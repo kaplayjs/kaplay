@@ -1,541 +1,580 @@
-import type {
-	ImageSource,
-	TextureOpt,
-	TexFilter,
-	Uniform,
-} from "./types"
+import type { ImageSource, TexFilter, TextureOpt, Uniform } from "./types";
 
-import {
-	Mat4,
-	Vec2,
-	Color,
-} from "./math"
+import { Color, Mat4, Vec2 } from "./math";
 
-import {
-	deepEq,
-} from "./utils"
+import { deepEq } from "./utils";
 
-export type GfxCtx = ReturnType<typeof initGfx>
+export type GfxCtx = ReturnType<typeof initGfx>;
 
 export class Texture {
+    ctx: GfxCtx;
+    src: null | ImageSource = null;
+    glTex: WebGLTexture;
+    width: number;
+    height: number;
 
-	ctx: GfxCtx
-	src: null | ImageSource = null
-	glTex: WebGLTexture
-	width: number
-	height: number
+    constructor(ctx: GfxCtx, w: number, h: number, opt: TextureOpt = {}) {
+        this.ctx = ctx;
+        const gl = ctx.gl;
+        this.glTex = ctx.gl.createTexture();
+        ctx.onDestroy(() => this.free());
 
-	constructor(ctx: GfxCtx, w: number, h: number, opt: TextureOpt = {}) {
+        this.width = w;
+        this.height = h;
 
-		this.ctx = ctx
-		const gl = ctx.gl
-		this.glTex = ctx.gl.createTexture()
-		ctx.onDestroy(() => this.free())
+        // TODO: no default
+        const filter = {
+            "linear": gl.LINEAR,
+            "nearest": gl.NEAREST,
+        }[opt.filter ?? ctx.opts.texFilter] ?? gl.NEAREST;
 
-		this.width = w
-		this.height = h
+        const wrap = {
+            "repeat": gl.REPEAT,
+            "clampToEadge": gl.CLAMP_TO_EDGE,
+        }[opt.wrap] ?? gl.CLAMP_TO_EDGE;
 
-		// TODO: no default
-		const filter = {
-			"linear": gl.LINEAR,
-			"nearest": gl.NEAREST,
-		}[opt.filter ?? ctx.opts.texFilter] ?? gl.NEAREST
+        this.bind();
 
-		const wrap = {
-			"repeat": gl.REPEAT,
-			"clampToEadge": gl.CLAMP_TO_EDGE,
-		}[opt.wrap] ?? gl.CLAMP_TO_EDGE
+        if (w && h) {
+            gl.texImage2D(
+                gl.TEXTURE_2D,
+                0,
+                gl.RGBA,
+                w,
+                h,
+                0,
+                gl.RGBA,
+                gl.UNSIGNED_BYTE,
+                null,
+            );
+        }
 
-		this.bind()
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, filter);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, filter);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, wrap);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, wrap);
+        this.unbind();
+    }
 
-		if (w && h) {
-			gl.texImage2D(
-				gl.TEXTURE_2D,
-				0, gl.RGBA,
-				w,
-				h,
-				0,
-				gl.RGBA,
-				gl.UNSIGNED_BYTE,
-				null,
-			)
-		}
+    static fromImage(
+        ctx: GfxCtx,
+        img: ImageSource,
+        opt: TextureOpt = {},
+    ): Texture {
+        const tex = new Texture(ctx, img.width, img.height, opt);
+        tex.update(img);
+        tex.src = img;
+        return tex;
+    }
 
-		gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, filter)
-		gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, filter)
-		gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, wrap)
-		gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, wrap)
-		this.unbind()
+    update(img: ImageSource, x = 0, y = 0) {
+        const gl = this.ctx.gl;
+        this.bind();
+        gl.texSubImage2D(
+            gl.TEXTURE_2D,
+            0,
+            x,
+            y,
+            gl.RGBA,
+            gl.UNSIGNED_BYTE,
+            img,
+        );
+        this.unbind();
+    }
 
-	}
+    bind() {
+        this.ctx.pushTexture2D(this.glTex);
+    }
 
-	static fromImage(ctx: GfxCtx, img: ImageSource, opt: TextureOpt = {}): Texture {
-		const tex = new Texture(ctx, img.width, img.height, opt)
-		tex.update(img)
-		tex.src = img
-		return tex
-	}
+    unbind() {
+        this.ctx.popTexture2D();
+    }
 
-	update(img: ImageSource, x = 0, y = 0) {
-		const gl = this.ctx.gl
-		this.bind()
-		gl.texSubImage2D(gl.TEXTURE_2D, 0, x, y, gl.RGBA, gl.UNSIGNED_BYTE, img)
-		this.unbind()
-	}
-
-	bind() {
-		this.ctx.pushTexture2D(this.glTex)
-	}
-
-	unbind() {
-		this.ctx.popTexture2D()
-	}
-
-	free() {
-		this.ctx.gl.deleteTexture(this.glTex)
-	}
-
+    free() {
+        this.ctx.gl.deleteTexture(this.glTex);
+    }
 }
 
 export class FrameBuffer {
+    ctx: GfxCtx;
+    tex: Texture;
+    glFramebuffer: WebGLFramebuffer;
+    glRenderbuffer: WebGLRenderbuffer;
 
-	ctx: GfxCtx
-	tex: Texture
-	glFramebuffer: WebGLFramebuffer
-	glRenderbuffer: WebGLRenderbuffer
+    constructor(ctx: GfxCtx, w: number, h: number, opt: TextureOpt = {}) {
+        this.ctx = ctx;
+        const gl = ctx.gl;
+        ctx.onDestroy(() => this.free());
+        this.tex = new Texture(ctx, w, h, opt);
+        this.glFramebuffer = gl.createFramebuffer();
+        this.glRenderbuffer = gl.createRenderbuffer();
+        this.bind();
+        gl.renderbufferStorage(gl.RENDERBUFFER, gl.DEPTH_STENCIL, w, h);
+        gl.framebufferTexture2D(
+            gl.FRAMEBUFFER,
+            gl.COLOR_ATTACHMENT0,
+            gl.TEXTURE_2D,
+            this.tex.glTex,
+            0,
+        );
+        gl.framebufferRenderbuffer(
+            gl.FRAMEBUFFER,
+            gl.DEPTH_STENCIL_ATTACHMENT,
+            gl.RENDERBUFFER,
+            this.glRenderbuffer,
+        );
+        this.unbind();
+    }
 
-	constructor(ctx: GfxCtx, w: number, h: number, opt: TextureOpt = {}) {
+    get width() {
+        return this.tex.width;
+    }
 
-		this.ctx = ctx
-		const gl = ctx.gl
-		ctx.onDestroy(() => this.free())
-		this.tex = new Texture(ctx, w, h, opt)
-		this.glFramebuffer = gl.createFramebuffer()
-		this.glRenderbuffer = gl.createRenderbuffer()
-		this.bind()
-		gl.renderbufferStorage(gl.RENDERBUFFER, gl.DEPTH_STENCIL, w, h)
-		gl.framebufferTexture2D(
-			gl.FRAMEBUFFER,
-			gl.COLOR_ATTACHMENT0,
-			gl.TEXTURE_2D,
-			this.tex.glTex,
-			0,
-		)
-		gl.framebufferRenderbuffer(
-			gl.FRAMEBUFFER,
-			gl.DEPTH_STENCIL_ATTACHMENT,
-			gl.RENDERBUFFER,
-			this.glRenderbuffer,
-		)
-		this.unbind()
-	}
+    get height() {
+        return this.tex.height;
+    }
 
-	get width() {
-		return this.tex.width
-	}
+    toImageData() {
+        const gl = this.ctx.gl;
+        const data = new Uint8ClampedArray(this.width * this.height * 4);
+        this.bind();
+        gl.readPixels(
+            0,
+            0,
+            this.width,
+            this.height,
+            gl.RGBA,
+            gl.UNSIGNED_BYTE,
+            data,
+        );
+        this.unbind();
+        // flip vertically
+        const bytesPerRow = this.width * 4;
+        const temp = new Uint8Array(bytesPerRow);
+        for (let y = 0; y < (this.height / 2 | 0); y++) {
+            const topOffset = y * bytesPerRow;
+            const bottomOffset = (this.height - y - 1) * bytesPerRow;
+            temp.set(data.subarray(topOffset, topOffset + bytesPerRow));
+            data.copyWithin(
+                topOffset,
+                bottomOffset,
+                bottomOffset + bytesPerRow,
+            );
+            data.set(temp, bottomOffset);
+        }
+        return new ImageData(data, this.width, this.height);
+    }
 
-	get height() {
-		return this.tex.height
-	}
+    toDataURL() {
+        const canvas = document.createElement("canvas");
+        const ctx = canvas.getContext("2d");
+        canvas.width = this.width;
+        canvas.height = this.height;
+        ctx.putImageData(this.toImageData(), 0, 0);
+        return canvas.toDataURL();
+    }
 
-	toImageData() {
-		const gl = this.ctx.gl
-		const data = new Uint8ClampedArray(this.width * this.height * 4)
-		this.bind()
-		gl.readPixels(0, 0, this.width, this.height, gl.RGBA, gl.UNSIGNED_BYTE, data)
-		this.unbind()
-		// flip vertically
-		const bytesPerRow = this.width * 4
-		const temp = new Uint8Array(bytesPerRow)
-		for (let y = 0; y < (this.height / 2 | 0); y++) {
-			const topOffset = y * bytesPerRow
-			const bottomOffset = (this.height - y - 1) * bytesPerRow
-			temp.set(data.subarray(topOffset, topOffset + bytesPerRow))
-			data.copyWithin(topOffset, bottomOffset, bottomOffset + bytesPerRow)
-			data.set(temp, bottomOffset)
-		}
-		return new ImageData(data, this.width, this.height)
-	}
+    clear() {
+        const gl = this.ctx.gl;
+        gl.clear(gl.COLOR_BUFFER_BIT);
+    }
 
-	toDataURL() {
-		const canvas = document.createElement("canvas")
-		const ctx = canvas.getContext("2d")
-		canvas.width = this.width
-		canvas.height = this.height
-		ctx.putImageData(this.toImageData(), 0, 0)
-		return canvas.toDataURL()
-	}
+    draw(action: () => void) {
+        this.bind();
+        action();
+        this.unbind();
+    }
 
-	clear() {
-		const gl = this.ctx.gl
-		gl.clear(gl.COLOR_BUFFER_BIT)
-	}
+    bind() {
+        this.ctx.pushFramebuffer(this.glFramebuffer);
+        this.ctx.pushRenderbuffer(this.glRenderbuffer);
+        this.ctx.pushViewport({ x: 0, y: 0, w: this.width, h: this.height });
+    }
 
-	draw(action: () => void) {
-		this.bind()
-		action()
-		this.unbind()
-	}
+    unbind() {
+        this.ctx.popFramebuffer();
+        this.ctx.popRenderbuffer();
+        this.ctx.popViewport();
+    }
 
-	bind() {
-		this.ctx.pushFramebuffer(this.glFramebuffer)
-		this.ctx.pushRenderbuffer(this.glRenderbuffer)
-		this.ctx.pushViewport({ x: 0, y: 0, w: this.width, h: this.height })
-	}
-
-	unbind() {
-		this.ctx.popFramebuffer()
-		this.ctx.popRenderbuffer()
-		this.ctx.popViewport()
-	}
-
-	free() {
-		const gl = this.ctx.gl
-		gl.deleteFramebuffer(this.glFramebuffer)
-		gl.deleteRenderbuffer(this.glRenderbuffer)
-		this.tex.free()
-	}
-
+    free() {
+        const gl = this.ctx.gl;
+        gl.deleteFramebuffer(this.glFramebuffer);
+        gl.deleteRenderbuffer(this.glRenderbuffer);
+        this.tex.free();
+    }
 }
 
 export class Shader {
+    ctx: GfxCtx;
+    glProgram: WebGLProgram;
 
-	ctx: GfxCtx
-	glProgram: WebGLProgram
+    constructor(ctx: GfxCtx, vert: string, frag: string, attribs: string[]) {
+        this.ctx = ctx;
+        ctx.onDestroy(() => this.free());
 
-	constructor(ctx: GfxCtx, vert: string, frag: string, attribs: string[]) {
+        const gl = ctx.gl;
+        const vertShader = gl.createShader(gl.VERTEX_SHADER);
+        const fragShader = gl.createShader(gl.FRAGMENT_SHADER);
 
-		this.ctx = ctx
-		ctx.onDestroy(() => this.free())
+        gl.shaderSource(vertShader, vert);
+        gl.shaderSource(fragShader, frag);
+        gl.compileShader(vertShader);
+        gl.compileShader(fragShader);
 
-		const gl = ctx.gl
-		const vertShader = gl.createShader(gl.VERTEX_SHADER)
-		const fragShader = gl.createShader(gl.FRAGMENT_SHADER)
+        const prog = gl.createProgram();
+        this.glProgram = prog;
 
-		gl.shaderSource(vertShader, vert)
-		gl.shaderSource(fragShader, frag)
-		gl.compileShader(vertShader)
-		gl.compileShader(fragShader)
+        gl.attachShader(prog, vertShader);
+        gl.attachShader(prog, fragShader);
 
-		const prog = gl.createProgram()
-		this.glProgram = prog
+        attribs.forEach((attrib, i) => gl.bindAttribLocation(prog, i, attrib));
 
-		gl.attachShader(prog, vertShader)
-		gl.attachShader(prog, fragShader)
+        gl.linkProgram(prog);
 
-		attribs.forEach((attrib, i) => gl.bindAttribLocation(prog, i, attrib))
+        if (!gl.getProgramParameter(prog, gl.LINK_STATUS)) {
+            const vertError = gl.getShaderInfoLog(vertShader);
+            if (vertError) throw new Error("VERTEX SHADER " + vertError);
+            const fragError = gl.getShaderInfoLog(fragShader);
+            if (fragError) throw new Error("FRAGMENT SHADER " + fragError);
+        }
 
-		gl.linkProgram(prog)
+        gl.deleteShader(vertShader);
+        gl.deleteShader(fragShader);
+    }
 
-		if (!gl.getProgramParameter(prog, gl.LINK_STATUS)) {
-			const vertError = gl.getShaderInfoLog(vertShader)
-			if (vertError) throw new Error("VERTEX SHADER " + vertError)
-			const fragError = gl.getShaderInfoLog(fragShader)
-			if (fragError) throw new Error("FRAGMENT SHADER " + fragError)
-		}
+    bind() {
+        this.ctx.pushProgram(this.glProgram);
+    }
 
-		gl.deleteShader(vertShader)
-		gl.deleteShader(fragShader)
+    unbind() {
+        this.ctx.popProgram();
+    }
 
-	}
+    send(uniform: Uniform) {
+        const gl = this.ctx.gl;
+        for (const name in uniform) {
+            const val = uniform[name];
+            const loc = gl.getUniformLocation(this.glProgram, name);
+            if (typeof val === "number") {
+                gl.uniform1f(loc, val);
+            } else if (val instanceof Mat4) {
+                gl.uniformMatrix4fv(loc, false, new Float32Array(val.m));
+            } else if (val instanceof Color) {
+                gl.uniform3f(loc, val.r, val.g, val.b);
+            } else if (val instanceof Vec2) {
+                gl.uniform2f(loc, val.x, val.y);
+            } else if (Array.isArray(val)) {
+                const first = val[0];
+                if (typeof first === "number") {
+                    gl.uniform1fv(loc, val as number[]);
+                } else if (first instanceof Vec2) {
+                    gl.uniform2fv(loc, val.map(v => [v.x, v.y]).flat());
+                } else if (first instanceof Color) {
+                    gl.uniform3fv(loc, val.map(v => [v.r, v.g, v.b]).flat());
+                }
+            } else {
+                throw new Error("Unsupported uniform data type");
+            }
+        }
+    }
 
-	bind() {
-		this.ctx.pushProgram(this.glProgram)
-	}
-
-	unbind() {
-		this.ctx.popProgram()
-	}
-
-	send(uniform: Uniform) {
-		const gl = this.ctx.gl
-		for (const name in uniform) {
-			const val = uniform[name]
-			const loc = gl.getUniformLocation(this.glProgram, name)
-			if (typeof val === "number") {
-				gl.uniform1f(loc, val)
-			} else if (val instanceof Mat4) {
-				gl.uniformMatrix4fv(loc, false, new Float32Array(val.m))
-			} else if (val instanceof Color) {
-				gl.uniform3f(loc, val.r, val.g, val.b)
-			} else if (val instanceof Vec2) {
-				gl.uniform2f(loc, val.x, val.y)
-			} else if (Array.isArray(val)) {
-				const first = val[0]
-				if (typeof first === "number") {
-					gl.uniform1fv(loc, val as number[])
-				} else if (first instanceof Vec2) {
-					gl.uniform2fv(loc, val.map(v => [v.x, v.y]).flat())
-				} else if (first instanceof Color) {
-					gl.uniform3fv(loc, val.map(v => [v.r, v.g, v.b]).flat())
-				}
-			} else {
-				throw new Error("Unsupported uniform data type")
-			}
-		}
-	}
-
-	free() {
-		this.ctx.gl.deleteProgram(this.glProgram)
-	}
-
+    free() {
+        this.ctx.gl.deleteProgram(this.glProgram);
+    }
 }
 
 export type VertexFormat = {
-	name: string,
-	size: number,
-}[]
+    name: string;
+    size: number;
+}[];
 
 export class BatchRenderer {
+    ctx: GfxCtx;
 
-	ctx: GfxCtx
+    glVBuf: WebGLBuffer;
+    glIBuf: WebGLBuffer;
+    vqueue: number[] = [];
+    iqueue: number[] = [];
+    stride: number;
+    maxVertices: number;
+    maxIndices: number;
 
-	glVBuf: WebGLBuffer
-	glIBuf: WebGLBuffer
-	vqueue: number[] = []
-	iqueue: number[] = []
-	stride: number
-	maxVertices: number
-	maxIndices: number
+    vertexFormat: VertexFormat;
+    numDraws: number = 0;
 
-	vertexFormat: VertexFormat
-	numDraws: number = 0
+    curPrimitive: GLenum | null = null;
+    curTex: Texture | null = null;
+    curShader: Shader | null = null;
+    curUniform: Uniform = {};
 
-	curPrimitive: GLenum | null = null
-	curTex: Texture | null = null
-	curShader: Shader | null = null
-	curUniform: Uniform = {}
+    constructor(
+        ctx: GfxCtx,
+        format: VertexFormat,
+        maxVertices: number,
+        maxIndices: number,
+    ) {
+        const gl = ctx.gl;
 
-	constructor(ctx: GfxCtx, format: VertexFormat, maxVertices: number, maxIndices: number) {
+        this.vertexFormat = format;
+        this.ctx = ctx;
+        this.stride = format.reduce((sum, f) => sum + f.size, 0);
+        this.maxVertices = maxVertices;
+        this.maxIndices = maxIndices;
 
-		const gl = ctx.gl
+        this.glVBuf = gl.createBuffer();
+        ctx.pushArrayBuffer(this.glVBuf);
+        gl.bufferData(gl.ARRAY_BUFFER, maxVertices * 4, gl.DYNAMIC_DRAW);
+        ctx.popArrayBuffer();
 
-		this.vertexFormat = format
-		this.ctx = ctx
-		this.stride = format.reduce((sum, f) => sum + f.size, 0)
-		this.maxVertices = maxVertices
-		this.maxIndices = maxIndices
+        this.glIBuf = gl.createBuffer();
+        ctx.pushElementArrayBuffer(this.glIBuf);
+        gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, maxIndices * 4, gl.DYNAMIC_DRAW);
+        ctx.popElementArrayBuffer();
+    }
 
-		this.glVBuf = gl.createBuffer()
-		ctx.pushArrayBuffer(this.glVBuf)
-		gl.bufferData(gl.ARRAY_BUFFER, maxVertices * 4, gl.DYNAMIC_DRAW)
-		ctx.popArrayBuffer()
+    push(
+        primitive: GLenum,
+        verts: number[],
+        indices: number[],
+        shader: Shader,
+        tex: Texture | null = null,
+        uniform: Uniform = {},
+    ) {
+        if (
+            primitive !== this.curPrimitive
+            || tex !== this.curTex
+            || shader !== this.curShader
+            || !deepEq(this.curUniform, uniform)
+            || this.vqueue.length + verts.length * this.stride
+                > this.maxVertices
+            || this.iqueue.length + indices.length > this.maxIndices
+        ) {
+            this.flush();
+        }
+        const indexOffset = this.vqueue.length / this.stride;
+        for (const v of verts) {
+            this.vqueue.push(v);
+        }
+        for (const i of indices) {
+            this.iqueue.push(i + indexOffset);
+        }
+        this.curPrimitive = primitive;
+        this.curShader = shader;
+        this.curTex = tex;
+        this.curUniform = uniform;
+    }
 
-		this.glIBuf = gl.createBuffer()
-		ctx.pushElementArrayBuffer(this.glIBuf)
-		gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, maxIndices * 4, gl.DYNAMIC_DRAW)
-		ctx.popElementArrayBuffer()
+    flush() {
+        if (
+            !this.curPrimitive
+            || !this.curShader
+            || this.vqueue.length === 0
+            || this.iqueue.length === 0
+        ) {
+            return;
+        }
 
-	}
+        const gl = this.ctx.gl;
 
-	push(
-		primitive: GLenum,
-		verts: number[],
-		indices: number[],
-		shader: Shader,
-		tex: Texture | null = null,
-		uniform: Uniform = {},
-	) {
-		if (
-			primitive !== this.curPrimitive
-			|| tex !== this.curTex
-			|| shader !== this.curShader
-			|| !deepEq(this.curUniform, uniform)
-			|| this.vqueue.length + verts.length * this.stride > this.maxVertices
-			|| this.iqueue.length + indices.length > this.maxIndices
-		) {
-			this.flush()
-		}
-		const indexOffset = this.vqueue.length / this.stride
-		for (const v of verts) {
-			this.vqueue.push(v)
-		}
-		for (const i of indices) {
-			this.iqueue.push(i + indexOffset)
-		}
-		this.curPrimitive = primitive
-		this.curShader = shader
-		this.curTex = tex
-		this.curUniform = uniform
-	}
+        this.ctx.pushArrayBuffer(this.glVBuf);
+        gl.bufferSubData(gl.ARRAY_BUFFER, 0, new Float32Array(this.vqueue));
+        this.ctx.pushElementArrayBuffer(this.glIBuf);
+        gl.bufferSubData(
+            gl.ELEMENT_ARRAY_BUFFER,
+            0,
+            new Uint16Array(this.iqueue),
+        );
+        this.ctx.setVertexFormat(this.vertexFormat);
+        this.curShader.bind();
+        this.curShader.send(this.curUniform);
+        this.curTex?.bind();
+        gl.drawElements(
+            this.curPrimitive,
+            this.iqueue.length,
+            gl.UNSIGNED_SHORT,
+            0,
+        );
+        this.curTex?.unbind();
+        this.curShader.unbind();
 
-	flush() {
+        this.ctx.popArrayBuffer();
+        this.ctx.popElementArrayBuffer();
 
-		if (
-			!this.curPrimitive
-			|| !this.curShader
-			|| this.vqueue.length === 0
-			|| this.iqueue.length === 0
-		) {
-			return
-		}
+        this.vqueue = [];
+        this.iqueue = [];
+        this.numDraws++;
+    }
 
-		const gl = this.ctx.gl
-
-		this.ctx.pushArrayBuffer(this.glVBuf)
-		gl.bufferSubData(gl.ARRAY_BUFFER, 0, new Float32Array(this.vqueue))
-		this.ctx.pushElementArrayBuffer(this.glIBuf)
-		gl.bufferSubData(gl.ELEMENT_ARRAY_BUFFER, 0, new Uint16Array(this.iqueue))
-		this.ctx.setVertexFormat(this.vertexFormat)
-		this.curShader.bind()
-		this.curShader.send(this.curUniform)
-		this.curTex?.bind()
-		gl.drawElements(this.curPrimitive, this.iqueue.length, gl.UNSIGNED_SHORT, 0)
-		this.curTex?.unbind()
-		this.curShader.unbind()
-
-		this.ctx.popArrayBuffer()
-		this.ctx.popElementArrayBuffer()
-
-		this.vqueue = []
-		this.iqueue = []
-		this.numDraws++
-
-	}
-
-	free() {
-		const gl = this.ctx.gl
-		gl.deleteBuffer(this.glVBuf)
-		gl.deleteBuffer(this.glIBuf)
-	}
-
+    free() {
+        const gl = this.ctx.gl;
+        gl.deleteBuffer(this.glVBuf);
+        gl.deleteBuffer(this.glIBuf);
+    }
 }
 
 export class Mesh {
+    ctx: GfxCtx;
+    glVBuf: WebGLBuffer;
+    glIBuf: WebGLBuffer;
+    vertexFormat: VertexFormat;
+    count: number;
 
-	ctx: GfxCtx
-	glVBuf: WebGLBuffer
-	glIBuf: WebGLBuffer
-	vertexFormat: VertexFormat
-	count: number
+    constructor(
+        ctx: GfxCtx,
+        format: VertexFormat,
+        verts: number[],
+        indices: number[],
+    ) {
+        const gl = ctx.gl;
 
-	constructor(ctx: GfxCtx, format: VertexFormat, verts: number[], indices: number[]) {
+        this.vertexFormat = format;
+        this.ctx = ctx;
 
-		const gl = ctx.gl
+        this.glVBuf = gl.createBuffer();
+        ctx.pushArrayBuffer(this.glVBuf);
+        gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(verts), gl.STATIC_DRAW);
+        ctx.popArrayBuffer();
 
-		this.vertexFormat = format
-		this.ctx = ctx
+        this.glIBuf = gl.createBuffer();
+        ctx.pushElementArrayBuffer(this.glIBuf);
+        gl.bufferData(
+            gl.ELEMENT_ARRAY_BUFFER,
+            new Uint16Array(indices),
+            gl.STATIC_DRAW,
+        );
+        ctx.popElementArrayBuffer();
 
-		this.glVBuf = gl.createBuffer()
-		ctx.pushArrayBuffer(this.glVBuf)
-		gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(verts), gl.STATIC_DRAW)
-		ctx.popArrayBuffer()
+        this.count = indices.length;
+    }
 
-		this.glIBuf = gl.createBuffer()
-		ctx.pushElementArrayBuffer(this.glIBuf)
-		gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(indices), gl.STATIC_DRAW)
-		ctx.popElementArrayBuffer()
+    draw(primitive?: GLenum) {
+        const gl = this.ctx.gl;
+        this.ctx.pushArrayBuffer(this.glVBuf);
+        this.ctx.pushElementArrayBuffer(this.glIBuf);
+        this.ctx.setVertexFormat(this.vertexFormat);
+        gl.drawElements(
+            primitive ?? gl.TRIANGLES,
+            this.count,
+            gl.UNSIGNED_SHORT,
+            0,
+        );
+        this.ctx.popArrayBuffer();
+        this.ctx.popElementArrayBuffer();
+    }
 
-		this.count = indices.length
-
-	}
-
-	draw(primitive?: GLenum) {
-		const gl = this.ctx.gl
-		this.ctx.pushArrayBuffer(this.glVBuf)
-		this.ctx.pushElementArrayBuffer(this.glIBuf)
-		this.ctx.setVertexFormat(this.vertexFormat)
-		gl.drawElements(primitive ?? gl.TRIANGLES, this.count, gl.UNSIGNED_SHORT, 0)
-		this.ctx.popArrayBuffer()
-		this.ctx.popElementArrayBuffer()
-	}
-
-	free() {
-		const gl = this.ctx.gl
-		gl.deleteBuffer(this.glVBuf)
-		gl.deleteBuffer(this.glIBuf)
-	}
-
-
+    free() {
+        const gl = this.ctx.gl;
+        gl.deleteBuffer(this.glVBuf);
+        gl.deleteBuffer(this.glIBuf);
+    }
 }
 
 function genStack<T>(setFunc: (item: T) => void) {
-	const stack: T[] = []
-	// TODO: don't do anything if pushed item is the same as the one on top?
-	const push = (item: T) => {
-		stack.push(item)
-		setFunc(item)
-	}
-	const pop = () => {
-		stack.pop()
-		setFunc(cur() ?? null)
-	}
-	const cur = () => stack[stack.length - 1]
-	return [push, pop, cur] as const
+    const stack: T[] = [];
+    // TODO: don't do anything if pushed item is the same as the one on top?
+    const push = (item: T) => {
+        stack.push(item);
+        setFunc(item);
+    };
+    const pop = () => {
+        stack.pop();
+        setFunc(cur() ?? null);
+    };
+    const cur = () => stack[stack.length - 1];
+    return [push, pop, cur] as const;
 }
 
 export default function initGfx(gl: WebGLRenderingContext, opts: {
-	texFilter?: TexFilter,
+    texFilter?: TexFilter;
 } = {}) {
+    const gc: Array<() => void> = [];
 
-	const gc: Array<() => void> = []
+    function onDestroy(action) {
+        gc.push(action);
+    }
 
-	function onDestroy(action) {
-		gc.push(action)
-	}
+    function destroy() {
+        gc.forEach((action) => action());
+        gl.getExtension("WEBGL_lose_context").loseContext();
+    }
 
-	function destroy() {
-		gc.forEach((action) => action())
-		gl.getExtension("WEBGL_lose_context").loseContext()
-	}
+    let curVertexFormat = null;
 
-	let curVertexFormat = null
+    function setVertexFormat(fmt: VertexFormat) {
+        if (deepEq(fmt, curVertexFormat)) return;
+        curVertexFormat = fmt;
+        const stride = fmt.reduce((sum, f) => sum + f.size, 0);
+        fmt.reduce((offset, f, i) => {
+            gl.vertexAttribPointer(
+                i,
+                f.size,
+                gl.FLOAT,
+                false,
+                stride * 4,
+                offset,
+            );
+            gl.enableVertexAttribArray(i);
+            return offset + f.size * 4;
+        }, 0);
+    }
 
-	function setVertexFormat(fmt: VertexFormat) {
-		if (deepEq(fmt, curVertexFormat)) return
-		curVertexFormat = fmt
-		const stride = fmt.reduce((sum, f) => sum + f.size, 0)
-		fmt.reduce((offset, f, i) => {
-			gl.vertexAttribPointer(i, f.size, gl.FLOAT, false, stride * 4, offset)
-			gl.enableVertexAttribArray(i)
-			return offset + f.size * 4
-		}, 0)
-	}
+    const [pushTexture2D, popTexture2D] = genStack<WebGLTexture>((t) =>
+        gl.bindTexture(gl.TEXTURE_2D, t)
+    );
 
-	const [ pushTexture2D, popTexture2D ] =
-		genStack<WebGLTexture>((t) => gl.bindTexture(gl.TEXTURE_2D, t))
+    const [pushArrayBuffer, popArrayBuffer] = genStack<WebGLBuffer>((b) =>
+        gl.bindBuffer(gl.ARRAY_BUFFER, b)
+    );
 
-	const [ pushArrayBuffer, popArrayBuffer ] =
-		genStack<WebGLBuffer>((b) => gl.bindBuffer(gl.ARRAY_BUFFER, b))
+    const [pushElementArrayBuffer, popElementArrayBuffer] = genStack<
+        WebGLBuffer
+    >((b) => gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, b));
 
-	const [ pushElementArrayBuffer, popElementArrayBuffer ] =
-		genStack<WebGLBuffer>((b) => gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, b))
+    const [pushFramebuffer, popFramebuffer] = genStack<WebGLFramebuffer>((b) =>
+        gl.bindFramebuffer(gl.FRAMEBUFFER, b)
+    );
 
-	const [ pushFramebuffer, popFramebuffer ] =
-		genStack<WebGLFramebuffer>((b) => gl.bindFramebuffer(gl.FRAMEBUFFER, b))
+    const [pushRenderbuffer, popRenderbuffer] = genStack<WebGLRenderbuffer>((
+        b,
+    ) => gl.bindRenderbuffer(gl.RENDERBUFFER, b));
 
-	const [ pushRenderbuffer, popRenderbuffer ] =
-		genStack<WebGLRenderbuffer>((b) => gl.bindRenderbuffer(gl.RENDERBUFFER, b))
+    const [pushViewport, popViewport] = genStack<
+        { x: number; y: number; w: number; h: number }
+    >(({ x, y, w, h }) => {
+        gl.viewport(x, y, w, h);
+    });
 
-	const [ pushViewport, popViewport ] =
-		genStack<{ x: number, y: number, w: number, h: number }>(({ x, y, w, h }) => {
-			gl.viewport(x, y, w, h)
-		})
+    const [pushProgram, popProgram] = genStack<WebGLProgram>((p) =>
+        gl.useProgram(p)
+    );
 
-	const [ pushProgram, popProgram ] = genStack<WebGLProgram>((p) => gl.useProgram(p))
+    pushViewport({
+        x: 0,
+        y: 0,
+        w: gl.drawingBufferWidth,
+        h: gl.drawingBufferHeight,
+    });
 
-	pushViewport({ x: 0, y: 0, w: gl.drawingBufferWidth, h: gl.drawingBufferHeight })
-
-	return {
-		gl,
-		opts,
-		onDestroy,
-		destroy,
-		pushTexture2D,
-		popTexture2D,
-		pushArrayBuffer,
-		popArrayBuffer,
-		pushElementArrayBuffer,
-		popElementArrayBuffer,
-		pushFramebuffer,
-		popFramebuffer,
-		pushRenderbuffer,
-		popRenderbuffer,
-		pushViewport,
-		popViewport,
-		pushProgram,
-		popProgram,
-		setVertexFormat,
-	}
-
+    return {
+        gl,
+        opts,
+        onDestroy,
+        destroy,
+        pushTexture2D,
+        popTexture2D,
+        pushArrayBuffer,
+        popArrayBuffer,
+        pushElementArrayBuffer,
+        popElementArrayBuffer,
+        pushFramebuffer,
+        popFramebuffer,
+        pushRenderbuffer,
+        popRenderbuffer,
+        pushViewport,
+        popViewport,
+        pushProgram,
+        popProgram,
+        setVertexFormat,
+    };
 }

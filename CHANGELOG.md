@@ -1,84 +1,101 @@
 ## v3001.0
 
 ## v3000.2
+
 - added `loadMusic()` to load streaming audio (doesn't block in loading screen)
 - added support for arrays in uniforms
 - added support for texture larger than 2048x2048
 - added `chooseMultiple()` and `shuffle()` helper functions
 
 ### v3000.1.17
+
 - exposed `vel` property on `BodyComp`
 
 ### v3000.1.16
+
 - fixed error not being logged
 - fixed error screen scaling error in letterbox mode
 
 ### v3000.1.15
+
 - fixed `loadRoot()` not working sometimes
 - fixed audio being resumed when the tab is switched on but `debug.paused` is true
 
 ### v3000.1.12
+
 - fixed `color()` and `rgb()` not working
 
 ### v3000.1.11
+
 - added option `kaboom({ focus: false })` to disable focus on start
 - fixed `rand()` typing for numbers
 - fixed mouse position in fullscreen
 - added `Color#toHSL()`
 
 ### v3000.1.10
+
 - fixed test code accidentally getting shipped (where a screenshot will be downloaded every time you press space)
 
 ### v3000.1.9
+
 - added `fill` option to `rect()`, `circle()` and `sprite()`
 - fixed view getting cut off in letterbox mode
 
 ### v3000.1.8
+
 - fixed `scale` option acting weird when width and height are defined (by @hirnsalat)
 
 ### v3000.1.7
+
 - fixed `debug.paused` not pausing audio
 - added `mask()` component
 - added support for colored font outline
+
 ```js
 loadFont("apl386", "/examples/fonts/apl386.ttf", {
-	outline: {
-		width: 8,
-		color: rgb(0, 0, 255),
-	},
-})
+    outline: {
+        width: 8,
+        color: rgb(0, 0, 255),
+    },
+});
 ```
+
 - fixed `wave()` not starting at `0` when time is `0`
 - kaboom now only displays error screen for kaboom's own error, instead of catching all errors in current window
 - added `KaboomError` class for errors related to current kaboom instance
 - setting `obj.text` with `text()` component now immediately updates `width` and `height` property
+
 ```js
 const obj = add([
     text("oh hi"),
     pos(100, 200),
-])
+]);
 
 // before
-obj.text = "bye"
-console.log(obj.width) // still the width of "oh hi" until next render
+obj.text = "bye";
+console.log(obj.width); // still the width of "oh hi" until next render
 
 // before
-obj.text = "bye"
-console.log(obj.width) // will be updated to the width of "bye"
+obj.text = "bye";
+console.log(obj.width); // will be updated to the width of "bye"
 ```
 
 ### v3000.1.6
+
 - fixed `loadSound` typing to accept `ArrayBuffer`
 
 ### v3000.1.5
+
 - added `Event#clear()` method
 - fixed `add()` without argument
 
 ### v3000.1.4
+
 - added `audio.stop()` method
+
 ```js
-const music = play("music")
-music.stop()
+const music = play("music");
+music.stop();
 ```
 
 ### v3000.1.3
@@ -87,11 +104,12 @@ music.stop()
 - allow `add()` and `make()` without arguments
 - added `debug.numObjects()`
 - added `width` and `height` properties to `SpriteData`
+
 ```js
 // get sprite size
 getSprite("bean").then((spr) => {
-    console.log(spr.width, spr.height)
-})
+    console.log(spr.width, spr.height);
+});
 ```
 
 ### v3000.1.2
@@ -112,81 +130,83 @@ getSprite("bean").then((spr) => {
 
 ```js
 // add a scene game object
-const scene = add([])
+const scene = add([]);
 
 const bean = scene.add([
     sprite("bean"),
     pos(100, 200),
     area(),
     body(),
-])
+]);
 
 scene.onKeyPress("space", () => {
-  bean.jump()
-})
+    bean.jump();
+});
 
 scene.onMousePress(() => {
-  bean.jump()
-})
+    bean.jump();
+});
 
 // setting scene.paused will pause all the input events
-scene.paused = true
+scene.paused = true;
 
 // destroying scene will cancel all its input events
-scene.destroy()
+scene.destroy();
 
-const ui = add([])
+const ui = add([]);
 
-ui.add(makeButton())
+ui.add(makeButton());
 
 // these will only work if ui game object is active
 ui.onMousePress(() => {
-  // ...
-})
+    // ...
+});
 
 // before you'll have to manually clean up events on obj.onDestroy()
-const scene = add([])
-const evs = []
+const scene = add([]);
+const evs = [];
 scene.onDestroy(() => {
-  evs.forEach((ev) => ev.cancel())
-})
+    evs.forEach((ev) => ev.cancel());
+});
 evs.push(k.onKeyPress("space", () => {
-  doSomeSceneSpecificStuff()
-}))
+    doSomeSceneSpecificStuff();
+}));
 ```
 
 - added `make()` to create game object without adding to the scene
+
 ```js
 const obj = make([
-  sprite("bean"),
-  pos(120, 60),
-])
+    sprite("bean"),
+    pos(120, 60),
+]);
 
-add(obj)
+add(obj);
 ```
 
 - fixed children not inheriting `fixed()` from parent
+
 ```js
 // before
 const ui = add([
-  fixed(),
-])
+    fixed(),
+]);
 
 ui.add([
-  rect(),
-  // have to also give all children game objects fixed()
-  fixed(),
-])
+    rect(),
+    // have to also give all children game objects fixed()
+    fixed(),
+]);
 
 // now
 const ui = add([
-  fixed(),
-])
+    fixed(),
+]);
 
 // you don't have to add fixed() to children
 ui.add([
-  rect(100, 100),
-])
+    rect(100, 100),
+]);
 ```
 
 - fixed `AreaComp#onClick()` event not getting cleaned up when game object is destroyed
@@ -202,49 +222,53 @@ ui.add([
 ## Game Objects
 
 - added scene graph, game objects are now stored in a tree-like structure and can have children with `obj.add()`
+
 ```js
 const bean = add([
     sprite("bean"),
     pos(160, 120),
-])
+]);
 
 const sword = bean.add([
     sprite("sword"),
     // transforms will be relative to parent bean object
     pos(20, 20),
     rotate(20),
-])
+]);
 
 const hat = bean.add([
     sprite("hat"),
     // transforms will be relative to parent bean object
     pos(0, -10),
-])
+]);
 
 // children will be moved alongside the parent
-bean.moveBy(100, 200)
+bean.moveBy(100, 200);
 
 // children will be destroyed alongside the parent
-bean.destroy()
+bean.destroy();
 ```
+
 - added `recursive` and `liveUpdate` options to `get()`
+
 ```js
 const enemies = get("enemy", {
     // get from all children and descendants, instead of only direct children
     recursive: true,
     // live update the returned list to listen to onAdd and onDestroy events
     liveUpdate: true,
-})
+});
 
-console.log(enemies.length) // 3
+console.log(enemies.length); // 3
 
 add([
     sprite("bigbird"),
     "enemy",
-])
+]);
 
-console.log(enemies.length) // 4
+console.log(enemies.length); // 4
 ```
+
 - changed object update order from reversed to not reversed
 - (**BREAK**) removed `GameObj#every()` and `GameObj#revery()` in favor of `obj.get("*").forEach()`
 - (**BREAK**) renamed `GameObj#_id` to `GameObj#id`
@@ -259,24 +283,28 @@ console.log(enemies.length) // 4
 
 - added collision support for rotate shapes and polygons
 - added option `collisionIgnore` to `area()` component, which accepts a list of tags to ignore when checking collision
+
 ```js
 const bean = add([
     sprite("bean"),
     pos(100, 80),
     area({
-        collisionIgnore: [ "cloud", "particle" ],
+        collisionIgnore: ["cloud", "particle"],
     }),
-])
+]);
 ```
+
 - added `Area#getCollisions` to get a list of all current collisions happening
+
 ```js
 for (const col of player.getCollisions()) {
-    const c = col.target
+    const c = col.target;
     if (c.is("chest")) {
-        c.open()
+        c.open();
     }
 }
 ```
+
 - added `Area#onCollideUpdate()` and `onCollideUpdate()` to register an event that runs every frame when 2 object is colising
 - added `Area#onCollideEnd()` and `onCollideEnd()` to register an event that runs once when 2 objects stopped colliding
 - added `Area#onHover()` and `onHover()` to register an event that runs once when an object(s) is hovered
@@ -288,14 +316,16 @@ for (const col of player.getCollisions()) {
 
 - added `Body#onFall()` which fires when object starts falling
 - added `Body#onPhysicsResolve()` and `Body#onBeforePhysicsResolve()` to register events relating to collision resolution
+
 ```js
 // make semi-solid platforms that doesn't block player when player is jumping over it
 player.onBeforePhysicsResolve((collision) => {
     if (collision.target.is(["platform", "soft"]) && player.isJumping()) {
-        collision.preventResolution()
+        collision.preventResolution();
     }
-})
+});
 ```
+
 - (**BREAK**) removed `solid()` in favor of `body({ isStatic: true })`
 - added option `body({ mass: 3 })` to define how hard a non-static body is to be pushed by another non-static body
 - added option `body({ stickToPlatform: false })` to turn off object moving with platform
@@ -318,21 +348,24 @@ player.onBeforePhysicsResolve((collision) => {
 - `stay()` now accepts a list of scenes to stay for, like `stay(["gameover", "menu"])`
 - (**BREAK**) changed `SpriteComp#flipX` and `SpriteComp#flipY` to properties instead of functions
 - (**BEARK**) `sprite.onAnimStart()` and `sprite.onAnimEnd()` now triggers on any animation
+
 ```js
 // before
 obj.onAnimEnd("walk", () => {
     // do something
-})
+});
 
 // v3000
 obj.onAnimEnd((anim) => {
     if (anim === "walk") {
         // do something
     }
-})
+});
 ```
+
 - (**BREAK**) `ScaleComp#scale` will always be a `Vec2` not `number`
 - `shader()` comp `uniform` parameter now supports a callback that returns the uniform every frame
+
 ```js
 const player = add([
     sprite("bean"),
@@ -340,7 +373,7 @@ const player = add([
     shader("flashy", () => ({
         "u_time": time(),
     })),
-])
+]);
 ```
 
 ## Assets
@@ -348,6 +381,7 @@ const player = add([
 - added `loadProgress()` that returns a `0.0 - 1.0` that indicates current asset loading progress
 - added option `loadingScreen` to `kaboom()` where you can turn off the default loading screen
 - added `onLoadUpdate()` to register a custom loading screen (see "loader" example)
+
 ```js
 // custom loading screen
 onLoadUpdate((progress) => {
@@ -355,38 +389,47 @@ onLoadUpdate((progress) => {
         pos: center(),
         radius: 32,
         end: map(progress, 0, 1, 0, 360),
-    })
-})
+    });
+});
 ```
+
 - added support for multiple sprite sources as frames in `loadSprite()`
+
 ```js
 loadSprite("player", [
     "sprites/player_idle.png",
     "sprites/player_run.png",
     "sprites/player_jump.png",
-])
+]);
 ```
+
 - (**BREAK**) added `loadShaderURL()`, `loadShader()` now only load shader code not files
 
 ## Text
 
 - added `loadFont()` to load `.ttf`, `.otf`, `.woff2` or any font supported by browser `FontFace`
+
 ```js
 // Load a custom font from a .ttf file
-loadFont("FlowerSketches", "/examples/fonts/FlowerSketches.ttf")
+loadFont("FlowerSketches", "/examples/fonts/FlowerSketches.ttf");
 
 // Load a custom font with options
-loadFont("apl386", "/examples/fonts/apl386.ttf", { outline: 4, filter: "linear" })
+loadFont("apl386", "/examples/fonts/apl386.ttf", {
+    outline: 4,
+    filter: "linear",
+});
 ```
+
 - (**BREAK**) renamed previous `loadFont()` to `loadBitmapFont()`
 - (**BREAK**) removed built-in `apl386`, `apl386o`, `sink`, `sinko` (still available under `examples/fonts`)
 - changed default font size to `36`
 - (**BREAK**) changed to bbcode syntax for styled text
+
 ```js
 // before
-"[oh hi].green here's some [styled].wavy text"
+"[oh hi].green here's some [styled].wavy text";
 // v3000
-"[green]oh hi[/green] here's some [wavy]styled[/wavy] text"
+"[green]oh hi[/green] here's some [wavy]styled[/wavy] text";
 ```
 
 ## Graphics
@@ -399,38 +442,45 @@ loadFont("apl386", "/examples/fonts/apl386.ttf", { outline: 4, filter: "linear" 
 - added `pixelDensity` option to `kaboom()`
 - (**BREAK**) changed position vertex format from `vec3` to `vec2` (which is passed in as the first argument of custom `frag` and `vert` shader functions)
 - added `usePostEffect()` to add post process shader
+
 ```js
-loadShader("invert", null, `
+loadShader(
+    "invert",
+    null,
+    `
 vec4 frag(vec2 pos, vec2 uv, vec4 color, sampler2D tex) {
     vec4 c = def_frag();
     return vec4(1.0 - c.r, 1.0 - c.g, 1.0 - c.b, c.a);
 }
-`)
+`,
+);
 
-usePostEffect("invert")
+usePostEffect("invert");
 ```
+
 - shader error logs now yields the correct line number
 - added `slice9` option to `loadSprite()` to enable [9 slice scaling](https://en.wikipedia.org/wiki/9-slice_scaling)
+
 ```js
 loadSprite("grass", "/sprites/grass.png", {
-	slice9: {
-		left: 8,
-		right: 8,
-		top: 8,
-		bottom: 8,
-	},
-})
+    slice9: {
+        left: 8,
+        right: 8,
+        top: 8,
+        bottom: 8,
+    },
+});
 
 const g = add([
-	sprite("grass"),
-])
+    sprite("grass"),
+]);
 
 onMouseMove(() => {
-	const mpos = mousePos()
+    const mpos = mousePos();
     // updating width / height will scale the image but not the sliced frame
-	g.width = mpos.x
-	g.height = mpos.y
-})
+    g.width = mpos.x;
+    g.height = mpos.y;
+});
 ```
 
 ## Audio
@@ -438,18 +488,19 @@ onMouseMove(() => {
 - added option `kaboom({ backgroundAudio: false })` to not pause audio when tab not active
 - changed `speed`, `detune`, `volume`, `loop` in `AudioPlay` from functions to properties
 - added `onEnd()` event for `const pb = play("sound")`
+
 ```js
 // before
-const music = play("song")
-music.speed(2)
-music.volume(0.5)
-music.loop(true)
+const music = play("song");
+music.speed(2);
+music.volume(0.5);
+music.loop(true);
 
 // v3000
-const music = play("song")
-music.speed = 2
-music.volume = 0.5
-music.loop = true
+const music = play("song");
+music.speed = 2;
+music.volume = 0.5;
+music.loop = true;
 ```
 
 ## Input
@@ -463,7 +514,6 @@ music.loop = true
 - added `getConnectedGamepads()`
 - added `onGamepadConnect()` and `onGamepadDisconnect()`
 - added `gamepads` option to `kaboom()` to define custom gamepads
-
 
 ## Level
 
@@ -492,10 +542,10 @@ addLevel([
     ],
     any: (symbol) => {
         if (symbol === "@") {
-            return [ /* ... */ ]
+            return [/* ... */];
         }
     },
-})
+});
 
 // v3000
 addLevel([
@@ -518,10 +568,10 @@ addLevel([
     },
     wildcardTile: (symbol) => {
         if (symbol === "@") {
-            return [ /* ... */ ]
+            return [/* ... */];
         }
     },
-})
+});
 ```
 
 ## Misc
@@ -535,56 +585,69 @@ addLevel([
 
 ```js
 // if use global functions
-import "kaboom"
-import "kaboom/global" // required to load global types
+import "kaboom";
+import "kaboom/global"; // required to load global types
 
-kaboom()
+kaboom();
 
 // will have definition
-add()
+add();
 ```
+
 ```js
 // if don't use global function
-import "kaboom"
+import "kaboom";
 
-kaboom({ global: false })
+kaboom({ global: false });
 
 // type error, won't pollute global namespace if not manually import "kaboom/global"
-add()
+add();
 ```
 
 - added `tween()` for tweening, and a set of built-in easing functions in `easings`
 
 ```js
 onMousePress(() => {
-	tween(bean.pos.x, mousePos().x, 1, (val) => bean.pos.x = val, easings.easeOutBounce)
-	tween(bean.pos.y, mousePos().y, 1, (val) => bean.pos.y = val, easings.easeOutBounce)
-})
+    tween(
+        bean.pos.x,
+        mousePos().x,
+        1,
+        (val) => bean.pos.x = val,
+        easings.easeOutBounce,
+    );
+    tween(
+        bean.pos.y,
+        mousePos().y,
+        1,
+        (val) => bean.pos.y = val,
+        easings.easeOutBounce,
+    );
+});
 ```
 
 - (**BREAK**) changed all event handlers to return a `EventController` object instead of a function to cancel event
 
 ```js
 // before
-const cancel = onUpdate(() => { /* ... */ })
-cancel()
+const cancel = onUpdate(() => {/* ... */});
+cancel();
 
 // v3000
-const ev = onUpdate(() => { /* ... */ })
-ev.paused = true
-ev.cancel()
+const ev = onUpdate(() => {/* ... */});
+ev.paused = true;
+ev.cancel();
 ```
 
 - timers can now be paused
 
 ```js
-const timer = wait(4, () => { /* ... */ })
-timer.paused = true
-timer.resume()
+const timer = wait(4, () => {/* ... */});
+timer.paused = true;
+timer.resume();
 
-const timer = loop(1, () => { /* ... */ })
-timer.paused = true
-timer.resume()
+const timer = loop(1, () => {/* ... */});
+timer.paused = true;
+timer.resume();
 ```
 
 - `kaboom()` now automatically focuses the canvas
@@ -736,11 +799,12 @@ timer.resume()
   - `AudioPlay#isPaused()`
 
 # v2000 "Burp Mode"
+
 - version jumped to v2000.0.0 (still semver, just big)
 - added `burp()` for easy burping
 - added decent typescript / autocomplete support and jsdocs
 - introducing new character "bean"
-![bean](assets/sprites/bean.png)
+  ![bean](assets/sprites/bean.png)
 - added `loadBean()` to load `"bean"` as a default sprite
 - changed default font to [APL386](https://abrudz.github.io/APL386/), as `"apl386o"` (default outlined version) and `"apl386"`
 - included font [kitchen sink](https://polyducks.itch.io/kitchen-sink-textmode-font) as `"sinko"` (outlined version) and `"sink"` (standard version with extended characters for text-mode games)
@@ -752,42 +816,43 @@ timer.resume()
 ```js
 // before
 add([
-	sprite("player"),
-	area(),
+    sprite("player"),
+    area(),
 ]);
 
 add([
-	sprite("rock"),
-	solid(),
+    sprite("rock"),
+    solid(),
 ]);
 
 keyDown("left", () => {
-	player.move(-120, 0);
+    player.move(-120, 0);
 });
 
 player.action(() => {
-	player.resolve(); // or pushOutAll() in beta versions
+    player.resolve(); // or pushOutAll() in beta versions
 });
 
 // after
 const player = add([
-	sprite("player"),
-	area(),
-	solid(),
+    sprite("player"),
+    area(),
+    solid(),
 ]);
 
 // both should be solid
 add([
-	sprite("rock"),
-	area(),
-	solid(),
+    sprite("rock"),
+    area(),
+    solid(),
 ]);
 
 keyDown("left", () => {
-	// this will handle collision resolution for you, if the other obj is also "solid"
-	player.move(-120, 0);
+    // this will handle collision resolution for you, if the other obj is also "solid"
+    player.move(-120, 0);
 });
 ```
+
 - added comp `opacity()` to set opacity
 - added comp `health()` to manage health related logic
 - added comp `move()` to manage projectile-like behavior
@@ -817,9 +882,10 @@ add([
 add([
     rotate(90),
     color(0, 127, 255),
-    opacity(0.5)
+    opacity(0.5),
 ]);
 ```
+
 - `global` and `debug` flag now are enabled by default, need to turn off manually if you don't want
 - added input events `touchStart(id, pos)`, `touchMove(id, pos)`, `touchEnd(id, pos)`, `mouseMove(pos)`
 - added `mouseDeltaPos()`
@@ -828,12 +894,14 @@ add([
 - added `anim` field in `SpriteCompOpt` to play an anim on start
 - beter type support for components
 - `scene()` and `start()` (also removed in favor of `go()`) are optional now, if you don't need multiple scenes yet you can just go directly
+
 ```js
 kaboom();
 // no mandatory scene() to start kabooming
 add(...);
 keyPress(...);
 ```
+
 - **BREAK** `area()` is now explicit and not automatically added by `sprite()`, `rect()`, and `text()`, removed each `noArea` or `area` config field
 - **BREAK** `area()` now takes an `AreaCompOpt`, where you can define the area size, scale, and hover cursor
 
@@ -841,10 +909,11 @@ keyPress(...);
 add([
     sprite("bean"),
     area(), // empty area will derive from sprite size
-    area({ scale: 0.5, }), // 0.5x the sprite size
-    area({ offset: vec2(0, 12), width: 4, height: 12, }), // more control over the collider region
+    area({ scale: 0.5 }), // 0.5x the sprite size
+    area({ offset: vec2(0, 12), width: 4, height: 12 }), // more control over the collider region
 ]);
 ```
+
 - **BREAK** renamed `isCollided()` to `isColliding()`, `isHovered()` to `isHovering()`
 - **BREAK** removed `overlaps()` and `isOverlapped()` and replaced with `isColliding()` and `collides()` only checks doesn't return true when 2 objects are just touching each other, use `isTouching()` to check if they're not colliding but just touching each other
 - added `isTouching()` to check if 2 objects are collided or just touching other
@@ -857,13 +926,14 @@ add([
 - **BREAK** changed last argument of `loadFont()` to `FontLoadOpt`
 - all event handlers like `keyPress()`, `mouseClick()`, `action()`, `collides()` now returns a function to cancel that listener
 - added `require` on component definitions, making it possible to declare dependencies for components, e.g.
+
 ```js
 function alwaysRight() {
     return {
         // the id of this component
         id: "alwaysRight",
         // list of component ids that this requires
-        require: [ "pos", ],
+        require: ["pos"],
         update() {
             // so you can use `move()` from pos() component with no worry
             this.move(100, 0);
@@ -871,14 +941,17 @@ function alwaysRight() {
     };
 }
 ```
+
 - **BREAK** overlapping component fields are not allowed, e.g. you can't have a custom comp that has a `collides` field if it already have a `area` component, since it already has that
 - **BREAK** changed `text(txt, size, conf)` to `text(txt, conf)` with `size` as a field
 - added `obj.c(id)` for getting a specific comp's state (by default all comps' states are mounted to the obj by `Object.defineProperty`)
+
 ```js
 // both works
 obj.play("anim");
 obj.c("sprite").play("anim");
 ```
+
 - pedit, aseprite plugins are now included by default
 - added `addKaboom()` for quick kaboom explosion
 - `load*()` now accepts `null` as name and not load into assets manager, instead just return the resource data handle
@@ -904,52 +977,57 @@ obj.c("sprite").play("anim");
 
 ```js
 loadSprite("hero", "hero.png", {
-	sliceX: 9,
-	anims: {
-		idle: { from: 0, to: 3, speed: 3, loop: true },
-		run: { from: 4, to: 7, speed: 10, loop: true },
-		hit: 8,
-	},
+    sliceX: 9,
+    anims: {
+        idle: { from: 0, to: 3, speed: 3, loop: true },
+        run: { from: 4, to: 7, speed: 10, loop: true },
+        hit: 8,
+    },
 });
 ```
+
 - **BREAK** changed `.play(anim, ifLoop)` under `sprite()` to accept a dict of properties `.play(anim, { loop: true, speed: 60, pingpong: true })`
 - **BREAK** now every symbol definition in `addLevel()` should be a function returning the component list, to ensure there's no weird shared states
 
 ```js
 addLevel([
-	"*    *",
-	"*    *",
-	"======",
+    "*    *",
+    "*    *",
+    "======",
 ], {
-	"*": () => [
-		sprite("wall"),
-		area(),
-		solid(),
-	],
-	"=": () => [
-		sprite("floor"),
-		area(),
-		solid(),
-	],
-})
+    "*": () => [
+        sprite("wall"),
+        area(),
+        solid(),
+    ],
+    "=": () => [
+        sprite("floor"),
+        area(),
+        solid(),
+    ],
+});
 ```
+
 - **BREAK** renamed `clearColor` to `background`
 - added collision detection functions `testLineLine()`, `testRectRect()`, `testRectLine()` etc.
 - added drawing functions `drawSprite()`, `drawRect()`, `drawCircle()`, `drawPolygon()`, `drawEllipse()`, `drawLine()`, `drawLines()`
 - added transformation functions `pushTransform()`, `popTransform()`, `pushTranslate()`, `pushRotate()`, `pushScale()`
 - **BREAK** removed `areaWidth()` and `areaHeight()` since they won't make sense if the area shape is not rectangle, use `worldArea()` if you need area data
+
 ```js
 const area = player.worldArea();
 if (area.shape === "rect") {
-	const width = area.p2.x - area.p1.x;
-	const height = area.p2.y - area.p1.y;
+    const width = area.p2.x - area.p1.x;
+    const height = area.p2.y - area.p1.y;
 }
 ```
 
 ### v0.5.1
+
 - added plugins npm package support e.g. `import asepritePlugin from "kaboom/plugins/aseprite"`
 
 # v0.5 "Sticky Type"
+
 - platforms are now sticky
 - moved to TypeScript
 - improved graphics performance
@@ -982,11 +1060,14 @@ if (area.shape === "rect") {
 - **BREAK** removed `sound.resume()` in favor of `sound.play()`
 
 ### v0.4.1
+
 - fixed `on("destroy")` handler getting called twice
 - fixed sprite `play()` not playing
 
 # v0.4 "Multiboom"
+
 - **BREAK** removed `init()` and `kaboom.global()`, in favor of `kaboom()`, also allows multiple kaboom games on one page
+
 ```js
 // replaces init(), and added a 'global' flag for previous kaboom.global()
 kaboom({
@@ -995,13 +1076,16 @@ kaboom({
     height: 480,
 });
 ```
+
 or not global
+
 ```js
 const k = kaboom();
 k.scene();
 k.start();
 k.vec2();
 ```
+
 - **BREAK** changed `clearColor` on `kaboom(conf)` to accept a 4 number array instead of `rgba()`
 - added a plugin system, see the `multiboom` example and `src/plugins`
 - **BREAK** removed support for `.kbmsprite`, supports newer version of `.pedit` through pedit plugin
@@ -1014,6 +1098,7 @@ k.vec2();
 - added `screenshot()` that returns of a png base64 data url for a screenshot
 
 # v0.3 "King Dedede...Bug!"
+
 - **BREAK** removed `pause()` and `paused()` in favor to `kaboom.debug.paused`
 - **BREAK** removed `velY`, `curPlatform` and `maxVel` fields by `body()`
 - **BREAK** changed `curAnim` by `sprite()` to method `curAnim()`
@@ -1031,6 +1116,7 @@ k.vec2();
 - fixed `loadRoot()` sometimes doesn't work in async tasks
 
 # v0.2 "Hear the Tremble"
+
 - **BREAK** removed `aseSpriteSheet` conf field from `loadSprite(name, src, conf)`
 - added `pause()`, `resume()`, `stop()`, `loop()`, `unloop()`, `volume()`, `detune()`, `speed()` methods to the handle returned by `play()`
 - added `camShake()` for built in camera shake
@@ -1047,6 +1133,7 @@ k.vec2();
 - added `level.spawn()`
 
 # v0.1 "Oh Hi Mark"
+
 - **BREAK** changed default origin point to `"topleft"`, so if you want object origin point to be at center you'll need to manual `origin("center")`
 - **BREAK** integrated `kit/physics` and `kit/level` to main lib
 - **BREAK** makes `collides()` only run on first collision, not run every frame during the same collision

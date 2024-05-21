@@ -1,15 +1,15 @@
 {
-	"compilerOptions": {
-		"noEmit": true,
-		"allowJs": true,
-		"esModuleInterop": true,
-		"target": "esnext",
-		"moduleResolution": "node",
-		"noImplicitThis": true,
-		"resolveJsonModule": true
-	},
-	"include": [
-		"src/**/*",
-		"scripts/**/*"
-	]
+  "compilerOptions": {
+    "noEmit": true,
+    "allowJs": true,
+    "esModuleInterop": true,
+    "target": "esnext",
+    "moduleResolution": "node",
+    "noImplicitThis": true,
+    "resolveJsonModule": true
+  },
+  "include": [
+    "src/**/*",
+    "scripts/**/*"
+  ]
 }

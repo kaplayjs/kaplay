@@ -30,4 +30,4 @@ EXAMPLE
 
   # if installed locally you don't need to use -- when passing options
   $ create-kaboom -t -s -d burp mygame
-  ```
+```

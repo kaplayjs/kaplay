@@ -48,6 +48,7 @@ You can paste this directly in a `.html` file and open with the browser. This wi
 The Kaboom package is deployed to npm, so it's availbale on various CDN providers, like `unpkg`, `skypack`, `jsdelivr`, etc.
 
 You can also just include it with a `<script>` tag.
+
 ```html
 <script src="https://unpkg.com/kaboom@3000.1.17/dist/kaboom.js"></script>
 
@@ -66,9 +67,9 @@ $ npm install kaboom
 
 You'll need to use a bundler to use Kaboom with NPM. There's a lot of options like:
 
-- `esbuild`, 
+- `esbuild`,
 - `webpack`,
-- `parcel`, 
+- `parcel`,
 - `vitejs`,
 
 This is a short example of how to use Kaboom with ["esbuild"](https://esbuild.github.io/).
@@ -105,6 +106,7 @@ You might have encountered errors when trying to `loadSprite()` from local file 
 - `$ static-here` if you have [static-here](https://github.com/amasad/static-here) installed
 
 Let's say you have a folder structure like this:
+
 ```sh
 .
 ├── sprites
@@ -116,6 +118,7 @@ Let's say you have a folder structure like this:
 ```
 
 and you have the static file server running on port `8000`, just go to `http://localhost:8000/index.html`, and you should be able to load stuff from relative paths like
+
 ```js
 loadSprite("froggy", "sprites/froggy.png");
 loadSound("horse", "sounds/horse.mp3");
@@ -130,6 +133,7 @@ Replit has templates that gets rid of manual setup. Fork from either of these 2 
 ### [Official Template](https://replit.com/@replit/Kaboom)
 
 This is a complete package including
+
 - In-editor tutorial
 - NPM / typescript support
 - Autocomplete

@@ -16,7 +16,7 @@ This is an intro tutorial that will cover the basic concepts and make a very sim
 Let's start by initializing the context with the `kaboom()` function.
 
 ```js
-kaboom()
+kaboom();
 ```
 
 This should give you a blank canvas with a nice checkerboard pattern like this
@@ -27,13 +27,13 @@ Then let's add some stuff to screen, like an image. Copy this piece of code to y
 
 ```js
 // load a sprite "bean" from an image
-loadSprite("bean", "sprites/bean.png")
+loadSprite("bean", "sprites/bean.png");
 
 // add something to screen
 add([
-	sprite("bean"),
-	pos(80, 40),
-])
+    sprite("bean"),
+    pos(80, 40),
+]);
 ```
 
 Introducing Frog the "Bean"! A happy frog that enjoys life. You'll see Bean a lot around here.
@@ -45,12 +45,12 @@ Before explaining what this code does, let's try adding some more stuff to it an
 ```js
 // add something to screen
 add([
-	sprite("bean"),
-	pos(80, 40),
-	scale(3),
-	rotate(30),
-	color(0, 0, 255),
-])
+    sprite("bean"),
+    pos(80, 40),
+    scale(3),
+    rotate(30),
+    color(0, 0, 255),
+]);
 ```
 
 Feel free to tweak some parameters and see how it affects what happens on screen.
@@ -62,7 +62,6 @@ In Kaboom, each game object is composed from multiple components. Each component
 For example, some component might decide what's the shape, some components might decide if it should subject to gravity, some components might decide what color it is, some component might decide how long it can live.
 
 ![comps](intro/comps.png)
-
 
 If you're having trouble understanding, consider this Human Bean:
 
@@ -77,19 +76,20 @@ It's actually kinda like playing with lego pieces! Let's keep this in mind and s
 ```js
 // putting together our player character
 const bean = add([
-	sprite("bean"),
-	pos(80, 40),
-	area(),
-	body(),
-])
+    sprite("bean"),
+    pos(80, 40),
+    area(),
+    body(),
+]);
 
 // .jump() when "space" key is pressed
 onKeyPress("space", () => {
-	bean.jump()
-})
+    bean.jump();
+});
 ```
 
 Let's see what components we're using:
+
 - `sprite()` makes it render as a sprite, with the `"bean"` sprite we just loaded with `loadSprite()`
 - `pos()` gives it a position on screen, at X: 80 Y: 40
 - `area()` gives it a collider area, so we can check for collisions with other characters later on
@@ -102,13 +102,13 @@ With the `body()` component, our Bean is going to keep falling into oblivion if 
 ```js
 // add platform
 add([
-	rect(width(), 48),
-	pos(0, height() - 48),
-	outline(4),
-	area(),
-	body({ isStatic: true }),
-	color(127, 200, 255),
-])
+    rect(width(), 48),
+    pos(0, height() - 48),
+    outline(4),
+    area(),
+    body({ isStatic: true }),
+    color(127, 200, 255),
+]);
 ```
 
 Woah! That looks like a lot, but it's actually really simple, let's look at each component
@@ -121,8 +121,9 @@ Woah! That looks like a lot, but it's actually really simple, let's look at each
 - `color()` makes it render with an RGB color, we give it a R: 127 G: 200 B: 255 which is a blue-ish color
 
 Now, before run, we should define the gravity of our world:
+
 ```js
-setGravity(1600)
+setGravity(1600);
 ```
 
 Pretty straightforward! Refresh the game and you should see our Bean is now safely landed on a static blue platform.
@@ -133,9 +134,9 @@ Let's also make sure our Bean can only jump when isGrounded.
 
 ```js
 onKeyPress("space", () => {
-	if (bean.isGrounded()) {
-		bean.jump();
-	}
+    if (bean.isGrounded()) {
+        bean.jump();
+    }
 });
 ```
 
@@ -146,17 +147,18 @@ Bean loves challanges. Let's start adding in obstacles to jump over! Time to bui
 ```js
 // add tree
 add([
-	rect(48, 64),
-	area(),
-	outline(4),
-	pos(width(), height() - 48),
-	anchor("botleft"),
-	color(255, 180, 255),
-	move(LEFT, 240),
+    rect(48, 64),
+    area(),
+    outline(4),
+    pos(width(), height() - 48),
+    anchor("botleft"),
+    color(255, 180, 255),
+    move(LEFT, 240),
 ]);
 ```
 
 A lot of these we have already seen you should know what they do, but some new ones here:
+
 - `anchor()` defines the origin point of positioning. By default `pos()` defines the top left point of the shape, here we change it to the bottom left point because we want it to be just above the platform, so we give it Y position of `height() - 48`
 - `move()` makes it move towards a direction infinitely. In this case we move towards the `LEFT` by `480` pixels per second
 
@@ -173,14 +175,14 @@ First we'll need to give the tree a tag. Any game object can have any number of 
 ```js
 // add tree
 add([
-	rect(48, 64),
-	area(),
-	outline(4),
-	pos(width(), height() - 48),
-	anchor("botleft"),
-	color(255, 180, 255),
-	move(LEFT, 240),
-	"tree", // add a tag here
+    rect(48, 64),
+    area(),
+    outline(4),
+    pos(width(), height() - 48),
+    anchor("botleft"),
+    color(255, 180, 255),
+    move(LEFT, 240),
+    "tree", // add a tag here
 ]);
 ```
 
@@ -188,8 +190,8 @@ To add a tag we simply put a string in the component array. Then we can check fo
 
 ```js
 bean.onCollide("tree", () => {
-	addKaboom(bean.pos);
-	shake();
+    addKaboom(bean.pos);
+    shake();
 });
 ```
 
@@ -211,17 +213,17 @@ Let's try the `loop()` function, which performs an action every x seconds.
 
 ```js
 loop(1, () => {
-	// add tree
-	add([
-		rect(48, 64),
-		area(),
-		outline(4),
-		pos(width(), height() - 48),
-		anchor("botleft"),
-		color(255, 180, 255),
-		move(LEFT, 240),
-		"tree", // add a tag here
-	]);
+    // add tree
+    add([
+        rect(48, 64),
+        area(),
+        outline(4),
+        pos(width(), height() - 48),
+        anchor("botleft"),
+        color(255, 180, 255),
+        move(LEFT, 240),
+        "tree", // add a tag here
+    ]);
 });
 ```
 
@@ -239,12 +241,12 @@ rect(48, rand(24, 64)),
 
 ```js
 function spawnTree() {
-	add([
-		// the tree components
-	]);
-	wait(rand(0.5, 1.5), () => {
-		spawnTree();
-	});
+    add([
+        // the tree components
+    ]);
+    wait(rand(0.5, 1.5), () => {
+        spawnTree();
+    });
 }
 
 spawnTree();
@@ -256,18 +258,18 @@ Before adding a score counter, let's actually complete the game loop first, by s
 
 ```js
 scene("game", () => {
-	add([
-		sprite("bean"),
-	])
-})
+    add([
+        sprite("bean"),
+    ]);
+});
 
 scene("lose", () => {
-	add([
-		text("Game Over"),
-	])
-})
+    add([
+        text("Game Over"),
+    ]);
+});
 
-go("game")
+go("game");
 ```
 
 Consider this example above, we're declaring 2 scenes here, "game" and "lose". The function we pass to `scene()` is the function to run when this scene is activated (by `go()`). In this case, we want to add a "bean" sprite on "game" scene, and want to add a "Game Over" text on the "lose" scene.
@@ -276,16 +278,16 @@ Let's first move everything game code we have into a scene.
 
 ```js
 // don't move these init / loader functions
-kaboom()
+kaboom();
 loadSprite("bean", "sprites/bean.png");
 
 scene("game", () => {
-	// add bean
-	// add platform
-	// spawn trees
+    // add bean
+    // add platform
+    // spawn trees
 });
 
-go("game")
+go("game");
 ```
 
 Try this, this shouldn't change any of your game's content.
@@ -294,21 +296,21 @@ Then we can add a "lose" scene independent to your core game content here.
 
 ```js
 scene("lose", () => {
-	add([
-		text("Game Over"),
-		pos(center()),
-		anchor("center"),
-	])
-})
+    add([
+        text("Game Over"),
+        pos(center()),
+        anchor("center"),
+    ]);
+});
 ```
 
 So in the "lose" scene, we'll add a piece of text in the center says "Game Over" (`text()` is a component that renders text). Go ahead and go to this scene when player collides with a tree:
 
 ```js
 player.onCollide("tree", () => {
-	addKaboom(bean.pos);
-	shake();
-	go("lose"); // go to "lose" scene here
+    addKaboom(bean.pos);
+    shake();
+    go("lose"); // go to "lose" scene here
 });
 ```
 
@@ -317,9 +319,9 @@ Ok! Now we've arrived at the final part of our game: score counter.
 ```js
 let score = 0;
 const scoreLabel = add([
-	text(score),
-	pos(24, 24)
-])
+    text(score),
+    pos(24, 24),
+]);
 ```
 
 Here we've declared a number variable to store the score, and added a game obj with `text()` component to display the text.
@@ -329,8 +331,8 @@ Let's keep it simple and just use time as score.
 ```js
 // increment score every frame
 onUpdate(() => {
-	score++;
-	scoreLabel.text = score;
+    score++;
+    scoreLabel.text = score;
 });
 ```
 
@@ -352,107 +354,101 @@ kaboom();
 loadSprite("bean", "sprites/bean.png");
 
 scene("game", () => {
+    // define gravity
+    setGravity(1600);
 
-	// define gravity
-	setGravity(1600);
+    // add a game object to screen
+    const player = add([
+        // list of components
+        sprite("bean"),
+        pos(80, 40),
+        area(),
+        body(),
+    ]);
 
-	// add a game object to screen
-	const player = add([
-		// list of components
-		sprite("bean"),
-		pos(80, 40),
-		area(),
-		body(),
-	]);
+    // floor
+    add([
+        rect(width(), FLOOR_HEIGHT),
+        outline(4),
+        pos(0, height()),
+        anchor("botleft"),
+        area(),
+        body({ isStatic: true }),
+        color(127, 200, 255),
+    ]);
 
-	// floor
-	add([
-		rect(width(), FLOOR_HEIGHT),
-		outline(4),
-		pos(0, height()),
-		anchor("botleft"),
-		area(),
-		body({ isStatic: true }),
-		color(127, 200, 255),
-	]);
+    function jump() {
+        if (player.isGrounded()) {
+            player.jump(JUMP_FORCE);
+        }
+    }
 
-	function jump() {
-		if (player.isGrounded()) {
-			player.jump(JUMP_FORCE);
-		}
-	}
+    // jump when user press space
+    onKeyPress("space", jump);
+    onClick(jump);
 
-	// jump when user press space
-	onKeyPress("space", jump);
-	onClick(jump);
+    function spawnTree() {
+        // add tree obj
+        add([
+            rect(48, rand(32, 96)),
+            area(),
+            outline(4),
+            pos(width(), height() - FLOOR_HEIGHT),
+            anchor("botleft"),
+            color(255, 180, 255),
+            move(LEFT, SPEED),
+            "tree",
+        ]);
 
-	function spawnTree() {
+        // wait a random amount of time to spawn next tree
+        wait(rand(0.5, 1.5), spawnTree);
+    }
 
-		// add tree obj
-		add([
-			rect(48, rand(32, 96)),
-			area(),
-			outline(4),
-			pos(width(), height() - FLOOR_HEIGHT),
-			anchor("botleft"),
-			color(255, 180, 255),
-			move(LEFT, SPEED),
-			"tree",
-		]);
+    // start spawning trees
+    spawnTree();
 
-		// wait a random amount of time to spawn next tree
-		wait(rand(0.5, 1.5), spawnTree);
+    // lose if player collides with any game obj with tag "tree"
+    player.onCollide("tree", () => {
+        // go to "lose" scene and pass the score
+        go("lose", score);
+        burp();
+        addKaboom(player.pos);
+    });
 
-	}
+    // keep track of score
+    let score = 0;
 
-	// start spawning trees
-	spawnTree();
+    const scoreLabel = add([
+        text(score),
+        pos(24, 24),
+    ]);
 
-	// lose if player collides with any game obj with tag "tree"
-	player.onCollide("tree", () => {
-		// go to "lose" scene and pass the score
-		go("lose", score);
-		burp();
-		addKaboom(player.pos);
-	});
-
-	// keep track of score
-	let score = 0;
-
-	const scoreLabel = add([
-		text(score),
-		pos(24, 24),
-	]);
-
-	// increment score every frame
-	onUpdate(() => {
-		score++;
-		scoreLabel.text = score;
-	});
-
+    // increment score every frame
+    onUpdate(() => {
+        score++;
+        scoreLabel.text = score;
+    });
 });
 
 scene("lose", (score) => {
+    add([
+        sprite("bean"),
+        pos(width() / 2, height() / 2 - 80),
+        scale(2),
+        anchor("center"),
+    ]);
 
-	add([
-		sprite("bean"),
-		pos(width() / 2, height() / 2 - 80),
-		scale(2),
-		anchor("center"),
-	]);
+    // display score
+    add([
+        text(score),
+        pos(width() / 2, height() / 2 + 80),
+        scale(2),
+        anchor("center"),
+    ]);
 
-	// display score
-	add([
-		text(score),
-		pos(width() / 2, height() / 2 + 80),
-		scale(2),
-		anchor("center"),
-	]);
-
-	// go back to game with space is pressed
-	onKeyPress("space", () => go("game"));
-	onClick(() => go("game"));
-
+    // go back to game with space is pressed
+    onKeyPress("space", () => go("game"));
+    onClick(() => go("game"));
 });
 
 go("game");

@@ -5,16 +5,16 @@ For example, it's most common for a game to have something run every frame which
 ```js
 // Make something always move to the right
 onUpdate(() => {
-	banana.move(320, 0)
-})
+    banana.move(320, 0);
+});
 ```
 
 Events are also used for input handlers.
 
 ```js
 onKeyPress("space", () => {
-	player.jump()
-})
+    player.jump();
+});
 ```
 
 Every function with the `on` prefix is an event register function that takes a callback function as the last argument, and should return a function that cancels the event listener.

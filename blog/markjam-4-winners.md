@@ -7,6 +7,7 @@ image: markjam-4-winners.png
 ---
 
 # MarkJam 4 Winners
+
 > MarkJam 4 judges, 9/16/2022
 
 MarkJam 4 has just finished! And we want to close it with the winners, this time we have had the total of...
@@ -18,6 +19,7 @@ Apparently not many were able to finish their game, I take this opportunity to s
 So, showcase time! let's take a look at the two winners of this edition
 
 ## Classic, dungeon, random
+
 > ErikoX, Mark's Knight
 
 In a classic rogue like style, this game is about going down dungeons and defeating Mark based enemies, with a sword and using bombs.
@@ -36,6 +38,7 @@ By getting coins, you can also get upgrades and become a better knight, get the 
 > tga, This looks amazing and has lots of potential! Kinda hope there's some roguelike elements like choose upgrade each floor
 
 ## Horror, a strange monster
+
 > Shrek2374, Afraid of the Mark
 
 In this game we have the clear task of escaping from a dark
@@ -50,6 +53,7 @@ Mark that will chase us through a maze, where our goal is to find a sword to kil
 Because of the immersive terror, it really cost our judges to rate this game (Especially Danie, who is very scary).
 
 # Conclussion
+
 Everyone is a winner! Hacker codes will be delivered soon :D. Thanks to the participants and to all the kaboomies who participated in this event, wait for the next one!
 
 Happy burp, Kaboom.

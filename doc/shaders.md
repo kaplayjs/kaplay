@@ -22,7 +22,7 @@ If a modified vertex is to be returned, it should be a 4 dimensional vector with
 ## Fragment shader
 
 Once the positions of all vertices is determined, the primitive is rasterized. For each pixel drawn, the fragment shader is called. This shader can no longer change the position, but it can affect the color.
-A default fragment shader would look like this. 
+A default fragment shader would look like this.
 
 ```
 vec4 frag(vec2 pos, vec2 uv, vec4 color, sampler2D tex) {
@@ -53,15 +53,19 @@ vec4 frag(vec2 pos, vec2 uv, vec4 color, sampler2D tex) {
 # Loading a shader
 
 There are two ways to load a shader:
-* loadShader takes two strings with the vertex and fragment shader code.
-* loadShaderURL takes file URLs for the vertex and fragment shaders.
+
+- loadShader takes two strings with the vertex and fragment shader code.
+- loadShaderURL takes file URLs for the vertex and fragment shaders.
 
 # Passing data
 
 Without parameters, a shader would be static, or would have to be redefined each frame if some dynamism was expected. Therefore a shader can have parameters which can change every time the scene is rendered. These parameters are called uniforms. Every function passing a shader also has a parameter to pass uniforms to the shader. For example, the following sprite effect defines a function which returns an object with a uniform called u_time. This function is called each frame, and the parameters are sent to the shader before rendering.
 
 ```ts
-loadShader("invert", null, `
+loadShader(
+    "invert",
+    null,
+    `
 	uniform float u_time;
 	
 	vec4 frag(vec2 pos, vec2 uv, vec4 color, sampler2D tex) {
@@ -69,17 +73,18 @@ loadShader("invert", null, `
 		float t = (sin(u_time * 4.0) + 1.0) / 2.0;
 		return mix(c, vec4(1.0 - c.r, 1.0 - c.g, 1.0 - c.b, c.a), t);
 	}
-`)
-	
+`,
+);
+
 add([
-  sprite("bean"),
-  pos(80, 40),
-  scale(8),
-  // Use the shader with shader() component and pass uniforms
-  shader("invert", () => ({
-    "u_time": time(),
-  })),
-])
+    sprite("bean"),
+    pos(80, 40),
+    scale(8),
+    // Use the shader with shader() component and pass uniforms
+    shader("invert", () => ({
+        "u_time": time(),
+    })),
+]);
 ```
 
 Instead of a function, an object can be passed. This can be used in case the uniforms are not frame dependent. Note though that to replace uniforms set using an object, the function needs to be called once more (in case of usePostEffect) or the component readded (in case of the shader component).
@@ -87,13 +92,13 @@ When using the direct draw API, like drawSprite or drawUVQuad, the shader and un
 
 ```ts
 drawSprite({
-  sprite: "bean",
-  pos: vec2(100, 200),
-  shader: "invert",
-  uniforms: {
-    "u_time": time(),
-  }
-})
+    sprite: "bean",
+    pos: vec2(100, 200),
+    shader: "invert",
+    uniforms: {
+        "u_time": time(),
+    },
+});
 ```
 
 # Multipass shaders
@@ -104,5 +109,6 @@ Some shaders, like gaussian blur, need multiple passes in order to work. This ca
 
 GLSL has a variety of functions which makes it easier to express your ideas in code. So be sure to look these up.
 Here are some resources to get started on writing GLSL shaders.
- * [https://thebookofshaders.com/]
- * [https://www.khronos.org/files/webgl/webgl-reference-card-1_0.pdf]
+
+- [https://thebookofshaders.com/]
+- [https://www.khronos.org/files/webgl/webgl-reference-card-1_0.pdf]

@@ -10,7 +10,7 @@ image: markjam-3.png
 
 > lajbel, 7/16/2022
 
-Ohhi Kaboomies, we have been working on an official jam, which some of you may be familiar with, Mark Jam. 
+Ohhi Kaboomies, we have been working on an official jam, which some of you may be familiar with, Mark Jam.
 
 Now we present to you **MarkJam 3**, the new edition, this time with a duration of 2 weeks.
 
@@ -22,7 +22,7 @@ For those who don't know MarkJam, it is an official competition dedicated to gam
 
 ![mark](https://imgur.com/VBOCyud.png)
 
-**Mark, examples character in [Kaboom Legacy](https://legacy.kaboomjs.com)*
+*_Mark, examples character in [Kaboom Legacy](https://legacy.kaboomjs.com)_
 
 The main idea of Mark Jam is that people from the community can have a recurring jam where they can participate and grow as devs. We want to see the amazing games created with Kaboom and Mark
 

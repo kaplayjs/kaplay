@@ -4,21 +4,19 @@ Also note that you have to put `drawXXX()` functions inside an `onDraw()` event 
 
 ```js
 onDraw(() => {
+    drawSprite({
+        sprite: "froggy",
+        pos: vec2(120, 160),
+        angle: 90,
+    });
 
-	drawSprite({
-		sprite: "froggy",
-		pos: vec2(120, 160),
-		angle: 90,
-	})
-
-	drawLine({
-		p1: vec2(0),
-		p2: mousePos(),
-		width: 4,
-		color: rgb(0, 0, 255),
-	})
-
-})
+    drawLine({
+        p1: vec2(0),
+        p2: mousePos(),
+        width: 4,
+        color: rgb(0, 0, 255),
+    });
+});
 ```
 
 There's also the option to use Kaboom purely as a rendering library. Check out the [draw](/play?demo=draw) demo.

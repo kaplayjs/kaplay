@@ -20,8 +20,8 @@ k.add([
     // the bullet move left forever
     k.move(LEFT, 600),
     // destroy the bullet when it's far out of view
-    k.offscreen({ destroy: true })
-])
+    k.offscreen({ destroy: true }),
+]);
 ```
 
 ## Hide Off-Screen Objects
@@ -35,8 +35,8 @@ for (let i = 0; i < 1000; i++) {
         k.sprite("flower"),
         k.pos(k.rand(-5000, 5000), k.rand(-5000, 5000)),
         // don't draw or update the flower when they're out of view
-        k.offscreen({ hide: true, pause: true })
-    ])
+        k.offscreen({ hide: true, pause: true }),
+    ]);
 }
 ```
 
@@ -46,8 +46,8 @@ Kaboom use a lot of `Promise` and `Promise`-like in time / event related stuff, 
 
 ```js
 async function example() {
-    await k.wait(3)
-    await k.tween(0, 100, 1, (x) => mark.pos.x = x)
+    await k.wait(3);
+    await k.tween(0, 100, 1, (x) => mark.pos.x = x);
 }
 ```
 
@@ -57,10 +57,10 @@ By default Kaboom uses a lot of common names like `pos`, `sprite` that occupies 
 
 ```js
 kaboom({
-    global: false
-})
+    global: false,
+});
 
-const pos = k.vec2(120, 200)
+const pos = k.vec2(120, 200);
 ```
 
 ## Use Game Object local timers
@@ -74,12 +74,12 @@ const player = k.add([
     k.pos(100, 200),
     k.timer(),
     k.state("idle"),
-])
+]);
 
 // these timers will only run when player game object is not paused / destroyed
 player.wait(2, () => {
-  // ...
-})
+    // ...
+});
 
 await player.tween(
     player.pos,
@@ -87,27 +87,27 @@ await player.tween(
     0.5,
     (p) => player.pos = p,
     k.easings.easeOutQuad,
-)
+);
 
 // this will pause all the timer events
-player.paused = true
+player.paused = true;
 
 // this will stop all the timer events
-player.destory()
+player.destory();
 
 player.onStateEnter("attack", async () => {
     // ... state code
     // if we use global k.wait() here it'll create infinitely running state transitions even when player game object doesn't exist anymore
-    await player.wait(2)
-    player.enterState("idle")
-})
+    await player.wait(2);
+    player.enterState("idle");
+});
 
 player.onStateEnter("idle", async () => {
     // ... state code
     // if we use global k.wait() here it'll create infinitely running state transitions even when player game object doesn't exist anymore
-    await player.wait(1)
-    player.enterState("attack")
-})
+    await player.wait(1);
+    player.enterState("attack");
+});
 ```
 
 ## Use Game Object local input handlers
@@ -115,29 +115,30 @@ player.onStateEnter("idle", async () => {
 Similar to above, it's often better to use local input handlers as opposed to global ones.
 
 ```js
-const gameScene = k.add([])
+const gameScene = k.add([]);
 
 const player = gameScene.add([
     k.sprite("bean"),
     k.pos(100, 200),
     k.area(),
     k.body(),
-])
+]);
 
 // these
 gameScene.onKeyPress("space", () => {
-    player.jump()
-})
+    player.jump();
+});
 
 // this will pause all the input events
-gameScene.paused = true
+gameScene.paused = true;
 
 // this will stop all the input events
-gameScene.destory()
+gameScene.destory();
 ```
 
 ## Compress Assets
 
 Loading assets takes time, compress them when you can.
+
 - Compress `.ttf` or `.otf` to `.woff2` (with [google/woff2](https://github.com/google/woff2))
 - Compress `.wav` files to `.ogg` or `.mp3`

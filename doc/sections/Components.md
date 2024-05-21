@@ -4,23 +4,23 @@ Use `add()` to assemble the components together into a Game Object and add them 
 
 ```js
 const player = add([
-	sprite("froggy"),
-	pos(100, 200),
-	area(),
-	body(),
-])
+    sprite("froggy"),
+    pos(100, 200),
+    area(),
+    body(),
+]);
 
 // .jump() is provided by body() component
-player.jump()
+player.jump();
 
 // .moveTo() is provided by pos() component
-player.moveTo(120, 80)
+player.moveTo(120, 80);
 
 // .onCollide() is provided by the area() component
 player.onCollide("enemy", (enemy) => {
-	destroy(enemy)
-	addExplosion()
-})
+    destroy(enemy);
+    addExplosion();
+});
 ```
 
 To see what methods and properties a component offers, click on the type that the component function returns, e.g. `PosComp`, which will open a panel showing all the properties and methods it'd give the game object.

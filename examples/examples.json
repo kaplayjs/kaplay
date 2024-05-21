@@ -1,30 +1,30 @@
 {
-	"order": [
-		"add",
-		"movement",
-		"collision",
-		"gravity",
-		"sprite",
-		"fadeIn",
-		"text",
-		"audio",
-		"level",
-		"scenes",
-		"timer",
-		"component",
-		"layer",
-		"camera",
-		"ai",
-		"button",
-		"dialog",
-		"draw",
-		"confetti",
-		"particle",
-		"shader",
-		"burp"
-	],
-	"hidden": [
-		"fall",
-		"bench"
-	]
+  "order": [
+    "add",
+    "movement",
+    "collision",
+    "gravity",
+    "sprite",
+    "fadeIn",
+    "text",
+    "audio",
+    "level",
+    "scenes",
+    "timer",
+    "component",
+    "layer",
+    "camera",
+    "ai",
+    "button",
+    "dialog",
+    "draw",
+    "confetti",
+    "particle",
+    "shader",
+    "burp"
+  ],
+  "hidden": [
+    "fall",
+    "bench"
+  ]
 }

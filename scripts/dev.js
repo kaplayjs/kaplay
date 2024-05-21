@@ -1,3 +1,3 @@
-import { dev } from "./lib.js"
+import { dev } from "./lib.js";
 
-await dev()
+await dev();
