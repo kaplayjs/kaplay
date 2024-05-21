@@ -1,4 +1,4 @@
-## Developing Kaplay
+## Developing kaplay
 
 1. `git clone https://github.com/marklovers/kaplay.git` to clone the repo.
 1. `cd kaplay` to enter the project directory.
