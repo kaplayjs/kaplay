@@ -1,7 +1,7 @@
 {
-	"name": "@katteam/kaboom",
-	"description": "kaboom.js is a JavaScript library that helps you make games fast and fun!",
-	"version": "3000.2.0-beta.1",
+	"name": "kaplay",
+	"description": "kaplay is a JavaScript library that helps you make games fast and fun!",
+	"version": "3001.0.0-alpha.1",
 	"license": "MIT",
 	"homepage": "https://kaboomjs.com/",
 	"repository": "github:replit/kaboom",

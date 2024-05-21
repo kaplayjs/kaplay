@@ -1,6 +1,11 @@
-# Kaboom
+# KAPLAY
 
-![kaboom](kaboom.png)
+![kaplay](assets/kaplay.gif)
+
+> Kaplay is the spiritual successor (and fork) of Kaboom, a JavaScript library that helps you make games fast and fun!
+> For now, there's links to the Kaboom documentation and examples, but in the future, they will be linked
+> to our own site.
+
 
 [**Kaboom**](https://kaboomjs.com) is a JavaScript library that helps you make games fast and fun!
 
