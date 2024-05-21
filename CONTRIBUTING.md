@@ -9,6 +9,8 @@
 1. The source entry point is `src/kaboom.ts`, editing any files referenced will automatically trigger rebuild. **Make sure not to break any existing examples**.
 
 ## Before commit
+1. follow conventional [conventional commits](https://www.conventionalcommits.org/en/v1.0.0/) format. You can see how seeing
+   the commit history.
 1. `npm run check` to check typescript.
 1. `npm run fmt` to format.
 
