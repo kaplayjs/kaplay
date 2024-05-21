@@ -43,6 +43,7 @@
   ],
   "scripts": {
     "dev": "NODE_ENV=development node scripts/dev.js",
+    "win:dev": "set NODE_ENV=development && node scripts/dev.js",
     "build": "node scripts/build.js",
     "check": "tsc",
     "fmt": "dprint fmt",
