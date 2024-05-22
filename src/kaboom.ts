@@ -13,6 +13,38 @@ import {
 } from "./assets";
 
 import {
+    MAX_TEXT_CACHE_SIZE,
+    DEF_VERT,
+    DEF_FRAG,
+    VERTEX_FORMAT,
+    MAX_BATCHED_VERTS,
+    MAX_BATCHED_INDICES,
+    SPRITE_ATLAS_WIDTH,
+    SPRITE_ATLAS_HEIGHT,
+    DEF_FONT_FILTER,
+    DEF_TEXT_CACHE_SIZE,
+    ASCII_CHARS,
+    DEF_FONT,
+    VERT_TEMPLATE,
+    FRAG_TEMPLATE,
+    BG_GRID_SIZE,
+    DEF_ANCHOR,
+    UV_PAD,
+  FONT_ATLAS_WIDTH,
+    FONT_ATLAS_HEIGHT,
+    LOG_MAX, COMP_DESC,
+    COMP_EVENTS,
+    DEF_TEXT_SIZE,
+    DEF_HASH_GRID_SIZE,
+    DBG_FONT,
+    LOG_TIME,
+  TEXT_STYLE_RE,
+  DEF_OFFSCREEN_DIS,
+  DEF_JUMP_FORCE,
+  MAX_VEL,
+} from "./constants"
+
+import {
     chance,
     choose,
     chooseMultiple,
@@ -198,119 +230,6 @@ interface SpriteCurAnim {
     pingpong: boolean;
     onEnd: () => void;
 }
-
-// some default charsets for loading bitmap fonts
-const ASCII_CHARS =
-    " !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~";
-
-const DEF_ANCHOR = "topleft";
-const BG_GRID_SIZE = 64;
-
-const DEF_FONT = "monospace";
-const DBG_FONT = "monospace";
-const DEF_TEXT_SIZE = 36;
-const DEF_TEXT_CACHE_SIZE = 64;
-const MAX_TEXT_CACHE_SIZE = 256;
-const FONT_ATLAS_WIDTH = 2048;
-const FONT_ATLAS_HEIGHT = 2048;
-const SPRITE_ATLAS_WIDTH = 2048;
-const SPRITE_ATLAS_HEIGHT = 2048;
-// 0.1 pixel padding to texture coordinates to prevent artifact
-const UV_PAD = 0.1;
-const DEF_HASH_GRID_SIZE = 64;
-const DEF_FONT_FILTER = "linear";
-
-const LOG_MAX = 8;
-const LOG_TIME = 4;
-
-const VERTEX_FORMAT = [
-    { name: "a_pos", size: 2 },
-    { name: "a_uv", size: 2 },
-    { name: "a_color", size: 4 },
-];
-
-const STRIDE = VERTEX_FORMAT.reduce((sum, f) => sum + f.size, 0);
-
-const MAX_BATCHED_QUAD = 2048;
-const MAX_BATCHED_VERTS = MAX_BATCHED_QUAD * 4 * STRIDE;
-const MAX_BATCHED_INDICES = MAX_BATCHED_QUAD * 6;
-
-// vertex shader template, replace {{user}} with user vertex shader code
-const VERT_TEMPLATE = `
-attribute vec2 a_pos;
-attribute vec2 a_uv;
-attribute vec4 a_color;
-
-varying vec2 v_pos;
-varying vec2 v_uv;
-varying vec4 v_color;
-
-vec4 def_vert() {
-	return vec4(a_pos, 0.0, 1.0);
-}
-
-{{user}}
-
-void main() {
-	vec4 pos = vert(a_pos, a_uv, a_color);
-	v_pos = a_pos;
-	v_uv = a_uv;
-	v_color = a_color;
-	gl_Position = pos;
-}
-`;
-
-// fragment shader template, replace {{user}} with user fragment shader code
-const FRAG_TEMPLATE = `
-precision mediump float;
-
-varying vec2 v_pos;
-varying vec2 v_uv;
-varying vec4 v_color;
-
-uniform sampler2D u_tex;
-
-vec4 def_frag() {
-	return v_color * texture2D(u_tex, v_uv);
-}
-
-{{user}}
-
-void main() {
-	gl_FragColor = frag(v_pos, v_uv, v_color, u_tex);
-	if (gl_FragColor.a == 0.0) {
-		discard;
-	}
-}
-`;
-
-// default {{user}} vertex shader code
-const DEF_VERT = `
-vec4 vert(vec2 pos, vec2 uv, vec4 color) {
-	return def_vert();
-}
-`;
-
-// default {{user}} fragment shader code
-const DEF_FRAG = `
-vec4 frag(vec2 pos, vec2 uv, vec4 color, sampler2D tex) {
-	return def_frag();
-}
-`;
-
-const COMP_DESC = new Set([
-    "id",
-    "require",
-]);
-
-const COMP_EVENTS = new Set([
-    "add",
-    "update",
-    "draw",
-    "destroy",
-    "inspect",
-    "drawInspect",
-]);
 
 // convert anchor string to a vec2 offset
 function anchorPt(orig: Anchor | Vec2): Vec2 {
@@ -2385,9 +2304,6 @@ export default (gopt: KaboomOpt = {}): KaboomCtx => {
         if (tr.opacity) fchar.opacity *= tr.opacity;
     }
 
-    // TODO: escape
-    const TEXT_STYLE_RE = /\[(?<style>\w+)\](?<text>.*?)\[\/\k<style>\]/g;
-
     // TODO: handle nested
     function compileStyledText(text: string): {
         charStyleMap: Record<number, string[]>;
@@ -3632,8 +3548,6 @@ export default (gopt: KaboomOpt = {}): KaboomCtx => {
         };
     }
 
-    const DEF_OFFSCREEN_DIS = 200;
-
     function offscreen(opt: OffScreenCompOpt = {}): OffScreenComp {
         const distance = opt.distance ?? DEF_OFFSCREEN_DIS;
         let isOut = false;
@@ -4528,10 +4442,6 @@ export default (gopt: KaboomOpt = {}): KaboomCtx => {
             },
         };
     }
-
-    // maximum y velocity with body()
-    const DEF_JUMP_FORCE = 640;
-    const MAX_VEL = 65536;
 
     // TODO: land on wall
     function body(opt: BodyCompOpt = {}): BodyComp {
