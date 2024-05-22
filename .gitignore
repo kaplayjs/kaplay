@@ -6,3 +6,5 @@ desktop/
 .env
 .vscode
 src-tauri/target/
+.replit
+replit.nix
