@@ -30,7 +30,7 @@ import {
     BG_GRID_SIZE,
     DEF_ANCHOR,
     UV_PAD,
-  FONT_ATLAS_WIDTH,
+    FONT_ATLAS_WIDTH,
     FONT_ATLAS_HEIGHT,
     LOG_MAX, COMP_DESC,
     COMP_EVENTS,
@@ -38,10 +38,10 @@ import {
     DEF_HASH_GRID_SIZE,
     DBG_FONT,
     LOG_TIME,
-  TEXT_STYLE_RE,
-  DEF_OFFSCREEN_DIS,
-  DEF_JUMP_FORCE,
-  MAX_VEL,
+    TEXT_STYLE_RE,
+    DEF_OFFSCREEN_DIS,
+    DEF_JUMP_FORCE,
+    MAX_VEL,
 } from "./constants"
 
 import {
@@ -288,11 +288,7 @@ export default (gopt: KaboomOpt = {}): KaboomCtx => {
     }
 
     // create a <canvas> if user didn't provide one
-    const canvas = gopt.canvas ?? (() => {
-        const canvas = document.createElement("canvas");
-        root.appendChild(canvas);
-        return canvas;
-    })();
+    const canvas = gopt.canvas ?? root.appendChild(document.createElement("canvas"))
 
     // global pixel scale
     const gscale = gopt.scale ?? 1;
