@@ -30,11 +30,9 @@ A commit starts with a type, a scope, and a subject:
 <type>(<scope>): <subject>
 ```
 
-The **type** is mandatory. [Should be one of the following](#commit-types).
-
-We don't use the **scope** right now, you must omit it. This may change in the future.
-
-The subject must be a short description of the change. 
+- The **type** is mandatory. [Should be one of the following](#commit-types).
+- We don't use the **scope** right now, you must omit it. This may change in the future.
+- The subject must be a short description of the change. 
 Use the imperative, present tense: "change" not "changed" nor "changes".
 
 ### Commit types
