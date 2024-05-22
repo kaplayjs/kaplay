@@ -59,7 +59,7 @@ refactor: move assets to src/assets
 ```
 `test`: adding missing tests or correcting existing tests
 ```
-test: added tests for add() component // added new example `firework
+test: added tests for add() component
 ```
 `build`: changes that affect the build system or external dependencies (esbuild, typescript)
 ```
@@ -77,4 +77,7 @@ revert: feat: add hello() component
 ```
 chore: update README.md
 ```
-
+`example`: adding a new example
+```
+example: add firework example
+```
