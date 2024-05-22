@@ -13,36 +13,37 @@ import {
 } from "./assets";
 
 import {
-    MAX_TEXT_CACHE_SIZE,
-    DEF_VERT,
-    DEF_FRAG,
-    VERTEX_FORMAT,
-    MAX_BATCHED_VERTS,
-    MAX_BATCHED_INDICES,
-    SPRITE_ATLAS_WIDTH,
-    SPRITE_ATLAS_HEIGHT,
-    DEF_FONT_FILTER,
-    DEF_TEXT_CACHE_SIZE,
     ASCII_CHARS,
-    DEF_FONT,
-    VERT_TEMPLATE,
-    FRAG_TEMPLATE,
     BG_GRID_SIZE,
-    DEF_ANCHOR,
-    UV_PAD,
-    FONT_ATLAS_WIDTH,
-    FONT_ATLAS_HEIGHT,
-    LOG_MAX, COMP_DESC,
+    COMP_DESC,
     COMP_EVENTS,
-    DEF_TEXT_SIZE,
-    DEF_HASH_GRID_SIZE,
     DBG_FONT,
-    LOG_TIME,
-    TEXT_STYLE_RE,
-    DEF_OFFSCREEN_DIS,
+    DEF_ANCHOR,
+    DEF_FONT,
+    DEF_FONT_FILTER,
+    DEF_FRAG,
+    DEF_HASH_GRID_SIZE,
     DEF_JUMP_FORCE,
+    DEF_OFFSCREEN_DIS,
+    DEF_TEXT_CACHE_SIZE,
+    DEF_TEXT_SIZE,
+    DEF_VERT,
+    FONT_ATLAS_HEIGHT,
+    FONT_ATLAS_WIDTH,
+    FRAG_TEMPLATE,
+    LOG_MAX,
+    LOG_TIME,
+    MAX_BATCHED_INDICES,
+    MAX_BATCHED_VERTS,
+    MAX_TEXT_CACHE_SIZE,
     MAX_VEL,
-} from "./constants"
+    SPRITE_ATLAS_HEIGHT,
+    SPRITE_ATLAS_WIDTH,
+    TEXT_STYLE_RE,
+    UV_PAD,
+    VERT_TEMPLATE,
+    VERTEX_FORMAT,
+} from "./constants";
 
 import {
     chance,
@@ -221,6 +222,7 @@ import beanSpriteSrc from "./assets/bean.png";
 import boomSpriteSrc from "./assets/boom.png";
 import burpSoundSrc from "./assets/burp.mp3";
 import kaSpriteSrc from "./assets/ka.png";
+import { health } from "./components/health";
 
 interface SpriteCurAnim {
     name: string;
@@ -288,7 +290,8 @@ export default (gopt: KaboomOpt = {}): KaboomCtx => {
     }
 
     // create a <canvas> if user didn't provide one
-    const canvas = gopt.canvas ?? root.appendChild(document.createElement("canvas"))
+    const canvas = gopt.canvas
+        ?? root.appendChild(document.createElement("canvas"));
 
     // global pixel scale
     const gscale = gopt.scale ?? 1;
@@ -3694,7 +3697,11 @@ export default (gopt: KaboomOpt = {}): KaboomCtx => {
                 return col && col.hasOverlap();
             },
 
-            onClick(this: GameObj<AreaComp>, f: () => void, btn: MouseButton = "left"): EventController {
+            onClick(
+                this: GameObj<AreaComp>,
+                f: () => void,
+                btn: MouseButton = "left",
+            ): EventController {
                 const e = app.onMousePress(btn, () => {
                     if (this.isHovering()) {
                         f();
@@ -4704,57 +4711,6 @@ export default (gopt: KaboomOpt = {}): KaboomCtx => {
         };
     }
 
-    function health(hp: number, maxHP?: number): HealthComp {
-        if (hp == null) {
-            throw new Error("health() requires the initial amount of hp");
-        }
-        return {
-            id: "health",
-            hurt(this: GameObj, n: number = 1) {
-                this.setHP(hp - n);
-                this.trigger("hurt", n);
-            },
-            heal(this: GameObj, n: number = 1) {
-                const origHP = hp;
-                this.setHP(hp + n);
-                this.trigger("heal", hp - origHP);
-            },
-            hp(): number {
-                return hp;
-            },
-            maxHP(): number | null {
-                return maxHP ?? null;
-            },
-            setMaxHP(n: number): void {
-                maxHP = n;
-            },
-            setHP(this: GameObj, n: number) {
-                hp = maxHP ? Math.min(maxHP, n) : n;
-                if (hp <= 0) {
-                    this.trigger("death");
-                }
-            },
-            onHurt(
-                this: GameObj,
-                action: (amount?: number) => void,
-            ): EventController {
-                return this.on("hurt", action);
-            },
-            onHeal(
-                this: GameObj,
-                action: (amount?: number) => void,
-            ): EventController {
-                return this.on("heal", action);
-            },
-            onDeath(this: GameObj, action: () => void): EventController {
-                return this.on("death", action);
-            },
-            inspect() {
-                return `${hp}`;
-            },
-        };
-    }
-
     function lifespan(time: number, opt: LifespanCompOpt = {}): EmptyComp {
         if (time == null) {
             throw new Error("lifespan() requires time");
@@ -4762,12 +4718,18 @@ export default (gopt: KaboomOpt = {}): KaboomCtx => {
         const fade = opt.fade ?? 0;
         return {
             id: "lifespan",
-            require: [ "opacity" ],
+            require: ["opacity"],
             async add(this: GameObj<OpacityComp>) {
                 await wait(time);
-                this.opacity = this.opacity ?? 1
+                this.opacity = this.opacity ?? 1;
                 if (fade > 0) {
-                    await tween(this.opacity, 0, fade, (a) => this.opacity = a, easings.linear);
+                    await tween(
+                        this.opacity,
+                        0,
+                        fade,
+                        (a) => this.opacity = a,
+                        easings.linear,
+                    );
                 }
                 this.destroy();
             },
@@ -6668,7 +6630,7 @@ export default (gopt: KaboomOpt = {}): KaboomCtx => {
         timer,
         fixed,
         stay,
-        health,
+        health: health,
         lifespan,
         z,
         move,
