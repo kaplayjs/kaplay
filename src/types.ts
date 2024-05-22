@@ -4706,7 +4706,7 @@ export interface AreaComp extends Comp {
      *
      * @since v2000.1
      */
-    onClick(f: () => void): void;
+    onClick(f: () => void, btn?: MouseButton): void;
     /**
      * Register an event runs once when hovered.
      *
