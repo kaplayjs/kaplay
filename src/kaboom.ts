@@ -3847,6 +3847,10 @@ export default (gopt: KaboomOpt = {}): KaboomCtx => {
                     return area.transform(game.cam.transform);
                 }
             },
+
+            inspect() {
+                return `(${(this.area.scale.x).toFixed(1)}, ${(this.area.scale.y).toFixed(1)})`;
+            }
         };
     }
 
