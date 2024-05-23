@@ -4365,7 +4365,9 @@ export default (gopt: KaboomOpt = {}): KaboomCtx => {
                 const ev = this.onUpdate(() => {
                     t += dt();
                     if (t >= time) {
-                        action();
+                        if (action){
+                            action();
+                        }
                         t -= time;
                         if (count != -1 && --count === 0) {
                             ev.cancel();
