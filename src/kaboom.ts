@@ -13,36 +13,37 @@ import {
 } from "./assets";
 
 import {
-    MAX_TEXT_CACHE_SIZE,
-    DEF_VERT,
-    DEF_FRAG,
-    VERTEX_FORMAT,
-    MAX_BATCHED_VERTS,
-    MAX_BATCHED_INDICES,
-    SPRITE_ATLAS_WIDTH,
-    SPRITE_ATLAS_HEIGHT,
-    DEF_FONT_FILTER,
-    DEF_TEXT_CACHE_SIZE,
     ASCII_CHARS,
-    DEF_FONT,
-    VERT_TEMPLATE,
-    FRAG_TEMPLATE,
     BG_GRID_SIZE,
-    DEF_ANCHOR,
-    UV_PAD,
-    FONT_ATLAS_WIDTH,
-    FONT_ATLAS_HEIGHT,
-    LOG_MAX, COMP_DESC,
+    COMP_DESC,
     COMP_EVENTS,
-    DEF_TEXT_SIZE,
-    DEF_HASH_GRID_SIZE,
     DBG_FONT,
-    LOG_TIME,
-    TEXT_STYLE_RE,
-    DEF_OFFSCREEN_DIS,
+    DEF_ANCHOR,
+    DEF_FONT,
+    DEF_FONT_FILTER,
+    DEF_FRAG,
+    DEF_HASH_GRID_SIZE,
     DEF_JUMP_FORCE,
+    DEF_OFFSCREEN_DIS,
+    DEF_TEXT_CACHE_SIZE,
+    DEF_TEXT_SIZE,
+    DEF_VERT,
+    FONT_ATLAS_HEIGHT,
+    FONT_ATLAS_WIDTH,
+    FRAG_TEMPLATE,
+    LOG_MAX,
+    LOG_TIME,
+    MAX_BATCHED_INDICES,
+    MAX_BATCHED_VERTS,
+    MAX_TEXT_CACHE_SIZE,
     MAX_VEL,
-} from "./constants"
+    SPRITE_ATLAS_HEIGHT,
+    SPRITE_ATLAS_WIDTH,
+    TEXT_STYLE_RE,
+    UV_PAD,
+    VERT_TEMPLATE,
+    VERTEX_FORMAT,
+} from "./constants";
 
 import {
     chance,
@@ -67,6 +68,8 @@ import {
     rand,
     randi,
     randSeed,
+    raycastGrid,
+    RaycastHit as BaseRaycastHit,
     Rect,
     rgb,
     RNG,
@@ -288,7 +291,8 @@ export default (gopt: KaboomOpt = {}): KaboomCtx => {
     }
 
     // create a <canvas> if user didn't provide one
-    const canvas = gopt.canvas ?? root.appendChild(document.createElement("canvas"))
+    const canvas = gopt.canvas
+        ?? root.appendChild(document.createElement("canvas"));
 
     // global pixel scale
     const gscale = gopt.scale ?? 1;
@@ -3694,7 +3698,11 @@ export default (gopt: KaboomOpt = {}): KaboomCtx => {
                 return col && col.hasOverlap();
             },
 
-            onClick(this: GameObj<AreaComp>, f: () => void, btn: MouseButton = "left"): EventController {
+            onClick(
+                this: GameObj<AreaComp>,
+                f: () => void,
+                btn: MouseButton = "left",
+            ): EventController {
                 const e = app.onMousePress(btn, () => {
                     if (this.isHovering()) {
                         f();
@@ -4766,12 +4774,18 @@ export default (gopt: KaboomOpt = {}): KaboomCtx => {
         const fade = opt.fade ?? 0;
         return {
             id: "lifespan",
-            require: [ "opacity" ],
+            require: ["opacity"],
             async add(this: GameObj<OpacityComp>) {
                 await wait(time);
-                this.opacity = this.opacity ?? 1
+                this.opacity = this.opacity ?? 1;
                 if (fade > 0) {
-                    await tween(this.opacity, 0, fade, (a) => this.opacity = a, easings.linear);
+                    await tween(
+                        this.opacity,
+                        0,
+                        fade,
+                        (a) => this.opacity = a,
+                        easings.linear,
+                    );
                 }
                 this.destroy();
             },
@@ -5485,6 +5499,26 @@ export default (gopt: KaboomOpt = {}): KaboomCtx => {
                 return spatialMap[hash] || [];
             },
 
+            raycast(origin: Vec2, direction: Vec2) {
+                origin = origin.scale(
+                    1 / this.tileWidth(),
+                    1 / this.tileHeight(),
+                );
+                const hit = raycastGrid(origin, direction, (tilePos: Vec2) => {
+                    const tiles = this.getAt(tilePos);
+                    if (tiles.some(t => t.isObstacle)) {
+                        return true;
+                    }
+                }, 64);
+                if (hit) {
+                    hit.point = hit.point.scale(
+                        this.tileWidth(),
+                        this.tileHeight(),
+                    );
+                }
+                return hit;
+            },
+
             update() {
                 if (spatialMap) {
                     updateSpatialMap();
@@ -5762,6 +5796,34 @@ export default (gopt: KaboomOpt = {}): KaboomCtx => {
                 });
             },
         };
+    }
+
+    type RaycastHit = BaseRaycastHit & {
+        object?: GameObj;
+    };
+
+    type RaycastResult = RaycastHit | null;
+
+    function raycast(origin: Vec2, direction: Vec2, exclude?: string[]) {
+        let minHit: RaycastResult;
+        const shapes = get("area");
+        shapes.forEach(s => {
+            if (exclude && exclude.some(tag => s.is(tag))) return;
+            const shape = s.worldArea();
+            const hit = shape.raycast(origin, direction);
+            if (hit) {
+                if (minHit) {
+                    if (hit.fraction < minHit.fraction) {
+                        minHit = hit;
+                        minHit.object = s;
+                    }
+                } else {
+                    minHit = hit;
+                    minHit.object = s;
+                }
+            }
+        });
+        return minHit;
     }
 
     function record(frameRate?): Recording {
@@ -6684,6 +6746,7 @@ export default (gopt: KaboomOpt = {}): KaboomCtx => {
         drawon,
         tile,
         agent,
+        raycast,
         // group events
         on,
         onUpdate,
