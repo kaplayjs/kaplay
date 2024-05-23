@@ -13,36 +13,37 @@ import {
 } from "./assets";
 
 import {
-    MAX_TEXT_CACHE_SIZE,
-    DEF_VERT,
-    DEF_FRAG,
-    VERTEX_FORMAT,
-    MAX_BATCHED_VERTS,
-    MAX_BATCHED_INDICES,
-    SPRITE_ATLAS_WIDTH,
-    SPRITE_ATLAS_HEIGHT,
-    DEF_FONT_FILTER,
-    DEF_TEXT_CACHE_SIZE,
     ASCII_CHARS,
-    DEF_FONT,
-    VERT_TEMPLATE,
-    FRAG_TEMPLATE,
     BG_GRID_SIZE,
-    DEF_ANCHOR,
-    UV_PAD,
-    FONT_ATLAS_WIDTH,
-    FONT_ATLAS_HEIGHT,
-    LOG_MAX, COMP_DESC,
+    COMP_DESC,
     COMP_EVENTS,
-    DEF_TEXT_SIZE,
-    DEF_HASH_GRID_SIZE,
     DBG_FONT,
-    LOG_TIME,
-    TEXT_STYLE_RE,
-    DEF_OFFSCREEN_DIS,
+    DEF_ANCHOR,
+    DEF_FONT,
+    DEF_FONT_FILTER,
+    DEF_FRAG,
+    DEF_HASH_GRID_SIZE,
     DEF_JUMP_FORCE,
+    DEF_OFFSCREEN_DIS,
+    DEF_TEXT_CACHE_SIZE,
+    DEF_TEXT_SIZE,
+    DEF_VERT,
+    FONT_ATLAS_HEIGHT,
+    FONT_ATLAS_WIDTH,
+    FRAG_TEMPLATE,
+    LOG_MAX,
+    LOG_TIME,
+    MAX_BATCHED_INDICES,
+    MAX_BATCHED_VERTS,
+    MAX_TEXT_CACHE_SIZE,
     MAX_VEL,
-} from "./constants"
+    SPRITE_ATLAS_HEIGHT,
+    SPRITE_ATLAS_WIDTH,
+    TEXT_STYLE_RE,
+    UV_PAD,
+    VERT_TEMPLATE,
+    VERTEX_FORMAT,
+} from "./constants";
 
 import {
     chance,
@@ -288,7 +289,8 @@ export default (gopt: KaboomOpt = {}): KaboomCtx => {
     }
 
     // create a <canvas> if user didn't provide one
-    const canvas = gopt.canvas ?? root.appendChild(document.createElement("canvas"))
+    const canvas = gopt.canvas
+        ?? root.appendChild(document.createElement("canvas"));
 
     // global pixel scale
     const gscale = gopt.scale ?? 1;
@@ -3694,7 +3696,11 @@ export default (gopt: KaboomOpt = {}): KaboomCtx => {
                 return col && col.hasOverlap();
             },
 
-            onClick(this: GameObj<AreaComp>, f: () => void, btn: MouseButton = "left"): EventController {
+            onClick(
+                this: GameObj<AreaComp>,
+                f: () => void,
+                btn: MouseButton = "left",
+            ): EventController {
                 const e = app.onMousePress(btn, () => {
                     if (this.isHovering()) {
                         f();
@@ -4346,15 +4352,24 @@ export default (gopt: KaboomOpt = {}): KaboomCtx => {
                 this: GameObj<TimerComp>,
                 time: number,
                 action?: () => void,
-            ): TimerController {
-                const actions = [];
-                if (action) actions.push(action);
-                let t = 0;
+            ): EventController {
+                return this.loop(time, action, 1);
+            },
+            loop(
+                this: GameObj<TimerComp>,
+                time: number,
+                action: () => void,
+                count: number = -1,
+            ): EventController {
+                let t: number = 0;
                 const ev = this.onUpdate(() => {
                     t += dt();
                     if (t >= time) {
-                        actions.forEach((f) => f());
-                        ev.cancel();
+                        action();
+                        t -= time;
+                        if (count != -1 && --count === 0) {
+                            ev.cancel();
+                        }
                     }
                 });
                 return {
@@ -4365,31 +4380,6 @@ export default (gopt: KaboomOpt = {}): KaboomCtx => {
                         ev.paused = p;
                     },
                     cancel: ev.cancel,
-                    onEnd(action) {
-                        actions.push(action);
-                    },
-                    then(action) {
-                        this.onEnd(action);
-                        return this;
-                    },
-                };
-            },
-            loop(t: number, action: () => void): EventController {
-                let curTimer: null | TimerController = null;
-                const newAction = () => {
-                    // TODO: should f be execute right away as loop() is called?
-                    curTimer = this.wait(t, newAction);
-                    action();
-                };
-                curTimer = this.wait(0, newAction);
-                return {
-                    get paused() {
-                        return curTimer.paused;
-                    },
-                    set paused(p) {
-                        curTimer.paused = p;
-                    },
-                    cancel: () => curTimer.cancel(),
                 };
             },
             tween<V extends LerpValue>(
@@ -4762,12 +4752,18 @@ export default (gopt: KaboomOpt = {}): KaboomCtx => {
         const fade = opt.fade ?? 0;
         return {
             id: "lifespan",
-            require: [ "opacity" ],
+            require: ["opacity"],
             async add(this: GameObj<OpacityComp>) {
                 await wait(time);
-                this.opacity = this.opacity ?? 1
+                this.opacity = this.opacity ?? 1;
                 if (fade > 0) {
-                    await tween(this.opacity, 0, fade, (a) => this.opacity = a, easings.linear);
+                    await tween(
+                        this.opacity,
+                        0,
+                        fade,
+                        (a) => this.opacity = a,
+                        easings.linear,
+                    );
                 }
                 this.destroy();
             },

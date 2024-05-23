@@ -5335,13 +5335,22 @@ export interface TimerComp extends Comp {
     /**
      * Run the callback after n seconds.
      */
-    wait(time: number, action?: () => void): TimerController;
+    wait(
+        this: GameObj<TimerComp>,
+        time: number,
+        action?: () => void,
+    ): EventController;
     /**
      * Run the callback every n seconds.
      *
      * @since v3000.0
      */
-    loop(time: number, action: () => void): EventController;
+    loop(
+        this: GameObj<TimerComp>,
+        time: number,
+        action: () => void,
+        count: number,
+    ): EventController;
     /**
      * Tweeeeen! Note that this doesn't specifically mean tweening on this object's property, this just registers the timer on this object, so the tween will cancel with the object gets destroyed, or paused when obj.paused is true.
      *
