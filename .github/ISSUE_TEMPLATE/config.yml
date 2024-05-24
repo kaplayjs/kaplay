@@ -1,7 +1,7 @@
 contact_links:
   - name: Help
     url: https://github.com/marklovers/kaplay/discussions/new?category=q-a
-    about: How to use certain Kaboom feature, or how to achieve something with Kaboom
-  - name: Suggestion
-    url: https://github.com/marklovers/kaplay/discussions/new?category=ideas
-    about: Features you'd like Kaboom to have
+    about: How to use certain kaplay feature, or how to achieve something with kaplay
+  - name: Compiling
+    url: https://github.com/marklovers/kaplay/discussions/new?category=q-a
+    about: How to compile kaplay/how to contribute to it
