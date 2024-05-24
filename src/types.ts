@@ -3848,11 +3848,23 @@ export type DrawPolygonOpt = RenderProps & {
      */
     radius?: number;
     /**
-     * The color of each vertice.
+     * The color of each vertex.
      *
      * @since v3000.0
      */
     colors?: Color[];
+    /**
+     * The uv of each vertex.
+     *
+     * @since v3001.0
+     */
+    uv?: Vec2[];
+    /**
+     * The texture if uv are supplied.
+     *
+     * @since v3001.0
+     */
+    tex?: Texture;
 };
 
 export interface Outline {
@@ -5048,9 +5060,21 @@ export interface PolygonComp extends Comp {
      */
     radius?: number;
     /**
-     * The color of each vertice.
+     * The color of each vertex.
      */
     colors?: Color[];
+    /**
+     * The uv of each vertex.
+     * 
+     * @since v3001.0
+     */
+    uv?: Vec2[];
+    /**
+     * The texture used when uv coordinates are present.
+     * 
+     * @since v3001.0
+     */
+    tex?: Texture;
     renderArea(): Polygon;
 }
 

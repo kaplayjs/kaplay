@@ -1924,7 +1924,7 @@ export default (gopt: KaboomOpt = {}): KaboomCtx => {
         // TODO: gradient for rounded rect
         // TODO: drawPolygon should handle generic rounded corners
         if (opt.radius) {
-            // maxium radius is half the shortest side
+            // maximum radius is half the shortest side
             const r = Math.min(Math.min(w, h) / 2, opt.radius);
 
             pts = [
@@ -2186,7 +2186,9 @@ export default (gopt: KaboomOpt = {}): KaboomCtx => {
 
             const verts = opt.pts.map((pt, i) => ({
                 pos: new Vec2(pt.x, pt.y),
-                uv: new Vec2(0, 0),
+                uv: opt.uv
+                    ? opt.uv[i]
+                    : new Vec2(0, 0),
                 color: opt.colors
                     ? (opt.colors[i] ? opt.colors[i].mult(color) : color)
                     : color,
@@ -2202,7 +2204,7 @@ export default (gopt: KaboomOpt = {}): KaboomCtx => {
                 verts,
                 opt.indices ?? indices,
                 opt.fixed,
-                gfx.defTex,
+                opt.uv ? opt.tex : gfx.defTex,
                 opt.shader,
                 opt.uniform,
             );
@@ -4254,11 +4256,15 @@ export default (gopt: KaboomOpt = {}): KaboomCtx => {
             id: "polygon",
             pts,
             colors: opt.colors,
+            uv: opt.uv,
+            tex: opt.tex,
             radius: opt.radius,
             draw(this: GameObj<PolygonComp>) {
                 drawPolygon(Object.assign(getRenderProps(this), {
                     pts: this.pts,
                     colors: this.colors,
+                    uv: this.uv,
+                    tex: this.tex,
                     radius: this.radius,
                     fill: opt.fill,
                 }));
