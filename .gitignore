@@ -8,3 +8,4 @@ desktop/
 src-tauri/target/
 .replit
 replit.nix
+/.obsidian
