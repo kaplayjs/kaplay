@@ -6,9 +6,9 @@
 > For now, there's links to the Kaboom documentation and examples, but in the future, they will be linked
 > to our own site.
 
-[**Kaboom**](https://kaboomjs.com) is a JavaScript library that helps you make games fast and fun!
+[**Kaplay**](https://kaplaydocs.pages.dev/) is a JavaScript library that helps you make games fast and fun!
 
-Start playing around with it in the [Kaboom Playground](https://kaboomjs.com/play)
+Start playing around with it in the [Kaplayground](https://kaplay.pages.dev/)
 
 ## Examples
 
@@ -37,7 +37,7 @@ onKeyPress("space", () => {
 });
 ```
 
-Kaboom uses a powerful component system to compose game objects and behaviors.
+kaplay uses a powerful component system to compose game objects and behaviors.
 
 ```js
 // add a game obj to the scene from a list of component
@@ -119,11 +119,11 @@ Then open http://localhost:5173 and edit `src/game.js`
 ### Install as NPM Package
 
 ```sh
-$ npm install kaboom
+$ npm install kaplay
 ```
 
 ```js
-import kaboom from "kaboom";
+import kaboom from "kaplay";
 
 kaboom();
 
@@ -136,7 +136,7 @@ add([
 also works with CommonJS
 
 ```js
-const kaboom = require("kaboom");
+const kaboom = require("kaplay");
 ```
 
 Note that you'll need to use a bundler like `esbuild` or `webpack` to use Kaboom with NPM
@@ -146,7 +146,7 @@ Note that you'll need to use a bundler like `esbuild` or `webpack` to use Kaboom
 This exports a global `kaboom` function
 
 ```html
-<script src="https://unpkg.com/kaboom@3000/dist/kaboom.js"></script>
+<script src="https://unpkg.com/kaplay@3001/dist/kaboom.js"></script>
 <script>
 kaboom()
 </script>
@@ -156,7 +156,7 @@ or use with es modules
 
 ```html
 <script type="module">
-import kaboom from "https://unpkg.com/kaboom@3000/dist/kaboom.mjs"
+import kaboom from "https://unpkg.com/kaplay@3001/dist/kaboom.mjs"
 kaboom()
 </script>
 ```
@@ -165,6 +165,7 @@ works all CDNs that supports NPM packages, e.g. jsdelivr, skypack
 
 ## Documentation
 
+- **v3001**: https://kaplaydocs.pages.dev/
 - **v3000**: https://kaboomjs.com/
 - **v2000**: https://2000.kaboomjs.com/
 - **v0.5.0**: https://legacy.kaboomjs.com/
@@ -181,7 +182,7 @@ Check out [CONTRIBUTION.md](CONTRIBUTING.md) for full info.
 ## Community
 
 - [Discord Server](https://discord.gg/aQ6RuQm3TF)
-- [GitHub Discussions](https://github.com/replit/kaboom/discussions)
+- [GitHub Discussions](https://github.com/marklovers/kaplay/discussions)
 - [Twitter](https://twitter.com/Kaboomjs)
 
 ### Games
