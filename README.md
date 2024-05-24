@@ -1,22 +1,26 @@
-# Kaboom
+# KAPLAY
 
-![kaboom](kaboom.png)
+![kaplay](https://github.com/marklovers/kaplay/raw/master/assets/kaplay.png)
 
-[**Kaboom**](https://kaboomjs.com) is a JavaScript library that helps you make games fast and fun!
+> Kaplay is the spiritual successor (and fork) of Kaboom, a JavaScript library that helps you make games fast and fun!
+> For now, there's links to the Kaboom documentation and examples, but in the future, they will be linked
+> to our own site.
 
-Start playing around with it in the [Kaboom Playground](https://kaboomjs.com/play)
+[**Kaplay**](https://kaplaydocs.pages.dev/) is a JavaScript library that helps you make games fast and fun!
+
+Start playing around with it in the [Kaplayground](https://kaplay.pages.dev/)
 
 ## Examples
 
 ```js
 // initialize context
-kaboom()
+kaboom();
 
 // define gravity
-setGravity(2400)
+setGravity(2400);
 
 // load a sprite called "bean"
-loadSprite("bean", "sprites/bean.png")
+loadSprite("bean", "sprites/bean.png");
 
 // compose the player game object from multiple components and add it to the game
 const bean = add([
@@ -24,16 +28,16 @@ const bean = add([
     pos(80, 40),
     area(),
     body(),
-])
+]);
 
 // press space to jump
 onKeyPress("space", () => {
     // this method is provided by the "body" component above
-    bean.jump()
-})
+    bean.jump();
+});
 ```
 
-Kaboom uses a powerful component system to compose game objects and behaviors.
+kaplay uses a powerful component system to compose game objects and behaviors.
 
 ```js
 // add a game obj to the scene from a list of component
@@ -57,7 +61,7 @@ const player = add([
         dead: false,
         speed: 240,
     },
-])
+]);
 ```
 
 Blocky imperative syntax for describing behaviors
@@ -66,31 +70,31 @@ Blocky imperative syntax for describing behaviors
 // .onCollide() comes from "area" component
 player.onCollide("enemy", () => {
     // .hurt() comes from "health" component
-    player.hurt(1)
-})
+    player.hurt(1);
+});
 
 // check fall death
 player.onUpdate(() => {
     if (player.pos.y >= height()) {
-        destroy(player)
-        gameOver()
+        destroy(player);
+        gameOver();
     }
-})
+});
 
 // if 'player' onCollide with any object with tag "enemy", run the callback
 player.onCollide("enemy", () => {
-    player.hp -= 1
-})
+    player.hp -= 1;
+});
 
 // all objects with tag "enemy" will move towards 'player' every frame
 onUpdate("enemy", (e) => {
-    e.move(player.pos.sub(e.pos).unit().scale(e.speed))
-})
+    e.move(player.pos.sub(e.pos).unit().scale(e.speed));
+});
 
 // move up 100 pixels per second every frame when "w" key is held down
 onKeyDown("w", () => {
-    player.move(0, 100)
-})
+    player.move(0, 100);
+});
 ```
 
 ## Usage
@@ -115,24 +119,24 @@ Then open http://localhost:5173 and edit `src/game.js`
 ### Install as NPM Package
 
 ```sh
-$ npm install kaboom
+$ npm install kaplay
 ```
 
 ```js
-import kaboom from "kaboom"
+import kaboom from "kaplay";
 
-kaboom()
+kaboom();
 
 add([
     text("oh hi"),
     pos(80, 40),
-])
+]);
 ```
 
 also works with CommonJS
 
 ```js
-const kaboom = require("kaboom")
+const kaboom = require("kaplay");
 ```
 
 Note that you'll need to use a bundler like `esbuild` or `webpack` to use Kaboom with NPM
@@ -142,7 +146,7 @@ Note that you'll need to use a bundler like `esbuild` or `webpack` to use Kaboom
 This exports a global `kaboom` function
 
 ```html
-<script src="https://unpkg.com/kaboom@3000.0.1/dist/kaboom.js"></script>
+<script src="https://unpkg.com/kaplay@3001/dist/kaboom.js"></script>
 <script>
 kaboom()
 </script>
@@ -152,7 +156,7 @@ or use with es modules
 
 ```html
 <script type="module">
-import kaboom from "https://unpkg.com/kaboom@3000.0.1/dist/kaboom.mjs"
+import kaboom from "https://unpkg.com/kaplay@3001/dist/kaboom.mjs"
 kaboom()
 </script>
 ```
@@ -160,10 +164,11 @@ kaboom()
 works all CDNs that supports NPM packages, e.g. jsdelivr, skypack
 
 ## Documentation
+
+- **v3001**: https://kaplaydocs.pages.dev/
 - **v3000**: https://kaboomjs.com/
 - **v2000**: https://2000.kaboomjs.com/
 - **v0.5.0**: https://legacy.kaboomjs.com/
-
 
 ## Dev
 
@@ -177,10 +182,11 @@ Check out [CONTRIBUTION.md](CONTRIBUTING.md) for full info.
 ## Community
 
 - [Discord Server](https://discord.gg/aQ6RuQm3TF)
-- [GitHub Discussions](https://github.com/replit/kaboom/discussions)
+- [GitHub Discussions](https://github.com/marklovers/kaplay/discussions)
 - [Twitter](https://twitter.com/Kaboomjs)
 
 ### Games
+
 Collection of games made with Kaboom, selected by Kaboom, [here](https://itch.io/c/2645141/made-in-kaboom).
 
 - [on Itch.io](https://itch.io/games/tag-kaboomjs)
@@ -189,7 +195,8 @@ Collection of games made with Kaboom, selected by Kaboom, [here](https://itch.io
 
 ## Misc
 
-- Thanks to [LaJBel](https://lajbel.repl.co/) for help building the Kaboom community
+- This project has no relation to Activision's game [Kaboom!](https://en.wikipedia.org/wiki/Kaboom!_(video_game))
+- Thanks to [tga](https://space55.xyz) for all his work on the original Kaboom.js
 - Thanks to [abrudz](https://github.com/abrudz) for the amazing [APL386 font](https://abrudz.github.io/APL386/)
 - Thanks to [Polyducks](http://polyducks.co.uk/) for the amazing [kitchen sink font](https://polyducks.itch.io/kitchen-sink-textmode-font) font
 - Thanks to [0x72](https://0x72.itch.io/) for the amazing [Dungeon Tileset](https://0x72.itch.io/dungeontileset-ii)
