@@ -1,5 +1,8 @@
 ## v3001.0
 
+- added global raycast function and raycast method to level
+- added support for textured polygons
+
 ## v3000.2
 
 - added `loadMusic()` to load streaming audio (doesn't block in loading screen)
