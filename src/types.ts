@@ -350,9 +350,9 @@ export interface KaboomCtx {
      *     outline(4),
      *     area(),
      * ])
+     * ```
      *
      * @group Components
-     * ```
      */
     polygon(pts: Vec2[], opt?: PolygonCompOpt): PolygonComp;
     /**
