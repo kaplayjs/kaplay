@@ -4577,6 +4577,8 @@ export default (gopt: KaboomOpt = {}): KaboomCtx => {
                         willFall = false;
                     }
 
+                    let updateY = true;
+
                     if (curPlatform) {
                         if (
                             // TODO: this prevents from falling when on edge
@@ -4595,20 +4597,22 @@ export default (gopt: KaboomOpt = {}): KaboomCtx => {
                                 );
                             }
                             lastPlatformPos = curPlatform.pos;
-                            return;
+                            updateY = false;
                         }
                     }
 
-                    const prevVelY = this.vel.y;
+                    if (updateY) {
+                        const prevVelY = this.vel.y;
 
-                    this.vel.y += game.gravity * this.gravityScale * dt();
-                    this.vel.y = Math.min(
-                        this.vel.y,
-                        opt.maxVelocity ?? MAX_VEL,
-                    );
+                        this.vel.y += game.gravity * this.gravityScale * dt();
+                        this.vel.y = Math.min(
+                            this.vel.y,
+                            opt.maxVelocity ?? MAX_VEL,
+                        );
 
-                    if (prevVelY < 0 && this.vel.y >= 0) {
-                        this.trigger("fall");
+                        if (prevVelY < 0 && this.vel.y >= 0) {
+                            this.trigger("fall");
+                        }
                     }
                 }
 
