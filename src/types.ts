@@ -2078,6 +2078,8 @@ export interface KaboomCtx {
      * Check if a circle and polygon intersect linewise.
      */
     testCirclePolygon(c: Circle, p: Polygon): boolean;
+    isConvex(pts:Vec2[]): boolean;
+    triangulate(pts:Vec2[]): Vec2[][];
     Line: typeof Line;
     Rect: typeof Rect;
     Circle: typeof Circle;
@@ -3865,6 +3867,12 @@ export type DrawPolygonOpt = RenderProps & {
      * @since v3001.0
      */
     tex?: Texture;
+    /**
+     * Triangulate concave polygons.
+     *
+     * @since v3001.0
+     */
+    triangulate?: boolean
 };
 
 export interface Outline {
@@ -5065,13 +5073,13 @@ export interface PolygonComp extends Comp {
     colors?: Color[];
     /**
      * The uv of each vertex.
-     * 
+     *
      * @since v3001.0
      */
     uv?: Vec2[];
     /**
      * The texture used when uv coordinates are present.
-     * 
+     *
      * @since v3001.0
      */
     tex?: Texture;

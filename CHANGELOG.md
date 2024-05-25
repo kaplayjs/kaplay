@@ -2,6 +2,7 @@
 
 - added global raycast function and raycast method to level
 - added support for textured polygons
+- added support for concave polygon drawing
 - added `loadMusic()` to load streaming audio (doesn't block in loading screen)
 - added support for arrays in uniforms
 - added support for texture larger than 2048x2048
