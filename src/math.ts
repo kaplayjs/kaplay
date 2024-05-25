@@ -2334,3 +2334,151 @@ export function sat(p1: Polygon, p2: Polygon): Vec2 | null {
     }
     return displacement;
 }
+
+// true if the angle is oriented counter clockwise
+function isOrientedCcw(a: Vec2, b: Vec2, c: Vec2) {
+    // return det(b-a, c-a) >= 0
+    return ((b.x - a.x) * (c.y - a.y) - (b.y - a.y) * (c.x - a.x)) >= 0;
+}
+
+// true if the polygon is oriented counter clockwise
+function isOrientedCcwPolygon(polygon: Vec2[]) {
+    let total =0;
+    let prev:Vec2 = polygon[polygon.length-1];
+    for (let i = 0; i < polygon.length; i++) {
+        total += (polygon[i].x - prev.x) * (polygon[i].y + prev.y);
+        prev = polygon[i];
+    }
+    return total < 0;
+}
+
+// true if a and b are on the same side of the line c->d
+function onSameSide(a: Vec2, b: Vec2, c: Vec2, d: Vec2) {
+    const px = d.x - c.x, py = d.y - c.y;
+    // return det(p, a-c) * det(p, b-c) >= 0
+    const l = px * (a.y - c.y) - py * (a.x - c.x);
+    const m = px * (b.y - c.y) - py * (b.x - c.x);
+    return l * m >= 0;
+}
+
+// true if p is contained in the triangle abc
+function pointInTriangle(p: Vec2, a: Vec2, b: Vec2, c: Vec2) {
+    return onSameSide(p, a, b, c) && onSameSide(p, b, a, c)
+        && onSameSide(p, c, a, b);
+}
+
+// true if any vertex in the list `vertices' is in the triangle abc.
+function someInTriangle(vertices: Vec2[], a: Vec2, b: Vec2, c: Vec2) {
+    for (const p of vertices) {
+        if (
+            (p !== a) && (p !== b) && (p !== c) && pointInTriangle(p, a, b, c)
+        ) {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+// true if the triangle is an ear, which is whether it can be cut off from the polygon without leaving a hole behind
+function isEar(a: Vec2, b: Vec2, c: Vec2, vertices: Vec2[]) {
+    return isOrientedCcw(a, b, c) && !someInTriangle(vertices, a, b, c);
+}
+
+export function triangulate(pts: Vec2[]): Vec2[][] {
+    if (pts.length < 3) {
+        return [];
+    }
+    if (pts.length == 3) {
+        return [pts];
+    }
+
+    /* Create a list of indexes to the previous and next points of a given point
+    prev_idx[i] gives the index to the previous point of the point at i */
+    let nextIdx = [];
+    let prevIdx = [];
+    let idx = 0;
+    for (let i = 0; i < pts.length; i++) {
+        const lm = pts[idx];
+        const pt = pts[i];
+        if (pt.x < lm.x || (pt.x == lm.x && pt.y < lm.y)) {
+            idx = idx;
+        }
+        nextIdx[i] = i + 1;
+        prevIdx[i] = i - 1;
+    }
+    nextIdx[nextIdx.length - 1] = 0;
+    prevIdx[0] = prevIdx.length - 1;
+
+    // If the polygon is not counter clockwise, swap the lists, thus reversing the winding
+    if (!isOrientedCcwPolygon(pts)) {
+        [nextIdx, prevIdx] = [prevIdx, nextIdx];
+    }
+
+    const concaveVertices = [];
+    for (let i = 0; i < pts.length; ++i) {
+        if (!isOrientedCcw(pts[prevIdx[i]], pts[i], pts[nextIdx[i]])) {
+            concaveVertices.push(pts[i]);
+        }
+    }
+
+    const triangles = [];
+    let nVertices = pts.length;
+    let current = 1;
+    let skipped = 0;
+    let next;
+    let prev;
+    while (nVertices > 3) {
+        next = nextIdx[current];
+        prev = prevIdx[current];
+        const a = pts[prev];
+        const b = pts[current];
+        const c = pts[next];
+        if (isEar(a, b, c, concaveVertices)) {
+            triangles.push([a, b, c]);
+            nextIdx[prev] = next;
+            prevIdx[next] = prev;
+            concaveVertices.splice(concaveVertices.indexOf(b), 1);
+            --nVertices;
+            skipped = 0;
+        } else if (++skipped > nVertices) {
+            return [];
+        }
+        current = next;
+    }
+    next = nextIdx[current];
+    prev = prevIdx[current];
+    triangles.push([pts[prev], pts[current], pts[next]]);
+
+    return triangles;
+}
+
+export function isConvex(pts: Vec2[])
+{
+	if (pts.length < 3)
+		return false;
+
+	// a polygon is convex if all corners turn in the same direction
+	// turning direction can be determined using the cross-product of
+	// the forward difference vectors
+	let i = pts.length - 2
+    let j = pts.length - 1
+    let k = 0;
+	let p = pts[j].sub(pts[i]);
+	let q = pts[k].sub(pts[j]);
+	let winding = p.cross(q);
+
+	while (k+1 < pts.length)
+	{
+		i = j; 
+        j = k; 
+        k++;
+		p = pts[j].sub(pts[i]);
+		q = pts[k].sub(pts[j]);
+
+		if (p.cross(q) * winding < 0) {
+			return false;
+        }
+	}
+	return true;
+}

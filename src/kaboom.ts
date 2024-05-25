@@ -86,6 +86,8 @@ import {
     Vec2,
     vec2,
     wave,
+    isConvex,
+    triangulate,
 } from "./math";
 
 import easings from "./easings";
@@ -2196,9 +2198,17 @@ export default (gopt: KaboomOpt = {}): KaboomCtx => {
             }));
 
             // TODO: better triangulation
-            const indices = [...Array(npts - 2).keys()]
+            let indices;
+            
+            if (opt.triangulate && isConvex(opt.pts)) {
+                const triangles = triangulate(opt.pts)
+                indices = triangles.map(t => t.map(p => opt.pts.indexOf(p))).flat()
+            }
+            else {
+                indices = [...Array(npts - 2).keys()]
                 .map((n) => [0, n + 1, n + 2])
                 .flat();
+            }
 
             drawRaw(
                 verts,
@@ -3859,8 +3869,10 @@ export default (gopt: KaboomOpt = {}): KaboomCtx => {
             },
 
             inspect() {
-                return `(${(this.area.scale.x).toFixed(1)}, ${(this.area.scale.y).toFixed(1)})`;
-            }
+                return `(${this.area.scale.x.toFixed(1)}, ${
+                    this.area.scale.y.toFixed(1)
+                })`;
+            },
         };
     }
 
@@ -6848,6 +6860,8 @@ export default (gopt: KaboomOpt = {}): KaboomCtx => {
         testCirclePolygon,
         testLinePoint,
         testLineCircle,
+        isConvex,
+        triangulate,
         // raw draw
         drawSprite,
         drawText,

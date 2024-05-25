@@ -15,6 +15,8 @@ const poly = add([
         vec2(80, 80),
         vec2(-60, 120),
         vec2(-120, 0),
+        vec2(-200, 20),
+        vec2(-270, 60),
     ], {
         colors: [
             rgb(128, 255, 128),
@@ -22,6 +24,8 @@ const poly = add([
             rgb(128, 128, 255),
             rgb(255, 128, 128),
             rgb(128, 128, 128),
+            rgb(128, 255, 128),
+            rgb(255, 128, 128),
         ],
     }),
     pos(300, 300),
@@ -33,6 +37,16 @@ let dragging = null;
 let hovering = null;
 
 poly.onDraw(() => {
+    const triangles = triangulate(poly.pts)
+    for (const triangle of triangles) {
+        drawTriangle({
+            p1: triangle[0],
+            p2: triangle[1],
+            p3: triangle[2],
+            fill: false,
+            outline: { color: BLACK }
+        })
+    }
     if (hovering !== null) {
         drawCircle({
             pos: poly.pts[hovering],
@@ -40,6 +54,15 @@ poly.onDraw(() => {
         });
     }
 });
+
+onUpdate(()=>{
+    if (isConvex(poly.pts)) {
+        poly.color = WHITE
+    }
+    else  {
+        poly.color = rgb(192, 192, 192)
+    }
+})
 
 onMousePress(() => {
     dragging = hovering;
