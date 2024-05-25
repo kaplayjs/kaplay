@@ -1999,9 +1999,9 @@ export interface KaboomCtx {
      * // using the handle to control (check out AudioPlay for more controls / info)
      * music.paused = true
      * music.speed = 1.2
+     * ```
      *
      * @group Audio
-     * ```
      */
     play(
         src:
