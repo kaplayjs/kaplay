@@ -29,6 +29,8 @@
  * k.onKeyPress(...)
  * k.vec2(...)
  * ```
+ *
+ * @group Start
  */
 declare function kaboom<T extends PluginList<unknown> = [undefined]>(
     options?: KaboomOpt<T>,
@@ -36,14 +38,14 @@ declare function kaboom<T extends PluginList<unknown> = [undefined]>(
 
 /**
  * Context handle that contains every kaboom function.
+ *
+ * @group Start
  */
 export interface KaboomCtx {
     /**
 	 * Assemble a game object from a list of components, and add it to the game
 	 *
 	 * @returns The added game object that contains all properties and methods each component offers.
-	 *
-	 * @section Game Obj
 	 *
 	 * @example
 	 * ```js
@@ -82,6 +84,8 @@ export interface KaboomCtx {
 	 *     destroy(player)
 	 * })
 	 * ```
+     *
+     * @group Game Obj
 	 */
     add<T>(comps?: CompList<T> | GameObj<T>): GameObj<T>;
     /**
@@ -101,6 +105,8 @@ export interface KaboomCtx {
 	 *     children(label),
 	 * ])
 	 * ```
+     *
+     * @group Game Obj
 	 */
     make<T>(comps?: CompList<T>): GameObj<T>;
     /**
@@ -140,6 +146,8 @@ export interface KaboomCtx {
      * 		readd(purpleBean)
      * })
      * ```
+     *
+     * @group Game Obj
      */
     readd(obj: GameObj): void;
     /**
@@ -156,6 +164,8 @@ export interface KaboomCtx {
      * // Recursively get all children and descendents
      * const allObjs = get("*", { recursive: true })
      * ```
+     *
+     * @group Game Obj
      */
     get(tag: Tag | Tag[], opts?: GetOpt): GameObj[];
     /**
@@ -168,6 +178,8 @@ export interface KaboomCtx {
      *     destroy(fruit)
      * })
      * ```
+     *
+     * @group Game Obj
      */
     destroy(obj: GameObj): void;
     /**
@@ -180,12 +192,12 @@ export interface KaboomCtx {
      *     destroyAll("bomb")
      * })
      * ```
+     *
+     * @group Game Obj
      */
     destroyAll(tag: Tag): void;
     /**
      * Position
-     *
-     * @section Components
      *
      * @example
      * ```js
@@ -195,6 +207,8 @@ export interface KaboomCtx {
      *     sprite("bean"),
      * ])
      * ```
+     *
+     * @group Components
      */
     pos(x: number, y: number): PosComp;
     pos(xy: number): PosComp;
@@ -202,6 +216,8 @@ export interface KaboomCtx {
     pos(): PosComp;
     /**
      * Scale.
+     *
+     * @group Components
      */
     scale(x: number, y: number): ScaleComp;
     scale(xy: number): ScaleComp;
@@ -225,10 +241,14 @@ export interface KaboomCtx {
      * bean.scale = vec2(2,4)
      *
      * ```
+     *
+     * @group Components
      */
     scale(): ScaleComp;
     /**
      * Rotation (in degrees).
+     *
+     * @group Components
      */
     rotate(a: number): RotateComp;
     /**
@@ -242,6 +262,8 @@ export interface KaboomCtx {
      *     color(0, 0, 255)
      * ])
      * ```
+     *
+     * @group Components
      */
     color(r: number, g: number, b: number): ColorComp;
     color(c: Color): ColorComp;
@@ -250,6 +272,8 @@ export interface KaboomCtx {
     color(): ColorComp;
     /**
      * Sets opacity (0.0 - 1.0).
+     *
+     * @group Components
      */
     opacity(o?: number): OpacityComp;
     /**
@@ -277,6 +301,8 @@ export interface KaboomCtx {
      * // manually setting a frame
      * bean.frame = 3
      * ```
+     *
+     * @group Components
      */
     sprite(spr: string | SpriteData, options?: SpriteCompOpt): SpriteComp;
     /**
@@ -306,12 +332,14 @@ export interface KaboomCtx {
      *     }),
      * ])
      * ```
+     *
+     * @group Components
      */
     text(txt: string, options?: TextCompOpt): TextComp;
     /**
      * Render as a polygon.
      *
-     * @since v3000.2
+     * @since v3001.0
      *
      * @example
      * ```js
@@ -322,6 +350,8 @@ export interface KaboomCtx {
      *     outline(4),
      *     area(),
      * ])
+     *
+     * @group Components
      * ```
      */
     polygon(pts: Vec2[], opt?: PolygonCompOpt): PolygonComp;
@@ -330,14 +360,15 @@ export interface KaboomCtx {
      *
      * @example
      * ```js
-     * // i don't know, could be an obstacle or something
-     * add([
+     * const obstacle = add([
      *     pos(80, 120),
      *     rect(20, 40),
      *     outline(4),
      *     area(),
      * ])
      * ```
+     *
+     * @group Components
      */
     rect(w: number, h: number, opt?: RectCompOpt): RectComp;
     /**
@@ -350,6 +381,8 @@ export interface KaboomCtx {
      *     circle(16),
      * ])
      * ```
+     *
+     * @group Components
      */
     circle(radius: number): CircleComp;
     /**
@@ -362,6 +395,8 @@ export interface KaboomCtx {
      *     shader("spiral"),
      * ])
      * ```
+     *
+     * @group Components
      */
     uvquad(w: number, h: number): UVQuadComp;
     /**
@@ -388,6 +423,8 @@ export interface KaboomCtx {
      *     }
      * })
      * ```
+     *
+     * @group Components
      */
     area(): AreaComp;
     /**
@@ -409,6 +446,8 @@ export interface KaboomCtx {
      *     area({ shape: new Polygon([vec2(0), vec2(100), vec2(-100, 100)]) }),
      * ])
      * ```
+     *
+     * @group Components
      */
     area(options: AreaCompOpt): AreaComp;
     /**
@@ -423,14 +462,20 @@ export interface KaboomCtx {
      *     anchor("center"),
      * ])
      * ```
+     *
+     * @group Components
      */
     anchor(o: Anchor | Vec2): AnchorComp;
     /**
      * Determines the draw order for objects on the same layer. Object will be drawn on top if z value is bigger.
+     *
+     * @group Components
      */
     z(z: number): ZComp;
     /**
      * Give obj an outline.
+     *
+     * @group Components
      */
     outline(width?: number, color?: Color): OutlineComp;
     /**
@@ -460,12 +505,15 @@ export interface KaboomCtx {
      *     debug.log("oh no!")
      * })
      * ```
+     *
+     * @group Components
      */
     body(options?: BodyCompOpt): BodyComp;
     /**
      * Enables double jump. Requires "body" component.
      *
      * @since v3000.0
+     * @group Components
      */
     doubleJump(numJumps?: number): DoubleJumpComp;
     /**
@@ -482,6 +530,8 @@ export interface KaboomCtx {
      *     offscreen({ destroy: true }),
      * ])
      * ```
+     *
+     * @group Components
      */
     move(direction: number | Vec2, speed: number): EmptyComp;
     /**
@@ -498,14 +548,20 @@ export interface KaboomCtx {
      *     "projectile",
      * ])
      * ```
+     *
+     * @group Components
      */
     offscreen(opt?: OffScreenCompOpt): OffScreenComp;
     /**
      * Follow another game obj's position.
+     *
+     * @group Components
      */
     follow(obj: GameObj | null, offset?: Vec2): FollowComp;
     /**
      * Custom shader.
+     *
+     * @group Components
      */
     shader(id: string, uniform?: Uniform | (() => Uniform)): ShaderComp;
     /**
@@ -521,6 +577,8 @@ export interface KaboomCtx {
      * obj.loop(0.5, () => { ... })
      * obj.tween(obj.pos, mousePos(), 0.5, (p) => obj.pos = p, easings.easeOutElastic)
      * ```
+     *
+     * @group Components
      */
     timer(): TimerComp;
     /**
@@ -535,6 +593,8 @@ export interface KaboomCtx {
      *     fixed(),
      * ])
      * ```
+     *
+     * @group Components
      */
     fixed(): FixedComp;
     /**
@@ -552,6 +612,8 @@ export interface KaboomCtx {
      *     go("lose", score)
      * })
      * ```
+     *
+     * @group Components
      */
     stay(scenesToStay?: string[]): StayComp;
     /**
@@ -582,6 +644,8 @@ export interface KaboomCtx {
      *     go("lose")
      * })
      * ```
+     *
+     * @group Components
      */
     health(hp: number, maxHP?: number): HealthComp;
     /**
@@ -595,6 +659,8 @@ export interface KaboomCtx {
      *     lifespan(1, { fade: 0.5 }),
      * ])
      * ```
+     *
+     * @group Components
      */
     lifespan(time: number, options?: LifespanCompOpt): EmptyComp;
     /**
@@ -634,6 +700,8 @@ export interface KaboomCtx {
      *     }
      * })
      * ```
+     *
+     * @group Components
      */
     state(
         initialState: string,
@@ -661,6 +729,8 @@ export interface KaboomCtx {
      *     checkHit(enemy, player)
      * })
      * ```
+     *
+     * @group Components
      */
     state(
         initialState: string,
@@ -671,13 +741,16 @@ export interface KaboomCtx {
      * Fade object in.
      *
      * Uses opacity for finding what to fade into and to set opacity during fade animation.
+     *
      * @since v3000.0
+     * @group Components
      */
     fadeIn(time: number): Comp;
     /**
      * Mask all children object render.
      *
-     * @since v3000.2
+     * @since v3001.0
+     * @group Components
      */
     mask(maskType?: Mask): MaskComp;
     drawon(canvas: FrameBuffer): Comp;
@@ -685,19 +758,22 @@ export interface KaboomCtx {
      * A tile on a tile map.
      *
      * @since v3000.0
+     * @group Components
      */
     tile(opt: TileCompOpt): TileComp;
     /**
      * An agent which can finds it way on a tilemap.
      *
      * @since v3000.0
+     * @group Components
      */
     agent(opt?: AgentCompOpt): AgentComp;
+    /**
+     * @group Components
+     */
     raycast(origin: Vec2, direction: Vec2, exclude?: string[]): RaycastResult;
     /**
      * Register an event on all game objs with certain tag.
-     *
-     * @section Events
      *
      * @example
      * ```js
@@ -722,6 +798,7 @@ export interface KaboomCtx {
      * })
      *
      * ```
+     * @group Events
      */
     on(
         event: string,
@@ -744,6 +821,7 @@ export interface KaboomCtx {
      *     }
      * })
      * ```
+     * @group Events
      */
     onUpdate(tag: Tag, action: (obj: GameObj) => void): EventController;
     /**
@@ -758,12 +836,14 @@ export interface KaboomCtx {
      *     debug.log("ohhi")
      * })
      * ```
+     * @group Events
      */
     onUpdate(action: () => void): EventController;
     /**
      * Register an event that runs every frame (~60 times per second) for all game objs with certain tag (this is the same as onUpdate but all draw events are run after update events, drawXXX() functions only work in this phase).
      *
      * @since v2000.1
+     * @group Events
      */
     onDraw(tag: Tag, action: (obj: GameObj) => void): EventController;
     /**
@@ -781,11 +861,24 @@ export interface KaboomCtx {
      *     })
      * })
      * ```
+     * @group Events
      */
     onDraw(action: () => void): EventController;
+    /**
+     * @group Events
+     */
     onAdd(tag: Tag, action: (obj: GameObj) => void): EventController;
+    /**
+     * @group Events
+     */
     onAdd(action: (obj: GameObj) => void): EventController;
+    /**
+     * @group Events
+     */
     onDestroy(tag: Tag, action: (obj: GameObj) => void): EventController;
+    /**
+     * @group Events
+     */
     onDestroy(action: (obj: GameObj) => void): EventController;
     /**
      * Register an event that runs when all assets finished loading.
@@ -803,42 +896,49 @@ export interface KaboomCtx {
      *     debug.log(bean.width)
      * })
      * ```
+     * @group Events
      */
     onLoad(action: () => void): void;
     /**
      * Register an event that runs every frame when assets are initially loading. Can be used to draw a custom loading screen.
      *
      * @since v3000.0
+     * @group Events
      */
     onLoading(action: (progress: number) => void): void;
     /**
      * Register a custom error handler. Can be used to draw a custom error screen.
      *
      * @since v3000.0
+     * @group Events
      */
     onError(action: (err: Error) => void): void;
     /**
      * Register an event that runs when the canvas resizes.
      *
      * @since v3000.0
+     * @group Events
      */
     onResize(action: () => void): void;
     /**
      * Cleanup function to run when quit() is called.
      *
      * @since v3000.0
+     * @group Events
      */
     onCleanup(action: () => void): void;
     /**
      * Register an event that runs when a gamepad is connected.
      *
      * @since v3000.0
+     * @group Events
      */
     onGamepadConnect(action: (gamepad: KGamePad) => void): void;
     /**
      * Register an event that runs when a gamepad is disconnected.
      *
      * @since v3000.0
+     * @group Events
      */
     onGamepadDisconnect(action: (gamepad: KGamePad) => void): void;
     /**
@@ -852,6 +952,7 @@ export interface KaboomCtx {
      *     addExplosion()
      * })
      * ```
+     * @group Events
      */
     onCollide(
         t1: Tag,
@@ -869,6 +970,8 @@ export interface KaboomCtx {
      *     runWorldEndTimer()
      * })
      * ```
+     *
+     * @group Events
      */
     onCollideUpdate(
         t1: Tag,
@@ -886,6 +989,8 @@ export interface KaboomCtx {
      *     worldEnd()
      * })
      * ```
+     *
+     * @group Events
      */
     onCollideEnd(
         t1: Tag,
@@ -902,6 +1007,8 @@ export interface KaboomCtx {
      * // click on any "chest" to open
      * onClick("chest", (chest) => chest.open())
      * ```
+     *
+     * @group Events
      */
     onClick(tag: Tag, action: (a: GameObj) => void): EventController;
     /**
@@ -914,24 +1021,29 @@ export interface KaboomCtx {
      * // click on anywhere to go to "game" scene
      * onClick(() => go("game"))
      * ```
+     *
+     * @group Events
      */
     onClick(action: () => void): EventController;
     /**
      * Register an event that runs once when game objs with certain tags are hovered (required to have area() component).
      *
      * @since v3000.0
+     * @group Events
      */
     onHover(tag: Tag, action: (a: GameObj) => void): EventController;
     /**
      * Register an event that runs every frame when game objs with certain tags are hovered (required to have area() component).
      *
      * @since v3000.0
+     * @group Events
      */
     onHoverUpdate(tag: Tag, onHover: (a: GameObj) => void): EventController;
     /**
      * Register an event that runs once when game objs with certain tags are unhovered (required to have area() component).
      *
      * @since v3000.0
+     * @group Events
      */
     onHoverEnd(tag: Tag, action: (a: GameObj) => void): EventController;
     /**
@@ -946,12 +1058,14 @@ export interface KaboomCtx {
      *     bean.move(-SPEED, 0)
      * })
      * ```
+     * @group Events
      */
     onKeyDown(key: Key, action: (key: Key) => void): EventController;
     /**
      * Register an event that runs every frame when any key is held down.
      *
      * @since v2000.1
+     * @group Events
      */
     onKeyDown(action: (key: Key) => void): EventController;
     /**
@@ -966,6 +1080,7 @@ export interface KaboomCtx {
      *     bean.jump()
      * })
      * ```
+     * @group Events
      */
     onKeyPress(key: Key, action: (key: Key) => void): EventController;
     /**
@@ -980,6 +1095,7 @@ export interface KaboomCtx {
      *     restart()
      * })
      * ```
+     * @group Events
      */
     onKeyPress(action: (key: Key) => void): EventController;
     /**
@@ -994,6 +1110,7 @@ export interface KaboomCtx {
      *     input.text = input.text.substring(0, input.text.length - 1)
      * })
      * ```
+     * @group Events
      */
     onKeyPressRepeat(k: Key, action: (k: Key) => void): EventController;
     onKeyPressRepeat(action: (k: Key) => void): EventController;
@@ -1001,6 +1118,7 @@ export interface KaboomCtx {
      * Register an event that runs when user releases certain key.
      *
      * @since v2000.1
+     * @group Events
      */
     onKeyRelease(k: Key, action: (k: Key) => void): EventController;
     onKeyRelease(action: (k: Key) => void): EventController;
@@ -1016,12 +1134,14 @@ export interface KaboomCtx {
      *     input.text += ch
      * })
      * ```
+     * @group Events
      */
     onCharInput(action: (ch: string) => void): EventController;
     /**
      * Register an event that runs every frame when a mouse button is being held down.
      *
      * @since v2000.1
+     * @group Events
      */
     onMouseDown(action: (m: MouseButton) => void): EventController;
     onMouseDown(
@@ -1032,6 +1152,7 @@ export interface KaboomCtx {
      * Register an event that runs when user clicks mouse.
      *
      * @since v2000.1
+     * @group Events
      */
     onMousePress(action: (m: MouseButton) => void): EventController;
     onMousePress(
@@ -1042,6 +1163,7 @@ export interface KaboomCtx {
      * Register an event that runs when user releases mouse.
      *
      * @since v2000.1
+     * @group Events
      */
     onMouseRelease(action: (m: MouseButton) => void): EventController;
     onMouseRelease(
@@ -1052,48 +1174,56 @@ export interface KaboomCtx {
      * Register an event that runs whenever user move the mouse.
      *
      * @since v2000.1
+     * @group Events
      */
     onMouseMove(action: (pos: Vec2, delta: Vec2) => void): EventController;
     /**
      * Register an event that runs when a touch starts.
      *
      * @since v2000.1
+     * @group Events
      */
     onTouchStart(action: (pos: Vec2, t: Touch) => void): EventController;
     /**
      * Register an event that runs whenever touch moves.
      *
      * @since v2000.1
+     * @group Events
      */
     onTouchMove(action: (pos: Vec2, t: Touch) => void): EventController;
     /**
      * Register an event that runs when a touch ends.
      *
      * @since v2000.1
+     * @group Events
      */
     onTouchEnd(action: (pos: Vec2, t: Touch) => void): EventController;
     /**
      * Register an event that runs when mouse wheel scrolled.
      *
      * @since v3000.0
+     * @group Events
      */
     onScroll(action: (delta: Vec2) => void): EventController;
     /**
      * Register an event that runs when tab is hidden.
      *
-     * @since v3000.2
+     * @since v3001.0
+     * @group Events
      */
     onHide(action: () => void): EventController;
     /**
      * Register an event that runs when tab is shown.
      *
-     * @since v3000.2
+     * @since v3001.0
+     * @group Events
      */
     onShow(action: () => void): EventController;
     /**
      * Register an event that runs every frame when certain gamepad button is held down.
      *
      * @since v3000.0
+     * @group Events
      */
     onGamepadButtonDown(
         btn: GamepadButton,
@@ -1103,6 +1233,7 @@ export interface KaboomCtx {
      * Register an event that runs every frame when any gamepad button is held down.
      *
      * @since v3000.0
+     * @group Events
      */
     onGamepadButtonDown(
         action: (btn: GamepadButton) => GamepadButton,
@@ -1111,6 +1242,7 @@ export interface KaboomCtx {
      * Register an event that runs when user presses certain gamepad button.
      *
      * @since v3000.0
+     * @group Events
      */
     onGamepadButtonPress(
         btn: GamepadButton,
@@ -1120,6 +1252,7 @@ export interface KaboomCtx {
      * Register an event that runs when user presses any gamepad button.
      *
      * @since v3000.0
+     * @group Events
      */
     onGamepadButtonPress(
         action: (btn: GamepadButton) => GamepadButton,
@@ -1128,6 +1261,7 @@ export interface KaboomCtx {
      * Register an event that runs when user releases any gamepad button.
      *
      * @since v3000.0
+     * @group Events
      */
     onGamepadButtonRelease(
         btn: GamepadButton,
@@ -1137,6 +1271,7 @@ export interface KaboomCtx {
      * Register an event that runs when user releases certain gamepad button.
      *
      * @since v3000.0
+     * @group Events
      */
     onGamepadButtonRelease(
         action: (btn: GamepadButton) => void,
@@ -1145,6 +1280,7 @@ export interface KaboomCtx {
      * Register an event that runs when the gamepad axis exists.
      *
      * @since v3000.0
+     * @group Events
      */
     onGamepadStick(
         stick: GamepadStick,
@@ -1154,18 +1290,19 @@ export interface KaboomCtx {
      * Register an event that runs when current scene ends.
      *
      * @since v3000.0
+     * @group Events
      */
     onSceneLeave(action: (newScene?: string) => void): EventController;
     /**
      * Sets the root for all subsequent resource urls.
-     *
-     * @section Assets
      *
      * @example
      * ```js
      * loadRoot("https://myassets.com/")
      * loadSprite("bean", "sprites/bean.png") // will resolve to "https://myassets.com/sprites/bean.png"
      * ```
+     *
+     * @group Assets
      */
     loadRoot(path?: string): string;
     /**
@@ -1193,6 +1330,8 @@ export interface KaboomCtx {
      *     },
      * })
      * ```
+     *
+     * @group Assets
      */
     loadSprite(
         name: string | null,
@@ -1226,6 +1365,8 @@ export interface KaboomCtx {
      *
      * player.play("run")
      * ```
+     *
+     * @group Assets
      */
     loadSpriteAtlas(
         src: LoadSpriteSrc,
@@ -1245,6 +1386,8 @@ export interface KaboomCtx {
      *
      * player.play("run")
      * ```
+     *
+     * @group Assets
      */
     loadSpriteAtlas(
         src: LoadSpriteSrc,
@@ -1257,12 +1400,17 @@ export interface KaboomCtx {
      * ```js
      * loadAseprite("car", "sprites/car.png", "sprites/car.json")
      * ```
+     *
+     * @group Assets
      */
     loadAseprite(
         name: string | null,
         imgSrc: LoadSpriteSrc,
         jsonSrc: string | AsepriteData,
     ): Asset<SpriteData>;
+    /**
+     * @group Assets
+     */
     loadPedit(name: string | null, src: string): Asset<SpriteData>;
     /**
      * Load default sprite "bean".
@@ -1276,12 +1424,15 @@ export interface KaboomCtx {
      *     sprite("bean"),
      * ])
      * ```
+     *
+     * @group Assets
      */
     loadBean(name?: string): Asset<SpriteData>;
     /**
      * Load custom JSON data from url.
      *
      * @since v3000.0
+     * @group Assets
      */
     loadJSON(name: string | null, url: string): Asset<any>;
     /**
@@ -1293,6 +1444,8 @@ export interface KaboomCtx {
      * loadSound("shoot", "/sounds/squeeze.mp3")
      * loadSound("shoot", "/sounds/shoot.wav")
      * ```
+     *
+     * @group Assets
      */
     loadSound(
         name: string | null,
@@ -1305,6 +1458,7 @@ export interface KaboomCtx {
      * ```js
      * loadMusic("shoot", "/music/bossfight.mp3")
      * ```
+     * @group Assets
      */
     loadMusic(
         name: string | null,
@@ -1320,6 +1474,7 @@ export interface KaboomCtx {
      * // load a font from a .ttf file
      * loadFont("frogblock", "fonts/frogblock.ttf")
      * ```
+     * @group Assets
      */
     loadFont(
         name: string,
@@ -1340,6 +1495,8 @@ export interface KaboomCtx {
      * // load a font with custom characters
      * loadBitmapFont("myfont", "myfont.png", 6, 8, { chars: "☺☻♥♦♣♠" })
      * ```
+     *
+     * @group Assets
      */
     loadBitmapFont(
         name: string | null,
@@ -1364,6 +1521,8 @@ export interface KaboomCtx {
      *     return def_frag() * vec4(0, 0, 1, 1);
      * }`, false)
      * ```
+     *
+     * @group Assets
      */
     loadShader(
         name: string | null,
@@ -1380,6 +1539,8 @@ export interface KaboomCtx {
      * // load only a fragment shader from URL
      * loadShader("outline", null, "/shaders/outline.glsl", true)
      * ```
+     *
+     * @group Assets
      */
     loadShaderURL(
         name: string | null,
@@ -1396,61 +1557,83 @@ export interface KaboomCtx {
      *     resolve("ok")
      * }))
      * ```
+     *
+     * @group Assets
      */
     load<T>(l: Promise<T>): Asset<T>;
     /**
      * Get the global asset loading progress (0.0 - 1.0).
      *
      * @since v3000.0
+     * @group Assets
      */
     loadProgress(): number;
     /**
      * Get SpriteData from name.
      *
      * @since v3000.0
+     * @group Assets
      */
     getSprite(name: string): Asset<SpriteData> | void;
     /**
      * Get SoundData from name.
      *
      * @since v3000.0
+     * @group Assets
      */
     getSound(name: string): Asset<SoundData> | void;
     /**
      * Get FontData from name.
      *
      * @since v3000.0
+     * @group Assets
      */
     getFont(name: string): Asset<FontData> | void;
     /**
      * Get BitmapFontData from name.
      *
      * @since v3000.0
+     * @group Assets
      */
     getBitmapFont(name: string): Asset<BitmapFontData> | void;
     /**
      * Get ShaderData from name.
      *
      * @since v3000.0
+     * @group Assets
      */
     getShader(name: string): Asset<ShaderData> | void;
     /**
      * Get custom data from name.
      *
      * @since v3000.0
+     * @group Assets
      */
     getAsset(name: string): Asset<any> | void;
+    /**
+     * The asset data.
+     * @group Assets
+     */
     Asset: typeof Asset;
+    /**
+     * The sprite data.
+     * @group Assets
+     */
     SpriteData: typeof SpriteData;
+    /**
+     * @group Assets
+     */
     SoundData: typeof SoundData;
     /**
      * Get the width of game.
      *
-     * @section Info
+     * @group Info
      */
     width(): number;
     /**
      * Get the height of game.
+     *
+     * @group Info
      */
     height(): number;
     /**
@@ -1465,6 +1648,8 @@ export interface KaboomCtx {
      *     // ...
      * ])
      * ```
+     *
+     * @group Info
      */
     center(): Vec2;
     /**
@@ -1477,30 +1662,40 @@ export interface KaboomCtx {
      *     bean.angle += 100 * dt()
      * })
      * ```
+     *
+     * @group Info
      */
     dt(): number;
     /**
      * Get the total time since beginning.
+     *
+     * @group Info
      */
     time(): number;
     /**
      * If the game canvas is currently focused.
      *
      * @since v2000.1
+     * @group Info
      */
     isFocused(): boolean;
     /**
      * Is currently on a touch screen device.
      *
      * @since v3000.0
+     * @group Info
      */
     isTouchscreen(): boolean;
     /**
      * Get current mouse position (without camera transform).
+     *
+     * @group Info
      */
     mousePos(): Vec2;
     /**
      * How much mouse moved last frame.
+     *
+     * @group Info
      */
     mouseDeltaPos(): Vec2;
     /**
@@ -1517,78 +1712,91 @@ export interface KaboomCtx {
      *     }
      * })
      * ```
+     * @group Info
      */
     isKeyDown(k?: Key): boolean;
     /**
      * If certain key is just pressed last frame.
      *
      * @since v2000.1
+     * @group Info
      */
     isKeyPressed(k?: Key): boolean;
     /**
      * If certain key is just pressed last frame (also fires repeatedly when the key is being held down).
      *
      * @since v2000.1
+     * @group Info
      */
     isKeyPressedRepeat(k?: Key): boolean;
     /**
      * If certain key is just released last frame.
      *
      * @since v2000.1
+     * @group Info
      */
     isKeyReleased(k?: Key): boolean;
     /**
      * If a mouse button is currently down.
      *
      * @since v2000.1
+     * @group Info
      */
     isMouseDown(button?: MouseButton): boolean;
     /**
      * If a mouse button is just clicked last frame.
      *
      * @since v2000.1
+     * @group Info
      */
     isMousePressed(button?: MouseButton): boolean;
     /**
      * If a mouse button is just released last frame.
      *
      * @since v2000.1
+     * @group Info
      */
     isMouseReleased(button?: MouseButton): boolean;
     /**
      * If mouse moved last frame.
      *
      * @since v2000.1
+     * @group Info
      */
     isMouseMoved(): boolean;
     /**
      * If a gamepad button is just pressed last frame
      *
      * @since v3000.0
+     * @group Info
      */
     isGamepadButtonPressed(btn?: GamepadButton): boolean;
     /**
      * If a gamepad button is currently held down.
      *
      * @since v3000.0
+     * @group Info
      */
     isGamepadButtonDown(btn?: GamepadButton): boolean;
     /**
      * If a gamepad button is just released last frame.
      *
      * @since v3000.0
+     * @group Info
      */
     isGamepadButtonReleased(btn?: GamepadButton): boolean;
     /**
      * Get stick axis values from a gamepad.
      *
-     * @since v3000.2
+     * @since v3001.0
+     * @group Info
      */
     getGamepadStick(stick: GamepadStick): Vec2;
     /**
      * List of characters inputted since last frame.
      *
      * @since v3000.0
+     * @group Info
      */
     charInputted(): string[];
     /**
@@ -1601,6 +1809,8 @@ export interface KaboomCtx {
      *     shake(120)
      * })
      * ```
+     *
+     * @group Info
      */
     shake(intensity: number): void;
     /**
@@ -1613,49 +1823,68 @@ export interface KaboomCtx {
      *     camPos(player.pos)
      * })
      * ```
+     *
+     * @group Info
      */
     camPos(pos: Vec2): Vec2;
     camPos(x: number, y: number): Vec2;
     camPos(): Vec2;
     /**
      * Get / set camera scale.
+     *
+     * @group Info
      */
     camScale(scale: Vec2): Vec2;
     camScale(x: number, y: number): Vec2;
     camScale(): Vec2;
     /**
      * Get / set camera rotation.
+     *
+     * @group Info
      */
     camRot(angle?: number): number;
     /**
      * Transform a point from world position to screen position.
+     *
+     * @group Info
      */
     toScreen(p: Vec2): Vec2;
     /**
      * Transform a point from screen position to world position.
+     *
+     * @group Info
      */
     toWorld(p: Vec2): Vec2;
     /**
      * Set gravity.
+     *
+     * @group Info
      */
     setGravity(g: number): void;
     /**
      * Get gravity.
+     *
+     * @group Info
      */
     getGravity(): number;
     /**
      * Set background color.
+     *
+     * @group Info
      */
     setBackground(color: Color, alpha?: number): void;
     setBackground(r: number, g: number, b: number, alpha?: number): void;
     /**
      * Get background color.
+     *
+     * @group Info
      */
     getBackground(): Color;
     /**
      * Get connected gamepads.
      *
      * @since v3000.0
+     * @group Info
      */
     getGamepads(): KGamePad[];
     /**
@@ -1669,26 +1898,29 @@ export interface KaboomCtx {
      *     setCursor("pointer")
      * })
      * ```
+     *
+     * @group Info
      */
     setCursor(style: Cursor): void;
     /**
      * Get current cursor style.
      *
      * @since v3000.0
-     * ```
+     * @group Info
      */
     getCursor(): Cursor;
     /**
      * Lock / unlock cursor. Note that you cannot lock cursor within 1 second after user unlocking the cursor with the default unlock gesture (typically the esc key) due to browser policy.
      *
      * @since v3000.0
+     * @group Info
      */
     setCursorLocked(locked: boolean): void;
     /**
      * Get if cursor is currently locked.
      *
      * @since v3000.0
-     * ```
+     * @group Info
      */
     isCursorLocked(): boolean;
     /**
@@ -1701,10 +1933,13 @@ export interface KaboomCtx {
      *     setFullscreen(!isFullscreen())
      * })
      * ```
+     * @group Info
      */
     setFullscreen(f?: boolean): void;
     /**
      * If currently in fullscreen mode.
+     *
+     * @group Info
      */
     isFullscreen(): boolean;
     /**
@@ -1722,6 +1957,7 @@ export interface KaboomCtx {
      * // wait() returns a PromiseLike that can be used with await
      * await wait(1)
      * ```
+     * @group Timer
      */
     wait(n: number, action?: () => void): TimerController;
     /**
@@ -1739,6 +1975,7 @@ export interface KaboomCtx {
      *     ])
      * })
      * ```
+     * @group Timer
      */
     loop(t: number, action: () => void): EventController;
     /**
@@ -1762,6 +1999,8 @@ export interface KaboomCtx {
      * // using the handle to control (check out AudioPlay for more controls / info)
      * music.paused = true
      * music.speed = 1.2
+     *
+     * @group Audio
      * ```
      */
     play(
@@ -1774,7 +2013,9 @@ export interface KaboomCtx {
         options?: AudioPlayOpt,
     ): AudioPlay;
     /**
-     * Yep.
+     * Yep. Plays a burp sound.
+     *
+     * @group Audio
      */
     burp(options?: AudioPlayOpt): AudioPlay;
     /**
@@ -1785,16 +2026,20 @@ export interface KaboomCtx {
      * // makes everything quieter
      * volume(0.5)
      * ```
+     *
+     * @group Audio
      */
     volume(v?: number): number;
     /**
      * Get the underlying browser AudioContext.
+     *
+     * @group Audio
      */
     audioCtx: AudioContext;
     /**
      * Get a random number between 0 - 1.
      *
-     * @section Math
+     * @group Math
      */
     rand(): number;
     /**
@@ -1811,6 +2056,8 @@ export interface KaboomCtx {
      * // a random color
      * rand(rgb(255, 255, 255))
      * ```
+     *
+     * @group Math
      */
     rand<T = RNGValue>(n: T): T;
     /**
@@ -1826,6 +2073,8 @@ export interface KaboomCtx {
      *     pos(width(), rand(0, height())),
      * ])
      * ```
+     *
+     * @group Math
      */
     rand<T = RNGValue>(a: T, b: T): T;
     /**
@@ -1835,6 +2084,8 @@ export interface KaboomCtx {
      * ```js
      * randi(10) // returns 0 to 9
      * ```
+     *
+     * @group Math
      */
     randi(n: number): number;
     /**
@@ -1844,6 +2095,8 @@ export interface KaboomCtx {
      * ```js
      * randi(0, 3) // returns 0, 1, or 2
      * ```
+     *
+     * @group Math
      */
     randi(a: number, b: number): number;
     /**
@@ -1853,6 +2106,8 @@ export interface KaboomCtx {
      * ```js
      * randi() // returns either 0 or 1
      * ```
+     *
+     * @group Math
      */
     randi(): number;
     /**
@@ -1862,6 +2117,8 @@ export interface KaboomCtx {
      * ```js
      * randSeed(Date.now())
      * ```
+     *
+     * @group Math
      */
     randSeed(seed?: number): number;
     /**
@@ -1881,6 +2138,8 @@ export interface KaboomCtx {
      * // move to 150 degrees direction with by length 10
      * player.pos = pos.add(Vec2.fromAngle(150).scale(10))
      * ```
+     *
+     * @group Math
      */
     vec2(x: number, y: number): Vec2;
     vec2(p: Vec2): Vec2;
@@ -1894,20 +2153,26 @@ export interface KaboomCtx {
      * // update the color of the sky to light blue
      * sky.color = rgb(0, 128, 255)
      * ```
+     *
+     * @group Math
      */
     rgb(r: number, g: number, b: number): Color;
     /**
      * Create a color from hex string.
      *
-     * @since v3000.2
+     * @since v3001.0
      *
      * @example
      * ```js
      * sky.color = rgb("#ef6360")
+     *
+     * @group Math
      */
     rgb(hex: string): Color;
     /**
      * Same as rgb(255, 255, 255).
+     *
+     * @group Math
      */
     rgb(): Color;
     /**
@@ -1922,10 +2187,14 @@ export interface KaboomCtx {
      *     obj.color = hsl2rgb(wave(0, 1, time()), 0.6, 0.6)
      * })
      * ```
+     *
+     * @group Math
      */
     hsl2rgb(hue: number, saturation: number, lightness: number): Color;
     /**
      * Rectangle area (0.0 - 1.0).
+     *
+     * @group Math
      */
     quad(x: number, y: number, w: number, h: number): Quad;
     /**
@@ -1936,18 +2205,22 @@ export interface KaboomCtx {
      * // decide the best fruit randomly
      * const bestFruit = choose(["apple", "banana", "pear", "watermelon"])
      * ```
+     *
+     * @group Math
      */
     choose<T>(lst: T[]): T;
     /**
      * Choose multiple random items from a list.
      *
-     * @since v3000.2
+     * @since v3001.0
+     * @group Math
      */
     chooseMultiple<T>(lst: T[], count: number): T[];
     /**
      * Shuffle an array.
      *
-     * @since v3000.2
+     * @since v3001.0
+     * @group Math
      */
     shuffle<T>(lst: T[]): T[];
     /**
@@ -1962,10 +2235,14 @@ export interface KaboomCtx {
      *     }
      * })
      * ```
+     *
+     * @group Math
      */
     chance(p: number): boolean;
     /**
      * Linear interpolation.
+     *
+     * @group Math
      */
     lerp<V extends LerpValue>(from: V, to: V, t: number): V;
     /**
@@ -1981,6 +2258,8 @@ export interface KaboomCtx {
      * // tween() returns a then-able that can be used with await
      * await tween(bean.opacity, 1, 0.5, (val) => bean.opacity = val, easings.easeOutQuad)
      * ```
+     *
+     * @group Math
      */
     tween<V extends LerpValue>(
         from: V,
@@ -1993,10 +2272,13 @@ export interface KaboomCtx {
      * A collection of easing functions for tweening.
      *
      * @since v3000.0
+     * @group Math
      */
     easings: Record<EaseFuncs, EaseFunc>;
     /**
      * Map a value from one range to another range.
+     *
+     * @group Math
      */
     map(
         v: number,
@@ -2007,6 +2289,8 @@ export interface KaboomCtx {
     ): number;
     /**
      * Map a value from one range to another range, and clamp to the dest range.
+     *
+     * @group Math
      */
     mapc(
         v: number,
@@ -2027,6 +2311,8 @@ export interface KaboomCtx {
      *     c.color.b = wave(0, 255, time() + 2)
      * })
      * ```
+     *
+     * @group Math
      */
     wave(
         lo: number,
@@ -2036,74 +2322,136 @@ export interface KaboomCtx {
     ): number;
     /**
      * Convert degrees to radians.
+     *
+     * @group Math
      */
     deg2rad(deg: number): number;
     /**
      * Convert radians to degrees.
+     *
+     * @group Math
      */
     rad2deg(rad: number): number;
     /**
      * Return a value clamped to an inclusive range of min and max.
+     *
+     * @group Math
      */
     clamp(n: number, min: number, max: number): number;
     /**
      * Evaluate the Bezier at the given t
+     *
+     * @group Math
      */
     evaluateBezier(pt1: Vec2, pt2: Vec2, pt3: Vec2, pt4: Vec2, t: number): Vec2;
     /**
      * Check if a line and a point intersect.
+     *
+     * @group Math
      */
     testLinePoint(l: Line, pt: Vec2): boolean;
     /**
      * Check if 2 lines intersects, if yes returns the intersection point.
+     *
+     * @group Math
      */
     testLineLine(l1: Line, l2: Line): Vec2 | null;
     /**
      * Check if a line and a circle intersect.
+     *
+     * @group Math
      */
     testLineCircle(l: Line, circle: Circle): boolean;
     /**
      * Check if 2 rectangle overlaps.
+     *
+     * @group Math
      */
     testRectRect(r1: Rect, r2: Rect): boolean;
     /**
      * Check if a line and a rectangle overlaps.
+     *
+     * @group Math
      */
     testRectLine(r: Rect, l: Line): boolean;
     /**
      * Check if a point is inside a rectangle.
+     *
+     * @group Math
      */
     testRectPoint(r: Rect, pt: Point): boolean;
     /**
      * Check if a circle and polygon intersect linewise.
+     * @group Math
+     */
+    /**
+     * @group Math
      */
     testCirclePolygon(c: Circle, p: Polygon): boolean;
-    isConvex(pts:Vec2[]): boolean;
-    triangulate(pts:Vec2[]): Vec2[][];
+    /**
+     * @group Math
+     */
+    isConvex(pts: Vec2[]): boolean;
+    /**
+     * @group Math
+     */
+    triangulate(pts: Vec2[]): Vec2[][];
+    /**
+     * @group Math
+     */
     Line: typeof Line;
+    /**
+     * @group Math
+     */
     Rect: typeof Rect;
+    /**
+     * @group Math
+     */
     Circle: typeof Circle;
+    /**
+     * @group Math
+     */
     Ellipse: typeof Ellipse;
+    /**
+     * @group Math
+     */
     Polygon: typeof Polygon;
+    /**
+     * @group Math
+     */
     Vec2: typeof Vec2;
+    /**
+     * @group Math
+     */
     Color: typeof Color;
+    /**
+     * @group Math
+     */
     Mat4: typeof Mat4;
+    /**
+     * @group Math
+     */
     Quad: typeof Quad;
+    /**
+     * @group Math
+     */
     RNG: typeof RNG;
     /**
      * Define a scene.
      *
-     * @section Scene
+     * @group Scene
      */
     scene(id: SceneName, def: SceneDef): void;
     /**
      * Go to a scene, passing all rest args to scene callback.
+     *
+     * @group Scene
      */
     go(id: SceneName, ...args: any): void;
     /**
      * Construct a level based on symbols.
      *
-     * @section Level
+     * @group Level
      *
      * @example
      * ```js
@@ -2144,17 +2492,17 @@ export interface KaboomCtx {
     /**
      * Get data from local storage, if not present can set to a default value.
      *
-     * @section Data
+     * @group Data
      */
     getData<T>(key: string, def?: T): T;
     /**
      * Set data from local storage.
+     *
+     * @group Data
      */
     setData(key: string, data: any): void;
     /**
      * Draw a sprite.
-     *
-     * @section Draw
      *
      * @example
      * ```js
@@ -2164,6 +2512,8 @@ export interface KaboomCtx {
      *     frame: 3,
      * })
      * ```
+     *
+     * @group Draw
      */
     drawSprite(options: DrawSpriteOpt): void;
     /**
@@ -2180,6 +2530,8 @@ export interface KaboomCtx {
      *     color: rgb(0, 0, 255),
      * })
      * ```
+     *
+     * @group Draw
      */
     drawText(options: DrawTextOpt): void;
     /**
@@ -2195,6 +2547,8 @@ export interface KaboomCtx {
      *     outline: { color: BLACK, width: 4 },
      * })
      * ```
+     *
+     * @group Draw
      */
     drawRect(options: DrawRectOpt): void;
     /**
@@ -2209,6 +2563,7 @@ export interface KaboomCtx {
      *     color: rgb(0, 0, 255),
      * })
      * ```
+     * @group Draw
      */
     drawLine(options: DrawLineOpt): void;
     /**
@@ -2223,6 +2578,8 @@ export interface KaboomCtx {
      *     color: rgb(0, 0, 255),
      * })
      * ```
+     *
+     * @group Draw
      */
     drawLines(options: DrawLinesOpt): void;
     /**
@@ -2236,6 +2593,8 @@ export interface KaboomCtx {
      *     color: rgb(0, 0, 255),
      * })
      * ```
+     *
+     * @group Draw
      */
     drawCurve(curve: (t: number) => Vec2, opt: DrawCurveOpt): void;
     /**
@@ -2252,6 +2611,8 @@ export interface KaboomCtx {
      *     color: GREEN
      * })
      * ```
+     *
+     * @group Draw
      */
     drawBezier(opt: DrawBezierOpt): void;
     /**
@@ -2267,6 +2628,8 @@ export interface KaboomCtx {
      *     color: rgb(0, 0, 255),
      * })
      * ```
+     *
+     * @group Draw
      */
     drawTriangle(options: DrawTriangleOpt): void;
     /**
@@ -2280,6 +2643,8 @@ export interface KaboomCtx {
      *     color: rgb(255, 255, 0),
      * })
      * ```
+     *
+     * @group Draw
      */
     drawCircle(options: DrawCircleOpt): void;
     /**
@@ -2294,6 +2659,8 @@ export interface KaboomCtx {
      *     color: rgb(255, 255, 0),
      * })
      * ```
+     *
+     * @group Draw
      */
     drawEllipse(options: DrawEllipseOpt): void;
     /**
@@ -2313,10 +2680,14 @@ export interface KaboomCtx {
      *     color: rgb(0, 0, 255),
      * })
      * ```
+     *
+     * @group Draw
      */
     drawPolygon(options: DrawPolygonOpt): void;
     /**
      * Draw a rectangle with UV data.
+     *
+     * @group Draw
      */
     drawUVQuad(options: DrawUVQuadOpt): void;
     /**
@@ -2338,18 +2709,22 @@ export interface KaboomCtx {
      *
      * drawFormattedText(txt)
      * ```
+     *
+     * @group Draw
      */
     drawFormattedText(text: FormattedText): void;
     /**
      * Whatever drawn in content will only be drawn if it's also drawn in mask (mask will not be rendered).
      *
      * @since v3000.0
+     * @group Draw
      */
     drawMasked(content: () => void, mask: () => void): void;
     /**
      * Subtract whatever drawn in content by whatever drawn in mask (mask will not be rendered).
      *
      * @since v3000.0
+     * @group Draw
      */
     drawSubtracted(content: () => void, mask: () => void): void;
     /**
@@ -2370,10 +2745,14 @@ export interface KaboomCtx {
      * // restore the transformation stack to when last pushed
      * popTransform()
      * ```
+     *
+     * @group Draw
      */
     pushTransform(): void;
     /**
      * Pop the topmost transform matrix from the transform stack.
+     *
+     * @group Draw
      */
     popTransform(): void;
     /**
@@ -2389,23 +2768,30 @@ export interface KaboomCtx {
      *     pos: vec2(20, 20),
      * })
      * ```
+     *
+     * @group Draw
      */
     pushTranslate(x: number, y: number): void;
     pushTranslate(p: Vec2): void;
     /**
      * Scale all subsequent draws.
+     *
+     * @group Draw
      */
     pushScale(x: number, y: number): void;
     pushScale(s: number): void;
     pushScale(s: Vec2): void;
     /**
      * Rotate all subsequent draws.
+     *
+     * @group Draw
      */
     pushRotate(angle: number): void;
     /**
      * Apply a transform matrix, ignore all prior transforms.
      *
      * @since v3000.0
+     * @group Draw
      */
     pushMatrix(mat: Mat4): void;
     /**
@@ -2424,6 +2810,8 @@ export interface KaboomCtx {
      *
      * usePostEffect("invert")
      * ```
+     *
+     * @group Draw
      */
     usePostEffect(name: string, uniform?: Uniform | (() => Uniform)): void;
     /**
@@ -2445,12 +2833,15 @@ export interface KaboomCtx {
      *
      * drawFormattedText(txt)
      * ```
+     *
+     * @group Draw
      */
     formatText(options: DrawTextOpt): FormattedText;
     /**
      * Create a canvas to draw stuff offscreen.
      *
-     * @since v3000.2
+     * @since v3001.0
+     * @group Draw
      */
     makeCanvas(w: number, h: number): Canvas;
     /**
@@ -2464,42 +2855,48 @@ export interface KaboomCtx {
      * // enter inspect mode
      * debug.inspect = true
      * ```
+     * @group Draw
      */
     debug: Debug;
     /**
      * Import a plugin.
      *
-     * @section Misc
+     * @group Plugins
      */
     plug<T extends Record<string, any>>(plugin: KaboomPlugin<T>): KaboomCtx & T;
     /**
      * Take a screenshot and get the dataurl of the image.
      *
      * @returns The dataURL of the image.
+     * @group Data
      */
     screenshot(): string;
     /**
      * Trigger a file download from a url.
      *
      * @since v3000.0
+     * @group Data
      */
     download(filename: string, dataurl: string): void;
     /**
      * Trigger a text file download.
      *
      * @since v3000.0
+     * @group Data
      */
     downloadText(filename: string, text: string): void;
     /**
      * Trigger a json download from a .
      *
      * @since v3000.0
+     * @group Data
      */
     downloadJSON(filename: string, data: any): void;
     /**
      * Trigger a file download from a blob.
      *
      * @since v3000.0
+     * @group Data
      */
     downloadBlob(filename: string, blob: Blob): void;
     /**
@@ -2508,70 +2905,131 @@ export interface KaboomCtx {
      * @returns A control handle.
      *
      * @since v2000.1
+     * @group Data
      */
     record(frameRate?: number): Recording;
     /**
      * Add an explosion
+     *
+     * @group Misc
      */
     addKaboom(pos: Vec2, opt?: BoomOpt): GameObj;
     /**
      * All chars in ASCII.
+     *
+     * @group Misc
      */
     ASCII_CHARS: string;
     /**
      * Left directional vector vec2(-1, 0).
+     *
+     * @group Misc
      */
     LEFT: Vec2;
     /**
      * Right directional vector vec2(1, 0).
+     *
+     * @group Misc
      */
     RIGHT: Vec2;
     /**
      * Up directional vector vec2(0, -1).
+     *
+     * @group Misc
      */
     UP: Vec2;
     /**
      * Down directional vector vec2(0, 1).
+     *
+     * @group Misc
      */
     DOWN: Vec2;
+    /**
+     * Red color.
+     *
+     * @group Misc
+     */
     RED: Color;
+    /**
+     * Green color.
+     *
+     * @group Misc
+     */
     GREEN: Color;
+    /**
+     * Blue color.
+     *
+     * @group Misc
+     */
     BLUE: Color;
+    /**
+     * Yellow color.
+     *
+     * @group Misc
+     */
     YELLOW: Color;
+    /**
+     * Cyan color.
+     *
+     * @group Misc
+     */
     MAGENTA: Color;
+    /**
+     * Cyan color.
+     *
+     * @group Misc
+     */
     CYAN: Color;
+    /**
+     * White color.
+     *
+     * @group Misc
+     */
     WHITE: Color;
+    /**
+     * Black color.
+     *
+     * @group Misc
+     */
     BLACK: Color;
     /**
      * The canvas DOM kaboom is currently using.
+     *
+     * @group Misc
      */
     canvas: HTMLCanvasElement;
     /**
      * End everything.
+     *
+     * @group Start
      */
     quit: () => void;
     /**
      * EventHandler for one single event.
      *
      * @since v3000.0
+     * @group Events
      */
     Event: typeof Event;
     /**
      * EventHandler for multiple events.
      *
      * @since v3000.0
+     * @group Events
      */
     EventHandler: typeof EventHandler;
     /**
      * The object that can pause or cancel an event.
      *
      * @since v3000.0
+     * @group Events
      */
     EventController: typeof EventController;
     /**
      * Current Kaboom library version.
      *
      * @since v3000.0
+     * @group Info
      */
     VERSION: string;
 }
@@ -2594,6 +3052,11 @@ export type MergePlugins<T extends PluginList<any>> = MergeObj<
 export type CompList<T> = Array<T | Tag>;
 export type PluginList<T> = Array<T | KaboomPlugin<any>>;
 
+/**
+ * A key.
+ *
+ * @group Input
+ */
 export type Key =
     | "f1"
     | "f2"
@@ -2669,6 +3132,9 @@ export type Key =
     | "down"
     | "shift";
 
+/**
+ * @group Input
+ */
 export type MouseButton =
     | "left"
     | "right"
@@ -2676,6 +3142,9 @@ export type MouseButton =
     | "back"
     | "forward";
 
+/**
+ * @group Input
+ */
 export type GamepadButton =
     | "north"
     | "east"
@@ -2696,6 +3165,9 @@ export type GamepadButton =
     | "home"
     | "capture";
 
+/**
+ * @group Input
+ */
 export type GamepadStick = "left" | "right";
 
 export type GamepadDef = {
@@ -2724,6 +3196,8 @@ export type GameObjInspect = Record<Tag, string | null>;
 
 /**
  * Kaboom configurations.
+ *
+ * @group Start
  */
 export interface KaboomOpt<T extends PluginList<any> = any> {
     /**
@@ -2827,7 +3301,7 @@ export interface KaboomOpt<T extends PluginList<any> = any> {
     /**
      * If focus on the canvas on start (default true).
      *
-     * @since v3000.2
+     * @since v3001.0
      */
     focus?: boolean;
     /**
@@ -2850,6 +3324,8 @@ export type KaboomPlugin<T> = (
 
 /**
  * Base interface of all game objects.
+ *
+ * @group Game Obj
  */
 export interface GameObjRaw {
     /**
@@ -3004,7 +3480,7 @@ export interface GameObjRaw {
     /**
      * The canvas to draw this game object on
      *
-     * @since v3000.2
+     * @since v3001.0
      */
     canvas: FrameBuffer | null;
     onKeyDown(key: Key, action: (key: Key) => void): EventController;
@@ -3282,11 +3758,11 @@ export declare class SpriteData {
     frames: Quad[];
     anims: SpriteAnims;
     /**
-     * @since v3000.2
+     * @since v3001.0
      */
     width: number;
     /**
-     * @since v3000.2
+     * @since v3001.0
      */
     height: number;
     slice9: NineSlice | null;
@@ -3311,7 +3787,7 @@ export interface LoadFontOpt {
     /**
      * The size to load the font in (default 64).
      *
-     * @since v3000.2
+     * @since v3001.0
      */
     size?: number;
 }
@@ -3388,7 +3864,7 @@ export interface AudioPlay {
     /**
      * Stop the sound.
      *
-     * @since v3000.2
+     * @since v3001.0
      */
     stop(): void;
     /**
@@ -3872,7 +4348,7 @@ export type DrawPolygonOpt = RenderProps & {
      *
      * @since v3001.0
      */
-    triangulate?: boolean
+    triangulate?: boolean;
 };
 
 export interface Outline {
@@ -4262,7 +4738,7 @@ export declare class Color {
     /**
      * Convert color into HSL format.
      *
-     * @since v3000.2
+     * @since v3001.0
      */
     toHSL(): [number, number, number];
     toString(): string;
@@ -4275,7 +4751,7 @@ export declare class Color {
     /**
      * Return the color converted to an array.
      *
-     * @since v3000.2
+     * @since v3001.0
      */
     toArray(): Array<number>;
 }
@@ -5055,7 +5531,7 @@ export type PolygonCompOpt = Omit<DrawPolygonOpt, "pts">;
 /**
  * Component to draw a polygon.
  *
- * @since v3000.2
+ * @since v3001.0
  */
 export interface PolygonComp extends Comp {
     draw: Comp["draw"];
@@ -5189,7 +5665,7 @@ export interface Debug {
     /**
      * Get total number of objects.
      *
-     * @since v3000.2
+     * @since v3001.0
      */
     numObjects(): number;
 }
@@ -5215,13 +5691,13 @@ export interface BodyComp extends Comp {
     /**
      * Object current velocity.
      *
-     * @since v3000.2
+     * @since v3001.0
      */
     vel: Vec2;
     /**
      * How much velocity decays (velocity *= (1 - drag) every frame).
      *
-     * @since v3000.2
+     * @since v3001.0
      */
     drag: number;
     /**
@@ -5331,7 +5807,7 @@ export interface BodyCompOpt {
     /**
      * How much velocity decays (velocity *= (1 - drag) every frame).
      *
-     * @since v3000.2
+     * @since v3001.0
      */
     drag?: number;
     /**
