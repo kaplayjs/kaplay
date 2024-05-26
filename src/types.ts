@@ -3541,6 +3541,8 @@ export interface GameObjRaw {
 
 /**
  * The basic unit of object in Kaboom. The player, a butterfly, a tree, or even a piece of text.
+ *
+ * @group Game Obj
  */
 export type GameObj<T = any> = GameObjRaw & MergeComps<T>;
 
