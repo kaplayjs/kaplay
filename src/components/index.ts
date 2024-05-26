@@ -1,5 +1,7 @@
 export * from "./draw/circle";
 export * from "./draw/opacity";
+export * from "./draw/sprite";
+export * from "./draw/text";
 export * from "./misc/health";
 export * from "./physics/area";
 export * from "./transform/anchor";

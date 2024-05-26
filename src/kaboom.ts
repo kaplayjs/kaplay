@@ -26,7 +26,6 @@ import {
     DEF_JUMP_FORCE,
     DEF_OFFSCREEN_DIS,
     DEF_TEXT_CACHE_SIZE,
-    DEF_TEXT_SIZE,
     DEF_VERT,
     FONT_ATLAS_HEIGHT,
     FONT_ATLAS_WIDTH,
@@ -80,7 +79,6 @@ import {
     testLineCircle,
     testLineLine,
     testLinePoint,
-    testPolygonPoint,
     testRectLine,
     testRectPoint,
     testRectRect,
@@ -112,16 +110,13 @@ import {
     Registry,
     runes,
     uid,
-    warn,
 } from "./utils";
 
 import type {
     AgentComp,
     AgentCompOpt,
     Anchor,
-    AnchorComp,
     AreaComp,
-    AreaCompOpt,
     AsepriteData,
     AudioPlay,
     AudioPlayOpt,
@@ -130,8 +125,6 @@ import type {
     BodyCompOpt,
     BoomOpt,
     CharTransform,
-    CircleComp,
-    CircleCompOpt,
     ColorComp,
     Comp,
     CompList,
@@ -159,7 +152,6 @@ import type {
     GameObj,
     GetOpt,
     GfxFont,
-    HealthComp,
     ImageSource,
     InternalCtx,
     KaboomCtx,
@@ -199,24 +191,17 @@ import type {
     SceneName,
     ShaderComp,
     ShaderData,
-    Shape,
-    SpriteAnimPlayOpt,
     SpriteAnims,
     SpriteAtlasData,
-    SpriteComp,
-    SpriteCompOpt,
     StateComp,
     StayComp,
     Tag,
     TexFilter,
     TextAlign,
-    TextComp,
-    TextCompOpt,
     TileComp,
     TileCompOpt,
     TimerComp,
     TimerController,
-    TweenController,
     Uniform,
     UVQuadComp,
     Vec2Args,
@@ -237,8 +222,9 @@ import {
     pos,
     rotate,
     scale,
+    sprite,
+    text,
 } from "./components";
-import { sprite } from "./components/draw/sprite";
 
 // convert anchor string to a vec2 offset
 export function anchorPt(orig: Anchor | Vec2): Vec2 {
@@ -3497,70 +3483,6 @@ export default (gopt: KaboomOpt = {}): KaboomCtx => {
             uniform: obj.uniform,
         };
     }
-
-    function text(t: string, opt: TextCompOpt = {}): TextComp {
-        function update(obj: GameObj<TextComp | any>) {
-            const ftext = formatText(Object.assign(getRenderProps(obj), {
-                text: obj.text + "",
-                size: obj.textSize,
-                font: obj.font,
-                width: opt.width && obj.width,
-                align: obj.align,
-                letterSpacing: obj.letterSpacing,
-                lineSpacing: obj.lineSpacing,
-                // TODO: shouldn't run when object / ancestor is paused
-                transform: obj.textTransform,
-                styles: obj.textStyles,
-            }));
-
-            if (!opt.width) {
-                obj.width = ftext.width / (obj.scale?.x || 1);
-            }
-
-            obj.height = ftext.height / (obj.scale?.y || 1);
-
-            return ftext;
-        }
-
-        const obj = {
-            id: "text",
-            set text(nt) {
-                t = nt;
-                // @ts-ignore
-                update(this);
-            },
-            get text() {
-                return t;
-            },
-            textSize: opt.size ?? DEF_TEXT_SIZE,
-            font: opt.font,
-            width: opt.width ?? 0,
-            height: 0,
-            align: opt.align,
-            lineSpacing: opt.lineSpacing,
-            letterSpacing: opt.letterSpacing,
-            textTransform: opt.transform,
-            textStyles: opt.styles,
-
-            add(this: GameObj<TextComp>) {
-                onLoad(() => update(this));
-            },
-
-            draw(this: GameObj<TextComp>) {
-                drawFormattedText(update(this));
-            },
-
-            renderArea() {
-                return new Rect(vec2(0), this.width, this.height);
-            },
-        };
-
-        // @ts-ignore
-        update(obj);
-
-        return obj;
-    }
-
     function polygon(pts: Vec2[], opt: PolygonCompOpt = {}): PolygonComp {
         if (pts.length < 3) {
             throw new Error(
