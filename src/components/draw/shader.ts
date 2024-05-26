@@ -18,7 +18,7 @@ export function shader(
                 uniform: uniform,
             }),
         inspect() {
-            return `shader(${id})`
+            return `shader: ${id}`
         },
     };
 }
