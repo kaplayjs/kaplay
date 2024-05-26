@@ -3,14 +3,13 @@
     "noEmit": true,
     "allowJs": true,
     "esModuleInterop": true,
-    "target": "esnext",
-    "moduleResolution": "node",
+    "target": "ESNext",
+    "moduleResolution": "Node",
     "noImplicitThis": false,
     "resolveJsonModule": true,
-    "baseUrl": "./",
     "paths": {
       "@/*": [
-        "src/*"
+        "./src/*"
       ],
     }
   },

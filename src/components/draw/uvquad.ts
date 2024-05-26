@@ -1,6 +1,6 @@
 import { getInternalContext, getKaboomContext } from "@/kaboom";
-import { vec2 } from "@/math";
-import { GameObj, Rect, UVQuadComp } from "@/types";
+import { Rect, vec2 } from "@/math";
+import type { GameObj, UVQuadComp } from "@/types";
 
 export function uvquad(w: number, h: number): UVQuadComp {
     const k = getKaboomContext(this);

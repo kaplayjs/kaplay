@@ -10,8 +10,6 @@ import {
 } from "@/types";
 
 export function timer(): TimerComp {
-    const k = getKaboomContext(this);
-
     return {
         id: "timer",
         wait(
@@ -19,6 +17,7 @@ export function timer(): TimerComp {
             time: number,
             action?: () => void,
         ): TimerController {
+            const k = getKaboomContext(this);
             const actions = [];
             if (action) actions.push(action);
             let t = 0;
@@ -72,6 +71,7 @@ export function timer(): TimerComp {
             setValue: (value: V) => void,
             easeFunc = easings.linear,
         ) {
+            const k = getKaboomContext(this);
             let curTime = 0;
             const onEndEvents: Array<() => void> = [];
             const ev = this.onUpdate(() => {

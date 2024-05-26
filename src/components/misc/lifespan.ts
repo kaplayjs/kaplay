@@ -1,7 +1,6 @@
 import easings from "@/easings";
 import { getKaboomContext } from "@/kaboom";
 import { EmptyComp, GameObj, LifespanCompOpt, OpacityComp } from "@/types";
-import { wait } from "scripts/lib";
 
 export function lifespan(time: number, opt: LifespanCompOpt = {}): EmptyComp {
     const k = getKaboomContext(this);
@@ -14,7 +13,7 @@ export function lifespan(time: number, opt: LifespanCompOpt = {}): EmptyComp {
         id: "lifespan",
         require: ["opacity"],
         async add(this: GameObj<OpacityComp>) {
-            await wait(time);
+            await k.wait(time);
             this.opacity = this.opacity ?? 1;
             if (fade > 0) {
                 await k.tween(
