@@ -26,7 +26,6 @@ import {
     DEF_JUMP_FORCE,
     DEF_OFFSCREEN_DIS,
     DEF_TEXT_CACHE_SIZE,
-    DEF_TEXT_SIZE,
     DEF_VERT,
     FONT_ATLAS_HEIGHT,
     FONT_ATLAS_WIDTH,
@@ -56,6 +55,7 @@ import {
     Ellipse,
     evaluateBezier,
     hsl2rgb,
+    isConvex,
     lerp,
     Line,
     map,
@@ -79,15 +79,13 @@ import {
     testLineCircle,
     testLineLine,
     testLinePoint,
-    testPolygonPoint,
     testRectLine,
     testRectPoint,
     testRectRect,
+    triangulate,
     Vec2,
     vec2,
     wave,
-    isConvex,
-    triangulate,
 } from "./math";
 
 import easings from "./easings";
@@ -112,16 +110,13 @@ import {
     Registry,
     runes,
     uid,
-    warn,
 } from "./utils";
 
 import type {
     AgentComp,
     AgentCompOpt,
     Anchor,
-    AnchorComp,
     AreaComp,
-    AreaCompOpt,
     AsepriteData,
     AudioPlay,
     AudioPlayOpt,
@@ -130,8 +125,6 @@ import type {
     BodyCompOpt,
     BoomOpt,
     CharTransform,
-    CircleComp,
-    CircleCompOpt,
     ColorComp,
     Comp,
     CompList,
@@ -147,6 +140,7 @@ import type {
     DrawRectOpt,
     DrawSpriteOpt,
     DrawTextOpt,
+    DrawTextureOpt,
     DrawTriangleOpt,
     DrawUVQuadOpt,
     Edge,
@@ -158,8 +152,8 @@ import type {
     GameObj,
     GetOpt,
     GfxFont,
-    HealthComp,
     ImageSource,
+    InternalCtx,
     KaboomCtx,
     KaboomOpt,
     KaboomPlugin,
@@ -197,47 +191,66 @@ import type {
     SceneName,
     ShaderComp,
     ShaderData,
-    Shape,
-    SpriteAnimPlayOpt,
     SpriteAnims,
     SpriteAtlasData,
-    SpriteComp,
-    SpriteCompOpt,
     StateComp,
     StayComp,
     Tag,
     TexFilter,
     TextAlign,
-    TextComp,
-    TextCompOpt,
     TileComp,
     TileCompOpt,
     TimerComp,
     TimerController,
-    TweenController,
     Uniform,
     UVQuadComp,
     Vec2Args,
     Vertex,
     ZComp,
-} from "./types";
+} from "@/types";
 
-import beanSpriteSrc from "./assets/bean.png";
-import boomSpriteSrc from "./assets/boom.png";
-import burpSoundSrc from "./assets/burp.mp3";
-import kaSpriteSrc from "./assets/ka.png";
+import {
+    agent,
+    anchor,
+    area,
+    body,
+    circle,
+    doubleJump,
+    drawon,
+    fadeIn,
+    fixed,
+    follow,
+    health,
+    lifespan,
+    mask,
+    move,
+    offscreen,
+    opacity,
+    outline,
+    polygon,
+    pos,
+    raycast,
+    rect,
+    rotate,
+    scale,
+    shader,
+    sprite,
+    state,
+    stay,
+    text,
+    tile,
+    timer,
+    uvquad,
+    z,
+} from "@/components";
 
-interface SpriteCurAnim {
-    name: string;
-    timer: number;
-    loop: boolean;
-    speed: number;
-    pingpong: boolean;
-    onEnd: () => void;
-}
+import beanSpriteSrc from "@/assets/bean.png";
+import boomSpriteSrc from "@/assets/boom.png";
+import burpSoundSrc from "@/assets/burp.mp3";
+import kaSpriteSrc from "@/assets/ka.png";
 
 // convert anchor string to a vec2 offset
-function anchorPt(orig: Anchor | Vec2): Vec2 {
+export function anchorPt(orig: Anchor | Vec2): Vec2 {
     switch (orig) {
         case "topleft":
             return new Vec2(-1, -1);
@@ -278,6 +291,31 @@ function alignPt(align: TextAlign): number {
 function createEmptyAudioBuffer(ctx: AudioContext) {
     return ctx.createBuffer(1, 1, 44100);
 }
+
+let ctx: KaboomCtx;
+
+// TODO: A better way to detect KaboomCtx
+export const isKaboomCtx = (obj: any): obj is KaboomCtx => {
+    return obj && obj["loadAseprite"];
+};
+
+export const getKaboomContext = (fallBack?: any): KaboomCtx => {
+    if (!ctx) {
+        throw new Error(
+            "You are trying to access to Kaboom Context before their initialization.",
+        );
+    }
+
+    if (isKaboomCtx(fallBack)) {
+        return fallBack;
+    }
+
+    return ctx;
+};
+
+export const getInternalContext = (kaboom: KaboomCtx): InternalCtx => {
+    return kaboom._k;
+};
 
 // only exports one kaboom() which contains all the state
 export default (gopt: KaboomOpt = {}): KaboomCtx => {
@@ -398,7 +436,9 @@ export default (gopt: KaboomOpt = {}): KaboomCtx => {
 
         if (gopt.background) {
             bgColor = rgb(gopt.background);
-            bgAlpha = Array.isArray(gopt.background) ? gopt.background[3] : 1;
+            bgAlpha = Array.isArray(gopt.background)
+                ? gopt.background[3]
+                : 1;
             gl.clearColor(
                 bgColor.r / 255,
                 bgColor.g / 255,
@@ -472,7 +512,8 @@ export default (gopt: KaboomOpt = {}): KaboomCtx => {
             bgColor: bgColor,
             bgAlpha: bgAlpha,
 
-            width: gopt.width ?? gl.drawingBufferWidth / pixelDensity / gscale,
+            width: gopt.width
+                ?? gl.drawingBufferWidth / pixelDensity / gscale,
             height: gopt.height
                 ?? gl.drawingBufferHeight / pixelDensity / gscale,
 
@@ -1473,17 +1514,6 @@ export default (gopt: KaboomOpt = {}): KaboomCtx => {
         return play(audio.burpSnd, opt);
     }
 
-    type DrawTextureOpt = RenderProps & {
-        tex: Texture;
-        width?: number;
-        height?: number;
-        tiled?: boolean;
-        flipX?: boolean;
-        flipY?: boolean;
-        quad?: Quad;
-        anchor?: Anchor | Vec2;
-    };
-
     function makeCanvas(w: number, h: number) {
         const fb = new FrameBuffer(ggl, w, h);
         return {
@@ -2199,15 +2229,15 @@ export default (gopt: KaboomOpt = {}): KaboomCtx => {
 
             // TODO: better triangulation
             let indices;
-            
+
             if (opt.triangulate && isConvex(opt.pts)) {
-                const triangles = triangulate(opt.pts)
-                indices = triangles.map(t => t.map(p => opt.pts.indexOf(p))).flat()
-            }
-            else {
+                const triangles = triangulate(opt.pts);
+                indices = triangles.map(t => t.map(p => opt.pts.indexOf(p)))
+                    .flat();
+            } else {
                 indices = [...Array(npts - 2).keys()]
-                .map((n) => [0, n + 1, n + 2])
-                .flat();
+                    .map((n) => [0, n + 1, n + 2])
+                    .flat();
             }
 
             drawRaw(
@@ -3366,107 +3396,6 @@ export default (gopt: KaboomOpt = {}): KaboomCtx => {
         return gfx.bgColor.clone();
     }
 
-    // TODO: manage global velocity here?
-    function pos(...args: Vec2Args): PosComp {
-        return {
-            id: "pos",
-            pos: vec2(...args),
-
-            moveBy(...args: Vec2Args) {
-                this.pos = this.pos.add(vec2(...args));
-            },
-
-            // move with velocity (pixels per second)
-            move(...args: Vec2Args) {
-                this.moveBy(vec2(...args).scale(dt()));
-            },
-
-            // move to a destination, with optional speed
-            moveTo(...args) {
-                if (
-                    typeof args[0] === "number" && typeof args[1] === "number"
-                ) {
-                    return this.moveTo(vec2(args[0], args[1]), args[2]);
-                }
-                const dest = args[0];
-                const speed = args[1];
-                if (speed === undefined) {
-                    this.pos = vec2(dest);
-                    return;
-                }
-                const diff = dest.sub(this.pos);
-                if (diff.len() <= speed * dt()) {
-                    this.pos = vec2(dest);
-                    return;
-                }
-                this.move(diff.unit().scale(speed));
-            },
-
-            worldPos(this: GameObj<PosComp>): Vec2 {
-                return this.parent
-                    ? this.parent.transform.multVec2(this.pos)
-                    : this.pos;
-            },
-
-            // get the screen position (transformed by camera)
-            screenPos(this: GameObj<PosComp | FixedComp>): Vec2 {
-                const pos = this.worldPos();
-                return isFixed(this)
-                    ? pos
-                    : toScreen(pos);
-            },
-
-            inspect() {
-                return `(${Math.round(this.pos.x)}, ${Math.round(this.pos.y)})`;
-            },
-
-            drawInspect() {
-                drawCircle({
-                    color: rgb(255, 0, 0),
-                    radius: 4 / getViewportScale(),
-                });
-            },
-        };
-    }
-
-    // TODO: allow single number assignment
-    function scale(...args: Vec2Args): ScaleComp {
-        if (args.length === 0) {
-            return scale(1);
-        }
-        return {
-            id: "scale",
-            scale: vec2(...args),
-            scaleTo(...args: Vec2Args) {
-                this.scale = vec2(...args);
-            },
-            scaleBy(...args: Vec2Args) {
-                this.scale.scale(vec2(...args));
-            },
-            inspect() {
-                return `(${toFixed(this.scale.x, 2)}, ${
-                    toFixed(this.scale.y, 2)
-                })`;
-            },
-        };
-    }
-
-    function rotate(r: number): RotateComp {
-        return {
-            id: "rotate",
-            angle: r ?? 0,
-            rotateBy(angle: number) {
-                this.angle += angle;
-            },
-            rotateTo(angle: number) {
-                this.angle = angle;
-            },
-            inspect() {
-                return `${Math.round(this.angle)}`;
-            },
-        };
-    }
-
     function color(...args): ColorComp {
         return {
             id: "color",
@@ -3481,399 +3410,9 @@ export default (gopt: KaboomOpt = {}): KaboomCtx => {
         return Number(n.toFixed(f));
     }
 
-    // TODO: fadeIn here?
-    function opacity(a: number): OpacityComp {
-        return {
-            id: "opacity",
-            opacity: a ?? 1,
-            inspect() {
-                return `${toFixed(this.opacity, 1)}`;
-            },
-            fadeOut(time = 1, easeFunc = easings.linear): TweenController {
-                return tween(
-                    this.opacity,
-                    0,
-                    time,
-                    (a) => this.opacity = a,
-                    easeFunc,
-                );
-            },
-        };
-    }
-
-    function anchor(o: Anchor | Vec2): AnchorComp {
-        if (!o) {
-            throw new Error("Please define an anchor");
-        }
-        return {
-            id: "anchor",
-            anchor: o,
-            inspect() {
-                if (typeof this.anchor === "string") {
-                    return this.anchor;
-                } else {
-                    return this.anchor.toString();
-                }
-            },
-        };
-    }
-
-    function z(z: number): ZComp {
-        return {
-            id: "z",
-            z: z,
-            inspect() {
-                return `${this.z}`;
-            },
-        };
-    }
-
-    function follow(obj: GameObj, offset?: Vec2): FollowComp {
-        return {
-            id: "follow",
-            require: ["pos"],
-            follow: {
-                obj: obj,
-                offset: offset ?? vec2(0),
-            },
-            add(this: GameObj<FollowComp | PosComp>) {
-                if (obj.exists()) {
-                    this.pos = this.follow.obj.pos.add(this.follow.offset);
-                }
-            },
-            update(this: GameObj<FollowComp | PosComp>) {
-                if (obj.exists()) {
-                    this.pos = this.follow.obj.pos.add(this.follow.offset);
-                }
-            },
-        };
-    }
-
-    function move(dir: number | Vec2, speed: number): EmptyComp {
-        const d = typeof dir === "number" ? Vec2.fromAngle(dir) : dir.unit();
-        return {
-            id: "move",
-            require: ["pos"],
-            update(this: GameObj<PosComp>) {
-                this.move(d.scale(speed));
-            },
-        };
-    }
-
-    function offscreen(opt: OffScreenCompOpt = {}): OffScreenComp {
-        const distance = opt.distance ?? DEF_OFFSCREEN_DIS;
-        let isOut = false;
-        return {
-            id: "offscreen",
-            require: ["pos"],
-            isOffScreen(this: GameObj<PosComp>): boolean {
-                const pos = this.screenPos();
-                const screenRect = new Rect(vec2(0), width(), height());
-                return !testRectPoint(screenRect, pos)
-                    && screenRect.sdistToPoint(pos) > distance * distance;
-            },
-            onExitScreen(this: GameObj, action: () => void): EventController {
-                return this.on("exitView", action);
-            },
-            onEnterScreen(this: GameObj, action: () => void): EventController {
-                return this.on("enterView", action);
-            },
-            update(this: GameObj) {
-                if (this.isOffScreen()) {
-                    if (!isOut) {
-                        this.trigger("exitView");
-                        isOut = true;
-                    }
-                    if (opt.hide) this.hidden = true;
-                    if (opt.pause) this.paused = true;
-                    if (opt.destroy) this.destroy();
-                } else {
-                    if (isOut) {
-                        this.trigger("enterView");
-                        isOut = false;
-                    }
-                    if (opt.hide) this.hidden = false;
-                    if (opt.pause) this.paused = false;
-                }
-            },
-        };
-    }
-
     function isFixed(obj: GameObj) {
         if (obj.fixed) return true;
         return obj.parent ? isFixed(obj.parent) : false;
-    }
-
-    function area(opt: AreaCompOpt = {}): AreaComp {
-        const colliding = {};
-        const collidingThisFrame = new Set();
-
-        return {
-            id: "area",
-            collisionIgnore: opt.collisionIgnore ?? [],
-
-            add(this: GameObj<AreaComp>) {
-                if (this.area.cursor) {
-                    this.onHover(() => app.setCursor(this.area.cursor));
-                }
-
-                this.onCollideUpdate((obj, col) => {
-                    if (!colliding[obj.id]) {
-                        this.trigger("collide", obj, col);
-                    }
-                    colliding[obj.id] = col;
-                    collidingThisFrame.add(obj.id);
-                });
-            },
-
-            update(this: GameObj<AreaComp>) {
-                for (const id in colliding) {
-                    if (!collidingThisFrame.has(Number(id))) {
-                        this.trigger("collideEnd", colliding[id].target);
-                        delete colliding[id];
-                    }
-                }
-                collidingThisFrame.clear();
-            },
-
-            drawInspect(this: GameObj<AreaComp | AnchorComp | FixedComp>) {
-                const a = this.localArea();
-
-                pushTransform();
-                pushScale(this.area.scale);
-                pushTranslate(this.area.offset);
-
-                const opts = {
-                    outline: {
-                        width: 4 / getViewportScale(),
-                        color: rgb(0, 0, 255),
-                    },
-                    anchor: this.anchor,
-                    fill: false,
-                    fixed: isFixed(this),
-                };
-
-                if (a instanceof Rect) {
-                    drawRect({
-                        ...opts,
-                        pos: a.pos,
-                        width: a.width,
-                        height: a.height,
-                    });
-                } else if (a instanceof Polygon) {
-                    drawPolygon({
-                        ...opts,
-                        pts: a.pts,
-                    });
-                } else if (a instanceof Circle) {
-                    drawCircle({
-                        ...opts,
-                        pos: a.center,
-                        radius: a.radius,
-                    });
-                }
-
-                popTransform();
-            },
-
-            area: {
-                shape: opt.shape ?? null,
-                scale: opt.scale ? vec2(opt.scale) : vec2(1),
-                offset: opt.offset ?? vec2(0),
-                cursor: opt.cursor ?? null,
-            },
-
-            isClicked(): boolean {
-                return app.isMousePressed() && this.isHovering();
-            },
-
-            isHovering(this: GameObj) {
-                const mpos = isFixed(this) ? mousePos() : toWorld(mousePos());
-                return this.hasPoint(mpos);
-            },
-
-            checkCollision(this: GameObj, other: GameObj<AreaComp>) {
-                return colliding[other.id] ?? null;
-            },
-
-            getCollisions() {
-                return Object.values(colliding);
-            },
-
-            // TODO: perform check instead of use cache
-            isColliding(other: GameObj<AreaComp>) {
-                return Boolean(colliding[other.id]);
-            },
-
-            isOverlapping(other) {
-                const col = colliding[other.id];
-                return col && col.hasOverlap();
-            },
-
-            onClick(
-                this: GameObj<AreaComp>,
-                f: () => void,
-                btn: MouseButton = "left",
-            ): EventController {
-                const e = app.onMousePress(btn, () => {
-                    if (this.isHovering()) {
-                        f();
-                    }
-                });
-                this.onDestroy(() => e.cancel());
-                return e;
-            },
-
-            onHover(this: GameObj, action: () => void): EventController {
-                let hovering = false;
-                return this.onUpdate(() => {
-                    if (!hovering) {
-                        if (this.isHovering()) {
-                            hovering = true;
-                            action();
-                        }
-                    } else {
-                        hovering = this.isHovering();
-                    }
-                });
-            },
-
-            onHoverUpdate(this: GameObj, onHover: () => void): EventController {
-                return this.onUpdate(() => {
-                    if (this.isHovering()) {
-                        onHover();
-                    }
-                });
-            },
-
-            onHoverEnd(this: GameObj, action: () => void): EventController {
-                let hovering = false;
-                return this.onUpdate(() => {
-                    if (hovering) {
-                        if (!this.isHovering()) {
-                            hovering = false;
-                            action();
-                        }
-                    } else {
-                        hovering = this.isHovering();
-                    }
-                });
-            },
-
-            onCollide(
-                this: GameObj,
-                tag: Tag | ((obj: GameObj, col?: Collision) => void),
-                cb?: (obj: GameObj, col?: Collision) => void,
-            ): EventController {
-                if (typeof tag === "function" && cb === undefined) {
-                    return this.on("collide", tag);
-                } else if (typeof tag === "string") {
-                    return this.onCollide((obj, col) => {
-                        if (obj.is(tag)) {
-                            cb(obj, col);
-                        }
-                    });
-                }
-            },
-
-            onCollideUpdate(
-                this: GameObj<AreaComp>,
-                tag: Tag | ((obj: GameObj, col?: Collision) => void),
-                cb?: (obj: GameObj, col?: Collision) => void,
-            ): EventController {
-                if (typeof tag === "function" && cb === undefined) {
-                    return this.on("collideUpdate", tag);
-                } else if (typeof tag === "string") {
-                    return this.on(
-                        "collideUpdate",
-                        (obj, col) => obj.is(tag) && cb(obj, col),
-                    );
-                }
-            },
-
-            onCollideEnd(
-                this: GameObj<AreaComp>,
-                tag: Tag | ((obj: GameObj) => void),
-                cb?: (obj: GameObj) => void,
-            ): EventController {
-                if (typeof tag === "function" && cb === undefined) {
-                    return this.on("collideEnd", tag);
-                } else if (typeof tag === "string") {
-                    return this.on(
-                        "collideEnd",
-                        (obj) => obj.is(tag) && cb(obj),
-                    );
-                }
-            },
-
-            hasPoint(pt: Vec2): boolean {
-                // TODO: convert to pt to local space instead
-                return testPolygonPoint(this.worldArea(), pt);
-            },
-
-            // push an obj out of another if they're overlapped
-            resolveCollision(
-                this: GameObj<AreaComp | PosComp>,
-                obj: GameObj<AreaComp>,
-            ) {
-                const col = this.checkCollision(obj);
-                if (col && !col.resolved) {
-                    this.pos = this.pos.add(col.displacement);
-                    col.resolved = true;
-                }
-            },
-
-            localArea(
-                this: GameObj<AreaComp | { renderArea(): Shape }>,
-            ): Shape {
-                return this.area.shape
-                    ? this.area.shape
-                    : this.renderArea();
-            },
-
-            // TODO: cache
-            worldArea(this: GameObj<AreaComp | AnchorComp>): Polygon {
-                const localArea = this.localArea();
-
-                if (
-                    !(localArea instanceof Polygon || localArea instanceof Rect)
-                ) {
-                    throw new Error(
-                        "Only support polygon and rect shapes for now",
-                    );
-                }
-
-                const transform = this.transform
-                    .clone()
-                    .scale(vec2(this.area.scale ?? 1))
-                    .translate(this.area.offset);
-
-                if (localArea instanceof Rect) {
-                    const offset = anchorPt(this.anchor || DEF_ANCHOR)
-                        .add(1, 1)
-                        .scale(-0.5)
-                        .scale(localArea.width, localArea.height);
-                    transform.translate(offset);
-                }
-
-                return localArea.transform(transform) as Polygon;
-            },
-
-            screenArea(this: GameObj<AreaComp | FixedComp>): Polygon {
-                const area = this.worldArea();
-                if (isFixed(this)) {
-                    return area;
-                } else {
-                    return area.transform(game.cam.transform);
-                }
-            },
-
-            inspect() {
-                return `(${this.area.scale.x.toFixed(1)}, ${
-                    this.area.scale.y.toFixed(1)
-                })`;
-            },
-        };
     }
 
     function getRenderProps(obj: GameObj<any>) {
@@ -3884,1085 +3423,6 @@ export default (gopt: KaboomOpt = {}): KaboomCtx => {
             outline: obj.outline,
             shader: obj.shader,
             uniform: obj.uniform,
-        };
-    }
-
-    // TODO: accept canvas
-    // TODO: clean
-    function sprite(
-        src: string | SpriteData | Asset<SpriteData>,
-        opt: SpriteCompOpt = {},
-    ): SpriteComp {
-        let spriteData: SpriteData | null = null;
-        let curAnim: SpriteCurAnim | null = null;
-        // 1  - from small index to large index
-        // -1 - reverse
-        let curAnimDir: -1 | 1 | null = null;
-        const spriteLoadedEvent = new Event<[SpriteData]>();
-
-        if (!src) {
-            throw new Error(
-                "Please pass the resource name or data to sprite()",
-            );
-        }
-
-        const calcTexScale = (
-            tex: Texture,
-            q: Quad,
-            w?: number,
-            h?: number,
-        ): Vec2 => {
-            const scale = vec2(1, 1);
-            if (w && h) {
-                scale.x = w / (tex.width * q.w);
-                scale.y = h / (tex.height * q.h);
-            } else if (w) {
-                scale.x = w / (tex.width * q.w);
-                scale.y = scale.x;
-            } else if (h) {
-                scale.y = h / (tex.height * q.h);
-                scale.x = scale.y;
-            }
-            return scale;
-        };
-
-        return {
-            id: "sprite",
-            // TODO: allow update
-            width: 0,
-            height: 0,
-            frame: opt.frame || 0,
-            quad: opt.quad || new Quad(0, 0, 1, 1),
-            animSpeed: opt.animSpeed ?? 1,
-            flipX: opt.flipX ?? false,
-            flipY: opt.flipY ?? false,
-
-            draw(this: GameObj<SpriteComp>) {
-                if (!spriteData) return;
-
-                const q = spriteData.frames[this.frame ?? 0];
-
-                if (!q) {
-                    throw new Error(`Frame not found: ${this.frame ?? 0}`);
-                }
-
-                if (spriteData.slice9) {
-                    // TODO: tile
-                    // TODO: use scale or width / height, or both?
-                    const { left, right, top, bottom } = spriteData.slice9;
-                    const tw = spriteData.tex.width * q.w;
-                    const th = spriteData.tex.height * q.h;
-                    const iw = this.width - left - right;
-                    const ih = this.height - top - bottom;
-                    const w1 = left / tw;
-                    const w3 = right / tw;
-                    const w2 = 1 - w1 - w3;
-                    const h1 = top / th;
-                    const h3 = bottom / th;
-                    const h2 = 1 - h1 - h3;
-                    const quads = [
-                        // uv
-                        quad(0, 0, w1, h1),
-                        quad(w1, 0, w2, h1),
-                        quad(w1 + w2, 0, w3, h1),
-                        quad(0, h1, w1, h2),
-                        quad(w1, h1, w2, h2),
-                        quad(w1 + w2, h1, w3, h2),
-                        quad(0, h1 + h2, w1, h3),
-                        quad(w1, h1 + h2, w2, h3),
-                        quad(w1 + w2, h1 + h2, w3, h3),
-                        // transform
-                        quad(0, 0, left, top),
-                        quad(left, 0, iw, top),
-                        quad(left + iw, 0, right, top),
-                        quad(0, top, left, ih),
-                        quad(left, top, iw, ih),
-                        quad(left + iw, top, right, ih),
-                        quad(0, top + ih, left, bottom),
-                        quad(left, top + ih, iw, bottom),
-                        quad(left + iw, top + ih, right, bottom),
-                    ];
-                    for (let i = 0; i < 9; i++) {
-                        const uv = quads[i];
-                        const transform = quads[i + 9];
-                        drawTexture(Object.assign(getRenderProps(this), {
-                            pos: transform.pos(),
-                            tex: spriteData.tex,
-                            quad: q.scale(uv),
-                            flipX: this.flipX,
-                            flipY: this.flipY,
-                            tiled: opt.tiled,
-                            width: transform.w,
-                            height: transform.h,
-                        }));
-                    }
-                } else {
-                    drawTexture(Object.assign(getRenderProps(this), {
-                        tex: spriteData.tex,
-                        quad: q.scale(this.quad ?? new Quad(0, 0, 1, 1)),
-                        flipX: this.flipX,
-                        flipY: this.flipY,
-                        tiled: opt.tiled,
-                        width: this.width,
-                        height: this.height,
-                    }));
-                }
-            },
-
-            add(this: GameObj<SpriteComp>) {
-                const setSpriteData = (spr) => {
-                    let q = spr.frames[0].clone();
-
-                    if (opt.quad) {
-                        q = q.scale(opt.quad);
-                    }
-
-                    const scale = calcTexScale(
-                        spr.tex,
-                        q,
-                        opt.width,
-                        opt.height,
-                    );
-
-                    this.width = spr.tex.width * q.w * scale.x;
-                    this.height = spr.tex.height * q.h * scale.y;
-
-                    if (opt.anim) {
-                        this.play(opt.anim);
-                    }
-
-                    spriteData = spr;
-                    spriteLoadedEvent.trigger(spriteData);
-                };
-
-                const spr = resolveSprite(src);
-
-                if (spr) {
-                    spr.onLoad(setSpriteData);
-                } else {
-                    onLoad(() => setSpriteData(resolveSprite(src).data));
-                }
-            },
-
-            update(this: GameObj<SpriteComp>) {
-                if (!curAnim) {
-                    return;
-                }
-
-                const anim = spriteData.anims[curAnim.name];
-
-                if (typeof anim === "number") {
-                    this.frame = anim;
-                    return;
-                }
-
-                if (anim.speed === 0) {
-                    throw new Error("Sprite anim speed cannot be 0");
-                }
-
-                curAnim.timer += dt() * this.animSpeed;
-
-                if (curAnim.timer >= (1 / curAnim.speed)) {
-                    curAnim.timer = 0;
-                    this.frame += curAnimDir;
-
-                    if (
-                        this.frame < Math.min(anim.from, anim.to)
-                        || this.frame > Math.max(anim.from, anim.to)
-                    ) {
-                        if (curAnim.loop) {
-                            if (curAnim.pingpong) {
-                                this.frame -= curAnimDir;
-                                curAnimDir *= -1;
-                                this.frame += curAnimDir;
-                            } else {
-                                this.frame = anim.from;
-                            }
-                        } else {
-                            if (curAnim.pingpong) {
-                                const isForward = curAnimDir
-                                    === Math.sign(anim.to - anim.from);
-                                if (isForward) {
-                                    this.frame = anim.to;
-                                    curAnimDir *= -1;
-                                    this.frame += curAnimDir;
-                                } else {
-                                    this.frame = anim.from;
-                                    curAnim.onEnd();
-                                    this.stop();
-                                }
-                            } else {
-                                this.frame = anim.to;
-                                curAnim.onEnd();
-                                this.stop();
-                            }
-                        }
-                    }
-                }
-            },
-
-            play(
-                this: GameObj<SpriteComp>,
-                name: string,
-                opt: SpriteAnimPlayOpt = {},
-            ) {
-                if (!spriteData) {
-                    spriteLoadedEvent.add(() => this.play(name, opt));
-                    return;
-                }
-
-                const anim = spriteData.anims[name];
-
-                if (anim === undefined) {
-                    throw new Error(`Anim not found: ${name}`);
-                }
-
-                if (curAnim) {
-                    this.stop();
-                }
-
-                curAnim = typeof anim === "number"
-                    ? {
-                        name: name,
-                        timer: 0,
-                        loop: false,
-                        pingpong: false,
-                        speed: 0,
-                        onEnd: () => {},
-                    }
-                    : {
-                        name: name,
-                        timer: 0,
-                        loop: opt.loop ?? anim.loop ?? false,
-                        pingpong: opt.pingpong ?? anim.pingpong ?? false,
-                        speed: opt.speed ?? anim.speed ?? 10,
-                        onEnd: opt.onEnd ?? (() => {}),
-                    };
-
-                curAnimDir = typeof anim === "number"
-                    ? null
-                    : anim.from < anim.to
-                    ? 1
-                    : -1;
-
-                this.frame = typeof anim === "number"
-                    ? anim
-                    : anim.from;
-
-                this.trigger("animStart", name);
-            },
-
-            stop(this: GameObj<SpriteComp>) {
-                if (!curAnim) {
-                    return;
-                }
-                const prevAnim = curAnim.name;
-                curAnim = null;
-                this.trigger("animEnd", prevAnim);
-            },
-
-            numFrames() {
-                return spriteData?.frames.length ?? 0;
-            },
-
-            curAnim() {
-                return curAnim?.name;
-            },
-
-            onAnimEnd(
-                this: GameObj<SpriteComp>,
-                action: (name: string) => void,
-            ): EventController {
-                return this.on("animEnd", action);
-            },
-
-            onAnimStart(
-                this: GameObj<SpriteComp>,
-                action: (name: string) => void,
-            ): EventController {
-                return this.on("animStart", action);
-            },
-
-            renderArea() {
-                return new Rect(vec2(0), this.width, this.height);
-            },
-
-            inspect() {
-                if (typeof src === "string") {
-                    return `"${src}"`;
-                }
-            },
-        };
-    }
-
-    function text(t: string, opt: TextCompOpt = {}): TextComp {
-        function update(obj: GameObj<TextComp | any>) {
-            const ftext = formatText(Object.assign(getRenderProps(obj), {
-                text: obj.text + "",
-                size: obj.textSize,
-                font: obj.font,
-                width: opt.width && obj.width,
-                align: obj.align,
-                letterSpacing: obj.letterSpacing,
-                lineSpacing: obj.lineSpacing,
-                // TODO: shouldn't run when object / ancestor is paused
-                transform: obj.textTransform,
-                styles: obj.textStyles,
-            }));
-
-            if (!opt.width) {
-                obj.width = ftext.width / (obj.scale?.x || 1);
-            }
-
-            obj.height = ftext.height / (obj.scale?.y || 1);
-
-            return ftext;
-        }
-
-        const obj = {
-            id: "text",
-            set text(nt) {
-                t = nt;
-                // @ts-ignore
-                update(this);
-            },
-            get text() {
-                return t;
-            },
-            textSize: opt.size ?? DEF_TEXT_SIZE,
-            font: opt.font,
-            width: opt.width ?? 0,
-            height: 0,
-            align: opt.align,
-            lineSpacing: opt.lineSpacing,
-            letterSpacing: opt.letterSpacing,
-            textTransform: opt.transform,
-            textStyles: opt.styles,
-
-            add(this: GameObj<TextComp>) {
-                onLoad(() => update(this));
-            },
-
-            draw(this: GameObj<TextComp>) {
-                drawFormattedText(update(this));
-            },
-
-            renderArea() {
-                return new Rect(vec2(0), this.width, this.height);
-            },
-        };
-
-        // @ts-ignore
-        update(obj);
-
-        return obj;
-    }
-
-    function polygon(pts: Vec2[], opt: PolygonCompOpt = {}): PolygonComp {
-        if (pts.length < 3) {
-            throw new Error(
-                `Polygon's need more than two points, ${pts.length} points provided`,
-            );
-        }
-        return {
-            id: "polygon",
-            pts,
-            colors: opt.colors,
-            uv: opt.uv,
-            tex: opt.tex,
-            radius: opt.radius,
-            draw(this: GameObj<PolygonComp>) {
-                drawPolygon(Object.assign(getRenderProps(this), {
-                    pts: this.pts,
-                    colors: this.colors,
-                    uv: this.uv,
-                    tex: this.tex,
-                    radius: this.radius,
-                    fill: opt.fill,
-                }));
-            },
-            renderArea(this: GameObj<PolygonComp>) {
-                return new Polygon(this.pts);
-            },
-            inspect() {
-                return this.pts.map(p => `[${p.x},${p.y}]`).join(",");
-            },
-        };
-    }
-
-    function rect(w: number, h: number, opt: RectCompOpt = {}): RectComp {
-        return {
-            id: "rect",
-            width: w,
-            height: h,
-            radius: opt.radius || 0,
-            draw(this: GameObj<RectComp>) {
-                drawRect(Object.assign(getRenderProps(this), {
-                    width: this.width,
-                    height: this.height,
-                    radius: this.radius,
-                    fill: opt.fill,
-                }));
-            },
-            renderArea() {
-                return new Rect(vec2(0), this.width, this.height);
-            },
-            inspect() {
-                return `${Math.ceil(this.width)}, ${Math.ceil(this.height)}`;
-            },
-        };
-    }
-
-    function uvquad(w: number, h: number): UVQuadComp {
-        return {
-            id: "rect",
-            width: w,
-            height: h,
-            draw(this: GameObj<UVQuadComp>) {
-                drawUVQuad(Object.assign(getRenderProps(this), {
-                    width: this.width,
-                    height: this.height,
-                }));
-            },
-            renderArea() {
-                return new Rect(vec2(0), this.width, this.height);
-            },
-            inspect() {
-                return `${Math.ceil(this.width)}, ${Math.ceil(this.height)}`;
-            },
-        };
-    }
-
-    function circle(radius: number, opt: CircleCompOpt = {}): CircleComp {
-        return {
-            id: "circle",
-            radius: radius,
-            draw(this: GameObj<CircleComp>) {
-                drawCircle(Object.assign(getRenderProps(this), {
-                    radius: this.radius,
-                    fill: opt.fill,
-                }));
-            },
-            renderArea(this: GameObj<AnchorComp | CircleComp>) {
-                return new Rect(
-                    new Vec2(this.anchor ? 0 : -this.radius),
-                    this.radius * 2,
-                    this.radius * 2,
-                );
-            },
-            inspect() {
-                return `${Math.ceil(this.radius)}`;
-            },
-        };
-    }
-
-    function outline(
-        width: number = 1,
-        color: Color = rgb(0, 0, 0),
-    ): OutlineComp {
-        return {
-            id: "outline",
-            outline: {
-                width,
-                color,
-            },
-        };
-    }
-
-    function timer(): TimerComp {
-        return {
-            id: "timer",
-            wait(
-                this: GameObj<TimerComp>,
-                time: number,
-                action?: () => void,
-            ): TimerController {
-                const actions = [];
-                if (action) actions.push(action);
-                let t = 0;
-                const ev = this.onUpdate(() => {
-                    t += dt();
-                    if (t >= time) {
-                        actions.forEach((f) => f());
-                        ev.cancel();
-                    }
-                });
-                return {
-                    get paused() {
-                        return ev.paused;
-                    },
-                    set paused(p) {
-                        ev.paused = p;
-                    },
-                    cancel: ev.cancel,
-                    onEnd(action) {
-                        actions.push(action);
-                    },
-                    then(action) {
-                        this.onEnd(action);
-                        return this;
-                    },
-                };
-            },
-            loop(t: number, action: () => void): EventController {
-                let curTimer: null | TimerController = null;
-                const newAction = () => {
-                    // TODO: should f be execute right away as loop() is called?
-                    curTimer = this.wait(t, newAction);
-                    action();
-                };
-                curTimer = this.wait(0, newAction);
-                return {
-                    get paused() {
-                        return curTimer.paused;
-                    },
-                    set paused(p) {
-                        curTimer.paused = p;
-                    },
-                    cancel: () => curTimer.cancel(),
-                };
-            },
-            tween<V extends LerpValue>(
-                this: GameObj<TimerComp>,
-                from: V,
-                to: V,
-                duration: number,
-                setValue: (value: V) => void,
-                easeFunc = easings.linear,
-            ) {
-                let curTime = 0;
-                const onEndEvents: Array<() => void> = [];
-                const ev = this.onUpdate(() => {
-                    curTime += dt();
-                    const t = Math.min(curTime / duration, 1);
-                    setValue(lerp(from, to, easeFunc(t)));
-                    if (t === 1) {
-                        ev.cancel();
-                        setValue(to);
-                        onEndEvents.forEach((action) => action());
-                    }
-                });
-                return {
-                    get paused() {
-                        return ev.paused;
-                    },
-                    set paused(p) {
-                        ev.paused = p;
-                    },
-                    onEnd(action: () => void) {
-                        onEndEvents.push(action);
-                    },
-                    then(action: () => void) {
-                        this.onEnd(action);
-                        return this;
-                    },
-                    cancel() {
-                        ev.cancel();
-                    },
-                    finish() {
-                        ev.cancel();
-                        setValue(to);
-                        onEndEvents.forEach((action) => action());
-                    },
-                };
-            },
-        };
-    }
-
-    // TODO: land on wall
-    function body(opt: BodyCompOpt = {}): BodyComp {
-        let curPlatform: GameObj<PosComp | AreaComp | BodyComp> | null = null;
-        let lastPlatformPos = null;
-        let willFall = false;
-
-        return {
-            id: "body",
-            require: ["pos"],
-            vel: new Vec2(0),
-            drag: opt.drag ?? 0,
-            jumpForce: opt.jumpForce ?? DEF_JUMP_FORCE,
-            gravityScale: opt.gravityScale ?? 1,
-            isStatic: opt.isStatic ?? false,
-            // TODO: prefer density * area
-            mass: opt.mass ?? 1,
-
-            add(this: GameObj<PosComp | BodyComp | AreaComp>) {
-                if (this.mass === 0) {
-                    throw new Error("Can't set body mass to 0");
-                }
-
-                if (this.is("area")) {
-                    // static vs static: don't resolve
-                    // static vs non-static: always resolve non-static
-                    // non-static vs non-static: resolve the first one
-                    this.onCollideUpdate(
-                        (other: GameObj<PosComp | BodyComp>, col) => {
-                            if (!other.is("body")) {
-                                return;
-                            }
-
-                            if (col.resolved) {
-                                return;
-                            }
-
-                            this.trigger("beforePhysicsResolve", col);
-                            const rcol = col.reverse();
-                            other.trigger("beforePhysicsResolve", rcol);
-
-                            // user can mark 'resolved' in beforePhysicsResolve to stop a resolution
-                            if (col.resolved || rcol.resolved) {
-                                return;
-                            }
-
-                            if (this.isStatic && other.isStatic) {
-                                return;
-                            } else if (!this.isStatic && !other.isStatic) {
-                                // TODO: update all children transform?
-                                const tmass = this.mass + other.mass;
-                                this.pos = this.pos.add(
-                                    col.displacement.scale(other.mass / tmass),
-                                );
-                                other.pos = other.pos.add(
-                                    col.displacement.scale(-this.mass / tmass),
-                                );
-                                this.transform = calcTransform(this);
-                                other.transform = calcTransform(other);
-                            } else {
-                                // if one is static and on is not, resolve the non static one
-                                const col2 = (!this.isStatic && other.isStatic)
-                                    ? col
-                                    : col.reverse();
-                                col2.source.pos = col2.source.pos.add(
-                                    col2.displacement,
-                                );
-                                col2.source.transform = calcTransform(
-                                    col2.source,
-                                );
-                            }
-
-                            col.resolved = true;
-                            this.trigger("physicsResolve", col);
-                            other.trigger("physicsResolve", col.reverse());
-                        },
-                    );
-
-                    this.onPhysicsResolve((col) => {
-                        if (game.gravity) {
-                            if (col.isBottom() && this.isFalling()) {
-                                this.vel.y = 0;
-                                curPlatform = col.target as GameObj<
-                                    PosComp | BodyComp | AreaComp
-                                >;
-                                lastPlatformPos = col.target.pos;
-                                if (willFall) {
-                                    willFall = false;
-                                } else {
-                                    this.trigger("ground", curPlatform);
-                                }
-                            } else if (col.isTop() && this.isJumping()) {
-                                this.vel.y = 0;
-                                this.trigger("headbutt", col.target);
-                            }
-                        }
-                    });
-                }
-            },
-
-            update(this: GameObj<PosComp | BodyComp | AreaComp>) {
-                if (game.gravity && !this.isStatic) {
-                    if (willFall) {
-                        curPlatform = null;
-                        lastPlatformPos = null;
-                        this.trigger("fallOff");
-                        willFall = false;
-                    }
-
-                    let updateY = true;
-
-                    if (curPlatform) {
-                        if (
-                            // TODO: this prevents from falling when on edge
-                            !this.isColliding(curPlatform)
-                            || !curPlatform.exists()
-                            || !curPlatform.is("body")
-                        ) {
-                            willFall = true;
-                        } else {
-                            if (
-                                !curPlatform.pos.eq(lastPlatformPos)
-                                && opt.stickToPlatform !== false
-                            ) {
-                                this.moveBy(
-                                    curPlatform.pos.sub(lastPlatformPos),
-                                );
-                            }
-                            lastPlatformPos = curPlatform.pos;
-                            updateY = false;
-                        }
-                    }
-
-                    if (updateY) {
-                        const prevVelY = this.vel.y;
-
-                        this.vel.y += game.gravity * this.gravityScale * dt();
-                        this.vel.y = Math.min(
-                            this.vel.y,
-                            opt.maxVelocity ?? MAX_VEL,
-                        );
-
-                        if (prevVelY < 0 && this.vel.y >= 0) {
-                            this.trigger("fall");
-                        }
-                    }
-                }
-
-                this.vel.x *= 1 - this.drag;
-                this.vel.y *= 1 - this.drag;
-
-                this.move(this.vel);
-            },
-
-            onPhysicsResolve(this: GameObj, action) {
-                return this.on("physicsResolve", action);
-            },
-
-            onBeforePhysicsResolve(this: GameObj, action) {
-                return this.on("beforePhysicsResolve", action);
-            },
-
-            curPlatform(): GameObj | null {
-                return curPlatform;
-            },
-
-            isGrounded() {
-                return curPlatform !== null;
-            },
-
-            isFalling(): boolean {
-                return this.vel.y > 0;
-            },
-
-            isJumping(): boolean {
-                return this.vel.y < 0;
-            },
-
-            jump(force: number) {
-                curPlatform = null;
-                lastPlatformPos = null;
-                this.vel.y = -force || -this.jumpForce;
-            },
-
-            onGround(this: GameObj, action: () => void): EventController {
-                return this.on("ground", action);
-            },
-
-            onFall(this: GameObj, action: () => void): EventController {
-                return this.on("fall", action);
-            },
-
-            onFallOff(this: GameObj, action: () => void): EventController {
-                return this.on("fallOff", action);
-            },
-
-            onHeadbutt(this: GameObj, action: () => void): EventController {
-                return this.on("headbutt", action);
-            },
-        };
-    }
-
-    function doubleJump(numJumps: number = 2): DoubleJumpComp {
-        let jumpsLeft = numJumps;
-        return {
-            id: "doubleJump",
-            require: ["body"],
-            numJumps: numJumps,
-            add(this: GameObj<BodyComp | DoubleJumpComp>) {
-                this.onGround(() => {
-                    jumpsLeft = this.numJumps;
-                });
-            },
-            doubleJump(
-                this: GameObj<BodyComp | DoubleJumpComp>,
-                force?: number,
-            ) {
-                if (jumpsLeft <= 0) {
-                    return;
-                }
-                if (jumpsLeft < this.numJumps) {
-                    this.trigger("doubleJump");
-                }
-                jumpsLeft--;
-                this.jump(force);
-            },
-            onDoubleJump(this: GameObj, action: () => void): EventController {
-                return this.on("doubleJump", action);
-            },
-            inspect(this: GameObj<BodyComp | DoubleJumpComp>) {
-                return `${jumpsLeft}`;
-            },
-        };
-    }
-
-    function shader(
-        id: string,
-        uniform?: Uniform | (() => Uniform),
-    ): ShaderComp {
-        return {
-            id: "shader",
-            shader: id,
-            ...(typeof uniform === "function"
-                ? {
-                    uniform: uniform(),
-                    update() {
-                        this.uniform = uniform();
-                    },
-                }
-                : {
-                    uniform: uniform,
-                }),
-        };
-    }
-
-    function fixed(): FixedComp {
-        return {
-            id: "fixed",
-            fixed: true,
-        };
-    }
-
-    function stay(scenesToStay?: string[]): StayComp {
-        return {
-            id: "stay",
-            stay: true,
-            scenesToStay: scenesToStay,
-        };
-    }
-
-    function health(hp: number, maxHP?: number): HealthComp {
-        if (hp == null) {
-            throw new Error("health() requires the initial amount of hp");
-        }
-        return {
-            id: "health",
-            hurt(this: GameObj, n: number = 1) {
-                this.setHP(hp - n);
-                this.trigger("hurt", n);
-            },
-            heal(this: GameObj, n: number = 1) {
-                const origHP = hp;
-                this.setHP(hp + n);
-                this.trigger("heal", hp - origHP);
-            },
-            hp(): number {
-                return hp;
-            },
-            maxHP(): number | null {
-                return maxHP ?? null;
-            },
-            setMaxHP(n: number): void {
-                maxHP = n;
-            },
-            setHP(this: GameObj, n: number) {
-                hp = maxHP ? Math.min(maxHP, n) : n;
-                if (hp <= 0) {
-                    this.trigger("death");
-                }
-            },
-            onHurt(
-                this: GameObj,
-                action: (amount?: number) => void,
-            ): EventController {
-                return this.on("hurt", action);
-            },
-            onHeal(
-                this: GameObj,
-                action: (amount?: number) => void,
-            ): EventController {
-                return this.on("heal", action);
-            },
-            onDeath(this: GameObj, action: () => void): EventController {
-                return this.on("death", action);
-            },
-            inspect() {
-                return `${hp}`;
-            },
-        };
-    }
-
-    function lifespan(time: number, opt: LifespanCompOpt = {}): EmptyComp {
-        if (time == null) {
-            throw new Error("lifespan() requires time");
-        }
-        const fade = opt.fade ?? 0;
-        return {
-            id: "lifespan",
-            require: ["opacity"],
-            async add(this: GameObj<OpacityComp>) {
-                await wait(time);
-                this.opacity = this.opacity ?? 1;
-                if (fade > 0) {
-                    await tween(
-                        this.opacity,
-                        0,
-                        fade,
-                        (a) => this.opacity = a,
-                        easings.linear,
-                    );
-                }
-                this.destroy();
-            },
-        };
-    }
-
-    function state(
-        initState: string,
-        stateList?: string[],
-        transitions?: Record<string, string | string[]>,
-    ): StateComp {
-        if (!initState) {
-            throw new Error("state() requires an initial state");
-        }
-
-        const events = {};
-
-        function initStateEvents(state: string) {
-            if (!events[state]) {
-                events[state] = {
-                    enter: new Event(),
-                    end: new Event(),
-                    update: new Event(),
-                    draw: new Event(),
-                };
-            }
-        }
-
-        function on(event, state, action) {
-            initStateEvents(state);
-            return events[state][event].add(action);
-        }
-
-        function trigger(event, state, ...args) {
-            initStateEvents(state);
-            events[state][event].trigger(...args);
-        }
-
-        let didFirstEnter = false;
-
-        return {
-            id: "state",
-            state: initState,
-
-            enterState(state: string, ...args) {
-                didFirstEnter = true;
-
-                if (stateList && !stateList.includes(state)) {
-                    throw new Error(`State not found: ${state}`);
-                }
-
-                const oldState = this.state;
-
-                if (transitions) {
-                    // check if the transition is legal, if transition graph is defined
-                    if (!transitions?.[oldState]) {
-                        return;
-                    }
-
-                    const available = typeof transitions[oldState] === "string"
-                        ? [transitions[oldState]]
-                        : transitions[oldState] as string[];
-
-                    if (!available.includes(state)) {
-                        throw new Error(
-                            `Cannot transition state from "${oldState}" to "${state}". Available transitions: ${
-                                available.map((s) => `"${s}"`).join(", ")
-                            }`,
-                        );
-                    }
-                }
-
-                trigger("end", oldState, ...args);
-                this.state = state;
-                trigger("enter", state, ...args);
-                trigger("enter", `${oldState} -> ${state}`, ...args);
-            },
-
-            onStateTransition(
-                from: string,
-                to: string,
-                action: () => void,
-            ): EventController {
-                return on("enter", `${from} -> ${to}`, action);
-            },
-
-            onStateEnter(state: string, action: () => void): EventController {
-                return on("enter", state, action);
-            },
-
-            onStateUpdate(state: string, action: () => void): EventController {
-                return on("update", state, action);
-            },
-
-            onStateDraw(state: string, action: () => void): EventController {
-                return on("draw", state, action);
-            },
-
-            onStateEnd(state: string, action: () => void): EventController {
-                return on("end", state, action);
-            },
-
-            update() {
-                // execute the enter event for initState
-                if (!didFirstEnter) {
-                    trigger("enter", initState);
-                    didFirstEnter = true;
-                }
-                trigger("update", this.state);
-            },
-
-            draw() {
-                trigger("draw", this.state);
-            },
-
-            inspect() {
-                return this.state;
-            },
-        };
-    }
-
-    function fadeIn(time: number = 1): Comp {
-        let finalOpacity;
-        let t = 0;
-        let done = false;
-        return {
-            require: ["opacity"],
-            add(this: GameObj<OpacityComp>) {
-                finalOpacity = this.opacity;
-                this.opacity = 0;
-            },
-            update(this: GameObj<OpacityComp>) {
-                if (done) return;
-                t += dt();
-                this.opacity = map(t, 0, time, 0, finalOpacity);
-                if (t >= time) {
-                    this.opacity = finalOpacity;
-                    done = true;
-                }
-            },
-        };
-    }
-
-    function mask(m: Mask = "intersect"): MaskComp {
-        return {
-            id: "mask",
-            mask: m,
-        };
-    }
-
-    function drawon(c: FrameBuffer) {
-        return {
-            add(this: GameObj) {
-                this.canvas = c;
-            },
         };
     }
 
@@ -5080,101 +3540,6 @@ export default (gopt: KaboomOpt = {}): KaboomCtx => {
         HorizontalBottom = 13,
         RightVertical = 14,
         All = 15,
-    }
-
-    function tile(opts: TileCompOpt = {}): TileComp {
-        let tilePos = vec2(0);
-        let isObstacle = opts.isObstacle ?? false;
-        let cost = opts.cost ?? 0;
-        let edges = opts.edges ?? [];
-
-        const getEdgeMask = () => {
-            const loopup = {
-                "left": EdgeMask.Left,
-                "top": EdgeMask.Top,
-                "right": EdgeMask.Right,
-                "bottom": EdgeMask.Bottom,
-            };
-            return edges.map(s => loopup[s] || 0).reduce(
-                (mask, dir) => mask | dir,
-                0,
-            );
-        };
-
-        let edgeMask = getEdgeMask();
-
-        return {
-            id: "tile",
-            tilePosOffset: opts.offset ?? vec2(0),
-
-            set tilePos(p: Vec2) {
-                const level = this.getLevel();
-                tilePos = p.clone();
-                // @ts-ignore
-                this.pos = vec2(
-                    this.tilePos.x * level.tileWidth(),
-                    this.tilePos.y * level.tileHeight(),
-                ).add(this.tilePosOffset);
-            },
-
-            get tilePos() {
-                return tilePos;
-            },
-
-            set isObstacle(is: boolean) {
-                if (isObstacle === is) return;
-                isObstacle = is;
-                this.getLevel().invalidateNavigationMap();
-            },
-
-            get isObstacle() {
-                return isObstacle;
-            },
-
-            set cost(n: number) {
-                if (cost === n) return;
-                cost = n;
-                this.getLevel().invalidateNavigationMap();
-            },
-
-            get cost() {
-                return cost;
-            },
-
-            set edges(e: Edge[]) {
-                edges = e;
-                edgeMask = getEdgeMask();
-                this.getLevel().invalidateNavigationMap();
-            },
-
-            get edges() {
-                return edges;
-            },
-
-            get edgeMask() {
-                return edgeMask;
-            },
-
-            getLevel(this: GameObj) {
-                return this.parent as GameObj<LevelComp>;
-            },
-
-            moveLeft() {
-                this.tilePos = this.tilePos.add(vec2(-1, 0));
-            },
-
-            moveRight() {
-                this.tilePos = this.tilePos.add(vec2(1, 0));
-            },
-
-            moveUp() {
-                this.tilePos = this.tilePos.add(vec2(0, -1));
-            },
-
-            moveDown() {
-                this.tilePos = this.tilePos.add(vec2(0, 1));
-            },
-        };
     }
 
     function addLevel(
@@ -5713,140 +4078,11 @@ export default (gopt: KaboomOpt = {}): KaboomCtx => {
         return level;
     }
 
-    function agent(opts: AgentCompOpt = {}): AgentComp {
-        let target: Vec2 | null = null;
-        let path: Vec2[] | null = null;
-        let index: number | null = null;
-        let navMapChangedEvent: EventController | null = null;
-        return {
-            id: "agent",
-            require: ["pos", "tile"],
-            agentSpeed: opts.speed ?? 100,
-            allowDiagonals: opts.allowDiagonals ?? true,
-            getDistanceToTarget(this: GameObj<AgentComp | PosComp>) {
-                return target ? this.pos.dist(target) : 0;
-            },
-            getNextLocation() {
-                return path && index ? path[index] : null;
-            },
-            getPath() {
-                return path ? path.slice() : null;
-            },
-            getTarget() {
-                return target;
-            },
-            isNavigationFinished() {
-                return path ? index === null : true;
-            },
-            isTargetReachable() {
-                return path !== null;
-            },
-            isTargetReached(this: GameObj<AgentComp | PosComp>) {
-                return target ? this.pos.eq(target) : true;
-            },
-            setTarget(this: GameObj<AgentComp | TileComp | PosComp>, p: Vec2) {
-                target = p;
-                path = this.getLevel().getPath(this.pos, target, {
-                    allowDiagonals: this.allowDiagonals,
-                });
-                index = path ? 0 : null;
-                if (path) {
-                    if (!navMapChangedEvent) {
-                        navMapChangedEvent = this.getLevel()
-                            .onNavigationMapChanged(() => {
-                                if (path && index !== null) {
-                                    path = this.getLevel().getPath(
-                                        this.pos,
-                                        target,
-                                        {
-                                            allowDiagonals: this.allowDiagonals,
-                                        },
-                                    );
-                                    index = path ? 0 : null;
-                                    if (path) {
-                                        this.trigger(
-                                            "navigation-next",
-                                            this,
-                                            path[index],
-                                        );
-                                    } else {
-                                        this.trigger("navigation-ended", this);
-                                    }
-                                }
-                            });
-                        this.onDestroy(() => navMapChangedEvent.cancel());
-                    }
-                    this.trigger("navigation-started", this);
-                    this.trigger("navigation-next", this, path[index]);
-                } else {
-                    this.trigger("navigation-ended", this);
-                }
-            },
-            update(this: GameObj<AgentComp | PosComp>) {
-                if (path && index !== null) {
-                    if (this.pos.sdist(path[index]) < 2) {
-                        if (index === path.length - 1) {
-                            this.pos = target.clone();
-                            index = null;
-                            this.trigger("navigation-ended", this);
-                            this.trigger("target-reached", this);
-                            return;
-                        } else {
-                            index++;
-                            this.trigger("navigation-next", this, path[index]);
-                        }
-                    }
-                    this.moveTo(path[index], this.agentSpeed);
-                }
-            },
-            onNavigationStarted(this: GameObj<AgentComp>, cb: () => void) {
-                return this.on("navigation-started", cb);
-            },
-            onNavigationNext(this: GameObj<AgentComp>, cb: () => void) {
-                return this.on("navigation-next", cb);
-            },
-            onNavigationEnded(this: GameObj<AgentComp>, cb: () => void) {
-                return this.on("navigation-ended", cb);
-            },
-            onTargetReached(this: GameObj<AgentComp>, cb: () => void) {
-                return this.on("target-reached", cb);
-            },
-            inspect() {
-                return JSON.stringify({
-                    target: JSON.stringify(target),
-                    path: JSON.stringify(path),
-                });
-            },
-        };
-    }
-
     type RaycastHit = BaseRaycastHit & {
         object?: GameObj;
     };
 
     type RaycastResult = RaycastHit | null;
-
-    function raycast(origin: Vec2, direction: Vec2, exclude?: string[]) {
-        let minHit: RaycastResult;
-        const shapes = get("area");
-        shapes.forEach(s => {
-            if (exclude && exclude.some(tag => s.is(tag))) return;
-            const shape = s.worldArea();
-            const hit = shape.raycast(origin, direction);
-            if (hit) {
-                if (minHit) {
-                    if (hit.fraction < minHit.fraction) {
-                        minHit = hit;
-                        minHit.object = s;
-                    }
-                } else {
-                    minHit = hit;
-                    minHit.object = s;
-                }
-            }
-        });
-        return minHit;
-    }
 
     function record(frameRate?): Recording {
         const stream = app.canvas.captureStream(frameRate);
@@ -6521,7 +4757,8 @@ export default (gopt: KaboomOpt = {}): KaboomCtx => {
             }
 
             if (
-                !assets.loaded && gopt.loadingScreen !== false || isFirstFrame
+                !assets.loaded && gopt.loadingScreen !== false
+                || isFirstFrame
             ) {
                 frameStart();
                 // TODO: Currently if assets are not initially loaded no updates or timers will be run, however they will run if loadingScreen is set to false. What's the desired behavior or should we make them consistent?
@@ -6665,8 +4902,22 @@ export default (gopt: KaboomOpt = {}): KaboomCtx => {
     updateViewport();
     initEvents();
 
+    const internalCtx = {
+        kaboomCtx: ctx,
+        app,
+        game,
+        isFixed,
+        toFixed,
+        getViewportScale,
+        getRenderProps,
+        resolveSprite,
+        drawTexture,
+        calcTransform,
+    } satisfies InternalCtx;
+
     // the exported ctx handle
-    const ctx: KaboomCtx = {
+    ctx = {
+        _k: internalCtx,
         VERSION,
         // asset load
         loadRoot,
@@ -6758,17 +5009,17 @@ export default (gopt: KaboomOpt = {}): KaboomCtx => {
         stay,
         health,
         lifespan,
+        state,
         z,
         move,
         offscreen,
         follow,
-        state,
         fadeIn,
         mask,
         drawon,
+        raycast,
         tile,
         agent,
-        raycast,
         // group events
         on,
         onUpdate,

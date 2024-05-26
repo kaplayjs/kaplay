@@ -3,10 +3,15 @@
     "noEmit": true,
     "allowJs": true,
     "esModuleInterop": true,
-    "target": "esnext",
-    "moduleResolution": "node",
-    "noImplicitThis": true,
-    "resolveJsonModule": true
+    "target": "ESNext",
+    "moduleResolution": "Node",
+    "noImplicitThis": false,
+    "resolveJsonModule": true,
+    "paths": {
+      "@/*": [
+        "./src/*"
+      ],
+    }
   },
   "include": [
     "src/**/*",

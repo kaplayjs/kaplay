@@ -5,6 +5,11 @@ const backgrounds = [
     [0, 0, 255],
 ];
 
+const positions = [
+    [200, 200],
+    [220, 100],
+];
+
 for (let i = 0; i < 2; i++) {
     const k = kaboom({
         background: backgrounds[i],
@@ -27,12 +32,12 @@ for (let i = 0; i < 2; i++) {
     }
 
     k.add([
-        k.sprite("bean"),
-        k.pos(k.width() / 2, k.height() / 2),
-        k.scale(6),
-        k.rotate(0),
-        spin(),
+        k.circle(40),
         k.anchor("center"),
+        k.pos(
+            positions[i][0],
+            positions[i][1],
+        ),
     ]);
 
     k.add([

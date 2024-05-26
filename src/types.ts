@@ -36,12 +36,40 @@ declare function kaboom<T extends PluginList<unknown> = [undefined]>(
     options?: KaboomOpt<T>,
 ): T extends [undefined] ? KaboomCtx : KaboomCtx & MergePlugins<T>;
 
+export type InternalCtx = {
+    kaboomCtx: KaboomCtx;
+    app: any;
+    game: any;
+    isFixed: (obj: GameObj) => boolean;
+    toFixed: (n: number, f: number) => number;
+    getViewportScale: () => number;
+    getRenderProps: (obj: GameObj) => {
+        color: Color;
+        opacity: number;
+        anchor: Anchor;
+        outline: Outline;
+        shader: Shader;
+        uniform: Uniform;
+    };
+    resolveSprite: (
+        src: DrawSpriteOpt["sprite"],
+    ) => Asset<SpriteData> | null;
+    drawTexture: (opt: DrawTextureOpt) => void;
+    calcTransform: (obj: GameObj) => Mat4;
+};
+
 /**
  * Context handle that contains every kaboom function.
  *
  * @group Start
  */
 export interface KaboomCtx {
+    /**
+     * The internal context object.
+     *
+     * @private
+     */
+    _k: InternalCtx;
     /**
 	 * Assemble a game object from a list of components, and add it to the game
 	 *
@@ -4014,6 +4042,17 @@ export interface RenderProps {
     outline?: Outline;
 }
 
+export type DrawTextureOpt = RenderProps & {
+    tex: Texture;
+    width?: number;
+    height?: number;
+    tiled?: boolean;
+    flipX?: boolean;
+    flipY?: boolean;
+    quad?: Quad;
+    anchor?: Anchor | Vec2;
+};
+
 /**
  * How the sprite should look like.
  */
@@ -6499,6 +6538,15 @@ export declare class EventController {
     readonly cancel: () => void;
     constructor(cancel: () => void);
     static join(events: EventController[]): EventController;
+}
+
+export interface SpriteCurAnim {
+    name: string;
+    timer: number;
+    loop: boolean;
+    speed: number;
+    pingpong: boolean;
+    onEnd: () => void;
 }
 
 // TODO: global name conflict, renamed to KEvent?
