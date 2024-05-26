@@ -160,6 +160,7 @@ import type {
     GfxFont,
     HealthComp,
     ImageSource,
+    InternalCtx,
     KaboomCtx,
     KaboomOpt,
     KaboomPlugin,
@@ -281,13 +282,7 @@ function createEmptyAudioBuffer(ctx: AudioContext) {
     return ctx.createBuffer(1, 1, 44100);
 }
 
-type InternalContext = {
-    kaboomCtx: KaboomCtx;
-    getViewportScale: () => number;
-};
-
 let ctx: KaboomCtx;
-let internalCtx: InternalContext[] = [];
 
 // TODO: A better way to detect KaboomCtx
 export const isKaboomCtx = (obj: any): obj is KaboomCtx => {
@@ -308,8 +303,8 @@ export const getKaboomContext = (fallBack?: any): KaboomCtx => {
     return ctx;
 };
 
-export const getInternalContext = (kaboom: KaboomCtx): InternalContext => {
-    return internalCtx.find((ctx) => ctx.kaboomCtx === kaboom);
+export const getInternalContext = (kaboom: KaboomCtx): InternalCtx => {
+    return kaboom._k;
 };
 
 // only exports one kaboom() which contains all the state
@@ -6615,9 +6610,14 @@ export default (gopt: KaboomOpt = {}): KaboomCtx => {
 
     updateViewport();
     initEvents();
+    const internalCtx = {
+        kaboomCtx: ctx,
+        getViewportScale,
+    };
 
     // the exported ctx handle
     ctx = {
+        _k: internalCtx,
         VERSION,
         // asset load
         loadRoot,
@@ -6885,11 +6885,6 @@ export default (gopt: KaboomOpt = {}): KaboomCtx => {
         EventHandler,
         EventController,
     };
-
-    internalCtx.push({
-        kaboomCtx: ctx,
-        getViewportScale,
-    });
 
     if (gopt.plugins) {
         gopt.plugins.forEach(plug);

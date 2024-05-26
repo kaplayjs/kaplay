@@ -36,12 +36,23 @@ declare function kaboom<T extends PluginList<unknown> = [undefined]>(
     options?: KaboomOpt<T>,
 ): T extends [undefined] ? KaboomCtx : KaboomCtx & MergePlugins<T>;
 
+export type InternalCtx = {
+    kaboomCtx: KaboomCtx;
+    getViewportScale: () => number;
+};
+
 /**
  * Context handle that contains every kaboom function.
  *
  * @group Start
  */
 export interface KaboomCtx {
+    /**
+     * The internal context object.
+     *
+     * @private
+     */
+    _k: InternalCtx;
     /**
 	 * Assemble a game object from a list of components, and add it to the game
 	 *
