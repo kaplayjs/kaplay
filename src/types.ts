@@ -1325,8 +1325,8 @@ export interface KaboomCtx {
     /**
      * Gets the name of the current scene.
      *
-     * @since v3000.0
-     * @group Scenes
+     * @since v3001.0
+     * @group Scene
      */
     getSceneName(): string;
     /**
