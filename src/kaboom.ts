@@ -707,6 +707,7 @@ export default (gopt: KaboomOpt = {}): KaboomCtx => {
         // misc
         gravity: 0,
         scenes: {},
+        currentScene: null,
 
         // on screen log
         logs: [],
@@ -3471,12 +3472,18 @@ export default (gopt: KaboomOpt = {}): KaboomCtx => {
 
             game.scenes[name](...args);
         });
+
+        game.currentScene = name;
     }
 
     function onSceneLeave(
         action: (newScene?: string) => void,
     ): EventController {
         return game.events.on("sceneLeave", action);
+    }
+
+    function getSceneName() {
+        return game.currentScene;
     }
 
     function getData<T>(key: string, def?: T): T {
@@ -5146,6 +5153,7 @@ export default (gopt: KaboomOpt = {}): KaboomCtx => {
         debug,
         // scene
         scene,
+        getSceneName,
         go,
         onSceneLeave,
         // level
