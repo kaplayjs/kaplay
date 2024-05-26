@@ -38,6 +38,10 @@ declare function kaboom<T extends PluginList<unknown> = [undefined]>(
 
 export type InternalCtx = {
     kaboomCtx: KaboomCtx;
+    app: any;
+    game: any;
+    isFixed: (obj: GameObj) => boolean;
+    toFixed: (n: number, f: number) => number;
     getViewportScale: () => number;
 };
 

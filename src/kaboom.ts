@@ -227,8 +227,16 @@ import beanSpriteSrc from "./assets/bean.png";
 import boomSpriteSrc from "./assets/boom.png";
 import burpSoundSrc from "./assets/burp.mp3";
 import kaSpriteSrc from "./assets/ka.png";
-import { circle } from "./components/draw/circle";
-import { pos } from "./components/transform/pos";
+import {
+    anchor,
+    area,
+    circle,
+    health,
+    opacity,
+    pos,
+    rotate,
+    scale,
+} from "./components";
 
 interface SpriteCurAnim {
     name: string;
@@ -240,7 +248,7 @@ interface SpriteCurAnim {
 }
 
 // convert anchor string to a vec2 offset
-function anchorPt(orig: Anchor | Vec2): Vec2 {
+export function anchorPt(orig: Anchor | Vec2): Vec2 {
     switch (orig) {
         case "topleft":
             return new Vec2(-1, -1);
@@ -3397,44 +3405,6 @@ export default (gopt: KaboomOpt = {}): KaboomCtx => {
         return gfx.bgColor.clone();
     }
 
-    // TODO: allow single number assignment
-    function scale(...args: Vec2Args): ScaleComp {
-        if (args.length === 0) {
-            return scale(1);
-        }
-        return {
-            id: "scale",
-            scale: vec2(...args),
-            scaleTo(...args: Vec2Args) {
-                this.scale = vec2(...args);
-            },
-            scaleBy(...args: Vec2Args) {
-                this.scale.scale(vec2(...args));
-            },
-            inspect() {
-                return `(${toFixed(this.scale.x, 2)}, ${
-                    toFixed(this.scale.y, 2)
-                })`;
-            },
-        };
-    }
-
-    function rotate(r: number): RotateComp {
-        return {
-            id: "rotate",
-            angle: r ?? 0,
-            rotateBy(angle: number) {
-                this.angle += angle;
-            },
-            rotateTo(angle: number) {
-                this.angle = angle;
-            },
-            inspect() {
-                return `${Math.round(this.angle)}`;
-            },
-        };
-    }
-
     function color(...args): ColorComp {
         return {
             id: "color",
@@ -3447,43 +3417,6 @@ export default (gopt: KaboomOpt = {}): KaboomCtx => {
 
     function toFixed(n: number, f: number) {
         return Number(n.toFixed(f));
-    }
-
-    // TODO: fadeIn here?
-    function opacity(a: number): OpacityComp {
-        return {
-            id: "opacity",
-            opacity: a ?? 1,
-            inspect() {
-                return `${toFixed(this.opacity, 1)}`;
-            },
-            fadeOut(time = 1, easeFunc = easings.linear): TweenController {
-                return tween(
-                    this.opacity,
-                    0,
-                    time,
-                    (a) => this.opacity = a,
-                    easeFunc,
-                );
-            },
-        };
-    }
-
-    function anchor(o: Anchor | Vec2): AnchorComp {
-        if (!o) {
-            throw new Error("Please define an anchor");
-        }
-        return {
-            id: "anchor",
-            anchor: o,
-            inspect() {
-                if (typeof this.anchor === "string") {
-                    return this.anchor;
-                } else {
-                    return this.anchor.toString();
-                }
-            },
-        };
     }
 
     function z(z: number): ZComp {
@@ -3570,278 +3503,6 @@ export default (gopt: KaboomOpt = {}): KaboomCtx => {
     function isFixed(obj: GameObj) {
         if (obj.fixed) return true;
         return obj.parent ? isFixed(obj.parent) : false;
-    }
-
-    function area(opt: AreaCompOpt = {}): AreaComp {
-        const colliding = {};
-        const collidingThisFrame = new Set();
-
-        return {
-            id: "area",
-            collisionIgnore: opt.collisionIgnore ?? [],
-
-            add(this: GameObj<AreaComp>) {
-                if (this.area.cursor) {
-                    this.onHover(() => app.setCursor(this.area.cursor));
-                }
-
-                this.onCollideUpdate((obj, col) => {
-                    if (!colliding[obj.id]) {
-                        this.trigger("collide", obj, col);
-                    }
-                    colliding[obj.id] = col;
-                    collidingThisFrame.add(obj.id);
-                });
-            },
-
-            update(this: GameObj<AreaComp>) {
-                for (const id in colliding) {
-                    if (!collidingThisFrame.has(Number(id))) {
-                        this.trigger("collideEnd", colliding[id].target);
-                        delete colliding[id];
-                    }
-                }
-                collidingThisFrame.clear();
-            },
-
-            drawInspect(this: GameObj<AreaComp | AnchorComp | FixedComp>) {
-                const a = this.localArea();
-
-                pushTransform();
-                pushScale(this.area.scale);
-                pushTranslate(this.area.offset);
-
-                const opts = {
-                    outline: {
-                        width: 4 / getViewportScale(),
-                        color: rgb(0, 0, 255),
-                    },
-                    anchor: this.anchor,
-                    fill: false,
-                    fixed: isFixed(this),
-                };
-
-                if (a instanceof Rect) {
-                    drawRect({
-                        ...opts,
-                        pos: a.pos,
-                        width: a.width,
-                        height: a.height,
-                    });
-                } else if (a instanceof Polygon) {
-                    drawPolygon({
-                        ...opts,
-                        pts: a.pts,
-                    });
-                } else if (a instanceof Circle) {
-                    drawCircle({
-                        ...opts,
-                        pos: a.center,
-                        radius: a.radius,
-                    });
-                }
-
-                popTransform();
-            },
-
-            area: {
-                shape: opt.shape ?? null,
-                scale: opt.scale ? vec2(opt.scale) : vec2(1),
-                offset: opt.offset ?? vec2(0),
-                cursor: opt.cursor ?? null,
-            },
-
-            isClicked(): boolean {
-                return app.isMousePressed() && this.isHovering();
-            },
-
-            isHovering(this: GameObj) {
-                const mpos = isFixed(this) ? mousePos() : toWorld(mousePos());
-                return this.hasPoint(mpos);
-            },
-
-            checkCollision(this: GameObj, other: GameObj<AreaComp>) {
-                return colliding[other.id] ?? null;
-            },
-
-            getCollisions() {
-                return Object.values(colliding);
-            },
-
-            // TODO: perform check instead of use cache
-            isColliding(other: GameObj<AreaComp>) {
-                return Boolean(colliding[other.id]);
-            },
-
-            isOverlapping(other) {
-                const col = colliding[other.id];
-                return col && col.hasOverlap();
-            },
-
-            onClick(
-                this: GameObj<AreaComp>,
-                f: () => void,
-                btn: MouseButton = "left",
-            ): EventController {
-                const e = app.onMousePress(btn, () => {
-                    if (this.isHovering()) {
-                        f();
-                    }
-                });
-                this.onDestroy(() => e.cancel());
-                return e;
-            },
-
-            onHover(this: GameObj, action: () => void): EventController {
-                let hovering = false;
-                return this.onUpdate(() => {
-                    if (!hovering) {
-                        if (this.isHovering()) {
-                            hovering = true;
-                            action();
-                        }
-                    } else {
-                        hovering = this.isHovering();
-                    }
-                });
-            },
-
-            onHoverUpdate(this: GameObj, onHover: () => void): EventController {
-                return this.onUpdate(() => {
-                    if (this.isHovering()) {
-                        onHover();
-                    }
-                });
-            },
-
-            onHoverEnd(this: GameObj, action: () => void): EventController {
-                let hovering = false;
-                return this.onUpdate(() => {
-                    if (hovering) {
-                        if (!this.isHovering()) {
-                            hovering = false;
-                            action();
-                        }
-                    } else {
-                        hovering = this.isHovering();
-                    }
-                });
-            },
-
-            onCollide(
-                this: GameObj,
-                tag: Tag | ((obj: GameObj, col?: Collision) => void),
-                cb?: (obj: GameObj, col?: Collision) => void,
-            ): EventController {
-                if (typeof tag === "function" && cb === undefined) {
-                    return this.on("collide", tag);
-                } else if (typeof tag === "string") {
-                    return this.onCollide((obj, col) => {
-                        if (obj.is(tag)) {
-                            cb(obj, col);
-                        }
-                    });
-                }
-            },
-
-            onCollideUpdate(
-                this: GameObj<AreaComp>,
-                tag: Tag | ((obj: GameObj, col?: Collision) => void),
-                cb?: (obj: GameObj, col?: Collision) => void,
-            ): EventController {
-                if (typeof tag === "function" && cb === undefined) {
-                    return this.on("collideUpdate", tag);
-                } else if (typeof tag === "string") {
-                    return this.on(
-                        "collideUpdate",
-                        (obj, col) => obj.is(tag) && cb(obj, col),
-                    );
-                }
-            },
-
-            onCollideEnd(
-                this: GameObj<AreaComp>,
-                tag: Tag | ((obj: GameObj) => void),
-                cb?: (obj: GameObj) => void,
-            ): EventController {
-                if (typeof tag === "function" && cb === undefined) {
-                    return this.on("collideEnd", tag);
-                } else if (typeof tag === "string") {
-                    return this.on(
-                        "collideEnd",
-                        (obj) => obj.is(tag) && cb(obj),
-                    );
-                }
-            },
-
-            hasPoint(pt: Vec2): boolean {
-                // TODO: convert to pt to local space instead
-                return testPolygonPoint(this.worldArea(), pt);
-            },
-
-            // push an obj out of another if they're overlapped
-            resolveCollision(
-                this: GameObj<AreaComp | PosComp>,
-                obj: GameObj<AreaComp>,
-            ) {
-                const col = this.checkCollision(obj);
-                if (col && !col.resolved) {
-                    this.pos = this.pos.add(col.displacement);
-                    col.resolved = true;
-                }
-            },
-
-            localArea(
-                this: GameObj<AreaComp | { renderArea(): Shape }>,
-            ): Shape {
-                return this.area.shape
-                    ? this.area.shape
-                    : this.renderArea();
-            },
-
-            // TODO: cache
-            worldArea(this: GameObj<AreaComp | AnchorComp>): Polygon {
-                const localArea = this.localArea();
-
-                if (
-                    !(localArea instanceof Polygon || localArea instanceof Rect)
-                ) {
-                    throw new Error(
-                        "Only support polygon and rect shapes for now",
-                    );
-                }
-
-                const transform = this.transform
-                    .clone()
-                    .scale(vec2(this.area.scale ?? 1))
-                    .translate(this.area.offset);
-
-                if (localArea instanceof Rect) {
-                    const offset = anchorPt(this.anchor || DEF_ANCHOR)
-                        .add(1, 1)
-                        .scale(-0.5)
-                        .scale(localArea.width, localArea.height);
-                    transform.translate(offset);
-                }
-
-                return localArea.transform(transform) as Polygon;
-            },
-
-            screenArea(this: GameObj<AreaComp | FixedComp>): Polygon {
-                const area = this.worldArea();
-                if (isFixed(this)) {
-                    return area;
-                } else {
-                    return area.transform(game.cam.transform);
-                }
-            },
-
-            inspect() {
-                return `(${this.area.scale.x.toFixed(1)}, ${
-                    this.area.scale.y.toFixed(1)
-                })`;
-            },
-        };
     }
 
     function getRenderProps(obj: GameObj<any>) {
@@ -4680,57 +4341,6 @@ export default (gopt: KaboomOpt = {}): KaboomCtx => {
             id: "stay",
             stay: true,
             scenesToStay: scenesToStay,
-        };
-    }
-
-    function health(hp: number, maxHP?: number): HealthComp {
-        if (hp == null) {
-            throw new Error("health() requires the initial amount of hp");
-        }
-        return {
-            id: "health",
-            hurt(this: GameObj, n: number = 1) {
-                this.setHP(hp - n);
-                this.trigger("hurt", n);
-            },
-            heal(this: GameObj, n: number = 1) {
-                const origHP = hp;
-                this.setHP(hp + n);
-                this.trigger("heal", hp - origHP);
-            },
-            hp(): number {
-                return hp;
-            },
-            maxHP(): number | null {
-                return maxHP ?? null;
-            },
-            setMaxHP(n: number): void {
-                maxHP = n;
-            },
-            setHP(this: GameObj, n: number) {
-                hp = maxHP ? Math.min(maxHP, n) : n;
-                if (hp <= 0) {
-                    this.trigger("death");
-                }
-            },
-            onHurt(
-                this: GameObj,
-                action: (amount?: number) => void,
-            ): EventController {
-                return this.on("hurt", action);
-            },
-            onHeal(
-                this: GameObj,
-                action: (amount?: number) => void,
-            ): EventController {
-                return this.on("heal", action);
-            },
-            onDeath(this: GameObj, action: () => void): EventController {
-                return this.on("death", action);
-            },
-            inspect() {
-                return `${hp}`;
-            },
         };
     }
 
@@ -6610,10 +6220,15 @@ export default (gopt: KaboomOpt = {}): KaboomCtx => {
 
     updateViewport();
     initEvents();
+
     const internalCtx = {
         kaboomCtx: ctx,
+        app,
+        game,
+        isFixed,
+        toFixed,
         getViewportScale,
-    };
+    } satisfies InternalCtx;
 
     // the exported ctx handle
     ctx = {
@@ -6686,7 +6301,7 @@ export default (gopt: KaboomOpt = {}): KaboomCtx => {
         destroyAll,
         get,
         readd,
-        // comps
+        // own file comps
         pos,
         scale,
         rotate,
@@ -6694,6 +6309,7 @@ export default (gopt: KaboomOpt = {}): KaboomCtx => {
         opacity,
         anchor,
         area,
+        // no own file comps
         sprite,
         text,
         polygon,
