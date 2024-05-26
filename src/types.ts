@@ -43,6 +43,18 @@ export type InternalCtx = {
     isFixed: (obj: GameObj) => boolean;
     toFixed: (n: number, f: number) => number;
     getViewportScale: () => number;
+    getRenderProps: (obj: GameObj) => {
+        color: Color;
+        opacity: number;
+        anchor: Anchor;
+        outline: Outline;
+        shader: Shader;
+        uniform: Uniform;
+    };
+    resolveSprite: (
+        src: DrawSpriteOpt["sprite"],
+    ) => Asset<SpriteData> | null;
+    drawTexture: (opt: DrawTextureOpt) => void;
 };
 
 /**
@@ -4029,6 +4041,17 @@ export interface RenderProps {
     outline?: Outline;
 }
 
+export type DrawTextureOpt = RenderProps & {
+    tex: Texture;
+    width?: number;
+    height?: number;
+    tiled?: boolean;
+    flipX?: boolean;
+    flipY?: boolean;
+    quad?: Quad;
+    anchor?: Anchor | Vec2;
+};
+
 /**
  * How the sprite should look like.
  */
@@ -6514,6 +6537,15 @@ export declare class EventController {
     readonly cancel: () => void;
     constructor(cancel: () => void);
     static join(events: EventController[]): EventController;
+}
+
+export interface SpriteCurAnim {
+    name: string;
+    timer: number;
+    loop: boolean;
+    speed: number;
+    pingpong: boolean;
+    onEnd: () => void;
 }
 
 // TODO: global name conflict, renamed to KEvent?

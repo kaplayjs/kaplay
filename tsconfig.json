@@ -7,6 +7,12 @@
     "moduleResolution": "node",
     "noImplicitThis": false,
     "resolveJsonModule": true,
+    "baseUrl": "./",
+    "paths": {
+      "@/*": [
+        "src/*"
+      ],
+    }
   },
   "include": [
     "src/**/*",
