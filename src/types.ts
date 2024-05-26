@@ -1322,6 +1322,14 @@ export interface KaboomCtx {
      */
     onSceneLeave(action: (newScene?: string) => void): EventController;
     /**
+    /**
+     * Gets the name of the current scene.
+     *
+     * @since v3001.0
+     * @group Scene
+     */
+    getSceneName(): string;
+    /**
      * Sets the root for all subsequent resource urls.
      *
      * @example
