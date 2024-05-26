@@ -56,6 +56,7 @@ import {
     Ellipse,
     evaluateBezier,
     hsl2rgb,
+    isConvex,
     lerp,
     Line,
     map,
@@ -83,11 +84,10 @@ import {
     testRectLine,
     testRectPoint,
     testRectRect,
+    triangulate,
     Vec2,
     vec2,
     wave,
-    isConvex,
-    triangulate,
 } from "./math";
 
 import easings from "./easings";
@@ -226,6 +226,8 @@ import beanSpriteSrc from "./assets/bean.png";
 import boomSpriteSrc from "./assets/boom.png";
 import burpSoundSrc from "./assets/burp.mp3";
 import kaSpriteSrc from "./assets/ka.png";
+import { circle } from "./components/draw/circle";
+import { pos } from "./components/transform/pos";
 
 interface SpriteCurAnim {
     name: string;
@@ -279,9 +281,40 @@ function createEmptyAudioBuffer(ctx: AudioContext) {
     return ctx.createBuffer(1, 1, 44100);
 }
 
+type InternalContext = {
+    kaboomCtx: KaboomCtx;
+    getViewportScale: () => number;
+};
+
+let ctx: KaboomCtx;
+let internalCtx: InternalContext[] = [];
+
+// TODO: A better way to detect KaboomCtx
+export const isKaboomCtx = (obj: any): obj is KaboomCtx => {
+    return Object.keys(obj).includes("loadAseprite");
+};
+
+export const getKaboomContext = (fallBack?: any): KaboomCtx => {
+    if (!ctx) {
+        throw new Error(
+            "You are trying to access to Kaboom Context before their initialization.",
+        );
+    }
+
+    if (isKaboomCtx(fallBack)) {
+        return fallBack;
+    }
+
+    return ctx;
+};
+
+export const getInternalContext = (kaboom: KaboomCtx): InternalContext => {
+    return internalCtx.find((ctx) => ctx.kaboomCtx === kaboom);
+};
+
 // only exports one kaboom() which contains all the state
-export default (gopt: KaboomOpt = {}): KaboomCtx => {
-    const root = gopt.root ?? document.body;
+export default (globalOpt: KaboomOpt = {}): KaboomCtx => {
+    const root = globalOpt.root ?? document.body;
 
     // if root is not defined (which falls back to <body>) we assume user is using kaboom on a clean page, and modify <body> to better fit a full screen canvas
     if (root === document.body) {
@@ -293,18 +326,18 @@ export default (gopt: KaboomOpt = {}): KaboomCtx => {
     }
 
     // create a <canvas> if user didn't provide one
-    const canvas = gopt.canvas
+    const canvas = globalOpt.canvas
         ?? root.appendChild(document.createElement("canvas"));
 
     // global pixel scale
-    const gscale = gopt.scale ?? 1;
-    const fixedSize = gopt.width && gopt.height && !gopt.stretch
-        && !gopt.letterbox;
+    const gscale = globalOpt.scale ?? 1;
+    const fixedSize = globalOpt.width && globalOpt.height && !globalOpt.stretch
+        && !globalOpt.letterbox;
 
     // adjust canvas size according to user size / viewport settings
     if (fixedSize) {
-        canvas.width = gopt.width * gscale;
-        canvas.height = gopt.height * gscale;
+        canvas.width = globalOpt.width * gscale;
+        canvas.height = globalOpt.height * gscale;
     } else {
         canvas.width = canvas.parentElement.offsetWidth;
         canvas.height = canvas.parentElement.offsetHeight;
@@ -326,7 +359,7 @@ export default (gopt: KaboomOpt = {}): KaboomCtx => {
         styles.push("height: 100%");
     }
 
-    if (gopt.crisp) {
+    if (globalOpt.crisp) {
         // chrome only supports pixelated and firefox only supports crisp-edges
         styles.push("image-rendering: pixelated");
         styles.push("image-rendering: crisp-edges");
@@ -334,7 +367,7 @@ export default (gopt: KaboomOpt = {}): KaboomCtx => {
 
     canvas.style.cssText = styles.join(";");
 
-    const pixelDensity = gopt.pixelDensity || window.devicePixelRatio;
+    const pixelDensity = globalOpt.pixelDensity || window.devicePixelRatio;
 
     canvas.width *= pixelDensity;
     canvas.height *= pixelDensity;
@@ -350,10 +383,10 @@ export default (gopt: KaboomOpt = {}): KaboomCtx => {
 
     const app = initApp({
         canvas: canvas,
-        touchToMouse: gopt.touchToMouse,
-        gamepads: gopt.gamepads,
-        pixelDensity: gopt.pixelDensity,
-        maxFPS: gopt.maxFPS,
+        touchToMouse: globalOpt.touchToMouse,
+        gamepads: globalOpt.gamepads,
+        pixelDensity: globalOpt.pixelDensity,
+        maxFPS: globalOpt.maxFPS,
     });
 
     const gc: Array<() => void> = [];
@@ -368,7 +401,7 @@ export default (gopt: KaboomOpt = {}): KaboomCtx => {
         });
 
     const ggl = initGfx(gl, {
-        texFilter: gopt.texFilter,
+        texFilter: globalOpt.texFilter,
     });
 
     const gfx = (() => {
@@ -381,11 +414,11 @@ export default (gopt: KaboomOpt = {}): KaboomCtx => {
             new ImageData(new Uint8ClampedArray([255, 255, 255, 255]), 1, 1),
         );
 
-        const frameBuffer = (gopt.width && gopt.height)
+        const frameBuffer = (globalOpt.width && globalOpt.height)
             ? new FrameBuffer(
                 ggl,
-                gopt.width * pixelDensity * gscale,
-                gopt.height * pixelDensity * gscale,
+                globalOpt.width * pixelDensity * gscale,
+                globalOpt.height * pixelDensity * gscale,
             )
             : new FrameBuffer(
                 ggl,
@@ -396,9 +429,11 @@ export default (gopt: KaboomOpt = {}): KaboomCtx => {
         let bgColor: null | Color = null;
         let bgAlpha = 1;
 
-        if (gopt.background) {
-            bgColor = rgb(gopt.background);
-            bgAlpha = Array.isArray(gopt.background) ? gopt.background[3] : 1;
+        if (globalOpt.background) {
+            bgColor = rgb(globalOpt.background);
+            bgAlpha = Array.isArray(globalOpt.background)
+                ? globalOpt.background[3]
+                : 1;
             gl.clearColor(
                 bgColor.r / 255,
                 bgColor.g / 255,
@@ -472,8 +507,9 @@ export default (gopt: KaboomOpt = {}): KaboomCtx => {
             bgColor: bgColor,
             bgAlpha: bgAlpha,
 
-            width: gopt.width ?? gl.drawingBufferWidth / pixelDensity / gscale,
-            height: gopt.height
+            width: globalOpt.width
+                ?? gl.drawingBufferWidth / pixelDensity / gscale,
+            height: globalOpt.height
                 ?? gl.drawingBufferHeight / pixelDensity / gscale,
 
             viewport: {
@@ -1158,7 +1194,7 @@ export default (gopt: KaboomOpt = {}): KaboomCtx => {
         | void
     {
         if (!src) {
-            return resolveFont(gopt.font ?? DEF_FONT);
+            return resolveFont(globalOpt.font ?? DEF_FONT);
         }
         if (typeof src === "string") {
             const bfont = getBitmapFont(src);
@@ -1201,7 +1237,7 @@ export default (gopt: KaboomOpt = {}): KaboomCtx => {
 
         function resumeAudioCtx() {
             if (debug.paused) return;
-            if (app.isHidden() && !gopt.backgroundAudio) return;
+            if (app.isHidden() && !globalOpt.backgroundAudio) return;
             audio.ctx.resume();
         }
 
@@ -2199,15 +2235,15 @@ export default (gopt: KaboomOpt = {}): KaboomCtx => {
 
             // TODO: better triangulation
             let indices;
-            
+
             if (opt.triangulate && isConvex(opt.pts)) {
-                const triangles = triangulate(opt.pts)
-                indices = triangles.map(t => t.map(p => opt.pts.indexOf(p))).flat()
-            }
-            else {
+                const triangles = triangulate(opt.pts);
+                indices = triangles.map(t => t.map(p => opt.pts.indexOf(p)))
+                    .flat();
+            } else {
                 indices = [...Array(npts - 2).keys()]
-                .map((n) => [0, n + 1, n + 2])
-                .flat();
+                    .map((n) => [0, n + 1, n + 2])
+                    .flat();
             }
 
             drawRaw(
@@ -2702,7 +2738,7 @@ export default (gopt: KaboomOpt = {}): KaboomCtx => {
         drawCalls: () => gfx.lastDrawCalls,
         clearLog: () => game.logs = [],
         log: (msg) => {
-            const max = gopt.logMax ?? LOG_MAX;
+            const max = globalOpt.logMax ?? LOG_MAX;
             game.logs.unshift({
                 msg: msg,
                 time: app.time(),
@@ -3364,69 +3400,6 @@ export default (gopt: KaboomOpt = {}): KaboomCtx => {
 
     function getBackground() {
         return gfx.bgColor.clone();
-    }
-
-    // TODO: manage global velocity here?
-    function pos(...args: Vec2Args): PosComp {
-        return {
-            id: "pos",
-            pos: vec2(...args),
-
-            moveBy(...args: Vec2Args) {
-                this.pos = this.pos.add(vec2(...args));
-            },
-
-            // move with velocity (pixels per second)
-            move(...args: Vec2Args) {
-                this.moveBy(vec2(...args).scale(dt()));
-            },
-
-            // move to a destination, with optional speed
-            moveTo(...args) {
-                if (
-                    typeof args[0] === "number" && typeof args[1] === "number"
-                ) {
-                    return this.moveTo(vec2(args[0], args[1]), args[2]);
-                }
-                const dest = args[0];
-                const speed = args[1];
-                if (speed === undefined) {
-                    this.pos = vec2(dest);
-                    return;
-                }
-                const diff = dest.sub(this.pos);
-                if (diff.len() <= speed * dt()) {
-                    this.pos = vec2(dest);
-                    return;
-                }
-                this.move(diff.unit().scale(speed));
-            },
-
-            worldPos(this: GameObj<PosComp>): Vec2 {
-                return this.parent
-                    ? this.parent.transform.multVec2(this.pos)
-                    : this.pos;
-            },
-
-            // get the screen position (transformed by camera)
-            screenPos(this: GameObj<PosComp | FixedComp>): Vec2 {
-                const pos = this.worldPos();
-                return isFixed(this)
-                    ? pos
-                    : toScreen(pos);
-            },
-
-            inspect() {
-                return `(${Math.round(this.pos.x)}, ${Math.round(this.pos.y)})`;
-            },
-
-            drawInspect() {
-                drawCircle({
-                    color: rgb(255, 0, 0),
-                    radius: 4 / getViewportScale(),
-                });
-            },
-        };
     }
 
     // TODO: allow single number assignment
@@ -4333,29 +4306,6 @@ export default (gopt: KaboomOpt = {}): KaboomCtx => {
         };
     }
 
-    function circle(radius: number, opt: CircleCompOpt = {}): CircleComp {
-        return {
-            id: "circle",
-            radius: radius,
-            draw(this: GameObj<CircleComp>) {
-                drawCircle(Object.assign(getRenderProps(this), {
-                    radius: this.radius,
-                    fill: opt.fill,
-                }));
-            },
-            renderArea(this: GameObj<AnchorComp | CircleComp>) {
-                return new Rect(
-                    new Vec2(this.anchor ? 0 : -this.radius),
-                    this.radius * 2,
-                    this.radius * 2,
-                );
-            },
-            inspect() {
-                return `${Math.ceil(this.radius)}`;
-            },
-        };
-    }
-
     function outline(
         width: number = 1,
         color: Color = rgb(0, 0, 0),
@@ -5051,7 +5001,7 @@ export default (gopt: KaboomOpt = {}): KaboomCtx => {
         for (const k in funcsObj) {
             // @ts-ignore
             ctx[k] = funcsObj[k];
-            if (gopt.global !== false) {
+            if (globalOpt.global !== false) {
                 // @ts-ignore
                 window[k] = funcsObj[k];
             }
@@ -6026,7 +5976,7 @@ export default (gopt: KaboomOpt = {}): KaboomCtx => {
         // TODO: persistent grid?
         // start a spatial hash grid for more efficient collision detection
         const grid: Record<number, Record<number, GameObj<AreaComp>[]>> = {};
-        const cellSize = gopt.hashGridSize || DEF_HASH_GRID_SIZE;
+        const cellSize = globalOpt.hashGridSize || DEF_HASH_GRID_SIZE;
 
         // current transform
         let tr = new Mat4();
@@ -6372,7 +6322,7 @@ export default (gopt: KaboomOpt = {}): KaboomCtx => {
 
                 game.logs = game.logs
                     .filter((log) =>
-                        app.time() - log.time < (gopt.logTime || LOG_TIME)
+                        app.time() - log.time < (globalOpt.logTime || LOG_TIME)
                     );
 
                 const ftext = formatText({
@@ -6521,7 +6471,8 @@ export default (gopt: KaboomOpt = {}): KaboomCtx => {
             }
 
             if (
-                !assets.loaded && gopt.loadingScreen !== false || isFirstFrame
+                !assets.loaded && globalOpt.loadingScreen !== false
+                || isFirstFrame
             ) {
                 frameStart();
                 // TODO: Currently if assets are not initially loaded no updates or timers will be run, however they will run if loadingScreen is set to false. What's the desired behavior or should we make them consistent?
@@ -6532,7 +6483,7 @@ export default (gopt: KaboomOpt = {}): KaboomCtx => {
                 checkFrame();
                 frameStart();
                 drawFrame();
-                if (gopt.debug !== false) drawDebug();
+                if (globalOpt.debug !== false) drawDebug();
                 frameEnd();
             }
 
@@ -6557,15 +6508,15 @@ export default (gopt: KaboomOpt = {}): KaboomCtx => {
         const cw = gl.drawingBufferWidth / pd;
         const ch = gl.drawingBufferHeight / pd;
 
-        if (gopt.letterbox) {
-            if (!gopt.width || !gopt.height) {
+        if (globalOpt.letterbox) {
+            if (!globalOpt.width || !globalOpt.height) {
                 throw new Error(
                     "Letterboxing requires width and height defined.",
                 );
             }
 
             const rc = cw / ch;
-            const rg = gopt.width / gopt.height;
+            const rg = globalOpt.width / globalOpt.height;
 
             if (rc > rg) {
                 const sw = ch * rg;
@@ -6590,8 +6541,8 @@ export default (gopt: KaboomOpt = {}): KaboomCtx => {
             return;
         }
 
-        if (gopt.stretch) {
-            if (!gopt.width || !gopt.height) {
+        if (globalOpt.stretch) {
+            if (!globalOpt.width || !globalOpt.height) {
                 throw new Error(
                     "Stretching requires width and height defined.",
                 );
@@ -6608,21 +6559,21 @@ export default (gopt: KaboomOpt = {}): KaboomCtx => {
 
     function initEvents() {
         app.onHide(() => {
-            if (!gopt.backgroundAudio) {
+            if (!globalOpt.backgroundAudio) {
                 audio.ctx.suspend();
             }
         });
 
         app.onShow(() => {
-            if (!gopt.backgroundAudio && !debug.paused) {
+            if (!globalOpt.backgroundAudio && !debug.paused) {
                 audio.ctx.resume();
             }
         });
 
         app.onResize(() => {
             if (app.isFullscreen()) return;
-            const fixedSize = gopt.width && gopt.height;
-            if (fixedSize && !gopt.stretch && !gopt.letterbox) return;
+            const fixedSize = globalOpt.width && globalOpt.height;
+            if (fixedSize && !globalOpt.stretch && !globalOpt.letterbox) return;
             canvas.width = canvas.offsetWidth * pixelDensity;
             canvas.height = canvas.offsetHeight * pixelDensity;
             updateViewport();
@@ -6638,7 +6589,7 @@ export default (gopt: KaboomOpt = {}): KaboomCtx => {
             }
         });
 
-        if (gopt.debug !== false) {
+        if (globalOpt.debug !== false) {
             app.onKeyPress("f1", () => debug.inspect = !debug.inspect);
             app.onKeyPress("f2", () => debug.clearLog());
             app.onKeyPress("f8", () => debug.paused = !debug.paused);
@@ -6657,7 +6608,7 @@ export default (gopt: KaboomOpt = {}): KaboomCtx => {
             app.onKeyPress("f10", () => debug.stepFrame());
         }
 
-        if (gopt.burp) {
+        if (globalOpt.burp) {
             app.onKeyPress("b", () => burp());
         }
     }
@@ -6666,7 +6617,7 @@ export default (gopt: KaboomOpt = {}): KaboomCtx => {
     initEvents();
 
     // the exported ctx handle
-    const ctx: KaboomCtx = {
+    ctx = {
         VERSION,
         // asset load
         loadRoot,
@@ -6935,18 +6886,23 @@ export default (gopt: KaboomOpt = {}): KaboomCtx => {
         EventController,
     };
 
-    if (gopt.plugins) {
-        gopt.plugins.forEach(plug);
+    internalCtx.push({
+        kaboomCtx: ctx,
+        getViewportScale,
+    });
+
+    if (globalOpt.plugins) {
+        globalOpt.plugins.forEach(plug);
     }
 
     // export everything to window if global is set
-    if (gopt.global !== false) {
+    if (globalOpt.global !== false) {
         for (const k in ctx) {
             window[k] = ctx[k];
         }
     }
 
-    if (gopt.focus !== false) {
+    if (globalOpt.focus !== false) {
         app.canvas.focus();
     }
 

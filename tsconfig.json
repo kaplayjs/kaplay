@@ -5,8 +5,8 @@
     "esModuleInterop": true,
     "target": "esnext",
     "moduleResolution": "node",
-    "noImplicitThis": true,
-    "resolveJsonModule": true
+    "noImplicitThis": false,
+    "resolveJsonModule": true,
   },
   "include": [
     "src/**/*",
