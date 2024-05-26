@@ -55,6 +55,7 @@ export type InternalCtx = {
         src: DrawSpriteOpt["sprite"],
     ) => Asset<SpriteData> | null;
     drawTexture: (opt: DrawTextureOpt) => void;
+    calcTransform: (obj: GameObj) => Mat4;
 };
 
 /**
