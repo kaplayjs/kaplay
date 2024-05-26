@@ -4883,7 +4883,7 @@ export default (gopt: KaboomOpt = {}): KaboomCtx => {
         });
 
         if (gopt.debug !== false) {
-            app.onKeyPress("f1", () => debug.inspect = !debug.inspect);
+            app.onKeyPress(!gopt.debugKey ? "f1" : gopt.debugKey, () => debug.inspect = !debug.inspect);
             app.onKeyPress("f2", () => debug.clearLog());
             app.onKeyPress("f8", () => debug.paused = !debug.paused);
             app.onKeyPress("f7", () => {

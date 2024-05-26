@@ -3261,6 +3261,10 @@ export interface KaboomOpt<T extends PluginList<any> = any> {
      */
     debug?: boolean;
     /**
+     * Key used to toggle debug mode (default "f1")
+     */
+    debugKey?: Key;
+    /**
      * Default font (defaults to "monospace").
      */
     font?: string;
