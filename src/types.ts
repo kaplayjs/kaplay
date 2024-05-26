@@ -4370,6 +4370,11 @@ export interface Outline {
     join?: LineJoin;
 }
 
+/**
+ * How the text should be aligned.
+ *
+ * @group Draw
+ */
 export type TextAlign =
     | "center"
     | "left"
@@ -4377,6 +4382,8 @@ export type TextAlign =
 
 /**
  * How the text should look like.
+ *
+ * @group Draw
  */
 export type DrawTextOpt = RenderProps & {
     /**
@@ -4469,6 +4476,8 @@ export type CharTransformFunc = (idx: number, ch: string) => CharTransform;
 
 /**
  * Describes how to transform each character.
+ *
+ * @group Component Options
  */
 export interface CharTransform {
     pos?: Vec2;
@@ -4478,6 +4487,9 @@ export interface CharTransform {
     opacity?: number;
 }
 
+/**
+ * @group Draw
+ */
 export type Cursor =
     | string
     | "auto"
@@ -4517,6 +4529,9 @@ export type Cursor =
     | "zoom-int"
     | "zoom-out";
 
+/**
+ * @group Draw
+ */
 export type Anchor =
     | "topleft"
     | "top"
@@ -4528,6 +4543,9 @@ export type Anchor =
     | "bot"
     | "botright";
 
+/**
+ * @group Math
+ */
 export type Vec2Args =
     | [number, number]
     | [number]
@@ -4535,6 +4553,11 @@ export type Vec2Args =
     | [number | Vec2]
     | [];
 
+/**
+ * A 2D vector.
+ *
+ * @group Math
+ */
 export declare class Vec2 {
     x: number;
     y: number;
@@ -4657,6 +4680,9 @@ export declare class Vec2 {
     toString(): string;
 }
 
+/**
+ * @group Math
+ */
 export declare class Mat4 {
     m: number[];
     constructor(m?: number[]);
@@ -4681,6 +4707,8 @@ export declare class Mat4 {
 
 /**
  * 0-255 RGBA color.
+ *
+ * @group Math
  */
 export declare class Color {
     /**
@@ -4758,6 +4786,9 @@ export declare class Color {
     toArray(): Array<number>;
 }
 
+/**
+ * @group Math
+ */
 export declare class Quad {
     x: number;
     y: number;
@@ -4770,16 +4801,25 @@ export declare class Quad {
     eq(q: Quad): boolean;
 }
 
+/**
+ * @group Math
+ */
 export type LerpValue =
     | number
     | Vec2
     | Color;
 
+/**
+ * @group Math
+ */
 export type RNGValue =
     | number
     | Vec2
     | Color;
 
+/**
+ * @group Math
+ */
 export type ShapeType =
     | Vec2
     | Circle
@@ -4788,6 +4828,9 @@ export type ShapeType =
     | Rect
     | Polygon;
 
+/**
+ * @group Math
+ */
 export type RaycastHit = {
     fraction: number;
     normal: Vec2;
@@ -4796,8 +4839,14 @@ export type RaycastHit = {
     object?: GameObj;
 };
 
+/**
+ * @group Math
+ */
 export type RaycastResult = RaycastHit | null;
 
+/**
+ * @group Math
+ */
 export declare class Rect {
     pos: Vec2;
     width: number;
@@ -4817,6 +4866,9 @@ export declare class Rect {
     raycast(origin: Vec2, direction: Vec2): RaycastResult;
 }
 
+/**
+ * @group Math
+ */
 export declare class Line {
     p1: Vec2;
     p2: Vec2;
@@ -4830,6 +4882,9 @@ export declare class Line {
     raycast(origin: Vec2, direction: Vec2): RaycastResult;
 }
 
+/**
+ * @group Math
+ */
 export declare class Circle {
     center: Vec2;
     radius: number;
@@ -4843,6 +4898,9 @@ export declare class Circle {
     raycast(origin: Vec2, direction: Vec2): RaycastResult;
 }
 
+/**
+ * @group Math
+ */
 export declare class Ellipse {
     center: Vec2;
     radiusX: number;
@@ -4857,6 +4915,9 @@ export declare class Ellipse {
     raycast(origin: Vec2, direction: Vec2): RaycastResult;
 }
 
+/**
+ * @group Math
+ */
 export declare class Polygon {
     pts: Vec2[];
     constructor(pts: Vec2[]);
@@ -4869,8 +4930,14 @@ export declare class Polygon {
     raycast(origin: Vec2, direction: Vec2): RaycastResult;
 }
 
+/**
+ * @group Math
+ */
 export type Point = Vec2;
 
+/**
+ * @group Math
+ */
 export declare class RNG {
     seed: number;
     constructor(seed: number);
@@ -4881,6 +4948,9 @@ export declare class RNG {
     genAny<T = RNGValue>(...args: T[]): T;
 }
 
+/**
+ * @group Component System
+ */
 export interface Comp {
     /**
      * Component ID (if left out won't be treated as a comp).
@@ -4918,13 +4988,21 @@ export interface Comp {
     drawInspect?: () => void;
 }
 
+/**
+ * @group Game Obj
+ */
 export type GameObjID = number;
 
 /**
  * A component without own properties.
+ *
+ * @group Component System
  */
 export type EmptyComp = { id: string } & Comp;
 
+/**
+ * @group Component System
+ */
 export interface PosComp extends Comp {
     /**
      * Object's current world position.
@@ -4955,6 +5033,9 @@ export interface PosComp extends Comp {
     worldPos(): Vec2;
 }
 
+/**
+ * @group Component System
+ */
 export interface ScaleComp extends Comp {
     scale: Vec2;
     scaleTo(s: number): void;
@@ -4965,6 +5046,9 @@ export interface ScaleComp extends Comp {
     scaleBy(sx: number, sy: number): void;
 }
 
+/**
+ * @group Component System
+ */
 export interface RotateComp extends Comp {
     /**
      * Angle in degrees.
@@ -4982,15 +5066,24 @@ export interface RotateComp extends Comp {
     rotateTo(s: number): void;
 }
 
+/**
+ * @group Component System
+ */
 export interface ColorComp extends Comp {
     color: Color;
 }
 
+/**
+ * @group Component System
+ */
 export interface OpacityComp extends Comp {
     opacity: number;
     fadeOut(time?: number, easeFunc?: EaseFunc): TweenController;
 }
 
+/**
+ * @group Component System
+ */
 export interface OpacityOpt {
     /**
      * Fade in n seconds when object is added to scene.
@@ -5000,6 +5093,9 @@ export interface OpacityOpt {
     fadeIn?: number;
 }
 
+/**
+ * @group Component System
+ */
 export interface AnchorComp extends Comp {
     /**
      * Anchor point for render.
@@ -5007,6 +5103,9 @@ export interface AnchorComp extends Comp {
     anchor: Anchor | Vec2;
 }
 
+/**
+ * @group Component System
+ */
 export interface ZComp extends Comp {
     /**
      * Defines the z-index of this game obj
@@ -5014,6 +5113,9 @@ export interface ZComp extends Comp {
     z: number;
 }
 
+/**
+ * @group Component System
+ */
 export interface FollowComp extends Comp {
     follow: {
         obj: GameObj;
@@ -5021,6 +5123,9 @@ export interface FollowComp extends Comp {
     };
 }
 
+/**
+ * @group Component System
+ */
 export interface OffScreenCompOpt {
     /**
      * If hide object when out of view.
@@ -5042,6 +5147,9 @@ export interface OffScreenCompOpt {
     distance?: number;
 }
 
+/**
+ * @group Component System
+ */
 export interface OffScreenComp extends Comp {
     /**
      * If object is currently out of view.
@@ -5059,6 +5167,8 @@ export interface OffScreenComp extends Comp {
 
 /**
  * Collision resolution data.
+ *
+ * @group Component System
  */
 export interface Collision {
     /**
@@ -5111,6 +5221,9 @@ export interface Collision {
     isRight(): boolean;
 }
 
+/**
+ * @group Component Options
+ */
 export interface AreaCompOpt {
     /**
      * The shape of the area (currently only Rect and Polygon is supported).
@@ -5146,6 +5259,9 @@ export interface AreaCompOpt {
     collisionIgnore?: Tag[];
 }
 
+/**
+ * @group Component System
+ */
 export interface AreaComp extends Comp {
     /**
      * Collider area info.
@@ -5291,6 +5407,9 @@ export interface AreaComp extends Comp {
     screenArea(): Polygon;
 }
 
+/**
+ * @group Component Options
+ */
 export interface SpriteCompOpt {
     /**
      * If the sprite is loaded with multiple frames, or sliced, use the frame option to specify which frame to draw.
@@ -5334,6 +5453,9 @@ export interface SpriteCompOpt {
     fill?: boolean;
 }
 
+/**
+ * @group Component System
+ */
 export interface SpriteComp extends Comp {
     draw: Comp["draw"];
     /**
@@ -5394,6 +5516,9 @@ export interface SpriteComp extends Comp {
     renderArea(): Rect;
 }
 
+/**
+ * @group Component System
+ */
 export interface TextComp extends Comp {
     draw: Comp["draw"];
     /**
@@ -5452,6 +5577,9 @@ export interface TextComp extends Comp {
     renderArea(): Rect;
 }
 
+/**
+ * @group Component Options
+ */
 export interface TextCompOpt {
     /**
      * Height of text.
@@ -5497,6 +5625,9 @@ export interface TextCompOpt {
     styles?: Record<string, CharTransform | CharTransformFunc>;
 }
 
+/**
+ * @group Component Options
+ */
 export interface RectCompOpt {
     /**
      * Radius of the rectangle corners.
@@ -5508,6 +5639,9 @@ export interface RectCompOpt {
     fill?: boolean;
 }
 
+/**
+ * @group Component System
+ */
 export interface RectComp extends Comp {
     draw: Comp["draw"];
     /**
@@ -5528,12 +5662,16 @@ export interface RectComp extends Comp {
     renderArea(): Rect;
 }
 
+/**
+ * @group Component Options
+ */
 export type PolygonCompOpt = Omit<DrawPolygonOpt, "pts">;
 
 /**
  * Component to draw a polygon.
  *
  * @since v3001.0
+ * @group Component System
  */
 export interface PolygonComp extends Comp {
     draw: Comp["draw"];
@@ -5564,6 +5702,9 @@ export interface PolygonComp extends Comp {
     renderArea(): Polygon;
 }
 
+/**
+ * @group Component Options
+ */
 export interface CircleCompOpt {
     /**
      * If fill the circle (useful if you only want to render outline with outline() component).
@@ -5571,6 +5712,9 @@ export interface CircleCompOpt {
     fill?: boolean;
 }
 
+/**
+ * @group Component System
+ */
 export interface CircleComp extends Comp {
     draw: Comp["draw"];
     /**
@@ -5583,6 +5727,9 @@ export interface CircleComp extends Comp {
     renderArea(): Rect;
 }
 
+/**
+ * @group Component System
+ */
 export interface UVQuadComp extends Comp {
     draw: Comp["draw"];
     /**
@@ -5599,6 +5746,9 @@ export interface UVQuadComp extends Comp {
     renderArea(): Rect;
 }
 
+/**
+ * @group Draw
+ */
 export type Shape =
     | Rect
     | Line
@@ -5607,10 +5757,16 @@ export type Shape =
     | Ellipse
     | Polygon;
 
+/**
+ * @group Component System
+ */
 export interface OutlineComp extends Comp {
     outline: Outline;
 }
 
+/**
+ * @group Debug
+ */
 export interface Debug {
     /**
      * Pause the whole game.
@@ -5672,6 +5828,9 @@ export interface Debug {
     numObjects(): number;
 }
 
+/**
+ * @group Math
+ */
 export type UniformValue =
     | number
     | Vec2
@@ -5681,14 +5840,26 @@ export type UniformValue =
     | Vec2[]
     | Color[];
 
+/**
+ * @group Math
+ */
 export type UniformKey = Exclude<string, "u_tex">;
+/**
+ * @group Math
+ */
 export type Uniform = Record<UniformKey, UniformValue>;
 
+/**
+ * @group Component System
+ */
 export interface ShaderComp extends Comp {
     uniform: Uniform;
     shader: string;
 }
 
+/**
+ * @group Component System
+ */
 export interface BodyComp extends Comp {
     /**
      * Object current velocity.
@@ -5790,6 +5961,9 @@ export interface BodyComp extends Comp {
     onHeadbutt(action: () => void): EventController;
 }
 
+/**
+ * @group Component System
+ */
 export interface DoubleJumpComp extends Comp {
     /**
      * Number of jumps allowed.
@@ -5805,6 +5979,9 @@ export interface DoubleJumpComp extends Comp {
     onDoubleJump(action: () => void): EventController;
 }
 
+/**
+ * @group Component Options
+ */
 export interface BodyCompOpt {
     /**
      * How much velocity decays (velocity *= (1 - drag) every frame).
@@ -5844,6 +6021,9 @@ export interface BodyCompOpt {
     mass?: number;
 }
 
+/**
+ * @group Component System
+ */
 export interface TimerComp extends Comp {
     /**
      * Run the callback after n seconds.
@@ -5869,6 +6049,9 @@ export interface TimerComp extends Comp {
     ): TweenController;
 }
 
+/**
+ * @group Component System
+ */
 export interface FixedComp extends Comp {
     /**
      * If the obj is unaffected by camera
@@ -5876,6 +6059,9 @@ export interface FixedComp extends Comp {
     fixed: boolean;
 }
 
+/**
+ * @group Component System
+ */
 export interface StayComp extends Comp {
     /**
      * If the obj should not be destroyed on scene switch.
@@ -5887,6 +6073,9 @@ export interface StayComp extends Comp {
     scenesToStay: string[];
 }
 
+/**
+ * @group Component System
+ */
 export interface HealthComp extends Comp {
     /**
      * Decrease HP by n (defaults to 1).
@@ -5932,6 +6121,9 @@ export interface HealthComp extends Comp {
     onDeath(action: () => void): EventController;
 }
 
+/**
+ * @group Component Options
+ */
 export interface LifespanCompOpt {
     /**
      * Fade out duration (default 0 which is no fade out).
@@ -5939,6 +6131,9 @@ export interface LifespanCompOpt {
     fade?: number;
 }
 
+/**
+ * @group Component System
+ */
 export interface StateComp extends Comp {
     /**
      * Current state.
@@ -5981,10 +6176,16 @@ export interface StateComp extends Comp {
 
 export type Mask = "intersect" | "subtract";
 
+/**
+ * @group Component System
+ */
 export interface MaskComp extends Comp {
     mask: Mask;
 }
 
+/**
+ * @group Component Options
+ */
 export interface LevelOpt {
     /**
      * Width of each block.
@@ -6010,12 +6211,18 @@ export interface LevelOpt {
     wildcardTile?: (sym: string, pos: Vec2) => CompList<any> | null | undefined;
 }
 
+/**
+ * @group Math
+ */
 export type Edge =
     | "left"
     | "right"
     | "top"
     | "bottom";
 
+/**
+ * @group Math
+ */
 export enum EdgeMask {
     None = 0,
     Left = 1,
@@ -6035,6 +6242,9 @@ export enum EdgeMask {
     All = 15,
 }
 
+/**
+ * @group Component Options
+ */
 export type TileCompOpt = {
     /**
      * If the tile is an obstacle in pathfinding.
@@ -6054,6 +6264,9 @@ export type TileCompOpt = {
     offset?: Vec2;
 };
 
+/**
+ * @group Component System
+ */
 export interface TileComp extends Comp {
     /**
      * The tile position inside the level.
@@ -6083,6 +6296,9 @@ export interface TileComp extends Comp {
     moveDown(): void;
 }
 
+/**
+ * @group Component System
+ */
 export interface LevelComp extends Comp {
     tileWidth(): number;
     tileHeight(): number;
@@ -6143,15 +6359,24 @@ export interface LevelComp extends Comp {
     onNavigationMapChanged(cb: () => void): EventController;
 }
 
+/**
+ * @group Component Options
+ */
 export type PathFindOpt = {
     allowDiagonals?: boolean;
 };
 
+/**
+ * @group Component Options
+ */
 export type AgentCompOpt = {
     speed?: number;
     allowDiagonals?: boolean;
 };
 
+/**
+ * @group Component System
+ */
 export interface AgentComp extends Comp {
     agentSpeed: number;
     allowDiagonals: boolean;
@@ -6169,6 +6394,9 @@ export interface AgentComp extends Comp {
     onTargetReached(cb: () => void): EventController;
 }
 
+/**
+ * @group Component Options
+ */
 export interface BoomOpt {
     /**
      * Animation speed.
@@ -6186,6 +6414,9 @@ export interface BoomOpt {
     comps?: CompList<any>;
 }
 
+/**
+ * @group Math
+ */
 export type EaseFuncs =
     | "linear"
     | "easeInSine"
@@ -6219,9 +6450,15 @@ export type EaseFuncs =
     | "easeOutBounce"
     | "easeInOutBounce";
 
+/**
+ * @group Math
+ */
 export type EaseFunc = (t: number) => number;
 
 // TODO: use PromiseLike or extend Promise?
+/**
+ * @group Timer
+ */
 export type TimerController = {
     /**
      * If the event handler is paused.
@@ -6238,6 +6475,9 @@ export type TimerController = {
     then(action: () => void): TimerController;
 };
 
+/**
+ * @group Timer
+ */
 export type TweenController = TimerController & {
     /**
      * Finish the tween now and cancel.
@@ -6245,6 +6485,9 @@ export type TweenController = TimerController & {
     finish(): void;
 };
 
+/**
+ * @group Events
+ */
 export declare class EventController {
     /**
      * If the event handler is paused.
