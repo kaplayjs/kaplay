@@ -291,7 +291,7 @@ let internalCtx: InternalContext[] = [];
 
 // TODO: A better way to detect KaboomCtx
 export const isKaboomCtx = (obj: any): obj is KaboomCtx => {
-    return Object.keys(obj).includes("loadAseprite");
+    return obj && obj["loadAseprite"];
 };
 
 export const getKaboomContext = (fallBack?: any): KaboomCtx => {
