@@ -11,7 +11,9 @@
       "@/*": [
         "./src/*"
       ]
-    }
+    },
+    // always use import type for type only imports
+    "verbatimModuleSyntax": true
   },
   "include": [
     "src/**/*",

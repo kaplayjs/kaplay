@@ -1,6 +1,6 @@
 import { getInternalContext, getKaboomContext } from "@/kaboom";
 import { Rect, vec2 } from "@/math";
-import { GameObj, RectComp, RectCompOpt } from "@/types";
+import type { GameObj, RectComp, RectCompOpt } from "@/types";
 
 export function rect(w: number, h: number, opt: RectCompOpt = {}): RectComp {
     const k = getKaboomContext(this);

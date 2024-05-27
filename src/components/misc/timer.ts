@@ -1,7 +1,7 @@
 import easings from "@/easings";
 import { getKaboomContext } from "@/kaboom";
 import { lerp } from "@/math";
-import {
+import type {
     EventController,
     GameObj,
     LerpValue,

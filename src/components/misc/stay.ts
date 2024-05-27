@@ -1,4 +1,4 @@
-import { StayComp } from "@/types";
+import type { StayComp } from "@/types";
 
 export function stay(scenesToStay?: string[]): StayComp {
     return {

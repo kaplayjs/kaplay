@@ -1,12 +1,12 @@
-import { getKaboomContext } from "../../kaboom";
-import { Rect, Vec2 } from "../../math";
-import {
+import { getKaboomContext } from "@/kaboom";
+import { Rect, Vec2 } from "@/math";
+import type {
     AnchorComp,
     CircleComp,
     CircleCompOpt,
     GameObj,
     KaboomCtx,
-} from "../../types";
+} from "@/types";
 
 function getRenderProps(obj: GameObj<any>) {
     return {

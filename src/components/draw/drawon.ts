@@ -1,4 +1,5 @@
-import { FrameBuffer, GameObj } from "@/types";
+import type { FrameBuffer } from "@/gfx";
+import type { GameObj } from "@/types";
 
 export function drawon(c: FrameBuffer) {
     return {

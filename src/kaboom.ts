@@ -66,7 +66,7 @@ import {
     randi,
     randSeed,
     raycastGrid,
-    RaycastHit as BaseRaycastHit,
+    type RaycastHit as BaseRaycastHit,
     Rect,
     rgb,
     RNG,

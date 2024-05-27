@@ -1,6 +1,6 @@
-import { getInternalContext, getKaboomContext } from "../../kaboom";
-import { vec2 } from "../../math";
-import { ScaleComp, Vec2Args } from "../../types";
+import { getInternalContext, getKaboomContext } from "@/kaboom";
+import { vec2 } from "@/math";
+import type { ScaleComp, Vec2Args } from "@/types";
 
 // TODO: allow single number assignment
 export function scale(...args: Vec2Args): ScaleComp {

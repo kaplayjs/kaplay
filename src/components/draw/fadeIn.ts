@@ -1,5 +1,5 @@
 import { getKaboomContext } from "@/kaboom";
-import { Comp, GameObj, OpacityComp } from "@/types";
+import type { Comp, GameObj, OpacityComp } from "@/types";
 
 export function fadeIn(time: number = 1): Comp {
     const k = getKaboomContext(this);

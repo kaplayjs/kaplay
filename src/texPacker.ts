@@ -1,6 +1,6 @@
 import type { ImageSource } from "./types";
 
-import { GfxCtx, Texture } from "./gfx";
+import { type GfxCtx, Texture } from "./gfx";
 
 import { Quad, Vec2 } from "./math";
 

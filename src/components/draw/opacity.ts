@@ -1,5 +1,5 @@
-import { getInternalContext, getKaboomContext } from "../../kaboom";
-import { OpacityComp, TweenController } from "../../types";
+import { getInternalContext, getKaboomContext } from "@/kaboom";
+import type { OpacityComp, TweenController } from "@/types";
 
 // TODO: fadeIn here?
 export function opacity(a: number): OpacityComp {

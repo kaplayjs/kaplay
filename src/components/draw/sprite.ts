@@ -1,20 +1,18 @@
 // TODO: accept canvas
 
+import type { Texture } from "@/gfx";
 import { getInternalContext, getKaboomContext } from "@/kaboom";
-import { Quad, quad, vec2 } from "@/math";
+import { Quad, quad, Vec2, vec2 } from "@/math";
 import type {
     Asset,
-    EventController,
     GameObj,
     SpriteAnimPlayOpt,
     SpriteComp,
     SpriteCompOpt,
     SpriteCurAnim,
     SpriteData,
-    Texture,
-    Vec2,
 } from "@/types";
-import { Event } from "@/utils";
+import { Event, EventController } from "@/utils";
 
 // TODO: clean
 export function sprite(

@@ -1,5 +1,5 @@
-import { vec2 } from "@/math";
-import { FollowComp, GameObj, PosComp, Vec2 } from "@/types";
+import { Vec2, vec2 } from "@/math";
+import type { FollowComp, GameObj, PosComp } from "@/types";
 
 export function follow(obj: GameObj, offset?: Vec2): FollowComp {
     return {

@@ -1,6 +1,6 @@
 import easings from "@/easings";
 import { getKaboomContext } from "@/kaboom";
-import { EmptyComp, GameObj, LifespanCompOpt, OpacityComp } from "@/types";
+import type { EmptyComp, GameObj, LifespanCompOpt, OpacityComp } from "@/types";
 
 export function lifespan(time: number, opt: LifespanCompOpt = {}): EmptyComp {
     const k = getKaboomContext(this);

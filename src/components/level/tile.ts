@@ -1,12 +1,11 @@
-import { vec2 } from "@/math";
+import { Vec2, vec2 } from "@/math";
 import {
-    Edge,
+    type Edge,
     EdgeMask,
-    GameObj,
-    LevelComp,
-    TileComp,
-    TileCompOpt,
-    Vec2,
+    type GameObj,
+    type LevelComp,
+    type TileComp,
+    type TileCompOpt,
 } from "@/types";
 
 export function tile(opts: TileCompOpt = {}): TileComp {

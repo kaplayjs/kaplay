@@ -1,13 +1,13 @@
 import { DEF_OFFSCREEN_DIS } from "@/constants";
 import { getKaboomContext } from "@/kaboom";
 import { Rect, vec2 } from "@/math";
-import {
-    EventController,
+import type {
     GameObj,
     OffScreenComp,
     OffScreenCompOpt,
     PosComp,
 } from "@/types";
+import type { EventController } from "@/utils";
 
 export function offscreen(opt: OffScreenCompOpt = {}): OffScreenComp {
     const k = getKaboomContext(this);

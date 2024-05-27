@@ -1,12 +1,12 @@
-import {
+import type { Vec2 } from "@/math";
+import type {
     AgentComp,
     AgentCompOpt,
-    EventController,
     GameObj,
     PosComp,
     TileComp,
-    Vec2,
 } from "@/types";
+import type { EventController } from "@/utils";
 
 export function agent(opts: AgentCompOpt = {}): AgentComp {
     let target: Vec2 | null = null;
