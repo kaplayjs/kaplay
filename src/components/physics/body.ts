@@ -91,7 +91,9 @@ export function body(opt: BodyCompOpt = {}): BodyComp {
                 this.onPhysicsResolve((col) => {
                     if (internal.game.gravity) {
                         if (col.isBottom() && this.isFalling()) {
-                            this.vel.y = 0;
+                            this.vel = this.vel.reject(
+                                internal.game.gravity.unit(),
+                            );
                             curPlatform = col.target as GameObj<
                                 PosComp | BodyComp | AreaComp
                             >;
@@ -102,7 +104,9 @@ export function body(opt: BodyCompOpt = {}): BodyComp {
                                 this.trigger("ground", curPlatform);
                             }
                         } else if (col.isTop() && this.isJumping()) {
-                            this.vel.y = 0;
+                            this.vel = this.vel.reject(
+                                internal.game.gravity.unit(),
+                            );
                             this.trigger("headbutt", col.target);
                         }
                     }
@@ -119,7 +123,7 @@ export function body(opt: BodyCompOpt = {}): BodyComp {
                     willFall = false;
                 }
 
-                let updateY = true;
+                let addGravity = true;
 
                 if (curPlatform) {
                     if (
@@ -139,21 +143,28 @@ export function body(opt: BodyCompOpt = {}): BodyComp {
                             );
                         }
                         lastPlatformPos = curPlatform.pos;
-                        updateY = false;
+                        addGravity = false;
                     }
                 }
 
-                if (updateY) {
-                    const prevVelY = this.vel.y;
+                if (addGravity) {
+                    const prevVel = this.vel.clone();
 
-                    this.vel.y += internal.game.gravity * this.gravityScale
-                        * k.dt();
-                    this.vel.y = Math.min(
-                        this.vel.y,
-                        opt.maxVelocity ?? MAX_VEL,
+                    // Apply gravity
+                    this.vel = this.vel.add(
+                        internal.game.gravity.scale(this.gravityScale * k.dt()),
                     );
 
-                    if (prevVelY < 0 && this.vel.y >= 0) {
+                    // Clamp velocity
+                    const maxVel = opt.maxVelocity ?? MAX_VEL;
+                    if (this.vel.slen() > maxVel * maxVel) {
+                        this.vel = this.vel.unit().scale(maxVel);
+                    }
+
+                    if (
+                        prevVel.dot(internal.game.gravity) < 0
+                        && this.vel.dot(internal.game.gravity) >= 0
+                    ) {
                         this.trigger("fall");
                     }
                 }
@@ -182,17 +193,19 @@ export function body(opt: BodyCompOpt = {}): BodyComp {
         },
 
         isFalling(): boolean {
-            return this.vel.y > 0;
+            return this.vel.dot(internal.game.gravity) > 0;
         },
 
         isJumping(): boolean {
-            return this.vel.y < 0;
+            return this.vel.dot(internal.game.gravity) < 0;
         },
 
         jump(force: number) {
             curPlatform = null;
             lastPlatformPos = null;
-            this.vel.y = -force || -this.jumpForce;
+            this.vel = internal.game.gravity.unit().scale(
+                -force || -this.jumpForce,
+            );
         },
 
         onGround(this: GameObj, action: () => void): EventController {

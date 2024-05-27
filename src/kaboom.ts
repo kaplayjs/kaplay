@@ -705,7 +705,7 @@ export default (gopt: KaboomOpt = {}): KaboomCtx => {
         root: make([]),
 
         // misc
-        gravity: 0,
+        gravity: vec2(0, 1),
         scenes: {},
         currentScene: null,
 
@@ -3370,11 +3370,19 @@ export default (gopt: KaboomOpt = {}): KaboomCtx => {
     }
 
     function setGravity(g: number) {
-        game.gravity = g;
+        game.gravity = game.gravity.unit().scale(g);
     }
 
     function getGravity() {
-        return game.gravity;
+        return game.gravity.len();
+    }
+
+    function setGravityDirection(d: Vec2) {
+        game.gravity = d.unit().scale(game.gravity.len());
+    }
+
+    function getGravityDirection() {
+        return game.gravity.unit();
     }
 
     function setBackground(...args) {
@@ -4249,16 +4257,16 @@ export default (gopt: KaboomOpt = {}): KaboomCtx => {
             return !this.displacement.isZero();
         }
         isLeft() {
-            return this.displacement.x > 0;
+            return this.displacement.cross(game.gravity) > 0;
         }
         isRight() {
-            return this.displacement.x < 0;
+            return this.displacement.cross(game.gravity) < 0;
         }
         isTop() {
-            return this.displacement.y > 0;
+            return this.displacement.dot(game.gravity) > 0;
         }
         isBottom() {
-            return this.displacement.y < 0;
+            return this.displacement.dot(game.gravity) < 0;
         }
         preventResolution() {
             this.resolved = true;
@@ -4983,6 +4991,8 @@ export default (gopt: KaboomOpt = {}): KaboomCtx => {
         toWorld,
         setGravity,
         getGravity,
+        setGravityDirection,
+        getGravityDirection,
         setBackground,
         getBackground,
         getGamepads: app.getGamepads,
