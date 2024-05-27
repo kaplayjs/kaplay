@@ -1,4 +1,4 @@
-import { LerpValue, Point, RNGValue, Vec2Args } from "./types";
+import type { LerpValue, Point, RNGValue, Vec2Args } from "@/types";
 
 export function deg2rad(deg: number): number {
     return deg * Math.PI / 180;
