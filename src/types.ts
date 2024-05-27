@@ -772,6 +772,7 @@ export interface KaboomCtx {
      *
      * @since v3000.0
      * @group Components
+     * @deprecated since v3001.0
      */
     fadeIn(time: number): Comp;
     /**
@@ -5137,19 +5138,8 @@ export interface ColorComp extends Comp {
  */
 export interface OpacityComp extends Comp {
     opacity: number;
+    fadeIn(time?: number, easeFunc?: EaseFunc): TweenController;
     fadeOut(time?: number, easeFunc?: EaseFunc): TweenController;
-}
-
-/**
- * @group Component System
- */
-export interface OpacityOpt {
-    /**
-     * Fade in n seconds when object is added to scene.
-     *
-     * @since v3000.0
-     */
-    fadeIn?: number;
 }
 
 /**

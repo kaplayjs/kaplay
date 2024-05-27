@@ -1,7 +1,6 @@
 import { getInternalContext, getKaboomContext } from "@/kaboom";
 import type { OpacityComp, TweenController } from "@/types";
 
-// TODO: fadeIn here?
 export function opacity(a: number): OpacityComp {
     const k = getKaboomContext(this);
     const internal = getInternalContext(k);
@@ -11,6 +10,15 @@ export function opacity(a: number): OpacityComp {
         opacity: a ?? 1,
         inspect() {
             return `${internal.toFixed(this.opacity, 1)}`;
+        },
+        fadeIn(time = 1, easeFunc = k.easings.linear): TweenController {
+            return k.tween(
+                0,
+                this.opacity,
+                time,
+                (a) => this.opacity = a,
+                easeFunc,
+            );
         },
         fadeOut(time = 1, easeFunc = k.easings.linear): TweenController {
             return k.tween(
