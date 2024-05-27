@@ -1904,6 +1904,14 @@ export interface KaboomCtx {
      */
     getGravity(): number;
     /**
+     * Set gravity direction.
+     */
+    setGravityDirection(d: Vec2): void;
+    /**
+     * Get gravity direction.
+     */
+    getGravityDirection(): Vec2;
+    /**
      * Set background color.
      *
      * @group Info

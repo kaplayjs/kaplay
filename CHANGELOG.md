@@ -8,6 +8,7 @@
 - added support for texture larger than 2048x2048
 - added `chooseMultiple()` and `shuffle()` helper functions
 - added `getSceneName()` to get the current scene name
+- added support for gravity direction
 
 ### v3000.1.17
 
