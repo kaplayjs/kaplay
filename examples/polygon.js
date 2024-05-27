@@ -37,15 +37,15 @@ let dragging = null;
 let hovering = null;
 
 poly.onDraw(() => {
-    const triangles = triangulate(poly.pts)
+    const triangles = triangulate(poly.pts);
     for (const triangle of triangles) {
         drawTriangle({
             p1: triangle[0],
             p2: triangle[1],
             p3: triangle[2],
             fill: false,
-            outline: { color: BLACK }
-        })
+            outline: { color: BLACK },
+        });
     }
     if (hovering !== null) {
         drawCircle({
@@ -55,14 +55,13 @@ poly.onDraw(() => {
     }
 });
 
-onUpdate(()=>{
+onUpdate(() => {
     if (isConvex(poly.pts)) {
-        poly.color = WHITE
+        poly.color = WHITE;
+    } else {
+        poly.color = rgb(192, 192, 192);
     }
-    else  {
-        poly.color = rgb(192, 192, 192)
-    }
-})
+});
 
 onMousePress(() => {
     dragging = hovering;

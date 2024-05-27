@@ -2343,8 +2343,8 @@ function isOrientedCcw(a: Vec2, b: Vec2, c: Vec2) {
 
 // true if the polygon is oriented counter clockwise
 function isOrientedCcwPolygon(polygon: Vec2[]) {
-    let total =0;
-    let prev:Vec2 = polygon[polygon.length-1];
+    let total = 0;
+    let prev: Vec2 = polygon[polygon.length - 1];
     for (let i = 0; i < polygon.length; i++) {
         total += (polygon[i].x - prev.x) * (polygon[i].y + prev.y);
         prev = polygon[i];
@@ -2453,32 +2453,31 @@ export function triangulate(pts: Vec2[]): Vec2[][] {
     return triangles;
 }
 
-export function isConvex(pts: Vec2[])
-{
-	if (pts.length < 3)
-		return false;
+export function isConvex(pts: Vec2[]) {
+    if (pts.length < 3) {
+        return false;
+    }
 
-	// a polygon is convex if all corners turn in the same direction
-	// turning direction can be determined using the cross-product of
-	// the forward difference vectors
-	let i = pts.length - 2
-    let j = pts.length - 1
+    // a polygon is convex if all corners turn in the same direction
+    // turning direction can be determined using the cross-product of
+    // the forward difference vectors
+    let i = pts.length - 2;
+    let j = pts.length - 1;
     let k = 0;
-	let p = pts[j].sub(pts[i]);
-	let q = pts[k].sub(pts[j]);
-	let winding = p.cross(q);
+    let p = pts[j].sub(pts[i]);
+    let q = pts[k].sub(pts[j]);
+    let winding = p.cross(q);
 
-	while (k+1 < pts.length)
-	{
-		i = j; 
-        j = k; 
+    while (k + 1 < pts.length) {
+        i = j;
+        j = k;
         k++;
-		p = pts[j].sub(pts[i]);
-		q = pts[k].sub(pts[j]);
+        p = pts[j].sub(pts[i]);
+        q = pts[k].sub(pts[j]);
 
-		if (p.cross(q) * winding < 0) {
-			return false;
+        if (p.cross(q) * winding < 0) {
+            return false;
         }
-	}
-	return true;
+    }
+    return true;
 }
