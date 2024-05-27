@@ -772,6 +772,7 @@ export interface KaboomCtx {
      *
      * @since v3000.0
      * @group Components
+     * @deprecated since v3001.0
      */
     fadeIn(time: number): Comp;
     /**

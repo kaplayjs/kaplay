@@ -13,9 +13,6 @@ export function fadeIn(time: number = 1): Comp {
         add(this: GameObj<OpacityComp>) {
             finalOpacity = this.opacity;
             this.opacity = 0;
-            console.warn(
-                "fadeInComp is deprecated, use gameObj.fadeIn() instead",
-            );
         },
         update(this: GameObj<OpacityComp>) {
             if (done) return;
