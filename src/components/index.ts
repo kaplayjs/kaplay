@@ -1,6 +1,5 @@
 export * from "./draw/circle";
 export * from "./draw/drawon";
-export * from "./draw/fadeIn";
 export * from "./draw/mask";
 export * from "./draw/opacity";
 export * from "./draw/outline";

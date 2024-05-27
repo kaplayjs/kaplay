@@ -766,15 +766,6 @@ export interface KaboomCtx {
         transitions: Record<string, string | string[]>,
     ): StateComp;
     /**
-     * Fade object in.
-     *
-     * Uses opacity for finding what to fade into and to set opacity during fade animation.
-     *
-     * @since v3000.0
-     * @group Components
-     */
-    fadeIn(time: number): Comp;
-    /**
      * Mask all children object render.
      *
      * @since v3001.0
@@ -5138,18 +5129,7 @@ export interface ColorComp extends Comp {
 export interface OpacityComp extends Comp {
     opacity: number;
     fadeOut(time?: number, easeFunc?: EaseFunc): TweenController;
-}
-
-/**
- * @group Component System
- */
-export interface OpacityOpt {
-    /**
-     * Fade in n seconds when object is added to scene.
-     *
-     * @since v3000.0
-     */
-    fadeIn?: number;
+    fadeIn(time?: number, easeFunc?: EaseFunc): TweenController;
 }
 
 /**
