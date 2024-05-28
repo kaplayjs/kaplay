@@ -1,4 +1,4 @@
-const k = kaboom();
+const k = kaplay();
 const { marea, mbody } = kmatter(k);
 
 const me = k.add([

@@ -1,4 +1,4 @@
-kaboom();
+kaplay();
 
 loadSprite("bean", "/sprites/bean.png");
 loadSprite("ghosty", "/sprites/ghosty.png");

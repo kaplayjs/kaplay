@@ -1,7 +1,7 @@
 // TODO: shader documentation in doc/
 
 // Custom shader
-kaboom();
+kaplay();
 
 loadSprite("bean", "/sprites/bean.png");
 

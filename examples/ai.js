@@ -1,7 +1,7 @@
 // Use state() component to handle basic AI
 
 // Start kaboom
-kaboom();
+kaplay();
 
 // Load assets
 loadSprite("bean", "/sprites/bean.png");

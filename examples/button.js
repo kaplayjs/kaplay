@@ -1,6 +1,6 @@
 // Simple Button UI
 
-kaboom({
+kaplay({
     background: [135, 62, 132],
 });
 

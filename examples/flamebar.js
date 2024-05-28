@@ -1,7 +1,7 @@
 // Mario-like flamebar
 
 // Start kaboom
-kaboom();
+kaplay();
 
 // Load assets
 loadSprite("bean", "/sprites/bean.png");

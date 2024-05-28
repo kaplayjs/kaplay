@@ -1,6 +1,6 @@
 // TODO: document
 
-kaboom({
+kaplay({
     background: [74, 48, 82],
 });
 

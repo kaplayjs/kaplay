@@ -1,4 +1,4 @@
-kaboom();
+kaplay();
 
 const fruits = [
     "apple",

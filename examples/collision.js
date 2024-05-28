@@ -1,7 +1,7 @@
 // Collision handling
 
 // Start kaboom
-kaboom({
+kaplay({
     scale: 2,
 });
 

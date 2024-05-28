@@ -1,7 +1,7 @@
 // Extend our game with multiple scenes
 
 // Start game
-kaboom();
+kaplay();
 
 // Load assets
 loadSprite("bean", "/sprites/bean.png");

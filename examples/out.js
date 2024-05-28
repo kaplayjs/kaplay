@@ -1,6 +1,6 @@
 // detect if obj is out of screen
 
-kaboom();
+kaplay();
 
 loadSprite("bean", "/sprites/bean.png");
 

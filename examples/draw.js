@@ -1,6 +1,6 @@
 // Kaboom as pure rendering lib (no component / game obj etc.)
 
-kaboom();
+kaplay();
 loadSprite("bean", "/sprites/bean.png");
 
 loadShader(

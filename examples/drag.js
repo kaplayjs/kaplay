@@ -1,6 +1,6 @@
 // Drag & drop interaction
 
-kaboom();
+kaplay();
 
 loadSprite("bean", "/sprites/bean.png");
 

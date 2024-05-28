@@ -284,8 +284,8 @@ export const getInternalContext = (kaboom: KaboomCtx): InternalCtx => {
     return kaboom._k;
 };
 
-// only exports one kaboom() which contains all the state
-const startGame = (gopt: KaboomOpt = {}): KaboomCtx => {
+// only exports one kaplay() which contains all the state
+const kaplay = (gopt: KaboomOpt = {}): KaboomCtx => {
     const root = gopt.root ?? document.body;
 
     // if root is not defined (which falls back to <body>) we assume user is using kaboom on a clean page, and modify <body> to better fit a full screen canvas
@@ -5538,4 +5538,4 @@ const startGame = (gopt: KaboomOpt = {}): KaboomCtx => {
     return ctx;
 };
 
-export default startGame;
+export default kaplay;

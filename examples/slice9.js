@@ -1,6 +1,6 @@
 // 9 slice sprite scaling
 
-kaboom();
+kaplay();
 
 // Load a sprite that's made for 9 slice scaling
 loadSprite("9slice", "/examples/sprites/9slice.png", {

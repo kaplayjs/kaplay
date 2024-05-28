@@ -12,10 +12,10 @@ const srcPath = `${srcDir}/kaboom.ts`;
 const fmts = [
     {
         format: "iife",
-        globalName: "startGame",
+        globalName: "kaplay",
         outfile: `${distDir}/kaboom.js`,
         footer: {
-            js: "window.kaboom = startGame.default; window.startGame = startGame.default",
+            js: "window.kaboom = kaplay.default; window.kaplay = kaplay.default",
         },
     },
     { format: "cjs", outfile: `${distDir}/kaboom.cjs` },
@@ -181,7 +181,7 @@ export async function genDTS() {
         throw new Error("KaboomCtx not found, failed to generate global defs.");
     }
 
-    writeFile(`${distDir}/kaboom.d.ts`, dts + "\n\nexport default startGame;");
+    writeFile(`${distDir}/kaboom.d.ts`, dts + "\n\nexport default kaplay;");
     writeFile(`${distDir}/global.d.ts`, globalDts);
     writeFile(`${distDir}/global.js`, "");
 }

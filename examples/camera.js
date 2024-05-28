@@ -1,7 +1,7 @@
 // Adjust camera / viewport
 
 // Start game
-kaboom();
+kaplay();
 
 // Load assets
 loadSprite("bean", "/sprites/bean.png");

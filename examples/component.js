@@ -1,6 +1,6 @@
 // Custom component
 
-kaboom();
+kaplay();
 
 loadSprite("bean", "/sprites/bean.png");
 

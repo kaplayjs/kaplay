@@ -1,5 +1,5 @@
 // Start the game in burp mode
-kaboom({
+kaplay({
     burp: true,
 });
 

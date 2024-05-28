@@ -1,6 +1,6 @@
 // bean is holding a concert to celebrate kaboom2000!
 
-kaboom({
+kaplay({
     scale: 0.7,
     background: [128, 180, 255],
 });

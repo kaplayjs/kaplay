@@ -1,7 +1,7 @@
 // Responding to gravity & jumping
 
 // Start kaboom
-kaboom();
+kaplay();
 
 // Load assets
 loadSprite("bean", "/sprites/bean.png");

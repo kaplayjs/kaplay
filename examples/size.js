@@ -1,4 +1,4 @@
-kaboom({
+kaplay({
     // without specifying "width" and "height", kaboom will size to the container (document.body by default)
     width: 200,
     height: 100,

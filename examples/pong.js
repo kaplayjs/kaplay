@@ -1,4 +1,4 @@
-kaboom({
+kaplay({
     background: [255, 255, 128],
 });
 
