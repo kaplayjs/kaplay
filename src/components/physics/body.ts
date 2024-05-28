@@ -193,17 +193,17 @@ export function body(opt: BodyCompOpt = {}): BodyComp {
         },
 
         isFalling(): boolean {
-            return this.vel.dot(internal.game.gravity) > 0;
+            return this.vel.dot(k.getGravityDirection()) > 0;
         },
 
         isJumping(): boolean {
-            return this.vel.dot(internal.game.gravity) < 0;
+            return this.vel.dot(k.getGravityDirection()) < 0;
         },
 
         jump(force: number) {
             curPlatform = null;
             lastPlatformPos = null;
-            this.vel = internal.game.gravity.unit().scale(
+            this.vel = k.getGravityDirection().scale(
                 -force || -this.jumpForce,
             );
         },
