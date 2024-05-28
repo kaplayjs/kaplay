@@ -6600,5 +6600,3 @@ export declare class EventHandler<EventMap extends Record<string, any[]>> {
     clear(): void;
     numListeners<Name extends keyof EventMap>(name: Name): number;
 }
-
-export default startGame;
