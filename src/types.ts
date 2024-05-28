@@ -4209,6 +4209,11 @@ export type LineJoin =
     | "bevel"
     | "miter";
 
+export type LineCap =
+    | "none" // aka butt
+    | "round"
+    | "square";
+
 /**
  * How the lines should look like.
  */
@@ -4229,6 +4234,14 @@ export type DrawLinesOpt = Omit<RenderProps, "angle" | "scale"> & {
      * Line join style (default "none").
      */
     join?: LineJoin;
+    /**
+     * Line cap style (default "none").
+     */
+    cap?: LineCap;
+    /**
+     * Maximum miter length, anything longer becomes bevel.
+     */
+    miterLimit?: number;
 };
 
 export type DrawCurveOpt = RenderProps & {

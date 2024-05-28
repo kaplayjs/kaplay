@@ -2003,6 +2003,335 @@ export default (gopt: KaboomOpt = {}): KaboomCtx => {
         );
     }
 
+    function _drawLinesBevel(opt: DrawLinesOpt) {
+        const pts = opt.pts;
+        const vertices = [];
+        const halfWidth = (opt.width || 1) * 0.5;
+        const isLoop = pts[0] === pts[pts.length - 1]
+            || pts[0].eq(pts[pts.length - 1]);
+        const offset = opt.pos || vec2(0, 0);
+        let segment;
+
+        if (isLoop) {
+            segment = pts[0].sub(pts[pts.length - 2]);
+        } else {
+            segment = pts[1].sub(pts[0]);
+        }
+
+        let length = segment.len();
+        let normal = segment.normal().scale(-halfWidth / length);
+
+        let pt1;
+        let pt2 = pts[0];
+
+        for (let i = 1; i < pts.length; i++) {
+            pt1 = pt2;
+            pt2 = pts[i];
+
+            const nextSegment = pt2.sub(pt1);
+            const nextLength = nextSegment.len();
+            const nextNormal = nextSegment.normal().scale(
+                -halfWidth / nextLength,
+            );
+
+            const det = segment.cross(nextSegment);
+
+            if (Math.abs(det) / (length * nextLength) < 0.05) {
+                // Parallel
+                vertices.push(pt1.add(normal));
+                vertices.push(pt1.sub(normal));
+
+                if (segment.dot(nextSegment) < 0) {
+                    vertices.push(pt1.sub(normal));
+                    vertices.push(pt1.add(normal));
+                }
+
+                segment = nextSegment;
+                length = nextLength;
+                normal = nextNormal;
+                continue;
+            }
+
+            const lambda = (nextNormal.sub(normal)).cross(nextSegment) / det;
+            const d = normal.add(segment.scale(lambda));
+
+            if (det > 0) {
+                vertices.push(pt1.add(d));
+                vertices.push(pt1.sub(normal));
+                vertices.push(pt1.add(d));
+                vertices.push(pt1.sub(nextNormal));
+            } else {
+                vertices.push(pt1.add(normal));
+                vertices.push(pt1.sub(d));
+                vertices.push(pt1.add(nextNormal));
+                vertices.push(pt1.sub(d));
+            }
+
+            segment = nextSegment;
+            length = nextLength;
+            normal = nextNormal;
+        }
+
+        const verts = vertices.map(v => ({
+            pos: offset.add(v),
+            uv: vec2(),
+            color: opt.color || Color.WHITE,
+            opacity: opt.opacity ?? 1,
+        }));
+
+        const indices = [];
+        let index = 0;
+        for (let i = 0; i < vertices.length - 2; i += 2) {
+            indices[index++] = i + 1;
+            indices[index++] = i;
+            indices[index++] = i + 2;
+            indices[index++] = i + 2;
+            indices[index++] = i + 3;
+            indices[index++] = i + 1;
+        }
+
+        if (isLoop) {
+            indices[index++] = vertices.length - 1;
+            indices[index++] = vertices.length - 2;
+            indices[index++] = 0;
+            indices[index++] = 0;
+            indices[index++] = 1;
+            indices[index++] = vertices.length - 1;
+        }
+
+        drawRaw(
+            verts,
+            indices,
+            opt.fixed,
+            gfx.defTex,
+            opt.shader,
+            opt.uniform,
+        );
+    }
+
+    function _drawLinesRound(opt: DrawLinesOpt) {
+        const pts = opt.pts;
+        const vertices = [];
+        const halfWidth = (opt.width || 1) * 0.5;
+        const isLoop = pts[0] === pts[pts.length - 1]
+            || pts[0].eq(pts[pts.length - 1]);
+        const offset = opt.pos || vec2(0, 0);
+        let segment;
+
+        if (isLoop) {
+            segment = pts[0].sub(pts[pts.length - 2]);
+        } else {
+            segment = pts[1].sub(pts[0]);
+        }
+
+        let length = segment.len();
+        let normal = segment.normal().scale(-halfWidth / length);
+
+        let pt1;
+        let pt2 = pts[0];
+
+        for (let i = 1; i < pts.length; i++) {
+            pt1 = pt2;
+            pt2 = pts[i];
+
+            const nextSegment = pt2.sub(pt1);
+            const nextLength = nextSegment.len();
+            const nextNormal = nextSegment.normal().scale(
+                -halfWidth / nextLength,
+            );
+
+            const det = segment.cross(nextSegment);
+
+            if (Math.abs(det) / (length * nextLength) < 0.05) {
+                // Parallel
+                vertices.push(pt1.add(normal));
+                vertices.push(pt1.sub(normal));
+
+                if (segment.dot(nextSegment) < 0) {
+                    vertices.push(pt1.sub(normal));
+                    vertices.push(pt1.add(normal));
+                }
+
+                segment = nextSegment;
+                length = nextLength;
+                normal = nextNormal;
+                continue;
+            }
+
+            const lambda = (nextNormal.sub(normal)).cross(nextSegment) / det;
+            const d = normal.add(segment.scale(lambda));
+
+            if (det > 0) {
+                const fixedPoint = pt1.add(d);
+                const n = Math.max(halfWidth, 10);
+                const angle = deg2rad(normal.angleBetween(nextNormal) / n);
+                let vector = normal;
+                const cs = Math.cos(angle);
+                const sn = Math.sin(angle);
+                for (let j = 0; j < n; j++) {
+                    vertices.push(fixedPoint);
+                    vertices.push(pt1.sub(vector));
+                    vector = vec2(
+                        vector.x * cs - vector.y * sn,
+                        vector.x * sn + vector.y * cs,
+                    );
+                }
+            } else {
+                const fixedPoint = pt1.sub(d);
+                const n = Math.max(halfWidth, 10);
+                const angle = deg2rad(normal.angleBetween(nextNormal) / n);
+                let vector = normal;
+                const cs = Math.cos(angle);
+                const sn = Math.sin(angle);
+                for (let j = 0; j < n; j++) {
+                    vertices.push(pt1.add(vector));
+                    vertices.push(fixedPoint);
+                    vector = vec2(
+                        vector.x * cs - vector.y * sn,
+                        vector.x * sn + vector.y * cs,
+                    );
+                }
+            }
+
+            segment = nextSegment;
+            length = nextLength;
+            normal = nextNormal;
+        }
+
+        const verts = vertices.map(v => ({
+            pos: offset.add(v),
+            uv: vec2(),
+            color: opt.color || Color.WHITE,
+            opacity: opt.opacity ?? 1,
+        }));
+
+        const indices = [];
+        let index = 0;
+        for (let i = 0; i < vertices.length - 2; i += 2) {
+            indices[index++] = i + 1;
+            indices[index++] = i;
+            indices[index++] = i + 2;
+            indices[index++] = i + 2;
+            indices[index++] = i + 3;
+            indices[index++] = i + 1;
+        }
+
+        if (isLoop) {
+            indices[index++] = vertices.length - 1;
+            indices[index++] = vertices.length - 2;
+            indices[index++] = 0;
+            indices[index++] = 0;
+            indices[index++] = 1;
+            indices[index++] = vertices.length - 1;
+        }
+
+        drawRaw(
+            verts,
+            indices,
+            opt.fixed,
+            gfx.defTex,
+            opt.shader,
+            opt.uniform,
+        );
+    }
+
+    function _drawLinesMiter(opt: DrawLinesOpt) {
+        const pts = opt.pts;
+        const vertices = [];
+        const halfWidth = (opt.width || 1) * 0.5;
+        const isLoop = pts[0] === pts[pts.length - 1]
+            || pts[0].eq(pts[pts.length - 1]);
+        const offset = opt.pos || vec2(0, 0);
+        let segment;
+
+        if (isLoop) {
+            segment = pts[0].sub(pts[pts.length - 2]);
+        } else {
+            segment = pts[1].sub(pts[0]);
+        }
+
+        let length = segment.len();
+        let normal = segment.normal().scale(-halfWidth / length);
+
+        let pt1;
+        let pt2 = pts[0];
+
+        for (let i = 1; i < pts.length; i++) {
+            pt1 = pt2;
+            pt2 = pts[i];
+
+            const nextSegment = pt2.sub(pt1);
+            const nextLength = nextSegment.len();
+            const nextNormal = nextSegment.normal().scale(
+                -halfWidth / nextLength,
+            );
+
+            const det = segment.cross(nextSegment);
+
+            if (Math.abs(det) / (length * nextLength) < 0.05) {
+                // Parallel
+                vertices.push(pt1.add(normal));
+                vertices.push(pt1.sub(normal));
+
+                if (segment.dot(nextSegment) < 0) {
+                    vertices.push(pt1.sub(normal));
+                    vertices.push(pt1.add(normal));
+                }
+
+                segment = nextSegment;
+                length = nextLength;
+                normal = nextNormal;
+                continue;
+            }
+
+            const lambda = (nextNormal.sub(normal)).cross(nextSegment) / det;
+            const d = normal.add(segment.scale(lambda));
+
+            vertices.push(pt1.add(d));
+            vertices.push(pt1.sub(d));
+
+            segment = nextSegment;
+            length = nextLength;
+            normal = nextNormal;
+        }
+
+        const verts = vertices.map(v => ({
+            pos: offset.add(v),
+            uv: vec2(),
+            color: opt.color || Color.WHITE,
+            opacity: opt.opacity ?? 1,
+        }));
+
+        const indices = [];
+        let index = 0;
+        for (let i = 0; i < vertices.length - 2; i += 2) {
+            indices[index++] = i + 1;
+            indices[index++] = i;
+            indices[index++] = i + 2;
+            indices[index++] = i + 2;
+            indices[index++] = i + 3;
+            indices[index++] = i + 1;
+        }
+
+        if (isLoop) {
+            indices[index++] = vertices.length - 1;
+            indices[index++] = vertices.length - 2;
+            indices[index++] = 0;
+            indices[index++] = 0;
+            indices[index++] = 1;
+            indices[index++] = vertices.length - 1;
+        }
+
+        drawRaw(
+            verts,
+            indices,
+            opt.fixed,
+            gfx.defTex,
+            opt.shader,
+            opt.uniform,
+        );
+    }
+
     function drawLines(opt: DrawLinesOpt) {
         const pts = opt.pts;
 
@@ -2014,9 +2343,20 @@ export default (gopt: KaboomOpt = {}): KaboomCtx => {
             return;
         }
 
+        if (pts.length > 2) {
+            switch (opt.join) {
+                case "bevel":
+                    return _drawLinesBevel(opt);
+                case "round":
+                    return _drawLinesRound(opt);
+                case "miter":
+                    return _drawLinesMiter(opt);
+            }
+        }
+
         if (opt.radius && pts.length >= 3) {
             // TODO: line joines
-            // TODO: rounded vertices for arbitury polygonic shape
+            // TODO: rounded vertices for arbitrary polygonic shape
             let minSLen = pts[0].sdist(pts[1]);
 
             for (let i = 1; i < pts.length - 1; i++) {
