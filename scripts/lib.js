@@ -12,10 +12,10 @@ const srcPath = `${srcDir}/kaboom.ts`;
 const fmts = [
     {
         format: "iife",
-        globalName: "kaboom",
+        globalName: "startGame",
         outfile: `${distDir}/kaboom.js`,
         footer: {
-            js: "window.kaboom = kaboom.default",
+            js: "window.kaboom = startGame.default; window.startGame = startGame.default",
         },
     },
     { format: "cjs", outfile: `${distDir}/kaboom.cjs` },

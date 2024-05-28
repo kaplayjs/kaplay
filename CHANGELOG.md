@@ -1,5 +1,6 @@
 ## v3001.0
 
+- renamed `kaboom` to `startGame` (you can still use `kaboom`)
 - added global raycast function and raycast method to level
 - added support for textured polygons
 - added support for concave polygon drawing

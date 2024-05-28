@@ -3,11 +3,11 @@
  *
  * @example
  * ```js
- * // Start kaboom with default options (will create a fullscreen canvas under <body>)
- * kaboom()
+ * // Start KAPLAY with default options (will create a fullscreen canvas under <body>)
+ * startGame()
  *
- * // Init with some options (check out #KaboomOpt for full options list)
- * kaboom({
+ * // Init with some options
+ * startGame({
  *     width: 320,
  *     height: 240,
  *     font: "sans-serif",
@@ -15,14 +15,14 @@
  *     background: [ 0, 0, 255, ],
  * })
  *
- * // All kaboom functions are imported to global after calling kaboom()
+ * // All kaboom functions are imported to global after calling startGame()
  * add()
  * onUpdate()
  * onKeyPress()
  * vec2()
  *
  * // If you want to prevent kaboom from importing all functions to global and use a context handle for all kaboom functions
- * const k = kaboom({ global: false })
+ * const k = startGame({ global: false })
  *
  * k.add(...)
  * k.onUpdate(...)
@@ -32,7 +32,7 @@
  *
  * @group Start
  */
-declare function kaboom<T extends PluginList<unknown> = [undefined]>(
+declare function startGame<T extends PluginList<unknown> = [undefined]>(
     options?: KaboomOpt<T>,
 ): T extends [undefined] ? KaboomCtx : KaboomCtx & MergePlugins<T>;
 
@@ -6601,4 +6601,4 @@ export declare class EventHandler<EventMap extends Record<string, any[]>> {
     numListeners<Name extends keyof EventMap>(name: Name): number;
 }
 
-export default kaboom;
+export default startGame;
