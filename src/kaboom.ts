@@ -672,7 +672,7 @@ export default (gopt: KaboomOpt = {}): KaboomCtx => {
         root: make([]),
 
         // misc
-        gravity: vec2(0, 1),
+        gravity: null,
         scenes: {},
         currentScene: null,
 
@@ -3677,19 +3677,25 @@ export default (gopt: KaboomOpt = {}): KaboomCtx => {
     }
 
     function setGravity(g: number) {
-        game.gravity = game.gravity.unit().scale(g);
+        // If g > 0 use either the current direction or use (0, 1)
+        // Else null
+        game.gravity = g ? (game.gravity || vec2(0, 1)).unit().scale(g) : null;
     }
 
     function getGravity() {
-        return game.gravity.len();
+        // If gravity > 0 return magnitude
+        // Else 0
+        return game.gravity ? game.gravity.len() : 0;
     }
 
     function setGravityDirection(d: Vec2) {
-        game.gravity = d.unit().scale(game.gravity.len());
+        // If gravity > 0 keep magnitude, otherwise use 1
+        game.gravity = d.unit().scale(game.gravity ? game.gravity.len() : 1);
     }
 
     function getGravityDirection() {
-        return game.gravity.unit();
+        // If gravity > 0 return magnitude, otherwise return (0, 1)
+        return game.gravity ? game.gravity.unit() : vec2(0, 1);
     }
 
     function setBackground(...args) {
@@ -4564,16 +4570,16 @@ export default (gopt: KaboomOpt = {}): KaboomCtx => {
             return !this.displacement.isZero();
         }
         isLeft() {
-            return this.displacement.cross(game.gravity) > 0;
+            return this.displacement.cross(game.gravity || vec2(0, 1)) > 0;
         }
         isRight() {
-            return this.displacement.cross(game.gravity) < 0;
+            return this.displacement.cross(game.gravity || vec2(0, 1)) < 0;
         }
         isTop() {
-            return this.displacement.dot(game.gravity) > 0;
+            return this.displacement.dot(game.gravity || vec2(0, 1)) > 0;
         }
         isBottom() {
-            return this.displacement.dot(game.gravity) < 0;
+            return this.displacement.dot(game.gravity || vec2(0, 1)) < 0;
         }
         preventResolution() {
             this.resolved = true;
