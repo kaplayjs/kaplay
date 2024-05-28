@@ -1,4 +1,4 @@
-const k = kaboom({
+const k = kaplay({
     global: false,
 });
 

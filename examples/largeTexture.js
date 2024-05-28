@@ -1,4 +1,4 @@
-kaboom();
+kaplay();
 
 let cameraPosition = camPos();
 let cameraScale = 1;

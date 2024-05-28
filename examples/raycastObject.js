@@ -1,4 +1,4 @@
-kaboom();
+kaplay();
 
 add([
     pos(80, 80),

@@ -1,6 +1,6 @@
 // bench marking sprite rendering performance
 
-kaboom();
+kaplay();
 
 loadSprite("bean", "sprites/bean.png");
 loadSprite("bag", "sprites/bag.png");

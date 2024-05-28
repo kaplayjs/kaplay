@@ -1,6 +1,6 @@
 // Customizing the asset loader
 
-kaboom({
+kaplay({
     // Optionally turn off loading screen entirely
     // Unloaded assets simply won't be drawn
     // loadingScreen: false,

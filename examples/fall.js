@@ -1,7 +1,7 @@
 // Build levels with addLevel()
 
 // Start game
-kaboom();
+kaplay();
 
 // Load assets
 loadSprite("coin", "/sprites/coin.png");

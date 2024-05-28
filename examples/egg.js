@@ -1,6 +1,6 @@
 // Egg minigames (yes, like Peppa)
 
-kaboom({
+kaplay({
     background: [135, 62, 132],
 });
 

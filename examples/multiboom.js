@@ -11,7 +11,7 @@ const positions = [
 ];
 
 for (let i = 0; i < 2; i++) {
-    const k = kaboom({
+    const k = kaplay({
         background: backgrounds[i],
         global: false,
         width: 320,

@@ -1,6 +1,6 @@
 // Simple dialogues
 
-kaboom({
+kaplay({
     background: [255, 209, 253],
 });
 

@@ -9,7 +9,7 @@ const DEF_SPIN = [2, 8];
 const DEF_SATURATION = 0.7;
 const DEF_LIGHTNESS = 0.6;
 
-kaboom();
+kaplay();
 
 function addConfetti(opt = {}) {
     const sample = (s) => typeof s === "function" ? s() : s;

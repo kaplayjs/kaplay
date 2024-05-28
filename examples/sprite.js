@@ -1,7 +1,7 @@
 // Sprite animation
 
 // Start a kaboom game
-kaboom({
+kaplay({
     // Scale the whole game up
     scale: 4,
     // Set the default font

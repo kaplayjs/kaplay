@@ -1,6 +1,6 @@
 // Differeces between onHover and onHoverUpdate
 
-kaboom({
+kaplay({
     // Use logMax to see more messages on debug.log()
     logMax: 5,
 });

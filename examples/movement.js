@@ -1,7 +1,7 @@
 // Input handling and basic player movement
 
 // Start kaboom
-kaboom();
+kaplay();
 
 // Load assets
 loadSprite("bean", "/sprites/bean.png");

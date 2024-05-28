@@ -14,7 +14,7 @@ Start playing around with it in the [Kaplayground](https://kaplay.pages.dev/)
 
 ```js
 // initialize context
-kaboom();
+kaplay();
 
 // define gravity
 setGravity(2400);
@@ -125,7 +125,7 @@ $ npm install kaplay
 ```js
 import kaboom from "kaplay";
 
-kaboom();
+kaplay();
 
 add([
     text("oh hi"),
@@ -148,7 +148,7 @@ This exports a global `kaboom` function
 ```html
 <script src="https://unpkg.com/kaplay@3001/dist/kaboom.js"></script>
 <script>
-kaboom()
+kaplay()
 </script>
 ```
 
@@ -157,7 +157,7 @@ or use with es modules
 ```html
 <script type="module">
 import kaboom from "https://unpkg.com/kaplay@3001/dist/kaboom.mjs"
-kaboom()
+kaplay()
 </script>
 ```
 

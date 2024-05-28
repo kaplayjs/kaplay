@@ -1,6 +1,6 @@
 // audio playback & control
 
-kaboom({
+kaplay({
     // Don't pause audio when tab is not active
     backgroundAudio: true,
     background: [0, 0, 0],

@@ -1,6 +1,6 @@
 // simple rpg style walk and talk
 
-kaboom({
+kaplay({
     background: [74, 48, 82],
 });
 

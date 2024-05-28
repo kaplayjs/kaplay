@@ -1,6 +1,6 @@
 // Tweeeeeening!
 
-kaboom({
+kaplay({
     background: [141, 183, 255],
 });
 

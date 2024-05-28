@@ -1,4 +1,4 @@
-kaboom();
+kaplay();
 
 loadSprite("bean", "/sprites/bean.png");
 loadSound("score", "/examples/sounds/score.mp3");

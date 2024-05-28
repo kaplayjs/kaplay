@@ -3,7 +3,7 @@ const JUMP_FORCE = 800;
 const SPEED = 480;
 
 // initialize context
-kaboom();
+kaplay();
 
 setBackground(141, 183, 255);
 

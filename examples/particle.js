@@ -1,6 +1,6 @@
 // Particle spawning
 
-kaboom();
+kaplay();
 
 const sprites = [
     "apple",
