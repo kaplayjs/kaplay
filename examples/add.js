@@ -1,7 +1,7 @@
 // Adding game objects to screen
 
 // Start a kaboom game
-kaboom();
+startGame();
 
 // Load a sprite asset from "sprites/bean.png", with the name "bean"
 loadSprite("bean", "/sprites/bean.png");

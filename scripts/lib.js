@@ -15,7 +15,7 @@ const fmts = [
         globalName: "kaboom",
         outfile: `${distDir}/kaboom.js`,
         footer: {
-            js: "window.kaboom = kaboom.default",
+            js: "window.startGame = kaboom.default; window.kaboom = kaboom.default;",
         },
     },
     { format: "cjs", outfile: `${distDir}/kaboom.cjs` },
