@@ -53,12 +53,10 @@
   },
   "devDependencies": {
     "@typescript-eslint/eslint-plugin": "^7.2.0",
+    "dprint": "^0.45.1",
     "esbuild": "^0.20.1",
     "express": "^4.18.3",
     "puppeteer": "^22.4.1",
     "typescript": "^5.4.2"
-  },
-  "dependencies": {
-    "dprint": "^0.45.1"
   }
 }
