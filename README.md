@@ -1,14 +1,14 @@
 # KAPLAY
 
-![kaplay](assets/kaplay.png)
+![KAPLAY](assets/kaplay.png)
 
 > Kaplay is the spiritual successor (and fork) of Kaboom, a JavaScript library that helps you make games fast and fun!
 > For now, there's links to the Kaboom documentation and examples, but in the future, they will be linked
 > to our own site.
 
-[**Kaplay**](https://kaplaydocs.pages.dev/) is a JavaScript library that helps you make games fast and fun!
+[**KAPLAY**](https://kaplayjs.com/) is a JavaScript library that helps you make games fast and fun!
 
-Start playing around with it in the [Kaplayground](https://kaplay.pages.dev/)
+Start playing around with it in the [KAPLAYGROUND](https://play.kaplayjs.com/)
 
 ## Examples
 
@@ -37,7 +37,7 @@ onKeyPress("space", () => {
 });
 ```
 
-kaplay uses a powerful component system to compose game objects and behaviors.
+KAPLAY uses a powerful component system to compose game objects and behaviors.
 
 ```js
 // add a game obj to the scene from a list of component
@@ -123,7 +123,7 @@ $ npm install kaplay
 ```
 
 ```js
-import kaboom from "kaplay";
+import kaplay from "kaplay";
 
 kaplay();
 
@@ -143,10 +143,10 @@ Note that you'll need to use a bundler like `esbuild` or `webpack` to use Kaboom
 
 ### Browser CDN
 
-This exports a global `kaboom` function
+This exports a global `kaplay` function
 
 ```html
-<script src="https://unpkg.com/kaplay@3001/dist/kaboom.js"></script>
+<script src="https://unpkg.com/kaplay@3000.1.17/dist/kaboom.js"></script>
 <script>
 kaplay()
 </script>
@@ -156,7 +156,7 @@ or use with es modules
 
 ```html
 <script type="module">
-import kaboom from "https://unpkg.com/kaplay@3001/dist/kaboom.mjs"
+import kaplay from "https://unpkg.com/kaplay@3000.1.17/dist/kaboom.mjs"
 kaplay()
 </script>
 ```
@@ -165,19 +165,10 @@ works all CDNs that supports NPM packages, e.g. jsdelivr, skypack
 
 ## Documentation
 
-- **v3001**: https://kaplaydocs.pages.dev/
+- **v3001**: https://kaplajs.com/
 - **v3000**: https://kaboomjs.com/
 - **v2000**: https://2000.kaboomjs.com/
 - **v0.5.0**: https://legacy.kaboomjs.com/
-
-## Dev
-
-1. `npm install` to install dev packages
-1. `npm run dev` to start dev server
-1. go to http://localhost:8000/ and pick an example
-1. edit examples in `examples/` to test
-
-Check out [CONTRIBUTION.md](CONTRIBUTING.md) for full info.
 
 ## Community
 
@@ -193,17 +184,14 @@ Collection of games made with Kaboom, selected by Kaboom, [here](https://itch.io
 - [on Replit](https://replit.com/apps/kaboom)
 - [on Newgrounds](https://www.newgrounds.com/search/conduct/games?tags=kaboomjs)
 
-## Misc
+## Credits
 
-- This project has no relation to Activision's game [Kaboom!](https://en.wikipedia.org/wiki/Kaboom!_(video_game))
 - Thanks to [tga](https://space55.xyz) for all his work on the original Kaboom.js
 - Thanks to [abrudz](https://github.com/abrudz) for the amazing [APL386 font](https://abrudz.github.io/APL386/)
 - Thanks to [Polyducks](http://polyducks.co.uk/) for the amazing [kitchen sink font](https://polyducks.itch.io/kitchen-sink-textmode-font) font
 - Thanks to [0x72](https://0x72.itch.io/) for the amazing [Dungeon Tileset](https://0x72.itch.io/dungeontileset-ii)
 - Thanks to [Kenney](https://kenney.nl/) for the amazing [1-Bit Platformer Pack](https://kenney.nl/assets/1-bit-platformer-pack)
-- Thanks to [mulfok](https://twitter.com/MulfoK) for the amazing [mulfok32](https://lospec.com/palette-list/mulfok32) color palette
+- Thanks to [mulfok](https://twitter.com/MulfoK) for the amazing [mulfok32](https://lospec.com/palette-list/mulfok32) color palette, used in KAPLAY sprites
 - Find bitmap fonts: [Oldschool PC Font](https://int10h.org/oldschool-pc-fonts)
 - Featured on [Console 50](https://console.substack.com/p/console-50)
 - Thanks to [Umayr](https://github.com/umayr) for kindly offering the "kaboom" npm package name
-- Please buy fireworks on [kaboom.com](http://www.kaboom.com/)
-- [How to do a KABOOM on a Trampoline](https://www.youtube.com/watch?v=3CemcWdc_Hc)
