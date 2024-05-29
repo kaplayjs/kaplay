@@ -253,8 +253,8 @@ ${
 <head>
 </head>
 <body>
-<script src="/dist/kaboom.js"></script>
-<script src="/examples/${name}.js"></script>
+<script type="module" src="/dist/kaboom.js"></script>
+<script type="module" src="/examples/${name}.js"></script>
 </body>
 </html>
 		`);
