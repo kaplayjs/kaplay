@@ -253,7 +253,10 @@ ${
 <head>
 </head>
 <body>
-<script type="module" src="/dist/kaboom.js"></script>
+<script type="module">
+    import kaplay from "/dist/kaboom.mjs";
+    globalThis.kaboom = kaplay
+</script>
 <script type="module" src="/examples/${name}.js"></script>
 </body>
 </html>
