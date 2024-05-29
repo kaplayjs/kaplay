@@ -4210,7 +4210,7 @@ export type LineJoin =
     | "miter";
 
 export type LineCap =
-    | "none" // aka butt
+    | "butt"
     | "round"
     | "square";
 
@@ -4436,11 +4436,29 @@ export interface Outline {
      */
     color?: Color;
     /**
+     * Opacity (overrides fill opacity).
+     *
+     * @since v3001.0
+     */
+    opacity?: number;
+    /**
      * Line join.
      *
      * @since v3000.0
      */
     join?: LineJoin;
+    /**
+     * Miter limit. If the length of the miter divided by the line width exceeds this limit, the style is converted to a bevel.
+     *
+     * @since v3001.0
+     */
+    miterLimit?: number;
+    /**
+     * Line cap.
+     *
+     * @since v3001.0
+     */
+    cap?: LineCap;
 }
 
 /**
