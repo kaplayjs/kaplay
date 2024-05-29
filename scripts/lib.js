@@ -254,7 +254,7 @@ ${
 </head>
 <body>
 <script type="module">
-    import kaplay from "/dist/kaboom.mjs";
+    import kaplay from "http://localhost:8000/dist/kaboom.mjs";
     globalThis.kaboom = kaplay
 </script>
 <script type="module" src="/examples/${name}.js"></script>
