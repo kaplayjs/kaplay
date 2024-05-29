@@ -2408,6 +2408,7 @@ const kaplay = (gopt: KaboomOpt = {}): KaboomCtx => {
             width: opt.width || 1,
             pos: opt.pos,
             color: opt.color,
+            opacity: opt.opacity,
         });
     }
 
@@ -2567,7 +2568,7 @@ const kaplay = (gopt: KaboomOpt = {}): KaboomCtx => {
                 join: opt.outline.join,
                 uniform: opt.uniform,
                 fixed: opt.fixed,
-                opacity: opt.opacity,
+                opacity: opt.opacity ?? opt.outline.opacity,
             });
         }
 

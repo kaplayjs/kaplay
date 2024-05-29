@@ -79,29 +79,22 @@ onDraw(() => {
         join: "miter",
         width: 20,
     });
-
-    // Triangles
-    drawTriangle({
-        pos: vec2(0, 400),
-        p1: vec2(125, 50),
-        p2: vec2(200, 200),
-        p3: vec2(50, 200),
-        outline: { color: RED, width: 20, join: "bevel" },
-    });
-
-    drawTriangle({
-        pos: vec2(200, 400),
-        p1: vec2(125, 50),
-        p2: vec2(200, 200),
-        p3: vec2(50, 200),
-        outline: { color: RED, width: 20, join: "round" },
-    });
-
-    drawTriangle({
-        pos: vec2(400, 400),
-        p1: vec2(125, 50),
-        p2: vec2(200, 200),
-        p3: vec2(50, 200),
-        outline: { color: RED, width: 20, join: "miter" },
-    });
 });
+
+add([
+    pos(0, 400),
+    polygon([vec2(125, 50), vec2(200, 200), vec2(50, 200)]),
+    outline(20, RED, 1, "bevel"),
+]);
+
+add([
+    pos(200, 400),
+    polygon([vec2(125, 50), vec2(200, 200), vec2(50, 200)]),
+    outline(20, RED, 1, "round"),
+]);
+
+add([
+    pos(400, 400),
+    polygon([vec2(125, 50), vec2(200, 200), vec2(50, 200)]),
+    outline(20, RED, 0.5, "miter"),
+]);
