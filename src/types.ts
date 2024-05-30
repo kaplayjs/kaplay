@@ -269,13 +269,13 @@ export interface KaboomCtx {
     scale(s: Vec2): ScaleComp;
     scale(): ScaleComp;
     /**
-     * Rotation (in degrees).
+     * Rotates a Game Object (in degrees).
      *
      * @group Components
      */
     rotate(a: number): RotateComp;
     /**
-     * Sets color (rgb 0-255).
+     * Sets the color of a Game Object (rgb 0-255).
      *
      * @example
      * ```js
@@ -294,13 +294,13 @@ export interface KaboomCtx {
     color(c: string): ColorComp;
     color(): ColorComp;
     /**
-     * Sets opacity (0.0 - 1.0).
+     * Sets the opacity of a Game Object (0.0 - 1.0).
      *
      * @group Components
      */
     opacity(o?: number): OpacityComp;
     /**
-     * Render as a sprite.
+     * Attach and render a sprite to a Game Object.
      *
      * @example
      * ```js
@@ -329,7 +329,7 @@ export interface KaboomCtx {
      */
     sprite(spr: string | SpriteData, options?: SpriteCompOpt): SpriteComp;
     /**
-     * Render as text.
+     * Attach and render a text to a Game Object.
      *
      * @example
      * ```js
@@ -360,7 +360,7 @@ export interface KaboomCtx {
      */
     text(txt: string, options?: TextCompOpt): TextComp;
     /**
-     * Render as a polygon.
+     * Attach and render a polygon to a Game Object.
      *
      * @since v3001.0
      *
@@ -379,7 +379,7 @@ export interface KaboomCtx {
      */
     polygon(pts: Vec2[], opt?: PolygonCompOpt): PolygonComp;
     /**
-     * Render as a rectangle.
+     * Attach and render a rectangle to a Game Object.
      *
      * @example
      * ```js
@@ -395,7 +395,7 @@ export interface KaboomCtx {
      */
     rect(w: number, h: number, opt?: RectCompOpt): RectComp;
     /**
-     * Render as a circle.
+     * Attach and render a circle to a Game Object.
      *
      * @example
      * ```js
@@ -409,7 +409,7 @@ export interface KaboomCtx {
      */
     circle(radius: number): CircleComp;
     /**
-     * Render as a UV quad.
+     * Attach and render a UV quad to a Game Object.
      *
      * @example
      * ```js
@@ -423,7 +423,7 @@ export interface KaboomCtx {
      */
     uvquad(w: number, h: number): UVQuadComp;
     /**
-     * Generates collider area from shape and enables collision detection.
+     * Attach a collider area from shape and enables collision detection in a Game Object.
      *
      * @example
      * ```js
@@ -450,28 +450,6 @@ export interface KaboomCtx {
      * @group Components
      */
     area(): AreaComp;
-    /**
-     * Define collider area and enables collision detection.
-     *
-     * @example
-     * ```js
-     * add([
-     *     sprite("flower"),
-     *     // Scale to 0.6 of the generated area
-     *     area({ scale: 0.6 }),
-     *     // If we want the area scale to be calculated from the center
-     *     anchor("center"),
-     * ])
-     *
-     * add([
-     *     sprite("bean"),
-     *     // Define area with custom shape
-     *     area({ shape: new Polygon([vec2(0), vec2(100), vec2(-100, 100)]) }),
-     * ])
-     * ```
-     *
-     * @group Components
-     */
     area(options: AreaCompOpt): AreaComp;
     /**
      * Anchor point for render (default "topleft").
