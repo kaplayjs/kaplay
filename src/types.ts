@@ -1,5 +1,5 @@
 /**
- * Initialize kaboom context. The starting point of all kaboom games.
+ * Initialize KAPLAY context. The starting point of all KAPLAY games.
  *
  * @example
  * ```js
@@ -15,13 +15,13 @@
  *     background: [ 0, 0, 255, ],
  * })
  *
- * // All kaboom functions are imported to global after calling kaplay()
+ * // All KAPLAY functions are imported to global after calling kaplay()
  * add()
  * onUpdate()
  * onKeyPress()
  * vec2()
  *
- * // If you want to prevent kaboom from importing all functions to global and use a context handle for all kaboom functions
+ * // If you want to prevent KAPLAY from importing all functions to global and use a context handle for all KAPLAY functions
  * const k = kaplay({ global: false })
  *
  * k.add(...)
@@ -225,7 +225,7 @@ export interface KaboomCtx {
      */
     destroyAll(tag: Tag): void;
     /**
-     * Position
+     * Set the position of a Game Object.
      *
      * @example
      * ```js
@@ -243,15 +243,7 @@ export interface KaboomCtx {
     pos(p: Vec2): PosComp;
     pos(): PosComp;
     /**
-     * Scale.
-     *
-     * @group Components
-     */
-    scale(x: number, y: number): ScaleComp;
-    scale(xy: number): ScaleComp;
-    scale(s: Vec2): ScaleComp;
-    /**
-     * Scale the game obj.
+     * Set the scale of a Game Object.
      *
      * @example
      * ```js
@@ -272,6 +264,9 @@ export interface KaboomCtx {
      *
      * @group Components
      */
+    scale(x: number, y: number): ScaleComp;
+    scale(xy: number): ScaleComp;
+    scale(s: Vec2): ScaleComp;
     scale(): ScaleComp;
     /**
      * Rotation (in degrees).
@@ -1550,7 +1545,7 @@ export interface KaboomCtx {
      * // default shaders and custom shader format
      * loadShader("outline",
      * `vec4 vert(vec2 pos, vec2 uv, vec4 color) {
-     *     // predefined functions to get the default value by kaboom
+     *     // predefined functions to get the default value by KAPLAY
      *     return def_vert();
      * }`,
      * `vec4 frag(vec2 pos, vec2 uv, vec4 color, sampler2D tex) {
@@ -3038,7 +3033,7 @@ export interface KaboomCtx {
      */
     BLACK: Color;
     /**
-     * The canvas DOM kaboom is currently using.
+     * The canvas DOM KAPLAY is currently using.
      *
      * @group Misc
      */
@@ -3071,7 +3066,7 @@ export interface KaboomCtx {
      */
     EventController: typeof EventController;
     /**
-     * Current Kaboom library version.
+     * Current KAPLAY library version.
      *
      * @since v3000.0
      * @group Info
@@ -3220,7 +3215,7 @@ export type GamepadDef = {
     sticks: Partial<Record<GamepadStick, { x: number; y: number }>>;
 };
 
-/** A Kaboom's gamepad */
+/** A KAPLAY's gamepad */
 export type KGamePad = {
     /** The order of the gamepad in the gamepad list. */
     index: number;
@@ -3240,7 +3235,7 @@ export type KGamePad = {
 export type GameObjInspect = Record<Tag, string | null>;
 
 /**
- * Kaboom configurations.
+ * KAPLAY configurations.
  *
  * @group Start
  */
@@ -3324,7 +3319,7 @@ export interface KaboomOpt<T extends PluginList<any> = any> {
      */
     touchToMouse?: boolean;
     /**
-     * If kaboom should render a default loading screen when assets are not fully ready (default true).
+     * If KAPLAY should render a default loading screen when assets are not fully ready (default true).
      *
      * @since v3000.0
      */
@@ -3354,7 +3349,7 @@ export interface KaboomOpt<T extends PluginList<any> = any> {
      */
     focus?: boolean;
     /**
-     * If import all kaboom functions to global (default true).
+     * If import all KAPLAY functions to global (default true).
      */
     global?: boolean;
     /**
@@ -3589,7 +3584,7 @@ export interface GameObjRaw {
 }
 
 /**
- * The basic unit of object in Kaboom. The player, a butterfly, a tree, or even a piece of text.
+ * The basic unit of object in KAPLAY. The player, a butterfly, a tree, or even a piece of text.
  *
  * @group Game Obj
  */
