@@ -165,7 +165,7 @@ works all CDNs that supports NPM packages, e.g. jsdelivr, skypack
 
 ## Documentation
 
-- **v3001**: https://kaplajs.com/
+- **v3001**: https://kaplayjs.com/
 - **v3000**: https://kaboomjs.com/
 - **v2000**: https://2000.kaboomjs.com/
 - **v0.5.0**: https://legacy.kaboomjs.com/
