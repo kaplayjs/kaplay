@@ -3092,6 +3092,10 @@ const kaplay = (gopt: KaboomOpt = {}): KaboomCtx => {
         return game.cam.angle;
     }
 
+    function camTransform(): Mat4 {
+        return game.cam.transform.clone();
+    }
+
     function shake(intensity: number = 12) {
         game.cam.shake += intensity;
     }
@@ -4287,8 +4291,8 @@ const kaplay = (gopt: KaboomOpt = {}): KaboomCtx => {
                 // Tiles are not accessible
                 // If we test the start tile, we may get stuck
                 /*if (costMap[start] === Infinity) {
-					return null
-				}*/
+                    return null
+                }*/
                 if (costMap[goal] === Infinity) {
                     return null;
                 }
@@ -5303,6 +5307,7 @@ const kaplay = (gopt: KaboomOpt = {}): KaboomCtx => {
         camPos,
         camScale,
         camRot,
+        camTransform,
         shake,
         toScreen,
         toWorld,
