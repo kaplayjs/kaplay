@@ -982,7 +982,7 @@ export class Mat4 {
             const r = Math.sqrt(this.m[0] * this.m[0] + this.m[1] * this.m[1]);
             return new Vec2(
                 Math.atan(this.m[0] * this.m[4] + this.m[1] * this.m[5])
-                    / (r * r),
+                / (r * r),
                 0,
             );
         } else if (this.m[4] != 0 || this.m[5] != 0) {
@@ -990,7 +990,7 @@ export class Mat4 {
             return new Vec2(
                 0,
                 Math.atan(this.m[0] * this.m[4] + this.m[1] * this.m[5])
-                    / (s * s),
+                / (s * s),
             );
         } else {
             return new Vec2(0, 0);
@@ -1223,13 +1223,13 @@ export function testLineLine(l1: Line, l2: Line): Vec2 | null {
 
 export function testRectLine(r: Rect, l: Line): boolean {
     /*if (testRectPoint(r, l.p1) || testRectPoint(r, l.p2)) {
-		return true
-	}
-	const pts = r.points()
-	return !!testLineLine(l, new Line(pts[0], pts[1]))
-		|| !!testLineLine(l, new Line(pts[1], pts[2]))
-		|| !!testLineLine(l, new Line(pts[2], pts[3]))
-		|| !!testLineLine(l, new Line(pts[3], pts[0]))*/
+        return true
+    }
+    const pts = r.points()
+    return !!testLineLine(l, new Line(pts[0], pts[1]))
+        || !!testLineLine(l, new Line(pts[1], pts[2]))
+        || !!testLineLine(l, new Line(pts[2], pts[3]))
+        || !!testLineLine(l, new Line(pts[3], pts[0]))*/
     const dir = l.p2.sub(l.p1);
     let tmin = Number.NEGATIVE_INFINITY, tmax = Number.POSITIVE_INFINITY;
 
@@ -1405,7 +1405,7 @@ export function testPolygonPoint(poly: Polygon, pt: Point): boolean {
             ((p[i].y > pt.y) != (p[j].y > pt.y))
             && (pt.x
                 < (p[j].x - p[i].x) * (pt.y - p[i].y) / (p[j].y - p[i].y)
-                    + p[i].x)
+                + p[i].x)
         ) {
             c = !c;
         }
@@ -1423,7 +1423,7 @@ export function testEllipsePoint(ellipse: Ellipse, pt: Point): boolean {
     const vx = pt.x * c + pt.y * s;
     const vy = -pt.x * s + pt.y * c;
     return vx * vx / (ellipse.radiusX * ellipse.radiusX)
-            + vy * vy / (ellipse.radiusY * ellipse.radiusY) < 1;
+        + vy * vy / (ellipse.radiusY * ellipse.radiusY) < 1;
 }
 
 export function testEllipseCircle(ellipse: Ellipse, circle: Circle): boolean {
@@ -1475,8 +1475,8 @@ export function testEllipseEllipse(
     }
     // No luck, we need to solve the equation
     /*
-	Etayo, Fernando, Laureano Gonzalez-Vega, and Natalia del Rio. "A new approach to characterizing the relative position of two ellipses depending on one parameter." Computer aided geometric design 23, no. 4 (2006): 324-350.
-	*/
+    Etayo, Fernando, Laureano Gonzalez-Vega, and Natalia del Rio. "A new approach to characterizing the relative position of two ellipses depending on one parameter." Computer aided geometric design 23, no. 4 (2006): 324-350.
+    */
     const A1 = new Mat3(
         1 / ellipse1.radiusX ** 2,
         0,
@@ -1934,7 +1934,7 @@ function raycastEllipse(
 export function raycastGrid(
     origin: Vec2,
     direction: Vec2,
-    gridPosHit: (gridPos: Vec2) => boolean,
+    gridPosHit: (gridPos: Vec2) => boolean | RaycastResult,
     maxDistance: number = 64,
 ): RaycastResult | null {
     const pos = origin;
@@ -2217,9 +2217,9 @@ export class Ellipse {
     contains(point: Vec2): boolean {
         // Both methods work, but the second one is faster
         /*let T = this.toTransform()
-		point = point.sub(this.center)
-		point = T.inverse.transform(point)
-		return testCirclePoint(new Circle(vec2(), 1), point)*/
+        point = point.sub(this.center)
+        point = T.inverse.transform(point)
+        return testCirclePoint(new Circle(vec2(), 1), point)*/
         point = point.sub(this.center);
         const angle = deg2rad(this.angle);
         const c = Math.cos(angle);
@@ -2227,7 +2227,7 @@ export class Ellipse {
         const vx = point.x * c + point.y * s;
         const vy = -point.x * s + point.y * c;
         return vx * vx / (this.radiusX * this.radiusX)
-                + vy * vy / (this.radiusY * this.radiusY) < 1;
+            + vy * vy / (this.radiusY * this.radiusY) < 1;
     }
     raycast(origin: Vec2, direction: Vec2): RaycastResult {
         return raycastEllipse(origin, direction, this);
