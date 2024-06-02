@@ -1332,7 +1332,7 @@ const kaplay = (gopt: KaboomOpt = {}): KaboomCtx => {
         srcNode.onended = () => {
             if (
                 getTime()
-                    >= (srcNode.buffer?.duration ?? Number.POSITIVE_INFINITY)
+                >= (srcNode.buffer?.duration ?? Number.POSITIVE_INFINITY)
             ) {
                 onEndEvents.trigger();
             }
@@ -1929,16 +1929,16 @@ const kaplay = (gopt: KaboomOpt = {}): KaboomCtx => {
 
             pts = [
                 new Vec2(r, 0),
-                new Vec2(w - r, 0),
+                //new Vec2(w - r, 0),
                 ...getArcPts(new Vec2(w - r, r), r, r, 270, 360),
-                new Vec2(w, r),
-                new Vec2(w, h - r),
+                //new Vec2(w, r),
+                //new Vec2(w, h - r),
                 ...getArcPts(new Vec2(w - r, h - r), r, r, 0, 90),
-                new Vec2(w - r, h),
-                new Vec2(r, h),
+                //new Vec2(w - r, h),
+                //new Vec2(r, h),
                 ...getArcPts(new Vec2(r, h - r), r, r, 90, 180),
-                new Vec2(0, h - r),
-                new Vec2(0, r),
+                //new Vec2(0, h - r),
+                //new Vec2(0, r),
                 ...getArcPts(new Vec2(r, r), r, r, 180, 270),
             ];
         }
@@ -2720,14 +2720,14 @@ const kaplay = (gopt: KaboomOpt = {}): KaboomCtx => {
                 outline: Outline | null;
                 filter: TexFilter;
             } = font instanceof FontData
-                ? {
-                    outline: font.outline,
-                    filter: font.filter,
-                }
-                : {
-                    outline: null,
-                    filter: DEF_FONT_FILTER,
-                };
+                    ? {
+                        outline: font.outline,
+                        filter: font.filter,
+                    }
+                    : {
+                        outline: null,
+                        filter: DEF_FONT_FILTER,
+                    };
 
             // TODO: customizable font tex filter
             const atlas: FontAtlas = fontAtlases[fontName] ?? {
@@ -5054,7 +5054,7 @@ const kaplay = (gopt: KaboomOpt = {}): KaboomCtx => {
             // clear canvas
             gl.clear(
                 gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT
-                    | gl.STENCIL_BUFFER_BIT,
+                | gl.STENCIL_BUFFER_BIT,
             );
 
             // unbind everything
