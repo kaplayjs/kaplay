@@ -7,7 +7,7 @@ kaplay();
 loadSprite("bean", "/sprites/bean.png");
 loadSprite("coin", "/sprites/coin.png");
 loadSprite("grass", "/sprites/grass.png");
-loadSound("score", "/sounds/score.mp3");
+loadSound("score", "/examples/sounds/score.mp3");
 
 const SPEED = 480;
 

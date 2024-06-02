@@ -6,7 +6,7 @@ loadSprite("bean", "/sprites/bean.png");
 loadSprite("coin", "/sprites/coin.png");
 loadSprite("grass", "/sprites/grass.png");
 loadSprite("spike", "/sprites/spike.png");
-loadSound("coin", "/sounds/score.mp3");
+loadSound("coin", "/examples/sounds/score.mp3");
 
 setGravity(4000);
 
