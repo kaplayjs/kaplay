@@ -2025,6 +2025,7 @@ const kaplay = (gopt: KaboomOpt = {}): KaboomCtx => {
         let pt2 = pts[0];
 
         for (let i = 1; i < pts.length; i++) {
+            if (pt2 === pts[i] || pt2.eq(pts[i])) { continue }
             pt1 = pt2;
             pt2 = pts[i];
 
@@ -2071,6 +2072,8 @@ const kaplay = (gopt: KaboomOpt = {}): KaboomCtx => {
             length = nextLength;
             normal = nextNormal;
         }
+
+        if (vertices.length < 4) { return }
 
         const verts = vertices.map(v => ({
             pos: offset.add(v),
@@ -2131,6 +2134,7 @@ const kaplay = (gopt: KaboomOpt = {}): KaboomCtx => {
         let pt2 = pts[0];
 
         for (let i = 1; i < pts.length; i++) {
+            if (pt2 === pts[i] || pt2.eq(pts[i])) { continue }
             pt1 = pt2;
             pt2 = pts[i];
 
@@ -2198,6 +2202,8 @@ const kaplay = (gopt: KaboomOpt = {}): KaboomCtx => {
             normal = nextNormal;
         }
 
+        if (vertices.length < 4) { return }
+
         const verts = vertices.map(v => ({
             pos: offset.add(v),
             uv: vec2(),
@@ -2257,6 +2263,7 @@ const kaplay = (gopt: KaboomOpt = {}): KaboomCtx => {
         let pt2 = pts[0];
 
         for (let i = 1; i < pts.length; i++) {
+            if (pt2 === pts[i] || pt2.eq(pts[i])) { continue }
             pt1 = pt2;
             pt2 = pts[i];
 
@@ -2294,6 +2301,8 @@ const kaplay = (gopt: KaboomOpt = {}): KaboomCtx => {
             length = nextLength;
             normal = nextNormal;
         }
+
+        if (vertices.length < 4) { return }
 
         const verts = vertices.map(v => ({
             pos: offset.add(v),
