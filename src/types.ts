@@ -71,71 +71,71 @@ export interface KaboomCtx {
      */
     _k: InternalCtx;
     /**
-	 * Assemble a game object from a list of components, and add it to the game
-	 *
-	 * @returns The added game object that contains all properties and methods each component offers.
-	 *
-	 * @example
-	 * ```js
-	 * const player = add([
-	 *     // List of components, each offers a set of functionalities
-	 *     sprite("mark"),
-	 *     pos(100, 200),
-	 *     area(),
-	 *     body(),
-	 *     health(8),
-	 *     // Plain strings are tags, a quicker way to let us define behaviors for a group
-	 *     "player",
-	 *     "friendly",
-	 *     // Components are just plain objects, you can pass an object literal as a component.
-	 *     {
-	 *         dir: LEFT,
-	 *         dead: false,
-	 *         speed: 240,
-	 *     },
-	 * ])
-	 *
-	 * // .jump is provided by body()
-	 * player.jump()
+     * Assemble a game object from a list of components, and add it to the game
+     *
+     * @returns The added game object that contains all properties and methods each component offers.
+     *
+     * @example
+     * ```js
+     * const player = add([
+     *     // List of components, each offers a set of functionalities
+     *     sprite("mark"),
+     *     pos(100, 200),
+     *     area(),
+     *     body(),
+     *     health(8),
+     *     // Plain strings are tags, a quicker way to let us define behaviors for a group
+     *     "player",
+     *     "friendly",
+     *     // Components are just plain objects, you can pass an object literal as a component.
+     *     {
+     *         dir: LEFT,
+     *         dead: false,
+     *         speed: 240,
+     *     },
+     * ])
+     *
+     * // .jump is provided by body()
+     * player.jump()
 
-	 * // .moveTo is provided by pos()
-	 * player.moveTo(300, 200)
-	 *
-	 * // .onUpdate() is on every game object, it registers an event that runs every frame
-	 * player.onUpdate(() => {
-	 *     // .move() is provided by pos()
-	 *     player.move(player.dir.scale(player.speed))
-	 * })
-	 *
-	 * // .onCollide is provided by area()
-	 * player.onCollide("tree", () => {
-	 *     destroy(player)
-	 * })
-	 * ```
+     * // .moveTo is provided by pos()
+     * player.moveTo(300, 200)
+     *
+     * // .onUpdate() is on every game object, it registers an event that runs every frame
+     * player.onUpdate(() => {
+     *     // .move() is provided by pos()
+     *     player.move(player.dir.scale(player.speed))
+     * })
+     *
+     * // .onCollide is provided by area()
+     * player.onCollide("tree", () => {
+     *     destroy(player)
+     * })
+     * ```
      *
      * @group Game Obj
-	 */
+     */
     add<T>(comps?: CompList<T> | GameObj<T>): GameObj<T>;
     /**
-	 * Create a game object like add(), but not adding to the scene.
-	 *
-	 * @since v3000.1
-	 *
-	 * @example
-	 * ```js
-	 * const label = make([
-	 *     text("oh hi"),
-	 * ])
+     * Create a game object like add(), but not adding to the scene.
+     *
+     * @since v3000.1
+     *
+     * @example
+     * ```js
+     * const label = make([
+     *     text("oh hi"),
+     * ])
 
-	 * add([
-	 *     rect(label.width, label.height),
-	 *     color(0, 0, 255),
-	 *     children(label),
-	 * ])
-	 * ```
+     * add([
+     *     rect(label.width, label.height),
+     *     color(0, 0, 255),
+     *     children(label),
+     * ])
+     * ```
      *
      * @group Game Obj
-	 */
+     */
     make<T>(comps?: CompList<T>): GameObj<T>;
     /**
      * Remove and re-add the game obj, without triggering add / destroy events.
@@ -1854,13 +1854,20 @@ export interface KaboomCtx {
      */
     camRot(angle?: number): number;
     /**
-     * Transform a point from world position to screen position.
+     * Get camera transform.
+     *
+     * @group Info
+     */
+    camTransform(): Mat4;
+    /**
+     * Transform a point from world position (relative to the root) to screen position (relative to the screen).
+     * @since v3001.0
      *
      * @group Info
      */
     toScreen(p: Vec2): Vec2;
     /**
-     * Transform a point from screen position to world position.
+     * Transform a point from screen position (relative to the screen) to world position (relative to the root).
      *
      * @group Info
      */
@@ -5130,13 +5137,42 @@ export interface PosComp extends Comp {
     moveTo(dest: Vec2, speed?: number): void;
     moveTo(x: number, y: number, speed?: number): void;
     /**
-     * Get position on screen after camera transform.
+     * Get the position of the object on the screen.
      */
     screenPos(): Vec2;
     /**
-     * Get position on screen after camera / parent transform.
+     * Get the position of the object relative to the root.
      */
     worldPos(): Vec2;
+    /**
+     * Transform a local point (relative to this) to a screen point (relative to the camera)
+     */
+    toScreen(this: GameObj<PosComp | FixedComp>, p: Vec2);
+    /**
+     * Transform a local point (relative to this) to a world point (relative to the root)
+     * @since v3001.0
+     */
+    toWorld(this: GameObj<PosComp>, p: Vec2);
+    /**
+     * Transform a screen point (relative to the camera) to a local point (relative to this)
+     * @since v3001.0
+     */
+    fromScreen(this: GameObj<PosComp | FixedComp>, p: Vec2);
+    /**
+     * Transform a world point (relative to the root) to a local point (relative to this)
+     * @since v3001.0
+     */
+    fromWorld(this: GameObj<PosComp>, p: Vec2);
+    /**
+     * Transform a point relative to this to a point relative to other
+     * @since v3001.0
+     */
+    toOther(this: GameObj<PosComp>, other: GameObj<PosComp>, p: Vec2);
+    /**
+     * Transform a point relative to other to a point relative to this
+     * @since v3001.0
+     */
+    fromOther(this: GameObj<PosComp>, other: GameObj<PosComp>, p: Vec2);
 }
 
 /**

@@ -45,18 +45,58 @@ export function pos(...args: Vec2Args): PosComp {
             this.move(diff.unit().scale(speed));
         },
 
+        // Get the position of the object relative to the root
         worldPos(this: GameObj<PosComp>): Vec2 {
             return this.parent
                 ? this.parent.transform.multVec2(this.pos)
                 : this.pos;
         },
 
-        // get the screen position (transformed by camera)
+        // Transform a local point to a world point
+        toWorld(this: GameObj<PosComp>, p: Vec2): Vec2 {
+            return this.parent
+                ? this.parent.transform.multVec2(this.pos.add(p))
+                : this.pos.add(p);
+        },
+
+        // Transform a world point (relative to the root) to a local point (relative to this)
+        fromWorld(this: GameObj<PosComp>, p: Vec2): Vec2 {
+            return this.parent
+                ? this.parent.transform.invert().multVec2(p).sub(this.pos)
+                : p.sub(this.pos);
+        },
+
+        // Transform a screen point (relative to the camera) to a local point (relative to this)
         screenPos(this: GameObj<PosComp | FixedComp>): Vec2 {
             const pos = this.worldPos();
             return isFixed(this)
                 ? pos
                 : k.toScreen(pos);
+        },
+
+        // Transform a local point (relative to this) to a screen point (relative to the camera)
+        toScreen(this: GameObj<PosComp | FixedComp>, p: Vec2): Vec2 {
+            const pos = this.toWorld(p);
+            return isFixed(this)
+                ? pos
+                : k.toScreen(pos);
+        },
+
+        // Transform a screen point (relative to the camera) to a local point (relative to this)
+        fromScreen(this: GameObj<PosComp>, p: Vec2): Vec2 {
+            return isFixed(this)
+                ? this.fromWorld(p)
+                : this.fromWorld(k.toWorld(p));
+        },
+
+        // Transform a point relative to this to a point relative to other
+        toOther(this: GameObj<PosComp>, other: GameObj<PosComp>, p: Vec2) {
+            return other.fromWorld(this.toWorld(p));
+        },
+
+        // Transform a point relative to other to a point relative to this
+        fromOther(this: GameObj<PosComp>, other: GameObj<PosComp>, p: Vec2) {
+            return other.toOther(this, p);
         },
 
         inspect() {
