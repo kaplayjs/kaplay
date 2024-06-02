@@ -771,7 +771,7 @@ export interface KaboomCtx {
      */
     agent(opt?: AgentCompOpt): AgentComp;
     /**
-     * @group Components
+     * @group Math
      */
     raycast(origin: Vec2, direction: Vec2, exclude?: string[]): RaycastResult;
     /**
@@ -1963,8 +1963,6 @@ export interface KaboomCtx {
     /**
      * Run the callback after n seconds.
      *
-     * @section Timer
-     *
      * @example
      * ```js
      * // 3 seconds until explosion! Runnn!
@@ -1998,8 +1996,6 @@ export interface KaboomCtx {
     loop(t: number, action: () => void): EventController;
     /**
      * Play a piece of audio.
-     *
-     * @section Audio
      *
      * @returns A control handle.
      *
@@ -2863,7 +2859,7 @@ export interface KaboomCtx {
      */
     makeCanvas(w: number, h: number): Canvas;
     /**
-     * @section Debug
+     * The Debug interface for debugging stuff.
      *
      * @example
      * ```js
@@ -2873,7 +2869,8 @@ export interface KaboomCtx {
      * // enter inspect mode
      * debug.inspect = true
      * ```
-     * @group Draw
+     *
+     * @group Debug
      */
     debug: Debug;
     /**
@@ -3067,6 +3064,11 @@ export type MergePlugins<T extends PluginList<any>> = MergeObj<
     ReturnType<T[number]>
 >;
 
+/**
+ * A component list.
+ *
+ * @group Component
+ */
 export type CompList<T> = Array<T | Tag>;
 export type PluginList<T> = Array<T | KaboomPlugin<any>>;
 
@@ -3151,6 +3153,8 @@ export type Key =
     | "shift";
 
 /**
+ * A mouse button.
+ *
  * @group Input
  */
 export type MouseButton =
@@ -3161,6 +3165,8 @@ export type MouseButton =
     | "forward";
 
 /**
+ * A gamepad button.
+ *
  * @group Input
  */
 export type GamepadButton =
@@ -3184,10 +3190,15 @@ export type GamepadButton =
     | "capture";
 
 /**
+ * A gamepad stick.
+ *
  * @group Input
  */
 export type GamepadStick = "left" | "right";
 
+/**
+ * A gamepad definition.
+ */
 export type GamepadDef = {
     buttons: Record<string, GamepadButton>;
     sticks: Partial<Record<GamepadStick, { x: number; y: number }>>;
@@ -3340,6 +3351,29 @@ export interface KaboomOpt<T extends PluginList<any> = any> {
     burp?: boolean;
 }
 
+/**
+ * A plugin for KAPLAY.
+ *
+ * @example
+ * ```js
+ * // a plugin that adds a new function to KAPLAY
+ * const myPlugin = (k) => ({
+ *    myFunc: () => {
+ *       k.debug.log("hello from my plugin")
+ *   }
+ * })
+ *
+ * // use the plugin
+ * kaplay({
+ *   plugins: [ myPlugin ]
+ * })
+ *
+ * // now you can use the new function
+ * myFunc()
+ * ```
+ *
+ * @group Plugins
+ */
 export type KaboomPlugin<T> = (
     k: KaboomCtx,
 ) => T | ((...args: any) => (k: KaboomCtx) => T);
@@ -3568,9 +3602,15 @@ export interface GameObjRaw {
  */
 export type GameObj<T = any> = GameObjRaw & MergeComps<T>;
 
+/**
+ * The name of a scene.
+ */
 export type SceneName = string;
 export type SceneDef = (...args: any) => void;
 
+/**
+ * @group Options
+ */
 export type GetOpt = {
     /**
      * Recursively get all children and their descendents.
@@ -3584,6 +3624,8 @@ export type GetOpt = {
 
 /**
  * Screen recording control handle.
+ *
+ * @group Data
  */
 export interface Recording {
     /**
@@ -4541,7 +4583,7 @@ export type CharTransformFunc = (idx: number, ch: string) => CharTransform;
 /**
  * Describes how to transform each character.
  *
- * @group Component Options
+ * @group Options
  */
 export interface CharTransform {
     pos?: Vec2;
@@ -5275,7 +5317,7 @@ export interface Collision {
 }
 
 /**
- * @group Component Options
+ * @group Options
  */
 export interface AreaCompOpt {
     /**
@@ -5461,7 +5503,7 @@ export interface AreaComp extends Comp {
 }
 
 /**
- * @group Component Options
+ * @group Options
  */
 export interface SpriteCompOpt {
     /**
@@ -5631,7 +5673,7 @@ export interface TextComp extends Comp {
 }
 
 /**
- * @group Component Options
+ * @group Options
  */
 export interface TextCompOpt {
     /**
@@ -5679,7 +5721,7 @@ export interface TextCompOpt {
 }
 
 /**
- * @group Component Options
+ * @group Options
  */
 export interface RectCompOpt {
     /**
@@ -5716,7 +5758,7 @@ export interface RectComp extends Comp {
 }
 
 /**
- * @group Component Options
+ * @group Options
  */
 export type PolygonCompOpt = Omit<DrawPolygonOpt, "pts">;
 
@@ -5756,7 +5798,7 @@ export interface PolygonComp extends Comp {
 }
 
 /**
- * @group Component Options
+ * @group Options
  */
 export interface CircleCompOpt {
     /**
@@ -6033,7 +6075,7 @@ export interface DoubleJumpComp extends Comp {
 }
 
 /**
- * @group Component Options
+ * @group Options
  */
 export interface BodyCompOpt {
     /**
@@ -6175,7 +6217,7 @@ export interface HealthComp extends Comp {
 }
 
 /**
- * @group Component Options
+ * @group Options
  */
 export interface LifespanCompOpt {
     /**
@@ -6237,7 +6279,7 @@ export interface MaskComp extends Comp {
 }
 
 /**
- * @group Component Options
+ * @group Options
  */
 export interface LevelOpt {
     /**
@@ -6296,7 +6338,9 @@ export enum EdgeMask {
 }
 
 /**
- * @group Component Options
+ * The options of a tile component
+ *
+ * @group Options
  */
 export type TileCompOpt = {
     /**
@@ -6413,14 +6457,14 @@ export interface LevelComp extends Comp {
 }
 
 /**
- * @group Component Options
+ * @group Options
  */
 export type PathFindOpt = {
     allowDiagonals?: boolean;
 };
 
 /**
- * @group Component Options
+ * @group Options
  */
 export type AgentCompOpt = {
     speed?: number;
@@ -6448,7 +6492,7 @@ export interface AgentComp extends Comp {
 }
 
 /**
- * @group Component Options
+ * @group Options
  */
 export interface BoomOpt {
     /**
@@ -6468,6 +6512,8 @@ export interface BoomOpt {
 }
 
 /**
+ * The list of easing functions available.
+ *
  * @group Math
  */
 export type EaseFuncs =
@@ -6529,6 +6575,8 @@ export type TimerController = {
 };
 
 /**
+ * Event controller for tween.
+ *
  * @group Timer
  */
 export type TweenController = TimerController & {
