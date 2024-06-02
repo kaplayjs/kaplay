@@ -4238,6 +4238,23 @@ const kaplay = (gopt: KaboomOpt = {}): KaboomCtx => {
                     if (tiles.some(t => t.isObstacle)) {
                         return true;
                     }
+                    let minHit: RaycastResult;
+                    for (const tile of tiles) {
+                        if (tile.is("area")) {
+                            const shape = tile.worldArea();
+                            const hit = shape.raycast(origin, direction);
+                            if (minHit) {
+                                if (hit.fraction < minHit.fraction) {
+                                    minHit = hit;
+                                    minHit.object = tile;
+                                }
+                            } else {
+                                minHit = hit;
+                                minHit.object = tile;
+                            }
+                        }
+                    }
+                    return minHit || false
                 }, 64);
                 if (hit) {
                     hit.point = hit.point.scale(
