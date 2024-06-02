@@ -3254,7 +3254,7 @@ export interface KaboomOpt<T extends PluginList<any> = any> {
      */
     debug?: boolean;
     /**
-     * key that toggles debug mode
+     * Key that toggles debug mode
      */
     debugKey?: Key;
     /**
