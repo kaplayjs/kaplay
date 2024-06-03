@@ -4200,7 +4200,7 @@ export type DrawRectOpt = RenderProps & {
     /**
      * The radius of each corner.
      */
-    radius?: number;
+    radius?: number | number[];
     /**
      * The anchor point, or the pivot point. Default to "topleft".
      */
@@ -4251,7 +4251,7 @@ export type DrawLinesOpt = Omit<RenderProps, "angle" | "scale"> & {
     /**
      * The radius of each corner.
      */
-    radius?: number;
+    radius?: number | number[];
     /**
      * Line join style (default "none").
      */
@@ -4421,7 +4421,7 @@ export type DrawPolygonOpt = RenderProps & {
     /**
      * The radius of each corner.
      */
-    radius?: number;
+    radius?: number | number[];
     /**
      * The color of each vertex.
      *
@@ -5813,7 +5813,7 @@ export interface PolygonComp extends Comp {
     /**
      * The radius of each corner.
      */
-    radius?: number;
+    radius?: number | number[];
     /**
      * The color of each vertex.
      */
