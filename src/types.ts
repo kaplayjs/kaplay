@@ -5618,7 +5618,15 @@ export interface SpriteComp extends Comp {
      */
     numFrames(): number;
     /**
+     * Get the current animation data.
+     *
+     * @since v3001.0
+     */
+    getCurAnim(): SpriteCurAnim;
+    /**
      * Get current anim name.
+     *
+     * @deprecated Use `getCurrentAnim().name` instead.
      */
     curAnim(): string;
     /**
