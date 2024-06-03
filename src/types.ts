@@ -5648,6 +5648,8 @@ export interface SpriteComp extends Comp {
 }
 
 /**
+ * Component to draw a text.
+ *
  * @group Component System
  */
 export interface TextComp extends Comp {
@@ -6586,6 +6588,8 @@ export type EaseFuncs =
     | "easeInOutBounce";
 
 /**
+ * A function that takes a time value and returns a new time value.
+ *
  * @group Math
  */
 export type EaseFunc = (t: number) => number;
@@ -6623,6 +6627,22 @@ export type TweenController = TimerController & {
 };
 
 /**
+ * A controller for all events in KAPLAY.
+ *
+ * @example
+ * ```js
+ * // Create a new event
+ * const logHi = onUpdate(() => {
+ *    debug.log("hi");
+ * });
+ *
+ * // Pause the event
+ * logHi.paused = true;
+ *
+ * // Cancel the event
+ * logHi.cancel();
+ *
+ * ```
  * @group Events
  */
 export declare class EventController {
