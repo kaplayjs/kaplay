@@ -4200,7 +4200,7 @@ export type DrawRectOpt = RenderProps & {
     /**
      * The radius of each corner.
      */
-    radius?: number;
+    radius?: number | number[];
     /**
      * The anchor point, or the pivot point. Default to "topleft".
      */
@@ -4251,7 +4251,7 @@ export type DrawLinesOpt = Omit<RenderProps, "angle" | "scale"> & {
     /**
      * The radius of each corner.
      */
-    radius?: number;
+    radius?: number | number[];
     /**
      * Line join style (default "none").
      */
@@ -4421,7 +4421,7 @@ export type DrawPolygonOpt = RenderProps & {
     /**
      * The radius of each corner.
      */
-    radius?: number;
+    radius?: number | number[];
     /**
      * The color of each vertex.
      *
@@ -5618,7 +5618,15 @@ export interface SpriteComp extends Comp {
      */
     numFrames(): number;
     /**
+     * Get the current animation data.
+     *
+     * @since v3001.0
+     */
+    getCurAnim(): SpriteCurAnim;
+    /**
      * Get current anim name.
+     *
+     * @deprecated Use `getCurrentAnim().name` instead.
      */
     curAnim(): string;
     /**
@@ -5648,6 +5656,8 @@ export interface SpriteComp extends Comp {
 }
 
 /**
+ * Component to draw a text.
+ *
  * @group Component System
  */
 export interface TextComp extends Comp {
@@ -5813,7 +5823,7 @@ export interface PolygonComp extends Comp {
     /**
      * The radius of each corner.
      */
-    radius?: number;
+    radius?: number | number[];
     /**
      * The color of each vertex.
      */
@@ -6586,6 +6596,8 @@ export type EaseFuncs =
     | "easeInOutBounce";
 
 /**
+ * A function that takes a time value and returns a new time value.
+ *
  * @group Math
  */
 export type EaseFunc = (t: number) => number;
@@ -6623,6 +6635,22 @@ export type TweenController = TimerController & {
 };
 
 /**
+ * A controller for all events in KAPLAY.
+ *
+ * @example
+ * ```js
+ * // Create a new event
+ * const logHi = onUpdate(() => {
+ *    debug.log("hi");
+ * });
+ *
+ * // Pause the event
+ * logHi.paused = true;
+ *
+ * // Cancel the event
+ * logHi.cancel();
+ *
+ * ```
  * @group Events
  */
 export declare class EventController {

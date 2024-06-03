@@ -298,6 +298,10 @@ export function sprite(
             return spriteData?.frames.length ?? 0;
         },
 
+        getCurAnim() {
+            return curAnim;
+        },
+
         curAnim() {
             return curAnim?.name;
         },

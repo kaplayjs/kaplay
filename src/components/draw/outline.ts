@@ -19,5 +19,8 @@ export function outline(
             miterLimit,
             cap,
         },
+        inspect() {
+            return `${this.outline.width}, ${this.outline.color}`;
+        }
     };
 }

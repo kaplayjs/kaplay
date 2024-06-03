@@ -10,6 +10,11 @@
 - added `chooseMultiple()` and `shuffle()` helper functions
 - added `getSceneName()` to get the current scene name
 - added support for gravity direction
+- added `SpriteComp.getCurAnim()` to get the current animation name
+- added `outline()` properties to inspect
+
+### Deprecated
+- deprecated `SpriteComp.curAnim()` in favor of `SpriteComp.getCurAnim().name`
 
 ### v3000.1.17
 
