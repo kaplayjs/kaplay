@@ -1925,21 +1925,17 @@ const kaplay = (gopt: KaboomOpt = {}): KaboomCtx => {
         // TODO: drawPolygon should handle generic rounded corners
         if (opt.radius) {
             // maximum radius is half the shortest side
-            const r = Math.min(Math.min(w, h) / 2, opt.radius);
+            const maxRadius = Math.min(w, h) / 2;
+            const r = Array.isArray(opt.radius)
+                ? opt.radius.map(r => Math.min(maxRadius, r))
+                : new Array(4).fill(Math.min(maxRadius, opt.radius));
 
             pts = [
-                new Vec2(r, 0),
-                //new Vec2(w - r, 0),
-                ...getArcPts(new Vec2(w - r, r), r, r, 270, 360),
-                //new Vec2(w, r),
-                //new Vec2(w, h - r),
-                ...getArcPts(new Vec2(w - r, h - r), r, r, 0, 90),
-                //new Vec2(w - r, h),
-                //new Vec2(r, h),
-                ...getArcPts(new Vec2(r, h - r), r, r, 90, 180),
-                //new Vec2(0, h - r),
-                //new Vec2(0, r),
-                ...getArcPts(new Vec2(r, r), r, r, 180, 270),
+                new Vec2(r[0], 0),
+                ...(r[1] ? getArcPts(new Vec2(w - r[1], r[1]), r[1], r[1], 270, 360) : [vec2(w, 0)]),
+                ...(r[2] ? getArcPts(new Vec2(w - r[2], h - r[2]), r[2], r[2], 0, 90) : [vec2(w, h)]),
+                ...(r[3] ? getArcPts(new Vec2(r[3], h - r[3]), r[3], r[3], 90, 180) : [vec2(0, h)]),
+                ...(r[0] ? getArcPts(new Vec2(r[0], r[0]), r[0], r[0], 180, 270) : []),
             ];
         }
 
@@ -2025,7 +2021,7 @@ const kaplay = (gopt: KaboomOpt = {}): KaboomCtx => {
         let pt2 = pts[0];
 
         for (let i = 1; i < pts.length; i++) {
-            if (pt2 === pts[i] || pt2.eq(pts[i])) { continue }
+            if (pt2 === pts[i] || pt2.eq(pts[i])) continue;
             pt1 = pt2;
             pt2 = pts[i];
 
@@ -2073,7 +2069,7 @@ const kaplay = (gopt: KaboomOpt = {}): KaboomCtx => {
             normal = nextNormal;
         }
 
-        if (vertices.length < 4) { return }
+        if (vertices.length < 4) return;
 
         const verts = vertices.map(v => ({
             pos: offset.add(v),
@@ -2134,7 +2130,7 @@ const kaplay = (gopt: KaboomOpt = {}): KaboomCtx => {
         let pt2 = pts[0];
 
         for (let i = 1; i < pts.length; i++) {
-            if (pt2 === pts[i] || pt2.eq(pts[i])) { continue }
+            if (pt2 === pts[i] || pt2.eq(pts[i])) continue;
             pt1 = pt2;
             pt2 = pts[i];
 
@@ -2202,7 +2198,7 @@ const kaplay = (gopt: KaboomOpt = {}): KaboomCtx => {
             normal = nextNormal;
         }
 
-        if (vertices.length < 4) { return }
+        if (vertices.length < 4) return;
 
         const verts = vertices.map(v => ({
             pos: offset.add(v),
@@ -2263,7 +2259,7 @@ const kaplay = (gopt: KaboomOpt = {}): KaboomCtx => {
         let pt2 = pts[0];
 
         for (let i = 1; i < pts.length; i++) {
-            if (pt2 === pts[i] || pt2.eq(pts[i])) { continue }
+            if (pt2 === pts[i] || pt2.eq(pts[i])) continue;
             pt1 = pt2;
             pt2 = pts[i];
 
@@ -2302,7 +2298,7 @@ const kaplay = (gopt: KaboomOpt = {}): KaboomCtx => {
             normal = nextNormal;
         }
 
-        if (vertices.length < 4) { return }
+        if (vertices.length < 4) return;
 
         const verts = vertices.map(v => ({
             pos: offset.add(v),
@@ -2366,14 +2362,6 @@ const kaplay = (gopt: KaboomOpt = {}): KaboomCtx => {
         if (opt.radius && pts.length >= 3) {
             // TODO: line joines
             // TODO: rounded vertices for arbitrary polygonic shape
-            let minSLen = pts[0].sdist(pts[1]);
-
-            for (let i = 1; i < pts.length - 1; i++) {
-                minSLen = Math.min(pts[i].sdist(pts[i + 1]), minSLen);
-            }
-
-            const radius = Math.min(opt.radius, Math.sqrt(minSLen) / 2);
-
             drawLine(Object.assign({}, opt, { p1: pts[0], p2: pts[1] }));
 
             for (let i = 1; i < pts.length - 2; i++) {
@@ -4254,7 +4242,7 @@ const kaplay = (gopt: KaboomOpt = {}): KaboomCtx => {
                             }
                         }
                     }
-                    return minHit || false
+                    return minHit || false;
                 }, 64);
                 if (hit) {
                     hit.point = hit.point.scale(
