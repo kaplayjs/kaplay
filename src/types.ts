@@ -2360,11 +2360,68 @@ export interface KaboomCtx {
      */
     clamp(n: number, min: number, max: number): number;
     /**
-     * Evaluate the Bezier at the given t
+     * Evaluate the quadratic Bezier at the given t
      *
      * @group Math
      */
+    evaluateQuadratic(pt1: Vec2, pt2: Vec2, pt3: Vec2, t: number): Vec2;
+    /**
+     * Evaluate the first derivative of a quadratic bezier at the given t
+     *
+     * @since v3001.0
+     * @group Math
+     */
+    evaluateQuadraticFirstDerivative(
+        pt1: Vec2,
+        pt2: Vec2,
+        pt3: Vec2,
+        t: number,
+    ): Vec2;
+    /**
+     * Evaluate the cubic Bezier at the given t
+     *
+     * @since v3001.0
+     * @group Math
+     */
     evaluateBezier(pt1: Vec2, pt2: Vec2, pt3: Vec2, pt4: Vec2, t: number): Vec2;
+    /**
+     * Evaluate the first derivative of a cubic Bezier at the given t
+     *
+     * @group Math
+     */
+    evaluateBezierFirstDerivative(
+        pt1: Vec2,
+        pt2: Vec2,
+        pt3: Vec2,
+        pt4: Vec2,
+        t: number,
+    ): Vec2;
+    /**
+     * Evaluate theCatmull-Rom spline at the given t
+     *
+     * @since v3001.0
+     * @group Math
+     */
+    evaluateCatmullRom(
+        pt1: Vec2,
+        pt2: Vec2,
+        pt3: Vec2,
+        pt4: Vec2,
+        t: number,
+    ): Vec2;
+    /**
+     * Evaluate the first derivative of a Catmull-Rom spline at the given t
+     *
+     * @since v3001.0
+     * @group Math
+     */
+    evaluateCatmullRomFirstDerivative(
+        pt1: Vec2,
+        pt2: Vec2,
+        pt3: Vec2,
+        pt4: Vec2,
+        t: number,
+    ): Vec2;
     /**
      * Check if a line and a point intersect.
      *

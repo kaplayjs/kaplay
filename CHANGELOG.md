@@ -12,8 +12,12 @@
 - added support for gravity direction
 - added `SpriteComp.getCurAnim()` to get the current animation name
 - added `outline()` properties to inspect
+- added line join (bevel, miter, round) and line caps (square, round)
+- added quadratic bezier and Catmull-Rom evaluation
+- added evaluation of the first derivative for all splines
 
 ### Deprecated
+
 - deprecated `SpriteComp.curAnim()` in favor of `SpriteComp.getCurAnim().name`
 
 ### v3000.1.17

@@ -51,6 +51,11 @@ import {
     deg2rad,
     Ellipse,
     evaluateBezier,
+    evaluateBezierFirstDerivative,
+    evaluateCatmullRom,
+    evaluateCatmullRomFirstDerivative,
+    evaluateQuadratic,
+    evaluateQuadraticFirstDerivative,
     hsl2rgb,
     isConvex,
     lerp,
@@ -1332,7 +1337,7 @@ const kaplay = (gopt: KaboomOpt = {}): KaboomCtx => {
         srcNode.onended = () => {
             if (
                 getTime()
-                >= (srcNode.buffer?.duration ?? Number.POSITIVE_INFINITY)
+                    >= (srcNode.buffer?.duration ?? Number.POSITIVE_INFINITY)
             ) {
                 onEndEvents.trigger();
             }
@@ -2887,14 +2892,14 @@ const kaplay = (gopt: KaboomOpt = {}): KaboomCtx => {
                 outline: Outline | null;
                 filter: TexFilter;
             } = font instanceof FontData
-                    ? {
-                        outline: font.outline,
-                        filter: font.filter,
-                    }
-                    : {
-                        outline: null,
-                        filter: DEF_FONT_FILTER,
-                    };
+                ? {
+                    outline: font.outline,
+                    filter: font.filter,
+                }
+                : {
+                    outline: null,
+                    filter: DEF_FONT_FILTER,
+                };
 
             // TODO: customizable font tex filter
             const atlas: FontAtlas = fontAtlases[fontName] ?? {
@@ -5238,7 +5243,7 @@ const kaplay = (gopt: KaboomOpt = {}): KaboomCtx => {
             // clear canvas
             gl.clear(
                 gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT
-                | gl.STENCIL_BUFFER_BIT,
+                    | gl.STENCIL_BUFFER_BIT,
             );
 
             // unbind everything
@@ -5630,7 +5635,12 @@ const kaplay = (gopt: KaboomOpt = {}): KaboomCtx => {
         deg2rad,
         rad2deg,
         clamp,
+        evaluateQuadratic,
+        evaluateQuadraticFirstDerivative,
         evaluateBezier,
+        evaluateBezierFirstDerivative,
+        evaluateCatmullRom,
+        evaluateCatmullRomFirstDerivative,
         testLineLine,
         testRectRect,
         testRectLine,
