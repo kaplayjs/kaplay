@@ -3264,7 +3264,7 @@ const kaplay = (gopt: KaboomOpt = {}): KaboomCtx => {
                 }
 
                 // class object
-                if (isClass(comp)) comp = new (comp as any);
+                if (isClass(comp)) comp = new (comp as any)(this);
 
                 // tag
                 if (typeof comp === "string") {
