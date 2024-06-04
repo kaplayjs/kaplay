@@ -1,7 +1,7 @@
 kaplay();
 
 onDraw(() => {
-    // Rectangles
+    // No line cap
     drawLines({
         pts: [
             vec2(50, 50),
@@ -10,7 +10,7 @@ onDraw(() => {
             vec2(50, 200),
         ],
         join: "bevel",
-        cap: "square",
+        cap: "none",
         width: 20,
     });
     drawCircle({
@@ -33,7 +33,7 @@ onDraw(() => {
             vec2(50, 200),
         ],
         join: "round",
-        cap: "square",
+        cap: "none",
         width: 20,
     });
     drawCircle({
@@ -56,7 +56,7 @@ onDraw(() => {
             vec2(50, 200),
         ],
         join: "miter",
-        cap: "square",
+        cap: "none",
         width: 20,
     });
     drawCircle({
@@ -66,6 +66,76 @@ onDraw(() => {
     });
     drawCircle({
         pos: vec2(450, 200),
+        radius: 4,
+        color: RED,
+    });
+
+    // Square line cap
+    drawLines({
+        pos: vec2(0, 250),
+        pts: [
+            vec2(50, 50),
+            vec2(200, 50),
+            vec2(200, 200),
+            vec2(50, 200),
+        ],
+        join: "bevel",
+        cap: "square",
+        width: 20,
+    });
+    drawCircle({
+        pos: vec2(50, 300),
+        radius: 4,
+        color: RED,
+    });
+    drawCircle({
+        pos: vec2(50, 450),
+        radius: 4,
+        color: RED,
+    });
+
+    drawLines({
+        pos: vec2(200, 250),
+        pts: [
+            vec2(50, 50),
+            vec2(200, 50),
+            vec2(200, 200),
+            vec2(50, 200),
+        ],
+        join: "round",
+        cap: "square",
+        width: 20,
+    });
+    drawCircle({
+        pos: vec2(250, 300),
+        radius: 4,
+        color: RED,
+    });
+    drawCircle({
+        pos: vec2(250, 450),
+        radius: 4,
+        color: RED,
+    });
+
+    drawLines({
+        pos: vec2(400, 250),
+        pts: [
+            vec2(50, 50),
+            vec2(200, 50),
+            vec2(200, 200),
+            vec2(50, 200),
+        ],
+        join: "miter",
+        cap: "square",
+        width: 20,
+    });
+    drawCircle({
+        pos: vec2(450, 300),
+        radius: 4,
+        color: RED,
+    });
+    drawCircle({
+        pos: vec2(450, 450),
         radius: 4,
         color: RED,
     });
