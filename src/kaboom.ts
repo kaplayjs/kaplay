@@ -3438,7 +3438,7 @@ const kaplay = (gopt: KaboomOpt = {}): KaboomCtx => {
 
                 // function object
                 if (typeof comp === 'function') return this.use(
-                    (comp as typeof ((v: any): any => {}))(this)
+                    (comp as (v: any) => any)(this)
                 );
 
                 // tag
