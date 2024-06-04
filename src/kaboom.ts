@@ -1332,7 +1332,7 @@ const kaplay = (gopt: KaboomOpt = {}): KaboomCtx => {
         srcNode.onended = () => {
             if (
                 getTime()
-                >= (srcNode.buffer?.duration ?? Number.POSITIVE_INFINITY)
+                    >= (srcNode.buffer?.duration ?? Number.POSITIVE_INFINITY)
             ) {
                 onEndEvents.trigger();
             }
@@ -1932,10 +1932,18 @@ const kaplay = (gopt: KaboomOpt = {}): KaboomCtx => {
 
             pts = [
                 new Vec2(r[0], 0),
-                ...(r[1] ? getArcPts(new Vec2(w - r[1], r[1]), r[1], r[1], 270, 360) : [vec2(w, 0)]),
-                ...(r[2] ? getArcPts(new Vec2(w - r[2], h - r[2]), r[2], r[2], 0, 90) : [vec2(w, h)]),
-                ...(r[3] ? getArcPts(new Vec2(r[3], h - r[3]), r[3], r[3], 90, 180) : [vec2(0, h)]),
-                ...(r[0] ? getArcPts(new Vec2(r[0], r[0]), r[0], r[0], 180, 270) : []),
+                ...(r[1]
+                    ? getArcPts(new Vec2(w - r[1], r[1]), r[1], r[1], 270, 360)
+                    : [vec2(w, 0)]),
+                ...(r[2]
+                    ? getArcPts(new Vec2(w - r[2], h - r[2]), r[2], r[2], 0, 90)
+                    : [vec2(w, h)]),
+                ...(r[3]
+                    ? getArcPts(new Vec2(r[3], h - r[3]), r[3], r[3], 90, 180)
+                    : [vec2(0, h)]),
+                ...(r[0]
+                    ? getArcPts(new Vec2(r[0], r[0]), r[0], r[0], 180, 270)
+                    : []),
             ];
         }
 
@@ -2020,6 +2028,17 @@ const kaplay = (gopt: KaboomOpt = {}): KaboomCtx => {
         let pt1;
         let pt2 = pts[0];
 
+        if (!isLoop) {
+            switch (opt.cap) {
+                case "square": {
+                    const dir = segment.scale(-halfWidth / length);
+                    vertices.push(pt2.add(dir).add(normal));
+                    vertices.push(pt2.add(dir).sub(normal));
+                    break;
+                }
+            }
+        }
+
         for (let i = 1; i < pts.length; i++) {
             if (pt2 === pts[i] || pt2.eq(pts[i])) continue;
             pt1 = pt2;
@@ -2067,6 +2086,19 @@ const kaplay = (gopt: KaboomOpt = {}): KaboomCtx => {
             segment = nextSegment;
             length = nextLength;
             normal = nextNormal;
+        }
+
+        if (!isLoop) {
+            vertices.push(pt2.add(normal));
+            vertices.push(pt2.sub(normal));
+            switch (opt.cap) {
+                case "square": {
+                    const dir = segment.scale(halfWidth / length);
+                    vertices.push(pt2.add(dir).add(normal));
+                    vertices.push(pt2.add(dir).sub(normal));
+                    break;
+                }
+            }
         }
 
         if (vertices.length < 4) return;
@@ -2128,6 +2160,17 @@ const kaplay = (gopt: KaboomOpt = {}): KaboomCtx => {
 
         let pt1;
         let pt2 = pts[0];
+
+        if (!isLoop) {
+            switch (opt.cap) {
+                case "square": {
+                    const dir = segment.scale(-halfWidth / length);
+                    vertices.push(pt2.add(dir).add(normal));
+                    vertices.push(pt2.add(dir).sub(normal));
+                    break;
+                }
+            }
+        }
 
         for (let i = 1; i < pts.length; i++) {
             if (pt2 === pts[i] || pt2.eq(pts[i])) continue;
@@ -2198,6 +2241,19 @@ const kaplay = (gopt: KaboomOpt = {}): KaboomCtx => {
             normal = nextNormal;
         }
 
+        if (!isLoop) {
+            vertices.push(pt2.add(normal));
+            vertices.push(pt2.sub(normal));
+            switch (opt.cap) {
+                case "square": {
+                    const dir = segment.scale(halfWidth / length);
+                    vertices.push(pt2.add(dir).add(normal));
+                    vertices.push(pt2.add(dir).sub(normal));
+                    break;
+                }
+            }
+        }
+
         if (vertices.length < 4) return;
 
         const verts = vertices.map(v => ({
@@ -2258,6 +2314,17 @@ const kaplay = (gopt: KaboomOpt = {}): KaboomCtx => {
         let pt1;
         let pt2 = pts[0];
 
+        if (!isLoop) {
+            switch (opt.cap) {
+                case "square": {
+                    const dir = segment.scale(-halfWidth / length);
+                    vertices.push(pt2.add(dir).add(normal));
+                    vertices.push(pt2.add(dir).sub(normal));
+                    break;
+                }
+            }
+        }
+
         for (let i = 1; i < pts.length; i++) {
             if (pt2 === pts[i] || pt2.eq(pts[i])) continue;
             pt1 = pt2;
@@ -2296,6 +2363,19 @@ const kaplay = (gopt: KaboomOpt = {}): KaboomCtx => {
             segment = nextSegment;
             length = nextLength;
             normal = nextNormal;
+        }
+
+        if (!isLoop) {
+            vertices.push(pt2.add(normal));
+            vertices.push(pt2.sub(normal));
+            switch (opt.cap) {
+                case "square": {
+                    const dir = segment.scale(halfWidth / length);
+                    vertices.push(pt2.add(dir).add(normal));
+                    vertices.push(pt2.add(dir).sub(normal));
+                    break;
+                }
+            }
         }
 
         if (vertices.length < 4) return;
@@ -2717,14 +2797,14 @@ const kaplay = (gopt: KaboomOpt = {}): KaboomCtx => {
                 outline: Outline | null;
                 filter: TexFilter;
             } = font instanceof FontData
-                    ? {
-                        outline: font.outline,
-                        filter: font.filter,
-                    }
-                    : {
-                        outline: null,
-                        filter: DEF_FONT_FILTER,
-                    };
+                ? {
+                    outline: font.outline,
+                    filter: font.filter,
+                }
+                : {
+                    outline: null,
+                    filter: DEF_FONT_FILTER,
+                };
 
             // TODO: customizable font tex filter
             const atlas: FontAtlas = fontAtlases[fontName] ?? {
@@ -5068,7 +5148,7 @@ const kaplay = (gopt: KaboomOpt = {}): KaboomCtx => {
             // clear canvas
             gl.clear(
                 gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT
-                | gl.STENCIL_BUFFER_BIT,
+                    | gl.STENCIL_BUFFER_BIT,
             );
 
             // unbind everything
