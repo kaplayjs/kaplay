@@ -1932,10 +1932,18 @@ const kaplay = (gopt: KaboomOpt = {}): KaboomCtx => {
 
             pts = [
                 new Vec2(r[0], 0),
-                ...(r[1] ? getArcPts(new Vec2(w - r[1], r[1]), r[1], r[1], 270, 360) : [vec2(w, 0)]),
-                ...(r[2] ? getArcPts(new Vec2(w - r[2], h - r[2]), r[2], r[2], 0, 90) : [vec2(w, h)]),
-                ...(r[3] ? getArcPts(new Vec2(r[3], h - r[3]), r[3], r[3], 90, 180) : [vec2(0, h)]),
-                ...(r[0] ? getArcPts(new Vec2(r[0], r[0]), r[0], r[0], 180, 270) : []),
+                ...(r[1]
+                    ? getArcPts(new Vec2(w - r[1], r[1]), r[1], r[1], 270, 360)
+                    : [vec2(w, 0)]),
+                ...(r[2]
+                    ? getArcPts(new Vec2(w - r[2], h - r[2]), r[2], r[2], 0, 90)
+                    : [vec2(w, h)]),
+                ...(r[3]
+                    ? getArcPts(new Vec2(r[3], h - r[3]), r[3], r[3], 90, 180)
+                    : [vec2(0, h)]),
+                ...(r[0]
+                    ? getArcPts(new Vec2(r[0], r[0]), r[0], r[0], 180, 270)
+                    : []),
             ];
         }
 
@@ -2020,6 +2028,32 @@ const kaplay = (gopt: KaboomOpt = {}): KaboomCtx => {
         let pt1;
         let pt2 = pts[0];
 
+        if (!isLoop) {
+            switch (opt.cap) {
+                case "square": {
+                    const dir = segment.scale(-halfWidth / length);
+                    vertices.push(pt2.add(dir).add(normal));
+                    vertices.push(pt2.add(dir).sub(normal));
+                    break;
+                }
+                case "round": {
+                    const n = Math.max(halfWidth, 10);
+                    const angle = Math.PI / n;
+                    let vector = normal.scale(-1);
+                    const cs = Math.cos(angle);
+                    const sn = Math.sin(angle);
+                    for (let j = 0; j < n; j++) {
+                        vertices.push(pt2);
+                        vertices.push(pt2.sub(vector));
+                        vector = vec2(
+                            vector.x * cs - vector.y * sn,
+                            vector.x * sn + vector.y * cs,
+                        );
+                    }
+                }
+            }
+        }
+
         for (let i = 1; i < pts.length; i++) {
             if (pt2 === pts[i] || pt2.eq(pts[i])) continue;
             pt1 = pt2;
@@ -2067,6 +2101,34 @@ const kaplay = (gopt: KaboomOpt = {}): KaboomCtx => {
             segment = nextSegment;
             length = nextLength;
             normal = nextNormal;
+        }
+
+        if (!isLoop) {
+            vertices.push(pt2.add(normal));
+            vertices.push(pt2.sub(normal));
+            switch (opt.cap) {
+                case "square": {
+                    const dir = segment.scale(halfWidth / length);
+                    vertices.push(pt2.add(dir).add(normal));
+                    vertices.push(pt2.add(dir).sub(normal));
+                    break;
+                }
+                case "round": {
+                    const n = Math.max(halfWidth, 10);
+                    const angle = Math.PI / n;
+                    let vector = normal.scale(1);
+                    const cs = Math.cos(angle);
+                    const sn = Math.sin(angle);
+                    for (let j = 0; j < n; j++) {
+                        vector = vec2(
+                            vector.x * cs - vector.y * sn,
+                            vector.x * sn + vector.y * cs,
+                        );
+                        vertices.push(pt2);
+                        vertices.push(pt2.sub(vector));
+                    }
+                }
+            }
         }
 
         if (vertices.length < 4) return;
@@ -2128,6 +2190,32 @@ const kaplay = (gopt: KaboomOpt = {}): KaboomCtx => {
 
         let pt1;
         let pt2 = pts[0];
+
+        if (!isLoop) {
+            switch (opt.cap) {
+                case "square": {
+                    const dir = segment.scale(-halfWidth / length);
+                    vertices.push(pt2.add(dir).add(normal));
+                    vertices.push(pt2.add(dir).sub(normal));
+                    break;
+                }
+                case "round": {
+                    const n = Math.max(halfWidth, 10);
+                    const angle = Math.PI / n;
+                    let vector = normal.scale(-1);
+                    const cs = Math.cos(angle);
+                    const sn = Math.sin(angle);
+                    for (let j = 0; j < n; j++) {
+                        vertices.push(pt2);
+                        vertices.push(pt2.sub(vector));
+                        vector = vec2(
+                            vector.x * cs - vector.y * sn,
+                            vector.x * sn + vector.y * cs,
+                        );
+                    }
+                }
+            }
+        }
 
         for (let i = 1; i < pts.length; i++) {
             if (pt2 === pts[i] || pt2.eq(pts[i])) continue;
@@ -2198,6 +2286,34 @@ const kaplay = (gopt: KaboomOpt = {}): KaboomCtx => {
             normal = nextNormal;
         }
 
+        if (!isLoop) {
+            vertices.push(pt2.add(normal));
+            vertices.push(pt2.sub(normal));
+            switch (opt.cap) {
+                case "square": {
+                    const dir = segment.scale(halfWidth / length);
+                    vertices.push(pt2.add(dir).add(normal));
+                    vertices.push(pt2.add(dir).sub(normal));
+                    break;
+                }
+                case "round": {
+                    const n = Math.max(halfWidth, 10);
+                    const angle = Math.PI / n;
+                    let vector = normal.scale(1);
+                    const cs = Math.cos(angle);
+                    const sn = Math.sin(angle);
+                    for (let j = 0; j < n; j++) {
+                        vector = vec2(
+                            vector.x * cs - vector.y * sn,
+                            vector.x * sn + vector.y * cs,
+                        );
+                        vertices.push(pt2);
+                        vertices.push(pt2.sub(vector));
+                    }
+                }
+            }
+        }
+
         if (vertices.length < 4) return;
 
         const verts = vertices.map(v => ({
@@ -2258,6 +2374,32 @@ const kaplay = (gopt: KaboomOpt = {}): KaboomCtx => {
         let pt1;
         let pt2 = pts[0];
 
+        if (!isLoop) {
+            switch (opt.cap) {
+                case "square": {
+                    const dir = segment.scale(-halfWidth / length);
+                    vertices.push(pt2.add(dir).add(normal));
+                    vertices.push(pt2.add(dir).sub(normal));
+                    break;
+                }
+                case "round": {
+                    const n = Math.max(halfWidth, 10);
+                    const angle = Math.PI / n;
+                    let vector = normal.scale(-1);
+                    const cs = Math.cos(angle);
+                    const sn = Math.sin(angle);
+                    for (let j = 0; j < n; j++) {
+                        vertices.push(pt2);
+                        vertices.push(pt2.sub(vector));
+                        vector = vec2(
+                            vector.x * cs - vector.y * sn,
+                            vector.x * sn + vector.y * cs,
+                        );
+                    }
+                }
+            }
+        }
+
         for (let i = 1; i < pts.length; i++) {
             if (pt2 === pts[i] || pt2.eq(pts[i])) continue;
             pt1 = pt2;
@@ -2296,6 +2438,34 @@ const kaplay = (gopt: KaboomOpt = {}): KaboomCtx => {
             segment = nextSegment;
             length = nextLength;
             normal = nextNormal;
+        }
+
+        if (!isLoop) {
+            vertices.push(pt2.add(normal));
+            vertices.push(pt2.sub(normal));
+            switch (opt.cap) {
+                case "square": {
+                    const dir = segment.scale(halfWidth / length);
+                    vertices.push(pt2.add(dir).add(normal));
+                    vertices.push(pt2.add(dir).sub(normal));
+                    break;
+                }
+                case "round": {
+                    const n = Math.max(halfWidth, 10);
+                    const angle = Math.PI / n;
+                    let vector = normal.scale(1);
+                    const cs = Math.cos(angle);
+                    const sn = Math.sin(angle);
+                    for (let j = 0; j < n; j++) {
+                        vector = vec2(
+                            vector.x * cs - vector.y * sn,
+                            vector.x * sn + vector.y * cs,
+                        );
+                        vertices.push(pt2);
+                        vertices.push(pt2.sub(vector));
+                    }
+                }
+            }
         }
 
         if (vertices.length < 4) return;
