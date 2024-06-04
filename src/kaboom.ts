@@ -110,6 +110,7 @@ import {
     Registry,
     runes,
     uid,
+    isClass
 } from "./utils";
 
 import type {
@@ -3436,6 +3437,9 @@ const kaplay = (gopt: KaboomOpt = {}): KaboomCtx => {
                 if (!comp) {
                     return;
                 }
+
+                // class object
+                if (isClass(comp)) comp = new (comp as any)(this);
 
                 // tag
                 if (typeof comp === "string") {

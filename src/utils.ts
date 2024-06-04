@@ -578,3 +578,7 @@ export function substring(string: string, start?: number, width?: number) {
     }
     return chars.slice(start, endIndex).join("");
 }
+
+export function isClass(obj: any): boolean {
+  return obj?.prototype && Object.getOwnPropertyDescriptor(obj.prototype, 'constructor') !== undefined;
+}
