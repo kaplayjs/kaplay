@@ -1332,7 +1332,7 @@ const kaplay = (gopt: KaboomOpt = {}): KaboomCtx => {
         srcNode.onended = () => {
             if (
                 getTime()
-                    >= (srcNode.buffer?.duration ?? Number.POSITIVE_INFINITY)
+                >= (srcNode.buffer?.duration ?? Number.POSITIVE_INFINITY)
             ) {
                 onEndEvents.trigger();
             }
@@ -2036,6 +2036,21 @@ const kaplay = (gopt: KaboomOpt = {}): KaboomCtx => {
                     vertices.push(pt2.add(dir).sub(normal));
                     break;
                 }
+                case "round": {
+                    const n = Math.max(halfWidth, 10);
+                    const angle = Math.PI / n;
+                    let vector = normal.scale(-1);
+                    const cs = Math.cos(angle);
+                    const sn = Math.sin(angle);
+                    for (let j = 0; j < n; j++) {
+                        vertices.push(pt2);
+                        vertices.push(pt2.sub(vector));
+                        vector = vec2(
+                            vector.x * cs - vector.y * sn,
+                            vector.x * sn + vector.y * cs,
+                        );
+                    }
+                }
             }
         }
 
@@ -2097,6 +2112,21 @@ const kaplay = (gopt: KaboomOpt = {}): KaboomCtx => {
                     vertices.push(pt2.add(dir).add(normal));
                     vertices.push(pt2.add(dir).sub(normal));
                     break;
+                }
+                case "round": {
+                    const n = Math.max(halfWidth, 10);
+                    const angle = Math.PI / n;
+                    let vector = normal.scale(1);
+                    const cs = Math.cos(angle);
+                    const sn = Math.sin(angle);
+                    for (let j = 0; j < n; j++) {
+                        vector = vec2(
+                            vector.x * cs - vector.y * sn,
+                            vector.x * sn + vector.y * cs,
+                        );
+                        vertices.push(pt2);
+                        vertices.push(pt2.sub(vector));
+                    }
                 }
             }
         }
@@ -2168,6 +2198,21 @@ const kaplay = (gopt: KaboomOpt = {}): KaboomCtx => {
                     vertices.push(pt2.add(dir).add(normal));
                     vertices.push(pt2.add(dir).sub(normal));
                     break;
+                }
+                case "round": {
+                    const n = Math.max(halfWidth, 10);
+                    const angle = Math.PI / n;
+                    let vector = normal.scale(-1);
+                    const cs = Math.cos(angle);
+                    const sn = Math.sin(angle);
+                    for (let j = 0; j < n; j++) {
+                        vertices.push(pt2);
+                        vertices.push(pt2.sub(vector));
+                        vector = vec2(
+                            vector.x * cs - vector.y * sn,
+                            vector.x * sn + vector.y * cs,
+                        );
+                    }
                 }
             }
         }
@@ -2251,6 +2296,21 @@ const kaplay = (gopt: KaboomOpt = {}): KaboomCtx => {
                     vertices.push(pt2.add(dir).sub(normal));
                     break;
                 }
+                case "round": {
+                    const n = Math.max(halfWidth, 10);
+                    const angle = Math.PI / n;
+                    let vector = normal.scale(1);
+                    const cs = Math.cos(angle);
+                    const sn = Math.sin(angle);
+                    for (let j = 0; j < n; j++) {
+                        vector = vec2(
+                            vector.x * cs - vector.y * sn,
+                            vector.x * sn + vector.y * cs,
+                        );
+                        vertices.push(pt2);
+                        vertices.push(pt2.sub(vector));
+                    }
+                }
             }
         }
 
@@ -2322,6 +2382,21 @@ const kaplay = (gopt: KaboomOpt = {}): KaboomCtx => {
                     vertices.push(pt2.add(dir).sub(normal));
                     break;
                 }
+                case "round": {
+                    const n = Math.max(halfWidth, 10);
+                    const angle = Math.PI / n;
+                    let vector = normal.scale(-1);
+                    const cs = Math.cos(angle);
+                    const sn = Math.sin(angle);
+                    for (let j = 0; j < n; j++) {
+                        vertices.push(pt2);
+                        vertices.push(pt2.sub(vector));
+                        vector = vec2(
+                            vector.x * cs - vector.y * sn,
+                            vector.x * sn + vector.y * cs,
+                        );
+                    }
+                }
             }
         }
 
@@ -2374,6 +2449,21 @@ const kaplay = (gopt: KaboomOpt = {}): KaboomCtx => {
                     vertices.push(pt2.add(dir).add(normal));
                     vertices.push(pt2.add(dir).sub(normal));
                     break;
+                }
+                case "round": {
+                    const n = Math.max(halfWidth, 10);
+                    const angle = Math.PI / n;
+                    let vector = normal.scale(1);
+                    const cs = Math.cos(angle);
+                    const sn = Math.sin(angle);
+                    for (let j = 0; j < n; j++) {
+                        vector = vec2(
+                            vector.x * cs - vector.y * sn,
+                            vector.x * sn + vector.y * cs,
+                        );
+                        vertices.push(pt2);
+                        vertices.push(pt2.sub(vector));
+                    }
                 }
             }
         }
@@ -2797,14 +2887,14 @@ const kaplay = (gopt: KaboomOpt = {}): KaboomCtx => {
                 outline: Outline | null;
                 filter: TexFilter;
             } = font instanceof FontData
-                ? {
-                    outline: font.outline,
-                    filter: font.filter,
-                }
-                : {
-                    outline: null,
-                    filter: DEF_FONT_FILTER,
-                };
+                    ? {
+                        outline: font.outline,
+                        filter: font.filter,
+                    }
+                    : {
+                        outline: null,
+                        filter: DEF_FONT_FILTER,
+                    };
 
             // TODO: customizable font tex filter
             const atlas: FontAtlas = fontAtlases[fontName] ?? {
@@ -5148,7 +5238,7 @@ const kaplay = (gopt: KaboomOpt = {}): KaboomCtx => {
             // clear canvas
             gl.clear(
                 gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT
-                    | gl.STENCIL_BUFFER_BIT,
+                | gl.STENCIL_BUFFER_BIT,
             );
 
             // unbind everything
