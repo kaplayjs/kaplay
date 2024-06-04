@@ -580,5 +580,5 @@ export function substring(string: string, start?: number, width?: number) {
 }
 
 export function isClass(obj: any): boolean {
-    return !!Object.getOwnPropertyDescriptors(Object.getPrototypeOf(obj))[Symbol.hasInstance as any];
+  return obj?.prototype && Object.getOwnPropertyDescriptor(obj.prototype, 'constructor') !== undefined;
 }
