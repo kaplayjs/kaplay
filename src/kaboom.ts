@@ -3443,6 +3443,11 @@ const kaplay = (gopt: KaboomOpt = {}): KaboomCtx => {
                 // class object
                 if (isClass(comp)) comp = new (comp as any)(this);
 
+                // function object
+                if (typeof comp === 'function') return this.use(
+                    (comp as (v: any) => any)(this)
+                );
+
                 // tag
                 if (typeof comp === "string") {
                     return this.use({
