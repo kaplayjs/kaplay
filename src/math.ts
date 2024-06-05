@@ -2302,7 +2302,16 @@ export function evaluateQuadraticFirstDerivative(
     t: number,
 ) {
     const mt = 1 - t;
-    return pt2.sub(pt1).add(pt3.sub(pt2)).scale(2);
+    return pt2.sub(pt1).scale(2 * mt).add(pt3.sub(pt2).scale(2 * t));
+}
+
+export function evaluateQuadraticSecondDerivative(
+    pt1: Vec2,
+    pt2: Vec2,
+    pt3: Vec2,
+    t: number,
+) {
+    return pt3.sub(pt2.scale(2)).add(pt1).scale(2);
 }
 
 export function evaluateBezier(
@@ -2334,6 +2343,19 @@ export function evaluateBezierFirstDerivative(
     const mt2 = mt * mt;
     return pt2.sub(pt1).scale(3 * mt2).add(pt3.sub(pt2).scale(6 * mt * t)).add(
         pt4.sub(pt3).scale(3 * t2),
+    );
+}
+
+export function evaluateBezierSecondDerivative(
+    pt1: Vec2,
+    pt2: Vec2,
+    pt3: Vec2,
+    pt4: Vec2,
+    t: number,
+) {
+    const mt = 1 - t;
+    return pt3.sub(pt2.scale(2)).add(pt1).scale(6 * mt).add(
+        pt4.sub(pt3.scale(2)).add(pt2).scale(6 * t),
     );
 }
 
