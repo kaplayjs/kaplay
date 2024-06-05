@@ -2378,6 +2378,18 @@ export interface KaboomCtx {
         t: number,
     ): Vec2;
     /**
+     * Evaluate the second derivative of a quadratic bezier at the given t
+     *
+     * @since v3001.0
+     * @group Math
+     */
+    evaluateQuadraticSecondDerivative(
+        pt1: Vec2,
+        pt2: Vec2,
+        pt3: Vec2,
+        t: number,
+    ): Vec2;
+    /**
      * Evaluate the cubic Bezier at the given t
      *
      * @since v3001.0
@@ -2397,7 +2409,20 @@ export interface KaboomCtx {
         t: number,
     ): Vec2;
     /**
-     * Evaluate theCatmull-Rom spline at the given t
+     * Evaluate the second derivative of a cubic bezier at the given t
+     *
+     * @since v3001.0
+     * @group Math
+     */
+    evaluateBezierSecondDerivative(
+        pt1: Vec2,
+        pt2: Vec2,
+        pt3: Vec2,
+        pt4: Vec2,
+        t: number,
+    ): Vec2;
+    /**
+     * Evaluate the Catmull-Rom spline at the given t
      *
      * @since v3001.0
      * @group Math
