@@ -192,6 +192,3 @@ Collection of games made with Kaboom, selected by Kaboom, [here](https://itch.io
 - Thanks to [0x72](https://0x72.itch.io/) for the amazing [Dungeon Tileset](https://0x72.itch.io/dungeontileset-ii)
 - Thanks to [Kenney](https://kenney.nl/) for the amazing [1-Bit Platformer Pack](https://kenney.nl/assets/1-bit-platformer-pack)
 - Thanks to [mulfok](https://twitter.com/MulfoK) for the amazing [mulfok32](https://lospec.com/palette-list/mulfok32) color palette, used in KAPLAY sprites
-- Find bitmap fonts: [Oldschool PC Font](https://int10h.org/oldschool-pc-fonts)
-- Featured on [Console 50](https://console.substack.com/p/console-50)
-- Thanks to [Umayr](https://github.com/umayr) for kindly offering the "kaboom" npm package name
