@@ -21,6 +21,6 @@ export function outline(
         },
         inspect() {
             return `${this.outline.width}, ${this.outline.color}`;
-        }
+        },
     };
 }

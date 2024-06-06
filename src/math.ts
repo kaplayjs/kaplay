@@ -2387,6 +2387,68 @@ export function evaluateCatmullRomFirstDerivative(
     return pt1.scale(A).add(pt2.scale(B)).add(pt3.scale(C)).add(pt4.scale(D));
 }
 
+export function normalizedCurve(curve: (t: number) => Vec2) {
+    const curveLength = curveLengthApproximation(curve);
+    const length = curveLength(1);
+    return (s: number) => {
+        const l = s * length;
+        const t = curveLength(l, true);
+        return curve(t);
+    };
+}
+
+export function curveLengthApproximation(
+    curve: (t: number) => Vec2,
+    entries: number = 10,
+    detail: number = 10,
+) {
+    const llut = [0];
+    const tlut = [0];
+    const dt = 1 / (entries - 1);
+    const ddt = dt / detail;
+    let length = 0;
+    let pp = curve(0);
+    let t = 0;
+    for (let e = 1; e < entries; e++) {
+        for (let d = 0; d < detail; d++) {
+            t += ddt;
+            const p = curve(t);
+            const l = p.dist(pp);
+            length += l;
+            pp = p;
+        }
+        llut[e] = length;
+        tlut[e] = t;
+    }
+    tlut[entries - 1] = 1;
+    return (t: number, inverse: boolean = false) => {
+        if (inverse) {
+            const l = t;
+            if (l <= 0) return 0;
+            if (l >= length) return 1;
+            let index = 0;
+            while (llut[index + 1] < l) index++;
+            const t1 = tlut[index];
+            const t2 = tlut[index + 1];
+            const l1 = llut[index];
+            const l2 = llut[index + 1];
+            const a = (l - l1) / (l2 - l1);
+            return t1 + (t2 - t1) * a;
+        } else {
+            if (t <= 0) return 0;
+            if (t >= 1) return llut[entries - 1];
+            let index = 0;
+            while (tlut[index + 1] < t) index++;
+            const t1 = tlut[index];
+            const t2 = tlut[index + 1];
+            const l1 = llut[index];
+            const l2 = llut[index + 1];
+            const a = (t - t1) / (t2 - t1);
+            return l1 + (l2 - l1) * a;
+        }
+    };
+}
+
 export function sat(p1: Polygon, p2: Polygon): Vec2 | null {
     let overlap = Number.MAX_VALUE;
     let displacement = vec2(0);

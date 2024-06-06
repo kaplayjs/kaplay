@@ -2448,6 +2448,29 @@ export interface KaboomCtx {
         t: number,
     ): Vec2;
     /**
+     * Returns a function.
+     * entries is the amount of entries in the LUT.
+     * detail is the sampling granularity of each segment recorded in the LUT.
+     * This new function either returns the length for a given t, or t for a given length, depending on the inverse parameter.
+     *
+     * @since v3001.0
+     * @group Math
+     */
+    curveLengthApproximation(
+        curve: (t: number) => Vec2,
+        entries: number,
+        detail: number,
+    ): (t: number, inverse: boolean) => number;
+    /**
+     * Returns a new curve which is normalized. This new curve has constant speed
+     * curve is any curve in t (non-constant between 0 and 1)
+     * returns a curve in s (constant between 0 and 1)
+     *
+     * @since v3001.0
+     * @group Math
+     */
+    normalizedCurve(curve: (t: number) => Vec2): (s: number) => Vec2;
+    /**
      * Check if a line and a point intersect.
      *
      * @group Math
