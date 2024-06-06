@@ -10,7 +10,7 @@
 - added `chooseMultiple()` and `shuffle()` helper functions
 - added `getSceneName()` to get the current scene name
 - added support for gravity direction
-- added `SpriteComp.getCurAnim()` to get the current animation name
+- added `SpriteComp.getCurAnim()` to get the current animation data
 - added `outline()` properties to inspect
 - added line join (bevel, miter, round) and line caps (square, round)
 - added quadratic bezier and Catmull-Rom evaluation
