@@ -24,6 +24,7 @@ export * from "./physics/doubleJump";
 export * from "./transform/anchor";
 export * from "./transform/fixed";
 export * from "./transform/follow";
+export * from "./transform/layer";
 export * from "./transform/move";
 export * from "./transform/offscreen";
 export * from "./transform/pos";
