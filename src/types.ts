@@ -1647,6 +1647,12 @@ export interface KaboomCtx {
      */
     width(): number;
     /**
+     * Get the root of all objects.
+     *
+     * @group Info
+     */
+    getTreeRoot(): GameObj;
+    /**
      * Get the height of game.
      *
      * @group Info

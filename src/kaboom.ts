@@ -3192,6 +3192,11 @@ const kaplay = (gopt: KaboomOpt = {}): KaboomCtx => {
         return gfx.height;
     }
 
+    // get game root
+    function getTreeRoot(): GameObj {
+        return game.root;
+    }
+
     // transform a point from window space to content space
     function windowToContent(pt: Vec2) {
         return new Vec2(
@@ -5544,6 +5549,7 @@ const kaplay = (gopt: KaboomOpt = {}): KaboomCtx => {
         getBackground,
         getGamepads: app.getGamepads,
         // obj
+        getTreeRoot,
         add,
         make,
         destroy,
