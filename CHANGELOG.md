@@ -15,6 +15,7 @@
 - added line join (bevel, miter, round) and line caps (square, round)
 - added quadratic bezier and Catmull-Rom evaluation
 - added evaluation of the first derivative for all splines
+- added layers and the layer component
 
 ### Deprecated
 
@@ -79,10 +80,7 @@ loadFont("apl386", "/examples/fonts/apl386.ttf", {
 - setting `obj.text` with `text()` component now immediately updates `width` and `height` property
 
 ```js
-const obj = add([
-    text("oh hi"),
-    pos(100, 200),
-]);
+const obj = add([text("oh hi"), pos(100, 200)]);
 
 // before
 obj.text = "bye";
@@ -145,12 +143,7 @@ getSprite("bean").then((spr) => {
 // add a scene game object
 const scene = add([]);
 
-const bean = scene.add([
-    sprite("bean"),
-    pos(100, 200),
-    area(),
-    body(),
-]);
+const bean = scene.add([sprite("bean"), pos(100, 200), area(), body()]);
 
 scene.onKeyPress("space", () => {
     bean.jump();
@@ -181,18 +174,17 @@ const evs = [];
 scene.onDestroy(() => {
     evs.forEach((ev) => ev.cancel());
 });
-evs.push(k.onKeyPress("space", () => {
-    doSomeSceneSpecificStuff();
-}));
+evs.push(
+    k.onKeyPress("space", () => {
+        doSomeSceneSpecificStuff();
+    }),
+);
 ```
 
 - added `make()` to create game object without adding to the scene
 
 ```js
-const obj = make([
-    sprite("bean"),
-    pos(120, 60),
-]);
+const obj = make([sprite("bean"), pos(120, 60)]);
 
 add(obj);
 ```
@@ -201,9 +193,7 @@ add(obj);
 
 ```js
 // before
-const ui = add([
-    fixed(),
-]);
+const ui = add([fixed()]);
 
 ui.add([
     rect(),
@@ -212,14 +202,10 @@ ui.add([
 ]);
 
 // now
-const ui = add([
-    fixed(),
-]);
+const ui = add([fixed()]);
 
 // you don't have to add fixed() to children
-ui.add([
-    rect(100, 100),
-]);
+ui.add([rect(100, 100)]);
 ```
 
 - fixed `AreaComp#onClick()` event not getting cleaned up when game object is destroyed
@@ -237,10 +223,7 @@ ui.add([
 - added scene graph, game objects are now stored in a tree-like structure and can have children with `obj.add()`
 
 ```js
-const bean = add([
-    sprite("bean"),
-    pos(160, 120),
-]);
+const bean = add([sprite("bean"), pos(160, 120)]);
 
 const sword = bean.add([
     sprite("sword"),
@@ -274,10 +257,7 @@ const enemies = get("enemy", {
 
 console.log(enemies.length); // 3
 
-add([
-    sprite("bigbird"),
-    "enemy",
-]);
+add([sprite("bigbird"), "enemy"]);
 
 console.log(enemies.length); // 4
 ```
@@ -384,7 +364,7 @@ const player = add([
     sprite("bean"),
     // will calculate and send u_time every frame
     shader("flashy", () => ({
-        "u_time": time(),
+        u_time: time(),
     })),
 ]);
 ```
@@ -484,9 +464,7 @@ loadSprite("grass", "/sprites/grass.png", {
     },
 });
 
-const g = add([
-    sprite("grass"),
-]);
+const g = add([sprite("grass")]);
 
 onMouseMove(() => {
     const mpos = mousePos();
@@ -537,51 +515,33 @@ music.loop = true;
 
 ```js
 // before
-addLevel([
-    "@  ^ $$",
-    "=======",
-], {
+addLevel(["@  ^ $$", "======="], {
     width: 32,
     height: 32,
-    "=": () => [
-        sprite("grass"),
-        area(),
-        body({ isStatic: true }),
-    ],
-    "$": () => [
-        sprite("coin"),
-        area(),
-        "coin",
-    ],
+    "=": () => [sprite("grass"), area(), body({ isStatic: true })],
+    $: () => [sprite("coin"), area(), "coin"],
     any: (symbol) => {
         if (symbol === "@") {
-            return [/* ... */];
+            return [
+                /* ... */
+            ];
         }
     },
 });
 
 // v3000
-addLevel([
-    "@  ^ $$",
-    "=======",
-], {
+addLevel(["@  ^ $$", "======="], {
     tileWidth: 32,
     tileHeight: 32,
     tiles: {
-        "=": () => [
-            sprite("grass"),
-            area(),
-            body({ isStatic: true }),
-        ],
-        "$": () => [
-            sprite("coin"),
-            area(),
-            "coin",
-        ],
+        "=": () => [sprite("grass"), area(), body({ isStatic: true })],
+        $: () => [sprite("coin"), area(), "coin"],
     },
     wildcardTile: (symbol) => {
         if (symbol === "@") {
-            return [/* ... */];
+            return [
+                /* ... */
+            ];
         }
     },
 });
@@ -625,14 +585,14 @@ onMousePress(() => {
         bean.pos.x,
         mousePos().x,
         1,
-        (val) => bean.pos.x = val,
+        (val) => (bean.pos.x = val),
         easings.easeOutBounce,
     );
     tween(
         bean.pos.y,
         mousePos().y,
         1,
-        (val) => bean.pos.y = val,
+        (val) => (bean.pos.y = val),
         easings.easeOutBounce,
     );
 });
@@ -642,11 +602,15 @@ onMousePress(() => {
 
 ```js
 // before
-const cancel = onUpdate(() => {/* ... */});
+const cancel = onUpdate(() => {
+    /* ... */
+});
 cancel();
 
 // v3000
-const ev = onUpdate(() => {/* ... */});
+const ev = onUpdate(() => {
+    /* ... */
+});
 ev.paused = true;
 ev.cancel();
 ```
@@ -654,11 +618,15 @@ ev.cancel();
 - timers can now be paused
 
 ```js
-const timer = wait(4, () => {/* ... */});
+const timer = wait(4, () => {
+    /* ... */
+});
 timer.paused = true;
 timer.resume();
 
-const timer = loop(1, () => {/* ... */});
+const timer = loop(1, () => {
+    /* ... */
+});
 timer.paused = true;
 timer.resume();
 ```
@@ -828,15 +796,9 @@ timer.resume();
 
 ```js
 // before
-add([
-    sprite("player"),
-    area(),
-]);
+add([sprite("player"), area()]);
 
-add([
-    sprite("rock"),
-    solid(),
-]);
+add([sprite("rock"), solid()]);
 
 keyDown("left", () => {
     player.move(-120, 0);
@@ -847,18 +809,10 @@ player.action(() => {
 });
 
 // after
-const player = add([
-    sprite("player"),
-    area(),
-    solid(),
-]);
+const player = add([sprite("player"), area(), solid()]);
 
 // both should be solid
-add([
-    sprite("rock"),
-    area(),
-    solid(),
-]);
+add([sprite("rock"), area(), solid()]);
 
 keyDown("left", () => {
     // this will handle collision resolution for you, if the other obj is also "solid"
@@ -886,17 +840,10 @@ keyDown("left", () => {
 
 ```js
 // before
-add([
-    rotate(Math.PI / 2),
-    color(0, 0.5, 1.0, 0.5),
-]);
+add([rotate(Math.PI / 2), color(0, 0.5, 1.0, 0.5)]);
 
 // after
-add([
-    rotate(90),
-    color(0, 127, 255),
-    opacity(0.5),
-]);
+add([rotate(90), color(0, 127, 255), opacity(0.5)]);
 ```
 
 - `global` and `debug` flag now are enabled by default, need to turn off manually if you don't want
@@ -1003,21 +950,9 @@ loadSprite("hero", "hero.png", {
 - **BREAK** now every symbol definition in `addLevel()` should be a function returning the component list, to ensure there's no weird shared states
 
 ```js
-addLevel([
-    "*    *",
-    "*    *",
-    "======",
-], {
-    "*": () => [
-        sprite("wall"),
-        area(),
-        solid(),
-    ],
-    "=": () => [
-        sprite("floor"),
-        area(),
-        solid(),
-    ],
+addLevel(["*    *", "*    *", "======"], {
+    "*": () => [sprite("wall"), area(), solid()],
+    "=": () => [sprite("floor"), area(), solid()],
 });
 ```
 
