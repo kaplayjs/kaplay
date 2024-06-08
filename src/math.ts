@@ -982,7 +982,7 @@ export class Mat4 {
             const r = Math.sqrt(this.m[0] * this.m[0] + this.m[1] * this.m[1]);
             return new Vec2(
                 Math.atan(this.m[0] * this.m[4] + this.m[1] * this.m[5])
-                    / (r * r),
+                / (r * r),
                 0,
             );
         } else if (this.m[4] != 0 || this.m[5] != 0) {
@@ -990,7 +990,7 @@ export class Mat4 {
             return new Vec2(
                 0,
                 Math.atan(this.m[0] * this.m[4] + this.m[1] * this.m[5])
-                    / (s * s),
+                / (s * s),
             );
         } else {
             return new Vec2(0, 0);
@@ -1405,7 +1405,7 @@ export function testPolygonPoint(poly: Polygon, pt: Point): boolean {
             ((p[i].y > pt.y) != (p[j].y > pt.y))
             && (pt.x
                 < (p[j].x - p[i].x) * (pt.y - p[i].y) / (p[j].y - p[i].y)
-                    + p[i].x)
+                + p[i].x)
         ) {
             c = !c;
         }
@@ -1423,7 +1423,7 @@ export function testEllipsePoint(ellipse: Ellipse, pt: Point): boolean {
     const vx = pt.x * c + pt.y * s;
     const vy = -pt.x * s + pt.y * c;
     return vx * vx / (ellipse.radiusX * ellipse.radiusX)
-            + vy * vy / (ellipse.radiusY * ellipse.radiusY) < 1;
+        + vy * vy / (ellipse.radiusY * ellipse.radiusY) < 1;
 }
 
 export function testEllipseCircle(ellipse: Ellipse, circle: Circle): boolean {
@@ -2227,7 +2227,7 @@ export class Ellipse {
         const vx = point.x * c + point.y * s;
         const vy = -point.x * s + point.y * c;
         return vx * vx / (this.radiusX * this.radiusX)
-                + vy * vy / (this.radiusY * this.radiusY) < 1;
+            + vy * vy / (this.radiusY * this.radiusY) < 1;
     }
     raycast(origin: Vec2, direction: Vec2): RaycastResult {
         return raycastEllipse(origin, direction, this);
@@ -2547,13 +2547,11 @@ export function easingLinear(keys: Vec2[]) {
     return (x: number) => {
         // Before start
         if (x <= 0 || keys.length == 1 || x <= keys[0].x) {
-            console.log(`before start`);
             return keys[0].y;
         }
         for (let i = 0; i < len; i++) {
             if (keys[i].x >= x) {
                 // Linear map
-                console.log(`${x} linear ${i - 1} and ${i}`);
                 return map(
                     x,
                     keys[i - 1].x,
@@ -2564,7 +2562,6 @@ export function easingLinear(keys: Vec2[]) {
             }
         }
         // After end
-        console.log(`${x} after end`);
         return keys[keys.length - 1].y;
     };
 }
