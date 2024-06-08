@@ -17,6 +17,7 @@
 - added evaluation of the first and second derivatives for all splines
 - added higher order easing functions linear, steps and cubic-bezier
 - added layers and the layer component
+- added `getTreeRoot()` to get the game's root object
 
 ### Deprecated
 
