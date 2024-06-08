@@ -2297,6 +2297,27 @@ export interface KaboomCtx {
      */
     easings: Record<EaseFuncs, EaseFunc>;
     /**
+     * Steps easing. Eases in discontinious steps.
+     *
+     * @since v3001.0
+     * @group Math
+     */
+    easingSteps(steps: number, position: StepPosition);
+    /**
+     * Linear easing with keyframes
+     *
+     * @since v3001.0
+     * @group Math
+     */
+    easingLinear(keys: Vec2[]);
+    /**
+     * Bezier easing. Both control points need x to be within 0 and 1.
+     *
+     * @since v3001.0
+     * @group Math
+     */
+    easingCubicBezier(p1: Vec2, p2: Vec2);
+    /**
      * Map a value from one range to another range.
      *
      * @group Math
@@ -3329,6 +3350,12 @@ export type KGamePad = {
     /** Get the value of a stick. */
     getStick(stick: GamepadStick): Vec2;
 };
+
+export type StepPosition =
+    | "jump-start"
+    | "jump-end"
+    | "jump-none"
+    | "jump-both";
 
 /**
  * Inspect info for a game object.
