@@ -189,12 +189,6 @@ export default (opt: {
         else if (document.webkitExitFullScreen) document.webkitExitFullScreen();
     }
 
-    function getFullscreenElement(): Element | void {
-        return document.fullscreenElement
-            // @ts-ignore
-            || document.webkitFullscreenElement;
-    }
-
     function setFullscreen(f: boolean = true) {
         if (f) {
             enterFullscreen(state.canvas);
@@ -204,7 +198,9 @@ export default (opt: {
     }
 
     function isFullscreen(): boolean {
-        return Boolean(getFullscreenElement());
+        return document.fullscreenElement === state.canvas
+            // @ts-ignore
+            || document.webkitFullscreenElement === state.canvas;
     }
 
     function quit() {
