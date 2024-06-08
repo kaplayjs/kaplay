@@ -474,6 +474,12 @@ export interface KaboomCtx {
      */
     z(z: number): ZComp;
     /**
+     * Determines the layer for objects. Object will be drawn on top if the layer index is higher.
+     *
+     * @group Components
+     */
+    layer(name: string): LayerComp;
+    /**
      * Give obj an outline.
      *
      * @group Components
@@ -2595,6 +2601,12 @@ export interface KaboomCtx {
      * @group Scene
      */
     go(id: SceneName, ...args: any): void;
+    /**
+     * Define the layer names. Should be called before any objects are made.
+     *
+     * @group Scene
+     */
+    layers(layernames: string[], defaultLayer: string): void;
     /**
      * Construct a level based on symbols.
      *
@@ -5426,6 +5438,21 @@ export interface OffScreenComp extends Comp {
      * Register an event that runs when object enters view.
      */
     onEnterScreen(action: () => void): EventController;
+}
+
+/**
+ * @group Component System
+ */
+export interface LayerComp extends Comp {
+    get layerIndex(): number;
+    /**
+     * Get the name of the current layer the object is assigned to.
+     */
+    get layer(): string;
+    /**
+     * Set the name of the layer the object should be assigned to.
+     */
+    set layer(name: string);
 }
 
 /**

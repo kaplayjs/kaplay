@@ -201,6 +201,7 @@ import {
     fixed,
     follow,
     health,
+    layer,
     lifespan,
     mask,
     move,
@@ -688,6 +689,8 @@ const kaplay = (gopt: KaboomOpt = {}): KaboomCtx => {
         gravity: null,
         scenes: {},
         currentScene: null,
+        layers: null,
+        defaultLayerIndex: 0,
 
         // on screen log
         logs: [],
@@ -3376,7 +3379,7 @@ const kaplay = (gopt: KaboomOpt = {}): KaboomCtx => {
             update() {
                 if (this.paused) return;
                 this.children
-                    .sort((o1, o2) => (o1.z ?? 0) - (o2.z ?? 0))
+                    /*.sort((o1, o2) => (o1.z ?? 0) - (o2.z ?? 0))*/
                     .forEach((child) => child.update());
                 this.trigger("update");
             },
@@ -3397,9 +3400,11 @@ const kaplay = (gopt: KaboomOpt = {}): KaboomCtx => {
                 pushTranslate(this.pos);
                 pushScale(this.scale);
                 pushRotate(this.angle);
-                const children = this.children.sort((o1, o2) =>
-                    (o1.z ?? 0) - (o2.z ?? 0)
-                );
+                const children = this.children.sort((o1, o2) => {
+                    const l1 = o1.layerIndex ?? game.defaultLayerIndex;
+                    const l2 = o2.layerIndex ?? game.defaultLayerIndex;
+                    return (l1 - l2) || (o1.z ?? 0) - (o2.z ?? 0);
+                });
                 // TODO: automatically don't draw if offscreen
                 if (this.mask) {
                     const maskFunc = {
@@ -3433,7 +3438,7 @@ const kaplay = (gopt: KaboomOpt = {}): KaboomCtx => {
                 pushScale(this.scale);
                 pushRotate(this.angle);
                 this.children
-                    .sort((o1, o2) => (o1.z ?? 0) - (o2.z ?? 0))
+                    /*.sort((o1, o2) => (o1.z ?? 0) - (o2.z ?? 0))*/
                     .forEach((child) => child.drawInspect());
                 this.trigger("drawInspect");
                 popTransform();
@@ -4699,6 +4704,19 @@ const kaplay = (gopt: KaboomOpt = {}): KaboomCtx => {
     const wait = game.root.wait.bind(game.root);
     const loop = game.root.loop.bind(game.root);
     const tween = game.root.tween.bind(game.root);
+    const layers = function(layerNames: string[], defaultLayer: string) {
+        if (game.layers) {
+            throw Error("Layers can only be assigned once.");
+        }
+        const defaultLayerIndex = layerNames.indexOf(defaultLayer);
+        if (defaultLayerIndex == -1) {
+            throw Error(
+                "The default layer name should be present in the layers list.",
+            );
+        }
+        game.layers = layerNames;
+        game.defaultLayerIndex = defaultLayerIndex;
+    };
 
     function boom(speed: number = 2, size: number = 1): Comp {
         let time = 0;
@@ -5557,6 +5575,7 @@ const kaplay = (gopt: KaboomOpt = {}): KaboomCtx => {
         lifespan,
         state,
         z,
+        layer,
         move,
         offscreen,
         follow,
@@ -5707,6 +5726,8 @@ const kaplay = (gopt: KaboomOpt = {}): KaboomCtx => {
         getSceneName,
         go,
         onSceneLeave,
+        // layers
+        layers,
         // level
         addLevel,
         // storage
