@@ -14,7 +14,8 @@
 - added `outline()` properties to inspect
 - added line join (bevel, miter, round) and line caps (square, round)
 - added quadratic bezier and Catmull-Rom evaluation
-- added evaluation of the first derivative for all splines
+- added evaluation of the first and second derivatives for all splines
+- added higher order easing functions linear, steps and cubic-bezier
 
 ### Deprecated
 

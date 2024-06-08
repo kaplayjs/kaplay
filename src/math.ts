@@ -2449,6 +2449,153 @@ export function curveLengthApproximation(
     };
 }
 
+// True if t is between 0 and 1
+function inZeroOneDomain(t: number) {
+    return 0 <= t && t <= 1;
+}
+
+// True if a and b are almost equal
+function approximately(a: number, b: number) {
+    return Math.abs(a - b) <= Number.EPSILON;
+}
+
+// Calculates the cube root ∛ of the given number
+function cubeRoot(v: number) {
+    if (v < 0) {
+        return -Math.pow(-v, 1 / 3);
+    } else {
+        return Math.pow(v, 1 / 3);
+    }
+}
+
+// Get all cubic roots of the given 1 dimensional bezier
+function getCubicRoots(pa: number, pb: number, pc: number, pd: number) {
+    let a = 3 * pa - 6 * pb + 3 * pc;
+    let b = -3 * pa + 3 * pb;
+    let c = pa;
+    let d = -pa + 3 * pb - 3 * pc + pd;
+
+    if (approximately(d, 0)) {
+        if (approximately(a, 0)) {
+            if (approximately(b, 0)) {
+                return [];
+            }
+            return [-c / b].filter(inZeroOneDomain);
+        }
+        const q = Math.sqrt(b * b - 4 * a * c);
+        const a2 = 2 * a;
+        return [(q - b) / a2, (-b - q) / a2].filter(inZeroOneDomain);
+    }
+
+    a /= d;
+    b /= d;
+    c /= d;
+
+    const p = (3 * b - a * a) / 3;
+    const p3 = p / 3;
+    const q = (2 * a * a * a - 9 * a * b + 27 * c) / 27;
+    const q2 = q / 2;
+    const discriminant = q2 * q2 + p3 * p3 * p3;
+
+    if (discriminant < 0) {
+        const mp3 = -p / 3;
+        const mp33 = mp3 * mp3 * mp3;
+        const r = Math.sqrt(mp33);
+        const t = -q / (2 * r);
+        const cosphi = t < -1 ? -1 : t > 1 ? 1 : t;
+        const phi = Math.acos(cosphi);
+        const crtr = cubeRoot(r);
+        const t1 = 2 * crtr;
+        const root1 = t1 * Math.cos(phi / 3) - a / 3;
+        const root2 = t1 * Math.cos((phi + 2 * Math.PI) / 3) - a / 3;
+        const root3 = t1 * Math.cos((phi + 4 * Math.PI) / 3) - a / 3;
+        return [root1, root2, root3].filter(inZeroOneDomain);
+    }
+
+    if (discriminant === 0) {
+        const u1 = q2 < 0 ? cubeRoot(-q2) : -cubeRoot(q2);
+        const root1 = 2 * u1 - a / 3;
+        const root2 = -u1 - a / 3;
+        return [root1, root2].filter(inZeroOneDomain);
+    }
+
+    const sd = Math.sqrt(discriminant);
+    const u1 = cubeRoot(sd - q2);
+    const v1 = cubeRoot(sd + q2);
+    const root1 = u1 - v1 - a / 3;
+    return [root1].filter(inZeroOneDomain);
+}
+
+// Returns y for the given x on the cubic bezier by first calculating the t for the given x, then calculating y from t
+function cubicBezierYforX(a: Vec2, b: Vec2, c: Vec2, d: Vec2, x: number) {
+    // Get t for x
+    const t = getCubicRoots(a.x - x, b.x - x, c.x - x, d.x - x);
+    if (t.length > 0) {
+        // Get y for t
+        return evaluateBezier(a, b, c, d, t[0]).y;
+    }
+    return NaN;
+}
+
+export function easingLinear(keys: Vec2[]) {
+    if (!keys || keys.length == 0) {
+        throw new Error(
+            "Need at least one point for easingLinear.",
+        );
+    }
+    const len = keys.length;
+    return (x: number) => {
+        // Before start
+        if (x <= 0 || keys.length == 1 || x <= keys[0].x) {
+            console.log(`before start`);
+            return keys[0].y;
+        }
+        for (let i = 0; i < len; i++) {
+            if (keys[i].x >= x) {
+                // Linear map
+                console.log(`${x} linear ${i - 1} and ${i}`);
+                return map(
+                    x,
+                    keys[i - 1].x,
+                    keys[i].x,
+                    keys[i - 1].y,
+                    keys[i].y,
+                );
+            }
+        }
+        // After end
+        console.log(`${x} after end`);
+        return keys[keys.length - 1].y;
+    };
+}
+
+export function easingCubicBezier(p1: Vec2, p2: Vec2) {
+    return (x: number) => {
+        return cubicBezierYforX(vec2(0, 0), p1, p2, vec2(1, 1), x);
+    };
+}
+
+export type StepPosition =
+    | "jump-start"
+    | "jump-end"
+    | "jump-none"
+    | "jump-both";
+
+export function easingSteps(
+    steps: number,
+    position: StepPosition = "jump-end",
+) {
+    const xdist = 1 / steps;
+    const jumpStart = position == "jump-start" || position == "jump-both";
+    const jumpEnd = position == "jump-end" || position == "jump-both";
+    const ydist = 1 / (steps + (jumpEnd ? 1 : 0));
+    const startY = jumpStart ? ydist : 0;
+    return (x: number) => {
+        const step = Math.floor(x / xdist);
+        return startY + step * ydist;
+    };
+}
+
 export function sat(p1: Polygon, p2: Polygon): Vec2 | null {
     let overlap = Number.MAX_VALUE;
     let displacement = vec2(0);

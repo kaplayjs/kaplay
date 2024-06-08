@@ -50,6 +50,9 @@ import {
     Color,
     curveLengthApproximation,
     deg2rad,
+    easingCubicBezier,
+    easingLinear,
+    easingSteps,
     Ellipse,
     evaluateBezier,
     evaluateBezierFirstDerivative,
@@ -109,12 +112,12 @@ import {
     EventHandler,
     getErrorMessage,
     getFileName,
+    isClass,
     isDataURL,
     overload2,
     Registry,
     runes,
     uid,
-    isClass
 } from "./utils";
 
 import type {
@@ -3446,9 +3449,11 @@ const kaplay = (gopt: KaboomOpt = {}): KaboomCtx => {
                 if (isClass(comp)) comp = new (comp as any)(this);
 
                 // function object
-                if (typeof comp === 'function') return this.use(
-                    (comp as (v: any) => any)(this)
-                );
+                if (typeof comp === "function") {
+                    return this.use(
+                        (comp as (v: any) => any)(this),
+                    );
+                }
 
                 // tag
                 if (typeof comp === "string") {
@@ -5658,6 +5663,9 @@ const kaplay = (gopt: KaboomOpt = {}): KaboomCtx => {
         evaluateCatmullRomFirstDerivative,
         curveLengthApproximation,
         normalizedCurve,
+        easingSteps,
+        easingLinear,
+        easingCubicBezier,
         testLineLine,
         testRectRect,
         testRectLine,
