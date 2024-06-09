@@ -22,6 +22,7 @@
 ### Deprecated
 
 - deprecated `SpriteComp.curAnim()` in favor of `SpriteComp.getCurAnim().name`
+- deprecated `fadeIn` component in favor of `OpacityComp.fadeIn()`
 
 ### v3000.1.17
 
