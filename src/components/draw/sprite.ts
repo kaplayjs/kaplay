@@ -20,7 +20,7 @@ export function sprite(
     opt: SpriteCompOpt = {},
 ): SpriteComp {
     const k = getKaboomContext(this);
-    const internal = getInternalContext(this);
+    const internal = getInternalContext(k);
 
     let spriteData: SpriteData | null = null;
     let curAnim: SpriteCurAnim | null = null;
