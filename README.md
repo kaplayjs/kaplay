@@ -2,7 +2,7 @@
 
 ![KAPLAY](assets/brand/kaplay-o.webp)
 
-> Kaplay is the spiritual successor (and fork) of Kaboom, a JavaScript library that helps you make games fast and fun!
+> KAPLAY is the spiritual successor (and fork) of Kaboom, a JavaScript library that helps you make games fast and fun!
 > For now, there's links to the Kaboom documentation and examples, but in the future, they will be linked
 > to our own site.
 
@@ -101,7 +101,7 @@ onKeyDown("w", () => {
 
 ### Start a Project With `create-kaboom`
 
-The fastest way to start a KaPlay game is with [`create-kaplay`](https://github.com/marklovers/create-kaplay)
+The fastest way to start a KAPLAY game is with [`create-kaplay`](https://github.com/marklovers/create-kaplay)
 
 ```sh
 $ npm init kaplay mygame
@@ -139,7 +139,7 @@ also works with CommonJS
 const kaboom = require("kaplay");
 ```
 
-Note that you'll need to use a bundler like `esbuild` or `webpack` to use KaPlay with NPM
+Note that you'll need to use a bundler like `esbuild` or `webpack` to use KAPLAY with NPM
 
 ### Browser CDN
 
