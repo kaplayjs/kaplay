@@ -120,6 +120,8 @@ import {
     uid,
 } from "./utils";
 
+import { FontData } from "./fonts";
+
 import type {
     Anchor,
     AreaComp,
@@ -738,37 +740,6 @@ const kaplay = (gopt: KaboomOpt = {}): KaboomCtx => {
         return assets.custom.add(name, fetchJSON(url));
     }
 
-    class FontData {
-        fontface: FontFace;
-        filter: TexFilter = DEF_FONT_FILTER;
-        outline: Outline | null = null;
-        size: number = DEF_TEXT_CACHE_SIZE;
-        constructor(face: FontFace, opt: LoadFontOpt = {}) {
-            this.fontface = face;
-            this.filter = opt.filter ?? DEF_FONT_FILTER;
-            this.size = opt.size ?? DEF_TEXT_CACHE_SIZE;
-            if (this.size > MAX_TEXT_CACHE_SIZE) {
-                throw new Error(`Max font size: ${MAX_TEXT_CACHE_SIZE}`);
-            }
-            if (opt.outline) {
-                this.outline = {
-                    width: 1,
-                    color: rgb(0, 0, 0),
-                };
-                if (typeof opt.outline === "number") {
-                    this.outline.width = opt.outline;
-                } else if (typeof opt.outline === "object") {
-                    if (opt.outline.width) {
-                        this.outline.width = opt.outline.width;
-                    }
-                    if (opt.outline.color) {
-                        this.outline.color = opt.outline.color;
-                    }
-                }
-            }
-        }
-    }
-
     // TODO: pass in null src to store opt for default fonts like "monospace"
     function loadFont(
         name: string,
@@ -1167,8 +1138,7 @@ const kaplay = (gopt: KaboomOpt = {}): KaboomCtx => {
         } else if (src instanceof Asset) {
             return src.data ? src.data : src;
         }
-        // TODO: check type
-        // @ts-ignore
+
         return src;
     }
 
@@ -1204,8 +1174,7 @@ const kaplay = (gopt: KaboomOpt = {}): KaboomCtx => {
         } else if (src instanceof Asset) {
             return src.data ? src.data : src;
         }
-        // TODO: check type
-        // @ts-ignore
+
         return src;
     }
 

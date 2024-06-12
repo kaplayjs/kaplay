@@ -12,9 +12,31 @@ export class Registry<T> extends Map<number, T> {
     }
 }
 
+/**
+ * A controller for all events in KAPLAY.
+ *
+ * @example
+ * ```js
+ * // Create a new event
+ * const logHi = onUpdate(() => {
+ *    debug.log("hi");
+ * });
+ *
+ * // Pause the event
+ * logHi.paused = true;
+ *
+ * // Cancel the event
+ * logHi.cancel();
+ *
+ * ```
+ * @group Events
+ */
 export class EventController {
+    /** If the event is paused */
     paused: boolean = false;
+    /** Cancel the event */
     readonly cancel: () => void;
+
     constructor(cancel: () => void) {
         this.cancel = cancel;
     }
@@ -580,5 +602,7 @@ export function substring(string: string, start?: number, width?: number) {
 }
 
 export function isClass(obj: any): boolean {
-  return obj?.prototype && Object.getOwnPropertyDescriptor(obj.prototype, 'constructor') !== undefined;
+    return obj?.prototype
+        && Object.getOwnPropertyDescriptor(obj.prototype, "constructor")
+            !== undefined;
 }

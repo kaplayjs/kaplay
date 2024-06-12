@@ -1,3 +1,10 @@
+import type { Asset } from "@/assets";
+import type { FontData } from "@/fonts";
+import type { Event, EventController, EventHandler } from "@/utils";
+import type { Vec2 } from "./math";
+
+export type { Asset, Event, EventController, EventHandler, FontData, Vec2 };
+
 /**
  * Initialize KAPLAY context. The starting point of all KAPLAY games.
  *
@@ -3202,7 +3209,6 @@ export interface KaboomCtx {
 
 export type Tag = string;
 
-// TODO: understand this
 type UnionToIntersection<U> = (U extends any ? (k: U) => void : never) extends
     ((k: infer I) => void) ? I : never;
 type Defined<T> = T extends any
@@ -3945,21 +3951,6 @@ export type SpriteAtlasEntry = LoadSpriteOpt & {
     height: number;
 };
 
-// TODO: use PromiseLike or extend Promise?
-export declare class Asset<D> {
-    loaded: boolean;
-    data: D | null;
-    error: Error | null;
-    constructor(loader: Promise<D>);
-    static loaded<D>(data: D): Asset<D>;
-    onLoad(action: (data: D) => void): Asset<D>;
-    onError(action: (err: Error) => void): Asset<D>;
-    onFinish(action: () => void): Asset<D>;
-    then(action: (data: D) => void): Asset<D>;
-    catch(action: (err: Error) => void): Asset<D>;
-    finally(action: () => void): Asset<D>;
-}
-
 export type LoadSpriteSrc = string | ImageSource;
 
 export type AsepriteData = {
@@ -4025,12 +4016,6 @@ export interface LoadBitmapFontOpt {
     chars?: string;
     filter?: TexFilter;
     outline?: number;
-}
-
-export declare class FontData {
-    fontface: FontFace;
-    filter: TexFilter;
-    outline: Outline | null;
 }
 
 export type BitmapFontData = GfxFont;
@@ -4821,133 +4806,6 @@ export type Vec2Args =
     | [Vec2]
     | [number | Vec2]
     | [];
-
-/**
- * A 2D vector.
- *
- * @group Math
- */
-export declare class Vec2 {
-    x: number;
-    y: number;
-    static LEFT: Vec2;
-    static RIGHT: Vec2;
-    static UP: Vec2;
-    static DOWN: Vec2;
-    static fromAngle(deg: number): Vec2;
-    constructor(x: number, y: number);
-    constructor(xy: number);
-    constructor();
-    clone(): Vec2;
-    /**
-     * Returns the addition with another vector.
-     */
-    add(p: Vec2): Vec2;
-    add(x: number, y: number): Vec2;
-    /**
-     * Returns the subtraction with another vector.
-     */
-    sub(p: Vec2): Vec2;
-    sub(x: number, y: number): Vec2;
-    /**
-     * Scale by another vector, or a single number.
-     */
-    scale(p: Vec2): Vec2;
-    scale(s: number): Vec2;
-    scale(sx: number, sy: number): Vec2;
-    /**
-     * Get the dot product with another vector.
-     */
-    dot(p: Vec2): number;
-    /**
-     * Get the cross product with another vector.
-     *
-     * @since v3000.0
-     */
-    cross(p2: Vec2): number;
-    /**
-     * Get distance between another vector.
-     */
-    dist(p: Vec2): number;
-    /**
-     * Get squared distance between another vector.
-     *
-     * @since v3000.0
-     */
-    sdist(p: Vec2): number;
-    len(): number;
-    /**
-     * Get squared length of a vector.
-     *
-     * @since v3000.0
-     */
-    slen(): number;
-    /**
-     * Get the unit vector (length of 1).
-     */
-    unit(): Vec2;
-    /**
-     * Get the perpendicular vector.
-     */
-    normal(): Vec2;
-    /**
-     * Get the reflection of a vector with a normal.
-     *
-     * @since v3000.0
-     */
-    reflect(normal: Vec2): Vec2;
-    /**
-     * Get the projection of a vector onto another vector.
-     *
-     * @since v3000.0
-     */
-    project(on: Vec2): Vec2;
-    /**
-     * Get the rejection of a vector onto another vector.
-     *
-     * @since v3000.0
-     */
-    reject(on: Vec2): Vec2;
-    /**
-     * Get the angle of the vector from p towards this.
-     */
-    angle(p: Vec2): number;
-    /**
-     * Get the angle between this vector and another vector.
-     *
-     * @since v3000.0
-     */
-    angleBetween(...args: any): number;
-    /**
-     * Linear interpolate to a destination vector (for positions).
-     */
-    lerp(p: Vec2, t: number): Vec2;
-    /**
-     * Spherical linear interpolate to a destination vector (for rotations).
-     *
-     * @since v3000.0
-     */
-    slerp(p: Vec2, t: number): Vec2;
-    /**
-     * If both x and y is 0.
-     *
-     * @since v3000.0
-     */
-    isZero(): boolean;
-    /**
-     * To n precision floating point.
-     */
-    toFixed(n: number): Vec2;
-    /**
-     * Multiply by a Mat4.
-     *
-     * @since v3000.0
-     */
-    transform(n: Mat4): Vec2;
-    bbox(): Rect;
-    eq(p: Vec2): boolean;
-    toString(): string;
-}
 
 /**
  * @group Math
@@ -6805,38 +6663,6 @@ export type TweenController = TimerController & {
     finish(): void;
 };
 
-/**
- * A controller for all events in KAPLAY.
- *
- * @example
- * ```js
- * // Create a new event
- * const logHi = onUpdate(() => {
- *    debug.log("hi");
- * });
- *
- * // Pause the event
- * logHi.paused = true;
- *
- * // Cancel the event
- * logHi.cancel();
- *
- * ```
- * @group Events
- */
-export declare class EventController {
-    /**
-     * If the event handler is paused.
-     */
-    paused: boolean;
-    /**
-     * Cancel the event handler.
-     */
-    readonly cancel: () => void;
-    constructor(cancel: () => void);
-    static join(events: EventController[]): EventController;
-}
-
 export interface SpriteCurAnim {
     name: string;
     timer: number;
@@ -6846,31 +6672,4 @@ export interface SpriteCurAnim {
     onEnd: () => void;
 }
 
-// TODO: global name conflict, renamed to KEvent?
-export declare class Event<Args extends any[] = any[]> {
-    add(action: (...args: Args) => void): EventController;
-    addOnce(action: (...args: any) => void): EventController;
-    next(): Promise<Args>;
-    trigger(...args: Args): void;
-    numListeners(): number;
-    clear(): void;
-}
-
-export declare class EventHandler<EventMap extends Record<string, any[]>> {
-    on<Name extends keyof EventMap>(
-        name: Name,
-        action: (...args: EventMap[Name]) => void,
-    ): EventController;
-    onOnce<Name extends keyof EventMap>(
-        name: Name,
-        action: (...args: EventMap[Name]) => void,
-    ): EventController;
-    next<Name extends keyof EventMap>(name: Name): Promise<unknown>;
-    trigger<Name extends keyof EventMap>(
-        name: Name,
-        ...args: EventMap[Name]
-    ): void;
-    remove<Name extends keyof EventMap>(name: Name): void;
-    clear(): void;
-    numListeners<Name extends keyof EventMap>(name: Name): number;
-}
+export default kaplay;

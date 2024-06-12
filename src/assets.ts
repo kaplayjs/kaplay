@@ -1,5 +1,8 @@
 import { Event } from "./utils";
 
+/**
+ * An asset is a resource that is loaded asynchronously.
+ */
 export class Asset<D> {
     loaded: boolean = false;
     data: D | null = null;
