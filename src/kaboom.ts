@@ -1904,12 +1904,15 @@ const kaplay = (gopt: KaboomOpt = {}): KaboomCtx => {
         const nverts = Math.ceil((end - start) / deg2rad(8) * res);
         const step = (end - start) / nverts;
 
-        // calculate vertices
-        for (let a = start; a < end; a += step) {
-            pts.push(pos.add(radiusX * Math.cos(a), radiusY * Math.sin(a)));
+        // Rotate vector v by r nverts+1 times
+        let v = vec2(Math.cos(start), Math.sin(start));
+        const r = vec2(Math.cos(step), Math.sin(step));
+        for (let i = 0; i <= nverts; i++) {
+            pts.push(pos.add(radiusX * v.x, radiusY * v.y));
+            // cos(a + b) = cos(a)cos(b) - sin(a)sin(b)
+            // sin(a + b) = cos(a)sin(b) + sin(a)cos(b)
+            v = vec2(v.x * r.x - v.y * r.y, v.x * r.y + v.y * r.x);
         }
-
-        pts.push(pos.add(radiusX * Math.cos(end), radiusY * Math.sin(end)));
 
         return pts;
     }
