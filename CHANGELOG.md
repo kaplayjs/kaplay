@@ -19,6 +19,7 @@
 - added higher order easing functions linear, steps and cubic-bezier
 - readded layers and the layer component
 - added `getTreeRoot()` to get the game's root object
+- added `tags` to get a game object's tags
 
 ### Deprecated
 

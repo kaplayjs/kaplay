@@ -3336,6 +3336,16 @@ const kaplay = (gopt: KaboomOpt = {}): KaboomCtx => {
                 return paused;
             },
 
+            get tags() {
+                const tags = [];
+                for (const [key, value] of compStates.entries()) {
+                    if (Object.keys(value).length == 1) {
+                        tags.push(key);
+                    }
+                }
+                return tags
+            },
+
             add<T2>(a: CompList<T2> | GameObj<T2> = []): GameObj<T2> {
                 const obj = Array.isArray(a) ? make(a) : a;
                 if (obj.parent) {

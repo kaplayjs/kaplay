@@ -3588,6 +3588,12 @@ export interface GameObjRaw {
      */
     children: GameObj[];
     /**
+     * Get the tags of a game object.
+     *
+     * @since v3001.0
+     */
+    tags: string[];
+    /**
      * Update this game object and all children game objects.
      *
      * @since v3000.0
