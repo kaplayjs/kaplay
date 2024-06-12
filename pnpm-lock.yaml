@@ -7,10 +7,6 @@ settings:
 importers:
 
   .:
-    dependencies:
-      esbuild-plugin-d-ts-path-alias:
-        specifier: ^4.2.0
-        version: 4.2.0(esbuild@0.20.2)(typescript@5.4.5)
     devDependencies:
       '@typescript-eslint/eslint-plugin':
         specifier: ^7.2.0
@@ -21,6 +17,9 @@ importers:
       esbuild:
         specifier: ^0.20.1
         version: 0.20.2
+      esbuild-plugin-d-ts-path-alias:
+        specifier: ^4.2.0
+        version: 4.2.0(esbuild@0.20.2)(typescript@5.4.5)
       express:
         specifier: ^4.18.3
         version: 4.19.2
