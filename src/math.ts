@@ -56,83 +56,169 @@ export function mapc(
     return clamp(map(v, l1, h1, l2, h2), l2, h2);
 }
 
+/**
+ * A 2D vector.
+ *
+ * @group Math
+ */
 export class Vec2 {
+    /** The x coordinate */
     x: number = 0;
+    /** The y coordinate */
     y: number = 0;
+
     constructor(x: number = 0, y: number = x) {
         this.x = x;
         this.y = y;
     }
+
+    /** Create a new Vec2 from an angle in degrees */
     static fromAngle(deg: number) {
         const angle = deg2rad(deg);
         return new Vec2(Math.cos(angle), Math.sin(angle));
     }
+
     static LEFT = new Vec2(-1, 0);
     static RIGHT = new Vec2(1, 0);
     static UP = new Vec2(0, -1);
     static DOWN = new Vec2(0, 1);
+
+    /** Clone the vector */
     clone(): Vec2 {
         return new Vec2(this.x, this.y);
     }
+
+    /** Returns the addition with another vector. */
     add(...args: Vec2Args): Vec2 {
         const p2 = vec2(...args);
         return new Vec2(this.x + p2.x, this.y + p2.y);
     }
+
+    /** Returns the subtraction with another vector. */
     sub(...args: Vec2Args): Vec2 {
         const p2 = vec2(...args);
         return new Vec2(this.x - p2.x, this.y - p2.y);
     }
+
+    /** Scale by another vector. or a single number */
     scale(...args: Vec2Args): Vec2 {
         const s = vec2(...args);
         return new Vec2(this.x * s.x, this.y * s.y);
     }
+
+    /** Get distance between another vector */
     dist(...args: Vec2Args): number {
         const p2 = vec2(...args);
         return this.sub(p2).len();
     }
+
+    /** Get squared distance between another vector */
     sdist(...args: Vec2Args): number {
         const p2 = vec2(...args);
         return this.sub(p2).slen();
     }
+
     len(): number {
         return Math.sqrt(this.dot(this));
     }
+
+    /**
+     * Get squared length of the vector
+     *
+     * @since v3000.0
+     */
     slen(): number {
         return this.dot(this);
     }
+
+    /**
+     * Get the unit vector (length of 1).
+     */
     unit(): Vec2 {
         const len = this.len();
         return len === 0 ? new Vec2(0) : this.scale(1 / len);
     }
+
+    /**
+     * Get the perpendicular vector.
+     */
     normal(): Vec2 {
         return new Vec2(this.y, -this.x);
     }
+
+    /**
+     * Get the reflection of a vector with a normal.
+     *
+     * @since v3000.0
+     */
     reflect(normal: Vec2) {
         return this.sub(normal.scale(2 * this.dot(normal)));
     }
+
+    /**
+     * Get the projection of a vector onto another vector.
+     *
+     * @since v3000.0
+     */
     project(on: Vec2) {
         return on.scale(on.dot(this) / on.len());
     }
+
+    /**
+     * Get the rejection of a vector onto another vector.
+     *
+     * @since v3000.0
+     */
     reject(on: Vec2) {
         return this.sub(this.project(on));
     }
+
+    /**
+     * Get the dot product with another vector.
+     */
     dot(p2: Vec2): number {
         return this.x * p2.x + this.y * p2.y;
     }
+
+    /**
+     * Get the cross product with another vector.
+     *
+     * @since v3000.0
+     */
     cross(p2: Vec2): number {
         return this.x * p2.y - this.y * p2.x;
     }
+
+    /**
+     * Get the angle of the vector in degrees.
+     */
     angle(...args: Vec2Args): number {
         const p2 = vec2(...args);
         return rad2deg(Math.atan2(this.y - p2.y, this.x - p2.x));
     }
+
+    /**
+     * Get the angle between this vector and another vector.
+     *
+     * @since v3000.0
+     */
     angleBetween(...args: Vec2Args): number {
         const p2 = vec2(...args);
         return rad2deg(Math.atan2(this.cross(p2), this.dot(p2)));
     }
+
+    /**
+     * Linear interpolate to a destination vector (for positions).
+     */
     lerp(dest: Vec2, t: number): Vec2 {
         return new Vec2(lerp(this.x, dest.x, t), lerp(this.y, dest.y, t));
     }
+
+    /**
+     * Spherical linear interpolate to a destination vector (for rotations).
+     *
+     * @since v3000.0
+     */
     slerp(dest: Vec2, t: number): Vec2 {
         const cos = this.dot(dest);
         const sin = this.cross(dest);
@@ -142,21 +228,40 @@ export class Vec2 {
             .add(dest.scale(Math.sin(t * angle)))
             .scale(1 / sin);
     }
+
+    /**
+     * If the vector (x, y) is zero.
+     *
+     * @since v3000.0
+     */
     isZero(): boolean {
         return this.x === 0 && this.y === 0;
     }
+
+    /**
+     * To n precision floating point.
+     */
     toFixed(n: number): Vec2 {
         return new Vec2(Number(this.x.toFixed(n)), Number(this.y.toFixed(n)));
     }
+
+    /**
+     * Multiply by a Mat4.
+     *
+     * @since v3000.0
+     */
     transform(m: Mat4): Vec2 {
         return m.multVec2(this);
     }
+
     eq(other: Vec2): boolean {
         return this.x === other.x && this.y === other.y;
     }
+
     bbox(): Rect {
         return new Rect(this, 0, 0);
     }
+
     toString(): string {
         return `vec2(${this.x.toFixed(2)}, ${this.y.toFixed(2)})`;
     }
@@ -982,7 +1087,7 @@ export class Mat4 {
             const r = Math.sqrt(this.m[0] * this.m[0] + this.m[1] * this.m[1]);
             return new Vec2(
                 Math.atan(this.m[0] * this.m[4] + this.m[1] * this.m[5])
-                / (r * r),
+                    / (r * r),
                 0,
             );
         } else if (this.m[4] != 0 || this.m[5] != 0) {
@@ -990,7 +1095,7 @@ export class Mat4 {
             return new Vec2(
                 0,
                 Math.atan(this.m[0] * this.m[4] + this.m[1] * this.m[5])
-                / (s * s),
+                    / (s * s),
             );
         } else {
             return new Vec2(0, 0);
@@ -1405,7 +1510,7 @@ export function testPolygonPoint(poly: Polygon, pt: Point): boolean {
             ((p[i].y > pt.y) != (p[j].y > pt.y))
             && (pt.x
                 < (p[j].x - p[i].x) * (pt.y - p[i].y) / (p[j].y - p[i].y)
-                + p[i].x)
+                    + p[i].x)
         ) {
             c = !c;
         }
@@ -1423,7 +1528,7 @@ export function testEllipsePoint(ellipse: Ellipse, pt: Point): boolean {
     const vx = pt.x * c + pt.y * s;
     const vy = -pt.x * s + pt.y * c;
     return vx * vx / (ellipse.radiusX * ellipse.radiusX)
-        + vy * vy / (ellipse.radiusY * ellipse.radiusY) < 1;
+            + vy * vy / (ellipse.radiusY * ellipse.radiusY) < 1;
 }
 
 export function testEllipseCircle(ellipse: Ellipse, circle: Circle): boolean {
@@ -2227,7 +2332,7 @@ export class Ellipse {
         const vx = point.x * c + point.y * s;
         const vy = -point.x * s + point.y * c;
         return vx * vx / (this.radiusX * this.radiusX)
-            + vy * vy / (this.radiusY * this.radiusY) < 1;
+                + vy * vy / (this.radiusY * this.radiusY) < 1;
     }
     raycast(origin: Vec2, direction: Vec2): RaycastResult {
         return raycastEllipse(origin, direction, this);

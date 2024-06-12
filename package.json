@@ -8,24 +8,24 @@
   "type": "module",
   "main": "./dist/kaboom.cjs",
   "module": "./dist/kaboom.mjs",
-  "types": "./dist/kaboom.d.ts",
+  "types": "./dist/declaration/types.d.ts",
   "exports": {
     ".": {
       "import": {
-        "types": "./dist/kaboom.d.ts",
+        "types": "./dist/declaration/types.d.ts",
         "default": "./dist/kaboom.mjs"
       },
       "require": {
-        "types": "./dist/kaboom.d.ts",
+        "types": "./dist/declaration/types.d.ts",
         "default": "./dist/kaboom.cjs"
       }
     },
-    "./global": "./dist/global.js"
+    "./global": "./dist/declaration/global.js"
   },
   "typesVersions": {
     "*": {
       "global": [
-        "./dist/global.d.ts"
+        "./dist/declaration/global.d.ts"
       ]
     }
   },
@@ -58,5 +58,8 @@
     "express": "^4.18.3",
     "puppeteer": "^22.4.1",
     "typescript": "^5.4.2"
+  },
+  "dependencies": {
+    "esbuild-plugin-d-ts-path-alias": "^4.2.0"
   }
 }

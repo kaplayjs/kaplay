@@ -1,5 +1,6 @@
 import cp from "child_process";
 import * as esbuild from "esbuild";
+import { dTSPathAliasPlugin } from "esbuild-plugin-d-ts-path-alias";
 import express from "express";
 import fs from "fs/promises";
 import path from "path";
@@ -71,7 +72,17 @@ async function writeFile(path, content) {
 }
 
 export async function genDTS() {
-    // generate .d.ts / docs data
+    // generate declaration files
+    esbuild.build({
+        bundle: true,
+        target: "esnext",
+        format: "esm",
+        entryPoints: ["./src/types.ts"],
+        outdir: "./dist/declaration/",
+        plugins: [dTSPathAliasPlugin()],
+    });
+
+    // global dts
     const dts = await fs.readFile(`${srcDir}/types.ts`, "utf-8");
 
     const f = ts.createSourceFile(
@@ -160,7 +171,7 @@ export async function genDTS() {
     // generate global decls for KaboomCtx members
     let globalDts = "";
 
-    globalDts += "import { KaboomCtx } from \"./kaboom\"\n";
+    globalDts += "import { KaboomCtx } from \"./types\"\n";
     globalDts += "declare global {\n";
 
     for (const stmt of stmts) {
@@ -181,9 +192,8 @@ export async function genDTS() {
         throw new Error("KaboomCtx not found, failed to generate global defs.");
     }
 
-    writeFile(`${distDir}/kaboom.d.ts`, dts + "\n\nexport default kaplay;");
-    writeFile(`${distDir}/global.d.ts`, globalDts);
-    writeFile(`${distDir}/global.js`, "");
+    writeFile(`${distDir}/declaration/global.d.ts`, globalDts);
+    writeFile(`${distDir}/declaration/global.js`, "");
 }
 
 export function serve(opt = {}) {
@@ -201,42 +211,42 @@ export function serve(opt = {}) {
             .map((d) => path.basename(d, ".js"));
         res.setHeader("Content-Type", "text/html");
         res.send(`
-<!DOCTYPE html>
-<html>
-<head>
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<style>
-* {
-	margin: 0;
-	padding: 0;
-}
-body {
-	padding: 16px;
-	font-size: 16px;
-	font-family: Monospace;
-}
-li {
-	list-style: none;
-}
-a {
-	color: blue;
-	text-decoration: none;
-}
-a:hover {
-	background: blue;
-	color: white;
-}
-</style>
-</head>
-<body>
-${
+    <!DOCTYPE html>
+    <html>
+    <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+    * {
+    	margin: 0;
+    	padding: 0;
+    }
+    body {
+    	padding: 16px;
+    	font-size: 16px;
+    	font-family: Monospace;
+    }
+    li {
+    	list-style: none;
+    }
+    a {
+    	color: blue;
+    	text-decoration: none;
+    }
+    a:hover {
+    	background: blue;
+    	color: white;
+    }
+    </style>
+    </head>
+    <body>
+    ${
             examples.map((example) =>
                 `<li><a href="/${example}">${example}</a></li>`
             ).join("")
         }
-</body>
-</html>
-		`);
+    </body>
+    </html>
+    		`);
     });
 
     app.get("/:name", async (req, res) => {
@@ -248,16 +258,16 @@ ${
         }
         res.setHeader("Content-Type", "text/html");
         res.send(`
-<!DOCTYPE html>
-<html>
-<head>
-</head>
-<body>
-<script src="/dist/kaboom.js"></script>
-<script src="/examples/${name}.js"></script>
-</body>
-</html>
-		`);
+    <!DOCTYPE html>
+    <html>
+    <head>
+    </head>
+    <body>
+    <script src="/dist/kaboom.js"></script>
+    <script src="/examples/${name}.js"></script>
+    </body>
+    </html>
+    		`);
     });
 
     return app.listen(port, () => {
