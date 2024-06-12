@@ -3311,7 +3311,6 @@ const kaplay = (gopt: KaboomOpt = {}): KaboomCtx => {
         const inputEvents: EventController[] = [];
         let onCurCompCleanup = null;
         let paused = false;
-        let tags: string[] = [];
 
         // @ts-ignore
         const obj: GameObj = {
@@ -3478,7 +3477,6 @@ const kaplay = (gopt: KaboomOpt = {}): KaboomCtx => {
 
                 // tag
                 if (typeof comp === "string") {
-                    tags.push(comp);
                     return this.use({
                         id: comp,
                     });
