@@ -11,12 +11,13 @@
 - added `getSceneName()` to get the current scene name
 - added support for gravity direction
 - added `SpriteComp.getCurAnim()` to get the current animation data
-- added `outline()` properties to inspect
+- added `outline()`, `shader()`, and `area()` properties to inspect
+- added support for radius in individual corners for `rect()` component
 - added line join (bevel, miter, round) and line caps (square, round)
 - added quadratic bezier and Catmull-Rom evaluation
 - added evaluation of the first and second derivatives for all splines
 - added higher order easing functions linear, steps and cubic-bezier
-- added layers and the layer component
+- readded layers and the layer component
 - added `getTreeRoot()` to get the game's root object
 
 ### Deprecated
