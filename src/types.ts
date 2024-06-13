@@ -5619,11 +5619,15 @@ export interface SpriteCompOpt {
 export interface SpriteComp extends Comp {
     draw: Comp["draw"];
     /**
+     * Name of the sprite.
+     */
+    sprite: string;
+    /**
      * Width for sprite.
      */
     width: number;
     /**
-     * Height for sprite.
+     * Height for sprite.s
      */
     height: number;
     /**

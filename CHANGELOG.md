@@ -20,6 +20,7 @@
 - readded layers and the layer component
 - added `getTreeRoot()` to get the game's root object
 - added `tags` to get a game object's tags
+- added `sprite` property to get the name of the sprite
 
 ### Deprecated
 

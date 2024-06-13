@@ -66,6 +66,10 @@ export function sprite(
         flipX: opt.flipX ?? false,
         flipY: opt.flipY ?? false,
 
+        get sprite() {
+            return src.toString()
+        },
+
         draw(this: GameObj<SpriteComp>) {
             if (!spriteData) return;
 
