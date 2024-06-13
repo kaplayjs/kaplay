@@ -1,6 +1,6 @@
 import cp from "child_process";
 import * as esbuild from "esbuild";
-import { dTSPathAliasPlugin } from "esbuild-plugin-d-ts-path-alias";
+import { dTSPathAliasPlugin } from "esbuild-dts-path-alias";
 import express from "express";
 import fs from "fs/promises";
 import path from "path";
