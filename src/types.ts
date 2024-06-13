@@ -5627,7 +5627,7 @@ export interface SpriteComp extends Comp {
      */
     width: number;
     /**
-     * Height for sprite.s
+     * Height for sprite.
      */
     height: number;
     /**
