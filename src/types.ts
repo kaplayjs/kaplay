@@ -203,6 +203,7 @@ export interface KaboomCtx {
      * @group Game Obj
      */
     get(tag: Tag | Tag[], opts?: GetOpt): GameObj[];
+    query(opt: QueryOpt): GameObj[];
     /**
      * Remove the game obj.
      *
@@ -677,6 +678,13 @@ export interface KaboomCtx {
      * @group Components
      */
     lifespan(time: number, options?: LifespanCompOpt): EmptyComp;
+    /**
+     * Names an object.
+     *
+     * @since v3001.0
+     * @group Components
+     */
+    named(name: string): NamedComp;
     /**
      * Finite state machine.
      *
@@ -3582,6 +3590,12 @@ export interface GameObjRaw {
      */
     get(tag: Tag | Tag[], opts?: GetOpt): GameObj[];
     /**
+     * Get a list of all game objs with certain properties.
+     *
+     * @since v3001.0
+     */
+    query(opt: QueryOpt): GameObj[];
+    /**
      * Get the parent game obj, if have any.
      *
      * @since v3000.0
@@ -3789,6 +3803,48 @@ export type GetOpt = {
      * Live update the returned list every time object is added / removed.
      */
     liveUpdate?: boolean;
+};
+
+/**
+ * @group Options
+ */
+export type QueryOpt = {
+    /**
+     * All objects which include all or any of these tags, depending on includeOp.
+     */
+    include?: string | string[];
+    /**
+     * Selects the operator to use. Defaults to and.
+     */
+    includeOp?: "and" | "or";
+    /**
+     * All objects which do not have all or any of these tags, depending on excludeOp.
+     */
+    exclude?: string | string[];
+    /**
+     * Selects the operator to use. Defaults to and.
+     */
+    excludeOp?: "and" | "or";
+    /**
+     * All objects which are near or far to the position of this, depending on distanceOp.
+     */
+    distance?: number;
+    /**
+     * Selects the operator to use. Defaults to near.
+     */
+    distanceOp?: "near" | "far";
+    /**
+     * All objects visible from this standpoint.
+     */
+    visible?: boolean;
+    /**
+     * All objects in the given group. Defaults to children.
+     */
+    hierarchy?: "children" | "siblings" | "ancestors" | "descendants";
+    /**
+     * All objects matching name
+     */
+    name?: string;
 };
 
 /**
@@ -6299,6 +6355,13 @@ export interface LifespanCompOpt {
      * Fade out duration (default 0 which is no fade out).
      */
     fade?: number;
+}
+
+export interface NamedComp extends Comp {
+    /**
+     * The name assigned to this object.
+     */
+    name: string;
 }
 
 /**

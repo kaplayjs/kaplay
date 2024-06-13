@@ -15,6 +15,7 @@ export * from "./level/agent";
 export * from "./level/tile";
 export * from "./misc/health";
 export * from "./misc/lifespan";
+export * from "./misc/named";
 export * from "./misc/state";
 export * from "./misc/stay";
 export * from "./misc/timer";
