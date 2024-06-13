@@ -46,10 +46,14 @@ export function pos(...args: Vec2Args): PosComp {
         },
 
         // Get the position of the object relative to the root
-        worldPos(this: GameObj<PosComp>): Vec2 {
-            return this.parent
-                ? this.parent.transform.multVec2(this.pos)
-                : this.pos;
+        worldPos(this: GameObj<PosComp>, pos: Vec2 | null = null): Vec2 {
+            if (pos) {
+                this.pos = this.pos.add(this.fromWorld(pos));
+            } else {
+                return this.parent
+                    ? this.parent.transform.multVec2(this.pos)
+                    : this.pos;
+            }
         },
 
         // Transform a local point to a world point
@@ -67,11 +71,18 @@ export function pos(...args: Vec2Args): PosComp {
         },
 
         // Transform a screen point (relative to the camera) to a local point (relative to this)
-        screenPos(this: GameObj<PosComp | FixedComp>): Vec2 {
-            const pos = this.worldPos();
-            return isFixed(this)
-                ? pos
-                : k.toScreen(pos);
+        screenPos(
+            this: GameObj<PosComp | FixedComp>,
+            pos: Vec2 | null = null,
+        ): Vec2 {
+            if (pos) {
+                this.pos = this.pos.add(this.fromScreen(pos));
+            } else {
+                const pos = this.worldPos();
+                return isFixed(this)
+                    ? pos
+                    : k.toScreen(pos);
+            }
         },
 
         // Transform a local point (relative to this) to a screen point (relative to the camera)
