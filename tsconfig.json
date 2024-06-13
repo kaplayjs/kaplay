@@ -5,8 +5,10 @@
     "moduleResolution": "Node",
     "noImplicitThis": false,
     "resolveJsonModule": true,
+    "emitDeclarationOnly": true,
     "declaration": true,
     "declarationMap": true,
+    "declarationDir": "dist/declaration",
     "paths": {
       "@/*": [
         "./src/*"
