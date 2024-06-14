@@ -1152,8 +1152,7 @@ const kaplay = (gopt: KaboomOpt = {}): KaboomCtx => {
         | BitmapFontData
         | Asset<BitmapFontData>
         | string
-        | void
-    {
+        | void {
         if (!src) {
             return resolveFont(gopt.font ?? DEF_FONT);
         }
@@ -1319,7 +1318,7 @@ const kaplay = (gopt: KaboomOpt = {}): KaboomCtx => {
         srcNode.onended = () => {
             if (
                 getTime()
-                    >= (srcNode.buffer?.duration ?? Number.POSITIVE_INFINITY)
+                >= (srcNode.buffer?.duration ?? Number.POSITIVE_INFINITY)
             ) {
                 onEndEvents.trigger();
             }
@@ -2877,14 +2876,14 @@ const kaplay = (gopt: KaboomOpt = {}): KaboomCtx => {
                 outline: Outline | null;
                 filter: TexFilter;
             } = font instanceof FontData
-                ? {
-                    outline: font.outline,
-                    filter: font.filter,
-                }
-                : {
-                    outline: null,
-                    filter: DEF_FONT_FILTER,
-                };
+                    ? {
+                        outline: font.outline,
+                        filter: font.filter,
+                    }
+                    : {
+                        outline: null,
+                        filter: DEF_FONT_FILTER,
+                    };
 
             // TODO: customizable font tex filter
             const atlas: FontAtlas = fontAtlases[fontName] ?? {
@@ -3632,7 +3631,6 @@ const kaplay = (gopt: KaboomOpt = {}): KaboomCtx => {
                         );
                         break;
                 }
-                console.log(`hierarchy: ${hierarchy}`, list);
                 if (opt.include) {
                     const includeOp = opt.includeOp || "and";
                     if (includeOp === "and" || !Array.isArray(opt.include)) {
@@ -3645,7 +3643,6 @@ const kaplay = (gopt: KaboomOpt = {}): KaboomCtx => {
                         );
                     }
                 }
-                console.log("include", list);
                 if (opt.exclude) {
                     const excludeOp = opt.includeOp || "and";
                     if (excludeOp === "and" || !Array.isArray(opt.include)) {
@@ -3679,10 +3676,6 @@ const kaplay = (gopt: KaboomOpt = {}): KaboomCtx => {
                         );
                     }
                 }
-                console.log(
-                    `distance: ${opt.distance}, distanceOp: ${opt.distanceOp}`,
-                    list,
-                );
                 if (opt.name) {
                     list = list.filter(o => o.name === opt.name);
                 }
@@ -4783,7 +4776,7 @@ const kaplay = (gopt: KaboomOpt = {}): KaboomCtx => {
     const loop = game.root.loop.bind(game.root);
     const query = game.root.query.bind(game.root);
     const tween = game.root.tween.bind(game.root);
-    const layers = function(layerNames: string[], defaultLayer: string) {
+    const layers = function (layerNames: string[], defaultLayer: string) {
         if (game.layers) {
             throw Error("Layers can only be assigned once.");
         }
@@ -5237,9 +5230,8 @@ const kaplay = (gopt: KaboomOpt = {}): KaboomCtx => {
                     const style = log.msg instanceof Error ? "error" : "info";
                     str += `[time]${log.time.toFixed(2)}[/time]`;
                     str += " ";
-                    str += `[${style}]${
-                        log.msg?.toString ? log.msg.toString() : log.msg
-                    }[/${style}]`;
+                    str += `[${style}]${log.msg?.toString ? log.msg.toString() : log.msg
+                        }[/${style}]`;
                     logs.push(str);
                 }
 
@@ -5358,7 +5350,7 @@ const kaplay = (gopt: KaboomOpt = {}): KaboomCtx => {
             // clear canvas
             gl.clear(
                 gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT
-                    | gl.STENCIL_BUFFER_BIT,
+                | gl.STENCIL_BUFFER_BIT,
             );
 
             // unbind everything
