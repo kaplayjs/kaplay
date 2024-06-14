@@ -26,6 +26,7 @@ export function polygon(pts: Vec2[], opt: PolygonCompOpt = {}): PolygonComp {
                 tex: this.tex,
                 radius: this.radius,
                 fill: opt.fill,
+                triangulate: opt.triangulate
             }));
         },
         renderArea(this: GameObj<PolygonComp>) {

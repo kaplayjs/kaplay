@@ -10,13 +10,14 @@ add([
 // Make a weird shape
 const poly = add([
     polygon([
-        vec2(0, -160),
-        vec2(160, 0),
-        vec2(80, 80),
-        vec2(-60, 120),
-        vec2(-120, 0),
-        vec2(-200, 20),
-        vec2(-270, 60),
+        vec2(0, 0),
+        vec2(100, 0),
+        vec2(100, 200),
+        vec2(200, 200),
+        vec2(200, 300),
+        vec2(100, 300),
+        vec2(100, 200),
+        vec2(0, 200),
     ], {
         colors: [
             rgb(128, 255, 128),
@@ -26,9 +27,11 @@ const poly = add([
             rgb(128, 128, 128),
             rgb(128, 255, 128),
             rgb(255, 128, 128),
+            rgb(128, 255, 128),
         ],
+        triangulate: true
     }),
-    pos(300, 300),
+    pos(150, 150),
     area(),
     color(),
 ]);
