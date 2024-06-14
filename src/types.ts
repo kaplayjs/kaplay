@@ -3429,16 +3429,14 @@ export type GamepadDef = {
 export type ButtonBinding = {
     keyboard?: Key | Key[];
     gamepad?: GamepadButton | GamepadButton[];
+    mouse?: MouseButton | MouseButton[];
 };
 
 /**
  * A buttons definition.
  */
 export type ButtonsDef = {
-    [key: string]: {
-        keyboard?: Key | Key[];
-        gamepad?: GamepadButton | GamepadButton[];
-    };
+    [key: string]: ButtonBinding;
 };
 
 /** A KAPLAY's gamepad */

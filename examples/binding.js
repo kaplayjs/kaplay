@@ -3,6 +3,12 @@ kaplay({
         "jump": {
             gamepad: ["south"],
             keyboard: ["up", "w"],
+            mouse: "left",
+        },
+        "inspect": {
+            gamepad: "east",
+            keyboard: "f",
+            mouse: "right",
         },
     },
 });
@@ -46,4 +52,12 @@ onButtonPress("jump", () => {
         // .jump() is provided by body()
         player.jump();
     }
+});
+
+onButtonDown("inspect", () => {
+    debug.log("inspecting");
+});
+
+onGamepadButtonPress("south", () => {
+    debug.log("south");
 });

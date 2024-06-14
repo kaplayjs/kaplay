@@ -79,7 +79,7 @@ export default (opt: {
 
     const state = {
         canvas: opt.canvas,
-        buttons: opt.buttons,
+        buttons: opt.buttons ?? {},
         loopID: null as null | number,
         stopped: false,
         dt: 0,
@@ -367,7 +367,7 @@ export default (opt: {
 
     function getButtonNameByKey(key: Key): string | undefined {
         for (const b in state.buttons) {
-            const bindings = state.buttons[b].keyboard.length
+            const bindings = state.buttons[b].keyboard?.length
                 ? state.buttons[b].keyboard
                 : [b];
 
@@ -383,8 +383,24 @@ export default (opt: {
         btn: GamepadButton,
     ): string | undefined {
         for (const b in state.buttons) {
-            const bindings = state.buttons[b].gamepad.length
+            const bindings = state.buttons[b].gamepad?.length
                 ? state.buttons[b].gamepad
+                : [b];
+
+            if (bindings.includes(btn)) {
+                return Object.keys(state.buttons).find((k) =>
+                    state.buttons[k] === state.buttons[b]
+                );
+            }
+        }
+    }
+
+    function getButtonByMouseButton(
+        btn: MouseButton,
+    ): string | undefined {
+        for (const b in state.buttons) {
+            const bindings = state.buttons[b].mouse?.length
+                ? state.buttons[b].mouse
                 : [b];
 
             if (bindings.includes(btn)) {
@@ -664,43 +680,35 @@ export default (opt: {
             const gamepadState = state.gamepadStates.get(gamepad.index);
 
             for (let i = 0; i < browserGamepad.buttons.length; i++) {
-                if (browserGamepad.buttons[i].pressed) {
-                    if (!gamepadState.buttonState.down.has(map.buttons[i])) {
+                const gamepadBtn = map.buttons[i];
+                const bindedBtn = getButtonByGamepadButton(gamepadBtn);
+
+                if (gamepadBtn.pressed) {
+                    if (!gamepadState.buttonState.down.has(gamepadBtn)) {
                         // replicate input in merged state, defined button state and gamepad state
-                        state.mergedGamepadState.buttonState.press(
-                            map.buttons[i],
-                        );
-                        gamepadState.buttonState.press(map.buttons[i]);
+                        state.mergedGamepadState.buttonState.press(gamepadBtn);
+                        gamepadState.buttonState.press(gamepadBtn);
+                        state.buttonState.press(bindedBtn);
 
-                        state.buttonState.press(
-                            getButtonByGamepadButton(map.buttons[i]),
-                        );
-
-                        state.events.trigger(
-                            "gamepadButtonPress",
-                            map.buttons[i],
-                        );
+                        state.events.trigger("gamepadButtonPress", gamepadBtn);
+                        state.events.trigger("buttonPress", bindedBtn);
                     }
 
-                    state.events.trigger(
-                        "buttonDown",
-                        getButtonByGamepadButton(map.buttons[i]),
-                    );
-                    state.events.trigger("gamepadButtonDown", map.buttons[i]);
+                    state.events.trigger("gamepadButtonDown", gamepadBtn);
+                    state.events.trigger("buttonDown", bindedBtn);
                 } else {
-                    if (gamepadState.buttonState.down.has(map.buttons[i])) {
+                    if (gamepadState.buttonState.down.has(gamepadBtn)) {
                         state.mergedGamepadState.buttonState.release(
-                            map.buttons[i],
+                            gamepadBtn,
                         );
-                        gamepadState.buttonState.release(map.buttons[i]);
-                        state.buttonState.release(
-                            getButtonByGamepadButton(map.buttons[i]),
-                        );
+                        gamepadState.buttonState.release(gamepadBtn);
+                        state.buttonState.release(bindedBtn);
 
                         state.events.trigger(
                             "gamepadButtonRelease",
-                            map.buttons[i],
+                            gamepadBtn,
                         );
+                        state.events.trigger("buttonRelease", bindedBtn);
                     }
                 }
             }
@@ -773,8 +781,12 @@ export default (opt: {
         state.events.onOnce("input", () => {
             const m = MOUSE_BUTTONS[e.button];
             if (!m) return;
+            const btn = getButtonByMouseButton(m);
+
             state.mouseState.press(m);
+            state.buttonState.press(btn);
             state.events.trigger("mousePress", m);
+            state.events.trigger("buttonPress", btn);
         });
     };
 
@@ -782,8 +794,12 @@ export default (opt: {
         state.events.onOnce("input", () => {
             const m = MOUSE_BUTTONS[e.button];
             if (!m) return;
+            const btn = getButtonByMouseButton(m);
+
             state.mouseState.release(m);
+            state.buttonState.release(btn);
             state.events.trigger("mouseRelease", m);
+            state.events.trigger("buttonRelease", btn);
         });
     };
 
@@ -836,10 +852,12 @@ export default (opt: {
     canvasEvents.keyup = (e) => {
         state.events.onOnce("input", () => {
             const k = KEY_ALIAS[e.key] || e.key.toLowerCase();
+            const btn = getButtonNameByKey(k);
+
             state.keyState.release(k);
-            state.buttonState.release(k);
+            state.buttonState.release(btn);
             state.events.trigger("keyRelease", k);
-            state.events.trigger("buttonRelease", getButtonNameByKey(k));
+            state.events.trigger("buttonRelease", btn);
         });
     };
 
@@ -856,8 +874,13 @@ export default (opt: {
                     touches[0].clientX - box.x,
                     touches[0].clientY - box.y,
                 );
+
+                const btn = getButtonByMouseButton("left");
+
                 state.mouseState.press("left");
+                state.buttonState.press(btn);
                 state.events.trigger("mousePress", "left");
+                state.events.trigger("buttonPress", btn);
             }
             touches.forEach((t) => {
                 state.events.trigger(
@@ -904,8 +927,12 @@ export default (opt: {
                     touches[0].clientY - box.y,
                 );
                 state.mouseDeltaPos = new Vec2(0, 0);
+                const btn = getButtonByMouseButton("left");
+
+                state.buttonState.release(btn);
                 state.mouseState.release("left");
                 state.events.trigger("mouseRelease", "left");
+                state.events.trigger("buttonRelease", btn);
             }
             touches.forEach((t) => {
                 state.events.trigger(
