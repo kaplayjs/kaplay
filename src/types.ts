@@ -1853,21 +1853,21 @@ export interface KaboomCtx<TButtonDef extends ButtonsDef = {}> {
      * @since v3001.0
      * @group Info
      */
-    isButtonPressed(button: string): boolean;
+    isButtonPressed(button: keyof TButtonDef): boolean;
     /**
      * If a defined button is currently held down on any input (keyboard, gamepad).
      *
      * @since v3001.0
      * @group Info
      */
-    isButtonDown(button: string): boolean;
+    isButtonDown(button: keyof TButtonDef): boolean;
     /**
      * If a defined button is just released last frame on any input (keyboard, gamepad).
      *
      * @since v3001.0
      * @group Info
      */
-    isButtonReleased(button: string): boolean;
+    isButtonReleased(button: keyof TButtonDef): boolean;
     /**
      * Get a input binding from a button name.
      */
