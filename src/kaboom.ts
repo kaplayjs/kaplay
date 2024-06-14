@@ -174,6 +174,7 @@ import type {
     PathFindOpt,
     PeditFile,
     PosComp,
+    QueryOpt,
     Recording,
     RenderProps,
     RotateComp,
@@ -207,6 +208,7 @@ import {
     lifespan,
     mask,
     move,
+    named,
     offscreen,
     opacity,
     outline,
@@ -1150,8 +1152,7 @@ const kaplay = (gopt: KaboomOpt = {}): KaboomCtx => {
         | BitmapFontData
         | Asset<BitmapFontData>
         | string
-        | void
-    {
+        | void {
         if (!src) {
             return resolveFont(gopt.font ?? DEF_FONT);
         }
@@ -1317,7 +1318,7 @@ const kaplay = (gopt: KaboomOpt = {}): KaboomCtx => {
         srcNode.onended = () => {
             if (
                 getTime()
-                    >= (srcNode.buffer?.duration ?? Number.POSITIVE_INFINITY)
+                >= (srcNode.buffer?.duration ?? Number.POSITIVE_INFINITY)
             ) {
                 onEndEvents.trigger();
             }
@@ -2875,14 +2876,14 @@ const kaplay = (gopt: KaboomOpt = {}): KaboomCtx => {
                 outline: Outline | null;
                 filter: TexFilter;
             } = font instanceof FontData
-                ? {
-                    outline: font.outline,
-                    filter: font.filter,
-                }
-                : {
-                    outline: null,
-                    filter: DEF_FONT_FILTER,
-                };
+                    ? {
+                        outline: font.outline,
+                        filter: font.filter,
+                    }
+                    : {
+                        outline: null,
+                        filter: DEF_FONT_FILTER,
+                    };
 
             // TODO: customizable font tex filter
             const atlas: FontAtlas = fontAtlases[fontName] ?? {
@@ -3312,7 +3313,7 @@ const kaplay = (gopt: KaboomOpt = {}): KaboomCtx => {
                         tags.push(key);
                     }
                 }
-                return tags
+                return tags;
             },
 
             add<T2>(a: CompList<T2> | GameObj<T2> = []): GameObj<T2> {
@@ -3594,6 +3595,89 @@ const kaplay = (gopt: KaboomOpt = {}): KaboomCtx => {
                             ev.cancel();
                         }
                     });
+                }
+                return list;
+            },
+
+            query(opt: QueryOpt) {
+                const hierarchy = opt.hierarchy || "children";
+                let list = [];
+                switch (hierarchy) {
+                    case "children":
+                        list = this.children;
+                        break;
+                    case "siblings":
+                        list = this.parent
+                            ? this.parent.children.filter((o: GameObj) =>
+                                o !== this
+                            )
+                            : [];
+                        break;
+                    case "ancestors":
+                        let parent = this.parent;
+                        while (parent) {
+                            list.push(parent);
+                            parent = parent.parent;
+                        }
+                        break;
+                    case "descendants":
+                        list = this.children.flatMap(
+                            function recurse(child: GameObj) {
+                                return [
+                                    child,
+                                    ...child.children.flatMap(recurse),
+                                ];
+                            },
+                        );
+                        break;
+                }
+                if (opt.include) {
+                    const includeOp = opt.includeOp || "and";
+                    if (includeOp === "and" || !Array.isArray(opt.include)) {
+                        // Accept if all match
+                        list = list.filter(o => o.is(opt.include));
+                    } else { // includeOp == "or"
+                        // Accept if some match
+                        list = list.filter(o =>
+                            (opt.include as string[]).some(t => o.is(t))
+                        );
+                    }
+                }
+                if (opt.exclude) {
+                    const excludeOp = opt.includeOp || "and";
+                    if (excludeOp === "and" || !Array.isArray(opt.include)) {
+                        // Reject if all match
+                        list = list.filter(o => !o.is(opt.exclude));
+                    } else { // includeOp == "or"
+                        // Reject if some match
+                        list = list.filter(o =>
+                            !(opt.exclude as string[]).some(t => o.is(t))
+                        );
+                    }
+                }
+                if (opt.visible === true) {
+                    list = list.filter(o => o.visible);
+                }
+                if (opt.distance) {
+                    if (!this.pos) {
+                        throw Error(
+                            "Can't do a distance query from an object without pos",
+                        );
+                    }
+                    const distanceOp = opt.distanceOp || "near";
+                    const sdist = opt.distance * opt.distance;
+                    if (distanceOp === "near") {
+                        list = list.filter(o =>
+                            o.pos && this.pos.sdist(o.pos) <= sdist
+                        );
+                    } else { // distanceOp === "far"
+                        list = list.filter(o =>
+                            o.pos && this.pos.sdist(o.pos) > sdist
+                        );
+                    }
+                }
+                if (opt.name) {
+                    list = list.filter(o => o.name === opt.name);
                 }
                 return list;
             },
@@ -4690,8 +4774,9 @@ const kaplay = (gopt: KaboomOpt = {}): KaboomCtx => {
     const get = game.root.get.bind(game.root);
     const wait = game.root.wait.bind(game.root);
     const loop = game.root.loop.bind(game.root);
+    const query = game.root.query.bind(game.root);
     const tween = game.root.tween.bind(game.root);
-    const layers = function(layerNames: string[], defaultLayer: string) {
+    const layers = function (layerNames: string[], defaultLayer: string) {
         if (game.layers) {
             throw Error("Layers can only be assigned once.");
         }
@@ -5145,9 +5230,8 @@ const kaplay = (gopt: KaboomOpt = {}): KaboomCtx => {
                     const style = log.msg instanceof Error ? "error" : "info";
                     str += `[time]${log.time.toFixed(2)}[/time]`;
                     str += " ";
-                    str += `[${style}]${
-                        log.msg?.toString ? log.msg.toString() : log.msg
-                    }[/${style}]`;
+                    str += `[${style}]${log.msg?.toString ? log.msg.toString() : log.msg
+                        }[/${style}]`;
                     logs.push(str);
                 }
 
@@ -5266,7 +5350,7 @@ const kaplay = (gopt: KaboomOpt = {}): KaboomCtx => {
             // clear canvas
             gl.clear(
                 gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT
-                    | gl.STENCIL_BUFFER_BIT,
+                | gl.STENCIL_BUFFER_BIT,
             );
 
             // unbind everything
@@ -5537,6 +5621,7 @@ const kaplay = (gopt: KaboomOpt = {}): KaboomCtx => {
         destroy,
         destroyAll,
         get,
+        query,
         readd,
         // comps
         pos,
@@ -5561,6 +5646,7 @@ const kaplay = (gopt: KaboomOpt = {}): KaboomCtx => {
         stay,
         health,
         lifespan,
+        named,
         state,
         z,
         layer,
