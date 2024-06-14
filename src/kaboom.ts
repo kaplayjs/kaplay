@@ -2692,11 +2692,11 @@ const kaplay = (gopt: KaboomOpt = {}): KaboomCtx => {
                 opacity: opt.opacity ?? 1,
             }));
 
-            // TODO: better triangulation
             let indices;
 
-            if (opt.triangulate && isConvex(opt.pts)) {
+            if (opt.triangulate/* && !isConvex(opt.pts)*/) {
                 const triangles = triangulate(opt.pts);
+                // TODO rewrite triangulate to just return new indices
                 indices = triangles.map(t => t.map(p => opt.pts.indexOf(p)))
                     .flat();
             } else {
