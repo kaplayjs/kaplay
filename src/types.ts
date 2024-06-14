@@ -1310,6 +1310,21 @@ export interface KaboomCtx {
         action: (value: Vec2) => void,
     ): EventController;
     /**
+     * Register an event that runs when user press a defined button
+     * (like "jump") on any input (keyboard, gamepad).
+     */
+    onButtonPress(button: string, action: () => void): EventController;
+    /**
+     * Register an event that runs when user release a defined button
+     * (like "jump") on any input (keyboard, gamepad).
+     */
+    onButtonRelease(button: string, action: () => void): EventController;
+    /**
+     * Register an event that runs when user press a defined button
+     * (like "jump") on any input (keyboard, gamepad).
+     */
+    onButtonDown(button: string, action: () => void): EventController;
+    /**
      * Register an event that runs when current scene ends.
      *
      * @since v3000.0
@@ -1822,6 +1837,27 @@ export interface KaboomCtx {
      * @group Info
      */
     isGamepadButtonReleased(btn?: GamepadButton): boolean;
+    /**
+     * If a defined button is just pressed last frame on any input (keyboard, gamepad).
+     *
+     * @since v3001.0
+     * @group Info
+     */
+    isButtonPressed(button: string): boolean;
+    /**
+     * If a defined button is currently held down on any input (keyboard, gamepad).
+     *
+     * @since v3001.0
+     * @group Info
+     */
+    isButtonDown(button: string): boolean;
+    /**
+     * If a defined button is just released last frame on any input (keyboard, gamepad).
+     *
+     * @since v3001.0
+     * @group Info
+     */
+    isButtonReleased(button: string): boolean;
     /**
      * Get stick axis values from a gamepad.
      *
@@ -3369,6 +3405,24 @@ export type GamepadDef = {
     sticks: Partial<Record<GamepadStick, { x: number; y: number }>>;
 };
 
+/**
+ * A button binding.
+ */
+export type ButtonBinding = {
+    keyboard?: Key | Key[];
+    gamepad?: GamepadButton | GamepadButton[];
+};
+
+/**
+ * A buttons definition.
+ */
+export type ButtonsDef = {
+    [key: string]: {
+        keyboard?: Key | Key[];
+        gamepad?: GamepadButton | GamepadButton[];
+    };
+};
+
 /** A KAPLAY's gamepad */
 export type KGamePad = {
     /** The order of the gamepad in the gamepad list. */
@@ -3496,6 +3550,12 @@ export interface KaboomOpt<T extends PluginList<any> = any> {
      * @since v3000.0
      */
     gamepads?: Record<string, GamepadDef>;
+    /**
+     * Defined buttons for input binding.
+     *
+     * @since v30010
+     */
+    buttons?: ButtonsDef;
     /**
      * Limit framerate to an amount per second.
      *
