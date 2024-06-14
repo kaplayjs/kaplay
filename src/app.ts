@@ -681,9 +681,10 @@ export default (opt: {
 
             for (let i = 0; i < browserGamepad.buttons.length; i++) {
                 const gamepadBtn = map.buttons[i];
+                const browserGamepadBtn = browserGamepad.buttons[i];
                 const bindedBtn = getButtonByGamepadButton(gamepadBtn);
 
-                if (gamepadBtn.pressed) {
+                if (browserGamepadBtn.pressed) {
                     if (!gamepadState.buttonState.down.has(gamepadBtn)) {
                         // replicate input in merged state, defined button state and gamepad state
                         state.mergedGamepadState.buttonState.press(gamepadBtn);
