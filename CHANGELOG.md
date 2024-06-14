@@ -25,9 +25,10 @@ onButtonPress("jump", () => {
 ```js
 debug.log(getButton("jump").keyboard); // ["space", "up"]
 
+// change the jump button in keyboard to "w"
 setButton("jump", {
     keyboard: ["w"],
-    gamepad: ["north"],
+    // gamepad binding is not changed
 });
 ```
 
