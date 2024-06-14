@@ -362,7 +362,10 @@ export default (opt: {
     }
 
     function setButton(btn: string, binding: ButtonBinding) {
-        state.buttons[btn] = binding;
+        state.buttons[btn] = {
+            ...state.buttons[btn],
+            ...binding,
+        };
     }
 
     function getButtonNameByKey(key: Key): string | undefined {

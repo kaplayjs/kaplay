@@ -20,6 +20,17 @@ onButtonPress("jump", () => {
 });
 ```
 
+- added `getButton(btn)` and `setButton(btn)` to get and set button bindings
+    
+```js
+debug.log(getButton("jump").keyboard); // ["space", "up"]
+
+setButton("jump", {
+    keyboard: ["w"],
+    gamepad: ["north"],
+});
+```
+
 - renamed `kaboom()` to `kaplay()` (you can still use `kaboom*`)
 - added global raycast function and raycast method to level
 - added support for textured polygons
