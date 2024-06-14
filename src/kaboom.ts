@@ -5711,10 +5711,12 @@ const kaplay = (gopt: KaboomOpt = {}): KaboomCtx => {
         isGamepadButtonPressed: app.isGamepadButtonPressed,
         isGamepadButtonDown: app.isGamepadButtonDown,
         isGamepadButtonReleased: app.isGamepadButtonReleased,
+        getGamepadStick: app.getGamepadStick,
         isButtonPressed: app.isButtonPressed,
         isButtonDown: app.isButtonDown,
         isButtonReleased: app.isButtonReleased,
-        getGamepadStick: app.getGamepadStick,
+        setButton: app.setButton,
+        getButton: app.getButton,
         charInputted: app.charInputted,
         // timer
         loop,

@@ -1,8 +1,3 @@
-/// <reference path="../dist/declaration/global.d.ts" />
-/// <reference path="../dist/declaration/types.d.ts" />
-
-// import kaplay from "../dist/declaration/types";
-
 kaplay({
     buttons: {
         "jump": {

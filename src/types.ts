@@ -39,9 +39,13 @@ export type { Asset, Event, EventController, EventHandler, FontData, Vec2 };
  *
  * @group Start
  */
-declare function kaplay<T extends PluginList<unknown> = [undefined]>(
-    options?: KaboomOpt<T>,
-): T extends [undefined] ? KaboomCtx : KaboomCtx & MergePlugins<T>;
+declare function kaplay<
+    TPlugins extends PluginList<unknown> = [undefined],
+    TButtons extends ButtonsDef = {},
+>(
+    options?: KaboomOpt<TPlugins, TButtons>,
+): TPlugins extends [undefined] ? KaboomCtx<TButtons>
+    : KaboomCtx<TButtons> & MergePlugins<TPlugins>;
 
 export type InternalCtx = {
     kaboomCtx: KaboomCtx;
@@ -70,7 +74,7 @@ export type InternalCtx = {
  *
  * @group Start
  */
-export interface KaboomCtx {
+export interface KaboomCtx<TButtonDef extends ButtonsDef = {}> {
     /**
      * The internal context object.
      *
@@ -1313,17 +1317,23 @@ export interface KaboomCtx {
      * Register an event that runs when user press a defined button
      * (like "jump") on any input (keyboard, gamepad).
      */
-    onButtonPress(button: string, action: () => void): EventController;
+    onButtonPress(
+        button: keyof TButtonDef,
+        action: () => void,
+    ): EventController;
     /**
      * Register an event that runs when user release a defined button
      * (like "jump") on any input (keyboard, gamepad).
      */
-    onButtonRelease(button: string, action: () => void): EventController;
+    onButtonRelease(
+        button: keyof TButtonDef,
+        action: () => void,
+    ): EventController;
     /**
      * Register an event that runs when user press a defined button
      * (like "jump") on any input (keyboard, gamepad).
      */
-    onButtonDown(button: string, action: () => void): EventController;
+    onButtonDown(button: keyof TButtonDef, action: () => void): EventController;
     /**
      * Register an event that runs when current scene ends.
      *
@@ -1858,6 +1868,14 @@ export interface KaboomCtx {
      * @group Info
      */
     isButtonReleased(button: string): boolean;
+    /**
+     * Get a input binding from a button name.
+     */
+    getButton(button: keyof TButtonDef): ButtonBinding;
+    /**
+     * Set a input binding for a button name.
+     */
+    setButton(button: string, def: ButtonBinding): void;
     /**
      * Get stick axis values from a gamepad.
      *
@@ -3453,7 +3471,10 @@ export type GameObjInspect = Record<Tag, string | null>;
  *
  * @group Start
  */
-export interface KaboomOpt<T extends PluginList<any> = any> {
+export interface KaboomOpt<
+    TPlugin extends PluginList<any> = any,
+    TButtonDef extends ButtonsDef = any,
+> {
     /**
      * Width of game.
      */
@@ -3555,7 +3576,7 @@ export interface KaboomOpt<T extends PluginList<any> = any> {
      *
      * @since v30010
      */
-    buttons?: ButtonsDef;
+    buttons?: TButtonDef;
     /**
      * Limit framerate to an amount per second.
      *
@@ -3575,7 +3596,7 @@ export interface KaboomOpt<T extends PluginList<any> = any> {
     /**
      * List of plugins to import.
      */
-    plugins?: T;
+    plugins?: TPlugin;
     /**
      * Enter burp mode.
      */

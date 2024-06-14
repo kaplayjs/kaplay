@@ -79,6 +79,7 @@ export default (opt: {
 
     const state = {
         canvas: opt.canvas,
+        buttons: opt.buttons,
         loopID: null as null | number,
         stopped: false,
         dt: 0,
@@ -357,18 +358,22 @@ export default (opt: {
     }
 
     function getButton(btn: string): ButtonBinding {
-        return opt.buttons?.[btn];
+        return state.buttons?.[btn];
+    }
+
+    function setButton(btn: string, binding: ButtonBinding) {
+        state.buttons[btn] = binding;
     }
 
     function getButtonNameByKey(key: Key): string | undefined {
-        for (const b in opt.buttons) {
-            const bindings = opt.buttons[b].keyboard.length
-                ? opt.buttons[b].keyboard
+        for (const b in state.buttons) {
+            const bindings = state.buttons[b].keyboard.length
+                ? state.buttons[b].keyboard
                 : [b];
 
             if (bindings.includes(key)) {
-                return Object.keys(opt.buttons).find((k) =>
-                    opt.buttons[k] === opt.buttons[b]
+                return Object.keys(state.buttons).find((k) =>
+                    state.buttons[k] === state.buttons[b]
                 );
             }
         }
@@ -377,14 +382,14 @@ export default (opt: {
     function getButtonByGamepadButton(
         btn: GamepadButton,
     ): string | undefined {
-        for (const b in opt.buttons) {
-            const bindings = opt.buttons[b].gamepad.length
-                ? opt.buttons[b].gamepad
+        for (const b in state.buttons) {
+            const bindings = state.buttons[b].gamepad.length
+                ? state.buttons[b].gamepad
                 : [b];
 
             if (bindings.includes(btn)) {
-                return Object.keys(opt.buttons).find((k) =>
-                    opt.buttons[k] === opt.buttons[b]
+                return Object.keys(state.buttons).find((k) =>
+                    state.buttons[k] === state.buttons[b]
                 );
             }
         }
@@ -1032,10 +1037,12 @@ export default (opt: {
         isGamepadButtonPressed,
         isGamepadButtonDown,
         isGamepadButtonReleased,
+        getGamepadStick,
         isButtonPressed,
         isButtonDown,
         isButtonReleased,
-        getGamepadStick,
+        setButton,
+        getButton,
         charInputted,
         onResize,
         onKeyDown,
