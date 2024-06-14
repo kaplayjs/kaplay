@@ -1,5 +1,37 @@
 ## v3001.0
 
+- added input bindings, `onButtonPress`, `onButtonRelease`, `onButtonDown`, and
+it's corresponding boolean versions, `isButtonPressed`, `isButtonDown` and 
+`isButtonReleased`
+
+```js
+// bind your buttons
+kaplay({
+    bindings: {
+        "jump": {
+            keyboard: ["space", "up"],
+            gamepad: ["south"],
+        },
+    },
+});
+
+onButtonPress("jump", () => {
+    player.jump();
+});
+```
+
+- added `getButton(btn)` and `setButton(btn)` to get and set button bindings
+    
+```js
+debug.log(getButton("jump").keyboard); // ["space", "up"]
+
+// change the jump button in keyboard to "w"
+setButton("jump", {
+    keyboard: ["w"],
+    // gamepad binding is not changed
+});
+```
+
 - renamed `kaboom()` to `kaplay()` (you can still use `kaboom*`)
 - added global raycast function and raycast method to level
 - added support for textured polygons

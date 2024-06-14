@@ -377,6 +377,7 @@ const kaplay = (gopt: KaboomOpt = {}): KaboomCtx => {
         gamepads: gopt.gamepads,
         pixelDensity: gopt.pixelDensity,
         maxFPS: gopt.maxFPS,
+        buttons: gopt.buttons,
     });
 
     const gc: Array<() => void> = [];
@@ -1152,7 +1153,8 @@ const kaplay = (gopt: KaboomOpt = {}): KaboomCtx => {
         | BitmapFontData
         | Asset<BitmapFontData>
         | string
-        | void {
+        | void
+    {
         if (!src) {
             return resolveFont(gopt.font ?? DEF_FONT);
         }
@@ -1318,7 +1320,7 @@ const kaplay = (gopt: KaboomOpt = {}): KaboomCtx => {
         srcNode.onended = () => {
             if (
                 getTime()
-                >= (srcNode.buffer?.duration ?? Number.POSITIVE_INFINITY)
+                    >= (srcNode.buffer?.duration ?? Number.POSITIVE_INFINITY)
             ) {
                 onEndEvents.trigger();
             }
@@ -2694,7 +2696,7 @@ const kaplay = (gopt: KaboomOpt = {}): KaboomCtx => {
 
             let indices;
 
-            if (opt.triangulate/* && !isConvex(opt.pts)*/) {
+            if (opt.triangulate /* && !isConvex(opt.pts)*/) {
                 const triangles = triangulate(opt.pts);
                 // TODO rewrite triangulate to just return new indices
                 indices = triangles.map(t => t.map(p => opt.pts.indexOf(p)))
@@ -2876,14 +2878,14 @@ const kaplay = (gopt: KaboomOpt = {}): KaboomCtx => {
                 outline: Outline | null;
                 filter: TexFilter;
             } = font instanceof FontData
-                    ? {
-                        outline: font.outline,
-                        filter: font.filter,
-                    }
-                    : {
-                        outline: null,
-                        filter: DEF_FONT_FILTER,
-                    };
+                ? {
+                    outline: font.outline,
+                    filter: font.filter,
+                }
+                : {
+                    outline: null,
+                    filter: DEF_FONT_FILTER,
+                };
 
             // TODO: customizable font tex filter
             const atlas: FontAtlas = fontAtlases[fontName] ?? {
@@ -4776,7 +4778,7 @@ const kaplay = (gopt: KaboomOpt = {}): KaboomCtx => {
     const loop = game.root.loop.bind(game.root);
     const query = game.root.query.bind(game.root);
     const tween = game.root.tween.bind(game.root);
-    const layers = function (layerNames: string[], defaultLayer: string) {
+    const layers = function(layerNames: string[], defaultLayer: string) {
         if (game.layers) {
             throw Error("Layers can only be assigned once.");
         }
@@ -5230,8 +5232,9 @@ const kaplay = (gopt: KaboomOpt = {}): KaboomCtx => {
                     const style = log.msg instanceof Error ? "error" : "info";
                     str += `[time]${log.time.toFixed(2)}[/time]`;
                     str += " ";
-                    str += `[${style}]${log.msg?.toString ? log.msg.toString() : log.msg
-                        }[/${style}]`;
+                    str += `[${style}]${
+                        log.msg?.toString ? log.msg.toString() : log.msg
+                    }[/${style}]`;
                     logs.push(str);
                 }
 
@@ -5350,7 +5353,7 @@ const kaplay = (gopt: KaboomOpt = {}): KaboomCtx => {
             // clear canvas
             gl.clear(
                 gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT
-                | gl.STENCIL_BUFFER_BIT,
+                    | gl.STENCIL_BUFFER_BIT,
             );
 
             // unbind everything
@@ -5692,6 +5695,9 @@ const kaplay = (gopt: KaboomOpt = {}): KaboomCtx => {
         onGamepadButtonPress: app.onGamepadButtonPress,
         onGamepadButtonRelease: app.onGamepadButtonRelease,
         onGamepadStick: app.onGamepadStick,
+        onButtonPress: app.onButtonPress,
+        onButtonDown: app.onButtonDown,
+        onButtonRelease: app.onButtonRelease,
         mousePos: mousePos,
         mouseDeltaPos: app.mouseDeltaPos,
         isKeyDown: app.isKeyDown,
@@ -5706,6 +5712,11 @@ const kaplay = (gopt: KaboomOpt = {}): KaboomCtx => {
         isGamepadButtonDown: app.isGamepadButtonDown,
         isGamepadButtonReleased: app.isGamepadButtonReleased,
         getGamepadStick: app.getGamepadStick,
+        isButtonPressed: app.isButtonPressed,
+        isButtonDown: app.isButtonDown,
+        isButtonReleased: app.isButtonReleased,
+        setButton: app.setButton,
+        getButton: app.getButton,
         charInputted: app.charInputted,
         // timer
         loop,

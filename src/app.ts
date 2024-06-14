@@ -1,6 +1,8 @@
 // everything related to canvas, game loop and input
 
 import type {
+    ButtonBinding,
+    ButtonsDef,
     Cursor,
     GamepadButton,
     GamepadDef,
@@ -69,6 +71,7 @@ export default (opt: {
     gamepads?: Record<string, GamepadDef>;
     pixelDensity?: number;
     maxFPS?: number;
+    buttons?: ButtonsDef;
 }) => {
     if (!opt.canvas) {
         throw new Error("Please provide a canvas");
@@ -76,6 +79,7 @@ export default (opt: {
 
     const state = {
         canvas: opt.canvas,
+        buttons: opt.buttons ?? {},
         loopID: null as null | number,
         stopped: false,
         dt: 0,
@@ -92,6 +96,8 @@ export default (opt: {
         mouseState: new ButtonState<MouseButton>(),
         mergedGamepadState: new GamepadState(),
         gamepadStates: new Map<number, GamepadState>(),
+        // unified input state
+        buttonState: new ButtonState<string>(),
         gamepads: [] as KGamePad[],
         charInputted: [],
         isMouseMoved: false,
@@ -116,6 +122,9 @@ export default (opt: {
             gamepadStick: [string, Vec2];
             gamepadConnect: [KGamePad];
             gamepadDisconnect: [KGamePad];
+            buttonDown: [string];
+            buttonPress: [string];
+            buttonRelease: [string];
             scroll: [Vec2];
             hide: [];
             show: [];
@@ -330,6 +339,81 @@ export default (opt: {
             : state.mergedGamepadState.buttonState.released.has(btn);
     }
 
+    function isButtonPressed(btn?: string): boolean {
+        return btn === undefined
+            ? state.buttonState.pressed.size > 0
+            : state.buttonState.pressed.has(btn);
+    }
+
+    function isButtonDown(btn?: string): boolean {
+        return btn === undefined
+            ? state.buttonState.down.size > 0
+            : state.buttonState.down.has(btn);
+    }
+
+    function isButtonReleased(btn?: string): boolean {
+        return btn === undefined
+            ? state.buttonState.released.size > 0
+            : state.buttonState.released.has(btn);
+    }
+
+    function getButton(btn: string): ButtonBinding {
+        return state.buttons?.[btn];
+    }
+
+    function setButton(btn: string, binding: ButtonBinding) {
+        state.buttons[btn] = {
+            ...state.buttons[btn],
+            ...binding,
+        };
+    }
+
+    function getButtonNameByKey(key: Key): string | undefined {
+        for (const b in state.buttons) {
+            const bindings = state.buttons[b].keyboard?.length
+                ? state.buttons[b].keyboard
+                : [b];
+
+            if (bindings.includes(key)) {
+                return Object.keys(state.buttons).find((k) =>
+                    state.buttons[k] === state.buttons[b]
+                );
+            }
+        }
+    }
+
+    function getButtonByGamepadButton(
+        btn: GamepadButton,
+    ): string | undefined {
+        for (const b in state.buttons) {
+            const bindings = state.buttons[b].gamepad?.length
+                ? state.buttons[b].gamepad
+                : [b];
+
+            if (bindings.includes(btn)) {
+                return Object.keys(state.buttons).find((k) =>
+                    state.buttons[k] === state.buttons[b]
+                );
+            }
+        }
+    }
+
+    function getButtonByMouseButton(
+        btn: MouseButton,
+    ): string | undefined {
+        for (const b in state.buttons) {
+            const bindings = state.buttons[b].mouse?.length
+                ? state.buttons[b].mouse
+                : [b];
+
+            if (bindings.includes(btn)) {
+                return Object.keys(state.buttons).find((k) =>
+                    state.buttons[k] === state.buttons[b]
+                );
+            }
+        }
+    }
+
     function onResize(action: () => void): EventController {
         return state.events.on("resize", action);
     }
@@ -487,11 +571,35 @@ export default (opt: {
         return [...state.gamepads];
     }
 
+    const onButtonPress = overload2((action: (btn: string) => void) => {
+        return state.events.on("buttonPress", action);
+    }, (btn: string, action: (btn: string) => void) => {
+        return state.events.on("buttonPress", (b) => b === btn && action(btn));
+    });
+
+    const onButtonDown = overload2((action: (btn: string) => void) => {
+        return state.events.on("buttonDown", action);
+    }, (btn: string, action: (btn: string) => void) => {
+        return state.events.on("buttonDown", (b) => b === btn && action(btn));
+    });
+
+    const onButtonRelease = overload2((action: (btn: string) => void) => {
+        return state.events.on("buttonRelease", action);
+    }, (btn: string, action: (btn: string) => void) => {
+        return state.events.on(
+            "buttonRelease",
+            (b) => b === btn && action(btn),
+        );
+    });
+
     function processInput() {
         state.events.trigger("input");
         state.keyState.down.forEach((k) => state.events.trigger("keyDown", k));
         state.mouseState.down.forEach((k) =>
             state.events.trigger("mouseDown", k)
+        );
+        state.buttonState.down.forEach((btn) =>
+            state.events.trigger("buttonDown", btn)
         );
         processGamepad();
     }
@@ -499,10 +607,13 @@ export default (opt: {
     function resetInput() {
         state.keyState.update();
         state.mouseState.update();
+        state.buttonState.update();
+
         state.mergedGamepadState.buttonState.update();
         state.mergedGamepadState.stickState.forEach((v, k) => {
             state.mergedGamepadState.stickState.set(k, new Vec2(0));
         });
+
         state.charInputted = [];
         state.isMouseMoved = false;
 
@@ -572,28 +683,36 @@ export default (opt: {
             const gamepadState = state.gamepadStates.get(gamepad.index);
 
             for (let i = 0; i < browserGamepad.buttons.length; i++) {
-                if (browserGamepad.buttons[i].pressed) {
-                    if (!gamepadState.buttonState.down.has(map.buttons[i])) {
-                        state.mergedGamepadState.buttonState.press(
-                            map.buttons[i],
-                        );
-                        gamepadState.buttonState.press(map.buttons[i]);
-                        state.events.trigger(
-                            "gamepadButtonPress",
-                            map.buttons[i],
-                        );
+                const gamepadBtn = map.buttons[i];
+                const browserGamepadBtn = browserGamepad.buttons[i];
+                const bindedBtn = getButtonByGamepadButton(gamepadBtn);
+
+                if (browserGamepadBtn.pressed) {
+                    if (!gamepadState.buttonState.down.has(gamepadBtn)) {
+                        // replicate input in merged state, defined button state and gamepad state
+                        state.mergedGamepadState.buttonState.press(gamepadBtn);
+                        gamepadState.buttonState.press(gamepadBtn);
+                        state.buttonState.press(bindedBtn);
+
+                        state.events.trigger("gamepadButtonPress", gamepadBtn);
+                        state.events.trigger("buttonPress", bindedBtn);
                     }
-                    state.events.trigger("gamepadButtonDown", map.buttons[i]);
+
+                    state.events.trigger("gamepadButtonDown", gamepadBtn);
+                    state.events.trigger("buttonDown", bindedBtn);
                 } else {
-                    if (gamepadState.buttonState.down.has(map.buttons[i])) {
+                    if (gamepadState.buttonState.down.has(gamepadBtn)) {
                         state.mergedGamepadState.buttonState.release(
-                            map.buttons[i],
+                            gamepadBtn,
                         );
-                        gamepadState.buttonState.release(map.buttons[i]);
+                        gamepadState.buttonState.release(gamepadBtn);
+                        state.buttonState.release(bindedBtn);
+
                         state.events.trigger(
                             "gamepadButtonRelease",
-                            map.buttons[i],
+                            gamepadBtn,
                         );
+                        state.events.trigger("buttonRelease", bindedBtn);
                     }
                 }
             }
@@ -666,8 +785,12 @@ export default (opt: {
         state.events.onOnce("input", () => {
             const m = MOUSE_BUTTONS[e.button];
             if (!m) return;
+            const btn = getButtonByMouseButton(m);
+
             state.mouseState.press(m);
+            state.buttonState.press(btn);
             state.events.trigger("mousePress", m);
+            state.events.trigger("buttonPress", btn);
         });
     };
 
@@ -675,8 +798,12 @@ export default (opt: {
         state.events.onOnce("input", () => {
             const m = MOUSE_BUTTONS[e.button];
             if (!m) return;
+            const btn = getButtonByMouseButton(m);
+
             state.mouseState.release(m);
+            state.buttonState.release(btn);
             state.events.trigger("mouseRelease", m);
+            state.events.trigger("buttonRelease", btn);
         });
     };
 
@@ -715,9 +842,13 @@ export default (opt: {
                 state.keyState.pressRepeat(k);
                 state.events.trigger("keyPressRepeat", k);
             } else {
+                const btn = getButtonNameByKey(k);
+
                 state.keyState.press(k);
+                state.buttonState.press(btn);
                 state.events.trigger("keyPressRepeat", k);
                 state.events.trigger("keyPress", k);
+                state.events.trigger("buttonPress", btn);
             }
         });
     };
@@ -725,8 +856,12 @@ export default (opt: {
     canvasEvents.keyup = (e) => {
         state.events.onOnce("input", () => {
             const k = KEY_ALIAS[e.key] || e.key.toLowerCase();
+            const btn = getButtonNameByKey(k);
+
             state.keyState.release(k);
+            state.buttonState.release(btn);
             state.events.trigger("keyRelease", k);
+            state.events.trigger("buttonRelease", btn);
         });
     };
 
@@ -734,6 +869,7 @@ export default (opt: {
     canvasEvents.touchstart = (e) => {
         // disable long tap context menu
         e.preventDefault();
+
         state.events.onOnce("input", () => {
             const touches = [...e.changedTouches];
             const box = state.canvas.getBoundingClientRect();
@@ -742,8 +878,13 @@ export default (opt: {
                     touches[0].clientX - box.x,
                     touches[0].clientY - box.y,
                 );
+
+                const btn = getButtonByMouseButton("left");
+
                 state.mouseState.press("left");
+                state.buttonState.press(btn);
                 state.events.trigger("mousePress", "left");
+                state.events.trigger("buttonPress", btn);
             }
             touches.forEach((t) => {
                 state.events.trigger(
@@ -790,8 +931,12 @@ export default (opt: {
                     touches[0].clientY - box.y,
                 );
                 state.mouseDeltaPos = new Vec2(0, 0);
+                const btn = getButtonByMouseButton("left");
+
+                state.buttonState.release(btn);
                 state.mouseState.release("left");
                 state.events.trigger("mouseRelease", "left");
+                state.events.trigger("buttonRelease", btn);
             }
             touches.forEach((t) => {
                 state.events.trigger(
@@ -924,6 +1069,11 @@ export default (opt: {
         isGamepadButtonDown,
         isGamepadButtonReleased,
         getGamepadStick,
+        isButtonPressed,
+        isButtonDown,
+        isButtonReleased,
+        setButton,
+        getButton,
         charInputted,
         onResize,
         onKeyDown,
@@ -947,6 +1097,9 @@ export default (opt: {
         onGamepadStick,
         onGamepadConnect,
         onGamepadDisconnect,
+        onButtonPress,
+        onButtonDown,
+        onButtonRelease,
         events: state.events,
     };
 };
