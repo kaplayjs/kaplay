@@ -1,4 +1,4 @@
-import type { FixedComp } from "@/types";
+import type { FixedComp } from "../../types";
 
 export function fixed(): FixedComp {
     return {

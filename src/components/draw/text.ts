@@ -1,7 +1,7 @@
-import { DEF_TEXT_SIZE } from "@/constants";
-import { getInternalContext, getKaboomContext } from "@/kaboom";
-import { Rect, vec2 } from "@/math";
-import type { GameObj, TextComp, TextCompOpt } from "@/types";
+import { DEF_TEXT_SIZE } from "../../constants";
+import { getInternalContext, getKaboomContext } from "../../kaboom";
+import { Rect, vec2 } from "../../math";
+import type { GameObj, TextComp, TextCompOpt } from "../../types";
 
 export function text(t: string, opt: TextCompOpt = {}): TextComp {
     const k = getKaboomContext(this);

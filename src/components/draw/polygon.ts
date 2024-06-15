@@ -1,6 +1,6 @@
-import { getInternalContext, getKaboomContext } from "@/kaboom";
-import { Polygon } from "@/math";
-import type { GameObj, PolygonComp, PolygonCompOpt, Vec2 } from "@/types";
+import { getInternalContext, getKaboomContext } from "../../kaboom";
+import { Polygon } from "../../math";
+import type { GameObj, PolygonComp, PolygonCompOpt, Vec2 } from "../../types";
 
 export function polygon(pts: Vec2[], opt: PolygonCompOpt = {}): PolygonComp {
     const k = getKaboomContext(this);
@@ -26,7 +26,7 @@ export function polygon(pts: Vec2[], opt: PolygonCompOpt = {}): PolygonComp {
                 tex: this.tex,
                 radius: this.radius,
                 fill: opt.fill,
-                triangulate: opt.triangulate
+                triangulate: opt.triangulate,
             }));
         },
         renderArea(this: GameObj<PolygonComp>) {

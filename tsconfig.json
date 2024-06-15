@@ -9,11 +9,6 @@
     "declaration": true,
     "declarationMap": true,
     "declarationDir": "dist/declaration",
-    "paths": {
-      "@/*": [
-        "./src/*"
-      ]
-    },
     // always use import type for type only imports
     "verbatimModuleSyntax": true
   },

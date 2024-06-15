@@ -1,5 +1,5 @@
-import type { EventController } from "@/utils";
 import type { GameObj, HealthComp } from "../../types";
+import type { EventController } from "../../utils";
 
 export function health(
     hp: number,

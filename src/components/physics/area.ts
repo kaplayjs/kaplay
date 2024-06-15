@@ -1,6 +1,6 @@
-import { DEF_ANCHOR } from "@/constants";
-import { anchorPt, getInternalContext, getKaboomContext } from "@/kaboom";
-import { Polygon, rgb, testPolygonPoint, Vec2, vec2 } from "@/math";
+import { DEF_ANCHOR } from "../../constants";
+import { anchorPt, getInternalContext, getKaboomContext } from "../../kaboom";
+import { Polygon, rgb, testPolygonPoint, Vec2, vec2 } from "../../math";
 import type {
     AnchorComp,
     AreaComp,
@@ -12,8 +12,8 @@ import type {
     PosComp,
     Shape,
     Tag,
-} from "@/types";
-import type { EventController } from "@/utils";
+} from "../../types";
+import type { EventController } from "../../utils";
 
 export function area(opt: AreaCompOpt = {}): AreaComp {
     const k = getKaboomContext(this);

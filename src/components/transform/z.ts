@@ -1,4 +1,4 @@
-import type { ZComp } from "@/types";
+import type { ZComp } from "../../types";
 
 export function z(z: number): ZComp {
     return {

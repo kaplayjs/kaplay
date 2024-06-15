@@ -1,6 +1,6 @@
-import { getKaboomContext } from "@/kaboom";
-import type { Vec2 } from "@/math";
-import type { RaycastResult } from "@/types";
+import { getKaboomContext } from "../../kaboom";
+import type { Vec2 } from "../../math";
+import type { RaycastResult } from "../../types";
 
 export function raycast(origin: Vec2, direction: Vec2, exclude?: string[]) {
     const k = getKaboomContext(this);

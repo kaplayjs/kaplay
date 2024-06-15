@@ -1,13 +1,13 @@
-import easings from "@/easings";
-import { getKaboomContext } from "@/kaboom";
-import { lerp } from "@/math";
+import easings from "../../easings";
+import { getKaboomContext } from "../../kaboom";
+import { lerp } from "../../math";
 import type {
     EventController,
     GameObj,
     LerpValue,
     TimerComp,
     TimerController,
-} from "@/types";
+} from "../../types";
 
 export function timer(): TimerComp {
     return {

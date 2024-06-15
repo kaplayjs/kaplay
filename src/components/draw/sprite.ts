@@ -1,8 +1,8 @@
 // TODO: accept canvas
 
-import type { Texture } from "@/gfx";
-import { getInternalContext, getKaboomContext } from "@/kaboom";
-import { Quad, quad, Vec2, vec2 } from "@/math";
+import type { Texture } from "../../gfx";
+import { getInternalContext, getKaboomContext } from "../../kaboom";
+import { Quad, quad, Vec2, vec2 } from "../../math";
 import type {
     Asset,
     GameObj,
@@ -11,8 +11,8 @@ import type {
     SpriteCompOpt,
     SpriteCurAnim,
     SpriteData,
-} from "@/types";
-import { Event, EventController } from "@/utils";
+} from "../../types";
+import { Event, EventController } from "../../utils";
 
 // TODO: clean
 export function sprite(
@@ -67,7 +67,7 @@ export function sprite(
         flipY: opt.flipY ?? false,
 
         get sprite() {
-            return src.toString()
+            return src.toString();
         },
 
         draw(this: GameObj<SpriteComp>) {

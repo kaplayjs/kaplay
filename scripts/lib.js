@@ -23,6 +23,7 @@ const fmts = [
     { format: "esm", outfile: `${distDir}/kaboom.mjs` },
 ];
 
+/** @type {esbuild.BuildOptions} */
 const config = {
     bundle: true,
     sourcemap: true,

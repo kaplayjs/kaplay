@@ -1,4 +1,4 @@
-import type { ShaderComp, Uniform } from "@/types";
+import type { ShaderComp, Uniform } from "../../types";
 
 export function shader(
     id: string,

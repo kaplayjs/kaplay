@@ -1,6 +1,6 @@
-import { getInternalContext, getKaboomContext } from "@/kaboom";
-import { Vec2, vec2 } from "@/math";
-import type { FixedComp, GameObj, PosComp, Vec2Args } from "@/types";
+import { getInternalContext, getKaboomContext } from "../../kaboom";
+import { Vec2, vec2 } from "../../math";
+import type { FixedComp, GameObj, PosComp, Vec2Args } from "../../types";
 
 function isFixed(obj: GameObj) {
     if (obj.fixed) return true;

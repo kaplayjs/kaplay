@@ -1,14 +1,14 @@
-import { DEF_JUMP_FORCE, MAX_VEL } from "@/constants";
-import { getInternalContext, getKaboomContext } from "@/kaboom";
-import { vec2 } from "@/math";
+import { DEF_JUMP_FORCE, MAX_VEL } from "../../constants";
+import { getInternalContext, getKaboomContext } from "../../kaboom";
+import { vec2 } from "../../math";
 import type {
     AreaComp,
     BodyComp,
     BodyCompOpt,
     GameObj,
     PosComp,
-} from "@/types";
-import type { EventController } from "@/utils";
+} from "../../types";
+import type { EventController } from "../../utils";
 
 export function body(opt: BodyCompOpt = {}): BodyComp {
     const k = getKaboomContext(this);

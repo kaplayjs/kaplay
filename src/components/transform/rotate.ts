@@ -1,4 +1,4 @@
-import type { RotateComp } from "@/types";
+import type { RotateComp } from "../../types";
 
 export function rotate(r: number): RotateComp {
     return {

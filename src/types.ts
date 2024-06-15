@@ -1,7 +1,7 @@
-import type { Asset } from "@/assets";
-import type { FontData } from "@/fonts";
-import type { Event, EventController, EventHandler } from "@/utils";
+import type { Asset } from "./assets";
+import type { FontData } from "./fonts";
 import type { Vec2 } from "./math";
+import type { Event, EventController, EventHandler } from "./utils";
 
 export type { Asset, Event, EventController, EventHandler, FontData, Vec2 };
 

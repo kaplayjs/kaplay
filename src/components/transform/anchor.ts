@@ -1,5 +1,5 @@
-import type { Vec2 } from "@/math";
-import type { Anchor, AnchorComp } from "@/types";
+import type { Vec2 } from "../../math";
+import type { Anchor, AnchorComp } from "../../types";
 
 export function anchor(o: Anchor | Vec2): AnchorComp {
     if (!o) {

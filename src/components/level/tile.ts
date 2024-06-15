@@ -1,4 +1,4 @@
-import { Vec2, vec2 } from "@/math";
+import { Vec2, vec2 } from "../../math";
 import {
     type Edge,
     EdgeMask,
@@ -6,7 +6,7 @@ import {
     type LevelComp,
     type TileComp,
     type TileCompOpt,
-} from "@/types";
+} from "../../types";
 
 export function tile(opts: TileCompOpt = {}): TileComp {
     let tilePos = vec2(0);

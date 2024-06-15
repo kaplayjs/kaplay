@@ -1,5 +1,5 @@
-import { getInternalContext, getKaboomContext } from "@/kaboom";
-import type { LayerComp } from "@/types";
+import { getInternalContext, getKaboomContext } from "../../kaboom";
+import type { LayerComp } from "../../types";
 
 export function layer(layer: string): LayerComp {
     const k = getKaboomContext(this);

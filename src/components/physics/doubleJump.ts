@@ -1,5 +1,5 @@
-import type { BodyComp, DoubleJumpComp, GameObj } from "@/types";
-import type { EventController } from "@/utils";
+import type { BodyComp, DoubleJumpComp, GameObj } from "../../types";
+import type { EventController } from "../../utils";
 
 export function doubleJump(numJumps: number = 2): DoubleJumpComp {
     let jumpsLeft = numJumps;

@@ -1,5 +1,5 @@
-import { Color, rgb } from "@/math";
-import type { LineCap, LineJoin, OutlineComp } from "@/types";
+import { Color, rgb } from "../../math";
+import type { LineCap, LineJoin, OutlineComp } from "../../types";
 
 export function outline(
     width: number = 1,

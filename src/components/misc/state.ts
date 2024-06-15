@@ -1,5 +1,5 @@
-import type { StateComp } from "@/types";
-import { Event, EventController } from "@/utils";
+import type { StateComp } from "../../types";
+import { Event, EventController } from "../../utils";
 
 export function state(
     initState: string,

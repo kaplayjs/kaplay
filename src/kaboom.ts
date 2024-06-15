@@ -190,7 +190,7 @@ import type {
     Uniform,
     Vec2Args,
     Vertex,
-} from "@/types";
+} from "./types";
 
 import {
     agent,
@@ -227,12 +227,12 @@ import {
     timer,
     uvquad,
     z,
-} from "@/components";
+} from "./components";
 
-import beanSpriteSrc from "@/assets/bean.png";
-import boomSpriteSrc from "@/assets/boom.png";
-import burpSoundSrc from "@/assets/burp.mp3";
-import kaSpriteSrc from "@/assets/ka.png";
+import beanSpriteSrc from "./assets/bean.png";
+import boomSpriteSrc from "./assets/boom.png";
+import burpSoundSrc from "./assets/burp.mp3";
+import kaSpriteSrc from "./assets/ka.png";
 
 // convert anchor string to a vec2 offset
 export function anchorPt(orig: Anchor | Vec2): Vec2 {
