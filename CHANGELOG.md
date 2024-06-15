@@ -32,6 +32,14 @@ setButton("jump", {
 });
 ```
 
+- now you can use array in all input handlers
+
+```js
+onKeyPress(["w", "up"], () => {
+    player.jump();
+});
+```
+
 - renamed `kaboom()` to `kaplay()` (you can still use `kaboom*`)
 - added global raycast function and raycast method to level
 - added support for textured polygons
