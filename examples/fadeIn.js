@@ -1,4 +1,5 @@
 kaplay();
+
 loadBean();
 
 // spawn a bean that takes a second to fade in

@@ -21,10 +21,12 @@
     "confetti",
     "particle",
     "shader",
-    "burp"
+    "burp",
+    "bench",
+    "gamepad",
+    "binding"
   ],
   "hidden": [
-    "fall",
-    "bench"
+    "fall"
   ]
 }
