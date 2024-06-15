@@ -1,8 +1,4 @@
-/// <reference path="../dist/declaration/global.d.ts" />
-
-import kaplay from "../dist/declaration/types";
-
-const k = kaplay({
+kaplay({
     buttons: {
         "jump": {
             gamepad: ["south"],
@@ -60,8 +56,4 @@ onButtonPress("jump", () => {
 
 onButtonDown("inspect", () => {
     debug.log("inspecting");
-});
-
-onGamepadButtonPress("south", () => {
-    debug.log("south");
 });
