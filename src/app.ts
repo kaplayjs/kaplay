@@ -14,7 +14,13 @@ import type {
 
 import { map, Vec2 } from "./math";
 
-import { EventController, EventHandler, overload2 } from "./utils";
+import {
+    EventController,
+    EventHandler,
+    isEqOrIncludes,
+    overload2,
+    setHasOrIncludes,
+} from "./utils";
 
 import GAMEPAD_MAP from "./gamepad.json";
 
@@ -116,9 +122,9 @@ export default (opt: {
             touchStart: [Vec2, Touch];
             touchMove: [Vec2, Touch];
             touchEnd: [Vec2, Touch];
-            gamepadButtonDown: [string];
-            gamepadButtonPress: [string];
-            gamepadButtonRelease: [string];
+            gamepadButtonDown: [GamepadButton];
+            gamepadButtonPress: [GamepadButton];
+            gamepadButtonRelease: [GamepadButton];
             gamepadStick: [string, Vec2];
             gamepadConnect: [KGamePad];
             gamepadDisconnect: [KGamePad];
@@ -297,64 +303,76 @@ export default (opt: {
         return state.isMouseMoved;
     }
 
-    function isKeyPressed(k?: Key): boolean {
+    function isKeyPressed(k?: Key | Key[]): boolean {
         return k === undefined
             ? state.keyState.pressed.size > 0
-            : state.keyState.pressed.has(k);
+            : setHasOrIncludes(state.keyState.pressed, k);
     }
 
-    function isKeyPressedRepeat(k?: Key): boolean {
+    function isKeyPressedRepeat(k?: Key | Key[]): boolean {
         return k === undefined
             ? state.keyState.pressedRepeat.size > 0
-            : state.keyState.pressedRepeat.has(k);
+            : setHasOrIncludes(state.keyState.pressedRepeat, k);
     }
 
-    function isKeyDown(k?: Key): boolean {
+    function isKeyDown(k?: Key | Key[]): boolean {
         return k === undefined
             ? state.keyState.down.size > 0
-            : state.keyState.down.has(k);
+            : setHasOrIncludes(state.keyState.down, k);
     }
 
-    function isKeyReleased(k?: Key): boolean {
+    function isKeyReleased(k?: Key | Key[]): boolean {
         return k === undefined
             ? state.keyState.released.size > 0
-            : state.keyState.released.has(k);
+            : setHasOrIncludes(state.keyState.released, k);
     }
 
-    function isGamepadButtonPressed(btn?: GamepadButton): boolean {
+    function isGamepadButtonPressed(
+        btn?: GamepadButton | GamepadButton[],
+    ): boolean {
         return btn === undefined
             ? state.mergedGamepadState.buttonState.pressed.size > 0
-            : state.mergedGamepadState.buttonState.pressed.has(btn);
+            : setHasOrIncludes(
+                state.mergedGamepadState.buttonState.pressed,
+                btn,
+            );
     }
 
-    function isGamepadButtonDown(btn?: GamepadButton): boolean {
+    function isGamepadButtonDown(
+        btn?: GamepadButton | GamepadButton[],
+    ): boolean {
         return btn === undefined
             ? state.mergedGamepadState.buttonState.down.size > 0
-            : state.mergedGamepadState.buttonState.down.has(btn);
+            : setHasOrIncludes(state.mergedGamepadState.buttonState.down, btn);
     }
 
-    function isGamepadButtonReleased(btn?: GamepadButton): boolean {
+    function isGamepadButtonReleased(
+        btn?: GamepadButton | GamepadButton[],
+    ): boolean {
         return btn === undefined
             ? state.mergedGamepadState.buttonState.released.size > 0
-            : state.mergedGamepadState.buttonState.released.has(btn);
+            : setHasOrIncludes(
+                state.mergedGamepadState.buttonState.released,
+                btn,
+            );
     }
 
-    function isButtonPressed(btn?: string): boolean {
+    function isButtonPressed(btn?: string | string[]): boolean {
         return btn === undefined
             ? state.buttonState.pressed.size > 0
-            : state.buttonState.pressed.has(btn);
+            : setHasOrIncludes(state.buttonState.pressed, btn);
     }
 
-    function isButtonDown(btn?: string): boolean {
+    function isButtonDown(btn?: string | string[]): boolean {
         return btn === undefined
             ? state.buttonState.down.size > 0
-            : state.buttonState.down.has(btn);
+            : setHasOrIncludes(state.buttonState.down, btn);
     }
 
-    function isButtonReleased(btn?: string): boolean {
+    function isButtonReleased(btn?: string | string[]): boolean {
         return btn === undefined
             ? state.buttonState.released.size > 0
-            : state.buttonState.released.has(btn);
+            : setHasOrIncludes(state.buttonState.released, btn);
     }
 
     function getButton(btn: string): ButtonBinding {
@@ -421,46 +439,71 @@ export default (opt: {
     // input callbacks
     const onKeyDown = overload2((action: (key: Key) => void) => {
         return state.events.on("keyDown", action);
-    }, (key: Key, action: (key: Key) => void) => {
-        return state.events.on("keyDown", (k) => k === key && action(key));
+    }, (key: Key | Key[], action: (key: Key) => void) => {
+        return state.events.on(
+            "keyDown",
+            (k) => isEqOrIncludes(key, k) && action(k),
+        );
     });
 
+    // key pressed is equal to the key by the user
     const onKeyPress = overload2((action: (key: Key) => void) => {
-        return state.events.on("keyPress", action);
-    }, (key: Key, action: (key: Key) => void) => {
-        return state.events.on("keyPress", (k) => k === key && action(key));
+        return state.events.on("keyPress", (k) => action(k));
+    }, (key: Key | Key[], action: (key: Key) => void) => {
+        return state.events.on(
+            "keyPress",
+            (k) => isEqOrIncludes(key, k) && action(k),
+        );
     });
 
     const onKeyPressRepeat = overload2((action: (key: Key) => void) => {
         return state.events.on("keyPressRepeat", action);
-    }, (key: Key, action: (key: Key) => void) => {
+    }, (key: Key | Key[], action: (key: Key) => void) => {
         return state.events.on(
             "keyPressRepeat",
-            (k) => k === key && action(key),
+            (k) => isEqOrIncludes(key, k) && action(k),
         );
     });
 
     const onKeyRelease = overload2((action: (key: Key) => void) => {
         return state.events.on("keyRelease", action);
-    }, (key: Key, action: (key: Key) => void) => {
-        return state.events.on("keyRelease", (k) => k === key && action(key));
+    }, (key: Key | Key[], action: (key: Key) => void) => {
+        return state.events.on(
+            "keyRelease",
+            (k) => isEqOrIncludes(key, k) && action(k),
+        );
     });
 
     const onMouseDown = overload2((action: (m: MouseButton) => void) => {
         return state.events.on("mouseDown", (m) => action(m));
-    }, (mouse: MouseButton, action: (m: MouseButton) => void) => {
-        return state.events.on("mouseDown", (m) => m === mouse && action(m));
+    }, (
+        mouse: MouseButton | MouseButton[],
+        action: (m: MouseButton) => void,
+    ) => {
+        return state.events.on(
+            "mouseDown",
+            (m) => isEqOrIncludes(mouse, m) && action(m),
+        );
     });
 
     const onMousePress = overload2((action: (m: MouseButton) => void) => {
         return state.events.on("mousePress", (m) => action(m));
-    }, (mouse: MouseButton, action: (m: MouseButton) => void) => {
-        return state.events.on("mousePress", (m) => m === mouse && action(m));
+    }, (
+        mouse: MouseButton | MouseButton[],
+        action: (m: MouseButton) => void,
+    ) => {
+        return state.events.on(
+            "mousePress",
+            (m) => isEqOrIncludes(mouse, m) && action(m),
+        );
     });
 
     const onMouseRelease = overload2((action: (m: MouseButton) => void) => {
         return state.events.on("mouseRelease", (m) => action(m));
-    }, (mouse: MouseButton, action: (m: MouseButton) => void) => {
+    }, (
+        mouse: MouseButton | MouseButton[],
+        action: (m: MouseButton) => void,
+    ) => {
         return state.events.on("mouseRelease", (m) => m === mouse && action(m));
     });
 
@@ -499,47 +542,50 @@ export default (opt: {
         return state.events.on("show", action);
     }
 
-    function onGamepadButtonDown(
-        btn: GamepadButton | ((btn: GamepadButton) => void),
-        action?: (btn: GamepadButton) => void,
-    ): EventController {
-        if (typeof btn === "function") {
-            return state.events.on("gamepadButtonDown", btn);
-        } else if (typeof btn === "string" && typeof action === "function") {
-            return state.events.on(
-                "gamepadButtonDown",
-                (b) => b === btn && action(btn),
-            );
-        }
-    }
-
-    function onGamepadButtonPress(
-        btn: GamepadButton | ((btn: GamepadButton) => void),
-        action?: (btn: GamepadButton) => void,
-    ): EventController {
-        if (typeof btn === "function") {
-            return state.events.on("gamepadButtonPress", btn);
-        } else if (typeof btn === "string" && typeof action === "function") {
+    const onGamepadButtonPress = overload2(
+        (action: (btn: GamepadButton) => void) => {
+            return state.events.on("gamepadButtonPress", (b) => action(b));
+        },
+        (
+            btn: GamepadButton | GamepadButton[],
+            action: (btn: GamepadButton) => void,
+        ) => {
             return state.events.on(
                 "gamepadButtonPress",
-                (b) => b === btn && action(btn),
+                (b) => isEqOrIncludes(btn, b) && action(b),
             );
-        }
-    }
+        },
+    );
 
-    function onGamepadButtonRelease(
-        btn: GamepadButton | ((btn: GamepadButton) => void),
-        action?: (btn: GamepadButton) => void,
-    ): EventController {
-        if (typeof btn === "function") {
-            return state.events.on("gamepadButtonRelease", btn);
-        } else if (typeof btn === "string" && typeof action === "function") {
+    const onGamepadButtonDown = overload2(
+        (action: (btn: GamepadButton) => void) => {
+            return state.events.on("gamepadButtonDown", (b) => action(b));
+        },
+        (
+            btn: GamepadButton,
+            action: (btn: GamepadButton) => void,
+        ) => {
+            return state.events.on(
+                "gamepadButtonDown",
+                (b) => isEqOrIncludes(btn, b) && action(b),
+            );
+        },
+    );
+
+    const onGamepadButtonRelease = overload2(
+        (action: (btn: GamepadButton) => void) => {
+            return state.events.on("gamepadButtonRelease", (b) => action(b));
+        },
+        (
+            btn: GamepadButton | GamepadButton[],
+            action: (btn: GamepadButton) => void,
+        ) => {
             return state.events.on(
                 "gamepadButtonRelease",
-                (b) => b === btn && action(btn),
+                (b) => isEqOrIncludes(btn, b) && action(b),
             );
-        }
-    }
+        },
+    );
 
     function onGamepadStick(
         stick: GamepadStick,
@@ -572,23 +618,29 @@ export default (opt: {
     }
 
     const onButtonPress = overload2((action: (btn: string) => void) => {
-        return state.events.on("buttonPress", action);
-    }, (btn: string, action: (btn: string) => void) => {
-        return state.events.on("buttonPress", (b) => b === btn && action(btn));
+        return state.events.on("buttonPress", (b) => action(b));
+    }, (btn: string | string, action: (btn: string) => void) => {
+        return state.events.on(
+            "buttonPress",
+            (b) => isEqOrIncludes(btn, b) && action(b),
+        );
     });
 
     const onButtonDown = overload2((action: (btn: string) => void) => {
-        return state.events.on("buttonDown", action);
-    }, (btn: string, action: (btn: string) => void) => {
-        return state.events.on("buttonDown", (b) => b === btn && action(btn));
+        return state.events.on("buttonDown", (b) => action(b));
+    }, (btn: string | string, action: (btn: string) => void) => {
+        return state.events.on(
+            "buttonDown",
+            (b) => isEqOrIncludes(btn, b) && action(b),
+        );
     });
 
     const onButtonRelease = overload2((action: (btn: string) => void) => {
-        return state.events.on("buttonRelease", action);
-    }, (btn: string, action: (btn: string) => void) => {
+        return state.events.on("buttonRelease", (b) => action(b));
+    }, (btn: string | string, action: (btn: string) => void) => {
         return state.events.on(
             "buttonRelease",
-            (b) => b === btn && action(btn),
+            (b) => isEqOrIncludes(btn, b) && action(b),
         );
     });
 
@@ -669,7 +721,9 @@ export default (opt: {
     function processGamepad() {
         for (const browserGamepad of navigator.getGamepads()) {
             if (
-                browserGamepad && !state.gamepadStates.has(browserGamepad.index)
+                browserGamepad && !state.gamepadStates.has(
+                    browserGamepad.index,
+                )
             ) {
                 registerGamepad(browserGamepad);
             }

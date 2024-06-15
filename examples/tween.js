@@ -12,6 +12,7 @@ let curEaseType = 0;
 
 const bean = add([
     sprite("bean"),
+    scale(2),
     pos(center()),
     rotate(0),
     anchor("center"),
@@ -28,12 +29,12 @@ add([
     pos(24, height() - 24),
 ]);
 
-onKeyPress("left", () => {
+onKeyPress(["left", "a"], () => {
     curEaseType = curEaseType === 0 ? easeTypes.length - 1 : curEaseType - 1;
     label.text = easeTypes[curEaseType];
 });
 
-onKeyPress("right", () => {
+onKeyPress(["right", "d"], () => {
     curEaseType = (curEaseType + 1) % easeTypes.length;
     label.text = easeTypes[curEaseType];
 });

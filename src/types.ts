@@ -42,10 +42,11 @@ export type { Asset, Event, EventController, EventHandler, FontData, Vec2 };
 declare function kaplay<
     TPlugins extends PluginList<unknown> = [undefined],
     TButtons extends ButtonsDef = {},
+    TButtonsName extends string = keyof TButtons & string,
 >(
     options?: KaboomOpt<TPlugins, TButtons>,
-): TPlugins extends [undefined] ? KaboomCtx<TButtons>
-    : KaboomCtx<TButtons> & MergePlugins<TPlugins>;
+): TPlugins extends [undefined] ? KaboomCtx<TButtons, TButtonsName>
+    : KaboomCtx<TButtons, TButtonsName> & MergePlugins<TPlugins>;
 
 export type InternalCtx = {
     kaboomCtx: KaboomCtx;
@@ -74,7 +75,10 @@ export type InternalCtx = {
  *
  * @group Start
  */
-export interface KaboomCtx<TButtonDef extends ButtonsDef = {}> {
+export interface KaboomCtx<
+    TButtonDef extends ButtonsDef = {},
+    TButton extends string = string,
+> {
     /**
      * The internal context object.
      *
@@ -1087,7 +1091,7 @@ export interface KaboomCtx<TButtonDef extends ButtonsDef = {}> {
      * ```
      * @group Events
      */
-    onKeyDown(key: Key, action: (key: Key) => void): EventController;
+    onKeyDown(key: Key | Key[], action: (key: Key) => void): EventController;
     /**
      * Register an event that runs every frame when any key is held down.
      *
@@ -1096,39 +1100,42 @@ export interface KaboomCtx<TButtonDef extends ButtonsDef = {}> {
      */
     onKeyDown(action: (key: Key) => void): EventController;
     /**
-     * Register an event that runs when user presses certain key.
-     *
-     * @since v2000.1
+     * Register an event that runs when user presses certain keys.
      *
      * @example
      * ```js
      * // .jump() once when "space" is just being pressed
      * onKeyPress("space", () => {
      *     bean.jump()
-     * })
+     * });
+     *
+     * onKeyPress(["up", "space"], () => {
+     *     bean.jump()
+     * });
      * ```
-     * @group Events
-     */
-    onKeyPress(key: Key, action: (key: Key) => void): EventController;
-    /**
-     * Register an event that runs when user presses any key.
      *
      * @since v2000.1
+     * @group Events
+     */
+    onKeyPress(key: Key | Key[], action: (key: Key) => void): EventController;
+    /**
+     * Register an event that runs when user presses any key.
      *
      * @example
      * ```js
      * // Call restart() when player presses any key
-     * onKeyPress(() => {
+     * onKeyPress((key) => {
+     *     debug.log(`key pressed ${key}`)
      *     restart()
      * })
      * ```
+     *
+     * @since v3001.0
      * @group Events
      */
     onKeyPress(action: (key: Key) => void): EventController;
     /**
-     * Register an event that runs when user presses certain key (also fires repeatedly when they key is being held down).
-     *
-     * @since v2000.1
+     * Register an event that runs when user presses certain kesy (also fires repeatedly when the keys are being held down).
      *
      * @example
      * ```js
@@ -1137,17 +1144,19 @@ export interface KaboomCtx<TButtonDef extends ButtonsDef = {}> {
      *     input.text = input.text.substring(0, input.text.length - 1)
      * })
      * ```
+     *
+     * @since v3000.1
      * @group Events
      */
-    onKeyPressRepeat(k: Key, action: (k: Key) => void): EventController;
+    onKeyPressRepeat(k: Key | Key[], action: (k: Key) => void): EventController;
     onKeyPressRepeat(action: (k: Key) => void): EventController;
     /**
-     * Register an event that runs when user releases certain key.
+     * Register an event that runs when user release certain keys.
      *
      * @since v2000.1
      * @group Events
      */
-    onKeyRelease(k: Key, action: (k: Key) => void): EventController;
+    onKeyRelease(k: Key | Key[], action: (k: Key) => void): EventController;
     onKeyRelease(action: (k: Key) => void): EventController;
     /**
      * Register an event that runs when user inputs text.
@@ -1165,36 +1174,40 @@ export interface KaboomCtx<TButtonDef extends ButtonsDef = {}> {
      */
     onCharInput(action: (ch: string) => void): EventController;
     /**
-     * Register an event that runs every frame when a mouse button is being held down.
+     * Register an event that runs every frame when certain mouse buttons are being held down.
      *
-     * @since v2000.1
+     * @since v3001.0
      * @group Events
      */
-    onMouseDown(action: (m: MouseButton) => void): EventController;
     onMouseDown(
-        button: MouseButton,
+        button: MouseButton | MouseButton[],
+        action: (m: MouseButton) => void,
+    ): EventController;
+    onMouseDown(
         action: (m: MouseButton) => void,
     ): EventController;
     /**
      * Register an event that runs when user clicks mouse.
      *
-     * @since v2000.1
+     * @since v3001.0
      * @group Events
      */
-    onMousePress(action: (m: MouseButton) => void): EventController;
     onMousePress(
-        button: MouseButton,
+        action: (m: MouseButton) => void,
+    ): EventController;
+    onMousePress(
+        button: MouseButton | MouseButton[],
         action: (m: MouseButton) => void,
     ): EventController;
     /**
      * Register an event that runs when user releases mouse.
      *
-     * @since v2000.1
+     * @since v3001.0
      * @group Events
      */
     onMouseRelease(action: (m: MouseButton) => void): EventController;
     onMouseRelease(
-        button: MouseButton,
+        button: MouseButton | MouseButton[],
         action: (m: MouseButton) => void,
     ): EventController;
     /**
@@ -1247,55 +1260,55 @@ export interface KaboomCtx<TButtonDef extends ButtonsDef = {}> {
      */
     onShow(action: () => void): EventController;
     /**
-     * Register an event that runs every frame when certain gamepad button is held down.
+     * Register an event that runs every frame when certain gamepad buttons are held down.
      *
-     * @since v3000.0
+     * @since v3001.0
      * @group Events
      */
     onGamepadButtonDown(
-        btn: GamepadButton,
+        btn: GamepadButton | GamepadButton[],
         action: (btn: GamepadButton) => void,
     ): EventController;
     /**
-     * Register an event that runs every frame when any gamepad button is held down.
+     * Register an event that runs every frame when any gamepad buttons are held down.
      *
-     * @since v3000.0
+     * @since v3001.0
      * @group Events
      */
     onGamepadButtonDown(
-        action: (btn: GamepadButton) => GamepadButton,
+        action: (btn: GamepadButton) => void,
     ): EventController;
     /**
      * Register an event that runs when user presses certain gamepad button.
      *
-     * @since v3000.0
+     * @since v3001.0
      * @group Events
      */
     onGamepadButtonPress(
-        btn: GamepadButton,
+        btn: GamepadButton | GamepadButton[],
         action: (btn: GamepadButton) => void,
     ): EventController;
     /**
      * Register an event that runs when user presses any gamepad button.
      *
-     * @since v3000.0
+     * @since v3001.0
      * @group Events
      */
     onGamepadButtonPress(
-        action: (btn: GamepadButton) => GamepadButton,
-    ): EventController;
-    /**
-     * Register an event that runs when user releases any gamepad button.
-     *
-     * @since v3000.0
-     * @group Events
-     */
-    onGamepadButtonRelease(
-        btn: GamepadButton,
         action: (btn: GamepadButton) => void,
     ): EventController;
     /**
-     * Register an event that runs when user releases certain gamepad button.
+     * Register an event that runs when user releases certain gamepad button
+     *
+     * @since v3001.0
+     * @group Events
+     */
+    onGamepadButtonRelease(
+        btn: GamepadButton | GamepadButton[],
+        action: (btn: GamepadButton) => void,
+    ): EventController;
+    /**
+     * Register an event that runs when user releases any gamepad button.
      *
      * @since v3000.0
      * @group Events
@@ -1318,22 +1331,27 @@ export interface KaboomCtx<TButtonDef extends ButtonsDef = {}> {
      * (like "jump") on any input (keyboard, gamepad).
      */
     onButtonPress(
-        button: keyof TButtonDef,
-        action: () => void,
+        btn: TButton | TButton[],
+        action: (btn: TButton) => void,
     ): EventController;
     /**
      * Register an event that runs when user release a defined button
      * (like "jump") on any input (keyboard, gamepad).
      */
     onButtonRelease(
-        button: keyof TButtonDef,
-        action: () => void,
+        btn: TButton | TButton[],
+        action: (btn: TButton) => void,
     ): EventController;
+    onButtonRelease(action: (btn: TButton) => void): EventController;
     /**
      * Register an event that runs when user press a defined button
      * (like "jump") on any input (keyboard, gamepad).
      */
-    onButtonDown(button: keyof TButtonDef, action: () => void): EventController;
+    onButtonDown(
+        btn: TButton | TButton[],
+        action: (btn: TButton) => void,
+    ): EventController;
+    onButtonDown(action: (btn: TButton) => void): EventController;
     /**
      * Register an event that runs when current scene ends.
      *
@@ -1761,9 +1779,9 @@ export interface KaboomCtx<TButtonDef extends ButtonsDef = {}> {
      */
     mouseDeltaPos(): Vec2;
     /**
-     * If certain key is currently down.
+     * If certain keys are currently down.
      *
-     * @since v2000.1
+     * @since v3001.0
      *
      * @example
      * ```js
@@ -1776,49 +1794,49 @@ export interface KaboomCtx<TButtonDef extends ButtonsDef = {}> {
      * ```
      * @group Info
      */
-    isKeyDown(k?: Key): boolean;
+    isKeyDown(k?: Key | Key[]): boolean;
     /**
-     * If certain key is just pressed last frame.
+     * If certain keys are just pressed last frame.
      *
-     * @since v2000.1
+     * @since v3001.0
      * @group Info
      */
-    isKeyPressed(k?: Key): boolean;
+    isKeyPressed(k?: Key | Key[]): boolean;
     /**
-     * If certain key is just pressed last frame (also fires repeatedly when the key is being held down).
+     * If certain keys are just pressed last frame (also fires repeatedly when the keys are being held down).
      *
-     * @since v2000.1
+     * @since v3001.0
      * @group Info
      */
-    isKeyPressedRepeat(k?: Key): boolean;
+    isKeyPressedRepeat(k?: Key | Key[]): boolean;
     /**
-     * If certain key is just released last frame.
+     * If certain keys are just released last frame.
      *
-     * @since v2000.1
+     * @since v3001.0
      * @group Info
      */
-    isKeyReleased(k?: Key): boolean;
+    isKeyReleased(k?: Key | Key[]): boolean;
     /**
-     * If a mouse button is currently down.
+     * If mouse buttons are currently down.
      *
-     * @since v2000.1
+     * @since v3001.0
      * @group Info
      */
-    isMouseDown(button?: MouseButton): boolean;
+    isMouseDown(button?: MouseButton | MouseButton[]): boolean;
     /**
-     * If a mouse button is just clicked last frame.
+     * If mouse buttons are just clicked last frame.
      *
-     * @since v2000.1
+     * @since v3001.0
      * @group Info
      */
-    isMousePressed(button?: MouseButton): boolean;
+    isMousePressed(button?: MouseButton | MouseButton[]): boolean;
     /**
-     * If a mouse button is just released last frame.
+     * If mouse buttons are just released last frame.
      *
-     * @since v2000.1
+     * @since v3001.0
      * @group Info
      */
-    isMouseReleased(button?: MouseButton): boolean;
+    isMouseReleased(button?: MouseButton | MouseButton[]): boolean;
     /**
      * If mouse moved last frame.
      *
@@ -1827,47 +1845,47 @@ export interface KaboomCtx<TButtonDef extends ButtonsDef = {}> {
      */
     isMouseMoved(): boolean;
     /**
-     * If a gamepad button is just pressed last frame
+     * If certain gamepad buttons are just pressed last frame
      *
      * @since v3000.0
      * @group Info
      */
-    isGamepadButtonPressed(btn?: GamepadButton): boolean;
+    isGamepadButtonPressed(btn?: GamepadButton | GamepadButton[]): boolean;
     /**
-     * If a gamepad button is currently held down.
+     * If certain gamepad buttons are currently held down.
      *
      * @since v3000.0
      * @group Info
      */
-    isGamepadButtonDown(btn?: GamepadButton): boolean;
+    isGamepadButtonDown(btn?: GamepadButton | GamepadButton): boolean;
     /**
-     * If a gamepad button is just released last frame.
+     * If certain gamepad buttons are just released last frame.
      *
      * @since v3000.0
      * @group Info
      */
-    isGamepadButtonReleased(btn?: GamepadButton): boolean;
+    isGamepadButtonReleased(btn?: GamepadButton | GamepadButton[]): boolean;
     /**
-     * If a defined button is just pressed last frame on any input (keyboard, gamepad).
+     * If certain binded buttons are just pressed last frame on any input (keyboard, gamepad).
      *
      * @since v3001.0
      * @group Info
      */
-    isButtonPressed(button: keyof TButtonDef): boolean;
+    isButtonPressed(button: TButton | TButton[]): boolean;
     /**
-     * If a defined button is currently held down on any input (keyboard, gamepad).
+     * If certain binded buttons are currently held down on any input (keyboard, gamepad).
      *
      * @since v3001.0
      * @group Info
      */
-    isButtonDown(button: keyof TButtonDef): boolean;
+    isButtonDown(button: TButton | TButton[]): boolean;
     /**
-     * If a defined button is just released last frame on any input (keyboard, gamepad).
+     * If certain binded buttons are just released last frame on any input (keyboard, gamepad).
      *
      * @since v3001.0
      * @group Info
      */
-    isButtonReleased(button: keyof TButtonDef): boolean;
+    isButtonReleased(button: TButton | TButton[]): boolean;
     /**
      * Get a input binding from a button name.
      */
@@ -3435,9 +3453,7 @@ export type ButtonBinding = {
 /**
  * A buttons definition.
  */
-export type ButtonsDef = {
-    [key: string]: ButtonBinding;
-};
+export type ButtonsDef = Record<string, ButtonBinding>;
 
 /** A KAPLAY's gamepad */
 export type KGamePad = {
@@ -3801,60 +3817,26 @@ export interface GameObjRaw {
      * @since v3001.0
      */
     canvas: FrameBuffer | null;
-    onKeyDown(key: Key, action: (key: Key) => void): EventController;
-    onKeyDown(action: (key: Key) => void): EventController;
-    onKeyPress(key: Key, action: (key: Key) => void): EventController;
-    onKeyPress(action: (key: Key) => void): EventController;
-    onKeyPressRepeat(k: Key, action: (k: Key) => void): EventController;
-    onKeyPressRepeat(action: (k: Key) => void): EventController;
-    onKeyRelease(k: Key, action: (k: Key) => void): EventController;
-    onKeyRelease(action: (k: Key) => void): EventController;
-    onCharInput(action: (ch: string) => void): EventController;
-    onMouseDown(action: (m: MouseButton) => void): EventController;
-    onMouseDown(
-        button: MouseButton,
-        action: (m: MouseButton) => void,
-    ): EventController;
-    onMousePress(action: (m: MouseButton) => void): EventController;
-    onMousePress(
-        button: MouseButton,
-        action: (m: MouseButton) => void,
-    ): EventController;
-    onMouseRelease(action: (m: MouseButton) => void): EventController;
-    onMouseRelease(
-        button: MouseButton,
-        action: (m: MouseButton) => void,
-    ): EventController;
-    onMouseMove(action: (pos: Vec2, delta: Vec2) => void): EventController;
-    onTouchStart(action: (pos: Vec2, t: Touch) => void): EventController;
-    onTouchMove(action: (pos: Vec2, t: Touch) => void): EventController;
-    onTouchEnd(action: (pos: Vec2, t: Touch) => void): EventController;
-    onScroll(action: (delta: Vec2) => void): EventController;
-    onGamepadButtonDown(
-        btn: GamepadButton,
-        action: (btn: GamepadButton) => void,
-    ): EventController;
-    onGamepadButtonDown(
-        action: (btn: GamepadButton) => GamepadButton,
-    ): EventController;
-    onGamepadButtonPress(
-        btn: GamepadButton,
-        action: (btn: GamepadButton) => void,
-    ): EventController;
-    onGamepadButtonPress(
-        action: (btn: GamepadButton) => GamepadButton,
-    ): EventController;
-    onGamepadButtonRelease(
-        btn: GamepadButton,
-        action: (btn: GamepadButton) => void,
-    ): EventController;
-    onGamepadButtonRelease(
-        action: (btn: GamepadButton) => void,
-    ): EventController;
-    onGamepadStick(
-        stick: GamepadStick,
-        action: (value: Vec2) => void,
-    ): EventController;
+    onKeyDown: KaboomCtx["onKeyDown"];
+    onKeyPress: KaboomCtx["onKeyPress"];
+    onKeyPressRepeat: KaboomCtx["onKeyPressRepeat"];
+    onKeyRelease: KaboomCtx["onKeyRelease"];
+    onCharInput: KaboomCtx["onCharInput"];
+    onMouseDown: KaboomCtx["onMouseDown"];
+    onMousePress: KaboomCtx["onMousePress"];
+    onMouseRelease: KaboomCtx["onMouseRelease"];
+    onMouseMove: KaboomCtx["onMouseMove"];
+    onTouchStart: KaboomCtx["onTouchStart"];
+    onTouchMove: KaboomCtx["onTouchMove"];
+    onTouchEnd: KaboomCtx["onTouchEnd"];
+    onScroll: KaboomCtx["onScroll"];
+    onGamepadButtonDown: KaboomCtx["onGamepadButtonDown"];
+    onGamepadButtonPress: KaboomCtx["onGamepadButtonPress"];
+    onGamepadButtonRelease: KaboomCtx["onGamepadButtonRelease"];
+    onGamepadStick: KaboomCtx["onGamepadStick"];
+    onButtonDown: KaboomCtx["onButtonDown"];
+    onButtonPress: KaboomCtx["onButtonPress"];
+    onButtonRelease: KaboomCtx["onButtonRelease"];
 }
 
 /**

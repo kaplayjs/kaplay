@@ -3759,7 +3759,6 @@ const kaplay = (gopt: KaboomOpt = {}): KaboomCtx => {
             },
         };
 
-        // TODO: type with as const
         const evs = [
             "onKeyPress",
             "onKeyPressRepeat",
@@ -3779,12 +3778,16 @@ const kaplay = (gopt: KaboomOpt = {}): KaboomCtx => {
             "onGamepadButtonDown",
             "onGamepadButtonRelease",
             "onGamepadStick",
-        ];
+            "onButtonPress",
+            "onButtonDown",
+            "onButtonRelease",
+        ] as const;
 
         for (const e of evs) {
-            obj[e] = (...args) => {
-                const ev = app[e](...args);
+            obj[e] = (...args: unknown[]) => {
+                const ev = app[e as any]?.(...args);
                 inputEvents.push(ev);
+
                 // TODO: what if the game object is destroy and re-added
                 obj.onDestroy(() => ev.cancel());
                 return ev;

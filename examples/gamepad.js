@@ -39,7 +39,7 @@ scene("game", () => {
         debug.log(b);
     });
 
-    onGamepadButtonPress("south", () => {
+    onGamepadButtonPress(["south", "west"], () => {
         player.jump();
     });
 
