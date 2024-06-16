@@ -39,31 +39,59 @@ onKeyPress(["w", "up"], () => {
     player.jump();
 });
 ```
+- readded `layers()` and the `layer()` component
 
-- renamed `kaboom()` to `kaplay()` (you can still use `kaboom*`)
+Before the `z()` component, there was a `layer()` component that allowed you to
+control the draw order of objects. It was removed in v3000, but now it's back
+
+```js
+// define the layers
+layers([
+    "bg",
+    "game",
+    "ui",
+// the default layer
+], "game");
+
+// use the layer component
+add([
+    sprite("bg"),
+    layer("bg")
+]);
+```
+
+- added support for radius in individual corners for `rect()` component
+
+```js
+add([
+    rect(100, 100, {
+        radius: [10, 20, 30, 40],
+    }),
+]);
+```
+
+- added `getTreeRoot()` to get the game's root object, which is the parent of all other objects
+- added `loadMusic()` to load streaming audio (doesn't block in loading screen)
+- added `chooseMultiple()` and `shuffle()` helpers for arrays
+- added `getSceneName()` to get the current scene name
+- added `SpriteComp.getCurAnim()` to get the current animation data
+- added `outline()`, `shader()`, and `area()` properties to `debug.inspect` (f1)
+- added `GameObjRaw.tags` to get a game object's tags
+- added `GameObjRaw.sprite` property to get the name of the sprite
 - added global raycast function and raycast method to level
 - added support for textured polygons
 - added support for concave polygon drawing
-- added `loadMusic()` to load streaming audio (doesn't block in loading screen)
 - added support for arrays in uniforms
 - added support for texture larger than 2048x2048
-- added `chooseMultiple()` and `shuffle()` helper functions
-- added `getSceneName()` to get the current scene name
 - added support for gravity direction
-- added `SpriteComp.getCurAnim()` to get the current animation data
-- added `outline()`, `shader()`, and `area()` properties to inspect
-- added support for radius in individual corners for `rect()` component
 - added line join (bevel, miter, round) and line caps (square, round)
 - added quadratic bezier and Catmull-Rom evaluation
 - added evaluation of the first and second derivatives for all splines
 - added higher order easing functions linear, steps and cubic-bezier
-- readded layers and the layer component
-- added `getTreeRoot()` to get the game's root object
-- added `tags` to get a game object's tags
-- added `sprite` property to get the name of the sprite
 
 ### Deprecated
 
+- deprecated `kaboom()` in favor of `kaplay()` (you can still use `kaboom*`)
 - deprecated `SpriteComp.curAnim()` in favor of `SpriteComp.getCurAnim().name`
 - deprecated `fadeIn` component in favor of `OpacityComp.fadeIn()`
 
