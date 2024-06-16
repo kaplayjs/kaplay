@@ -1,6 +1,5 @@
 import { getKaboomContext } from "../../kaboom";
-import type { Vec2 } from "../../math";
-import type { RaycastResult } from "../../types";
+import type { RaycastResult, Vec2 } from "../../math";
 
 // this is not a component lol
 export function raycast(origin: Vec2, direction: Vec2, exclude?: string[]) {
