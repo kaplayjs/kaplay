@@ -1054,14 +1054,14 @@ export interface KaboomCtx<
      * Register an event that runs when a gamepad is connected.
      *
      * @since v3000.0
-     * @group Events
+     * @group Input
      */
     onGamepadConnect(action: (gamepad: KGamePad) => void): void;
     /**
      * Register an event that runs when a gamepad is disconnected.
      *
      * @since v3000.0
-     * @group Events
+     * @group Input
      */
     onGamepadDisconnect(action: (gamepad: KGamePad) => void): void;
     /**
@@ -1131,13 +1131,11 @@ export interface KaboomCtx<
      * onClick("chest", (chest) => chest.open())
      * ```
      *
-     * @group Events
+     * @group Input
      */
     onClick(tag: Tag, action: (a: GameObj) => void): EventController;
     /**
      * Register an event that runs when users clicks.
-     *
-     * @since v2000.1
      *
      * @example
      * ```js
@@ -1145,7 +1143,7 @@ export interface KaboomCtx<
      * onClick(() => go("game"))
      * ```
      *
-     * @group Events
+     * @since v2000.1
      */
     onClick(action: () => void): EventController;
     /**
@@ -1172,8 +1170,6 @@ export interface KaboomCtx<
     /**
      * Register an event that runs every frame when a key is held down.
      *
-     * @since v2000.1
-     *
      * @example
      * ```js
      * // move left by SPEED pixels per frame every frame when left arrow key is being held down
@@ -1181,14 +1177,16 @@ export interface KaboomCtx<
      *     bean.move(-SPEED, 0)
      * })
      * ```
-     * @group Events
+     *
+     * @since v2000.1
+     * @group Input
      */
     onKeyDown(key: Key | Key[], action: (key: Key) => void): EventController;
     /**
      * Register an event that runs every frame when any key is held down.
      *
      * @since v2000.1
-     * @group Events
+     * @group Input
      */
     onKeyDown(action: (key: Key) => void): EventController;
     /**
@@ -1207,7 +1205,7 @@ export interface KaboomCtx<
      * ```
      *
      * @since v2000.1
-     * @group Events
+     * @group Input
      */
     onKeyPress(key: Key | Key[], action: (key: Key) => void): EventController;
     /**
@@ -1223,7 +1221,7 @@ export interface KaboomCtx<
      * ```
      *
      * @since v3001.0
-     * @group Events
+     * @group Input
      */
     onKeyPress(action: (key: Key) => void): EventController;
     /**
@@ -1238,7 +1236,7 @@ export interface KaboomCtx<
      * ```
      *
      * @since v3000.1
-     * @group Events
+     * @group Input
      */
     onKeyPressRepeat(k: Key | Key[], action: (k: Key) => void): EventController;
     onKeyPressRepeat(action: (k: Key) => void): EventController;
@@ -1246,7 +1244,7 @@ export interface KaboomCtx<
      * Register an event that runs when user release certain keys.
      *
      * @since v2000.1
-     * @group Events
+     * @group Input
      */
     onKeyRelease(k: Key | Key[], action: (k: Key) => void): EventController;
     onKeyRelease(action: (k: Key) => void): EventController;
@@ -1262,14 +1260,14 @@ export interface KaboomCtx<
      *     input.text += ch
      * })
      * ```
-     * @group Events
+     * @group Input
      */
     onCharInput(action: (ch: string) => void): EventController;
     /**
      * Register an event that runs every frame when certain mouse buttons are being held down.
      *
      * @since v3001.0
-     * @group Events
+     * @group Input
      */
     onMouseDown(
         button: MouseButton | MouseButton[],
@@ -1282,7 +1280,7 @@ export interface KaboomCtx<
      * Register an event that runs when user clicks mouse.
      *
      * @since v3001.0
-     * @group Events
+     * @group Input
      */
     onMousePress(
         action: (m: MouseButton) => void,
@@ -1295,7 +1293,7 @@ export interface KaboomCtx<
      * Register an event that runs when user releases mouse.
      *
      * @since v3001.0
-     * @group Events
+     * @group Input
      */
     onMouseRelease(action: (m: MouseButton) => void): EventController;
     onMouseRelease(
@@ -1306,35 +1304,35 @@ export interface KaboomCtx<
      * Register an event that runs whenever user move the mouse.
      *
      * @since v2000.1
-     * @group Events
+     * @group Input
      */
     onMouseMove(action: (pos: Vec2, delta: Vec2) => void): EventController;
     /**
      * Register an event that runs when a touch starts.
      *
      * @since v2000.1
-     * @group Events
+     * @group Input
      */
     onTouchStart(action: (pos: Vec2, t: Touch) => void): EventController;
     /**
      * Register an event that runs whenever touch moves.
      *
      * @since v2000.1
-     * @group Events
+     * @group Input
      */
     onTouchMove(action: (pos: Vec2, t: Touch) => void): EventController;
     /**
      * Register an event that runs when a touch ends.
      *
      * @since v2000.1
-     * @group Events
+     * @group Input
      */
     onTouchEnd(action: (pos: Vec2, t: Touch) => void): EventController;
     /**
      * Register an event that runs when mouse wheel scrolled.
      *
      * @since v3000.0
-     * @group Events
+     * @group Input
      */
     onScroll(action: (delta: Vec2) => void): EventController;
     /**
@@ -1355,7 +1353,7 @@ export interface KaboomCtx<
      * Register an event that runs every frame when certain gamepad buttons are held down.
      *
      * @since v3001.0
-     * @group Events
+     * @group Input
      */
     onGamepadButtonDown(
         btn: GamepadButton | GamepadButton[],
@@ -1365,7 +1363,7 @@ export interface KaboomCtx<
      * Register an event that runs every frame when any gamepad buttons are held down.
      *
      * @since v3001.0
-     * @group Events
+     * @group Input
      */
     onGamepadButtonDown(
         action: (btn: GamepadButton) => void,
@@ -1374,7 +1372,7 @@ export interface KaboomCtx<
      * Register an event that runs when user presses certain gamepad button.
      *
      * @since v3001.0
-     * @group Events
+     * @group Input
      */
     onGamepadButtonPress(
         btn: GamepadButton | GamepadButton[],
@@ -1384,7 +1382,7 @@ export interface KaboomCtx<
      * Register an event that runs when user presses any gamepad button.
      *
      * @since v3001.0
-     * @group Events
+     * @group Input
      */
     onGamepadButtonPress(
         action: (btn: GamepadButton) => void,
@@ -1393,7 +1391,7 @@ export interface KaboomCtx<
      * Register an event that runs when user releases certain gamepad button
      *
      * @since v3001.0
-     * @group Events
+     * @group Input
      */
     onGamepadButtonRelease(
         btn: GamepadButton | GamepadButton[],
@@ -1403,7 +1401,7 @@ export interface KaboomCtx<
      * Register an event that runs when user releases any gamepad button.
      *
      * @since v3000.0
-     * @group Events
+     * @group Input
      */
     onGamepadButtonRelease(
         action: (btn: GamepadButton) => void,
@@ -1412,7 +1410,7 @@ export interface KaboomCtx<
      * Register an event that runs when the gamepad axis exists.
      *
      * @since v3000.0
-     * @group Events
+     * @group Input
      */
     onGamepadStick(
         stick: GamepadStick,
@@ -1421,6 +1419,9 @@ export interface KaboomCtx<
     /**
      * Register an event that runs when user press a defined button
      * (like "jump") on any input (keyboard, gamepad).
+     *
+     * @since v3001.0
+     * @group Input
      */
     onButtonPress(
         btn: TButton | TButton[],
@@ -1429,6 +1430,9 @@ export interface KaboomCtx<
     /**
      * Register an event that runs when user release a defined button
      * (like "jump") on any input (keyboard, gamepad).
+     *
+     * @since v3001.0
+     * @group Input
      */
     onButtonRelease(
         btn: TButton | TButton[],
@@ -1438,6 +1442,9 @@ export interface KaboomCtx<
     /**
      * Register an event that runs when user press a defined button
      * (like "jump") on any input (keyboard, gamepad).
+     *
+     * @since v3001.0
+     * @group Input
      */
     onButtonDown(
         btn: TButton | TButton[],
@@ -1855,25 +1862,23 @@ export interface KaboomCtx<
      * Is currently on a touch screen device.
      *
      * @since v3000.0
-     * @group Info
+     * @group Input
      */
     isTouchscreen(): boolean;
     /**
      * Get current mouse position (without camera transform).
      *
-     * @group Info
+     * @group Input
      */
     mousePos(): Vec2;
     /**
      * How much mouse moved last frame.
      *
-     * @group Info
+     * @group Input
      */
     mouseDeltaPos(): Vec2;
     /**
      * If certain keys are currently down.
-     *
-     * @since v3001.0
      *
      * @example
      * ```js
@@ -1884,120 +1889,128 @@ export interface KaboomCtx<
      *     }
      * })
      * ```
-     * @group Info
+     *
+     * @since v3001.0
+     * @group Input
      */
     isKeyDown(k?: Key | Key[]): boolean;
     /**
      * If certain keys are just pressed last frame.
      *
      * @since v3001.0
-     * @group Info
+     * @group Input
      */
     isKeyPressed(k?: Key | Key[]): boolean;
     /**
      * If certain keys are just pressed last frame (also fires repeatedly when the keys are being held down).
      *
      * @since v3001.0
-     * @group Info
+     * @group Input
      */
     isKeyPressedRepeat(k?: Key | Key[]): boolean;
     /**
      * If certain keys are just released last frame.
      *
      * @since v3001.0
-     * @group Info
+     * @group Input
      */
     isKeyReleased(k?: Key | Key[]): boolean;
     /**
      * If mouse buttons are currently down.
      *
      * @since v3001.0
-     * @group Info
+     * @group Input
      */
     isMouseDown(button?: MouseButton | MouseButton[]): boolean;
     /**
      * If mouse buttons are just clicked last frame.
      *
      * @since v3001.0
-     * @group Info
+     * @group Input
      */
     isMousePressed(button?: MouseButton | MouseButton[]): boolean;
     /**
      * If mouse buttons are just released last frame.
      *
      * @since v3001.0
-     * @group Info
+     * @group Input
      */
     isMouseReleased(button?: MouseButton | MouseButton[]): boolean;
     /**
      * If mouse moved last frame.
      *
      * @since v2000.1
-     * @group Info
+     * @group Input
      */
     isMouseMoved(): boolean;
     /**
      * If certain gamepad buttons are just pressed last frame
      *
      * @since v3000.0
-     * @group Info
+     * @group Input
      */
     isGamepadButtonPressed(btn?: GamepadButton | GamepadButton[]): boolean;
     /**
      * If certain gamepad buttons are currently held down.
      *
      * @since v3000.0
-     * @group Info
+     * @group Input
      */
     isGamepadButtonDown(btn?: GamepadButton | GamepadButton): boolean;
     /**
      * If certain gamepad buttons are just released last frame.
      *
      * @since v3000.0
-     * @group Info
+     * @group Input
      */
     isGamepadButtonReleased(btn?: GamepadButton | GamepadButton[]): boolean;
     /**
      * If certain binded buttons are just pressed last frame on any input (keyboard, gamepad).
      *
      * @since v3001.0
-     * @group Info
+     * @group Input
      */
     isButtonPressed(button: TButton | TButton[]): boolean;
     /**
      * If certain binded buttons are currently held down on any input (keyboard, gamepad).
      *
      * @since v3001.0
-     * @group Info
+     * @group Input
      */
     isButtonDown(button: TButton | TButton[]): boolean;
     /**
      * If certain binded buttons are just released last frame on any input (keyboard, gamepad).
      *
      * @since v3001.0
-     * @group Info
+     * @group Input
      */
     isButtonReleased(button: TButton | TButton[]): boolean;
     /**
      * Get a input binding from a button name.
+     *
+     * @since v3001.0
+     * @group Input
      */
     getButton(button: keyof TButtonDef): ButtonBinding;
     /**
      * Set a input binding for a button name.
+     *
+     * @since v3001.0
+     * @group Input
      */
     setButton(button: string, def: ButtonBinding): void;
     /**
      * Get stick axis values from a gamepad.
      *
      * @since v3001.0
-     * @group Info
+     * @group Input
      */
     getGamepadStick(stick: GamepadStick): Vec2;
     /**
      * List of characters inputted since last frame.
      *
      * @since v3000.0
-     * @group Info
+     * @group Input
      */
     charInputted(): string[];
     /**
@@ -3396,7 +3409,7 @@ export type MergePlugins<T extends PluginList<any>> = MergeObj<
 /**
  * A component list.
  *
- * @group Component
+ * @group Components
  */
 export type CompList<T> = Array<T | Tag>;
 export type PluginList<T> = Array<T | KaboomPlugin<any>>;
