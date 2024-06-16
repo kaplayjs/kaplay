@@ -1717,6 +1717,9 @@ export function testPointPoint(p1: Point, p2: Point): boolean {
     return p1.x === p2.x && p1.y === p2.y;
 }
 
+/**
+ * @group Math
+ */
 export type ShapeType = Vec2 | Circle | Line | Rect | Polygon | Ellipse;
 
 export function testPointShape(point: Point, shape: ShapeType): boolean {
@@ -1845,6 +1848,9 @@ export function testShapeShape(shape1: ShapeType, shape2: ShapeType): boolean {
     }
 }
 
+/**
+ * @group Math
+ */
 export type RaycastHit = {
     fraction: number;
     normal: Vec2;
@@ -1852,6 +1858,9 @@ export type RaycastHit = {
     gridPos?: Vec2;
 };
 
+/**
+ * @group Math
+ */
 export type RaycastResult = RaycastHit | null;
 
 function raycastLine(origin: Vec2, direction: Vec2, line: Line): RaycastResult {

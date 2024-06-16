@@ -42,7 +42,7 @@ import type {
     ZComp,
 } from "./components/";
 import type { FontData } from "./fonts";
-import type { Vec2 } from "./math";
+import type { RaycastHit, RaycastResult, ShapeType, Vec2 } from "./math";
 import type { Event, EventController, EventHandler } from "./utils";
 
 export type {
@@ -75,11 +75,14 @@ export type {
     PolygonComp,
     PolygonCompOpt,
     PosComp,
+    RaycastHit,
+    RaycastResult,
     RectComp,
     RectCompOpt,
     RotateComp,
     ScaleComp,
     ShaderComp,
+    ShapeType,
     SpriteComp,
     SpriteCompOpt,
     StateComp,
@@ -5149,33 +5152,6 @@ export type RNGValue =
     | number
     | Vec2
     | Color;
-
-/**
- * @group Math
- */
-export type ShapeType =
-    | Vec2
-    | Circle
-    | Ellipse
-    | Line
-    | Rect
-    | Polygon;
-
-/**
- * @group Math
- */
-export type RaycastHit = {
-    fraction: number;
-    normal: Vec2;
-    point: Vec2;
-    gridPos?: Vec2;
-    object?: GameObj;
-};
-
-/**
- * @group Math
- */
-export type RaycastResult = RaycastHit | null;
 
 /**
  * @group Math
