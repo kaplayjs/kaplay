@@ -6800,4 +6800,4 @@ export interface SpriteCurAnim {
     onEnd: () => void;
 }
 
-export default kaplay;
+export type { kaplay as default };
