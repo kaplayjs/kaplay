@@ -1,4 +1,4 @@
-## v3001.0
+## v3001.0 (alpha, kaplay@next)
 
 - added input bindings, `onButtonPress`, `onButtonRelease`, `onButtonDown`, and
 it's corresponding boolean versions, `isButtonPressed`, `isButtonDown` and 
