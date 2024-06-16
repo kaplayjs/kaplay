@@ -1,4 +1,14 @@
-import type { ShaderComp, Uniform } from "../../types";
+import type { Comp, Uniform } from "../../types";
+
+/**
+ * The {@link shader `shader()`} component.
+ *
+ * @group Components
+ */
+export interface ShaderComp extends Comp {
+    uniform: Uniform;
+    shader: string;
+}
 
 export function shader(
     id: string,

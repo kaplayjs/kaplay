@@ -131,7 +131,6 @@ import type {
     BitmapFontData,
     BoomOpt,
     CharTransform,
-    ColorComp,
     Comp,
     CompList,
     Debug,
@@ -233,6 +232,7 @@ import beanSpriteSrc from "./assets/bean.png";
 import boomSpriteSrc from "./assets/boom.png";
 import burpSoundSrc from "./assets/burp.mp3";
 import kaSpriteSrc from "./assets/ka.png";
+import { color } from "./components/draw/color";
 
 // convert anchor string to a vec2 offset
 export function anchorPt(orig: Anchor | Vec2): Vec2 {
@@ -296,10 +296,6 @@ export const getKaboomContext = (fallBack?: any): KaboomCtx => {
     }
 
     return ctx;
-};
-
-export const getInternalContext = (kaboom: KaboomCtx): InternalCtx => {
-    return kaboom._k;
 };
 
 // only exports one kaplay() which contains all the state
@@ -3992,16 +3988,6 @@ const kaplay = (gopt: KaboomOpt = {}): KaboomCtx => {
 
     function getBackground() {
         return gfx.bgColor.clone();
-    }
-
-    function color(...args): ColorComp {
-        return {
-            id: "color",
-            color: rgb(...args),
-            inspect() {
-                return this.color.toString();
-            },
-        };
     }
 
     function toFixed(n: number, f: number) {

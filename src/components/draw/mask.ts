@@ -1,4 +1,13 @@
-import type { Mask, MaskComp } from "../../types";
+import type { Comp, Mask } from "../../types";
+
+/**
+ * The {@link mask `mask()`} component.
+ *
+ * @group Components
+ */
+export interface MaskComp extends Comp {
+    mask: Mask;
+}
 
 export function mask(m: Mask = "intersect"): MaskComp {
     return {

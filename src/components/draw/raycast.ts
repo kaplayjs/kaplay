@@ -2,6 +2,7 @@ import { getKaboomContext } from "../../kaboom";
 import type { Vec2 } from "../../math";
 import type { RaycastResult } from "../../types";
 
+// this is not a component lol
 export function raycast(origin: Vec2, direction: Vec2, exclude?: string[]) {
     const k = getKaboomContext(this);
     let minHit: RaycastResult;

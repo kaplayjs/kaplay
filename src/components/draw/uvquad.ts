@@ -1,17 +1,37 @@
-import { getInternalContext, getKaboomContext } from "../../kaboom";
+import { getKaboomContext } from "../../kaboom";
 import { Rect, vec2 } from "../../math";
-import type { GameObj, UVQuadComp } from "../../types";
+import type { Comp, GameObj } from "../../types";
 
+/**
+ * The {@link uvquad `uvquad()`} component.
+ *
+ * @group Components
+ */
+export interface UVQuadComp extends Comp {
+    draw: Comp["draw"];
+    /**
+     * Width of rect.
+     */
+    width: number;
+    /**
+     * Height of height.
+     */
+    height: number;
+    /**
+     * @since v3000.0
+     */
+    renderArea(): Rect;
+}
 export function uvquad(w: number, h: number): UVQuadComp {
     const k = getKaboomContext(this);
-    const internal = getInternalContext(k);
+    const { getRenderProps } = k._k;
 
     return {
         id: "rect",
         width: w,
         height: h,
         draw(this: GameObj<UVQuadComp>) {
-            k.drawUVQuad(Object.assign(internal.getRenderProps(this), {
+            k.drawUVQuad(Object.assign(getRenderProps(this), {
                 width: this.width,
                 height: this.height,
             }));

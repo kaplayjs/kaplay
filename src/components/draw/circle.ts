@@ -1,30 +1,42 @@
 import { getKaboomContext } from "../../kaboom";
 import { Rect, Vec2 } from "../../math";
-import type {
-    AnchorComp,
-    CircleComp,
-    CircleCompOpt,
-    GameObj,
-    KaboomCtx,
-} from "../../types";
+import type { Comp, GameObj } from "../../types";
+import type { AnchorComp } from "../transform/anchor";
+import type { outline } from "./outline";
 
-function getRenderProps(obj: GameObj<any>) {
-    return {
-        color: obj.color,
-        opacity: obj.opacity,
-        anchor: obj.anchor,
-        outline: obj.outline,
-        shader: obj.shader,
-        uniform: obj.uniform,
-    };
+/**
+ * The {@link circle `circle()`} component.
+ *
+ * @group Components
+ */
+export interface CircleComp extends Comp {
+    draw: Comp["draw"];
+    /** Radius of circle. */
+    radius: number;
+    /**
+     * Render area of the circle.
+     *
+     * @since v3000.0
+     */
+    renderArea(): Rect;
 }
 
-export function circle(
-    this: KaboomCtx,
-    radius: number,
-    opt: CircleCompOpt = {},
-): CircleComp {
+/**
+ * Options for the {@link circle `circle()``} component.
+ *
+ * @group Components
+ */
+export interface CircleCompOpt {
+    /**
+     * If fill the circle (useful if you only want to render outline with
+     * {@link outline `outline()`} component).
+     */
+    fill?: boolean;
+}
+
+export function circle(radius: number, opt: CircleCompOpt = {}): CircleComp {
     const k = getKaboomContext(this);
+    const { getRenderProps } = k._k;
 
     return {
         id: "circle",

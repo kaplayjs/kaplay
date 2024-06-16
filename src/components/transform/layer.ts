@@ -1,10 +1,28 @@
-import { getInternalContext, getKaboomContext } from "../../kaboom";
-import type { LayerComp } from "../../types";
+import { getKaboomContext } from "../../kaboom";
+import type { Comp } from "../../types";
+
+/**
+ * The {@link layer `layer()`} component.
+ *
+ * @group Components
+ */
+export interface LayerComp extends Comp {
+    get layerIndex(): number;
+    /**
+     * Get the name of the current layer the object is assigned to.
+     */
+    get layer(): string;
+    /**
+     * Set the name of the layer the object should be assigned to.
+     */
+    set layer(name: string);
+}
 
 export function layer(layer: string): LayerComp {
     const k = getKaboomContext(this);
-    const internal = getInternalContext(k);
-    let _layerIndex = internal.game.layers.indexOf(layer);
+    const { game } = k._k;
+
+    let _layerIndex = game.layers.indexOf(layer);
     return {
         id: "layer",
         get layerIndex() {
@@ -14,7 +32,7 @@ export function layer(layer: string): LayerComp {
             return k.layers[_layerIndex];
         },
         set layer(value: string) {
-            _layerIndex = internal.game.layers.indexOf(value);
+            _layerIndex = game.layers.indexOf(value);
             if (_layerIndex == -1) throw Error("Invalid layer name");
         },
         inspect() {

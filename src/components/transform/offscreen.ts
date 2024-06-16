@@ -1,13 +1,55 @@
 import { DEF_OFFSCREEN_DIS } from "../../constants";
 import { getKaboomContext } from "../../kaboom";
 import { Rect, vec2 } from "../../math";
-import type {
-    GameObj,
-    OffScreenComp,
-    OffScreenCompOpt,
-    PosComp,
-} from "../../types";
+import type { Comp, GameObj } from "../../types";
 import type { EventController } from "../../utils";
+import type { PosComp } from "./pos";
+
+/**
+ * The {@link offscreen `offscreen()`} component.
+ *
+ * @group Components
+ */
+export interface OffScreenComp extends Comp {
+    /**
+     * If object is currently out of view.
+     */
+    isOffScreen(): boolean;
+    /**
+     * Register an event that runs when object goes out of view.
+     */
+    onExitScreen(action: () => void): EventController;
+    /**
+     * Register an event that runs when object enters view.
+     */
+    onEnterScreen(action: () => void): EventController;
+}
+
+/**
+ * Options for {@link offscreen `offscreen()`} component.
+ *
+ * @group Components
+ */
+export interface OffScreenCompOpt {
+    /**
+     * If hide object when out of view.
+     */
+    hide?: boolean;
+    /**
+     * If pause object when out of view.
+     */
+    pause?: boolean;
+    /**
+     * If destroy object when out of view.
+     */
+    destroy?: boolean;
+    /**
+     * The distance when out of view is triggered (default 200).
+     *
+     * @since v3000.0
+     */
+    distance?: number;
+}
 
 export function offscreen(opt: OffScreenCompOpt = {}): OffScreenComp {
     const k = getKaboomContext(this);

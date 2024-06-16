@@ -1,18 +1,163 @@
 import { DEF_JUMP_FORCE, MAX_VEL } from "../../constants";
-import { getInternalContext, getKaboomContext } from "../../kaboom";
-import { vec2 } from "../../math";
-import type {
-    AreaComp,
-    BodyComp,
-    BodyCompOpt,
-    GameObj,
-    PosComp,
-} from "../../types";
+import { getKaboomContext } from "../../kaboom";
+import { type Vec2, vec2 } from "../../math";
+import type { Collision, Comp, GameObj, PosComp } from "../../types";
 import type { EventController } from "../../utils";
+import type { AreaComp } from "./area";
+
+/**
+ * The {@link body `body()`} component.
+ *
+ * @group Components
+ */
+export interface BodyComp extends Comp {
+    /**
+     * Object current velocity.
+     *
+     * @since v3001.0
+     */
+    vel: Vec2;
+    /**
+     * How much velocity decays (velocity *= (1 - drag) every frame).
+     *
+     * @since v3001.0
+     */
+    drag: number;
+    /**
+     * If object is static, won't move, and all non static objects won't move past it.
+     */
+    isStatic: boolean;
+    /**
+     * Initial speed in pixels per second for jump().
+     */
+    jumpForce: number;
+    /**
+     * Gravity multiplier.
+     */
+    gravityScale: number;
+    /**
+     * Mass of the body, decides how much a non-static body should move when resolves with another non-static body. (default 1).
+     *
+     * @since v3000.0
+     */
+    mass?: number;
+    /**
+     * If object should move with moving platform (default true).
+     *
+     * @since v3000.0
+     */
+    stickToPlatform?: boolean;
+    /**
+     * Current platform landing on.
+     */
+    curPlatform(): GameObj | null;
+    /**
+     * If currently landing on a platform.
+     *
+     * @since v2000.1
+     */
+    isGrounded(): boolean;
+    /**
+     * If currently falling.
+     *
+     * @since v2000.1
+     */
+    isFalling(): boolean;
+    /**
+     * If currently rising.
+     *
+     * @since v3000.0
+     */
+    isJumping(): boolean;
+    /**
+     * Upward thrust.
+     */
+    jump(force?: number): void;
+    /**
+     * Register an event that runs when a collision is resolved.
+     *
+     * @since v3000.0
+     */
+    onPhysicsResolve(action: (col: Collision) => void): EventController;
+    /**
+     * Register an event that runs before a collision would be resolved.
+     *
+     * @since v3000.0
+     */
+    onBeforePhysicsResolve(action: (col: Collision) => void): EventController;
+    /**
+     * Register an event that runs when the object is grounded.
+     *
+     * @since v2000.1
+     */
+    onGround(action: () => void): EventController;
+    /**
+     * Register an event that runs when the object starts falling.
+     *
+     * @since v2000.1
+     */
+    onFall(action: () => void): EventController;
+    /**
+     * Register an event that runs when the object falls off platform.
+     *
+     * @since v3000.0
+     */
+    onFallOff(action: () => void): EventController;
+    /**
+     * Register an event that runs when the object bumps into something on the head.
+     *
+     * @since v2000.1
+     */
+    onHeadbutt(action: () => void): EventController;
+}
+
+/**
+ * Options for the {@link body `body()`} component.
+ *
+ * @group Components
+ */
+export interface BodyCompOpt {
+    /**
+     * How much velocity decays (velocity *= (1 - drag) every frame).
+     *
+     * @since v3001.0
+     */
+    drag?: number;
+    /**
+     * Initial speed in pixels per second for jump().
+     */
+    jumpForce?: number;
+    /**
+     * Maximum velocity when falling.
+     */
+    maxVelocity?: number;
+    /**
+     * Gravity multiplier.
+     */
+    gravityScale?: number;
+    /**
+     * If object is static, won't move, and all non static objects won't move past it.
+     *
+     * @since v3000.0
+     */
+    isStatic?: boolean;
+    /**
+     * If object should move with moving platform (default true).
+     *
+     * @since v3000.0
+     */
+    stickToPlatform?: boolean;
+    /**
+     * Mass of the body, decides how much a non-static body should move when resolves with another non-static body. (default 1).
+     *
+     * @since v3000.0
+     */
+    mass?: number;
+}
 
 export function body(opt: BodyCompOpt = {}): BodyComp {
     const k = getKaboomContext(this);
-    const internal = getInternalContext(k);
+    const { calcTransform, game } = k._k;
     let curPlatform: GameObj<PosComp | AreaComp | BodyComp> | null = null;
     let lastPlatformPos = null;
     let willFall = false;
@@ -67,8 +212,8 @@ export function body(opt: BodyCompOpt = {}): BodyComp {
                             other.pos = other.pos.add(
                                 col.displacement.scale(-this.mass / tmass),
                             );
-                            this.transform = internal.calcTransform(this);
-                            other.transform = internal.calcTransform(other);
+                            this.transform = calcTransform(this);
+                            other.transform = calcTransform(other);
                         } else {
                             // if one is static and on is not, resolve the non static one
                             const col2 = (!this.isStatic && other.isStatic)
@@ -77,7 +222,7 @@ export function body(opt: BodyCompOpt = {}): BodyComp {
                             col2.source.pos = col2.source.pos.add(
                                 col2.displacement,
                             );
-                            col2.source.transform = internal.calcTransform(
+                            col2.source.transform = calcTransform(
                                 col2.source,
                             );
                         }
@@ -89,10 +234,10 @@ export function body(opt: BodyCompOpt = {}): BodyComp {
                 );
 
                 this.onPhysicsResolve((col) => {
-                    if (internal.game.gravity) {
+                    if (game.gravity) {
                         if (col.isBottom() && this.isFalling()) {
                             this.vel = this.vel.reject(
-                                internal.game.gravity.unit(),
+                                game.gravity.unit(),
                             );
                             curPlatform = col.target as GameObj<
                                 PosComp | BodyComp | AreaComp
@@ -105,7 +250,7 @@ export function body(opt: BodyCompOpt = {}): BodyComp {
                             }
                         } else if (col.isTop() && this.isJumping()) {
                             this.vel = this.vel.reject(
-                                internal.game.gravity.unit(),
+                                game.gravity.unit(),
                             );
                             this.trigger("headbutt", col.target);
                         }
@@ -115,7 +260,7 @@ export function body(opt: BodyCompOpt = {}): BodyComp {
         },
 
         update(this: GameObj<PosComp | BodyComp | AreaComp>) {
-            if (internal.game.gravity && !this.isStatic) {
+            if (game.gravity && !this.isStatic) {
                 if (willFall) {
                     curPlatform = null;
                     lastPlatformPos = null;
@@ -152,7 +297,7 @@ export function body(opt: BodyCompOpt = {}): BodyComp {
 
                     // Apply gravity
                     this.vel = this.vel.add(
-                        internal.game.gravity.scale(this.gravityScale * k.dt()),
+                        game.gravity.scale(this.gravityScale * k.dt()),
                     );
 
                     // Clamp velocity
@@ -162,8 +307,8 @@ export function body(opt: BodyCompOpt = {}): BodyComp {
                     }
 
                     if (
-                        prevVel.dot(internal.game.gravity) < 0
-                        && this.vel.dot(internal.game.gravity) >= 0
+                        prevVel.dot(game.gravity) < 0
+                        && this.vel.dot(game.gravity) >= 0
                     ) {
                         this.trigger("fall");
                     }
