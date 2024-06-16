@@ -4,7 +4,7 @@ import type { Comp, EaseFunc, TweenController } from "../../types";
 /**
  * The {@link opacity `opacity()`} component.
  *
- * @group Components
+ * @group Component Types
  */
 export interface OpacityComp extends Comp {
     /** Opacity of the current object. */

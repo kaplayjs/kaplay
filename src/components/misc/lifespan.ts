@@ -5,7 +5,7 @@ import type { EmptyComp, GameObj, OpacityComp } from "../../types";
 /**
  * The {@link lifespan `lifespan()`} component.
  *
- * @group Components
+ * @group Component Types
  */
 export interface LifespanCompOpt {
     /**

@@ -4,7 +4,7 @@ import type { Comp } from "../../types";
 /**
  * The {@link layer `layer()`} component.
  *
- * @group Components
+ * @group Component Types
  */
 export interface LayerComp extends Comp {
     get layerIndex(): number;

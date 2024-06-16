@@ -3,7 +3,7 @@ import type { Comp, Mask } from "../../types";
 /**
  * The {@link mask `mask()`} component.
  *
- * @group Components
+ * @group Component Types
  */
 export interface MaskComp extends Comp {
     mask: Mask;

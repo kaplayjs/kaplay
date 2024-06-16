@@ -10,7 +10,7 @@ import {
 /**
  * The {@link tile `tile()`} component.
  *
- * @group Components
+ * @group Component Types
  */
 export interface TileComp extends Comp {
     /**
@@ -44,7 +44,7 @@ export interface TileComp extends Comp {
 /**
  * Options for the {@link tile `tile()`} component.
  *
- * @group Components
+ * @group Component Types
  */
 export type TileCompOpt = {
     /**

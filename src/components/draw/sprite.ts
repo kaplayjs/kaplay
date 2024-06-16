@@ -16,7 +16,7 @@ import { Event, EventController } from "../../utils";
 /**
  * The {@link sprite `sprite()`} component.
  *
- * @group Components
+ * @group Component Types
  */
 export interface SpriteComp extends Comp {
     draw: Comp["draw"];
@@ -93,7 +93,7 @@ export interface SpriteComp extends Comp {
 /**
  * Options for the {@link sprite `sprite()`} component.
  *
- * @group Components
+ * @group Component Types
  */
 export interface SpriteCompOpt {
     /**

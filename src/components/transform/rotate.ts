@@ -3,7 +3,7 @@ import type { Comp } from "../../types";
 /**
  * The {@link rotate `rotate()`} component.
  *
- * @group Components
+ * @group Component Types
  */
 export interface RotateComp extends Comp {
     /**

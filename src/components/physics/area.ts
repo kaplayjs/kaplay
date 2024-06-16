@@ -18,7 +18,7 @@ import type { FixedComp } from "../transform/fixed";
 /**
  * The {@link area `area()`} component.
  *
- * @group Components
+ * @group Component Types
  */
 export interface AreaComp extends Comp {
     /**

@@ -6,7 +6,7 @@ import type { FixedComp } from "./fixed";
 /**
  * The {@link pos `pos()`} component.
  *
- * @group Components
+ * @group Component Types
  */
 export interface PosComp extends Comp {
     /**

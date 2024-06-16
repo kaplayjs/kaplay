@@ -5,7 +5,7 @@ import type { Comp, GameObj } from "../../types";
 /**
  * The {@link rect `rect()`} component.
  *
- * @group Components
+ * @group Component Types
  */
 export interface RectComp extends Comp {
     draw: Comp["draw"];
@@ -30,7 +30,7 @@ export interface RectComp extends Comp {
 /**
  * Options for the {@link rect `rect()`} component.
  *
- * @group Components
+ * @group Component Types
  */
 export interface RectCompOpt {
     /**

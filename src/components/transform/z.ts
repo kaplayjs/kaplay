@@ -3,7 +3,7 @@ import type { Comp } from "../../types";
 /**
  * The {@link z `z()`} component.
  *
- * @group Components
+ * @group Component Types
  */
 export interface ZComp extends Comp {
     /**

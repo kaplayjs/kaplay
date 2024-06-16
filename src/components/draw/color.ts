@@ -4,7 +4,7 @@ import type { Comp } from "../../types";
 /**
  * The {@link color `color()`} component.
  *
- * @group Components
+ * @group Component Types
  */
 export interface ColorComp extends Comp {
     color: Color;

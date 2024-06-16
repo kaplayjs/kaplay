@@ -4,7 +4,7 @@ import { Event, EventController } from "../../utils";
 /**
  * The {@link state `state()`} component.
  *
- * @group Components
+ * @group Component Types
  */
 export interface StateComp extends Comp {
     /**

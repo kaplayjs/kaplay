@@ -3,7 +3,7 @@ import type { Comp } from "../../types";
 /**
  * The {@link named `named()`} component.
  *
- * @group Components
+ * @group Component Types
  */
 export interface NamedComp extends Comp {
     /** The name assigned to this object. */

@@ -13,7 +13,7 @@ import type {
 /**
  * The {@link timer `timer()`} component.
  *
- * @group Componens
+ * @group Component Types
  */
 export interface TimerComp extends Comp {
     /**

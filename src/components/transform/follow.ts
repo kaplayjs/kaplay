@@ -5,7 +5,7 @@ import type { PosComp } from "./pos";
 /**
  * The {@link follow `follow()`} component.
  *
- * @group Components
+ * @group Component Types
  */
 export interface FollowComp extends Comp {
     follow: {

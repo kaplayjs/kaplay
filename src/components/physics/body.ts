@@ -8,7 +8,7 @@ import type { AreaComp } from "./area";
 /**
  * The {@link body `body()`} component.
  *
- * @group Components
+ * @group Component Types
  */
 export interface BodyComp extends Comp {
     /**
@@ -114,7 +114,7 @@ export interface BodyComp extends Comp {
 /**
  * Options for the {@link body `body()`} component.
  *
- * @group Components
+ * @group Component Types
  */
 export interface BodyCompOpt {
     /**

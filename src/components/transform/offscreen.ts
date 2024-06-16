@@ -8,7 +8,7 @@ import type { PosComp } from "./pos";
 /**
  * The {@link offscreen `offscreen()`} component.
  *
- * @group Components
+ * @group Component Types
  */
 export interface OffScreenComp extends Comp {
     /**
@@ -28,7 +28,7 @@ export interface OffScreenComp extends Comp {
 /**
  * Options for {@link offscreen `offscreen()`} component.
  *
- * @group Components
+ * @group Component Types
  */
 export interface OffScreenCompOpt {
     /**

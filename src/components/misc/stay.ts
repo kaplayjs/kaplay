@@ -3,7 +3,7 @@ import type { Comp } from "../../types";
 /**
  * The {@link stay `stay()`} component.
  *
- * @group Components
+ * @group Component Types
  */
 export interface StayComp extends Comp {
     /**

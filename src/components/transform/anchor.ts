@@ -4,7 +4,7 @@ import type { Anchor, Comp } from "../../types";
 /**
  * The {@link anchor `anchor()`} component.
  *
- * @group Components
+ * @group Component Types
  */
 export interface AnchorComp extends Comp {
     /**

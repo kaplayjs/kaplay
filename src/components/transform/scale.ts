@@ -5,7 +5,7 @@ import type { Comp, Vec2Args } from "../../types";
 /**
  * The {@link scale `scale()`} component.
  *
- * @group Components
+ * @group Component Types
  */
 export interface ScaleComp extends Comp {
     scale: Vec2;

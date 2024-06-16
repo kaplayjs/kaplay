@@ -3,7 +3,7 @@ import type { Comp } from "../../types";
 /**
  * The {@link fixed `fixed()`} component.
  *
- * @group Componens
+ * @group Component Types
  */
 export interface FixedComp extends Comp {
     /**

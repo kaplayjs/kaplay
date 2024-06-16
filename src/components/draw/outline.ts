@@ -4,7 +4,7 @@ import type { Comp, LineCap, LineJoin, Outline } from "../../types";
 /**
  * The {@link outline `outline()`} component.
  *
- * @group Components
+ * @group Component Types
  */
 export interface OutlineComp extends Comp {
     outline: Outline;

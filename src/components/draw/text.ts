@@ -13,7 +13,7 @@ import type {
 /**
  * The {@link text `text()`} component.
  *
- * @group Components
+ * @group Component Types
  */
 export interface TextComp extends Comp {
     draw: Comp["draw"];
@@ -76,7 +76,7 @@ export interface TextComp extends Comp {
 /**
  * Options for the {@link text `text()`} component.
  *
- * @group Components
+ * @group Component Types
  */
 export interface TextCompOpt {
     /**

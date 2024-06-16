@@ -4,7 +4,7 @@ import type { EventController } from "../../utils";
 /**
  * The {@link health `health()`} component.
  *
- * @group Components
+ * @group Component Types
  */
 export interface HealthComp extends Comp {
     /**

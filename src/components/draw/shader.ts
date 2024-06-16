@@ -3,7 +3,7 @@ import type { Comp, Uniform } from "../../types";
 /**
  * The {@link shader `shader()`} component.
  *
- * @group Components
+ * @group Component Types
  */
 export interface ShaderComp extends Comp {
     uniform: Uniform;

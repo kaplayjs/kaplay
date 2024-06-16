@@ -7,7 +7,7 @@ import type { Comp, DrawPolygonOpt, GameObj, Vec2 } from "../../types";
  * The {@link polygon `polygon()`} component.
  *
  * @since v3001.0
- * @group Components
+ * @group Component Types
  */
 export interface PolygonComp extends Comp {
     draw: Comp["draw"];
@@ -41,7 +41,7 @@ export interface PolygonComp extends Comp {
 /**
  * Options for the {@link polygon `polygon()`} component.
  *
- * @group Components
+ * @group Component Types
  */
 export type PolygonCompOpt = Omit<DrawPolygonOpt, "pts">;
 

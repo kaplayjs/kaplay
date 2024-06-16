@@ -7,7 +7,7 @@ import type { outline } from "./outline";
 /**
  * The {@link circle `circle()`} component.
  *
- * @group Components
+ * @group Component Types
  */
 export interface CircleComp extends Comp {
     draw: Comp["draw"];
@@ -24,7 +24,7 @@ export interface CircleComp extends Comp {
 /**
  * Options for the {@link circle `circle()``} component.
  *
- * @group Components
+ * @group Component Types
  */
 export interface CircleCompOpt {
     /**
