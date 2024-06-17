@@ -76,6 +76,7 @@ add([
 - added `getSceneName()` to get the current scene name
 - added `SpriteComp.getCurAnim()` to get the current animation data
 - added `outline()`, `shader()`, and `area()` properties to `debug.inspect` (f1)
+- added `kaboomOpt.debugKey` for customizing the key used to toggle debug mode
 - added `GameObjRaw.tags` to get a game object's tags
 - added `GameObjRaw.sprite` property to get the name of the sprite
 - added global raycast function and raycast method to level
@@ -88,6 +89,8 @@ add([
 - added quadratic bezier and Catmull-Rom evaluation
 - added evaluation of the first and second derivatives for all splines
 - added higher order easing functions linear, steps and cubic-bezier
+- added `Color.toArray()`
+
 
 ### Deprecated
 
