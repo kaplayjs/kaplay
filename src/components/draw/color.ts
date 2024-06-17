@@ -1,0 +1,21 @@
+import { type Color, rgb } from "../../math";
+import type { Comp } from "../../types";
+
+/**
+ * The {@link color `color()`} component.
+ *
+ * @group Components
+ */
+export interface ColorComp extends Comp {
+    color: Color;
+}
+
+export function color(...args): ColorComp {
+    return {
+        id: "color",
+        color: rgb(...args),
+        inspect() {
+            return this.color.toString();
+        },
+    };
+}

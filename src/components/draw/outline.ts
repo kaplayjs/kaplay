@@ -1,5 +1,14 @@
 import { Color, rgb } from "../../math";
-import type { LineCap, LineJoin, OutlineComp } from "../../types";
+import type { Comp, LineCap, LineJoin, Outline } from "../../types";
+
+/**
+ * The {@link outline `outline()`} component.
+ *
+ * @group Components
+ */
+export interface OutlineComp extends Comp {
+    outline: Outline;
+}
 
 export function outline(
     width: number = 1,

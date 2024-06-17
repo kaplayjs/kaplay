@@ -1,9 +1,98 @@
 import type { Asset } from "./assets";
+import type {
+    AgentComp,
+    AgentCompOpt,
+    AnchorComp,
+    AreaComp,
+    AreaCompOpt,
+    BodyComp,
+    BodyCompOpt,
+    CircleComp,
+    ColorComp,
+    DoubleJumpComp,
+    FixedComp,
+    FollowComp,
+    HealthComp,
+    LayerComp,
+    LifespanCompOpt,
+    MaskComp,
+    NamedComp,
+    OffScreenComp,
+    OffScreenCompOpt,
+    OpacityComp,
+    OutlineComp,
+    PolygonComp,
+    PolygonCompOpt,
+    PosComp,
+    RectComp,
+    RectCompOpt,
+    RotateComp,
+    ScaleComp,
+    ShaderComp,
+    SpriteComp,
+    SpriteCompOpt,
+    StateComp,
+    StayComp,
+    TextComp,
+    TextCompOpt,
+    TileComp,
+    TileCompOpt,
+    TimerComp,
+    UVQuadComp,
+    ZComp,
+} from "./components/";
 import type { FontData } from "./fonts";
 import type { Vec2 } from "./math";
 import type { Event, EventController, EventHandler } from "./utils";
 
-export type { Asset, Event, EventController, EventHandler, FontData, Vec2 };
+export type {
+    AgentComp,
+    AgentCompOpt,
+    AnchorComp,
+    AreaComp,
+    AreaCompOpt,
+    Asset,
+    BodyComp,
+    BodyCompOpt,
+    CircleComp,
+    ColorComp,
+    DoubleJumpComp,
+    Event,
+    EventController,
+    EventHandler,
+    FixedComp,
+    FollowComp,
+    FontData,
+    HealthComp,
+    LayerComp,
+    LifespanCompOpt,
+    MaskComp,
+    NamedComp,
+    OffScreenComp,
+    OffScreenCompOpt,
+    OpacityComp,
+    OutlineComp,
+    PolygonComp,
+    PolygonCompOpt,
+    PosComp,
+    RectComp,
+    RectCompOpt,
+    RotateComp,
+    ScaleComp,
+    ShaderComp,
+    SpriteComp,
+    SpriteCompOpt,
+    StateComp,
+    StayComp,
+    TextComp,
+    TextCompOpt,
+    TileComp,
+    TileCompOpt,
+    TimerComp,
+    UVQuadComp,
+    Vec2,
+    ZComp,
+};
 
 /**
  * Initialize KAPLAY context. The starting point of all KAPLAY games.
@@ -5193,7 +5282,7 @@ export declare class RNG {
 }
 
 /**
- * @group Component System
+ * @group Components
  */
 export interface Comp {
     /**
@@ -5240,212 +5329,14 @@ export type GameObjID = number;
 /**
  * A component without own properties.
  *
- * @group Component System
+ * @group Components
  */
 export type EmptyComp = { id: string } & Comp;
 
 /**
- * @group Component System
- */
-export interface PosComp extends Comp {
-    /**
-     * Object's current world position.
-     */
-    pos: Vec2;
-    /**
-     * Move how many pixels per second. If object is 'solid', it won't move into other 'solid' objects.
-     */
-    move(xVel: number, yVel: number): void;
-    move(vel: Vec2): void;
-    /**
-     * Move how many pixels, without multiplying dt, but still checking for 'solid'.
-     */
-    moveBy(dx: number, dy: number): void;
-    moveBy(d: Vec2): void;
-    /**
-     * Move to a spot with a speed (pixels per second), teleports if speed is not given.
-     */
-    moveTo(dest: Vec2, speed?: number): void;
-    moveTo(x: number, y: number, speed?: number): void;
-    /**
-     * Get the position of the object on the screen.
-     */
-    screenPos(): Vec2;
-    /**
-     * Get the position of the object relative to the root.
-     */
-    worldPos(): Vec2;
-    /**
-     * Transform a local point (relative to this) to a screen point (relative to the camera)
-     */
-    toScreen(this: GameObj<PosComp | FixedComp>, p: Vec2);
-    /**
-     * Transform a local point (relative to this) to a world point (relative to the root)
-     * @since v3001.0
-     */
-    toWorld(this: GameObj<PosComp>, p: Vec2);
-    /**
-     * Transform a screen point (relative to the camera) to a local point (relative to this)
-     * @since v3001.0
-     */
-    fromScreen(this: GameObj<PosComp | FixedComp>, p: Vec2);
-    /**
-     * Transform a world point (relative to the root) to a local point (relative to this)
-     * @since v3001.0
-     */
-    fromWorld(this: GameObj<PosComp>, p: Vec2);
-    /**
-     * Transform a point relative to this to a point relative to other
-     * @since v3001.0
-     */
-    toOther(this: GameObj<PosComp>, other: GameObj<PosComp>, p: Vec2);
-    /**
-     * Transform a point relative to other to a point relative to this
-     * @since v3001.0
-     */
-    fromOther(this: GameObj<PosComp>, other: GameObj<PosComp>, p: Vec2);
-}
-
-/**
- * @group Component System
- */
-export interface ScaleComp extends Comp {
-    scale: Vec2;
-    scaleTo(s: number): void;
-    scaleTo(s: Vec2): void;
-    scaleTo(sx: number, sy: number): void;
-    scaleBy(s: number): void;
-    scaleBy(s: Vec2): void;
-    scaleBy(sx: number, sy: number): void;
-}
-
-/**
- * @group Component System
- */
-export interface RotateComp extends Comp {
-    /**
-     * Angle in degrees.
-     */
-    angle: number;
-    /**
-     * Rotate in degrees.
-     */
-    rotateBy(angle: number): void;
-    /**
-     * Rotate to a degree (like directly assign to .angle)
-     *
-     * @since v3000.0
-     */
-    rotateTo(s: number): void;
-}
-
-/**
- * @group Component System
- */
-export interface ColorComp extends Comp {
-    color: Color;
-}
-
-/**
- * @group Component System
- */
-export interface OpacityComp extends Comp {
-    opacity: number;
-    fadeIn(time?: number, easeFunc?: EaseFunc): TweenController;
-    fadeOut(time?: number, easeFunc?: EaseFunc): TweenController;
-}
-
-/**
- * @group Component System
- */
-export interface AnchorComp extends Comp {
-    /**
-     * Anchor point for render.
-     */
-    anchor: Anchor | Vec2;
-}
-
-/**
- * @group Component System
- */
-export interface ZComp extends Comp {
-    /**
-     * Defines the z-index of this game obj
-     */
-    z: number;
-}
-
-/**
- * @group Component System
- */
-export interface FollowComp extends Comp {
-    follow: {
-        obj: GameObj;
-        offset: Vec2;
-    };
-}
-
-/**
- * @group Component System
- */
-export interface OffScreenCompOpt {
-    /**
-     * If hide object when out of view.
-     */
-    hide?: boolean;
-    /**
-     * If pause object when out of view.
-     */
-    pause?: boolean;
-    /**
-     * If destroy object when out of view.
-     */
-    destroy?: boolean;
-    /**
-     * The distance when out of view is triggered (default 200).
-     *
-     * @since v3000.0
-     */
-    distance?: number;
-}
-
-/**
- * @group Component System
- */
-export interface OffScreenComp extends Comp {
-    /**
-     * If object is currently out of view.
-     */
-    isOffScreen(): boolean;
-    /**
-     * Register an event that runs when object goes out of view.
-     */
-    onExitScreen(action: () => void): EventController;
-    /**
-     * Register an event that runs when object enters view.
-     */
-    onEnterScreen(action: () => void): EventController;
-}
-
-/**
- * @group Component System
- */
-export interface LayerComp extends Comp {
-    get layerIndex(): number;
-    /**
-     * Get the name of the current layer the object is assigned to.
-     */
-    get layer(): string;
-    /**
-     * Set the name of the layer the object should be assigned to.
-     */
-    set layer(name: string);
-}
-
-/**
  * Collision resolution data.
  *
- * @group Component System
+ * @group Components
  */
 export interface Collision {
     /**
@@ -5499,545 +5390,6 @@ export interface Collision {
 }
 
 /**
- * @group Options
- */
-export interface AreaCompOpt {
-    /**
-     * The shape of the area (currently only Rect and Polygon is supported).
-     *
-     * @example
-     * ```js
-     * add([
-     *     sprite("butterfly"),
-     *     pos(100, 200),
-     *     // a triangle shape!
-     *     area({ shape: new Polygon([vec2(0), vec2(100), vec2(-100, 100)]) }),
-     * ])
-     * ```
-     */
-    shape?: Shape;
-    /**
-     * Area scale.
-     */
-    scale?: number | Vec2;
-    /**
-     * Area offset.
-     */
-    offset?: Vec2;
-    /**
-     * Cursor on hover.
-     */
-    cursor?: Cursor;
-    /**
-     * If this object should ignore collisions against certain other objects.
-     *
-     * @since v3000.0
-     */
-    collisionIgnore?: Tag[];
-}
-
-/**
- * @group Component System
- */
-export interface AreaComp extends Comp {
-    /**
-     * Collider area info.
-     */
-    area: {
-        /**
-         * If we use a custom shape over render shape.
-         */
-        shape: Shape | null;
-        /**
-         * Area scale.
-         */
-        scale: Vec2;
-        /**
-         * Area offset.
-         */
-        offset: Vec2;
-        /**
-         * Cursor on hover.
-         */
-        cursor: Cursor | null;
-    };
-    /**
-     * If this object should ignore collisions against certain other objects.
-     *
-     * @since v3000.0
-     */
-    collisionIgnore: Tag[];
-    /**
-     * If was just clicked on last frame.
-     */
-    isClicked(): boolean;
-    /**
-     * If is being hovered on.
-     */
-    isHovering(): boolean;
-    /**
-     * Check collision with another game obj.
-     *
-     * @since v3000.0
-     */
-    checkCollision(other: GameObj<AreaComp>): Collision | null;
-    /**
-     * Get all collisions currently happening.
-     *
-     * @since v3000.0
-     */
-    getCollisions(): Collision[];
-    /**
-     * If is currently colliding with another game obj.
-     */
-    isColliding(o: GameObj<AreaComp>): boolean;
-    /**
-     * If is currently overlapping with another game obj (like isColliding, but will return false if the objects are just touching edges).
-     */
-    isOverlapping(o: GameObj<AreaComp>): boolean;
-    /**
-     * Register an event runs when clicked.
-     *
-     * @since v2000.1
-     */
-    onClick(f: () => void, btn?: MouseButton): void;
-    /**
-     * Register an event runs once when hovered.
-     *
-     * @since v3000.0
-     */
-    onHover(action: () => void): EventController;
-    /**
-     * Register an event runs every frame when hovered.
-     *
-     * @since v3000.0
-     */
-    onHoverUpdate(action: () => void): EventController;
-    /**
-     * Register an event runs once when unhovered.
-     *
-     * @since v3000.0
-     */
-    onHoverEnd(action: () => void): EventController;
-    /**
-     * Register an event runs once when collide with another game obj with certain tag.
-     *
-     * @since v2001.0
-     */
-    onCollide(tag: Tag, f: (obj: GameObj, col?: Collision) => void): void;
-    /**
-     * Register an event runs once when collide with another game obj.
-     *
-     * @since v2000.1
-     */
-    onCollide(f: (obj: GameObj, col?: Collision) => void): void;
-    /**
-     * Register an event runs every frame when collide with another game obj with certain tag.
-     *
-     * @since v3000.0
-     */
-    onCollideUpdate(
-        tag: Tag,
-        f: (obj: GameObj, col?: Collision) => void,
-    ): EventController;
-    /**
-     * Register an event runs every frame when collide with another game obj.
-     *
-     * @since v3000.0
-     */
-    onCollideUpdate(
-        f: (obj: GameObj, col?: Collision) => void,
-    ): EventController;
-    /**
-     * Register an event runs once when stopped colliding with another game obj with certain tag.
-     *
-     * @since v3000.0
-     */
-    onCollideEnd(tag: Tag, f: (obj: GameObj) => void): EventController;
-    /**
-     * Register an event runs once when stopped colliding with another game obj.
-     *
-     * @since v3000.0
-     */
-    onCollideEnd(f: (obj: GameObj) => void): void;
-    /**
-     * If has a certain point inside collider.
-     */
-    hasPoint(p: Vec2): boolean;
-    /**
-     * Push out from another solid game obj if currently overlapping.
-     */
-    resolveCollision(obj: GameObj): void;
-    /**
-     * Get the geometry data for the collider in local coordinate space.
-     *
-     * @since v3000.0
-     */
-    localArea(): Shape;
-    /**
-     * Get the geometry data for the collider in world coordinate space.
-     */
-    worldArea(): Polygon;
-    /**
-     * Get the geometry data for the collider in screen coordinate space.
-     */
-    screenArea(): Polygon;
-}
-
-/**
- * @group Options
- */
-export interface SpriteCompOpt {
-    /**
-     * If the sprite is loaded with multiple frames, or sliced, use the frame option to specify which frame to draw.
-     */
-    frame?: number;
-    /**
-     * If provided width and height, don't stretch but instead render tiled.
-     */
-    tiled?: boolean;
-    /**
-     * Stretch sprite to a certain width.
-     */
-    width?: number;
-    /**
-     * Stretch sprite to a certain height.
-     */
-    height?: number;
-    /**
-     * Play an animation on start.
-     */
-    anim?: string;
-    /**
-     * Speed multiplier for all animations (for the actual fps for an anim use .play("anim", { speed: 10 })).
-     */
-    animSpeed?: number;
-    /**
-     * Flip texture horizontally.
-     */
-    flipX?: boolean;
-    /**
-     * Flip texture vertically.
-     */
-    flipY?: boolean;
-    /**
-     * The rectangular sub-area of the texture to render, default to full texture `quad(0, 0, 1, 1)`.
-     */
-    quad?: Quad;
-    /**
-     * If fill the sprite (useful if you only want to render outline with outline() component).
-     */
-    fill?: boolean;
-}
-
-/**
- * @group Component System
- */
-export interface SpriteComp extends Comp {
-    draw: Comp["draw"];
-    /**
-     * Name of the sprite.
-     */
-    sprite: string;
-    /**
-     * Width for sprite.
-     */
-    width: number;
-    /**
-     * Height for sprite.
-     */
-    height: number;
-    /**
-     * Current frame.
-     */
-    frame: number;
-    /**
-     * The rectangular area of the texture to render.
-     */
-    quad: Quad;
-    /**
-     * Play a piece of anim.
-     */
-    play(anim: string, options?: SpriteAnimPlayOpt): void;
-    /**
-     * Stop current anim.
-     */
-    stop(): void;
-    /**
-     * Get total number of frames.
-     */
-    numFrames(): number;
-    /**
-     * Get the current animation data.
-     *
-     * @since v3001.0
-     */
-    getCurAnim(): SpriteCurAnim;
-    /**
-     * Get current anim name.
-     *
-     * @deprecated Use `getCurrentAnim().name` instead.
-     */
-    curAnim(): string;
-    /**
-     * Speed multiplier for all animations (for the actual fps for an anim use .play("anim", { speed: 10 })).
-     */
-    animSpeed: number;
-    /**
-     * Flip texture horizontally.
-     */
-    flipX: boolean;
-    /**
-     * Flip texture vertically.
-     */
-    flipY: boolean;
-    /**
-     * Register an event that runs when an animation is played.
-     */
-    onAnimStart(action: (anim: string) => void): EventController;
-    /**
-     * Register an event that runs when an animation is ended.
-     */
-    onAnimEnd(action: (anim: string) => void): EventController;
-    /**
-     * @since v3000.0
-     */
-    renderArea(): Rect;
-}
-
-/**
- * Component to draw a text.
- *
- * @group Component System
- */
-export interface TextComp extends Comp {
-    draw: Comp["draw"];
-    /**
-     * The text to render.
-     */
-    text: string;
-    /**
-     * The text size.
-     */
-    textSize: number;
-    /**
-     * The font to use.
-     */
-    font: string | BitmapFontData;
-    /**
-     * Width of text.
-     */
-    width: number;
-    /**
-     * Height of text.
-     */
-    height: number;
-    /**
-     * Text alignment ("left", "center" or "right", default "left").
-     *
-     * @since v3000.0
-     */
-    align: TextAlign;
-    /**
-     * The gap between each line.
-     *
-     * @since v2000.2
-     */
-    lineSpacing: number;
-    /**
-     * The gap between each character.
-     *
-     * @since v2000.2
-     */
-    letterSpacing: number;
-    /**
-     * Transform the pos, scale, rotation or color for each character based on the index or char.
-     *
-     * @since v2000.1
-     */
-    textTransform: CharTransform | CharTransformFunc;
-    /**
-     * Stylesheet for styled chunks, in the syntax of "this is a [style]text[/style] word".
-     *
-     * @since v2000.2
-     */
-    textStyles: Record<string, CharTransform | CharTransformFunc>;
-    /**
-     * @since v3000.0
-     */
-    renderArea(): Rect;
-}
-
-/**
- * @group Options
- */
-export interface TextCompOpt {
-    /**
-     * Height of text.
-     */
-    size?: number;
-    /**
-     * The font to use.
-     */
-    font?: string | BitmapFontData;
-    /**
-     * Wrap text to a certain width.
-     */
-    width?: number;
-    /**
-     * Text alignment ("left", "center" or "right", default "left").
-     *
-     * @since v3000.0
-     */
-    align?: TextAlign;
-    /**
-     * The gap between each line.
-     *
-     * @since v2000.2
-     */
-    lineSpacing?: number;
-    /**
-     * The gap between each character.
-     *
-     * @since v2000.2
-     */
-    letterSpacing?: number;
-    /**
-     * Transform the pos, scale, rotation or color for each character based on the index or char.
-     *
-     * @since v2000.1
-     */
-    transform?: CharTransform | CharTransformFunc;
-    /**
-     * Stylesheet for styled chunks, in the syntax of "this is a [style]text[/style] word".
-     *
-     * @since v2000.2
-     */
-    styles?: Record<string, CharTransform | CharTransformFunc>;
-}
-
-/**
- * @group Options
- */
-export interface RectCompOpt {
-    /**
-     * Radius of the rectangle corners.
-     */
-    radius?: number;
-    /**
-     * If fill the rectangle (useful if you only want to render outline with outline() component).
-     */
-    fill?: boolean;
-}
-
-/**
- * @group Component System
- */
-export interface RectComp extends Comp {
-    draw: Comp["draw"];
-    /**
-     * Width of rectangle.
-     */
-    width: number;
-    /**
-     * Height of rectangle.
-     */
-    height: number;
-    /**
-     * The radius of each corner.
-     */
-    radius?: number;
-    /**
-     * @since v3000.0
-     */
-    renderArea(): Rect;
-}
-
-/**
- * @group Options
- */
-export type PolygonCompOpt = Omit<DrawPolygonOpt, "pts">;
-
-/**
- * Component to draw a polygon.
- *
- * @since v3001.0
- * @group Component System
- */
-export interface PolygonComp extends Comp {
-    draw: Comp["draw"];
-    /**
-     * Points in the polygon.
-     */
-    pts: Vec2[];
-    /**
-     * The radius of each corner.
-     */
-    radius?: number | number[];
-    /**
-     * The color of each vertex.
-     */
-    colors?: Color[];
-    /**
-     * The uv of each vertex.
-     *
-     * @since v3001.0
-     */
-    uv?: Vec2[];
-    /**
-     * The texture used when uv coordinates are present.
-     *
-     * @since v3001.0
-     */
-    tex?: Texture;
-    renderArea(): Polygon;
-}
-
-/**
- * @group Options
- */
-export interface CircleCompOpt {
-    /**
-     * If fill the circle (useful if you only want to render outline with outline() component).
-     */
-    fill?: boolean;
-}
-
-/**
- * @group Component System
- */
-export interface CircleComp extends Comp {
-    draw: Comp["draw"];
-    /**
-     * Radius of circle.
-     */
-    radius: number;
-    /**
-     * @since v3000.0
-     */
-    renderArea(): Rect;
-}
-
-/**
- * @group Component System
- */
-export interface UVQuadComp extends Comp {
-    draw: Comp["draw"];
-    /**
-     * Width of rect.
-     */
-    width: number;
-    /**
-     * Height of height.
-     */
-    height: number;
-    /**
-     * @since v3000.0
-     */
-    renderArea(): Rect;
-}
-
-/**
  * @group Draw
  */
 export type Shape =
@@ -6047,13 +5399,6 @@ export type Shape =
     | Circle
     | Ellipse
     | Polygon;
-
-/**
- * @group Component System
- */
-export interface OutlineComp extends Comp {
-    outline: Outline;
-}
 
 /**
  * @group Debug
@@ -6140,346 +5485,7 @@ export type UniformKey = Exclude<string, "u_tex">;
  */
 export type Uniform = Record<UniformKey, UniformValue>;
 
-/**
- * @group Component System
- */
-export interface ShaderComp extends Comp {
-    uniform: Uniform;
-    shader: string;
-}
-
-/**
- * @group Component System
- */
-export interface BodyComp extends Comp {
-    /**
-     * Object current velocity.
-     *
-     * @since v3001.0
-     */
-    vel: Vec2;
-    /**
-     * How much velocity decays (velocity *= (1 - drag) every frame).
-     *
-     * @since v3001.0
-     */
-    drag: number;
-    /**
-     * If object is static, won't move, and all non static objects won't move past it.
-     */
-    isStatic: boolean;
-    /**
-     * Initial speed in pixels per second for jump().
-     */
-    jumpForce: number;
-    /**
-     * Gravity multiplier.
-     */
-    gravityScale: number;
-    /**
-     * Mass of the body, decides how much a non-static body should move when resolves with another non-static body. (default 1).
-     *
-     * @since v3000.0
-     */
-    mass?: number;
-    /**
-     * If object should move with moving platform (default true).
-     *
-     * @since v3000.0
-     */
-    stickToPlatform?: boolean;
-    /**
-     * Current platform landing on.
-     */
-    curPlatform(): GameObj | null;
-    /**
-     * If currently landing on a platform.
-     *
-     * @since v2000.1
-     */
-    isGrounded(): boolean;
-    /**
-     * If currently falling.
-     *
-     * @since v2000.1
-     */
-    isFalling(): boolean;
-    /**
-     * If currently rising.
-     *
-     * @since v3000.0
-     */
-    isJumping(): boolean;
-    /**
-     * Upward thrust.
-     */
-    jump(force?: number): void;
-    /**
-     * Register an event that runs when a collision is resolved.
-     *
-     * @since v3000.0
-     */
-    onPhysicsResolve(action: (col: Collision) => void): EventController;
-    /**
-     * Register an event that runs before a collision would be resolved.
-     *
-     * @since v3000.0
-     */
-    onBeforePhysicsResolve(action: (col: Collision) => void): EventController;
-    /**
-     * Register an event that runs when the object is grounded.
-     *
-     * @since v2000.1
-     */
-    onGround(action: () => void): EventController;
-    /**
-     * Register an event that runs when the object starts falling.
-     *
-     * @since v2000.1
-     */
-    onFall(action: () => void): EventController;
-    /**
-     * Register an event that runs when the object falls off platform.
-     *
-     * @since v3000.0
-     */
-    onFallOff(action: () => void): EventController;
-    /**
-     * Register an event that runs when the object bumps into something on the head.
-     *
-     * @since v2000.1
-     */
-    onHeadbutt(action: () => void): EventController;
-}
-
-/**
- * @group Component System
- */
-export interface DoubleJumpComp extends Comp {
-    /**
-     * Number of jumps allowed.
-     */
-    numJumps: number;
-    /**
-     * Performs double jump (the initial jump only happens if player is grounded).
-     */
-    doubleJump(force?: number): void;
-    /**
-     * Register an event that runs when the object performs the second jump when double jumping.
-     */
-    onDoubleJump(action: () => void): EventController;
-}
-
-/**
- * @group Options
- */
-export interface BodyCompOpt {
-    /**
-     * How much velocity decays (velocity *= (1 - drag) every frame).
-     *
-     * @since v3001.0
-     */
-    drag?: number;
-    /**
-     * Initial speed in pixels per second for jump().
-     */
-    jumpForce?: number;
-    /**
-     * Maximum velocity when falling.
-     */
-    maxVelocity?: number;
-    /**
-     * Gravity multiplier.
-     */
-    gravityScale?: number;
-    /**
-     * If object is static, won't move, and all non static objects won't move past it.
-     *
-     * @since v3000.0
-     */
-    isStatic?: boolean;
-    /**
-     * If object should move with moving platform (default true).
-     *
-     * @since v3000.0
-     */
-    stickToPlatform?: boolean;
-    /**
-     * Mass of the body, decides how much a non-static body should move when resolves with another non-static body. (default 1).
-     *
-     * @since v3000.0
-     */
-    mass?: number;
-}
-
-/**
- * @group Component System
- */
-export interface TimerComp extends Comp {
-    /**
-     * Run the callback after n seconds.
-     */
-    wait(time: number, action?: () => void): TimerController;
-    /**
-     * Run the callback every n seconds.
-     *
-     * @since v3000.0
-     */
-    loop(time: number, action: () => void): EventController;
-    /**
-     * Tweeeeen! Note that this doesn't specifically mean tweening on this object's property, this just registers the timer on this object, so the tween will cancel with the object gets destroyed, or paused when obj.paused is true.
-     *
-     * @since v3000.0
-     */
-    tween<V extends LerpValue>(
-        from: V,
-        to: V,
-        duration: number,
-        setValue: (value: V) => void,
-        easeFunc?: (t: number) => number,
-    ): TweenController;
-}
-
-/**
- * @group Component System
- */
-export interface FixedComp extends Comp {
-    /**
-     * If the obj is unaffected by camera
-     */
-    fixed: boolean;
-}
-
-/**
- * @group Component System
- */
-export interface StayComp extends Comp {
-    /**
-     * If the obj should not be destroyed on scene switch.
-     */
-    stay: boolean;
-    /**
-     * Array of scenes that the obj will stay on.
-     */
-    scenesToStay: string[];
-}
-
-/**
- * @group Component System
- */
-export interface HealthComp extends Comp {
-    /**
-     * Decrease HP by n (defaults to 1).
-     */
-    hurt(n?: number): void;
-    /**
-     * Increase HP by n (defaults to 1).
-     */
-    heal(n?: number): void;
-    /**
-     * Current health points.
-     */
-    hp(): number;
-    /**
-     * Set current health points.
-     */
-    setHP(hp: number): void;
-    /**
-     * Max amount of HP.
-     */
-    maxHP(): number | null;
-    /**
-     * Set max amount of HP.
-     */
-    setMaxHP(hp: number): void;
-    /**
-     * Register an event that runs when hurt() is called upon the object.
-     *
-     * @since v2000.1
-     */
-    onHurt(action: (amount?: number) => void): EventController;
-    /**
-     * Register an event that runs when heal() is called upon the object.
-     *
-     * @since v2000.1
-     */
-    onHeal(action: (amount?: number) => void): EventController;
-    /**
-     * Register an event that runs when object's HP is equal or below 0.
-     *
-     * @since v2000.1
-     */
-    onDeath(action: () => void): EventController;
-}
-
-/**
- * @group Options
- */
-export interface LifespanCompOpt {
-    /**
-     * Fade out duration (default 0 which is no fade out).
-     */
-    fade?: number;
-}
-
-export interface NamedComp extends Comp {
-    /**
-     * The name assigned to this object.
-     */
-    name: string;
-}
-
-/**
- * @group Component System
- */
-export interface StateComp extends Comp {
-    /**
-     * Current state.
-     */
-    state: string;
-    /**
-     * Enter a state, trigger onStateEnd for previous state and onStateEnter for the new State state.
-     */
-    enterState: (state: string, ...args: any) => void;
-    /**
-     * Register event that runs once when a specific state transition happens. Accepts arguments passed from `enterState(name, ...args)`.
-     *
-     * @since v2000.2
-     */
-    onStateTransition(
-        from: string,
-        to: string,
-        action: () => void,
-    ): EventController;
-    /**
-     * Register event that runs once when enters a specific state. Accepts arguments passed from `enterState(name, ...args)`.
-     */
-    onStateEnter: (
-        state: string,
-        action: (...args: any) => void,
-    ) => EventController;
-    /**
-     * Register an event that runs once when leaves a specific state.
-     */
-    onStateEnd: (state: string, action: () => void) => EventController;
-    /**
-     * Register an event that runs every frame when in a specific state.
-     */
-    onStateUpdate: (state: string, action: () => void) => EventController;
-    /**
-     * Register an event that runs every frame when in a specific state.
-     */
-    onStateDraw: (state: string, action: () => void) => EventController;
-}
-
 export type Mask = "intersect" | "subtract";
-
-/**
- * @group Component System
- */
-export interface MaskComp extends Comp {
-    mask: Mask;
-}
 
 /**
  * @group Options
@@ -6541,63 +5547,7 @@ export enum EdgeMask {
 }
 
 /**
- * The options of a tile component
- *
- * @group Options
- */
-export type TileCompOpt = {
-    /**
-     * If the tile is an obstacle in pathfinding.
-     */
-    isObstacle?: boolean;
-    /**
-     * How much a tile is cost to traverse in pathfinding (default 0).
-     */
-    cost?: number;
-    /**
-     * If the tile has hard edges that cannot pass in pathfinding.
-     */
-    edges?: Edge[];
-    /**
-     * Position offset when setting `tilePos`.
-     */
-    offset?: Vec2;
-};
-
-/**
- * @group Component System
- */
-export interface TileComp extends Comp {
-    /**
-     * The tile position inside the level.
-     */
-    tilePos: Vec2;
-    /**
-     * If the tile is an obstacle in pathfinding.
-     */
-    isObstacle: boolean;
-    /**
-     * How much a tile is cost to traverse in pathfinding (default 0).
-     */
-    cost: number;
-    /**
-     * If the tile has hard edges that cannot pass in pathfinding.
-     */
-    edges: Edge[];
-    /**
-     * Position offset when setting `tilePos`.
-     */
-    tilePosOffset: Vec2;
-    readonly edgeMask: EdgeMask;
-    getLevel(): GameObj<LevelComp>;
-    moveLeft(): void;
-    moveRight(): void;
-    moveUp(): void;
-    moveDown(): void;
-}
-
-/**
- * @group Component System
+ * @group Components
  */
 export interface LevelComp extends Comp {
     tileWidth(): number;
@@ -6665,34 +5615,6 @@ export interface LevelComp extends Comp {
 export type PathFindOpt = {
     allowDiagonals?: boolean;
 };
-
-/**
- * @group Options
- */
-export type AgentCompOpt = {
-    speed?: number;
-    allowDiagonals?: boolean;
-};
-
-/**
- * @group Component System
- */
-export interface AgentComp extends Comp {
-    agentSpeed: number;
-    allowDiagonals: boolean;
-    getDistanceToTarget(): number;
-    getNextLocation(): Vec2 | null;
-    getPath(): Vec2[] | null;
-    getTarget(): Vec2 | null;
-    isNavigationFinished(): boolean;
-    isTargetReachable(): boolean;
-    isTargetReached(): boolean;
-    setTarget(target: Vec2): void;
-    onNavigationStarted(cb: () => void): EventController;
-    onNavigationNext(cb: () => void): EventController;
-    onNavigationEnded(cb: () => void): EventController;
-    onTargetReached(cb: () => void): EventController;
-}
 
 /**
  * @group Options

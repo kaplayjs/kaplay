@@ -1,5 +1,26 @@
-import type { BodyComp, DoubleJumpComp, GameObj } from "../../types";
+import type { Comp, GameObj } from "../../types";
 import type { EventController } from "../../utils";
+import type { BodyComp } from "./body";
+
+/**
+ * The {@link doubleJump `doubleJump()`} component.
+ *
+ * @group Components
+ */
+export interface DoubleJumpComp extends Comp {
+    /**
+     * Number of jumps allowed.
+     */
+    numJumps: number;
+    /**
+     * Performs double jump (the initial jump only happens if player is grounded).
+     */
+    doubleJump(force?: number): void;
+    /**
+     * Register an event that runs when the object performs the second jump when double jumping.
+     */
+    onDoubleJump(action: () => void): EventController;
+}
 
 export function doubleJump(numJumps: number = 2): DoubleJumpComp {
     let jumpsLeft = numJumps;

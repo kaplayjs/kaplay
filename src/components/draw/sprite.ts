@@ -1,18 +1,142 @@
 // TODO: accept canvas
 
 import type { Texture } from "../../gfx";
-import { getInternalContext, getKaboomContext } from "../../kaboom";
-import { Quad, quad, Vec2, vec2 } from "../../math";
+import { getKaboomContext } from "../../kaboom";
+import { Quad, quad, type Rect, Vec2, vec2 } from "../../math";
 import type {
     Asset,
+    Comp,
     GameObj,
     SpriteAnimPlayOpt,
-    SpriteComp,
-    SpriteCompOpt,
     SpriteCurAnim,
     SpriteData,
 } from "../../types";
 import { Event, EventController } from "../../utils";
+
+/**
+ * The {@link sprite `sprite()`} component.
+ *
+ * @group Components
+ */
+export interface SpriteComp extends Comp {
+    draw: Comp["draw"];
+    /**
+     * Name of the sprite.
+     */
+    sprite: string;
+    /**
+     * Width for sprite.
+     */
+    width: number;
+    /**
+     * Height for sprite.
+     */
+    height: number;
+    /**
+     * Current frame.
+     */
+    frame: number;
+    /**
+     * The rectangular area of the texture to render.
+     */
+    quad: Quad;
+    /**
+     * Play a piece of anim.
+     */
+    play(anim: string, options?: SpriteAnimPlayOpt): void;
+    /**
+     * Stop current anim.
+     */
+    stop(): void;
+    /**
+     * Get total number of frames.
+     */
+    numFrames(): number;
+    /**
+     * Get the current animation data.
+     *
+     * @since v3001.0
+     */
+    getCurAnim(): SpriteCurAnim;
+    /**
+     * Get current anim name.
+     *
+     * @deprecated Use `getCurrentAnim().name` instead.
+     */
+    curAnim(): string;
+    /**
+     * Speed multiplier for all animations (for the actual fps for an anim use .play("anim", { speed: 10 })).
+     */
+    animSpeed: number;
+    /**
+     * Flip texture horizontally.
+     */
+    flipX: boolean;
+    /**
+     * Flip texture vertically.
+     */
+    flipY: boolean;
+    /**
+     * Register an event that runs when an animation is played.
+     */
+    onAnimStart(action: (anim: string) => void): EventController;
+    /**
+     * Register an event that runs when an animation is ended.
+     */
+    onAnimEnd(action: (anim: string) => void): EventController;
+    /**
+     * @since v3000.0
+     */
+    renderArea(): Rect;
+}
+
+/**
+ * Options for the {@link sprite `sprite()`} component.
+ *
+ * @group Components
+ */
+export interface SpriteCompOpt {
+    /**
+     * If the sprite is loaded with multiple frames, or sliced, use the frame option to specify which frame to draw.
+     */
+    frame?: number;
+    /**
+     * If provided width and height, don't stretch but instead render tiled.
+     */
+    tiled?: boolean;
+    /**
+     * Stretch sprite to a certain width.
+     */
+    width?: number;
+    /**
+     * Stretch sprite to a certain height.
+     */
+    height?: number;
+    /**
+     * Play an animation on start.
+     */
+    anim?: string;
+    /**
+     * Speed multiplier for all animations (for the actual fps for an anim use .play("anim", { speed: 10 })).
+     */
+    animSpeed?: number;
+    /**
+     * Flip texture horizontally.
+     */
+    flipX?: boolean;
+    /**
+     * Flip texture vertically.
+     */
+    flipY?: boolean;
+    /**
+     * The rectangular sub-area of the texture to render, default to full texture `quad(0, 0, 1, 1)`.
+     */
+    quad?: Quad;
+    /**
+     * If fill the sprite (useful if you only want to render outline with outline() component).
+     */
+    fill?: boolean;
+}
 
 // TODO: clean
 export function sprite(
@@ -20,7 +144,7 @@ export function sprite(
     opt: SpriteCompOpt = {},
 ): SpriteComp {
     const k = getKaboomContext(this);
-    const internal = getInternalContext(k);
+    const { drawTexture, getRenderProps, resolveSprite } = k._k;
 
     let spriteData: SpriteData | null = null;
     let curAnim: SpriteCurAnim | null = null;
@@ -118,8 +242,8 @@ export function sprite(
                 for (let i = 0; i < 9; i++) {
                     const uv = quads[i];
                     const transform = quads[i + 9];
-                    internal.drawTexture(
-                        Object.assign(internal.getRenderProps(this), {
+                    drawTexture(
+                        Object.assign(getRenderProps(this), {
                             pos: transform.pos(),
                             tex: spriteData.tex,
                             quad: q.scale(uv),
@@ -132,8 +256,8 @@ export function sprite(
                     );
                 }
             } else {
-                internal.drawTexture(
-                    Object.assign(internal.getRenderProps(this), {
+                drawTexture(
+                    Object.assign(getRenderProps(this), {
                         tex: spriteData.tex,
                         quad: q.scale(this.quad ?? new Quad(0, 0, 1, 1)),
                         flipX: this.flipX,
@@ -172,12 +296,12 @@ export function sprite(
                 spriteLoadedEvent.trigger(spriteData);
             };
 
-            const spr = internal.resolveSprite(src);
+            const spr = resolveSprite(src);
 
             if (spr) {
                 spr.onLoad(setSpriteData);
             } else {
-                k.onLoad(() => setSpriteData(internal.resolveSprite(src).data));
+                k.onLoad(() => setSpriteData(resolveSprite(src).data));
             }
         },
 

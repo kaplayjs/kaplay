@@ -1,12 +1,39 @@
 import type { Vec2 } from "../../math";
-import type {
-    AgentComp,
-    AgentCompOpt,
-    GameObj,
-    PosComp,
-    TileComp,
-} from "../../types";
+import type { Comp, GameObj, PosComp } from "../../types";
 import type { EventController } from "../../utils";
+import type { TileComp } from "./tile";
+
+/**
+ * The {@link agent `agent()`} component.
+ *
+ * @group Components
+ */
+export interface AgentComp extends Comp {
+    agentSpeed: number;
+    allowDiagonals: boolean;
+    getDistanceToTarget(): number;
+    getNextLocation(): Vec2 | null;
+    getPath(): Vec2[] | null;
+    getTarget(): Vec2 | null;
+    isNavigationFinished(): boolean;
+    isTargetReachable(): boolean;
+    isTargetReached(): boolean;
+    setTarget(target: Vec2): void;
+    onNavigationStarted(cb: () => void): EventController;
+    onNavigationNext(cb: () => void): EventController;
+    onNavigationEnded(cb: () => void): EventController;
+    onTargetReached(cb: () => void): EventController;
+}
+
+/**
+ * Options for the {@link agent `agent()`} component.
+ *
+ * @group Components
+ */
+export type AgentCompOpt = {
+    speed?: number;
+    allowDiagonals?: boolean;
+};
 
 export function agent(opts: AgentCompOpt = {}): AgentComp {
     let target: Vec2 | null = null;

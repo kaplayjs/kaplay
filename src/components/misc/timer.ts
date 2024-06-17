@@ -2,12 +2,43 @@ import easings from "../../easings";
 import { getKaboomContext } from "../../kaboom";
 import { lerp } from "../../math";
 import type {
+    Comp,
     EventController,
     GameObj,
     LerpValue,
-    TimerComp,
     TimerController,
+    TweenController,
 } from "../../types";
+
+/**
+ * The {@link timer `timer()`} component.
+ *
+ * @group Componens
+ */
+export interface TimerComp extends Comp {
+    /**
+     * Run the callback after n seconds.
+     */
+    wait(time: number, action?: () => void): TimerController;
+    /**
+     * Run the callback every n seconds.
+     *
+     * @since v3000.0
+     */
+    loop(time: number, action: () => void): EventController;
+    /**
+     * Tweeeeen! Note that this doesn't specifically mean tweening on this object's property, this just registers the timer on this object, so the tween will cancel with the object gets destroyed, or paused when obj.paused is true.
+     *
+     * @since v3000.0
+     */
+    tween<V extends LerpValue>(
+        from: V,
+        to: V,
+        duration: number,
+        setValue: (value: V) => void,
+        easeFunc?: (t: number) => number,
+    ): TweenController;
+}
 
 export function timer(): TimerComp {
     return {
