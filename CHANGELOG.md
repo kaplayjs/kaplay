@@ -89,8 +89,8 @@ add([
 - added quadratic bezier and Catmull-Rom evaluation
 - added evaluation of the first and second derivatives for all splines
 - added higher order easing functions linear, steps and cubic-bezier
+- added `camFlash()`
 - added `Color.toArray()`
-
 
 ### Deprecated
 
