@@ -2062,7 +2062,7 @@ export interface KaboomCtx<
      *
      * @group Info
      */
-    camFlash(flashColor: Color, fadeOutTime: number): void;
+    camFlash(flashColor: Color, fadeOutTime: number): TimerController;
     /**
      * Get camera transform.
      *
