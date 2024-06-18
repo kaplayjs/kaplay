@@ -74,7 +74,9 @@ add([
 - added `loadMusic()` to load streaming audio (doesn't block in loading screen)
 - added `chooseMultiple()` and `shuffle()` helpers for arrays
 - added `getSceneName()` to get the current scene name
+- added `camFlash()` to flash the screen
 - added `SpriteComp.getCurAnim()` to get the current animation data
+- added `Color.toArray()` to convert a color to an array
 - added `outline()`, `shader()`, and `area()` properties to `debug.inspect` (f1)
 - added `kaboomOpt.debugKey` for customizing the key used to toggle debug mode
 - added `GameObjRaw.tags` to get a game object's tags
@@ -89,8 +91,6 @@ add([
 - added quadratic bezier and Catmull-Rom evaluation
 - added evaluation of the first and second derivatives for all splines
 - added higher order easing functions linear, steps and cubic-bezier
-- added `camFlash()`
-- added `Color.toArray()`
 
 ### Deprecated
 
