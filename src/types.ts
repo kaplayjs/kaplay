@@ -2058,6 +2058,12 @@ export interface KaboomCtx<
      */
     camRot(angle?: number): number;
     /**
+     * Flash the camera.
+     *
+     * @group Info
+     */
+    camFlash(flashColor: Color, fadeOutTime: number): void;
+    /**
      * Get camera transform.
      *
      * @group Info

@@ -3251,6 +3251,18 @@ const kaplay = (gopt: KaboomOpt = {}): KaboomCtx => {
         return game.cam.angle;
     }
 
+    function camFlash(flashColor:Color = rgb(255, 255, 255), fadeOutTime:number = 1) {
+        debug.log(flashColor)
+        debug.log(fadeOutTime)
+        let flash = add([
+            rect(width(), height()),
+            color(flashColor),
+            opacity(1),
+            fixed(),
+        ])
+        flash.fadeOut(fadeOutTime).onEnd(() => destroy(flash))
+    }
+
     function camTransform(): Mat4 {
         return game.cam.transform.clone();
     }
@@ -5594,6 +5606,7 @@ const kaplay = (gopt: KaboomOpt = {}): KaboomCtx => {
         // misc
         camPos,
         camScale,
+        camFlash,
         camRot,
         camTransform,
         shake,
