@@ -3252,8 +3252,6 @@ const kaplay = (gopt: KaboomOpt = {}): KaboomCtx => {
     }
 
     function camFlash(flashColor:Color = rgb(255, 255, 255), fadeOutTime:number = 1) {
-        debug.log(flashColor)
-        debug.log(fadeOutTime)
         let flash = add([
             rect(width(), height()),
             color(flashColor),
