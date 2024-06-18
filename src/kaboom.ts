@@ -3258,7 +3258,9 @@ const kaplay = (gopt: KaboomOpt = {}): KaboomCtx => {
             opacity(1),
             fixed(),
         ])
-        flash.fadeOut(fadeOutTime).onEnd(() => destroy(flash))
+        let fade = flash.fadeOut(fadeOutTime)
+        fade.onEnd(() => destroy(flash))
+        return fade;
     }
 
     function camTransform(): Mat4 {
