@@ -130,6 +130,7 @@ import type {
     AudioPlayOpt,
     BitmapFontData,
     BoomOpt,
+    ButtonsDef,
     CharTransform,
     Comp,
     CompList,
@@ -166,12 +167,14 @@ import type {
     LoadSpriteOpt,
     LoadSpriteSrc,
     MaskComp,
+    MergePlugins,
     MouseButton,
     MusicData,
     NineSlice,
     Outline,
     PathFindOpt,
     PeditFile,
+    PluginList,
     PosComp,
     QueryOpt,
     Recording,
@@ -197,6 +200,7 @@ import {
     area,
     body,
     circle,
+    color,
     doubleJump,
     drawon,
     fadeIn,
@@ -232,7 +236,8 @@ import beanSpriteSrc from "./assets/bean.png";
 import boomSpriteSrc from "./assets/boom.png";
 import burpSoundSrc from "./assets/burp.mp3";
 import kaSpriteSrc from "./assets/ka.png";
-import { color } from "./components/draw/color";
+
+export type * from "./types";
 
 // convert anchor string to a vec2 offset
 export function anchorPt(orig: Anchor | Vec2): Vec2 {
@@ -298,8 +303,49 @@ export const getKaboomContext = (fallBack?: any): KaboomCtx => {
     return ctx;
 };
 
-// only exports one kaplay() which contains all the state
-const kaplay = (gopt: KaboomOpt = {}): KaboomCtx => {
+/**
+ * Initialize KAPLAY context. The starting point of all KAPLAY games.
+ *
+ * @example
+ * ```js
+ * // Start KAPLAY with default options (will create a fullscreen canvas under <body>)
+ * kaplay()
+ *
+ * // Init with some options
+ * kaplay({
+ *     width: 320,
+ *     height: 240,
+ *     font: "sans-serif",
+ *     canvas: document.querySelector("#mycanvas"),
+ *     background: [ 0, 0, 255, ],
+ * })
+ *
+ * // All KAPLAY functions are imported to global after calling kaplay()
+ * add()
+ * onUpdate()
+ * onKeyPress()
+ * vec2()
+ *
+ * // If you want to prevent KAPLAY from importing all functions to global and use a context handle for all KAPLAY functions
+ * const k = kaplay({ global: false })
+ *
+ * k.add(...)
+ * k.onUpdate(...)
+ * k.onKeyPress(...)
+ * k.vec2(...)
+ * ```
+ *
+ * @group Start
+ */
+const kaplay = <
+    TPlugins extends PluginList<unknown> = [undefined],
+    TButtons extends ButtonsDef = {},
+    TButtonsName extends string = keyof TButtons & string,
+>(
+    gopt: KaboomOpt<TPlugins, TButtons> = {},
+): TPlugins extends [undefined] ? KaboomCtx<TButtons, TButtonsName>
+    : KaboomCtx<TButtons, TButtonsName> & MergePlugins<TPlugins> =>
+{
     const root = gopt.root ?? document.body;
 
     // if root is not defined (which falls back to <body>) we assume user is using kaboom on a clean page, and modify <body> to better fit a full screen canvas
@@ -3251,15 +3297,18 @@ const kaplay = (gopt: KaboomOpt = {}): KaboomCtx => {
         return game.cam.angle;
     }
 
-    function camFlash(flashColor:Color = rgb(255, 255, 255), fadeOutTime:number = 1) {
+    function camFlash(
+        flashColor: Color = rgb(255, 255, 255),
+        fadeOutTime: number = 1,
+    ) {
         let flash = add([
             rect(width(), height()),
             color(flashColor),
             opacity(1),
             fixed(),
-        ])
-        let fade = flash.fadeOut(fadeOutTime)
-        fade.onEnd(() => destroy(flash))
+        ]);
+        let fade = flash.fadeOut(fadeOutTime);
+        fade.onEnd(() => destroy(flash));
         return fade;
     }
 
@@ -5868,7 +5917,9 @@ const kaplay = (gopt: KaboomOpt = {}): KaboomCtx => {
         app.canvas.focus();
     }
 
-    return ctx;
+    return ctx as TPlugins extends [undefined]
+        ? KaboomCtx<TButtons, TButtonsName>
+        : KaboomCtx<TButtons, TButtonsName> & MergePlugins<TPlugins>;
 };
 
 export default kaplay;

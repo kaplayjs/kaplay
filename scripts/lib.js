@@ -78,9 +78,14 @@ export async function genDTS() {
         bundle: true,
         target: "esnext",
         format: "esm",
-        entryPoints: ["./src/types.ts"],
+        entryPoints: ["./src/kaboom.ts"],
         outdir: "./dist/declaration/",
         plugins: [dTSPathAliasPlugin()],
+        loader: {
+            ".png": "dataurl",
+            ".glsl": "text",
+            ".mp3": "binary",
+        },
     });
 
     // global dts
