@@ -23,4 +23,4 @@ jobs:
       - name: Run Checker
         run: pnpm run check
       - name: Run tests
-        run: pnpm run test
+        run: pnpm run test -c
