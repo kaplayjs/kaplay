@@ -79,9 +79,8 @@ export function timer(): TimerComp {
         loop(t: number, action: () => void): EventController {
             let curTimer: null | TimerController = null;
             const newAction = () => {
-                // TODO: should f be execute right away as loop() is called?
-                curTimer = this.wait(t, newAction);
                 action();
+                curTimer = this.wait(t, newAction);
             };
             curTimer = this.wait(0, newAction);
             return {
