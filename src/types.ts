@@ -1416,7 +1416,6 @@ export interface KaboomCtx<
      */
     onSceneLeave(action: (newScene?: string) => void): EventController;
     /**
-    /**
      * Gets the name of the current scene.
      *
      * @since v3001.0
