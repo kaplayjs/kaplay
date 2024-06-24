@@ -35,7 +35,7 @@ export function scale(...args: Vec2Args): ScaleComp {
             this.scale.scale(vec2(...args));
         },
         inspect() {
-            return `(${toFixed(this.scale.x, 2)}, ${toFixed(this.scale.y, 2)})`;
+            return `scale: (${toFixed(this.scale.x, 2)}, ${toFixed(this.scale.y, 2)})`;
         },
     };
 }

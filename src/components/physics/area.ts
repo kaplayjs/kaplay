@@ -473,7 +473,7 @@ export function area(opt: AreaCompOpt = {}): AreaComp {
         },
 
         inspect() {
-            return `(${this.area.scale.x.toFixed(1)}, ${
+            return `area: (${this.area.scale.x.toFixed(1)}, ${
                 this.area.scale.y.toFixed(1)
             })`;
         },

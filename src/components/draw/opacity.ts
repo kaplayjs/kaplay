@@ -22,9 +22,6 @@ export function opacity(a: number): OpacityComp {
     return {
         id: "opacity",
         opacity: a ?? 1,
-        inspect() {
-            return `${toFixed(this.opacity, 1)}`;
-        },
         fadeIn(time = 1, easeFunc = k.easings.linear): TweenController {
             return k.tween(
                 0,
@@ -42,6 +39,9 @@ export function opacity(a: number): OpacityComp {
                 (a) => this.opacity = a,
                 easeFunc,
             );
+        },
+        inspect() {
+            return `opacity: ${toFixed(this.opacity, 1)}`;
         },
     };
 }
