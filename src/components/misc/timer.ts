@@ -82,7 +82,6 @@ export function timer(): TimerComp {
                 action();
                 curTimer = this.wait(t, newAction);
             };
-            curTimer = this.wait(0, newAction);
             return {
                 get paused() {
                     return curTimer.paused;
