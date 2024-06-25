@@ -24,19 +24,22 @@ class Particle {
     }
 }
 
+export type EmitterOpt = {
+    shape?: ShapeType;
+    lifetime?: number;
+    rate: number;
+    direction: number;
+    spread: number;
+};
+
 export type ParticlesOpt = {
-    maxParticles: number;
-    emitterShape?: ShapeType;
-    emitterLifetime?: number;
-    emissionRate: number;
-    emissionDirection: number;
-    emissionSpread: number;
-    particleLifeTime: [number, number];
-    particleSpeed: [number, number];
-    particleColors?: Color[];
-    particleOpacities?: number[];
-    particleQuads?: Quad[];
-    particleTexture?: Texture;
+    max: number;
+    lifeTime: [number, number];
+    speed: [number, number];
+    colors?: Color[];
+    opacities?: number[];
+    quads?: Quad[];
+    texture?: Texture;
 };
 
 export interface ParticlesComp extends Comp {
@@ -44,19 +47,19 @@ export interface ParticlesComp extends Comp {
     onEnd(cb: () => void): void;
 }
 
-export function particles(opt: ParticlesOpt): ParticlesComp {
+export function particles(popt: ParticlesOpt, eopt: EmitterOpt): ParticlesComp {
     const k = getKaboomContext(this);
 
-    let emitterLifetime = opt.emitterLifetime;
+    let emitterLifetime = eopt.lifetime;
 
     const particles: Particle[] = [];
-    const colors = opt.particleColors || [k.WHITE];
-    const opacities = opt.particleOpacities || [1];
-    const quads = opt.particleQuads;
-    const lifetime = opt.particleLifeTime;
-    const direction = opt.emissionDirection;
-    const spread = opt.emissionSpread;
-    const speed = opt.particleSpeed;
+    const colors = popt.colors || [k.WHITE];
+    const opacities = popt.opacities || [1];
+    const quads = popt.quads;
+    const lifetime = popt.lifeTime;
+    const direction = eopt.direction;
+    const spread = eopt.spread;
+    const speed = popt.speed;
     const indices: number[] = [];
     let count = 0;
     let time = 0;
@@ -72,16 +75,15 @@ export function particles(opt: ParticlesOpt): ParticlesComp {
                     k.rand(speed[0], speed[1]),
                 );
                 const lt = k.rand(lifetime[0], lifetime[1]);
-                console.log(opt.emitterShape);
-                const pos = opt.emitterShape
-                    ? opt.emitterShape.random()
+                const pos = eopt.shape
+                    ? eopt.shape.random()
                     : vec2();
                 particles.push(new Particle(lt, pos, vel));
             }
             count += n;
         },
         update() {
-            if (emitterLifetime <= 0) {
+            if (eopt.lifetime <= 0) {
                 return;
             }
             const DT = k.dt();
@@ -108,20 +110,12 @@ export function particles(opt: ParticlesOpt): ParticlesComp {
             // Create new particles according to accumulated time
             time += DT;
             while (
-                count < opt.maxParticles && opt.emissionRate
-                && time > opt.emissionRate
+                count < popt.max && eopt.rate
+                && time > eopt.rate
             ) {
-                const angle = k.rand(direction - spread, direction + spread);
-                const vel = Vec2.fromAngle(angle).scale(
-                    k.rand(speed[0], speed[1]),
-                );
-                const lt = k.rand(lifetime[0], lifetime[1]);
-                const pos = opt.emitterShape
-                    ? opt.emitterShape.random()
-                    : vec2();
-                particles.push(new Particle(lt, pos, vel));
+                this.emit(1)
                 count++;
-                time -= opt.emissionRate;
+                time -= eopt.rate;
             }
         },
         draw() {
@@ -162,15 +156,15 @@ export function particles(opt: ParticlesOpt): ParticlesComp {
                         ),
                     )
                     : opacities[opacityIndex];
-                if (opt.particleTexture && quads) {
+                if (popt.texture && quads) {
                     const quadIndex = Math.floor(p.progress * quads.length);
                     const quad = quads[quadIndex];
                     k.drawUVQuad(
                         {
                             pos: p.pos,
-                            width: quad.w * opt.particleTexture.width,
-                            height: quad.h * opt.particleTexture.height,
-                            tex: opt.particleTexture,
+                            width: quad.w * popt.texture.width,
+                            height: quad.h * popt.texture.height,
+                            tex: popt.texture,
                             quad: quad,
                             color: color,
                             opacity: opacity,
@@ -191,7 +185,7 @@ export function particles(opt: ParticlesOpt): ParticlesComp {
             return onEndEvents.add(action);
         },
         inspect() {
-            return `count: ${count}/${opt.maxParticles}`;
+            return `count: ${count}/${popt.max}`;
         },
     };
 }

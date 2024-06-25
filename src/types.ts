@@ -44,7 +44,7 @@ import type {
     UVQuadComp,
     ZComp,
 } from "./components/";
-import type { ParticlesComp, ParticlesOpt } from "./components/draw/particles";
+import type { ParticlesComp, ParticlesOpt, EmitterOpt } from "./components/draw/particles";
 import type { FontData } from "./fonts";
 import type { RaycastHit, RaycastResult, ShapeType, Vec2 } from "./math";
 import type { NavMesh } from "./math/navigationmesh";
@@ -558,7 +558,7 @@ export interface KaboomCtx<
      * @group Components
      */
     outline(width?: number, color?: Color): OutlineComp;
-    particles(opt: ParticlesOpt): ParticlesComp;
+    particles(popt: ParticlesOpt, eopt: EmitterOpt): ParticlesComp;
     /**
      * Physical body that responds to gravity. Requires "area" and "pos" comp. This also makes the object "solid".
      *
@@ -4852,11 +4852,11 @@ export type DrawTextOpt = RenderProps & {
      * The name of font to use.
      */
     font?:
-        | string
-        | FontData
-        | Asset<FontData>
-        | BitmapFontData
-        | Asset<BitmapFontData>;
+    | string
+    | FontData
+    | Asset<FontData>
+    | BitmapFontData
+    | Asset<BitmapFontData>;
     /**
      * The size of text (the height of each character).
      */
