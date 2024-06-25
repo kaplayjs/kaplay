@@ -94,6 +94,7 @@ import {
     triangulate,
     Vec2,
     vec2,
+    type Vec2Args,
     wave,
 } from "./math";
 
@@ -190,7 +191,6 @@ import type {
     TexFilter,
     TextAlign,
     Uniform,
-    Vec2Args,
     Vertex,
 } from "./types";
 
@@ -1096,27 +1096,27 @@ const kaplay = <
         return loadSprite(name, beanSpriteSrc);
     }
 
-    function getSprite(name: string): Asset<SpriteData> | void {
+    function getSprite(name: string): Asset<SpriteData> | null {
         return assets.sprites.get(name);
     }
 
-    function getSound(name: string): Asset<SoundData> | void {
+    function getSound(name: string): Asset<SoundData> | null {
         return assets.sounds.get(name);
     }
 
-    function getFont(name: string): Asset<FontData> | void {
+    function getFont(name: string): Asset<FontData> | null {
         return assets.fonts.get(name);
     }
 
-    function getBitmapFont(name: string): Asset<BitmapFontData> | void {
+    function getBitmapFont(name: string): Asset<BitmapFontData> | null {
         return assets.bitmapFonts.get(name);
     }
 
-    function getShader(name: string): Asset<ShaderData> | void {
+    function getShader(name: string): Asset<ShaderData> | null {
         return assets.shaders.get(name);
     }
 
-    function getAsset(name: string): Asset<any> | void {
+    function getAsset(name: string): Asset<any> | null {
         return assets.custom.get(name);
     }
 
