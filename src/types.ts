@@ -28,6 +28,9 @@ import type {
     RectCompOpt,
     RotateComp,
     ScaleComp,
+    SentryCandidates,
+    SentryComp,
+    SentryCompOpt,
     ShaderComp,
     SpriteComp,
     SpriteCompOpt,
@@ -41,8 +44,10 @@ import type {
     UVQuadComp,
     ZComp,
 } from "./components/";
+import type { ParticlesComp, ParticlesOpt } from "./components/draw/particles";
 import type { FontData } from "./fonts";
 import type { RaycastHit, RaycastResult, ShapeType, Vec2 } from "./math";
+import type { NavMesh } from "./math/navigationmesh";
 import type { Event, EventController, EventHandler } from "./utils";
 
 export type {
@@ -81,6 +86,9 @@ export type {
     RectCompOpt,
     RotateComp,
     ScaleComp,
+    SentryCandidates,
+    SentryComp,
+    SentryCompOpt,
     ShaderComp,
     ShapeType,
     SpriteComp,
@@ -550,6 +558,7 @@ export interface KaboomCtx<
      * @group Components
      */
     outline(width?: number, color?: Color): OutlineComp;
+    particles(opt: ParticlesOpt): ParticlesComp;
     /**
      * Physical body that responds to gravity. Requires "area" and "pos" comp. This also makes the object "solid".
      *
@@ -848,6 +857,13 @@ export interface KaboomCtx<
      * @group Components
      */
     agent(opt?: AgentCompOpt): AgentComp;
+    /**
+     * A sentry which reacts to objects coming into view.
+     *
+     * @since v3001.0
+     * @group Components
+     */
+    sentry(candidates: SentryCandidates, opt?: SentryCompOpt): SentryComp;
     /**
      * @group Math
      */
@@ -2692,7 +2708,7 @@ export interface KaboomCtx<
      *
      * @group Math
      */
-    testRectPoint(r: Rect, pt: Point): boolean;
+    testRectPoint(r: Rect, pt: Vec2): boolean;
     /**
      * Check if a circle and polygon intersect linewise.
      * @group Math
@@ -2709,6 +2725,10 @@ export interface KaboomCtx<
      * @group Math
      */
     triangulate(pts: Vec2[]): Vec2[][];
+    /**
+     * @group Math
+     */
+    NavMesh: typeof NavMesh;
     /**
      * @group Math
      */
@@ -5148,6 +5168,7 @@ export declare class Rect {
     collides(shape: ShapeType): boolean;
     contains(point: Vec2): boolean;
     raycast(origin: Vec2, direction: Vec2): RaycastResult;
+    random(): Vec2;
 }
 
 /**
@@ -5164,6 +5185,7 @@ export declare class Line {
     collides(shape: ShapeType): boolean;
     contains(point: Vec2): boolean;
     raycast(origin: Vec2, direction: Vec2): RaycastResult;
+    random(): Vec2;
 }
 
 /**
@@ -5180,6 +5202,7 @@ export declare class Circle {
     collides(shape: ShapeType): boolean;
     contains(point: Vec2): boolean;
     raycast(origin: Vec2, direction: Vec2): RaycastResult;
+    random(): Vec2;
 }
 
 /**
@@ -5212,12 +5235,24 @@ export declare class Polygon {
     collides(shape: ShapeType): boolean;
     contains(point: Vec2): boolean;
     raycast(origin: Vec2, direction: Vec2): RaycastResult;
+    random(): Vec2;
 }
 
 /**
  * @group Math
  */
-export type Point = Vec2;
+export declare class Point {
+    pt: Vec2;
+    constructor(pt: Vec2);
+    transform(m: Mat4): Point;
+    bbox(): Rect;
+    area(): number;
+    clone(): Point;
+    collides(shape: ShapeType): boolean;
+    contains(point: Vec2): boolean;
+    raycast(origin: Vec2, direction: Vec2): RaycastResult;
+    random(): Vec2;
+}
 
 /**
  * @group Math

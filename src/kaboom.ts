@@ -97,6 +97,8 @@ import {
     wave,
 } from "./math";
 
+import { NavMesh } from "./math/navigationmesh";
+
 import easings from "./easings";
 import TexPacker from "./texPacker";
 
@@ -215,12 +217,14 @@ import {
     offscreen,
     opacity,
     outline,
+    particles,
     polygon,
     pos,
     raycast,
     rect,
     rotate,
     scale,
+    sentry,
     shader,
     sprite,
     state,
@@ -4027,7 +4031,7 @@ const kaplay = <
     }
 
     function getGravityDirection() {
-        // If gravity > 0 return magnitude, otherwise return (0, 1)
+        // If gravity != null return unit vector, otherwise return (0, 1)
         return game.gravity ? game.gravity.unit() : vec2(0, 1);
     }
 
@@ -5692,6 +5696,7 @@ const kaplay = <
         circle,
         uvquad,
         outline,
+        particles,
         body,
         doubleJump,
         shader,
@@ -5713,6 +5718,7 @@ const kaplay = <
         raycast,
         tile,
         agent,
+        sentry,
         // group events
         on,
         onUpdate,
@@ -5830,6 +5836,7 @@ const kaplay = <
         testLineCircle,
         isConvex,
         triangulate,
+        NavMesh,
         // raw draw
         drawSprite,
         drawText,
