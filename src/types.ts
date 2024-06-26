@@ -44,7 +44,11 @@ import type {
     UVQuadComp,
     ZComp,
 } from "./components/";
-import type { ParticlesComp, ParticlesOpt, EmitterOpt } from "./components/draw/particles";
+import type {
+    EmitterOpt,
+    ParticlesComp,
+    ParticlesOpt,
+} from "./components/draw/particles";
 import type { FontData } from "./fonts";
 import type { FrameBuffer, Texture } from "./gfx";
 import type {
@@ -4854,11 +4858,11 @@ export type DrawTextOpt = RenderProps & {
      * The name of font to use.
      */
     font?:
-    | string
-    | FontData
-    | Asset<FontData>
-    | BitmapFontData
-    | Asset<BitmapFontData>;
+        | string
+        | FontData
+        | Asset<FontData>
+        | BitmapFontData
+        | Asset<BitmapFontData>;
     /**
      * The size of text (the height of each character).
      */

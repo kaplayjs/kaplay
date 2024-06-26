@@ -4,8 +4,8 @@ import puppeteer from "puppeteer";
 import { build, serve, wait } from "./lib.js";
 const exampleCI = JSON.parse(
     await fs.readFile(
-        new URL('../examples/ciTest.json', import.meta.url)
-    )
+        new URL("../examples/ciTest.json", import.meta.url),
+    ),
 );
 
 await build();
@@ -16,13 +16,12 @@ let failed = false;
 console.log("launching browser");
 const browser = await puppeteer.launch();
 console.log("getting examples list");
-let examples 
+let examples;
 
 if (process.argv[2] === "--ci" || process.argv[2] === "-c") {
     console.log("Testing For Github CI");
     examples = exampleCI.order;
-}
-else{
+} else {
     console.log("Testing For Local Development");
     examples = (await fs.readdir("examples"))
         .filter((p) => !p.startsWith(".") && p.endsWith(".js"))

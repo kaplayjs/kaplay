@@ -349,7 +349,8 @@ const kaplay = <
 >(
     gopt: KaboomOpt<TPlugins, TButtons> = {},
 ): TPlugins extends [undefined] ? KaboomCtx<TButtons, TButtonsName>
-    : KaboomCtx<TButtons, TButtonsName> & MergePlugins<TPlugins> => {
+    : KaboomCtx<TButtons, TButtonsName> & MergePlugins<TPlugins> =>
+{
     const root = gopt.root ?? document.body;
 
     // if root is not defined (which falls back to <body>) we assume user is using kaboom on a clean page, and modify <body> to better fit a full screen canvas
@@ -1199,7 +1200,8 @@ const kaplay = <
         | BitmapFontData
         | Asset<BitmapFontData>
         | string
-        | void {
+        | void
+    {
         if (!src) {
             return resolveFont(gopt.font ?? DEF_FONT);
         }
@@ -1365,7 +1367,7 @@ const kaplay = <
         srcNode.onended = () => {
             if (
                 getTime()
-                >= (srcNode.buffer?.duration ?? Number.POSITIVE_INFINITY)
+                    >= (srcNode.buffer?.duration ?? Number.POSITIVE_INFINITY)
             ) {
                 onEndEvents.trigger();
             }
@@ -2923,14 +2925,14 @@ const kaplay = <
                 outline: Outline | null;
                 filter: TexFilter;
             } = font instanceof FontData
-                    ? {
-                        outline: font.outline,
-                        filter: font.filter,
-                    }
-                    : {
-                        outline: null,
-                        filter: DEF_FONT_FILTER,
-                    };
+                ? {
+                    outline: font.outline,
+                    filter: font.filter,
+                }
+                : {
+                    outline: null,
+                    filter: DEF_FONT_FILTER,
+                };
 
             // TODO: customizable font tex filter
             const atlas: FontAtlas = fontAtlases[fontName] ?? {
@@ -4831,7 +4833,7 @@ const kaplay = <
     const loop = game.root.loop.bind(game.root);
     const query = game.root.query.bind(game.root);
     const tween = game.root.tween.bind(game.root);
-    const layers = function (layerNames: string[], defaultLayer: string) {
+    const layers = function(layerNames: string[], defaultLayer: string) {
         if (game.layers) {
             throw Error("Layers can only be assigned once.");
         }
@@ -5285,8 +5287,9 @@ const kaplay = <
                     const style = log.msg instanceof Error ? "error" : "info";
                     str += `[time]${log.time.toFixed(2)}[/time]`;
                     str += " ";
-                    str += `[${style}]${log.msg?.toString ? log.msg.toString() : log.msg
-                        }[/${style}]`;
+                    str += `[${style}]${
+                        log.msg?.toString ? log.msg.toString() : log.msg
+                    }[/${style}]`;
                     logs.push(str);
                 }
 
@@ -5405,7 +5408,7 @@ const kaplay = <
             // clear canvas
             gl.clear(
                 gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT
-                | gl.STENCIL_BUFFER_BIT,
+                    | gl.STENCIL_BUFFER_BIT,
             );
 
             // unbind everything

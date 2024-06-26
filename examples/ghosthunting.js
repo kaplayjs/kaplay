@@ -121,7 +121,7 @@ function addEnemy(p) {
                             rate: 0,
                             direction: -90,
                             spread: 0,
-                        })
+                        }),
                     ]);
                     dissipate.emit(20);
                     dissipate.onEnd(() => {

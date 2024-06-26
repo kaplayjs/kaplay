@@ -6,21 +6,28 @@
 
 ## Editing examples
 
-1. Pick on example to test and edit the corresponding `/examples/[name].js`, or create a new file under `/examples` to test anything you're working on.
-1. The source entry point is `src/kaboom.ts`, editing any files referenced will automatically trigger rebuild. **Make sure not to break any existing examples**.
+1. Pick on example to test and edit the corresponding `/examples/[name].js`, or
+   create a new file under `/examples` to test anything you're working on.
+1. The source entry point is `src/kaboom.ts`, editing any files referenced will
+   automatically trigger rebuild. **Make sure not to break any existing
+   examples**.
 
 ## Before commit
 
-1. follow conventional [conventional commits](https://www.conventionalcommits.org/en/v1.0.0/) format. You can see how seeing
-   the commit history.
+1. follow conventional
+   [conventional commits](https://www.conventionalcommits.org/en/v1.0.0/)
+   format. You can see how seeing the commit history.
 1. `npm run check` to check typescript.
 1. `npm run fmt` to format.
 
 ## Documentation
 
-Most kaboom docs are written in `src/types.ts` as [jsDoc](https://www.typescriptlang.org/docs/handbook/jsdoc-supported-types.html) above each kaboom component entry.
+Most kaboom docs are written in `src/types.ts` as
+[jsDoc](https://www.typescriptlang.org/docs/handbook/jsdoc-supported-types.html)
+above each kaboom component entry.
 
-**Help on improving the documentation is appreciated! Thank you for contributing!**
+**Help on improving the documentation is appreciated! Thank you for
+contributing!**
 
 ## Conventional Commits Guide
 
@@ -33,9 +40,10 @@ A commit starts with a type, a scope, and a subject:
 ```
 
 - The **type** is mandatory. [Should be one of the following](#commit-types).
-- We don't use the **scope** right now, you must omit it. This may change in the future.
-- The subject must be a short description of the change.
-  Use the imperative, present tense: "change" not "changed" nor "changes".
+- We don't use the **scope** right now, you must omit it. This may change in the
+  future.
+- The subject must be a short description of the change. Use the imperative,
+  present tense: "change" not "changed" nor "changes".
 
 ### Commit types
 
@@ -57,7 +65,8 @@ fix: fix platformer example
 docs: update add() component jsDoc example
 ```
 
-`style`: changes that do not affect the meaning of the code (white-space, formatting, missing semi-colons, etc)
+`style`: changes that do not affect the meaning of the code (white-space,
+formatting, missing semi-colons, etc)
 
 ```
 style: format all files
@@ -75,7 +84,8 @@ refactor: move assets to src/assets
 test: added tests for add() component
 ```
 
-`build`: changes that affect the build system or external dependencies (esbuild, typescript)
+`build`: changes that affect the build system or external dependencies (esbuild,
+typescript)
 
 ```
 build: update esbuild to 0.12.0
@@ -93,7 +103,8 @@ ci: add examples test workflow
 revert: feat: add hello() component
 ```
 
-`chore`: updating tasks, general maintenance, etc (anything that doesn't fit in the above types)
+`chore`: updating tasks, general maintenance, etc (anything that doesn't fit in
+the above types)
 
 ```
 chore: update README.md
