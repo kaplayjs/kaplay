@@ -178,7 +178,10 @@ works all CDNs that supports NPM packages, e.g. jsdelivr, skypack
 
 ### Games
 
-Collection of games made with KAPLAY (and Kaboom), selected by KAPLAY, [here](https://itch.io/c/4494863/kag-collection).
+Collections of games made with KAPLAY (and Kaboom), selected by KAPLAY:
+
+- [Itch.io](https://itch.io/c/4494863/kag-collection)
+- [Newgrounds.com](https://www.newgrounds.com/playlist/379920/kaplay-games)
 
 ## Credits
 
