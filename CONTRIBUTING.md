@@ -1,4 +1,4 @@
-## Developing kaplay
+# Developing kaplay
 
 1. `git clone https://github.com/marklovers/kaplay.git` to clone the repo.
 1. `cd kaplay` to enter the project directory.
@@ -11,14 +11,7 @@
 1. The source entry point is `src/kaboom.ts`, editing any files referenced will
    automatically trigger rebuild. **Make sure not to break any existing
    examples**.
-
-## Before commit
-
-1. follow conventional
-   [conventional commits](https://www.conventionalcommits.org/en/v1.0.0/)
-   format. You can see how seeing the commit history.
-1. `npm run check` to check typescript.
-1. `npm run fmt` to format.
+1. Run `pnpm dev` to start the dev server and try examples.
 
 ## Documentation
 
@@ -29,7 +22,16 @@ above each kaboom component entry.
 **Help on improving the documentation is appreciated! Thank you for
 contributing!**
 
-## Conventional Commits Guide
+# Before commit
+
+1. follow conventional
+   [conventional commits](#conventional-commits-guide)
+   format. You can see how seeing the commit history.
+2. `npm run check` to check typescript.
+3. `npm run fmt` to format.
+
+
+# Conventional Commits Guide
 
 You must follow the following rules when writing commit messages:
 
