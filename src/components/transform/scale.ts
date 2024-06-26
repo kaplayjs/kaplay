@@ -1,6 +1,6 @@
 import { getKaboomContext } from "../../kaboom";
-import { type Vec2, vec2 } from "../../math";
-import type { Comp, Vec2Args } from "../../types";
+import { type Vec2, vec2, type Vec2Args } from "../../math";
+import type { Comp } from "../../types";
 
 /**
  * The {@link scale `scale()`} component.

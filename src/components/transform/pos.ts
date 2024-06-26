@@ -1,6 +1,6 @@
 import { getKaboomContext } from "../../kaboom";
-import { Vec2, vec2 } from "../../math";
-import type { Comp, GameObj, Vec2Args } from "../../types";
+import { Vec2, vec2, type Vec2Args } from "../../math";
+import type { Comp, GameObj } from "../../types";
 import type { FixedComp } from "./fixed";
 
 /**

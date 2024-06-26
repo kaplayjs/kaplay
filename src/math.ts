@@ -1,9 +1,16 @@
-import {
-    type GameObj,
-    type LerpValue,
-    type RNGValue,
-    type Vec2Args,
-} from "./types";
+import type { GameObj, LerpValue, RNGValue } from "./types";
+
+/**
+ * Possible arguments for a Vec2.
+ *
+ * @group Math
+ */
+export type Vec2Args =
+    | [number, number]
+    | [number]
+    | [Vec2]
+    | [number | Vec2]
+    | [];
 
 export function deg2rad(deg: number): number {
     return deg * Math.PI / 180;
@@ -284,9 +291,17 @@ export function vec2(...args: Vec2Args): Vec2 {
     return new Vec2(...args);
 }
 
+/**
+ * 0-255 RGBA color.
+ *
+ * @group Math
+ */
 export class Color {
+    /** Red (0-255. */
     r: number = 255;
+    /** Green (0-255). */
     g: number = 255;
+    /** Blue (0-255). */
     b: number = 255;
 
     constructor(r: number, g: number, b: number) {
@@ -299,6 +314,18 @@ export class Color {
         return new Color(arr[0], arr[1], arr[2]);
     }
 
+    /**
+     * Create color from hex string or literal.
+     *
+     * @example
+     * ```js
+     * Color.fromHex(0xfcef8d)
+     * Color.fromHex("#5ba675")
+     * Color.fromHex("d46eb3")
+     * ```
+     *
+     * @since v3000.0
+     */
     static fromHex(hex: string | number) {
         if (typeof hex === "number") {
             return new Color(
@@ -361,10 +388,12 @@ export class Color {
         return new Color(this.r, this.g, this.b);
     }
 
+    /** Lighten the color (adds RGB by n). */
     lighten(a: number): Color {
         return new Color(this.r + a, this.g + a, this.b + a);
     }
 
+    /** Darkens the color (subtracts RGB by n). */
     darken(a: number): Color {
         return this.lighten(-a);
     }
@@ -381,6 +410,11 @@ export class Color {
         );
     }
 
+    /**
+     * Linear interpolate to a destination color.
+     *
+     * @since v3000.0
+     */
     lerp(dest: Color, t: number): Color {
         return new Color(
             lerp(this.r, dest.r, t),
@@ -389,6 +423,11 @@ export class Color {
         );
     }
 
+    /**
+     * Convert color into HSL format.
+     *
+     * @since v3001.0
+     */
     toHSL(): [number, number, number] {
         const r = this.r / 255;
         const g = this.g / 255;
@@ -428,12 +467,22 @@ export class Color {
         return `rgb(${this.r}, ${this.g}, ${this.b})`;
     }
 
+    /**
+     * Return the hex string of color.
+     *
+     * @since v3000.0
+     */
     toHex(): string {
         return "#"
             + ((1 << 24) + (this.r << 16) + (this.g << 8) + this.b).toString(16)
                 .slice(1);
     }
 
+    /**
+     * Return the color converted to an array.
+     *
+     * @since v3001.0
+     */
     toArray(): Array<number> {
         return [this.r, this.g, this.b];
     }
@@ -457,6 +506,9 @@ export function rgb(...args): Color {
 
 export const hsl2rgb = (h, s, l) => Color.fromHSL(h, s, l);
 
+/**
+ * @group Math
+ */
 export class Quad {
     x: number = 0;
     y: number = 0;
@@ -853,6 +905,9 @@ class Mat3 {
     }
 }
 
+/**
+ * @group Math
+ */
 export class Mat4 {
     m: number[] = [
         1,
@@ -1092,7 +1147,7 @@ export class Mat4 {
             const r = Math.sqrt(this.m[0] * this.m[0] + this.m[1] * this.m[1]);
             return new Vec2(
                 Math.atan(this.m[0] * this.m[4] + this.m[1] * this.m[5])
-                    / (r * r),
+                / (r * r),
                 0,
             );
         } else if (this.m[4] != 0 || this.m[5] != 0) {
@@ -1100,7 +1155,7 @@ export class Mat4 {
             return new Vec2(
                 0,
                 Math.atan(this.m[0] * this.m[4] + this.m[1] * this.m[5])
-                    / (s * s),
+                / (s * s),
             );
         } else {
             return new Vec2(0, 0);
@@ -1187,6 +1242,9 @@ const A = 1103515245;
 const C = 12345;
 const M = 2147483648;
 
+/**
+ * @group Math
+ */
 export class RNG {
     seed: number;
     constructor(seed: number) {
@@ -1515,7 +1573,7 @@ export function testPolygonPoint(poly: Polygon, pt: Vec2): boolean {
             ((p[i].y > pt.y) != (p[j].y > pt.y))
             && (pt.x
                 < (p[j].x - p[i].x) * (pt.y - p[i].y) / (p[j].y - p[i].y)
-                    + p[i].x)
+                + p[i].x)
         ) {
             c = !c;
         }
@@ -1533,7 +1591,7 @@ export function testEllipsePoint(ellipse: Ellipse, pt: Vec2): boolean {
     const vx = pt.x * c + pt.y * s;
     const vy = -pt.x * s + pt.y * c;
     return vx * vx / (ellipse.radiusX * ellipse.radiusX)
-            + vy * vy / (ellipse.radiusY * ellipse.radiusY) < 1;
+        + vy * vy / (ellipse.radiusY * ellipse.radiusY) < 1;
 }
 
 export function testEllipseCircle(ellipse: Ellipse, circle: Circle): boolean {
@@ -2141,6 +2199,9 @@ export class Point {
     }
 }
 
+/**
+ * @group Math
+ */
 export class Line {
     p1: Vec2;
     p2: Vec2;
@@ -2175,6 +2236,9 @@ export class Line {
 }
 
 // TODO: use x: number y: number (x, y, width, height)
+/**
+ * @group Math
+ */
 export class Rect {
     pos: Vec2;
     width: number;
@@ -2237,6 +2301,9 @@ export class Rect {
     }
 }
 
+/**
+ * @group Math
+ */
 export class Circle {
     center: Vec2;
     radius: number;
@@ -2276,6 +2343,9 @@ export class Circle {
     }
 }
 
+/**
+ * @group Math
+ */
 export class Ellipse {
     center: Vec2;
     radiusX: number;
@@ -2396,7 +2466,7 @@ export class Ellipse {
         const vx = point.x * c + point.y * s;
         const vy = -point.x * s + point.y * c;
         return vx * vx / (this.radiusX * this.radiusX)
-                + vy * vy / (this.radiusY * this.radiusY) < 1;
+            + vy * vy / (this.radiusY * this.radiusY) < 1;
     }
     raycast(origin: Vec2, direction: Vec2): RaycastResult {
         return raycastEllipse(origin, direction, this);
@@ -2406,6 +2476,9 @@ export class Ellipse {
     }
 }
 
+/**
+ * @group Math
+ */
 export class Polygon {
     pts: Vec2[];
     constructor(pts: Vec2[]) {

@@ -46,7 +46,23 @@ import type {
 } from "./components/";
 import type { ParticlesComp, ParticlesOpt, EmitterOpt } from "./components/draw/particles";
 import type { FontData } from "./fonts";
-import type { RaycastHit, RaycastResult, ShapeType, Vec2 } from "./math";
+import type { FrameBuffer, Texture } from "./gfx";
+import type {
+    Circle,
+    Color,
+    Ellipse,
+    Line,
+    Mat4,
+    Point,
+    Polygon,
+    Quad,
+    RaycastHit,
+    RaycastResult,
+    Rect,
+    RNG,
+    ShapeType,
+    Vec2,
+} from "./math";
 import type { NavMesh } from "./math/navigationmesh";
 import type { Event, EventController, EventHandler } from "./utils";
 
@@ -59,31 +75,41 @@ export type {
     Asset,
     BodyComp,
     BodyCompOpt,
+    Circle,
     CircleComp,
+    Color,
     ColorComp,
     DoubleJumpComp,
+    Ellipse,
     Event,
     EventController,
     EventHandler,
     FixedComp,
     FollowComp,
     FontData,
+    FrameBuffer,
     HealthComp,
     LayerComp,
     LifespanCompOpt,
+    Line,
     MaskComp,
+    Mat4,
     NamedComp,
     OffScreenComp,
     OffScreenCompOpt,
     OpacityComp,
     OutlineComp,
+    Polygon,
     PolygonComp,
     PolygonCompOpt,
     PosComp,
+    Quad,
     RaycastHit,
     RaycastResult,
+    Rect,
     RectComp,
     RectCompOpt,
+    RNG,
     RotateComp,
     ScaleComp,
     SentryCandidates,
@@ -97,6 +123,7 @@ export type {
     StayComp,
     TextComp,
     TextCompOpt,
+    Texture,
     TileComp,
     TileCompOpt,
     TimerComp,
@@ -1719,42 +1746,42 @@ export interface KaboomCtx<
      * @since v3000.0
      * @group Assets
      */
-    getSprite(name: string): Asset<SpriteData> | void;
+    getSprite(name: string): Asset<SpriteData> | null;
     /**
      * Get SoundData from name.
      *
      * @since v3000.0
      * @group Assets
      */
-    getSound(name: string): Asset<SoundData> | void;
+    getSound(name: string): Asset<SoundData> | null;
     /**
      * Get FontData from name.
      *
      * @since v3000.0
      * @group Assets
      */
-    getFont(name: string): Asset<FontData> | void;
+    getFont(name: string): Asset<FontData> | null;
     /**
      * Get BitmapFontData from name.
      *
      * @since v3000.0
      * @group Assets
      */
-    getBitmapFont(name: string): Asset<BitmapFontData> | void;
+    getBitmapFont(name: string): Asset<BitmapFontData> | null;
     /**
      * Get ShaderData from name.
      *
      * @since v3000.0
      * @group Assets
      */
-    getShader(name: string): Asset<ShaderData> | void;
+    getShader(name: string): Asset<ShaderData> | null;
     /**
      * Get custom data from name.
      *
      * @since v3000.0
      * @group Assets
      */
-    getAsset(name: string): Asset<any> | void;
+    getAsset(name: string): Asset<any> | null;
     /**
      * The asset data.
      * @group Assets
@@ -2732,6 +2759,10 @@ export interface KaboomCtx<
     /**
      * @group Math
      */
+    Point: typeof Point;
+    /**
+     * @group Math
+     */
     Line: typeof Line;
     /**
      * @group Math
@@ -3257,85 +3288,85 @@ export interface KaboomCtx<
     /**
      * All chars in ASCII.
      *
-     * @group Misc
+     * @group Constants
      */
     ASCII_CHARS: string;
     /**
      * Left directional vector vec2(-1, 0).
      *
-     * @group Misc
+     * @group Constants
      */
     LEFT: Vec2;
     /**
      * Right directional vector vec2(1, 0).
      *
-     * @group Misc
+     * @group Constants
      */
     RIGHT: Vec2;
     /**
      * Up directional vector vec2(0, -1).
      *
-     * @group Misc
+     * @group Constants
      */
     UP: Vec2;
     /**
      * Down directional vector vec2(0, 1).
      *
-     * @group Misc
+     * @group Constants
      */
     DOWN: Vec2;
     /**
      * Red color.
      *
-     * @group Misc
+     * @group Constants
      */
     RED: Color;
     /**
      * Green color.
      *
-     * @group Misc
+     * @group Constants
      */
     GREEN: Color;
     /**
      * Blue color.
      *
-     * @group Misc
+     * @group Constants
      */
     BLUE: Color;
     /**
      * Yellow color.
      *
-     * @group Misc
+     * @group Constants
      */
     YELLOW: Color;
     /**
      * Cyan color.
      *
-     * @group Misc
+     * @group Constants
      */
     MAGENTA: Color;
     /**
      * Cyan color.
      *
-     * @group Misc
+     * @group Constants
      */
     CYAN: Color;
     /**
      * White color.
      *
-     * @group Misc
+     * @group Constants
      */
     WHITE: Color;
     /**
      * Black color.
      *
-     * @group Misc
+     * @group Constants
      */
     BLACK: Color;
     /**
      * The canvas DOM KAPLAY is currently using.
      *
-     * @group Misc
+     * @group Info
      */
     canvas: HTMLCanvasElement;
     /**
@@ -3383,6 +3414,11 @@ type Defined<T> = T extends any
     : never;
 type Expand<T> = T extends infer U ? { [K in keyof U]: U[K] } : never;
 export type MergeObj<T> = Expand<UnionToIntersection<Defined<T>>>;
+/**
+ * A type to merge the components of a game object, omiting the default component properties.
+ *
+ * @group Component Types
+ */
 export type MergeComps<T> = Omit<MergeObj<T>, keyof Comp>;
 export type MergePlugins<T extends PluginList<any>> = MergeObj<
     ReturnType<T[number]>
@@ -3391,7 +3427,7 @@ export type MergePlugins<T extends PluginList<any>> = MergeObj<
 /**
  * A component list.
  *
- * @group Components
+ * @group Component Types
  */
 export type CompList<T> = Array<T | Tag>;
 export type PluginList<T> = Array<T | KaboomPlugin<any>>;
@@ -4352,40 +4388,6 @@ export type ImageSource = Exclude<TexImageSource, VideoFrame>;
 
 type GfxCtx = any;
 
-export declare class Texture {
-    ctx: GfxCtx;
-    src: null | ImageSource;
-    glTex: WebGLTexture;
-    width: number;
-    height: number;
-    constructor(ctx: GfxCtx, w: number, h: number, opt?: TextureOpt);
-    static fromImage(ctx: GfxCtx, img: ImageSource, opt?: TextureOpt): Texture;
-    update(img: ImageSource, x?: number, y?: number);
-    bind();
-    unbind();
-    /**
-     * Frees up texture memory. Call this once the texture is no longer being used to avoid memory leaks.
-     */
-    free(): void;
-}
-
-export declare class FrameBuffer {
-    ctx: GfxCtx;
-    tex: Texture;
-    glFramebuffer: WebGLFramebuffer;
-    glRenderbuffer: WebGLRenderbuffer;
-    constructor(ctx: GfxCtx, w: number, h: number, opt?: TextureOpt);
-    width: number;
-    height: number;
-    toImageData(): ImageData;
-    toDataURL(): string;
-    clear(): void;
-    draw(action: () => void): void;
-    bind(): void;
-    unbind(): void;
-    free(): void;
-}
-
 export type Canvas = {
     width: number;
     height: number;
@@ -5004,137 +5006,6 @@ export type Anchor =
 /**
  * @group Math
  */
-export type Vec2Args =
-    | [number, number]
-    | [number]
-    | [Vec2]
-    | [number | Vec2]
-    | [];
-
-/**
- * @group Math
- */
-export declare class Mat4 {
-    m: number[];
-    constructor(m?: number[]);
-    static translate(p: Vec2): Mat4;
-    static scale(s: Vec2): Mat4;
-    static rotateX(a: number): Mat4;
-    static rotateY(a: number): Mat4;
-    static rotateZ(a: number): Mat4;
-    clone(): Mat4;
-    mult(other: Mat4): Mat4;
-    multVec2(p: Vec2): Vec2;
-    translate(p: Vec2): Mat4;
-    scale(s: Vec2): Mat4;
-    rotate(a: number): Mat4;
-    getTranslation(): Vec2;
-    getScale(): Vec2;
-    getRotation(): number;
-    getSkew(): Vec2;
-    invert(): Mat4;
-    toString(): string;
-}
-
-/**
- * 0-255 RGBA color.
- *
- * @group Math
- */
-export declare class Color {
-    /**
-     * Red (0-255).
-     */
-    r: number;
-    /**
-     * Green (0-255).
-     */
-    g: number;
-    /**
-     * Blue (0-255).
-     */
-    b: number;
-    constructor(r: number, g: number, b: number);
-    static fromArray(arr: number[]): Color;
-    static fromHSL(h: number, s: number, l: number): Color;
-    /**
-     * Create color from hex string or literal.
-     *
-     * @since v3000.0
-     *
-     * @example
-     * ```js
-     * Color.fromHex(0xfcef8d)
-     * Color.fromHex("#5ba675")
-     * Color.fromHex("d46eb3")
-     * ```
-     */
-    static fromHex(hex: number | string): Color;
-    static RED: Color;
-    static GREEN: Color;
-    static BLUE: Color;
-    static YELLOW: Color;
-    static MAGENTA: Color;
-    static CYAN: Color;
-    static WHITE: Color;
-    static BLACK: Color;
-    clone(): Color;
-    /**
-     * Lighten the color (adds RGB by n).
-     */
-    lighten(n: number): Color;
-    /**
-     * Darkens the color (subtracts RGB by n).
-     */
-    darken(n: number): Color;
-    invert(): Color;
-    mult(other: Color): Color;
-    /**
-     * Linear interpolate to a destination color.
-     *
-     * @since v3000.0
-     */
-    lerp(dest: Color, t: number): Color;
-    eq(c: Color): boolean;
-    /**
-     * Convert color into HSL format.
-     *
-     * @since v3001.0
-     */
-    toHSL(): [number, number, number];
-    toString(): string;
-    /**
-     * Return the hex string of color.
-     *
-     * @since v3000.0
-     */
-    toHex(): string;
-    /**
-     * Return the color converted to an array.
-     *
-     * @since v3001.0
-     */
-    toArray(): Array<number>;
-}
-
-/**
- * @group Math
- */
-export declare class Quad {
-    x: number;
-    y: number;
-    w: number;
-    h: number;
-    constructor(x: number, y: number, w: number, h: number);
-    scale(q: Quad): Quad;
-    pos(): Vec2;
-    clone(): Quad;
-    eq(q: Quad): boolean;
-}
-
-/**
- * @group Math
- */
 export type LerpValue =
     | number
     | Vec2
@@ -5147,125 +5018,6 @@ export type RNGValue =
     | number
     | Vec2
     | Color;
-
-/**
- * @group Math
- */
-export declare class Rect {
-    pos: Vec2;
-    width: number;
-    height: number;
-    constructor(pos: Vec2, width: number, height: number);
-    static fromPoints(p1: Vec2, p2: Vec2): Rect;
-    center(): Vec2;
-    points(): [Vec2, Vec2, Vec2, Vec2];
-    transform(m: Mat4): Polygon;
-    bbox(): Rect;
-    area(): number;
-    clone(): Rect;
-    distToPoint(p: Vec2): number;
-    sdistToPoint(p: Vec2): number;
-    collides(shape: ShapeType): boolean;
-    contains(point: Vec2): boolean;
-    raycast(origin: Vec2, direction: Vec2): RaycastResult;
-    random(): Vec2;
-}
-
-/**
- * @group Math
- */
-export declare class Line {
-    p1: Vec2;
-    p2: Vec2;
-    constructor(p1: Vec2, p2: Vec2);
-    transform(m: Mat4): Line;
-    bbox(): Rect;
-    area(): number;
-    clone(): Line;
-    collides(shape: ShapeType): boolean;
-    contains(point: Vec2): boolean;
-    raycast(origin: Vec2, direction: Vec2): RaycastResult;
-    random(): Vec2;
-}
-
-/**
- * @group Math
- */
-export declare class Circle {
-    center: Vec2;
-    radius: number;
-    constructor(pos: Vec2, radius: number);
-    transform(m: Mat4): Ellipse;
-    bbox(): Rect;
-    area(): number;
-    clone(): Circle;
-    collides(shape: ShapeType): boolean;
-    contains(point: Vec2): boolean;
-    raycast(origin: Vec2, direction: Vec2): RaycastResult;
-    random(): Vec2;
-}
-
-/**
- * @group Math
- */
-export declare class Ellipse {
-    center: Vec2;
-    radiusX: number;
-    radiusY: number;
-    constructor(pos: Vec2, rx: number, ry: number);
-    transform(m: Mat4): Ellipse;
-    bbox(): Rect;
-    area(): number;
-    clone(): Ellipse;
-    collides(shape: ShapeType): boolean;
-    contains(point: Vec2): boolean;
-    raycast(origin: Vec2, direction: Vec2): RaycastResult;
-}
-
-/**
- * @group Math
- */
-export declare class Polygon {
-    pts: Vec2[];
-    constructor(pts: Vec2[]);
-    transform(m: Mat4): Polygon;
-    bbox(): Rect;
-    area(): number;
-    clone(): Polygon;
-    collides(shape: ShapeType): boolean;
-    contains(point: Vec2): boolean;
-    raycast(origin: Vec2, direction: Vec2): RaycastResult;
-    random(): Vec2;
-}
-
-/**
- * @group Math
- */
-export declare class Point {
-    pt: Vec2;
-    constructor(pt: Vec2);
-    transform(m: Mat4): Point;
-    bbox(): Rect;
-    area(): number;
-    clone(): Point;
-    collides(shape: ShapeType): boolean;
-    contains(point: Vec2): boolean;
-    raycast(origin: Vec2, direction: Vec2): RaycastResult;
-    random(): Vec2;
-}
-
-/**
- * @group Math
- */
-export declare class RNG {
-    seed: number;
-    constructor(seed: number);
-    gen(): number;
-    genNumber(a: number, b: number): number;
-    genVec2(a: Vec2, b?: Vec2): Vec2;
-    genColor(a: Color, b: Color): Color;
-    genAny<T = RNGValue>(...args: T[]): T;
-}
 
 /**
  * @group Components
@@ -5298,7 +5050,7 @@ export interface Comp {
     /**
      * Debug info for inspect mode.
      */
-    inspect?: () => string | void;
+    inspect?: () => string | null;
     /**
      * Draw debug info in inspect mode
      *
@@ -5315,14 +5067,14 @@ export type GameObjID = number;
 /**
  * A component without own properties.
  *
- * @group Components
+ * @group Component Types
  */
 export type EmptyComp = { id: string } & Comp;
 
 /**
  * Collision resolution data.
  *
- * @group Components
+ * @group Math
  */
 export interface Collision {
     /**
@@ -5533,7 +5285,9 @@ export enum EdgeMask {
 }
 
 /**
- * @group Components
+ * A level component.
+ *
+ * @group Component Types
  */
 export interface LevelComp extends Comp {
     tileWidth(): number;
