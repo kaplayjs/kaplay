@@ -1,4 +1,4 @@
-import type { GameObj, LerpValue, Point, RNGValue } from "./types";
+import type { GameObj, LerpValue, RNGValue } from "./types";
 
 /**
  * Possible arguments for a Vec2.
@@ -1147,7 +1147,7 @@ export class Mat4 {
             const r = Math.sqrt(this.m[0] * this.m[0] + this.m[1] * this.m[1]);
             return new Vec2(
                 Math.atan(this.m[0] * this.m[4] + this.m[1] * this.m[5])
-                    / (r * r),
+                / (r * r),
                 0,
             );
         } else if (this.m[4] != 0 || this.m[5] != 0) {
@@ -1155,7 +1155,7 @@ export class Mat4 {
             return new Vec2(
                 0,
                 Math.atan(this.m[0] * this.m[4] + this.m[1] * this.m[5])
-                    / (s * s),
+                / (s * s),
             );
         } else {
             return new Vec2(0, 0);
@@ -1420,14 +1420,14 @@ export function testRectLine(r: Rect, l: Line): boolean {
     return tmax >= tmin && tmax >= 0 && tmin <= 1;
 }
 
-export function testRectPoint2(r: Rect, pt: Point): boolean {
+export function testRectPoint2(r: Rect, pt: Vec2): boolean {
     return pt.x >= r.pos.x
         && pt.x <= r.pos.x + r.width
         && pt.y >= r.pos.y
         && pt.y <= r.pos.y + r.height;
 }
 
-export function testRectPoint(r: Rect, pt: Point): boolean {
+export function testRectPoint(r: Rect, pt: Vec2): boolean {
     return pt.x > r.pos.x
         && pt.x < r.pos.x + r.width
         && pt.y > r.pos.y
@@ -1513,7 +1513,7 @@ export function testLinePolygon(l: Line, p: Polygon): boolean {
     return false;
 }
 
-export function testCirclePoint(c: Circle, p: Point): boolean {
+export function testCirclePoint(c: Circle, p: Vec2): boolean {
     return c.center.sdist(p) < c.radius * c.radius;
 }
 
@@ -1564,7 +1564,7 @@ export function testPolygonPolygon(p1: Polygon, p2: Polygon): boolean {
 }
 
 // https://wrf.ecse.rpi.edu/Research/Short_Notes/pnpoly.html
-export function testPolygonPoint(poly: Polygon, pt: Point): boolean {
+export function testPolygonPoint(poly: Polygon, pt: Vec2): boolean {
     let c = false;
     const p = poly.pts;
 
@@ -1573,7 +1573,7 @@ export function testPolygonPoint(poly: Polygon, pt: Point): boolean {
             ((p[i].y > pt.y) != (p[j].y > pt.y))
             && (pt.x
                 < (p[j].x - p[i].x) * (pt.y - p[i].y) / (p[j].y - p[i].y)
-                    + p[i].x)
+                + p[i].x)
         ) {
             c = !c;
         }
@@ -1582,7 +1582,7 @@ export function testPolygonPoint(poly: Polygon, pt: Point): boolean {
     return c;
 }
 
-export function testEllipsePoint(ellipse: Ellipse, pt: Point): boolean {
+export function testEllipsePoint(ellipse: Ellipse, pt: Vec2): boolean {
     // Transform the point into the ellipse's unrotated coordinate system at the origin
     pt = pt.sub(ellipse.center);
     const angle = deg2rad(ellipse.angle);
@@ -1591,7 +1591,7 @@ export function testEllipsePoint(ellipse: Ellipse, pt: Point): boolean {
     const vx = pt.x * c + pt.y * s;
     const vy = -pt.x * s + pt.y * c;
     return vx * vx / (ellipse.radiusX * ellipse.radiusX)
-            + vy * vy / (ellipse.radiusY * ellipse.radiusY) < 1;
+        + vy * vy / (ellipse.radiusY * ellipse.radiusY) < 1;
 }
 
 export function testEllipseCircle(ellipse: Ellipse, circle: Circle): boolean {
@@ -1776,34 +1776,34 @@ export function testEllipsePolygon(ellipse: Ellipse, poly: Polygon): boolean {
     return testCirclePolygon(new Circle(vec2(), 1), poly);
 }
 
-export function testPointPoint(p1: Point, p2: Point): boolean {
+export function testPointPoint(p1: Vec2, p2: Vec2): boolean {
     return p1.x === p2.x && p1.y === p2.y;
 }
 
 /**
  * @group Math
  */
-export type ShapeType = Vec2 | Circle | Line | Rect | Polygon | Ellipse;
+export type ShapeType = Point | Circle | Line | Rect | Polygon | Ellipse;
 
 export function testPointShape(point: Point, shape: ShapeType): boolean {
     if (shape instanceof Vec2) {
-        return testPointPoint(shape as Point, point);
+        return testPointPoint(shape as Vec2, point.pt);
     } else if (shape instanceof Circle) {
-        return testCirclePoint(shape as Circle, point);
+        return testCirclePoint(shape as Circle, point.pt);
     } else if (shape instanceof Line) {
-        return testLinePoint(shape as Line, point as Vec2);
+        return testLinePoint(shape as Line, point.pt);
     } else if (shape instanceof Rect) {
-        return testRectPoint(shape as Rect, point);
+        return testRectPoint(shape as Rect, point.pt);
     } else if (shape instanceof Polygon) {
-        return testPolygonPoint(shape as Polygon, point);
+        return testPolygonPoint(shape as Polygon, point.pt);
     } else if (shape instanceof Ellipse) {
-        return testEllipsePoint(shape as Ellipse, point);
+        return testEllipsePoint(shape as Ellipse, point.pt);
     } else {
         return false;
     }
 }
 
-export function testLineShape(line: Line, shape: ShapeType): boolean {
+export function testLineShape(line: Line, shape: ShapeType | Vec2): boolean {
     if (shape instanceof Vec2) {
         return testLinePoint(line, shape as Vec2);
     } else if (shape instanceof Circle) {
@@ -1821,9 +1821,12 @@ export function testLineShape(line: Line, shape: ShapeType): boolean {
     }
 }
 
-export function testCircleShape(circle: Circle, shape: ShapeType): boolean {
+export function testCircleShape(
+    circle: Circle,
+    shape: ShapeType | Vec2,
+): boolean {
     if (shape instanceof Vec2) {
-        return testCirclePoint(circle, shape as Point);
+        return testCirclePoint(circle, shape as Vec2);
     } else if (shape instanceof Circle) {
         return testCircleCircle(circle, shape as Circle);
     } else if (shape instanceof Line) {
@@ -1839,9 +1842,9 @@ export function testCircleShape(circle: Circle, shape: ShapeType): boolean {
     }
 }
 
-export function testRectShape(rect: Rect, shape: ShapeType): boolean {
+export function testRectShape(rect: Rect, shape: ShapeType | Vec2): boolean {
     if (shape instanceof Vec2) {
-        return testRectPoint(rect, shape as Point);
+        return testRectPoint(rect, shape as Vec2);
     } else if (shape instanceof Circle) {
         return testRectCircle(rect, shape as Circle);
     } else if (shape instanceof Line) {
@@ -1857,9 +1860,12 @@ export function testRectShape(rect: Rect, shape: ShapeType): boolean {
     }
 }
 
-export function testPolygonShape(polygon: Polygon, shape: ShapeType): boolean {
+export function testPolygonShape(
+    polygon: Polygon,
+    shape: ShapeType | Vec2,
+): boolean {
     if (shape instanceof Vec2) {
-        return testPolygonPoint(polygon, shape as Point);
+        return testPolygonPoint(polygon, shape as Vec2);
     } else if (shape instanceof Circle) {
         return testCirclePolygon(shape as Circle, polygon);
     } else if (shape instanceof Line) {
@@ -1877,7 +1883,7 @@ export function testPolygonShape(polygon: Polygon, shape: ShapeType): boolean {
 
 export function testEllipseShape(ellipse: Ellipse, shape: ShapeType): boolean {
     if (shape instanceof Vec2) {
-        return testEllipsePoint(ellipse, shape as Point);
+        return testEllipsePoint(ellipse, shape as Vec2);
     } else if (shape instanceof Circle) {
         return testEllipseCircle(ellipse, shape as Circle);
     } else if (shape instanceof Line) {
@@ -1895,7 +1901,7 @@ export function testEllipseShape(ellipse: Ellipse, shape: ShapeType): boolean {
 
 export function testShapeShape(shape1: ShapeType, shape2: ShapeType): boolean {
     if (shape1 instanceof Vec2) {
-        return testPointShape(shape1 as Vec2, shape2);
+        return testPointShape(new Point(shape1), shape2);
     } else if (shape1 instanceof Circle) {
         return testCircleShape(shape1 as Circle, shape2);
     } else if (shape1 instanceof Line) {
@@ -2162,6 +2168,37 @@ export function raycastGrid(
     return null;
 }
 
+export class Point {
+    pt: Vec2;
+    constructor(pt: Vec2) {
+        this.pt = pt.clone();
+    }
+    transform(m: Mat4): Point {
+        return new Point(m.multVec2(this.pt));
+    }
+    bbox(): Rect {
+        return new Rect(this.pt, 0, 0);
+    }
+    area(): number {
+        return 0;
+    }
+    clone(): Point {
+        return new Point(this.pt);
+    }
+    collides(shape: ShapeType): boolean {
+        return testPointShape(this, shape);
+    }
+    contains(point: Vec2): boolean {
+        return this.pt.eq(point);
+    }
+    raycast(origin: Vec2, direction: Vec2): RaycastResult {
+        return null;
+    }
+    random(): Vec2 {
+        return this.pt.clone();
+    }
+}
+
 /**
  * @group Math
  */
@@ -2184,7 +2221,7 @@ export class Line {
     clone(): Line {
         return new Line(this.p1, this.p2);
     }
-    collides(shape: ShapeType): boolean {
+    collides(shape: ShapeType | Vec2): boolean {
         return testLineShape(this, shape);
     }
     contains(point: Vec2): boolean {
@@ -2192,6 +2229,9 @@ export class Line {
     }
     raycast(origin: Vec2, direction: Vec2): RaycastResult {
         return raycastLine(origin, direction, this);
+    }
+    random(): Vec2 {
+        return this.p1.add(this.p2.sub(this.p1).scale(rand(1)));
     }
 }
 
@@ -2247,7 +2287,7 @@ export class Rect {
         const dy = Math.max(min.y - p.y, 0, p.y - max.y);
         return dx * dx + dy * dy;
     }
-    collides(shape: ShapeType): boolean {
+    collides(shape: ShapeType | Vec2): boolean {
         return testRectShape(this, shape);
     }
     contains(point: Vec2): boolean {
@@ -2255,6 +2295,9 @@ export class Rect {
     }
     raycast(origin: Vec2, direction: Vec2): RaycastResult {
         return raycastRect(origin, direction, this);
+    }
+    random(): Vec2 {
+        return this.pos.add(rand(this.width), rand(this.height));
     }
 }
 
@@ -2283,7 +2326,7 @@ export class Circle {
     clone(): Circle {
         return new Circle(this.center, this.radius);
     }
-    collides(shape: ShapeType): boolean {
+    collides(shape: ShapeType | Vec2): boolean {
         return testCircleShape(this, shape);
     }
     contains(point: Vec2): boolean {
@@ -2291,6 +2334,12 @@ export class Circle {
     }
     raycast(origin: Vec2, direction: Vec2): RaycastResult {
         return raycastCircle(origin, direction, this);
+    }
+    random(): Vec2 {
+        // TODO: Not uniform!!
+        return this.center.add(
+            Vec2.fromAngle(rand(360).scale(rand(this.radius))),
+        );
     }
 }
 
@@ -2417,10 +2466,13 @@ export class Ellipse {
         const vx = point.x * c + point.y * s;
         const vy = -point.x * s + point.y * c;
         return vx * vx / (this.radiusX * this.radiusX)
-                + vy * vy / (this.radiusY * this.radiusY) < 1;
+            + vy * vy / (this.radiusY * this.radiusY) < 1;
     }
     raycast(origin: Vec2, direction: Vec2): RaycastResult {
         return raycastEllipse(origin, direction, this);
+    }
+    random(): Vec2 {
+        return this.center;
     }
 }
 
@@ -2463,7 +2515,7 @@ export class Polygon {
     clone(): Polygon {
         return new Polygon(this.pts.map((pt) => pt.clone()));
     }
-    collides(shape: ShapeType): boolean {
+    collides(shape: ShapeType | Vec2): boolean {
         return testPolygonShape(this, shape);
     }
     contains(point: Vec2): boolean {
@@ -2471,6 +2523,9 @@ export class Polygon {
     }
     raycast(origin: Vec2, direction: Vec2): RaycastResult {
         return raycastPolygon(origin, direction, this);
+    }
+    random(): Vec2 {
+        return vec2();
     }
 }
 

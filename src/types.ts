@@ -28,6 +28,9 @@ import type {
     RectCompOpt,
     RotateComp,
     ScaleComp,
+    SentryCandidates,
+    SentryComp,
+    SentryCompOpt,
     ShaderComp,
     SpriteComp,
     SpriteCompOpt,
@@ -41,6 +44,7 @@ import type {
     UVQuadComp,
     ZComp,
 } from "./components/";
+import type { ParticlesComp, ParticlesOpt, EmitterOpt } from "./components/draw/particles";
 import type { FontData } from "./fonts";
 import type { FrameBuffer, Texture } from "./gfx";
 import type {
@@ -49,6 +53,7 @@ import type {
     Ellipse,
     Line,
     Mat4,
+    Point,
     Polygon,
     Quad,
     RaycastHit,
@@ -58,6 +63,7 @@ import type {
     ShapeType,
     Vec2,
 } from "./math";
+import type { NavMesh } from "./math/navigationmesh";
 import type { Event, EventController, EventHandler } from "./utils";
 
 export type {
@@ -106,6 +112,9 @@ export type {
     RNG,
     RotateComp,
     ScaleComp,
+    SentryCandidates,
+    SentryComp,
+    SentryCompOpt,
     ShaderComp,
     ShapeType,
     SpriteComp,
@@ -576,6 +585,7 @@ export interface KaboomCtx<
      * @group Components
      */
     outline(width?: number, color?: Color): OutlineComp;
+    particles(popt: ParticlesOpt, eopt: EmitterOpt): ParticlesComp;
     /**
      * Physical body that responds to gravity. Requires "area" and "pos" comp. This also makes the object "solid".
      *
@@ -874,6 +884,13 @@ export interface KaboomCtx<
      * @group Components
      */
     agent(opt?: AgentCompOpt): AgentComp;
+    /**
+     * A sentry which reacts to objects coming into view.
+     *
+     * @since v3001.0
+     * @group Components
+     */
+    sentry(candidates: SentryCandidates, opt?: SentryCompOpt): SentryComp;
     /**
      * @group Math
      */
@@ -2718,7 +2735,7 @@ export interface KaboomCtx<
      *
      * @group Math
      */
-    testRectPoint(r: Rect, pt: Point): boolean;
+    testRectPoint(r: Rect, pt: Vec2): boolean;
     /**
      * Check if a circle and polygon intersect linewise.
      * @group Math
@@ -2735,6 +2752,14 @@ export interface KaboomCtx<
      * @group Math
      */
     triangulate(pts: Vec2[]): Vec2[][];
+    /**
+     * @group Math
+     */
+    NavMesh: typeof NavMesh;
+    /**
+     * @group Math
+     */
+    Point: typeof Point;
     /**
      * @group Math
      */
@@ -4829,11 +4854,11 @@ export type DrawTextOpt = RenderProps & {
      * The name of font to use.
      */
     font?:
-        | string
-        | FontData
-        | Asset<FontData>
-        | BitmapFontData
-        | Asset<BitmapFontData>;
+    | string
+    | FontData
+    | Asset<FontData>
+    | BitmapFontData
+    | Asset<BitmapFontData>;
     /**
      * The size of text (the height of each character).
      */
@@ -4993,11 +5018,6 @@ export type RNGValue =
     | number
     | Vec2
     | Color;
-
-/**
- * @group Math
- */
-export type Point = Vec2;
 
 /**
  * @group Components

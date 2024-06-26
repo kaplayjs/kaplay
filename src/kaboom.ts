@@ -70,6 +70,7 @@ import {
     mapc,
     Mat4,
     normalizedCurve,
+    Point,
     Polygon,
     Quad,
     quad,
@@ -97,6 +98,8 @@ import {
     type Vec2Args,
     wave,
 } from "./math";
+
+import { NavMesh } from "./math/navigationmesh";
 
 import easings from "./easings";
 import TexPacker from "./texPacker";
@@ -215,12 +218,14 @@ import {
     offscreen,
     opacity,
     outline,
+    particles,
     polygon,
     pos,
     raycast,
     rect,
     rotate,
     scale,
+    sentry,
     shader,
     sprite,
     state,
@@ -344,8 +349,7 @@ const kaplay = <
 >(
     gopt: KaboomOpt<TPlugins, TButtons> = {},
 ): TPlugins extends [undefined] ? KaboomCtx<TButtons, TButtonsName>
-    : KaboomCtx<TButtons, TButtonsName> & MergePlugins<TPlugins> =>
-{
+    : KaboomCtx<TButtons, TButtonsName> & MergePlugins<TPlugins> => {
     const root = gopt.root ?? document.body;
 
     // if root is not defined (which falls back to <body>) we assume user is using kaboom on a clean page, and modify <body> to better fit a full screen canvas
@@ -1195,8 +1199,7 @@ const kaplay = <
         | BitmapFontData
         | Asset<BitmapFontData>
         | string
-        | void
-    {
+        | void {
         if (!src) {
             return resolveFont(gopt.font ?? DEF_FONT);
         }
@@ -1362,7 +1365,7 @@ const kaplay = <
         srcNode.onended = () => {
             if (
                 getTime()
-                    >= (srcNode.buffer?.duration ?? Number.POSITIVE_INFINITY)
+                >= (srcNode.buffer?.duration ?? Number.POSITIVE_INFINITY)
             ) {
                 onEndEvents.trigger();
             }
@@ -2920,14 +2923,14 @@ const kaplay = <
                 outline: Outline | null;
                 filter: TexFilter;
             } = font instanceof FontData
-                ? {
-                    outline: font.outline,
-                    filter: font.filter,
-                }
-                : {
-                    outline: null,
-                    filter: DEF_FONT_FILTER,
-                };
+                    ? {
+                        outline: font.outline,
+                        filter: font.filter,
+                    }
+                    : {
+                        outline: null,
+                        filter: DEF_FONT_FILTER,
+                    };
 
             // TODO: customizable font tex filter
             const atlas: FontAtlas = fontAtlases[fontName] ?? {
@@ -4027,7 +4030,7 @@ const kaplay = <
     }
 
     function getGravityDirection() {
-        // If gravity > 0 return magnitude, otherwise return (0, 1)
+        // If gravity != null return unit vector, otherwise return (0, 1)
         return game.gravity ? game.gravity.unit() : vec2(0, 1);
     }
 
@@ -4828,7 +4831,7 @@ const kaplay = <
     const loop = game.root.loop.bind(game.root);
     const query = game.root.query.bind(game.root);
     const tween = game.root.tween.bind(game.root);
-    const layers = function(layerNames: string[], defaultLayer: string) {
+    const layers = function (layerNames: string[], defaultLayer: string) {
         if (game.layers) {
             throw Error("Layers can only be assigned once.");
         }
@@ -5282,9 +5285,8 @@ const kaplay = <
                     const style = log.msg instanceof Error ? "error" : "info";
                     str += `[time]${log.time.toFixed(2)}[/time]`;
                     str += " ";
-                    str += `[${style}]${
-                        log.msg?.toString ? log.msg.toString() : log.msg
-                    }[/${style}]`;
+                    str += `[${style}]${log.msg?.toString ? log.msg.toString() : log.msg
+                        }[/${style}]`;
                     logs.push(str);
                 }
 
@@ -5403,7 +5405,7 @@ const kaplay = <
             // clear canvas
             gl.clear(
                 gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT
-                    | gl.STENCIL_BUFFER_BIT,
+                | gl.STENCIL_BUFFER_BIT,
             );
 
             // unbind everything
@@ -5692,6 +5694,7 @@ const kaplay = <
         circle,
         uvquad,
         outline,
+        particles,
         body,
         doubleJump,
         shader,
@@ -5713,6 +5716,7 @@ const kaplay = <
         raycast,
         tile,
         agent,
+        sentry,
         // group events
         on,
         onUpdate,
@@ -5782,6 +5786,7 @@ const kaplay = <
         Rect,
         Circle,
         Ellipse,
+        Point,
         Polygon,
         Vec2,
         Color,
@@ -5830,6 +5835,7 @@ const kaplay = <
         testLineCircle,
         isConvex,
         triangulate,
+        NavMesh,
         // raw draw
         drawSprite,
         drawText,
