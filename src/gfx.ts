@@ -90,11 +90,15 @@ export class Texture {
         this.ctx.popTexture2D();
     }
 
+    /** Frees up texture memory. Call this once the texture is no longer being used to avoid memory leaks. */
     free() {
         this.ctx.gl.deleteTexture(this.glTex);
     }
 }
 
+/**
+ * @group GFX
+ */
 export class FrameBuffer {
     ctx: GfxCtx;
     tex: Texture;
@@ -205,6 +209,9 @@ export class FrameBuffer {
     }
 }
 
+/**
+ * @group GFX
+ */
 export class Shader {
     ctx: GfxCtx;
     glProgram: WebGLProgram;

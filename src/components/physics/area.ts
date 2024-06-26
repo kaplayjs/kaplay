@@ -167,6 +167,8 @@ export interface AreaComp extends Comp {
 
 /**
  * Options for the {@link area `area()`} component.
+ *
+ * @group Component Types
  */
 export interface AreaCompOpt {
     /**
