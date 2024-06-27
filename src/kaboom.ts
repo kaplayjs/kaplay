@@ -242,6 +242,7 @@ import boomSpriteSrc from "./assets/boom.png";
 import burpSoundSrc from "./assets/burp.mp3";
 import kaSpriteSrc from "./assets/ka.png";
 
+// for import types from package
 export type * from "./types";
 
 // convert anchor string to a vec2 offset
