@@ -29,7 +29,7 @@ const poly = add([
             rgb(255, 128, 128),
             rgb(128, 255, 128),
         ],
-        triangulate: true
+        triangulate: true,
     }),
     pos(150, 150),
     area(),

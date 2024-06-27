@@ -1,3 +1,4 @@
+import { Vec2 } from "../math";
 import { BinaryHeap } from "../utils";
 
 export interface Graph {
@@ -11,10 +12,10 @@ export interface Graph {
     getPath(from: number, to: number): number[];
     /* Returns the path as waypoints */
     getWaypointPath(
-        from: { x: number; y: number },
-        to: { x: number; y: number },
+        from: Vec2,
+        to: Vec2,
         opt: any,
-    ): { x: number; y: number }[];
+    ): Vec2[];
 }
 
 function buildPath(start: number, goal: number, cameFrom: Map<number, number>) {

@@ -41,7 +41,7 @@ export interface SentryCompOpt {
     /*
      * The direction the sentry is pointing to. If undefined, direction has no influence.
      */
-    direction?: Vec2;
+    direction?: Vec2 | number;
     /*
      * The field of view of the sentry in degrees. If undefined, defaults to human fov of 200 degrees.
      */
@@ -68,17 +68,19 @@ export function sentry(
     opts: SentryCompOpt = {},
 ): SentryComp {
     const k = getKaboomContext(this);
-    let t = 0;
     const get: SentryCandidatesCb = typeof candidates === "function"
         ? candidates
         : () => {
             return k.query(candidates);
         };
     const checkFrequency = opts.checkFrequency || 1;
+    let t = 0;
     return {
         id: "sentry",
         require: ["pos"],
-        direction: opts.direction,
+        direction: typeof opts.direction == "number"
+            ? Vec2.fromAngle(opts.direction)
+            : opts.direction,
         spotted: [],
         set directionAngle(value: number) {
             this.direction = value !== undefined
@@ -96,7 +98,8 @@ export function sentry(
                 let objects = get();
                 // If fieldOfView is used, keep only object within view
                 if (
-                    this.direction && this.fieldOfView && this.fieldOfView < 360
+                    objects.length && this.direction && this.fieldOfView
+                    && this.fieldOfView < 360
                 ) {
                     const halfAngle = this.fieldOfView / 2;
                     objects = objects.filter(o =>
@@ -106,7 +109,7 @@ export function sentry(
                     );
                 }
                 // If lineOfSight is used, raycast
-                if (opts.lineOfSight) {
+                if (objects.length && opts.lineOfSight) {
                     objects = objects.filter(o => {
                         const hit = raycast(
                             this.pos,

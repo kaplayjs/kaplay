@@ -113,7 +113,7 @@ export function particles(popt: ParticlesOpt, eopt: EmitterOpt): ParticlesComp {
                 count < popt.max && eopt.rate
                 && time > eopt.rate
             ) {
-                this.emit(1)
+                this.emit(1);
                 count++;
                 time -= eopt.rate;
             }
