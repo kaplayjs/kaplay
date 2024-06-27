@@ -136,6 +136,13 @@ export type {
     ZComp,
 };
 
+// for back compat with v3000
+export type {
+    KEvent as Event,
+    KEventController as EventController,
+    KEventHandler as EventHandler,
+};
+
 export type InternalCtx = {
     kaboomCtx: KaboomCtx;
     app: any;
