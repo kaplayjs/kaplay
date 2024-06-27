@@ -1,4 +1,4 @@
-## v3001.0 (alpha, kaplay@next)
+# v3001.0 (alpha, kaplay@next)
 
 - added input bindings, `onButtonPress`, `onButtonRelease`, `onButtonDown`, and
   it's corresponding boolean versions, `isButtonPressed`, `isButtonDown` and
@@ -98,7 +98,7 @@ add([
 - added evaluation of the first and second derivatives for all splines
 - added higher order easing functions linear, steps and cubic-bezier
 
-### Deprecated
+## Deprecated
 
 - deprecated `kaboom()` in favor of `kaplay()` (you can still use `kaboom*`)
 - deprecated `SpriteComp.curAnim()` in favor of `SpriteComp.getCurAnim().name`
