@@ -103,6 +103,8 @@ add([
 - deprecated `kaboom()` in favor of `kaplay()` (you can still use `kaboom*`)
 - deprecated `SpriteComp.curAnim()` in favor of `SpriteComp.getCurAnim().name`
 - deprecated `fadeIn` component in favor of `OpacityComp.fadeIn()`
+- deprecated `Event`, `EventHandler` and `EventController` in favor of `KEvent`,
+  `KEventHandler` and `KEventController`
 
 ### v3000.1.17
 
