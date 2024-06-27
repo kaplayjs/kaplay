@@ -1,5 +1,5 @@
 import type { Comp } from "../../types";
-import { Event, EventController } from "../../utils";
+import { KEvent, KEventController } from "../../utils";
 
 /**
  * The {@link state `state()`} component.
@@ -24,26 +24,26 @@ export interface StateComp extends Comp {
         from: string,
         to: string,
         action: () => void,
-    ): EventController;
+    ): KEventController;
     /**
      * Register event that runs once when enters a specific state. Accepts arguments passed from `enterState(name, ...args)`.
      */
     onStateEnter: (
         state: string,
         action: (...args: any) => void,
-    ) => EventController;
+    ) => KEventController;
     /**
      * Register an event that runs once when leaves a specific state.
      */
-    onStateEnd: (state: string, action: () => void) => EventController;
+    onStateEnd: (state: string, action: () => void) => KEventController;
     /**
      * Register an event that runs every frame when in a specific state.
      */
-    onStateUpdate: (state: string, action: () => void) => EventController;
+    onStateUpdate: (state: string, action: () => void) => KEventController;
     /**
      * Register an event that runs every frame when in a specific state.
      */
-    onStateDraw: (state: string, action: () => void) => EventController;
+    onStateDraw: (state: string, action: () => void) => KEventController;
 }
 
 export function state(
@@ -60,10 +60,10 @@ export function state(
     function initStateEvents(state: string) {
         if (!events[state]) {
             events[state] = {
-                enter: new Event(),
-                end: new Event(),
-                update: new Event(),
-                draw: new Event(),
+                enter: new KEvent(),
+                end: new KEvent(),
+                update: new KEvent(),
+                draw: new KEvent(),
             };
         }
     }
@@ -122,23 +122,23 @@ export function state(
             from: string,
             to: string,
             action: () => void,
-        ): EventController {
+        ): KEventController {
             return on("enter", `${from} -> ${to}`, action);
         },
 
-        onStateEnter(state: string, action: () => void): EventController {
+        onStateEnter(state: string, action: () => void): KEventController {
             return on("enter", state, action);
         },
 
-        onStateUpdate(state: string, action: () => void): EventController {
+        onStateUpdate(state: string, action: () => void): KEventController {
             return on("update", state, action);
         },
 
-        onStateDraw(state: string, action: () => void): EventController {
+        onStateDraw(state: string, action: () => void): KEventController {
             return on("draw", state, action);
         },
 
-        onStateEnd(state: string, action: () => void): EventController {
+        onStateEnd(state: string, action: () => void): KEventController {
             return on("end", state, action);
         },
 

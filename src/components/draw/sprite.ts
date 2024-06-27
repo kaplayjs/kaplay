@@ -11,7 +11,7 @@ import type {
     SpriteCurAnim,
     SpriteData,
 } from "../../types";
-import { Event, EventController } from "../../utils";
+import { KEvent, KEventController } from "../../utils";
 
 /**
  * The {@link sprite `sprite()`} component.
@@ -79,11 +79,11 @@ export interface SpriteComp extends Comp {
     /**
      * Register an event that runs when an animation is played.
      */
-    onAnimStart(action: (anim: string) => void): EventController;
+    onAnimStart(action: (anim: string) => void): KEventController;
     /**
      * Register an event that runs when an animation is ended.
      */
-    onAnimEnd(action: (anim: string) => void): EventController;
+    onAnimEnd(action: (anim: string) => void): KEventController;
     /**
      * @since v3000.0
      */
@@ -151,7 +151,7 @@ export function sprite(
     // 1  - from small index to large index
     // -1 - reverse
     let curAnimDir: -1 | 1 | null = null;
-    const spriteLoadedEvent = new Event<[SpriteData]>();
+    const spriteLoadedEvent = new KEvent<[SpriteData]>();
 
     if (!src) {
         throw new Error(
@@ -437,14 +437,14 @@ export function sprite(
         onAnimEnd(
             this: GameObj<SpriteComp>,
             action: (name: string) => void,
-        ): EventController {
+        ): KEventController {
             return this.on("animEnd", action);
         },
 
         onAnimStart(
             this: GameObj<SpriteComp>,
             action: (name: string) => void,
-        ): EventController {
+        ): KEventController {
             return this.on("animStart", action);
         },
 

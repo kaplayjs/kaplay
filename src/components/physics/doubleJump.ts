@@ -1,5 +1,5 @@
 import type { Comp, GameObj } from "../../types";
-import type { EventController } from "../../utils";
+import type { KEventController } from "../../utils";
 import type { BodyComp } from "./body";
 
 /**
@@ -19,7 +19,7 @@ export interface DoubleJumpComp extends Comp {
     /**
      * Register an event that runs when the object performs the second jump when double jumping.
      */
-    onDoubleJump(action: () => void): EventController;
+    onDoubleJump(action: () => void): KEventController;
 }
 
 export function doubleJump(numJumps: number = 2): DoubleJumpComp {
@@ -46,7 +46,7 @@ export function doubleJump(numJumps: number = 2): DoubleJumpComp {
             jumpsLeft--;
             this.jump(force);
         },
-        onDoubleJump(this: GameObj, action: () => void): EventController {
+        onDoubleJump(this: GameObj, action: () => void): KEventController {
             return this.on("doubleJump", action);
         },
         inspect(this: GameObj<BodyComp | DoubleJumpComp>) {

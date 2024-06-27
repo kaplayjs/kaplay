@@ -2,7 +2,7 @@ import type { Texture } from "../../gfx";
 import { getKaboomContext } from "../../kaboom";
 import { Color, lerp, map, Quad, Vec2, vec2 } from "../../math";
 import type { Comp, ShapeType } from "../../types";
-import { Event } from "../../utils";
+import { KEvent } from "../../utils";
 
 class Particle {
     pos: Vec2;
@@ -64,7 +64,7 @@ export function particles(popt: ParticlesOpt, eopt: EmitterOpt): ParticlesComp {
     let count = 0;
     let time = 0;
 
-    const onEndEvents = new Event();
+    const onEndEvents = new KEvent();
 
     return {
         id: "particles",

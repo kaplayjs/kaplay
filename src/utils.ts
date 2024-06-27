@@ -31,7 +31,7 @@ export class Registry<T> extends Map<number, T> {
  * ```
  * @group Events
  */
-export class EventController {
+export class KEventController {
     /** If the event is paused */
     paused: boolean = false;
     /** Cancel the event */
@@ -40,8 +40,10 @@ export class EventController {
     constructor(cancel: () => void) {
         this.cancel = cancel;
     }
-    static join(events: EventController[]): EventController {
-        const ev = new EventController(() => events.forEach((e) => e.cancel()));
+    static join(events: KEventController[]): KEventController {
+        const ev = new KEventController(() =>
+            events.forEach((e) => e.cancel())
+        );
         Object.defineProperty(ev, "paused", {
             get: () => events[0].paused,
             set: (p: boolean) => events.forEach((e) => e.paused = p),
@@ -51,17 +53,18 @@ export class EventController {
     }
 }
 
-export class Event<Args extends any[] = any[]> {
+export class KEvent<Args extends any[] = any[]> {
     private handlers: Registry<(...args: Args) => void> = new Registry();
-    add(action: (...args: Args) => void): EventController {
+
+    add(action: (...args: Args) => void): KEventController {
         const cancel = this.handlers.pushd((...args: Args) => {
             if (ev.paused) return;
             action(...args);
         });
-        const ev = new EventController(cancel);
+        const ev = new KEventController(cancel);
         return ev;
     }
-    addOnce(action: (...args) => void): EventController {
+    addOnce(action: (...args) => void): KEventController {
         const ev = this.add((...args) => {
             ev.cancel();
             action(...args);
@@ -83,25 +86,25 @@ export class Event<Args extends any[] = any[]> {
 }
 
 // TODO: only accept one argument?
-export class EventHandler<EventMap extends Record<string, any[]>> {
+export class KEventHandler<EventMap extends Record<string, any[]>> {
     private handlers: Partial<
         {
-            [Name in keyof EventMap]: Event<EventMap[Name]>;
+            [Name in keyof EventMap]: KEvent<EventMap[Name]>;
         }
     > = {};
     on<Name extends keyof EventMap>(
         name: Name,
         action: (...args: EventMap[Name]) => void,
-    ): EventController {
+    ): KEventController {
         if (!this.handlers[name]) {
-            this.handlers[name] = new Event<EventMap[Name]>();
+            this.handlers[name] = new KEvent<EventMap[Name]>();
         }
         return this.handlers[name].add(action);
     }
     onOnce<Name extends keyof EventMap>(
         name: Name,
         action: (...args: EventMap[Name]) => void,
-    ): EventController {
+    ): KEventController {
         const ev = this.on(name, (...args) => {
             ev.cancel();
             action(...args);

@@ -1,5 +1,5 @@
 import { Vec2 } from "../../math";
-import type { Comp, GameObj, PosComp, QueryOpt } from "../../types";
+import type { Comp, GameObj, PosComp } from "../../types";
 
 export interface PatrolComp extends Comp {
     patrolSpeed: number;

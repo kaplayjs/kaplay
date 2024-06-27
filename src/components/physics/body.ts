@@ -2,7 +2,7 @@ import { DEF_JUMP_FORCE, MAX_VEL } from "../../constants";
 import { getKaboomContext } from "../../kaboom";
 import { type Vec2, vec2 } from "../../math";
 import type { Collision, Comp, GameObj, PosComp } from "../../types";
-import type { EventController } from "../../utils";
+import type { KEventController } from "../../utils";
 import type { AreaComp } from "./area";
 
 /**
@@ -78,37 +78,37 @@ export interface BodyComp extends Comp {
      *
      * @since v3000.0
      */
-    onPhysicsResolve(action: (col: Collision) => void): EventController;
+    onPhysicsResolve(action: (col: Collision) => void): KEventController;
     /**
      * Register an event that runs before a collision would be resolved.
      *
      * @since v3000.0
      */
-    onBeforePhysicsResolve(action: (col: Collision) => void): EventController;
+    onBeforePhysicsResolve(action: (col: Collision) => void): KEventController;
     /**
      * Register an event that runs when the object is grounded.
      *
      * @since v2000.1
      */
-    onGround(action: () => void): EventController;
+    onGround(action: () => void): KEventController;
     /**
      * Register an event that runs when the object starts falling.
      *
      * @since v2000.1
      */
-    onFall(action: () => void): EventController;
+    onFall(action: () => void): KEventController;
     /**
      * Register an event that runs when the object falls off platform.
      *
      * @since v3000.0
      */
-    onFallOff(action: () => void): EventController;
+    onFallOff(action: () => void): KEventController;
     /**
      * Register an event that runs when the object bumps into something on the head.
      *
      * @since v2000.1
      */
-    onHeadbutt(action: () => void): EventController;
+    onHeadbutt(action: () => void): KEventController;
 }
 
 /**
@@ -353,19 +353,19 @@ export function body(opt: BodyCompOpt = {}): BodyComp {
             );
         },
 
-        onGround(this: GameObj, action: () => void): EventController {
+        onGround(this: GameObj, action: () => void): KEventController {
             return this.on("ground", action);
         },
 
-        onFall(this: GameObj, action: () => void): EventController {
+        onFall(this: GameObj, action: () => void): KEventController {
             return this.on("fall", action);
         },
 
-        onFallOff(this: GameObj, action: () => void): EventController {
+        onFallOff(this: GameObj, action: () => void): KEventController {
             return this.on("fallOff", action);
         },
 
-        onHeadbutt(this: GameObj, action: () => void): EventController {
+        onHeadbutt(this: GameObj, action: () => void): KEventController {
             return this.on("headbutt", action);
         },
     };

@@ -3,8 +3,8 @@ import { getKaboomContext } from "../../kaboom";
 import { lerp } from "../../math";
 import type {
     Comp,
-    EventController,
     GameObj,
+    KEventController,
     LerpValue,
     TimerController,
     TweenController,
@@ -25,7 +25,7 @@ export interface TimerComp extends Comp {
      *
      * @since v3000.0
      */
-    loop(time: number, action: () => void): EventController;
+    loop(time: number, action: () => void): KEventController;
     /**
      * Tweeeeen! Note that this doesn't specifically mean tweening on this object's property, this just registers the timer on this object, so the tween will cancel with the object gets destroyed, or paused when obj.paused is true.
      *
@@ -76,7 +76,7 @@ export function timer(): TimerComp {
                 },
             };
         },
-        loop(t: number, action: () => void): EventController {
+        loop(t: number, action: () => void): KEventController {
             let curTimer: null | TimerController = null;
             const newAction = () => {
                 // TODO: should f be execute right away as loop() is called?
