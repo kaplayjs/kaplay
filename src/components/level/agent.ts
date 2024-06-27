@@ -1,6 +1,6 @@
 import type { Vec2 } from "../../math";
 import type { Comp, GameObj, PosComp } from "../../types";
-import type { EventController } from "../../utils";
+import type { KEventController } from "../../utils";
 import type { TileComp } from "./tile";
 
 /**
@@ -19,10 +19,10 @@ export interface AgentComp extends Comp {
     isTargetReachable(): boolean;
     isTargetReached(): boolean;
     setTarget(target: Vec2): void;
-    onNavigationStarted(cb: () => void): EventController;
-    onNavigationNext(cb: () => void): EventController;
-    onNavigationEnded(cb: () => void): EventController;
-    onTargetReached(cb: () => void): EventController;
+    onNavigationStarted(cb: () => void): KEventController;
+    onNavigationNext(cb: () => void): KEventController;
+    onNavigationEnded(cb: () => void): KEventController;
+    onTargetReached(cb: () => void): KEventController;
 }
 
 /**
@@ -39,7 +39,7 @@ export function agent(opts: AgentCompOpt = {}): AgentComp {
     let target: Vec2 | null = null;
     let path: Vec2[] | null = null;
     let index: number | null = null;
-    let navMapChangedEvent: EventController | null = null;
+    let navMapChangedEvent: KEventController | null = null;
     return {
         id: "agent",
         require: ["pos", "tile"],

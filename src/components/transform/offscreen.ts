@@ -2,7 +2,7 @@ import { DEF_OFFSCREEN_DIS } from "../../constants";
 import { getKaboomContext } from "../../kaboom";
 import { Rect, vec2 } from "../../math";
 import type { Comp, GameObj } from "../../types";
-import type { EventController } from "../../utils";
+import type { KEventController } from "../../utils";
 import type { PosComp } from "./pos";
 
 /**
@@ -18,11 +18,11 @@ export interface OffScreenComp extends Comp {
     /**
      * Register an event that runs when object goes out of view.
      */
-    onExitScreen(action: () => void): EventController;
+    onExitScreen(action: () => void): KEventController;
     /**
      * Register an event that runs when object enters view.
      */
-    onEnterScreen(action: () => void): EventController;
+    onEnterScreen(action: () => void): KEventController;
 }
 
 /**
@@ -65,10 +65,10 @@ export function offscreen(opt: OffScreenCompOpt = {}): OffScreenComp {
             return !k.testRectPoint(screenRect, pos)
                 && screenRect.sdistToPoint(pos) > distance * distance;
         },
-        onExitScreen(this: GameObj, action: () => void): EventController {
+        onExitScreen(this: GameObj, action: () => void): KEventController {
             return this.on("exitView", action);
         },
-        onEnterScreen(this: GameObj, action: () => void): EventController {
+        onEnterScreen(this: GameObj, action: () => void): KEventController {
             return this.on("enterView", action);
         },
         update(this: GameObj) {

@@ -1,5 +1,5 @@
 import type { Comp, GameObj } from "../../types";
-import type { EventController } from "../../utils";
+import type { KEventController } from "../../utils";
 
 /**
  * The {@link health `health()`} component.
@@ -36,19 +36,19 @@ export interface HealthComp extends Comp {
      *
      * @since v2000.1
      */
-    onHurt(action: (amount?: number) => void): EventController;
+    onHurt(action: (amount?: number) => void): KEventController;
     /**
      * Register an event that runs when heal() is called upon the object.
      *
      * @since v2000.1
      */
-    onHeal(action: (amount?: number) => void): EventController;
+    onHeal(action: (amount?: number) => void): KEventController;
     /**
      * Register an event that runs when object's HP is equal or below 0.
      *
      * @since v2000.1
      */
-    onDeath(action: () => void): EventController;
+    onDeath(action: () => void): KEventController;
 }
 
 export function health(
@@ -88,16 +88,16 @@ export function health(
         onHurt(
             this: GameObj,
             action: (amount?: number) => void,
-        ): EventController {
+        ): KEventController {
             return this.on("hurt", action);
         },
         onHeal(
             this: GameObj,
             action: (amount?: number) => void,
-        ): EventController {
+        ): KEventController {
             return this.on("heal", action);
         },
-        onDeath(this: GameObj, action: () => void): EventController {
+        onDeath(this: GameObj, action: () => void): KEventController {
             return this.on("death", action);
         },
         inspect() {

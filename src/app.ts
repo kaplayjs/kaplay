@@ -15,9 +15,9 @@ import type {
 import { map, Vec2 } from "./math";
 
 import {
-    EventController,
-    EventHandler,
     isEqOrIncludes,
+    KEventController,
+    KEventHandler,
     overload2,
     setHasOrIncludes,
 } from "./utils";
@@ -109,7 +109,7 @@ export default (opt: {
         isMouseMoved: false,
         lastWidth: opt.canvas.offsetWidth,
         lastHeight: opt.canvas.offsetHeight,
-        events: new EventHandler<{
+        events: new KEventHandler<{
             mouseMove: [];
             mouseDown: [MouseButton];
             mousePress: [MouseButton];
@@ -432,7 +432,7 @@ export default (opt: {
         }
     }
 
-    function onResize(action: () => void): EventController {
+    function onResize(action: () => void): KEventController {
         return state.events.on("resize", action);
     }
 
@@ -507,38 +507,38 @@ export default (opt: {
         return state.events.on("mouseRelease", (m) => m === mouse && action(m));
     });
 
-    function onMouseMove(f: (pos: Vec2, dpos: Vec2) => void): EventController {
+    function onMouseMove(f: (pos: Vec2, dpos: Vec2) => void): KEventController {
         return state.events.on(
             "mouseMove",
             () => f(mousePos(), mouseDeltaPos()),
         );
     }
 
-    function onCharInput(action: (ch: string) => void): EventController {
+    function onCharInput(action: (ch: string) => void): KEventController {
         return state.events.on("charInput", action);
     }
 
-    function onTouchStart(f: (pos: Vec2, t: Touch) => void): EventController {
+    function onTouchStart(f: (pos: Vec2, t: Touch) => void): KEventController {
         return state.events.on("touchStart", f);
     }
 
-    function onTouchMove(f: (pos: Vec2, t: Touch) => void): EventController {
+    function onTouchMove(f: (pos: Vec2, t: Touch) => void): KEventController {
         return state.events.on("touchMove", f);
     }
 
-    function onTouchEnd(f: (pos: Vec2, t: Touch) => void): EventController {
+    function onTouchEnd(f: (pos: Vec2, t: Touch) => void): KEventController {
         return state.events.on("touchEnd", f);
     }
 
-    function onScroll(action: (delta: Vec2) => void): EventController {
+    function onScroll(action: (delta: Vec2) => void): KEventController {
         return state.events.on("scroll", action);
     }
 
-    function onHide(action: () => void): EventController {
+    function onHide(action: () => void): KEventController {
         return state.events.on("hide", action);
     }
 
-    function onShow(action: () => void): EventController {
+    function onShow(action: () => void): KEventController {
         return state.events.on("show", action);
     }
 
@@ -590,7 +590,7 @@ export default (opt: {
     function onGamepadStick(
         stick: GamepadStick,
         action: (value: Vec2) => void,
-    ): EventController {
+    ): KEventController {
         return state.events.on(
             "gamepadStick",
             (a: string, v: Vec2) => a === stick && action(v),
