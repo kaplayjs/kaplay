@@ -25,4 +25,4 @@ jobs:
       - name: Run tests
         run: pnpm run test -c
       - name: Upload Package
-        run: pnpx pkg-pr-new publish ./dist
+        run: pnpx pkg-pr-new publish
