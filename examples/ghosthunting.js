@@ -159,9 +159,10 @@ function addEnemy(p) {
         patrol({ speed: 100 }),
         // Navigator can compute a path given a graph
         navigation({
-            graph: nav, navigationOpt: {
+            graph: nav,
+            navigationOpt: {
                 type: "edges",
-            }
+            },
         }),
         "enemy",
         { action: "observing", waypoint: null },

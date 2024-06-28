@@ -24,12 +24,10 @@ contributing!**
 
 # Before commit
 
-1. follow conventional
-   [conventional commits](#conventional-commits-guide)
+1. follow conventional [conventional commits](#conventional-commits-guide)
    format. You can see how seeing the commit history.
 2. `npm run check` to check typescript.
 3. `npm run fmt` to format.
-
 
 # Conventional Commits Guide
 

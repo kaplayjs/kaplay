@@ -17,14 +17,14 @@ import type {
     LifespanCompOpt,
     MaskComp,
     NamedComp,
+    NavigationComp,
+    NavigationCompOpt,
     OffScreenComp,
     OffScreenCompOpt,
     OpacityComp,
     OutlineComp,
     PatrolComp,
     PatrolCompOpt,
-    NavigationComp,
-    NavigationCompOpt,
     PolygonComp,
     PolygonCompOpt,
     PosComp,
@@ -103,14 +103,14 @@ export type {
     MaskComp,
     Mat4,
     NamedComp,
+    NavigationComp,
+    NavigationCompOpt,
     OffScreenComp,
     OffScreenCompOpt,
     OpacityComp,
     OutlineComp,
     PatrolComp,
     PatrolCompOpt,
-    NavigationComp,
-    NavigationCompOpt,
     Polygon,
     PolygonComp,
     PolygonCompOpt,
@@ -4890,11 +4890,11 @@ export type DrawTextOpt = RenderProps & {
      * The name of font to use.
      */
     font?:
-    | string
-    | FontData
-    | Asset<FontData>
-    | BitmapFontData
-    | Asset<BitmapFontData>;
+        | string
+        | FontData
+        | Asset<FontData>
+        | BitmapFontData
+        | Asset<BitmapFontData>;
     /**
      * The size of text (the height of each character).
      */

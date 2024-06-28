@@ -146,7 +146,7 @@ export function sentry(
                     objects = objects.filter(o =>
                         o.pos
                         && directionVector.angleBetween(o.pos.sub(this.pos))
-                        <= halfAngle
+                            <= halfAngle
                     );
                 }
                 // If lineOfSight is used, raycast
