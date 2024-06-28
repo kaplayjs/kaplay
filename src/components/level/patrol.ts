@@ -1,6 +1,6 @@
 import { Vec2 } from "../../math";
 import type { Comp, GameObj, PosComp } from "../../types";
-import type { EventController } from "../../utils";
+import type { KEventController } from "../../utils";
 
 export interface PatrolComp extends Comp {
     /*
@@ -18,7 +18,7 @@ export interface PatrolComp extends Comp {
     /*
      * Only called when using "stop" and the path reaches its end.
      */
-    onPatrolFinished(cb: (objects: GameObj[]) => void): EventController;
+    onPatrolFinished(cb: (objects: GameObj[]) => void): KEventController;
 }
 
 type PatrolEndBehavior =

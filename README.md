@@ -2,11 +2,13 @@
 
 ![KAPLAY](assets/brand/kaplay-o.webp)
 
-> KAPLAY is the spiritual successor (and fork) of Kaboom, a JavaScript library that helps you make games fast and fun!
-> For now, there's links to the Kaboom documentation and examples, but in the future, they will be linked
-> to our own site.
+> KAPLAY is the spiritual successor (and fork) of Kaboom, a JavaScript library
+> that helps you make games fast and fun! For now, there's links to the Kaboom
+> documentation and examples, but in the future, they will be linked to our own
+> site.
 
-[**KAPLAY**](https://kaplayjs.com/) is a JavaScript library that helps you make games fast and fun!
+[**KAPLAY**](https://kaplayjs.com/) is a JavaScript library that helps you make
+games fast and fun!
 
 Start playing around with it in the [KAPLAYGROUND](https://play.kaplayjs.com/)
 
@@ -101,13 +103,15 @@ onKeyDown("w", () => {
 
 ### Start a Project With `create-kaplay`
 
-The fastest way to start a KAPLAY game is with [`create-kaplay`](https://github.com/marklovers/create-kaplay)
+The fastest way to start a KAPLAY game is with
+[`create-kaplay`](https://github.com/marklovers/create-kaplay)
 
 ```sh
 $ create-kaplay mygame
 ```
 
-This will create a directory called `mygame` for you, containing all the files we need
+This will create a directory called `mygame` for you, containing all the files
+we need
 
 ```sh
 $ cd mygame
@@ -139,7 +143,8 @@ also works with CommonJS
 const kaboom = require("kaplay");
 ```
 
-Note that you'll need to use a bundler like `esbuild` or `webpack` to use KAPLAY with NPM
+Note that you'll need to use a bundler like `esbuild` or `webpack` to use KAPLAY
+with NPM
 
 ### Browser CDN
 
@@ -185,9 +190,16 @@ Collections of games made with KAPLAY (and Kaboom), selected by KAPLAY:
 
 ## Credits
 
-- Thanks to [tga](https://space55.xyz) for all his work on the original Kaboom.js
-- Thanks to [mulfok](https://twitter.com/MulfoK) for the amazing [mulfok32](https://lospec.com/palette-list/mulfok32) color palette, used in KAPLAY sprites
-- Thanks to [abrudz](https://github.com/abrudz) for the amazing [APL386 font](https://abrudz.github.io/APL386/)
-- Thanks to [Polyducks](http://polyducks.co.uk/) for the amazing [kitchen sink font](https://polyducks.itch.io/kitchen-sink-textmode-font) font
-- Thanks to [0x72](https://0x72.itch.io/) for the amazing [Dungeon Tileset](https://0x72.itch.io/dungeontileset-ii)
-- Thanks to [Kenney](https://kenney.nl/) for the amazing [1-Bit Platformer Pack](https://kenney.nl/assets/1-bit-platformer-pack)
+- Thanks to [tga](https://space55.xyz) for all his work on the original
+  Kaboom.js
+- Thanks to [mulfok](https://twitter.com/MulfoK) for the amazing
+  [mulfok32](https://lospec.com/palette-list/mulfok32) color palette, used in
+  KAPLAY sprites
+- Thanks to [abrudz](https://github.com/abrudz) for the amazing
+  [APL386 font](https://abrudz.github.io/APL386/)
+- Thanks to [Polyducks](http://polyducks.co.uk/) for the amazing
+  [kitchen sink font](https://polyducks.itch.io/kitchen-sink-textmode-font) font
+- Thanks to [0x72](https://0x72.itch.io/) for the amazing
+  [Dungeon Tileset](https://0x72.itch.io/dungeontileset-ii)
+- Thanks to [Kenney](https://kenney.nl/) for the amazing
+  [1-Bit Platformer Pack](https://kenney.nl/assets/1-bit-platformer-pack)

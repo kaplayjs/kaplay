@@ -11,7 +11,7 @@ import type {
     Shape,
     Tag,
 } from "../../types";
-import type { EventController } from "../../utils";
+import type { KEventController } from "../../utils";
 import type { AnchorComp } from "../transform/anchor";
 import type { FixedComp } from "../transform/fixed";
 
@@ -87,19 +87,19 @@ export interface AreaComp extends Comp {
      *
      * @since v3000.0
      */
-    onHover(action: () => void): EventController;
+    onHover(action: () => void): KEventController;
     /**
      * Register an event runs every frame when hovered.
      *
      * @since v3000.0
      */
-    onHoverUpdate(action: () => void): EventController;
+    onHoverUpdate(action: () => void): KEventController;
     /**
      * Register an event runs once when unhovered.
      *
      * @since v3000.0
      */
-    onHoverEnd(action: () => void): EventController;
+    onHoverEnd(action: () => void): KEventController;
     /**
      * Register an event runs once when collide with another game obj with certain tag.
      *
@@ -120,7 +120,7 @@ export interface AreaComp extends Comp {
     onCollideUpdate(
         tag: Tag,
         f: (obj: GameObj, col?: Collision) => void,
-    ): EventController;
+    ): KEventController;
     /**
      * Register an event runs every frame when collide with another game obj.
      *
@@ -128,13 +128,13 @@ export interface AreaComp extends Comp {
      */
     onCollideUpdate(
         f: (obj: GameObj, col?: Collision) => void,
-    ): EventController;
+    ): KEventController;
     /**
      * Register an event runs once when stopped colliding with another game obj with certain tag.
      *
      * @since v3000.0
      */
-    onCollideEnd(tag: Tag, f: (obj: GameObj) => void): EventController;
+    onCollideEnd(tag: Tag, f: (obj: GameObj) => void): KEventController;
     /**
      * Register an event runs once when stopped colliding with another game obj.
      *
@@ -320,7 +320,7 @@ export function area(opt: AreaCompOpt = {}): AreaComp {
             this: GameObj<AreaComp>,
             f: () => void,
             btn: MouseButton = "left",
-        ): EventController {
+        ): KEventController {
             const e = app.onMousePress(btn, () => {
                 if (this.isHovering()) {
                     f();
@@ -330,7 +330,7 @@ export function area(opt: AreaCompOpt = {}): AreaComp {
             return e;
         },
 
-        onHover(this: GameObj, action: () => void): EventController {
+        onHover(this: GameObj, action: () => void): KEventController {
             let hovering = false;
             return this.onUpdate(() => {
                 if (!hovering) {
@@ -344,7 +344,7 @@ export function area(opt: AreaCompOpt = {}): AreaComp {
             });
         },
 
-        onHoverUpdate(this: GameObj, onHover: () => void): EventController {
+        onHoverUpdate(this: GameObj, onHover: () => void): KEventController {
             return this.onUpdate(() => {
                 if (this.isHovering()) {
                     onHover();
@@ -352,7 +352,7 @@ export function area(opt: AreaCompOpt = {}): AreaComp {
             });
         },
 
-        onHoverEnd(this: GameObj, action: () => void): EventController {
+        onHoverEnd(this: GameObj, action: () => void): KEventController {
             let hovering = false;
             return this.onUpdate(() => {
                 if (hovering) {
@@ -370,7 +370,7 @@ export function area(opt: AreaCompOpt = {}): AreaComp {
             this: GameObj,
             tag: Tag | ((obj: GameObj, col?: Collision) => void),
             cb?: (obj: GameObj, col?: Collision) => void,
-        ): EventController {
+        ): KEventController {
             if (typeof tag === "function" && cb === undefined) {
                 return this.on("collide", tag);
             } else if (typeof tag === "string") {
@@ -386,7 +386,7 @@ export function area(opt: AreaCompOpt = {}): AreaComp {
             this: GameObj<AreaComp>,
             tag: Tag | ((obj: GameObj, col?: Collision) => void),
             cb?: (obj: GameObj, col?: Collision) => void,
-        ): EventController {
+        ): KEventController {
             if (typeof tag === "function" && cb === undefined) {
                 return this.on("collideUpdate", tag);
             } else if (typeof tag === "string") {
@@ -401,7 +401,7 @@ export function area(opt: AreaCompOpt = {}): AreaComp {
             this: GameObj<AreaComp>,
             tag: Tag | ((obj: GameObj) => void),
             cb?: (obj: GameObj) => void,
-        ): EventController {
+        ): KEventController {
             if (typeof tag === "function" && cb === undefined) {
                 return this.on("collideEnd", tag);
             } else if (typeof tag === "string") {

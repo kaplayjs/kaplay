@@ -6,6 +6,7 @@
   "json": {
   },
   "markdown": {
+    "textWrap": "always"
   },
   "excludes": [
     "**/node_modules",

@@ -1,4 +1,4 @@
-import { Event } from "./utils";
+import { KEvent } from "./utils";
 
 /**
  * An asset is a resource that is loaded asynchronously.
@@ -7,9 +7,9 @@ export class Asset<D> {
     loaded: boolean = false;
     data: D | null = null;
     error: Error | null = null;
-    private onLoadEvents: Event<[D]> = new Event();
-    private onErrorEvents: Event<[Error]> = new Event();
-    private onFinishEvents: Event<[]> = new Event();
+    private onLoadEvents: KEvent<[D]> = new KEvent();
+    private onErrorEvents: KEvent<[Error]> = new KEvent();
+    private onFinishEvents: KEvent<[]> = new KEvent();
     constructor(loader: Promise<D>) {
         loader.then((data) => {
             this.loaded = true;

@@ -72,7 +72,7 @@ import type {
     Vec2,
 } from "./math";
 import type { NavMesh } from "./math/navigationmesh";
-import type { Event, EventController, EventHandler } from "./utils";
+import type { KEvent, KEventController, KEventHandler } from "./utils";
 
 export type {
     AgentComp,
@@ -89,14 +89,14 @@ export type {
     ColorComp,
     DoubleJumpComp,
     Ellipse,
-    Event,
-    EventController,
-    EventHandler,
     FixedComp,
     FollowComp,
     FontData,
     FrameBuffer,
     HealthComp,
+    KEvent,
+    KEventController,
+    KEventHandler,
     LayerComp,
     LifespanCompOpt,
     Line,
@@ -142,6 +142,13 @@ export type {
     UVQuadComp,
     Vec2,
     ZComp,
+};
+
+// for back compat with v3000
+export type {
+    KEvent as Event,
+    KEventController as EventController,
+    KEventHandler as EventHandler,
 };
 
 export type InternalCtx = {
@@ -953,7 +960,7 @@ export interface KaboomCtx<
         event: string,
         tag: Tag,
         action: (obj: GameObj, ...args: any) => void,
-    ): EventController;
+    ): KEventController;
     /**
      * Register an event that runs every frame (~60 times per second) for all game objs with certain tag.
      *
@@ -972,7 +979,7 @@ export interface KaboomCtx<
      * ```
      * @group Events
      */
-    onUpdate(tag: Tag, action: (obj: GameObj) => void): EventController;
+    onUpdate(tag: Tag, action: (obj: GameObj) => void): KEventController;
     /**
      * Register an event that runs every frame (~60 times per second).
      *
@@ -987,14 +994,14 @@ export interface KaboomCtx<
      * ```
      * @group Events
      */
-    onUpdate(action: () => void): EventController;
+    onUpdate(action: () => void): KEventController;
     /**
      * Register an event that runs every frame (~60 times per second) for all game objs with certain tag (this is the same as onUpdate but all draw events are run after update events, drawXXX() functions only work in this phase).
      *
      * @since v2000.1
      * @group Events
      */
-    onDraw(tag: Tag, action: (obj: GameObj) => void): EventController;
+    onDraw(tag: Tag, action: (obj: GameObj) => void): KEventController;
     /**
      * Register an event that runs every frame (~60 times per second) (this is the same as onUpdate but all draw events are run after update events, drawXXX() functions only work in this phase).
      *
@@ -1012,23 +1019,23 @@ export interface KaboomCtx<
      * ```
      * @group Events
      */
-    onDraw(action: () => void): EventController;
+    onDraw(action: () => void): KEventController;
     /**
      * @group Events
      */
-    onAdd(tag: Tag, action: (obj: GameObj) => void): EventController;
+    onAdd(tag: Tag, action: (obj: GameObj) => void): KEventController;
     /**
      * @group Events
      */
-    onAdd(action: (obj: GameObj) => void): EventController;
+    onAdd(action: (obj: GameObj) => void): KEventController;
     /**
      * @group Events
      */
-    onDestroy(tag: Tag, action: (obj: GameObj) => void): EventController;
+    onDestroy(tag: Tag, action: (obj: GameObj) => void): KEventController;
     /**
      * @group Events
      */
-    onDestroy(action: (obj: GameObj) => void): EventController;
+    onDestroy(action: (obj: GameObj) => void): KEventController;
     /**
      * Register an event that runs when all assets finished loading.
      *
@@ -1107,7 +1114,7 @@ export interface KaboomCtx<
         t1: Tag,
         t2: Tag,
         action: (a: GameObj, b: GameObj, col?: Collision) => void,
-    ): EventController;
+    ): KEventController;
     /**
      * Register an event that runs every frame when 2 game objs with certain tags collides (required to have area() component).
      *
@@ -1126,7 +1133,7 @@ export interface KaboomCtx<
         t1: Tag,
         t2: Tag,
         action: (a: GameObj, b: GameObj, col?: Collision) => void,
-    ): EventController;
+    ): KEventController;
     /**
      * Register an event that runs once frame when 2 game objs with certain tags stops colliding (required to have area() component).
      *
@@ -1145,7 +1152,7 @@ export interface KaboomCtx<
         t1: Tag,
         t2: Tag,
         action: (a: GameObj, b: GameObj, col?: Collision) => void,
-    ): EventController;
+    ): KEventController;
     /**
      * Register an event that runs when game objs with certain tags are clicked (required to have the area() component).
      *
@@ -1159,7 +1166,7 @@ export interface KaboomCtx<
      *
      * @group Input
      */
-    onClick(tag: Tag, action: (a: GameObj) => void): EventController;
+    onClick(tag: Tag, action: (a: GameObj) => void): KEventController;
     /**
      * Register an event that runs when users clicks.
      *
@@ -1171,28 +1178,28 @@ export interface KaboomCtx<
      *
      * @since v2000.1
      */
-    onClick(action: () => void): EventController;
+    onClick(action: () => void): KEventController;
     /**
      * Register an event that runs once when game objs with certain tags are hovered (required to have area() component).
      *
      * @since v3000.0
      * @group Events
      */
-    onHover(tag: Tag, action: (a: GameObj) => void): EventController;
+    onHover(tag: Tag, action: (a: GameObj) => void): KEventController;
     /**
      * Register an event that runs every frame when game objs with certain tags are hovered (required to have area() component).
      *
      * @since v3000.0
      * @group Events
      */
-    onHoverUpdate(tag: Tag, onHover: (a: GameObj) => void): EventController;
+    onHoverUpdate(tag: Tag, onHover: (a: GameObj) => void): KEventController;
     /**
      * Register an event that runs once when game objs with certain tags are unhovered (required to have area() component).
      *
      * @since v3000.0
      * @group Events
      */
-    onHoverEnd(tag: Tag, action: (a: GameObj) => void): EventController;
+    onHoverEnd(tag: Tag, action: (a: GameObj) => void): KEventController;
     /**
      * Register an event that runs every frame when a key is held down.
      *
@@ -1207,14 +1214,14 @@ export interface KaboomCtx<
      * @since v2000.1
      * @group Input
      */
-    onKeyDown(key: Key | Key[], action: (key: Key) => void): EventController;
+    onKeyDown(key: Key | Key[], action: (key: Key) => void): KEventController;
     /**
      * Register an event that runs every frame when any key is held down.
      *
      * @since v2000.1
      * @group Input
      */
-    onKeyDown(action: (key: Key) => void): EventController;
+    onKeyDown(action: (key: Key) => void): KEventController;
     /**
      * Register an event that runs when user presses certain keys.
      *
@@ -1233,7 +1240,7 @@ export interface KaboomCtx<
      * @since v2000.1
      * @group Input
      */
-    onKeyPress(key: Key | Key[], action: (key: Key) => void): EventController;
+    onKeyPress(key: Key | Key[], action: (key: Key) => void): KEventController;
     /**
      * Register an event that runs when user presses any key.
      *
@@ -1249,7 +1256,7 @@ export interface KaboomCtx<
      * @since v3001.0
      * @group Input
      */
-    onKeyPress(action: (key: Key) => void): EventController;
+    onKeyPress(action: (key: Key) => void): KEventController;
     /**
      * Register an event that runs when user presses certain kesy (also fires repeatedly when the keys are being held down).
      *
@@ -1264,16 +1271,19 @@ export interface KaboomCtx<
      * @since v3000.1
      * @group Input
      */
-    onKeyPressRepeat(k: Key | Key[], action: (k: Key) => void): EventController;
-    onKeyPressRepeat(action: (k: Key) => void): EventController;
+    onKeyPressRepeat(
+        k: Key | Key[],
+        action: (k: Key) => void,
+    ): KEventController;
+    onKeyPressRepeat(action: (k: Key) => void): KEventController;
     /**
      * Register an event that runs when user release certain keys.
      *
      * @since v2000.1
      * @group Input
      */
-    onKeyRelease(k: Key | Key[], action: (k: Key) => void): EventController;
-    onKeyRelease(action: (k: Key) => void): EventController;
+    onKeyRelease(k: Key | Key[], action: (k: Key) => void): KEventController;
+    onKeyRelease(action: (k: Key) => void): KEventController;
     /**
      * Register an event that runs when user inputs text.
      *
@@ -1288,7 +1298,7 @@ export interface KaboomCtx<
      * ```
      * @group Input
      */
-    onCharInput(action: (ch: string) => void): EventController;
+    onCharInput(action: (ch: string) => void): KEventController;
     /**
      * Register an event that runs every frame when certain mouse buttons are being held down.
      *
@@ -1298,10 +1308,10 @@ export interface KaboomCtx<
     onMouseDown(
         button: MouseButton | MouseButton[],
         action: (m: MouseButton) => void,
-    ): EventController;
+    ): KEventController;
     onMouseDown(
         action: (m: MouseButton) => void,
-    ): EventController;
+    ): KEventController;
     /**
      * Register an event that runs when user clicks mouse.
      *
@@ -1310,71 +1320,71 @@ export interface KaboomCtx<
      */
     onMousePress(
         action: (m: MouseButton) => void,
-    ): EventController;
+    ): KEventController;
     onMousePress(
         button: MouseButton | MouseButton[],
         action: (m: MouseButton) => void,
-    ): EventController;
+    ): KEventController;
     /**
      * Register an event that runs when user releases mouse.
      *
      * @since v3001.0
      * @group Input
      */
-    onMouseRelease(action: (m: MouseButton) => void): EventController;
+    onMouseRelease(action: (m: MouseButton) => void): KEventController;
     onMouseRelease(
         button: MouseButton | MouseButton[],
         action: (m: MouseButton) => void,
-    ): EventController;
+    ): KEventController;
     /**
      * Register an event that runs whenever user move the mouse.
      *
      * @since v2000.1
      * @group Input
      */
-    onMouseMove(action: (pos: Vec2, delta: Vec2) => void): EventController;
+    onMouseMove(action: (pos: Vec2, delta: Vec2) => void): KEventController;
     /**
      * Register an event that runs when a touch starts.
      *
      * @since v2000.1
      * @group Input
      */
-    onTouchStart(action: (pos: Vec2, t: Touch) => void): EventController;
+    onTouchStart(action: (pos: Vec2, t: Touch) => void): KEventController;
     /**
      * Register an event that runs whenever touch moves.
      *
      * @since v2000.1
      * @group Input
      */
-    onTouchMove(action: (pos: Vec2, t: Touch) => void): EventController;
+    onTouchMove(action: (pos: Vec2, t: Touch) => void): KEventController;
     /**
      * Register an event that runs when a touch ends.
      *
      * @since v2000.1
      * @group Input
      */
-    onTouchEnd(action: (pos: Vec2, t: Touch) => void): EventController;
+    onTouchEnd(action: (pos: Vec2, t: Touch) => void): KEventController;
     /**
      * Register an event that runs when mouse wheel scrolled.
      *
      * @since v3000.0
      * @group Input
      */
-    onScroll(action: (delta: Vec2) => void): EventController;
+    onScroll(action: (delta: Vec2) => void): KEventController;
     /**
      * Register an event that runs when tab is hidden.
      *
      * @since v3001.0
      * @group Events
      */
-    onHide(action: () => void): EventController;
+    onHide(action: () => void): KEventController;
     /**
      * Register an event that runs when tab is shown.
      *
      * @since v3001.0
      * @group Events
      */
-    onShow(action: () => void): EventController;
+    onShow(action: () => void): KEventController;
     /**
      * Register an event that runs every frame when certain gamepad buttons are held down.
      *
@@ -1384,7 +1394,7 @@ export interface KaboomCtx<
     onGamepadButtonDown(
         btn: GamepadButton | GamepadButton[],
         action: (btn: GamepadButton) => void,
-    ): EventController;
+    ): KEventController;
     /**
      * Register an event that runs every frame when any gamepad buttons are held down.
      *
@@ -1393,7 +1403,7 @@ export interface KaboomCtx<
      */
     onGamepadButtonDown(
         action: (btn: GamepadButton) => void,
-    ): EventController;
+    ): KEventController;
     /**
      * Register an event that runs when user presses certain gamepad button.
      *
@@ -1403,7 +1413,7 @@ export interface KaboomCtx<
     onGamepadButtonPress(
         btn: GamepadButton | GamepadButton[],
         action: (btn: GamepadButton) => void,
-    ): EventController;
+    ): KEventController;
     /**
      * Register an event that runs when user presses any gamepad button.
      *
@@ -1412,7 +1422,7 @@ export interface KaboomCtx<
      */
     onGamepadButtonPress(
         action: (btn: GamepadButton) => void,
-    ): EventController;
+    ): KEventController;
     /**
      * Register an event that runs when user releases certain gamepad button
      *
@@ -1422,7 +1432,7 @@ export interface KaboomCtx<
     onGamepadButtonRelease(
         btn: GamepadButton | GamepadButton[],
         action: (btn: GamepadButton) => void,
-    ): EventController;
+    ): KEventController;
     /**
      * Register an event that runs when user releases any gamepad button.
      *
@@ -1431,7 +1441,7 @@ export interface KaboomCtx<
      */
     onGamepadButtonRelease(
         action: (btn: GamepadButton) => void,
-    ): EventController;
+    ): KEventController;
     /**
      * Register an event that runs when the gamepad axis exists.
      *
@@ -1441,7 +1451,7 @@ export interface KaboomCtx<
     onGamepadStick(
         stick: GamepadStick,
         action: (value: Vec2) => void,
-    ): EventController;
+    ): KEventController;
     /**
      * Register an event that runs when user press a defined button
      * (like "jump") on any input (keyboard, gamepad).
@@ -1452,7 +1462,7 @@ export interface KaboomCtx<
     onButtonPress(
         btn: TButton | TButton[],
         action: (btn: TButton) => void,
-    ): EventController;
+    ): KEventController;
     /**
      * Register an event that runs when user release a defined button
      * (like "jump") on any input (keyboard, gamepad).
@@ -1463,8 +1473,8 @@ export interface KaboomCtx<
     onButtonRelease(
         btn: TButton | TButton[],
         action: (btn: TButton) => void,
-    ): EventController;
-    onButtonRelease(action: (btn: TButton) => void): EventController;
+    ): KEventController;
+    onButtonRelease(action: (btn: TButton) => void): KEventController;
     /**
      * Register an event that runs when user press a defined button
      * (like "jump") on any input (keyboard, gamepad).
@@ -1475,15 +1485,15 @@ export interface KaboomCtx<
     onButtonDown(
         btn: TButton | TButton[],
         action: (btn: TButton) => void,
-    ): EventController;
-    onButtonDown(action: (btn: TButton) => void): EventController;
+    ): KEventController;
+    onButtonDown(action: (btn: TButton) => void): KEventController;
     /**
      * Register an event that runs when current scene ends.
      *
      * @since v3000.0
      * @group Events
      */
-    onSceneLeave(action: (newScene?: string) => void): EventController;
+    onSceneLeave(action: (newScene?: string) => void): KEventController;
     /**
      * Gets the name of the current scene.
      *
@@ -2235,7 +2245,7 @@ export interface KaboomCtx<
      * ```
      * @group Timer
      */
-    loop(t: number, action: () => void): EventController;
+    loop(t: number, action: () => void): KEventController;
     /**
      * Play a piece of audio.
      *
@@ -3407,21 +3417,21 @@ export interface KaboomCtx<
      * @since v3000.0
      * @group Events
      */
-    Event: typeof Event;
+    KEvent: typeof KEvent;
     /**
      * EventHandler for multiple events.
      *
      * @since v3000.0
      * @group Events
      */
-    EventHandler: typeof EventHandler;
+    KEventHandler: typeof KEventHandler;
     /**
      * The object that can pause or cancel an event.
      *
      * @since v3000.0
      * @group Events
      */
-    EventController: typeof EventController;
+    KEventController: typeof KEventController;
     /**
      * Current KAPLAY library version.
      *
@@ -3893,7 +3903,7 @@ export interface GameObjRaw {
     /**
      * Register an event.
      */
-    on(event: string, action: (...args: any) => void): EventController;
+    on(event: string, action: (...args: any) => void): KEventController;
     /**
      * Trigger an event.
      */
@@ -3913,25 +3923,25 @@ export interface GameObjRaw {
     /**
      * Register an event that runs when the game obj is added to the scene.
      */
-    onAdd(action: () => void): EventController;
+    onAdd(action: () => void): KEventController;
     /**
      * Register an event that runs every frame as long as the game obj exists.
      *
      * @since v2000.1
      */
-    onUpdate(action: () => void): EventController;
+    onUpdate(action: () => void): KEventController;
     /**
      * Register an event that runs every frame as long as the game obj exists (this is the same as `onUpdate()`, but all draw events are run after all update events).
      *
      * @since v2000.1
      */
-    onDraw(action: () => void): EventController;
+    onDraw(action: () => void): KEventController;
     /**
      * Register an event that runs when the game obj is destroyed.
      *
      * @since v2000.1
      */
-    onDestroy(action: () => void): EventController;
+    onDestroy(action: () => void): KEventController;
     /**
      * If game obj is attached to the scene graph.
      */
@@ -4391,8 +4401,8 @@ export interface AudioPlay {
      *
      * @since v3000.0
      */
-    onEnd(action: () => void): EventController;
-    then(action: () => void): EventController;
+    onEnd(action: () => void): KEventController;
+    then(action: () => void): KEventController;
 }
 
 export declare class Shader {
@@ -5369,10 +5379,10 @@ export interface LevelComp extends Comp {
      */
     getPath(from: Vec2, to: Vec2, opts?: PathFindOpt): Vec2[] | null;
     getSpatialMap(): GameObj[][];
-    onSpatialMapChanged(cb: () => void): EventController;
-    onNavigationMapInvalid(cb: () => void): EventController;
+    onSpatialMapChanged(cb: () => void): KEventController;
+    onNavigationMapInvalid(cb: () => void): KEventController;
     invalidateNavigationMap(): void;
-    onNavigationMapChanged(cb: () => void): EventController;
+    onNavigationMapChanged(cb: () => void): KEventController;
 }
 
 /**

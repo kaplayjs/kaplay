@@ -1,7 +1,7 @@
 import { getKaboomContext } from "../../kaboom";
 import { Vec2 } from "../../math";
 import type { Comp, GameObj, PosComp, QueryOpt } from "../../types";
-import type { EventController } from "../../utils";
+import type { KEventController } from "../../utils";
 import { raycast } from "../draw/raycast";
 
 /**
@@ -29,7 +29,7 @@ export interface SentryComp extends Comp {
     /*
      * Binds the event fired when objects of interest are spotted.
      */
-    onObjectsSpotted(cb: (objects: GameObj[]) => void): EventController;
+    onObjectsSpotted(cb: (objects: GameObj[]) => void): KEventController;
     /*
      * Returns whether the object is within the field of view.
      */
@@ -146,7 +146,7 @@ export function sentry(
                     objects = objects.filter(o =>
                         o.pos
                         && directionVector.angleBetween(o.pos.sub(this.pos))
-                            <= halfAngle
+                        <= halfAngle
                     );
                 }
                 // If lineOfSight is used, raycast

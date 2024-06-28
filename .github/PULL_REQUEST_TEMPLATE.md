@@ -6,17 +6,15 @@ Before submitting a Pull Request, please ensure you've done the following:
 
 ## Description
 
-
 ### Issues or related
 
 <!--
 For pull requests that relate or close an issue, please include them
-below. 
+below.
 
-The text `closes #1234` will connect the current PR to that issue, it also closes 
+The text `closes #1234` will connect the current PR to that issue, it also closes
 the issue when the PR is merged.
 -->
 
 - Related Issue #
 - Closes #
-

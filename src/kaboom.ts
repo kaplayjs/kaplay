@@ -111,13 +111,13 @@ import {
     downloadBlob,
     downloadJSON,
     downloadText,
-    Event,
-    EventController,
-    EventHandler,
     getErrorMessage,
     getFileName,
     isClass,
     isDataURL,
+    KEvent,
+    KEventController,
+    KEventHandler,
     overload2,
     Registry,
     runes,
@@ -244,6 +244,7 @@ import boomSpriteSrc from "./assets/boom.png";
 import burpSoundSrc from "./assets/burp.mp3";
 import kaSpriteSrc from "./assets/ka.png";
 
+// for import types from package
 export type * from "./types";
 
 // convert anchor string to a vec2 offset
@@ -701,7 +702,7 @@ const kaplay = <
 
     const game = {
         // general events
-        events: new EventHandler<{
+        events: new KEventHandler<{
             mouseMove: [];
             mouseDown: [MouseButton];
             mousePress: [MouseButton];
@@ -733,7 +734,7 @@ const kaplay = <
         }>(),
 
         // object events
-        objEvents: new EventHandler(),
+        objEvents: new KEventHandler(),
 
         // root game object
         root: make([]),
@@ -1237,7 +1238,7 @@ const kaplay = <
     }
 
     function playMusic(url: string, opt: AudioPlayOpt = {}): AudioPlay {
-        const onEndEvents = new Event();
+        const onEndEvents = new KEvent();
         const el = new Audio(url);
         const src = audio.ctx.createMediaElementSource(el);
 
@@ -1353,7 +1354,7 @@ const kaplay = <
         const ctx = audio.ctx;
         let paused = opt.paused ?? false;
         let srcNode = ctx.createBufferSource();
-        const onEndEvents = new Event();
+        const onEndEvents = new KEvent();
         const gainNode = ctx.createGain();
         const pos = opt.seek ?? 0;
         let startTime = 0;
@@ -3344,8 +3345,8 @@ const kaplay = <
     function make<T>(comps: CompList<T> = []): GameObj<T> {
         const compStates = new Map();
         const cleanups = {};
-        const events = new EventHandler();
-        const inputEvents: EventController[] = [];
+        const events = new KEventHandler();
+        const inputEvents: KEventController[] = [];
         let onCurCompCleanup = null;
         let paused = false;
 
@@ -3773,7 +3774,7 @@ const kaplay = <
                 }
             },
 
-            on(name: string, action: (...args) => void): EventController {
+            on(name: string, action: (...args) => void): KEventController {
                 const ctrl = events.on(name, action.bind(this));
                 if (onCurCompCleanup) {
                     onCurCompCleanup(() => ctrl.cancel());
@@ -3800,19 +3801,19 @@ const kaplay = <
                 return info;
             },
 
-            onAdd(cb: () => void): EventController {
+            onAdd(cb: () => void): KEventController {
                 return this.on("add", cb);
             },
 
-            onUpdate(cb: () => void): EventController {
+            onUpdate(cb: () => void): KEventController {
                 return this.on("update", cb);
             },
 
-            onDraw(cb: () => void): EventController {
+            onDraw(cb: () => void): KEventController {
                 return this.on("draw", cb);
             },
 
-            onDestroy(action: () => void): EventController {
+            onDestroy(action: () => void): KEventController {
                 return this.on("destroy", action);
             },
 
@@ -3868,7 +3869,7 @@ const kaplay = <
         event: string,
         tag: Tag,
         cb: (obj: GameObj, ...args) => void,
-    ): EventController {
+    ): KEventController {
         if (!game.objEvents[event]) {
             game.objEvents[event] = new Registry();
         }
@@ -3879,7 +3880,7 @@ const kaplay = <
         });
     }
 
-    const onUpdate = overload2((action: () => void): EventController => {
+    const onUpdate = overload2((action: () => void): KEventController => {
         const obj = add([{ update: action }]);
         return {
             get paused() {
@@ -3894,7 +3895,7 @@ const kaplay = <
         return on("update", tag, action);
     });
 
-    const onDraw = overload2((action: () => void): EventController => {
+    const onDraw = overload2((action: () => void): KEventController => {
         const obj = add([{ draw: action }]);
         return {
             get paused() {
@@ -3926,7 +3927,7 @@ const kaplay = <
         t1: Tag,
         t2: Tag,
         f: (a: GameObj, b: GameObj, col?: Collision) => void,
-    ): EventController {
+    ): KEventController {
         return on("collide", t1, (a, b, col) => b.is(t2) && f(a, b, col));
     }
 
@@ -3934,7 +3935,7 @@ const kaplay = <
         t1: Tag,
         t2: Tag,
         f: (a: GameObj, b: GameObj, col?: Collision) => void,
-    ): EventController {
+    ): KEventController {
         return on("collideUpdate", t1, (a, b, col) => b.is(t2) && f(a, b, col));
     }
 
@@ -3942,7 +3943,7 @@ const kaplay = <
         t1: Tag,
         t2: Tag,
         f: (a: GameObj, b: GameObj, col?: Collision) => void,
-    ): EventController {
+    ): KEventController {
         return on("collideEnd", t1, (a, b, col) => b.is(t2) && f(a, b, col));
     }
 
@@ -3963,11 +3964,11 @@ const kaplay = <
             }
             events.push(obj.onClick(() => action(obj)));
         });
-        return EventController.join(events);
+        return KEventController.join(events);
     });
 
     // add an event that runs once when objs with tag t is hovered
-    function onHover(t: Tag, action: (obj: GameObj) => void): EventController {
+    function onHover(t: Tag, action: (obj: GameObj) => void): KEventController {
         const events = [];
         forAllCurrentAndFuture(t, (obj) => {
             if (!obj.area) {
@@ -3977,14 +3978,14 @@ const kaplay = <
             }
             events.push(obj.onHover(() => action(obj)));
         });
-        return EventController.join(events);
+        return KEventController.join(events);
     }
 
     // add an event that runs once when objs with tag t is hovered
     function onHoverUpdate(
         t: Tag,
         action: (obj: GameObj) => void,
-    ): EventController {
+    ): KEventController {
         const events = [];
         forAllCurrentAndFuture(t, (obj) => {
             if (!obj.area) {
@@ -3994,14 +3995,14 @@ const kaplay = <
             }
             events.push(obj.onHoverUpdate(() => action(obj)));
         });
-        return EventController.join(events);
+        return KEventController.join(events);
     }
 
     // add an event that runs once when objs with tag t is unhovered
     function onHoverEnd(
         t: Tag,
         action: (obj: GameObj) => void,
-    ): EventController {
+    ): KEventController {
         const events = [];
         forAllCurrentAndFuture(t, (obj) => {
             if (!obj.area) {
@@ -4011,7 +4012,7 @@ const kaplay = <
             }
             events.push(obj.onHoverEnd(() => action(obj)));
         });
-        return EventController.join(events);
+        return KEventController.join(events);
     }
 
     function setGravity(g: number) {
@@ -4127,7 +4128,7 @@ const kaplay = <
 
     function onSceneLeave(
         action: (newScene?: string) => void,
-    ): EventController {
+    ): KEventController {
         return game.events.on("sceneLeave", action);
     }
 
@@ -5907,9 +5908,9 @@ const kaplay = <
         BLACK: Color.BLACK,
         quit,
         // helpers
-        Event,
-        EventHandler,
-        EventController,
+        KEvent: KEvent,
+        KEventHandler: KEventHandler,
+        KEventController: KEventController,
     };
 
     if (gopt.plugins) {

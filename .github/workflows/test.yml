@@ -24,3 +24,5 @@ jobs:
         run: pnpm run check
       - name: Run tests
         run: pnpm run test -c
+      - name: Upload Package
+        run: pnpx pkg-pr-new publish
