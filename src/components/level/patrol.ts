@@ -6,7 +6,7 @@ export interface PatrolComp extends Comp {
     /*
      * Path to follow. If null, doesn't move.
      */
-    waypoints?: Vec2[];
+    waypoints: Vec2[] | null;
     /*
      * Speed of the movement during patrol.
      */
