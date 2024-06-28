@@ -21,6 +21,10 @@ import type {
     OffScreenCompOpt,
     OpacityComp,
     OutlineComp,
+    PatrolComp,
+    PatrolCompOpt,
+    NavigationComp,
+    NavigationCompOpt,
     PolygonComp,
     PolygonCompOpt,
     PosComp,
@@ -103,6 +107,10 @@ export type {
     OffScreenCompOpt,
     OpacityComp,
     OutlineComp,
+    PatrolComp,
+    PatrolCompOpt,
+    NavigationComp,
+    NavigationCompOpt,
     Polygon,
     PolygonComp,
     PolygonCompOpt,
@@ -895,6 +903,20 @@ export interface KaboomCtx<
      * @group Components
      */
     sentry(candidates: SentryCandidates, opt?: SentryCompOpt): SentryComp;
+    /**
+     * A patrol which can follow waypoints to a goal.
+     *
+     * @since v3001.0
+     * @group Components
+     */
+    patrol(opts: PatrolCompOpt): PatrolComp;
+    /**
+     * A navigator which can calculate waypoints to a goal.
+     *
+     * @since v3001.0
+     * @group Components
+     */
+    navigation(opts: NavigationCompOpt): NavigationComp;
     /**
      * @group Math
      */
@@ -4858,11 +4880,11 @@ export type DrawTextOpt = RenderProps & {
      * The name of font to use.
      */
     font?:
-        | string
-        | FontData
-        | Asset<FontData>
-        | BitmapFontData
-        | Asset<BitmapFontData>;
+    | string
+    | FontData
+    | Asset<FontData>
+    | BitmapFontData
+    | Asset<BitmapFontData>;
     /**
      * The size of text (the height of each character).
      */

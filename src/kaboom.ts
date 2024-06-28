@@ -219,6 +219,8 @@ import {
     opacity,
     outline,
     particles,
+    patrol,
+    navigation,
     polygon,
     pos,
     raycast,
@@ -5717,6 +5719,8 @@ const kaplay = <
         tile,
         agent,
         sentry,
+        patrol,
+        navigation,
         // group events
         on,
         onUpdate,

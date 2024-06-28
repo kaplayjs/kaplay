@@ -2,7 +2,7 @@ import { Vec2 } from "../../math";
 import { type Graph } from "../../math/navigation";
 import type { Comp, GameObj, PosComp } from "../../types";
 
-export interface NavigatorMapComp extends Comp {
+export interface NavigationMapComp extends Comp {
     /*
      * Get navigation waypoints to reach the given target from the given origin.
      */
@@ -13,16 +13,16 @@ export interface NavigatorMapComp extends Comp {
     graph: Graph;
 }
 
-export interface NavigatorCompOpt {
+export interface NavigationMapCompOpt {
     /*
      * The graph to use for navigation. If null, the ancestors are queried for a navigatorMap component.
      */
     graph?: Graph;
 }
 
-export function navigatorMap(
-    opts: NavigatorCompOpt,
-): NavigatorMapComp {
+export function navigationMap(
+    opts: NavigationMapCompOpt,
+): NavigationMapComp {
     let graph = opts.graph;
     return {
         id: "navigatorMap",
@@ -33,7 +33,7 @@ export function navigatorMap(
             graph = value;
         },
         navigate(
-            this: GameObj<NavigatorMapComp>,
+            this: GameObj<NavigationMapComp>,
             origin: Vec2,
             target: Vec2,
             navigationOpt: any = {},
@@ -43,18 +43,18 @@ export function navigatorMap(
     };
 }
 
-export interface NavigatorComp extends Comp {
+export interface NavigationComp extends Comp {
     /*
      * Get navigation waypoints to reach the given target from the current position.
      */
-    navigate(target: Vec2): Vec2[] | null;
+    navigateTo(target: Vec2): Vec2[] | null;
     /*
      * Get the graph used for navigastion if any.
      */
     graph: Graph | null;
 }
 
-export interface NavigatorCompOpt {
+export interface NavigationCompOpt {
     /*
      * The graph to use for navigation. If null, the ancestors are queried for a navigatorMap component.
      */
@@ -65,15 +65,15 @@ export interface NavigatorCompOpt {
     navigationOpt?: any;
 }
 
-export function navigator(
-    opts: NavigatorCompOpt,
-): NavigatorComp {
+export function navigation(
+    opts: NavigationCompOpt,
+): NavigationComp {
     let graph = opts.graph;
     return {
         id: "navigator",
         require: ["pos"],
-        navigate(
-            this: GameObj<NavigatorComp | PosComp>,
+        navigateTo(
+            this: GameObj<NavigationComp | PosComp>,
             target: Vec2,
         ): Vec2[] | null {
             const graph: Graph = this.graph;

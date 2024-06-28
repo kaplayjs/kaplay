@@ -1,5 +1,6 @@
 import { Vec2 } from "../../math";
 import type { Comp, GameObj, PosComp } from "../../types";
+import type { EventController } from "../../utils";
 
 export interface PatrolComp extends Comp {
     /*
@@ -14,6 +15,10 @@ export interface PatrolComp extends Comp {
      * Current subgoal, if any.
      */
     nextLocation: Vec2 | null;
+    /*
+     * Only called when using "stop" and the path reaches its end.
+     */
+    onPatrolFinished(cb: (objects: GameObj[]) => void): EventController;
 }
 
 type PatrolEndBehavior =
@@ -44,8 +49,9 @@ export function patrol(
 ): PatrolComp {
     let waypoints = opts.waypoints;
     let speed = opts.speed || 100; // Or throw error?
-    let endBehavior = opts.endBehavior || "ping-pong"; // Default is traveling the reverse path back to the start.
+    let endBehavior = opts.endBehavior || "stop"; // Default is stop.
     let index = 0;
+    let finished = waypoints != null;
     return {
         id: "patrol",
         require: ["pos"],
@@ -61,14 +67,15 @@ export function patrol(
         set waypoints(value) {
             waypoints = value;
             index = 0;
+            finished = false;
         },
         get nextLocation() {
             return waypoints ? waypoints[index] : null;
         },
         update(this: GameObj<PatrolComp | PosComp>) {
-            if (!waypoints) return;
+            if (!waypoints || finished) return;
             this.moveTo(this.nextLocation, speed);
-            if (this.pos.sdist(this.nextLocation) < 4) {
+            if (this.pos.sdist(this.nextLocation) < 9) {
                 switch (endBehavior) {
                     case "loop":
                         index = (index + 1) % waypoints.length;
@@ -82,9 +89,16 @@ export function patrol(
                         break;
                     case "stop":
                         index = Math.min(index + 1, waypoints.length - 1);
+                        if (index == waypoints.length - 1) {
+                            finished = true;
+                            this.trigger("patrol-finished");
+                        }
                         break;
                 }
             }
+        },
+        onPatrolFinished(cb: (objects: GameObj[]) => void) {
+            return this.on("patrol-finished", cb);
         },
     };
 }

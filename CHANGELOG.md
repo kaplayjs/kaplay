@@ -84,6 +84,7 @@ add([
 - added `GameObjRaw<SpriteComp>.sprite` property to get the name of the sprite
 - added `patrol()` component to move along a list of waypoints
 - added `sentry()` component to notify when certain objects are in sight
+- added `navigation()` component to calculate a list of waypoints on a graph
 - added `particles()` component to emit and draw particles
 - added `NavMesh` class for pathfinding on a mesh
 - added global raycast function and raycast method to level

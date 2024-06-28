@@ -14,7 +14,7 @@ export * from "./draw/sprite";
 export * from "./draw/text";
 export * from "./draw/uvquad";
 export * from "./level/agent";
-export * from "./level/navigator";
+export * from "./level/navigation";
 export * from "./level/patrol";
 export * from "./level/sentry";
 export * from "./level/tile";

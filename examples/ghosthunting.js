@@ -129,6 +129,17 @@ function addEnemy(p) {
                     });
                     destroy(this);
                 });
+                this.onObjectsSpotted(objects => {
+                    console.log(objects);
+                    const playerSeen = objects.some(o => o.is("player"));
+                    if (playerSeen) {
+                        enemy.action = "pursuit";
+                        enemy.waypoints = null;
+                    }
+                });
+                this.onPatrolFinished(() => {
+                    enemy.action = "observe";
+                });
             },
         },
         pos(p),
@@ -137,9 +148,23 @@ function addEnemy(p) {
         anchor(vec2(0, 0)),
         area(),
         body(),
+        // Health provides properties and methods to keep track of the enemies health
         health(100),
+        // Sentry makes it easy to check for visibility of the player
+        sentry({ includes: "player" }, {
+            lineOfSight: true,
+            raycastExclude: ["enemy"],
+        }),
+        // Patrol can make the enemy follow a computed path
+        patrol({ speed: 100 }),
+        // Navigator can compute a path given a graph
+        navigation({
+            graph: nav, navigationOpt: {
+                type: "edges",
+            }
+        }),
         "enemy",
-        { action: "patrolling", waypoint: null },
+        { action: "observing", waypoint: null },
     ]);
     return enemy;
 }
@@ -150,41 +175,19 @@ addEnemy(vec2(width() * 1 / 4, height() / 2));
 let path;
 onUpdate("enemy", enemy => {
     switch (enemy.action) {
-        case "patrolling": {
-            const hit = raycast(enemy.pos, player.pos.sub(enemy.pos), [
-                "enemy",
-            ]);
-            if (hit && hit.object.is("player")) {
-                // We saw a player, start pursuit
-                enemy.action = "moving";
-            }
+        case "observe": {
             break;
         }
-        case "moving": {
-            const hit = raycast(enemy.pos, player.pos.sub(enemy.pos), [
-                "enemy",
-            ]);
-            if (hit && hit.object.is("player")) {
+        case "pursuit": {
+            if (enemy.hasLineOfSight(player)) {
                 // We can see the player, just go straight to their location
                 enemy.moveTo(player.pos, 100);
             } else {
                 // We can't see the player, but we know where they are, plot a path
-                path = nav.getWaypointPath(enemy.pos, player.pos, {
-                    type: "edges",
-                });
-                enemy.waypoint = path[1];
-                enemy.action = "waypoint";
-            }
-            break;
-        }
-        case "waypoint": {
-            if (enemy.pos.sub(enemy.waypoint).slen() < 4) {
-                // We are at the waypoint, check if we see the player
-                path = null;
-                enemy.action = "moving";
-            } else {
-                // Move closer to the waypoint
-                enemy.moveTo(enemy.waypoint, 100);
+                path = enemy.navigateTo(player.pos);
+                // enemy.waypoint = path[1];
+                enemy.waypoints = path;
+                enemy.action = "observe";
             }
             break;
         }
