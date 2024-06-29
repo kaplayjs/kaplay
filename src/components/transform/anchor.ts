@@ -22,9 +22,9 @@ export function anchor(o: Anchor | Vec2): AnchorComp {
         anchor: o,
         inspect() {
             if (typeof this.anchor === "string") {
-                return this.anchor;
+                return `anchor: ` + this.anchor;
             } else {
-                return this.anchor.toString();
+                return `anchor: ` + this.anchor.toString();
             }
         },
     };

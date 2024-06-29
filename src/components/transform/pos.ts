@@ -176,7 +176,7 @@ export function pos(...args: Vec2Args): PosComp {
         },
 
         inspect() {
-            return `pos: (${Math.round(this.pos.x)}, ${Math.round(this.pos.y)})`;
+            return `pos: (${Math.round(this.pos.x)}x, ${Math.round(this.pos.y)}y)`;
         },
 
         drawInspect() {

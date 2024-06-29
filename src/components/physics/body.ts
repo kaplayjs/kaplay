@@ -368,5 +368,9 @@ export function body(opt: BodyCompOpt = {}): BodyComp {
         onHeadbutt(this: GameObj, action: () => void): EventController {
             return this.on("headbutt", action);
         },
+
+        inspect() {
+            return `gravityScale: ${this.gravityScale}x`
+        }
     };
 }

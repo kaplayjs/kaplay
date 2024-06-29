@@ -50,7 +50,7 @@ export function doubleJump(numJumps: number = 2): DoubleJumpComp {
             return this.on("doubleJump", action);
         },
         inspect(this: GameObj<BodyComp | DoubleJumpComp>) {
-            return `${jumpsLeft}`;
+            return `jumpsLeft: ${jumpsLeft}`;
         },
     };
 }

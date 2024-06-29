@@ -55,7 +55,7 @@ export function circle(radius: number, opt: CircleCompOpt = {}): CircleComp {
             );
         },
         inspect() {
-            return `${Math.ceil(this.radius)}`;
+            return `radius: ${Math.ceil(this.radius)}`;
         },
     };
 }

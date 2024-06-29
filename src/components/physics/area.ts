@@ -473,9 +473,10 @@ export function area(opt: AreaCompOpt = {}): AreaComp {
         },
 
         inspect() {
-            return `area: (${this.area.scale.x.toFixed(1)}, ${
+            if (this.area.scale.x == this.area.scale.y) return `area: ${this.area.scale.x.toFixed(1)}x`;
+            else return `area: (${this.area.scale.x.toFixed(1)}x, ${
                 this.area.scale.y.toFixed(1)
-            })`;
+            }y)`;
         },
     };
 }

@@ -134,7 +134,7 @@ export function agent(opts: AgentCompOpt = {}): AgentComp {
             return this.on("target-reached", cb);
         },
         inspect() {
-            return JSON.stringify({
+            return `agent: ` + JSON.stringify({
                 target: JSON.stringify(target),
                 path: JSON.stringify(path),
             });

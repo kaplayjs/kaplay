@@ -76,7 +76,7 @@ export function polygon(pts: Vec2[], opt: PolygonCompOpt = {}): PolygonComp {
             return new Polygon(this.pts);
         },
         inspect() {
-            return this.pts.map(p => `[${p.x},${p.y}]`).join(",");
+            return `polygon: ${this.pts.map(p => `[${p.x},${p.y}]`).join(",")}`;
         },
     };
 }
