@@ -11,7 +11,9 @@ loadSprite("hexagon", "./sprites/particle_hexagon_filled.png");
 loadSprite("star", "./sprites/particle_star_filled.png");
 
 const nav = new NavMesh();
+// Hallway
 nav.addPolygon([vec2(20, 20), vec2(1004, 20), vec2(620, 120), vec2(20, 120)]);
+// Living room
 nav.addPolygon([
     vec2(620, 120),
     vec2(1004, 20),
@@ -19,6 +21,14 @@ nav.addPolygon([
     vec2(620, 140),
 ]);
 nav.addPolygon([vec2(20, 140), vec2(620, 140), vec2(1004, 440), vec2(20, 440)]);
+// Kitchen
+nav.addPolygon([vec2(20, 460), vec2(320, 460), vec2(320, 748), vec2(20, 748)]);
+nav.addPolygon([vec2(320, 440), vec2(420, 440), vec2(420, 748), vec2(320, 748)]);
+nav.addPolygon([vec2(420, 460), vec2(620, 460), vec2(620, 748), vec2(420, 748)]);
+// Storage room
+nav.addPolygon([vec2(640, 460), vec2(720, 460), vec2(720, 748), vec2(640, 748)]);
+nav.addPolygon([vec2(720, 440), vec2(820, 440), vec2(820, 748), vec2(720, 748)]);
+nav.addPolygon([vec2(820, 460), vec2(1004, 460), vec2(1004, 748), vec2(820, 748)]);
 
 // Border
 add([
@@ -130,16 +140,12 @@ add([
 add([
     pos(720, 440),
     rect(100, 20),
-    area(),
-    body({ isStatic: true }),
     color(rgb(64, 128, 64)),
     "floor",
 ]);
 add([
     pos(640, 460),
     rect(364, 288),
-    area(),
-    body({ isStatic: true }),
     color(rgb(64, 128, 64)),
     "floor",
 ]);
@@ -165,7 +171,6 @@ function addEnemy(p) {
         {
             add() {
                 this.onHurt(() => {
-                    console.log(this.hp());
                     this.opacity = this.hp() / 100;
                 });
                 this.onDeath(() => {
@@ -198,7 +203,6 @@ function addEnemy(p) {
                     destroy(this);
                 });
                 this.onObjectsSpotted(objects => {
-                    console.log(objects);
                     const playerSeen = objects.some(o => o.is("player"));
                     if (playerSeen) {
                         enemy.action = "pursuit";
@@ -240,6 +244,8 @@ function addEnemy(p) {
 
 addEnemy(vec2(width() * 3 / 4, height() / 2));
 addEnemy(vec2(width() * 1 / 4, height() / 2));
+addEnemy(vec2(width() * 1 / 4, height() * 2 / 3));
+addEnemy(vec2(width() * 0.8, height() * 2 / 3));
 
 let path;
 onUpdate("enemy", enemy => {
@@ -334,30 +340,3 @@ onMousePress(() => {
         }
     }
 });
-
-/*onDraw(() => {
-    drawPolygon({
-        pts: [vec2(20, 20), vec2(1004, 20), vec2(620, 120), vec2(20, 120)],
-        fill: false,
-        outline: { color: RED, width: 4 }
-    })
-    drawPolygon({
-        pts: [vec2(620, 120), vec2(1004, 20), vec2(1004, 440), vec2(620, 140)],
-        fill: false,
-        outline: { color: RED, width: 4 }
-    })
-    drawPolygon({
-        pts: [vec2(20, 140), vec2(620, 140), vec2(1004, 440), vec2(20, 440)],
-        fill: false,
-        outline: { color: RED, width: 4 }
-    })
-    if (path) {
-        path.forEach((p, index) => {
-            drawCircle({
-                pos: p,
-                radius: 4,
-                color: index == 1 ? GREEN : BLUE
-            })
-        });
-    }
-})*/

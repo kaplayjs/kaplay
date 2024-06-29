@@ -73,9 +73,10 @@ export function patrol(
             return waypoints ? waypoints[index] : null;
         },
         update(this: GameObj<PatrolComp | PosComp>) {
-            if (!waypoints || finished) return;
-            this.moveTo(this.nextLocation, speed);
-            if (this.pos.sdist(this.nextLocation) < 9) {
+            const nextWaypoint = this.nextLocation
+            if (!waypoints || !nextWaypoint || finished) return;
+            this.moveTo(nextWaypoint, speed);
+            if (this.pos.sdist(nextWaypoint) < 9) {
                 switch (endBehavior) {
                     case "loop":
                         index = (index + 1) % waypoints.length;
