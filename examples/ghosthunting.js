@@ -81,6 +81,68 @@ add([
     color(rgb(64, 64, 128)),
     "floor",
 ]);
+add([
+    pos(20, 440),
+    rect(300, 20),
+    area(),
+    body({ isStatic: true }),
+    color(rgb(128, 128, 128)),
+    "wall",
+]);
+add([
+    pos(420, 440),
+    rect(300, 20),
+    area(),
+    body({ isStatic: true }),
+    color(rgb(128, 128, 128)),
+    "wall",
+]);
+add([
+    pos(820, 440),
+    rect(300, 20),
+    area(),
+    body({ isStatic: true }),
+    color(rgb(128, 128, 128)),
+    "wall",
+]);
+// Kitchen
+add([
+    pos(320, 440),
+    rect(100, 20),
+    color(rgb(128, 128, 64)),
+    "floor",
+]);
+add([
+    pos(20, 460),
+    rect(600, 288),
+    color(rgb(128, 128, 64)),
+    "floor",
+]);
+add([
+    pos(620, 460),
+    rect(20, 288),
+    area(),
+    body({ isStatic: true }),
+    color(rgb(128, 128, 128)),
+    "wall",
+]);
+// Storage
+add([
+    pos(720, 440),
+    rect(100, 20),
+    area(),
+    body({ isStatic: true }),
+    color(rgb(64, 128, 64)),
+    "floor",
+]);
+add([
+    pos(640, 460),
+    rect(364, 288),
+    area(),
+    body({ isStatic: true }),
+    color(rgb(64, 128, 64)),
+    "floor",
+]);
 
 const player = add([
     pos(50, 50),
