@@ -29,7 +29,7 @@ export function outline(
             cap,
         },
         inspect() {
-            return `${this.outline.width}, ${this.outline.color}`;
+            return `outline: ${this.outline.width}px, ${this.outline.color}`;
         },
     };
 }

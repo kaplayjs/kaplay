@@ -64,7 +64,7 @@ export function rect(w: number, h: number, opt: RectCompOpt = {}): RectComp {
             return new Rect(vec2(0), this.width, this.height);
         },
         inspect() {
-            return `${Math.ceil(this.width)}, ${Math.ceil(this.height)}`;
+            return `rect: (${Math.ceil(this.width)}w, ${Math.ceil(this.height)}h)`;
         },
     };
 }

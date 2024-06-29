@@ -36,7 +36,7 @@ export function layer(layer: string): LayerComp {
             if (_layerIndex == -1) throw Error("Invalid layer name");
         },
         inspect() {
-            return `${this.layer}`;
+            return `layer: ${this.layer}`;
         },
     };
 }

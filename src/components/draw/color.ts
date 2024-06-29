@@ -15,7 +15,7 @@ export function color(...args): ColorComp {
         id: "color",
         color: rgb(...args),
         inspect() {
-            return this.color.toString();
+            return `color: ${this.color.toString()}`;
         },
     };
 }

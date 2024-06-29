@@ -454,7 +454,7 @@ export function sprite(
 
         inspect() {
             if (typeof src === "string") {
-                return `"${src}"`;
+                return `sprite: "${src}"`;
             }
         },
     };

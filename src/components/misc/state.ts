@@ -156,7 +156,7 @@ export function state(
         },
 
         inspect() {
-            return this.state;
+            return `state: ${this.state}`
         },
     };
 }

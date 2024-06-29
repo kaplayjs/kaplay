@@ -33,7 +33,7 @@ export function rotate(r: number): RotateComp {
             this.angle = angle;
         },
         inspect() {
-            return `${Math.round(this.angle)}`;
+            return `angle: ${Math.round(this.angle)}`;
         },
     };
 }

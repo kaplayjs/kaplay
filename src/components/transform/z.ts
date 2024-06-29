@@ -17,7 +17,7 @@ export function z(z: number): ZComp {
         id: "z",
         z: z,
         inspect() {
-            return `${this.z}`;
+            return `z: ${this.z}`;
         },
     };
 }
