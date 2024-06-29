@@ -247,6 +247,8 @@ onMousePress(() => {
                 speed: [200, 250],
                 lifeTime: [0.2, 0.5],
                 colors: [WHITE],
+                opacities: [1.0, 0.0],
+                angle: [0, 360]
             }, {
                 lifetime: 0.5,
                 rate: 0,

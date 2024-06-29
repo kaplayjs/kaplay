@@ -13,20 +13,9 @@ class Particle {
     lt: number | null;
     gc: boolean;
 
-    constructor(
-        lt: number,
-        pos: Vec2,
-        vel: Vec2,
-        angle: number,
-        angularVelocity: number,
-    ) {
-        this.pos = pos.clone();
-        this.vel = vel;
-        this.angle = angle;
-        this.angularVelocity = angularVelocity;
+    constructor() {
         this.t = 0;
-        this.lt = lt;
-        this.gc = false;
+        this.gc = true;
     }
 
     get progress() {
@@ -95,14 +84,29 @@ export function particles(popt: ParticlesOpt, eopt: EmitterOpt): ParticlesComp {
                 opacity: 1,
             };
         }
+        particles[i] = new Particle()
     }
 
     const onEndEvents = new KEvent();
 
+    function nextFree(index: number = 0): number | null {
+        while (index < popt.max) {
+            if (particles[index].gc) {
+                return index
+            }
+            index++
+        }
+        return null
+    }
+
     return {
         id: "particles",
         emit(n: number) {
+            let index = 0
             for (let i = 0; i < n; i++) {
+                index = nextFree(index)
+                if (index == null) { return }
+
                 const velocityAngle = k.rand(
                     direction - spread,
                     direction + spread,
@@ -119,9 +123,14 @@ export function particles(popt: ParticlesOpt, eopt: EmitterOpt): ParticlesComp {
                 const pos = eopt.shape
                     ? eopt.shape.random()
                     : vec2();
-                particles.push(
-                    new Particle(lt, pos, vel, angle, angularVelocity),
-                );
+                // TODO: Don't create particles, overwrite gc particles
+                const p = particles[index]
+                p.lt = lt
+                p.pos = pos
+                p.vel = vel
+                p.angle = angle
+                p.angularVelocity = angularVelocity
+                p.gc = false
             }
             count += n;
         },
