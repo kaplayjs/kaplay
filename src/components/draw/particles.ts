@@ -7,8 +7,10 @@ import { KEvent } from "../../utils";
 class Particle {
     pos: Vec2;
     vel: Vec2;
+    acc: Vec2;
     angle: number;
     angularVelocity: number;
+    damping: number;
     t: number;
     lt: number | null;
     gc: boolean;
@@ -24,27 +26,87 @@ class Particle {
 }
 
 export type EmitterOpt = {
+    /*
+     * Shape of the emitter. If given, particles spwan within this shape.
+     */
     shape?: ShapeType;
+    /*
+     * Lifetime of the emitter.
+     */
     lifetime?: number;
-    rate: number;
+    /*
+     * Rate of emission in particles per second if the emitter should emit out of itself.
+     */
+    rate?: number;
+    /*
+     * Direction of emission.
+     */
     direction: number;
+    /*
+     * Spread (cone) of emission around the direction.
+     */
     spread: number;
 };
 
 export type ParticlesOpt = {
+    /*
+     * Maximum number of simultaneously rendered particles.
+     */
     max: number;
+    /*
+     * Minimum and maximum lifetime of a particle in seconds.
+     */
     lifeTime?: [number, number];
+    /*
+     * Minimum and maximum speed of a particle in pixels per second.
+     */
     speed?: [number, number];
+    /*
+     * Minimum and maximum acceleration of a particle in pixels per second^2.
+     */
+    acceleration?: [Vec2, Vec2];
+    /*
+     * Minimum and maximum damping of a particle.
+     */
+    damping?: [number, number];
+    /*
+     * Minimum and maximum start angle of a particle.
+     */
     angle?: [number, number];
+    /*
+     * Minimum and maximum angular velocity of a particle.
+     */
     angularVelocity?: [number, number];
+    /*
+     * Scale from start to end for a particle.
+     */
+    scales?: number[];
+    /*
+     * Colors from start to end for a particle.
+     */
     colors?: Color[];
+    /*
+     * Opacity from start to end for a particle.
+     */
     opacities?: number[];
+    /*
+     * Quads from start to end for a particle.
+     */
     quads?: Quad[];
+    /*
+     * Texture used for the particle.
+     */
     texture?: Texture;
 };
 
 export interface ParticlesComp extends Comp {
+    /*
+     * Emit a number of particles
+     */
     emit(n: number): void;
+    /*
+     * Called when the emitter expires
+     */
     onEnd(cb: () => void): void;
 }
 
@@ -57,12 +119,16 @@ export function particles(popt: ParticlesOpt, eopt: EmitterOpt): ParticlesComp {
     const colors = popt.colors || [k.WHITE];
     const opacities = popt.opacities || [1];
     const quads = popt.quads || [new Quad(0, 0, 1, 1)];
+    const scales = popt.scales || [1];
     const lifetime = popt.lifeTime;
     const direction = eopt.direction;
     const spread = eopt.spread;
     const speed = popt.speed || [0, 0];
     const angleRange = popt.angle || [0, 0];
     const angularVelocityRange = popt.angularVelocity || [0, 0];
+    const accelerationRange = popt.acceleration || [vec2(0), vec2(0)];
+    const dampingRange = popt.damping || [0, 0];
+
     const indices: number[] = [];
     const vertices: Vertex[] = new Array<Vertex>(popt.max);
     let count = 0;
@@ -119,6 +185,14 @@ export function particles(popt: ParticlesOpt, eopt: EmitterOpt): ParticlesComp {
                     angularVelocityRange[0],
                     angularVelocityRange[1],
                 );
+                const acceleration = vec2(
+                    k.rand(accelerationRange[0].x, accelerationRange[1].x),
+                    k.rand(accelerationRange[0].y, accelerationRange[1].y)
+                );
+                const damping = k.rand(
+                    dampingRange[0],
+                    dampingRange[1],
+                );
                 const lt = lifetime ? k.rand(lifetime[0], lifetime[1]) : null;
                 const pos = eopt.shape
                     ? eopt.shape.random()
@@ -128,7 +202,10 @@ export function particles(popt: ParticlesOpt, eopt: EmitterOpt): ParticlesComp {
                 p.lt = lt
                 p.pos = pos
                 p.vel = vel
+                p.acc = acceleration
                 p.angle = angle
+                p.angularVelocity = angularVelocity
+                p.damping = damping
                 p.angularVelocity = angularVelocity
                 p.gc = false
             }
@@ -150,6 +227,7 @@ export function particles(popt: ParticlesOpt, eopt: EmitterOpt): ParticlesComp {
                     count--;
                     continue;
                 }
+                p.vel = p.vel.add(p.acc.scale(DT)).scale(1 - p.damping * DT);
                 p.pos = p.pos.add(p.vel.scale(DT));
                 p.angle += p.angularVelocity * DT;
             }
@@ -214,8 +292,8 @@ export function particles(popt: ParticlesOpt, eopt: EmitterOpt): ParticlesComp {
 
                 const quadIndex = Math.floor(p.progress * quads.length);
                 const quad = quads[quadIndex];
-
-                const scale = 1;
+                const scaleIndex = Math.floor(p.progress * scales.length);
+                const scale = scales[scaleIndex];
                 const c = Math.cos(p.angle * Math.PI / 180);
                 const s = Math.sin(p.angle * Math.PI / 180);
 
