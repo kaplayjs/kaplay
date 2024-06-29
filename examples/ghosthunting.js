@@ -7,6 +7,8 @@ kaplay({
 loadSprite("bean", "./sprites/bean.png");
 loadSprite("gun", "./sprites/gun.png");
 loadSprite("ghosty", "./sprites/ghosty.png");
+loadSprite("hexagon", "./sprites/particle_hexagon_filled.png");
+loadSprite("star", "./sprites/particle_star_filled.png");
 
 const nav = new NavMesh();
 nav.addPolygon([vec2(20, 20), vec2(1004, 20), vec2(620, 120), vec2(20, 120)]);
@@ -117,6 +119,8 @@ function addEnemy(p) {
                             lifeTime: [1.0, 1.5],
                             colors: [rgb(128, 128, 255), WHITE],
                             opacities: [0.1, 1.0, 0.0],
+                            texture: getSprite("star").data.tex,
+                            quads: [getSprite("star").data.frames[0]]
                         }, {
                             lifetime: 1.5,
                             shape: rect,
@@ -245,12 +249,14 @@ onMousePress(() => {
             particles({
                 max: 20,
                 speed: [200, 250],
-                lifeTime: [0.2, 0.5],
+                lifeTime: [0.2, 0.75],
                 colors: [WHITE],
                 opacities: [1.0, 0.0],
-                angle: [0, 360]
+                angle: [0, 360],
+                texture: getSprite("hexagon").data.tex,
+                quads: [getSprite("hexagon").data.frames[0]]
             }, {
-                lifetime: 0.5,
+                lifetime: 0.75,
                 rate: 0,
                 direction: dir.scale(-1).angle(),
                 spread: 45,
