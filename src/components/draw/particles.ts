@@ -197,7 +197,7 @@ export function particles(popt: ParticlesOpt, eopt: EmitterOpt): ParticlesComp {
                 const pos = eopt.shape
                     ? eopt.shape.random()
                     : vec2();
-                // TODO: Don't create particles, overwrite gc particles
+
                 const p = particles[index]
                 p.lt = lt
                 p.pos = pos
@@ -297,8 +297,8 @@ export function particles(popt: ParticlesOpt, eopt: EmitterOpt): ParticlesComp {
                 const c = Math.cos(p.angle * Math.PI / 180);
                 const s = Math.sin(p.angle * Math.PI / 180);
 
-                const hw = 10 / 2;
-                const hh = 10 / 2;
+                const hw = (popt.texture ? popt.texture.width : 10) * quad.w / 2;
+                const hh = (popt.texture ? popt.texture.height : 10) * quad.h / 2;
 
                 let j = i * 4;
                 // Left top
