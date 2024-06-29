@@ -5605,6 +5605,7 @@ const kaplay = <
         getRenderProps,
         resolveSprite,
         drawTexture,
+        drawRaw,
         calcTransform,
     } satisfies InternalCtx;
 

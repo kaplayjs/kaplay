@@ -170,6 +170,14 @@ export type InternalCtx = {
         src: DrawSpriteOpt["sprite"],
     ) => Asset<SpriteData> | null;
     drawTexture: (opt: DrawTextureOpt) => void;
+    drawRaw(
+        verts: Vertex[],
+        indices: number[],
+        fixed: boolean,
+        tex: Texture,
+        shaderSrc: RenderProps["shader"],
+        uniform: Uniform,
+    );
     calcTransform: (obj: GameObj) => Mat4;
 };
 

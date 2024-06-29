@@ -112,6 +112,8 @@ function addEnemy(p) {
                         particles({
                             max: 20,
                             speed: [50, 100],
+                            angle: [0, 360],
+                            angularVelocity: [45, 90],
                             lifeTime: [1.0, 1.5],
                             colors: [rgb(128, 128, 255), WHITE],
                             opacities: [0.1, 1.0, 0.0],
