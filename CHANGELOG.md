@@ -13,10 +13,11 @@ kaplay({
             gamepad: ["south"],
         },
     },
+  },
 });
 
 onButtonPress("jump", () => {
-    player.jump();
+  player.jump();
 });
 ```
 
@@ -87,6 +88,7 @@ add([
 - added `sentry()` component to notify when certain objects are in sight
 - added `particles()` component to emit and draw particles
 - added `NavMesh` class for pathfinding on a mesh
+- added `navigation()` component to calculate a list of waypoints on a graph
 - added global raycast function and raycast method to level
 - added support for textured polygons
 - added support for concave polygon drawing

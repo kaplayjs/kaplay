@@ -17,10 +17,14 @@ import type {
     LifespanCompOpt,
     MaskComp,
     NamedComp,
+    NavigationComp,
+    NavigationCompOpt,
     OffScreenComp,
     OffScreenCompOpt,
     OpacityComp,
     OutlineComp,
+    PatrolComp,
+    PatrolCompOpt,
     PolygonComp,
     PolygonCompOpt,
     PosComp,
@@ -99,10 +103,14 @@ export type {
     MaskComp,
     Mat4,
     NamedComp,
+    NavigationComp,
+    NavigationCompOpt,
     OffScreenComp,
     OffScreenCompOpt,
     OpacityComp,
     OutlineComp,
+    PatrolComp,
+    PatrolCompOpt,
     Polygon,
     PolygonComp,
     PolygonCompOpt,
@@ -162,6 +170,14 @@ export type InternalCtx = {
         src: DrawSpriteOpt["sprite"],
     ) => Asset<SpriteData> | null;
     drawTexture: (opt: DrawTextureOpt) => void;
+    drawRaw(
+        verts: Vertex[],
+        indices: number[],
+        fixed: boolean,
+        tex: Texture,
+        shaderSrc: RenderProps["shader"],
+        uniform: Uniform,
+    );
     calcTransform: (obj: GameObj) => Mat4;
 };
 
@@ -902,6 +918,20 @@ export interface KaboomCtx<
      * @group Components
      */
     sentry(candidates: SentryCandidates, opt?: SentryCompOpt): SentryComp;
+    /**
+     * A patrol which can follow waypoints to a goal.
+     *
+     * @since v3001.0
+     * @group Components
+     */
+    patrol(opts: PatrolCompOpt): PatrolComp;
+    /**
+     * A navigator which can calculate waypoints to a goal.
+     *
+     * @since v3001.0
+     * @group Components
+     */
+    navigation(opts: NavigationCompOpt): NavigationComp;
     /**
      * @group Math
      */

@@ -215,10 +215,12 @@ import {
     mask,
     move,
     named,
+    navigation,
     offscreen,
     opacity,
     outline,
     particles,
+    patrol,
     polygon,
     pos,
     raycast,
@@ -5603,6 +5605,7 @@ const kaplay = <
         getRenderProps,
         resolveSprite,
         drawTexture,
+        drawRaw,
         calcTransform,
     } satisfies InternalCtx;
 
@@ -5721,6 +5724,8 @@ const kaplay = <
         tile,
         agent,
         sentry,
+        patrol,
+        navigation,
         // group events
         on,
         onUpdate,

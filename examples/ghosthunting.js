@@ -7,9 +7,13 @@ kaplay({
 loadSprite("bean", "./sprites/bean.png");
 loadSprite("gun", "./sprites/gun.png");
 loadSprite("ghosty", "./sprites/ghosty.png");
+loadSprite("hexagon", "./sprites/particle_hexagon_filled.png");
+loadSprite("star", "./sprites/particle_star_filled.png");
 
 const nav = new NavMesh();
+// Hallway
 nav.addPolygon([vec2(20, 20), vec2(1004, 20), vec2(620, 120), vec2(20, 120)]);
+// Living room
 nav.addPolygon([
     vec2(620, 120),
     vec2(1004, 20),
@@ -17,6 +21,14 @@ nav.addPolygon([
     vec2(620, 140),
 ]);
 nav.addPolygon([vec2(20, 140), vec2(620, 140), vec2(1004, 440), vec2(20, 440)]);
+// Kitchen
+nav.addPolygon([vec2(20, 460), vec2(320, 460), vec2(320, 748), vec2(20, 748)]);
+nav.addPolygon([vec2(320, 440), vec2(420, 440), vec2(420, 748), vec2(320, 748)]);
+nav.addPolygon([vec2(420, 460), vec2(620, 460), vec2(620, 748), vec2(420, 748)]);
+// Storage room
+nav.addPolygon([vec2(640, 460), vec2(720, 460), vec2(720, 748), vec2(640, 748)]);
+nav.addPolygon([vec2(720, 440), vec2(820, 440), vec2(820, 748), vec2(720, 748)]);
+nav.addPolygon([vec2(820, 460), vec2(1004, 460), vec2(1004, 748), vec2(820, 748)]);
 
 // Border
 add([
@@ -79,6 +91,64 @@ add([
     color(rgb(64, 64, 128)),
     "floor",
 ]);
+add([
+    pos(20, 440),
+    rect(300, 20),
+    area(),
+    body({ isStatic: true }),
+    color(rgb(128, 128, 128)),
+    "wall",
+]);
+add([
+    pos(420, 440),
+    rect(300, 20),
+    area(),
+    body({ isStatic: true }),
+    color(rgb(128, 128, 128)),
+    "wall",
+]);
+add([
+    pos(820, 440),
+    rect(300, 20),
+    area(),
+    body({ isStatic: true }),
+    color(rgb(128, 128, 128)),
+    "wall",
+]);
+// Kitchen
+add([
+    pos(320, 440),
+    rect(100, 20),
+    color(rgb(128, 128, 64)),
+    "floor",
+]);
+add([
+    pos(20, 460),
+    rect(600, 288),
+    color(rgb(128, 128, 64)),
+    "floor",
+]);
+add([
+    pos(620, 460),
+    rect(20, 288),
+    area(),
+    body({ isStatic: true }),
+    color(rgb(128, 128, 128)),
+    "wall",
+]);
+// Storage
+add([
+    pos(720, 440),
+    rect(100, 20),
+    color(rgb(64, 128, 64)),
+    "floor",
+]);
+add([
+    pos(640, 460),
+    rect(364, 288),
+    color(rgb(64, 128, 64)),
+    "floor",
+]);
 
 const player = add([
     pos(50, 50),
@@ -101,7 +171,6 @@ function addEnemy(p) {
         {
             add() {
                 this.onHurt(() => {
-                    console.log(this.hp());
                     this.opacity = this.hp() / 100;
                 });
                 this.onDeath(() => {
@@ -112,9 +181,13 @@ function addEnemy(p) {
                         particles({
                             max: 20,
                             speed: [50, 100],
+                            angle: [0, 360],
+                            angularVelocity: [45, 90],
                             lifeTime: [1.0, 1.5],
                             colors: [rgb(128, 128, 255), WHITE],
                             opacities: [0.1, 1.0, 0.0],
+                            texture: getSprite("star").data.tex,
+                            quads: [getSprite("star").data.frames[0]]
                         }, {
                             lifetime: 1.5,
                             shape: rect,
@@ -129,6 +202,16 @@ function addEnemy(p) {
                     });
                     destroy(this);
                 });
+                this.onObjectsSpotted(objects => {
+                    const playerSeen = objects.some(o => o.is("player"));
+                    if (playerSeen) {
+                        enemy.action = "pursuit";
+                        enemy.waypoints = null;
+                    }
+                });
+                this.onPatrolFinished(() => {
+                    enemy.action = "observe";
+                });
             },
         },
         pos(p),
@@ -137,54 +220,49 @@ function addEnemy(p) {
         anchor(vec2(0, 0)),
         area(),
         body(),
+        // Health provides properties and methods to keep track of the enemies health
         health(100),
+        // Sentry makes it easy to check for visibility of the player
+        sentry({ includes: "player" }, {
+            lineOfSight: true,
+            raycastExclude: ["enemy"],
+        }),
+        // Patrol can make the enemy follow a computed path
+        patrol({ speed: 100 }),
+        // Navigator can compute a path given a graph
+        navigation({
+            graph: nav,
+            navigationOpt: {
+                type: "edges",
+            },
+        }),
         "enemy",
-        { action: "patrolling", waypoint: null },
+        { action: "observing", waypoint: null },
     ]);
     return enemy;
 }
 
 addEnemy(vec2(width() * 3 / 4, height() / 2));
 addEnemy(vec2(width() * 1 / 4, height() / 2));
+addEnemy(vec2(width() * 1 / 4, height() * 2 / 3));
+addEnemy(vec2(width() * 0.8, height() * 2 / 3));
 
 let path;
 onUpdate("enemy", enemy => {
     switch (enemy.action) {
-        case "patrolling": {
-            const hit = raycast(enemy.pos, player.pos.sub(enemy.pos), [
-                "enemy",
-            ]);
-            if (hit && hit.object.is("player")) {
-                // We saw a player, start pursuit
-                enemy.action = "moving";
-            }
+        case "observe": {
             break;
         }
-        case "moving": {
-            const hit = raycast(enemy.pos, player.pos.sub(enemy.pos), [
-                "enemy",
-            ]);
-            if (hit && hit.object.is("player")) {
+        case "pursuit": {
+            if (enemy.hasLineOfSight(player)) {
                 // We can see the player, just go straight to their location
                 enemy.moveTo(player.pos, 100);
             } else {
                 // We can't see the player, but we know where they are, plot a path
-                path = nav.getWaypointPath(enemy.pos, player.pos, {
-                    type: "edges",
-                });
-                enemy.waypoint = path[1];
-                enemy.action = "waypoint";
-            }
-            break;
-        }
-        case "waypoint": {
-            if (enemy.pos.sub(enemy.waypoint).slen() < 4) {
-                // We are at the waypoint, check if we see the player
-                path = null;
-                enemy.action = "moving";
-            } else {
-                // Move closer to the waypoint
-                enemy.moveTo(enemy.waypoint, 100);
+                path = enemy.navigateTo(player.pos);
+                // enemy.waypoint = path[1];
+                enemy.waypoints = path;
+                enemy.action = "observe";
             }
             break;
         }
@@ -239,10 +317,14 @@ onMousePress(() => {
             particles({
                 max: 20,
                 speed: [200, 250],
-                lifeTime: [0.2, 0.5],
+                lifeTime: [0.2, 0.75],
                 colors: [WHITE],
+                opacities: [1.0, 0.0],
+                angle: [0, 360],
+                texture: getSprite("hexagon").data.tex,
+                quads: [getSprite("hexagon").data.frames[0]]
             }, {
-                lifetime: 0.5,
+                lifetime: 0.75,
                 rate: 0,
                 direction: dir.scale(-1).angle(),
                 spread: 45,
@@ -258,30 +340,3 @@ onMousePress(() => {
         }
     }
 });
-
-/*onDraw(() => {
-    drawPolygon({
-        pts: [vec2(20, 20), vec2(1004, 20), vec2(620, 120), vec2(20, 120)],
-        fill: false,
-        outline: { color: RED, width: 4 }
-    })
-    drawPolygon({
-        pts: [vec2(620, 120), vec2(1004, 20), vec2(1004, 440), vec2(620, 140)],
-        fill: false,
-        outline: { color: RED, width: 4 }
-    })
-    drawPolygon({
-        pts: [vec2(20, 140), vec2(620, 140), vec2(1004, 440), vec2(20, 440)],
-        fill: false,
-        outline: { color: RED, width: 4 }
-    })
-    if (path) {
-        path.forEach((p, index) => {
-            drawCircle({
-                pos: p,
-                radius: 4,
-                color: index == 1 ? GREEN : BLUE
-            })
-        });
-    }
-})*/
