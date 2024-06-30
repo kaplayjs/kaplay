@@ -29,7 +29,7 @@ export function layer(layer: string): LayerComp {
             return _layerIndex;
         },
         get layer(): string {
-            return k.layers[_layerIndex];
+            return game.layers[_layerIndex];
         },
         set layer(value: string) {
             _layerIndex = game.layers.indexOf(value);
