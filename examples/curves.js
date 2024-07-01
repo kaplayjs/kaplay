@@ -191,10 +191,10 @@ onMouseRelease((pos) => {
 });
 
 // Scene creation
-p0 = addPoint(RED, 100, 40);
-p1 = addPoint(BLUE, 80, 120);
-p2 = addPoint(BLUE, 300, 60);
-p3 = addPoint(RED, 250, 200);
+const p0 = addPoint(RED, 100, 40);
+const p1 = addPoint(BLUE, 80, 120);
+const p2 = addPoint(BLUE, 300, 60);
+const p3 = addPoint(RED, 250, 200);
 
 addBezier(p0, p1, p2, p3);
 
@@ -203,10 +203,10 @@ add([
     text("yellow: default spacing\nred: constant spacing", { size: 20 }),
 ]);
 
-c0 = addPoint(RED, 400, 40);
-c1 = addPoint(RED, 380, 120);
-c2 = addPoint(RED, 500, 60);
-c3 = addPoint(RED, 450, 200);
+const c0 = addPoint(RED, 400, 40);
+const c1 = addPoint(RED, 380, 120);
+const c2 = addPoint(RED, 500, 60);
+const c3 = addPoint(RED, 450, 200);
 
 addCatmullRom(c0, c1, c2, c3);
 
