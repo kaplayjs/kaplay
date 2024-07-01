@@ -1,7 +1,7 @@
 {
   "name": "kaplay",
   "description": "KAPLAY is a JavaScript library that helps you make games fast and fun!",
-  "version": "3001.0.0-alpha.16",
+  "version": "3001.0.0-alpha.17",
   "license": "MIT",
   "homepage": "https://kaplayjs.com/",
   "repository": "github:marklovers/kaplay",
@@ -49,7 +49,8 @@
     "fmt": "dprint fmt",
     "test": "node scripts/test.js",
     "desktop": "tauri dev",
-    "prepare": "npm run build"
+    "prepare": "npm run build",
+    "publish:next": "npm publish --tag next"
   },
   "devDependencies": {
     "dprint": "^0.45.1",

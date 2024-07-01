@@ -29,14 +29,14 @@ export function layer(layer: string): LayerComp {
             return _layerIndex;
         },
         get layer(): string {
-            return k.layers[_layerIndex];
+            return game.layers[_layerIndex];
         },
         set layer(value: string) {
             _layerIndex = game.layers.indexOf(value);
             if (_layerIndex == -1) throw Error("Invalid layer name");
         },
         inspect() {
-            return `${this.layer}`;
+            return `layer: ${this.layer}`;
         },
     };
 }

@@ -5153,8 +5153,12 @@ const kaplay = <
 
                 for (const tag in data) {
                     if (data[tag]) {
-                        lines.push(`${tag}: ${data[tag]}`);
-                    } else {
+                        // pushes the inspect function (eg: `sprite: "bean"`)
+                        lines.push(`${data[tag]}`);
+                    }
+
+                    else {
+                        // pushes only the tag (name of the component)
                         lines.push(`${tag}`);
                     }
                 }

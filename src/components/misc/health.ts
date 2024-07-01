@@ -101,7 +101,7 @@ export function health(
             return this.on("death", action);
         },
         inspect() {
-            return `${hp}`;
+            return `health: ${hp}`;
         },
     };
 }
