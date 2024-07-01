@@ -54,6 +54,7 @@
     "transformShape",
     "raycastShape",
     "raycastObject",
+    "ghosthunting",
     "curves",
     "rpg",
     "runner",
