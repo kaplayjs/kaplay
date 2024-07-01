@@ -75,7 +75,7 @@ onMousePress(() => {
     const shapes = get("area");
     const pos = mousePos();
     const pickList = shapes.filter((shape) => shape.hasPoint(pos));
-    selection = pickList[pickList.length - 1];
+    const selection = pickList[pickList.length - 1];
     if (selection) {
         get("selected").forEach(s => s.unuse("selected"));
         selection.use("selected");
