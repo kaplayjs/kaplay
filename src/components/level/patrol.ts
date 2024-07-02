@@ -15,14 +15,15 @@ export interface PatrolComp extends Comp {
      * Current subgoal, if any.
      */
     nextLocation: Vec2 | null;
-    /*
-     * Only called when using "stop" and the path reaches its end.
+    /**
+     * Attaches an event handler which is called when using "stop" and the end of the path is reached.
+     * @param cb The event handler called when the patrol finishes.
      */
     onPatrolFinished(cb: (objects: GameObj[]) => void): KEventController;
 }
 
 type PatrolEndBehavior =
-    /* Go directly bak to the start */
+    /* Go directly back to the start */
     | "loop"
     /* Traveling the reverse path back to the start */
     | "ping-pong"
@@ -73,7 +74,7 @@ export function patrol(
             return waypoints ? waypoints[index] : null;
         },
         update(this: GameObj<PatrolComp | PosComp>) {
-            const nextWaypoint = this.nextLocation
+            const nextWaypoint = this.nextLocation;
             if (!waypoints || !nextWaypoint || finished) return;
             this.moveTo(nextWaypoint, speed);
             if (this.pos.sdist(nextWaypoint) < 9) {

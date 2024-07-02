@@ -370,7 +370,7 @@ export function body(opt: BodyCompOpt = {}): BodyComp {
         },
 
         inspect() {
-            return `gravityScale: ${this.gravityScale}x`
-        }
+            return `gravityScale: ${this.gravityScale}x`;
+        },
     };
 }

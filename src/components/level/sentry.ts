@@ -26,20 +26,25 @@ export interface SentryComp extends Comp {
      * The objects spotted most recently.
      */
     spotted: GameObj<any>[];
-    /*
-     * Binds the event fired when objects of interest are spotted.
+    /**
+     * Attaches an event handler which is called when objects of interest are spotted.
+     * @param cb The event handler called when objects are spotted.
      */
     onObjectsSpotted(cb: (objects: GameObj[]) => void): KEventController;
-    /*
-     * Returns whether the object is within the field of view.
+    /**
+     * Returns true if the object is within the field of view.
+     * @param obj The object to test.
+     * @param direction The direction to look at.
+     * @param fieldOfView The field of view in degrees.
      */
     isWithinFieldOfView(
         obj: GameObj<PosComp>,
         direction?: Vec2,
         fieldOfView?: number,
     ): boolean;
-    /*
-     * Returns whether there is a line of sight to the object.
+    /**
+     * Returns true if there is a line of sight to the object.
+     * @param obj The object to test.
      */
     hasLineOfSight(obj: GameObj<PosComp>): boolean;
 }

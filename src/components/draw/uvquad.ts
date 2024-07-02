@@ -40,7 +40,9 @@ export function uvquad(w: number, h: number): UVQuadComp {
             return new Rect(vec2(0), this.width, this.height);
         },
         inspect() {
-            return `uvquad: (${Math.ceil(this.width)}w, ${Math.ceil(this.height)})h`;
+            return `uvquad: (${Math.ceil(this.width)}w, ${
+                Math.ceil(this.height)
+            })h`;
         },
     };
 }
