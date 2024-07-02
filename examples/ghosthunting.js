@@ -23,12 +23,37 @@ nav.addPolygon([
 nav.addPolygon([vec2(20, 140), vec2(620, 140), vec2(1004, 440), vec2(20, 440)]);
 // Kitchen
 nav.addPolygon([vec2(20, 460), vec2(320, 460), vec2(320, 748), vec2(20, 748)]);
-nav.addPolygon([vec2(320, 440), vec2(420, 440), vec2(420, 748), vec2(320, 748)]);
-nav.addPolygon([vec2(420, 460), vec2(620, 460), vec2(620, 748), vec2(420, 748)]);
+nav.addPolygon([
+    vec2(320, 440),
+    vec2(420, 440),
+    vec2(420, 748),
+    vec2(320, 748),
+]);
+nav.addPolygon([
+    vec2(420, 460),
+    vec2(620, 460),
+    vec2(620, 748),
+    vec2(420, 748),
+]);
 // Storage room
-nav.addPolygon([vec2(640, 460), vec2(720, 460), vec2(720, 748), vec2(640, 748)]);
-nav.addPolygon([vec2(720, 440), vec2(820, 440), vec2(820, 748), vec2(720, 748)]);
-nav.addPolygon([vec2(820, 460), vec2(1004, 460), vec2(1004, 748), vec2(820, 748)]);
+nav.addPolygon([
+    vec2(640, 460),
+    vec2(720, 460),
+    vec2(720, 748),
+    vec2(640, 748),
+]);
+nav.addPolygon([
+    vec2(720, 440),
+    vec2(820, 440),
+    vec2(820, 748),
+    vec2(720, 748),
+]);
+nav.addPolygon([
+    vec2(820, 460),
+    vec2(1004, 460),
+    vec2(1004, 748),
+    vec2(820, 748),
+]);
 
 // Border
 add([
@@ -187,7 +212,7 @@ function addEnemy(p) {
                             colors: [rgb(128, 128, 255), WHITE],
                             opacities: [0.1, 1.0, 0.0],
                             texture: getSprite("star").data.tex,
-                            quads: [getSprite("star").data.frames[0]]
+                            quads: [getSprite("star").data.frames[0]],
                         }, {
                             lifetime: 1.5,
                             shape: rect,
@@ -322,7 +347,7 @@ onMousePress(() => {
                 opacities: [1.0, 0.0],
                 angle: [0, 360],
                 texture: getSprite("hexagon").data.tex,
-                quads: [getSprite("hexagon").data.frames[0]]
+                quads: [getSprite("hexagon").data.frames[0]],
             }, {
                 lifetime: 0.75,
                 rate: 0,

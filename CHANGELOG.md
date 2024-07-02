@@ -89,6 +89,8 @@ add([
 - added `particles()` component to emit and draw particles
 - added `NavMesh` class for pathfinding on a mesh
 - added `navigation()` component to calculate a list of waypoints on a graph
+- added `animate()` component to animate the properties of an object using
+  keyframes
 - added global raycast function and raycast method to level
 - added support for textured polygons
 - added support for concave polygon drawing

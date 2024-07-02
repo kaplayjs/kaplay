@@ -150,7 +150,7 @@ export function particles(popt: ParticlesOpt, eopt: EmitterOpt): ParticlesComp {
                 opacity: 1,
             };
         }
-        particles[i] = new Particle()
+        particles[i] = new Particle();
     }
 
     const onEndEvents = new KEvent();
@@ -158,20 +158,20 @@ export function particles(popt: ParticlesOpt, eopt: EmitterOpt): ParticlesComp {
     function nextFree(index: number = 0): number | null {
         while (index < popt.max) {
             if (particles[index].gc) {
-                return index
+                return index;
             }
-            index++
+            index++;
         }
-        return null
+        return null;
     }
 
     return {
         id: "particles",
         emit(n: number) {
-            let index = 0
+            let index = 0;
             for (let i = 0; i < n; i++) {
-                index = nextFree(index)
-                if (index == null) { return }
+                index = nextFree(index);
+                if (index == null) return;
 
                 const velocityAngle = k.rand(
                     direction - spread,
@@ -187,7 +187,7 @@ export function particles(popt: ParticlesOpt, eopt: EmitterOpt): ParticlesComp {
                 );
                 const acceleration = vec2(
                     k.rand(accelerationRange[0].x, accelerationRange[1].x),
-                    k.rand(accelerationRange[0].y, accelerationRange[1].y)
+                    k.rand(accelerationRange[0].y, accelerationRange[1].y),
                 );
                 const damping = k.rand(
                     dampingRange[0],
@@ -198,16 +198,16 @@ export function particles(popt: ParticlesOpt, eopt: EmitterOpt): ParticlesComp {
                     ? eopt.shape.random()
                     : vec2();
 
-                const p = particles[index]
-                p.lt = lt
-                p.pos = pos
-                p.vel = vel
-                p.acc = acceleration
-                p.angle = angle
-                p.angularVelocity = angularVelocity
-                p.damping = damping
-                p.angularVelocity = angularVelocity
-                p.gc = false
+                const p = particles[index];
+                p.lt = lt;
+                p.pos = pos;
+                p.vel = vel;
+                p.acc = acceleration;
+                p.angle = angle;
+                p.angularVelocity = angularVelocity;
+                p.damping = damping;
+                p.angularVelocity = angularVelocity;
+                p.gc = false;
             }
             count += n;
         },
@@ -297,8 +297,10 @@ export function particles(popt: ParticlesOpt, eopt: EmitterOpt): ParticlesComp {
                 const c = Math.cos(p.angle * Math.PI / 180);
                 const s = Math.sin(p.angle * Math.PI / 180);
 
-                const hw = (popt.texture ? popt.texture.width : 10) * quad.w / 2;
-                const hh = (popt.texture ? popt.texture.height : 10) * quad.h / 2;
+                const hw = (popt.texture ? popt.texture.width : 10) * quad.w
+                    / 2;
+                const hh = (popt.texture ? popt.texture.height : 10) * quad.h
+                    / 2;
 
                 let j = i * 4;
                 // Left top

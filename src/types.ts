@@ -3,6 +3,7 @@ import type {
     AgentComp,
     AgentCompOpt,
     AnchorComp,
+    AnimateComp,
     AreaComp,
     AreaCompOpt,
     BodyComp,
@@ -911,6 +912,13 @@ export interface KaboomCtx<
      * @group Components
      */
     agent(opt?: AgentCompOpt): AgentComp;
+    /**
+     * A component to animate properties.
+     *
+     * @since v3001.0
+     * @group Components
+     */
+    animate(): AnimateComp;
     /**
      * A sentry which reacts to objects coming into view.
      *

@@ -200,6 +200,7 @@ import type {
 import {
     agent,
     anchor,
+    animate,
     area,
     body,
     circle,
@@ -5155,9 +5156,7 @@ const kaplay = <
                     if (data[tag]) {
                         // pushes the inspect function (eg: `sprite: "bean"`)
                         lines.push(`${data[tag]}`);
-                    }
-
-                    else {
+                    } else {
                         // pushes only the tag (name of the component)
                         lines.push(`${tag}`);
                     }
@@ -5726,6 +5725,7 @@ const kaplay = <
         drawon,
         raycast,
         tile,
+        animate,
         agent,
         sentry,
         patrol,

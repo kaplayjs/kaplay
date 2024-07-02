@@ -18,6 +18,7 @@ export * from "./level/navigation";
 export * from "./level/patrol";
 export * from "./level/sentry";
 export * from "./level/tile";
+export * from "./misc/animate";
 export * from "./misc/health";
 export * from "./misc/lifespan";
 export * from "./misc/named";
