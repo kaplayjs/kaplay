@@ -43,6 +43,7 @@ import type {
     StayComp,
     TextComp,
     TextCompOpt,
+    TextInputComp,
     TileComp,
     TileCompOpt,
     TimerComp,
@@ -136,6 +137,7 @@ export type {
     StayComp,
     TextComp,
     TextCompOpt,
+    TextInputComp,
     Texture,
     TileComp,
     TileCompOpt,
@@ -700,6 +702,23 @@ export interface KaboomCtx<
      * @group Components
      */
     shader(id: string, uniform?: Uniform | (() => Uniform)): ShaderComp;
+    /**
+     * Get input from the user and store it in the nodes text property, displaying it with the text component and allowing other functions to access it.
+     *
+     * @example
+     * ```js
+     * const obj = add([
+     *     text(""),
+     *     textInput(),
+     * ])
+     *
+     * obj.hasFocus = false
+     * debug.log(obj.text) // oh no i cant see my new text since it was disabled
+     * ```
+     *
+     * @group Components
+     */
+    textInput(hasFocus?: boolean, maxInputLength?: number): TextInputComp;
     /**
      * Enable timer related functions like wait(), loop(), tween() on the game object.
      *
