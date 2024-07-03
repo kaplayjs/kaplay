@@ -233,6 +233,7 @@ import {
     state,
     stay,
     text,
+    textInput,
     tile,
     timer,
     uvquad,
@@ -5155,9 +5156,7 @@ const kaplay = <
                     if (data[tag]) {
                         // pushes the inspect function (eg: `sprite: "bean"`)
                         lines.push(`${data[tag]}`);
-                    }
-
-                    else {
+                    } else {
                         // pushes only the tag (name of the component)
                         lines.push(`${tag}`);
                     }
@@ -5709,6 +5708,7 @@ const kaplay = <
         body,
         doubleJump,
         shader,
+        textInput,
         timer,
         fixed,
         stay,

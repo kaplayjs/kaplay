@@ -23,6 +23,7 @@ export * from "./misc/lifespan";
 export * from "./misc/named";
 export * from "./misc/state";
 export * from "./misc/stay";
+export * from "./misc/textInput";
 export * from "./misc/timer";
 export * from "./physics/area";
 export * from "./physics/body";

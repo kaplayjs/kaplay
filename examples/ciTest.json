@@ -52,6 +52,7 @@
     "easing",
     "bench",
     "gamepad",
-    "binding"
+    "binding",
+    "textInput"
   ]
 }
