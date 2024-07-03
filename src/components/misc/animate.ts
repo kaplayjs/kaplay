@@ -1,7 +1,13 @@
 import easings from "../../easings";
 import { getKaboomContext } from "../../kaboom";
-import { Color, easingLinear, lerp, Vec2 } from "../../math";
-import type { Comp, EaseFunc, GameObj, LerpValue } from "../../types";
+import { Color, evaluateCatmullRom, lerp, Vec2 } from "../../math";
+import type {
+    Comp,
+    EaseFunc,
+    GameObj,
+    KEventController,
+    LerpValue,
+} from "../../types";
 
 type AnimateEndBehavior =
     /* Go directly back to the start */
@@ -55,6 +61,20 @@ export interface AnimateComp extends Comp {
      * @param name Name of the property to remove the animation from.
      */
     unanimate(name: string): void;
+    /**
+     * Removes the animations from all properties
+     */
+    unanimateAll(): void;
+    /**
+     * Attaches an event handler which is called when all the animation channels have finished.
+     * @param cb The event handler called when the animation finishes.
+     */
+    onAnimateFinished(cb: () => void): KEventController;
+    /**
+     * Attaches an event handler which is called when an animation channels has finished.
+     * @param cb The event handler called when an animation channel finishes.
+     */
+    onAnimateChannelFinished(cb: (name: string) => void): KEventController;
 }
 
 class AnimateChannel {
@@ -62,14 +82,19 @@ class AnimateChannel {
     duration: number;
     endBehavior: AnimateEndBehavior;
     easing: EaseFunc;
+    interpolation: Interpolation;
+    isFinished: boolean;
     constructor(name: string, opts: AnimateOpt) {
         this.name = name;
         this.duration = opts.duration;
         this.endBehavior = opts.endBehavior || "stop";
         this.easing = opts.easing || easings.linear;
+        this.interpolation = opts.interpolation || "linear";
+        this.isFinished = false;
     }
 
-    update(obj: GameObj<any>, t: number) {
+    update(obj: GameObj<any>, t: number): boolean {
+        return true;
     }
 
     /**
@@ -112,6 +137,10 @@ class AnimateChannel {
     }
 }
 
+function reflect(a: Vec2, b: Vec2) {
+    return b.add(b.sub(a));
+}
+
 class AnimateChannelNumber extends AnimateChannel {
     keys: number[];
     timing: number[] | null;
@@ -126,7 +155,7 @@ class AnimateChannelNumber extends AnimateChannel {
         this.timing = timing;
     }
 
-    update(obj: GameObj<any>, t: number): void {
+    update(obj: GameObj<any>, t: number): boolean {
         const [index, alpha] = this.getLowerKeyIndexAndRelativeTime(
             t,
             this.keys.length,
@@ -141,6 +170,7 @@ class AnimateChannelNumber extends AnimateChannel {
                 this.easing(alpha),
             );
         }
+        return alpha == 1;
     }
 }
 
@@ -158,7 +188,7 @@ class AnimateChannelVec2 extends AnimateChannel {
         this.timing = timing;
     }
 
-    update(obj: GameObj<any>, t: number): void {
+    update(obj: GameObj<any>, t: number): boolean {
         const [index, alpha] = this.getLowerKeyIndexAndRelativeTime(
             t,
             this.keys.length,
@@ -167,11 +197,32 @@ class AnimateChannelVec2 extends AnimateChannel {
         if (alpha == 0) {
             obj[this.name] = this.keys[index];
         } else {
-            obj[this.name] = this.keys[index].lerp(
-                this.keys[index + 1],
-                this.easing(alpha),
-            );
+            console.log(this.interpolation);
+            if (this.interpolation === "linear") {
+                obj[this.name] = this.keys[index].lerp(
+                    this.keys[index + 1],
+                    this.easing(alpha),
+                );
+            } else {
+                const prevKey = this.keys[index];
+                const nextIndex = index + 1;
+                const nextKey = this.keys[nextIndex];
+                const prevPrevKey = index > 0
+                    ? this.keys[index - 1]
+                    : reflect(nextKey, prevKey);
+                const nextNextKey = nextIndex < this.keys.length - 1
+                    ? this.keys[nextIndex + 1]
+                    : reflect(prevKey, nextKey);
+                obj[this.name] = evaluateCatmullRom(
+                    prevPrevKey,
+                    prevKey,
+                    nextKey,
+                    nextNextKey,
+                    this.easing(alpha),
+                );
+            }
         }
+        return alpha == 1;
     }
 }
 
@@ -189,7 +240,7 @@ class AnimateChannelColor extends AnimateChannel {
         this.timing = timing;
     }
 
-    update(obj: GameObj<any>, t: number): void {
+    update(obj: GameObj<any>, t: number): boolean {
         const [index, alpha] = this.getLowerKeyIndexAndRelativeTime(
             t,
             this.keys.length,
@@ -203,6 +254,7 @@ class AnimateChannelColor extends AnimateChannel {
                 this.easing(alpha),
             );
         }
+        return alpha == 1;
     }
 }
 
@@ -210,11 +262,23 @@ export function animate(): AnimateComp {
     const k = getKaboomContext(this);
     const channels: AnimateChannel[] = [];
     let t = 0;
+    let isFinished = false;
     return {
         update() {
+            let allFinished: boolean = true;
+            let localFinished: boolean;
             t += k.dt();
             for (const c of channels) {
-                c.update(this, t);
+                localFinished = c.update(this, t);
+                if (localFinished && !c.isFinished) {
+                    c.isFinished = true;
+                    this.trigger("animate-channel-finished", c.name);
+                }
+                allFinished &&= localFinished;
+            }
+            if (allFinished && !isFinished) {
+                isFinished = true;
+                this.trigger("animate-finished");
             }
         },
         animate<T extends LerpValue>(
@@ -223,7 +287,9 @@ export function animate(): AnimateComp {
             times: number[] | null,
             opts: AnimateOpt,
         ) {
-            if (typeof keys[0]) {
+            isFinished = false;
+            this.unanimate(name);
+            if (typeof keys[0] === "number") {
                 channels.push(
                     new AnimateChannelNumber(
                         name,
@@ -247,6 +313,15 @@ export function animate(): AnimateComp {
             if (index >= 0) {
                 channels.splice(index, 1);
             }
+        },
+        unanimateAll() {
+            channels.splice(0, channels.length);
+        },
+        onAnimateFinished(cb: () => void) {
+            return this.on("animate-finished", cb);
+        },
+        onAnimateChannelFinished(cb: (name: string) => void) {
+            return this.on("animate-channel-finished", cb);
         },
     };
 }

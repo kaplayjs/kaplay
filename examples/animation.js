@@ -41,6 +41,20 @@ coloringBean.animate("color", [WHITE, RED, GREEN, BLUE, WHITE], null, {
     endBehavior: "loop",
 });
 
+const opacitingBean = add([
+    sprite("bean"),
+    pos(150, 300),
+    anchor("center"),
+    opacity(1),
+    animate(),
+]);
+
+opacitingBean.animate("opacity", [1, 0, 1], null, {
+    duration: 8,
+    easing: easings.easeInOutCubic,
+    endBehavior: "loop",
+});
+
 const squaringBean = add([
     sprite("bean"),
     pos(50, 400),
@@ -85,4 +99,24 @@ timedSquaringBean.animate(
         1.0,
     ],
     { duration: 8, endBehavior: "loop" },
+);
+
+const curvingBean = add([
+    sprite("bean"),
+    pos(50, 400),
+    anchor("center"),
+    animate(),
+]);
+
+curvingBean.animate(
+    "pos",
+    [
+        vec2(200, 400),
+        vec2(250, 500),
+        vec2(300, 400),
+        vec2(350, 500),
+        vec2(400, 400),
+    ],
+    null,
+    { duration: 8, endBehavior: "ping-pong", interpolation: "spline" },
 );
