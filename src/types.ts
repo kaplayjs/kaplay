@@ -702,7 +702,7 @@ export interface KaboomCtx<
      */
     shader(id: string, uniform?: Uniform | (() => Uniform)): ShaderComp;
     /**
-     * Enable timer related functions like wait(), loop(), tween() on the game object.
+     * Get input from the user and store it in the nodes text property, displaying it with the text component and allowing other functions to access it.
      *
      * @example
      * ```js
