@@ -40,6 +40,14 @@ export interface AnimateOpt {
      * Interpolation function. Default is linear interpolation.
      */
     interpolation?: Interpolation;
+    /**
+     * Timestamps in percent for the given keys, if omitted, keys are equally spaced.
+     */
+    timing?: number[];
+    /**
+     * Easings for the given keys, if omitted, easing is used.
+     */
+    easings?: EaseFunc[];
 }
 
 export interface AnimateComp extends Comp {
@@ -47,13 +55,11 @@ export interface AnimateComp extends Comp {
      * Animates a property on this object.
      * @param name Name of the property to animate.
      * @param keys Keys determining the value at a certain point in time.
-     * @param times Timestamps in percent for the given keys, if omitted, keys are equally spaced.
      * @param opts Options.
      */
     animate<T extends LerpValue>(
         name: string,
         keys: T[],
-        times: number[] | null,
         opts: AnimateOpt,
     ): void;
     /**
@@ -84,6 +90,8 @@ class AnimateChannel {
     easing: EaseFunc;
     interpolation: Interpolation;
     isFinished: boolean;
+    timing: number[] | null;
+    easings: EaseFunc[] | null;
     constructor(name: string, opts: AnimateOpt) {
         this.name = name;
         this.duration = opts.duration;
@@ -91,6 +99,8 @@ class AnimateChannel {
         this.easing = opts.easing || easings.linear;
         this.interpolation = opts.interpolation || "linear";
         this.isFinished = false;
+        this.timing = opts.timing;
+        this.easings = opts.easings;
     }
 
     update(obj: GameObj<any>, t: number): boolean {
@@ -143,16 +153,13 @@ function reflect(a: Vec2, b: Vec2) {
 
 class AnimateChannelNumber extends AnimateChannel {
     keys: number[];
-    timing: number[] | null;
     constructor(
         name: string,
         keys: number[],
-        timing: number[] | null,
         opts: AnimateOpt,
     ) {
         super(name, opts);
         this.keys = keys;
-        this.timing = timing;
     }
 
     update(obj: GameObj<any>, t: number): boolean {
@@ -164,10 +171,11 @@ class AnimateChannelNumber extends AnimateChannel {
         if (alpha == 0) {
             obj[this.name] = this.keys[index];
         } else {
+            const easing = this.easings ? this.easings[index] : this.easing;
             obj[this.name] = lerp(
                 this.keys[index],
                 this.keys[index + 1],
-                this.easing(alpha),
+                easing(alpha),
             );
         }
         return alpha == 1;
@@ -176,16 +184,13 @@ class AnimateChannelNumber extends AnimateChannel {
 
 class AnimateChannelVec2 extends AnimateChannel {
     keys: Vec2[];
-    timing: number[] | null;
     constructor(
         name: string,
         keys: Vec2[],
-        timing: number[] | null,
         opts: AnimateOpt,
     ) {
         super(name, opts);
         this.keys = keys;
-        this.timing = timing;
     }
 
     update(obj: GameObj<any>, t: number): boolean {
@@ -197,11 +202,11 @@ class AnimateChannelVec2 extends AnimateChannel {
         if (alpha == 0) {
             obj[this.name] = this.keys[index];
         } else {
-            console.log(this.interpolation);
+            const easing = this.easings ? this.easings[index] : this.easing;
             if (this.interpolation === "linear") {
                 obj[this.name] = this.keys[index].lerp(
                     this.keys[index + 1],
-                    this.easing(alpha),
+                    easing(alpha),
                 );
             } else {
                 const prevKey = this.keys[index];
@@ -218,7 +223,7 @@ class AnimateChannelVec2 extends AnimateChannel {
                     prevKey,
                     nextKey,
                     nextNextKey,
-                    this.easing(alpha),
+                    easing(alpha),
                 );
             }
         }
@@ -228,16 +233,13 @@ class AnimateChannelVec2 extends AnimateChannel {
 
 class AnimateChannelColor extends AnimateChannel {
     keys: Color[];
-    timing: number[] | null;
     constructor(
         name: string,
         keys: Color[],
-        timing: number[] | null,
         opts: AnimateOpt,
     ) {
         super(name, opts);
         this.keys = keys;
-        this.timing = timing;
     }
 
     update(obj: GameObj<any>, t: number): boolean {
@@ -249,9 +251,10 @@ class AnimateChannelColor extends AnimateChannel {
         if (alpha == 0) {
             obj[this.name] = this.keys[index];
         } else {
+            const easing = this.easings ? this.easings[index] : this.easing;
             obj[this.name] = this.keys[index].lerp(
                 this.keys[index + 1],
-                this.easing(alpha),
+                easing(alpha),
             );
         }
         return alpha == 1;
@@ -284,7 +287,6 @@ export function animate(): AnimateComp {
         animate<T extends LerpValue>(
             name: string,
             keys: T[],
-            times: number[] | null,
             opts: AnimateOpt,
         ) {
             isFinished = false;
@@ -294,17 +296,16 @@ export function animate(): AnimateComp {
                     new AnimateChannelNumber(
                         name,
                         keys as number[],
-                        times,
                         opts,
                     ),
                 );
             } else if (keys[0] instanceof Vec2) {
                 channels.push(
-                    new AnimateChannelVec2(name, keys as Vec2[], times, opts),
+                    new AnimateChannelVec2(name, keys as Vec2[], opts),
                 );
             } else if (keys[0] instanceof Color) {
                 channels.push(
-                    new AnimateChannelColor(name, keys as Color[], times, opts),
+                    new AnimateChannelColor(name, keys as Color[], opts),
                 );
             }
         },

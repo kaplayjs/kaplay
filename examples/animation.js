@@ -11,7 +11,7 @@ const rotatingBean = add([
     animate(),
 ]);
 
-rotatingBean.animate("angle", [0, 360], null, {
+rotatingBean.animate("angle", [0, 360], {
     duration: 2,
     endBehavior: "loop",
 });
@@ -23,7 +23,7 @@ const movingBean = add([
     animate(),
 ]);
 
-movingBean.animate("pos", [vec2(50, 150), vec2(150, 150)], null, {
+movingBean.animate("pos", [vec2(50, 150), vec2(150, 150)], {
     duration: 2,
     endBehavior: "ping-pong",
 });
@@ -36,7 +36,7 @@ const coloringBean = add([
     animate(),
 ]);
 
-coloringBean.animate("color", [WHITE, RED, GREEN, BLUE, WHITE], null, {
+coloringBean.animate("color", [WHITE, RED, GREEN, BLUE, WHITE], {
     duration: 8,
     endBehavior: "loop",
 });
@@ -49,7 +49,7 @@ const opacitingBean = add([
     animate(),
 ]);
 
-opacitingBean.animate("opacity", [1, 0, 1], null, {
+opacitingBean.animate("opacity", [1, 0, 1], {
     duration: 8,
     easing: easings.easeInOutCubic,
     endBehavior: "loop",
@@ -71,7 +71,6 @@ squaringBean.animate(
         vec2(50, 500),
         vec2(50, 400),
     ],
-    null,
     { duration: 8, endBehavior: "loop" },
 );
 
@@ -91,14 +90,17 @@ timedSquaringBean.animate(
         vec2(50, 500),
         vec2(50, 400),
     ],
-    [
-        0,
-        0.1,
-        0.3,
-        0.7,
-        1.0,
-    ],
-    { duration: 8, endBehavior: "loop" },
+    {
+        duration: 8,
+        endBehavior: "loop",
+        timing: [
+            0,
+            0.1,
+            0.3,
+            0.7,
+            1.0,
+        ],
+    },
 );
 
 const curvingBean = add([
@@ -117,6 +119,5 @@ curvingBean.animate(
         vec2(350, 500),
         vec2(400, 400),
     ],
-    null,
     { duration: 8, endBehavior: "ping-pong", interpolation: "spline" },
 );
