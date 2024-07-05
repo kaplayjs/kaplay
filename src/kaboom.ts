@@ -1839,30 +1839,113 @@ const kaplay = <
         const scale = new Vec2(1);
 
         if (opt.tiled) {
-            // TODO: draw fract
-            const repX = Math.ceil((opt.width || w) / w);
-            const repY = Math.ceil((opt.height || h) / h);
             const anchor = anchorPt(opt.anchor || DEF_ANCHOR).add(
                 new Vec2(1, 1),
             ).scale(0.5);
-            const offset = anchor.scale(repX * w, repY * h);
+            const offset = anchor.scale(opt.width || w, opt.height || h);
 
-            // TODO: rotation
-            for (let i = 0; i < repX; i++) {
-                for (let j = 0; j < repY; j++) {
-                    drawUVQuad(Object.assign({}, opt, {
-                        pos: (opt.pos || new Vec2(0)).add(
-                            new Vec2(w * i, h * j),
-                        ).sub(offset),
-                        scale: scale.scale(opt.scale || new Vec2(1)),
-                        tex: opt.tex,
-                        quad: q,
-                        width: w,
-                        height: h,
-                        anchor: "topleft",
-                    }));
+            const fcols = (opt.width || w) / w;
+            const frows = (opt.height || h) / h;
+            const cols = Math.floor(fcols);
+            const rows = Math.floor(frows);
+            const fracX = fcols - cols;
+            const fracY = frows - rows;
+            const n = (cols + fracX ? 1 : 0) * (rows + fracY ? 1 : 0);
+            const indices = new Array<number>(n * 6);
+            const vertices = new Array<Vertex>(n * 4);
+            let index = 0;
+
+            /*drawUVQuad(Object.assign({}, opt, {
+                scale: scale.scale(opt.scale || new Vec2(1)),
+            }));*/
+
+            const addQuad = (
+                x: number,
+                y: number,
+                w: number,
+                h: number,
+                q: Quad,
+            ) => {
+                indices[index * 6 + 0] = index * 4 + 0;
+                indices[index * 6 + 1] = index * 4 + 1;
+                indices[index * 6 + 2] = index * 4 + 3;
+                indices[index * 6 + 3] = index * 4 + 1;
+                indices[index * 6 + 4] = index * 4 + 2;
+                indices[index * 6 + 5] = index * 4 + 3;
+
+                vertices[index * 4 + 0] = {
+                    pos: new Vec2(x - offset.x, y - offset.y),
+                    uv: new Vec2(q.x, q.y),
+                    color: opt.color || Color.WHITE,
+                    opacity: opt.opacity || 1,
+                };
+                vertices[index * 4 + 1] = {
+                    pos: new Vec2(x + w - offset.x, y - offset.y),
+                    uv: new Vec2(q.x + q.w, q.y),
+                    color: opt.color || Color.WHITE,
+                    opacity: opt.opacity || 1,
+                };
+                vertices[index * 4 + 2] = {
+                    pos: new Vec2(x + w - offset.x, y + h - offset.y),
+                    uv: new Vec2(q.x + q.w, q.y + q.h),
+                    color: opt.color || Color.WHITE,
+                    opacity: opt.opacity || 1,
+                };
+                vertices[index * 4 + 3] = {
+                    pos: new Vec2(x - offset.x, y + h - offset.y),
+                    uv: new Vec2(q.x, q.y + q.h),
+                    color: opt.color || Color.WHITE,
+                    opacity: opt.opacity || 1,
+                };
+                index++;
+            };
+
+            for (let j = 0; j < rows; j++) {
+                for (let i = 0; i < cols; i++) {
+                    addQuad(i * w, j * h, w, h, q);
+                }
+
+                if (fracX) {
+                    addQuad(
+                        cols * w,
+                        j * h,
+                        w * fracX,
+                        h,
+                        new Quad(q.x, q.y, q.w * fracX, q.h),
+                    );
                 }
             }
+
+            if (fracY) {
+                for (let i = 0; i < cols; i++) {
+                    addQuad(
+                        i * w,
+                        rows * h,
+                        w,
+                        h * fracY,
+                        new Quad(q.x, q.y, q.w, q.h * fracY),
+                    );
+                }
+
+                if (fracX) {
+                    addQuad(
+                        cols * w,
+                        rows * h,
+                        w * fracX,
+                        h * fracY,
+                        new Quad(q.x, q.y, q.w * fracX, q.h * fracY),
+                    );
+                }
+            }
+
+            drawRaw(
+                vertices,
+                indices,
+                opt.fixed,
+                opt.tex,
+                opt.shader,
+                opt.uniform,
+            );
         } else {
             // TODO: should this ignore scale?
             if (opt.width && opt.height) {
