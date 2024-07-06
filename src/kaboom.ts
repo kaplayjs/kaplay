@@ -1559,6 +1559,7 @@ const kaplay = <
             const fmt =
                 /(?<type>^\w+) SHADER ERROR: 0:(?<line>\d+): (?<msg>.+)/;
             const match = getErrorMessage(e).match(fmt);
+            if (!match?.groups) throw e
             const line = Number(match.groups.line) - lineOffset;
             const msg = match.groups.msg.trim();
             const ty = match.groups.type.toLowerCase();
