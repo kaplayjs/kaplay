@@ -3429,7 +3429,11 @@ const kaplay = <
         return obj.parent ? tr.mult(obj.parent.transform) : tr;
     }
 
-    function make<T>(comps: CompList<T> = []): GameObj<T> {
+    type MakeTypeIsFN<T, Chain = T> = T extends (go: GameObj) => infer R ? R : Chain
+    type MakeTypeIsCLASS<T, Chain = T> = T extends new (go: GameObj) => infer R ? R : Chain
+	type MakeType<T> = MakeTypeIsCLASS<T, MakeTypeIsFN<T>>
+
+	function make<T>(comps: CompList<T> = []): GameObj<MakeType<T>> {
         const compStates = new Map();
         const cleanups = {};
         const events = new KEventHandler();
