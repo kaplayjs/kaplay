@@ -1611,7 +1611,7 @@ const kaplay = <
             ? gfx.transform
             : game.cam.transform.mult(gfx.transform);
 
-        const vv = [];
+        const vv: number[] = [];
 
         for (const v of verts) {
             // normalized world space coordinate [-1.0 ~ 1.0]
