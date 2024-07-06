@@ -294,9 +294,8 @@ function createEmptyAudioBuffer(ctx: AudioContext) {
 
 let ctx: KaboomCtx;
 
-// TODO: A better way to detect KaboomCtx
 export const isKaboomCtx = (obj: any): obj is KaboomCtx => {
-    return obj && obj["loadAseprite"];
+    return obj && obj["VERSION"] === VERSION;
 };
 
 export const getKaboomContext = (fallBack?: any): KaboomCtx => {
