@@ -539,8 +539,8 @@ const kaplay = <
             defShader: defShader,
             defTex: emptyTex,
             frameBuffer: frameBuffer,
-            postShader: null,
-            postShaderUniform: null,
+            postShader: null as string | null,
+            postShaderUniform: null as Uniform | (() => Uniform) | null,
             renderer: renderer,
 
             transform: new Mat4(),

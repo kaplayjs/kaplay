@@ -4498,8 +4498,8 @@ export interface RenderProps {
     color?: Color;
     opacity?: number;
     fixed?: boolean;
-    shader?: string | ShaderData | Asset<ShaderData>;
-    uniform?: Uniform;
+    shader?: string | ShaderData | Asset<ShaderData> | null;
+    uniform?: Uniform | null;
     outline?: Outline;
 }
 
