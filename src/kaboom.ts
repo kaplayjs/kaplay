@@ -3472,8 +3472,8 @@ const kaplay = <
                 return tags;
             },
 
-            add<T2>(a: CompList<T2> | GameObj<T2> = []): GameObj<T2> {
-                const obj = Array.isArray(a) ? make(a) : a;
+            add<T2>(a: CompList<T2> | GameObj<T2>): GameObj {
+		const obj = Array.isArray(a) ? make(a) : a;
                 if (obj.parent) {
                     throw new Error(
                         "Cannot add a game obj that already has a parent.",
