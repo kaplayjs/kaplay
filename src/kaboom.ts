@@ -1209,6 +1209,7 @@ const kaplay = <
         | BitmapFontData
         | Asset<BitmapFontData>
         | string
+        | null
         | void
     {
         if (!src) {
