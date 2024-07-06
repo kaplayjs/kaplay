@@ -839,7 +839,7 @@ const kaplay = <
 
     // get an array of frames based on configuration on how to slice the image
     function slice(x = 1, y = 1, dx = 0, dy = 0, w = 1, h = 1): Quad[] {
-        const frames = [];
+        const frames: Quad[] = [];
         const qw = w / x;
         const qh = h / y;
         for (let j = 0; j < y; j++) {
