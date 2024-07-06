@@ -988,6 +988,7 @@ const kaplay = <
                 canvas.height = data.height * data.frames.length;
 
                 const c2d = canvas.getContext("2d");
+                if (!c2d) throw new Error("Failed to create canvas context")
 
                 images.forEach((img: HTMLImageElement, i) => {
                     c2d.drawImage(img, 0, i * data.height);
