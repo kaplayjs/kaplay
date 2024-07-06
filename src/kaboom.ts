@@ -1740,7 +1740,7 @@ const kaplay = <
 
     function popTransform() {
         if (gfx.transformStack.length > 0) {
-            gfx.transform = gfx.transformStack.pop();
+            gfx.transform = gfx.transformStack.pop()!;
         }
     }
 
