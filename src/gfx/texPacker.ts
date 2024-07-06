@@ -1,8 +1,8 @@
-import type { ImageSource } from "./types";
+import type { ImageSource } from "../types";
 
-import { type GfxCtx, Texture } from "./gfx";
+import { type GfxCtx, Texture } from "../gfx";
 
-import { Quad, Vec2 } from "./math";
+import { Quad, Vec2 } from "../math";
 
 export default class TexPacker {
     private textures: Texture[] = [];

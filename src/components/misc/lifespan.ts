@@ -1,5 +1,5 @@
-import easings from "../../easings";
 import { getKaboomContext } from "../../kaboom";
+import easings from "../../math/easings";
 import type { EmptyComp, GameObj, OpacityComp } from "../../types";
 
 /**

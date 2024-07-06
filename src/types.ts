@@ -1,4 +1,3 @@
-import type { Asset } from "./assets";
 import type {
     AgentComp,
     AgentCompOpt,
@@ -55,8 +54,9 @@ import type {
     ParticlesComp,
     ParticlesOpt,
 } from "./components/draw/particles";
-import type { FontData } from "./fonts";
 import type { FrameBuffer, Texture } from "./gfx";
+import type { Asset } from "./gfx/assets";
+import type { FontData } from "./gfx/fonts";
 import type {
     Circle,
     Color,
@@ -244,7 +244,13 @@ export interface KaboomCtx<
      *
      * @group Game Obj
      */
-    add<T>(comps?: CompList<T> | GameObj<T>): GameObj<T extends new (go: GameObj) => infer R ? R : T extends (go: GameObj) => infer R ? R : T>;
+    add<T>(
+        comps?: CompList<T> | GameObj<T>,
+    ): GameObj<
+        T extends new(go: GameObj) => infer R ? R
+            : T extends (go: GameObj) => infer R ? R
+            : T
+    >;
     /**
      * Create a game object like add(), but not adding to the scene.
      *
@@ -265,7 +271,13 @@ export interface KaboomCtx<
      *
      * @group Game Obj
      */
-    make<T>(comps?: CompList<T>): GameObj<T extends new (go: GameObj) => infer R ? R : T extends (go: GameObj) => infer R ? R : T>;
+    make<T>(
+        comps?: CompList<T>,
+    ): GameObj<
+        T extends new(go: GameObj) => infer R ? R
+            : T extends (go: GameObj) => infer R ? R
+            : T
+    >;
     /**
      * Remove and re-add the game obj, without triggering add / destroy events.
      * @example

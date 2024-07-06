@@ -10,7 +10,7 @@ import {
     fetchJSON,
     fetchText,
     loadImg,
-} from "./assets";
+} from "./gfx/assets";
 
 import {
     ASCII_CHARS,
@@ -101,8 +101,8 @@ import {
 
 import { NavMesh } from "./math/navigationmesh";
 
-import easings from "./easings";
-import TexPacker from "./texPacker";
+import TexPacker from "./gfx/texPacker";
+import easings from "./math/easings";
 
 import {
     BinaryHeap,
@@ -124,7 +124,7 @@ import {
     uid,
 } from "./utils";
 
-import { FontData } from "./fonts";
+import { FontData } from "./gfx/fonts";
 
 import type {
     Anchor,
@@ -644,10 +644,10 @@ const kaplay = <
         }
 
         static fromArrayBuffer(buf: ArrayBuffer): Promise<SoundData> {
-			return new Promise((resolve, reject) =>
-				audio.ctx.decodeAudioData(buf, resolve, reject),
-			).then((buf) => new SoundData(buf as AudioBuffer))
-		}
+            return new Promise((resolve, reject) =>
+                audio.ctx.decodeAudioData(buf, resolve, reject)
+            ).then((buf) => new SoundData(buf as AudioBuffer));
+        }
 
         static fromURL(url: string): Promise<SoundData> {
             if (isDataURL(url)) {
@@ -918,7 +918,7 @@ const kaplay = <
         canvas.width = width * images.length;
         canvas.height = height;
         const c2d = canvas.getContext("2d");
-	if (!c2d) throw new Error("Failed to create canvas context");
+        if (!c2d) throw new Error("Failed to create canvas context");
         images.forEach((img, i) => {
             if (img instanceof ImageData) {
                 c2d.putImageData(img, i * width, 0);
@@ -991,7 +991,7 @@ const kaplay = <
                 canvas.height = data.height * data.frames.length;
 
                 const c2d = canvas.getContext("2d");
-                if (!c2d) throw new Error("Failed to create canvas context")
+                if (!c2d) throw new Error("Failed to create canvas context");
 
                 images.forEach((img: HTMLImageElement, i) => {
                     c2d.drawImage(img, 0, i * data.height);
@@ -3435,11 +3435,14 @@ const kaplay = <
         return obj.parent ? tr.mult(obj.parent.transform) : tr;
     }
 
-    type MakeTypeIsFN<T, Chain = T> = T extends (go: GameObj) => infer R ? R : Chain
-    type MakeTypeIsCLASS<T, Chain = T> = T extends new (go: GameObj) => infer R ? R : Chain
-	type MakeType<T> = MakeTypeIsCLASS<T, MakeTypeIsFN<T>>
+    type MakeTypeIsFN<T, Chain = T> = T extends (go: GameObj) => infer R ? R
+        : Chain;
+    type MakeTypeIsCLASS<T, Chain = T> = T extends new(go: GameObj) => infer R
+        ? R
+        : Chain;
+    type MakeType<T> = MakeTypeIsCLASS<T, MakeTypeIsFN<T>>;
 
-	function make<T>(comps: CompList<T> = []): GameObj<MakeType<T>> {
+    function make<T>(comps: CompList<T> = []): GameObj<MakeType<T>> {
         const compStates = new Map();
         const cleanups = {};
         const events = new KEventHandler();
@@ -3479,7 +3482,7 @@ const kaplay = <
             },
 
             add<T2>(a: CompList<T2> | GameObj<T2>): GameObj {
-		const obj = Array.isArray(a) ? make(a) : a;
+                const obj = Array.isArray(a) ? make(a) : a;
                 if (obj.parent) {
                     throw new Error(
                         "Cannot add a game obj that already has a parent.",
