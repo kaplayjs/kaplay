@@ -244,7 +244,7 @@ export interface KaboomCtx<
      *
      * @group Game Obj
      */
-    add<T>(comps?: CompList<T> | GameObj<T>): GameObj<T extends new (go: GameObj) => infer R ? R : T extends (go: GameObj) => infer R ? R : T>>;
+    add<T>(comps?: CompList<T> | GameObj<T>): GameObj<T extends new (go: GameObj) => infer R ? R : T extends (go: GameObj) => infer R ? R : T>;
     /**
      * Create a game object like add(), but not adding to the scene.
      *
