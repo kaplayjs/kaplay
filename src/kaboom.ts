@@ -642,10 +642,10 @@ const kaplay = <
         }
 
         static fromArrayBuffer(buf: ArrayBuffer): Promise<SoundData> {
-            return new Promise((resolve, reject) =>
-                audio.ctx.decodeAudioData(buf, resolve, reject)
-            ).then((buf: AudioBuffer) => new SoundData(buf));
-        }
+			return new Promise((resolve, reject) =>
+				audio.ctx.decodeAudioData(buf, resolve, reject),
+			).then((buf) => new SoundData(buf as AudioBuffer))
+		}
 
         static fromURL(url: string): Promise<SoundData> {
             if (isDataURL(url)) {
