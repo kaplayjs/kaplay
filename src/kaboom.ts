@@ -378,11 +378,11 @@ const kaplay = <
 
     // adjust canvas size according to user size / viewport settings
     if (fixedSize) {
-        canvas.width = gopt.width * gscale;
-        canvas.height = gopt.height * gscale;
+        canvas.width = gopt.width! * gscale;
+        canvas.height = gopt.height! * gscale;
     } else {
-        canvas.width = canvas.parentElement.offsetWidth;
-        canvas.height = canvas.parentElement.offsetHeight;
+        canvas.width = canvas.parentElement!.offsetWidth;
+        canvas.height = canvas.parentElement!.offsetHeight;
     }
 
     // canvas css styles
