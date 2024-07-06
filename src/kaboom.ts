@@ -918,6 +918,7 @@ const kaplay = <
         canvas.width = width * images.length;
         canvas.height = height;
         const c2d = canvas.getContext("2d");
+	if (!c2d) throw new Error("Failed to create canvas context");
         images.forEach((img, i) => {
             if (img instanceof ImageData) {
                 c2d.putImageData(img, i * width, 0);
