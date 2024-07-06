@@ -3700,12 +3700,23 @@ const kaplay = <
             },
 
             unuse(id: Tag) {
+                if (compStates.has(id)) {
+                    // check all components for a dependent, if there's one, throw an error
+                    for (const comp of compStates.values()) {
+                        if (comp.require && comp.require.includes(id)) {
+                            throw new Error(
+                                `Can't unuse. Component "${comp.id}" requires component "${id}"`,
+                            );
+                        }
+                    }
+
+                    compStates.delete(id);
+                }
+
                 if (cleanups[id]) {
                     cleanups[id].forEach((e) => e());
+
                     delete cleanups[id];
-                }
-                if (compStates.has(id)) {
-                    compStates.delete(id);
                 }
             },
 
