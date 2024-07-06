@@ -22,7 +22,7 @@ import {
     setHasOrIncludes,
 } from "./utils";
 
-import GAMEPAD_MAP from "./gamepad.json";
+import GAMEPAD_MAP from "./data/gamepad.json";
 
 export class ButtonState<T = string> {
     pressed: Set<T> = new Set([]);

@@ -1,6 +1,6 @@
-import easings from "../../easings";
 import { getKaboomContext } from "../../kaboom";
 import { Color, evaluateCatmullRom, lerp, Vec2 } from "../../math";
+import easings from "../../math/easings";
 import type {
     Comp,
     EaseFunc,
