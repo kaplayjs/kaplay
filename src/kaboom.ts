@@ -576,7 +576,7 @@ const kaplay = <
             tex: Texture,
             frames?: Quad[],
             anims: SpriteAnims = {},
-            slice9: NineSlice = null,
+            slice9: NineSlice | null = null,
         ) {
             this.tex = tex;
             if (frames) this.frames = frames;
