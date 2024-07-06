@@ -443,6 +443,8 @@ const kaplay = <
             preserveDrawingBuffer: true,
         });
 
+    if (!gl) throw new Error("WebGL not supported")
+
     const ggl = initGfx(gl, {
         texFilter: gopt.texFilter,
     });
