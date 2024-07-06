@@ -3434,7 +3434,11 @@ const kaplay = <
         return obj.parent ? tr.mult(obj.parent.transform) : tr;
     }
 
-    function make<T>(comps: CompList<T> = []): GameObj<T> {
+    type MakeTypeIsFN<T, Chain = T> = T extends (go: GameObj) => infer R ? R : Chain
+    type MakeTypeIsCLASS<T, Chain = T> = T extends new (go: GameObj) => infer R ? R : Chain
+	type MakeType<T> = MakeTypeIsCLASS<T, MakeTypeIsFN<T>>
+
+	function make<T>(comps: CompList<T> = []): GameObj<MakeType<T>> {
         const compStates = new Map();
         const cleanups = {};
         const events = new KEventHandler();
@@ -3473,8 +3477,8 @@ const kaplay = <
                 return tags;
             },
 
-            add<T2>(a: CompList<T2> | GameObj<T2> = []): GameObj<T2> {
-                const obj = Array.isArray(a) ? make(a) : a;
+            add<T2>(a: CompList<T2> | GameObj<T2>): GameObj {
+		const obj = Array.isArray(a) ? make(a) : a;
                 if (obj.parent) {
                     throw new Error(
                         "Cannot add a game obj that already has a parent.",
@@ -3961,10 +3965,10 @@ const kaplay = <
         }
 
         for (const comp of comps) {
-            obj.use(comp);
+            obj.use(comp as string | Comp);
         }
 
-        return obj as unknown as GameObj<T>;
+        return obj;
     }
 
     // add an event to a tag
