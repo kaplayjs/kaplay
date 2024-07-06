@@ -3963,7 +3963,7 @@ const kaplay = <
             obj.use(comp as string | Comp);
         }
 
-        return obj as unknown as GameObj<T>;
+        return obj;
     }
 
     // add an event to a tag
