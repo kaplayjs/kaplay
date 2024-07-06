@@ -3960,7 +3960,7 @@ const kaplay = <
         }
 
         for (const comp of comps) {
-            obj.use(comp);
+            obj.use(comp as string | Comp);
         }
 
         return obj as unknown as GameObj<T>;
