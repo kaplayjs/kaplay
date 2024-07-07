@@ -3112,7 +3112,7 @@ const kaplay = <
         const scale = vec2(opt.scale ?? 1).scale(size / font.size);
         const lineSpacing = opt.lineSpacing ?? 0;
         const letterSpacing = opt.letterSpacing ?? 0;
-        let curX = 0;
+        let curX: number = 0;
         let tw = 0;
         let th = 0;
         const lines: Array<{
@@ -3121,8 +3121,8 @@ const kaplay = <
         }> = [];
         let curLine: FormattedChar[] = [];
         let cursor = 0;
-        let lastSpace = null;
-        let lastSpaceWidth = null;
+        let lastSpace: number | null = null;
+        let lastSpaceWidth: number | null = null;
 
         // TODO: word break
         while (cursor < chars.length) {
@@ -3158,7 +3158,7 @@ const kaplay = <
                             gw = q.w * scale.x;
                             // omit trailing space
                             curLine = curLine.slice(0, lastSpace - 1);
-                            curX = lastSpaceWidth;
+                            curX = lastSpaceWidth!;
                         }
                         lastSpace = null;
                         lastSpaceWidth = null;
