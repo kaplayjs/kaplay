@@ -3241,7 +3241,7 @@ const kaplay = <
                 if (charStyleMap[idx]) {
                     const styles = charStyleMap[idx];
                     for (const name of styles) {
-                        const style = opt.styles[name];
+                        const style = opt.styles?.[name];
                         const tr = typeof style === "function"
                             ? style(idx, fchar.ch)
                             : style;
