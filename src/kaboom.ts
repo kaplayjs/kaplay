@@ -696,7 +696,7 @@ const kaplay = <
         sounds: new AssetBucket<SoundData>(),
         shaders: new AssetBucket<ShaderData>(),
         custom: new AssetBucket<any>(),
-        music: {},
+        music: {} as Record<string, string>,
         packer: new TexPacker(ggl, SPRITE_ATLAS_WIDTH, SPRITE_ATLAS_HEIGHT),
         // if we finished initially loading all assets
         loaded: false,
@@ -1107,7 +1107,9 @@ const kaplay = <
     ) {
         const a = new Audio(url);
         a.preload = "auto";
-        return assets.music[name] = fixURL(url);
+
+        // TODO: assets.music should be a map
+        return assets.music[name as keyof typeof assets.music] = fixURL(url);
     }
 
     function loadBean(name: string = "bean"): Asset<SpriteData> {
@@ -1115,27 +1117,27 @@ const kaplay = <
     }
 
     function getSprite(name: string): Asset<SpriteData> | null {
-        return assets.sprites.get(name);
+        return assets.sprites.get(name) ?? null;
     }
 
     function getSound(name: string): Asset<SoundData> | null {
-        return assets.sounds.get(name);
+        return assets.sounds.get(name) ?? null;
     }
 
     function getFont(name: string): Asset<FontData> | null {
-        return assets.fonts.get(name);
+        return assets.fonts.get(name) ?? null;
     }
 
     function getBitmapFont(name: string): Asset<BitmapFontData> | null {
-        return assets.bitmapFonts.get(name);
+        return assets.bitmapFonts.get(name) ?? null;
     }
 
     function getShader(name: string): Asset<ShaderData> | null {
-        return assets.shaders.get(name);
+        return assets.shaders.get(name) ?? null;
     }
 
     function getAsset(name: string): Asset<any> | null {
-        return assets.custom.get(name);
+        return assets.custom.get(name) ?? null;
     }
 
     function resolveSprite(
