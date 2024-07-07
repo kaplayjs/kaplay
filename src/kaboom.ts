@@ -2012,7 +2012,7 @@ const kaplay = <
         end = deg2rad(end % 360);
         if (end <= start) end += Math.PI * 2;
 
-        const pts: number[] = [];
+        const pts: Vec2[] = [];
         const nverts = Math.ceil((end - start) / deg2rad(8) * res);
         const step = (end - start) / nverts;
 
