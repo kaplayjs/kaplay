@@ -754,7 +754,7 @@ const kaplay = <
 
         // camera
         cam: {
-            pos: null,
+            pos: null as Vec2 | null,
             scale: new Vec2(1),
             angle: 0,
             shake: 0,
