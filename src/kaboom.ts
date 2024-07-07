@@ -2850,10 +2850,10 @@ const kaplay = <
             drawRaw(
                 verts,
                 opt.indices ?? indices,
-                opt.fixed,
+                opt.fixed!,
                 opt.uv ? opt.tex : gfx.defTex,
                 opt.shader,
-                opt.uniform,
+                opt.uniform!,
             );
         }
 
