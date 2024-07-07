@@ -12,7 +12,11 @@ import type {
     MouseButton,
 } from "./types";
 
-import { map, Vec2 } from "./math";
+import { 
+    map, 
+    Vec2,
+    vec2
+} from "./math";
 
 import {
     isEqOrIncludes,
@@ -694,7 +698,7 @@ export default (opt: {
             },
             getStick: (stick: GamepadStick) => {
                 return state.gamepadStates.get(browserGamepad.index)?.stickState
-                    .get(stick) || false;
+                    .get(stick) || vec2();
             },
         };
 
