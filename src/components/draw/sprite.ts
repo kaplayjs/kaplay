@@ -271,7 +271,9 @@ export function sprite(
         },
 
         add(this: GameObj<SpriteComp>) {
-            const setSpriteData = (spr) => {
+            const setSpriteData = (spr: SpriteData | null) => {
+                if (!spr) return;
+                
                 let q = spr.frames[0].clone();
 
                 if (opt.quad) {
