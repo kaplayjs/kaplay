@@ -4619,7 +4619,7 @@ const kaplay = <
                     if (comp.id === "pos") hasPos = true;
                 }
 
-                if (!hasPos) comps.push(pos());
+                if (!hasPos) comps.push(ctx.pos());
                 if (!hasTile) comps.push(tile());
 
                 const obj = level.add(comps);
