@@ -473,10 +473,13 @@ const kaplay = <
         let bgAlpha = 1;
 
         if (gopt.background) {
-            bgColor = rgb(gopt.background);
-            bgAlpha = Array.isArray(gopt.background)
-                ? gopt.background[3]
-                : 1;
+            if (typeof gopt.background === "string") {
+                bgColor = rgb(gopt.background);
+            } else {
+                bgColor = rgb(...gopt.background);
+                bgAlpha = gopt.background[3] ?? 1;
+            }
+
             gl.clearColor(
                 bgColor.r / 255,
                 bgColor.g / 255,

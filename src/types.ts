@@ -72,7 +72,7 @@ import type {
     ShapeType,
     Vec2,
 } from "./math";
-import type { Color } from "./math/color";
+import type { Color, RGBAValue, RGBValue } from "./math/color";
 import type { NavMesh } from "./math/navigationmesh";
 import type { KEvent, KEventController, KEventHandler } from "./utils";
 
@@ -3748,7 +3748,7 @@ export interface KaboomOpt<
     /**
      * Background color. E.g. [ 0, 0, 255 ] for solid blue background, or [ 0, 0, 0, 0 ] for transparent background. Accepts RGB value array or string hex codes.
      */
-    background?: number[] | string;
+    background?: RGBValue | RGBAValue | string;
     /**
      * Default texture filter.
      */

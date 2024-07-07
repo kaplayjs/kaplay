@@ -1,5 +1,8 @@
 import { clamp, lerp } from "../math";
 
+export type RGBValue = [number, number, number];
+export type RGBAValue = [number, number, number, number];
+
 /**
  * 0-255 RGBA color.
  *
@@ -201,11 +204,15 @@ export class Color {
 }
 
 export type ColorArgs =
+    // rgb(new Color(255, 255, 255))
     | [Color]
-    | [number, number, number]
+    // rgb(255, 255, 255)
+    | RGBValue
+    // rgb(255, 255, 255, 255)
+    | RGBAValue
+    // rgb("#ffffff")
     | [string]
     | [number[]]
-    | undefined[]
     | [];
 
 export function rgb(...args: ColorArgs): Color {
@@ -213,15 +220,20 @@ export function rgb(...args: ColorArgs): Color {
         return new Color(255, 255, 255);
     } else if (args.length === 1) {
         if (args[0] instanceof Color) {
+            // rgb(new Color(255, 255, 255))
             return args[0].clone();
         } else if (typeof args[0] === "string") {
+            // rgb("#ffffff")
             return Color.fromHex(args[0]);
         } else if (Array.isArray(args[0]) && args[0].length === 3) {
+            // rgb([255, 255, 255])
             return Color.fromArray(args[0]);
         }
+    } else if (args.length === 3 || args.length === 4) {
+        return new Color(args[0], args[1], args[2]);
     }
-    // @ts-ignore
-    return new Color(...args);
+
+    throw new Error("Invalid color arguments");
 }
 
 export const hsl2rgb = (h: number, s: number, l: number) =>
