@@ -544,7 +544,7 @@ const kaplay = <
             renderer: renderer,
 
             transform: new Mat4(),
-            transformStack: [],
+            transformStack: [] as Mat4[],
 
             bgTex: bgTex,
             bgColor: bgColor,
@@ -1740,6 +1740,7 @@ const kaplay = <
 
     function popTransform() {
         if (gfx.transformStack.length > 0) {
+            // if there's more than 1 element, it will return obviously a Mat4
             gfx.transform = gfx.transformStack.pop()!;
         }
     }
