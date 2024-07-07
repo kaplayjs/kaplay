@@ -896,7 +896,7 @@ export default (opt: {
             e.preventDefault();
         }
         state.events.onOnce("input", () => {
-            const k = KEY_ALIAS[e.key as keyof typeof KEY_ALIAS] || e.key.toLowerCase();
+            const k: Key = KEY_ALIAS[e.key as keyof typeof KEY_ALIAS] as Key || e.key.toLowerCase();
             if (k === undefined) throw new Error(`Unknown key: ${e.key}`);
             if (k.length === 1) {
                 state.events.trigger("charInput", k);
@@ -909,7 +909,7 @@ export default (opt: {
                 state.keyState.pressRepeat(k);
                 state.events.trigger("keyPressRepeat", k);
             } else {
-                const btn = getButtonNameByKey(k);
+                const btn = getButtonNameByKey(k)!;
 
                 state.keyState.press(k);
                 state.buttonState.press(btn);
@@ -923,7 +923,7 @@ export default (opt: {
     canvasEvents.keyup = (e) => {
         state.events.onOnce("input", () => {
             const k = KEY_ALIAS[e.key] || e.key.toLowerCase();
-            const btn = getButtonNameByKey(k);
+            const btn = getButtonNameByKey(k)!;
 
             state.keyState.release(k);
             state.buttonState.release(btn);
@@ -946,7 +946,7 @@ export default (opt: {
                     touches[0].clientY - box.y,
                 );
 
-                const btn = getButtonByMouseButton("left");
+                const btn = getButtonByMouseButton("left")!;
 
                 state.mouseState.press("left");
                 state.buttonState.press(btn);
@@ -998,7 +998,7 @@ export default (opt: {
                     touches[0].clientY - box.y,
                 );
                 state.mouseDeltaPos = new Vec2(0, 0);
-                const btn = getButtonByMouseButton("left");
+                const btn = getButtonByMouseButton("left")!;
 
                 state.buttonState.release(btn);
                 state.mouseState.release("left");
