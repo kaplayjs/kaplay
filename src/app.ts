@@ -750,7 +750,7 @@ export default (opt: {
             for (let i = 0; i < browserGamepad.buttons.length; i++) {
                 const gamepadBtn = map.buttons[i];
                 const browserGamepadBtn = browserGamepad.buttons[i];
-                const bindedBtn = getButtonByGamepadButton(gamepadBtn);
+                const bindedBtn = getButtonByGamepadButton(gamepadBtn)!;
 
                 if (browserGamepadBtn.pressed) {
                     if (!gamepadState.buttonState.down.has(gamepadBtn)) {
