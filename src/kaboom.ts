@@ -2965,6 +2965,7 @@ const kaplay = <
 
         // put each styled char index into a map for easy access when iterating each char
         for (const match of text.matchAll(TEXT_STYLE_RE)) {
+            if (!match?.groups) continue;
             const origIdx = match.index - idxOffset;
             for (let i = 0; i < match.groups.text.length; i++) {
                 charStyleMap[i + origIdx] = [match.groups.style];
