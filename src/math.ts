@@ -2129,7 +2129,7 @@ export class Circle {
     random(): Vec2 {
         // TODO: Not uniform!!
         return this.center.add(
-            Vec2.fromAngle(rand(360) * rand(this.radius)),
+            Vec2.fromAngle(rand(360)).scale(rand(this.radius)),
         );
     }
 }
