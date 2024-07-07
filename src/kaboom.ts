@@ -187,6 +187,7 @@ import type {
     SceneDef,
     SceneName,
     ShaderData,
+    SpriteAnim,
     SpriteAnims,
     SpriteAtlasData,
     Tag,
@@ -1037,7 +1038,8 @@ const kaplay = <
                         f.frame.h / size.h,
                     );
                 });
-                const anims = {};
+                const anims: Record<string, number | SpriteAnim> = {};
+
                 for (const anim of data.meta.frameTags) {
                     if (anim.from === anim.to) {
                         anims[anim.name] = anim.from;
