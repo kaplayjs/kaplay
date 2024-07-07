@@ -180,7 +180,7 @@ export type InternalCtx = {
         tex: Texture,
         shaderSrc: RenderProps["shader"],
         uniform: Uniform,
-    );
+    ): any;
     calcTransform: (obj: GameObj) => Mat4;
 };
 
@@ -2596,21 +2596,21 @@ export interface KaboomCtx<
      * @since v3001.0
      * @group Math
      */
-    easingSteps(steps: number, position: StepPosition);
+    easingSteps(steps: number, position: StepPosition): (x: number) => number;
     /**
      * Linear easing with keyframes
      *
      * @since v3001.0
      * @group Math
      */
-    easingLinear(keys: Vec2[]);
+    easingLinear(keys: Vec2[]): (x: number) => number;
     /**
      * Bezier easing. Both control points need x to be within 0 and 1.
      *
      * @since v3001.0
      * @group Math
      */
-    easingCubicBezier(p1: Vec2, p2: Vec2);
+    easingCubicBezier(p1: Vec2, p2: Vec2): (x: number) => number;
     /**
      * Map a value from one range to another range.
      *
@@ -4458,10 +4458,11 @@ export declare class Shader {
     ctx: GfxCtx;
     glProgram: WebGLProgram;
     constructor(ctx: GfxCtx, vert: string, frag: string, attribs: string[]);
-    bind();
-    unbind();
-    send(uniform: Uniform);
-    free();
+    // TODO: type this
+    bind(): any;
+    unbind(): any;
+    send(uniform: Uniform): any;
+    free(): any;
 }
 
 export type TextureOpt = {
