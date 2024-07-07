@@ -750,7 +750,7 @@ const kaplay = <
         defaultLayerIndex: 0,
 
         // on screen log
-        logs: [] as { msg: string | { toString(): string; }, time: number, }[],
+        logs: [] as { msg: string | { toString(): string }; time: number }[],
 
         // camera
         cam: {
@@ -6045,7 +6045,7 @@ const kaplay = <
     // export everything to window if global is set
     if (gopt.global !== false) {
         for (const k in ctx) {
-            window[k] = ctx[k];
+            (<any> window[<any> k]) = ctx[k as keyof KaboomCtx];
         }
     }
 
