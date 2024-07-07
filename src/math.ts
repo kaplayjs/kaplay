@@ -491,7 +491,15 @@ export class Color {
     }
 }
 
-export function rgb(...args): Color {
+type ColorArgs =
+    | [number, number, number]
+    | [Color]
+    | [string]
+    | [number[]]
+    | undefined[]
+    | [];
+
+export function rgb(...args: ColorArgs): Color {
     if (args.length === 0) {
         return new Color(255, 255, 255);
     } else if (args.length === 1) {
@@ -507,7 +515,8 @@ export function rgb(...args): Color {
     return new Color(...args);
 }
 
-export const hsl2rgb = (h, s, l) => Color.fromHSL(h, s, l);
+export const hsl2rgb = (h: number, s: number, l: number) =>
+    Color.fromHSL(h, s, l);
 
 /**
  * @group Math
@@ -859,7 +868,7 @@ class Mat3 {
             - this.m12 * this.m21 * this.m33 - this.m11 * this.m23 * this.m32;
     }
 
-    rotate(radians) {
+    rotate(radians: number) {
         const c = Math.cos(radians);
         const s = Math.sin(radians);
         const oldA = this.m11;
@@ -870,7 +879,8 @@ class Mat3 {
         this.m22 = c * this.m22 - s * oldB;
         return this;
     }
-    scale(x, y) {
+
+    scale(x: number, y: number) {
         this.m11 *= x;
         this.m12 *= x;
         this.m21 *= y;
@@ -1235,7 +1245,7 @@ export function wave(
     lo: number,
     hi: number,
     t: number,
-    f = (t) => -Math.cos(t),
+    f = (t: number) => -Math.cos(t),
 ): number {
     return lo + (f(t) + 1) / 2 * (hi - lo);
 }
