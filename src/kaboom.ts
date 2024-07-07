@@ -3050,6 +3050,7 @@ const kaplay = <
                 if (!atlas.font.map[ch]) {
                     // TODO: use assets.packer to pack font texture
                     const c2d = fontCacheC2d;
+                    if (!c2d) throw new Error("fontCacheC2d is not defined.");
                     c2d.clearRect(
                         0,
                         0,
