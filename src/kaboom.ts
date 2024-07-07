@@ -877,7 +877,8 @@ const kaplay = <
         }
         return load(
             SpriteData.from(src).then((atlas) => {
-                const map = {};
+                const map: Record<string, SpriteData> = {};
+
                 for (const name in data) {
                     const info = data[name];
                     const quad = atlas.frames[0];
