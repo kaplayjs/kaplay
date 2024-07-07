@@ -109,7 +109,7 @@ export default (opt: {
         // unified input state
         buttonState: new ButtonState<string>(),
         gamepads: [] as KGamePad[],
-        charInputted: [],
+        charInputted: [] as string[],
         isMouseMoved: false,
         lastWidth: opt.canvas.offsetWidth,
         lastHeight: opt.canvas.offsetHeight,
