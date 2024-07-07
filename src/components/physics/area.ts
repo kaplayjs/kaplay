@@ -218,7 +218,7 @@ export function area(opt: AreaCompOpt = {}): AreaComp {
 
         add(this: GameObj<AreaComp>) {
             if (this.area.cursor) {
-                this.onHover(() => app.setCursor(this.area.cursor));
+                this.onHover(() => app.setCursor(this.area.cursor!));
             }
 
             this.onCollideUpdate((obj, col) => {
