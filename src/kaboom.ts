@@ -1757,6 +1757,15 @@ const kaplay = <
             );
         }
 
+        if (opt.pos === undefined)
+            throw new Error("drawUVQuad() requires property \"pos\".");
+
+        if (opt.angle === undefined)
+            throw new Error("drawUVQuad() requires property \"pos\".")
+
+        if (opt.scale === undefined)
+            throw new Error("drawUVQuad() requires property \"scale\".")
+
         if (opt.width <= 0 || opt.height <= 0) {
             return;
         }
