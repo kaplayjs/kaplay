@@ -4164,7 +4164,7 @@ const kaplay = <
     }
 
     function getBackground() {
-        return gfx.bgColor.clone();
+        return gfx.bgColor?.clone?.();
     }
 
     function toFixed(n: number, f: number) {
