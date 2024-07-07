@@ -20,12 +20,9 @@ export default class TexPacker {
         this.canvas.height = h;
         this.textures = [Texture.fromImage(gfx, this.canvas)];
         this.bigTextures = [];
-
-        const canvasContext = this.canvas.getContext("2d");
-
-        if (!canvasContext) throw new Error("Failed to get 2d context");
-
-        this.c2d = canvasContext;
+        
+        this.c2d = this.canvas.getContext("2d");
+        if (!this.c2d) throw new Error("Failed to get 2d context");
     }
     add(img: ImageSource): [Texture, Quad] {
         if (img.width > this.canvas.width || img.height > this.canvas.height) {

@@ -218,10 +218,11 @@ export function area(opt: AreaCompOpt = {}): AreaComp {
 
         add(this: GameObj<AreaComp>) {
             if (this.area.cursor) {
-                this.onHover(() => app.setCursor(this.area.cursor));
+                this.onHover(() => app.setCursor(this.area.cursor!));
             }
 
             this.onCollideUpdate((obj, col) => {
+                if (!obj.id) throw new Error("area() requires the object to have an id");
                 if (!colliding[obj.id]) {
                     this.trigger("collide", obj, col);
                 }
@@ -299,6 +300,7 @@ export function area(opt: AreaCompOpt = {}): AreaComp {
         },
 
         checkCollision(this: GameObj, other: GameObj<AreaComp>) {
+            if (!other.id) throw new Error("checkCollision() requires the object to have an id");
             return colliding[other.id] ?? null;
         },
 
@@ -308,10 +310,12 @@ export function area(opt: AreaCompOpt = {}): AreaComp {
 
         // TODO: perform check instead of use cache
         isColliding(other: GameObj<AreaComp>) {
+            if (!other.id) throw new Error("isColliding() requires the object to have an id");
             return Boolean(colliding[other.id]);
         },
 
         isOverlapping(other) {
+            if (!other.id) throw new Error("isOverlapping() requires the object to have an id");
             const col = colliding[other.id];
             return col && col.hasOverlap();
         },
@@ -376,10 +380,10 @@ export function area(opt: AreaCompOpt = {}): AreaComp {
             } else if (typeof tag === "string") {
                 return this.onCollide((obj, col) => {
                     if (obj.is(tag)) {
-                        cb(obj, col);
+                        cb?.(obj, col);
                     }
                 });
-            }
+            } else throw new Error("onCollide() requires either a function or a tag")
         },
 
         onCollideUpdate(
@@ -392,9 +396,9 @@ export function area(opt: AreaCompOpt = {}): AreaComp {
             } else if (typeof tag === "string") {
                 return this.on(
                     "collideUpdate",
-                    (obj, col) => obj.is(tag) && cb(obj, col),
+                    (obj, col) => obj.is(tag) && cb?.(obj, col),
                 );
-            }
+            } else throw new Error("onCollideUpdate() requires either a function or a tag")
         },
 
         onCollideEnd(
@@ -407,9 +411,9 @@ export function area(opt: AreaCompOpt = {}): AreaComp {
             } else if (typeof tag === "string") {
                 return this.on(
                     "collideEnd",
-                    (obj) => obj.is(tag) && cb(obj),
+                    (obj) => obj.is(tag) && cb?.(obj),
                 );
-            }
+            } else throw new Error("onCollideEnd() requires either a function or a tag")
         },
 
         hasPoint(pt: Vec2): boolean {
