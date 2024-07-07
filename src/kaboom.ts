@@ -96,7 +96,7 @@ import {
     wave,
 } from "./math";
 
-import { Color, hsl2rgb, rgb } from "./math/color";
+import { Color, type ColorArgs, hsl2rgb, rgb } from "./math/color";
 
 import { NavMesh } from "./math/navigationmesh";
 
@@ -4159,24 +4159,23 @@ const kaplay = <
         return game.gravity ? game.gravity.unit() : vec2(0, 1);
     }
 
-    function setBackground(...args) {
-        if (args.length === 1 || args.length === 2) {
-            gfx.bgColor = rgb(args[0]);
-            if (args[1]) gfx.bgAlpha = args[1];
-        } else if (args.length === 3 || args.length === 4) {
-            gfx.bgColor = rgb(args[0], args[1], args[2]);
-            if (args[3]) gfx.bgAlpha = args[3];
-        }
+    function setBackground(...args: ColorArgs) {
+        const color = rgb(...args);
+        const alpha = args[3] ?? 1;
+
+        gfx.bgColor = color;
+        gfx.bgAlpha = alpha;
+
         gl.clearColor(
-            gfx.bgColor!.r / 255,
-            gfx.bgColor!.g / 255,
-            gfx.bgColor!.b / 255,
-            gfx.bgAlpha,
+            color.r / 255,
+            color.g / 255,
+            color.b / 255,
+            alpha,
         );
     }
 
     function getBackground() {
-        return gfx.bgColor?.clone?.();
+        return gfx.bgColor?.clone?.() ?? null;
     }
 
     function toFixed(n: number, f: number) {

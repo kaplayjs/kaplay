@@ -2189,14 +2189,16 @@ export interface KaboomCtx<
      *
      * @group Info
      */
-    setBackground(color: Color, alpha?: number): void;
-    setBackground(r: number, g: number, b: number, alpha?: number): void;
+    setBackground(color: Color): void;
+    setBackground(color: Color, alpha: number): void;
+    setBackground(r: number, g: number, b: number): void;
+    setBackground(r: number, g: number, b: number, alpha: number): void;
     /**
      * Get background color.
      *
      * @group Info
      */
-    getBackground(): Color;
+    getBackground(): Color | null;
     /**
      * Get connected gamepads.
      *

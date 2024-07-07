@@ -206,9 +206,21 @@ export class Color {
 export type ColorArgs =
     // rgb(new Color(255, 255, 255))
     | [Color]
+    /**
+     * rgb(new Color(255, 255, 255), 1)
+     *
+     * This is only used to parse directly the color of background. This
+     * syntax shouldn't be used to set opacity. Use `opacity()` comp instead.
+     */
+    | [Color, number]
     // rgb(255, 255, 255)
     | RGBValue
-    // rgb(255, 255, 255, 255)
+    /**
+     * rgb(255, 255, 255, 1)
+     *
+     * This is only used to parse directly the color of background. This
+     * syntax shouldn't be used to set opacity. Use `opacity()` comp instead.
+     */
     | RGBAValue
     // rgb("#ffffff")
     | [string]
@@ -228,6 +240,10 @@ export function rgb(...args: ColorArgs): Color {
         } else if (Array.isArray(args[0]) && args[0].length === 3) {
             // rgb([255, 255, 255])
             return Color.fromArray(args[0]);
+        }
+    } else if (args.length === 2) {
+        if (args[0] instanceof Color) {
+            return args[0].clone();
         }
     } else if (args.length === 3 || args.length === 4) {
         return new Color(args[0], args[1], args[2]);
