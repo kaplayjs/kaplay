@@ -741,8 +741,9 @@ export default (opt: {
             const browserGamepad = navigator.getGamepads()[gamepad.index];
             if (!browserGamepad) continue;
             const customMap = opt.gamepads ?? {};
-            const map = customMap[browserGamepad.id]
-                ?? GAMEPAD_MAP[browserGamepad.id] ?? GAMEPAD_MAP["default"];
+            const map = customMap[browserGamepad.id] 
+                ?? (GAMEPAD_MAP as Record<any, GamepadDef>)[browserGamepad.id]
+                ?? GAMEPAD_MAP["default"]
             const gamepadState = state.gamepadStates.get(gamepad.index);
             if (!gamepadState) continue;
 
