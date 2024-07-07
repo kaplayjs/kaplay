@@ -794,7 +794,7 @@ const kaplay = <
         return assets.urlPrefix;
     }
 
-    function loadJSON(name, url) {
+    function loadJSON(name: string, url: string) {
         return assets.custom.add(name, fetchJSON(url));
     }
 
