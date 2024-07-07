@@ -4905,7 +4905,7 @@ const kaplay = <
 
     type RaycastResult = RaycastHit | null;
 
-    function record(frameRate?): Recording {
+    function record(frameRate?: number): Recording {
         const stream = app.canvas.captureStream(frameRate);
         const audioDest = audio.ctx.createMediaStreamDestination();
 
@@ -4918,7 +4918,7 @@ const kaplay = <
         // stream.addTrack(firstAudioTrack);
 
         const recorder = new MediaRecorder(stream);
-        const chunks = [];
+        const chunks: any[] = [];
 
         recorder.ondataavailable = (e) => {
             if (e.data.size > 0) {
