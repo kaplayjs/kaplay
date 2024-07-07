@@ -922,7 +922,7 @@ export default (opt: {
 
     canvasEvents.keyup = (e) => {
         state.events.onOnce("input", () => {
-            const k = KEY_ALIAS[e.key] || e.key.toLowerCase();
+            const k: Key = KEY_ALIAS[e.key as keyof typeof KEY_ALIAS] as Key || e.key.toLowerCase();
             const btn = getButtonNameByKey(k)!;
 
             state.keyState.release(k);
@@ -1075,16 +1075,16 @@ export default (opt: {
         });
     };
 
-    for (const name in canvasEvents) {
-        state.canvas.addEventListener(name, canvasEvents[name]);
+    for (const [name, val] of Object.entries(canvasEvents)) {
+        state.canvas.addEventListener(name, val as EventListenerOrEventListenerObject)
     }
-
-    for (const name in docEvents) {
-        document.addEventListener(name, docEvents[name]);
+    
+    for (const [name, val] of Object.entries(docEvents)) {
+        document.addEventListener(name, val as EventListenerOrEventListenerObject)
     }
-
-    for (const name in winEvents) {
-        window.addEventListener(name, winEvents[name]);
+    
+    for (const [name, val] of Object.entries(winEvents)) {
+        window.addEventListener(name, val as EventListenerOrEventListenerObject)
     }
 
     const resizeObserver = new ResizeObserver((entries) => {
