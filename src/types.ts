@@ -2949,7 +2949,7 @@ export interface KaboomCtx<
      *
      * @group Data
      */
-    getData<T>(key: string, def?: T): T;
+    getData<T>(key: string, def?: T): T | null;
     /**
      * Set data from local storage.
      *

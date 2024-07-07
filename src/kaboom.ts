@@ -748,7 +748,7 @@ const kaplay = <
 
         // misc
         gravity: null as Vec2 | null,
-        scenes: {},
+        scenes: {} as Record<SceneName, SceneDef>,
         currentScene: null as SceneName | null,
         layers: null,
         defaultLayerIndex: 0,
@@ -4215,7 +4215,7 @@ const kaplay = <
         game.scenes[id] = def;
     }
 
-    function go(name: SceneName, ...args) {
+    function go(name: SceneName, ...args: unknown[]) {
         if (!game.scenes[name]) {
             throw new Error(`Scene not found: ${name}`);
         }
@@ -4262,7 +4262,7 @@ const kaplay = <
         return game.currentScene;
     }
 
-    function getData<T>(key: string, def?: T): T {
+    function getData<T>(key: string, def?: T): T | null {
         try {
             return JSON.parse(window.localStorage[key]);
         } catch {
