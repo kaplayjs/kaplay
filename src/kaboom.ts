@@ -1832,10 +1832,10 @@ const kaplay = <
                 },
             ],
             [0, 1, 3, 1, 2, 3],
-            opt.fixed,
+            opt.fixed!,
             opt.tex,
             opt.shader,
-            opt.uniform,
+            opt.uniform!,
         );
 
         popTransform();
