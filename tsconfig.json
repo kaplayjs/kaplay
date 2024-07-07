@@ -10,7 +10,8 @@
     "declarationMap": true,
     "declarationDir": "dist/declaration",
     // always use import type for type only imports
-    "verbatimModuleSyntax": true
+    "verbatimModuleSyntax": true,
+    "strict": true
   },
   "include": [
     "src/**/*",
