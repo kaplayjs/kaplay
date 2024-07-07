@@ -3122,7 +3122,7 @@ const kaplay = <
         let curLine: FormattedChar[] = [];
         let cursor = 0;
         let lastSpace: number | null = null;
-        let lastSpaceWidth: number | null = null;
+        let lastSpaceWidth: number = 0;
 
         // TODO: word break
         while (cursor < chars.length) {
@@ -3138,7 +3138,7 @@ const kaplay = <
                 });
 
                 lastSpace = null;
-                lastSpaceWidth = null;
+                lastSpaceWidth = 0;
                 curX = 0;
                 curLine = [];
             } else {
@@ -3158,14 +3158,16 @@ const kaplay = <
                             gw = q.w * scale.x;
                             // omit trailing space
                             curLine = curLine.slice(0, lastSpace - 1);
-                            curX = lastSpaceWidth!;
+                            curX = lastSpaceWidth;
                         }
                         lastSpace = null;
-                        lastSpaceWidth = null;
+                        lastSpaceWidth = 0;
+
                         lines.push({
                             width: curX - letterSpacing,
                             chars: curLine,
                         });
+
                         curX = 0;
                         curLine = [];
                     }
