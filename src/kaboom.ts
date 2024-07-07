@@ -1719,22 +1719,25 @@ const kaplay = <
         gfx.transform = m.clone();
     }
 
-    function pushTranslate(...args: Vec2Args) {
+    function pushTranslate(...args: Vec2Args | [undefined]) {
         if (args[0] === undefined) return;
+
         const p = vec2(...args);
         if (p.x === 0 && p.y === 0) return;
         gfx.transform.translate(p);
     }
 
-    function pushScale(...args: Vec2Args) {
+    function pushScale(...args: Vec2Args | [undefined]) {
         if (args[0] === undefined) return;
+
         const p = vec2(...args);
         if (p.x === 1 && p.y === 1) return;
         gfx.transform.scale(p);
     }
 
-    function pushRotate(a: number) {
+    function pushRotate(a: number | undefined) {
         if (!a) return;
+
         gfx.transform.rotate(a);
     }
 
@@ -1823,10 +1826,10 @@ const kaplay = <
                 },
             ],
             [0, 1, 3, 1, 2, 3],
-            opt.fixed,
+            opt.fixed!,
             opt.tex,
             opt.shader,
-            opt.uniform,
+            opt.uniform!,
         );
 
         popTransform();
