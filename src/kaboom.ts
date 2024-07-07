@@ -4156,9 +4156,9 @@ const kaplay = <
             if (args[3]) gfx.bgAlpha = args[3];
         }
         gl.clearColor(
-            gfx.bgColor.r / 255,
-            gfx.bgColor.g / 255,
-            gfx.bgColor.b / 255,
+            gfx.bgColor!.r / 255,
+            gfx.bgColor!.g / 255,
+            gfx.bgColor!.b / 255,
             gfx.bgAlpha,
         );
     }
