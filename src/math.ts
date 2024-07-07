@@ -1270,7 +1270,7 @@ export class RNG {
     genNumber(a: number, b: number): number {
         return a + this.gen() * (b - a);
     }
-    genVec2(a: Vec2, b?: Vec2): Vec2 {
+    genVec2(a: Vec2, b: Vec2): Vec2 {
         return new Vec2(
             this.genNumber(a.x, b.x),
             this.genNumber(a.y, b.y),
@@ -1283,7 +1283,7 @@ export class RNG {
             this.genNumber(a.b, b.b),
         );
     }
-    genAny<T = RNGValue>(...args: T[]): T {
+    genAny<T = RNGValue>(...args: [] | [T] | [T, T]): T {
         if (args.length === 0) {
             return this.gen() as T;
         } else if (args.length === 1) {
@@ -1303,6 +1303,8 @@ export class RNG {
                 return this.genColor(args[0], args[1]) as T;
             }
         }
+
+        throw new Error("More than 2 arguments not supported");
     }
 }
 
