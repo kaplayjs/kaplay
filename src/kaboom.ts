@@ -745,7 +745,7 @@ const kaplay = <
         // misc
         gravity: null,
         scenes: {},
-        currentScene: null,
+        currentScene: null as SceneName | null,
         layers: null,
         defaultLayerIndex: 0,
 

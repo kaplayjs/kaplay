@@ -1542,12 +1542,12 @@ export interface KaboomCtx<
      */
     onSceneLeave(action: (newScene?: string) => void): KEventController;
     /**
-     * Gets the name of the current scene.
+     * Gets the name of the current scene. Returns null if no scene is active.
      *
      * @since v3001.0
      * @group Scene
      */
-    getSceneName(): string;
+    getSceneName(): string | null;
     /**
      * Sets the root for all subsequent resource urls.
      *
