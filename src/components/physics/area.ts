@@ -300,6 +300,7 @@ export function area(opt: AreaCompOpt = {}): AreaComp {
         },
 
         checkCollision(this: GameObj, other: GameObj<AreaComp>) {
+            if (!other.id) throw new Error("area() requires the object to have an id");
             return colliding[other.id] ?? null;
         },
 
