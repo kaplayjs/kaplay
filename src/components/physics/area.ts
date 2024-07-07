@@ -1,6 +1,7 @@
 import { DEF_ANCHOR } from "../../constants";
 import { anchorPt, getKaboomContext } from "../../kaboom";
-import { Polygon, rgb, testPolygonPoint, Vec2, vec2 } from "../../math";
+import { Polygon, testPolygonPoint, Vec2, vec2 } from "../../math";
+import { rgb } from "../../math/color";
 import type {
     Collision,
     Comp,
