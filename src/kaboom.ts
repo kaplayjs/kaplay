@@ -3994,6 +3994,7 @@ const kaplay = <
 
         for (const e of evs) {
             obj[e] = (...args: unknown[]) => {
+                // @ts-ignore
                 const ev = app[e as any]?.(...args);
                 inputEvents.push(ev);
 
