@@ -3458,7 +3458,7 @@ const kaplay = <
     type MakeType<T> = MakeTypeIsCLASS<T, MakeTypeIsFN<T>>;
 
     function make<T>(comps: CompList<T> = []): GameObj<MakeType<T>> {
-        const compStates = new Map();
+        const compStates = new Map<string, Comp>();
         const cleanups = {} as Record<string, (() => unknown)[]>;
         const events = new KEventHandler();
         const inputEvents: KEventController[] = [];
@@ -3752,8 +3752,8 @@ const kaplay = <
                 }
             },
 
-            c(id: Tag): Comp {
-                return compStates.get(id);
+            c(id: Tag): Comp | null {
+                return compStates.get(id) ?? null;
             },
 
             // TODO: Separate

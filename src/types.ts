@@ -3964,7 +3964,7 @@ export interface GameObjRaw {
     /**
      * Get state for a specific comp.
      */
-    c(id: Tag): Comp | undefined;
+    c(id: Tag): Comp | null;
     /**
      * Gather debug info of all comps.
      */
