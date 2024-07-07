@@ -1720,22 +1720,25 @@ const kaplay = <
         gfx.transform = m.clone();
     }
 
-    function pushTranslate(...args: Vec2Args) {
+    function pushTranslate(...args: Vec2Args | [undefined]) {
         if (args[0] === undefined) return;
+
         const p = vec2(...args);
         if (p.x === 0 && p.y === 0) return;
         gfx.transform.translate(p);
     }
 
-    function pushScale(...args: Vec2Args) {
+    function pushScale(...args: Vec2Args | [undefined]) {
         if (args[0] === undefined) return;
+
         const p = vec2(...args);
         if (p.x === 1 && p.y === 1) return;
         gfx.transform.scale(p);
     }
 
-    function pushRotate(a: number) {
+    function pushRotate(a: number | undefined) {
         if (!a) return;
+
         gfx.transform.rotate(a);
     }
 
@@ -1778,9 +1781,9 @@ const kaplay = <
         const qh = q.h - uvPadY * 2;
 
         pushTransform();
-        pushTranslate(opt.pos!);
-        pushRotate(opt.angle!);
-        pushScale(opt.scale!);
+        pushTranslate(opt.pos);
+        pushRotate(opt.angle);
+        pushScale(opt.scale);
         pushTranslate(offset);
 
         drawRaw(
