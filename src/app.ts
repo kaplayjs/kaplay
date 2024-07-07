@@ -678,23 +678,23 @@ export default (opt: {
     }
 
     function registerGamepad(browserGamepad: Gamepad) {
-        const gamepad = {
+        const gamepad: KGamePad = {
             index: browserGamepad.index,
             isPressed: (btn: GamepadButton) => {
                 return state.gamepadStates.get(browserGamepad.index)?.buttonState
-                    .pressed.has(btn);
+                    .pressed.has(btn) || false;
             },
             isDown: (btn: GamepadButton) => {
                 return state.gamepadStates.get(browserGamepad.index)?.buttonState
-                    .down.has(btn);
+                    .down.has(btn) || false;
             },
             isReleased: (btn: GamepadButton) => {
                 return state.gamepadStates.get(browserGamepad.index)?.buttonState
-                    .released.has(btn);
+                    .released.has(btn) || false;
             },
             getStick: (stick: GamepadStick) => {
                 return state.gamepadStates.get(browserGamepad.index)?.stickState
-                    .get(stick);
+                    .get(stick) || false;
             },
         };
 
