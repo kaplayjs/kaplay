@@ -750,7 +750,7 @@ const kaplay = <
         defaultLayerIndex: 0,
 
         // on screen log
-        logs: [],
+        logs: [] as { msg: string | { toString(): string; }, time: number, }[],
 
         // camera
         cam: {
