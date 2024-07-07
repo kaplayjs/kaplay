@@ -3269,8 +3269,8 @@ const kaplay = <
 
     function drawFormattedText(ftext: FormattedText) {
         pushTransform();
-        pushTranslate(ftext.opt.pos);
-        pushRotate(ftext.opt.angle);
+        pushTranslate(ftext.opt.pos!);
+        pushRotate(ftext.opt.angle!);
         pushTranslate(
             anchorPt(ftext.opt.anchor ?? "topleft").add(1, 1).scale(
                 ftext.width,
