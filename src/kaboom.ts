@@ -3749,7 +3749,7 @@ const kaplay = <
                             ? this.isAncestorOf(obj)
                             : obj.parent === this;
                     };
-                    const events = [];
+                    const events: EventController[] = [];
                     // TODO: handle when object add / remove tags
                     // TODO: clean up when obj destroyed
                     events.push(onAdd((obj) => {
