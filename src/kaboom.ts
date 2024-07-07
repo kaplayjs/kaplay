@@ -2688,7 +2688,7 @@ const kaplay = <
                 if (opt.join !== "none") {
                     drawCircle(Object.assign({}, opt, {
                         pos: pts[i],
-                        radius: opt.width / 2,
+                        radius: (opt.width || 1) / 2,
                     }));
                 }
             }
