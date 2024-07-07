@@ -1,7 +1,7 @@
 import { DEF_JUMP_FORCE, MAX_VEL } from "../../constants";
 import { getKaboomContext } from "../../kaboom";
 import { type Vec2, vec2 } from "../../math";
-import type { Collision, Comp, GameObj, PosComp } from "../../types";
+import type { Collision, Comp, GameObj, KaboomCtx, PosComp } from "../../types";
 import type { KEventController } from "../../utils";
 import type { AreaComp } from "./area";
 
@@ -155,7 +155,10 @@ export interface BodyCompOpt {
     mass?: number;
 }
 
-export function body(opt: BodyCompOpt = {}): BodyComp {
+export function body(
+    this: KaboomCtx,
+    opt: BodyCompOpt = {},
+): BodyComp {
     const k = getKaboomContext(this);
     const { calcTransform, game } = k._k;
     let curPlatform: GameObj<PosComp | AreaComp | BodyComp> | null = null;

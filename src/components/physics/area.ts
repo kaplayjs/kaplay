@@ -6,6 +6,7 @@ import type {
     Comp,
     Cursor,
     GameObj,
+    KaboomCtx,
     MouseButton,
     PosComp,
     Shape,
@@ -205,7 +206,7 @@ export interface AreaCompOpt {
     collisionIgnore?: Tag[];
 }
 
-export function area(opt: AreaCompOpt = {}): AreaComp {
+export function area(this: KaboomCtx, opt: AreaCompOpt = {}): AreaComp {
     const k = getKaboomContext(this);
     const { app, isFixed, getViewportScale, game } = k._k;
 
@@ -222,7 +223,9 @@ export function area(opt: AreaCompOpt = {}): AreaComp {
             }
 
             this.onCollideUpdate((obj, col) => {
-                if (!obj.id) throw new Error("area() requires the object to have an id");
+                if (!obj.id) {
+                    throw new Error("area() requires the object to have an id");
+                }
                 if (!colliding[obj.id]) {
                     this.trigger("collide", obj, col);
                 }
@@ -300,7 +303,11 @@ export function area(opt: AreaCompOpt = {}): AreaComp {
         },
 
         checkCollision(this: GameObj, other: GameObj<AreaComp>) {
-            if (!other.id) throw new Error("checkCollision() requires the object to have an id");
+            if (!other.id) {
+                throw new Error(
+                    "checkCollision() requires the object to have an id",
+                );
+            }
             return colliding[other.id] ?? null;
         },
 
@@ -310,12 +317,20 @@ export function area(opt: AreaCompOpt = {}): AreaComp {
 
         // TODO: perform check instead of use cache
         isColliding(other: GameObj<AreaComp>) {
-            if (!other.id) throw new Error("isColliding() requires the object to have an id");
+            if (!other.id) {
+                throw new Error(
+                    "isColliding() requires the object to have an id",
+                );
+            }
             return Boolean(colliding[other.id]);
         },
 
         isOverlapping(other) {
-            if (!other.id) throw new Error("isOverlapping() requires the object to have an id");
+            if (!other.id) {
+                throw new Error(
+                    "isOverlapping() requires the object to have an id",
+                );
+            }
             const col = colliding[other.id];
             return col && col.hasOverlap();
         },
@@ -383,7 +398,9 @@ export function area(opt: AreaCompOpt = {}): AreaComp {
                         cb?.(obj, col);
                     }
                 });
-            } else throw new Error("onCollide() requires either a function or a tag")
+            } else {throw new Error(
+                    "onCollide() requires either a function or a tag",
+                );}
         },
 
         onCollideUpdate(
@@ -398,7 +415,9 @@ export function area(opt: AreaCompOpt = {}): AreaComp {
                     "collideUpdate",
                     (obj, col) => obj.is(tag) && cb?.(obj, col),
                 );
-            } else throw new Error("onCollideUpdate() requires either a function or a tag")
+            } else {throw new Error(
+                    "onCollideUpdate() requires either a function or a tag",
+                );}
         },
 
         onCollideEnd(
@@ -413,7 +432,9 @@ export function area(opt: AreaCompOpt = {}): AreaComp {
                     "collideEnd",
                     (obj) => obj.is(tag) && cb?.(obj),
                 );
-            } else throw new Error("onCollideEnd() requires either a function or a tag")
+            } else {throw new Error(
+                    "onCollideEnd() requires either a function or a tag",
+                );}
         },
 
         hasPoint(pt: Vec2): boolean {

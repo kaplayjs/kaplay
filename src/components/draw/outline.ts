@@ -1,4 +1,4 @@
-import { Color, rgb } from "../../math";
+import { Color, rgb } from "../../math/color";
 import type { Comp, LineCap, LineJoin, Outline } from "../../types";
 
 /**

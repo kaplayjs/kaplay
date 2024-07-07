@@ -1,5 +1,6 @@
 import { getKaboomContext } from "../../kaboom";
-import { Color, evaluateCatmullRom, lerp, Vec2 } from "../../math";
+import { evaluateCatmullRom, lerp, Vec2 } from "../../math";
+import { Color } from "../../math/color";
 import easings from "../../math/easings";
 import type {
     Comp,

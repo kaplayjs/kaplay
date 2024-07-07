@@ -1,6 +1,6 @@
 import { getKaboomContext } from "../../kaboom";
 import { Rect, vec2 } from "../../math";
-import type { Comp, GameObj } from "../../types";
+import type { Comp, GameObj, KaboomCtx } from "../../types";
 
 /**
  * The {@link uvquad `uvquad()`} component.
@@ -22,7 +22,11 @@ export interface UVQuadComp extends Comp {
      */
     renderArea(): Rect;
 }
-export function uvquad(w: number, h: number): UVQuadComp {
+export function uvquad(
+    this: KaboomCtx,
+    w: number,
+    h: number,
+): UVQuadComp {
     const k = getKaboomContext(this);
     const { getRenderProps } = k._k;
 

@@ -1,6 +1,6 @@
 import { getKaboomContext } from "../../kaboom";
 import { Rect, vec2 } from "../../math";
-import type { Comp, GameObj } from "../../types";
+import type { Comp, GameObj, KaboomCtx } from "../../types";
 
 /**
  * The {@link rect `rect()`} component.
@@ -43,7 +43,12 @@ export interface RectCompOpt {
     fill?: boolean;
 }
 
-export function rect(w: number, h: number, opt: RectCompOpt = {}): RectComp {
+export function rect(
+    this: KaboomCtx,
+    w: number,
+    h: number,
+    opt: RectCompOpt = {},
+): RectComp {
     const k = getKaboomContext(this);
     const { getRenderProps } = k._k;
 

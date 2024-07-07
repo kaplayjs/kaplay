@@ -1,7 +1,14 @@
 import type { Texture } from "../../gfx";
 import { getKaboomContext } from "../../kaboom";
-import { type Color, Polygon } from "../../math";
-import type { Comp, DrawPolygonOpt, GameObj, Vec2 } from "../../types";
+import { Polygon } from "../../math";
+import { type Color } from "../../math/color";
+import type {
+    Comp,
+    DrawPolygonOpt,
+    GameObj,
+    KaboomCtx,
+    Vec2,
+} from "../../types";
 
 /**
  * The {@link polygon `polygon()`} component.
@@ -45,7 +52,11 @@ export interface PolygonComp extends Comp {
  */
 export type PolygonCompOpt = Omit<DrawPolygonOpt, "pts">;
 
-export function polygon(pts: Vec2[], opt: PolygonCompOpt = {}): PolygonComp {
+export function polygon(
+    this: KaboomCtx,
+    pts: Vec2[],
+    opt: PolygonCompOpt = {},
+): PolygonComp {
     const k = getKaboomContext(this);
     const { getRenderProps } = k._k;
 

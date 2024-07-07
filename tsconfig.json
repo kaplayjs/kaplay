@@ -3,7 +3,7 @@
     "esModuleInterop": true,
     "target": "ESNext",
     "moduleResolution": "Node",
-    "noImplicitThis": false,
+    "noImplicitThis": true,
     "resolveJsonModule": true,
     "emitDeclarationOnly": true,
     "declaration": true,

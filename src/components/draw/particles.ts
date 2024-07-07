@@ -1,7 +1,7 @@
 import type { Texture } from "../../gfx";
 import { getKaboomContext } from "../../kaboom";
 import { Color, lerp, map, Quad, Vec2, vec2 } from "../../math";
-import type { Comp, ShapeType, Vertex } from "../../types";
+import type { Comp, KaboomCtx, ShapeType, Vertex } from "../../types";
 import { KEvent } from "../../utils";
 
 class Particle {
@@ -110,7 +110,11 @@ export interface ParticlesComp extends Comp {
     onEnd(cb: () => void): void;
 }
 
-export function particles(popt: ParticlesOpt, eopt: EmitterOpt): ParticlesComp {
+export function particles(
+    this: KaboomCtx,
+    popt: ParticlesOpt,
+    eopt: EmitterOpt,
+): ParticlesComp {
     const k = getKaboomContext(this);
 
     let emitterLifetime = eopt.lifetime;

@@ -7,6 +7,7 @@ import type {
     Asset,
     Comp,
     GameObj,
+    KaboomCtx,
     SpriteAnimPlayOpt,
     SpriteCurAnim,
     SpriteData,
@@ -140,6 +141,7 @@ export interface SpriteCompOpt {
 
 // TODO: clean
 export function sprite(
+    this: KaboomCtx,
     src: string | SpriteData | Asset<SpriteData>,
     opt: SpriteCompOpt = {},
 ): SpriteComp {
@@ -273,7 +275,7 @@ export function sprite(
         add(this: GameObj<SpriteComp>) {
             const setSpriteData = (spr: SpriteData | null) => {
                 if (!spr) return;
-                
+
                 let q = spr.frames[0].clone();
 
                 if (opt.quad) {

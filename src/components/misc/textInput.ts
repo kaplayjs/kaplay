@@ -1,5 +1,5 @@
 import { getKaboomContext } from "../../kaboom";
-import type { Comp, KEventController } from "../../types";
+import type { Comp, KaboomCtx, KEventController } from "../../types";
 
 /**
  * The {@link stay `stay()`} component.
@@ -14,6 +14,7 @@ export interface TextInputComp extends Comp {
 }
 
 export function textInput(
+    this: KaboomCtx,
     hasFocus: boolean = true,
     maxInputLength?: number,
 ): TextInputComp {
