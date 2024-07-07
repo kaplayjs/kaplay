@@ -151,6 +151,7 @@ import type {
     DrawTextureOpt,
     DrawTriangleOpt,
     DrawUVQuadOpt,
+    EventController,
     FixedComp,
     FormattedChar,
     FormattedText,
@@ -2965,12 +2966,11 @@ const kaplay = <
         if (tr.opacity) fchar.opacity *= tr.opacity;
     }
 
-    // TODO: handle nested
     function compileStyledText(text: string): {
         charStyleMap: Record<number, string[]>;
         text: string;
     } {
-        const charStyleMap = {};
+        const charStyleMap = {} as Record<number, string[]>;
         // get the text without the styling syntax
         const renderText = text.replace(TEXT_STYLE_RE, "$2");
         let idxOffset = 0;
@@ -3459,7 +3459,7 @@ const kaplay = <
 
     function make<T>(comps: CompList<T> = []): GameObj<MakeType<T>> {
         const compStates = new Map();
-        const cleanups = {};
+        const cleanups = {} as Record<string, (() => unknown)[]>;
         const events = new KEventHandler();
         const inputEvents: KEventController[] = [];
         let onCurCompCleanup = null;
@@ -3526,17 +3526,19 @@ const kaplay = <
                 if (idx !== -1) {
                     obj.parent = null;
                     this.children.splice(idx, 1);
-                    const trigger = (o) => {
+
+                    const trigger = (o: GameObj) => {
                         o.trigger("destroy");
                         game.events.trigger("destroy", o);
                         o.children.forEach((child) => trigger(child));
                     };
+
                     trigger(obj);
                 }
             },
 
             // TODO: recursive
-            removeAll(tag?: Tag) {
+            removeAll(this: GameObj, tag?: Tag) {
                 if (tag) {
                     this.get(tag).forEach((obj) => this.remove(obj));
                 } else {
@@ -3544,7 +3546,7 @@ const kaplay = <
                 }
             },
 
-            update() {
+            update(this: GameObj) {
                 if (this.paused) return;
                 this.children
                     /*.sort((o1, o2) => (o1.z ?? 0) - (o2.z ?? 0))*/
@@ -3654,6 +3656,7 @@ const kaplay = <
                     if (!prop) continue;
 
                     if (typeof prop.value === "function") {
+                        // @ts-ignore Maybe a MAP would be better?
                         comp[k] = comp[k].bind(this);
                     }
 
@@ -3753,20 +3756,27 @@ const kaplay = <
                 return compStates.get(id);
             },
 
+            // TODO: Separate
             get(t: Tag | Tag[], opts: GetOpt = {}): GameObj[] {
                 let list: GameObj[] = opts.recursive
-                    ? this.children.flatMap(function recurse(child) {
-                        return [child, ...child.children.flatMap(recurse)];
-                    })
+                    ? this.children.flatMap(
+                        function recurse(child: GameObj): GameObj[] {
+                            return [child, ...child.children.flatMap(recurse)];
+                        },
+                    )
                     : this.children;
+
                 list = list.filter((child) => t ? child.is(t) : true);
+
                 if (opts.liveUpdate) {
-                    const isChild = (obj) => {
+                    const isChild = (obj: GameObj) => {
                         return opts.recursive
                             ? this.isAncestorOf(obj)
                             : obj.parent === this;
                     };
-                    const events = [];
+
+                    const events: EventController[] = [];
+
                     // TODO: handle when object add / remove tags
                     // TODO: clean up when obj destroyed
                     events.push(onAdd((obj) => {
@@ -3793,7 +3803,10 @@ const kaplay = <
 
             query(opt: QueryOpt) {
                 const hierarchy = opt.hierarchy || "children";
-                let list = [];
+                const include = opt.include;
+                const exclude = opt.exclude;
+                let list: GameObj[] = [];
+
                 switch (hierarchy) {
                     case "children":
                         list = this.children;
@@ -3814,7 +3827,7 @@ const kaplay = <
                         break;
                     case "descendants":
                         list = this.children.flatMap(
-                            function recurse(child: GameObj) {
+                            function recurse(child: GameObj): GameObj[] {
                                 return [
                                     child,
                                     ...child.children.flatMap(recurse),
@@ -3823,11 +3836,12 @@ const kaplay = <
                         );
                         break;
                 }
-                if (opt.include) {
+                if (include) {
                     const includeOp = opt.includeOp || "and";
+
                     if (includeOp === "and" || !Array.isArray(opt.include)) {
                         // Accept if all match
-                        list = list.filter(o => o.is(opt.include));
+                        list = list.filter(o => o.is(include));
                     } else { // includeOp == "or"
                         // Accept if some match
                         list = list.filter(o =>
@@ -3835,11 +3849,11 @@ const kaplay = <
                         );
                     }
                 }
-                if (opt.exclude) {
+                if (exclude) {
                     const excludeOp = opt.includeOp || "and";
                     if (excludeOp === "and" || !Array.isArray(opt.include)) {
                         // Reject if all match
-                        list = list.filter(o => !o.is(opt.exclude));
+                        list = list.filter(o => !o.is(exclude));
                     } else { // includeOp == "or"
                         // Reject if some match
                         list = list.filter(o =>
@@ -3901,7 +3915,10 @@ const kaplay = <
                 }
             },
 
-            on(name: string, action: (...args) => void): KEventController {
+            on(
+                name: string,
+                action: (...args: unknown[]) => void,
+            ): KEventController {
                 const ctrl = events.on(name, action.bind(this));
                 if (onCurCompCleanup) {
                     onCurCompCleanup(() => ctrl.cancel());
