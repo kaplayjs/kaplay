@@ -2011,6 +2011,7 @@ function raycastRect(origin: Vec2, direction: Vec2, rect: Rect) {
 
     if (tmax >= tmin && tmin >= 0 && tmin <= 1) {
         const point = origin.add(direction.scale(tmin));
+
         return {
             point: point,
             normal: normal,
@@ -2308,6 +2309,8 @@ export class Rect {
         return this.collides(point);
     }
     raycast(origin: Vec2, direction: Vec2): RaycastResult {
+        // Further type checking is needed here @mflerackers
+        // @ts-ignore
         return raycastRect(origin, direction, this);
     }
     random(): Vec2 {
@@ -2352,7 +2355,7 @@ export class Circle {
     random(): Vec2 {
         // TODO: Not uniform!!
         return this.center.add(
-            Vec2.fromAngle(rand(360).scale(rand(this.radius))),
+            Vec2.fromAngle(rand(360) * rand(this.radius)),
         );
     }
 }
