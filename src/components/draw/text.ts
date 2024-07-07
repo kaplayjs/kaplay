@@ -191,5 +191,6 @@ export function text(
     // @ts-ignore
     update(obj);
 
+    // @ts-ignore Deep check in text related methods
     return obj;
 }

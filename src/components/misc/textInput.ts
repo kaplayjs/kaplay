@@ -1,5 +1,11 @@
 import { getKaboomContext } from "../../kaboom";
-import type { Comp, KaboomCtx, KEventController } from "../../types";
+import type {
+    Comp,
+    GameObj,
+    KaboomCtx,
+    KEventController,
+    TextComp,
+} from "../../types";
 
 /**
  * The {@link stay `stay()`} component.
@@ -21,10 +27,12 @@ export function textInput(
     let k = getKaboomContext(this);
     let charEv: KEventController;
     let backEv: KEventController;
+
     return {
         id: "textInput",
         hasFocus: hasFocus,
-        add() {
+        require: ["text"],
+        add(this: GameObj<TextComp & TextInputComp>) {
             charEv = k.onCharInput((character) => {
                 if (
                     this.hasFocus
