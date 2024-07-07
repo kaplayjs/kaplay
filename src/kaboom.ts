@@ -3117,7 +3117,7 @@ const kaplay = <
         const scale = vec2(opt.scale ?? 1).scale(size / font.size);
         const lineSpacing = opt.lineSpacing ?? 0;
         const letterSpacing = opt.letterSpacing ?? 0;
-        let curX = 0;
+        let curX: number = 0;
         let tw = 0;
         let th = 0;
         const lines: Array<{
@@ -3126,8 +3126,8 @@ const kaplay = <
         }> = [];
         let curLine: FormattedChar[] = [];
         let cursor = 0;
-        let lastSpace = null;
-        let lastSpaceWidth = null;
+        let lastSpace: number | null = null;
+        let lastSpaceWidth: number = 0;
 
         // TODO: word break
         while (cursor < chars.length) {
@@ -3143,7 +3143,7 @@ const kaplay = <
                 });
 
                 lastSpace = null;
-                lastSpaceWidth = null;
+                lastSpaceWidth = 0;
                 curX = 0;
                 curLine = [];
             } else {
@@ -3166,11 +3166,13 @@ const kaplay = <
                             curX = lastSpaceWidth;
                         }
                         lastSpace = null;
-                        lastSpaceWidth = null;
+                        lastSpaceWidth = 0;
+
                         lines.push({
                             width: curX - letterSpacing,
                             chars: curLine,
                         });
+
                         curX = 0;
                         curLine = [];
                     }
