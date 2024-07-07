@@ -195,6 +195,7 @@ import type {
     Tag,
     TexFilter,
     TextAlign,
+    TimerComp,
     Uniform,
     Vertex,
 } from "./types";
@@ -746,7 +747,7 @@ const kaplay = <
         objEvents: new KEventHandler(),
 
         // root game object
-        root: make([]),
+        root: make([]) as GameObj<TimerComp>,
 
         // misc
         gravity: null as Vec2 | null,
