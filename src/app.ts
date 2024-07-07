@@ -681,19 +681,19 @@ export default (opt: {
         const gamepad = {
             index: browserGamepad.index,
             isPressed: (btn: GamepadButton) => {
-                return state.gamepadStates.get(browserGamepad.index).buttonState
+                return state.gamepadStates.get(browserGamepad.index)?.buttonState
                     .pressed.has(btn);
             },
             isDown: (btn: GamepadButton) => {
-                return state.gamepadStates.get(browserGamepad.index).buttonState
+                return state.gamepadStates.get(browserGamepad.index)?.buttonState
                     .down.has(btn);
             },
             isReleased: (btn: GamepadButton) => {
-                return state.gamepadStates.get(browserGamepad.index).buttonState
+                return state.gamepadStates.get(browserGamepad.index)?.buttonState
                     .released.has(btn);
             },
             getStick: (stick: GamepadStick) => {
-                return state.gamepadStates.get(browserGamepad.index).stickState
+                return state.gamepadStates.get(browserGamepad.index)?.stickState
                     .get(stick);
             },
         };
