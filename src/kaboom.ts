@@ -1542,7 +1542,7 @@ const kaplay = <
             toImageData: () => fb.toImageData(),
             width: fb.width,
             height: fb.height,
-            draw: (action) => {
+            draw: (action: () => void) => {
                 flush();
                 fb.bind();
                 action();
@@ -1608,7 +1608,7 @@ const kaplay = <
     function drawRaw(
         verts: Vertex[],
         indices: number[],
-        fixed: boolean,
+        fixed: boolean = false,
         tex: Texture = gfx.defTex,
         shaderSrc: RenderProps["shader"] = gfx.defShader,
         uniform: Uniform = {},
@@ -1834,10 +1834,10 @@ const kaplay = <
                 },
             ],
             [0, 1, 3, 1, 2, 3],
-            opt.fixed!,
+            opt.fixed,
             opt.tex,
             opt.shader,
-            opt.uniform!,
+            opt.uniform ?? undefined,
         );
 
         popTransform();
@@ -1960,7 +1960,7 @@ const kaplay = <
                 opt.fixed,
                 opt.tex,
                 opt.shader,
-                opt.uniform,
+                opt.uniform ?? undefined,
             );
         } else {
             // TODO: should this ignore scale?
@@ -2145,7 +2145,7 @@ const kaplay = <
             opt.fixed,
             gfx.defTex,
             opt.shader,
-            opt.uniform,
+            opt.uniform ?? undefined,
         );
     }
 
@@ -2308,7 +2308,7 @@ const kaplay = <
             opt.fixed,
             gfx.defTex,
             opt.shader,
-            opt.uniform,
+            opt.uniform ?? undefined,
         );
     }
 
@@ -2491,7 +2491,7 @@ const kaplay = <
             opt.fixed,
             gfx.defTex,
             opt.shader,
-            opt.uniform,
+            opt.uniform ?? undefined,
         );
     }
 
@@ -2645,7 +2645,7 @@ const kaplay = <
             opt.fixed,
             gfx.defTex,
             opt.shader,
-            opt.uniform,
+            opt.uniform ?? undefined,
         );
     }
 
@@ -2862,7 +2862,7 @@ const kaplay = <
             drawRaw(
                 verts,
                 opt.indices ?? indices,
-                opt.fixed ?? false,
+                opt.fixed,
                 opt.uv ? opt.tex : gfx.defTex,
                 opt.shader,
                 opt.uniform ?? undefined,
