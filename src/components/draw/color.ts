@@ -1,4 +1,4 @@
-import { type Color, rgb } from "../../math/color";
+import { type Color, type ColorArgs, rgb } from "../../math/color";
 import type { Comp } from "../../types";
 
 /**
@@ -9,15 +9,6 @@ import type { Comp } from "../../types";
 export interface ColorComp extends Comp {
     color: Color;
 }
-
-type ARGcase = [number, number, number];
-
-type Colorcase = Color
-type RBGcase = ARGcase
-type STRcase = string
-type NONEcase = void
-
-type ColorArgs = [Colorcase | RBGcase | STRcase | NONEcase] | ARGcase;
 
 export function color(...args: ColorArgs): ColorComp {
     return {

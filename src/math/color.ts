@@ -200,9 +200,9 @@ export class Color {
     }
 }
 
-type ColorArgs =
-    | [number, number, number]
+export type ColorArgs =
     | [Color]
+    | [number, number, number]
     | [string]
     | [number[]]
     | undefined[]
