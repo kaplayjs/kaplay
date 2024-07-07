@@ -752,7 +752,7 @@ const kaplay = <
         gravity: null as Vec2 | null,
         scenes: {} as Record<SceneName, SceneDef>,
         currentScene: null as SceneName | null,
-        layers: null,
+        layers: null as string[] | null,
         defaultLayerIndex: 0,
 
         // on screen log
@@ -4980,6 +4980,7 @@ const kaplay = <
     const loop = game.root.loop.bind(game.root);
     const query = game.root.query.bind(game.root);
     const tween = game.root.tween.bind(game.root);
+
     const layers = function(layerNames: string[], defaultLayer: string) {
         if (game.layers) {
             throw Error("Layers can only be assigned once.");
@@ -5014,26 +5015,26 @@ const kaplay = <
 
     function addKaboom(p: Vec2, opt: BoomOpt = {}): GameObj {
         const kaboom = add([
-            pos(p),
-            stay(),
+            ctx.pos(p),
+            ctx.stay(),
         ]);
 
         const speed = (opt.speed || 1) * 5;
         const s = opt.scale || 1;
 
         kaboom.add([
-            sprite(boomSprite),
-            scale(0),
-            anchor("center"),
+            ctx.sprite(boomSprite.data!),
+            ctx.scale(0),
+            ctx.anchor("center"),
             boom(speed, s),
             ...opt.comps ?? [],
         ]);
 
         const ka = kaboom.add([
-            sprite(kaSprite),
-            scale(0),
-            anchor("center"),
-            timer(),
+            ctx.sprite(kaSprite.data!),
+            ctx.scale(0),
+            ctx.anchor("center"),
+            ctx.timer(),
             ...opt.comps ?? [],
         ]);
 
@@ -5102,7 +5103,7 @@ const kaplay = <
         let tr = new Mat4();
 
         // a local transform stack
-        const stack = [];
+        const stack: any[] = [];
 
         function checkObj(obj: GameObj) {
             stack.push(tr.clone());
@@ -5237,7 +5238,7 @@ const kaplay = <
         }
     }
 
-    function drawInspectText(pos, txt) {
+    function drawInspectText(pos: Vec2, txt: string) {
         drawUnscaled(() => {
             const pad = vec2(8);
 
@@ -5615,7 +5616,7 @@ const kaplay = <
 
             game.events.trigger("frameEnd");
         } catch (e) {
-            handleErr(e);
+            handleErr(e as Error);
         }
     });
 
@@ -6060,13 +6061,15 @@ const kaplay = <
         BLACK: Color.BLACK,
         quit,
         // helpers
-        KEvent: KEvent,
-        KEventHandler: KEventHandler,
-        KEventController: KEventController,
+        KEvent,
+        KEventHandler,
+        KEventController,
     };
 
-    if (gopt.plugins) {
-        gopt.plugins.forEach(plug);
+    const plugins = gopt.plugins as KaboomPlugin<Record<string, unknown>>[];
+
+    if (plugins) {
+        plugins.forEach(plug);
     }
 
     // export everything to window if global is set
