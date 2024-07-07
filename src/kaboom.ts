@@ -156,6 +156,7 @@ import type {
     FormattedChar,
     FormattedText,
     GameObj,
+    GameObjInspect,
     GetOpt,
     GfxFont,
     ImageSource,
@@ -3938,9 +3939,10 @@ const kaplay = <
             },
 
             inspect() {
-                const info = {};
+                const info = {} as GameObjInspect;
+
                 for (const [tag, comp] of compStates) {
-                    info[tag] = comp.inspect ? comp.inspect() : null;
+                    info[tag] = comp.inspect?.() ?? null;
                 }
                 return info;
             },
