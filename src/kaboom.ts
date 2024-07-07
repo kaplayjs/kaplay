@@ -3635,6 +3635,7 @@ const kaplay = <
                     }
 
                     const prop = Object.getOwnPropertyDescriptor(comp, k);
+                    if (!prop) continue;
 
                     if (typeof prop.value === "function") {
                         comp[k] = comp[k].bind(this);
