@@ -783,7 +783,8 @@ export default (opt: {
             }
 
             for (const stickName in map.sticks) {
-                const stick = map.sticks[stickName];
+                const stick = map.sticks[stickName as GamepadStick];
+                if (!stick) continue;
                 const value = new Vec2(
                     browserGamepad.axes[stick.x],
                     browserGamepad.axes[stick.y],
