@@ -747,7 +747,7 @@ const kaplay = <
         root: make([]),
 
         // misc
-        gravity: null,
+        gravity: null as Vec2 | null,
         scenes: {},
         currentScene: null as SceneName | null,
         layers: null,
@@ -4187,7 +4187,7 @@ const kaplay = <
         return Number(n.toFixed(f));
     }
 
-    function isFixed(obj: GameObj) {
+    function isFixed(obj: GameObj): boolean {
         if (obj.fixed) return true;
         return obj.parent ? isFixed(obj.parent) : false;
     }
