@@ -1,4 +1,4 @@
-import { type Color, rgb } from "../../math";
+import { type Color, rgb } from "../../math/color";
 import type { Comp } from "../../types";
 
 /**
