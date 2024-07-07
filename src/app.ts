@@ -740,6 +740,7 @@ export default (opt: {
             const map = customMap[browserGamepad.id]
                 ?? GAMEPAD_MAP[browserGamepad.id] ?? GAMEPAD_MAP["default"];
             const gamepadState = state.gamepadStates.get(gamepad.index);
+            if (!gamepadState) continue;
 
             for (let i = 0; i < browserGamepad.buttons.length; i++) {
                 const gamepadBtn = map.buttons[i];
