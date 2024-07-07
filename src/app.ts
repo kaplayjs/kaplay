@@ -224,14 +224,18 @@ export default (opt: {
 
     function quit() {
         state.stopped = true;
-        for (const name in canvasEvents) {
-            state.canvas.removeEventListener(name, canvasEvents[name as keyof typeof canvasEvents]);
+        const ce = Object.entries(canvasEvents);
+        const de = Object.entries(docEvents);
+        const we = Object.entries(winEvents);
+        type EL = EventListenerOrEventListenerObject;
+        for (const [name, val] of ce) {
+            state.canvas.removeEventListener(name, val as EL)
         }
-        for (const name in docEvents) {
-            document.removeEventListener(name, docEvents[name as keyof typeof docEvents]);
+        for (const [name, val] of de) {
+            document.removeEventListener(name, val as EL)
         }
-        for (const name in winEvents) {
-            window.removeEventListener(name, winEvents[name as keyof typeof winEvents]);
+        for (const [name, val] of we) {
+            window.removeEventListener(name, val as EL)
         }
         resizeObserver.disconnect();
     }
