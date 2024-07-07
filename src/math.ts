@@ -337,6 +337,9 @@ export class Color {
             const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(
                 hex,
             );
+
+            if (!result) throw new Error("Invalid hex color format");
+
             return new Color(
                 parseInt(result[1], 16),
                 parseInt(result[2], 16),
@@ -353,7 +356,7 @@ export class Color {
             return new Color(255 * l, 255 * l, 255 * l);
         }
 
-        const hue2rgb = (p, q, t) => {
+        const hue2rgb = (p: number, q: number, t: number) => {
             if (t < 0) t += 1;
             if (t > 1) t -= 1;
             if (t < 1 / 6) return p + (q - p) * 6 * t;
