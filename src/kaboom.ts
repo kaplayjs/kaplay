@@ -1757,15 +1757,6 @@ const kaplay = <
             );
         }
 
-        if (opt.pos === undefined)
-            throw new Error("drawUVQuad() requires property \"pos\".");
-
-        if (opt.angle === undefined)
-            throw new Error("drawUVQuad() requires property \"pos\".")
-
-        if (opt.scale === undefined)
-            throw new Error("drawUVQuad() requires property \"scale\".")
-
         if (opt.width <= 0 || opt.height <= 0) {
             return;
         }
@@ -1787,9 +1778,9 @@ const kaplay = <
         const qh = q.h - uvPadY * 2;
 
         pushTransform();
-        pushTranslate(opt.pos);
-        pushRotate(opt.angle);
-        pushScale(opt.scale);
+        pushTranslate(opt.pos!);
+        pushRotate(opt.angle!);
+        pushScale(opt.scale!);
         pushTranslate(offset);
 
         drawRaw(
