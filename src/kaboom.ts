@@ -2815,10 +2815,10 @@ const kaplay = <
         }
 
         pushTransform();
-        pushTranslate(opt.pos);
-        pushScale(opt.scale);
-        pushRotate(opt.angle);
-        pushTranslate(opt.offset);
+        pushTranslate(opt.pos!);
+        pushScale(opt.scale!);
+        pushRotate(opt.angle!);
+        pushTranslate(opt.offset!);
 
         if (opt.fill !== false) {
             const color = opt.color ?? Color.WHITE;
