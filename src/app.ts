@@ -851,7 +851,7 @@ export default (opt: {
         state.events.onOnce("input", () => {
             const m = MOUSE_BUTTONS[e.button];
             if (!m) return;
-            const btn = getButtonByMouseButton(m);
+            const btn = getButtonByMouseButton(m)!;
 
             state.mouseState.press(m);
             state.buttonState.press(btn);
