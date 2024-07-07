@@ -59,7 +59,6 @@ import type { Asset } from "./gfx/assets";
 import type { FontData } from "./gfx/fonts";
 import type {
     Circle,
-    Color,
     Ellipse,
     Line,
     Mat4,
@@ -73,6 +72,7 @@ import type {
     ShapeType,
     Vec2,
 } from "./math";
+import type { Color } from "./math/color";
 import type { NavMesh } from "./math/navigationmesh";
 import type { KEvent, KEventController, KEventHandler } from "./utils";
 

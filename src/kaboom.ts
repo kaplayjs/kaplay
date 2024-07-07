@@ -47,7 +47,6 @@ import {
     chooseMultiple,
     Circle,
     clamp,
-    Color,
     curveLengthApproximation,
     deg2rad,
     easingCubicBezier,
@@ -62,7 +61,6 @@ import {
     evaluateQuadratic,
     evaluateQuadraticFirstDerivative,
     evaluateQuadraticSecondDerivative,
-    hsl2rgb,
     isConvex,
     lerp,
     Line,
@@ -81,7 +79,6 @@ import {
     raycastGrid,
     type RaycastHit as BaseRaycastHit,
     Rect,
-    rgb,
     RNG,
     sat,
     shuffle,
@@ -98,6 +95,8 @@ import {
     type Vec2Args,
     wave,
 } from "./math";
+
+import { Color, hsl2rgb, rgb } from "./math/color";
 
 import { NavMesh } from "./math/navigationmesh";
 
