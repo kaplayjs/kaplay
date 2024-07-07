@@ -225,13 +225,13 @@ export default (opt: {
     function quit() {
         state.stopped = true;
         for (const name in canvasEvents) {
-            state.canvas.removeEventListener(name, canvasEvents[name as any]);
+            state.canvas.removeEventListener(name, canvasEvents[name as keyof typeof canvasEvents]);
         }
         for (const name in docEvents) {
-            document.removeEventListener(name, docEvents[name as any]);
+            document.removeEventListener(name, docEvents[name as keyof typeof docEvents]);
         }
         for (const name in winEvents) {
-            window.removeEventListener(name, winEvents[name as any]);
+            window.removeEventListener(name, winEvents[name as keyof typeof winEvents]);
         }
         resizeObserver.disconnect();
     }
