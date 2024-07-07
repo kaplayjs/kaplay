@@ -896,7 +896,8 @@ export default (opt: {
             e.preventDefault();
         }
         state.events.onOnce("input", () => {
-            const k = KEY_ALIAS[e.key] || e.key.toLowerCase();
+            const k = KEY_ALIAS[e.key as keyof typeof KEY_ALIAS] || e.key.toLowerCase();
+            if (k === undefined) throw new Error(`Unknown key: ${e.key}`);
             if (k.length === 1) {
                 state.events.trigger("charInput", k);
                 state.charInputted.push(k);
