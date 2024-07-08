@@ -4113,7 +4113,8 @@ const kaplay = <
     const onClick = overload2((action: () => void) => {
         return app.onMousePress(action);
     }, (tag: Tag, action: (obj: GameObj) => void) => {
-        const events: any[] = [];
+        const events: EventController[] = [];
+
         forAllCurrentAndFuture(tag, (obj) => {
             if (!obj.area) {
                 throw new Error(
@@ -4127,7 +4128,8 @@ const kaplay = <
 
     // add an event that runs once when objs with tag t is hovered
     function onHover(t: Tag, action: (obj: GameObj) => void): KEventController {
-        const events: any[] = [];
+        const events: EventController[] = [];
+
         forAllCurrentAndFuture(t, (obj) => {
             if (!obj.area) {
                 throw new Error(
@@ -4144,7 +4146,8 @@ const kaplay = <
         t: Tag,
         action: (obj: GameObj) => void,
     ): KEventController {
-        const events: any[] = [];
+        const events: EventController[] = [];
+
         forAllCurrentAndFuture(t, (obj) => {
             if (!obj.area) {
                 throw new Error(
@@ -4161,7 +4164,8 @@ const kaplay = <
         t: Tag,
         action: (obj: GameObj) => void,
     ): KEventController {
-        const events: any[] = [];
+        const events: EventController[] = [];
+
         forAllCurrentAndFuture(t, (obj) => {
             if (!obj.area) {
                 throw new Error(
