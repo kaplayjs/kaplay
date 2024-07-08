@@ -1,6 +1,6 @@
 const VERSION = "3001.0.0";
 
-import initApp from "./app";
+import { type App, initApp } from "./app";
 import initGfx, { BatchRenderer, FrameBuffer, Shader, Texture } from "./gfx";
 
 import {
@@ -4000,12 +4000,11 @@ const kaplay = <
             "onButtonPress",
             "onButtonDown",
             "onButtonRelease",
-        ] as const;
+        ] as unknown as [keyof Pick<App, "onKeyPress">];
 
         for (const e of evs) {
-            obj[e] = (...args: unknown[]) => {
-                // @ts-ignore
-                const ev = app[e as any]?.(...args);
+            obj[e] = (...args: [any]) => {
+                const ev = app[e]?.(...args);
                 inputEvents.push(ev);
 
                 // TODO: what if the game object is destroy and re-added
