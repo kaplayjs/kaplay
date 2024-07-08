@@ -4482,8 +4482,8 @@ const kaplay = <
                 while (frontier.length > 0) {
                     const i = frontier.pop();
                     getNeighbours(i).forEach((i) => {
-                        if (connectivityMap[i] < 0) {
-                            connectivityMap[i] = index;
+                        if (connectivityMap![i] < 0) {
+                            connectivityMap![i] = index;
                             frontier.push(i);
                         }
                     });
@@ -4496,7 +4496,7 @@ const kaplay = <
             }
             connectivityMap.fill(-1, 0, size);
             let index = 0;
-            for (let i = 0; i < costMap.length; i++) {
+            for (let i = 0; i < costMap!.length; i++) {
                 if (connectivityMap[i] >= 0) {
                     index++;
                     continue;
