@@ -4356,7 +4356,7 @@ const kaplay = <
 
         // TODO: custom parent
         const level = add([
-            pos(opt.pos ?? vec2(0)),
+            ctx.pos(opt.pos ?? vec2(0)),
         ]) as GameObj<PosComp | LevelComp>;
 
         const numRows = map.length;
