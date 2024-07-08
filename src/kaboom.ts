@@ -4020,13 +4020,15 @@ const kaplay = <
     }
 
     // add an event to a tag
+    // TODO: Implement `cb` args typing
     function on(
         event: string,
         tag: Tag,
-        cb: (obj: GameObj, ...args) => void,
+        cb: (obj: GameObj, ...args: any[]) => void,
     ): KEventController {
-        if (!game.objEvents[event]) {
-            game.objEvents[event] = new Registry();
+        type EventKey = keyof KEventHandler<Record<string, any[]>>
+        if (!game.objEvents[<EventKey> event]) {
+            game.objEvents[<EventKey> event] = new Registry() as any;
         }
         return game.objEvents.on(event, (obj, ...args) => {
             if (obj.is(tag)) {
