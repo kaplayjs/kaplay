@@ -4680,7 +4680,7 @@ const kaplay = <
                 if (!spatialMap) {
                     createSpatialMap();
                 }
-                return spatialMap;
+                return spatialMap!;
             },
 
             onSpatialMapChanged(this: GameObj<LevelComp>, cb: () => void) {
