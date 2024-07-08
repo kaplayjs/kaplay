@@ -436,16 +436,18 @@ const kaplay = <
 
     const gc: Array<() => void> = [];
 
-    const gl: WebGLRenderingContext = app.canvas
+    const canvasContext = app.canvas
         .getContext("webgl", {
             antialias: true,
             depth: true,
             stencil: true,
             alpha: true,
             preserveDrawingBuffer: true,
-        })!;
+        });
 
-    if (!gl || gl === null) throw new Error("WebGL not supported");
+    if (!canvasContext) throw new Error("WebGL not supported");
+
+    const gl = canvasContext;
 
     const ggl = initGfx(gl, {
         texFilter: gopt.texFilter,
