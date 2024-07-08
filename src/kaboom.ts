@@ -4593,7 +4593,7 @@ const kaplay = <
                 this: GameObj<LevelComp>,
                 key: string | CompList<any>,
                 ...args: Vec2Args
-            ): GameObj | null {
+            ) {
                 const p = vec2(...args);
 
                 const comps = (() => {
