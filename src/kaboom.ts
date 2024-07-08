@@ -3418,9 +3418,9 @@ const kaplay = <
         fadeOutTime: number = 1,
     ) {
         let flash = add([
-            rect(width(), height()),
+            rect.apply(ctx, [width(), height()]),
             color(flashColor),
-            opacity(1),
+            opacity.apply(ctx, [1]),
             fixed(),
         ]);
         let fade = flash.fadeOut(fadeOutTime);
