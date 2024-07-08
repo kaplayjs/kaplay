@@ -4508,7 +4508,7 @@ const kaplay = <
 
         const getCost = (node: number, neighbour: number) => {
             // Cost of destination tile
-            return costMap[neighbour];
+            return costMap![neighbour];
         };
 
         const getHeuristic = (node: number, goal: number) => {
