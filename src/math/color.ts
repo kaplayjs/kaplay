@@ -22,6 +22,7 @@ export class Color {
         this.b = clamp(b, 0, 255);
     }
 
+    // TODO: Type arr as tuple (no in ts-strict branch yet)
     static fromArray(arr: number[]) {
         return new Color(arr[0], arr[1], arr[2]);
     }

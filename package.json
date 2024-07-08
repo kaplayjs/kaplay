@@ -48,6 +48,7 @@
     "check": "tsc",
     "fmt": "dprint fmt",
     "test": "node scripts/test.js",
+    "test:vite": "vitest",
     "desktop": "tauri dev",
     "prepare": "npm run build",
     "publish:next": "npm publish --tag next"
@@ -58,6 +59,7 @@
     "esbuild-dts-path-alias": "^4.2.1",
     "express": "^4.18.3",
     "puppeteer": "^22.4.1",
-    "typescript": "^5.4.2"
+    "typescript": "^5.4.2",
+    "vitest": "^2.0.0"
   }
 }
