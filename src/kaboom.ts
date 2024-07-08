@@ -3464,7 +3464,7 @@ const kaplay = <
         const cleanups = {} as Record<string, (() => unknown)[]>;
         const events = new KEventHandler();
         const inputEvents: KEventController[] = [];
-        let onCurCompCleanup = null;
+        let onCurCompCleanup: Function | null = null;
         let paused = false;
 
         // @ts-ignore
@@ -3678,18 +3678,18 @@ const kaplay = <
                         // automatically clean up events created by components in add() stage
                         const func = k === "add"
                             ? () => {
-                                onCurCompCleanup = (c) => gc.push(c);
-                                comp[k]();
+                                onCurCompCleanup = (c: any) => gc.push(c);
+                                comp[k]!();
                                 onCurCompCleanup = null;
                             }
-                            : comp[k];
-                        gc.push(this.on(k, func).cancel);
+                            : comp[<keyof typeof comp> k];
+                        gc.push(this.on(k, <any> func).cancel);
                     } else {
                         if (this[k] === undefined) {
                             // assign comp fields to game obj
                             Object.defineProperty(this, k, {
-                                get: () => comp[k],
-                                set: (val) => comp[k] = val,
+                                get: () => comp[<keyof typeof comp> k],
+                                set: (val) => comp[<keyof typeof comp> k] = val,
                                 configurable: true,
                                 enumerable: true,
                             });
@@ -3722,7 +3722,7 @@ const kaplay = <
                 if (this.exists()) {
                     checkDeps();
                     if (comp.add) {
-                        onCurCompCleanup = (c) => gc.push(c);
+                        onCurCompCleanup = (c: any) => gc.push(c);
                         comp.add.call(this);
                         onCurCompCleanup = null;
                     }
