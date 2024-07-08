@@ -3476,8 +3476,8 @@ const kaplay = <
         let onCurCompCleanup: Function | null = null;
         let paused = false;
 
-        // @ts-ignore
-        const obj: GameObj = {
+        // the game object without the event methods, added later
+        const obj: Omit<GameObj, keyof typeof evs> = {
             id: uid(),
             // TODO: a nice way to hide / pause when add()-ing
             hidden: false,
@@ -3507,7 +3507,7 @@ const kaplay = <
                 return tags;
             },
 
-            add<T2>(a: CompList<T2> | GameObj<T2>): GameObj {
+            add<T2>(this: GameObj, a: CompList<T2> | GameObj<T2>): GameObj {
                 const obj = Array.isArray(a) ? make(a) : a;
                 if (obj.parent) {
                     throw new Error(
@@ -3906,7 +3906,7 @@ const kaplay = <
                 return obj.parent === this || this.isAncestorOf(obj.parent);
             },
 
-            exists(): boolean {
+            exists(this: GameObj): boolean {
                 return game.root.isAncestorOf(this);
             },
 
@@ -3937,7 +3937,7 @@ const kaplay = <
                 return ctrl;
             },
 
-            trigger(name: string, ...args): void {
+            trigger(name: string, ...args: unknown[]): void {
                 events.trigger(name, ...args);
                 game.objEvents.trigger(name, this, ...args);
             },
@@ -4017,7 +4017,7 @@ const kaplay = <
             obj.use(comp as string | Comp);
         }
 
-        return obj;
+        return obj as GameObj<MakeType<T>>;
     }
 
     // add an event to a tag
