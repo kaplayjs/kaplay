@@ -4687,7 +4687,7 @@ const kaplay = <
                     createSpatialMap();
                 }
                 const hash = tile2Hash(tilePos);
-                return spatialMap[hash] || [];
+                return spatialMap![hash] || [];
             },
 
             raycast(origin: Vec2, direction: Vec2) {
