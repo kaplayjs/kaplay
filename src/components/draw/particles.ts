@@ -1,18 +1,19 @@
 import type { Texture } from "../../gfx";
 import { getKaboomContext } from "../../kaboom";
-import { Color, lerp, map, Quad, Vec2, vec2 } from "../../math";
+import { lerp, map, Quad, Vec2, vec2 } from "../../math";
+import { Color } from "../../math/color";
 import type { Comp, KaboomCtx, ShapeType, Vertex } from "../../types";
 import { KEvent } from "../../utils";
 
 class Particle {
-    pos: Vec2;
-    vel: Vec2;
-    acc: Vec2;
-    angle: number;
-    angularVelocity: number;
-    damping: number;
+    pos: Vec2 = vec2(0);
+    vel: Vec2 = vec2(0);
+    acc: Vec2 = vec2(0);
+    angle: number = 0;
+    angularVelocity: number = 0;
+    damping: number = 0;
     t: number;
-    lt: number | null;
+    lt: number | null = null;
     gc: boolean;
 
     constructor() {
@@ -172,7 +173,7 @@ export function particles(
     return {
         id: "particles",
         emit(n: number) {
-            let index = 0;
+            let index: number | null = 0;
             for (let i = 0; i < n; i++) {
                 index = nextFree(index);
                 if (index == null) return;
