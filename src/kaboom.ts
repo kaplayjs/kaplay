@@ -4026,7 +4026,7 @@ const kaplay = <
         tag: Tag,
         cb: (obj: GameObj, ...args: any[]) => void,
     ): KEventController {
-        type EventKey = keyof KEventHandler<Record<string, any[]>>
+        type EventKey = keyof KEventHandler<Record<string, any[]>>;
         if (!game.objEvents[<EventKey> event]) {
             game.objEvents[<EventKey> event] = new Registry() as any;
         }
@@ -4402,10 +4402,10 @@ const kaplay = <
 
         const removeFromSpatialMap = (obj: GameObj) => {
             const i = tile2Hash(obj.tilePos);
-            if (spatialMap[i]) {
-                const index = spatialMap[i].indexOf(obj);
+            if (spatialMap![i]) {
+                const index = spatialMap![i].indexOf(obj);
                 if (index >= 0) {
-                    spatialMap[i].splice(index, 1);
+                    spatialMap![i].splice(index, 1);
                 }
             }
         };
@@ -4489,7 +4489,9 @@ const kaplay = <
                 const frontier: number[] = [];
                 frontier.push(i);
                 while (frontier.length > 0) {
-                    const i = frontier.pop();
+                    // TODO: Remove non-null assertion
+                    const i = frontier.pop()!;
+
                     getNeighbours(i).forEach((i) => {
                         if (connectivityMap![i] < 0) {
                             connectivityMap![i] = index;
@@ -4801,9 +4803,10 @@ const kaplay = <
 
                 // Tiles are not within the same section
                 // If we test the start tile when invalid, we may get stuck
+                // TODO: Remove non-null assertion
                 if (
-                    connectivityMap[start] != -1
-                    && connectivityMap[start] !== connectivityMap[goal]
+                    connectivityMap![start] != -1
+                    && connectivityMap![start] !== connectivityMap![goal]
                 ) {
                     return null;
                 }
@@ -4840,7 +4843,8 @@ const kaplay = <
                             + getHeuristic(next, goal);
                         if (
                             !costSoFar.has(next)
-                            || newCost < costSoFar.get(next)
+                            // TODO: Remove non-null assertion
+                            || newCost < costSoFar.get(next)!
                         ) {
                             costSoFar.set(next, newCost);
                             frontier.insert({ cost: newCost, node: next });
@@ -4854,7 +4858,8 @@ const kaplay = <
                 const p = hash2Tile(node);
                 path.push(p);
                 while (node !== start) {
-                    node = cameFrom.get(node);
+                    // TODO: Remove non-null assertion
+                    node = cameFrom.get(node)!;
                     const p = hash2Tile(node);
                     path.push(p);
                 }
