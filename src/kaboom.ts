@@ -4522,17 +4522,17 @@ const kaplay = <
             const n = [];
             const x = Math.floor(node % numColumns);
             const left = x > 0
-                && (edgeMap[node] & EdgeMask.Left)
-                && costMap[node - 1] !== Infinity;
+                && (edgeMap![node] & EdgeMask.Left)
+                && costMap![node - 1] !== Infinity;
             const top = node >= numColumns
-                && (edgeMap[node] & EdgeMask.Top)
-                && costMap[node - numColumns] !== Infinity;
+                && (edgeMap![node] & EdgeMask.Top)
+                && costMap![node - numColumns] !== Infinity;
             const right = x < numColumns - 1
-                && (edgeMap[node] & EdgeMask.Right)
-                && costMap[node + 1] !== Infinity;
+                && (edgeMap![node] & EdgeMask.Right)
+                && costMap![node + 1] !== Infinity;
             const bottom = node < numColumns * numRows - numColumns - 1
-                && (edgeMap[node] & EdgeMask.Bottom)
-                && costMap[node + numColumns] !== Infinity;
+                && (edgeMap![node] & EdgeMask.Bottom)
+                && costMap![node + numColumns] !== Infinity;
             if (diagonals) {
                 if (left) {
                     if (top) n.push(node - numColumns - 1);
