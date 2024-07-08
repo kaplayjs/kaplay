@@ -4327,11 +4327,9 @@ const kaplay = <
             funcsObj = funcs;
         }
         for (const k in funcsObj) {
-            // @ts-ignore
-            ctx[k] = funcsObj[k];
+            ctx[k as keyof typeof ctx] = funcsObj[k];
             if (gopt.global !== false) {
-                // @ts-ignore
-                window[k] = funcsObj[k];
+                window[k as any] = funcsObj[k];
             }
         }
         return ctx as KaboomCtx & T;
