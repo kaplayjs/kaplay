@@ -3688,7 +3688,7 @@ const kaplay = <
                         const func = k === "add"
                             ? () => {
                                 onCurCompCleanup = (c: any) => gc.push(c);
-                                comp[k]!();
+                                comp[k]?.();
                                 onCurCompCleanup = null;
                             }
                             : comp[<keyof typeof comp> k];
