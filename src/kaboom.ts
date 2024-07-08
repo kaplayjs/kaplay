@@ -4781,7 +4781,7 @@ const kaplay = <
                 /*if (costMap[start] === Infinity) {
                     return null
                 }*/
-                if (costMap[goal] === Infinity) {
+                if (costMap![goal] === Infinity) {
                     return null;
                 }
 
@@ -4815,7 +4815,7 @@ const kaplay = <
                 costSoFar.set(start, 0);
 
                 while (frontier.length !== 0) {
-                    const current = frontier.remove()?.node;
+                    const current = frontier.remove()?.node!;
 
                     if (current === goal) {
                         break;
