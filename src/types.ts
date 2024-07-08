@@ -3863,7 +3863,11 @@ export interface GameObjRaw {
      *
      * @since v3000.0
      */
-    add<T>(comps?: CompList<T> | GameObj<T>): GameObj<T>;
+    add<T>(comps?: CompList<T> | GameObj<T>): GameObj<
+        T extends new(go: GameObj) => infer R ? R
+            : T extends (go: GameObj) => infer R ? R
+            : T
+    >;
     /**
      * Remove and re-add the game obj, without triggering add / destroy events.
      */
