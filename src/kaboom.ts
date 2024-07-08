@@ -3080,7 +3080,12 @@ const kaplay = <
                     let w = Math.ceil(m.width);
                     if (!w) continue;
                     let h = font.size;
-                    if (atlas.outline) {
+
+                    // TODO: Test if this works with the verification of width and color
+                    if (
+                        atlas.outline && atlas.outline.width
+                        && atlas.outline.color
+                    ) {
                         c2d.lineJoin = "round";
                         c2d.lineWidth = atlas.outline.width * 2;
                         c2d.strokeStyle = atlas.outline.color.toHex();
@@ -3089,9 +3094,11 @@ const kaplay = <
                             atlas.outline.width,
                             atlas.outline.width,
                         );
+
                         w += atlas.outline.width * 2;
                         h += atlas.outline.width * 3;
                     }
+
                     c2d.fillText(
                         ch,
                         atlas.outline?.width ?? 0,
