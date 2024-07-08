@@ -4705,18 +4705,18 @@ const kaplay = <
                         if (tile.is("area")) {
                             const shape = tile.worldArea();
                             const hit = shape.raycast(origin, direction);
-                            if (minHit) {
+                            if (minHit!) {
                                 if (hit.fraction < minHit.fraction) {
                                     minHit = hit;
-                                    minHit.object = tile;
+                                    minHit!.object = tile;
                                 }
                             } else {
                                 minHit = hit;
-                                minHit.object = tile;
+                                minHit!.object = tile;
                             }
                         }
                     }
-                    return minHit || false;
+                    return minHit! || false;
                 }, 64);
                 if (hit) {
                     hit.point = hit.point.scale(
