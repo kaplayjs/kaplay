@@ -4827,6 +4827,7 @@ const kaplay = <
                 costSoFar.set(start, 0);
 
                 while (frontier.length !== 0) {
+                    // TODO: Remove non-null assertion
                     const current = frontier.remove()?.node!;
 
                     if (current === goal) {
@@ -5038,7 +5039,7 @@ const kaplay = <
         const s = opt.scale || 1;
 
         kaboom.add([
-            ctx.sprite(boomSprite.data!),
+            ctx.sprite(boomSprite),
             ctx.scale(0),
             ctx.anchor("center"),
             boom(speed, s),
@@ -5046,7 +5047,7 @@ const kaplay = <
         ]);
 
         const ka = kaboom.add([
-            ctx.sprite(kaSprite.data!),
+            ctx.sprite(kaSprite),
             ctx.scale(0),
             ctx.anchor("center"),
             ctx.timer(),

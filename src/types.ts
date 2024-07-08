@@ -469,7 +469,10 @@ export interface KaboomCtx<
      *
      * @group Components
      */
-    sprite(spr: string | SpriteData, options?: SpriteCompOpt): SpriteComp;
+    sprite(
+        spr: string | SpriteData | Asset<SpriteData>,
+        options?: SpriteCompOpt,
+    ): SpriteComp;
     /**
      * Attach and render a text to a Game Object.
      *
