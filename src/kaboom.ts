@@ -4393,10 +4393,10 @@ const kaplay = <
 
         const insertIntoSpatialMap = (obj: GameObj) => {
             const i = tile2Hash(obj.tilePos);
-            if (spatialMap[i]) {
-                spatialMap[i].push(obj);
+            if (spatialMap![i]) {
+                spatialMap![i].push(obj);
             } else {
-                spatialMap[i] = [obj];
+                spatialMap![i] = [obj];
             }
         };
 
