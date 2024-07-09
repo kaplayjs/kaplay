@@ -58,13 +58,13 @@ export interface SpriteComp extends Comp {
      *
      * @since v3001.0
      */
-    getCurAnim(): SpriteCurAnim;
+    getCurAnim(): SpriteCurAnim | null;
     /**
      * Get current anim name.
      *
      * @deprecated Use `getCurrentAnim().name` instead.
      */
-    curAnim(): string;
+    curAnim(): string | undefined;
     /**
      * Speed multiplier for all animations (for the actual fps for an anim use .play("anim", { speed: 10 })).
      */
@@ -305,16 +305,16 @@ export function sprite(
             if (spr) {
                 spr.onLoad(setSpriteData);
             } else {
-                k.onLoad(() => setSpriteData(resolveSprite(src).data));
+                k.onLoad(() => setSpriteData(resolveSprite(src)!.data));
             }
         },
 
         update(this: GameObj<SpriteComp>) {
-            if (!curAnim) {
+            if (!spriteData || !curAnim || curAnimDir === null) {
                 return;
             }
 
-            const anim = spriteData.anims[curAnim.name];
+            const anim = spriteData!.anims[curAnim.name];
 
             if (typeof anim === "number") {
                 this.frame = anim;
@@ -393,7 +393,7 @@ export function sprite(
                     loop: false,
                     pingpong: false,
                     speed: 0,
-                    onEnd: () => {},
+                    onEnd: () => { },
                 }
                 : {
                     name: name,
@@ -401,14 +401,14 @@ export function sprite(
                     loop: opt.loop ?? anim.loop ?? false,
                     pingpong: opt.pingpong ?? anim.pingpong ?? false,
                     speed: opt.speed ?? anim.speed ?? 10,
-                    onEnd: opt.onEnd ?? (() => {}),
+                    onEnd: opt.onEnd ?? (() => { }),
                 };
 
             curAnimDir = typeof anim === "number"
                 ? null
                 : anim.from < anim.to
-                ? 1
-                : -1;
+                    ? 1
+                    : -1;
 
             this.frame = typeof anim === "number"
                 ? anim
@@ -460,6 +460,7 @@ export function sprite(
             if (typeof src === "string") {
                 return `sprite: "${src}"`;
             }
+            return null;
         },
     };
 }
