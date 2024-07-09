@@ -6,7 +6,7 @@ export interface PatrolComp extends Comp {
     /*
      * Path to follow. If null, doesn't move.
      */
-    waypoints: Vec2[] | null;
+    waypoints: Vec2[] | undefined;
     /*
      * Speed of the movement during patrol.
      */
@@ -14,7 +14,7 @@ export interface PatrolComp extends Comp {
     /*
      * Current subgoal, if any.
      */
-    nextLocation: Vec2 | null;
+    nextLocation: Vec2 | undefined;
     /**
      * Attaches an event handler which is called when using "stop" and the end of the path is reached.
      * @param cb The event handler called when the patrol finishes.
@@ -71,7 +71,7 @@ export function patrol(
             finished = false;
         },
         get nextLocation() {
-            return waypoints ? waypoints[index] : null;
+            return waypoints ? waypoints[index] : undefined;
         },
         update(this: GameObj<PatrolComp | PosComp>) {
             const nextWaypoint = this.nextLocation;
@@ -100,7 +100,7 @@ export function patrol(
             }
         },
         onPatrolFinished(cb: (objects: GameObj[]) => void) {
-            return this.on("patrol-finished", cb);
+            return (this as unknown as GameObj<PatrolComp>).on("patrol-finished", cb);
         },
     };
 }
