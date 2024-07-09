@@ -4,6 +4,7 @@
     "target": "ESNext",
     "moduleResolution": "Node",
     "noImplicitThis": true,
+    "skipLibCheck": true,
     "resolveJsonModule": true,
     "emitDeclarationOnly": true,
     "declaration": true,
