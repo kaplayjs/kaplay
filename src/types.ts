@@ -1,3 +1,4 @@
+import type { App } from "./app";
 import type {
     AgentComp,
     AgentCompOpt,
@@ -156,7 +157,8 @@ export type {
 
 export type InternalCtx = {
     kaboomCtx: KaboomCtx;
-    app: any;
+    app: App;
+    gfx: GfxCtx;
     game: any;
     isFixed: (obj: GameObj) => boolean;
     toFixed: (n: number, f: number) => number;
