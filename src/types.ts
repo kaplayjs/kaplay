@@ -163,6 +163,7 @@ export type InternalCtx = {
     gfx: GfxCtx;
     assets: AssetsCtx;
     game: any;
+    loadProgress(): number;
     isFixed: (obj: GameObj) => boolean;
     toFixed: (n: number, f: number) => number;
     getViewportScale: () => number;

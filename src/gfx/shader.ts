@@ -6,6 +6,13 @@ import {
     VERTEX_FORMAT,
 } from "../constants";
 import { type GfxCtx, Shader } from "../gfx";
+import { Asset } from "../gfx";
+import {
+    getKaboomContext,
+    type KaboomCtx,
+    type RenderProps,
+    type ShaderData,
+} from "../kaboom";
 import { getErrorMessage } from "../utils";
 
 export function makeShader(
@@ -33,4 +40,30 @@ export function makeShader(
         const ty = match.groups.type.toLowerCase();
         throw new Error(`${ty} shader line ${line}: ${msg}`);
     }
+}
+
+export function resolveShader(
+    c: KaboomCtx,
+    src: RenderProps["shader"],
+): ShaderData | Asset<ShaderData> | null {
+    const { _k, getShader } = getKaboomContext(c);
+    const { gfx, loadProgress } = _k;
+
+    if (!src) {
+        return gfx.defShader;
+    }
+    if (typeof src === "string") {
+        const shader = getShader(src);
+        if (shader) {
+            return shader.data ?? shader;
+        } else if (loadProgress() < 1) {
+            return null;
+        } else {
+            throw new Error(`Shader not found: ${src}`);
+        }
+    } else if (src instanceof Asset) {
+        return src.data ? src.data : src;
+    }
+
+    return src;
 }

@@ -109,7 +109,6 @@ import { Color, type ColorArgs, hsl2rgb, rgb } from "./math/color";
 
 import { NavMesh } from "./math/navigationmesh";
 
-import TexPacker from "./gfx/texPacker";
 import easings from "./math/easings";
 
 import {
@@ -134,7 +133,6 @@ import {
 import { FontData } from "./gfx/fonts";
 
 import type {
-    Anchor,
     AreaComp,
     AsepriteData,
     AudioPlay,
@@ -267,16 +265,26 @@ export const isKaboomCtx = (obj: any): obj is KaboomCtx => {
 };
 
 export const getKaboomContext = (fallBack?: any): KaboomCtx => {
+    // if context is tried to use before it is initialized
+    // it will throw an error
     if (!ctx) {
         throw new Error(
             "You are trying to access to Kaboom Context before their initialization.",
         );
     }
 
+    // case: when using multiple instance, this on a context consumer
+    // will be the context
     if (isKaboomCtx(fallBack)) {
         return fallBack;
     }
 
+    // case: when using internal context, we return the ctx attached
+    if (isKaboomCtx(fallBack?.ctx)) {
+        return fallBack.ctx;
+    }
+
+    // in case of using globals, we return the global context
     return ctx;
 };
 
@@ -5544,6 +5552,7 @@ const kaplay = <
         game,
         gfx,
         assets,
+        loadProgress,
         isFixed,
         toFixed,
         getViewportScale,
