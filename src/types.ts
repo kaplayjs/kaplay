@@ -55,7 +55,7 @@ import type {
     ParticlesComp,
     ParticlesOpt,
 } from "./components/draw/particles";
-import type { FrameBuffer, Texture } from "./gfx";
+import type { AppGfxCtx, FrameBuffer, GfxCtx, Texture } from "./gfx";
 import type { Asset, AssetsCtx } from "./gfx/assets";
 import type { FontData } from "./gfx/fonts";
 import type {
@@ -160,10 +160,11 @@ export type {
 export type InternalCtx = {
     kaboomCtx: KaboomCtx;
     app: App;
-    gfx: GfxCtx;
+    gfx: AppGfxCtx;
     assets: AssetsCtx;
     game: any;
     loadProgress(): number;
+    screen2ndc(pt: Vec2): Vec2;
     isFixed: (obj: GameObj) => boolean;
     toFixed: (n: number, f: number) => number;
     getViewportScale: () => number;
@@ -4485,8 +4486,6 @@ export type TextureOpt = {
 };
 
 export type ImageSource = Exclude<TexImageSource, VideoFrame>;
-
-type GfxCtx = any;
 
 export type Canvas = {
     width: number;
