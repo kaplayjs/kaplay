@@ -97,7 +97,7 @@ export type ParticlesOpt = {
     /*
      * Texture used for the particle.
      */
-    texture?: Texture;
+    texture: Texture;
 };
 
 export interface ParticlesComp extends Comp {
@@ -217,7 +217,7 @@ export function particles(
             count += n;
         },
         update() {
-            if (eopt.lifetime <= 0) {
+            if (emitterLifetime !== undefined && emitterLifetime <= 0) {
                 return;
             }
             const DT = k.dt();
@@ -255,7 +255,7 @@ export function particles(
             }
         },
         draw() {
-            if (emitterLifetime <= 0) {
+            if (emitterLifetime !== undefined && emitterLifetime <= 0) {
                 return;
             }
 
@@ -353,10 +353,10 @@ export function particles(
             k._k.drawRaw(
                 vertices,
                 indices,
-                this.fixed,
+                (this as any).fixed,
                 popt.texture,
-                this.shader,
-                this.uniform,
+                (this as any).shader,
+                (this as any).uniform,
             );
         },
         onEnd(action: () => void) {
