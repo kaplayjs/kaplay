@@ -72,6 +72,7 @@ import type {
     RNG,
     ShapeType,
     Vec2,
+    Vec2Args,
 } from "./math";
 import type { Color, RGBAValue, RGBValue } from "./math/color";
 import type { NavMesh } from "./math/navigationmesh";
@@ -145,6 +146,7 @@ export type {
     TimerComp,
     UVQuadComp,
     Vec2,
+    Vec2Args,
     ZComp,
 };
 
@@ -3233,27 +3235,28 @@ export interface KaboomCtx<
      */
     pushTranslate(x: number, y: number): void;
     pushTranslate(p: Vec2): void;
+    pushTranslate(...args: Vec2Args | [undefined]): void;
     /**
      * Scale all subsequent draws.
      *
      * @group Draw
      */
     pushScale(x: number, y: number): void;
-    pushScale(s: number): void;
-    pushScale(s: Vec2): void;
+    pushScale(s: Vec2 | number): void;
+    pushScale(...args: Vec2Args | [undefined] | [undefined, undefined]): void;
     /**
      * Rotate all subsequent draws.
      *
      * @group Draw
      */
-    pushRotate(angle: number): void;
+    pushRotate(angle?: number): void;
     /**
      * Apply a transform matrix, ignore all prior transforms.
      *
      * @since v3000.0
      * @group Draw
      */
-    pushMatrix(mat: Mat4): void;
+    pushMatrix(mat?: Mat4): void;
     /**
      * Apply a post process effect from a shader name.
      *

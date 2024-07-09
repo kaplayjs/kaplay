@@ -249,6 +249,14 @@ import boomSpriteSrc from "./assets/boom.png";
 import burpSoundSrc from "./assets/burp.mp3";
 import kaSpriteSrc from "./assets/ka.png";
 import { initAppGfx } from "./gfx/gfxApp";
+import {
+    popTransform,
+    pushMatrix,
+    pushRotate,
+    pushScale,
+    pushTransform,
+    pushTranslate,
+} from "./gfx/push";
 import { makeShader } from "./gfx/shader";
 
 // for import types from package
@@ -1584,43 +1592,6 @@ const kaplay = <
         );
     }
 
-    function pushMatrix(m: Mat4) {
-        gfx.transform = m.clone();
-    }
-
-    function pushTranslate(...args: Vec2Args | [undefined]) {
-        if (args[0] === undefined) return;
-
-        const p = vec2(...args);
-        if (p.x === 0 && p.y === 0) return;
-        gfx.transform.translate(p);
-    }
-
-    function pushScale(...args: Vec2Args | [undefined]) {
-        if (args[0] === undefined) return;
-
-        const p = vec2(...args);
-        if (p.x === 1 && p.y === 1) return;
-        gfx.transform.scale(p);
-    }
-
-    function pushRotate(a: number | undefined) {
-        if (!a) return;
-
-        gfx.transform.rotate(a);
-    }
-
-    function pushTransform() {
-        gfx.transformStack.push(gfx.transform.clone());
-    }
-
-    function popTransform() {
-        if (gfx.transformStack.length > 0) {
-            // if there's more than 1 element, it will return obviously a Mat4
-            gfx.transform = gfx.transformStack.pop()!;
-        }
-    }
-
     // draw a uv textured quad
     function drawUVQuad(opt: DrawUVQuadOpt) {
         if (opt.width === undefined || opt.height === undefined) {
@@ -1649,11 +1620,11 @@ const kaplay = <
         const qw = q.w - uvPadX * 2;
         const qh = q.h - uvPadY * 2;
 
-        pushTransform();
-        pushTranslate(opt.pos);
-        pushRotate(opt.angle);
-        pushScale(opt.scale);
-        pushTranslate(offset);
+        ctx.pushTransform();
+        ctx.pushTranslate(opt.pos);
+        ctx.pushRotate(opt.angle);
+        ctx.pushScale(opt.scale);
+        ctx.pushTranslate(offset);
 
         drawRaw(
             [
@@ -1701,7 +1672,7 @@ const kaplay = <
             opt.uniform ?? undefined,
         );
 
-        popTransform();
+        ctx.popTransform();
     }
 
     // TODO: clean
@@ -2687,11 +2658,11 @@ const kaplay = <
             return;
         }
 
-        pushTransform();
-        pushTranslate(opt.pos);
-        pushScale(opt.scale);
-        pushRotate(opt.angle);
-        pushTranslate(opt.offset);
+        ctx.pushTransform();
+        ctx.pushTranslate(opt.pos!);
+        ctx.pushScale(opt.scale);
+        ctx.pushRotate(opt.angle);
+        ctx.pushTranslate(opt.offset!);
 
         if (opt.fill !== false) {
             const color = opt.color ?? Color.WHITE;
@@ -2743,7 +2714,7 @@ const kaplay = <
             });
         }
 
-        popTransform();
+        ctx.popTransform();
     }
 
     function drawStenciled(
@@ -3151,10 +3122,10 @@ const kaplay = <
     }
 
     function drawFormattedText(ftext: FormattedText) {
-        pushTransform();
-        pushTranslate(ftext.opt.pos);
-        pushRotate(ftext.opt.angle);
-        pushTranslate(
+        ctx.pushTransform();
+        ctx.pushTranslate(ftext.opt.pos!);
+        ctx.pushRotate(ftext.opt.angle!);
+        ctx.pushTranslate(
             anchorPt(ftext.opt.anchor ?? "topleft").add(1, 1).scale(
                 ftext.width,
                 ftext.height,
@@ -3177,7 +3148,7 @@ const kaplay = <
                 fixed: ftext.opt.fixed,
             });
         });
-        popTransform();
+        ctx.popTransform();
     }
 
     // get game width
@@ -3433,10 +3404,10 @@ const kaplay = <
                 }
                 const f = gfx.fixed;
                 if (this.fixed) gfx.fixed = true;
-                pushTransform();
-                pushTranslate(this.pos);
-                pushScale(this.scale);
-                pushRotate(this.angle);
+                ctx.pushTransform();
+                ctx.pushTranslate(this.pos);
+                ctx.pushScale(this.scale);
+                ctx.pushRotate(this.angle);
                 const children = this.children.sort((o1, o2) => {
                     const l1 = o1.layerIndex ?? game.defaultLayerIndex;
                     const l2 = o2.layerIndex ?? game.defaultLayerIndex;
@@ -3460,7 +3431,7 @@ const kaplay = <
                     this.trigger("draw");
                     children.forEach((child) => child.draw());
                 }
-                popTransform();
+                ctx.popTransform();
                 gfx.fixed = f;
                 if (this.canvas) {
                     flush();
@@ -3470,15 +3441,15 @@ const kaplay = <
 
             drawInspect(this: GameObj<PosComp | ScaleComp | RotateComp>) {
                 if (this.hidden) return;
-                pushTransform();
-                pushTranslate(this.pos);
-                pushScale(this.scale);
-                pushRotate(this.angle);
+                ctx.pushTransform();
+                ctx.pushTranslate(this.pos);
+                ctx.pushScale(this.scale);
+                ctx.pushRotate(this.angle);
                 this.children
                     /*.sort((o1, o2) => (o1.z ?? 0) - (o2.z ?? 0))*/
                     .forEach((child) => child.drawInspect());
                 this.trigger("drawInspect");
-                popTransform();
+                ctx.popTransform();
             },
 
             // use a comp, or tag
@@ -5125,8 +5096,8 @@ const kaplay = <
         drawUnscaled(() => {
             const pad = vec2(8);
 
-            pushTransform();
-            pushTranslate(pos);
+            ctx.pushTransform();
+            ctx.pushTranslate(pos);
 
             const ftxt = formatText({
                 text: txt,
@@ -5141,11 +5112,11 @@ const kaplay = <
             const bh = ftxt.height + pad.x * 2;
 
             if (pos.x + bw >= width()) {
-                pushTranslate(vec2(-bw, 0));
+                ctx.pushTranslate(vec2(-bw, 0));
             }
 
             if (pos.y + bh >= height()) {
-                pushTranslate(vec2(0, -bh));
+                ctx.pushTranslate(vec2(0, -bh));
             }
 
             drawRect({
@@ -5158,7 +5129,7 @@ const kaplay = <
             });
 
             drawFormattedText(ftxt);
-            popTransform();
+            ctx.popTransform();
         });
     }
 
@@ -5198,9 +5169,9 @@ const kaplay = <
         if (debug.paused) {
             drawUnscaled(() => {
                 // top right corner
-                pushTransform();
-                pushTranslate(width(), 0);
-                pushTranslate(-8, 8);
+                ctx.pushTransform();
+                ctx.pushTranslate(width(), 0);
+                ctx.pushTranslate(-8, 8);
 
                 const size = 32;
 
@@ -5228,16 +5199,16 @@ const kaplay = <
                     });
                 }
 
-                popTransform();
+                ctx.popTransform();
             });
         }
 
         if (debug.timeScale !== 1) {
             drawUnscaled(() => {
                 // bottom right corner
-                pushTransform();
-                pushTranslate(width(), height());
-                pushTranslate(-8, -8);
+                ctx.pushTransform();
+                ctx.pushTranslate(width(), height());
+                ctx.pushTranslate(-8, -8);
 
                 const pad = 8;
 
@@ -5285,15 +5256,15 @@ const kaplay = <
                 // text
                 drawFormattedText(ftxt);
 
-                popTransform();
+                ctx.popTransform();
             });
         }
 
         if (debug.curRecording) {
             drawUnscaled(() => {
-                pushTransform();
-                pushTranslate(0, height());
-                pushTranslate(24, -24);
+                ctx.pushTransform();
+                ctx.pushTranslate(0, height());
+                ctx.pushTranslate(24, -24);
 
                 drawCircle({
                     radius: 12,
@@ -5302,15 +5273,15 @@ const kaplay = <
                     fixed: true,
                 });
 
-                popTransform();
+                ctx.popTransform();
             });
         }
 
         if (debug.showLog && game.logs.length > 0) {
             drawUnscaled(() => {
-                pushTransform();
-                pushTranslate(0, height());
-                pushTranslate(8, -8);
+                ctx.pushTransform();
+                ctx.pushTranslate(0, height());
+                ctx.pushTranslate(8, -8);
 
                 const pad = 8;
                 const logs = [];
@@ -5358,7 +5329,7 @@ const kaplay = <
                 });
 
                 drawFormattedText(ftext);
-                popTransform();
+                ctx.popTransform();
             });
         }
     }
@@ -5422,7 +5393,7 @@ const kaplay = <
                     fixed: true,
                 });
 
-                popTransform();
+                ctx.popTransform();
                 game.events.trigger("error", err);
             });
 

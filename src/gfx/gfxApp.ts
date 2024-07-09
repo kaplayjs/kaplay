@@ -103,7 +103,7 @@ export const initAppGfx = (gopt: KaboomOpt, ggl: GfxCtx) => {
         },
     );
 
-    return {
+    const gfx = {
         // how many draw calls we're doing last frame, this is the number we give to users
         lastDrawCalls: 0,
 
@@ -136,4 +136,6 @@ export const initAppGfx = (gopt: KaboomOpt, ggl: GfxCtx) => {
 
         fixed: false,
     };
+
+    return gfx;
 };
