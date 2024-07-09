@@ -2,6 +2,7 @@ import { Mat4, Vec2 } from "./math";
 import { Color } from "./math/color";
 import type { ImageSource, TexFilter, TextureOpt, Uniform } from "./types";
 import { deepEq } from "./utils";
+import { arrayIsColor, arrayIsNumber, arrayIsVec2 } from "./utils/asserts";
 
 export type GfxCtx = ReturnType<typeof initGfx>;
 
@@ -15,22 +16,22 @@ export class Texture {
     constructor(ctx: GfxCtx, w: number, h: number, opt: TextureOpt = {}) {
         this.ctx = ctx;
         const gl = ctx.gl;
-        this.glTex = ctx.gl.createTexture();
+        // TODO: Remove non-null assertion
+        this.glTex = ctx.gl.createTexture()!;
         ctx.onDestroy(() => this.free());
 
         this.width = w;
         this.height = h;
 
-        // TODO: no default
         const filter = {
             "linear": gl.LINEAR,
             "nearest": gl.NEAREST,
-        }[opt.filter ?? ctx.opts.texFilter] ?? gl.NEAREST;
+        }[opt.filter ?? ctx.opts.texFilter ?? "nearest"];
 
         const wrap = {
             "repeat": gl.REPEAT,
-            "clampToEadge": gl.CLAMP_TO_EDGE,
-        }[opt.wrap] ?? gl.CLAMP_TO_EDGE;
+            "clampToEdge": gl.CLAMP_TO_EDGE,
+        }[opt.wrap ?? "clampToEdge"];
 
         this.bind();
 
@@ -109,8 +110,9 @@ export class FrameBuffer {
         const gl = ctx.gl;
         ctx.onDestroy(() => this.free());
         this.tex = new Texture(ctx, w, h, opt);
-        this.glFramebuffer = gl.createFramebuffer();
-        this.glRenderbuffer = gl.createRenderbuffer();
+        // TODO: Remove non-null assertions
+        this.glFramebuffer = gl.createFramebuffer()!;
+        this.glRenderbuffer = gl.createRenderbuffer()!;
         this.bind();
         gl.renderbufferStorage(gl.RENDERBUFFER, gl.DEPTH_STENCIL, w, h);
         gl.framebufferTexture2D(
@@ -173,6 +175,9 @@ export class FrameBuffer {
         const ctx = canvas.getContext("2d");
         canvas.width = this.width;
         canvas.height = this.height;
+
+        if (!ctx) throw new Error("Failed to get 2d context");
+
         ctx.putImageData(this.toImageData(), 0, 0);
         return canvas.toDataURL();
     }
@@ -223,25 +228,27 @@ export class Shader {
         const vertShader = gl.createShader(gl.VERTEX_SHADER);
         const fragShader = gl.createShader(gl.FRAGMENT_SHADER);
 
-        gl.shaderSource(vertShader, vert);
-        gl.shaderSource(fragShader, frag);
-        gl.compileShader(vertShader);
-        gl.compileShader(fragShader);
+        // What we should do if vert or frag are null?
+        // TODO: Remove all non-null assertions
+        gl.shaderSource(vertShader!, vert);
+        gl.shaderSource(fragShader!, frag);
+        gl.compileShader(vertShader!);
+        gl.compileShader(fragShader!);
 
         const prog = gl.createProgram();
-        this.glProgram = prog;
+        this.glProgram = prog!;
 
-        gl.attachShader(prog, vertShader);
-        gl.attachShader(prog, fragShader);
+        gl.attachShader(prog!, vertShader!);
+        gl.attachShader(prog!, fragShader!);
 
-        attribs.forEach((attrib, i) => gl.bindAttribLocation(prog, i, attrib));
+        attribs.forEach((attrib, i) => gl.bindAttribLocation(prog!, i, attrib));
 
-        gl.linkProgram(prog);
+        gl.linkProgram(prog!);
 
-        if (!gl.getProgramParameter(prog, gl.LINK_STATUS)) {
-            const vertError = gl.getShaderInfoLog(vertShader);
+        if (!gl.getProgramParameter(prog!, gl.LINK_STATUS)) {
+            const vertError = gl.getShaderInfoLog(vertShader!);
             if (vertError) throw new Error("VERTEX SHADER " + vertError);
-            const fragError = gl.getShaderInfoLog(fragShader);
+            const fragError = gl.getShaderInfoLog(fragShader!);
             if (fragError) throw new Error("FRAGMENT SHADER " + fragError);
         }
 
@@ -272,11 +279,12 @@ export class Shader {
                 gl.uniform2f(loc, val.x, val.y);
             } else if (Array.isArray(val)) {
                 const first = val[0];
-                if (typeof first === "number") {
+
+                if (arrayIsNumber(val)) {
                     gl.uniform1fv(loc, val as number[]);
-                } else if (first instanceof Vec2) {
-                    gl.uniform2fv(loc, val.map(v => [v.x, v.y]).flat());
-                } else if (first instanceof Color) {
+                } else if (arrayIsVec2(val)) {
+                    gl.uniform2fv(loc, val.map((v) => [v.x, v.y]).flat());
+                } else if (arrayIsColor(val)) {
                     gl.uniform3fv(loc, val.map(v => [v.r, v.g, v.b]).flat());
                 }
             } else {
@@ -328,12 +336,13 @@ export class BatchRenderer {
         this.maxVertices = maxVertices;
         this.maxIndices = maxIndices;
 
-        this.glVBuf = gl.createBuffer();
+        // TODO: Remove non-null assertions
+        this.glVBuf = gl.createBuffer()!;
         ctx.pushArrayBuffer(this.glVBuf);
         gl.bufferData(gl.ARRAY_BUFFER, maxVertices * 4, gl.DYNAMIC_DRAW);
         ctx.popArrayBuffer();
 
-        this.glIBuf = gl.createBuffer();
+        this.glIBuf = gl.createBuffer()!;
         ctx.pushElementArrayBuffer(this.glIBuf);
         gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, maxIndices * 4, gl.DYNAMIC_DRAW);
         ctx.popElementArrayBuffer();
@@ -437,12 +446,13 @@ export class Mesh {
         this.vertexFormat = format;
         this.ctx = ctx;
 
-        this.glVBuf = gl.createBuffer();
+        // TODO: Remove non-null assertions
+        this.glVBuf = gl.createBuffer()!;
         ctx.pushArrayBuffer(this.glVBuf);
         gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(verts), gl.STATIC_DRAW);
         ctx.popArrayBuffer();
 
-        this.glIBuf = gl.createBuffer();
+        this.glIBuf = gl.createBuffer()!;
         ctx.pushElementArrayBuffer(this.glIBuf);
         gl.bufferData(
             gl.ELEMENT_ARRAY_BUFFER,
@@ -485,7 +495,8 @@ function genStack<T>(setFunc: (item: T) => void) {
     };
     const pop = () => {
         stack.pop();
-        setFunc(cur() ?? null);
+        // TODO: Remove non-null assertion
+        setFunc(cur() ?? null!);
     };
     const cur = () => stack[stack.length - 1];
     return [push, pop, cur] as const;
@@ -496,16 +507,17 @@ export default function initGfx(gl: WebGLRenderingContext, opts: {
 } = {}) {
     const gc: Array<() => void> = [];
 
-    function onDestroy(action) {
+    function onDestroy(action: () => unknown) {
         gc.push(action);
     }
 
     function destroy() {
         gc.forEach((action) => action());
-        gl.getExtension("WEBGL_lose_context").loseContext();
+        // TODO: Remove non-null assertion
+        gl.getExtension("WEBGL_lose_context")!.loseContext();
     }
 
-    let curVertexFormat = null;
+    let curVertexFormat: object | null = null;
 
     function setVertexFormat(fmt: VertexFormat) {
         if (deepEq(fmt, curVertexFormat)) return;
