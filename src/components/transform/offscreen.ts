@@ -64,6 +64,10 @@ export function offscreen(
         require: ["pos"],
         isOffScreen(this: GameObj<PosComp>): boolean {
             const pos = this.screenPos();
+
+            // This is not possible, screenPos() without arguments returns the pos
+            if (!pos) return false;
+
             const screenRect = new Rect(vec2(0), k.width(), k.height());
             return !k.testRectPoint(screenRect, pos)
                 && screenRect.sdistToPoint(pos) > distance * distance;
