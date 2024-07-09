@@ -59,7 +59,6 @@ import type { Asset } from "./gfx/assets";
 import type { FontData } from "./gfx/fonts";
 import type {
     Circle,
-    Color,
     Ellipse,
     Line,
     Mat4,
@@ -73,6 +72,7 @@ import type {
     ShapeType,
     Vec2,
 } from "./math";
+import type { Color, RGBAValue, RGBValue } from "./math/color";
 import type { NavMesh } from "./math/navigationmesh";
 import type { KEvent, KEventController, KEventHandler } from "./utils";
 
@@ -180,7 +180,7 @@ export type InternalCtx = {
         tex: Texture,
         shaderSrc: RenderProps["shader"],
         uniform: Uniform,
-    );
+    ): any;
     calcTransform: (obj: GameObj) => Mat4;
 };
 
@@ -469,7 +469,10 @@ export interface KaboomCtx<
      *
      * @group Components
      */
-    sprite(spr: string | SpriteData, options?: SpriteCompOpt): SpriteComp;
+    sprite(
+        spr: string | SpriteData | Asset<SpriteData>,
+        options?: SpriteCompOpt,
+    ): SpriteComp;
     /**
      * Attach and render a text to a Game Object.
      *
@@ -1542,12 +1545,12 @@ export interface KaboomCtx<
      */
     onSceneLeave(action: (newScene?: string) => void): KEventController;
     /**
-     * Gets the name of the current scene.
+     * Gets the name of the current scene. Returns null if no scene is active.
      *
      * @since v3001.0
      * @group Scene
      */
-    getSceneName(): string;
+    getSceneName(): string | null;
     /**
      * Sets the root for all subsequent resource urls.
      *
@@ -2189,14 +2192,16 @@ export interface KaboomCtx<
      *
      * @group Info
      */
-    setBackground(color: Color, alpha?: number): void;
-    setBackground(r: number, g: number, b: number, alpha?: number): void;
+    setBackground(color: Color): void;
+    setBackground(color: Color, alpha: number): void;
+    setBackground(r: number, g: number, b: number): void;
+    setBackground(r: number, g: number, b: number, alpha: number): void;
     /**
      * Get background color.
      *
      * @group Info
      */
-    getBackground(): Color;
+    getBackground(): Color | null;
     /**
      * Get connected gamepads.
      *
@@ -2594,21 +2599,21 @@ export interface KaboomCtx<
      * @since v3001.0
      * @group Math
      */
-    easingSteps(steps: number, position: StepPosition);
+    easingSteps(steps: number, position: StepPosition): (x: number) => number;
     /**
      * Linear easing with keyframes
      *
      * @since v3001.0
      * @group Math
      */
-    easingLinear(keys: Vec2[]);
+    easingLinear(keys: Vec2[]): (x: number) => number;
     /**
      * Bezier easing. Both control points need x to be within 0 and 1.
      *
      * @since v3001.0
      * @group Math
      */
-    easingCubicBezier(p1: Vec2, p2: Vec2);
+    easingCubicBezier(p1: Vec2, p2: Vec2): (x: number) => number;
     /**
      * Map a value from one range to another range.
      *
@@ -2947,7 +2952,7 @@ export interface KaboomCtx<
      *
      * @group Data
      */
-    getData<T>(key: string, def?: T): T;
+    getData<T>(key: string, def?: T): T | null;
     /**
      * Set data from local storage.
      *
@@ -3748,7 +3753,7 @@ export interface KaboomOpt<
     /**
      * Background color. E.g. [ 0, 0, 255 ] for solid blue background, or [ 0, 0, 0, 0 ] for transparent background. Accepts RGB value array or string hex codes.
      */
-    background?: number[] | string;
+    background?: RGBValue | RGBAValue | string;
     /**
      * Default texture filter.
      */
@@ -3861,7 +3866,11 @@ export interface GameObjRaw {
      *
      * @since v3000.0
      */
-    add<T>(comps?: CompList<T> | GameObj<T>): GameObj<T>;
+    add<T>(comps?: CompList<T> | GameObj<T>): GameObj<
+        T extends new(go: GameObj) => infer R ? R
+            : T extends (go: GameObj) => infer R ? R
+            : T
+    >;
     /**
      * Remove and re-add the game obj, without triggering add / destroy events.
      */
@@ -3962,7 +3971,7 @@ export interface GameObjRaw {
     /**
      * Get state for a specific comp.
      */
-    c(id: Tag): Comp | undefined;
+    c(id: Tag): Comp | null;
     /**
      * Gather debug info of all comps.
      */
@@ -4456,10 +4465,11 @@ export declare class Shader {
     ctx: GfxCtx;
     glProgram: WebGLProgram;
     constructor(ctx: GfxCtx, vert: string, frag: string, attribs: string[]);
-    bind();
-    unbind();
-    send(uniform: Uniform);
-    free();
+    // TODO: type this
+    bind(): any;
+    unbind(): any;
+    send(uniform: Uniform): any;
+    free(): any;
 }
 
 export type TextureOpt = {
@@ -5187,7 +5197,7 @@ export interface Collision {
      *
      * @since v3000.0
      */
-    hasOverlap(): void;
+    hasOverlap(): boolean;
     /**
      * Get a new collision with reversed source and target relationship.
      */
@@ -5384,9 +5394,11 @@ export interface LevelComp extends Comp {
     spawn(sym: string, x: number, y: number): GameObj | null;
     /**
      * Spawn a tile from a component list.
+     *
+     * @returns The spawned game object, or null if the obj hasn't components.
      */
-    spawn<T>(obj: CompList<T>, p: Vec2): GameObj<T>;
-    spawn<T>(sym: CompList<T>, x: number, y: number): GameObj<T>;
+    spawn<T>(obj: CompList<T>, p: Vec2): GameObj<T> | null;
+    spawn<T>(sym: CompList<T>, x: number, y: number): GameObj<T> | null;
     /**
      * Total width of level in pixels.
      */

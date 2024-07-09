@@ -49,7 +49,8 @@ export function timer(): TimerComp {
             action?: () => void,
         ): TimerController {
             const k = getKaboomContext(this);
-            const actions = [];
+            const actions: Function[] = [];
+
             if (action) actions.push(action);
             let t = 0;
             const ev = this.onUpdate(() => {
@@ -86,12 +87,12 @@ export function timer(): TimerComp {
             curTimer = this.wait(0, newAction);
             return {
                 get paused() {
-                    return curTimer.paused;
+                    return curTimer?.paused ?? false;
                 },
                 set paused(p) {
-                    curTimer.paused = p;
+                    if (curTimer) curTimer.paused = p;
                 },
-                cancel: () => curTimer.cancel(),
+                cancel: () => curTimer?.cancel(),
             };
         },
         tween<V extends LerpValue>(

@@ -6,7 +6,7 @@ import type { Comp, Uniform } from "../../types";
  * @group Component Types
  */
 export interface ShaderComp extends Comp {
-    uniform: Uniform;
+    uniform?: Uniform;
     shader: string;
 }
 

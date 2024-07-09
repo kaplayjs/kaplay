@@ -1,8 +1,13 @@
-import { getKaboomContext } from "../../kaboom";
+import { getKaboomContext, type KaboomCtx } from "../../kaboom";
 import type { RaycastResult, Vec2 } from "../../math";
 
 // this is not a component lol
-export function raycast(origin: Vec2, direction: Vec2, exclude?: string[]) {
+export function raycast(
+    this: KaboomCtx,
+    origin: Vec2,
+    direction: Vec2,
+    exclude?: string[],
+) {
     const k = getKaboomContext(this);
     let minHit: RaycastResult;
 
@@ -16,13 +21,14 @@ export function raycast(origin: Vec2, direction: Vec2, exclude?: string[]) {
             if (minHit) {
                 if (hit.fraction < minHit.fraction) {
                     minHit = hit;
-                    minHit.object = s;
+                    minHit!.object = s;
                 }
             } else {
                 minHit = hit;
-                minHit.object = s;
+                minHit!.object = s;
             }
         }
     });
-    return minHit;
+
+    return minHit!;
 }

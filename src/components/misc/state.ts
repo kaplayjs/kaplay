@@ -55,7 +55,7 @@ export function state(
         throw new Error("state() requires an initial state");
     }
 
-    const events = {};
+    const events: { [k: string]: any } = {};
 
     function initStateEvents(state: string) {
         if (!events[state]) {
@@ -68,12 +68,12 @@ export function state(
         }
     }
 
-    function on(event, state, action) {
+    function on(event: string, state: string, action: () => void) {
         initStateEvents(state);
         return events[state][event].add(action);
     }
 
-    function trigger(event, state, ...args) {
+    function trigger(event: string, state: string, ...args: any[]) {
         initStateEvents(state);
         events[state][event].trigger(...args);
     }
@@ -105,8 +105,7 @@ export function state(
 
                 if (!available.includes(state)) {
                     throw new Error(
-                        `Cannot transition state from "${oldState}" to "${state}". Available transitions: ${
-                            available.map((s) => `"${s}"`).join(", ")
+                        `Cannot transition state from "${oldState}" to "${state}". Available transitions: ${available.map((s) => `"${s}"`).join(", ")
                         }`,
                     );
                 }

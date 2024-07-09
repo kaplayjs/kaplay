@@ -1,5 +1,5 @@
 import { getKaboomContext } from "../../kaboom";
-import type { Comp } from "../../types";
+import type { Comp, KaboomCtx } from "../../types";
 
 /**
  * The {@link layer `layer()`} component.
@@ -18,7 +18,10 @@ export interface LayerComp extends Comp {
     set layer(name: string);
 }
 
-export function layer(layer: string): LayerComp {
+export function layer(
+    this: KaboomCtx,
+    layer: string,
+): LayerComp {
     const k = getKaboomContext(this);
     const { game } = k._k;
 

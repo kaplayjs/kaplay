@@ -1,6 +1,6 @@
 import { getKaboomContext } from "../../kaboom";
 import easings from "../../math/easings";
-import type { EmptyComp, GameObj, OpacityComp } from "../../types";
+import type { EmptyComp, GameObj, KaboomCtx, OpacityComp } from "../../types";
 
 /**
  * The {@link lifespan `lifespan()`} component.
@@ -14,7 +14,11 @@ export interface LifespanCompOpt {
     fade?: number;
 }
 
-export function lifespan(time: number, opt: LifespanCompOpt = {}): EmptyComp {
+export function lifespan(
+    this: KaboomCtx,
+    time: number,
+    opt: LifespanCompOpt = {},
+): EmptyComp {
     const k = getKaboomContext(this);
 
     if (time == null) {

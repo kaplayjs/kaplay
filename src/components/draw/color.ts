@@ -1,4 +1,4 @@
-import { type Color, rgb } from "../../math";
+import { type Color, type ColorArgs, rgb } from "../../math/color";
 import type { Comp } from "../../types";
 
 /**
@@ -10,7 +10,7 @@ export interface ColorComp extends Comp {
     color: Color;
 }
 
-export function color(...args): ColorComp {
+export function color(...args: ColorArgs): ColorComp {
     return {
         id: "color",
         color: rgb(...args),

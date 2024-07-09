@@ -1,18 +1,19 @@
 import type { Texture } from "../../gfx";
 import { getKaboomContext } from "../../kaboom";
-import { Color, lerp, map, Quad, Vec2, vec2 } from "../../math";
-import type { Comp, ShapeType, Vertex } from "../../types";
+import { lerp, map, Quad, Vec2, vec2 } from "../../math";
+import { Color } from "../../math/color";
+import type { Comp, KaboomCtx, ShapeType, Vertex } from "../../types";
 import { KEvent } from "../../utils";
 
 class Particle {
-    pos: Vec2;
-    vel: Vec2;
-    acc: Vec2;
-    angle: number;
-    angularVelocity: number;
-    damping: number;
+    pos: Vec2 = vec2(0);
+    vel: Vec2 = vec2(0);
+    acc: Vec2 = vec2(0);
+    angle: number = 0;
+    angularVelocity: number = 0;
+    damping: number = 0;
     t: number;
-    lt: number | null;
+    lt: number | null = null;
     gc: boolean;
 
     constructor() {
@@ -96,7 +97,7 @@ export type ParticlesOpt = {
     /*
      * Texture used for the particle.
      */
-    texture?: Texture;
+    texture: Texture;
 };
 
 export interface ParticlesComp extends Comp {
@@ -110,7 +111,11 @@ export interface ParticlesComp extends Comp {
     onEnd(cb: () => void): void;
 }
 
-export function particles(popt: ParticlesOpt, eopt: EmitterOpt): ParticlesComp {
+export function particles(
+    this: KaboomCtx,
+    popt: ParticlesOpt,
+    eopt: EmitterOpt,
+): ParticlesComp {
     const k = getKaboomContext(this);
 
     let emitterLifetime = eopt.lifetime;
@@ -168,7 +173,7 @@ export function particles(popt: ParticlesOpt, eopt: EmitterOpt): ParticlesComp {
     return {
         id: "particles",
         emit(n: number) {
-            let index = 0;
+            let index: number | null = 0;
             for (let i = 0; i < n; i++) {
                 index = nextFree(index);
                 if (index == null) return;
@@ -212,7 +217,7 @@ export function particles(popt: ParticlesOpt, eopt: EmitterOpt): ParticlesComp {
             count += n;
         },
         update() {
-            if (eopt.lifetime <= 0) {
+            if (emitterLifetime !== undefined && emitterLifetime <= 0) {
                 return;
             }
             const DT = k.dt();
@@ -250,7 +255,7 @@ export function particles(popt: ParticlesOpt, eopt: EmitterOpt): ParticlesComp {
             }
         },
         draw() {
-            if (emitterLifetime <= 0) {
+            if (emitterLifetime !== undefined && emitterLifetime <= 0) {
                 return;
             }
 
@@ -348,10 +353,10 @@ export function particles(popt: ParticlesOpt, eopt: EmitterOpt): ParticlesComp {
             k._k.drawRaw(
                 vertices,
                 indices,
-                this.fixed,
+                (this as any).fixed,
                 popt.texture,
-                this.shader,
-                this.uniform,
+                (this as any).shader,
+                (this as any).uniform,
             );
         },
         onEnd(action: () => void) {

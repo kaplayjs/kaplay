@@ -12,7 +12,7 @@ import type {
     MouseButton,
 } from "./types";
 
-import { map, Vec2 } from "./math";
+import { map, Vec2, vec2 } from "./math";
 
 import {
     isEqOrIncludes,
@@ -71,7 +71,9 @@ class FPSCounter {
     }
 }
 
-export default (opt: {
+export type App = ReturnType<typeof initApp>;
+
+export const initApp = (opt: {
     canvas: HTMLCanvasElement;
     touchToMouse?: boolean;
     gamepads?: Record<string, GamepadDef>;
@@ -105,7 +107,7 @@ export default (opt: {
         // unified input state
         buttonState: new ButtonState<string>(),
         gamepads: [] as KGamePad[],
-        charInputted: [],
+        charInputted: [] as string[],
         isMouseMoved: false,
         lastWidth: opt.canvas.offsetWidth,
         lastHeight: opt.canvas.offsetHeight,
@@ -220,14 +222,18 @@ export default (opt: {
 
     function quit() {
         state.stopped = true;
-        for (const name in canvasEvents) {
-            state.canvas.removeEventListener(name, canvasEvents[name]);
+        const ce = Object.entries(canvasEvents);
+        const de = Object.entries(docEvents);
+        const we = Object.entries(winEvents);
+        type EL = EventListenerOrEventListenerObject;
+        for (const [name, val] of ce) {
+            state.canvas.removeEventListener(name, val as EL);
         }
-        for (const name in docEvents) {
-            document.removeEventListener(name, docEvents[name]);
+        for (const [name, val] of de) {
+            document.removeEventListener(name, val as EL);
         }
-        for (const name in winEvents) {
-            window.removeEventListener(name, winEvents[name]);
+        for (const [name, val] of we) {
+            window.removeEventListener(name, val as EL);
         }
         resizeObserver.disconnect();
     }
@@ -678,23 +684,26 @@ export default (opt: {
     }
 
     function registerGamepad(browserGamepad: Gamepad) {
-        const gamepad = {
+        const gamepad: KGamePad = {
             index: browserGamepad.index,
             isPressed: (btn: GamepadButton) => {
-                return state.gamepadStates.get(browserGamepad.index).buttonState
-                    .pressed.has(btn);
+                return state.gamepadStates.get(browserGamepad.index)
+                    ?.buttonState
+                    .pressed.has(btn) || false;
             },
             isDown: (btn: GamepadButton) => {
-                return state.gamepadStates.get(browserGamepad.index).buttonState
-                    .down.has(btn);
+                return state.gamepadStates.get(browserGamepad.index)
+                    ?.buttonState
+                    .down.has(btn) || false;
             },
             isReleased: (btn: GamepadButton) => {
-                return state.gamepadStates.get(browserGamepad.index).buttonState
-                    .released.has(btn);
+                return state.gamepadStates.get(browserGamepad.index)
+                    ?.buttonState
+                    .released.has(btn) || false;
             },
             getStick: (stick: GamepadStick) => {
-                return state.gamepadStates.get(browserGamepad.index).stickState
-                    .get(stick);
+                return state.gamepadStates.get(browserGamepad.index)?.stickState
+                    .get(stick) || vec2();
             },
         };
 
@@ -731,15 +740,18 @@ export default (opt: {
 
         for (const gamepad of state.gamepads) {
             const browserGamepad = navigator.getGamepads()[gamepad.index];
+            if (!browserGamepad) continue;
             const customMap = opt.gamepads ?? {};
             const map = customMap[browserGamepad.id]
-                ?? GAMEPAD_MAP[browserGamepad.id] ?? GAMEPAD_MAP["default"];
+                ?? (GAMEPAD_MAP as Record<any, GamepadDef>)[browserGamepad.id]
+                ?? GAMEPAD_MAP["default"];
             const gamepadState = state.gamepadStates.get(gamepad.index);
+            if (!gamepadState) continue;
 
             for (let i = 0; i < browserGamepad.buttons.length; i++) {
                 const gamepadBtn = map.buttons[i];
                 const browserGamepadBtn = browserGamepad.buttons[i];
-                const bindedBtn = getButtonByGamepadButton(gamepadBtn);
+                const bindedBtn = getButtonByGamepadButton(gamepadBtn)!;
 
                 if (browserGamepadBtn.pressed) {
                     if (!gamepadState.buttonState.down.has(gamepadBtn)) {
@@ -772,7 +784,8 @@ export default (opt: {
             }
 
             for (const stickName in map.sticks) {
-                const stick = map.sticks[stickName];
+                const stick = map.sticks[stickName as GamepadStick];
+                if (!stick) continue;
                 const value = new Vec2(
                     browserGamepad.axes[stick.x],
                     browserGamepad.axes[stick.y],
@@ -839,7 +852,7 @@ export default (opt: {
         state.events.onOnce("input", () => {
             const m = MOUSE_BUTTONS[e.button];
             if (!m) return;
-            const btn = getButtonByMouseButton(m);
+            const btn = getButtonByMouseButton(m)!;
 
             state.mouseState.press(m);
             state.buttonState.press(btn);
@@ -852,7 +865,7 @@ export default (opt: {
         state.events.onOnce("input", () => {
             const m = MOUSE_BUTTONS[e.button];
             if (!m) return;
-            const btn = getButtonByMouseButton(m);
+            const btn = getButtonByMouseButton(m)!;
 
             state.mouseState.release(m);
             state.buttonState.release(btn);
@@ -884,7 +897,9 @@ export default (opt: {
             e.preventDefault();
         }
         state.events.onOnce("input", () => {
-            const k = KEY_ALIAS[e.key] || e.key.toLowerCase();
+            const k: Key = KEY_ALIAS[e.key as keyof typeof KEY_ALIAS] as Key
+                || e.key.toLowerCase();
+            if (k === undefined) throw new Error(`Unknown key: ${e.key}`);
             if (k.length === 1) {
                 state.events.trigger("charInput", k);
                 state.charInputted.push(k);
@@ -896,7 +911,7 @@ export default (opt: {
                 state.keyState.pressRepeat(k);
                 state.events.trigger("keyPressRepeat", k);
             } else {
-                const btn = getButtonNameByKey(k);
+                const btn = getButtonNameByKey(k)!;
 
                 state.keyState.press(k);
                 state.buttonState.press(btn);
@@ -909,8 +924,9 @@ export default (opt: {
 
     canvasEvents.keyup = (e) => {
         state.events.onOnce("input", () => {
-            const k = KEY_ALIAS[e.key] || e.key.toLowerCase();
-            const btn = getButtonNameByKey(k);
+            const k: Key = KEY_ALIAS[e.key as keyof typeof KEY_ALIAS] as Key
+                || e.key.toLowerCase();
+            const btn = getButtonNameByKey(k)!;
 
             state.keyState.release(k);
             state.buttonState.release(btn);
@@ -933,7 +949,7 @@ export default (opt: {
                     touches[0].clientY - box.y,
                 );
 
-                const btn = getButtonByMouseButton("left");
+                const btn = getButtonByMouseButton("left")!;
 
                 state.mouseState.press("left");
                 state.buttonState.press(btn);
@@ -985,7 +1001,7 @@ export default (opt: {
                     touches[0].clientY - box.y,
                 );
                 state.mouseDeltaPos = new Vec2(0, 0);
-                const btn = getButtonByMouseButton("left");
+                const btn = getButtonByMouseButton("left")!;
 
                 state.buttonState.release(btn);
                 state.mouseState.release("left");
@@ -1062,16 +1078,25 @@ export default (opt: {
         });
     };
 
-    for (const name in canvasEvents) {
-        state.canvas.addEventListener(name, canvasEvents[name]);
+    for (const [name, val] of Object.entries(canvasEvents)) {
+        state.canvas.addEventListener(
+            name,
+            val as EventListenerOrEventListenerObject,
+        );
     }
 
-    for (const name in docEvents) {
-        document.addEventListener(name, docEvents[name]);
+    for (const [name, val] of Object.entries(docEvents)) {
+        document.addEventListener(
+            name,
+            val as EventListenerOrEventListenerObject,
+        );
     }
 
-    for (const name in winEvents) {
-        window.addEventListener(name, winEvents[name]);
+    for (const [name, val] of Object.entries(winEvents)) {
+        window.addEventListener(
+            name,
+            val as EventListenerOrEventListenerObject,
+        );
     }
 
     const resizeObserver = new ResizeObserver((entries) => {

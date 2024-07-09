@@ -1,3 +1,4 @@
+import { Color, rgb } from "./math/color";
 import type { GameObj, LerpValue, RNGValue } from "./types";
 
 /**
@@ -290,221 +291,6 @@ export function vec2(...args: Vec2Args): Vec2 {
     // @ts-ignore
     return new Vec2(...args);
 }
-
-/**
- * 0-255 RGBA color.
- *
- * @group Math
- */
-export class Color {
-    /** Red (0-255. */
-    r: number = 255;
-    /** Green (0-255). */
-    g: number = 255;
-    /** Blue (0-255). */
-    b: number = 255;
-
-    constructor(r: number, g: number, b: number) {
-        this.r = clamp(r, 0, 255);
-        this.g = clamp(g, 0, 255);
-        this.b = clamp(b, 0, 255);
-    }
-
-    static fromArray(arr: number[]) {
-        return new Color(arr[0], arr[1], arr[2]);
-    }
-
-    /**
-     * Create color from hex string or literal.
-     *
-     * @example
-     * ```js
-     * Color.fromHex(0xfcef8d)
-     * Color.fromHex("#5ba675")
-     * Color.fromHex("d46eb3")
-     * ```
-     *
-     * @since v3000.0
-     */
-    static fromHex(hex: string | number) {
-        if (typeof hex === "number") {
-            return new Color(
-                (hex >> 16) & 0xff,
-                (hex >> 8) & 0xff,
-                (hex >> 0) & 0xff,
-            );
-        } else if (typeof hex === "string") {
-            const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(
-                hex,
-            );
-            return new Color(
-                parseInt(result[1], 16),
-                parseInt(result[2], 16),
-                parseInt(result[3], 16),
-            );
-        } else {
-            throw new Error("Invalid hex color format");
-        }
-    }
-
-    // TODO: use range of [0, 360] [0, 100] [0, 100]?
-    static fromHSL(h: number, s: number, l: number) {
-        if (s == 0) {
-            return new Color(255 * l, 255 * l, 255 * l);
-        }
-
-        const hue2rgb = (p, q, t) => {
-            if (t < 0) t += 1;
-            if (t > 1) t -= 1;
-            if (t < 1 / 6) return p + (q - p) * 6 * t;
-            if (t < 1 / 2) return q;
-            if (t < 2 / 3) return p + (q - p) * (2 / 3 - t) * 6;
-            return p;
-        };
-
-        const q = l < 0.5 ? l * (1 + s) : l + s - l * s;
-        const p = 2 * l - q;
-        const r = hue2rgb(p, q, h + 1 / 3);
-        const g = hue2rgb(p, q, h);
-        const b = hue2rgb(p, q, h - 1 / 3);
-
-        return new Color(
-            Math.round(r * 255),
-            Math.round(g * 255),
-            Math.round(b * 255),
-        );
-    }
-
-    static RED = new Color(255, 0, 0);
-    static GREEN = new Color(0, 255, 0);
-    static BLUE = new Color(0, 0, 255);
-    static YELLOW = new Color(255, 255, 0);
-    static MAGENTA = new Color(255, 0, 255);
-    static CYAN = new Color(0, 255, 255);
-    static WHITE = new Color(255, 255, 255);
-    static BLACK = new Color(0, 0, 0);
-
-    clone(): Color {
-        return new Color(this.r, this.g, this.b);
-    }
-
-    /** Lighten the color (adds RGB by n). */
-    lighten(a: number): Color {
-        return new Color(this.r + a, this.g + a, this.b + a);
-    }
-
-    /** Darkens the color (subtracts RGB by n). */
-    darken(a: number): Color {
-        return this.lighten(-a);
-    }
-
-    invert(): Color {
-        return new Color(255 - this.r, 255 - this.g, 255 - this.b);
-    }
-
-    mult(other: Color): Color {
-        return new Color(
-            this.r * other.r / 255,
-            this.g * other.g / 255,
-            this.b * other.b / 255,
-        );
-    }
-
-    /**
-     * Linear interpolate to a destination color.
-     *
-     * @since v3000.0
-     */
-    lerp(dest: Color, t: number): Color {
-        return new Color(
-            lerp(this.r, dest.r, t),
-            lerp(this.g, dest.g, t),
-            lerp(this.b, dest.b, t),
-        );
-    }
-
-    /**
-     * Convert color into HSL format.
-     *
-     * @since v3001.0
-     */
-    toHSL(): [number, number, number] {
-        const r = this.r / 255;
-        const g = this.g / 255;
-        const b = this.b / 255;
-        const max = Math.max(r, g, b), min = Math.min(r, g, b);
-        let h = (max + min) / 2;
-        let s = h;
-        const l = h;
-        if (max == min) {
-            h = s = 0;
-        } else {
-            const d = max - min;
-            s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
-            switch (max) {
-                case r:
-                    h = (g - b) / d + (g < b ? 6 : 0);
-                    break;
-                case g:
-                    h = (b - r) / d + 2;
-                    break;
-                case b:
-                    h = (r - g) / d + 4;
-                    break;
-            }
-            h /= 6;
-        }
-        return [h, s, l];
-    }
-
-    eq(other: Color): boolean {
-        return this.r === other.r
-            && this.g === other.g
-            && this.b === other.b;
-    }
-
-    toString(): string {
-        return `rgb(${this.r}, ${this.g}, ${this.b})`;
-    }
-
-    /**
-     * Return the hex string of color.
-     *
-     * @since v3000.0
-     */
-    toHex(): string {
-        return "#"
-            + ((1 << 24) + (this.r << 16) + (this.g << 8) + this.b).toString(16)
-                .slice(1);
-    }
-
-    /**
-     * Return the color converted to an array.
-     *
-     * @since v3001.0
-     */
-    toArray(): Array<number> {
-        return [this.r, this.g, this.b];
-    }
-}
-
-export function rgb(...args): Color {
-    if (args.length === 0) {
-        return new Color(255, 255, 255);
-    } else if (args.length === 1) {
-        if (args[0] instanceof Color) {
-            return args[0].clone();
-        } else if (typeof args[0] === "string") {
-            return Color.fromHex(args[0]);
-        } else if (Array.isArray(args[0]) && args[0].length === 3) {
-            return Color.fromArray(args[0]);
-        }
-    }
-    // @ts-ignore
-    return new Color(...args);
-}
-
-export const hsl2rgb = (h, s, l) => Color.fromHSL(h, s, l);
 
 /**
  * @group Math
@@ -856,7 +642,7 @@ class Mat3 {
             - this.m12 * this.m21 * this.m33 - this.m11 * this.m23 * this.m32;
     }
 
-    rotate(radians) {
+    rotate(radians: number) {
         const c = Math.cos(radians);
         const s = Math.sin(radians);
         const oldA = this.m11;
@@ -867,7 +653,8 @@ class Mat3 {
         this.m22 = c * this.m22 - s * oldB;
         return this;
     }
-    scale(x, y) {
+
+    scale(x: number, y: number) {
         this.m11 *= x;
         this.m12 *= x;
         this.m21 *= y;
@@ -1232,7 +1019,7 @@ export function wave(
     lo: number,
     hi: number,
     t: number,
-    f = (t) => -Math.cos(t),
+    f = (t: number) => -Math.cos(t),
 ): number {
     return lo + (f(t) + 1) / 2 * (hi - lo);
 }
@@ -1257,7 +1044,7 @@ export class RNG {
     genNumber(a: number, b: number): number {
         return a + this.gen() * (b - a);
     }
-    genVec2(a: Vec2, b?: Vec2): Vec2 {
+    genVec2(a: Vec2, b: Vec2): Vec2 {
         return new Vec2(
             this.genNumber(a.x, b.x),
             this.genNumber(a.y, b.y),
@@ -1270,7 +1057,7 @@ export class RNG {
             this.genNumber(a.b, b.b),
         );
     }
-    genAny<T = RNGValue>(...args: T[]): T {
+    genAny<T = RNGValue>(...args: [] | [T] | [T, T]): T {
         if (args.length === 0) {
             return this.gen() as T;
         } else if (args.length === 1) {
@@ -1290,6 +1077,8 @@ export class RNG {
                 return this.genColor(args[0], args[1]) as T;
             }
         }
+
+        throw new Error("More than 2 arguments not supported");
     }
 }
 
@@ -1303,13 +1092,12 @@ export function randSeed(seed?: number): number {
     return defRNG.seed;
 }
 
-export function rand(...args) {
-    // @ts-ignore
+export function rand<T = number>(...args: [] | [T] | [T, T]) {
     return defRNG.genAny(...args);
 }
 
 // TODO: randi() to return 0 / 1?
-export function randi(...args: number[]) {
+export function randi(...args: [] | [number] | [number, number]) {
     return Math.floor(rand(...args));
 }
 
@@ -1997,6 +1785,7 @@ function raycastRect(origin: Vec2, direction: Vec2, rect: Rect) {
 
     if (tmax >= tmin && tmin >= 0 && tmin <= 1) {
         const point = origin.add(direction.scale(tmin));
+
         return {
             point: point,
             normal: normal,
@@ -2294,6 +2083,8 @@ export class Rect {
         return this.collides(point);
     }
     raycast(origin: Vec2, direction: Vec2): RaycastResult {
+        // Further type checking is needed here @mflerackers
+        // @ts-ignore
         return raycastRect(origin, direction, this);
     }
     random(): Vec2 {
@@ -2338,7 +2129,7 @@ export class Circle {
     random(): Vec2 {
         // TODO: Not uniform!!
         return this.center.add(
-            Vec2.fromAngle(rand(360).scale(rand(this.radius))),
+            Vec2.fromAngle(rand(360)).scale(rand(this.radius)),
         );
     }
 }

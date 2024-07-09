@@ -23,7 +23,8 @@ function buildPath(start: number, goal: number, cameFrom: Map<number, number>) {
     let node = goal;
     path.push(node);
     while (node !== start) {
-        node = cameFrom.get(node);
+        // TODO: Remove non-null assertion
+        node = cameFrom.get(node)!;
         if (node == undefined) return null;
         path.push(node);
     }
@@ -48,11 +49,13 @@ export function breadthFirstSearch(
             break;
         }
 
-        const neighbours = graph.getNeighbours(current);
+        // TODO: Remove non-null assertion
+        const neighbours = graph.getNeighbours(current!);
         for (let next of neighbours) {
             if (!cameFrom.get(next)) {
                 frontier.push(next);
-                cameFrom.set(next, current);
+                // TODO: Remove non-null assertion
+                cameFrom.set(next, current!);
             }
         }
     }
@@ -83,17 +86,18 @@ export function dijkstraSearch(
             break;
         }
 
-        const neighbours = graph.getNeighbours(current);
+        // TODO: Remove non-null assertion
+        const neighbours = graph.getNeighbours(current!);
         for (let next of neighbours) {
-            const newCost = (costSoFar.get(current) || 0)
-                + graph.getCost(current, next);
+            const newCost = (costSoFar.get(current!) || 0)
+                + graph.getCost(current!, next);
             if (
                 !costSoFar.has(next)
-                || newCost < costSoFar.get(next)
+                || newCost < costSoFar.get(next)!
             ) {
                 costSoFar.set(next, newCost);
                 frontier.insert({ cost: newCost, node: next });
-                cameFrom.set(next, current);
+                cameFrom.set(next, current!);
             }
         }
     }
@@ -125,20 +129,23 @@ export function aStarSearch(
             break;
         }
 
-        const neighbours = graph.getNeighbours(current);
+        // TODO: Remove non-null assertion
+        const neighbours = graph.getNeighbours(current!);
         for (let next of neighbours) {
-            const newCost = (costSoFar.get(current) || 0)
-                + graph.getCost(current, next) + graph.getHeuristic(next, goal);
+            const newCost = (costSoFar.get(current!) || 0)
+                + graph.getCost(current!, next)
+                + graph.getHeuristic(next, goal);
             if (
                 !costSoFar.has(next)
-                || newCost < costSoFar.get(next)
+                || newCost < costSoFar.get(next)!
             ) {
                 costSoFar.set(next, newCost);
                 frontier.insert({ cost: newCost, node: next });
-                cameFrom.set(next, current);
+                cameFrom.set(next, current!);
             }
         }
     }
 
-    return buildPath(start, goal, cameFrom);
+    // TODO: Remove non-null assertion
+    return buildPath(start, goal, cameFrom)!;
 }

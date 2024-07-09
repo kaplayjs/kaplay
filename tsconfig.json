@@ -3,14 +3,16 @@
     "esModuleInterop": true,
     "target": "ESNext",
     "moduleResolution": "Node",
-    "noImplicitThis": false,
+    "noImplicitThis": true,
+    "skipLibCheck": true,
     "resolveJsonModule": true,
     "emitDeclarationOnly": true,
     "declaration": true,
     "declarationMap": true,
     "declarationDir": "dist/declaration",
     // always use import type for type only imports
-    "verbatimModuleSyntax": true
+    "verbatimModuleSyntax": true,
+    "strict": true
   },
   "include": [
     "src/**/*",

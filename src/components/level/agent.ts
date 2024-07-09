@@ -1,4 +1,4 @@
-import type { Vec2 } from "../../math";
+import { Vec2 } from "../../math";
 import type { Comp, GameObj, PosComp } from "../../types";
 import type { KEventController } from "../../utils";
 import type { TileComp } from "./tile";
@@ -72,11 +72,11 @@ export function agent(opts: AgentCompOpt = {}): AgentComp {
                 allowDiagonals: this.allowDiagonals,
             });
             index = path ? 0 : null;
-            if (path) {
+            if (path && index !== null) {
                 if (!navMapChangedEvent) {
                     navMapChangedEvent = this.getLevel()
                         .onNavigationMapChanged(() => {
-                            if (path && index !== null) {
+                            if (target && path && index !== null) {
                                 path = this.getLevel().getPath(
                                     this.pos,
                                     target,
@@ -84,19 +84,20 @@ export function agent(opts: AgentCompOpt = {}): AgentComp {
                                         allowDiagonals: this.allowDiagonals,
                                     },
                                 );
-                                index = path ? 0 : null;
                                 if (path) {
+                                    index = 0;
                                     this.trigger(
                                         "navigation-next",
                                         this,
                                         path[index],
                                     );
                                 } else {
+                                    index = null
                                     this.trigger("navigation-ended", this);
                                 }
                             }
                         });
-                    this.onDestroy(() => navMapChangedEvent.cancel());
+                    this.onDestroy(() => navMapChangedEvent?.cancel());
                 }
                 this.trigger("navigation-started", this);
                 this.trigger("navigation-next", this, path[index]);
@@ -105,7 +106,7 @@ export function agent(opts: AgentCompOpt = {}): AgentComp {
             }
         },
         update(this: GameObj<AgentComp | PosComp>) {
-            if (path && index !== null) {
+            if (target && path && index !== null) {
                 if (this.pos.sdist(path[index]) < 2) {
                     if (index === path.length - 1) {
                         this.pos = target.clone();

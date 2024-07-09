@@ -23,8 +23,10 @@ class NavEdge {
 }
 
 class NavPolygon {
-    private _edges: NavEdge[];
-    private _centroid: Vec2;
+    // I don't know if set a default affects how the code is did
+    // TODO: Remove non-null assertion
+    private _edges!: NavEdge[];
+    private _centroid!: Vec2;
     private _id: number;
 
     constructor(id: number) {
@@ -133,7 +135,8 @@ export class NavMesh implements Graph {
     private _findCommonEdge(a: NavPolygon, b: NavPolygon): NavEdge | null {
         for (const edge of a.edges) {
             const e = this._findEdge(edge.b, edge.a);
-            if (e && e.polygon.deref().id === b.id) {
+            // TODO: Remove non-null assertion
+            if (e && e.polygon.deref()!.id === b.id) {
                 return e;
             }
         }
@@ -222,7 +225,8 @@ export class NavMesh implements Graph {
             return [];
         }
 
-        const path = this.getPath(startPolygon.id, goalPolygon.id);
+        // TODO: Remove non-null assertion
+        const path = this.getPath(startPolygon!.id, goalPolygon!.id);
 
         // No path was found
         if (!path) {
@@ -235,9 +239,10 @@ export class NavMesh implements Graph {
                 const p1 = this._polygons[path[i - 1]];
                 const p2 = this._polygons[path[i]];
                 const edge = this._findCommonEdge(p1, p2);
+                // TODO: Remove non-null assertion
                 edges.push(
-                    edge.middle.add(
-                        p2.centroid.sub(edge.middle).unit().scale(4),
+                    edge!.middle.add(
+                        p2.centroid.sub(edge!.middle).unit().scale(4),
                     ),
                 );
             }

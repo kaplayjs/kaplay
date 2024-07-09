@@ -84,7 +84,8 @@ export class AssetBucket<D> {
         this.assets.set(id, asset);
         return asset;
     }
-    get(handle: string): Asset<D> | null {
+    // if not found return undefined
+    get(handle: string): Asset<D> | undefined {
         return this.assets.get(handle);
     }
     progress(): number {

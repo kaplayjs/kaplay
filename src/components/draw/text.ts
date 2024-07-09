@@ -7,6 +7,7 @@ import type {
     CharTransformFunc,
     Comp,
     GameObj,
+    KaboomCtx,
     TextAlign,
 } from "../../types";
 
@@ -123,7 +124,11 @@ export interface TextCompOpt {
     styles?: Record<string, CharTransform | CharTransformFunc>;
 }
 
-export function text(t: string, opt: TextCompOpt = {}): TextComp {
+export function text(
+    this: KaboomCtx,
+    t: string,
+    opt: TextCompOpt = {},
+): TextComp {
     const k = getKaboomContext(this);
     const { getRenderProps } = k._k;
 
@@ -186,5 +191,6 @@ export function text(t: string, opt: TextCompOpt = {}): TextComp {
     // @ts-ignore
     update(obj);
 
+    // @ts-ignore Deep check in text related methods
     return obj;
 }

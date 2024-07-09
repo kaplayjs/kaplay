@@ -24,5 +24,7 @@ jobs:
         run: pnpm run check
       - name: Run tests
         run: pnpm run test -c
+      - name: Run vitests
+        run: pnpm run test:vite
       - name: Upload Package
         run: pnpx pkg-pr-new publish

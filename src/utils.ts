@@ -64,7 +64,9 @@ export class KEvent<Args extends any[] = any[]> {
         const ev = new KEventController(cancel);
         return ev;
     }
-    addOnce(action: (...args) => void): KEventController {
+    addOnce(
+        action: (...args: (Args | PromiseLike<Args>)[]) => void,
+    ): KEventController {
         const ev = this.add((...args) => {
             ev.cancel();
             action(...args);
@@ -267,9 +269,9 @@ export function deprecateMsg(oldName: string, newName: string) {
 export function deprecate(
     oldName: string,
     newName: string,
-    newFunc: (...args) => any,
+    newFunc: (...args: unknown[]) => any,
 ) {
-    return (...args) => {
+    return (...args: unknown[]) => {
         deprecateMsg(oldName, newName);
         return newFunc(...args);
     };
@@ -597,10 +599,16 @@ export function substring(string: string, start?: number, width?: number) {
     }
     const rest = chars.length - start;
     const stringWidth = width === undefined ? rest : width;
-    let endIndex = start + stringWidth;
+    let endIndex: number | null = start + stringWidth;
+
     if (endIndex > (start + rest)) {
-        endIndex = undefined;
+        endIndex = null;
     }
+
+    if (endIndex === null) {
+        return chars.slice(start).join("");
+    }
+
     return chars.slice(start, endIndex).join("");
 }
 

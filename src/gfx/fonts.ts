@@ -3,7 +3,7 @@ import {
     DEF_TEXT_CACHE_SIZE,
     MAX_TEXT_CACHE_SIZE,
 } from "../constants";
-import { rgb } from "../math";
+import { rgb } from "../math/color";
 import type { LoadFontOpt, Outline, TexFilter } from "../types";
 
 export class FontData {

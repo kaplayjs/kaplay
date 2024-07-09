@@ -1,6 +1,6 @@
 const VERSION = "3001.0.0";
 
-import initApp from "./app";
+import { type App, initApp } from "./app";
 import initGfx, { BatchRenderer, FrameBuffer, Shader, Texture } from "./gfx";
 
 import {
@@ -47,7 +47,6 @@ import {
     chooseMultiple,
     Circle,
     clamp,
-    Color,
     curveLengthApproximation,
     deg2rad,
     easingCubicBezier,
@@ -62,7 +61,6 @@ import {
     evaluateQuadratic,
     evaluateQuadraticFirstDerivative,
     evaluateQuadraticSecondDerivative,
-    hsl2rgb,
     isConvex,
     lerp,
     Line,
@@ -81,7 +79,6 @@ import {
     raycastGrid,
     type RaycastHit as BaseRaycastHit,
     Rect,
-    rgb,
     RNG,
     sat,
     shuffle,
@@ -98,6 +95,8 @@ import {
     type Vec2Args,
     wave,
 } from "./math";
+
+import { Color, type ColorArgs, hsl2rgb, rgb } from "./math/color";
 
 import { NavMesh } from "./math/navigationmesh";
 
@@ -152,10 +151,12 @@ import type {
     DrawTextureOpt,
     DrawTriangleOpt,
     DrawUVQuadOpt,
+    EventController,
     FixedComp,
     FormattedChar,
     FormattedText,
     GameObj,
+    GameObjInspect,
     GetOpt,
     GfxFont,
     ImageSource,
@@ -188,11 +189,13 @@ import type {
     SceneDef,
     SceneName,
     ShaderData,
+    SpriteAnim,
     SpriteAnims,
     SpriteAtlasData,
     Tag,
     TexFilter,
     TextAlign,
+    TimerComp,
     Uniform,
     Vertex,
 } from "./types";
@@ -433,16 +436,18 @@ const kaplay = <
 
     const gc: Array<() => void> = [];
 
-    const gl: WebGLRenderingContext = app.canvas
+    const canvasContext = app.canvas
         .getContext("webgl", {
             antialias: true,
             depth: true,
             stencil: true,
             alpha: true,
             preserveDrawingBuffer: true,
-        })!;
+        });
 
-    if (!gl || gl === null) throw new Error("WebGL not supported");
+    if (!canvasContext) throw new Error("WebGL not supported");
+
+    const gl = canvasContext;
 
     const ggl = initGfx(gl, {
         texFilter: gopt.texFilter,
@@ -474,10 +479,13 @@ const kaplay = <
         let bgAlpha = 1;
 
         if (gopt.background) {
-            bgColor = rgb(gopt.background);
-            bgAlpha = Array.isArray(gopt.background)
-                ? gopt.background[3]
-                : 1;
+            if (typeof gopt.background === "string") {
+                bgColor = rgb(gopt.background);
+            } else {
+                bgColor = rgb(...gopt.background);
+                bgAlpha = gopt.background[3] ?? 1;
+            }
+
             gl.clearColor(
                 bgColor.r / 255,
                 bgColor.g / 255,
@@ -545,7 +553,7 @@ const kaplay = <
             renderer: renderer,
 
             transform: new Mat4(),
-            transformStack: [],
+            transformStack: [] as Mat4[],
 
             bgTex: bgTex,
             bgColor: bgColor,
@@ -693,7 +701,7 @@ const kaplay = <
         sounds: new AssetBucket<SoundData>(),
         shaders: new AssetBucket<ShaderData>(),
         custom: new AssetBucket<any>(),
-        music: {},
+        music: {} as Record<string, string>,
         packer: new TexPacker(ggl, SPRITE_ATLAS_WIDTH, SPRITE_ATLAS_HEIGHT),
         // if we finished initially loading all assets
         loaded: false,
@@ -741,21 +749,21 @@ const kaplay = <
         objEvents: new KEventHandler(),
 
         // root game object
-        root: make([]),
+        root: make([]) as GameObj<TimerComp>,
 
         // misc
-        gravity: null,
-        scenes: {},
-        currentScene: null,
-        layers: null,
+        gravity: null as Vec2 | null,
+        scenes: {} as Record<SceneName, SceneDef>,
+        currentScene: null as SceneName | null,
+        layers: null as string[] | null,
         defaultLayerIndex: 0,
 
         // on screen log
-        logs: [],
+        logs: [] as { msg: string | { toString(): string }; time: number }[],
 
         // camera
         cam: {
-            pos: null,
+            pos: null as Vec2 | null,
             scale: new Vec2(1),
             angle: 0,
             shake: 0,
@@ -792,7 +800,7 @@ const kaplay = <
         return assets.urlPrefix;
     }
 
-    function loadJSON(name, url) {
+    function loadJSON(name: string, url: string) {
         return assets.custom.add(name, fetchJSON(url));
     }
 
@@ -875,7 +883,8 @@ const kaplay = <
         }
         return load(
             SpriteData.from(src).then((atlas) => {
-                const map = {};
+                const map: Record<string, SpriteData> = {};
+
                 for (const name in data) {
                     const info = data[name];
                     const quad = atlas.frames[0];
@@ -1034,7 +1043,8 @@ const kaplay = <
                         f.frame.h / size.h,
                     );
                 });
-                const anims = {};
+                const anims: Record<string, number | SpriteAnim> = {};
+
                 for (const anim of data.meta.frameTags) {
                     if (anim.from === anim.to) {
                         anims[anim.name] = anim.from;
@@ -1102,7 +1112,9 @@ const kaplay = <
     ) {
         const a = new Audio(url);
         a.preload = "auto";
-        return assets.music[name] = fixURL(url);
+
+        // TODO: assets.music should be a map
+        return assets.music[name as keyof typeof assets.music] = fixURL(url);
     }
 
     function loadBean(name: string = "bean"): Asset<SpriteData> {
@@ -1110,27 +1122,27 @@ const kaplay = <
     }
 
     function getSprite(name: string): Asset<SpriteData> | null {
-        return assets.sprites.get(name);
+        return assets.sprites.get(name) ?? null;
     }
 
     function getSound(name: string): Asset<SoundData> | null {
-        return assets.sounds.get(name);
+        return assets.sounds.get(name) ?? null;
     }
 
     function getFont(name: string): Asset<FontData> | null {
-        return assets.fonts.get(name);
+        return assets.fonts.get(name) ?? null;
     }
 
     function getBitmapFont(name: string): Asset<BitmapFontData> | null {
-        return assets.bitmapFonts.get(name);
+        return assets.bitmapFonts.get(name) ?? null;
     }
 
     function getShader(name: string): Asset<ShaderData> | null {
-        return assets.shaders.get(name);
+        return assets.shaders.get(name) ?? null;
     }
 
     function getAsset(name: string): Asset<any> | null {
-        return assets.custom.get(name);
+        return assets.custom.get(name) ?? null;
     }
 
     function resolveSprite(
@@ -1535,7 +1547,7 @@ const kaplay = <
             toImageData: () => fb.toImageData(),
             width: fb.width,
             height: fb.height,
-            draw: (action) => {
+            draw: (action: () => void) => {
                 flush();
                 fb.bind();
                 action();
@@ -1601,7 +1613,7 @@ const kaplay = <
     function drawRaw(
         verts: Vertex[],
         indices: number[],
-        fixed: boolean,
+        fixed: boolean = false,
         tex: Texture = gfx.defTex,
         shaderSrc: RenderProps["shader"] = gfx.defShader,
         uniform: Uniform = {},
@@ -1720,22 +1732,25 @@ const kaplay = <
         gfx.transform = m.clone();
     }
 
-    function pushTranslate(...args: Vec2Args) {
+    function pushTranslate(...args: Vec2Args | [undefined]) {
         if (args[0] === undefined) return;
+
         const p = vec2(...args);
         if (p.x === 0 && p.y === 0) return;
         gfx.transform.translate(p);
     }
 
-    function pushScale(...args: Vec2Args) {
+    function pushScale(...args: Vec2Args | [undefined]) {
         if (args[0] === undefined) return;
+
         const p = vec2(...args);
         if (p.x === 1 && p.y === 1) return;
         gfx.transform.scale(p);
     }
 
-    function pushRotate(a: number) {
+    function pushRotate(a: number | undefined) {
         if (!a) return;
+
         gfx.transform.rotate(a);
     }
 
@@ -1745,7 +1760,8 @@ const kaplay = <
 
     function popTransform() {
         if (gfx.transformStack.length > 0) {
-            gfx.transform = gfx.transformStack.pop();
+            // if there's more than 1 element, it will return obviously a Mat4
+            gfx.transform = gfx.transformStack.pop()!;
         }
     }
 
@@ -1826,7 +1842,7 @@ const kaplay = <
             opt.fixed,
             opt.tex,
             opt.shader,
-            opt.uniform,
+            opt.uniform ?? undefined,
         );
 
         popTransform();
@@ -1949,7 +1965,7 @@ const kaplay = <
                 opt.fixed,
                 opt.tex,
                 opt.shader,
-                opt.uniform,
+                opt.uniform ?? undefined,
             );
         } else {
             // TODO: should this ignore scale?
@@ -2012,7 +2028,7 @@ const kaplay = <
         end = deg2rad(end % 360);
         if (end <= start) end += Math.PI * 2;
 
-        const pts = [];
+        const pts: Vec2[] = [];
         const nverts = Math.ceil((end - start) / deg2rad(8) * res);
         const step = (end - start) / nverts;
 
@@ -2134,7 +2150,7 @@ const kaplay = <
             opt.fixed,
             gfx.defTex,
             opt.shader,
-            opt.uniform,
+            opt.uniform ?? undefined,
         );
     }
 
@@ -2297,7 +2313,7 @@ const kaplay = <
             opt.fixed,
             gfx.defTex,
             opt.shader,
-            opt.uniform,
+            opt.uniform ?? undefined,
         );
     }
 
@@ -2480,7 +2496,7 @@ const kaplay = <
             opt.fixed,
             gfx.defTex,
             opt.shader,
-            opt.uniform,
+            opt.uniform ?? undefined,
         );
     }
 
@@ -2634,12 +2650,13 @@ const kaplay = <
             opt.fixed,
             gfx.defTex,
             opt.shader,
-            opt.uniform,
+            opt.uniform ?? undefined,
         );
     }
 
     function drawLines(opt: DrawLinesOpt) {
         const pts = opt.pts;
+        const width = opt.width ?? 1;
 
         if (!pts) {
             throw new Error("drawLines() requires property \"pts\".");
@@ -2688,7 +2705,7 @@ const kaplay = <
                 if (opt.join !== "none") {
                     drawCircle(Object.assign({}, opt, {
                         pos: pts[i],
-                        radius: opt.width / 2,
+                        radius: width / 2,
                     }));
                 }
             }
@@ -2853,7 +2870,7 @@ const kaplay = <
                 opt.fixed,
                 opt.uv ? opt.tex : gfx.defTex,
                 opt.shader,
-                opt.uniform,
+                opt.uniform ?? undefined,
             );
         }
 
@@ -2953,18 +2970,18 @@ const kaplay = <
         if (tr.opacity) fchar.opacity *= tr.opacity;
     }
 
-    // TODO: handle nested
     function compileStyledText(text: string): {
         charStyleMap: Record<number, string[]>;
         text: string;
     } {
-        const charStyleMap = {};
+        const charStyleMap = {} as Record<number, string[]>;
         // get the text without the styling syntax
         const renderText = text.replace(TEXT_STYLE_RE, "$2");
         let idxOffset = 0;
 
         // put each styled char index into a map for easy access when iterating each char
         for (const match of text.matchAll(TEXT_STYLE_RE)) {
+            if (!match?.groups) continue;
             const origIdx = match.index - idxOffset;
             for (let i = 0; i < match.groups.text.length; i++) {
                 charStyleMap[i + origIdx] = [match.groups.style];
@@ -3050,6 +3067,7 @@ const kaplay = <
                 if (!atlas.font.map[ch]) {
                     // TODO: use assets.packer to pack font texture
                     const c2d = fontCacheC2d;
+                    if (!c2d) throw new Error("fontCacheC2d is not defined.");
                     c2d.clearRect(
                         0,
                         0,
@@ -3064,7 +3082,12 @@ const kaplay = <
                     let w = Math.ceil(m.width);
                     if (!w) continue;
                     let h = font.size;
-                    if (atlas.outline) {
+
+                    // TODO: Test if this works with the verification of width and color
+                    if (
+                        atlas.outline && atlas.outline.width
+                        && atlas.outline.color
+                    ) {
                         c2d.lineJoin = "round";
                         c2d.lineWidth = atlas.outline.width * 2;
                         c2d.strokeStyle = atlas.outline.color.toHex();
@@ -3073,9 +3096,11 @@ const kaplay = <
                             atlas.outline.width,
                             atlas.outline.width,
                         );
+
                         w += atlas.outline.width * 2;
                         h += atlas.outline.width * 3;
                     }
+
                     c2d.fillText(
                         ch,
                         atlas.outline?.width ?? 0,
@@ -3112,7 +3137,7 @@ const kaplay = <
         const scale = vec2(opt.scale ?? 1).scale(size / font.size);
         const lineSpacing = opt.lineSpacing ?? 0;
         const letterSpacing = opt.letterSpacing ?? 0;
-        let curX = 0;
+        let curX: number = 0;
         let tw = 0;
         let th = 0;
         const lines: Array<{
@@ -3121,8 +3146,8 @@ const kaplay = <
         }> = [];
         let curLine: FormattedChar[] = [];
         let cursor = 0;
-        let lastSpace = null;
-        let lastSpaceWidth = null;
+        let lastSpace: number | null = null;
+        let lastSpaceWidth: number = 0;
 
         // TODO: word break
         while (cursor < chars.length) {
@@ -3138,7 +3163,7 @@ const kaplay = <
                 });
 
                 lastSpace = null;
-                lastSpaceWidth = null;
+                lastSpaceWidth = 0;
                 curX = 0;
                 curLine = [];
             } else {
@@ -3161,11 +3186,13 @@ const kaplay = <
                             curX = lastSpaceWidth;
                         }
                         lastSpace = null;
-                        lastSpaceWidth = null;
+                        lastSpaceWidth = 0;
+
                         lines.push({
                             width: curX - letterSpacing,
                             chars: curLine,
                         });
+
                         curX = 0;
                         curLine = [];
                     }
@@ -3241,7 +3268,7 @@ const kaplay = <
                 if (charStyleMap[idx]) {
                     const styles = charStyleMap[idx];
                     for (const name of styles) {
-                        const style = opt.styles[name];
+                        const style = opt.styles?.[name];
                         const tr = typeof style === "function"
                             ? style(idx, fchar.ch)
                             : style;
@@ -3400,9 +3427,9 @@ const kaplay = <
         fadeOutTime: number = 1,
     ) {
         let flash = add([
-            rect(width(), height()),
+            ctx.rect(width(), height()),
             color(flashColor),
-            opacity(1),
+            ctx.opacity(1),
             fixed(),
         ]);
         let fade = flash.fadeOut(fadeOutTime);
@@ -3442,15 +3469,15 @@ const kaplay = <
     type MakeType<T> = MakeTypeIsCLASS<T, MakeTypeIsFN<T>>;
 
     function make<T>(comps: CompList<T> = []): GameObj<MakeType<T>> {
-        const compStates = new Map();
-        const cleanups = {};
+        const compStates = new Map<string, Comp>();
+        const cleanups = {} as Record<string, (() => unknown)[]>;
         const events = new KEventHandler();
         const inputEvents: KEventController[] = [];
-        let onCurCompCleanup = null;
+        let onCurCompCleanup: Function | null = null;
         let paused = false;
 
-        // @ts-ignore
-        const obj: GameObj = {
+        // the game object without the event methods, added later
+        const obj: Omit<GameObj, keyof typeof evs> = {
             id: uid(),
             // TODO: a nice way to hide / pause when add()-ing
             hidden: false,
@@ -3480,7 +3507,7 @@ const kaplay = <
                 return tags;
             },
 
-            add<T2>(a: CompList<T2> | GameObj<T2>): GameObj {
+            add<T2>(this: GameObj, a: CompList<T2> | GameObj<T2>): GameObj {
                 const obj = Array.isArray(a) ? make(a) : a;
                 if (obj.parent) {
                     throw new Error(
@@ -3510,17 +3537,19 @@ const kaplay = <
                 if (idx !== -1) {
                     obj.parent = null;
                     this.children.splice(idx, 1);
-                    const trigger = (o) => {
+
+                    const trigger = (o: GameObj) => {
                         o.trigger("destroy");
                         game.events.trigger("destroy", o);
                         o.children.forEach((child) => trigger(child));
                     };
+
                     trigger(obj);
                 }
             },
 
             // TODO: recursive
-            removeAll(tag?: Tag) {
+            removeAll(this: GameObj, tag?: Tag) {
                 if (tag) {
                     this.get(tag).forEach((obj) => this.remove(obj));
                 } else {
@@ -3528,7 +3557,7 @@ const kaplay = <
                 }
             },
 
-            update() {
+            update(this: GameObj) {
                 if (this.paused) return;
                 this.children
                     /*.sort((o1, o2) => (o1.z ?? 0) - (o2.z ?? 0))*/
@@ -3635,8 +3664,10 @@ const kaplay = <
                     }
 
                     const prop = Object.getOwnPropertyDescriptor(comp, k);
+                    if (!prop) continue;
 
                     if (typeof prop.value === "function") {
+                        // @ts-ignore Maybe a MAP would be better?
                         comp[k] = comp[k].bind(this);
                     }
 
@@ -3656,18 +3687,18 @@ const kaplay = <
                         // automatically clean up events created by components in add() stage
                         const func = k === "add"
                             ? () => {
-                                onCurCompCleanup = (c) => gc.push(c);
-                                comp[k]();
+                                onCurCompCleanup = (c: any) => gc.push(c);
+                                comp[k]?.();
                                 onCurCompCleanup = null;
                             }
-                            : comp[k];
-                        gc.push(this.on(k, func).cancel);
+                            : comp[<keyof typeof comp> k];
+                        gc.push(this.on(k, <any> func).cancel);
                     } else {
                         if (this[k] === undefined) {
                             // assign comp fields to game obj
                             Object.defineProperty(this, k, {
-                                get: () => comp[k],
-                                set: (val) => comp[k] = val,
+                                get: () => comp[<keyof typeof comp> k],
+                                set: (val) => comp[<keyof typeof comp> k] = val,
                                 configurable: true,
                                 enumerable: true,
                             });
@@ -3700,7 +3731,7 @@ const kaplay = <
                 if (this.exists()) {
                     checkDeps();
                     if (comp.add) {
-                        onCurCompCleanup = (c) => gc.push(c);
+                        onCurCompCleanup = (c: any) => gc.push(c);
                         comp.add.call(this);
                         onCurCompCleanup = null;
                     }
@@ -3732,24 +3763,31 @@ const kaplay = <
                 }
             },
 
-            c(id: Tag): Comp {
-                return compStates.get(id);
+            c(id: Tag): Comp | null {
+                return compStates.get(id) ?? null;
             },
 
+            // TODO: Separate
             get(t: Tag | Tag[], opts: GetOpt = {}): GameObj[] {
                 let list: GameObj[] = opts.recursive
-                    ? this.children.flatMap(function recurse(child) {
-                        return [child, ...child.children.flatMap(recurse)];
-                    })
+                    ? this.children.flatMap(
+                        function recurse(child: GameObj): GameObj[] {
+                            return [child, ...child.children.flatMap(recurse)];
+                        },
+                    )
                     : this.children;
+
                 list = list.filter((child) => t ? child.is(t) : true);
+
                 if (opts.liveUpdate) {
-                    const isChild = (obj) => {
+                    const isChild = (obj: GameObj) => {
                         return opts.recursive
                             ? this.isAncestorOf(obj)
                             : obj.parent === this;
                     };
-                    const events = [];
+
+                    const events: EventController[] = [];
+
                     // TODO: handle when object add / remove tags
                     // TODO: clean up when obj destroyed
                     events.push(onAdd((obj) => {
@@ -3776,7 +3814,10 @@ const kaplay = <
 
             query(opt: QueryOpt) {
                 const hierarchy = opt.hierarchy || "children";
-                let list = [];
+                const include = opt.include;
+                const exclude = opt.exclude;
+                let list: GameObj[] = [];
+
                 switch (hierarchy) {
                     case "children":
                         list = this.children;
@@ -3797,7 +3838,7 @@ const kaplay = <
                         break;
                     case "descendants":
                         list = this.children.flatMap(
-                            function recurse(child: GameObj) {
+                            function recurse(child: GameObj): GameObj[] {
                                 return [
                                     child,
                                     ...child.children.flatMap(recurse),
@@ -3806,11 +3847,12 @@ const kaplay = <
                         );
                         break;
                 }
-                if (opt.include) {
+                if (include) {
                     const includeOp = opt.includeOp || "and";
+
                     if (includeOp === "and" || !Array.isArray(opt.include)) {
                         // Accept if all match
-                        list = list.filter(o => o.is(opt.include));
+                        list = list.filter(o => o.is(include));
                     } else { // includeOp == "or"
                         // Accept if some match
                         list = list.filter(o =>
@@ -3818,11 +3860,11 @@ const kaplay = <
                         );
                     }
                 }
-                if (opt.exclude) {
+                if (exclude) {
                     const excludeOp = opt.includeOp || "and";
                     if (excludeOp === "and" || !Array.isArray(opt.include)) {
                         // Reject if all match
-                        list = list.filter(o => !o.is(opt.exclude));
+                        list = list.filter(o => !o.is(exclude));
                     } else { // includeOp == "or"
                         // Reject if some match
                         list = list.filter(o =>
@@ -3864,7 +3906,7 @@ const kaplay = <
                 return obj.parent === this || this.isAncestorOf(obj.parent);
             },
 
-            exists(): boolean {
+            exists(this: GameObj): boolean {
                 return game.root.isAncestorOf(this);
             },
 
@@ -3884,7 +3926,10 @@ const kaplay = <
                 }
             },
 
-            on(name: string, action: (...args) => void): KEventController {
+            on(
+                name: string,
+                action: (...args: unknown[]) => void,
+            ): KEventController {
                 const ctrl = events.on(name, action.bind(this));
                 if (onCurCompCleanup) {
                     onCurCompCleanup(() => ctrl.cancel());
@@ -3892,7 +3937,7 @@ const kaplay = <
                 return ctrl;
             },
 
-            trigger(name: string, ...args): void {
+            trigger(name: string, ...args: unknown[]): void {
                 events.trigger(name, ...args);
                 game.objEvents.trigger(name, this, ...args);
             },
@@ -3904,9 +3949,10 @@ const kaplay = <
             },
 
             inspect() {
-                const info = {};
+                const info = {} as GameObjInspect;
+
                 for (const [tag, comp] of compStates) {
-                    info[tag] = comp.inspect ? comp.inspect() : null;
+                    info[tag] = comp.inspect?.() ?? null;
                 }
                 return info;
             },
@@ -3954,11 +4000,11 @@ const kaplay = <
             "onButtonPress",
             "onButtonDown",
             "onButtonRelease",
-        ] as const;
+        ] as unknown as [keyof Pick<App, "onKeyPress">];
 
         for (const e of evs) {
-            obj[e] = (...args: unknown[]) => {
-                const ev = app[e as any]?.(...args);
+            obj[e] = (...args: [any]) => {
+                const ev = app[e]?.(...args);
                 inputEvents.push(ev);
 
                 // TODO: what if the game object is destroy and re-added
@@ -3971,17 +4017,19 @@ const kaplay = <
             obj.use(comp as string | Comp);
         }
 
-        return obj;
+        return obj as GameObj<MakeType<T>>;
     }
 
     // add an event to a tag
+    // TODO: Implement `cb` args typing
     function on(
         event: string,
         tag: Tag,
-        cb: (obj: GameObj, ...args) => void,
+        cb: (obj: GameObj, ...args: any[]) => void,
     ): KEventController {
-        if (!game.objEvents[event]) {
-            game.objEvents[event] = new Registry();
+        type EventKey = keyof KEventHandler<Record<string, any[]>>;
+        if (!game.objEvents[<EventKey> event]) {
+            game.objEvents[<EventKey> event] = new Registry() as any;
         }
         return game.objEvents.on(event, (obj, ...args) => {
             if (obj.is(tag)) {
@@ -4065,7 +4113,8 @@ const kaplay = <
     const onClick = overload2((action: () => void) => {
         return app.onMousePress(action);
     }, (tag: Tag, action: (obj: GameObj) => void) => {
-        const events = [];
+        const events: EventController[] = [];
+
         forAllCurrentAndFuture(tag, (obj) => {
             if (!obj.area) {
                 throw new Error(
@@ -4079,7 +4128,8 @@ const kaplay = <
 
     // add an event that runs once when objs with tag t is hovered
     function onHover(t: Tag, action: (obj: GameObj) => void): KEventController {
-        const events = [];
+        const events: EventController[] = [];
+
         forAllCurrentAndFuture(t, (obj) => {
             if (!obj.area) {
                 throw new Error(
@@ -4096,7 +4146,8 @@ const kaplay = <
         t: Tag,
         action: (obj: GameObj) => void,
     ): KEventController {
-        const events = [];
+        const events: EventController[] = [];
+
         forAllCurrentAndFuture(t, (obj) => {
             if (!obj.area) {
                 throw new Error(
@@ -4113,7 +4164,8 @@ const kaplay = <
         t: Tag,
         action: (obj: GameObj) => void,
     ): KEventController {
-        const events = [];
+        const events: EventController[] = [];
+
         forAllCurrentAndFuture(t, (obj) => {
             if (!obj.area) {
                 throw new Error(
@@ -4147,31 +4199,30 @@ const kaplay = <
         return game.gravity ? game.gravity.unit() : vec2(0, 1);
     }
 
-    function setBackground(...args) {
-        if (args.length === 1 || args.length === 2) {
-            gfx.bgColor = rgb(args[0]);
-            if (args[1]) gfx.bgAlpha = args[1];
-        } else if (args.length === 3 || args.length === 4) {
-            gfx.bgColor = rgb(args[0], args[1], args[2]);
-            if (args[3]) gfx.bgAlpha = args[3];
-        }
+    function setBackground(...args: ColorArgs) {
+        const color = rgb(...args);
+        const alpha = args[3] ?? 1;
+
+        gfx.bgColor = color;
+        gfx.bgAlpha = alpha;
+
         gl.clearColor(
-            gfx.bgColor.r / 255,
-            gfx.bgColor.g / 255,
-            gfx.bgColor.b / 255,
-            gfx.bgAlpha,
+            color.r / 255,
+            color.g / 255,
+            color.b / 255,
+            alpha,
         );
     }
 
     function getBackground() {
-        return gfx.bgColor.clone();
+        return gfx.bgColor?.clone?.() ?? null;
     }
 
     function toFixed(n: number, f: number) {
         return Number(n.toFixed(f));
     }
 
-    function isFixed(obj: GameObj) {
+    function isFixed(obj: GameObj): boolean {
         if (obj.fixed) return true;
         return obj.parent ? isFixed(obj.parent) : false;
     }
@@ -4199,7 +4250,7 @@ const kaplay = <
         game.scenes[id] = def;
     }
 
-    function go(name: SceneName, ...args) {
+    function go(name: SceneName, ...args: unknown[]) {
         if (!game.scenes[name]) {
             throw new Error(`Scene not found: ${name}`);
         }
@@ -4246,7 +4297,7 @@ const kaplay = <
         return game.currentScene;
     }
 
-    function getData<T>(key: string, def?: T): T {
+    function getData<T>(key: string, def?: T): T | null {
         try {
             return JSON.parse(window.localStorage[key]);
         } catch {
@@ -4276,11 +4327,9 @@ const kaplay = <
             funcsObj = funcs;
         }
         for (const k in funcsObj) {
-            // @ts-ignore
-            ctx[k] = funcsObj[k];
+            ctx[k as keyof typeof ctx] = funcsObj[k];
             if (gopt.global !== false) {
-                // @ts-ignore
-                window[k] = funcsObj[k];
+                window[k as any] = funcsObj[k];
             }
         }
         return ctx as KaboomCtx & T;
@@ -4319,7 +4368,7 @@ const kaplay = <
 
         // TODO: custom parent
         const level = add([
-            pos(opt.pos ?? vec2(0)),
+            ctx.pos(opt.pos ?? vec2(0)),
         ]) as GameObj<PosComp | LevelComp>;
 
         const numRows = map.length;
@@ -4347,19 +4396,19 @@ const kaplay = <
 
         const insertIntoSpatialMap = (obj: GameObj) => {
             const i = tile2Hash(obj.tilePos);
-            if (spatialMap[i]) {
-                spatialMap[i].push(obj);
+            if (spatialMap![i]) {
+                spatialMap![i].push(obj);
             } else {
-                spatialMap[i] = [obj];
+                spatialMap![i] = [obj];
             }
         };
 
         const removeFromSpatialMap = (obj: GameObj) => {
             const i = tile2Hash(obj.tilePos);
-            if (spatialMap[i]) {
-                const index = spatialMap[i].indexOf(obj);
+            if (spatialMap![i]) {
+                const index = spatialMap![i].indexOf(obj);
                 if (index >= 0) {
-                    spatialMap[i].splice(index, 1);
+                    spatialMap![i].splice(index, 1);
                 }
             }
         };
@@ -4443,10 +4492,12 @@ const kaplay = <
                 const frontier: number[] = [];
                 frontier.push(i);
                 while (frontier.length > 0) {
-                    const i = frontier.pop();
+                    // TODO: Remove non-null assertion
+                    const i = frontier.pop()!;
+
                     getNeighbours(i).forEach((i) => {
-                        if (connectivityMap[i] < 0) {
-                            connectivityMap[i] = index;
+                        if (connectivityMap![i] < 0) {
+                            connectivityMap![i] = index;
                             frontier.push(i);
                         }
                     });
@@ -4459,7 +4510,7 @@ const kaplay = <
             }
             connectivityMap.fill(-1, 0, size);
             let index = 0;
-            for (let i = 0; i < costMap.length; i++) {
+            for (let i = 0; i < costMap!.length; i++) {
                 if (connectivityMap[i] >= 0) {
                     index++;
                     continue;
@@ -4471,7 +4522,7 @@ const kaplay = <
 
         const getCost = (node: number, neighbour: number) => {
             // Cost of destination tile
-            return costMap[neighbour];
+            return costMap![neighbour];
         };
 
         const getHeuristic = (node: number, goal: number) => {
@@ -4485,17 +4536,17 @@ const kaplay = <
             const n = [];
             const x = Math.floor(node % numColumns);
             const left = x > 0
-                && (edgeMap[node] & EdgeMask.Left)
-                && costMap[node - 1] !== Infinity;
+                && (edgeMap![node] & EdgeMask.Left)
+                && costMap![node - 1] !== Infinity;
             const top = node >= numColumns
-                && (edgeMap[node] & EdgeMask.Top)
-                && costMap[node - numColumns] !== Infinity;
+                && (edgeMap![node] & EdgeMask.Top)
+                && costMap![node - numColumns] !== Infinity;
             const right = x < numColumns - 1
-                && (edgeMap[node] & EdgeMask.Right)
-                && costMap[node + 1] !== Infinity;
+                && (edgeMap![node] & EdgeMask.Right)
+                && costMap![node + 1] !== Infinity;
             const bottom = node < numColumns * numRows - numColumns - 1
-                && (edgeMap[node] & EdgeMask.Bottom)
-                && costMap[node + numColumns] !== Infinity;
+                && (edgeMap![node] & EdgeMask.Bottom)
+                && costMap![node + numColumns] !== Infinity;
             if (diagonals) {
                 if (left) {
                     if (top) n.push(node - numColumns - 1);
@@ -4545,7 +4596,7 @@ const kaplay = <
                 this: GameObj<LevelComp>,
                 key: string | CompList<any>,
                 ...args: Vec2Args
-            ): GameObj | null {
+            ) {
                 const p = vec2(...args);
 
                 const comps = (() => {
@@ -4582,7 +4633,7 @@ const kaplay = <
                     if (comp.id === "pos") hasPos = true;
                 }
 
-                if (!hasPos) comps.push(pos());
+                if (!hasPos) comps.push(ctx.pos());
                 if (!hasTile) comps.push(tile());
 
                 const obj = level.add(comps);
@@ -4634,7 +4685,7 @@ const kaplay = <
                 if (!spatialMap) {
                     createSpatialMap();
                 }
-                return spatialMap;
+                return spatialMap!;
             },
 
             onSpatialMapChanged(this: GameObj<LevelComp>, cb: () => void) {
@@ -4650,7 +4701,7 @@ const kaplay = <
                     createSpatialMap();
                 }
                 const hash = tile2Hash(tilePos);
-                return spatialMap[hash] || [];
+                return spatialMap![hash] || [];
             },
 
             raycast(origin: Vec2, direction: Vec2) {
@@ -4668,18 +4719,18 @@ const kaplay = <
                         if (tile.is("area")) {
                             const shape = tile.worldArea();
                             const hit = shape.raycast(origin, direction);
-                            if (minHit) {
+                            if (minHit!) {
                                 if (hit.fraction < minHit.fraction) {
                                     minHit = hit;
-                                    minHit.object = tile;
+                                    minHit!.object = tile;
                                 }
                             } else {
                                 minHit = hit;
-                                minHit.object = tile;
+                                minHit!.object = tile;
                             }
                         }
                     }
-                    return minHit || false;
+                    return minHit! || false;
                 }, 64);
                 if (hit) {
                     hit.point = hit.point.scale(
@@ -4744,7 +4795,7 @@ const kaplay = <
                 /*if (costMap[start] === Infinity) {
                     return null
                 }*/
-                if (costMap[goal] === Infinity) {
+                if (costMap![goal] === Infinity) {
                     return null;
                 }
 
@@ -4755,9 +4806,10 @@ const kaplay = <
 
                 // Tiles are not within the same section
                 // If we test the start tile when invalid, we may get stuck
+                // TODO: Remove non-null assertion
                 if (
-                    connectivityMap[start] != -1
-                    && connectivityMap[start] !== connectivityMap[goal]
+                    connectivityMap![start] != -1
+                    && connectivityMap![start] !== connectivityMap![goal]
                 ) {
                     return null;
                 }
@@ -4778,7 +4830,8 @@ const kaplay = <
                 costSoFar.set(start, 0);
 
                 while (frontier.length !== 0) {
-                    const current = frontier.remove()?.node;
+                    // TODO: Remove non-null assertion
+                    const current = frontier.remove()?.node!;
 
                     if (current === goal) {
                         break;
@@ -4794,7 +4847,8 @@ const kaplay = <
                             + getHeuristic(next, goal);
                         if (
                             !costSoFar.has(next)
-                            || newCost < costSoFar.get(next)
+                            // TODO: Remove non-null assertion
+                            || newCost < costSoFar.get(next)!
                         ) {
                             costSoFar.set(next, newCost);
                             frontier.insert({ cost: newCost, node: next });
@@ -4807,11 +4861,20 @@ const kaplay = <
                 let node = goal;
                 const p = hash2Tile(node);
                 path.push(p);
+
                 while (node !== start) {
-                    node = cameFrom.get(node);
+                    let cameNode = cameFrom.get(node);
+
+                    if (!cameNode) {
+                        throw new Error("Bug in pathfinding algorithm");
+                    }
+
+                    node = cameNode;
+
                     const p = hash2Tile(node);
                     path.push(p);
                 }
+
                 return path.reverse();
             },
 
@@ -4868,7 +4931,7 @@ const kaplay = <
 
     type RaycastResult = RaycastHit | null;
 
-    function record(frameRate?): Recording {
+    function record(frameRate?: number): Recording {
         const stream = app.canvas.captureStream(frameRate);
         const audioDest = audio.ctx.createMediaStreamDestination();
 
@@ -4881,7 +4944,7 @@ const kaplay = <
         // stream.addTrack(firstAudioTrack);
 
         const recorder = new MediaRecorder(stream);
-        const chunks = [];
+        const chunks: any[] = [];
 
         recorder.ondataavailable = (e) => {
             if (e.data.size > 0) {
@@ -4944,6 +5007,7 @@ const kaplay = <
     const loop = game.root.loop.bind(game.root);
     const query = game.root.query.bind(game.root);
     const tween = game.root.tween.bind(game.root);
+
     const layers = function(layerNames: string[], defaultLayer: string) {
         if (game.layers) {
             throw Error("Layers can only be assigned once.");
@@ -4978,26 +5042,26 @@ const kaplay = <
 
     function addKaboom(p: Vec2, opt: BoomOpt = {}): GameObj {
         const kaboom = add([
-            pos(p),
-            stay(),
+            ctx.pos(p),
+            ctx.stay(),
         ]);
 
         const speed = (opt.speed || 1) * 5;
         const s = opt.scale || 1;
 
         kaboom.add([
-            sprite(boomSprite),
-            scale(0),
-            anchor("center"),
+            ctx.sprite(boomSprite),
+            ctx.scale(0),
+            ctx.anchor("center"),
             boom(speed, s),
             ...opt.comps ?? [],
         ]);
 
         const ka = kaboom.add([
-            sprite(kaSprite),
-            scale(0),
-            anchor("center"),
-            timer(),
+            ctx.sprite(kaSprite),
+            ctx.scale(0),
+            ctx.anchor("center"),
+            ctx.timer(),
             ...opt.comps ?? [],
         ]);
 
@@ -5066,7 +5130,7 @@ const kaplay = <
         let tr = new Mat4();
 
         // a local transform stack
-        const stack = [];
+        const stack: any[] = [];
 
         function checkObj(obj: GameObj) {
             stack.push(tr.clone());
@@ -5201,7 +5265,7 @@ const kaplay = <
         }
     }
 
-    function drawInspectText(pos, txt) {
+    function drawInspectText(pos: Vec2, txt: string) {
         drawUnscaled(() => {
             const pad = vec2(8);
 
@@ -5579,7 +5643,7 @@ const kaplay = <
 
             game.events.trigger("frameEnd");
         } catch (e) {
-            handleErr(e);
+            handleErr(e as Error);
         }
     });
 
@@ -6024,19 +6088,21 @@ const kaplay = <
         BLACK: Color.BLACK,
         quit,
         // helpers
-        KEvent: KEvent,
-        KEventHandler: KEventHandler,
-        KEventController: KEventController,
+        KEvent,
+        KEventHandler,
+        KEventController,
     };
 
-    if (gopt.plugins) {
-        gopt.plugins.forEach(plug);
+    const plugins = gopt.plugins as KaboomPlugin<Record<string, unknown>>[];
+
+    if (plugins) {
+        plugins.forEach(plug);
     }
 
     // export everything to window if global is set
     if (gopt.global !== false) {
         for (const k in ctx) {
-            window[k] = ctx[k];
+            (<any> window[<any> k]) = ctx[k as keyof KaboomCtx];
         }
     }
 
