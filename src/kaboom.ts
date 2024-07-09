@@ -4861,12 +4861,20 @@ const kaplay = <
                 let node = goal;
                 const p = hash2Tile(node);
                 path.push(p);
+
                 while (node !== start) {
-                    // TODO: Remove non-null assertion
-                    node = cameFrom.get(node)!;
+                    let cameNode = cameFrom.get(node);
+
+                    if (!cameNode) {
+                        throw new Error("Bug in pathfinding algorithm");
+                    }
+
+                    node = cameNode;
+
                     const p = hash2Tile(node);
                     path.push(p);
                 }
+
                 return path.reverse();
             },
 

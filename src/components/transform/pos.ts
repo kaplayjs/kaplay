@@ -31,40 +31,40 @@ export interface PosComp extends Comp {
     /**
      * Get the position of the object on the screen.
      */
-    screenPos(): Vec2;
+    screenPos(): Vec2 | null;
     /**
      * Get the position of the object relative to the root.
      */
-    worldPos(): Vec2;
+    worldPos(): Vec2 | null;
     /**
      * Transform a local point (relative to this) to a screen point (relative to the camera)
      */
-    toScreen(this: GameObj<PosComp | FixedComp>, p: Vec2);
+    toScreen(this: GameObj<PosComp | FixedComp>, p: Vec2): Vec2;
     /**
      * Transform a local point (relative to this) to a world point (relative to the root)
      * @since v3001.0
      */
-    toWorld(this: GameObj<PosComp>, p: Vec2);
+    toWorld(this: GameObj<PosComp>, p: Vec2): Vec2;
     /**
      * Transform a screen point (relative to the camera) to a local point (relative to this)
      * @since v3001.0
      */
-    fromScreen(this: GameObj<PosComp | FixedComp>, p: Vec2);
+    fromScreen(this: GameObj<PosComp | FixedComp>, p: Vec2): Vec2;
     /**
      * Transform a world point (relative to the root) to a local point (relative to this)
      * @since v3001.0
      */
-    fromWorld(this: GameObj<PosComp>, p: Vec2);
+    fromWorld(this: GameObj<PosComp>, p: Vec2): Vec2;
     /**
      * Transform a point relative to this to a point relative to other
      * @since v3001.0
      */
-    toOther(this: GameObj<PosComp>, other: GameObj<PosComp>, p: Vec2);
+    toOther(this: GameObj<PosComp>, other: GameObj<PosComp>, p: Vec2): Vec2;
     /**
      * Transform a point relative to other to a point relative to this
      * @since v3001.0
      */
-    fromOther(this: GameObj<PosComp>, other: GameObj<PosComp>, p: Vec2);
+    fromOther(this: GameObj<PosComp>, other: GameObj<PosComp>, p: Vec2): Vec2;
 }
 
 export function pos(
@@ -88,10 +88,12 @@ export function pos(
         },
 
         // move to a destination, with optional speed
+        // Adress all ts ignores
         moveTo(...args) {
             if (
                 typeof args[0] === "number" && typeof args[1] === "number"
             ) {
+                // @ts-ignore Use overload functions here?
                 return this.moveTo(vec2(args[0], args[1]), args[2]);
             }
             const dest = args[0];
@@ -100,6 +102,7 @@ export function pos(
                 this.pos = vec2(dest);
                 return;
             }
+            // @ts-ignore
             const diff = dest.sub(this.pos);
             if (diff.len() <= speed * k.dt()) {
                 this.pos = vec2(dest);
@@ -109,9 +112,10 @@ export function pos(
         },
 
         // Get the position of the object relative to the root
-        worldPos(this: GameObj<PosComp>, pos: Vec2 | null = null): Vec2 {
+        worldPos(this: GameObj<PosComp>, pos: Vec2 | null = null) {
             if (pos) {
                 this.pos = this.pos.add(this.fromWorld(pos));
+                return null;
             } else {
                 return this.parent
                     ? this.parent.transform.multVec2(this.pos)
@@ -137,11 +141,23 @@ export function pos(
         screenPos(
             this: GameObj<PosComp | FixedComp>,
             pos: Vec2 | null = null,
-        ): Vec2 {
+        ) {
             if (pos) {
                 this.pos = this.pos.add(this.fromScreen(pos));
+                return null;
             } else {
                 const pos = this.worldPos();
+
+                // This is not really possible, because worldPos() will always return a value
+                // if it doesn't have arguments
+
+                // I left this like that for compatibility, maybe if it returns a value
+                // will break something?
+
+                if (!pos) {
+                    return null;
+                }
+
                 return isFixed(this)
                     ? pos
                     : k.toScreen(pos);
