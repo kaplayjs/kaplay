@@ -24,6 +24,7 @@ import {
     fetchArrayBuffer,
     fetchJSON,
     fetchText,
+    initAssets,
     loadImg,
 } from "./gfx/assets";
 
@@ -536,20 +537,7 @@ const kaplay = <
         };
     })();
 
-    const assets = {
-        urlPrefix: "",
-        // asset holders
-        sprites: new AssetBucket<SpriteData>(),
-        fonts: new AssetBucket<FontData>(),
-        bitmapFonts: new AssetBucket<BitmapFontData>(),
-        sounds: new AssetBucket<SoundData>(),
-        shaders: new AssetBucket<ShaderData>(),
-        custom: new AssetBucket<any>(),
-        music: {} as Record<string, string>,
-        packer: new TexPacker(ggl, SPRITE_ATLAS_WIDTH, SPRITE_ATLAS_HEIGHT),
-        // if we finished initially loading all assets
-        loaded: false,
-    };
+    const assets = initAssets(ggl);
 
     function fixURL<D>(url: D): D {
         if (typeof url !== "string" || isDataURL(url)) return url;
@@ -5555,6 +5543,7 @@ const kaplay = <
         app,
         game,
         gfx,
+        assets,
         isFixed,
         toFixed,
         getViewportScale,

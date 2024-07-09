@@ -1,4 +1,14 @@
+import { SPRITE_ATLAS_HEIGHT, SPRITE_ATLAS_WIDTH } from "../constants";
+import type {
+    BitmapFontData,
+    FontData,
+    ShaderData,
+    SoundData,
+    SpriteData,
+} from "../kaboom";
 import { KEvent } from "../utils/";
+import type { GfxCtx } from "./gfx";
+import TexPacker from "./texPacker";
 
 /**
  * An asset is a resource that is loaded asynchronously.
@@ -133,3 +143,25 @@ export function loadImg(src: string): Promise<HTMLImageElement> {
             reject(new Error(`Failed to load image from "${src}"`));
     });
 }
+
+// create assets
+export type AssetsCtx = ReturnType<typeof initAssets>;
+
+export const initAssets = (ggl: GfxCtx) => {
+    const assets = {
+        urlPrefix: "",
+        // asset holders
+        sprites: new AssetBucket<SpriteData>(),
+        fonts: new AssetBucket<FontData>(),
+        bitmapFonts: new AssetBucket<BitmapFontData>(),
+        sounds: new AssetBucket<SoundData>(),
+        shaders: new AssetBucket<ShaderData>(),
+        custom: new AssetBucket<any>(),
+        music: {} as Record<string, string>,
+        packer: new TexPacker(ggl, SPRITE_ATLAS_WIDTH, SPRITE_ATLAS_HEIGHT),
+        // if we finished initially loading all assets
+        loaded: false,
+    };
+
+    return assets;
+};

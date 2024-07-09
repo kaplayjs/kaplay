@@ -56,7 +56,7 @@ import type {
     ParticlesOpt,
 } from "./components/draw/particles";
 import type { FrameBuffer, Texture } from "./gfx";
-import type { Asset } from "./gfx/assets";
+import type { Asset, AssetsCtx } from "./gfx/assets";
 import type { FontData } from "./gfx/fonts";
 import type {
     Circle,
@@ -161,6 +161,7 @@ export type InternalCtx = {
     kaboomCtx: KaboomCtx;
     app: App;
     gfx: GfxCtx;
+    assets: AssetsCtx;
     game: any;
     isFixed: (obj: GameObj) => boolean;
     toFixed: (n: number, f: number) => number;
