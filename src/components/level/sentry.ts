@@ -108,7 +108,7 @@ export function sentry(
                 ? Vec2.fromAngle(value)
                 : undefined;
         },
-        get directionAngle(): number {
+        get directionAngle(): number | undefined {
             return this.direction ? this.direction.angle() : undefined;
         },
         fieldOfView: opts.fieldOfView || 200, // 200 degrees = Human field of view
@@ -118,10 +118,10 @@ export function sentry(
             direction?: Vec2,
             fieldOfView?: number,
         ) {
-            const dir: Vec2 = (typeof direction === "number"
+            const dir: Vec2 | undefined = (typeof direction === "number"
                 ? Vec2.fromAngle(direction)
                 : direction) || directionVector;
-            const fov: number = fieldOfView || opts.fieldOfView;
+            const fov: number | undefined = fieldOfView || opts.fieldOfView;
             if (!dir || !fov || fov >= 360) return true;
             const halfAngle = fov / 2;
             return obj.pos
@@ -131,12 +131,12 @@ export function sentry(
             this: GameObj<SentryComp | PosComp>,
             obj: GameObj<PosComp>,
         ) {
-            const hit = raycast(
+            const hit = k.raycast(
                 this.pos,
                 obj.pos.sub(this.pos),
                 opts.raycastExclude,
             );
-            return hit && hit.object === obj;
+            return hit != null && hit.object === obj;
         },
         update(this: GameObj<SentryComp | PosComp>) {
             t += k.dt();
@@ -152,7 +152,7 @@ export function sentry(
                     objects = objects.filter(o =>
                         o.pos
                         && directionVector.angleBetween(o.pos.sub(this.pos))
-                            <= halfAngle
+                        <= halfAngle
                     );
                 }
                 // If lineOfSight is used, raycast
@@ -169,7 +169,7 @@ export function sentry(
             }
         },
         onObjectsSpotted(cb: (objects: GameObj[]) => void) {
-            return this.on("object-spotted", cb);
+            return (this as unknown as GameObj<SentryComp>).on("object-spotted", cb);
         },
     };
 }
