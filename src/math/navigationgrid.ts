@@ -9,7 +9,9 @@ export class Grid implements Graph {
     private _rows: number;
     private _tileWidth: number;
     private _tileHeight: number;
-    private _data: string[];
+    // Initializer here?
+    // TODO: Remove non-null assertion
+    private _data!: string[];
     private _diagonals: boolean;
     private _connMap: number[];
 
@@ -38,7 +40,8 @@ export class Grid implements Graph {
             frontier.push(tile);
             while (frontier.length > 0) {
                 const tile = frontier.pop();
-                that.getNeighbours(tile).forEach(t => {
+                // TODO: Remove non-null assertion
+                that.getNeighbours(tile!).forEach(t => {
                     if (that._connMap[t] < 0) {
                         that._connMap[t] = index;
                         frontier.push(t);
@@ -106,6 +109,8 @@ export class Grid implements Graph {
             }
         }
 
+        // TODO: Remove @ts-ignore
+        // @ts-ignore neighbours look like as a number[]?
         return neighbours.filter(({ x, y }) => this._data[y][x] != "x");
     }
 
