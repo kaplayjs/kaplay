@@ -2,6 +2,9 @@ const VERSION = "3001.0.0";
 
 import { type App, initApp } from "./app";
 import {
+    alignPt,
+    anchorPt,
+    createEmptyAudioBuffer,
     FrameBuffer,
     initAppGfx,
     initGfx,
@@ -255,49 +258,6 @@ import kaSpriteSrc from "./assets/ka.png";
 
 // for import types from package
 export type * from "./types";
-
-// convert anchor string to a vec2 offset
-export function anchorPt(orig: Anchor | Vec2): Vec2 {
-    switch (orig) {
-        case "topleft":
-            return new Vec2(-1, -1);
-        case "top":
-            return new Vec2(0, -1);
-        case "topright":
-            return new Vec2(1, -1);
-        case "left":
-            return new Vec2(-1, 0);
-        case "center":
-            return new Vec2(0, 0);
-        case "right":
-            return new Vec2(1, 0);
-        case "botleft":
-            return new Vec2(-1, 1);
-        case "bot":
-            return new Vec2(0, 1);
-        case "botright":
-            return new Vec2(1, 1);
-        default:
-            return orig;
-    }
-}
-
-function alignPt(align: TextAlign): number {
-    switch (align) {
-        case "left":
-            return 0;
-        case "center":
-            return 0.5;
-        case "right":
-            return 1;
-        default:
-            return 0;
-    }
-}
-
-function createEmptyAudioBuffer(ctx: AudioContext) {
-    return ctx.createBuffer(1, 1, 44100);
-}
 
 let ctx: KaboomCtx;
 

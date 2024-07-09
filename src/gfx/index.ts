@@ -1,3 +1,4 @@
+export * from "./anchor";
 export * from "./assets";
 export * from "./fonts";
 export * from "./gfx";
