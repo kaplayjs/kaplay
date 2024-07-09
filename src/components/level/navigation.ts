@@ -6,7 +6,11 @@ export interface NavigationMapComp extends Comp {
     /*
      * Get navigation waypoints to reach the given target from the given origin.
      */
-    navigate(origin: Vec2, target: Vec2, navigationOpt: any): Vec2[] | undefined;
+    navigate(
+        origin: Vec2,
+        target: Vec2,
+        navigationOpt: any,
+    ): Vec2[] | undefined;
     /*
      * The graph to use for navigation.
      */
@@ -83,7 +87,8 @@ export function navigation(
             if (graph) {
                 return graph;
             }
-            let parent: GameObj<any> | null = (this as unknown as GameObj<NavigationComp>).parent;
+            let parent: GameObj<any> | null =
+                (this as unknown as GameObj<NavigationComp>).parent;
             while (parent) {
                 if (parent.is("navigatormap")) {
                     return parent.graph;

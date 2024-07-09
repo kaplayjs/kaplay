@@ -276,7 +276,10 @@ export function animate(): AnimateComp {
                 localFinished = c.update(this as unknown as GameObj<any>, t);
                 if (localFinished && !c.isFinished) {
                     c.isFinished = true;
-                    (this as unknown as GameObj<any>).trigger("animate-channel-finished", c.name);
+                    (this as unknown as GameObj<any>).trigger(
+                        "animate-channel-finished",
+                        c.name,
+                    );
                 }
                 allFinished &&= localFinished;
             }
@@ -323,7 +326,10 @@ export function animate(): AnimateComp {
             return (this as unknown as GameObj<any>).on("animate-finished", cb);
         },
         onAnimateChannelFinished(cb: (name: string) => void) {
-            return (this as unknown as GameObj<any>).on("animate-channel-finished", cb);
+            return (this as unknown as GameObj<any>).on(
+                "animate-channel-finished",
+                cb,
+            );
         },
     };
 }
