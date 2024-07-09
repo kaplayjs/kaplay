@@ -1,7 +1,19 @@
 const VERSION = "3001.0.0";
 
 import { type App, initApp } from "./app";
-import initGfx, { BatchRenderer, FrameBuffer, Shader, Texture } from "./gfx";
+import {
+    FrameBuffer,
+    initAppGfx,
+    initGfx,
+    makeShader,
+    popTransform,
+    pushMatrix,
+    pushRotate,
+    pushScale,
+    pushTransform,
+    pushTranslate,
+    Texture,
+} from "./gfx";
 
 import {
     Asset,
@@ -248,16 +260,6 @@ import beanSpriteSrc from "./assets/bean.png";
 import boomSpriteSrc from "./assets/boom.png";
 import burpSoundSrc from "./assets/burp.mp3";
 import kaSpriteSrc from "./assets/ka.png";
-import { initAppGfx } from "./gfx/gfxApp";
-import {
-    popTransform,
-    pushMatrix,
-    pushRotate,
-    pushScale,
-    pushTransform,
-    pushTranslate,
-} from "./gfx/push";
-import { makeShader } from "./gfx/shader";
 
 // for import types from package
 export type * from "./types";

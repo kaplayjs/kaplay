@@ -1,8 +1,8 @@
-import { Mat4, Vec2 } from "./math";
-import { Color } from "./math/color";
-import type { ImageSource, TexFilter, TextureOpt, Uniform } from "./types";
-import { arrayIsColor, arrayIsNumber, arrayIsVec2 } from "./utils/";
-import { deepEq } from "./utils/";
+import { Mat4, Vec2 } from "../math";
+import { Color } from "../math/color";
+import type { ImageSource, TexFilter, TextureOpt, Uniform } from "../types";
+import { arrayIsColor, arrayIsNumber, arrayIsVec2 } from "../utils/";
+import { deepEq } from "../utils/";
 
 export type GfxCtx = ReturnType<typeof initGfx>;
 
@@ -526,7 +526,7 @@ function genStack<T>(setFunc: (item: T | null) => void) {
     return [push, pop, cur] as const;
 }
 
-export default function initGfx(gl: WebGLRenderingContext, opts: {
+export function initGfx(gl: WebGLRenderingContext, opts: {
     texFilter?: TexFilter;
 } = {}) {
     const gc: Array<() => void> = [];
