@@ -1,6 +1,6 @@
 import { Vec2 } from "../../math";
 import type { Comp, GameObj, PosComp } from "../../types";
-import type { KEventController } from "../../utils";
+import type { KEventController } from "../../utils/";
 
 export interface PatrolComp extends Comp {
     /*
@@ -100,7 +100,10 @@ export function patrol(
             }
         },
         onPatrolFinished(cb: (objects: GameObj[]) => void) {
-            return (this as unknown as GameObj<PatrolComp>).on("patrol-finished", cb);
+            return (this as unknown as GameObj<PatrolComp>).on(
+                "patrol-finished",
+                cb,
+            );
         },
     };
 }

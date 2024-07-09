@@ -1,5 +1,5 @@
 import type { Comp, GameObj } from "../../types";
-import type { KEventController } from "../../utils";
+import type { KEventController } from "../../utils/";
 
 /**
  * The {@link health `health()`} component.

@@ -1,5 +1,5 @@
 import type { Comp } from "../../types";
-import { KEvent, KEventController } from "../../utils";
+import { KEvent, KEventController } from "../../utils/";
 
 /**
  * The {@link state `state()`} component.
@@ -105,7 +105,8 @@ export function state(
 
                 if (!available.includes(state)) {
                     throw new Error(
-                        `Cannot transition state from "${oldState}" to "${state}". Available transitions: ${available.map((s) => `"${s}"`).join(", ")
+                        `Cannot transition state from "${oldState}" to "${state}". Available transitions: ${
+                            available.map((s) => `"${s}"`).join(", ")
                         }`,
                     );
                 }

@@ -13,7 +13,7 @@ import type {
     Shape,
     Tag,
 } from "../../types";
-import type { KEventController } from "../../utils";
+import type { KEventController } from "../../utils/";
 import type { AnchorComp } from "../transform/anchor";
 import type { FixedComp } from "../transform/fixed";
 

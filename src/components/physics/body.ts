@@ -2,7 +2,7 @@ import { DEF_JUMP_FORCE, MAX_VEL } from "../../constants";
 import { getKaboomContext } from "../../kaboom";
 import { type Vec2, vec2 } from "../../math";
 import type { Collision, Comp, GameObj, KaboomCtx, PosComp } from "../../types";
-import type { KEventController } from "../../utils";
+import type { KEventController } from "../../utils/";
 import type { AreaComp } from "./area";
 
 /**

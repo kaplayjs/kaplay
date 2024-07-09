@@ -20,7 +20,7 @@ import {
     KEventHandler,
     overload2,
     setHasOrIncludes,
-} from "./utils";
+} from "./utils/";
 
 import GAMEPAD_MAP from "./data/gamepad.json";
 

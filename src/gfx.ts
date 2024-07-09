@@ -1,8 +1,8 @@
 import { Mat4, Vec2 } from "./math";
 import { Color } from "./math/color";
 import type { ImageSource, TexFilter, TextureOpt, Uniform } from "./types";
-import { deepEq } from "./utils";
-import { arrayIsColor, arrayIsNumber, arrayIsVec2 } from "./utils/asserts";
+import { deepEq } from "./utils/";
+import { arrayIsColor, arrayIsNumber, arrayIsVec2 } from "./utils//asserts";
 
 export type GfxCtx = ReturnType<typeof initGfx>;
 
