@@ -16,8 +16,13 @@ export class Texture {
     constructor(ctx: GfxCtx, w: number, h: number, opt: TextureOpt = {}) {
         this.ctx = ctx;
         const gl = ctx.gl;
-        // TODO: Remove non-null assertion
-        this.glTex = ctx.gl.createTexture()!;
+        const glText = ctx.gl.createTexture();
+
+        if (!glText) {
+            throw new Error("Failed to create texture");
+        }
+
+        this.glTex = glText;
         ctx.onDestroy(() => this.free());
 
         this.width = w;
@@ -110,9 +115,17 @@ export class FrameBuffer {
         const gl = ctx.gl;
         ctx.onDestroy(() => this.free());
         this.tex = new Texture(ctx, w, h, opt);
-        // TODO: Remove non-null assertions
-        this.glFramebuffer = gl.createFramebuffer()!;
-        this.glRenderbuffer = gl.createRenderbuffer()!;
+
+        const frameBuffer = gl.createFramebuffer();
+        const renderBuffer = gl.createRenderbuffer();
+
+        if (!frameBuffer || !renderBuffer) {
+            throw new Error("Failed to create framebuffer");
+        }
+
+        this.glFramebuffer = frameBuffer;
+        this.glRenderbuffer = renderBuffer;
+
         this.bind();
         gl.renderbufferStorage(gl.RENDERBUFFER, gl.DEPTH_STENCIL, w, h);
         gl.framebufferTexture2D(
@@ -228,12 +241,16 @@ export class Shader {
         const vertShader = gl.createShader(gl.VERTEX_SHADER);
         const fragShader = gl.createShader(gl.FRAGMENT_SHADER);
 
+        if (!vertShader || !fragShader) {
+            throw new Error("Failed to create shader");
+        }
+
         // What we should do if vert or frag are null?
-        // TODO: Remove all non-null assertions
-        gl.shaderSource(vertShader!, vert);
-        gl.shaderSource(fragShader!, frag);
-        gl.compileShader(vertShader!);
-        gl.compileShader(fragShader!);
+
+        gl.shaderSource(vertShader, vert);
+        gl.shaderSource(fragShader, frag);
+        gl.compileShader(vertShader);
+        gl.compileShader(fragShader);
 
         const prog = gl.createProgram();
         this.glProgram = prog!;
@@ -336,8 +353,14 @@ export class BatchRenderer {
         this.maxVertices = maxVertices;
         this.maxIndices = maxIndices;
 
-        // TODO: Remove non-null assertions
-        this.glVBuf = gl.createBuffer()!;
+        const glVBuf = gl.createBuffer();
+
+        if (!glVBuf) {
+            throw new Error("Failed to create vertex buffer");
+        }
+
+        this.glVBuf = glVBuf;
+
         ctx.pushArrayBuffer(this.glVBuf);
         gl.bufferData(gl.ARRAY_BUFFER, maxVertices * 4, gl.DYNAMIC_DRAW);
         ctx.popArrayBuffer();
@@ -442,12 +465,14 @@ export class Mesh {
         indices: number[],
     ) {
         const gl = ctx.gl;
-
         this.vertexFormat = format;
         this.ctx = ctx;
+        const glVBuf = gl.createBuffer();
 
-        // TODO: Remove non-null assertions
-        this.glVBuf = gl.createBuffer()!;
+        if (!glVBuf) throw new Error("Failed to create vertex buffer");
+
+        this.glVBuf = glVBuf;
+
         ctx.pushArrayBuffer(this.glVBuf);
         gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(verts), gl.STATIC_DRAW);
         ctx.popArrayBuffer();
@@ -486,7 +511,7 @@ export class Mesh {
     }
 }
 
-function genStack<T>(setFunc: (item: T) => void) {
+function genStack<T>(setFunc: (item: T | null) => void) {
     const stack: T[] = [];
     // TODO: don't do anything if pushed item is the same as the one on top?
     const push = (item: T) => {
@@ -495,8 +520,7 @@ function genStack<T>(setFunc: (item: T) => void) {
     };
     const pop = () => {
         stack.pop();
-        // TODO: Remove non-null assertion
-        setFunc(cur() ?? null!);
+        setFunc(cur() ?? null);
     };
     const cur = () => stack[stack.length - 1];
     return [push, pop, cur] as const;
@@ -513,8 +537,8 @@ export default function initGfx(gl: WebGLRenderingContext, opts: {
 
     function destroy() {
         gc.forEach((action) => action());
-        // TODO: Remove non-null assertion
-        gl.getExtension("WEBGL_lose_context")!.loseContext();
+        const extension = gl.getExtension("WEBGL_lose_context");
+        if (extension) extension.loseContext();
     }
 
     let curVertexFormat: object | null = null;
@@ -559,7 +583,10 @@ export default function initGfx(gl: WebGLRenderingContext, opts: {
 
     const [pushViewport, popViewport] = genStack<
         { x: number; y: number; w: number; h: number }
-    >(({ x, y, w, h }) => {
+    >((stack) => {
+        if (!stack) return;
+        const { x, y, w, h } = stack;
+
         gl.viewport(x, y, w, h);
     });
 
