@@ -5197,7 +5197,7 @@ export interface Collision {
      *
      * @since v3000.0
      */
-    hasOverlap(): void;
+    hasOverlap(): boolean;
     /**
      * Get a new collision with reversed source and target relationship.
      */

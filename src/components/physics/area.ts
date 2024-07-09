@@ -211,7 +211,7 @@ export function area(this: KaboomCtx, opt: AreaCompOpt = {}): AreaComp {
     const k = getKaboomContext(this);
     const { app, isFixed, getViewportScale, game } = k._k;
 
-    const colliding = {};
+    const colliding: Record<string, Collision> = {};
     const collidingThisFrame = new Set();
 
     return {
@@ -230,6 +230,10 @@ export function area(this: KaboomCtx, opt: AreaCompOpt = {}): AreaComp {
                 if (!colliding[obj.id]) {
                     this.trigger("collide", obj, col);
                 }
+                if (!col) {
+                    return;
+                }
+
                 colliding[obj.id] = col;
                 collidingThisFrame.add(obj.id);
             });
@@ -394,7 +398,7 @@ export function area(this: KaboomCtx, opt: AreaCompOpt = {}): AreaComp {
             if (typeof tag === "function" && cb === undefined) {
                 return this.on("collide", tag);
             } else if (typeof tag === "string") {
-                return this.onCollide((obj, col) => {
+                return this.onCollide((obj: GameObj, col: Collision) => {
                     if (obj.is(tag)) {
                         cb?.(obj, col);
                     }
