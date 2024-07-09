@@ -1,6 +1,6 @@
 import { Vec2 } from "../../math";
 import type { Comp, GameObj, PosComp } from "../../types";
-import type { KEventController } from "../../utils";
+import type { KEventController } from "../../utils/";
 import type { TileComp } from "./tile";
 
 /**
@@ -92,7 +92,7 @@ export function agent(opts: AgentCompOpt = {}): AgentComp {
                                         path[index],
                                     );
                                 } else {
-                                    index = null
+                                    index = null;
                                     this.trigger("navigation-ended", this);
                                 }
                             }

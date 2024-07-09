@@ -1,4 +1,4 @@
-import { KEvent } from "../utils";
+import { KEvent } from "../utils/";
 
 /**
  * An asset is a resource that is loaded asynchronously.

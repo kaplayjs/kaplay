@@ -74,7 +74,7 @@ import type {
 } from "./math";
 import type { Color, RGBAValue, RGBValue } from "./math/color";
 import type { NavMesh } from "./math/navigationmesh";
-import type { KEvent, KEventController, KEventHandler } from "./utils";
+import type { KEvent, KEventController, KEventHandler } from "./utils/";
 
 export type {
     AgentComp,

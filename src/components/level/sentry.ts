@@ -1,7 +1,7 @@
 import { getKaboomContext } from "../../kaboom";
 import { Vec2 } from "../../math";
 import type { Comp, GameObj, KaboomCtx, PosComp, QueryOpt } from "../../types";
-import type { KEventController } from "../../utils";
+import type { KEventController } from "../../utils/";
 import { raycast } from "../draw/raycast";
 
 /**
@@ -152,7 +152,7 @@ export function sentry(
                     objects = objects.filter(o =>
                         o.pos
                         && directionVector.angleBetween(o.pos.sub(this.pos))
-                        <= halfAngle
+                            <= halfAngle
                     );
                 }
                 // If lineOfSight is used, raycast
@@ -169,7 +169,10 @@ export function sentry(
             }
         },
         onObjectsSpotted(cb: (objects: GameObj[]) => void) {
-            return (this as unknown as GameObj<SentryComp>).on("object-spotted", cb);
+            return (this as unknown as GameObj<SentryComp>).on(
+                "object-spotted",
+                cb,
+            );
         },
     };
 }

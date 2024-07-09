@@ -12,7 +12,7 @@ import type {
     SpriteCurAnim,
     SpriteData,
 } from "../../types";
-import { KEvent, KEventController } from "../../utils";
+import { KEvent, KEventController } from "../../utils/";
 
 /**
  * The {@link sprite `sprite()`} component.
@@ -393,7 +393,7 @@ export function sprite(
                     loop: false,
                     pingpong: false,
                     speed: 0,
-                    onEnd: () => { },
+                    onEnd: () => {},
                 }
                 : {
                     name: name,
@@ -401,14 +401,14 @@ export function sprite(
                     loop: opt.loop ?? anim.loop ?? false,
                     pingpong: opt.pingpong ?? anim.pingpong ?? false,
                     speed: opt.speed ?? anim.speed ?? 10,
-                    onEnd: opt.onEnd ?? (() => { }),
+                    onEnd: opt.onEnd ?? (() => {}),
                 };
 
             curAnimDir = typeof anim === "number"
                 ? null
                 : anim.from < anim.to
-                    ? 1
-                    : -1;
+                ? 1
+                : -1;
 
             this.frame = typeof anim === "number"
                 ? anim
