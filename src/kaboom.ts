@@ -254,6 +254,7 @@ import beanSpriteSrc from "./assets/bean.png";
 import boomSpriteSrc from "./assets/boom.png";
 import burpSoundSrc from "./assets/burp.mp3";
 import kaSpriteSrc from "./assets/ka.png";
+import { drawRaw } from "./gfx/draw";
 
 // for import types from package
 export type * from "./types";
@@ -1421,45 +1422,6 @@ const kaplay = <
             map: map,
             size: gh,
         };
-    }
-
-    // TODO: expose
-    function drawRaw(
-        verts: Vertex[],
-        indices: number[],
-        fixed: boolean = false,
-        tex: Texture = gfx.defTex,
-        shaderSrc: RenderProps["shader"] = gfx.defShader,
-        uniform: Uniform = {},
-    ) {
-        const shader = resolveShader(shaderSrc);
-
-        if (!shader || shader instanceof Asset) {
-            return;
-        }
-
-        const transform = (gfx.fixed || fixed)
-            ? gfx.transform
-            : game.cam.transform.mult(gfx.transform);
-
-        const vv: number[] = [];
-
-        for (const v of verts) {
-            // normalized world space coordinate [-1.0 ~ 1.0]
-            const pt = screen2ndc(transform.multVec2(v.pos));
-            vv.push(
-                pt.x,
-                pt.y,
-                v.uv.x,
-                v.uv.y,
-                v.color.r / 255,
-                v.color.g / 255,
-                v.color.b / 255,
-                v.opacity,
-            );
-        }
-
-        gfx.renderer.push(gl.TRIANGLES, vv, indices, shader, tex, uniform);
     }
 
     // draw all batched shapes
@@ -5552,6 +5514,7 @@ const kaplay = <
         game,
         gfx,
         assets,
+        screen2ndc,
         loadProgress,
         isFixed,
         toFixed,

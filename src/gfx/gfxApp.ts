@@ -106,6 +106,7 @@ export const initAppGfx = (gopt: KaboomOpt, ggl: GfxCtx) => {
     const gfx = {
         // how many draw calls we're doing last frame, this is the number we give to users
         lastDrawCalls: 0,
+        ggl,
 
         // gfx states
         defShader: defShader,
