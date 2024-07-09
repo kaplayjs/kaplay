@@ -40,7 +40,7 @@ export interface BodyComp extends Comp {
      *
      * @since v3000.0
      */
-    mass?: number;
+    mass: number;
     /**
      * If object should move with moving platform (default true).
      *
@@ -162,7 +162,7 @@ export function body(
     const k = getKaboomContext(this);
     const { calcTransform, game } = k._k;
     let curPlatform: GameObj<PosComp | AreaComp | BodyComp> | null = null;
-    let lastPlatformPos = null;
+    let lastPlatformPos: null | Vec2 = null;
     let willFall = false;
 
     return {
@@ -186,14 +186,10 @@ export function body(
                 // static vs non-static: always resolve non-static
                 // non-static vs non-static: resolve the first one
                 this.onCollideUpdate(
-                    (other: GameObj<PosComp | BodyComp>, col) => {
-                        if (!other.is("body")) {
-                            return;
-                        }
-
-                        if (col.resolved) {
-                            return;
-                        }
+                    (other, col) => {
+                        if (!col) return;
+                        if (!other.is("body")) return;
+                        if (col.resolved) return;
 
                         this.trigger("beforePhysicsResolve", col);
                         const rcol = col.reverse();
@@ -283,7 +279,8 @@ export function body(
                         willFall = true;
                     } else {
                         if (
-                            !curPlatform.pos.eq(lastPlatformPos)
+                            lastPlatformPos
+                            && !curPlatform.pos.eq(lastPlatformPos)
                             && opt.stickToPlatform !== false
                         ) {
                             this.moveBy(
