@@ -248,6 +248,7 @@ import beanSpriteSrc from "./assets/bean.png";
 import boomSpriteSrc from "./assets/boom.png";
 import burpSoundSrc from "./assets/burp.mp3";
 import kaSpriteSrc from "./assets/ka.png";
+import { makeShader } from "./gfx/shader";
 
 // for import types from package
 export type * from "./types";
@@ -454,7 +455,7 @@ const kaplay = <
     });
 
     const gfx = (() => {
-        const defShader = makeShader(DEF_VERT, DEF_FRAG);
+        const defShader = makeShader(ggl, DEF_VERT, DEF_FRAG);
 
         // a 1x1 white texture to draw raw shapes like rectangles and polygons
         // we use a texture for those so we can use only 1 pipeline for drawing sprites + shapes
@@ -1071,7 +1072,7 @@ const kaplay = <
         vert?: string,
         frag?: string,
     ) {
-        return assets.shaders.addLoaded(name, makeShader(vert, frag));
+        return assets.shaders.addLoaded(name, makeShader(ggl, vert, frag));
     }
 
     function loadShaderURL(
@@ -1087,7 +1088,7 @@ const kaplay = <
                 : Promise.resolve(null);
         const load = Promise.all([resolveUrl(vert), resolveUrl(frag)])
             .then(([vcode, fcode]: [string | null, string | null]) => {
-                return makeShader(vcode, fcode);
+                return makeShader(ggl, vcode, fcode);
             });
         return assets.shaders.add(name, load);
     }
@@ -1555,32 +1556,6 @@ const kaplay = <
                 fb.unbind();
             },
         };
-    }
-
-    function makeShader(
-        vertSrc: string | null = DEF_VERT,
-        fragSrc: string | null = DEF_FRAG,
-    ): Shader {
-        const vcode = VERT_TEMPLATE.replace("{{user}}", vertSrc ?? DEF_VERT);
-        const fcode = FRAG_TEMPLATE.replace("{{user}}", fragSrc ?? DEF_FRAG);
-        try {
-            return new Shader(
-                ggl,
-                vcode,
-                fcode,
-                VERTEX_FORMAT.map((vert) => vert.name),
-            );
-        } catch (e) {
-            const lineOffset = 14;
-            const fmt =
-                /(?<type>^\w+) SHADER ERROR: 0:(?<line>\d+): (?<msg>.+)/;
-            const match = getErrorMessage(e).match(fmt);
-            if (!match?.groups) throw e;
-            const line = Number(match.groups.line) - lineOffset;
-            const msg = match.groups.msg.trim();
-            const ty = match.groups.type.toLowerCase();
-            throw new Error(`${ty} shader line ${line}: ${msg}`);
-        }
     }
 
     function makeFont(
