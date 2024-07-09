@@ -91,8 +91,8 @@ class AnimateChannel {
     easing: EaseFunc;
     interpolation: Interpolation;
     isFinished: boolean;
-    timing: number[] | null;
-    easings: EaseFunc[] | null;
+    timing: number[] | undefined;
+    easings: EaseFunc[] | undefined;
     constructor(name: string, opts: AnimateOpt) {
         this.name = name;
         this.duration = opts.duration;
@@ -117,7 +117,7 @@ class AnimateChannel {
     getLowerKeyIndexAndRelativeTime(
         t: number,
         count: number,
-        timing: number[] | null,
+        timing?: number[],
     ): [number, number] {
         const maxIndex = count - 1;
         if (t >= this.duration && this.endBehavior == "stop") {
@@ -263,7 +263,7 @@ class AnimateChannelColor extends AnimateChannel {
 }
 
 export function animate(): AnimateComp {
-    const k = getKaboomContext(this);
+    const k = getKaboomContext();
     const channels: AnimateChannel[] = [];
     let t = 0;
     let isFinished = false;
@@ -273,16 +273,16 @@ export function animate(): AnimateComp {
             let localFinished: boolean;
             t += k.dt();
             for (const c of channels) {
-                localFinished = c.update(this, t);
+                localFinished = c.update(this as unknown as GameObj<any>, t);
                 if (localFinished && !c.isFinished) {
                     c.isFinished = true;
-                    this.trigger("animate-channel-finished", c.name);
+                    (this as unknown as GameObj<any>).trigger("animate-channel-finished", c.name);
                 }
                 allFinished &&= localFinished;
             }
             if (allFinished && !isFinished) {
                 isFinished = true;
-                this.trigger("animate-finished");
+                (this as unknown as GameObj<any>).trigger("animate-finished");
             }
         },
         animate<T extends LerpValue>(
@@ -320,10 +320,10 @@ export function animate(): AnimateComp {
             channels.splice(0, channels.length);
         },
         onAnimateFinished(cb: () => void) {
-            return this.on("animate-finished", cb);
+            return (this as unknown as GameObj<any>).on("animate-finished", cb);
         },
         onAnimateChannelFinished(cb: (name: string) => void) {
-            return this.on("animate-channel-finished", cb);
+            return (this as unknown as GameObj<any>).on("animate-channel-finished", cb);
         },
     };
 }
