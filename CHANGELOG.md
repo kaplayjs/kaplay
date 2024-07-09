@@ -103,6 +103,11 @@ add([
 - added higher order easing functions linear, steps and cubic-bezier
 - added a text input component
 
+## Fixed
+
+- **(break)** much typescript definitions was fixed, if you use typescript now
+  maybe you see new errors that make your code strict
+
 ## Deprecated
 
 - deprecated `kaboom()` in favor of `kaplay()` (you can still use `kaboom*`)
