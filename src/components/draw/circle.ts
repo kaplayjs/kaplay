@@ -1,6 +1,6 @@
 import { getKaboomContext } from "../../kaboom";
 import { Rect, Vec2 } from "../../math";
-import type { Comp, GameObj, KaboomCtx } from "../../types";
+import type { Comp, GameObj } from "../../types";
 import type { AnchorComp } from "../transform/anchor";
 import type { outline } from "./outline";
 
@@ -19,6 +19,10 @@ export interface CircleComp extends Comp {
      * @since v3000.0
      */
     renderArea(): Rect;
+    /**
+     * Center of circle
+     */
+    center(): Vec2;
 }
 
 /**
@@ -34,11 +38,7 @@ export interface CircleCompOpt {
     fill?: boolean;
 }
 
-export function circle(
-    this: KaboomCtx,
-    radius: number,
-    opt: CircleCompOpt = {},
-): CircleComp {
+export function circle(radius: number, opt: CircleCompOpt = {}): CircleComp {
     const k = getKaboomContext(this);
     const { getRenderProps } = k._k;
 
@@ -57,6 +57,9 @@ export function circle(
                 this.radius * 2,
                 this.radius * 2,
             );
+        },
+        center() {
+            return new Vec2(this.radius, this.radius)
         },
         inspect() {
             return `radius: ${Math.ceil(this.radius)}`;
