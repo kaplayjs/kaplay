@@ -1,5 +1,5 @@
 import { getKaboomContext } from "../../kaboom";
-import { Rect, vec2 } from "../../math";
+import { Rect, vec2, Vec2 } from "../../math";
 import type { Comp, GameObj, KaboomCtx } from "../../types";
 
 /**
@@ -25,6 +25,10 @@ export interface RectComp extends Comp {
      * @since v3000.0
      */
     renderArea(): Rect;
+    /**
+     * The center of rectangle
+     */
+    center(): Vec2;
 }
 
 /**
@@ -68,6 +72,9 @@ export function rect(
         renderArea() {
             return new Rect(vec2(0), this.width, this.height);
         },
+        center() {
+            return vec2(this.width / 2, this.height / 2)
+        }
         inspect() {
             return `rect: (${Math.ceil(this.width)}w, ${
                 Math.ceil(this.height)
