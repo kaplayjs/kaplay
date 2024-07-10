@@ -89,6 +89,10 @@ export interface SpriteComp extends Comp {
      * @since v3000.0
      */
     renderArea(): Rect;
+    /**
+     * Center of sprite
+     */
+    center(): Vec2
 }
 
 /**
@@ -454,6 +458,10 @@ export function sprite(
 
         renderArea() {
             return new k.Rect(vec2(0), this.width, this.height);
+        },
+
+        center() {
+            return vec2(this.width / 2, this.height / 2)
         },
 
         inspect() {
