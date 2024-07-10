@@ -1,6 +1,6 @@
 import { getKaboomContext } from "../../kaboom";
 import { Rect, Vec2 } from "../../math";
-import type { Comp, GameObj } from "../../types";
+import type { Comp, GameObj, KaboomCtx } from "../../types";
 import type { AnchorComp } from "../transform/anchor";
 import type { outline } from "./outline";
 
