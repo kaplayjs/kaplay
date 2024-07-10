@@ -38,7 +38,11 @@ export interface CircleCompOpt {
     fill?: boolean;
 }
 
-export function circle(radius: number, opt: CircleCompOpt = {}): CircleComp {
+export function circle(
+    this: KaboomCtx,
+    radius: number,
+    opt: CircleCompOpt = {},
+): CircleComp {
     const k = getKaboomContext(this);
     const { getRenderProps } = k._k;
 
