@@ -74,7 +74,7 @@ export function rect(
         },
         center() {
             return vec2(this.width / 2, this.height / 2)
-        }
+        },
         inspect() {
             return `rect: (${Math.ceil(this.width)}w, ${
                 Math.ceil(this.height)
