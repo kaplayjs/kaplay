@@ -1,5 +1,6 @@
 export * from "./anchor";
 export * from "./assets";
+export * from "./draw";
 export * from "./fonts";
 export * from "./gfx";
 export * from "./gfxApp";

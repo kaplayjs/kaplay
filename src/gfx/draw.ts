@@ -1,10 +1,12 @@
+import { withGfxAndKaboom } from "../core/context";
 import { getKaboomContext } from "../kaboom";
 import type { RenderProps, Texture, Uniform, Vertex } from "../types";
 import { Asset } from "./assets";
 import { resolveShader } from "./shader";
 
-export function drawRaw(
-    this: any,
+export const ctxDrawRaw = withGfxAndKaboom(function(
+    gfx,
+    k,
     verts: Vertex[],
     indices: number[],
     fixed: boolean = false,
@@ -12,13 +14,12 @@ export function drawRaw(
     shaderSrc?: RenderProps["shader"],
     uniform: Uniform = {},
 ) {
-    const ctx = getKaboomContext(this);
-    const { _k } = ctx;
-    const { game, gfx, screen2ndc } = _k;
+    const { _k } = k;
+    const { game, screen2ndc } = _k;
 
     const parsedTex = tex ?? gfx.defTex;
     const parsedShader = shaderSrc ?? gfx.defShader;
-    const shader = resolveShader(ctx, parsedShader);
+    const shader = resolveShader(k, parsedShader);
 
     if (!shader || shader instanceof Asset) {
         return;
@@ -53,4 +54,4 @@ export function drawRaw(
         parsedTex,
         uniform,
     );
-}
+});

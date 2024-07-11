@@ -32,8 +32,9 @@ for (let i = 0; i < 2; i++) {
     }
 
     k.add([
-        k.circle(40),
+        k.rect(40, 30),
         k.anchor("center"),
+        spin(),
         k.pos(
             positions[i][0],
             positions[i][1],

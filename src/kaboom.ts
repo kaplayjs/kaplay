@@ -5,16 +5,16 @@ import {
     alignPt,
     anchorPt,
     createEmptyAudioBuffer,
+    ctxPopTransform,
+    ctxPushMatrix,
+    ctxPushRotate,
+    ctxPushScale,
+    ctxPushTransform,
+    ctxPushTranslate,
     FrameBuffer,
     initAppGfx,
     initGfx,
     makeShader,
-    popTransform,
-    pushMatrix,
-    pushRotate,
-    pushScale,
-    pushTransform,
-    pushTranslate,
     Texture,
 } from "./gfx";
 
@@ -214,6 +214,7 @@ import {
     body,
     circle,
     color,
+    ctxRect,
     doubleJump,
     drawon,
     fadeIn,
@@ -234,7 +235,6 @@ import {
     polygon,
     pos,
     raycast,
-    rect,
     rotate,
     scale,
     sentry,
@@ -254,7 +254,7 @@ import beanSpriteSrc from "./assets/bean.png";
 import boomSpriteSrc from "./assets/boom.png";
 import burpSoundSrc from "./assets/burp.mp3";
 import kaSpriteSrc from "./assets/ka.png";
-import { drawRaw } from "./gfx/draw";
+import { ctxDrawRaw } from "./gfx/";
 
 // for import types from package
 export type * from "./types";
@@ -284,6 +284,10 @@ export const getKaboomContext = (fallBack?: any): KaboomCtx => {
     if (isKaboomCtx(fallBack?.ctx)) {
         return fallBack.ctx;
     }
+
+    // console.trace(
+    //     "The Kaboom context was used from global, if this is not intentional, there's a bad usage of Kaboom Context",
+    // );
 
     // in case of using globals, we return the global context
     return ctx;
@@ -332,6 +336,10 @@ const kaplay = <
 ): TPlugins extends [undefined] ? KaboomCtx<TButtons, TButtonsName>
     : KaboomCtx<TButtons, TButtonsName> & MergePlugins<TPlugins> =>
 {
+    const ctxWrapper = {
+        current: null as unknown as KaboomCtx | null,
+    };
+
     const root = gopt.root ?? document.body;
 
     // if root is not defined (which falls back to <body>) we assume user is using kaboom on a clean page, and modify <body> to better fit a full screen canvas
@@ -428,6 +436,16 @@ const kaplay = <
     });
 
     const gfx = initAppGfx(gopt, ggl);
+
+    // gfx dependants
+
+    const pushTranslate = ctxPushTranslate(gfx);
+    const pushTransform = ctxPushTransform(gfx);
+    const pushMatrix = ctxPushMatrix(gfx);
+    const pushScale = ctxPushScale(gfx);
+    const pushRotate = ctxPushRotate(gfx);
+    const popTransform = ctxPopTransform(gfx);
+    const drawRaw = ctxDrawRaw(gfx, ctxWrapper);
 
     class SpriteData {
         tex: Texture;
@@ -613,6 +631,8 @@ const kaplay = <
     };
 
     game.root.use(timer());
+
+    const rect = ctxRect(ctxWrapper);
 
     // wrap individual loaders with global loader counter, for stuff like progress bar
     function load<T>(prom: Promise<T>): Asset<T> {
@@ -1532,11 +1552,11 @@ const kaplay = <
         const qw = q.w - uvPadX * 2;
         const qh = q.h - uvPadY * 2;
 
-        ctx.pushTransform();
-        ctx.pushTranslate(opt.pos);
-        ctx.pushRotate(opt.angle);
-        ctx.pushScale(opt.scale);
-        ctx.pushTranslate(offset);
+        pushTransform();
+        pushTranslate(opt.pos);
+        pushRotate(opt.angle);
+        pushScale(opt.scale);
+        pushTranslate(offset);
 
         drawRaw(
             [
@@ -1584,7 +1604,7 @@ const kaplay = <
             opt.uniform ?? undefined,
         );
 
-        ctx.popTransform();
+        popTransform();
     }
 
     // TODO: clean
@@ -2570,11 +2590,11 @@ const kaplay = <
             return;
         }
 
-        ctx.pushTransform();
-        ctx.pushTranslate(opt.pos!);
-        ctx.pushScale(opt.scale);
-        ctx.pushRotate(opt.angle);
-        ctx.pushTranslate(opt.offset!);
+        pushTransform();
+        pushTranslate(opt.pos!);
+        pushScale(opt.scale);
+        pushRotate(opt.angle);
+        pushTranslate(opt.offset!);
 
         if (opt.fill !== false) {
             const color = opt.color ?? Color.WHITE;
@@ -2626,7 +2646,7 @@ const kaplay = <
             });
         }
 
-        ctx.popTransform();
+        popTransform();
     }
 
     function drawStenciled(
@@ -3034,10 +3054,10 @@ const kaplay = <
     }
 
     function drawFormattedText(ftext: FormattedText) {
-        ctx.pushTransform();
-        ctx.pushTranslate(ftext.opt.pos!);
-        ctx.pushRotate(ftext.opt.angle!);
-        ctx.pushTranslate(
+        pushTransform();
+        pushTranslate(ftext.opt.pos!);
+        pushRotate(ftext.opt.angle!);
+        pushTranslate(
             anchorPt(ftext.opt.anchor ?? "topleft").add(1, 1).scale(
                 ftext.width,
                 ftext.height,
@@ -3060,7 +3080,7 @@ const kaplay = <
                 fixed: ftext.opt.fixed,
             });
         });
-        ctx.popTransform();
+        popTransform();
     }
 
     // get game width
@@ -3166,7 +3186,7 @@ const kaplay = <
         fadeOutTime: number = 1,
     ) {
         let flash = add([
-            ctx.rect(width(), height()),
+            rect(width(), height()),
             color(flashColor),
             ctx.opacity(1),
             fixed(),
@@ -3316,10 +3336,10 @@ const kaplay = <
                 }
                 const f = gfx.fixed;
                 if (this.fixed) gfx.fixed = true;
-                ctx.pushTransform();
-                ctx.pushTranslate(this.pos);
-                ctx.pushScale(this.scale);
-                ctx.pushRotate(this.angle);
+                pushTransform();
+                pushTranslate(this.pos);
+                pushScale(this.scale);
+                pushRotate(this.angle);
                 const children = this.children.sort((o1, o2) => {
                     const l1 = o1.layerIndex ?? game.defaultLayerIndex;
                     const l2 = o2.layerIndex ?? game.defaultLayerIndex;
@@ -3343,7 +3363,7 @@ const kaplay = <
                     this.trigger("draw");
                     children.forEach((child) => child.draw());
                 }
-                ctx.popTransform();
+                popTransform();
                 gfx.fixed = f;
                 if (this.canvas) {
                     flush();
@@ -3353,15 +3373,15 @@ const kaplay = <
 
             drawInspect(this: GameObj<PosComp | ScaleComp | RotateComp>) {
                 if (this.hidden) return;
-                ctx.pushTransform();
-                ctx.pushTranslate(this.pos);
-                ctx.pushScale(this.scale);
-                ctx.pushRotate(this.angle);
+                pushTransform();
+                pushTranslate(this.pos);
+                pushScale(this.scale);
+                pushRotate(this.angle);
                 this.children
                     /*.sort((o1, o2) => (o1.z ?? 0) - (o2.z ?? 0))*/
                     .forEach((child) => child.drawInspect());
                 this.trigger("drawInspect");
-                ctx.popTransform();
+                popTransform();
             },
 
             // use a comp, or tag
@@ -5008,8 +5028,8 @@ const kaplay = <
         drawUnscaled(() => {
             const pad = vec2(8);
 
-            ctx.pushTransform();
-            ctx.pushTranslate(pos);
+            pushTransform();
+            pushTranslate(pos);
 
             const ftxt = formatText({
                 text: txt,
@@ -5024,11 +5044,11 @@ const kaplay = <
             const bh = ftxt.height + pad.x * 2;
 
             if (pos.x + bw >= width()) {
-                ctx.pushTranslate(vec2(-bw, 0));
+                pushTranslate(vec2(-bw, 0));
             }
 
             if (pos.y + bh >= height()) {
-                ctx.pushTranslate(vec2(0, -bh));
+                pushTranslate(vec2(0, -bh));
             }
 
             drawRect({
@@ -5041,7 +5061,7 @@ const kaplay = <
             });
 
             drawFormattedText(ftxt);
-            ctx.popTransform();
+            popTransform();
         });
     }
 
@@ -5081,9 +5101,9 @@ const kaplay = <
         if (debug.paused) {
             drawUnscaled(() => {
                 // top right corner
-                ctx.pushTransform();
-                ctx.pushTranslate(width(), 0);
-                ctx.pushTranslate(-8, 8);
+                pushTransform();
+                pushTranslate(width(), 0);
+                pushTranslate(-8, 8);
 
                 const size = 32;
 
@@ -5111,16 +5131,16 @@ const kaplay = <
                     });
                 }
 
-                ctx.popTransform();
+                popTransform();
             });
         }
 
         if (debug.timeScale !== 1) {
             drawUnscaled(() => {
                 // bottom right corner
-                ctx.pushTransform();
-                ctx.pushTranslate(width(), height());
-                ctx.pushTranslate(-8, -8);
+                pushTransform();
+                pushTranslate(width(), height());
+                pushTranslate(-8, -8);
 
                 const pad = 8;
 
@@ -5168,15 +5188,15 @@ const kaplay = <
                 // text
                 drawFormattedText(ftxt);
 
-                ctx.popTransform();
+                popTransform();
             });
         }
 
         if (debug.curRecording) {
             drawUnscaled(() => {
-                ctx.pushTransform();
-                ctx.pushTranslate(0, height());
-                ctx.pushTranslate(24, -24);
+                pushTransform();
+                pushTranslate(0, height());
+                pushTranslate(24, -24);
 
                 drawCircle({
                     radius: 12,
@@ -5185,15 +5205,15 @@ const kaplay = <
                     fixed: true,
                 });
 
-                ctx.popTransform();
+                popTransform();
             });
         }
 
         if (debug.showLog && game.logs.length > 0) {
             drawUnscaled(() => {
-                ctx.pushTransform();
-                ctx.pushTranslate(0, height());
-                ctx.pushTranslate(8, -8);
+                pushTransform();
+                pushTranslate(0, height());
+                pushTranslate(8, -8);
 
                 const pad = 8;
                 const logs = [];
@@ -5241,7 +5261,7 @@ const kaplay = <
                 });
 
                 drawFormattedText(ftext);
-                ctx.popTransform();
+                popTransform();
             });
         }
     }
@@ -5305,7 +5325,7 @@ const kaplay = <
                     fixed: true,
                 });
 
-                ctx.popTransform();
+                popTransform();
                 game.events.trigger("error", err);
             });
 
@@ -5835,6 +5855,8 @@ const kaplay = <
         KEventHandler,
         KEventController,
     };
+
+    ctxWrapper.current = ctx;
 
     const plugins = gopt.plugins as KaboomPlugin<Record<string, unknown>>[];
 
