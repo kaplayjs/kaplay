@@ -1,63 +1,43 @@
-import { getKaboomContext, type KaboomCtx } from "../kaboom";
+import { withGfx } from "../core/context";
 import { type Mat4, vec2, type Vec2Args } from "../math";
 
-export function pushTranslate(
-    this: KaboomCtx,
-    ...args: Vec2Args | [undefined]
-) {
-    const { _k } = getKaboomContext(this);
-    const { gfx } = _k;
+export const ctxPushTranslate = withGfx(
+    function(gfx, ...args: Vec2Args | [undefined]) {
+        if (args[0] === undefined) return;
 
-    if (args[0] === undefined) return;
+        const p = vec2(...args);
+        if (p.x === 0 && p.y === 0) return;
+        gfx.transform.translate(p);
+    },
+);
 
-    const p = vec2(...args);
-    if (p.x === 0 && p.y === 0) return;
-    gfx.transform.translate(p);
-}
-
-export function pushTransform(this: KaboomCtx) {
-    const { _k } = getKaboomContext(this);
-    const { gfx } = _k;
-
+export const ctxPushTransform = withGfx(function(gfx) {
     gfx.transformStack.push(gfx.transform.clone());
-}
+});
 
-export function pushMatrix(this: KaboomCtx, m: Mat4) {
-    const { _k } = getKaboomContext(this);
-    const { gfx } = _k;
-
+export const ctxPushMatrix = withGfx(function(gfx, m: Mat4) {
     gfx.transform = m.clone();
-}
+});
 
-export function pushScale(
-    this: KaboomCtx,
-    ...args: Vec2Args | [undefined] | [undefined, undefined]
-) {
-    if (args[0] === undefined) return;
+export const ctxPushScale = withGfx(
+    function(gfx, ...args: Vec2Args | [undefined] | [undefined, undefined]) {
+        if (args[0] === undefined) return;
 
-    const { _k } = getKaboomContext(this);
-    const { gfx } = _k;
+        const p = vec2(...args);
+        if (p.x === 1 && p.y === 1) return;
+        gfx.transform.scale(p);
+    },
+);
 
-    const p = vec2(...args);
-    if (p.x === 1 && p.y === 1) return;
-    gfx.transform.scale(p);
-}
-
-export function pushRotate(this: KaboomCtx, a: number | undefined) {
+export const ctxPushRotate = withGfx(function(gfx, a: number | undefined) {
     if (!a) return;
 
-    const { _k } = getKaboomContext(this);
-    const { gfx } = _k;
-
     gfx.transform.rotate(a);
-}
+});
 
-export function popTransform(this: KaboomCtx) {
-    const { _k } = getKaboomContext(this);
-    const { gfx } = _k;
-
+export const ctxPopTransform = withGfx(function(gfx) {
     if (gfx.transformStack.length > 0) {
         // if there's more than 1 element, it will return obviously a Mat4
         gfx.transform = gfx.transformStack.pop()!;
     }
-}
+});

@@ -1,3 +1,4 @@
+import { withKaboomCtx } from "../../core/context";
 import { getKaboomContext } from "../../kaboom";
 import { Rect, vec2 } from "../../math";
 import type { Comp, GameObj, KaboomCtx } from "../../types";
@@ -43,35 +44,32 @@ export interface RectCompOpt {
     fill?: boolean;
 }
 
-export function rect(
-    this: KaboomCtx,
-    w: number,
-    h: number,
-    opt: RectCompOpt = {},
-): RectComp {
-    const k = getKaboomContext(this);
-    const { getRenderProps } = k._k;
+export const ctxRect = withKaboomCtx(
+    function(kCtx, w: number, h: number, opt: RectCompOpt = {}): RectComp {
+        const k = kCtx;
+        const { getRenderProps } = k._k;
 
-    return {
-        id: "rect",
-        width: w,
-        height: h,
-        radius: opt.radius || 0,
-        draw(this: GameObj<RectComp>) {
-            k.drawRect(Object.assign(getRenderProps(this), {
-                width: this.width,
-                height: this.height,
-                radius: this.radius,
-                fill: opt.fill,
-            }));
-        },
-        renderArea() {
-            return new Rect(vec2(0), this.width, this.height);
-        },
-        inspect() {
-            return `rect: (${Math.ceil(this.width)}w, ${
-                Math.ceil(this.height)
-            }h)`;
-        },
-    };
-}
+        return {
+            id: "rect",
+            width: w,
+            height: h,
+            radius: opt.radius || 0,
+            draw(this: GameObj<RectComp>) {
+                k.drawRect(Object.assign(getRenderProps(this), {
+                    width: this.width,
+                    height: this.height,
+                    radius: this.radius,
+                    fill: opt.fill,
+                }));
+            },
+            renderArea() {
+                return new Rect(vec2(0), this.width, this.height);
+            },
+            inspect() {
+                return `rect: (${Math.ceil(this.width)}w, ${
+                    Math.ceil(this.height)
+                }h)`;
+            },
+        };
+    },
+);
