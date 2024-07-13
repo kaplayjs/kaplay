@@ -188,7 +188,6 @@ export type InternalCtx = {
         shaderSrc: RenderProps["shader"],
         uniform: Uniform,
     ): any;
-    calcTransform: (obj: GameObj) => Mat4;
 };
 
 /**
