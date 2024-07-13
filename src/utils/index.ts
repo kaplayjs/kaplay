@@ -9,5 +9,4 @@ export * from "./log";
 export * from "./overload";
 export * from "./runes";
 export * from "./sets";
-
 export * from "./uid";
