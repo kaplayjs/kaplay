@@ -1,3 +1,4 @@
+import type { TimerComp } from "../components";
 import { Mat4, Vec2 } from "../math";
 import {
     type GameObj,
@@ -5,7 +6,6 @@ import {
     type MouseButton,
     type SceneDef,
     type SceneName,
-    type TimerComp,
 } from "../types";
 import { KEventHandler } from "../utils";
 import { make } from "./make";

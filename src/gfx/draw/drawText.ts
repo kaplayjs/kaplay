@@ -1,8 +1,8 @@
+import type { Asset, BitmapFontData } from "../../assets";
 import type { FontData } from "../../assets/font";
 import type { Vec2 } from "../../math";
 import type { Color } from "../../math/color";
-import type { Anchor, BitmapFontData, RenderProps } from "../../types";
-import type { Asset } from "../assets";
+import type { Anchor, RenderProps } from "../../types";
 import { formatText } from "../formatText";
 import { drawFormattedText } from "./drawFormattedText";
 

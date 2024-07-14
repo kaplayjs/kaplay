@@ -1,4 +1,11 @@
 import type { App } from "../app";
+import type {
+    FixedComp,
+    MaskComp,
+    PosComp,
+    RotateComp,
+    ScaleComp,
+} from "../components";
 import { COMP_DESC, COMP_EVENTS } from "../constants";
 import {
     flush,
@@ -15,19 +22,13 @@ import {
     type Comp,
     type CompList,
     type EventController,
-    type FixedComp,
     type GameObj,
     type GameObjInspect,
     type GetOpt,
-    type KEventController,
-    type MaskComp,
-    type PosComp,
     type QueryOpt,
-    type RotateComp,
-    type ScaleComp,
     type Tag,
 } from "../types";
-import { isClass, KEventHandler, uid } from "../utils";
+import { isClass, type KEventController, KEventHandler, uid } from "../utils";
 
 type MakeTypeIsFN<T, Chain = T> = T extends (go: GameObj) => infer R ? R
     : Chain;

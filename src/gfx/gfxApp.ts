@@ -7,9 +7,9 @@ import {
     VERTEX_FORMAT,
 } from "../constants";
 import { BatchRenderer, FrameBuffer, type GfxCtx, Texture } from "../gfx";
-import type { Color, KaboomOpt, Uniform } from "../kaboom";
 import { Mat4 } from "../math";
-import { rgb } from "../math/color";
+import { type Color, rgb } from "../math/color";
+import type { KaboomOpt, Uniform } from "../types";
 
 export type AppGfxCtx = ReturnType<typeof initAppGfx>;
 
