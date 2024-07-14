@@ -1,6 +1,7 @@
 import { Vec2 } from "../../math";
-import type { Comp, GameObj, PosComp } from "../../types";
+import type { Comp, GameObj } from "../../types";
 import type { KEventController } from "../../utils/";
+import type { PosComp } from "../transform/pos";
 import type { TileComp } from "./tile";
 
 /**

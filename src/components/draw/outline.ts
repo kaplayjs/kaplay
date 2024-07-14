@@ -1,5 +1,6 @@
+import type { LineCap, LineJoin } from "../../gfx";
 import { Color, rgb } from "../../math/color";
-import type { Comp, LineCap, LineJoin, Outline } from "../../types";
+import type { Comp, Outline } from "../../types";
 
 /**
  * The {@link outline `outline()`} component.

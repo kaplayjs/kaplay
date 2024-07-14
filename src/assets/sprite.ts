@@ -1,4 +1,4 @@
-import { Asset, loadImg, loadProgress } from "../gfx/assets";
+import { Asset, loadImg, loadProgress } from "../assets";
 import type { Texture } from "../gfx/gfx";
 import { assets } from "../kaboom";
 import { Quad } from "../math";
@@ -103,7 +103,7 @@ export function resolveSprite(
     }
 }
 
-function getSprite(name: string): Asset<SpriteData> | null {
+export function getSprite(name: string): Asset<SpriteData> | null {
     return assets.sprites.get(name) ?? null;
 }
 

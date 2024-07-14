@@ -1,11 +1,7 @@
 import { k } from "../../kaboom";
-import type {
-    Comp,
-    GameObj,
-    KaboomCtx,
-    KEventController,
-    TextComp,
-} from "../../types";
+import type { Comp, GameObj, KaboomCtx } from "../../types";
+import type { KEventController } from "../../utils";
+import type { TextComp } from "../draw/text";
 
 /**
  * The {@link stay `stay()`} component.

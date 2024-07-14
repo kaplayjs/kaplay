@@ -1,7 +1,7 @@
 import { getRenderProps } from "../../game/utils";
-import { k } from "../../kaboom";
+import { drawCircle } from "../../gfx";
 import { Rect, Vec2 } from "../../math";
-import type { Comp, GameObj, KaboomCtx } from "../../types";
+import type { Comp, GameObj } from "../../types";
 import type { AnchorComp } from "../transform/anchor";
 import type { outline } from "./outline";
 
@@ -40,7 +40,7 @@ export function circle(radius: number, opt: CircleCompOpt = {}): CircleComp {
         id: "circle",
         radius: radius,
         draw(this: GameObj<CircleComp>) {
-            k.drawCircle(Object.assign(getRenderProps(this), {
+            drawCircle(Object.assign(getRenderProps(this), {
                 radius: this.radius,
                 fill: opt.fill,
             }));

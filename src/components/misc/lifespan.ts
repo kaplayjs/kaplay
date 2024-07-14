@@ -1,6 +1,7 @@
 import { k } from "../../kaboom";
 import easings from "../../math/easings";
-import type { EmptyComp, GameObj, KaboomCtx, OpacityComp } from "../../types";
+import type { EmptyComp, GameObj, KaboomCtx } from "../../types";
+import type { OpacityComp } from "../draw/opacity";
 
 /**
  * The {@link lifespan `lifespan()`} component.

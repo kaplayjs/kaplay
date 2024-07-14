@@ -4,12 +4,12 @@ import {
     DEF_TEXT_CACHE_SIZE,
     MAX_TEXT_CACHE_SIZE,
 } from "../constants";
-import { Asset, loadProgress } from "../gfx/assets";
 import type { DrawTextOpt } from "../gfx/draw/drawText";
 import { assets, globalOpt } from "../kaboom";
 import { rgb } from "../math/color";
-import type { BitmapFontData, LoadFontOpt, Outline, TexFilter } from "../types";
-import { getBitmapFont } from "./bitmapFont";
+import type { LoadFontOpt, Outline, TexFilter } from "../types";
+import { Asset, loadProgress } from "./asset";
+import { type BitmapFontData, getBitmapFont } from "./bitmapFont";
 
 export class FontData {
     fontface: FontFace;

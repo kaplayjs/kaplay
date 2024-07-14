@@ -1,7 +1,8 @@
 import { k } from "../../kaboom";
 import { Vec2 } from "../../math";
-import type { Comp, GameObj, KaboomCtx, PosComp, QueryOpt } from "../../types";
+import type { Comp, GameObj, KaboomCtx, QueryOpt } from "../../types";
 import type { KEventController } from "../../utils/";
+import type { PosComp } from "../transform/pos";
 
 /**
  * The {@link sentry `sentry()`} component.

@@ -4,11 +4,11 @@ import easings from "../../math/easings";
 import type {
     Comp,
     GameObj,
-    KEventController,
     LerpValue,
     TimerController,
     TweenController,
 } from "../../types";
+import type { KEventController } from "../../utils";
 
 /**
  * The {@link timer `timer()`} component.

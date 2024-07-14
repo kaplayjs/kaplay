@@ -5,8 +5,7 @@ import {
     VERT_TEMPLATE,
     VERTEX_FORMAT,
 } from "../constants";
-import { type GfxCtx, loadProgress, Shader } from "../gfx";
-import { Asset } from "../gfx";
+import { type GfxCtx, Shader } from "../gfx";
 import {
     assets,
     gfx,
@@ -15,6 +14,8 @@ import {
     type ShaderData,
 } from "../kaboom";
 import { getErrorMessage } from "../utils";
+import { loadProgress } from "./asset";
+import { Asset } from "./asset";
 
 export function makeShader(
     ggl: GfxCtx,

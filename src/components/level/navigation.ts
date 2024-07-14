@@ -1,6 +1,7 @@
 import { Vec2 } from "../../math";
 import { type Graph } from "../../math/navigation";
-import type { Comp, GameObj, PosComp } from "../../types";
+import type { Comp, GameObj } from "../../types";
+import type { PosComp } from "../transform/pos";
 
 export interface NavigationMapComp extends Comp {
     /*

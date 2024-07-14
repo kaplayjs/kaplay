@@ -5,6 +5,7 @@ import {
     type AppGfxCtx,
     createEmptyAudioBuffer,
     drawCircle,
+    drawDebug,
     drawEllipse,
     drawLine,
     drawLines,
@@ -12,15 +13,12 @@ import {
     drawSprite,
     drawTexture,
     drawUVQuad,
+    flush,
     formatText,
     FrameBuffer,
-    getBitmapFont,
-    getFont,
-    getShader,
     height,
     initAppGfx,
     initGfx,
-    makeShader,
     mousePos,
     popTransform,
     pushMatrix,
@@ -34,13 +32,23 @@ import {
 
 import {
     Asset,
+    type BitmapFontData,
     fetchArrayBuffer,
     fetchJSON,
     fetchText,
+    FontData,
+    getBitmapFont,
+    getFont,
+    getShader,
+    getSprite,
+    type GfxFont,
     initAssets,
     loadImg,
     loadProgress,
-} from "./gfx/assets";
+    makeShader,
+    slice,
+    SpriteData,
+} from "./assets";
 
 import {
     ASCII_CHARS,
@@ -131,13 +139,10 @@ import {
     toFixed,
 } from "./utils/";
 
-import { FontData } from "./assets/fonts";
-
 import type {
     AsepriteData,
     AudioPlay,
     AudioPlayOpt,
-    BitmapFontData,
     BoomOpt,
     ButtonsDef,
     Comp,
@@ -145,7 +150,6 @@ import type {
     Debug,
     EventController,
     GameObj,
-    GfxFont,
     ImageSource,
     KaboomCtx,
     KaboomOpt,
@@ -218,11 +222,6 @@ import {
     z,
 } from "./components";
 
-import beanSpriteSrc from "./assets/bean.png";
-import boomSpriteSrc from "./assets/boom.png";
-import burpSoundSrc from "./assets/burp.mp3";
-import kaSpriteSrc from "./assets/ka.png";
-import { slice, SpriteData } from "./assets/sprite";
 import { type Game, initGame } from "./game/game";
 import { make } from "./game/make";
 import {
@@ -236,6 +235,10 @@ import {
     drawUnscaled,
 } from "./gfx/draw";
 import { drawRect } from "./gfx/draw/drawRect";
+import beanSpriteSrc from "./kassets/bean.png";
+import boomSpriteSrc from "./kassets/boom.png";
+import burpSoundSrc from "./kassets/burp.mp3";
+import kaSpriteSrc from "./kassets/ka.png";
 
 // for import types from package
 export type * from "./types";
@@ -765,10 +768,6 @@ const kaplay = <
         return loadSprite(name, beanSpriteSrc);
     }
 
-    function getSprite(name: string): Asset<SpriteData> | null {
-        return assets.sprites.get(name) ?? null;
-    }
-
     function getSound(name: string): Asset<SoundData> | null {
         return assets.sounds.get(name) ?? null;
     }
@@ -1130,11 +1129,6 @@ const kaplay = <
             map: map,
             size: gh,
         };
-    }
-
-    // draw all batched shapes
-    function flush() {
-        gfx.renderer.flush();
     }
 
     // start a rendering frame, reset some states
@@ -2822,10 +2816,10 @@ const kaplay = <
         loadBean,
         loadJSON,
         load,
-        getSprite,
         getSound,
         getFont,
         getBitmapFont,
+        getSprite,
         getShader,
         getAsset,
         Asset,
@@ -3134,6 +3128,3 @@ const kaplay = <
 };
 
 export default kaplay;
-function drawDebug() {
-    throw new Error("Function not implemented.");
-}

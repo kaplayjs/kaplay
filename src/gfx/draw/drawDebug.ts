@@ -19,7 +19,7 @@ import { drawRect } from "./drawRect";
 import { drawTriangle } from "./drawTriangle";
 import { drawUnscaled } from "./drawUnscaled";
 
-function drawDebug() {
+export function drawDebug() {
     if (debug.inspect) {
         let inspecting = null;
 

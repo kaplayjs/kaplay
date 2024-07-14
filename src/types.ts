@@ -1,4 +1,5 @@
-import type { FontData } from "./assets/fonts";
+import type { Asset, BitmapFontData } from "./assets";
+import type { FontData } from "./assets/font";
 import type {
     AgentComp,
     AgentCompOpt,
@@ -56,17 +57,21 @@ import type {
     ParticlesOpt,
 } from "./components/draw/particles";
 import type {
+    DrawBezierOpt,
     DrawCircleOpt,
+    DrawCurveOpt,
     DrawLineOpt,
     DrawLinesOpt,
     DrawRectOpt,
+    DrawTextOpt,
+    DrawTriangleOpt,
+    FormattedText,
     FrameBuffer,
     GfxCtx,
     LineCap,
     LineJoin,
     Texture,
 } from "./gfx";
-import type { Asset } from "./gfx/assets";
 import type {
     Circle,
     Ellipse,
@@ -4253,7 +4258,6 @@ export interface LoadBitmapFontOpt {
     outline?: number;
 }
 
-export type BitmapFontData = GfxFont;
 export type ShaderData = Shader;
 
 // TODO: enable setting on load, make part of SoundData
@@ -4391,12 +4395,6 @@ export type Canvas = {
     draw(action: () => void): void;
     free(): void;
 };
-
-export interface GfxFont {
-    tex: Texture;
-    map: Record<string, Quad>;
-    size: number;
-}
 
 export interface Vertex {
     pos: Vec2;

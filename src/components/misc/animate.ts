@@ -2,13 +2,8 @@ import { k } from "../../kaboom";
 import { evaluateCatmullRom, lerp, Vec2 } from "../../math";
 import { Color } from "../../math/color";
 import easings from "../../math/easings";
-import type {
-    Comp,
-    EaseFunc,
-    GameObj,
-    KEventController,
-    LerpValue,
-} from "../../types";
+import type { Comp, EaseFunc, GameObj, LerpValue } from "../../types";
+import type { KEventController } from "../../utils";
 
 type AnimateEndBehavior =
     /* Go directly back to the start */

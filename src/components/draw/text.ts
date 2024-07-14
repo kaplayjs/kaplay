@@ -1,16 +1,10 @@
+import type { BitmapFontData } from "../../assets";
 import { DEF_TEXT_SIZE } from "../../constants";
 import { getRenderProps } from "../../game/utils";
+import type { CharTransform, CharTransformFunc, TextAlign } from "../../gfx";
 import { k } from "../../kaboom";
 import { Rect, vec2 } from "../../math";
-import type {
-    BitmapFontData,
-    CharTransform,
-    CharTransformFunc,
-    Comp,
-    GameObj,
-    KaboomCtx,
-    TextAlign,
-} from "../../types";
+import type { Comp, GameObj, KaboomCtx } from "../../types";
 
 /**
  * The {@link text `text()`} component.

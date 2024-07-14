@@ -1,8 +1,8 @@
 import { drawRaw, type Texture } from "../../gfx";
 import { k } from "../../kaboom";
-import { lerp, map, Quad, Vec2, vec2 } from "../../math";
+import { lerp, map, Quad, type ShapeType, Vec2, vec2 } from "../../math";
 import { Color } from "../../math/color";
-import type { Comp, KaboomCtx, ShapeType, Vertex } from "../../types";
+import type { Comp, KaboomCtx, Vertex } from "../../types";
 import { KEvent } from "../../utils/";
 
 class Particle {

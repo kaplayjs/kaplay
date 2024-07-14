@@ -1,15 +1,9 @@
 import { getRenderProps } from "../../game/utils";
 import type { Texture } from "../../gfx";
 import { k } from "../../kaboom";
-import { Polygon } from "../../math";
+import { Polygon, type Vec2 } from "../../math";
 import { type Color } from "../../math/color";
-import type {
-    Comp,
-    DrawPolygonOpt,
-    GameObj,
-    KaboomCtx,
-    Vec2,
-} from "../../types";
+import type { Comp, DrawPolygonOpt, GameObj, KaboomCtx } from "../../types";
 
 /**
  * The {@link polygon `polygon()`} component.

@@ -1,4 +1,4 @@
-import { FontData, resolveFont } from "../assets/fonts";
+import { FontData, resolveFont } from "../assets/font";
 import {
     DEF_FONT_FILTER,
     DEF_TEXT_CACHE_SIZE,

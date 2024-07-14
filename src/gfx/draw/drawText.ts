@@ -1,4 +1,4 @@
-import type { FontData } from "../../assets/fonts";
+import type { FontData } from "../../assets/font";
 import type { Vec2 } from "../../math";
 import type { Color } from "../../math/color";
 import type { Anchor, BitmapFontData, RenderProps } from "../../types";
