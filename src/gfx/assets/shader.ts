@@ -4,17 +4,11 @@ import {
     FRAG_TEMPLATE,
     VERT_TEMPLATE,
     VERTEX_FORMAT,
-} from "../constants";
-import { type GfxCtx, loadProgress, Shader } from "../gfx";
-import { Asset } from "../gfx";
-import {
-    assets,
-    gfx,
-    type KaboomCtx,
-    type RenderProps,
-    type ShaderData,
-} from "../kaboom";
-import { getErrorMessage } from "../utils";
+} from "../../constants";
+import { type GfxCtx, loadProgress, Shader } from "../../gfx";
+import { assets, gfx, type RenderProps, type ShaderData } from "../../kaboom";
+import { getErrorMessage } from "../../utils";
+import { Asset } from "./asset";
 
 export function makeShader(
     ggl: GfxCtx,

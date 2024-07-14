@@ -1,5 +1,23 @@
-import { debug, game } from "../../kaboom";
+import { DBG_FONT, LOG_TIME } from "../../constants";
+import { app, debug, game, globalOpt } from "../../kaboom";
+import { vec2, wave } from "../../math";
+import { rgb } from "../../math/color";
+import { formatText } from "../formatText";
+import {
+    contentToView,
+    height,
+    mousePos,
+    popTransform,
+    pushTransform,
+    pushTranslate,
+    width,
+} from "../stack";
+import { drawCircle } from "./drawCircle";
+import { drawFormattedText } from "./drawFormattedText";
 import { drawInspectText } from "./drawInspectText";
+import { drawRect } from "./drawRect";
+import { drawTriangle } from "./drawTriangle";
+import { drawUnscaled } from "./drawUnscaled";
 
 function drawDebug() {
     if (debug.inspect) {
@@ -167,7 +185,7 @@ function drawDebug() {
 
             game.logs = game.logs
                 .filter((log) =>
-                    app.time() - log.time < (gopt.logTime || LOG_TIME)
+                    app.time() - log.time < (globalOpt.logTime || LOG_TIME)
                 );
 
             const ftext = formatText({

@@ -12,12 +12,16 @@ import {
     drawSprite,
     drawTexture,
     drawUVQuad,
+    formatText,
     FrameBuffer,
+    getBitmapFont,
+    getFont,
     getShader,
     height,
     initAppGfx,
     initGfx,
     makeShader,
+    mousePos,
     popTransform,
     pushMatrix,
     pushRotate,
@@ -221,6 +225,16 @@ import kaSpriteSrc from "./assets/ka.png";
 import { slice, SpriteData } from "./assets/sprite";
 import { type Game, initGame } from "./game/game";
 import { make } from "./game/make";
+import {
+    drawBezier,
+    drawCurve,
+    drawFormattedText,
+    drawMasked,
+    drawSubtracted,
+    drawText,
+    drawTriangle,
+    drawUnscaled,
+} from "./gfx/draw";
 import { drawRect } from "./gfx/draw/drawRect";
 
 // for import types from package
@@ -1204,26 +1218,6 @@ const kaplay = <
     // get game root
     function getTreeRoot(): GameObj {
         return game.root;
-    }
-
-    // transform a point from window space to content space
-    function windowToContent(pt: Vec2) {
-        return new Vec2(
-            (pt.x - gfx.viewport.x) * width() / gfx.viewport.width,
-            (pt.y - gfx.viewport.y) * height() / gfx.viewport.height,
-        );
-    }
-
-    // transform a point from content space to view space
-    function contentToView(pt: Vec2) {
-        return new Vec2(
-            pt.x * gfx.viewport.width / gfx.width,
-            pt.y * gfx.viewport.height / gfx.height,
-        );
-    }
-
-    function mousePos() {
-        return windowToContent(app.mousePos());
     }
 
     let debugPaused = false;
@@ -3140,3 +3134,6 @@ const kaplay = <
 };
 
 export default kaplay;
+function drawDebug() {
+    throw new Error("Function not implemented.");
+}

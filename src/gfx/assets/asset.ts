@@ -1,15 +1,15 @@
-import { SPRITE_ATLAS_HEIGHT, SPRITE_ATLAS_WIDTH } from "../constants";
+import { SPRITE_ATLAS_HEIGHT, SPRITE_ATLAS_WIDTH } from "../../constants";
 import {
     assets,
     type BitmapFontData,
-    type FontData,
     type ShaderData,
     type SoundData,
     type SpriteData,
-} from "../kaboom";
-import { KEvent } from "../utils/";
-import type { GfxCtx } from "./gfx";
-import TexPacker from "./texPacker";
+} from "../../kaboom";
+import { KEvent } from "../../utils";
+import type { GfxCtx } from "../gfx";
+import TexPacker from "../texPacker";
+import type { FontData } from "./fonts";
 
 /**
  * An asset is a resource that is loaded asynchronously.
