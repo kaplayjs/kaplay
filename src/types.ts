@@ -1,4 +1,4 @@
-import type { App } from "./app";
+import type { FontData } from "./assets/fonts";
 import type {
     AgentComp,
     AgentCompOpt,
@@ -55,9 +55,18 @@ import type {
     ParticlesComp,
     ParticlesOpt,
 } from "./components/draw/particles";
-import type { AppGfxCtx, FrameBuffer, GfxCtx, Texture } from "./gfx";
-import type { Asset, AssetsCtx } from "./gfx/assets";
-import type { FontData } from "./gfx/fonts";
+import type {
+    DrawCircleOpt,
+    DrawLineOpt,
+    DrawLinesOpt,
+    DrawRectOpt,
+    FrameBuffer,
+    GfxCtx,
+    LineCap,
+    LineJoin,
+    Texture,
+} from "./gfx";
+import type { Asset } from "./gfx/assets";
 import type {
     Circle,
     Ellipse,
@@ -66,11 +75,9 @@ import type {
     Point,
     Polygon,
     Quad,
-    RaycastHit,
     RaycastResult,
     Rect,
     RNG,
-    ShapeType,
     Vec2,
     Vec2Args,
 } from "./math";
@@ -78,117 +85,11 @@ import type { Color, RGBAValue, RGBValue } from "./math/color";
 import type { NavMesh } from "./math/navigationmesh";
 import type { KEvent, KEventController, KEventHandler } from "./utils/";
 
-export type {
-    AgentComp,
-    AgentCompOpt,
-    AnchorComp,
-    AreaComp,
-    AreaCompOpt,
-    Asset,
-    BodyComp,
-    BodyCompOpt,
-    Circle,
-    CircleComp,
-    Color,
-    ColorComp,
-    DoubleJumpComp,
-    Ellipse,
-    FixedComp,
-    FollowComp,
-    FontData,
-    FrameBuffer,
-    HealthComp,
-    KEvent,
-    KEventController,
-    KEventHandler,
-    LayerComp,
-    LifespanCompOpt,
-    Line,
-    MaskComp,
-    Mat4,
-    NamedComp,
-    NavigationComp,
-    NavigationCompOpt,
-    OffScreenComp,
-    OffScreenCompOpt,
-    OpacityComp,
-    OutlineComp,
-    PatrolComp,
-    PatrolCompOpt,
-    Polygon,
-    PolygonComp,
-    PolygonCompOpt,
-    PosComp,
-    Quad,
-    RaycastHit,
-    RaycastResult,
-    Rect,
-    RectComp,
-    RectCompOpt,
-    RNG,
-    RotateComp,
-    ScaleComp,
-    SentryCandidates,
-    SentryComp,
-    SentryCompOpt,
-    ShaderComp,
-    ShapeType,
-    SpriteComp,
-    SpriteCompOpt,
-    StateComp,
-    StayComp,
-    TextComp,
-    TextCompOpt,
-    TextInputComp,
-    Texture,
-    TileComp,
-    TileCompOpt,
-    TimerComp,
-    UVQuadComp,
-    Vec2,
-    Vec2Args,
-    ZComp,
-};
-
 // for back compat with v3000
 export type {
     KEvent as Event,
     KEventController as EventController,
     KEventHandler as EventHandler,
-};
-
-export type InternalCtx = {
-    kaboomCtx: KaboomCtx;
-    app: App;
-    gfx: AppGfxCtx;
-    assets: AssetsCtx;
-    game: any;
-    loadProgress(): number;
-    screen2ndc(pt: Vec2): Vec2;
-    isFixed: (obj: GameObj) => boolean;
-    toFixed: (n: number, f: number) => number;
-    getViewportScale: () => number;
-    getRenderProps: (obj: GameObj) => {
-        color: Color;
-        opacity: number;
-        anchor: Anchor;
-        outline: Outline;
-        shader: Shader;
-        uniform: Uniform;
-    };
-    resolveSprite: (
-        src: DrawSpriteOpt["sprite"],
-    ) => Asset<SpriteData> | null;
-    drawTexture: (opt: DrawTextureOpt) => void;
-    drawRaw(
-        verts: Vertex[],
-        indices: number[],
-        fixed: boolean,
-        tex: Texture,
-        shaderSrc: RenderProps["shader"],
-        uniform: Uniform,
-    ): any;
-    calcTransform: (obj: GameObj) => Mat4;
 };
 
 /**
@@ -200,12 +101,6 @@ export interface KaboomCtx<
     TButtonDef extends ButtonsDef = {},
     TButton extends string = string,
 > {
-    /**
-     * The internal context object.
-     *
-     * @private
-     */
-    _k: InternalCtx;
     /**
      * Assemble a game object from a list of components, and add it to the game
      *
@@ -4616,195 +4511,6 @@ export type DrawUVQuadOpt = RenderProps & {
 };
 
 /**
- * How the rectangle should look like.
- */
-export type DrawRectOpt = RenderProps & {
-    /**
-     * Width of the rectangle.
-     */
-    width: number;
-    /**
-     * Height of the rectangle.
-     */
-    height: number;
-    /**
-     * Use gradient instead of solid color.
-     *
-     * @since v3000.0
-     */
-    gradient?: [Color, Color];
-    /**
-     * If the gradient should be horizontal.
-     *
-     * @since v3000.0
-     */
-    horizontal?: boolean;
-    /**
-     * If fill the shape with color (set this to false if you only want an outline).
-     */
-    fill?: boolean;
-    /**
-     * The radius of each corner.
-     */
-    radius?: number | number[];
-    /**
-     * The anchor point, or the pivot point. Default to "topleft".
-     */
-    anchor?: Anchor | Vec2;
-};
-
-/**
- * How the line should look like.
- */
-export type DrawLineOpt = Omit<RenderProps, "angle" | "scale"> & {
-    /**
-     * Starting point of the line.
-     */
-    p1: Vec2;
-    /**
-     * Ending point of the line.
-     */
-    p2: Vec2;
-    /**
-     * The width, or thickness of the line,
-     */
-    width?: number;
-};
-
-export type LineJoin =
-    | "none"
-    | "round"
-    | "bevel"
-    | "miter";
-
-export type LineCap =
-    | "butt"
-    | "round"
-    | "square";
-
-/**
- * How the lines should look like.
- */
-export type DrawLinesOpt = Omit<RenderProps, "angle" | "scale"> & {
-    /**
-     * The points that should be connected with a line.
-     */
-    pts: Vec2[];
-    /**
-     * The width, or thickness of the lines,
-     */
-    width?: number;
-    /**
-     * The radius of each corner.
-     */
-    radius?: number | number[];
-    /**
-     * Line join style (default "none").
-     */
-    join?: LineJoin;
-    /**
-     * Line cap style (default "none").
-     */
-    cap?: LineCap;
-    /**
-     * Maximum miter length, anything longer becomes bevel.
-     */
-    miterLimit?: number;
-};
-
-export type DrawCurveOpt = RenderProps & {
-    /**
-     * The amount of line segments to draw.
-     */
-    segments?: number;
-    /**
-     * The width of the line.
-     */
-    width?: number;
-};
-
-export type DrawBezierOpt = DrawCurveOpt & {
-    /**
-     * The first point.
-     */
-    pt1: Vec2;
-    /**
-     * The the first control point.
-     */
-    pt2: Vec2;
-    /**
-     * The the second control point.
-     */
-    pt3: Vec2;
-    /**
-     * The second point.
-     */
-    pt4: Vec2;
-};
-
-/**
- * How the triangle should look like.
- */
-export type DrawTriangleOpt = RenderProps & {
-    /**
-     * First point of triangle.
-     */
-    p1: Vec2;
-    /**
-     * Second point of triangle.
-     */
-    p2: Vec2;
-    /**
-     * Third point of triangle.
-     */
-    p3: Vec2;
-    /**
-     * If fill the shape with color (set this to false if you only want an outline).
-     */
-    fill?: boolean;
-    /**
-     * The radius of each corner.
-     */
-    radius?: number;
-};
-
-/**
- * How the circle should look like.
- */
-export type DrawCircleOpt = Omit<RenderProps, "angle"> & {
-    /**
-     * Radius of the circle.
-     */
-    radius: number;
-    /**
-     * Starting angle.
-     */
-    start?: number;
-    /**
-     * Ending angle.
-     */
-    end?: number;
-    /**
-     * If fill the shape with color (set this to false if you only want an outline).
-     */
-    fill?: boolean;
-    /**
-     * Use gradient instead of solid color.
-     *
-     * @since v3000.0
-     */
-    gradient?: [Color, Color];
-    /**
-     * Multiplier for circle vertices resolution (default 1)
-     */
-    resolution?: number;
-    /**
-     * The anchor point, or the pivot point. Default to "topleft".
-     */
-    anchor?: Anchor | Vec2;
-};
-
-/**
  * How the ellipse should look like.
  */
 export type DrawEllipseOpt = RenderProps & {
@@ -4927,123 +4633,6 @@ export interface Outline {
      * @since v3001.0
      */
     cap?: LineCap;
-}
-
-/**
- * How the text should be aligned.
- *
- * @group Draw
- */
-export type TextAlign =
-    | "center"
-    | "left"
-    | "right";
-
-/**
- * How the text should look like.
- *
- * @group Draw
- */
-export type DrawTextOpt = RenderProps & {
-    /**
-     * The text to render.
-     */
-    text: string;
-    /**
-     * The name of font to use.
-     */
-    font?:
-        | string
-        | FontData
-        | Asset<FontData>
-        | BitmapFontData
-        | Asset<BitmapFontData>;
-    /**
-     * The size of text (the height of each character).
-     */
-    size?: number;
-    /**
-     * Text alignment (default "left")
-     *
-     * @since v3000.0
-     */
-    align?: TextAlign;
-    /**
-     * The maximum width. Will wrap word around if exceed.
-     */
-    width?: number;
-    /**
-     * The gap between each line (only available for bitmap fonts).
-     *
-     * @since v2000.2
-     */
-    lineSpacing?: number;
-    /**
-     * The gap between each character (only available for bitmap fonts).
-     *
-     * @since v2000.2
-     */
-    letterSpacing?: number;
-    /**
-     * The anchor point, or the pivot point. Default to "topleft".
-     */
-    anchor?: Anchor | Vec2;
-    /**
-     * Transform the pos, scale, rotation or color for each character based on the index or char (only available for bitmap fonts).
-     *
-     * @since v2000.1
-     */
-    transform?: CharTransform | CharTransformFunc;
-    /**
-     * Stylesheet for styled chunks, in the syntax of "this is a [stylename]styled[/stylename] word" (only available for bitmap fonts).
-     *
-     * @since v2000.2
-     */
-    styles?: Record<string, CharTransform | CharTransformFunc>;
-};
-
-/**
- * Formatted text with info on how and where to render each character.
- */
-export type FormattedText = {
-    width: number;
-    height: number;
-    chars: FormattedChar[];
-    opt: DrawTextOpt;
-};
-
-/**
- * One formated character.
- */
-export interface FormattedChar {
-    ch: string;
-    tex: Texture;
-    width: number;
-    height: number;
-    quad: Quad;
-    pos: Vec2;
-    scale: Vec2;
-    angle: number;
-    color: Color;
-    opacity: number;
-}
-
-/**
- * A function that returns a character transform config. Useful if you're generating dynamic styles.
- */
-export type CharTransformFunc = (idx: number, ch: string) => CharTransform;
-
-/**
- * Describes how to transform each character.
- *
- * @group Options
- */
-export interface CharTransform {
-    pos?: Vec2;
-    scale?: Vec2 | number;
-    angle?: number;
-    color?: Color;
-    opacity?: number;
 }
 
 /**

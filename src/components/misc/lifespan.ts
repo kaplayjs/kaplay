@@ -1,4 +1,4 @@
-import { getKaboomContext } from "../../kaboom";
+import { k } from "../../kaboom";
 import easings from "../../math/easings";
 import type { EmptyComp, GameObj, KaboomCtx, OpacityComp } from "../../types";
 
@@ -19,8 +19,6 @@ export function lifespan(
     time: number,
     opt: LifespanCompOpt = {},
 ): EmptyComp {
-    const k = getKaboomContext(this);
-
     if (time == null) {
         throw new Error("lifespan() requires time");
     }

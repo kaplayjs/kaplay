@@ -1,5 +1,6 @@
+import { getRenderProps } from "../../game/utils";
 import type { Texture } from "../../gfx";
-import { getKaboomContext } from "../../kaboom";
+import { k } from "../../kaboom";
 import { Polygon } from "../../math";
 import { type Color } from "../../math/color";
 import type {
@@ -57,9 +58,6 @@ export function polygon(
     pts: Vec2[],
     opt: PolygonCompOpt = {},
 ): PolygonComp {
-    const k = getKaboomContext(this);
-    const { getRenderProps } = k._k;
-
     if (pts.length < 3) {
         throw new Error(
             `Polygon's need more than two points, ${pts.length} points provided`,

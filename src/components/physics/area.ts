@@ -1,6 +1,7 @@
 import { DEF_ANCHOR } from "../../constants";
-import { anchorPt } from "../../gfx";
-import { getKaboomContext } from "../../kaboom";
+import { isFixed } from "../../game/utils";
+import { anchorPt, getViewportScale } from "../../gfx";
+import { app, game, k } from "../../kaboom";
 import { Polygon, testPolygonPoint, Vec2, vec2 } from "../../math";
 import { rgb } from "../../math/color";
 import type {
@@ -209,9 +210,6 @@ export interface AreaCompOpt {
 }
 
 export function area(this: KaboomCtx, opt: AreaCompOpt = {}): AreaComp {
-    const k = getKaboomContext(this);
-    const { app, isFixed, getViewportScale, game } = k._k;
-
     const colliding: Record<string, Collision> = {};
     const collidingThisFrame = new Set();
 

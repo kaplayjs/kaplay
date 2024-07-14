@@ -1,10 +1,11 @@
 import { SPRITE_ATLAS_HEIGHT, SPRITE_ATLAS_WIDTH } from "../constants";
-import type {
-    BitmapFontData,
-    FontData,
-    ShaderData,
-    SoundData,
-    SpriteData,
+import {
+    assets,
+    type BitmapFontData,
+    type FontData,
+    type ShaderData,
+    type SoundData,
+    type SpriteData,
 } from "../kaboom";
 import { KEvent } from "../utils/";
 import type { GfxCtx } from "./gfx";
@@ -142,6 +143,19 @@ export function loadImg(src: string): Promise<HTMLImageElement> {
         img.onerror = () =>
             reject(new Error(`Failed to load image from "${src}"`));
     });
+}
+
+export function loadProgress(): number {
+    const buckets = [
+        assets.sprites,
+        assets.sounds,
+        assets.shaders,
+        assets.fonts,
+        assets.bitmapFonts,
+        assets.custom,
+    ];
+    return buckets.reduce((n, bucket) => n + bucket.progress(), 0)
+        / buckets.length;
 }
 
 // create assets

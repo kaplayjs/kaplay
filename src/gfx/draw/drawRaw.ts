@@ -1,12 +1,10 @@
-import { withGfxAndKaboom } from "../core/context";
-import { getKaboomContext } from "../kaboom";
-import type { RenderProps, Texture, Uniform, Vertex } from "../types";
-import { Asset } from "./assets";
-import { resolveShader } from "./shader";
+import { resolveShader } from "../../assets/shader";
+import { game, gfx } from "../../kaboom";
+import { screen2ndc } from "../../math/various";
+import type { RenderProps, Texture, Uniform, Vertex } from "../../types";
+import { Asset } from "../assets";
 
-export const ctxDrawRaw = withGfxAndKaboom(function(
-    gfx,
-    k,
+export function drawRaw(
     verts: Vertex[],
     indices: number[],
     fixed: boolean = false,
@@ -14,12 +12,9 @@ export const ctxDrawRaw = withGfxAndKaboom(function(
     shaderSrc?: RenderProps["shader"],
     uniform: Uniform = {},
 ) {
-    const { _k } = k;
-    const { game, screen2ndc } = _k;
-
     const parsedTex = tex ?? gfx.defTex;
     const parsedShader = shaderSrc ?? gfx.defShader;
-    const shader = resolveShader(k, parsedShader);
+    const shader = resolveShader(parsedShader);
 
     if (!shader || shader instanceof Asset) {
         return;
@@ -34,6 +29,7 @@ export const ctxDrawRaw = withGfxAndKaboom(function(
     for (const v of verts) {
         // normalized world space coordinate [-1.0 ~ 1.0]
         const pt = screen2ndc(transform.multVec2(v.pos));
+
         vv.push(
             pt.x,
             pt.y,
@@ -54,4 +50,4 @@ export const ctxDrawRaw = withGfxAndKaboom(function(
         parsedTex,
         uniform,
     );
-});
+}

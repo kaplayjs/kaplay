@@ -5,10 +5,11 @@ import {
     VERT_TEMPLATE,
     VERTEX_FORMAT,
 } from "../constants";
-import { type GfxCtx, Shader } from "../gfx";
+import { type GfxCtx, loadProgress, Shader } from "../gfx";
 import { Asset } from "../gfx";
 import {
-    getKaboomContext,
+    assets,
+    gfx,
     type KaboomCtx,
     type RenderProps,
     type ShaderData,
@@ -43,12 +44,8 @@ export function makeShader(
 }
 
 export function resolveShader(
-    c: KaboomCtx,
     src: RenderProps["shader"],
 ): ShaderData | Asset<ShaderData> | null {
-    const { _k, getShader } = getKaboomContext(c);
-    const { gfx, loadProgress } = _k;
-
     if (!src) {
         return gfx.defShader;
     }
@@ -66,4 +63,8 @@ export function resolveShader(
     }
 
     return src;
+}
+
+export function getShader(name: string): Asset<ShaderData> | null {
+    return assets.shaders.get(name) ?? null;
 }

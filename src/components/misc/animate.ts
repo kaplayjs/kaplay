@@ -1,4 +1,4 @@
-import { getKaboomContext } from "../../kaboom";
+import { k } from "../../kaboom";
 import { evaluateCatmullRom, lerp, Vec2 } from "../../math";
 import { Color } from "../../math/color";
 import easings from "../../math/easings";
@@ -263,7 +263,6 @@ class AnimateChannelColor extends AnimateChannel {
 }
 
 export function animate(): AnimateComp {
-    const k = getKaboomContext();
     const channels: AnimateChannel[] = [];
     let t = 0;
     let isFinished = false;

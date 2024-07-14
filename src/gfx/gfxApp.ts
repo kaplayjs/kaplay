@@ -1,3 +1,4 @@
+import { makeShader } from "../assets/shader";
 import {
     DEF_FRAG,
     DEF_VERT,
@@ -9,7 +10,6 @@ import { BatchRenderer, FrameBuffer, type GfxCtx, Texture } from "../gfx";
 import type { Color, KaboomOpt, Uniform } from "../kaboom";
 import { Mat4 } from "../math";
 import { rgb } from "../math/color";
-import { makeShader } from "./shader";
 
 export type AppGfxCtx = ReturnType<typeof initAppGfx>;
 

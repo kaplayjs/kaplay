@@ -1,5 +1,6 @@
-import { getKaboomContext } from "../../kaboom";
+import { k } from "../../kaboom";
 import type { Comp, EaseFunc, KaboomCtx, TweenController } from "../../types";
+import { toFixed } from "../../utils";
 
 /**
  * The {@link opacity `opacity()`} component.
@@ -19,9 +20,6 @@ export function opacity(
     this: KaboomCtx,
     a: number,
 ): OpacityComp {
-    const k = getKaboomContext(this);
-    const { toFixed } = k._k;
-
     return {
         id: "opacity",
         opacity: a ?? 1,

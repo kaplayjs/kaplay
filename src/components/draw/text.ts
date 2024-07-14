@@ -1,5 +1,6 @@
 import { DEF_TEXT_SIZE } from "../../constants";
-import { getKaboomContext } from "../../kaboom";
+import { getRenderProps } from "../../game/utils";
+import { k } from "../../kaboom";
 import { Rect, vec2 } from "../../math";
 import type {
     BitmapFontData,
@@ -129,9 +130,6 @@ export function text(
     t: string,
     opt: TextCompOpt = {},
 ): TextComp {
-    const k = getKaboomContext(this);
-    const { getRenderProps } = k._k;
-
     function update(obj: GameObj<TextComp | any>) {
         const ftext = k.formatText(Object.assign(getRenderProps(obj), {
             text: obj.text + "",

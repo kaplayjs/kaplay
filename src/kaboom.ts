@@ -2,52 +2,51 @@ const VERSION = "3001.0.0";
 
 import { type App, initApp } from "./app";
 import {
-    alignPt,
-    anchorPt,
+    type AppGfxCtx,
     createEmptyAudioBuffer,
-    ctxPopTransform,
-    ctxPushMatrix,
-    ctxPushRotate,
-    ctxPushScale,
-    ctxPushTransform,
-    ctxPushTranslate,
+    drawCircle,
+    drawEllipse,
+    drawLine,
+    drawLines,
+    drawPolygon,
+    drawSprite,
+    drawTexture,
+    drawUVQuad,
     FrameBuffer,
+    getShader,
+    height,
     initAppGfx,
     initGfx,
     makeShader,
+    popTransform,
+    pushMatrix,
+    pushRotate,
+    pushScale,
+    pushTransform,
+    pushTranslate,
     Texture,
+    width,
 } from "./gfx";
 
 import {
     Asset,
-    AssetBucket,
     fetchArrayBuffer,
     fetchJSON,
     fetchText,
     initAssets,
     loadImg,
+    loadProgress,
 } from "./gfx/assets";
 
 import {
     ASCII_CHARS,
     BG_GRID_SIZE,
-    COMP_DESC,
-    COMP_EVENTS,
     DBG_FONT,
-    DEF_ANCHOR,
-    DEF_FONT,
-    DEF_FONT_FILTER,
     DEF_HASH_GRID_SIZE,
-    DEF_TEXT_CACHE_SIZE,
-    FONT_ATLAS_HEIGHT,
-    FONT_ATLAS_WIDTH,
     LOG_MAX,
-    LOG_TIME,
     MAX_TEXT_CACHE_SIZE,
     SPRITE_ATLAS_HEIGHT,
     SPRITE_ATLAS_WIDTH,
-    TEXT_STYLE_RE,
-    UV_PAD,
 } from "./constants";
 
 import {
@@ -119,91 +118,53 @@ import {
     downloadJSON,
     downloadText,
     getFileName,
-    isClass,
     isDataURL,
     KEvent,
     KEventController,
     KEventHandler,
     overload2,
     Registry,
-    runes,
-    uid,
+    toFixed,
 } from "./utils/";
 
-import { FontData } from "./gfx/fonts";
+import { FontData } from "./assets/fonts";
 
 import type {
-    AreaComp,
     AsepriteData,
     AudioPlay,
     AudioPlayOpt,
     BitmapFontData,
     BoomOpt,
     ButtonsDef,
-    CharTransform,
     Comp,
     CompList,
     Debug,
-    DrawBezierOpt,
-    DrawCircleOpt,
-    DrawCurveOpt,
-    DrawEllipseOpt,
-    DrawLineOpt,
-    DrawLinesOpt,
-    DrawPolygonOpt,
-    DrawRectOpt,
-    DrawSpriteOpt,
-    DrawTextOpt,
-    DrawTextureOpt,
-    DrawTriangleOpt,
-    DrawUVQuadOpt,
     EventController,
-    FixedComp,
-    FormattedChar,
-    FormattedText,
     GameObj,
-    GameObjInspect,
-    GetOpt,
     GfxFont,
     ImageSource,
-    InternalCtx,
     KaboomCtx,
     KaboomOpt,
     KaboomPlugin,
-    Key,
     LevelComp,
     LevelOpt,
     LoadBitmapFontOpt,
     LoadFontOpt,
     LoadSpriteOpt,
     LoadSpriteSrc,
-    MaskComp,
     MergePlugins,
-    MouseButton,
     MusicData,
-    NineSlice,
-    Outline,
     PathFindOpt,
     PeditFile,
     PluginList,
-    PosComp,
-    QueryOpt,
     Recording,
-    RenderProps,
-    RotateComp,
-    ScaleComp,
     SceneDef,
     SceneName,
     ShaderData,
     SpriteAnim,
-    SpriteAnims,
     SpriteAtlasData,
     Tag,
-    TexFilter,
-    TextAlign,
-    TimerComp,
     Uniform,
-    Vertex,
 } from "./types";
 
 import {
@@ -211,10 +172,10 @@ import {
     anchor,
     animate,
     area,
+    type AreaComp,
     body,
     circle,
     color,
-    ctxRect,
     doubleJump,
     drawon,
     fadeIn,
@@ -234,9 +195,12 @@ import {
     patrol,
     polygon,
     pos,
+    type PosComp,
     raycast,
+    rect,
     rotate,
     scale,
+    type ScaleComp,
     sentry,
     shader,
     sprite,
@@ -254,44 +218,23 @@ import beanSpriteSrc from "./assets/bean.png";
 import boomSpriteSrc from "./assets/boom.png";
 import burpSoundSrc from "./assets/burp.mp3";
 import kaSpriteSrc from "./assets/ka.png";
-import { ctxDrawRaw } from "./gfx/";
+import { slice, SpriteData } from "./assets/sprite";
+import { type Game, initGame } from "./game/game";
+import { make } from "./game/make";
+import { drawRect } from "./gfx/draw/drawRect";
 
 // for import types from package
 export type * from "./types";
 
-let ctx: KaboomCtx;
-
-export const isKaboomCtx = (obj: any): obj is KaboomCtx => {
-    return obj && obj["VERSION"] === VERSION;
-};
-
-export const getKaboomContext = (fallBack?: any): KaboomCtx => {
-    // if context is tried to use before it is initialized
-    // it will throw an error
-    if (!ctx) {
-        throw new Error(
-            "You are trying to access to Kaboom Context before their initialization.",
-        );
-    }
-
-    // case: when using multiple instance, this on a context consumer
-    // will be the context
-    if (isKaboomCtx(fallBack)) {
-        return fallBack;
-    }
-
-    // case: when using internal context, we return the ctx attached
-    if (isKaboomCtx(fallBack?.ctx)) {
-        return fallBack.ctx;
-    }
-
-    // console.trace(
-    //     "The Kaboom context was used from global, if this is not intentional, there's a bad usage of Kaboom Context",
-    // );
-
-    // in case of using globals, we return the global context
-    return ctx;
-};
+export let k: KaboomCtx;
+export let globalOpt: KaboomOpt;
+export let gfx: AppGfxCtx;
+export let game: Game;
+export let app: App;
+export let assets: ReturnType<typeof initAssets>;
+export let fontCacheCanvas: HTMLCanvasElement | null;
+export let fontCacheC2d: CanvasRenderingContext2D | null;
+export let debug: Debug;
 
 /**
  * Initialize KAPLAY context. The starting point of all KAPLAY games.
@@ -336,10 +279,7 @@ const kaplay = <
 ): TPlugins extends [undefined] ? KaboomCtx<TButtons, TButtonsName>
     : KaboomCtx<TButtons, TButtonsName> & MergePlugins<TPlugins> =>
 {
-    const ctxWrapper = {
-        current: null as unknown as KaboomCtx | null,
-    };
-
+    globalOpt = gopt;
     const root = gopt.root ?? document.body;
 
     // if root is not defined (which falls back to <body>) we assume user is using kaboom on a clean page, and modify <body> to better fit a full screen canvas
@@ -400,14 +340,14 @@ const kaplay = <
     // make canvas focusable
     canvas.tabIndex = 0;
 
-    const fontCacheCanvas = document.createElement("canvas");
+    fontCacheCanvas = document.createElement("canvas");
     fontCacheCanvas.width = MAX_TEXT_CACHE_SIZE;
     fontCacheCanvas.height = MAX_TEXT_CACHE_SIZE;
-    const fontCacheC2d = fontCacheCanvas.getContext("2d", {
+    fontCacheC2d = fontCacheCanvas.getContext("2d", {
         willReadFrequently: true,
     });
 
-    const app = initApp({
+    app = initApp({
         canvas: canvas,
         touchToMouse: gopt.touchToMouse,
         gamepads: gopt.gamepads,
@@ -435,85 +375,7 @@ const kaplay = <
         texFilter: gopt.texFilter,
     });
 
-    const gfx = initAppGfx(gopt, ggl);
-
-    // gfx dependants
-
-    const pushTranslate = ctxPushTranslate(gfx);
-    const pushTransform = ctxPushTransform(gfx);
-    const pushMatrix = ctxPushMatrix(gfx);
-    const pushScale = ctxPushScale(gfx);
-    const pushRotate = ctxPushRotate(gfx);
-    const popTransform = ctxPopTransform(gfx);
-    const drawRaw = ctxDrawRaw(gfx, ctxWrapper);
-
-    class SpriteData {
-        tex: Texture;
-        frames: Quad[] = [new Quad(0, 0, 1, 1)];
-        anims: SpriteAnims = {};
-        slice9: NineSlice | null = null;
-
-        constructor(
-            tex: Texture,
-            frames?: Quad[],
-            anims: SpriteAnims = {},
-            slice9: NineSlice | null = null,
-        ) {
-            this.tex = tex;
-            if (frames) this.frames = frames;
-            this.anims = anims;
-            this.slice9 = slice9;
-        }
-
-        get width() {
-            return this.tex.width * this.frames[0].w;
-        }
-
-        get height() {
-            return this.tex.height * this.frames[0].h;
-        }
-
-        static from(
-            src: LoadSpriteSrc,
-            opt: LoadSpriteOpt = {},
-        ): Promise<SpriteData> {
-            return typeof src === "string"
-                ? SpriteData.fromURL(src, opt)
-                : Promise.resolve(SpriteData.fromImage(src, opt));
-        }
-
-        static fromImage(
-            data: ImageSource,
-            opt: LoadSpriteOpt = {},
-        ): SpriteData {
-            const [tex, quad] = assets.packer.add(data);
-            const frames = opt.frames
-                ? opt.frames.map((f) =>
-                    new Quad(
-                        quad.x + f.x * quad.w,
-                        quad.y + f.y * quad.h,
-                        f.w * quad.w,
-                        f.h * quad.h,
-                    )
-                )
-                : slice(
-                    opt.sliceX || 1,
-                    opt.sliceY || 1,
-                    quad.x,
-                    quad.y,
-                    quad.w,
-                    quad.h,
-                );
-            return new SpriteData(tex, frames, opt.anims, opt.slice9);
-        }
-
-        static fromURL(
-            url: string,
-            opt: LoadSpriteOpt = {},
-        ): Promise<SpriteData> {
-            return loadImg(url).then((img) => SpriteData.fromImage(img, opt));
-        }
-    }
+    gfx = initAppGfx(gopt, ggl);
 
     class SoundData {
         buf: AudioBuffer;
@@ -564,93 +426,20 @@ const kaplay = <
         };
     })();
 
-    const assets = initAssets(ggl);
+    assets = initAssets(ggl);
 
     function fixURL<D>(url: D): D {
         if (typeof url !== "string" || isDataURL(url)) return url;
         return assets.urlPrefix + url as D;
     }
 
-    const game = {
-        // general events
-        events: new KEventHandler<{
-            mouseMove: [];
-            mouseDown: [MouseButton];
-            mousePress: [MouseButton];
-            mouseRelease: [MouseButton];
-            charInput: [string];
-            keyPress: [Key];
-            keyDown: [Key];
-            keyPressRepeat: [Key];
-            keyRelease: [Key];
-            touchStart: [Vec2, Touch];
-            touchMove: [Vec2, Touch];
-            touchEnd: [Vec2, Touch];
-            gamepadButtonDown: [string];
-            gamepadButtonPress: [string];
-            gamepadButtonRelease: [string];
-            gamepadStick: [string, Vec2];
-            gamepadConnect: [Gamepad];
-            gamepadDisconnect: [Gamepad];
-            scroll: [Vec2];
-            add: [GameObj];
-            destroy: [GameObj];
-            load: [];
-            loading: [number];
-            error: [Error];
-            input: [];
-            frameEnd: [];
-            resize: [];
-            sceneLeave: [string];
-        }>(),
-
-        // object events
-        objEvents: new KEventHandler(),
-
-        // root game object
-        root: make([]) as GameObj<TimerComp>,
-
-        // misc
-        gravity: null as Vec2 | null,
-        scenes: {} as Record<SceneName, SceneDef>,
-        currentScene: null as SceneName | null,
-        layers: null as string[] | null,
-        defaultLayerIndex: 0,
-
-        // on screen log
-        logs: [] as { msg: string | { toString(): string }; time: number }[],
-
-        // camera
-        cam: {
-            pos: null as Vec2 | null,
-            scale: new Vec2(1),
-            angle: 0,
-            shake: 0,
-            transform: new Mat4(),
-        },
-    };
+    game = initGame();
 
     game.root.use(timer());
-
-    const rect = ctxRect(ctxWrapper);
 
     // wrap individual loaders with global loader counter, for stuff like progress bar
     function load<T>(prom: Promise<T>): Asset<T> {
         return assets.custom.add(null, prom);
-    }
-
-    // get current load progress
-    function loadProgress(): number {
-        const buckets = [
-            assets.sprites,
-            assets.sounds,
-            assets.shaders,
-            assets.fonts,
-            assets.bitmapFonts,
-            assets.custom,
-        ];
-        return buckets.reduce((n, bucket) => n + bucket.progress(), 0)
-            / buckets.length;
     }
 
     // global load path prefix
@@ -705,26 +494,6 @@ const kaplay = <
                     );
                 }),
         );
-    }
-
-    // get an array of frames based on configuration on how to slice the image
-    function slice(x = 1, y = 1, dx = 0, dy = 0, w = 1, h = 1): Quad[] {
-        const frames: Quad[] = [];
-        const qw = w / x;
-        const qh = h / y;
-        for (let j = 0; j < y; j++) {
-            for (let i = 0; i < x; i++) {
-                frames.push(
-                    new Quad(
-                        dx + i * qw,
-                        dy + j * qh,
-                        qw,
-                        qh,
-                    ),
-                );
-            }
-        }
-        return frames;
     }
 
     // TODO: load synchronously if passed ImageSource
@@ -990,44 +759,8 @@ const kaplay = <
         return assets.sounds.get(name) ?? null;
     }
 
-    function getFont(name: string): Asset<FontData> | null {
-        return assets.fonts.get(name) ?? null;
-    }
-
-    function getBitmapFont(name: string): Asset<BitmapFontData> | null {
-        return assets.bitmapFonts.get(name) ?? null;
-    }
-
-    function getShader(name: string): Asset<ShaderData> | null {
-        return assets.shaders.get(name) ?? null;
-    }
-
     function getAsset(name: string): Asset<any> | null {
         return assets.custom.get(name) ?? null;
-    }
-
-    function resolveSprite(
-        src: DrawSpriteOpt["sprite"],
-    ): Asset<SpriteData> | null {
-        if (typeof src === "string") {
-            const spr = getSprite(src);
-            if (spr) {
-                // if it's already loaded or being loading, return it
-                return spr;
-            } else if (loadProgress() < 1) {
-                // if there's any other ongoing loading task we return empty and don't error yet
-                return null;
-            } else {
-                // if all other assets are loaded and we still haven't found this sprite, throw
-                throw new Error(`Sprite not found: ${src}`);
-            }
-        } else if (src instanceof SpriteData) {
-            return Asset.loaded(src);
-        } else if (src instanceof Asset) {
-            return src;
-        } else {
-            throw new Error(`Invalid sprite: ${src}`);
-        }
     }
 
     function resolveSound(
@@ -1049,65 +782,6 @@ const kaplay = <
         } else {
             throw new Error(`Invalid sound: ${src}`);
         }
-    }
-
-    function resolveShader(
-        src: RenderProps["shader"],
-    ): ShaderData | Asset<ShaderData> | null {
-        if (!src) {
-            return gfx.defShader;
-        }
-        if (typeof src === "string") {
-            const shader = getShader(src);
-            if (shader) {
-                return shader.data ?? shader;
-            } else if (loadProgress() < 1) {
-                return null;
-            } else {
-                throw new Error(`Shader not found: ${src}`);
-            }
-        } else if (src instanceof Asset) {
-            return src.data ? src.data : src;
-        }
-
-        return src;
-    }
-
-    function resolveFont(
-        src: DrawTextOpt["font"],
-    ):
-        | FontData
-        | Asset<FontData>
-        | BitmapFontData
-        | Asset<BitmapFontData>
-        | string
-        | null
-        | void
-    {
-        if (!src) {
-            return resolveFont(gopt.font ?? DEF_FONT);
-        }
-        if (typeof src === "string") {
-            const bfont = getBitmapFont(src);
-            const font = getFont(src);
-            if (bfont) {
-                return bfont.data ?? bfont;
-            } else if (font) {
-                return font.data ?? font;
-            } else if (
-                document.fonts.check(`${DEF_TEXT_CACHE_SIZE}px ${src}`)
-            ) {
-                return src;
-            } else if (loadProgress() < 1) {
-                return null;
-            } else {
-                throw new Error(`Font not found: ${src}`);
-            }
-        } else if (src instanceof Asset) {
-            return src.data ? src.data : src;
-        }
-
-        return src;
     }
 
     // get / set master volume
@@ -1524,1574 +1198,8 @@ const kaplay = <
         );
     }
 
-    // draw a uv textured quad
-    function drawUVQuad(opt: DrawUVQuadOpt) {
-        if (opt.width === undefined || opt.height === undefined) {
-            throw new Error(
-                "drawUVQuad() requires property \"width\" and \"height\".",
-            );
-        }
-
-        if (opt.width <= 0 || opt.height <= 0) {
-            return;
-        }
-
-        const w = opt.width;
-        const h = opt.height;
-        const anchor = anchorPt(opt.anchor || DEF_ANCHOR);
-        const offset = anchor.scale(new Vec2(w, h).scale(-0.5));
-        const q = opt.quad || new Quad(0, 0, 1, 1);
-        const color = opt.color || rgb(255, 255, 255);
-        const opacity = opt.opacity ?? 1;
-
-        // apply uv padding to avoid artifacts
-        const uvPadX = opt.tex ? UV_PAD / opt.tex.width : 0;
-        const uvPadY = opt.tex ? UV_PAD / opt.tex.height : 0;
-        const qx = q.x + uvPadX;
-        const qy = q.y + uvPadY;
-        const qw = q.w - uvPadX * 2;
-        const qh = q.h - uvPadY * 2;
-
-        pushTransform();
-        pushTranslate(opt.pos);
-        pushRotate(opt.angle);
-        pushScale(opt.scale);
-        pushTranslate(offset);
-
-        drawRaw(
-            [
-                {
-                    pos: new Vec2(-w / 2, h / 2),
-                    uv: new Vec2(
-                        opt.flipX ? qx + qw : qx,
-                        opt.flipY ? qy : qy + qh,
-                    ),
-                    color: color,
-                    opacity: opacity,
-                },
-                {
-                    pos: new Vec2(-w / 2, -h / 2),
-                    uv: new Vec2(
-                        opt.flipX ? qx + qw : qx,
-                        opt.flipY ? qy + qh : qy,
-                    ),
-                    color: color,
-                    opacity: opacity,
-                },
-                {
-                    pos: new Vec2(w / 2, -h / 2),
-                    uv: new Vec2(
-                        opt.flipX ? qx : qx + qw,
-                        opt.flipY ? qy + qh : qy,
-                    ),
-                    color: color,
-                    opacity: opacity,
-                },
-                {
-                    pos: new Vec2(w / 2, h / 2),
-                    uv: new Vec2(
-                        opt.flipX ? qx : qx + qw,
-                        opt.flipY ? qy : qy + qh,
-                    ),
-                    color: color,
-                    opacity: opacity,
-                },
-            ],
-            [0, 1, 3, 1, 2, 3],
-            opt.fixed,
-            opt.tex,
-            opt.shader,
-            opt.uniform ?? undefined,
-        );
-
-        popTransform();
-    }
-
-    // TODO: clean
-    function drawTexture(opt: DrawTextureOpt) {
-        if (!opt.tex) {
-            throw new Error("drawTexture() requires property \"tex\".");
-        }
-
-        const q = opt.quad ?? new Quad(0, 0, 1, 1);
-        const w = opt.tex.width * q.w;
-        const h = opt.tex.height * q.h;
-        const scale = new Vec2(1);
-
-        if (opt.tiled) {
-            const anchor = anchorPt(opt.anchor || DEF_ANCHOR).add(
-                new Vec2(1, 1),
-            ).scale(0.5);
-            const offset = anchor.scale(opt.width || w, opt.height || h);
-
-            const fcols = (opt.width || w) / w;
-            const frows = (opt.height || h) / h;
-            const cols = Math.floor(fcols);
-            const rows = Math.floor(frows);
-            const fracX = fcols - cols;
-            const fracY = frows - rows;
-            const n = (cols + fracX ? 1 : 0) * (rows + fracY ? 1 : 0);
-            const indices = new Array<number>(n * 6);
-            const vertices = new Array<Vertex>(n * 4);
-            let index = 0;
-
-            /*drawUVQuad(Object.assign({}, opt, {
-                scale: scale.scale(opt.scale || new Vec2(1)),
-            }));*/
-
-            const addQuad = (
-                x: number,
-                y: number,
-                w: number,
-                h: number,
-                q: Quad,
-            ) => {
-                indices[index * 6 + 0] = index * 4 + 0;
-                indices[index * 6 + 1] = index * 4 + 1;
-                indices[index * 6 + 2] = index * 4 + 3;
-                indices[index * 6 + 3] = index * 4 + 1;
-                indices[index * 6 + 4] = index * 4 + 2;
-                indices[index * 6 + 5] = index * 4 + 3;
-
-                vertices[index * 4 + 0] = {
-                    pos: new Vec2(x - offset.x, y - offset.y),
-                    uv: new Vec2(q.x, q.y),
-                    color: opt.color || Color.WHITE,
-                    opacity: opt.opacity || 1,
-                };
-                vertices[index * 4 + 1] = {
-                    pos: new Vec2(x + w - offset.x, y - offset.y),
-                    uv: new Vec2(q.x + q.w, q.y),
-                    color: opt.color || Color.WHITE,
-                    opacity: opt.opacity || 1,
-                };
-                vertices[index * 4 + 2] = {
-                    pos: new Vec2(x + w - offset.x, y + h - offset.y),
-                    uv: new Vec2(q.x + q.w, q.y + q.h),
-                    color: opt.color || Color.WHITE,
-                    opacity: opt.opacity || 1,
-                };
-                vertices[index * 4 + 3] = {
-                    pos: new Vec2(x - offset.x, y + h - offset.y),
-                    uv: new Vec2(q.x, q.y + q.h),
-                    color: opt.color || Color.WHITE,
-                    opacity: opt.opacity || 1,
-                };
-                index++;
-            };
-
-            for (let j = 0; j < rows; j++) {
-                for (let i = 0; i < cols; i++) {
-                    addQuad(i * w, j * h, w, h, q);
-                }
-
-                if (fracX) {
-                    addQuad(
-                        cols * w,
-                        j * h,
-                        w * fracX,
-                        h,
-                        new Quad(q.x, q.y, q.w * fracX, q.h),
-                    );
-                }
-            }
-
-            if (fracY) {
-                for (let i = 0; i < cols; i++) {
-                    addQuad(
-                        i * w,
-                        rows * h,
-                        w,
-                        h * fracY,
-                        new Quad(q.x, q.y, q.w, q.h * fracY),
-                    );
-                }
-
-                if (fracX) {
-                    addQuad(
-                        cols * w,
-                        rows * h,
-                        w * fracX,
-                        h * fracY,
-                        new Quad(q.x, q.y, q.w * fracX, q.h * fracY),
-                    );
-                }
-            }
-
-            drawRaw(
-                vertices,
-                indices,
-                opt.fixed,
-                opt.tex,
-                opt.shader,
-                opt.uniform ?? undefined,
-            );
-        } else {
-            // TODO: should this ignore scale?
-            if (opt.width && opt.height) {
-                scale.x = opt.width / w;
-                scale.y = opt.height / h;
-            } else if (opt.width) {
-                scale.x = opt.width / w;
-                scale.y = scale.x;
-            } else if (opt.height) {
-                scale.y = opt.height / h;
-                scale.x = scale.y;
-            }
-
-            drawUVQuad(Object.assign({}, opt, {
-                scale: scale.scale(opt.scale || new Vec2(1)),
-                tex: opt.tex,
-                quad: q,
-                width: w,
-                height: h,
-            }));
-        }
-    }
-
-    function drawSprite(opt: DrawSpriteOpt) {
-        if (!opt.sprite) {
-            throw new Error("drawSprite() requires property \"sprite\"");
-        }
-
-        // TODO: slow
-        const spr = resolveSprite(opt.sprite);
-
-        if (!spr || !spr.data) {
-            return;
-        }
-
-        const q = spr.data.frames[opt.frame ?? 0];
-
-        if (!q) {
-            throw new Error(`Frame not found: ${opt.frame ?? 0}`);
-        }
-
-        drawTexture(Object.assign({}, opt, {
-            tex: spr.data.tex,
-            quad: q.scale(opt.quad ?? new Quad(0, 0, 1, 1)),
-        }));
-    }
-
-    // generate vertices to form an arc
-    function getArcPts(
-        pos: Vec2,
-        radiusX: number,
-        radiusY: number,
-        start: number,
-        end: number,
-        res: number = 1,
-    ): Vec2[] {
-        // normalize and turn start and end angles to radians
-        start = deg2rad(start % 360);
-        end = deg2rad(end % 360);
-        if (end <= start) end += Math.PI * 2;
-
-        const pts: Vec2[] = [];
-        const nverts = Math.ceil((end - start) / deg2rad(8) * res);
-        const step = (end - start) / nverts;
-
-        // Rotate vector v by r nverts+1 times
-        let v = vec2(Math.cos(start), Math.sin(start));
-        const r = vec2(Math.cos(step), Math.sin(step));
-        for (let i = 0; i <= nverts; i++) {
-            pts.push(pos.add(radiusX * v.x, radiusY * v.y));
-            // cos(a + b) = cos(a)cos(b) - sin(a)sin(b)
-            // sin(a + b) = cos(a)sin(b) + sin(a)cos(b)
-            v = vec2(v.x * r.x - v.y * r.y, v.x * r.y + v.y * r.x);
-        }
-
-        return pts;
-    }
-
-    function drawRect(opt: DrawRectOpt) {
-        if (opt.width === undefined || opt.height === undefined) {
-            throw new Error(
-                "drawRect() requires property \"width\" and \"height\".",
-            );
-        }
-
-        if (opt.width <= 0 || opt.height <= 0) {
-            return;
-        }
-
-        const w = opt.width;
-        const h = opt.height;
-        const anchor = anchorPt(opt.anchor || DEF_ANCHOR).add(1, 1);
-        const offset = anchor.scale(new Vec2(w, h).scale(-0.5));
-
-        let pts = [
-            new Vec2(0, 0),
-            new Vec2(w, 0),
-            new Vec2(w, h),
-            new Vec2(0, h),
-        ];
-
-        // TODO: gradient for rounded rect
-        // TODO: drawPolygon should handle generic rounded corners
-        if (opt.radius) {
-            // maximum radius is half the shortest side
-            const maxRadius = Math.min(w, h) / 2;
-            const r = Array.isArray(opt.radius)
-                ? opt.radius.map(r => Math.min(maxRadius, r))
-                : new Array(4).fill(Math.min(maxRadius, opt.radius));
-
-            pts = [
-                new Vec2(r[0], 0),
-                ...(r[1]
-                    ? getArcPts(new Vec2(w - r[1], r[1]), r[1], r[1], 270, 360)
-                    : [vec2(w, 0)]),
-                ...(r[2]
-                    ? getArcPts(new Vec2(w - r[2], h - r[2]), r[2], r[2], 0, 90)
-                    : [vec2(w, h)]),
-                ...(r[3]
-                    ? getArcPts(new Vec2(r[3], h - r[3]), r[3], r[3], 90, 180)
-                    : [vec2(0, h)]),
-                ...(r[0]
-                    ? getArcPts(new Vec2(r[0], r[0]), r[0], r[0], 180, 270)
-                    : []),
-            ];
-        }
-
-        drawPolygon(Object.assign({}, opt, {
-            offset,
-            pts,
-            ...(opt.gradient
-                ? {
-                    colors: opt.horizontal
-                        ? [
-                            opt.gradient[0],
-                            opt.gradient[1],
-                            opt.gradient[1],
-                            opt.gradient[0],
-                        ]
-                        : [
-                            opt.gradient[0],
-                            opt.gradient[0],
-                            opt.gradient[1],
-                            opt.gradient[1],
-                        ],
-                }
-                : {}),
-        }));
-    }
-
-    function drawLine(opt: DrawLineOpt) {
-        const { p1, p2 } = opt;
-
-        if (!p1 || !p2) {
-            throw new Error(
-                "drawLine() requires properties \"p1\" and \"p2\".",
-            );
-        }
-
-        const w = opt.width || 1;
-
-        // the displacement from the line end point to the corner point
-        const dis = p2.sub(p1).unit().normal().scale(w * 0.5);
-
-        // calculate the 4 corner points of the line polygon
-        const verts = [
-            p1.sub(dis),
-            p1.add(dis),
-            p2.add(dis),
-            p2.sub(dis),
-        ].map((p) => ({
-            pos: new Vec2(p.x, p.y),
-            uv: new Vec2(0),
-            color: opt.color ?? Color.WHITE,
-            opacity: opt.opacity ?? 1,
-        }));
-
-        drawRaw(
-            verts,
-            [0, 1, 3, 1, 2, 3],
-            opt.fixed,
-            gfx.defTex,
-            opt.shader,
-            opt.uniform ?? undefined,
-        );
-    }
-
-    function _drawLinesBevel(opt: DrawLinesOpt) {
-        const pts = opt.pts;
-        const vertices = [];
-        const halfWidth = (opt.width || 1) * 0.5;
-        const isLoop = pts[0] === pts[pts.length - 1]
-            || pts[0].eq(pts[pts.length - 1]);
-        const offset = opt.pos || vec2(0, 0);
-        let segment;
-
-        if (isLoop) {
-            segment = pts[0].sub(pts[pts.length - 2]);
-        } else {
-            segment = pts[1].sub(pts[0]);
-        }
-
-        let length = segment.len();
-        let normal = segment.normal().scale(-halfWidth / length);
-
-        let pt1;
-        let pt2 = pts[0];
-
-        if (!isLoop) {
-            switch (opt.cap) {
-                case "square": {
-                    const dir = segment.scale(-halfWidth / length);
-                    vertices.push(pt2.add(dir).add(normal));
-                    vertices.push(pt2.add(dir).sub(normal));
-                    break;
-                }
-                case "round": {
-                    const n = Math.max(halfWidth, 10);
-                    const angle = Math.PI / n;
-                    let vector = normal.scale(-1);
-                    const cs = Math.cos(angle);
-                    const sn = Math.sin(angle);
-                    for (let j = 0; j < n; j++) {
-                        vertices.push(pt2);
-                        vertices.push(pt2.sub(vector));
-                        vector = vec2(
-                            vector.x * cs - vector.y * sn,
-                            vector.x * sn + vector.y * cs,
-                        );
-                    }
-                }
-            }
-        }
-
-        for (let i = 1; i < pts.length; i++) {
-            if (pt2 === pts[i] || pt2.eq(pts[i])) continue;
-            pt1 = pt2;
-            pt2 = pts[i];
-
-            const nextSegment = pt2.sub(pt1);
-            const nextLength = nextSegment.len();
-            const nextNormal = nextSegment.normal().scale(
-                -halfWidth / nextLength,
-            );
-
-            const det = segment.cross(nextSegment);
-
-            if (Math.abs(det) / (length * nextLength) < 0.05) {
-                // Parallel
-                vertices.push(pt1.add(normal));
-                vertices.push(pt1.sub(normal));
-
-                if (segment.dot(nextSegment) < 0) {
-                    vertices.push(pt1.sub(normal));
-                    vertices.push(pt1.add(normal));
-                }
-
-                segment = nextSegment;
-                length = nextLength;
-                normal = nextNormal;
-                continue;
-            }
-
-            const lambda = (nextNormal.sub(normal)).cross(nextSegment) / det;
-            const d = normal.add(segment.scale(lambda));
-
-            if (det > 0) {
-                vertices.push(pt1.add(d));
-                vertices.push(pt1.sub(normal));
-                vertices.push(pt1.add(d));
-                vertices.push(pt1.sub(nextNormal));
-            } else {
-                vertices.push(pt1.add(normal));
-                vertices.push(pt1.sub(d));
-                vertices.push(pt1.add(nextNormal));
-                vertices.push(pt1.sub(d));
-            }
-
-            segment = nextSegment;
-            length = nextLength;
-            normal = nextNormal;
-        }
-
-        if (!isLoop) {
-            vertices.push(pt2.add(normal));
-            vertices.push(pt2.sub(normal));
-            switch (opt.cap) {
-                case "square": {
-                    const dir = segment.scale(halfWidth / length);
-                    vertices.push(pt2.add(dir).add(normal));
-                    vertices.push(pt2.add(dir).sub(normal));
-                    break;
-                }
-                case "round": {
-                    const n = Math.max(halfWidth, 10);
-                    const angle = Math.PI / n;
-                    let vector = normal.scale(1);
-                    const cs = Math.cos(angle);
-                    const sn = Math.sin(angle);
-                    for (let j = 0; j < n; j++) {
-                        vector = vec2(
-                            vector.x * cs - vector.y * sn,
-                            vector.x * sn + vector.y * cs,
-                        );
-                        vertices.push(pt2);
-                        vertices.push(pt2.sub(vector));
-                    }
-                }
-            }
-        }
-
-        if (vertices.length < 4) return;
-
-        const verts = vertices.map(v => ({
-            pos: offset.add(v),
-            uv: vec2(),
-            color: opt.color || Color.WHITE,
-            opacity: opt.opacity ?? 1,
-        }));
-
-        const indices = [];
-        let index = 0;
-        for (let i = 0; i < vertices.length - 2; i += 2) {
-            indices[index++] = i + 1;
-            indices[index++] = i;
-            indices[index++] = i + 2;
-            indices[index++] = i + 2;
-            indices[index++] = i + 3;
-            indices[index++] = i + 1;
-        }
-
-        if (isLoop) {
-            indices[index++] = vertices.length - 1;
-            indices[index++] = vertices.length - 2;
-            indices[index++] = 0;
-            indices[index++] = 0;
-            indices[index++] = 1;
-            indices[index++] = vertices.length - 1;
-        }
-
-        drawRaw(
-            verts,
-            indices,
-            opt.fixed,
-            gfx.defTex,
-            opt.shader,
-            opt.uniform ?? undefined,
-        );
-    }
-
-    function _drawLinesRound(opt: DrawLinesOpt) {
-        const pts = opt.pts;
-        const vertices = [];
-        const halfWidth = (opt.width || 1) * 0.5;
-        const isLoop = pts[0] === pts[pts.length - 1]
-            || pts[0].eq(pts[pts.length - 1]);
-        const offset = opt.pos || vec2(0, 0);
-        let segment;
-
-        if (isLoop) {
-            segment = pts[0].sub(pts[pts.length - 2]);
-        } else {
-            segment = pts[1].sub(pts[0]);
-        }
-
-        let length = segment.len();
-        let normal = segment.normal().scale(-halfWidth / length);
-
-        let pt1;
-        let pt2 = pts[0];
-
-        if (!isLoop) {
-            switch (opt.cap) {
-                case "square": {
-                    const dir = segment.scale(-halfWidth / length);
-                    vertices.push(pt2.add(dir).add(normal));
-                    vertices.push(pt2.add(dir).sub(normal));
-                    break;
-                }
-                case "round": {
-                    const n = Math.max(halfWidth, 10);
-                    const angle = Math.PI / n;
-                    let vector = normal.scale(-1);
-                    const cs = Math.cos(angle);
-                    const sn = Math.sin(angle);
-                    for (let j = 0; j < n; j++) {
-                        vertices.push(pt2);
-                        vertices.push(pt2.sub(vector));
-                        vector = vec2(
-                            vector.x * cs - vector.y * sn,
-                            vector.x * sn + vector.y * cs,
-                        );
-                    }
-                }
-            }
-        }
-
-        for (let i = 1; i < pts.length; i++) {
-            if (pt2 === pts[i] || pt2.eq(pts[i])) continue;
-            pt1 = pt2;
-            pt2 = pts[i];
-
-            const nextSegment = pt2.sub(pt1);
-            const nextLength = nextSegment.len();
-            const nextNormal = nextSegment.normal().scale(
-                -halfWidth / nextLength,
-            );
-
-            const det = segment.cross(nextSegment);
-
-            if (Math.abs(det) / (length * nextLength) < 0.05) {
-                // Parallel
-                vertices.push(pt1.add(normal));
-                vertices.push(pt1.sub(normal));
-
-                if (segment.dot(nextSegment) < 0) {
-                    vertices.push(pt1.sub(normal));
-                    vertices.push(pt1.add(normal));
-                }
-
-                segment = nextSegment;
-                length = nextLength;
-                normal = nextNormal;
-                continue;
-            }
-
-            const lambda = (nextNormal.sub(normal)).cross(nextSegment) / det;
-            const d = normal.add(segment.scale(lambda));
-
-            if (det > 0) {
-                const fixedPoint = pt1.add(d);
-                const n = Math.max(halfWidth, 10);
-                const angle = deg2rad(normal.angleBetween(nextNormal) / n);
-                let vector = normal;
-                const cs = Math.cos(angle);
-                const sn = Math.sin(angle);
-                for (let j = 0; j < n; j++) {
-                    vertices.push(fixedPoint);
-                    vertices.push(pt1.sub(vector));
-                    vector = vec2(
-                        vector.x * cs - vector.y * sn,
-                        vector.x * sn + vector.y * cs,
-                    );
-                }
-            } else {
-                const fixedPoint = pt1.sub(d);
-                const n = Math.max(halfWidth, 10);
-                const angle = deg2rad(normal.angleBetween(nextNormal) / n);
-                let vector = normal;
-                const cs = Math.cos(angle);
-                const sn = Math.sin(angle);
-                for (let j = 0; j < n; j++) {
-                    vertices.push(pt1.add(vector));
-                    vertices.push(fixedPoint);
-                    vector = vec2(
-                        vector.x * cs - vector.y * sn,
-                        vector.x * sn + vector.y * cs,
-                    );
-                }
-            }
-
-            segment = nextSegment;
-            length = nextLength;
-            normal = nextNormal;
-        }
-
-        if (!isLoop) {
-            vertices.push(pt2.add(normal));
-            vertices.push(pt2.sub(normal));
-            switch (opt.cap) {
-                case "square": {
-                    const dir = segment.scale(halfWidth / length);
-                    vertices.push(pt2.add(dir).add(normal));
-                    vertices.push(pt2.add(dir).sub(normal));
-                    break;
-                }
-                case "round": {
-                    const n = Math.max(halfWidth, 10);
-                    const angle = Math.PI / n;
-                    let vector = normal.scale(1);
-                    const cs = Math.cos(angle);
-                    const sn = Math.sin(angle);
-                    for (let j = 0; j < n; j++) {
-                        vector = vec2(
-                            vector.x * cs - vector.y * sn,
-                            vector.x * sn + vector.y * cs,
-                        );
-                        vertices.push(pt2);
-                        vertices.push(pt2.sub(vector));
-                    }
-                }
-            }
-        }
-
-        if (vertices.length < 4) return;
-
-        const verts = vertices.map(v => ({
-            pos: offset.add(v),
-            uv: vec2(),
-            color: opt.color || Color.WHITE,
-            opacity: opt.opacity ?? 1,
-        }));
-
-        const indices = [];
-        let index = 0;
-        for (let i = 0; i < vertices.length - 2; i += 2) {
-            indices[index++] = i + 1;
-            indices[index++] = i;
-            indices[index++] = i + 2;
-            indices[index++] = i + 2;
-            indices[index++] = i + 3;
-            indices[index++] = i + 1;
-        }
-
-        if (isLoop) {
-            indices[index++] = vertices.length - 1;
-            indices[index++] = vertices.length - 2;
-            indices[index++] = 0;
-            indices[index++] = 0;
-            indices[index++] = 1;
-            indices[index++] = vertices.length - 1;
-        }
-
-        drawRaw(
-            verts,
-            indices,
-            opt.fixed,
-            gfx.defTex,
-            opt.shader,
-            opt.uniform ?? undefined,
-        );
-    }
-
-    function _drawLinesMiter(opt: DrawLinesOpt) {
-        const pts = opt.pts;
-        const vertices = [];
-        const halfWidth = (opt.width || 1) * 0.5;
-        const isLoop = pts[0] === pts[pts.length - 1]
-            || pts[0].eq(pts[pts.length - 1]);
-        const offset = opt.pos || vec2(0, 0);
-        let segment;
-
-        if (isLoop) {
-            segment = pts[0].sub(pts[pts.length - 2]);
-        } else {
-            segment = pts[1].sub(pts[0]);
-        }
-
-        let length = segment.len();
-        let normal = segment.normal().scale(-halfWidth / length);
-
-        let pt1;
-        let pt2 = pts[0];
-
-        if (!isLoop) {
-            switch (opt.cap) {
-                case "square": {
-                    const dir = segment.scale(-halfWidth / length);
-                    vertices.push(pt2.add(dir).add(normal));
-                    vertices.push(pt2.add(dir).sub(normal));
-                    break;
-                }
-                case "round": {
-                    const n = Math.max(halfWidth, 10);
-                    const angle = Math.PI / n;
-                    let vector = normal.scale(-1);
-                    const cs = Math.cos(angle);
-                    const sn = Math.sin(angle);
-                    for (let j = 0; j < n; j++) {
-                        vertices.push(pt2);
-                        vertices.push(pt2.sub(vector));
-                        vector = vec2(
-                            vector.x * cs - vector.y * sn,
-                            vector.x * sn + vector.y * cs,
-                        );
-                    }
-                }
-            }
-        }
-
-        for (let i = 1; i < pts.length; i++) {
-            if (pt2 === pts[i] || pt2.eq(pts[i])) continue;
-            pt1 = pt2;
-            pt2 = pts[i];
-
-            const nextSegment = pt2.sub(pt1);
-            const nextLength = nextSegment.len();
-            const nextNormal = nextSegment.normal().scale(
-                -halfWidth / nextLength,
-            );
-
-            const det = segment.cross(nextSegment);
-
-            if (Math.abs(det) / (length * nextLength) < 0.05) {
-                // Parallel
-                vertices.push(pt1.add(normal));
-                vertices.push(pt1.sub(normal));
-
-                if (segment.dot(nextSegment) < 0) {
-                    vertices.push(pt1.sub(normal));
-                    vertices.push(pt1.add(normal));
-                }
-
-                segment = nextSegment;
-                length = nextLength;
-                normal = nextNormal;
-                continue;
-            }
-
-            const lambda = (nextNormal.sub(normal)).cross(nextSegment) / det;
-            const d = normal.add(segment.scale(lambda));
-
-            vertices.push(pt1.add(d));
-            vertices.push(pt1.sub(d));
-
-            segment = nextSegment;
-            length = nextLength;
-            normal = nextNormal;
-        }
-
-        if (!isLoop) {
-            vertices.push(pt2.add(normal));
-            vertices.push(pt2.sub(normal));
-            switch (opt.cap) {
-                case "square": {
-                    const dir = segment.scale(halfWidth / length);
-                    vertices.push(pt2.add(dir).add(normal));
-                    vertices.push(pt2.add(dir).sub(normal));
-                    break;
-                }
-                case "round": {
-                    const n = Math.max(halfWidth, 10);
-                    const angle = Math.PI / n;
-                    let vector = normal.scale(1);
-                    const cs = Math.cos(angle);
-                    const sn = Math.sin(angle);
-                    for (let j = 0; j < n; j++) {
-                        vector = vec2(
-                            vector.x * cs - vector.y * sn,
-                            vector.x * sn + vector.y * cs,
-                        );
-                        vertices.push(pt2);
-                        vertices.push(pt2.sub(vector));
-                    }
-                }
-            }
-        }
-
-        if (vertices.length < 4) return;
-
-        const verts = vertices.map(v => ({
-            pos: offset.add(v),
-            uv: vec2(),
-            color: opt.color || Color.WHITE,
-            opacity: opt.opacity ?? 1,
-        }));
-
-        const indices = [];
-        let index = 0;
-        for (let i = 0; i < vertices.length - 2; i += 2) {
-            indices[index++] = i + 1;
-            indices[index++] = i;
-            indices[index++] = i + 2;
-            indices[index++] = i + 2;
-            indices[index++] = i + 3;
-            indices[index++] = i + 1;
-        }
-
-        if (isLoop) {
-            indices[index++] = vertices.length - 1;
-            indices[index++] = vertices.length - 2;
-            indices[index++] = 0;
-            indices[index++] = 0;
-            indices[index++] = 1;
-            indices[index++] = vertices.length - 1;
-        }
-
-        drawRaw(
-            verts,
-            indices,
-            opt.fixed,
-            gfx.defTex,
-            opt.shader,
-            opt.uniform ?? undefined,
-        );
-    }
-
-    function drawLines(opt: DrawLinesOpt) {
-        const pts = opt.pts;
-        const width = opt.width ?? 1;
-
-        if (!pts) {
-            throw new Error("drawLines() requires property \"pts\".");
-        }
-
-        if (pts.length < 2) {
-            return;
-        }
-
-        if (pts.length > 2) {
-            switch (opt.join) {
-                case "bevel":
-                    return _drawLinesBevel(opt);
-                case "round":
-                    return _drawLinesRound(opt);
-                case "miter":
-                    return _drawLinesMiter(opt);
-            }
-        }
-
-        if (opt.radius && pts.length >= 3) {
-            // TODO: line joines
-            // TODO: rounded vertices for arbitrary polygonic shape
-            drawLine(Object.assign({}, opt, { p1: pts[0], p2: pts[1] }));
-
-            for (let i = 1; i < pts.length - 2; i++) {
-                const p1 = pts[i];
-                const p2 = pts[i + 1];
-                drawLine(Object.assign({}, opt, {
-                    p1: p1,
-                    p2: p2,
-                }));
-            }
-
-            drawLine(Object.assign({}, opt, {
-                p1: pts[pts.length - 2],
-                p2: pts[pts.length - 1],
-            }));
-        } else {
-            for (let i = 0; i < pts.length - 1; i++) {
-                drawLine(Object.assign({}, opt, {
-                    p1: pts[i],
-                    p2: pts[i + 1],
-                }));
-                // TODO: other line join types
-                if (opt.join !== "none") {
-                    drawCircle(Object.assign({}, opt, {
-                        pos: pts[i],
-                        radius: width / 2,
-                    }));
-                }
-            }
-        }
-    }
-
-    function drawCurve(curve: (t: number) => Vec2, opt: DrawCurveOpt) {
-        const segments = opt.segments ?? 16;
-        const p: Vec2[] = [];
-        for (let i = 0; i <= segments; i++) {
-            p.push(curve(i / segments));
-        }
-        drawLines({
-            pts: p,
-            width: opt.width || 1,
-            pos: opt.pos,
-            color: opt.color,
-            opacity: opt.opacity,
-        });
-    }
-
-    function drawBezier(opt: DrawBezierOpt) {
-        drawCurve(
-            t => evaluateBezier(opt.pt1, opt.pt2, opt.pt3, opt.pt4, t),
-            opt,
-        );
-    }
-
-    function drawTriangle(opt: DrawTriangleOpt) {
-        if (!opt.p1 || !opt.p2 || !opt.p3) {
-            throw new Error(
-                "drawTriangle() requires properties \"p1\", \"p2\" and \"p3\".",
-            );
-        }
-        return drawPolygon(Object.assign({}, opt, {
-            pts: [opt.p1, opt.p2, opt.p3],
-        }));
-    }
-
-    function drawCircle(opt: DrawCircleOpt) {
-        if (typeof opt.radius !== "number") {
-            throw new Error("drawCircle() requires property \"radius\".");
-        }
-
-        if (opt.radius === 0) {
-            return;
-        }
-
-        drawEllipse(Object.assign({}, opt, {
-            radiusX: opt.radius,
-            radiusY: opt.radius,
-            angle: 0,
-        }));
-    }
-
-    function drawEllipse(opt: DrawEllipseOpt) {
-        if (opt.radiusX === undefined || opt.radiusY === undefined) {
-            throw new Error(
-                "drawEllipse() requires properties \"radiusX\" and \"radiusY\".",
-            );
-        }
-
-        if (opt.radiusX === 0 || opt.radiusY === 0) {
-            return;
-        }
-
-        const start = opt.start ?? 0;
-        const end = opt.end ?? 360;
-        const offset = anchorPt(opt.anchor ?? "center").scale(
-            new Vec2(-opt.radiusX, -opt.radiusY),
-        );
-
-        const pts = getArcPts(
-            offset,
-            opt.radiusX,
-            opt.radiusY,
-            start,
-            end,
-            opt.resolution,
-        );
-
-        // center
-        pts.unshift(offset);
-
-        const polyOpt = Object.assign({}, opt, {
-            pts,
-            radius: 0,
-            ...(opt.gradient
-                ? {
-                    colors: [
-                        opt.gradient[0],
-                        ...Array(pts.length - 1).fill(opt.gradient[1]),
-                    ],
-                }
-                : {}),
-        });
-
-        // full circle with outline shouldn't have the center point
-        if (end - start >= 360 && opt.outline) {
-            if (opt.fill !== false) {
-                drawPolygon(Object.assign({}, polyOpt, {
-                    outline: null,
-                }));
-            }
-            drawPolygon(Object.assign({}, polyOpt, {
-                pts: pts.slice(1),
-                fill: false,
-            }));
-            return;
-        }
-
-        drawPolygon(polyOpt);
-    }
-
-    function drawPolygon(opt: DrawPolygonOpt) {
-        if (!opt.pts) {
-            throw new Error("drawPolygon() requires property \"pts\".");
-        }
-
-        const npts = opt.pts.length;
-
-        if (npts < 3) {
-            return;
-        }
-
-        pushTransform();
-        pushTranslate(opt.pos!);
-        pushScale(opt.scale);
-        pushRotate(opt.angle);
-        pushTranslate(opt.offset!);
-
-        if (opt.fill !== false) {
-            const color = opt.color ?? Color.WHITE;
-
-            const verts = opt.pts.map((pt, i) => ({
-                pos: new Vec2(pt.x, pt.y),
-                uv: opt.uv
-                    ? opt.uv[i]
-                    : new Vec2(0, 0),
-                color: opt.colors
-                    ? (opt.colors[i] ? opt.colors[i].mult(color) : color)
-                    : color,
-                opacity: opt.opacity ?? 1,
-            }));
-
-            let indices;
-
-            if (opt.triangulate /* && !isConvex(opt.pts)*/) {
-                const triangles = triangulate(opt.pts);
-                // TODO rewrite triangulate to just return new indices
-                indices = triangles.map(t => t.map(p => opt.pts.indexOf(p)))
-                    .flat();
-            } else {
-                indices = [...Array(npts - 2).keys()]
-                    .map((n) => [0, n + 1, n + 2])
-                    .flat();
-            }
-
-            drawRaw(
-                verts,
-                opt.indices ?? indices,
-                opt.fixed,
-                opt.uv ? opt.tex : gfx.defTex,
-                opt.shader,
-                opt.uniform ?? undefined,
-            );
-        }
-
-        if (opt.outline) {
-            drawLines({
-                pts: [...opt.pts, opt.pts[0]],
-                radius: opt.radius,
-                width: opt.outline.width,
-                color: opt.outline.color,
-                join: opt.outline.join,
-                uniform: opt.uniform,
-                fixed: opt.fixed,
-                opacity: opt.opacity ?? opt.outline.opacity,
-            });
-        }
-
-        popTransform();
-    }
-
-    function drawStenciled(
-        content: () => void,
-        mask: () => void,
-        test: number,
-    ) {
-        flush();
-        gl.clear(gl.STENCIL_BUFFER_BIT);
-        gl.enable(gl.STENCIL_TEST);
-
-        // don't perform test, pure write
-        gl.stencilFunc(
-            gl.NEVER,
-            1,
-            0xFF,
-        );
-
-        // always replace since we're writing to the buffer
-        gl.stencilOp(
-            gl.REPLACE,
-            gl.REPLACE,
-            gl.REPLACE,
-        );
-
-        mask();
-        flush();
-
-        // perform test
-        gl.stencilFunc(
-            test,
-            1,
-            0xFF,
-        );
-
-        // don't write since we're only testing
-        gl.stencilOp(
-            gl.KEEP,
-            gl.KEEP,
-            gl.KEEP,
-        );
-
-        content();
-        flush();
-        gl.disable(gl.STENCIL_TEST);
-    }
-
-    function drawMasked(content: () => void, mask: () => void) {
-        drawStenciled(content, mask, gl.EQUAL);
-    }
-
-    function drawSubtracted(content: () => void, mask: () => void) {
-        drawStenciled(content, mask, gl.NOTEQUAL);
-    }
-
-    function getViewportScale() {
-        return (gfx.viewport.width + gfx.viewport.height)
-            / (gfx.width + gfx.height);
-    }
-
-    function drawUnscaled(content: () => void) {
-        flush();
-        const ow = gfx.width;
-        const oh = gfx.height;
-        gfx.width = gfx.viewport.width;
-        gfx.height = gfx.viewport.height;
-        content();
-        flush();
-        gfx.width = ow;
-        gfx.height = oh;
-    }
-
-    function applyCharTransform(fchar: FormattedChar, tr: CharTransform) {
-        if (tr.pos) fchar.pos = fchar.pos.add(tr.pos);
-        if (tr.scale) fchar.scale = fchar.scale.scale(vec2(tr.scale));
-        if (tr.angle) fchar.angle += tr.angle;
-        if (tr.color && fchar.ch.length === 1) {
-            fchar.color = fchar.color.mult(tr.color);
-        }
-        if (tr.opacity) fchar.opacity *= tr.opacity;
-    }
-
-    function compileStyledText(text: string): {
-        charStyleMap: Record<number, string[]>;
-        text: string;
-    } {
-        const charStyleMap = {} as Record<number, string[]>;
-        // get the text without the styling syntax
-        const renderText = text.replace(TEXT_STYLE_RE, "$2");
-        let idxOffset = 0;
-
-        // put each styled char index into a map for easy access when iterating each char
-        for (const match of text.matchAll(TEXT_STYLE_RE)) {
-            if (!match?.groups) continue;
-            const origIdx = match.index - idxOffset;
-            for (let i = 0; i < match.groups.text.length; i++) {
-                charStyleMap[i + origIdx] = [match.groups.style];
-            }
-            // omit the style syntax in format string when calculating index
-            idxOffset += match[0].length - match.groups.text.length;
-        }
-
-        return {
-            charStyleMap: charStyleMap,
-            text: renderText,
-        };
-    }
-
-    type FontAtlas = {
-        font: BitmapFontData;
-        cursor: Vec2;
-        outline: Outline | null;
-    };
-
-    const fontAtlases: Record<string, FontAtlas> = {};
-
     // TODO: cache formatted text
     // format text and return a list of chars with their calculated position
-    function formatText(opt: DrawTextOpt): FormattedText {
-        if (opt.text === undefined) {
-            throw new Error("formatText() requires property \"text\".");
-        }
-
-        let font = resolveFont(opt.font);
-
-        // if it's still loading
-        if (opt.text === "" || font instanceof Asset || !font) {
-            return {
-                width: 0,
-                height: 0,
-                chars: [],
-                opt: opt,
-            };
-        }
-
-        const { charStyleMap, text } = compileStyledText(opt.text + "");
-        const chars = runes(text);
-
-        // if it's not bitmap font, we draw it with 2d canvas or use cached image
-        if (font instanceof FontData || typeof font === "string") {
-            const fontName = font instanceof FontData
-                ? font.fontface.family
-                : font;
-            const opts: {
-                outline: Outline | null;
-                filter: TexFilter;
-            } = font instanceof FontData
-                ? {
-                    outline: font.outline,
-                    filter: font.filter,
-                }
-                : {
-                    outline: null,
-                    filter: DEF_FONT_FILTER,
-                };
-
-            // TODO: customizable font tex filter
-            const atlas: FontAtlas = fontAtlases[fontName] ?? {
-                font: {
-                    tex: new Texture(ggl, FONT_ATLAS_WIDTH, FONT_ATLAS_HEIGHT, {
-                        filter: opts.filter,
-                    }),
-                    map: {},
-                    size: DEF_TEXT_CACHE_SIZE,
-                },
-                cursor: new Vec2(0),
-                outline: opts.outline,
-            };
-
-            if (!fontAtlases[fontName]) {
-                fontAtlases[fontName] = atlas;
-            }
-
-            font = atlas.font;
-
-            for (const ch of chars) {
-                if (!atlas.font.map[ch]) {
-                    // TODO: use assets.packer to pack font texture
-                    const c2d = fontCacheC2d;
-                    if (!c2d) throw new Error("fontCacheC2d is not defined.");
-                    c2d.clearRect(
-                        0,
-                        0,
-                        fontCacheCanvas.width,
-                        fontCacheCanvas.height,
-                    );
-                    c2d.font = `${font.size}px ${fontName}`;
-                    c2d.textBaseline = "top";
-                    c2d.textAlign = "left";
-                    c2d.fillStyle = "#ffffff";
-                    const m = c2d.measureText(ch);
-                    let w = Math.ceil(m.width);
-                    if (!w) continue;
-                    let h = font.size;
-
-                    // TODO: Test if this works with the verification of width and color
-                    if (
-                        atlas.outline && atlas.outline.width
-                        && atlas.outline.color
-                    ) {
-                        c2d.lineJoin = "round";
-                        c2d.lineWidth = atlas.outline.width * 2;
-                        c2d.strokeStyle = atlas.outline.color.toHex();
-                        c2d.strokeText(
-                            ch,
-                            atlas.outline.width,
-                            atlas.outline.width,
-                        );
-
-                        w += atlas.outline.width * 2;
-                        h += atlas.outline.width * 3;
-                    }
-
-                    c2d.fillText(
-                        ch,
-                        atlas.outline?.width ?? 0,
-                        atlas.outline?.width ?? 0,
-                    );
-
-                    const img = c2d.getImageData(0, 0, w, h);
-
-                    // if we are about to exceed the X axis of the texture, go to another line
-                    if (atlas.cursor.x + w > FONT_ATLAS_WIDTH) {
-                        atlas.cursor.x = 0;
-                        atlas.cursor.y += h;
-                        if (atlas.cursor.y > FONT_ATLAS_HEIGHT) {
-                            // TODO: create another atlas
-                            throw new Error(
-                                "Font atlas exceeds character limit",
-                            );
-                        }
-                    }
-
-                    font.tex.update(img, atlas.cursor.x, atlas.cursor.y);
-                    font.map[ch] = new Quad(
-                        atlas.cursor.x,
-                        atlas.cursor.y,
-                        w,
-                        h,
-                    );
-                    atlas.cursor.x += w;
-                }
-            }
-        }
-
-        const size = opt.size || font.size;
-        const scale = vec2(opt.scale ?? 1).scale(size / font.size);
-        const lineSpacing = opt.lineSpacing ?? 0;
-        const letterSpacing = opt.letterSpacing ?? 0;
-        let curX: number = 0;
-        let tw = 0;
-        let th = 0;
-        const lines: Array<{
-            width: number;
-            chars: FormattedChar[];
-        }> = [];
-        let curLine: FormattedChar[] = [];
-        let cursor = 0;
-        let lastSpace: number | null = null;
-        let lastSpaceWidth: number = 0;
-
-        // TODO: word break
-        while (cursor < chars.length) {
-            let ch = chars[cursor];
-
-            // always new line on '\n'
-            if (ch === "\n") {
-                th += size + lineSpacing;
-
-                lines.push({
-                    width: curX - letterSpacing,
-                    chars: curLine,
-                });
-
-                lastSpace = null;
-                lastSpaceWidth = 0;
-                curX = 0;
-                curLine = [];
-            } else {
-                let q = font.map[ch];
-
-                // TODO: leave space if character not found?
-                if (q) {
-                    let gw = q.w * scale.x;
-
-                    if (opt.width && curX + gw > opt.width) {
-                        // new line on last word if width exceeds
-                        th += size + lineSpacing;
-                        if (lastSpace != null) {
-                            cursor -= curLine.length - lastSpace;
-                            ch = chars[cursor];
-                            q = font.map[ch];
-                            gw = q.w * scale.x;
-                            // omit trailing space
-                            curLine = curLine.slice(0, lastSpace - 1);
-                            curX = lastSpaceWidth;
-                        }
-                        lastSpace = null;
-                        lastSpaceWidth = 0;
-
-                        lines.push({
-                            width: curX - letterSpacing,
-                            chars: curLine,
-                        });
-
-                        curX = 0;
-                        curLine = [];
-                    }
-
-                    // push char
-                    curLine.push({
-                        tex: font.tex,
-                        width: q.w,
-                        height: q.h,
-                        // without some padding there'll be visual artifacts on edges
-                        quad: new Quad(
-                            q.x / font.tex.width,
-                            q.y / font.tex.height,
-                            q.w / font.tex.width,
-                            q.h / font.tex.height,
-                        ),
-                        ch: ch,
-                        pos: new Vec2(curX, th),
-                        opacity: opt.opacity ?? 1,
-                        color: opt.color ?? Color.WHITE,
-                        scale: vec2(scale),
-                        angle: 0,
-                    });
-
-                    if (ch === " ") {
-                        lastSpace = curLine.length;
-                        lastSpaceWidth = curX;
-                    }
-
-                    curX += gw;
-                    tw = Math.max(tw, curX);
-                    curX += letterSpacing;
-                }
-            }
-
-            cursor++;
-        }
-
-        lines.push({
-            width: curX - letterSpacing,
-            chars: curLine,
-        });
-
-        th += size;
-
-        if (opt.width) {
-            tw = opt.width;
-        }
-
-        const fchars: FormattedChar[] = [];
-
-        for (let i = 0; i < lines.length; i++) {
-            const ox = (tw - lines[i].width) * alignPt(opt.align ?? "left");
-
-            for (const fchar of lines[i].chars) {
-                const q = font.map[fchar.ch];
-                const idx = fchars.length + i;
-
-                fchar.pos = fchar.pos.add(ox, 0).add(
-                    q.w * scale.x * 0.5,
-                    q.h * scale.y * 0.5,
-                );
-
-                if (opt.transform) {
-                    const tr = typeof opt.transform === "function"
-                        ? opt.transform(idx, fchar.ch)
-                        : opt.transform;
-                    if (tr) {
-                        applyCharTransform(fchar, tr);
-                    }
-                }
-
-                if (charStyleMap[idx]) {
-                    const styles = charStyleMap[idx];
-                    for (const name of styles) {
-                        const style = opt.styles?.[name];
-                        const tr = typeof style === "function"
-                            ? style(idx, fchar.ch)
-                            : style;
-                        if (tr) {
-                            applyCharTransform(fchar, tr);
-                        }
-                    }
-                }
-
-                fchars.push(fchar);
-            }
-        }
-
-        return {
-            width: tw,
-            height: th,
-            chars: fchars,
-            opt: opt,
-        };
-    }
-
-    function drawText(opt: DrawTextOpt) {
-        drawFormattedText(formatText(opt));
-    }
-
-    function drawFormattedText(ftext: FormattedText) {
-        pushTransform();
-        pushTranslate(ftext.opt.pos!);
-        pushRotate(ftext.opt.angle!);
-        pushTranslate(
-            anchorPt(ftext.opt.anchor ?? "topleft").add(1, 1).scale(
-                ftext.width,
-                ftext.height,
-            ).scale(-0.5),
-        );
-        ftext.chars.forEach((ch) => {
-            drawUVQuad({
-                tex: ch.tex,
-                width: ch.width,
-                height: ch.height,
-                pos: ch.pos,
-                scale: ch.scale,
-                angle: ch.angle,
-                color: ch.color,
-                opacity: ch.opacity,
-                quad: ch.quad,
-                anchor: "center",
-                uniform: ftext.opt.uniform,
-                shader: ftext.opt.shader,
-                fixed: ftext.opt.fixed,
-            });
-        });
-        popTransform();
-    }
-
-    // get game width
-    function width(): number {
-        return gfx.width;
-    }
-
-    // get game height
-    function height(): number {
-        return gfx.height;
-    }
 
     // get game root
     function getTreeRoot(): GameObj {
@@ -3120,7 +1228,7 @@ const kaplay = <
 
     let debugPaused = false;
 
-    const debug: Debug = {
+    debug = {
         inspect: false,
         timeScale: 1,
         showLog: true,
@@ -3188,7 +1296,7 @@ const kaplay = <
         let flash = add([
             rect(width(), height()),
             color(flashColor),
-            ctx.opacity(1),
+            k.opacity(1),
             fixed(),
         ]);
         let fade = flash.fadeOut(fadeOutTime);
@@ -3210,573 +1318,6 @@ const kaplay = <
 
     function toWorld(p: Vec2): Vec2 {
         return game.cam.transform.invert().multVec2(p);
-    }
-
-    function calcTransform(obj: GameObj): Mat4 {
-        const tr = new Mat4();
-        if (obj.pos) tr.translate(obj.pos);
-        if (obj.scale) tr.scale(obj.scale);
-        if (obj.angle) tr.rotate(obj.angle);
-        return obj.parent ? tr.mult(obj.parent.transform) : tr;
-    }
-
-    type MakeTypeIsFN<T, Chain = T> = T extends (go: GameObj) => infer R ? R
-        : Chain;
-    type MakeTypeIsCLASS<T, Chain = T> = T extends new(go: GameObj) => infer R
-        ? R
-        : Chain;
-    type MakeType<T> = MakeTypeIsCLASS<T, MakeTypeIsFN<T>>;
-
-    function make<T>(comps: CompList<T> = []): GameObj<MakeType<T>> {
-        const compStates = new Map<string, Comp>();
-        const cleanups = {} as Record<string, (() => unknown)[]>;
-        const events = new KEventHandler();
-        const inputEvents: KEventController[] = [];
-        let onCurCompCleanup: Function | null = null;
-        let paused = false;
-
-        // the game object without the event methods, added later
-        const obj: Omit<GameObj, keyof typeof evs> = {
-            id: uid(),
-            // TODO: a nice way to hide / pause when add()-ing
-            hidden: false,
-            transform: new Mat4(),
-            children: [],
-            parent: null,
-
-            set paused(p) {
-                if (p === paused) return;
-                paused = p;
-                for (const e of inputEvents) {
-                    e.paused = p;
-                }
-            },
-
-            get paused() {
-                return paused;
-            },
-
-            get tags() {
-                const tags = [];
-                for (const [key, value] of compStates.entries()) {
-                    if (Object.keys(value).length == 1) {
-                        tags.push(key);
-                    }
-                }
-                return tags;
-            },
-
-            add<T2>(this: GameObj, a: CompList<T2> | GameObj<T2>): GameObj {
-                const obj = Array.isArray(a) ? make(a) : a;
-                if (obj.parent) {
-                    throw new Error(
-                        "Cannot add a game obj that already has a parent.",
-                    );
-                }
-                obj.parent = this;
-                obj.transform = calcTransform(obj);
-                this.children.push(obj);
-                // TODO: trigger add for children
-                obj.trigger("add", obj);
-                game.events.trigger("add", obj);
-                return obj;
-            },
-
-            readd(obj: GameObj): GameObj {
-                const idx = this.children.indexOf(obj);
-                if (idx !== -1) {
-                    this.children.splice(idx, 1);
-                    this.children.push(obj);
-                }
-                return obj;
-            },
-
-            remove(obj: GameObj): void {
-                const idx = this.children.indexOf(obj);
-                if (idx !== -1) {
-                    obj.parent = null;
-                    this.children.splice(idx, 1);
-
-                    const trigger = (o: GameObj) => {
-                        o.trigger("destroy");
-                        game.events.trigger("destroy", o);
-                        o.children.forEach((child) => trigger(child));
-                    };
-
-                    trigger(obj);
-                }
-            },
-
-            // TODO: recursive
-            removeAll(this: GameObj, tag?: Tag) {
-                if (tag) {
-                    this.get(tag).forEach((obj) => this.remove(obj));
-                } else {
-                    for (const child of [...this.children]) this.remove(child);
-                }
-            },
-
-            update(this: GameObj) {
-                if (this.paused) return;
-                this.children
-                    /*.sort((o1, o2) => (o1.z ?? 0) - (o2.z ?? 0))*/
-                    .forEach((child) => child.update());
-                this.trigger("update");
-            },
-
-            draw(
-                this: GameObj<
-                    PosComp | ScaleComp | RotateComp | FixedComp | MaskComp
-                >,
-            ) {
-                if (this.hidden) return;
-                if (this.canvas) {
-                    flush();
-                    this.canvas.bind();
-                }
-                const f = gfx.fixed;
-                if (this.fixed) gfx.fixed = true;
-                pushTransform();
-                pushTranslate(this.pos);
-                pushScale(this.scale);
-                pushRotate(this.angle);
-                const children = this.children.sort((o1, o2) => {
-                    const l1 = o1.layerIndex ?? game.defaultLayerIndex;
-                    const l2 = o2.layerIndex ?? game.defaultLayerIndex;
-                    return (l1 - l2) || (o1.z ?? 0) - (o2.z ?? 0);
-                });
-                // TODO: automatically don't draw if offscreen
-                if (this.mask) {
-                    const maskFunc = {
-                        intersect: drawMasked,
-                        subtract: drawSubtracted,
-                    }[this.mask];
-                    if (!maskFunc) {
-                        throw new Error(`Invalid mask func: "${this.mask}"`);
-                    }
-                    maskFunc(() => {
-                        children.forEach((child) => child.draw());
-                    }, () => {
-                        this.trigger("draw");
-                    });
-                } else {
-                    this.trigger("draw");
-                    children.forEach((child) => child.draw());
-                }
-                popTransform();
-                gfx.fixed = f;
-                if (this.canvas) {
-                    flush();
-                    this.canvas.unbind();
-                }
-            },
-
-            drawInspect(this: GameObj<PosComp | ScaleComp | RotateComp>) {
-                if (this.hidden) return;
-                pushTransform();
-                pushTranslate(this.pos);
-                pushScale(this.scale);
-                pushRotate(this.angle);
-                this.children
-                    /*.sort((o1, o2) => (o1.z ?? 0) - (o2.z ?? 0))*/
-                    .forEach((child) => child.drawInspect());
-                this.trigger("drawInspect");
-                popTransform();
-            },
-
-            // use a comp, or tag
-            use(comp: Comp | Tag) {
-                if (!comp) {
-                    return;
-                }
-
-                // class object
-                if (isClass(comp)) comp = new (comp as any)(this);
-
-                // function object
-                if (typeof comp === "function") {
-                    return this.use(
-                        (comp as (v: any) => any)(this),
-                    );
-                }
-
-                // tag
-                if (typeof comp === "string") {
-                    return this.use({
-                        id: comp,
-                    });
-                }
-
-                let gc = [];
-
-                // clear if overwrite
-                if (comp.id) {
-                    this.unuse(comp.id);
-                    cleanups[comp.id] = [];
-                    gc = cleanups[comp.id];
-                    compStates.set(comp.id, comp);
-                }
-
-                for (const k in comp) {
-                    if (COMP_DESC.has(k)) {
-                        continue;
-                    }
-
-                    const prop = Object.getOwnPropertyDescriptor(comp, k);
-                    if (!prop) continue;
-
-                    if (typeof prop.value === "function") {
-                        // @ts-ignore Maybe a MAP would be better?
-                        comp[k] = comp[k].bind(this);
-                    }
-
-                    if (prop.set) {
-                        Object.defineProperty(comp, k, {
-                            set: prop.set.bind(this),
-                        });
-                    }
-
-                    if (prop.get) {
-                        Object.defineProperty(comp, k, {
-                            get: prop.get.bind(this),
-                        });
-                    }
-
-                    if (COMP_EVENTS.has(k)) {
-                        // automatically clean up events created by components in add() stage
-                        const func = k === "add"
-                            ? () => {
-                                onCurCompCleanup = (c: any) => gc.push(c);
-                                comp[k]?.();
-                                onCurCompCleanup = null;
-                            }
-                            : comp[<keyof typeof comp> k];
-                        gc.push(this.on(k, <any> func).cancel);
-                    } else {
-                        if (this[k] === undefined) {
-                            // assign comp fields to game obj
-                            Object.defineProperty(this, k, {
-                                get: () => comp[<keyof typeof comp> k],
-                                set: (val) => comp[<keyof typeof comp> k] = val,
-                                configurable: true,
-                                enumerable: true,
-                            });
-                            gc.push(() => delete this[k]);
-                        } else {
-                            throw new Error(
-                                `Duplicate component property: "${k}"`,
-                            );
-                        }
-                    }
-                }
-
-                // check for component dependencies
-                const checkDeps = () => {
-                    if (!comp.require) return;
-                    for (const dep of comp.require) {
-                        if (!this.c(dep)) {
-                            throw new Error(
-                                `Component "${comp.id}" requires component "${dep}"`,
-                            );
-                        }
-                    }
-                };
-
-                if (comp.destroy) {
-                    gc.push(comp.destroy.bind(this));
-                }
-
-                // manually trigger add event if object already exist
-                if (this.exists()) {
-                    checkDeps();
-                    if (comp.add) {
-                        onCurCompCleanup = (c: any) => gc.push(c);
-                        comp.add.call(this);
-                        onCurCompCleanup = null;
-                    }
-                } else {
-                    if (comp.require) {
-                        gc.push(this.on("add", checkDeps).cancel);
-                    }
-                }
-            },
-
-            unuse(id: Tag) {
-                if (compStates.has(id)) {
-                    // check all components for a dependent, if there's one, throw an error
-                    for (const comp of compStates.values()) {
-                        if (comp.require && comp.require.includes(id)) {
-                            throw new Error(
-                                `Can't unuse. Component "${comp.id}" requires component "${id}"`,
-                            );
-                        }
-                    }
-
-                    compStates.delete(id);
-                }
-
-                if (cleanups[id]) {
-                    cleanups[id].forEach((e) => e());
-
-                    delete cleanups[id];
-                }
-            },
-
-            c(id: Tag): Comp | null {
-                return compStates.get(id) ?? null;
-            },
-
-            // TODO: Separate
-            get(t: Tag | Tag[], opts: GetOpt = {}): GameObj[] {
-                let list: GameObj[] = opts.recursive
-                    ? this.children.flatMap(
-                        function recurse(child: GameObj): GameObj[] {
-                            return [child, ...child.children.flatMap(recurse)];
-                        },
-                    )
-                    : this.children;
-
-                list = list.filter((child) => t ? child.is(t) : true);
-
-                if (opts.liveUpdate) {
-                    const isChild = (obj: GameObj) => {
-                        return opts.recursive
-                            ? this.isAncestorOf(obj)
-                            : obj.parent === this;
-                    };
-
-                    const events: EventController[] = [];
-
-                    // TODO: handle when object add / remove tags
-                    // TODO: clean up when obj destroyed
-                    events.push(onAdd((obj) => {
-                        if (isChild(obj) && obj.is(t)) {
-                            list.push(obj);
-                        }
-                    }));
-                    events.push(onDestroy((obj) => {
-                        if (isChild(obj) && obj.is(t)) {
-                            const idx = list.findIndex((o) => o.id === obj.id);
-                            if (idx !== -1) {
-                                list.splice(idx, 1);
-                            }
-                        }
-                    }));
-                    this.onDestroy(() => {
-                        for (const ev of events) {
-                            ev.cancel();
-                        }
-                    });
-                }
-                return list;
-            },
-
-            query(opt: QueryOpt) {
-                const hierarchy = opt.hierarchy || "children";
-                const include = opt.include;
-                const exclude = opt.exclude;
-                let list: GameObj[] = [];
-
-                switch (hierarchy) {
-                    case "children":
-                        list = this.children;
-                        break;
-                    case "siblings":
-                        list = this.parent
-                            ? this.parent.children.filter((o: GameObj) =>
-                                o !== this
-                            )
-                            : [];
-                        break;
-                    case "ancestors":
-                        let parent = this.parent;
-                        while (parent) {
-                            list.push(parent);
-                            parent = parent.parent;
-                        }
-                        break;
-                    case "descendants":
-                        list = this.children.flatMap(
-                            function recurse(child: GameObj): GameObj[] {
-                                return [
-                                    child,
-                                    ...child.children.flatMap(recurse),
-                                ];
-                            },
-                        );
-                        break;
-                }
-                if (include) {
-                    const includeOp = opt.includeOp || "and";
-
-                    if (includeOp === "and" || !Array.isArray(opt.include)) {
-                        // Accept if all match
-                        list = list.filter(o => o.is(include));
-                    } else { // includeOp == "or"
-                        // Accept if some match
-                        list = list.filter(o =>
-                            (opt.include as string[]).some(t => o.is(t))
-                        );
-                    }
-                }
-                if (exclude) {
-                    const excludeOp = opt.includeOp || "and";
-                    if (excludeOp === "and" || !Array.isArray(opt.include)) {
-                        // Reject if all match
-                        list = list.filter(o => !o.is(exclude));
-                    } else { // includeOp == "or"
-                        // Reject if some match
-                        list = list.filter(o =>
-                            !(opt.exclude as string[]).some(t => o.is(t))
-                        );
-                    }
-                }
-                if (opt.visible === true) {
-                    list = list.filter(o => o.visible);
-                }
-                if (opt.distance) {
-                    if (!this.pos) {
-                        throw Error(
-                            "Can't do a distance query from an object without pos",
-                        );
-                    }
-                    const distanceOp = opt.distanceOp || "near";
-                    const sdist = opt.distance * opt.distance;
-                    if (distanceOp === "near") {
-                        list = list.filter(o =>
-                            o.pos && this.pos.sdist(o.pos) <= sdist
-                        );
-                    } else { // distanceOp === "far"
-                        list = list.filter(o =>
-                            o.pos && this.pos.sdist(o.pos) > sdist
-                        );
-                    }
-                }
-                if (opt.name) {
-                    list = list.filter(o => o.name === opt.name);
-                }
-                return list;
-            },
-
-            isAncestorOf(obj: GameObj) {
-                if (!obj.parent) {
-                    return false;
-                }
-                return obj.parent === this || this.isAncestorOf(obj.parent);
-            },
-
-            exists(this: GameObj): boolean {
-                return game.root.isAncestorOf(this);
-            },
-
-            is(tag: Tag | Tag[]): boolean {
-                if (tag === "*") {
-                    return true;
-                }
-                if (Array.isArray(tag)) {
-                    for (const t of tag) {
-                        if (!this.c(t)) {
-                            return false;
-                        }
-                    }
-                    return true;
-                } else {
-                    return this.c(tag) != null;
-                }
-            },
-
-            on(
-                name: string,
-                action: (...args: unknown[]) => void,
-            ): KEventController {
-                const ctrl = events.on(name, action.bind(this));
-                if (onCurCompCleanup) {
-                    onCurCompCleanup(() => ctrl.cancel());
-                }
-                return ctrl;
-            },
-
-            trigger(name: string, ...args: unknown[]): void {
-                events.trigger(name, ...args);
-                game.objEvents.trigger(name, this, ...args);
-            },
-
-            destroy() {
-                if (this.parent) {
-                    this.parent.remove(this);
-                }
-            },
-
-            inspect() {
-                const info = {} as GameObjInspect;
-
-                for (const [tag, comp] of compStates) {
-                    info[tag] = comp.inspect?.() ?? null;
-                }
-                return info;
-            },
-
-            onAdd(cb: () => void): KEventController {
-                return this.on("add", cb);
-            },
-
-            onUpdate(cb: () => void): KEventController {
-                return this.on("update", cb);
-            },
-
-            onDraw(cb: () => void): KEventController {
-                return this.on("draw", cb);
-            },
-
-            onDestroy(action: () => void): KEventController {
-                return this.on("destroy", action);
-            },
-
-            clearEvents() {
-                events.clear();
-            },
-        };
-
-        const evs = [
-            "onKeyPress",
-            "onKeyPressRepeat",
-            "onKeyDown",
-            "onKeyRelease",
-            "onMousePress",
-            "onMouseDown",
-            "onMouseRelease",
-            "onMouseMove",
-            "onCharInput",
-            "onMouseMove",
-            "onTouchStart",
-            "onTouchMove",
-            "onTouchEnd",
-            "onScroll",
-            "onGamepadButtonPress",
-            "onGamepadButtonDown",
-            "onGamepadButtonRelease",
-            "onGamepadStick",
-            "onButtonPress",
-            "onButtonDown",
-            "onButtonRelease",
-        ] as unknown as [keyof Pick<App, "onKeyPress">];
-
-        for (const e of evs) {
-            obj[e] = (...args: [any]) => {
-                const ev = app[e]?.(...args);
-                inputEvents.push(ev);
-
-                // TODO: what if the game object is destroy and re-added
-                obj.onDestroy(() => ev.cancel());
-                return ev;
-            };
-        }
-
-        for (const comp of comps) {
-            obj.use(comp as string | Comp);
-        }
-
-        return obj as GameObj<MakeType<T>>;
     }
 
     // add an event to a tag
@@ -3977,26 +1518,6 @@ const kaplay = <
         return gfx.bgColor?.clone?.() ?? null;
     }
 
-    function toFixed(n: number, f: number) {
-        return Number(n.toFixed(f));
-    }
-
-    function isFixed(obj: GameObj): boolean {
-        if (obj.fixed) return true;
-        return obj.parent ? isFixed(obj.parent) : false;
-    }
-
-    function getRenderProps(obj: GameObj<any>) {
-        return {
-            color: obj.color,
-            opacity: obj.opacity,
-            anchor: obj.anchor,
-            outline: obj.outline,
-            shader: obj.shader,
-            uniform: obj.uniform,
-        };
-    }
-
     function onLoad(cb: () => void): void {
         if (assets.loaded) {
             cb();
@@ -4077,21 +1598,23 @@ const kaplay = <
         plugin: KaboomPlugin<T>,
         ...args: any
     ): KaboomCtx & T {
-        const funcs = plugin(ctx);
+        const funcs = plugin(k);
         let funcsObj: T;
         if (typeof funcs === "function") {
             const plugWithOptions = funcs(...args);
-            funcsObj = plugWithOptions(ctx);
+            funcsObj = plugWithOptions(k);
         } else {
             funcsObj = funcs;
         }
-        for (const k in funcsObj) {
-            ctx[k as keyof typeof ctx] = funcsObj[k];
+
+        for (const key in funcsObj) {
+            k[key as keyof typeof k] = funcsObj[key];
+
             if (gopt.global !== false) {
-                window[k as any] = funcsObj[k];
+                window[key as any] = funcsObj[key];
             }
         }
-        return ctx as KaboomCtx & T;
+        return k as KaboomCtx & T;
     }
 
     function center(): Vec2 {
@@ -4127,7 +1650,7 @@ const kaplay = <
 
         // TODO: custom parent
         const level = add([
-            ctx.pos(opt.pos ?? vec2(0)),
+            k.pos(opt.pos ?? vec2(0)),
         ]) as GameObj<PosComp | LevelComp>;
 
         const numRows = map.length;
@@ -4392,7 +1915,7 @@ const kaplay = <
                     if (comp.id === "pos") hasPos = true;
                 }
 
-                if (!hasPos) comps.push(ctx.pos());
+                if (!hasPos) comps.push(k.pos());
                 if (!hasTile) comps.push(tile());
 
                 const obj = level.add(comps);
@@ -4801,26 +2324,26 @@ const kaplay = <
 
     function addKaboom(p: Vec2, opt: BoomOpt = {}): GameObj {
         const kaboom = add([
-            ctx.pos(p),
-            ctx.stay(),
+            k.pos(p),
+            k.stay(),
         ]);
 
         const speed = (opt.speed || 1) * 5;
         const s = opt.scale || 1;
 
         kaboom.add([
-            ctx.sprite(boomSprite),
-            ctx.scale(0),
-            ctx.anchor("center"),
+            k.sprite(boomSprite),
+            k.scale(0),
+            k.anchor("center"),
             boom(speed, s),
             ...opt.comps ?? [],
         ]);
 
         const ka = kaboom.add([
-            ctx.sprite(kaSprite),
-            ctx.scale(0),
-            ctx.anchor("center"),
-            ctx.timer(),
+            k.sprite(kaSprite),
+            k.scale(0),
+            k.anchor("center"),
+            k.timer(),
             ...opt.comps ?? [],
         ]);
 
@@ -5020,248 +2543,6 @@ const kaplay = <
                     width: w * progress,
                     height: h,
                 });
-            });
-        }
-    }
-
-    function drawInspectText(pos: Vec2, txt: string) {
-        drawUnscaled(() => {
-            const pad = vec2(8);
-
-            pushTransform();
-            pushTranslate(pos);
-
-            const ftxt = formatText({
-                text: txt,
-                font: DBG_FONT,
-                size: 16,
-                pos: pad,
-                color: rgb(255, 255, 255),
-                fixed: true,
-            });
-
-            const bw = ftxt.width + pad.x * 2;
-            const bh = ftxt.height + pad.x * 2;
-
-            if (pos.x + bw >= width()) {
-                pushTranslate(vec2(-bw, 0));
-            }
-
-            if (pos.y + bh >= height()) {
-                pushTranslate(vec2(0, -bh));
-            }
-
-            drawRect({
-                width: bw,
-                height: bh,
-                color: rgb(0, 0, 0),
-                radius: 4,
-                opacity: 0.8,
-                fixed: true,
-            });
-
-            drawFormattedText(ftxt);
-            popTransform();
-        });
-    }
-
-    function drawDebug() {
-        if (debug.inspect) {
-            let inspecting = null;
-
-            for (const obj of game.root.get("*", { recursive: true })) {
-                if (obj.c("area") && obj.isHovering()) {
-                    inspecting = obj;
-                    break;
-                }
-            }
-
-            game.root.drawInspect();
-
-            if (inspecting) {
-                const lines = [];
-                const data = inspecting.inspect();
-
-                for (const tag in data) {
-                    if (data[tag]) {
-                        // pushes the inspect function (eg: `sprite: "bean"`)
-                        lines.push(`${data[tag]}`);
-                    } else {
-                        // pushes only the tag (name of the component)
-                        lines.push(`${tag}`);
-                    }
-                }
-
-                drawInspectText(contentToView(mousePos()), lines.join("\n"));
-            }
-
-            drawInspectText(vec2(8), `FPS: ${debug.fps()}`);
-        }
-
-        if (debug.paused) {
-            drawUnscaled(() => {
-                // top right corner
-                pushTransform();
-                pushTranslate(width(), 0);
-                pushTranslate(-8, 8);
-
-                const size = 32;
-
-                // bg
-                drawRect({
-                    width: size,
-                    height: size,
-                    anchor: "topright",
-                    color: rgb(0, 0, 0),
-                    opacity: 0.8,
-                    radius: 4,
-                    fixed: true,
-                });
-
-                // pause icon
-                for (let i = 1; i <= 2; i++) {
-                    drawRect({
-                        width: 4,
-                        height: size * 0.6,
-                        anchor: "center",
-                        pos: vec2(-size / 3 * i, size * 0.5),
-                        color: rgb(255, 255, 255),
-                        radius: 2,
-                        fixed: true,
-                    });
-                }
-
-                popTransform();
-            });
-        }
-
-        if (debug.timeScale !== 1) {
-            drawUnscaled(() => {
-                // bottom right corner
-                pushTransform();
-                pushTranslate(width(), height());
-                pushTranslate(-8, -8);
-
-                const pad = 8;
-
-                // format text first to get text size
-                const ftxt = formatText({
-                    text: debug.timeScale.toFixed(1),
-                    font: DBG_FONT,
-                    size: 16,
-                    color: rgb(255, 255, 255),
-                    pos: vec2(-pad),
-                    anchor: "botright",
-                    fixed: true,
-                });
-
-                // bg
-                drawRect({
-                    width: ftxt.width + pad * 2 + pad * 4,
-                    height: ftxt.height + pad * 2,
-                    anchor: "botright",
-                    color: rgb(0, 0, 0),
-                    opacity: 0.8,
-                    radius: 4,
-                    fixed: true,
-                });
-
-                // fast forward / slow down icon
-                for (let i = 0; i < 2; i++) {
-                    const flipped = debug.timeScale < 1;
-                    drawTriangle({
-                        p1: vec2(-ftxt.width - pad * (flipped ? 2 : 3.5), -pad),
-                        p2: vec2(
-                            -ftxt.width - pad * (flipped ? 2 : 3.5),
-                            -pad - ftxt.height,
-                        ),
-                        p3: vec2(
-                            -ftxt.width - pad * (flipped ? 3.5 : 2),
-                            -pad - ftxt.height / 2,
-                        ),
-                        pos: vec2(-i * pad * 1 + (flipped ? -pad * 0.5 : 0), 0),
-                        color: rgb(255, 255, 255),
-                        fixed: true,
-                    });
-                }
-
-                // text
-                drawFormattedText(ftxt);
-
-                popTransform();
-            });
-        }
-
-        if (debug.curRecording) {
-            drawUnscaled(() => {
-                pushTransform();
-                pushTranslate(0, height());
-                pushTranslate(24, -24);
-
-                drawCircle({
-                    radius: 12,
-                    color: rgb(255, 0, 0),
-                    opacity: wave(0, 1, app.time() * 4),
-                    fixed: true,
-                });
-
-                popTransform();
-            });
-        }
-
-        if (debug.showLog && game.logs.length > 0) {
-            drawUnscaled(() => {
-                pushTransform();
-                pushTranslate(0, height());
-                pushTranslate(8, -8);
-
-                const pad = 8;
-                const logs = [];
-
-                for (const log of game.logs) {
-                    let str = "";
-                    const style = log.msg instanceof Error ? "error" : "info";
-                    str += `[time]${log.time.toFixed(2)}[/time]`;
-                    str += " ";
-                    str += `[${style}]${
-                        log.msg?.toString ? log.msg.toString() : log.msg
-                    }[/${style}]`;
-                    logs.push(str);
-                }
-
-                game.logs = game.logs
-                    .filter((log) =>
-                        app.time() - log.time < (gopt.logTime || LOG_TIME)
-                    );
-
-                const ftext = formatText({
-                    text: logs.join("\n"),
-                    font: DBG_FONT,
-                    pos: vec2(pad, -pad),
-                    anchor: "botleft",
-                    size: 16,
-                    width: width() * 0.6,
-                    lineSpacing: pad / 2,
-                    fixed: true,
-                    styles: {
-                        "time": { color: rgb(127, 127, 127) },
-                        "info": { color: rgb(255, 255, 255) },
-                        "error": { color: rgb(255, 0, 127) },
-                    },
-                });
-
-                drawRect({
-                    width: ftext.width + pad * 2,
-                    height: ftext.height + pad * 2,
-                    anchor: "botleft",
-                    color: rgb(0, 0, 0),
-                    radius: 4,
-                    opacity: 0.8,
-                    fixed: true,
-                });
-
-                drawFormattedText(ftext);
-                popTransform();
             });
         }
     }
@@ -5528,27 +2809,8 @@ const kaplay = <
     updateViewport();
     initEvents();
 
-    const internalCtx: InternalCtx = {
-        kaboomCtx: ctx,
-        app,
-        game,
-        gfx,
-        assets,
-        screen2ndc,
-        loadProgress,
-        isFixed,
-        toFixed,
-        getViewportScale,
-        getRenderProps,
-        resolveSprite,
-        drawTexture,
-        drawRaw,
-        calcTransform,
-    };
-
     // the exported ctx handle
-    ctx = {
-        _k: internalCtx,
+    k = {
         VERSION,
         // asset load
         loadRoot,
@@ -5856,8 +3118,6 @@ const kaplay = <
         KEventController,
     };
 
-    ctxWrapper.current = ctx;
-
     const plugins = gopt.plugins as KaboomPlugin<Record<string, unknown>>[];
 
     if (plugins) {
@@ -5866,8 +3126,8 @@ const kaplay = <
 
     // export everything to window if global is set
     if (gopt.global !== false) {
-        for (const k in ctx) {
-            (<any> window[<any> k]) = ctx[k as keyof KaboomCtx];
+        for (const key in k) {
+            (<any> window[<any> key]) = k[key as keyof KaboomCtx];
         }
     }
 
@@ -5875,8 +3135,7 @@ const kaplay = <
         app.canvas.focus();
     }
 
-    return ctx as TPlugins extends [undefined]
-        ? KaboomCtx<TButtons, TButtonsName>
+    return k as TPlugins extends [undefined] ? KaboomCtx<TButtons, TButtonsName>
         : KaboomCtx<TButtons, TButtonsName> & MergePlugins<TPlugins>;
 };
 

@@ -1,7 +1,9 @@
 // TODO: accept canvas
 
-import type { Texture } from "../../gfx";
-import { getKaboomContext } from "../../kaboom";
+import { resolveSprite } from "../../assets/sprite";
+import { getRenderProps } from "../../game/utils";
+import { drawTexture, type Texture } from "../../gfx";
+import { k } from "../../kaboom";
 import { Quad, quad, type Rect, Vec2, vec2 } from "../../math";
 import type {
     Asset,
@@ -145,9 +147,6 @@ export function sprite(
     src: string | SpriteData | Asset<SpriteData>,
     opt: SpriteCompOpt = {},
 ): SpriteComp {
-    const k = getKaboomContext(this);
-    const { drawTexture, getRenderProps, resolveSprite } = k._k;
-
     let spriteData: SpriteData | null = null;
     let curAnim: SpriteCurAnim | null = null;
     // 1  - from small index to large index

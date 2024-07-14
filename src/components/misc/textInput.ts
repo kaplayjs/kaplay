@@ -1,4 +1,4 @@
-import { getKaboomContext } from "../../kaboom";
+import { k } from "../../kaboom";
 import type {
     Comp,
     GameObj,
@@ -24,7 +24,6 @@ export function textInput(
     hasFocus: boolean = true,
     maxInputLength?: number,
 ): TextInputComp {
-    let k = getKaboomContext(this);
     let charEv: KEventController;
     let backEv: KEventController;
 

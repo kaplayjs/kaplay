@@ -1,5 +1,5 @@
-import type { Texture } from "../../gfx";
-import { getKaboomContext } from "../../kaboom";
+import { drawRaw, type Texture } from "../../gfx";
+import { k } from "../../kaboom";
 import { lerp, map, Quad, Vec2, vec2 } from "../../math";
 import { Color } from "../../math/color";
 import type { Comp, KaboomCtx, ShapeType, Vertex } from "../../types";
@@ -116,8 +116,6 @@ export function particles(
     popt: ParticlesOpt,
     eopt: EmitterOpt,
 ): ParticlesComp {
-    const k = getKaboomContext(this);
-
     let emitterLifetime = eopt.lifetime;
 
     const particles: Particle[] = [];
@@ -350,7 +348,7 @@ export function particles(
                 v.opacity = opacity;
             }
 
-            k._k.drawRaw(
+            drawRaw(
                 vertices,
                 indices,
                 (this as any).fixed,

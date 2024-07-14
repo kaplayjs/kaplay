@@ -1,4 +1,4 @@
-import { getKaboomContext } from "../../kaboom";
+import { k } from "../../kaboom";
 import { lerp } from "../../math";
 import easings from "../../math/easings";
 import type {
@@ -48,7 +48,6 @@ export function timer(): TimerComp {
             time: number,
             action?: () => void,
         ): TimerController {
-            const k = getKaboomContext(this);
             const actions: Function[] = [];
 
             if (action) actions.push(action);
@@ -103,7 +102,6 @@ export function timer(): TimerComp {
             setValue: (value: V) => void,
             easeFunc = easings.linear,
         ) {
-            const k = getKaboomContext(this);
             let curTime = 0;
             const onEndEvents: Array<() => void> = [];
             const ev = this.onUpdate(() => {

@@ -1,4 +1,5 @@
-import { getKaboomContext } from "../../kaboom";
+import { getRenderProps } from "../../game/utils";
+import { drawUVQuad } from "../../gfx";
 import { Rect, vec2 } from "../../math";
 import type { Comp, GameObj, KaboomCtx } from "../../types";
 
@@ -27,15 +28,12 @@ export function uvquad(
     w: number,
     h: number,
 ): UVQuadComp {
-    const k = getKaboomContext(this);
-    const { getRenderProps } = k._k;
-
     return {
         id: "rect",
         width: w,
         height: h,
         draw(this: GameObj<UVQuadComp>) {
-            k.drawUVQuad(Object.assign(getRenderProps(this), {
+            drawUVQuad(Object.assign(getRenderProps(this), {
                 width: this.width,
                 height: this.height,
             }));
