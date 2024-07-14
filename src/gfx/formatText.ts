@@ -1,4 +1,4 @@
-import { FontData, resolveFont } from "../assets/font";
+import { Asset, type BitmapFontData, FontData, resolveFont } from "../assets";
 import {
     DEF_FONT_FILTER,
     DEF_TEXT_CACHE_SIZE,
@@ -9,12 +9,15 @@ import {
 import { fontCacheC2d, fontCacheCanvas, gfx } from "../kaboom";
 import { Quad, Vec2, vec2 } from "../math";
 import { Color } from "../math/color";
-import type { BitmapFontData, Outline, TexFilter } from "../types";
+import { type Outline, type TexFilter } from "../types";
 import { runes } from "../utils";
 import { alignPt } from "./anchor";
-import { Asset } from "./assets";
-import type { FormattedChar, FormattedText } from "./draw/drawFormattedText";
-import type { CharTransform, DrawTextOpt } from "./draw/drawText";
+import type {
+    CharTransform,
+    DrawTextOpt,
+    FormattedChar,
+    FormattedText,
+} from "./draw";
 import { Texture } from "./gfx";
 
 type FontAtlas = {
@@ -123,6 +126,11 @@ export function formatText(opt: DrawTextOpt): FormattedText {
                 // TODO: use assets.packer to pack font texture
                 const c2d = fontCacheC2d;
                 if (!c2d) throw new Error("fontCacheC2d is not defined.");
+
+                if (!fontCacheCanvas) {
+                    throw new Error("fontCacheCanvas is not defined.");
+                }
+
                 c2d.clearRect(
                     0,
                     0,
