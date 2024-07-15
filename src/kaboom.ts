@@ -399,7 +399,7 @@ const kaplay = <
     });
 
     gfx = initAppGfx(gopt, ggl);
-    const audio = initAudio();
+    audio = initAudio();
     assets = initAssets(ggl);
 
     function fixURL<D>(url: D): D {
