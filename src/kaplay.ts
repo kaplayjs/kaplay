@@ -57,7 +57,6 @@ import {
 
 import {
     Asset,
-    fetchJSON,
     getAsset,
     getBitmapFont,
     getFont,
