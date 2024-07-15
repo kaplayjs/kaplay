@@ -1,3 +1,3 @@
+export * from "../game/camera";
 export * from "./app";
-export * from "./camera";
 export * from "./frame";

@@ -1,9 +1,9 @@
 import { color, fixed, opacity, rect } from "../components";
-import { destroy } from "../game";
 import { center, height, width } from "../gfx";
 import { game } from "../kaplay";
 import { type Color, rgb } from "../math/color";
 import { type Mat4, type Vec2, vec2, type Vec2Args } from "../math/math";
+import { destroy } from ".";
 
 export function camPos(...pos: Vec2Args): Vec2 {
     if (pos.length > 0) {
