@@ -8,7 +8,7 @@
 
 1. Pick on example to test and edit the corresponding `/examples/[name].js`, or
    create a new file under `/examples` to test anything you're working on.
-1. The source entry point is `src/kaboom.ts`, editing any files referenced will
+1. The source entry point is `src/kaaplay.ts`, editing any files referenced will
    automatically trigger rebuild. **Make sure not to break any existing
    examples**.
 1. Run `pnpm dev` to start the dev server and try examples.
