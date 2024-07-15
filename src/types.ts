@@ -1,9 +1,13 @@
 import type {
+    AsepriteData,
     Asset,
     BitmapFontData,
     LoadBitmapFontOpt,
+    LoadSpriteOpt,
+    LoadSpriteSrc,
     ShaderData,
     SoundData,
+    SpriteAtlasData,
     SpriteData,
     Uniform,
 } from "./assets";
@@ -73,6 +77,7 @@ import type {
     DrawLineOpt,
     DrawLinesOpt,
     DrawRectOpt,
+    DrawSpriteOpt,
     DrawTextOpt,
     DrawTriangleOpt,
     FormattedText,
@@ -4062,32 +4067,6 @@ export interface Recording {
 }
 
 /**
- * Frame-based animation configuration.
- */
-export type SpriteAnim = number | {
-    /**
-     * The starting frame.
-     */
-    from: number;
-    /**
-     * The end frame.
-     */
-    to: number;
-    /**
-     * If this anim should be played in loop.
-     */
-    loop?: boolean;
-    /**
-     * When looping should it move back instead of go to start frame again.
-     */
-    pingpong?: boolean;
-    /**
-     * This anim's speed in frames per second.
-     */
-    speed?: number;
-};
-
-/**
  * Sprite animation configuration when playing.
  */
 export interface SpriteAnimPlayOpt {
@@ -4108,114 +4087,6 @@ export interface SpriteAnimPlayOpt {
      */
     onEnd?: () => void;
 }
-
-export interface PeditFile {
-    width: number;
-    height: number;
-    frames: string[];
-    anims: SpriteAnims;
-}
-
-/**
- * A dict of name <-> animation.
- */
-export type SpriteAnims = Record<string, SpriteAnim>;
-
-// TODO: support frameWidth and frameHeight as alternative to slice
-/**
- * Sprite loading configuration.
- */
-export interface LoadSpriteOpt {
-    /**
-     * If the defined area contains multiple sprites, how many frames are in the area hozizontally.
-     */
-    sliceX?: number;
-    /**
-     * If the defined area contains multiple sprites, how many frames are in the area vertically.
-     */
-    sliceY?: number;
-    /**
-     * 9 slice sprite for proportional scaling.
-     *
-     * @since v3000.0
-     */
-    slice9?: NineSlice;
-    /**
-     * Individual frames.
-     *
-     * @since v3000.0
-     */
-    frames?: Quad[];
-    /**
-     * Animation configuration.
-     */
-    anims?: SpriteAnims;
-}
-
-export type NineSlice = {
-    /**
-     * The width of the 9-slice's left column.
-     */
-    left: number;
-    /**
-     * The width of the 9-slice's right column.
-     */
-    right: number;
-    /**
-     * The height of the 9-slice's top row.
-     */
-    top: number;
-    /**
-     * The height of the 9-slice's bottom row.
-     */
-    bottom: number;
-};
-
-export type SpriteAtlasData = Record<string, SpriteAtlasEntry>;
-
-/**
- * A sprite in a sprite atlas.
- */
-export type SpriteAtlasEntry = LoadSpriteOpt & {
-    /**
-     * X position of the top left corner.
-     */
-    x: number;
-    /**
-     * Y position of the top left corner.
-     */
-    y: number;
-    /**
-     * Sprite area width.
-     */
-    width: number;
-    /**
-     * Sprite area height.
-     */
-    height: number;
-};
-
-export type LoadSpriteSrc = string | ImageSource;
-
-export type AsepriteData = {
-    frames: Array<{
-        frame: {
-            x: number;
-            y: number;
-            w: number;
-            h: number;
-        };
-    }>;
-    meta: {
-        size: { w: number; h: number };
-        frameTags: Array<{
-            name: string;
-            from: number;
-            to: number;
-            direction: "forward" | "reverse" | "pingpong";
-        }>;
-    };
-};
 
 export type MusicData = string;
 
@@ -4294,48 +4165,6 @@ export type DrawTextureOpt = RenderProps & {
     flipX?: boolean;
     flipY?: boolean;
     quad?: Quad;
-    anchor?: Anchor | Vec2;
-};
-
-/**
- * How the sprite should look like.
- */
-export type DrawSpriteOpt = RenderProps & {
-    /**
-     * The sprite name in the asset manager, or the raw sprite data.
-     */
-    sprite: string | SpriteData | Asset<SpriteData>;
-    /**
-     * If the sprite is loaded with multiple frames, or sliced, use the frame option to specify which frame to draw.
-     */
-    frame?: number;
-    /**
-     * Width of sprite. If `height` is not specified it'll stretch with aspect ratio. If `tiled` is set to true it'll tiled to the specified width horizontally.
-     */
-    width?: number;
-    /**
-     * Height of sprite. If `width` is not specified it'll stretch with aspect ratio. If `tiled` is set to true it'll tiled to the specified width vertically.
-     */
-    height?: number;
-    /**
-     * When set to true, `width` and `height` will not scale the sprite but instead render multiple tiled copies of them until the specified width and height. Useful for background texture pattern etc.
-     */
-    tiled?: boolean;
-    /**
-     * If flip the texture horizontally.
-     */
-    flipX?: boolean;
-    /**
-     * If flip the texture vertically.
-     */
-    flipY?: boolean;
-    /**
-     * The sub-area to render from the texture, by default it'll render the whole `quad(0, 0, 1, 1)`
-     */
-    quad?: Quad;
-    /**
-     * The anchor point, or the pivot point. Default to "topleft".
-     */
     anchor?: Anchor | Vec2;
 };
 

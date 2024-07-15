@@ -1,6 +1,7 @@
 import { assets, audio } from "../kaboom";
 import { dataURLToArrayBuffer, isDataURL } from "../utils";
 import { Asset, fetchArrayBuffer, loadProgress } from "./asset";
+import { fixURL } from "./utils";
 
 export class SoundData {
     buf: AudioBuffer;
@@ -49,4 +50,29 @@ export function resolveSound(
 
 export function getSound(name: string): Asset<SoundData> | null {
     return assets.sounds.get(name) ?? null;
+}
+
+// load a sound to asset manager
+export function loadSound(
+    name: string | null,
+    src: string | ArrayBuffer,
+): Asset<SoundData> {
+    src = fixURL(src);
+    return assets.sounds.add(
+        name,
+        typeof src === "string"
+            ? SoundData.fromURL(src)
+            : SoundData.fromArrayBuffer(src),
+    );
+}
+
+export function loadMusic(
+    name: string | null,
+    url: string,
+) {
+    const a = new Audio(url);
+    a.preload = "auto";
+
+    // TODO: assets.music should be a map
+    return assets.music[name as keyof typeof assets.music] = fixURL(url);
 }

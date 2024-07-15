@@ -12,6 +12,7 @@ import {
     toScreen,
     toWorld,
 } from "./app";
+
 import {
     type AppGfxCtx,
     center,
@@ -38,6 +39,7 @@ import {
     flush,
     formatText,
     FrameBuffer,
+    getBackground,
     height,
     initAppGfx,
     initGfx,
@@ -48,6 +50,7 @@ import {
     pushScale,
     pushTransform,
     pushTranslate,
+    setBackground,
     updateViewport,
     width,
 } from "./gfx";
@@ -55,20 +58,26 @@ import {
 import {
     Asset,
     fetchJSON,
-    fetchText,
+    getAsset,
     getBitmapFont,
     getFont,
     getShader,
     getSound,
     getSprite,
     initAssets,
+    load,
+    loadAseprite,
+    loadBean,
     loadBitmapFont,
     loadFont,
-    loadImg,
+    loadMusic,
+    loadPedit,
     loadProgress,
-    makeShader,
-    type ShaderData,
-    slice,
+    loadShader,
+    loadShaderURL,
+    loadSound,
+    loadSprite,
+    loadSpriteAtlas,
     SoundData,
     SpriteData,
     type Uniform,
@@ -81,8 +90,6 @@ import {
     DEF_HASH_GRID_SIZE,
     LOG_MAX,
     MAX_TEXT_CACHE_SIZE,
-    SPRITE_ATLAS_HEIGHT,
-    SPRITE_ATLAS_WIDTH,
 } from "./constants";
 
 import {
@@ -91,6 +98,7 @@ import {
     chooseMultiple,
     Circle,
     clamp,
+    Color,
     curveLengthApproximation,
     deg2rad,
     easingCubicBezier,
@@ -105,12 +113,14 @@ import {
     evaluateQuadratic,
     evaluateQuadraticFirstDerivative,
     evaluateQuadraticSecondDerivative,
+    hsl2rgb,
     isConvex,
     lerp,
     Line,
     map,
     mapc,
     Mat4,
+    NavMesh,
     normalizedCurve,
     Point,
     Polygon,
@@ -121,6 +131,7 @@ import {
     randi,
     randSeed,
     Rect,
+    rgb,
     RNG,
     sat,
     shuffle,
@@ -135,11 +146,7 @@ import {
     Vec2,
     vec2,
     wave,
-} from "./math/math";
-
-import { Color, type ColorArgs, hsl2rgb, rgb } from "./math/color";
-
-import { NavMesh } from "./math/navigationmesh";
+} from "./math";
 
 import easings from "./math/easings";
 
@@ -148,34 +155,21 @@ import {
     downloadBlob,
     downloadJSON,
     downloadText,
-    getFileName,
-    isDataURL,
     KEvent,
     KEventController,
     KEventHandler,
-    overload2,
-    Registry,
 } from "./utils/";
 
 import type {
-    AsepriteData,
     ButtonsDef,
     Debug,
-    EventController,
     GameObj,
-    ImageSource,
     KaboomCtx,
     KaboomOpt,
     KaboomPlugin,
-    LoadSpriteOpt,
-    LoadSpriteSrc,
     MergePlugins,
-    PeditFile,
     PluginList,
     Recording,
-    SpriteAnim,
-    SpriteAtlasData,
-    Tag,
 } from "./types";
 
 import {
@@ -224,22 +218,35 @@ import {
 } from "./components";
 
 import { dt } from "./app";
-import { burp, play, volume } from "./audio";
-import { type AudioCtx, initAudio } from "./audio/audio";
+import { type AudioCtx, burp, initAudio, play, volume } from "./audio";
+
 import {
     addKaboom,
     addLevel,
     destroy,
+    type Game,
     getSceneName,
     getTreeRoot,
     go,
     initEvents,
+    initGame,
+    make,
+    on,
+    onAdd,
+    onClick,
+    onCollide,
+    onCollideEnd,
+    onCollideUpdate,
+    onDestroy,
+    onDraw,
+    onHover,
+    onHoverEnd,
+    onHoverUpdate,
     onSceneLeave,
+    onUpdate,
     scene,
 } from "./game";
-import { type Game, initGame } from "./game/game";
-import { make } from "./game/make";
-import beanSpriteSrc from "./kassets/bean.png";
+
 import boomSpriteSrc from "./kassets/boom.png";
 import kaSpriteSrc from "./kassets/ka.png";
 
@@ -402,19 +409,9 @@ const kaplay = <
     audio = initAudio();
     assets = initAssets(ggl);
 
-    function fixURL<D>(url: D): D {
-        if (typeof url !== "string" || isDataURL(url)) return url;
-        return assets.urlPrefix + url as D;
-    }
-
     game = initGame();
 
     game.root.use(timer());
-
-    // wrap individual loaders with global loader counter, for stuff like progress bar
-    function load<T>(prom: Promise<T>): Asset<T> {
-        return assets.custom.add(null, prom);
-    }
 
     // global load path prefix
     function loadRoot(path?: string): string {
@@ -426,265 +423,6 @@ const kaplay = <
 
     function loadJSON(name: string, url: string) {
         return assets.custom.add(name, fetchJSON(url));
-    }
-
-    // TODO: load synchronously if passed ImageSource
-    function loadSpriteAtlas(
-        src: LoadSpriteSrc,
-        data: SpriteAtlasData | string,
-    ): Asset<Record<string, SpriteData>> {
-        src = fixURL(src);
-        if (typeof data === "string") {
-            return load(
-                new Promise((res, rej) => {
-                    fetchJSON(data).then((json) => {
-                        loadSpriteAtlas(src, json).then(res).catch(rej);
-                    });
-                }),
-            );
-        }
-        return load(
-            SpriteData.from(src).then((atlas) => {
-                const map: Record<string, SpriteData> = {};
-
-                for (const name in data) {
-                    const info = data[name];
-                    const quad = atlas.frames[0];
-                    const w = SPRITE_ATLAS_WIDTH * quad.w;
-                    const h = SPRITE_ATLAS_HEIGHT * quad.h;
-                    const frames = info.frames
-                        ? info.frames.map((f) =>
-                            new Quad(
-                                quad.x + (info.x + f.x) / w * quad.w,
-                                quad.y + (info.y + f.y) / h * quad.h,
-                                f.w / w * quad.w,
-                                f.h / h * quad.h,
-                            )
-                        )
-                        : slice(
-                            info.sliceX || 1,
-                            info.sliceY || 1,
-                            quad.x + info.x / w * quad.w,
-                            quad.y + info.y / h * quad.h,
-                            info.width / w * quad.w,
-                            info.height / h * quad.h,
-                        );
-                    const spr = new SpriteData(atlas.tex, frames, info.anims);
-                    assets.sprites.addLoaded(name, spr);
-                    map[name] = spr;
-                }
-                return map;
-            }),
-        );
-    }
-
-    function createSpriteSheet(
-        images: ImageSource[],
-        opt: LoadSpriteOpt = {},
-    ): SpriteData {
-        const canvas = document.createElement("canvas");
-        const width = images[0].width;
-        const height = images[0].height;
-        canvas.width = width * images.length;
-        canvas.height = height;
-        const c2d = canvas.getContext("2d");
-        if (!c2d) throw new Error("Failed to create canvas context");
-        images.forEach((img, i) => {
-            if (img instanceof ImageData) {
-                c2d.putImageData(img, i * width, 0);
-            } else {
-                c2d.drawImage(img, i * width, 0);
-            }
-        });
-        const merged = c2d.getImageData(0, 0, images.length * width, height);
-        return SpriteData.fromImage(merged, {
-            ...opt,
-            sliceX: images.length,
-            sliceY: 1,
-        });
-    }
-
-    // load a sprite to asset manager
-    function loadSprite(
-        name: string | null,
-        src: LoadSpriteSrc | LoadSpriteSrc[],
-        opt: LoadSpriteOpt = {
-            sliceX: 1,
-            sliceY: 1,
-            anims: {},
-        },
-    ): Asset<SpriteData> {
-        src = fixURL(src);
-        if (Array.isArray(src)) {
-            if (src.some((s) => typeof s === "string")) {
-                return assets.sprites.add(
-                    name,
-                    Promise.all(src.map((s) => {
-                        return typeof s === "string"
-                            ? loadImg(s)
-                            : Promise.resolve(s);
-                    })).then((images) => createSpriteSheet(images, opt)),
-                );
-            } else {
-                return assets.sprites.addLoaded(
-                    name,
-                    createSpriteSheet(src as ImageSource[], opt),
-                );
-            }
-        } else {
-            if (typeof src === "string") {
-                return assets.sprites.add(name, SpriteData.from(src, opt));
-            } else {
-                return assets.sprites.addLoaded(
-                    name,
-                    SpriteData.fromImage(src, opt),
-                );
-            }
-        }
-    }
-
-    function loadPedit(
-        name: string | null,
-        src: string | PeditFile,
-    ): Asset<SpriteData> {
-        src = fixURL(src);
-
-        return assets.sprites.add(
-            name,
-            new Promise(async (resolve) => {
-                const data = typeof src === "string"
-                    ? await fetchJSON(src)
-                    : src;
-                const images = await Promise.all(data.frames.map(loadImg));
-                const canvas = document.createElement("canvas");
-                canvas.width = data.width;
-                canvas.height = data.height * data.frames.length;
-
-                const c2d = canvas.getContext("2d");
-                if (!c2d) throw new Error("Failed to create canvas context");
-
-                images.forEach((img: HTMLImageElement, i) => {
-                    c2d.drawImage(img, 0, i * data.height);
-                });
-
-                const spr = await loadSprite(null, canvas, {
-                    sliceY: data.frames.length,
-                    anims: data.anims,
-                });
-
-                resolve(spr);
-            }),
-        );
-    }
-
-    function loadAseprite(
-        name: string | null,
-        imgSrc: LoadSpriteSrc,
-        jsonSrc: string | AsepriteData,
-    ): Asset<SpriteData> {
-        imgSrc = fixURL(imgSrc);
-        jsonSrc = fixURL(jsonSrc);
-
-        if (typeof imgSrc === "string" && !jsonSrc) {
-            jsonSrc = getFileName(imgSrc) + ".json";
-        }
-
-        const resolveJSON = typeof jsonSrc === "string"
-            ? fetchJSON(jsonSrc)
-            : Promise.resolve(jsonSrc);
-
-        return assets.sprites.add(
-            name,
-            resolveJSON.then((data: AsepriteData) => {
-                const size = data.meta.size;
-                const frames = data.frames.map((f: any) => {
-                    return new Quad(
-                        f.frame.x / size.w,
-                        f.frame.y / size.h,
-                        f.frame.w / size.w,
-                        f.frame.h / size.h,
-                    );
-                });
-                const anims: Record<string, number | SpriteAnim> = {};
-
-                for (const anim of data.meta.frameTags) {
-                    if (anim.from === anim.to) {
-                        anims[anim.name] = anim.from;
-                    } else {
-                        anims[anim.name] = {
-                            from: anim.from,
-                            to: anim.to,
-                            speed: 10,
-                            loop: true,
-                            pingpong: anim.direction === "pingpong",
-                        };
-                    }
-                }
-                return SpriteData.from(imgSrc, {
-                    frames: frames,
-                    anims: anims,
-                });
-            }),
-        );
-    }
-
-    function loadShader(
-        name: string | null,
-        vert?: string,
-        frag?: string,
-    ) {
-        return assets.shaders.addLoaded(name, makeShader(ggl, vert, frag));
-    }
-
-    function loadShaderURL(
-        name: string | null,
-        vert?: string,
-        frag?: string,
-    ): Asset<ShaderData> {
-        vert = fixURL(vert);
-        frag = fixURL(frag);
-        const resolveUrl = (url?: string) =>
-            url
-                ? fetchText(url)
-                : Promise.resolve(null);
-        const load = Promise.all([resolveUrl(vert), resolveUrl(frag)])
-            .then(([vcode, fcode]: [string | null, string | null]) => {
-                return makeShader(ggl, vcode, fcode);
-            });
-        return assets.shaders.add(name, load);
-    }
-
-    // load a sound to asset manager
-    function loadSound(
-        name: string | null,
-        src: string | ArrayBuffer,
-    ): Asset<SoundData> {
-        src = fixURL(src);
-        return assets.sounds.add(
-            name,
-            typeof src === "string"
-                ? SoundData.fromURL(src)
-                : SoundData.fromArrayBuffer(src),
-        );
-    }
-
-    function loadMusic(
-        name: string | null,
-        url: string,
-    ) {
-        const a = new Audio(url);
-        a.preload = "auto";
-
-        // TODO: assets.music should be a map
-        return assets.music[name as keyof typeof assets.music] = fixURL(url);
-    }
-
-    function loadBean(name: string = "bean"): Asset<SpriteData> {
-        return loadSprite(name, beanSpriteSrc);
-    }
-
-    function getAsset(name: string): Asset<any> | null {
-        return assets.custom.get(name) ?? null;
     }
 
     function makeCanvas(w: number, h: number) {
@@ -816,163 +554,6 @@ const kaplay = <
         },
     };
 
-    // add an event to a tag
-    // TODO: Implement `cb` args typing
-    function on(
-        event: string,
-        tag: Tag,
-        cb: (obj: GameObj, ...args: any[]) => void,
-    ): KEventController {
-        type EventKey = keyof KEventHandler<Record<string, any[]>>;
-        if (!game.objEvents[<EventKey> event]) {
-            game.objEvents[<EventKey> event] = new Registry() as any;
-        }
-        return game.objEvents.on(event, (obj, ...args) => {
-            if (obj.is(tag)) {
-                cb(obj, ...args);
-            }
-        });
-    }
-
-    const onUpdate = overload2((action: () => void): KEventController => {
-        const obj = add([{ update: action }]);
-        return {
-            get paused() {
-                return obj.paused;
-            },
-            set paused(p) {
-                obj.paused = p;
-            },
-            cancel: () => obj.destroy(),
-        };
-    }, (tag: Tag, action: (obj: GameObj) => void) => {
-        return on("update", tag, action);
-    });
-
-    const onDraw = overload2((action: () => void): KEventController => {
-        const obj = add([{ draw: action }]);
-        return {
-            get paused() {
-                return obj.hidden;
-            },
-            set paused(p) {
-                obj.hidden = p;
-            },
-            cancel: () => obj.destroy(),
-        };
-    }, (tag: Tag, action: (obj: GameObj) => void) => {
-        return on("draw", tag, action);
-    });
-
-    const onAdd = overload2((action: (obj: GameObj) => void) => {
-        return game.events.on("add", action);
-    }, (tag: Tag, action: (obj: GameObj) => void) => {
-        return on("add", tag, action);
-    });
-
-    const onDestroy = overload2((action: (obj: GameObj) => void) => {
-        return game.events.on("destroy", action);
-    }, (tag: Tag, action: (obj: GameObj) => void) => {
-        return on("destroy", tag, action);
-    });
-
-    // add an event that runs with objs with t1 collides with objs with t2
-    function onCollide(
-        t1: Tag,
-        t2: Tag,
-        f: (a: GameObj, b: GameObj, col?: Collision) => void,
-    ): KEventController {
-        return on("collide", t1, (a, b, col) => b.is(t2) && f(a, b, col));
-    }
-
-    function onCollideUpdate(
-        t1: Tag,
-        t2: Tag,
-        f: (a: GameObj, b: GameObj, col?: Collision) => void,
-    ): KEventController {
-        return on("collideUpdate", t1, (a, b, col) => b.is(t2) && f(a, b, col));
-    }
-
-    function onCollideEnd(
-        t1: Tag,
-        t2: Tag,
-        f: (a: GameObj, b: GameObj, col?: Collision) => void,
-    ): KEventController {
-        return on("collideEnd", t1, (a, b, col) => b.is(t2) && f(a, b, col));
-    }
-
-    function forAllCurrentAndFuture(t: Tag, action: (obj: GameObj) => void) {
-        get(t, { recursive: true }).forEach(action);
-        onAdd(t, action);
-    }
-
-    const onClick = overload2((action: () => void) => {
-        return app.onMousePress(action);
-    }, (tag: Tag, action: (obj: GameObj) => void) => {
-        const events: EventController[] = [];
-
-        forAllCurrentAndFuture(tag, (obj) => {
-            if (!obj.area) {
-                throw new Error(
-                    "onClick() requires the object to have area() component",
-                );
-            }
-            events.push(obj.onClick(() => action(obj)));
-        });
-        return KEventController.join(events);
-    });
-
-    // add an event that runs once when objs with tag t is hovered
-    function onHover(t: Tag, action: (obj: GameObj) => void): KEventController {
-        const events: EventController[] = [];
-
-        forAllCurrentAndFuture(t, (obj) => {
-            if (!obj.area) {
-                throw new Error(
-                    "onHover() requires the object to have area() component",
-                );
-            }
-            events.push(obj.onHover(() => action(obj)));
-        });
-        return KEventController.join(events);
-    }
-
-    // add an event that runs once when objs with tag t is hovered
-    function onHoverUpdate(
-        t: Tag,
-        action: (obj: GameObj) => void,
-    ): KEventController {
-        const events: EventController[] = [];
-
-        forAllCurrentAndFuture(t, (obj) => {
-            if (!obj.area) {
-                throw new Error(
-                    "onHoverUpdate() requires the object to have area() component",
-                );
-            }
-            events.push(obj.onHoverUpdate(() => action(obj)));
-        });
-        return KEventController.join(events);
-    }
-
-    // add an event that runs once when objs with tag t is unhovered
-    function onHoverEnd(
-        t: Tag,
-        action: (obj: GameObj) => void,
-    ): KEventController {
-        const events: EventController[] = [];
-
-        forAllCurrentAndFuture(t, (obj) => {
-            if (!obj.area) {
-                throw new Error(
-                    "onHoverEnd() requires the object to have area() component",
-                );
-            }
-            events.push(obj.onHoverEnd(() => action(obj)));
-        });
-        return KEventController.join(events);
-    }
-
     function setGravity(g: number) {
         // If g > 0 use either the current direction or use (0, 1)
         // Else null
@@ -993,25 +574,6 @@ const kaplay = <
     function getGravityDirection() {
         // If gravity != null return unit vector, otherwise return (0, 1)
         return game.gravity ? game.gravity.unit() : vec2(0, 1);
-    }
-
-    function setBackground(...args: ColorArgs) {
-        const color = rgb(...args);
-        const alpha = args[3] ?? 1;
-
-        gfx.bgColor = color;
-        gfx.bgAlpha = alpha;
-
-        gl.clearColor(
-            color.r / 255,
-            color.g / 255,
-            color.b / 255,
-            alpha,
-        );
-    }
-
-    function getBackground() {
-        return gfx.bgColor?.clone?.() ?? null;
     }
 
     function onLoad(cb: () => void): void {

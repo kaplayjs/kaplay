@@ -16,8 +16,9 @@ import {
     arrayIsVec2,
     getErrorMessage,
 } from "../utils";
-import { loadProgress } from "./asset";
+import { fetchText, loadProgress } from "./asset";
 import { Asset } from "./asset";
+import { fixURL } from "./utils";
 
 export type ShaderData = Shader;
 
@@ -182,4 +183,30 @@ export function resolveShader(
 
 export function getShader(name: string): Asset<ShaderData> | null {
     return assets.shaders.get(name) ?? null;
+}
+
+export function loadShader(
+    name: string | null,
+    vert?: string,
+    frag?: string,
+) {
+    return assets.shaders.addLoaded(name, makeShader(gfx.ggl, vert, frag));
+}
+
+export function loadShaderURL(
+    name: string | null,
+    vert?: string,
+    frag?: string,
+): Asset<ShaderData> {
+    vert = fixURL(vert);
+    frag = fixURL(frag);
+    const resolveUrl = (url?: string) =>
+        url
+            ? fetchText(url)
+            : Promise.resolve(null);
+    const load = Promise.all([resolveUrl(vert), resolveUrl(frag)])
+        .then(([vcode, fcode]: [string | null, string | null]) => {
+            return makeShader(gfx.ggl, vcode, fcode);
+        });
+    return assets.shaders.add(name, load);
 }

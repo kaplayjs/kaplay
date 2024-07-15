@@ -1,3 +1,4 @@
+export * from "./events";
 export * from "./game";
 export * from "./initEvents";
 export * from "./kaboom";

@@ -1,4 +1,5 @@
 export * from "./anchor";
+export * from "./bg";
 export * from "./draw";
 export * from "./formatText";
 export * from "./gfx";

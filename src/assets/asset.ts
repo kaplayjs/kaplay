@@ -156,6 +156,15 @@ export function loadProgress(): number {
         / buckets.length;
 }
 
+export function getAsset(name: string): Asset<any> | null {
+    return assets.custom.get(name) ?? null;
+}
+
+// wrap individual loaders with global loader counter, for stuff like progress bar
+export function load<T>(prom: Promise<T>): Asset<T> {
+    return assets.custom.add(null, prom);
+}
+
 // create assets
 export type AssetsCtx = ReturnType<typeof initAssets>;
 

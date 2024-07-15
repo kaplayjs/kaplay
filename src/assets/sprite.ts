@@ -1,15 +1,94 @@
 import { Asset, loadImg, loadProgress } from "../assets";
+import type { DrawSpriteOpt } from "../gfx";
 import type { Texture } from "../gfx/gfx";
 import { assets } from "../kaboom";
+import beanSpriteSrc from "../kassets/bean.png";
 import { Quad } from "../math/math";
-import {
-    type DrawSpriteOpt,
-    type ImageSource,
-    type LoadSpriteOpt,
-    type LoadSpriteSrc,
-    type NineSlice,
-    type SpriteAnims,
-} from "../types";
+import { type ImageSource } from "../types";
+import { fixURL } from "./utils";
+
+/**
+ * Frame-based animation configuration.
+ */
+export type SpriteAnim = number | {
+    /**
+     * The starting frame.
+     */
+    from: number;
+    /**
+     * The end frame.
+     */
+    to: number;
+    /**
+     * If this anim should be played in loop.
+     */
+    loop?: boolean;
+    /**
+     * When looping should it move back instead of go to start frame again.
+     */
+    pingpong?: boolean;
+    /**
+     * This anim's speed in frames per second.
+     */
+    speed?: number;
+};
+
+/**
+ * A dict of name <-> animation.
+ */
+export type SpriteAnims = Record<string, SpriteAnim>;
+
+// TODO: support frameWidth and frameHeight as alternative to slice
+/**
+ * Sprite loading configuration.
+ */
+export interface LoadSpriteOpt {
+    /**
+     * If the defined area contains multiple sprites, how many frames are in the area hozizontally.
+     */
+    sliceX?: number;
+    /**
+     * If the defined area contains multiple sprites, how many frames are in the area vertically.
+     */
+    sliceY?: number;
+    /**
+     * 9 slice sprite for proportional scaling.
+     *
+     * @since v3000.0
+     */
+    slice9?: NineSlice;
+    /**
+     * Individual frames.
+     *
+     * @since v3000.0
+     */
+    frames?: Quad[];
+    /**
+     * Animation configuration.
+     */
+    anims?: SpriteAnims;
+}
+
+export type NineSlice = {
+    /**
+     * The width of the 9-slice's left column.
+     */
+    left: number;
+    /**
+     * The width of the 9-slice's right column.
+     */
+    right: number;
+    /**
+     * The height of the 9-slice's top row.
+     */
+    top: number;
+    /**
+     * The height of the 9-slice's bottom row.
+     */
+    bottom: number;
+};
+
+export type LoadSpriteSrc = string | ImageSource;
 
 export class SpriteData {
     tex: Texture;
@@ -110,6 +189,45 @@ export function getSprite(name: string): Asset<SpriteData> | null {
     return assets.sprites.get(name) ?? null;
 }
 
+// load a sprite to asset manager
+export function loadSprite(
+    name: string | null,
+    src: LoadSpriteSrc | LoadSpriteSrc[],
+    opt: LoadSpriteOpt = {
+        sliceX: 1,
+        sliceY: 1,
+        anims: {},
+    },
+): Asset<SpriteData> {
+    src = fixURL(src);
+    if (Array.isArray(src)) {
+        if (src.some((s) => typeof s === "string")) {
+            return assets.sprites.add(
+                name,
+                Promise.all(src.map((s) => {
+                    return typeof s === "string"
+                        ? loadImg(s)
+                        : Promise.resolve(s);
+                })).then((images) => createSpriteSheet(images, opt)),
+            );
+        } else {
+            return assets.sprites.addLoaded(
+                name,
+                createSpriteSheet(src as ImageSource[], opt),
+            );
+        }
+    } else {
+        if (typeof src === "string") {
+            return assets.sprites.add(name, SpriteData.from(src, opt));
+        } else {
+            return assets.sprites.addLoaded(
+                name,
+                SpriteData.fromImage(src, opt),
+            );
+        }
+    }
+}
+
 export function slice(x = 1, y = 1, dx = 0, dy = 0, w = 1, h = 1): Quad[] {
     const frames: Quad[] = [];
     const qw = w / x;
@@ -127,4 +245,36 @@ export function slice(x = 1, y = 1, dx = 0, dy = 0, w = 1, h = 1): Quad[] {
         }
     }
     return frames;
+}
+
+// TODO: load synchronously if passed ImageSource
+
+export function createSpriteSheet(
+    images: ImageSource[],
+    opt: LoadSpriteOpt = {},
+): SpriteData {
+    const canvas = document.createElement("canvas");
+    const width = images[0].width;
+    const height = images[0].height;
+    canvas.width = width * images.length;
+    canvas.height = height;
+    const c2d = canvas.getContext("2d");
+    if (!c2d) throw new Error("Failed to create canvas context");
+    images.forEach((img, i) => {
+        if (img instanceof ImageData) {
+            c2d.putImageData(img, i * width, 0);
+        } else {
+            c2d.drawImage(img, i * width, 0);
+        }
+    });
+    const merged = c2d.getImageData(0, 0, images.length * width, height);
+    return SpriteData.fromImage(merged, {
+        ...opt,
+        sliceX: images.length,
+        sliceY: 1,
+    });
+}
+
+export function loadBean(name: string = "bean"): Asset<SpriteData> {
+    return loadSprite(name, beanSpriteSrc);
 }
