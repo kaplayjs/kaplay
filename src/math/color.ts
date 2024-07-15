@@ -1,4 +1,4 @@
-import { clamp, lerp } from "../math";
+import { clamp, lerp } from "./math";
 
 export type RGBValue = [number, number, number];
 export type RGBAValue = [number, number, number, number];

@@ -1,8 +1,10 @@
-import { getKaboomContext } from "../../kaboom";
-import { Vec2 } from "../../math";
-import type { Comp, GameObj, KaboomCtx, PosComp, QueryOpt } from "../../types";
+import { dt } from "../../app";
+import { game, k } from "../../kaplay";
+import { Vec2 } from "../../math/math";
+import type { Comp, GameObj, KaboomCtx, QueryOpt } from "../../types";
 import type { KEventController } from "../../utils/";
-import { raycast } from "../draw/raycast";
+import { raycast } from "../draw";
+import type { PosComp } from "../transform/pos";
 
 /**
  * The {@link sentry `sentry()`} component.
@@ -85,11 +87,10 @@ export function sentry(
     candidates: SentryCandidates,
     opts: SentryCompOpt = {},
 ): SentryComp {
-    const k = getKaboomContext(this);
     const get: SentryCandidatesCb = typeof candidates === "function"
         ? candidates
         : () => {
-            return k.query(candidates);
+            return game.root.query(candidates);
         };
     const checkFrequency = opts.checkFrequency || 1;
     const directionVector = typeof opts.direction === "number"
@@ -131,7 +132,7 @@ export function sentry(
             this: GameObj<SentryComp | PosComp>,
             obj: GameObj<PosComp>,
         ) {
-            const hit = k.raycast(
+            const hit = raycast(
                 this.pos,
                 obj.pos.sub(this.pos),
                 opts.raycastExclude,
@@ -139,7 +140,7 @@ export function sentry(
             return hit != null && hit.object === obj;
         },
         update(this: GameObj<SentryComp | PosComp>) {
-            t += k.dt();
+            t += dt();
             if (t > checkFrequency) {
                 t -= checkFrequency;
                 let objects = get();

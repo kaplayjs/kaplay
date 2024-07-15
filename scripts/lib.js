@@ -8,7 +8,7 @@ import ts from "typescript";
 
 const srcDir = "src";
 const distDir = "dist";
-const srcPath = `${srcDir}/kaboom.ts`;
+const srcPath = `${srcDir}/kaplay.ts`;
 
 const fmts = [
     {
@@ -78,7 +78,7 @@ export async function genDTS() {
         bundle: true,
         target: "esnext",
         format: "esm",
-        entryPoints: ["./src/kaboom.ts"],
+        entryPoints: ["./src/kaplay.ts"],
         outdir: "./dist/declaration/",
         plugins: [dTSPathAliasPlugin()],
         loader: {

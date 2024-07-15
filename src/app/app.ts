@@ -10,9 +10,9 @@ import type {
     Key,
     KGamePad,
     MouseButton,
-} from "./types";
+} from "../types";
 
-import { map, Vec2, vec2 } from "./math";
+import { map, Vec2, vec2 } from "../math/math";
 
 import {
     isEqOrIncludes,
@@ -20,9 +20,9 @@ import {
     KEventHandler,
     overload2,
     setHasOrIncludes,
-} from "./utils/";
+} from "../utils";
 
-import GAMEPAD_MAP from "./data/gamepad.json";
+import GAMEPAD_MAP from "../data/gamepad.json";
 
 export class ButtonState<T = string> {
     pressed: Set<T> = new Set([]);

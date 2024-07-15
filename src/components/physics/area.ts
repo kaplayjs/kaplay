@@ -1,8 +1,9 @@
 import { DEF_ANCHOR } from "../../constants";
-import { anchorPt } from "../../gfx";
-import { getKaboomContext } from "../../kaboom";
-import { Polygon, testPolygonPoint, Vec2, vec2 } from "../../math";
+import { isFixed } from "../../game/utils";
+import { anchorPt, getViewportScale } from "../../gfx";
+import { app, game, k } from "../../kaplay";
 import { rgb } from "../../math/color";
+import { Polygon, testPolygonPoint, Vec2, vec2 } from "../../math/math";
 import type {
     Collision,
     Comp,
@@ -10,13 +11,13 @@ import type {
     GameObj,
     KaboomCtx,
     MouseButton,
-    PosComp,
     Shape,
     Tag,
 } from "../../types";
 import type { KEventController } from "../../utils/";
 import type { AnchorComp } from "../transform/anchor";
 import type { FixedComp } from "../transform/fixed";
+import type { PosComp } from "../transform/pos";
 
 /**
  * The {@link area `area()`} component.
@@ -209,9 +210,6 @@ export interface AreaCompOpt {
 }
 
 export function area(this: KaboomCtx, opt: AreaCompOpt = {}): AreaComp {
-    const k = getKaboomContext(this);
-    const { app, isFixed, getViewportScale, game } = k._k;
-
     const colliding: Record<string, Collision> = {};
     const collidingThisFrame = new Set();
 

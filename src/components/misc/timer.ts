@@ -1,14 +1,14 @@
-import { getKaboomContext } from "../../kaboom";
-import { lerp } from "../../math";
+import { k } from "../../kaplay";
 import easings from "../../math/easings";
+import { lerp } from "../../math/math";
 import type {
     Comp,
     GameObj,
-    KEventController,
     LerpValue,
     TimerController,
     TweenController,
 } from "../../types";
+import type { KEventController } from "../../utils";
 
 /**
  * The {@link timer `timer()`} component.
@@ -48,7 +48,6 @@ export function timer(): TimerComp {
             time: number,
             action?: () => void,
         ): TimerController {
-            const k = getKaboomContext(this);
             const actions: Function[] = [];
 
             if (action) actions.push(action);
@@ -103,7 +102,6 @@ export function timer(): TimerComp {
             setValue: (value: V) => void,
             easeFunc = easings.linear,
         ) {
-            const k = getKaboomContext(this);
             let curTime = 0;
             const onEndEvents: Array<() => void> = [];
             const ev = this.onUpdate(() => {

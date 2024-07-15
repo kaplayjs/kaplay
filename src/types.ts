@@ -1,4 +1,18 @@
-import type { App } from "./app";
+import type {
+    AsepriteData,
+    Asset,
+    BitmapFontData,
+    LoadBitmapFontOpt,
+    LoadSpriteOpt,
+    LoadSpriteSrc,
+    ShaderData,
+    SoundData,
+    SpriteAtlasData,
+    SpriteData,
+    Uniform,
+} from "./assets";
+import type { FontData } from "./assets/font";
+import type { AudioPlay, AudioPlayOpt } from "./audio";
 import type {
     AgentComp,
     AgentCompOpt,
@@ -55,9 +69,25 @@ import type {
     ParticlesComp,
     ParticlesOpt,
 } from "./components/draw/particles";
-import type { AppGfxCtx, FrameBuffer, GfxCtx, Texture } from "./gfx";
-import type { Asset, AssetsCtx } from "./gfx/assets";
-import type { FontData } from "./gfx/fonts";
+import type { BoomOpt, LevelOpt, SceneDef, SceneName } from "./game";
+import type {
+    DrawBezierOpt,
+    DrawCircleOpt,
+    DrawCurveOpt,
+    DrawLineOpt,
+    DrawLinesOpt,
+    DrawRectOpt,
+    DrawSpriteOpt,
+    DrawTextOpt,
+    DrawTriangleOpt,
+    FormattedText,
+    FrameBuffer,
+    GfxCtx,
+    LineCap,
+    LineJoin,
+    Texture,
+} from "./gfx";
+import type { Color, RGBAValue, RGBValue } from "./math/color";
 import type {
     Circle,
     Ellipse,
@@ -66,129 +96,20 @@ import type {
     Point,
     Polygon,
     Quad,
-    RaycastHit,
     RaycastResult,
     Rect,
     RNG,
-    ShapeType,
     Vec2,
     Vec2Args,
-} from "./math";
-import type { Color, RGBAValue, RGBValue } from "./math/color";
+} from "./math/math";
 import type { NavMesh } from "./math/navigationmesh";
 import type { KEvent, KEventController, KEventHandler } from "./utils/";
-
-export type {
-    AgentComp,
-    AgentCompOpt,
-    AnchorComp,
-    AreaComp,
-    AreaCompOpt,
-    Asset,
-    BodyComp,
-    BodyCompOpt,
-    Circle,
-    CircleComp,
-    Color,
-    ColorComp,
-    DoubleJumpComp,
-    Ellipse,
-    FixedComp,
-    FollowComp,
-    FontData,
-    FrameBuffer,
-    HealthComp,
-    KEvent,
-    KEventController,
-    KEventHandler,
-    LayerComp,
-    LifespanCompOpt,
-    Line,
-    MaskComp,
-    Mat4,
-    NamedComp,
-    NavigationComp,
-    NavigationCompOpt,
-    OffScreenComp,
-    OffScreenCompOpt,
-    OpacityComp,
-    OutlineComp,
-    PatrolComp,
-    PatrolCompOpt,
-    Polygon,
-    PolygonComp,
-    PolygonCompOpt,
-    PosComp,
-    Quad,
-    RaycastHit,
-    RaycastResult,
-    Rect,
-    RectComp,
-    RectCompOpt,
-    RNG,
-    RotateComp,
-    ScaleComp,
-    SentryCandidates,
-    SentryComp,
-    SentryCompOpt,
-    ShaderComp,
-    ShapeType,
-    SpriteComp,
-    SpriteCompOpt,
-    StateComp,
-    StayComp,
-    TextComp,
-    TextCompOpt,
-    TextInputComp,
-    Texture,
-    TileComp,
-    TileCompOpt,
-    TimerComp,
-    UVQuadComp,
-    Vec2,
-    Vec2Args,
-    ZComp,
-};
 
 // for back compat with v3000
 export type {
     KEvent as Event,
     KEventController as EventController,
     KEventHandler as EventHandler,
-};
-
-export type InternalCtx = {
-    kaboomCtx: KaboomCtx;
-    app: App;
-    gfx: AppGfxCtx;
-    assets: AssetsCtx;
-    game: any;
-    loadProgress(): number;
-    screen2ndc(pt: Vec2): Vec2;
-    isFixed: (obj: GameObj) => boolean;
-    toFixed: (n: number, f: number) => number;
-    getViewportScale: () => number;
-    getRenderProps: (obj: GameObj) => {
-        color: Color;
-        opacity: number;
-        anchor: Anchor;
-        outline: Outline;
-        shader: Shader;
-        uniform: Uniform;
-    };
-    resolveSprite: (
-        src: DrawSpriteOpt["sprite"],
-    ) => Asset<SpriteData> | null;
-    drawTexture: (opt: DrawTextureOpt) => void;
-    drawRaw(
-        verts: Vertex[],
-        indices: number[],
-        fixed: boolean,
-        tex: Texture,
-        shaderSrc: RenderProps["shader"],
-        uniform: Uniform,
-    ): any;
-    calcTransform: (obj: GameObj) => Mat4;
 };
 
 /**
@@ -200,12 +121,6 @@ export interface KaboomCtx<
     TButtonDef extends ButtonsDef = {},
     TButton extends string = string,
 > {
-    /**
-     * The internal context object.
-     *
-     * @private
-     */
-    _k: InternalCtx;
     /**
      * Assemble a game object from a list of components, and add it to the game
      *
@@ -4070,12 +3985,6 @@ export interface GameObjRaw {
 export type GameObj<T = any> = GameObjRaw & MergeComps<T>;
 
 /**
- * The name of a scene.
- */
-export type SceneName = string;
-export type SceneDef = (...args: any) => void;
-
-/**
  * @group Options
  */
 export type GetOpt = {
@@ -4158,32 +4067,6 @@ export interface Recording {
 }
 
 /**
- * Frame-based animation configuration.
- */
-export type SpriteAnim = number | {
-    /**
-     * The starting frame.
-     */
-    from: number;
-    /**
-     * The end frame.
-     */
-    to: number;
-    /**
-     * If this anim should be played in loop.
-     */
-    loop?: boolean;
-    /**
-     * When looping should it move back instead of go to start frame again.
-     */
-    pingpong?: boolean;
-    /**
-     * This anim's speed in frames per second.
-     */
-    speed?: number;
-};
-
-/**
  * Sprite animation configuration when playing.
  */
 export interface SpriteAnimPlayOpt {
@@ -4205,140 +4088,6 @@ export interface SpriteAnimPlayOpt {
     onEnd?: () => void;
 }
 
-export interface PeditFile {
-    width: number;
-    height: number;
-    frames: string[];
-    anims: SpriteAnims;
-}
-
-/**
- * A dict of name <-> animation.
- */
-export type SpriteAnims = Record<string, SpriteAnim>;
-
-// TODO: support frameWidth and frameHeight as alternative to slice
-/**
- * Sprite loading configuration.
- */
-export interface LoadSpriteOpt {
-    /**
-     * If the defined area contains multiple sprites, how many frames are in the area hozizontally.
-     */
-    sliceX?: number;
-    /**
-     * If the defined area contains multiple sprites, how many frames are in the area vertically.
-     */
-    sliceY?: number;
-    /**
-     * 9 slice sprite for proportional scaling.
-     *
-     * @since v3000.0
-     */
-    slice9?: NineSlice;
-    /**
-     * Individual frames.
-     *
-     * @since v3000.0
-     */
-    frames?: Quad[];
-    /**
-     * Animation configuration.
-     */
-    anims?: SpriteAnims;
-}
-
-export type NineSlice = {
-    /**
-     * The width of the 9-slice's left column.
-     */
-    left: number;
-    /**
-     * The width of the 9-slice's right column.
-     */
-    right: number;
-    /**
-     * The height of the 9-slice's top row.
-     */
-    top: number;
-    /**
-     * The height of the 9-slice's bottom row.
-     */
-    bottom: number;
-};
-
-export type SpriteAtlasData = Record<string, SpriteAtlasEntry>;
-
-/**
- * A sprite in a sprite atlas.
- */
-export type SpriteAtlasEntry = LoadSpriteOpt & {
-    /**
-     * X position of the top left corner.
-     */
-    x: number;
-    /**
-     * Y position of the top left corner.
-     */
-    y: number;
-    /**
-     * Sprite area width.
-     */
-    width: number;
-    /**
-     * Sprite area height.
-     */
-    height: number;
-};
-
-export type LoadSpriteSrc = string | ImageSource;
-
-export type AsepriteData = {
-    frames: Array<{
-        frame: {
-            x: number;
-            y: number;
-            w: number;
-            h: number;
-        };
-    }>;
-    meta: {
-        size: { w: number; h: number };
-        frameTags: Array<{
-            name: string;
-            from: number;
-            to: number;
-            direction: "forward" | "reverse" | "pingpong";
-        }>;
-    };
-};
-
-export declare class SpriteData {
-    tex: Texture;
-    frames: Quad[];
-    anims: SpriteAnims;
-    /**
-     * @since v3001.0
-     */
-    width: number;
-    /**
-     * @since v3001.0
-     */
-    height: number;
-    slice9: NineSlice | null;
-    constructor(tex: Texture, frames?: Quad[], anims?: SpriteAnims);
-    static from(src: LoadSpriteSrc, opt?: LoadSpriteOpt): Promise<SpriteData>;
-    static fromImage(data: ImageSource, opt?: LoadSpriteOpt): SpriteData;
-    static fromURL(url: string, opt?: LoadSpriteOpt): Promise<SpriteData>;
-}
-
-export declare class SoundData {
-    buf: AudioBuffer;
-    constructor(buf: AudioBuffer);
-    static fromArrayBuffer(buf: ArrayBuffer): Promise<SoundData>;
-    static fromURL(url: string): Promise<SoundData>;
-}
-
 export type MusicData = string;
 
 export interface LoadFontOpt {
@@ -4350,123 +4099,6 @@ export interface LoadFontOpt {
      * @since v3001.0
      */
     size?: number;
-}
-
-export interface LoadBitmapFontOpt {
-    chars?: string;
-    filter?: TexFilter;
-    outline?: number;
-}
-
-export type BitmapFontData = GfxFont;
-export type ShaderData = Shader;
-
-// TODO: enable setting on load, make part of SoundData
-/**
- * Audio play configurations.
- */
-export interface AudioPlayOpt {
-    /**
-     * If audio should start out paused.
-     *
-     * @since v3000.0
-     */
-    paused?: boolean;
-    /**
-     * If audio should be played again from start when its ended.
-     */
-    loop?: boolean;
-    /**
-     * Volume of audio. 1.0 means full volume, 0.5 means half volume.
-     */
-    volume?: number;
-    /**
-     * Playback speed. 1.0 means normal playback speed, 2.0 means twice as fast.
-     */
-    speed?: number;
-    /**
-     * Detune the sound. Every 100 means a semitone.
-     *
-     * @example
-     * ```js
-     * // play a random note in the octave
-     * play("noteC", {
-     *     detune: randi(0, 12) * 100,
-     * })
-     * ```
-     */
-    detune?: number;
-    /**
-     * The start time, in seconds.
-     */
-    seek?: number;
-}
-
-export interface AudioPlay {
-    /**
-     * Start playing audio.
-     *
-     * @since v3000.0
-     */
-    play(time?: number): void;
-    /**
-     * Seek time.
-     *
-     * @since v3000.0
-     */
-    seek(time: number): void;
-    /**
-     * Stop the sound.
-     *
-     * @since v3001.0
-     */
-    stop(): void;
-    /**
-     * If the sound is paused.
-     *
-     * @since v2000.1
-     */
-    paused: boolean;
-    /**
-     * Playback speed of the sound. 1.0 means normal playback speed, 2.0 means twice as fast.
-     */
-    speed: number;
-    /**
-     * Detune the sound. Every 100 means a semitone.
-     *
-     * @example
-     * ```js
-     * // tune down a semitone
-     * music.detune = -100
-     *
-     * // tune up an octave
-     * music.detune = 1200
-     * ```
-     */
-    detune: number;
-    /**
-     * Volume of the sound. 1.0 means full volume, 0.5 means half volume.
-     */
-    volume: number;
-    /**
-     * If the audio should start again when it ends.
-     */
-    loop: boolean;
-    /**
-     * The current playing time (not accurate if speed is changed).
-     */
-    time(): number;
-    /**
-     * The total duration.
-     */
-    duration(): number;
-    /**
-     * Register an event that runs when audio ends.
-     *
-     * @since v3000.0
-     */
-    onEnd(action: () => void): KEventController;
-    then(action: () => void): KEventController;
 }
 
 export declare class Shader {
@@ -4496,12 +4128,6 @@ export type Canvas = {
     draw(action: () => void): void;
     free(): void;
 };
-
-export interface GfxFont {
-    tex: Texture;
-    map: Record<string, Quad>;
-    size: number;
-}
 
 export interface Vertex {
     pos: Vec2;
@@ -4542,48 +4168,6 @@ export type DrawTextureOpt = RenderProps & {
     anchor?: Anchor | Vec2;
 };
 
-/**
- * How the sprite should look like.
- */
-export type DrawSpriteOpt = RenderProps & {
-    /**
-     * The sprite name in the asset manager, or the raw sprite data.
-     */
-    sprite: string | SpriteData | Asset<SpriteData>;
-    /**
-     * If the sprite is loaded with multiple frames, or sliced, use the frame option to specify which frame to draw.
-     */
-    frame?: number;
-    /**
-     * Width of sprite. If `height` is not specified it'll stretch with aspect ratio. If `tiled` is set to true it'll tiled to the specified width horizontally.
-     */
-    width?: number;
-    /**
-     * Height of sprite. If `width` is not specified it'll stretch with aspect ratio. If `tiled` is set to true it'll tiled to the specified width vertically.
-     */
-    height?: number;
-    /**
-     * When set to true, `width` and `height` will not scale the sprite but instead render multiple tiled copies of them until the specified width and height. Useful for background texture pattern etc.
-     */
-    tiled?: boolean;
-    /**
-     * If flip the texture horizontally.
-     */
-    flipX?: boolean;
-    /**
-     * If flip the texture vertically.
-     */
-    flipY?: boolean;
-    /**
-     * The sub-area to render from the texture, by default it'll render the whole `quad(0, 0, 1, 1)`
-     */
-    quad?: Quad;
-    /**
-     * The anchor point, or the pivot point. Default to "topleft".
-     */
-    anchor?: Anchor | Vec2;
-};
-
 export type DrawUVQuadOpt = RenderProps & {
     /**
      * Width of the UV quad.
@@ -4609,195 +4193,6 @@ export type DrawUVQuadOpt = RenderProps & {
      * The texture sampling area.
      */
     quad?: Quad;
-    /**
-     * The anchor point, or the pivot point. Default to "topleft".
-     */
-    anchor?: Anchor | Vec2;
-};
-
-/**
- * How the rectangle should look like.
- */
-export type DrawRectOpt = RenderProps & {
-    /**
-     * Width of the rectangle.
-     */
-    width: number;
-    /**
-     * Height of the rectangle.
-     */
-    height: number;
-    /**
-     * Use gradient instead of solid color.
-     *
-     * @since v3000.0
-     */
-    gradient?: [Color, Color];
-    /**
-     * If the gradient should be horizontal.
-     *
-     * @since v3000.0
-     */
-    horizontal?: boolean;
-    /**
-     * If fill the shape with color (set this to false if you only want an outline).
-     */
-    fill?: boolean;
-    /**
-     * The radius of each corner.
-     */
-    radius?: number | number[];
-    /**
-     * The anchor point, or the pivot point. Default to "topleft".
-     */
-    anchor?: Anchor | Vec2;
-};
-
-/**
- * How the line should look like.
- */
-export type DrawLineOpt = Omit<RenderProps, "angle" | "scale"> & {
-    /**
-     * Starting point of the line.
-     */
-    p1: Vec2;
-    /**
-     * Ending point of the line.
-     */
-    p2: Vec2;
-    /**
-     * The width, or thickness of the line,
-     */
-    width?: number;
-};
-
-export type LineJoin =
-    | "none"
-    | "round"
-    | "bevel"
-    | "miter";
-
-export type LineCap =
-    | "butt"
-    | "round"
-    | "square";
-
-/**
- * How the lines should look like.
- */
-export type DrawLinesOpt = Omit<RenderProps, "angle" | "scale"> & {
-    /**
-     * The points that should be connected with a line.
-     */
-    pts: Vec2[];
-    /**
-     * The width, or thickness of the lines,
-     */
-    width?: number;
-    /**
-     * The radius of each corner.
-     */
-    radius?: number | number[];
-    /**
-     * Line join style (default "none").
-     */
-    join?: LineJoin;
-    /**
-     * Line cap style (default "none").
-     */
-    cap?: LineCap;
-    /**
-     * Maximum miter length, anything longer becomes bevel.
-     */
-    miterLimit?: number;
-};
-
-export type DrawCurveOpt = RenderProps & {
-    /**
-     * The amount of line segments to draw.
-     */
-    segments?: number;
-    /**
-     * The width of the line.
-     */
-    width?: number;
-};
-
-export type DrawBezierOpt = DrawCurveOpt & {
-    /**
-     * The first point.
-     */
-    pt1: Vec2;
-    /**
-     * The the first control point.
-     */
-    pt2: Vec2;
-    /**
-     * The the second control point.
-     */
-    pt3: Vec2;
-    /**
-     * The second point.
-     */
-    pt4: Vec2;
-};
-
-/**
- * How the triangle should look like.
- */
-export type DrawTriangleOpt = RenderProps & {
-    /**
-     * First point of triangle.
-     */
-    p1: Vec2;
-    /**
-     * Second point of triangle.
-     */
-    p2: Vec2;
-    /**
-     * Third point of triangle.
-     */
-    p3: Vec2;
-    /**
-     * If fill the shape with color (set this to false if you only want an outline).
-     */
-    fill?: boolean;
-    /**
-     * The radius of each corner.
-     */
-    radius?: number;
-};
-
-/**
- * How the circle should look like.
- */
-export type DrawCircleOpt = Omit<RenderProps, "angle"> & {
-    /**
-     * Radius of the circle.
-     */
-    radius: number;
-    /**
-     * Starting angle.
-     */
-    start?: number;
-    /**
-     * Ending angle.
-     */
-    end?: number;
-    /**
-     * If fill the shape with color (set this to false if you only want an outline).
-     */
-    fill?: boolean;
-    /**
-     * Use gradient instead of solid color.
-     *
-     * @since v3000.0
-     */
-    gradient?: [Color, Color];
-    /**
-     * Multiplier for circle vertices resolution (default 1)
-     */
-    resolution?: number;
     /**
      * The anchor point, or the pivot point. Default to "topleft".
      */
@@ -4927,123 +4322,6 @@ export interface Outline {
      * @since v3001.0
      */
     cap?: LineCap;
-}
-
-/**
- * How the text should be aligned.
- *
- * @group Draw
- */
-export type TextAlign =
-    | "center"
-    | "left"
-    | "right";
-
-/**
- * How the text should look like.
- *
- * @group Draw
- */
-export type DrawTextOpt = RenderProps & {
-    /**
-     * The text to render.
-     */
-    text: string;
-    /**
-     * The name of font to use.
-     */
-    font?:
-        | string
-        | FontData
-        | Asset<FontData>
-        | BitmapFontData
-        | Asset<BitmapFontData>;
-    /**
-     * The size of text (the height of each character).
-     */
-    size?: number;
-    /**
-     * Text alignment (default "left")
-     *
-     * @since v3000.0
-     */
-    align?: TextAlign;
-    /**
-     * The maximum width. Will wrap word around if exceed.
-     */
-    width?: number;
-    /**
-     * The gap between each line (only available for bitmap fonts).
-     *
-     * @since v2000.2
-     */
-    lineSpacing?: number;
-    /**
-     * The gap between each character (only available for bitmap fonts).
-     *
-     * @since v2000.2
-     */
-    letterSpacing?: number;
-    /**
-     * The anchor point, or the pivot point. Default to "topleft".
-     */
-    anchor?: Anchor | Vec2;
-    /**
-     * Transform the pos, scale, rotation or color for each character based on the index or char (only available for bitmap fonts).
-     *
-     * @since v2000.1
-     */
-    transform?: CharTransform | CharTransformFunc;
-    /**
-     * Stylesheet for styled chunks, in the syntax of "this is a [stylename]styled[/stylename] word" (only available for bitmap fonts).
-     *
-     * @since v2000.2
-     */
-    styles?: Record<string, CharTransform | CharTransformFunc>;
-};
-
-/**
- * Formatted text with info on how and where to render each character.
- */
-export type FormattedText = {
-    width: number;
-    height: number;
-    chars: FormattedChar[];
-    opt: DrawTextOpt;
-};
-
-/**
- * One formated character.
- */
-export interface FormattedChar {
-    ch: string;
-    tex: Texture;
-    width: number;
-    height: number;
-    quad: Quad;
-    pos: Vec2;
-    scale: Vec2;
-    angle: number;
-    color: Color;
-    opacity: number;
-}
-
-/**
- * A function that returns a character transform config. Useful if you're generating dynamic styles.
- */
-export type CharTransformFunc = (idx: number, ch: string) => CharTransform;
-
-/**
- * Describes how to transform each character.
- *
- * @group Options
- */
-export interface CharTransform {
-    pos?: Vec2;
-    scale?: Vec2 | number;
-    angle?: number;
-    color?: Color;
-    opacity?: number;
 }
 
 /**
@@ -5301,56 +4579,7 @@ export interface Debug {
     numObjects(): number;
 }
 
-/**
- * @group Math
- */
-export type UniformValue =
-    | number
-    | Vec2
-    | Color
-    | Mat4
-    | number[]
-    | Vec2[]
-    | Color[];
-
-/**
- * @group Math
- */
-export type UniformKey = Exclude<string, "u_tex">;
-/**
- * @group Math
- */
-export type Uniform = Record<UniformKey, UniformValue>;
-
 export type Mask = "intersect" | "subtract";
-
-/**
- * @group Options
- */
-export interface LevelOpt {
-    /**
-     * Width of each block.
-     */
-    tileWidth: number;
-    /**
-     * Height of each block.
-     */
-    tileHeight: number;
-    /**
-     * Position of the first block.
-     */
-    pos?: Vec2;
-    /**
-     * Definition of each tile.
-     */
-    tiles: {
-        [sym: string]: (pos: Vec2) => CompList<any>;
-    };
-    /**
-     * Called when encountered a symbol not defined in "tiles".
-     */
-    wildcardTile?: (sym: string, pos: Vec2) => CompList<any> | null | undefined;
-}
 
 /**
  * @group Math
@@ -5456,26 +4685,6 @@ export interface LevelComp extends Comp {
 export type PathFindOpt = {
     allowDiagonals?: boolean;
 };
-
-/**
- * @group Options
- */
-export interface BoomOpt {
-    /**
-     * Animation speed.
-     */
-    speed?: number;
-    /**
-     * Scale.
-     */
-    scale?: number;
-    /**
-     * Additional components.
-     *
-     * @since v3000.0
-     */
-    comps?: CompList<any>;
-}
 
 /**
  * The list of easing functions available.

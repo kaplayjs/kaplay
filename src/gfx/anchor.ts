@@ -1,5 +1,6 @@
-import { Vec2 } from "../math";
-import { type Anchor, type TextAlign } from "../types";
+import { Vec2 } from "../math/math";
+import { type Anchor } from "../types";
+import type { TextAlign } from "./draw";
 
 // convert anchor string to a vec2 offset
 export function anchorPt(orig: Anchor | Vec2): Vec2 {

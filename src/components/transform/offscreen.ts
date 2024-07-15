@@ -1,6 +1,6 @@
 import { DEF_OFFSCREEN_DIS } from "../../constants";
-import { getKaboomContext } from "../../kaboom";
-import { Rect, vec2 } from "../../math";
+import { k } from "../../kaplay";
+import { Rect, vec2 } from "../../math/math";
 import type { Comp, GameObj, KaboomCtx } from "../../types";
 import type { KEventController } from "../../utils/";
 import type { PosComp } from "./pos";
@@ -55,7 +55,6 @@ export function offscreen(
     this: KaboomCtx,
     opt: OffScreenCompOpt = {},
 ): OffScreenComp {
-    const k = getKaboomContext(this);
     const distance = opt.distance ?? DEF_OFFSCREEN_DIS;
     let isOut = false;
 

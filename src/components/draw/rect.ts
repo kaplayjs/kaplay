@@ -1,7 +1,7 @@
-import { withKaboomCtx } from "../../core/context";
-import { getKaboomContext } from "../../kaboom";
-import { Rect, vec2 } from "../../math";
-import type { Comp, GameObj, KaboomCtx } from "../../types";
+import { getRenderProps } from "../../game/utils";
+import { drawRect } from "../../gfx";
+import { Rect, vec2 } from "../../math/math";
+import type { Comp, GameObj } from "../../types";
 
 /**
  * The {@link rect `rect()`} component.
@@ -44,32 +44,27 @@ export interface RectCompOpt {
     fill?: boolean;
 }
 
-export const ctxRect = withKaboomCtx(
-    function(kCtx, w: number, h: number, opt: RectCompOpt = {}): RectComp {
-        const k = kCtx;
-        const { getRenderProps } = k._k;
-
-        return {
-            id: "rect",
-            width: w,
-            height: h,
-            radius: opt.radius || 0,
-            draw(this: GameObj<RectComp>) {
-                k.drawRect(Object.assign(getRenderProps(this), {
-                    width: this.width,
-                    height: this.height,
-                    radius: this.radius,
-                    fill: opt.fill,
-                }));
-            },
-            renderArea() {
-                return new Rect(vec2(0), this.width, this.height);
-            },
-            inspect() {
-                return `rect: (${Math.ceil(this.width)}w, ${
-                    Math.ceil(this.height)
-                }h)`;
-            },
-        };
-    },
-);
+export function rect(w: number, h: number, opt: RectCompOpt = {}): RectComp {
+    return {
+        id: "rect",
+        width: w,
+        height: h,
+        radius: opt.radius || 0,
+        draw(this: GameObj<RectComp>) {
+            drawRect(Object.assign(getRenderProps(this), {
+                width: this.width,
+                height: this.height,
+                radius: this.radius,
+                fill: opt.fill,
+            }));
+        },
+        renderArea() {
+            return new Rect(vec2(0), this.width, this.height);
+        },
+        inspect() {
+            return `rect: (${Math.ceil(this.width)}w, ${
+                Math.ceil(this.height)
+            }h)`;
+        },
+    };
+}

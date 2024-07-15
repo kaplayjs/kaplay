@@ -1,14 +1,13 @@
 import { SPRITE_ATLAS_HEIGHT, SPRITE_ATLAS_WIDTH } from "../constants";
-import type {
-    BitmapFontData,
-    FontData,
-    ShaderData,
-    SoundData,
-    SpriteData,
-} from "../kaboom";
-import { KEvent } from "../utils/";
-import type { GfxCtx } from "./gfx";
-import TexPacker from "./texPacker";
+import type { GfxCtx } from "../gfx/gfx";
+import TexPacker from "../gfx/texPacker";
+import { assets } from "../kaplay";
+import { KEvent } from "../utils";
+import type { BitmapFontData } from "./bitmapFont";
+import type { FontData } from "./font";
+import type { ShaderData } from "./shader";
+import type { SoundData } from "./sound";
+import type { SpriteData } from "./sprite";
 
 /**
  * An asset is a resource that is loaded asynchronously.
@@ -132,6 +131,18 @@ export function fetchArrayBuffer(path: string) {
     return fetchURL(path).then((res) => res.arrayBuffer());
 }
 
+// global load path prefix
+export function loadRoot(path?: string): string {
+    if (path !== undefined) {
+        assets.urlPrefix = path;
+    }
+    return assets.urlPrefix;
+}
+
+export function loadJSON(name: string, url: string) {
+    return assets.custom.add(name, fetchJSON(url));
+}
+
 // wrapper around image loader to get a Promise
 export function loadImg(src: string): Promise<HTMLImageElement> {
     const img = new Image();
@@ -142,6 +153,28 @@ export function loadImg(src: string): Promise<HTMLImageElement> {
         img.onerror = () =>
             reject(new Error(`Failed to load image from "${src}"`));
     });
+}
+
+export function loadProgress(): number {
+    const buckets = [
+        assets.sprites,
+        assets.sounds,
+        assets.shaders,
+        assets.fonts,
+        assets.bitmapFonts,
+        assets.custom,
+    ];
+    return buckets.reduce((n, bucket) => n + bucket.progress(), 0)
+        / buckets.length;
+}
+
+export function getAsset(name: string): Asset<any> | null {
+    return assets.custom.get(name) ?? null;
+}
+
+// wrap individual loaders with global loader counter, for stuff like progress bar
+export function load<T>(prom: Promise<T>): Asset<T> {
+    return assets.custom.add(null, prom);
 }
 
 // create assets

@@ -1,5 +1,6 @@
-import { getKaboomContext } from "../../kaboom";
-import type { Comp, EaseFunc, KaboomCtx, TweenController } from "../../types";
+import { game, k } from "../../kaplay";
+import type { Comp, EaseFunc, TweenController } from "../../types";
+import { toFixed } from "../../utils";
 
 /**
  * The {@link opacity `opacity()`} component.
@@ -15,18 +16,12 @@ export interface OpacityComp extends Comp {
     fadeOut(time?: number, easeFunc?: EaseFunc): TweenController;
 }
 
-export function opacity(
-    this: KaboomCtx,
-    a: number,
-): OpacityComp {
-    const k = getKaboomContext(this);
-    const { toFixed } = k._k;
-
+export function opacity(a: number): OpacityComp {
     return {
         id: "opacity",
         opacity: a ?? 1,
         fadeIn(time = 1, easeFunc = k.easings.linear): TweenController {
-            return k.tween(
+            return game.root.tween(
                 0,
                 this.opacity,
                 time,
@@ -35,7 +30,7 @@ export function opacity(
             );
         },
         fadeOut(time = 1, easeFunc = k.easings.linear): TweenController {
-            return k.tween(
+            return game.root.tween(
                 this.opacity,
                 0,
                 time,

@@ -1,4 +1,5 @@
-import type { Comp, Uniform } from "../../types";
+import type { Uniform } from "../../assets";
+import type { Comp } from "../../types";
 
 /**
  * The {@link shader `shader()`} component.

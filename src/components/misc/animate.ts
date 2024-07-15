@@ -1,14 +1,9 @@
-import { getKaboomContext } from "../../kaboom";
-import { evaluateCatmullRom, lerp, Vec2 } from "../../math";
+import { dt } from "../../app";
 import { Color } from "../../math/color";
 import easings from "../../math/easings";
-import type {
-    Comp,
-    EaseFunc,
-    GameObj,
-    KEventController,
-    LerpValue,
-} from "../../types";
+import { evaluateCatmullRom, lerp, Vec2 } from "../../math/math";
+import type { Comp, EaseFunc, GameObj, LerpValue } from "../../types";
+import type { KEventController } from "../../utils";
 
 type AnimateEndBehavior =
     /* Go directly back to the start */
@@ -263,7 +258,6 @@ class AnimateChannelColor extends AnimateChannel {
 }
 
 export function animate(): AnimateComp {
-    const k = getKaboomContext();
     const channels: AnimateChannel[] = [];
     let t = 0;
     let isFinished = false;
@@ -271,7 +265,7 @@ export function animate(): AnimateComp {
         update() {
             let allFinished: boolean = true;
             let localFinished: boolean;
-            t += k.dt();
+            t += dt();
             for (const c of channels) {
                 localFinished = c.update(this as unknown as GameObj<any>, t);
                 if (localFinished && !c.isFinished) {

@@ -1,6 +1,7 @@
-import { getKaboomContext } from "../../kaboom";
-import { Rect, Vec2 } from "../../math";
-import type { Comp, GameObj, KaboomCtx } from "../../types";
+import { getRenderProps } from "../../game/utils";
+import { drawCircle } from "../../gfx";
+import { Rect, Vec2 } from "../../math/math";
+import type { Comp, GameObj } from "../../types";
 import type { AnchorComp } from "../transform/anchor";
 import type { outline } from "./outline";
 
@@ -34,19 +35,12 @@ export interface CircleCompOpt {
     fill?: boolean;
 }
 
-export function circle(
-    this: KaboomCtx,
-    radius: number,
-    opt: CircleCompOpt = {},
-): CircleComp {
-    const k = getKaboomContext(this);
-    const { getRenderProps } = k._k;
-
+export function circle(radius: number, opt: CircleCompOpt = {}): CircleComp {
     return {
         id: "circle",
         radius: radius,
         draw(this: GameObj<CircleComp>) {
-            k.drawCircle(Object.assign(getRenderProps(this), {
+            drawCircle(Object.assign(getRenderProps(this), {
                 radius: this.radius,
                 fill: opt.fill,
             }));

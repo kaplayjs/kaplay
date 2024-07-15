@@ -1,16 +1,17 @@
 // TODO: accept canvas
 
-import type { Texture } from "../../gfx";
-import { getKaboomContext } from "../../kaboom";
-import { Quad, quad, type Rect, Vec2, vec2 } from "../../math";
+import { dt } from "../../app";
+import type { Asset, SpriteData } from "../../assets";
+import { resolveSprite } from "../../assets/sprite";
+import { onLoad } from "../../game";
+import { getRenderProps } from "../../game/utils";
+import { drawTexture, type Texture } from "../../gfx";
+import { Quad, quad, Rect, Vec2, vec2 } from "../../math";
 import type {
-    Asset,
     Comp,
     GameObj,
-    KaboomCtx,
     SpriteAnimPlayOpt,
     SpriteCurAnim,
-    SpriteData,
 } from "../../types";
 import { KEvent, KEventController } from "../../utils/";
 
@@ -141,13 +142,9 @@ export interface SpriteCompOpt {
 
 // TODO: clean
 export function sprite(
-    this: KaboomCtx,
     src: string | SpriteData | Asset<SpriteData>,
     opt: SpriteCompOpt = {},
 ): SpriteComp {
-    const k = getKaboomContext(this);
-    const { drawTexture, getRenderProps, resolveSprite } = k._k;
-
     let spriteData: SpriteData | null = null;
     let curAnim: SpriteCurAnim | null = null;
     // 1  - from small index to large index
@@ -305,7 +302,7 @@ export function sprite(
             if (spr) {
                 spr.onLoad(setSpriteData);
             } else {
-                k.onLoad(() => setSpriteData(resolveSprite(src)!.data));
+                onLoad(() => setSpriteData(resolveSprite(src)!.data));
             }
         },
 
@@ -325,7 +322,7 @@ export function sprite(
                 throw new Error("Sprite anim speed cannot be 0");
             }
 
-            curAnim.timer += k.dt() * this.animSpeed;
+            curAnim.timer += dt() * this.animSpeed;
 
             if (curAnim.timer >= (1 / curAnim.speed)) {
                 curAnim.timer = 0;
@@ -453,7 +450,7 @@ export function sprite(
         },
 
         renderArea() {
-            return new k.Rect(vec2(0), this.width, this.height);
+            return new Rect(vec2(0), this.width, this.height);
         },
 
         inspect() {

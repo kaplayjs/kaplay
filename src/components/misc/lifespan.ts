@@ -1,6 +1,7 @@
-import { getKaboomContext } from "../../kaboom";
+import { game } from "../../kaplay";
 import easings from "../../math/easings";
-import type { EmptyComp, GameObj, KaboomCtx, OpacityComp } from "../../types";
+import type { EmptyComp, GameObj, KaboomCtx } from "../../types";
+import type { OpacityComp } from "../draw/opacity";
 
 /**
  * The {@link lifespan `lifespan()`} component.
@@ -19,8 +20,6 @@ export function lifespan(
     time: number,
     opt: LifespanCompOpt = {},
 ): EmptyComp {
-    const k = getKaboomContext(this);
-
     if (time == null) {
         throw new Error("lifespan() requires time");
     }
@@ -29,10 +28,10 @@ export function lifespan(
         id: "lifespan",
         require: ["opacity"],
         async add(this: GameObj<OpacityComp>) {
-            await k.wait(time);
+            await game.root.wait(time);
             this.opacity = this.opacity ?? 1;
             if (fade > 0) {
-                await k.tween(
+                await game.root.tween(
                     this.opacity,
                     0,
                     fade,

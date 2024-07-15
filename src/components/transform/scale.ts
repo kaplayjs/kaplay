@@ -1,6 +1,5 @@
-import { getKaboomContext } from "../../kaboom";
-import { type Vec2, vec2, type Vec2Args } from "../../math";
-import type { Comp, KaboomCtx } from "../../types";
+import { type Vec2, vec2, type Vec2Args } from "../../math/math";
+import type { Comp } from "../../types";
 
 /**
  * The {@link scale `scale()`} component.
@@ -18,12 +17,9 @@ export interface ScaleComp extends Comp {
 }
 
 // TODO: allow single number assignment
-export function scale(this: KaboomCtx, ...args: Vec2Args): ScaleComp {
-    const k = getKaboomContext(this);
-    const { toFixed } = k._k;
-
+export function scale(...args: Vec2Args): ScaleComp {
     if (args.length === 0) {
-        return k.scale(1);
+        return scale(1);
     }
     return {
         id: "scale",
