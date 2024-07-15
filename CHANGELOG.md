@@ -32,6 +32,10 @@ setButton("jump", {
     keyboard: ["w"],
     // gamepad binding is not changed
 });
+
+onButtonPress(() => {
+    console.log(getLastDevice());
+});
 ```
 
 - now you can use array in all input handlers
