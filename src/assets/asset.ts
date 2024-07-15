@@ -131,6 +131,18 @@ export function fetchArrayBuffer(path: string) {
     return fetchURL(path).then((res) => res.arrayBuffer());
 }
 
+// global load path prefix
+export function loadRoot(path?: string): string {
+    if (path !== undefined) {
+        assets.urlPrefix = path;
+    }
+    return assets.urlPrefix;
+}
+
+export function loadJSON(name: string, url: string) {
+    return assets.custom.add(name, fetchJSON(url));
+}
+
 // wrapper around image loader to get a Promise
 export function loadImg(src: string): Promise<HTMLImageElement> {
     const img = new Image();

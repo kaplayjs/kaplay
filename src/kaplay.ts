@@ -70,9 +70,11 @@ import {
     loadBean,
     loadBitmapFont,
     loadFont,
+    loadJSON,
     loadMusic,
     loadPedit,
     loadProgress,
+    loadRoot,
     loadShader,
     loadShaderURL,
     loadSound,
@@ -225,6 +227,8 @@ import {
     addLevel,
     destroy,
     type Game,
+    getGravity,
+    getGravityDirection,
     getSceneName,
     getTreeRoot,
     go,
@@ -244,11 +248,14 @@ import {
     onHover,
     onHoverEnd,
     onHoverUpdate,
+    onLoad,
     onLoading,
     onResize,
     onSceneLeave,
     onUpdate,
     scene,
+    setGravity,
+    setGravityDirection,
 } from "./game";
 
 import boomSpriteSrc from "./kassets/boom.png";
@@ -417,18 +424,6 @@ const kaplay = <
 
     game.root.use(timer());
 
-    // global load path prefix
-    function loadRoot(path?: string): string {
-        if (path !== undefined) {
-            assets.urlPrefix = path;
-        }
-        return assets.urlPrefix;
-    }
-
-    function loadJSON(name: string, url: string) {
-        return assets.custom.add(name, fetchJSON(url));
-    }
-
     function makeCanvas(w: number, h: number) {
         const fb = new FrameBuffer(ggl, w, h);
         return {
@@ -557,36 +552,6 @@ const kaplay = <
             }
         },
     };
-
-    function setGravity(g: number) {
-        // If g > 0 use either the current direction or use (0, 1)
-        // Else null
-        game.gravity = g ? (game.gravity || vec2(0, 1)).unit().scale(g) : null;
-    }
-
-    function getGravity() {
-        // If gravity > 0 return magnitude
-        // Else 0
-        return game.gravity ? game.gravity.len() : 0;
-    }
-
-    function setGravityDirection(d: Vec2) {
-        // If gravity > 0 keep magnitude, otherwise use 1
-        game.gravity = d.unit().scale(game.gravity ? game.gravity.len() : 1);
-    }
-
-    function getGravityDirection() {
-        // If gravity != null return unit vector, otherwise return (0, 1)
-        return game.gravity ? game.gravity.unit() : vec2(0, 1);
-    }
-
-    function onLoad(cb: () => void): void {
-        if (assets.loaded) {
-            cb();
-        } else {
-            game.events.on("load", cb);
-        }
-    }
 
     function getData<T>(key: string, def?: T): T | null {
         try {

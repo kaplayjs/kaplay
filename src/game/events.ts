@@ -1,6 +1,6 @@
 // add an event to a tag
 
-import { app, game } from "../kaplay";
+import { app, assets, game } from "../kaplay";
 import type { Collision, GameObj, Tag } from "../types";
 import {
     KEventController,
@@ -178,4 +178,12 @@ export function onResize(action: () => void) {
 
 export function onError(action: (err: Error) => void) {
     game.events.on("error", action);
+}
+
+export function onLoad(cb: () => void): void {
+    if (assets.loaded) {
+        cb();
+    } else {
+        game.events.on("load", cb);
+    }
 }
