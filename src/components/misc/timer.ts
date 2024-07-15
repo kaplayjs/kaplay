@@ -1,4 +1,4 @@
-import { k } from "../../kaboom";
+import { k } from "../../kaplay";
 import easings from "../../math/easings";
 import { lerp } from "../../math/math";
 import type {

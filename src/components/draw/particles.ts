@@ -1,5 +1,5 @@
 import { drawRaw, type Texture } from "../../gfx";
-import { k } from "../../kaboom";
+import { k } from "../../kaplay";
 import { Color } from "../../math/color";
 import { lerp, map, Quad, type ShapeType, Vec2, vec2 } from "../../math/math";
 import type { Comp, KaboomCtx, Vertex } from "../../types";

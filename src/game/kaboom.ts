@@ -1,5 +1,5 @@
 import { anchor, boom, pos, scale, sprite, stay, timer } from "../components";
-import { boomSprite, game, kaSprite } from "../kaboom";
+import { boomSprite, game, kaSprite } from "../kaplay";
 import type { Vec2 } from "../math";
 import type { CompList, GameObj } from "../types";
 

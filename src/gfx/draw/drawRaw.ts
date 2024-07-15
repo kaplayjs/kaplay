@@ -1,5 +1,5 @@
 import { Asset, resolveShader, type Uniform } from "../../assets";
-import { game, gfx } from "../../kaboom";
+import { game, gfx } from "../../kaplay";
 import { screen2ndc } from "../../math/various";
 import type { RenderProps, Vertex } from "../../types";
 import type { Texture } from "../gfx";

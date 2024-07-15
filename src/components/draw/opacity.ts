@@ -1,4 +1,4 @@
-import { k } from "../../kaboom";
+import { k } from "../../kaplay";
 import type { Comp, EaseFunc, TweenController } from "../../types";
 import { toFixed } from "../../utils";
 

@@ -1,4 +1,4 @@
-import { game } from "../kaboom";
+import { game } from "../kaplay";
 import type { GameObj } from "../types";
 
 export function destroy(obj: GameObj) {

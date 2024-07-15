@@ -1,4 +1,4 @@
-import { app, game } from "../kaboom";
+import { app, game } from "../kaplay";
 import { Mat4, vec2 } from "../math/math";
 import type { KEventController } from "../utils";
 import { initEvents } from "./initEvents";

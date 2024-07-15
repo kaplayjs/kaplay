@@ -1,5 +1,5 @@
 import { pos, type PosComp, tile } from "../components";
-import { game } from "../kaboom";
+import { game } from "../kaplay";
 import {
     raycastGrid,
     type RaycastResult,

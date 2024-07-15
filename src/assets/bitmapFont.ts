@@ -1,6 +1,6 @@
 import { ASCII_CHARS } from "../constants";
 import { Texture } from "../gfx";
-import { assets, gfx } from "../kaboom";
+import { assets, gfx } from "../kaplay";
 import type { Quad } from "../math/math";
 import type { TexFilter } from "../types";
 import { type Asset, loadImg } from "./asset";

@@ -1,4 +1,4 @@
-import { audio } from "../kaboom";
+import { audio } from "../kaplay";
 
 // get / set master volume
 export function volume(v?: number): number {

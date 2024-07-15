@@ -2,7 +2,7 @@ import type { BitmapFontData } from "../../assets";
 import { DEF_TEXT_SIZE } from "../../constants";
 import { getRenderProps } from "../../game/utils";
 import type { CharTransform, CharTransformFunc, TextAlign } from "../../gfx";
-import { k } from "../../kaboom";
+import { k } from "../../kaplay";
 import { Rect, vec2 } from "../../math/math";
 import type { Comp, GameObj, KaboomCtx } from "../../types";
 

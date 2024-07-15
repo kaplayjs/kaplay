@@ -1,4 +1,4 @@
-import { k } from "../../kaboom";
+import { k } from "../../kaplay";
 import easings from "../../math/easings";
 import type { EmptyComp, GameObj, KaboomCtx } from "../../types";
 import type { OpacityComp } from "../draw/opacity";

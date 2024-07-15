@@ -1,4 +1,4 @@
-import { game } from "../../kaboom";
+import { game } from "../../kaplay";
 import type { Comp, KaboomCtx } from "../../types";
 
 /**

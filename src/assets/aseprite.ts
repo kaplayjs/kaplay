@@ -1,4 +1,4 @@
-import { assets } from "../kaboom";
+import { assets } from "../kaplay";
 import { Quad } from "../math";
 import { getFileName } from "../utils";
 import { type Asset, fetchJSON } from "./asset";

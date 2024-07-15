@@ -1,4 +1,4 @@
-import { app, audio, debug, globalOpt } from "../kaboom";
+import { app, audio, debug, globalOpt } from "../kaplay";
 import { clamp } from "../math/math";
 import { KEvent } from "../utils";
 import type { AudioPlay, AudioPlayOpt } from "./play";

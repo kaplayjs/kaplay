@@ -1,4 +1,4 @@
-import { gfx } from "../../kaboom";
+import { gfx } from "../../kaplay";
 import { Color } from "../../math/color";
 import { triangulate, Vec2 } from "../../math/math";
 import type { DrawPolygonOpt } from "../../types";

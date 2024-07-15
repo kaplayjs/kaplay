@@ -1,4 +1,4 @@
-import { gfx } from "../kaboom";
+import { gfx } from "../kaplay";
 import { type ColorArgs, rgb } from "../math";
 
 export function setBackground(...args: ColorArgs) {

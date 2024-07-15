@@ -1,6 +1,6 @@
 // add an event to a tag
 
-import { app, game } from "../kaboom";
+import { app, game } from "../kaplay";
 import type { Collision, GameObj, Tag } from "../types";
 import {
     KEventController,

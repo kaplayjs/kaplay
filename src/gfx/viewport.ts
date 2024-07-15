@@ -1,4 +1,4 @@
-import { gfx, globalOpt, pixelDensity } from "../kaboom";
+import { gfx, globalOpt, pixelDensity } from "../kaplay";
 
 // update viewport based on user setting and fullscreen state
 export function updateViewport() {

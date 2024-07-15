@@ -4,7 +4,7 @@ import type { Asset, SpriteData } from "../../assets";
 import { resolveSprite } from "../../assets/sprite";
 import { getRenderProps } from "../../game/utils";
 import { drawTexture, type Texture } from "../../gfx";
-import { k } from "../../kaboom";
+import { k } from "../../kaplay";
 import { Quad, quad, type Rect, Vec2, vec2 } from "../../math/math";
 import type {
     Comp,

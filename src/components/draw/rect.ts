@@ -1,5 +1,5 @@
 import { getRenderProps } from "../../game/utils";
-import { k } from "../../kaboom";
+import { k } from "../../kaplay";
 import { Rect, vec2 } from "../../math/math";
 import type { Comp, GameObj } from "../../types";
 

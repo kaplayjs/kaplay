@@ -1,5 +1,5 @@
 import { dt } from "../../app/frame";
-import { game } from "../../kaboom";
+import { game } from "../../kaplay";
 import { lerp, Mat4, rand, Vec2 } from "../../math/math";
 import { center, flush } from "../stack";
 

@@ -1,6 +1,6 @@
 import { getRenderProps } from "../../game/utils";
 import type { Texture } from "../../gfx";
-import { k } from "../../kaboom";
+import { k } from "../../kaplay";
 import { type Color } from "../../math/color";
 import { Polygon, type Vec2 } from "../../math/math";
 import type { Comp, DrawPolygonOpt, GameObj, KaboomCtx } from "../../types";

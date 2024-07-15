@@ -1,5 +1,5 @@
 import { Asset, resolveSound, type SoundData } from "../assets";
-import { assets, audio } from "../kaboom";
+import { assets, audio } from "../kaplay";
 import type { MusicData } from "../types";
 import { KEvent, type KEventController } from "../utils";
 import { playMusic } from "./playMusic";

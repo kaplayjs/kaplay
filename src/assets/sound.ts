@@ -1,4 +1,4 @@
-import { assets, audio } from "../kaboom";
+import { assets, audio } from "../kaplay";
 import { dataURLToArrayBuffer, isDataURL } from "../utils";
 import { Asset, fetchArrayBuffer, loadProgress } from "./asset";
 import { fixURL } from "./utils";

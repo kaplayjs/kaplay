@@ -158,7 +158,7 @@ import {
     KEvent,
     KEventController,
     KEventHandler,
-} from "./utils/";
+} from "./utils";
 
 import type {
     ButtonsDef,

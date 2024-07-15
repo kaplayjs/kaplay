@@ -1,4 +1,4 @@
-import { k } from "../../kaboom";
+import { k } from "../../kaplay";
 import { Color } from "../../math/color";
 import easings from "../../math/easings";
 import { evaluateCatmullRom, lerp, Vec2 } from "../../math/math";

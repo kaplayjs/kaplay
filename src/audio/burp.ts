@@ -1,4 +1,4 @@
-import { audio } from "../kaboom";
+import { audio } from "../kaplay";
 import { type AudioPlay, type AudioPlayOpt, play } from "./play";
 
 // core kaboom logic

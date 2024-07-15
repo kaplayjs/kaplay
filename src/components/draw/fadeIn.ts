@@ -1,4 +1,4 @@
-import { k } from "../../kaboom";
+import { k } from "../../kaplay";
 import type { Comp, GameObj, KaboomCtx } from "../../types";
 import type { OpacityComp } from "./opacity";
 

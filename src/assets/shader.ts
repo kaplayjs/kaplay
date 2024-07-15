@@ -6,7 +6,7 @@ import {
     VERTEX_FORMAT,
 } from "../constants";
 import { type GfxCtx } from "../gfx";
-import { assets, gfx } from "../kaboom";
+import { assets, gfx } from "../kaplay";
 import { Color } from "../math/color";
 import { Mat4, Vec2 } from "../math/math";
 import type { RenderProps } from "../types";

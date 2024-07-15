@@ -9,7 +9,7 @@ import {
     globalOpt,
     gscale,
     pixelDensity,
-} from "../kaboom";
+} from "../kaplay";
 import { clamp } from "../math/math";
 import { toFixed } from "../utils";
 

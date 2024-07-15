@@ -1,4 +1,4 @@
-import { k } from "../../kaboom";
+import { k } from "../../kaplay";
 import type { Comp, GameObj, KaboomCtx } from "../../types";
 import type { KEventController } from "../../utils";
 import type { TextComp } from "../draw/text";

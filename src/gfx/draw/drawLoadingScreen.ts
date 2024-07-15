@@ -1,5 +1,5 @@
 import { loadProgress } from "../../assets";
-import { game } from "../../kaboom";
+import { game } from "../../kaplay";
 import { rgb } from "../../math/color";
 import { vec2 } from "../../math/math";
 import { height, width } from "../stack";

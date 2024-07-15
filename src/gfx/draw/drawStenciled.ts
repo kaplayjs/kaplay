@@ -1,4 +1,4 @@
-import { gfx } from "../../kaboom";
+import { gfx } from "../../kaplay";
 import { flush } from "../stack";
 
 export function drawStenciled(

@@ -6,7 +6,7 @@ import {
 } from "../constants";
 import type { Texture } from "../gfx";
 import type { DrawTextOpt } from "../gfx/draw/drawText";
-import { assets, globalOpt } from "../kaboom";
+import { assets, globalOpt } from "../kaplay";
 import { rgb } from "../math/color";
 import { Quad } from "../math/math";
 import type { LoadFontOpt, Outline, TexFilter } from "../types";

@@ -1,5 +1,5 @@
 import { SPRITE_ATLAS_HEIGHT, SPRITE_ATLAS_WIDTH } from "../constants";
-import { assets } from "../kaboom";
+import { assets } from "../kaplay";
 import { Quad } from "../math";
 import { type Asset, fetchJSON, load } from "./asset";
 import {

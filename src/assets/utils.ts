@@ -1,4 +1,4 @@
-import { assets } from "../kaboom";
+import { assets } from "../kaplay";
 import { isDataURL } from "../utils";
 
 export function fixURL<D>(url: D): D {

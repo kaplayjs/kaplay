@@ -1,4 +1,4 @@
-import { app, gfx } from "../kaboom";
+import { app, gfx } from "../kaplay";
 import { type Mat4, Vec2, vec2, type Vec2Args } from "../math/math";
 
 export function pushTranslate(...args: Vec2Args | [undefined]) {

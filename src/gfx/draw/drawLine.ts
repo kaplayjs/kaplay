@@ -1,4 +1,4 @@
-import { gfx } from "../../kaboom";
+import { gfx } from "../../kaplay";
 import { Color } from "../../math/color";
 import { deg2rad, Vec2, vec2 } from "../../math/math";
 import type { RenderProps } from "../../types";

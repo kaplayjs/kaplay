@@ -15,7 +15,7 @@ import {
     pushTransform,
     pushTranslate,
 } from "../gfx";
-import { app, game, gfx, k } from "../kaboom";
+import { app, game, gfx, k } from "../kaplay";
 import { Mat4 } from "../math/math";
 import { calcTransform } from "../math/various";
 import {
