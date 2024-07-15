@@ -426,11 +426,9 @@ export const initApp = (opt: {
         btn: MouseButton,
     ): string | undefined {
         for (const b in state.buttons) {
-            const bindings = state.buttons[b].mouse?.length
-                ? state.buttons[b].mouse
-                : [b];
+            const bindings = state.buttons[b].mouse;
 
-            if (bindings.includes(btn)) {
+            if (bindings?.includes(btn)) {
                 return Object.keys(state.buttons).find((k) =>
                     state.buttons[k] === state.buttons[b]
                 );
@@ -852,12 +850,15 @@ export const initApp = (opt: {
         state.events.onOnce("input", () => {
             const m = MOUSE_BUTTONS[e.button];
             if (!m) return;
-            const btn = getButtonByMouseButton(m)!;
+            const btn = getButtonByMouseButton(m);
+
+            if (btn) {
+                state.buttonState.press(btn);
+                state.events.trigger("buttonPress", btn);
+            }
 
             state.mouseState.press(m);
-            state.buttonState.press(btn);
             state.events.trigger("mousePress", m);
-            state.events.trigger("buttonPress", btn);
         });
     };
 
@@ -865,12 +866,15 @@ export const initApp = (opt: {
         state.events.onOnce("input", () => {
             const m = MOUSE_BUTTONS[e.button];
             if (!m) return;
-            const btn = getButtonByMouseButton(m)!;
+            const btn = getButtonByMouseButton(m);
+
+            if (btn) {
+                state.buttonState.release(btn);
+                state.events.trigger("buttonRelease", btn);
+            }
 
             state.mouseState.release(m);
-            state.buttonState.release(btn);
             state.events.trigger("mouseRelease", m);
-            state.events.trigger("buttonRelease", btn);
         });
     };
 
