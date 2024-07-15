@@ -1,4 +1,4 @@
-import { k } from "../../kaplay";
+import { dt } from "../../app";
 import { Color } from "../../math/color";
 import easings from "../../math/easings";
 import { evaluateCatmullRom, lerp, Vec2 } from "../../math/math";
@@ -265,7 +265,7 @@ export function animate(): AnimateComp {
         update() {
             let allFinished: boolean = true;
             let localFinished: boolean;
-            t += k.dt();
+            t += dt();
             for (const c of channels) {
                 localFinished = c.update(this as unknown as GameObj<any>, t);
                 if (localFinished && !c.isFinished) {

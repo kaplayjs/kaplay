@@ -1,7 +1,17 @@
+import { dt } from "../../app";
 import { drawRaw, type Texture } from "../../gfx";
 import { k } from "../../kaplay";
-import { Color } from "../../math/color";
-import { lerp, map, Quad, type ShapeType, Vec2, vec2 } from "../../math/math";
+import {
+    Color,
+    lerp,
+    map,
+    Quad,
+    rand,
+    rgb,
+    type ShapeType,
+    Vec2,
+    vec2,
+} from "../../math";
 import type { Comp, KaboomCtx, Vertex } from "../../types";
 import { KEvent } from "../../utils/";
 
@@ -119,7 +129,7 @@ export function particles(
     let emitterLifetime = eopt.lifetime;
 
     const particles: Particle[] = [];
-    const colors = popt.colors || [k.WHITE];
+    const colors = popt.colors || [Color.WHITE];
     const opacities = popt.opacities || [1];
     const quads = popt.quads || [new Quad(0, 0, 1, 1)];
     const scales = popt.scales || [1];
@@ -149,7 +159,7 @@ export function particles(
             vertices[i * 4 + j] = {
                 pos: new Vec2(0, 0),
                 uv: new Vec2(0, 0),
-                color: k.rgb(255, 255, 255),
+                color: rgb(255, 255, 255),
                 opacity: 1,
             };
         }
@@ -176,27 +186,27 @@ export function particles(
                 index = nextFree(index);
                 if (index == null) return;
 
-                const velocityAngle = k.rand(
+                const velocityAngle = rand(
                     direction - spread,
                     direction + spread,
                 );
                 const vel = Vec2.fromAngle(velocityAngle).scale(
-                    k.rand(speed[0], speed[1]),
+                    rand(speed[0], speed[1]),
                 );
-                const angle = k.rand(angleRange[0], angleRange[1]);
-                const angularVelocity = k.rand(
+                const angle = rand(angleRange[0], angleRange[1]);
+                const angularVelocity = rand(
                     angularVelocityRange[0],
                     angularVelocityRange[1],
                 );
                 const acceleration = vec2(
-                    k.rand(accelerationRange[0].x, accelerationRange[1].x),
-                    k.rand(accelerationRange[0].y, accelerationRange[1].y),
+                    rand(accelerationRange[0].x, accelerationRange[1].x),
+                    rand(accelerationRange[0].y, accelerationRange[1].y),
                 );
-                const damping = k.rand(
+                const damping = rand(
                     dampingRange[0],
                     dampingRange[1],
                 );
-                const lt = lifetime ? k.rand(lifetime[0], lifetime[1]) : null;
+                const lt = lifetime ? rand(lifetime[0], lifetime[1]) : null;
                 const pos = eopt.shape
                     ? eopt.shape.random()
                     : vec2();
@@ -218,7 +228,7 @@ export function particles(
             if (emitterLifetime !== undefined && emitterLifetime <= 0) {
                 return;
             }
-            const DT = k.dt();
+            const DT = dt();
             // Update all particles
             for (const p of particles) {
                 if (p.gc) {

@@ -1,7 +1,14 @@
 import type { BitmapFontData } from "../../assets";
 import { DEF_TEXT_SIZE } from "../../constants";
+import { onLoad } from "../../game";
 import { getRenderProps } from "../../game/utils";
-import type { CharTransform, CharTransformFunc, TextAlign } from "../../gfx";
+import {
+    type CharTransform,
+    type CharTransformFunc,
+    drawFormattedText,
+    formatText,
+    type TextAlign,
+} from "../../gfx";
 import { k } from "../../kaplay";
 import { Rect, vec2 } from "../../math/math";
 import type { Comp, GameObj, KaboomCtx } from "../../types";
@@ -125,7 +132,7 @@ export function text(
     opt: TextCompOpt = {},
 ): TextComp {
     function update(obj: GameObj<TextComp | any>) {
-        const ftext = k.formatText(Object.assign(getRenderProps(obj), {
+        const ftext = formatText(Object.assign(getRenderProps(obj), {
             text: obj.text + "",
             size: obj.textSize,
             font: obj.font,
@@ -168,11 +175,11 @@ export function text(
         textStyles: opt.styles,
 
         add(this: GameObj<TextComp>) {
-            k.onLoad(() => update(this));
+            onLoad(() => update(this));
         },
 
         draw(this: GameObj<TextComp>) {
-            k.drawFormattedText(update(this));
+            drawFormattedText(update(this));
         },
 
         renderArea() {

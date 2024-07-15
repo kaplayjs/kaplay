@@ -1,6 +1,5 @@
 import { getRenderProps } from "../../game/utils";
-import type { Texture } from "../../gfx";
-import { k } from "../../kaplay";
+import { drawPolygon, type Texture } from "../../gfx";
 import { type Color } from "../../math/color";
 import { Polygon, type Vec2 } from "../../math/math";
 import type { Comp, DrawPolygonOpt, GameObj, KaboomCtx } from "../../types";
@@ -65,7 +64,7 @@ export function polygon(
         tex: opt.tex,
         radius: opt.radius,
         draw(this: GameObj<PolygonComp>) {
-            k.drawPolygon(Object.assign(getRenderProps(this), {
+            drawPolygon(Object.assign(getRenderProps(this), {
                 pts: this.pts,
                 colors: this.colors,
                 uv: this.uv,

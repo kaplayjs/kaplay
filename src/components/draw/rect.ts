@@ -1,5 +1,5 @@
 import { getRenderProps } from "../../game/utils";
-import { k } from "../../kaplay";
+import { drawRect } from "../../gfx";
 import { Rect, vec2 } from "../../math/math";
 import type { Comp, GameObj } from "../../types";
 
@@ -51,7 +51,7 @@ export function rect(w: number, h: number, opt: RectCompOpt = {}): RectComp {
         height: h,
         radius: opt.radius || 0,
         draw(this: GameObj<RectComp>) {
-            k.drawRect(Object.assign(getRenderProps(this), {
+            drawRect(Object.assign(getRenderProps(this), {
                 width: this.width,
                 height: this.height,
                 radius: this.radius,

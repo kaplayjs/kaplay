@@ -1,4 +1,4 @@
-import { k } from "../../kaplay";
+import { game, k } from "../../kaplay";
 import type { Comp, EaseFunc, TweenController } from "../../types";
 import { toFixed } from "../../utils";
 
@@ -21,7 +21,7 @@ export function opacity(a: number): OpacityComp {
         id: "opacity",
         opacity: a ?? 1,
         fadeIn(time = 1, easeFunc = k.easings.linear): TweenController {
-            return k.tween(
+            return game.root.tween(
                 0,
                 this.opacity,
                 time,
@@ -30,7 +30,7 @@ export function opacity(a: number): OpacityComp {
             );
         },
         fadeOut(time = 1, easeFunc = k.easings.linear): TweenController {
-            return k.tween(
+            return game.root.tween(
                 this.opacity,
                 0,
                 time,

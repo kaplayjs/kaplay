@@ -1,4 +1,5 @@
-import { k } from "../../kaplay";
+import { dt } from "../../app";
+import { map } from "../../math";
 import type { Comp, GameObj, KaboomCtx } from "../../types";
 import type { OpacityComp } from "./opacity";
 
@@ -18,8 +19,8 @@ export function fadeIn(
         },
         update(this: GameObj<OpacityComp>) {
             if (done) return;
-            t += k.dt();
-            this.opacity = k.map(t, 0, time, 0, finalOpacity);
+            t += dt();
+            this.opacity = map(t, 0, time, 0, finalOpacity);
 
             if (t >= time) {
                 this.opacity = finalOpacity;

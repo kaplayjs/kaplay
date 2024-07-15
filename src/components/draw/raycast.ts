@@ -1,4 +1,4 @@
-import { k } from "../../kaplay";
+import { game, k } from "../../kaplay";
 import type { RaycastResult, Vec2 } from "../../math/math";
 
 // this is not a component lol
@@ -9,7 +9,7 @@ export function raycast(
 ) {
     let minHit: RaycastResult;
 
-    const shapes = k.get("area");
+    const shapes = game.root.get("area");
 
     shapes.forEach(s => {
         if (exclude && exclude.some(tag => s.is(tag))) return;

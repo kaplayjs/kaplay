@@ -1,15 +1,15 @@
 // TODO: accept canvas
 
+import { dt } from "../../app";
 import type { Asset, SpriteData } from "../../assets";
 import { resolveSprite } from "../../assets/sprite";
+import { onLoad } from "../../game";
 import { getRenderProps } from "../../game/utils";
 import { drawTexture, type Texture } from "../../gfx";
-import { k } from "../../kaplay";
-import { Quad, quad, type Rect, Vec2, vec2 } from "../../math/math";
+import { Quad, quad, Rect, Vec2, vec2 } from "../../math";
 import type {
     Comp,
     GameObj,
-    KaboomCtx,
     SpriteAnimPlayOpt,
     SpriteCurAnim,
 } from "../../types";
@@ -302,7 +302,7 @@ export function sprite(
             if (spr) {
                 spr.onLoad(setSpriteData);
             } else {
-                k.onLoad(() => setSpriteData(resolveSprite(src)!.data));
+                onLoad(() => setSpriteData(resolveSprite(src)!.data));
             }
         },
 
@@ -322,7 +322,7 @@ export function sprite(
                 throw new Error("Sprite anim speed cannot be 0");
             }
 
-            curAnim.timer += k.dt() * this.animSpeed;
+            curAnim.timer += dt() * this.animSpeed;
 
             if (curAnim.timer >= (1 / curAnim.speed)) {
                 curAnim.timer = 0;
@@ -450,7 +450,7 @@ export function sprite(
         },
 
         renderArea() {
-            return new k.Rect(vec2(0), this.width, this.height);
+            return new Rect(vec2(0), this.width, this.height);
         },
 
         inspect() {
