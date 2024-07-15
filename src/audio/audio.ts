@@ -1,6 +1,6 @@
 import { SoundData } from "../assets";
 import { createEmptyAudioBuffer } from "../gfx";
-import burpSoundSrc from "./kassets/burp.mp3";
+import burpSoundSrc from "../kassets/burp.mp3";
 
 export type AudioCtx = ReturnType<typeof initAudio>;
 
