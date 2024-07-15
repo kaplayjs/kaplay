@@ -2,6 +2,7 @@ export * from "./events";
 export * from "./game";
 export * from "./initEvents";
 export * from "./kaboom";
+export * from "./layers";
 export * from "./level";
 export * from "./make";
 export * from "./object";

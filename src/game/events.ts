@@ -167,3 +167,15 @@ export function onHoverEnd(
     });
     return KEventController.join(events);
 }
+
+export function onLoading(action: (progress: number) => void) {
+    game.events.on("loading", action);
+}
+
+export function onResize(action: () => void) {
+    app.onResize(action);
+}
+
+export function onError(action: (err: Error) => void) {
+    game.events.on("error", action);
+}

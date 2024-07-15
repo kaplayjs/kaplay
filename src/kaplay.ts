@@ -230,6 +230,7 @@ import {
     go,
     initEvents,
     initGame,
+    layers,
     make,
     on,
     onAdd,
@@ -239,9 +240,12 @@ import {
     onCollideUpdate,
     onDestroy,
     onDraw,
+    onError,
     onHover,
     onHoverEnd,
     onHoverUpdate,
+    onLoading,
+    onResize,
     onSceneLeave,
     onUpdate,
     scene,
@@ -697,20 +701,6 @@ const kaplay = <
     const query = game.root.query.bind(game.root);
     const tween = game.root.tween.bind(game.root);
 
-    const layers = function(layerNames: string[], defaultLayer: string) {
-        if (game.layers) {
-            throw Error("Layers can only be assigned once.");
-        }
-        const defaultLayerIndex = layerNames.indexOf(defaultLayer);
-        if (defaultLayerIndex == -1) {
-            throw Error(
-                "The default layer name should be present in the layers list.",
-            );
-        }
-        game.layers = layerNames;
-        game.defaultLayerIndex = defaultLayerIndex;
-    };
-
     kaSprite = loadSprite(null, kaSpriteSrc);
     boomSprite = loadSprite(null, boomSpriteSrc);
 
@@ -854,18 +844,6 @@ const kaplay = <
         }
 
         checkObj(game.root);
-    }
-
-    function onLoading(action: (progress: number) => void) {
-        game.events.on("loading", action);
-    }
-
-    function onResize(action: () => void) {
-        app.onResize(action);
-    }
-
-    function onError(action: (err: Error) => void) {
-        game.events.on("error", action);
     }
 
     function handleErr(err: Error) {
