@@ -7,8 +7,8 @@ import {
     TEXT_STYLE_RE,
 } from "../constants";
 import { fontCacheC2d, fontCacheCanvas, gfx } from "../kaboom";
-import { Quad, Vec2, vec2 } from "../math";
 import { Color } from "../math/color";
+import { Quad, Vec2, vec2 } from "../math/math";
 import { type Outline, type TexFilter } from "../types";
 import { runes } from "../utils";
 import { alignPt } from "./anchor";

@@ -1,6 +1,6 @@
 import { height, width } from "../gfx";
-import { deg2rad, Mat4, Vec2, vec2 } from "../math";
 import type { GameObj } from "../types";
+import { deg2rad, Mat4, Vec2, vec2 } from "./math";
 
 export function calcTransform(obj: GameObj): Mat4 {
     const tr = new Mat4();

@@ -1,4 +1,4 @@
-import { Vec2, vec2 } from "../math";
+import { Vec2, vec2 } from "./math";
 import { aStarSearch, type Graph } from "./navigation";
 
 class NavEdge {

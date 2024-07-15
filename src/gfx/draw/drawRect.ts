@@ -1,6 +1,6 @@
 import { DEF_ANCHOR } from "../../constants";
-import { Vec2, vec2 } from "../../math";
 import type { Color } from "../../math/color";
+import { Vec2, vec2 } from "../../math/math";
 import { getArcPts } from "../../math/various";
 import type { Anchor, RenderProps } from "../../types";
 import { anchorPt } from "../anchor";

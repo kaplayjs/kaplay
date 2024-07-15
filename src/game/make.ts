@@ -16,7 +16,7 @@ import {
     pushTranslate,
 } from "../gfx";
 import { app, game, gfx, k } from "../kaboom";
-import { Mat4 } from "../math";
+import { Mat4 } from "../math/math";
 import { calcTransform } from "../math/various";
 import {
     type Comp,

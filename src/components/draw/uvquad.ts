@@ -1,6 +1,6 @@
 import { getRenderProps } from "../../game/utils";
 import { drawUVQuad } from "../../gfx";
-import { Rect, vec2 } from "../../math";
+import { Rect, vec2 } from "../../math/math";
 import type { Comp, GameObj, KaboomCtx } from "../../types";
 
 /**

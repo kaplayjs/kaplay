@@ -1,18 +1,17 @@
 // TODO: accept canvas
 
-import type { Asset } from "../../assets";
+import type { Asset, SpriteData } from "../../assets";
 import { resolveSprite } from "../../assets/sprite";
 import { getRenderProps } from "../../game/utils";
 import { drawTexture, type Texture } from "../../gfx";
 import { k } from "../../kaboom";
-import { Quad, quad, type Rect, Vec2, vec2 } from "../../math";
+import { Quad, quad, type Rect, Vec2, vec2 } from "../../math/math";
 import type {
     Comp,
     GameObj,
     KaboomCtx,
     SpriteAnimPlayOpt,
     SpriteCurAnim,
-    SpriteData,
 } from "../../types";
 import { KEvent, KEventController } from "../../utils/";
 
@@ -143,7 +142,6 @@ export interface SpriteCompOpt {
 
 // TODO: clean
 export function sprite(
-    this: KaboomCtx,
     src: string | SpriteData | Asset<SpriteData>,
     opt: SpriteCompOpt = {},
 ): SpriteComp {

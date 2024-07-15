@@ -1,6 +1,6 @@
 import { gfx } from "../../kaboom";
-import { triangulate, Vec2 } from "../../math";
 import { Color } from "../../math/color";
+import { triangulate, Vec2 } from "../../math/math";
 import type { DrawPolygonOpt } from "../../types";
 import {
     popTransform,

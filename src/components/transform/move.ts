@@ -1,4 +1,4 @@
-import { Vec2 } from "../../math";
+import { Vec2 } from "../../math/math";
 import type { EmptyComp, GameObj } from "../../types";
 import type { PosComp } from "./pos";
 

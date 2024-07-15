@@ -1,5 +1,14 @@
-import type { Asset, BitmapFontData } from "./assets";
+import type {
+    Asset,
+    BitmapFontData,
+    LoadBitmapFontOpt,
+    ShaderData,
+    SoundData,
+    SpriteData,
+    Uniform,
+} from "./assets";
 import type { FontData } from "./assets/font";
+import type { AudioPlay, AudioPlayOpt } from "./audio";
 import type {
     AgentComp,
     AgentCompOpt,
@@ -56,6 +65,7 @@ import type {
     ParticlesComp,
     ParticlesOpt,
 } from "./components/draw/particles";
+import type { BoomOpt, LevelOpt, SceneDef, SceneName } from "./game";
 import type {
     DrawBezierOpt,
     DrawCircleOpt,
@@ -72,6 +82,7 @@ import type {
     LineJoin,
     Texture,
 } from "./gfx";
+import type { Color, RGBAValue, RGBValue } from "./math/color";
 import type {
     Circle,
     Ellipse,
@@ -85,8 +96,7 @@ import type {
     RNG,
     Vec2,
     Vec2Args,
-} from "./math";
-import type { Color, RGBAValue, RGBValue } from "./math/color";
+} from "./math/math";
 import type { NavMesh } from "./math/navigationmesh";
 import type { KEvent, KEventController, KEventHandler } from "./utils/";
 
@@ -3970,12 +3980,6 @@ export interface GameObjRaw {
 export type GameObj<T = any> = GameObjRaw & MergeComps<T>;
 
 /**
- * The name of a scene.
- */
-export type SceneName = string;
-export type SceneDef = (...args: any) => void;
-
-/**
  * @group Options
  */
 export type GetOpt = {
@@ -4213,32 +4217,6 @@ export type AsepriteData = {
     };
 };
 
-export declare class SpriteData {
-    tex: Texture;
-    frames: Quad[];
-    anims: SpriteAnims;
-    /**
-     * @since v3001.0
-     */
-    width: number;
-    /**
-     * @since v3001.0
-     */
-    height: number;
-    slice9: NineSlice | null;
-    constructor(tex: Texture, frames?: Quad[], anims?: SpriteAnims);
-    static from(src: LoadSpriteSrc, opt?: LoadSpriteOpt): Promise<SpriteData>;
-    static fromImage(data: ImageSource, opt?: LoadSpriteOpt): SpriteData;
-    static fromURL(url: string, opt?: LoadSpriteOpt): Promise<SpriteData>;
-}
-
-export declare class SoundData {
-    buf: AudioBuffer;
-    constructor(buf: AudioBuffer);
-    static fromArrayBuffer(buf: ArrayBuffer): Promise<SoundData>;
-    static fromURL(url: string): Promise<SoundData>;
-}
-
 export type MusicData = string;
 
 export interface LoadFontOpt {
@@ -4250,122 +4228,6 @@ export interface LoadFontOpt {
      * @since v3001.0
      */
     size?: number;
-}
-
-export interface LoadBitmapFontOpt {
-    chars?: string;
-    filter?: TexFilter;
-    outline?: number;
-}
-
-export type ShaderData = Shader;
-
-// TODO: enable setting on load, make part of SoundData
-/**
- * Audio play configurations.
- */
-export interface AudioPlayOpt {
-    /**
-     * If audio should start out paused.
-     *
-     * @since v3000.0
-     */
-    paused?: boolean;
-    /**
-     * If audio should be played again from start when its ended.
-     */
-    loop?: boolean;
-    /**
-     * Volume of audio. 1.0 means full volume, 0.5 means half volume.
-     */
-    volume?: number;
-    /**
-     * Playback speed. 1.0 means normal playback speed, 2.0 means twice as fast.
-     */
-    speed?: number;
-    /**
-     * Detune the sound. Every 100 means a semitone.
-     *
-     * @example
-     * ```js
-     * // play a random note in the octave
-     * play("noteC", {
-     *     detune: randi(0, 12) * 100,
-     * })
-     * ```
-     */
-    detune?: number;
-    /**
-     * The start time, in seconds.
-     */
-    seek?: number;
-}
-
-export interface AudioPlay {
-    /**
-     * Start playing audio.
-     *
-     * @since v3000.0
-     */
-    play(time?: number): void;
-    /**
-     * Seek time.
-     *
-     * @since v3000.0
-     */
-    seek(time: number): void;
-    /**
-     * Stop the sound.
-     *
-     * @since v3001.0
-     */
-    stop(): void;
-    /**
-     * If the sound is paused.
-     *
-     * @since v2000.1
-     */
-    paused: boolean;
-    /**
-     * Playback speed of the sound. 1.0 means normal playback speed, 2.0 means twice as fast.
-     */
-    speed: number;
-    /**
-     * Detune the sound. Every 100 means a semitone.
-     *
-     * @example
-     * ```js
-     * // tune down a semitone
-     * music.detune = -100
-     *
-     * // tune up an octave
-     * music.detune = 1200
-     * ```
-     */
-    detune: number;
-    /**
-     * Volume of the sound. 1.0 means full volume, 0.5 means half volume.
-     */
-    volume: number;
-    /**
-     * If the audio should start again when it ends.
-     */
-    loop: boolean;
-    /**
-     * The current playing time (not accurate if speed is changed).
-     */
-    time(): number;
-    /**
-     * The total duration.
-     */
-    duration(): number;
-    /**
-     * Register an event that runs when audio ends.
-     *
-     * @since v3000.0
-     */
-    onEnd(action: () => void): KEventController;
-    then(action: () => void): KEventController;
 }
 
 export declare class Shader {
@@ -4888,56 +4750,7 @@ export interface Debug {
     numObjects(): number;
 }
 
-/**
- * @group Math
- */
-export type UniformValue =
-    | number
-    | Vec2
-    | Color
-    | Mat4
-    | number[]
-    | Vec2[]
-    | Color[];
-
-/**
- * @group Math
- */
-export type UniformKey = Exclude<string, "u_tex">;
-/**
- * @group Math
- */
-export type Uniform = Record<UniformKey, UniformValue>;
-
 export type Mask = "intersect" | "subtract";
-
-/**
- * @group Options
- */
-export interface LevelOpt {
-    /**
-     * Width of each block.
-     */
-    tileWidth: number;
-    /**
-     * Height of each block.
-     */
-    tileHeight: number;
-    /**
-     * Position of the first block.
-     */
-    pos?: Vec2;
-    /**
-     * Definition of each tile.
-     */
-    tiles: {
-        [sym: string]: (pos: Vec2) => CompList<any>;
-    };
-    /**
-     * Called when encountered a symbol not defined in "tiles".
-     */
-    wildcardTile?: (sym: string, pos: Vec2) => CompList<any> | null | undefined;
-}
 
 /**
  * @group Math
@@ -5043,26 +4856,6 @@ export interface LevelComp extends Comp {
 export type PathFindOpt = {
     allowDiagonals?: boolean;
 };
-
-/**
- * @group Options
- */
-export interface BoomOpt {
-    /**
-     * Animation speed.
-     */
-    speed?: number;
-    /**
-     * Scale.
-     */
-    scale?: number;
-    /**
-     * Additional components.
-     *
-     * @since v3000.0
-     */
-    comps?: CompList<any>;
-}
 
 /**
  * The list of easing functions available.

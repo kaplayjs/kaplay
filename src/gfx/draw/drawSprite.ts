@@ -1,6 +1,6 @@
 import { resolveSprite } from "../../assets/sprite";
 import type { DrawSpriteOpt } from "../../kaboom";
-import { Quad } from "../../math";
+import { Quad } from "../../math/math";
 import { drawTexture } from "./drawTexture";
 
 export function drawSprite(opt: DrawSpriteOpt) {

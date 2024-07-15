@@ -2,8 +2,8 @@ import { DEF_ANCHOR } from "../../constants";
 import { isFixed } from "../../game/utils";
 import { anchorPt, getViewportScale } from "../../gfx";
 import { app, game, k } from "../../kaboom";
-import { Polygon, testPolygonPoint, Vec2, vec2 } from "../../math";
 import { rgb } from "../../math/color";
+import { Polygon, testPolygonPoint, Vec2, vec2 } from "../../math/math";
 import type {
     Collision,
     Comp,

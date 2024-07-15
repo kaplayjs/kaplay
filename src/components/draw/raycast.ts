@@ -1,5 +1,5 @@
 import { k } from "../../kaboom";
-import type { RaycastResult, Vec2 } from "../../math";
+import type { RaycastResult, Vec2 } from "../../math/math";
 
 // this is not a component lol
 export function raycast(

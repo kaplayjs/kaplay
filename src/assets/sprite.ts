@@ -1,7 +1,7 @@
 import { Asset, loadImg, loadProgress } from "../assets";
 import type { Texture } from "../gfx/gfx";
 import { assets } from "../kaboom";
-import { Quad } from "../math";
+import { Quad } from "../math/math";
 import {
     type DrawSpriteOpt,
     type ImageSource,
@@ -29,6 +29,9 @@ export class SpriteData {
         this.slice9 = slice9;
     }
 
+    /**
+     * @since v3001.0
+     */
     get width() {
         return this.tex.width * this.frames[0].w;
     }

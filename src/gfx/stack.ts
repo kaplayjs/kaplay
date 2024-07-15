@@ -1,5 +1,5 @@
 import { app, gfx } from "../kaboom";
-import { type Mat4, Vec2, vec2, type Vec2Args } from "../math";
+import { type Mat4, Vec2, vec2, type Vec2Args } from "../math/math";
 
 export function pushTranslate(...args: Vec2Args | [undefined]) {
     if (args[0] === undefined) return;
@@ -77,4 +77,8 @@ export function windowToContent(pt: Vec2) {
 
 export function mousePos() {
     return windowToContent(app.mousePos());
+}
+
+export function center(): Vec2 {
+    return vec2(width() / 2, height() / 2);
 }

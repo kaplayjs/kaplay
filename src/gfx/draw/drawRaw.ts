@@ -1,8 +1,7 @@
-import { Asset } from "../../assets";
-import { resolveShader } from "../../assets/shader";
+import { Asset, resolveShader, type Uniform } from "../../assets";
 import { game, gfx } from "../../kaboom";
 import { screen2ndc } from "../../math/various";
-import type { RenderProps, Uniform, Vertex } from "../../types";
+import type { RenderProps, Vertex } from "../../types";
 import type { Texture } from "../gfx";
 
 export function drawRaw(

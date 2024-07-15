@@ -1,6 +1,6 @@
 import { k } from "../../kaboom";
-import { lerp } from "../../math";
 import easings from "../../math/easings";
+import { lerp } from "../../math/math";
 import type {
     Comp,
     GameObj,

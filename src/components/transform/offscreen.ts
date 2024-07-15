@@ -1,6 +1,6 @@
 import { DEF_OFFSCREEN_DIS } from "../../constants";
 import { k } from "../../kaboom";
-import { Rect, vec2 } from "../../math";
+import { Rect, vec2 } from "../../math/math";
 import type { Comp, GameObj, KaboomCtx } from "../../types";
 import type { KEventController } from "../../utils/";
 import type { PosComp } from "./pos";

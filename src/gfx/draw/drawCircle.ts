@@ -1,5 +1,5 @@
-import type { Vec2 } from "../../math";
 import type { Color } from "../../math/color";
+import type { Vec2 } from "../../math/math";
 import type { Anchor, RenderProps } from "../../types";
 import { drawEllipse } from "./drawEllipse";
 

@@ -1,6 +1,6 @@
 import { getRenderProps } from "../../game/utils";
 import { drawCircle } from "../../gfx";
-import { Rect, Vec2 } from "../../math";
+import { Rect, Vec2 } from "../../math/math";
 import type { Comp, GameObj } from "../../types";
 import type { AnchorComp } from "../transform/anchor";
 import type { outline } from "./outline";

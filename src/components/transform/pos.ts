@@ -1,7 +1,7 @@
 import { isFixed } from "../../game/utils";
 import { getViewportScale } from "../../gfx";
 import { k } from "../../kaboom";
-import { Vec2, vec2, type Vec2Args } from "../../math";
+import { Vec2, vec2, type Vec2Args } from "../../math/math";
 import type { Comp, GameObj, KaboomCtx } from "../../types";
 import type { FixedComp } from "./fixed";
 
@@ -69,10 +69,7 @@ export interface PosComp extends Comp {
     fromOther(this: GameObj<PosComp>, other: GameObj<PosComp>, p: Vec2): Vec2;
 }
 
-export function pos(
-    this: KaboomCtx,
-    ...args: Vec2Args
-): PosComp {
+export function pos(...args: Vec2Args): PosComp {
     return {
         id: "pos",
         pos: vec2(...args),

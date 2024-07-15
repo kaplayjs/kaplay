@@ -1,5 +1,5 @@
 import { k } from "../../kaboom";
-import type { Comp, EaseFunc, KaboomCtx, TweenController } from "../../types";
+import type { Comp, EaseFunc, TweenController } from "../../types";
 import { toFixed } from "../../utils";
 
 /**
@@ -16,10 +16,7 @@ export interface OpacityComp extends Comp {
     fadeOut(time?: number, easeFunc?: EaseFunc): TweenController;
 }
 
-export function opacity(
-    this: KaboomCtx,
-    a: number,
-): OpacityComp {
+export function opacity(a: number): OpacityComp {
     return {
         id: "opacity",
         opacity: a ?? 1,

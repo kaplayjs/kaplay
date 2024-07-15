@@ -1,14 +1,9 @@
 import type { TimerComp } from "../components";
-import { Mat4, Vec2 } from "../math";
-import {
-    type GameObj,
-    type Key,
-    type MouseButton,
-    type SceneDef,
-    type SceneName,
-} from "../types";
+import { Mat4, Vec2 } from "../math/math";
+import { type GameObj, type Key, type MouseButton } from "../types";
 import { KEventHandler } from "../utils";
 import { make } from "./make";
+import type { SceneDef, SceneName } from "./scenes";
 
 export type Game = ReturnType<typeof initGame>;
 

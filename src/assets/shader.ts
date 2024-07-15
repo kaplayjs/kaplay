@@ -5,17 +5,131 @@ import {
     VERT_TEMPLATE,
     VERTEX_FORMAT,
 } from "../constants";
-import { type GfxCtx, Shader } from "../gfx";
+import { type GfxCtx } from "../gfx";
+import { assets, gfx } from "../kaboom";
+import { Color } from "../math/color";
+import { Mat4, Vec2 } from "../math/math";
+import type { RenderProps } from "../types";
 import {
-    assets,
-    gfx,
-    type KaboomCtx,
-    type RenderProps,
-    type ShaderData,
-} from "../kaboom";
-import { getErrorMessage } from "../utils";
+    arrayIsColor,
+    arrayIsNumber,
+    arrayIsVec2,
+    getErrorMessage,
+} from "../utils";
 import { loadProgress } from "./asset";
 import { Asset } from "./asset";
+
+export type ShaderData = Shader;
+
+/**
+ * @group Math
+ */
+export type UniformValue =
+    | number
+    | Vec2
+    | Color
+    | Mat4
+    | number[]
+    | Vec2[]
+    | Color[];
+
+/**
+ * @group Math
+ */
+export type UniformKey = Exclude<string, "u_tex">;
+/**
+ * @group Math
+ */
+export type Uniform = Record<UniformKey, UniformValue>;
+
+/**
+ * @group GFX
+ */
+export class Shader {
+    ctx: GfxCtx;
+    glProgram: WebGLProgram;
+
+    constructor(ctx: GfxCtx, vert: string, frag: string, attribs: string[]) {
+        this.ctx = ctx;
+        ctx.onDestroy(() => this.free());
+
+        const gl = ctx.gl;
+        const vertShader = gl.createShader(gl.VERTEX_SHADER);
+        const fragShader = gl.createShader(gl.FRAGMENT_SHADER);
+
+        if (!vertShader || !fragShader) {
+            throw new Error("Failed to create shader");
+        }
+
+        // What we should do if vert or frag are null?
+
+        gl.shaderSource(vertShader, vert);
+        gl.shaderSource(fragShader, frag);
+        gl.compileShader(vertShader);
+        gl.compileShader(fragShader);
+
+        const prog = gl.createProgram();
+        this.glProgram = prog!;
+
+        gl.attachShader(prog!, vertShader!);
+        gl.attachShader(prog!, fragShader!);
+
+        attribs.forEach((attrib, i) => gl.bindAttribLocation(prog!, i, attrib));
+
+        gl.linkProgram(prog!);
+
+        if (!gl.getProgramParameter(prog!, gl.LINK_STATUS)) {
+            const vertError = gl.getShaderInfoLog(vertShader!);
+            if (vertError) throw new Error("VERTEX SHADER " + vertError);
+            const fragError = gl.getShaderInfoLog(fragShader!);
+            if (fragError) throw new Error("FRAGMENT SHADER " + fragError);
+        }
+
+        gl.deleteShader(vertShader);
+        gl.deleteShader(fragShader);
+    }
+
+    bind() {
+        this.ctx.pushProgram(this.glProgram);
+    }
+
+    unbind() {
+        this.ctx.popProgram();
+    }
+
+    send(uniform: Uniform) {
+        const gl = this.ctx.gl;
+        for (const name in uniform) {
+            const val = uniform[name];
+            const loc = gl.getUniformLocation(this.glProgram, name);
+            if (typeof val === "number") {
+                gl.uniform1f(loc, val);
+            } else if (val instanceof Mat4) {
+                gl.uniformMatrix4fv(loc, false, new Float32Array(val.m));
+            } else if (val instanceof Color) {
+                gl.uniform3f(loc, val.r, val.g, val.b);
+            } else if (val instanceof Vec2) {
+                gl.uniform2f(loc, val.x, val.y);
+            } else if (Array.isArray(val)) {
+                const first = val[0];
+
+                if (arrayIsNumber(val)) {
+                    gl.uniform1fv(loc, val as number[]);
+                } else if (arrayIsVec2(val)) {
+                    gl.uniform2fv(loc, val.map((v) => [v.x, v.y]).flat());
+                } else if (arrayIsColor(val)) {
+                    gl.uniform3fv(loc, val.map(v => [v.r, v.g, v.b]).flat());
+                }
+            } else {
+                throw new Error("Unsupported uniform data type");
+            }
+        }
+    }
+
+    free() {
+        this.ctx.gl.deleteProgram(this.glProgram);
+    }
+}
 
 export function makeShader(
     ggl: GfxCtx,

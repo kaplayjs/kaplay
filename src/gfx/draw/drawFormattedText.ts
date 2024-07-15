@@ -1,5 +1,5 @@
-import type { Quad, Vec2 } from "../../math";
 import type { Color } from "../../math/color";
+import type { Quad, Vec2 } from "../../math/math";
 import { anchorPt } from "../anchor";
 import type { Texture } from "../gfx";
 import {

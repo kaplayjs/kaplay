@@ -1,6 +1,6 @@
 import { gfx } from "../../kaboom";
-import { deg2rad, Vec2, vec2 } from "../../math";
 import { Color } from "../../math/color";
+import { deg2rad, Vec2, vec2 } from "../../math/math";
 import type { RenderProps } from "../../types";
 import { drawCircle } from "./drawCircle";
 import { drawRaw } from "./drawRaw";

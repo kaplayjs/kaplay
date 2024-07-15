@@ -1,4 +1,4 @@
-import type { GameObj } from "../kaboom";
+import type { GameObj } from "../types";
 
 export function isFixed(obj: GameObj): boolean {
     if (obj.fixed) return true;

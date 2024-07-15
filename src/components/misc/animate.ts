@@ -1,7 +1,7 @@
 import { k } from "../../kaboom";
-import { evaluateCatmullRom, lerp, Vec2 } from "../../math";
 import { Color } from "../../math/color";
 import easings from "../../math/easings";
+import { evaluateCatmullRom, lerp, Vec2 } from "../../math/math";
 import type { Comp, EaseFunc, GameObj, LerpValue } from "../../types";
 import type { KEventController } from "../../utils";
 

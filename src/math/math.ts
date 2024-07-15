@@ -1,5 +1,5 @@
-import { Color, rgb } from "./math/color";
-import type { GameObj, LerpValue, RNGValue } from "./types";
+import type { GameObj, LerpValue, RNGValue } from "../types";
+import { Color, rgb } from "./color";
 
 /**
  * Possible arguments for a Vec2.

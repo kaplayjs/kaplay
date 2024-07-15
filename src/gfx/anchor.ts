@@ -1,4 +1,4 @@
-import { Vec2 } from "../math";
+import { Vec2 } from "../math/math";
 import { type Anchor } from "../types";
 import type { TextAlign } from "./draw";
 
