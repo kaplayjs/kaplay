@@ -73,6 +73,5 @@ export function loadMusic(
     const a = new Audio(url);
     a.preload = "auto";
 
-    // TODO: assets.music should be a map
     return assets.music[name as keyof typeof assets.music] = fixURL(url);
 }
