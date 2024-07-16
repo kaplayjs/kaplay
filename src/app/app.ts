@@ -24,7 +24,7 @@ import GAMEPAD_MAP from "../data/gamepad.json";
 import {
     type ButtonBinding,
     type ButtonsDef,
-    getLastInputType,
+    getLastInputDeviceType,
 } from "./inputBindings";
 
 export class ButtonState<T = string> {
@@ -1211,7 +1211,7 @@ export const initApp = (opt: {
         onButtonPress,
         onButtonDown,
         onButtonRelease,
-        getLastInputType,
+        getLastInputDeviceType,
         events: state.events,
     };
 };

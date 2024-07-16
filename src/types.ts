@@ -2015,12 +2015,12 @@ export interface KaboomCtx<
      */
     getGamepadStick(stick: GamepadStick): Vec2;
     /**
-     * Get the latest input type that triggered the input event.
+     * Get the latest input device type that triggered the input event.
      *
-     * @returns The last input type, or null if no input event has been triggered.
+     * @returns The last input device type, or null if no input event has been triggered.
      * @since v3001.0
      */
-    getLastInputType(): ButtonBindingDevice | null;
+    getLastInputDeviceType(): ButtonBindingDevice | null;
     /**
      * List of characters inputted since last frame.
      *
