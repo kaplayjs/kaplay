@@ -328,7 +328,7 @@ const kaplay = <
     }
 
     // create a <canvas> if user didn't provide one
-    canvas = gopt.canvas
+    let canvas = gopt.canvas
         ?? root.appendChild(document.createElement("canvas"));
 
     // global pixel scale
