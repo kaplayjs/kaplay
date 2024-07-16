@@ -94,6 +94,14 @@ export class KEventHandler<EventMap extends Record<string, any[]>> {
             [Name in keyof EventMap]: KEvent<EventMap[Name]>;
         }
     > = {};
+    registers: Partial<
+        {
+            [Name in keyof EventMap]: Registry<
+                (...args: EventMap[Name]) => void
+            >;
+        }
+    > = {};
+
     on<Name extends keyof EventMap>(
         name: Name,
         action: (...args: EventMap[Name]) => void,

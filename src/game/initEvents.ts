@@ -70,6 +70,7 @@ export function initEvents() {
         app.onKeyPress("f10", () => debug.stepFrame());
     }
 
+    // burp mode initialization
     if (globalOpt.burp) {
         app.onKeyPress("b", () => burp());
     }

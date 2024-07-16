@@ -1,27 +1,27 @@
 // add an event to a tag
 
-import { app, assets, game } from "../kaplay";
-import type { Collision, GameObj, Tag } from "../types";
-import {
-    KEventController,
-    type KEventHandler,
-    overload2,
-    Registry,
-} from "../utils";
+import { app, assets, game } from "../../kaplay";
+import type { Collision, GameObj, Tag } from "../../types";
+import { KEventController, overload2, Registry } from "../../utils";
+import type { GameObjEventMap, GameObjEventNames } from "./eventMap";
 
-// TODO: Implement `cb` args typing
-export function on(
-    event: string,
+export type TupleWithoutFirst<T extends any[]> = T extends [infer R, ...infer E]
+    ? E
+    : never;
+
+export function on<Ev extends GameObjEventNames | string & {}>(
+    event: Ev,
     tag: Tag,
-    cb: (obj: GameObj, ...args: any[]) => void,
+    cb: (obj: GameObj, ...args: TupleWithoutFirst<GameObjEventMap[Ev]>) => void,
 ): KEventController {
-    type EventKey = keyof KEventHandler<Record<string, any[]>>;
-    if (!game.objEvents[<EventKey> event]) {
-        game.objEvents[<EventKey> event] = new Registry() as any;
+    if (!game.objEvents.registers[<keyof GameObjEventMap> event]) {
+        game.objEvents.registers[<keyof GameObjEventMap> event] =
+            new Registry() as any;
     }
-    return game.objEvents.on(event, (obj, ...args) => {
+
+    return game.objEvents.on(<keyof GameObjEventMap> event, (obj, ...args) => {
         if (obj.is(tag)) {
-            cb(obj, ...args);
+            cb(obj, ...args as TupleWithoutFirst<GameObjEventMap[Ev]>);
         }
     });
 }
