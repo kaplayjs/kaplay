@@ -22,6 +22,7 @@ onButtonPress("jump", () => {
 ```
 
 - added `getButton(btn)` and `setButton(btn)` to get and set button bindings
+- added `getLastInputType()` to get what was the last pressed device
 
 ```js
 debug.log(getButton("jump").keyboard); // ["space", "up"]
@@ -30,6 +31,10 @@ debug.log(getButton("jump").keyboard); // ["space", "up"]
 setButton("jump", {
     keyboard: ["w"],
     // gamepad binding is not changed
+});
+
+onButtonPress(() => {
+    console.log(getLastInputType());
 });
 ```
 

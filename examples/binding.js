@@ -27,11 +27,6 @@ const player = add([
     body(),
 ]);
 
-// .onGround() is provided by body(). It registers an event that runs whenever player hits the ground.
-player.onGround(() => {
-    debug.log("ouch");
-});
-
 // Add a platform to hold the player
 add([
     rect(width(), 48),
@@ -48,6 +43,8 @@ add([
 ]);
 
 onButtonPress("jump", () => {
+    debug.log(getLastInputType());
+
     if (player.isGrounded()) {
         // .jump() is provided by body()
         player.jump();

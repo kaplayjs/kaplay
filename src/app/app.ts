@@ -1,14 +1,12 @@
 // everything related to canvas, game loop and input
 
 import type {
-    ButtonBinding,
-    ButtonsDef,
     Cursor,
-    GamepadButton,
     GamepadDef,
     GamepadStick,
     Key,
     KGamePad,
+    KGamepadButton,
     MouseButton,
 } from "../types";
 
@@ -23,6 +21,11 @@ import {
 } from "../utils";
 
 import GAMEPAD_MAP from "../data/gamepad.json";
+import {
+    type ButtonBinding,
+    type ButtonsDef,
+    getLastInputType,
+} from "./inputBindings";
 
 export class ButtonState<T = string> {
     pressed: Set<T> = new Set([]);
@@ -50,7 +53,7 @@ export class ButtonState<T = string> {
 }
 
 class GamepadState {
-    buttonState: ButtonState<GamepadButton> = new ButtonState();
+    buttonState: ButtonState<KGamepadButton> = new ButtonState();
     stickState: Map<GamepadStick, Vec2> = new Map();
 }
 
@@ -72,8 +75,12 @@ class FPSCounter {
 }
 
 export type App = ReturnType<typeof initApp>;
+export type AppState = ReturnType<typeof initAppState>;
 
-export const initApp = (opt: {
+export let appState: AppState;
+
+// TODO: Finish types or separate app state from initApp
+export const initAppState = (opt: {
     canvas: HTMLCanvasElement;
     touchToMouse?: boolean;
     gamepads?: Record<string, GamepadDef>;
@@ -81,11 +88,7 @@ export const initApp = (opt: {
     maxFPS?: number;
     buttons?: ButtonsDef;
 }) => {
-    if (!opt.canvas) {
-        throw new Error("Please provide a canvas");
-    }
-
-    const state = {
+    return {
         canvas: opt.canvas,
         buttons: opt.buttons ?? {},
         loopID: null as null | number,
@@ -104,6 +107,7 @@ export const initApp = (opt: {
         mouseState: new ButtonState<MouseButton>(),
         mergedGamepadState: new GamepadState(),
         gamepadStates: new Map<number, GamepadState>(),
+        lastInputDevice: null as "mouse" | "keyboard" | "gamepad" | null,
         // unified input state
         buttonState: new ButtonState<string>(),
         gamepads: [] as KGamePad[],
@@ -124,9 +128,9 @@ export const initApp = (opt: {
             touchStart: [Vec2, Touch];
             touchMove: [Vec2, Touch];
             touchEnd: [Vec2, Touch];
-            gamepadButtonDown: [GamepadButton];
-            gamepadButtonPress: [GamepadButton];
-            gamepadButtonRelease: [GamepadButton];
+            gamepadButtonDown: [KGamepadButton];
+            gamepadButtonPress: [KGamepadButton];
+            gamepadButtonRelease: [KGamepadButton];
             gamepadStick: [string, Vec2];
             gamepadConnect: [KGamePad];
             gamepadDisconnect: [KGamePad];
@@ -140,6 +144,22 @@ export const initApp = (opt: {
             input: [];
         }>(),
     };
+};
+
+export const initApp = (opt: {
+    canvas: HTMLCanvasElement;
+    touchToMouse?: boolean;
+    gamepads?: Record<string, GamepadDef>;
+    pixelDensity?: number;
+    maxFPS?: number;
+    buttons?: ButtonsDef;
+}) => {
+    if (!opt.canvas) {
+        throw new Error("Please provide a canvas");
+    }
+
+    const state = initAppState(opt);
+    appState = state;
 
     function dt() {
         return state.dt * state.timeScale;
@@ -334,7 +354,7 @@ export const initApp = (opt: {
     }
 
     function isGamepadButtonPressed(
-        btn?: GamepadButton | GamepadButton[],
+        btn?: KGamepadButton | KGamepadButton[],
     ): boolean {
         return btn === undefined
             ? state.mergedGamepadState.buttonState.pressed.size > 0
@@ -345,7 +365,7 @@ export const initApp = (opt: {
     }
 
     function isGamepadButtonDown(
-        btn?: GamepadButton | GamepadButton[],
+        btn?: KGamepadButton | KGamepadButton[],
     ): boolean {
         return btn === undefined
             ? state.mergedGamepadState.buttonState.down.size > 0
@@ -353,7 +373,7 @@ export const initApp = (opt: {
     }
 
     function isGamepadButtonReleased(
-        btn?: GamepadButton | GamepadButton[],
+        btn?: KGamepadButton | KGamepadButton[],
     ): boolean {
         return btn === undefined
             ? state.mergedGamepadState.buttonState.released.size > 0
@@ -407,10 +427,10 @@ export const initApp = (opt: {
     }
 
     function getButtonByGamepadButton(
-        btn: GamepadButton,
+        btn: KGamepadButton,
     ): string | undefined {
         for (const b in state.buttons) {
-            const bindings = state.buttons[b].gamepad?.length
+            const bindings = Array.isArray(state.buttons[b].gamepad)
                 ? state.buttons[b].gamepad
                 : [b];
 
@@ -547,12 +567,12 @@ export const initApp = (opt: {
     }
 
     const onGamepadButtonPress = overload2(
-        (action: (btn: GamepadButton) => void) => {
+        (action: (btn: KGamepadButton) => void) => {
             return state.events.on("gamepadButtonPress", (b) => action(b));
         },
         (
-            btn: GamepadButton | GamepadButton[],
-            action: (btn: GamepadButton) => void,
+            btn: KGamepadButton | KGamepadButton[],
+            action: (btn: KGamepadButton) => void,
         ) => {
             return state.events.on(
                 "gamepadButtonPress",
@@ -562,12 +582,12 @@ export const initApp = (opt: {
     );
 
     const onGamepadButtonDown = overload2(
-        (action: (btn: GamepadButton) => void) => {
+        (action: (btn: KGamepadButton) => void) => {
             return state.events.on("gamepadButtonDown", (b) => action(b));
         },
         (
-            btn: GamepadButton,
-            action: (btn: GamepadButton) => void,
+            btn: KGamepadButton,
+            action: (btn: KGamepadButton) => void,
         ) => {
             return state.events.on(
                 "gamepadButtonDown",
@@ -577,12 +597,12 @@ export const initApp = (opt: {
     );
 
     const onGamepadButtonRelease = overload2(
-        (action: (btn: GamepadButton) => void) => {
+        (action: (btn: KGamepadButton) => void) => {
             return state.events.on("gamepadButtonRelease", (b) => action(b));
         },
         (
-            btn: GamepadButton | GamepadButton[],
-            action: (btn: GamepadButton) => void,
+            btn: KGamepadButton | KGamepadButton[],
+            action: (btn: KGamepadButton) => void,
         ) => {
             return state.events.on(
                 "gamepadButtonRelease",
@@ -684,17 +704,17 @@ export const initApp = (opt: {
     function registerGamepad(browserGamepad: Gamepad) {
         const gamepad: KGamePad = {
             index: browserGamepad.index,
-            isPressed: (btn: GamepadButton) => {
+            isPressed: (btn: KGamepadButton) => {
                 return state.gamepadStates.get(browserGamepad.index)
                     ?.buttonState
                     .pressed.has(btn) || false;
             },
-            isDown: (btn: GamepadButton) => {
+            isDown: (btn: KGamepadButton) => {
                 return state.gamepadStates.get(browserGamepad.index)
                     ?.buttonState
                     .down.has(btn) || false;
             },
-            isReleased: (btn: GamepadButton) => {
+            isReleased: (btn: KGamepadButton) => {
                 return state.gamepadStates.get(browserGamepad.index)
                     ?.buttonState
                     .released.has(btn) || false;
@@ -754,6 +774,7 @@ export const initApp = (opt: {
                 if (browserGamepadBtn.pressed) {
                     if (!gamepadState.buttonState.down.has(gamepadBtn)) {
                         // replicate input in merged state, defined button state and gamepad state
+                        state.lastInputDevice = "gamepad";
                         state.mergedGamepadState.buttonState.press(gamepadBtn);
                         gamepadState.buttonState.press(gamepadBtn);
                         state.buttonState.press(bindedBtn);
@@ -852,6 +873,8 @@ export const initApp = (opt: {
             if (!m) return;
             const btn = getButtonByMouseButton(m);
 
+            state.lastInputDevice = "mouse";
+
             if (btn) {
                 state.buttonState.press(btn);
                 state.events.trigger("buttonPress", btn);
@@ -917,6 +940,7 @@ export const initApp = (opt: {
             } else {
                 const btn = getButtonNameByKey(k)!;
 
+                state.lastInputDevice = "keyboard";
                 state.keyState.press(k);
                 state.buttonState.press(btn);
                 state.events.trigger("keyPressRepeat", k);
@@ -953,12 +977,16 @@ export const initApp = (opt: {
                     touches[0].clientY - box.y,
                 );
 
-                const btn = getButtonByMouseButton("left")!;
+                const btn = getButtonByMouseButton("left");
+                state.lastInputDevice = "mouse";
+
+                if (btn) {
+                    state.buttonState.press(btn);
+                    state.events.trigger("buttonPress", btn);
+                }
 
                 state.mouseState.press("left");
-                state.buttonState.press(btn);
                 state.events.trigger("mousePress", "left");
-                state.events.trigger("buttonPress", btn);
             }
             touches.forEach((t) => {
                 state.events.trigger(
@@ -1183,6 +1211,7 @@ export const initApp = (opt: {
         onButtonPress,
         onButtonDown,
         onButtonRelease,
+        getLastInputType,
         events: state.events,
     };
 };

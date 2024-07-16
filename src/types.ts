@@ -1,3 +1,4 @@
+import type { ButtonBinding, ButtonBindingDevice, ButtonsDef } from "./app";
 import type {
     AsepriteData,
     Asset,
@@ -1364,8 +1365,8 @@ export interface KaboomCtx<
      * @group Input
      */
     onGamepadButtonDown(
-        btn: GamepadButton | GamepadButton[],
-        action: (btn: GamepadButton) => void,
+        btn: KGamepadButton | KGamepadButton[],
+        action: (btn: KGamepadButton) => void,
     ): KEventController;
     /**
      * Register an event that runs every frame when any gamepad buttons are held down.
@@ -1374,7 +1375,7 @@ export interface KaboomCtx<
      * @group Input
      */
     onGamepadButtonDown(
-        action: (btn: GamepadButton) => void,
+        action: (btn: KGamepadButton) => void,
     ): KEventController;
     /**
      * Register an event that runs when user presses certain gamepad button.
@@ -1383,8 +1384,8 @@ export interface KaboomCtx<
      * @group Input
      */
     onGamepadButtonPress(
-        btn: GamepadButton | GamepadButton[],
-        action: (btn: GamepadButton) => void,
+        btn: KGamepadButton | KGamepadButton[],
+        action: (btn: KGamepadButton) => void,
     ): KEventController;
     /**
      * Register an event that runs when user presses any gamepad button.
@@ -1393,7 +1394,7 @@ export interface KaboomCtx<
      * @group Input
      */
     onGamepadButtonPress(
-        action: (btn: GamepadButton) => void,
+        action: (btn: KGamepadButton) => void,
     ): KEventController;
     /**
      * Register an event that runs when user releases certain gamepad button
@@ -1402,8 +1403,8 @@ export interface KaboomCtx<
      * @group Input
      */
     onGamepadButtonRelease(
-        btn: GamepadButton | GamepadButton[],
-        action: (btn: GamepadButton) => void,
+        btn: KGamepadButton | KGamepadButton[],
+        action: (btn: KGamepadButton) => void,
     ): KEventController;
     /**
      * Register an event that runs when user releases any gamepad button.
@@ -1412,7 +1413,7 @@ export interface KaboomCtx<
      * @group Input
      */
     onGamepadButtonRelease(
-        action: (btn: GamepadButton) => void,
+        action: (btn: KGamepadButton) => void,
     ): KEventController;
     /**
      * Register an event that runs when the gamepad axis exists.
@@ -1956,21 +1957,21 @@ export interface KaboomCtx<
      * @since v3000.0
      * @group Input
      */
-    isGamepadButtonPressed(btn?: GamepadButton | GamepadButton[]): boolean;
+    isGamepadButtonPressed(btn?: KGamepadButton | KGamepadButton[]): boolean;
     /**
      * If certain gamepad buttons are currently held down.
      *
      * @since v3000.0
      * @group Input
      */
-    isGamepadButtonDown(btn?: GamepadButton | GamepadButton): boolean;
+    isGamepadButtonDown(btn?: KGamepadButton | KGamepadButton): boolean;
     /**
      * If certain gamepad buttons are just released last frame.
      *
      * @since v3000.0
      * @group Input
      */
-    isGamepadButtonReleased(btn?: GamepadButton | GamepadButton[]): boolean;
+    isGamepadButtonReleased(btn?: KGamepadButton | KGamepadButton[]): boolean;
     /**
      * If certain binded buttons are just pressed last frame on any input (keyboard, gamepad).
      *
@@ -2013,6 +2014,13 @@ export interface KaboomCtx<
      * @group Input
      */
     getGamepadStick(stick: GamepadStick): Vec2;
+    /**
+     * Get the latest input type that triggered the input event.
+     *
+     * @returns The last input type, or null if no input event has been triggered.
+     * @since v3001.0
+     */
+    getLastInputType(): ButtonBindingDevice | null;
     /**
      * List of characters inputted since last frame.
      *
@@ -3540,7 +3548,7 @@ export type MouseButton =
  *
  * @group Input
  */
-export type GamepadButton =
+export type KGamepadButton =
     | "north"
     | "east"
     | "south"
@@ -3571,34 +3579,20 @@ export type GamepadStick = "left" | "right";
  * A gamepad definition.
  */
 export type GamepadDef = {
-    buttons: Record<string, GamepadButton>;
+    buttons: Record<string, KGamepadButton>;
     sticks: Partial<Record<GamepadStick, { x: number; y: number }>>;
 };
-
-/**
- * A button binding.
- */
-export type ButtonBinding = {
-    keyboard?: Key | Key[];
-    gamepad?: GamepadButton | GamepadButton[];
-    mouse?: MouseButton | MouseButton[];
-};
-
-/**
- * A buttons definition.
- */
-export type ButtonsDef = Record<string, ButtonBinding>;
 
 /** A KAPLAY's gamepad */
 export type KGamePad = {
     /** The order of the gamepad in the gamepad list. */
     index: number;
     /** If certain button is pressed. */
-    isPressed(b: GamepadButton): boolean;
+    isPressed(b: KGamepadButton): boolean;
     /** If certain button is held down. */
-    isDown(b: GamepadButton): boolean;
+    isDown(b: KGamepadButton): boolean;
     /** If certain button is released. */
-    isReleased(b: GamepadButton): boolean;
+    isReleased(b: KGamepadButton): boolean;
     /** Get the value of a stick. */
     getStick(stick: GamepadStick): Vec2;
 };

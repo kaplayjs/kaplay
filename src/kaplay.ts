@@ -1,17 +1,6 @@
 const VERSION = "3001.0.0";
 
-import {
-    type App,
-    camFlash,
-    camPos,
-    camRot,
-    camScale,
-    camTransform,
-    initApp,
-    shake,
-    toScreen,
-    toWorld,
-} from "./app";
+import { type App, type ButtonsDef, initApp } from "./app";
 
 import {
     type AppGfxCtx,
@@ -162,7 +151,6 @@ import {
 } from "./utils";
 
 import type {
-    ButtonsDef,
     Debug,
     GameObj,
     KaboomCtx,
@@ -224,6 +212,11 @@ import { type AudioCtx, burp, initAudio, play, volume } from "./audio";
 import {
     addKaboom,
     addLevel,
+    camFlash,
+    camPos,
+    camRot,
+    camScale,
+    camTransform,
     destroy,
     type Game,
     getGravity,
@@ -255,6 +248,9 @@ import {
     scene,
     setGravity,
     setGravityDirection,
+    shake,
+    toScreen,
+    toWorld,
 } from "./game";
 
 import boomSpriteSrc from "./kassets/boom.png";
@@ -1114,6 +1110,7 @@ const kaplay = <
         isButtonReleased: app.isButtonReleased,
         setButton: app.setButton,
         getButton: app.getButton,
+        getLastInputType: app.getLastInputType,
         charInputted: app.charInputted,
         // timer
         loop,
