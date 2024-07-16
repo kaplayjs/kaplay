@@ -33,5 +33,9 @@ loop(0.1, () => {
         "particle",
     ]);
 
+    item.onCollide("particle", (p) => {
+        console.log("dea");
+    });
+
     item.jump(rand(320, 640));
 });
