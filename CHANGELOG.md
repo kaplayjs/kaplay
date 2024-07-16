@@ -22,7 +22,7 @@ onButtonPress("jump", () => {
 ```
 
 - added `getButton(btn)` and `setButton(btn)` to get and set button bindings
-- added `getLastDevice()` to get what was the last pressed device
+- added `getLastInputType()` to get what was the last pressed device
 
 ```js
 debug.log(getButton("jump").keyboard); // ["space", "up"]
@@ -34,7 +34,7 @@ setButton("jump", {
 });
 
 onButtonPress(() => {
-    console.log(getLastDevice());
+    console.log(getLastInputType());
 });
 ```
 

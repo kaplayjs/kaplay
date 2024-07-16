@@ -43,7 +43,7 @@ add([
 ]);
 
 onButtonPress("jump", () => {
-    debug.log(getLastDevice());
+    debug.log(getLastInputType());
 
     if (player.isGrounded()) {
         // .jump() is provided by body()

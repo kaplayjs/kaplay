@@ -26,6 +26,6 @@ export type ButtonsDef = Record<string, ButtonBinding>;
  */
 export type ButtonBindingDevice = "keyboard" | "gamepad" | "mouse";
 
-export const getLastDevice: KaboomCtx["getLastDevice"] = () => {
+export const getLastInputType: KaboomCtx["getLastInputType"] = () => {
     return appState.lastInputDevice;
 };
