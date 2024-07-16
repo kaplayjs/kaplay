@@ -165,13 +165,13 @@ export function sentry(
                 }
                 if (objects.length > 0) {
                     this.spotted = objects;
-                    this.trigger("object-spotted", objects);
+                    this.trigger("objectSpotted", objects);
                 }
             }
         },
         onObjectsSpotted(cb: (objects: GameObj[]) => void) {
             return (this as unknown as GameObj<SentryComp>).on(
-                "object-spotted",
+                "objectSpotted",
                 cb,
             );
         },

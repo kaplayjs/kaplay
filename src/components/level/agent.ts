@@ -88,22 +88,22 @@ export function agent(opts: AgentCompOpt = {}): AgentComp {
                                 if (path) {
                                     index = 0;
                                     this.trigger(
-                                        "navigation-next",
+                                        "navigationNext",
                                         this,
                                         path[index],
                                     );
                                 } else {
                                     index = null;
-                                    this.trigger("navigation-ended", this);
+                                    this.trigger("navigationEnded", this);
                                 }
                             }
                         });
                     this.onDestroy(() => navMapChangedEvent?.cancel());
                 }
-                this.trigger("navigation-started", this);
-                this.trigger("navigation-next", this, path[index]);
+                this.trigger("navigationStarted", this);
+                this.trigger("navigationNext", this, path[index]);
             } else {
-                this.trigger("navigation-ended", this);
+                this.trigger("navigationEnded", this);
             }
         },
         update(this: GameObj<AgentComp | PosComp>) {
@@ -112,28 +112,28 @@ export function agent(opts: AgentCompOpt = {}): AgentComp {
                     if (index === path.length - 1) {
                         this.pos = target.clone();
                         index = null;
-                        this.trigger("navigation-ended", this);
-                        this.trigger("target-reached", this);
+                        this.trigger("navigationEnded", this);
+                        this.trigger("targetReached", this);
                         return;
                     } else {
                         index++;
-                        this.trigger("navigation-next", this, path[index]);
+                        this.trigger("navigationNext", this, path[index]);
                     }
                 }
                 this.moveTo(path[index], this.agentSpeed);
             }
         },
         onNavigationStarted(this: GameObj<AgentComp>, cb: () => void) {
-            return this.on("navigation-started", cb);
+            return this.on("navigationStarted", cb);
         },
         onNavigationNext(this: GameObj<AgentComp>, cb: () => void) {
-            return this.on("navigation-next", cb);
+            return this.on("navigationNext", cb);
         },
         onNavigationEnded(this: GameObj<AgentComp>, cb: () => void) {
-            return this.on("navigation-ended", cb);
+            return this.on("navigationEnded", cb);
         },
         onTargetReached(this: GameObj<AgentComp>, cb: () => void) {
-            return this.on("target-reached", cb);
+            return this.on("targetReached", cb);
         },
         inspect() {
             return `agent: ` + JSON.stringify({

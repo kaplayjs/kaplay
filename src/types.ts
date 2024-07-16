@@ -70,7 +70,15 @@ import type {
     ParticlesComp,
     ParticlesOpt,
 } from "./components/draw/particles";
-import type { BoomOpt, LevelOpt, SceneDef, SceneName } from "./game";
+import type {
+    BoomOpt,
+    GameObjEventMap,
+    GameObjEventNames,
+    LevelOpt,
+    SceneDef,
+    SceneName,
+    TupleWithoutFirst,
+} from "./game";
 import type {
     DrawBezierOpt,
     DrawCircleOpt,
@@ -88,6 +96,7 @@ import type {
     LineJoin,
     Texture,
 } from "./gfx";
+import kaplay from "./kaplay";
 import type { Color, RGBAValue, RGBValue } from "./math/color";
 import type {
     Circle,
@@ -929,10 +938,13 @@ export interface KaboomCtx<
      * ```
      * @group Events
      */
-    on(
-        event: string,
+    on<Ev extends GameObjEventNames | string & {}>(
+        event: Ev,
         tag: Tag,
-        action: (obj: GameObj, ...args: any) => void,
+        action: (
+            obj: GameObj,
+            ...args: TupleWithoutFirst<GameObjEventMap[Ev]>
+        ) => void,
     ): KEventController;
     /**
      * Register an event that runs every frame (~60 times per second) for all game objs with certain tag.

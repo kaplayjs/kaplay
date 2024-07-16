@@ -94,7 +94,7 @@ export function patrol(
                         index = Math.min(index + 1, waypoints.length - 1);
                         if (index == waypoints.length - 1) {
                             finished = true;
-                            this.trigger("patrol-finished");
+                            this.trigger("patrolFinished");
                         }
                         break;
                 }
@@ -102,7 +102,7 @@ export function patrol(
         },
         onPatrolFinished(cb: (objects: GameObj[]) => void) {
             return (this as unknown as GameObj<PatrolComp>).on(
-                "patrol-finished",
+                "patrolFinished",
                 cb,
             );
         },

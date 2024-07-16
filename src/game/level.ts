@@ -127,7 +127,7 @@ export function addLevel(
             }
         }
         if (spatialMapChanged) {
-            level.trigger("spatial_map_changed");
+            level.trigger("spatialMapChanged");
         }
     };
 
@@ -345,8 +345,8 @@ export function addLevel(
 
             if (spatialMap) {
                 insertIntoSpatialMap(obj);
-                this.trigger("spatial_map_changed");
-                this.trigger("navigation_map_invalid");
+                this.trigger("spatialMapChanged");
+                this.trigger("navigationMapInvalid");
             }
 
             return obj;
@@ -388,11 +388,11 @@ export function addLevel(
         },
 
         onSpatialMapChanged(this: GameObj<LevelComp>, cb: () => void) {
-            return this.on("spatial_map_changed", cb);
+            return this.on("spatialMapChanged", cb);
         },
 
         onNavigationMapInvalid(this: GameObj<LevelComp>, cb: () => void) {
-            return this.on("navigation_map_invalid", cb);
+            return this.on("navigationMapInvalid", cb);
         },
 
         getAt(tilePos: Vec2) {
@@ -453,7 +453,7 @@ export function addLevel(
         },
 
         onNavigationMapChanged(this: GameObj<LevelComp>, cb: () => void) {
-            return this.on("navigation_map_changed", cb);
+            return this.on("navigationMapChanged", cb);
         },
 
         getTilePath(
@@ -610,7 +610,7 @@ export function addLevel(
 
     level.onNavigationMapInvalid(() => {
         level.invalidateNavigationMap();
-        level.trigger("navigation_map_changed");
+        level.trigger("navigationMapChanged");
     });
 
     map.forEach((row, i) => {

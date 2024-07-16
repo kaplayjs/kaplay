@@ -271,7 +271,7 @@ export function animate(): AnimateComp {
                 if (localFinished && !c.isFinished) {
                     c.isFinished = true;
                     (this as unknown as GameObj<any>).trigger(
-                        "animate-channel-finished",
+                        "animateChannelFinished",
                         c.name,
                     );
                 }
@@ -279,7 +279,7 @@ export function animate(): AnimateComp {
             }
             if (allFinished && !isFinished) {
                 isFinished = true;
-                (this as unknown as GameObj<any>).trigger("animate-finished");
+                (this as unknown as GameObj<any>).trigger("animateFinished");
             }
         },
         animate<T extends LerpValue>(
@@ -317,11 +317,11 @@ export function animate(): AnimateComp {
             channels.splice(0, channels.length);
         },
         onAnimateFinished(cb: () => void) {
-            return (this as unknown as GameObj<any>).on("animate-finished", cb);
+            return (this as unknown as GameObj<any>).on("animateFinished", cb);
         },
         onAnimateChannelFinished(cb: (name: string) => void) {
             return (this as unknown as GameObj<any>).on(
-                "animate-channel-finished",
+                "animateChannelFinished",
                 cb,
             );
         },
