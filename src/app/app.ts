@@ -79,7 +79,6 @@ export type AppState = ReturnType<typeof initAppState>;
 
 export let appState: AppState;
 
-// TODO: Finish types or separate app state from initApp
 export const initAppState = (opt: {
     canvas: HTMLCanvasElement;
     touchToMouse?: boolean;
