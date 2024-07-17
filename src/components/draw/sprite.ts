@@ -178,6 +178,36 @@ export function sprite(
         return scale;
     };
 
+    const setSpriteData = (
+        obj: GameObj<SpriteComp>,
+        spr: SpriteData | null,
+    ) => {
+        if (!spr) return;
+
+        let q = spr.frames[0].clone();
+
+        if (opt.quad) {
+            q = q.scale(opt.quad);
+        }
+
+        const scale = calcTexScale(
+            spr.tex,
+            q,
+            opt.width,
+            opt.height,
+        );
+
+        obj.width = spr.tex.width * q.w * scale.x;
+        obj.height = spr.tex.height * q.h * scale.y;
+
+        if (opt.anim) {
+            obj.play(opt.anim);
+        }
+
+        spriteData = spr;
+        spriteLoadedEvent.trigger(spriteData);
+    };
+
     return {
         id: "sprite",
         // TODO: allow update
@@ -191,6 +221,16 @@ export function sprite(
 
         get sprite() {
             return src.toString();
+        },
+
+        set sprite(src) {
+            const spr = resolveSprite(src);
+
+            if (spr) {
+                spr.onLoad(spr =>
+                    setSpriteData(this as unknown as GameObj<SpriteComp>, spr)
+                );
+            }
         },
 
         draw(this: GameObj<SpriteComp>) {
@@ -270,39 +310,14 @@ export function sprite(
         },
 
         add(this: GameObj<SpriteComp>) {
-            const setSpriteData = (spr: SpriteData | null) => {
-                if (!spr) return;
-
-                let q = spr.frames[0].clone();
-
-                if (opt.quad) {
-                    q = q.scale(opt.quad);
-                }
-
-                const scale = calcTexScale(
-                    spr.tex,
-                    q,
-                    opt.width,
-                    opt.height,
-                );
-
-                this.width = spr.tex.width * q.w * scale.x;
-                this.height = spr.tex.height * q.h * scale.y;
-
-                if (opt.anim) {
-                    this.play(opt.anim);
-                }
-
-                spriteData = spr;
-                spriteLoadedEvent.trigger(spriteData);
-            };
-
             const spr = resolveSprite(src);
 
             if (spr) {
-                spr.onLoad(setSpriteData);
+                // The sprite exists
+                spr.onLoad(spr => setSpriteData(this, spr));
             } else {
-                onLoad(() => setSpriteData(resolveSprite(src)!.data));
+                // The sprite may be loaded later in the script, check again when all resources have been loaded
+                onLoad(() => setSpriteData(this, resolveSprite(src)!.data));
             }
         },
 
