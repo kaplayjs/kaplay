@@ -2,6 +2,7 @@
 kaplay();
 
 loadSprite("bean", "sprites/bean.png");
+loadSprite("bag", "sprites/bag.png");
 
 const rotatingBean = add([
     sprite("bean"),
@@ -10,6 +11,8 @@ const rotatingBean = add([
     rotate(0),
     animate(),
 ]);
+
+rotatingBean.sprite = "bag";
 
 rotatingBean.animate("angle", [0, 360], {
     duration: 2,
