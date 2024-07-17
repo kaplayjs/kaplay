@@ -93,15 +93,17 @@ root.add(); // same as add()
 root.get(); // same as get()
 ```
 
-- setters/getters syntax in `scale()` component
+- setters/getters syntax in `scale()` and `sprite()` component
 
 ```js
 const obj = add([
+    sprite("bean"),
     scale(2),
 ]);
 
 // set it with = syntax
 obj.scale = vec2(3, 4);
+obj.sprite = "bag";
 ```
 
 ## Misc
