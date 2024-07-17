@@ -1,4 +1,4 @@
-import { type Vec2, vec2, type Vec2Args } from "../../math/math";
+import { Vec2, vec2, type Vec2Args } from "../../math/math";
 import type { Comp } from "../../types";
 
 /**
@@ -7,34 +7,68 @@ import type { Comp } from "../../types";
  * @group Component Types
  */
 export interface ScaleComp extends Comp {
+    /**
+     * The current scale of the object
+     *
+     * @returns The current scale of the object as a {@link Vec2 `Vec2`}
+     */
     scale: Vec2;
+    /**
+     * Set the scale of the object to a number
+     */
     scaleTo(s: number): void;
+    /**
+     * Set the scale of the object to a Vec2
+     */
     scaleTo(s: Vec2): void;
+    /**
+     * Set the scale of the object to a number for x and y
+     */
     scaleTo(sx: number, sy: number): void;
+    /**
+     * Scale the object by a number
+     */
     scaleBy(s: number): void;
+    /**
+     * Scale the object by a Vec2
+     */
     scaleBy(s: Vec2): void;
+    /**
+     * Scale the object by a number for x and y
+     */
     scaleBy(sx: number, sy: number): void;
 }
 
-// TODO: allow single number assignment
 export function scale(...args: Vec2Args): ScaleComp {
     if (args.length === 0) {
         return scale(1);
     }
+    let _scale = vec2(1);
     return {
         id: "scale",
-        scale: vec2(...args),
+        set scale(value: Vec2) {
+            if (value instanceof Vec2 === false) {
+                throw Error(
+                    "The scale property on scale is a vector. Use scaleTo or scaleBy to set the scale with a number.",
+                );
+            }
+
+            _scale = vec2(value);
+        },
+        get scale() {
+            return _scale;
+        },
         scaleTo(...args: Vec2Args) {
-            this.scale = vec2(...args);
+            _scale = vec2(...args);
         },
         scaleBy(...args: Vec2Args) {
-            this.scale.scale(vec2(...args));
+            _scale = _scale.scale(vec2(...args));
         },
         inspect() {
-            if (this.scale.x == this.scale.y) {
-                return `scale: ${this.scale.x.toFixed(1)}x`;
-            } else {return `scale: (${this.scale.x.toFixed(1)}x, ${
-                    this.scale.y.toFixed(1)
+            if (_scale.x == _scale.y) {
+                return `scale: ${_scale.x.toFixed(1)}x`;
+            } else {return `scale: (${_scale.x.toFixed(1)}x, ${
+                    _scale.y.toFixed(1)
                 }y)`;}
         },
     };

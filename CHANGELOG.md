@@ -1,4 +1,6 @@
-# v3001.0 (alpha, kaplay@next)
+# v3001.0.0 (alpha, kaplay@next)
+
+## Input
 
 - added input bindings, `onButtonPress`, `onButtonRelease`, `onButtonDown`, and
   it's corresponding boolean versions, `isButtonPressed`, `isButtonDown` and
@@ -13,16 +15,14 @@ kaplay({
             gamepad: ["south"],
         },
     },
-  },
 });
 
 onButtonPress("jump", () => {
-  player.jump();
+    player.jump();
 });
 ```
 
 - added `getButton(btn)` and `setButton(btn)` to get and set button bindings
-- added `getLastInputDeviceType()` to get what was the last pressed device
 
 ```js
 debug.log(getButton("jump").keyboard); // ["space", "up"]
@@ -32,19 +32,25 @@ setButton("jump", {
     keyboard: ["w"],
     // gamepad binding is not changed
 });
+```
 
+- added `getLastInputDeviceType()` to get what was the last pressed device
+
+```js
 onButtonPress(() => {
     console.log(getLastInputDeviceType()); // keyboard, mouse or gamepad
 });
 ```
 
-- now you can use array in all input handlers
+- now you can use arrays in all input handlers
 
 ```js
 onKeyPress(["w", "up"], () => {
     player.jump();
 });
 ```
+
+## Components
 
 - readded `layers()` and the `layer()` component
 
@@ -79,6 +85,27 @@ add([
 
 - added `getTreeRoot()` to get the game's root object, which is the parent of
   all other objects
+
+```js
+// get the root object
+const root = getTreeRoot();
+root.add(); // same as add()
+root.get(); // same as get()
+```
+
+- setters/getters syntax in `scale()` component
+
+```js
+const obj = add([
+    scale(2),
+]);
+
+// set it with = syntax
+obj.scale = vec2(3, 4);
+```
+
+## Misc
+
 - added `loadMusic()` to load streaming audio (doesn't block in loading screen)
 - added `chooseMultiple()` and `shuffle()` helpers for arrays
 - added `getSceneName()` to get the current scene name
@@ -108,7 +135,7 @@ add([
 - added higher order easing functions linear, steps and cubic-bezier
 - added a text input component
 
-## Fixed
+## Bug fixes
 
 - **(break)** much typescript definitions was fixed, if you use typescript now
   maybe you see new errors that make your code strict
