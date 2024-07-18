@@ -11,6 +11,12 @@ const DEF_LIGHTNESS = 0.6;
 
 kaplay();
 
+add([
+    text("click for confetti"),
+    anchor("top"),
+    pos(center().x, 0),
+]);
+
 function addConfetti(opt = {}) {
     const sample = (s) => typeof s === "function" ? s() : s;
     for (let i = 0; i < (opt.count ?? DEF_COUNT); i++) {
@@ -32,6 +38,7 @@ function addConfetti(opt = {}) {
             anchor("center"),
             rotate(rand(0, 360)),
         ]);
+
         const spin = rand(DEF_SPIN[0], DEF_SPIN[1]);
         const gravity = opt.gravity ?? DEF_GRAVITY;
         const airDrag = opt.airDrag ?? DEF_AIR_DRAG;
@@ -48,6 +55,7 @@ function addConfetti(opt = {}) {
             opt.angularVelocity
                 ?? rand(DEF_ANGULAR_VELOCITY[0], DEF_ANGULAR_VELOCITY[1]),
         );
+
         p.onUpdate(() => {
             velY += gravity * dt();
             p.pos.x += velX * dt();
