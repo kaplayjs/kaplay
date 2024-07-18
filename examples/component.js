@@ -30,7 +30,7 @@ function funky() {
             // "this" in all component methods refers to the host game object
             // Here we're updating some properties provided by other components
             this.color = rgb(rand(0, 255), rand(0, 255), rand(0, 255));
-            this.scale = rand(1, 2);
+            this.scale = vec2(rand(1, 2));
         },
 
         // Runs every frame (after update) as long as the host object exists

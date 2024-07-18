@@ -3,20 +3,15 @@
 kaplay({
     scale: 0.7,
     background: [128, 180, 255],
+    font: "happy",
 });
 
-// TODO: add more friends
-const friends = [
-    "bag",
-    "ghosty",
-    "bobo",
-    "gigagantrum",
-];
-
-for (const friend of friends) {
-    loadSprite(friend, `/sprites/${friend}.png`);
-}
-
+loadSprite("bag", `/sprites/bag.png`);
+loadSprite("ghosty", "/sprites/ghosty.png");
+loadSprite("bobo", `/sprites/bobo.png`);
+loadSprite("gigagantrum", "/sprites/gigagantrum.png");
+loadSprite("tga", "/sprites/dino.png");
+loadSprite("ghostiny", "/sprites/ghostiny.png");
 loadSprite("bean", "/sprites/bean.png");
 loadSprite("note", "/sprites/note.png");
 loadSprite("grass", "/sprites/grass.png");
@@ -24,10 +19,20 @@ loadSprite("cloud", "/sprites/cloud.png");
 loadSprite("sun", "/sprites/sun.png");
 loadSound("bell", "/examples/sounds/bell.mp3");
 loadSound("kaboom2000", "/examples/sounds/kaboom2000.mp3");
+loadBitmapFont("happy", "/examples/fonts/happy_28x36.png", 28, 36);
+
+const friends = [
+    "bag",
+    "bobo",
+    "ghosty",
+    "gigagantrum",
+    "tga",
+    "ghostiny",
+];
 
 const FLOOR_HEIGHT = 64;
 const JUMP_FORCE = 1320;
-const CAPTION_SPEED = 340;
+const CAPTION_SPEED = 220;
 const PLAYER_SPEED = 640;
 
 let started = false;
@@ -160,10 +165,10 @@ const caption = add([
             return {
                 color: hsl2rgb(
                     ((time() * 60 + idx * 20) % 255) / 255,
-                    0.7,
-                    0.8,
+                    0.9,
+                    0.6,
                 ),
-                scale: wave(1, 1.2, time() * 3 + idx),
+                scale: wave(1.4, 1.6, time() * 3 + idx),
                 angle: wave(-9, 9, time() * 3 + idx),
             };
         },
