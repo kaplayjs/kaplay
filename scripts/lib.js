@@ -10,17 +10,17 @@ const srcDir = "src";
 const distDir = "dist";
 const srcPath = `${srcDir}/index.ts`;
 
-const fmts = [
+const fmts = (name) => [
     {
         format: "iife",
         globalName: "kaplay",
-        outfile: `${distDir}/kaplay.js`,
+        outfile: `${distDir}/${name}.js`,
         footer: {
             js: "window.kaboom = kaplay.default; window.kaplay = kaplay.default",
         },
     },
-    { format: "cjs", outfile: `${distDir}/kaplay.cjs` },
-    { format: "esm", outfile: `${distDir}/kaplay.mjs` },
+    { format: "cjs", outfile: `${distDir}/${name}.cjs` },
+    { format: "esm", outfile: `${distDir}/${name}.mjs` },
 ];
 
 /** @type {esbuild.BuildOptions} */
@@ -38,12 +38,14 @@ const config = {
 };
 
 export async function build() {
-    return Promise.all(fmts.map((fmt) => {
-        return esbuild.build({
-            ...config,
-            ...fmt,
-        }).then(() => console.log(`-> ${fmt.outfile}`));
-    }));
+    return Promise.all(
+        [fmts("kaplay"), fmts("kaboom")].flat().map((fmt) => {
+            return esbuild.build({
+                ...config,
+                ...fmt,
+            }).then(() => console.log(`-> ${fmt.outfile}`));
+        }),
+    );
 }
 
 export async function dev() {
@@ -51,14 +53,14 @@ export async function dev() {
     serve();
     const ctx = await esbuild.context({
         ...config,
-        ...fmts[0],
+        ...fmts("kaplay")[0],
         minify: false,
         plugins: [
             {
                 name: "logger",
                 setup(b) {
                     b.onEnd(() => {
-                        console.log(`-> ${fmts[0].outfile}`);
+                        console.log(`-> ${fmts("kaplay")[0].outfile}`);
                     });
                 },
             },
