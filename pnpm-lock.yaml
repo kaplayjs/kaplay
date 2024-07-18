@@ -11,6 +11,9 @@ importers:
       dprint:
         specifier: ^0.45.1
         version: 0.45.1
+      dts-bundle-generator:
+        specifier: ^9.5.1
+        version: 9.5.1
       esbuild:
         specifier: ^0.21.5
         version: 0.21.5
@@ -577,6 +580,11 @@ packages:
 
   dprint@0.45.1:
     resolution: {integrity: sha512-OYefcDgxd6jSdig/Cfkw1vdvyiOIRruCPnqGBbXpc95buDt9kvwL+Lic1OHc+SaQSsQub0BUZMd5+TNgy8Sh3A==}
+    hasBin: true
+
+  dts-bundle-generator@9.5.1:
+    resolution: {integrity: sha512-DxpJOb2FNnEyOzMkG11sxO2dmxPjthoVWxfKqWYJ/bI/rT1rvTMktF5EKjAYrRZu6Z6t3NhOUZ0sZ5ZXevOfbA==}
+    engines: {node: '>=14.0.0'}
     hasBin: true
 
   ee-first@1.1.1:
@@ -1746,6 +1754,11 @@ snapshots:
       '@dprint/linux-x64-glibc': 0.45.1
       '@dprint/linux-x64-musl': 0.45.1
       '@dprint/win32-x64': 0.45.1
+
+  dts-bundle-generator@9.5.1:
+    dependencies:
+      typescript: 5.5.3
+      yargs: 17.7.2
 
   ee-first@1.1.1: {}
 
