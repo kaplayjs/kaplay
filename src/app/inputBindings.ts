@@ -1,4 +1,4 @@
-import type { KaboomCtx, Key, KGamepadButton, MouseButton } from "../types";
+import type { KAPLAYCtx, Key, KGamepadButton, MouseButton } from "../types";
 import { appState } from "./app";
 
 /**
@@ -26,7 +26,7 @@ export type ButtonsDef = Record<string, ButtonBinding>;
  */
 export type ButtonBindingDevice = "keyboard" | "gamepad" | "mouse";
 
-export const getLastInputDeviceType: KaboomCtx["getLastInputDeviceType"] =
+export const getLastInputDeviceType: KAPLAYCtx["getLastInputDeviceType"] =
     () => {
         return appState.lastInputDevice;
     };

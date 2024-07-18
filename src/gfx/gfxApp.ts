@@ -9,11 +9,11 @@ import {
 import { BatchRenderer, FrameBuffer, type GfxCtx, Texture } from "../gfx";
 import { type Color, rgb } from "../math/color";
 import { Mat4 } from "../math/math";
-import type { KaboomOpt } from "../types";
+import type { KAPLAYOpt } from "../types";
 
 export type AppGfxCtx = ReturnType<typeof initAppGfx>;
 
-export const initAppGfx = (gopt: KaboomOpt, ggl: GfxCtx) => {
+export const initAppGfx = (gopt: KAPLAYOpt, ggl: GfxCtx) => {
     const defShader = makeShader(ggl, DEF_VERT, DEF_FRAG);
     const pixelDensity = window.devicePixelRatio || window.devicePixelRatio;
     const gscale = gopt.scale ?? 1;

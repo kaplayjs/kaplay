@@ -1,7 +1,7 @@
 import { dt } from "../../app";
 import { game, k } from "../../kaplay";
 import { Vec2 } from "../../math/math";
-import type { Comp, GameObj, KaboomCtx, QueryOpt } from "../../types";
+import type { Comp, GameObj, QueryOpt } from "../../types";
 import type { KEventController } from "../../utils/";
 import { raycast } from "../draw";
 import type { PosComp } from "../transform/pos";
@@ -83,7 +83,6 @@ export type SentryCandidatesCb = () => GameObj<any>[];
 export type SentryCandidates = SentryCandidatesCb | QueryOpt;
 
 export function sentry(
-    this: KaboomCtx,
     candidates: SentryCandidates,
     opts: SentryCompOpt = {},
 ): SentryComp {

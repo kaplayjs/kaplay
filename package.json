@@ -6,18 +6,18 @@
   "homepage": "https://kaplayjs.com/",
   "repository": "github:marklovers/kaplay",
   "type": "module",
-  "main": "./dist/kaboom.cjs",
-  "module": "./dist/kaboom.mjs",
-  "types": "./dist/declaration/kaplay.d.ts",
+  "main": "./dist/kaplay.cjs",
+  "module": "./dist/kaplay.mjs",
+  "types": "./dist/declaration/index.d.ts",
   "exports": {
     ".": {
       "import": {
-        "types": "./dist/declaration/kaplay.d.ts",
-        "default": "./dist/kaboom.mjs"
+        "types": "./dist/declaration/index.d.ts",
+        "default": "./dist/kaplay.mjs"
       },
       "require": {
-        "types": "./dist/declaration/kaplay.d.ts",
-        "default": "./dist/kaboom.cjs"
+        "types": "./dist/declaration/index.d.ts",
+        "default": "./dist/kaplay.cjs"
       }
     },
     "./global": "./dist/declaration/global.js"

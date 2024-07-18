@@ -11,7 +11,7 @@ import {
 } from "../../gfx";
 import { k } from "../../kaplay";
 import { Rect, vec2 } from "../../math/math";
-import type { Comp, GameObj, KaboomCtx } from "../../types";
+import type { Comp, GameObj, KAPLAYCtx } from "../../types";
 
 /**
  * The {@link text `text()`} component.
@@ -126,11 +126,7 @@ export interface TextCompOpt {
     styles?: Record<string, CharTransform | CharTransformFunc>;
 }
 
-export function text(
-    this: KaboomCtx,
-    t: string,
-    opt: TextCompOpt = {},
-): TextComp {
+export function text(t: string, opt: TextCompOpt = {}): TextComp {
     function update(obj: GameObj<TextComp | any>) {
         const ftext = formatText(Object.assign(getRenderProps(obj), {
             text: obj.text + "",

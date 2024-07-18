@@ -1,6 +1,6 @@
 import { game } from "../../kaplay";
 import easings from "../../math/easings";
-import type { EmptyComp, GameObj, KaboomCtx } from "../../types";
+import type { EmptyComp, GameObj } from "../../types";
 import type { OpacityComp } from "../draw/opacity";
 
 /**
@@ -15,11 +15,7 @@ export interface LifespanCompOpt {
     fade?: number;
 }
 
-export function lifespan(
-    this: KaboomCtx,
-    time: number,
-    opt: LifespanCompOpt = {},
-): EmptyComp {
+export function lifespan(time: number, opt: LifespanCompOpt = {}): EmptyComp {
     if (time == null) {
         throw new Error("lifespan() requires time");
     }

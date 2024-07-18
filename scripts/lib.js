@@ -8,19 +8,19 @@ import ts from "typescript";
 
 const srcDir = "src";
 const distDir = "dist";
-const srcPath = `${srcDir}/kaplay.ts`;
+const srcPath = `${srcDir}/index.ts`;
 
 const fmts = [
     {
         format: "iife",
         globalName: "kaplay",
-        outfile: `${distDir}/kaboom.js`,
+        outfile: `${distDir}/kaplay.js`,
         footer: {
             js: "window.kaboom = kaplay.default; window.kaplay = kaplay.default",
         },
     },
-    { format: "cjs", outfile: `${distDir}/kaboom.cjs` },
-    { format: "esm", outfile: `${distDir}/kaboom.mjs` },
+    { format: "cjs", outfile: `${distDir}/kaplay.cjs` },
+    { format: "esm", outfile: `${distDir}/kaplay.mjs` },
 ];
 
 /** @type {esbuild.BuildOptions} */
@@ -78,7 +78,7 @@ export async function genDTS() {
         bundle: true,
         target: "esnext",
         format: "esm",
-        entryPoints: ["./src/kaplay.ts"],
+        entryPoints: ["./src/index.ts"],
         outdir: "./dist/declaration/",
         plugins: [dTSPathAliasPlugin()],
         loader: {
@@ -174,19 +174,19 @@ export async function genDTS() {
     // check if global defs are being generated
     let globalGenerated = false;
 
-    // generate global decls for KaboomCtx members
+    // generate global decls for KAPLAYCtx members
     let globalDts = "";
 
-    globalDts += "import { KaboomCtx } from \"./types\"\n";
+    globalDts += "import { KAPLAYCtx } from \"./types\"\n";
     globalDts += "declare global {\n";
 
     for (const stmt of stmts) {
-        if (stmt.name === "KaboomCtx") {
+        if (stmt.name === "KAPLAYCtx") {
             if (stmt.kind !== "InterfaceDeclaration") {
-                throw new Error("KaboomCtx must be an interface.");
+                throw new Error("KAPLAYCtx must be an interface.");
             }
             for (const name in stmt.members) {
-                globalDts += `\tconst ${name}: KaboomCtx["${name}"]\n`;
+                globalDts += `\tconst ${name}: KAPLAYCtx["${name}"]\n`;
             }
             globalGenerated = true;
         }
@@ -195,7 +195,7 @@ export async function genDTS() {
     globalDts += "}\n";
 
     if (!globalGenerated) {
-        throw new Error("KaboomCtx not found, failed to generate global defs.");
+        throw new Error("KAPLAYCtx not found, failed to generate global defs.");
     }
 
     writeFile(`${distDir}/declaration/global.d.ts`, globalDts);
@@ -269,7 +269,7 @@ export function serve(opt = {}) {
     <head>
     </head>
     <body>
-    <script src="/dist/kaboom.js"></script>
+    <script src="/dist/kaplay.js"></script>
     <script src="/examples/${name}.js"></script>
     </body>
     </html>

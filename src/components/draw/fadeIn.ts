@@ -1,12 +1,9 @@
 import { dt } from "../../app";
 import { map } from "../../math";
-import type { Comp, GameObj, KaboomCtx } from "../../types";
+import type { Comp, GameObj } from "../../types";
 import type { OpacityComp } from "./opacity";
 
-export function fadeIn(
-    this: KaboomCtx,
-    time: number = 1,
-): Comp {
+export function fadeIn(time: number = 1): Comp {
     let finalOpacity: number;
     let t = 0;
     let done = false;

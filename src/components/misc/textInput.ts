@@ -1,5 +1,5 @@
 import { k } from "../../kaplay";
-import type { Comp, GameObj, KaboomCtx } from "../../types";
+import type { Comp, GameObj, KAPLAYCtx } from "../../types";
 import type { KEventController } from "../../utils";
 import type { TextComp } from "../draw/text";
 
@@ -16,7 +16,7 @@ export interface TextInputComp extends Comp {
 }
 
 export function textInput(
-    this: KaboomCtx,
+    this: KAPLAYCtx,
     hasFocus: boolean = true,
     maxInputLength?: number,
 ): TextInputComp {

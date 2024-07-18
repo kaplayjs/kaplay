@@ -2,7 +2,7 @@ import { DEF_JUMP_FORCE, MAX_VEL } from "../../constants";
 import { game, k } from "../../kaplay";
 import { type Vec2, vec2 } from "../../math/math";
 import { calcTransform } from "../../math/various";
-import type { Collision, Comp, GameObj, KaboomCtx } from "../../types";
+import type { Collision, Comp, GameObj } from "../../types";
 import type { KEventController } from "../../utils/";
 import type { PosComp } from "../transform/pos";
 import type { AreaComp } from "./area";
@@ -157,10 +157,7 @@ export interface BodyCompOpt {
     mass?: number;
 }
 
-export function body(
-    this: KaboomCtx,
-    opt: BodyCompOpt = {},
-): BodyComp {
+export function body(opt: BodyCompOpt = {}): BodyComp {
     let curPlatform: GameObj<PosComp | AreaComp | BodyComp> | null = null;
     let lastPlatformPos: null | Vec2 = null;
     let willFall = false;

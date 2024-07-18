@@ -1,6 +1,5 @@
 import { dt } from "../../app";
 import { drawRaw, type Texture } from "../../gfx";
-import { k } from "../../kaplay";
 import {
     Color,
     lerp,
@@ -12,7 +11,7 @@ import {
     Vec2,
     vec2,
 } from "../../math";
-import type { Comp, KaboomCtx, Vertex } from "../../types";
+import type { Comp, Vertex } from "../../types";
 import { KEvent } from "../../utils/";
 
 class Particle {
@@ -121,11 +120,7 @@ export interface ParticlesComp extends Comp {
     onEnd(cb: () => void): void;
 }
 
-export function particles(
-    this: KaboomCtx,
-    popt: ParticlesOpt,
-    eopt: EmitterOpt,
-): ParticlesComp {
+export function particles(popt: ParticlesOpt, eopt: EmitterOpt): ParticlesComp {
     let emitterLifetime = eopt.lifetime;
 
     const particles: Particle[] = [];
