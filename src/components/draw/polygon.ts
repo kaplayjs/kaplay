@@ -2,7 +2,7 @@ import { getRenderProps } from "../../game/utils";
 import { drawPolygon, type Texture } from "../../gfx";
 import { type Color } from "../../math/color";
 import { Polygon, type Vec2 } from "../../math/math";
-import type { Comp, DrawPolygonOpt, GameObj, KaboomCtx } from "../../types";
+import type { Comp, DrawPolygonOpt, GameObj } from "../../types";
 
 /**
  * The {@link polygon `polygon()`} component.
@@ -46,11 +46,7 @@ export interface PolygonComp extends Comp {
  */
 export type PolygonCompOpt = Omit<DrawPolygonOpt, "pts">;
 
-export function polygon(
-    this: KaboomCtx,
-    pts: Vec2[],
-    opt: PolygonCompOpt = {},
-): PolygonComp {
+export function polygon(pts: Vec2[], opt: PolygonCompOpt = {}): PolygonComp {
     if (pts.length < 3) {
         throw new Error(
             `Polygon's need more than two points, ${pts.length} points provided`,

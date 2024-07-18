@@ -91,12 +91,10 @@ import type {
     DrawTriangleOpt,
     FormattedText,
     FrameBuffer,
-    GfxCtx,
     LineCap,
     LineJoin,
     Texture,
 } from "./gfx";
-import kaplay from "./kaplay";
 import type { Color, RGBAValue, RGBValue } from "./math/color";
 import type {
     Circle,
@@ -109,6 +107,7 @@ import type {
     RaycastResult,
     Rect,
     RNG,
+    StepPosition,
     Vec2,
     Vec2Args,
 } from "./math/math";
@@ -117,6 +116,9 @@ import type { KEvent, KEventController, KEventHandler } from "./utils/";
 
 // for back compat with v3000
 export type {
+    KAPLAYCtx as KaboomCtx,
+    KAPLAYOpt as KaboomOpt,
+    KAPLAYPlugin as KaboomPlugin,
     KEvent as Event,
     KEventController as EventController,
     KEventHandler as EventHandler,
@@ -127,7 +129,7 @@ export type {
  *
  * @group Start
  */
-export interface KaboomCtx<
+export interface KAPLAYCtx<
     TButtonDef extends ButtonsDef = {},
     TButton extends string = string,
 > {
@@ -3265,7 +3267,7 @@ export interface KaboomCtx<
      *
      * @group Plugins
      */
-    plug<T extends Record<string, any>>(plugin: KaboomPlugin<T>): KaboomCtx & T;
+    plug<T extends Record<string, any>>(plugin: KAPLAYPlugin<T>): KAPLAYCtx & T;
     /**
      * Take a screenshot and get the dataurl of the image.
      *
@@ -3461,7 +3463,7 @@ export type MergePlugins<T extends PluginList<any>> = MergeObj<
  * @group Component Types
  */
 export type CompList<T> = Array<T | Tag>;
-export type PluginList<T> = Array<T | KaboomPlugin<any>>;
+export type PluginList<T> = Array<T | KAPLAYPlugin<any>>;
 
 /**
  * A key.
@@ -3609,12 +3611,6 @@ export type KGamePad = {
     getStick(stick: GamepadStick): Vec2;
 };
 
-export type StepPosition =
-    | "jump-start"
-    | "jump-end"
-    | "jump-none"
-    | "jump-both";
-
 /**
  * Inspect info for a game object.
  */
@@ -3625,7 +3621,7 @@ export type GameObjInspect = Record<Tag, string | null>;
  *
  * @group Start
  */
-export interface KaboomOpt<
+export interface KAPLAYOpt<
     TPlugin extends PluginList<any> = any,
     TButtonDef extends ButtonsDef = any,
 > {
@@ -3780,9 +3776,9 @@ export interface KaboomOpt<
  *
  * @group Plugins
  */
-export type KaboomPlugin<T> = (
-    k: KaboomCtx,
-) => T | ((...args: any) => (k: KaboomCtx) => T);
+export type KAPLAYPlugin<T> = (
+    k: KAPLAYCtx,
+) => T | ((...args: any) => (k: KAPLAYCtx) => T);
 
 /**
  * Base interface of all game objects.
@@ -3961,26 +3957,26 @@ export interface GameObjRaw {
      * @since v3001.0
      */
     canvas: FrameBuffer | null;
-    onKeyDown: KaboomCtx["onKeyDown"];
-    onKeyPress: KaboomCtx["onKeyPress"];
-    onKeyPressRepeat: KaboomCtx["onKeyPressRepeat"];
-    onKeyRelease: KaboomCtx["onKeyRelease"];
-    onCharInput: KaboomCtx["onCharInput"];
-    onMouseDown: KaboomCtx["onMouseDown"];
-    onMousePress: KaboomCtx["onMousePress"];
-    onMouseRelease: KaboomCtx["onMouseRelease"];
-    onMouseMove: KaboomCtx["onMouseMove"];
-    onTouchStart: KaboomCtx["onTouchStart"];
-    onTouchMove: KaboomCtx["onTouchMove"];
-    onTouchEnd: KaboomCtx["onTouchEnd"];
-    onScroll: KaboomCtx["onScroll"];
-    onGamepadButtonDown: KaboomCtx["onGamepadButtonDown"];
-    onGamepadButtonPress: KaboomCtx["onGamepadButtonPress"];
-    onGamepadButtonRelease: KaboomCtx["onGamepadButtonRelease"];
-    onGamepadStick: KaboomCtx["onGamepadStick"];
-    onButtonDown: KaboomCtx["onButtonDown"];
-    onButtonPress: KaboomCtx["onButtonPress"];
-    onButtonRelease: KaboomCtx["onButtonRelease"];
+    onKeyDown: KAPLAYCtx["onKeyDown"];
+    onKeyPress: KAPLAYCtx["onKeyPress"];
+    onKeyPressRepeat: KAPLAYCtx["onKeyPressRepeat"];
+    onKeyRelease: KAPLAYCtx["onKeyRelease"];
+    onCharInput: KAPLAYCtx["onCharInput"];
+    onMouseDown: KAPLAYCtx["onMouseDown"];
+    onMousePress: KAPLAYCtx["onMousePress"];
+    onMouseRelease: KAPLAYCtx["onMouseRelease"];
+    onMouseMove: KAPLAYCtx["onMouseMove"];
+    onTouchStart: KAPLAYCtx["onTouchStart"];
+    onTouchMove: KAPLAYCtx["onTouchMove"];
+    onTouchEnd: KAPLAYCtx["onTouchEnd"];
+    onScroll: KAPLAYCtx["onScroll"];
+    onGamepadButtonDown: KAPLAYCtx["onGamepadButtonDown"];
+    onGamepadButtonPress: KAPLAYCtx["onGamepadButtonPress"];
+    onGamepadButtonRelease: KAPLAYCtx["onGamepadButtonRelease"];
+    onGamepadStick: KAPLAYCtx["onGamepadStick"];
+    onButtonDown: KAPLAYCtx["onButtonDown"];
+    onButtonPress: KAPLAYCtx["onButtonPress"];
+    onButtonRelease: KAPLAYCtx["onButtonRelease"];
 }
 
 /**
@@ -4105,17 +4101,6 @@ export interface LoadFontOpt {
      * @since v3001.0
      */
     size?: number;
-}
-
-export declare class Shader {
-    ctx: GfxCtx;
-    glProgram: WebGLProgram;
-    constructor(ctx: GfxCtx, vert: string, frag: string, attribs: string[]);
-    // TODO: type this
-    bind(): any;
-    unbind(): any;
-    send(uniform: Uniform): any;
-    free(): any;
 }
 
 export type TextureOpt = {

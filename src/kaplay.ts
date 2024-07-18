@@ -153,9 +153,9 @@ import {
 import type {
     Debug,
     GameObj,
-    KaboomCtx,
-    KaboomOpt,
-    KaboomPlugin,
+    KAPLAYCtx,
+    KAPLAYOpt,
+    KAPLAYPlugin,
     MergePlugins,
     PluginList,
     Recording,
@@ -256,8 +256,8 @@ import {
 import boomSpriteSrc from "./kassets/boom.png";
 import kaSpriteSrc from "./kassets/ka.png";
 
-export let k: KaboomCtx;
-export let globalOpt: KaboomOpt;
+export let k: KAPLAYCtx;
+export let globalOpt: KAPLAYOpt;
 export let gfx: AppGfxCtx;
 export let game: Game;
 export let app: App;
@@ -311,9 +311,9 @@ const kaplay = <
     TButtons extends ButtonsDef = {},
     TButtonsName extends string = keyof TButtons & string,
 >(
-    gopt: KaboomOpt<TPlugins, TButtons> = {},
-): TPlugins extends [undefined] ? KaboomCtx<TButtons, TButtonsName>
-    : KaboomCtx<TButtons, TButtonsName> & MergePlugins<TPlugins> =>
+    gopt: KAPLAYOpt<TPlugins, TButtons> = {},
+): TPlugins extends [undefined] ? KAPLAYCtx<TButtons, TButtonsName>
+    : KAPLAYCtx<TButtons, TButtonsName> & MergePlugins<TPlugins> =>
 {
     globalOpt = gopt;
     const root = gopt.root ?? document.body;
@@ -566,9 +566,9 @@ const kaplay = <
     }
 
     function plug<T extends Record<string, any>>(
-        plugin: KaboomPlugin<T>,
+        plugin: KAPLAYPlugin<T>,
         ...args: any
-    ): KaboomCtx & T {
+    ): KAPLAYCtx & T {
         const funcs = plugin(k);
         let funcsObj: T;
         if (typeof funcs === "function") {
@@ -585,7 +585,7 @@ const kaplay = <
                 window[key as any] = funcsObj[key];
             }
         }
-        return k as KaboomCtx & T;
+        return k as KAPLAYCtx & T;
     }
 
     function record(frameRate?: number): Recording {
@@ -1247,7 +1247,7 @@ const kaplay = <
         KEventController,
     };
 
-    const plugins = gopt.plugins as KaboomPlugin<Record<string, unknown>>[];
+    const plugins = gopt.plugins as KAPLAYPlugin<Record<string, unknown>>[];
 
     if (plugins) {
         plugins.forEach(plug);
@@ -1256,7 +1256,7 @@ const kaplay = <
     // export everything to window if global is set
     if (gopt.global !== false) {
         for (const key in k) {
-            (<any> window[<any> key]) = k[key as keyof KaboomCtx];
+            (<any> window[<any> key]) = k[key as keyof KAPLAYCtx];
         }
     }
 
@@ -1264,8 +1264,8 @@ const kaplay = <
         app.canvas.focus();
     }
 
-    return k as TPlugins extends [undefined] ? KaboomCtx<TButtons, TButtonsName>
-        : KaboomCtx<TButtons, TButtonsName> & MergePlugins<TPlugins>;
+    return k as TPlugins extends [undefined] ? KAPLAYCtx<TButtons, TButtonsName>
+        : KAPLAYCtx<TButtons, TButtonsName> & MergePlugins<TPlugins>;
 };
 
-export default kaplay;
+export { kaplay };

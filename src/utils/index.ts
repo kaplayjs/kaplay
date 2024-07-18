@@ -4,7 +4,6 @@ export * from "./binaryheap";
 export * from "./dataURL";
 export * from "./deepEq";
 export * from "./events";
-export * from "./events";
 export * from "./log";
 export * from "./numbers";
 export * from "./overload";

@@ -1,5 +1,5 @@
 import { game } from "../../kaplay";
-import type { Comp, KaboomCtx } from "../../types";
+import type { Comp } from "../../types";
 
 /**
  * The {@link layer `layer()`} component.
@@ -25,10 +25,7 @@ export interface LayerComp extends Comp {
     set layer(name: string);
 }
 
-export function layer(
-    this: KaboomCtx,
-    layer: string,
-): LayerComp {
+export function layer(layer: string): LayerComp {
     let _layerIndex = game.layers?.indexOf(layer);
 
     return {

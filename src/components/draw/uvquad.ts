@@ -1,7 +1,7 @@
 import { getRenderProps } from "../../game/utils";
 import { drawUVQuad } from "../../gfx";
 import { Rect, vec2 } from "../../math/math";
-import type { Comp, GameObj, KaboomCtx } from "../../types";
+import type { Comp, GameObj } from "../../types";
 
 /**
  * The {@link uvquad `uvquad()`} component.
@@ -23,11 +23,7 @@ export interface UVQuadComp extends Comp {
      */
     renderArea(): Rect;
 }
-export function uvquad(
-    this: KaboomCtx,
-    w: number,
-    h: number,
-): UVQuadComp {
+export function uvquad(w: number, h: number): UVQuadComp {
     return {
         id: "rect",
         width: w,

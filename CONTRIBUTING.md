@@ -15,9 +15,10 @@
 
 ## Documentation
 
-Most kaboom docs are written in `src/types.ts` as
+Most KAPLAY docs are written on every component file in `src/components`, and
+`src/types.ts` as
 [jsDoc](https://www.typescriptlang.org/docs/handbook/jsdoc-supported-types.html)
-above each kaboom component entry.
+above each KAPLAY component entry.
 
 **Help on improving the documentation is appreciated! Thank you for
 contributing!**
@@ -26,8 +27,8 @@ contributing!**
 
 1. follow conventional [conventional commits](#conventional-commits-guide)
    format. You can see how seeing the commit history.
-2. `npm run check` to check typescript.
-3. `npm run fmt` to format.
+2. `pnpm run check` to check typescript.
+3. `pnpm run fmt` to format.
 
 # Conventional Commits Guide
 

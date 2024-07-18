@@ -62,7 +62,7 @@ const el = typeof canvas === "undefined"
     : canvas;
 
 if (!el) {
-    console.log("Can't find kaboom canvas, skipping input test");
+    console.log("Can't find KAPLAY canvas, skipping input test");
 } else {
     setTimeout(() => {
         for (const key of keys) {

@@ -9,7 +9,6 @@ import type {
     Comp,
     Cursor,
     GameObj,
-    KaboomCtx,
     MouseButton,
     Shape,
     Tag,
@@ -209,7 +208,7 @@ export interface AreaCompOpt {
     collisionIgnore?: Tag[];
 }
 
-export function area(this: KaboomCtx, opt: AreaCompOpt = {}): AreaComp {
+export function area(opt: AreaCompOpt = {}): AreaComp {
     const colliding: Record<string, Collision> = {};
     const collidingThisFrame = new Set();
 
