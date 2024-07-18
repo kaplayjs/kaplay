@@ -43,7 +43,9 @@ export function scale(...args: Vec2Args): ScaleComp {
     if (args.length === 0) {
         return scale(1);
     }
-    let _scale = vec2(1);
+
+    let _scale = vec2(...args);
+
     return {
         id: "scale",
         set scale(value: Vec2) {
