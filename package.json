@@ -1,22 +1,22 @@
 {
   "name": "kaplay",
   "description": "KAPLAY is a JavaScript library that helps you make games fast and fun!",
-  "version": "3001.0.0-alpha.17",
+  "version": "3001.0.0-alpha.18",
   "license": "MIT",
   "homepage": "https://kaplayjs.com/",
   "repository": "github:marklovers/kaplay",
   "type": "module",
   "main": "./dist/kaboom.cjs",
   "module": "./dist/kaboom.mjs",
-  "types": "./dist/declaration/kaboom.d.ts",
+  "types": "./dist/declaration/kaplay.d.ts",
   "exports": {
     ".": {
       "import": {
-        "types": "./dist/declaration/kaboom.d.ts",
+        "types": "./dist/declaration/kaplay.d.ts",
         "default": "./dist/kaboom.mjs"
       },
       "require": {
-        "types": "./dist/declaration/kaboom.d.ts",
+        "types": "./dist/declaration/kaplay.d.ts",
         "default": "./dist/kaboom.cjs"
       }
     },
