@@ -4,7 +4,7 @@ import {
     DEF_TEXT_CACHE_SIZE,
     FONT_ATLAS_HEIGHT,
     FONT_ATLAS_WIDTH,
-    TEXT_STYLE_RE,
+    MULTI_WORD_RE
 } from "../constants";
 import { fontCacheC2d, fontCacheCanvas, gfx } from "../kaplay";
 import { Color } from "../math/color";
@@ -43,19 +43,56 @@ function compileStyledText(text: string): {
     text: string;
 } {
     const charStyleMap = {} as Record<number, string[]>;
-    // get the text without the styling syntax
-    const renderText = text.replace(TEXT_STYLE_RE, "$2");
-    let idxOffset = 0;
+    let renderText = "";
+    let styleStack: [string, number][] = [];
+    let lastIndex = 0;
+    let skipCount = 0;
 
-    // put each styled char index into a map for easy access when iterating each char
-    for (const match of text.matchAll(TEXT_STYLE_RE)) {
-        if (!match?.groups) continue;
-        const origIdx = match.index - idxOffset;
-        for (let i = 0; i < match.groups.text.length; i++) {
-            charStyleMap[i + origIdx] = [match.groups.style];
+    for (let i = 0; i < text.length; i++) {
+        if (i !== lastIndex + 1) skipCount += i - lastIndex;
+        lastIndex = i;
+
+        if (text[i] === "\\" && text[i + 1] === "[") continue;
+
+        if ((i === 0 || text[i - 1] !== "\\") && text[i] === "[") {
+            const start = i;
+
+            i++;
+
+            let isClosing = text[i] === "/";
+            let style = "";
+            
+            if (isClosing) i++;
+
+            while (i < text.length && text[i] !== "]")
+                style += text[i++];
+
+            if (
+                !MULTI_WORD_RE.test(style) ||
+                i >= text.length ||
+                text[i] !== "]" ||
+                (isClosing && (styleStack.length === 0 || styleStack[styleStack.length - 1][0] !== style))
+            ) {
+                i = start;
+            } else {
+                if (!isClosing) styleStack.push([style, start]);
+                else styleStack.pop();
+
+                continue;
+            }
         }
-        // omit the style syntax in format string when calculating index
-        idxOffset += match[0].length - match.groups.text.length;
+
+        renderText += text[i];
+        if (styleStack.length > 0) charStyleMap[i - skipCount] = styleStack.map(([name]) => name);
+    }
+
+    if  (styleStack.length > 0) {
+        while (styleStack.length > 0) {
+            const [_, start] = styleStack.pop()!;
+            text = text.substring(0, start) + "\\" + text.substring(start);
+        }
+
+        return compileStyledText(text);
     }
 
     return {

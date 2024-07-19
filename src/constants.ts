@@ -95,9 +95,7 @@ export const COMP_EVENTS = new Set([
     "inspect",
     "drawInspect",
 ]);
-// TODO: escape
-// eslint-disable-next-line
-export const TEXT_STYLE_RE = /\[(?<style>\w+)\](?<text>.*?)\[\/\k<style>\]/g;
+export const MULTI_WORD_RE = /^\w+$/;
 export const DEF_OFFSCREEN_DIS = 200;
 // maximum y velocity with body()
 export const DEF_JUMP_FORCE = 640;
