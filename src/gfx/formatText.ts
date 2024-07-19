@@ -4,7 +4,6 @@ import {
     DEF_TEXT_CACHE_SIZE,
     FONT_ATLAS_HEIGHT,
     FONT_ATLAS_WIDTH,
-    TEXT_STYLE_RE,
 } from "../constants";
 import { fontCacheC2d, fontCacheCanvas, gfx } from "../kaplay";
 import { Color } from "../math/color";
@@ -38,25 +37,106 @@ function applyCharTransform(fchar: FormattedChar, tr: CharTransform) {
     if (tr.opacity) fchar.opacity *= tr.opacity;
 }
 
+function underlineTextRange(text: string, start: number, end: number) {
+    const lines = text.split("\n");
+
+    let startLine: number = 0; 
+    let startCol: number = 0; 
+    let endLine: number = 0; 
+    let endCol: number = 0;
+
+    for (let i = 0; i < end; i++) {
+        if (text[i] === "\n") {
+            if (i <= start) {
+                startLine++;
+                startCol = 0;
+            }
+
+            endLine++;
+            endCol = 0;
+        }
+
+        if (i <= start) startCol++;
+        endCol++;
+    }
+
+    let out = "";
+
+    for (let i = startLine; i <= endLine; i++) {
+        out += lines[i] + "\n";
+
+        if (i === startLine && i === endLine)
+            out += " ".repeat(startCol - 1) + "^".repeat(endCol - startCol + 1);
+        else if (i === startLine)
+            out += " ".repeat(startCol - 1) + "^".repeat(lines[i].length - startCol + 1);
+        else if (i === endLine)
+            out += "^".repeat(endCol);
+        else
+            out += "^".repeat(lines[i].length);
+
+        if (i !== endLine) out += "\n";
+    }
+
+    return out;
+}
+
 function compileStyledText(text: string): {
     charStyleMap: Record<number, string[]>;
     text: string;
 } {
     const charStyleMap = {} as Record<number, string[]>;
-    // get the text without the styling syntax
-    const renderText = text.replace(TEXT_STYLE_RE, "$2");
-    let idxOffset = 0;
+    let renderText = "";
+    let styleStack: [string, number][] = [];
+    let lastIndex = 0;
+    let skipCount = 0;
 
-    // put each styled char index into a map for easy access when iterating each char
-    for (const match of text.matchAll(TEXT_STYLE_RE)) {
-        if (!match?.groups) continue;
-        const origIdx = match.index - idxOffset;
-        for (let i = 0; i < match.groups.text.length; i++) {
-            charStyleMap[i + origIdx] = [match.groups.style];
+    for (let i = 0; i < text.length; i++) {
+        if (i !== lastIndex + 1) skipCount += i - lastIndex;
+        lastIndex = i;
+
+        if (text[i] === "[") {
+            const start = i;
+
+            i++;
+
+            let isClosing = text[i] === "/";
+            let style = "";
+            
+            if (isClosing) i++;
+
+            while (i < text.length && text[i] !== "]")
+                style += text[i++];
+
+            if (i >= text.length) throw new Error(`malformatted styled text: ${isClosing ? "closing" : "opening"} style tag never closed
+
+${underlineTextRange(text, start, text.length)}`);
+            if (style.length === 0) throw new Error(`malformatted styled text: style name cannot be empty
+
+${underlineTextRange(text, start, i)}`);
+
+            if (!isClosing) styleStack.push([style, start]);
+            else {
+                if (styleStack.length === 0 ||
+                    styleStack[styleStack.length - 1][0] !== style
+                )
+                    throw new Error(`malformatted styled text: cannot close unopened style '${style}'
+
+${underlineTextRange(text, start, i)}`);
+
+                styleStack.pop();
+            }
+
+            continue;
         }
-        // omit the style syntax in format string when calculating index
-        idxOffset += match[0].length - match.groups.text.length;
+
+        renderText += text[i];
+        if (styleStack.length > 0) charStyleMap[i - skipCount] = styleStack.map(([name]) => name);
     }
+
+    if (styleStack.length > 0)
+        throw new Error(`malformatted styled text: cannot end styled text without closing all styles first, unclosed '${styleStack[styleStack.length - 1][0]}'
+
+${underlineTextRange(text, styleStack[styleStack.length - 1][1], text.length)}`);
 
     return {
         charStyleMap: charStyleMap,
