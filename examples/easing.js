@@ -10,7 +10,7 @@ add([
 ]);
 
 onClick("steps", (square) => {
-    tween(
+    square.tween(
         WHITE,
         BLACK,
         2,
@@ -31,7 +31,7 @@ add([
 ]);
 
 onClick("stepsmove", (square) => {
-    tween(
+    square.tween(
         80,
         400,
         2,
@@ -52,7 +52,7 @@ add([
 ]);
 
 onClick("linear", (square) => {
-    tween(
+    square.tween(
         WHITE,
         BLACK,
         2,
@@ -71,7 +71,7 @@ add([
 ]);
 
 onClick("linearmove", (square) => {
-    tween(
+    square.tween(
         80,
         400,
         2,
@@ -92,7 +92,7 @@ add([
 ]);
 
 onClick("bezier", (square) => {
-    tween(
+    square.tween(
         WHITE,
         BLACK,
         2,
@@ -111,7 +111,7 @@ add([
 ]);
 
 onClick("beziermove", (square) => {
-    tween(
+    square.tween(
         80,
         400,
         2,
