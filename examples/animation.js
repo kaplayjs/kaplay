@@ -4,6 +4,7 @@ kaplay();
 loadSprite("bean", "sprites/bean.png");
 loadSprite("bag", "sprites/bag.png");
 
+// Rotating
 const rotatingBean = add([
     sprite("bean"),
     pos(50, 50),
@@ -12,13 +13,15 @@ const rotatingBean = add([
     animate(),
 ]);
 
+// Trying sprite change
 rotatingBean.sprite = "bag";
 
 rotatingBean.animate("angle", [0, 360], {
     duration: 2,
-    endBehavior: "loop",
+    direction: "forward",
 });
 
+// Moving right to left using ping-pong
 const movingBean = add([
     sprite("bean"),
     pos(50, 150),
@@ -28,9 +31,23 @@ const movingBean = add([
 
 movingBean.animate("pos", [vec2(50, 150), vec2(150, 150)], {
     duration: 2,
-    endBehavior: "ping-pong",
+    direction: "ping-pong",
 });
 
+// Same animation as before, but relative to the spawn position
+const secondMovingBean = add([
+    sprite("bean"),
+    pos(150, 0),
+    anchor("center"),
+    animate({ relative: true }),
+]);
+
+secondMovingBean.animate("pos", [vec2(50, 150), vec2(150, 150)], {
+    duration: 2,
+    direction: "ping-pong",
+});
+
+// Changing color using a color list
 const coloringBean = add([
     sprite("bean"),
     pos(50, 300),
@@ -40,10 +57,10 @@ const coloringBean = add([
 ]);
 
 coloringBean.animate("color", [WHITE, RED, GREEN, BLUE, WHITE], {
-    duration: 8,
-    endBehavior: "loop",
+    duration: 8
 });
 
+// Changing opacity using an opacity list
 const opacitingBean = add([
     sprite("bean"),
     pos(150, 300),
@@ -54,10 +71,10 @@ const opacitingBean = add([
 
 opacitingBean.animate("opacity", [1, 0, 1], {
     duration: 8,
-    easing: easings.easeInOutCubic,
-    endBehavior: "loop",
+    easing: easings.easeInOutCubic
 });
 
+// Moving in a square like motion
 const squaringBean = add([
     sprite("bean"),
     pos(50, 400),
@@ -74,9 +91,10 @@ squaringBean.animate(
         vec2(50, 500),
         vec2(50, 400),
     ],
-    { duration: 8, endBehavior: "loop" },
+    { duration: 8 },
 );
 
+// Moving in a square like motion, but with custom spaced keyframes
 const timedSquaringBean = add([
     sprite("bean"),
     pos(50, 400),
@@ -95,7 +113,6 @@ timedSquaringBean.animate(
     ],
     {
         duration: 8,
-        endBehavior: "loop",
         timing: [
             0,
             0.1,
@@ -106,6 +123,7 @@ timedSquaringBean.animate(
     },
 );
 
+// Using spline interpolation to move according to a smoothened path
 const curvingBean = add([
     sprite("bean"),
     pos(50, 400),
@@ -122,5 +140,5 @@ curvingBean.animate(
         vec2(350, 500),
         vec2(400, 400),
     ],
-    { duration: 8, endBehavior: "ping-pong", interpolation: "spline" },
+    { duration: 8, direction: "ping-pong", interpolation: "spline" },
 );

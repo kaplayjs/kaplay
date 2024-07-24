@@ -1,19 +1,21 @@
 import { dt } from "../../app";
 import { Color } from "../../math/color";
 import easings from "../../math/easings";
-import { evaluateCatmullRom, lerp, Vec2 } from "../../math/math";
+import { evaluateCatmullRom, lerp, Vec2, vec2 } from "../../math/math";
 import type { Comp, EaseFunc, GameObj, LerpValue } from "../../types";
 import type { KEventController } from "../../utils";
 
-type AnimateEndBehavior =
-    /* Go directly back to the start */
-    | "loop"
-    /* Animate in reverse when reaching the end */
-    | "ping-pong"
-    /* Stop */
-    | "stop";
+type TimeDirection =
+    /* Animate forward */
+    | "forward"
+    /* Animate in reverse */
+    | "reverse"
+    /* Alternate animating forward and reverse */
+    | "ping-pong";
 
 type Interpolation =
+    /* No interpolation */
+    | "none"
     /* Linear interpolation */
     | "linear"
     /* Spline interpolation */
@@ -25,9 +27,13 @@ export interface AnimateOpt {
      */
     duration: number;
     /**
-     * Behavior when reaching the end of the animation. Default is stop.
+     * Loops, Default is undefined aka infinite
      */
-    endBehavior?: AnimateEndBehavior;
+    loops?: number;
+    /**
+     * Behavior when reaching the end of the animation. Default is forward.
+     */
+    direction?: TimeDirection;
     /**
      * Easing function. Default is linear time.
      */
@@ -44,6 +50,24 @@ export interface AnimateOpt {
      * Easings for the given keys, if omitted, easing is used.
      */
     easings?: EaseFunc[];
+}
+
+export interface AnimateCompOpt {
+    /**
+     * TODO: Changes the angle so it follows the motion
+     */
+    followMotion?: boolean,
+    /**
+     * The animation is added to the base values of pos, angle, scale and opacity instead of replacing them
+     */
+    relative?: boolean,
+}
+
+export interface BaseValues {
+    pos: Vec2,
+    angle: number,
+    scale: Vec2,
+    opacity: number,
 }
 
 export interface AnimateComp extends Comp {
@@ -77,26 +101,37 @@ export interface AnimateComp extends Comp {
      * @param cb The event handler called when an animation channel finishes.
      */
     onAnimateChannelFinished(cb: (name: string) => void): KEventController;
+    /**
+     * Base values for relative animation
+     */
+    base: BaseValues;
 }
 
+/**
+ * Baseclass for animation channels, only handles parameter normalization and keyframe searches
+ */
 class AnimateChannel {
     name: string;
     duration: number;
-    endBehavior: AnimateEndBehavior;
+    loops: number;
+    direction: TimeDirection;
     easing: EaseFunc;
     interpolation: Interpolation;
     isFinished: boolean;
     timing: number[] | undefined;
     easings: EaseFunc[] | undefined;
-    constructor(name: string, opts: AnimateOpt) {
+    relative: boolean;
+    constructor(name: string, opts: AnimateOpt, relative: boolean) {
         this.name = name;
         this.duration = opts.duration;
-        this.endBehavior = opts.endBehavior || "stop";
+        this.loops = opts.loops || 0;
+        this.direction = opts.direction || "forward";
         this.easing = opts.easing || easings.linear;
         this.interpolation = opts.interpolation || "linear";
         this.isFinished = false;
         this.timing = opts.timing;
         this.easings = opts.easings;
+        this.relative = relative;
     }
 
     update(obj: GameObj<any>, t: number): boolean {
@@ -115,15 +150,19 @@ class AnimateChannel {
         timing?: number[],
     ): [number, number] {
         const maxIndex = count - 1;
-        if (t >= this.duration && this.endBehavior == "stop") {
+        // Check how many loops we've made
+        let p = t / this.duration;
+        if (this.loops !== 0 && p >= this.loops) {
             return [maxIndex, 0];
         }
-        let p = t / this.duration;
+        // Split looped and actual time
         const m = Math.trunc(p);
         p -= m;
-        if (this.endBehavior == "ping-pong" && (m & 1)) {
+        // Reverse if needed
+        if (this.direction == "reverse" || (this.direction == "ping-pong" && (m & 1))) {
             p = 1 - p;
         }
+        // If we have individual keyframe positions, use them, otherwise use uniform spread
         if (timing) {
             let index = 0;
             while (timing[index + 1] !== undefined && timing[index + 1] < p) {
@@ -141,20 +180,54 @@ class AnimateChannel {
             return [index, (p - index / maxIndex) * maxIndex];
         }
     }
+
+    setValue<T>(obj: GameObj<any>, name: string, value: T) {
+        if (this.relative) {
+            switch (name) {
+                case "pos":
+                    obj["pos"] = obj.base.pos.add(value as Vec2);
+                    break;
+                case "angle":
+                    obj["angle"] = obj.base.angle + (value as number);
+                    break;
+                case "scale":
+                    obj["scale"] = obj.base.scale.scale(value as Vec2);
+                    break;
+                case "opacity":
+                    obj["opacity"] = obj.base.opacity * (value as number);
+                    break;
+                default:
+                    obj[name] = value;
+            }
+        }
+        else {
+            obj[name] = value;
+        }
+    }
 }
 
+/**
+ * Reflects a point around another point
+ * @param a Point to reflect
+ * @param b Point to reflect around
+ * @returns Reflected point
+ */
 function reflect(a: Vec2, b: Vec2) {
     return b.add(b.sub(a));
 }
 
+/**
+ * Subclass handling number keys
+ */
 class AnimateChannelNumber extends AnimateChannel {
     keys: number[];
     constructor(
         name: string,
         keys: number[],
         opts: AnimateOpt,
+        relative: boolean
     ) {
-        super(name, opts);
+        super(name, opts, relative);
         this.keys = keys;
     }
 
@@ -164,28 +237,33 @@ class AnimateChannelNumber extends AnimateChannel {
             this.keys.length,
             this.timing,
         );
-        if (alpha == 0) {
-            obj[this.name] = this.keys[index];
+        // Return exact value in case of exact hit or no interpolation, otherwise interpolate
+        if (alpha == 0 || this.interpolation === "none") {
+            this.setValue(obj, this.name, this.keys[index]);
         } else {
             const easing = this.easings ? this.easings[index] : this.easing;
-            obj[this.name] = lerp(
+            this.setValue(obj, this.name, lerp(
                 this.keys[index],
                 this.keys[index + 1],
                 easing(alpha),
-            );
+            ));
         }
         return alpha == 1;
     }
 }
 
+/**
+ * Subclass handling vector keys
+ */
 class AnimateChannelVec2 extends AnimateChannel {
     keys: Vec2[];
     constructor(
         name: string,
         keys: Vec2[],
         opts: AnimateOpt,
+        relative: boolean
     ) {
-        super(name, opts);
+        super(name, opts, relative);
         this.keys = keys;
     }
 
@@ -195,15 +273,17 @@ class AnimateChannelVec2 extends AnimateChannel {
             this.keys.length,
             this.timing,
         );
-        if (alpha == 0) {
-            obj[this.name] = this.keys[index];
+        // Return exact value in case of exact hit or no interpolation, otherwise interpolate
+        if (alpha == 0 || this.interpolation === "none") {
+            this.setValue(obj, this.name, this.keys[index]);
         } else {
             const easing = this.easings ? this.easings[index] : this.easing;
+            // Use linear or spline interpolation
             if (this.interpolation === "linear") {
-                obj[this.name] = this.keys[index].lerp(
+                this.setValue(obj, this.name, this.keys[index].lerp(
                     this.keys[index + 1],
                     easing(alpha),
-                );
+                ));
             } else {
                 const prevKey = this.keys[index];
                 const nextIndex = index + 1;
@@ -214,27 +294,31 @@ class AnimateChannelVec2 extends AnimateChannel {
                 const nextNextKey = nextIndex < this.keys.length - 1
                     ? this.keys[nextIndex + 1]
                     : reflect(prevKey, nextKey);
-                obj[this.name] = evaluateCatmullRom(
+                this.setValue(obj, this.name, evaluateCatmullRom(
                     prevPrevKey,
                     prevKey,
                     nextKey,
                     nextNextKey,
                     easing(alpha),
-                );
+                ));
             }
         }
         return alpha == 1;
     }
 }
 
+/**
+ * Subclass handling color keys
+ */
 class AnimateChannelColor extends AnimateChannel {
     keys: Color[];
     constructor(
         name: string,
         keys: Color[],
         opts: AnimateOpt,
+        relative: boolean
     ) {
-        super(name, opts);
+        super(name, opts, relative);
         this.keys = keys;
     }
 
@@ -244,24 +328,48 @@ class AnimateChannelColor extends AnimateChannel {
             this.keys.length,
             this.timing,
         );
-        if (alpha == 0) {
-            obj[this.name] = this.keys[index];
+        // Return exact value in case of exact hit or no interpolation, otherwise interpolate
+        if (alpha == 0 || this.interpolation == "none") {
+            this.setValue(obj, this.name, this.keys[index]);
         } else {
             const easing = this.easings ? this.easings[index] : this.easing;
-            obj[this.name] = this.keys[index].lerp(
+            this.setValue(obj, this.name, this.keys[index].lerp(
                 this.keys[index + 1],
                 easing(alpha),
-            );
+            ));
         }
         return alpha == 1;
     }
 }
 
-export function animate(): AnimateComp {
+export function animate(gopts: AnimateCompOpt = {}): AnimateComp {
     const channels: AnimateChannel[] = [];
     let t = 0;
     let isFinished = false;
     return {
+        id: "animate",
+        base: {
+            pos: vec2(0, 0),
+            angle: 0,
+            scale: vec2(1, 1),
+            opacity: 1,
+        },
+        add(this: GameObj<AnimateComp>) {
+            if (gopts.relative) {
+                if (this.is("pos")) {
+                    this.base.pos = (this as any).pos.clone();
+                }
+                if (this.is("rotate")) {
+                    this.base.angle = (this as any).angle;
+                }
+                if (this.is("scale")) {
+                    this.base.scale = (this as any).scale;
+                }
+                if (this.is("opacity")) {
+                    this.base.opacity = (this as any).opacity;
+                }
+            }
+        },
         update() {
             let allFinished: boolean = true;
             let localFinished: boolean;
@@ -295,15 +403,18 @@ export function animate(): AnimateComp {
                         name,
                         keys as number[],
                         opts,
+                        gopts.relative || false
                     ),
                 );
             } else if (keys[0] instanceof Vec2) {
                 channels.push(
-                    new AnimateChannelVec2(name, keys as Vec2[], opts),
+                    new AnimateChannelVec2(name, keys as Vec2[], opts,
+                        gopts.relative || false),
                 );
             } else if (keys[0] instanceof Color) {
                 channels.push(
-                    new AnimateChannelColor(name, keys as Color[], opts),
+                    new AnimateChannelColor(name, keys as Color[], opts,
+                        gopts.relative || false),
                 );
             }
         },
