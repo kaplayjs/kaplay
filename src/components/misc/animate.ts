@@ -18,6 +18,8 @@ type Interpolation =
     | "none"
     /* Linear interpolation */
     | "linear"
+    /* Spherical linear interpolation */
+    | "slerp"
     /* Spline interpolation */
     | "spline";
 
@@ -279,28 +281,37 @@ class AnimateChannelVec2 extends AnimateChannel {
         } else {
             const easing = this.easings ? this.easings[index] : this.easing;
             // Use linear or spline interpolation
-            if (this.interpolation === "linear") {
-                this.setValue(obj, this.name, this.keys[index].lerp(
-                    this.keys[index + 1],
-                    easing(alpha),
-                ));
-            } else {
-                const prevKey = this.keys[index];
-                const nextIndex = index + 1;
-                const nextKey = this.keys[nextIndex];
-                const prevPrevKey = index > 0
-                    ? this.keys[index - 1]
-                    : reflect(nextKey, prevKey);
-                const nextNextKey = nextIndex < this.keys.length - 1
-                    ? this.keys[nextIndex + 1]
-                    : reflect(prevKey, nextKey);
-                this.setValue(obj, this.name, evaluateCatmullRom(
-                    prevPrevKey,
-                    prevKey,
-                    nextKey,
-                    nextNextKey,
-                    easing(alpha),
-                ));
+            switch (this.interpolation) {
+                case "linear":
+                    this.setValue(obj, this.name, this.keys[index].lerp(
+                        this.keys[index + 1],
+                        easing(alpha),
+                    ));
+                    break;
+                case "slerp":
+                    this.setValue(obj, this.name, this.keys[index].slerp(
+                        this.keys[index + 1],
+                        easing(alpha),
+                    ));
+                    break;
+                case "spline":
+                    const prevKey = this.keys[index];
+                    const nextIndex = index + 1;
+                    const nextKey = this.keys[nextIndex];
+                    const prevPrevKey = index > 0
+                        ? this.keys[index - 1]
+                        : reflect(nextKey, prevKey);
+                    const nextNextKey = nextIndex < this.keys.length - 1
+                        ? this.keys[nextIndex + 1]
+                        : reflect(prevKey, nextKey);
+                    this.setValue(obj, this.name, evaluateCatmullRom(
+                        prevPrevKey,
+                        prevKey,
+                        nextKey,
+                        nextNextKey,
+                        easing(alpha),
+                    ));
+                    break;
             }
         }
         return alpha == 1;
