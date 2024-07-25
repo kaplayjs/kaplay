@@ -47,7 +47,7 @@
   "scripts": {
     "dev": "NODE_ENV=development node scripts/dev.js",
     "win:dev": "set NODE_ENV=development && node scripts/dev.js",
-    "build": "node scripts/build.js && npm run mergedoc",
+    "build": "node scripts/build.js && npm run mergedocr",
     "check": "tsc",
     "fmt": "dprint fmt",
     "test": "node scripts/test.js",
