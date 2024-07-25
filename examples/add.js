@@ -1,13 +1,13 @@
 // Adding game objects to screen
 
-// Start a kaplay game
+// Start a KAPLAY game
 kaplay();
 
 // Load a sprite asset from "sprites/bean.png", with the name "bean"
 loadSprite("bean", "/sprites/bean.png");
 loadSprite("ghosty", "/sprites/ghosty.png");
 
-// A "Game Object" is the basic unit of entity in kaplay
+// A "Game Object" is the basic unit of entity in KAPLAY
 // Game objects are composed from components
 // Each component gives a game object certain capabilities
 
