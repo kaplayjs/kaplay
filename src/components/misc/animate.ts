@@ -331,16 +331,24 @@ class AnimateChannelVec2 extends AnimateChannel {
             // Use linear or spline interpolation
             switch (this.interpolation) {
                 case "linear":
-                    this.setValue(obj, this.name, this.keys[index].lerp(
-                        this.keys[index + 1],
-                        easing(alpha),
-                    ));
+                    this.setValue(
+                        obj,
+                        this.name,
+                        this.keys[index].lerp(
+                            this.keys[index + 1],
+                            easing(alpha),
+                        ),
+                    );
                     break;
                 case "slerp":
-                    this.setValue(obj, this.name, this.keys[index].slerp(
-                        this.keys[index + 1],
-                        easing(alpha),
-                    ));
+                    this.setValue(
+                        obj,
+                        this.name,
+                        this.keys[index].slerp(
+                            this.keys[index + 1],
+                            easing(alpha),
+                        ),
+                    );
                     break;
                 case "spline":
                     if (this.curves) {
@@ -363,7 +371,6 @@ class AnimateChannelVec2 extends AnimateChannel {
         return alpha == 1;
     }
 }
-
 
 /**
  * Subclass handling color keys
