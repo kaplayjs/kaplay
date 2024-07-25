@@ -83,6 +83,9 @@ import {
 } from "./constants";
 
 import {
+    bezier,
+    cardinal,
+    catmullRom,
     chance,
     choose,
     chooseMultiple,
@@ -103,8 +106,10 @@ import {
     evaluateQuadratic,
     evaluateQuadraticFirstDerivative,
     evaluateQuadraticSecondDerivative,
+    hermite,
     hsl2rgb,
     isConvex,
+    kochanekBartels,
     lerp,
     Line,
     map,
@@ -1162,6 +1167,11 @@ const kaplay = <
         evaluateCatmullRomFirstDerivative,
         curveLengthApproximation,
         normalizedCurve,
+        hermite,
+        cardinal,
+        catmullRom,
+        bezier,
+        kochanekBartels,
         easingSteps,
         easingLinear,
         easingCubicBezier,

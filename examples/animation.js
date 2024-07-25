@@ -57,7 +57,7 @@ const coloringBean = add([
 ]);
 
 coloringBean.animate("color", [WHITE, RED, GREEN, BLUE, WHITE], {
-    duration: 8
+    duration: 8,
 });
 
 // Changing opacity using an opacity list
@@ -71,7 +71,7 @@ const opacitingBean = add([
 
 opacitingBean.animate("opacity", [1, 0, 1], {
     duration: 8,
-    easing: easings.easeInOutCubic
+    easing: easings.easeInOutCubic,
 });
 
 // Moving in a square like motion
@@ -142,3 +142,16 @@ curvingBean.animate(
     ],
     { duration: 8, direction: "ping-pong", interpolation: "spline" },
 );
+
+/*onDraw(() => {
+    drawCurve(t => evaluateCatmullRom(
+        vec2(200, 400),
+        vec2(250, 500),
+        vec2(300, 400),
+        vec2(350, 500), t), { color: RED })
+    drawCurve(catmullRom(
+        vec2(200, 400),
+        vec2(250, 500),
+        vec2(300, 400),
+        vec2(350, 500)), { color: GREEN })
+})*/
