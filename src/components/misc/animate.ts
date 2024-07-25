@@ -4,7 +4,6 @@ import easings from "../../math/easings";
 import {
     catmullRom,
     hermiteFirstDerivative,
-    // evaluateCatmullRom,
     lerp,
     Vec2,
     vec2,
@@ -61,7 +60,7 @@ export interface AnimateOpt {
 
 export interface AnimateCompOpt {
     /**
-     * TODO: Changes the angle so it follows the motion
+     * Changes the angle so it follows the motion, requires the rotate component
      */
     followMotion?: boolean;
     /**
