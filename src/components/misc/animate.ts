@@ -1,7 +1,13 @@
 import { dt } from "../../app";
 import { Color } from "../../math/color";
 import easings from "../../math/easings";
-import { evaluateCatmullRom, lerp, Vec2, vec2 } from "../../math/math";
+import {
+    catmullRom,
+    hermiteFirstDerivative,
+    lerp,
+    Vec2,
+    vec2,
+} from "../../math/math";
 import type { Comp, EaseFunc, GameObj, LerpValue } from "../../types";
 import type { KEventController } from "../../utils";
 
@@ -56,20 +62,20 @@ export interface AnimateOpt {
 
 export interface AnimateCompOpt {
     /**
-     * TODO: Changes the angle so it follows the motion
+     * Changes the angle so it follows the motion, requires the rotate component
      */
-    followMotion?: boolean,
+    followMotion?: boolean;
     /**
      * The animation is added to the base values of pos, angle, scale and opacity instead of replacing them
      */
-    relative?: boolean,
+    relative?: boolean;
 }
 
 export interface BaseValues {
-    pos: Vec2,
-    angle: number,
-    scale: Vec2,
-    opacity: number,
+    pos: Vec2;
+    angle: number;
+    scale: Vec2;
+    opacity: number;
 }
 
 export interface AnimateComp extends Comp {
@@ -161,7 +167,10 @@ class AnimateChannel {
         const m = Math.trunc(p);
         p -= m;
         // Reverse if needed
-        if (this.direction == "reverse" || (this.direction == "ping-pong" && (m & 1))) {
+        if (
+            this.direction == "reverse"
+            || (this.direction == "ping-pong" && (m & 1))
+        ) {
             p = 1 - p;
         }
         // If we have individual keyframe positions, use them, otherwise use uniform spread
@@ -201,8 +210,7 @@ class AnimateChannel {
                 default:
                     obj[name] = value;
             }
-        }
-        else {
+        } else {
             obj[name] = value;
         }
     }
@@ -227,7 +235,7 @@ class AnimateChannelNumber extends AnimateChannel {
         name: string,
         keys: number[],
         opts: AnimateOpt,
-        relative: boolean
+        relative: boolean,
     ) {
         super(name, opts, relative);
         this.keys = keys;
@@ -244,11 +252,15 @@ class AnimateChannelNumber extends AnimateChannel {
             this.setValue(obj, this.name, this.keys[index]);
         } else {
             const easing = this.easings ? this.easings[index] : this.easing;
-            this.setValue(obj, this.name, lerp(
-                this.keys[index],
-                this.keys[index + 1],
-                easing(alpha),
-            ));
+            this.setValue(
+                obj,
+                this.name,
+                lerp(
+                    this.keys[index],
+                    this.keys[index + 1],
+                    easing(alpha),
+                ),
+            );
         }
         return alpha == 1;
     }
@@ -259,14 +271,50 @@ class AnimateChannelNumber extends AnimateChannel {
  */
 class AnimateChannelVec2 extends AnimateChannel {
     keys: Vec2[];
+    curves?: ((t: number) => Vec2)[];
+    dcurves?: ((t: number) => Vec2)[];
     constructor(
         name: string,
         keys: Vec2[],
         opts: AnimateOpt,
-        relative: boolean
+        relative: boolean,
+        followMotion: boolean,
     ) {
         super(name, opts, relative);
         this.keys = keys;
+        // If spline interpolation is used, bake splines
+        if (this.interpolation === "spline") {
+            this.curves = [];
+            // If following motion, bake derivatives as well
+            if (followMotion) {
+                this.dcurves = [];
+            }
+            for (let i = 0; i < this.keys.length - 1; i++) {
+                const prevKey = this.keys[i];
+                const nextIndex = i + 1;
+                const nextKey = this.keys[nextIndex];
+                const prevPrevKey = i > 0
+                    ? this.keys[i - 1]
+                    : reflect(nextKey, prevKey);
+                const nextNextKey = nextIndex < this.keys.length - 1
+                    ? this.keys[nextIndex + 1]
+                    : reflect(prevKey, nextKey);
+                this.curves.push(
+                    catmullRom(prevPrevKey, prevKey, nextKey, nextNextKey),
+                );
+                if (followMotion) {
+                    this.dcurves?.push(
+                        catmullRom(
+                            prevPrevKey,
+                            prevKey,
+                            nextKey,
+                            nextNextKey,
+                            hermiteFirstDerivative,
+                        ),
+                    );
+                }
+            }
+        }
     }
 
     update(obj: GameObj<any>, t: number): boolean {
@@ -283,35 +331,41 @@ class AnimateChannelVec2 extends AnimateChannel {
             // Use linear or spline interpolation
             switch (this.interpolation) {
                 case "linear":
-                    this.setValue(obj, this.name, this.keys[index].lerp(
-                        this.keys[index + 1],
-                        easing(alpha),
-                    ));
+                    this.setValue(
+                        obj,
+                        this.name,
+                        this.keys[index].lerp(
+                            this.keys[index + 1],
+                            easing(alpha),
+                        ),
+                    );
                     break;
                 case "slerp":
-                    this.setValue(obj, this.name, this.keys[index].slerp(
-                        this.keys[index + 1],
-                        easing(alpha),
-                    ));
+                    this.setValue(
+                        obj,
+                        this.name,
+                        this.keys[index].slerp(
+                            this.keys[index + 1],
+                            easing(alpha),
+                        ),
+                    );
                     break;
                 case "spline":
-                    const prevKey = this.keys[index];
-                    const nextIndex = index + 1;
-                    const nextKey = this.keys[nextIndex];
-                    const prevPrevKey = index > 0
-                        ? this.keys[index - 1]
-                        : reflect(nextKey, prevKey);
-                    const nextNextKey = nextIndex < this.keys.length - 1
-                        ? this.keys[nextIndex + 1]
-                        : reflect(prevKey, nextKey);
-                    this.setValue(obj, this.name, evaluateCatmullRom(
-                        prevPrevKey,
-                        prevKey,
-                        nextKey,
-                        nextNextKey,
-                        easing(alpha),
-                    ));
-                    break;
+                    if (this.curves) {
+                        this.setValue(
+                            obj,
+                            this.name,
+                            this.curves[index](easing(alpha)),
+                        );
+                        if (this.dcurves) {
+                            this.setValue(
+                                obj,
+                                "angle",
+                                this.dcurves[index](easing(alpha)).angle(),
+                            );
+                        }
+                        break;
+                    }
             }
         }
         return alpha == 1;
@@ -327,7 +381,7 @@ class AnimateChannelColor extends AnimateChannel {
         name: string,
         keys: Color[],
         opts: AnimateOpt,
-        relative: boolean
+        relative: boolean,
     ) {
         super(name, opts, relative);
         this.keys = keys;
@@ -344,10 +398,14 @@ class AnimateChannelColor extends AnimateChannel {
             this.setValue(obj, this.name, this.keys[index]);
         } else {
             const easing = this.easings ? this.easings[index] : this.easing;
-            this.setValue(obj, this.name, this.keys[index].lerp(
-                this.keys[index + 1],
-                easing(alpha),
-            ));
+            this.setValue(
+                obj,
+                this.name,
+                this.keys[index].lerp(
+                    this.keys[index + 1],
+                    easing(alpha),
+                ),
+            );
         }
         return alpha == 1;
     }
@@ -359,6 +417,7 @@ export function animate(gopts: AnimateCompOpt = {}): AnimateComp {
     let isFinished = false;
     return {
         id: "animate",
+        require: gopts.followMotion ? ["rotate"] : undefined,
         base: {
             pos: vec2(0, 0),
             angle: 0,
@@ -414,18 +473,27 @@ export function animate(gopts: AnimateCompOpt = {}): AnimateComp {
                         name,
                         keys as number[],
                         opts,
-                        gopts.relative || false
+                        gopts.relative || false,
                     ),
                 );
             } else if (keys[0] instanceof Vec2) {
                 channels.push(
-                    new AnimateChannelVec2(name, keys as Vec2[], opts,
-                        gopts.relative || false),
+                    new AnimateChannelVec2(
+                        name,
+                        keys as Vec2[],
+                        opts,
+                        gopts.relative || false,
+                        name === "pos" && (gopts.followMotion || false),
+                    ),
                 );
             } else if (keys[0] instanceof Color) {
                 channels.push(
-                    new AnimateChannelColor(name, keys as Color[], opts,
-                        gopts.relative || false),
+                    new AnimateChannelColor(
+                        name,
+                        keys as Color[],
+                        opts,
+                        gopts.relative || false,
+                    ),
                 );
             }
         },

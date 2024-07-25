@@ -78,7 +78,6 @@ export function smoothstep(edge0: number, edge1: number, x: number) {
     return x * x * (3.0 - 2.0 * x);
 }
 
-
 /**
  * A 2D vector.
  *
@@ -944,7 +943,7 @@ export class Mat4 {
             const r = Math.sqrt(this.m[0] * this.m[0] + this.m[1] * this.m[1]);
             return new Vec2(
                 Math.atan(this.m[0] * this.m[4] + this.m[1] * this.m[5])
-                / (r * r),
+                    / (r * r),
                 0,
             );
         } else if (this.m[4] != 0 || this.m[5] != 0) {
@@ -952,7 +951,7 @@ export class Mat4 {
             return new Vec2(
                 0,
                 Math.atan(this.m[0] * this.m[4] + this.m[1] * this.m[5])
-                / (s * s),
+                    / (s * s),
             );
         } else {
             return new Vec2(0, 0);
@@ -1371,7 +1370,7 @@ export function testPolygonPoint(poly: Polygon, pt: Vec2): boolean {
             ((p[i].y > pt.y) != (p[j].y > pt.y))
             && (pt.x
                 < (p[j].x - p[i].x) * (pt.y - p[i].y) / (p[j].y - p[i].y)
-                + p[i].x)
+                    + p[i].x)
         ) {
             c = !c;
         }
@@ -1389,7 +1388,7 @@ export function testEllipsePoint(ellipse: Ellipse, pt: Vec2): boolean {
     const vx = pt.x * c + pt.y * s;
     const vy = -pt.x * s + pt.y * c;
     return vx * vx / (ellipse.radiusX * ellipse.radiusX)
-        + vy * vy / (ellipse.radiusY * ellipse.radiusY) < 1;
+            + vy * vy / (ellipse.radiusY * ellipse.radiusY) < 1;
 }
 
 export function testEllipseCircle(ellipse: Ellipse, circle: Circle): boolean {
@@ -2267,7 +2266,7 @@ export class Ellipse {
         const vx = point.x * c + point.y * s;
         const vy = -point.x * s + point.y * c;
         return vx * vx / (this.radiusX * this.radiusX)
-            + vy * vy / (this.radiusY * this.radiusY) < 1;
+                + vy * vy / (this.radiusY * this.radiusY) < 1;
     }
     raycast(origin: Vec2, direction: Vec2): RaycastResult {
         return raycastEllipse(origin, direction, this);
@@ -2495,6 +2494,176 @@ export function curveLengthApproximation(
             const a = (t - t1) / (t2 - t1);
             return l1 + (l2 - l1) * a;
         }
+    };
+}
+
+/**
+ * A second order function returning an evaluator for the given 1D Hermite curve
+ * @param pt1 First point
+ * @param m1 First control point (tangent)
+ * @param m2 Second control point (tangent)
+ * @param pt2 Second point
+ * @returns A function which gives the value on the 1D Hermite curve at t
+ */
+export function hermite(pt1: number, m1: number, m2: number, pt2: number) {
+    const A = 2 * pt1 + m1 - 2 * pt2 + m2;
+    const B = -3 * pt1 + 3 * pt2 - 2 * m1 - m2;
+    const C = m1;
+    const D = pt1;
+
+    return (t: number) => {
+        const t2 = t * t;
+        const t3 = t2 * t;
+        return A * t3 + B * t2 + C * t + D;
+    };
+}
+
+/**
+ * A second order function returning an evaluator for the given 2D Cardinal curve
+ * @param pt1 Previous point
+ * @param pt2 First point
+ * @param pt3 Second point
+ * @param pt4 Next point
+ * @param tension The tension of the curve, [0..1] from round to tight.
+ * @param h The hermite function or one of its derivatives.
+ * @returns A function which gives the value on the 2D Cardinal curve at t
+ */
+export function cardinal(
+    pt1: Vec2,
+    pt2: Vec2,
+    pt3: Vec2,
+    pt4: Vec2,
+    tension: number,
+    h = hermite,
+) {
+    const hx = h(
+        pt2.x,
+        (1 - tension) * (pt3.x - pt1.x),
+        (1 - tension) * (pt4.x - pt2.x),
+        pt3.x,
+    );
+    const hy = h(
+        pt2.y,
+        (1 - tension) * (pt3.y - pt1.y),
+        (1 - tension) * (pt4.y - pt2.y),
+        pt3.y,
+    );
+    return (t: number) => {
+        return new Vec2(hx(t), hy(t));
+    };
+}
+
+/**
+ * A second order function returning an evaluator for the given 2D Catmull-Rom curve
+ * @param pt1 Previous point
+ * @param pt2 First point
+ * @param pt3 Second point
+ * @param pt4 Next point
+ * @returns A function which gives the value on the 2D Catmull-Rom curve at t
+ */
+export function catmullRom(
+    pt1: Vec2,
+    pt2: Vec2,
+    pt3: Vec2,
+    pt4: Vec2,
+    h = hermite,
+) {
+    // A Catmull-Rom curve is a Cardinal curve with as tension 0.5
+    return cardinal(pt1, pt2, pt3, pt4, 0.5, h);
+}
+
+/**
+ * A second order function returning an evaluator for the given 2D quadratic Bezier curve
+ * @param pt1 First point
+ * @param pt2 First control point
+ * @param pt3 Second control point
+ * @param pt4 Second point
+ * @returns A function which gives the value on the 2D quadratic Bezier curve at t
+ */
+export function bezier(
+    pt1: Vec2,
+    pt2: Vec2,
+    pt3: Vec2,
+    pt4: Vec2,
+    h = hermite,
+) {
+    // Convert the Bezier to a Catmull-Rom curve
+    return catmullRom(
+        pt4.add(pt1.sub(pt2).scale(6)),
+        pt1,
+        pt4,
+        pt1.add(pt4.sub(pt3).scale(6)),
+        h,
+    );
+}
+
+/**
+ * A second order function returning an evaluator for the given 2D Kochanek–Bartels curve
+ * @param pt1 Previous point
+ * @param pt2 First point
+ * @param pt3 Second point
+ * @param pt4 Next point
+ * @param tension The tension of the curve, [-1..1] from round to tight.
+ * @param continuity The continuity of the curve, [-1..1] from box corners to inverted corners.
+ * @param bias The bias of the curve, [-1..1] from pre-shoot to post-shoot.
+ * @returns A function which gives the value on the 2D Kochanek–Bartels curve at t
+ */
+export function kochanekBartels(
+    pt1: Vec2,
+    pt2: Vec2,
+    pt3: Vec2,
+    pt4: Vec2,
+    tension: number,
+    continuity: number,
+    bias: number,
+    h = hermite,
+) {
+    const hx = h(
+        pt2.x,
+        0.5 * (1 - tension) * (1 + bias) * (1 + continuity) * (pt2.x - pt1.x)
+            + 0.5 * (1 - tension) * (1 - bias) * (1 - continuity)
+                * (pt3.x - pt2.x),
+        0.5 * (1 - tension) * (1 + bias) * (1 - continuity) * (pt3.x - pt2.x)
+            + 0.5 * (1 - tension) * (1 - bias) * (1 + continuity)
+                * (pt4.x - pt3.x),
+        pt3.x,
+    );
+    const hy = h(
+        pt2.y,
+        0.5 * (1 - tension) * (1 + bias) * (1 + continuity) * (pt2.y - pt1.y)
+            + 0.5 * (1 - tension) * (1 - bias) * (1 - continuity)
+                * (pt3.y - pt2.y),
+        0.5 * (1 - tension) * (1 + bias) * (1 - continuity) * (pt3.y - pt2.y)
+            + 0.5 * (1 - tension) * (1 - bias) * (1 + continuity)
+                * (pt4.y - pt3.y),
+        pt3.y,
+    );
+    return (t: number) => {
+        return new Vec2(hx(t), hy(t));
+    };
+}
+
+/**
+ * A second order function returning an evaluator for the derivative of the given 1D Hermite curve
+ * @param pt1 First point
+ * @param m1 First control point (tangent)
+ * @param m2 Second control point (tangent)
+ * @param pt2 Second point
+ * @returns A function which gives the first derivative on the 1D Hermite curve at t
+ */
+export function hermiteFirstDerivative(
+    pt1: number,
+    m1: number,
+    m2: number,
+    pt2: number,
+) {
+    const A = 2 * pt1 + m1 - 2 * pt2 + m2;
+    const B = -3 * pt1 + 3 * pt2 - 2 * m1 + m2;
+    const C = m1;
+
+    return (t: number) => {
+        const t2 = t * t;
+        return 3 * A * t2 + 2 * B * t + C;
     };
 }
 
