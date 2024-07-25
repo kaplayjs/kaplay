@@ -3,6 +3,7 @@ import { Color } from "../../math/color";
 import easings from "../../math/easings";
 import {
     catmullRom,
+    hermiteFirstDerivative,
     // evaluateCatmullRom,
     lerp,
     Vec2,
@@ -270,17 +271,23 @@ class AnimateChannelNumber extends AnimateChannel {
 class AnimateChannelVec2 extends AnimateChannel {
     keys: Vec2[];
     curves?: ((t: number) => Vec2)[];
+    dcurves?: ((t: number) => Vec2)[];
     constructor(
         name: string,
         keys: Vec2[],
         opts: AnimateOpt,
         relative: boolean,
+        followMotion: boolean,
     ) {
         super(name, opts, relative);
         this.keys = keys;
         // If spline interpolation is used, bake splines
         if (this.interpolation === "spline") {
             this.curves = [];
+            // If following motion, bake derivatives as well
+            if (followMotion) {
+                this.dcurves = [];
+            }
             for (let i = 0; i < this.keys.length - 1; i++) {
                 const prevKey = this.keys[i];
                 const nextIndex = i + 1;
@@ -294,7 +301,17 @@ class AnimateChannelVec2 extends AnimateChannel {
                 this.curves.push(
                     catmullRom(prevPrevKey, prevKey, nextKey, nextNextKey),
                 );
-                console.log(prevPrevKey, prevKey, nextKey, nextNextKey);
+                if (followMotion) {
+                    this.dcurves?.push(
+                        catmullRom(
+                            prevPrevKey,
+                            prevKey,
+                            nextKey,
+                            nextNextKey,
+                            hermiteFirstDerivative,
+                        ),
+                    );
+                }
             }
         }
     }
@@ -321,27 +338,18 @@ class AnimateChannelVec2 extends AnimateChannel {
                     ),
                 );
             } else if (this.curves) {
-                /*const prevKey = this.keys[index];
-                const nextIndex = index + 1;
-                const nextKey = this.keys[nextIndex];
-                const prevPrevKey = index > 0
-                    ? this.keys[index - 1]
-                    : reflect(nextKey, prevKey);
-                const nextNextKey = nextIndex < this.keys.length - 1
-                    ? this.keys[nextIndex + 1]
-                    : reflect(prevKey, nextKey);
-                this.setValue(obj, this.name, evaluateCatmullRom(
-                    prevPrevKey,
-                    prevKey,
-                    nextKey,
-                    nextNextKey,
-                    easing(alpha),
-                ));*/
                 this.setValue(
                     obj,
                     this.name,
                     this.curves[index](easing(alpha)),
                 );
+                if (this.dcurves) {
+                    this.setValue(
+                        obj,
+                        "angle",
+                        this.dcurves[index](easing(alpha)).angle(),
+                    );
+                }
             }
         }
         return alpha == 1;
@@ -393,6 +401,7 @@ export function animate(gopts: AnimateCompOpt = {}): AnimateComp {
     let isFinished = false;
     return {
         id: "animate",
+        require: gopts.followMotion ? ["rotate"] : undefined,
         base: {
             pos: vec2(0, 0),
             angle: 0,
@@ -458,6 +467,7 @@ export function animate(gopts: AnimateCompOpt = {}): AnimateComp {
                         keys as Vec2[],
                         opts,
                         gopts.relative || false,
+                        name === "pos" && (gopts.followMotion || false),
                     ),
                 );
             } else if (keys[0] instanceof Color) {

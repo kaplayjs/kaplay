@@ -2516,6 +2516,7 @@ export function hermite(pt1: number, m1: number, m2: number, pt2: number) {
  * @param pt3 Second point
  * @param pt4 Next point
  * @param tension The tension of the curve, [0..1] from round to tight.
+ * @param h The hermite function or one of its derivatives.
  * @returns A function which gives the value on the 2D Cardinal curve at t
  */
 export function cardinal(
@@ -2524,14 +2525,15 @@ export function cardinal(
     pt3: Vec2,
     pt4: Vec2,
     tension: number,
+    h = hermite,
 ) {
-    const hx = hermite(
+    const hx = h(
         pt2.x,
         (1 - tension) * (pt3.x - pt1.x),
         (1 - tension) * (pt4.x - pt2.x),
         pt3.x,
     );
-    const hy = hermite(
+    const hy = h(
         pt2.y,
         (1 - tension) * (pt3.y - pt1.y),
         (1 - tension) * (pt4.y - pt2.y),
@@ -2555,9 +2557,10 @@ export function catmullRom(
     pt2: Vec2,
     pt3: Vec2,
     pt4: Vec2,
+    h = hermite,
 ) {
     // A Catmull-Rom curve is a Cardinal curve with as tension 0.5
-    return cardinal(pt1, pt2, pt3, pt4, 0.5);
+    return cardinal(pt1, pt2, pt3, pt4, 0.5, h);
 }
 
 /**
@@ -2573,6 +2576,7 @@ export function bezier(
     pt2: Vec2,
     pt3: Vec2,
     pt4: Vec2,
+    h = hermite,
 ) {
     // Convert the Bezier to a Catmull-Rom curve
     return catmullRom(
@@ -2580,6 +2584,7 @@ export function bezier(
         pt1,
         pt4,
         pt1.add(pt4.sub(pt3).scale(6)),
+        h,
     );
 }
 
@@ -2602,8 +2607,9 @@ export function kochanekBartels(
     tension: number,
     continuity: number,
     bias: number,
+    h = hermite,
 ) {
-    const hx = hermite(
+    const hx = h(
         pt2.x,
         0.5 * (1 - tension) * (1 + bias) * (1 + continuity) * (pt2.x - pt1.x)
             + 0.5 * (1 - tension) * (1 - bias) * (1 - continuity)
@@ -2613,7 +2619,7 @@ export function kochanekBartels(
                 * (pt4.x - pt3.x),
         pt3.x,
     );
-    const hy = hermite(
+    const hy = h(
         pt2.y,
         0.5 * (1 - tension) * (1 + bias) * (1 + continuity) * (pt2.y - pt1.y)
             + 0.5 * (1 - tension) * (1 - bias) * (1 - continuity)

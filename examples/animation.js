@@ -128,7 +128,8 @@ const curvingBean = add([
     sprite("bean"),
     pos(50, 400),
     anchor("center"),
-    animate(),
+    animate({ followMotion: true }),
+    rotate(0),
 ]);
 
 curvingBean.animate(
