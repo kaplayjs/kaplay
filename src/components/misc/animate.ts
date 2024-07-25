@@ -24,6 +24,8 @@ type Interpolation =
     | "none"
     /* Linear interpolation */
     | "linear"
+    /* Spherical linear interpolation */
+    | "slerp"
     /* Spline interpolation */
     | "spline";
 
@@ -327,33 +329,41 @@ class AnimateChannelVec2 extends AnimateChannel {
         } else {
             const easing = this.easings ? this.easings[index] : this.easing;
             // Use linear or spline interpolation
-            if (this.interpolation === "linear") {
-                this.setValue(
-                    obj,
-                    this.name,
-                    this.keys[index].lerp(
+            switch (this.interpolation) {
+                case "linear":
+                    this.setValue(obj, this.name, this.keys[index].lerp(
                         this.keys[index + 1],
                         easing(alpha),
-                    ),
-                );
-            } else if (this.curves) {
-                this.setValue(
-                    obj,
-                    this.name,
-                    this.curves[index](easing(alpha)),
-                );
-                if (this.dcurves) {
-                    this.setValue(
-                        obj,
-                        "angle",
-                        this.dcurves[index](easing(alpha)).angle(),
-                    );
-                }
+                    ));
+                    break;
+                case "slerp":
+                    this.setValue(obj, this.name, this.keys[index].slerp(
+                        this.keys[index + 1],
+                        easing(alpha),
+                    ));
+                    break;
+                case "spline":
+                    if (this.curves) {
+                        this.setValue(
+                            obj,
+                            this.name,
+                            this.curves[index](easing(alpha)),
+                        );
+                        if (this.dcurves) {
+                            this.setValue(
+                                obj,
+                                "angle",
+                                this.dcurves[index](easing(alpha)).angle(),
+                            );
+                        }
+                        break;
+                    }
             }
         }
         return alpha == 1;
     }
 }
+
 
 /**
  * Subclass handling color keys
