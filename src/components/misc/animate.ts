@@ -3,6 +3,7 @@ import { Color } from "../../math/color";
 import easings from "../../math/easings";
 import {
     catmullRom,
+    easingLinear,
     hermiteFirstDerivative,
     lerp,
     Vec2,
@@ -10,6 +11,7 @@ import {
 } from "../../math/math";
 import type { Comp, EaseFunc, GameObj, LerpValue } from "../../types";
 import type { KEventController } from "../../utils";
+import type { NamedComp } from "./named";
 
 type TimeDirection =
     /* Animate forward */
@@ -113,6 +115,14 @@ export interface AnimateComp extends Comp {
      * Base values for relative animation
      */
     base: BaseValues;
+    /**
+     * Serializes the animation of this object to plain Javascript types
+     */
+    serializeAnimationChannels(): Record<string, AnimationChannel>;
+    /**
+     * Serializes the options of this object to plain Javascript types
+     */
+    serializeAnimationOptions(): { followMotion?: boolean; relative?: boolean };
 }
 
 /**
@@ -214,6 +224,32 @@ class AnimateChannel {
             obj[name] = value;
         }
     }
+
+    serialize(): AnimationChannel {
+        const serialization: AnimationChannel = {
+            duration: this.duration,
+            keys: []
+        };
+        if (this.loops) {
+            serialization.loops = this.loops;
+        }
+        if (this.direction !== "forward") {
+            serialization.direction = this.direction;
+        }
+        if (this.easing != easings.linear) {
+            serialization.easing = this.easing.name;
+        }
+        if (this.interpolation !== "linear") {
+            serialization.interpolation = this.interpolation;
+        }
+        if (this.timing) {
+            serialization.timing = this.timing;
+        }
+        if (this.easings) {
+            serialization.easings = this.easings.map(e => this.easing.name);
+        }
+        return serialization;
+    }
 }
 
 /**
@@ -263,6 +299,10 @@ class AnimateChannelNumber extends AnimateChannel {
             );
         }
         return alpha == 1;
+    }
+
+    serialize() {
+        return Object.assign(super.serialize(), { keys: this.keys });
     }
 }
 
@@ -370,6 +410,12 @@ class AnimateChannelVec2 extends AnimateChannel {
         }
         return alpha == 1;
     }
+
+    serialize() {
+        return Object.assign(super.serialize(), {
+            keys: this.keys.map(v => [v.x, v.y]),
+        });
+    }
 }
 
 /**
@@ -409,7 +455,35 @@ class AnimateChannelColor extends AnimateChannel {
         }
         return alpha == 1;
     }
+
+    serialize() {
+        return Object.assign(super.serialize(), { keys: this.keys });
+    }
 }
+
+type AnimationChannelKeys = number[] | number[][];
+
+type AnimationOptions = {
+    duration: number;
+    loops?: number;
+    direction?: TimeDirection;
+    easing?: string;
+    interpolation?: Interpolation;
+    timing?: number[];
+    easings?: string[];
+}
+
+type AnimationChannel = {
+    keys: AnimationChannelKeys;
+} & AnimationOptions;
+
+type Animation = {
+    name: string;
+    followMotion?: boolean;
+    relative?: boolean;
+    channels?: Record<string, AnimationChannel>;
+    children?: Animation[];
+};
 
 export function animate(gopts: AnimateCompOpt = {}): AnimateComp {
     const channels: AnimateChannel[] = [];
@@ -515,5 +589,97 @@ export function animate(gopts: AnimateCompOpt = {}): AnimateComp {
                 cb,
             );
         },
+        serializeAnimationChannels() {
+            return channels.reduce((o: Record<string, AnimationChannel>, c) => {
+                o[c.name] = c.serialize();
+                return o;
+            }, {});
+        },
+        serializeAnimationOptions() {
+            const options: any = {};
+            if (gopts.followMotion) {
+                options.followMotion = true;
+            }
+            if (gopts.relative) {
+                options.relative = true;
+            }
+            return options;
+        },
     };
+}
+
+/**
+ * Serializes an animation to javascript objects for serialization to JSON.
+ * @param obj The root object to serialize from.
+ * @param name Optional name of the root object.
+ * @returns A javascript object serialization of the animation.
+ */
+export function serializeAnimation(obj: GameObj<any>, name: string): any {
+    let serialization: Animation = { name: obj.name };
+    if (obj.is("animate")) {
+        serialization.channels = (obj as GameObj<AnimateComp>)
+            .serializeAnimationChannels();
+        Object.assign(
+            serialization,
+            (obj as GameObj<NamedComp | AnimateComp>)
+                .serializeAnimationOptions(),
+        );
+    }
+    if (obj.children.length > 0) {
+        serialization.children = obj.children.filter(o => o.is("named")).map(
+            o => serializeAnimation(o, o.name),
+        );
+    }
+    return serialization;
+}
+
+function deserializeKeys(keys: AnimationChannelKeys) {
+    if (typeof keys[0] == "number") {
+        return keys;
+    }
+    else if (Array.isArray(keys[0])) {
+        if (keys[0].length == 2) {
+            return (keys as number[][]).map(k => new Vec2(k[0], k[1]));
+        }
+        else if (keys[0].length == 3) {
+            return (keys as number[][]).map(k => new Color(k[0], k[1], k[2]));
+        }
+    }
+}
+
+function deserializeOptions(options: AnimationOptions) {
+    if (options.easing) {
+        options.easing = (easings as any)[options.easing];
+    }
+    if (options.easings) {
+        options.easings = options.easings.map(e => (easings as any)[e]);
+    }
+    return options;
+}
+
+/**
+ * Applies the animation to this object and its named children
+ * @param obj The root object to deserialize to.
+ * @param animation A javascript object serialization of the animation.
+ */
+export function applyAnimation(obj: GameObj<any>, animation: Animation) {
+    // TODO: test this
+    obj.use(animate({
+        followMotion: animation.followMotion,
+        relative: animation.relative
+    }));
+    if (animation.channels) {
+        for (const name in animation.channels) {
+            const channel = animation.channels[name];
+            obj.animate(name, deserializeKeys(channel.keys), deserializeOptions(channel))
+        }
+    }
+    if (animation.children) {
+        for (const childAnimation of animation.children) {
+            const q = obj.query({ name: childAnimation.name });
+            if (q.length != 0) {
+                applyAnimation(q[0], childAnimation);
+            }
+        }
+    }
 }
