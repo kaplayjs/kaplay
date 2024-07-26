@@ -12,6 +12,7 @@ export interface NamedComp extends Comp {
 
 export function named(name: string): NamedComp {
     return {
+        id: "named",
         name,
     };
 }

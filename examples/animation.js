@@ -144,6 +144,34 @@ curvingBean.animate(
     { duration: 8, direction: "ping-pong", interpolation: "spline" },
 );
 
+const littleBeanPivot = curvingBean.add([
+    animate(),
+    rotate(0),
+    named("littlebeanpivot"),
+]);
+
+littleBeanPivot.animate("angle", [0, 360], {
+    duration: 2,
+    direction: "reverse",
+});
+
+const littleBean = littleBeanPivot.add([
+    sprite("bean"),
+    pos(50, 50),
+    anchor("center"),
+    scale(0.25),
+    animate(),
+    rotate(0),
+    named("littlebean"),
+]);
+
+littleBean.animate("angle", [0, 360], {
+    duration: 2,
+    direction: "forward",
+});
+
+console.log(JSON.stringify(serializeAnimation(curvingBean, "root"), "", 2));
+
 /*onDraw(() => {
     drawCurve(t => evaluateCatmullRom(
         vec2(200, 400),

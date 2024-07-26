@@ -888,6 +888,10 @@ export interface KAPLAYCtx<
      */
     animate(): AnimateComp;
     /**
+     * Serializes the animation to plain objects
+     */
+    serializeAnimation(obj: GameObj, name: string): Animation;
+    /**
      * A sentry which reacts to objects coming into view.
      *
      * @since v3001.0
