@@ -72,6 +72,16 @@ export interface BodyComp extends Comp {
      */
     isJumping(): boolean;
     /**
+     * Applies an impulse
+     * @param impulse The impulse vector, applied directly
+     */
+    applyImpulse(impulse: Vec2): void;
+    /**
+     * Applies a force
+     * @param force The force vector, applied after scaled by the inverse mass
+     */
+    addForce(force: Vec2): void;
+    /**
      * Upward thrust.
      */
     jump(force?: number): void;
@@ -255,7 +265,7 @@ export function body(opt: BodyCompOpt = {}): BodyComp {
             }
         },
 
-        update(this: GameObj<PosComp | BodyComp | AreaComp>) {
+        fixedUpdate(this: GameObj<PosComp | BodyComp | AreaComp>) {
             if (game.gravity && !this.isStatic) {
                 if (willFall) {
                     curPlatform = null;
@@ -340,6 +350,14 @@ export function body(opt: BodyCompOpt = {}): BodyComp {
 
         isJumping(): boolean {
             return this.vel.dot(k.getGravityDirection()) < 0;
+        },
+
+        applyImpulse(impulse: Vec2) {
+            this.vel = this.vel.add(impulse);
+        },
+
+        addForce(force: Vec2) {
+            this.vel = this.vel.add(force.scale(1 / this.mass));
         },
 
         jump(force: number) {

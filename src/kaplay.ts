@@ -243,6 +243,7 @@ import {
     onDestroy,
     onDraw,
     onError,
+    onFixedUpdate,
     onHover,
     onHoverEnd,
     onHoverUpdate,
@@ -670,6 +671,11 @@ const kaplay = <
     kaSprite = loadSprite(null, kaSpriteSrc);
     boomSprite = loadSprite(null, boomSpriteSrc);
 
+    function fixedUpdateFrame() {
+        // update every obj
+        game.root.fixedUpdate();
+    }
+
     function updateFrame() {
         // update every obj
         game.root.update();
@@ -817,54 +823,57 @@ const kaplay = <
         audio.ctx.suspend();
 
         // TODO: this should only run once
-        app.run(() => {
-            frameStart();
+        app.run(
+            () => {},
+            () => {
+                frameStart();
 
-            drawUnscaled(() => {
-                const pad = 32;
-                const gap = 16;
-                const gw = width();
-                const gh = height();
+                drawUnscaled(() => {
+                    const pad = 32;
+                    const gap = 16;
+                    const gw = width();
+                    const gh = height();
 
-                const textStyle = {
-                    size: 36,
-                    width: gw - pad * 2,
-                    letterSpacing: 4,
-                    lineSpacing: 4,
-                    font: DBG_FONT,
-                    fixed: true,
-                };
+                    const textStyle = {
+                        size: 36,
+                        width: gw - pad * 2,
+                        letterSpacing: 4,
+                        lineSpacing: 4,
+                        font: DBG_FONT,
+                        fixed: true,
+                    };
 
-                drawRect({
-                    width: gw,
-                    height: gh,
-                    color: rgb(0, 0, 255),
-                    fixed: true,
+                    drawRect({
+                        width: gw,
+                        height: gh,
+                        color: rgb(0, 0, 255),
+                        fixed: true,
+                    });
+
+                    const title = formatText({
+                        ...textStyle,
+                        text: "Error",
+                        pos: vec2(pad),
+                        color: rgb(255, 128, 0),
+                        fixed: true,
+                    });
+
+                    drawFormattedText(title);
+
+                    drawText({
+                        ...textStyle,
+                        text: err.message,
+                        pos: vec2(pad, pad + title.height + gap),
+                        fixed: true,
+                    });
+
+                    popTransform();
+                    game.events.trigger("error", err);
                 });
 
-                const title = formatText({
-                    ...textStyle,
-                    text: "Error",
-                    pos: vec2(pad),
-                    color: rgb(255, 128, 0),
-                    fixed: true,
-                });
-
-                drawFormattedText(title);
-
-                drawText({
-                    ...textStyle,
-                    text: err.message,
-                    pos: vec2(pad, pad + title.height + gap),
-                    fixed: true,
-                });
-
-                popTransform();
-                game.events.trigger("error", err);
-            });
-
-            frameEnd();
-        });
+                frameEnd();
+            },
+        );
     }
 
     function onCleanup(action: () => void) {
@@ -904,41 +913,52 @@ const kaplay = <
     let isFirstFrame = true;
 
     // main game loop
-    app.run(() => {
-        try {
-            if (!assets.loaded) {
-                if (loadProgress() === 1 && !isFirstFrame) {
-                    assets.loaded = true;
-                    game.events.trigger("load");
+    app.run(
+        () => {
+            try {
+                if (assets.loaded) {
+                    checkFrame();
+                    if (!debug.paused) fixedUpdateFrame();
                 }
+            } catch (e) {
+                handleErr(e as Error);
             }
+        },
+        () => {
+            try {
+                if (!assets.loaded) {
+                    if (loadProgress() === 1 && !isFirstFrame) {
+                        assets.loaded = true;
+                        game.events.trigger("load");
+                    }
+                }
 
-            if (
-                !assets.loaded && gopt.loadingScreen !== false
-                || isFirstFrame
-            ) {
-                frameStart();
-                // TODO: Currently if assets are not initially loaded no updates or timers will be run, however they will run if loadingScreen is set to false. What's the desired behavior or should we make them consistent?
-                drawLoadScreen();
-                frameEnd();
-            } else {
-                if (!debug.paused) updateFrame();
-                checkFrame();
-                frameStart();
-                drawFrame();
-                if (gopt.debug !== false) drawDebug();
-                frameEnd();
+                if (
+                    !assets.loaded && gopt.loadingScreen !== false
+                    || isFirstFrame
+                ) {
+                    frameStart();
+                    // TODO: Currently if assets are not initially loaded no updates or timers will be run, however they will run if loadingScreen is set to false. What's the desired behavior or should we make them consistent?
+                    drawLoadScreen();
+                    frameEnd();
+                } else {
+                    if (!debug.paused) updateFrame();
+                    frameStart();
+                    drawFrame();
+                    if (gopt.debug !== false) drawDebug();
+                    frameEnd();
+                }
+
+                if (isFirstFrame) {
+                    isFirstFrame = false;
+                }
+
+                game.events.trigger("frameEnd");
+            } catch (e) {
+                handleErr(e as Error);
             }
-
-            if (isFirstFrame) {
-                isFirstFrame = false;
-            }
-
-            game.events.trigger("frameEnd");
-        } catch (e) {
-            handleErr(e as Error);
-        }
-    });
+        },
+    );
 
     updateViewport();
     initEvents();
@@ -1064,6 +1084,7 @@ const kaplay = <
         navigation,
         // group events
         on,
+        onFixedUpdate,
         onUpdate,
         onDraw,
         onAdd,

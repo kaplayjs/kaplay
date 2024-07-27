@@ -89,6 +89,7 @@ vec4 frag(vec2 pos, vec2 uv, vec4 color, sampler2D tex) {
 export const COMP_DESC = new Set(["id", "require"]);
 export const COMP_EVENTS = new Set([
     "add",
+    "fixedUpdate",
     "update",
     "draw",
     "destroy",

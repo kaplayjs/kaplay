@@ -125,6 +125,14 @@ export function make<T>(comps: CompList<T> = []): GameObj<MakeType<T>> {
             }
         },
 
+        fixedUpdate(this: GameObj) {
+            if (this.paused) return;
+            this.children
+                /*.sort((o1, o2) => (o1.z ?? 0) - (o2.z ?? 0))*/
+                .forEach((child) => child.fixedUpdate());
+            this.trigger("fixedUpdate");
+        },
+
         update(this: GameObj) {
             if (this.paused) return;
             this.children
@@ -527,6 +535,10 @@ export function make<T>(comps: CompList<T> = []): GameObj<MakeType<T>> {
 
         onAdd(cb: () => void): KEventController {
             return this.on("add", cb);
+        },
+
+        onFixedUpdate(cb: () => void): KEventController {
+            return this.on("fixedUpdate", cb);
         },
 
         onUpdate(cb: () => void): KEventController {

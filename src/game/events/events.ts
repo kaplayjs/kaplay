@@ -26,6 +26,24 @@ export function on<Ev extends GameObjEventNames | string & {}>(
     });
 }
 
+export const onFixedUpdate = overload2(
+    (action: () => void): KEventController => {
+        const obj = game.root.add([{ update: action }]);
+        return {
+            get paused() {
+                return obj.paused;
+            },
+            set paused(p) {
+                obj.paused = p;
+            },
+            cancel: () => obj.destroy(),
+        };
+    },
+    (tag: Tag, action: (obj: GameObj) => void) => {
+        return on("fixedUpdate", tag, action);
+    },
+);
+
 export const onUpdate = overload2((action: () => void): KEventController => {
     const obj = game.root.add([{ update: action }]);
     return {
