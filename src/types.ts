@@ -953,6 +953,13 @@ export interface KAPLAYCtx<
         ) => void,
     ): KEventController;
     /**
+     * Register an event that runs at a fixed framerate.
+     *
+     * @since v3000.1
+     */
+    onFixedUpdate(cb: () => void): KEventController;
+    onFixedUpdate(tag: Tag, action: (obj: GameObj) => void): KEventController;
+    /**
      * Register an event that runs every frame (~60 times per second) for all game objs with certain tag.
      *
      * @since v2000.1
@@ -3923,6 +3930,12 @@ export interface GameObjRaw {
     /**
      * Update this game object and all children game objects.
      *
+     * @since v3001.0
+     */
+    fixedUpdate(): void;
+    /**
+     * Update this game object and all children game objects.
+     *
      * @since v3000.0
      */
     update(): void;
@@ -4475,6 +4488,10 @@ export interface Comp {
      * Event that runs when host game obj is added to scene.
      */
     add?: () => void;
+    /**
+     * Event that runs at a fixed frame rate.
+     */
+    fixedUpdate?: () => void;
     /**
      * Event that runs every frame.
      */

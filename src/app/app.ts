@@ -257,7 +257,7 @@ export const initApp = (opt: {
         resizeObserver.disconnect();
     }
 
-    function run(action: () => void) {
+    function run(fixedUpdate: () => void, update: () => void) {
         if (state.loopID !== null) {
             cancelAnimationFrame(state.loopID);
         }
@@ -286,11 +286,14 @@ export const initApp = (opt: {
                     state.time += dt();
                     state.fpsCounter.tick(state.dt);
                 }
-                accumulatedDt = 0;
                 state.skipTime = false;
                 state.numFrames++;
+                while (accumulatedDt > 1 / 60) {
+                    fixedUpdate();
+                    accumulatedDt -= 1 / 60;
+                }
                 processInput();
-                action();
+                update();
                 resetInput();
             }
 
