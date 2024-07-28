@@ -266,7 +266,7 @@ export function body(opt: BodyCompOpt = {}): BodyComp {
             }
         },
 
-        fixedUpdate(this: GameObj<PosComp | BodyComp | AreaComp>) {
+        update(this: GameObj<PosComp | BodyComp | AreaComp>) {
             if (game.gravity && !this.isStatic) {
                 if (willFall) {
                     curPlatform = null;

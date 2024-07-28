@@ -915,14 +915,14 @@ const kaplay = <
     // main game loop
     app.run(
         () => {
-            try {
+            /*try {
                 if (assets.loaded) {
                     checkFrame();
                     if (!debug.paused) fixedUpdateFrame();
                 }
             } catch (e) {
                 handleErr(e as Error);
-            }
+            }*/
         },
         () => {
             try {
@@ -943,6 +943,7 @@ const kaplay = <
                     frameEnd();
                 } else {
                     if (!debug.paused) updateFrame();
+                    checkFrame();
                     frameStart();
                     drawFrame();
                     if (gopt.debug !== false) drawDebug();
