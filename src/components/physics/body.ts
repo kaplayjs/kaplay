@@ -305,7 +305,7 @@ export function body(opt: BodyCompOpt = {}): BodyComp {
 
                     // Apply gravity
                     this.vel = this.vel.add(
-                        game.gravity.scale(this.gravityScale * k.fixedDt()),
+                        game.gravity.scale(this.gravityScale * k.dt()),
                     );
 
                     // Clamp velocity
@@ -323,10 +323,10 @@ export function body(opt: BodyCompOpt = {}): BodyComp {
                 }
             }
 
-            this.vel.x *= 1 - this.drag * fixedDt();
-            this.vel.y *= 1 - this.drag * fixedDt();
+            this.vel.x *= 1 - this.drag * k.dt();
+            this.vel.y *= 1 - this.drag * k.dt();
 
-            this.moveBy(this.vel.scale(fixedDt()));
+            this.move(this.vel);
         },
 
         onPhysicsResolve(this: GameObj, action) {
