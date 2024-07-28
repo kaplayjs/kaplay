@@ -289,6 +289,7 @@ export const initApp = (opt: {
             if (accumulatedDt > desiredDt) {
                 if (!state.skipTime) {
                     fixedAccumulatedDt += accumulatedDt;
+                    state.dt = state.fixedDt;
                     while (fixedAccumulatedDt > state.fixedDt) {
                         fixedUpdate();
                         fixedAccumulatedDt -= state.fixedDt;
