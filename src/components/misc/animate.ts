@@ -228,7 +228,7 @@ class AnimateChannel {
     serialize(): AnimationChannel {
         const serialization: AnimationChannel = {
             duration: this.duration,
-            keys: []
+            keys: [],
         };
         if (this.loops) {
             serialization.loops = this.loops;
@@ -471,7 +471,7 @@ type AnimationOptions = {
     interpolation?: Interpolation;
     timing?: number[];
     easings?: string[];
-}
+};
 
 type AnimationChannel = {
     keys: AnimationChannelKeys;
@@ -636,12 +636,10 @@ export function serializeAnimation(obj: GameObj<any>, name: string): any {
 function deserializeKeys(keys: AnimationChannelKeys) {
     if (typeof keys[0] == "number") {
         return keys;
-    }
-    else if (Array.isArray(keys[0])) {
+    } else if (Array.isArray(keys[0])) {
         if (keys[0].length == 2) {
             return (keys as number[][]).map(k => new Vec2(k[0], k[1]));
-        }
-        else if (keys[0].length == 3) {
+        } else if (keys[0].length == 3) {
             return (keys as number[][]).map(k => new Color(k[0], k[1], k[2]));
         }
     }
@@ -666,12 +664,16 @@ export function applyAnimation(obj: GameObj<any>, animation: Animation) {
     // TODO: test this
     obj.use(animate({
         followMotion: animation.followMotion,
-        relative: animation.relative
+        relative: animation.relative,
     }));
     if (animation.channels) {
         for (const name in animation.channels) {
             const channel = animation.channels[name];
-            obj.animate(name, deserializeKeys(channel.keys), deserializeOptions(channel))
+            obj.animate(
+                name,
+                deserializeKeys(channel.keys),
+                deserializeOptions(channel),
+            );
         }
     }
     if (animation.children) {

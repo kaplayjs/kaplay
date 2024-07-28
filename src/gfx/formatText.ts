@@ -4,7 +4,7 @@ import {
     DEF_TEXT_CACHE_SIZE,
     FONT_ATLAS_HEIGHT,
     FONT_ATLAS_WIDTH,
-    MULTI_WORD_RE
+    MULTI_WORD_RE,
 } from "../constants";
 import { fontCacheC2d, fontCacheCanvas, gfx } from "../kaplay";
 import { Color } from "../math/color";
@@ -61,17 +61,20 @@ function compileStyledText(text: string): {
 
             let isClosing = text[i] === "/";
             let style = "";
-            
+
             if (isClosing) i++;
 
-            while (i < text.length && text[i] !== "]")
+            while (i < text.length && text[i] !== "]") {
                 style += text[i++];
+            }
 
             if (
-                !MULTI_WORD_RE.test(style) ||
-                i >= text.length ||
-                text[i] !== "]" ||
-                (isClosing && (styleStack.length === 0 || styleStack[styleStack.length - 1][0] !== style))
+                !MULTI_WORD_RE.test(style)
+                || i >= text.length
+                || text[i] !== "]"
+                || (isClosing
+                    && (styleStack.length === 0
+                        || styleStack[styleStack.length - 1][0] !== style))
             ) {
                 i = start;
             } else {
@@ -83,10 +86,12 @@ function compileStyledText(text: string): {
         }
 
         renderText += text[i];
-        if (styleStack.length > 0) charStyleMap[i - skipCount] = styleStack.map(([name]) => name);
+        if (styleStack.length > 0) {
+            charStyleMap[i - skipCount] = styleStack.map(([name]) => name);
+        }
     }
 
-    if  (styleStack.length > 0) {
+    if (styleStack.length > 0) {
         while (styleStack.length > 0) {
             const [_, start] = styleStack.pop()!;
             text = text.substring(0, start) + "\\" + text.substring(start);
