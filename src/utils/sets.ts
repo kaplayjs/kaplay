@@ -16,3 +16,15 @@ export const setHasOrIncludes = <K>(
 
     return set.has(key);
 };
+
+export const mapAddOrPush = <K, V>(
+    map: Map<K, V[]>,
+    key: K,
+    value: V,
+): void => {
+    if (map.has(key)) {
+        map.get(key)?.push(value);
+    } else {
+        map.set(key, [value]);
+    }
+};
