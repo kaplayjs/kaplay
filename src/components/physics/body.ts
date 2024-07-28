@@ -1,3 +1,4 @@
+import { fixedDt } from "../../app";
 import { DEF_JUMP_FORCE, MAX_VEL } from "../../constants";
 import { game, k } from "../../kaplay";
 import { type Vec2, vec2 } from "../../math/math";
@@ -304,7 +305,7 @@ export function body(opt: BodyCompOpt = {}): BodyComp {
 
                     // Apply gravity
                     this.vel = this.vel.add(
-                        game.gravity.scale(this.gravityScale * k.dt()),
+                        game.gravity.scale(this.gravityScale * k.fixedDt()),
                     );
 
                     // Clamp velocity
@@ -322,10 +323,10 @@ export function body(opt: BodyCompOpt = {}): BodyComp {
                 }
             }
 
-            this.vel.x *= 1 - this.drag;
-            this.vel.y *= 1 - this.drag;
+            this.vel.x *= 1 - this.drag * fixedDt();
+            this.vel.y *= 1 - this.drag * fixedDt();
 
-            this.move(this.vel);
+            this.moveBy(this.vel.scale(fixedDt()));
         },
 
         onPhysicsResolve(this: GameObj, action) {

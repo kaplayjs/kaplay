@@ -93,6 +93,7 @@ export const initAppState = (opt: {
         loopID: null as null | number,
         stopped: false,
         dt: 0,
+        fixedDt: 1 / 50,
         time: 0,
         realTime: 0,
         fpsCounter: new FPSCounter(),
@@ -162,6 +163,10 @@ export const initApp = (opt: {
 
     function dt() {
         return state.dt * state.timeScale;
+    }
+
+    function fixedDt() {
+        return state.fixedDt * state.timeScale;
     }
 
     function isHidden() {
@@ -262,6 +267,7 @@ export const initApp = (opt: {
             cancelAnimationFrame(state.loopID);
         }
 
+        let fixedAccumulatedDt = 0;
         let accumulatedDt = 0;
 
         const frame = (t: number) => {
@@ -282,16 +288,18 @@ export const initApp = (opt: {
 
             if (accumulatedDt > desiredDt) {
                 if (!state.skipTime) {
+                    fixedAccumulatedDt += accumulatedDt;
+                    while (fixedAccumulatedDt > state.fixedDt) {
+                        fixedUpdate();
+                        fixedAccumulatedDt -= state.fixedDt;
+                    }
                     state.dt = accumulatedDt;
                     state.time += dt();
                     state.fpsCounter.tick(state.dt);
                 }
+                accumulatedDt = 0;
                 state.skipTime = false;
                 state.numFrames++;
-                while (accumulatedDt > 1 / 60) {
-                    fixedUpdate();
-                    accumulatedDt -= 1 / 60;
-                }
                 processInput();
                 update();
                 resetInput();
@@ -1152,6 +1160,7 @@ export const initApp = (opt: {
 
     return {
         dt,
+        fixedDt,
         time,
         run,
         canvas: state.canvas,
