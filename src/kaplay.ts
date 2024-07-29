@@ -887,7 +887,7 @@ const kaplay = <
             // clear canvas
             gl.clear(
                 gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT
-                    | gl.STENCIL_BUFFER_BIT,
+                | gl.STENCIL_BUFFER_BIT,
             );
 
             // unbind everything
@@ -915,14 +915,14 @@ const kaplay = <
     // main game loop
     app.run(
         () => {
-            /*try {
+            try {
                 if (assets.loaded) {
                     checkFrame();
                     if (!debug.paused) fixedUpdateFrame();
                 }
             } catch (e) {
                 handleErr(e as Error);
-            }*/
+            }
         },
         () => {
             try {
