@@ -5,9 +5,6 @@ loadSprite("bag", "sprites/bag.png");
 
 setGravity(300);
 
-let startTime = 0
-let results = []
-
 const trajectoryText = add([
     pos(20, 20),
     text(`0`)
@@ -25,8 +22,8 @@ onDraw(() => {
 })
 
 onClick(() => {
-    results = []
-    startTime = time();
+    const startTime = time()
+    let results = []
     const bean = add([
         sprite("bean"),
         anchor("center"),
