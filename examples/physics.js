@@ -5,6 +5,14 @@ loadSprite("bag", "sprites/bag.png");
 
 setGravity(300);
 
+let startTime = 0
+let results = []
+
+const trajectoryText = add([
+    pos(20, 20),
+    text(`0`)
+])
+
 function ballistics(pos, vel, t) {
     return pos.add(vel.scale(t)).add(vec2(0, 1).scale(getGravity() * t * t * 0.5));
 }
@@ -17,6 +25,8 @@ onDraw(() => {
 })
 
 onClick(() => {
+    results = []
+    startTime = time();
     const bean = add([
         sprite("bean"),
         anchor("center"),
@@ -37,6 +47,15 @@ onClick(() => {
                     width: 2,
                     color: GREEN
                 });
+            },
+            update() {
+                const t = time() - startTime
+                if (t >= 2) return
+                results.push([t, this.pos.y, ballistics(vec2(50, 100), vec2(200, -100), t).y])
+            },
+            destroy() {
+                const a = results.map(d => Math.sqrt((d[1] - d[2]) * (d[1] - d[2]))).reduce((s, v) => s + v, 0) / results.length
+                trajectoryText.text = `${(a).toFixed(2)}`;
             }
         }
     ])
