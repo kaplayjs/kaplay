@@ -6,7 +6,7 @@
   "homepage": "https://kaplayjs.com/",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/marklovers/kaplay.git"
+    "url": "git+https://github.com/kaplayjs/kaplay.git"
   },
   "type": "module",
   "main": "./dist/kaplay.cjs",

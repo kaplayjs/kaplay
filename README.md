@@ -99,7 +99,7 @@ onKeyDown("w", () => {
 ### Start a Project With `create-kaplay`
 
 The fastest way to start a KAPLAY game is with
-[`create-kaplay`](https://github.com/marklovers/create-kaplay)
+[`create-kaplay`](https://github.com/kaplayjs/create-kaplay)
 
 ```sh
 $ create-kaplay mygame
@@ -173,7 +173,7 @@ works all CDNs that supports NPM packages, e.g. jsdelivr, skypack
 ## Community
 
 - [Discord Server](https://discord.gg/aQ6RuQm3TF)
-- [GitHub Discussions](https://github.com/marklovers/kaplay/discussions)
+- [GitHub Discussions](https://github.com/kaplayjs/kaplay/discussions)
 - [Twitter](https://twitter.com/Kaboomjs)
 
 ### Games

@@ -1,6 +1,6 @@
 # Developing kaplay
 
-1. `git clone https://github.com/marklovers/kaplay.git` to clone the repo.
+1. `git clone https://github.com/kaplayjs/kaplay.git` to clone the repo.
 1. `cd kaplay` to enter the project directory.
 1. `pnpm install` to install dependencies.
 
