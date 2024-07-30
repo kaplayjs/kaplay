@@ -114,6 +114,8 @@ obj.sprite = "bag";
 - added `camFlash()` to flash the screen
 - added `SpriteComp.getCurAnim()` to get the current animation data
 - added `Color.toArray()` to convert a color to an array
+- added `Vec2.toArray()` to convert a vec2 to an array (eg: player.pos.toArray())
+- added `Vec2.fromArray()` to convert an array to a vec2 (eg: player.pos = Vec2.fromArray(newPosition))
 - added `outline()`, `shader()`, and `area()` properties to `debug.inspect` (f1)
 - added `kaboomOpt.debugKey` for customizing the key used to toggle debug mode
 - added `GameObjRaw.tags` to get a game object's tags
