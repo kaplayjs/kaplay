@@ -21,10 +21,14 @@ import type {
     AnimateComp,
     AreaComp,
     AreaCompOpt,
+    AreaEffectorComp,
+    AreaEffectorCompOpt,
     BodyComp,
     BodyCompOpt,
     CircleComp,
     ColorComp,
+    ConstantForceComp,
+    ConstantForceCompOpt,
     DoubleJumpComp,
     FixedComp,
     FollowComp,
@@ -41,6 +45,8 @@ import type {
     OutlineComp,
     PatrolComp,
     PatrolCompOpt,
+    PointEffectorComp,
+    PointEffectorCompOpt,
     PolygonComp,
     PolygonCompOpt,
     PosComp,
@@ -56,6 +62,8 @@ import type {
     SpriteCompOpt,
     StateComp,
     StayComp,
+    SurfaceEffectorComp,
+    SurfaceEffectorCompOpt,
     TextComp,
     TextCompOpt,
     TextInputComp,
@@ -596,6 +604,38 @@ export interface KAPLAYCtx<
      * @group Components
      */
     body(options?: BodyCompOpt): BodyComp;
+    /**
+     * Applies a force on a colliding object in order to make it move along the collision tangent vector.
+     * Good for conveyor belts.
+     *
+     * @since v3001.0
+     * @group Components
+     */
+    surfaceEffector(options: SurfaceEffectorCompOpt): SurfaceEffectorComp;
+    /**
+     * Applies a force on a colliding object.
+     * Good to apply anti-gravity, wind or water flow.
+     *
+     * @since v3001.0
+     * @group Components
+     */
+    areaEffector(options: AreaEffectorCompOpt): AreaEffectorComp;
+    /**
+     * Applies a force on a colliding object directed towards this object's origin.
+     * Good to apply magnetic attractiong or repulsion.
+     *
+     * @since v3001.0
+     * @group Components
+     */
+    pointEffector(options: PointEffectorCompOpt): PointEffectorComp;
+    /**
+     * Applies a constant force to the object.
+     * Good to apply constant thrust.
+     *
+     * @since v3001.0
+     * @group Components
+     */
+    constantForce(opts: ConstantForceCompOpt): ConstantForceComp;
     /**
      * Enables double jump. Requires "body" component.
      *
@@ -4549,6 +4589,14 @@ export interface Collision {
      * The second game object in the collision.
      */
     target: GameObj;
+    /**
+     * The contact normal.
+     */
+    normal: Vec2;
+    /**
+     * The length of the displacement.
+     */
+    distance: Vec2;
     /**
      * The displacement source game object have to make to avoid the collision.
      */
