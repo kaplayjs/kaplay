@@ -2820,9 +2820,14 @@ export function easingSteps(
     };
 }
 
-export function sat(p1: Polygon, p2: Polygon): Vec2 | null {
+export type SatResult = {
+    normal: Vec2;
+    distance: number;
+};
+
+export function sat(p1: Polygon, p2: Polygon): SatResult | null {
     let overlap = Number.MAX_VALUE;
-    let displacement = vec2(0);
+    let result: SatResult = { normal: vec2(0), distance: 0 };
     for (const poly of [p1, p2]) {
         for (let i = 0; i < poly.pts.length; i++) {
             const a = poly.pts[i];
@@ -2850,11 +2855,12 @@ export function sat(p1: Polygon, p2: Polygon): Vec2 | null {
                 const o1 = max2 - min1;
                 const o2 = min2 - max1;
                 overlap = Math.abs(o1) < Math.abs(o2) ? o1 : o2;
-                displacement = axisProj.scale(overlap);
+                result.normal = axisProj;
+                result.distance = overlap;
             }
         }
     }
-    return displacement;
+    return result;
 }
 
 // true if the angle is oriented counter clockwise

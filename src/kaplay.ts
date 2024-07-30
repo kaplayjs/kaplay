@@ -172,9 +172,11 @@ import {
     animate,
     area,
     type AreaComp,
+    areaEffector,
     body,
     circle,
     color,
+    constantForce,
     doubleJump,
     drawon,
     fadeIn,
@@ -192,6 +194,7 @@ import {
     outline,
     particles,
     patrol,
+    pointEffector,
     polygon,
     pos,
     raycast,
@@ -204,6 +207,7 @@ import {
     sprite,
     state,
     stay,
+    surfaceEffector,
     text,
     textInput,
     tile,
@@ -684,24 +688,31 @@ const kaplay = <
     class Collision {
         source: GameObj;
         target: GameObj;
-        displacement: Vec2;
+        normal: Vec2;
+        distance: number;
         resolved: boolean = false;
         constructor(
             source: GameObj,
             target: GameObj,
-            dis: Vec2,
+            normal: Vec2,
+            distance: number,
             resolved = false,
         ) {
             this.source = source;
             this.target = target;
-            this.displacement = dis;
+            this.normal = normal;
+            this.distance = distance;
             this.resolved = resolved;
+        }
+        get displacement() {
+            return this.normal.scale(this.distance);
         }
         reverse() {
             return new Collision(
                 this.target,
                 this.source,
-                this.displacement.scale(-1),
+                this.normal.scale(-1),
+                this.distance,
                 this.resolved,
             );
         }
@@ -795,7 +806,8 @@ const kaplay = <
                                     const col1 = new Collision(
                                         aobj,
                                         other,
-                                        res,
+                                        res.normal,
+                                        res.distance,
                                     );
                                     aobj.trigger("collideUpdate", other, col1);
                                     const col2 = col1.reverse();
@@ -1058,6 +1070,10 @@ const kaplay = <
         outline,
         particles,
         body,
+        surfaceEffector,
+        areaEffector,
+        pointEffector,
+        constantForce,
         doubleJump,
         shader,
         textInput,
