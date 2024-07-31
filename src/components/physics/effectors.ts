@@ -171,12 +171,20 @@ export type BuoyancyEffectorCompOpt = {
     surfaceLevel: number;
     density?: number;
     linearDrag?: number;
+    angularDrag?: number;
+    flowAngle?: number;
+    flowMagnitude?: number;
+    flowVariation?: number;
 };
 
 export interface BuoyancyEffectorComp extends Comp {
     surfaceLevel: number;
     density: number;
     linearDrag: number;
+    angularDrag: number;
+    flowAngle: number;
+    flowMagnitude: number;
+    flowVariation: number;
     applyBuoyancy(body: GameObj<BodyComp>, submergedArea: Polygon): void;
     applyDrag(body: GameObj<BodyComp>, submergedArea: Polygon): void;
 }
@@ -189,7 +197,11 @@ export function buoyancyEffector(
         require: ["area"],
         surfaceLevel: opts.surfaceLevel,
         density: opts.density ?? 1,
-        linearDrag: opts.linearDrag ?? 10,
+        linearDrag: opts.linearDrag ?? 1,
+        angularDrag: opts.angularDrag ?? 0.2,
+        flowAngle: opts.flowAngle ?? 0,
+        flowMagnitude: opts.flowMagnitude ?? 0,
+        flowVariation: opts.flowVariation ?? 0,
         add(this: GameObj<AreaComp | BuoyancyEffectorComp>) {
             this.onCollideUpdate((obj, col) => {
                 const o = obj as GameObj<BodyComp | AreaComp>;
@@ -202,6 +214,14 @@ export function buoyancyEffector(
                 if (submergedArea) {
                     this.applyBuoyancy(o, submergedArea);
                     this.applyDrag(o, submergedArea);
+                }
+
+                if (this.flowMagnitude) {
+                    o.addForce(
+                        Vec2.fromAngle(this.flowAngle).scale(
+                            this.flowMagnitude,
+                        ),
+                    );
                 }
             });
         },
@@ -219,7 +239,7 @@ export function buoyancyEffector(
             // console.log("dragForce", dragForce)
             // TODO: Should be applied to the center of submergedArea, but since there is no torque yet, this is OK
             body.addForce(dragForce);
-            // const angularDrag = submergedArea.area() * -body.angularVelocity;
+            // const angularDrag = submergedArea.area() * -body.angularVelocity * this.angularDrag;
             // object.addTorque(angularDrag);
         },
     };

@@ -94,16 +94,6 @@ loop(5, () => {
     ]);
 });
 
-// Water
-add([
-    pos(400, 200),
-    rect(200, 100),
-    color(BLUE),
-    opacity(0.5),
-    area(),
-    buoyancyEffector({ surfaceLevel: 200, density: 6 }),
-]);
-
 // A box
 add([
     pos(500, 100),
@@ -112,4 +102,14 @@ add([
     area(),
     body({ mass: 10 }),
     // offscreen({ destroy: true }),
+]);
+
+// Water
+add([
+    pos(400, 200),
+    rect(200, 100),
+    color(BLUE),
+    opacity(0.5),
+    area(),
+    buoyancyEffector({ surfaceLevel: 200, density: 6 }),
 ]);
