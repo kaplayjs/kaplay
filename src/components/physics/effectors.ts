@@ -170,11 +170,13 @@ export function platformEffector(
 export type BuoyancyEffectorCompOpt = {
     surfaceLevel: number;
     density?: number;
+    linearDrag?: number;
 };
 
 export interface BuoyancyEffectorComp extends Comp {
     surfaceLevel: number;
     density: number;
+    linearDrag: number;
     applyBuoyancy(body: GameObj<BodyComp>, submergedArea: Polygon): void;
     applyDrag(body: GameObj<BodyComp>, submergedArea: Polygon): void;
 }
@@ -187,6 +189,7 @@ export function buoyancyEffector(
         require: ["area"],
         surfaceLevel: opts.surfaceLevel,
         density: opts.density ?? 1,
+        linearDrag: opts.linearDrag ?? 10,
         add(this: GameObj<AreaComp | BuoyancyEffectorComp>) {
             this.onCollideUpdate((obj, col) => {
                 const o = obj as GameObj<BodyComp | AreaComp>;
@@ -211,8 +214,7 @@ export function buoyancyEffector(
         },
         applyDrag(body: GameObj<BodyComp>, submergedArea: Polygon) {
             const velocity = body.vel;
-            const speed = velocity.len();
-            const dragMagnitude = this.density * speed * 0.1;
+            const dragMagnitude = this.density * this.linearDrag;
             const dragForce = velocity.scale(-dragMagnitude);
             // console.log("dragForce", dragForce)
             // TODO: Should be applied to the center of submergedArea, but since there is no torque yet, this is OK
