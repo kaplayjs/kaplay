@@ -27,7 +27,7 @@ export function surfaceEffector(
         require: ["area"],
         speed: opts.speed,
         speedVariation: opts.speedVariation ?? 0,
-        forceScale: opts.speedVariation ?? 0.1,
+        forceScale: opts.speedVariation ?? 0.9,
         add(this: GameObj<AreaComp | SurfaceEffectorComp>) {
             this.onCollideUpdate((obj, col) => {
                 const dir = col?.normal.normal();
@@ -203,7 +203,7 @@ export function buoyancyEffector(
             });
         },
         applyBuoyancy(body: GameObj<BodyComp>, submergedArea: Polygon) {
-            const displacedMass = this.density * submergedArea.area() / 100;
+            const displacedMass = this.density * submergedArea.area();
             const buoyancyForce = vec2(0, 1).scale(-displacedMass);
             // console.log("buoyancyForce", buoyancyForce)
             // TODO: Should be applied to the center of submergedArea, but since there is no torque yet, this is OK
@@ -212,7 +212,7 @@ export function buoyancyEffector(
         applyDrag(body: GameObj<BodyComp>, submergedArea: Polygon) {
             const velocity = body.vel;
             const speed = velocity.len();
-            const dragMagnitude = this.density / speed;
+            const dragMagnitude = this.density * speed * 0.1;
             const dragForce = velocity.scale(-dragMagnitude);
             // console.log("dragForce", dragForce)
             // TODO: Should be applied to the center of submergedArea, but since there is no torque yet, this is OK

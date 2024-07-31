@@ -46,10 +46,10 @@ add([
 
 // Windtunnel moving up
 add([
-    pos(20, 320),
+    pos(20, 150),
     rect(50, 300),
     area(),
-    areaEffector({ forceAngle: -90, forceMagnitude: 10 }),
+    areaEffector({ forceAngle: -90, forceMagnitude: 150 }),
     {
         draw() {
             drawPolygon({
@@ -66,11 +66,11 @@ add([
 
 // Magnet
 add([
-    pos(35, 35),
-    rect(60, 60),
+    pos(85, 50),
+    rect(90, 90),
     anchor("center"),
     area(),
-    pointEffector({ forceMagnitude: 10 }),
+    pointEffector({ forceMagnitude: 300 }),
     {
         draw() {
             drawCircle({
@@ -90,7 +90,7 @@ loop(5, () => {
         color(RED),
         area(),
         body(),
-        offscreen({ destroy: true }),
+        offscreen({ destroy: true, distance: 10 }),
     ]);
 });
 
@@ -101,7 +101,7 @@ add([
     color(BLUE),
     opacity(0.5),
     area(),
-    buoyancyEffector({ surfaceLevel: 200, density: 3 }),
+    buoyancyEffector({ surfaceLevel: 200, density: 6 }),
 ]);
 
 // A box
@@ -110,6 +110,6 @@ add([
     rect(20, 20),
     color(RED),
     area(),
-    body(),
+    body({ mass: 10 }),
     // offscreen({ destroy: true }),
 ]);
