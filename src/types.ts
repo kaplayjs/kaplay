@@ -3010,7 +3010,7 @@ export interface KAPLAYCtx<
      *         "=": () => [
      *             sprite("floor"),
      *             area(),
-     *             solid(),
+     *             body({ isStatic: true }),
      *         ],
      *         "$": () => [
      *             sprite("coin"),
