@@ -25,6 +25,8 @@ import type {
     AreaEffectorCompOpt,
     BodyComp,
     BodyCompOpt,
+    BuoyancyEffectorComp,
+    BuoyancyEffectorCompOpt,
     CircleComp,
     ColorComp,
     ConstantForceComp,
@@ -628,6 +630,14 @@ export interface KAPLAYCtx<
      * @group Components
      */
     pointEffector(options: PointEffectorCompOpt): PointEffectorComp;
+    /**
+     * Applies an upwards force (force against gravity) to colliding objects depending on the fluid density and submerged area.
+     * Good to apply constant thrust.
+     *
+     * @since v3001.0
+     * @group Components
+     */
+    buoyancyEffector(options: BuoyancyEffectorCompOpt): BuoyancyEffectorComp;
     /**
      * Applies a constant force to the object.
      * Good to apply constant thrust.

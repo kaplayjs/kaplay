@@ -2,6 +2,7 @@ kaplay();
 
 setGravity(300);
 
+// Conveyor belt moving right
 add([
     pos(100, 300),
     rect(200, 20),
@@ -22,6 +23,7 @@ add([
     },
 ]);
 
+// Conveyor belt moving left
 add([
     pos(80, 400),
     rect(250, 20),
@@ -42,11 +44,12 @@ add([
     },
 ]);
 
+// Windtunnel moving up
 add([
-    pos(20, 320),
+    pos(20, 150),
     rect(50, 300),
     area(),
-    areaEffector({ forceAngle: -90, forceMagnitude: 10 }),
+    areaEffector({ forceAngle: -90, forceMagnitude: 150 }),
     {
         draw() {
             drawPolygon({
@@ -61,12 +64,13 @@ add([
     },
 ]);
 
+// Magnet
 add([
-    pos(35, 35),
-    rect(60, 60),
+    pos(85, 50),
+    rect(90, 90),
     anchor("center"),
     area(),
-    pointEffector({ forceMagnitude: 10 }),
+    pointEffector({ forceMagnitude: 300 }),
     {
         draw() {
             drawCircle({
@@ -78,6 +82,7 @@ add([
     },
 ]);
 
+// Continouous boxes
 loop(5, () => {
     add([
         pos(100, 100),
@@ -85,6 +90,26 @@ loop(5, () => {
         color(RED),
         area(),
         body(),
-        offscreen({ destroy: true }),
+        offscreen({ destroy: true, distance: 10 }),
     ]);
 });
+
+// A box
+add([
+    pos(500, 100),
+    rect(20, 20),
+    color(RED),
+    area(),
+    body({ mass: 10 }),
+    // offscreen({ destroy: true }),
+]);
+
+// Water
+add([
+    pos(400, 200),
+    rect(200, 100),
+    color(BLUE),
+    opacity(0.5),
+    area(),
+    buoyancyEffector({ surfaceLevel: 200, density: 6 }),
+]);

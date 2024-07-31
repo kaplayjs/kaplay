@@ -172,6 +172,7 @@ export function body(opt: BodyCompOpt = {}): BodyComp {
     let curPlatform: GameObj<PosComp | AreaComp | BodyComp> | null = null;
     let lastPlatformPos: null | Vec2 = null;
     let willFall = false;
+    const acc = vec2(0);
 
     return {
         id: "body",
@@ -266,7 +267,7 @@ export function body(opt: BodyCompOpt = {}): BodyComp {
             }
         },
 
-        update(this: GameObj<PosComp | BodyComp | AreaComp>) {
+        fixedUpdate(this: GameObj<PosComp | BodyComp | AreaComp>) {
             if (game.gravity && !this.isStatic) {
                 if (willFall) {
                     curPlatform = null;
@@ -323,6 +324,12 @@ export function body(opt: BodyCompOpt = {}): BodyComp {
                 }
             }
 
+            this.vel.x += acc.x * k.dt();
+            this.vel.y += acc.y * k.dt();
+
+            acc.x = 0;
+            acc.y = 0;
+
             this.vel.x *= 1 - this.drag * k.dt();
             this.vel.y *= 1 - this.drag * k.dt();
 
@@ -358,7 +365,8 @@ export function body(opt: BodyCompOpt = {}): BodyComp {
         },
 
         addForce(force: Vec2) {
-            this.vel = this.vel.add(force.scale(1 / this.mass));
+            acc.x += force.x / this.mass;
+            acc.y += force.y / this.mass;
         },
 
         jump(force: number) {

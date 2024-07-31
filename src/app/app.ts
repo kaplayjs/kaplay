@@ -287,7 +287,7 @@ export const initApp = (opt: {
             }
 
             const loopTime = t / 1000;
-            const realDt = loopTime - state.realTime;
+            const realDt = Math.min(loopTime - state.realTime, 0.25);
             const desiredDt = opt.maxFPS ? 1 / opt.maxFPS : 0;
 
             state.realTime = loopTime;

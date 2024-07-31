@@ -174,6 +174,7 @@ import {
     type AreaComp,
     areaEffector,
     body,
+    buoyancyEffector,
     circle,
     color,
     constantForce,
@@ -927,14 +928,14 @@ const kaplay = <
     // main game loop
     app.run(
         () => {
-            /*try {
+            try {
                 if (assets.loaded) {
                     checkFrame();
                     if (!debug.paused) fixedUpdateFrame();
                 }
             } catch (e) {
                 handleErr(e as Error);
-            }*/
+            }
         },
         () => {
             try {
@@ -1073,6 +1074,7 @@ const kaplay = <
         surfaceEffector,
         areaEffector,
         pointEffector,
+        buoyancyEffector,
         constantForce,
         doubleJump,
         shader,
