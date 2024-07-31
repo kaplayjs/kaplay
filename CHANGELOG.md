@@ -127,8 +127,8 @@ obj.sprite = "bag";
 - added `navigation()` component to calculate a list of waypoints on a graph
 - added `animate()` component to animate the properties of an object using
   keyframes
-- added effector components: `areaEffector()`, `pointEffector()`,
-  `surfaceEffector()`
+- added effector components: `areaEffector()`, `buoyancyEffector`,
+  `pointEffector()`, `surfaceEffector()`
 - added `constantForce()` component
 - added global raycast function and raycast method to level
 - added support for textured polygons

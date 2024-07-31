@@ -2334,7 +2334,42 @@ export class Polygon {
         return raycastPolygon(origin, direction, this);
     }
     random(): Vec2 {
+        /**
+         * TODO:
+         * - cut into triangles
+         * - choose a random triangle with probability linked to surface area
+         * - choose a random point in the triangle
+         */
         return vec2();
+    }
+    cut(a: Vec2, b: Vec2): [Polygon | null, Polygon | null] {
+        const surfaceLine = new Line(a, b);
+        const left: Array<Vec2> = [];
+        const right: Array<Vec2> = [];
+        const ab = b.sub(a);
+        let prev = this.pts[this.pts.length - 1];
+        let ap = prev.sub(a);
+        let wasLeft = ab.cross(ap) > 0;
+        this.pts.forEach(p => {
+            ap = p.sub(a);
+            const isLeft = ab.cross(ap) > 0;
+            if (wasLeft != isLeft) {
+                // Since the points are on opposite sides of the line, we know they intersect
+                const intersection = testLineLine(
+                    new Line(prev, p),
+                    surfaceLine,
+                );
+                left.push(intersection!);
+                right.push(intersection!);
+                wasLeft = isLeft;
+            }
+            (isLeft ? left : right).push(p);
+            prev = p;
+        });
+        return [
+            left.length ? new Polygon(left) : null,
+            right.length ? new Polygon(right) : null,
+        ];
     }
 }
 

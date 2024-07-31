@@ -1,5 +1,7 @@
+import { getGravity, getGravityDirection } from "../../game";
+import { width } from "../../gfx";
 import { debug } from "../../kaplay";
-import { Vec2 } from "../../math";
+import { Polygon, Vec2, vec2 } from "../../math";
 import type { Comp, GameObj } from "../../types";
 import type { PosComp } from "../transform";
 import type { AreaComp } from "./area";
@@ -130,6 +132,93 @@ export function constantForce(opts: ConstantForceCompOpt): ConstantForceComp {
             if (this.force) {
                 this.addForce(this.force);
             }
+        },
+    };
+}
+
+export type PlatformEffectorCompOpt = {
+    surfaceArc?: number;
+    useOneWay?: boolean;
+};
+
+export interface PlatformEffectorComp extends Comp {
+    surfaceArc: number;
+    useOneWay: boolean;
+}
+
+export function platformEffector(
+    opt: PlatformEffectorCompOpt,
+): PlatformEffectorComp {
+    return {
+        id: "platformEffector",
+        require: ["area", "body"],
+        surfaceArc: opt.surfaceArc ?? 180,
+        useOneWay: opt.useOneWay ?? false,
+        add(this: GameObj<BodyComp | AreaComp | PlatformEffectorComp>) {
+            this.onBeforePhysicsResolve(collision => {
+                const v = collision.target.vel;
+                const up = getGravityDirection().scale(-1);
+                const angle = up.angleBetween(v);
+                if (Math.abs(angle) > this.surfaceArc / 2) {
+                    collision.preventResolution();
+                }
+            });
+        },
+    };
+}
+
+export type BuoyancyEffectorCompOpt = {
+    surfaceLevel: number;
+    density?: number;
+};
+
+export interface BuoyancyEffectorComp extends Comp {
+    surfaceLevel: number;
+    density: number;
+    applyBuoyancy(body: GameObj<BodyComp>, submergedArea: Polygon): void;
+    applyDrag(body: GameObj<BodyComp>, submergedArea: Polygon): void;
+}
+
+export function buoyancyEffector(
+    opts: BuoyancyEffectorCompOpt,
+): BuoyancyEffectorComp {
+    return {
+        id: "buoyancyEffector",
+        require: ["area"],
+        surfaceLevel: opts.surfaceLevel,
+        density: opts.density ?? 1,
+        add(this: GameObj<AreaComp | BuoyancyEffectorComp>) {
+            this.onCollideUpdate((obj, col) => {
+                const o = obj as GameObj<BodyComp | AreaComp>;
+                const polygon = o.worldArea();
+                const [submergedArea, _] = polygon.cut(
+                    vec2(0, this.surfaceLevel),
+                    vec2(width(), this.surfaceLevel),
+                );
+
+                if (submergedArea) {
+                    this.applyBuoyancy(o, submergedArea);
+                    this.applyDrag(o, submergedArea);
+                }
+            });
+        },
+        applyBuoyancy(body: GameObj<BodyComp>, submergedArea: Polygon) {
+            const displacedMass = this.density * submergedArea.area() / 100;
+            const buoyancyForce = vec2(0, 1).scale(-displacedMass);
+            // console.log("buoyancyForce", buoyancyForce)
+            // TODO: Should be applied to the center of submergedArea, but since there is no torque yet, this is OK
+            body.addForce(buoyancyForce);
+        },
+        applyDrag(body: GameObj<BodyComp>, submergedArea: Polygon) {
+            const velocity = body.vel;
+            const speed = velocity.len();
+            const dragMagnitude = this.density / speed;
+            const dragForce = velocity.scale(-dragMagnitude);
+            // console.log("dragForce", dragForce)
+            // TODO: Should be applied to the center of submergedArea, but since there is no torque yet, this is OK
+            body.addForce(dragForce);
+            // const angularDrag = submergedArea.area() * -body.angularVelocity;
+            // object.addTorque(angularDrag);
         },
     };
 }
