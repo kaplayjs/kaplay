@@ -44,7 +44,9 @@ export type AreaEffectorCompOpt = {
     useGlobalAngle?: boolean;
     forceAngle: number;
     forceMagnitude: number;
-    forceVariation: number;
+    forceVariation?: number;
+    linearDrag?: number;
+    //angularDrag?: number;
 };
 
 export interface AreaEffectorComp extends Comp {
@@ -52,6 +54,8 @@ export interface AreaEffectorComp extends Comp {
     forceAngle: number;
     forceMagnitude: number;
     forceVariation: number;
+    linearDrag?: number;
+    //angularDrag?: number;
 }
 
 export function areaEffector(opts: AreaEffectorCompOpt): AreaEffectorComp {
@@ -62,11 +66,16 @@ export function areaEffector(opts: AreaEffectorCompOpt): AreaEffectorComp {
         forceAngle: opts.forceAngle,
         forceMagnitude: opts.forceMagnitude,
         forceVariation: opts.forceVariation ?? 0,
+        linearDrag: opts.linearDrag ?? 0,
+        //angularDrag: opts.angularDrag ?? 0,
         add(this: GameObj<AreaComp | AreaEffectorComp>) {
             this.onCollideUpdate((obj, col) => {
                 const dir = Vec2.fromAngle(this.forceAngle);
                 const force = dir.scale(this.forceMagnitude);
                 obj.addForce(force);
+                if (this.linearDrag) {
+                    obj.addForce(obj.vel.scale(-this.linearDrag));
+                }
             });
         },
     };
