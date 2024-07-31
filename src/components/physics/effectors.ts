@@ -79,6 +79,8 @@ export type PointEffectorCompOpt = {
     forceVariation: number;
     distanceScale?: number;
     forceMode?: ForceMode;
+    linearDrag?: number;
+    //angularDrag?: number;
 };
 
 export interface PointEffectorComp extends Comp {
@@ -86,6 +88,8 @@ export interface PointEffectorComp extends Comp {
     forceVariation: number;
     distanceScale: number;
     forceMode: ForceMode;
+    linearDrag: number;
+    //angularDrag: number;
 }
 
 export function pointEffector(opts: PointEffectorCompOpt): PointEffectorComp {
@@ -96,6 +100,8 @@ export function pointEffector(opts: PointEffectorCompOpt): PointEffectorComp {
         forceVariation: opts.forceVariation ?? 0,
         distanceScale: opts.distanceScale ?? 1,
         forceMode: opts.forceMode || "inverseLinear",
+        linearDrag: opts.linearDrag ?? 0,
+        //angularDrag: opts.angularDrag ?? 0,
         add(this: GameObj<PointEffectorComp | AreaComp | PosComp>) {
             this.onCollideUpdate((obj, col) => {
                 const dir = this.pos.sub(obj.pos);
@@ -104,12 +110,15 @@ export function pointEffector(opts: PointEffectorCompOpt): PointEffectorComp {
                 const forceScale = this.forceMode === "constant"
                     ? 1
                     : this.forceMode === "inverseLinear"
-                    ? 1 / distance
-                    : 1 / distance ** 2;
+                        ? 1 / distance
+                        : 1 / distance ** 2;
                 const force = dir.scale(
                     this.forceMagnitude * forceScale / length,
                 );
                 obj.addForce(force);
+                if (this.linearDrag) {
+                    obj.addForce(obj.vel.scale(-this.linearDrag));
+                }
             });
         },
     };
