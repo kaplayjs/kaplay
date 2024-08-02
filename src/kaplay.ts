@@ -841,7 +841,7 @@ const kaplay = <
     function handleErr(err: Error) {
         console.error(err);
         audio.ctx.suspend();
-        const errorMessage = err.message
+        const errorMessage = err.message ?? String(err)
             ?? "Unknown error, check console for more info";
 
         // TODO: this should only run once
