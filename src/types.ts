@@ -281,6 +281,30 @@ export interface KAPLAYCtx<
      * @group Game Obj
      */
     get(tag: Tag | Tag[], opts?: GetOpt): GameObj[];
+    /**
+     * Get a list of game objects in an advanced way.
+     *
+     * @example
+     * ```js
+     * const bean = k.add(["friend", "bean"]);
+     * const bean2 = k.add(["friend", "bean"]);
+     * const bag = k.add(["friend", "bag"]);
+     *
+     * // get bean
+     * query({
+     *     include: "bean",
+     * }) // will return [bean, bean2];
+     *
+     * // get all friends excluding bean
+     * query({
+     *     include: "friend",
+     *     exclude: "bean",
+     * }); // will return [bag]
+     *
+     * ```
+     *
+     * @group Game Obj
+     */
     query(opt: QueryOpt): GameObj[];
     /**
      * Remove the game obj.
