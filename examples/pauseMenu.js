@@ -143,7 +143,8 @@ scene("game", () => {
         if (game.paused) {
             pauseMenu.hidden = false;
             pauseMenu.paused = false;
-        } else {
+        }
+        else {
             curTween.onEnd(() => {
                 pauseMenu.hidden = true;
                 pauseMenu.paused = true;

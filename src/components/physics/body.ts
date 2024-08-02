@@ -211,7 +211,8 @@ export function body(opt: BodyCompOpt = {}): BodyComp {
 
                         if (this.isStatic && other.isStatic) {
                             return;
-                        } else if (!this.isStatic && !other.isStatic) {
+                        }
+                        else if (!this.isStatic && !other.isStatic) {
                             // TODO: update all children transform?
                             const tmass = this.mass + other.mass;
                             this.pos = this.pos.add(
@@ -222,7 +223,8 @@ export function body(opt: BodyCompOpt = {}): BodyComp {
                             );
                             this.transform = calcTransform(this);
                             other.transform = calcTransform(other);
-                        } else {
+                        }
+                        else {
                             // if one is static and on is not, resolve the non static one
                             const col2 = (!this.isStatic && other.isStatic)
                                 ? col
@@ -253,10 +255,12 @@ export function body(opt: BodyCompOpt = {}): BodyComp {
                             lastPlatformPos = col.target.pos;
                             if (willFall) {
                                 willFall = false;
-                            } else {
+                            }
+                            else {
                                 this.trigger("ground", curPlatform);
                             }
-                        } else if (col.isTop() && this.isJumping()) {
+                        }
+                        else if (col.isTop() && this.isJumping()) {
                             this.vel = this.vel.reject(
                                 game.gravity.unit(),
                             );
@@ -286,7 +290,8 @@ export function body(opt: BodyCompOpt = {}): BodyComp {
                         || !curPlatform.is("body")
                     ) {
                         willFall = true;
-                    } else {
+                    }
+                    else {
                         if (
                             lastPlatformPos
                             && !curPlatform.pos.eq(lastPlatformPos)

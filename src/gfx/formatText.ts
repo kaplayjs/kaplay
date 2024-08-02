@@ -77,7 +77,8 @@ function compileStyledText(text: string): {
                         || styleStack[styleStack.length - 1][0] !== style))
             ) {
                 i = start;
-            } else {
+            }
+            else {
                 if (!isClosing) styleStack.push([style, start]);
                 else styleStack.pop();
 
@@ -271,7 +272,8 @@ export function formatText(opt: DrawTextOpt): FormattedText {
             lastSpaceWidth = 0;
             curX = 0;
             curLine = [];
-        } else {
+        }
+        else {
             let q = font.map[ch];
 
             // TODO: leave space if character not found?

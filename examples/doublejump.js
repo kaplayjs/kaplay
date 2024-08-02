@@ -135,7 +135,8 @@ scene("game", () => {
         bean.move(x, 0);
         if (bean.pos.x < 0) {
             bean.pos.x = width();
-        } else if (bean.pos.x > width()) {
+        }
+        else if (bean.pos.x > width()) {
             bean.pos.x = 0;
         }
     }

@@ -112,7 +112,8 @@ export function _drawLinesBevel(opt: DrawLinesOpt) {
 
     if (isLoop) {
         segment = pts[0].sub(pts[pts.length - 2]);
-    } else {
+    }
+    else {
         segment = pts[1].sub(pts[0]);
     }
 
@@ -185,7 +186,8 @@ export function _drawLinesBevel(opt: DrawLinesOpt) {
             vertices.push(pt1.sub(normal));
             vertices.push(pt1.add(d));
             vertices.push(pt1.sub(nextNormal));
-        } else {
+        }
+        else {
             vertices.push(pt1.add(normal));
             vertices.push(pt1.sub(d));
             vertices.push(pt1.add(nextNormal));
@@ -275,7 +277,8 @@ export function _drawLinesRound(opt: DrawLinesOpt) {
 
     if (isLoop) {
         segment = pts[0].sub(pts[pts.length - 2]);
-    } else {
+    }
+    else {
         segment = pts[1].sub(pts[0]);
     }
 
@@ -358,7 +361,8 @@ export function _drawLinesRound(opt: DrawLinesOpt) {
                     vector.x * sn + vector.y * cs,
                 );
             }
-        } else {
+        }
+        else {
             const fixedPoint = pt1.sub(d);
             const n = Math.max(halfWidth, 10);
             const angle = deg2rad(normal.angleBetween(nextNormal) / n);
@@ -458,7 +462,8 @@ export function _drawLinesMiter(opt: DrawLinesOpt) {
 
     if (isLoop) {
         segment = pts[0].sub(pts[pts.length - 2]);
-    } else {
+    }
+    else {
         segment = pts[1].sub(pts[0]);
     }
 
@@ -642,7 +647,8 @@ export function drawLines(opt: DrawLinesOpt) {
             p1: pts[pts.length - 2],
             p2: pts[pts.length - 1],
         }));
-    } else {
+    }
+    else {
         for (let i = 0; i < pts.length - 1; i++) {
             drawLine(Object.assign({}, opt, {
                 p1: pts[i],

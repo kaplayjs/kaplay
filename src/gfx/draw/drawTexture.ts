@@ -124,15 +124,18 @@ export function drawTexture(opt: DrawTextureOpt) {
             opt.shader,
             opt.uniform ?? undefined,
         );
-    } else {
+    }
+    else {
         // TODO: should this ignore scale?
         if (opt.width && opt.height) {
             scale.x = opt.width / w;
             scale.y = opt.height / h;
-        } else if (opt.width) {
+        }
+        else if (opt.width) {
             scale.x = opt.width / w;
             scale.y = scale.x;
-        } else if (opt.height) {
+        }
+        else if (opt.height) {
             scale.y = opt.height / h;
             scale.x = scale.y;
         }

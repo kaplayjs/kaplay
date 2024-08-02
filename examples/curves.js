@@ -110,10 +110,12 @@ function addCatmullRom(...objects) {
                 if (t <= p0) {
                     curve = curveCoords[0];
                     ct = t * (1 / p0);
-                } else if (t <= p0 + p1) {
+                }
+                else if (t <= p0 + p1) {
                     curve = curveCoords[1];
                     ct = (t - p0) * (1 / p1);
-                } else {
+                }
+                else {
                     curve = curveCoords[2];
                     ct = (t - p0 - p1) * (1 / p2);
                 }

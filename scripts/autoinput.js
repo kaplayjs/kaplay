@@ -63,7 +63,8 @@ const el = typeof canvas === "undefined"
 
 if (!el) {
     console.log("Can't find KAPLAY canvas, skipping input test");
-} else {
+}
+else {
     setTimeout(() => {
         for (const key of keys) {
             el.dispatchEvent(

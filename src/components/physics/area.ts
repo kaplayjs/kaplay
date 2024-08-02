@@ -271,12 +271,14 @@ export function area(opt: AreaCompOpt = {}): AreaComp {
                     width: a.width,
                     height: a.height,
                 });
-            } else if (a instanceof k.Polygon) {
+            }
+            else if (a instanceof k.Polygon) {
                 k.drawPolygon({
                     ...opts,
                     pts: a.pts,
                 });
-            } else if (a instanceof k.Circle) {
+            }
+            else if (a instanceof k.Circle) {
                 k.drawCircle({
                     ...opts,
                     pos: a.center,
@@ -360,7 +362,8 @@ export function area(opt: AreaCompOpt = {}): AreaComp {
                         hovering = true;
                         action();
                     }
-                } else {
+                }
+                else {
                     hovering = this.isHovering();
                 }
             });
@@ -382,7 +385,8 @@ export function area(opt: AreaCompOpt = {}): AreaComp {
                         hovering = false;
                         action();
                     }
-                } else {
+                }
+                else {
                     hovering = this.isHovering();
                 }
             });
@@ -395,13 +399,15 @@ export function area(opt: AreaCompOpt = {}): AreaComp {
         ): KEventController {
             if (typeof tag === "function" && cb === undefined) {
                 return this.on("collide", tag);
-            } else if (typeof tag === "string") {
+            }
+            else if (typeof tag === "string") {
                 return this.onCollide((obj: GameObj, col: Collision) => {
                     if (obj.is(tag)) {
                         cb?.(obj, col);
                     }
                 });
-            } else {throw new Error(
+            }
+            else {throw new Error(
                     "onCollide() requires either a function or a tag",
                 );}
         },
@@ -413,12 +419,14 @@ export function area(opt: AreaCompOpt = {}): AreaComp {
         ): KEventController {
             if (typeof tag === "function" && cb === undefined) {
                 return this.on("collideUpdate", tag);
-            } else if (typeof tag === "string") {
+            }
+            else if (typeof tag === "string") {
                 return this.on(
                     "collideUpdate",
                     (obj, col) => obj.is(tag) && cb?.(obj, col),
                 );
-            } else {throw new Error(
+            }
+            else {throw new Error(
                     "onCollideUpdate() requires either a function or a tag",
                 );}
         },
@@ -430,12 +438,14 @@ export function area(opt: AreaCompOpt = {}): AreaComp {
         ): KEventController {
             if (typeof tag === "function" && cb === undefined) {
                 return this.on("collideEnd", tag);
-            } else if (typeof tag === "string") {
+            }
+            else if (typeof tag === "string") {
                 return this.on(
                     "collideEnd",
                     (obj) => obj.is(tag) && cb?.(obj),
                 );
-            } else {throw new Error(
+            }
+            else {throw new Error(
                     "onCollideEnd() requires either a function or a tag",
                 );}
         },
@@ -497,7 +507,8 @@ export function area(opt: AreaCompOpt = {}): AreaComp {
             const area = this.worldArea();
             if (isFixed(this)) {
                 return area;
-            } else {
+            }
+            else {
                 return area.transform(game.cam.transform);
             }
         },
@@ -505,7 +516,8 @@ export function area(opt: AreaCompOpt = {}): AreaComp {
         inspect() {
             if (this.area.scale.x == this.area.scale.y) {
                 return `area: ${this.area.scale.x.toFixed(1)}x`;
-            } else {return `area: (${this.area.scale.x.toFixed(1)}x, ${
+            }
+            else {return `area: (${this.area.scale.x.toFixed(1)}x, ${
                     this.area.scale.y.toFixed(1)
                 }y)`;}
         },

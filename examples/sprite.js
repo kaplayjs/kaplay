@@ -63,7 +63,8 @@ add([
 player.onGround(() => {
     if (!isKeyDown("left") && !isKeyDown("right")) {
         player.play("idle");
-    } else {
+    }
+    else {
         player.play("run");
     }
 });

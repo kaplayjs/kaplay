@@ -201,7 +201,8 @@ export function onError(action: (err: Error) => void) {
 export function onLoad(cb: () => void): void {
     if (assets.loaded) {
         cb();
-    } else {
+    }
+    else {
         game.events.on("load", cb);
     }
 }

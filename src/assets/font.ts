@@ -32,7 +32,8 @@ export class FontData {
             };
             if (typeof opt.outline === "number") {
                 this.outline.width = opt.outline;
-            } else if (typeof opt.outline === "object") {
+            }
+            else if (typeof opt.outline === "object") {
                 if (opt.outline.width) {
                     this.outline.width = opt.outline.width;
                 }
@@ -63,18 +64,23 @@ export function resolveFont(
         const font = getFont(src);
         if (bfont) {
             return bfont.data ?? bfont;
-        } else if (font) {
+        }
+        else if (font) {
             return font.data ?? font;
-        } else if (
+        }
+        else if (
             document.fonts.check(`${DEF_TEXT_CACHE_SIZE}px ${src}`)
         ) {
             return src;
-        } else if (loadProgress() < 1) {
+        }
+        else if (loadProgress() < 1) {
             return null;
-        } else {
+        }
+        else {
             throw new Error(`Font not found: ${src}`);
         }
-    } else if (src instanceof Asset) {
+    }
+    else if (src instanceof Asset) {
         return src.data ? src.data : src;
     }
 

@@ -109,7 +109,8 @@ scene("battle", () => {
             sky.color.g = wave(127, 255, t + 1);
             sky.color.b = wave(127, 255, t + 2);
             sky.opacity = 1;
-        } else {
+        }
+        else {
             sky.color = rgb(0, 0, 0);
             sky.opacity = 0;
         }
@@ -335,7 +336,8 @@ scene("battle", () => {
         if (healthbar.flash) {
             healthbar.color = rgb(255, 255, 255);
             healthbar.flash = false;
-        } else {
+        }
+        else {
             healthbar.color = rgb(127, 255, 127);
         }
     });

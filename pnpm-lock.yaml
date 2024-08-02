@@ -7,6 +7,10 @@ settings:
 importers:
 
   .:
+    dependencies:
+      '@kaplayjs/dprint-config':
+        specifier: ^1.0.0
+        version: 1.0.0
     devDependencies:
       dprint:
         specifier: ^0.45.1
@@ -56,8 +60,18 @@ packages:
     cpu: [arm64]
     os: [darwin]
 
+  '@dprint/darwin-arm64@0.47.2':
+    resolution: {integrity: sha512-mVPFBJsXxGDKHHCAY8wbqOyS4028g1bN15H9tivCnPAjwaZhkUimZHXWejXADjhGn+Xm2SlakugY9PY/68pH3Q==}
+    cpu: [arm64]
+    os: [darwin]
+
   '@dprint/darwin-x64@0.45.1':
     resolution: {integrity: sha512-YUj421LmBLDlxpIER3pORKfQmpmXD50n5mClHjpZrnl17WTiHtQ+jHvDJdJoxH2eS66W0mQyxLoGo5SfFfiM7A==}
+    cpu: [x64]
+    os: [darwin]
+
+  '@dprint/darwin-x64@0.47.2':
+    resolution: {integrity: sha512-T7wzlc+rBV+6BRRiBjoqoy5Hj4TR2Nv2p2s9+ycyPGs10Kj/JXOWD8dnEHeBgUr2r4qe/ZdcxmsFQ5Hf2n0WuA==}
     cpu: [x64]
     os: [darwin]
 
@@ -66,8 +80,18 @@ packages:
     cpu: [arm64]
     os: [linux]
 
+  '@dprint/linux-arm64-glibc@0.47.2':
+    resolution: {integrity: sha512-B0m1vT5LdVtrNOVdkqpLPrSxuCD+l5bTIgRzPaDoIB1ChWQkler9IlX8C+RStpujjPj6SYvwo5vTzjQSvRdQkA==}
+    cpu: [arm64]
+    os: [linux]
+
   '@dprint/linux-arm64-musl@0.45.1':
     resolution: {integrity: sha512-un2awe1L1sAJLsCPSEUrE0/cgupdzbYFoyBOutyU1zHR9KQn47AtIDw+chvuinU4xleHDuEGyXGuJ6NE+Ky6vw==}
+    cpu: [arm64]
+    os: [linux]
+
+  '@dprint/linux-arm64-musl@0.47.2':
+    resolution: {integrity: sha512-zID6wZZqpg2/Q2Us+ERQkbhLwlW3p3xaeEr00MPf49bpydmEjMiPuSjWPkNv+slQSIyIsVovOxF4lbNZjsdtvw==}
     cpu: [arm64]
     os: [linux]
 
@@ -76,13 +100,33 @@ packages:
     cpu: [x64]
     os: [linux]
 
+  '@dprint/linux-x64-glibc@0.47.2':
+    resolution: {integrity: sha512-rB3WXMdINnRd33DItIp7mObS7dzHW90ZzeJSsoKJLPp+Z7wXjjb27UUowfqVI4baa/1pd7sdbX54DPohMtfu/A==}
+    cpu: [x64]
+    os: [linux]
+
   '@dprint/linux-x64-musl@0.45.1':
     resolution: {integrity: sha512-p2/gjnHDd8GRCvtey5HZO4o/He6pSmY/zpcCuIXprFW9P0vNlEj3DFhz4FPpOKXM+csrsVWWs2E0T/xr5QZtVg==}
     cpu: [x64]
     os: [linux]
 
+  '@dprint/linux-x64-musl@0.47.2':
+    resolution: {integrity: sha512-E0+TNbzYdTXJ/jCVjUctVxkda/faw++aDQLfyWGcmdMJnbM7NZz+W4fUpDXzMPsjy+zTWxXcPK7/q2DZz2gnbg==}
+    cpu: [x64]
+    os: [linux]
+
+  '@dprint/win32-arm64@0.47.2':
+    resolution: {integrity: sha512-K1EieTCFjfOCmyIhw9zFSduE6qVCNHEveupqZEfbSkVGw5T9MJQ1I9+n7MDb3RIDYEUk0enJ58/w82q8oDKCyA==}
+    cpu: [arm64]
+    os: [win32]
+
   '@dprint/win32-x64@0.45.1':
     resolution: {integrity: sha512-2l78XM7KsW46P2Yv6uPB3fE+y92EsBlrCxi+RVQ0pbznPFdMdkLyGgaCuh683zdld14jHlaADpIQ7YchGAEMAg==}
+    cpu: [x64]
+    os: [win32]
+
+  '@dprint/win32-x64@0.47.2':
+    resolution: {integrity: sha512-LhizWr8VrhHvq4ump8HwOERyFmdLiE8C6A42QSntGXzKdaa2nEOq20x/o56ZIiDcesiV+1TmosMKimPcOZHa+Q==}
     cpu: [x64]
     os: [win32]
 
@@ -245,6 +289,9 @@ packages:
 
   '@jridgewell/trace-mapping@0.3.25':
     resolution: {integrity: sha512-vNk6aEwybGtawWmy/PzwnGDOjCkLWSD2wqvjGGAgOAwCGWySYXfYoxt00IJkTF+8Lb57DwOb3Aa0o9CApepiYQ==}
+
+  '@kaplayjs/dprint-config@1.0.0':
+    resolution: {integrity: sha512-nvP56+acuJisDqIwfAXCsahSnHZNpqKCebBMgZBjouCwIvSqUCl0A3jnKjU7Z9slCwqdE96c7pBMu9k6ofiMXw==}
 
   '@puppeteer/browsers@2.2.3':
     resolution: {integrity: sha512-bJ0UBsk0ESOs6RFcLXOt99a3yTDcOKlzfjad+rhFwdaG1Lu/Wzq58GHYCDTlZ9z6mldf4g+NTb+TXEfe0PpnsQ==}
@@ -580,6 +627,10 @@ packages:
 
   dprint@0.45.1:
     resolution: {integrity: sha512-OYefcDgxd6jSdig/Cfkw1vdvyiOIRruCPnqGBbXpc95buDt9kvwL+Lic1OHc+SaQSsQub0BUZMd5+TNgy8Sh3A==}
+    hasBin: true
+
+  dprint@0.47.2:
+    resolution: {integrity: sha512-geUcVIIrmLaY+YtuOl4gD7J/QCjsXZa5gUqre9sO6cgH0X/Fa9heBN3l/AWVII6rKPw45ATuCSDWz1pyO+HkPQ==}
     hasBin: true
 
   dts-bundle-generator@9.5.1:
@@ -1321,22 +1372,46 @@ snapshots:
   '@dprint/darwin-arm64@0.45.1':
     optional: true
 
+  '@dprint/darwin-arm64@0.47.2':
+    optional: true
+
   '@dprint/darwin-x64@0.45.1':
+    optional: true
+
+  '@dprint/darwin-x64@0.47.2':
     optional: true
 
   '@dprint/linux-arm64-glibc@0.45.1':
     optional: true
 
+  '@dprint/linux-arm64-glibc@0.47.2':
+    optional: true
+
   '@dprint/linux-arm64-musl@0.45.1':
+    optional: true
+
+  '@dprint/linux-arm64-musl@0.47.2':
     optional: true
 
   '@dprint/linux-x64-glibc@0.45.1':
     optional: true
 
+  '@dprint/linux-x64-glibc@0.47.2':
+    optional: true
+
   '@dprint/linux-x64-musl@0.45.1':
     optional: true
 
+  '@dprint/linux-x64-musl@0.47.2':
+    optional: true
+
+  '@dprint/win32-arm64@0.47.2':
+    optional: true
+
   '@dprint/win32-x64@0.45.1':
+    optional: true
+
+  '@dprint/win32-x64@0.47.2':
     optional: true
 
   '@esbuild/aix-ppc64@0.21.5':
@@ -1428,6 +1503,10 @@ snapshots:
     dependencies:
       '@jridgewell/resolve-uri': 3.1.2
       '@jridgewell/sourcemap-codec': 1.4.15
+
+  '@kaplayjs/dprint-config@1.0.0':
+    dependencies:
+      dprint: 0.47.2
 
   '@puppeteer/browsers@2.2.3':
     dependencies:
@@ -1754,6 +1833,17 @@ snapshots:
       '@dprint/linux-x64-glibc': 0.45.1
       '@dprint/linux-x64-musl': 0.45.1
       '@dprint/win32-x64': 0.45.1
+
+  dprint@0.47.2:
+    optionalDependencies:
+      '@dprint/darwin-arm64': 0.47.2
+      '@dprint/darwin-x64': 0.47.2
+      '@dprint/linux-arm64-glibc': 0.47.2
+      '@dprint/linux-arm64-musl': 0.47.2
+      '@dprint/linux-x64-glibc': 0.47.2
+      '@dprint/linux-x64-musl': 0.47.2
+      '@dprint/win32-arm64': 0.47.2
+      '@dprint/win32-x64': 0.47.2
 
   dts-bundle-generator@9.5.1:
     dependencies:

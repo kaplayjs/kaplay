@@ -352,7 +352,8 @@ const kaplay = <
     if (fixedSize) {
         canvas.width = gopt.width! * gscale;
         canvas.height = gopt.height! * gscale;
-    } else {
+    }
+    else {
         canvas.width = canvas.parentElement!.offsetWidth;
         canvas.height = canvas.parentElement!.offsetHeight;
     }
@@ -368,7 +369,8 @@ const kaplay = <
         const ch = canvas.height;
         styles.push(`width: ${cw}px`);
         styles.push(`height: ${ch}px`);
-    } else {
+    }
+    else {
         styles.push("width: 100%");
         styles.push("height: 100%");
     }
@@ -554,7 +556,8 @@ const kaplay = <
             debugPaused = v;
             if (v) {
                 audio.ctx.suspend();
-            } else {
+            }
+            else {
                 audio.ctx.resume();
             }
         },
@@ -567,7 +570,8 @@ const kaplay = <
             if (def) {
                 setData(key, def);
                 return def;
-            } else {
+            }
+            else {
                 return null;
             }
         }
@@ -586,7 +590,8 @@ const kaplay = <
         if (typeof funcs === "function") {
             const plugWithOptions = funcs(...args);
             funcsObj = plugWithOptions(k);
-        } else {
+        }
+        else {
             funcsObj = funcs;
         }
 
@@ -779,9 +784,11 @@ const kaplay = <
                         if (!grid[x]) {
                             grid[x] = {};
                             grid[x][y] = [aobj];
-                        } else if (!grid[x][y]) {
+                        }
+                        else if (!grid[x][y]) {
                             grid[x][y] = [aobj];
-                        } else {
+                        }
+                        else {
                             const cell = grid[x][y];
                             check: for (const other of cell) {
                                 if (other.paused) continue;
@@ -954,7 +961,8 @@ const kaplay = <
                     // TODO: Currently if assets are not initially loaded no updates or timers will be run, however they will run if loadingScreen is set to false. What's the desired behavior or should we make them consistent?
                     drawLoadScreen();
                     frameEnd();
-                } else {
+                }
+                else {
                     if (!debug.paused) updateFrame();
                     checkFrame();
                     frameStart();

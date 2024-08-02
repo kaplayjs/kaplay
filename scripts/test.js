@@ -21,7 +21,8 @@ let examples;
 if (process.argv[2] === "--ci" || process.argv[2] === "-c") {
     console.log("Testing For Github CI");
     examples = exampleCI.order;
-} else {
+}
+else {
     console.log("Testing For Local Development");
     examples = (await fs.readdir("examples"))
         .filter((p) => !p.startsWith(".") && p.endsWith(".js"))

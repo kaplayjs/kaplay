@@ -58,7 +58,8 @@ function rayCastGrid(origin, direction, gridPosHit, maxDistance = 64) {
                 t: t / len, // Since dir is normalized, t is len times too large
                 gridPos,
             };
-        } else if (hit) {
+        }
+        else if (hit) {
             return hit;
         }
         if (tMax.x < tMax.y) {
@@ -66,7 +67,8 @@ function rayCastGrid(origin, direction, gridPosHit, maxDistance = 64) {
             t = tMax.x;
             tMax.x += tDelta.x;
             steppedIndex = 0;
-        } else {
+        }
+        else {
             gridPos.y += step.y;
             t = tMax.y;
             tMax.y += tDelta.y;
@@ -347,12 +349,14 @@ onTouchMove(pos => {
     const delta = pos.sub(lastPos);
     if (delta.x < 0) {
         camera.angle -= 90 * dt();
-    } else if (delta.x > 0) {
+    }
+    else if (delta.x > 0) {
         camera.angle += 90 * dt();
     }
     if (delta.y < 0) {
         camera.move(Vec2.fromAngle(camera.angle).scale(40));
-    } else if (delta.y > 0) {
+    }
+    else if (delta.y > 0) {
         camera.move(Vec2.fromAngle(camera.angle).scale(-40));
     }
     lastPos = pos;

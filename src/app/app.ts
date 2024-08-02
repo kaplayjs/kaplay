@@ -215,7 +215,8 @@ export const initApp = (opt: {
             } catch (e) {
                 console.error(e);
             }
-        } else {
+        }
+        else {
             document.exitPointerLock();
         }
     }
@@ -240,7 +241,8 @@ export const initApp = (opt: {
     function setFullscreen(f: boolean = true) {
         if (f) {
             enterFullscreen(state.canvas);
-        } else {
+        }
+        else {
             exitFullscreen();
         }
     }
@@ -777,7 +779,8 @@ export const initApp = (opt: {
                     }
 
                     state.events.trigger("gamepadButtonDown", gamepadBtn);
-                } else if (gamepadState.buttonState.down.has(gamepadBtn)) {
+                }
+                else if (gamepadState.buttonState.down.has(gamepadBtn)) {
                     if (isGamepadButtonBind) {
                         state.buttonsByGamepad.get(gamepadBtn)?.forEach(
                             (btn) => {
@@ -841,7 +844,8 @@ export const initApp = (opt: {
                 const offset = (ww - (cw * ratio)) / 2;
                 mousePos.x = map(e.offsetX - offset, 0, cw * ratio, 0, cw);
                 mousePos.y = map(e.offsetY, 0, ch * ratio, 0, ch);
-            } else {
+            }
+            else {
                 const ratio = ww / cw;
                 const offset = (wh - (ch * ratio)) / 2;
                 mousePos.x = map(e.offsetX, 0, cw * ratio, 0, cw);
@@ -929,14 +933,16 @@ export const initApp = (opt: {
             if (k.length === 1) {
                 state.events.trigger("charInput", k);
                 state.charInputted.push(k);
-            } else if (k === "space") {
+            }
+            else if (k === "space") {
                 state.events.trigger("charInput", " ");
                 state.charInputted.push(" ");
             }
             if (e.repeat) {
                 state.keyState.pressRepeat(k);
                 state.events.trigger("keyPressRepeat", k);
-            } else {
+            }
+            else {
                 state.lastInputDevice = "keyboard";
 
                 if (state.buttonsByKey.has(k)) {
@@ -1100,7 +1106,8 @@ export const initApp = (opt: {
             state.skipTime = true;
             state.isHidden = false;
             state.events.trigger("show");
-        } else {
+        }
+        else {
             state.isHidden = true;
             state.events.trigger("hide");
         }

@@ -168,10 +168,12 @@ export function sprite(
         if (w && h) {
             scale.x = w / (tex.width * q.w);
             scale.y = h / (tex.height * q.h);
-        } else if (w) {
+        }
+        else if (w) {
             scale.x = w / (tex.width * q.w);
             scale.y = scale.x;
-        } else if (h) {
+        }
+        else if (h) {
             scale.y = h / (tex.height * q.h);
             scale.x = scale.y;
         }
@@ -294,7 +296,8 @@ export function sprite(
                         }),
                     );
                 }
-            } else {
+            }
+            else {
                 drawTexture(
                     Object.assign(getRenderProps(this), {
                         tex: spriteData.tex,
@@ -315,7 +318,8 @@ export function sprite(
             if (spr) {
                 // The sprite exists
                 spr.onLoad(spr => setSpriteData(this, spr));
-            } else {
+            }
+            else {
                 // The sprite may be loaded later in the script, check again when all resources have been loaded
                 onLoad(() => setSpriteData(this, resolveSprite(src)!.data));
             }
@@ -352,10 +356,12 @@ export function sprite(
                             this.frame -= curAnimDir;
                             curAnimDir *= -1;
                             this.frame += curAnimDir;
-                        } else {
+                        }
+                        else {
                             this.frame = anim.from;
                         }
-                    } else {
+                    }
+                    else {
                         if (curAnim.pingpong) {
                             const isForward = curAnimDir
                                 === Math.sign(anim.to - anim.from);
@@ -363,12 +369,14 @@ export function sprite(
                                 this.frame = anim.to;
                                 curAnimDir *= -1;
                                 this.frame += curAnimDir;
-                            } else {
+                            }
+                            else {
                                 this.frame = anim.from;
                                 curAnim.onEnd();
                                 this.stop();
                             }
-                        } else {
+                        }
+                        else {
                             this.frame = anim.to;
                             curAnim.onEnd();
                             this.stop();

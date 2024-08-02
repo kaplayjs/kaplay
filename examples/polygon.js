@@ -61,7 +61,8 @@ poly.onDraw(() => {
 onUpdate(() => {
     if (isConvex(poly.pts)) {
         poly.color = WHITE;
-    } else {
+    }
+    else {
         poly.color = rgb(192, 192, 192);
     }
 });

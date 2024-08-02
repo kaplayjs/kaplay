@@ -11,7 +11,8 @@ export function drawLoadScreen() {
 
     if (game.events.numListeners("loading") > 0) {
         game.events.trigger("loading", progress);
-    } else {
+    }
+    else {
         drawUnscaled(() => {
             const w = width() / 2;
             const h = 24;

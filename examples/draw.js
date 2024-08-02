@@ -125,7 +125,8 @@ onDraw(() => {
                 },
             });
         }, drawStuff);
-    } else {
+    }
+    else {
         drawStuff();
     }
 });

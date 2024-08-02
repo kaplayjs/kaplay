@@ -112,7 +112,8 @@ export function pos(...args: Vec2Args): PosComp {
             if (pos) {
                 this.pos = this.pos.add(this.fromWorld(pos));
                 return null;
-            } else {
+            }
+            else {
                 return this.parent
                     ? this.parent.transform.multVec2(this.pos)
                     : this.pos;
@@ -141,7 +142,8 @@ export function pos(...args: Vec2Args): PosComp {
             if (pos) {
                 this.pos = this.pos.add(this.fromScreen(pos));
                 return null;
-            } else {
+            }
+            else {
                 const pos = this.worldPos();
 
                 // This is not really possible, because worldPos() will always return a value

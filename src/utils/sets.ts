@@ -24,7 +24,8 @@ export const mapAddOrPush = <K, V>(
 ): void => {
     if (map.has(key)) {
         map.get(key)?.push(value);
-    } else {
+    }
+    else {
         map.set(key, [value]);
     }
 };

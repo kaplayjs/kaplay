@@ -109,7 +109,8 @@ player.onUpdate(() => {
     // .isHovering() is provided by area() component, which returns a boolean of if the object is currently being hovered on
     if (player.isHovering()) {
         player.color = rgb(0, 0, 255);
-    } else {
+    }
+    else {
         player.color = rgb();
     }
 });

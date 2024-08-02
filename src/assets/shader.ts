@@ -105,23 +105,30 @@ export class Shader {
             const loc = gl.getUniformLocation(this.glProgram, name);
             if (typeof val === "number") {
                 gl.uniform1f(loc, val);
-            } else if (val instanceof Mat4) {
+            }
+            else if (val instanceof Mat4) {
                 gl.uniformMatrix4fv(loc, false, new Float32Array(val.m));
-            } else if (val instanceof Color) {
+            }
+            else if (val instanceof Color) {
                 gl.uniform3f(loc, val.r, val.g, val.b);
-            } else if (val instanceof Vec2) {
+            }
+            else if (val instanceof Vec2) {
                 gl.uniform2f(loc, val.x, val.y);
-            } else if (Array.isArray(val)) {
+            }
+            else if (Array.isArray(val)) {
                 const first = val[0];
 
                 if (arrayIsNumber(val)) {
                     gl.uniform1fv(loc, val as number[]);
-                } else if (arrayIsVec2(val)) {
+                }
+                else if (arrayIsVec2(val)) {
                     gl.uniform2fv(loc, val.map((v) => [v.x, v.y]).flat());
-                } else if (arrayIsColor(val)) {
+                }
+                else if (arrayIsColor(val)) {
                     gl.uniform3fv(loc, val.map(v => [v.r, v.g, v.b]).flat());
                 }
-            } else {
+            }
+            else {
                 throw new Error("Unsupported uniform data type");
             }
         }
@@ -169,12 +176,15 @@ export function resolveShader(
         const shader = getShader(src);
         if (shader) {
             return shader.data ?? shader;
-        } else if (loadProgress() < 1) {
+        }
+        else if (loadProgress() < 1) {
             return null;
-        } else {
+        }
+        else {
             throw new Error(`Shader not found: ${src}`);
         }
-    } else if (src instanceof Asset) {
+    }
+    else if (src instanceof Asset) {
         return src.data ? src.data : src;
     }
 

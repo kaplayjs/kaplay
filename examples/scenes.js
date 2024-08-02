@@ -119,7 +119,8 @@ scene("game", ({ levelIdx, score }) => {
                 levelIdx: levelIdx + 1,
                 score: score,
             });
-        } else {
+        }
+        else {
             // Otherwise we have reached the end of game, go to "win" scene!
             go("win", { score: score });
         }

@@ -46,7 +46,8 @@ export class Color {
                 (hex >> 8) & 0xff,
                 (hex >> 0) & 0xff,
             );
-        } else if (typeof hex === "string") {
+        }
+        else if (typeof hex === "string") {
             const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(
                 hex,
             );
@@ -58,7 +59,8 @@ export class Color {
                 parseInt(result[2], 16),
                 parseInt(result[3], 16),
             );
-        } else {
+        }
+        else {
             throw new Error("Invalid hex color format");
         }
     }
@@ -154,7 +156,8 @@ export class Color {
         const l = h;
         if (max == min) {
             h = s = 0;
-        } else {
+        }
+        else {
             const d = max - min;
             s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
             switch (max) {
@@ -231,22 +234,27 @@ export type ColorArgs =
 export function rgb(...args: ColorArgs): Color {
     if (args.length === 0) {
         return new Color(255, 255, 255);
-    } else if (args.length === 1) {
+    }
+    else if (args.length === 1) {
         if (args[0] instanceof Color) {
             // rgb(new Color(255, 255, 255))
             return args[0].clone();
-        } else if (typeof args[0] === "string") {
+        }
+        else if (typeof args[0] === "string") {
             // rgb("#ffffff")
             return Color.fromHex(args[0]);
-        } else if (Array.isArray(args[0]) && args[0].length === 3) {
+        }
+        else if (Array.isArray(args[0]) && args[0].length === 3) {
             // rgb([255, 255, 255])
             return Color.fromArray(args[0]);
         }
-    } else if (args.length === 2) {
+    }
+    else if (args.length === 2) {
         if (args[0] instanceof Color) {
             return args[0].clone();
         }
-    } else if (args.length === 3 || args.length === 4) {
+    }
+    else if (args.length === 3 || args.length === 4) {
         return new Color(args[0], args[1], args[2]);
     }
 

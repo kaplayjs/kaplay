@@ -54,7 +54,8 @@ export default class TexPacker {
         }
         if (img instanceof ImageData) {
             this.c2d.putImageData(img, pos.x, pos.y);
-        } else {
+        }
+        else {
             this.c2d.drawImage(img, pos.x, pos.y);
         }
         curTex.update(this.canvas);

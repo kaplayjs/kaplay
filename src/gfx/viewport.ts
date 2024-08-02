@@ -30,7 +30,8 @@ export function updateViewport() {
                 width: sw,
                 height: canvasHeight,
             };
-        } else {
+        }
+        else {
             const sh = canvasWidth / rg;
             const y = (canvasHeight - sh) / 2;
             gfx.viewport = {

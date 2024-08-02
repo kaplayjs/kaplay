@@ -248,7 +248,8 @@ scene("game", ({ levelId, coins } = { levelId: 0, coins: 0 }) => {
                 levelId: levelId + 1,
                 coins: coins,
             });
-        } else {
+        }
+        else {
             go("win");
         }
     });

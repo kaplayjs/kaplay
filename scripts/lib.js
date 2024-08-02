@@ -108,7 +108,8 @@ export async function genDTS() {
             const v = f(k, o[k]);
             if (v != null) {
                 o[k] = v;
-            } else {
+            }
+            else {
                 delete o[k];
             }
             if (typeof o[k] === "object") {

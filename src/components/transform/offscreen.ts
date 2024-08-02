@@ -83,7 +83,8 @@ export function offscreen(opt: OffScreenCompOpt = {}): OffScreenComp {
                 if (opt.hide) this.hidden = true;
                 if (opt.pause) this.paused = true;
                 if (opt.destroy) this.destroy();
-            } else {
+            }
+            else {
                 if (isOut) {
                     this.trigger("enterView");
                     isOut = false;

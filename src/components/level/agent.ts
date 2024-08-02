@@ -92,7 +92,8 @@ export function agent(opts: AgentCompOpt = {}): AgentComp {
                                         this,
                                         path[index],
                                     );
-                                } else {
+                                }
+                                else {
                                     index = null;
                                     this.trigger("navigationEnded", this);
                                 }
@@ -102,7 +103,8 @@ export function agent(opts: AgentCompOpt = {}): AgentComp {
                 }
                 this.trigger("navigationStarted", this);
                 this.trigger("navigationNext", this, path[index]);
-            } else {
+            }
+            else {
                 this.trigger("navigationEnded", this);
             }
         },
@@ -115,7 +117,8 @@ export function agent(opts: AgentCompOpt = {}): AgentComp {
                         this.trigger("navigationEnded", this);
                         this.trigger("targetReached", this);
                         return;
-                    } else {
+                    }
+                    else {
                         index++;
                         this.trigger("navigationNext", this, path[index]);
                     }

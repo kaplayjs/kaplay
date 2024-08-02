@@ -69,7 +69,8 @@ export function scale(...args: Vec2Args): ScaleComp {
         inspect() {
             if (_scale.x == _scale.y) {
                 return `scale: ${_scale.x.toFixed(1)}x`;
-            } else {return `scale: (${_scale.x.toFixed(1)}x, ${
+            }
+            else {return `scale: (${_scale.x.toFixed(1)}x, ${
                     _scale.y.toFixed(1)
                 }y)`;}
         },

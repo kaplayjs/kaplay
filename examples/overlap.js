@@ -161,7 +161,8 @@ onUpdate(() => {
             )
         ) {
             s1.color = RED;
-        } else {
+        }
+        else {
             s1.color = BLUE;
         }
     });

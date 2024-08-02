@@ -19,7 +19,8 @@ export class SoundData {
     static fromURL(url: string): Promise<SoundData> {
         if (isDataURL(url)) {
             return SoundData.fromArrayBuffer(dataURLToArrayBuffer(url));
-        } else {
+        }
+        else {
             return fetchArrayBuffer(url).then((buf) =>
                 SoundData.fromArrayBuffer(buf)
             );
@@ -34,16 +35,21 @@ export function resolveSound(
         const snd = getSound(src);
         if (snd) {
             return snd;
-        } else if (loadProgress() < 1) {
+        }
+        else if (loadProgress() < 1) {
             return null;
-        } else {
+        }
+        else {
             throw new Error(`Sound not found: ${src}`);
         }
-    } else if (src instanceof SoundData) {
+    }
+    else if (src instanceof SoundData) {
         return Asset.loaded(src);
-    } else if (src instanceof Asset) {
+    }
+    else if (src instanceof Asset) {
         return src;
-    } else {
+    }
+    else {
         throw new Error(`Invalid sound: ${src}`);
     }
 }

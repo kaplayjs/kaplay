@@ -93,7 +93,8 @@ function bounce() {
                 if (w < 0) {
                     bouncing = false;
                     timer = 0;
-                } else {
+                }
+                else {
                     this.scale = vec2(1 + w);
                 }
             }
@@ -141,7 +142,8 @@ player.onHeadbutt((block) => {
             caption.paused = false;
             music = play("kaboom2000");
         }
-    } else if (block.is("burp")) {
+    }
+    else if (block.is("burp")) {
         burp();
         shake(480);
         if (music) music.paused = true;

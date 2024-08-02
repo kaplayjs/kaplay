@@ -201,7 +201,8 @@ export function play(
                     started = false;
                 }
                 stopTime = ctx.currentTime;
-            } else {
+            }
+            else {
                 srcNode = cloneNode(srcNode);
                 const pos = stopTime - startTime;
                 srcNode.start(0, pos);
@@ -226,7 +227,8 @@ export function play(
             if (paused) {
                 srcNode = cloneNode(srcNode);
                 startTime = stopTime - time;
-            } else {
+            }
+            else {
                 srcNode.stop();
                 srcNode = cloneNode(srcNode);
                 startTime = ctx.currentTime - time;

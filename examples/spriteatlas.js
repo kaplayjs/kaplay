@@ -293,7 +293,8 @@ function interact() {
             if (c.opened) {
                 c.play("close");
                 c.opened = false;
-            } else {
+            }
+            else {
                 c.play("open");
                 c.opened = true;
             }
@@ -354,7 +355,8 @@ onGamepadStick("left", (v) => {
         player.flipX = true;
         sword.flipX = true;
         sword.pos = vec2(4, 9);
-    } else if (v.x > 0) {
+    }
+    else if (v.x > 0) {
         player.flipX = false;
         sword.flipX = false;
         sword.pos = vec2(-4, 9);
@@ -362,7 +364,8 @@ onGamepadStick("left", (v) => {
     player.move(v.scale(SPEED));
     if (v.isZero()) {
         if (player.curAnim() !== "idle") player.play("idle");
-    } else {
+    }
+    else {
         if (player.curAnim() !== "run") player.play("run");
     }
 });

@@ -282,7 +282,8 @@ onUpdate("enemy", enemy => {
             if (enemy.hasLineOfSight(player)) {
                 // We can see the player, just go straight to their location
                 enemy.moveTo(player.pos, 100);
-            } else {
+            }
+            else {
                 // We can't see the player, but we know where they are, plot a path
                 path = enemy.navigateTo(player.pos);
                 // enemy.waypoint = path[1];

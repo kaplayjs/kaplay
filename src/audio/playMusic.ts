@@ -52,7 +52,8 @@ export function playMusic(url: string, opt: AudioPlayOpt = {}): AudioPlay {
         set paused(p: boolean) {
             if (p) {
                 el.pause();
-            } else {
+            }
+            else {
                 play();
             }
         },

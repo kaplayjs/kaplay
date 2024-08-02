@@ -44,7 +44,8 @@ export const initAppGfx = (gopt: KAPLAYOpt, ggl: GfxCtx) => {
     if (gopt.background) {
         if (typeof gopt.background === "string") {
             bgColor = rgb(gopt.background);
-        } else {
+        }
+        else {
             bgColor = rgb(...gopt.background);
             bgAlpha = gopt.background[3] ?? 1;
         }

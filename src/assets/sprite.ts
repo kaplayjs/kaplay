@@ -169,18 +169,23 @@ export function resolveSprite(
         if (spr) {
             // if it's already loaded or being loading, return it
             return spr;
-        } else if (loadProgress() < 1) {
+        }
+        else if (loadProgress() < 1) {
             // if there's any other ongoing loading task we return empty and don't error yet
             return null;
-        } else {
+        }
+        else {
             // if all other assets are loaded and we still haven't found this sprite, throw
             throw new Error(`Sprite not found: ${src}`);
         }
-    } else if (src instanceof SpriteData) {
+    }
+    else if (src instanceof SpriteData) {
         return Asset.loaded(src);
-    } else if (src instanceof Asset) {
+    }
+    else if (src instanceof Asset) {
         return src;
-    } else {
+    }
+    else {
         throw new Error(`Invalid sprite: ${src}`);
     }
 }
@@ -210,16 +215,19 @@ export function loadSprite(
                         : Promise.resolve(s);
                 })).then((images) => createSpriteSheet(images, opt)),
             );
-        } else {
+        }
+        else {
             return assets.sprites.addLoaded(
                 name,
                 createSpriteSheet(src as ImageSource[], opt),
             );
         }
-    } else {
+    }
+    else {
         if (typeof src === "string") {
             return assets.sprites.add(name, SpriteData.from(src, opt));
-        } else {
+        }
+        else {
             return assets.sprites.addLoaded(
                 name,
                 SpriteData.fromImage(src, opt),
@@ -263,7 +271,8 @@ export function createSpriteSheet(
     images.forEach((img, i) => {
         if (img instanceof ImageData) {
             c2d.putImageData(img, i * width, 0);
-        } else {
+        }
+        else {
             c2d.drawImage(img, i * width, 0);
         }
     });

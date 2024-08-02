@@ -50,7 +50,8 @@ export function drawPolygon(opt: DrawPolygonOpt) {
             // TODO rewrite triangulate to just return new indices
             indices = triangles.map(t => t.map(p => opt.pts.indexOf(p)))
                 .flat();
-        } else {
+        }
+        else {
             indices = [...Array(npts - 2).keys()]
                 .map((n) => [0, n + 1, n + 2])
                 .flat();

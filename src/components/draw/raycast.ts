@@ -21,7 +21,8 @@ export function raycast(
                     minHit = hit;
                     minHit!.object = s;
                 }
-            } else {
+            }
+            else {
                 minHit = hit;
                 minHit!.object = s;
             }

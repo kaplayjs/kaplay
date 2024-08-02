@@ -120,7 +120,8 @@ export function make<T>(comps: CompList<T> = []): GameObj<MakeType<T>> {
         removeAll(this: GameObj, tag?: Tag) {
             if (tag) {
                 this.get(tag).forEach((obj) => this.remove(obj));
-            } else {
+            }
+            else {
                 for (const child of [...this.children]) this.remove(child);
             }
         },
@@ -176,7 +177,8 @@ export function make<T>(comps: CompList<T> = []): GameObj<MakeType<T>> {
                 }, () => {
                     this.trigger("draw");
                 });
-            } else {
+            }
+            else {
                 this.trigger("draw");
                 children.forEach((child) => child.draw());
             }
@@ -269,7 +271,8 @@ export function make<T>(comps: CompList<T> = []): GameObj<MakeType<T>> {
                         }
                         : comp[<keyof typeof comp> k];
                     gc.push(this.on(k, <any> func).cancel);
-                } else {
+                }
+                else {
                     if (this[k] === undefined) {
                         // assign comp fields to game obj
                         Object.defineProperty(this, k, {
@@ -279,7 +282,8 @@ export function make<T>(comps: CompList<T> = []): GameObj<MakeType<T>> {
                             enumerable: true,
                         });
                         gc.push(() => delete this[k]);
-                    } else {
+                    }
+                    else {
                         throw new Error(
                             `Duplicate component property: "${k}"`,
                         );
@@ -311,7 +315,8 @@ export function make<T>(comps: CompList<T> = []): GameObj<MakeType<T>> {
                     comp.add.call(this);
                     onCurCompCleanup = null;
                 }
-            } else {
+            }
+            else {
                 if (comp.require) {
                     gc.push(this.on("add", checkDeps).cancel);
                 }
@@ -429,7 +434,8 @@ export function make<T>(comps: CompList<T> = []): GameObj<MakeType<T>> {
                 if (includeOp === "and" || !Array.isArray(opt.include)) {
                     // Accept if all match
                     list = list.filter(o => o.is(include));
-                } else { // includeOp == "or"
+                }
+                else { // includeOp == "or"
                     // Accept if some match
                     list = list.filter(o =>
                         (opt.include as string[]).some(t => o.is(t))
@@ -441,7 +447,8 @@ export function make<T>(comps: CompList<T> = []): GameObj<MakeType<T>> {
                 if (excludeOp === "and" || !Array.isArray(opt.include)) {
                     // Reject if all match
                     list = list.filter(o => !o.is(exclude));
-                } else { // includeOp == "or"
+                }
+                else { // includeOp == "or"
                     // Reject if some match
                     list = list.filter(o =>
                         !(opt.exclude as string[]).some(t => o.is(t))
@@ -463,7 +470,8 @@ export function make<T>(comps: CompList<T> = []): GameObj<MakeType<T>> {
                     list = list.filter(o =>
                         o.pos && this.pos.sdist(o.pos) <= sdist
                     );
-                } else { // distanceOp === "far"
+                }
+                else { // distanceOp === "far"
                     list = list.filter(o =>
                         o.pos && this.pos.sdist(o.pos) > sdist
                     );
@@ -497,7 +505,8 @@ export function make<T>(comps: CompList<T> = []): GameObj<MakeType<T>> {
                     }
                 }
                 return true;
-            } else {
+            }
+            else {
                 return this.c(tag) != null;
             }
         },

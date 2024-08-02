@@ -162,10 +162,12 @@ scene("main", (levelIdx) => {
         if (hasKey) {
             if (levelIdx + 1 < levels.length) {
                 go("main", levelIdx + 1);
-            } else {
+            }
+            else {
                 go("win");
             }
-        } else {
+        }
+        else {
             dialog.say("you got no key!");
         }
     });

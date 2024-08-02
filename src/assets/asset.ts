@@ -28,7 +28,8 @@ export class Asset<D> {
             this.error = err;
             if (this.onErrorEvents.numListeners() > 0) {
                 this.onErrorEvents.trigger(err);
-            } else {
+            }
+            else {
                 throw err;
             }
         }).finally(() => {
@@ -45,7 +46,8 @@ export class Asset<D> {
     onLoad(action: (data: D) => void) {
         if (this.loaded && this.data) {
             action(this.data);
-        } else {
+        }
+        else {
             this.onLoadEvents.add(action);
         }
         return this;
@@ -53,7 +55,8 @@ export class Asset<D> {
     onError(action: (err: Error) => void) {
         if (this.loaded && this.error) {
             action(this.error);
-        } else {
+        }
+        else {
             this.onErrorEvents.add(action);
         }
         return this;
@@ -61,7 +64,8 @@ export class Asset<D> {
     onFinish(action: () => void) {
         if (this.loaded) {
             action();
-        } else {
+        }
+        else {
             this.onFinishEvents.add(action);
         }
         return this;

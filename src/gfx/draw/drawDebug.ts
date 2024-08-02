@@ -40,7 +40,8 @@ export function drawDebug() {
                 if (data[tag]) {
                     // pushes the inspect function (eg: `sprite: "bean"`)
                     lines.push(`${data[tag]}`);
-                } else {
+                }
+                else {
                     // pushes only the tag (name of the component)
                     lines.push(`${tag}`);
                 }

@@ -51,7 +51,8 @@ onUpdate(() => {
             )
         ) {
             s1.color = RED;
-        } else {
+        }
+        else {
             s1.color = BLUE;
         }
     });
@@ -194,7 +195,8 @@ get("laser").forEach(laser => {
         get("selected").forEach(s => s.unuse("selected"));
         if (laser.pos.sub(mousePos()).slen() > 28 * 28) {
             laser.use("turn");
-        } else {
+        }
+        else {
             laser.use("selected");
         }
     });

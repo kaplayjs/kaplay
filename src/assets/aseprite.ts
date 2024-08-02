@@ -58,7 +58,8 @@ export function loadAseprite(
             for (const anim of data.meta.frameTags) {
                 if (anim.from === anim.to) {
                     anims[anim.name] = anim.from;
-                } else {
+                }
+                else {
                     anims[anim.name] = {
                         from: anim.from,
                         to: anim.to,

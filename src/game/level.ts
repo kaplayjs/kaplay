@@ -97,7 +97,8 @@ export function addLevel(
         const i = tile2Hash(obj.tilePos);
         if (spatialMap![i]) {
             spatialMap![i].push(obj);
-        } else {
+        }
+        else {
             spatialMap![i] = [obj];
         }
     };
@@ -139,7 +140,8 @@ export function addLevel(
         const size = level.numRows() * level.numColumns();
         if (!costMap) {
             costMap = new Array<number>(size);
-        } else {
+        }
+        else {
             costMap.length = size;
         }
         costMap.fill(1, 0, size);
@@ -151,7 +153,8 @@ export function addLevel(
                     if (obj.isObstacle) {
                         cost = Infinity;
                         break;
-                    } else {
+                    }
+                    else {
                         cost += obj.cost;
                     }
                 }
@@ -166,7 +169,8 @@ export function addLevel(
         const size = level.numRows() * level.numColumns();
         if (!edgeMap) {
             edgeMap = new Array<number>(size);
-        } else {
+        }
+        else {
             edgeMap.length = size;
         }
         edgeMap.fill(EdgeMask.All, 0, size);
@@ -204,7 +208,8 @@ export function addLevel(
         };
         if (!connectivityMap) {
             connectivityMap = new Array<number>(size);
-        } else {
+        }
+        else {
             connectivityMap.length = size;
         }
         connectivityMap.fill(-1, 0, size);
@@ -263,7 +268,8 @@ export function addLevel(
             if (bottom) {
                 n.push(node + numColumns);
             }
-        } else {
+        }
+        else {
             if (left) {
                 n.push(node - 1);
             }
@@ -307,12 +313,15 @@ export function addLevel(
                             );
                         }
                         return opt.tiles[key](p);
-                    } else if (opt.wildcardTile) {
+                    }
+                    else if (opt.wildcardTile) {
                         return opt.wildcardTile(key, p);
                     }
-                } else if (Array.isArray(key)) {
+                }
+                else if (Array.isArray(key)) {
                     return key;
-                } else {
+                }
+                else {
                     throw new Error(
                         "Expected a symbol or a component list",
                     );
@@ -423,7 +432,8 @@ export function addLevel(
                                 minHit = hit;
                                 minHit!.object = tile;
                             }
-                        } else {
+                        }
+                        else {
                             minHit = hit;
                             minHit!.object = tile;
                         }
@@ -600,7 +610,8 @@ export function addLevel(
                         ),
                     to,
                 ];
-            } else {
+            }
+            else {
                 return null;
             }
         },

@@ -54,6 +54,7 @@ scene("game", () => {
 
 if (getGamepads().length > 0) {
     go("game");
-} else {
+}
+else {
     go("nogamepad");
 }

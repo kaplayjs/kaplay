@@ -68,7 +68,8 @@ onKeyPress("enter", () => {
             e.stage = 1;
             e.rock();
             e.use(sprite("egg_crack"));
-        } else if (e.stage === 1) {
+        }
+        else if (e.stage === 1) {
             e.stage = 2;
             e.use(sprite("bean"));
             addKaboom(e.pos.sub(0, e.height / 2));

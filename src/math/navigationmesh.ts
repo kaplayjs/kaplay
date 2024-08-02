@@ -247,7 +247,8 @@ export class NavMesh implements Graph {
                 );
             }
             return [start, ...edges, goal];
-        } else { // type === "centroids"
+        }
+        else { // type === "centroids"
             return [
                 start,
                 ...path.slice(1, -1).map(index =>

@@ -39,9 +39,11 @@ export function lerp<V extends LerpValue>(
 ): V {
     if (typeof a === "number" && typeof b === "number") {
         return a + (b - a) * t as V;
-    } else if (a instanceof Vec2 && b instanceof Vec2) {
+    }
+    else if (a instanceof Vec2 && b instanceof Vec2) {
         return a.lerp(b, t) as V;
-    } else if (a instanceof Color && b instanceof Color) {
+    }
+    else if (a instanceof Color && b instanceof Color) {
         return a.lerp(b, t) as V;
     }
     throw new Error(
@@ -302,7 +304,8 @@ export function vec2(...args: Vec2Args): Vec2 {
     if (args.length === 1) {
         if (args[0] instanceof Vec2) {
             return new Vec2(args[0].x, args[0].y);
-        } else if (Array.isArray(args[0]) && args[0].length === 2) {
+        }
+        else if (Array.isArray(args[0]) && args[0].length === 2) {
             return new Vec2(...args[0]);
         }
     }
@@ -414,12 +417,15 @@ class Mat2 {
     eigenvectors(e1: number, e2: number) {
         if (this.c != 0) {
             return [[e1 - this.d, this.c], [e2 - this.d, this.c]];
-        } else if (this.b != 0) {
+        }
+        else if (this.b != 0) {
             return [[this.b, e1 - this.a], [this.b, e2 - this.a]];
-        } else {
+        }
+        else {
             if (Math.abs(this.transform(vec2(1, 0)).x - e1) < Number.EPSILON) {
                 return [[1, 0], [0, 1]];
-            } else {
+            }
+            else {
                 return [[0, 1], [1, 0]];
             }
         }
@@ -918,11 +924,13 @@ export class Mat4 {
             const det = this.m[0] * this.m[5] - this.m[1] * this.m[4];
             const r = Math.sqrt(this.m[0] * this.m[0] + this.m[1] * this.m[1]);
             return new Vec2(r, det / r);
-        } else if (this.m[4] != 0 || this.m[5] != 0) {
+        }
+        else if (this.m[4] != 0 || this.m[5] != 0) {
             const det = this.m[0] * this.m[5] - this.m[1] * this.m[4];
             const s = Math.sqrt(this.m[4] * this.m[4] + this.m[5] * this.m[5]);
             return new Vec2(det / s, s);
-        } else {
+        }
+        else {
             return new Vec2(0, 0);
         }
     }
@@ -935,14 +943,16 @@ export class Mat4 {
                     ? Math.acos(this.m[0] / r)
                     : -Math.acos(this.m[0] / r),
             );
-        } else if (this.m[4] != 0 || this.m[5] != 0) {
+        }
+        else if (this.m[4] != 0 || this.m[5] != 0) {
             const s = Math.sqrt(this.m[4] * this.m[4] + this.m[5] * this.m[5]);
             return rad2deg(
                 Math.PI / 2 - (this.m[5] > 0
                     ? Math.acos(-this.m[4] / s)
                     : -Math.acos(this.m[4] / s)),
             );
-        } else {
+        }
+        else {
             return 0;
         }
     }
@@ -955,14 +965,16 @@ export class Mat4 {
                     / (r * r),
                 0,
             );
-        } else if (this.m[4] != 0 || this.m[5] != 0) {
+        }
+        else if (this.m[4] != 0 || this.m[5] != 0) {
             const s = Math.sqrt(this.m[4] * this.m[4] + this.m[5] * this.m[5]);
             return new Vec2(
                 0,
                 Math.atan(this.m[0] * this.m[4] + this.m[1] * this.m[5])
                     / (s * s),
             );
-        } else {
+        }
+        else {
             return new Vec2(0, 0);
         }
     }
@@ -1078,20 +1090,26 @@ export class RNG {
     genAny<T = RNGValue>(...args: [] | [T] | [T, T]): T {
         if (args.length === 0) {
             return this.gen() as T;
-        } else if (args.length === 1) {
+        }
+        else if (args.length === 1) {
             if (typeof args[0] === "number") {
                 return this.genNumber(0, args[0]) as T;
-            } else if (args[0] instanceof Vec2) {
+            }
+            else if (args[0] instanceof Vec2) {
                 return this.genVec2(vec2(0, 0), args[0]) as T;
-            } else if (args[0] instanceof Color) {
+            }
+            else if (args[0] instanceof Color) {
                 return this.genColor(rgb(0, 0, 0), args[0]) as T;
             }
-        } else if (args.length === 2) {
+        }
+        else if (args.length === 2) {
             if (typeof args[0] === "number" && typeof args[1] === "number") {
                 return this.genNumber(args[0], args[1]) as T;
-            } else if (args[0] instanceof Vec2 && args[1] instanceof Vec2) {
+            }
+            else if (args[0] instanceof Vec2 && args[1] instanceof Vec2) {
                 return this.genVec2(args[0], args[1]) as T;
-            } else if (args[0] instanceof Color && args[1] instanceof Color) {
+            }
+            else if (args[0] instanceof Color && args[1] instanceof Color) {
                 return this.genColor(args[0], args[1]) as T;
             }
         }
@@ -1281,13 +1299,15 @@ export function testLineCircle(l: Line, circle: Circle): boolean {
     // No root
     if ((a <= Number.EPSILON) || (dis < 0)) {
         return false;
-    } // One possible root
+    }
+    // One possible root
     else if (dis == 0) {
         const t = -b / (2 * a);
         if (t >= 0 && t <= 1) {
             return true;
         }
-    } // Two possible roots
+    }
+    // Two possible roots
     else {
         const t1 = (-b + Math.sqrt(dis)) / (2 * a);
         const t2 = (-b - Math.sqrt(dis)) / (2 * a);
@@ -1441,7 +1461,8 @@ export function testEllipseEllipse(
             ellipse2,
             new Circle(ellipse1.center, ellipse1.radiusX),
         );
-    } else if (ellipse2.radiusX === ellipse2.radiusY) {
+    }
+    else if (ellipse2.radiusX === ellipse2.radiusY) {
         return testEllipseCircle(
             ellipse1,
             new Circle(ellipse2.center, ellipse2.radiusX),
@@ -1556,16 +1577,19 @@ export function testEllipseEllipse(
             - 4 * a ** 3 * c - 4 * b ** 3;
         if (condition1 > 0 && condition2 < 0 && condition3 > 0) {
             return false;
-        } else {
+        }
+        else {
             return true;
         }
-    } else {
+    }
+    else {
         const condition1 = -3 * b + a ** 2;
         const condition2 = -27 * c ** 2 + 18 * c * a * b + a ** 2 * b ** 2
             - 4 * a ** 3 * c - 4 * b ** 3;
         if (condition1 > 0 && condition2 > 0) {
             return false;
-        } else {
+        }
+        else {
             return true;
         }
     }
@@ -1594,17 +1618,23 @@ export type ShapeType = Point | Circle | Line | Rect | Polygon | Ellipse;
 export function testPointShape(point: Point, shape: ShapeType): boolean {
     if (shape instanceof Vec2) {
         return testPointPoint(shape as Vec2, point.pt);
-    } else if (shape instanceof Circle) {
+    }
+    else if (shape instanceof Circle) {
         return testCirclePoint(shape as Circle, point.pt);
-    } else if (shape instanceof Line) {
+    }
+    else if (shape instanceof Line) {
         return testLinePoint(shape as Line, point.pt);
-    } else if (shape instanceof Rect) {
+    }
+    else if (shape instanceof Rect) {
         return testRectPoint(shape as Rect, point.pt);
-    } else if (shape instanceof Polygon) {
+    }
+    else if (shape instanceof Polygon) {
         return testPolygonPoint(shape as Polygon, point.pt);
-    } else if (shape instanceof Ellipse) {
+    }
+    else if (shape instanceof Ellipse) {
         return testEllipsePoint(shape as Ellipse, point.pt);
-    } else {
+    }
+    else {
         return false;
     }
 }
@@ -1612,17 +1642,23 @@ export function testPointShape(point: Point, shape: ShapeType): boolean {
 export function testLineShape(line: Line, shape: ShapeType | Vec2): boolean {
     if (shape instanceof Vec2) {
         return testLinePoint(line, shape as Vec2);
-    } else if (shape instanceof Circle) {
+    }
+    else if (shape instanceof Circle) {
         return testLineCircle(line, shape as Circle);
-    } else if (shape instanceof Line) {
+    }
+    else if (shape instanceof Line) {
         return testLineLine(line, shape as Line) != null;
-    } else if (shape instanceof Rect) {
+    }
+    else if (shape instanceof Rect) {
         return testRectLine(shape as Rect, line);
-    } else if (shape instanceof Polygon) {
+    }
+    else if (shape instanceof Polygon) {
         return testLinePolygon(line, shape as Polygon);
-    } else if (shape instanceof Ellipse) {
+    }
+    else if (shape instanceof Ellipse) {
         return testEllipseLine(shape as Ellipse, line);
-    } else {
+    }
+    else {
         return false;
     }
 }
@@ -1633,17 +1669,23 @@ export function testCircleShape(
 ): boolean {
     if (shape instanceof Vec2) {
         return testCirclePoint(circle, shape as Vec2);
-    } else if (shape instanceof Circle) {
+    }
+    else if (shape instanceof Circle) {
         return testCircleCircle(circle, shape as Circle);
-    } else if (shape instanceof Line) {
+    }
+    else if (shape instanceof Line) {
         return testLineCircle(shape as Line, circle);
-    } else if (shape instanceof Rect) {
+    }
+    else if (shape instanceof Rect) {
         return testRectCircle(shape as Rect, circle);
-    } else if (shape instanceof Polygon) {
+    }
+    else if (shape instanceof Polygon) {
         return testCirclePolygon(circle, shape as Polygon);
-    } else if (shape instanceof Ellipse) {
+    }
+    else if (shape instanceof Ellipse) {
         return testEllipseCircle(shape as Ellipse, circle);
-    } else {
+    }
+    else {
         return false;
     }
 }
@@ -1651,17 +1693,23 @@ export function testCircleShape(
 export function testRectShape(rect: Rect, shape: ShapeType | Vec2): boolean {
     if (shape instanceof Vec2) {
         return testRectPoint(rect, shape as Vec2);
-    } else if (shape instanceof Circle) {
+    }
+    else if (shape instanceof Circle) {
         return testRectCircle(rect, shape as Circle);
-    } else if (shape instanceof Line) {
+    }
+    else if (shape instanceof Line) {
         return testRectLine(rect, shape as Line);
-    } else if (shape instanceof Rect) {
+    }
+    else if (shape instanceof Rect) {
         return testRectRect(rect, shape as Rect);
-    } else if (shape instanceof Polygon) {
+    }
+    else if (shape instanceof Polygon) {
         return testRectPolygon(rect, shape as Polygon);
-    } else if (shape instanceof Ellipse) {
+    }
+    else if (shape instanceof Ellipse) {
         return testEllipseRect(shape as Ellipse, rect);
-    } else {
+    }
+    else {
         return false;
     }
 }
@@ -1672,17 +1720,23 @@ export function testPolygonShape(
 ): boolean {
     if (shape instanceof Vec2) {
         return testPolygonPoint(polygon, shape as Vec2);
-    } else if (shape instanceof Circle) {
+    }
+    else if (shape instanceof Circle) {
         return testCirclePolygon(shape as Circle, polygon);
-    } else if (shape instanceof Line) {
+    }
+    else if (shape instanceof Line) {
         return testLinePolygon(shape as Line, polygon);
-    } else if (shape instanceof Rect) {
+    }
+    else if (shape instanceof Rect) {
         return testRectPolygon(shape as Rect, polygon);
-    } else if (shape instanceof Polygon) {
+    }
+    else if (shape instanceof Polygon) {
         return testPolygonPolygon(shape as Polygon, polygon);
-    } else if (shape instanceof Ellipse) {
+    }
+    else if (shape instanceof Ellipse) {
         return testEllipsePolygon(shape as Ellipse, polygon);
-    } else {
+    }
+    else {
         return false;
     }
 }
@@ -1690,17 +1744,23 @@ export function testPolygonShape(
 export function testEllipseShape(ellipse: Ellipse, shape: ShapeType): boolean {
     if (shape instanceof Vec2) {
         return testEllipsePoint(ellipse, shape as Vec2);
-    } else if (shape instanceof Circle) {
+    }
+    else if (shape instanceof Circle) {
         return testEllipseCircle(ellipse, shape as Circle);
-    } else if (shape instanceof Line) {
+    }
+    else if (shape instanceof Line) {
         return testEllipseLine(ellipse, shape as Line);
-    } else if (shape instanceof Rect) {
+    }
+    else if (shape instanceof Rect) {
         return testEllipseRect(ellipse, shape as Rect);
-    } else if (shape instanceof Polygon) {
+    }
+    else if (shape instanceof Polygon) {
         return testEllipsePolygon(ellipse, shape as Polygon);
-    } else if (shape instanceof Ellipse) {
+    }
+    else if (shape instanceof Ellipse) {
         return testEllipseEllipse(shape as Ellipse, ellipse);
-    } else {
+    }
+    else {
         return false;
     }
 }
@@ -1708,17 +1768,23 @@ export function testEllipseShape(ellipse: Ellipse, shape: ShapeType): boolean {
 export function testShapeShape(shape1: ShapeType, shape2: ShapeType): boolean {
     if (shape1 instanceof Vec2) {
         return testPointShape(new Point(shape1), shape2);
-    } else if (shape1 instanceof Circle) {
+    }
+    else if (shape1 instanceof Circle) {
         return testCircleShape(shape1 as Circle, shape2);
-    } else if (shape1 instanceof Line) {
+    }
+    else if (shape1 instanceof Line) {
         return testLineShape(shape1 as Line, shape2);
-    } else if (shape1 instanceof Rect) {
+    }
+    else if (shape1 instanceof Rect) {
         return testRectShape(shape1 as Rect, shape2);
-    } else if (shape1 instanceof Polygon) {
+    }
+    else if (shape1 instanceof Polygon) {
         return testPolygonShape(shape1 as Polygon, shape2);
-    } else if (shape1 instanceof Ellipse) {
+    }
+    else if (shape1 instanceof Ellipse) {
         return testEllipseShape(shape1 as Ellipse, shape2);
-    } else {
+    }
+    else {
         return false;
     }
 }
@@ -1809,7 +1875,8 @@ function raycastRect(origin: Vec2, direction: Vec2, rect: Rect) {
             normal: normal,
             fraction: tmin,
         };
-    } else {
+    }
+    else {
         return null;
     }
 }
@@ -1832,7 +1899,8 @@ function raycastCircle(
     // No root
     if ((A <= Number.EPSILON) || (disc < 0)) {
         return null;
-    } // One possible root
+    }
+    // One possible root
     else if (disc == 0) {
         const t = -B / (2 * A);
         if (t >= 0 && t <= 1) {
@@ -1843,7 +1911,8 @@ function raycastCircle(
                 fraction: t,
             };
         }
-    } // Two possible roots
+    }
+    // Two possible roots
     else {
         const t1 = (-B + Math.sqrt(disc)) / (2 * A);
         const t2 = (-B - Math.sqrt(disc)) / (2 * A);
@@ -1956,7 +2025,8 @@ export function raycastGrid(
                 fraction: t / len, // Since dir is normalized, t is len times too large
                 gridPos,
             };
-        } else if (hit) {
+        }
+        else if (hit) {
             return hit;
         }
         if (tMax.x < tMax.y) {
@@ -1964,7 +2034,8 @@ export function raycastGrid(
             t = tMax.x;
             tMax.x += tDelta.x;
             steppedIndex = 0;
-        } else {
+        }
+        else {
             gridPos.y += step.y;
             t = tMax.y;
             tMax.y += tDelta.y;
@@ -2182,7 +2253,8 @@ export class Ellipse {
                 b,
                 rad2deg(Math.atan2(-v1[1], v1[0])),
             );
-        } else {
+        }
+        else {
             return new Ellipse(
                 vec2(),
                 b,
@@ -2210,7 +2282,8 @@ export class Ellipse {
                 tr.m[0] * this.radiusX,
                 tr.m[5] * this.radiusY,
             );
-        } else {
+        }
+        else {
             // Rotation. We can't just add angles, as the scale can squeeze the
             // ellipse and thus change the angle.
             // Get the transformation which maps the unit circle onto the ellipse
@@ -2233,7 +2306,8 @@ export class Ellipse {
                 this.center.sub(vec2(this.radiusX, this.radiusY)),
                 this.center.add(vec2(this.radiusX, this.radiusY)),
             );
-        } else {
+        }
+        else {
             // Rotation. We need to find the maximum x and y distance from the
             // center of the rotated ellipse
             const angle = deg2rad(this.angle);
@@ -2526,7 +2600,8 @@ export function curveLengthApproximation(
             const l2 = llut[index + 1];
             const a = (l - l1) / (l2 - l1);
             return t1 + (t2 - t1) * a;
-        } else {
+        }
+        else {
             if (t <= 0) return 0;
             if (t >= 1) return llut[entries - 1];
             let index = 0;
@@ -2725,7 +2800,8 @@ function approximately(a: number, b: number) {
 function cubeRoot(v: number) {
     if (v < 0) {
         return -Math.pow(-v, 1 / 3);
-    } else {
+    }
+    else {
         return Math.pow(v, 1 / 3);
     }
 }
@@ -3004,7 +3080,8 @@ export function triangulate(pts: Vec2[]): Vec2[][] {
             concaveVertices.splice(concaveVertices.indexOf(b), 1);
             --nVertices;
             skipped = 0;
-        } else if (++skipped > nVertices) {
+        }
+        else if (++skipped > nVertices) {
             return [];
         }
         current = next;

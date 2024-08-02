@@ -196,7 +196,8 @@ class AnimateChannel {
                 index,
                 (p - timing[index]) / (timing[index + 1] - timing[index]),
             ];
-        } else {
+        }
+        else {
             const index = Math.floor((count - 1) * p);
             return [index, (p - index / maxIndex) * maxIndex];
         }
@@ -220,7 +221,8 @@ class AnimateChannel {
                 default:
                     obj[name] = value;
             }
-        } else {
+        }
+        else {
             obj[name] = value;
         }
     }
@@ -286,7 +288,8 @@ class AnimateChannelNumber extends AnimateChannel {
         // Return exact value in case of exact hit or no interpolation, otherwise interpolate
         if (alpha == 0 || this.interpolation === "none") {
             this.setValue(obj, this.name, this.keys[index]);
-        } else {
+        }
+        else {
             const easing = this.easings ? this.easings[index] : this.easing;
             this.setValue(
                 obj,
@@ -366,7 +369,8 @@ class AnimateChannelVec2 extends AnimateChannel {
         // Return exact value in case of exact hit or no interpolation, otherwise interpolate
         if (alpha == 0 || this.interpolation === "none") {
             this.setValue(obj, this.name, this.keys[index]);
-        } else {
+        }
+        else {
             const easing = this.easings ? this.easings[index] : this.easing;
             // Use linear or spline interpolation
             switch (this.interpolation) {
@@ -442,7 +446,8 @@ class AnimateChannelColor extends AnimateChannel {
         // Return exact value in case of exact hit or no interpolation, otherwise interpolate
         if (alpha == 0 || this.interpolation == "none") {
             this.setValue(obj, this.name, this.keys[index]);
-        } else {
+        }
+        else {
             const easing = this.easings ? this.easings[index] : this.easing;
             this.setValue(
                 obj,
@@ -550,7 +555,8 @@ export function animate(gopts: AnimateCompOpt = {}): AnimateComp {
                         gopts.relative || false,
                     ),
                 );
-            } else if (keys[0] instanceof Vec2) {
+            }
+            else if (keys[0] instanceof Vec2) {
                 channels.push(
                     new AnimateChannelVec2(
                         name,
@@ -560,7 +566,8 @@ export function animate(gopts: AnimateCompOpt = {}): AnimateComp {
                         name === "pos" && (gopts.followMotion || false),
                     ),
                 );
-            } else if (keys[0] instanceof Color) {
+            }
+            else if (keys[0] instanceof Color) {
                 channels.push(
                     new AnimateChannelColor(
                         name,
@@ -636,10 +643,12 @@ export function serializeAnimation(obj: GameObj<any>, name: string): any {
 function deserializeKeys(keys: AnimationChannelKeys) {
     if (typeof keys[0] == "number") {
         return keys;
-    } else if (Array.isArray(keys[0])) {
+    }
+    else if (Array.isArray(keys[0])) {
         if (keys[0].length == 2) {
             return (keys as number[][]).map(k => new Vec2(k[0], k[1]));
-        } else if (keys[0].length == 3) {
+        }
+        else if (keys[0].length == 3) {
             return (keys as number[][]).map(k => new Color(k[0], k[1], k[2]));
         }
     }

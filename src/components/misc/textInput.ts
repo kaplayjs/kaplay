@@ -35,7 +35,8 @@ export function textInput(
                 ) {
                     if (k.isKeyDown("shift")) {
                         this.text += character.toUpperCase();
-                    } else {
+                    }
+                    else {
                         this.text += character;
                     }
                 }
