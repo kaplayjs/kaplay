@@ -122,6 +122,16 @@ export interface BodyComp extends Comp {
      * @since v2000.1
      */
     onHeadbutt(action: () => void): KEventController;
+    /**
+     * Register an event that runs when an object lands on this object.
+     *
+     * @since v3001.0
+     */
+    onLand(action: (obj: GameObj) => void): KEventController;
+    /**
+     * Register an event that runs when the object is bumped by another object head.
+     */
+    onHeadbutted(action: (obj: GameObj) => void): KEventController;
 }
 
 /**
@@ -258,6 +268,7 @@ export function body(opt: BodyCompOpt = {}): BodyComp {
                             }
                             else {
                                 this.trigger("ground", curPlatform);
+                                col.target.trigger("land", this);
                             }
                         }
                         else if (col.isTop() && this.isJumping()) {
@@ -265,6 +276,7 @@ export function body(opt: BodyCompOpt = {}): BodyComp {
                                 game.gravity.unit(),
                             );
                             this.trigger("headbutt", col.target);
+                            col.target.trigger("headbutted", this);
                         }
                     }
                 });
@@ -396,6 +408,14 @@ export function body(opt: BodyCompOpt = {}): BodyComp {
 
         onHeadbutt(this: GameObj, action: () => void): KEventController {
             return this.on("headbutt", action);
+        },
+
+        onLand(this: GameObj, action: (obj: GameObj) => void) {
+            return this.on("land", action);
+        },
+
+        onHeadbutted(this: GameObj, action: (obj: GameObj) => void) {
+            return this.on("headbutted", action);
         },
 
         inspect() {
