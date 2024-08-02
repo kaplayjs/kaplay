@@ -841,6 +841,8 @@ const kaplay = <
     function handleErr(err: Error) {
         console.error(err);
         audio.ctx.suspend();
+        const errorMessage = err.message
+            ?? "Unknown error, check console for more info";
 
         // TODO: this should only run once
         app.run(
@@ -882,7 +884,7 @@ const kaplay = <
 
                     drawText({
                         ...textStyle,
-                        text: err.message,
+                        text: errorMessage,
                         pos: vec2(pad, pad + title.height + gap),
                         fixed: true,
                     });
