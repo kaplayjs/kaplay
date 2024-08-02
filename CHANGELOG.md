@@ -148,6 +148,7 @@ obj.sprite = "bag";
 
 - **(break)** much typescript definitions was fixed, if you use typescript now
   maybe you see new errors that make your code strict
+- fix error screen not showing with not Error object
 
 ## Deprecated
 
