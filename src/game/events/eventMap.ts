@@ -51,6 +51,8 @@ export type GameObjEventNames =
 
 /**
  * Game Object events.
+ *
+ * @group Events
  */
 export type GameObjEventMap = {
     /** Triggered every frame */
@@ -133,6 +135,18 @@ export type GameObjEventMap = {
      * From {@link body `body()`} component
      */
     "headbutt": [GameObj];
+    /**
+     * Triggered when an object lands on this object
+     *
+     * From {@link body `body()`} component
+     */
+    "land": [GameObj];
+    /**
+     * Triggered when object is headbutted by another object
+     *
+     * From {@link body `body()`} component
+     */
+    "headbutted": [GameObj];
     /**
      * Triggered when object double jumps
      *
