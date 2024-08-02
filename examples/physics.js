@@ -16,6 +16,8 @@ function ballistics(pos, vel, t) {
     );
 }
 
+let y;
+
 onDraw(() => {
     drawCurve(t => ballistics(vec2(50, 100), vec2(200, -100), t * 2), {
         width: 2,
