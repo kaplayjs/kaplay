@@ -225,8 +225,8 @@ export function buoyancyEffector(
                 const o = obj as GameObj<BodyComp | AreaComp>;
                 const polygon = o.worldArea();
                 const [submergedArea, _] = polygon.cut(
-                    vec2(0, this.surfaceLevel),
-                    vec2(width(), this.surfaceLevel),
+                    vec2(-100, this.surfaceLevel),
+                    vec2(100, this.surfaceLevel),
                 );
 
                 if (submergedArea) {
