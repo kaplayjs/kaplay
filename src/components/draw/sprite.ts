@@ -63,7 +63,7 @@ export interface SpriteComp extends Comp {
     /**
      * Get current anim name.
      *
-     * @deprecated Use `getCurrentAnim().name` instead.
+     * @deprecated Use `getCurAnim().name` instead.
      */
     curAnim(): string | undefined;
     /**
