@@ -2359,6 +2359,17 @@ export class Ellipse {
     }
 }
 
+function segmentLineIntersection(a: Vec2, b: Vec2, c: Vec2, d: Vec2) {
+    const ab = b.sub(a);
+    const cd = d.sub(c);
+    let s = ab.cross(cd);
+    if (s < 0.00001 && s > -0.00001) return null;
+    const ac = c.sub(a);
+    s = ac.cross(cd) / s;
+    if (s < 0 || s > 1) return null;
+    return a.add(ab.scale(s));
+}
+
 /**
  * @group Math
  */
@@ -2429,10 +2440,7 @@ export class Polygon {
             const isLeft = ab.cross(ap) > 0;
             if (wasLeft != isLeft) {
                 // Since the points are on opposite sides of the line, we know they intersect
-                const intersection = testLineLine(
-                    new Line(prev, p),
-                    surfaceLine,
-                );
+                const intersection = segmentLineIntersection(prev, p, a, b);
                 left.push(intersection!);
                 right.push(intersection!);
                 wasLeft = isLeft;
