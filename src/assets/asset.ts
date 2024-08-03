@@ -8,6 +8,7 @@ import type { FontData } from "./font";
 import type { ShaderData } from "./shader";
 import type { SoundData } from "./sound";
 import type { SpriteData } from "./sprite";
+import type { VideoData } from "./video";
 
 /**
  * An asset is a resource that is loaded asynchronously.
@@ -189,6 +190,7 @@ export const initAssets = (ggl: GfxCtx) => {
         urlPrefix: "",
         // asset holders
         sprites: new AssetBucket<SpriteData>(),
+        videos: new AssetBucket<VideoData>(),
         fonts: new AssetBucket<FontData>(),
         bitmapFonts: new AssetBucket<BitmapFontData>(),
         sounds: new AssetBucket<SoundData>(),
