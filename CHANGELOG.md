@@ -106,6 +106,21 @@ obj.scale = vec2(3, 4);
 obj.sprite = "bag";
 ```
 
+- `sprite()` new methods, `getAnim`, `hasAnim`, `getCurAnim()`,
+
+```js
+const obj = add([
+    sprite("bean"),
+]);
+
+// get the current animation name
+debug.log(obj.getCurAnim().name);
+// check if an animation exists
+debug.log(obj.hasAnim("walk"));
+// get the animation data
+debug.log(obj.getAnim("walk"));
+```
+
 ## Misc
 
 - added `loadMusic()` to load streaming audio (doesn't block in loading screen)
@@ -142,7 +157,7 @@ obj.sprite = "bag";
 - added quadratic bezier and Catmull-Rom evaluation
 - added evaluation of the first and second derivatives for all splines
 - added higher order easing functions linear, steps and cubic-bezier
-- added a text input component
+- added `textInput()` component
 
 ## Bug fixes
 
