@@ -283,6 +283,31 @@ export function body(opt: BodyCompOpt = {}): BodyComp {
             }
         },
 
+        update(this: GameObj<PosComp | BodyComp | AreaComp>) {
+            if (curPlatform) {
+                if (
+                    // TODO: this prevents from falling when on edge
+                    !this.isColliding(curPlatform)
+                    || !curPlatform.exists()
+                    || !curPlatform.is("body")
+                ) {
+                    willFall = true;
+                }
+                else {
+                    if (
+                        lastPlatformPos
+                        && !curPlatform.pos.eq(lastPlatformPos)
+                        && opt.stickToPlatform !== false
+                    ) {
+                        this.moveBy(
+                            curPlatform.pos.sub(lastPlatformPos),
+                        );
+                    }
+                    lastPlatformPos = curPlatform.pos;
+                }
+            }
+        },
+
         fixedUpdate(this: GameObj<PosComp | BodyComp | AreaComp>) {
             if (game.gravity && !this.isStatic) {
                 if (willFall) {
@@ -295,27 +320,7 @@ export function body(opt: BodyCompOpt = {}): BodyComp {
                 let addGravity = true;
 
                 if (curPlatform) {
-                    if (
-                        // TODO: this prevents from falling when on edge
-                        !this.isColliding(curPlatform)
-                        || !curPlatform.exists()
-                        || !curPlatform.is("body")
-                    ) {
-                        willFall = true;
-                    }
-                    else {
-                        if (
-                            lastPlatformPos
-                            && !curPlatform.pos.eq(lastPlatformPos)
-                            && opt.stickToPlatform !== false
-                        ) {
-                            this.moveBy(
-                                curPlatform.pos.sub(lastPlatformPos),
-                            );
-                        }
-                        lastPlatformPos = curPlatform.pos;
-                        addGravity = false;
-                    }
+                    addGravity = false;
                 }
 
                 if (addGravity) {
