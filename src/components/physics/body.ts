@@ -184,6 +184,7 @@ export function body(opt: BodyCompOpt = {}): BodyComp {
     let willFall = false;
     const acc = vec2(0);
     let prevPhysicsPos: Vec2 | null = null;
+    let prevDrawPos: Vec2 | null = null;
 
     return {
         id: "body",
@@ -310,7 +311,9 @@ export function body(opt: BodyCompOpt = {}): BodyComp {
 
         fixedUpdate(this: GameObj<PosComp | BodyComp | AreaComp>) {
             if (prevPhysicsPos) {
-                this.pos = prevPhysicsPos;
+                if (this.pos.eq(prevDrawPos!)) {
+                    this.pos = prevPhysicsPos;
+                }
                 prevPhysicsPos = null;
             }
 
@@ -369,6 +372,7 @@ export function body(opt: BodyCompOpt = {}): BodyComp {
                     nextPhysicsPos,
                     dt / k.fixedDt(),
                 );
+                prevDrawPos = this.pos.clone();
             }
 
             acc.x = 0;
