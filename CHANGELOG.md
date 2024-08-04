@@ -1,10 +1,14 @@
-# v3001.0.0 (alpha, kaplay@next)
+# v4000.0.0 and v3001.0.0
+
+This version is a double release, with a lot of new features and breaking
+changes. v3001 release are focused in backward compatibility with v3000 with the
+features of v4000, while v4000 will have the most features and breaking changes.
 
 ## Input
 
-- added input bindings, `onButtonPress`, `onButtonRelease`, `onButtonDown`, and
-  it's corresponding boolean versions, `isButtonPressed`, `isButtonDown` and
-  `isButtonReleased`
+- (**v3001/4000**) added input bindings, `onButtonPress`, `onButtonRelease`,
+  `onButtonDown`, and it's corresponding boolean versions, `isButtonPressed`,
+  `isButtonDown` and `isButtonReleased`
 
 ```js
 // bind your buttons
@@ -22,7 +26,8 @@ onButtonPress("jump", () => {
 });
 ```
 
-- added `getButton(btn)` and `setButton(btn)` to get and set button bindings
+- (**v3001/4000**) added `getButton(btn)` and `setButton(btn)` to get and set
+  button bindings
 
 ```js
 debug.log(getButton("jump").keyboard); // ["space", "up"]
@@ -34,7 +39,8 @@ setButton("jump", {
 });
 ```
 
-- added `getLastInputDeviceType()` to get what was the last pressed device
+- (**v3001/4000**) added `getLastInputDeviceType()` to get what was the last
+  pressed device
 
 ```js
 onButtonPress(() => {
@@ -42,7 +48,7 @@ onButtonPress(() => {
 });
 ```
 
-- now you can use arrays in all input handlers
+- (**v3001/4000**) now you can use arrays in all input handlers
 
 ```js
 onKeyPress(["w", "up"], () => {
@@ -52,7 +58,7 @@ onKeyPress(["w", "up"], () => {
 
 ## Components
 
-- readded `layers()` and the `layer()` component
+- (**v3001/4000**) readded `layers()` and the `layer()` component
 
 Before the `z()` component, there was a `layer()` component that allowed you to
 control the draw order of objects. It was removed in v3000, but now it's back
@@ -73,7 +79,8 @@ layers(
 add([sprite("bg"), layer("bg")]);
 ```
 
-- added support for radius in individual corners for `rect()` component
+- (**v3001/4000**) added support for radius in individual corners for `rect()`
+  component
 
 ```js
 add([
@@ -83,8 +90,8 @@ add([
 ]);
 ```
 
-- added `getTreeRoot()` to get the game's root object, which is the parent of
-  all other objects
+- (**v3001/4000**) added `getTreeRoot()` to get the game's root object, which is
+  the parent of all other objects
 
 ```js
 // get the root object
@@ -93,7 +100,7 @@ root.add(); // same as add()
 root.get(); // same as get()
 ```
 
-- setters/getters syntax in `scale()` and `sprite()` component
+- (**v3001/4000**) setters/getters syntax in `scale()` and `sprite()` component
 
 ```js
 const obj = add([
@@ -123,41 +130,51 @@ debug.log(obj.getAnim("walk"));
 
 ## Misc
 
-- added `loadMusic()` to load streaming audio (doesn't block in loading screen)
-- added `chooseMultiple()` and `shuffle()` helpers for arrays
-- added `getSceneName()` to get the current scene name
-- added `camFlash()` to flash the screen
-- added `SpriteComp.getCurAnim()` to get the current animation data
-- added `Color.toArray()` to convert a color to an array
+- (**v3001/4000**) added `loadMusic()` to load streaming audio (doesn't block in
+  loading screen)
+- (**v3001/4000**) added `chooseMultiple()` and `shuffle()` helpers for arrays
+- (**v3001/4000**) added `getSceneName()` to get the current scene name
+- (**v3001/4000**) added `camFlash()` to flash the screen
+- (**v3001/4000**) added `SpriteComp.getCurAnim()` to get the current animation
+  data
+- (**v3001/4000**) added `Color.toArray()` to convert a color to an array
 - added `Vec2.toArray()` to convert a vec2 to an array (eg:
   player.pos.toArray())
-- added `Vec2.fromArray()` to convert an array to a vec2 (eg: player.pos =
-  Vec2.fromArray(newPosition))
-- added `outline()`, `shader()`, and `area()` properties to `debug.inspect` (f1)
-- added `kaboomOpt.debugKey` for customizing the key used to toggle debug mode
-- added `GameObjRaw.tags` to get a game object's tags
-- added `GameObjRaw<SpriteComp>.sprite` property to get the name of the sprite
-- added `patrol()` component to move along a list of waypoints
-- added `sentry()` component to notify when certain objects are in sight
-- added `particles()` component to emit and draw particles
-- added `NavMesh` class for pathfinding on a mesh
-- added `navigation()` component to calculate a list of waypoints on a graph
-- added `animate()` component to animate the properties of an object using
-  keyframes
-- added effector components: `areaEffector()`, `buoyancyEffector()`,
-  `pointEffector()`, `surfaceEffector()`
-- added `constantForce()` component
-- added global raycast function and raycast method to level
-- added support for textured polygons
-- added support for concave polygon drawing
-- added support for arrays in uniforms
-- added support for texture larger than 2048x2048
-- added support for gravity direction
-- added line join (bevel, miter, round) and line caps (square, round)
-- added quadratic bezier and Catmull-Rom evaluation
-- added evaluation of the first and second derivatives for all splines
-- added higher order easing functions linear, steps and cubic-bezier
-- added `textInput()` component
+- (**v3001/4000**) added `Vec2.fromArray()` to convert an array to a vec2 (eg:
+  player.pos = Vec2.fromArray(newPosition))
+- (**v3001/4000**) added `outline()`, `shader()`, and `area()` properties to
+  `debug.inspect` (f1)
+- (**v3001/4000**) added `kaboomOpt.debugKey` for customizing the key used to
+  toggle debug mode
+- (**v3001/4000**) added `GameObjRaw.tags` to get a game object's tags
+- (**v3001/4000**) added `GameObjRaw<SpriteComp>.sprite` property to get the
+  name of the sprite
+- (**v3001/4000**) added `patrol()` component to move along a list of waypoints
+- (**v3001/4000**) added `sentry()` component to notify when certain objects are
+  in sight
+- (**v3001/4000**) added `particles()` component to emit and draw particles
+- (**v3001/4000**) added `NavMesh` class for pathfinding on a mesh
+- (**v3001/4000**) added `navigation()` component to calculate a list of
+  waypoints on a graph
+- (**v3001/4000**) added `animate()` component to animate the properties of an
+  object using keyframes
+- (**v3001/4000**) added effector components: `areaEffector()`,
+  `buoyancyEffector()`, `pointEffector()`, `surfaceEffector()`
+- (**v3001/4000**) added `constantForce()` component
+- (**v3001/4000**) added global raycast function and raycast method to level
+- (**v3001/4000**) added support for textured polygons
+- (**v3001/4000**) added support for concave polygon drawing
+- (**v3001/4000**) added support for arrays in uniforms
+- (**v3001/4000**) added support for texture larger than 2048x2048
+- (**v3001/4000**) added support for gravity direction
+- (**v3001/4000**) added line join (bevel, miter, round) and line caps (square,
+  round)
+- (**v3001/4000**) added quadratic bezier and Catmull-Rom evaluation
+- (**v3001/4000**) added evaluation of the first and second derivatives for all
+  splines
+- (**v3001/4000**) added higher order easing functions linear, steps and
+  cubic-bezier
+- (**v3001/4000**) added `textInput()` component
 
 ## Bug fixes
 
