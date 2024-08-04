@@ -544,7 +544,12 @@ export function make<T>(comps: CompList<T> = []): GameObj<MakeType<T>> {
                 info[tag] = comp.inspect?.() ?? null;
             }
 
-            for (const comp of anonymousCompStates) {
+            for (const [i, comp] of anonymousCompStates.entries()) {
+                if (comp.inspect) {
+                    info[i] = comp.inspect();
+                    continue;
+                }
+
                 for (const [key, value] of Object.entries(comp)) {
                     if (typeof value === "function") {
                         continue;
