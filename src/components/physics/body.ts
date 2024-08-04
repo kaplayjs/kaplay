@@ -183,6 +183,7 @@ export function body(opt: BodyCompOpt = {}): BodyComp {
     let lastPlatformPos: null | Vec2 = null;
     let willFall = false;
     const acc = vec2(0);
+    let prevPhysicsPos: Vec2 | null = null;
 
     return {
         id: "body",
@@ -194,7 +195,6 @@ export function body(opt: BodyCompOpt = {}): BodyComp {
         isStatic: opt.isStatic ?? false,
         // TODO: prefer density * area
         mass: opt.mass ?? 1,
-
         add(this: GameObj<PosComp | BodyComp | AreaComp>) {
             if (this.mass === 0) {
                 throw new Error("Can't set body mass to 0");
@@ -309,6 +309,11 @@ export function body(opt: BodyCompOpt = {}): BodyComp {
         },
 
         fixedUpdate(this: GameObj<PosComp | BodyComp | AreaComp>) {
+            if (prevPhysicsPos) {
+                this.pos = prevPhysicsPos;
+                prevPhysicsPos = null;
+            }
+
             if (game.gravity && !this.isStatic) {
                 if (willFall) {
                     curPlatform = null;
@@ -349,13 +354,25 @@ export function body(opt: BodyCompOpt = {}): BodyComp {
             this.vel.x += acc.x * k.dt();
             this.vel.y += acc.y * k.dt();
 
-            acc.x = 0;
-            acc.y = 0;
-
             this.vel.x *= 1 - this.drag * k.dt();
             this.vel.y *= 1 - this.drag * k.dt();
 
             this.move(this.vel);
+
+            const dt = k.restDt();
+            if (dt) {
+                prevPhysicsPos = this.pos.clone();
+                const nextVel = this.vel.add(acc.scale(k.dt()));
+                const nextPhysicsPos = this.pos.add(nextVel.scale(k.dt()));
+                this.pos = k.lerp(
+                    prevPhysicsPos,
+                    nextPhysicsPos,
+                    dt / k.fixedDt(),
+                );
+            }
+
+            acc.x = 0;
+            acc.y = 0;
         },
 
         onPhysicsResolve(this: GameObj, action) {
