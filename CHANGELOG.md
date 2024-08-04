@@ -144,7 +144,7 @@ debug.log(obj.getAnim("walk"));
 - added `navigation()` component to calculate a list of waypoints on a graph
 - added `animate()` component to animate the properties of an object using
   keyframes
-- added effector components: `areaEffector()`, `buoyancyEffector`,
+- added effector components: `areaEffector()`, `buoyancyEffector()`,
   `pointEffector()`, `surfaceEffector()`
 - added `constantForce()` component
 - added global raycast function and raycast method to level
@@ -163,6 +163,7 @@ debug.log(obj.getAnim("walk"));
 
 - **(break)** much typescript definitions was fixed, if you use typescript now
   maybe you see new errors that make your code strict
+- fix error screen not showing with not Error object
 
 ## Deprecated
 
