@@ -5,6 +5,7 @@ import type { Quad } from "../math/math";
 import type { TexFilter } from "../types";
 import { type Asset, loadImg } from "./asset";
 import { makeFont } from "./font";
+import { fixURL } from "./utils";
 
 export interface GfxFont {
     tex: Texture;
@@ -33,9 +34,11 @@ export function loadBitmapFont(
     gh: number,
     opt: LoadBitmapFontOpt = {},
 ): Asset<BitmapFontData> {
+    const fontSrc = fixURL(src);
+
     return assets.bitmapFonts.add(
         name,
-        loadImg(src)
+        loadImg(fontSrc)
             .then((img) => {
                 return makeFont(
                     Texture.fromImage(gfx.ggl, img, opt),
