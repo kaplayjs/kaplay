@@ -1,8 +1,16 @@
 # Developing kaplay
 
+We're currently workign in two main branches:
+
+- `v3001`: the branch for v3001. This is the branch you should use to develop
+  new features, or all in general but breaking changes.
+- `master`: the main branch, where we developer v4000. This is the branch you
+  should use to develop new features that are breaking changes and can't be done
+  for v3001.
+
 1. `git clone https://github.com/kaplayjs/kaplay.git` to clone the repo.
-1. `cd kaplay` to enter the project directory.
-1. `pnpm install` to install dependencies.
+2. `cd kaplay` to enter the project directory.
+3. `pnpm install` to install dependencies.
 
 ## Editing examples
 
