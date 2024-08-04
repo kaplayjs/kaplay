@@ -18,6 +18,12 @@ import type { AnchorComp } from "../transform/anchor";
 import type { FixedComp } from "../transform/fixed";
 import type { PosComp } from "../transform/pos";
 
+let areaCount = 0;
+
+export function usesArea() {
+    return areaCount > 0;
+}
+
 /**
  * The {@link area `area()`} component.
  *
@@ -217,6 +223,7 @@ export function area(opt: AreaCompOpt = {}): AreaComp {
         collisionIgnore: opt.collisionIgnore ?? [],
 
         add(this: GameObj<AreaComp>) {
+            areaCount++;
             if (this.area.cursor) {
                 this.onHover(() => app.setCursor(this.area.cursor!));
             }
@@ -235,6 +242,10 @@ export function area(opt: AreaCompOpt = {}): AreaComp {
                 colliding[obj.id] = col;
                 collidingThisFrame.add(obj.id);
             });
+        },
+
+        destroy() {
+            areaCount--;
         },
 
         update(this: GameObj<AreaComp>) {
@@ -407,9 +418,11 @@ export function area(opt: AreaCompOpt = {}): AreaComp {
                     }
                 });
             }
-            else {throw new Error(
+            else {
+                throw new Error(
                     "onCollide() requires either a function or a tag",
-                );}
+                );
+            }
         },
 
         onCollideUpdate(
@@ -426,9 +439,11 @@ export function area(opt: AreaCompOpt = {}): AreaComp {
                     (obj, col) => obj.is(tag) && cb?.(obj, col),
                 );
             }
-            else {throw new Error(
+            else {
+                throw new Error(
                     "onCollideUpdate() requires either a function or a tag",
-                );}
+                );
+            }
         },
 
         onCollideEnd(
@@ -445,9 +460,11 @@ export function area(opt: AreaCompOpt = {}): AreaComp {
                     (obj) => obj.is(tag) && cb?.(obj),
                 );
             }
-            else {throw new Error(
+            else {
+                throw new Error(
                     "onCollideEnd() requires either a function or a tag",
-                );}
+                );
+            }
         },
 
         hasPoint(pt: Vec2): boolean {
@@ -517,9 +534,11 @@ export function area(opt: AreaCompOpt = {}): AreaComp {
             if (this.area.scale.x == this.area.scale.y) {
                 return `area: ${this.area.scale.x.toFixed(1)}x`;
             }
-            else {return `area: (${this.area.scale.x.toFixed(1)}x, ${
+            else {
+                return `area: (${this.area.scale.x.toFixed(1)}x, ${
                     this.area.scale.y.toFixed(1)
-                }y)`;}
+                }y)`;
+            }
         },
     };
 }
