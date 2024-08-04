@@ -38,6 +38,7 @@ type MakeType<T> = MakeTypeIsCLASS<T, MakeTypeIsFN<T>>;
 
 export function make<T>(comps: CompList<T> = []): GameObj<MakeType<T>> {
     const compStates = new Map<string, Comp>();
+    const anonymousCompStates: Comp[] = [];
     const cleanups = {} as Record<string, (() => unknown)[]>;
     const events = new KEventHandler();
     const inputEvents: KEventController[] = [];
@@ -203,7 +204,7 @@ export function make<T>(comps: CompList<T> = []): GameObj<MakeType<T>> {
             popTransform();
         },
 
-        // use a comp, or tag
+        // use a comp or a tag
         use(comp: Comp | Tag) {
             if (!comp) {
                 return;
@@ -235,6 +236,9 @@ export function make<T>(comps: CompList<T> = []): GameObj<MakeType<T>> {
                 gc = cleanups[comp.id];
                 compStates.set(comp.id, comp);
             }
+            else {
+                anonymousCompStates.push(comp);
+            }
 
             for (const k in comp) {
                 if (COMP_DESC.has(k)) {
@@ -245,7 +249,7 @@ export function make<T>(comps: CompList<T> = []): GameObj<MakeType<T>> {
                 if (!prop) continue;
 
                 if (typeof prop.value === "function") {
-                    // @ts-ignore Maybe a MAP would be better?
+                    // @ts-ignore
                     comp[k] = comp[k].bind(this);
                 }
 
@@ -539,6 +543,18 @@ export function make<T>(comps: CompList<T> = []): GameObj<MakeType<T>> {
             for (const [tag, comp] of compStates) {
                 info[tag] = comp.inspect?.() ?? null;
             }
+
+            for (const comp of anonymousCompStates) {
+                for (const [key, value] of Object.entries(comp)) {
+                    if (typeof value === "function") {
+                        continue;
+                    }
+                    else {
+                        info[key] = `${key}: ${value}`;
+                    }
+                }
+            }
+
             return info;
         },
 
