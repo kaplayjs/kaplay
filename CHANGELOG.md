@@ -175,6 +175,7 @@ debug.log(obj.getAnim("walk"));
 - (**v3001/4000**) added higher order easing functions linear, steps and
   cubic-bezier
 - (**v3001/4000**) added `textInput()` component
+- (**v3001/4000**) now you can see custom properties in debug.inspect
 
 ## Bug fixes
 
