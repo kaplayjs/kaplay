@@ -1959,6 +1959,12 @@ export interface KAPLAYCtx<
      */
     fixedDt(): number;
     /**
+     * Get the rest delta time since last frame.
+     *
+     * @group Info
+     */
+    restDt(): number;
+    /**
      * Get the total time since beginning.
      *
      * @since v3001

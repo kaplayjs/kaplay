@@ -218,7 +218,7 @@ import {
     z,
 } from "./components";
 
-import { dt, fixedDt } from "./app";
+import { dt, fixedDt, restDt } from "./app";
 import { type AudioCtx, burp, initAudio, play, volume } from "./audio";
 
 import {
@@ -1026,6 +1026,7 @@ const kaplay = <
         center,
         dt,
         fixedDt,
+        restDt,
         time: app.time,
         screenshot: app.screenshot,
         record,

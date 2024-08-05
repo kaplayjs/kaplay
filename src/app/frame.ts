@@ -7,3 +7,7 @@ export function dt() {
 export function fixedDt() {
     return app.fixedDt() * debug.timeScale;
 }
+
+export function restDt() {
+    return app.restDt() * debug.timeScale;
+}
