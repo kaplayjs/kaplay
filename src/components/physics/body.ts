@@ -184,7 +184,8 @@ export function body(opt: BodyCompOpt = {}): BodyComp {
     let willFall = false;
     const acc = vec2(0);
     let prevPhysicsPos: Vec2 | null = null;
-    let prevDrawPos: Vec2 | null = null;
+    let nextPhysicsPos: Vec2 | null = null;
+    let prevDrawPos: Vec2;
 
     return {
         id: "body",
@@ -197,6 +198,9 @@ export function body(opt: BodyCompOpt = {}): BodyComp {
         // TODO: prefer density * area
         mass: opt.mass ?? 1,
         add(this: GameObj<PosComp | BodyComp | AreaComp>) {
+            prevPhysicsPos = this.pos.clone();
+            nextPhysicsPos = this.pos.clone();
+            prevDrawPos = this.pos.clone();
             if (this.mass === 0) {
                 throw new Error("Can't set body mass to 0");
             }
@@ -307,11 +311,27 @@ export function body(opt: BodyCompOpt = {}): BodyComp {
                     lastPlatformPos = curPlatform.pos;
                 }
             }
+
+            const dt = k.restDt();
+            if (dt) {
+                // Check if no external changes were made
+                if (this.pos.eq(prevDrawPos)) {
+                    // Interpolate physics steps
+                    this.pos = k.lerp(
+                        prevPhysicsPos!,
+                        nextPhysicsPos!,
+                        dt / k.fixedDt(),
+                    );
+                    // Copy to check for changes
+                    prevDrawPos = this.pos.clone();
+                }
+            }
         },
 
         fixedUpdate(this: GameObj<PosComp | BodyComp | AreaComp>) {
+            // If we were interpolating, and the position wasn't set manually, reset to last physics position
             if (prevPhysicsPos) {
-                if (this.pos.eq(prevDrawPos!)) {
+                if (this.pos.eq(prevDrawPos)) {
                     this.pos = prevPhysicsPos;
                 }
                 prevPhysicsPos = null;
@@ -364,14 +384,12 @@ export function body(opt: BodyCompOpt = {}): BodyComp {
 
             const dt = k.restDt();
             if (dt) {
+                // Save this position as previous
                 prevPhysicsPos = this.pos.clone();
+                // Calculate next (future) position
                 const nextVel = this.vel.add(acc.scale(k.dt()));
-                const nextPhysicsPos = this.pos.add(nextVel.scale(k.dt()));
-                this.pos = k.lerp(
-                    prevPhysicsPos,
-                    nextPhysicsPos,
-                    dt / k.fixedDt(),
-                );
+                nextPhysicsPos = this.pos.add(nextVel.scale(k.dt()));
+                // Copy to check for changes
                 prevDrawPos = this.pos.clone();
             }
 

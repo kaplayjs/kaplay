@@ -312,6 +312,7 @@ export const initApp = (opt: {
                         }
                         fixedUpdate();
                     }
+                    state.restDt = fixedAccumulatedDt;
                     state.dt = accumulatedDt;
                     state.time += dt();
                     state.fpsCounter.tick(state.dt);
