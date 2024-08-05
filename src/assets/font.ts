@@ -12,7 +12,6 @@ import { Quad } from "../math/math";
 import type { LoadFontOpt, Outline, TexFilter } from "../types";
 import { Asset, loadProgress } from "./asset";
 import { type BitmapFontData, getBitmapFont, type GfxFont } from "./bitmapFont";
-import { fixURL } from "./utils";
 
 export class FontData {
     fontface: FontFace;
@@ -98,17 +97,16 @@ export function loadFont(
     src: string | BinaryData,
     opt: LoadFontOpt = {},
 ): Asset<FontData> {
-    const fontSrc = fixURL(src);
     const font = new FontFace(
         name,
-        typeof src === "string" ? `url(${fontSrc})` : fontSrc,
+        typeof src === "string" ? `url(${src})` : src,
     );
     document.fonts.add(font);
 
     return assets.fonts.add(
         name,
         font.load().catch((err) => {
-            throw new Error(`Failed to load font from "${fontSrc}": ${err}`);
+            throw new Error(`Failed to load font from "${src}": ${err}`);
         }).then((face) => new FontData(face, opt)),
     );
 }

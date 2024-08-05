@@ -76,9 +76,8 @@ export function loadMusic(
     name: string | null,
     url: string,
 ) {
-    const musicUrl = fixURL(url);
-    const a = new Audio(musicUrl);
+    const a = new Audio(url);
     a.preload = "auto";
 
-    return assets.music[name as keyof typeof assets.music] = musicUrl;
+    return assets.music[name as keyof typeof assets.music] = fixURL(url);
 }
