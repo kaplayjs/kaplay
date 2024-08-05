@@ -422,20 +422,25 @@ export function addLevel(
                 if (tiles.some(t => t.isObstacle)) {
                     return true;
                 }
-                let minHit: RaycastResult;
+                let minHit: RaycastResult = null;
                 for (const tile of tiles) {
                     if (tile.is("area")) {
                         const shape = tile.worldArea();
-                        const hit = shape.raycast(origin, direction);
-                        if (minHit!) {
-                            if (hit.fraction < minHit.fraction) {
-                                minHit = hit;
-                                minHit!.object = tile;
+                        const hit = shape.raycast(
+                            origin,
+                            direction,
+                        ) as RaycastResult;
+                        if (hit) {
+                            if (minHit) {
+                                if (hit.fraction < minHit.fraction) {
+                                    minHit = hit;
+                                    minHit.object = tile;
+                                }
                             }
-                        }
-                        else {
-                            minHit = hit;
-                            minHit!.object = tile;
+                            else {
+                                minHit = hit;
+                                minHit.object = tile;
+                            }
                         }
                     }
                 }
