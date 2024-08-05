@@ -213,6 +213,7 @@ import {
     textInput,
     tile,
     timer,
+    usesArea,
     uvquad,
     z,
 } from "./components";
@@ -743,6 +744,10 @@ const kaplay = <
     }
 
     function checkFrame() {
+        if (!usesArea()) {
+            return;
+        }
+
         // TODO: persistent grid?
         // start a spatial hash grid for more efficient collision detection
         const grid: Record<number, Record<number, GameObj<AreaComp>[]>> = {};
