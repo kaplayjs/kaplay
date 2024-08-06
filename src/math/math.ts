@@ -1984,7 +1984,7 @@ function raycastEllipse(
             // Calculate the normal at the unrotated ellipse, then rotate the normal to the rotated ellipse
             normal: R.transform(
                 vec2(ellipse.radiusY ** 2 * p.x, ellipse.radiusX ** 2 * p.y),
-            ),
+            ).unit(),
             fraction,
         };
     }
