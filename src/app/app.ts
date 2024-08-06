@@ -100,6 +100,7 @@ export const initAppState = (opt: {
         stopped: false,
         dt: 0,
         fixedDt: 1 / 50,
+        restDt: 0,
         time: 0,
         realTime: 0,
         fpsCounter: new FPSCounter(),
@@ -174,6 +175,10 @@ export const initApp = (opt: {
 
     function fixedDt() {
         return state.fixedDt * state.timeScale;
+    }
+
+    function restDt() {
+        return state.restDt * state.timeScale;
     }
 
     function isHidden() {
@@ -299,10 +304,15 @@ export const initApp = (opt: {
                 if (!state.skipTime) {
                     fixedAccumulatedDt += accumulatedDt;
                     state.dt = state.fixedDt;
+                    state.restDt = 0;
                     while (fixedAccumulatedDt > state.fixedDt) {
-                        fixedUpdate();
                         fixedAccumulatedDt -= state.fixedDt;
+                        if (fixedAccumulatedDt < state.fixedDt) {
+                            state.restDt = fixedAccumulatedDt;
+                        }
+                        fixedUpdate();
                     }
+                    state.restDt = fixedAccumulatedDt;
                     state.dt = accumulatedDt;
                     state.time += dt();
                     state.fpsCounter.tick(state.dt);
@@ -1170,6 +1180,7 @@ export const initApp = (opt: {
     return {
         dt,
         fixedDt,
+        restDt,
         time,
         run,
         canvas: state.canvas,

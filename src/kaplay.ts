@@ -213,11 +213,12 @@ import {
     textInput,
     tile,
     timer,
+    usesArea,
     uvquad,
     z,
 } from "./components";
 
-import { dt, fixedDt } from "./app";
+import { dt, fixedDt, restDt } from "./app";
 import { type AudioCtx, burp, initAudio, play, volume } from "./audio";
 
 import {
@@ -743,6 +744,10 @@ const kaplay = <
     }
 
     function checkFrame() {
+        if (!usesArea()) {
+            return;
+        }
+
         // TODO: persistent grid?
         // start a spatial hash grid for more efficient collision detection
         const grid: Record<number, Record<number, GameObj<AreaComp>[]>> = {};
@@ -841,6 +846,8 @@ const kaplay = <
     function handleErr(err: Error) {
         console.error(err);
         audio.ctx.suspend();
+        const errorMessage = err.message ?? String(err)
+            ?? "Unknown error, check console for more info";
 
         // TODO: this should only run once
         app.run(
@@ -882,7 +889,7 @@ const kaplay = <
 
                     drawText({
                         ...textStyle,
-                        text: err.message,
+                        text: errorMessage,
                         pos: vec2(pad, pad + title.height + gap),
                         fixed: true,
                     });
@@ -1019,6 +1026,7 @@ const kaplay = <
         center,
         dt,
         fixedDt,
+        restDt,
         time: app.time,
         screenshot: app.screenshot,
         record,

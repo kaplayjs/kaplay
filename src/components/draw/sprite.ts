@@ -1,7 +1,7 @@
 // TODO: accept canvas
 
 import { dt } from "../../app";
-import type { Asset, SpriteData } from "../../assets";
+import type { Asset, SpriteAnim, SpriteData } from "../../assets";
 import { resolveSprite } from "../../assets/sprite";
 import { onLoad } from "../../game";
 import { getRenderProps } from "../../game/utils";
@@ -63,9 +63,17 @@ export interface SpriteComp extends Comp {
     /**
      * Get current anim name.
      *
-     * @deprecated Use `getCurrentAnim().name` instead.
+     * @deprecated Use `getCurAnim().name` instead.
      */
     curAnim(): string | undefined;
+    /**
+     * Check if object's sprite has an animation.
+     */
+    hasAnim(name: string): boolean;
+    /**
+     * Get an animation.
+     */
+    getAnim(name: string): SpriteAnim | null;
     /**
      * Speed multiplier for all animations (for the actual fps for an anim use .play("anim", { speed: 10 })).
      */
@@ -456,6 +464,14 @@ export function sprite(
 
         curAnim() {
             return curAnim?.name;
+        },
+
+        getAnim(name) {
+            return spriteData?.anims[name] ?? null;
+        },
+
+        hasAnim(name) {
+            return Boolean(this.getAnim(name));
         },
 
         onAnimEnd(
