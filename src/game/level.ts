@@ -413,11 +413,11 @@ export function addLevel(
         },
 
         raycast(origin: Vec2, direction: Vec2) {
-            origin = origin.scale(
+            const levelOrigin = origin.scale(
                 1 / this.tileWidth(),
                 1 / this.tileHeight(),
             );
-            const hit = raycastGrid(origin, direction, (tilePos: Vec2) => {
+            const hit = raycastGrid(levelOrigin, direction, (tilePos: Vec2) => {
                 const tiles = this.getAt(tilePos);
                 if (tiles.some(t => t.isObstacle)) {
                     return true;
