@@ -280,7 +280,7 @@ export function play(
 
         set pan(pan: number) {
             panNode.pan.value = pan;
-        }
+        },
 
         get pan() {
             return panNode.pan.value;
