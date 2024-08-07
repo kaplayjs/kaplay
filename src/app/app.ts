@@ -840,8 +840,10 @@ export const initApp = (opt: {
     const pd = opt.pixelDensity || window.devicePixelRatio || 1;
 
     canvasEvents.mousemove = (e) => {
+        let timer;
         const mousePos = new Vec2(e.offsetX, e.offsetY);
         const mouseDeltaPos = new Vec2(e.movementX, e.movementY);
+
         if (isFullscreen()) {
             const cw = state.canvas.width / pd;
             const ch = state.canvas.height / pd;
@@ -862,12 +864,21 @@ export const initApp = (opt: {
                 mousePos.y = map(e.offsetY - offset, 0, ch * ratio, 0, ch);
             }
         }
+
         state.events.onOnce("input", () => {
             state.isMouseMoved = true;
             state.mousePos = mousePos;
             state.mouseDeltaPos = mouseDeltaPos;
             state.events.trigger("mouseMove");
         });
+
+        clearTimeout(timer);
+
+        // reset mouse moved state after 100ms
+        timer = setTimeout(() => {
+            state.isMouseMoved = false;
+            state.mouseDeltaPos = new Vec2(0);
+        }, 100);
     };
 
     const MOUSE_BUTTONS: MouseButton[] = [
