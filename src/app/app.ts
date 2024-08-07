@@ -678,6 +678,7 @@ export const initApp = (opt: {
 
         state.charInputted = [];
         state.isMouseMoved = false;
+        state.mouseDeltaPos = new Vec2(0);
 
         state.gamepadStates.forEach((s) => {
             s.buttonState.update();
@@ -840,7 +841,6 @@ export const initApp = (opt: {
     const pd = opt.pixelDensity || window.devicePixelRatio || 1;
 
     canvasEvents.mousemove = (e) => {
-        let timer;
         const mousePos = new Vec2(e.offsetX, e.offsetY);
         const mouseDeltaPos = new Vec2(e.movementX, e.movementY);
 
@@ -871,14 +871,6 @@ export const initApp = (opt: {
             state.mouseDeltaPos = mouseDeltaPos;
             state.events.trigger("mouseMove");
         });
-
-        clearTimeout(timer);
-
-        // reset mouse moved state after 100ms
-        timer = setTimeout(() => {
-            state.isMouseMoved = false;
-            state.mouseDeltaPos = new Vec2(0);
-        }, 100);
     };
 
     const MOUSE_BUTTONS: MouseButton[] = [
