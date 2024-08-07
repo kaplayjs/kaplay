@@ -104,6 +104,7 @@ function createMazeLevelMap(width, height, options) {
 const level = addLevel(
     createMazeLevelMap(15, 15, {}),
     {
+        pos: vec2(100, 100),
         tileWidth: TILE_WIDTH,
         tileHeight: TILE_HEIGHT,
         tiles: {
@@ -129,7 +130,7 @@ const bean = level.spawn(
 );
 
 onClick(() => {
-    const pos = mousePos();
+    const pos = level.fromScreen(mousePos());
     bean.setTarget(vec2(
         Math.floor(pos.x / TILE_WIDTH) * TILE_WIDTH + TILE_WIDTH / 2,
         Math.floor(pos.y / TILE_HEIGHT) * TILE_HEIGHT + TILE_HEIGHT / 2,
@@ -145,6 +146,7 @@ onUpdate(() => {
     }
     pts.push(pts[1]);
     drawPolygon({
+        pos: vec2(100, 100),
         pts: pts,
         color: rgb(255, 255, 100),
     });
