@@ -1,5 +1,5 @@
 kaplay({
-    background: "",
+    background: [212, 110, 179],
 });
 
 loadRoot("/examples");
