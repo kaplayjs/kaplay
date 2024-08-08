@@ -1,4 +1,10 @@
 import { DEF_ANCHOR } from "../../constants";
+import {
+    LocalAreaDirty,
+    LocalAreaUpdated,
+    WorldAreaDirty,
+    WorldAreaUpdated,
+} from "../../game/make";
 import { isFixed } from "../../game/utils";
 import { anchorPt, getViewportScale } from "../../gfx";
 import { app, game, k } from "../../kaplay";
@@ -217,6 +223,8 @@ export interface AreaCompOpt {
 export function area(opt: AreaCompOpt = {}): AreaComp {
     const colliding: Record<string, Collision> = {};
     const collidingThisFrame = new Set();
+    let localArea: Shape;
+    let worldArea: Polygon;
 
     return {
         id: "area",
@@ -487,37 +495,51 @@ export function area(opt: AreaCompOpt = {}): AreaComp {
         localArea(
             this: GameObj<AreaComp | { renderArea(): Shape }>,
         ): Shape {
-            return this.area.shape
-                ? this.area.shape
-                : this.renderArea();
+            if (this.dirtyFlags & LocalAreaDirty) {
+                localArea = this.area.shape
+                    ? this.area.shape
+                    : this.renderArea();
+
+                this.dirtyFlags &= ~LocalAreaDirty;
+                this.dirtyFlags |= LocalAreaUpdated;
+            }
+            return localArea;
         },
 
-        // TODO: cache
         worldArea(this: GameObj<AreaComp | AnchorComp>): Polygon {
-            const localArea = this.localArea();
+            if (this.dirtyFlags & WorldAreaDirty) {
+                const localArea = this.localArea();
 
-            if (
-                !(localArea instanceof k.Polygon || localArea instanceof k.Rect)
-            ) {
-                throw new Error(
-                    "Only support polygon and rect shapes for now",
-                );
+                if (
+                    !(localArea instanceof k.Polygon
+                        || localArea instanceof k.Rect)
+                ) {
+                    console.log(localArea);
+                    throw new Error(
+                        "Only support polygon and rect shapes for now",
+                    );
+                }
+
+                const transform = (this as GameObj).worldTransform
+                    .clone()
+                    .scale(vec2(this.area.scale ?? 1))
+                    .translate(this.area.offset);
+
+                if (localArea instanceof k.Rect) {
+                    const offset = anchorPt(this.anchor || DEF_ANCHOR)
+                        .add(1, 1)
+                        .scale(-0.5)
+                        .scale(localArea.width, localArea.height);
+                    transform.translate(offset);
+                }
+
+                worldArea = localArea.transform(transform) as Polygon;
+
+                this.dirtyFlags &= ~WorldAreaDirty;
+                this.dirtyFlags |= WorldAreaUpdated;
             }
 
-            const transform = this.transform
-                .clone()
-                .scale(vec2(this.area.scale ?? 1))
-                .translate(this.area.offset);
-
-            if (localArea instanceof k.Rect) {
-                const offset = anchorPt(this.anchor || DEF_ANCHOR)
-                    .add(1, 1)
-                    .scale(-0.5)
-                    .scale(localArea.width, localArea.height);
-                transform.translate(offset);
-            }
-
-            return localArea.transform(transform) as Polygon;
+            return worldArea;
         },
 
         screenArea(this: GameObj<AreaComp | FixedComp>): Polygon {

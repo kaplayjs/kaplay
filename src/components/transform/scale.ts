@@ -1,5 +1,6 @@
+import { AllDirty, LocalTransformDirty } from "../../game/make";
 import { Vec2, vec2, type Vec2Args } from "../../math/math";
-import type { Comp } from "../../types";
+import type { Comp, GameObj } from "../../types";
 
 /**
  * The {@link scale `scale()`} component.
@@ -48,6 +49,7 @@ export function scale(...args: Vec2Args): ScaleComp {
 
     return {
         id: "scale",
+
         set scale(value: Vec2) {
             if (value instanceof Vec2 === false) {
                 throw Error(
@@ -55,11 +57,13 @@ export function scale(...args: Vec2Args): ScaleComp {
                 );
             }
 
-            _scale = vec2(value);
+            _scale = value;
+            (this as unknown as GameObj).dirtyFlags = AllDirty;
         },
         get scale() {
             return _scale;
         },
+
         scaleTo(...args: Vec2Args) {
             _scale = vec2(...args);
         },
@@ -70,9 +74,11 @@ export function scale(...args: Vec2Args): ScaleComp {
             if (_scale.x == _scale.y) {
                 return `scale: ${_scale.x.toFixed(1)}x`;
             }
-            else {return `scale: (${_scale.x.toFixed(1)}x, ${
+            else {
+                return `scale: (${_scale.x.toFixed(1)}x, ${
                     _scale.y.toFixed(1)
-                }y)`;}
+                }y)`;
+            }
         },
     };
 }

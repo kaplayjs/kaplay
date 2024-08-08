@@ -17,7 +17,7 @@ import {
 } from "../gfx";
 import { app, game, gfx, k } from "../kaplay";
 import { Mat4 } from "../math/math";
-import { calcTransform } from "../math/various";
+import { calcLocalTransform, calcTransform } from "../math/various";
 import {
     type Comp,
     type CompList,
@@ -36,6 +36,19 @@ type MakeTypeIsCLASS<T, Chain = T> = T extends new(go: GameObj) => infer R ? R
     : Chain;
 type MakeType<T> = MakeTypeIsCLASS<T, MakeTypeIsFN<T>>;
 
+export const LocalTransformDirty = 1;
+export const LocalAreaDirty = 2;
+export const WorldTransformDirty = 4;
+export const WorldAreaDirty = 8;
+export const BBoxDirty = 16;
+export const AllDirty = 31;
+
+export const LocalTransformUpdated = WorldTransformDirty | WorldAreaDirty
+    | BBoxDirty;
+export const LocalAreaUpdated = WorldAreaDirty | BBoxDirty;
+export const WorldTransformUpdated = WorldAreaDirty | BBoxDirty;
+export const WorldAreaUpdated = BBoxDirty;
+
 export function make<T>(comps: CompList<T> = []): GameObj<MakeType<T>> {
     const compStates = new Map<string, Comp>();
     const anonymousCompStates: Comp[] = [];
@@ -44,15 +57,45 @@ export function make<T>(comps: CompList<T> = []): GameObj<MakeType<T>> {
     const inputEvents: KEventController[] = [];
     let onCurCompCleanup: Function | null = null;
     let paused = false;
+    let localTransform: Mat4;
+    let worldTransform: Mat4;
+    let parentTransform: Mat4;
 
     // the game object without the event methods, added later
     const obj: Omit<GameObj, keyof typeof evs> = {
         id: uid(),
         // TODO: a nice way to hide / pause when add()-ing
         hidden: false,
-        transform: new Mat4(),
+        // transform: new Mat4(),
         children: [],
         parent: null,
+        dirtyFlags: AllDirty,
+
+        get localTransform() {
+            if (this.dirtyFlags & LocalTransformDirty) {
+                localTransform = calcLocalTransform(this as GameObj<any>);
+
+                this.dirtyFlags &= ~LocalTransformDirty;
+                this.dirtyFlags |= LocalTransformUpdated;
+            }
+
+            return localTransform;
+        },
+
+        get worldTransform() {
+            if (
+                parentTransform !== this.parent?.worldTransform
+                || this.dirtyFlags & WorldTransformDirty
+            ) {
+                worldTransform = calcTransform(this as GameObj<any>);
+                parentTransform = this.parent?.worldTransform;
+
+                this.dirtyFlags &= ~WorldTransformDirty;
+                this.dirtyFlags |= WorldTransformUpdated;
+            }
+
+            return worldTransform;
+        },
 
         set paused(p) {
             if (p === paused) return;
@@ -84,7 +127,7 @@ export function make<T>(comps: CompList<T> = []): GameObj<MakeType<T>> {
                 );
             }
             obj.parent = this;
-            obj.transform = calcTransform(obj);
+            obj.dirtyFlags = AllDirty;
             this.children.push(obj);
             // TODO: trigger add for children
             obj.trigger("add", obj);

@@ -1,3 +1,4 @@
+import { AllDirty, LocalTransformDirty } from "../../game";
 import { isFixed } from "../../game/utils";
 import { getViewportScale } from "../../gfx";
 import { k } from "../../kaplay";
@@ -70,9 +71,17 @@ export interface PosComp extends Comp {
 }
 
 export function pos(...args: Vec2Args): PosComp {
+    let _pos: Vec2 = vec2(...args);
     return {
         id: "pos",
-        pos: vec2(...args),
+
+        get pos() {
+            return _pos;
+        },
+        set pos(value) {
+            _pos = value;
+            (this as unknown as GameObj).dirtyFlags = AllDirty;
+        },
 
         moveBy(...args: Vec2Args) {
             this.pos = this.pos.add(vec2(...args));
@@ -115,7 +124,7 @@ export function pos(...args: Vec2Args): PosComp {
             }
             else {
                 return this.parent
-                    ? this.parent.transform.multVec2(this.pos)
+                    ? this.parent.worldTransform.multVec2(this.pos)
                     : this.pos;
             }
         },
@@ -123,14 +132,14 @@ export function pos(...args: Vec2Args): PosComp {
         // Transform a local point to a world point
         toWorld(this: GameObj<PosComp>, p: Vec2): Vec2 {
             return this.parent
-                ? this.parent.transform.multVec2(this.pos.add(p))
+                ? this.parent.worldTransform.multVec2(this.pos.add(p))
                 : this.pos.add(p);
         },
 
         // Transform a world point (relative to the root) to a local point (relative to this)
         fromWorld(this: GameObj<PosComp>, p: Vec2): Vec2 {
             return this.parent
-                ? this.parent.transform.invert().multVec2(p).sub(this.pos)
+                ? this.parent.worldTransform.invert().multVec2(p).sub(this.pos)
                 : p.sub(this.pos);
         },
 

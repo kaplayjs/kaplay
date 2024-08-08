@@ -753,23 +753,8 @@ const kaplay = <
         const grid: Record<number, Record<number, GameObj<AreaComp>[]>> = {};
         const cellSize = gopt.hashGridSize || DEF_HASH_GRID_SIZE;
 
-        // current transform
-        let tr = new Mat4();
-
-        // a local transform stack
-        const stack: any[] = [];
-
         function checkObj(obj: GameObj) {
-            stack.push(tr.clone());
-
-            // Update object transform here. This will be the transform later used in rendering.
-            if (obj.pos) tr.translate(obj.pos);
-            if (obj.scale) tr.scale(obj.scale);
-            if (obj.angle) tr.rotate(obj.angle);
-            obj.transform = tr.clone();
-
             if (obj.c("area") && !obj.paused) {
-                // TODO: only update worldArea if transform changed
                 const aobj = obj as GameObj<AreaComp>;
                 const area = aobj.worldArea();
                 const bbox = area.bbox();
@@ -809,7 +794,6 @@ const kaplay = <
                                         continue check;
                                     }
                                 }
-                                // TODO: cache the world area here
                                 const res = sat(
                                     aobj.worldArea(),
                                     other.worldArea(),
@@ -837,7 +821,6 @@ const kaplay = <
             }
 
             obj.children.forEach(checkObj);
-            tr = stack.pop();
         }
 
         checkObj(game.root);

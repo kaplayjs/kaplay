@@ -4105,12 +4105,13 @@ export interface GameObjRaw {
      * @since v3000.0
      */
     isAncestorOf(obj: GameObj): boolean;
+    dirtyFlags: number;
     /**
      * Calculated transform matrix of a game object.
      *
      * @since v3000.0
      */
-    transform: Mat4;
+    // transform: Mat4;
     /**
      * If draw the game obj (run "draw" event or not).
      */

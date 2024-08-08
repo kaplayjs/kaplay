@@ -1,4 +1,5 @@
-import type { Comp } from "../../types";
+import { AllDirty, LocalTransformDirty } from "../../game/make";
+import type { Comp, GameObj } from "../../types";
 
 /**
  * The {@link rotate `rotate()`} component.
@@ -23,9 +24,18 @@ export interface RotateComp extends Comp {
 }
 
 export function rotate(r: number): RotateComp {
+    let _angle: number = r ?? 0;
     return {
         id: "rotate",
-        angle: r ?? 0,
+
+        get angle() {
+            return _angle;
+        },
+        set angle(value) {
+            _angle = value;
+            (this as unknown as GameObj).dirtyFlags = AllDirty;
+        },
+
         rotateBy(angle: number) {
             this.angle += angle;
         },

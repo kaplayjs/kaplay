@@ -236,8 +236,6 @@ export function body(opt: BodyCompOpt = {}): BodyComp {
                             other.pos = other.pos.add(
                                 col.displacement.scale(-this.mass / tmass),
                             );
-                            this.transform = calcTransform(this);
-                            other.transform = calcTransform(other);
                         }
                         else {
                             // if one is static and on is not, resolve the non static one
@@ -246,9 +244,6 @@ export function body(opt: BodyCompOpt = {}): BodyComp {
                                 : col.reverse();
                             col2.source.pos = col2.source.pos.add(
                                 col2.displacement,
-                            );
-                            col2.source.transform = calcTransform(
-                                col2.source,
                             );
                         }
 
