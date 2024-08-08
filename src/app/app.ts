@@ -678,6 +678,7 @@ export const initApp = (opt: {
 
         state.charInputted = [];
         state.isMouseMoved = false;
+        state.mouseDeltaPos = new Vec2(0);
 
         state.gamepadStates.forEach((s) => {
             s.buttonState.update();
@@ -842,6 +843,7 @@ export const initApp = (opt: {
     canvasEvents.mousemove = (e) => {
         const mousePos = new Vec2(e.offsetX, e.offsetY);
         const mouseDeltaPos = new Vec2(e.movementX, e.movementY);
+
         if (isFullscreen()) {
             const cw = state.canvas.width / pd;
             const ch = state.canvas.height / pd;
@@ -862,6 +864,7 @@ export const initApp = (opt: {
                 mousePos.y = map(e.offsetY - offset, 0, ch * ratio, 0, ch);
             }
         }
+
         state.events.onOnce("input", () => {
             state.isMouseMoved = true;
             state.mousePos = mousePos;
