@@ -43,6 +43,12 @@ export interface AudioPlayOpt {
      * The start time, in seconds.
      */
     seek?: number;
+    /**
+     * The stereo pan of the sound.
+     * -1.0 means fully from the left channel, 0.0 means centered, 1.0 means fully right.
+     * Defaults to 0.0.
+     */
+    pan?: number;
 }
 
 export interface AudioPlay {
@@ -92,6 +98,12 @@ export interface AudioPlay {
      */
     volume: number;
     /**
+     * The stereo pan of the sound.
+     * -1.0 means fully from the left channel, 0.0 means centered, 1.0 means fully right.
+     * Defaults to 0.0.
+     */
+    pan?: number;
+    /**
      * If the audio should start again when it ends.
      */
     loop: boolean;
@@ -130,6 +142,7 @@ export function play(
     let srcNode = ctx.createBufferSource();
     const onEndEvents = new KEvent();
     const gainNode = ctx.createGain();
+    const panNode = ctx.createStereoPanner();
     const pos = opt.seek ?? 0;
     let startTime = 0;
     let stopTime = 0;
@@ -138,7 +151,7 @@ export function play(
     srcNode.loop = Boolean(opt.loop);
     srcNode.detune.value = opt.detune ?? 0;
     srcNode.playbackRate.value = opt.speed ?? 1;
-    srcNode.connect(gainNode);
+    srcNode.connect(panNode);
     srcNode.onended = () => {
         if (
             getTime()
@@ -147,6 +160,8 @@ export function play(
             onEndEvents.trigger();
         }
     };
+    panNode.pan.value = opt.pan ?? 0;
+    panNode.connect(gainNode);
     gainNode.connect(audio.masterNode);
     gainNode.gain.value = opt.volume ?? 1;
 
@@ -261,6 +276,14 @@ export function play(
 
         get volume() {
             return gainNode.gain.value;
+        },
+
+        set pan(pan: number) {
+            panNode.pan.value = pan;
+        },
+
+        get pan() {
+            return panNode.pan.value;
         },
 
         set loop(l: boolean) {
