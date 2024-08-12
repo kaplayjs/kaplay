@@ -1,5 +1,6 @@
 import { DEF_ANCHOR } from "../../constants";
 import {
+    AreaDirty,
     LocalAreaDirty,
     LocalAreaUpdated,
     WorldAreaDirty,
@@ -223,6 +224,9 @@ export interface AreaCompOpt {
 export function area(opt: AreaCompOpt = {}): AreaComp {
     const colliding: Record<string, Collision> = {};
     const collidingThisFrame = new Set();
+    let _shape: Shape | null = opt.shape ?? null;
+    let _scale: Vec2 = opt.scale ? vec2(opt.scale) : vec2(1);
+    let _offset: Vec2 = opt.offset ?? vec2(0);
     let localArea: Shape;
     let worldArea: Polygon;
 
@@ -309,9 +313,27 @@ export function area(opt: AreaCompOpt = {}): AreaComp {
         },
 
         area: {
-            shape: opt.shape ?? null,
-            scale: opt.scale ? vec2(opt.scale) : vec2(1),
-            offset: opt.offset ?? vec2(0),
+            get shape() {
+                return _shape;
+            },
+            set shape(value: Shape | null) {
+                _shape = value;
+                (this as unknown as GameObj).dirtyFlags |= AreaDirty;
+            },
+            get scale() {
+                return _scale;
+            },
+            set scale(value: Vec2) {
+                _scale = value;
+                (this as unknown as GameObj).dirtyFlags |= AreaDirty;
+            },
+            get offset() {
+                return _scale;
+            },
+            set offset(value: Vec2) {
+                _offset = value;
+                (this as unknown as GameObj).dirtyFlags |= AreaDirty;
+            },
             cursor: opt.cursor ?? null,
         },
 
