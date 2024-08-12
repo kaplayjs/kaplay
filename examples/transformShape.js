@@ -135,7 +135,7 @@ add([
             return new Ellipse(vec2(), 40, 15, 45);
         },
         draw() {
-            pushRotate(45);
+            pushRotate(-45);
             drawEllipse({
                 radiusX: 40,
                 radiusY: 15,
@@ -147,7 +147,7 @@ add([
 ]);
 
 function getGlobalShape(s) {
-    const t = s.transform;
+    const t = s.worldTransform;
     return s.getShape().transform(t);
 }
 
