@@ -310,15 +310,25 @@ export function body(opt: BodyCompOpt = {}): BodyComp {
             const dt = k.restDt();
             if (dt) {
                 // Check if no external changes were made
-                if (this.pos.eq(prevDrawPos)) {
+                if (this.pos.x == prevDrawPos.x) {
                     // Interpolate physics steps
-                    this.pos = k.lerp(
-                        prevPhysicsPos!,
-                        nextPhysicsPos!,
+                    this.pos.x = k.lerp(
+                        prevPhysicsPos!.x,
+                        nextPhysicsPos!.x,
                         dt / k.fixedDt(),
                     );
                     // Copy to check for changes
-                    prevDrawPos = this.pos.clone();
+                    prevDrawPos.x = this.pos.x;
+                }
+                if (this.pos.y == prevDrawPos.y) {
+                    // Interpolate physics steps
+                    this.pos.y = k.lerp(
+                        prevPhysicsPos!.y,
+                        nextPhysicsPos!.y,
+                        dt / k.fixedDt(),
+                    );
+                    // Copy to check for changes
+                    prevDrawPos.y = this.pos.y;
                 }
             }
         },
@@ -326,8 +336,11 @@ export function body(opt: BodyCompOpt = {}): BodyComp {
         fixedUpdate(this: GameObj<PosComp | BodyComp | AreaComp>) {
             // If we were interpolating, and the position wasn't set manually, reset to last physics position
             if (prevPhysicsPos) {
-                if (this.pos.eq(prevDrawPos)) {
-                    this.pos = prevPhysicsPos;
+                if (this.pos.x == prevDrawPos.x) {
+                    this.pos.x = prevPhysicsPos.x;
+                }
+                if (this.pos.y == prevDrawPos.y) {
+                    this.pos.y = prevPhysicsPos.y;
                 }
                 prevPhysicsPos = null;
             }
