@@ -119,8 +119,8 @@ export function pointEffector(opts: PointEffectorCompOpt): PointEffectorComp {
                 const forceScale = this.forceMode === "constant"
                     ? 1
                     : this.forceMode === "inverseLinear"
-                    ? 1 / distance
-                    : 1 / distance ** 2;
+                        ? 1 / distance
+                        : 1 / distance ** 2;
                 const force = dir.scale(
                     this.forceMagnitude * forceScale / length,
                 );
@@ -221,7 +221,7 @@ export function buoyancyEffector(
         flowMagnitude: opts.flowMagnitude ?? 0,
         flowVariation: opts.flowVariation ?? 0,
         add(this: GameObj<AreaComp | BuoyancyEffectorComp>) {
-            this.onCollideUpdate((obj, col) => {
+            this.onCollideUpdate("body", (obj, col) => {
                 const o = obj as GameObj<BodyComp | AreaComp>;
                 const polygon = o.worldArea();
                 const [submergedArea, _] = polygon.cut(
