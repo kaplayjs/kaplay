@@ -10,13 +10,13 @@ jobs:
     name: Syncing branches
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v2
       - name: Set up Node
         uses: actions/setup-node@v1
         with:
           node-version: 12
       - name: Create Sync PR
-        uses: sudoStatus200/create-sync-pr@0.3.1
+        uses: maordavidov/create-sync-pr@0.3.1
         with:
           GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
           SOURCE_BRANCH: "master"
