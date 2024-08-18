@@ -1,6 +1,4 @@
-import { getGravity, getGravityDirection } from "../../game";
-import { width } from "../../gfx";
-import { debug } from "../../kaplay";
+import { getGravityDirection } from "../../game";
 import { Polygon, Vec2, vec2 } from "../../math";
 import type { Comp, GameObj } from "../../types";
 import type { PosComp } from "../transform";
@@ -29,7 +27,7 @@ export function surfaceEffector(
         speedVariation: opts.speedVariation ?? 0,
         forceScale: opts.speedVariation ?? 0.9,
         add(this: GameObj<AreaComp | SurfaceEffectorComp>) {
-            this.onCollideUpdate((obj, col) => {
+            this.onCollideUpdate("body", (obj, col) => {
                 const dir = col?.normal.normal();
                 const currentVel = obj.vel.project(dir);
                 const wantedVel = dir?.scale(this.speed);
@@ -69,7 +67,7 @@ export function areaEffector(opts: AreaEffectorCompOpt): AreaEffectorComp {
         linearDrag: opts.linearDrag ?? 0,
         // angularDrag: opts.angularDrag ?? 0,
         add(this: GameObj<AreaComp | AreaEffectorComp>) {
-            this.onCollideUpdate((obj, col) => {
+            this.onCollideUpdate("body", (obj, col) => {
                 const dir = Vec2.fromAngle(this.forceAngle);
                 const force = dir.scale(this.forceMagnitude);
                 obj.addForce(force);
@@ -112,15 +110,15 @@ export function pointEffector(opts: PointEffectorCompOpt): PointEffectorComp {
         linearDrag: opts.linearDrag ?? 0,
         // angularDrag: opts.angularDrag ?? 0,
         add(this: GameObj<PointEffectorComp | AreaComp | PosComp>) {
-            this.onCollideUpdate((obj, col) => {
+            this.onCollideUpdate("body", (obj, col) => {
                 const dir = this.pos.sub(obj.pos);
                 const length = dir.len();
                 const distance = length * this.distanceScale / 10;
                 const forceScale = this.forceMode === "constant"
                     ? 1
                     : this.forceMode === "inverseLinear"
-                    ? 1 / distance
-                    : 1 / distance ** 2;
+                        ? 1 / distance
+                        : 1 / distance ** 2;
                 const force = dir.scale(
                     this.forceMagnitude * forceScale / length,
                 );
@@ -221,7 +219,7 @@ export function buoyancyEffector(
         flowMagnitude: opts.flowMagnitude ?? 0,
         flowVariation: opts.flowVariation ?? 0,
         add(this: GameObj<AreaComp | BuoyancyEffectorComp>) {
-            this.onCollideUpdate((obj, col) => {
+            this.onCollideUpdate("body", (obj, col) => {
                 const o = obj as GameObj<BodyComp | AreaComp>;
                 const polygon = o.worldArea();
                 const [submergedArea, _] = polygon.cut(
