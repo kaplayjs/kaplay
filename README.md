@@ -102,7 +102,7 @@ The fastest way to start a KAPLAY game is with
 [`create-kaplay`](https://github.com/kaplayjs/create-kaplay)
 
 ```sh
-$ create-kaplay mygame
+$ npx create-kaplay mygame
 ```
 
 This will create a directory called `mygame` for you, containing all the files
