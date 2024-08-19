@@ -4,6 +4,7 @@ kaplay({
 
 // Load a custom font from a .ttf file
 loadFont("FlowerSketches", "/examples/fonts/FlowerSketches.ttf");
+loadFont("ShantellSans", "/examples/fonts/ShantellSans.ttf");
 
 // Load a custom font with options
 loadFont("apl386", "/examples/fonts/apl386.ttf", {
@@ -28,6 +29,7 @@ const fonts = [
     "FlowerSketches",
     "apl386",
     "Sans-Serif",
+    "ShantellSans",
 ];
 
 // Keep track which is the current font
