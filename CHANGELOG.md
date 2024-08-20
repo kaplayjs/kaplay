@@ -287,23 +287,24 @@ features of v4000, while v4000 will have the most features and breaking changes.
 
 ## Helpers
 
-- (**v3001/4000**) added `getSceneName()` to get the current scene name
-- (**v3001/4000**) added `Color.toArray()` to convert a color to an array
-- (**v3001/4000**) added global raycast function and raycast method to level
-- (**v3001/4000**) added support for textured polygons
-- (**v3001/4000**) added support for concave polygon drawing
-- (**v3001/4000**) added support for arrays in uniforms
-- (**v3001/4000**) added support for texture larger than 2048x2048
-- (**v3001/4000**) added support for gravity direction
-- (**v3001/4000**) added line join (bevel, miter, round) and line caps (square,
-  round)
-- (**v3001/4000**) added quadratic bezier and Catmull-Rom evaluation
-- (**v3001/4000**) added evaluation of the first and second derivatives for all
-  splines
-- (**v3001/4000**) added higher order easing functions linear, steps and
-  cubic-bezier
+> All changes applies for both v3001 and v4000
+
+- added `getSceneName()` to get the current scene name
+- added `Color.toArray()` to convert a color to an array
+- added global raycast function and raycast method to level
+- added support for textured polygons
+- added support for concave polygon drawing
+- added support for arrays in uniforms
+- added support for texture larger than 2048x2048
+- added support for gravity direction
+- added line join (bevel, miter, round) and line caps (square, round)
+- added quadratic bezier and Catmull-Rom evaluation
+- added evaluation of the first and second derivatives for all splines
+- added higher order easing functions linear, steps and cubic-bezier
 
 ## Deprecations
+
+> All changes applies for both v3001 and v4000
 
 - deprecated `kaboom()` in favor of `kaplay()` (you can still use `kaboom*`)
 - deprecated `SpriteComp.curAnim()` in favor of `SpriteComp.getCurAnim().name`
@@ -312,6 +313,8 @@ features of v4000, while v4000 will have the most features and breaking changes.
   `KEventHandler` and `KEventController`
 
 ## Bug fixes
+
+> All changes applies for both v3001 and v4000
 
 - **(break)** much typescript definitions was fixed, if you use typescript now
   maybe you see new errors that make your code strict
