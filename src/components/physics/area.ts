@@ -262,7 +262,6 @@ export function area(opt: AreaCompOpt = {}): AreaComp {
             const a = this.localArea();
 
             k.pushTransform();
-            k.pushScale(this.area.scale);
             k.pushTranslate(this.area.offset);
 
             const opts = {
@@ -279,14 +278,15 @@ export function area(opt: AreaCompOpt = {}): AreaComp {
                 k.drawRect({
                     ...opts,
                     pos: a.pos,
-                    width: a.width,
-                    height: a.height,
+                    width: a.width * this.area.scale.x,
+                    height: a.height * this.area.scale.y,
                 });
             }
             else if (a instanceof k.Polygon) {
                 k.drawPolygon({
                     ...opts,
                     pts: a.pts,
+                    scale: this.area.scale,
                 });
             }
             else if (a instanceof k.Circle) {
@@ -531,12 +531,12 @@ export function area(opt: AreaCompOpt = {}): AreaComp {
         },
 
         inspect() {
-            if (this.area.scale.x == this.area.scale.y) {
-                return `area: ${this.area.scale.x.toFixed(1)}x`;
+            if (this.area.scale?.x == this.area.scale?.y) {
+                return `area: ${this.area.scale?.x?.toFixed(1)}x`;
             }
             else {
-                return `area: (${this.area.scale.x.toFixed(1)}x, ${
-                    this.area.scale.y.toFixed(1)
+                return `area: (${this.area.scale?.x?.toFixed(1)}x, ${
+                    this.area.scale.y?.toFixed(1)
                 }y)`;
             }
         },
