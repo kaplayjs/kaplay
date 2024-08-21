@@ -321,6 +321,7 @@ features of v4000, while v4000 will have the most features and breaking changes.
 - fix error screen not showing with not Error object
 - fix error where debug screen was scaling bad the blue rectangles
 - fix error where error screen was not showing when the error was thrown in a input event
+- fix error where fonts was cropped in the bottom
 
 ### v3000.1.17
 
