@@ -22,7 +22,7 @@ jobs:
             cherry-pick
           reviewers: |
             lajbel
-          title: "{old_title} [cherry-pick {old_pull_request_id}]"
+          title: "{old_title} [cherry-pick]"
           body: "Cherry picking #{old_pull_request_id} onto this branch"
 env:
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
