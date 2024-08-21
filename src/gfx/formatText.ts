@@ -187,7 +187,7 @@ export function formatText(opt: DrawTextOpt): FormattedText {
                 const m = c2d.measureText(ch);
                 let w = Math.ceil(m.width);
                 if (!w) continue;
-                let h = font.size;
+                let h = m.fontBoundingBoxAscent + m.fontBoundingBoxDescent;
 
                 // TODO: Test if this works with the verification of width and color
                 if (
