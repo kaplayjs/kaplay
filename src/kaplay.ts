@@ -951,8 +951,10 @@ const kaplay = <
                 handleErr(e as Error);
             }
         },
-        () => {
+        (processInput, resetInput) => {
             try {
+                processInput();
+
                 if (!assets.loaded) {
                     if (loadProgress() === 1 && !isFirstFrame) {
                         assets.loaded = true;
@@ -983,6 +985,8 @@ const kaplay = <
                 }
 
                 game.events.trigger("frameEnd");
+
+                resetInput();
             } catch (e) {
                 handleErr(e as Error);
             }

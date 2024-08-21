@@ -276,7 +276,7 @@ export const initApp = (opt: {
         resizeObserver.disconnect();
     }
 
-    function run(fixedUpdate: () => void, update: () => void) {
+    function run(fixedUpdate: () => void, update: (processInput: () => void, resetInput: () => void) => void) {
         if (state.loopID !== null) {
             cancelAnimationFrame(state.loopID);
         }
@@ -320,9 +320,8 @@ export const initApp = (opt: {
                 accumulatedDt = 0;
                 state.skipTime = false;
                 state.numFrames++;
-                processInput();
-                update();
-                resetInput();
+
+                update(processInput, resetInput);
             }
 
             state.loopID = requestAnimationFrame(frame);

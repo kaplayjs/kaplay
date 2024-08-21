@@ -320,6 +320,7 @@ features of v4000, while v4000 will have the most features and breaking changes.
   maybe you see new errors that make your code strict
 - fix error screen not showing with not Error object
 - fix error where debug screen was scaling bad the blue rectangles
+- fix error where error screen was not showing when the error was thrown in a input event
 
 ### v3000.1.17
 
