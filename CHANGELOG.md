@@ -191,6 +191,17 @@ debug.log(obj.getAnim("walk"));
 - deprecated `Event`, `EventHandler` and `EventController` in favor of `KEvent`,
   `KEventHandler` and `KEventController`
 
+## Bug fixes
+
+> All changes applies for both v3001 and v4000
+
+- **(break)** much typescript definitions was fixed, if you use typescript now
+  maybe you see new errors that make your code strict
+- fix error screen not showing with not Error object
+- fix error where debug screen was scaling bad the blue rectangles
+- fix error where error screen was not showing when the error was thrown in a input event
+- fix error where fonts was cropped in the bottom
+
 ### v3000.1.17
 
 - exposed `vel` property on `BodyComp`
