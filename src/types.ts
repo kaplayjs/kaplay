@@ -776,7 +776,7 @@ export interface KAPLAYCtx<
      */
     fixed(): FixedComp;
     /**
-     * Don't get destroyed on scene switch.
+     * Don't get destroyed on scene switch. Only works in objects attached to root.
      *
      * @example
      * ```js
