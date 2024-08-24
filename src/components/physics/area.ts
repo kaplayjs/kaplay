@@ -328,7 +328,7 @@ export function area(opt: AreaCompOpt = {}): AreaComp {
                 (this as unknown as GameObj).dirtyFlags |= AreaDirty;
             },
             get offset() {
-                return _scale;
+                return _offset;
             },
             set offset(value: Vec2) {
                 _offset = value;
