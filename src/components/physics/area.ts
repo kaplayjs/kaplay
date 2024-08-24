@@ -260,7 +260,7 @@ export function area(opt: AreaCompOpt = {}): AreaComp {
             areaCount--;
         },
 
-        update(this: GameObj<AreaComp>) {
+        fixedUpdate(this: GameObj<AreaComp>) {
             for (const id in colliding) {
                 if (!collidingThisFrame.has(Number(id))) {
                     this.trigger("collideEnd", colliding[id].target);

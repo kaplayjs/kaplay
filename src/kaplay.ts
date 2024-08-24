@@ -927,8 +927,8 @@ const kaplay = <
         () => {
             try {
                 if (assets.loaded) {
-                    checkFrame();
                     if (!debug.paused) fixedUpdateFrame();
+                    checkFrame();
                 }
             } catch (e) {
                 handleErr(e as Error);
