@@ -261,17 +261,26 @@ export function body(opt: BodyCompOpt = {}): BodyComp {
                 this.onPhysicsResolve((col) => {
                     if (game.gravity) {
                         if (col.isBottom() && this.isFalling()) {
+                            // Clear the velocity in the direction of gravity, as we've hit something
                             this.vel = this.vel.reject(
                                 game.gravity.unit(),
                             );
+                            // We need the past platform to check if we already were on a platform
+                            const pastPlatform = curPlatform;
                             curPlatform = col.target as GameObj<
                                 PosComp | BodyComp | AreaComp
                             >;
-                            lastPlatformPos = col.target.pos;
+                            if (pastPlatform != curPlatform) {
+                                // If we are on a new platform, update the sticky position
+                                lastPlatformPos = col.target.pos;
+                            }
                             if (willFall) {
+                                // We would have fallen, but didn't.
+                                // This happens when we leave one platform block and move onto another
                                 willFall = false;
                             }
-                            else {
+                            else if (!pastPlatform) {
+                                // We weren't on a platform, land
                                 this.trigger("ground", curPlatform);
                                 col.target.trigger("land", this);
                             }
@@ -289,21 +298,21 @@ export function body(opt: BodyCompOpt = {}): BodyComp {
         },
 
         update(this: GameObj<PosComp | BodyComp | AreaComp>) {
+            // Sticky platform
             if (curPlatform) {
                 if (
-                    // TODO: this prevents from falling when on edge
-                    !this.isColliding(curPlatform)
-                    || !curPlatform.exists()
-                    || !curPlatform.is("body")
+                    // We are still colliding with the platform and the platform exists
+                    this.isColliding(curPlatform)
+                    && curPlatform.exists()
+                    && curPlatform.is("body")
                 ) {
-                    willFall = true;
-                }
-                else {
+                    // This needs to happen in onUpdate. Otherwise the player position will jitter.
                     if (
                         lastPlatformPos
                         && !curPlatform.pos.eq(lastPlatformPos)
                         && opt.stickToPlatform !== false
                     ) {
+                        // Stick to the platform
                         this.moveBy(
                             curPlatform.pos.sub(lastPlatformPos),
                         );
@@ -351,6 +360,7 @@ export function body(opt: BodyCompOpt = {}): BodyComp {
             }
 
             if (game.gravity && !this.isStatic) {
+                // If we are falling over the edge of the current a platform
                 if (willFall) {
                     curPlatform = null;
                     lastPlatformPos = null;
@@ -358,35 +368,42 @@ export function body(opt: BodyCompOpt = {}): BodyComp {
                     willFall = false;
                 }
 
-                let addGravity = true;
-
+                // If we were previously on a platform
                 if (curPlatform) {
-                    addGravity = false;
+                    if (
+                        // If we are no longer on the platform, or the platform was deleted
+                        !this.isColliding(curPlatform)
+                        || !curPlatform.exists()
+                        || !curPlatform.is("body")
+                    ) {
+                        willFall = true;
+                    }
                 }
 
-                if (addGravity) {
-                    const prevVel = this.vel.clone();
+                const prevVel = this.vel.clone();
 
-                    // Apply gravity
-                    this.vel = this.vel.add(
-                        game.gravity.scale(this.gravityScale * k.dt()),
-                    );
+                // Apply gravity
+                this.vel = this.vel.add(
+                    game.gravity.scale(this.gravityScale * k.dt()),
+                );
 
-                    // Clamp velocity
-                    const maxVel = opt.maxVelocity ?? MAX_VEL;
-                    if (this.vel.slen() > maxVel * maxVel) {
-                        this.vel = this.vel.unit().scale(maxVel);
-                    }
+                // Clamp velocity
+                const maxVel = opt.maxVelocity ?? MAX_VEL;
+                if (this.vel.slen() > maxVel * maxVel) {
+                    this.vel = this.vel.unit().scale(maxVel);
+                }
 
-                    if (
-                        prevVel.dot(game.gravity) < 0
-                        && this.vel.dot(game.gravity) >= 0
-                    ) {
-                        this.trigger("fall");
-                    }
+                // Check if we have started to fall.
+                // We do this by looking at the velocity vector along the direction of gravity
+                if (
+                    prevVel.dot(game.gravity) < 0
+                    && this.vel.dot(game.gravity) >= 0
+                ) {
+                    this.trigger("fall");
                 }
             }
 
+            // Apply velocity and position changes
             this.vel.x += acc.x * k.dt();
             this.vel.y += acc.y * k.dt();
 
@@ -395,6 +412,7 @@ export function body(opt: BodyCompOpt = {}): BodyComp {
 
             this.move(this.vel);
 
+            // If we need to interpolate physics, prepare interpolation data
             const dt = k.restDt();
             if (dt) {
                 // Save this position as previous
@@ -406,6 +424,7 @@ export function body(opt: BodyCompOpt = {}): BodyComp {
                 prevDrawPos = this.pos.clone();
             }
 
+            // Reset acceleration
             acc.x = 0;
             acc.y = 0;
         },
