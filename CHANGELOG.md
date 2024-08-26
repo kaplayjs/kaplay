@@ -58,6 +58,14 @@ features of v4000, while v4000 will have the most features and breaking changes.
   });
   ```
 
+- now gamepad events return what gamepad triggered the action (**v3001/4000**)
+
+  ```js
+  onGamepadButtonPress("south", (btn, gp) => {
+      console.log(gp.index); // gamepad number on navigator's gamepad list
+  });
+  ```
+
 ## Physics
 
 - added effector components: `areaEffector()`, `buoyancyEffector()`,
@@ -320,7 +328,8 @@ features of v4000, while v4000 will have the most features and breaking changes.
   maybe you see new errors that make your code strict
 - fix error screen not showing with not Error object
 - fix error where debug screen was scaling bad the blue rectangles
-- fix error where error screen was not showing when the error was thrown in a input event
+- fix error where error screen was not showing when the error was thrown in a
+  input event
 - fix error where fonts was cropped in the bottom
 
 ### v3000.1.17

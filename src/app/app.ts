@@ -5,7 +5,7 @@ import type {
     GamepadDef,
     GamepadStick,
     Key,
-    KGamePad,
+    KGamepad,
     KGamepadButton,
     MouseButton,
 } from "../types";
@@ -117,7 +117,7 @@ export const initAppState = (opt: {
         lastInputDevice: null as "mouse" | "keyboard" | "gamepad" | null,
         // unified input state
         buttonState: new ButtonState<string>(),
-        gamepads: [] as KGamePad[],
+        gamepads: [] as KGamepad[],
         charInputted: [] as string[],
         isMouseMoved: false,
         lastWidth: opt.canvas.offsetWidth,
@@ -135,12 +135,12 @@ export const initAppState = (opt: {
             touchStart: [Vec2, Touch];
             touchMove: [Vec2, Touch];
             touchEnd: [Vec2, Touch];
-            gamepadButtonDown: [KGamepadButton];
-            gamepadButtonPress: [KGamepadButton];
-            gamepadButtonRelease: [KGamepadButton];
-            gamepadStick: [string, Vec2];
-            gamepadConnect: [KGamePad];
-            gamepadDisconnect: [KGamePad];
+            gamepadButtonDown: [KGamepadButton, KGamepad];
+            gamepadButtonPress: [KGamepadButton, KGamepad];
+            gamepadButtonRelease: [KGamepadButton, KGamepad];
+            gamepadStick: [string, Vec2, KGamepad];
+            gamepadConnect: [KGamepad];
+            gamepadDisconnect: [KGamepad];
             buttonDown: [string];
             buttonPress: [string];
             buttonRelease: [string];
@@ -276,7 +276,10 @@ export const initApp = (opt: {
         resizeObserver.disconnect();
     }
 
-    function run(fixedUpdate: () => void, update: (processInput: () => void, resetInput: () => void) => void) {
+    function run(
+        fixedUpdate: () => void,
+        update: (processInput: () => void, resetInput: () => void) => void,
+    ) {
         if (state.loopID !== null) {
             cancelAnimationFrame(state.loopID);
         }
@@ -552,65 +555,74 @@ export const initApp = (opt: {
     }
 
     const onGamepadButtonPress = overload2(
-        (action: (btn: KGamepadButton) => void) => {
-            return state.events.on("gamepadButtonPress", (b) => action(b));
+        (action: (btn: KGamepadButton, gamepad: KGamepad) => void) => {
+            return state.events.on(
+                "gamepadButtonPress",
+                (b, gp) => action(b, gp),
+            );
         },
         (
             btn: KGamepadButton | KGamepadButton[],
-            action: (btn: KGamepadButton) => void,
+            action: (btn: KGamepadButton, gamepad: KGamepad) => void,
         ) => {
             return state.events.on(
                 "gamepadButtonPress",
-                (b) => isEqOrIncludes(btn, b) && action(b),
+                (b, gp) => isEqOrIncludes(btn, b) && action(b, gp),
             );
         },
     );
 
     const onGamepadButtonDown = overload2(
-        (action: (btn: KGamepadButton) => void) => {
-            return state.events.on("gamepadButtonDown", (b) => action(b));
+        (action: (btn: KGamepadButton, gamepad: KGamepad) => void) => {
+            return state.events.on(
+                "gamepadButtonDown",
+                (b, gp) => action(b, gp),
+            );
         },
         (
             btn: KGamepadButton,
-            action: (btn: KGamepadButton) => void,
+            action: (btn: KGamepadButton, gamepad: KGamepad) => void,
         ) => {
             return state.events.on(
                 "gamepadButtonDown",
-                (b) => isEqOrIncludes(btn, b) && action(b),
+                (b, gp) => isEqOrIncludes(btn, b) && action(b, gp),
             );
         },
     );
 
     const onGamepadButtonRelease = overload2(
-        (action: (btn: KGamepadButton) => void) => {
-            return state.events.on("gamepadButtonRelease", (b) => action(b));
+        (action: (btn: KGamepadButton, gamepad: KGamepad) => void) => {
+            return state.events.on(
+                "gamepadButtonRelease",
+                (b, gp) => action(b, gp),
+            );
         },
         (
             btn: KGamepadButton | KGamepadButton[],
-            action: (btn: KGamepadButton) => void,
+            action: (btn: KGamepadButton, gamepad: KGamepad) => void,
         ) => {
             return state.events.on(
                 "gamepadButtonRelease",
-                (b) => isEqOrIncludes(btn, b) && action(b),
+                (b, gp) => isEqOrIncludes(btn, b) && action(b, gp),
             );
         },
     );
 
     function onGamepadStick(
         stick: GamepadStick,
-        action: (value: Vec2) => void,
+        action: (value: Vec2, gp: KGamepad) => void,
     ): KEventController {
         return state.events.on(
             "gamepadStick",
-            (a: string, v: Vec2) => a === stick && action(v),
+            (a, v, gp) => a === stick && action(v, gp),
         );
     }
 
-    function onGamepadConnect(action: (gamepad: KGamePad) => void) {
+    function onGamepadConnect(action: (gamepad: KGamepad) => void) {
         state.events.on("gamepadConnect", action);
     }
 
-    function onGamepadDisconnect(action: (gamepad: KGamePad) => void) {
+    function onGamepadDisconnect(action: (gamepad: KGamepad) => void) {
         state.events.on("gamepadDisconnect", action);
     }
 
@@ -622,7 +634,7 @@ export const initApp = (opt: {
         return [...state.charInputted];
     }
 
-    function getGamepads(): KGamePad[] {
+    function getGamepads(): KGamepad[] {
         return [...state.gamepads];
     }
 
@@ -688,7 +700,7 @@ export const initApp = (opt: {
     }
 
     function registerGamepad(browserGamepad: Gamepad) {
-        const gamepad: KGamePad = {
+        const gamepad: KGamepad = {
             index: browserGamepad.index,
             isPressed: (btn: KGamepadButton) => {
                 return state.gamepadStates.get(browserGamepad.index)
@@ -776,7 +788,11 @@ export const initApp = (opt: {
 
                         state.mergedGamepadState.buttonState.press(gamepadBtn);
                         gamepadState.buttonState.press(gamepadBtn);
-                        state.events.trigger("gamepadButtonPress", gamepadBtn);
+                        state.events.trigger(
+                            "gamepadButtonPress",
+                            gamepadBtn,
+                            gamepad,
+                        );
                     }
 
                     if (isGamepadButtonBind) {
@@ -788,7 +804,11 @@ export const initApp = (opt: {
                         );
                     }
 
-                    state.events.trigger("gamepadButtonDown", gamepadBtn);
+                    state.events.trigger(
+                        "gamepadButtonDown",
+                        gamepadBtn,
+                        gamepad,
+                    );
                 }
                 else if (gamepadState.buttonState.down.has(gamepadBtn)) {
                     if (isGamepadButtonBind) {
@@ -808,6 +828,7 @@ export const initApp = (opt: {
                     state.events.trigger(
                         "gamepadButtonRelease",
                         gamepadBtn,
+                        gamepad,
                     );
                 }
             }
@@ -824,7 +845,7 @@ export const initApp = (opt: {
                     stickName as GamepadStick,
                     value,
                 );
-                state.events.trigger("gamepadStick", stickName, value);
+                state.events.trigger("gamepadStick", stickName, value, gamepad);
             }
         }
     }
