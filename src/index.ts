@@ -181,7 +181,7 @@ export type {
     KAPLAYOpt,
     KAPLAYPlugin,
     Key,
-    KGamePad,
+    KGamepad,
     KGamepadButton,
     LerpValue,
     LevelComp,

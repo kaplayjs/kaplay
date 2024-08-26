@@ -6,9 +6,82 @@ features of v4000, while v4000 will have the most features and breaking changes.
 
 ## Input
 
-- (**v3001/4000**) added input bindings, `onButtonPress`, `onButtonRelease`,
-  `onButtonDown`, and it's corresponding boolean versions, `isButtonPressed`,
-  `isButtonDown` and `isButtonReleased`
+- added input bindings, `onButtonPress`, `onButtonRelease`, `onButtonDown`, and
+  it's corresponding boolean versions, `isButtonPressed`, `isButtonDown` and
+  `isButtonReleased`. (**v3001/4000**)
+
+  ```js
+  kaplay({
+      // bind your buttons
+      buttons: {
+          jump: {
+              keyboard: ["space", "up"],
+              gamepad: ["south"],
+          },
+      },
+  });
+
+  onButtonPress("jump", () => {
+      player.jump();
+  });
+  ```
+
+- added `getButton(btn)` and `setButton(btn)` to get and set button bindings
+  (**v3001/4000**)
+
+  ```js
+  // ["space", "up"]
+  debug.log(getButton("jump").keyboard);
+
+  // change the jump button in keyboard to "w"
+  setButton("jump", {
+      keyboard: ["w"],
+      // gamepad binding is not changed
+  });
+  ```
+
+- added `getLastInputDeviceType()` to get what was the last pressed device
+  (**v3001/4000**)
+
+  ```js
+  onButtonPress(() => {
+      const lastInputDevice = getLastInputDeviceType(); // keyboard, mouse or gamepad
+      // change icons, etc
+  });
+  ```
+
+- added the possibility of use arrays in all input handlers (**v3001/4000**)
+
+  ```js
+  onKeyPress(["w", "up"], () => {
+      player.jump();
+  });
+  ```
+
+- now gamepad events return what gamepad triggered the action (**v3001/4000**)
+
+  ```js
+  onGamepadButtonPress("south", (btn, gp) => {
+      console.log(gp.index); // gamepad number on navigator's gamepad list
+  });
+  ```
+
+## Physics
+
+- added effector components: `areaEffector()`, `buoyancyEffector()`,
+  `pointEffector()`, `surfaceEffector()`. (**v3001/4000**)
+- added `constantForce()` component (**v3001/4000**)
+- (**v3001/4000**) added `patrol()` component to move along a list of waypoints
+- (**v3001/4000**) added `sentry()` component to notify when certain objects are
+  in sight
+- (**v3001/4000**) added `NavMesh` class for pathfinding on a mesh
+- (**v3001/4000**) added `navigation()` component to calculate a list of
+  waypoints on a graph
+
+## Game Object
+
+- added `getTreeRoot()` to get the game's root object, which is the parent of
+  all other objects (**v3001/4000**)
 
 ```js
 // bind your buttons
@@ -199,7 +272,8 @@ debug.log(obj.getAnim("walk"));
   maybe you see new errors that make your code strict
 - fix error screen not showing with not Error object
 - fix error where debug screen was scaling bad the blue rectangles
-- fix error where error screen was not showing when the error was thrown in a input event
+- fix error where error screen was not showing when the error was thrown in a
+  input event
 - fix error where fonts was cropped in the bottom
 
 ### v3000.1.17

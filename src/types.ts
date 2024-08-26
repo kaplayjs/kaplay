@@ -1161,14 +1161,14 @@ export interface KAPLAYCtx<
      * @since v3000.0
      * @group Input
      */
-    onGamepadConnect(action: (gamepad: KGamePad) => void): void;
+    onGamepadConnect(action: (gamepad: KGamepad) => void): void;
     /**
      * Register an event that runs when a gamepad is disconnected.
      *
      * @since v3000.0
      * @group Input
      */
-    onGamepadDisconnect(action: (gamepad: KGamePad) => void): void;
+    onGamepadDisconnect(action: (gamepad: KGamepad) => void): void;
     /**
      * Register an event that runs once when 2 game objs with certain tags collides (required to have area() component).
      *
@@ -1465,7 +1465,7 @@ export interface KAPLAYCtx<
      */
     onGamepadButtonDown(
         btn: KGamepadButton | KGamepadButton[],
-        action: (btn: KGamepadButton) => void,
+        action: (btn: KGamepadButton, gamepad: KGamepad) => void,
     ): KEventController;
     /**
      * Register an event that runs every frame when any gamepad buttons are held down.
@@ -1474,7 +1474,7 @@ export interface KAPLAYCtx<
      * @group Input
      */
     onGamepadButtonDown(
-        action: (btn: KGamepadButton) => void,
+        action: (btn: KGamepadButton, gamepad: KGamepad) => void,
     ): KEventController;
     /**
      * Register an event that runs when user presses certain gamepad button.
@@ -1484,7 +1484,7 @@ export interface KAPLAYCtx<
      */
     onGamepadButtonPress(
         btn: KGamepadButton | KGamepadButton[],
-        action: (btn: KGamepadButton) => void,
+        action: (btn: KGamepadButton, gamepad: KGamepad) => void,
     ): KEventController;
     /**
      * Register an event that runs when user presses any gamepad button.
@@ -1493,7 +1493,7 @@ export interface KAPLAYCtx<
      * @group Input
      */
     onGamepadButtonPress(
-        action: (btn: KGamepadButton) => void,
+        action: (btn: KGamepadButton, gamepad: KGamepad) => void,
     ): KEventController;
     /**
      * Register an event that runs when user releases certain gamepad button
@@ -1503,7 +1503,7 @@ export interface KAPLAYCtx<
      */
     onGamepadButtonRelease(
         btn: KGamepadButton | KGamepadButton[],
-        action: (btn: KGamepadButton) => void,
+        action: (btn: KGamepadButton, gamepad: KGamepad) => void,
     ): KEventController;
     /**
      * Register an event that runs when user releases any gamepad button.
@@ -1512,7 +1512,7 @@ export interface KAPLAYCtx<
      * @group Input
      */
     onGamepadButtonRelease(
-        action: (btn: KGamepadButton) => void,
+        action: (btn: KGamepadButton, gamepad: KGamepad) => void,
     ): KEventController;
     /**
      * Register an event that runs when the gamepad axis exists.
@@ -1522,7 +1522,7 @@ export interface KAPLAYCtx<
      */
     onGamepadStick(
         stick: GamepadStick,
-        action: (value: Vec2) => void,
+        action: (value: Vec2, gameepad: KGamepad) => void,
     ): KEventController;
     /**
      * Register an event that runs when user press a defined button
@@ -2250,7 +2250,7 @@ export interface KAPLAYCtx<
      * @since v3000.0
      * @group Info
      */
-    getGamepads(): KGamePad[];
+    getGamepads(): KGamepad[];
     /**
      * Set cursor style (check Cursor type for possible values). Cursor will be reset to "default" every frame so use this in an per-frame action.
      *
@@ -3764,7 +3764,7 @@ export type GamepadDef = {
 };
 
 /** A KAPLAY's gamepad */
-export type KGamePad = {
+export type KGamepad = {
     /** The order of the gamepad in the gamepad list. */
     index: number;
     /** If certain button is pressed. */
