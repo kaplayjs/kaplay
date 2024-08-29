@@ -16,6 +16,7 @@ features of v4000, while v4000 will have the most features and breaking changes.
       buttons: {
           jump: {
               keyboard: ["space", "up"],
+              keyboardCode: "Space", // you can also use key codes
               gamepad: ["south"],
           },
       },
