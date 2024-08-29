@@ -96,6 +96,7 @@ export const initAppState = (opt: {
         buttonsByKey: new Map<Key, string[]>(),
         buttonsByMouse: new Map<MouseButton, string[]>(),
         buttonsByGamepad: new Map<KGamepadButton, string[]>(),
+        buttonsByKeyCode: new Map<string, string[]>(),
         loopID: null as null | number,
         stopped: false,
         dt: 0,
@@ -962,6 +963,8 @@ export const initApp = (opt: {
         state.events.onOnce("input", () => {
             const k: Key = KEY_ALIAS[e.key as keyof typeof KEY_ALIAS] as Key
                 || e.key.toLowerCase();
+            const code = e.code;
+
             if (k === undefined) throw new Error(`Unknown key: ${e.key}`);
             if (k.length === 1) {
                 state.events.trigger("charInput", k);
@@ -985,6 +988,13 @@ export const initApp = (opt: {
                     });
                 }
 
+                if (state.buttonsByKeyCode.has(code)) {
+                    state.buttonsByKeyCode.get(code)?.forEach((btn) => {
+                        state.buttonState.press(btn);
+                        state.events.trigger("buttonPress", btn);
+                    });
+                }
+
                 state.keyState.press(k);
                 state.events.trigger("keyPressRepeat", k);
                 state.events.trigger("keyPress", k);
@@ -996,9 +1006,17 @@ export const initApp = (opt: {
         state.events.onOnce("input", () => {
             const k: Key = KEY_ALIAS[e.key as keyof typeof KEY_ALIAS] as Key
                 || e.key.toLowerCase();
+            const code = e.code;
 
             if (state.buttonsByKey.has(k)) {
                 state.buttonsByKey.get(k)?.forEach((btn) => {
+                    state.buttonState.release(btn);
+                    state.events.trigger("buttonRelease", btn);
+                });
+            }
+
+            if (state.buttonsByKeyCode.has(code)) {
+                state.buttonsByKeyCode.get(code)?.forEach((btn) => {
                     state.buttonState.release(btn);
                     state.events.trigger("buttonRelease", btn);
                 });
