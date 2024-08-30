@@ -1,5 +1,6 @@
 export * from "./animate";
 export * from "./boom";
+export * from "./fakeMouse";
 export * from "./health";
 export * from "./lifespan";
 export * from "./named";

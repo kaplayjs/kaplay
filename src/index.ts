@@ -43,6 +43,8 @@ export type {
     ColorComp,
     DoubleJumpComp,
     EmitterOpt,
+    FakeMouseComp,
+    FakeMouseOpt,
     FixedComp,
     FollowComp,
     HealthComp,
