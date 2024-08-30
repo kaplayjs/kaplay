@@ -70,7 +70,7 @@ features of v4000, while v4000 will have the most features and breaking changes.
 
   ```js
   const myCursor = add([
-      fakeCursor(),
+      fakeMouse(),
       sprite("kat"),
       pos(100, 100),
   ]);
