@@ -181,6 +181,7 @@ import {
     doubleJump,
     drawon,
     fadeIn,
+    fakeMouse,
     fixed,
     follow,
     health,
@@ -1122,6 +1123,7 @@ const kaplay = <
         sentry,
         patrol,
         navigation,
+        fakeMouse,
         // group events
         on,
         onFixedUpdate,

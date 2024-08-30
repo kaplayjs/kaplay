@@ -32,6 +32,8 @@ import type {
     ConstantForceComp,
     ConstantForceCompOpt,
     DoubleJumpComp,
+    FakeMouseComp,
+    FakeMouseOpt,
     FixedComp,
     FollowComp,
     HealthComp,
@@ -280,7 +282,7 @@ export interface KAPLAYCtx<
      *
      * @group Game Obj
      */
-    get(tag: Tag | Tag[], opts?: GetOpt): GameObj[];
+    get<T>(tag: Tag | Tag[], opts?: GetOpt): GameObj<T>[];
     /**
      * Get a list of game objects in an advanced way.
      *
@@ -961,6 +963,12 @@ export interface KAPLAYCtx<
      * @group Components
      */
     animate(): AnimateComp;
+    /**
+     * A fake mouse that follows the mouse position and triggers events.
+     *
+     * [Guide about fake mouse](https://kaplayjs.com/guides/fake-mouse)
+     */
+    fakeMouse(opt?: FakeMouseOpt): FakeMouseComp;
     /**
      * Serializes the animation to plain objects
      */
