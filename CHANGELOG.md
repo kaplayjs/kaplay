@@ -66,6 +66,20 @@ features of v4000, while v4000 will have the most features and breaking changes.
   });
   ```
 
+- added a fake cursor API (**v4000**)
+
+  ```js
+  const myCursor = add([
+      fakeCursor(),
+      sprite("kat"),
+      pos(100, 100),
+  ]);
+
+  myCursor.press(); // trigger onClick events if the mouse is over
+  myCursor.release();
+  myCursor.move(vec2(100, 200)); // move as your wish
+  ```
+
 ## Physics
 
 - added effector components: `areaEffector()`, `buoyancyEffector()`,
