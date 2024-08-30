@@ -9,6 +9,7 @@ import { appState } from "./app";
  */
 export type ButtonBinding = {
     keyboard?: Key | Key[];
+    keyboardCode?: string | string[];
     gamepad?: KGamepadButton | KGamepadButton[];
     mouse?: MouseButton | MouseButton[];
 };
@@ -38,12 +39,20 @@ export const parseButtonBindings = () => {
 
     for (const b in btns) {
         const keyboardBtns = btns[b].keyboard && [btns[b].keyboard].flat();
+        const keyboardCodes = btns[b].keyboardCode
+            && [btns[b].keyboardCode].flat();
         const gamepadBtns = btns[b].gamepad && [btns[b].gamepad].flat();
         const mouseBtns = btns[b].mouse && [btns[b].mouse].flat();
 
         if (keyboardBtns) {
             keyboardBtns.forEach((k) => {
                 mapAddOrPush(appState.buttonsByKey, k, b);
+            });
+        }
+
+        if (keyboardCodes) {
+            keyboardCodes.forEach((k) => {
+                mapAddOrPush(appState.buttonsByKeyCode, k, b);
             });
         }
 
