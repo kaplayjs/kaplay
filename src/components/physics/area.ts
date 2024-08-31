@@ -9,8 +9,7 @@ import {
 import { isFixed } from "../../game/utils";
 import { anchorPt, getViewportScale } from "../../gfx";
 import { app, game, k } from "../../kaplay";
-import { rgb } from "../../math/color";
-import { Polygon, testPolygonPoint, Vec2, vec2 } from "../../math/math";
+import { Polygon, rgb, testPolygonPoint, Vec2, vec2 } from "../../math";
 import type {
     Collision,
     Comp,
@@ -21,9 +20,8 @@ import type {
     Tag,
 } from "../../types";
 import type { KEventController } from "../../utils/";
-import type { AnchorComp } from "../transform/anchor";
-import type { FixedComp } from "../transform/fixed";
-import type { PosComp } from "../transform/pos";
+import type { FakeMouseComp } from "../misc";
+import type { AnchorComp, FixedComp, PosComp } from "../transform";
 
 let areaCount = 0;
 
@@ -221,6 +219,9 @@ export interface AreaCompOpt {
     collisionIgnore?: Tag[];
 }
 
+let fakeMouse: GameObj<FakeMouseComp | PosComp> | null = null;
+let fakeMouseChecked = false;
+
 export function area(opt: AreaCompOpt = {}): AreaComp {
     const colliding: Record<string, Collision> = {};
     const collidingThisFrame = new Set();
@@ -229,6 +230,11 @@ export function area(opt: AreaCompOpt = {}): AreaComp {
     let _offset: Vec2 = opt.offset ?? vec2(0);
     let localArea: Shape;
     let worldArea: Polygon;
+
+    if (!fakeMouse && !fakeMouseChecked) {
+        fakeMouse = k.get<FakeMouseComp | PosComp>("fakeMouse")[0];
+        fakeMouseChecked = true;
+    }
 
     return {
         id: "area",
@@ -274,7 +280,6 @@ export function area(opt: AreaCompOpt = {}): AreaComp {
             const a = this.localArea();
 
             k.pushTransform();
-            k.pushScale(this.area.scale);
             k.pushTranslate(this.area.offset);
 
             const opts = {
@@ -291,14 +296,15 @@ export function area(opt: AreaCompOpt = {}): AreaComp {
                 k.drawRect({
                     ...opts,
                     pos: a.pos,
-                    width: a.width,
-                    height: a.height,
+                    width: a.width * this.area.scale.x,
+                    height: a.height * this.area.scale.y,
                 });
             }
             else if (a instanceof k.Polygon) {
                 k.drawPolygon({
                     ...opts,
                     pts: a.pts,
+                    scale: this.area.scale,
                 });
             }
             else if (a instanceof k.Circle) {
@@ -338,13 +344,23 @@ export function area(opt: AreaCompOpt = {}): AreaComp {
         },
 
         isClicked(): boolean {
+            if (fakeMouse) {
+                return fakeMouse.isPressed && this.isHovering();
+            }
+
             return app.isMousePressed() && this.isHovering();
         },
 
-        isHovering(this: GameObj) {
-            const mpos = isFixed(this)
-                ? k.mousePos()
-                : k.toWorld(k.mousePos());
+        isHovering(this: GameObj<AreaComp>) {
+            if (fakeMouse) {
+                const mpos = isFixed(this)
+                    ? fakeMouse.pos
+                    : k.toWorld(fakeMouse.pos);
+
+                return this.hasPoint(mpos);
+            }
+
+            const mpos = isFixed(this) ? k.mousePos() : k.toWorld(k.mousePos());
             return this.hasPoint(mpos);
         },
 
@@ -383,14 +399,23 @@ export function area(opt: AreaCompOpt = {}): AreaComp {
 
         onClick(
             this: GameObj<AreaComp>,
-            f: () => void,
+            action: () => void,
             btn: MouseButton = "left",
         ): KEventController {
-            const e = app.onMousePress(btn, () => {
+            if (fakeMouse) {
+                fakeMouse.onPress(() => {
+                    if (this.isHovering()) {
+                        action();
+                    }
+                });
+            }
+
+            const e = k.onMousePress(btn, () => {
                 if (this.isHovering()) {
-                    f();
+                    action();
                 }
             });
+
             this.onDestroy(() => e.cancel());
             return e;
         },
@@ -575,12 +600,12 @@ export function area(opt: AreaCompOpt = {}): AreaComp {
         },
 
         inspect() {
-            if (this.area.scale.x == this.area.scale.y) {
-                return `area: ${this.area.scale.x.toFixed(1)}x`;
+            if (this.area.scale?.x == this.area.scale?.y) {
+                return `area: ${this.area.scale?.x?.toFixed(1)}x`;
             }
             else {
-                return `area: (${this.area.scale.x.toFixed(1)}x, ${
-                    this.area.scale.y.toFixed(1)
+                return `area: (${this.area.scale?.x?.toFixed(1)}x, ${
+                    this.area.scale.y?.toFixed(1)
                 }y)`;
             }
         },

@@ -1,0 +1,28 @@
+on:
+  pull_request:
+    branches:
+      - master
+    types: ["closed"]
+
+jobs:
+  cherry_pick_release_v2_0:
+    name: Cherry pick into v3001
+    runs-on: ubuntu-latest
+    if: ${{ contains(github.event.pull_request.labels.*.name, 'v3001&v4000') && github.event.pull_request.merged == true }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Cherry pick into v3001
+        uses: carloscastrojumo/github-cherry-pick-action@v1.0.10
+        with:
+          branch: v3001
+          labels: |
+            cherry-pick
+          reviewers: |
+            lajbel
+          title: "{old_title} [cherry-pick]"
+          body: "Cherry picking #{old_pull_request_id} onto this branch"
+env:
+  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
