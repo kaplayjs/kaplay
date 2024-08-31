@@ -28,7 +28,7 @@ export function on<Ev extends GameObjEventNames | string & {}>(
 
 export const onFixedUpdate = overload2(
     (action: () => void): KEventController => {
-        const obj = game.root.add([{ update: action }]);
+        const obj = game.root.add([{ fixedUpdate: action }]);
         return {
             get paused() {
                 return obj.paused;
