@@ -60,4 +60,4 @@ add([
     pos(12, 12),
 ]);
 
-// Check out https://kaboomjs.com#BodyComp for everything body() provides
+// Check out https://kaplayjs.com/doc/BodyComp for everything body() provides
