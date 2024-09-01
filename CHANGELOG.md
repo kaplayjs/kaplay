@@ -328,6 +328,7 @@ features of v4000, while v4000 will have the most features and breaking changes.
 ## TypeScript
 
 - now you can type `get()` with a type parameter and passsing component types.
+  (**v4000**)
 
   ```ts
   const player = get<BodyComp>("player");
