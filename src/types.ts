@@ -282,7 +282,7 @@ export interface KAPLAYCtx<
      *
      * @group Game Obj
      */
-    get<T>(tag: Tag | Tag[], opts?: GetOpt): GameObj<T>[];
+    get<T = any>(tag: Tag | Tag[], opts?: GetOpt): GameObj<T>[];
     /**
      * Get a list of game objects in an advanced way.
      *
@@ -3997,7 +3997,7 @@ export interface GameObjRaw {
      *
      * @since v3000.0
      */
-    get(tag: Tag | Tag[], opts?: GetOpt): GameObj[];
+    get<T = any>(tag: Tag | Tag[], opts?: GetOpt): GameObj<T>[];
     /**
      * Get a list of all game objs with certain properties.
      *

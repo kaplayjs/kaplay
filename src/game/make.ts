@@ -353,7 +353,7 @@ export function make<T>(comps: CompList<T> = []): GameObj<MakeType<T>> {
         },
 
         // TODO: Separate
-        get(t: Tag | Tag[], opts: GetOpt = {}): GameObj[] {
+        get<T = any>(t: Tag | Tag[], opts: GetOpt = {}): GameObj<T>[] {
             let list: GameObj[] = opts.recursive
                 ? this.children.flatMap(
                     function recurse(child: GameObj): GameObj[] {
