@@ -325,6 +325,14 @@ features of v4000, while v4000 will have the most features and breaking changes.
 - added evaluation of the first and second derivatives for all splines
 - added higher order easing functions linear, steps and cubic-bezier
 
+## TypeScript
+
+- now you can type `get()` with a type parameter and passsing component types.
+
+  ```ts
+  const player = get<BodyComp>("player");
+  ```
+
 ## Deprecations
 
 > All changes applies for both v3001 and v4000
