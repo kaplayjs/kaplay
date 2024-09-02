@@ -173,7 +173,7 @@ export function play(
     };
     panNode.pan.value = opt.pan ?? 0;
     panNode.connect(gainNode);
-    gainNode.connect(audio.masterNode);
+    gainNode.connect(opt.connectTo ?? audio.masterNode);
     gainNode.gain.value = opt.volume ?? 1;
 
     const start = (data: SoundData) => {
