@@ -238,6 +238,7 @@ features of v4000, while v4000 will have the most features and breaking changes.
 
 ## Audio
 
+- now you can pass an `AudioBuffer` to `loadSound()` (**v4000**)
 - added `loadMusic()` to load streaming audio (doesn't block in loading screen).
   (**v3001/4000**)
 
