@@ -10,6 +10,10 @@ export class SoundData {
         this.buf = buf;
     }
 
+    static fromAudioBuffer(buf: AudioBuffer): SoundData {
+        return new SoundData(buf);
+    }
+
     static fromArrayBuffer(buf: ArrayBuffer): Promise<SoundData> {
         return new Promise((resolve, reject) =>
             audio.ctx.decodeAudioData(buf, resolve, reject)
@@ -61,15 +65,22 @@ export function getSound(name: string): Asset<SoundData> | null {
 // load a sound to asset manager
 export function loadSound(
     name: string | null,
-    src: string | ArrayBuffer,
+    src: string | ArrayBuffer | AudioBuffer,
 ): Asset<SoundData> {
-    src = fixURL(src);
-    return assets.sounds.add(
-        name,
-        typeof src === "string"
-            ? SoundData.fromURL(src)
-            : SoundData.fromArrayBuffer(src),
-    );
+    const fixedSrc = fixURL(src);
+    let sound: Promise<SoundData> | SoundData;
+
+    if (typeof fixedSrc === "string") {
+        sound = SoundData.fromURL(fixedSrc);
+    }
+    else if (fixedSrc instanceof ArrayBuffer) {
+        sound = SoundData.fromArrayBuffer(fixedSrc);
+    }
+    else {
+        sound = Promise.resolve(SoundData.fromAudioBuffer(fixedSrc));
+    }
+
+    return assets.sounds.add(name, sound);
 }
 
 export function loadMusic(
