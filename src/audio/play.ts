@@ -321,7 +321,7 @@ export function play(
             return this.onEnd(action);
         },
 
-        connect(node: AudioNode = null) {
+        connect(node?: AudioNode) {
             gainNode.disconnect();
             gainNode.connect(node ?? audio.masterNode);
         },
