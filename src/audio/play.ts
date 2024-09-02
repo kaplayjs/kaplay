@@ -49,6 +49,11 @@ export interface AudioPlayOpt {
      * Defaults to 0.0.
      */
     pan?: number;
+    /**
+     * If the audio node should start out connected to another audio node rather than
+     * Kaplay's default volume node. Defaults to undefined, i.e. use Kaplay's volume node.
+     */
+    connectTo?: AudioNode
 }
 
 export interface AudioPlay {
@@ -122,6 +127,12 @@ export interface AudioPlay {
      */
     onEnd(action: () => void): KEventController;
     then(action: () => void): KEventController;
+    /**
+     * Disconnect the audio node from whatever it is currently connected to
+     * and connect it to the passed-in audio node, or to Kaplay's default volume node
+     * if no node is passed.
+     */
+    connect(node?: AudioNode): void;
 }
 
 export function play(
@@ -308,6 +319,11 @@ export function play(
 
         then(action: () => void) {
             return this.onEnd(action);
+        },
+
+        connect(node: AudioNode = null) {
+            gainNode.disconnect();
+            gainNode.connect(node ?? audio.masterNode);
         },
     };
 }
