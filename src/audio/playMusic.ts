@@ -8,7 +8,7 @@ export function playMusic(url: string, opt: AudioPlayOpt = {}): AudioPlay {
     const el = new Audio(url);
     const src = audio.ctx.createMediaElementSource(el);
 
-    src.connect(audio.masterNode);
+    src.connect(opt.connectTo ?? audio.masterNode);
 
     function resumeAudioCtx() {
         if (debug.paused) return;
@@ -101,6 +101,11 @@ export function playMusic(url: string, opt: AudioPlayOpt = {}): AudioPlay {
 
         then(action: () => void) {
             return this.onEnd(action);
+        },
+
+        connect(node?: AudioNode) {
+            src.disconnect();
+            src.connect(node ?? audio.masterNode);
         },
     };
 }
