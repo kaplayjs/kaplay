@@ -106,6 +106,8 @@ import {
     evaluateQuadratic,
     evaluateQuadraticFirstDerivative,
     evaluateQuadraticSecondDerivative,
+    gjkShapeIntersection,
+    gjkShapeIntersects,
     hermite,
     hsl2rgb,
     isConvex,
@@ -810,12 +812,12 @@ const kaplay = <
                                         continue check;
                                     }
                                 }
-                                // TODO: cache the world area here
-                                const res = sat(
+                                const res = gjkShapeIntersection( // sat(
                                     aobj.worldArea(),
                                     other.worldArea(),
                                 );
                                 if (res) {
+                                    // console.log(res)
                                     // TODO: rehash if the object position is changed after resolution?
                                     const col1 = new Collision(
                                         aobj,
@@ -1247,6 +1249,8 @@ const kaplay = <
         testCirclePolygon,
         testLinePoint,
         testLineCircle,
+        gjkShapeIntersects,
+        gjkShapeIntersection,
         isConvex,
         triangulate,
         NavMesh,

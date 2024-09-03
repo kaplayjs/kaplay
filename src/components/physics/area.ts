@@ -165,11 +165,11 @@ export interface AreaComp extends Comp {
     /**
      * Get the geometry data for the collider in world coordinate space.
      */
-    worldArea(): Polygon;
+    worldArea(): Shape;
     /**
      * Get the geometry data for the collider in screen coordinate space.
      */
-    screenArea(): Polygon;
+    screenArea(): Shape;
 }
 
 /**
@@ -494,7 +494,7 @@ export function area(opt: AreaCompOpt = {}): AreaComp {
 
         hasPoint(pt: Vec2): boolean {
             // TODO: convert to pt to local space instead
-            return testPolygonPoint(this.worldArea(), pt);
+            return this.worldArea().contains(pt);
         },
 
         // push an obj out of another if they're overlapped
@@ -521,14 +521,6 @@ export function area(opt: AreaCompOpt = {}): AreaComp {
         worldArea(this: GameObj<AreaComp | AnchorComp>): Polygon {
             const localArea = this.localArea();
 
-            if (
-                !(localArea instanceof k.Polygon || localArea instanceof k.Rect)
-            ) {
-                throw new Error(
-                    "Only support polygon and rect shapes for now",
-                );
-            }
-
             const transform = this.transform
                 .clone()
                 .scale(vec2(this.area.scale ?? 1))
@@ -545,7 +537,7 @@ export function area(opt: AreaCompOpt = {}): AreaComp {
             return localArea.transform(transform) as Polygon;
         },
 
-        screenArea(this: GameObj<AreaComp | FixedComp>): Polygon {
+        screenArea(this: GameObj<AreaComp | FixedComp>): Shape {
             const area = this.worldArea();
             if (isFixed(this)) {
                 return area;
