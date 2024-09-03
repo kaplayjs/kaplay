@@ -764,8 +764,8 @@ const kaplay = <
             stack.push(tr.clone());
 
             // Update object transform here. This will be the transform later used in rendering.
-            if (obj.scale) tr.scale(obj.scale);
             if (obj.pos) tr.translate(obj.pos);
+            if (obj.scale) tr.scale(obj.scale);
             if (obj.angle) tr.rotate(obj.angle);
             obj.transform = tr.clone();
 
