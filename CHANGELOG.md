@@ -1,3 +1,9 @@
+# v4000.0.0
+
+- Replaced the Separating Axis Theorem (SAT) with the Gilbert–Johnson–Keerthi (GJK) distance algorithm.
+- Added circle and (rotated) ellipse collision shapes.
+- Circle area is no longer a box.
+
 # v4000.0.0 and v3001.0.0
 
 This version is a double release, with a lot of new features and breaking
@@ -12,18 +18,18 @@ features of v4000, while v4000 will have the most features and breaking changes.
 
   ```js
   kaplay({
-      // bind your buttons
-      buttons: {
-          jump: {
-              keyboard: ["space", "up"],
-              keyboardCode: "Space", // you can also use key codes
-              gamepad: ["south"],
-          },
+    // bind your buttons
+    buttons: {
+      jump: {
+        keyboard: ["space", "up"],
+        keyboardCode: "Space", // you can also use key codes
+        gamepad: ["south"],
       },
+    },
   });
 
   onButtonPress("jump", () => {
-      player.jump();
+    player.jump();
   });
   ```
 
@@ -36,8 +42,8 @@ features of v4000, while v4000 will have the most features and breaking changes.
 
   // change the jump button in keyboard to "w"
   setButton("jump", {
-      keyboard: ["w"],
-      // gamepad binding is not changed
+    keyboard: ["w"],
+    // gamepad binding is not changed
   });
   ```
 
@@ -46,8 +52,8 @@ features of v4000, while v4000 will have the most features and breaking changes.
 
   ```js
   onButtonPress(() => {
-      const lastInputDevice = getLastInputDeviceType(); // keyboard, mouse or gamepad
-      // change icons, etc
+    const lastInputDevice = getLastInputDeviceType(); // keyboard, mouse or gamepad
+    // change icons, etc
   });
   ```
 
@@ -55,7 +61,7 @@ features of v4000, while v4000 will have the most features and breaking changes.
 
   ```js
   onKeyPress(["w", "up"], () => {
-      player.jump();
+    player.jump();
   });
   ```
 
@@ -63,18 +69,14 @@ features of v4000, while v4000 will have the most features and breaking changes.
 
   ```js
   onGamepadButtonPress("south", (btn, gp) => {
-      console.log(gp.index); // gamepad number on navigator's gamepad list
+    console.log(gp.index); // gamepad number on navigator's gamepad list
   });
   ```
 
 - added a fake cursor API (**v4000**)
 
   ```js
-  const myCursor = add([
-      fakeMouse(),
-      sprite("kat"),
-      pos(100, 100),
-  ]);
+  const myCursor = add([fakeMouse(), sprite("kat"), pos(100, 100)]);
 
   myCursor.press(); // trigger onClick events if the mouse is over
   myCursor.release();
@@ -121,10 +123,7 @@ features of v4000, while v4000 will have the most features and breaking changes.
   components (**v3001/4000**)
 
   ```js
-  const obj = add([
-      sprite("bean"),
-      scale(2),
-  ]);
+  const obj = add([sprite("bean"), scale(2)]);
 
   // set it with = syntax
   obj.scale = vec2(3, 4);
@@ -141,8 +140,8 @@ features of v4000, while v4000 will have the most features and breaking changes.
   ```js
   // prop to animate, frames, options
   rotatingBean.animate("angle", [0, 360], {
-      duration: 2,
-      direction: "forward",
+    duration: 2,
+    direction: "forward",
   });
   ```
 
@@ -157,13 +156,13 @@ features of v4000, while v4000 will have the most features and breaking changes.
   ```js
   // define the layers
   layers(
-      [
-          "bg",
-          "game",
-          "ui",
-          // the default layer
-      ],
+    [
+      "bg",
       "game",
+      "ui",
+      // the default layer
+    ],
+    "game"
   );
 
   // use the layer component
@@ -174,9 +173,7 @@ features of v4000, while v4000 will have the most features and breaking changes.
   (**v3001/4000**)
 
   ```js
-  const obj = add([
-      sprite("bean", { anim: "walk" }),
-  ]);
+  const obj = add([sprite("bean", { anim: "walk" })]);
 
   // get the current animation name
   debug.log(obj.getCurAnim().name); // "walk"
@@ -186,19 +183,17 @@ features of v4000, while v4000 will have the most features and breaking changes.
 
   ```js
   loadSprite("bean", "bean.png", {
-      sliceX: 4,
-      sliceY: 1,
-      anims: {
-          walk: {
-              from: 0,
-              to: 3,
-          },
+    sliceX: 4,
+    sliceY: 1,
+    anims: {
+      walk: {
+        from: 0,
+        to: 3,
       },
+    },
   });
 
-  const obj = add([
-      sprite("bean"),
-  ]);
+  const obj = add([sprite("bean")]);
 
   // get the animation data
   debug.log(obj.getAnim("walk")); // { from: 0, to: 3 }
@@ -207,9 +202,7 @@ features of v4000, while v4000 will have the most features and breaking changes.
 - added `SpriteComp.hasAnim()` to check if an animation exists (**v3001/4000**)
 
   ```js
-  const obj = add([
-      sprite("bean", { anim: "walk" }),
-  ]);
+  const obj = add([sprite("bean", { anim: "walk" })]);
 
   // check if an animation exists
   debug.log(obj.hasAnim("walk")); // true
@@ -226,9 +219,9 @@ features of v4000, while v4000 will have the most features and breaking changes.
 
   ```js
   add([
-      rect(100, 100, {
-          radius: [10, 20, 30, 40],
-      }),
+    rect(100, 100, {
+      radius: [10, 20, 30, 40],
+    }),
   ]);
   ```
 
@@ -289,21 +282,22 @@ features of v4000, while v4000 will have the most features and breaking changes.
 
   ```js
   kaplay({
-      debugKey: "l",
+    debugKey: "l",
   });
   ```
+
 - added compatibility with custom properties in debug mode
 
   ```js
   const obj = add([
-      sprite("bean"),
-      {
-          health: 100, // on debug.inspect
-          damage: 10, // on debug.inspect
-          hp() {
-              this.health -= this.damage;
-          }, // not on debug.inspect
-      },
+    sprite("bean"),
+    {
+      health: 100, // on debug.inspect
+      damage: 10, // on debug.inspect
+      hp() {
+        this.health -= this.damage;
+      }, // not on debug.inspect
+    },
   ]);
 
   // see the custom properties in debug mode
@@ -407,10 +401,10 @@ features of v4000, while v4000 will have the most features and breaking changes.
 
 ```js
 loadFont("apl386", "/examples/fonts/apl386.ttf", {
-    outline: {
-        width: 8,
-        color: rgb(0, 0, 255),
-    },
+  outline: {
+    width: 8,
+    color: rgb(0, 0, 255),
+  },
 });
 ```
 
@@ -461,7 +455,7 @@ music.stop();
 ```js
 // get sprite size
 getSprite("bean").then((spr) => {
-    console.log(spr.width, spr.height);
+  console.log(spr.width, spr.height);
 });
 ```
 
@@ -488,11 +482,11 @@ const scene = add([]);
 const bean = scene.add([sprite("bean"), pos(100, 200), area(), body()]);
 
 scene.onKeyPress("space", () => {
-    bean.jump();
+  bean.jump();
 });
 
 scene.onMousePress(() => {
-    bean.jump();
+  bean.jump();
 });
 
 // setting scene.paused will pause all the input events
@@ -507,19 +501,19 @@ ui.add(makeButton());
 
 // these will only work if ui game object is active
 ui.onMousePress(() => {
-    // ...
+  // ...
 });
 
 // before you'll have to manually clean up events on obj.onDestroy()
 const scene = add([]);
 const evs = [];
 scene.onDestroy(() => {
-    evs.forEach((ev) => ev.cancel());
+  evs.forEach((ev) => ev.cancel());
 });
 evs.push(
-    k.onKeyPress("space", () => {
-        doSomeSceneSpecificStuff();
-    }),
+  k.onKeyPress("space", () => {
+    doSomeSceneSpecificStuff();
+  })
 );
 ```
 
@@ -538,9 +532,9 @@ add(obj);
 const ui = add([fixed()]);
 
 ui.add([
-    rect(),
-    // have to also give all children game objects fixed()
-    fixed(),
+  rect(),
+  // have to also give all children game objects fixed()
+  fixed(),
 ]);
 
 // now
@@ -572,16 +566,16 @@ ui.add([rect(100, 100)]);
 const bean = add([sprite("bean"), pos(160, 120)]);
 
 const sword = bean.add([
-    sprite("sword"),
-    // transforms will be relative to parent bean object
-    pos(20, 20),
-    rotate(20),
+  sprite("sword"),
+  // transforms will be relative to parent bean object
+  pos(20, 20),
+  rotate(20),
 ]);
 
 const hat = bean.add([
-    sprite("hat"),
-    // transforms will be relative to parent bean object
-    pos(0, -10),
+  sprite("hat"),
+  // transforms will be relative to parent bean object
+  pos(0, -10),
 ]);
 
 // children will be moved alongside the parent
@@ -595,10 +589,10 @@ bean.destroy();
 
 ```js
 const enemies = get("enemy", {
-    // get from all children and descendants, instead of only direct children
-    recursive: true,
-    // live update the returned list to listen to onAdd and onDestroy events
-    liveUpdate: true,
+  // get from all children and descendants, instead of only direct children
+  recursive: true,
+  // live update the returned list to listen to onAdd and onDestroy events
+  liveUpdate: true,
 });
 
 console.log(enemies.length); // 3
@@ -629,11 +623,11 @@ console.log(enemies.length); // 4
 
 ```js
 const bean = add([
-    sprite("bean"),
-    pos(100, 80),
-    area({
-        collisionIgnore: ["cloud", "particle"],
-    }),
+  sprite("bean"),
+  pos(100, 80),
+  area({
+    collisionIgnore: ["cloud", "particle"],
+  }),
 ]);
 ```
 
@@ -641,10 +635,10 @@ const bean = add([
 
 ```js
 for (const col of player.getCollisions()) {
-    const c = col.target;
-    if (c.is("chest")) {
-        c.open();
-    }
+  const c = col.target;
+  if (c.is("chest")) {
+    c.open();
+  }
 }
 ```
 
@@ -669,9 +663,9 @@ for (const col of player.getCollisions()) {
 ```js
 // make semi-solid platforms that doesn't block player when player is jumping over it
 player.onBeforePhysicsResolve((collision) => {
-    if (collision.target.is(["platform", "soft"]) && player.isJumping()) {
-        collision.preventResolution();
-    }
+  if (collision.target.is(["platform", "soft"]) && player.isJumping()) {
+    collision.preventResolution();
+  }
 });
 ```
 
@@ -713,14 +707,14 @@ player.onBeforePhysicsResolve((collision) => {
 ```js
 // before
 obj.onAnimEnd("walk", () => {
-    // do something
+  // do something
 });
 
 // v3000
 obj.onAnimEnd((anim) => {
-    if (anim === "walk") {
-        // do something
-    }
+  if (anim === "walk") {
+    // do something
+  }
 });
 ```
 
@@ -730,11 +724,11 @@ obj.onAnimEnd((anim) => {
 
 ```js
 const player = add([
-    sprite("bean"),
-    // will calculate and send u_time every frame
-    shader("flashy", () => ({
-        u_time: time(),
-    })),
+  sprite("bean"),
+  // will calculate and send u_time every frame
+  shader("flashy", () => ({
+    u_time: time(),
+  })),
 ]);
 ```
 
@@ -750,11 +744,11 @@ const player = add([
 ```js
 // custom loading screen
 onLoadUpdate((progress) => {
-    drawCircle({
-        pos: center(),
-        radius: 32,
-        end: map(progress, 0, 1, 0, 360),
-    });
+  drawCircle({
+    pos: center(),
+    radius: 32,
+    end: map(progress, 0, 1, 0, 360),
+  });
 });
 ```
 
@@ -762,9 +756,9 @@ onLoadUpdate((progress) => {
 
 ```js
 loadSprite("player", [
-    "sprites/player_idle.png",
-    "sprites/player_run.png",
-    "sprites/player_jump.png",
+  "sprites/player_idle.png",
+  "sprites/player_run.png",
+  "sprites/player_jump.png",
 ]);
 ```
 
@@ -782,8 +776,8 @@ loadFont("FlowerSketches", "/examples/fonts/FlowerSketches.ttf");
 
 // Load a custom font with options
 loadFont("apl386", "/examples/fonts/apl386.ttf", {
-    outline: 4,
-    filter: "linear",
+  outline: 4,
+  filter: "linear",
 });
 ```
 
@@ -815,14 +809,14 @@ loadFont("apl386", "/examples/fonts/apl386.ttf", {
 
 ```js
 loadShader(
-    "invert",
-    null,
-    `
+  "invert",
+  null,
+  `
 vec4 frag(vec2 pos, vec2 uv, vec4 color, sampler2D tex) {
     vec4 c = def_frag();
     return vec4(1.0 - c.r, 1.0 - c.g, 1.0 - c.b, c.a);
 }
-`,
+`
 );
 
 usePostEffect("invert");
@@ -834,21 +828,21 @@ usePostEffect("invert");
 
 ```js
 loadSprite("grass", "/sprites/grass.png", {
-    slice9: {
-        left: 8,
-        right: 8,
-        top: 8,
-        bottom: 8,
-    },
+  slice9: {
+    left: 8,
+    right: 8,
+    top: 8,
+    bottom: 8,
+  },
 });
 
 const g = add([sprite("grass")]);
 
 onMouseMove(() => {
-    const mpos = mousePos();
-    // updating width / height will scale the image but not the sliced frame
-    g.width = mpos.x;
-    g.height = mpos.y;
+  const mpos = mousePos();
+  // updating width / height will scale the image but not the sliced frame
+  g.width = mpos.x;
+  g.height = mpos.y;
 });
 ```
 
@@ -900,34 +894,34 @@ music.loop = true;
 ```js
 // before
 addLevel(["@  ^ $$", "======="], {
-    width: 32,
-    height: 32,
-    "=": () => [sprite("grass"), area(), body({ isStatic: true })],
-    $: () => [sprite("coin"), area(), "coin"],
-    any: (symbol) => {
-        if (symbol === "@") {
-            return [
-                /* ... */
-            ];
-        }
-    },
+  width: 32,
+  height: 32,
+  "=": () => [sprite("grass"), area(), body({ isStatic: true })],
+  $: () => [sprite("coin"), area(), "coin"],
+  any: (symbol) => {
+    if (symbol === "@") {
+      return [
+        /* ... */
+      ];
+    }
+  },
 });
 
 // v3000
 addLevel(["@  ^ $$", "======="], {
-    tileWidth: 32,
-    tileHeight: 32,
-    tiles: {
-        "=": () => [sprite("grass"), area(), body({ isStatic: true })],
-        $: () => [sprite("coin"), area(), "coin"],
-    },
-    wildcardTile: (symbol) => {
-        if (symbol === "@") {
-            return [
-                /* ... */
-            ];
-        }
-    },
+  tileWidth: 32,
+  tileHeight: 32,
+  tiles: {
+    "=": () => [sprite("grass"), area(), body({ isStatic: true })],
+    $: () => [sprite("coin"), area(), "coin"],
+  },
+  wildcardTile: (symbol) => {
+    if (symbol === "@") {
+      return [
+        /* ... */
+      ];
+    }
+  },
 });
 ```
 
@@ -967,20 +961,20 @@ add();
 
 ```js
 onMousePress(() => {
-    tween(
-        bean.pos.x,
-        mousePos().x,
-        1,
-        (val) => (bean.pos.x = val),
-        easings.easeOutBounce,
-    );
-    tween(
-        bean.pos.y,
-        mousePos().y,
-        1,
-        (val) => (bean.pos.y = val),
-        easings.easeOutBounce,
-    );
+  tween(
+    bean.pos.x,
+    mousePos().x,
+    1,
+    (val) => (bean.pos.x = val),
+    easings.easeOutBounce
+  );
+  tween(
+    bean.pos.y,
+    mousePos().y,
+    1,
+    (val) => (bean.pos.y = val),
+    easings.easeOutBounce
+  );
 });
 ```
 
@@ -990,13 +984,13 @@ onMousePress(() => {
 ```js
 // before
 const cancel = onUpdate(() => {
-    /* ... */
+  /* ... */
 });
 cancel();
 
 // v3000
 const ev = onUpdate(() => {
-    /* ... */
+  /* ... */
 });
 ev.paused = true;
 ev.cancel();
@@ -1006,13 +1000,13 @@ ev.cancel();
 
 ```js
 const timer = wait(4, () => {
-    /* ... */
+  /* ... */
 });
 timer.paused = true;
 timer.resume();
 
 const timer = loop(1, () => {
-    /* ... */
+  /* ... */
 });
 timer.paused = true;
 timer.resume();
@@ -1206,11 +1200,11 @@ add([sprite("player"), area()]);
 add([sprite("rock"), solid()]);
 
 keyDown("left", () => {
-    player.move(-120, 0);
+  player.move(-120, 0);
 });
 
 player.action(() => {
-    player.resolve(); // or pushOutAll() in beta versions
+  player.resolve(); // or pushOutAll() in beta versions
 });
 
 // after
@@ -1220,8 +1214,8 @@ const player = add([sprite("player"), area(), solid()]);
 add([sprite("rock"), area(), solid()]);
 
 keyDown("left", () => {
-    // this will handle collision resolution for you, if the other obj is also "solid"
-    player.move(-120, 0);
+  // this will handle collision resolution for you, if the other obj is also "solid"
+  player.move(-120, 0);
 });
 ```
 
@@ -1282,10 +1276,10 @@ keyPress(...);
 
 ```js
 add([
-    sprite("bean"),
-    area(), // empty area will derive from sprite size
-    area({ scale: 0.5 }), // 0.5x the sprite size
-    area({ offset: vec2(0, 12), width: 4, height: 12 }), // more control over the collider region
+  sprite("bean"),
+  area(), // empty area will derive from sprite size
+  area({ scale: 0.5 }), // 0.5x the sprite size
+  area({ offset: vec2(0, 12), width: 4, height: 12 }), // more control over the collider region
 ]);
 ```
 
@@ -1310,16 +1304,16 @@ add([
 
 ```js
 function alwaysRight() {
-    return {
-        // the id of this component
-        id: "alwaysRight",
-        // list of component ids that this requires
-        require: ["pos"],
-        update() {
-            // so you can use `move()` from pos() component with no worry
-            this.move(100, 0);
-        },
-    };
+  return {
+    // the id of this component
+    id: "alwaysRight",
+    // list of component ids that this requires
+    require: ["pos"],
+    update() {
+      // so you can use `move()` from pos() component with no worry
+      this.move(100, 0);
+    },
+  };
 }
 ```
 
@@ -1367,12 +1361,12 @@ obj.c("sprite").play("anim");
 
 ```js
 loadSprite("hero", "hero.png", {
-    sliceX: 9,
-    anims: {
-        idle: { from: 0, to: 3, speed: 3, loop: true },
-        run: { from: 4, to: 7, speed: 10, loop: true },
-        hit: 8,
-    },
+  sliceX: 9,
+  anims: {
+    idle: { from: 0, to: 3, speed: 3, loop: true },
+    run: { from: 4, to: 7, speed: 10, loop: true },
+    hit: 8,
+  },
 });
 ```
 
@@ -1383,8 +1377,8 @@ loadSprite("hero", "hero.png", {
 
 ```js
 addLevel(["*    *", "*    *", "======"], {
-    "*": () => [sprite("wall"), area(), solid()],
-    "=": () => [sprite("floor"), area(), solid()],
+  "*": () => [sprite("wall"), area(), solid()],
+  "=": () => [sprite("floor"), area(), solid()],
 });
 ```
 
@@ -1401,8 +1395,8 @@ addLevel(["*    *", "*    *", "======"], {
 ```js
 const area = player.worldArea();
 if (area.shape === "rect") {
-    const width = area.p2.x - area.p1.x;
-    const height = area.p2.y - area.p1.y;
+  const width = area.p2.x - area.p1.x;
+  const height = area.p2.y - area.p1.y;
 }
 ```
 
@@ -1461,9 +1455,9 @@ if (area.shape === "rect") {
 ```js
 // replaces init(), and added a 'global' flag for previous kaboom.global()
 kaboom({
-    global: true,
-    width: 480,
-    height: 480,
+  global: true,
+  width: 480,
+  height: 480,
 });
 ```
 
