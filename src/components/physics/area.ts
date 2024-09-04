@@ -523,8 +523,8 @@ export function area(opt: AreaCompOpt = {}): AreaComp {
 
             const transform = this.transform
                 .clone()
-                .scale(vec2(this.area.scale ?? 1))
-                .translate(this.area.offset);
+                .translate(this.area.offset)
+                .scale(vec2(this.area.scale ?? 1));
 
             if (localArea instanceof k.Rect) {
                 const offset = anchorPt(this.anchor || DEF_ANCHOR)
