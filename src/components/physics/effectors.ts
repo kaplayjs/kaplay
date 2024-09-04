@@ -221,7 +221,10 @@ export function buoyancyEffector(
         add(this: GameObj<AreaComp | BuoyancyEffectorComp>) {
             this.onCollideUpdate("body", (obj, col) => {
                 const o = obj as GameObj<BodyComp | AreaComp>;
-                const polygon = o.worldArea();
+                const shape = o.worldArea();
+                const polygon: Polygon = shape instanceof Polygon
+                    ? shape
+                    : new Polygon(shape.bbox().points());
                 const [submergedArea, _] = polygon.cut(
                     vec2(-100, this.surfaceLevel),
                     vec2(100, this.surfaceLevel),

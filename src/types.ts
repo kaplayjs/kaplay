@@ -107,6 +107,7 @@ import type {
     LineJoin,
     Texture,
 } from "./gfx";
+import type { GjkCollisionResult } from "./math";
 import type { Color, RGBAValue, RGBValue } from "./math/color";
 import type {
     Circle,
@@ -2950,6 +2951,17 @@ export interface KAPLAYCtx<
      * @group Math
      */
     testCirclePolygon(c: Circle, p: Polygon): boolean;
+    /**
+     * @group Math
+     */
+    gjkShapeIntersects(shapeA: Shape, shapeB: Shape): boolean;
+    /**
+     * @group Math
+     */
+    gjkShapeIntersection(
+        shapeA: Shape,
+        shapeB: Shape,
+    ): GjkCollisionResult | null;
     /**
      * @group Math
      */

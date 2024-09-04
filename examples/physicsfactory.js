@@ -82,7 +82,7 @@ add([
     },
 ]);
 
-// Continouous boxes
+// Continuous boxes
 loop(5, () => {
     add([
         pos(100, 100),
