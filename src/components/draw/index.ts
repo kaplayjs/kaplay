@@ -1,6 +1,7 @@
 export * from "./circle";
 export * from "./color";
 export * from "./drawon";
+export * from "./ellipse";
 export * from "./fadeIn";
 export * from "./mask";
 export * from "./opacity";
