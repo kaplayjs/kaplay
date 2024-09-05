@@ -1,6 +1,6 @@
 # Developing kaplay
 
-We're currently workign in two main branches:
+We're currently working in two main branches:
 
 - `v3001`: the branch for v3001. This is the branch you should use to develop
   new features, or all in general but breaking changes.
@@ -8,8 +8,8 @@ We're currently workign in two main branches:
   should use to develop new features that are breaking changes and can't be done
   for v3001.
 
-When you publish a PR that is for v3001 and v4000, you should target `master` 
-branch and add the tag `v3001&v4000`. When the PR is merged, the PR will be 
+When you publish a PR that is for v3001 and v4000, you should target `master`
+branch and add the tag `v3001&v4000`. When the PR is merged, the PR will be
 cherry-picked to `v3001` branch.
 
 1. `git clone https://github.com/kaplayjs/kaplay.git` to clone the repo.

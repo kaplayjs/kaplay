@@ -77,6 +77,7 @@ import type {
     UVQuadComp,
     ZComp,
 } from "./components/";
+import type { EllipseComp } from "./components/draw/ellipse";
 import type {
     EmitterOpt,
     ParticlesComp,
@@ -525,6 +526,20 @@ export interface KAPLAYCtx<
      */
     circle(radius: number): CircleComp;
     /**
+     * Attach and render an ellipse to a Game Object.
+     *
+     * @example
+     * ```js
+     * add([
+     *     pos(80, 120),
+     *     ellipse(16, 8),
+     * ])
+     * ```
+     *
+     * @group Components
+     */
+    ellipse(radiusX: number, radiusY: number): EllipseComp;
+    /**
      * Attach and render a UV quad to a Game Object.
      *
      * @example
@@ -535,6 +550,7 @@ export interface KAPLAYCtx<
      * ])
      * ```
      *
+     * @since v4000.0
      * @group Components
      */
     uvquad(w: number, h: number): UVQuadComp;
@@ -2952,10 +2968,12 @@ export interface KAPLAYCtx<
      */
     testCirclePolygon(c: Circle, p: Polygon): boolean;
     /**
+     * @since v4000.0
      * @group Math
      */
     gjkShapeIntersects(shapeA: Shape, shapeB: Shape): boolean;
     /**
+     * @since v4000.0
      * @group Math
      */
     gjkShapeIntersection(
