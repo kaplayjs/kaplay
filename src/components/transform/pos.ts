@@ -81,9 +81,10 @@ export function pos(...args: Vec2Args): PosComp {
         // move with velocity (pixels per second)
         move(...args: Vec2Args) {
             const vel = vec2(...args).scale(k.dt());
-            this.moveBy(vel);
             if (this.c("body")) {
-                this.vel.add(vel);
+                this.vel = this.vel.reject(vel).add(vel);
+            } else {
+                this.moveBy(vel);
             }
         },
 
