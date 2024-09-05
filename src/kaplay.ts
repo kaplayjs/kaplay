@@ -384,7 +384,7 @@ const kaplay = <
 
     canvas.style.cssText = styles.join(";");
 
-    pixelDensity = gopt.pixelDensity || window.devicePixelRatio;
+    pixelDensity = gopt.pixelDensity || 1;
 
     canvas.width *= pixelDensity;
     canvas.height *= pixelDensity;
