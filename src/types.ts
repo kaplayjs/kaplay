@@ -3862,7 +3862,7 @@ export interface KAPLAYOpt<
      */
     font?: string;
     /**
-     * Device pixel scale (defaults to window.devicePixelRatio, high pixel density will hurt performance).
+     * Device pixel scale (defaults to 1, high pixel density will hurt performance).
      *
      * @since v3000.0
      */

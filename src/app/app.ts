@@ -859,7 +859,7 @@ export const initApp = (opt: {
     const docEvents: EventList<DocumentEventMap> = {};
     const winEvents: EventList<WindowEventMap> = {};
 
-    const pd = opt.pixelDensity || window.devicePixelRatio || 1;
+    const pd = opt.pixelDensity || 1;
 
     canvasEvents.mousemove = (e) => {
         const mousePos = new Vec2(e.offsetX, e.offsetY);

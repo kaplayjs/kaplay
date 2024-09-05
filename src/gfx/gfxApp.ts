@@ -15,7 +15,7 @@ export type AppGfxCtx = ReturnType<typeof initAppGfx>;
 
 export const initAppGfx = (gopt: KAPLAYOpt, ggl: GfxCtx) => {
     const defShader = makeShader(ggl, DEF_VERT, DEF_FRAG);
-    const pixelDensity = window.devicePixelRatio || window.devicePixelRatio;
+    const pixelDensity = gopt.pixelDensity ?? 1;
     const gscale = gopt.scale ?? 1;
     const { gl } = ggl;
 
