@@ -4,6 +4,7 @@ import { k } from "../../kaplay";
 import { Vec2, vec2, type Vec2Args } from "../../math/math";
 import type { Comp, GameObj } from "../../types";
 import type { FixedComp } from "./fixed";
+import type { BodyComp } from "../physics";
 
 /**
  * The {@link pos `pos()`} component.
@@ -79,7 +80,7 @@ export function pos(...args: Vec2Args): PosComp {
         },
 
         // move with velocity (pixels per second)
-        move(...args: Vec2Args) {
+        move(this: GameObj<PosComp | BodyComp>, ...args: Vec2Args) {
             const vel = vec2(...args).scale(k.dt());
             if (this.c("body")) {
                 this.vel = this.vel.reject(vel).add(vel);
