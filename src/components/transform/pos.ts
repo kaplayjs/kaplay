@@ -83,7 +83,7 @@ export function pos(...args: Vec2Args): PosComp {
             const vel = vec2(...args).scale(k.dt());
             this.moveBy(vel);
             if (this.c("body")) {
-                this.vel = vel;
+                this.vel.add(vel);
             }
         },
 
