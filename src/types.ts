@@ -2252,15 +2252,24 @@ export interface KAPLAYCtx<
      */
     getGamepads(): KGamepad[];
     /**
-     * Set cursor style (check Cursor type for possible values). Cursor will be reset to "default" every frame so use this in an per-frame action.
+     * Set cursor style.
      *
      * @since v3000.0
      *
      * @example
      * ```js
+     * // Change between cursor styles
+     *
+     * // Reset cursor to default at start of every frame
+     * onUpdate(() => setCursor("default"));
+     *
      * button.onHover((c) => {
+     *    // change cursor to pointer when hovering over button
      *     setCursor("pointer")
      * })
+     *
+     * // Hide the only cursor at start (useful for fakeMouse)
+     * setCursor("none");
      * ```
      *
      * @group Info
