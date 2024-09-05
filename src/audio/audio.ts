@@ -1,8 +1,11 @@
 import { SoundData } from "../assets";
-import { createEmptyAudioBuffer } from "../gfx";
 import burpSoundSrc from "../kassets/burp.mp3";
 
 export type AudioCtx = ReturnType<typeof initAudio>;
+
+export function createEmptyAudioBuffer(ctx: AudioContext) {
+    return ctx.createBuffer(1, 1, 44100);
+}
 
 export const initAudio = () => {
     const audio = (() => {
