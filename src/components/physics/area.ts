@@ -54,7 +54,7 @@ export interface AreaComp extends Comp {
      *
      * @since v3000.0
      */
-    collisionIgnore: Tag[];
+    collisionIgnore: (Tag | GameObj)[];
     /**
      * If was just clicked on last frame.
      */

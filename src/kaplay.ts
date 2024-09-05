@@ -330,8 +330,7 @@ const kaplay = <
 >(
     gopt: KAPLAYOpt<TPlugins, TButtons> = {},
 ): TPlugins extends [undefined] ? KAPLAYCtx<TButtons, TButtonsName>
-    : KAPLAYCtx<TButtons, TButtonsName> & MergePlugins<TPlugins> =>
-{
+    : KAPLAYCtx<TButtons, TButtonsName> & MergePlugins<TPlugins> => {
     globalOpt = gopt;
     const root = gopt.root ?? document.body;
 
@@ -804,12 +803,20 @@ const kaplay = <
                                 if (!other.exists()) continue;
                                 if (checked.has(other.id)) continue;
                                 for (const tag of aobj.collisionIgnore) {
-                                    if (other.is(tag)) {
+                                    if (typeof tag === "string") {
+                                        if (other.is(tag)) {
+                                            continue check;
+                                        }
+                                    } else if (tag === other) {
                                         continue check;
                                     }
                                 }
                                 for (const tag of other.collisionIgnore) {
-                                    if (aobj.is(tag)) {
+                                    if (typeof tag === "string") {
+                                        if (aobj.is(tag)) {
+                                            continue check;
+                                        }
+                                    } else if (tag === aobj) {
                                         continue check;
                                     }
                                 }
@@ -855,7 +862,7 @@ const kaplay = <
 
         // TODO: this should only run once
         app.run(
-            () => {},
+            () => { },
             () => {
                 frameStart();
 
@@ -918,7 +925,7 @@ const kaplay = <
             // clear canvas
             gl.clear(
                 gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT
-                    | gl.STENCIL_BUFFER_BIT,
+                | gl.STENCIL_BUFFER_BIT,
             );
 
             // unbind everything
@@ -1337,7 +1344,7 @@ const kaplay = <
     // export everything to window if global is set
     if (gopt.global !== false) {
         for (const key in k) {
-            (<any> window[<any> key]) = k[key as keyof KAPLAYCtx];
+            (<any>window[<any>key]) = k[key as keyof KAPLAYCtx];
         }
     }
 
