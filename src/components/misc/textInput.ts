@@ -42,7 +42,7 @@ export function textInput(
                 }
             });
 
-            backEv = k.onKeyPress("backspace", () => {
+            backEv = k.onKeyPressRepeat("backspace", () => {
                 if (this.hasFocus) {
                     this.text = this.text.slice(0, -1);
                 }

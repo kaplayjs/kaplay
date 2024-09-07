@@ -175,7 +175,7 @@ export function text(t: string, opt: TextCompOpt = {}): TextComp {
         letterSpacing: opt.letterSpacing,
         textTransform: opt.transform,
         textStyles: opt.styles,
-        renderedText: compileStyledText(t).text,
+        renderedText: t ? compileStyledText(t).text : "",
 
         add(this: GameObj<TextComp>) {
             onLoad(() => update(this));

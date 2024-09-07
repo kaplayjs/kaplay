@@ -116,7 +116,7 @@ export function formatText(opt: DrawTextOpt): FormattedText {
     let font = resolveFont(opt.font);
 
     // if it's still loading
-    if (opt.text === "" || font instanceof Asset || !font) {
+    if (!opt.text || opt.text === "" || font instanceof Asset || !font) {
         return {
             width: 0,
             height: 0,
