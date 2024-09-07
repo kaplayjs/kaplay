@@ -208,7 +208,7 @@ export function play(
         newNode.playbackRate.value = oldNode.playbackRate.value;
         newNode.detune.value = oldNode.detune.value;
         newNode.onended = oldNode.onended;
-        newNode.connect(gainNode);
+        newNode.connect(panNode);
         return newNode;
     };
 
