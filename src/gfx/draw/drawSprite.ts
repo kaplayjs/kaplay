@@ -43,6 +43,10 @@ export type DrawSpriteOpt = RenderProps & {
      * The anchor point, or the pivot point. Default to "topleft".
      */
     anchor?: Anchor | Vec2;
+    /**
+     * The position
+     */
+    pos?: Vec2;
 };
 
 export function drawSprite(opt: DrawSpriteOpt) {
