@@ -19,6 +19,7 @@ export type FormattedText = {
     height: number;
     chars: FormattedChar[];
     opt: DrawTextOpt;
+    renderedText: string;
 };
 
 /**
@@ -65,5 +66,6 @@ export function drawFormattedText(ftext: FormattedText) {
             fixed: ftext.opt.fixed,
         });
     });
+
     popTransform();
 }

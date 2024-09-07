@@ -35,10 +35,11 @@ function applyCharTransform(fchar: FormattedChar, tr: CharTransform) {
     if (tr.color && fchar.ch.length === 1) {
         fchar.color = fchar.color.mult(tr.color);
     }
-    if (tr.opacity) fchar.opacity *= tr.opacity;
+    // attention to type coercion, 0 is a valid value, only null & undefined are not
+    if (tr.opacity != null) fchar.opacity *= tr.opacity;
 }
 
-function compileStyledText(text: string): {
+export function compileStyledText(text: string): {
     charStyleMap: Record<number, string[]>;
     text: string;
 } {
@@ -121,6 +122,7 @@ export function formatText(opt: DrawTextOpt): FormattedText {
             height: 0,
             chars: [],
             opt: opt,
+            renderedText: "",
         };
     }
 
@@ -379,6 +381,7 @@ export function formatText(opt: DrawTextOpt): FormattedText {
                     const tr = typeof style === "function"
                         ? style(idx, fchar.ch)
                         : style;
+
                     if (tr) {
                         applyCharTransform(fchar, tr);
                     }
@@ -394,5 +397,6 @@ export function formatText(opt: DrawTextOpt): FormattedText {
         height: th,
         chars: fchars,
         opt: opt,
+        renderedText: text,
     };
 }
