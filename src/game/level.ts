@@ -7,6 +7,7 @@ import {
     vec2,
     type Vec2Args,
 } from "../math/math";
+import { calcTransform } from "../math/various";
 import type { CompList, GameObj, LevelComp, PathFindOpt } from "../types";
 import { BinaryHeap } from "../utils";
 
@@ -351,6 +352,8 @@ export function addLevel(
             }
 
             obj.tilePos = p;
+            // Stale, so recalculate
+            obj.transform = calcTransform(obj);
 
             if (spatialMap) {
                 insertIntoSpatialMap(obj);
