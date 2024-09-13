@@ -342,7 +342,7 @@ export function addLevel(
                 if (comp.id === "pos") hasPos = true;
             }
 
-            if (!hasPos) comps.push(pos());
+            if (!hasPos) comps.push(pos(this.tile2Pos(p)));
             if (!hasTile) comps.push(tile());
 
             const obj = level.add(comps);
@@ -415,9 +415,15 @@ export function addLevel(
             return spatialMap![hash] || [];
         },
 
-        raycast(this: GameObj<LevelComp | PosComp>, origin: Vec2, direction: Vec2) {
+        raycast(
+            this: GameObj<LevelComp | PosComp>,
+            origin: Vec2,
+            direction: Vec2,
+        ) {
             const worldOrigin = this.toWorld(origin);
-            const worldDirection = this.toWorld(origin.add(direction)).sub(worldOrigin);
+            const worldDirection = this.toWorld(origin.add(direction)).sub(
+                worldOrigin,
+            );
             const levelOrigin = origin.scale(
                 1 / this.tileWidth(),
                 1 / this.tileHeight(),
