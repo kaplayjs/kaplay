@@ -4629,7 +4629,7 @@ export interface Comp {
     /**
      * Event that runs every frame.
      */
-    update?: (this: GameObj) => void;
+    update?: () => void;
     /**
      * Event that runs every frame after update.
      */
