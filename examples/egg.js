@@ -1,3 +1,4 @@
+// @ts-check
 // Egg minigames (yes, like Peppa)
 
 kaplay({

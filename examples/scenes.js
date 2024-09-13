@@ -1,3 +1,5 @@
+// @ts-check
+
 // Extend our game with multiple scenes
 
 // Start game

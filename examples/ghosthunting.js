@@ -1,3 +1,5 @@
+// @ts-check
+
 kaplay({
     width: 1024,
     height: 768,

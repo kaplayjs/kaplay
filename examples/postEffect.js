@@ -1,3 +1,5 @@
+// @ts-check
+
 // Build levels with addLevel()
 
 // Start game

@@ -1,4 +1,4 @@
-// TODO: document
+// @ts-check
 
 kaplay({
     background: [74, 48, 82],

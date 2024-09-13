@@ -1,3 +1,5 @@
+// @ts-check
+
 // Drag & drop interaction
 
 kaplay();

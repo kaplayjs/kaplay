@@ -1,3 +1,5 @@
+// @ts-check
+
 // simple rpg style walk and talk
 
 kaplay({

@@ -1,3 +1,5 @@
+// @ts-check
+
 // Simple dialogues with character avatars
 
 kaplay({

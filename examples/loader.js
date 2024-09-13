@@ -1,3 +1,5 @@
+// @ts-check
+
 // Customizing the asset loader
 
 kaplay({

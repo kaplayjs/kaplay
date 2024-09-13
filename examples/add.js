@@ -1,3 +1,5 @@
+// @ts-check
+
 // Adding game objects to screen
 
 // Start a KAPLAY game

@@ -180,7 +180,8 @@ export async function genDTS() {
     // generate global decls for KAPLAYCtx members
     let globalDts = "";
 
-    globalDts += "import { KAPLAYCtx } from \"./types\"\n";
+    globalDts +=
+        "import { KAPLAYCtx } from \"./types\"\nimport { kaplay as KAPLAY } from \"./kaplay\"\n";
     globalDts += "declare global {\n";
 
     for (const stmt of stmts) {
@@ -194,6 +195,9 @@ export async function genDTS() {
             globalGenerated = true;
         }
     }
+
+    globalDts += `\tconst kaplay: typeof KAPLAY\n`;
+    globalDts += `\tconst kaboom: typeof KAPLAY\n`;
 
     globalDts += "}\n";
 

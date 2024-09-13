@@ -1,3 +1,5 @@
+// @ts-check
+
 kaplay({
     background: [31, 16, 42],
 });
@@ -19,27 +21,31 @@ const level = addLevel([
         ],
     },
 });
-level.use(rotate(45))
+level.use(rotate(45));
 
 onLoad(() => {
     level.spawn([
         pos(
             level.tileWidth() * 1.5,
-            level.tileHeight() * 1.5
+            level.tileHeight() * 1.5,
         ),
         circle(6),
-        color('#ea6262'),
+        color("#ea6262"),
         {
             add() {
                 const rayHit = level.raycast(
                     this.pos,
-                    Vec2.fromAngle(0).scale(100)
+                    Vec2.fromAngle(0).scale(100),
                 );
 
-                debug.log(`${rayHit != null} ${rayHit && rayHit.object ? rayHit.object.id : -1}`);
+                debug.log(
+                    `${rayHit != null} ${
+                        rayHit && rayHit.object ? rayHit.object.id : -1
+                    }`,
+                );
             },
         },
-    ])
-})
+    ]);
+});
 
-debug.inspect = true
+debug.inspect = true;
