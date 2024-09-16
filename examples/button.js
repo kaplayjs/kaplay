@@ -1,3 +1,5 @@
+// @ts-check
+
 // Simple Button UI
 
 kaplay({
@@ -16,6 +18,7 @@ function addButton(txt, p, f) {
         scale(1),
         anchor("center"),
         outline(4),
+        color(0, 0, 0),
     ]);
 
     // add a child object that displays the text

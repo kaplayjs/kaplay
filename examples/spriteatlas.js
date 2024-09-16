@@ -1,3 +1,5 @@
+// @ts-check
+
 kaplay({
     scale: 4,
     background: [0, 0, 0],

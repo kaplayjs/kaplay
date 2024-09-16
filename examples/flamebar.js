@@ -1,3 +1,5 @@
+// @ts-check
+
 // Mario-like flamebar
 
 // Start kaboom

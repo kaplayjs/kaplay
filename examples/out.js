@@ -1,3 +1,5 @@
+// @ts-check
+
 // detect if obj is out of screen
 
 kaplay();

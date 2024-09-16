@@ -1,3 +1,5 @@
+// @ts-check
+
 // Particle spawning
 
 kaplay();

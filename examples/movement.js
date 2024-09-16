@@ -1,3 +1,5 @@
+// @ts-check
+
 // Input handling and basic player movement
 
 // Start kaboom

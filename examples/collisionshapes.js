@@ -1,3 +1,5 @@
+// @ts-check
+
 kaplay();
 
 setGravity(300);

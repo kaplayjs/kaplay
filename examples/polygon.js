@@ -1,6 +1,8 @@
-kaplay();
+// @ts-check
 
-setBackground(0, 0, 0);
+kaplay({
+    background: [0, 0, 0],
+});
 
 add([
     text("Drag corners of the polygon"),

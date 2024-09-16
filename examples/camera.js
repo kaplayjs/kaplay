@@ -1,3 +1,5 @@
+// @ts-check
+
 // Adjust camera / viewport
 
 // Start game
@@ -77,7 +79,8 @@ onKeyDown("right", () => player.move(SPEED, 0));
 
 let score = 0;
 
-// Add a ui layer with fixed() component to make the object not affected by camera
+// Add a ui layer with fixed() component to make the object
+// not affected by camera
 const ui = add([
     fixed(),
 ]);
@@ -94,6 +97,7 @@ ui.add([
 ]);
 
 onClick(() => {
-    // Use toWorld() to transform a screen-space coordinate (like mousePos()) to the world-space coordinate, which has the camera transform applied
+    // Use toWorld() to transform a screen-space coordinate (like mousePos()) to
+    // the world-space coordinate, which has the camera transform applied
     addKaboom(toWorld(mousePos()));
 });

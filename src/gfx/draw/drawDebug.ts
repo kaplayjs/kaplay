@@ -179,7 +179,7 @@ export function drawDebug() {
                 str += `[time]${log.time.toFixed(2)}[/time]`;
                 str += " ";
                 str += `[${style}]${
-                    log.msg?.toString ? log.msg.toString() : log.msg
+                    typeof log?.msg === "string" ? log.msg : String(log.msg)
                 }[/${style}]`;
                 logs.push(str);
             }

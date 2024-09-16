@@ -22,10 +22,10 @@ export interface RotateComp extends Comp {
     rotateTo(s: number): void;
 }
 
-export function rotate(r: number): RotateComp {
+export function rotate(a?: number): RotateComp {
     return {
         id: "rotate",
-        angle: r ?? 0,
+        angle: a ?? 0,
         rotateBy(angle: number) {
             this.angle += angle;
         },
