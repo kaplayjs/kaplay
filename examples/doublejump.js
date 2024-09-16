@@ -1,3 +1,5 @@
+// @ts-check
+
 kaplay({
     background: [141, 183, 255],
 });
@@ -37,7 +39,7 @@ function spin(speed = 1200) {
 
 scene("game", () => {
     const score = add([
-        text("0", 24),
+        text("0", { size: 24 }),
         pos(24, 24),
         { value: 0 },
     ]);
@@ -111,7 +113,7 @@ scene("game", () => {
         destroy(c);
         play("coin");
         score.value += 1;
-        score.text = score.value;
+        score.text = score.value.toString();
         genCoin(c.idx);
     });
 
@@ -161,7 +163,7 @@ scene("game", () => {
     const timer = add([
         anchor("topright"),
         pos(width() - 24, 24),
-        text(timeLeft),
+        text(timeLeft.toString()),
     ]);
 
     onUpdate(() => {

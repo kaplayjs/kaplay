@@ -1,3 +1,5 @@
+// @ts-check
+
 // Start the game in burp mode
 kaplay({
     burp: true,

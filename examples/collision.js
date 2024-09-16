@@ -1,3 +1,5 @@
+// @ts-check
+
 // Collision handling
 
 // Start kaboom

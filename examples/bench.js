@@ -1,3 +1,5 @@
+// @ts-config
+
 // bench marking sprite rendering performance
 
 kaplay();

@@ -1,6 +1,5 @@
-// Adding game objects to screen
+// @ts-check
 
-// Start a kaboom game
 kaplay();
 
 // Load a sprite asset from "sprites/bean.png", with the name "bean"

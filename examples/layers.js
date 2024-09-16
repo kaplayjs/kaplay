@@ -1,3 +1,5 @@
+// @ts-check
+
 kaplay();
 
 layers(["bg", "game", "ui"], "game");

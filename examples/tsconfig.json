@@ -1,0 +1,17 @@
+{
+  "compilerOptions": {
+    "types": [
+      "../dist/declaration/global.d.ts"
+    ],
+    "target": "ESNext", /* Set the JavaScript language version for emitted JavaScript and include compatible library declarations. */
+    "module": "ESNext", /* Specify what module code is generated. */
+    "moduleResolution": "Bundler",
+    "noEmit": true, /* Disable emitting files from a compilation. */
+    "esModuleInterop": true, /* Emit additional JavaScript to ease support for importing CommonJS modules. This enables 'allowSyntheticDefaultImports' for type compatibility. */
+    "forceConsistentCasingInFileNames": true, /* Ensure that casing is correct in imports. */
+    "strict": true,
+    "allowJs": true,
+    "moduleDetection": "force",
+    "noImplicitAny": false
+  }
+}

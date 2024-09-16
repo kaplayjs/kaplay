@@ -1,3 +1,5 @@
+// @ts-check
+
 // audio playback & control
 
 kaplay({

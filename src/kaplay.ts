@@ -536,8 +536,10 @@ const kaplay = <
         stepFrame: updateFrame,
         drawCalls: () => gfx.lastDrawCalls,
         clearLog: () => game.logs = [],
-        log: (msg) => {
+        log: (...msgs) => {
             const max = gopt.logMax ?? LOG_MAX;
+            const msg = msgs.concat(" ").join(" ");
+
             game.logs.unshift({
                 msg: msg,
                 time: app.time(),

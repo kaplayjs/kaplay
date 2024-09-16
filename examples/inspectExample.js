@@ -1,3 +1,5 @@
+// @ts-check
+
 kaplay();
 
 // # will delete this file when changes get merged/declined i don't intend this to be an actual example

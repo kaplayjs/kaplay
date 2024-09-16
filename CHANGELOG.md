@@ -1,8 +1,21 @@
-# v4000.0.0 and v3001.0.0
+# v4000.0.0
 
-This version is a double release, with a lot of new features and breaking
-changes. v3001 release are focused in backward compatibility with v3000 with the
-features of v4000, while v4000 will have the most features and breaking changes.
+- Replaced the Separating Axis Theorem (SAT) with the Gilbert–Johnson–Keerthi
+  (GJK) distance algorithm.
+- Added circle and (rotated) ellipse collision shapes.
+- Added an ellipse component.
+- Circle area is no longer a box.
+- Added a fake cursor API
+
+  ```js
+  const myCursor = add([fakeMouse(), sprite("kat"), pos(100, 100)]);
+
+  myCursor.press(); // trigger onClick events if the mouse is over
+  myCursor.release();
+  myCursor.move(vec2(100, 200)); // move as your wish
+  ```
+
+# v4000.0.0 and v3001.0.0
 
 ## Input
 
@@ -187,77 +200,75 @@ obj.scale = vec2(3, 4);
 obj.sprite = "bag";
 ```
 
-- `sprite()` new methods, `getAnim`, `hasAnim`, `getCurAnim()`,
+- added `shuffle()` to shuffle an array. (**v3001/4000**)
 
-```js
-const obj = add([
-    sprite("bean"),
-]);
+  ```js
+  const numbers = [1, 2, 3, 4, 5];
+  shuffle(numbers); // [3, 1, 5, 2, 4]
+  ```
 
-// get the current animation name
-debug.log(obj.getCurAnim().name);
-// check if an animation exists
-debug.log(obj.hasAnim("walk"));
-// get the animation data
-debug.log(obj.getAnim("walk"));
-```
+## Debug mode
 
-## Misc
+- added `outline()`, `shader()`, and `area()` properties to `debug.inspect`.
+- added `KAPLAYOpt.debugKey` for customizing the key used to toggle debug mode.
 
-- (**v3001/4000**) added `loadMusic()` to load streaming audio (doesn't block in
-  loading screen)
-- (**v3001/4000**) added `chooseMultiple()` and `shuffle()` helpers for arrays
-- (**v3001/4000**) added `getSceneName()` to get the current scene name
-- (**v3001/4000**) added `camFlash()` to flash the screen
-- (**v3001/4000**) added `SpriteComp.getCurAnim()` to get the current animation
-  data
-- (**v3001/4000**) added `Color.toArray()` to convert a color to an array
-- added `Vec2.toArray()` to convert a vec2 to an array (eg:
-  player.pos.toArray())
-- (**v3001/4000**) added `Vec2.fromArray()` to convert an array to a vec2 (eg:
-  player.pos = Vec2.fromArray(newPosition))
-- (**v3001/4000**) added `outline()`, `shader()`, and `area()` properties to
-  `debug.inspect` (f1)
-- (**v3001/4000**) added `kaboomOpt.debugKey` for customizing the key used to
-  toggle debug mode
-- (**v3001/4000**) added `GameObjRaw.tags` to get a game object's tags
-- (**v3001/4000**) added `GameObjRaw<SpriteComp>.sprite` property to get the
-  name of the sprite
-- (**v3001/4000**) added `patrol()` component to move along a list of waypoints
-- (**v3001/4000**) added `sentry()` component to notify when certain objects are
-  in sight
-- (**v3001/4000**) added `particles()` component to emit and draw particles
-- (**v3001/4000**) added `NavMesh` class for pathfinding on a mesh
-- (**v3001/4000**) added `navigation()` component to calculate a list of
-  waypoints on a graph
-- (**v3001/4000**) added `animate()` component to animate the properties of an
-  object using keyframes
-- (**v3001/4000**) added effector components: `areaEffector()`,
-  `buoyancyEffector()`, `pointEffector()`, `surfaceEffector()`
-- (**v3001/4000**) added `constantForce()` component
-- (**v3001/4000**) added global raycast function and raycast method to level
-- (**v3001/4000**) added support for textured polygons
-- (**v3001/4000**) added support for concave polygon drawing
-- (**v3001/4000**) added support for arrays in uniforms
-- (**v3001/4000**) added support for texture larger than 2048x2048
-- (**v3001/4000**) added support for gravity direction
-- (**v3001/4000**) added line join (bevel, miter, round) and line caps (square,
-  round)
-- (**v3001/4000**) added quadratic bezier and Catmull-Rom evaluation
-- (**v3001/4000**) added evaluation of the first and second derivatives for all
-  splines
-- (**v3001/4000**) added higher order easing functions linear, steps and
-  cubic-bezier
-- (**v3001/4000**) added `textInput()` component
-- (**v3001/4000**) now you can see custom properties in debug.inspect
+  ```js
+  kaplay({
+      debugKey: "l",
+  });
+  ```
+- added compatibility with custom properties in debug mode
 
-## Bug fixes
+  ```js
+  const obj = add([
+      sprite("bean"),
+      {
+          health: 100, // on debug.inspect
+          damage: 10, // on debug.inspect
+          hp() {
+              this.health -= this.damage;
+          }, // not on debug.inspect
+      },
+  ]);
 
-- **(break)** much typescript definitions was fixed, if you use typescript now
-  maybe you see new errors that make your code strict
-- fix error screen not showing with not Error object
+  // see the custom properties in debug mode
+  debug.inspect = true;
+  ```
+- Now `debug.log()` accepts multiple argument of any type, like `console.log()`.
 
-## Deprecated
+## Helpers
+
+- added `getSceneName()` to get the current scene name
+- added `Color.toArray()` to convert a color to an array
+- added global raycast function and raycast method to level
+- added support for textured polygons
+- added support for concave polygon drawing
+- added support for arrays in uniforms
+- added support for texture larger than 2048x2048
+- added support for gravity direction
+- added line join (bevel, miter, round) and line caps (square, round)
+- added quadratic bezier and Catmull-Rom evaluation
+- added evaluation of the first and second derivatives for all splines
+- added higher order easing functions linear, steps and cubic-bezier
+
+## TypeScript
+
+- Now you can type `get()` with a type parameter and passing component types.
+  (**v4000**)
+
+  ```ts
+  const player = get<BodyComp>("player");
+  ```
+- Now `Key` also accepts a string as an acceptable value.
+- Now `text()` component doesn't require to pass a string.
+- Now `camScale()` and `camPos()` accept only 1 number as parameter.
+- Now `shake()` can be called without args.
+- Now `loadShader()` and `loadShaderURL()` accepts null for unused parameters.
+- Now `RectCompOpt` accepts a array of numbers for `radius`.
+
+## Deprecations
+
+> All changes applies for both v3001 and v4000
 
 - deprecated `kaboom()` in favor of `kaplay()` (you can still use `kaboom*`)
 - deprecated `SpriteComp.curAnim()` in favor of `SpriteComp.getCurAnim().name`
