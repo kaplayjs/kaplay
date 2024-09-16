@@ -5,12 +5,17 @@
 - Added circle and (rotated) ellipse collision shapes.
 - Added an ellipse component.
 - Circle area is no longer a box.
+- Added a fake cursor API
+
+  ```js
+  const myCursor = add([fakeMouse(), sprite("kat"), pos(100, 100)]);
+
+  myCursor.press(); // trigger onClick events if the mouse is over
+  myCursor.release();
+  myCursor.move(vec2(100, 200)); // move as your wish
+  ```
 
 # v4000.0.0 and v3001.0.0
-
-This version is a double release, with a lot of new features and breaking
-changes. v3001 release are focused in backward compatibility with v3000 with the
-features of v4000, while v4000 will have the most features and breaking changes.
 
 ## Input
 
@@ -73,16 +78,6 @@ features of v4000, while v4000 will have the most features and breaking changes.
   onGamepadButtonPress("south", (btn, gp) => {
       console.log(gp.index); // gamepad number on navigator's gamepad list
   });
-  ```
-
-- added a fake cursor API (**v4000**)
-
-  ```js
-  const myCursor = add([fakeMouse(), sprite("kat"), pos(100, 100)]);
-
-  myCursor.press(); // trigger onClick events if the mouse is over
-  myCursor.release();
-  myCursor.move(vec2(100, 200)); // move as your wish
   ```
 
 ## Physics
@@ -277,17 +272,14 @@ features of v4000, while v4000 will have the most features and breaking changes.
 
 ## Debug mode
 
-- added `outline()`, `shader()`, and `area()` properties to `debug.inspect`
-  (**v3001/4000**)
+- added `outline()`, `shader()`, and `area()` properties to `debug.inspect`.
 - added `KAPLAYOpt.debugKey` for customizing the key used to toggle debug mode.
-  (**v3001/4000**)
 
   ```js
   kaplay({
       debugKey: "l",
   });
   ```
-
 - added compatibility with custom properties in debug mode
 
   ```js
@@ -305,10 +297,9 @@ features of v4000, while v4000 will have the most features and breaking changes.
   // see the custom properties in debug mode
   debug.inspect = true;
   ```
+- Now `debug.log()` accepts multiple argument of any type, like `console.log()`.
 
 ## Helpers
-
-> All changes applies for both v3001 and v4000
 
 - added `getSceneName()` to get the current scene name
 - added `Color.toArray()` to convert a color to an array
@@ -325,12 +316,16 @@ features of v4000, while v4000 will have the most features and breaking changes.
 
 ## TypeScript
 
-- now you can type `get()` with a type parameter and passing component types.
+- Now you can type `get()` with a type parameter and passing component types.
   (**v4000**)
 
   ```ts
   const player = get<BodyComp>("player");
   ```
+- Now `Key` also accepts a string as an acceptable value.
+- Now `text()` component doesn't require to pass a string.
+- Now `camScale()` and `camPos()` accept only 1 number as parameter.
+- Now `shake()` can be called without args.
 
 ## Deprecations
 
