@@ -623,7 +623,20 @@ export interface KAPLAYCtx<
      *
      * @group Components
      */
-    outline(width?: number, color?: Color): OutlineComp;
+    outline(
+        width?: number,
+        color?: Color,
+        opacity?: number,
+        join?: LineJoin,
+        miterLimit?: number,
+        cap?: LineCap,
+    ): OutlineComp;
+    /**
+     * Attach a particle emitter to a Game Object.
+     *
+     * @param popt The options for the particles.
+     * @param eopt The options for the emitter.
+     */
     particles(popt: ParticlesOpt, eopt: EmitterOpt): ParticlesComp;
     /**
      * Physical body that responds to gravity. Requires "area" and "pos" comp. This also makes the object "solid".
@@ -972,7 +985,7 @@ export interface KAPLAYCtx<
      * @since v3000.0
      * @group Components
      */
-    tile(opt: TileCompOpt): TileComp;
+    tile(opt?: TileCompOpt): TileComp;
     /**
      * An agent which can finds it way on a tilemap.
      *
@@ -1838,8 +1851,8 @@ export interface KAPLAYCtx<
      */
     loadShader(
         name: string | null,
-        vert?: string,
-        frag?: string,
+        vert?: string | null,
+        frag?: string | null,
     ): Asset<ShaderData>;
     /**
      * Load a shader with vertex and fragment code file url.
@@ -1856,8 +1869,8 @@ export interface KAPLAYCtx<
      */
     loadShaderURL(
         name: string | null,
-        vert?: string,
-        frag?: string,
+        vert?: string | null,
+        frag?: string | null,
     ): Asset<ShaderData>;
     /**
      * Add a new loader to wait for before starting the game.

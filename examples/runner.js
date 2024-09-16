@@ -79,14 +79,14 @@ scene("game", () => {
     let score = 0;
 
     const scoreLabel = add([
-        text(score),
+        text(score.toString()),
         pos(24, 24),
     ]);
 
     // increment score every frame
     onUpdate(() => {
         score++;
-        scoreLabel.text = score;
+        scoreLabel.text = score.toString();
     });
 });
 

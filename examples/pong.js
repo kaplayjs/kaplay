@@ -32,13 +32,13 @@ onUpdate("paddle", (p) => {
 let score = 0;
 
 add([
-    text(score),
+    text(score.toString()),
     pos(center()),
     anchor("center"),
     z(50),
     {
         update() {
-            this.text = score;
+            this.text = score.toString();
         },
     },
 ]);

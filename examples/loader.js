@@ -20,7 +20,7 @@ loadSprite("bean", "/sprites/bean.png").onError(() => {
 
 loadSprite("ghosty", "/sprites/ghosty.png");
 
-// load() adds a Promise under kaboom's management, which affects loadProgress()
+// load() adds a Promise under KAPLAY's management, which affects loadProgress()
 // Here we intentionally stall the loading by 1sec to see the loading screen
 load(
     new Promise((res) => {

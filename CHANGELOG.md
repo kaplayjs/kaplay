@@ -326,6 +326,8 @@
 - Now `text()` component doesn't require to pass a string.
 - Now `camScale()` and `camPos()` accept only 1 number as parameter.
 - Now `shake()` can be called without args.
+- Now `loadShader()` and `loadShaderURL()` accepts null for unused parameters.
+- Now `RectCompOpt` accepts a array of numbers for `radius`.
 
 ## Deprecations
 

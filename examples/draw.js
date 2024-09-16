@@ -28,6 +28,7 @@ const py = 160;
 const doodles = [];
 const trail = [];
 
+/** @type { import("../dist/declaration").Outline } */
 const outline = {
     width: 4,
     color: rgb(0, 0, 0),

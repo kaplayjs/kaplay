@@ -272,7 +272,7 @@ scene("battle", () => {
     });
 
     const timer = add([
-        text(0),
+        text("0"),
         pos(12, 32),
         fixed(),
         { time: 0 },

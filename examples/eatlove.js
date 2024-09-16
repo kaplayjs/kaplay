@@ -82,7 +82,9 @@ scene("game", () => {
     let score = 0;
 
     const scoreLabel = add([
-        text(score, 32),
+        text(score.toString(), {
+            size: 32,
+        }),
         pos(12, 12),
     ]);
 
@@ -91,7 +93,7 @@ scene("game", () => {
         addKaboom(player.pos);
         score += 1;
         destroy(heart);
-        scoreLabel.text = score;
+        scoreLabel.text = score.toString();
         burp();
         shake(12);
     });

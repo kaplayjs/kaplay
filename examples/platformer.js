@@ -267,7 +267,7 @@ scene("game", ({ levelId, coins } = { levelId: 0, coins: 0 }) => {
 
     player.onCollide("enemy", (e, col) => {
         // if it's not from the top, die
-        if (!col.isBottom()) {
+        if (!col?.isBottom()) {
             go("lose");
             play("hit");
         }
@@ -337,11 +337,11 @@ scene("game", ({ levelId, coins } = { levelId: 0, coins: 0 }) => {
     });
 
     onKeyPress("down", () => {
-        player.weight = 3;
+        player.gravityScale = 3;
     });
 
     onKeyRelease("down", () => {
-        player.weight = 1;
+        player.gravityScale = 1;
     });
 
     onGamepadButtonPress("south", jump);

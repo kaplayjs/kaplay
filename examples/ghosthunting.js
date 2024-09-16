@@ -250,7 +250,7 @@ function addEnemy(p) {
         // Health provides properties and methods to keep track of the enemies health
         health(100),
         // Sentry makes it easy to check for visibility of the player
-        sentry({ includes: "player" }, {
+        sentry({ include: "player" }, {
             lineOfSight: true,
             raycastExclude: ["enemy"],
         }),
@@ -297,7 +297,7 @@ onUpdate("enemy", enemy => {
     }
 });
 
-const SPEED = 100;
+const SPEED = 200;
 
 const dirs = {
     "left": LEFT,
