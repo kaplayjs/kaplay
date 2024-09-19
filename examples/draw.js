@@ -1,3 +1,5 @@
+// @ts-check
+
 // Kaboom as pure rendering lib (no component / game obj etc.)
 
 kaplay();
@@ -26,6 +28,7 @@ const py = 160;
 const doodles = [];
 const trail = [];
 
+/** @type { import("../dist/declaration").Outline } */
 const outline = {
     width: 4,
     color: rgb(0, 0, 0),

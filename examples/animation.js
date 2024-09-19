@@ -1,3 +1,5 @@
+// @ts-check
+
 // Start kaboom
 kaplay();
 
@@ -174,7 +176,7 @@ console.log(JSON.stringify(serializeAnimation(curvingBean, "root"), "", 2));
 
 /*onDraw(() => {
     drawCurve(t => evaluateCatmullRom(
-        vec2(200, 400),
+        vec2(200, 400),\
         vec2(250, 500),
         vec2(300, 400),
         vec2(350, 500), t), { color: RED })

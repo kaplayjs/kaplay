@@ -40,7 +40,3 @@ export function alignPt(align: TextAlign): number {
             return 0;
     }
 }
-
-export function createEmptyAudioBuffer(ctx: AudioContext) {
-    return ctx.createBuffer(1, 1, 44100);
-}

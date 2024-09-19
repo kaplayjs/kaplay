@@ -1,3 +1,5 @@
+// @ts-check
+
 // Sprite animation
 
 // Start a kaboom game

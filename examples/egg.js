@@ -1,3 +1,4 @@
+// @ts-check
 // Egg minigames (yes, like Peppa)
 
 kaplay({
@@ -74,7 +75,7 @@ onKeyPress("enter", () => {
             e.use(sprite("bean"));
             addKaboom(e.pos.sub(0, e.height / 2));
             counter.value += 1;
-            counter.text = counter.value;
+            counter.text = counter.value.toString();
         }
     });
 });

@@ -21,7 +21,7 @@ export interface RectComp extends Comp {
     /**
      * The radius of each corner.
      */
-    radius?: number;
+    radius?: number | [number, number, number, number];
     /**
      * @since v3000.0
      */
@@ -37,7 +37,7 @@ export interface RectCompOpt {
     /**
      * Radius of the rectangle corners.
      */
-    radius?: number;
+    radius?: number | [number, number, number, number];
     /**
      * If fill the rectangle (useful if you only want to render outline with outline() component).
      */

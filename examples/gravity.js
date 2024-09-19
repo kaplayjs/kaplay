@@ -1,3 +1,5 @@
+// @ts-check
+
 // Responding to gravity & jumping
 
 // Start kaboom

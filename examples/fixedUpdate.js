@@ -1,3 +1,5 @@
+// @ts-check
+
 kaplay();
 
 let fixedCount = 0;

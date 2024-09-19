@@ -19,6 +19,7 @@ import type {
     AgentCompOpt,
     AnchorComp,
     AnimateComp,
+    AnimateCompOpt,
     AreaComp,
     AreaCompOpt,
     AreaEffectorComp,
@@ -110,6 +111,7 @@ import type {
     LineJoin,
     Texture,
 } from "./gfx";
+import { kaplay } from "./kaplay";
 import type { GjkCollisionResult } from "./math";
 import type { Color, RGBAValue, RGBValue } from "./math/color";
 import type {
@@ -387,9 +389,11 @@ export interface KAPLAYCtx<
     /**
      * Rotates a Game Object (in degrees).
      *
+     * @param a The angle to rotate by. Defaults to 0.
+     *
      * @group Components
      */
-    rotate(a: number): RotateComp;
+    rotate(a?: number): RotateComp;
     /**
      * Sets the color of a Game Object (rgb 0-255).
      *
@@ -450,6 +454,9 @@ export interface KAPLAYCtx<
     /**
      * Attach and render a text to a Game Object.
      *
+     * @param txt The text to display.
+     * @param options Options for the text component. See {@link TextCompOpt}.
+     *
      * @example
      * ```js
      * // a simple score counter
@@ -477,7 +484,7 @@ export interface KAPLAYCtx<
      *
      * @group Components
      */
-    text(txt: string, options?: TextCompOpt): TextComp;
+    text(txt?: string, options?: TextCompOpt): TextComp;
     /**
      * Attach and render a polygon to a Game Object.
      *
@@ -618,7 +625,20 @@ export interface KAPLAYCtx<
      *
      * @group Components
      */
-    outline(width?: number, color?: Color): OutlineComp;
+    outline(
+        width?: number,
+        color?: Color,
+        opacity?: number,
+        join?: LineJoin,
+        miterLimit?: number,
+        cap?: LineCap,
+    ): OutlineComp;
+    /**
+     * Attach a particle emitter to a Game Object.
+     *
+     * @param popt The options for the particles.
+     * @param eopt The options for the emitter.
+     */
     particles(popt: ParticlesOpt, eopt: EmitterOpt): ParticlesComp;
     /**
      * Physical body that responds to gravity. Requires "area" and "pos" comp. This also makes the object "solid".
@@ -976,7 +996,7 @@ export interface KAPLAYCtx<
      * @since v3000.0
      * @group Components
      */
-    tile(opt: TileCompOpt): TileComp;
+    tile(opt?: TileCompOpt): TileComp;
     /**
      * An agent which can finds it way on a tilemap.
      *
@@ -990,7 +1010,7 @@ export interface KAPLAYCtx<
      * @since v3001.0
      * @group Components
      */
-    animate(): AnimateComp;
+    animate(opt?: AnimateCompOpt): AnimateComp;
     /**
      * A fake mouse that follows the mouse position and triggers events.
      *
@@ -1842,8 +1862,8 @@ export interface KAPLAYCtx<
      */
     loadShader(
         name: string | null,
-        vert?: string,
-        frag?: string,
+        vert?: string | null,
+        frag?: string | null,
     ): Asset<ShaderData>;
     /**
      * Load a shader with vertex and fragment code file url.
@@ -1860,8 +1880,8 @@ export interface KAPLAYCtx<
      */
     loadShaderURL(
         name: string | null,
-        vert?: string,
-        frag?: string,
+        vert?: string | null,
+        frag?: string | null,
     ): Asset<ShaderData>;
     /**
      * Add a new loader to wait for before starting the game.
@@ -2179,6 +2199,8 @@ export interface KAPLAYCtx<
     /**
      * Camera shake.
      *
+     * @param intensity - The intensity of the shake. Default to 12.
+     *
      * @example
      * ```js
      * // shake intensively when bean collides with a "bomb"
@@ -2189,7 +2211,7 @@ export interface KAPLAYCtx<
      *
      * @group Info
      */
-    shake(intensity: number): void;
+    shake(intensity?: number): void;
     /**
      * Get / set camera position.
      *
@@ -2205,6 +2227,7 @@ export interface KAPLAYCtx<
      */
     camPos(pos: Vec2): Vec2;
     camPos(x: number, y: number): Vec2;
+    camPos(xy: number): Vec2;
     camPos(): Vec2;
     /**
      * Get / set camera scale.
@@ -2213,6 +2236,7 @@ export interface KAPLAYCtx<
      */
     camScale(scale: Vec2): Vec2;
     camScale(x: number, y: number): Vec2;
+    camScale(xy: number): Vec2;
     camScale(): Vec2;
     /**
      * Get / set camera rotation.
@@ -3695,79 +3719,82 @@ export type PluginList<T> = Array<T | KAPLAYPlugin<any>>;
  * @group Input
  */
 export type Key =
-    | "f1"
-    | "f2"
-    | "f3"
-    | "f4"
-    | "f5"
-    | "f6"
-    | "f7"
-    | "f8"
-    | "f9"
-    | "f10"
-    | "f11"
-    | "f12"
-    | "`"
-    | "1"
-    | "2"
-    | "3"
-    | "4"
-    | "5"
-    | "6"
-    | "7"
-    | "8"
-    | "9"
-    | "0"
-    | "-"
-    | "="
-    | "q"
-    | "w"
-    | "e"
-    | "r"
-    | "t"
-    | "y"
-    | "u"
-    | "i"
-    | "o"
-    | "p"
-    | "["
-    | "]"
-    | "\\"
-    | "a"
-    | "s"
-    | "d"
-    | "f"
-    | "g"
-    | "h"
-    | "j"
-    | "k"
-    | "l"
-    | ";"
-    | "'"
-    | "z"
-    | "x"
-    | "c"
-    | "v"
-    | "b"
-    | "n"
-    | "m"
-    | ","
-    | "."
-    | "/"
-    | "escape"
-    | "backspace"
-    | "enter"
-    | "tab"
-    | "control"
-    | "alt"
-    | "meta"
-    | "space"
-    | " "
-    | "left"
-    | "right"
-    | "up"
-    | "down"
-    | "shift";
+    | (
+        | "f1"
+        | "f2"
+        | "f3"
+        | "f4"
+        | "f5"
+        | "f6"
+        | "f7"
+        | "f8"
+        | "f9"
+        | "f10"
+        | "f11"
+        | "f12"
+        | "`"
+        | "1"
+        | "2"
+        | "3"
+        | "4"
+        | "5"
+        | "6"
+        | "7"
+        | "8"
+        | "9"
+        | "0"
+        | "-"
+        | "="
+        | "q"
+        | "w"
+        | "e"
+        | "r"
+        | "t"
+        | "y"
+        | "u"
+        | "i"
+        | "o"
+        | "p"
+        | "["
+        | "]"
+        | "\\"
+        | "a"
+        | "s"
+        | "d"
+        | "f"
+        | "g"
+        | "h"
+        | "j"
+        | "k"
+        | "l"
+        | ";"
+        | "'"
+        | "z"
+        | "x"
+        | "c"
+        | "v"
+        | "b"
+        | "n"
+        | "m"
+        | ","
+        | "."
+        | "/"
+        | "escape"
+        | "backspace"
+        | "enter"
+        | "tab"
+        | "control"
+        | "alt"
+        | "meta"
+        | "space"
+        | " "
+        | "left"
+        | "right"
+        | "up"
+        | "down"
+        | "shift"
+    )
+    | string & {};
 
 /**
  * A mouse button.
@@ -4793,11 +4820,11 @@ export interface Debug {
     /**
      * Log some text to on screen debug log.
      */
-    log(msg: string | { toString(): string }): void;
+    log(...msg: any): void;
     /**
      * Log an error message to on screen debug log.
      */
-    error(msg: string | { toString(): string }): void;
+    error(msg: any): void;
     /**
      * The recording handle if currently in recording mode.
      *

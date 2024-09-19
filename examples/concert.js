@@ -1,3 +1,5 @@
+// @ts-check
+
 // bean is holding a concert to celebrate kaboom2000!
 
 kaplay({

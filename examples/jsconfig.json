@@ -1,8 +1,0 @@
-{
-  "compilerOptions": {
-    "types": [
-      "../dist/declaration/global.d.ts"
-    ],
-    "strict": true
-  }
-}

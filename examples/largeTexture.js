@@ -1,3 +1,5 @@
+// @ts-check
+
 kaplay();
 
 let cameraPosition = camPos();

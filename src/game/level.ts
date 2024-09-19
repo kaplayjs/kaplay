@@ -7,6 +7,7 @@ import {
     vec2,
     type Vec2Args,
 } from "../math/math";
+import { calcTransform } from "../math/various";
 import type { CompList, GameObj, LevelComp, PathFindOpt } from "../types";
 import { BinaryHeap } from "../utils";
 
@@ -341,7 +342,7 @@ export function addLevel(
                 if (comp.id === "pos") hasPos = true;
             }
 
-            if (!hasPos) comps.push(pos());
+            if (!hasPos) comps.push(pos(this.tile2Pos(p)));
             if (!hasTile) comps.push(tile());
 
             const obj = level.add(comps);
@@ -351,6 +352,8 @@ export function addLevel(
             }
 
             obj.tilePos = p;
+            // Stale, so recalculate
+            obj.transform = calcTransform(obj);
 
             if (spatialMap) {
                 insertIntoSpatialMap(obj);
@@ -412,7 +415,15 @@ export function addLevel(
             return spatialMap![hash] || [];
         },
 
-        raycast(origin: Vec2, direction: Vec2) {
+        raycast(
+            this: GameObj<LevelComp | PosComp>,
+            origin: Vec2,
+            direction: Vec2,
+        ) {
+            const worldOrigin = this.toWorld(origin);
+            const worldDirection = this.toWorld(origin.add(direction)).sub(
+                worldOrigin,
+            );
             const levelOrigin = origin.scale(
                 1 / this.tileWidth(),
                 1 / this.tileHeight(),
@@ -427,8 +438,8 @@ export function addLevel(
                     if (tile.is("area")) {
                         const shape = tile.worldArea();
                         const hit = shape.raycast(
-                            origin,
-                            direction,
+                            worldOrigin,
+                            worldDirection,
                         ) as RaycastResult;
                         if (hit) {
                             if (minHit) {
