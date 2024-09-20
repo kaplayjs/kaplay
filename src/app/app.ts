@@ -672,9 +672,14 @@ export const initApp = (opt: {
         state.mouseState.down.forEach((k) =>
             state.events.trigger("mouseDown", k)
         );
-        state.buttonState.down.forEach((btn) =>
-            state.events.trigger("buttonDown", btn)
-        );
+
+        state.buttonState.down.forEach((btn) => {
+            const gamepadBindings = getButton(btn)?.gamepad;
+            if (gamepadBindings && isGamepadButtonDown(gamepadBindings)) return;
+
+            state.events.trigger("buttonDown", btn);
+        });
+
         processGamepad();
     }
 
