@@ -1,5 +1,5 @@
 import { assets } from "../kaplay";
-import { type Asset, fetchJSON, loadImg } from "./asset";
+import { type Asset, fetchJSON, loadImage } from "./asset";
 import { loadSprite, type SpriteAnims, type SpriteData } from "./sprite";
 import { fixURL } from "./utils";
 
@@ -22,7 +22,7 @@ export function loadPedit(
             const data = typeof src === "string"
                 ? await fetchJSON(src)
                 : src;
-            const images = await Promise.all(data.frames.map(loadImg));
+            const images = await Promise.all(data.frames.map(loadImage));
             const canvas = document.createElement("canvas");
             canvas.width = data.width;
             canvas.height = data.height * data.frames.length;

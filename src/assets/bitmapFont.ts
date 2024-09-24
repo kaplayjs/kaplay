@@ -3,7 +3,7 @@ import { Texture } from "../gfx";
 import { assets, gfx } from "../kaplay";
 import type { Quad } from "../math/math";
 import type { TexFilter } from "../types";
-import { type Asset, loadImg } from "./asset";
+import { type Asset, loadImage } from "./asset";
 import { makeFont } from "./font";
 
 export interface GfxFont {
@@ -35,7 +35,7 @@ export function loadBitmapFont(
 ): Asset<BitmapFontData> {
     return assets.bitmapFonts.add(
         name,
-        loadImg(src)
+        loadImage(src)
             .then((img) => {
                 return makeFont(
                     Texture.fromImage(gfx.ggl, img, opt),
