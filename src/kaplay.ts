@@ -132,6 +132,7 @@ import {
     RNG,
     sat,
     shuffle,
+    SweepAndPrune,
     testCirclePolygon,
     testLineCircle,
     testLineLine,
@@ -749,10 +750,82 @@ const kaplay = <
         }
     }
 
+    function narrowPhase(
+        obj: GameObj<AreaComp>,
+        other: GameObj<AreaComp>,
+    ): boolean {
+        if (other.paused) return false;
+        if (!other.exists()) return false;
+        for (const tag of obj.collisionIgnore) {
+            if (other.is(tag)) {
+                return false;
+            }
+        }
+        for (const tag of other.collisionIgnore) {
+            if (obj.is(tag)) {
+                return false;
+            }
+        }
+        const res = gjkShapeIntersection(
+            obj.worldArea(),
+            other.worldArea(),
+        );
+        if (res) {
+            const col1 = new Collision(
+                obj,
+                other,
+                res.normal,
+                res.distance,
+            );
+            obj.trigger("collideUpdate", other, col1);
+            const col2 = col1.reverse();
+            // resolution only has to happen once
+            col2.resolved = col1.resolved;
+            other.trigger("collideUpdate", obj, col2);
+        }
+        return true;
+    }
+
+    const sap = new SweepAndPrune();
+    let sapInit = false;
+    function broadPhase() {
+        if (!usesArea()) {
+            return;
+        }
+
+        if (!sapInit) {
+            sapInit = true;
+            onAdd(obj => {
+                if (obj.is("area")) {
+                    sap.add(obj as GameObj<AreaComp>);
+                }
+            });
+            onDestroy(obj => {
+                sap.remove(obj as GameObj<AreaComp>);
+            });
+            onSceneLeave(scene => {
+                sapInit = false;
+                sap.clear();
+            });
+            for (const obj of get("*", { recursive: true })) {
+                if (obj.is("area")) {
+                    sap.add(obj as GameObj<AreaComp>);
+                }
+            }
+        }
+
+        sap.update();
+        for (const [obj1, obj2] of sap) {
+            narrowPhase(obj1, obj2);
+        }
+    }
+
     function checkFrame() {
         if (!usesArea()) {
             return;
         }
+
+        return broadPhase();
 
         // TODO: persistent grid?
         // start a spatial hash grid for more efficient collision detection
@@ -820,7 +893,6 @@ const kaplay = <
                                     other.worldArea(),
                                 );
                                 if (res) {
-                                    // console.log(res)
                                     // TODO: rehash if the object position is changed after resolution?
                                     const col1 = new Collision(
                                         aobj,
