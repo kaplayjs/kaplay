@@ -1,45 +1,32 @@
-# Developing kaplay
+# Developing KAPLAY
 
-We're currently working in two main branches:
+We're currently working in two branches:
 
-- `v3001`: the branch for v3001. This is the branch you should use to develop
-  new features, or all in general but breaking changes.
-- `master`: the main branch, where we developer v4000. This is the branch you
-  should use to develop new features that are breaking changes and can't be done
-  for v3001.
+- `v3001`: the branch for v3001. This is the branch you should use to fix bugs
+  on v3001 and v4000.
+- `master`: the main branch, where we develop v4000. This is the branch you must
+  use to develop new features.
 
-When you publish a PR that is for v3001 and v4000, you should target `master`
-branch and add the tag `v3001&v4000`. When the PR is approved, you should
-cherry-pick and create another PR to `v3001` branch. Both will be merged at time
-
-Example:
-
-```
-PR #664:
-feat: add hello() component
-```
-
-When approved
-
-```
-PR #665:
-feat: add hello() component (v3001) (#664)
-```
+When you publish a PR with a fix for v3001 and v4000, you should create 2 PRs,
+one targeting `v3001` and the other targeting `master`. We recommend you using
+[`cherry-pick`](https://dev.to/hakki/git-cherry-pick-a-guide-to-selectively-merging-commits-2i14)
+to apply the fix to both branches.
 
 ## Cloning the repository
 
+```sh
+git clone https://github.com/kaplayjs/kaplay.git # to clone the repo.
+cd kaplay # to enter the project directory.
+pnpm install # to install dependencies.
 ```
-1. `git clone https://github.com/kaplayjs/kaplay.git` to clone the repo.
-2. `cd kaplay` to enter the project directory.
-3. `pnpm install` to install dependencies.
 
 ## Editing examples
 
 1. Pick on example to test and edit the corresponding `/examples/[name].js`, or
- create a new file under `/examples` to test anything you're working on.
+   create a new file under `/examples` to test anything you're working on.
 1. The source entry point is `src/kaplay.ts`, editing any files referenced will
- automatically trigger rebuild. **Make sure not to break any existing
- examples**.
+   automatically trigger rebuild. **Make sure not to break any existing
+   examples**.
 1. Run `pnpm dev` to start the dev server and try examples.
 
 ## Documentation
@@ -49,26 +36,26 @@ Most KAPLAY docs are written on every component file in `src/components`, and
 [jsDoc](https://www.typescriptlang.org/docs/handbook/jsdoc-supported-types.html)
 above each KAPLAY component entry.
 
-**Help on improving the documentation is appreciated! Thank you for
-contributing!**
+**Help on improving the documentation is appreciated!**
 
 # Before commit
 
-1. follow conventional [conventional commits](#conventional-commits-guide)
- format. You can see how seeing the commit history.
-2. `pnpm run check` to check typescript.
+1. Follow our [conventional commits](#conventional-commits-guide) format. You
+   can see how seeing the commit history.
+2. `pnpm run check` to check TypeScript.
 3. `pnpm run fmt` to format.
 
 # Conventional Commits Guide
 
-You must follow the following rules when writing commit messages:
+This guide should be followed for all commits to the repository, and also for
+issues and PRs.
 
 A commit starts with a type, a scope, and a subject:
-```
 
+```
 <type>(<scope>): <subject>
-
 ```
+
 - The **type** is mandatory. [Should be one of the following](#commit-types).
 - We don't use the **scope** right now, you must omit it. This may change in the
   future.
@@ -78,72 +65,68 @@ A commit starts with a type, a scope, and a subject:
 ### Commit types
 
 `feat`: a new feature or part of a feature
-```
 
+```
 feat: add hello() component
-
 ```
+
 `fix`: a bug fix
-```
 
+```
 fix: fix platformer example
-
 ```
+
 `docs`: changes to documentation (jsDoc, md files, etc)
-```
 
+```
 docs: update add() component jsDoc example
-
 ```
+
 `style`: changes that do not affect the meaning of the code (white-space,
 formatting, missing semi-colons, etc)
-```
 
+```
 style: format all files
-
 ```
+
 `refactor`: a code change that neither fixes a bug nor adds a feature
-```
 
+```
 refactor: move assets to src/assets
-
 ```
+
 `test`: adding missing tests or correcting existing tests
-```
 
+```
 test: added tests for add() component
-
 ```
+
 `build`: changes that affect the build system or external dependencies (esbuild,
 typescript)
-```
 
+```
 build: update esbuild to 0.12.0
-
 ```
+
 `ci`: changes to our CI configuration files and scripts (Github Actions)
-```
 
+```
 ci: add examples test workflow
-
 ```
+
 `revert`: reverts a previous commit
-```
 
+```
 revert: feat: add hello() component
-
 ```
+
 `chore`: updating tasks, general maintenance, etc (anything that doesn't fit in
 the above types)
-```
 
+```
 chore: update README.md
-
-```
-`example`: adding a new example
 ```
 
-example: add firework example
+### Special Type
 
-```
-```
+`bug`: for bugs on issues. Is not a commit type but used on issues.
