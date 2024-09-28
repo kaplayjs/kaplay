@@ -750,7 +750,7 @@ class Mat2 {
 }
 
 // Internal class
-class Mat23 {
+export class Mat23 {
     // 2x3 matrix, since the last column is always (0, 0, 1)
     a: number;
     b: number; // 0
@@ -835,7 +835,7 @@ class Mat23 {
     }
     translate(t: Vec2): Mat23 {
         this.e += t.x * this.a + t.y * this.c;
-        this.f += t.y * this.b + t.x * this.d;
+        this.f += t.x * this.b + t.y * this.d;
         return this;
     }
     rotate(radians: number): Mat23 {
@@ -861,6 +861,18 @@ class Mat23 {
             this.a * p.x + this.c * p.y + this.e,
             this.b * p.x + this.d * p.y + this.f,
         );
+    }
+    transformPoint(p: Vec2, o: Vec2): Vec2 {
+        const tmp = p.x;
+        o.x = this.a * p.x + this.c * p.y + this.e;
+        o.y = this.b * tmp + this.d * p.y + this.f;
+        return o;
+    }
+    transformVector(v: Vec2, o: Vec2): Vec2 {
+        const tmp = v.x;
+        o.x = this.a * v.x + this.c * v.y;
+        o.y = this.b * tmp + this.d * v.y;
+        return o;
     }
 
     get det() {
@@ -1256,7 +1268,7 @@ export class Mat4 {
             const r = Math.sqrt(this.m[0] * this.m[0] + this.m[1] * this.m[1]);
             return new Vec2(
                 Math.atan(this.m[0] * this.m[4] + this.m[1] * this.m[5])
-                / (r * r),
+                    / (r * r),
                 0,
             );
         }
@@ -1265,7 +1277,7 @@ export class Mat4 {
             return new Vec2(
                 0,
                 Math.atan(this.m[0] * this.m[4] + this.m[1] * this.m[5])
-                / (s * s),
+                    / (s * s),
             );
         }
         else {
@@ -1693,7 +1705,7 @@ export function testPolygonPoint(poly: Polygon, pt: Vec2): boolean {
             ((p[i].y > pt.y) != (p[j].y > pt.y))
             && (pt.x
                 < (p[j].x - p[i].x) * (pt.y - p[i].y) / (p[j].y - p[i].y)
-                + p[i].x)
+                    + p[i].x)
         ) {
             c = !c;
         }
@@ -1711,7 +1723,7 @@ export function testEllipsePoint(ellipse: Ellipse, pt: Vec2): boolean {
     const vx = pt.x * c + pt.y * s;
     const vy = -pt.x * s + pt.y * c;
     return vx * vx / (ellipse.radiusX * ellipse.radiusX)
-        + vy * vy / (ellipse.radiusY * ellipse.radiusY) < 1;
+            + vy * vy / (ellipse.radiusY * ellipse.radiusY) < 1;
 }
 
 export function testEllipseCircle(ellipse: Ellipse, circle: Circle): boolean {
@@ -2643,7 +2655,7 @@ export class Ellipse {
         const vx = point.x * c + point.y * s;
         const vy = -point.x * s + point.y * c;
         return vx * vx / (this.radiusX * this.radiusX)
-            + vy * vy / (this.radiusY * this.radiusY) < 1;
+                + vy * vy / (this.radiusY * this.radiusY) < 1;
     }
     raycast(origin: Vec2, direction: Vec2): RaycastResult {
         return raycastEllipse(origin, direction, this);
@@ -3042,21 +3054,21 @@ export function kochanekBartels(
     const hx = h(
         pt2.x,
         0.5 * (1 - tension) * (1 + bias) * (1 + continuity) * (pt2.x - pt1.x)
-        + 0.5 * (1 - tension) * (1 - bias) * (1 - continuity)
-        * (pt3.x - pt2.x),
+            + 0.5 * (1 - tension) * (1 - bias) * (1 - continuity)
+                * (pt3.x - pt2.x),
         0.5 * (1 - tension) * (1 + bias) * (1 - continuity) * (pt3.x - pt2.x)
-        + 0.5 * (1 - tension) * (1 - bias) * (1 + continuity)
-        * (pt4.x - pt3.x),
+            + 0.5 * (1 - tension) * (1 - bias) * (1 + continuity)
+                * (pt4.x - pt3.x),
         pt3.x,
     );
     const hy = h(
         pt2.y,
         0.5 * (1 - tension) * (1 + bias) * (1 + continuity) * (pt2.y - pt1.y)
-        + 0.5 * (1 - tension) * (1 - bias) * (1 - continuity)
-        * (pt3.y - pt2.y),
+            + 0.5 * (1 - tension) * (1 - bias) * (1 - continuity)
+                * (pt3.y - pt2.y),
         0.5 * (1 - tension) * (1 + bias) * (1 - continuity) * (pt3.y - pt2.y)
-        + 0.5 * (1 - tension) * (1 - bias) * (1 + continuity)
-        * (pt4.y - pt3.y),
+            + 0.5 * (1 - tension) * (1 - bias) * (1 + continuity)
+                * (pt4.y - pt3.y),
         pt3.y,
     );
     return (t: number) => {

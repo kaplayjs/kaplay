@@ -116,6 +116,7 @@ import type {
     Circle,
     Ellipse,
     Line,
+    Mat23,
     Mat4,
     Point,
     Polygon,
@@ -3061,6 +3062,10 @@ export interface KAPLAYCtx<
      * @group Math
      */
     Mat4: typeof Mat4;
+    /**
+     * @group Math
+     */
+    Mat23: typeof Mat23;
     /**
      * @group Math
      */
