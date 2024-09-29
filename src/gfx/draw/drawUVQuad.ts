@@ -1,14 +1,14 @@
 import { DEF_ANCHOR, UV_PAD } from "../../constants";
-import { rgb } from "../../math/color";
+import { Color, rgb } from "../../math/color";
 import { Quad, Vec2 } from "../../math/math";
 import type { DrawUVQuadOpt } from "../../types";
 import { anchorPt } from "../anchor";
 import {
     popTransform,
     pushRotate,
-    pushScale,
+    pushScaleV,
     pushTransform,
-    pushTranslate,
+    pushTranslateV,
 } from "../stack";
 import { drawRaw } from "./drawRaw";
 
@@ -26,9 +26,9 @@ export function drawUVQuad(opt: DrawUVQuadOpt) {
     const w = opt.width;
     const h = opt.height;
     const anchor = anchorPt(opt.anchor || DEF_ANCHOR);
-    const offset = anchor.scale(new Vec2(w, h).scale(-0.5));
+    const offset = new Vec2(anchor.x * w * -0.5, anchor.y * h * -0.5);
     const q = opt.quad || new Quad(0, 0, 1, 1);
-    const color = opt.color || rgb(255, 255, 255);
+    const color = opt.color || Color.WHITE;
     const opacity = opt.opacity ?? 1;
 
     // apply uv padding to avoid artifacts
@@ -40,10 +40,10 @@ export function drawUVQuad(opt: DrawUVQuadOpt) {
     const qh = q.h - uvPadY * 2;
 
     pushTransform();
-    pushTranslate(opt.pos);
+    pushTranslateV(opt.pos);
     pushRotate(opt.angle);
-    pushScale(opt.scale);
-    pushTranslate(offset);
+    pushScaleV(opt.scale);
+    pushTranslateV(offset);
 
     drawRaw(
         [

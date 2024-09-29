@@ -1,7 +1,7 @@
 import { DBG_FONT, LOG_TIME } from "../../constants";
 import { app, debug, game, globalOpt } from "../../kaplay";
 import { rgb } from "../../math/color";
-import { vec2, wave } from "../../math/math";
+import { Vec2, vec2, wave } from "../../math/math";
 import { formatText } from "../formatText";
 import {
     contentToView,

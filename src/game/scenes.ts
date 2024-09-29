@@ -1,5 +1,5 @@
 import { app, game } from "../kaplay";
-import { Mat4, vec2 } from "../math/math";
+import { Mat23, vec2 } from "../math/math";
 import type { KEventController } from "../utils";
 import { initEvents } from "./initEvents";
 
@@ -41,7 +41,7 @@ export function go(name: SceneName, ...args: unknown[]) {
             scale: vec2(1),
             angle: 0,
             shake: 0,
-            transform: new Mat4(),
+            transform: new Mat23(),
         };
 
         game.scenes[name](...args);

@@ -30,7 +30,7 @@ class HashGrid {
     update() {
         // Update edge data
         for (const obj of this.objects) {
-            obj.transform = calcTransform(obj);
+            calcTransform(obj, obj.transform);
         }
     }
 

@@ -14,13 +14,12 @@ export function drawTexture(opt: DrawTextureOpt) {
     const q = opt.quad ?? new Quad(0, 0, 1, 1);
     const w = opt.tex.width * q.w;
     const h = opt.tex.height * q.h;
-    const scale = new Vec2(1);
+    const scale = Vec2.ONE;
 
     if (opt.tiled) {
-        const anchor = anchorPt(opt.anchor || DEF_ANCHOR).add(
-            new Vec2(1, 1),
-        ).scale(0.5);
-        const offset = anchor.scale(opt.width || w, opt.height || h);
+        const offset = anchorPt(opt.anchor || DEF_ANCHOR);
+        offset.x = (offset.x + 1) * 0.5 * (opt.width || w);
+        offset.y = (offset.y + 1) * 0.5 * (opt.height || h);
 
         const fcols = (opt.width || w) / w;
         const frows = (opt.height || h) / h;
@@ -141,7 +140,7 @@ export function drawTexture(opt: DrawTextureOpt) {
         }
 
         drawUVQuad(Object.assign({}, opt, {
-            scale: scale.scale(opt.scale || new Vec2(1)),
+            scale: opt.scale ? scale.scale(opt.scale) : scale,
             tex: opt.tex,
             quad: q,
             width: w,

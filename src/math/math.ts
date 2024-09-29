@@ -107,6 +107,8 @@ export class Vec2 {
         return new Vec2(arr[0], arr[1]);
     }
 
+    static ZERO = new Vec2(0, 0);
+    static ONE = new Vec2(1, 1);
     static LEFT = new Vec2(-1, 0);
     static RIGHT = new Vec2(1, 0);
     static UP = new Vec2(0, -1);
@@ -823,6 +825,32 @@ export class Mat23 {
             0,
         );
     }
+    clone() {
+        return new Mat23(
+            this.a,
+            this.b,
+            this.c,
+            this.d,
+            this.e,
+            this.f,
+        );
+    }
+    setMat23(m: Mat23) {
+        this.a = m.a;
+        this.b = m.b;
+        this.c = m.c;
+        this.d = m.d;
+        this.e = m.e;
+        this.f = m.f;
+    }
+    setIdentity() {
+        this.a = 1;
+        this.b = 0;
+        this.c = 0;
+        this.d = 1;
+        this.e = 0;
+        this.f = 0;
+    }
     mul(other: Mat23): Mat23 {
         return new Mat23(
             other.a * this.a + other.b * this.c,
@@ -833,12 +861,18 @@ export class Mat23 {
             other.e * this.b + other.f * this.d + this.f,
         );
     }
-    translate(t: Vec2): Mat23 {
+    translateSelfV(t: Vec2): Mat23 {
         this.e += t.x * this.a + t.y * this.c;
         this.f += t.x * this.b + t.y * this.d;
         return this;
     }
-    rotate(radians: number): Mat23 {
+    translateSelf(x: number, y: number): Mat23 {
+        this.e += x * this.a + y * this.c;
+        this.f += x * this.b + y * this.d;
+        return this;
+    }
+    rotateSelf(degrees: number): Mat23 {
+        const radians = deg2rad(degrees);
         const c = Math.cos(radians);
         const s = Math.sin(radians);
         const oldA = this.a;
@@ -849,12 +883,33 @@ export class Mat23 {
         this.d = c * this.d - s * oldB;
         return this;
     }
-    scale(s: Vec2): Mat23 {
+    scaleSelfV(s: Vec2): Mat23 {
         this.a *= s.x;
         this.b *= s.x;
         this.c *= s.y;
         this.d *= s.y;
         return this;
+    }
+    scaleSelf(x: number, y: number): Mat23 {
+        this.a *= x;
+        this.b *= x;
+        this.c *= y;
+        this.d *= y;
+        return this;
+    }
+    mulSelf(other: Mat23) {
+        const a = other.a * this.a + other.b * this.c;
+        const b = other.a * this.b + other.b * this.d;
+        const c = other.c * this.a + other.d * this.c;
+        const d = other.c * this.b + other.d * this.d;
+        const e = other.e * this.a + other.f * this.c + this.e;
+        const f = other.e * this.b + other.f * this.d + this.f;
+        this.a = a;
+        this.b = b;
+        this.c = c;
+        this.d = d;
+        this.e = e;
+        this.f = f;
     }
     transform(p: Vec2) {
         return vec2(
@@ -888,6 +943,20 @@ export class Mat23 {
             this.a / det,
             (this.c * this.f - this.d * this.e) / det,
             (this.b * this.e - this.a * this.f) / det,
+        );
+    }
+    getTranslation() {
+        return new Vec2(this.e, this.f);
+    }
+    getRotation() {
+        return rad2deg(
+            Math.atan2(-this.c, this.a),
+        );
+    }
+    getScale() {
+        return new Vec2(
+            Math.sqrt(this.a * this.a + this.c * this.c),
+            Math.sqrt(this.b * this.b + this.d * this.d),
         );
     }
 }
@@ -2357,8 +2426,8 @@ export class Point {
     constructor(pt: Vec2) {
         this.pt = pt.clone();
     }
-    transform(m: Mat4): Point {
-        return new Point(m.multVec2(this.pt));
+    transform(m: Mat23): Point {
+        return new Point(m.transformPoint(this.pt, vec2()));
     }
     bbox(): Rect {
         return new Rect(this.pt, 0, 0);
@@ -2393,8 +2462,11 @@ export class Line {
         this.p1 = p1.clone();
         this.p2 = p2.clone();
     }
-    transform(m: Mat4): Line {
-        return new Line(m.multVec2(this.p1), m.multVec2(this.p2));
+    transform(m: Mat23): Line {
+        return new Line(
+            m.transformPoint(this.p1, vec2()),
+            m.transformPoint(this.p2, vec2()),
+        );
     }
     bbox(): Rect {
         return Rect.fromPoints(this.p1, this.p2);
@@ -2449,8 +2521,10 @@ export class Rect {
             this.pos.add(0, this.height),
         ];
     }
-    transform(m: Mat4): Polygon {
-        return new Polygon(this.points().map((pt) => m.multVec2(pt)));
+    transform(m: Mat23): Polygon {
+        return new Polygon(
+            this.points().map((pt) => m.transformPoint(pt, vec2())),
+        );
     }
     bbox(): Rect {
         return this.clone();
@@ -2497,7 +2571,7 @@ export class Circle {
         this.center = center.clone();
         this.radius = radius;
     }
-    transform(tr: Mat4): Ellipse {
+    transform(tr: Mat23): Ellipse {
         return new Ellipse(this.center, this.radius, this.radius).transform(tr);
     }
     bbox(): Rect {
@@ -2580,13 +2654,13 @@ export class Ellipse {
             c * this.radiusY,
         );
     }
-    transform(tr: Mat4): Ellipse {
+    transform(tr: Mat23): Ellipse {
         if (this.angle == 0 && tr.getRotation() == 0) {
             // No rotation, so we can just take the scale and translation
             return new Ellipse(
-                tr.multVec2(this.center),
-                tr.m[0] * this.radiusX,
-                tr.m[5] * this.radiusY,
+                tr.transformPoint(this.center, vec2()),
+                tr.a * this.radiusX,
+                tr.d * this.radiusY,
             );
         }
         else {
@@ -2601,7 +2675,7 @@ export class Ellipse {
             T = M.toMat2();
             // Return the ellipse made from the transformed unit circle
             const ellipse = Ellipse.fromMat2(T);
-            ellipse.center = tr.multVec2(this.center);
+            ellipse.center = tr.transformPoint(this.center, vec2());
             return ellipse;
         }
     }
@@ -2687,8 +2761,8 @@ export class Polygon {
         }
         this.pts = pts;
     }
-    transform(m: Mat4): Polygon {
-        return new Polygon(this.pts.map((pt) => m.multVec2(pt)));
+    transform(m: Mat23): Polygon {
+        return new Polygon(this.pts.map((pt) => m.transformPoint(pt, vec2())));
     }
     bbox(): Rect {
         const p1 = vec2(Number.MAX_VALUE);

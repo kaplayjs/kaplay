@@ -300,11 +300,13 @@ export class BatchRenderer {
             this.flush();
         }
         const indexOffset = this.vqueue.length / this.stride;
-        for (const v of verts) {
-            this.vqueue.push(v);
+        let l = verts.length;
+        for (let i = 0; i < l; i++) {
+            this.vqueue.push(verts[i]);
         }
-        for (const i of indices) {
-            this.iqueue.push(i + indexOffset);
+        l = indices.length;
+        for (let i = 0; i < l; i++) {
+            this.iqueue.push(indices[i] + indexOffset);
         }
         this.curPrimitive = primitive;
         this.curShader = shader;

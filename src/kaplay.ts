@@ -36,9 +36,9 @@ import {
     popTransform,
     pushMatrix,
     pushRotate,
-    pushScale,
+    pushScaleV,
     pushTransform,
-    pushTranslate,
+    pushTranslateV,
     setBackground,
     updateViewport,
     width,
@@ -486,8 +486,8 @@ const kaplay = <
 
         gfx.renderer.numDraws = 0;
         gfx.fixed = false;
-        gfx.transformStack.length = 0;
-        gfx.transform = new Mat4();
+        gfx.transformStackIndex = -1;
+        gfx.transform.setIdentity();
     }
 
     function usePostEffect(name: string, uniform?: Uniform | (() => Uniform)) {
@@ -828,13 +828,13 @@ const kaplay = <
 
         return broadPhase();
 
-        // TODO: persistent grid?
+        /*// TODO: persistent grid?
         // start a spatial hash grid for more efficient collision detection
         const grid: Record<number, Record<number, GameObj<AreaComp>[]>> = {};
         const cellSize = gopt.hashGridSize || DEF_HASH_GRID_SIZE;
 
         // current transform
-        let tr = new Mat4();
+        let tr = new Mat23();
 
         // a local transform stack
         const stack: any[] = [];
@@ -919,7 +919,7 @@ const kaplay = <
             tr = stack.pop();
         }
 
-        checkObj(game.root);
+        checkObj(game.root);*/
     }
 
     function handleErr(err: Error) {
@@ -1351,8 +1351,8 @@ const kaplay = <
         drawSubtracted,
         pushTransform,
         popTransform,
-        pushTranslate,
-        pushScale,
+        pushTranslate: pushTranslateV,
+        pushScale: pushScaleV,
         pushRotate,
         pushMatrix,
         usePostEffect,

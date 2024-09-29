@@ -5,9 +5,9 @@ import type { DrawPolygonOpt } from "../../types";
 import {
     popTransform,
     pushRotate,
-    pushScale,
+    pushScaleV,
     pushTransform,
-    pushTranslate,
+    pushTranslateV,
 } from "../stack";
 import { drawLines } from "./drawLine";
 import { drawRaw } from "./drawRaw";
@@ -24,10 +24,10 @@ export function drawPolygon(opt: DrawPolygonOpt) {
     }
 
     pushTransform();
-    pushTranslate(opt.pos!);
-    pushScale(opt.scale);
+    pushTranslateV(opt.pos!);
+    pushScaleV(opt.scale);
     pushRotate(opt.angle);
-    pushTranslate(opt.offset!);
+    pushTranslateV(opt.offset!);
 
     if (opt.fill !== false) {
         const color = opt.color ?? Color.WHITE;

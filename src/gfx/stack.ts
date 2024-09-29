@@ -1,42 +1,45 @@
 import { app, gfx } from "../kaplay";
-import { type Mat4, Vec2, vec2, type Vec2Args } from "../math/math";
+import { type Mat23, Vec2, vec2, type Vec2Args } from "../math/math";
 
-export function pushTranslate(...args: Vec2Args | [undefined]) {
-    if (args[0] === undefined) return;
+export function pushTranslateV(t: Vec2 | undefined) {
+    if (t === undefined) return;
+    if (t.x === 0 && t.y === 0) return;
+    gfx.transform.translateSelfV(t);
+}
 
-    const p = vec2(...args);
-    if (p.x === 0 && p.y === 0) return;
-    gfx.transform.translate(p);
+export function pushTranslate(x: number, y: number) {
+    if (x === 0 && y === 0) return;
+    gfx.transform.translateSelf(x, y);
 }
 
 export function pushTransform() {
-    gfx.transformStack.push(gfx.transform.clone());
+    gfx.transformStack[++gfx.transformStackIndex].setMat23(gfx.transform);
 }
 
-export function pushMatrix(m: Mat4) {
-    gfx.transform = m.clone();
+export function pushMatrix(m: Mat23) {
+    gfx.transform.setMat23(m);
 }
 
-export function pushScale(
-    ...args: Vec2Args | [undefined] | [undefined, undefined]
-) {
-    if (args[0] === undefined) return;
+export function pushScaleV(s: Vec2 | undefined) {
+    if (s === undefined) return;
+    if (s.x === 1 && s.y === 1) return;
+    gfx.transform.scaleSelfV(s);
+}
 
-    const p = vec2(...args);
-    if (p.x === 1 && p.y === 1) return;
-    gfx.transform.scale(p);
+export function pushScale(x: number, y: number) {
+    if (x === 1 && y === 1) return;
+    gfx.transform.scaleSelf(x, y);
 }
 
 export function pushRotate(a: number | undefined) {
     if (!a) return;
 
-    gfx.transform.rotate(a);
+    gfx.transform.rotateSelf(a);
 }
 
 export function popTransform() {
-    if (gfx.transformStack.length > 0) {
-        // if there's more than 1 element, it will return obviously a Mat4
-        gfx.transform = gfx.transformStack.pop()!;
+    if (gfx.transformStackIndex >= 0) {
+        gfx.transform.setMat23(gfx.transformStack[gfx.transformStackIndex--]);
     }
 }
 
