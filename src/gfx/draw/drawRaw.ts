@@ -12,7 +12,7 @@ export function drawRaw(
     fixed: boolean = false,
     tex?: Texture,
     shaderSrc?: RenderProps["shader"],
-    uniform: Uniform = {},
+    uniform?: Uniform,
 ) {
     const parsedTex = tex ?? gfx.defTex;
     const parsedShader = shaderSrc ?? gfx.defShader;
