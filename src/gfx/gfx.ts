@@ -292,9 +292,9 @@ export class BatchRenderer {
             primitive !== this.curPrimitive
             || tex !== this.curTex
             || shader !== this.curShader
-            || !deepEq(this.curUniform, uniform)
+            || ((this.curUniform != uniform) && !deepEq(this.curUniform, uniform))
             || this.vqueue.length + verts.length * this.stride
-                > this.maxVertices
+            > this.maxVertices
             || this.iqueue.length + indices.length > this.maxIndices
         ) {
             this.flush();
