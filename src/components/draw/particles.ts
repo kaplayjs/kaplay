@@ -138,7 +138,12 @@ export function particles(popt: ParticlesOpt, eopt: EmitterOpt): ParticlesComp {
     const dampingRange = popt.damping || [0, 0];
 
     const indices: number[] = [];
-    const vertices: Vertex[] = new Array<Vertex>(popt.max);
+    const attributes = {
+        pos: new Array<number>(popt.max * 2),
+        uv: new Array<number>(popt.max * 2),
+        color: new Array<number>(popt.max * 3),
+        opacity: new Array<number>(popt.max),
+    };
     let count = 0;
     let time = 0;
 
@@ -150,14 +155,11 @@ export function particles(popt: ParticlesOpt, eopt: EmitterOpt): ParticlesComp {
         indices[i * 6 + 4] = i * 4 + 2;
         indices[i * 6 + 5] = i * 4 + 3;
 
-        for (let j = 0; j < 4; j++) {
-            vertices[i * 4 + j] = {
-                pos: new Vec2(0, 0),
-                uv: new Vec2(0, 0),
-                color: rgb(255, 255, 255),
-                opacity: 1,
-            };
-        }
+        attributes.pos.fill(0);
+        attributes.uv.fill(0);
+        attributes.color.fill(255);
+        attributes.opacity.fill(1);
+
         particles[i] = new Particle();
     }
 
@@ -312,49 +314,56 @@ export function particles(popt: ParticlesOpt, eopt: EmitterOpt): ParticlesComp {
 
                 let j = i * 4;
                 // Left top
-                let v = vertices[j];
-                v.pos.x = p.pos.x + (-hw) * scale * c - (-hh) * scale * s;
-                v.pos.y = p.pos.y + (-hw) * scale * s + (-hh) * scale * c;
-                v.uv.x = quad.x;
-                v.uv.y = quad.y;
-                v.color.r = color.r;
-                v.color.g = color.g;
-                v.color.b = color.b;
-                v.opacity = opacity;
+                attributes.pos[j * 2] = p.pos.x + (-hw) * scale * c
+                    - (-hh) * scale * s;
+                attributes.pos[j * 2 + 1] = p.pos.y + (-hw) * scale * s
+                    + (-hh) * scale * c;
+                attributes.uv[j * 2] = quad.x;
+                attributes.uv[j * 2 + 1] = quad.y;
+                attributes.color[j * 3] = color.r;
+                attributes.color[j * 3 + 1] = color.g;
+                attributes.color[j * 3 + 2] = color.b;
+                attributes.opacity[j] = opacity;
                 // Right top
-                v = vertices[j + 1];
-                v.pos.x = p.pos.x + hw * scale * c - (-hh) * scale * s;
-                v.pos.y = p.pos.y + hw * scale * s + (-hh) * scale * c;
-                v.uv.x = quad.x + quad.w;
-                v.uv.y = quad.y;
-                v.color.r = color.r;
-                v.color.g = color.g;
-                v.color.b = color.b;
-                v.opacity = opacity;
+                j++;
+                attributes.pos[j * 2] = p.pos.x + hw * scale * c
+                    - (-hh) * scale * s;
+                attributes.pos[j * 2 + 1] = p.pos.y + hw * scale * s
+                    + (-hh) * scale * c;
+                attributes.uv[j * 2] = quad.x + quad.w;
+                attributes.uv[j * 2 + 1] = quad.y;
+                attributes.color[j * 3] = color.r;
+                attributes.color[j * 3 + 1] = color.g;
+                attributes.color[j * 3 + 2] = color.b;
+                attributes.opacity[j] = opacity;
                 // Right bottom
-                v = vertices[j + 2];
-                v.pos.x = p.pos.x + hw * scale * c - hh * scale * s;
-                v.pos.y = p.pos.y + hw * scale * s + hh * scale * c;
-                v.uv.x = quad.x + quad.w;
-                v.uv.y = quad.y + quad.h;
-                v.color.r = color.r;
-                v.color.g = color.g;
-                v.color.b = color.b;
-                v.opacity = opacity;
+                j++;
+                attributes.pos[j * 2] = p.pos.x + hw * scale * c
+                    - hh * scale * s;
+                attributes.pos[j * 2 + 1] = p.pos.y + hw * scale * s
+                    + hh * scale * c;
+                attributes.uv[j * 2] = quad.x + quad.w;
+                attributes.uv[j * 2 + 1] = quad.y + quad.h;
+                attributes.color[j * 3] = color.r;
+                attributes.color[j * 3 + 1] = color.g;
+                attributes.color[j * 3 + 2] = color.b;
+                attributes.opacity[j] = opacity;
                 // Left bottom
-                v = vertices[j + 3];
-                v.pos.x = p.pos.x + (-hw) * scale * c - hh * scale * s;
-                v.pos.y = p.pos.y + (-hw) * scale * s + hh * scale * c;
-                v.uv.x = quad.x;
-                v.uv.y = quad.y + quad.h;
-                v.color.r = color.r;
-                v.color.g = color.g;
-                v.color.b = color.b;
-                v.opacity = opacity;
+                j++;
+                attributes.pos[j * 2] = p.pos.x + (-hw) * scale * c
+                    - hh * scale * s;
+                attributes.pos[j * 2 + 1] = p.pos.y + (-hw) * scale * s
+                    + hh * scale * c;
+                attributes.uv[j * 2] = quad.x;
+                attributes.uv[j * 2 + 1] = quad.y + quad.h;
+                attributes.color[j * 3] = color.r;
+                attributes.color[j * 3 + 1] = color.g;
+                attributes.color[j * 3 + 2] = color.b;
+                attributes.opacity[j] = opacity;
             }
 
             drawRaw(
-                vertices,
+                attributes,
                 indices,
                 (this as any).fixed,
                 popt.texture,

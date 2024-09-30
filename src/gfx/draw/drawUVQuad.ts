@@ -8,6 +8,7 @@ import {
     pushRotate,
     pushScaleV,
     pushTransform,
+    pushTranslate,
     pushTranslateV,
 } from "../stack";
 import { drawRaw } from "./drawRaw";
@@ -26,7 +27,8 @@ export function drawUVQuad(opt: DrawUVQuadOpt) {
     const w = opt.width;
     const h = opt.height;
     const anchor = anchorPt(opt.anchor || DEF_ANCHOR);
-    const offset = new Vec2(anchor.x * w * -0.5, anchor.y * h * -0.5);
+    const offsetX = anchor.x * w * -0.5;
+    const offsetY = anchor.y * h * -0.5;
     const q = opt.quad || new Quad(0, 0, 1, 1);
     const color = opt.color || Color.WHITE;
     const opacity = opt.opacity ?? 1;
@@ -43,47 +45,51 @@ export function drawUVQuad(opt: DrawUVQuadOpt) {
     pushTranslateV(opt.pos);
     pushRotate(opt.angle);
     pushScaleV(opt.scale);
-    pushTranslateV(offset);
+    pushTranslate(offsetX, offsetY);
 
     drawRaw(
-        [
-            {
-                pos: new Vec2(-w / 2, h / 2),
-                uv: new Vec2(
-                    opt.flipX ? qx + qw : qx,
-                    opt.flipY ? qy : qy + qh,
-                ),
-                color: color,
-                opacity: opacity,
-            },
-            {
-                pos: new Vec2(-w / 2, -h / 2),
-                uv: new Vec2(
-                    opt.flipX ? qx + qw : qx,
-                    opt.flipY ? qy + qh : qy,
-                ),
-                color: color,
-                opacity: opacity,
-            },
-            {
-                pos: new Vec2(w / 2, -h / 2),
-                uv: new Vec2(
-                    opt.flipX ? qx : qx + qw,
-                    opt.flipY ? qy + qh : qy,
-                ),
-                color: color,
-                opacity: opacity,
-            },
-            {
-                pos: new Vec2(w / 2, h / 2),
-                uv: new Vec2(
-                    opt.flipX ? qx : qx + qw,
-                    opt.flipY ? qy : qy + qh,
-                ),
-                color: color,
-                opacity: opacity,
-            },
-        ],
+        {
+            pos: [
+                -w / 2,
+                h / 2,
+                -w / 2,
+                -h / 2,
+                w / 2,
+                -h / 2,
+                w / 2,
+                h / 2,
+            ],
+            uv: [
+                opt.flipX ? qx + qw : qx,
+                opt.flipY ? qy : qy + qh,
+                opt.flipX ? qx + qw : qx,
+                opt.flipY ? qy + qh : qy,
+                opt.flipX ? qx : qx + qw,
+                opt.flipY ? qy + qh : qy,
+                opt.flipX ? qx : qx + qw,
+                opt.flipY ? qy : qy + qh,
+            ],
+            color: [
+                color.r,
+                color.g,
+                color.b,
+                color.r,
+                color.g,
+                color.b,
+                color.r,
+                color.g,
+                color.b,
+                color.r,
+                color.g,
+                color.b,
+            ],
+            opacity: [
+                opacity,
+                opacity,
+                opacity,
+                opacity,
+            ],
+        },
         [0, 1, 3, 1, 2, 3],
         opt.fixed,
         opt.tex,

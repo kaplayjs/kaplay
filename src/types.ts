@@ -4374,6 +4374,13 @@ export interface Vertex {
     opacity: number;
 }
 
+export interface Attributes {
+    pos: number[];
+    uv: number[];
+    color: number[];
+    opacity: number[];
+}
+
 /**
  * Texture scaling filter. "nearest" is mainly for sharp pixelated scaling, "linear" means linear interpolation.
  */
