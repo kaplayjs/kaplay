@@ -58,6 +58,7 @@
     "publish:next": "npm publish --tag next"
   },
   "devDependencies": {
+    "@kaplayjs/dprint-config": "^1.0.0",
     "dprint": "^0.45.1",
     "dts-bundle-generator": "^9.5.1",
     "esbuild": "^0.21.5",
@@ -67,8 +68,5 @@
     "typescript": "^5.5.3",
     "vitest": "^2.0.0"
   },
-  "packageManager": "pnpm@9.5.0+sha512.140036830124618d624a2187b50d04289d5a087f326c9edfc0ccd733d76c4f52c3a313d4fc148794a2a9d81553016004e6742e8cf850670268a7387fc220c903",
-  "dependencies": {
-    "@kaplayjs/dprint-config": "^1.0.0"
-  }
+  "packageManager": "pnpm@9.5.0+sha512.140036830124618d624a2187b50d04289d5a087f326c9edfc0ccd733d76c4f52c3a313d4fc148794a2a9d81553016004e6742e8cf850670268a7387fc220c903"
 }
