@@ -18,8 +18,8 @@ export function drawTexture(opt: DrawTextureOpt) {
 
     if (opt.tiled) {
         const offset = anchorPt(opt.anchor || DEF_ANCHOR);
-        offset.x = (offset.x + 1) * 0.5 * (opt.width || w);
-        offset.y = (offset.y + 1) * 0.5 * (opt.height || h);
+        const offsetX = (offset.x + 1) * 0.5 * (opt.width || w);
+        const offsetY = (offset.y + 1) * 0.5 * (opt.height || h);
 
         const fcols = (opt.width || w) / w;
         const frows = (opt.height || h) / h;
@@ -59,8 +59,8 @@ export function drawTexture(opt: DrawTextureOpt) {
             indices[index * 6 + 5] = index * 4 + 3;
 
             let s = index * 4;
-            attributes.pos[s * 2] = x - offset.x;
-            attributes.pos[s * 2 + 1] = y - offset.y;
+            attributes.pos[s * 2] = x - offsetX;
+            attributes.pos[s * 2 + 1] = y - offsetY;
             attributes.uv[s * 2] = q.x;
             attributes.uv[s * 2 + 1] = q.y;
             attributes.color[s * 3] = color.r;
@@ -68,8 +68,8 @@ export function drawTexture(opt: DrawTextureOpt) {
             attributes.color[s * 3 + 2] = color.b;
             attributes.opacity[s] = opacity;
             s++;
-            attributes.pos[s * 2] = x + w - offset.x;
-            attributes.pos[s * 2 + 1] = y - offset.y;
+            attributes.pos[s * 2] = x + w - offsetX;
+            attributes.pos[s * 2 + 1] = y - offsetY;
             attributes.uv[s * 2] = q.x + q.w;
             attributes.uv[s * 2 + 1] = q.y;
             attributes.color[s * 3] = color.r;
@@ -77,8 +77,8 @@ export function drawTexture(opt: DrawTextureOpt) {
             attributes.color[s * 3 + 2] = color.b;
             attributes.opacity[s] = opacity;
             s++;
-            attributes.pos[s * 2] = x + w - offset.x;
-            attributes.pos[s * 2 + 1] = y + h - offset.y;
+            attributes.pos[s * 2] = x + w - offsetX;
+            attributes.pos[s * 2 + 1] = y + h - offsetY;
             attributes.uv[s * 2] = q.x + q.w;
             attributes.uv[s * 2 + 1] = q.y + q.h;
             attributes.color[s * 3] = color.r;
@@ -86,8 +86,8 @@ export function drawTexture(opt: DrawTextureOpt) {
             attributes.color[s * 3 + 2] = color.b;
             attributes.opacity[s] = opacity;
             s++;
-            attributes.pos[s * 2] = x - offset.x;
-            attributes.pos[s * 2 + 1] = y + h - offset.y;
+            attributes.pos[s * 2] = x - offsetX;
+            attributes.pos[s * 2 + 1] = y + h - offsetY;
             attributes.uv[s * 2] = q.x;
             attributes.uv[s * 2 + 1] = q.y + q.h;
             attributes.color[s * 3] = color.r;

@@ -174,14 +174,18 @@ export function make<T>(comps: CompList<T> = []): GameObj<MakeType<T>> {
                     throw new Error(`Invalid mask func: "${this.mask}"`);
                 }
                 maskFunc(() => {
-                    children.forEach((child) => child.draw());
+                    for (let i = 0; i < children.length; i++) {
+                        children[i].draw();
+                    }
                 }, () => {
                     this.trigger("draw");
                 });
             }
             else {
                 this.trigger("draw");
-                children.forEach((child) => child.draw());
+                for (let i = 0; i < children.length; i++) {
+                    children[i].draw();
+                }
             }
             popTransform();
             gfx.fixed = f;
