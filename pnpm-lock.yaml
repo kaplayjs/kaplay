@@ -7,11 +7,10 @@ settings:
 importers:
 
   .:
-    dependencies:
+    devDependencies:
       '@kaplayjs/dprint-config':
         specifier: ^1.0.0
         version: 1.0.0
-    devDependencies:
       dprint:
         specifier: ^0.45.1
         version: 0.45.1
