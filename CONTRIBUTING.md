@@ -1,20 +1,24 @@
-# Developing kaplay
+# Developing KAPLAY
 
-We're currently working in two main branches:
+We're currently working in two branches:
 
-- `v3001`: the branch for v3001. This is the branch you should use to develop
-  new features, or all in general but breaking changes.
-- `master`: the main branch, where we developer v4000. This is the branch you
-  should use to develop new features that are breaking changes and can't be done
-  for v3001.
+- `v3001`: the branch for v3001. This is the branch you should use to fix bugs
+  on v3001 and v4000.
+- `master`: the main branch, where we develop v4000. This is the branch you must
+  use to develop new features.
 
-When you publish a PR that is for v3001 and v4000, you should target `master`
-branch and add the tag `v3001&v4000`. When the PR is merged, the PR will be
-cherry-picked to `v3001` branch.
+When you publish a PR with a fix for v3001 and v4000, you should create 2 PRs,
+one targeting `v3001` and the other targeting `master`. We recommend you using
+[`cherry-pick`](https://dev.to/hakki/git-cherry-pick-a-guide-to-selectively-merging-commits-2i14)
+to apply the fix to both branches.
 
-1. `git clone https://github.com/kaplayjs/kaplay.git` to clone the repo.
-2. `cd kaplay` to enter the project directory.
-3. `pnpm install` to install dependencies.
+## Cloning the repository
+
+```sh
+git clone https://github.com/kaplayjs/kaplay.git # to clone the repo.
+cd kaplay # to enter the project directory.
+pnpm install # to install dependencies.
+```
 
 ## Editing examples
 
@@ -32,19 +36,19 @@ Most KAPLAY docs are written on every component file in `src/components`, and
 [jsDoc](https://www.typescriptlang.org/docs/handbook/jsdoc-supported-types.html)
 above each KAPLAY component entry.
 
-**Help on improving the documentation is appreciated! Thank you for
-contributing!**
+**Help on improving the documentation is appreciated!**
 
 # Before commit
 
-1. follow conventional [conventional commits](#conventional-commits-guide)
-   format. You can see how seeing the commit history.
-2. `pnpm run check` to check typescript.
+1. Follow our [conventional commits](#conventional-commits-guide) format. You
+   can see how seeing the commit history.
+2. `pnpm run check` to check TypeScript.
 3. `pnpm run fmt` to format.
 
 # Conventional Commits Guide
 
-You must follow the following rules when writing commit messages:
+This guide should be followed for all commits to the repository, and also for
+issues and PRs.
 
 A commit starts with a type, a scope, and a subject:
 
@@ -123,8 +127,6 @@ the above types)
 chore: update README.md
 ```
 
-`example`: adding a new example
+### Special Type
 
-```
-example: add firework example
-```
+`bug`: for bugs on issues. Is not a commit type but used on issues.
