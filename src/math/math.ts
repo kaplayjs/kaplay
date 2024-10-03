@@ -112,6 +112,20 @@ export class Vec2 {
     static UP = new Vec2(0, -1);
     static DOWN = new Vec2(0, 1);
 
+    /** Closest orthagonal direction: LEFT, RIGHT, UP, or DOWN */
+    toAxis(): Vec2 {
+        var result = vec2();
+        var minDist = Number.MAX_VALUE;
+        for (var c of [Vec2.LEFT, Vec2.RIGHT, Vec2.UP, Vec2.DOWN]) {
+            const dist = this.unit().sub(c).len();
+            if (dist < minDist) {
+                minDist = dist;
+                result = c;
+            }
+        }
+        return result;
+    }
+
     /** Clone the vector */
     clone(): Vec2 {
         return new Vec2(this.x, this.y);
