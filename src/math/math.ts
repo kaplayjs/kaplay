@@ -114,16 +114,9 @@ export class Vec2 {
 
     /** Closest orthogonal direction: LEFT, RIGHT, UP, or DOWN */
     toAxis(): Vec2 {
-        let result = vec2();
-        let minDist = Number.MAX_VALUE;
-        for (var c of [Vec2.LEFT, Vec2.RIGHT, Vec2.UP, Vec2.DOWN]) {
-            const dist = this.unit().dist(c);
-            if (dist < minDist) {
-                minDist = dist;
-                result = c;
-            }
-        }
-        return result;
+        return Math.abs(this.x) > Math.abs(this.y) ?
+            this.x < 0 ? Vec2.LEFT : Vec2.RIGHT :
+            this.y < 0 ? Vec2.UP : Vec2.DOWN;
     }
 
     /** Clone the vector */
