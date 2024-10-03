@@ -114,9 +114,9 @@ export class Vec2 {
 
     /** Closest orthogonal direction: LEFT, RIGHT, UP, or DOWN */
     toAxis(): Vec2 {
-        var result = vec2();
+        let result = vec2();
         let minDist = Number.MAX_VALUE;
-        let (var c of [Vec2.LEFT, Vec2.RIGHT, Vec2.UP, Vec2.DOWN]) {
+        for (var c of [Vec2.LEFT, Vec2.RIGHT, Vec2.UP, Vec2.DOWN]) {
             const dist = this.unit().sub(c).len();
             if (dist < minDist) {
                 minDist = dist;
