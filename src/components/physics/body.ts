@@ -261,10 +261,6 @@ export function body(opt: BodyCompOpt = {}): BodyComp {
                 this.onPhysicsResolve((col) => {
                     if (game.gravity) {
                         if (col.isBottom() && this.isFalling()) {
-                            // Clear the velocity in the direction of gravity, as we've hit something
-                            this.vel = this.vel.reject(
-                                game.gravity.unit(),
-                            );
                             // We need the past platform to check if we already were on a platform
                             const pastPlatform = curPlatform;
                             curPlatform = col.target as GameObj<
@@ -286,13 +282,15 @@ export function body(opt: BodyCompOpt = {}): BodyComp {
                             }
                         }
                         else if (col.isTop() && this.isJumping()) {
-                            this.vel = this.vel.reject(
-                                game.gravity.unit(),
-                            );
                             this.trigger("headbutt", col.target);
                             col.target.trigger("headbutted", this);
                         }
                     }
+
+                    // Clear the velocity in the direction of the normal, as we've hit something
+                    this.vel = this.vel.reject(
+                        col.normal,
+                    );
                 });
             }
         },
