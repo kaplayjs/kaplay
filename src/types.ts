@@ -697,8 +697,8 @@ export interface KAPLAYCtx<
     pointEffector(options: PointEffectorCompOpt): PointEffectorComp;
     /**
      * The platform effector makes it easier to implement one way platforms
-     * or walls. This effector is used with a static body, but it will only
-     * be solid depending on the direction the object is traveling from.
+     * or walls. This effector is typically used with a static body, and it
+     * will only be solid depending on the direction the object is traveling from.
      *
      * @since v3001.0
      * @group Components
