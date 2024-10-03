@@ -703,7 +703,7 @@ export interface KAPLAYCtx<
      * @since v3001.0
      * @group Components
      */
-    platformEffector(options: PlatformEffectorCompOpt): PlatformEffectorComp;
+    platformEffector(options?: PlatformEffectorCompOpt): PlatformEffectorComp;
     /**
      * Applies an upwards force (force against gravity) to colliding objects depending on the fluid density and submerged area.
      * Good to apply constant thrust.
