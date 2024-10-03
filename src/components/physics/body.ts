@@ -21,11 +21,11 @@ export interface BodyComp extends Comp {
      */
     vel: Vec2;
     /**
-     * How much velocity decays (velocity *= (1 - drag) every frame).
+     * How much velocity decays (velocity *= 1 / (damping * dt + 1) every frame).
      *
      * @since v3001.0
      */
-    drag: number;
+    damping: number;
     /**
      * If object is static, won't move, and all non static objects won't move past it.
      */
@@ -141,11 +141,11 @@ export interface BodyComp extends Comp {
  */
 export interface BodyCompOpt {
     /**
-     * How much velocity decays (velocity *= (1 - drag) every frame).
+     * How much velocity decays (velocity *= 1 / (damping * dt + 1) every frame).
      *
      * @since v3001.0
      */
-    drag?: number;
+    damping?: number;
     /**
      * Initial speed in pixels per second for jump().
      */
@@ -191,7 +191,7 @@ export function body(opt: BodyCompOpt = {}): BodyComp {
         id: "body",
         require: ["pos"],
         vel: vec2(0),
-        drag: opt.drag ?? 0,
+        damping: opt.damping ?? 0,
         jumpForce: opt.jumpForce ?? DEF_JUMP_FORCE,
         gravityScale: opt.gravityScale ?? 1,
         isStatic: opt.isStatic ?? false,
@@ -405,8 +405,8 @@ export function body(opt: BodyCompOpt = {}): BodyComp {
             this.vel.x += acc.x * k.dt();
             this.vel.y += acc.y * k.dt();
 
-            this.vel.x *= 1 - this.drag * k.dt();
-            this.vel.y *= 1 - this.drag * k.dt();
+            this.vel.x *= 1 / (1 + this.damping * k.dt());
+            this.vel.y *= 1 / (1 + this.damping * k.dt());
 
             this.move(this.vel);
 
