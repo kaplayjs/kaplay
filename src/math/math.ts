@@ -117,7 +117,7 @@ export class Vec2 {
         let result = vec2();
         let minDist = Number.MAX_VALUE;
         for (var c of [Vec2.LEFT, Vec2.RIGHT, Vec2.UP, Vec2.DOWN]) {
-            const dist = this.unit().sub(c).len();
+            const dist = this.unit().dist(c);
             if (dist < minDist) {
                 minDist = dist;
                 result = c;
