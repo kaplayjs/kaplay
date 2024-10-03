@@ -153,7 +153,8 @@ export function constantForce(opts: ConstantForceCompOpt): ConstantForceComp {
 
 export type PlatformEffectorCompOpt = {
     /**
-     * If the object is moving in a direction in here, it won't collide.
+     * If the object is about to collide and the collision normal direction is
+     * in here, the object won't collide.
      * 
      * Should be a list of unit vectors `LEFT`, `RIGHT`, `UP`, or `DOWN`.
      */
@@ -171,7 +172,7 @@ export interface PlatformEffectorComp extends Comp {
     /**
      * A set of the objects that should not collide with this, because `shouldCollide` returned true.
      * 
-     * Objects in here are automatically removed when the stop colliding, so the casual user shouldn't
+     * Objects in here are automatically removed when they stop colliding, so the casual user shouldn't
      * need to touch this much. However, if an object is added to this set before the object collides
      * with the platform effector, it won't collide even if `shouldCollide` returns true.
      */
