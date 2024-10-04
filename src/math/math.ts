@@ -112,6 +112,13 @@ export class Vec2 {
     static UP = new Vec2(0, -1);
     static DOWN = new Vec2(0, 1);
 
+    /** Closest orthogonal direction: LEFT, RIGHT, UP, or DOWN */
+    toAxis(): Vec2 {
+        return Math.abs(this.x) > Math.abs(this.y) ?
+            this.x < 0 ? Vec2.LEFT : Vec2.RIGHT :
+            this.y < 0 ? Vec2.UP : Vec2.DOWN;
+    }
+
     /** Clone the vector */
     clone(): Vec2 {
         return new Vec2(this.x, this.y);
