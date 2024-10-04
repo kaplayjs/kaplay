@@ -213,18 +213,18 @@ export function body(opt: BodyCompOpt = {}): BodyComp {
 
                         const friction = Math.sqrt(
                             (col.source.friction || 0)
-                                * (col.source.friction || 0),
+                                * (col.target.friction || 0),
                         );
                         const restitution = Math.max(
                             col.source.restitution || 0,
-                            col.source.restitution || 0,
+                            col.target.restitution || 0,
                         );
 
                         if (restitution != 0) {
+                            // TODO: if the other body is also not static, the magnitude of the velocity needs to be redistributed
                             this.vel = this.vel.reflect(col.normal).scale(
                                 restitution,
                             );
-                            console.log(this.vel);
                         }
                     },
                 );
