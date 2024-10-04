@@ -21,7 +21,7 @@ export interface BodyComp extends Comp {
      */
     vel: Vec2;
     /**
-     * How much velocity decays (velocity *= 1 / (damping * dt + 1) every frame).
+     * How much velocity decays (velocity *= 1 / (1 + damping * dt) every frame).
      *
      * @since v3001.0
      */
@@ -141,7 +141,7 @@ export interface BodyComp extends Comp {
  */
 export interface BodyCompOpt {
     /**
-     * How much velocity decays (velocity *= 1 / (damping * dt + 1) every frame).
+     * How much velocity decays (velocity *= 1 / (1 + damping * dt) every frame).
      *
      * @since v3001.0
      */
