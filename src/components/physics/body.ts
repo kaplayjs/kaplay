@@ -211,10 +211,6 @@ export function body(opt: BodyCompOpt = {}): BodyComp {
                         if (!col) return;
                         if (this.isStatic) return;
 
-                        const friction = Math.sqrt(
-                            (col.source.friction || 0)
-                                * (col.target.friction || 0),
-                        );
                         const restitution = Math.max(
                             col.source.restitution || 0,
                             col.target.restitution || 0,
@@ -310,11 +306,21 @@ export function body(opt: BodyCompOpt = {}): BodyComp {
                         }
                     }
 
+                    const friction = Math.sqrt(
+                        (col.source.friction || 0)
+                            * (col.target.friction || 0),
+                    );
+
+                    const projection = this.vel.project(col.normal);
+                    const rejection = this.vel.sub(projection);
+
                     // Clear the velocity in the direction of the normal, as we've hit something
                     if (this.vel.dot(col.normal) < 0) {
-                        this.vel = this.vel.reject(
-                            col.normal,
-                        );
+                        this.vel = rejection;
+                    }
+                    // Modulate the velocity tangential to the normal
+                    if (friction != 0) {
+                        this.vel = this.vel.sub(rejection.scale(friction));
                     }
                 });
             }
