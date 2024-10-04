@@ -184,7 +184,7 @@ export function platformEffector(
 ): PlatformEffectorComp {
     opt.ignoreSides ??= [Vec2.UP];
     opt.shouldCollide ??= (_, normal) => {
-        return opt.ignoreSides?.findIndex(s => s.unit().sub(normal).slen() < Number.EPSILON) == -1;
+        return opt.ignoreSides?.findIndex(s => s.sdist(normal) < Number.EPSILON) == -1;
     }
     return {
         id: "platformEffector",
