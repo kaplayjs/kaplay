@@ -320,6 +320,9 @@ export function body(opt: BodyCompOpt = {}): BodyComp {
                     }
                     // Modulate the velocity tangential to the normal
                     if (friction != 0) {
+                        // TODO: This should work with dt, not frame, but then friction 1 will brake in 1 second, not one frame
+                        // TODO: This should depend with gravity, stronger gravity means more friction
+                        //       getGravityDirection().scale(getGravity()).project(col.normal).len()
                         this.vel = this.vel.sub(rejection.scale(friction));
                     }
                 });
