@@ -206,6 +206,29 @@ export function body(opt: BodyCompOpt = {}): BodyComp {
             }
 
             if (this.is("area")) {
+                this.onCollide(
+                    (other, col) => {
+                        if (!col) return;
+                        if (this.isStatic) return;
+
+                        const friction = Math.sqrt(
+                            (col.source.friction || 0)
+                                * (col.source.friction || 0),
+                        );
+                        const restitution = Math.max(
+                            col.source.restitution || 0,
+                            col.source.restitution || 0,
+                        );
+
+                        if (restitution != 0) {
+                            this.vel = this.vel.reflect(col.normal).scale(
+                                restitution,
+                            );
+                            console.log(this.vel);
+                        }
+                    },
+                );
+
                 // static vs static: don't resolve
                 // static vs non-static: always resolve non-static
                 // non-static vs non-static: resolve the first one
@@ -288,9 +311,11 @@ export function body(opt: BodyCompOpt = {}): BodyComp {
                     }
 
                     // Clear the velocity in the direction of the normal, as we've hit something
-                    this.vel = this.vel.reject(
-                        col.normal,
-                    );
+                    if (this.vel.dot(col.normal) < 0) {
+                        this.vel = this.vel.reject(
+                            col.normal,
+                        );
+                    }
                 });
             }
         },

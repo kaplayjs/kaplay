@@ -55,6 +55,8 @@ export interface AreaComp extends Comp {
      * @since v3000.0
      */
     collisionIgnore: Tag[];
+    restitution?: number;
+    friction?: number;
     /**
      * If was just clicked on last frame.
      */
