@@ -3,7 +3,7 @@ import { type Graph } from "../../math/navigation";
 import type { Comp, GameObj } from "../../types";
 import type { PosComp } from "../transform/pos";
 
-export interface NavigationMapComp extends Comp {
+export interface PathfinderMapComp extends Comp {
     /*
      * Get navigation waypoints to reach the given target from the given origin.
      */
@@ -18,16 +18,16 @@ export interface NavigationMapComp extends Comp {
     graph: Graph | undefined;
 }
 
-export interface NavigationMapCompOpt {
+export interface PathfinderMapCompOpt {
     /*
      * The graph to use for navigation. If null, the ancestors are queried for a navigatorMap component.
      */
     graph?: Graph;
 }
 
-export function navigationMap(
-    opts: NavigationMapCompOpt,
-): NavigationMapComp {
+export function pathfinderMap(
+    opts: PathfinderMapCompOpt,
+): PathfinderMapComp {
     let graph = opts.graph;
     return {
         id: "navigatorMap",
@@ -38,7 +38,7 @@ export function navigationMap(
             graph = value;
         },
         navigate(
-            this: GameObj<NavigationMapComp>,
+            this: GameObj<PathfinderMapComp>,
             origin: Vec2,
             target: Vec2,
             navigationOpt: any = {},
@@ -48,7 +48,7 @@ export function navigationMap(
     };
 }
 
-export interface NavigationComp extends Comp {
+export interface PathfinderComp extends Comp {
     /*
      * Get navigation waypoints to reach the given target from the current position.
      */
@@ -59,7 +59,7 @@ export interface NavigationComp extends Comp {
     graph: Graph | undefined;
 }
 
-export interface NavigationCompOpt {
+export interface PathfinderCompOpt {
     /*
      * The graph to use for navigation. If null, the ancestors are queried for a navigatorMap component.
      */
@@ -70,15 +70,15 @@ export interface NavigationCompOpt {
     navigationOpt?: any;
 }
 
-export function navigation(
-    opts: NavigationCompOpt,
-): NavigationComp {
+export function pathfinder(
+    opts: PathfinderCompOpt,
+): PathfinderComp {
     let graph = opts.graph;
     return {
         id: "navigator",
         require: ["pos"],
         navigateTo(
-            this: GameObj<NavigationComp | PosComp>,
+            this: GameObj<PathfinderComp | PosComp>,
             target: Vec2,
         ): Vec2[] | undefined {
             const graph: Graph | undefined = this.graph;
@@ -89,7 +89,7 @@ export function navigation(
                 return graph;
             }
             let parent: GameObj<any> | null =
-                (this as unknown as GameObj<NavigationComp>).parent;
+                (this as unknown as GameObj<PathfinderComp>).parent;
             while (parent) {
                 if (parent.is("navigatormap")) {
                     return parent.graph;

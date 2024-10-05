@@ -1,4 +1,4 @@
-import { BinaryHeap } from "../utils/";
+import { BinaryHeap } from "../utils";
 import { Vec2 } from "./math";
 
 export interface Graph {

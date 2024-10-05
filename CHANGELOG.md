@@ -89,7 +89,7 @@
 - added `sentry()` component to notify when certain objects are in sight.
   (**v3001/4000**)
 - added `NavMesh` class for pathfinding on a mesh. (**v3001/4000**)
-- added `navigation()` component to calculate a list of waypoints on a graph.
+- added `pathfinder()` component to calculate a list of waypoints on a graph.
   (**v3001/4000**)
 - now collision checks are only done if there's area objects. (**v3001/4000**)
 
