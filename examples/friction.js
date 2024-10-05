@@ -1,4 +1,4 @@
-kaplay({/*scale: 0.5*/});
+kaplay({ scale: 0.5 });
 loadSprite("bean", "/sprites/bean.png");
 loadSprite("grass", "/sprites/grass.png");
 setGravity(3200);
