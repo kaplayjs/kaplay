@@ -206,25 +206,6 @@ export function body(opt: BodyCompOpt = {}): BodyComp {
             }
 
             if (this.is("area")) {
-                this.onCollide(
-                    (other, col) => {
-                        if (!col) return;
-                        if (this.isStatic) return;
-
-                        const restitution = Math.max(
-                            col.source.restitution || 0,
-                            col.target.restitution || 0,
-                        );
-
-                        if (restitution != 0) {
-                            // TODO: if the other body is also not static, the magnitude of the velocity needs to be redistributed
-                            this.vel = this.vel.reflect(col.normal).scale(
-                                restitution,
-                            );
-                        }
-                    },
-                );
-
                 // static vs static: don't resolve
                 // static vs non-static: always resolve non-static
                 // non-static vs non-static: resolve the first one
@@ -306,6 +287,11 @@ export function body(opt: BodyCompOpt = {}): BodyComp {
                         }
                     }
 
+                    const restitution = Math.max(
+                        col.source.restitution || 0,
+                        col.target.restitution || 0,
+                    );
+
                     const friction = Math.sqrt(
                         (col.source.friction || 0)
                             * (col.target.friction || 0),
@@ -316,9 +302,17 @@ export function body(opt: BodyCompOpt = {}): BodyComp {
 
                     // Clear the velocity in the direction of the normal, as we've hit something
                     if (this.vel.dot(col.normal) < 0) {
-                        this.vel = rejection;
+                        if (restitution == 0) {
+                            this.vel = rejection;
+                        }
+                        else {
+                            // Modulate the velocity tangential to the normal
+                            this.vel = this.vel.reflect(col.normal).scale(
+                                restitution,
+                            );
+                        }
                     }
-                    // Modulate the velocity tangential to the normal
+
                     if (friction != 0) {
                         // TODO: This should work with dt, not frame, but then friction 1 will brake in 1 second, not one frame
                         // TODO: This should depend with gravity, stronger gravity means more friction

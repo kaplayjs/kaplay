@@ -15,14 +15,14 @@ const level = addLevel([
     tiles: {
         "@": () => [
             sprite("bean"),
-            area({ friction: 0.02, restitution: 0 }),
+            area({ friction: 0, restitution: 1 }),
             body(),
             anchor("bot"),
             "player",
         ],
         "=": () => [
             sprite("grass"),
-            area({ friction: 0.02, restitution: 0 }),
+            area({ friction: 0, restitution: 1 }),
             body({ isStatic: true }),
             anchor("bot"),
         ],
