@@ -50,6 +50,8 @@ import type {
     OutlineComp,
     PatrolComp,
     PatrolCompOpt,
+    PlatformEffectorComp,
+    PlatformEffectorCompOpt,
     PointEffectorComp,
     PointEffectorCompOpt,
     PolygonComp,
@@ -693,6 +695,15 @@ export interface KAPLAYCtx<
      * @group Components
      */
     pointEffector(options: PointEffectorCompOpt): PointEffectorComp;
+    /**
+     * The platform effector makes it easier to implement one way platforms
+     * or walls. This effector is typically used with a static body, and it
+     * will only be solid depending on the direction the object is traveling from.
+     *
+     * @since v3001.0
+     * @group Components
+     */
+    platformEffector(options?: PlatformEffectorCompOpt): PlatformEffectorComp;
     /**
      * Applies an upwards force (force against gravity) to colliding objects depending on the fluid density and submerged area.
      * Good to apply constant thrust.
