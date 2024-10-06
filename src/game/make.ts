@@ -27,7 +27,7 @@ import {
     type QueryOpt,
     type Tag,
 } from "../types";
-import { type KEventController, KEventHandler, uid } from "../utils";
+import { KEventController, KEventHandler, uid } from "../utils";
 
 export function make<T>(comps: CompList<T> = []): GameObj<T> {
     const compStates = new Map<string, Comp>();
@@ -596,15 +596,26 @@ export function make<T>(comps: CompList<T> = []): GameObj<T> {
 
     for (const e of evs) {
         obj[e] = (...args: [any]) => {
-            const ev = app[e]?.(...args);
+            let ev = app[e]?.(...args);
             inputEvents.push(ev);
 
             obj.onDestroy(() => ev.cancel());
             obj.on("sceneEnter", () => {
-                ev.cancel();
+                // All app events are already canceled by changing the scene
+                // not neccesary -> ev.cancel();
                 inputEvents.splice(inputEvents.indexOf(ev), 1);
-                app[e]?.(...args);
+                // create a new event with the same arguments
+                const newEv = app[e]?.(...args);
+
+                // Replace the old event functions with the new ones
+                // old KEventController.cancel() => new KEventController.cancel()
+                KEventController.replace(ev, newEv);
+                // Save the reference to the new event so replace work every scene change
+                // There's always only 2 events connected, old and new
+                ev = newEv;
+                inputEvents.push(ev);
             });
+
             return ev;
         };
     }
