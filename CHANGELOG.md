@@ -5,7 +5,8 @@
 - Added circle and (rotated) ellipse collision shapes.
 - Added an ellipse component.
 - Circle area is no longer a box.
-- Added a fake cursor API
+- Added a fake cursor API.
+- Added restitution and friction.
 
   ```js
   const myCursor = add([fakeMouse(), sprite("kat"), pos(100, 100)]);
@@ -280,6 +281,7 @@
       debugKey: "l",
   });
   ```
+
 - added compatibility with custom properties in debug mode
 
   ```js
@@ -297,6 +299,7 @@
   // see the custom properties in debug mode
   debug.inspect = true;
   ```
+
 - Now `debug.log()` accepts multiple argument of any type, like `console.log()`.
 
 ## Helpers
@@ -322,6 +325,7 @@
   ```ts
   const player = get<BodyComp>("player");
   ```
+
 - Now `Key` also accepts a string as an acceptable value.
 - Now `text()` component doesn't require to pass a string.
 - Now `camScale()` and `camPos()` accept only 1 number as parameter.

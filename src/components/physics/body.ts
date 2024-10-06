@@ -287,10 +287,38 @@ export function body(opt: BodyCompOpt = {}): BodyComp {
                         }
                     }
 
-                    // Clear the velocity in the direction of the normal, as we've hit something
-                    this.vel = this.vel.reject(
-                        col.normal,
+                    const restitution = Math.max(
+                        col.source.restitution || 0,
+                        col.target.restitution || 0,
                     );
+
+                    const friction = Math.sqrt(
+                        (col.source.friction || 0)
+                            * (col.target.friction || 0),
+                    );
+
+                    const projection = this.vel.project(col.normal);
+                    const rejection = this.vel.sub(projection);
+
+                    // Clear the velocity in the direction of the normal, as we've hit something
+                    if (this.vel.dot(col.normal) < 0) {
+                        if (restitution == 0) {
+                            this.vel = rejection;
+                        }
+                        else {
+                            // Modulate the velocity tangential to the normal
+                            this.vel = this.vel.reflect(col.normal).scale(
+                                restitution,
+                            );
+                        }
+                    }
+
+                    if (friction != 0) {
+                        // TODO: This should work with dt, not frame, but then friction 1 will brake in 1 second, not one frame
+                        // TODO: This should depend with gravity, stronger gravity means more friction
+                        //       getGravityDirection().scale(getGravity()).project(col.normal).len()
+                        this.vel = this.vel.sub(rejection.scale(friction));
+                    }
                 });
             }
         },
