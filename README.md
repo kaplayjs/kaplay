@@ -2,18 +2,6 @@
 
 ![KAPLAY](assets/brand/kaplay-o.webp)
 
-![GitHub License](https://img.shields.io/github/license/kaplayjs/kaplay?style=for-the-badge)
-![NPM Downloads](https://img.shields.io/npm/dy/kaplay?style=for-the-badge)
-![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/kaplayjs/kaplay/test.yml?style=for-the-badge)
-![GitHub contributors](https://img.shields.io/github/contributors/kaplayjs/kaplay?style=for-the-badge)
-![Open Collective backers](https://img.shields.io/opencollective/backers/kaplay?style=for-the-badge)
-
-![GitHub Repo stars](https://img.shields.io/github/stars/kaplayjs/kaplay?style=for-the-badge)
-![GitHub forks](https://img.shields.io/github/forks/kaplayjs/kaplay?style=for-the-badge)
-
-![NPM Version](https://img.shields.io/npm/v/kaplay?style=for-the-badge)
-![NPM Version (with dist tag)](https://img.shields.io/npm/v/kaplay/next?style=for-the-badge)
-
 [**KAPLAY**](https://kaplayjs.com/) is a JavaScript library that helps you make
 games fast and fun!
 

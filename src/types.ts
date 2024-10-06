@@ -111,7 +111,6 @@ import type {
     LineJoin,
     Texture,
 } from "./gfx";
-import { kaplay } from "./kaplay";
 import type { GjkCollisionResult } from "./math";
 import type { Color, RGBAValue, RGBValue } from "./math/color";
 import type {
@@ -131,16 +130,6 @@ import type {
 } from "./math/math";
 import type { NavMesh } from "./math/navigationmesh";
 import type { KEvent, KEventController, KEventHandler } from "./utils/";
-
-// for back compat with v3000
-export type {
-    KAPLAYCtx as KaboomCtx,
-    KAPLAYOpt as KaboomOpt,
-    KAPLAYPlugin as KaboomPlugin,
-    KEvent as Event,
-    KEventController as EventController,
-    KEventHandler as EventHandler,
-};
 
 /**
  * Context handle that contains every kaboom function.
