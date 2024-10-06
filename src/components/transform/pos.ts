@@ -1,6 +1,6 @@
 import { isFixed } from "../../game/utils";
-import { getViewportScale, width } from "../../gfx";
-import { globalOpt, k } from "../../kaplay";
+import { getViewportScale } from "../../gfx";
+import { k } from "../../kaplay";
 import { Vec2, vec2, type Vec2Args } from "../../math/math";
 import type { Comp, GameObj } from "../../types";
 import type { FixedComp } from "./fixed";
