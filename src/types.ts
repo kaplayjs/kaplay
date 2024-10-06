@@ -189,13 +189,7 @@ export interface KAPLAYCtx<
      *
      * @group Game Obj
      */
-    add<T>(
-        comps?: CompList<T> | GameObj<T>,
-    ): GameObj<
-        T extends new(go: GameObj) => infer R ? R
-            : T extends (go: GameObj) => infer R ? R
-            : T
-    >;
+    add<T>(comps?: CompList<T> | GameObj<T>): GameObj<T>;
     /**
      * Create a game object like add(), but not adding to the scene.
      *
@@ -216,13 +210,7 @@ export interface KAPLAYCtx<
      *
      * @group Game Obj
      */
-    make<T>(
-        comps?: CompList<T>,
-    ): GameObj<
-        T extends new(go: GameObj) => infer R ? R
-            : T extends (go: GameObj) => infer R ? R
-            : T
-    >;
+    make<T>(comps?: CompList<T>): GameObj<T>;
     /**
      * Remove and re-add the game obj, without triggering add / destroy events.
      * @example
@@ -3992,11 +3980,7 @@ export interface GameObjRaw {
      *
      * @since v3000.0
      */
-    add<T>(comps?: CompList<T> | GameObj<T>): GameObj<
-        T extends new(go: GameObj) => infer R ? R
-            : T extends (go: GameObj) => infer R ? R
-            : T
-    >;
+    add<T>(comps?: CompList<T> | GameObj<T>): GameObj<T>;
     /**
      * Remove and re-add the game obj, without triggering add / destroy events.
      */
