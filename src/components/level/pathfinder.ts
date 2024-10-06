@@ -20,7 +20,7 @@ export interface PathfinderMapComp extends Comp {
 
 export interface PathfinderMapCompOpt {
     /*
-     * The graph to use for navigation. If null, the ancestors are queried for a navigatorMap component.
+     * The graph to use for navigation. If null, the ancestors are queried for a pathfinderMap component.
      */
     graph?: Graph;
 }
@@ -30,7 +30,7 @@ export function pathfinderMap(
 ): PathfinderMapComp {
     let graph = opts.graph;
     return {
-        id: "navigatorMap",
+        id: "pathfinderMap",
         get graph(): Graph | undefined {
             return graph;
         },
@@ -61,7 +61,7 @@ export interface PathfinderComp extends Comp {
 
 export interface PathfinderCompOpt {
     /*
-     * The graph to use for navigation. If null, the ancestors are queried for a navigatorMap component.
+     * The graph to use for navigation. If null, the ancestors are queried for a pathfinderMap component.
      */
     graph?: Graph;
     /*
@@ -75,7 +75,7 @@ export function pathfinder(
 ): PathfinderComp {
     let graph = opts.graph;
     return {
-        id: "navigator",
+        id: "pathfinder",
         require: ["pos"],
         navigateTo(
             this: GameObj<PathfinderComp | PosComp>,
@@ -91,7 +91,7 @@ export function pathfinder(
             let parent: GameObj<any> | null =
                 (this as unknown as GameObj<PathfinderComp>).parent;
             while (parent) {
-                if (parent.is("navigatormap")) {
+                if (parent.is("pathfinderMap")) {
                     return parent.graph;
                 }
                 parent = parent.parent;
