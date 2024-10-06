@@ -132,16 +132,6 @@ import type {
 import type { NavMesh } from "./math/navigationmesh";
 import type { KEvent, KEventController, KEventHandler } from "./utils/";
 
-// for back compat with v3000
-export type {
-    KAPLAYCtx as KaboomCtx,
-    KAPLAYOpt as KaboomOpt,
-    KAPLAYPlugin as KaboomPlugin,
-    KEvent as Event,
-    KEventController as EventController,
-    KEventHandler as EventHandler,
-};
-
 /**
  * Context handle that contains every kaboom function.
  *

@@ -21,14 +21,13 @@ import { calcTransform } from "../math/various";
 import {
     type Comp,
     type CompList,
-    type EventController,
     type GameObj,
     type GameObjInspect,
     type GetOpt,
     type QueryOpt,
     type Tag,
 } from "../types";
-import { isClass, type KEventController, KEventHandler, uid } from "../utils";
+import { type KEventController, KEventHandler, uid } from "../utils";
 
 export function make<T>(comps: CompList<T> = []): GameObj<T> {
     const compStates = new Map<string, Comp>();
@@ -353,7 +352,7 @@ export function make<T>(comps: CompList<T> = []): GameObj<T> {
                         : obj.parent === this;
                 };
 
-                const events: EventController[] = [];
+                const events: KEventController[] = [];
 
                 // TODO: handle when object add / remove tags
                 // TODO: clean up when obj destroyed
