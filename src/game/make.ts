@@ -96,6 +96,7 @@ export function make<T>(comps: CompList<T> = []): GameObj<T> {
 
         remove(obj: GameObj): void {
             const idx = this.children.indexOf(obj);
+
             if (idx !== -1) {
                 obj.parent = null;
                 this.children.splice(idx, 1);
@@ -598,8 +599,12 @@ export function make<T>(comps: CompList<T> = []): GameObj<T> {
             const ev = app[e]?.(...args);
             inputEvents.push(ev);
 
-            // TODO: what if the game object is destroy and re-added
             obj.onDestroy(() => ev.cancel());
+            obj.on("sceneLeave", () => {
+                ev.cancel();
+                inputEvents.splice(inputEvents.indexOf(ev), 1);
+                app[e]?.(...args);
+            });
             return ev;
         };
     }

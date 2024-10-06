@@ -23,12 +23,16 @@ export function go(name: SceneName, ...args: unknown[]) {
         app.events.clear();
         game.events.clear();
         game.objEvents.clear();
+
         [...game.root.children].forEach((obj) => {
             if (
                 !obj.stay
                 || (obj.scenesToStay && !obj.scenesToStay.includes(name))
             ) {
                 game.root.remove(obj);
+            }
+            else {
+                obj.trigger("sceneLeave", name);
             }
         });
 
