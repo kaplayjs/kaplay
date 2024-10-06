@@ -1,6 +1,6 @@
 import { isFixed } from "../../game/utils";
-import { getViewportScale } from "../../gfx";
-import { k } from "../../kaplay";
+import { getViewportScale, width } from "../../gfx";
+import { globalOpt, k } from "../../kaplay";
 import { Vec2, vec2, type Vec2Args } from "../../math/math";
 import type { Comp, GameObj } from "../../types";
 import type { FixedComp } from "./fixed";
@@ -130,8 +130,10 @@ export function pos(...args: Vec2Args): PosComp {
         // Transform a world point (relative to the root) to a local point (relative to this)
         fromWorld(this: GameObj<PosComp>, p: Vec2): Vec2 {
             return this.parent
-                ? this.parent.transform.invert().multVec2(p).sub(this.pos)
-                : p.sub(this.pos);
+                ? this.parent.transform.invert().multVec2(
+                    p.scale(1 / getViewportScale()),
+                ).sub(this.pos)
+                : p.sub(this.pos).scale(1 / getViewportScale());
         },
 
         // Transform a screen point (relative to the camera) to a local point (relative to this)
@@ -167,7 +169,7 @@ export function pos(...args: Vec2Args): PosComp {
             const pos = this.toWorld(p);
             return isFixed(this)
                 ? pos
-                : k.toScreen(pos);
+                : k.toScreen(pos.scale(1 / getViewportScale()));
         },
 
         // Transform a screen point (relative to the camera) to a local point (relative to this)
