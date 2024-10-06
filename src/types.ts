@@ -111,7 +111,6 @@ import type {
     LineJoin,
     Texture,
 } from "./gfx";
-import { kaplay } from "./kaplay";
 import type { GjkCollisionResult } from "./math";
 import type { Color, RGBAValue, RGBValue } from "./math/color";
 import type {
