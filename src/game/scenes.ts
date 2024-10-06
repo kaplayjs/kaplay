@@ -32,7 +32,7 @@ export function go(name: SceneName, ...args: unknown[]) {
                 game.root.remove(obj);
             }
             else {
-                obj.trigger("sceneLeave", name);
+                obj.trigger("sceneEnter", name);
             }
         });
 

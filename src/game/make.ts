@@ -600,7 +600,7 @@ export function make<T>(comps: CompList<T> = []): GameObj<T> {
             inputEvents.push(ev);
 
             obj.onDestroy(() => ev.cancel());
-            obj.on("sceneLeave", () => {
+            obj.on("sceneEnter", () => {
                 ev.cancel();
                 inputEvents.splice(inputEvents.indexOf(ev), 1);
                 app[e]?.(...args);
