@@ -1,5 +1,5 @@
 import { color, fixed, opacity, rect } from "../components";
-import { center, height, width } from "../gfx";
+import { center, getViewportScale, height, width } from "../gfx";
 import { game } from "../kaplay";
 import { type Color, rgb } from "../math/color";
 import { type Mat4, type Vec2, vec2, type Vec2Args } from "../math/math";
@@ -50,9 +50,13 @@ export function shake(intensity: number = 12) {
 }
 
 export function toScreen(p: Vec2): Vec2 {
-    return game.cam.transform.multVec2(p);
+    const viewportScale = getViewportScale();
+
+    return game.cam.transform.multVec2(p).scale(viewportScale);
 }
 
 export function toWorld(p: Vec2): Vec2 {
-    return game.cam.transform.invert().multVec2(p);
+    const viewportFactor = 1 / getViewportScale();
+
+    return game.cam.transform.invert().multVec2(p).scale(viewportFactor);
 }
