@@ -42,12 +42,12 @@ import type {
     LifespanCompOpt,
     MaskComp,
     NamedComp,
-    NavigationComp,
-    NavigationCompOpt,
     OffScreenComp,
     OffScreenCompOpt,
     OpacityComp,
     OutlineComp,
+    PathfinderComp,
+    PathfinderCompOpt,
     PatrolComp,
     PatrolCompOpt,
     PlatformEffectorComp,
@@ -1013,12 +1013,12 @@ export interface KAPLAYCtx<
      */
     patrol(opts: PatrolCompOpt): PatrolComp;
     /**
-     * A navigator which can calculate waypoints to a goal.
+     * A navigator pathfinder which can calculate waypoints to a goal.
      *
      * @since v3001.0
      * @group Components
      */
-    navigation(opts: NavigationCompOpt): NavigationComp;
+    pathfinder(opts: PathfinderCompOpt): PathfinderComp;
     /**
      * @group Math
      */

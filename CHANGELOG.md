@@ -87,7 +87,7 @@
 - added `patrol()` component to move along a list of waypoints.
 - added `sentry()` component to notify when certain objects are in sight.
 - added `NavMesh` class for pathfinding on a mesh.
-- added `navigation()` component to calculate a list of waypoints on a graph.
+- added `pathfinder()` component to calculate a list of waypoints on a graph.
 - now collision checks are only done if there's area objects.
 
 ## Game Object
