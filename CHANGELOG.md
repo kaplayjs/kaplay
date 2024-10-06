@@ -5,7 +5,8 @@
 - Added circle and (rotated) ellipse collision shapes.
 - Added an ellipse component.
 - Circle area is no longer a box.
-- Added a fake cursor API
+- Added a fake cursor API.
+- Added restitution and friction.
 
   ```js
   const myCursor = add([fakeMouse(), sprite("kat"), pos(100, 100)]);
@@ -21,7 +22,7 @@
 
 - added input bindings, `onButtonPress`, `onButtonRelease`, `onButtonDown`, and
   it's corresponding boolean versions, `isButtonPressed`, `isButtonDown` and
-  `isButtonReleased`. (**v3001/4000**)
+  `isButtonReleased`.
 
   ```js
   kaplay({
@@ -41,7 +42,6 @@
   ```
 
 - added `getButton(btn)` and `setButton(btn)` to get and set button bindings
-  (**v3001/4000**)
 
   ```js
   // ["space", "up"]
@@ -55,7 +55,6 @@
   ```
 
 - added `getLastInputDeviceType()` to get what was the last pressed device
-  (**v3001/4000**)
 
   ```js
   onButtonPress(() => {
@@ -64,7 +63,7 @@
   });
   ```
 
-- added the possibility of use arrays in all input handlers (**v3001/4000**)
+- added the possibility of use arrays in all input handlers
 
   ```js
   onKeyPress(["w", "up"], () => {
@@ -72,7 +71,7 @@
   });
   ```
 
-- now gamepad events return what gamepad triggered the action (**v3001/4000**)
+- now gamepad events return what gamepad triggered the action
 
   ```js
   onGamepadButtonPress("south", (btn, gp) => {
@@ -83,20 +82,18 @@
 ## Physics
 
 - added effector components: `areaEffector()`, `buoyancyEffector()`,
-  `pointEffector()`, `surfaceEffector()`. (**v3001/4000**)
-- added `constantForce()` component. (**v3001/4000**)
-- added `patrol()` component to move along a list of waypoints. (**v3001/4000**)
+  `pointEffector()`, `surfaceEffector()`.
+- added `constantForce()` component.
+- added `patrol()` component to move along a list of waypoints.
 - added `sentry()` component to notify when certain objects are in sight.
-  (**v3001/4000**)
-- added `NavMesh` class for pathfinding on a mesh. (**v3001/4000**)
+- added `NavMesh` class for pathfinding on a mesh.
 - added `pathfinder()` component to calculate a list of waypoints on a graph.
-  (**v3001/4000**)
-- now collision checks are only done if there's area objects. (**v3001/4000**)
+- now collision checks are only done if there's area objects.
 
 ## Game Object
 
 - added `getTreeRoot()` to get the game's root object, which is the parent of
-  all other objects (**v3001/4000**)
+  all other objects
 
   ```js
   // get the root object
@@ -105,7 +102,7 @@
   root.get(); // same as get()
   ```
 
-- added `GameObjRaw.tags` to get a game object's tags. (**v3001/4000**)
+- added `GameObjRaw.tags` to get a game object's tags.
 
   ```js
   const obj = add([sprite("bean"), "enemy", "dangerous"]);
@@ -117,7 +114,7 @@
 ## Components
 
 - added support to setters/getters syntax in `ScaleComp` and `SpriteComp`
-  components (**v3001/4000**)
+  components
 
   ```js
   const obj = add([sprite("bean"), scale(2)]);
@@ -132,7 +129,6 @@
 - added the `animate()` component to _animate_ the properties of an object using
   keyframes. Check out
   [Animation Example](https://play.kaplayjs.com/?example=animation)
-  (**v3001/4000**)
 
   ```js
   // prop to animate, frames, options
@@ -142,9 +138,9 @@
   });
   ```
 
-- added `particles()` component to emit and draw particles. (**v3001/4000**)
+- added `particles()` component to emit and draw particles.
 
-- readded `layers()` and the `layer()` component. (**v3001/4000**)
+- readded `layers()` and the `layer()` component.
 
   Before the `z()` component, there was a `layer()` component that allowed you
   to control the draw order of objects. It was removed in v3000, but now it's
@@ -167,7 +163,6 @@
   ```
 
 - added `SpriteComp.getCurAnim()` to get the current animation data
-  (**v3001/4000**)
 
   ```js
   const obj = add([sprite("bean", { anim: "walk" })]);
@@ -176,7 +171,7 @@
   debug.log(obj.getCurAnim().name); // "walk"
   ```
 
-- added `SpriteComp.getAnim()` for get any animation data (**v3001/4000**)
+- added `SpriteComp.getAnim()` for get any animation data
 
   ```js
   loadSprite("bean", "bean.png", {
@@ -196,7 +191,7 @@
   debug.log(obj.getAnim("walk")); // { from: 0, to: 3 }
   ```
 
-- added `SpriteComp.hasAnim()` to check if an animation exists (**v3001/4000**)
+- added `SpriteComp.hasAnim()` to check if an animation exists
 
   ```js
   const obj = add([sprite("bean", { anim: "walk" })]);
@@ -205,14 +200,13 @@
   debug.log(obj.hasAnim("walk")); // true
   ```
 
-- added `camFlash()` to flash the screen. (**v3001/4000**)
+- added `camFlash()` to flash the screen.
 
   ```js
   camFlash(0.5, 0.5, 0.5, 0.5);
   ```
 
 - added support for radius in individual corners for `RectComp` component.
-  (**v3001/4000**)
 
   ```js
   add([
@@ -231,7 +225,6 @@
 
 - now you can pass an `AudioBuffer` to `loadSound()` (**v4000**)
 - added `loadMusic()` to load streaming audio (doesn't block in loading screen).
-  (**v3001/4000**)
 
   ```js
   loadMusic("bgm", "bgm.mp3");
@@ -242,13 +235,13 @@
 
 ## Math
 
-- added `Vec2.fromArray()` to convert an array to a `Vec2`. (**v3001/4000**)
+- added `Vec2.fromArray()` to convert an array to a `Vec2`.
 
   ```js
   const point = Vec2.fromArray([100, 200]); // vec2(100, 200);
   ```
 
-- added `Vec2.toArray()` to convert a `Vec2` to an array. (**v3001/4000**)
+- added `Vec2.toArray()` to convert a `Vec2` to an array.
 
   ```js
   const point = vec2(100, 200);
@@ -256,14 +249,13 @@
   ```
 
 - added `chooseMultiple()` to choose a random element from an array.
-  (**v3001/4000**)
 
   ```js
   const numbers = [1, 2, 3, 4, 5];
   const random = chooseMultiple(numbers, 3); // [3, 1, 5]
   ```
 
-- added `shuffle()` to shuffle an array. (**v3001/4000**)
+- added `shuffle()` to shuffle an array.
 
   ```js
   const numbers = [1, 2, 3, 4, 5];
@@ -280,6 +272,7 @@
       debugKey: "l",
   });
   ```
+
 - added compatibility with custom properties in debug mode
 
   ```js
@@ -297,6 +290,7 @@
   // see the custom properties in debug mode
   debug.inspect = true;
   ```
+
 - Now `debug.log()` accepts multiple argument of any type, like `console.log()`.
 
 ## Helpers
@@ -322,6 +316,7 @@
   ```ts
   const player = get<BodyComp>("player");
   ```
+
 - Now `Key` also accepts a string as an acceptable value.
 - Now `text()` component doesn't require to pass a string.
 - Now `camScale()` and `camPos()` accept only 1 number as parameter.
@@ -350,6 +345,7 @@
 - fix error where error screen was not showing when the error was thrown in a
   input event
 - fix error where fonts was cropped in the bottom
+- fix an error where `stay()` object loose their input events on scene change
 
 ### v3000.1.17
 

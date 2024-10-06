@@ -21,22 +21,15 @@ import { calcTransform } from "../math/various";
 import {
     type Comp,
     type CompList,
-    type EventController,
     type GameObj,
     type GameObjInspect,
     type GetOpt,
     type QueryOpt,
     type Tag,
 } from "../types";
-import { isClass, type KEventController, KEventHandler, uid } from "../utils";
+import { type KEventController, KEventHandler, uid } from "../utils";
 
-type MakeTypeIsFN<T, Chain = T> = T extends (go: GameObj) => infer R ? R
-    : Chain;
-type MakeTypeIsCLASS<T, Chain = T> = T extends new(go: GameObj) => infer R ? R
-    : Chain;
-type MakeType<T> = MakeTypeIsCLASS<T, MakeTypeIsFN<T>>;
-
-export function make<T>(comps: CompList<T> = []): GameObj<MakeType<T>> {
+export function make<T>(comps: CompList<T> = []): GameObj<T> {
     const compStates = new Map<string, Comp>();
     const anonymousCompStates: Comp[] = [];
     const cleanups = {} as Record<string, (() => unknown)[]>;
@@ -76,7 +69,7 @@ export function make<T>(comps: CompList<T> = []): GameObj<MakeType<T>> {
             return tags;
         },
 
-        add<T2>(this: GameObj, a: CompList<T2> | GameObj<T2>): GameObj {
+        add<T2>(this: GameObj, a: CompList<T2> | GameObj<T2>): GameObj<T2> {
             const obj = Array.isArray(a) ? make(a) : a;
             if (obj.parent) {
                 throw new Error(
@@ -103,6 +96,7 @@ export function make<T>(comps: CompList<T> = []): GameObj<MakeType<T>> {
 
         remove(obj: GameObj): void {
             const idx = this.children.indexOf(obj);
+
             if (idx !== -1) {
                 obj.parent = null;
                 this.children.splice(idx, 1);
@@ -206,19 +200,7 @@ export function make<T>(comps: CompList<T> = []): GameObj<MakeType<T>> {
 
         // use a comp or a tag
         use(comp: Comp | Tag) {
-            if (!comp) {
-                return;
-            }
-
-            // class object
-            if (isClass(comp)) comp = new (comp as any)(this);
-
-            // function object
-            if (typeof comp === "function") {
-                return this.use(
-                    (comp as (v: any) => any)(this),
-                );
-            }
+            if (!comp) return;
 
             // tag
             if (typeof comp === "string") {
@@ -371,7 +353,7 @@ export function make<T>(comps: CompList<T> = []): GameObj<MakeType<T>> {
                         : obj.parent === this;
                 };
 
-                const events: EventController[] = [];
+                const events: KEventController[] = [];
 
                 // TODO: handle when object add / remove tags
                 // TODO: clean up when obj destroyed
@@ -617,8 +599,12 @@ export function make<T>(comps: CompList<T> = []): GameObj<MakeType<T>> {
             const ev = app[e]?.(...args);
             inputEvents.push(ev);
 
-            // TODO: what if the game object is destroy and re-added
             obj.onDestroy(() => ev.cancel());
+            obj.on("sceneEnter", () => {
+                ev.cancel();
+                inputEvents.splice(inputEvents.indexOf(ev), 1);
+                app[e]?.(...args);
+            });
             return ev;
         };
     }
@@ -627,5 +613,5 @@ export function make<T>(comps: CompList<T> = []): GameObj<MakeType<T>> {
         obj.use(comp as string | Comp);
     }
 
-    return obj as GameObj<MakeType<T>>;
+    return obj as GameObj<T>;
 }

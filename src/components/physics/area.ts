@@ -55,6 +55,8 @@ export interface AreaComp extends Comp {
      * @since v3000.0
      */
     collisionIgnore: Tag[];
+    restitution?: number;
+    friction?: number;
     /**
      * If was just clicked on last frame.
      */
@@ -210,6 +212,18 @@ export interface AreaCompOpt {
      * @since v3000.0
      */
     collisionIgnore?: Tag[];
+    /**
+     * Bounciness factor between 0 and 1.
+     *
+     * @since v4000.0
+     */
+    restitution?: number;
+    /**
+     * Friction factor between 0 and 1.
+     *
+     * @since v4000.0
+     */
+    friction?: number;
 }
 
 let fakeMouse: GameObj<FakeMouseComp | PosComp> | null = null;
@@ -227,6 +241,8 @@ export function area(opt: AreaCompOpt = {}): AreaComp {
     return {
         id: "area",
         collisionIgnore: opt.collisionIgnore ?? [],
+        restitution: opt.restitution,
+        friction: opt.friction,
 
         add(this: GameObj<AreaComp>) {
             areaCount++;
