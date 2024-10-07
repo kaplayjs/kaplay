@@ -596,7 +596,7 @@ export function make<T>(comps: CompList<T> = []): GameObj<T> {
 
     for (const e of evs) {
         obj[e] = (...args: [any]) => {
-            let ev = app[e]?.(...args);
+            const ev = app[e]?.(...args);
             inputEvents.push(ev);
 
             obj.onDestroy(() => ev.cancel());
@@ -607,12 +607,9 @@ export function make<T>(comps: CompList<T> = []): GameObj<T> {
                 // create a new event with the same arguments
                 const newEv = app[e]?.(...args);
 
-                // Replace the old event functions with the new ones
+                // Replace the old event handler with the new one
                 // old KEventController.cancel() => new KEventController.cancel()
                 KEventController.replace(ev, newEv);
-                // Save the reference to the new event so replace work every scene change
-                // There's always only 2 events connected, old and new
-                ev = newEv;
                 inputEvents.push(ev);
             });
 
