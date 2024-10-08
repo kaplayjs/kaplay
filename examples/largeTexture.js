@@ -2,11 +2,11 @@
 
 kaplay();
 
-let cameraPosition = camPos();
-let cameraScale = 1;
-
 // Loads a random 2500px image
 loadSprite("bigyoshi", "/examples/sprites/YOSHI.png");
+
+let cameraPosition = camPos();
+let cameraScale = 1;
 
 add([
     sprite("bigyoshi"),
