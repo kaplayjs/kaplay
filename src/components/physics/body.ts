@@ -302,15 +302,8 @@ export function body(opt: BodyCompOpt = {}): BodyComp {
 
                     // Clear the velocity in the direction of the normal, as we've hit something
                     if (this.vel.dot(col.normal) < 0) {
-                        if (restitution == 0) {
-                            this.vel = rejection;
-                        }
-                        else {
-                            // Modulate the velocity tangential to the normal
-                            this.vel = this.vel.reflect(col.normal).scale(
-                                restitution,
-                            );
-                        }
+                        // Modulate the velocity tangential to the normal
+                        this.vel = rejection.sub(projection.scale(restitution));
                     }
 
                     if (friction != 0) {
