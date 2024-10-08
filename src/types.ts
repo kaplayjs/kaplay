@@ -42,14 +42,16 @@ import type {
     LifespanCompOpt,
     MaskComp,
     NamedComp,
-    NavigationComp,
-    NavigationCompOpt,
     OffScreenComp,
     OffScreenCompOpt,
     OpacityComp,
     OutlineComp,
+    PathfinderComp,
+    PathfinderCompOpt,
     PatrolComp,
     PatrolCompOpt,
+    PlatformEffectorComp,
+    PlatformEffectorCompOpt,
     PointEffectorComp,
     PointEffectorCompOpt,
     PolygonComp,
@@ -109,7 +111,6 @@ import type {
     LineJoin,
     Texture,
 } from "./gfx";
-import { kaplay } from "./kaplay";
 import type { GjkCollisionResult } from "./math";
 import type { Color, RGBAValue, RGBValue } from "./math/color";
 import type {
@@ -130,16 +131,6 @@ import type {
 } from "./math/math";
 import type { NavMesh } from "./math/navigationmesh";
 import type { KEvent, KEventController, KEventHandler } from "./utils/";
-
-// for back compat with v3000
-export type {
-    KAPLAYCtx as KaboomCtx,
-    KAPLAYOpt as KaboomOpt,
-    KAPLAYPlugin as KaboomPlugin,
-    KEvent as Event,
-    KEventController as EventController,
-    KEventHandler as EventHandler,
-};
 
 /**
  * Context handle that contains every kaboom function.
@@ -195,13 +186,7 @@ export interface KAPLAYCtx<
      *
      * @group Game Obj
      */
-    add<T>(
-        comps?: CompList<T> | GameObj<T>,
-    ): GameObj<
-        T extends new(go: GameObj) => infer R ? R
-            : T extends (go: GameObj) => infer R ? R
-            : T
-    >;
+    add<T>(comps?: CompList<T> | GameObj<T>): GameObj<T>;
     /**
      * Create a game object like add(), but not adding to the scene.
      *
@@ -222,13 +207,7 @@ export interface KAPLAYCtx<
      *
      * @group Game Obj
      */
-    make<T>(
-        comps?: CompList<T>,
-    ): GameObj<
-        T extends new(go: GameObj) => infer R ? R
-            : T extends (go: GameObj) => infer R ? R
-            : T
-    >;
+    make<T>(comps?: CompList<T>): GameObj<T>;
     /**
      * Remove and re-add the game obj, without triggering add / destroy events.
      * @example
@@ -695,6 +674,15 @@ export interface KAPLAYCtx<
      */
     pointEffector(options: PointEffectorCompOpt): PointEffectorComp;
     /**
+     * The platform effector makes it easier to implement one way platforms
+     * or walls. This effector is typically used with a static body, and it
+     * will only be solid depending on the direction the object is traveling from.
+     *
+     * @since v3001.0
+     * @group Components
+     */
+    platformEffector(options?: PlatformEffectorCompOpt): PlatformEffectorComp;
+    /**
      * Applies an upwards force (force against gravity) to colliding objects depending on the fluid density and submerged area.
      * Good to apply constant thrust.
      *
@@ -1026,12 +1014,12 @@ export interface KAPLAYCtx<
      */
     patrol(opts: PatrolCompOpt): PatrolComp;
     /**
-     * A navigator which can calculate waypoints to a goal.
+     * A navigator pathfinder which can calculate waypoints to a goal.
      *
      * @since v3001.0
      * @group Components
      */
-    navigation(opts: NavigationCompOpt): NavigationComp;
+    pathfinder(opts: PathfinderCompOpt): PathfinderComp;
     /**
      * @group Math
      */
@@ -3734,6 +3722,7 @@ export type Key =
         | "9"
         | "0"
         | "-"
+        | "+"
         | "="
         | "q"
         | "w"
@@ -4032,11 +4021,7 @@ export interface GameObjRaw {
      *
      * @since v3000.0
      */
-    add<T>(comps?: CompList<T> | GameObj<T>): GameObj<
-        T extends new(go: GameObj) => infer R ? R
-            : T extends (go: GameObj) => infer R ? R
-            : T
-    >;
+    add<T>(comps?: CompList<T> | GameObj<T>): GameObj<T>;
     /**
      * Remove and re-add the game obj, without triggering add / destroy events.
      */

@@ -40,6 +40,7 @@ export const initGame = () => {
             frameEnd: [];
             resize: [];
             sceneLeave: [string];
+            sceneEnter: [string];
         }>(),
 
         // object events

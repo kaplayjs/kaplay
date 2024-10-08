@@ -21,11 +21,11 @@ export interface BodyComp extends Comp {
      */
     vel: Vec2;
     /**
-     * How much velocity decays (velocity *= (1 - drag) every frame).
+     * How much velocity decays (velocity *= 1 / (1 + damping * dt) every frame).
      *
      * @since v3001.0
      */
-    drag: number;
+    damping: number;
     /**
      * If object is static, won't move, and all non static objects won't move past it.
      */
@@ -141,11 +141,11 @@ export interface BodyComp extends Comp {
  */
 export interface BodyCompOpt {
     /**
-     * How much velocity decays (velocity *= (1 - drag) every frame).
+     * How much velocity decays (velocity *= 1 / (1 + damping * dt) every frame).
      *
      * @since v3001.0
      */
-    drag?: number;
+    damping?: number;
     /**
      * Initial speed in pixels per second for jump().
      */
@@ -191,7 +191,7 @@ export function body(opt: BodyCompOpt = {}): BodyComp {
         id: "body",
         require: ["pos"],
         vel: vec2(0),
-        drag: opt.drag ?? 0,
+        damping: opt.damping ?? 0,
         jumpForce: opt.jumpForce ?? DEF_JUMP_FORCE,
         gravityScale: opt.gravityScale ?? 1,
         isStatic: opt.isStatic ?? false,
@@ -285,10 +285,31 @@ export function body(opt: BodyCompOpt = {}): BodyComp {
                         }
                     }
 
-                    // Clear the velocity in the direction of the normal, as we've hit something
-                    this.vel = this.vel.reject(
-                        col.normal,
+                    const restitution = Math.max(
+                        col.source.restitution || 0,
+                        col.target.restitution || 0,
                     );
+
+                    const friction = Math.sqrt(
+                        (col.source.friction || 0)
+                            * (col.target.friction || 0),
+                    );
+
+                    const projection = this.vel.project(col.normal);
+                    const rejection = this.vel.sub(projection);
+
+                    // Clear the velocity in the direction of the normal, as we've hit something
+                    if (this.vel.dot(col.normal) < 0) {
+                        // Modulate the velocity tangential to the normal
+                        this.vel = rejection.sub(projection.scale(restitution));
+                    }
+
+                    if (friction != 0) {
+                        // TODO: This should work with dt, not frame, but then friction 1 will brake in 1 second, not one frame
+                        // TODO: This should depend with gravity, stronger gravity means more friction
+                        //       getGravityDirection().scale(getGravity()).project(col.normal).len()
+                        this.vel = this.vel.sub(rejection.scale(friction));
+                    }
                 });
             }
         },
@@ -403,8 +424,8 @@ export function body(opt: BodyCompOpt = {}): BodyComp {
             this.vel.x += acc.x * k.dt();
             this.vel.y += acc.y * k.dt();
 
-            this.vel.x *= 1 - this.drag * k.dt();
-            this.vel.y *= 1 - this.drag * k.dt();
+            this.vel.x *= 1 / (1 + this.damping * k.dt());
+            this.vel.y *= 1 / (1 + this.damping * k.dt());
 
             this.move(this.vel);
 

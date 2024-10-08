@@ -1,4 +1,3 @@
-import { getGravityDirection } from "../../game";
 import { Polygon, Vec2, vec2 } from "../../math";
 import type { Comp, GameObj } from "../../types";
 import type { PosComp } from "../transform";
@@ -117,8 +116,8 @@ export function pointEffector(opts: PointEffectorCompOpt): PointEffectorComp {
                 const forceScale = this.forceMode === "constant"
                     ? 1
                     : this.forceMode === "inverseLinear"
-                    ? 1 / distance
-                    : 1 / distance ** 2;
+                        ? 1 / distance
+                        : 1 / distance ** 2;
                 const force = dir.scale(
                     this.forceMagnitude * forceScale / length,
                 );
@@ -153,31 +152,56 @@ export function constantForce(opts: ConstantForceCompOpt): ConstantForceComp {
 }
 
 export type PlatformEffectorCompOpt = {
-    surfaceArc?: number;
-    useOneWay?: boolean;
+    /**
+     * If the object is about to collide and the collision normal direction is
+     * in here, the object won't collide.
+     * 
+     * Should be a list of unit vectors `LEFT`, `RIGHT`, `UP`, or `DOWN`.
+     */
+    ignoreSides?: Vec2[]
+    /**
+     * A function that determines whether the object should collide.
+     * 
+     * If present, it overrides the `ignoreSides`; if absent, it is
+     * automatically created from `ignoreSides`.
+     */
+    shouldCollide?: (obj: GameObj, normal: Vec2) => boolean
 };
 
 export interface PlatformEffectorComp extends Comp {
-    surfaceArc: number;
-    useOneWay: boolean;
+    /**
+     * A set of the objects that should not collide with this, because `shouldCollide` returned true.
+     * 
+     * Objects in here are automatically removed when they stop colliding, so the casual user shouldn't
+     * need to touch this much. However, if an object is added to this set before the object collides
+     * with the platform effector, it won't collide even if `shouldCollide` returns true.
+     */
+    platformIgnore: Set<GameObj>;
 }
 
 export function platformEffector(
-    opt: PlatformEffectorCompOpt,
+    opt: PlatformEffectorCompOpt = {},
 ): PlatformEffectorComp {
+    opt.ignoreSides ??= [Vec2.UP];
+    opt.shouldCollide ??= (_, normal) => {
+        return opt.ignoreSides?.findIndex(s => s.sdist(normal) < Number.EPSILON) == -1;
+    }
     return {
         id: "platformEffector",
         require: ["area", "body"],
-        surfaceArc: opt.surfaceArc ?? 180,
-        useOneWay: opt.useOneWay ?? false,
+        platformIgnore: new Set<GameObj>(),
         add(this: GameObj<BodyComp | AreaComp | PlatformEffectorComp>) {
             this.onBeforePhysicsResolve(collision => {
-                const v = collision.target.vel;
-                const up = getGravityDirection().scale(-1);
-                const angle = up.angleBetween(v);
-                if (Math.abs(angle) > this.surfaceArc / 2) {
+                if (this.platformIgnore.has(collision.target)) {
                     collision.preventResolution();
                 }
+                else if (!opt.shouldCollide!(collision.target, collision.normal)) {
+                    collision.preventResolution();
+                    this.platformIgnore.add(collision.target);
+                }
+            });
+            this.onCollideEnd(obj => {
+                this.platformIgnore.delete(obj);
             });
         },
     };

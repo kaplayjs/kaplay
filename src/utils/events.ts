@@ -35,7 +35,7 @@ export class KEventController {
     /** If the event is paused */
     paused: boolean = false;
     /** Cancel the event */
-    readonly cancel: () => void;
+    cancel: () => void;
 
     constructor(cancel: () => void) {
         this.cancel = cancel;
@@ -50,6 +50,16 @@ export class KEventController {
         });
         ev.paused = false;
         return ev;
+    }
+    static replace(oldEv: KEventController, newEv: KEventController) {
+        oldEv.cancel = () => newEv.cancel();
+        newEv.paused = oldEv.paused;
+        Object.defineProperty(oldEv, "paused", {
+            get: () => newEv.paused,
+            set: (p: boolean) => newEv.paused = p,
+        });
+
+        return oldEv;
     }
 }
 
