@@ -473,15 +473,18 @@ export function body(opt: BodyCompOpt = {}): BodyComp {
         },
 
         applyImpulse(impulse: Vec2) {
+            if (this.isStatic) return;
             this.vel = this.vel.add(impulse);
         },
 
         addForce(force: Vec2) {
+            if (this.isStatic) return;
             acc.x += force.x / this.mass;
             acc.y += force.y / this.mass;
         },
 
         jump(force: number) {
+            if (this.isStatic) return;
             curPlatform = null;
             lastPlatformPos = null;
             this.vel = k.getGravityDirection().scale(
