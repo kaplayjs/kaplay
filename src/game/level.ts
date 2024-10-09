@@ -356,7 +356,8 @@ export function addLevel(
             obj.transform = calcTransform(obj);
 
             obj.onDestroy(() => {
-                removeFromSpatialMap(obj);
+                if(spatialMap)
+                    removeFromSpatialMap(obj);
                 this.trigger("spatialMapChanged");
                 this.trigger("navigationMapInvalid");
             });
