@@ -35,9 +35,13 @@ export interface SpriteComp extends Comp {
      */
     height: number;
     /**
-     * Current frame.
+     * Current global frame.
      */
     frame: number;
+    /**
+     * Current frame in animation.
+     */
+    relativeFrame: number;
     /**
      * The rectangular area of the texture to render.
      */
@@ -228,19 +232,33 @@ export function sprite(
         animSpeed: opt.animSpeed ?? 1,
         flipX: opt.flipX ?? false,
         flipY: opt.flipY ?? false,
-
+        
         get sprite() {
             return src.toString();
         },
-
+        
         set sprite(src) {
             const spr = resolveSprite(src);
-
+            
             if (spr) {
                 spr.onLoad(spr =>
                     setSpriteData(this as unknown as GameObj<SpriteComp>, spr)
                 );
             }
+        },
+
+        get relativeFrame() {
+            if (!spriteData || !curAnim || curAnimDir === null) {
+                return this.frame;
+            }
+            
+            const anim = spriteData.anims[curAnim.name];
+            
+            if (typeof anim === "number") {
+                return anim;
+            }
+            
+            return this.frame - Math.min(anim.from, anim.to);
         },
 
         draw(this: GameObj<SpriteComp>) {
