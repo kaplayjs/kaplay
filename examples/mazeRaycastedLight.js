@@ -113,6 +113,7 @@ const level = addLevel(
             "#": () => [
                 sprite("steel"),
                 tile({ isObstacle: true }),
+                // area()
             ],
         },
     },
@@ -143,8 +144,8 @@ onUpdate(() => {
     const pts = [bean.pos];
     // This is overkill, since you theoretically only need to shoot rays to grid positions
     for (let i = 0; i < 360; i += 1) {
-        const hit = level.raycast(bean.pos, Vec2.fromAngle(i));
-        pts.push(hit.point);
+        const hit = level.raycast(bean.pos, Vec2.fromAngle(i).scale(64 * 15));
+        if (hit) pts.push(hit.point);
     }
     pts.push(pts[1]);
     drawPolygon({
