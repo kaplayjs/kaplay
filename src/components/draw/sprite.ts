@@ -35,13 +35,13 @@ export interface SpriteComp extends Comp {
      */
     height: number;
     /**
-     * Current global frame.
+     * Current frame in the entire spritesheet.
      */
     frame: number;
     /**
-     * Current frame in animation.
+     * Current frame in relative to the animation that is currently playing.
      */
-    relativeFrame: number;
+    animFrame: number;
     /**
      * The rectangular area of the texture to render.
      */
@@ -247,7 +247,7 @@ export function sprite(
             }
         },
 
-        get relativeFrame() {
+        get animFrame() {
             if (!spriteData || !curAnim || curAnimDir === null) {
                 return this.frame;
             }
