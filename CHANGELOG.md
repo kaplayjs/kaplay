@@ -1,13 +1,13 @@
 # v4000.0.0
 
+- Added `animFrame` to SpriteComp.
 - Replaced the Separating Axis Theorem (SAT) with the Gilbert–Johnson–Keerthi
   (GJK) distance algorithm.
 - Added circle and (rotated) ellipse collision shapes.
 - Added an ellipse component.
 - Circle area is no longer a box.
-- Added a fake cursor API.
 - Added restitution and friction.
-
+- Added a fake cursor API.
   ```js
   const myCursor = add([fakeMouse(), sprite("kat"), pos(100, 100)]);
 
