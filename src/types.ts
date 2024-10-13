@@ -615,6 +615,9 @@ export interface KAPLAYCtx<
      *
      * @param popt The options for the particles.
      * @param eopt The options for the emitter.
+     *
+     * @group Components
+     * @since v3001.0
      */
     particles(popt: ParticlesOpt, eopt: EmitterOpt): ParticlesComp;
     /**
