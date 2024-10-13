@@ -1,15 +1,18 @@
 # v4000.0.0
 
-- Added `animFrame` to SpriteComp.
 - Replaced the Separating Axis Theorem (SAT) with the Gilbert–Johnson–Keerthi
   (GJK) distance algorithm.
 - Added circle and (rotated) ellipse collision shapes.
-- Added an ellipse component.
+- Added `ellipse()` component.
 - Circle area is no longer a box.
 - Added restitution and friction.
 - Added a fake cursor API.
   ```js
-  const myCursor = add([fakeMouse(), sprite("kat"), pos(100, 100)]);
+  const myCursor = add([
+      fakeMouse(),
+      sprite("kat"),
+      pos(100, 100),
+  ]);
 
   myCursor.press(); // trigger onClick events if the mouse is over
   myCursor.release();
@@ -20,7 +23,7 @@
 
 ## Input
 
-- added input bindings, `onButtonPress`, `onButtonRelease`, `onButtonDown`, and
+- Added input bindings, `onButtonPress`, `onButtonRelease`, `onButtonDown`, and
   it's corresponding boolean versions, `isButtonPressed`, `isButtonDown` and
   `isButtonReleased`.
 
@@ -221,9 +224,12 @@
 
 - fix error screen not showing with not Error object
 
+- Added `SpriteComp.animFrame` to get the frame of the current animation (not on
+  the spritesheet)
+
 ## Audio
 
-- now you can pass an `AudioBuffer` to `loadSound()` (**v4000**)
+- now you can pass an `AudioBuffer` to `loadSound()`
 - added `loadMusic()` to load streaming audio (doesn't block in loading screen).
 
   ```js
