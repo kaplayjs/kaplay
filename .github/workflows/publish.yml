@@ -1,8 +1,9 @@
 name: Publish to NPM
 
 on:
-  release:
-    types: [created]
+  push:
+    tags: 
+      - '4000*'
 
 jobs:
   publish:
