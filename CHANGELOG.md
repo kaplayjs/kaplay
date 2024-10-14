@@ -1,27 +1,10 @@
-# v4000.0.0
-
-- Replaced the Separating Axis Theorem (SAT) with the Gilbert–Johnson–Keerthi
-  (GJK) distance algorithm.
-- Added circle and (rotated) ellipse collision shapes.
-- Added an ellipse component.
-- Circle area is no longer a box.
-- Added a fake cursor API
-
-  ```js
-  const myCursor = add([fakeMouse(), sprite("kat"), pos(100, 100)]);
-
-  myCursor.press(); // trigger onClick events if the mouse is over
-  myCursor.release();
-  myCursor.move(vec2(100, 200)); // move as your wish
-  ```
-
 # v4000.0.0 and v3001.0.0
 
 ## Input
 
-- added input bindings, `onButtonPress`, `onButtonRelease`, `onButtonDown`, and
+- Added input bindings, `onButtonPress`, `onButtonRelease`, `onButtonDown`, and
   it's corresponding boolean versions, `isButtonPressed`, `isButtonDown` and
-  `isButtonReleased`. (**v3001/4000**)
+  `isButtonReleased`.
 
   ```js
   kaplay({
@@ -41,7 +24,6 @@
   ```
 
 - added `getButton(btn)` and `setButton(btn)` to get and set button bindings
-  (**v3001/4000**)
 
   ```js
   // ["space", "up"]
@@ -55,7 +37,6 @@
   ```
 
 - added `getLastInputDeviceType()` to get what was the last pressed device
-  (**v3001/4000**)
 
   ```js
   onButtonPress(() => {
@@ -64,7 +45,7 @@
   });
   ```
 
-- added the possibility of use arrays in all input handlers (**v3001/4000**)
+- added the possibility of use arrays in all input handlers
 
   ```js
   onKeyPress(["w", "up"], () => {
@@ -72,7 +53,7 @@
   });
   ```
 
-- now gamepad events return what gamepad triggered the action (**v3001/4000**)
+- now gamepad events return what gamepad triggered the action
 
   ```js
   onGamepadButtonPress("south", (btn, gp) => {
@@ -83,124 +64,183 @@
 ## Physics
 
 - added effector components: `areaEffector()`, `buoyancyEffector()`,
-  `pointEffector()`, `surfaceEffector()`. (**v3001/4000**)
-- added `constantForce()` component (**v3001/4000**)
-- (**v3001/4000**) added `patrol()` component to move along a list of waypoints
-- (**v3001/4000**) added `sentry()` component to notify when certain objects are
-  in sight
-- (**v3001/4000**) added `NavMesh` class for pathfinding on a mesh
-- (**v3001/4000**) added `navigation()` component to calculate a list of
-  waypoints on a graph
+  `pointEffector()`, `surfaceEffector()`.
+- added `constantForce()` component.
+- added `patrol()` component to move along a list of waypoints.
+- added `sentry()` component to notify when certain objects are in sight.
+- added `NavMesh` class for pathfinding on a mesh.
+- added `pathfinder()` component to calculate a list of waypoints on a graph.
+- now collision checks are only done if there's area objects.
 
 ## Game Object
 
 - added `getTreeRoot()` to get the game's root object, which is the parent of
-  all other objects (**v3001/4000**)
+  all other objects
 
-```js
-// bind your buttons
-kaplay({
-    bindings: {
-        jump: {
-            keyboard: ["space", "up"],
-            gamepad: ["south"],
-        },
-    },
-});
+  ```js
+  // get the root object
+  const root = getTreeRoot();
+  root.add(); // same as add()
+  root.get(); // same as get()
+  ```
 
-onButtonPress("jump", () => {
-    player.jump();
-});
-```
+- added `GameObjRaw.tags` to get a game object's tags.
 
-- (**v3001/4000**) added `getButton(btn)` and `setButton(btn)` to get and set
-  button bindings
+  ```js
+  const obj = add([sprite("bean"), "enemy", "dangerous"]);
 
-```js
-debug.log(getButton("jump").keyboard); // ["space", "up"]
-
-// change the jump button in keyboard to "w"
-setButton("jump", {
-    keyboard: ["w"],
-    // gamepad binding is not changed
-});
-```
-
-- (**v3001/4000**) added `getLastInputDeviceType()` to get what was the last
-  pressed device
-
-```js
-onButtonPress(() => {
-    console.log(getLastInputDeviceType()); // keyboard, mouse or gamepad
-});
-```
-
-- (**v3001/4000**) now you can use arrays in all input handlers
-
-```js
-onKeyPress(["w", "up"], () => {
-    player.jump();
-});
-```
+  // get the tags
+  debug.log(obj.tags); // ["enemy", "dangerous"]
+  ```
 
 ## Components
 
-- (**v3001/4000**) readded `layers()` and the `layer()` component
+- added support to setters/getters syntax in `ScaleComp` and `SpriteComp`
+  components
 
-Before the `z()` component, there was a `layer()` component that allowed you to
-control the draw order of objects. It was removed in v3000, but now it's back
+  ```js
+  const obj = add([sprite("bean"), scale(2)]);
 
-```js
-// define the layers
-layers(
-    [
-        "bg",
-        "game",
-        "ui",
-        // the default layer
-    ],
-    "game",
-);
+  // set it with = syntax
+  obj.scale = vec2(3, 4);
+  obj.sprite = "bag";
+  ```
 
-// use the layer component
-add([sprite("bg"), layer("bg")]);
-```
+## Rendering and Animation
 
-- (**v3001/4000**) added support for radius in individual corners for `rect()`
-  component
+- added the `animate()` component to _animate_ the properties of an object using
+  keyframes. Check out
+  [Animation Example](https://play.kaplayjs.com/?example=animation)
 
-```js
-add([
-    rect(100, 100, {
-        radius: [10, 20, 30, 40],
-    }),
-]);
-```
+  ```js
+  // prop to animate, frames, options
+  rotatingBean.animate("angle", [0, 360], {
+      duration: 2,
+      direction: "forward",
+  });
+  ```
 
-- (**v3001/4000**) added `getTreeRoot()` to get the game's root object, which is
-  the parent of all other objects
+- added `particles()` component to emit and draw particles.
 
-```js
-// get the root object
-const root = getTreeRoot();
-root.add(); // same as add()
-root.get(); // same as get()
-```
+- readded `layers()` and the `layer()` component.
 
-- (**v3001/4000**) setters/getters syntax in `scale()` and `sprite()` component
+  Before the `z()` component, there was a `layer()` component that allowed you
+  to control the draw order of objects. It was removed in v3000, but now it's
+  back from the void.
 
-```js
-const obj = add([
-    sprite("bean"),
-    scale(2),
-]);
+  ```js
+  // define the layers
+  layers(
+      [
+          "bg",
+          "game",
+          "ui",
+          // the default layer
+      ],
+      "game",
+  );
 
-// set it with = syntax
-obj.scale = vec2(3, 4);
-obj.sprite = "bag";
-```
+  // use the layer component
+  add([sprite("bg"), layer("bg")]);
+  ```
 
-- added `shuffle()` to shuffle an array. (**v3001/4000**)
+- added `SpriteComp.getCurAnim()` to get the current animation data
+
+  ```js
+  const obj = add([sprite("bean", { anim: "walk" })]);
+
+  // get the current animation name
+  debug.log(obj.getCurAnim().name); // "walk"
+  ```
+
+- added `SpriteComp.getAnim()` for get any animation data
+
+  ```js
+  loadSprite("bean", "bean.png", {
+      sliceX: 4,
+      sliceY: 1,
+      anims: {
+          walk: {
+              from: 0,
+              to: 3,
+          },
+      },
+  });
+
+  const obj = add([sprite("bean")]);
+
+  // get the animation data
+  debug.log(obj.getAnim("walk")); // { from: 0, to: 3 }
+  ```
+
+- added `SpriteComp.hasAnim()` to check if an animation exists
+
+  ```js
+  const obj = add([sprite("bean", { anim: "walk" })]);
+
+  // check if an animation exists
+  debug.log(obj.hasAnim("walk")); // true
+  ```
+
+- added `camFlash()` to flash the screen.
+
+  ```js
+  camFlash(0.5, 0.5, 0.5, 0.5);
+  ```
+
+- added support for radius in individual corners for `RectComp` component.
+
+  ```js
+  add([
+      rect(100, 100, {
+          radius: [10, 20, 30, 40],
+      }),
+  ]);
+  ```
+
+- (**! break**) removed compatibilty to use two KAPLAY frames in the same page,
+  due to perfomance improvements
+
+- fix error screen not showing with not Error object
+
+- Added `SpriteComp.animFrame` to get the frame of the current animation (not on
+  the spritesheet)
+
+## Audio
+
+- now you can pass an `AudioBuffer` to `loadSound()`
+- added `loadMusic()` to load streaming audio (doesn't block in loading screen).
+
+  ```js
+  loadMusic("bgm", "bgm.mp3");
+
+  // play the music
+  play("bgm");
+  ```
+
+## Math
+
+- added `Vec2.fromArray()` to convert an array to a `Vec2`.
+
+  ```js
+  const point = Vec2.fromArray([100, 200]); // vec2(100, 200);
+  ```
+
+- added `Vec2.toArray()` to convert a `Vec2` to an array.
+
+  ```js
+  const point = vec2(100, 200);
+  const arr = point.toArray(); // [100, 200]
+  ```
+
+- added `chooseMultiple()` to choose a random element from an array.
+
+  ```js
+  const numbers = [1, 2, 3, 4, 5];
+  const random = chooseMultiple(numbers, 3); // [3, 1, 5]
+  ```
+
+- added `shuffle()` to shuffle an array.
 
   ```js
   const numbers = [1, 2, 3, 4, 5];
@@ -217,6 +257,7 @@ obj.sprite = "bag";
       debugKey: "l",
   });
   ```
+
 - added compatibility with custom properties in debug mode
 
   ```js
@@ -234,6 +275,7 @@ obj.sprite = "bag";
   // see the custom properties in debug mode
   debug.inspect = true;
   ```
+
 - Now `debug.log()` accepts multiple argument of any type, like `console.log()`.
 
 ## Helpers
@@ -259,6 +301,7 @@ obj.sprite = "bag";
   ```ts
   const player = get<BodyComp>("player");
   ```
+
 - Now `Key` also accepts a string as an acceptable value.
 - Now `text()` component doesn't require to pass a string.
 - Now `camScale()` and `camPos()` accept only 1 number as parameter.
@@ -580,15 +623,15 @@ for (const col of player.getCollisions()) {
 ```
 
 - added `Area#onCollideUpdate()` and `onCollideUpdate()` to register an event
-  that runs every frame when 2 object is colising
+  that runs every frame when 2 objects are colliding
 - added `Area#onCollideEnd()` and `onCollideEnd()` to register an event that
-  runs once when 2 objects stopped colliding
+  runs once when 2 objects stop colliding
 - added `Area#onHover()` and `onHover()` to register an event that runs once
-  when an object(s) is hovered
+  when an object(s) is hovered over
 - added `Area#onHoverEnd()` and `onHoverEnd()` to register an event that runs
-  once when an object(s) stopped being hovered
+  once when an object(s) stops being hovered over
 - (**BREAK**) renamed `onHover()` to `onHoverUpdate()` (it registers an event
-  that runs every frame when an object is hovered)
+  that runs every frame when an object is hovered over)
 - (**BREAK**) renamed `pushOut()` to `resolveCollision()`
 
 #### Body
@@ -1195,7 +1238,7 @@ add([rotate(90), color(0, 127, 255), opacity(0.5)]);
 - added `mousePos()` now gets the screen mouse pos, use `mouseWorldPos()` to get
   the mouse position affected by camera
 - added `anim` field in `SpriteCompOpt` to play an anim on start
-- beter type support for components
+- better type support for components
 - `scene()` and `start()` (also removed in favor of `go()`) are optional now, if
   you don't need multiple scenes yet you can just go directly
 
@@ -1363,7 +1406,7 @@ if (area.shape === "rect") {
 - fixed unable to play another anim in `onAnimEnd()`
 - fixed scene switches happen in the middle of a frame
 - fixed `scale(0)` not working
-- fixed `mosuePos()` not returning the camera affected pos with no layers
+- fixed `mousePos()` not returning the camera affected pos with no layers
 - **BREAK** changed `dbg()` to plain `debug` object
 - **BREAK** moved `fps()`, `objCount()`, `stepFrame()`, `log()`, `error()` under
   `debug`
