@@ -40,8 +40,7 @@
   ],
   "files": [
     "dist/",
-    "src/",
-    "kaboom.png",
+    "kaplay.webp",
     "CHANGELOG.md"
   ],
   "scripts": {
