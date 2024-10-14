@@ -1,6 +1,6 @@
 // @ts-check
 
-// Start kaboom
+// Start kaplay
 kaplay();
 
 // We use the default function to load the bean sprite

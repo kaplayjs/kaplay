@@ -2,7 +2,7 @@
 
 // Use state() component to handle basic AI
 
-// Start kaboom
+// Start kaplay
 kaplay();
 
 // Load assets

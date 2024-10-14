@@ -2,7 +2,7 @@
 
 // Responding to gravity & jumping
 
-// Start kaboom
+// Start kaplay
 kaplay();
 
 // Load assets
