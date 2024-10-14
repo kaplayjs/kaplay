@@ -20,7 +20,7 @@ import {
     setHasOrIncludes,
 } from "../utils";
 
-import GAMEPAD_MAP from "../data/gamepad.json";
+import GAMEPAD_MAP from "../data/gamepad.json" assert { type: "json" };
 import {
     type ButtonBinding,
     type ButtonsDef,
