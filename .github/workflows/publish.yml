@@ -1,0 +1,28 @@
+name: Publish to NPM
+
+on:
+  push:
+    tags: 
+      - '4000*'
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Install Node.js
+        uses: actions/setup-node@v4
+        with:
+          registry-url: "https://registry.npmjs.org"
+          node-version: 20
+      - uses: pnpm/action-setup@v4
+        name: Install pnpm
+        with:
+          run_install: false
+      - name: Install dependencies
+        run: pnpm install
+      - name: Publish to NPM
+        run: npm publish --tag next
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

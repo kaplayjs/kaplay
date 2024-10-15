@@ -15,6 +15,9 @@ import {
 import type { Comp, Vertex } from "../../types";
 import { KEvent } from "../../utils/";
 
+/**
+ * A particle. Used on the {@link particles `particles()`} component.
+ */
 class Particle {
     pos: Vec2 = vec2(0);
     vel: Vec2 = vec2(0);
@@ -34,6 +37,9 @@ class Particle {
     }
 }
 
+/**
+ * Options for the {@link particles `particles()`}'s component
+ */
 export type EmitterOpt = {
     /*
      * Shape of the emitter. If given, particles spawn within this shape.
@@ -57,6 +63,11 @@ export type EmitterOpt = {
     spread: number;
 };
 
+/**
+ * Options for the {@link particles `particles()`}'s component
+ *
+ * @group Component Types
+ */
 export type ParticlesOpt = {
     /*
      * Maximum number of simultaneously rendered particles.
@@ -108,6 +119,11 @@ export type ParticlesOpt = {
     texture: Texture;
 };
 
+/**
+ * The {@link particles `particles()`} component.
+ *
+ * @group Component Types
+ */
 export interface ParticlesComp extends Comp {
     /*
      * Emit a number of particles
