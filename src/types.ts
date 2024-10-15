@@ -117,6 +117,7 @@ import type {
     Circle,
     Ellipse,
     Line,
+    Mat23,
     Mat4,
     Point,
     Polygon,
@@ -2235,7 +2236,7 @@ export interface KAPLAYCtx<
      *
      * @group Info
      */
-    camTransform(): Mat4;
+    camTransform(): Mat23;
     /**
      * Transform a point from world position (relative to the root) to screen position (relative to the screen).
      * @since v3001.0
@@ -3055,6 +3056,10 @@ export interface KAPLAYCtx<
     /**
      * @group Math
      */
+    Mat23: typeof Mat23;
+    /**
+     * @group Math
+     */
     Quad: typeof Quad;
     /**
      * @group Math
@@ -3401,17 +3406,13 @@ export interface KAPLAYCtx<
      *
      * @group Draw
      */
-    pushTranslate(x: number, y: number): void;
-    pushTranslate(p: Vec2): void;
-    pushTranslate(...args: Vec2Args | [undefined]): void;
+    pushTranslate(t?: Vec2): void;
     /**
      * Scale all subsequent draws.
      *
      * @group Draw
      */
-    pushScale(x: number, y: number): void;
-    pushScale(s: Vec2 | number): void;
-    pushScale(...args: Vec2Args | [undefined] | [undefined, undefined]): void;
+    pushScale(s?: Vec2): void;
     /**
      * Rotate all subsequent draws.
      *
@@ -3424,7 +3425,7 @@ export interface KAPLAYCtx<
      * @since v3000.0
      * @group Draw
      */
-    pushMatrix(mat?: Mat4): void;
+    pushMatrix(mat?: Mat23): void;
     /**
      * Apply a post process effect from a shader name.
      *
@@ -4172,7 +4173,7 @@ export interface GameObjRaw {
      *
      * @since v3000.0
      */
-    transform: Mat4;
+    transform: Mat23;
     /**
      * If draw the game obj (run "draw" event or not).
      */
@@ -4361,6 +4362,13 @@ export interface Vertex {
     opacity: number;
 }
 
+export interface Attributes {
+    pos: number[];
+    uv: number[];
+    color: number[];
+    opacity: number[];
+}
+
 /**
  * Texture scaling filter. "nearest" is mainly for sharp pixelated scaling, "linear" means linear interpolation.
  */
@@ -4372,7 +4380,7 @@ export type TexWrap = "repeat" | "clampToEdge";
  */
 export interface RenderProps {
     pos?: Vec2;
-    scale?: Vec2 | number;
+    scale?: Vec2;
     angle?: number;
     color?: Color;
     opacity?: number;

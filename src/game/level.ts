@@ -353,7 +353,7 @@ export function addLevel(
 
             obj.tilePos = p;
             // Stale, so recalculate
-            obj.transform = calcTransform(obj);
+            calcTransform(obj, obj.transform);
 
             if (spatialMap) {
                 insertIntoSpatialMap(obj);

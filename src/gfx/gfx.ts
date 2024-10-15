@@ -246,7 +246,7 @@ export class BatchRenderer {
     curPrimitive: GLenum | null = null;
     curTex: Texture | null = null;
     curShader: Shader | null = null;
-    curUniform: Uniform = {};
+    curUniform: Uniform | null = null;
 
     constructor(
         ctx: GfxCtx,
@@ -286,13 +286,14 @@ export class BatchRenderer {
         indices: number[],
         shader: Shader,
         tex: Texture | null = null,
-        uniform: Uniform = {},
+        uniform: Uniform | null = null,
     ) {
         if (
             primitive !== this.curPrimitive
             || tex !== this.curTex
             || shader !== this.curShader
-            || !deepEq(this.curUniform, uniform)
+            || ((this.curUniform != uniform)
+                && !deepEq(this.curUniform, uniform))
             || this.vqueue.length + verts.length * this.stride
                 > this.maxVertices
             || this.iqueue.length + indices.length > this.maxIndices
@@ -300,11 +301,13 @@ export class BatchRenderer {
             this.flush();
         }
         const indexOffset = this.vqueue.length / this.stride;
-        for (const v of verts) {
-            this.vqueue.push(v);
+        let l = verts.length;
+        for (let i = 0; i < l; i++) {
+            this.vqueue.push(verts[i]);
         }
-        for (const i of indices) {
-            this.iqueue.push(i + indexOffset);
+        l = indices.length;
+        for (let i = 0; i < l; i++) {
+            this.iqueue.push(indices[i] + indexOffset);
         }
         this.curPrimitive = primitive;
         this.curShader = shader;
@@ -334,7 +337,9 @@ export class BatchRenderer {
         );
         this.ctx.setVertexFormat(this.vertexFormat);
         this.curShader.bind();
-        this.curShader.send(this.curUniform);
+        if (this.curUniform) {
+            this.curShader.send(this.curUniform);
+        }
         this.curTex?.bind();
         gl.drawElements(
             this.curPrimitive,
