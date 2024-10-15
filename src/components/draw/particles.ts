@@ -38,6 +38,11 @@ class Particle {
 }
 
 /**
+ * A particles option used for {@link ParticlesOpt `ParticlesOpt`}. 
+ */
+export type AngleModifier = "None" | "Modified" | "Aligned";
+
+/**
  * Options for the {@link particles `particles()`}'s component
  */
 export type EmitterOpt = {
@@ -117,6 +122,10 @@ export type ParticlesOpt = {
      * Texture used for the particle.
      */
     texture: Texture;
+    /*
+     * Modifies the angle of the particle when emitted.
+     */
+    angleModifier: AngleModifier;
 };
 
 /**
@@ -133,10 +142,21 @@ export interface ParticlesComp extends Comp {
      * Called when the emitter expires
      */
     onEnd(cb: () => void): void;
+    /*
+     * Modifies the emitter's direction.
+     */
+    setDirection(newDirection: number): void;
+    /*
+     * Modifies the emitter's spread.
+     */
+    setSpread(newSpread: number): void;
 }
 
 export function particles(popt: ParticlesOpt, eopt: EmitterOpt): ParticlesComp {
     let emitterLifetime = eopt.lifetime;
+
+    let direction = eopt.direction || 0;
+    let spread = eopt.spread || 0;
 
     const particles: Particle[] = new Array<Particle>(popt.max);
     const colors = popt.colors || [Color.WHITE];
@@ -144,13 +164,12 @@ export function particles(popt: ParticlesOpt, eopt: EmitterOpt): ParticlesComp {
     const quads = popt.quads || [new Quad(0, 0, 1, 1)];
     const scales = popt.scales || [1];
     const lifetime = popt.lifeTime;
-    const direction = eopt.direction || 0;
-    const spread = eopt.spread || 0;
     const speed = popt.speed || [0, 0];
     const angleRange = popt.angle || [0, 0];
     const angularVelocityRange = popt.angularVelocity || [0, 0];
     const accelerationRange = popt.acceleration || [vec2(0), vec2(0)];
     const dampingRange = popt.damping || [0, 0];
+    const angleModifier = popt.angleModifier || "None";
 
     const indices: number[] = new Array<number>(popt.max * 6);
     const attributes = {
@@ -234,6 +253,12 @@ export function particles(popt: ParticlesOpt, eopt: EmitterOpt): ParticlesComp {
                 p.angularVelocity = angularVelocity;
                 p.damping = damping;
                 p.gc = false;
+
+                if (angleModifier === "Modified") {
+                    p.angle += velocityAngle;
+                } else if (angleModifier === "Aligned") {
+                    p.angle = velocityAngle;
+                }
             }
             count += n;
         },
@@ -327,8 +352,19 @@ export function particles(popt: ParticlesOpt, eopt: EmitterOpt): ParticlesComp {
                 const quadIndex = Math.floor(progress * quads.length);
                 const quad = quads[quadIndex];
                 const scaleIndex = Math.floor(progress * scales.length);
-                const scale = scales[scaleIndex];
-                // TODO: lerp scale
+                const scale = scaleIndex < scales.length - 1
+                    ? lerp(
+                        scales[scaleIndex],
+                        scales[scaleIndex + 1],
+                        map(
+                            progress,
+                            scaleIndex / scales.length,
+                            (scaleIndex + 1) / scales.length,
+                            0,
+                            1,
+                        ),
+                    )
+                    : scales[scaleIndex];
                 const angle = deg2rad(p.angle);
                 const c = Math.cos(angle);
                 const s = Math.sin(angle);
@@ -394,6 +430,12 @@ export function particles(popt: ParticlesOpt, eopt: EmitterOpt): ParticlesComp {
                 (this as any).shader,
                 (this as any).uniform,
             );
+        },
+        setDirection(newDirection: number) {
+            direction = newDirection;
+        },
+        setSpread(newSpread: number) {
+            spread = newSpread;
         },
         onEnd(action: () => void) {
             return onEndEvents.add(action);
