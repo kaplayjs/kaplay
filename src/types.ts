@@ -594,6 +594,32 @@ export interface KAPLAYCtx<
      *
      * @param popt The options for the particles.
      * @param eopt The options for the emitter.
+     * 
+     * @example
+     * ```js
+     * // beansplosion
+     * 
+     * // create the emitter
+     * const emitter = add([
+     *     pos(center()),
+     *     particles({
+     *         max: 100,
+     *         speed: [75, 100],
+     *         lifeTime: [0.75,1.0],
+     *         angle: [0, 360],
+     *         opacities: [1.0, 0.0],
+     *         texture: getSprite("bean").tex,   // texture of a sprite
+     *         quads: getSprite("bean").frames,  // frames of a sprite
+     *     }, {
+     *         direction: 0,
+     *         spread: 360,
+     *     }),
+     * ])
+     *
+     * onUpdate(() => {
+     *     emitter.emit(1)
+     * })
+     * ```
      *
      * @group Components
      * @since v3001.0
@@ -633,6 +659,23 @@ export interface KAPLAYCtx<
     /**
      * Applies a force on a colliding object in order to make it move along the collision tangent vector.
      * Good for conveyor belts.
+     * 
+     * @example
+     * ```js
+     * loadSprite("belt", "/sprites/jumpy.png")
+     * 
+     * // conveyor belt
+     * add([
+     *     pos(center()),
+     *     sprite("belt"),
+     *     rotate(90),
+     *     area(),
+     *     body({ isStatic: true }),
+     *     surfaceEffector({
+     *         speed: 50,
+     *     })
+     * ])
+     * ```
      *
      * @since v3001.0
      * @group Components
@@ -936,6 +979,22 @@ export interface KAPLAYCtx<
      * @group Components
      */
     mask(maskType?: Mask): MaskComp;
+    /**
+     * Specifies the FrameBuffer the object should be drawn on.
+     * 
+     * @example
+     * ```js
+     * // Draw on another canvas
+     * let canvas = makeCanvas(width(), height())
+     * 
+     * let beanOnCanvas = add([
+     *     sprite("bean"),
+     *     drawon(canvas.fb),
+     * ])
+     * ```
+     * 
+     * @param canvas 
+     */
     drawon(canvas: FrameBuffer): Comp;
     /**
      * A tile on a tile map.
