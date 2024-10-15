@@ -38,7 +38,7 @@ class Particle {
 }
 
 /**
- * A particles option used for {@link ParticlesOpt `ParticlesOpt`}. 
+ * A particles option used for {@link ParticlesOpt `ParticlesOpt`}.
  */
 export type AngleModifier = "None" | "Modified" | "Aligned";
 
@@ -256,7 +256,8 @@ export function particles(popt: ParticlesOpt, eopt: EmitterOpt): ParticlesComp {
 
                 if (angleModifier === "Modified") {
                     p.angle += velocityAngle;
-                } else if (angleModifier === "Aligned") {
+                }
+                else if (angleModifier === "Aligned") {
                     p.angle = velocityAngle;
                 }
             }
