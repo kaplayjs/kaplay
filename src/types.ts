@@ -648,7 +648,7 @@ export interface KAPLAYCtx<
     areaEffector(options: AreaEffectorCompOpt): AreaEffectorComp;
     /**
      * Applies a force on a colliding object directed towards this object's origin.
-     * Good to apply magnetic attractiong or repulsion.
+     * Good to apply magnetic attraction or repulsion.
      *
      * @since v3001.0
      * @group Components
@@ -888,10 +888,7 @@ export interface KAPLAYCtx<
      *
      * @group Components
      */
-    state(
-        initialState: string,
-        stateList?: string[],
-    ): StateComp;
+    state(initialState: string, stateList?: string[]): StateComp;
     /**
      * state() with pre-defined transitions.
      *
@@ -1018,7 +1015,7 @@ export interface KAPLAYCtx<
      * ```
      * @group Events
      */
-    on<Ev extends GameObjEventNames | string & {}>(
+    on<Ev extends GameObjEventNames | (string & {})>(
         event: Ev,
         tag: Tag,
         action: (
@@ -1330,7 +1327,7 @@ export interface KAPLAYCtx<
      */
     onKeyPress(action: (key: Key) => void): KEventController;
     /**
-     * Register an event that runs when user presses certain kesy (also fires repeatedly when the keys are being held down).
+     * Register an event that runs when user presses certain keys (also fires repeatedly when the keys are being held down).
      *
      * @example
      * ```js
@@ -1381,18 +1378,14 @@ export interface KAPLAYCtx<
         button: MouseButton | MouseButton[],
         action: (m: MouseButton) => void,
     ): KEventController;
-    onMouseDown(
-        action: (m: MouseButton) => void,
-    ): KEventController;
+    onMouseDown(action: (m: MouseButton) => void): KEventController;
     /**
      * Register an event that runs when user clicks mouse.
      *
      * @since v3001.0
      * @group Input
      */
-    onMousePress(
-        action: (m: MouseButton) => void,
-    ): KEventController;
+    onMousePress(action: (m: MouseButton) => void): KEventController;
     onMousePress(
         button: MouseButton | MouseButton[],
         action: (m: MouseButton) => void,
@@ -1727,10 +1720,7 @@ export interface KAPLAYCtx<
      *
      * @group Assets
      */
-    loadSound(
-        name: string | null,
-        src: string | ArrayBuffer,
-    ): Asset<SoundData>;
+    loadSound(name: string | null, src: string | ArrayBuffer): Asset<SoundData>;
     /**
      * Like loadSound(), but the audio is streamed and won't block loading. Use this for big audio files like background music.
      *
@@ -1740,10 +1730,7 @@ export interface KAPLAYCtx<
      * ```
      * @group Assets
      */
-    loadMusic(
-        name: string | null,
-        url: string,
-    ): void;
+    loadMusic(name: string | null, url: string): void;
     /**
      * Load a font (any format supported by the browser, e.g. ttf, otf, woff).
      *
@@ -1762,7 +1749,7 @@ export interface KAPLAYCtx<
         opt?: LoadFontOpt,
     ): Asset<FontData>;
     /**
-     * Load a bitmap font into asset manager, with name and resource url and infomation on the layout of the bitmap.
+     * Load a bitmap font into asset manager, with name and resource url and information on the layout of the bitmap.
      *
      * @since v3000.0
      *
@@ -2085,21 +2072,21 @@ export interface KAPLAYCtx<
      */
     isGamepadButtonReleased(btn?: KGamepadButton | KGamepadButton[]): boolean;
     /**
-     * If certain binded buttons are just pressed last frame on any input (keyboard, gamepad).
+     * If certain bound buttons are just pressed last frame on any input (keyboard, gamepad).
      *
      * @since v3001.0
      * @group Input
      */
     isButtonPressed(button: TButton | TButton[]): boolean;
     /**
-     * If certain binded buttons are currently held down on any input (keyboard, gamepad).
+     * If certain bound buttons are currently held down on any input (keyboard, gamepad).
      *
      * @since v3001.0
      * @group Input
      */
     isButtonDown(button: TButton | TButton[]): boolean;
     /**
-     * If certain binded buttons are just released last frame on any input (keyboard, gamepad).
+     * If certain bound buttons are just released last frame on any input (keyboard, gamepad).
      *
      * @since v3001.0
      * @group Input
@@ -2674,25 +2661,13 @@ export interface KAPLAYCtx<
      *
      * @group Math
      */
-    map(
-        v: number,
-        l1: number,
-        h1: number,
-        l2: number,
-        h2: number,
-    ): number;
+    map(v: number, l1: number, h1: number, l2: number, h2: number): number;
     /**
      * Map a value from one range to another range, and clamp to the dest range.
      *
      * @group Math
      */
-    mapc(
-        v: number,
-        l1: number,
-        h1: number,
-        l2: number,
-        h2: number,
-    ): number;
+    mapc(v: number, l1: number, h1: number, l2: number, h2: number): number;
     /**
      * Interpolate between 2 values (Optionally takes a custom periodic function, which default to Math.sin).
      *
@@ -3028,7 +3003,7 @@ export interface KAPLAYCtx<
      *
      * @group Scene
      */
-    layers(layernames: string[], defaultLayer: string): void;
+    layers(layers: string[], defaultLayer: string): void;
     /**
      * Construct a level based on symbols.
      *
@@ -3448,7 +3423,7 @@ export interface KAPLAYCtx<
      */
     plug<T extends Record<string, any>>(plugin: KAPLAYPlugin<T>): KAPLAYCtx & T;
     /**
-     * Take a screenshot and get the dataurl of the image.
+     * Take a screenshot and get the data url of the image.
      *
      * @returns The dataURL of the image.
      * @group Data
@@ -3619,15 +3594,17 @@ export interface KAPLAYCtx<
 
 export type Tag = string;
 
-type UnionToIntersection<U> = (U extends any ? (k: U) => void : never) extends
-    ((k: infer I) => void) ? I : never;
+type UnionToIntersection<U> = (U extends any ? (k: U) => void : never) extends (
+    k: infer I,
+) => void ? I
+    : never;
 type Defined<T> = T extends any
     ? Pick<T, { [K in keyof T]-?: T[K] extends undefined ? never : K }[keyof T]>
     : never;
 type Expand<T> = T extends infer U ? { [K in keyof U]: U[K] } : never;
 export type MergeObj<T> = Expand<UnionToIntersection<Defined<T>>>;
 /**
- * A type to merge the components of a game object, omiting the default component properties.
+ * A type to merge the components of a game object, omitting the default component properties.
  *
  * @group Component Types
  */
@@ -3726,19 +3703,14 @@ export type Key =
         | "down"
         | "shift"
     )
-    | string & {};
+    | (string & {});
 
 /**
  * A mouse button.
  *
  * @group Input
  */
-export type MouseButton =
-    | "left"
-    | "right"
-    | "middle"
-    | "back"
-    | "forward";
+export type MouseButton = "left" | "right" | "middle" | "back" | "forward";
 
 /**
  * A gamepad button.
@@ -3780,7 +3752,7 @@ export type GamepadDef = {
     sticks: Partial<Record<GamepadStick, { x: number; y: number }>>;
 };
 
-/** A KAPLAY's gamepad */
+/** A KAPLAY gamepad */
 export type KGamepad = {
     /** The order of the gamepad in the gamepad list. */
     index: number;
@@ -4176,7 +4148,7 @@ export type GameObj<T = any> = GameObjRaw & MergeComps<T>;
  */
 export type GetOpt = {
     /**
-     * Recursively get all children and their descendents.
+     * Recursively get all children and their descendants.
      */
     recursive?: boolean;
     /**
@@ -4467,7 +4439,7 @@ export type DrawPolygonOpt = RenderProps & {
 
 export interface Outline {
     /**
-     * The width, or thinkness of the line.
+     * The width, or thickness of the line.
      */
     width?: number;
     /**
@@ -4559,18 +4531,12 @@ export type Anchor =
 /**
  * @group Math
  */
-export type LerpValue =
-    | number
-    | Vec2
-    | Color;
+export type LerpValue = number | Vec2 | Color;
 
 /**
  * @group Math
  */
-export type RNGValue =
-    | number
-    | Vec2
-    | Color;
+export type RNGValue = number | Vec2 | Color;
 
 /**
  * @group Components
@@ -4695,13 +4661,7 @@ export interface Collision {
 /**
  * @group Draw
  */
-export type Shape =
-    | Rect
-    | Line
-    | Point
-    | Circle
-    | Ellipse
-    | Polygon;
+export type Shape = Rect | Line | Point | Circle | Ellipse | Polygon;
 
 /**
  * @group Debug
@@ -4772,11 +4732,7 @@ export type Mask = "intersect" | "subtract";
 /**
  * @group Math
  */
-export type Edge =
-    | "left"
-    | "right"
-    | "top"
-    | "bottom";
+export type Edge = "left" | "right" | "top" | "bottom";
 
 /**
  * @group Math
