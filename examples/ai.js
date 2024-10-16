@@ -65,9 +65,10 @@ enemy.onStateEnter("move", async () => {
     enemy.enterState("idle");
 });
 
-// .onStateUpdate() will run every frame, but only when the current state is "move"
-// We move the enemy in the direction of the player
+// .onStateUpdate() is similar to .onUpdate(), it'll run every frame, but in this case
+// Only when the current state is "move"
 enemy.onStateUpdate("move", () => {
+    // We move the enemy in the direction of the player
     if (!player.exists()) return;
     const dir = player.pos.sub(enemy.pos).unit();
     enemy.move(dir.scale(ENEMY_SPEED));
