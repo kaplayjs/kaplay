@@ -1,5 +1,7 @@
 // @ts-check
 
+// Confetti effect done manually (not using particle component)
+
 kaplay();
 
 const DEF_COUNT = 80;

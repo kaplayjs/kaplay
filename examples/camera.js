@@ -12,10 +12,12 @@ loadSprite("grass", "/sprites/grass.png");
 loadSound("score", "/examples/sounds/score.mp3");
 
 const SPEED = 480;
+let score = 0;
 
+// Set the gravity acceleration (pixels per second)
 setGravity(2400);
 
-// Setup a basic level
+// Setup a basic level, check the 'level' example for more info
 const level = addLevel([
     "@  =  $",
     "=======",
@@ -49,17 +51,20 @@ const level = addLevel([
 // Get the player object from tag
 const player = level.get("player")[0];
 
+// Will run every frame
 player.onUpdate(() => {
     // Set the viewport center to player.pos
     camPos(player.worldPos());
 });
 
+// Set the viewport center to player.pos whenever their physics are resolved
 player.onPhysicsResolve(() => {
-    // Set the viewport center to player.pos
     camPos(player.worldPos());
 });
 
+// When the player collides with a coin object
 player.onCollide("coin", (coin) => {
+    // It does these things
     destroy(coin);
     play("score");
     score++;
@@ -77,8 +82,6 @@ onKeyPress("space", () => {
 onKeyDown("left", () => player.move(-SPEED, 0));
 onKeyDown("right", () => player.move(SPEED, 0));
 
-let score = 0;
-
 // Add a ui layer with fixed() component to make the object
 // not affected by camera
 const ui = add([
@@ -91,7 +94,7 @@ ui.add([
     pos(12),
     {
         update() {
-            this.text = score;
+            this.text = score.toString();
         },
     },
 ]);

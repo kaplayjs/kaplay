@@ -2,7 +2,7 @@
 
 // Mario-like flamebar
 
-// Start kaboom
+// Start kaplay
 kaplay();
 
 // Load assets
