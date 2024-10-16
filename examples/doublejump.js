@@ -40,7 +40,7 @@ function spin(speed = 1200) {
 	};
 }
 
-// Setsup the game scene
+// Sets up the game scene
 scene("game", () => {
 	// This score textObject holds a value property in a plain object
 	const score = add([
