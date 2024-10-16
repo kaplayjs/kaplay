@@ -1,6 +1,6 @@
 // @ts-check
 
-// # How kaplay handles collisions with different shapes
+// How kaplay handles collisions with different shapes
 kaplay();
 
 // Set the gravity acceleration (pixels per second)
