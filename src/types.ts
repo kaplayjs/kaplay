@@ -394,6 +394,20 @@ export interface KAPLAYCtx<
     /**
      * Sets the opacity of a Game Object (0.0 - 1.0).
      *
+     * @example
+     * ```js
+     * const bean = add([
+     *     sprite("bean"),
+     *     opacity(0.5) // Make bean 50% transparent
+     * ])
+     *
+     * // Make bean invisible
+     * bean.opacity = 0
+     *
+     * // Make bean fully visible
+     * bean.opacity = 1
+     * ```
+     *
      * @group Components
      */
     opacity(o?: number): OpacityComp;
@@ -589,11 +603,50 @@ export interface KAPLAYCtx<
     /**
      * Determines the draw order for objects on the same layer. Object will be drawn on top if z value is bigger.
      *
+     * @example
+     * ```js
+     *
+     * const bean = add([
+     *    sprite("bean"),
+     *    pos(100, 100),
+     *    z(10), // Bean has a z value of 10
+     * ])
+     *
+     * // Mark has a z value of 20, so he will always be drawn on top of bean
+     * const mark = add([
+     *   sprite("mark"),
+     *   pos(100, 100),
+     *   z(20),
+     * ])
+     *
+     * bean.z = 30 // Bean now has a higher z value, so it will be drawn on top of mark
+     * ```
+     *
      * @group Components
      */
     z(z: number): ZComp;
     /**
      * Determines the layer for objects. Object will be drawn on top if the layer index is higher.
+     *
+     * @example
+     * ```js
+     * // Define layers
+     * layers(["background", "game", "foreground"], "game")
+     *
+     * const bean = add([
+     *     sprite("bean"),
+     *     pos(100, 100),
+     *     layer("background"),
+     * ])
+     *
+     * // Mark is in a higher layer, so he will be drawn on top of bean
+     * const mark = add([
+     *     sprite("mark"),
+     *     pos(100, 100),
+     *     layer("game"),
+     * ])
+     *
+     * bean.layer("foreground") // Bean is now in the foreground layer and will be drawn on top of mark
      *
      * @group Components
      */
@@ -616,11 +669,11 @@ export interface KAPLAYCtx<
      *
      * @param popt The options for the particles.
      * @param eopt The options for the emitter.
-     * 
+     *
      * @example
      * ```js
      * // beansplosion
-     * 
+     *
      * // create the emitter
      * const emitter = add([
      *     pos(center()),
@@ -681,11 +734,11 @@ export interface KAPLAYCtx<
     /**
      * Applies a force on a colliding object in order to make it move along the collision tangent vector.
      * Good for conveyor belts.
-     * 
+     *
      * @example
      * ```js
      * loadSprite("belt", "/sprites/jumpy.png")
-     * 
+     *
      * // conveyor belt
      * add([
      *     pos(center()),
@@ -789,6 +842,30 @@ export interface KAPLAYCtx<
     offscreen(opt?: OffScreenCompOpt): OffScreenComp;
     /**
      * Follow another game obj's position.
+     *
+     * @example
+     * ```js
+     * const bean = add(...)
+     *
+     * add([
+     *   sprite("bag"),
+     *   pos(),
+     *   follow(bean) // Follow bean's position
+     * ])
+     * ```
+     *
+     * @example
+     * ```js
+     * const target = add(...)
+     *
+     * const mark = add([
+     *   sprite("mark"),
+     *   pos(),
+     *   follow(target, vec2(32, 32)) // Follow target's position with an offset
+     * ])
+     *
+     * mark.follow.offset = vec2(64, 64) // Change the offset
+     * ```
      *
      * @group Components
      */
@@ -1012,19 +1089,19 @@ export interface KAPLAYCtx<
     mask(maskType?: Mask): MaskComp;
     /**
      * Specifies the FrameBuffer the object should be drawn on.
-     * 
+     *
      * @example
      * ```js
      * // Draw on another canvas
      * let canvas = makeCanvas(width(), height())
-     * 
+     *
      * let beanOnCanvas = add([
      *     sprite("bean"),
      *     drawon(canvas.fb),
      * ])
      * ```
-     * 
-     * @param canvas 
+     *
+     * @param canvas
      */
     drawon(canvas: FrameBuffer): Comp;
     /**
@@ -1354,6 +1431,14 @@ export interface KAPLAYCtx<
     /**
      * Register an event that runs every frame when game objs with certain tags are hovered (required to have area() component).
      *
+     * @example
+     * ```js
+     * // Rotate bean 90 degrees per second when hovered
+     * onHoverUpdate("bean", (bean) => {
+     *   bean.angle += dt() * 90
+     * })
+     * ```
+     *
      * @since v3000.0
      * @group Events
      */
@@ -1527,6 +1612,15 @@ export interface KAPLAYCtx<
     onTouchEnd(action: (pos: Vec2, t: Touch) => void): KEventController;
     /**
      * Register an event that runs when mouse wheel scrolled.
+     *
+     * @example
+     * ```js
+     * // Zoom camera on scroll
+     * onScroll((delta) => {
+     *     const zoom = delta.y / 500
+     *     camScale(camScale().add(zoom))
+     * })
+     * ```
      *
      * @since v3000.0
      * @group Input
