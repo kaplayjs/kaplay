@@ -14,7 +14,7 @@ for (let i = 0; i < 5000; i++) {
         sprite(i % 2 === 0 ? "bean" : "bag"),
         pos(rand(0, width()), rand(0, height())),
         anchor("center"),
-    ]);
+    ]).paused = true;
 }
 
 onDraw(() => {
