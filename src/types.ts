@@ -605,7 +605,6 @@ export interface KAPLAYCtx<
      *
      * @example
      * ```js
-     *
      * const bean = add([
      *    sprite("bean"),
      *    pos(100, 100),
