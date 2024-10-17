@@ -1,6 +1,6 @@
 import { SPRITE_ATLAS_HEIGHT, SPRITE_ATLAS_WIDTH } from "../constants";
+import TexPacker from "../gfx/classes/TexPacker";
 import type { GfxCtx } from "../gfx/gfx";
-import TexPacker from "../gfx/texPacker";
 import { assets } from "../kaplay";
 import { KEvent } from "../utils";
 import type { BitmapFontData } from "./bitmapFont";
@@ -11,6 +11,8 @@ import type { SpriteData } from "./sprite";
 
 /**
  * An asset is a resource that is loaded asynchronously.
+ *
+ * It can be a sprite, a sound, a font, a shader, etc.
  */
 export class Asset<D> {
     loaded: boolean = false;
@@ -19,6 +21,7 @@ export class Asset<D> {
     private onLoadEvents: KEvent<[D]> = new KEvent();
     private onErrorEvents: KEvent<[Error]> = new KEvent();
     private onFinishEvents: KEvent<[]> = new KEvent();
+
     constructor(loader: Promise<D>) {
         loader.then((data) => {
             this.loaded = true;
@@ -26,6 +29,7 @@ export class Asset<D> {
             this.onLoadEvents.trigger(data);
         }).catch((err) => {
             this.error = err;
+
             if (this.onErrorEvents.numListeners() > 0) {
                 this.onErrorEvents.trigger(err);
             }
@@ -84,17 +88,20 @@ export class Asset<D> {
 export class AssetBucket<D> {
     assets: Map<string, Asset<D>> = new Map();
     lastUID: number = 0;
+
     add(name: string | null, loader: Promise<D>): Asset<D> {
         // if user don't provide a name we use a generated one
         const id = name ?? (this.lastUID++ + "");
         const asset = new Asset(loader);
         this.assets.set(id, asset);
+
         return asset;
     }
     addLoaded(name: string | null, data: D): Asset<D> {
         const id = name ?? (this.lastUID++ + "");
         const asset = Asset.loaded(data);
         this.assets.set(id, asset);
+
         return asset;
     }
     // if not found return undefined
@@ -106,21 +113,22 @@ export class AssetBucket<D> {
             return 1;
         }
         let loaded = 0;
+
         this.assets.forEach((asset) => {
             if (asset.loaded) {
                 loaded++;
             }
         });
+
         return loaded / this.assets.size;
     }
 }
 
 export function fetchURL(url: string) {
-    return fetch(url)
-        .then((res) => {
-            if (!res.ok) throw new Error(`Failed to fetch "${url}"`);
-            return res;
-        });
+    return fetch(url).then((res) => {
+        if (!res.ok) throw new Error(`Failed to fetch "${url}"`);
+        return res;
+    });
 }
 
 export function fetchJSON(path: string) {
@@ -148,10 +156,11 @@ export function loadJSON(name: string, url: string) {
 }
 
 // wrapper around image loader to get a Promise
-export function loadImg(src: string): Promise<HTMLImageElement> {
+export function loadImage(src: string): Promise<HTMLImageElement> {
     const img = new Image();
     img.crossOrigin = "anonymous";
     img.src = src;
+
     return new Promise<HTMLImageElement>((resolve, reject) => {
         img.onload = () => resolve(img);
         img.onerror = () =>
