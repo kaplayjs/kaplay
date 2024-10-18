@@ -1872,7 +1872,7 @@ export interface KAPLAYCtx<
      *
      * @group Assets
      */
-    loadSound(name: string | null, src: string | ArrayBuffer): Asset<SoundData>;
+    loadSound(name: string | null, src: string | ArrayBuffer | AudioBuffer): Asset<SoundData>;
     /**
      * Like loadSound(), but the audio is streamed and won't block loading. Use this for big audio files like background music.
      *
