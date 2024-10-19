@@ -688,19 +688,6 @@ const kaplay = <
 
     boomSprite = loadSprite(null, boomSpriteSrc);
     kaSprite = loadSprite(null, kaSpriteSrc);
-    let f: Asset<SpriteData>;
-
-    setTimeout(() => {
-        f = loadSprite("ghosty", "/sprites/ghosty.png");
-    }, 5000);
-
-    setTimeout(() => {
-        assets.packer.remove(f.data!.packerId!);
-    }, 6000);
-
-    setInterval(() => {
-        loadSprite(null, "/sprites/ghosty.png");
-    }, 1000);
 
     function fixedUpdateFrame() {
         // update every obj
