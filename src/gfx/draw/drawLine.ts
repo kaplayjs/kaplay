@@ -313,6 +313,11 @@ export function _drawLinesBevel(opt: DrawLinesOpt) {
     for (let i = 0; i < vertices.length; i++) {
         attributes.pos[i * 2] = vertices[i].x + offset.x;
         attributes.pos[i * 2 + 1] = vertices[i].y + offset.y;
+        if (opt.color) {
+            attributes.color[i * 3] = opt.color.r;
+            attributes.color[i * 3 + 1] = opt.color.g;
+            attributes.color[i * 3 + 2] = opt.color.g;
+        }
     }
 
     drawRaw(
@@ -510,6 +515,11 @@ export function _drawLinesRound(opt: DrawLinesOpt) {
     for (let i = 0; i < vertices.length; i++) {
         attributes.pos[i * 2] = vertices[i].x + offset.x;
         attributes.pos[i * 2 + 1] = vertices[i].y + offset.y;
+        if (opt.color) {
+            attributes.color[i * 3] = opt.color.r;
+            attributes.color[i * 3 + 1] = opt.color.g;
+            attributes.color[i * 3 + 2] = opt.color.g;
+        }
     }
 
     drawRaw(
@@ -677,6 +687,11 @@ export function _drawLinesMiter(opt: DrawLinesOpt) {
     for (let i = 0; i < vertices.length; i++) {
         attributes.pos[i * 2] = vertices[i].x + offset.x;
         attributes.pos[i * 2 + 1] = vertices[i].y + offset.y;
+        if (opt.color) {
+            attributes.color[i * 3] = opt.color.r;
+            attributes.color[i * 3 + 1] = opt.color.g;
+            attributes.color[i * 3 + 2] = opt.color.g;
+        }
     }
 
     drawRaw(
