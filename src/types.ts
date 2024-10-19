@@ -368,7 +368,18 @@ export interface KAPLAYCtx<
      *
      * @param a The angle to rotate by. Defaults to 0.
      *
-     * @group Components
+     * @example
+     * ```js
+     * let bean = add([
+     *     sprite("bean"),
+     *     rotate(),
+     * ])
+     *
+     * // bean will be upside down!
+     * bean.angle = 180
+     * ```
+
+    * @group Components
      */
     rotate(a?: number): RotateComp;
     /**
@@ -588,6 +599,20 @@ export interface KAPLAYCtx<
     /**
      * Determines the draw order for objects on the same layer. Object will be drawn on top if z value is bigger.
      *
+     * @example
+     * ```ts
+     * let bean1 = add([
+     *     sprite("bean"),
+     *     z(1),
+     * ])
+     *
+     * // bean2 will be above bean1
+     * let bean2 = add([
+     *     sprite("bean"),
+     *     z(2),
+     * ])
+     * ```
+     *
      * @group Components
      */
     z(z: number): ZComp;
@@ -750,7 +775,7 @@ export interface KAPLAYCtx<
      */
     follow(obj: GameObj | null, offset?: Vec2): FollowComp;
     /**
-     * Custom shader.
+     * Custom shader to manipulate sprite.
      *
      * @group Components
      */
@@ -986,6 +1011,22 @@ export interface KAPLAYCtx<
     agent(opt?: AgentCompOpt): AgentComp;
     /**
      * A component to animate properties.
+     *
+     * @example
+     * ```js
+     * let movingBean = add([
+     *       sprite("bean"),
+     *       pos(50, 150),
+     *       anchor("center"),
+     *       animate(),
+     * ]);
+     *
+     * // Moving right to left using ping-pong
+     * movingBean.animate("pos", [vec2(50, 150), vec2(150, 150)], {
+     *     duration: 2,
+     *     direction: "ping-pong",
+     * });
+     * ```
      *
      * @since v3001.0
      * @group Components
@@ -1474,6 +1515,19 @@ export interface KAPLAYCtx<
     onTouchEnd(action: (pos: Vec2, t: Touch) => void): KEventController;
     /**
      * Register an event that runs when mouse wheel scrolled.
+     *
+     * @example
+     * ```ts
+     * let bean = add([
+     *     sprite("bean"),
+     *     pos(),
+     * ])
+     *
+     * // move bean with your scroll wheel!
+     * onScroll((delta) => {
+     *     bean.pos.y += delta.y
+     * })
+     * ```
      *
      * @since v3000.0
      * @group Input
@@ -2226,6 +2280,14 @@ export interface KAPLAYCtx<
     camRot(angle?: number): number;
     /**
      * Flash the camera.
+     *
+     * @example
+     * ```js
+     * onClick(() => {
+     *     // flashed
+     *     camFlash(WHITE, 0.5)
+     * })
+     * ```
      *
      * @group Info
      */
