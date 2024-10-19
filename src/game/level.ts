@@ -590,7 +590,7 @@ export function addLevel(
             while (node !== start) {
                 let cameNode = cameFrom.get(node);
 
-                if (!cameNode) {
+                if (cameNode === undefined) {
                     throw new Error("Bug in pathfinding algorithm");
                 }
 
