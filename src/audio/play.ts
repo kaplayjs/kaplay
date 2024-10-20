@@ -53,7 +53,7 @@ export interface AudioPlayOpt {
      * If the audio node should start out connected to another audio node rather than
      * KAPLAY's default volume node. Defaults to undefined, i.e. use KAPLAY's volume node.
      */
-    connectTo?: AudioNode
+    connectTo?: AudioNode;
 }
 
 export interface AudioPlay {

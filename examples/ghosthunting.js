@@ -349,6 +349,7 @@ onMousePress(() => {
                 colors: [WHITE],
                 opacities: [1.0, 0.0],
                 angle: [0, 360],
+                scales: [1.0, 0.0],
                 texture: getSprite("hexagon").data.tex,
                 quads: [getSprite("hexagon").data.frames[0]],
             }, {
