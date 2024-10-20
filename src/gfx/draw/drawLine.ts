@@ -316,7 +316,7 @@ export function _drawLinesBevel(opt: DrawLinesOpt) {
         if (opt.color) {
             attributes.color[i * 3] = opt.color.r;
             attributes.color[i * 3 + 1] = opt.color.g;
-            attributes.color[i * 3 + 2] = opt.color.g;
+            attributes.color[i * 3 + 2] = opt.color.b;
         }
     }
 
@@ -518,7 +518,7 @@ export function _drawLinesRound(opt: DrawLinesOpt) {
         if (opt.color) {
             attributes.color[i * 3] = opt.color.r;
             attributes.color[i * 3 + 1] = opt.color.g;
-            attributes.color[i * 3 + 2] = opt.color.g;
+            attributes.color[i * 3 + 2] = opt.color.b;
         }
     }
 
@@ -690,7 +690,7 @@ export function _drawLinesMiter(opt: DrawLinesOpt) {
         if (opt.color) {
             attributes.color[i * 3] = opt.color.r;
             attributes.color[i * 3 + 1] = opt.color.g;
-            attributes.color[i * 3 + 2] = opt.color.g;
+            attributes.color[i * 3 + 2] = opt.color.b;
         }
     }
 
