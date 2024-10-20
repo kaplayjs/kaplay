@@ -443,6 +443,7 @@ const kaplay = <
 
     function makeCanvas(w: number, h: number) {
         const fb = new FrameBuffer(ggl, w, h);
+
         return {
             clear: () => fb.clear(),
             free: () => fb.free(),
@@ -688,8 +689,8 @@ const kaplay = <
     const query = game.root.query.bind(game.root);
     const tween = game.root.tween.bind(game.root);
 
-    kaSprite = loadSprite(null, kaSpriteSrc);
     boomSprite = loadSprite(null, boomSpriteSrc);
+    kaSprite = loadSprite(null, kaSpriteSrc);
 
     function fixedUpdateFrame() {
         // update every obj
