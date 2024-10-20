@@ -1296,28 +1296,28 @@ export interface KAPLAYCtx<
      * ```
      * @group Events
      */
-    onLoad(action: () => void): void;
+    onLoad(action: () => void): KEventController | undefined;
     /**
      * Register an event that runs every frame when assets are initially loading. Can be used to draw a custom loading screen.
      *
      * @since v3000.0
      * @group Events
      */
-    onLoading(action: (progress: number) => void): void;
+    onLoading(action: (progress: number) => void): KEventController;
     /**
      * Register a custom error handler. Can be used to draw a custom error screen.
      *
      * @since v3000.0
      * @group Events
      */
-    onError(action: (err: Error) => void): void;
+    onError(action: (err: Error) => void): KEventController;
     /**
      * Register an event that runs when the canvas resizes.
      *
      * @since v3000.0
      * @group Events
      */
-    onResize(action: () => void): void;
+    onResize(action: () => void): KEventController;
     /**
      * Cleanup function to run when quit() is called.
      *
@@ -1331,14 +1331,14 @@ export interface KAPLAYCtx<
      * @since v3000.0
      * @group Input
      */
-    onGamepadConnect(action: (gamepad: KGamepad) => void): void;
+    onGamepadConnect(action: (gamepad: KGamepad) => void): KEventController;
     /**
      * Register an event that runs when a gamepad is disconnected.
      *
      * @since v3000.0
      * @group Input
      */
-    onGamepadDisconnect(action: (gamepad: KGamepad) => void): void;
+    onGamepadDisconnect(action: (gamepad: KGamepad) => void): KEventController;
     /**
      * Register an event that runs once when 2 game objs with certain tags collides (required to have area() component).
      *
@@ -1910,7 +1910,10 @@ export interface KAPLAYCtx<
      *
      * @group Assets
      */
-    loadSound(name: string | null, src: string | ArrayBuffer | AudioBuffer): Asset<SoundData>;
+    loadSound(
+        name: string | null,
+        src: string | ArrayBuffer | AudioBuffer,
+    ): Asset<SoundData>;
     /**
      * Like loadSound(), but the audio is streamed and won't block loading. Use this for big audio files like background music.
      *

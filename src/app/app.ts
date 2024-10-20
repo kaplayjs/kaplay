@@ -620,11 +620,11 @@ export const initApp = (opt: {
     }
 
     function onGamepadConnect(action: (gamepad: KGamepad) => void) {
-        state.events.on("gamepadConnect", action);
+        return state.events.on("gamepadConnect", action);
     }
 
     function onGamepadDisconnect(action: (gamepad: KGamepad) => void) {
-        state.events.on("gamepadDisconnect", action);
+        return state.events.on("gamepadDisconnect", action);
     }
 
     function getGamepadStick(stick: GamepadStick): Vec2 {

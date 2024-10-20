@@ -187,22 +187,22 @@ export function onHoverEnd(
 }
 
 export function onLoading(action: (progress: number) => void) {
-    game.events.on("loading", action);
+    return game.events.on("loading", action);
 }
 
 export function onResize(action: () => void) {
-    app.onResize(action);
+    return app.onResize(action);
 }
 
 export function onError(action: (err: Error) => void) {
-    game.events.on("error", action);
+    return game.events.on("error", action);
 }
 
-export function onLoad(cb: () => void): void {
+export function onLoad(cb: () => void) {
     if (assets.loaded) {
         cb();
     }
     else {
-        game.events.on("load", cb);
+        return game.events.on("load", cb);
     }
 }
