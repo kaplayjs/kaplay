@@ -29,6 +29,7 @@ import type {
     BuoyancyEffectorComp,
     BuoyancyEffectorCompOpt,
     CircleComp,
+    CircleCompOpt,
     ColorComp,
     ConstantForceComp,
     ConstantForceCompOpt,
@@ -525,7 +526,7 @@ export interface KAPLAYCtx<
      *
      * @group Components
      */
-    circle(radius: number): CircleComp;
+    circle(radius: number, opt?: CircleCompOpt): CircleComp;
     /**
      * Attach and render an ellipse to a Game Object.
      *
