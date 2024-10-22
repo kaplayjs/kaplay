@@ -33,7 +33,7 @@ Time: ${music.time().toFixed(2)}
 Volume: ${music.volume.toFixed(2)}
 Speed: ${music.speed.toFixed(2)}
 
-[space] play/pause
+\\[space] play/pause
 [up/down] volume
 [left/right] speed
 	`.trim();
