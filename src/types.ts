@@ -1263,10 +1263,30 @@ export interface KAPLAYCtx<
      */
     onDraw(action: () => void): KEventController;
     /**
+     * Runs when an object with a certain tag is added to the scene.
+     * 
+     * ```js
+     * onAdd("coin", (coin) => {
+     *     play("bling")
+     * })
+     * ```
      * @group Events
      */
     onAdd(tag: Tag, action: (obj: GameObj) => void): KEventController;
     /**
+     * Runs when an specific object is added to the scene.
+     * 
+     * let bean = make([
+     *     sprite("bean"),
+     *     pos(),
+     * ])
+     * 
+     * bean.onAdd(() => {
+     *     bean.pos = center()
+     * })
+     * 
+     * add(bean)
+     * 
      * @group Events
      */
     onAdd(action: (obj: GameObj) => void): KEventController;
@@ -4262,7 +4282,20 @@ export interface GameObjRaw {
      */
     inspect(): GameObjInspect;
     /**
-     * Register an event that runs when the game obj is added to the scene.
+     * Runs when an specific object is added to the scene.
+     * 
+     * let bean = make([
+     *     sprite("bean"),
+     *     pos(),
+     * ])
+     * 
+     * bean.onAdd(() => {
+     *     bean.pos = center()
+     * })
+     * 
+     * add(bean)
+     * 
+     * @group Events
      */
     onAdd(action: () => void): KEventController;
     /**
