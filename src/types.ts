@@ -29,6 +29,7 @@ import type {
     BuoyancyEffectorComp,
     BuoyancyEffectorCompOpt,
     CircleComp,
+    CircleCompOpt,
     ColorComp,
     ConstantForceComp,
     ConstantForceCompOpt,
@@ -387,6 +388,20 @@ export interface KAPLAYCtx<
     /**
      * Sets the opacity of a Game Object (0.0 - 1.0).
      *
+     * @example
+     * ```js
+     * const bean = add([
+     *     sprite("bean"),
+     *     opacity(0.5) // Make bean 50% transparent
+     * ])
+     *
+     * // Make bean invisible
+     * bean.opacity = 0
+     *
+     * // Make bean fully visible
+     * bean.opacity = 1
+     * ```
+     *
      * @group Components
      */
     opacity(o?: number): OpacityComp;
@@ -504,7 +519,7 @@ export interface KAPLAYCtx<
      *
      * @group Components
      */
-    circle(radius: number): CircleComp;
+    circle(radius: number, opt?: CircleCompOpt): CircleComp;
     /**
      * Attach and render a UV quad to a Game Object.
      *
@@ -567,11 +582,49 @@ export interface KAPLAYCtx<
     /**
      * Determines the draw order for objects on the same layer. Object will be drawn on top if z value is bigger.
      *
+     * @example
+     * ```js
+     * const bean = add([
+     *    sprite("bean"),
+     *    pos(100, 100),
+     *    z(10), // Bean has a z value of 10
+     * ])
+     *
+     * // Mark has a z value of 20, so he will always be drawn on top of bean
+     * const mark = add([
+     *   sprite("mark"),
+     *   pos(100, 100),
+     *   z(20),
+     * ])
+     *
+     * bean.z = 30 // Bean now has a higher z value, so it will be drawn on top of mark
+     * ```
+     *
      * @group Components
      */
     z(z: number): ZComp;
     /**
      * Determines the layer for objects. Object will be drawn on top if the layer index is higher.
+     *
+     * @example
+     * ```js
+     * // Define layers
+     * layers(["background", "game", "foreground"], "game")
+     *
+     * const bean = add([
+     *     sprite("bean"),
+     *     pos(100, 100),
+     *     layer("background"),
+     * ])
+     *
+     * // Mark is in a higher layer, so he will be drawn on top of bean
+     * const mark = add([
+     *     sprite("mark"),
+     *     pos(100, 100),
+     *     layer("game"),
+     * ])
+     *
+     * bean.layer("foreground") // Bean is now in the foreground layer and will be drawn on top of mark
      *
      * @group Components
      */
@@ -594,6 +647,32 @@ export interface KAPLAYCtx<
      *
      * @param popt The options for the particles.
      * @param eopt The options for the emitter.
+     *
+     * @example
+     * ```js
+     * // beansplosion
+     *
+     * // create the emitter
+     * const emitter = add([
+     *     pos(center()),
+     *     particles({
+     *         max: 100,
+     *         speed: [75, 100],
+     *         lifeTime: [0.75,1.0],
+     *         angle: [0, 360],
+     *         opacities: [1.0, 0.0],
+     *         texture: getSprite("bean").tex,   // texture of a sprite
+     *         quads: getSprite("bean").frames,  // frames of a sprite
+     *     }, {
+     *         direction: 0,
+     *         spread: 360,
+     *     }),
+     * ])
+     *
+     * onUpdate(() => {
+     *     emitter.emit(1)
+     * })
+     * ```
      *
      * @group Components
      * @since v3001.0
@@ -634,6 +713,23 @@ export interface KAPLAYCtx<
      * Applies a force on a colliding object in order to make it move along the collision tangent vector.
      * Good for conveyor belts.
      *
+     * @example
+     * ```js
+     * loadSprite("belt", "/sprites/jumpy.png")
+     *
+     * // conveyor belt
+     * add([
+     *     pos(center()),
+     *     sprite("belt"),
+     *     rotate(90),
+     *     area(),
+     *     body({ isStatic: true }),
+     *     surfaceEffector({
+     *         speed: 50,
+     *     })
+     * ])
+     * ```
+     *
      * @since v3001.0
      * @group Components
      */
@@ -648,7 +744,7 @@ export interface KAPLAYCtx<
     areaEffector(options: AreaEffectorCompOpt): AreaEffectorComp;
     /**
      * Applies a force on a colliding object directed towards this object's origin.
-     * Good to apply magnetic attractiong or repulsion.
+     * Good to apply magnetic attraction or repulsion.
      *
      * @since v3001.0
      * @group Components
@@ -715,6 +811,30 @@ export interface KAPLAYCtx<
     offscreen(opt?: OffScreenCompOpt): OffScreenComp;
     /**
      * Follow another game obj's position.
+     *
+     * @example
+     * ```js
+     * const bean = add(...)
+     *
+     * add([
+     *   sprite("bag"),
+     *   pos(),
+     *   follow(bean) // Follow bean's position
+     * ])
+     * ```
+     *
+     * @example
+     * ```js
+     * const target = add(...)
+     *
+     * const mark = add([
+     *   sprite("mark"),
+     *   pos(),
+     *   follow(target, vec2(32, 32)) // Follow target's position with an offset
+     * ])
+     *
+     * mark.follow.offset = vec2(64, 64) // Change the offset
+     * ```
      *
      * @group Components
      */
@@ -888,10 +1008,7 @@ export interface KAPLAYCtx<
      *
      * @group Components
      */
-    state(
-        initialState: string,
-        stateList?: string[],
-    ): StateComp;
+    state(initialState: string, stateList?: string[]): StateComp;
     /**
      * state() with pre-defined transitions.
      *
@@ -939,6 +1056,22 @@ export interface KAPLAYCtx<
      * @group Components
      */
     mask(maskType?: Mask): MaskComp;
+    /**
+     * Specifies the FrameBuffer the object should be drawn on.
+     *
+     * @example
+     * ```js
+     * // Draw on another canvas
+     * let canvas = makeCanvas(width(), height())
+     *
+     * let beanOnCanvas = add([
+     *     sprite("bean"),
+     *     drawon(canvas.fb),
+     * ])
+     * ```
+     *
+     * @param canvas
+     */
     drawon(canvas: FrameBuffer): Comp;
     /**
      * A tile on a tile map.
@@ -1018,7 +1151,7 @@ export interface KAPLAYCtx<
      * ```
      * @group Events
      */
-    on<Ev extends GameObjEventNames | string & {}>(
+    on<Ev extends GameObjEventNames | (string & {})>(
         event: Ev,
         tag: Tag,
         action: (
@@ -1261,6 +1394,14 @@ export interface KAPLAYCtx<
     /**
      * Register an event that runs every frame when game objs with certain tags are hovered (required to have area() component).
      *
+     * @example
+     * ```js
+     * // Rotate bean 90 degrees per second when hovered
+     * onHoverUpdate("bean", (bean) => {
+     *   bean.angle += dt() * 90
+     * })
+     * ```
+     *
      * @since v3000.0
      * @group Events
      */
@@ -1330,7 +1471,7 @@ export interface KAPLAYCtx<
      */
     onKeyPress(action: (key: Key) => void): KEventController;
     /**
-     * Register an event that runs when user presses certain kesy (also fires repeatedly when the keys are being held down).
+     * Register an event that runs when user presses certain keys (also fires repeatedly when the keys are being held down).
      *
      * @example
      * ```js
@@ -1381,18 +1522,14 @@ export interface KAPLAYCtx<
         button: MouseButton | MouseButton[],
         action: (m: MouseButton) => void,
     ): KEventController;
-    onMouseDown(
-        action: (m: MouseButton) => void,
-    ): KEventController;
+    onMouseDown(action: (m: MouseButton) => void): KEventController;
     /**
      * Register an event that runs when user clicks mouse.
      *
      * @since v3001.0
      * @group Input
      */
-    onMousePress(
-        action: (m: MouseButton) => void,
-    ): KEventController;
+    onMousePress(action: (m: MouseButton) => void): KEventController;
     onMousePress(
         button: MouseButton | MouseButton[],
         action: (m: MouseButton) => void,
@@ -1438,6 +1575,15 @@ export interface KAPLAYCtx<
     onTouchEnd(action: (pos: Vec2, t: Touch) => void): KEventController;
     /**
      * Register an event that runs when mouse wheel scrolled.
+     *
+     * @example
+     * ```js
+     * // Zoom camera on scroll
+     * onScroll((delta) => {
+     *     const zoom = delta.y / 500
+     *     camScale(camScale().add(zoom))
+     * })
+     * ```
      *
      * @since v3000.0
      * @group Input
@@ -1727,10 +1873,7 @@ export interface KAPLAYCtx<
      *
      * @group Assets
      */
-    loadSound(
-        name: string | null,
-        src: string | ArrayBuffer,
-    ): Asset<SoundData>;
+    loadSound(name: string | null, src: string | ArrayBuffer | AudioBuffer): Asset<SoundData>;
     /**
      * Like loadSound(), but the audio is streamed and won't block loading. Use this for big audio files like background music.
      *
@@ -1740,10 +1883,7 @@ export interface KAPLAYCtx<
      * ```
      * @group Assets
      */
-    loadMusic(
-        name: string | null,
-        url: string,
-    ): void;
+    loadMusic(name: string | null, url: string): void;
     /**
      * Load a font (any format supported by the browser, e.g. ttf, otf, woff).
      *
@@ -1762,7 +1902,7 @@ export interface KAPLAYCtx<
         opt?: LoadFontOpt,
     ): Asset<FontData>;
     /**
-     * Load a bitmap font into asset manager, with name and resource url and infomation on the layout of the bitmap.
+     * Load a bitmap font into asset manager, with name and resource url and information on the layout of the bitmap.
      *
      * @since v3000.0
      *
@@ -2085,21 +2225,21 @@ export interface KAPLAYCtx<
      */
     isGamepadButtonReleased(btn?: KGamepadButton | KGamepadButton[]): boolean;
     /**
-     * If certain binded buttons are just pressed last frame on any input (keyboard, gamepad).
+     * If certain bound buttons are just pressed last frame on any input (keyboard, gamepad).
      *
      * @since v3001.0
      * @group Input
      */
     isButtonPressed(button: TButton | TButton[]): boolean;
     /**
-     * If certain binded buttons are currently held down on any input (keyboard, gamepad).
+     * If certain bound buttons are currently held down on any input (keyboard, gamepad).
      *
      * @since v3001.0
      * @group Input
      */
     isButtonDown(button: TButton | TButton[]): boolean;
     /**
-     * If certain binded buttons are just released last frame on any input (keyboard, gamepad).
+     * If certain bound buttons are just released last frame on any input (keyboard, gamepad).
      *
      * @since v3001.0
      * @group Input
@@ -2674,25 +2814,13 @@ export interface KAPLAYCtx<
      *
      * @group Math
      */
-    map(
-        v: number,
-        l1: number,
-        h1: number,
-        l2: number,
-        h2: number,
-    ): number;
+    map(v: number, l1: number, h1: number, l2: number, h2: number): number;
     /**
      * Map a value from one range to another range, and clamp to the dest range.
      *
      * @group Math
      */
-    mapc(
-        v: number,
-        l1: number,
-        h1: number,
-        l2: number,
-        h2: number,
-    ): number;
+    mapc(v: number, l1: number, h1: number, l2: number, h2: number): number;
     /**
      * Interpolate between 2 values (Optionally takes a custom periodic function, which default to Math.sin).
      *
@@ -3028,7 +3156,7 @@ export interface KAPLAYCtx<
      *
      * @group Scene
      */
-    layers(layernames: string[], defaultLayer: string): void;
+    layers(layers: string[], defaultLayer: string): void;
     /**
      * Construct a level based on symbols.
      *
@@ -3448,7 +3576,7 @@ export interface KAPLAYCtx<
      */
     plug<T extends Record<string, any>>(plugin: KAPLAYPlugin<T>): KAPLAYCtx & T;
     /**
-     * Take a screenshot and get the dataurl of the image.
+     * Take a screenshot and get the data url of the image.
      *
      * @returns The dataURL of the image.
      * @group Data
@@ -3619,15 +3747,17 @@ export interface KAPLAYCtx<
 
 export type Tag = string;
 
-type UnionToIntersection<U> = (U extends any ? (k: U) => void : never) extends
-    ((k: infer I) => void) ? I : never;
+type UnionToIntersection<U> = (U extends any ? (k: U) => void : never) extends (
+    k: infer I,
+) => void ? I
+    : never;
 type Defined<T> = T extends any
     ? Pick<T, { [K in keyof T]-?: T[K] extends undefined ? never : K }[keyof T]>
     : never;
 type Expand<T> = T extends infer U ? { [K in keyof U]: U[K] } : never;
 export type MergeObj<T> = Expand<UnionToIntersection<Defined<T>>>;
 /**
- * A type to merge the components of a game object, omiting the default component properties.
+ * A type to merge the components of a game object, omitting the default component properties.
  *
  * @group Component Types
  */
@@ -3726,19 +3856,14 @@ export type Key =
         | "down"
         | "shift"
     )
-    | string & {};
+    | (string & {});
 
 /**
  * A mouse button.
  *
  * @group Input
  */
-export type MouseButton =
-    | "left"
-    | "right"
-    | "middle"
-    | "back"
-    | "forward";
+export type MouseButton = "left" | "right" | "middle" | "back" | "forward";
 
 /**
  * A gamepad button.
@@ -3780,7 +3905,7 @@ export type GamepadDef = {
     sticks: Partial<Record<GamepadStick, { x: number; y: number }>>;
 };
 
-/** A KAPLAY's gamepad */
+/** A KAPLAY gamepad */
 export type KGamepad = {
     /** The order of the gamepad in the gamepad list. */
     index: number;
@@ -4176,7 +4301,7 @@ export type GameObj<T = any> = GameObjRaw & MergeComps<T>;
  */
 export type GetOpt = {
     /**
-     * Recursively get all children and their descendents.
+     * Recursively get all children and their descendants.
      */
     recursive?: boolean;
     /**
@@ -4467,7 +4592,7 @@ export type DrawPolygonOpt = RenderProps & {
 
 export interface Outline {
     /**
-     * The width, or thinkness of the line.
+     * The width, or thickness of the line.
      */
     width?: number;
     /**
@@ -4559,18 +4684,12 @@ export type Anchor =
 /**
  * @group Math
  */
-export type LerpValue =
-    | number
-    | Vec2
-    | Color;
+export type LerpValue = number | Vec2 | Color;
 
 /**
  * @group Math
  */
-export type RNGValue =
-    | number
-    | Vec2
-    | Color;
+export type RNGValue = number | Vec2 | Color;
 
 /**
  * @group Components
@@ -4695,13 +4814,7 @@ export interface Collision {
 /**
  * @group Draw
  */
-export type Shape =
-    | Rect
-    | Line
-    | Point
-    | Circle
-    | Ellipse
-    | Polygon;
+export type Shape = Rect | Line | Point | Circle | Ellipse | Polygon;
 
 /**
  * @group Debug
@@ -4772,11 +4885,7 @@ export type Mask = "intersect" | "subtract";
 /**
  * @group Math
  */
-export type Edge =
-    | "left"
-    | "right"
-    | "top"
-    | "bottom";
+export type Edge = "left" | "right" | "top" | "bottom";
 
 /**
  * @group Math

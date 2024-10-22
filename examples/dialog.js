@@ -15,6 +15,7 @@ kaplay({
     font: "happy",
 });
 
+// Loads all sprites
 loadSprite("bean", "/sprites/bean.png");
 loadSprite("mark", "/sprites/mark.png");
 loadSound("bean_voice", "examples/sounds/bean_voice.wav");
@@ -199,6 +200,7 @@ function startWriting(dialog, char) {
     });
 }
 
+// When the game finishes loading, the dialog will start updating
 onLoad(() => {
     updateDialog();
 });
