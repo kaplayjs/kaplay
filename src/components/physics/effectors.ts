@@ -165,7 +165,7 @@ export type PlatformEffectorCompOpt = {
      * If present, it overrides the `ignoreSides`; if absent, it is
      * automatically created from `ignoreSides`.
      */
-    shouldCollide?: (obj: GameObj, normal: Vec2) => boolean
+    shouldCollide?: (this: GameObj<PlatformEffectorComp>, obj: GameObj, normal: Vec2) => boolean
 };
 
 export interface PlatformEffectorComp extends Comp {
@@ -195,7 +195,7 @@ export function platformEffector(
                 if (this.platformIgnore.has(collision.target)) {
                     collision.preventResolution();
                 }
-                else if (!opt.shouldCollide!(collision.target, collision.normal)) {
+                else if (!opt.shouldCollide!.call(this, collision.target, collision.normal)) {
                     collision.preventResolution();
                     this.platformIgnore.add(collision.target);
                 }
