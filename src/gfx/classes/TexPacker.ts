@@ -63,9 +63,6 @@ export default class TexPacker {
         const differenceWidth = this.canvas.width - this.x;
         const differenceHeight = this.canvas.height - this.y;
 
-        console.log(differenceHeight);
-        console.log(differenceWidth);
-
         this.x += img.width;
 
         if (img.height > this.curHeight) {

@@ -229,7 +229,6 @@ export function loadSprite(
         }
     }
     else {
-        console.log(assets.sprites);
         if (typeof src === "string") {
             return assets.sprites.add(name, SpriteData.from(src, opt));
         }
