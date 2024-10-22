@@ -4,7 +4,6 @@ import {
     DEF_TEXT_CACHE_SIZE,
     FONT_ATLAS_HEIGHT,
     FONT_ATLAS_WIDTH,
-    MULTI_WORD_RE,
 } from "../constants";
 import { fontCacheC2d, fontCacheCanvas, gfx } from "../kaplay";
 import { Color } from "../math/color";
@@ -45,65 +44,56 @@ export function compileStyledText(text: string): {
 } {
     const charStyleMap = {} as Record<number, string[]>;
     let renderText = "";
-    let styleStack: [string, number][] = [];
-    let lastIndex = 0;
-    let skipCount = 0;
+    let styleStack: string[] = [];
 
-    for (let i = 0; i < text.length; i++) {
-        if (i !== lastIndex + 1) skipCount += i - lastIndex;
-        lastIndex = i;
+    const emit = (ch: string) => {
+        if (styleStack.length > 0)
+            charStyleMap[renderText.length] = styleStack.slice();
+        renderText += ch;
+    };
 
-        if (text[i] === "\\" && text[i + 1] === "[") continue;
-
-        if ((i === 0 || text[i - 1] !== "\\") && text[i] === "[") {
-            const start = i;
-
-            i++;
-
-            let isClosing = text[i] === "/";
-            let style = "";
-
-            if (isClosing) i++;
-
-            while (i < text.length && text[i] !== "]") {
-                style += text[i++];
-            }
-
-            if (
-                !MULTI_WORD_RE.test(style)
-                || i >= text.length
-                || text[i] !== "]"
-                || (isClosing
-                    && (styleStack.length === 0
-                        || styleStack[styleStack.length - 1][0] !== style))
-            ) {
-                i = start;
-            }
-            else {
-                if (!isClosing) styleStack.push([style, start]);
-                else styleStack.pop();
-
+    while (text !== "") {
+        if (text[0] === "\\") {
+            if (text.length === 1)
+                throw new Error("Styled text error: \\ at end of string");
+            emit(text[1]);
+            text = text.slice(2);
+            continue;
+        }
+        if (text[0] === "[") {
+            const execResult = /^\[(\/)?(\w+?)\]/.exec(text);
+            if (!execResult) {
+                // xxx: should throw an error here?
+                emit(text[0]);
+                text = text.slice(1);
                 continue;
             }
+            const [m, e, gn] = execResult;
+            if (e !== undefined) {
+                const x = styleStack.pop();
+                if (x !== gn) {
+                    if (x !== undefined)
+                        throw new Error(
+                            "Styled text error: mismatched tags. "
+                            + `Expected [/${x}], got [/${gn}]`);
+                    else throw new Error(
+                        `Styled text error: stray end tag [/${gn}]`)
+                }
+            } else styleStack.push(gn);
+            text = text.slice(m.length);
+            continue;
         }
-
-        renderText += text[i];
-        if (styleStack.length > 0) {
-            charStyleMap[i - skipCount] = styleStack.map(([name]) => name);
-        }
+        emit(text[0]);
+        text = text.slice(1);
     }
 
-    if (styleStack.length > 0) {
-        while (styleStack.length > 0) {
-            const [_, start] = styleStack.pop()!;
-            text = text.substring(0, start) + "\\" + text.substring(start);
-        }
-
-        return compileStyledText(text);
-    }
+    if (styleStack.length > 0)
+        throw new Error(
+            `Styled text error: unclosed tags ${styleStack}`
+        );
 
     return {
-        charStyleMap: charStyleMap,
+        charStyleMap,
         text: renderText,
     };
 }
@@ -138,14 +128,14 @@ export function formatText(opt: DrawTextOpt): FormattedText {
             outline: Outline | null;
             filter: TexFilter;
         } = font instanceof FontData
-            ? {
-                outline: font.outline,
-                filter: font.filter,
-            }
-            : {
-                outline: null,
-                filter: DEF_FONT_FILTER,
-            };
+                ? {
+                    outline: font.outline,
+                    filter: font.filter,
+                }
+                : {
+                    outline: null,
+                    filter: DEF_FONT_FILTER,
+                };
 
         // TODO: customizable font tex filter
         const atlas: FontAtlas = fontAtlases[fontName] ?? {
