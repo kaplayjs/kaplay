@@ -36,9 +36,9 @@ import {
     popTransform,
     pushMatrix,
     pushRotate,
-    pushScale,
+    pushScaleV,
     pushTransform,
-    pushTranslate,
+    pushTranslateV,
     setBackground,
     updateViewport,
     width,
@@ -116,6 +116,7 @@ import {
     Line,
     map,
     mapc,
+    Mat23,
     Mat4,
     NavMesh,
     normalizedCurve,
@@ -132,6 +133,7 @@ import {
     RNG,
     sat,
     shuffle,
+    SweepAndPrune,
     testCirclePolygon,
     testLineCircle,
     testLineLine,
@@ -441,6 +443,7 @@ const kaplay = <
 
     function makeCanvas(w: number, h: number) {
         const fb = new FrameBuffer(ggl, w, h);
+
         return {
             clear: () => fb.clear(),
             free: () => fb.free(),
@@ -485,8 +488,8 @@ const kaplay = <
 
         gfx.renderer.numDraws = 0;
         gfx.fixed = false;
-        gfx.transformStack.length = 0;
-        gfx.transform = new Mat4();
+        gfx.transformStackIndex = -1;
+        gfx.transform.setIdentity();
     }
 
     function usePostEffect(name: string, uniform?: Uniform | (() => Uniform)) {
@@ -686,8 +689,8 @@ const kaplay = <
     const query = game.root.query.bind(game.root);
     const tween = game.root.tween.bind(game.root);
 
-    kaSprite = loadSprite(null, kaSpriteSrc);
     boomSprite = loadSprite(null, boomSpriteSrc);
+    kaSprite = loadSprite(null, kaSpriteSrc);
 
     function fixedUpdateFrame() {
         // update every obj
@@ -750,18 +753,90 @@ const kaplay = <
         }
     }
 
+    function narrowPhase(
+        obj: GameObj<AreaComp>,
+        other: GameObj<AreaComp>,
+    ): boolean {
+        if (other.paused) return false;
+        if (!other.exists()) return false;
+        for (const tag of obj.collisionIgnore) {
+            if (other.is(tag)) {
+                return false;
+            }
+        }
+        for (const tag of other.collisionIgnore) {
+            if (obj.is(tag)) {
+                return false;
+            }
+        }
+        const res = gjkShapeIntersection(
+            obj.worldArea(),
+            other.worldArea(),
+        );
+        if (res) {
+            const col1 = new Collision(
+                obj,
+                other,
+                res.normal,
+                res.distance,
+            );
+            obj.trigger("collideUpdate", other, col1);
+            const col2 = col1.reverse();
+            // resolution only has to happen once
+            col2.resolved = col1.resolved;
+            other.trigger("collideUpdate", obj, col2);
+        }
+        return true;
+    }
+
+    const sap = new SweepAndPrune();
+    let sapInit = false;
+    function broadPhase() {
+        if (!usesArea()) {
+            return;
+        }
+
+        if (!sapInit) {
+            sapInit = true;
+            onAdd(obj => {
+                if (obj.is("area")) {
+                    sap.add(obj as GameObj<AreaComp>);
+                }
+            });
+            onDestroy(obj => {
+                sap.remove(obj as GameObj<AreaComp>);
+            });
+            onSceneLeave(scene => {
+                sapInit = false;
+                sap.clear();
+            });
+            for (const obj of get("*", { recursive: true })) {
+                if (obj.is("area")) {
+                    sap.add(obj as GameObj<AreaComp>);
+                }
+            }
+        }
+
+        sap.update();
+        for (const [obj1, obj2] of sap) {
+            narrowPhase(obj1, obj2);
+        }
+    }
+
     function checkFrame() {
         if (!usesArea()) {
             return;
         }
 
-        // TODO: persistent grid?
+        return broadPhase();
+
+        /*// TODO: persistent grid?
         // start a spatial hash grid for more efficient collision detection
         const grid: Record<number, Record<number, GameObj<AreaComp>[]>> = {};
         const cellSize = gopt.hashGridSize || DEF_HASH_GRID_SIZE;
 
         // current transform
-        let tr = new Mat4();
+        let tr = new Mat23();
 
         // a local transform stack
         const stack: any[] = [];
@@ -821,7 +896,6 @@ const kaplay = <
                                     other.worldArea(),
                                 );
                                 if (res) {
-                                    // console.log(res)
                                     // TODO: rehash if the object position is changed after resolution?
                                     const col1 = new Collision(
                                         aobj,
@@ -847,7 +921,7 @@ const kaplay = <
             tr = stack.pop();
         }
 
-        checkObj(game.root);
+        checkObj(game.root);*/
     }
 
     function handleErr(err: Error) {
@@ -1208,6 +1282,7 @@ const kaplay = <
         Vec2,
         Color,
         Mat4,
+        Mat23,
         Quad,
         RNG,
         rand,
@@ -1279,8 +1354,8 @@ const kaplay = <
         drawSubtracted,
         pushTransform,
         popTransform,
-        pushTranslate,
-        pushScale,
+        pushTranslate: pushTranslateV,
+        pushScale: pushScaleV,
         pushRotate,
         pushMatrix,
         usePostEffect,

@@ -353,7 +353,7 @@ export function addLevel(
 
             obj.tilePos = p;
             // Stale, so recalculate
-            obj.transform = calcTransform(obj);
+            calcTransform(obj, obj.transform);
 
             if (spatialMap) {
                 insertIntoSpatialMap(obj);
@@ -590,7 +590,7 @@ export function addLevel(
             while (node !== start) {
                 let cameNode = cameFrom.get(node);
 
-                if (!cameNode) {
+                if (cameNode === undefined) {
                     throw new Error("Bug in pathfinding algorithm");
                 }
 

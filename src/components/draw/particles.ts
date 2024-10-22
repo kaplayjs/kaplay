@@ -25,13 +25,11 @@ class Particle {
     angle: number = 0;
     angularVelocity: number = 0;
     damping: number = 0;
-    t: number;
+    t: number = 0;
     lt: number | null = null;
-    gc: boolean;
+    gc: boolean = true;
 
     constructor() {
-        this.t = 0;
-        this.gc = true;
     }
 
     get progress() {
@@ -44,7 +42,7 @@ class Particle {
  */
 export type EmitterOpt = {
     /*
-     * Shape of the emitter. If given, particles spwan within this shape.
+     * Shape of the emitter. If given, particles spawn within this shape.
      */
     shape?: ShapeType;
     /*
@@ -140,7 +138,7 @@ export interface ParticlesComp extends Comp {
 export function particles(popt: ParticlesOpt, eopt: EmitterOpt): ParticlesComp {
     let emitterLifetime = eopt.lifetime;
 
-    const particles: Particle[] = [];
+    const particles: Particle[] = new Array<Particle>(popt.max);
     const colors = popt.colors || [Color.WHITE];
     const opacities = popt.opacities || [1];
     const quads = popt.quads || [new Quad(0, 0, 1, 1)];
@@ -155,7 +153,12 @@ export function particles(popt: ParticlesOpt, eopt: EmitterOpt): ParticlesComp {
     const dampingRange = popt.damping || [0, 0];
 
     const indices: number[] = new Array<number>(popt.max * 6);
-    const vertices: Vertex[] = new Array<Vertex>(popt.max * 4);
+    const attributes = {
+        pos: new Array<number>(popt.max * 4 * 2),
+        uv: new Array<number>(popt.max * 4 * 2),
+        color: new Array<number>(popt.max * 4 * 3),
+        opacity: new Array<number>(popt.max * 4),
+    };
     let count = 0;
     let time = 0;
 
@@ -167,14 +170,11 @@ export function particles(popt: ParticlesOpt, eopt: EmitterOpt): ParticlesComp {
         indices[i * 6 + 4] = i * 4 + 2;
         indices[i * 6 + 5] = i * 4 + 3;
 
-        for (let j = 0; j < 4; j++) {
-            vertices[i * 4 + j] = {
-                pos: new Vec2(0, 0),
-                uv: new Vec2(0, 0),
-                color: rgb(255, 255, 255),
-                opacity: 1,
-            };
-        }
+        attributes.pos.fill(0);
+        attributes.uv.fill(0);
+        attributes.color.fill(255);
+        attributes.opacity.fill(1);
+
         particles[i] = new Particle();
     }
 
@@ -241,6 +241,7 @@ export function particles(popt: ParticlesOpt, eopt: EmitterOpt): ParticlesComp {
             if (emitterLifetime !== undefined && emitterLifetime <= 0) {
                 return;
             }
+
             const DT = dt();
             // Update all particles
             for (let i = 0; i < particles.length; i++) {
@@ -287,10 +288,10 @@ export function particles(popt: ParticlesOpt, eopt: EmitterOpt): ParticlesComp {
             for (let i = 0; i < particles.length; i++) {
                 const p = particles[i];
                 if (p.gc) {
-                    vertices[i * 4].opacity = 0;
-                    vertices[i * 4 + 1].opacity = 0;
-                    vertices[i * 4 + 2].opacity = 0;
-                    vertices[i * 4 + 3].opacity = 0;
+                    attributes.opacity[i * 4] = 0;
+                    attributes.opacity[i * 4 + 1] = 0;
+                    attributes.opacity[i * 4 + 2] = 0;
+                    attributes.opacity[i * 4 + 3] = 0;
                     continue;
                 }
                 const progress = p.progress;
@@ -327,60 +328,66 @@ export function particles(popt: ParticlesOpt, eopt: EmitterOpt): ParticlesComp {
                 const quad = quads[quadIndex];
                 const scaleIndex = Math.floor(progress * scales.length);
                 const scale = scales[scaleIndex];
+                // TODO: lerp scale
                 const angle = deg2rad(p.angle);
                 const c = Math.cos(angle);
                 const s = Math.sin(angle);
 
-                const hw = popt.texture.width * quad.w
-                    / 2;
-                const hh = popt.texture.height * quad.h
-                    / 2;
+                const hw = popt.texture.width * quad.w / 2;
+                const hh = popt.texture.height * quad.h / 2;
 
                 let j = i * 4;
                 // Left top
-                let v = vertices[j];
-                v.pos.x = p.pos.x + (-hw) * scale * c - (-hh) * scale * s;
-                v.pos.y = p.pos.y + (-hw) * scale * s + (-hh) * scale * c;
-                v.uv.x = quad.x;
-                v.uv.y = quad.y;
-                v.color.r = color.r;
-                v.color.g = color.g;
-                v.color.b = color.b;
-                v.opacity = opacity;
+                attributes.pos[j * 2] = p.pos.x + (-hw) * scale * c
+                    - (-hh) * scale * s;
+                attributes.pos[j * 2 + 1] = p.pos.y + (-hw) * scale * s
+                    + (-hh) * scale * c;
+                attributes.uv[j * 2] = quad.x;
+                attributes.uv[j * 2 + 1] = quad.y;
+                attributes.color[j * 3] = color.r;
+                attributes.color[j * 3 + 1] = color.g;
+                attributes.color[j * 3 + 2] = color.b;
+                attributes.opacity[j] = opacity;
                 // Right top
-                v = vertices[j + 1];
-                v.pos.x = p.pos.x + hw * scale * c - (-hh) * scale * s;
-                v.pos.y = p.pos.y + hw * scale * s + (-hh) * scale * c;
-                v.uv.x = quad.x + quad.w;
-                v.uv.y = quad.y;
-                v.color.r = color.r;
-                v.color.g = color.g;
-                v.color.b = color.b;
-                v.opacity = opacity;
+                j++;
+                attributes.pos[j * 2] = p.pos.x + hw * scale * c
+                    - (-hh) * scale * s;
+                attributes.pos[j * 2 + 1] = p.pos.y + hw * scale * s
+                    + (-hh) * scale * c;
+                attributes.uv[j * 2] = quad.x + quad.w;
+                attributes.uv[j * 2 + 1] = quad.y;
+                attributes.color[j * 3] = color.r;
+                attributes.color[j * 3 + 1] = color.g;
+                attributes.color[j * 3 + 2] = color.b;
+                attributes.opacity[j] = opacity;
                 // Right bottom
-                v = vertices[j + 2];
-                v.pos.x = p.pos.x + hw * scale * c - hh * scale * s;
-                v.pos.y = p.pos.y + hw * scale * s + hh * scale * c;
-                v.uv.x = quad.x + quad.w;
-                v.uv.y = quad.y + quad.h;
-                v.color.r = color.r;
-                v.color.g = color.g;
-                v.color.b = color.b;
-                v.opacity = opacity;
+                j++;
+                attributes.pos[j * 2] = p.pos.x + hw * scale * c
+                    - hh * scale * s;
+                attributes.pos[j * 2 + 1] = p.pos.y + hw * scale * s
+                    + hh * scale * c;
+                attributes.uv[j * 2] = quad.x + quad.w;
+                attributes.uv[j * 2 + 1] = quad.y + quad.h;
+                attributes.color[j * 3] = color.r;
+                attributes.color[j * 3 + 1] = color.g;
+                attributes.color[j * 3 + 2] = color.b;
+                attributes.opacity[j] = opacity;
                 // Left bottom
-                v = vertices[j + 3];
-                v.pos.x = p.pos.x + (-hw) * scale * c - hh * scale * s;
-                v.pos.y = p.pos.y + (-hw) * scale * s + hh * scale * c;
-                v.uv.x = quad.x;
-                v.uv.y = quad.y + quad.h;
-                v.color.r = color.r;
-                v.color.g = color.g;
-                v.color.b = color.b;
-                v.opacity = opacity;
+                j++;
+                attributes.pos[j * 2] = p.pos.x + (-hw) * scale * c
+                    - hh * scale * s;
+                attributes.pos[j * 2 + 1] = p.pos.y + (-hw) * scale * s
+                    + hh * scale * c;
+                attributes.uv[j * 2] = quad.x;
+                attributes.uv[j * 2 + 1] = quad.y + quad.h;
+                attributes.color[j * 3] = color.r;
+                attributes.color[j * 3 + 1] = color.g;
+                attributes.color[j * 3 + 2] = color.b;
+                attributes.opacity[j] = opacity;
             }
 
             drawRaw(
-                vertices,
+                attributes,
                 indices,
                 (this as any).fixed,
                 popt.texture,

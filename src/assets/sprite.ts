@@ -1,4 +1,4 @@
-import { Asset, loadImg, loadProgress } from "../assets";
+import { Asset, loadImage, loadProgress } from "../assets";
 import type { DrawSpriteOpt } from "../gfx";
 import type { Texture } from "../gfx/gfx";
 import { assets } from "../kaplay";
@@ -95,17 +95,20 @@ export class SpriteData {
     frames: Quad[] = [new Quad(0, 0, 1, 1)];
     anims: SpriteAnims = {};
     slice9: NineSlice | null = null;
+    packerId: number | null;
 
     constructor(
         tex: Texture,
         frames?: Quad[],
         anims: SpriteAnims = {},
         slice9: NineSlice | null = null,
+        packerId: number | null = null,
     ) {
         this.tex = tex;
         if (frames) this.frames = frames;
         this.anims = anims;
         this.slice9 = slice9;
+        this.packerId = packerId;
     }
 
     /**
@@ -132,7 +135,7 @@ export class SpriteData {
         data: ImageSource,
         opt: LoadSpriteOpt = {},
     ): SpriteData {
-        const [tex, quad] = assets.packer.add(data);
+        const [tex, quad, packerId] = assets.packer.add(data);
         const frames = opt.frames
             ? opt.frames.map((f) =>
                 new Quad(
@@ -150,14 +153,15 @@ export class SpriteData {
                 quad.w,
                 quad.h,
             );
-        return new SpriteData(tex, frames, opt.anims, opt.slice9);
+
+        return new SpriteData(tex, frames, opt.anims, opt.slice9, packerId);
     }
 
     static fromURL(
         url: string,
         opt: LoadSpriteOpt = {},
     ): Promise<SpriteData> {
-        return loadImg(url).then((img) => SpriteData.fromImage(img, opt));
+        return loadImage(url).then((img) => SpriteData.fromImage(img, opt));
     }
 }
 
@@ -179,9 +183,9 @@ export function resolveSprite(
             throw new Error(`Sprite not found: ${src}`);
         }
     }
-    else if (src instanceof SpriteData) {
-        return Asset.loaded(src);
-    }
+    // else if (src instanceof SpriteData) {
+    //     return Asset.loaded(src);
+    // }
     else if (src instanceof Asset) {
         return src;
     }
@@ -205,13 +209,14 @@ export function loadSprite(
     },
 ): Asset<SpriteData> {
     src = fixURL(src);
+
     if (Array.isArray(src)) {
         if (src.some((s) => typeof s === "string")) {
             return assets.sprites.add(
                 name,
                 Promise.all(src.map((s) => {
                     return typeof s === "string"
-                        ? loadImg(s)
+                        ? loadImage(s)
                         : Promise.resolve(s);
                 })).then((images) => createSpriteSheet(images, opt)),
             );
@@ -224,6 +229,7 @@ export function loadSprite(
         }
     }
     else {
+        console.log(assets.sprites);
         if (typeof src === "string") {
             return assets.sprites.add(name, SpriteData.from(src, opt));
         }
@@ -256,7 +262,6 @@ export function slice(x = 1, y = 1, dx = 0, dy = 0, w = 1, h = 1): Quad[] {
 }
 
 // TODO: load synchronously if passed ImageSource
-
 export function createSpriteSheet(
     images: ImageSource[],
     opt: LoadSpriteOpt = {},
@@ -266,8 +271,10 @@ export function createSpriteSheet(
     const height = images[0].height;
     canvas.width = width * images.length;
     canvas.height = height;
+
     const c2d = canvas.getContext("2d");
     if (!c2d) throw new Error("Failed to create canvas context");
+
     images.forEach((img, i) => {
         if (img instanceof ImageData) {
             c2d.putImageData(img, i * width, 0);
@@ -276,7 +283,9 @@ export function createSpriteSheet(
             c2d.drawImage(img, i * width, 0);
         }
     });
+
     const merged = c2d.getImageData(0, 0, images.length * width, height);
+
     return SpriteData.fromImage(merged, {
         ...opt,
         sliceX: images.length,

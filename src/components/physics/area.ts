@@ -539,15 +539,15 @@ export function area(opt: AreaCompOpt = {}): AreaComp {
 
             const transform = this.transform
                 .clone()
-                .translate(this.area.offset)
-                .scale(vec2(this.area.scale ?? 1));
+                .translateSelfV(this.area.offset)
+                .scaleSelfV(vec2(this.area.scale ?? 1));
 
             if (localArea instanceof k.Rect) {
                 const offset = anchorPt(this.anchor || DEF_ANCHOR)
                     .add(1, 1)
                     .scale(-0.5)
                     .scale(localArea.width, localArea.height);
-                transform.translate(offset);
+                transform.translateSelfV(offset);
             }
 
             return localArea.transform(transform) as Polygon;

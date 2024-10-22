@@ -1,10 +1,10 @@
 // @ts-check
 
-// Kaboom as pure rendering lib (no component / game obj etc.)
-
+// Kaplay as pure rendering lib (no component / game obj etc.)
 kaplay();
 loadSprite("bean", "/sprites/bean.png");
 
+// Loads a spiral shader
 loadShader(
     "spiral",
     null,
