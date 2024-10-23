@@ -546,7 +546,7 @@ const kaplay = <
         clearLog: () => game.logs = [],
         log: (...msgs) => {
             const max = gopt.logMax ?? LOG_MAX;
-            const msg = msgs.concat(" ").join(" ");
+            const msg = msgs.length > 1 ? msgs.concat(" ").join(" ") : msgs[0];
 
             game.logs.unshift({
                 msg: msg,
