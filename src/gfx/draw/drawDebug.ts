@@ -220,12 +220,20 @@ export function drawDebug() {
 }
 
 function prettyDebug(object: any | undefined, inside: boolean = false): string {
+    var outStr = "", tmp;
     if (inside && typeof object === "string") {
         object = JSON.stringify(object);
     }
+    if (Array.isArray(object)) {
+        outStr = [
+            "[",
+            object.map(e => prettyDebug(e, true)).join(", "),
+            "]"
+        ].join("");
+        object = outStr;
+    }
     if (typeof object === "object"
         && object.toString === Object.prototype.toString) {
-            var outStr = "", tmp;
             if (object.constructor !== Object) outStr += object.constructor.name + " ";
             outStr += [
                 "{",

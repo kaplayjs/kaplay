@@ -6,6 +6,7 @@ const pretty = {
     even: {
         nested: "objects",
     },
+    arrays: ["show", "like", "you", "would", "write", "them"],
     "own toString is used": vec2(10, 10)
 }
 
