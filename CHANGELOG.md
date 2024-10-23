@@ -45,6 +45,14 @@
   });
   ```
 
+- added `pressButton(btn)` and `releaseButton(btn)` to simulate button press and
+  release
+
+  ```js
+  pressButton("jump"); // triggers onButtonPress and starts onButtonDown
+  releaseButton("jump"); // triggers onButtonRelease and stops onButtonDown
+  ```
+
 - added the possibility of use arrays in all input handlers
 
   ```js
