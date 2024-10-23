@@ -445,6 +445,16 @@ export const initApp = (opt: {
         };
     }
 
+    function pressButton(btn: string) {
+        state.buttonState.press(btn);
+        state.events.trigger("buttonPress", btn);
+    }
+
+    function releaseButton(btn: string) {
+        state.buttonState.release(btn);
+        state.events.trigger("buttonRelease", btn);
+    }
+
     function onResize(action: () => void): KEventController {
         return state.events.on("resize", action);
     }
@@ -1262,6 +1272,8 @@ export const initApp = (opt: {
         isButtonReleased,
         setButton,
         getButton,
+        pressButton,
+        releaseButton,
         charInputted,
         onResize,
         onKeyDown,
