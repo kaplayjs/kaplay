@@ -29,6 +29,7 @@ import type {
     BuoyancyEffectorComp,
     BuoyancyEffectorCompOpt,
     CircleComp,
+    CircleCompOpt,
     ColorComp,
     ConstantForceComp,
     ConstantForceCompOpt,
@@ -369,7 +370,18 @@ export interface KAPLAYCtx<
      *
      * @param a The angle to rotate by. Defaults to 0.
      *
-     * @group Components
+     * @example
+     * ```js
+     * let bean = add([
+     *     sprite("bean"),
+     *     rotate(),
+     * ])
+     *
+     * // bean will be upside down!
+     * bean.angle = 180
+     * ```
+
+    * @group Components
      */
     rotate(a?: number): RotateComp;
     /**
@@ -393,6 +405,20 @@ export interface KAPLAYCtx<
     color(): ColorComp;
     /**
      * Sets the opacity of a Game Object (0.0 - 1.0).
+     *
+     * @example
+     * ```js
+     * const bean = add([
+     *     sprite("bean"),
+     *     opacity(0.5) // Make bean 50% transparent
+     * ])
+     *
+     * // Make bean invisible
+     * bean.opacity = 0
+     *
+     * // Make bean fully visible
+     * bean.opacity = 1
+     * ```
      *
      * @group Components
      */
@@ -511,7 +537,7 @@ export interface KAPLAYCtx<
      *
      * @group Components
      */
-    circle(radius: number): CircleComp;
+    circle(radius: number, opt?: CircleCompOpt): CircleComp;
     /**
      * Attach and render an ellipse to a Game Object.
      *
@@ -589,11 +615,49 @@ export interface KAPLAYCtx<
     /**
      * Determines the draw order for objects on the same layer. Object will be drawn on top if z value is bigger.
      *
+     * @example
+     * ```js
+     * const bean = add([
+     *    sprite("bean"),
+     *    pos(100, 100),
+     *    z(10), // Bean has a z value of 10
+     * ])
+     *
+     * // Mark has a z value of 20, so he will always be drawn on top of bean
+     * const mark = add([
+     *   sprite("mark"),
+     *   pos(100, 100),
+     *   z(20),
+     * ])
+     *
+     * bean.z = 30 // Bean now has a higher z value, so it will be drawn on top of mark
+     * ```
+     *
      * @group Components
      */
     z(z: number): ZComp;
     /**
      * Determines the layer for objects. Object will be drawn on top if the layer index is higher.
+     *
+     * @example
+     * ```js
+     * // Define layers
+     * layers(["background", "game", "foreground"], "game")
+     *
+     * const bean = add([
+     *     sprite("bean"),
+     *     pos(100, 100),
+     *     layer("background"),
+     * ])
+     *
+     * // Mark is in a higher layer, so he will be drawn on top of bean
+     * const mark = add([
+     *     sprite("mark"),
+     *     pos(100, 100),
+     *     layer("game"),
+     * ])
+     *
+     * bean.layer("foreground") // Bean is now in the foreground layer and will be drawn on top of mark
      *
      * @group Components
      */
@@ -616,11 +680,11 @@ export interface KAPLAYCtx<
      *
      * @param popt The options for the particles.
      * @param eopt The options for the emitter.
-     * 
+     *
      * @example
      * ```js
      * // beansplosion
-     * 
+     *
      * // create the emitter
      * const emitter = add([
      *     pos(center()),
@@ -681,11 +745,11 @@ export interface KAPLAYCtx<
     /**
      * Applies a force on a colliding object in order to make it move along the collision tangent vector.
      * Good for conveyor belts.
-     * 
+     *
      * @example
      * ```js
      * loadSprite("belt", "/sprites/jumpy.png")
-     * 
+     *
      * // conveyor belt
      * add([
      *     pos(center()),
@@ -790,11 +854,35 @@ export interface KAPLAYCtx<
     /**
      * Follow another game obj's position.
      *
+     * @example
+     * ```js
+     * const bean = add(...)
+     *
+     * add([
+     *   sprite("bag"),
+     *   pos(),
+     *   follow(bean) // Follow bean's position
+     * ])
+     * ```
+     *
+     * @example
+     * ```js
+     * const target = add(...)
+     *
+     * const mark = add([
+     *   sprite("mark"),
+     *   pos(),
+     *   follow(target, vec2(32, 32)) // Follow target's position with an offset
+     * ])
+     *
+     * mark.follow.offset = vec2(64, 64) // Change the offset
+     * ```
+     *
      * @group Components
      */
     follow(obj: GameObj | null, offset?: Vec2): FollowComp;
     /**
-     * Custom shader.
+     * Custom shader to manipulate sprite.
      *
      * @group Components
      */
@@ -1012,19 +1100,19 @@ export interface KAPLAYCtx<
     mask(maskType?: Mask): MaskComp;
     /**
      * Specifies the FrameBuffer the object should be drawn on.
-     * 
+     *
      * @example
      * ```js
      * // Draw on another canvas
      * let canvas = makeCanvas(width(), height())
-     * 
+     *
      * let beanOnCanvas = add([
      *     sprite("bean"),
      *     drawon(canvas.fb),
      * ])
      * ```
-     * 
-     * @param canvas 
+     *
+     * @param canvas
      */
     drawon(canvas: FrameBuffer): Comp;
     /**
@@ -1043,6 +1131,22 @@ export interface KAPLAYCtx<
     agent(opt?: AgentCompOpt): AgentComp;
     /**
      * A component to animate properties.
+     *
+     * @example
+     * ```js
+     * let movingBean = add([
+     *       sprite("bean"),
+     *       pos(50, 150),
+     *       anchor("center"),
+     *       animate(),
+     * ]);
+     *
+     * // Moving right to left using ping-pong
+     * movingBean.animate("pos", [vec2(50, 150), vec2(150, 150)], {
+     *     duration: 2,
+     *     direction: "ping-pong",
+     * });
+     * ```
      *
      * @since v3001.0
      * @group Components
@@ -1283,7 +1387,7 @@ export interface KAPLAYCtx<
      * ```
      * @group Events
      */
-    onLoad(action: () => void): void;
+    onLoad(action: () => void): KEventController | undefined;
     /**
      * Register an event that runs every frame when assets are initially loading. Can be used to draw a custom loading screen.
      * 
@@ -1313,7 +1417,7 @@ export interface KAPLAYCtx<
      * @since v3000.0
      * @group Events
      */
-    onLoading(action: (progress: number) => void): void;
+    onLoading(action: (progress: number) => void): KEventController;
     /**
      * Register a custom error handler. Can be used to draw a custom error screen.
      * 
@@ -1349,7 +1453,7 @@ export interface KAPLAYCtx<
      * @since v3000.0
      * @group Events
      */
-    onError(action: (err: Error) => void): void;
+    onError(action: (err: Error) => void): KEventController;
     /**
      * Register an event that runs when the canvas resizes.
      * 
@@ -1373,7 +1477,7 @@ export interface KAPLAYCtx<
      * @since v3000.0
      * @group Events
      */
-    onResize(action: () => void): void;
+    onResize(action: () => void): KEventController;
     /**
      * Cleanup function to run when quit() is called.
      * 
@@ -1405,7 +1509,7 @@ export interface KAPLAYCtx<
      * @since v3000.0
      * @group Input
      */
-    onGamepadConnect(action: (gamepad: KGamepad) => void): void;
+    onGamepadConnect(action: (gamepad: KGamepad) => void): KEventController;
     /**
      * Register an event that runs when a gamepad is disconnected.
      * 
@@ -1420,7 +1524,7 @@ export interface KAPLAYCtx<
      * @since v3000.0
      * @group Input
      */
-    onGamepadDisconnect(action: (gamepad: KGamepad) => void): void;
+    onGamepadDisconnect(action: (gamepad: KGamepad) => void): KEventController;
     /**
      * Register an event that runs once when 2 game objs with certain tags collides (required to have area() component).
      *
@@ -1512,6 +1616,14 @@ export interface KAPLAYCtx<
     onHover(tag: Tag, action: (a: GameObj) => void): KEventController;
     /**
      * Register an event that runs every frame when game objs with certain tags are hovered (required to have area() component).
+     *
+     * @example
+     * ```js
+     * // Rotate bean 90 degrees per second when hovered
+     * onHoverUpdate("bean", (bean) => {
+     *   bean.angle += dt() * 90
+     * })
+     * ```
      *
      * @since v3000.0
      * @group Events
@@ -1826,28 +1938,13 @@ export interface KAPLAYCtx<
     onTouchEnd(action: (pos: Vec2, t: Touch) => void): KEventController;
     /**
      * Register an event that runs when mouse wheel scrolled.
-     * 
+     *
      * @example
      * ```js
-     * // change item selected
-     * let hotbar = [null, null, null, "apple", null, "diamond sword", null, null, null]
-     * let selectedItemIndex = 0
-     * 
-     * // when scrollwheel is moved
-     * onScroll((d) => {
-     *     // if scrollwheel was moved up (negative y is up)
-     *     if (d.y < 0) {
-     *         selectedItemIndex++
-     *     } else if (d.y > 0) {
-     *         selectedItemIndex--
-     *     } else {
-     *         // onScroll accounts for horizontal mwheel scrolling
-     *         debug.log("x-direction scroll")
-     *         return
-     *     }
-     *     // wrap index from 0 to 8
-     *     selectedItemIndex = ((selectedItemIndex % 9) + 9) % 9
-     *     debug.log(`Item: ${hotbar[selectedItemIndex]} at index ${selectedItemIndex}`)
+     * // Zoom camera on scroll
+     * onScroll((delta) => {
+     *     const zoom = delta.y / 500
+     *     camScale(camScale().add(zoom))
      * })
      * ```
      *
@@ -2151,14 +2248,6 @@ export interface KAPLAYCtx<
     onButtonDown(action: (btn: TButton) => void): KEventController;
     /**
      * Register an event that runs when current scene ends.
-     * 
-     * @example
-     * ```js
-     * // run before leaving the scene
-     * onSceneLeave((newScene) => {
-     *     debug.log("we are going to ${newScene}")
-     * })
-     * ```
      *
      * @since v3000.0
      * @group Events
@@ -2325,7 +2414,10 @@ export interface KAPLAYCtx<
      *
      * @group Assets
      */
-    loadSound(name: string | null, src: string | ArrayBuffer): Asset<SoundData>;
+    loadSound(
+        name: string | null,
+        src: string | ArrayBuffer | AudioBuffer,
+    ): Asset<SoundData>;
     /**
      * Like loadSound(), but the audio is streamed and won't block loading. Use this for big audio files like background music.
      *
@@ -2712,6 +2804,34 @@ export interface KAPLAYCtx<
      */
     setButton(button: string, def: ButtonBinding): void;
     /**
+     * Press a button virtually.
+     *
+     * @since v3001.0
+     * @group Input
+     *
+     * @example
+     * ```js
+     * // press "jump" button
+     * pressButton("jump"); // triggers onButtonPress, starts onButtonDown
+     * releaseButton("jump"); // triggers onButtonRelease, stops onButtonDown
+     * ```
+     */
+    pressButton(button: TButton): void;
+    /**
+     * Release a button virtually.
+     *
+     * @since v3001.0
+     * @group Input
+     *
+     * @example
+     * ```js
+     * // press "jump" button
+     * pressButton("jump"); // triggers onButtonPress, starts onButtonDown
+     * releaseButton("jump"); // triggers onButtonRelease, stops onButtonDown
+     * ```
+     */
+    releaseButton(button: TButton): void;
+    /**
      * Get stick axis values from a gamepad.
      *
      * @since v3001.0
@@ -2782,6 +2902,14 @@ export interface KAPLAYCtx<
     camRot(angle?: number): number;
     /**
      * Flash the camera.
+     *
+     * @example
+     * ```js
+     * onClick(() => {
+     *     // flashed
+     *     camFlash(WHITE, 0.5)
+     * })
+     * ```
      *
      * @group Info
      */
