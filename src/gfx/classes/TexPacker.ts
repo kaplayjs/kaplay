@@ -26,9 +26,6 @@ export default class TexPacker {
         this.textures = [Texture.fromImage(gfx, this.canvas)];
         this.bigTextures = [];
 
-        // render canvas on the dom
-        document.body.appendChild(this.canvas);
-
         const context2D = this.canvas.getContext("2d");
         if (!context2D) throw new Error("Failed to get 2d context");
 
