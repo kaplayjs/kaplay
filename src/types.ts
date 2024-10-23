@@ -2327,6 +2327,34 @@ export interface KAPLAYCtx<
      */
     setButton(button: string, def: ButtonBinding): void;
     /**
+     * Press a button virtually.
+     *
+     * @since v3001.0
+     * @group Input
+     *
+     * @example
+     * ```js
+     * // press "jump" button
+     * pressButton("jump"); // triggers onButtonPress, starts onButtonDown
+     * releaseButton("jump"); // triggers onButtonRelease, stops onButtonDown
+     * ```
+     */
+    pressButton(button: TButton): void;
+    /**
+     * Release a button virtually.
+     *
+     * @since v3001.0
+     * @group Input
+     *
+     * @example
+     * ```js
+     * // press "jump" button
+     * pressButton("jump"); // triggers onButtonPress, starts onButtonDown
+     * releaseButton("jump"); // triggers onButtonRelease, stops onButtonDown
+     * ```
+     */
+    releaseButton(button: TButton): void;
+    /**
      * Get stick axis values from a gamepad.
      *
      * @since v3001.0

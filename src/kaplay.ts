@@ -1262,6 +1262,8 @@ const kaplay = <
         isButtonReleased: app.isButtonReleased,
         setButton: app.setButton,
         getButton: app.getButton,
+        pressButton: app.pressButton,
+        releaseButton: app.releaseButton,
         getLastInputDeviceType: app.getLastInputDeviceType,
         charInputted: app.charInputted,
         // timer
