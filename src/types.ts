@@ -1282,10 +1282,10 @@ export interface KAPLAYCtx<
      * ])
      * 
      * bean.onAdd(() => {
-     *     bean.pos = center()
+     *     bean.pos = center();
      * })
      * 
-     * add(bean)
+     * add(bean);
      * 
      * @group Events
      */
@@ -4290,10 +4290,10 @@ export interface GameObjRaw {
      * ])
      * 
      * bean.onAdd(() => {
-     *     bean.pos = center()
+     *     bean.pos = center();
      * })
      * 
-     * add(bean)
+     * add(bean);
      * 
      * @group Events
      */
