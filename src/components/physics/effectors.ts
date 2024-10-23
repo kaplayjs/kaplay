@@ -116,8 +116,8 @@ export function pointEffector(opts: PointEffectorCompOpt): PointEffectorComp {
                 const forceScale = this.forceMode === "constant"
                     ? 1
                     : this.forceMode === "inverseLinear"
-                        ? 1 / distance
-                        : 1 / distance ** 2;
+                    ? 1 / distance
+                    : 1 / distance ** 2;
                 const force = dir.scale(
                     this.forceMagnitude * forceScale / length,
                 );
@@ -155,23 +155,27 @@ export type PlatformEffectorCompOpt = {
     /**
      * If the object is about to collide and the collision normal direction is
      * in here, the object won't collide.
-     * 
+     *
      * Should be a list of unit vectors `LEFT`, `RIGHT`, `UP`, or `DOWN`.
      */
-    ignoreSides?: Vec2[]
+    ignoreSides?: Vec2[];
     /**
      * A function that determines whether the object should collide.
-     * 
+     *
      * If present, it overrides the `ignoreSides`; if absent, it is
      * automatically created from `ignoreSides`.
      */
-    shouldCollide?: (this: GameObj<PlatformEffectorComp>, obj: GameObj, normal: Vec2) => boolean
+    shouldCollide?: (
+        this: GameObj<PlatformEffectorComp>,
+        obj: GameObj,
+        normal: Vec2,
+    ) => boolean;
 };
 
 export interface PlatformEffectorComp extends Comp {
     /**
      * A set of the objects that should not collide with this, because `shouldCollide` returned true.
-     * 
+     *
      * Objects in here are automatically removed when they stop colliding, so the casual user shouldn't
      * need to touch this much. However, if an object is added to this set before the object collides
      * with the platform effector, it won't collide even if `shouldCollide` returns true.
@@ -184,8 +188,9 @@ export function platformEffector(
 ): PlatformEffectorComp {
     opt.ignoreSides ??= [Vec2.UP];
     opt.shouldCollide ??= (_, normal) => {
-        return opt.ignoreSides?.findIndex(s => s.sdist(normal) < Number.EPSILON) == -1;
-    }
+        return opt.ignoreSides?.findIndex(s => s.sdist(normal) < Number.EPSILON)
+            == -1;
+    };
     return {
         id: "platformEffector",
         require: ["area", "body"],
@@ -195,7 +200,13 @@ export function platformEffector(
                 if (this.platformIgnore.has(collision.target)) {
                     collision.preventResolution();
                 }
-                else if (!opt.shouldCollide!.call(this, collision.target, collision.normal)) {
+                else if (
+                    !opt.shouldCollide!.call(
+                        this,
+                        collision.target,
+                        collision.normal,
+                    )
+                ) {
                     collision.preventResolution();
                     this.platformIgnore.add(collision.target);
                 }

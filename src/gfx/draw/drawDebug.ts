@@ -228,21 +228,31 @@ function prettyDebug(object: any | undefined, inside: boolean = false): string {
         outStr = [
             "[",
             object.map(e => prettyDebug(e, true)).join(", "),
-            "]"
+            "]",
         ].join("");
         object = outStr;
     }
-    if (typeof object === "object"
-        && object.toString === Object.prototype.toString) {
-            if (object.constructor !== Object) outStr += object.constructor.name + " ";
-            outStr += [
-                "{",
-                (tmp = Object.getOwnPropertyNames(object)
-                    .map(p => `${/^\w+$/.test(p) ? p : JSON.stringify(p)}: ${prettyDebug(object[p], true)}`)
-                    .join(", ")) ? ` ${tmp} ` : "",
-                "}"
-            ].join("");
-            object = outStr;
+    if (
+        typeof object === "object"
+        && object.toString === Object.prototype.toString
+    ) {
+        if (object.constructor !== Object) {
+            outStr += object.constructor.name + " ";
+        }
+        outStr += [
+            "{",
+            (tmp = Object.getOwnPropertyNames(object)
+                    .map(p =>
+                        `${/^\w+$/.test(p) ? p : JSON.stringify(p)}: ${
+                            prettyDebug(object[p], true)
+                        }`
+                    )
+                    .join(", "))
+                ? ` ${tmp} `
+                : "",
+            "}",
+        ].join("");
+        object = outStr;
     }
     return String(object).replaceAll(/(?<!\\)\[/g, "\\[");
 }

@@ -47,15 +47,17 @@ export function compileStyledText(text: string): {
     let styleStack: string[] = [];
 
     const emit = (ch: string) => {
-        if (styleStack.length > 0)
+        if (styleStack.length > 0) {
             charStyleMap[renderText.length] = styleStack.slice();
+        }
         renderText += ch;
     };
 
     while (text !== "") {
         if (text[0] === "\\") {
-            if (text.length === 1)
+            if (text.length === 1) {
                 throw new Error("Styled text error: \\ at end of string");
+            }
             emit(text[1]);
             text = text.slice(2);
             continue;
@@ -72,14 +74,18 @@ export function compileStyledText(text: string): {
             if (e !== undefined) {
                 const x = styleStack.pop();
                 if (x !== gn) {
-                    if (x !== undefined)
+                    if (x !== undefined) {
                         throw new Error(
                             "Styled text error: mismatched tags. "
-                            + `Expected [/${x}], got [/${gn}]`);
-                    else throw new Error(
-                        `Styled text error: stray end tag [/${gn}]`)
+                                + `Expected [/${x}], got [/${gn}]`,
+                        );
+                    }
+                    else {throw new Error(
+                            `Styled text error: stray end tag [/${gn}]`,
+                        );}
                 }
-            } else styleStack.push(gn);
+            }
+            else styleStack.push(gn);
             text = text.slice(m.length);
             continue;
         }
@@ -87,10 +93,11 @@ export function compileStyledText(text: string): {
         text = text.slice(1);
     }
 
-    if (styleStack.length > 0)
+    if (styleStack.length > 0) {
         throw new Error(
-            `Styled text error: unclosed tags ${styleStack}`
+            `Styled text error: unclosed tags ${styleStack}`,
         );
+    }
 
     return {
         charStyleMap,
@@ -128,14 +135,14 @@ export function formatText(opt: DrawTextOpt): FormattedText {
             outline: Outline | null;
             filter: TexFilter;
         } = font instanceof FontData
-                ? {
-                    outline: font.outline,
-                    filter: font.filter,
-                }
-                : {
-                    outline: null,
-                    filter: DEF_FONT_FILTER,
-                };
+            ? {
+                outline: font.outline,
+                filter: font.filter,
+            }
+            : {
+                outline: null,
+                filter: DEF_FONT_FILTER,
+            };
 
         // TODO: customizable font tex filter
         const atlas: FontAtlas = fontAtlases[fontName] ?? {

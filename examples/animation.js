@@ -137,7 +137,7 @@ timedSquaringBean.animate(
     },
 );
 
-// We'll move this bean in a curve 
+// We'll move this bean in a curve
 // Using spline interpolation to move according to a smoothened path
 const curvingBean = add([
     sprite("bean"),
