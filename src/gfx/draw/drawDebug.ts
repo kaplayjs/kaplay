@@ -178,9 +178,7 @@ export function drawDebug() {
                 const style = log.msg instanceof Error ? "error" : "info";
                 str += `[time]${log.time.toFixed(2)}[/time]`;
                 str += " ";
-                str += `[${style}]${
-                    typeof log?.msg === "string" ? log.msg : String(log.msg)
-                }[/${style}]`;
+                str += `[${style}]${prettyDebug(log.msg)}[/${style}]`;
                 logs.push(str);
             }
 
@@ -219,4 +217,32 @@ export function drawDebug() {
             popTransform();
         });
     }
+}
+
+function prettyDebug(object: any | undefined, inside: boolean = false): string {
+    var outStr = "", tmp;
+    if (inside && typeof object === "string") {
+        object = JSON.stringify(object);
+    }
+    if (Array.isArray(object)) {
+        outStr = [
+            "[",
+            object.map(e => prettyDebug(e, true)).join(", "),
+            "]"
+        ].join("");
+        object = outStr;
+    }
+    if (typeof object === "object"
+        && object.toString === Object.prototype.toString) {
+            if (object.constructor !== Object) outStr += object.constructor.name + " ";
+            outStr += [
+                "{",
+                (tmp = Object.getOwnPropertyNames(object)
+                    .map(p => `${/^\w+$/.test(p) ? p : JSON.stringify(p)}: ${prettyDebug(object[p], true)}`)
+                    .join(", ")) ? ` ${tmp} ` : "",
+                "}"
+            ].join("");
+            object = outStr;
+    }
+    return String(object).replaceAll(/(?<!\\)\[/g, "\\[");
 }
