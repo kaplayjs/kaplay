@@ -39,37 +39,30 @@ export function surfaceEffector(
 
 export type AreaEffectorCompOpt = {
     useGlobalAngle?: boolean;
-    forceAngle: number;
-    forceMagnitude: number;
-    forceVariation?: number;
+    force: Vec2;
     linearDrag?: number;
-    // angularDrag?: number;
 };
 
 export interface AreaEffectorComp extends Comp {
     useGlobalAngle: boolean;
-    forceAngle: number;
-    forceMagnitude: number;
-    forceVariation: number;
-    linearDrag?: number;
-    // angularDrag?: number;
+    force: Vec2;
+    linearDrag: number;
 }
 
 export function areaEffector(opts: AreaEffectorCompOpt): AreaEffectorComp {
     return {
         id: "areaEffector",
         require: ["area"],
-        useGlobalAngle: opts.useGlobalAngle || false,
-        forceAngle: opts.forceAngle,
-        forceMagnitude: opts.forceMagnitude,
-        forceVariation: opts.forceVariation ?? 0,
+        force: opts.force,
         linearDrag: opts.linearDrag ?? 0,
-        // angularDrag: opts.angularDrag ?? 0,
+        useGlobalAngle: opts.useGlobalAngle ?? true,
         add(this: GameObj<AreaComp | AreaEffectorComp>) {
-            this.onCollideUpdate("body", (obj, col) => {
-                const dir = Vec2.fromAngle(this.forceAngle);
-                const force = dir.scale(this.forceMagnitude);
-                obj.addForce(force);
+            this.onCollideUpdate("body", obj => {
+                obj.addForce(
+                    this.useGlobalAngle
+                        ? this.force
+                        : this.force.rotate(this.transform.getRotation()),
+                );
                 if (this.linearDrag) {
                     obj.addForce(obj.vel.scale(-this.linearDrag));
                 }
@@ -82,20 +75,16 @@ export type ForceMode = "constant" | "inverseLinear" | "inverseSquared";
 
 export type PointEffectorCompOpt = {
     forceMagnitude: number;
-    forceVariation: number;
     distanceScale?: number;
     forceMode?: ForceMode;
     linearDrag?: number;
-    // angularDrag?: number;
 };
 
 export interface PointEffectorComp extends Comp {
     forceMagnitude: number;
-    forceVariation: number;
     distanceScale: number;
     forceMode: ForceMode;
     linearDrag: number;
-    // angularDrag: number;
 }
 
 export function pointEffector(opts: PointEffectorCompOpt): PointEffectorComp {
@@ -103,7 +92,6 @@ export function pointEffector(opts: PointEffectorCompOpt): PointEffectorComp {
         id: "pointEffector",
         require: ["area", "pos"],
         forceMagnitude: opts.forceMagnitude,
-        forceVariation: opts.forceVariation ?? 0,
         distanceScale: opts.distanceScale ?? 1,
         forceMode: opts.forceMode || "inverseLinear",
         linearDrag: opts.linearDrag ?? 0,
@@ -132,10 +120,12 @@ export function pointEffector(opts: PointEffectorCompOpt): PointEffectorComp {
 
 export type ConstantForceCompOpt = {
     force?: Vec2;
+    useGlobalAngle?: boolean;
 };
 
 export interface ConstantForceComp extends Comp {
-    force?: Vec2;
+    force: Vec2 | undefined;
+    useGlobalAngle: boolean;
 }
 
 export function constantForce(opts: ConstantForceCompOpt): ConstantForceComp {
@@ -143,9 +133,14 @@ export function constantForce(opts: ConstantForceCompOpt): ConstantForceComp {
         id: "constantForce",
         require: ["body"],
         force: opts.force,
+        useGlobalAngle: opts.useGlobalAngle ?? true,
         update(this: GameObj<BodyComp | ConstantForceComp>) {
             if (this.force) {
-                this.addForce(this.force);
+                this.addForce(
+                    this.useGlobalAngle
+                        ? this.force
+                        : this.force.rotate(this.transform.getRotation()),
+                );
             }
         },
     };
