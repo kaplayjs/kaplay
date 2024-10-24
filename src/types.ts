@@ -1265,36 +1265,49 @@ export interface KAPLAYCtx<
     /**
      * Runs when an object with a certain tag is added to the scene.
      * 
+     * @example
      * ```js
      * onAdd("coin", (coin) => {
-     *     play("bling")
+     *     play("bling");
      * })
      * ```
      * @group Events
      */
     onAdd(tag: Tag, action: (obj: GameObj) => void): KEventController;
     /**
-     * Runs when an specific object is added to the scene.
+     * Runs when an any object is added to the scene.
      * 
-     * let bean = make([
-     *     sprite("bean"),
-     *     pos(),
-     * ])
-     * 
-     * bean.onAdd(() => {
-     *     bean.pos = center();
+     * @example
+     * ```js
+     * onAdd((obj) => {
+     *     if (obj.sprite == "bean") obj.pos = center();
+     *     else obj.pos = vec2(rand(0, width()), rand(0, height()));
      * })
-     * 
-     * add(bean);
-     * 
+     * ```
      * @group Events
      */
     onAdd(action: (obj: GameObj) => void): KEventController;
     /**
+     * Runs when an with a tag is destroyed.
+     * 
+     * @example
+     * ```js
+     * onDestroy("bomb", () => {
+     *     debug.log("world is saved!")
+     * })
+     * ```
      * @group Events
      */
     onDestroy(tag: Tag, action: (obj: GameObj) => void): KEventController;
     /**
+     * Runs when any object is destroyed.
+     * 
+     * @example
+     * ```js
+     * onDestroy((obj) => {
+     *    if (obj.sprite == "bean") debug.log("RIP bean...");
+     * })
+     * ```
      * @group Events
      */
     onDestroy(action: (obj: GameObj) => void): KEventController;
