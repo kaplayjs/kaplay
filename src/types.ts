@@ -1288,7 +1288,7 @@ export interface KAPLAYCtx<
      */
     onAdd(action: (obj: GameObj) => void): KEventController;
     /**
-     * Runs when an with a tag is destroyed.
+     * Runs when an object with a tag is destroyed.
      * 
      * @example
      * ```js
