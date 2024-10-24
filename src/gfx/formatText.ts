@@ -38,13 +38,14 @@ function applyCharTransform(fchar: FormattedChar, tr: CharTransform) {
     if (tr.opacity != null) fchar.opacity *= tr.opacity;
 }
 
-export function compileStyledText(text: string): {
+export function compileStyledText(txt: string): {
     charStyleMap: Record<number, string[]>;
     text: string;
 } {
     const charStyleMap = {} as Record<number, string[]>;
     let renderText = "";
     let styleStack: string[] = [];
+    let text = String(txt);
 
     const emit = (ch: string) => {
         if (styleStack.length > 0) {
