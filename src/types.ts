@@ -3190,6 +3190,16 @@ export interface KAPLAYCtx<
      * @since v4000.0
      * @group Math
      */
+    clipLineToRect(r: Rect, l: Line, result: Line): boolean;
+    /**
+     * @since v4000.0
+     * @group Math
+     */
+    clipLineToCircle(c: Circle, l: Line, result: Line): boolean;
+    /**
+     * @since v4000.0
+     * @group Math
+     */
     gjkShapeIntersects(shapeA: Shape, shapeB: Shape): boolean;
     /**
      * @since v4000.0

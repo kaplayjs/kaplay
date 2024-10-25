@@ -1597,15 +1597,7 @@ export function testLineLine(l1: Line, l2: Line): Vec2 | null {
     );
 }
 
-export function testRectLine(r: Rect, l: Line): boolean {
-    /*if (testRectPoint(r, l.p1) || testRectPoint(r, l.p2)) {
-        return true
-    }
-    const pts = r.points()
-    return !!testLineLine(l, new Line(pts[0], pts[1]))
-        || !!testLineLine(l, new Line(pts[1], pts[2]))
-        || !!testLineLine(l, new Line(pts[2], pts[3]))
-        || !!testLineLine(l, new Line(pts[3], pts[0]))*/
+export function clipLineToRect(r: Rect, l: Line, result: Line): boolean {
     const dir = l.p2.sub(l.p1);
     let tmin = Number.NEGATIVE_INFINITY, tmax = Number.POSITIVE_INFINITY;
 
@@ -1616,6 +1608,11 @@ export function testRectLine(r: Rect, l: Line): boolean {
         tmin = Math.max(tmin, Math.min(tx1, tx2));
         tmax = Math.min(tmax, Math.max(tx1, tx2));
     }
+    else {
+        if (l.p1.x < r.pos.x || l.p1.x > r.pos.x + r.width) {
+            return false;
+        }
+    }
 
     if (dir.y != 0.0) {
         const ty1 = (r.pos.y - l.p1.y) / dir.y;
@@ -1623,6 +1620,51 @@ export function testRectLine(r: Rect, l: Line): boolean {
 
         tmin = Math.max(tmin, Math.min(ty1, ty2));
         tmax = Math.min(tmax, Math.max(ty1, ty2));
+    }
+    else {
+        if (l.p1.y < r.pos.y || l.p1.y > r.pos.y + r.height) {
+            return false;
+        }
+    }
+
+    if (tmax >= tmin && tmax >= 0 && tmin <= 1) {
+        Vec2.addScaled(l.p1, dir, Math.max(tmin, 0), result.p1);
+        Vec2.addScaled(l.p1, dir, Math.min(tmax, 1), result.p2);
+        return true;
+    }
+    else {
+        return false;
+    }
+}
+
+export function testRectLine(r: Rect, l: Line): boolean {
+    const dir = l.p2.sub(l.p1);
+    let tmin = Number.NEGATIVE_INFINITY, tmax = Number.POSITIVE_INFINITY;
+
+    if (dir.x != 0.0) {
+        const tx1 = (r.pos.x - l.p1.x) / dir.x;
+        const tx2 = (r.pos.x + r.width - l.p1.x) / dir.x;
+
+        tmin = Math.max(tmin, Math.min(tx1, tx2));
+        tmax = Math.min(tmax, Math.max(tx1, tx2));
+    }
+    else {
+        if (l.p1.x < r.pos.x || l.p1.x > r.pos.x + r.width) {
+            return false;
+        }
+    }
+
+    if (dir.y != 0.0) {
+        const ty1 = (r.pos.y - l.p1.y) / dir.y;
+        const ty2 = (r.pos.y + r.height - l.p1.y) / dir.y;
+
+        tmin = Math.max(tmin, Math.min(ty1, ty2));
+        tmax = Math.min(tmax, Math.max(ty1, ty2));
+    }
+    else {
+        if (l.p1.y < r.pos.y || l.p1.y > r.pos.y + r.height) {
+            return false;
+        }
     }
 
     return tmax >= tmin && tmax >= 0 && tmin <= 1;
@@ -1668,6 +1710,76 @@ export function testLinePoint(l: Line, pt: Vec2): boolean {
     // Since t is percentual distance of pt from line.p1 on the line,
     // it should be between 0% and 100%
     return t >= 0 && t <= 1;
+}
+
+export function clipLineToCircle(
+    circle: Circle,
+    l: Line,
+    result: Line,
+): boolean {
+    const v = l.p2.sub(l.p1);
+    const a = v.dot(v);
+    const centerToOrigin = l.p1.sub(circle.center);
+    const b = 2 * v.dot(centerToOrigin);
+    const c = centerToOrigin.dot(centerToOrigin)
+        - circle.radius * circle.radius;
+    // Calculate the discriminant of ax^2 + bx + c
+    const dis = b * b - 4 * a * c;
+
+    // No root
+    if ((a <= Number.EPSILON) || (dis < 0)) {
+        return false;
+    }
+    // One possible root
+    else if (dis == 0) {
+        const t = -b / (2 * a);
+        if (t >= 0 && t <= 1) {
+            if (testCirclePoint(circle, l.p1)) {
+                Vec2.copy(l.p1, result.p1);
+                Vec2.addScaled(l.p1, v, t, result.p2);
+            }
+            else {
+                Vec2.addScaled(l.p1, v, t, result.p1);
+                Vec2.copy(l.p2, result.p2);
+            }
+            return true;
+        }
+    }
+    // Two possible roots
+    else {
+        const t1 = (-b + Math.sqrt(dis)) / (2 * a);
+        const t2 = (-b - Math.sqrt(dis)) / (2 * a);
+        const b1 = t1 >= 0 && t1 <= 1;
+        const b2 = t2 >= 0 && t2 <= 1;
+        if (b1 && b2) {
+            Vec2.addScaled(l.p1, v, t1, result.p1);
+            Vec2.addScaled(l.p1, v, t2, result.p2);
+            return true;
+        }
+        else if (b1 || b2) {
+            const t = b1 ? t1 : t2;
+            if (testCirclePoint(circle, l.p1)) {
+                Vec2.copy(l.p1, result.p1);
+                Vec2.addScaled(l.p1, v, t, result.p2);
+            }
+            else {
+                Vec2.addScaled(l.p1, v, t, result.p1);
+                Vec2.copy(l.p2, result.p2);
+            }
+            return true;
+        }
+    }
+
+    // Check if line is completely within the circle
+    // We only need to check one point, since the line didn't cross the circle
+    if (testCirclePoint(circle, l.p1)) {
+        Vec2.copy(l.p1, result.p1);
+        Vec2.copy(l.p2, result.p2);
+        return true;
+    }
+    else {
+        return false;
+    }
 }
 
 export function testLineCircle(l: Line, circle: Circle): boolean {
