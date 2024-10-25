@@ -1597,15 +1597,7 @@ export function testLineLine(l1: Line, l2: Line): Vec2 | null {
     );
 }
 
-export function testRectLine(r: Rect, l: Line): boolean {
-    /*if (testRectPoint(r, l.p1) || testRectPoint(r, l.p2)) {
-        return true
-    }
-    const pts = r.points()
-    return !!testLineLine(l, new Line(pts[0], pts[1]))
-        || !!testLineLine(l, new Line(pts[1], pts[2]))
-        || !!testLineLine(l, new Line(pts[2], pts[3]))
-        || !!testLineLine(l, new Line(pts[3], pts[0]))*/
+export function clipLineToRect(r: Rect, l: Line, result: Line): boolean {
     const dir = l.p2.sub(l.p1);
     let tmin = Number.NEGATIVE_INFINITY, tmax = Number.POSITIVE_INFINITY;
 
@@ -1616,6 +1608,11 @@ export function testRectLine(r: Rect, l: Line): boolean {
         tmin = Math.max(tmin, Math.min(tx1, tx2));
         tmax = Math.min(tmax, Math.max(tx1, tx2));
     }
+    else {
+        if (l.p1.x < r.pos.x || l.p1.x > r.pos.x + r.width) {
+            return false;
+        }
+    }
 
     if (dir.y != 0.0) {
         const ty1 = (r.pos.y - l.p1.y) / dir.y;
@@ -1623,6 +1620,51 @@ export function testRectLine(r: Rect, l: Line): boolean {
 
         tmin = Math.max(tmin, Math.min(ty1, ty2));
         tmax = Math.min(tmax, Math.max(ty1, ty2));
+    }
+    else {
+        if (l.p1.y < r.pos.y || l.p1.y > r.pos.y + r.height) {
+            return false;
+        }
+    }
+
+    if (tmax >= tmin && tmax >= 0 && tmin <= 1) {
+        Vec2.addScaled(l.p1, dir, Math.max(tmin, 0), result.p1);
+        Vec2.addScaled(l.p1, dir, Math.min(tmax, 1), result.p2);
+        return true;
+    }
+    else {
+        return false;
+    }
+}
+
+export function testRectLine(r: Rect, l: Line): boolean {
+    const dir = l.p2.sub(l.p1);
+    let tmin = Number.NEGATIVE_INFINITY, tmax = Number.POSITIVE_INFINITY;
+
+    if (dir.x != 0.0) {
+        const tx1 = (r.pos.x - l.p1.x) / dir.x;
+        const tx2 = (r.pos.x + r.width - l.p1.x) / dir.x;
+
+        tmin = Math.max(tmin, Math.min(tx1, tx2));
+        tmax = Math.min(tmax, Math.max(tx1, tx2));
+    }
+    else {
+        if (l.p1.x < r.pos.x || l.p1.x > r.pos.x + r.width) {
+            return false;
+        }
+    }
+
+    if (dir.y != 0.0) {
+        const ty1 = (r.pos.y - l.p1.y) / dir.y;
+        const ty2 = (r.pos.y + r.height - l.p1.y) / dir.y;
+
+        tmin = Math.max(tmin, Math.min(ty1, ty2));
+        tmax = Math.min(tmax, Math.max(ty1, ty2));
+    }
+    else {
+        if (l.p1.y < r.pos.y || l.p1.y > r.pos.y + r.height) {
+            return false;
+        }
     }
 
     return tmax >= tmin && tmax >= 0 && tmin <= 1;

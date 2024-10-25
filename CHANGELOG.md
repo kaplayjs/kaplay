@@ -1,5 +1,6 @@
 # v4000.0.0
 
+- Added clipLineToRect
 - Replaced the Separating Axis Theorem (SAT) with the Gilbert–Johnson–Keerthi
   (GJK) distance algorithm.
 - Added circle and (rotated) ellipse collision shapes.
