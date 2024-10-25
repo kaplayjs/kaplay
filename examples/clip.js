@@ -62,6 +62,10 @@ scene("rect", () => {
             drawRectClippedLine(r, line);
         }
     });
+
+    onKeyPress("c", () => {
+        go("circle");
+    });
 });
 
 scene("circle", () => {
@@ -80,6 +84,11 @@ scene("circle", () => {
             drawCircleClippedLine(c, line);
         }
     });
+
+    onKeyPress("r", () => {
+        go("rect");
+    });
 });
 
 go("circle");
+
