@@ -91,4 +91,3 @@ scene("circle", () => {
 });
 
 go("circle");
-

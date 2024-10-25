@@ -1749,9 +1749,23 @@ export function clipLineToCircle(
     else {
         const t1 = (-b + Math.sqrt(dis)) / (2 * a);
         const t2 = (-b - Math.sqrt(dis)) / (2 * a);
-        if ((t1 >= 0 && t1 <= 1) || (t2 >= 0 && t2 <= 1)) {
+        const b1 = t1 >= 0 && t1 <= 1;
+        const b2 = t2 >= 0 && t2 <= 1;
+        if (b1 && b2) {
             Vec2.addScaled(l.p1, v, t1, result.p1);
             Vec2.addScaled(l.p1, v, t2, result.p2);
+            return true;
+        }
+        else if (b1 || b2) {
+            const t = b1 ? t1 : t2;
+            if (testCirclePoint(circle, l.p1)) {
+                Vec2.copy(l.p1, result.p1);
+                Vec2.addScaled(l.p1, v, t, result.p2);
+            }
+            else {
+                Vec2.addScaled(l.p1, v, t, result.p1);
+                Vec2.copy(l.p2, result.p2);
+            }
             return true;
         }
     }
