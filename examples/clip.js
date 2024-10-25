@@ -1,6 +1,7 @@
 kaplay();
 
 const r = new Rect(vec2(100, 100), 300, 200);
+const c = new Circle(vec2(250, 200), 100, 100);
 const res = new Line(vec2(), vec2());
 const testLines = [
     new Line(vec2(20, 40), vec2(500, 200)),
@@ -12,7 +13,7 @@ const testLines = [
     new Line(vec2(120, 150), vec2(120, 190)),
 ];
 
-function drawClippedLine(r, l) {
+function drawRectClippedLine(r, l) {
     drawLine({
         p1: l.p1,
         p2: l.p2,
@@ -28,19 +29,57 @@ function drawClippedLine(r, l) {
     }
 }
 
-onDraw(() => {
-    drawRect({
-        pos: r.pos,
-        width: r.width,
-        height: r.height,
-        fill: false,
-        outline: {
-            color: RED,
-            width: 1,
-        },
+function drawCircleClippedLine(r, l) {
+    drawLine({
+        p1: l.p1,
+        p2: l.p2,
+        color: WHITE,
     });
 
-    for (line of testLines) {
-        drawClippedLine(r, line);
+    if (clipLineToCircle(c, l, res)) {
+        drawLine({
+            p1: res.p1,
+            p2: res.p2,
+            color: GREEN,
+        });
     }
+}
+
+scene("rect", () => {
+    onDraw(() => {
+        drawRect({
+            pos: r.pos,
+            width: r.width,
+            height: r.height,
+            fill: false,
+            outline: {
+                color: RED,
+                width: 1,
+            },
+        });
+
+        for (line of testLines) {
+            drawRectClippedLine(r, line);
+        }
+    });
 });
+
+scene("circle", () => {
+    onDraw(() => {
+        drawCircle({
+            pos: c.center,
+            radius: c.radius,
+            fill: false,
+            outline: {
+                color: RED,
+                width: 1,
+            },
+        });
+
+        for (line of testLines) {
+            drawCircleClippedLine(c, line);
+        }
+    });
+});
+
+go("circle");

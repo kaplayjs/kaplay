@@ -1712,6 +1712,62 @@ export function testLinePoint(l: Line, pt: Vec2): boolean {
     return t >= 0 && t <= 1;
 }
 
+export function clipLineToCircle(
+    circle: Circle,
+    l: Line,
+    result: Line,
+): boolean {
+    const v = l.p2.sub(l.p1);
+    const a = v.dot(v);
+    const centerToOrigin = l.p1.sub(circle.center);
+    const b = 2 * v.dot(centerToOrigin);
+    const c = centerToOrigin.dot(centerToOrigin)
+        - circle.radius * circle.radius;
+    // Calculate the discriminant of ax^2 + bx + c
+    const dis = b * b - 4 * a * c;
+
+    // No root
+    if ((a <= Number.EPSILON) || (dis < 0)) {
+        return false;
+    }
+    // One possible root
+    else if (dis == 0) {
+        const t = -b / (2 * a);
+        if (t >= 0 && t <= 1) {
+            if (testCirclePoint(circle, l.p1)) {
+                Vec2.copy(l.p1, result.p1);
+                Vec2.addScaled(l.p1, v, t, result.p2);
+            }
+            else {
+                Vec2.addScaled(l.p1, v, t, result.p1);
+                Vec2.copy(l.p2, result.p2);
+            }
+            return true;
+        }
+    }
+    // Two possible roots
+    else {
+        const t1 = (-b + Math.sqrt(dis)) / (2 * a);
+        const t2 = (-b - Math.sqrt(dis)) / (2 * a);
+        if ((t1 >= 0 && t1 <= 1) || (t2 >= 0 && t2 <= 1)) {
+            Vec2.addScaled(l.p1, v, t1, result.p1);
+            Vec2.addScaled(l.p1, v, t2, result.p2);
+            return true;
+        }
+    }
+
+    // Check if line is completely within the circle
+    // We only need to check one point, since the line didn't cross the circle
+    if (testCirclePoint(circle, l.p1)) {
+        Vec2.copy(l.p1, result.p1);
+        Vec2.copy(l.p2, result.p2);
+        return true;
+    }
+    else {
+        return false;
+    }
+}
+
 export function testLineCircle(l: Line, circle: Circle): boolean {
     const v = l.p2.sub(l.p1);
     const a = v.dot(v);
