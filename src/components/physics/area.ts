@@ -1,9 +1,9 @@
 import { DEF_ANCHOR } from "../../constants";
 import { isFixed } from "../../game/utils";
-import { anchorPt, getViewportScale } from "../../gfx";
-import { app, game, k } from "../../kaplay";
+import { anchorPt, drawCircle, drawPolygon, drawRect, getViewportScale, popTransform, pushTransform, pushTranslate } from "../../gfx";
+import { _k } from "../../kaplay";
 import { rgb } from "../../math/color";
-import { Polygon, testPolygonPoint, Vec2, vec2 } from "../../math/math";
+import { Circle, Polygon, Rect, testPolygonPoint, Vec2, vec2 } from "../../math/math";
 import type {
     Collision,
     Comp,
@@ -225,7 +225,7 @@ export function area(opt: AreaCompOpt = {}): AreaComp {
         add(this: GameObj<AreaComp>) {
             areaCount++;
             if (this.area.cursor) {
-                this.onHover(() => app.setCursor(this.area.cursor!));
+                this.onHover(() => _k.app.setCursor(this.area.cursor!));
             }
 
             this.onCollideUpdate((obj, col) => {
@@ -261,8 +261,8 @@ export function area(opt: AreaCompOpt = {}): AreaComp {
         drawInspect(this: GameObj<AreaComp | AnchorComp | FixedComp>) {
             const a = this.localArea();
 
-            k.pushTransform();
-            k.pushTranslate(this.area.offset);
+            pushTransform();
+            pushTranslate(this.area.offset);
 
             const opts = {
                 outline: {
@@ -274,30 +274,30 @@ export function area(opt: AreaCompOpt = {}): AreaComp {
                 fixed: isFixed(this),
             };
 
-            if (a instanceof k.Rect) {
-                k.drawRect({
+            if (a instanceof Rect) {
+                drawRect({
                     ...opts,
                     pos: a.pos,
                     width: a.width * this.area.scale.x,
                     height: a.height * this.area.scale.y,
                 });
             }
-            else if (a instanceof k.Polygon) {
-                k.drawPolygon({
+            else if (a instanceof Polygon) {
+                drawPolygon({
                     ...opts,
                     pts: a.pts,
                     scale: this.area.scale,
                 });
             }
-            else if (a instanceof k.Circle) {
-                k.drawCircle({
+            else if (a instanceof Circle) {
+                drawCircle({
                     ...opts,
                     pos: a.center,
                     radius: a.radius,
                 });
             }
 
-            k.popTransform();
+            popTransform();
         },
 
         area: {
@@ -308,13 +308,13 @@ export function area(opt: AreaCompOpt = {}): AreaComp {
         },
 
         isClicked(): boolean {
-            return app.isMousePressed() && this.isHovering();
+            return _k.app.isMousePressed() && this.isHovering();
         },
 
         isHovering(this: GameObj) {
             const mpos = isFixed(this)
-                ? k.mousePos()
-                : k.toWorld(k.mousePos());
+                ? _k.k.mousePos()
+                : _k.k.toWorld(_k.k.mousePos());
             return this.hasPoint(mpos);
         },
 
@@ -356,7 +356,7 @@ export function area(opt: AreaCompOpt = {}): AreaComp {
             f: () => void,
             btn: MouseButton = "left",
         ): KEventController {
-            const e = app.onMousePress(btn, () => {
+            const e = _k.app.onMousePress(btn, () => {
                 if (this.isHovering()) {
                     f();
                 }
@@ -497,7 +497,7 @@ export function area(opt: AreaCompOpt = {}): AreaComp {
             const localArea = this.localArea();
 
             if (
-                !(localArea instanceof k.Polygon || localArea instanceof k.Rect)
+                !(localArea instanceof Polygon || localArea instanceof Rect)
             ) {
                 throw new Error(
                     "Only support polygon and rect shapes for now",
@@ -509,7 +509,7 @@ export function area(opt: AreaCompOpt = {}): AreaComp {
                 .translate(this.area.offset)
                 .scale(vec2(this.area.scale ?? 1));
 
-            if (localArea instanceof k.Rect) {
+            if (localArea instanceof Rect) {
                 const offset = anchorPt(this.anchor || DEF_ANCHOR)
                     .add(1, 1)
                     .scale(-0.5)
@@ -526,7 +526,7 @@ export function area(opt: AreaCompOpt = {}): AreaComp {
                 return area;
             }
             else {
-                return area.transform(game.cam.transform);
+                return area.transform(_k.game.cam.transform);
             }
         },
 

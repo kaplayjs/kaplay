@@ -1,8 +1,9 @@
-import type { ButtonBinding, ButtonBindingDevice, ButtonsDef } from "./app";
+import type { App, ButtonBinding, ButtonBindingDevice, ButtonsDef } from "./app";
 import type {
     AsepriteData,
     Asset,
     BitmapFontData,
+    initAssets,
     LoadBitmapFontOpt,
     LoadSpriteOpt,
     LoadSpriteSrc,
@@ -13,7 +14,7 @@ import type {
     Uniform,
 } from "./assets";
 import type { FontData } from "./assets/font";
-import type { AudioPlay, AudioPlayOpt } from "./audio";
+import type { AudioCtx, AudioPlay, AudioPlayOpt } from "./audio";
 import type {
     AgentComp,
     AgentCompOpt,
@@ -84,6 +85,7 @@ import type {
 } from "./components/draw/particles";
 import type {
     BoomOpt,
+    Game,
     GameObjEventMap,
     GameObjEventNames,
     LevelOpt,
@@ -92,6 +94,7 @@ import type {
     TupleWithoutFirst,
 } from "./game";
 import type {
+    AppGfxCtx,
     DrawBezierOpt,
     DrawCircleOpt,
     DrawCurveOpt,
@@ -127,6 +130,27 @@ import type { NavMesh } from "./math/navigationmesh";
 import type { KEvent, KEventController, KEventHandler } from "./utils/";
 
 /**
+ * Sensitive KAPLAY data
+ */
+export type KAPLAYInternal = {
+    k: KAPLAYCtx;
+    globalOpt: KAPLAYOpt;
+    gfx: AppGfxCtx;
+    game: Game;
+    app: App;
+    assets: ReturnType<typeof initAssets>;
+    fontCacheCanvas: HTMLCanvasElement | null;
+    fontCacheC2d: CanvasRenderingContext2D | null;
+    debug: Debug;
+    audio: AudioCtx;
+    pixelDensity: number;
+    canvas: HTMLCanvasElement;
+    gscale: number;
+    kaSprite: Asset<SpriteData>;
+    boomSprite: Asset<SpriteData>;
+}
+
+/**
  * Context handle that contains every kaboom function.
  *
  * @group Start
@@ -135,6 +159,12 @@ export interface KAPLAYCtx<
     TButtonDef extends ButtonsDef = {},
     TButton extends string = string,
 > {
+    /**
+     * Internal data that should not be accessed directly.
+     * 
+     * @group Misc
+     */
+    _k: KAPLAYInternal;
     /**
      * Assemble a game object from a list of components, and add it to the game
      *

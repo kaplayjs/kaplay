@@ -1,4 +1,4 @@
-import { app, gfx } from "../kaplay";
+import { _k } from "../kaplay";
 import { type Mat4, Vec2, vec2, type Vec2Args } from "../math/math";
 
 export function pushTranslate(...args: Vec2Args | [undefined]) {
@@ -6,15 +6,15 @@ export function pushTranslate(...args: Vec2Args | [undefined]) {
 
     const p = vec2(...args);
     if (p.x === 0 && p.y === 0) return;
-    gfx.transform.translate(p);
+    _k.gfx.transform.translate(p);
 }
 
 export function pushTransform() {
-    gfx.transformStack.push(gfx.transform.clone());
+    _k.gfx.transformStack.push(_k.gfx.transform.clone());
 }
 
 export function pushMatrix(m: Mat4) {
-    gfx.transform = m.clone();
+    _k.gfx.transform = m.clone();
 }
 
 export function pushScale(
@@ -24,59 +24,59 @@ export function pushScale(
 
     const p = vec2(...args);
     if (p.x === 1 && p.y === 1) return;
-    gfx.transform.scale(p);
+    _k.gfx.transform.scale(p);
 }
 
 export function pushRotate(a: number | undefined) {
     if (!a) return;
 
-    gfx.transform.rotate(a);
+    _k.gfx.transform.rotate(a);
 }
 
 export function popTransform() {
-    if (gfx.transformStack.length > 0) {
+    if (_k.gfx.transformStack.length > 0) {
         // if there's more than 1 element, it will return obviously a Mat4
-        gfx.transform = gfx.transformStack.pop()!;
+        _k.gfx.transform = _k.gfx.transformStack.pop()!;
     }
 }
 
 export function flush() {
-    gfx.renderer.flush();
+    _k.gfx.renderer.flush();
 }
 
 // get game width
 export function width(): number {
-    return gfx.width;
+    return _k.gfx.width;
 }
 
 // get game height
 export function height(): number {
-    return gfx.height;
+    return _k.gfx.height;
 }
 
 export function getViewportScale() {
-    return (gfx.viewport.width + gfx.viewport.height)
-        / (gfx.width + gfx.height);
+    return (_k.gfx.viewport.width + _k.gfx.viewport.height)
+        / (_k.gfx.width + _k.gfx.height);
 }
 
 // transform a point from content space to view space
 export function contentToView(pt: Vec2) {
     return new Vec2(
-        pt.x * gfx.viewport.width / gfx.width,
-        pt.y * gfx.viewport.height / gfx.height,
+        pt.x * _k.gfx.viewport.width / _k.gfx.width,
+        pt.y * _k.gfx.viewport.height / _k.gfx.height,
     );
 }
 
 // transform a point from window space to content space
 export function windowToContent(pt: Vec2) {
     return new Vec2(
-        (pt.x - gfx.viewport.x) * width() / gfx.viewport.width,
-        (pt.y - gfx.viewport.y) * height() / gfx.viewport.height,
+        (pt.x - _k.gfx.viewport.x) * width() / _k.gfx.viewport.width,
+        (pt.y - _k.gfx.viewport.y) * height() / _k.gfx.viewport.height,
     );
 }
 
 export function mousePos() {
-    return windowToContent(app.mousePos());
+    return windowToContent(_k.app.mousePos());
 }
 
 export function center(): Vec2 {

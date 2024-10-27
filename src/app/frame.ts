@@ -1,13 +1,13 @@
-import { app, debug } from "../kaplay";
+import { _k } from "../kaplay";
 
 export function dt() {
-    return app.dt() * debug.timeScale;
+    return _k.app.dt();
 }
 
 export function fixedDt() {
-    return app.fixedDt() * debug.timeScale;
+    return _k.app.fixedDt();
 }
 
 export function restDt() {
-    return app.restDt() * debug.timeScale;
+    return _k.app.restDt();
 }

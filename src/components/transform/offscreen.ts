@@ -1,6 +1,7 @@
 import { DEF_OFFSCREEN_DIS } from "../../constants";
-import { k } from "../../kaplay";
-import { Rect, vec2 } from "../../math/math";
+import { height, width } from "../../gfx";
+import { _k } from "../../kaplay";
+import { Rect, testRectPoint, vec2 } from "../../math/math";
 import type { Comp, GameObj } from "../../types";
 import type { KEventController } from "../../utils/";
 import type { PosComp } from "./pos";
@@ -64,8 +65,8 @@ export function offscreen(opt: OffScreenCompOpt = {}): OffScreenComp {
             // This is not possible, screenPos() without arguments returns the pos
             if (!pos) return false;
 
-            const screenRect = new Rect(vec2(0), k.width(), k.height());
-            return !k.testRectPoint(screenRect, pos)
+            const screenRect = new Rect(vec2(0), width(), height());
+            return !testRectPoint(screenRect, pos)
                 && screenRect.sdistToPoint(pos) > distance * distance;
         },
         onExitScreen(this: GameObj, action: () => void): KEventController {

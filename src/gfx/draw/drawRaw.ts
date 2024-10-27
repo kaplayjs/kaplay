@@ -1,5 +1,5 @@
 import { Asset, resolveShader, type Uniform } from "../../assets";
-import { game, gfx } from "../../kaplay";
+import { _k } from "../../kaplay";
 import { screen2ndc } from "../../math/various";
 import type { RenderProps, Vertex } from "../../types";
 import type { Texture } from "../gfx";
@@ -12,17 +12,17 @@ export function drawRaw(
     shaderSrc?: RenderProps["shader"],
     uniform: Uniform = {},
 ) {
-    const parsedTex = tex ?? gfx.defTex;
-    const parsedShader = shaderSrc ?? gfx.defShader;
+    const parsedTex = tex ?? _k.gfx.defTex;
+    const parsedShader = shaderSrc ?? _k.gfx.defShader;
     const shader = resolveShader(parsedShader);
 
     if (!shader || shader instanceof Asset) {
         return;
     }
 
-    const transform = (gfx.fixed || fixed)
-        ? gfx.transform
-        : game.cam.transform.mult(gfx.transform);
+    const transform = (_k.gfx.fixed || fixed)
+        ? _k.gfx.transform
+        : _k.game.cam.transform.mult(_k.gfx.transform);
 
     const vv: number[] = [];
 
@@ -42,8 +42,8 @@ export function drawRaw(
         );
     }
 
-    gfx.renderer.push(
-        gfx.ggl.gl.TRIANGLES,
+    _k.gfx.renderer.push(
+        _k.gfx.ggl.gl.TRIANGLES,
         vv,
         indices,
         shader,

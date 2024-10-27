@@ -1,7 +1,7 @@
 import { Asset, loadImg, loadProgress } from "../assets";
 import type { DrawSpriteOpt } from "../gfx";
 import type { Texture } from "../gfx/gfx";
-import { assets } from "../kaplay";
+import { _k } from "../kaplay";
 import beanSpriteSrc from "../kassets/bean.png";
 import { Quad } from "../math/math";
 import { type ImageSource } from "../types";
@@ -132,7 +132,7 @@ export class SpriteData {
         data: ImageSource,
         opt: LoadSpriteOpt = {},
     ): SpriteData {
-        const [tex, quad] = assets.packer.add(data);
+        const [tex, quad] = _k.assets.packer.add(data);
         const frames = opt.frames
             ? opt.frames.map((f) =>
                 new Quad(
@@ -191,7 +191,7 @@ export function resolveSprite(
 }
 
 export function getSprite(name: string): Asset<SpriteData> | null {
-    return assets.sprites.get(name) ?? null;
+    return _k.assets.sprites.get(name) ?? null;
 }
 
 // load a sprite to asset manager
@@ -207,7 +207,7 @@ export function loadSprite(
     src = fixURL(src);
     if (Array.isArray(src)) {
         if (src.some((s) => typeof s === "string")) {
-            return assets.sprites.add(
+            return _k.assets.sprites.add(
                 name,
                 Promise.all(src.map((s) => {
                     return typeof s === "string"
@@ -217,7 +217,7 @@ export function loadSprite(
             );
         }
         else {
-            return assets.sprites.addLoaded(
+            return _k.assets.sprites.addLoaded(
                 name,
                 createSpriteSheet(src as ImageSource[], opt),
             );
@@ -225,10 +225,10 @@ export function loadSprite(
     }
     else {
         if (typeof src === "string") {
-            return assets.sprites.add(name, SpriteData.from(src, opt));
+            return _k.assets.sprites.add(name, SpriteData.from(src, opt));
         }
         else {
-            return assets.sprites.addLoaded(
+            return _k.assets.sprites.addLoaded(
                 name,
                 SpriteData.fromImage(src, opt),
             );

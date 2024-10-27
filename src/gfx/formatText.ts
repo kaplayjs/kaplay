@@ -5,7 +5,7 @@ import {
     FONT_ATLAS_HEIGHT,
     FONT_ATLAS_WIDTH,
 } from "../constants";
-import { fontCacheC2d, fontCacheCanvas, gfx } from "../kaplay";
+import { _k } from "../kaplay";
 import { Color } from "../math/color";
 import { Quad, Vec2, vec2 } from "../math/math";
 import { type Outline, type TexFilter } from "../types";
@@ -141,7 +141,7 @@ export function formatText(opt: DrawTextOpt): FormattedText {
         // TODO: customizable font tex filter
         const atlas: FontAtlas = fontAtlases[fontName] ?? {
             font: {
-                tex: new Texture(gfx.ggl, FONT_ATLAS_WIDTH, FONT_ATLAS_HEIGHT, {
+                tex: new Texture(_k.gfx.ggl, FONT_ATLAS_WIDTH, FONT_ATLAS_HEIGHT, {
                     filter: opts.filter,
                 }),
                 map: {},
@@ -160,18 +160,18 @@ export function formatText(opt: DrawTextOpt): FormattedText {
         for (const ch of chars) {
             if (!atlas.font.map[ch]) {
                 // TODO: use assets.packer to pack font texture
-                const c2d = fontCacheC2d;
+                const c2d = _k.fontCacheC2d;
                 if (!c2d) throw new Error("fontCacheC2d is not defined.");
 
-                if (!fontCacheCanvas) {
+                if (!_k.fontCacheCanvas) {
                     throw new Error("fontCacheCanvas is not defined.");
                 }
 
                 c2d.clearRect(
                     0,
                     0,
-                    fontCacheCanvas.width,
-                    fontCacheCanvas.height,
+                    _k.fontCacheCanvas.width,
+                    _k.fontCacheCanvas.height,
                 );
                 c2d.font = `${font.size}px ${fontName}`;
                 c2d.textBaseline = "top";
