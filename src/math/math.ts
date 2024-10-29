@@ -1132,9 +1132,8 @@ export function rand<T = number>(...args: [] | [T] | [T, T]) {
     return defRNG.genAny(...args);
 }
 
-// TODO: randi() to return 0 / 1?
 export function randi(...args: [] | [number] | [number, number]) {
-    return Math.floor(rand(...args));
+    return Math.floor(rand(...(args.length > 0 ? args : [2])));
 }
 
 export function chance(p: number): boolean {
