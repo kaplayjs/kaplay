@@ -2205,15 +2205,43 @@ export interface KAPLAYCtx<
      */
     mouseDeltaPos(): Vec2;
     /**
-     * If certain keys are currently down.
+     * If any or certain key(s) are currently down.
      *
      * @example
      * ```js
+     * // Any key down
+     *
+     * let lastKeyTime = time()
+     * let triedToWakeUp = false
+     *
+     * onUpdate(() => {
+     *     if (isKeyDown()) {
+     *         lastKeyTime = time()
+     *         triedToWakeUp = false
+     *         return
+     *     }
+     *
+     *     if (triedToWakeUp || time() - lastKeyTime < 5) return
+     *
+     *     debug.log("Wake up!")
+     *     triedToWakeUp = true
+     * })
+     *
+     * // Certain key down
      * // equivalent to the calling bean.move() in an onKeyDown("left")
+     *
      * onUpdate(() => {
      *     if (isKeyDown("left")) {
      *         bean.move(-SPEED, 0)
      *     }
+     * })
+     *
+     * // Certain keys down
+     *
+     * let isMoving = false
+     *
+     * onUpdate(() => {
+     *     isMoving = isKeyDown(["left", "right"])
      * })
      * ```
      *
@@ -2222,21 +2250,69 @@ export interface KAPLAYCtx<
      */
     isKeyDown(k?: Key | Key[]): boolean;
     /**
-     * If certain keys are just pressed last frame.
+     * If any or certain key(s) are just pressed last frame.
+     *
+     * @example
+     * ```js
+     * onUpdate(() => {
+     *     if (!isKeyPressed()) return // early return as no key was pressed
+     *
+     *     if (isKeyPressed("space")) debug.log("Pressed the jump key")
+     *     if (isKeyPressed(["left", "right"])) debug.log("Pressed any of the move keys")
+     * })
+     * ```
      *
      * @since v3001.0
      * @group Input
      */
     isKeyPressed(k?: Key | Key[]): boolean;
     /**
-     * If certain keys are just pressed last frame (also fires repeatedly when the keys are being held down).
+     * If any or certain key(s) are just pressed last frame (also fires repeatedly when the keys are being held down).
+     *
+     * @example
+     * ```js
+     * let heldKeys = new Set()
+     *
+     * onUpdate(() => {
+     *     if (isKeyPressedRepeat("space")) {
+     *         pressedOrHeld(["space"], 'the jump key')
+     *     } else if (isKeyPressedRepeat(["left", "right"])) {
+     *         pressedOrHeld(["left", "right"], 'any of the move keys')
+     *     } else if (isKeyPressedRepeat()) {
+     *         pressedOrHeld(["any"], 'any key')
+     *     }
+     * })
+     *
+     * onKeyRelease((key) => wait(0.1, () => {
+     *     heldKeys.delete(key)
+     *     heldKeys.delete("any")
+     * }))
+     *
+     * // log message if pressed only or held as well
+     * function pressedOrHeld(keys, string) {
+     *     debug.log(`Pressed${keys.some(key => heldKeys.has(key)) ? ' and held' : ''} ${string}`)
+     *     keys.forEach((key) => {
+     *         if (key == "any" || isKeyDown(key)) heldKeys.add(key)
+     *     })
+     * }
+     * ```
      *
      * @since v3001.0
      * @group Input
      */
     isKeyPressedRepeat(k?: Key | Key[]): boolean;
     /**
-     * If certain keys are just released last frame.
+     * If any or certain key(s) are just released last frame.
+     *
+     * @example
+     * ```js
+     * onUpdate(() => {
+     *     if (!isKeyReleased()) return // early return as no key was released
+     *
+     *     if (isKeyReleased("space")) debug.log("Released the jump key")
+     *     if (isKeyReleased(["left", "right"])) debug.log("Released any of the move keys")
+     * })
+     * ```
      *
      * @since v3001.0
      * @group Input
@@ -2292,26 +2368,56 @@ export interface KAPLAYCtx<
      */
     isGamepadButtonReleased(btn?: KGamepadButton | KGamepadButton[]): boolean;
     /**
-     * If certain bound buttons are just pressed last frame on any input (keyboard, gamepad).
+     * If any or certain bound button(s) are just pressed last frame on any input (keyboard, gamepad).
+     *
+     * @example
+     * ```js
+     * onUpdate(() => {
+     *     if (!isButtonPressed()) return // early return as no button was pressed
+     *
+     *     if (isButtonPressed("jump")) debug.log("Player jumped")
+     *     if (isButtonPressed(["left", "right"])) debug.log("Player moved")
+     * })
+     * ```
      *
      * @since v3001.0
      * @group Input
      */
-    isButtonPressed(button: TButton | TButton[]): boolean;
+    isButtonPressed(button?: TButton | TButton[]): boolean;
     /**
-     * If certain bound buttons are currently held down on any input (keyboard, gamepad).
+     * If any or certain bound button(s) are currently held down on any input (keyboard, gamepad).
+     *
+     * @example
+     * ```js
+     * onUpdate(() => {
+     *     if (!isButtonDown()) return // early return as no button is held down
+     *
+     *     if (isButtonDown("jump")) debug.log("Player is jumping")
+     *     if (isButtonDown(["left", "right"])) debug.log("Player is moving")
+     * })
+     * ```
      *
      * @since v3001.0
      * @group Input
      */
-    isButtonDown(button: TButton | TButton[]): boolean;
+    isButtonDown(button?: TButton | TButton[]): boolean;
     /**
-     * If certain bound buttons are just released last frame on any input (keyboard, gamepad).
+     * If any or certain bound button(s) are just released last frame on any input (keyboard, gamepad).
+     *
+     * @example
+     * ```js
+     * onUpdate(() => {
+     *     if (!isButtonReleased()) return // early return as no button was released
+     *
+     *     if (isButtonReleased("jump")) debug.log("Player stopped jumping")
+     *     if (isButtonReleased(["left", "right"])) debug.log("Player stopped moving")
+     * })
+     * ```
      *
      * @since v3001.0
      * @group Input
      */
-    isButtonReleased(button: TButton | TButton[]): boolean;
+    isButtonReleased(button?: TButton | TButton[]): boolean;
     /**
      * Get a input binding from a button name.
      *
