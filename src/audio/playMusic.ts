@@ -1,4 +1,4 @@
-import { app, audio, debug, globalOpt } from "../kaplay";
+import { _k } from "../kaplay";
 import { clamp } from "../math/math";
 import { KEvent } from "../utils";
 import type { AudioPlay, AudioPlayOpt } from "./play";
@@ -6,14 +6,14 @@ import type { AudioPlay, AudioPlayOpt } from "./play";
 export function playMusic(url: string, opt: AudioPlayOpt = {}): AudioPlay {
     const onEndEvents = new KEvent();
     const el = new Audio(url);
-    const src = audio.ctx.createMediaElementSource(el);
+    const src = _k.audio.ctx.createMediaElementSource(el);
 
-    src.connect(audio.masterNode);
+    src.connect(_k.audio.masterNode);
 
     function resumeAudioCtx() {
-        if (debug.paused) return;
-        if (app.isHidden() && !globalOpt.backgroundAudio) return;
-        audio.ctx.resume();
+        if (_k.debug.paused) return;
+        if (_k.app.isHidden() && !_k.globalOpt.backgroundAudio) return;
+        _k.audio.ctx.resume();
     }
 
     function play() {

@@ -1,6 +1,6 @@
 import { ASCII_CHARS } from "../constants";
 import { Texture } from "../gfx";
-import { assets, gfx } from "../kaplay";
+import { _k } from "../kaplay";
 import type { Quad } from "../math/math";
 import type { TexFilter } from "../types";
 import { type Asset, loadImg } from "./asset";
@@ -16,7 +16,7 @@ export interface GfxFont {
 export type BitmapFontData = GfxFont;
 
 export function getBitmapFont(name: string): Asset<BitmapFontData> | null {
-    return assets.bitmapFonts.get(name) ?? null;
+    return _k.assets.bitmapFonts.get(name) ?? null;
 }
 
 export interface LoadBitmapFontOpt {
@@ -36,12 +36,12 @@ export function loadBitmapFont(
 ): Asset<BitmapFontData> {
     const fontSrc = fixURL(src);
 
-    return assets.bitmapFonts.add(
+    return _k.assets.bitmapFonts.add(
         name,
         loadImg(fontSrc)
             .then((img) => {
                 return makeFont(
-                    Texture.fromImage(gfx.ggl, img, opt),
+                    Texture.fromImage(_k.gfx.ggl, img, opt),
                     gw,
                     gh,
                     opt.chars ?? ASCII_CHARS,

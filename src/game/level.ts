@@ -1,5 +1,5 @@
 import { pos, type PosComp, tile } from "../components";
-import { game } from "../kaplay";
+import { _k } from "../kaplay";
 import {
     raycastGrid,
     type RaycastResult,
@@ -67,7 +67,7 @@ export function addLevel(
     }
 
     // TODO: custom parent
-    const level = game.root.add([
+    const level = _k.game.root.add([
         pos(opt.pos ?? vec2(0)),
     ]) as GameObj<PosComp | LevelComp>;
 

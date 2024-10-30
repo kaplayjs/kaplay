@@ -1,7 +1,7 @@
 import { SPRITE_ATLAS_HEIGHT, SPRITE_ATLAS_WIDTH } from "../constants";
 import type { GfxCtx } from "../gfx/gfx";
 import TexPacker from "../gfx/texPacker";
-import { assets } from "../kaplay";
+import { _k } from "../kaplay";
 import { KEvent } from "../utils";
 import type { BitmapFontData } from "./bitmapFont";
 import type { FontData } from "./font";
@@ -139,13 +139,13 @@ export function fetchArrayBuffer(path: string) {
 // global load path prefix
 export function loadRoot(path?: string): string {
     if (path !== undefined) {
-        assets.urlPrefix = path;
+        _k.assets.urlPrefix = path;
     }
-    return assets.urlPrefix;
+    return _k.assets.urlPrefix;
 }
 
 export function loadJSON(name: string, url: string) {
-    return assets.custom.add(name, fetchJSON(fixURL(url)));
+    return _k.assets.custom.add(name, fetchJSON(fixURL(url)));
 }
 
 // wrapper around image loader to get a Promise
@@ -162,24 +162,24 @@ export function loadImg(src: string): Promise<HTMLImageElement> {
 
 export function loadProgress(): number {
     const buckets = [
-        assets.sprites,
-        assets.sounds,
-        assets.shaders,
-        assets.fonts,
-        assets.bitmapFonts,
-        assets.custom,
+        _k.assets.sprites,
+        _k.assets.sounds,
+        _k.assets.shaders,
+        _k.assets.fonts,
+        _k.assets.bitmapFonts,
+        _k.assets.custom,
     ];
     return buckets.reduce((n, bucket) => n + bucket.progress(), 0)
         / buckets.length;
 }
 
 export function getAsset(name: string): Asset<any> | null {
-    return assets.custom.get(name) ?? null;
+    return _k.assets.custom.get(name) ?? null;
 }
 
 // wrap individual loaders with global loader counter, for stuff like progress bar
 export function load<T>(prom: Promise<T>): Asset<T> {
-    return assets.custom.add(null, prom);
+    return _k.assets.custom.add(null, prom);
 }
 
 // create assets

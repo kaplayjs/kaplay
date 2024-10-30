@@ -1,5 +1,5 @@
 import { Asset, resolveSound, type SoundData } from "../assets";
-import { assets, audio } from "../kaplay";
+import { _k } from "../kaplay";
 import type { MusicData } from "../types";
 import { KEvent, type KEventController } from "../utils";
 import { playMusic } from "./playMusic";
@@ -133,11 +133,11 @@ export function play(
         | Asset<MusicData>,
     opt: AudioPlayOpt = {},
 ): AudioPlay {
-    if (typeof src === "string" && assets.music[src]) {
-        return playMusic(assets.music[src], opt);
+    if (typeof src === "string" && _k.assets.music[src]) {
+        return playMusic(_k.assets.music[src], opt);
     }
 
-    const ctx = audio.ctx;
+    const ctx = _k.audio.ctx;
     let paused = opt.paused ?? false;
     let srcNode = ctx.createBufferSource();
     const onEndEvents = new KEvent();
@@ -162,7 +162,7 @@ export function play(
     };
     panNode.pan.value = opt.pan ?? 0;
     panNode.connect(gainNode);
-    gainNode.connect(audio.masterNode);
+    gainNode.connect(_k.audio.masterNode);
     gainNode.gain.value = opt.volume ?? 1;
 
     const start = (data: SoundData) => {

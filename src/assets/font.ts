@@ -6,7 +6,7 @@ import {
 } from "../constants";
 import type { Texture } from "../gfx";
 import type { DrawTextOpt } from "../gfx/draw/drawText";
-import { assets, globalOpt } from "../kaplay";
+import { _k } from "../kaplay";
 import { rgb } from "../math/color";
 import { Quad } from "../math/math";
 import type { LoadFontOpt, Outline, TexFilter } from "../types";
@@ -58,7 +58,7 @@ export function resolveFont(
     | void
 {
     if (!src) {
-        return resolveFont(globalOpt.font ?? DEF_FONT);
+        return resolveFont(_k.globalOpt.font ?? DEF_FONT);
     }
     if (typeof src === "string") {
         const bfont = getBitmapFont(src);
@@ -89,7 +89,7 @@ export function resolveFont(
 }
 
 export function getFont(name: string): Asset<FontData> | null {
-    return assets.fonts.get(name) ?? null;
+    return _k.assets.fonts.get(name) ?? null;
 }
 
 // TODO: pass in null src to store opt for default fonts like "monospace"
@@ -105,7 +105,7 @@ export function loadFont(
     );
     document.fonts.add(font);
 
-    return assets.fonts.add(
+    return _k.assets.fonts.add(
         name,
         font.load().catch((err) => {
             throw new Error(`Failed to load font from "${fontSrc}": ${err}`);

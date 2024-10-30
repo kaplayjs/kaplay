@@ -1,4 +1,4 @@
-import { k } from "../../kaplay";
+import { _k } from "../../kaplay";
 import easings from "../../math/easings";
 import { lerp } from "../../math/math";
 import type {
@@ -53,7 +53,7 @@ export function timer(): TimerComp {
             if (action) actions.push(action);
             let t = 0;
             const ev = this.onUpdate(() => {
-                t += k.dt();
+                t += _k.app.state.dt;
                 if (t >= time) {
                     actions.forEach((f) => f());
                     ev.cancel();
@@ -105,7 +105,7 @@ export function timer(): TimerComp {
             let curTime = 0;
             const onEndEvents: Array<() => void> = [];
             const ev = this.onUpdate(() => {
-                curTime += k.dt();
+                curTime += _k.app.state.dt;
                 const t = Math.min(curTime / duration, 1);
                 setValue(lerp(from, to, easeFunc(t)));
                 if (t === 1) {

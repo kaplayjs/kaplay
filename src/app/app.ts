@@ -1225,6 +1225,7 @@ export const initApp = (opt: {
     resizeObserver.observe(state.canvas);
 
     return {
+        state,
         dt,
         fixedDt,
         restDt,

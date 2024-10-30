@@ -1,7 +1,8 @@
-import { fixedDt } from "../../app";
+import { dt, fixedDt, restDt } from "../../app";
 import { DEF_JUMP_FORCE, MAX_VEL } from "../../constants";
-import { game, k } from "../../kaplay";
-import { type Vec2, vec2 } from "../../math/math";
+import { getGravityDirection } from "../../game";
+import { _k } from "../../kaplay";
+import { lerp, type Vec2, vec2 } from "../../math/math";
 import { calcTransform } from "../../math/various";
 import type { Collision, Comp, GameObj } from "../../types";
 import type { KEventController } from "../../utils/";
@@ -259,11 +260,11 @@ export function body(opt: BodyCompOpt = {}): BodyComp {
                 );
 
                 this.onPhysicsResolve((col) => {
-                    if (game.gravity) {
+                    if (_k.game.gravity) {
                         if (col.isBottom() && this.isFalling()) {
                             // Clear the velocity in the direction of gravity, as we've hit something
                             this.vel = this.vel.reject(
-                                game.gravity.unit(),
+                                _k.game.gravity.unit(),
                             );
                             // We need the past platform to check if we already were on a platform
                             const pastPlatform = curPlatform;
@@ -287,7 +288,7 @@ export function body(opt: BodyCompOpt = {}): BodyComp {
                         }
                         else if (col.isTop() && this.isJumping()) {
                             this.vel = this.vel.reject(
-                                game.gravity.unit(),
+                                _k.game.gravity.unit(),
                             );
                             this.trigger("headbutt", col.target);
                             col.target.trigger("headbutted", this);
@@ -321,25 +322,25 @@ export function body(opt: BodyCompOpt = {}): BodyComp {
                 }
             }
 
-            const dt = k.restDt();
+            const dt = restDt();
             if (dt) {
                 // Check if no external changes were made
                 if (this.pos.x == prevDrawPos.x) {
                     // Interpolate physics steps
-                    this.pos.x = k.lerp(
+                    this.pos.x = lerp(
                         prevPhysicsPos!.x,
                         nextPhysicsPos!.x,
-                        dt / k.fixedDt(),
+                        dt / fixedDt(),
                     );
                     // Copy to check for changes
                     prevDrawPos.x = this.pos.x;
                 }
                 if (this.pos.y == prevDrawPos.y) {
                     // Interpolate physics steps
-                    this.pos.y = k.lerp(
+                    this.pos.y = lerp(
                         prevPhysicsPos!.y,
                         nextPhysicsPos!.y,
-                        dt / k.fixedDt(),
+                        dt / fixedDt(),
                     );
                     // Copy to check for changes
                     prevDrawPos.y = this.pos.y;
@@ -359,7 +360,7 @@ export function body(opt: BodyCompOpt = {}): BodyComp {
                 prevPhysicsPos = null;
             }
 
-            if (game.gravity && !this.isStatic) {
+            if (_k.game.gravity && !this.isStatic) {
                 // If we are falling over the edge of the current a platform
                 if (willFall) {
                     curPlatform = null;
@@ -384,7 +385,7 @@ export function body(opt: BodyCompOpt = {}): BodyComp {
 
                 // Apply gravity
                 this.vel = this.vel.add(
-                    game.gravity.scale(this.gravityScale * k.dt()),
+                    _k.game.gravity.scale(this.gravityScale * dt()),
                 );
 
                 // Clamp velocity
@@ -396,30 +397,30 @@ export function body(opt: BodyCompOpt = {}): BodyComp {
                 // Check if we have started to fall.
                 // We do this by looking at the velocity vector along the direction of gravity
                 if (
-                    prevVel.dot(game.gravity) < 0
-                    && this.vel.dot(game.gravity) >= 0
+                    prevVel.dot(_k.game.gravity) < 0
+                    && this.vel.dot(_k.game.gravity) >= 0
                 ) {
                     this.trigger("fall");
                 }
             }
 
             // Apply velocity and position changes
-            this.vel.x += acc.x * k.dt();
-            this.vel.y += acc.y * k.dt();
+            this.vel.x += acc.x * dt();
+            this.vel.y += acc.y * dt();
 
-            this.vel.x *= 1 - this.drag * k.dt();
-            this.vel.y *= 1 - this.drag * k.dt();
+            this.vel.x *= 1 - this.drag * dt();
+            this.vel.y *= 1 - this.drag * dt();
 
             this.move(this.vel);
 
             // If we need to interpolate physics, prepare interpolation data
-            const dt = k.restDt();
-            if (dt) {
+            const rDt = restDt();
+            if (rDt) {
                 // Save this position as previous
                 prevPhysicsPos = this.pos.clone();
                 // Calculate next (future) position
-                const nextVel = this.vel.add(acc.scale(k.dt()));
-                nextPhysicsPos = this.pos.add(nextVel.scale(k.dt()));
+                const nextVel = this.vel.add(acc.scale(dt()));
+                nextPhysicsPos = this.pos.add(nextVel.scale(dt()));
                 // Copy to check for changes
                 prevDrawPos = this.pos.clone();
             }
@@ -446,11 +447,11 @@ export function body(opt: BodyCompOpt = {}): BodyComp {
         },
 
         isFalling(): boolean {
-            return this.vel.dot(k.getGravityDirection()) > 0;
+            return this.vel.dot(getGravityDirection()) > 0;
         },
 
         isJumping(): boolean {
-            return this.vel.dot(k.getGravityDirection()) < 0;
+            return this.vel.dot(getGravityDirection()) < 0;
         },
 
         applyImpulse(impulse: Vec2) {
@@ -465,7 +466,7 @@ export function body(opt: BodyCompOpt = {}): BodyComp {
         jump(force: number) {
             curPlatform = null;
             lastPlatformPos = null;
-            this.vel = k.getGravityDirection().scale(
+            this.vel = getGravityDirection().scale(
                 -force || -this.jumpForce,
             );
         },

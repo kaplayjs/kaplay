@@ -15,7 +15,7 @@ import {
     pushTransform,
     pushTranslate,
 } from "../gfx";
-import { app, game, gfx, k } from "../kaplay";
+import { _k } from "../kaplay";
 import { Mat4 } from "../math/math";
 import { calcTransform } from "../math/various";
 import {
@@ -81,7 +81,7 @@ export function make<T>(comps: CompList<T> = []): GameObj<T> {
             this.children.push(obj);
             // TODO: trigger add for children
             obj.trigger("add", obj);
-            game.events.trigger("add", obj);
+            _k.game.events.trigger("add", obj);
             return obj;
         },
 
@@ -103,7 +103,7 @@ export function make<T>(comps: CompList<T> = []): GameObj<T> {
 
                 const trigger = (o: GameObj) => {
                     o.trigger("destroy");
-                    game.events.trigger("destroy", o);
+                    _k.game.events.trigger("destroy", o);
                     o.children.forEach((child) => trigger(child));
                 };
 
@@ -147,22 +147,22 @@ export function make<T>(comps: CompList<T> = []): GameObj<T> {
                 flush();
                 this.canvas.bind();
             }
-            const f = gfx.fixed;
-            if (this.fixed) gfx.fixed = true;
+            const f = _k.gfx.fixed;
+            if (this.fixed) _k.gfx.fixed = true;
             pushTransform();
             pushTranslate(this.pos);
             pushScale(this.scale);
             pushRotate(this.angle);
             const children = this.children.sort((o1, o2) => {
-                const l1 = o1.layerIndex ?? game.defaultLayerIndex;
-                const l2 = o2.layerIndex ?? game.defaultLayerIndex;
+                const l1 = o1.layerIndex ?? _k.game.defaultLayerIndex;
+                const l2 = o2.layerIndex ?? _k.game.defaultLayerIndex;
                 return (l1 - l2) || (o1.z ?? 0) - (o2.z ?? 0);
             });
             // TODO: automatically don't draw if offscreen
             if (this.mask) {
                 const maskFunc = {
-                    intersect: k.drawMasked,
-                    subtract: k.drawSubtracted,
+                    intersect: _k.k.drawMasked,
+                    subtract: _k.k.drawSubtracted,
                 }[this.mask];
                 if (!maskFunc) {
                     throw new Error(`Invalid mask func: "${this.mask}"`);
@@ -178,7 +178,7 @@ export function make<T>(comps: CompList<T> = []): GameObj<T> {
                 children.forEach((child) => child.draw());
             }
             popTransform();
-            gfx.fixed = f;
+            _k.gfx.fixed = f;
             if (this.canvas) {
                 flush();
                 this.canvas.unbind();
@@ -357,12 +357,12 @@ export function make<T>(comps: CompList<T> = []): GameObj<T> {
 
                 // TODO: handle when object add / remove tags
                 // TODO: clean up when obj destroyed
-                events.push(k.onAdd((obj) => {
+                events.push(_k.k.onAdd((obj) => {
                     if (isChild(obj) && obj.is(t)) {
                         list.push(obj);
                     }
                 }));
-                events.push(k.onDestroy((obj) => {
+                events.push(_k.k.onDestroy((obj) => {
                     if (isChild(obj) && obj.is(t)) {
                         const idx = list.findIndex((o) => o.id === obj.id);
                         if (idx !== -1) {
@@ -477,7 +477,7 @@ export function make<T>(comps: CompList<T> = []): GameObj<T> {
         },
 
         exists(this: GameObj): boolean {
-            return game.root.isAncestorOf(this);
+            return _k.game.root.isAncestorOf(this);
         },
 
         is(tag: Tag | Tag[]): boolean {
@@ -510,7 +510,7 @@ export function make<T>(comps: CompList<T> = []): GameObj<T> {
 
         trigger(name: string, ...args: unknown[]): void {
             events.trigger(name, ...args);
-            game.objEvents.trigger(name, this, ...args);
+            _k.game.objEvents.trigger(name, this, ...args);
         },
 
         destroy() {
@@ -596,7 +596,7 @@ export function make<T>(comps: CompList<T> = []): GameObj<T> {
 
     for (const e of evs) {
         obj[e] = (...args: [any]) => {
-            const ev = app[e]?.(...args);
+            const ev = _k.app[e]?.(...args);
             inputEvents.push(ev);
 
             obj.onDestroy(() => ev.cancel());
@@ -605,7 +605,7 @@ export function make<T>(comps: CompList<T> = []): GameObj<T> {
                 // not neccesary -> ev.cancel();
                 inputEvents.splice(inputEvents.indexOf(ev), 1);
                 // create a new event with the same arguments
-                const newEv = app[e]?.(...args);
+                const newEv = _k.app[e]?.(...args);
 
                 // Replace the old event handler with the new one
                 // old KEventController.cancel() => new KEventController.cancel()
