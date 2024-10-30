@@ -236,8 +236,8 @@ export function body(opt: BodyCompOpt = {}): BodyComp {
                             other.pos = other.pos.add(
                                 col.displacement.scale(-this.mass / tmass),
                             );
-                            this.transform = calcTransform(this);
-                            other.transform = calcTransform(other);
+                            calcTransform(this, this.transform);
+                            calcTransform(other, other.transform);
                         }
                         else {
                             // if one is static and on is not, resolve the non static one
@@ -247,9 +247,7 @@ export function body(opt: BodyCompOpt = {}): BodyComp {
                             col2.source.pos = col2.source.pos.add(
                                 col2.displacement,
                             );
-                            col2.source.transform = calcTransform(
-                                col2.source,
-                            );
+                            calcTransform(col2.source, col2.source.transform);
                         }
 
                         col.resolved = true;
@@ -302,15 +300,8 @@ export function body(opt: BodyCompOpt = {}): BodyComp {
 
                     // Clear the velocity in the direction of the normal, as we've hit something
                     if (this.vel.dot(col.normal) < 0) {
-                        if (restitution == 0) {
-                            this.vel = rejection;
-                        }
-                        else {
-                            // Modulate the velocity tangential to the normal
-                            this.vel = this.vel.reflect(col.normal).scale(
-                                restitution,
-                            );
-                        }
+                        // Modulate the velocity tangential to the normal
+                        this.vel = rejection.sub(projection.scale(restitution));
                     }
 
                     if (friction != 0) {

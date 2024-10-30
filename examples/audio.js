@@ -3,11 +3,12 @@
 // audio playback & control
 
 kaplay({
-    // Don't pause audio when tab is not active
+    // This makes it so the audio doesn't pause when the tab is changed
     backgroundAudio: true,
     background: [0, 0, 0],
 });
 
+// Loads the bell sound, and OtherworldlyFoe sound
 loadSound("bell", "/examples/sounds/bell.mp3");
 loadSound("OtherworldlyFoe", "/examples/sounds/OtherworldlyFoe.mp3");
 
@@ -32,7 +33,7 @@ Time: ${music.time().toFixed(2)}
 Volume: ${music.volume.toFixed(2)}
 Speed: ${music.speed.toFixed(2)}
 
-[space] play/pause
+\\[space] play/pause
 [up/down] volume
 [left/right] speed
 	`.trim();
@@ -51,6 +52,7 @@ onKeyPressRepeat("left", () => music.speed -= 0.1);
 onKeyPressRepeat("right", () => music.speed += 0.1);
 onKeyPress("m", () => music.seek(4.24));
 
+// We store some keys in a string
 const keyboard = "awsedftgyhujk";
 
 // Simple piano with "bell" sound and the second row of a QWERTY keyboard

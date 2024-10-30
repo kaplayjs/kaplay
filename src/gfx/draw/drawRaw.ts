@@ -1,16 +1,20 @@
 import { Asset, resolveShader, type Uniform } from "../../assets";
 import { game, gfx } from "../../kaplay";
+import { Vec2, vec2 } from "../../math/math";
 import { screen2ndc } from "../../math/various";
-import type { RenderProps, Vertex } from "../../types";
+import type { Attributes, RenderProps } from "../../types";
 import type { Texture } from "../gfx";
+import { height, width } from "../stack";
+
+const scratchPt = new Vec2();
 
 export function drawRaw(
-    verts: Vertex[],
+    attributes: Attributes,
     indices: number[],
     fixed: boolean = false,
     tex?: Texture,
     shaderSrc?: RenderProps["shader"],
-    uniform: Uniform = {},
+    uniform?: Uniform,
 ) {
     const parsedTex = tex ?? gfx.defTex;
     const parsedShader = shaderSrc ?? gfx.defShader;
@@ -22,24 +26,33 @@ export function drawRaw(
 
     const transform = (gfx.fixed || fixed)
         ? gfx.transform
-        : game.cam.transform.mult(gfx.transform);
+        : game.cam.transform.mul(gfx.transform);
 
-    const vv: number[] = [];
+    const vertLength = attributes.pos.length / 2;
+    const vv: number[] = new Array(vertLength * 8);
 
-    for (const v of verts) {
+    const w = width();
+    const h = height();
+    let index = 0;
+    for (let i = 0; i < vertLength; i++) {
+        scratchPt.x = attributes.pos[i * 2];
+        scratchPt.y = attributes.pos[i * 2 + 1];
         // normalized world space coordinate [-1.0 ~ 1.0]
-        const pt = screen2ndc(transform.multVec2(v.pos));
-
-        vv.push(
-            pt.x,
-            pt.y,
-            v.uv.x,
-            v.uv.y,
-            v.color.r / 255,
-            v.color.g / 255,
-            v.color.b / 255,
-            v.opacity,
+        screen2ndc(
+            transform.transformPoint(scratchPt, scratchPt),
+            w,
+            h,
+            scratchPt,
         );
+
+        vv[index++] = scratchPt.x;
+        vv[index++] = scratchPt.y;
+        vv[index++] = attributes.uv[i * 2];
+        vv[index++] = attributes.uv[i * 2 + 1];
+        vv[index++] = attributes.color[i * 3] / 255;
+        vv[index++] = attributes.color[i * 3 + 1] / 255;
+        vv[index++] = attributes.color[i * 3 + 2] / 255;
+        vv[index++] = attributes.opacity[i];
     }
 
     gfx.renderer.push(

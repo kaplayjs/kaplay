@@ -11,12 +11,12 @@ import {
     flush,
     popTransform,
     pushRotate,
-    pushScale,
+    pushScaleV,
     pushTransform,
-    pushTranslate,
+    pushTranslateV,
 } from "../gfx";
 import { app, game, gfx, k } from "../kaplay";
-import { Mat4 } from "../math/math";
+import { Mat23 } from "../math/math";
 import { calcTransform } from "../math/various";
 import {
     type Comp,
@@ -27,7 +27,7 @@ import {
     type QueryOpt,
     type Tag,
 } from "../types";
-import { type KEventController, KEventHandler, uid } from "../utils";
+import { KEventController, KEventHandler, uid } from "../utils";
 
 export function make<T>(comps: CompList<T> = []): GameObj<T> {
     const compStates = new Map<string, Comp>();
@@ -43,7 +43,7 @@ export function make<T>(comps: CompList<T> = []): GameObj<T> {
         id: uid(),
         // TODO: a nice way to hide / pause when add()-ing
         hidden: false,
-        transform: new Mat4(),
+        transform: new Mat23(),
         children: [],
         parent: null,
 
@@ -77,7 +77,7 @@ export function make<T>(comps: CompList<T> = []): GameObj<T> {
                 );
             }
             obj.parent = this;
-            obj.transform = calcTransform(obj);
+            calcTransform(obj, obj.transform);
             this.children.push(obj);
             // TODO: trigger add for children
             obj.trigger("add", obj);
@@ -150,8 +150,8 @@ export function make<T>(comps: CompList<T> = []): GameObj<T> {
             const f = gfx.fixed;
             if (this.fixed) gfx.fixed = true;
             pushTransform();
-            pushTranslate(this.pos);
-            pushScale(this.scale);
+            pushTranslateV(this.pos);
+            pushScaleV(this.scale);
             pushRotate(this.angle);
             const children = this.children.sort((o1, o2) => {
                 const l1 = o1.layerIndex ?? game.defaultLayerIndex;
@@ -168,14 +168,18 @@ export function make<T>(comps: CompList<T> = []): GameObj<T> {
                     throw new Error(`Invalid mask func: "${this.mask}"`);
                 }
                 maskFunc(() => {
-                    children.forEach((child) => child.draw());
+                    for (let i = 0; i < children.length; i++) {
+                        children[i].draw();
+                    }
                 }, () => {
                     this.trigger("draw");
                 });
             }
             else {
                 this.trigger("draw");
-                children.forEach((child) => child.draw());
+                for (let i = 0; i < children.length; i++) {
+                    children[i].draw();
+                }
             }
             popTransform();
             gfx.fixed = f;
@@ -188,8 +192,8 @@ export function make<T>(comps: CompList<T> = []): GameObj<T> {
         drawInspect(this: GameObj<PosComp | ScaleComp | RotateComp>) {
             if (this.hidden) return;
             pushTransform();
-            pushTranslate(this.pos);
-            pushScale(this.scale);
+            pushTranslateV(this.pos);
+            pushScaleV(this.scale);
             pushRotate(this.angle);
             this.children
                 /*.sort((o1, o2) => (o1.z ?? 0) - (o2.z ?? 0))*/
@@ -601,10 +605,18 @@ export function make<T>(comps: CompList<T> = []): GameObj<T> {
 
             obj.onDestroy(() => ev.cancel());
             obj.on("sceneEnter", () => {
-                ev.cancel();
+                // All app events are already canceled by changing the scene
+                // not neccesary -> ev.cancel();
                 inputEvents.splice(inputEvents.indexOf(ev), 1);
-                app[e]?.(...args);
+                // create a new event with the same arguments
+                const newEv = app[e]?.(...args);
+
+                // Replace the old event handler with the new one
+                // old KEventController.cancel() => new KEventController.cancel()
+                KEventController.replace(ev, newEv);
+                inputEvents.push(ev);
             });
+
             return ev;
         };
     }

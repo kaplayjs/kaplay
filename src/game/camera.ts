@@ -2,7 +2,7 @@ import { color, fixed, opacity, rect } from "../components";
 import { center, getViewportScale, height, width } from "../gfx";
 import { game } from "../kaplay";
 import { type Color, rgb } from "../math/color";
-import { type Mat4, type Vec2, vec2, type Vec2Args } from "../math/math";
+import { type Mat23, type Vec2, vec2, type Vec2Args } from "../math/math";
 import { destroy } from ".";
 
 export function camPos(...pos: Vec2Args): Vec2 {
@@ -41,7 +41,7 @@ export function camFlash(
     return fade;
 }
 
-export function camTransform(): Mat4 {
+export function camTransform(): Mat23 {
     return game.cam.transform.clone();
 }
 

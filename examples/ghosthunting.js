@@ -256,8 +256,8 @@ function addEnemy(p) {
         }),
         // Patrol can make the enemy follow a computed path
         patrol({ speed: 100 }),
-        // Navigator can compute a path given a graph
-        navigation({
+        // Pathfinder can compute a path given a graph
+        pathfinder({
             graph: nav,
             navigationOpt: {
                 type: "edges",

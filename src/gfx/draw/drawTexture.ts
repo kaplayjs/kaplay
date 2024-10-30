@@ -14,13 +14,12 @@ export function drawTexture(opt: DrawTextureOpt) {
     const q = opt.quad ?? new Quad(0, 0, 1, 1);
     const w = opt.tex.width * q.w;
     const h = opt.tex.height * q.h;
-    const scale = new Vec2(1);
+    const scale = Vec2.ONE;
 
     if (opt.tiled) {
-        const anchor = anchorPt(opt.anchor || DEF_ANCHOR).add(
-            new Vec2(1, 1),
-        ).scale(0.5);
-        const offset = anchor.scale(opt.width || w, opt.height || h);
+        const offset = anchorPt(opt.anchor || DEF_ANCHOR);
+        const offsetX = (offset.x + 1) * 0.5 * (opt.width || w);
+        const offsetY = (offset.y + 1) * 0.5 * (opt.height || h);
 
         const fcols = (opt.width || w) / w;
         const frows = (opt.height || h) / h;
@@ -30,12 +29,20 @@ export function drawTexture(opt: DrawTextureOpt) {
         const fracY = frows - rows;
         const n = (cols + fracX ? 1 : 0) * (rows + fracY ? 1 : 0);
         const indices = new Array<number>(n * 6);
-        const vertices = new Array<Vertex>(n * 4);
+        const attributes = {
+            pos: new Array<number>(n * 4 * 2),
+            uv: new Array<number>(n * 4 * 2),
+            color: new Array<number>(n * 4 * 3),
+            opacity: new Array<number>(n * 4),
+        };
         let index = 0;
 
         /*drawUVQuad(Object.assign({}, opt, {
             scale: scale.scale(opt.scale || new Vec2(1)),
         }));*/
+
+        const color = opt.color || Color.WHITE;
+        const opacity = opt.opacity || 1;
 
         const addQuad = (
             x: number,
@@ -51,30 +58,42 @@ export function drawTexture(opt: DrawTextureOpt) {
             indices[index * 6 + 4] = index * 4 + 2;
             indices[index * 6 + 5] = index * 4 + 3;
 
-            vertices[index * 4 + 0] = {
-                pos: new Vec2(x - offset.x, y - offset.y),
-                uv: new Vec2(q.x, q.y),
-                color: opt.color || Color.WHITE,
-                opacity: opt.opacity || 1,
-            };
-            vertices[index * 4 + 1] = {
-                pos: new Vec2(x + w - offset.x, y - offset.y),
-                uv: new Vec2(q.x + q.w, q.y),
-                color: opt.color || Color.WHITE,
-                opacity: opt.opacity || 1,
-            };
-            vertices[index * 4 + 2] = {
-                pos: new Vec2(x + w - offset.x, y + h - offset.y),
-                uv: new Vec2(q.x + q.w, q.y + q.h),
-                color: opt.color || Color.WHITE,
-                opacity: opt.opacity || 1,
-            };
-            vertices[index * 4 + 3] = {
-                pos: new Vec2(x - offset.x, y + h - offset.y),
-                uv: new Vec2(q.x, q.y + q.h),
-                color: opt.color || Color.WHITE,
-                opacity: opt.opacity || 1,
-            };
+            let s = index * 4;
+            attributes.pos[s * 2] = x - offsetX;
+            attributes.pos[s * 2 + 1] = y - offsetY;
+            attributes.uv[s * 2] = q.x;
+            attributes.uv[s * 2 + 1] = q.y;
+            attributes.color[s * 3] = color.r;
+            attributes.color[s * 3 + 1] = color.g;
+            attributes.color[s * 3 + 2] = color.b;
+            attributes.opacity[s] = opacity;
+            s++;
+            attributes.pos[s * 2] = x + w - offsetX;
+            attributes.pos[s * 2 + 1] = y - offsetY;
+            attributes.uv[s * 2] = q.x + q.w;
+            attributes.uv[s * 2 + 1] = q.y;
+            attributes.color[s * 3] = color.r;
+            attributes.color[s * 3 + 1] = color.g;
+            attributes.color[s * 3 + 2] = color.b;
+            attributes.opacity[s] = opacity;
+            s++;
+            attributes.pos[s * 2] = x + w - offsetX;
+            attributes.pos[s * 2 + 1] = y + h - offsetY;
+            attributes.uv[s * 2] = q.x + q.w;
+            attributes.uv[s * 2 + 1] = q.y + q.h;
+            attributes.color[s * 3] = color.r;
+            attributes.color[s * 3 + 1] = color.g;
+            attributes.color[s * 3 + 2] = color.b;
+            attributes.opacity[s] = opacity;
+            s++;
+            attributes.pos[s * 2] = x - offsetX;
+            attributes.pos[s * 2 + 1] = y + h - offsetY;
+            attributes.uv[s * 2] = q.x;
+            attributes.uv[s * 2 + 1] = q.y + q.h;
+            attributes.color[s * 3] = color.r;
+            attributes.color[s * 3 + 1] = color.g;
+            attributes.color[s * 3 + 2] = color.b;
+            attributes.opacity[s] = opacity;
             index++;
         };
 
@@ -117,7 +136,7 @@ export function drawTexture(opt: DrawTextureOpt) {
         }
 
         drawRaw(
-            vertices,
+            attributes,
             indices,
             opt.fixed,
             opt.tex,
@@ -141,7 +160,7 @@ export function drawTexture(opt: DrawTextureOpt) {
         }
 
         drawUVQuad(Object.assign({}, opt, {
-            scale: scale.scale(opt.scale || new Vec2(1)),
+            scale: opt.scale ? scale.scale(opt.scale) : scale,
             tex: opt.tex,
             quad: q,
             width: w,

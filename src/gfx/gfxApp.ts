@@ -8,7 +8,7 @@ import {
 } from "../constants";
 import { BatchRenderer, FrameBuffer, type GfxCtx, Texture } from "../gfx";
 import { type Color, rgb } from "../math/color";
-import { Mat4 } from "../math/math";
+import { Mat23, Mat4 } from "../math/math";
 import type { KAPLAYOpt } from "../types";
 
 export type AppGfxCtx = ReturnType<typeof initAppGfx>;
@@ -104,6 +104,8 @@ export const initAppGfx = (gopt: KAPLAYOpt, ggl: GfxCtx) => {
         },
     );
 
+    const transformStack = new Array(32).fill(0).map(_ => new Mat23());
+
     return {
         // how many draw calls we're doing last frame, this is the number we give to users
         lastDrawCalls: 0,
@@ -117,8 +119,9 @@ export const initAppGfx = (gopt: KAPLAYOpt, ggl: GfxCtx) => {
         postShaderUniform: null as Uniform | (() => Uniform) | null,
         renderer: renderer,
 
-        transform: new Mat4(),
-        transformStack: [] as Mat4[],
+        transform: new Mat23(),
+        transformStack: transformStack,
+        transformStackIndex: -1,
 
         bgTex: bgTex,
         bgColor: bgColor,

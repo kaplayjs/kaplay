@@ -2,6 +2,7 @@
 
 kaplay();
 
+// A lttle game about eating fruit!
 const fruits = [
     "apple",
     "pineapple",
@@ -19,6 +20,7 @@ loadSound("hit", "/examples/sounds/hit.mp3");
 loadSound("wooosh", "/examples/sounds/wooosh.mp3");
 
 scene("start", () => {
+    // Plays the wooosh sound
     play("wooosh");
 
     add([

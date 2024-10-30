@@ -1,15 +1,19 @@
 # v4000.0.0
 
+- Added clipLineToRect
 - Replaced the Separating Axis Theorem (SAT) with the Gilbert–Johnson–Keerthi
   (GJK) distance algorithm.
 - Added circle and (rotated) ellipse collision shapes.
-- Added an ellipse component.
+- Added `ellipse()` component.
 - Circle area is no longer a box.
-- Added a fake cursor API.
 - Added restitution and friction.
-
+- Added a fake cursor API.
   ```js
-  const myCursor = add([fakeMouse(), sprite("kat"), pos(100, 100)]);
+  const myCursor = add([
+      fakeMouse(),
+      sprite("kat"),
+      pos(100, 100),
+  ]);
 
   myCursor.press(); // trigger onClick events if the mouse is over
   myCursor.release();
@@ -20,7 +24,7 @@
 
 ## Input
 
-- added input bindings, `onButtonPress`, `onButtonRelease`, `onButtonDown`, and
+- Added input bindings, `onButtonPress`, `onButtonRelease`, `onButtonDown`, and
   it's corresponding boolean versions, `isButtonPressed`, `isButtonDown` and
   `isButtonReleased`.
 
@@ -63,6 +67,14 @@
   });
   ```
 
+- added `pressButton(btn)` and `releaseButton(btn)` to simulate button press and
+  release
+
+  ```js
+  pressButton("jump"); // triggers onButtonPress and starts onButtonDown
+  releaseButton("jump"); // triggers onButtonRelease and stops onButtonDown
+  ```
+
 - added the possibility of use arrays in all input handlers
 
   ```js
@@ -87,7 +99,7 @@
 - added `patrol()` component to move along a list of waypoints.
 - added `sentry()` component to notify when certain objects are in sight.
 - added `NavMesh` class for pathfinding on a mesh.
-- added `navigation()` component to calculate a list of waypoints on a graph.
+- added `pathfinder()` component to calculate a list of waypoints on a graph.
 - now collision checks are only done if there's area objects.
 
 ## Game Object
@@ -221,9 +233,12 @@
 
 - fix error screen not showing with not Error object
 
+- Added `SpriteComp.animFrame` to get the frame of the current animation (not on
+  the spritesheet)
+
 ## Audio
 
-- now you can pass an `AudioBuffer` to `loadSound()` (**v4000**)
+- now you can pass an `AudioBuffer` to `loadSound()`
 - added `loadMusic()` to load streaming audio (doesn't block in loading screen).
 
   ```js
