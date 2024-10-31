@@ -189,7 +189,9 @@ Collections of games made with KAPLAY (and Kaboom), selected by KAPLAY:
   Kaboom.js
 - Thanks to [mulfok](https://twitter.com/MulfoK) for the amazing
   [mulfok32](https://lospec.com/palette-list/mulfok32) color palette, used in
-  KAPLAY sprites
+  KAPLAY sprites and art in general
+- Thansk to [Kenney](https://kenney.nl/) for all used assets for examples
+  - [Impact Sound Pack](https://kenney.nl/assets/impact-sounds)
 - Thanks to [abrudz](https://github.com/abrudz) for the amazing
   [APL386 font](https://abrudz.github.io/APL386/)
 - Thanks to [Polyducks](http://polyducks.co.uk/) for the amazing
