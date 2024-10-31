@@ -35,6 +35,8 @@ const cursor = add([
     fakeMouse(),
 ]);
 
+setCursor("none"); // Hide the real mouse
+
 // Mouse press and release with keyboard, this will trigger mouse proper
 // events like .onClick, .onHover, etc
 cursor.onKeyPress("space", () => {
@@ -71,10 +73,16 @@ const door = add([
     scale(2),
 ]);
 
+// Trigered thanks to cursor.press(), you can trigger it with a real mouse or
+// with the keyboard
 door.onClick(() => {
-    if (knocks > MAX_KNOCKS) return openDoor();
-    play("knock");
-    knocks++;
+    if (knocks > MAX_KNOCKS) {
+        openDoor();
+    }
+    else {
+        knocks++;
+        play("knock");
+    }
 });
 
 door.onHover(() => {
