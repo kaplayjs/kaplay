@@ -4,15 +4,15 @@ import type { KEventController } from "../../utils/";
 import type { PosComp } from "../transform/pos";
 
 export interface PatrolComp extends Comp {
-    /*
+    /**
      * Path to follow. If null, doesn't move.
      */
     waypoints: Vec2[] | undefined;
-    /*
+    /**
      * Speed of the movement during patrol.
      */
     patrolSpeed: number;
-    /*
+    /**
      * Current subgoal, if any.
      */
     nextLocation: Vec2 | undefined;
@@ -32,15 +32,15 @@ type PatrolEndBehavior =
     | "stop";
 
 export interface PatrolCompOpt {
-    /*
+    /**
      * Path to follow. If null, starts suspended.
      */
     waypoints?: Vec2[];
-    /*
+    /**
      * Speed of the movement during patrol.
      */
     speed?: number;
-    /*
+    /**
      * What to do after the last waypoint has been reached.
      */
     endBehavior?: PatrolEndBehavior;
