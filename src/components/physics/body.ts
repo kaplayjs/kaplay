@@ -160,7 +160,8 @@ export interface BodyCompOpt {
      */
     gravityScale?: number;
     /**
-     * If object is static, won't move, and all non static objects won't move past it.
+     * If object is static, it won't move, all non static objects won't move past it, and all
+     * calls to addForce(), applyImpulse(), or jump() on this body will do absolutely nothing.
      *
      * @since v3000.0
      */
