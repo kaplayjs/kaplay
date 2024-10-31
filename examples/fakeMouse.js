@@ -86,11 +86,11 @@ door.onClick(() => {
 });
 
 door.onHover(() => {
-    cursor.use(sprite("grab"));
+    cursor.sprite = "grab";
 });
 
 door.onHoverEnd(() => {
-    cursor.use(sprite("cursor"));
+    cursor.sprite = "cursor";
 });
 
 // Open the door, a friend appears
