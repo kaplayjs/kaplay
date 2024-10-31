@@ -24,6 +24,14 @@ onKeyPress("enter", () => {
     });
 });
 
+// For our mobile friends
+onTouchStart(() => {
+    play("bell", {
+        volume: 1,
+        speed: 1,
+    });
+});
+
 // We can also play music, and control it
 const music = play("OtherworldlyFoe", {
     loop: true,
