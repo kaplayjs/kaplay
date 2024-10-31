@@ -12,19 +12,19 @@ import type { PosComp } from "../transform/pos";
  * @group Component Types
  */
 export interface SentryComp extends Comp {
-    /*
+    /**
      * The direction the sentry is pointing to.
      */
     direction?: Vec2;
-    /*
+    /**
      * The direction of the sentry as an angle in degrees.
      */
     directionAngle?: number;
-    /*
+    /**
      * The field of view of the sentry in degrees.
      */
     fieldOfView?: number;
-    /*
+    /**
      * The objects spotted most recently.
      */
     spotted: GameObj<any>[];
@@ -57,23 +57,23 @@ export interface SentryComp extends Comp {
  * @group Component Types
  */
 export interface SentryCompOpt {
-    /*
+    /**
      * The direction the sentry is pointing to. If undefined, direction has no influence.
      */
     direction?: Vec2 | number;
-    /*
+    /**
      * The field of view of the sentry in degrees. If undefined, defaults to human fov of 200 degrees.
      */
     fieldOfView?: number;
-    /*
+    /**
      * If true, line of sight matters. This means that objects which are blocked from view by areas are invisible.
      */
     lineOfSight?: boolean;
-    /*
+    /**
      * When using line of sight, the objects which are transparent for the ray. Include at least a tag identifying the sentry.
      */
     raycastExclude?: string[];
-    /*
+    /**
      * The frequency of checking, defaults to every second.
      */
     checkFrequency?: number;

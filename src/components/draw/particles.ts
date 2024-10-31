@@ -41,23 +41,23 @@ class Particle {
  * Options for the {@link particles `particles()`}'s component
  */
 export type EmitterOpt = {
-    /*
+    /**
      * Shape of the emitter. If given, particles spawn within this shape.
      */
     shape?: ShapeType;
-    /*
+    /**
      * Lifetime of the emitter.
      */
     lifetime?: number;
-    /*
+    /**
      * Rate of emission in particles per second if the emitter should emit out of itself.
      */
     rate?: number;
-    /*
+    /**
      * Direction of emission.
      */
     direction: number;
-    /*
+    /**
      * Spread (cone) of emission around the direction.
      */
     spread: number;
@@ -69,51 +69,51 @@ export type EmitterOpt = {
  * @group Component Types
  */
 export type ParticlesOpt = {
-    /*
+    /**
      * Maximum number of simultaneously rendered particles.
      */
     max: number;
-    /*
+    /**
      * Minimum and maximum lifetime of a particle in seconds.
      */
     lifeTime?: [number, number];
-    /*
+    /**
      * Minimum and maximum speed of a particle in pixels per second.
      */
     speed?: [number, number];
-    /*
+    /**
      * Minimum and maximum acceleration of a particle in pixels per second^2.
      */
     acceleration?: [Vec2, Vec2];
-    /*
+    /**
      * Minimum and maximum damping of a particle.
      */
     damping?: [number, number];
-    /*
+    /**
      * Minimum and maximum start angle of a particle.
      */
     angle?: [number, number];
-    /*
+    /**
      * Minimum and maximum angular velocity of a particle.
      */
     angularVelocity?: [number, number];
-    /*
+    /**
      * Scale from start to end for a particle.
      */
     scales?: number[];
-    /*
+    /**
      * Colors from start to end for a particle.
      */
     colors?: Color[];
-    /*
+    /**
      * Opacity from start to end for a particle.
      */
     opacities?: number[];
-    /*
+    /**
      * Quads from start to end for a particle.
      */
     quads?: Quad[];
-    /*
+    /**
      * Texture used for the particle.
      */
     texture: Texture;
@@ -125,11 +125,11 @@ export type ParticlesOpt = {
  * @group Component Types
  */
 export interface ParticlesComp extends Comp {
-    /*
+    /**
      * Emit a number of particles
      */
     emit(n: number): void;
-    /*
+    /**
      * Called when the emitter expires
      */
     onEnd(cb: () => void): void;
