@@ -6,6 +6,7 @@ import type { AudioPlay, AudioPlayOpt } from "./play";
 export function playMusic(url: string, opt: AudioPlayOpt = {}): AudioPlay {
     const onEndEvents = new KEvent();
     const el = new Audio(url);
+    el.crossOrigin = "anonymous";
     const src = audio.ctx.createMediaElementSource(el);
 
     src.connect(opt.connectTo ?? audio.masterNode);
