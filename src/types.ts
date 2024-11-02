@@ -1,4 +1,9 @@
-import type { App, ButtonBinding, ButtonBindingDevice, ButtonsDef } from "./app";
+import type {
+    App,
+    ButtonBinding,
+    ButtonBindingDevice,
+    ButtonsDef,
+} from "./app";
 import type {
     AsepriteData,
     Asset,
@@ -148,7 +153,7 @@ export type KAPLAYInternal = {
     gscale: number;
     kaSprite: Asset<SpriteData>;
     boomSprite: Asset<SpriteData>;
-}
+};
 
 /**
  * Context handle that contains every kaboom function.
@@ -161,7 +166,7 @@ export interface KAPLAYCtx<
 > {
     /**
      * Internal data that should not be accessed directly.
-     * 
+     *
      * @group Misc
      */
     _k: KAPLAYInternal;
@@ -219,14 +224,17 @@ export interface KAPLAYCtx<
      * @example
      * ```js
      * const label = make([
-     *     text("oh hi"),
-     * ])
-
-     * add([
-     *     rect(label.width, label.height),
-     *     color(0, 0, 255),
-     *     children(label),
-     * ])
+     *     rect(100, 20),
+     * ]);
+     *
+     * // Add a new text to the label
+     * label.add([
+     *     text("Hello, world!"),
+     * ]);
+     *
+     * // Add game object to the scene
+     * // Now it will render
+     * add(label);
      * ```
      *
      * @group Game Obj
@@ -1903,7 +1911,10 @@ export interface KAPLAYCtx<
      *
      * @group Assets
      */
-    loadSound(name: string | null, src: string | ArrayBuffer | AudioBuffer): Asset<SoundData>;
+    loadSound(
+        name: string | null,
+        src: string | ArrayBuffer | AudioBuffer,
+    ): Asset<SoundData>;
     /**
      * Like loadSound(), but the audio is streamed and won't block loading. Use this for big audio files like background music.
      *
