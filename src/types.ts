@@ -196,14 +196,17 @@ export interface KAPLAYCtx<
      * @example
      * ```js
      * const label = make([
-     *     text("oh hi"),
-     * ])
-
-     * add([
-     *     rect(label.width, label.height),
-     *     color(0, 0, 255),
-     *     children(label),
-     * ])
+     *     rect(100, 20),
+     * ]);
+     *
+     * // Add a new text to the label
+     * label.add([
+     *     text("Hello, world!"),
+     * ]);
+     *
+     * // Add game object to the scene
+     * // Now it will render
+     * add(label);
      * ```
      *
      * @group Game Obj
