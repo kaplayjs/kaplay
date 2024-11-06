@@ -109,5 +109,5 @@ function openDoor() {
 
     burp();
 
-    debug.log("What happens?");
+    debug.log("What happened?");
 }
