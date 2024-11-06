@@ -21,6 +21,7 @@ import {
 } from "../utils";
 
 import GAMEPAD_MAP from "../data/gamepad.json" assert { type: "json" };
+import { gfx } from "../kaplay";
 import {
     type ButtonBinding,
     type ButtonsDef,
@@ -868,7 +869,10 @@ export const initApp = (opt: {
     const pd = opt.pixelDensity || 1;
 
     canvasEvents.mousemove = (e) => {
-        const mousePos = new Vec2(e.offsetX, e.offsetY);
+        const mousePos = new Vec2(
+            e.offsetX - gfx.viewport.x,
+            e.offsetY - gfx.viewport.y,
+        );
         const mouseDeltaPos = new Vec2(e.movementX, e.movementY);
 
         if (isFullscreen()) {
