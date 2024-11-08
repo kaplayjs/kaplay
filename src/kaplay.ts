@@ -1043,8 +1043,8 @@ const kaplay = <
                 if (!assets.loaded) {
                     if (loadProgress() === 1 && !isFirstFrame) {
                         assets.loaded = true;
-                        getFailedAssets().forEach(asset =>
-                            game.events.trigger("loadError", ...asset)
+                        getFailedAssets().forEach(details =>
+                            game.events.trigger("loadError", ...details)
                         );
                         game.events.trigger("load");
                     }
