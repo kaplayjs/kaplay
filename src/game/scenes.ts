@@ -1,4 +1,4 @@
-import { app, game } from "../kaplay";
+import { _k } from "../kaplay";
 import { Mat23, vec2 } from "../math/math";
 import type { KEventController } from "../utils";
 import { initEvents } from "./initEvents";
@@ -10,37 +10,37 @@ export type SceneName = string;
 export type SceneDef = (...args: any) => void;
 
 export function scene(id: SceneName, def: SceneDef) {
-    game.scenes[id] = def;
+    _k.game.scenes[id] = def;
 }
 
 export function go(name: SceneName, ...args: unknown[]) {
-    if (!game.scenes[name]) {
+    if (!_k.game.scenes[name]) {
         throw new Error(`Scene not found: ${name}`);
     }
 
-    game.events.onOnce("frameEnd", () => {
-        game.events.trigger("sceneLeave", name);
-        app.events.clear();
-        game.events.clear();
-        game.objEvents.clear();
+    _k.game.events.onOnce("frameEnd", () => {
+        _k.game.events.trigger("sceneLeave", name);
+        _k.app.events.clear();
+        _k.game.events.clear();
+        _k.game.objEvents.clear();
 
-        [...game.root.children].forEach((obj) => {
+        [..._k.game.root.children].forEach((obj) => {
             if (
                 !obj.stay
                 || (obj.scenesToStay && !obj.scenesToStay.includes(name))
             ) {
-                game.root.remove(obj);
+                _k.game.root.remove(obj);
             }
             else {
                 obj.trigger("sceneEnter", name);
             }
         });
 
-        game.root.clearEvents();
+        _k.game.root.clearEvents();
         initEvents();
 
         // cam
-        game.cam = {
+        _k.game.cam = {
             pos: null,
             scale: vec2(1),
             angle: 0,
@@ -48,18 +48,18 @@ export function go(name: SceneName, ...args: unknown[]) {
             transform: new Mat23(),
         };
 
-        game.scenes[name](...args);
+        _k.game.scenes[name](...args);
     });
 
-    game.currentScene = name;
+    _k.game.currentScene = name;
 }
 
 export function onSceneLeave(
     action: (newScene?: string) => void,
 ): KEventController {
-    return game.events.on("sceneLeave", action);
+    return _k.game.events.on("sceneLeave", action);
 }
 
 export function getSceneName() {
-    return game.currentScene;
+    return _k.game.currentScene;
 }

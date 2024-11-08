@@ -1,4 +1,4 @@
-import { assets } from "../kaplay";
+import { _k } from "../kaplay";
 import { Quad } from "../math";
 import { getFileName } from "../utils";
 import { type Asset, fetchJSON } from "./asset";
@@ -41,7 +41,7 @@ export function loadAseprite(
         ? fetchJSON(jsonSrc)
         : Promise.resolve(jsonSrc);
 
-    return assets.sprites.add(
+    return _k.assets.sprites.add(
         name,
         resolveJSON.then((data: AsepriteData) => {
             const size = data.meta.size;

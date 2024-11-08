@@ -1,4 +1,4 @@
-import { gfx } from "../../kaplay";
+import { _k } from "../../kaplay";
 import { Color } from "../../math/color";
 import { triangulate, Vec2 } from "../../math/math";
 import type { DrawPolygonOpt } from "../../types";
@@ -100,7 +100,7 @@ export function drawPolygon(opt: DrawPolygonOpt) {
             attributes,
             opt.indices ?? indices,
             opt.fixed,
-            opt.uv ? opt.tex : gfx.defTex,
+            opt.uv ? opt.tex : _k.gfx.defTex,
             opt.shader,
             opt.uniform ?? undefined,
         );

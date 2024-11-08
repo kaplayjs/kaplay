@@ -1,9 +1,9 @@
-import { audio } from "../kaplay";
+import { _k } from "../kaplay";
 
 // get / set master volume
 export function volume(v?: number): number {
     if (v !== undefined) {
-        audio.masterNode.gain.value = v;
+        _k.audio.masterNode.gain.value = v;
     }
-    return audio.masterNode.gain.value;
+    return _k.audio.masterNode.gain.value;
 }
