@@ -48,6 +48,7 @@ import {
     Asset,
     getAsset,
     getBitmapFont,
+    getFailedAssets,
     getFont,
     getShader,
     getSound,
@@ -263,6 +264,7 @@ import {
     onHoverEnd,
     onHoverUpdate,
     onLoad,
+    onLoadError,
     onLoading,
     onResize,
     onSceneLeave,
@@ -1041,6 +1043,9 @@ const kaplay = <
                 if (!assets.loaded) {
                     if (loadProgress() === 1 && !isFirstFrame) {
                         assets.loaded = true;
+                        getFailedAssets().forEach(asset =>
+                            game.events.trigger("loadError", ...asset)
+                        );
                         game.events.trigger("load");
                     }
                 }
@@ -1126,6 +1131,7 @@ const kaplay = <
         isFullscreen: app.isFullscreen,
         isTouchscreen: app.isTouchscreen,
         onLoad,
+        onLoadError,
         onLoading,
         onResize,
         onGamepadConnect: app.onGamepadConnect,

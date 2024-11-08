@@ -1,5 +1,6 @@
 // add an event to a tag
 
+import { type Asset, getFailedAssets } from "../../assets";
 import { app, assets, game } from "../../kaplay";
 import type { Collision, GameObj, Tag } from "../../types";
 import { KEventController, overload2, Registry } from "../../utils";
@@ -204,5 +205,18 @@ export function onLoad(cb: () => void) {
     }
     else {
         return game.events.on("load", cb);
+    }
+}
+
+export function onLoadError(
+    cb: (name: string, failedAsset: Asset<any>) => void,
+) {
+    if (assets.loaded) {
+        getFailedAssets().forEach(asset =>
+            game.events.trigger("loadError", ...asset)
+        );
+    }
+    else {
+        return game.events.on("loadError", cb);
     }
 }

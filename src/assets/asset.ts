@@ -122,6 +122,12 @@ export class AssetBucket<D> {
 
         return loaded / this.assets.size;
     }
+
+    getFailedAssets(): [string, Asset<D>][] {
+        return Array.from(this.assets.keys()).filter(a =>
+            this.assets.get(a)!.error !== null
+        ).map(a => [a, this.assets.get(a)!]);
+    }
 }
 
 export function fetchURL(url: string) {
@@ -181,7 +187,22 @@ export function loadProgress(): number {
         / buckets.length;
 }
 
-export function getAsset(name: string): Asset<any> | null {
+export function getFailedAssets(): [string, Asset<any>][] {
+    const buckets = [
+        assets.sprites,
+        assets.sounds,
+        assets.shaders,
+        assets.fonts,
+        assets.bitmapFonts,
+        assets.custom,
+    ];
+    return buckets.reduce(
+        (fails, bucket) => fails.concat(bucket.getFailedAssets()),
+        [] as [string, Asset<any>][],
+    );
+}
+
+export function getAsset<T>(name: string): Asset<T> | null {
     return assets.custom.get(name) ?? null;
 }
 
