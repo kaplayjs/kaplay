@@ -1,5 +1,5 @@
 import { SPRITE_ATLAS_HEIGHT, SPRITE_ATLAS_WIDTH } from "../constants";
-import { assets } from "../kaplay";
+import { _k } from "../kaplay";
 import { Quad } from "../math";
 import { type Asset, fetchJSON, load } from "./asset";
 import {
@@ -75,7 +75,7 @@ export function loadSpriteAtlas(
                         info.height / h * quad.h,
                     );
                 const spr = new SpriteData(atlas.tex, frames, info.anims);
-                assets.sprites.addLoaded(name, spr);
+                _k.assets.sprites.addLoaded(name, spr);
                 map[name] = spr;
             }
             return map;

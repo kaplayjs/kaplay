@@ -1,14 +1,14 @@
-import { gfx } from "../kaplay";
+import { _k } from "../kaplay";
 import { type ColorArgs, rgb } from "../math";
 
 export function setBackground(...args: ColorArgs) {
     const color = rgb(...args);
     const alpha = args[3] ?? 1;
 
-    gfx.bgColor = color;
-    gfx.bgAlpha = alpha;
+    _k.gfx.bgColor = color;
+    _k.gfx.bgAlpha = alpha;
 
-    gfx.ggl.gl.clearColor(
+    _k.gfx.ggl.gl.clearColor(
         color.r / 255,
         color.g / 255,
         color.b / 255,
@@ -17,5 +17,5 @@ export function setBackground(...args: ColorArgs) {
 }
 
 export function getBackground() {
-    return gfx.bgColor?.clone?.() ?? null;
+    return _k.gfx.bgColor?.clone?.() ?? null;
 }

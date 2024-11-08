@@ -1,4 +1,4 @@
-import { game } from "../../kaplay";
+import { _k } from "../../kaplay";
 import easings from "../../math/easings";
 import type { EmptyComp, GameObj } from "../../types";
 import type { OpacityComp } from "../draw/opacity";
@@ -24,10 +24,10 @@ export function lifespan(time: number, opt: LifespanCompOpt = {}): EmptyComp {
         id: "lifespan",
         require: ["opacity"],
         async add(this: GameObj<OpacityComp>) {
-            await game.root.wait(time);
+            await _k.game.root.wait(time);
             this.opacity = this.opacity ?? 1;
             if (fade > 0) {
-                await game.root.tween(
+                await _k.game.root.tween(
                     this.opacity,
                     0,
                     fade,

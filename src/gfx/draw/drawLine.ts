@@ -1,5 +1,5 @@
 import { opacity } from "../../components";
-import { gfx } from "../../kaplay";
+import { _k } from "../../kaplay";
 import { Color } from "../../math/color";
 import { deg2rad, Vec2, vec2 } from "../../math/math";
 import type { RenderProps } from "../../types";
@@ -101,7 +101,7 @@ export function drawLine(opt: DrawLineOpt) {
         attributes,
         [0, 1, 3, 1, 2, 3],
         opt.fixed,
-        gfx.defTex,
+        _k.gfx.defTex,
         opt.shader,
         opt.uniform ?? undefined,
     );
@@ -324,7 +324,7 @@ export function _drawLinesBevel(opt: DrawLinesOpt) {
         attributes,
         indices,
         opt.fixed,
-        gfx.defTex,
+        _k.gfx.defTex,
         opt.shader,
         opt.uniform ?? undefined,
     );
@@ -526,7 +526,7 @@ export function _drawLinesRound(opt: DrawLinesOpt) {
         attributes,
         indices,
         opt.fixed,
-        gfx.defTex,
+        _k.gfx.defTex,
         opt.shader,
         opt.uniform ?? undefined,
     );
@@ -698,7 +698,7 @@ export function _drawLinesMiter(opt: DrawLinesOpt) {
         attributes,
         indices,
         opt.fixed,
-        gfx.defTex,
+        _k.gfx.defTex,
         opt.shader,
         opt.uniform ?? undefined,
     );

@@ -165,6 +165,7 @@ import type {
     Debug,
     GameObj,
     KAPLAYCtx,
+    KAPLAYInternal,
     KAPLAYOpt,
     KAPLAYPlugin,
     MergePlugins,
@@ -228,7 +229,7 @@ import {
 } from "./components";
 
 import { dt, fixedDt, restDt } from "./app";
-import { type AudioCtx, burp, initAudio, play, volume } from "./audio";
+import { burp, initAudio, play, volume } from "./audio";
 
 import {
     addKaboom,
@@ -239,7 +240,6 @@ import {
     camScale,
     camTransform,
     destroy,
-    type Game,
     getGravity,
     getGravityDirection,
     getSceneName,
@@ -278,21 +278,24 @@ import {
 import boomSpriteSrc from "./kassets/boom.png";
 import kaSpriteSrc from "./kassets/ka.png";
 
-export let k: KAPLAYCtx;
-export let globalOpt: KAPLAYOpt;
-export let gfx: AppGfxCtx;
-export let game: Game;
-export let app: App;
-export let assets: ReturnType<typeof initAssets>;
-export let fontCacheCanvas: HTMLCanvasElement | null;
-export let fontCacheC2d: CanvasRenderingContext2D | null;
-export let debug: Debug;
-export let audio: AudioCtx;
-export let pixelDensity: number;
-export let canvas: HTMLCanvasElement;
-export let gscale: number;
-export let kaSprite: Asset<SpriteData>;
-export let boomSprite: Asset<SpriteData>;
+// Internal data, shared between all modules
+export const _k = {
+    k: null,
+    globalOpt: null,
+    gfx: null,
+    game: null,
+    app: null,
+    assets: null,
+    fontCacheCanvas: null,
+    fontCacheC2d: null,
+    debug: null,
+    audio: null,
+    pixelDensity: null,
+    canvas: null,
+    gscale: null,
+    kaSprite: null,
+    boomSprite: null,
+} as unknown as KAPLAYInternal;
 
 /**
  * Initialize KAPLAY context. The starting point of all KAPLAY games.
@@ -337,7 +340,14 @@ const kaplay = <
 ): TPlugins extends [undefined] ? KAPLAYCtx<TButtons, TButtonsName>
     : KAPLAYCtx<TButtons, TButtonsName> & MergePlugins<TPlugins> =>
 {
-    globalOpt = gopt;
+    if (_k.k) {
+        console.warn(
+            "KAPLAY already initialized, you are calling kaplay() multiple times, it may lead bugs!",
+        );
+        _k.k.quit();
+    }
+
+    _k.globalOpt = gopt;
     const root = gopt.root ?? document.body;
 
     // if root is not defined (which falls back to <body>) we assume user is using kaboom on a clean page, and modify <body> to better fit a full screen canvas
@@ -350,11 +360,13 @@ const kaplay = <
     }
 
     // create a <canvas> if user didn't provide one
-    canvas = gopt.canvas
+    const canvas = gopt.canvas
         ?? root.appendChild(document.createElement("canvas"));
+    _k.canvas = canvas;
 
     // global pixel scale
-    gscale = gopt.scale ?? 1;
+    const gscale = gopt.scale ?? 1;
+    _k.gscale = gscale;
     const fixedSize = gopt.width && gopt.height && !gopt.stretch
         && !gopt.letterbox;
 
@@ -393,21 +405,24 @@ const kaplay = <
 
     canvas.style.cssText = styles.join(";");
 
-    pixelDensity = gopt.pixelDensity || 1;
+    const pixelDensity = gopt.pixelDensity || 1;
+    _k.pixelDensity = pixelDensity;
 
     canvas.width *= pixelDensity;
     canvas.height *= pixelDensity;
     // make canvas focusable
     canvas.tabIndex = 0;
 
-    fontCacheCanvas = document.createElement("canvas");
+    const fontCacheCanvas = document.createElement("canvas");
     fontCacheCanvas.width = MAX_TEXT_CACHE_SIZE;
     fontCacheCanvas.height = MAX_TEXT_CACHE_SIZE;
-    fontCacheC2d = fontCacheCanvas.getContext("2d", {
+    _k.fontCacheCanvas = fontCacheCanvas;
+    const fontCacheC2d = fontCacheCanvas.getContext("2d", {
         willReadFrequently: true,
     });
+    _k.fontCacheC2d = fontCacheC2d;
 
-    app = initApp({
+    const app = initApp({
         canvas: canvas,
         touchToMouse: gopt.touchToMouse,
         gamepads: gopt.gamepads,
@@ -415,6 +430,7 @@ const kaplay = <
         maxFPS: gopt.maxFPS,
         buttons: gopt.buttons,
     });
+    _k.app = app;
 
     const gc: Array<() => void> = [];
 
@@ -435,11 +451,14 @@ const kaplay = <
         texFilter: gopt.texFilter,
     });
 
-    gfx = initAppGfx(gopt, ggl);
-    audio = initAudio();
-    assets = initAssets(ggl);
-
-    game = initGame();
+    const gfx = initAppGfx(gopt, ggl);
+    _k.gfx = gfx;
+    const audio = initAudio();
+    _k.audio = audio;
+    const assets = initAssets(ggl);
+    _k.assets = assets;
+    const game = initGame();
+    _k.game = game;
 
     game.root.use(timer());
 
@@ -537,7 +556,7 @@ const kaplay = <
 
     let debugPaused = false;
 
-    debug = {
+    const debug: Debug = {
         inspect: false,
         timeScale: 1,
         showLog: true,
@@ -576,6 +595,8 @@ const kaplay = <
         },
     };
 
+    _k.debug = debug;
+
     function getData<T>(key: string, def?: T): T | null {
         try {
             return JSON.parse(window.localStorage[key]);
@@ -598,24 +619,24 @@ const kaplay = <
         plugin: KAPLAYPlugin<T>,
         ...args: any
     ): KAPLAYCtx & T {
-        const funcs = plugin(k);
+        const funcs = plugin(ctx);
         let funcsObj: T;
         if (typeof funcs === "function") {
             const plugWithOptions = funcs(...args);
-            funcsObj = plugWithOptions(k);
+            funcsObj = plugWithOptions(ctx);
         }
         else {
             funcsObj = funcs;
         }
 
         for (const key in funcsObj) {
-            k[key as keyof typeof k] = funcsObj[key];
+            ctx[key as keyof typeof ctx] = funcsObj[key];
 
             if (gopt.global !== false) {
                 window[key as any] = funcsObj[key];
             }
         }
-        return k as KAPLAYCtx & T;
+        return ctx as unknown as KAPLAYCtx & T;
     }
 
     function record(frameRate?: number): Recording {
@@ -691,8 +712,11 @@ const kaplay = <
     const query = game.root.query.bind(game.root);
     const tween = game.root.tween.bind(game.root);
 
-    boomSprite = loadSprite(null, boomSpriteSrc);
-    kaSprite = loadSprite(null, kaSpriteSrc);
+    const kaSprite = loadSprite(null, kaSpriteSrc);
+    const boomSprite = loadSprite(null, boomSpriteSrc);
+
+    _k.kaSprite = kaSprite;
+    _k.boomSprite = boomSprite;
 
     function fixedUpdateFrame() {
         // update every obj
@@ -1080,7 +1104,8 @@ const kaplay = <
     initEvents();
 
     // the exported ctx handle
-    k = {
+    const ctx: KAPLAYCtx = {
+        _k,
         VERSION,
         // asset load
         loadRoot,
@@ -1413,6 +1438,8 @@ const kaplay = <
         KEventController,
     };
 
+    _k.k = ctx;
+
     const plugins = gopt.plugins as KAPLAYPlugin<Record<string, unknown>>[];
 
     if (plugins) {
@@ -1421,8 +1448,8 @@ const kaplay = <
 
     // export everything to window if global is set
     if (gopt.global !== false) {
-        for (const key in k) {
-            (<any> window[<any> key]) = k[key as keyof KAPLAYCtx];
+        for (const key in ctx) {
+            (<any> window[<any> key]) = ctx[key as keyof KAPLAYCtx];
         }
     }
 
@@ -1430,7 +1457,8 @@ const kaplay = <
         app.canvas.focus();
     }
 
-    return k as TPlugins extends [undefined] ? KAPLAYCtx<TButtons, TButtonsName>
+    return ctx as unknown as TPlugins extends [undefined]
+        ? KAPLAYCtx<TButtons, TButtonsName>
         : KAPLAYCtx<TButtons, TButtonsName> & MergePlugins<TPlugins>;
 };
 

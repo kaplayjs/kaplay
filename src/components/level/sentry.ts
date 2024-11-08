@@ -1,5 +1,5 @@
 import { dt } from "../../app";
-import { game, k } from "../../kaplay";
+import { _k } from "../../kaplay";
 import { Vec2 } from "../../math/math";
 import type { Comp, GameObj, QueryOpt } from "../../types";
 import type { KEventController } from "../../utils/";
@@ -89,7 +89,7 @@ export function sentry(
     const get: SentryCandidatesCb = typeof candidates === "function"
         ? candidates
         : () => {
-            return game.root.query(candidates);
+            return _k.game.root.query(candidates);
         };
     const checkFrequency = opts.checkFrequency || 1;
     const directionVector = typeof opts.direction === "number"
