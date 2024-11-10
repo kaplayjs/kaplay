@@ -184,7 +184,8 @@ export function drawDebug() {
 
             _k.game.logs = _k.game.logs
                 .filter((log) =>
-                    _k.app.time() - log.time < (_k.globalOpt.logTime || LOG_TIME)
+                    _k.app.time() - log.time
+                        < (_k.globalOpt.logTime || LOG_TIME)
                 );
 
             const ftext = formatText({
@@ -219,7 +220,12 @@ export function drawDebug() {
     }
 }
 
-function prettyDebug(object: any | undefined, inside: boolean = false): string {
+function prettyDebug(
+    object: any | undefined,
+    inside: boolean = false,
+    seen: Set<any> = new Set(),
+): string {
+    if (seen.has(object)) return "<recursive>";
     var outStr = "", tmp;
     if (inside && typeof object === "string") {
         object = JSON.stringify(object);
@@ -227,22 +233,37 @@ function prettyDebug(object: any | undefined, inside: boolean = false): string {
     if (Array.isArray(object)) {
         outStr = [
             "[",
-            object.map(e => prettyDebug(e, true)).join(", "),
-            "]"
+            object.map(e => prettyDebug(e, true, seen.union(new Set([object]))))
+                .join(", "),
+            "]",
         ].join("");
         object = outStr;
     }
-    if (typeof object === "object"
-        && object.toString === Object.prototype.toString) {
-            if (object.constructor !== Object) outStr += object.constructor.name + " ";
-            outStr += [
-                "{",
-                (tmp = Object.getOwnPropertyNames(object)
-                    .map(p => `${/^\w+$/.test(p) ? p : JSON.stringify(p)}: ${prettyDebug(object[p], true)}`)
-                    .join(", ")) ? ` ${tmp} ` : "",
-                "}"
-            ].join("");
-            object = outStr;
+    if (
+        typeof object === "object"
+        && object.toString === Object.prototype.toString
+    ) {
+        if (object.constructor !== Object) {
+            outStr += object.constructor.name + " ";
+        }
+        outStr += [
+            "{",
+            (tmp = Object.getOwnPropertyNames(object)
+                    .map(p =>
+                        `${/^\w+$/.test(p) ? p : JSON.stringify(p)}: ${
+                            prettyDebug(
+                                object[p],
+                                true,
+                                seen.union(new Set([object])),
+                            )
+                        }`
+                    )
+                    .join(", "))
+                ? ` ${tmp} `
+                : "",
+            "}",
+        ].join("");
+        object = outStr;
     }
     return String(object).replaceAll(/(?<!\\)\[/g, "\\[");
 }
