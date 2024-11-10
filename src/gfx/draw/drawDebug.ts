@@ -233,7 +233,7 @@ function prettyDebug(object: any | undefined, inside: boolean = false, seen: Set
         ].join("");
         object = outStr;
     }
-    if (obj === null) return "null";
+    if (object === null) return "null";
     if (
         typeof object === "object"
         && object.toString === Object.prototype.toString
