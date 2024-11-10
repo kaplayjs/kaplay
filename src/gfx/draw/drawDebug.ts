@@ -219,7 +219,8 @@ export function drawDebug() {
     }
 }
 
-function prettyDebug(object: any | undefined, inside: boolean = false): string {
+function prettyDebug(object: any | undefined, inside: boolean = false, seen: Set<any> = new Set): string {
+    if (seen.has(object)) return "<recursive>";
     var outStr = "", tmp;
     if (inside && typeof object === "string") {
         object = JSON.stringify(object);
@@ -227,7 +228,7 @@ function prettyDebug(object: any | undefined, inside: boolean = false): string {
     if (Array.isArray(object)) {
         outStr = [
             "[",
-            object.map(e => prettyDebug(e, true)).join(", "),
+            object.map(e => prettyDebug(e, true, seen.union(new Set([object])))).join(", "),
             "]",
         ].join("");
         object = outStr;
@@ -244,7 +245,7 @@ function prettyDebug(object: any | undefined, inside: boolean = false): string {
             (tmp = Object.getOwnPropertyNames(object)
                     .map(p =>
                         `${/^\w+$/.test(p) ? p : JSON.stringify(p)}: ${
-                            prettyDebug(object[p], true)
+                            prettyDebug(object[p], true, seen.union(new Set([object])))
                         }`
                     )
                     .join(", "))
