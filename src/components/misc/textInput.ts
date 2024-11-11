@@ -13,6 +13,10 @@ export interface TextInputComp extends Comp {
      * Enable the text input array from being modified by user input.
      */
     hasFocus: boolean;
+    /**
+     * The "real" text that the user typed, without any escaping.
+     */
+    typedText: string;
 }
 
 export function textInput(
@@ -22,26 +26,26 @@ export function textInput(
 ): TextInputComp {
     let charEv: KEventController;
     let backEv: KEventController;
-    let typedText: string = "";
     return {
         id: "textInput",
         hasFocus: hasFocus,
         require: ["text"],
+        typedText: "";
         add(this: GameObj<TextComp & TextInputComp>) {
             const flip = () => {
-                this.text = typedText.replace(/([\[\\])/g, "\\$1");
+                this.text = this.typedText.replace(/([\[\\])/g, "\\$1");
             };
 
             charEv = _k.k.onCharInput((character) => {
                 if (
                     this.hasFocus
-                    && (!maxInputLength || typedText.length < maxInputLength)
+                    && (!maxInputLength || this.typedText.length < maxInputLength)
                 ) {
                     if (_k.k.isKeyDown("shift")) {
-                        typedText += character.toUpperCase();
+                        this.typedText += character.toUpperCase();
                     }
                     else {
-                        typedText += character;
+                        this.typedText += character;
                     }
                     flip();
                 }
@@ -49,7 +53,7 @@ export function textInput(
 
             backEv = _k.k.onKeyPressRepeat("backspace", () => {
                 if (this.hasFocus) {
-                    typedText = typedText.slice(0, -1);
+                    this.typedText = this.typedText.slice(0, -1);
                 }
                 flip();
             });
