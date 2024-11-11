@@ -22,30 +22,36 @@ export function textInput(
 ): TextInputComp {
     let charEv: KEventController;
     let backEv: KEventController;
-
+    let typedText: string = "";
     return {
         id: "textInput",
         hasFocus: hasFocus,
         require: ["text"],
         add(this: GameObj<TextComp & TextInputComp>) {
+            const flip = () => {
+                this.text = typedText.replace(/([\[\\])/g, "\\$1");
+            };
+
             charEv = _k.k.onCharInput((character) => {
                 if (
                     this.hasFocus
-                    && (!maxInputLength || this.text.length < maxInputLength)
+                    && (!maxInputLength || typedText.length < maxInputLength)
                 ) {
                     if (_k.k.isKeyDown("shift")) {
-                        this.text += character.toUpperCase();
+                        typedText += character.toUpperCase();
                     }
                     else {
-                        this.text += character;
+                        typedText += character;
                     }
+                    flip();
                 }
             });
 
             backEv = _k.k.onKeyPressRepeat("backspace", () => {
                 if (this.hasFocus) {
-                    this.text = this.text.slice(0, -1);
+                    typedText = typedText.slice(0, -1);
                 }
+                flip();
             });
         },
         destroy() {
