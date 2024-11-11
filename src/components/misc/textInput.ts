@@ -30,7 +30,7 @@ export function textInput(
         id: "textInput",
         hasFocus: hasFocus,
         require: ["text"],
-        typedText: "";
+        typedText: "",
         add(this: GameObj<TextComp & TextInputComp>) {
             const flip = () => {
                 this.text = this.typedText.replace(/([\[\\])/g, "\\$1");
