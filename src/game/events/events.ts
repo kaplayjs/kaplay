@@ -215,9 +215,7 @@ export function onLoadError(
     cb: (name: string, failedAsset: Asset<any>) => void,
 ) {
     if (_k.assets.loaded) {
-        getFailedAssets().forEach(asset =>
-            _k.game.events.trigger("loadError", ...asset)
-        );
+        getFailedAssets().forEach(asset => cb(...asset));
     }
     else {
         return _k.game.events.on("loadError", cb);
