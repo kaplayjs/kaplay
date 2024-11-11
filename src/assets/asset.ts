@@ -202,7 +202,7 @@ export function getFailedAssets(): [string, Asset<any>][] {
         [] as [string, Asset<any>][],
     );
 }
-export function getAsset<T>(name: string): Asset<any> | null {
+export function getAsset(name: string): Asset<any> | null {
     return _k.assets.custom.get(name) ?? null;
 }
 
