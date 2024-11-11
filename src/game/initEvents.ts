@@ -1,77 +1,69 @@
 import { burp } from "../audio";
 import { FrameBuffer, updateViewport } from "../gfx";
-import {
-    app,
-    audio,
-    canvas,
-    debug,
-    gfx,
-    globalOpt,
-    gscale,
-    pixelDensity,
+import {_k
 } from "../kaplay";
 import { clamp } from "../math/math";
 import { toFixed } from "../utils";
 
 export function initEvents() {
-    app.onHide(() => {
-        if (!globalOpt.backgroundAudio) {
-            audio.ctx.suspend();
+    _k.app.onHide(() => {
+        if (!_k.globalOpt.backgroundAudio) {
+            _k.audio.ctx.suspend();
         }
     });
 
-    app.onShow(() => {
-        if (!globalOpt.backgroundAudio && !debug.paused) {
-            audio.ctx.resume();
+    _k.app.onShow(() => {
+        if (!_k.globalOpt.backgroundAudio && !_k.debug.paused) {
+            _k.audio.ctx.resume();
         }
     });
 
-    app.onResize(() => {
-        if (app.isFullscreen()) return;
-        const fixedSize = globalOpt.width && globalOpt.height;
-        if (fixedSize && !globalOpt.stretch && !globalOpt.letterbox) return;
+    _k.app.onResize(() => {
+        if (_k.app.isFullscreen()) return;
+        const fixedSize = _k.globalOpt.width && _k.globalOpt.height;
+        if (fixedSize && !_k.globalOpt.stretch && !_k.globalOpt.letterbox) return;
 
-        canvas.width = canvas.offsetWidth * pixelDensity;
-        canvas.height = canvas.offsetHeight * pixelDensity;
+        _k.canvas.width = _k.canvas.offsetWidth * _k.pixelDensity;
+        _k.canvas.height = _k.canvas.offsetHeight * _k.pixelDensity;
 
         updateViewport();
 
         if (!fixedSize) {
-            gfx.frameBuffer.free();
-            gfx.frameBuffer = new FrameBuffer(
-                gfx.ggl,
-                gfx.ggl.gl.drawingBufferWidth,
-                gfx.ggl.gl.drawingBufferHeight,
+            _k.gfx.frameBuffer.free();
+            _k.gfx.frameBuffer = new FrameBuffer(
+                _k.gfx.ggl,
+                _k.gfx.ggl.gl.drawingBufferWidth,
+                _k.gfx.ggl.gl.drawingBufferHeight,
             );
-            gfx.width = gfx.ggl.gl.drawingBufferWidth / pixelDensity / gscale;
-            gfx.height = gfx.ggl.gl.drawingBufferHeight / pixelDensity / gscale;
+            _k.gfx.width = _k.gfx.ggl.gl.drawingBufferWidth / _k.pixelDensity / _k.gscale;
+            _k.gfx.height = _k.gfx.ggl.gl.drawingBufferHeight / _k.pixelDensity / _k.gscale;
         }
     });
 
-    if (globalOpt.debug !== false) {
-        app.onKeyPress(
-            globalOpt.debugKey ?? "f1",
-            () => debug.inspect = !debug.inspect,
+    if (_k.globalOpt.debug !== false) {
+        _k.app.onKeyPress(
+            _k.globalOpt.debugKey ?? "f1",
+            () => _k.debug.inspect = !_k.debug.inspect,
         );
-        app.onKeyPress("f2", () => debug.clearLog());
-        app.onKeyPress("f8", () => debug.paused = !debug.paused);
-        app.onKeyPress("f7", () => {
-            debug.timeScale = toFixed(
-                clamp(debug.timeScale - 0.2, 0, 2),
+        _k.app.onKeyPress("f2", () => _k.debug.clearLog());
+        _k.app.onKeyPress("f8", () => _k.debug.paused = !_k.debug.paused);
+        _k.app.onKeyPress("f7", () => {
+            _k.debug.timeScale = toFixed(
+                clamp(_k.debug.timeScale - 0.2, 0, 2),
                 1,
             );
         });
-        app.onKeyPress("f9", () => {
-            debug.timeScale = toFixed(
-                clamp(debug.timeScale + 0.2, 0, 2),
+        _k.app.onKeyPress("f9", () => {
+            _k.debug.timeScale = toFixed(
+                clamp(_k.debug.timeScale + 0.2, 0, 2),
                 1,
             );
         });
-        app.onKeyPress("f10", () => debug.stepFrame());
+        _k.app.onKeyPress("f10", () => _k.debug.stepFrame());
     }
 
     // burp mode initialization
-    if (globalOpt.burp) {
-        app.onKeyPress("b", () => burp());
+    if (_k.globalOpt.burp) {
+        _k.app.onKeyPress("b", () => burp());
     }
 }

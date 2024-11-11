@@ -1,5 +1,5 @@
 import { DBG_FONT, LOG_TIME } from "../../constants";
-import { app, debug, game, globalOpt } from "../../kaplay";
+import { _k } from "../../kaplay";
 import { rgb } from "../../math/color";
 import { vec2, wave } from "../../math/math";
 import { formatText } from "../formatText";
@@ -20,17 +20,17 @@ import { drawTriangle } from "./drawTriangle";
 import { drawUnscaled } from "./drawUnscaled";
 
 export function drawDebug() {
-    if (debug.inspect) {
+    if (_k.debug.inspect) {
         let inspecting = null;
 
-        for (const obj of game.root.get("*", { recursive: true })) {
+        for (const obj of _k.game.root.get("*", { recursive: true })) {
             if (obj.c("area") && obj.isHovering()) {
                 inspecting = obj;
                 break;
             }
         }
 
-        game.root.drawInspect();
+        _k.game.root.drawInspect();
 
         if (inspecting) {
             const lines = [];
@@ -50,10 +50,10 @@ export function drawDebug() {
             drawInspectText(contentToView(mousePos()), lines.join("\n"));
         }
 
-        drawInspectText(vec2(8), `FPS: ${debug.fps()}`);
+        drawInspectText(vec2(8), `FPS: ${_k.debug.fps()}`);
     }
 
-    if (debug.paused) {
+    if (_k.debug.paused) {
         drawUnscaled(() => {
             // top right corner
             pushTransform();
@@ -90,7 +90,7 @@ export function drawDebug() {
         });
     }
 
-    if (debug.timeScale !== 1) {
+    if (_k.debug.timeScale !== 1) {
         drawUnscaled(() => {
             // bottom right corner
             pushTransform();
@@ -101,7 +101,7 @@ export function drawDebug() {
 
             // format text first to get text size
             const ftxt = formatText({
-                text: debug.timeScale.toFixed(1),
+                text: _k.debug.timeScale.toFixed(1),
                 font: DBG_FONT,
                 size: 16,
                 color: rgb(255, 255, 255),
@@ -123,7 +123,7 @@ export function drawDebug() {
 
             // fast forward / slow down icon
             for (let i = 0; i < 2; i++) {
-                const flipped = debug.timeScale < 1;
+                const flipped = _k.debug.timeScale < 1;
                 drawTriangle({
                     p1: vec2(-ftxt.width - pad * (flipped ? 2 : 3.5), -pad),
                     p2: vec2(
@@ -147,7 +147,7 @@ export function drawDebug() {
         });
     }
 
-    if (debug.curRecording) {
+    if (_k.debug.curRecording) {
         drawUnscaled(() => {
             pushTransform();
             pushTranslate(0, height());
@@ -156,7 +156,7 @@ export function drawDebug() {
             drawCircle({
                 radius: 12,
                 color: rgb(255, 0, 0),
-                opacity: wave(0, 1, app.time() * 4),
+                opacity: wave(0, 1, _k.app.time() * 4),
                 fixed: true,
             });
 
@@ -164,7 +164,7 @@ export function drawDebug() {
         });
     }
 
-    if (debug.showLog && game.logs.length > 0) {
+    if (_k.debug.showLog && _k.game.logs.length > 0) {
         drawUnscaled(() => {
             pushTransform();
             pushTranslate(0, height());
@@ -173,7 +173,7 @@ export function drawDebug() {
             const pad = 8;
             const logs = [];
 
-            for (const log of game.logs) {
+            for (const log of _k.game.logs) {
                 let str = "";
                 const style = log.msg instanceof Error ? "error" : "info";
                 str += `[time]${log.time.toFixed(2)}[/time]`;
@@ -182,9 +182,9 @@ export function drawDebug() {
                 logs.push(str);
             }
 
-            game.logs = game.logs
+            _k.game.logs = _k.game.logs
                 .filter((log) =>
-                    app.time() - log.time < (globalOpt.logTime || LOG_TIME)
+                    _k.app.time() - log.time < (_k.globalOpt.logTime || LOG_TIME)
                 );
 
             const ftext = formatText({
@@ -219,7 +219,8 @@ export function drawDebug() {
     }
 }
 
-function prettyDebug(object: any | undefined, inside: boolean = false): string {
+function prettyDebug(object: any | undefined, inside: boolean = false, seen: Set<any> = new Set): string {
+    if (seen.has(object)) return "<recursive>";
     var outStr = "", tmp;
     if (inside && typeof object === "string") {
         object = JSON.stringify(object);
@@ -227,7 +228,7 @@ function prettyDebug(object: any | undefined, inside: boolean = false): string {
     if (Array.isArray(object)) {
         outStr = [
             "[",
-            object.map(e => prettyDebug(e, true)).join(", "),
+            object.map(e => prettyDebug(e, true, seen.union(new Set([object])))).join(", "),
             "]",
         ].join("");
         object = outStr;
@@ -244,7 +245,7 @@ function prettyDebug(object: any | undefined, inside: boolean = false): string {
             (tmp = Object.getOwnPropertyNames(object)
                     .map(p =>
                         `${/^\w+$/.test(p) ? p : JSON.stringify(p)}: ${
-                            prettyDebug(object[p], true)
+                            prettyDebug(object[p], true, seen.union(new Set([object])))
                         }`
                     )
                     .join(", "))

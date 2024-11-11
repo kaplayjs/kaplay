@@ -1,5 +1,5 @@
 import { Asset, resolveShader, type Uniform } from "../../assets";
-import { game, gfx } from "../../kaplay";
+import { _k } from "../../kaplay";
 import { Vec2, vec2 } from "../../math/math";
 import { screen2ndc } from "../../math/various";
 import type { Attributes, RenderProps } from "../../types";
@@ -16,17 +16,17 @@ export function drawRaw(
     shaderSrc?: RenderProps["shader"],
     uniform?: Uniform,
 ) {
-    const parsedTex = tex ?? gfx.defTex;
-    const parsedShader = shaderSrc ?? gfx.defShader;
+    const parsedTex = tex ?? _k.gfx.defTex;
+    const parsedShader = shaderSrc ?? _k.gfx.defShader;
     const shader = resolveShader(parsedShader);
 
     if (!shader || shader instanceof Asset) {
         return;
     }
 
-    const transform = (gfx.fixed || fixed)
-        ? gfx.transform
-        : game.cam.transform.mul(gfx.transform);
+    const transform = (_k.gfx.fixed || fixed)
+        ? _k.gfx.transform
+        : _k.game.cam.transform.mul(_k.gfx.transform);
 
     const vertLength = attributes.pos.length / 2;
     const vv: number[] = new Array(vertLength * 8);
@@ -55,8 +55,8 @@ export function drawRaw(
         vv[index++] = attributes.opacity[i];
     }
 
-    gfx.renderer.push(
-        gfx.ggl.gl.TRIANGLES,
+    _k.gfx.renderer.push(
+        _k.gfx.ggl.gl.TRIANGLES,
         vv,
         indices,
         shader,

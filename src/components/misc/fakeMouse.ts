@@ -1,5 +1,5 @@
 import { mousePos } from "../../gfx";
-import { k } from "../../kaplay";
+import { _k } from "../../kaplay";
 import type { Comp, GameObj } from "../../types";
 import type { PosComp } from "../transform";
 
@@ -55,7 +55,7 @@ export const fakeMouse = (opt: FakeMouseOpt = {
         update(this: FakeMouse) {
             if (!opt.followMouse) return;
 
-            if (k.isMouseMoved()) {
+            if (_k.k.isMouseMoved()) {
                 this.pos = mousePos();
             }
         },

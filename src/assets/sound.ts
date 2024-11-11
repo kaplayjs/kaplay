@@ -1,4 +1,4 @@
-import { assets, audio } from "../kaplay";
+import { _k } from "../kaplay";
 import { dataURLToArrayBuffer, isDataURL } from "../utils";
 import { Asset, fetchArrayBuffer, loadProgress } from "./asset";
 import { fixURL } from "./utils";
@@ -16,7 +16,7 @@ export class SoundData {
 
     static fromArrayBuffer(buf: ArrayBuffer): Promise<SoundData> {
         return new Promise((resolve, reject) =>
-            audio.ctx.decodeAudioData(buf, resolve, reject)
+            _k.audio.ctx.decodeAudioData(buf, resolve, reject)
         ).then((buf) => new SoundData(buf as AudioBuffer));
     }
 
@@ -59,7 +59,7 @@ export function resolveSound(
 }
 
 export function getSound(name: string): Asset<SoundData> | null {
-    return assets.sounds.get(name) ?? null;
+    return _k.assets.sounds.get(name) ?? null;
 }
 
 // load a sound to asset manager
@@ -80,15 +80,16 @@ export function loadSound(
         sound = Promise.resolve(SoundData.fromAudioBuffer(fixedSrc));
     }
 
-    return assets.sounds.add(name, sound);
+    return _k.assets.sounds.add(name, sound);
 }
 
 export function loadMusic(
     name: string | null,
     url: string,
 ) {
-    const a = new Audio(url);
+    const musicUrl = fixURL(url);
+    const a = new Audio(musicUrl);
     a.preload = "auto";
 
-    return assets.music[name as keyof typeof assets.music] = fixURL(url);
+    return _k.assets.music[name as keyof typeof _k.assets.music] = musicUrl;
 }

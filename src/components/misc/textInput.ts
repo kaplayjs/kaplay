@@ -1,4 +1,4 @@
-import { k } from "../../kaplay";
+import { _k } from "../../kaplay";
 import type { Comp, GameObj, KAPLAYCtx } from "../../types";
 import type { KEventController } from "../../utils";
 import type { TextComp } from "../draw/text";
@@ -28,12 +28,12 @@ export function textInput(
         hasFocus: hasFocus,
         require: ["text"],
         add(this: GameObj<TextComp & TextInputComp>) {
-            charEv = k.onCharInput((character) => {
+            charEv = _k.k.onCharInput((character) => {
                 if (
                     this.hasFocus
                     && (!maxInputLength || this.text.length < maxInputLength)
                 ) {
-                    if (k.isKeyDown("shift")) {
+                    if (_k.k.isKeyDown("shift")) {
                         this.text += character.toUpperCase();
                     }
                     else {
@@ -42,7 +42,7 @@ export function textInput(
                 }
             });
 
-            backEv = k.onKeyPressRepeat("backspace", () => {
+            backEv = _k.k.onKeyPressRepeat("backspace", () => {
                 if (this.hasFocus) {
                     this.text = this.text.slice(0, -1);
                 }
