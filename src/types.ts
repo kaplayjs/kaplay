@@ -1233,17 +1233,21 @@ export interface KAPLAYCtx<
      * })
      *
      * // a custom event can be defined manually
-     * // by passing a name and a callback function
-     * on("talk", (message, posX, posY) => {
-     *     add([
-     *      text(message),
-     *      pos(posX, posY - 100)
+     * // by passing an event name, a tag, and a callback function
+     * // if you want any tag, use a tag of "*"
+     * on("talk", "npc", (npc, message) => {
+     *     npc.add([
+     *         text(message),
+     *         pos(0, -50),
+     *         lifespan(2),
+     *         opacity(),
      *     ])
-     * })
+     * });
+     *
      * onKeyPress("space", () => {
-     *    // the trigger method on game objs can be used to trigger a custom event
-     *    npc.trigger("talk", "Hello World!", npc.pos.x, npc.pos.y)
-     * })
+     *     // the trigger method on game objs can be used to trigger a custom event
+     *     npc.trigger("talk", "Hello, KAPLAY!");
+     * });
      *
      * ```
      * @group Events
