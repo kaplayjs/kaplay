@@ -1362,6 +1362,26 @@ export interface KAPLAYCtx<
      */
     onLoad(action: () => void): KEventController | undefined;
     /**
+     * Register an event that runs once for each asset that failed to load,
+     * after all others have completed.
+     *
+     * @example
+     * ```js
+     * // this will not load
+     * loadSprite("bobo", "notavalidURL");
+     *
+     * // process the error
+     * // you decide whether to ignore it, or throw an error and halt the game
+     * onLoadError((name, asset) => {
+     *     debug.error(`${name} failed to load: ${asset.error}`);
+     * })
+     * ```
+     * @group Events
+     */
+    onLoadError(
+        action: (name: string, failedAsset: Asset<any>) => void,
+    ): KEventController | undefined;
+    /**
      * Register an event that runs every frame when assets are initially loading. Can be used to draw a custom loading screen.
      *
      * @since v3000.0
