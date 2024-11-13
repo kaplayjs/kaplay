@@ -17,10 +17,11 @@ export function drawTexture(opt: DrawTextureOpt) {
     const scale = new Vec2(1);
 
     if (opt.tiled) {
-        const anchor = anchorPt(opt.anchor || DEF_ANCHOR).add(
-            new Vec2(1, 1),
-        ).scale(0.5);
-        const offset = anchor.scale(opt.width || w, opt.height || h);
+        const offset = anchorPt(opt.anchor || DEF_ANCHOR);
+        const offsetX = (opt.pos?.x || 0)
+            - (offset.x + 1) * 0.5 * (opt.width || w);
+        const offsetY = (opt.pos?.y || 0)
+            - (offset.y + 1) * 0.5 * (opt.height || h);
 
         const fcols = (opt.width || w) / w;
         const frows = (opt.height || h) / h;
