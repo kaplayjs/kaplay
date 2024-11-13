@@ -239,6 +239,7 @@ function prettyDebug(
         ].join("");
         object = outStr;
     }
+    if (object === null) return "null";
     if (
         typeof object === "object"
         && object.toString === Object.prototype.toString
