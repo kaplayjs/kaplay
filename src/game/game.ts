@@ -1,3 +1,4 @@
+import type { Asset } from "../assets";
 import type { TimerComp } from "../components";
 import { Mat4, Vec2 } from "../math/math";
 import { type GameObj, type Key, type MouseButton } from "../types";
@@ -34,6 +35,7 @@ export const initGame = () => {
             add: [GameObj];
             destroy: [GameObj];
             load: [];
+            loadError: [string, Asset<any>];
             loading: [number];
             error: [Error];
             input: [];

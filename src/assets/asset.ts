@@ -114,6 +114,12 @@ export class AssetBucket<D> {
         });
         return loaded / this.assets.size;
     }
+
+    getFailedAssets(): [string, Asset<D>][] {
+        return Array.from(this.assets.keys()).filter(a =>
+            this.assets.get(a)!.error !== null
+        ).map(a => [a, this.assets.get(a)!]);
+    }
 }
 
 export function fetchURL(url: string) {
@@ -173,6 +179,20 @@ export function loadProgress(): number {
         / buckets.length;
 }
 
+export function getFailedAssets(): [string, Asset<any>][] {
+    const buckets = [
+        _k.assets.sprites,
+        _k.assets.sounds,
+        _k.assets.shaders,
+        _k.assets.fonts,
+        _k.assets.bitmapFonts,
+        _k.assets.custom,
+    ];
+    return buckets.reduce(
+        (fails, bucket) => fails.concat(bucket.getFailedAssets()),
+        [] as [string, Asset<any>][],
+    );
+}
 export function getAsset(name: string): Asset<any> | null {
     return _k.assets.custom.get(name) ?? null;
 }
