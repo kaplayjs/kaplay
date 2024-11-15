@@ -274,8 +274,14 @@ export function make<T>(comps: CompList<T> = []): GameObj<T> {
                         gc.push(() => delete this[k]);
                     }
                     else {
+                        const originalCompId = compStates.values().find(c =>
+                            (c as any)[k] !== undefined
+                        )?.id;
                         throw new Error(
-                            `Duplicate component property: "${k}"`,
+                            `Duplicate component property: "${k}" while adding component "${comp.id}"`
+                                + (originalCompId
+                                    ? ` (originally added by "${originalCompId}")`
+                                    : ""),
                         );
                     }
                 }
