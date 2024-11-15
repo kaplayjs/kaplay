@@ -953,7 +953,7 @@ export interface KAPLAYCtx<
      *
      * @group Components
      */
-    timer(): TimerComp;
+    timer(maxLoopsPerFrame?: number): TimerComp;
     /**
      * Make object unaffected by camera or parent object transforms, and render at last.
      *
@@ -2758,7 +2758,7 @@ export interface KAPLAYCtx<
      * ```
      * @group Timer
      */
-    loop(t: number, action: () => void): KEventController;
+    loop(t: number, action: () => void, maxLoops?: number, waitFirst?: boolean): TimerController;
     /**
      * Play a piece of audio.
      *
