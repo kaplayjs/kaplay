@@ -1,4 +1,9 @@
-import type { App, ButtonBinding, ButtonBindingDevice, ButtonsDef } from "./app";
+import type {
+    App,
+    ButtonBinding,
+    ButtonBindingDevice,
+    ButtonsDef,
+} from "./app";
 import type {
     AsepriteData,
     Asset,
@@ -15,72 +20,72 @@ import type {
 } from "./assets";
 import type { FontData } from "./assets/font";
 import type { AudioCtx, AudioPlay, AudioPlayOpt } from "./audio";
-import type {
-    AgentComp,
-    AgentCompOpt,
-    AnchorComp,
-    AnimateComp,
-    AnimateCompOpt,
-    AreaComp,
-    AreaCompOpt,
-    AreaEffectorComp,
-    AreaEffectorCompOpt,
-    BodyComp,
-    BodyCompOpt,
-    BuoyancyEffectorComp,
-    BuoyancyEffectorCompOpt,
-    CircleComp,
-    CircleCompOpt,
-    ColorComp,
-    ConstantForceComp,
-    ConstantForceCompOpt,
-    DoubleJumpComp,
-    FakeMouseComp,
-    FakeMouseOpt,
-    FixedComp,
-    FollowComp,
-    HealthComp,
-    LayerComp,
-    LifespanCompOpt,
-    MaskComp,
-    NamedComp,
-    OffScreenComp,
-    OffScreenCompOpt,
-    OpacityComp,
-    OutlineComp,
-    PathfinderComp,
-    PathfinderCompOpt,
-    PatrolComp,
-    PatrolCompOpt,
-    PlatformEffectorComp,
-    PlatformEffectorCompOpt,
-    PointEffectorComp,
-    PointEffectorCompOpt,
-    PolygonComp,
-    PolygonCompOpt,
-    PosComp,
-    RectComp,
-    RectCompOpt,
-    RotateComp,
-    ScaleComp,
-    SentryCandidates,
-    SentryComp,
-    SentryCompOpt,
-    ShaderComp,
-    SpriteComp,
-    SpriteCompOpt,
-    StateComp,
-    StayComp,
-    SurfaceEffectorComp,
-    SurfaceEffectorCompOpt,
-    TextComp,
-    TextCompOpt,
-    TextInputComp,
-    TileComp,
-    TileCompOpt,
-    TimerComp,
-    UVQuadComp,
-    ZComp,
+import {
+    type AgentComp,
+    type AgentCompOpt,
+    type AnchorComp,
+    type AnimateComp,
+    type AnimateCompOpt,
+    type AreaComp,
+    type AreaCompOpt,
+    type AreaEffectorComp,
+    type AreaEffectorCompOpt,
+    type BodyComp,
+    type BodyCompOpt,
+    type BuoyancyEffectorComp,
+    type BuoyancyEffectorCompOpt,
+    type CircleComp,
+    type CircleCompOpt,
+    type ColorComp,
+    type ConstantForceComp,
+    type ConstantForceCompOpt,
+    type DoubleJumpComp,
+    type FakeMouseComp,
+    type FakeMouseOpt,
+    type FixedComp,
+    type FollowComp,
+    type HealthComp,
+    type LayerComp,
+    type LifespanCompOpt,
+    type MaskComp,
+    type NamedComp,
+    type OffScreenComp,
+    type OffScreenCompOpt,
+    type OpacityComp,
+    type OutlineComp,
+    type PathfinderComp,
+    type PathfinderCompOpt,
+    type PatrolComp,
+    type PatrolCompOpt,
+    type PlatformEffectorComp,
+    type PlatformEffectorCompOpt,
+    type PointEffectorComp,
+    type PointEffectorCompOpt,
+    type PolygonComp,
+    type PolygonCompOpt,
+    type PosComp,
+    type RectComp,
+    type RectCompOpt,
+    type RotateComp,
+    type ScaleComp,
+    type SentryCandidates,
+    type SentryComp,
+    type SentryCompOpt,
+    type ShaderComp,
+    type SpriteComp,
+    type SpriteCompOpt,
+    type StateComp,
+    type StayComp,
+    type SurfaceEffectorComp,
+    type SurfaceEffectorCompOpt,
+    type TextComp,
+    type TextCompOpt,
+    type TextInputComp,
+    type TileComp,
+    type TileCompOpt,
+    type TimerComp,
+    type UVQuadComp,
+    type ZComp,
 } from "./components/";
 import type { EllipseComp } from "./components/draw/ellipse";
 import type {
@@ -116,7 +121,6 @@ import type {
     Texture,
 } from "./gfx";
 import type { GjkCollisionResult } from "./math";
-import type { Color, RGBAValue, RGBValue } from "./math/color";
 import type {
     Circle,
     Ellipse,
@@ -131,8 +135,8 @@ import type {
     RNG,
     StepPosition,
     Vec2,
-    Vec2Args,
-} from "./math/math";
+} from "./math";
+import type { Color, RGBAValue, RGBValue } from "./math/color";
 import type { NavMesh } from "./math/navigationmesh";
 import type { KEvent, KEventController, KEventHandler } from "./utils/";
 
@@ -155,7 +159,65 @@ export type KAPLAYInternal = {
     gscale: number;
     kaSprite: Asset<SpriteData>;
     boomSprite: Asset<SpriteData>;
-}
+};
+
+type TaggedComps = {
+    "sprite": SpriteComp;
+    "text": TextComp;
+    "polygon": PolygonComp;
+    "rect": RectComp;
+    "circle": CircleComp;
+    "ellipse": EllipseComp;
+    "uvquad": UVQuadComp;
+    "area": AreaComp;
+    "pos": PosComp;
+    "scale": ScaleComp;
+    "rotate": RotateComp;
+    "color": ColorComp;
+    "opacity": OpacityComp;
+    "anchor": AnchorComp;
+    "z": ZComp;
+    "layer": LayerComp;
+    "outline": OutlineComp;
+    "particles": ParticlesComp;
+    "body": BodyComp;
+    "surfaceEffector": SurfaceEffectorComp;
+    "areaEffector": AreaEffectorComp;
+    "pointEffector": PointEffectorComp;
+    "platformEffector": PlatformEffectorComp;
+    "buoyancyEffector": BuoyancyEffectorComp;
+    "constantForce": ConstantForceComp;
+    "doubleJump": DoubleJumpComp;
+    "move": EmptyComp;
+    "offscreen": OffScreenComp;
+    "follow": FollowComp;
+    "shader": ShaderComp;
+    "textInput": TextInputComp;
+    "timer": TimerComp;
+    "fixed": FixedComp;
+    "stay": StayComp;
+    "health": HealthComp;
+    "mask": MaskComp;
+    "fakeMouse": FakeMouseComp;
+    "named": NamedComp;
+    "animate": AnimateComp;
+    "patrol": PatrolComp;
+    "pathfinder": PathfinderComp;
+    "sentry": SentryComp;
+    "tile": TileComp;
+    "state": StateComp;
+    "*": EmptyComp;
+};
+
+type CompTagNames = StringWithSome<keyof TaggedComps>;
+
+type CompByTag<T = any> = T extends keyof TaggedComps ? TaggedComps[T]
+    : EmptyComp;
+
+type StringWithSome<T> = T | (string & Record<never, never>);
+
+type CompByTagOrComp<TComp, TTag = TComp> = TComp extends object ? TComp
+    : CompByTag<TTag>;
 
 /**
  * Context handle that contains every kaboom function.
@@ -168,7 +230,7 @@ export interface KAPLAYCtx<
 > {
     /**
      * Internal data that should not be accessed directly.
-     * 
+     *
      * @group Misc
      */
     _k: KAPLAYInternal;
@@ -2758,7 +2820,12 @@ export interface KAPLAYCtx<
      * ```
      * @group Timer
      */
-    loop(t: number, action: () => void, maxLoops?: number, waitFirst?: boolean): TimerController;
+    loop(
+        t: number,
+        action: () => void,
+        maxLoops?: number,
+        waitFirst?: boolean,
+    ): TimerController;
     /**
      * Play a piece of audio.
      *
@@ -4382,7 +4449,7 @@ export type KAPLAYPlugin<T> = (
  *
  * @group Game Obj
  */
-export interface GameObjRaw {
+declare class GameObjRaw {
     /**
      * Add a child.
      *
@@ -4467,15 +4534,38 @@ export interface GameObjRaw {
     drawInspect: () => void;
     clearEvents: () => void;
     /**
-     * If there's certain tag(s) on the game obj.
+     * If there's certain tag(s) on the game object.
+     *
+     * @example
+     * ```js
+     * if(obj.is("player")) {
+     *     // do something...
+     * }
+     *
+     * // check if there's a sprite component
+     * if(obj.is("sprite")) {
+     *     // do something...
+     * }
+     * ```
      */
-    is(tag: Tag | Tag[]): boolean;
-    // TODO: update the GameObj type info
+    is<const T, const T2 extends CompTagNames = CompTagNames>(
+        tag: T2 | T2[],
+    ): this is this & MergeComps<CompByTagOrComp<T, T2>>;
     /**
      * Add a component or tag.
+     *
+     * @example
+     * ```ts
+     * const obj = add([
+     *     sprite("bean"),
+     * ]);
+     *
+     * obj.use(opacity(0.5))
+     * ```
      */
-    use(comp: Comp | Tag): void;
-    // TODO: update the GameObj type info
+    use<const T>(
+        compOrTag: T | T[],
+    ): asserts this is T extends string ? this : this & MergeComps<T>;
     /**
      * Remove a tag or a component with its id.
      */
@@ -4717,7 +4807,7 @@ export type Canvas = {
     clear(): void;
     draw(action: () => void): void;
     free(): void;
-    readonly fb: FrameBuffer
+    readonly fb: FrameBuffer;
 };
 
 export interface Vertex {
