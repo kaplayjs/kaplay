@@ -4627,6 +4627,7 @@ export type Canvas = {
     clear(): void;
     draw(action: () => void): void;
     free(): void;
+    readonly fb: FrameBuffer
 };
 
 export interface Vertex {
