@@ -54,6 +54,10 @@ export type EmitterOpt = {
      */
     rate?: number;
     /**
+     * Position (relative) of emission.
+     */
+    position: Vec2;
+    /**
      * Direction of emission.
      */
     direction: number;
@@ -125,6 +129,16 @@ export type ParticlesOpt = {
  * @group Component Types
  */
 export interface ParticlesComp extends Comp {
+    emitter: {
+        /**
+         * Relative position of the emitter
+         */
+        position: Vec2;
+        /**
+         * Relative direction of the emitter
+         */
+        direction: number;
+    }
     /**
      * Emit a number of particles
      */
@@ -144,7 +158,6 @@ export function particles(popt: ParticlesOpt, eopt: EmitterOpt): ParticlesComp {
     const quads = popt.quads || [new Quad(0, 0, 1, 1)];
     const scales = popt.scales || [1];
     const lifetime = popt.lifeTime;
-    const direction = eopt.direction || 0;
     const spread = eopt.spread || 0;
     const speed = popt.speed || [0, 0];
     const angleRange = popt.angle || [0, 0];
@@ -192,6 +205,10 @@ export function particles(popt: ParticlesOpt, eopt: EmitterOpt): ParticlesComp {
 
     return {
         id: "particles",
+        emitter: {
+            position: eopt.position || vec2(),
+            direction: eopt.direction || 0,
+        },
         emit(n: number) {
             n = Math.min(n, popt.max - count);
             let index: number | null = 0;
@@ -200,8 +217,8 @@ export function particles(popt: ParticlesOpt, eopt: EmitterOpt): ParticlesComp {
                 if (index == null) return;
 
                 const velocityAngle = rand(
-                    direction - spread,
-                    direction + spread,
+                    this.emitter.direction - spread,
+                    this.emitter.direction + spread,
                 );
                 const vel = Vec2.fromAngle(velocityAngle).scale(
                     rand(speed[0], speed[1]),
@@ -220,9 +237,9 @@ export function particles(popt: ParticlesOpt, eopt: EmitterOpt): ParticlesComp {
                     dampingRange[1],
                 );
                 const lt = lifetime ? rand(lifetime[0], lifetime[1]) : null;
-                const pos = eopt.shape
+                const pos = this.emitter.position.add(eopt.shape
                     ? eopt.shape.random()
-                    : vec2();
+                    : vec2());
 
                 const p = particles[index];
                 p.t = 0;
@@ -270,10 +287,10 @@ export function particles(popt: ParticlesOpt, eopt: EmitterOpt): ParticlesComp {
             time += DT;
             while (
                 count < popt.max && eopt.rate
-                && time > eopt.rate
+                && time > 1 / eopt.rate
             ) {
                 this.emit(1);
-                time -= eopt.rate;
+                time -= 1 / eopt.rate;
             }
         },
         draw() {
