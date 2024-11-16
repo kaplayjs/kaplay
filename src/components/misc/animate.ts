@@ -316,7 +316,7 @@ class AnimateChannelNumber extends AnimateChannel {
                 ),
             );
         }
-        return alpha == 1;
+        return index == this.keys.length - 1;
     }
 
     serialize() {
@@ -427,7 +427,7 @@ class AnimateChannelVec2 extends AnimateChannel {
                     }
             }
         }
-        return alpha == 1;
+        return index == this.keys.length - 1;
     }
 
     serialize() {
@@ -473,7 +473,7 @@ class AnimateChannelColor extends AnimateChannel {
                 ),
             );
         }
-        return alpha == 1;
+        return index == this.keys.length - 1;
     }
 
     serialize() {
@@ -522,6 +522,8 @@ export function animate(gopts: AnimateCompOpt = {}): AnimateComp {
             paused: false,
             seek(time: number) {
                 t = clamp(time, 0, this.duration);
+                channels.forEach(channel => { channel.isFinished = false; });
+                isFinished = false;
             },
             get duration() {
                 return channels.reduce((acc, channel) => Math.max(channel.duration, acc), 0);
@@ -550,6 +552,7 @@ export function animate(gopts: AnimateCompOpt = {}): AnimateComp {
             t += dt();
             for (const c of channels) {
                 localFinished = c.update(this as unknown as GameObj<any>, t);
+                console.log("localFinished", localFinished, c.isFinished);
                 if (localFinished && !c.isFinished) {
                     c.isFinished = true;
                     (this as unknown as GameObj<any>).trigger(

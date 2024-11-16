@@ -21,11 +21,15 @@ const rotatingBean = add([
 rotatingBean.animate("angle", [0, 360], {
     duration: 2,
     direction: "forward",
+    loops: 1,
 });
 
 onClick(() => {
     rotatingBean.animation.seek(0);
 })
+
+rotatingBean.onAnimateChannelFinished(name => { debug.log(`${name} finished`) })
+rotatingBean.onAnimateFinished(() => { debug.log(`All finished`) })
 
 // Now we'll move this bean from left to right
 const movingBean = add([
