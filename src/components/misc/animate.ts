@@ -181,12 +181,12 @@ class AnimateChannel {
         t: number,
         count: number,
         timing?: number[],
-    ): [number, number] {
+    ): [number, number, boolean] {
         const maxIndex = count - 1;
         // Check how many loops we've made
         let p = t / this.duration;
         if (this.loops !== 0 && p >= this.loops) {
-            return [maxIndex, 0];
+            return [maxIndex, 0, true];
         }
         // Split looped and actual time
         const m = Math.trunc(p);
@@ -205,16 +205,17 @@ class AnimateChannel {
                 index++;
             }
             if (index >= maxIndex) {
-                return [maxIndex, 0];
+                return [maxIndex, 0, true];
             }
             return [
                 index,
                 (p - timing[index]) / (timing[index + 1] - timing[index]),
+                false
             ];
         }
         else {
             const index = Math.floor((count - 1) * p);
-            return [index, (p - index / maxIndex) * maxIndex];
+            return [index, (p - index / maxIndex) * maxIndex, false];
         }
     }
 
@@ -295,7 +296,7 @@ class AnimateChannelNumber extends AnimateChannel {
     }
 
     update(obj: GameObj<any>, t: number): boolean {
-        const [index, alpha] = this.getLowerKeyIndexAndRelativeTime(
+        const [index, alpha, isFinished] = this.getLowerKeyIndexAndRelativeTime(
             t,
             this.keys.length,
             this.timing,
@@ -316,7 +317,7 @@ class AnimateChannelNumber extends AnimateChannel {
                 ),
             );
         }
-        return index == this.keys.length - 1;
+        return isFinished;
     }
 
     serialize() {
@@ -376,7 +377,7 @@ class AnimateChannelVec2 extends AnimateChannel {
     }
 
     update(obj: GameObj<any>, t: number): boolean {
-        const [index, alpha] = this.getLowerKeyIndexAndRelativeTime(
+        const [index, alpha, isFinished] = this.getLowerKeyIndexAndRelativeTime(
             t,
             this.keys.length,
             this.timing,
@@ -427,7 +428,7 @@ class AnimateChannelVec2 extends AnimateChannel {
                     }
             }
         }
-        return index == this.keys.length - 1;
+        return isFinished;
     }
 
     serialize() {
@@ -453,7 +454,7 @@ class AnimateChannelColor extends AnimateChannel {
     }
 
     update(obj: GameObj<any>, t: number): boolean {
-        const [index, alpha] = this.getLowerKeyIndexAndRelativeTime(
+        const [index, alpha, isFinished] = this.getLowerKeyIndexAndRelativeTime(
             t,
             this.keys.length,
             this.timing,
@@ -473,7 +474,7 @@ class AnimateChannelColor extends AnimateChannel {
                 ),
             );
         }
-        return index == this.keys.length - 1;
+        return isFinished;
     }
 
     serialize() {
@@ -552,7 +553,6 @@ export function animate(gopts: AnimateCompOpt = {}): AnimateComp {
             t += dt();
             for (const c of channels) {
                 localFinished = c.update(this as unknown as GameObj<any>, t);
-                console.log("localFinished", localFinished, c.isFinished);
                 if (localFinished && !c.isFinished) {
                     c.isFinished = true;
                     (this as unknown as GameObj<any>).trigger(
