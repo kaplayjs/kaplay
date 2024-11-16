@@ -3,6 +3,7 @@ import { Color } from "../../math/color";
 import easings from "../../math/easings";
 import {
     catmullRom,
+    clamp,
     easingLinear,
     hermiteFirstDerivative,
     lerp,
@@ -115,9 +116,23 @@ export interface AnimateComp extends Comp {
      * Base values for relative animation
      */
     base: BaseValues;
-    /**
-     * Serializes the animation of this object to plain Javascript types
-     */
+    animation: {
+        /**
+         * Pauses playing
+         */
+        paused: boolean;
+        /**
+         * Move the animation to a specific point in time 
+         */
+        seek(time: number): void;
+        /**
+         * Returns the duration of the animation
+         */
+        duration: number
+        /**
+         * Serializes the animation of this object to plain Javascript types
+         */
+    }
     serializeAnimationChannels(): Record<string, AnimationChannel>;
     /**
      * Serializes the options of this object to plain Javascript types
@@ -503,6 +518,15 @@ export function animate(gopts: AnimateCompOpt = {}): AnimateComp {
             scale: vec2(1, 1),
             opacity: 1,
         },
+        animation: {
+            paused: false,
+            seek(time: number) {
+                t = clamp(time, 0, this.duration);
+            },
+            get duration() {
+                return channels.reduce((acc, channel) => Math.max(channel.duration, acc), 0);
+            },
+        },
         add(this: GameObj<AnimateComp>) {
             if (gopts.relative) {
                 if (this.is("pos")) {
@@ -520,6 +544,7 @@ export function animate(gopts: AnimateCompOpt = {}): AnimateComp {
             }
         },
         update() {
+            if (this.animation.paused) { return; }
             let allFinished: boolean = true;
             let localFinished: boolean;
             t += dt();
