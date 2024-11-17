@@ -35,6 +35,8 @@ export function make<T>(comps: CompList<T> = []): GameObj<T> {
     const cleanups = {} as Record<string, (() => unknown)[]>;
     const events = new KEventHandler();
     const inputEvents: KEventController[] = [];
+    const tags = new Set<Tag>("*");
+    const treatTagsAsComponents = _k.globalOpt.tagsAsComponents;
     let onCurCompCleanup: Function | null = null;
     let paused = false;
 
@@ -60,13 +62,7 @@ export function make<T>(comps: CompList<T> = []): GameObj<T> {
         },
 
         get tags() {
-            const tags = [];
-            for (const [key, value] of compStates.entries()) {
-                if (Object.keys(value).length == 1) {
-                    tags.push(key);
-                }
-            }
-            return tags;
+            return Array.from(tags);
         },
 
         add<T2>(this: GameObj, a: CompList<T2> | GameObj<T2>): GameObj<T2> {
@@ -202,15 +198,11 @@ export function make<T>(comps: CompList<T> = []): GameObj<T> {
             popTransform();
         },
 
-        // use a comp or a tag
-        use(comp: Comp | Tag) {
-            if (!comp) return;
-
+        // use a comp
+        use(comp: Comp) {
             // tag
             if (typeof comp === "string") {
-                return this.use({
-                    id: comp,
-                });
+                return tags.add(comp);
             }
 
             let gc = [];
@@ -225,6 +217,9 @@ export function make<T>(comps: CompList<T> = []): GameObj<T> {
             else {
                 anonymousCompStates.push(comp);
             }
+
+            // add component id as tag
+            if (treatTagsAsComponents) tags.add(comp.id!);
 
             for (const k in comp) {
                 if (COMP_DESC.has(k)) {
@@ -319,7 +314,8 @@ export function make<T>(comps: CompList<T> = []): GameObj<T> {
             }
         },
 
-        unuse(id: Tag) {
+        // Remove components
+        unuse(id: string) {
             if (compStates.has(id)) {
                 // check all components for a dependent, if there's one, throw an error
                 for (const comp of compStates.values()) {
@@ -331,6 +327,9 @@ export function make<T>(comps: CompList<T> = []): GameObj<T> {
                 }
 
                 compStates.delete(id);
+            }
+            else if (treatTagsAsComponents && tags.has(id)) {
+                tags.delete(id);
             }
 
             if (cleanups[id]) {
@@ -344,8 +343,19 @@ export function make<T>(comps: CompList<T> = []): GameObj<T> {
             return compStates.get(id) ?? null;
         },
 
-        // TODO: Separate
         get<T = any>(t: Tag | Tag[], opts: GetOpt = {}): GameObj<T>[] {
+            const checkTagsOrComps = (child: GameObj, t: Tag | Tag[]) => {
+                if (opts.only === "comps") {
+                    return child.has(t);
+                }
+                else if (opts.only === "tags") {
+                    return child.is(t);
+                }
+                else {
+                    return child.is(t) || child.has(t);
+                }
+            };
+
             let list: GameObj[] = opts.recursive
                 ? this.children.flatMap(
                     function recurse(child: GameObj): GameObj[] {
@@ -354,7 +364,9 @@ export function make<T>(comps: CompList<T> = []): GameObj<T> {
                 )
                 : this.children;
 
-            list = list.filter((child) => t ? child.is(t) : true);
+            list = list.filter((child) =>
+                t ? checkTagsOrComps(child, t) : true
+            );
 
             if (opts.liveUpdate) {
                 const isChild = (obj: GameObj) => {
@@ -368,12 +380,12 @@ export function make<T>(comps: CompList<T> = []): GameObj<T> {
                 // TODO: handle when object add / remove tags
                 // TODO: clean up when obj destroyed
                 events.push(_k.k.onAdd((obj) => {
-                    if (isChild(obj) && obj.is(t)) {
+                    if (isChild(obj) && checkTagsOrComps(obj, t)) {
                         list.push(obj);
                     }
                 }));
                 events.push(_k.k.onDestroy((obj) => {
-                    if (isChild(obj) && obj.is(t)) {
+                    if (isChild(obj) && checkTagsOrComps(obj, t)) {
                         const idx = list.findIndex((o) => o.id === obj.id);
                         if (idx !== -1) {
                             list.splice(idx, 1);
@@ -424,6 +436,7 @@ export function make<T>(comps: CompList<T> = []): GameObj<T> {
                     );
                     break;
             }
+
             if (include) {
                 const includeOp = opt.includeOp || "and";
 
@@ -438,6 +451,7 @@ export function make<T>(comps: CompList<T> = []): GameObj<T> {
                     );
                 }
             }
+
             if (exclude) {
                 const excludeOp = opt.includeOp || "and";
                 if (excludeOp === "and" || !Array.isArray(opt.include)) {
@@ -451,9 +465,11 @@ export function make<T>(comps: CompList<T> = []): GameObj<T> {
                     );
                 }
             }
+
             if (opt.visible === true) {
                 list = list.filter(o => o.visible);
             }
+
             if (opt.distance) {
                 if (!this.pos) {
                     throw Error(
@@ -490,20 +506,58 @@ export function make<T>(comps: CompList<T> = []): GameObj<T> {
             return _k.game.root.isAncestorOf(this);
         },
 
-        is(tag: Tag | Tag[]): boolean {
-            if (tag === "*") {
-                return true;
-            }
+        // Tags related
+        // Check if gameobj has a tag
+        is(tag: Tag | Tag[], op: "or" | "and" = "and"): boolean {
             if (Array.isArray(tag)) {
-                for (const t of tag) {
-                    if (!this.c(t)) {
-                        return false;
-                    }
+                if (op === "and") {
+                    return tag.every(tag => tags.has(tag));
                 }
-                return true;
+                else {
+                    return tag.some(tag => tags.has(tag));
+                }
             }
             else {
-                return this.c(tag) != null;
+                return tags.has(tag);
+            }
+        },
+
+        // Tag a game object
+        tag(tag: Tag | Tag[]): void {
+            if (Array.isArray(tag)) {
+                for (const t of tag) {
+                    tags.add(t);
+                }
+            }
+            else {
+                tags.add(tag);
+            }
+        },
+
+        // Untag a game object
+        untag(tag: Tag | Tag[]): void {
+            if (Array.isArray(tag)) {
+                for (const t of tag) {
+                    tags.delete(t);
+                }
+            }
+            else {
+                tags.delete(tag);
+            }
+        },
+
+        // Check if gameobj has a component. It also checks many components with
+        has(compList: string | string[], op: "and" | "or" = "and"): boolean {
+            if (Array.isArray(compList)) {
+                if (op === "and") {
+                    return compList.every((c) => compStates.has(c));
+                }
+                else {
+                    return compList.some(c => compStates.has(c));
+                }
+            }
+            else {
+                return compStates.has(compList);
             }
         },
 

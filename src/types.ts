@@ -1,4 +1,9 @@
-import type { App, ButtonBinding, ButtonBindingDevice, ButtonsDef } from "./app";
+import type {
+    App,
+    ButtonBinding,
+    ButtonBindingDevice,
+    ButtonsDef,
+} from "./app";
 import type {
     AsepriteData,
     Asset,
@@ -155,7 +160,7 @@ export type KAPLAYInternal = {
     gscale: number;
     kaSprite: Asset<SpriteData>;
     boomSprite: Asset<SpriteData>;
-}
+};
 
 /**
  * Context handle that contains every kaboom function.
@@ -168,7 +173,7 @@ export interface KAPLAYCtx<
 > {
     /**
      * Internal data that should not be accessed directly.
-     * 
+     *
      * @group Misc
      */
     _k: KAPLAYInternal;
@@ -2758,7 +2763,12 @@ export interface KAPLAYCtx<
      * ```
      * @group Timer
      */
-    loop(t: number, action: () => void, maxLoops?: number, waitFirst?: boolean): TimerController;
+    loop(
+        t: number,
+        action: () => void,
+        maxLoops?: number,
+        waitFirst?: boolean,
+    ): TimerController;
     /**
      * Play a piece of audio.
      *
@@ -4348,6 +4358,14 @@ export interface KAPLAYOpt<
      * Enter burp mode.
      */
     burp?: boolean;
+    /**
+     * Make component's id ("sprite" for sprite() comp) be added as tags.
+     *
+     * That means .is() will return true for components with that id.
+     *
+     * @default true
+     */
+    tagsAsComponents?: boolean;
 }
 
 /**
@@ -4433,12 +4451,14 @@ export interface GameObjRaw {
      * Get all children game objects.
      *
      * @since v3000.0
+     * @readonly
      */
     children: GameObj[];
     /**
      * Get the tags of a game object.
      *
      * @since v3001.0
+     * @readonly
      */
     tags: string[];
     /**
@@ -4467,19 +4487,75 @@ export interface GameObjRaw {
     drawInspect: () => void;
     clearEvents: () => void;
     /**
-     * If there's certain tag(s) on the game obj.
-     */
-    is(tag: Tag | Tag[]): boolean;
-    // TODO: update the GameObj type info
-    /**
-     * Add a component or tag.
+     * Add a component.
+     *
+     * @example
+     * ```js
+     * const obj = add([
+     *    sprite("bean"),
+     * ]);
+     *
+     * // Add opacity
+     * obj.use(opacity(0.5));
+     * ```
      */
     use(comp: Comp | Tag): void;
-    // TODO: update the GameObj type info
     /**
-     * Remove a tag or a component with its id.
+     * Remove a component with its id (the component name)
+     *
+     * @example
+     * ```js
+     * // Remove sprite component
+     * obj.unuse("sprite");
+     * ```
      */
     unuse(comp: Tag): void;
+    /**
+     * Check if game object has a certain component.
+     *
+     * @example
+     * ```js
+     * // Check if game object has sprite component
+     * if(obj.has("sprite")) {
+     *     debug.log("has sprite component");
+     * }
+     *
+     * // Check if game object has tags
+     * obj.has(["tag1", "tag2"]); // AND, it has both tags
+     * obj.has(["tag1", "tag2"], "or"); // OR, it has either tag1 or tag2
+     * ```
+     */
+    has(
+        /** Component(s) for checking */
+        compId: string | string[],
+        /**
+         * Operator to use when searching for multiple components.
+         *
+         * @default "and"
+         */
+        op?: "and" | "or",
+    ): boolean;
+    /**
+     * Add a tag(s) to the game obj.
+     */
+    tag(tag: Tag | Tag[]): void;
+    /**
+     * Remove a tag(s) from the game obj.
+     */
+    untag(tag: Tag | Tag[]): void;
+    /**
+     * If there's certain tag(s) on the game obj.
+     */
+    is(
+        /** Tag(s) for checking */
+        tag: Tag | Tag[],
+        /**
+         * Operator to use when searching for multiple tags.
+         *
+         * @default "and"
+         */
+        op?: "and" | "or",
+    ): boolean;
     /**
      * Register an event.
      */
@@ -4597,6 +4673,10 @@ export type GetOpt = {
      * Live update the returned list every time object is added / removed.
      */
     liveUpdate?: boolean;
+    /**
+     * Get only by tags or components.
+     */
+    only?: "tags" | "comps";
 };
 
 /**
@@ -4717,7 +4797,7 @@ export type Canvas = {
     clear(): void;
     draw(action: () => void): void;
     free(): void;
-    readonly fb: FrameBuffer
+    readonly fb: FrameBuffer;
 };
 
 export interface Vertex {
