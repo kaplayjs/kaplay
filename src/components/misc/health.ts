@@ -18,19 +18,11 @@ export interface HealthComp extends Comp {
     /**
      * Current health points.
      */
-    hp(): number;
-    /**
-     * Set current health points.
-     */
-    setHP(hp: number): void;
+    hp: number
     /**
      * Max amount of HP.
      */
-    maxHP(): number | null;
-    /**
-     * Set max amount of HP.
-     */
-    setMaxHP(hp: number): void;
+    maxHP: number | undefined
     /**
      * Register an event that runs when hurt() is called upon the object.
      *
@@ -62,29 +54,23 @@ export function health(
     return {
         id: "health",
         hurt(this: GameObj, n: number = 1) {
-            this.setHP(hp - n);
             this.trigger("hurt", n);
+            this.hp -= n;
         },
         heal(this: GameObj, n: number = 1) {
-            const origHP = hp;
-            this.setHP(hp + n);
-            this.trigger("heal", hp - origHP);
+            this.trigger("heal", n);
+            this.hp += n;
         },
-        hp(): number {
+        get hp(): number {
             return hp;
         },
-        maxHP(): number | null {
-            return maxHP ?? null;
-        },
-        setMaxHP(n: number): void {
-            maxHP = n;
-        },
-        setHP(this: GameObj, n: number) {
-            hp = maxHP ? Math.min(maxHP, n) : n;
+        set hp(n: number) {
+            hp = this.maxHP ? Math.min(this.maxHP, n) : n;
             if (hp <= 0) {
-                this.trigger("death");
+                (this as unknown as GameObj<HealthComp>).trigger("death");
             }
         },
+        maxHP,
         onHurt(
             this: GameObj,
             action: (amount?: number) => void,
@@ -101,7 +87,7 @@ export function health(
             return this.on("death", action);
         },
         inspect() {
-            return `health: ${hp}`;
+            return `health: ${this.hp}` + (this.maxHP ? `/${this.maxHP}` : "");
         },
     };
 }

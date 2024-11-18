@@ -198,7 +198,7 @@ function addEnemy(p) {
         {
             add() {
                 this.onHurt(() => {
-                    this.opacity = this.hp() / 100;
+                    this.opacity = this.hp / 100;
                 });
                 this.onDeath(() => {
                     const rect = this.localArea();
