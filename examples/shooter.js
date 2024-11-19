@@ -98,7 +98,7 @@ scene("battle", () => {
 
     const sky = add([
         rect(width(), height()),
-        color(0, 0, 0),
+        color(BLACK),
         opacity(0),
     ]);
 
@@ -111,7 +111,7 @@ scene("battle", () => {
             sky.opacity = 1;
         }
         else {
-            sky.color = rgb(0, 0, 0);
+            sky.color = BLACK;
             sky.opacity = 0;
         }
     });
@@ -205,7 +205,7 @@ scene("battle", () => {
             area(),
             pos(p),
             anchor("center"),
-            color(127, 127, 255),
+            color(rgb(127, 127, 255)),
             outline(4),
             move(UP, BULLET_SPEED),
             offscreen({ destroy: true }),
@@ -321,7 +321,7 @@ scene("battle", () => {
     const healthbar = add([
         rect(width(), 24),
         pos(0, 0),
-        color(107, 201, 108),
+        color(rgb(107, 201, 108)),
         fixed(),
         {
             max: BOSS_HEALTH,
@@ -334,7 +334,7 @@ scene("battle", () => {
 
     healthbar.onUpdate(() => {
         if (healthbar.flash) {
-            healthbar.color = rgb(255, 255, 255);
+            healthbar.color = WHITE;
             healthbar.flash = false;
         }
         else {
@@ -362,7 +362,7 @@ scene("win", ({ time, boss }) => {
 
     add([
         sprite(boss),
-        color(255, 0, 0),
+        color(RED),
         anchor("center"),
         scale(8),
         pos(width() / 2, height() / 2),

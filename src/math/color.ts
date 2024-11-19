@@ -93,6 +93,26 @@ export class Color {
         );
     }
 
+    static fromCSSString(color: string): Color {
+        const ctx = new OffscreenCanvas(1, 1).getContext("2d");
+        if (!ctx)
+            throw new Error("Failed to create offscreen canvas context");
+        ctx.fillStyle = color;
+        ctx.fillRect(0, 0, 1, 1);
+        const c = Array.from(ctx.getImageData(0, 0, 1, 1).data.slice(0, 3));
+        if (c.every(ch => ch === 0)) {
+            // if it is invalid we get black
+            // check to see if it is really invalid or actually
+            // supposed to be black
+            // (from https://stackoverflow.com/a/48485007/23626926)
+            const s = new Option().style;
+            s.color = color;
+            if (s.color !== color.toLowerCase())
+                throw new RangeError(`"${color}" is not a valid color`);
+        }
+        return Color.fromArray(c);
+    }
+
     static RED = new Color(255, 0, 0);
     static GREEN = new Color(0, 255, 0);
     static BLUE = new Color(0, 0, 255);
@@ -242,7 +262,7 @@ export function rgb(...args: ColorArgs): Color {
         }
         else if (typeof args[0] === "string") {
             // rgb("#ffffff")
-            return Color.fromHex(args[0]);
+            return Color.fromCSSString(args[0]);
         }
         else if (Array.isArray(args[0]) && args[0].length === 3) {
             // rgb([255, 255, 255])

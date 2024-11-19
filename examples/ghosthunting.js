@@ -63,7 +63,7 @@ add([
     rect(20, height()),
     area(),
     body({ isStatic: true }),
-    color(rgb(128, 128, 128)),
+    color("gray"),
     "wall",
 ]);
 add([
@@ -71,7 +71,7 @@ add([
     rect(width(), 20),
     area(),
     body({ isStatic: true }),
-    color(rgb(128, 128, 128)),
+    color("gray"),
     "wall",
 ]);
 add([
@@ -79,7 +79,7 @@ add([
     rect(20, height()),
     area(),
     body({ isStatic: true }),
-    color(rgb(128, 128, 128)),
+    color("gray"),
     "wall",
 ]);
 add([
@@ -87,7 +87,7 @@ add([
     rect(width(), 20),
     area(),
     body({ isStatic: true }),
-    color(rgb(128, 128, 128)),
+    color("gray"),
     "wall",
 ]);
 // Hallway
@@ -102,7 +102,7 @@ add([
     rect(600, 20),
     area(),
     body({ isStatic: true }),
-    color(rgb(128, 128, 128)),
+    color("gray"),
     "wall",
 ]);
 // Living room
@@ -123,7 +123,7 @@ add([
     rect(300, 20),
     area(),
     body({ isStatic: true }),
-    color(rgb(128, 128, 128)),
+    color("gray"),
     "wall",
 ]);
 add([
@@ -131,7 +131,7 @@ add([
     rect(300, 20),
     area(),
     body({ isStatic: true }),
-    color(rgb(128, 128, 128)),
+    color("gray"),
     "wall",
 ]);
 add([
@@ -139,7 +139,7 @@ add([
     rect(300, 20),
     area(),
     body({ isStatic: true }),
-    color(rgb(128, 128, 128)),
+    color("gray"),
     "wall",
 ]);
 // Kitchen
@@ -160,7 +160,7 @@ add([
     rect(20, 288),
     area(),
     body({ isStatic: true }),
-    color(rgb(128, 128, 128)),
+    color("gray"),
     "wall",
 ]);
 // Storage
