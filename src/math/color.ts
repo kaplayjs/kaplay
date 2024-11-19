@@ -93,6 +93,9 @@ export class Color {
         );
     }
 
+    /**
+     * Tries both fromHex() and fromCSSString()
+     */
     static fromString(color: string): Color {
         try {
             // fromHex() allows stuff like "ff00ff"
@@ -104,6 +107,17 @@ export class Color {
         }
     }
 
+    /**
+     * Parses the color in the same way as your browser parses CSS.
+     *
+     * You can use [color names](https://developer.mozilla.org/en-US/docs/Web/CSS/named-color) such as "tomato" and "firebrick",
+     * notations such as `hsl()` and `cmyk()`, and even advanced stuff
+     * like [`color-mix()`](https://developer.mozilla.org/en-US/docs/Web/CSS/color_value/color-mix).
+     * Do note that you are at the mercy of the browser, not all formats may be supported.
+     *
+     * You can find all of the available formats [at MDN](https://developer.mozilla.org/en-US/docs/Web/CSS/color_value), be sure to check
+     * the browser compatibility table if it sounds like a "weird" format.
+     */
     static fromCSSString(color: string): Color {
         const ctx = new OffscreenCanvas(1, 1).getContext("2d");
         if (!ctx)
