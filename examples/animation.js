@@ -21,7 +21,15 @@ const rotatingBean = add([
 rotatingBean.animate("angle", [0, 360], {
     duration: 2,
     direction: "forward",
+    loops: 1,
 });
+
+onClick(() => {
+    rotatingBean.animation.seek(0);
+})
+
+rotatingBean.onAnimateChannelFinished(name => { debug.log(`${name} finished`) })
+rotatingBean.onAnimateFinished(() => { debug.log(`All finished`) })
 
 // Now we'll move this bean from left to right
 const movingBean = add([
@@ -37,6 +45,10 @@ movingBean.animate("pos", [vec2(50, 150), vec2(150, 150)], {
     duration: 2,
     direction: "ping-pong",
 });
+
+onClick(() => {
+    movingBean.animation.paused = !movingBean.animation.paused;
+})
 
 // Same animation as before, but relative to the spawn position
 const secondMovingBean = add([
