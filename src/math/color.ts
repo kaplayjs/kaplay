@@ -107,8 +107,15 @@ export class Color {
             // (from https://stackoverflow.com/a/48485007/23626926)
             const s = new Option().style;
             s.color = color;
-            if (s.color !== color.toLowerCase())
-                throw new RangeError(`"${color}" is not a valid color`);
+            if (s.color !== color.toLowerCase()) {
+                try {
+                    // fromHex() allows stuff like "ff00ff"
+                    // (without the leading #) which is not valid in CSS
+                    return Color.fromHex(color);
+                } catch (_) {
+                    throw new RangeError(`"${color}" is not a valid color`);
+                }
+            }
         }
         return Color.fromArray(c);
     }
