@@ -93,13 +93,18 @@ export class Color {
         );
     }
 
-    static fromCSSString(color: string): Color {
+    static fromString(color: string): Color {
         try {
             // fromHex() allows stuff like "ff00ff"
             // (without the leading #) which is not valid in CSS
             // so handle it first
             return Color.fromHex(color);
-        } catch (_) { }
+        } catch (_) {
+            return Color.fromCSSString(color);
+        }
+    }
+
+    static fromCSSString(color: string): Color {
         const ctx = new OffscreenCanvas(1, 1).getContext("2d");
         if (!ctx)
             throw new Error("Failed to create offscreen canvas context");
@@ -114,7 +119,7 @@ export class Color {
             const s = new Option().style;
             s.color = color;
             if (s.color !== color.toLowerCase())
-                throw new RangeError(`"${color}" is not a valid color`);
+                throw new RangeError(`"${color}" is not a valid CSS color`);
         }
         return Color.fromArray(c);
     }
@@ -259,7 +264,7 @@ export type ColorArgs =
 
 export function rgb(...args: ColorArgs): Color {
     if (args.length === 0) {
-        return new Color(255, 255, 255);
+        return Color.WHITE;
     }
     else if (args.length === 1) {
         if (args[0] instanceof Color) {
@@ -268,7 +273,9 @@ export function rgb(...args: ColorArgs): Color {
         }
         else if (typeof args[0] === "string") {
             // rgb("#ffffff")
-            return Color.fromCSSString(args[0]);
+            // rgb("ffffff")
+            // rgb("white")
+            return Color.fromString(args[0]);
         }
         else if (Array.isArray(args[0]) && args[0].length === 3) {
             // rgb([255, 255, 255])
