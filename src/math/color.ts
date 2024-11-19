@@ -263,32 +263,33 @@ export type ColorArgs =
     | [];
 
 export function rgb(...args: ColorArgs): Color {
-    if (args.length === 0) {
-        return Color.WHITE;
-    }
-    else if (args.length === 1) {
-        if (args[0] instanceof Color) {
-            // rgb(new Color(255, 255, 255))
-            return args[0].clone();
-        }
-        else if (typeof args[0] === "string") {
-            // rgb("#ffffff")
-            // rgb("ffffff")
-            // rgb("white")
-            return Color.fromString(args[0]);
-        }
-        else if (Array.isArray(args[0]) && args[0].length === 3) {
-            // rgb([255, 255, 255])
-            return Color.fromArray(args[0]);
-        }
-    }
-    else if (args.length === 2) {
-        if (args[0] instanceof Color) {
-            return args[0].clone();
-        }
-    }
-    else if (args.length === 3 || args.length === 4) {
-        return new Color(args[0], args[1], args[2]);
+    switch (args.length) {
+        case 0:
+            return Color.WHITE;
+        case 1:
+            if (args[0] instanceof Color) {
+                // rgb(new Color(255, 255, 255))
+                return args[0].clone();
+            }
+            else if (typeof args[0] === "string") {
+                // rgb("#ffffff")
+                // rgb("ffffff")
+                // rgb("white")
+                return Color.fromString(args[0]);
+            }
+            else if (Array.isArray(args[0]) && args[0].length === 3) {
+                // rgb([255, 255, 255])
+                return Color.fromArray(args[0]);
+            }
+            break;
+        case 2:
+            if (args[0] instanceof Color) {
+                return args[0].clone();
+            }
+            break;
+        case 3:
+        case 4:
+            return new Color(args[0], args[1], args[2]);
     }
 
     throw new Error("Invalid color arguments");
