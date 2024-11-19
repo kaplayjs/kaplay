@@ -136,7 +136,6 @@ import type {
     RNG,
     StepPosition,
     Vec2,
-    Vec2Args,
 } from "./math/math";
 import type { NavMesh } from "./math/navigationmesh";
 import type { KEvent, KEventController, KEventHandler } from "./utils/";
