@@ -20,7 +20,14 @@
   myCursor.move(vec2(100, 200)); // move as your wish
   ```
 
-# v4000.0.0 and v3001.0.0
+# v3001.1.0: A perfectionist skull (unreleased)
+
+## Documentation
+
+- Added many JSDoc specifiers on many functions (@require, @deprecated, @since,
+  @group, etc)
+
+# v3001.0.0
 
 ## Input
 

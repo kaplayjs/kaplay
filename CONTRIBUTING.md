@@ -51,6 +51,55 @@ definition, the JSDoc comments are on `types.ts`.
 
 **Help on improving the documentation is appreciated!**
 
+## JSDoc comments
+
+There is the structure of a JSDoc comment:
+
+- The Description of the member.
+- `@deprecated` when the member is deprecated.
+- `@requires` when the member requires something to work. Usually a component.
+- `@param` for each parameter. Each parameter should have - at start.
+- `@example` for 1 (and only one) example.
+- `@returns` for the return value description.
+- `@since` for the version when the member was added.
+- `@group` for the group of the member.
+
+Example:
+
+````ts
+/**
+   * Attach and render a circle to a Game Object.
+   *
+   * @param radius - The radius of the circle.
+   * @param opt - Options for the circle component. See {@link CircleCompOpt `CircleCompOpt`}.
+   *
+   * @example
+   * ```js
+   * add([
+   *     pos(80, 120),
+   *     circle(16),
+   * ])
+   * ```
+   *
+   * @returns The circle comp.
+   * @since v2000.0
+   * @group Components
+   */
+  circle(radius: number, opt?: CircleCompOpt): CircleComp;
+````
+
+## Abbreviations
+
+- `opt` for an options object.
+- `pos` for a position vector.
+- `dir` for a direction vector.
+- `comp` for a component.
+- `game obj` word for a game object.
+- `lst` for a list of something.
+- `action` the callback that is executed when smt happens.
+- `btn` button
+- `k` in some contexts, key, in others, KAPLAY interface
+
 # Before commit
 
 1. Follow our [conventional commits](#conventional-commits-guide) format. You
