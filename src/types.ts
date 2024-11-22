@@ -1059,6 +1059,9 @@ export interface KAPLAYCtx<
     /**
      * Get input from the user and store it in the nodes text property, displaying it with the text component and allowing other functions to access it.
      *
+     * @param hasFocus Whether the text input should have focus.
+     * @param maxInputLength The maximum length of the input.
+     *
      * @example
      * ```js
      * const obj = add([
@@ -1070,11 +1073,15 @@ export interface KAPLAYCtx<
      * debug.log(obj.text) // oh no i cant see my new text since it was disabled
      * ```
      *
+     * @returns The text input component.
+     * @since v3001.0
      * @group Components
      */
     textInput(hasFocus?: boolean, maxInputLength?: number): TextInputComp;
     /**
      * Enable timer related functions like wait(), loop(), tween() on the game object.
+     *
+     * @param maxLoopsPerFrame The maximum number of loops per frame.
      *
      * @example
      * ```js
