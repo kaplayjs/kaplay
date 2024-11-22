@@ -197,6 +197,7 @@ import {
     particles,
     pathfinder,
     patrol,
+    platformEffector,
     pointEffector,
     polygon,
     pos,
@@ -290,7 +291,6 @@ export const _k = {
     boomSprite: null,
 } as unknown as KAPLAYInternal;
 
-
 /**
  * Initialize KAPLAY context. The starting point of all KAPLAY games.
  *
@@ -334,8 +334,10 @@ const kaplay = <
 ): TPlugins extends [undefined] ? KAPLAYCtx<TButtons, TButtonsName>
     : KAPLAYCtx<TButtons, TButtonsName> & MergePlugins<TPlugins> =>
 {
-    if(_k.k) {
-        console.warn("KAPLAY already initialized, you are calling kaplay() multiple times, it may lead bugs!");
+    if (_k.k) {
+        console.warn(
+            "KAPLAY already initialized, you are calling kaplay() multiple times, it may lead bugs!",
+        );
         _k.k.quit();
     }
 
@@ -470,7 +472,9 @@ const kaplay = <
                 flush();
                 fb.unbind();
             },
-            get fb() { return fb; }
+            get fb() {
+                return fb;
+            },
         };
     }
 
@@ -1029,7 +1033,7 @@ const kaplay = <
 
     // the exported ctx handle
     const ctx: KAPLAYCtx = {
-         _k,
+        _k,
         VERSION,
         // asset load
         loadRoot,
@@ -1124,6 +1128,7 @@ const kaplay = <
         outline,
         particles,
         body,
+        platformEffector: platformEffector,
         surfaceEffector,
         areaEffector,
         pointEffector,
@@ -1374,7 +1379,8 @@ const kaplay = <
         app.canvas.focus();
     }
 
-    return ctx as unknown as TPlugins extends [undefined] ? KAPLAYCtx<TButtons, TButtonsName>
+    return ctx as unknown as TPlugins extends [undefined]
+        ? KAPLAYCtx<TButtons, TButtonsName>
         : KAPLAYCtx<TButtons, TButtonsName> & MergePlugins<TPlugins>;
 };
 
