@@ -1,4 +1,9 @@
-import type { App, ButtonBinding, ButtonBindingDevice, ButtonsDef } from "./app";
+import type {
+    App,
+    ButtonBinding,
+    ButtonBindingDevice,
+    ButtonsDef,
+} from "./app";
 import type {
     AsepriteData,
     Asset,
@@ -155,7 +160,7 @@ export type KAPLAYInternal = {
     gscale: number;
     kaSprite: Asset<SpriteData>;
     boomSprite: Asset<SpriteData>;
-}
+};
 
 /**
  * Context handle that contains every kaboom function.
@@ -168,13 +173,15 @@ export interface KAPLAYCtx<
 > {
     /**
      * Internal data that should not be accessed directly.
-     * 
+     *
+     * @readonly
      * @group Misc
      */
     _k: KAPLAYInternal;
     /**
-     * Assemble a game object from a list of components, and add it to the game
+     * Assemble a game object from a list of components, and add it to the game,
      *
+     * @param comps - List of components to add to the game object, or a game object made with {@link make `make()`}.
      * @returns The added game object that contains all properties and methods each component offers.
      *
      * @example
@@ -221,6 +228,9 @@ export interface KAPLAYCtx<
     /**
      * Create a game object like add(), but not adding to the scene.
      *
+     * @param comps - List of components to add to the game object.
+     *
+     * @returns The created game object that contains all properties and methods each component offers.
      * @since v3000.1
      *
      * @example
@@ -244,6 +254,9 @@ export interface KAPLAYCtx<
     make<T>(comps?: CompList<T>): GameObj<T>;
     /**
      * Remove and re-add the game obj, without triggering add / destroy events.
+     *
+     * @param obj - The game object to re-add.
+     *
      * @example
      * ```js
      * // Common way to use this is to have one sprite overlap another sprite, and use readd() to have the bottom sprite on top of the other.
@@ -282,9 +295,12 @@ export interface KAPLAYCtx<
      *
      * @group Game Obj
      */
-    readd(obj: GameObj): void;
+    readd(obj: GameObj): GameObj;
     /**
      * Get a list of all game objs with certain tag.
+     *
+     * @param tag - The tag to search for. Use "*" to get all objects.
+     * @param opts - Additional options.
      *
      * @example
      * ```js
@@ -303,6 +319,8 @@ export interface KAPLAYCtx<
     get<T = any>(tag: Tag | Tag[], opts?: GetOpt): GameObj<T>[];
     /**
      * Get a list of game objects in an advanced way.
+     *
+     * @param opt - The query options.
      *
      * @example
      * ```js
@@ -329,6 +347,8 @@ export interface KAPLAYCtx<
     /**
      * Remove the game obj.
      *
+     * @param obj - The game object to remove.
+     *
      * @example
      * ```js
      * // every time bean collides with anything with tag "fruit", remove it
@@ -342,6 +362,8 @@ export interface KAPLAYCtx<
     destroy(obj: GameObj): void;
     /**
      * Remove all game objs with certain tag.
+     *
+     * @param tag - The tag to search for.
      *
      * @example
      * ```js
@@ -357,13 +379,17 @@ export interface KAPLAYCtx<
     /**
      * Set the position of a Game Object.
      *
+     * @param x The x position to set.
+     * @param y The y position to set.
+     * @returns The position component.
+     *
      * @example
      * ```js
      * // This game object will draw a "bean" sprite at (100, 200)
      * add([
      *     pos(100, 200),
      *     sprite("bean"),
-     * ])
+     * ]);
      * ```
      *
      * @group Components
@@ -374,6 +400,10 @@ export interface KAPLAYCtx<
     pos(): PosComp;
     /**
      * Set the scale of a Game Object.
+     *
+     * @param x The x scale to set.
+     * @param y The y scale to set.
+     * @returns The scale component.
      *
      * @example
      * ```js
@@ -402,6 +432,7 @@ export interface KAPLAYCtx<
      * Rotates a Game Object (in degrees).
      *
      * @param a The angle to rotate by. Defaults to 0.
+     * @returns The rotate component.
      *
      * @example
      * ```js
@@ -419,6 +450,11 @@ export interface KAPLAYCtx<
     rotate(a?: number): RotateComp;
     /**
      * Sets the color of a Game Object (rgb 0-255).
+     *
+     * @param r The red value to set.
+     * @param g The green value to set.
+     * @param b The blue value to set.
+     * @returns The color component.
      *
      * @example
      * ```js
@@ -439,6 +475,9 @@ export interface KAPLAYCtx<
     /**
      * Sets the opacity of a Game Object (0.0 - 1.0).
      *
+     * @param o The opacity value to set.
+     * @returns The opacity component.
+     *
      * @example
      * ```js
      * const bean = add([
@@ -458,6 +497,9 @@ export interface KAPLAYCtx<
     opacity(o?: number): OpacityComp;
     /**
      * Attach and render a sprite to a Game Object.
+     *
+     * @param spr The sprite to render.
+     * @param options Options for the sprite component. See {@link SpriteCompOpt `SpriteCompOpt`}.
      *
      * @example
      * ```js
@@ -482,6 +524,7 @@ export interface KAPLAYCtx<
      * bean.frame = 3
      * ```
      *
+     * @returns The sprite component.
      * @group Components
      */
     sprite(
@@ -492,7 +535,7 @@ export interface KAPLAYCtx<
      * Attach and render a text to a Game Object.
      *
      * @param txt The text to display.
-     * @param options Options for the text component. See {@link TextCompOpt}.
+     * @param opt Options for the text component. See {@link TextCompOpt}.
      *
      * @example
      * ```js
@@ -519,13 +562,15 @@ export interface KAPLAYCtx<
      * ])
      * ```
      *
+     * @returns The text component.
      * @group Components
      */
-    text(txt?: string, options?: TextCompOpt): TextComp;
+    text(txt?: string, opt?: TextCompOpt): TextComp;
     /**
      * Attach and render a polygon to a Game Object.
      *
-     * @since v3001.0
+     * @param pts The points to render the polygon.
+     * @param options Options for the polygon component. See {@link PolygonCompOpt `PolygonCompOpt`}.
      *
      * @example
      * ```js
@@ -538,11 +583,17 @@ export interface KAPLAYCtx<
      * ])
      * ```
      *
+     * @returns The polygon component.
+     * @since v3001.0
      * @group Components
      */
     polygon(pts: Vec2[], opt?: PolygonCompOpt): PolygonComp;
     /**
      * Attach and render a rectangle to a Game Object.
+     *
+     * @param w The width of the rectangle.
+     * @param h The height of the rectangle.
+     * @param opt Options for the rectangle component. See {@link RectCompOpt `RectCompOpt`}.
      *
      * @example
      * ```js
@@ -554,11 +605,15 @@ export interface KAPLAYCtx<
      * ])
      * ```
      *
+     * @returns The rectangle component.
      * @group Components
      */
     rect(w: number, h: number, opt?: RectCompOpt): RectComp;
     /**
      * Attach and render a circle to a Game Object.
+     *
+     * @param radius The radius of the circle.
+     * @param opt Options for the circle component. See {@link CircleCompOpt `CircleCompOpt`}.
      *
      * @example
      * ```js
@@ -568,11 +623,15 @@ export interface KAPLAYCtx<
      * ])
      * ```
      *
+     * @returns The circle component.
      * @group Components
      */
     circle(radius: number, opt?: CircleCompOpt): CircleComp;
     /**
      * Attach and render an ellipse to a Game Object.
+     *
+     * @param radiusX The radius of the ellipse on the x-axis.
+     * @param radiusY The radius of the ellipse on the y-axis.
      *
      * @example
      * ```js
@@ -582,11 +641,15 @@ export interface KAPLAYCtx<
      * ])
      * ```
      *
+     * @returns The ellipse component.
      * @group Components
      */
     ellipse(radiusX: number, radiusY: number): EllipseComp;
     /**
      * Attach and render a UV quad to a Game Object.
+     *
+     * @param w The width of the quad.
+     * @param h The height of the quad.
      *
      * @example
      * ```js
@@ -596,12 +659,15 @@ export interface KAPLAYCtx<
      * ])
      * ```
      *
+     * @returns The UV quad component.
      * @since v4000.0
      * @group Components
      */
     uvquad(w: number, h: number): UVQuadComp;
     /**
      * Attach a collider area from shape and enables collision detection in a Game Object.
+     *
+     * @param opt Options for the area component. See {@link AreaCompOpt `AreaCompOpt`}.
      *
      * @example
      * ```js
@@ -625,12 +691,14 @@ export interface KAPLAYCtx<
      * })
      * ```
      *
+     * @returns The area component.
      * @group Components
      */
-    area(): AreaComp;
-    area(options: AreaCompOpt): AreaComp;
+    area(opt?: AreaCompOpt): AreaComp;
     /**
      * Anchor point for render (default "topleft").
+     *
+     * @param o The anchor point to set.
      *
      * @example
      * ```js
@@ -642,11 +710,14 @@ export interface KAPLAYCtx<
      * ])
      * ```
      *
+     * @returns The anchor component.
      * @group Components
      */
     anchor(o: Anchor | Vec2): AnchorComp;
     /**
      * Determines the draw order for objects on the same layer. Object will be drawn on top if z value is bigger.
+     *
+     * @param z The z value to set.
      *
      * @example
      * ```js
@@ -666,11 +737,14 @@ export interface KAPLAYCtx<
      * bean.z = 30 // Bean now has a higher z value, so it will be drawn on top of mark
      * ```
      *
+     * @returns The z component.
      * @group Components
      */
     z(z: number): ZComp;
     /**
      * Determines the layer for objects. Object will be drawn on top if the layer index is higher.
+     *
+     * @param name The layer name to set.
      *
      * @example
      * ```js
@@ -692,12 +766,33 @@ export interface KAPLAYCtx<
      *
      * bean.layer("foreground") // Bean is now in the foreground layer and will be drawn on top of mark
      *
+     * @returns The layer component.
+     * @since v3001.0
      * @group Components
      */
     layer(name: string): LayerComp;
     /**
-     * Give obj an outline.
+     * Give an object an outline. Doesn't support sprite or text components.
      *
+     * @param width The width of the outline.
+     * @param color The color of the outline.
+     * @param opacity The opacity of the outline.
+     * @param join The line join style.
+     * @param miterLimit The miter limit ratio.
+     * @param cap The line cap style.
+     *
+     * @example
+     * ```js
+     * // Add an outline to a rectangle
+     *
+     * add([
+     *    rect(40, 40),
+     *    outline(4),
+     * ]);
+     * ```
+     *
+     * @returns The outline component.
+     * @since v2000.0
      * @group Components
      */
     outline(
@@ -740,12 +835,15 @@ export interface KAPLAYCtx<
      * })
      * ```
      *
-     * @group Components
+     * @returns The particles component.
      * @since v3001.0
+     * @group Components
      */
     particles(popt: ParticlesOpt, eopt: EmitterOpt): ParticlesComp;
     /**
      * Physical body that responds to gravity. Requires "area" and "pos" comp. This also makes the object "solid".
+     *
+     * @param opt Options for the body component. See {@link BodyCompOpt `BodyCompOpt`}.
      *
      * @example
      * ```js
@@ -772,12 +870,16 @@ export interface KAPLAYCtx<
      * })
      * ```
      *
+     * @returns The body component.
+     * @since v2000.0
      * @group Components
      */
-    body(options?: BodyCompOpt): BodyComp;
+    body(opt?: BodyCompOpt): BodyComp;
     /**
      * Applies a force on a colliding object in order to make it move along the collision tangent vector.
      * Good for conveyor belts.
+     *
+     * @param opt Options for the surface effector component. See {@link SurfaceEffectorCompOpt `SurfaceEffectorCompOpt`}.
      *
      * @example
      * ```js
@@ -796,60 +898,84 @@ export interface KAPLAYCtx<
      * ])
      * ```
      *
+     * @returns The surface effector component.
      * @since v3001.0
      * @group Components
      */
-    surfaceEffector(options: SurfaceEffectorCompOpt): SurfaceEffectorComp;
+    surfaceEffector(opt: SurfaceEffectorCompOpt): SurfaceEffectorComp;
     /**
      * Applies a force on a colliding object.
      * Good to apply anti-gravity, wind or water flow.
      *
+     * @param opt Options for the area effector component. See {@link AreaEffectorCompOpt `AreaEffectorCompOpt`}.
+     *
+     * @returns The area effector component.
      * @since v3001.0
      * @group Components
      */
-    areaEffector(options: AreaEffectorCompOpt): AreaEffectorComp;
+    areaEffector(opt: AreaEffectorCompOpt): AreaEffectorComp;
     /**
      * Applies a force on a colliding object directed towards this object's origin.
      * Good to apply magnetic attraction or repulsion.
      *
+     * @param opt Options for the point effector component. See {@link PointEffectorCompOpt `PointEffectorCompOpt`}.
+     *
+     * @returns The point effector component.
      * @since v3001.0
      * @group Components
      */
-    pointEffector(options: PointEffectorCompOpt): PointEffectorComp;
+    pointEffector(opt: PointEffectorCompOpt): PointEffectorComp;
     /**
      * The platform effector makes it easier to implement one way platforms
      * or walls. This effector is typically used with a static body, and it
      * will only be solid depending on the direction the object is traveling from.
      *
+     * @param opt Options for the platform effector component. See {@link PlatformEffectorCompOpt `PlatformEffectorCompOpt`}.
+     *
+     * @returns The platform effector component.
      * @since v3001.0
      * @group Components
      */
-    platformEffector(options?: PlatformEffectorCompOpt): PlatformEffectorComp;
+    platformEffector(opt?: PlatformEffectorCompOpt): PlatformEffectorComp;
     /**
      * Applies an upwards force (force against gravity) to colliding objects depending on the fluid density and submerged area.
      * Good to apply constant thrust.
      *
+     * @param opt Options for the buoyancy effector component. See {@link BuoyancyEffectorCompOpt `BuoyancyEffectorCompOpt`}.
+     *
+     * @returns The buoyancy effector component.
      * @since v3001.0
      * @group Components
      */
-    buoyancyEffector(options: BuoyancyEffectorCompOpt): BuoyancyEffectorComp;
+    buoyancyEffector(opt: BuoyancyEffectorCompOpt): BuoyancyEffectorComp;
     /**
      * Applies a constant force to the object.
      * Good to apply constant thrust.
      *
+     * @param opt Options for the constant force component. See {@link ConstantForceCompOpt `ConstantForceCompOpt`}.
+     *
+     * @returns The constant force component.
      * @since v3001.0
      * @group Components
      */
-    constantForce(opts: ConstantForceCompOpt): ConstantForceComp;
+    constantForce(opt: ConstantForceCompOpt): ConstantForceComp;
     /**
-     * Enables double jump. Requires "body" component.
+     * Enables double jump.
      *
+     * @requires {@link body `body()`}
+     * @param numJumps The number of jumps allowed. Defaults to 1.
+     *
+     * @returns The double jump component.
      * @since v3000.0
      * @group Components
      */
     doubleJump(numJumps?: number): DoubleJumpComp;
     /**
-     * Move towards a direction infinitely, and destroys when it leaves game view. Requires "pos" component.
+     * Move towards a direction infinitely, and destroys when it leaves game view.
+     *
+     * @requires {@link pos `pos()`}
+     * @param dir The direction to move towards.
+     * @param speed The speed to move at.
      *
      * @example
      * ```js
@@ -863,13 +989,13 @@ export interface KAPLAYCtx<
      * ])
      * ```
      *
+     * @returns The move component.
+     * @since v2000.0
      * @group Components
      */
-    move(direction: number | Vec2, speed: number): EmptyComp;
+    move(dir: number | Vec2, speed: number): EmptyComp;
     /**
      * Control the behavior of object when it goes out of view.
-     *
-     * @since v2000.2
      *
      * @example
      * ```js
@@ -881,25 +1007,28 @@ export interface KAPLAYCtx<
      * ])
      * ```
      *
+     * @returns The offscreen component.
+     * @since v2000.2
      * @group Components
      */
     offscreen(opt?: OffScreenCompOpt): OffScreenComp;
     /**
      * Follow another game obj's position.
      *
+     * @param obj The game obj to follow.
+     * @param offset The offset to follow at.
+     *
      * @example
      * ```js
      * const bean = add(...)
      *
      * add([
-     *   sprite("bag"),
-     *   pos(),
-     *   follow(bean) // Follow bean's position
-     * ])
-     * ```
+     *     sprite("bag"),
+     *     pos(),
+     *     follow(bean) // Follow bean's position
+     * ]);
      *
-     * @example
-     * ```js
+     * // Using offset
      * const target = add(...)
      *
      * const mark = add([
@@ -911,12 +1040,19 @@ export interface KAPLAYCtx<
      * mark.follow.offset = vec2(64, 64) // Change the offset
      * ```
      *
+     * @returns The follow component.
+     * @since v2000.0
      * @group Components
      */
     follow(obj: GameObj | null, offset?: Vec2): FollowComp;
     /**
      * Custom shader to manipulate sprite.
      *
+     * @param id The shader id.
+     * @param uniform The uniform to pass to the shader.
+     *
+     * @returns The shader component.
+     * @since v2000.0
      * @group Components
      */
     shader(id: string, uniform?: Uniform | (() => Uniform)): ShaderComp;
@@ -2758,7 +2894,12 @@ export interface KAPLAYCtx<
      * ```
      * @group Timer
      */
-    loop(t: number, action: () => void, maxLoops?: number, waitFirst?: boolean): TimerController;
+    loop(
+        t: number,
+        action: () => void,
+        maxLoops?: number,
+        waitFirst?: boolean,
+    ): TimerController;
     /**
      * Play a piece of audio.
      *
@@ -4717,7 +4858,7 @@ export type Canvas = {
     clear(): void;
     draw(action: () => void): void;
     free(): void;
-    readonly fb: FrameBuffer
+    readonly fb: FrameBuffer;
 };
 
 export interface Vertex {

@@ -51,6 +51,23 @@ definition, the JSDoc comments are on `types.ts`.
 
 **Help on improving the documentation is appreciated!**
 
+## JSDoc comments
+
+Rules for JSDoc comments:
+
+- This is the order of different tags:
+  - `@requires`
+  - `@param`
+  - `@example`
+  - `@returns`
+  - `@since`
+  - `@group`
+
+Some common names used:
+
+- `opt` for an options object.
+- `dir` for a direction vector.
+
 # Before commit
 
 1. Follow our [conventional commits](#conventional-commits-guide) format. You
