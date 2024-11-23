@@ -1295,13 +1295,13 @@ export interface KAPLAYCtx<
      * @example
      * ```js
      * // This will run when the object is added.
-     * onAdd("addTag", () => {
+     * onAdd("player", () => {
      *     debug.log("ohhi")
      * })
      * 
      * add([
      *     pos(),
-     *     "addTag"
+     *     "player"
      * ])
      * ```
      * 
@@ -1331,18 +1331,18 @@ export interface KAPLAYCtx<
      * 
      * @example
      * ```js
-     * // This will run when the object is destroyed.
-     * onDestroy("destroyTag", () => {
+     * // This will run when the tagged object is destroyed.
+     * onDestroy("bean", () => {
      *     debug.log("ohbye")
      * })
      * 
-     * let objectToDestroy = add([
+     * let player = add([
      *     pos(),
-     *     "destroyTag"
+     *     "bean"
      * ])
      * 
-     * // Destroy the object
-     * destroy(objectToDestroy)
+     * // Destroy the tagged object
+     * destroy(player)
      * ```
      * 
      * @group Events
@@ -1358,12 +1358,12 @@ export interface KAPLAYCtx<
      *     debug.log("ohbye")
      * })
      * 
-     * let objectToDestroy = add([
+     * let ghosty = add([
      *     pos(),
      * ])
      * 
      * // Destroy the object
-     * destroy(objectToDestroy)
+     * destroy(ghosty)
      * ```
      * 
      * @group Events
@@ -1786,8 +1786,8 @@ export interface KAPLAYCtx<
      * let mouseTime = 0
      * onMouseDown((m) => {
      *     mouseTime += dt()
-     *     debug.log(`Time with mouse down: ${mouseTime})
-     *     debug.log(`Mouse button down: ${m})
+     *     debug.log(`Time with mouse down: ${mouseTime}`)
+     *     debug.log(`Mouse button down: ${m}`)
      * })
      * ```
      *
@@ -1802,11 +1802,12 @@ export interface KAPLAYCtx<
      * ```js
      * // gives cookies on left press, remove on right press
      * let cookies = 0
-     * onMousePress([`left`, `right`], (m) => {
-     *     if (m == `left`)
+     * onMousePress(["left", "right"], (m) => {
+     *     if (m == "left") {
      *         cookies++
-     *     else
+     *     } else {
      *         cookies--
+     *     }
      *     debug.log(`Cookies: ${cookies}`)
      * })
      * ```
@@ -1885,29 +1886,9 @@ export interface KAPLAYCtx<
      * 
      * @example
      * ```js
-     * // bean with mouse `trail`
-     * let bean = add([
-     *     pos(mousePos()),
-     *     anchor("center"),
-     *     sprite("bean")
-     * ])
-     * 
-     * let bd = vec2(0)
-     * 
      * // runs when the mouse has moved
      * onMouseMove((p, d) => {
      *     bean.pos = p // set bean position to mouse position
-     *     bd = bean.pos.sub(d.x * 10, d.y * 10) // d is the change in mouse position
-     * })
-     * 
-     * // draw trail to see where mouse moved
-     * onDraw(() => {
-     *     drawLine({
-     *         p1: bean.pos,
-     *         p2: bd,
-     *         width: 4,
-     *         color: rgb(0,0,0)
-     *     })
      * })
      * ```
      *
@@ -1999,17 +1980,7 @@ export interface KAPLAYCtx<
      * 
      * @example
      * ```js
-     * // basic car
-     * let car = add([
-     *     pos(center()),
-     *     anchor("center"),
-     *     rect(64, 32),
-     *     color(RED),
-     *     area(),
-     *     body(),
-     *     rotate(),
-     * ])
-     * 
+     * // when button is being held down
      * onGamepadButtonDown("rtrigger", (gp) => {
      *     car.addForce(Vec2.fromAngle(car.angle).scale(10))
      * })
@@ -2027,17 +1998,6 @@ export interface KAPLAYCtx<
      * 
      * @example
      * ```js
-     * // basic car with brakes
-     * let car = add([
-     *     pos(center()),
-     *     anchor("center"),
-     *     rect(64, 32),
-     *     color(RED),
-     *     area(),
-     *     body(),
-     *     rotate(),
-     * ])
-     * 
      * // when button is being held down
      * onGamepadButtonDown((btn, gp) => {
      *     if (btn == "rtrigger") {
@@ -2058,17 +2018,7 @@ export interface KAPLAYCtx<
      * 
      * @example
      * ```js
-     * // gamepad player jump
-     * setGravity(200)
-     * 
-     * let player = add([
-     *     pos(center()),
-     *     anchor("center"),
-     *     sprite("bean"),
-     *     area(),
-     *     body()
-     * ])
-     * 
+     * // when user presses button
      * onGamepadButtonPress("south", (btn, gp) => {
      *     player.jump(200)
      * })
@@ -2086,24 +2036,11 @@ export interface KAPLAYCtx<
      *
      * @example
      * ```js
-     * // gamepad player controls
-     * setGravity(200)
-     * 
-     * let player = add([
-     *     pos(center()),
-     *     anchor("center"),
-     *     sprite("bean"),
-     *     area(),
-     *     body()
-     * ])
-     * 
+     * // when user presses button
      * onGamepadButtonPress((btn, gp) => {
-     *     if (btn == "south")
+     *     if (btn == "south") {
      *         player.jump(200)     // jump
-     *     else if (btn == "west")
-     *         player.applyImpulse(vec2(-100, 0))   // dash left
-     *     else if (btn == "east")
-     *         player.applyImpulse(vec2(100, 0))    // dash right
+     *     }
      * })
      * ```
      * 
@@ -2143,34 +2080,10 @@ export interface KAPLAYCtx<
      * 
      * @example
      * ```js
-     * // fun charged abilities
-     * let chargeTimes = [0,0,0,0]
-     * onGamepadButtonPress((btn, gp) => {
-     *     if (btn == "north") {
-     *         chargeTimes[0] = time()
-     *     } else if (btn == "east") {
-     *         chargeTimes[1] = time()
-     *     } else if (btn == "south") {
-     *         chargeTimes[2] = time()
-     *     } else if (btn == "west") {
-     *         chargeTimes[3] = time()
-     *     }
-     * })
-     * 
      * // when a gamepad button is released, this is run
      * onGamepadButtonRelease((btn, gp) => {
      *     if (btn == "north") {
-     *         let chargedt = time() - chargeTimes[0]
-     *         debug.log(`Used ${chargedt * 1000} power for "bean smack"!`)
-     *     } else if (btn == "east") {
-     *         let chargedt = time() - chargeTimes[1]\
-     *         debug.log(`Used ${chargedt * 1000} power for "mark's mark"!`)
-     *     } else if (btn == "south") {
-     *         let chargedt = time() - chargeTimes[2]
-     *         debug.log(`Used ${chargedt * 1000} power for "bobo splash"!`)
-     *     } else if (btn == "west") {
-     *         let chargedt = time() - chargeTimes[3]
-     *         debug.log(`Used ${chargedt * 1000} power for "kaplay"!`)
+     *         player.jump(500)
      *     }
      * })
      * ```
@@ -2189,18 +2102,12 @@ export interface KAPLAYCtx<
      * // player move
      * let player = add([
      *     pos(center()),
-     *     anchor(`center`),
      *     sprite(`bean`),
-     *     area(),
-     *     body(),
-     *     {
-     *         SPEED: 200,
-     *     }
      * ])
      * 
      * // when left stick is moved
      * onGamepadStick("left", (stickVector, gp) => {
-     *     player.move(stickVector.x * player.SPEED, 0);
+     *     player.move(stickVector.x, 0);
      * })
      * ```
      *
