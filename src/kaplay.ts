@@ -1,9 +1,8 @@
 const VERSION = "3001.0.0";
 
-import { type App, type ButtonsDef, initApp } from "./app";
+import { type ButtonsDef, initApp } from "./app";
 
 import {
-    type AppGfxCtx,
     center,
     drawBezier,
     drawCircle,
@@ -78,7 +77,6 @@ import {
     ASCII_CHARS,
     BG_GRID_SIZE,
     DBG_FONT,
-    DEF_HASH_GRID_SIZE,
     LOG_MAX,
     MAX_TEXT_CACHE_SIZE,
 } from "./constants";
@@ -134,7 +132,6 @@ import {
     Rect,
     rgb,
     RNG,
-    sat,
     shuffle,
     SweepAndPrune,
     testCirclePolygon,
