@@ -781,7 +781,7 @@ export interface KAPLAYCtx<
      *
      * @returns The layer comp.
      * @since v3001.0
-     * @group Components
+     * @group Layer
      */
     layer(name: string): LayerComp;
     /**
@@ -3114,6 +3114,91 @@ export interface KAPLAYCtx<
      */
     charInputted(): string[];
     /**
+     * Set camera position.
+     *
+     * @param pos - The position to set the camera to.
+     *
+     * @example
+     * ```js
+     * // move camera to (100, 100)
+     * setCamPos(100, 100);
+     * setCamPos(vec2(100, 100));
+     * setCamPos(100); // x and y are the same
+     * ```
+     *
+     * @since v3001.1
+     * @group Camera
+     */
+    setCamPos(pos: Vec2): void;
+    setCamPos(x: number, y: number): void;
+    setCamPos(xy: number): void;
+    /**
+     * Get camera position.
+     *
+     * @returns The current camera position.
+     * @since v3001.1
+     * @group Camera
+     */
+    getCamPos(): Vec2;
+    /**
+     * Set camera scale.
+     *
+     * @param scale - The scale to set the camera to.
+     *
+     * @example
+     * ```js
+     * // set camera scale to (2, 2)
+     * setCamScale(2, 2);
+     * setCamScale(vec2(2, 2));
+     * setCamScale(2); // x and y are the same
+     * ```
+     *
+     * @since v3001.1
+     * @group Camera
+     */
+    setCamScale(scale: Vec2): void;
+    setCamScale(x: number, y: number): void;
+    setCamScale(xy: number): void;
+    /**
+     * Get camera scale.
+     *
+     * @returns The current camera scale.
+     * @since v3001.1
+     * @group Camera
+     */
+    getCamScale(): Vec2;
+    /**
+     * Set camera rotation.
+     *
+     * @param angle - The angle to rotate the camera.
+     *
+     * @example
+     * ```js
+     * // rotate camera 90 degrees
+     * setCamRot(90);
+     * ```
+     *
+     * @since v3001.1
+     * @group Camera
+     */
+    setCamRot(angle: number): void;
+    /**
+     * Get camera rotation.
+     *
+     * @returns The current camera rotation.
+     * @since v3001.1
+     * @group Camera
+     */
+    getCamRot(): number;
+    /**
+     * Get camera transform.
+     *
+     * @returns The current camera transform.
+     * @since v3001.1
+     * @group Camera
+     */
+    getCamTransform(): Mat23;
+    /**
      * Camera shake.
      *
      * @param intensity - The intensity of the shake. Default to 12.
@@ -3131,6 +3216,28 @@ export interface KAPLAYCtx<
      */
     shake(intensity?: number): void;
     /**
+     * Camera flash.
+     *
+     * @param flashColor - The color of the flash.
+     * @param fadeOutTime - The time it takes for the flash to fade out.
+     *
+     * @example
+     * ```js
+     * onClick(() => {
+     *     // flashed
+     *     flash(WHITE, 0.5);
+     * });
+     * ```
+     *
+     * @returns A timer controller.
+     * @since v3001.0
+     * @group Camera
+     */
+    flash(flashColor: Color, fadeOutTime: number): TimerController;
+    // #region DEPRECATED CAMERA METHODS ---------------------------------------
+    /**
+     * @deprecated Use {@link setCamPos} and {@link getCamPos} instead.
+     *
      * Get / set camera position.
      *
      * @param pos - The position to set the camera to.
@@ -3148,10 +3255,16 @@ export interface KAPLAYCtx<
      * @group Camera
      */
     camPos(pos: Vec2): Vec2;
+    /** @deprecated */
     camPos(x: number, y: number): Vec2;
+    /** @deprecated */
     camPos(xy: number): Vec2;
+    /** @deprecated */
+
     camPos(): Vec2;
     /**
+     * @deprecated Use {@link setCamScale} and {@link getCamScale} instead.
+     *
      * Get / set camera scale.
      *
      * @param scale - The scale to set the camera to.
@@ -3161,10 +3274,15 @@ export interface KAPLAYCtx<
      * @group Camera
      */
     camScale(scale: Vec2): Vec2;
+    /** @deprecated */
     camScale(x: number, y: number): Vec2;
+    /** @deprecated */
     camScale(xy: number): Vec2;
+    /** @deprecated */
     camScale(): Vec2;
     /**
+     * @deprecated Use {@link setCamRot} and {@link getCamRot} instead.
+     *
      * Get / set camera rotation.
      *
      * @param angle - The angle to rotate the camera.
@@ -3175,6 +3293,8 @@ export interface KAPLAYCtx<
      */
     camRot(angle?: number): number;
     /**
+     * @deprecated use {@link flash} instead.
+     *
      * Flash the camera.
      *
      * @param flashColor - The color of the flash.
@@ -3194,11 +3314,14 @@ export interface KAPLAYCtx<
      */
     camFlash(flashColor: Color, fadeOutTime: number): TimerController;
     /**
+     * @deprecated use {@link getCamTransform} instead.
+     *
      * Get camera transform.
      *
      * @group Camera
      */
     camTransform(): Mat23;
+    // #endregion DEPRECATED CAMERA METHODS ------------------------------------
     /**
      * Transform a point from world position (relative to the root) to screen position (relative to the screen).
      *
@@ -3439,6 +3562,30 @@ export interface KAPLAYCtx<
      */
     burp(options?: AudioPlayOpt): AudioPlay;
     /**
+     * Set the global volume.
+     *
+     * @param v - The volume to set.
+     *
+     * @example
+     * ```js
+     * setVolume(0.5)
+     * ```
+     *
+     * @since v3001.1
+     * @group Audio
+     */
+    setVolume(v: number): void;
+    /**
+     * Get the global volume.
+     *
+     * @returns The current volume.
+     * @since v3001.1
+     * @group Audio
+     */
+    getVolume(): number;
+    /**
+     * @deprecated Use {@link setVolume} and {@link getVolume} instead.
+     *
      * Sets global volume.
      *
      * @example
@@ -4208,6 +4355,50 @@ export interface KAPLAYCtx<
      * @example
      * ```js
      * layers(["bg", "obj", "ui"], "obj")
+     *
+     * // no layer specified, will be added to "obj"
+     * add([
+     *      sprite("bean"),
+     * ]);
+     *
+     * // add to "bg" layer
+     * add([
+     *     sprite("bg"),
+     *     layer("bg"),
+     * ]);
+     * ```
+     *
+     * @since v3001.1
+     * @group Layers
+     */
+    setLayers(layers: string[], defaultLayer: string): void;
+    /**
+     * Get the layer names.
+     *
+     * @returns The layer names or null if not set.
+     * @since v3001.1
+     * @group Layers
+     */
+    getLayers(): string[] | null;
+    /**
+     * Get the default layer name.
+     *
+     * @returns The default layer name or null if not set.
+     * @since v3001.1
+     * @group Layers
+     */
+    getDefaultLayer(): string | null;
+    /**
+     * @deprecated Use {@link setLayers} instead.
+     *
+     * Define the layer names. Should be called before any objects are made.
+     *
+     * @param layers - The layer names.
+     * @param defaultLayer - The default layer name.
+     *
+     * @example
+     * ```js
+     * setLayers(["bg", "obj", "ui"], "obj")
      *
      * // no layer specified, will be added to "obj"
      * add([

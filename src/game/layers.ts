@@ -1,6 +1,7 @@
 import { _k } from "../kaplay";
+import { deprecateMsg } from "../utils";
 
-export const layers = function(layerNames: string[], defaultLayer: string) {
+export function setLayers(layerNames: string[], defaultLayer: string) {
     if (_k.game.layers) {
         throw Error("Layers can only be assigned once.");
     }
@@ -12,4 +13,17 @@ export const layers = function(layerNames: string[], defaultLayer: string) {
     }
     _k.game.layers = layerNames;
     _k.game.defaultLayerIndex = defaultLayerIndex;
-};
+}
+
+export function getLayers() {
+    return _k.game.layers;
+}
+
+export function getDefaultLayer() {
+    return _k.game.layers?.[_k.game.defaultLayerIndex] ?? null;
+}
+
+export function layers(layerNames: string[], defaultLayer: string) {
+    deprecateMsg("layers", "setLayers");
+    setLayers(layerNames, defaultLayer);
+}
