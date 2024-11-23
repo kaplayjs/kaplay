@@ -54,12 +54,12 @@ const player = level.get("player")[0];
 // Will run every frame
 player.onUpdate(() => {
     // Set the viewport center to player.pos
-    camPos(player.worldPos());
+    setCamPos(player.worldPos());
 });
 
 // Set the viewport center to player.pos whenever their physics are resolved
 player.onPhysicsResolve(() => {
-    camPos(player.worldPos());
+    setCamPos(player.worldPos());
 });
 
 // When the player collides with a coin object
@@ -69,7 +69,7 @@ player.onCollide("coin", (coin) => {
     play("score");
     score++;
     // Zoooom in!
-    camScale(2);
+    setCamScale(2);
 });
 
 // Movements

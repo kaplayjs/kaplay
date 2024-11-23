@@ -158,8 +158,8 @@ player.onHeadbutt((block) => {
 
 onUpdate(() => {
     if (!burping) return;
-    camPos(camPos().lerp(player.pos, dt() * 3));
-    camScale(camScale().lerp(vec2(5), dt() * 3));
+    setCamPos(getCamPos().lerp(player.pos, dt() * 3));
+    setCamScale(getCamScale().lerp(vec2(5), dt() * 3));
 });
 
 const lyrics =
