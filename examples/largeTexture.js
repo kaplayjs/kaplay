@@ -5,7 +5,7 @@ kaplay();
 // Loads a random 2500px image
 loadSprite("bigyoshi", "/examples/sprites/YOSHI.png");
 
-let cameraPosition = camPos();
+let cameraPosition = getCamPos();
 let cameraScale = 1;
 
 add([
@@ -30,11 +30,11 @@ onUpdate(() => {
         cameraPosition = cameraPosition.sub(
             mouseDeltaPos().scale(1 / cameraScale),
         );
-        camPos(cameraPosition);
+        setCamPos(cameraPosition);
     }
 });
 
 onScroll((delta) => {
     cameraScale = cameraScale * (1 - 0.1 * Math.sign(delta.y));
-    camScale(cameraScale);
+    setCamScale(cameraScale);
 });
