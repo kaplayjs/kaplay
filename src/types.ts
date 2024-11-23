@@ -1292,6 +1292,9 @@ export interface KAPLAYCtx<
     /**
      * Register an event that runs when an object with the provided tag is added.
      * 
+     * @param tag - The tag for which the event runs. 
+     * @param action - The function that runs when an object is added.
+     * 
      * @example
      * ```js
      * // This will run when the object is added.
@@ -1305,11 +1308,14 @@ export interface KAPLAYCtx<
      * ])
      * ```
      * 
+     * @returns {@link KEventController `KEventController`}.
      * @group Events
      */
     onAdd(tag: Tag, action: (obj: GameObj) => void): KEventController;
     /**
      * Register an event that runs when an object is added
+     * 
+     * @param action - The callback that runs when an object is added.
      * 
      * @example
      * ```js
@@ -1323,11 +1329,15 @@ export interface KAPLAYCtx<
      * ])
      * ```
      * 
+     * @returns {@link KEventController `KEventController`}.
      * @group Events
      */
     onAdd(action: (obj: GameObj) => void): KEventController;
     /**
      * Register an event that runs when an object with the provided tag is destroyed.
+     * 
+     * @param tag - The tag for which the event runs. 
+     * @param action - The function that runs when an object is destroyed.
      * 
      * @example
      * ```js
@@ -1345,11 +1355,14 @@ export interface KAPLAYCtx<
      * destroy(player)
      * ```
      * 
+     * @returns {@link KEventController `KEventController`}.
      * @group Events
      */
     onDestroy(tag: Tag, action: (obj: GameObj) => void): KEventController;
     /**
      * Register an event that runs when an object is destroyed.
+     * 
+     * @param action - The function that runs when an object is destroyed.
      * 
      * @example
      * ```js
@@ -1366,6 +1379,7 @@ export interface KAPLAYCtx<
      * destroy(ghosty)
      * ```
      * 
+     * @returns {@link KEventController `KEventController`}.
      * @group Events
      */
     onDestroy(action: (obj: GameObj) => void): KEventController;
@@ -1385,11 +1399,15 @@ export interface KAPLAYCtx<
      *     debug.log(bean.width)
      * })
      * ```
+     * 
+     * @returns {@link KEventController `KEventController`} or undefined.
      * @group Events
      */
     onLoad(action: () => void): KEventController | undefined;
     /**
      * Register an event that runs every frame when assets are initially loading. Can be used to draw a custom loading screen.
+     * 
+     * @param action - The function that runs when assets are loading.
      * 
      * @example
      * ```
@@ -1414,12 +1432,15 @@ export interface KAPLAYCtx<
      * })
      * ```
      *
+     * @returns {@link KEventController `KEventController`}.
      * @since v3000.0
      * @group Events
      */
     onLoading(action: (progress: number) => void): KEventController;
     /**
      * Register a custom error handler. Can be used to draw a custom error screen.
+     * 
+     * @param action - The function that runs when the program errors.
      * 
      * @example
      * ```js
@@ -1450,12 +1471,15 @@ export interface KAPLAYCtx<
      * ])
      * ```
      *
+     * @returns {@link KEventController `KEventController`}.
      * @since v3000.0
      * @group Events
      */
     onError(action: (err: Error) => void): KEventController;
     /**
      * Register an event that runs when the canvas resizes.
+     * 
+     * @param action - The function that runs when the canvas resizes.
      * 
      * @example
      * ```js
@@ -1474,12 +1498,15 @@ export interface KAPLAYCtx<
      * })
      * ```
      *
+     * @returns {@link KEventController `KEventController`}.
      * @since v3000.0
      * @group Events
      */
     onResize(action: () => void): KEventController;
     /**
      * Cleanup function to run when quit() is called.
+     * 
+     * @param action - The function that runs when quit() is called.
      * 
      * @example
      * ```js
@@ -1491,12 +1518,15 @@ export interface KAPLAYCtx<
      * quit()
      * ```
      *
+     * @returns {@link KEventController `KEventController`}.
      * @since v3000.0
      * @group Events
      */
     onCleanup(action: () => void): void;
     /**
      * Register an event that runs when a gamepad is connected.
+     * 
+     * @param action - The function that runs when quit() is called.
      * 
      * @example
      * ```js
@@ -1506,12 +1536,15 @@ export interface KAPLAYCtx<
      * })
      * ```
      *
+     * @returns {@link KEventController `KEventController`}.
      * @since v3000.0
      * @group Input
      */
     onGamepadConnect(action: (gamepad: KGamepad) => void): KEventController;
     /**
      * Register an event that runs when a gamepad is disconnected.
+     * 
+     * @param action - The function that runs when quit() is called.
      * 
      * @example
      * ```js
@@ -1521,6 +1554,7 @@ export interface KAPLAYCtx<
      * })
      * ```
      *
+     * @returns {@link KEventController `KEventController`}.
      * @since v3000.0
      * @group Input
      */
@@ -1715,6 +1749,9 @@ export interface KAPLAYCtx<
     /**
      * Register an event that runs when user release certain keys.
      * 
+     * @param k = The key or keys to watch. See {@link Key `Key`}.
+     * @param action - The function that runs when a user releases certain keys
+     * 
      * @example
      * ```js
      * // release `a` or `b` keys
@@ -1723,12 +1760,15 @@ export interface KAPLAYCtx<
      * })
      * ```
      *
+     * @returns {@link KEventController `KEventController`}.
      * @since v2000.1
      * @group Input
      */
     onKeyRelease(k: Key | Key[], action: (k: Key) => void): KEventController;
     /**
      * Register an event that runs when user releases a key.
+     * 
+     * @param action - The function that runs when a user releases a {@link Key `Key`}.
      * 
      * @example
      * ```js
@@ -1738,6 +1778,7 @@ export interface KAPLAYCtx<
      * })
      * ```
      *
+     * @returns {@link KEventController `KEventController`}.
      * @since v2000.1
      * @group Input
      */
@@ -1760,6 +1801,9 @@ export interface KAPLAYCtx<
     /**
      * Register an event that runs every frame when certain mouse buttons are being held down.
      * 
+     * @param button - The mouse button or buttons that are watched. See {@link MouseButton `MouseButton`}.
+     * @param action - The function that is run when certain mouse buttons are being held down.
+     * 
      * @example
      * ```js
      * // count time with left mouse button down
@@ -1770,6 +1814,7 @@ export interface KAPLAYCtx<
      * })
      * ```
      *
+     * @returns {@link KEventController `KEventController`}.
      * @since v3001.0
      * @group Input
      */
@@ -1779,6 +1824,8 @@ export interface KAPLAYCtx<
     ): KEventController;
     /**
      * Register an event that runs every frame when any mouse button is being held down.
+     * 
+     * @param action - The function that is run when any mouse button is being held down.
      * 
      * @example
      * ```js
@@ -1791,12 +1838,15 @@ export interface KAPLAYCtx<
      * })
      * ```
      *
+     * @returns {@link KEventController `KEventController`}.
      * @since v3001.0
      * @group Input
      */
     onMouseDown(action: (m: MouseButton) => void): KEventController;
     /**
      * Register an event that runs when user clicks mouse.
+     * 
+     * @param action - The function that is run when user clicks a mouse button.
      * 
      * @example
      * ```js
@@ -1812,12 +1862,16 @@ export interface KAPLAYCtx<
      * })
      * ```
      *
+     * @returns {@link KEventController `KEventController`}.
      * @since v3001.0
      * @group Input
      */
     onMousePress(action: (m: MouseButton) => void): KEventController;
     /**
      * Register an event that runs when user clicks mouse.
+     * 
+     * @param button - The mouse button or buttons that are being watched. See {@link MouseButton `MouseButton`}.
+     * @param action - The function that is run what the user clicks a provided mouse button.
      * 
      * @example
      * ```js
@@ -1829,6 +1883,7 @@ export interface KAPLAYCtx<
      * })
      * ```
      *
+     * @returns {@link KEventController `KEventController`}.
      * @since v3001.0
      * @group Input
      */ 
@@ -1838,6 +1893,8 @@ export interface KAPLAYCtx<
     ): KEventController;
     /**
      * Register an event that runs when user releases mouse.
+     * 
+     * @param action - The function that is run what the user clicks a provided mouse button.
      * 
      * @example
      * ```js
@@ -1852,12 +1909,16 @@ export interface KAPLAYCtx<
      * })
      * ```
      *
+     * @returns {@link KEventController `KEventController`}.
      * @since v3001.0
      * @group Input
      */
     onMouseRelease(action: (m: MouseButton) => void): KEventController;
     /**
      * Register an event that runs when user releases mouse.
+     * 
+     * @param button - The mouse button or buttons that are being watched. See {@link MouseButton `MouseButton`}.
+     * @param action - The function that is run what the user clicks a provided mouse button.
      * 
      * @example
      * ```js
@@ -1874,6 +1935,7 @@ export interface KAPLAYCtx<
      * }
      * ```
      *
+     * @returns {@link KEventController `KEventController`}.
      * @since v3001.0
      * @group Input
      */
@@ -1884,6 +1946,8 @@ export interface KAPLAYCtx<
     /**
      * Register an event that runs whenever user move the mouse.
      * 
+     * @param action - The function that is run what the user moves the mouse.
+     * 
      * @example
      * ```js
      * // runs when the mouse has moved
@@ -1892,6 +1956,7 @@ export interface KAPLAYCtx<
      * })
      * ```
      *
+     * @returns {@link KEventController `KEventController`}.
      * @since v2000.1
      * @group Input
      */
@@ -1936,6 +2001,8 @@ export interface KAPLAYCtx<
     /**
      * Register an event that runs when tab is hidden.
      * 
+     * @param action - The function that is run what the tab is hidden.
+     * 
      * @example
      * ```js
      * // spooky ghost
@@ -1956,12 +2023,15 @@ export interface KAPLAYCtx<
      * })
      * ```
      *
+     * @returns {@link KEventController `KEventController`}.
      * @since v3001.0
      * @group Events
      */
     onHide(action: () => void): KEventController;
     /**
      * Register an event that runs when tab is shown.
+     * 
+     * @param action - The function that is run when the tab is shown.
      * 
      * @example
      * ```js
@@ -1971,12 +2041,16 @@ export interface KAPLAYCtx<
      * })
      * ```
      *
+     * @returns {@link KEventController `KEventController`}.
      * @since v3001.0
      * @group Events
      */
     onShow(action: () => void): KEventController;
     /**
      * Register an event that runs every frame when certain gamepad buttons are held down.
+     * 
+     * @param button - The specific gamepad button or buttons to watch for when they are held down. See {@link KGamepadButton `KGamepadButton`}.
+     * @param action - The function that is run while certain gamepad buttons are held down.
      * 
      * @example
      * ```js
@@ -1986,6 +2060,7 @@ export interface KAPLAYCtx<
      * })
      * ```
      *
+     * @returns {@link KEventController `KEventController`}.
      * @since v3001.0
      * @group Input
      */
@@ -1995,6 +2070,8 @@ export interface KAPLAYCtx<
     ): KEventController;
     /**
      * Register an event that runs every frame when any gamepad buttons are held down.
+     * 
+     * @param action - The function that is run while any gamepad buttons are held down.
      * 
      * @example
      * ```js
@@ -2007,6 +2084,8 @@ export interface KAPLAYCtx<
      *     }
      * })
      * ```
+     * 
+     * @returns {@link KEventController `KEventController`}.
      * @since v3001.0
      * @group Input
      */
@@ -2016,6 +2095,9 @@ export interface KAPLAYCtx<
     /**
      * Register an event that runs when user presses certain gamepad button.
      * 
+     * @param button - The specific gamepad button or buttons to watch for when they are pressed. See {@link KGamepadButton `KGamepadButton`}.
+     * @param action - The function that is run when certain gamepad buttons are pressed.
+     * 
      * @example
      * ```js
      * // when user presses button
@@ -2024,6 +2106,7 @@ export interface KAPLAYCtx<
      * })
      * ```
      *
+     * @returns {@link KEventController `KEventController`}.
      * @since v3001.0
      * @group Input
      */
@@ -2034,6 +2117,8 @@ export interface KAPLAYCtx<
     /**
      * Register an event that runs when user presses any gamepad button.
      *
+     * @param action - The function that is run when any gamepad buttons is pressed.
+     * 
      * @example
      * ```js
      * // when user presses button
@@ -2044,6 +2129,7 @@ export interface KAPLAYCtx<
      * })
      * ```
      * 
+     * @returns {@link KEventController `KEventController`}.
      * @since v3001.0
      * @group Input
      */
@@ -2052,6 +2138,9 @@ export interface KAPLAYCtx<
     ): KEventController;
     /**
      * Register an event that runs when user releases certain gamepad button
+     * 
+     * @param button - The specific gamepad button or buttons to watch for when they are released. See {@link KGamepadButton `KGamepadButton`}.
+     * @param action - The function that is run when certain gamepad buttons are released.
      * 
      * @example
      * ```js
@@ -2068,6 +2157,7 @@ export interface KAPLAYCtx<
      * })
      * ```
      *
+     * @returns {@link KEventController `KEventController`}.
      * @since v3001.0
      * @group Input
      */
@@ -2077,6 +2167,8 @@ export interface KAPLAYCtx<
     ): KEventController;
     /**
      * Register an event that runs when user releases any gamepad button.
+     * 
+     * @param action - The function that is run when any gamepad buttons are released.
      * 
      * @example
      * ```js
@@ -2088,6 +2180,7 @@ export interface KAPLAYCtx<
      * })
      * ```
      *
+     * @returns {@link KEventController `KEventController`}.
      * @since v3000.0
      * @group Input
      */
@@ -2096,6 +2189,9 @@ export interface KAPLAYCtx<
     ): KEventController;
     /**
      * Register an event that runs when the gamepad axis exists.
+     * 
+     * @param button - The specific gamepad stick that is moved. See {@link GamepadStick `GamepadStick`}.
+     * @param action - The function that is run when a specific gamepad stick is moved.
      * 
      * @example
      * ```js
@@ -2111,6 +2207,7 @@ export interface KAPLAYCtx<
      * })
      * ```
      *
+     * @returns {@link KEventController `KEventController`}.
      * @since v3000.0
      * @group Input
      */
