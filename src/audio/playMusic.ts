@@ -7,6 +7,8 @@ export function playMusic(url: string, opt: AudioPlayOpt = {}): AudioPlay {
     const onEndEvents = new KEvent();
     const el = new Audio(url);
     el.crossOrigin = "anonymous";
+    el.loop = Boolean(opt.loop);
+
     const src = _k.audio.ctx.createMediaElementSource(el);
 
     src.connect(_k.audio.masterNode);
