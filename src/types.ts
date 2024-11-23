@@ -1589,7 +1589,7 @@ export interface KAPLAYCtx<
      * ])
      * ```
      * 
-     * @returns {@link KEventController `KEventController`}.
+     * @returns The event controller.
      * @since v2000.0
      * @group Events
      */
@@ -1611,7 +1611,7 @@ export interface KAPLAYCtx<
      * ])
      * ```
      * 
-     * @returns {@link KEventController `KEventController`}.
+     * @returns The event controller.
      * @since v2000.0
      * @group Events
      */
@@ -1638,7 +1638,7 @@ export interface KAPLAYCtx<
      * destroy(player)
      * ```
      * 
-     * @returns {@link KEventController `KEventController`}.
+     * @returns The event controller.
      * @since v2000.0
      * @group Events
      */
@@ -1663,7 +1663,7 @@ export interface KAPLAYCtx<
      * destroy(ghosty)
      * ```
      * 
-     * @returns {@link KEventController `KEventController`}.
+     * @returns The event controller.
      * @group Events
      */
     onDestroy(action: (obj: GameObj) => void): KEventController;
@@ -1742,7 +1742,7 @@ export interface KAPLAYCtx<
      * })
      * ```
      *
-     * @returns {@link KEventController `KEventController`}.
+     * @returns The event controller.
      * @since v3000.0
      * @group Events
      */
@@ -1781,7 +1781,7 @@ export interface KAPLAYCtx<
      * ])
      * ```
      *
-     * @returns {@link KEventController `KEventController`}.
+     * @returns The event controller.
      * @since v3000.0
      * @group Events
      */
@@ -1808,7 +1808,7 @@ export interface KAPLAYCtx<
      * })
      * ```
      *
-     * @returns {@link KEventController `KEventController`}.
+     * @returns The event controller.
      * @since v3000.0
      * @group Events
      */
@@ -1828,7 +1828,7 @@ export interface KAPLAYCtx<
      * quit()
      * ```
      *
-     * @returns {@link KEventController `KEventController`}.
+     * @returns The event controller.
      * @since v3000.0
      * @group Events
      */
@@ -1846,7 +1846,7 @@ export interface KAPLAYCtx<
      * })
      * ```
      *
-     * @returns {@link KEventController `KEventController`}.
+     * @returns The event controller.
      * @since v3000.0
      * @group Input
      */
@@ -1864,7 +1864,7 @@ export interface KAPLAYCtx<
      * })
      * ```
      *
-     * @returns {@link KEventController `KEventController`}.
+     * @returns The event controller.
      * @since v3000.0
      * @group Input
      */
@@ -2120,7 +2120,7 @@ export interface KAPLAYCtx<
      * })
      * ```
      *
-     * @returns {@link KEventController `KEventController`}.
+     * @returns The event controller.
      * @since v2000.1
      * @group Input
      */
@@ -2138,7 +2138,7 @@ export interface KAPLAYCtx<
      * })
      * ```
      *
-     * @returns {@link KEventController `KEventController`}.
+     * @returns The event controller.
      * @since v2000.1
      * @group Input
      */
@@ -2177,7 +2177,7 @@ export interface KAPLAYCtx<
      * })
      * ```
      *
-     * @returns {@link KEventController `KEventController`}.
+     * @returns The event controller.
      * @since v3001.0
      * @group Input
      */
@@ -2201,7 +2201,7 @@ export interface KAPLAYCtx<
      * })
      * ```
      *
-     * @returns {@link KEventController `KEventController`}.
+     * @returns The event controller.
      * @since v3001.0
      * @group Input
      */
@@ -2225,7 +2225,7 @@ export interface KAPLAYCtx<
      * })
      * ```
      *
-     * @returns {@link KEventController `KEventController`}.
+     * @returns The event controller.
      * @since v3001.0
      * @group Input
      */
@@ -2246,7 +2246,7 @@ export interface KAPLAYCtx<
      * })
      * ```
      *
-     * @returns {@link KEventController `KEventController`}.
+     * @returns The event controller.
      * @since v3001.0
      * @group Input
      */ 
@@ -2272,7 +2272,7 @@ export interface KAPLAYCtx<
      * })
      * ```
      *
-     * @returns {@link KEventController `KEventController`}.
+     * @returns The event controller.
      * @since v3001.0
      * @group Input
      */
@@ -2298,7 +2298,7 @@ export interface KAPLAYCtx<
      * }
      * ```
      *
-     * @returns {@link KEventController `KEventController`}.
+     * @returns The event controller.
      * @since v3001.0
      * @group Input
      */
@@ -2319,7 +2319,7 @@ export interface KAPLAYCtx<
      * })
      * ```
      *
-     * @returns {@link KEventController `KEventController`}.
+     * @returns The event controller.
      * @since v2000.1
      * @group Input
      */
@@ -2398,7 +2398,7 @@ export interface KAPLAYCtx<
      * })
      * ```
      *
-     * @returns {@link KEventController `KEventController`}.
+     * @returns The event controller.
      * @since v3001.0
      * @group Events
      */
@@ -2416,7 +2416,7 @@ export interface KAPLAYCtx<
      * })
      * ```
      *
-     * @returns {@link KEventController `KEventController`}.
+     * @returns The event controller.
      * @since v3001.0
      * @group Events
      */
@@ -2435,7 +2435,7 @@ export interface KAPLAYCtx<
      * })
      * ```
      *
-     * @returns {@link KEventController `KEventController`}.
+     * @returns The event controller.
      * @since v3001.0
      * @group Input
      */
@@ -2460,7 +2460,7 @@ export interface KAPLAYCtx<
      * })
      * ```
      * 
-     * @returns {@link KEventController `KEventController`}.
+     * @returns The event controller.
      * @since v3001.0
      * @group Input
      */
@@ -2481,7 +2481,7 @@ export interface KAPLAYCtx<
      * })
      * ```
      *
-     * @returns {@link KEventController `KEventController`}.
+     * @returns The event controller.
      * @since v3001.0
      * @group Input
      */
@@ -2504,7 +2504,7 @@ export interface KAPLAYCtx<
      * })
      * ```
      * 
-     * @returns {@link KEventController `KEventController`}.
+     * @returns The event controller.
      * @since v3001.0
      * @group Input
      */
@@ -2532,7 +2532,7 @@ export interface KAPLAYCtx<
      * })
      * ```
      *
-     * @returns {@link KEventController `KEventController`}.
+     * @returns The event controller.
      * @since v3001.0
      * @group Input
      */
@@ -2555,7 +2555,7 @@ export interface KAPLAYCtx<
      * })
      * ```
      *
-     * @returns {@link KEventController `KEventController`}.
+     * @returns The event controller.
      * @since v3000.0
      * @group Input
      */
@@ -2582,7 +2582,7 @@ export interface KAPLAYCtx<
      * })
      * ```
      *
-     * @returns {@link KEventController `KEventController`}.
+     * @returns The event controller.
      * @since v3000.0
      * @group Input
      */
