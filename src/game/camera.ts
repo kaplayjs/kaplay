@@ -3,30 +3,38 @@ import { center, height, width } from "../gfx";
 import { _k } from "../kaplay";
 import { type Color, rgb } from "../math/color";
 import { type Mat4, type Vec2, vec2, type Vec2Args } from "../math/math";
+import { deprecateMsg } from "../utils";
 import { destroy } from ".";
 
-export function camPos(...pos: Vec2Args): Vec2 {
-    if (pos.length > 0) {
-        _k.game.cam.pos = vec2(...pos);
-    }
+export function setCamPos(...pos: Vec2Args) {
+    _k.game.cam.pos = vec2(...pos);
+}
+
+export function getCamPos(): Vec2 {
     return _k.game.cam.pos ? _k.game.cam.pos.clone() : center();
 }
 
-export function camScale(...scale: Vec2Args): Vec2 {
-    if (scale.length > 0) {
-        _k.game.cam.scale = vec2(...scale);
-    }
+export function setCamScale(...scale: Vec2Args) {
+    _k.game.cam.scale = vec2(...scale);
+}
+
+export function getCamScale(): Vec2 {
     return _k.game.cam.scale.clone();
 }
 
-export function camRot(angle: number): number {
-    if (angle !== undefined) {
-        _k.game.cam.angle = angle;
-    }
+export function setCamRot(angle: number) {
+    _k.game.cam.angle = angle;
+}
+
+export function getCamRot(): number {
     return _k.game.cam.angle;
 }
 
-export function camFlash(
+export function getCamTransform(): Mat4 {
+    return _k.game.cam.transform.clone();
+}
+
+export function flash(
     flashColor: Color = rgb(255, 255, 255),
     fadeOutTime: number = 1,
 ) {
@@ -55,4 +63,40 @@ export function toScreen(p: Vec2): Vec2 {
 
 export function toWorld(p: Vec2): Vec2 {
     return _k.game.cam.transform.invert().multVec2(p);
+}
+
+export function camPos(...pos: Vec2Args): Vec2 {
+    deprecateMsg("camPos", "setCamPos / getCamPos");
+
+    if (pos.length > 0) {
+        setCamPos(...pos);
+    }
+    return getCamPos();
+}
+
+export function camScale(...scale: Vec2Args): Vec2 {
+    deprecateMsg("camScale", "setCamScale / getCamScale");
+
+    if (scale.length > 0) {
+        setCamScale(...scale);
+    }
+    return getCamScale();
+}
+
+export function camRot(angle: number): number {
+    deprecateMsg("camRot", "setCamRot / getCamRot");
+
+    if (angle !== undefined) {
+        setCamRot(angle);
+    }
+    return getCamRot();
+}
+
+export function camFlash(
+    flashColor: Color = rgb(255, 255, 255),
+    fadeOutTime: number = 1,
+) {
+    deprecateMsg("camFlash", "flash");
+
+    return flash(flashColor, fadeOutTime);
 }

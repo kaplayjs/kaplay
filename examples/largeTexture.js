@@ -2,7 +2,7 @@
 
 kaplay();
 
-let cameraPosition = camPos();
+let cameraPosition = getCamPos();
 let cameraScale = 1;
 
 // Loads a random 2500px image
@@ -30,11 +30,11 @@ onUpdate(() => {
         cameraPosition = cameraPosition.sub(
             mouseDeltaPos().scale(1 / cameraScale),
         );
-        camPos(cameraPosition);
+        setCamPos(cameraPosition);
     }
 });
 
 onScroll((delta) => {
     cameraScale = cameraScale * (1 - 0.1 * Math.sign(delta.y));
-    camScale(cameraScale);
+    setCamScale(cameraScale);
 });
