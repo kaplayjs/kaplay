@@ -1580,13 +1580,13 @@ export interface KAPLAYCtx<
      * ```js
      * // This will run when the object is added.
      * onAdd("player", () => {
-     *     debug.log("ohhi")
-     * })
+     *     debug.log("ohhi");
+     * });
      * 
      * add([
      *     pos(),
      *     "player"
-     * ])
+     * ]);
      * ```
      * 
      * @returns The event controller.
@@ -1603,12 +1603,12 @@ export interface KAPLAYCtx<
      * ```js
      * // This will run when the object is added.
      * onAdd(() => {
-     *     debug.log("ohhi")
-     * })
+     *     debug.log("ohhi");
+     * });
      * 
      * add([
      *     pos(),
-     * ])
+     * ]);
      * ```
      * 
      * @returns The event controller.
@@ -1626,8 +1626,8 @@ export interface KAPLAYCtx<
      * ```js
      * // This will run when the tagged object is destroyed.
      * onDestroy("bean", () => {
-     *     debug.log("ohbye")
-     * })
+     *     debug.log("ohbye");
+     * });
      * 
      * let player = add([
      *     pos(),
@@ -1635,7 +1635,7 @@ export interface KAPLAYCtx<
      * ])
      * 
      * // Destroy the tagged object
-     * destroy(player)
+     * destroy(player);
      * ```
      * 
      * @returns The event controller.
@@ -1652,15 +1652,15 @@ export interface KAPLAYCtx<
      * ```js
      * // This will run when the object is destroyed.
      * onDestroy(() => {
-     *     debug.log("ohbye")
-     * })
+     *     debug.log("ohbye");
+     * });
      * 
      * let ghosty = add([
      *     pos(),
-     * ])
+     * ]);
      * 
      * // Destroy the object
-     * destroy(ghosty)
+     * destroy(ghosty);
      * ```
      * 
      * @returns The event controller.
@@ -1676,15 +1676,15 @@ export interface KAPLAYCtx<
      * ```js
      * const bean = add([
      *     sprite("bean"),
-     * ])
+     * ]);
      *
      * // certain assets related data are only available when the game finishes loading
      * onLoad(() => {
      *     debug.log(bean.width)
-     * })
+     * });
      * ```
      * 
-     * @returns {@link KEventController `KEventController`} or undefined.
+     * @returns The event controller.
      * @since v2000.1
      * @group Events
      */
@@ -1704,7 +1704,7 @@ export interface KAPLAYCtx<
      * // you decide whether to ignore it, or throw an error and halt the game
      * onLoadError((name, asset) => {
      *     debug.error(`${name} failed to load: ${asset.error}`);
-     * })
+     * });
      * ```
      *
      * @returns The event controller.
@@ -1730,7 +1730,7 @@ export interface KAPLAYCtx<
      *         pos: center().add(-120,0),
      *         color: BLACK,
      *         anchor: `left,
-     *     })
+     *     });
      *     // Progress of the bar
      *     drawRect({
      *         width: map(progress, 0, 1, 0, 220),
@@ -1738,8 +1738,8 @@ export interface KAPLAYCtx<
      *         pos: center().add(-116, 0),
      *         color: BLUE,
      *         anchor: `left
-     *     })
-     * })
+     *     });
+     * });
      * ```
      *
      * @returns The event controller.
@@ -1762,7 +1762,7 @@ export interface KAPLAYCtx<
      *         pos: center(),
      *         color: RED,
      *         anchor: `center,
-     *     })
+     *     });
      * 
      *     drawText({
      *         text: err.message,
@@ -1772,13 +1772,13 @@ export interface KAPLAYCtx<
      *         align: `center`,
      *         pos: center(),
      *         color: BLACK
-     *     })
-     * })
+     *     });
+     * });
      * 
      * // cause common error
      * let pos = add([
      *     pos()
-     * ])
+     * ]);
      * ```
      *
      * @returns The event controller.
@@ -1797,15 +1797,15 @@ export interface KAPLAYCtx<
      * let rectangle = add([
      *     rect(width(), height()),
      *     color(GREEN),
-     * ])
+     * ]);
      * 
      * // resize the rectangle to screen size
      * onResize(() => {
-     *     debug.log(`Old Size: ${rectangle.width}x${rectangle.height}`)
-     *     rectangle.width = width()
-     *     rectangle.height = height()
-     *     debug.log(`New Size: ${rectangle.width}x${rectangle.height}`)
-     * })
+     *     debug.log(`Old Size: ${rectangle.width}x${rectangle.height}`);
+     *     rectangle.width = width();
+     *     rectangle.height = height();
+     *     debug.log(`New Size: ${rectangle.width}x${rectangle.height}`);
+     * });
      * ```
      *
      * @returns The event controller.
@@ -1822,10 +1822,10 @@ export interface KAPLAYCtx<
      * ```js
      * // useful externally from KAPLAY
      * onCleanup(() => {
-     *     console.log(`ohbye :(`)
-     * })
+     *     console.log(`ohbye :(`);
+     * });
      * 
-     * quit()
+     * quit();
      * ```
      *
      * @returns The event controller.
@@ -1842,8 +1842,8 @@ export interface KAPLAYCtx<
      * ```js
      * // watch for a controller connecting
      * onGamepadConnect((gp) => {
-     *     debug.log(`ohhi player ${gp.index + 1}`)
-     * })
+     *     debug.log(`ohhi player ${gp.index + 1}`);
+     * });
      * ```
      *
      * @returns The event controller.
@@ -1860,8 +1860,8 @@ export interface KAPLAYCtx<
      * ```js
      * // watch for a controller disconnecting
      * onGamepadDisconnect((gp) => {
-     *     debug.log(`ohbye player ${gp.index + 1}`)
-     * })
+     *     debug.log(`ohbye player ${gp.index + 1}`);
+     * });
      * ```
      *
      * @returns The event controller.
@@ -2116,8 +2116,8 @@ export interface KAPLAYCtx<
      * ```js
      * // release `a` or `b` keys
      * onKeyRelease([`a`, `b`], (k) => {
-     *     debug.log(`Released the ${k} key...`)
-     * })
+     *     debug.log(`Released the ${k} key...`);
+     * });
      * ```
      *
      * @returns The event controller.
@@ -2134,8 +2134,8 @@ export interface KAPLAYCtx<
      * ```js
      * // release a key
      * onKeyRelease((k) => {
-     *     debug.log(`Released the ${k} key...`)
-     * })
+     *     debug.log(`Released the ${k} key...`);
+     * });
      * ```
      *
      * @returns The event controller.
@@ -2170,11 +2170,11 @@ export interface KAPLAYCtx<
      * @example
      * ```js
      * // count time with left mouse button down
-     * let mouseTime = 0
+     * let mouseTime = 0;
      * onMouseDown("left", () => {
-     *     mouseTime += dt()
-     *     debug.log(`Time with mouse down: ${mouseTime})
-     * })
+     *     mouseTime += dt();
+     *     debug.log(`Time with mouse down: ${mouseTime});
+     * });
      * ```
      *
      * @returns The event controller.
@@ -2193,12 +2193,10 @@ export interface KAPLAYCtx<
      * @example
      * ```js
      * // count time with any mouse button down
-     * let mouseTime = 0
+     * let mouseTime = 0;
      * onMouseDown((m) => {
-     *     mouseTime += dt()
-     *     debug.log(`Time with mouse down: ${mouseTime}`)
-     *     debug.log(`Mouse button down: ${m}`)
-     * })
+     *     mouseTime += dt();
+     * });
      * ```
      *
      * @returns The event controller.
@@ -2214,15 +2212,14 @@ export interface KAPLAYCtx<
      * @example
      * ```js
      * // gives cookies on left press, remove on right press
-     * let cookies = 0
+     * let cookies = 0;
      * onMousePress(["left", "right"], (m) => {
      *     if (m == "left") {
-     *         cookies++
+     *         cookies++;
      *     } else {
-     *         cookies--
+     *         cookies--;
      *     }
-     *     debug.log(`Cookies: ${cookies}`)
-     * })
+     * });
      * ```
      *
      * @returns The event controller.
@@ -2239,11 +2236,11 @@ export interface KAPLAYCtx<
      * @example
      * ```js
      * // gives cookies on any mouse press
-     * let cookies = 0
+     * let cookies = 0;
      * onMousePress((m) => {
-     *     cookies++
-     *     debug.log(`Cookies: ${cookies}`)
-     * })
+     *     cookies++;
+     *     debug.log(`Cookies: ${cookies}`);
+     * });
      * ```
      *
      * @returns The event controller.
@@ -2263,13 +2260,13 @@ export interface KAPLAYCtx<
      * ```js
      * // spawn bean where right mouse is released
      * onMouseRelease("right", (m) => {
-     *     debug.log(`${m} released, spawning bean...`)
+     *     debug.log(`${m} released, spawning bean...`);
      *     add([
      *         pos(mousePos()),
      *         sprite("bean"),
      *         anchor("center"),
-     *     ])
-     * })
+     *     ]);
+     * });
      * ```
      *
      * @returns The event controller.
@@ -2288,14 +2285,14 @@ export interface KAPLAYCtx<
      * // spawn bean where right mouse is released
      * onMouseRelease((m) => {
      *     if (m == "right") {
-     *         debug.log(`${m} released, spawning bean...`)
+     *         debug.log(`${m} released, spawning bean...`);
      *         add([
      *             pos(mousePos()),
      *             sprite("bean"),
      *             anchor("center"),
-     *         ])
-     *     })
-     * }
+     *         ]);
+     *     });
+     * });
      * ```
      *
      * @returns The event controller.
@@ -2315,8 +2312,8 @@ export interface KAPLAYCtx<
      * ```js
      * // runs when the mouse has moved
      * onMouseMove((p, d) => {
-     *     bean.pos = p // set bean position to mouse position
-     * })
+     *     bean.pos = p; // set bean position to mouse position
+     * });
      * ```
      *
      * @returns The event controller.
@@ -2385,17 +2382,17 @@ export interface KAPLAYCtx<
      *     pos(center()),
      *     sprite("ghosty"),
      *     anchor("center"),
-     * ])
+     * ]);
      * 
      * // when switching tabs, this runs
      * onHide(() => {
-     *     destroy(ghosty)
+     *     destroy(ghosty);
      *     add([
      *         text("There was never aa ghosttttt"),
      *         pos(center()),
      *         anchor("center")
-     *     ])
-     * })
+     *     ]);
+     * });
      * ```
      *
      * @returns The event controller.
@@ -2412,8 +2409,8 @@ export interface KAPLAYCtx<
      * ```js
      * // user has returned to this tab
      * onShow(() => {
-     *     burp()
-     * })
+     *     burp();
+     * });
      * ```
      *
      * @returns The event controller.
@@ -2431,8 +2428,8 @@ export interface KAPLAYCtx<
      * ```js
      * // when button is being held down
      * onGamepadButtonDown("rtrigger", (gp) => {
-     *     car.addForce(Vec2.fromAngle(car.angle).scale(10))
-     * })
+     *     car.addForce(Vec2.fromAngle(car.angle).scale(10));
+     * });
      * ```
      *
      * @returns The event controller.
@@ -2453,11 +2450,11 @@ export interface KAPLAYCtx<
      * // when button is being held down
      * onGamepadButtonDown((btn, gp) => {
      *     if (btn == "rtrigger") {
-     *         car.addForce(Vec2.fromAngle(car.angle).scale(10))
+     *         car.addForce(Vec2.fromAngle(car.angle).scale(10));
      *     } else if (btn == "ltrigger") {
-     *         car.addForce(Vec2.fromAngle(car.angle).scale(-5))
+     *         car.addForce(Vec2.fromAngle(car.angle).scale(-5));
      *     }
-     * })
+     * });
      * ```
      * 
      * @returns The event controller.
@@ -2477,8 +2474,8 @@ export interface KAPLAYCtx<
      * ```js
      * // when user presses button
      * onGamepadButtonPress("south", (btn, gp) => {
-     *     player.jump(200)
-     * })
+     *     player.jump(200);
+     * });
      * ```
      *
      * @returns The event controller.
@@ -2499,9 +2496,9 @@ export interface KAPLAYCtx<
      * // when user presses button
      * onGamepadButtonPress((btn, gp) => {
      *     if (btn == "south") {
-     *         player.jump(200)     // jump
+     *         player.jump(200);     // jump
      *     }
-     * })
+     * });
      * ```
      * 
      * @returns The event controller.
@@ -2522,14 +2519,14 @@ export interface KAPLAYCtx<
      * // charged attack
      * let chargeTime = 0
      * onGamepadButtonPress("west", (btn, gp) => {
-     *     chargeTime = time()
-     * })
+     *     chargeTime = time();
+     * });
      * 
      * // when a gamepad button is released, this is run
      * onGamepadButtonRelease("west", (btn, gp) => {
-     *     let chargedt = time() - chargeTime
-     *     debug.log(`Used ${chargedt * 1000} power!`)
-     * })
+     *     let chargedt = time() - chargeTime;
+     *     debug.log(`Used ${chargedt * 1000} power!`);
+     * });
      * ```
      *
      * @returns The event controller.
@@ -2550,9 +2547,9 @@ export interface KAPLAYCtx<
      * // when a gamepad button is released, this is run
      * onGamepadButtonRelease((btn, gp) => {
      *     if (btn == "north") {
-     *         player.jump(500)
+     *         player.jump(500);
      *     }
-     * })
+     * });
      * ```
      *
      * @returns The event controller.
@@ -2574,12 +2571,12 @@ export interface KAPLAYCtx<
      * let player = add([
      *     pos(center()),
      *     sprite(`bean`),
-     * ])
+     * ]);
      * 
      * // when left stick is moved
      * onGamepadStick("left", (stickVector, gp) => {
      *     player.move(stickVector.x, 0);
-     * })
+     * });
      * ```
      *
      * @returns The event controller.
