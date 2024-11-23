@@ -1,9 +1,8 @@
 const VERSION = "3001.0.0";
 
-import { type App, type ButtonsDef, initApp } from "./app";
+import { type ButtonsDef, initApp } from "./app";
 
 import {
-    type AppGfxCtx,
     center,
     drawBezier,
     drawCircle,
@@ -341,7 +340,9 @@ const kaplay = <
     TButtons extends ButtonsDef = {},
     TButtonsName extends string = keyof TButtons & string,
 >(
-    gopt: KAPLAYOpt<TPlugins, TButtons> = {},
+    gopt: KAPLAYOpt<TPlugins, TButtons> = {
+        tagsAsComponents: true,
+    },
 ): TPlugins extends [undefined] ? KAPLAYCtx<TButtons, TButtonsName>
     : KAPLAYCtx<TButtons, TButtonsName> & MergePlugins<TPlugins> =>
 {
