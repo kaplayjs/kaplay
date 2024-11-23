@@ -5440,27 +5440,40 @@ export type KAPLAYPlugin<T> = (
 /**
  * Base interface of all game objects.
  *
+ * @since v2000.0
  * @group Game Obj
  */
 export interface GameObjRaw {
     /**
      * Add a child.
      *
+     * @param comps - The components to add.
+     *
+     * @returns The added game object.
      * @since v3000.0
      */
     add<T>(comps?: CompList<T> | GameObj<T>): GameObj<T>;
     /**
      * Remove and re-add the game obj, without triggering add / destroy events.
+     *
+     * @param obj - The game object to re-add.
+     *
+     * @returns The re-added game object.
+     * @since v3000.0
      */
     readd<T>(obj: GameObj<T>): GameObj<T>;
     /**
      * Remove a child.
+     *
+     * @param obj - The game object to remove.
      *
      * @since v3000.0
      */
     remove(obj: GameObj): void;
     /**
      * Remove all children with a certain tag.
+     *
+     * @param tag - The tag to remove.
      *
      * @since v3000.0
      */
@@ -5474,11 +5487,15 @@ export interface GameObjRaw {
     /**
      * Get a list of all game objs with certain tag.
      *
+     * @param tag - The tag to get.
+     *
      * @since v3000.0
      */
     get<T = any>(tag: Tag | Tag[], opts?: GetOpt): GameObj<T>[];
     /**
      * Get a list of all game objs with certain properties.
+     *
+     * @param opt - The properties to get.
      *
      * @since v3001.0
      */
@@ -5490,17 +5507,17 @@ export interface GameObjRaw {
      */
     parent: GameObj | null;
     /**
+     * @readonly
      * Get all children game objects.
      *
      * @since v3000.0
-     * @readonly
      */
     children: GameObj[];
     /**
-     * Get the tags of a game object.
+     * @readonly
+     * Get the tags of a game object. For update it, use `tag()` and `untag()`.
      *
      * @since v3001.0
-     * @readonly
      */
     tags: string[];
     /**
@@ -5540,20 +5557,29 @@ export interface GameObjRaw {
      * // Add opacity
      * obj.use(opacity(0.5));
      * ```
+     *
+     * @since v2000.0
      */
     use(comp: Comp | Tag): void;
     /**
      * Remove a component with its id (the component name)
+     *
+     * @param comp - The component id to remove. It means the name, if sprite, then it's "sprite".
      *
      * @example
      * ```js
      * // Remove sprite component
      * obj.unuse("sprite");
      * ```
+     *
+     * @since v2000.0
      */
     unuse(comp: Tag): void;
     /**
      * Check if game object has a certain component.
+     *
+     * @param compId - The component id(s) to check.
+     * @param op - The operator to use when searching for multiple components. Default is "and".
      *
      * @example
      * ```js
@@ -5566,27 +5592,52 @@ export interface GameObjRaw {
      * obj.has(["tag1", "tag2"]); // AND, it has both tags
      * obj.has(["tag1", "tag2"], "or"); // OR, it has either tag1 or tag2
      * ```
+     *
+     * @returns true if has the component(s), false otherwise.
+     * @since v3001.1
      */
-    has(
-        /** Component(s) for checking */
-        compId: string | string[],
-        /**
-         * Operator to use when searching for multiple components.
-         *
-         * @default "and"
-         */
-        op?: "and" | "or",
-    ): boolean;
+    has(compId: string | string[], op?: "and" | "or"): boolean;
     /**
      * Add a tag(s) to the game obj.
+     *
+     * @param tag - The tag(s) to add.
+     *
+     * @example
+     * ```js
+     * // add enemy tag
+     * obj.tag("enemy");
+     *
+     * // add multiple tags
+     * obj.tag(["enemy", "boss"]);
+     * ```
+     *
+     * @since v3001.1
      */
     tag(tag: Tag | Tag[]): void;
     /**
      * Remove a tag(s) from the game obj.
+     *
+     * @param tag - The tag(s) to remove.
+     *
+     * @example
+     * ```js
+     * // remove enemy tag
+     * obj.untag("enemy");
+     *
+     * // remove multiple tags
+     * obj.untag(["enemy", "boss"]);
+     * ```
+     *
+     * @since v3001.1
      */
     untag(tag: Tag | Tag[]): void;
     /**
      * If there's certain tag(s) on the game obj.
+     *
+     * @param tag - The tag(s) for checking.
+     * @param op - The operator to use when searching for multiple tags. Default is "and".
+     *
+     * @since v3001.1
      */
     is(
         /** Tag(s) for checking */
@@ -5600,53 +5651,82 @@ export interface GameObjRaw {
     ): boolean;
     /**
      * Register an event.
+     *
+     * @param event - The event name.
+     * @param action - The action to run when event is triggered.
+     *
+     * @returns The event controller.
+     * @since v2000.0
      */
     on(event: string, action: (...args: any) => void): KEventController;
     /**
      * Trigger an event.
+     *
+     * @param event - The event name.
+     * @parm args - The arguments to pass to the event action.
+     *
+     * @since v2000.0
      */
     trigger(event: string, ...args: any): void;
     /**
      * Remove the game obj from scene.
+     *
+     * @since v2000.0
      */
     destroy(): void;
     /**
      * Get state for a specific comp.
+     *
+     * @param id - The component id.
+     *
+     * @since v2000.0
      */
-    c(id: Tag): Comp | null;
+    c(id: string): Comp | null;
     /**
      * Gather debug info of all comps.
+     *
+     * @since v2000.0
      */
     inspect(): GameObjInspect;
     /**
      * Register an event that runs when the game obj is added to the scene.
+     *
+     * @returns The event controller.
+     * @since v2000.0
      */
     onAdd(action: () => void): KEventController;
     /**
      * Register an event that runs every frame as long as the game obj exists.
      *
+     * @returns The event controller.
      * @since v2000.1
      */
     onUpdate(action: () => void): KEventController;
     /**
      * Register an event that runs every frame as long as the game obj exists (this is the same as `onUpdate()`, but all draw events are run after all update events).
      *
+     * @returns The event controller.
      * @since v2000.1
      */
     onDraw(action: () => void): KEventController;
     /**
      * Register an event that runs when the game obj is destroyed.
      *
+     * @returns The event controller.
      * @since v2000.1
      */
     onDestroy(action: () => void): KEventController;
     /**
      * If game obj is attached to the scene graph.
+     *
+     * @returns true if attached, false otherwise.
+     * @since v2000.0
      */
     exists(): boolean;
     /**
      * Check if is an ancestor (recursive parent) of another game object
      *
+     * @returns true if is ancestor, false otherwise.
      * @since v3000.0
      */
     isAncestorOf(obj: GameObj): boolean;
@@ -5658,14 +5738,20 @@ export interface GameObjRaw {
     transform: Mat23;
     /**
      * If draw the game obj (run "draw" event or not).
+     *
+     * @since v2000.0
      */
     hidden: boolean;
     /**
      * If update the game obj (run "update" event or not).
+     *
+     * @since v2000.0
      */
     paused: boolean;
     /**
      * A unique number ID for each game object.
+     *
+     * @since v2000.0
      */
     id: GameObjID | null;
     /**
