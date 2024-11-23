@@ -5,7 +5,7 @@ import {
     FONT_ATLAS_HEIGHT,
     FONT_ATLAS_WIDTH,
 } from "../constants";
-import { fontCacheC2d, fontCacheCanvas, gfx } from "../kaplay";
+import { _k } from "../kaplay";
 import { Color } from "../math/color";
 import { Quad, Vec2, vec2 } from "../math/math";
 import { type Outline, type TexFilter } from "../types";
@@ -38,24 +38,27 @@ function applyCharTransform(fchar: FormattedChar, tr: CharTransform) {
     if (tr.opacity != null) fchar.opacity *= tr.opacity;
 }
 
-export function compileStyledText(text: string): {
+export function compileStyledText(txt: string): {
     charStyleMap: Record<number, string[]>;
     text: string;
 } {
     const charStyleMap = {} as Record<number, string[]>;
     let renderText = "";
     let styleStack: string[] = [];
+    let text = String(txt);
 
     const emit = (ch: string) => {
-        if (styleStack.length > 0)
+        if (styleStack.length > 0) {
             charStyleMap[renderText.length] = styleStack.slice();
+        }
         renderText += ch;
     };
 
     while (text !== "") {
         if (text[0] === "\\") {
-            if (text.length === 1)
+            if (text.length === 1) {
                 throw new Error("Styled text error: \\ at end of string");
+            }
             emit(text[1]);
             text = text.slice(2);
             continue;
@@ -72,14 +75,18 @@ export function compileStyledText(text: string): {
             if (e !== undefined) {
                 const x = styleStack.pop();
                 if (x !== gn) {
-                    if (x !== undefined)
+                    if (x !== undefined) {
                         throw new Error(
                             "Styled text error: mismatched tags. "
-                            + `Expected [/${x}], got [/${gn}]`);
-                    else throw new Error(
-                        `Styled text error: stray end tag [/${gn}]`)
+                                + `Expected [/${x}], got [/${gn}]`,
+                        );
+                    }
+                    else {throw new Error(
+                            `Styled text error: stray end tag [/${gn}]`,
+                        );}
                 }
-            } else styleStack.push(gn);
+            }
+            else styleStack.push(gn);
             text = text.slice(m.length);
             continue;
         }
@@ -87,10 +94,11 @@ export function compileStyledText(text: string): {
         text = text.slice(1);
     }
 
-    if (styleStack.length > 0)
+    if (styleStack.length > 0) {
         throw new Error(
-            `Styled text error: unclosed tags ${styleStack}`
+            `Styled text error: unclosed tags ${styleStack}`,
         );
+    }
 
     return {
         charStyleMap,
@@ -128,19 +136,19 @@ export function formatText(opt: DrawTextOpt): FormattedText {
             outline: Outline | null;
             filter: TexFilter;
         } = font instanceof FontData
-                ? {
-                    outline: font.outline,
-                    filter: font.filter,
-                }
-                : {
-                    outline: null,
-                    filter: DEF_FONT_FILTER,
-                };
+            ? {
+                outline: font.outline,
+                filter: font.filter,
+            }
+            : {
+                outline: null,
+                filter: DEF_FONT_FILTER,
+            };
 
         // TODO: customizable font tex filter
         const atlas: FontAtlas = fontAtlases[fontName] ?? {
             font: {
-                tex: new Texture(gfx.ggl, FONT_ATLAS_WIDTH, FONT_ATLAS_HEIGHT, {
+                tex: new Texture(_k.gfx.ggl, FONT_ATLAS_WIDTH, FONT_ATLAS_HEIGHT, {
                     filter: opts.filter,
                 }),
                 map: {},
@@ -159,18 +167,18 @@ export function formatText(opt: DrawTextOpt): FormattedText {
         for (const ch of chars) {
             if (!atlas.font.map[ch]) {
                 // TODO: use assets.packer to pack font texture
-                const c2d = fontCacheC2d;
+                const c2d = _k.fontCacheC2d;
                 if (!c2d) throw new Error("fontCacheC2d is not defined.");
 
-                if (!fontCacheCanvas) {
+                if (!_k.fontCacheCanvas) {
                     throw new Error("fontCacheCanvas is not defined.");
                 }
 
                 c2d.clearRect(
                     0,
                     0,
-                    fontCacheCanvas.width,
-                    fontCacheCanvas.height,
+                    _k.fontCacheCanvas.width,
+                    _k.fontCacheCanvas.height,
                 );
                 c2d.font = `${font.size}px ${fontName}`;
                 c2d.textBaseline = "top";

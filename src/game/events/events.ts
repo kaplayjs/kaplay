@@ -1,6 +1,7 @@
 // add an event to a tag
 
-import { app, assets, game } from "../../kaplay";
+import { type Asset, getFailedAssets } from "../../assets";
+import { _k } from "../../kaplay";
 import type { Collision, GameObj, Tag } from "../../types";
 import { KEventController, overload2, Registry } from "../../utils";
 import type { GameObjEventMap, GameObjEventNames } from "./eventMap";
@@ -14,21 +15,24 @@ export function on<Ev extends GameObjEventNames | string & {}>(
     tag: Tag,
     cb: (obj: GameObj, ...args: TupleWithoutFirst<GameObjEventMap[Ev]>) => void,
 ): KEventController {
-    if (!game.objEvents.registers[<keyof GameObjEventMap> event]) {
-        game.objEvents.registers[<keyof GameObjEventMap> event] =
+    if (!_k.game.objEvents.registers[<keyof GameObjEventMap> event]) {
+        _k.game.objEvents.registers[<keyof GameObjEventMap> event] =
             new Registry() as any;
     }
 
-    return game.objEvents.on(<keyof GameObjEventMap> event, (obj, ...args) => {
-        if (obj.is(tag)) {
-            cb(obj, ...args as TupleWithoutFirst<GameObjEventMap[Ev]>);
-        }
-    });
+    return _k.game.objEvents.on(
+        <keyof GameObjEventMap> event,
+        (obj, ...args) => {
+            if (obj.is(tag)) {
+                cb(obj, ...args as TupleWithoutFirst<GameObjEventMap[Ev]>);
+            }
+        },
+    );
 }
 
 export const onFixedUpdate = overload2(
     (action: () => void): KEventController => {
-        const obj = game.root.add([{ fixedUpdate: action }]);
+        const obj = _k.game.root.add([{ fixedUpdate: action }]);
         return {
             get paused() {
                 return obj.paused;
@@ -45,7 +49,7 @@ export const onFixedUpdate = overload2(
 );
 
 export const onUpdate = overload2((action: () => void): KEventController => {
-    const obj = game.root.add([{ update: action }]);
+    const obj = _k.game.root.add([{ update: action }]);
     return {
         get paused() {
             return obj.paused;
@@ -60,7 +64,7 @@ export const onUpdate = overload2((action: () => void): KEventController => {
 });
 
 export const onDraw = overload2((action: () => void): KEventController => {
-    const obj = game.root.add([{ draw: action }]);
+    const obj = _k.game.root.add([{ draw: action }]);
     return {
         get paused() {
             return obj.hidden;
@@ -75,13 +79,13 @@ export const onDraw = overload2((action: () => void): KEventController => {
 });
 
 export const onAdd = overload2((action: (obj: GameObj) => void) => {
-    return game.events.on("add", action);
+    return _k.game.events.on("add", action);
 }, (tag: Tag, action: (obj: GameObj) => void) => {
     return on("add", tag, action);
 });
 
 export const onDestroy = overload2((action: (obj: GameObj) => void) => {
-    return game.events.on("destroy", action);
+    return _k.game.events.on("destroy", action);
 }, (tag: Tag, action: (obj: GameObj) => void) => {
     return on("destroy", tag, action);
 });
@@ -112,12 +116,12 @@ export function onCollideEnd(
 }
 
 export function forAllCurrentAndFuture(t: Tag, action: (obj: GameObj) => void) {
-    game.root.get(t, { recursive: true }).forEach(action);
+    _k.game.root.get(t, { recursive: true }).forEach(action);
     onAdd(t, action);
 }
 
 export const onClick = overload2((action: () => void) => {
-    return app.onMousePress(action);
+    return _k.app.onMousePress(action);
 }, (tag: Tag, action: (obj: GameObj) => void) => {
     const events: KEventController[] = [];
 
@@ -187,22 +191,33 @@ export function onHoverEnd(
 }
 
 export function onLoading(action: (progress: number) => void) {
-    return game.events.on("loading", action);
+    return _k.game.events.on("loading", action);
 }
 
 export function onResize(action: () => void) {
-    return app.onResize(action);
+    return _k.app.onResize(action);
 }
 
 export function onError(action: (err: Error) => void) {
-    return game.events.on("error", action);
+    return _k.game.events.on("error", action);
 }
 
 export function onLoad(cb: () => void) {
-    if (assets.loaded) {
+    if (_k.assets.loaded) {
         cb();
     }
     else {
-        return game.events.on("load", cb);
+        return _k.game.events.on("load", cb);
+    }
+}
+
+export function onLoadError(
+    cb: (name: string, failedAsset: Asset<any>) => void,
+) {
+    if (_k.assets.loaded) {
+        getFailedAssets().forEach(asset => cb(...asset));
+    }
+    else {
+        return _k.game.events.on("loadError", cb);
     }
 }

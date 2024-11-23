@@ -1,5 +1,6 @@
-# v4000.0.0
+# v4000.0.0 (unreleased)
 
+- Added clipLineToRect
 - Replaced the Separating Axis Theorem (SAT) with the Gilbert–Johnson–Keerthi
   (GJK) distance algorithm.
 - Added circle and (rotated) ellipse collision shapes.
@@ -19,7 +20,19 @@
   myCursor.move(vec2(100, 200)); // move as your wish
   ```
 
-# v4000.0.0 and v3001.0.0
+# v3001.1.0: A perfectionist skull (unreleased)
+
+- Added many JSDoc specifiers on many functions (@require, @deprecated, @since,
+  @group, etc)
+- Added `getLayers()` to get the layers list
+- Added `getDefaulLayer()` to get the default layer
+- Deprecated camera methods `camScale()`, `camPos()` and `camRot()` in favor of
+  `setCamScale()`, `getCamScale()`, `setCamPos()`, `getCamPos()`, `setCamRot()`
+  and `getCamRot`.
+- Deprecated `camFlash()` in favor of `flash()`, for a `shake()`-like name.
+- Deprecated `camTransform()` in favor of `getCamTransform()`.
+
+# v3001.0.0: Spooky Beans!
 
 ## Input
 

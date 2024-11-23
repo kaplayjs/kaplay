@@ -184,17 +184,18 @@ Collections of games made with KAPLAY (and Kaboom), selected by KAPLAY:
 - [Newgrounds.com](https://www.newgrounds.com/playlist/379920/kaplay-games)
 
 ## Credits
-
 - Thanks to [tga](https://space55.xyz) for all his work on the original
   Kaboom.js
-- Thanks to [mulfok](https://twitter.com/MulfoK) for the amazing
+- Thanks to [mulfok](https://twitter.com/MulfoK) for the awesome
   [mulfok32](https://lospec.com/palette-list/mulfok32) color palette, used in
-  KAPLAY sprites
+  KAPLAY sprites and art
+- Thanks to [Pixabay](https://pixabay.com/users/pixabay-1/) for the great [burp](https://pixabay.com/sound-effects/burp-104984/) sound, used in `burp()` function
+- Thansk to [Kenney](https://kenney.nl/) for all used assets for examples
+  - [Impact Sound Pack](https://kenney.nl/assets/impact-sounds)
+  - [1-Bit Platformer Pack](https://kenney.nl/assets/1-bit-platformer-pack)
 - Thanks to [abrudz](https://github.com/abrudz) for the amazing
   [APL386 font](https://abrudz.github.io/APL386/)
 - Thanks to [Polyducks](http://polyducks.co.uk/) for the amazing
   [kitchen sink font](https://polyducks.itch.io/kitchen-sink-textmode-font) font
 - Thanks to [0x72](https://0x72.itch.io/) for the amazing
   [Dungeon Tileset](https://0x72.itch.io/dungeontileset-ii)
-- Thanks to [Kenney](https://kenney.nl/) for the amazing
-  [1-Bit Platformer Pack](https://kenney.nl/assets/1-bit-platformer-pack)

@@ -10,7 +10,7 @@ import {
     formatText,
     type TextAlign,
 } from "../../gfx";
-import { k } from "../../kaplay";
+import { _k } from "../../kaplay";
 import { Rect, vec2 } from "../../math/math";
 import type { Comp, GameObj, KAPLAYCtx } from "../../types";
 

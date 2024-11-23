@@ -1,5 +1,5 @@
 import { loadProgress } from "../../assets";
-import { game } from "../../kaplay";
+import { _k } from "../../kaplay";
 import { rgb } from "../../math/color";
 import { vec2 } from "../../math/math";
 import { height, width } from "../stack";
@@ -9,8 +9,8 @@ import { drawUnscaled } from "./drawUnscaled";
 export function drawLoadScreen() {
     const progress = loadProgress();
 
-    if (game.events.numListeners("loading") > 0) {
-        game.events.trigger("loading", progress);
+    if (_k.game.events.numListeners("loading") > 0) {
+        _k.game.events.trigger("loading", progress);
     }
     else {
         drawUnscaled(() => {

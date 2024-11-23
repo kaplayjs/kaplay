@@ -1,4 +1,4 @@
-import { k } from "../../kaplay";
+import { _k } from "../../kaplay";
 import easings from "../../math/easings";
 import { lerp } from "../../math/math";
 import type {
@@ -8,7 +8,7 @@ import type {
     TimerController,
     TweenController,
 } from "../../types";
-import type { KEventController } from "../../utils";
+import { KEvent } from "../../utils";
 
 /**
  * The {@link timer `timer()`} component.
@@ -17,15 +17,23 @@ import type { KEventController } from "../../utils";
  */
 export interface TimerComp extends Comp {
     /**
+     * The maximum number of loops per frame allowed,
+     * to keep loops with sub-frame intervals from freezing the game.
+     */
+    maxLoopsPerFrame: number
+    /**
      * Run the callback after n seconds.
      */
     wait(time: number, action?: () => void): TimerController;
     /**
      * Run the callback every n seconds.
      *
+     * If waitFirst is false (the default), the function will
+     * be called once on the very next frame, and then loop like normal.
+     *
      * @since v3000.0
      */
-    loop(time: number, action: () => void): KEventController;
+    loop(time: number, action: () => void, maxLoops?: number, waitFirst?: boolean): TimerController;
     /**
      * Tweeeeen! Note that this doesn't specifically mean tweening on this object's property, this just registers the timer on this object, so the tween will cancel with the object gets destroyed, or paused when obj.paused is true.
      *
@@ -40,59 +48,42 @@ export interface TimerComp extends Comp {
     ): TweenController;
 }
 
-export function timer(): TimerComp {
+export function timer(maxLoopsPerFrame: number = 1000): TimerComp {
     return {
         id: "timer",
-        wait(
-            this: GameObj<TimerComp>,
-            time: number,
-            action?: () => void,
-        ): TimerController {
-            const actions: Function[] = [];
-
-            if (action) actions.push(action);
-            let t = 0;
+        maxLoopsPerFrame,
+        loop(this: GameObj<TimerComp>, time: number, action: () => void, count: number = -1, waitFirst: boolean = false): TimerController {
+            let t: number = waitFirst ? 0 : time;
+            let onEndEvents = new KEvent;
             const ev = this.onUpdate(() => {
-                t += k.dt();
-                if (t >= time) {
-                    actions.forEach((f) => f());
-                    ev.cancel();
+                t += _k.app.state.dt;
+                for (let i = 0; t >= time && i < this.maxLoopsPerFrame; i++) {
+                    if (count != -1) {
+                        count--;
+                        if (count < 0) {
+                            ev.cancel();
+                            onEndEvents.trigger();
+                            return;
+                        }
+                    }
+                    action();
+                    t -= time;
                 }
-            });
+            })
             return {
                 get paused() {
-                    return ev.paused;
+                    return ev.paused
                 },
                 set paused(p) {
-                    ev.paused = p;
+                    ev.paused = p
                 },
                 cancel: ev.cancel,
-                onEnd(action) {
-                    actions.push(action);
-                },
-                then(action) {
-                    this.onEnd(action);
-                    return this;
-                },
-            };
+                onEnd: onEndEvents.add,
+                then(f) { onEndEvents.add(f); return this; }
+            }
         },
-        loop(t: number, action: () => void): KEventController {
-            let curTimer: null | TimerController = null;
-            const newAction = () => {
-                // TODO: should f be execute right away as loop() is called?
-                curTimer = this.wait(t, newAction);
-                action();
-            };
-            curTimer = this.wait(0, newAction);
-            return {
-                get paused() {
-                    return curTimer?.paused ?? false;
-                },
-                set paused(p) {
-                    if (curTimer) curTimer.paused = p;
-                },
-                cancel: () => curTimer?.cancel(),
-            };
+        wait(this: GameObj<TimerComp>, time: number, action?: () => void): TimerController {
+            return this.loop(time, action ?? (() => { }), 1, true);
         },
         tween<V extends LerpValue>(
             this: GameObj<TimerComp>,
@@ -105,7 +96,7 @@ export function timer(): TimerComp {
             let curTime = 0;
             const onEndEvents: Array<() => void> = [];
             const ev = this.onUpdate(() => {
-                curTime += k.dt();
+                curTime += _k.app.state.dt;
                 const t = Math.min(curTime / duration, 1);
                 setValue(lerp(from, to, easeFunc(t)));
                 if (t === 1) {

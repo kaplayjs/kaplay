@@ -51,7 +51,7 @@ add([
     pos(20, 150),
     rect(50, 300),
     area(),
-    areaEffector({ forceAngle: -90, forceMagnitude: 150 }),
+    areaEffector({ force: UP.scale(150) }),
     {
         draw() {
             drawPolygon({

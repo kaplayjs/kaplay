@@ -46,7 +46,7 @@ const level = addLevel([
                     if (normal.sub(LEFT).len() < Number.EPSILON) return false;
                     if (normal.sub(RIGHT).len() < Number.EPSILON) return false;
                     return true;
-                }
+                },
             }),
         ],
     },
@@ -71,5 +71,5 @@ onKeyDown("right", () => {
 });
 
 onUpdate(() => {
-    camPos(player.worldPos());
+    setCamPos(player.worldPos());
 });
