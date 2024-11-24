@@ -838,7 +838,7 @@ const kaplay = <
         if (!sapInit) {
             sapInit = true;
             onAdd(obj => {
-                if (obj.is("area")) {
+                if (obj.has("area")) {
                     sap.add(obj as GameObj<AreaComp>);
                 }
             });
@@ -850,7 +850,7 @@ const kaplay = <
                 sap.clear();
             });
             for (const obj of get("*", { recursive: true })) {
-                if (obj.is("area")) {
+                if (obj.has("area")) {
                     sap.add(obj as GameObj<AreaComp>);
                 }
             }
