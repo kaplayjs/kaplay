@@ -91,7 +91,7 @@ export function pathfinder(
             let parent: GameObj<any> | null =
                 (this as unknown as GameObj<PathfinderComp>).parent;
             while (parent) {
-                if (parent.is("pathfinderMap")) {
+                if (parent.has("pathfinderMap")) {
                     return parent.graph;
                 }
                 parent = parent.parent;

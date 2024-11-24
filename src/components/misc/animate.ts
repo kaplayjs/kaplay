@@ -122,17 +122,17 @@ export interface AnimateComp extends Comp {
          */
         paused: boolean;
         /**
-         * Move the animation to a specific point in time 
+         * Move the animation to a specific point in time
          */
         seek(time: number): void;
         /**
          * Returns the duration of the animation
          */
-        duration: number
+        duration: number;
         /**
          * Serializes the animation of this object to plain Javascript types
          */
-    }
+    };
     serializeAnimationChannels(): Record<string, AnimationChannel>;
     /**
      * Serializes the options of this object to plain Javascript types
@@ -210,7 +210,7 @@ class AnimateChannel {
             return [
                 index,
                 (p - timing[index]) / (timing[index + 1] - timing[index]),
-                false
+                false,
             ];
         }
         else {
@@ -523,31 +523,36 @@ export function animate(gopts: AnimateCompOpt = {}): AnimateComp {
             paused: false,
             seek(time: number) {
                 t = clamp(time, 0, this.duration);
-                channels.forEach(channel => { channel.isFinished = false; });
+                channels.forEach(channel => {
+                    channel.isFinished = false;
+                });
                 isFinished = false;
             },
             get duration() {
-                return channels.reduce((acc, channel) => Math.max(channel.duration, acc), 0);
+                return channels.reduce(
+                    (acc, channel) => Math.max(channel.duration, acc),
+                    0,
+                );
             },
         },
         add(this: GameObj<AnimateComp>) {
             if (gopts.relative) {
-                if (this.is("pos")) {
+                if (this.has("pos")) {
                     this.base.pos = (this as any).pos.clone();
                 }
-                if (this.is("rotate")) {
+                if (this.has("rotate")) {
                     this.base.angle = (this as any).angle;
                 }
-                if (this.is("scale")) {
+                if (this.has("scale")) {
                     this.base.scale = (this as any).scale;
                 }
-                if (this.is("opacity")) {
+                if (this.has("opacity")) {
                     this.base.opacity = (this as any).opacity;
                 }
             }
         },
         update() {
-            if (this.animation.paused) { return; }
+            if (this.animation.paused) return;
             let allFinished: boolean = true;
             let localFinished: boolean;
             t += dt();
@@ -651,7 +656,7 @@ export function animate(gopts: AnimateCompOpt = {}): AnimateComp {
  */
 export function serializeAnimation(obj: GameObj<any>, name: string): any {
     let serialization: Animation = { name: obj.name };
-    if (obj.is("animate")) {
+    if (obj.has("animate")) {
         serialization.channels = (obj as GameObj<AnimateComp>)
             .serializeAnimationChannels();
         Object.assign(
@@ -661,7 +666,7 @@ export function serializeAnimation(obj: GameObj<any>, name: string): any {
         );
     }
     if (obj.children.length > 0) {
-        serialization.children = obj.children.filter(o => o.is("named")).map(
+        serialization.children = obj.children.filter(o => o.has("named")).map(
             o => serializeAnimation(o, o.name),
         );
     }
