@@ -1,6 +1,6 @@
 import { DEF_OFFSCREEN_DIS } from "../../constants";
+import { onUpdate } from "../../game";
 import { height, width } from "../../gfx";
-import { _k } from "../../kaplay";
 import { Rect, testRectPoint, vec2 } from "../../math/math";
 import type { Comp, GameObj } from "../../types";
 import type { KEventController } from "../../utils/";
@@ -41,6 +41,10 @@ export interface OffScreenCompOpt {
      */
     pause?: boolean;
     /**
+     * If unpause object when back in view.
+     */
+    unpause?: boolean;
+    /**
      * If destroy object when out of view.
      */
     destroy?: boolean;
@@ -55,6 +59,26 @@ export interface OffScreenCompOpt {
 export function offscreen(opt: OffScreenCompOpt = {}): OffScreenComp {
     const distance = opt.distance ?? DEF_OFFSCREEN_DIS;
     let isOut = false;
+
+    const check = (self: GameObj<OffScreenComp>) => {
+        if (self.isOffScreen()) {
+            if (!isOut) {
+                self.trigger("exitView");
+                isOut = true;
+            }
+            if (opt.hide) self.hidden = true;
+            if (opt.pause) self.paused = true;
+            if (opt.destroy) self.destroy();
+        }
+        else {
+            if (isOut) {
+                self.trigger("enterView");
+                isOut = false;
+            }
+            if (opt.hide) self.hidden = false;
+            if (opt.pause) self.paused = false;
+        }
+    }
 
     return {
         id: "offscreen",
@@ -75,24 +99,9 @@ export function offscreen(opt: OffScreenCompOpt = {}): OffScreenComp {
         onEnterScreen(this: GameObj, action: () => void): KEventController {
             return this.on("enterView", action);
         },
-        update(this: GameObj) {
-            if (this.isOffScreen()) {
-                if (!isOut) {
-                    this.trigger("exitView");
-                    isOut = true;
-                }
-                if (opt.hide) this.hidden = true;
-                if (opt.pause) this.paused = true;
-                if (opt.destroy) this.destroy();
-            }
-            else {
-                if (isOut) {
-                    this.trigger("enterView");
-                    isOut = false;
-                }
-                if (opt.hide) this.hidden = false;
-                if (opt.pause) this.paused = false;
-            }
-        },
+        add(this: GameObj<OffScreenComp>) {
+            if (opt.pause && opt.unpause) onUpdate(() => check(this));
+            else this.onUpdate(() => check(this));
+        }
     };
 }
