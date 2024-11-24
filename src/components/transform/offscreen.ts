@@ -78,7 +78,7 @@ export function offscreen(opt: OffScreenCompOpt = {}): OffScreenComp {
             if (opt.hide) self.hidden = false;
             if (opt.pause) self.paused = false;
         }
-    }
+    };
 
     return {
         id: "offscreen",
@@ -102,6 +102,6 @@ export function offscreen(opt: OffScreenCompOpt = {}): OffScreenComp {
         add(this: GameObj<OffScreenComp>) {
             if (opt.pause && opt.unpause) onUpdate(() => check(this));
             else this.onUpdate(() => check(this));
-        }
+        },
     };
 }
