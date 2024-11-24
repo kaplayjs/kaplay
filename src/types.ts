@@ -3837,13 +3837,51 @@ export interface KAPLAYCtx<
     easingCubicBezier(p1: Vec2, p2: Vec2): (x: number) => number;
     /**
      * Map a value from one range to another range.
-     *
+     * 
+     * If the value overshoots, the source range, the result values will also do.
+     * 
+     * For clamping check {@link mapc}
+     * 
+     * @param v The value the function will depend on.
+     * @param l1 The minimum value of the source range.
+     * @param h1 The minimum result value.
+     * @param l2 The maximum value of the source range.
+     * @param h2 The maximum result value.
+     * 
+     * @example
+     * ```js
+     * onUpdate(() => {
+     *      // Redness will be 0 when the mouse is at the left edge and 255 when the mouse is at the right edge
+     *      const redness = map(mousePos().x, 0, width(), 0, 255)
+     *      setBackground(rgb(redness, 0, 0))
+     * })
+     * ```
+     * 
+     * @returns The result value based on the source value.
+     * @since v2000.0
      * @group Math
      */
     map(v: number, l1: number, h1: number, l2: number, h2: number): number;
     /**
      * Map a value from one range to another range, and clamp to the dest range.
-     *
+     * 
+     * @param v The value the function will depend on.
+     * @param l1 The minimum value of the source range.
+     * @param h1 The minimum result value.
+     * @param l2 The maximum value of the source range.
+     * @param h2 The maximum result value.
+     * 
+     * @example
+     * ```js
+     * onUpdate(() => {
+     *      // This variable will be 0 when the mouse is at the left edge and 255 when the mouse is at the right edge
+     *      const redness = mapc(mousePos().x, 0, width(), 0, 255)
+     *      setBackground(rgb(redness, 0, 0))
+     * })
+     * ```
+     * 
+     * @returns The clamped result value based on the source value.
+     * @since v2000.0
      * @group Math
      */
     mapc(v: number, l1: number, h1: number, l2: number, h2: number): number;
