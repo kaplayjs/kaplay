@@ -1,11 +1,16 @@
+// @ts-check
+
 import fs from "fs/promises";
 import path from "path";
 import puppeteer from "puppeteer";
-import { build, serve, wait } from "./lib.js";
+import { serve } from "./dev/serve.js";
+import { build } from "./lib/build.js";
+import { wait } from "./lib/util.js";
+
 const exampleCI = JSON.parse(
-    await fs.readFile(
+    (await fs.readFile(
         new URL("../examples/ciTest.json", import.meta.url),
-    ),
+    )).toString(),
 );
 
 await build();
@@ -30,6 +35,7 @@ else {
         // particle example crashes puppeteer in github action for some reason
         .filter((e) => e !== "particle");
 }
+
 for (const example of examples) {
     console.log(`testing example "${example}"`);
     const page = await browser.newPage();
