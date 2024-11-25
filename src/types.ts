@@ -2538,7 +2538,7 @@ export interface KAPLAYCtx<
      * @example
      * ```js
      * // load only a fragment shader from URL
-     * loadShader("outline", null, "/shaders/outline.glsl", true)
+     * loadShaderURL("outline", null, "/shaders/outline.glsl")
      * ```
      *
      * @retunrs The asset data.
