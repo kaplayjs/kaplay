@@ -48,7 +48,7 @@ for (const example of examples) {
         console.error(example, err);
     });
     await page.goto(`http://localhost:${port}/${example}`);
-    await page.addScriptTag({ path: "scripts/autoinput.js" });
+    await page.addScriptTag({ path: "scripts/lib/autoinput.js" });
     await wait(1000);
     await page.close();
 }
