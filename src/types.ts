@@ -1573,7 +1573,7 @@ export interface KAPLAYCtx<
     /**
      * Register an event that runs when an object with the provided tag is added.
      * 
-     * @param tag - The tag for which the event runs. 
+     * @param tag - The tag to listen for. 
      * @param action - The function that runs when an object is added.
      * 
      * @example
@@ -1597,7 +1597,7 @@ export interface KAPLAYCtx<
     /**
      * Register an event that runs when an object is added
      * 
-     * @param action - The callback that runs when an object is added.
+     * @param action - The function that runs when an object is added.
      * 
      * @example
      * ```js
@@ -1619,7 +1619,7 @@ export interface KAPLAYCtx<
     /**
      * Register an event that runs when an object with the provided tag is destroyed.
      * 
-     * @param tag - The tag for which the event runs. 
+     * @param tag - The tag to listen for. 
      * @param action - The function that runs when an object is destroyed.
      * 
      * @example
