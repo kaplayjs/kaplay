@@ -23,7 +23,7 @@ function addButton(
         scale(1),
         anchor("center"),
         outline(4),
-        color(0, 0, 0),
+        color(255, 255, 255),
     ]);
 
     // add a child object that displays the text

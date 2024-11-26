@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>
+        <%= name %>
+    </title>
+    <style>
+        body {
+            overflow: hidden;
+            font-family: Monospace;
+            background: #2a303c;
+        }
+
+        .control {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            display: flex;
+            justify-content: space-between;
+            padding: 8px;
+            background: rgba(0, 0, 0, 0.5);
+        }
+
+        .control a {
+            color: #6ac96b;
+            font-size: 1.5rem;
+        }
+
+        .control a:hover {
+            color: white;
+        }
+
+        .control a:active {
+            color: #6ac96b;
+        }
+    </style>
+</head>
+
+<body>
+    <script src="/dist/kaplay.js"></script>
+    <script src="/<%= path %>"></script>
+
+    <div class="control">
+        <a href="<%= prev %>">PREV (alt+left)</a>
+        <a href="/">HOME (esc)</a>
+        <a href="<%= vscode %>">Open in VSC (.)</a>
+        <a href="<%= next %>">NEXT (alt+right)</a>
+    </div>
+
+    <script>
+        const prevButton = document.querySelector(".control a:first-child");
+        const homeButton = document.querySelector(".control a:nth-child(2)");
+        const vscodeButton = document.querySelector(".control a:nth-child(3)");
+        const nextButton = document.querySelector(".control a:last-child");
+
+        document.addEventListener("keydown", (e) => {
+            if (e.key === "Escape") {
+                homeButton.click();
+            }
+            if (e.key === ".") {
+                vscodeButton.click();
+            }
+            if (e.altKey) {
+                if (e.key === "ArrowLeft") {
+                    prevButton.click();
+                }
+                if (e.key === "ArrowRight") {
+                    nextButton.click();
+                }
+            }
+        });
+    </script>
+</body>
+
+</html>
