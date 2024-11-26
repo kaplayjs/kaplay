@@ -1,3 +1,5 @@
+// @ts-check
+
 kaplay();
 
 const level = addLevel([

@@ -1,3 +1,5 @@
+// @ts-check
+
 kaplay({
     scale: 4,
     background: [0, 0, 0],
@@ -318,12 +320,12 @@ const dirs = {
 };
 
 player.onUpdate(() => {
-    camPos(player.pos);
+    setCamPos(player.pos);
 });
 
 player.onPhysicsResolve(() => {
     // Set the viewport center to player.pos
-    camPos(player.pos);
+    setCamPos(player.pos);
 });
 
 onKeyDown("right", () => {

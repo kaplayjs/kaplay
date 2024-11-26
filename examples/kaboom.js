@@ -1,3 +1,5 @@
+// @ts-check
+
 // You can still use kaboom() instead of kaplay()!
 kaboom();
 

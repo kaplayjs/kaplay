@@ -1,3 +1,9 @@
+// @ts-check
+
+// Confetti effect done manually (not using particle component)
+
+kaplay();
+
 const DEF_COUNT = 80;
 const DEF_GRAVITY = 800;
 const DEF_AIR_DRAG = 0.9;
@@ -8,8 +14,6 @@ const DEF_SPREAD = 60;
 const DEF_SPIN = [2, 8];
 const DEF_SATURATION = 0.7;
 const DEF_LIGHTNESS = 0.6;
-
-kaplay();
 
 add([
     text("click for confetti"),

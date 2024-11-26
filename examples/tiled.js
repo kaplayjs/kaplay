@@ -1,3 +1,5 @@
+// @ts-check
+
 kaplay();
 
 loadSprite("bean", "/sprites/bean.png");
@@ -11,5 +13,10 @@ add([
     }),
     anchor("center"),
 ]);
+
+add([
+    circle(4),
+    pos(150, 150)
+])
 
 // debug.inspect = true

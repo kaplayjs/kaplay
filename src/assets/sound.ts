@@ -1,4 +1,4 @@
-import { assets, audio } from "../kaplay";
+import { _k } from "../kaplay";
 import { dataURLToArrayBuffer, isDataURL } from "../utils";
 import { Asset, fetchArrayBuffer, loadProgress } from "./asset";
 import { fixURL } from "./utils";
@@ -10,9 +10,13 @@ export class SoundData {
         this.buf = buf;
     }
 
+    static fromAudioBuffer(buf: AudioBuffer): SoundData {
+        return new SoundData(buf);
+    }
+
     static fromArrayBuffer(buf: ArrayBuffer): Promise<SoundData> {
         return new Promise((resolve, reject) =>
-            audio.ctx.decodeAudioData(buf, resolve, reject)
+            _k.audio.ctx.decodeAudioData(buf, resolve, reject)
         ).then((buf) => new SoundData(buf as AudioBuffer));
     }
 
@@ -55,29 +59,37 @@ export function resolveSound(
 }
 
 export function getSound(name: string): Asset<SoundData> | null {
-    return assets.sounds.get(name) ?? null;
+    return _k.assets.sounds.get(name) ?? null;
 }
 
 // load a sound to asset manager
 export function loadSound(
     name: string | null,
-    src: string | ArrayBuffer,
+    src: string | ArrayBuffer | AudioBuffer,
 ): Asset<SoundData> {
-    src = fixURL(src);
-    return assets.sounds.add(
-        name,
-        typeof src === "string"
-            ? SoundData.fromURL(src)
-            : SoundData.fromArrayBuffer(src),
-    );
+    const fixedSrc = fixURL(src);
+    let sound: Promise<SoundData> | SoundData;
+
+    if (typeof fixedSrc === "string") {
+        sound = SoundData.fromURL(fixedSrc);
+    }
+    else if (fixedSrc instanceof ArrayBuffer) {
+        sound = SoundData.fromArrayBuffer(fixedSrc);
+    }
+    else {
+        sound = Promise.resolve(SoundData.fromAudioBuffer(fixedSrc));
+    }
+
+    return _k.assets.sounds.add(name, sound);
 }
 
 export function loadMusic(
     name: string | null,
     url: string,
 ) {
-    const a = new Audio(url);
+    const musicUrl = fixURL(url);
+    const a = new Audio(musicUrl);
     a.preload = "auto";
 
-    return assets.music[name as keyof typeof assets.music] = fixURL(url);
+    return _k.assets.music[name as keyof typeof _k.assets.music] = musicUrl;
 }

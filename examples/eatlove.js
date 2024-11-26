@@ -1,5 +1,8 @@
+// @ts-check
+
 kaplay();
 
+// A lttle game about eating fruit!
 const fruits = [
     "apple",
     "pineapple",
@@ -17,6 +20,7 @@ loadSound("hit", "/examples/sounds/hit.mp3");
 loadSound("wooosh", "/examples/sounds/wooosh.mp3");
 
 scene("start", () => {
+    // Plays the wooosh sound
     play("wooosh");
 
     add([
@@ -80,7 +84,9 @@ scene("game", () => {
     let score = 0;
 
     const scoreLabel = add([
-        text(score, 32),
+        text(score.toString(), {
+            size: 32,
+        }),
         pos(12, 12),
     ]);
 
@@ -89,7 +95,7 @@ scene("game", () => {
         addKaboom(player.pos);
         score += 1;
         destroy(heart);
-        scoreLabel.text = score;
+        scoreLabel.text = score.toString();
         burp();
         shake(12);
     });

@@ -1,3 +1,5 @@
+// @ts-check
+
 kaplay();
 
 loadSprite("bean", "/sprites/bean.png");
@@ -109,7 +111,7 @@ scene("game", () => {
 
     // display score
     const scoreLabel = add([
-        text(score),
+        text(score.toString()),
         anchor("center"),
         pos(width() / 2, 80),
         fixed(),
@@ -118,7 +120,7 @@ scene("game", () => {
 
     function addScore() {
         score++;
-        scoreLabel.text = score;
+        scoreLabel.text = score.toString();
         play("score");
     }
 });

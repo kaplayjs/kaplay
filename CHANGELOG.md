@@ -1,14 +1,44 @@
-# v4000.0.0 and v3001.0.0
+# v4000.0.0 (unreleased)
 
-This version is a double release, with a lot of new features and breaking
-changes. v3001 release are focused in backward compatibility with v3000 with the
-features of v4000, while v4000 will have the most features and breaking changes.
+- Added clipLineToRect
+- Replaced the Separating Axis Theorem (SAT) with the Gilbert–Johnson–Keerthi
+  (GJK) distance algorithm.
+- Added circle and (rotated) ellipse collision shapes.
+- Added `ellipse()` component.
+- Circle area is no longer a box.
+- Added restitution and friction.
+- Added a fake cursor API.
+  ```js
+  const myCursor = add([
+      fakeMouse(),
+      sprite("kat"),
+      pos(100, 100),
+  ]);
+
+  myCursor.press(); // trigger onClick events if the mouse is over
+  myCursor.release();
+  myCursor.move(vec2(100, 200)); // move as your wish
+  ```
+
+# v3001.1.0: A perfectionist skull (unreleased)
+
+- Added many JSDoc specifiers on many functions (@require, @deprecated, @since,
+  @group, etc)
+- Added `getLayers()` to get the layers list
+- Added `getDefaulLayer()` to get the default layer
+- Deprecated camera methods `camScale()`, `camPos()` and `camRot()` in favor of
+  `setCamScale()`, `getCamScale()`, `setCamPos()`, `getCamPos()`, `setCamRot()`
+  and `getCamRot`.
+- Deprecated `camFlash()` in favor of `flash()`, for a `shake()`-like name.
+- Deprecated `camTransform()` in favor of `getCamTransform()`.
+
+# v3001.0.0: Spooky Beans!
 
 ## Input
 
-- added input bindings, `onButtonPress`, `onButtonRelease`, `onButtonDown`, and
+- Added input bindings, `onButtonPress`, `onButtonRelease`, `onButtonDown`, and
   it's corresponding boolean versions, `isButtonPressed`, `isButtonDown` and
-  `isButtonReleased`. (**v3001/4000**)
+  `isButtonReleased`.
 
   ```js
   kaplay({
@@ -28,7 +58,6 @@ features of v4000, while v4000 will have the most features and breaking changes.
   ```
 
 - added `getButton(btn)` and `setButton(btn)` to get and set button bindings
-  (**v3001/4000**)
 
   ```js
   // ["space", "up"]
@@ -42,7 +71,6 @@ features of v4000, while v4000 will have the most features and breaking changes.
   ```
 
 - added `getLastInputDeviceType()` to get what was the last pressed device
-  (**v3001/4000**)
 
   ```js
   onButtonPress(() => {
@@ -51,7 +79,15 @@ features of v4000, while v4000 will have the most features and breaking changes.
   });
   ```
 
-- added the possibility of use arrays in all input handlers (**v3001/4000**)
+- added `pressButton(btn)` and `releaseButton(btn)` to simulate button press and
+  release
+
+  ```js
+  pressButton("jump"); // triggers onButtonPress and starts onButtonDown
+  releaseButton("jump"); // triggers onButtonRelease and stops onButtonDown
+  ```
+
+- added the possibility of use arrays in all input handlers
 
   ```js
   onKeyPress(["w", "up"], () => {
@@ -59,7 +95,7 @@ features of v4000, while v4000 will have the most features and breaking changes.
   });
   ```
 
-- now gamepad events return what gamepad triggered the action (**v3001/4000**)
+- now gamepad events return what gamepad triggered the action
 
   ```js
   onGamepadButtonPress("south", (btn, gp) => {
@@ -67,36 +103,21 @@ features of v4000, while v4000 will have the most features and breaking changes.
   });
   ```
 
-- added a fake cursor API (**v4000**)
-
-  ```js
-  const myCursor = add([
-      fakeMouse(),
-      sprite("kat"),
-      pos(100, 100),
-  ]);
-
-  myCursor.press(); // trigger onClick events if the mouse is over
-  myCursor.release();
-  myCursor.move(vec2(100, 200)); // move as your wish
-  ```
-
 ## Physics
 
 - added effector components: `areaEffector()`, `buoyancyEffector()`,
-  `pointEffector()`, `surfaceEffector()`. (**v3001/4000**)
-- added `constantForce()` component (**v3001/4000**)
-- (**v3001/4000**) added `patrol()` component to move along a list of waypoints
-- (**v3001/4000**) added `sentry()` component to notify when certain objects are
-  in sight
-- (**v3001/4000**) added `NavMesh` class for pathfinding on a mesh
-- (**v3001/4000**) added `navigation()` component to calculate a list of
-  waypoints on a graph
+  `pointEffector()`, `surfaceEffector()`.
+- added `constantForce()` component.
+- added `patrol()` component to move along a list of waypoints.
+- added `sentry()` component to notify when certain objects are in sight.
+- added `NavMesh` class for pathfinding on a mesh.
+- added `pathfinder()` component to calculate a list of waypoints on a graph.
+- now collision checks are only done if there's area objects.
 
 ## Game Object
 
 - added `getTreeRoot()` to get the game's root object, which is the parent of
-  all other objects (**v3001/4000**)
+  all other objects
 
   ```js
   // get the root object
@@ -105,7 +126,7 @@ features of v4000, while v4000 will have the most features and breaking changes.
   root.get(); // same as get()
   ```
 
-- added `GameObjRaw.tags` to get a game object's tags. (**v3001/4000**)
+- added `GameObjRaw.tags` to get a game object's tags.
 
   ```js
   const obj = add([sprite("bean"), "enemy", "dangerous"]);
@@ -117,13 +138,10 @@ features of v4000, while v4000 will have the most features and breaking changes.
 ## Components
 
 - added support to setters/getters syntax in `ScaleComp` and `SpriteComp`
-  components (**v3001/4000**)
+  components
 
   ```js
-  const obj = add([
-      sprite("bean"),
-      scale(2),
-  ]);
+  const obj = add([sprite("bean"), scale(2)]);
 
   // set it with = syntax
   obj.scale = vec2(3, 4);
@@ -135,7 +153,6 @@ features of v4000, while v4000 will have the most features and breaking changes.
 - added the `animate()` component to _animate_ the properties of an object using
   keyframes. Check out
   [Animation Example](https://play.kaplayjs.com/?example=animation)
-  (**v3001/4000**)
 
   ```js
   // prop to animate, frames, options
@@ -145,9 +162,9 @@ features of v4000, while v4000 will have the most features and breaking changes.
   });
   ```
 
-- added `particles()` component to emit and draw particles. (**v3001/4000**)
+- added `particles()` component to emit and draw particles.
 
-- readded `layers()` and the `layer()` component. (**v3001/4000**)
+- readded `layers()` and the `layer()` component.
 
   Before the `z()` component, there was a `layer()` component that allowed you
   to control the draw order of objects. It was removed in v3000, but now it's
@@ -170,18 +187,15 @@ features of v4000, while v4000 will have the most features and breaking changes.
   ```
 
 - added `SpriteComp.getCurAnim()` to get the current animation data
-  (**v3001/4000**)
 
   ```js
-  const obj = add([
-      sprite("bean", { anim: "walk" }),
-  ]);
+  const obj = add([sprite("bean", { anim: "walk" })]);
 
   // get the current animation name
   debug.log(obj.getCurAnim().name); // "walk"
   ```
 
-- added `SpriteComp.getAnim()` for get any animation data (**v3001/4000**)
+- added `SpriteComp.getAnim()` for get any animation data
 
   ```js
   loadSprite("bean", "bean.png", {
@@ -195,33 +209,28 @@ features of v4000, while v4000 will have the most features and breaking changes.
       },
   });
 
-  const obj = add([
-      sprite("bean"),
-  ]);
+  const obj = add([sprite("bean")]);
 
   // get the animation data
   debug.log(obj.getAnim("walk")); // { from: 0, to: 3 }
   ```
 
-- added `SpriteComp.hasAnim()` to check if an animation exists (**v3001/4000**)
+- added `SpriteComp.hasAnim()` to check if an animation exists
 
   ```js
-  const obj = add([
-      sprite("bean", { anim: "walk" }),
-  ]);
+  const obj = add([sprite("bean", { anim: "walk" })]);
 
   // check if an animation exists
   debug.log(obj.hasAnim("walk")); // true
   ```
 
-- added `camFlash()` to flash the screen. (**v3001/4000**)
+- added `camFlash()` to flash the screen.
 
   ```js
   camFlash(0.5, 0.5, 0.5, 0.5);
   ```
 
 - added support for radius in individual corners for `RectComp` component.
-  (**v3001/4000**)
 
   ```js
   add([
@@ -236,10 +245,13 @@ features of v4000, while v4000 will have the most features and breaking changes.
 
 - fix error screen not showing with not Error object
 
+- Added `SpriteComp.animFrame` to get the frame of the current animation (not on
+  the spritesheet)
+
 ## Audio
 
+- now you can pass an `AudioBuffer` to `loadSound()`
 - added `loadMusic()` to load streaming audio (doesn't block in loading screen).
-  (**v3001/4000**)
 
   ```js
   loadMusic("bgm", "bgm.mp3");
@@ -250,13 +262,13 @@ features of v4000, while v4000 will have the most features and breaking changes.
 
 ## Math
 
-- added `Vec2.fromArray()` to convert an array to a `Vec2`. (**v3001/4000**)
+- added `Vec2.fromArray()` to convert an array to a `Vec2`.
 
   ```js
   const point = Vec2.fromArray([100, 200]); // vec2(100, 200);
   ```
 
-- added `Vec2.toArray()` to convert a `Vec2` to an array. (**v3001/4000**)
+- added `Vec2.toArray()` to convert a `Vec2` to an array.
 
   ```js
   const point = vec2(100, 200);
@@ -264,14 +276,13 @@ features of v4000, while v4000 will have the most features and breaking changes.
   ```
 
 - added `chooseMultiple()` to choose a random element from an array.
-  (**v3001/4000**)
 
   ```js
   const numbers = [1, 2, 3, 4, 5];
   const random = chooseMultiple(numbers, 3); // [3, 1, 5]
   ```
 
-- added `shuffle()` to shuffle an array. (**v3001/4000**)
+- added `shuffle()` to shuffle an array.
 
   ```js
   const numbers = [1, 2, 3, 4, 5];
@@ -280,16 +291,15 @@ features of v4000, while v4000 will have the most features and breaking changes.
 
 ## Debug mode
 
-- added `outline()`, `shader()`, and `area()` properties to `debug.inspect`
-  (**v3001/4000**)
+- added `outline()`, `shader()`, and `area()` properties to `debug.inspect`.
 - added `KAPLAYOpt.debugKey` for customizing the key used to toggle debug mode.
-  (**v3001/4000**)
 
   ```js
   kaplay({
       debugKey: "l",
   });
   ```
+
 - added compatibility with custom properties in debug mode
 
   ```js
@@ -308,9 +318,9 @@ features of v4000, while v4000 will have the most features and breaking changes.
   debug.inspect = true;
   ```
 
-## Helpers
+- Now `debug.log()` accepts multiple argument of any type, like `console.log()`.
 
-> All changes applies for both v3001 and v4000
+## Helpers
 
 - added `getSceneName()` to get the current scene name
 - added `Color.toArray()` to convert a color to an array
@@ -324,6 +334,22 @@ features of v4000, while v4000 will have the most features and breaking changes.
 - added quadratic bezier and Catmull-Rom evaluation
 - added evaluation of the first and second derivatives for all splines
 - added higher order easing functions linear, steps and cubic-bezier
+
+## TypeScript
+
+- Now you can type `get()` with a type parameter and passing component types.
+  (**v4000**)
+
+  ```ts
+  const player = get<BodyComp>("player");
+  ```
+
+- Now `Key` also accepts a string as an acceptable value.
+- Now `text()` component doesn't require to pass a string.
+- Now `camScale()` and `camPos()` accept only 1 number as parameter.
+- Now `shake()` can be called without args.
+- Now `loadShader()` and `loadShaderURL()` accepts null for unused parameters.
+- Now `RectCompOpt` accepts a array of numbers for `radius`.
 
 ## Deprecations
 
@@ -346,6 +372,7 @@ features of v4000, while v4000 will have the most features and breaking changes.
 - fix error where error screen was not showing when the error was thrown in a
   input event
 - fix error where fonts was cropped in the bottom
+- fix an error where `stay()` object loose their input events on scene change
 
 ### v3000.1.17
 
@@ -638,15 +665,15 @@ for (const col of player.getCollisions()) {
 ```
 
 - added `Area#onCollideUpdate()` and `onCollideUpdate()` to register an event
-  that runs every frame when 2 object is colising
+  that runs every frame when 2 objects are colliding
 - added `Area#onCollideEnd()` and `onCollideEnd()` to register an event that
-  runs once when 2 objects stopped colliding
+  runs once when 2 objects stop colliding
 - added `Area#onHover()` and `onHover()` to register an event that runs once
-  when an object(s) is hovered
+  when an object(s) is hovered over
 - added `Area#onHoverEnd()` and `onHoverEnd()` to register an event that runs
-  once when an object(s) stopped being hovered
+  once when an object(s) stops being hovered over
 - (**BREAK**) renamed `onHover()` to `onHoverUpdate()` (it registers an event
-  that runs every frame when an object is hovered)
+  that runs every frame when an object is hovered over)
 - (**BREAK**) renamed `pushOut()` to `resolveCollision()`
 
 #### Body
@@ -1253,7 +1280,7 @@ add([rotate(90), color(0, 127, 255), opacity(0.5)]);
 - added `mousePos()` now gets the screen mouse pos, use `mouseWorldPos()` to get
   the mouse position affected by camera
 - added `anim` field in `SpriteCompOpt` to play an anim on start
-- beter type support for components
+- better type support for components
 - `scene()` and `start()` (also removed in favor of `go()`) are optional now, if
   you don't need multiple scenes yet you can just go directly
 
@@ -1421,7 +1448,7 @@ if (area.shape === "rect") {
 - fixed unable to play another anim in `onAnimEnd()`
 - fixed scene switches happen in the middle of a frame
 - fixed `scale(0)` not working
-- fixed `mosuePos()` not returning the camera affected pos with no layers
+- fixed `mousePos()` not returning the camera affected pos with no layers
 - **BREAK** changed `dbg()` to plain `debug` object
 - **BREAK** moved `fps()`, `objCount()`, `stepFrame()`, `log()`, `error()` under
   `debug`

@@ -1,3 +1,5 @@
+// @ts-check
+
 kaplay({
     background: [141, 183, 255],
 });
@@ -217,7 +219,7 @@ scene("game", ({ levelId, coins } = { levelId: 0, coins: 0 }) => {
     // action() runs every frame
     player.onUpdate(() => {
         // center camera to player
-        camPos(player.pos);
+        setCamPos(player.pos);
         // check fall death
         if (player.pos.y >= FALL_DEATH) {
             go("lose");
@@ -232,7 +234,7 @@ scene("game", ({ levelId, coins } = { levelId: 0, coins: 0 }) => {
 
     player.onPhysicsResolve(() => {
         // Set the viewport center to player.pos
-        camPos(player.pos);
+        setCamPos(player.pos);
     });
 
     // if player onCollide with any obj with "danger" tag, lose
@@ -265,7 +267,7 @@ scene("game", ({ levelId, coins } = { levelId: 0, coins: 0 }) => {
 
     player.onCollide("enemy", (e, col) => {
         // if it's not from the top, die
-        if (!col.isBottom()) {
+        if (!col?.isBottom()) {
             go("lose");
             play("hit");
         }
@@ -335,11 +337,11 @@ scene("game", ({ levelId, coins } = { levelId: 0, coins: 0 }) => {
     });
 
     onKeyPress("down", () => {
-        player.weight = 3;
+        player.gravityScale = 3;
     });
 
     onKeyRelease("down", () => {
-        player.weight = 1;
+        player.gravityScale = 1;
     });
 
     onGamepadButtonPress("south", jump);

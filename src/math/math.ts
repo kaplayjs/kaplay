@@ -107,26 +107,103 @@ export class Vec2 {
         return new Vec2(arr[0], arr[1]);
     }
 
+    static ZERO = new Vec2(0, 0);
+    static ONE = new Vec2(1, 1);
     static LEFT = new Vec2(-1, 0);
     static RIGHT = new Vec2(1, 0);
     static UP = new Vec2(0, -1);
     static DOWN = new Vec2(0, 1);
+
+    /** Closest orthogonal direction: LEFT, RIGHT, UP, or DOWN */
+    toAxis(): Vec2 {
+        return Math.abs(this.x) > Math.abs(this.y)
+            ? this.x < 0 ? Vec2.LEFT : Vec2.RIGHT
+            : this.y < 0
+                ? Vec2.UP
+                : Vec2.DOWN;
+    }
 
     /** Clone the vector */
     clone(): Vec2 {
         return new Vec2(this.x, this.y);
     }
 
-    /** Returns the addition with another vector. */
+    static copy(v: Vec2, out: Vec2): Vec2 {
+        out.x = v.x;
+        out.y = v.y;
+        return out;
+    }
+
+    /** Returns the sum with another vector. */
     add(...args: Vec2Args): Vec2 {
         const p2 = vec2(...args);
         return new Vec2(this.x + p2.x, this.y + p2.y);
     }
 
-    /** Returns the subtraction with another vector. */
+    static addScaled(v: Vec2, other: Vec2, s: number, out: Vec2): Vec2 {
+        out.x = v.x + other.x * s;
+        out.y = v.y + other.y * s;
+        return out;
+    }
+
+    /**
+     * Calculates the sum of the vectors
+     * @param v The first term
+     * @param x The x of the second term
+     * @param y The y of the second term
+     * @param out The vector sum
+     * @returns The sum of the vectors
+     */
+    static addc(v: Vec2, x: number, y: number, out: Vec2): Vec2 {
+        out.x = v.x + x;
+        out.y = v.y + y;
+        return out;
+    }
+
+    /**
+     * Calculates the sum of the vectors
+     * @param v The first term
+     * @param other The second term
+     * @param out The vector sum
+     * @returns The sum of the vectors
+     */
+    static add(v: Vec2, other: Vec2, out: Vec2): Vec2 {
+        out.x = v.x + other.x;
+        out.y = v.y + other.y;
+        return out;
+    }
+
+    /** Returns the difference with another vector. */
     sub(...args: Vec2Args): Vec2 {
         const p2 = vec2(...args);
         return new Vec2(this.x - p2.x, this.y - p2.y);
+    }
+
+    /**
+     * Calculates the difference of the vectors
+     * @param v The first term
+     * @param x The x of the second term
+     * @param y The y of the second term
+     * @param out The vector difference
+     * @returns The difference of the vectors
+     */
+    static subc(v: Vec2, x: number, y: number, out: Vec2): Vec2 {
+        out.x = v.x - x;
+        out.y = v.y - y;
+        return out;
+    }
+
+    /**
+     * Calculates the difference of the vectors
+     * @param v The first term
+     * @param other The second term
+     * @param out The vector difference
+     * @returns The difference of the vectors
+     */
+    static sub(v: Vec2, other: Vec2, out: Vec2): Vec2 {
+        out.x = v.x - other.x;
+        out.y = v.y - other.y;
+        return out;
     }
 
     /** Scale by another vector. or a single number */
@@ -135,10 +212,63 @@ export class Vec2 {
         return new Vec2(this.x * s.x, this.y * s.y);
     }
 
+    /**
+     * Calculates the scale of the vector
+     * @param v The vector
+     * @param x The x scale
+     * @param y The y scale
+     * @param out The scaled vector
+     * @returns The scale of the vector
+     */
+    static scale(v: Vec2, s: number, out: Vec2): Vec2 {
+        out.x = v.x * s;
+        out.y = v.y * s;
+        return out;
+    }
+
+    /**
+     * Calculates the scale of the vector
+     * @param v The vector
+     * @param x The x scale
+     * @param y The y scale
+     * @param out The scaled vector
+     * @returns The scale of the vector
+     */
+    static scalec(v: Vec2, x: number, y: number, out: Vec2): Vec2 {
+        out.x = v.x * x;
+        out.y = v.y * y;
+        return out;
+    }
+
+    /**
+     * Calculates the scale of the vector
+     * @param v The vector
+     * @param other The scale
+     * @param out The scaled vector
+     * @returns The scale of the vector
+     */
+    static scalev(v: Vec2, other: Vec2, out: Vec2): Vec2 {
+        out.x = v.x * other.x;
+        out.y = v.y * other.y;
+        return out;
+    }
+
     /** Get distance between another vector */
     dist(...args: Vec2Args): number {
         const p2 = vec2(...args);
         return this.sub(p2).len();
+    }
+
+    /**
+     * Calculates the distance between the vectors
+     * @param v The vector
+     * @param other The other vector
+     * @returns The between the vectors
+     */
+    static dist(v: Vec2, other: Vec2): number {
+        const x = v.x - other.x;
+        const y = v.y - other.y;
+        return Math.sqrt(x * x + y * y);
     }
 
     /** Get squared distance between another vector */
@@ -147,8 +277,29 @@ export class Vec2 {
         return this.sub(p2).slen();
     }
 
+    /**
+     * Calculates the squared distance between the vectors
+     * @param v The vector
+     * @param other The other vector
+     * @returns The distance between the vectors
+     */
+    static sdist(v: Vec2, other: Vec2): number {
+        const x = v.x - other.x;
+        const y = v.y - other.y;
+        return x * x + y * y;
+    }
+
     len(): number {
         return Math.sqrt(this.dot(this));
+    }
+
+    /**
+     * Calculates the length of the vector
+     * @param v The vector
+     * @returns The length of the vector
+     */
+    static len(v: Vec2) {
+        return Math.sqrt(v.x * v.x + v.y * v.y);
     }
 
     /**
@@ -161,6 +312,15 @@ export class Vec2 {
     }
 
     /**
+     * Calculates the squared length of the vector
+     * @param v The vector
+     * @returns The squared length of the vector
+     */
+    static slen(v: Vec2) {
+        return v.x * v.x + v.y * v.y;
+    }
+
+    /**
      * Get the unit vector (length of 1).
      */
     unit(): Vec2 {
@@ -168,11 +328,24 @@ export class Vec2 {
         return len === 0 ? new Vec2(0) : this.scale(1 / len);
     }
 
+    static unit(v: Vec2, out: Vec2): Vec2 {
+        const len = Vec2.len(v);
+        out.x = v.x / len;
+        out.y = v.y / len;
+        return out;
+    }
+
     /**
      * Get the perpendicular vector.
      */
     normal(): Vec2 {
         return new Vec2(this.y, -this.x);
+    }
+
+    static normal(v: Vec2, out: Vec2): Vec2 {
+        out.x = v.y;
+        out.y = -v.x;
+        return out;
     }
 
     /**
@@ -202,11 +375,86 @@ export class Vec2 {
         return this.sub(this.project(on));
     }
 
+    rotate(vecOrAngle: Vec2 | number) {
+        if (vecOrAngle instanceof Vec2) {
+            return new Vec2(
+                this.x * vecOrAngle.x - this.y * vecOrAngle.y,
+                this.x * vecOrAngle.y + this.y * vecOrAngle.x,
+            );
+        }
+        else {
+            const angle = deg2rad(vecOrAngle);
+            const c = Math.cos(angle);
+            const s = Math.sin(angle);
+            return new Vec2(
+                this.x * c - this.y * s,
+                this.x * s + this.y * c,
+            );
+        }
+    }
+
+    /**
+     * Calculates the rotated vector
+     * @param v The vector
+     * @param dir The rotation vector
+     * @param out The rotated vector
+     * @returns The rotated vector
+     */
+    static rotate(v: Vec2, dir: Vec2, out: Vec2): Vec2 {
+        const tmp = v.x;
+        out.x = v.x * dir.x - v.y * dir.y;
+        out.y = tmp * dir.y + v.y * dir.x;
+        return out;
+    }
+
+    /**
+     * Calculates the rotated vector
+     * @param v The vector
+     * @param angle The angle in radians
+     * @param out The rotated vector
+     * @returns The rotated vector
+     */
+    static rotateByAngle(v: Vec2, angle: number, out: Vec2): Vec2 {
+        const c = Math.cos(angle);
+        const s = Math.sin(angle);
+        const tmp = v.x;
+        out.x = v.x * c - v.y * s;
+        out.y = tmp * s + v.y * c;
+        return out;
+    }
+
+    invRotate(vecOrAngle: Vec2 | number) {
+        if (vecOrAngle instanceof Vec2) {
+            return this.rotate(new Vec2(vecOrAngle.x, -vecOrAngle.y));
+        }
+        else {
+            return this.rotate(-vecOrAngle);
+        }
+    }
+
+    /**
+     * Calculates the inverse rotated vector
+     * @param v The vector
+     * @param dir The rotation vector
+     * @param out The rotated vector
+     * @returns The rotated vector
+     */
+    static inverseRotate(v: Vec2, dir: Vec2, out: Vec2): Vec2 {
+        const tmp = v.x;
+        out.x = v.x * dir.x + v.y * dir.y;
+        out.y = -tmp * dir.y + v.y * dir.x;
+        return out;
+    }
+
     /**
      * Get the dot product with another vector.
      */
     dot(p2: Vec2): number {
         return this.x * p2.x + this.y * p2.y;
+    }
+
+    static dot(v: Vec2, other: Vec2): number {
+        return v.x * v.x + v.y * v.y;
     }
 
     /**
@@ -218,12 +466,25 @@ export class Vec2 {
         return this.x * p2.y - this.y * p2.x;
     }
 
+    static cross(v: Vec2, other: Vec2): number {
+        return v.x * other.y - v.y * other.x;
+    }
+
     /**
      * Get the angle of the vector in degrees.
      */
     angle(...args: Vec2Args): number {
         const p2 = vec2(...args);
         return rad2deg(Math.atan2(this.y - p2.y, this.x - p2.x));
+    }
+
+    /**
+     * Calculates the angle represented by the vector in radians
+     * @param v The vector
+     * @returns Angle represented by the vector in radians
+     */
+    static toAngle(v: Vec2) {
+        return Math.atan2(v.y, v.x);
     }
 
     /**
@@ -237,10 +498,34 @@ export class Vec2 {
     }
 
     /**
+     * Calculates the angle between the vectors in radians
+     * @param v First vector
+     * @param other Second vector
+     * @returns Angle between the vectors in radians
+     */
+    static angleBetween(v: Vec2, other: Vec2) {
+        return Math.atan2(Vec2.cross(v, other), Vec2.dot(v, other));
+    }
+
+    /**
      * Linear interpolate to a destination vector (for positions).
      */
     lerp(dest: Vec2, t: number): Vec2 {
         return new Vec2(lerp(this.x, dest.x, t), lerp(this.y, dest.y, t));
+    }
+
+    /**
+     * Linear interpolate src and dst by t
+     * @param src First vector
+     * @param dst Second vector
+     * @param t Percentage
+     * @param out The linear interpolation between src and dst by t
+     * @returns The linear interpolation between src and dst by t
+     */
+    static lerp(src: Vec2, dst: Vec2, t: number, out: Vec2): Vec2 {
+        out.x = src.x * (dst.x - src.x) * t;
+        out.y = src.y * (dst.y - src.y) * t;
+        return out;
     }
 
     /**
@@ -256,6 +541,26 @@ export class Vec2 {
             .scale(Math.sin((1 - t) * angle))
             .add(dest.scale(Math.sin(t * angle)))
             .scale(1 / sin);
+    }
+
+    /**
+     * Spherical interpolate src and dst by t
+     * @param src First vector
+     * @param dst Second vector
+     * @param t Percentage
+     * @param out The spherical interpolation between src and dst by t
+     * @returns The spherical interpolation between src and dst by t
+     */
+    static slerp(src: Vec2, dst: Vec2, t: number, out: Vec2): Vec2 {
+        const cos = Vec2.dot(src, dst);
+        const sin = Vec2.cross(src, dst);
+        const angle = Math.atan2(sin, cos);
+        const t1 = Math.sin((1 - t) * angle);
+        const t2 = Math.sin(t * angle);
+        const invSin = 1 / sin;
+        out.x = (src.x * t1 + dst.x * t2) * invSin;
+        out.y = (src.y * t1 + dst.y * t2) * invSin;
+        return out;
     }
 
     /**
@@ -456,7 +761,7 @@ class Mat2 {
 }
 
 // Internal class
-class Mat23 {
+export class Mat23 {
     // 2x3 matrix, since the last column is always (0, 0, 1)
     a: number;
     b: number; // 0
@@ -529,6 +834,32 @@ class Mat23 {
             0,
         );
     }
+    clone() {
+        return new Mat23(
+            this.a,
+            this.b,
+            this.c,
+            this.d,
+            this.e,
+            this.f,
+        );
+    }
+    setMat23(m: Mat23) {
+        this.a = m.a;
+        this.b = m.b;
+        this.c = m.c;
+        this.d = m.d;
+        this.e = m.e;
+        this.f = m.f;
+    }
+    setIdentity() {
+        this.a = 1;
+        this.b = 0;
+        this.c = 0;
+        this.d = 1;
+        this.e = 0;
+        this.f = 0;
+    }
     mul(other: Mat23): Mat23 {
         return new Mat23(
             other.a * this.a + other.b * this.c,
@@ -539,12 +870,18 @@ class Mat23 {
             other.e * this.b + other.f * this.d + this.f,
         );
     }
-    translate(t: Vec2): Mat23 {
+    translateSelfV(t: Vec2): Mat23 {
         this.e += t.x * this.a + t.y * this.c;
-        this.f += t.y * this.b + t.x * this.d;
+        this.f += t.x * this.b + t.y * this.d;
         return this;
     }
-    rotate(radians: number): Mat23 {
+    translateSelf(x: number, y: number): Mat23 {
+        this.e += x * this.a + y * this.c;
+        this.f += x * this.b + y * this.d;
+        return this;
+    }
+    rotateSelf(degrees: number): Mat23 {
+        const radians = deg2rad(degrees);
         const c = Math.cos(radians);
         const s = Math.sin(radians);
         const oldA = this.a;
@@ -555,18 +892,52 @@ class Mat23 {
         this.d = c * this.d - s * oldB;
         return this;
     }
-    scale(s: Vec2): Mat23 {
+    scaleSelfV(s: Vec2): Mat23 {
         this.a *= s.x;
         this.b *= s.x;
         this.c *= s.y;
         this.d *= s.y;
         return this;
     }
+    scaleSelf(x: number, y: number): Mat23 {
+        this.a *= x;
+        this.b *= x;
+        this.c *= y;
+        this.d *= y;
+        return this;
+    }
+    mulSelf(other: Mat23) {
+        const a = other.a * this.a + other.b * this.c;
+        const b = other.a * this.b + other.b * this.d;
+        const c = other.c * this.a + other.d * this.c;
+        const d = other.c * this.b + other.d * this.d;
+        const e = other.e * this.a + other.f * this.c + this.e;
+        const f = other.e * this.b + other.f * this.d + this.f;
+        this.a = a;
+        this.b = b;
+        this.c = c;
+        this.d = d;
+        this.e = e;
+        this.f = f;
+        return this
+    }
     transform(p: Vec2) {
         return vec2(
             this.a * p.x + this.c * p.y + this.e,
             this.b * p.x + this.d * p.y + this.f,
         );
+    }
+    transformPoint(p: Vec2, o: Vec2): Vec2 {
+        const tmp = p.x;
+        o.x = this.a * p.x + this.c * p.y + this.e;
+        o.y = this.b * tmp + this.d * p.y + this.f;
+        return o;
+    }
+    transformVector(v: Vec2, o: Vec2): Vec2 {
+        const tmp = v.x;
+        o.x = this.a * v.x + this.c * v.y;
+        o.y = this.b * tmp + this.d * v.y;
+        return o;
     }
 
     get det() {
@@ -582,6 +953,20 @@ class Mat23 {
             this.a / det,
             (this.c * this.f - this.d * this.e) / det,
             (this.b * this.e - this.a * this.f) / det,
+        );
+    }
+    getTranslation() {
+        return new Vec2(this.e, this.f);
+    }
+    getRotation() {
+        return rad2deg(
+            Math.atan2(-this.c, this.a),
+        );
+    }
+    getScale() {
+        return new Vec2(
+            Math.sqrt(this.a * this.a + this.c * this.c),
+            Math.sqrt(this.b * this.b + this.d * this.d),
         );
     }
 }
@@ -962,7 +1347,7 @@ export class Mat4 {
             const r = Math.sqrt(this.m[0] * this.m[0] + this.m[1] * this.m[1]);
             return new Vec2(
                 Math.atan(this.m[0] * this.m[4] + this.m[1] * this.m[5])
-                    / (r * r),
+                / (r * r),
                 0,
             );
         }
@@ -971,7 +1356,7 @@ export class Mat4 {
             return new Vec2(
                 0,
                 Math.atan(this.m[0] * this.m[4] + this.m[1] * this.m[5])
-                    / (s * s),
+                / (s * s),
             );
         }
         else {
@@ -1132,9 +1517,8 @@ export function rand<T = number>(...args: [] | [T] | [T, T]) {
     return defRNG.genAny(...args);
 }
 
-// TODO: randi() to return 0 / 1?
 export function randi(...args: [] | [number] | [number, number]) {
-    return Math.floor(rand(...args));
+    return Math.floor(rand(...(args.length > 0 ? args : [2])));
 }
 
 export function chance(p: number): boolean {
@@ -1213,15 +1597,7 @@ export function testLineLine(l1: Line, l2: Line): Vec2 | null {
     );
 }
 
-export function testRectLine(r: Rect, l: Line): boolean {
-    /*if (testRectPoint(r, l.p1) || testRectPoint(r, l.p2)) {
-        return true
-    }
-    const pts = r.points()
-    return !!testLineLine(l, new Line(pts[0], pts[1]))
-        || !!testLineLine(l, new Line(pts[1], pts[2]))
-        || !!testLineLine(l, new Line(pts[2], pts[3]))
-        || !!testLineLine(l, new Line(pts[3], pts[0]))*/
+export function clipLineToRect(r: Rect, l: Line, result: Line): boolean {
     const dir = l.p2.sub(l.p1);
     let tmin = Number.NEGATIVE_INFINITY, tmax = Number.POSITIVE_INFINITY;
 
@@ -1232,6 +1608,11 @@ export function testRectLine(r: Rect, l: Line): boolean {
         tmin = Math.max(tmin, Math.min(tx1, tx2));
         tmax = Math.min(tmax, Math.max(tx1, tx2));
     }
+    else {
+        if (l.p1.x < r.pos.x || l.p1.x > r.pos.x + r.width) {
+            return false;
+        }
+    }
 
     if (dir.y != 0.0) {
         const ty1 = (r.pos.y - l.p1.y) / dir.y;
@@ -1239,6 +1620,51 @@ export function testRectLine(r: Rect, l: Line): boolean {
 
         tmin = Math.max(tmin, Math.min(ty1, ty2));
         tmax = Math.min(tmax, Math.max(ty1, ty2));
+    }
+    else {
+        if (l.p1.y < r.pos.y || l.p1.y > r.pos.y + r.height) {
+            return false;
+        }
+    }
+
+    if (tmax >= tmin && tmax >= 0 && tmin <= 1) {
+        Vec2.addScaled(l.p1, dir, Math.max(tmin, 0), result.p1);
+        Vec2.addScaled(l.p1, dir, Math.min(tmax, 1), result.p2);
+        return true;
+    }
+    else {
+        return false;
+    }
+}
+
+export function testRectLine(r: Rect, l: Line): boolean {
+    const dir = l.p2.sub(l.p1);
+    let tmin = Number.NEGATIVE_INFINITY, tmax = Number.POSITIVE_INFINITY;
+
+    if (dir.x != 0.0) {
+        const tx1 = (r.pos.x - l.p1.x) / dir.x;
+        const tx2 = (r.pos.x + r.width - l.p1.x) / dir.x;
+
+        tmin = Math.max(tmin, Math.min(tx1, tx2));
+        tmax = Math.min(tmax, Math.max(tx1, tx2));
+    }
+    else {
+        if (l.p1.x < r.pos.x || l.p1.x > r.pos.x + r.width) {
+            return false;
+        }
+    }
+
+    if (dir.y != 0.0) {
+        const ty1 = (r.pos.y - l.p1.y) / dir.y;
+        const ty2 = (r.pos.y + r.height - l.p1.y) / dir.y;
+
+        tmin = Math.max(tmin, Math.min(ty1, ty2));
+        tmax = Math.min(tmax, Math.max(ty1, ty2));
+    }
+    else {
+        if (l.p1.y < r.pos.y || l.p1.y > r.pos.y + r.height) {
+            return false;
+        }
     }
 
     return tmax >= tmin && tmax >= 0 && tmin <= 1;
@@ -1284,6 +1710,76 @@ export function testLinePoint(l: Line, pt: Vec2): boolean {
     // Since t is percentual distance of pt from line.p1 on the line,
     // it should be between 0% and 100%
     return t >= 0 && t <= 1;
+}
+
+export function clipLineToCircle(
+    circle: Circle,
+    l: Line,
+    result: Line,
+): boolean {
+    const v = l.p2.sub(l.p1);
+    const a = v.dot(v);
+    const centerToOrigin = l.p1.sub(circle.center);
+    const b = 2 * v.dot(centerToOrigin);
+    const c = centerToOrigin.dot(centerToOrigin)
+        - circle.radius * circle.radius;
+    // Calculate the discriminant of ax^2 + bx + c
+    const dis = b * b - 4 * a * c;
+
+    // No root
+    if ((a <= Number.EPSILON) || (dis < 0)) {
+        return false;
+    }
+    // One possible root
+    else if (dis == 0) {
+        const t = -b / (2 * a);
+        if (t >= 0 && t <= 1) {
+            if (testCirclePoint(circle, l.p1)) {
+                Vec2.copy(l.p1, result.p1);
+                Vec2.addScaled(l.p1, v, t, result.p2);
+            }
+            else {
+                Vec2.addScaled(l.p1, v, t, result.p1);
+                Vec2.copy(l.p2, result.p2);
+            }
+            return true;
+        }
+    }
+    // Two possible roots
+    else {
+        const t1 = (-b + Math.sqrt(dis)) / (2 * a);
+        const t2 = (-b - Math.sqrt(dis)) / (2 * a);
+        const b1 = t1 >= 0 && t1 <= 1;
+        const b2 = t2 >= 0 && t2 <= 1;
+        if (b1 && b2) {
+            Vec2.addScaled(l.p1, v, t1, result.p1);
+            Vec2.addScaled(l.p1, v, t2, result.p2);
+            return true;
+        }
+        else if (b1 || b2) {
+            const t = b1 ? t1 : t2;
+            if (testCirclePoint(circle, l.p1)) {
+                Vec2.copy(l.p1, result.p1);
+                Vec2.addScaled(l.p1, v, t, result.p2);
+            }
+            else {
+                Vec2.addScaled(l.p1, v, t, result.p1);
+                Vec2.copy(l.p2, result.p2);
+            }
+            return true;
+        }
+    }
+
+    // Check if line is completely within the circle
+    // We only need to check one point, since the line didn't cross the circle
+    if (testCirclePoint(circle, l.p1)) {
+        Vec2.copy(l.p1, result.p1);
+        Vec2.copy(l.p2, result.p2);
+        return true;
+    }
+    else {
+        return false;
+    }
 }
 
 export function testLineCircle(l: Line, circle: Circle): boolean {
@@ -1399,7 +1895,7 @@ export function testPolygonPoint(poly: Polygon, pt: Vec2): boolean {
             ((p[i].y > pt.y) != (p[j].y > pt.y))
             && (pt.x
                 < (p[j].x - p[i].x) * (pt.y - p[i].y) / (p[j].y - p[i].y)
-                    + p[i].x)
+                + p[i].x)
         ) {
             c = !c;
         }
@@ -1417,7 +1913,7 @@ export function testEllipsePoint(ellipse: Ellipse, pt: Vec2): boolean {
     const vx = pt.x * c + pt.y * s;
     const vy = -pt.x * s + pt.y * c;
     return vx * vx / (ellipse.radiusX * ellipse.radiusX)
-            + vy * vy / (ellipse.radiusY * ellipse.radiusY) < 1;
+        + vy * vy / (ellipse.radiusY * ellipse.radiusY) < 1;
 }
 
 export function testEllipseCircle(ellipse: Ellipse, circle: Circle): boolean {
@@ -2051,8 +2547,8 @@ export class Point {
     constructor(pt: Vec2) {
         this.pt = pt.clone();
     }
-    transform(m: Mat4): Point {
-        return new Point(m.multVec2(this.pt));
+    transform(m: Mat23): Point {
+        return new Point(m.transformPoint(this.pt, vec2()));
     }
     bbox(): Rect {
         return new Rect(this.pt, 0, 0);
@@ -2087,8 +2583,11 @@ export class Line {
         this.p1 = p1.clone();
         this.p2 = p2.clone();
     }
-    transform(m: Mat4): Line {
-        return new Line(m.multVec2(this.p1), m.multVec2(this.p2));
+    transform(m: Mat23): Line {
+        return new Line(
+            m.transformPoint(this.p1, vec2()),
+            m.transformPoint(this.p2, vec2()),
+        );
     }
     bbox(): Rect {
         return Rect.fromPoints(this.p1, this.p2);
@@ -2143,8 +2642,10 @@ export class Rect {
             this.pos.add(0, this.height),
         ];
     }
-    transform(m: Mat4): Polygon {
-        return new Polygon(this.points().map((pt) => m.multVec2(pt)));
+    transform(m: Mat23): Polygon {
+        return new Polygon(
+            this.points().map((pt) => m.transformPoint(pt, vec2())),
+        );
     }
     bbox(): Rect {
         return this.clone();
@@ -2191,7 +2692,7 @@ export class Circle {
         this.center = center.clone();
         this.radius = radius;
     }
-    transform(tr: Mat4): Ellipse {
+    transform(tr: Mat23): Ellipse {
         return new Ellipse(this.center, this.radius, this.radius).transform(tr);
     }
     bbox(): Rect {
@@ -2274,13 +2775,13 @@ export class Ellipse {
             c * this.radiusY,
         );
     }
-    transform(tr: Mat4): Ellipse {
+    transform(tr: Mat23): Ellipse {
         if (this.angle == 0 && tr.getRotation() == 0) {
             // No rotation, so we can just take the scale and translation
             return new Ellipse(
-                tr.multVec2(this.center),
-                tr.m[0] * this.radiusX,
-                tr.m[5] * this.radiusY,
+                tr.transformPoint(this.center, vec2()),
+                tr.a * this.radiusX,
+                tr.d * this.radiusY,
             );
         }
         else {
@@ -2295,7 +2796,7 @@ export class Ellipse {
             T = M.toMat2();
             // Return the ellipse made from the transformed unit circle
             const ellipse = Ellipse.fromMat2(T);
-            ellipse.center = tr.multVec2(this.center);
+            ellipse.center = tr.transformPoint(this.center, vec2());
             return ellipse;
         }
     }
@@ -2349,7 +2850,7 @@ export class Ellipse {
         const vx = point.x * c + point.y * s;
         const vy = -point.x * s + point.y * c;
         return vx * vx / (this.radiusX * this.radiusX)
-                + vy * vy / (this.radiusY * this.radiusY) < 1;
+            + vy * vy / (this.radiusY * this.radiusY) < 1;
     }
     raycast(origin: Vec2, direction: Vec2): RaycastResult {
         return raycastEllipse(origin, direction, this);
@@ -2381,8 +2882,8 @@ export class Polygon {
         }
         this.pts = pts;
     }
-    transform(m: Mat4): Polygon {
-        return new Polygon(this.pts.map((pt) => m.multVec2(pt)));
+    transform(m: Mat23): Polygon {
+        return new Polygon(this.pts.map((pt) => m.transformPoint(pt, vec2())));
     }
     bbox(): Rect {
         const p1 = vec2(Number.MAX_VALUE);
@@ -2748,21 +3249,21 @@ export function kochanekBartels(
     const hx = h(
         pt2.x,
         0.5 * (1 - tension) * (1 + bias) * (1 + continuity) * (pt2.x - pt1.x)
-            + 0.5 * (1 - tension) * (1 - bias) * (1 - continuity)
-                * (pt3.x - pt2.x),
+        + 0.5 * (1 - tension) * (1 - bias) * (1 - continuity)
+        * (pt3.x - pt2.x),
         0.5 * (1 - tension) * (1 + bias) * (1 - continuity) * (pt3.x - pt2.x)
-            + 0.5 * (1 - tension) * (1 - bias) * (1 + continuity)
-                * (pt4.x - pt3.x),
+        + 0.5 * (1 - tension) * (1 - bias) * (1 + continuity)
+        * (pt4.x - pt3.x),
         pt3.x,
     );
     const hy = h(
         pt2.y,
         0.5 * (1 - tension) * (1 + bias) * (1 + continuity) * (pt2.y - pt1.y)
-            + 0.5 * (1 - tension) * (1 - bias) * (1 - continuity)
-                * (pt3.y - pt2.y),
+        + 0.5 * (1 - tension) * (1 - bias) * (1 - continuity)
+        * (pt3.y - pt2.y),
         0.5 * (1 - tension) * (1 + bias) * (1 - continuity) * (pt3.y - pt2.y)
-            + 0.5 * (1 - tension) * (1 - bias) * (1 + continuity)
-                * (pt4.y - pt3.y),
+        + 0.5 * (1 - tension) * (1 - bias) * (1 + continuity)
+        * (pt4.y - pt3.y),
         pt3.y,
     );
     return (t: number) => {
@@ -2937,49 +3438,6 @@ export function easingSteps(
         const step = Math.floor(x / xdist);
         return startY + step * ydist;
     };
-}
-
-export type SatResult = {
-    normal: Vec2;
-    distance: number;
-};
-
-export function sat(p1: Polygon, p2: Polygon): SatResult | null {
-    let overlap = Number.MAX_VALUE;
-    let result: SatResult = { normal: vec2(0), distance: 0 };
-    for (const poly of [p1, p2]) {
-        for (let i = 0; i < poly.pts.length; i++) {
-            const a = poly.pts[i];
-            const b = poly.pts[(i + 1) % poly.pts.length];
-            const axisProj = b.sub(a).normal().unit();
-            let min1 = Number.MAX_VALUE;
-            let max1 = -Number.MAX_VALUE;
-            for (let j = 0; j < p1.pts.length; j++) {
-                const q = p1.pts[j].dot(axisProj);
-                min1 = Math.min(min1, q);
-                max1 = Math.max(max1, q);
-            }
-            let min2 = Number.MAX_VALUE;
-            let max2 = -Number.MAX_VALUE;
-            for (let j = 0; j < p2.pts.length; j++) {
-                const q = p2.pts[j].dot(axisProj);
-                min2 = Math.min(min2, q);
-                max2 = Math.max(max2, q);
-            }
-            const o = Math.min(max1, max2) - Math.max(min1, min2);
-            if (o < 0) {
-                return null;
-            }
-            if (o < Math.abs(overlap)) {
-                const o1 = max2 - min1;
-                const o2 = min2 - max1;
-                overlap = Math.abs(o1) < Math.abs(o2) ? o1 : o2;
-                result.normal = axisProj;
-                result.distance = overlap;
-            }
-        }
-    }
-    return result;
 }
 
 // true if the angle is oriented counter clockwise

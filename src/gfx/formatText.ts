@@ -4,9 +4,8 @@ import {
     DEF_TEXT_CACHE_SIZE,
     FONT_ATLAS_HEIGHT,
     FONT_ATLAS_WIDTH,
-    MULTI_WORD_RE,
 } from "../constants";
-import { fontCacheC2d, fontCacheCanvas, gfx } from "../kaplay";
+import { _k } from "../kaplay";
 import { Color } from "../math/color";
 import { Quad, Vec2, vec2 } from "../math/math";
 import { type Outline, type TexFilter } from "../types";
@@ -35,74 +34,74 @@ function applyCharTransform(fchar: FormattedChar, tr: CharTransform) {
     if (tr.color && fchar.ch.length === 1) {
         fchar.color = fchar.color.mult(tr.color);
     }
-    if (tr.opacity) fchar.opacity *= tr.opacity;
+    // attention to type coercion, 0 is a valid value, only null & undefined are not
+    if (tr.opacity != null) fchar.opacity *= tr.opacity;
 }
 
-function compileStyledText(text: string): {
+export function compileStyledText(txt: string): {
     charStyleMap: Record<number, string[]>;
     text: string;
 } {
     const charStyleMap = {} as Record<number, string[]>;
     let renderText = "";
-    let styleStack: [string, number][] = [];
-    let lastIndex = 0;
-    let skipCount = 0;
+    let styleStack: string[] = [];
+    let text = String(txt);
 
-    for (let i = 0; i < text.length; i++) {
-        if (i !== lastIndex + 1) skipCount += i - lastIndex;
-        lastIndex = i;
+    const emit = (ch: string) => {
+        if (styleStack.length > 0) {
+            charStyleMap[renderText.length] = styleStack.slice();
+        }
+        renderText += ch;
+    };
 
-        if (text[i] === "\\" && text[i + 1] === "[") continue;
-
-        if ((i === 0 || text[i - 1] !== "\\") && text[i] === "[") {
-            const start = i;
-
-            i++;
-
-            let isClosing = text[i] === "/";
-            let style = "";
-
-            if (isClosing) i++;
-
-            while (i < text.length && text[i] !== "]") {
-                style += text[i++];
+    while (text !== "") {
+        if (text[0] === "\\") {
+            if (text.length === 1) {
+                throw new Error("Styled text error: \\ at end of string");
             }
-
-            if (
-                !MULTI_WORD_RE.test(style)
-                || i >= text.length
-                || text[i] !== "]"
-                || (isClosing
-                    && (styleStack.length === 0
-                        || styleStack[styleStack.length - 1][0] !== style))
-            ) {
-                i = start;
-            }
-            else {
-                if (!isClosing) styleStack.push([style, start]);
-                else styleStack.pop();
-
+            emit(text[1]);
+            text = text.slice(2);
+            continue;
+        }
+        if (text[0] === "[") {
+            const execResult = /^\[(\/)?(\w+?)\]/.exec(text);
+            if (!execResult) {
+                // xxx: should throw an error here?
+                emit(text[0]);
+                text = text.slice(1);
                 continue;
             }
+            const [m, e, gn] = execResult;
+            if (e !== undefined) {
+                const x = styleStack.pop();
+                if (x !== gn) {
+                    if (x !== undefined) {
+                        throw new Error(
+                            "Styled text error: mismatched tags. "
+                                + `Expected [/${x}], got [/${gn}]`,
+                        );
+                    }
+                    else {throw new Error(
+                            `Styled text error: stray end tag [/${gn}]`,
+                        );}
+                }
+            }
+            else styleStack.push(gn);
+            text = text.slice(m.length);
+            continue;
         }
-
-        renderText += text[i];
-        if (styleStack.length > 0) {
-            charStyleMap[i - skipCount] = styleStack.map(([name]) => name);
-        }
+        emit(text[0]);
+        text = text.slice(1);
     }
 
     if (styleStack.length > 0) {
-        while (styleStack.length > 0) {
-            const [_, start] = styleStack.pop()!;
-            text = text.substring(0, start) + "\\" + text.substring(start);
-        }
-
-        return compileStyledText(text);
+        throw new Error(
+            `Styled text error: unclosed tags ${styleStack}`,
+        );
     }
 
     return {
-        charStyleMap: charStyleMap,
+        charStyleMap,
         text: renderText,
     };
 }
@@ -115,12 +114,13 @@ export function formatText(opt: DrawTextOpt): FormattedText {
     let font = resolveFont(opt.font);
 
     // if it's still loading
-    if (opt.text === "" || font instanceof Asset || !font) {
+    if (!opt.text || opt.text === "" || font instanceof Asset || !font) {
         return {
             width: 0,
             height: 0,
             chars: [],
             opt: opt,
+            renderedText: "",
         };
     }
 
@@ -148,7 +148,7 @@ export function formatText(opt: DrawTextOpt): FormattedText {
         // TODO: customizable font tex filter
         const atlas: FontAtlas = fontAtlases[fontName] ?? {
             font: {
-                tex: new Texture(gfx.ggl, FONT_ATLAS_WIDTH, FONT_ATLAS_HEIGHT, {
+                tex: new Texture(_k.gfx.ggl, FONT_ATLAS_WIDTH, FONT_ATLAS_HEIGHT, {
                     filter: opts.filter,
                 }),
                 map: {},
@@ -167,18 +167,18 @@ export function formatText(opt: DrawTextOpt): FormattedText {
         for (const ch of chars) {
             if (!atlas.font.map[ch]) {
                 // TODO: use assets.packer to pack font texture
-                const c2d = fontCacheC2d;
+                const c2d = _k.fontCacheC2d;
                 if (!c2d) throw new Error("fontCacheC2d is not defined.");
 
-                if (!fontCacheCanvas) {
+                if (!_k.fontCacheCanvas) {
                     throw new Error("fontCacheCanvas is not defined.");
                 }
 
                 c2d.clearRect(
                     0,
                     0,
-                    fontCacheCanvas.width,
-                    fontCacheCanvas.height,
+                    _k.fontCacheCanvas.width,
+                    _k.fontCacheCanvas.height,
                 );
                 c2d.font = `${font.size}px ${fontName}`;
                 c2d.textBaseline = "top";
@@ -379,6 +379,7 @@ export function formatText(opt: DrawTextOpt): FormattedText {
                     const tr = typeof style === "function"
                         ? style(idx, fchar.ch)
                         : style;
+
                     if (tr) {
                         applyCharTransform(fchar, tr);
                     }
@@ -394,5 +395,6 @@ export function formatText(opt: DrawTextOpt): FormattedText {
         height: th,
         chars: fchars,
         opt: opt,
+        renderedText: text,
     };
 }

@@ -6,7 +6,7 @@ import {
     height,
     popTransform,
     pushTransform,
-    pushTranslate,
+    pushTranslateV,
     width,
 } from "../stack";
 import { drawFormattedText } from "./drawFormattedText";
@@ -18,7 +18,7 @@ export function drawInspectText(pos: Vec2, txt: string) {
         const pad = vec2(8);
 
         pushTransform();
-        pushTranslate(pos);
+        pushTranslateV(pos);
 
         const ftxt = formatText({
             text: txt,
@@ -33,11 +33,11 @@ export function drawInspectText(pos: Vec2, txt: string) {
         const bh = ftxt.height + pad.x * 2;
 
         if (pos.x + bw >= width()) {
-            pushTranslate(vec2(-bw, 0));
+            pushTranslateV(vec2(-bw, 0));
         }
 
         if (pos.y + bh >= height()) {
-            pushTranslate(vec2(0, -bh));
+            pushTranslateV(vec2(0, -bh));
         }
 
         drawRect({

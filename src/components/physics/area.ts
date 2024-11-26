@@ -7,9 +7,26 @@ import {
     WorldAreaUpdated,
 } from "../../game/make";
 import { isFixed } from "../../game/utils";
-import { anchorPt, getViewportScale } from "../../gfx";
-import { app, game, k } from "../../kaplay";
-import { Polygon, rgb, testPolygonPoint, Vec2, vec2 } from "../../math";
+import {
+    anchorPt,
+    drawCircle,
+    drawPolygon,
+    drawRect,
+    getViewportScale,
+    popTransform,
+    pushTransform,
+    pushTranslate,
+} from "../../gfx";
+import { _k } from "../../kaplay";
+import {
+    Circle,
+    Polygon,
+    Rect,
+    rgb,
+    testPolygonPoint,
+    Vec2,
+    vec2,
+} from "../../math";
 import type {
     Collision,
     Comp,
@@ -62,6 +79,8 @@ export interface AreaComp extends Comp {
      * @since v3000.0
      */
     collisionIgnore: Tag[];
+    restitution?: number;
+    friction?: number;
     /**
      * If was just clicked on last frame.
      */
@@ -172,11 +191,11 @@ export interface AreaComp extends Comp {
     /**
      * Get the geometry data for the collider in world coordinate space.
      */
-    worldArea(): Polygon;
+    worldArea(): Shape;
     /**
      * Get the geometry data for the collider in screen coordinate space.
      */
-    screenArea(): Polygon;
+    screenArea(): Shape;
 }
 
 /**
@@ -217,6 +236,18 @@ export interface AreaCompOpt {
      * @since v3000.0
      */
     collisionIgnore?: Tag[];
+    /**
+     * Bounciness factor between 0 and 1.
+     *
+     * @since v4000.0
+     */
+    restitution?: number;
+    /**
+     * Friction factor between 0 and 1.
+     *
+     * @since v4000.0
+     */
+    friction?: number;
 }
 
 let fakeMouse: GameObj<FakeMouseComp | PosComp> | null = null;
@@ -232,18 +263,20 @@ export function area(opt: AreaCompOpt = {}): AreaComp {
     let worldArea: Polygon;
 
     if (!fakeMouse && !fakeMouseChecked) {
-        fakeMouse = k.get<FakeMouseComp | PosComp>("fakeMouse")[0];
+        fakeMouse = _k.k.get<FakeMouseComp | PosComp>("fakeMouse")[0];
         fakeMouseChecked = true;
     }
 
     return {
         id: "area",
         collisionIgnore: opt.collisionIgnore ?? [],
+        restitution: opt.restitution,
+        friction: opt.friction,
 
         add(this: GameObj<AreaComp>) {
             areaCount++;
             if (this.area.cursor) {
-                this.onHover(() => app.setCursor(this.area.cursor!));
+                this.onHover(() => _k.app.setCursor(this.area.cursor!));
             }
 
             this.onCollideUpdate((obj, col) => {
@@ -279,8 +312,8 @@ export function area(opt: AreaCompOpt = {}): AreaComp {
         drawInspect(this: GameObj<AreaComp | AnchorComp | FixedComp>) {
             const a = this.localArea();
 
-            k.pushTransform();
-            k.pushTranslate(this.area.offset);
+            pushTransform();
+            pushTranslate(this.area.offset.x, this.area.offset.y);
 
             const opts = {
                 outline: {
@@ -292,30 +325,30 @@ export function area(opt: AreaCompOpt = {}): AreaComp {
                 fixed: isFixed(this),
             };
 
-            if (a instanceof k.Rect) {
-                k.drawRect({
+            if (a instanceof Rect) {
+                drawRect({
                     ...opts,
                     pos: a.pos,
                     width: a.width * this.area.scale.x,
                     height: a.height * this.area.scale.y,
                 });
             }
-            else if (a instanceof k.Polygon) {
-                k.drawPolygon({
+            else if (a instanceof Polygon) {
+                drawPolygon({
                     ...opts,
                     pts: a.pts,
                     scale: this.area.scale,
                 });
             }
-            else if (a instanceof k.Circle) {
-                k.drawCircle({
+            else if (a instanceof Circle) {
+                drawCircle({
                     ...opts,
                     pos: a.center,
                     radius: a.radius,
                 });
             }
 
-            k.popTransform();
+            popTransform();
         },
 
         area: {
@@ -348,19 +381,21 @@ export function area(opt: AreaCompOpt = {}): AreaComp {
                 return fakeMouse.isPressed && this.isHovering();
             }
 
-            return app.isMousePressed() && this.isHovering();
+            return _k.app.isMousePressed() && this.isHovering();
         },
 
         isHovering(this: GameObj<AreaComp>) {
             if (fakeMouse) {
                 const mpos = isFixed(this)
                     ? fakeMouse.pos
-                    : k.toWorld(fakeMouse.pos);
+                    : _k.k.toWorld(fakeMouse.pos);
 
                 return this.hasPoint(mpos);
             }
 
-            const mpos = isFixed(this) ? k.mousePos() : k.toWorld(k.mousePos());
+            const mpos = isFixed(this)
+                ? _k.k.mousePos()
+                : _k.k.toWorld(_k.k.mousePos());
             return this.hasPoint(mpos);
         },
 
@@ -410,7 +445,7 @@ export function area(opt: AreaCompOpt = {}): AreaComp {
                 });
             }
 
-            const e = k.onMousePress(btn, () => {
+            const e = _k.k.onMousePress(btn, () => {
                 if (this.isHovering()) {
                     action();
                 }
@@ -524,7 +559,7 @@ export function area(opt: AreaCompOpt = {}): AreaComp {
 
         hasPoint(pt: Vec2): boolean {
             // TODO: convert to pt to local space instead
-            return testPolygonPoint(this.worldArea(), pt);
+            return this.worldArea().contains(pt);
         },
 
         // push an obj out of another if they're overlapped
@@ -553,31 +588,21 @@ export function area(opt: AreaCompOpt = {}): AreaComp {
             return localArea;
         },
 
-        worldArea(this: GameObj<AreaComp | AnchorComp>): Polygon {
+        worldArea(this: GameObj<PosComp | AreaComp | AnchorComp>): Polygon {
             if (this.dirtyFlags & WorldAreaDirty) {
                 const localArea = this.localArea();
 
-                if (
-                    !(localArea instanceof k.Polygon
-                        || localArea instanceof k.Rect)
-                ) {
-                    console.log(localArea);
-                    throw new Error(
-                        "Only support polygon and rect shapes for now",
-                    );
-                }
-
-                const transform = (this as GameObj).worldTransform
+                const transform = this.worldTransform
                     .clone()
-                    .scale(vec2(this.area.scale ?? 1))
-                    .translate(this.area.offset);
+                    .translateSelfV(this.area.offset)
+                    .scaleSelfV(vec2(this.area.scale ?? 1));
 
-                if (localArea instanceof k.Rect) {
+                if (localArea instanceof Rect) {
                     const offset = anchorPt(this.anchor || DEF_ANCHOR)
                         .add(1, 1)
                         .scale(-0.5)
                         .scale(localArea.width, localArea.height);
-                    transform.translate(offset);
+                    transform.translateSelfV(offset);
                 }
 
                 worldArea = localArea.transform(transform) as Polygon;
@@ -589,13 +614,13 @@ export function area(opt: AreaCompOpt = {}): AreaComp {
             return worldArea;
         },
 
-        screenArea(this: GameObj<AreaComp | FixedComp>): Polygon {
+        screenArea(this: GameObj<AreaComp | FixedComp>): Shape {
             const area = this.worldArea();
             if (isFixed(this)) {
                 return area;
             }
             else {
-                return area.transform(game.cam.transform);
+                return area.transform(_k.game.cam.transform);
             }
         },
 
@@ -604,9 +629,8 @@ export function area(opt: AreaCompOpt = {}): AreaComp {
                 return `area: ${this.area.scale?.x?.toFixed(1)}x`;
             }
             else {
-                return `area: (${this.area.scale?.x?.toFixed(1)}x, ${
-                    this.area.scale.y?.toFixed(1)
-                }y)`;
+                return `area: (${this.area.scale?.x?.toFixed(1)}x, ${this.area.scale.y?.toFixed(1)
+                    }y)`;
             }
         },
     };

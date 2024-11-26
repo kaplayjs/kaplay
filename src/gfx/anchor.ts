@@ -2,27 +2,37 @@ import { Vec2 } from "../math/math";
 import { type Anchor } from "../types";
 import type { TextAlign } from "./draw";
 
+const TOP_LEFT = new Vec2(-1, -1);
+const TOP = new Vec2(0, -1);
+const TOP_RIGHT = new Vec2(1, -1);
+const LEFT = new Vec2(-1, 0);
+const CENTER = new Vec2(0, 0);
+const RIGHT = new Vec2(1, 0);
+const BOTTOM_LEFT = new Vec2(-1, 1);
+const BOTTOM = new Vec2(0, 1);
+const BOTTOM_RIGHT = new Vec2(1, 1);
+
 // convert anchor string to a vec2 offset
 export function anchorPt(orig: Anchor | Vec2): Vec2 {
     switch (orig) {
         case "topleft":
-            return new Vec2(-1, -1);
+            return TOP_LEFT;
         case "top":
-            return new Vec2(0, -1);
+            return TOP;
         case "topright":
-            return new Vec2(1, -1);
+            return TOP_RIGHT;
         case "left":
-            return new Vec2(-1, 0);
+            return LEFT;
         case "center":
-            return new Vec2(0, 0);
+            return CENTER;
         case "right":
-            return new Vec2(1, 0);
+            return RIGHT;
         case "botleft":
-            return new Vec2(-1, 1);
+            return BOTTOM_LEFT;
         case "bot":
-            return new Vec2(0, 1);
+            return BOTTOM;
         case "botright":
-            return new Vec2(1, 1);
+            return BOTTOM_RIGHT;
         default:
             return orig;
     }
@@ -39,8 +49,4 @@ export function alignPt(align: TextAlign): number {
         default:
             return 0;
     }
-}
-
-export function createEmptyAudioBuffer(ctx: AudioContext) {
-    return ctx.createBuffer(1, 1, 44100);
 }

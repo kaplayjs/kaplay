@@ -1,82 +1,89 @@
-import { app, gfx } from "../kaplay";
-import { type Mat4, Vec2, vec2, type Vec2Args } from "../math/math";
+import { _k } from "../kaplay";
+import { type Mat23, Vec2, vec2, type Vec2Args } from "../math/math";
 
-export function pushTranslate(...args: Vec2Args | [undefined]) {
-    if (args[0] === undefined) return;
+export function pushTranslateV(t: Vec2 | undefined) {
+    if (t === undefined) return;
+    if (t.x === 0 && t.y === 0) return;
+    _k.gfx.transform.translateSelfV(t);
+}
 
-    const p = vec2(...args);
-    if (p.x === 0 && p.y === 0) return;
-    gfx.transform.translate(p);
+export function pushTranslate(x: number, y: number) {
+    if (x === 0 && y === 0) return;
+    _k.gfx.transform.translateSelf(x, y);
 }
 
 export function pushTransform() {
-    gfx.transformStack.push(gfx.transform.clone());
+    _k.gfx.transformStack[++_k.gfx.transformStackIndex].setMat23(
+        _k.gfx.transform,
+    );
 }
 
-export function pushMatrix(m: Mat4) {
-    gfx.transform = m.clone();
+export function pushMatrix(m: Mat23) {
+    _k.gfx.transform.setMat23(m);
 }
 
-export function pushScale(
-    ...args: Vec2Args | [undefined] | [undefined, undefined]
-) {
-    if (args[0] === undefined) return;
+export function pushScaleV(s: Vec2 | undefined) {
+    if (s === undefined) return;
+    if (s.x === 1 && s.y === 1) return;
+    _k.gfx.transform.scaleSelfV(s);
+}
 
-    const p = vec2(...args);
-    if (p.x === 1 && p.y === 1) return;
-    gfx.transform.scale(p);
+export function pushScale(x: number, y: number) {
+    if (x === 1 && y === 1) return;
+    _k.gfx.transform.scaleSelf(x, y);
 }
 
 export function pushRotate(a: number | undefined) {
     if (!a) return;
 
-    gfx.transform.rotate(a);
+    _k.gfx.transform.rotateSelf(a);
 }
 
 export function popTransform() {
-    if (gfx.transformStack.length > 0) {
-        // if there's more than 1 element, it will return obviously a Mat4
-        gfx.transform = gfx.transformStack.pop()!;
+    if (_k.gfx.transformStackIndex >= 0) {
+        _k.gfx.transform.setMat23(
+            _k.gfx.transformStack[_k.gfx.transformStackIndex--],
+        );
     }
 }
 
 export function flush() {
-    gfx.renderer.flush();
+    _k.gfx.renderer.flush();
 }
 
 // get game width
 export function width(): number {
-    return gfx.width;
+    return _k.gfx.width;
 }
 
 // get game height
 export function height(): number {
-    return gfx.height;
+    return _k.gfx.height;
 }
 
 export function getViewportScale() {
-    return (gfx.viewport.width + gfx.viewport.height)
-        / (gfx.width + gfx.height);
+    return (_k.gfx.viewport.width + _k.gfx.viewport.height)
+        / (_k.gfx.width + _k.gfx.height);
 }
 
 // transform a point from content space to view space
 export function contentToView(pt: Vec2) {
     return new Vec2(
-        pt.x * gfx.viewport.width / gfx.width,
-        pt.y * gfx.viewport.height / gfx.height,
+        pt.x * _k.gfx.viewport.width / _k.gfx.width,
+        pt.y * _k.gfx.viewport.height / _k.gfx.height,
     );
 }
 
 // transform a point from window space to content space
 export function windowToContent(pt: Vec2) {
     return new Vec2(
-        (pt.x - gfx.viewport.x) * width() / gfx.viewport.width,
-        (pt.y - gfx.viewport.y) * height() / gfx.viewport.height,
+        (pt.x - _k.gfx.viewport.x) * width() / _k.gfx.viewport.width,
+        (pt.y - _k.gfx.viewport.y) * height() / _k.gfx.viewport.height,
     );
 }
 
 export function mousePos() {
-    return windowToContent(app.mousePos());
+    return windowToContent(_k.app.mousePos());
 }
 
 export function center(): Vec2 {

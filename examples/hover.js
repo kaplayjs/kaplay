@@ -1,3 +1,5 @@
+// @ts-check
+
 // Differeces between onHover and onHoverUpdate
 
 kaplay({

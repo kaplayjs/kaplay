@@ -5,11 +5,12 @@ import { getRenderProps } from "../../game/utils";
 import {
     type CharTransform,
     type CharTransformFunc,
+    compileStyledText,
     drawFormattedText,
     formatText,
     type TextAlign,
 } from "../../gfx";
-import { k } from "../../kaplay";
+import { _k } from "../../kaplay";
 import { Rect, vec2 } from "../../math/math";
 import type { Comp, GameObj, KAPLAYCtx } from "../../types";
 
@@ -24,6 +25,10 @@ export interface TextComp extends Comp {
      * The text to render.
      */
     text: string;
+    /**
+     * The text after formatting.
+     */
+    renderedText: string;
     /**
      * The text size.
      */
@@ -156,6 +161,7 @@ export function text(t: string, opt: TextCompOpt = {}): TextComp {
             t = nt;
             // @ts-ignore
             update(this);
+            this.renderedText = compileStyledText(t).text;
         },
         get text() {
             return t;
@@ -169,6 +175,7 @@ export function text(t: string, opt: TextCompOpt = {}): TextComp {
         letterSpacing: opt.letterSpacing,
         textTransform: opt.transform,
         textStyles: opt.styles,
+        renderedText: t ? compileStyledText(t).text : "",
 
         add(this: GameObj<TextComp>) {
             onLoad(() => update(this));

@@ -1,3 +1,5 @@
+// @ts-check
+
 // 9 slice sprite scaling
 
 kaplay();

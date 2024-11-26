@@ -1,6 +1,6 @@
 import { getRenderProps } from "../../game/utils";
 import { drawCircle } from "../../gfx";
-import { Rect, Vec2 } from "../../math/math";
+import { Circle, Rect, Vec2 } from "../../math/math";
 import type { Comp, GameObj } from "../../types";
 import type { AnchorComp } from "../transform/anchor";
 import type { outline } from "./outline";
@@ -19,7 +19,7 @@ export interface CircleComp extends Comp {
      *
      * @since v3000.0
      */
-    renderArea(): Rect;
+    renderArea(): Circle;
 }
 
 /**
@@ -46,10 +46,9 @@ export function circle(radius: number, opt: CircleCompOpt = {}): CircleComp {
             }));
         },
         renderArea(this: GameObj<AnchorComp | CircleComp>) {
-            return new Rect(
-                new Vec2(this.anchor ? 0 : -this.radius),
-                this.radius * 2,
-                this.radius * 2,
+            return new Circle(
+                new Vec2(0),
+                this.radius,
             );
         },
         inspect() {

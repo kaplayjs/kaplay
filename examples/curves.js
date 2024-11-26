@@ -1,3 +1,5 @@
+// @ts-check
+
 kaplay();
 
 function addPoint(c, ...args) {

@@ -1,3 +1,5 @@
+// @ts-check
+
 // Drag & drop interaction
 
 kaplay();
@@ -47,7 +49,8 @@ onMousePress(() => {
     if (curDraggin) {
         return;
     }
-    // Loop all "bean"s in reverse, so we pick the topmost one
+
+    // Loop all "bean"s in reverse, so we pick the one that is on top
     for (const obj of get("drag").reverse()) {
         // If mouse is pressed and mouse position is inside, we pick
         if (obj.isHovering()) {

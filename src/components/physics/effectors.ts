@@ -1,4 +1,3 @@
-import { getGravityDirection } from "../../game";
 import { Polygon, Vec2, vec2 } from "../../math";
 import type { Comp, GameObj } from "../../types";
 import type { PosComp } from "../transform";
@@ -33,6 +32,7 @@ export function surfaceEffector(
                 const wantedVel = dir?.scale(this.speed);
                 const force = wantedVel?.sub(currentVel);
                 obj.addForce(force?.scale(obj.mass * this.forceScale));
+                console.log("onCollideUpdate")
             });
         },
     };
@@ -40,37 +40,30 @@ export function surfaceEffector(
 
 export type AreaEffectorCompOpt = {
     useGlobalAngle?: boolean;
-    forceAngle: number;
-    forceMagnitude: number;
-    forceVariation?: number;
+    force: Vec2;
     linearDrag?: number;
-    // angularDrag?: number;
 };
 
 export interface AreaEffectorComp extends Comp {
     useGlobalAngle: boolean;
-    forceAngle: number;
-    forceMagnitude: number;
-    forceVariation: number;
-    linearDrag?: number;
-    // angularDrag?: number;
+    force: Vec2;
+    linearDrag: number;
 }
 
 export function areaEffector(opts: AreaEffectorCompOpt): AreaEffectorComp {
     return {
         id: "areaEffector",
         require: ["area"],
-        useGlobalAngle: opts.useGlobalAngle || false,
-        forceAngle: opts.forceAngle,
-        forceMagnitude: opts.forceMagnitude,
-        forceVariation: opts.forceVariation ?? 0,
+        force: opts.force,
         linearDrag: opts.linearDrag ?? 0,
-        // angularDrag: opts.angularDrag ?? 0,
+        useGlobalAngle: opts.useGlobalAngle ?? true,
         add(this: GameObj<AreaComp | AreaEffectorComp>) {
-            this.onCollideUpdate("body", (obj, col) => {
-                const dir = Vec2.fromAngle(this.forceAngle);
-                const force = dir.scale(this.forceMagnitude);
-                obj.addForce(force);
+            this.onCollideUpdate("body", obj => {
+                obj.addForce(
+                    this.useGlobalAngle
+                        ? this.force
+                        : this.force.rotate(this.worldTransform.getRotation()),
+                );
                 if (this.linearDrag) {
                     obj.addForce(obj.vel.scale(-this.linearDrag));
                 }
@@ -83,20 +76,16 @@ export type ForceMode = "constant" | "inverseLinear" | "inverseSquared";
 
 export type PointEffectorCompOpt = {
     forceMagnitude: number;
-    forceVariation: number;
     distanceScale?: number;
     forceMode?: ForceMode;
     linearDrag?: number;
-    // angularDrag?: number;
 };
 
 export interface PointEffectorComp extends Comp {
     forceMagnitude: number;
-    forceVariation: number;
     distanceScale: number;
     forceMode: ForceMode;
     linearDrag: number;
-    // angularDrag: number;
 }
 
 export function pointEffector(opts: PointEffectorCompOpt): PointEffectorComp {
@@ -104,7 +93,6 @@ export function pointEffector(opts: PointEffectorCompOpt): PointEffectorComp {
         id: "pointEffector",
         require: ["area", "pos"],
         forceMagnitude: opts.forceMagnitude,
-        forceVariation: opts.forceVariation ?? 0,
         distanceScale: opts.distanceScale ?? 1,
         forceMode: opts.forceMode || "inverseLinear",
         linearDrag: opts.linearDrag ?? 0,
@@ -117,8 +105,8 @@ export function pointEffector(opts: PointEffectorCompOpt): PointEffectorComp {
                 const forceScale = this.forceMode === "constant"
                     ? 1
                     : this.forceMode === "inverseLinear"
-                    ? 1 / distance
-                    : 1 / distance ** 2;
+                        ? 1 / distance
+                        : 1 / distance ** 2;
                 const force = dir.scale(
                     this.forceMagnitude * forceScale / length,
                 );
@@ -133,10 +121,12 @@ export function pointEffector(opts: PointEffectorCompOpt): PointEffectorComp {
 
 export type ConstantForceCompOpt = {
     force?: Vec2;
+    useGlobalAngle?: boolean;
 };
 
 export interface ConstantForceComp extends Comp {
-    force?: Vec2;
+    force: Vec2 | undefined;
+    useGlobalAngle: boolean;
 }
 
 export function constantForce(opts: ConstantForceCompOpt): ConstantForceComp {
@@ -144,40 +134,81 @@ export function constantForce(opts: ConstantForceCompOpt): ConstantForceComp {
         id: "constantForce",
         require: ["body"],
         force: opts.force,
+        useGlobalAngle: opts.useGlobalAngle ?? true,
         update(this: GameObj<BodyComp | ConstantForceComp>) {
             if (this.force) {
-                this.addForce(this.force);
+                this.addForce(
+                    this.useGlobalAngle
+                        ? this.force
+                        : this.force.rotate(this.worldTransform.getRotation()),
+                );
             }
         },
     };
 }
 
 export type PlatformEffectorCompOpt = {
-    surfaceArc?: number;
-    useOneWay?: boolean;
+    /**
+     * If the object is about to collide and the collision normal direction is
+     * in here, the object won't collide.
+     *
+     * Should be a list of unit vectors `LEFT`, `RIGHT`, `UP`, or `DOWN`.
+     */
+    ignoreSides?: Vec2[];
+    /**
+     * A function that determines whether the object should collide.
+     *
+     * If present, it overrides the `ignoreSides`; if absent, it is
+     * automatically created from `ignoreSides`.
+     */
+    shouldCollide?: (
+        this: GameObj<PlatformEffectorComp>,
+        obj: GameObj,
+        normal: Vec2,
+    ) => boolean;
 };
 
 export interface PlatformEffectorComp extends Comp {
-    surfaceArc: number;
-    useOneWay: boolean;
+    /**
+     * A set of the objects that should not collide with this, because `shouldCollide` returned true.
+     *
+     * Objects in here are automatically removed when they stop colliding, so the casual user shouldn't
+     * need to touch this much. However, if an object is added to this set before the object collides
+     * with the platform effector, it won't collide even if `shouldCollide` returns true.
+     */
+    platformIgnore: Set<GameObj>;
 }
 
 export function platformEffector(
-    opt: PlatformEffectorCompOpt,
+    opt: PlatformEffectorCompOpt = {},
 ): PlatformEffectorComp {
+    opt.ignoreSides ??= [Vec2.UP];
+    opt.shouldCollide ??= (_, normal) => {
+        return opt.ignoreSides?.findIndex(s => s.sdist(normal) < Number.EPSILON)
+            == -1;
+    };
     return {
         id: "platformEffector",
         require: ["area", "body"],
-        surfaceArc: opt.surfaceArc ?? 180,
-        useOneWay: opt.useOneWay ?? false,
+        platformIgnore: new Set<GameObj>(),
         add(this: GameObj<BodyComp | AreaComp | PlatformEffectorComp>) {
             this.onBeforePhysicsResolve(collision => {
-                const v = collision.target.vel;
-                const up = getGravityDirection().scale(-1);
-                const angle = up.angleBetween(v);
-                if (Math.abs(angle) > this.surfaceArc / 2) {
+                if (this.platformIgnore.has(collision.target)) {
                     collision.preventResolution();
                 }
+                else if (
+                    !opt.shouldCollide!.call(
+                        this,
+                        collision.target,
+                        collision.normal,
+                    )
+                ) {
+                    collision.preventResolution();
+                    this.platformIgnore.add(collision.target);
+                }
+            });
+            this.onCollideEnd(obj => {
+                this.platformIgnore.delete(obj);
             });
         },
     };
@@ -221,7 +252,10 @@ export function buoyancyEffector(
         add(this: GameObj<AreaComp | BuoyancyEffectorComp>) {
             this.onCollideUpdate("body", (obj, col) => {
                 const o = obj as GameObj<BodyComp | AreaComp>;
-                const polygon = o.worldArea();
+                const shape = o.worldArea();
+                const polygon: Polygon = shape instanceof Polygon
+                    ? shape
+                    : new Polygon(shape.bbox().points());
                 const [submergedArea, _] = polygon.cut(
                     vec2(-100, this.surfaceLevel),
                     vec2(100, this.surfaceLevel),

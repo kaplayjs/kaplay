@@ -1,3 +1,5 @@
+// @ts-check
+
 // bean is holding a concert to celebrate kaboom2000!
 
 kaplay({
@@ -6,13 +8,14 @@ kaplay({
     font: "happy",
 });
 
+// Adds bean and all of this friends
+loadBean();
 loadSprite("bag", `/sprites/bag.png`);
 loadSprite("ghosty", "/sprites/ghosty.png");
 loadSprite("bobo", `/sprites/bobo.png`);
 loadSprite("gigagantrum", "/sprites/gigagantrum.png");
 loadSprite("tga", "/sprites/dino.png");
 loadSprite("ghostiny", "/sprites/ghostiny.png");
-loadSprite("bean", "/sprites/bean.png");
 loadSprite("note", "/sprites/note.png");
 loadSprite("grass", "/sprites/grass.png");
 loadSprite("cloud", "/sprites/cloud.png");
@@ -21,6 +24,7 @@ loadSound("bell", "/examples/sounds/bell.mp3");
 loadSound("kaboom2000", "/examples/sounds/kaboom2000.mp3");
 loadBitmapFont("happy", "/examples/fonts/happy_28x36.png", 28, 36);
 
+// An array of friends
 const friends = [
     "bag",
     "bobo",
@@ -154,8 +158,8 @@ player.onHeadbutt((block) => {
 
 onUpdate(() => {
     if (!burping) return;
-    camPos(camPos().lerp(player.pos, dt() * 3));
-    camScale(camScale().lerp(vec2(5), dt() * 3));
+    setCamPos(getCamPos().lerp(player.pos, dt() * 3));
+    setCamScale(getCamScale().lerp(vec2(5), dt() * 3));
 });
 
 const lyrics =

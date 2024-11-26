@@ -1,6 +1,5 @@
 import cp from "child_process";
 import * as esbuild from "esbuild";
-import { dTSPathAliasPlugin } from "esbuild-dts-path-alias";
 import express from "express";
 import fs from "fs/promises";
 import path from "path";
@@ -75,21 +74,6 @@ async function writeFile(path, content) {
 }
 
 export async function genDTS() {
-    // generate declaration files
-    esbuild.build({
-        bundle: true,
-        target: "esnext",
-        format: "esm",
-        entryPoints: ["./src/index.ts"],
-        outdir: "./dist/declaration/",
-        plugins: [dTSPathAliasPlugin()],
-        loader: {
-            ".png": "dataurl",
-            ".glsl": "text",
-            ".mp3": "binary",
-        },
-    });
-
     // global dts
     const dts = await fs.readFile(`${srcDir}/types.ts`, "utf-8");
 
@@ -180,7 +164,8 @@ export async function genDTS() {
     // generate global decls for KAPLAYCtx members
     let globalDts = "";
 
-    globalDts += "import { KAPLAYCtx } from \"./types\"\n";
+    globalDts +=
+        "import { KAPLAYCtx } from \"./types\"\nimport { kaplay as KAPLAY } from \"./kaplay\"\n";
     globalDts += "declare global {\n";
 
     for (const stmt of stmts) {
@@ -194,6 +179,9 @@ export async function genDTS() {
             globalGenerated = true;
         }
     }
+
+    globalDts += `\tconst kaplay: typeof KAPLAY\n`;
+    globalDts += `\tconst kaboom: typeof KAPLAY\n`;
 
     globalDts += "}\n";
 

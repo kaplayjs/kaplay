@@ -1,3 +1,6 @@
+// @ts-check
+
+// Moves objects with custom easings
 kaplay();
 
 add([

@@ -1,4 +1,6 @@
-// Start kaboom
+// @ts-check
+
+// Start kaplay
 kaplay();
 
 // load assets

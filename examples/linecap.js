@@ -1,3 +1,5 @@
+// @ts-check
+
 kaplay();
 
 onDraw(() => {
@@ -10,7 +12,6 @@ onDraw(() => {
             vec2(50, 200),
         ],
         join: "bevel",
-        cap: "none",
         width: 20,
     });
     drawCircle({
@@ -33,7 +34,6 @@ onDraw(() => {
             vec2(50, 200),
         ],
         join: "round",
-        cap: "none",
         width: 20,
     });
     drawCircle({
@@ -56,7 +56,6 @@ onDraw(() => {
             vec2(50, 200),
         ],
         join: "miter",
-        cap: "none",
         width: 20,
     });
     drawCircle({

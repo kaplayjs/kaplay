@@ -1,4 +1,5 @@
-import { gfx } from "../../kaplay";
+import { opacity } from "../../components";
+import { _k } from "../../kaplay";
 import { Color } from "../../math/color";
 import { deg2rad, Vec2, vec2 } from "../../math/math";
 import type { RenderProps } from "../../types";
@@ -38,7 +39,7 @@ export function drawLine(opt: DrawLineOpt) {
     const dis = p2.sub(p1).unit().normal().scale(w * 0.5);
 
     // calculate the 4 corner points of the line polygon
-    const verts = [
+    /*const verts = [
         p1.sub(dis),
         p1.add(dis),
         p2.add(dis),
@@ -48,13 +49,59 @@ export function drawLine(opt: DrawLineOpt) {
         uv: new Vec2(0),
         color: opt.color ?? Color.WHITE,
         opacity: opt.opacity ?? 1,
-    }));
+    }));*/
+
+    const color = opt.color ?? Color.WHITE;
+    const opacity = opt.opacity ?? 1;
+
+    const attributes = {
+        pos: [
+            p1.x - dis.x,
+            p1.y - dis.y,
+            p1.x + dis.x,
+            p1.y + dis.y,
+            p2.x + dis.x,
+            p2.y + dis.y,
+            p2.x - dis.x,
+            p2.y - dis.y,
+        ],
+        uv: [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+        ],
+        color: [
+            color.r,
+            color.g,
+            color.b,
+            color.r,
+            color.g,
+            color.b,
+            color.r,
+            color.g,
+            color.b,
+            color.r,
+            color.g,
+            color.b,
+        ],
+        opacity: [
+            opacity,
+            opacity,
+            opacity,
+            opacity,
+        ],
+    };
 
     drawRaw(
-        verts,
+        attributes,
         [0, 1, 3, 1, 2, 3],
         opt.fixed,
-        gfx.defTex,
+        _k.gfx.defTex,
         opt.shader,
         opt.uniform ?? undefined,
     );
@@ -229,13 +276,6 @@ export function _drawLinesBevel(opt: DrawLinesOpt) {
 
     if (vertices.length < 4) return;
 
-    const verts = vertices.map(v => ({
-        pos: offset.add(v),
-        uv: vec2(),
-        color: opt.color || Color.WHITE,
-        opacity: opt.opacity ?? 1,
-    }));
-
     const indices = [];
     let index = 0;
     for (let i = 0; i < vertices.length - 2; i += 2) {
@@ -256,11 +296,35 @@ export function _drawLinesBevel(opt: DrawLinesOpt) {
         indices[index++] = vertices.length - 1;
     }
 
+    /*const verts = vertices.map(v => ({
+        pos: offset.add(v),
+        uv: vec2(),
+        color: opt.color || Color.WHITE,
+        opacity: opt.opacity ?? 1,
+    }));*/
+
+    const attributes = {
+        pos: new Array<number>(vertices.length * 2),
+        uv: new Array<number>(vertices.length * 2).fill(0),
+        color: new Array<number>(vertices.length * 3).fill(255),
+        opacity: new Array<number>(vertices.length).fill(opt.opacity ?? 1),
+    };
+
+    for (let i = 0; i < vertices.length; i++) {
+        attributes.pos[i * 2] = vertices[i].x + offset.x;
+        attributes.pos[i * 2 + 1] = vertices[i].y + offset.y;
+        if (opt.color) {
+            attributes.color[i * 3] = opt.color.r;
+            attributes.color[i * 3 + 1] = opt.color.g;
+            attributes.color[i * 3 + 2] = opt.color.b;
+        }
+    }
+
     drawRaw(
-        verts,
+        attributes,
         indices,
         opt.fixed,
-        gfx.defTex,
+        _k.gfx.defTex,
         opt.shader,
         opt.uniform ?? undefined,
     );
@@ -441,11 +505,28 @@ export function _drawLinesRound(opt: DrawLinesOpt) {
         indices[index++] = vertices.length - 1;
     }
 
+    const attributes = {
+        pos: new Array<number>(vertices.length * 2),
+        uv: new Array<number>(vertices.length * 2).fill(0),
+        color: new Array<number>(vertices.length * 3).fill(255),
+        opacity: new Array<number>(vertices.length).fill(opt.opacity ?? 1),
+    };
+
+    for (let i = 0; i < vertices.length; i++) {
+        attributes.pos[i * 2] = vertices[i].x + offset.x;
+        attributes.pos[i * 2 + 1] = vertices[i].y + offset.y;
+        if (opt.color) {
+            attributes.color[i * 3] = opt.color.r;
+            attributes.color[i * 3 + 1] = opt.color.g;
+            attributes.color[i * 3 + 2] = opt.color.b;
+        }
+    }
+
     drawRaw(
-        verts,
+        attributes,
         indices,
         opt.fixed,
-        gfx.defTex,
+        _k.gfx.defTex,
         opt.shader,
         opt.uniform ?? undefined,
     );
@@ -596,11 +677,28 @@ export function _drawLinesMiter(opt: DrawLinesOpt) {
         indices[index++] = vertices.length - 1;
     }
 
+    const attributes = {
+        pos: new Array<number>(vertices.length * 2),
+        uv: new Array<number>(vertices.length * 2).fill(0),
+        color: new Array<number>(vertices.length * 3).fill(255),
+        opacity: new Array<number>(vertices.length).fill(opt.opacity ?? 1),
+    };
+
+    for (let i = 0; i < vertices.length; i++) {
+        attributes.pos[i * 2] = vertices[i].x + offset.x;
+        attributes.pos[i * 2 + 1] = vertices[i].y + offset.y;
+        if (opt.color) {
+            attributes.color[i * 3] = opt.color.r;
+            attributes.color[i * 3 + 1] = opt.color.g;
+            attributes.color[i * 3 + 2] = opt.color.b;
+        }
+    }
+
     drawRaw(
-        verts,
+        attributes,
         indices,
         opt.fixed,
-        gfx.defTex,
+        _k.gfx.defTex,
         opt.shader,
         opt.uniform ?? undefined,
     );

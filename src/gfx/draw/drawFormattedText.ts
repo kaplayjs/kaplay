@@ -6,7 +6,7 @@ import {
     popTransform,
     pushRotate,
     pushTransform,
-    pushTranslate,
+    pushTranslateV,
 } from "../stack";
 import type { DrawTextOpt } from "./drawText";
 import { drawUVQuad } from "./drawUVQuad";
@@ -19,6 +19,7 @@ export type FormattedText = {
     height: number;
     chars: FormattedChar[];
     opt: DrawTextOpt;
+    renderedText: string;
 };
 
 /**
@@ -39,9 +40,9 @@ export interface FormattedChar {
 
 export function drawFormattedText(ftext: FormattedText) {
     pushTransform();
-    pushTranslate(ftext.opt.pos!);
+    pushTranslateV(ftext.opt.pos!);
     pushRotate(ftext.opt.angle!);
-    pushTranslate(
+    pushTranslateV(
         anchorPt(ftext.opt.anchor ?? "topleft").add(1, 1).scale(
             ftext.width,
             ftext.height,
@@ -65,5 +66,6 @@ export function drawFormattedText(ftext: FormattedText) {
             fixed: ftext.opt.fixed,
         });
     });
+
     popTransform();
 }

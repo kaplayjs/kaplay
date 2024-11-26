@@ -80,10 +80,34 @@ export type CharTransformFunc = (idx: number, ch: string) => CharTransform;
  * @group Options
  */
 export interface CharTransform {
+    /**
+     * Offset to apply to the position of the text character.
+     * Shifts the character's position by the specified 2D vector.
+     */
     pos?: Vec2;
+
+    /**
+     * Scale transformation to apply to the text character's current scale.
+     * When a number, it is scaled uniformly.
+     * Given a 2D vector, it is scaled independently along the X and Y axis.
+     */
     scale?: Vec2 | number;
+
+    /**
+     * Increases the amount of degrees to rotate the text character.
+     */
     angle?: number;
+
+    /**
+     * Color transformation applied to the text character.
+     * Multiplies the current color with this color.
+     */
     color?: Color;
+
+    /**
+     * Opacity multiplication applied to the text character.
+     * For example, an opacity of 0.4 with 2 set in the transformation, the resulting opacity will be 0.8 (0.4 × 2).
+     */
     opacity?: number;
 }
 

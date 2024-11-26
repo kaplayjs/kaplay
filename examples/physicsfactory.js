@@ -1,3 +1,5 @@
+// @ts-check
+
 kaplay();
 
 setGravity(300);
@@ -49,7 +51,7 @@ add([
     pos(20, 150),
     rect(50, 300),
     area(),
-    areaEffector({ forceAngle: -90, forceMagnitude: 150 }),
+    areaEffector({ force: UP.scale(150) }),
     {
         draw() {
             drawPolygon({
@@ -82,7 +84,7 @@ add([
     },
 ]);
 
-// Continouous boxes
+// Continuous boxes
 loop(5, () => {
     add([
         pos(100, 100),

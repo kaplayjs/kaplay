@@ -1,5 +1,5 @@
 import { Asset, resolveSound, type SoundData } from "../assets";
-import { assets, audio } from "../kaplay";
+import { _k } from "../kaplay";
 import type { MusicData } from "../types";
 import { KEvent, type KEventController } from "../utils";
 import { playMusic } from "./playMusic";
@@ -49,6 +49,11 @@ export interface AudioPlayOpt {
      * Defaults to 0.0.
      */
     pan?: number;
+    /**
+     * If the audio node should start out connected to another audio node rather than
+     * KAPLAY's default volume node. Defaults to undefined, i.e. use KAPLAY's volume node.
+     */
+    connectTo?: AudioNode;
 }
 
 export interface AudioPlay {
@@ -122,6 +127,12 @@ export interface AudioPlay {
      */
     onEnd(action: () => void): KEventController;
     then(action: () => void): KEventController;
+    /**
+     * Disconnect the audio node from whatever it is currently connected to
+     * and connect it to the passed-in audio node, or to Kaplay's default volume node
+     * if no node is passed.
+     */
+    connect(node?: AudioNode): void;
 }
 
 export function play(
@@ -133,11 +144,11 @@ export function play(
         | Asset<MusicData>,
     opt: AudioPlayOpt = {},
 ): AudioPlay {
-    if (typeof src === "string" && assets.music[src]) {
-        return playMusic(assets.music[src], opt);
+    if (typeof src === "string" && _k.assets.music[src]) {
+        return playMusic(_k.assets.music[src], opt);
     }
 
-    const ctx = audio.ctx;
+    const ctx = _k.audio.ctx;
     let paused = opt.paused ?? false;
     let srcNode = ctx.createBufferSource();
     const onEndEvents = new KEvent();
@@ -162,7 +173,7 @@ export function play(
     };
     panNode.pan.value = opt.pan ?? 0;
     panNode.connect(gainNode);
-    gainNode.connect(audio.masterNode);
+    gainNode.connect(opt.connectTo ?? _k.audio.masterNode);
     gainNode.gain.value = opt.volume ?? 1;
 
     const start = (data: SoundData) => {
@@ -197,7 +208,7 @@ export function play(
         newNode.playbackRate.value = oldNode.playbackRate.value;
         newNode.detune.value = oldNode.detune.value;
         newNode.onended = oldNode.onended;
-        newNode.connect(gainNode);
+        newNode.connect(panNode);
         return newNode;
     };
 
@@ -308,6 +319,11 @@ export function play(
 
         then(action: () => void) {
             return this.onEnd(action);
+        },
+
+        connect(node?: AudioNode) {
+            gainNode.disconnect();
+            gainNode.connect(node ?? _k.audio.masterNode);
         },
     };
 }

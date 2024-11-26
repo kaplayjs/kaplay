@@ -1,5 +1,5 @@
 import { pos, type PosComp, tile } from "../components";
-import { game } from "../kaplay";
+import { _k } from "../kaplay";
 import {
     raycastGrid,
     type RaycastResult,
@@ -7,6 +7,7 @@ import {
     vec2,
     type Vec2Args,
 } from "../math/math";
+import { calcWorldTransform } from "../math/various";
 import type { CompList, GameObj, LevelComp, PathFindOpt } from "../types";
 import { BinaryHeap } from "../utils";
 
@@ -66,7 +67,7 @@ export function addLevel(
     }
 
     // TODO: custom parent
-    const level = game.root.add([
+    const level = _k.game.root.add([
         pos(opt.pos ?? vec2(0)),
     ]) as GameObj<PosComp | LevelComp>;
 
@@ -341,7 +342,7 @@ export function addLevel(
                 if (comp.id === "pos") hasPos = true;
             }
 
-            if (!hasPos) comps.push(pos());
+            if (!hasPos) comps.push(pos(this.tile2Pos(p)));
             if (!hasTile) comps.push(tile());
 
             const obj = level.add(comps);
@@ -412,11 +413,17 @@ export function addLevel(
             return spatialMap![hash] || [];
         },
 
-        raycast(origin: Vec2, direction: Vec2) {
-            const levelOrigin = origin.scale(
-                1 / this.tileWidth(),
-                1 / this.tileHeight(),
+        raycast(
+            this: GameObj<LevelComp | PosComp>,
+            origin: Vec2,
+            direction: Vec2,
+        ) {
+            const worldOrigin = this.toWorld(origin);
+            const worldDirection = this.toWorld(origin.add(direction)).sub(
+                worldOrigin,
             );
+            const invTileWidth = 1 / this.tileWidth();
+            const levelOrigin = origin.scale(invTileWidth);
             const hit = raycastGrid(levelOrigin, direction, (tilePos: Vec2) => {
                 const tiles = this.getAt(tilePos);
                 if (tiles.some(t => t.isObstacle)) {
@@ -424,11 +431,11 @@ export function addLevel(
                 }
                 let minHit: RaycastResult = null;
                 for (const tile of tiles) {
-                    if (tile.is("area")) {
+                    if (tile.has("area")) {
                         const shape = tile.worldArea();
                         const hit = shape.raycast(
-                            origin,
-                            direction,
+                            worldOrigin,
+                            worldDirection,
                         ) as RaycastResult;
                         if (hit) {
                             if (minHit) {
@@ -444,13 +451,15 @@ export function addLevel(
                         }
                     }
                 }
-                return minHit! || false;
+                if (minHit) {
+                    minHit.point = this.fromWorld(minHit.point).scale(
+                        invTileWidth,
+                    );
+                }
+                return minHit || false;
             }, 64);
             if (hit) {
-                hit.point = hit.point.scale(
-                    this.tileWidth(),
-                    this.tileHeight(),
-                );
+                hit.point = hit.point.scale(this.tileWidth());
             }
             return hit;
         },
@@ -579,7 +588,7 @@ export function addLevel(
             while (node !== start) {
                 let cameNode = cameFrom.get(node);
 
-                if (!cameNode) {
+                if (cameNode === undefined) {
                     throw new Error("Bug in pathfinding algorithm");
                 }
 

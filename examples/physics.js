@@ -1,3 +1,5 @@
+// @ts-check
+
 kaplay();
 
 loadSprite("bean", "sprites/bean.png");

@@ -11,30 +11,23 @@ import {
     flush,
     popTransform,
     pushRotate,
-    pushScale,
+    pushScaleV,
     pushTransform,
-    pushTranslate,
+    pushTranslateV,
 } from "../gfx";
-import { app, game, gfx, k } from "../kaplay";
-import { Mat4 } from "../math/math";
-import { calcLocalTransform, calcTransform } from "../math/various";
+import { _k } from "../kaplay";
+import { Mat23 } from "../math/math";
+import { calcLocalTransform, calcWorldTransform as calcWorldTransform } from "../math/various";
 import {
     type Comp,
     type CompList,
-    type EventController,
     type GameObj,
     type GameObjInspect,
     type GetOpt,
     type QueryOpt,
     type Tag,
 } from "../types";
-import { isClass, type KEventController, KEventHandler, uid } from "../utils";
-
-type MakeTypeIsFN<T, Chain = T> = T extends (go: GameObj) => infer R ? R
-    : Chain;
-type MakeTypeIsCLASS<T, Chain = T> = T extends new(go: GameObj) => infer R ? R
-    : Chain;
-type MakeType<T> = MakeTypeIsCLASS<T, MakeTypeIsFN<T>>;
+import { KEventController, KEventHandler, uid } from "../utils";
 
 export const LocalTransformDirty = 1;
 export const LocalAreaDirty = 2;
@@ -42,26 +35,26 @@ export const WorldTransformDirty = 4;
 export const WorldAreaDirty = 8;
 export const BBoxDirty = 16;
 export const AllDirty = 31;
-
 export const AreaDirty = 2 | 4;
-
 export const LocalTransformUpdated = WorldTransformDirty | WorldAreaDirty
     | BBoxDirty;
 export const LocalAreaUpdated = WorldAreaDirty | BBoxDirty;
 export const WorldTransformUpdated = WorldAreaDirty | BBoxDirty;
 export const WorldAreaUpdated = BBoxDirty;
 
-export function make<T>(comps: CompList<T> = []): GameObj<MakeType<T>> {
+export function make<T>(comps: CompList<T> = []): GameObj<T> {
     const compStates = new Map<string, Comp>();
     const anonymousCompStates: Comp[] = [];
     const cleanups = {} as Record<string, (() => unknown)[]>;
     const events = new KEventHandler();
     const inputEvents: KEventController[] = [];
+    const tags = new Set<Tag>("*");
+    const treatTagsAsComponents = _k.globalOpt.tagsAsComponents;
     let onCurCompCleanup: Function | null = null;
     let paused = false;
-    let localTransform: Mat4;
-    let worldTransform: Mat4;
-    let parentTransform: Mat4;
+    let localTransform: Mat23 = new Mat23();
+    let worldTransform: Mat23 = new Mat23();
+    let parentTransform: Mat23 = new Mat23();
 
     // the game object without the event methods, added later
     const obj: Omit<GameObj, keyof typeof evs> = {
@@ -75,7 +68,7 @@ export function make<T>(comps: CompList<T> = []): GameObj<MakeType<T>> {
 
         get localTransform() {
             if (this.dirtyFlags & LocalTransformDirty) {
-                localTransform = calcLocalTransform(this as GameObj<any>);
+                localTransform = calcLocalTransform(this as GameObj<any>, localTransform);
 
                 this.dirtyFlags &= ~LocalTransformDirty;
                 this.dirtyFlags |= LocalTransformUpdated;
@@ -84,12 +77,16 @@ export function make<T>(comps: CompList<T> = []): GameObj<MakeType<T>> {
             return localTransform;
         },
 
+        set localTransform(value: Mat23) {
+            throw "Not allowed"
+        },
+
         get worldTransform() {
             if (
                 parentTransform !== this.parent?.worldTransform
                 || this.dirtyFlags & WorldTransformDirty
             ) {
-                worldTransform = calcTransform(this as GameObj<any>);
+                worldTransform = calcWorldTransform(this as GameObj<any>, worldTransform);
                 parentTransform = this.parent?.worldTransform;
 
                 this.dirtyFlags &= ~WorldTransformDirty;
@@ -97,6 +94,10 @@ export function make<T>(comps: CompList<T> = []): GameObj<MakeType<T>> {
             }
 
             return worldTransform;
+        },
+
+        set worldTransform(value: Mat23) {
+            throw "Not allowed"
         },
 
         set paused(p) {
@@ -112,16 +113,10 @@ export function make<T>(comps: CompList<T> = []): GameObj<MakeType<T>> {
         },
 
         get tags() {
-            const tags = [];
-            for (const [key, value] of compStates.entries()) {
-                if (Object.keys(value).length == 1) {
-                    tags.push(key);
-                }
-            }
-            return tags;
+            return Array.from(tags);
         },
 
-        add<T2>(this: GameObj, a: CompList<T2> | GameObj<T2>): GameObj {
+        add<T2>(this: GameObj, a: CompList<T2> | GameObj<T2>): GameObj<T2> {
             const obj = Array.isArray(a) ? make(a) : a;
             if (obj.parent) {
                 throw new Error(
@@ -133,7 +128,7 @@ export function make<T>(comps: CompList<T> = []): GameObj<MakeType<T>> {
             this.children.push(obj);
             // TODO: trigger add for children
             obj.trigger("add", obj);
-            game.events.trigger("add", obj);
+            _k.game.events.trigger("add", obj);
             return obj;
         },
 
@@ -148,13 +143,14 @@ export function make<T>(comps: CompList<T> = []): GameObj<MakeType<T>> {
 
         remove(obj: GameObj): void {
             const idx = this.children.indexOf(obj);
+
             if (idx !== -1) {
                 obj.parent = null;
                 this.children.splice(idx, 1);
 
                 const trigger = (o: GameObj) => {
                     o.trigger("destroy");
-                    game.events.trigger("destroy", o);
+                    _k.game.events.trigger("destroy", o);
                     o.children.forEach((child) => trigger(child));
                 };
 
@@ -198,38 +194,42 @@ export function make<T>(comps: CompList<T> = []): GameObj<MakeType<T>> {
                 flush();
                 this.canvas.bind();
             }
-            const f = gfx.fixed;
-            if (this.fixed) gfx.fixed = true;
+            const f = _k.gfx.fixed;
+            if (this.fixed) _k.gfx.fixed = true;
             pushTransform();
-            pushTranslate(this.pos);
-            pushScale(this.scale);
+            pushTranslateV(this.pos);
+            pushScaleV(this.scale);
             pushRotate(this.angle);
             const children = this.children.sort((o1, o2) => {
-                const l1 = o1.layerIndex ?? game.defaultLayerIndex;
-                const l2 = o2.layerIndex ?? game.defaultLayerIndex;
+                const l1 = o1.layerIndex ?? _k.game.defaultLayerIndex;
+                const l2 = o2.layerIndex ?? _k.game.defaultLayerIndex;
                 return (l1 - l2) || (o1.z ?? 0) - (o2.z ?? 0);
             });
             // TODO: automatically don't draw if offscreen
             if (this.mask) {
                 const maskFunc = {
-                    intersect: k.drawMasked,
-                    subtract: k.drawSubtracted,
+                    intersect: _k.k.drawMasked,
+                    subtract: _k.k.drawSubtracted,
                 }[this.mask];
                 if (!maskFunc) {
                     throw new Error(`Invalid mask func: "${this.mask}"`);
                 }
                 maskFunc(() => {
-                    children.forEach((child) => child.draw());
+                    for (let i = 0; i < children.length; i++) {
+                        children[i].draw();
+                    }
                 }, () => {
                     this.trigger("draw");
                 });
             }
             else {
                 this.trigger("draw");
-                children.forEach((child) => child.draw());
+                for (let i = 0; i < children.length; i++) {
+                    children[i].draw();
+                }
             }
             popTransform();
-            gfx.fixed = f;
+            _k.gfx.fixed = f;
             if (this.canvas) {
                 flush();
                 this.canvas.unbind();
@@ -239,8 +239,8 @@ export function make<T>(comps: CompList<T> = []): GameObj<MakeType<T>> {
         drawInspect(this: GameObj<PosComp | ScaleComp | RotateComp>) {
             if (this.hidden) return;
             pushTransform();
-            pushTranslate(this.pos);
-            pushScale(this.scale);
+            pushTranslateV(this.pos);
+            pushScaleV(this.scale);
             pushRotate(this.angle);
             this.children
                 /*.sort((o1, o2) => (o1.z ?? 0) - (o2.z ?? 0))*/
@@ -249,27 +249,11 @@ export function make<T>(comps: CompList<T> = []): GameObj<MakeType<T>> {
             popTransform();
         },
 
-        // use a comp or a tag
-        use(comp: Comp | Tag) {
-            if (!comp) {
-                return;
-            }
-
-            // class object
-            if (isClass(comp)) comp = new (comp as any)(this);
-
-            // function object
-            if (typeof comp === "function") {
-                return this.use(
-                    (comp as (v: any) => any)(this),
-                );
-            }
-
+        // use a comp
+        use(comp: Comp) {
             // tag
             if (typeof comp === "string") {
-                return this.use({
-                    id: comp,
-                });
+                return tags.add(comp);
             }
 
             let gc = [];
@@ -284,6 +268,9 @@ export function make<T>(comps: CompList<T> = []): GameObj<MakeType<T>> {
             else {
                 anonymousCompStates.push(comp);
             }
+
+            // add component id as tag
+            if (treatTagsAsComponents) tags.add(comp.id!);
 
             for (const k in comp) {
                 if (COMP_DESC.has(k)) {
@@ -318,23 +305,29 @@ export function make<T>(comps: CompList<T> = []): GameObj<MakeType<T>> {
                             comp[k]?.();
                             onCurCompCleanup = null;
                         }
-                        : comp[<keyof typeof comp> k];
-                    gc.push(this.on(k, <any> func).cancel);
+                        : comp[<keyof typeof comp>k];
+                    gc.push(this.on(k, <any>func).cancel);
                 }
                 else {
                     if (this[k] === undefined) {
                         // assign comp fields to game obj
                         Object.defineProperty(this, k, {
-                            get: () => comp[<keyof typeof comp> k],
-                            set: (val) => comp[<keyof typeof comp> k] = val,
+                            get: () => comp[<keyof typeof comp>k],
+                            set: (val) => comp[<keyof typeof comp>k] = val,
                             configurable: true,
                             enumerable: true,
                         });
                         gc.push(() => delete this[k]);
                     }
                     else {
+                        const originalCompId = compStates.values().find(c =>
+                            (c as any)[k] !== undefined
+                        )?.id;
                         throw new Error(
-                            `Duplicate component property: "${k}"`,
+                            `Duplicate component property: "${k}" while adding component "${comp.id}"`
+                            + (originalCompId
+                                ? ` (originally added by "${originalCompId}")`
+                                : ""),
                         );
                     }
                 }
@@ -372,7 +365,8 @@ export function make<T>(comps: CompList<T> = []): GameObj<MakeType<T>> {
             }
         },
 
-        unuse(id: Tag) {
+        // Remove components
+        unuse(id: string) {
             if (compStates.has(id)) {
                 // check all components for a dependent, if there's one, throw an error
                 for (const comp of compStates.values()) {
@@ -384,6 +378,9 @@ export function make<T>(comps: CompList<T> = []): GameObj<MakeType<T>> {
                 }
 
                 compStates.delete(id);
+            }
+            else if (treatTagsAsComponents && tags.has(id)) {
+                tags.delete(id);
             }
 
             if (cleanups[id]) {
@@ -397,8 +394,19 @@ export function make<T>(comps: CompList<T> = []): GameObj<MakeType<T>> {
             return compStates.get(id) ?? null;
         },
 
-        // TODO: Separate
-        get(t: Tag | Tag[], opts: GetOpt = {}): GameObj[] {
+        get<T = any>(t: Tag | Tag[], opts: GetOpt = {}): GameObj<T>[] {
+            const checkTagsOrComps = (child: GameObj, t: Tag | Tag[]) => {
+                if (opts.only === "comps") {
+                    return child.has(t);
+                }
+                else if (opts.only === "tags") {
+                    return child.is(t);
+                }
+                else {
+                    return child.is(t) || child.has(t);
+                }
+            };
+
             let list: GameObj[] = opts.recursive
                 ? this.children.flatMap(
                     function recurse(child: GameObj): GameObj[] {
@@ -407,7 +415,9 @@ export function make<T>(comps: CompList<T> = []): GameObj<MakeType<T>> {
                 )
                 : this.children;
 
-            list = list.filter((child) => t ? child.is(t) : true);
+            list = list.filter((child) =>
+                t ? checkTagsOrComps(child, t) : true
+            );
 
             if (opts.liveUpdate) {
                 const isChild = (obj: GameObj) => {
@@ -416,17 +426,17 @@ export function make<T>(comps: CompList<T> = []): GameObj<MakeType<T>> {
                         : obj.parent === this;
                 };
 
-                const events: EventController[] = [];
+                const events: KEventController[] = [];
 
                 // TODO: handle when object add / remove tags
                 // TODO: clean up when obj destroyed
-                events.push(k.onAdd((obj) => {
-                    if (isChild(obj) && obj.is(t)) {
+                events.push(_k.k.onAdd((obj) => {
+                    if (isChild(obj) && checkTagsOrComps(obj, t)) {
                         list.push(obj);
                     }
                 }));
-                events.push(k.onDestroy((obj) => {
-                    if (isChild(obj) && obj.is(t)) {
+                events.push(_k.k.onDestroy((obj) => {
+                    if (isChild(obj) && checkTagsOrComps(obj, t)) {
                         const idx = list.findIndex((o) => o.id === obj.id);
                         if (idx !== -1) {
                             list.splice(idx, 1);
@@ -477,6 +487,7 @@ export function make<T>(comps: CompList<T> = []): GameObj<MakeType<T>> {
                     );
                     break;
             }
+
             if (include) {
                 const includeOp = opt.includeOp || "and";
 
@@ -491,6 +502,7 @@ export function make<T>(comps: CompList<T> = []): GameObj<MakeType<T>> {
                     );
                 }
             }
+
             if (exclude) {
                 const excludeOp = opt.includeOp || "and";
                 if (excludeOp === "and" || !Array.isArray(opt.include)) {
@@ -504,9 +516,11 @@ export function make<T>(comps: CompList<T> = []): GameObj<MakeType<T>> {
                     );
                 }
             }
+
             if (opt.visible === true) {
                 list = list.filter(o => o.visible);
             }
+
             if (opt.distance) {
                 if (!this.pos) {
                     throw Error(
@@ -540,23 +554,61 @@ export function make<T>(comps: CompList<T> = []): GameObj<MakeType<T>> {
         },
 
         exists(this: GameObj): boolean {
-            return game.root.isAncestorOf(this);
+            return _k.game.root.isAncestorOf(this);
         },
 
-        is(tag: Tag | Tag[]): boolean {
-            if (tag === "*") {
-                return true;
-            }
+        // Tags related
+        // Check if gameobj has a tag
+        is(tag: Tag | Tag[], op: "or" | "and" = "and"): boolean {
             if (Array.isArray(tag)) {
-                for (const t of tag) {
-                    if (!this.c(t)) {
-                        return false;
-                    }
+                if (op === "and") {
+                    return tag.every(tag => tags.has(tag));
                 }
-                return true;
+                else {
+                    return tag.some(tag => tags.has(tag));
+                }
             }
             else {
-                return this.c(tag) != null;
+                return tags.has(tag);
+            }
+        },
+
+        // Tag a game object
+        tag(tag: Tag | Tag[]): void {
+            if (Array.isArray(tag)) {
+                for (const t of tag) {
+                    tags.add(t);
+                }
+            }
+            else {
+                tags.add(tag);
+            }
+        },
+
+        // Untag a game object
+        untag(tag: Tag | Tag[]): void {
+            if (Array.isArray(tag)) {
+                for (const t of tag) {
+                    tags.delete(t);
+                }
+            }
+            else {
+                tags.delete(tag);
+            }
+        },
+
+        // Check if gameobj has a component. It also checks many components with
+        has(compList: string | string[], op: "and" | "or" = "and"): boolean {
+            if (Array.isArray(compList)) {
+                if (op === "and") {
+                    return compList.every((c) => compStates.has(c));
+                }
+                else {
+                    return compList.some(c => compStates.has(c));
+                }
+            }
+            else {
+                return compStates.has(compList);
             }
         },
 
@@ -573,7 +625,7 @@ export function make<T>(comps: CompList<T> = []): GameObj<MakeType<T>> {
 
         trigger(name: string, ...args: unknown[]): void {
             events.trigger(name, ...args);
-            game.objEvents.trigger(name, this, ...args);
+            _k.game.objEvents.trigger(name, this, ...args);
         },
 
         destroy() {
@@ -659,11 +711,23 @@ export function make<T>(comps: CompList<T> = []): GameObj<MakeType<T>> {
 
     for (const e of evs) {
         obj[e] = (...args: [any]) => {
-            const ev = app[e]?.(...args);
+            const ev = _k.app[e]?.(...args);
             inputEvents.push(ev);
 
-            // TODO: what if the game object is destroy and re-added
             obj.onDestroy(() => ev.cancel());
+            obj.on("sceneEnter", () => {
+                // All app events are already canceled by changing the scene
+                // not neccesary -> ev.cancel();
+                inputEvents.splice(inputEvents.indexOf(ev), 1);
+                // create a new event with the same arguments
+                const newEv = _k.app[e]?.(...args);
+
+                // Replace the old event handler with the new one
+                // old KEventController.cancel() => new KEventController.cancel()
+                KEventController.replace(ev, newEv);
+                inputEvents.push(ev);
+            });
+
             return ev;
         };
     }
@@ -672,5 +736,5 @@ export function make<T>(comps: CompList<T> = []): GameObj<MakeType<T>> {
         obj.use(comp as string | Comp);
     }
 
-    return obj as GameObj<MakeType<T>>;
+    return obj as GameObj<T>;
 }
