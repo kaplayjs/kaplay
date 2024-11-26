@@ -1,4 +1,7 @@
-import { build, genDTS } from "./lib.js";
+// @ts-check
+
+import { build } from "./lib/build.js";
+import { genGlobalDTS } from "./lib/globaldts.js";
 
 await build();
-await genDTS();
+await genGlobalDTS();

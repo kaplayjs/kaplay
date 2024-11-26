@@ -19,7 +19,7 @@ function addButton(txt = "start game", p = vec2(200, 100), f = () => debug.log("
         scale(1),
         anchor("center"),
         outline(4),
-        color(0, 0, 0),
+        color(255, 255, 255),
     ]);
 
     // add a child object that displays the text
