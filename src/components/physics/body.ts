@@ -206,14 +206,14 @@ export function body(opt: BodyCompOpt = {}): BodyComp {
                 throw new Error("Can't set body mass to 0");
             }
 
-            if (this.is("area")) {
+            if (this.has("area")) {
                 // static vs static: don't resolve
                 // static vs non-static: always resolve non-static
                 // non-static vs non-static: resolve the first one
                 this.onCollideUpdate(
                     (other, col) => {
                         if (!col) return;
-                        if (!other.is("body")) return;
+                        if (!other.has("body")) return;
                         if (col.resolved) return;
 
                         this.trigger("beforePhysicsResolve", col);
@@ -322,7 +322,7 @@ export function body(opt: BodyCompOpt = {}): BodyComp {
                     // We are still colliding with the platform and the platform exists
                     this.isColliding(curPlatform)
                     && curPlatform.exists()
-                    && curPlatform.is("body")
+                    && curPlatform.has("body")
                 ) {
                     // This needs to happen in onUpdate. Otherwise the player position will jitter.
                     if (
@@ -392,7 +392,7 @@ export function body(opt: BodyCompOpt = {}): BodyComp {
                         // If we are no longer on the platform, or the platform was deleted
                         !this.isColliding(curPlatform)
                         || !curPlatform.exists()
-                        || !curPlatform.is("body")
+                        || !curPlatform.has("body")
                     ) {
                         willFall = true;
                     }

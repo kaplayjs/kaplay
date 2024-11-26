@@ -433,7 +433,7 @@ export function addLevel(
                 }
                 let minHit: RaycastResult = null;
                 for (const tile of tiles) {
-                    if (tile.is("area")) {
+                    if (tile.has("area")) {
                         const shape = tile.worldArea();
                         const hit = shape.raycast(
                             worldOrigin,

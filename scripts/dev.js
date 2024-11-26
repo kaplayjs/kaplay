@@ -1,3 +1,5 @@
-import { dev } from "./lib.js";
+// @ts-check
+
+import { dev } from "./dev/dev.js";
 
 await dev();
