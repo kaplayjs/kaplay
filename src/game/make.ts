@@ -35,7 +35,7 @@ export const WorldTransformDirty = 4;
 export const WorldAreaDirty = 8;
 export const BBoxDirty = 16;
 export const AllDirty = 31;
-export const AreaDirty = 2 | 4;
+export const AreaDirty = LocalAreaDirty | WorldAreaDirty | BBoxDirty;
 export const LocalTransformUpdated = WorldTransformDirty | WorldAreaDirty
     | BBoxDirty;
 export const LocalAreaUpdated = WorldAreaDirty | BBoxDirty;
