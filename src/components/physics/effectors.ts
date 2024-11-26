@@ -26,7 +26,8 @@ export function surfaceEffector(
         speedVariation: opts.speedVariation ?? 0,
         forceScale: opts.speedVariation ?? 0.9,
         add(this: GameObj<AreaComp | SurfaceEffectorComp>) {
-            this.onCollideUpdate("body", (obj, col) => {
+            this.onCollideUpdate((obj, col) => {
+                if (!obj.has("body")) return;
                 const dir = col?.normal.normal();
                 const currentVel = obj.vel.project(dir);
                 const wantedVel = dir?.scale(this.speed);
@@ -57,7 +58,8 @@ export function areaEffector(opts: AreaEffectorCompOpt): AreaEffectorComp {
         linearDrag: opts.linearDrag ?? 0,
         useGlobalAngle: opts.useGlobalAngle ?? true,
         add(this: GameObj<AreaComp | AreaEffectorComp>) {
-            this.onCollideUpdate("body", obj => {
+            this.onCollideUpdate(obj => {
+                if (!obj.has("body")) return;
                 obj.addForce(
                     this.useGlobalAngle
                         ? this.force
@@ -97,7 +99,8 @@ export function pointEffector(opts: PointEffectorCompOpt): PointEffectorComp {
         linearDrag: opts.linearDrag ?? 0,
         // angularDrag: opts.angularDrag ?? 0,
         add(this: GameObj<PointEffectorComp | AreaComp | PosComp>) {
-            this.onCollideUpdate("body", (obj, col) => {
+            this.onCollideUpdate(obj => {
+                if (!obj.has("body")) return;
                 const dir = this.pos.sub(obj.pos);
                 const length = dir.len();
                 const distance = length * this.distanceScale / 10;
@@ -249,7 +252,8 @@ export function buoyancyEffector(
         flowMagnitude: opts.flowMagnitude ?? 0,
         flowVariation: opts.flowVariation ?? 0,
         add(this: GameObj<AreaComp | BuoyancyEffectorComp>) {
-            this.onCollideUpdate("body", (obj, col) => {
+            this.onCollideUpdate(obj => {
+                if (!obj.has("body")) return;
                 const o = obj as GameObj<BodyComp | AreaComp>;
                 const shape = o.worldArea();
                 const polygon: Polygon = shape instanceof Polygon
