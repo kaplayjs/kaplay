@@ -1,6 +1,6 @@
 // @ts-check
 
-// Simple Button UI
+// Simple UI and setup for buttons
 
 kaplay({
     background: [135, 62, 132],
@@ -9,7 +9,12 @@ kaplay({
 // reset cursor to default on frame start for easier cursor management
 onUpdate(() => setCursor("default"));
 
-function addButton(txt, p, f) {
+// Function that adds a button to the game with a given text, position and function
+function addButton(
+    txt = "start game",
+    p = vec2(200, 100),
+    f = () => debug.log("hello"),
+) {
     // add a parent background object
     const btn = add([
         rect(240, 80, { radius: 8 }),
@@ -18,7 +23,7 @@ function addButton(txt, p, f) {
         scale(1),
         anchor("center"),
         outline(4),
-        color(0, 0, 0),
+        color(255, 255, 255),
     ]);
 
     // add a child object that displays the text
@@ -51,5 +56,6 @@ function addButton(txt, p, f) {
     return btn;
 }
 
+// Adds the buttons with the function we added
 addButton("Start", vec2(200, 100), () => debug.log("oh hi"));
 addButton("Quit", vec2(200, 200), () => debug.log("bye"));

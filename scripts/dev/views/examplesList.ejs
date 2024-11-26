@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>KAPLAY Dev Mode</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            padding: 16px;
+            font-size: 16px;
+            font-family: Monospace;
+        }
+
+        .wrapper {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 16px;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 2rem;
+        }
+
+        li {
+            list-style: none;
+            font-size: 1.5rem;
+            text-overflow: ellipsis;
+            overflow: hidden;
+            white-space: nowrap;
+        }
+
+        .title {
+            font-size: 2rem;
+            font-weight: bold;
+        }
+
+        a {
+            color: blue;
+            text-decoration: none;
+        }
+
+        a:hover {
+            background: #6ac96b;
+            color: white;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            body {
+                background: #2a303c;
+            }
+
+            .title {
+                color: white;
+            }
+
+            li {
+                color: #6ac96b;
+            }
+
+            a {
+                color: #6ac96b;
+            }
+
+            a:hover {
+                background: #6ac96b;
+                color: white;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="wrapper">
+        <li class="title">Playtests</li>
+        <% playtests.forEach((example)=> { %>
+            <li>
+                <a href="/<%= example %>">
+                    <%= example %>
+                </a>
+            </li>
+            <% }); %>
+    </div>
+    <div class="wrapper">
+        <li class="title">Examples</li>
+        <% examples.forEach((example)=> { %>
+            <li>
+                <a href="/<%= example %>">
+                    <%= example %>
+                </a>
+            </li>
+
+            <% }); %>
+    </div>
+</body>
+
+</html>

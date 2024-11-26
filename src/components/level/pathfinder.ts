@@ -4,7 +4,7 @@ import type { Comp, GameObj } from "../../types";
 import type { PosComp } from "../transform/pos";
 
 export interface PathfinderMapComp extends Comp {
-    /*
+    /**
      * Get navigation waypoints to reach the given target from the given origin.
      */
     navigate(
@@ -12,14 +12,14 @@ export interface PathfinderMapComp extends Comp {
         target: Vec2,
         navigationOpt: any,
     ): Vec2[] | undefined;
-    /*
+    /**
      * The graph to use for navigation.
      */
     graph: Graph | undefined;
 }
 
 export interface PathfinderMapCompOpt {
-    /*
+    /**
      * The graph to use for navigation. If null, the ancestors are queried for a pathfinderMap component.
      */
     graph?: Graph;
@@ -49,22 +49,22 @@ export function pathfinderMap(
 }
 
 export interface PathfinderComp extends Comp {
-    /*
+    /**
      * Get navigation waypoints to reach the given target from the current position.
      */
     navigateTo(target: Vec2): Vec2[] | undefined;
-    /*
+    /**
      * Get the graph used for navigastion if any.
      */
     graph: Graph | undefined;
 }
 
 export interface PathfinderCompOpt {
-    /*
+    /**
      * The graph to use for navigation. If null, the ancestors are queried for a pathfinderMap component.
      */
     graph?: Graph;
-    /*
+    /**
      * The navigation options depending on the kind of graph used.
      */
     navigationOpt?: any;
@@ -91,7 +91,7 @@ export function pathfinder(
             let parent: GameObj<any> | null =
                 (this as unknown as GameObj<PathfinderComp>).parent;
             while (parent) {
-                if (parent.is("pathfinderMap")) {
+                if (parent.has("pathfinderMap")) {
                     return parent.graph;
                 }
                 parent = parent.parent;

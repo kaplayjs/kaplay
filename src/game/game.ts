@@ -1,5 +1,6 @@
+import type { Asset } from "../assets";
 import type { TimerComp } from "../components";
-import { Mat4, Vec2 } from "../math/math";
+import { Mat23, Vec2 } from "../math/math";
 import { type GameObj, type Key, type MouseButton } from "../types";
 import { KEventHandler } from "../utils";
 import type { GameObjEventMap } from "./events";
@@ -34,6 +35,7 @@ export const initGame = () => {
             add: [GameObj];
             destroy: [GameObj];
             load: [];
+            loadError: [string, Asset<any>];
             loading: [number];
             error: [Error];
             input: [];
@@ -65,7 +67,7 @@ export const initGame = () => {
             scale: new Vec2(1),
             angle: 0,
             shake: 0,
-            transform: new Mat4(),
+            transform: new Mat23(),
         },
     };
 

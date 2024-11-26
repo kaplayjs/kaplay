@@ -1,4 +1,4 @@
-import { assets } from "../kaplay";
+import { _k } from "../kaplay";
 import { type Asset, fetchJSON, loadImg } from "./asset";
 import { loadSprite, type SpriteAnims, type SpriteData } from "./sprite";
 import { fixURL } from "./utils";
@@ -16,7 +16,7 @@ export function loadPedit(
 ): Asset<SpriteData> {
     src = fixURL(src);
 
-    return assets.sprites.add(
+    return _k.assets.sprites.add(
         name,
         new Promise(async (resolve) => {
             const data = typeof src === "string"

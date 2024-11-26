@@ -1,26 +1,42 @@
-# v4000.0.0
+# v4000.0.0 (unreleased)
 
+- Added clipLineToRect
 - Replaced the Separating Axis Theorem (SAT) with the Gilbert–Johnson–Keerthi
   (GJK) distance algorithm.
 - Added circle and (rotated) ellipse collision shapes.
-- Added an ellipse component.
+- Added `ellipse()` component.
 - Circle area is no longer a box.
-- Added a fake cursor API.
 - Added restitution and friction.
-
+- Added a fake cursor API.
   ```js
-  const myCursor = add([fakeMouse(), sprite("kat"), pos(100, 100)]);
+  const myCursor = add([
+      fakeMouse(),
+      sprite("kat"),
+      pos(100, 100),
+  ]);
 
   myCursor.press(); // trigger onClick events if the mouse is over
   myCursor.release();
   myCursor.move(vec2(100, 200)); // move as your wish
   ```
 
-# v4000.0.0 and v3001.0.0
+# v3001.1.0: A perfectionist skull (unreleased)
+
+- Added many JSDoc specifiers on many functions (@require, @deprecated, @since,
+  @group, etc)
+- Added `getLayers()` to get the layers list
+- Added `getDefaulLayer()` to get the default layer
+- Deprecated camera methods `camScale()`, `camPos()` and `camRot()` in favor of
+  `setCamScale()`, `getCamScale()`, `setCamPos()`, `getCamPos()`, `setCamRot()`
+  and `getCamRot`.
+- Deprecated `camFlash()` in favor of `flash()`, for a `shake()`-like name.
+- Deprecated `camTransform()` in favor of `getCamTransform()`.
+
+# v3001.0.0: Spooky Beans!
 
 ## Input
 
-- added input bindings, `onButtonPress`, `onButtonRelease`, `onButtonDown`, and
+- Added input bindings, `onButtonPress`, `onButtonRelease`, `onButtonDown`, and
   it's corresponding boolean versions, `isButtonPressed`, `isButtonDown` and
   `isButtonReleased`.
 
@@ -61,6 +77,14 @@
       const lastInputDevice = getLastInputDeviceType(); // keyboard, mouse or gamepad
       // change icons, etc
   });
+  ```
+
+- added `pressButton(btn)` and `releaseButton(btn)` to simulate button press and
+  release
+
+  ```js
+  pressButton("jump"); // triggers onButtonPress and starts onButtonDown
+  releaseButton("jump"); // triggers onButtonRelease and stops onButtonDown
   ```
 
 - added the possibility of use arrays in all input handlers
@@ -221,9 +245,12 @@
 
 - fix error screen not showing with not Error object
 
+- Added `SpriteComp.animFrame` to get the frame of the current animation (not on
+  the spritesheet)
+
 ## Audio
 
-- now you can pass an `AudioBuffer` to `loadSound()` (**v4000**)
+- now you can pass an `AudioBuffer` to `loadSound()`
 - added `loadMusic()` to load streaming audio (doesn't block in loading screen).
 
   ```js

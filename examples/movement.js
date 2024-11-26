@@ -2,7 +2,7 @@
 
 // Input handling and basic player movement
 
-// Start kaboom
+// Start kaplay
 kaplay();
 
 // Load assets

@@ -2,6 +2,7 @@ import { dt } from "../../app";
 import { drawRaw, type Texture } from "../../gfx";
 import {
     Color,
+    deg2rad,
     lerp,
     map,
     Quad,
@@ -14,6 +15,9 @@ import {
 import type { Comp, Vertex } from "../../types";
 import { KEvent } from "../../utils/";
 
+/**
+ * A particle. Used on the {@link particles `particles()`} component.
+ */
 class Particle {
     pos: Vec2 = vec2(0);
     vel: Vec2 = vec2(0);
@@ -21,13 +25,11 @@ class Particle {
     angle: number = 0;
     angularVelocity: number = 0;
     damping: number = 0;
-    t: number;
+    t: number = 0;
     lt: number | null = null;
-    gc: boolean;
+    gc: boolean = true;
 
     constructor() {
-        this.t = 0;
-        this.gc = true;
     }
 
     get progress() {
@@ -35,86 +37,113 @@ class Particle {
     }
 }
 
+/**
+ * Options for the {@link particles `particles()`}'s component
+ */
 export type EmitterOpt = {
-    /*
-     * Shape of the emitter. If given, particles spwan within this shape.
+    /**
+     * Shape of the emitter. If given, particles spawn within this shape.
      */
     shape?: ShapeType;
-    /*
+    /**
      * Lifetime of the emitter.
      */
     lifetime?: number;
-    /*
+    /**
      * Rate of emission in particles per second if the emitter should emit out of itself.
      */
     rate?: number;
-    /*
+    /**
+     * Position (relative) of emission.
+     */
+    position: Vec2;
+    /**
      * Direction of emission.
      */
     direction: number;
-    /*
+    /**
      * Spread (cone) of emission around the direction.
      */
     spread: number;
 };
 
+/**
+ * Options for the {@link particles `particles()`}'s component
+ *
+ * @group Component Types
+ */
 export type ParticlesOpt = {
-    /*
+    /**
      * Maximum number of simultaneously rendered particles.
      */
     max: number;
-    /*
+    /**
      * Minimum and maximum lifetime of a particle in seconds.
      */
     lifeTime?: [number, number];
-    /*
+    /**
      * Minimum and maximum speed of a particle in pixels per second.
      */
     speed?: [number, number];
-    /*
+    /**
      * Minimum and maximum acceleration of a particle in pixels per second^2.
      */
     acceleration?: [Vec2, Vec2];
-    /*
+    /**
      * Minimum and maximum damping of a particle.
      */
     damping?: [number, number];
-    /*
+    /**
      * Minimum and maximum start angle of a particle.
      */
     angle?: [number, number];
-    /*
+    /**
      * Minimum and maximum angular velocity of a particle.
      */
     angularVelocity?: [number, number];
-    /*
+    /**
      * Scale from start to end for a particle.
      */
     scales?: number[];
-    /*
+    /**
      * Colors from start to end for a particle.
      */
     colors?: Color[];
-    /*
+    /**
      * Opacity from start to end for a particle.
      */
     opacities?: number[];
-    /*
+    /**
      * Quads from start to end for a particle.
      */
     quads?: Quad[];
-    /*
+    /**
      * Texture used for the particle.
      */
     texture: Texture;
 };
 
+/**
+ * The {@link particles `particles()`} component.
+ *
+ * @group Component Types
+ */
 export interface ParticlesComp extends Comp {
-    /*
+    emitter: {
+        /**
+         * Relative position of the emitter
+         */
+        position: Vec2;
+        /**
+         * Relative direction of the emitter
+         */
+        direction: number;
+    }
+    /**
      * Emit a number of particles
      */
     emit(n: number): void;
-    /*
+    /**
      * Called when the emitter expires
      */
     onEnd(cb: () => void): void;
@@ -123,22 +152,26 @@ export interface ParticlesComp extends Comp {
 export function particles(popt: ParticlesOpt, eopt: EmitterOpt): ParticlesComp {
     let emitterLifetime = eopt.lifetime;
 
-    const particles: Particle[] = [];
+    const particles: Particle[] = new Array<Particle>(popt.max);
     const colors = popt.colors || [Color.WHITE];
     const opacities = popt.opacities || [1];
     const quads = popt.quads || [new Quad(0, 0, 1, 1)];
     const scales = popt.scales || [1];
     const lifetime = popt.lifeTime;
-    const direction = eopt.direction;
-    const spread = eopt.spread;
+    const spread = eopt.spread || 0;
     const speed = popt.speed || [0, 0];
     const angleRange = popt.angle || [0, 0];
     const angularVelocityRange = popt.angularVelocity || [0, 0];
     const accelerationRange = popt.acceleration || [vec2(0), vec2(0)];
     const dampingRange = popt.damping || [0, 0];
 
-    const indices: number[] = [];
-    const vertices: Vertex[] = new Array<Vertex>(popt.max);
+    const indices: number[] = new Array<number>(popt.max * 6);
+    const attributes = {
+        pos: new Array<number>(popt.max * 4 * 2),
+        uv: new Array<number>(popt.max * 4 * 2),
+        color: new Array<number>(popt.max * 4 * 3),
+        opacity: new Array<number>(popt.max * 4),
+    };
     let count = 0;
     let time = 0;
 
@@ -150,14 +183,11 @@ export function particles(popt: ParticlesOpt, eopt: EmitterOpt): ParticlesComp {
         indices[i * 6 + 4] = i * 4 + 2;
         indices[i * 6 + 5] = i * 4 + 3;
 
-        for (let j = 0; j < 4; j++) {
-            vertices[i * 4 + j] = {
-                pos: new Vec2(0, 0),
-                uv: new Vec2(0, 0),
-                color: rgb(255, 255, 255),
-                opacity: 1,
-            };
-        }
+        attributes.pos.fill(0);
+        attributes.uv.fill(0);
+        attributes.color.fill(255);
+        attributes.opacity.fill(1);
+
         particles[i] = new Particle();
     }
 
@@ -175,15 +205,20 @@ export function particles(popt: ParticlesOpt, eopt: EmitterOpt): ParticlesComp {
 
     return {
         id: "particles",
+        emitter: {
+            position: eopt.position || vec2(),
+            direction: eopt.direction || 0,
+        },
         emit(n: number) {
+            n = Math.min(n, popt.max - count);
             let index: number | null = 0;
             for (let i = 0; i < n; i++) {
                 index = nextFree(index);
                 if (index == null) return;
 
                 const velocityAngle = rand(
-                    direction - spread,
-                    direction + spread,
+                    this.emitter.direction - spread,
+                    this.emitter.direction + spread,
                 );
                 const vel = Vec2.fromAngle(velocityAngle).scale(
                     rand(speed[0], speed[1]),
@@ -202,11 +237,12 @@ export function particles(popt: ParticlesOpt, eopt: EmitterOpt): ParticlesComp {
                     dampingRange[1],
                 );
                 const lt = lifetime ? rand(lifetime[0], lifetime[1]) : null;
-                const pos = eopt.shape
+                const pos = this.emitter.position.add(eopt.shape
                     ? eopt.shape.random()
-                    : vec2();
+                    : vec2());
 
                 const p = particles[index];
+                p.t = 0;
                 p.lt = lt;
                 p.pos = pos;
                 p.vel = vel;
@@ -214,7 +250,6 @@ export function particles(popt: ParticlesOpt, eopt: EmitterOpt): ParticlesComp {
                 p.angle = angle;
                 p.angularVelocity = angularVelocity;
                 p.damping = damping;
-                p.angularVelocity = angularVelocity;
                 p.gc = false;
             }
             count += n;
@@ -223,14 +258,16 @@ export function particles(popt: ParticlesOpt, eopt: EmitterOpt): ParticlesComp {
             if (emitterLifetime !== undefined && emitterLifetime <= 0) {
                 return;
             }
+
             const DT = dt();
             // Update all particles
-            for (const p of particles) {
+            for (let i = 0; i < particles.length; i++) {
+                const p = particles[i];
                 if (p.gc) {
                     continue;
                 }
                 p.t += DT;
-                if (p.lt && p.t >= p.lt) {
+                if (p.lt !== null && p.t >= p.lt) {
                     p.gc = true;
                     count--;
                     continue;
@@ -250,15 +287,17 @@ export function particles(popt: ParticlesOpt, eopt: EmitterOpt): ParticlesComp {
             time += DT;
             while (
                 count < popt.max && eopt.rate
-                && time > eopt.rate
+                && time > 1 / eopt.rate
             ) {
                 this.emit(1);
-                count++;
-                time -= eopt.rate;
+                time -= 1 / eopt.rate;
             }
         },
         draw() {
-            if (emitterLifetime !== undefined && emitterLifetime <= 0) {
+            if (
+                (emitterLifetime !== undefined && emitterLifetime <= 0)
+                || count == 0
+            ) {
                 return;
             }
 
@@ -266,10 +305,14 @@ export function particles(popt: ParticlesOpt, eopt: EmitterOpt): ParticlesComp {
             for (let i = 0; i < particles.length; i++) {
                 const p = particles[i];
                 if (p.gc) {
+                    attributes.opacity[i * 4] = 0;
+                    attributes.opacity[i * 4 + 1] = 0;
+                    attributes.opacity[i * 4 + 2] = 0;
+                    attributes.opacity[i * 4 + 3] = 0;
                     continue;
                 }
                 const progress = p.progress;
-                const colorIndex = Math.floor(p.progress * colors.length);
+                const colorIndex = Math.floor(progress * colors.length);
                 const color = colorIndex < colors.length - 1
                     ? lerp(
                         colors[colorIndex],
@@ -283,7 +326,7 @@ export function particles(popt: ParticlesOpt, eopt: EmitterOpt): ParticlesComp {
                         ),
                     )
                     : colors[colorIndex];
-                const opacityIndex = Math.floor(p.progress * opacities.length);
+                const opacityIndex = Math.floor(progress * opacities.length);
                 const opacity = opacityIndex < opacities.length - 1
                     ? lerp(
                         opacities[opacityIndex],
@@ -298,63 +341,70 @@ export function particles(popt: ParticlesOpt, eopt: EmitterOpt): ParticlesComp {
                     )
                     : opacities[opacityIndex];
 
-                const quadIndex = Math.floor(p.progress * quads.length);
+                const quadIndex = Math.floor(progress * quads.length);
                 const quad = quads[quadIndex];
-                const scaleIndex = Math.floor(p.progress * scales.length);
+                const scaleIndex = Math.floor(progress * scales.length);
                 const scale = scales[scaleIndex];
-                const c = Math.cos(p.angle * Math.PI / 180);
-                const s = Math.sin(p.angle * Math.PI / 180);
+                // TODO: lerp scale
+                const angle = deg2rad(p.angle);
+                const c = Math.cos(angle);
+                const s = Math.sin(angle);
 
-                const hw = (popt.texture ? popt.texture.width : 10) * quad.w
-                    / 2;
-                const hh = (popt.texture ? popt.texture.height : 10) * quad.h
-                    / 2;
+                const hw = popt.texture.width * quad.w / 2;
+                const hh = popt.texture.height * quad.h / 2;
 
                 let j = i * 4;
                 // Left top
-                let v = vertices[j];
-                v.pos.x = p.pos.x + (-hw) * scale * c - (-hh) * scale * s;
-                v.pos.y = p.pos.y + (-hw) * scale * s + (-hh) * scale * c;
-                v.uv.x = quad.x;
-                v.uv.y = quad.y;
-                v.color.r = color.r;
-                v.color.g = color.g;
-                v.color.b = color.b;
-                v.opacity = opacity;
+                attributes.pos[j * 2] = p.pos.x + (-hw) * scale * c
+                    - (-hh) * scale * s;
+                attributes.pos[j * 2 + 1] = p.pos.y + (-hw) * scale * s
+                    + (-hh) * scale * c;
+                attributes.uv[j * 2] = quad.x;
+                attributes.uv[j * 2 + 1] = quad.y;
+                attributes.color[j * 3] = color.r;
+                attributes.color[j * 3 + 1] = color.g;
+                attributes.color[j * 3 + 2] = color.b;
+                attributes.opacity[j] = opacity;
                 // Right top
-                v = vertices[j + 1];
-                v.pos.x = p.pos.x + hw * scale * c - (-hh) * scale * s;
-                v.pos.y = p.pos.y + hw * scale * s + (-hh) * scale * c;
-                v.uv.x = quad.x + quad.w;
-                v.uv.y = quad.y;
-                v.color.r = color.r;
-                v.color.g = color.g;
-                v.color.b = color.b;
-                v.opacity = opacity;
+                j++;
+                attributes.pos[j * 2] = p.pos.x + hw * scale * c
+                    - (-hh) * scale * s;
+                attributes.pos[j * 2 + 1] = p.pos.y + hw * scale * s
+                    + (-hh) * scale * c;
+                attributes.uv[j * 2] = quad.x + quad.w;
+                attributes.uv[j * 2 + 1] = quad.y;
+                attributes.color[j * 3] = color.r;
+                attributes.color[j * 3 + 1] = color.g;
+                attributes.color[j * 3 + 2] = color.b;
+                attributes.opacity[j] = opacity;
                 // Right bottom
-                v = vertices[j + 2];
-                v.pos.x = p.pos.x + hw * scale * c - hh * scale * s;
-                v.pos.y = p.pos.y + hw * scale * s + hh * scale * c;
-                v.uv.x = quad.x + quad.w;
-                v.uv.y = quad.y + quad.h;
-                v.color.r = color.r;
-                v.color.g = color.g;
-                v.color.b = color.b;
-                v.opacity = opacity;
+                j++;
+                attributes.pos[j * 2] = p.pos.x + hw * scale * c
+                    - hh * scale * s;
+                attributes.pos[j * 2 + 1] = p.pos.y + hw * scale * s
+                    + hh * scale * c;
+                attributes.uv[j * 2] = quad.x + quad.w;
+                attributes.uv[j * 2 + 1] = quad.y + quad.h;
+                attributes.color[j * 3] = color.r;
+                attributes.color[j * 3 + 1] = color.g;
+                attributes.color[j * 3 + 2] = color.b;
+                attributes.opacity[j] = opacity;
                 // Left bottom
-                v = vertices[j + 3];
-                v.pos.x = p.pos.x + (-hw) * scale * c - hh * scale * s;
-                v.pos.y = p.pos.y + (-hw) * scale * s + hh * scale * c;
-                v.uv.x = quad.x;
-                v.uv.y = quad.y + quad.h;
-                v.color.r = color.r;
-                v.color.g = color.g;
-                v.color.b = color.b;
-                v.opacity = opacity;
+                j++;
+                attributes.pos[j * 2] = p.pos.x + (-hw) * scale * c
+                    - hh * scale * s;
+                attributes.pos[j * 2 + 1] = p.pos.y + (-hw) * scale * s
+                    + hh * scale * c;
+                attributes.uv[j * 2] = quad.x;
+                attributes.uv[j * 2 + 1] = quad.y + quad.h;
+                attributes.color[j * 3] = color.r;
+                attributes.color[j * 3 + 1] = color.g;
+                attributes.color[j * 3 + 2] = color.b;
+                attributes.opacity[j] = opacity;
             }
 
             drawRaw(
-                vertices,
+                attributes,
                 indices,
                 (this as any).fixed,
                 popt.texture,

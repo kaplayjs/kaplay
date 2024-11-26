@@ -1,5 +1,6 @@
 // @ts-check
 
+// How to fade in an object
 kaplay();
 
 loadBean();

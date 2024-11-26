@@ -1,4 +1,4 @@
-import { gfx, globalOpt, pixelDensity } from "../kaplay";
+import { _k } from "../kaplay";
 
 // update viewport based on user setting and fullscreen state
 export function updateViewport() {
@@ -7,24 +7,24 @@ export function updateViewport() {
     // window size (will be the same as view size except letterbox mode)
 
     // canvas size
-    const pd = pixelDensity;
-    const canvasWidth = gfx.ggl.gl.drawingBufferWidth / pd;
-    const canvasHeight = gfx.ggl.gl.drawingBufferHeight / pd;
+    const pd = _k.pixelDensity;
+    const canvasWidth = _k.gfx.ggl.gl.drawingBufferWidth / pd;
+    const canvasHeight = _k.gfx.ggl.gl.drawingBufferHeight / pd;
 
-    if (globalOpt.letterbox) {
-        if (!globalOpt.width || !globalOpt.height) {
+    if (_k.globalOpt.letterbox) {
+        if (!_k.globalOpt.width || !_k.globalOpt.height) {
             throw new Error(
                 "Letterboxing requires width and height defined.",
             );
         }
 
         const rc = canvasWidth / canvasHeight;
-        const rg = globalOpt.width / globalOpt.height;
+        const rg = _k.globalOpt.width / _k.globalOpt.height;
 
         if (rc > rg) {
             const sw = canvasHeight * rg;
             const x = (canvasWidth - sw) / 2;
-            gfx.viewport = {
+            _k.gfx.viewport = {
                 x: x,
                 y: 0,
                 width: sw,
@@ -34,7 +34,7 @@ export function updateViewport() {
         else {
             const sh = canvasWidth / rg;
             const y = (canvasHeight - sh) / 2;
-            gfx.viewport = {
+            _k.gfx.viewport = {
                 x: 0,
                 y: y,
                 width: canvasWidth,
@@ -45,15 +45,15 @@ export function updateViewport() {
         return;
     }
 
-    if (globalOpt.stretch) {
-        if (!globalOpt.width || !globalOpt.height) {
+    if (_k.globalOpt.stretch) {
+        if (!_k.globalOpt.width || !_k.globalOpt.height) {
             throw new Error(
                 "Stretching requires width and height defined.",
             );
         }
     }
 
-    gfx.viewport = {
+    _k.gfx.viewport = {
         x: 0,
         y: 0,
         width: canvasWidth,

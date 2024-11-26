@@ -1,6 +1,6 @@
 // @ts-check
-// Egg minigames (yes, like Peppa)
 
+// Egg minigames (yes, like Peppa)
 kaplay({
     background: [135, 62, 132],
 });

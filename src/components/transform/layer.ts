@@ -1,4 +1,4 @@
-import { game } from "../../kaplay";
+import { _k } from "../../kaplay";
 import type { Comp } from "../../types";
 
 /**
@@ -26,7 +26,7 @@ export interface LayerComp extends Comp {
 }
 
 export function layer(layer: string): LayerComp {
-    let _layerIndex = game.layers?.indexOf(layer);
+    let _layerIndex = _k.game.layers?.indexOf(layer);
 
     return {
         id: "layer",
@@ -36,10 +36,10 @@ export function layer(layer: string): LayerComp {
         get layer(): string | null {
             if (!_layerIndex) return null;
 
-            return game.layers?.[_layerIndex] ?? null;
+            return _k.game.layers?.[_layerIndex] ?? null;
         },
         set layer(value: string) {
-            _layerIndex = game.layers?.indexOf(value);
+            _layerIndex = _k.game.layers?.indexOf(value);
 
             if (_layerIndex == -1) throw Error("Invalid layer name");
         },

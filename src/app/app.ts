@@ -20,7 +20,7 @@ import {
     setHasOrIncludes,
 } from "../utils";
 
-import GAMEPAD_MAP from "../data/gamepad.json";
+import GAMEPAD_MAP from "../data/gamepad.json" assert { type: "json" };
 import {
     type ButtonBinding,
     type ButtonsDef,
@@ -79,6 +79,8 @@ export type App = ReturnType<typeof initApp>;
 export type AppState = ReturnType<typeof initAppState>;
 
 export let appState: AppState;
+
+const GP_MAP = GAMEPAD_MAP as Record<string, GamepadDef>;
 
 export const initAppState = (opt: {
     canvas: HTMLCanvasElement;
@@ -445,6 +447,16 @@ export const initApp = (opt: {
         };
     }
 
+    function pressButton(btn: string) {
+        state.buttonState.press(btn);
+        state.events.trigger("buttonPress", btn);
+    }
+
+    function releaseButton(btn: string) {
+        state.buttonState.release(btn);
+        state.events.trigger("buttonRelease", btn);
+    }
+
     function onResize(action: () => void): KEventController {
         return state.events.on("resize", action);
     }
@@ -620,11 +632,11 @@ export const initApp = (opt: {
     }
 
     function onGamepadConnect(action: (gamepad: KGamepad) => void) {
-        state.events.on("gamepadConnect", action);
+        return state.events.on("gamepadConnect", action);
     }
 
     function onGamepadDisconnect(action: (gamepad: KGamepad) => void) {
-        state.events.on("gamepadDisconnect", action);
+        return state.events.on("gamepadDisconnect", action);
     }
 
     function getGamepadStick(stick: GamepadStick): Vec2 {
@@ -672,11 +684,7 @@ export const initApp = (opt: {
         state.mouseState.down.forEach((k) =>
             state.events.trigger("mouseDown", k)
         );
-
         state.buttonState.down.forEach((btn) => {
-            const gamepadBindings = getButton(btn)?.gamepad;
-            if (gamepadBindings && isGamepadButtonDown(gamepadBindings)) return;
-
             state.events.trigger("buttonDown", btn);
         });
 
@@ -764,10 +772,10 @@ export const initApp = (opt: {
         for (const gamepad of state.gamepads) {
             const browserGamepad = navigator.getGamepads()[gamepad.index];
             if (!browserGamepad) continue;
+
             const customMap = opt.gamepads ?? {};
             const map = customMap[browserGamepad.id]
-                ?? (GAMEPAD_MAP as Record<any, GamepadDef>)[browserGamepad.id]
-                ?? GAMEPAD_MAP["default"];
+                || GP_MAP[browserGamepad.id] || GP_MAP["default"];
             const gamepadState = state.gamepadStates.get(gamepad.index);
             if (!gamepadState) continue;
 
@@ -779,39 +787,32 @@ export const initApp = (opt: {
                 );
 
                 if (browserGamepadBtn.pressed) {
-                    if (!gamepadState.buttonState.down.has(gamepadBtn)) {
-                        state.lastInputDevice = "gamepad";
-
-                        if (isGamepadButtonBind) {
-                            // replicate input in merged state, defined button state and gamepad state
-                            state.buttonsByGamepad.get(gamepadBtn)?.forEach(
-                                (btn) => {
-                                    state.buttonState.press(btn);
-                                    state.events.trigger("buttonPress", btn);
-                                },
-                            );
-                        }
-
-                        state.mergedGamepadState.buttonState.press(gamepadBtn);
-                        gamepadState.buttonState.press(gamepadBtn);
+                    if (gamepadState.buttonState.down.has(gamepadBtn)) {
                         state.events.trigger(
-                            "gamepadButtonPress",
+                            "gamepadButtonDown",
                             gamepadBtn,
                             gamepad,
                         );
+
+                        continue;
                     }
 
+                    state.lastInputDevice = "gamepad";
+
                     if (isGamepadButtonBind) {
+                        // replicate input in merged state, defined button state and gamepad state
                         state.buttonsByGamepad.get(gamepadBtn)?.forEach(
                             (btn) => {
                                 state.buttonState.press(btn);
-                                state.events.trigger("buttonDown", btn);
+                                state.events.trigger("buttonPress", btn);
                             },
                         );
                     }
 
+                    state.mergedGamepadState.buttonState.press(gamepadBtn);
+                    gamepadState.buttonState.press(gamepadBtn);
                     state.events.trigger(
-                        "gamepadButtonDown",
+                        "gamepadButtonPress",
                         gamepadBtn,
                         gamepad,
                     );
@@ -1224,6 +1225,7 @@ export const initApp = (opt: {
     resizeObserver.observe(state.canvas);
 
     return {
+        state,
         dt,
         fixedDt,
         restDt,
@@ -1262,6 +1264,8 @@ export const initApp = (opt: {
         isButtonReleased,
         setButton,
         getButton,
+        pressButton,
+        releaseButton,
         charInputted,
         onResize,
         onKeyDown,

@@ -1,5 +1,5 @@
 import { anchor, boom, pos, scale, sprite, stay, timer } from "../components";
-import { boomSprite, game, kaSprite } from "../kaplay";
+import { _k } from "../kaplay";
 import type { Vec2 } from "../math";
 import type { CompList, GameObj } from "../types";
 
@@ -24,7 +24,7 @@ export interface BoomOpt {
 }
 
 export function addKaboom(p: Vec2, opt: BoomOpt = {}): GameObj {
-    const kaboom = game.root.add([
+    const kaboom = _k.game.root.add([
         pos(p),
         stay(),
     ]);
@@ -33,7 +33,7 @@ export function addKaboom(p: Vec2, opt: BoomOpt = {}): GameObj {
     const s = opt.scale || 1;
 
     kaboom.add([
-        sprite(boomSprite),
+        sprite(_k.boomSprite),
         scale(0),
         anchor("center"),
         boom(speed, s),
@@ -41,7 +41,7 @@ export function addKaboom(p: Vec2, opt: BoomOpt = {}): GameObj {
     ]);
 
     const ka = kaboom.add([
-        sprite(kaSprite),
+        sprite(_k.kaSprite),
         scale(0),
         anchor("center"),
         timer(),

@@ -1,8 +1,25 @@
 import { DEF_ANCHOR } from "../../constants";
 import { isFixed } from "../../game/utils";
-import { anchorPt, getViewportScale } from "../../gfx";
-import { app, game, k } from "../../kaplay";
-import { Polygon, rgb, testPolygonPoint, Vec2, vec2 } from "../../math";
+import {
+    anchorPt,
+    drawCircle,
+    drawPolygon,
+    drawRect,
+    getViewportScale,
+    popTransform,
+    pushTransform,
+    pushTranslate,
+} from "../../gfx";
+import { _k } from "../../kaplay";
+import {
+    Circle,
+    Polygon,
+    Rect,
+    rgb,
+    testPolygonPoint,
+    Vec2,
+    vec2,
+} from "../../math";
 import type {
     Collision,
     Comp,
@@ -234,7 +251,7 @@ export function area(opt: AreaCompOpt = {}): AreaComp {
     const collidingThisFrame = new Set();
 
     if (!fakeMouse && !fakeMouseChecked) {
-        fakeMouse = k.get<FakeMouseComp | PosComp>("fakeMouse")[0];
+        fakeMouse = _k.k.get<FakeMouseComp | PosComp>("fakeMouse")[0];
         fakeMouseChecked = true;
     }
 
@@ -247,7 +264,7 @@ export function area(opt: AreaCompOpt = {}): AreaComp {
         add(this: GameObj<AreaComp>) {
             areaCount++;
             if (this.area.cursor) {
-                this.onHover(() => app.setCursor(this.area.cursor!));
+                this.onHover(() => _k.app.setCursor(this.area.cursor!));
             }
 
             this.onCollideUpdate((obj, col) => {
@@ -283,8 +300,8 @@ export function area(opt: AreaCompOpt = {}): AreaComp {
         drawInspect(this: GameObj<AreaComp | AnchorComp | FixedComp>) {
             const a = this.localArea();
 
-            k.pushTransform();
-            k.pushTranslate(this.area.offset);
+            pushTransform();
+            pushTranslate(this.area.offset.x, this.area.offset.y);
 
             const opts = {
                 outline: {
@@ -296,30 +313,30 @@ export function area(opt: AreaCompOpt = {}): AreaComp {
                 fixed: isFixed(this),
             };
 
-            if (a instanceof k.Rect) {
-                k.drawRect({
+            if (a instanceof Rect) {
+                drawRect({
                     ...opts,
                     pos: a.pos,
                     width: a.width * this.area.scale.x,
                     height: a.height * this.area.scale.y,
                 });
             }
-            else if (a instanceof k.Polygon) {
-                k.drawPolygon({
+            else if (a instanceof Polygon) {
+                drawPolygon({
                     ...opts,
                     pts: a.pts,
                     scale: this.area.scale,
                 });
             }
-            else if (a instanceof k.Circle) {
-                k.drawCircle({
+            else if (a instanceof Circle) {
+                drawCircle({
                     ...opts,
                     pos: a.center,
                     radius: a.radius,
                 });
             }
 
-            k.popTransform();
+            popTransform();
         },
 
         area: {
@@ -334,19 +351,21 @@ export function area(opt: AreaCompOpt = {}): AreaComp {
                 return fakeMouse.isPressed && this.isHovering();
             }
 
-            return app.isMousePressed() && this.isHovering();
+            return _k.app.isMousePressed() && this.isHovering();
         },
 
         isHovering(this: GameObj<AreaComp>) {
             if (fakeMouse) {
                 const mpos = isFixed(this)
                     ? fakeMouse.pos
-                    : k.toWorld(fakeMouse.pos);
+                    : _k.k.toWorld(fakeMouse.pos);
 
                 return this.hasPoint(mpos);
             }
 
-            const mpos = isFixed(this) ? k.mousePos() : k.toWorld(k.mousePos());
+            const mpos = isFixed(this)
+                ? _k.k.mousePos()
+                : _k.k.toWorld(_k.k.mousePos());
             return this.hasPoint(mpos);
         },
 
@@ -396,7 +415,7 @@ export function area(opt: AreaCompOpt = {}): AreaComp {
                 });
             }
 
-            const e = k.onMousePress(btn, () => {
+            const e = _k.k.onMousePress(btn, () => {
                 if (this.isHovering()) {
                     action();
                 }
@@ -539,15 +558,15 @@ export function area(opt: AreaCompOpt = {}): AreaComp {
 
             const transform = this.transform
                 .clone()
-                .translate(this.area.offset)
-                .scale(vec2(this.area.scale ?? 1));
+                .translateSelfV(this.area.offset)
+                .scaleSelfV(vec2(this.area.scale ?? 1));
 
-            if (localArea instanceof k.Rect) {
+            if (localArea instanceof Rect) {
                 const offset = anchorPt(this.anchor || DEF_ANCHOR)
                     .add(1, 1)
                     .scale(-0.5)
                     .scale(localArea.width, localArea.height);
-                transform.translate(offset);
+                transform.translateSelfV(offset);
             }
 
             return localArea.transform(transform) as Polygon;
@@ -559,7 +578,7 @@ export function area(opt: AreaCompOpt = {}): AreaComp {
                 return area;
             }
             else {
-                return area.transform(game.cam.transform);
+                return area.transform(_k.game.cam.transform);
             }
         },
 

@@ -6,7 +6,7 @@ import {
     VERTEX_FORMAT,
 } from "../constants";
 import { type GfxCtx } from "../gfx";
-import { assets, gfx } from "../kaplay";
+import { _k } from "../kaplay";
 import { Color } from "../math/color";
 import { Mat4, Vec2 } from "../math/math";
 import type { RenderProps } from "../types";
@@ -170,7 +170,7 @@ export function resolveShader(
     src: RenderProps["shader"],
 ): ShaderData | Asset<ShaderData> | null {
     if (!src) {
-        return gfx.defShader;
+        return _k.gfx.defShader;
     }
     if (typeof src === "string") {
         const shader = getShader(src);
@@ -192,7 +192,7 @@ export function resolveShader(
 }
 
 export function getShader(name: string): Asset<ShaderData> | null {
-    return assets.shaders.get(name) ?? null;
+    return _k.assets.shaders.get(name) ?? null;
 }
 
 export function loadShader(
@@ -200,7 +200,7 @@ export function loadShader(
     vert?: string,
     frag?: string,
 ) {
-    return assets.shaders.addLoaded(name, makeShader(gfx.ggl, vert, frag));
+    return _k.assets.shaders.addLoaded(name, makeShader(_k.gfx.ggl, vert, frag));
 }
 
 export function loadShaderURL(
@@ -216,7 +216,7 @@ export function loadShaderURL(
             : Promise.resolve(null);
     const load = Promise.all([resolveUrl(vert), resolveUrl(frag)])
         .then(([vcode, fcode]: [string | null, string | null]) => {
-            return makeShader(gfx.ggl, vcode, fcode);
+            return makeShader(_k.gfx.ggl, vcode, fcode);
         });
-    return assets.shaders.add(name, load);
+    return _k.assets.shaders.add(name, load);
 }

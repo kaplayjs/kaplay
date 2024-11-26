@@ -1,6 +1,6 @@
 // @ts-check
 
-// Start kaboom
+// Start kaplay
 kaplay();
 
 setBackground(BLACK);
@@ -15,7 +15,7 @@ add([
 // Add the node that you write in
 const food = add([
     text(""),
-    textInput(true, 10), // make it have focus and only be 20 chars max
+    textInput(true, 20), // make it have focus and only be 20 chars max
     pos(width() / 2, height() / 2),
     anchor("center"),
 ]);

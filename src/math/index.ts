@@ -6,5 +6,6 @@ export * from "./navigation";
 export * from "./navigationgrid";
 export * from "./navigationmesh";
 export * from "./sat";
+export * from "./spatial/sweepandprune";
 export * from "./various";
 export * from "./vec3";
