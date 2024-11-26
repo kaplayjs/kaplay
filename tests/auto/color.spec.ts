@@ -1,5 +1,5 @@
 import { expect, test } from "vitest";
-import { Color, rgb } from "../color";
+import { Color, rgb } from "../../src/math/color";
 
 test("new Color(44, 44, 44) should return Color(44, 44, 44)", () => {
     const color = new Color(44, 44, 44);
