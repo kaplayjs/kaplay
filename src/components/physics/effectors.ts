@@ -68,6 +68,8 @@ export function areaEffector(opts: AreaEffectorCompOpt): AreaEffectorComp {
         // angularDrag: opts.angularDrag ?? 0,
         add(this: GameObj<AreaComp | AreaEffectorComp>) {
             this.onCollideUpdate("body", (obj, col) => {
+                if (!obj.has("body")) return;
+
                 const dir = Vec2.fromAngle(this.forceAngle);
                 const force = dir.scale(this.forceMagnitude);
                 obj.addForce(force);
