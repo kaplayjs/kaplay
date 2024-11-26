@@ -32,7 +32,6 @@ export function surfaceEffector(
                 const wantedVel = dir?.scale(this.speed);
                 const force = wantedVel?.sub(currentVel);
                 obj.addForce(force?.scale(obj.mass * this.forceScale));
-                console.log("onCollideUpdate")
             });
         },
     };
