@@ -4,7 +4,7 @@
     "target": "ESNext",
     "module": "ESNext",
     "moduleResolution": "Bundler",
-    "skipLibCheck": true,
+    "skipLibCheck": false,
     "resolveJsonModule": true,
     "emitDeclarationOnly": true,
     "declaration": true,

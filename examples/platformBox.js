@@ -71,5 +71,5 @@ onKeyDown("right", () => {
 });
 
 onUpdate(() => {
-    camPos(player.worldPos());
+    setCamPos(player.worldPos());
 });

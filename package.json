@@ -46,21 +46,21 @@
   "scripts": {
     "dev": "NODE_ENV=development node scripts/dev.js",
     "win:dev": "set NODE_ENV=development && node scripts/dev.js",
-    "build": "npm run dts && node scripts/build.js && npm run merge-dts",
+    "build": "tsc --p tsconfig.dts.json && node scripts/build.js && npm run doc-dts",
     "check": "tsc",
     "fmt": "dprint fmt",
     "test": "node scripts/test.js",
-    "merge-dts": "dts-bundle-generator -o dist/doc.d.ts dist/declaration/index.d.ts",
+    "doc-dts": "dts-bundle-generator -o dist/doc.d.ts dist/declaration/index.d.ts",
     "test:vite": "vitest",
     "desktop": "tauri dev",
     "prepare": "npm run build",
-    "publish:next": "npm publish --tag next",
-    "dts": "tsc --p tsconfig.dts.json"
+    "publish:next": "npm publish --tag next"
   },
   "devDependencies": {
     "@kaplayjs/dprint-config": "^1.1.0",
     "dprint": "^0.45.1",
     "dts-bundle-generator": "^9.5.1",
+    "ejs": "^3.1.10",
     "esbuild": "^0.21.5",
     "express": "^4.21.1",
     "puppeteer": "^22.15.0",

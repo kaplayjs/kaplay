@@ -1,9 +1,8 @@
 const VERSION = "3001.0.0";
 
-import { type App, type ButtonsDef, initApp } from "./app";
+import { type ButtonsDef, initApp } from "./app";
 
 import {
-    type AppGfxCtx,
     center,
     drawBezier,
     drawCircle,
@@ -78,7 +77,6 @@ import {
     ASCII_CHARS,
     BG_GRID_SIZE,
     DBG_FONT,
-    DEF_HASH_GRID_SIZE,
     LOG_MAX,
     MAX_TEXT_CACHE_SIZE,
 } from "./constants";
@@ -134,7 +132,6 @@ import {
     Rect,
     rgb,
     RNG,
-    sat,
     shuffle,
     SweepAndPrune,
     testCirclePolygon,
@@ -230,7 +227,7 @@ import {
 } from "./components";
 
 import { dt, fixedDt, restDt } from "./app";
-import { burp, initAudio, play, volume } from "./audio";
+import { burp, getVolume, initAudio, play, setVolume, volume } from "./audio";
 
 import {
     addKaboom,
@@ -241,8 +238,15 @@ import {
     camScale,
     camTransform,
     destroy,
+    flash,
+    getCamPos,
+    getCamRot,
+    getCamScale,
+    getCamTransform,
+    getDefaultLayer,
     getGravity,
     getGravityDirection,
+    getLayers,
     getSceneName,
     getTreeRoot,
     go,
@@ -270,8 +274,12 @@ import {
     onSceneLeave,
     onUpdate,
     scene,
+    setCamPos,
+    setCamRot,
+    setCamScale,
     setGravity,
     setGravityDirection,
+    setLayers,
     shake,
     toScreen,
     toWorld,
@@ -481,7 +489,9 @@ const kaplay = <
                 flush();
                 fb.unbind();
             },
-            get fb() { return fb; }
+            get fb() {
+                return fb;
+            },
         };
     }
 
@@ -828,7 +838,7 @@ const kaplay = <
         if (!sapInit) {
             sapInit = true;
             onAdd(obj => {
-                if (obj.is("area")) {
+                if (obj.has("area")) {
                     sap.add(obj as GameObj<AreaComp>);
                 }
             });
@@ -840,7 +850,7 @@ const kaplay = <
                 sap.clear();
             });
             for (const obj of get("*", { recursive: true })) {
-                if (obj.is("area")) {
+                if (obj.has("area")) {
                     sap.add(obj as GameObj<AreaComp>);
                 }
             }
@@ -1165,6 +1175,14 @@ const kaplay = <
         onError,
         onCleanup,
         // misc
+        flash: flash,
+        setCamPos: setCamPos,
+        getCamPos: getCamPos,
+        setCamRot: setCamRot,
+        getCamRot: getCamRot,
+        setCamScale: setCamScale,
+        getCamScale: getCamScale,
+        getCamTransform: getCamTransform,
         camPos,
         camScale,
         camFlash,
@@ -1305,6 +1323,8 @@ const kaplay = <
         wait,
         // audio
         play,
+        setVolume: setVolume,
+        getVolume: getVolume,
         volume,
         burp,
         audioCtx: audio.ctx,
@@ -1406,7 +1426,10 @@ const kaplay = <
         go,
         onSceneLeave,
         // layers
-        layers,
+        layers: layers,
+        getLayers: getLayers,
+        setLayers: setLayers,
+        getDefaultLayer: getDefaultLayer,
         // level
         addLevel,
         // storage
