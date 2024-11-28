@@ -9,6 +9,7 @@
   and `getCamRot`.
 - Deprecated `camFlash()` in favor of `flash()`, for a `shake()`-like name.
 - Deprecated `camTransform()` in favor of `getCamTransform()`.
+- Fixed artifacts present in some TrueType fonts.
 
 # v3001.0.0: Spooky Beans!
 
