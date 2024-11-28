@@ -100,3 +100,4 @@ export const DEF_OFFSCREEN_DIS = 200;
 // maximum y velocity with body()
 export const DEF_JUMP_FORCE = 640;
 export const MAX_VEL = 65536;
+export const EVENT_CANCEL_SYMBOL = Symbol.for("kaplay.cancel");

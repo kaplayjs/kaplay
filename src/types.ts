@@ -5510,6 +5510,19 @@ export interface KAPLAYCtx<
      */
     KEventController: typeof KEventController;
     /**
+     * Cancels the event if returned.
+     * 
+     * @since v3001.1
+     * @group Events
+     * @example
+     * ```js
+     * onKeyPress((key) => {
+     *     if (key === "q") return k.cancel();
+     * });
+     * ```
+     */
+    cancel: () => Symbol,
+    /**
      * Current KAPLAY library version.
      *
      * @since v3000.0
