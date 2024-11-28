@@ -53,7 +53,7 @@ export function patrol(
     let speed = opts.speed || 100; // Or throw error?
     let endBehavior = opts.endBehavior || "stop"; // Default is stop.
     let index = 0;
-    let finished = waypoints != null;
+    let finished = false;
     return {
         id: "patrol",
         require: ["pos"],
