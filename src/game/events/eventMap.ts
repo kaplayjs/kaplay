@@ -20,6 +20,8 @@ export type GameObjEventNames =
     | "draw"
     | "add"
     | "destroy"
+    | "use"
+    | "unuse"
     | "collide"
     | "collideUpdate"
     | "collideEnd"
@@ -63,6 +65,10 @@ export type GameObjEventMap = {
     "add": [GameObj];
     /** Triggered when object is destroyed */
     "destroy": [GameObj];
+    /** Triggered when component is used */
+    "use": [GameObj, string];
+    /** Triggered when component is unused */
+    "unuse": [GameObj, string];
     /**
      * Triggered when object collides with another object
      *

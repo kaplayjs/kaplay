@@ -254,15 +254,15 @@ export function make<T>(comps: CompList<T> = []): GameObj<T> {
                             comp[k]?.();
                             onCurCompCleanup = null;
                         }
-                        : comp[<keyof typeof comp> k];
-                    gc.push(this.on(k, <any> func).cancel);
+                        : comp[<keyof typeof comp>k];
+                    gc.push(this.on(k, <any>func).cancel);
                 }
                 else {
                     if (this[k] === undefined) {
                         // assign comp fields to game obj
                         Object.defineProperty(this, k, {
-                            get: () => comp[<keyof typeof comp> k],
-                            set: (val) => comp[<keyof typeof comp> k] = val,
+                            get: () => comp[<keyof typeof comp>k],
+                            set: (val) => comp[<keyof typeof comp>k] = val,
                             configurable: true,
                             enumerable: true,
                         });
@@ -274,9 +274,9 @@ export function make<T>(comps: CompList<T> = []): GameObj<T> {
                         )?.id;
                         throw new Error(
                             `Duplicate component property: "${k}" while adding component "${comp.id}"`
-                                + (originalCompId
-                                    ? ` (originally added by "${originalCompId}")`
-                                    : ""),
+                            + (originalCompId
+                                ? ` (originally added by "${originalCompId}")`
+                                : ""),
                         );
                     }
                 }
@@ -307,7 +307,8 @@ export function make<T>(comps: CompList<T> = []): GameObj<T> {
                     onCurCompCleanup = null;
                 }
                 if (comp.id) {
-                    this.trigger("compAdd", comp.id);
+                    this.trigger("use", comp.id);
+                    _k.game.events.trigger("use", obj, comp.id);
                 }
             }
             else {
@@ -331,7 +332,8 @@ export function make<T>(comps: CompList<T> = []): GameObj<T> {
 
                 compStates.delete(id);
 
-                this.trigger("compDestroy", id);
+                this.trigger("unuse", id);
+                _k.game.events.trigger("unuse", obj, id);
             }
             else if (treatTagsAsComponents && tags.has(id)) {
                 tags.delete(id);
@@ -634,12 +636,12 @@ export function make<T>(comps: CompList<T> = []): GameObj<T> {
             return this.on("destroy", action);
         },
 
-        onCompAdd(action: (id: string) => void): KEventController {
-            return this.on("compAdd", action);
+        onUse(action: (id: string) => void): KEventController {
+            return this.on("use", action);
         },
 
-        onCompDestroy(action: (id: string) => void): KEventController {
-            return this.on("compDestroy", action);
+        onUnuse(action: (id: string) => void): KEventController {
+            return this.on("unuse", action);
         },
 
         clearEvents() {
