@@ -1,8 +1,8 @@
 # v4000.0.0 (unreleased)
 
-- Added clipLineToRect
-- Replaced the Separating Axis Theorem (SAT) with the Gilbert–Johnson–Keerthi
-  (GJK) distance algorithm.
+- Added `clipLineToRect()`
+- Replaced the Separating Axis Theorem (SAT) with the "Gilbert–Johnson–Keerthi"
+  (`GJK`) distance algorithm.
 - Added circle and (rotated) ellipse collision shapes.
 - Added `ellipse()` component.
 - Circle area is no longer a box.
@@ -31,6 +31,7 @@
   and `getCamRot`.
 - Deprecated `camFlash()` in favor of `flash()`, for a `shake()`-like name.
 - Deprecated `camTransform()` in favor of `getCamTransform()`.
+- Fixed artifacts present in some TrueType fonts.
 
 # v3001.0.0: Spooky Beans!
 

@@ -11,13 +11,15 @@ import { Quad, Vec2, vec2 } from "../math/math";
 import { type Outline, type TexFilter } from "../types";
 import { runes } from "../utils";
 import { alignPt } from "./anchor";
-import type {
-    CharTransform,
-    DrawTextOpt,
-    FormattedChar,
-    FormattedText,
+import {
+    type CharTransform,
+    type DrawTextOpt,
+    drawUVQuad,
+    type FormattedChar,
+    type FormattedText,
 } from "./draw";
 import { Texture } from "./gfx";
+import { center } from "./stack";
 
 type FontAtlas = {
     font: BitmapFontData;
@@ -148,9 +150,14 @@ export function formatText(opt: DrawTextOpt): FormattedText {
         // TODO: customizable font tex filter
         const atlas: FontAtlas = fontAtlases[fontName] ?? {
             font: {
-                tex: new Texture(_k.gfx.ggl, FONT_ATLAS_WIDTH, FONT_ATLAS_HEIGHT, {
-                    filter: opts.filter,
-                }),
+                tex: new Texture(
+                    _k.gfx.ggl,
+                    FONT_ATLAS_WIDTH,
+                    FONT_ATLAS_HEIGHT,
+                    {
+                        filter: opts.filter,
+                    },
+                ),
                 map: {},
                 size: DEF_TEXT_CACHE_SIZE,
             },
@@ -180,6 +187,7 @@ export function formatText(opt: DrawTextOpt): FormattedText {
                     _k.fontCacheCanvas.width,
                     _k.fontCacheCanvas.height,
                 );
+
                 c2d.font = `${font.size}px ${fontName}`;
                 c2d.textBaseline = "top";
                 c2d.textAlign = "left";
@@ -187,7 +195,8 @@ export function formatText(opt: DrawTextOpt): FormattedText {
                 const m = c2d.measureText(ch);
                 let w = Math.ceil(m.width);
                 if (!w) continue;
-                let h = m.fontBoundingBoxAscent + m.fontBoundingBoxDescent;
+                let h = Math.ceil(Math.abs(m.actualBoundingBoxAscent))
+                    + Math.ceil(Math.abs(m.actualBoundingBoxDescent));
 
                 // TODO: Test if this works with the verification of width and color
                 if (
@@ -213,7 +222,12 @@ export function formatText(opt: DrawTextOpt): FormattedText {
                     atlas.outline?.width ?? 0,
                 );
 
-                const img = c2d.getImageData(0, 0, w, h);
+                const img = c2d.getImageData(
+                    0,
+                    0,
+                    w,
+                    h,
+                );
 
                 // if we are about to exceed the X axis of the texture, go to another line
                 if (atlas.cursor.x + w > FONT_ATLAS_WIDTH) {
@@ -228,13 +242,15 @@ export function formatText(opt: DrawTextOpt): FormattedText {
                 }
 
                 font.tex.update(img, atlas.cursor.x, atlas.cursor.y);
+
                 font.map[ch] = new Quad(
                     atlas.cursor.x,
                     atlas.cursor.y,
                     w,
                     h,
                 );
-                atlas.cursor.x += w;
+
+                atlas.cursor.x += w + 1;
             }
         }
     }

@@ -60,7 +60,7 @@ export const initAppGfx = (gopt: KAPLAYOpt, ggl: GfxCtx) => {
 
     gl.enable(gl.BLEND);
     gl.blendFuncSeparate(
-        gl.SRC_ALPHA,
+        gl.ONE,
         gl.ONE_MINUS_SRC_ALPHA,
         gl.ONE,
         gl.ONE_MINUS_SRC_ALPHA,
