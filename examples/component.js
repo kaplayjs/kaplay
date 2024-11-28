@@ -114,10 +114,10 @@ add([
     pos(12, 12),
 ]);
 
-bean.onCompAdd(id => {
+bean.onUse(id => {
     debug.log(`Component ${id} added`);
 })
 
-bean.onCompDestroy(id => {
+bean.onUnuse(id => {
     debug.log(`Component ${id} removed`);
 })
