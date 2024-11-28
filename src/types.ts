@@ -6437,6 +6437,8 @@ export interface LevelComp extends Comp {
      */
     getPath(from: Vec2, to: Vec2, opts?: PathFindOpt): Vec2[] | null;
     getSpatialMap(): GameObj[][];
+    removeFromSpatialMap(obj: GameObj): void;
+    insertIntoSpatialMap(obj: GameObj): void;
     onSpatialMapChanged(cb: () => void): KEventController;
     onNavigationMapInvalid(cb: () => void): KEventController;
     invalidateNavigationMap(): void;
