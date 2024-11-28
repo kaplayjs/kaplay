@@ -165,14 +165,6 @@ export function formatText(opt: DrawTextOpt): FormattedText {
             outline: opts.outline,
         };
 
-        drawUVQuad({
-            tex: atlas.font.tex,
-            height: atlas.font.tex.height,
-            width: atlas.font.tex.width,
-            pos: vec2(0, center().y),
-            scale: vec2(2),
-        });
-
         if (!fontAtlases[fontName]) {
             fontAtlases[fontName] = atlas;
         }
