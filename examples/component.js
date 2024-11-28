@@ -88,7 +88,11 @@ onKeyPress("space", () => {
     // .coolness is from our plain object 'unnamed component'
     if (bean.coolness >= 100) {
         // We can use .getFunky() provided by the funky() component now
+        if (!bean.has("funky")) {
+            bean.use(funky());
+        }
         bean.getFunky();
+        debug.log(`Funky`);
     }
 });
 
@@ -101,6 +105,7 @@ onKeyPress("escape", () => {
     // .unuse() removes a component from the game object
     // The tag is the one that appears on the id
     bean.unuse("funky");
+    debug.log(`Not funky`);
 });
 
 // Adds a text object
@@ -108,3 +113,11 @@ add([
     text("Press space to get funky", { width: width() }),
     pos(12, 12),
 ]);
+
+bean.onCompAdd(id => {
+    debug.log(`Component ${id} added`);
+})
+
+bean.onCompDestroy(id => {
+    debug.log(`Component ${id} removed`);
+})

@@ -306,6 +306,9 @@ export function make<T>(comps: CompList<T> = []): GameObj<T> {
                     comp.add.call(this);
                     onCurCompCleanup = null;
                 }
+                if (comp.id) {
+                    this.trigger("compAdd", comp.id);
+                }
             }
             else {
                 if (comp.require) {
@@ -327,6 +330,8 @@ export function make<T>(comps: CompList<T> = []): GameObj<T> {
                 }
 
                 compStates.delete(id);
+
+                this.trigger("compDestroy", id);
             }
             else if (treatTagsAsComponents && tags.has(id)) {
                 tags.delete(id);
@@ -627,6 +632,14 @@ export function make<T>(comps: CompList<T> = []): GameObj<T> {
 
         onDestroy(action: () => void): KEventController {
             return this.on("destroy", action);
+        },
+
+        onCompAdd(action: (id: string) => void): KEventController {
+            return this.on("compAdd", action);
+        },
+
+        onCompDestroy(action: (id: string) => void): KEventController {
+            return this.on("compDestroy", action);
         },
 
         clearEvents() {

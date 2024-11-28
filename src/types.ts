@@ -6149,6 +6149,20 @@ export interface GameObjRaw {
      */
     onDestroy(action: () => void): KEventController;
     /**
+     * Register an event that runs when a component is used.
+     *
+     * @returns The event controller.
+     * @since v4000.0
+     */
+    onCompAdd(action: (id: string) => void): KEventController;
+    /**
+     * Register an event that runs when a component is unused.
+     *
+     * @returns The event controller.
+     * @since v4000.0
+     */
+    onCompDestroy(action: (id: string) => void): KEventController;
+    /**
      * If game obj is attached to the scene graph.
      *
      * @returns true if attached, false otherwise.
