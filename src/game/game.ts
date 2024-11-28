@@ -34,6 +34,8 @@ export const initGame = () => {
             scroll: [Vec2];
             add: [GameObj];
             destroy: [GameObj];
+            use: [GameObj, string];
+            unuse: [GameObj, string];
             load: [];
             loadError: [string, Asset<any>];
             loading: [number];

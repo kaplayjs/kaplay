@@ -199,7 +199,7 @@ export function make<T>(comps: CompList<T> = []): GameObj<T> {
         },
 
         // use a comp
-        use(comp: Comp) {
+        use(this: GameObj, comp: Comp) {
             // tag
             if (typeof comp === "string") {
                 return tags.add(comp);
@@ -308,7 +308,7 @@ export function make<T>(comps: CompList<T> = []): GameObj<T> {
                 }
                 if (comp.id) {
                     this.trigger("use", comp.id);
-                    _k.game.events.trigger("use", obj, comp.id);
+                    _k.game.events.trigger("use", this, comp.id);
                 }
             }
             else {
@@ -319,7 +319,7 @@ export function make<T>(comps: CompList<T> = []): GameObj<T> {
         },
 
         // Remove components
-        unuse(id: string) {
+        unuse(this: GameObj, id: string) {
             if (compStates.has(id)) {
                 // check all components for a dependent, if there's one, throw an error
                 for (const comp of compStates.values()) {
@@ -333,7 +333,7 @@ export function make<T>(comps: CompList<T> = []): GameObj<T> {
                 compStates.delete(id);
 
                 this.trigger("unuse", id);
-                _k.game.events.trigger("unuse", obj, id);
+                _k.game.events.trigger("unuse", this, id);
             }
             else if (treatTagsAsComponents && tags.has(id)) {
                 tags.delete(id);
