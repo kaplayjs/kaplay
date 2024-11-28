@@ -15,13 +15,13 @@ export function on<Ev extends GameObjEventNames | string & {}>(
     tag: Tag,
     cb: (obj: GameObj, ...args: TupleWithoutFirst<GameObjEventMap[Ev]>) => void,
 ): KEventController {
-    if (!_k.game.objEvents.registers[<keyof GameObjEventMap> event]) {
-        _k.game.objEvents.registers[<keyof GameObjEventMap> event] =
+    if (!_k.game.objEvents.registers[<keyof GameObjEventMap>event]) {
+        _k.game.objEvents.registers[<keyof GameObjEventMap>event] =
             new Registry() as any;
     }
 
     return _k.game.objEvents.on(
-        <keyof GameObjEventMap> event,
+        <keyof GameObjEventMap>event,
         (obj, ...args) => {
             if (obj.is(tag)) {
                 cb(obj, ...args as TupleWithoutFirst<GameObjEventMap[Ev]>);
@@ -88,6 +88,18 @@ export const onDestroy = overload2((action: (obj: GameObj) => void) => {
     return _k.game.events.on("destroy", action);
 }, (tag: Tag, action: (obj: GameObj) => void) => {
     return on("destroy", tag, action);
+});
+
+export const onUse = overload2((action: (obj: GameObj, id: string) => void) => {
+    return _k.game.events.on("use", action);
+}, (tag: Tag, action: (obj: GameObj, id: string) => void) => {
+    return on("use", tag, action);
+});
+
+export const onUnuse = overload2((action: (obj: GameObj, id: string) => void) => {
+    return _k.game.events.on("unuse", action);
+}, (tag: Tag, action: (obj: GameObj, id: string) => void) => {
+    return on("unuse", tag, action);
 });
 
 // add an event that runs with objs with t1 collides with objs with t2
