@@ -35,6 +35,7 @@ export interface TileComp extends Comp {
     tilePosOffset: Vec2;
     readonly edgeMask: EdgeMask;
     getLevel(): GameObj<LevelComp>;
+    tileMove(dir: Vec2): void;
     moveLeft(): void;
     moveRight(): void;
     moveUp(): void;
@@ -142,20 +143,28 @@ export function tile(opts: TileCompOpt = {}): TileComp {
             return this.parent as GameObj<LevelComp>;
         },
 
+        tileMove(dir: Vec2) {
+            const level = this.getLevel();
+            level.removeFromSpatialMap(this as unknown as GameObj<TileComp>);
+            this.tilePos = this.tilePos.add(dir);
+            level.insertIntoSpatialMap(this as unknown as GameObj<TileComp>);
+            level.trigger("spatialMapChanged");
+        },
+
         moveLeft() {
-            this.tilePos = this.tilePos.add(vec2(-1, 0));
+            this.tileMove(vec2(-1, 0));
         },
 
         moveRight() {
-            this.tilePos = this.tilePos.add(vec2(1, 0));
+            this.tileMove(vec2(1, 0));
         },
 
         moveUp() {
-            this.tilePos = this.tilePos.add(vec2(0, -1));
+            this.tileMove(vec2(0, -1));
         },
 
         moveDown() {
-            this.tilePos = this.tilePos.add(vec2(0, 1));
+            this.tileMove(vec2(0, 1));
         },
     };
 }

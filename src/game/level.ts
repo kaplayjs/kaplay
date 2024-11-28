@@ -399,6 +399,10 @@ export function addLevel(
             return spatialMap!;
         },
 
+        removeFromSpatialMap,
+
+        insertIntoSpatialMap,
+
         onSpatialMapChanged(this: GameObj<LevelComp>, cb: () => void) {
             return this.on("spatialMapChanged", cb);
         },
