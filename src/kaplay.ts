@@ -78,6 +78,7 @@ import {
     BG_GRID_SIZE,
     DBG_FONT,
     DEF_HASH_GRID_SIZE,
+    EVENT_CANCEL_SYMBOL,
     LOG_MAX,
     MAX_TEXT_CACHE_SIZE,
 } from "./constants";
@@ -1383,6 +1384,7 @@ const kaplay = <
         KEvent,
         KEventHandler,
         KEventController,
+        cancel: () => EVENT_CANCEL_SYMBOL,
     };
 
     _k.k = ctx;
