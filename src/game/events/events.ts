@@ -90,17 +90,13 @@ export const onDestroy = overload2((action: (obj: GameObj) => void) => {
     return on("destroy", tag, action);
 });
 
-export const onUse = overload2((action: (obj: GameObj, id: string) => void) => {
+export const onUse = (action: (obj: GameObj, id: string) => void) => {
     return _k.game.events.on("use", action);
-}, (tag: Tag, action: (obj: GameObj, id: string) => void) => {
-    return on("use", tag, action);
-});
+};
 
-export const onUnuse = overload2((action: (obj: GameObj, id: string) => void) => {
+export const onUnuse = (action: (obj: GameObj, id: string) => void) => {
     return _k.game.events.on("unuse", action);
-}, (tag: Tag, action: (obj: GameObj, id: string) => void) => {
-    return on("unuse", tag, action);
-});
+};
 
 // add an event that runs with objs with t1 collides with objs with t2
 export function onCollide(
