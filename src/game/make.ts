@@ -526,26 +526,34 @@ export function make<T>(comps: CompList<T> = []): GameObj<T> {
         },
 
         // Tag a game object
-        tag(tag: Tag | Tag[]): void {
+        tag(this: GameObj, tag: Tag | Tag[]): void {
             if (Array.isArray(tag)) {
                 for (const t of tag) {
                     tags.add(t);
+                    this.trigger("tag", t);
+                    _k.game.events.trigger("tag", this, t);
                 }
             }
             else {
                 tags.add(tag);
+                this.trigger("tag", tag);
+                _k.game.events.trigger("tag", this, tag);
             }
         },
 
         // Untag a game object
-        untag(tag: Tag | Tag[]): void {
+        untag(this: GameObj, tag: Tag | Tag[]): void {
             if (Array.isArray(tag)) {
                 for (const t of tag) {
                     tags.delete(t);
+                    this.trigger("untag", t);
+                    _k.game.events.trigger("untag", this, t);
                 }
             }
             else {
                 tags.delete(tag);
+                this.trigger("untag", tag);
+                _k.game.events.trigger("untag", this, tag);
             }
         },
 

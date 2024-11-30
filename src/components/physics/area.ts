@@ -1,9 +1,25 @@
 import { DEF_ANCHOR } from "../../constants";
 import { isFixed } from "../../game/utils";
-import { anchorPt, drawCircle, drawPolygon, drawRect, getViewportScale, popTransform, pushTransform, pushTranslate } from "../../gfx";
+import {
+    anchorPt,
+    drawCircle,
+    drawPolygon,
+    drawRect,
+    getViewportScale,
+    popTransform,
+    pushTransform,
+    pushTranslate,
+} from "../../gfx";
 import { _k } from "../../kaplay";
 import { rgb } from "../../math/color";
-import { Circle, Polygon, Rect, testPolygonPoint, Vec2, vec2 } from "../../math/math";
+import {
+    Circle,
+    Polygon,
+    Rect,
+    testPolygonPoint,
+    Vec2,
+    vec2,
+} from "../../math/math";
 import type {
     Collision,
     Comp,
@@ -217,6 +233,12 @@ export interface AreaCompOpt {
 export function area(opt: AreaCompOpt = {}): AreaComp {
     const colliding: Record<string, Collision> = {};
     const collidingThisFrame = new Set();
+    const events: KEventController[] = [];
+
+    if (!fakeMouse && !fakeMouseChecked) {
+        fakeMouse = _k.k.get<FakeMouseComp | PosComp>("fakeMouse")[0];
+        fakeMouseChecked = true;
+    }
 
     return {
         id: "area",
@@ -225,10 +247,12 @@ export function area(opt: AreaCompOpt = {}): AreaComp {
         add(this: GameObj<AreaComp>) {
             areaCount++;
             if (this.area.cursor) {
-                this.onHover(() => _k.app.setCursor(this.area.cursor!));
+                events.push(
+                    this.onHover(() => _k.app.setCursor(this.area.cursor!)),
+                );
             }
 
-            this.onCollideUpdate((obj, col) => {
+            events.push(this.onCollideUpdate((obj, col) => {
                 if (!obj.id) {
                     throw new Error("area() requires the object to have an id");
                 }
@@ -241,11 +265,14 @@ export function area(opt: AreaCompOpt = {}): AreaComp {
 
                 colliding[obj.id] = col;
                 collidingThisFrame.add(obj.id);
-            });
+            }));
         },
 
         destroy() {
             areaCount--;
+            for (const event of events) {
+                event.cancel();
+            }
         },
 
         fixedUpdate(this: GameObj<AreaComp>) {
@@ -361,7 +388,8 @@ export function area(opt: AreaCompOpt = {}): AreaComp {
                     f();
                 }
             });
-            this.onDestroy(() => e.cancel());
+            events.push(e);
+
             return e;
         },
 

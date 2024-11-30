@@ -36,6 +36,8 @@ export const initGame = () => {
             destroy: [GameObj];
             use: [GameObj, string];
             unuse: [GameObj, string];
+            tag: [GameObj, string];
+            untag: [GameObj, string];
             load: [];
             loadError: [string, Asset<any>];
             loading: [number];
