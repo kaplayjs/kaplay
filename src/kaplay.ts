@@ -262,6 +262,8 @@ import {
     onCollideEnd,
     onCollideUpdate,
     onDestroy,
+    onUse,
+    onUnuse,
     onDraw,
     onError,
     onFixedUpdate,
@@ -349,8 +351,7 @@ const kaplay = <
 >(
     gopt: KAPLAYOpt<TPlugins, TButtons> = {},
 ): TPlugins extends [undefined] ? KAPLAYCtx<TButtons, TButtonsName>
-    : KAPLAYCtx<TButtons, TButtonsName> & MergePlugins<TPlugins> =>
-{
+    : KAPLAYCtx<TButtons, TButtonsName> & MergePlugins<TPlugins> => {
     if (_k.k) {
         console.warn(
             "KAPLAY already initialized, you are calling kaplay() multiple times, it may lead bugs!",
@@ -972,7 +973,7 @@ const kaplay = <
 
         // TODO: this should only run once
         app.run(
-            () => {},
+            () => { },
             () => {
                 frameStart();
 
@@ -1035,7 +1036,7 @@ const kaplay = <
             // clear canvas
             gl.clear(
                 gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT
-                    | gl.STENCIL_BUFFER_BIT,
+                | gl.STENCIL_BUFFER_BIT,
             );
 
             // unbind everything
@@ -1266,6 +1267,8 @@ const kaplay = <
         onDraw,
         onAdd,
         onDestroy,
+        onUse,
+        onUnuse,
         onClick,
         onCollide,
         onCollideUpdate,
@@ -1481,7 +1484,7 @@ const kaplay = <
     // export everything to window if global is set
     if (gopt.global !== false) {
         for (const key in ctx) {
-            (<any> window[<any> key]) = ctx[key as keyof KAPLAYCtx];
+            (<any>window[<any>key]) = ctx[key as keyof KAPLAYCtx];
         }
     }
 

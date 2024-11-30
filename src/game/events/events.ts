@@ -92,13 +92,13 @@ export const onDestroy = overload2((action: (obj: GameObj) => void) => {
 
 export const onUse = overload2((action: (obj: GameObj, id: string) => void) => {
     return _k.game.events.on("use", action);
-}, (tag: Tag, action: (obj: GameObj, id: string) => void) => {
+}, (tag: Tag, action: (obj: GameObj) => void) => {
     return on("use", tag, action);
 });
 
 export const onUnuse = overload2((action: (obj: GameObj, id: string) => void) => {
     return _k.game.events.on("unuse", action);
-}, (tag: Tag, action: (obj: GameObj, id: string) => void) => {
+}, (tag: Tag, action: (obj: GameObj) => void) => {
     return on("unuse", tag, action);
 });
 

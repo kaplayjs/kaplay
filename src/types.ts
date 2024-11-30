@@ -311,6 +311,10 @@ export interface KAPLAYCtx<
      * // Recursively get all children and descendents
      * const allObjs = get("*", { recursive: true });
      * ```
+     * 
+     * // Get a live query which updates in real-time
+     * const allObjs = get("*", { liveUpdate: true });
+     * ```
      *
      * @returns A list of game objects that have the tag.
      * @since v2000.0
@@ -338,6 +342,18 @@ export interface KAPLAYCtx<
      *     include: "friend",
      *     exclude: "bean",
      * }); // will return [bag]
+     * 
+     * // get all visible friends
+     * query({
+     *     include: "friend",
+     *     visible: true,
+     * });
+     * 
+     * // get all friends less than 150 pixels from bean
+     * bean.query({
+     *     include: "friend",
+     *     distance: 150,
+     * });
      *
      * ```
      *
@@ -1597,6 +1613,7 @@ export interface KAPLAYCtx<
     /**
      * Register an event that runs when an object is added
      * 
+     * @param tag - The tag to match, only called for objects with a matching tag.
      * @param action - The function that runs when an object is added.
      * 
      * @example
@@ -1619,7 +1636,6 @@ export interface KAPLAYCtx<
     /**
      * Register an event that runs when an object with the provided tag is destroyed.
      * 
-     * @param tag - The tag to listen for. 
      * @param action - The function that runs when an object is destroyed.
      * 
      * @example
@@ -1646,6 +1662,7 @@ export interface KAPLAYCtx<
     /**
      * Register an event that runs when an object is destroyed.
      * 
+     * @param tag - The tag to match, only called for objects with a matching tag.
      * @param action - The function that runs when an object is destroyed.
      * 
      * @example
@@ -1667,6 +1684,26 @@ export interface KAPLAYCtx<
      * @group Events
      */
     onDestroy(action: (obj: GameObj) => void): KEventController;
+    /**
+     * Register an event that runs when an object starts using a component.
+     * 
+     * @param action - The function that runs when an object starts using component.
+     *
+     * @returns The event controller.
+     * @since v3001.1
+     * @group Events
+     */
+    onUse(action: (obj: GameObj, id: string) => void): KEventController;
+    /**
+     * Register an event that runs when an object stops using a component.
+     * 
+     * @param action - The function that runs when an object stops using a component.
+     * 
+     * @returns The event controller.
+     * @since v3001.1
+     * @group Events
+     */
+    onUnuse(action: (obj: GameObj, id: string) => void): KEventController;
     /**
      * Register an event that runs when all assets finished loading.
      *
@@ -2246,7 +2283,7 @@ export interface KAPLAYCtx<
      * @returns The event controller.
      * @since v3001.0
      * @group Input
-     */ 
+     */
     onMousePress(
         btn: MouseButton | MouseButton[],
         action: (m: MouseButton) => void,

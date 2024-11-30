@@ -384,7 +384,6 @@ export function make<T>(comps: CompList<T> = []): GameObj<T> {
 
                 const events: KEventController[] = [];
 
-                // TODO: handle when object add / remove tags
                 // TODO: clean up when obj destroyed
                 events.push(_k.k.onAdd((obj) => {
                     if (isChild(obj) && checkTagsOrComps(obj, t)) {
@@ -392,7 +391,23 @@ export function make<T>(comps: CompList<T> = []): GameObj<T> {
                     }
                 }));
                 events.push(_k.k.onDestroy((obj) => {
+                    if (checkTagsOrComps(obj, t)) {
+                        const idx = list.findIndex((o) => o.id === obj.id);
+                        if (idx !== -1) {
+                            list.splice(idx, 1);
+                        }
+                    }
+                }));
+                events.push(_k.k.onUse((obj) => {
                     if (isChild(obj) && checkTagsOrComps(obj, t)) {
+                        const idx = list.findIndex((o) => o.id === obj.id);
+                        if (idx == -1) {
+                            list.push(obj);
+                        }
+                    }
+                }));
+                events.push(_k.k.onUnuse((obj, id) => {
+                    if (isChild(obj) && !checkTagsOrComps(obj, t)) {
                         const idx = list.findIndex((o) => o.id === obj.id);
                         if (idx !== -1) {
                             list.splice(idx, 1);
