@@ -1690,6 +1690,7 @@ export interface KAPLAYCtx<
      * @param action - The function that runs when an object starts using component.
      *
      * @returns The event controller.
+     * @since v3001.1
      * @group Events
      */
     onUse(action: (obj: GameObj, id: string) => void): KEventController;
@@ -1699,6 +1700,7 @@ export interface KAPLAYCtx<
      * @param action - The function that runs when an object stops using a component.
      * 
      * @returns The event controller.
+     * @since v3001.1
      * @group Events
      */
     onUnuse(action: (obj: GameObj, id: string) => void): KEventController;
