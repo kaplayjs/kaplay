@@ -22,6 +22,8 @@ export type GameObjEventNames =
     | "destroy"
     | "use"
     | "unuse"
+    | "tag"
+    | "untag"
     | "collide"
     | "collideUpdate"
     | "collideEnd"
@@ -69,6 +71,10 @@ export type GameObjEventMap = {
     "use": [GameObj, string];
     /** Triggered when component is unused */
     "unuse": [GameObj, string];
+    /** Triggered when tag is added */
+    "tag": [GameObj, string];
+    /** Triggered when tag is removed */
+    "untag": [GameObj, string];
     /**
      * Triggered when object collides with another object
      *

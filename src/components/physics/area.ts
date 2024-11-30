@@ -249,6 +249,7 @@ let fakeMouseChecked = false;
 export function area(opt: AreaCompOpt = {}): AreaComp {
     const colliding: Record<string, Collision> = {};
     const collidingThisFrame = new Set();
+    const events: KEventController[] = [];
 
     if (!fakeMouse && !fakeMouseChecked) {
         fakeMouse = _k.k.get<FakeMouseComp | PosComp>("fakeMouse")[0];
@@ -264,10 +265,10 @@ export function area(opt: AreaCompOpt = {}): AreaComp {
         add(this: GameObj<AreaComp>) {
             areaCount++;
             if (this.area.cursor) {
-                this.onHover(() => _k.app.setCursor(this.area.cursor!));
+                events.push(this.onHover(() => _k.app.setCursor(this.area.cursor!)));
             }
 
-            this.onCollideUpdate((obj, col) => {
+            events.push(this.onCollideUpdate((obj, col) => {
                 if (!obj.id) {
                     throw new Error("area() requires the object to have an id");
                 }
@@ -280,11 +281,14 @@ export function area(opt: AreaCompOpt = {}): AreaComp {
 
                 colliding[obj.id] = col;
                 collidingThisFrame.add(obj.id);
-            });
+            }));
         },
 
         destroy() {
             areaCount--;
+            for (const event of events) {
+                event.cancel();
+            }
         },
 
         fixedUpdate(this: GameObj<AreaComp>) {
@@ -420,8 +424,8 @@ export function area(opt: AreaCompOpt = {}): AreaComp {
                     action();
                 }
             });
+            events.push(e);
 
-            this.onDestroy(() => e.cancel());
             return e;
         },
 
@@ -587,9 +591,8 @@ export function area(opt: AreaCompOpt = {}): AreaComp {
                 return `area: ${this.area.scale?.x?.toFixed(1)}x`;
             }
             else {
-                return `area: (${this.area.scale?.x?.toFixed(1)}x, ${
-                    this.area.scale.y?.toFixed(1)
-                }y)`;
+                return `area: (${this.area.scale?.x?.toFixed(1)}x, ${this.area.scale.y?.toFixed(1)
+                    }y)`;
             }
         },
     };

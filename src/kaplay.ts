@@ -264,6 +264,8 @@ import {
     onDestroy,
     onUse,
     onUnuse,
+    onTag,
+    onUntag,
     onDraw,
     onError,
     onFixedUpdate,
@@ -847,6 +849,16 @@ const kaplay = <
             onDestroy(obj => {
                 sap.remove(obj as GameObj<AreaComp>);
             });
+            onUse((obj, id) => {
+                if (id === "area") {
+                    sap.add(obj as GameObj<AreaComp>);
+                }
+            });
+            onUnuse((obj, id) => {
+                if (id === "area") {
+                    sap.remove(obj as GameObj<AreaComp>);
+                }
+            });
             onSceneLeave(scene => {
                 sapInit = false;
                 sap.clear();
@@ -1269,6 +1281,8 @@ const kaplay = <
         onDestroy,
         onUse,
         onUnuse,
+        onTag,
+        onUntag,
         onClick,
         onCollide,
         onCollideUpdate,
