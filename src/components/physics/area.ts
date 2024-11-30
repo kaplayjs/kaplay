@@ -424,8 +424,8 @@ export function area(opt: AreaCompOpt = {}): AreaComp {
                     action();
                 }
             });
+            events.push(e);
 
-            this.onDestroy(() => e.cancel());
             return e;
         },
 

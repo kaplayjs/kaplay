@@ -22,7 +22,7 @@ loop(5, () => {
             ghost.untag("touchable");
             ghost.use(color(RED));
             ghost.wait(5, () => {
-                ghost.use("area");
+                ghost.use(area());
                 ghost.tag("touchable");
                 ghost.use(color(WHITE));
             })
