@@ -2,7 +2,7 @@ kaplay();
 
 loadSprite("ghosty", "/sprites/ghosty.png");
 
-const q = get("color", { liveUpdate: true });
+const q = get("area", { liveUpdate: true });
 
 loop(5, () => {
     if (q.length < 10) {
@@ -14,19 +14,23 @@ loop(5, () => {
             pos(x, y),
             area(),
             timer(),
-            color(RED),
-            "ghost"
+            color(WHITE),
+            "touchable"
         ]);
         ghost.wait(5, () => {
-            ghost.unuse("color");
+            ghost.unuse("area");
+            ghost.untag("touchable");
+            ghost.use(color(RED));
             ghost.wait(5, () => {
-                ghost.use(color(RED));
+                ghost.use("area");
+                ghost.tag("touchable");
+                ghost.use(color(WHITE));
             })
         })
     }
 });
 
-onClick("ghost", (ghost) => {
+onClick("touchable", (ghost) => {
     ghost.destroy();
 });
 
