@@ -3837,9 +3837,6 @@ export interface KAPLAYCtx<
      * ```js
      * // tween bean to mouse position
      * tween(bean.pos, mousePos(), 1, (p) => bean.pos = p, easings.easeOutBounce)
-     *
-     * // tween() returns a then-able that can be used with await
-     * await tween(bean.opacity, 1, 0.5, (val) => bean.opacity = val, easings.easeOutQuad)
      * ```
      *
      * @group Math
