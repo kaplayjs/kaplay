@@ -44,7 +44,7 @@ export type SpriteAnims = Record<string, SpriteAnim>;
  */
 export interface LoadSpriteOpt {
     /**
-     * If the defined area contains multiple sprites, how many frames are in the area hozizontally.
+     * If the defined area contains multiple sprites, how many frames are in the area horizontally.
      */
     sliceX?: number;
     /**
