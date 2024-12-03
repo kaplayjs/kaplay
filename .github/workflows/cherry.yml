@@ -1,0 +1,33 @@
+name: "Cherry pick Release/candidate into develop"
+on:
+    pull_request_comment:                                      
+        types: [created, edited, deleted]
+
+
+jobs:
+  test-cherry-pick:
+    runs-on: ubuntu-latest
+    if: github.event.comment.body == '/cherry-pick' && github.event.comment.author_association == 'MEMBER'
+    name: Cherry Pick action
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          submodules: recursive #If you need to operate on submodules
+
+      - name: Cherry pick
+        id: cherry-pick
+        uses: wireapp/action-auto-cherry-pick@v1.0.2
+        with:
+          # Branch which will receive the automatic cherry-picks
+          target-branch: "develop"
+          
+          # If you want the action to fast-forward the submodules to a specific branch
+          submodules-target-branch: "develop"
+          pr-title-suffix: "🍒"
+
+      - name: Get the output
+        run: echo "The created PR number is ${{
+          steps.cherry-pick.outputs.pr-number }}"
+        
