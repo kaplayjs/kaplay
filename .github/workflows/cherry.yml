@@ -7,9 +7,20 @@ on:
 jobs:
   test-cherry-pick:
     runs-on: ubuntu-latest
-    if: github.event.comment.body == '/cherry-pick' && github.event.comment.author_association == 'MEMBER'
+    if: github.event.comment.body == '/cherry-pick'
     name: Cherry Pick action
     steps:
+      - uses: actions/github-script@v7
+        with:
+          github-token: ${{secrets.GITHUB_TOKEN}}
+          script: |
+                  github.rest.issues.createComment({
+                    issue_number: context.issue.number,
+                    owner: context.repo.owner,
+                    repo: context.repo.repo,
+                    body: 'ohhibro!'
+                  })
+
       - name: Checkout
         uses: actions/checkout@v4
         with:
