@@ -1,44 +1,14 @@
-name: "Cherry pick Release/candidate into develop"
-on:
-    issue_comment:                                       
-        types: [created, edited, deleted]
+name: "Cherry"
 
+on:
+  issue_comment:
+    types: [created]
 
 jobs:
-  test-cherry-pick:
+  test:
     runs-on: ubuntu-latest
-    if: github.event.comment.body == '/cherry-pick'
-    name: Cherry Pick action
     steps:
-      - uses: actions/github-script@v7
-        with:
-          github-token: ${{secrets.GITHUB_TOKEN}}
-          script: |
-                  github.rest.issues.createComment({
-                    issue_number: context.issue.number,
-                    owner: context.repo.owner,
-                    repo: context.repo.repo,
-                    body: 'ohhibro!'
-                  })
-
       - name: Checkout
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-          submodules: recursive #If you need to operate on submodules
-
-      - name: Cherry pick
-        id: cherry-pick
-        uses: wireapp/action-auto-cherry-pick@v1.0.2
-        with:
-          # Branch which will receive the automatic cherry-picks
-          target-branch: "develop"
-          
-          # If you want the action to fast-forward the submodules to a specific branch
-          submodules-target-branch: "develop"
-          pr-title-suffix: "🍒"
-
-      - name: Get the output
-        run: echo "The created PR number is ${{
-          steps.cherry-pick.outputs.pr-number }}"
-        
+        uses: actions/checkout@v2
+      - name: Run tests
+        run: echo "Running tests"
