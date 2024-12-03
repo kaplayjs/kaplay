@@ -1,6 +1,6 @@
 name: "Cherry pick Release/candidate into develop"
 on:
-    pull_request_comment:                                      
+    issue_comment:                                       
         types: [created, edited, deleted]
 
 
