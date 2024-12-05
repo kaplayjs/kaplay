@@ -19,7 +19,10 @@ const server = serve({ port: port });
 
 let failed = false;
 console.log("launching browser");
-const browser = await puppeteer.launch();
+const browser = await puppeteer.launch({
+    args: ["--no-sandbox"],
+});
+
 console.log("getting examples list");
 let examples;
 
