@@ -107,9 +107,17 @@ export class Vec2 {
         return new Vec2(arr[0], arr[1]);
     }
 
+    /** An empty vector. (0, 0) */
+    static ZERO = new Vec2(0, 0);
+    /** A vector with both components of 1. (1, 1) */
+    static ONE = new Vec2(1, 1);
+    /** A vector signaling to the left. (-1, 0) */
     static LEFT = new Vec2(-1, 0);
+    /** A vector signaling to the right. (1, 0) */
     static RIGHT = new Vec2(1, 0);
+    /** A vector signaling up. (0, -1) */
     static UP = new Vec2(0, -1);
+    /** A vector signaling down. (0, 1) */
     static DOWN = new Vec2(0, 1);
 
     /** Clone the vector */
@@ -147,6 +155,23 @@ export class Vec2 {
         return this.sub(p2).slen();
     }
 
+    /**
+     * Calculates the squared distance between the vectors
+     * @param v The vector
+     * @param other The other vector
+     * @returns The distance between the vectors
+     */
+    static sdist(v: Vec2, other: Vec2): number {
+        const x = v.x - other.x;
+        const y = v.y - other.y;
+        return x * x + y * y;
+    }
+
+    /**
+     * Get length of the vector
+     *
+     * @since v3000.0
+     */
     len(): number {
         return Math.sqrt(this.dot(this));
     }
@@ -210,12 +235,30 @@ export class Vec2 {
     }
 
     /**
+     * Get the dot product between 2 vectors.
+     *
+     * @since v3000.0
+     */
+    static dot(v: Vec2, other: Vec2): number {
+        return v.x * v.x + v.y * v.y;
+    }
+
+    /**
      * Get the cross product with another vector.
      *
      * @since v3000.0
      */
     cross(p2: Vec2): number {
         return this.x * p2.y - this.y * p2.x;
+    }
+
+    /**
+     * Get the cross product between 2 vectors.
+     *
+     * @since v3000.0
+     */
+    static cross(v: Vec2, other: Vec2): number {
+        return v.x * other.y - v.y * other.x;
     }
 
     /**
@@ -283,18 +326,30 @@ export class Vec2 {
         return m.multVec2(this);
     }
 
+    /**
+     * See if one vector is equal to another.
+     *
+     * @since v3000.0
+     */
     eq(other: Vec2): boolean {
         return this.x === other.x && this.y === other.y;
     }
 
+    /** Converts the vector to a {@link Rect `Rect()`} with the vector as the origin.
+     * @since v3000.0.
+     */
     bbox(): Rect {
         return new Rect(this, 0, 0);
     }
 
+    /** Converts the vector to a readable string. */
     toString(): string {
         return `vec2(${this.x.toFixed(2)}, ${this.y.toFixed(2)})`;
     }
 
+    /** Converts the vector to an array.
+     * @since v3001.0
+     */
     toArray(): Array<number> {
         return [this.x, this.y];
     }
