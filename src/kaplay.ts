@@ -291,6 +291,7 @@ import {
     toWorld,
 } from "./game";
 
+import { LCEvents } from "./game/systems";
 import boomSpriteSrc from "./kassets/boom.png";
 import kaSpriteSrc from "./kassets/ka.png";
 
@@ -311,6 +312,16 @@ export const _k = {
     gscale: null,
     kaSprite: null,
     boomSprite: null,
+    systems: [], // all systems added
+    // we allocate systems
+    systemsList: [
+        [], // afterDraw
+        [], // afterFixedUpdate
+        [], // afterUpdate
+        [], // beforeDraw
+        [], // beforeFixedUpdate
+        [], // beforeUpdate
+    ],
 } as unknown as KAPLAYInternal;
 
 /**
@@ -362,6 +373,8 @@ const kaplay = <
         );
         _k.k.quit();
     }
+
+    const systemsByEvent = _k.systemsByEvent;
 
     _k.globalOpt = gopt;
     const root = gopt.root ?? document.body;
@@ -1080,7 +1093,24 @@ const kaplay = <
         () => {
             try {
                 if (assets.loaded) {
-                    if (!debug.paused) fixedUpdateFrame();
+                    if (!debug.paused) {
+                        for (
+                            const sys
+                                of systemsByEvent[LCEvents.BeforeFixedUpdate]
+                        ) {
+                            sys.run();
+                        }
+
+                        fixedUpdateFrame();
+
+                        for (
+                            const sys
+                                of systemsByEvent[LCEvents.AfterFixedUpdate]
+                        ) {
+                            sys.run();
+                        }
+                    }
+
                     checkFrame();
                 }
             } catch (e) {
@@ -1111,11 +1141,35 @@ const kaplay = <
                     frameEnd();
                 }
                 else {
-                    if (!debug.paused) updateFrame();
+                    if (!debug.paused) {
+                        for (
+                            const sys of systemsByEvent[LCEvents.BeforeUpdate]
+                        ) {
+                            sys.run();
+                        }
+                        updateFrame();
+
+                        for (
+                            const sys of systemsByEvent[LCEvents.AfterUpdate]
+                        ) {
+                            sys.run();
+                        }
+                    }
+
                     checkFrame();
                     frameStart();
+
+                    for (const sys of systemsByEvent[LCEvents.BeforeDraw]) {
+                        sys.run();
+                    }
+
                     drawFrame();
                     if (gopt.debug !== false) drawDebug();
+
+                    for (const sys of systemsByEvent[LCEvents.AfterDraw]) {
+                        sys.run();
+                    }
+
                     frameEnd();
                 }
 
