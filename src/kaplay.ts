@@ -314,7 +314,7 @@ export const _k = {
     boomSprite: null,
     systems: [], // all systems added
     // we allocate systems
-    systemsList: [
+    systemsByEvent: [
         [], // afterDraw
         [], // afterFixedUpdate
         [], // afterUpdate
@@ -373,8 +373,6 @@ const kaplay = <
         );
         _k.k.quit();
     }
-
-    const systemsByEvent = _k.systemsByEvent;
 
     _k.globalOpt = gopt;
     const root = gopt.root ?? document.body;
@@ -1095,8 +1093,8 @@ const kaplay = <
                 if (assets.loaded) {
                     if (!debug.paused) {
                         for (
-                            const sys
-                                of systemsByEvent[LCEvents.BeforeFixedUpdate]
+                            const sys of _k
+                                .systemsByEvent[LCEvents.BeforeFixedUpdate]
                         ) {
                             sys.run();
                         }
@@ -1104,8 +1102,8 @@ const kaplay = <
                         fixedUpdateFrame();
 
                         for (
-                            const sys
-                                of systemsByEvent[LCEvents.AfterFixedUpdate]
+                            const sys of _k
+                                .systemsByEvent[LCEvents.AfterFixedUpdate]
                         ) {
                             sys.run();
                         }
@@ -1143,14 +1141,15 @@ const kaplay = <
                 else {
                     if (!debug.paused) {
                         for (
-                            const sys of systemsByEvent[LCEvents.BeforeUpdate]
+                            const sys of _k
+                                .systemsByEvent[LCEvents.BeforeUpdate]
                         ) {
                             sys.run();
                         }
                         updateFrame();
 
                         for (
-                            const sys of systemsByEvent[LCEvents.AfterUpdate]
+                            const sys of _k.systemsByEvent[LCEvents.AfterUpdate]
                         ) {
                             sys.run();
                         }
@@ -1159,14 +1158,14 @@ const kaplay = <
                     checkFrame();
                     frameStart();
 
-                    for (const sys of systemsByEvent[LCEvents.BeforeDraw]) {
+                    for (const sys of _k.systemsByEvent[LCEvents.BeforeDraw]) {
                         sys.run();
                     }
 
                     drawFrame();
                     if (gopt.debug !== false) drawDebug();
 
-                    for (const sys of systemsByEvent[LCEvents.AfterDraw]) {
+                    for (const sys of _k.systemsByEvent[LCEvents.AfterDraw]) {
                         sys.run();
                     }
 
