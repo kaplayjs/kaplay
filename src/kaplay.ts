@@ -291,7 +291,7 @@ import {
     toWorld,
 } from "./game";
 
-import { LCEvents } from "./game/systems";
+import { LCEvents, system } from "./game/systems";
 import boomSpriteSrc from "./kassets/boom.png";
 import kaSpriteSrc from "./kassets/ka.png";
 
@@ -365,8 +365,7 @@ const kaplay = <
 >(
     gopt: KAPLAYOpt<TPlugins, TButtons> = {},
 ): TPlugins extends [undefined] ? KAPLAYCtx<TButtons, TButtonsName>
-    : KAPLAYCtx<TButtons, TButtonsName> & MergePlugins<TPlugins> =>
-{
+    : KAPLAYCtx<TButtons, TButtonsName> & MergePlugins<TPlugins> => {
     if (_k.k) {
         console.warn(
             "KAPLAY already initialized, you are calling kaplay() multiple times, it may lead bugs!",
@@ -488,6 +487,8 @@ const kaplay = <
     _k.game = game;
 
     game.root.use(timer());
+
+    system("collision", checkFrame, [LCEvents.AfterFixedUpdate, LCEvents.AfterUpdate])
 
     function makeCanvas(w: number, h: number) {
         const fb = new FrameBuffer(ggl, w, h);
@@ -998,7 +999,7 @@ const kaplay = <
 
         // TODO: this should only run once
         app.run(
-            () => {},
+            () => { },
             () => {
                 frameStart();
 
@@ -1061,7 +1062,7 @@ const kaplay = <
             // clear canvas
             gl.clear(
                 gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT
-                    | gl.STENCIL_BUFFER_BIT,
+                | gl.STENCIL_BUFFER_BIT,
             );
 
             // unbind everything
@@ -1109,7 +1110,7 @@ const kaplay = <
                         }
                     }
 
-                    checkFrame();
+                    //checkFrame();
                 }
             } catch (e) {
                 handleErr(e as Error);
@@ -1155,7 +1156,7 @@ const kaplay = <
                         }
                     }
 
-                    checkFrame();
+                    //checkFrame();
                     frameStart();
 
                     for (const sys of _k.systemsByEvent[LCEvents.BeforeDraw]) {
@@ -1553,7 +1554,7 @@ const kaplay = <
     // export everything to window if global is set
     if (gopt.global !== false) {
         for (const key in ctx) {
-            (<any> window[<any> key]) = ctx[key as keyof KAPLAYCtx];
+            (<any>window[<any>key]) = ctx[key as keyof KAPLAYCtx];
         }
     }
 

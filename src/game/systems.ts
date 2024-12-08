@@ -21,7 +21,7 @@ export const system = (name: string, action: () => void, when: LCEvents[]) => {
     const replacingSystemIdx = systems.findIndex((s) => s.name === name);
 
     // if existent system, remove it
-    if (replacingSystemIdx) {
+    if (replacingSystemIdx != -1) {
         const replacingSystem = systems[replacingSystemIdx];
         const when = replacingSystem.when;
 
