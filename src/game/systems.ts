@@ -39,8 +39,6 @@ export const system = (name: string, action: () => void, when: LCEvents[]) => {
         when,
     };
 
-    // save the index of the system in systems by event, so we can remove it later
-    // fastly
     for (const loc of when) {
         _k.systemsByEvent[loc].push(system);
     }
