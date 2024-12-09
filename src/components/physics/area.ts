@@ -235,11 +235,6 @@ export function area(opt: AreaCompOpt = {}): AreaComp {
     const collidingThisFrame = new Set();
     const events: KEventController[] = [];
 
-    if (!fakeMouse && !fakeMouseChecked) {
-        fakeMouse = _k.k.get<FakeMouseComp | PosComp>("fakeMouse")[0];
-        fakeMouseChecked = true;
-    }
-
     return {
         id: "area",
         collisionIgnore: opt.collisionIgnore ?? [],
