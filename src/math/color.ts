@@ -93,6 +93,51 @@ export class Color {
         );
     }
 
+    /**
+     * Tries both fromHex() and fromCSSString()
+     */
+    static fromString(color: string): Color {
+        try {
+            // fromHex() allows stuff like "ff00ff"
+            // (without the leading #) which is not valid in CSS
+            // so handle it first
+            return Color.fromHex(color);
+        } catch (_) {
+            return Color.fromCSSString(color);
+        }
+    }
+
+    /**
+     * Parses the color in the same way as your browser parses CSS.
+     *
+     * You can use [color names](https://developer.mozilla.org/en-US/docs/Web/CSS/named-color) such as "tomato" and "firebrick",
+     * notations such as `hsl()` and `cmyk()`, and even advanced stuff
+     * like [`color-mix()`](https://developer.mozilla.org/en-US/docs/Web/CSS/color_value/color-mix).
+     * Do note that you are at the mercy of the browser, not all formats may be supported.
+     *
+     * You can find all of the available formats [at MDN](https://developer.mozilla.org/en-US/docs/Web/CSS/color_value), be sure to check
+     * the browser compatibility table if it sounds like a "weird" format.
+     */
+    static fromCSSString(color: string): Color {
+        const ctx = new OffscreenCanvas(1, 1).getContext("2d");
+        if (!ctx)
+            throw new Error("Failed to create offscreen canvas context");
+        ctx.fillStyle = color;
+        ctx.fillRect(0, 0, 1, 1);
+        const c = Array.from(ctx.getImageData(0, 0, 1, 1).data.slice(0, 3));
+        if (c.every(ch => ch === 0)) {
+            // if it is invalid we get black
+            // check to see if it is really invalid or actually
+            // supposed to be black
+            // (from https://stackoverflow.com/a/48485007/23626926)
+            const s = new Option().style;
+            s.color = color;
+            if (s.color !== color.toLowerCase())
+                throw new RangeError(`"${color}" is not a valid CSS color`);
+        }
+        return Color.fromArray(c);
+    }
+
     static RED = new Color(255, 0, 0);
     static GREEN = new Color(0, 255, 0);
     static BLUE = new Color(0, 0, 255);
@@ -232,30 +277,33 @@ export type ColorArgs =
     | [];
 
 export function rgb(...args: ColorArgs): Color {
-    if (args.length === 0) {
-        return new Color(255, 255, 255);
-    }
-    else if (args.length === 1) {
-        if (args[0] instanceof Color) {
-            // rgb(new Color(255, 255, 255))
-            return args[0].clone();
-        }
-        else if (typeof args[0] === "string") {
-            // rgb("#ffffff")
-            return Color.fromHex(args[0]);
-        }
-        else if (Array.isArray(args[0]) && args[0].length === 3) {
-            // rgb([255, 255, 255])
-            return Color.fromArray(args[0]);
-        }
-    }
-    else if (args.length === 2) {
-        if (args[0] instanceof Color) {
-            return args[0].clone();
-        }
-    }
-    else if (args.length === 3 || args.length === 4) {
-        return new Color(args[0], args[1], args[2]);
+    switch (args.length) {
+        case 0:
+            return Color.WHITE;
+        case 1:
+            if (args[0] instanceof Color) {
+                // rgb(new Color(255, 255, 255))
+                return args[0].clone();
+            }
+            else if (typeof args[0] === "string") {
+                // rgb("#ffffff")
+                // rgb("ffffff")
+                // rgb("white")
+                return Color.fromString(args[0]);
+            }
+            else if (Array.isArray(args[0]) && args[0].length === 3) {
+                // rgb([255, 255, 255])
+                return Color.fromArray(args[0]);
+            }
+            break;
+        case 2:
+            if (args[0] instanceof Color) {
+                return args[0].clone();
+            }
+            break;
+        case 3:
+        case 4:
+            return new Color(args[0], args[1], args[2]);
     }
 
     throw new Error("Invalid color arguments");
