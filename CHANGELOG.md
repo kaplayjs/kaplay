@@ -32,6 +32,7 @@
 - Deprecated `camFlash()` in favor of `flash()`, for a `shake()`-like name.
 - Deprecated `camTransform()` in favor of `getCamTransform()`.
 - Fixed artifacts present in some TrueType fonts.
+- Allow to override the default style in styled text chunks with `override: true` flag
 
 # v3001.0.0: Spooky Beans!
 
