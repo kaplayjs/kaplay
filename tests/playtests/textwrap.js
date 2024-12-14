@@ -19,6 +19,6 @@ add([
     text(theText, {
         size: 16,
         width: 17 * 16,
-        indentWholeParagraph: true
+        indentAll: true
     }),
 ]);
