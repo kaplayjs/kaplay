@@ -67,6 +67,11 @@ export type DrawTextOpt = RenderProps & {
      * @since v2000.2
      */
     styles?: Record<string, CharTransform | CharTransformFunc>;
+    /**
+     * If true, any (whitespace) indent on the first line of the paragraph
+     * will be copied to all of the lines for those parts that text-wrap.
+     */
+    indentWholeParagraph?: boolean
 };
 
 /**

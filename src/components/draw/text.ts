@@ -129,6 +129,11 @@ export interface TextCompOpt {
      * @since v2000.2
      */
     styles?: Record<string, CharTransform | CharTransformFunc>;
+    /**
+     * If true, any (whitespace) indent on the first line of the paragraph
+     * will be copied to all of the lines for those parts that text-wrap.
+     */
+    indentWholeParagraph?: boolean;
 }
 
 export function text(t: string, opt: TextCompOpt = {}): TextComp {
@@ -144,6 +149,7 @@ export function text(t: string, opt: TextCompOpt = {}): TextComp {
             // TODO: shouldn't run when object / ancestor is paused
             transform: obj.textTransform,
             styles: obj.textStyles,
+            indentWholeParagraph: opt.indentWholeParagraph
         }));
 
         if (!opt.width) {
