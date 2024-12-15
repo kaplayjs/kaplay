@@ -28,6 +28,18 @@ import {
     type Tag,
 } from "../types";
 import { KEventController, KEventHandler, uid } from "../utils";
+import type { Game } from "./game";
+
+export enum KeepFlags {
+    Pos = 1,
+    Angle = 2,
+    Scale = 4,
+    All = 7,
+}
+
+export type SetParentOpt = {
+    keep: KeepFlags
+}
 
 export function make<T>(comps: CompList<T> = []): GameObj<T> {
     const compStates = new Map<string, Comp>();
@@ -39,6 +51,7 @@ export function make<T>(comps: CompList<T> = []): GameObj<T> {
     const treatTagsAsComponents = _k.globalOpt.tagsAsComponents;
     let onCurCompCleanup: Function | null = null;
     let paused = false;
+    let _parent: GameObj;
 
     // the game object without the event methods, added later
     const obj: Omit<GameObj, keyof typeof evs> = {
@@ -47,7 +60,37 @@ export function make<T>(comps: CompList<T> = []): GameObj<T> {
         hidden: false,
         transform: new Mat23(),
         children: [],
-        parent: null,
+
+        get parent() {
+            return _parent!;
+        },
+
+        set parent(p: GameObj) {
+            if (_parent === p) { return; }
+            const index = _parent ? _parent.children.indexOf(this as GameObj) : -1;
+            if (index !== -1) {
+                _parent.children.splice(index, 1);
+            }
+            _parent = p;
+            p.children.push(this as GameObj);
+        },
+
+        setParent(p: GameObj, opt: SetParentOpt) {
+            if (_parent === p) { return; }
+            const oldTransform = _parent.transform
+            const newTransform = p.transform
+            if ((opt.keep & KeepFlags.Pos) && this.pos !== undefined) {
+                oldTransform.transformPoint(this.pos, this.pos)
+                newTransform.inverse.transformPoint(this.pos, this.pos)
+            }
+            if ((opt.keep & KeepFlags.Angle) && this.angle !== undefined) {
+                this.angle += newTransform.getRotation() - oldTransform.getRotation();
+            }
+            if ((opt.keep & KeepFlags.Scale) && this.scale !== undefined) {
+                this.scale = this.scale.scale(oldTransform.getScale().invScale(newTransform.getScale()));
+            }
+            this.parent = p;
+        },
 
         set paused(p) {
             if (p === paused) return;

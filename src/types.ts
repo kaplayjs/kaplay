@@ -101,6 +101,7 @@ import type {
     LevelOpt,
     SceneDef,
     SceneName,
+    SetParentOpt,
     TupleWithoutFirst,
 } from "./game";
 import type {
@@ -6006,11 +6007,17 @@ export interface GameObjRaw {
      */
     query(opt: QueryOpt): GameObj[];
     /**
-     * Get the parent game obj, if have any.
+     * Get or set the parent game obj.
      *
      * @since v3000.0
      */
     parent: GameObj | null;
+    /**
+     * Set the parent game obj.
+     *
+     * @since v4000.0
+     */
+    setParent(p: GameObj, opt: SetParentOpt): void;
     /**
      * @readonly
      * Get all children game objects.
