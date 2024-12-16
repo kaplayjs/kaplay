@@ -7,13 +7,11 @@
 - Added `ellipse()` component.
 - Circle area is no longer a box.
 - Added restitution and friction.
+- Objects can switch parent by assigning the parent property or using setParent.
 - Added a fake cursor API.
+
   ```js
-  const myCursor = add([
-      fakeMouse(),
-      sprite("kat"),
-      pos(100, 100),
-  ]);
+  const myCursor = add([fakeMouse(), sprite("kat"), pos(100, 100)]);
 
   myCursor.press(); // trigger onClick events if the mouse is over
   myCursor.release();

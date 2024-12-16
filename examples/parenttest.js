@@ -12,9 +12,9 @@ const centerBean = add([
     {
         update() {
             this.angle += 20 * dt();
-        }
-    }
-])
+        },
+    },
+]);
 
 const orbitingBean = centerBean.add([
     pos(vec2(100, 0)),
@@ -33,24 +33,24 @@ const orbitingBean = centerBean.add([
             else {
                 this.color = WHITE;
             }
-        }
-    }
-])
+        },
+    },
+]);
 
 onMousePress(() => {
-    if (orbitingBean.parent === centerBean/* && orbitingBean.isHovering()*/) {
-        orbitingBean.setParent(getTreeRoot(), { keep: 7 });
+    if (orbitingBean.parent === centerBean /* && orbitingBean.isHovering()*/) {
+        orbitingBean.setParent(getTreeRoot(), { keep: KeepFlags.All });
     }
-})
+});
 
 onMouseMove((pos, delta) => {
     if (orbitingBean.parent !== centerBean) {
         orbitingBean.pos = orbitingBean.pos.add(delta);
     }
-})
+});
 
 onMouseRelease(() => {
     if (orbitingBean.parent !== centerBean) {
-        orbitingBean.setParent(centerBean, { keep: 7 });
+        orbitingBean.setParent(centerBean, { keep: KeepFlags.All });
     }
-})
+});

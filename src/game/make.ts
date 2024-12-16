@@ -38,8 +38,8 @@ export enum KeepFlags {
 }
 
 export type SetParentOpt = {
-    keep: KeepFlags
-}
+    keep: KeepFlags;
+};
 
 export function make<T>(comps: CompList<T> = []): GameObj<T> {
     const compStates = new Map<string, Comp>();
@@ -66,8 +66,10 @@ export function make<T>(comps: CompList<T> = []): GameObj<T> {
         },
 
         set parent(p: GameObj) {
-            if (_parent === p) { return; }
-            const index = _parent ? _parent.children.indexOf(this as GameObj) : -1;
+            if (_parent === p) return;
+            const index = _parent
+                ? _parent.children.indexOf(this as GameObj)
+                : -1;
             if (index !== -1) {
                 _parent.children.splice(index, 1);
             }
@@ -76,18 +78,21 @@ export function make<T>(comps: CompList<T> = []): GameObj<T> {
         },
 
         setParent(p: GameObj, opt: SetParentOpt) {
-            if (_parent === p) { return; }
-            const oldTransform = _parent.transform
-            const newTransform = p.transform
+            if (_parent === p) return;
+            const oldTransform = _parent.transform;
+            const newTransform = p.transform;
             if ((opt.keep & KeepFlags.Pos) && this.pos !== undefined) {
-                oldTransform.transformPoint(this.pos, this.pos)
-                newTransform.inverse.transformPoint(this.pos, this.pos)
+                oldTransform.transformPoint(this.pos, this.pos);
+                newTransform.inverse.transformPoint(this.pos, this.pos);
             }
             if ((opt.keep & KeepFlags.Angle) && this.angle !== undefined) {
-                this.angle += newTransform.getRotation() - oldTransform.getRotation();
+                this.angle += newTransform.getRotation()
+                    - oldTransform.getRotation();
             }
             if ((opt.keep & KeepFlags.Scale) && this.scale !== undefined) {
-                this.scale = this.scale.scale(oldTransform.getScale().invScale(newTransform.getScale()));
+                this.scale = this.scale.scale(
+                    oldTransform.getScale().invScale(newTransform.getScale()),
+                );
             }
             this.parent = p;
         },
@@ -297,15 +302,15 @@ export function make<T>(comps: CompList<T> = []): GameObj<T> {
                             comp[k]?.();
                             onCurCompCleanup = null;
                         }
-                        : comp[<keyof typeof comp>k];
-                    gc.push(this.on(k, <any>func).cancel);
+                        : comp[<keyof typeof comp> k];
+                    gc.push(this.on(k, <any> func).cancel);
                 }
                 else {
                     if (this[k] === undefined) {
                         // assign comp fields to game obj
                         Object.defineProperty(this, k, {
-                            get: () => comp[<keyof typeof comp>k],
-                            set: (val) => comp[<keyof typeof comp>k] = val,
+                            get: () => comp[<keyof typeof comp> k],
+                            set: (val) => comp[<keyof typeof comp> k] = val,
                             configurable: true,
                             enumerable: true,
                         });
@@ -317,9 +322,9 @@ export function make<T>(comps: CompList<T> = []): GameObj<T> {
                         )?.id;
                         throw new Error(
                             `Duplicate component property: "${k}" while adding component "${comp.id}"`
-                            + (originalCompId
-                                ? ` (originally added by "${originalCompId}")`
-                                : ""),
+                                + (originalCompId
+                                    ? ` (originally added by "${originalCompId}")`
+                                    : ""),
                         );
                     }
                 }
