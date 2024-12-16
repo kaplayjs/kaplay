@@ -5585,14 +5585,14 @@ export interface KAPLAYCtx<
      */
     cancel: () => Symbol;
     /**
-     * Flags indicating which transform components to keep. When used, tha aspect of the transform will not change visually
+     * Flags indicating which transform components to keep. When used, the aspect of the transform will not change visually
      * even if the parent transform is different. For example a sprite pointing west, will keep pointing west, even if the
      * parent transform applies a rotation with an angle different from 0. This is only applied once, during switching parents.
      *
      * @since v3000.0
      * @group Game Obj
      */
-    KeepFlags: KeepFlags;
+    KeepFlags: typeof KeepFlags;
     /**
      * Current KAPLAY library version.
      *
