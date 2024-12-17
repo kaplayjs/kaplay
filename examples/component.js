@@ -116,8 +116,8 @@ add([
 
 bean.onUse(id => {
     debug.log(`Component ${id} added`);
-})
+});
 
 bean.onUnuse(id => {
     debug.log(`Component ${id} removed`);
-})
+});

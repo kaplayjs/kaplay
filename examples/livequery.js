@@ -15,7 +15,7 @@ loop(5, () => {
             area(),
             timer(),
             color(WHITE),
-            "touchable"
+            "touchable",
         ]);
         ghost.wait(5, () => {
             ghost.unuse("area");
@@ -25,8 +25,8 @@ loop(5, () => {
                 ghost.use(area());
                 ghost.tag("touchable");
                 ghost.use(color(WHITE));
-            })
-        })
+            });
+        });
     }
 });
 
