@@ -8,9 +8,9 @@ import { build } from "./lib/build.js";
 import { wait } from "./lib/util.js";
 
 const exampleCI = JSON.parse(
-    (await fs.readFile(
-        new URL("../examples/ciTest.json", import.meta.url),
-    )).toString(),
+    (
+        await fs.readFile(new URL("../examples/ciTest.json", import.meta.url))
+    ).toString(),
 );
 
 await build();
@@ -19,7 +19,9 @@ const server = serve({ port: port });
 
 let failed = false;
 console.log("launching browser");
-const browser = await puppeteer.launch();
+const browser = await puppeteer.launch({
+    args: ["--no-sandbox"],
+});
 console.log("getting examples list");
 let examples;
 

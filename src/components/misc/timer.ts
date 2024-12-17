@@ -20,7 +20,7 @@ export interface TimerComp extends Comp {
      * The maximum number of loops per frame allowed,
      * to keep loops with sub-frame intervals from freezing the game.
      */
-    maxLoopsPerFrame: number
+    maxLoopsPerFrame: number;
     /**
      * Run the callback after n seconds.
      */
@@ -33,7 +33,12 @@ export interface TimerComp extends Comp {
      *
      * @since v3000.0
      */
-    loop(time: number, action: () => void, maxLoops?: number, waitFirst?: boolean): TimerController;
+    loop(
+        time: number,
+        action: () => void,
+        maxLoops?: number,
+        waitFirst?: boolean,
+    ): TimerController;
     /**
      * Tweeeeen! Note that this doesn't specifically mean tweening on this object's property, this just registers the timer on this object, so the tween will cancel with the object gets destroyed, or paused when obj.paused is true.
      *
@@ -52,9 +57,15 @@ export function timer(maxLoopsPerFrame: number = 1000): TimerComp {
     return {
         id: "timer",
         maxLoopsPerFrame,
-        loop(this: GameObj<TimerComp>, time: number, action: () => void, count: number = -1, waitFirst: boolean = false): TimerController {
+        loop(
+            this: GameObj<TimerComp>,
+            time: number,
+            action: () => void,
+            count: number = -1,
+            waitFirst: boolean = false,
+        ): TimerController {
             let t: number = waitFirst ? 0 : time;
-            let onEndEvents = new KEvent;
+            let onEndEvents = new KEvent();
             const ev = this.onUpdate(() => {
                 t += _k.app.state.dt;
                 for (let i = 0; t >= time && i < this.maxLoopsPerFrame; i++) {
@@ -69,21 +80,28 @@ export function timer(maxLoopsPerFrame: number = 1000): TimerComp {
                     action();
                     t -= time;
                 }
-            })
+            });
             return {
                 get paused() {
-                    return ev.paused
+                    return ev.paused;
                 },
                 set paused(p) {
-                    ev.paused = p
+                    ev.paused = p;
                 },
                 cancel: ev.cancel,
                 onEnd: onEndEvents.add,
-                then(f) { onEndEvents.add(f); return this; }
-            }
+                then(f) {
+                    onEndEvents.add(f);
+                    return this;
+                },
+            };
         },
-        wait(this: GameObj<TimerComp>, time: number, action?: () => void): TimerController {
-            return this.loop(time, action ?? (() => { }), 1, true);
+        wait(
+            this: GameObj<TimerComp>,
+            time: number,
+            action?: () => void,
+        ): TimerController {
+            return this.loop(time, action ?? (() => {}), 1, true);
         },
         tween<V extends LerpValue>(
             this: GameObj<TimerComp>,

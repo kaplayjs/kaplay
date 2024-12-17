@@ -15,13 +15,13 @@ export function on<Ev extends GameObjEventNames | string & {}>(
     tag: Tag,
     cb: (obj: GameObj, ...args: TupleWithoutFirst<GameObjEventMap[Ev]>) => void,
 ): KEventController {
-    if (!_k.game.objEvents.registers[<keyof GameObjEventMap>event]) {
-        _k.game.objEvents.registers[<keyof GameObjEventMap>event] =
+    if (!_k.game.objEvents.registers[<keyof GameObjEventMap> event]) {
+        _k.game.objEvents.registers[<keyof GameObjEventMap> event] =
             new Registry() as any;
     }
 
     return _k.game.objEvents.on(
-        <keyof GameObjEventMap>event,
+        <keyof GameObjEventMap> event,
         (obj, ...args) => {
             if (obj.is(tag)) {
                 cb(obj, ...args as TupleWithoutFirst<GameObjEventMap[Ev]>);
@@ -96,11 +96,14 @@ export const onUse = overload2((action: (obj: GameObj, id: string) => void) => {
     return on("use", tag, action);
 });
 
-export const onUnuse = overload2((action: (obj: GameObj, id: string) => void) => {
-    return _k.game.events.on("unuse", action);
-}, (tag: Tag, action: (obj: GameObj) => void) => {
-    return on("unuse", tag, action);
-});
+export const onUnuse = overload2(
+    (action: (obj: GameObj, id: string) => void) => {
+        return _k.game.events.on("unuse", action);
+    },
+    (tag: Tag, action: (obj: GameObj) => void) => {
+        return on("unuse", tag, action);
+    },
+);
 
 export const onTag = overload2((action: (obj: GameObj, id: string) => void) => {
     return _k.game.events.on("tag", action);
@@ -108,11 +111,14 @@ export const onTag = overload2((action: (obj: GameObj, id: string) => void) => {
     return on("tag", tag, action);
 });
 
-export const onUntag = overload2((action: (obj: GameObj, id: string) => void) => {
-    return _k.game.events.on("untag", action);
-}, (tag: Tag, action: (obj: GameObj) => void) => {
-    return on("untag", tag, action);
-});
+export const onUntag = overload2(
+    (action: (obj: GameObj, id: string) => void) => {
+        return _k.game.events.on("untag", action);
+    },
+    (tag: Tag, action: (obj: GameObj) => void) => {
+        return on("untag", tag, action);
+    },
+);
 
 // add an event that runs with objs with t1 collides with objs with t2
 export function onCollide(

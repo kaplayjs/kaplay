@@ -1,7 +1,6 @@
 import { burp } from "../audio";
 import { FrameBuffer, updateViewport } from "../gfx";
-import {_k
-} from "../kaplay";
+import { _k } from "../kaplay";
 import { clamp } from "../math/math";
 import { toFixed } from "../utils";
 
@@ -21,7 +20,9 @@ export function initEvents() {
     _k.app.onResize(() => {
         if (_k.app.isFullscreen()) return;
         const fixedSize = _k.globalOpt.width && _k.globalOpt.height;
-        if (fixedSize && !_k.globalOpt.stretch && !_k.globalOpt.letterbox) return;
+        if (fixedSize && !_k.globalOpt.stretch && !_k.globalOpt.letterbox) {
+            return;
+        }
 
         _k.canvas.width = _k.canvas.offsetWidth * _k.pixelDensity;
         _k.canvas.height = _k.canvas.offsetHeight * _k.pixelDensity;
@@ -35,8 +36,10 @@ export function initEvents() {
                 _k.gfx.ggl.gl.drawingBufferWidth,
                 _k.gfx.ggl.gl.drawingBufferHeight,
             );
-            _k.gfx.width = _k.gfx.ggl.gl.drawingBufferWidth / _k.pixelDensity / _k.gscale;
-            _k.gfx.height = _k.gfx.ggl.gl.drawingBufferHeight / _k.pixelDensity / _k.gscale;
+            _k.gfx.width = _k.gfx.ggl.gl.drawingBufferWidth / _k.pixelDensity
+                / _k.gscale;
+            _k.gfx.height = _k.gfx.ggl.gl.drawingBufferHeight / _k.pixelDensity
+                / _k.gscale;
         }
     });
 

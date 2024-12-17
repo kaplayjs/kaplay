@@ -138,7 +138,7 @@ export interface ParticlesComp extends Comp {
          * Relative direction of the emitter
          */
         direction: number;
-    }
+    };
     /**
      * Emit a number of particles
      */
@@ -237,9 +237,11 @@ export function particles(popt: ParticlesOpt, eopt: EmitterOpt): ParticlesComp {
                     dampingRange[1],
                 );
                 const lt = lifetime ? rand(lifetime[0], lifetime[1]) : null;
-                const pos = this.emitter.position.add(eopt.shape
-                    ? eopt.shape.random()
-                    : vec2());
+                const pos = this.emitter.position.add(
+                    eopt.shape
+                        ? eopt.shape.random()
+                        : vec2(),
+                );
 
                 const p = particles[index];
                 p.t = 0;
