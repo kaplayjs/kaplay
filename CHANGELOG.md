@@ -7,13 +7,11 @@
 - Added `ellipse()` component.
 - Circle area is no longer a box.
 - Added restitution and friction.
+- Objects can switch parent by assigning the parent property or using setParent.
 - Added a fake cursor API.
+
   ```js
-  const myCursor = add([
-      fakeMouse(),
-      sprite("kat"),
-      pos(100, 100),
-  ]);
+  const myCursor = add([fakeMouse(), sprite("kat"), pos(100, 100)]);
 
   myCursor.press(); // trigger onClick events if the mouse is over
   myCursor.release();
@@ -25,7 +23,7 @@
 - Added many JSDoc specifiers on many functions (@require, @deprecated, @since,
   @group, etc)
 - Added `getLayers()` to get the layers list
-- Added `getDefaulLayer()` to get the default layer
+- Added `getDefaultLayer()` to get the default layer
 - Deprecated camera methods `camScale()`, `camPos()` and `camRot()` in favor of
   `setCamScale()`, `getCamScale()`, `setCamPos()`, `getCamPos()`, `setCamRot()`
   and `getCamRot`.
@@ -724,7 +722,7 @@ player.onBeforePhysicsResolve((collision) => {
   `stay(["gameover", "menu"])`
 - (**BREAK**) changed `SpriteComp#flipX` and `SpriteComp#flipY` to properties
   instead of functions
-- (**BEARK**) `sprite.onAnimStart()` and `sprite.onAnimEnd()` now triggers on
+- (**BREAK**) `sprite.onAnimStart()` and `sprite.onAnimEnd()` now triggers on
   any animation
 
 ```js

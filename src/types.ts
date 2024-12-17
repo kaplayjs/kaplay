@@ -98,9 +98,11 @@ import type {
     Game,
     GameObjEventMap,
     GameObjEventNames,
+    KeepFlags,
     LevelOpt,
     SceneDef,
     SceneName,
+    SetParentOpt,
     TupleWithoutFirst,
 } from "./game";
 import type { LCEvents, System } from "./game/systems";
@@ -5586,6 +5588,15 @@ export interface KAPLAYCtx<
      */
     cancel: () => Symbol;
     /**
+     * Flags indicating which transform components to keep. When used, the aspect of the transform will not change visually
+     * even if the parent transform is different. For example a sprite pointing west, will keep pointing west, even if the
+     * parent transform applies a rotation with an angle different from 0. This is only applied once, during switching parents.
+     *
+     * @since v3000.0
+     * @group Game Obj
+     */
+    KeepFlags: typeof KeepFlags;
+    /**
      * Current KAPLAY library version.
      *
      * @since v3000.0
@@ -6009,11 +6020,17 @@ export interface GameObjRaw {
      */
     query(opt: QueryOpt): GameObj[];
     /**
-     * Get the parent game obj, if have any.
+     * Get or set the parent game obj.
      *
      * @since v3000.0
      */
     parent: GameObj | null;
+    /**
+     * Set the parent game obj.
+     *
+     * @since v4000.0
+     */
+    setParent(p: GameObj, opt: SetParentOpt): void;
     /**
      * @readonly
      * Get all children game objects.
