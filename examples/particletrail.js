@@ -20,11 +20,11 @@ onLoad(() => {
             rate: 5,
             direction: -90,
             spread: 2,
-        })
-    ])
+        }),
+    ]);
 
     onMouseMove((pos, delta) => {
         trail.emitter.position = pos;
         trail.emit(1);
-    })
-})
+    });
+});
