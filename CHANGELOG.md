@@ -18,18 +18,18 @@
   myCursor.move(vec2(100, 200)); // move as your wish
   ```
 
-# v3001.1.0: A perfectionist skull (unreleased)
+# v3001.0.5
 
 - Added many JSDoc specifiers on many functions (@require, @deprecated, @since,
   @group, etc)
-- Added `getLayers()` to get the layers list
-- Added `getDefaultLayer()` to get the default layer
+- Fixed artifacts present in some TrueType fonts.
 - Deprecated camera methods `camScale()`, `camPos()` and `camRot()` in favor of
   `setCamScale()`, `getCamScale()`, `setCamPos()`, `getCamPos()`, `setCamRot()`
   and `getCamRot`.
-- Deprecated `camFlash()` in favor of `flash()`, for a `shake()`-like name.
 - Deprecated `camTransform()` in favor of `getCamTransform()`.
-- Fixed artifacts present in some TrueType fonts.
+- Deprecated `camFlash()` in favor of `flash()`, for a `shake()`-like name.
+- Added `getLayers()` to get the layers list (experimental)
+- Added `getDefaultLayer()` to get the default layer (experimental)
 
 # v3001.0.0: Spooky Beans!
 
