@@ -4873,14 +4873,16 @@ export interface KAPLAYCtx<
      * @returns The layer names or null if not set.
      * @since v3001.1
      * @group Layers
+     * @experimental This feature is in experimental phase, it will be fully released in v3001.1
      */
     getLayers(): string[] | null;
     /**
      * Get the default layer name.
      *
      * @returns The default layer name or null if not set.
-     * @since v3001.1
+     * @since v3001.0.5
      * @group Layers
+     * @experimental This feature is in experimental phase, it will be fully released in v3001.1
      */
     getDefaultLayer(): string | null;
     /**
@@ -5594,8 +5596,9 @@ export interface KAPLAYCtx<
      * ```
      *
      * @returns The cancel event symbol.
-     * @since v3001.1
+     * @since v3001.0.5
      * @group Events
+     * @experimental This feature is in experimental phase, it will be fully released in v3001.1.0
      */
     cancel: () => Symbol;
     /**
@@ -5936,6 +5939,7 @@ export interface KAPLAYOpt<
      * That means .is() will return true for components with that id.
      *
      * @default true
+     * @experimental This feature is in experimental phase, it will be fully released in v3001.1.0
      */
     tagsAsComponents?: boolean;
 }
@@ -6130,7 +6134,8 @@ export interface GameObjRaw {
      * ```
      *
      * @returns true if has the component(s), false otherwise.
-     * @since v3001.1
+     * @since v3001.0.5
+     * @experimental This feature is in experimental phase, it will be fully released in v3001.1.0
      */
     has(compId: string | string[], op?: "and" | "or"): boolean;
     /**
@@ -6147,7 +6152,8 @@ export interface GameObjRaw {
      * obj.tag(["enemy", "boss"]);
      * ```
      *
-     * @since v3001.1
+     * @since v3001.0.5
+     * @experimental This feature is in experimental phase, it will be fully released in v3001.1.0
      */
     tag(tag: Tag | Tag[]): void;
     /**
@@ -6164,7 +6170,8 @@ export interface GameObjRaw {
      * obj.untag(["enemy", "boss"]);
      * ```
      *
-     * @since v3001.1
+     * @since v3001.0.5
+     * @experimental This feature is in experimental phase, it will be fully released in v3001.1.0
      */
     untag(tag: Tag | Tag[]): void;
     /**
@@ -6173,18 +6180,10 @@ export interface GameObjRaw {
      * @param tag - The tag(s) for checking.
      * @param op - The operator to use when searching for multiple tags. Default is "and".
      *
-     * @since v3001.1
+     * @since v3001.0.5
+     * @experimental This feature is in experimental phase, it will be fully released in v3001.1.0
      */
-    is(
-        /** Tag(s) for checking */
-        tag: Tag | Tag[],
-        /**
-         * Operator to use when searching for multiple tags.
-         *
-         * @default "and"
-         */
-        op?: "and" | "or",
-    ): boolean;
+    is(tag: Tag | Tag[], op?: "and" | "or"): boolean;
     /**
      * Register an event.
      *

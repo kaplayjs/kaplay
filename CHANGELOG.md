@@ -45,13 +45,14 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ### Added
 
 - Added tags and components separation in `KAPLAYOpt.tagsAsComponents`
-  **experimental**
+  (**experimental**)
 - Added `.is()`, `.tag()` and `.untag()` to `GameObjRaw`, check, add and remove
+  (**experimental**)
 - Added `.has()` to `GameObjRaw`, to check if a game object has a component tags
-  **experimental**
+  (**experimental**)
 - Added events for listen to comps being removed or added `onUse()` and
-  `onUnused()` **experimental**
-- Added `k.cancel()` to cancel the current event **experimental**
+  `onUnused()` (**experimental**)
+- Added `k.cancel()` to cancel the current event (**experimental**)
 - ```js
   onKeyPress("space", () => {
       // do something
@@ -59,9 +60,8 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
       return cancel();
   });
   ```
-- Added `getDefaultLayer()` to get the default layer (experimental)
-  **experimental**
-- Added `getLayers()` to get the layers list (experimental) **experimental**
+- Added `getDefaultLayer()` to get the default layer (**experimental**)
+- Added `getLayers()` to get the layers list (**experimental**)
 - Added many JSDoc specifiers on many functions (@require, @deprecated, @since,
   @group, etc)
 
@@ -69,7 +69,7 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 - Added `.use()`, `.unuse()` and `.has()` to `GameObjRaw`, to add, remove and
   check components. This only works with `KAPLAYOpt.tagsAsComponents` set to
-  `true` **experimental**
+  `true` (**experimental**)
 
 ### Deprecated
 
