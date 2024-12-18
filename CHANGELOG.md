@@ -40,7 +40,7 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   (`GJK`) distance algorithm.
 - Changed default behaviour of `kaplay({ tagsAsComponents: false })` to `false`.
 
-## [3001.0.5] - TBD
+## [3001.0.5] - 2024-12-18
 
 ### Added
 
