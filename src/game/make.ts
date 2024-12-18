@@ -122,7 +122,6 @@ export function make<T>(comps: CompList<T> = []): GameObj<T> {
             }
             obj.parent = this;
             calcTransform(obj, obj.transform);
-            this.children.push(obj);
             // TODO: trigger add for children
             obj.trigger("add", obj);
             _k.game.events.trigger("add", obj);

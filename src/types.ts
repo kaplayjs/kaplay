@@ -5386,6 +5386,17 @@ export interface KAPLAYCtx<
      */
     plug<T extends Record<string, any>>(plugin: KAPLAYPlugin<T>): KAPLAYCtx & T;
     /**
+     * Runs a system at the specified events in the pipeline
+     *
+     * @param name The name of the system. Overwrites an existing system if the name has been used before.
+     * @param cb The function to run.
+     * @param when When to run the function.
+     *
+     * @since v4000.0
+     * @group Plugins
+     */
+    system(name: string, cb: () => void, when: LCEvents[]): void;
+    /**
      * Take a screenshot and get the data url of the image.
      *
      * @returns The dataURL of the image.
