@@ -1,0 +1,11 @@
+{
+	"Add experimental message": {
+		"scope": "javascript,typescript",
+		// kpd = KAPLAY Development
+		"prefix": "kpd-experimental",
+		"body": [
+			"@experimental - This feature is in experimental phase, it will be fully released in $1",
+		],
+		"description": "Add @experimental tag in JSDoc"
+	}
+}
