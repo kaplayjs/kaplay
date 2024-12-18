@@ -105,6 +105,7 @@ import type {
     SetParentOpt,
     TupleWithoutFirst,
 } from "./game";
+import type { LCEvents, System } from "./game/systems";
 import type {
     AppGfxCtx,
     DrawBezierOpt,
@@ -161,6 +162,8 @@ export type KAPLAYInternal = {
     gscale: number;
     kaSprite: Asset<SpriteData>;
     boomSprite: Asset<SpriteData>;
+    systems: System[];
+    systemsByEvent: System[][];
 };
 
 /**
