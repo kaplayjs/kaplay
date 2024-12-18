@@ -30,6 +30,10 @@ type FontAtlas = {
 const fontAtlases: Record<string, FontAtlas> = {};
 
 function applyCharTransform(fchar: FormattedChar, tr: CharTransform) {
+    if (tr.override) {
+        Object.assign(fchar, tr);
+        return;
+    }
     if (tr.pos) fchar.pos = fchar.pos.add(tr.pos);
     if (tr.scale) fchar.scale = fchar.scale.scale(vec2(tr.scale));
     if (tr.angle) fchar.angle += tr.angle;
