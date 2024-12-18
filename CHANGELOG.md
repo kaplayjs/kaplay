@@ -10,13 +10,12 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Added
 
-- Added `clipLineToRect()`
-- Added circle and (rotated) ellipse collision shapes.
 - Added `ellipse()` component.
+- Added circle and (rotated) ellipse collision shapes.
+- Added `clipLineToRect()`
 - Added support to circle shapes in `area()`.
-- Added `GameObjRaw.setParent()` to change the parent of a game object.
+- Added `obj.setParent()` to change the parent of a game object.
 - Added `fakeMouse()` to create a fake mouse cursor.
-- Added restitution and friction.
 
   ```js
   const myCursor = add([fakeMouse(), sprite("kat"), pos(100, 100)]);
@@ -25,23 +24,52 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   myCursor.release();
   myCursor.move(vec2(100, 200)); // move as your wish
   ```
+- Added restitution and friction.
+- Added `k.system()` to replace internal events or create new.
+
+  ```js
+  system("collision", () => {
+    // system code
+  }, [LCEvents.AfterFixedUpdate, LCEvents.AfterUpdate]),
+  ```
+- Added LCEvents enum for identify different lifecycle events.
 
 ### Changed
 
 - Replaced the Separating Axis Theorem (SAT) with the "Gilbert–Johnson–Keerthi"
   (`GJK`) distance algorithm.
-- Changed default behaviour of `KAPLAYOpt.tagsAsComponents` to `false`.
+- Changed default behaviour of `kaplay({ tagsAsComponents: false })` to `false`.
 
 ## [3001.0.5] - TBD
 
 ### Added
 
-- Added many JSDoc specifiers on many functions (@require, @deprecated, @since,
-  @group, etc) - **experimental**
+- Added tags and components separation in `KAPLAYOpt.tagsAsComponents`
+  **experimental**
+- Added `.is()`, `.tag()` and `.untag()` to `GameObjRaw`, check, add and remove
+- Added `.has()` to `GameObjRaw`, to check if a game object has a component tags
+  **experimental**
+- Added events for listen to comps being removed or added `onUse()` and
+  `onUnused()` **experimental**
+- Added `k.cancel()` to cancel the current event **experimental**
+- ```js
+  onKeyPress("space", () => {
+      // do something
+      // cancel the event
+      return cancel();
+  });
+  ```
 - Added `getDefaultLayer()` to get the default layer (experimental)
-- Added `getLayers()` to get the layers list (experimental)
+  **experimental**
+- Added `getLayers()` to get the layers list (experimental) **experimental**
+- Added many JSDoc specifiers on many functions (@require, @deprecated, @since,
+  @group, etc)
 
 ### Changed
+
+- Added `.use()`, `.unuse()` and `.has()` to `GameObjRaw`, to add, remove and
+  check components. This only works with `KAPLAYOpt.tagsAsComponents` set to
+  `true` **experimental**
 
 ### Deprecated
 
@@ -54,6 +82,7 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ### Fixed
 
 - Fixed artifacts present in some TrueType fonts.
+- Fixed `.use()` and `.unuse()` with area components.
 
 ## [3001.0.0] "Spooky Beans!" - 2024-10-31
 
