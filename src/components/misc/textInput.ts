@@ -4,7 +4,7 @@ import type { KEventController } from "../../utils";
 import type { TextComp } from "../draw/text";
 
 /**
- * The {@link stay `stay()`} component.
+ * The {@link textInput `textInput()`} component.
  *
  * @group Component Types
  */
