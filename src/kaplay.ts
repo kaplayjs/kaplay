@@ -282,6 +282,7 @@ import {
     shake,
     toScreen,
     toWorld,
+    trigger,
 } from "./game";
 
 import boomSpriteSrc from "./kassets/boom.png";
@@ -1186,7 +1187,8 @@ const kaplay = <
         patrol,
         pathfinder,
         // group events
-        on,
+        trigger,
+        on: on as KAPLAYCtx["on"], // our internal on should be strict, user shouldn't
         onFixedUpdate,
         onUpdate,
         onDraw,

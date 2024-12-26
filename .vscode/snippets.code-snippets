@@ -4,7 +4,7 @@
 		// kpd = KAPLAY Development
 		"prefix": "kpd-experimental",
 		"body": [
-			"@experimental This feature is in experimental phase, it will be fully released in $1",
+			"@experimental This feature is in experimental phase, it will be fully released in v3001.1.0",
 		],
 		"description": "Add @experimental tag in JSDoc"
 	}

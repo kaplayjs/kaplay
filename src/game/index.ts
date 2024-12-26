@@ -1,5 +1,5 @@
+export * from "../events";
 export * from "./camera";
-export * from "./events";
 export * from "./game";
 export * from "./gravity";
 export * from "./initEvents";
