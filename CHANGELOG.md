@@ -104,6 +104,7 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ### Fixed
 
 - Fixed artifacts present in some TrueType fonts.
+- Allow to override the default style in styled text chunks with `override: true` flag
 - Fixed `.use()` and `.unuse()` with area components.
 
 ## [3001.0.0] "Spooky Beans!" - 2024-10-31
