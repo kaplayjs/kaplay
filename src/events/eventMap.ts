@@ -9,58 +9,30 @@ import {
     type patrol,
     type sentry,
     type sprite,
-} from "../../components";
-import type { Vec2 } from "../../math";
-import type { Collision, GameObj } from "../../types";
-import { type addLevel } from "../level";
-
-// exclude mapped types
-export type GameObjEventNames =
-    | "update"
-    | "draw"
-    | "add"
-    | "destroy"
-    | "use"
-    | "unuse"
-    | "tag"
-    | "untag"
-    | "collide"
-    | "collideUpdate"
-    | "collideEnd"
-    | "hurt"
-    | "heal"
-    | "death"
-    | "beforePhysicsResolve"
-    | "physicsResolve"
-    | "ground"
-    | "fall"
-    | "fallOff"
-    | "headbutt"
-    | "doubleJump"
-    | "exitView"
-    | "enterView"
-    | "animStart"
-    | "animEnd"
-    | "navigationNext"
-    | "navigationEnded"
-    | "navigationStarted"
-    | "targetReached"
-    | "patrolFinished"
-    | "objectSpotted"
-    | "animateChannelFinished"
-    | "animateFinished"
-    | "spatialMapChanged"
-    | "navigationMapInvalid"
-    | "navigationMapChanged";
+} from "../components";
+import { type addLevel } from "../game/level";
+import type { Vec2 } from "../math";
+import type {
+    Collision,
+    GameObj,
+    Key,
+    KGamepad,
+    KGamepadButton,
+    MouseButton,
+} from "../types";
 
 /**
- * Game Object events.
+ * Game Object events with their arguments.
+ *
+ * If looking for use it with `obj.on()`, ignore first parameter (Game Obj)
  *
  * @group Events
  */
 export type GameObjEventMap = {
     /** Triggered every frame */
     "update": [GameObj];
+    /** Triggered every frame at a fixed 50fps rate */
+    "fixedUpdate": [GameObj];
     /** Triggered every frame before update */
     "draw": [GameObj];
     /** Triggered when object is added */
@@ -233,6 +205,42 @@ export type GameObjEventMap = {
      * From level of {@link addLevel `addLevel()`} function
      */
     "navigationMapChanged": [GameObj];
+};
 
+export type GameObjEvents = GameObjEventMap & {
     [key: string]: any[];
+};
+
+export type GameObjEventNames = keyof GameObjEventMap;
+
+/**
+ * App events with their arguments
+ */
+export type AppEventMap = {
+    mouseMove: [];
+    mouseDown: [MouseButton];
+    mousePress: [MouseButton];
+    mouseRelease: [MouseButton];
+    charInput: [string];
+    keyPress: [Key];
+    keyDown: [Key];
+    keyPressRepeat: [Key];
+    keyRelease: [Key];
+    touchStart: [Vec2, Touch];
+    touchMove: [Vec2, Touch];
+    touchEnd: [Vec2, Touch];
+    gamepadButtonDown: [KGamepadButton, KGamepad];
+    gamepadButtonPress: [KGamepadButton, KGamepad];
+    gamepadButtonRelease: [KGamepadButton, KGamepad];
+    gamepadStick: [string, Vec2, KGamepad];
+    gamepadConnect: [KGamepad];
+    gamepadDisconnect: [KGamepad];
+    buttonDown: [string];
+    buttonPress: [string];
+    buttonRelease: [string];
+    scroll: [Vec2];
+    hide: [];
+    show: [];
+    resize: [];
+    input: [];
 };

@@ -1,9 +1,9 @@
 import type { Asset } from "../assets";
 import type { TimerComp } from "../components";
+import type { GameObjEventMap, GameObjEvents } from "../events";
 import { Mat4, Vec2 } from "../math/math";
 import { type GameObj, type Key, type MouseButton } from "../types";
 import { KEventHandler } from "../utils";
-import type { GameObjEventMap } from "./events";
 import { make } from "./make";
 import type { SceneDef, SceneName } from "./scenes";
 
@@ -50,7 +50,7 @@ export const initGame = () => {
         }>(),
 
         // object events
-        objEvents: new KEventHandler<GameObjEventMap>(),
+        objEvents: new KEventHandler<GameObjEvents>(),
 
         // root game object
         root: make([]) as GameObj<TimerComp>,

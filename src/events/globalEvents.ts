@@ -1,34 +1,45 @@
 // add an event to a tag
 
-import { type Asset, getFailedAssets } from "../../assets";
-import { _k } from "../../kaplay";
-import type { Collision, GameObj, Tag } from "../../types";
-import { KEventController, overload2, Registry } from "../../utils";
-import type { GameObjEventMap, GameObjEventNames } from "./eventMap";
+import { type Asset, getFailedAssets } from "../assets";
+import { _k } from "../kaplay";
+import type { Collision, GameObj, Tag } from "../types";
+import { KEventController, overload2, Registry } from "../utils";
+import type {
+    GameObjEventMap,
+    GameObjEventNames,
+    GameObjEvents,
+} from "./eventMap";
 
 export type TupleWithoutFirst<T extends any[]> = T extends [infer R, ...infer E]
     ? E
     : never;
 
-export function on<Ev extends GameObjEventNames | string & {}>(
+export function on<Ev extends GameObjEventNames>(
     event: Ev,
     tag: Tag,
-    cb: (obj: GameObj, ...args: TupleWithoutFirst<GameObjEventMap[Ev]>) => void,
+    cb: (obj: GameObj, ...args: TupleWithoutFirst<GameObjEvents[Ev]>) => void,
 ): KEventController {
-    if (!_k.game.objEvents.registers[<keyof GameObjEventMap> event]) {
-        _k.game.objEvents.registers[<keyof GameObjEventMap> event] =
-            new Registry() as any;
+    if (!_k.game.objEvents.registers[event]) {
+        _k.game.objEvents.registers[event] = new Registry() as any;
     }
 
     return _k.game.objEvents.on(
         <keyof GameObjEventMap> event,
         (obj, ...args) => {
             if (obj.is(tag)) {
-                cb(obj, ...args as TupleWithoutFirst<GameObjEventMap[Ev]>);
+                cb(obj, ...args as TupleWithoutFirst<GameObjEvents[Ev]>);
             }
         },
     );
 }
+
+export const trigger = (event: string, tag: string, ...args: any[]) => {
+    for (const obj of _k.game.root.children) {
+        if (obj.is(tag)) {
+            obj.trigger(event);
+        }
+    }
+};
 
 export const onFixedUpdate = overload2(
     (action: () => void): KEventController => {
@@ -111,11 +122,14 @@ export const onTag = overload2((action: (obj: GameObj, id: string) => void) => {
     return on("tag", tag, action);
 });
 
-export const onUntag = overload2((action: (obj: GameObj, id: string) => void) => {
-    return _k.game.events.on("untag", action);
-}, (tag: Tag, action: (obj: GameObj) => void) => {
-    return on("untag", tag, action);
-});
+export const onUntag = overload2(
+    (action: (obj: GameObj, id: string) => void) => {
+        return _k.game.events.on("untag", action);
+    },
+    (tag: Tag, action: (obj: GameObj) => void) => {
+        return on("untag", tag, action);
+    },
+);
 
 // add an event that runs with objs with t1 collides with objs with t2
 export function onCollide(

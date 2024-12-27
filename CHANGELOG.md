@@ -40,6 +40,24 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   (`GJK`) distance algorithm.
 - Changed default behaviour of `kaplay({ tagsAsComponents: false })` to `false`.
 
+## [3001.0.6] "Santa Events" - 2024-12-26
+
+### Added
+
+- Added `trigger(event, tag, ...args)` for global triggering events on a
+  specific tag (**experimental**)
+
+  ```js
+  trigger("shoot", "target", 140);
+
+  on("shoot", "target", (obj, score) => {
+      obj.destroy();
+      debug.log(140); // every bomb was 140 score points!
+  });
+  ```
+
+- Added TypeScript definition for all App Events and missing Game Object Events
+
 ## [3001.0.5] - 2024-12-18
 
 ### Added

@@ -93,8 +93,8 @@ import type {
 import type {
     BoomOpt,
     Game,
-    GameObjEventMap,
     GameObjEventNames,
+    GameObjEvents,
     LevelOpt,
     SceneDef,
     SceneName,
@@ -1408,6 +1408,27 @@ export interface KAPLAYCtx<
      */
     raycast(origin: Vec2, direction: Vec2, exclude?: string[]): RaycastResult;
     /**
+     * Trigger an event on all game objs with certain tag.
+     *
+     * @param tag - The tag to trigger to.
+     * @param args - Arguments to pass to the `on()` functions
+     *
+     * @example
+     * ```js
+     * trigger("shoot", "target", 140);
+     *
+     * on("shoot", "target", (obj, score) => {
+     *     obj.destroy();
+     *     debug.log(140); // every bomb was 140 score points!
+     * });
+     * ```
+     *
+     * @since v3001.0.6
+     * @group Events
+     * @experimental This feature is in experimental phase, it will be fully released in v3001.1.0
+     */
+    trigger(event: string, tag: string, ...args: any): void;
+    /**
      * Register an event on all game objs with certain tag.
      *
      * @param tag - The tag to listen for.
@@ -1450,7 +1471,7 @@ export interface KAPLAYCtx<
         tag: Tag,
         action: (
             obj: GameObj,
-            ...args: TupleWithoutFirst<GameObjEventMap[Ev]>
+            ...args: TupleWithoutFirst<GameObjEvents[Ev]>
         ) => void,
     ): KEventController;
     /**
@@ -5682,7 +5703,10 @@ export interface GameObjRaw {
      * @returns The event controller.
      * @since v2000.0
      */
-    on(event: string, action: (...args: any) => void): KEventController;
+    on(
+        event: GameObjEventNames | (string & {}),
+        action: (...args: any) => void,
+    ): KEventController;
     /**
      * Trigger an event.
      *
