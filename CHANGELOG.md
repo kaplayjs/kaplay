@@ -45,7 +45,7 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ### Added
 
 - Added `trigger(event, tag, ...args)` for global triggering events on a
-  specific tag (**experimental**)
+  specific tag (**experimental**) - @lajbel
 
   ```js
   trigger("shoot", "target", 140);
@@ -55,11 +55,14 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
       debug.log(140); // every bomb was 140 score points!
   });
   ```
-- Added TypeScript definition for all App Events and missing Game Object Events
+- Add the possibility to override the default style in styled text chunks with
+  `override: true` flag - @dragoncoder047
+- Added TypeScript definition for all App Events and missing Game Object
+  Events - @lajbel
 
 ### Fixed
 
-- Fixed an incorrect mention to the component in `TextInputComp` type by
+- Fixed an incorrect mention to the component in `TextInputComp` type -
   @dragoncoder047
 
 ## [3001.0.5] - 2024-12-18
@@ -89,7 +92,7 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Changed
 
-- Added `.use()`, `.unuse()` and `.has()` to `GameObjRaw`, to add, remove and
+- Changed `.use()`, `.unuse()` and `.has()` to `GameObjRaw`, to add, remove and
   check components. This only works with `KAPLAYOpt.tagsAsComponents` set to
   `true` (**experimental**)
 
@@ -104,7 +107,6 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ### Fixed
 
 - Fixed artifacts present in some TrueType fonts.
-- Allow to override the default style in styled text chunks with `override: true` flag
 - Fixed `.use()` and `.unuse()` with area components.
 
 ## [3001.0.0] "Spooky Beans!" - 2024-10-31
