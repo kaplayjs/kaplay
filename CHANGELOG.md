@@ -45,7 +45,7 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ### Added
 
 - Added `trigger(event, tag, ...args)` for global triggering events on a
-  specific tag (**experimental**)
+  specific tag (**experimental**) - @lajbel
 
   ```js
   trigger("shoot", "target", 140);
@@ -56,7 +56,36 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   });
   ```
 
-- Added TypeScript definition for all App Events and missing Game Object Events
+- Added `{ override?: true }` in `CharTransform` for overridding text styles -
+  @dragoncoder047
+
+  ```js
+  add([
+      pos(100, 150),
+      text("With override: Hello [foo]styled[/foo] text", {
+          transform: {
+              color: BLACK, // Default text color for every character
+          },
+          styles: {
+              foo: {
+                  color: RED, // [foo] will be red
+                  override: true, // will override the black def color
+              },
+          },
+      }),
+  ]);
+  ```
+
+- Added `{ indentAll?: boolean }` in `TextCompOpt` to indent every new line -
+  @dragoncoder047
+
+- Added TypeScript definition for all App Events and missing Game Object
+  Events - @lajbel
+
+### Fixed
+
+- Fixed an incorrect mention to the component in `TextInputComp` type -
+  @dragoncoder047
 
 ## [3001.0.5] - 2024-12-18
 
@@ -100,7 +129,6 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ### Fixed
 
 - Fixed artifacts present in some TrueType fonts.
-- Allow to override the default style in styled text chunks with `override: true` flag
 - Fixed `.use()` and `.unuse()` with area components.
 
 ## [3001.0.0] "Spooky Beans!" - 2024-10-31
