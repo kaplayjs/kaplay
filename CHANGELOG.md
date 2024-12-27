@@ -22,8 +22,8 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   });
   ```
 
-- Added `{ override: true }` flag for overridding text styles in
-  `CharTransform` - @dragoncoder047
+- Added `{ override?: true }` in `CharTransform` for overridding text styles -
+  @dragoncoder047
 
   ```js
   add([
@@ -41,6 +41,9 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
       }),
   ]);
   ```
+
+- Added `{ indentAll?: boolean }` in `TextCompOpt` to indent every new line -
+  @dragoncoder047
 
 - Added TypeScript definition for all App Events and missing Game Object
   Events - @lajbel
@@ -77,7 +80,7 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Changed
 
-- Changed `.use()`, `.unuse()` and `.has()` to `GameObjRaw`, to add, remove and
+- Added `.use()`, `.unuse()` and `.has()` to `GameObjRaw`, to add, remove and
   check components. This only works with `KAPLAYOpt.tagsAsComponents` set to
   `true` (**experimental**)
 
