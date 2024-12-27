@@ -6,40 +6,6 @@ The format is (mostly) based on
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project
 adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [4000.0.0] - TBD
-
-### Added
-
-- Added `ellipse()` component.
-- Added circle and (rotated) ellipse collision shapes.
-- Added `clipLineToRect()`
-- Added support to circle shapes in `area()`.
-- Added `obj.setParent()` to change the parent of a game object.
-- Added `fakeMouse()` to create a fake mouse cursor.
-
-  ```js
-  const myCursor = add([fakeMouse(), sprite("kat"), pos(100, 100)]);
-
-  myCursor.press(); // trigger onClick events if the mouse is over
-  myCursor.release();
-  myCursor.move(vec2(100, 200)); // move as your wish
-  ```
-- Added restitution and friction.
-- Added `k.system()` to replace internal events or create new.
-
-  ```js
-  system("collision", () => {
-    // system code
-  }, [LCEvents.AfterFixedUpdate, LCEvents.AfterUpdate]),
-  ```
-- Added LCEvents enum for identify different lifecycle events.
-
-### Changed
-
-- Replaced the Separating Axis Theorem (SAT) with the "Gilbert–Johnson–Keerthi"
-  (`GJK`) distance algorithm.
-- Changed default behaviour of `kaplay({ tagsAsComponents: false })` to `false`.
-
 ## [3001.0.6] "Santa Events" - 2024-12-26
 
 ### Added
