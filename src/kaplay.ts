@@ -290,6 +290,7 @@ import {
     shake,
     toScreen,
     toWorld,
+    trigger,
 } from "./game";
 
 import { LCEvents, system } from "./game/systems";
@@ -1334,7 +1335,8 @@ const kaplay = <
         pathfinder,
         fakeMouse,
         // group events
-        on,
+        trigger,
+        on: on as KAPLAYCtx["on"], // our internal on should be strict, user shouldn't
         onFixedUpdate,
         onUpdate,
         onDraw,

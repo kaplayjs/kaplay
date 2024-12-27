@@ -21,6 +21,7 @@ import {
 } from "../utils";
 
 import GAMEPAD_MAP from "../data/gamepad.json" assert { type: "json" };
+import type { AppEventMap } from "../game";
 import {
     type ButtonBinding,
     type ButtonsDef,
@@ -125,34 +126,7 @@ export const initAppState = (opt: {
         isMouseMoved: false,
         lastWidth: opt.canvas.offsetWidth,
         lastHeight: opt.canvas.offsetHeight,
-        events: new KEventHandler<{
-            mouseMove: [];
-            mouseDown: [MouseButton];
-            mousePress: [MouseButton];
-            mouseRelease: [MouseButton];
-            charInput: [string];
-            keyPress: [Key];
-            keyDown: [Key];
-            keyPressRepeat: [Key];
-            keyRelease: [Key];
-            touchStart: [Vec2, Touch];
-            touchMove: [Vec2, Touch];
-            touchEnd: [Vec2, Touch];
-            gamepadButtonDown: [KGamepadButton, KGamepad];
-            gamepadButtonPress: [KGamepadButton, KGamepad];
-            gamepadButtonRelease: [KGamepadButton, KGamepad];
-            gamepadStick: [string, Vec2, KGamepad];
-            gamepadConnect: [KGamepad];
-            gamepadDisconnect: [KGamepad];
-            buttonDown: [string];
-            buttonPress: [string];
-            buttonRelease: [string];
-            scroll: [Vec2];
-            hide: [];
-            show: [];
-            resize: [];
-            input: [];
-        }>(),
+        events: new KEventHandler<AppEventMap>(),
     };
 };
 

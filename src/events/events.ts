@@ -128,7 +128,6 @@ export class KEventHandler<EventMap extends Record<string, any[]>> {
             >;
         }
     > = {};
-
     on<Name extends keyof EventMap>(
         name: Name,
         action: (...args: EventMap[Name]) => void,
