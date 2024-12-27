@@ -55,8 +55,27 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
       debug.log(140); // every bomb was 140 score points!
   });
   ```
-- Add the possibility to override the default style in styled text chunks with
-  `override: true` flag - @dragoncoder047
+
+- Added `{ override: true }` flag for overridding text styles in
+  `CharTransform` - @dragoncoder047
+
+  ```js
+  add([
+      pos(100, 150),
+      text("With override: Hello [foo]styled[/foo] text", {
+          transform: {
+              color: BLACK, // Default text color for every character
+          },
+          styles: {
+              foo: {
+                  color: RED, // [foo] will be red
+                  override: true, // will override the black def color
+              },
+          },
+      }),
+  ]);
+  ```
+
 - Added TypeScript definition for all App Events and missing Game Object
   Events - @lajbel
 
