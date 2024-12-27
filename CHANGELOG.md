@@ -40,7 +40,7 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   (`GJK`) distance algorithm.
 - Changed default behaviour of `kaplay({ tagsAsComponents: false })` to `false`.
 
-## [3001.0.6] "Santa Events" - 2024-12-26
+## [3001.0.6] "Santa Events" - 2024-12-27
 
 ### Added
 
