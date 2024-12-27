@@ -274,6 +274,7 @@ export function formatText(opt: DrawTextOpt): FormattedText {
     let cursor = 0;
     let lastSpace: number | null = null;
     let lastSpaceWidth: number = 0;
+    let paraIndentX: number | undefined = undefined;
 
     // TODO: word break
     while (cursor < chars.length) {
@@ -292,6 +293,7 @@ export function formatText(opt: DrawTextOpt): FormattedText {
             lastSpaceWidth = 0;
             curX = 0;
             curLine = [];
+            paraIndentX = undefined;
         }
         else {
             let q = font.map[ch];
@@ -320,7 +322,7 @@ export function formatText(opt: DrawTextOpt): FormattedText {
                         chars: curLine,
                     });
 
-                    curX = 0;
+                    curX = paraIndentX ?? 0;
                     curLine = [];
                 }
 
@@ -347,6 +349,9 @@ export function formatText(opt: DrawTextOpt): FormattedText {
                 if (ch === " ") {
                     lastSpace = curLine.length;
                     lastSpaceWidth = curX;
+                }
+                if (opt.indentAll && paraIndentX === undefined && /\S/.test(ch)) {
+                    paraIndentX = curX;
                 }
 
                 curX += gw;

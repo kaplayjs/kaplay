@@ -18,8 +18,10 @@ export function drawTexture(opt: DrawTextureOpt) {
 
     if (opt.tiled) {
         const offset = anchorPt(opt.anchor || DEF_ANCHOR);
-        const offsetX = (opt.pos?.x || 0) - (offset.x + 1) * 0.5 * (opt.width || w);
-        const offsetY = (opt.pos?.y || 0) - (offset.y + 1) * 0.5 * (opt.height || h);
+        const offsetX = (opt.pos?.x || 0)
+            - (offset.x + 1) * 0.5 * (opt.width || w);
+        const offsetY = (opt.pos?.y || 0)
+            - (offset.y + 1) * 0.5 * (opt.height || h);
 
         const fcols = (opt.width || w) / w;
         const frows = (opt.height || h) / h;

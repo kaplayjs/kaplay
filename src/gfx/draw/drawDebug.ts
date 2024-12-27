@@ -184,7 +184,8 @@ export function drawDebug() {
 
             _k.game.logs = _k.game.logs
                 .filter((log) =>
-                    _k.app.time() - log.time < (_k.globalOpt.logTime || LOG_TIME)
+                    _k.app.time() - log.time
+                        < (_k.globalOpt.logTime || LOG_TIME)
                 );
 
             const ftext = formatText({
@@ -219,7 +220,11 @@ export function drawDebug() {
     }
 }
 
-function prettyDebug(object: any | undefined, inside: boolean = false, seen: Set<any> = new Set): string {
+function prettyDebug(
+    object: any | undefined,
+    inside: boolean = false,
+    seen: Set<any> = new Set(),
+): string {
     if (seen.has(object)) return "<recursive>";
     var outStr = "", tmp;
     if (inside && typeof object === "string") {
@@ -228,7 +233,8 @@ function prettyDebug(object: any | undefined, inside: boolean = false, seen: Set
     if (Array.isArray(object)) {
         outStr = [
             "[",
-            object.map(e => prettyDebug(e, true, seen.union(new Set([object])))).join(", "),
+            object.map(e => prettyDebug(e, true, seen.union(new Set([object]))))
+                .join(", "),
             "]",
         ].join("");
         object = outStr;
@@ -246,7 +252,11 @@ function prettyDebug(object: any | undefined, inside: boolean = false, seen: Set
             (tmp = Object.getOwnPropertyNames(object)
                     .map(p =>
                         `${/^\w+$/.test(p) ? p : JSON.stringify(p)}: ${
-                            prettyDebug(object[p], true, seen.union(new Set([object])))
+                            prettyDebug(
+                                object[p],
+                                true,
+                                seen.union(new Set([object])),
+                            )
                         }`
                     )
                     .join(", "))

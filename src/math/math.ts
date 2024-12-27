@@ -259,6 +259,12 @@ export class Vec2 {
         return out;
     }
 
+    /** Scale by the inverse of another vector. or a single number */
+    invScale(...args: Vec2Args): Vec2 {
+        const s = vec2(...args);
+        return new Vec2(this.x / s.x, this.y / s.y);
+    }
+
     /** Get distance between another vector */
     dist(...args: Vec2Args): number {
         const p2 = vec2(...args);

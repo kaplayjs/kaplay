@@ -16,7 +16,7 @@ add([
 
 add([
     circle(4),
-    pos(150, 150)
-])
+    pos(150, 150),
+]);
 
 // debug.inspect = true

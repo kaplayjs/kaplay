@@ -66,7 +66,8 @@ export class KEventController {
 }
 
 export class KEvent<Args extends any[] = any[]> {
-    private cancellers: WeakMap<(...args: Args) => unknown, () => void> = new WeakMap();
+    private cancellers: WeakMap<(...args: Args) => unknown, () => void> =
+        new WeakMap();
     private handlers: Registry<(...args: Args) => unknown> = new Registry();
 
     add(action: (...args: Args) => unknown): KEventController {
@@ -97,8 +98,12 @@ export class KEvent<Args extends any[] = any[]> {
             const result = action(...args);
             let cancel;
 
-            if (result === EVENT_CANCEL_SYMBOL && (cancel = this.cancellers.get(action)))
+            if (
+                result === EVENT_CANCEL_SYMBOL
+                && (cancel = this.cancellers.get(action))
+            ) {
                 cancel();
+            }
         });
     }
     numListeners(): number {

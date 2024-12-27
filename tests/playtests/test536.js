@@ -11,8 +11,8 @@ const bean = add([
     {
         update() {
             this.angle += 400 * dt();
-        }
-    }
+        },
+    },
 ]);
 
 camPos(0, 0);

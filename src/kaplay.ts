@@ -254,6 +254,7 @@ import {
     go,
     initEvents,
     initGame,
+    KeepFlags,
     layers,
     make,
     on,
@@ -291,6 +292,7 @@ import {
     toWorld,
 } from "./game";
 
+import { LCEvents, system } from "./game/systems";
 import boomSpriteSrc from "./kassets/boom.png";
 import kaSpriteSrc from "./kassets/ka.png";
 
@@ -311,6 +313,16 @@ export const _k = {
     gscale: null,
     kaSprite: null,
     boomSprite: null,
+    systems: [], // all systems added
+    // we allocate systems
+    systemsByEvent: [
+        [], // afterDraw
+        [], // afterFixedUpdate
+        [], // afterUpdate
+        [], // beforeDraw
+        [], // beforeFixedUpdate
+        [], // beforeUpdate
+    ],
 } as unknown as KAPLAYInternal;
 
 /**
@@ -477,6 +489,11 @@ const kaplay = <
     _k.game = game;
 
     game.root.use(timer());
+
+    system("collision", checkFrame, [
+        LCEvents.AfterFixedUpdate,
+        LCEvents.AfterUpdate,
+    ]);
 
     function makeCanvas(w: number, h: number) {
         const fb = new FrameBuffer(ggl, w, h);
@@ -1080,8 +1097,25 @@ const kaplay = <
         () => {
             try {
                 if (assets.loaded) {
-                    if (!debug.paused) fixedUpdateFrame();
-                    checkFrame();
+                    if (!debug.paused) {
+                        for (
+                            const sys of _k
+                                .systemsByEvent[LCEvents.BeforeFixedUpdate]
+                        ) {
+                            sys.run();
+                        }
+
+                        fixedUpdateFrame();
+
+                        for (
+                            const sys of _k
+                                .systemsByEvent[LCEvents.AfterFixedUpdate]
+                        ) {
+                            sys.run();
+                        }
+                    }
+
+                    // checkFrame();
                 }
             } catch (e) {
                 handleErr(e as Error);
@@ -1111,11 +1145,36 @@ const kaplay = <
                     frameEnd();
                 }
                 else {
-                    if (!debug.paused) updateFrame();
-                    checkFrame();
+                    if (!debug.paused) {
+                        for (
+                            const sys of _k
+                                .systemsByEvent[LCEvents.BeforeUpdate]
+                        ) {
+                            sys.run();
+                        }
+                        updateFrame();
+
+                        for (
+                            const sys of _k.systemsByEvent[LCEvents.AfterUpdate]
+                        ) {
+                            sys.run();
+                        }
+                    }
+
+                    // checkFrame();
                     frameStart();
+
+                    for (const sys of _k.systemsByEvent[LCEvents.BeforeDraw]) {
+                        sys.run();
+                    }
+
                     drawFrame();
                     if (gopt.debug !== false) drawDebug();
+
+                    for (const sys of _k.systemsByEvent[LCEvents.AfterDraw]) {
+                        sys.run();
+                    }
+
                     frameEnd();
                 }
 
@@ -1461,6 +1520,7 @@ const kaplay = <
         downloadBlob,
         // plugin
         plug,
+        system,
         // char sets
         ASCII_CHARS,
         // dom
@@ -1486,6 +1546,7 @@ const kaplay = <
         KEvent,
         KEventHandler,
         KEventController,
+        KeepFlags,
         cancel: () => EVENT_CANCEL_SYMBOL,
     };
 

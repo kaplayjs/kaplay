@@ -4,7 +4,7 @@ import type { KEventController } from "../../utils";
 import type { TextComp } from "../draw/text";
 
 /**
- * The {@link stay `stay()`} component.
+ * The {@link textInput `textInput()`} component.
  *
  * @group Component Types
  */
@@ -39,7 +39,8 @@ export function textInput(
             charEv = _k.k.onCharInput((character) => {
                 if (
                     this.hasFocus
-                    && (!maxInputLength || this.typedText.length < maxInputLength)
+                    && (!maxInputLength
+                        || this.typedText.length < maxInputLength)
                 ) {
                     if (_k.k.isKeyDown("shift")) {
                         this.typedText += character.toUpperCase();
