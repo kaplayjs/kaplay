@@ -55,8 +55,12 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
       debug.log(140); // every bomb was 140 score points!
   });
   ```
-
 - Added TypeScript definition for all App Events and missing Game Object Events
+
+### Fixed
+
+- Fixed an incorrect mention to the component in `TextInputComp` type by
+  @dragoncoder047
 
 ## [3001.0.5] - 2024-12-18
 
