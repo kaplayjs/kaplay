@@ -7145,6 +7145,7 @@ export interface SpriteCurAnim {
     timer: number;
     loop: boolean;
     speed: number;
+    frameIndex: number;
     pingpong: boolean;
     onEnd: () => void;
 }
