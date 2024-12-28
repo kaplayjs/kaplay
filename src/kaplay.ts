@@ -576,7 +576,11 @@ const kaplay = <
         showLog: true,
         fps: () => app.fps(),
         numFrames: () => app.numFrames(),
-        stepFrame: updateFrame,
+        stepFrame: () => {
+            fixedUpdateFrame();
+            checkFrame();
+            updateFrame();
+        },
         drawCalls: () => gfx.lastDrawCalls,
         clearLog: () => game.logs = [],
         log: (...msgs) => {
