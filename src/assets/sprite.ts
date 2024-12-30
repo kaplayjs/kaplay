@@ -33,6 +33,8 @@ export type SpriteAnim = number | {
     speed?: number;
     /**
      * List of frames for the animation.
+     *
+     * If this property exists, **from, to, and pingpong will be ignored**.
      */
     frames?: number[];
 };
