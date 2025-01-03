@@ -214,13 +214,42 @@ export function sprite(
         obj.width = spr.tex.width * q.w * scale.x;
         obj.height = spr.tex.height * q.h * scale.y;
 
-        if (opt.anim) {
-            obj.play(opt.anim);
+        if (spr.anims) {
+            for (let animName in spr.anims) {
+                const anim = spr.anims[animName];
+                if (typeof anim !== "number") {
+                    anim.frames = createAnimFrames(anim);
+                }
+            }
         }
 
         spriteData = spr;
         spriteLoadedEvent.trigger(spriteData);
+
+        if (opt.anim) {
+            obj.play(opt.anim);
+        }
     };
+
+    const createAnimFrames = (anim: Exclude<SpriteAnim, number>) => {
+        if (anim.frames) {
+            return anim.frames;
+        }
+        const frames = [];
+        if (anim.from === undefined || anim.to === undefined) {
+            throw new Error("Sprite anim 'from' and 'to' must be defined if 'frames' is not defined");
+        }
+        const frameSeqLength = Math.abs(anim.to - anim.from) + 1;
+        for (let i = 0; i < frameSeqLength; i++) {
+            frames.push(anim.from + i * Math.sign(anim.to - anim.from));
+        }
+        if (anim.pingpong) {
+            for (let i = frameSeqLength - 2; i > 0; i--) {
+                frames.push(frames[i]);
+            }
+        }
+        return frames;
+    }
 
     return {
         id: "sprite",
@@ -256,6 +285,10 @@ export function sprite(
 
             if (typeof anim === "number") {
                 return anim;
+            }
+
+            if (anim.from === undefined || anim.to === undefined) {
+                return curAnim.frameIndex;
             }
 
             return this.frame - Math.min(anim.from, anim.to);
@@ -371,44 +404,36 @@ export function sprite(
 
             if (curAnim.timer >= (1 / curAnim.speed)) {
                 curAnim.timer = 0;
-                this.frame += curAnimDir;
+                curAnim.frameIndex += curAnimDir;
 
-                if (
-                    this.frame < Math.min(anim.from, anim.to)
-                    || this.frame > Math.max(anim.from, anim.to)
-                ) {
-                    if (curAnim.loop) {
-                        if (curAnim.pingpong) {
-                            this.frame -= curAnimDir;
-                            curAnimDir *= -1;
-                            this.frame += curAnimDir;
-                        }
-                        else {
-                            this.frame = anim.from;
-                        }
+                const frames = anim.frames!;
+                if (curAnim.frameIndex >= frames.length) {
+                    if (curAnim.pingpong && !anim.pingpong) {
+                        curAnimDir = -1;
+                        curAnim.frameIndex = frames.length - 2;
+                    } else if (curAnim.loop) {
+                        curAnim.frameIndex = 0;
+                    } else {
+                        this.frame = frames.at(-1)!;
+                        curAnim.onEnd();
+                        this.stop();
+                        return;
                     }
-                    else {
-                        if (curAnim.pingpong) {
-                            const isForward = curAnimDir
-                                === Math.sign(anim.to - anim.from);
-                            if (isForward) {
-                                this.frame = anim.to;
-                                curAnimDir *= -1;
-                                this.frame += curAnimDir;
-                            }
-                            else {
-                                this.frame = anim.from;
-                                curAnim.onEnd();
-                                this.stop();
-                            }
-                        }
-                        else {
-                            this.frame = anim.to;
-                            curAnim.onEnd();
-                            this.stop();
-                        }
+                } else if (curAnim.frameIndex < 0) {
+                    if (curAnim.pingpong && curAnim.loop) {
+                        curAnimDir = 1;
+                        curAnim.frameIndex = 1;
+                    } else if (curAnim.loop) {
+                        curAnim.frameIndex = frames.length - 1;
+                    } else {
+                        this.frame = frames[0];
+                        curAnim.onEnd();
+                        this.stop();
+                        return;
                     }
                 }
+
+                this.frame = frames[curAnim.frameIndex];
             }
         },
 
@@ -439,7 +464,8 @@ export function sprite(
                     loop: false,
                     pingpong: false,
                     speed: 0,
-                    onEnd: () => {},
+                    frameIndex: 0,
+                    onEnd: () => { },
                 }
                 : {
                     name: name,
@@ -447,18 +473,12 @@ export function sprite(
                     loop: opt.loop ?? anim.loop ?? false,
                     pingpong: opt.pingpong ?? anim.pingpong ?? false,
                     speed: opt.speed ?? anim.speed ?? 10,
-                    onEnd: opt.onEnd ?? (() => {}),
+                    frameIndex: 0,
+                    onEnd: opt.onEnd ?? (() => { }),
                 };
 
-            curAnimDir = typeof anim === "number"
-                ? null
-                : anim.from < anim.to
-                ? 1
-                : -1;
-
-            this.frame = typeof anim === "number"
-                ? anim
-                : anim.from;
+            curAnimDir = typeof anim === "number" ? null : 1;
+            this.frame = typeof anim === "number" ? anim : anim.frames![0];
 
             this.trigger("animStart", name);
         },
