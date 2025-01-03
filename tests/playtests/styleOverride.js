@@ -8,10 +8,10 @@ add([
         },
         styles: {
             foo: {
-                color: RED
-            }
-        }
-    })
+                color: RED,
+            },
+        },
+    }),
 ]);
 
 add([
@@ -23,10 +23,10 @@ add([
         styles: {
             foo: {
                 color: RED,
-                override: true
-            }
-        }
-    })
+                override: true,
+            },
+        },
+    }),
 ]);
 
 add([
@@ -35,9 +35,9 @@ add([
         styles: {
             foo: {
                 color: RED,
-                override: true
-            }
-        }
+                override: true,
+            },
+        },
     }),
     color(WHITE.darken(200)),
 ]);

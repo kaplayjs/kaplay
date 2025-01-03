@@ -71,7 +71,7 @@ export type DrawTextOpt = RenderProps & {
      * If true, any (whitespace) indent on the first line of the paragraph
      * will be copied to all of the lines for those parts that text-wrap.
      */
-    indentAll?: boolean
+    indentAll?: boolean;
 };
 
 /**
@@ -120,7 +120,7 @@ export interface CharTransform {
      * will override, rather than compose with, the default styles given in {@link DrawTextOpt.transform} and by other
      * components' styles.
      */
-    override?: boolean
+    override?: boolean;
 }
 
 /**
