@@ -149,7 +149,7 @@ export function text(t: string, opt: TextCompOpt = {}): TextComp {
             // TODO: shouldn't run when object / ancestor is paused
             transform: obj.textTransform,
             styles: obj.textStyles,
-            indentAll: opt.indentAll
+            indentAll: opt.indentAll,
         }));
 
         if (!opt.width) {

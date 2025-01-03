@@ -350,7 +350,9 @@ export function formatText(opt: DrawTextOpt): FormattedText {
                     lastSpace = curLine.length;
                     lastSpaceWidth = curX;
                 }
-                if (opt.indentAll && paraIndentX === undefined && /\S/.test(ch)) {
+                if (
+                    opt.indentAll && paraIndentX === undefined && /\S/.test(ch)
+                ) {
                     paraIndentX = curX;
                 }
 

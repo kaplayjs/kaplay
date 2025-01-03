@@ -39,6 +39,14 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - Replaced the Separating Axis Theorem (SAT) with the "Gilbert–Johnson–Keerthi"
   (`GJK`) distance algorithm.
 - Changed default behaviour of `kaplay({ tagsAsComponents: false })` to `false`.
+- Now if you pass a nullish value to `.use()` it throws an error
+
+## [3001.0.7] - TBD
+
+### Changed
+
+- Now you cannot pass parameters that are not a component or string to `.use()`.
+  Otherwise it will throw an error
 
 ## [3001.0.6] "Santa Events" - 2024-12-27
 
