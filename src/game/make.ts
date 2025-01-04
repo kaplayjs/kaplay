@@ -253,9 +253,9 @@ export function make<T>(comps: CompList<T> = []): GameObj<T> {
                 // for use add(["tag"])
                 return tags.add(comp);
             }
-            else if (typeof comp != "object") {
+            else if (!comp || typeof comp != "object") {
                 throw new Error(
-                    `You can only pass a component or a string to .use(), you passed: ${typeof comp}`,
+                    `You can only pass a component or a string to .use(), you passed a "${typeof comp}"`,
                 );
             }
 
