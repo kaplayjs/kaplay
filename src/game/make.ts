@@ -74,8 +74,9 @@ export function make<T>(comps: CompList<T> = []): GameObj<T> {
                 _parent.children.splice(index, 1);
             }
             _parent = p;
-            if (p)
+            if (p) {
                 p.children.push(this as GameObj);
+            }
         },
 
         setParent(p: GameObj, opt: SetParentOpt) {
@@ -248,9 +249,14 @@ export function make<T>(comps: CompList<T> = []): GameObj<T> {
 
         // use a comp
         use(this: GameObj, comp: Comp) {
-            // tag
-            if (typeof comp === "string") {
+            if (typeof comp == "string") {
+                // for use add(["tag"])
                 return tags.add(comp);
+            }
+            else if (!comp || typeof comp != "object") {
+                throw new Error(
+                    `You can only pass a component or a string to .use(), you passed a "${typeof comp}"`,
+                );
             }
 
             let gc = [];
@@ -261,13 +267,12 @@ export function make<T>(comps: CompList<T> = []): GameObj<T> {
                 cleanups[comp.id] = [];
                 gc = cleanups[comp.id];
                 compStates.set(comp.id, comp);
+                // supporting tagsAsComponents
+                if (treatTagsAsComponents) tags.add(comp.id);
             }
             else {
                 anonymousCompStates.push(comp);
             }
-
-            // add component id as tag
-            if (treatTagsAsComponents) tags.add(comp.id!);
 
             for (const k in comp) {
                 if (COMP_DESC.has(k)) {
@@ -302,15 +307,15 @@ export function make<T>(comps: CompList<T> = []): GameObj<T> {
                             comp[k]?.();
                             onCurCompCleanup = null;
                         }
-                        : comp[<keyof typeof comp>k];
-                    gc.push(this.on(k, <any>func).cancel);
+                        : comp[<keyof typeof comp> k];
+                    gc.push(this.on(k, <any> func).cancel);
                 }
                 else {
                     if (this[k] === undefined) {
                         // assign comp fields to game obj
                         Object.defineProperty(this, k, {
-                            get: () => comp[<keyof typeof comp>k],
-                            set: (val) => comp[<keyof typeof comp>k] = val,
+                            get: () => comp[<keyof typeof comp> k],
+                            set: (val) => comp[<keyof typeof comp> k] = val,
                             configurable: true,
                             enumerable: true,
                         });
@@ -322,9 +327,9 @@ export function make<T>(comps: CompList<T> = []): GameObj<T> {
                         )?.id;
                         throw new Error(
                             `Duplicate component property: "${k}" while adding component "${comp.id}"`
-                            + (originalCompId
-                                ? ` (originally added by "${originalCompId}")`
-                                : ""),
+                                + (originalCompId
+                                    ? ` (originally added by "${originalCompId}")`
+                                    : ""),
                         );
                     }
                 }
