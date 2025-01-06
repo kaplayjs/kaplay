@@ -4,7 +4,7 @@ const theText = `MAN PAGE
     Very long description paragraph. Very long description paragraph. Very long description paragraph. Very long description paragraph. Very long description paragraph. Very long description paragraph. Very long description paragraph.
 
 ANOTHER SECTION
-    Yet some more text here. Yet some more text here. Yet some more text here. Yet some more text here.`
+    Yet some more text here. Yet some more text here. Yet some more text here. Yet some more text here.`;
 
 add([
     pos(100, 100),
@@ -19,6 +19,6 @@ add([
     text(theText, {
         size: 16,
         width: 17 * 16,
-        indentAll: true
+        indentAll: true,
     }),
 ]);
