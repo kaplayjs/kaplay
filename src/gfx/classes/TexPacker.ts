@@ -32,11 +32,16 @@ export default class TexPacker {
         this.c2d = context2D;
     }
 
+    // create a image with a single texture
+    add_single(img: ImageSource): [Texture, Quad, number] {
+        const tex = Texture.fromImage(this.gfx, img);
+        this.bigTextures.push(tex);
+        return [tex, new Quad(0, 0, 1, 1), 0];
+    }
+
     add(img: ImageSource): [Texture, Quad, number] {
         if (img.width > this.canvas.width || img.height > this.canvas.height) {
-            const tex = Texture.fromImage(this.gfx, img);
-            this.bigTextures.push(tex);
-            return [tex, new Quad(0, 0, 1, 1), 0];
+            this.add_single(img)
         }
 
         // next row
