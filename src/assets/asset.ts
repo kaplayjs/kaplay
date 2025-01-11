@@ -214,7 +214,7 @@ export function load<T>(prom: Promise<T>): Asset<T> {
 // create assets
 export type AssetsCtx = ReturnType<typeof initAssets>;
 
-export const initAssets = (ggl: GfxCtx) => {
+export const initAssets = (ggl: GfxCtx, spriteAtlasPadding: number) => {
     const assets = {
         urlPrefix: "",
         // asset holders
@@ -225,7 +225,12 @@ export const initAssets = (ggl: GfxCtx) => {
         shaders: new AssetBucket<ShaderData>(),
         custom: new AssetBucket<any>(),
         music: {} as Record<string, string>,
-        packer: new TexPacker(ggl, SPRITE_ATLAS_WIDTH, SPRITE_ATLAS_HEIGHT),
+        packer: new TexPacker(
+            ggl,
+            SPRITE_ATLAS_WIDTH,
+            SPRITE_ATLAS_HEIGHT,
+            spriteAtlasPadding,
+        ),
         // if we finished initially loading all assets
         loaded: false,
     };
