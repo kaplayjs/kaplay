@@ -24,6 +24,7 @@ import { center } from "./stack";
 type FontAtlas = {
     font: BitmapFontData;
     cursor: Vec2;
+    maxHeight: number;
     outline: Outline | null;
 };
 
@@ -85,12 +86,14 @@ export function compileStyledText(txt: string): {
                     if (x !== undefined) {
                         throw new Error(
                             "Styled text error: mismatched tags. "
-                                + `Expected [/${x}], got [/${gn}]`,
+                            + `Expected [/${x}], got [/${gn}]`,
                         );
                     }
-                    else {throw new Error(
+                    else {
+                        throw new Error(
                             `Styled text error: stray end tag [/${gn}]`,
-                        );}
+                        );
+                    }
                 }
             }
             else styleStack.push(gn);
@@ -143,14 +146,14 @@ export function formatText(opt: DrawTextOpt): FormattedText {
             outline: Outline | null;
             filter: TexFilter;
         } = font instanceof FontData
-            ? {
-                outline: font.outline,
-                filter: font.filter,
-            }
-            : {
-                outline: null,
-                filter: DEF_FONT_FILTER,
-            };
+                ? {
+                    outline: font.outline,
+                    filter: font.filter,
+                }
+                : {
+                    outline: null,
+                    filter: DEF_FONT_FILTER,
+                };
 
         // TODO: customizable font tex filter
         const atlas: FontAtlas = fontAtlases[fontName] ?? {
@@ -167,6 +170,7 @@ export function formatText(opt: DrawTextOpt): FormattedText {
                 size: DEF_TEXT_CACHE_SIZE,
             },
             cursor: new Vec2(0),
+            maxHeight: 0,
             outline: opts.outline,
         };
 
@@ -237,7 +241,8 @@ export function formatText(opt: DrawTextOpt): FormattedText {
                 // if we are about to exceed the X axis of the texture, go to another line
                 if (atlas.cursor.x + w > FONT_ATLAS_WIDTH) {
                     atlas.cursor.x = 0;
-                    atlas.cursor.y += h;
+                    atlas.cursor.y += atlas.maxHeight;
+                    atlas.maxHeight = 0;
                     if (atlas.cursor.y > FONT_ATLAS_HEIGHT) {
                         // TODO: create another atlas
                         throw new Error(
@@ -256,6 +261,7 @@ export function formatText(opt: DrawTextOpt): FormattedText {
                 );
 
                 atlas.cursor.x += w + 1;
+                atlas.maxHeight = Math.max(atlas.maxHeight, h);
             }
         }
     }
