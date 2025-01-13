@@ -8,10 +8,25 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [3001.0.7] - 2025-01-15
 
+### Added
+
+- Added `kaplay({ spriteAtlasPadding })` for setting the space between the
+  sprites in the sprite atlas - @marianyp
+
+  ```js
+  kaplay({
+      spriteAtlasPadding: 10, // 10 pixels of space between each sprite
+  });
+  ```
+
 ### Changed
 
 - Now you cannot pass parameters that are not a component or string to `.use()`.
-  Otherwise it will throw an error
+  Otherwise it will throw an error - @lajbel
+
+### Fixed
+
+- Fixed a bug where font atlas were working strange - @mflerackers
 
 ## [3001.0.6] "Santa Events" - 2024-12-27
 
