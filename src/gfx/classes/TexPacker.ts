@@ -17,14 +17,16 @@ export default class TexPacker {
     private y: number = 0;
     private curHeight: number = 0;
     private gfx: GfxCtx;
+    private padding: number;
 
-    constructor(gfx: GfxCtx, w: number, h: number) {
+    constructor(gfx: GfxCtx, w: number, h: number, padding: number) {
         this.gfx = gfx;
         this.canvas = document.createElement("canvas");
         this.canvas.width = w;
         this.canvas.height = h;
         this.textures = [Texture.fromImage(gfx, this.canvas)];
         this.bigTextures = [];
+        this.padding = padding;
 
         const context2D = this.canvas.getContext("2d");
         if (!context2D) throw new Error("Failed to get 2d context");
@@ -33,21 +35,26 @@ export default class TexPacker {
     }
 
     add(img: ImageSource): [Texture, Quad, number] {
-        if (img.width > this.canvas.width || img.height > this.canvas.height) {
+        const paddedWidth = img.width + this.padding * 2;
+        const paddedHeight = img.height + this.padding * 2;
+
+        if (
+            paddedWidth > this.canvas.width || paddedHeight > this.canvas.height
+        ) {
             const tex = Texture.fromImage(this.gfx, img);
             this.bigTextures.push(tex);
             return [tex, new Quad(0, 0, 1, 1), 0];
         }
 
         // next row
-        if (this.x + img.width > this.canvas.width) {
+        if (this.x + paddedWidth > this.canvas.width) {
             this.x = 0;
             this.y += this.curHeight;
             this.curHeight = 0;
         }
 
         // next texture
-        if (this.y + img.height > this.canvas.height) {
+        if (this.y + paddedHeight > this.canvas.height) {
             this.c2d.clearRect(0, 0, this.canvas.width, this.canvas.height);
             this.textures.push(Texture.fromImage(this.gfx, this.canvas));
             this.x = 0;
@@ -56,14 +63,12 @@ export default class TexPacker {
         }
 
         const curTex = this.textures[this.textures.length - 1];
-        const pos = new Vec2(this.x, this.y);
-        const differenceWidth = this.canvas.width - this.x;
-        const differenceHeight = this.canvas.height - this.y;
+        const pos = new Vec2(this.x + this.padding, this.y + this.padding);
 
-        this.x += img.width;
+        this.x += paddedWidth;
 
-        if (img.height > this.curHeight) {
-            this.curHeight = img.height;
+        if (paddedHeight > this.curHeight) {
+            this.curHeight = paddedHeight;
         }
 
         if (img instanceof ImageData) {
