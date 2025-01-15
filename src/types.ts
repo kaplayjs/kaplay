@@ -5963,6 +5963,11 @@ export interface KAPLAYOpt<
      * @experimental This feature is in experimental phase, it will be fully released in v3001.1.0
      */
     tagsAsComponents?: boolean;
+    /**
+     * Padding used when adding sprites to texture atlas.
+     * @default 0
+     */
+    spriteAtlasPadding?: number;
 }
 
 /**

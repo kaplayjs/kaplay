@@ -62,7 +62,8 @@ varying vec4 v_color;
 uniform sampler2D u_tex;
 
 vec4 def_frag() {
-	return v_color * texture2D(u_tex, v_uv);
+	vec4 texColor = texture2D(u_tex, v_uv);
+	return vec4((v_color.rgb * texColor.rgb), texColor.a) * v_color.a;
 }
 
 {{user}}
