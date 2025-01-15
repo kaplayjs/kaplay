@@ -24,18 +24,23 @@ export function lifespan(time: number, opt: LifespanCompOpt = {}): EmptyComp {
         id: "lifespan",
         require: ["opacity"],
         async add(this: GameObj<OpacityComp>) {
-            await _k.game.root.wait(time);
-            this.opacity = this.opacity ?? 1;
-            if (fade > 0) {
-                await _k.game.root.tween(
-                    this.opacity,
-                    0,
-                    fade,
-                    (a) => this.opacity = a,
-                    easings.linear,
-                );
-            }
-            this.destroy();
+            _k.game.root.wait(time, () => {
+                this.opacity = this.opacity ?? 1;
+                if (fade > 0) {
+                    _k.game.root.tween(
+                        this.opacity,
+                        0,
+                        fade,
+                        (a) => this.opacity = a,
+                        easings.linear,
+                    ).onEnd(() => {
+                        this.destroy();
+                    });
+                }
+                else {
+                    this.destroy();
+                }
+            });
         },
     };
 }

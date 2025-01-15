@@ -1,6 +1,5 @@
 // @ts-check
 
-// Particle spawning
 
 kaplay();
 
@@ -18,10 +17,9 @@ sprites.forEach((spr) => {
 
 setGravity(800);
 
-// Spawn one particle every 0.1 second
-loop(0.1, () => {
-    // TODO: they are resolving collision with each other for some reason
-    // Compose particle properties with components
+// Spawn one object every 0.1 second
+loop(0.2, () => {
+    // Compose object properties with components
     const item = add([
         pos(mousePos()),
         sprite(choose(sprites)),
@@ -29,15 +27,15 @@ loop(0.1, () => {
         scale(rand(0.5, 1)),
         area({ collisionIgnore: ["particle"] }),
         body(),
-        lifespan(1, { fade: 0.5 }),
+        // lifespan() comp destroys the object after desired seconds
+        lifespan(1, {
+            // it will fade after 0.5 seconds
+            fade: 0.5
+        }),
         opacity(1),
         move(choose([LEFT, RIGHT]), rand(60, 240)),
         "particle",
     ]);
-
-    item.onCollide("particle", (p) => {
-        console.log("dea");
-    });
 
     item.jump(rand(320, 640));
 });
