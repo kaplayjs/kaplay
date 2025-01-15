@@ -34,6 +34,13 @@ export default class TexPacker {
         this.c2d = context2D;
     }
 
+    // create a image with a single texture
+    add_single(img: ImageSource): [Texture, Quad, number] {
+        const tex = Texture.fromImage(this.gfx, img);
+        this.bigTextures.push(tex);
+        return [tex, new Quad(0, 0, 1, 1), 0];
+    }
+
     add(img: ImageSource): [Texture, Quad, number] {
         const paddedWidth = img.width + this.padding * 2;
         const paddedHeight = img.height + this.padding * 2;
@@ -41,9 +48,7 @@ export default class TexPacker {
         if (
             paddedWidth > this.canvas.width || paddedHeight > this.canvas.height
         ) {
-            const tex = Texture.fromImage(this.gfx, img);
-            this.bigTextures.push(tex);
-            return [tex, new Quad(0, 0, 1, 1), 0];
+            this.add_single(img);
         }
 
         // next row
