@@ -67,6 +67,10 @@ export interface LoadSpriteOpt {
      * Animation configuration.
      */
     anims?: SpriteAnims;
+    /**
+     * If the sprite is a single image.
+     */
+    singular?: boolean;
 }
 
 export type NineSlice = {
@@ -132,7 +136,9 @@ export class SpriteData {
         data: ImageSource,
         opt: LoadSpriteOpt = {},
     ): SpriteData {
-        const [tex, quad] = _k.assets.packer.add(data);
+        const [tex, quad] = opt.singular
+            ? _k.assets.packer.add_single(data)
+            : _k.assets.packer.add(data);
         const frames = opt.frames
             ? opt.frames.map((f) =>
                 new Quad(
