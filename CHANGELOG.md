@@ -10,6 +10,17 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Added
 
+- Added new option in `LoadSpriteOpt` for loading sprites in an individual
+  spritesheet - @chqs-git
+  ```js
+  loadSprite(
+      "player",
+      "sprites/player.png",
+      {
+          singular: true,
+      },
+  );
+  ```
 - **(examples)** Added a new `particle` example! - @lajbel
 
 ### Changed
@@ -34,11 +45,11 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - Added `kaplay({ spriteAtlasPadding })` for setting the space between the
   sprites in the sprite atlas - @marianyp
 
-  ```js
-  kaplay({
-      spriteAtlasPadding: 10, // 10 pixels of space between each sprite
-  });
-  ```
+```js
+kaplay({
+    spriteAtlasPadding: 10, // 10 pixels of space between each sprite
+});
+```
 
 ### Changed
 
