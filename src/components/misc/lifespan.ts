@@ -26,6 +26,7 @@ export function lifespan(time: number, opt: LifespanCompOpt = {}): EmptyComp {
         add(this: GameObj<OpacityComp>) {
             _k.game.root.wait(time, () => {
                 this.opacity = this.opacity ?? 1;
+
                 if (fade > 0) {
                     _k.game.root.tween(
                         this.opacity,

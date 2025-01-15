@@ -18,14 +18,14 @@ sprites.forEach((spr) => {
 setGravity(800);
 
 // Spawn one object every 0.1 second
-loop(0.2, () => {
+loop(0.1, () => {
     // Compose object properties with components
     const item = add([
-        pos(mousePos()),
+        pos(center()),
         sprite(choose(sprites)),
         anchor("center"),
         scale(rand(0.5, 1)),
-        area({ collisionIgnore: ["particle"] }),
+        area({ collisionIgnore: ["fruit"] }),
         body(),
         // lifespan() comp destroys the object after desired seconds
         lifespan(1, {
@@ -34,7 +34,7 @@ loop(0.2, () => {
         }),
         opacity(1),
         move(choose([LEFT, RIGHT]), rand(60, 240)),
-        "particle",
+        "fruit",
     ]);
 
     item.jump(rand(320, 640));
