@@ -140,22 +140,16 @@ export function make<T>(comps: CompList<T> = []): GameObj<T> {
         },
 
         remove(obj: GameObj): void {
-            const idx = this.children.indexOf(obj);
+            obj.parent = null;
 
-            if (idx !== -1) {
-                obj.parent = null;
-                this.children.splice(idx, 1);
+            const trigger = (o: GameObj) => {
+                o.trigger("destroy");
+                _k.game.events.trigger("destroy", o);
+                o.children.forEach((child) => trigger(child));
+            };
 
-                const trigger = (o: GameObj) => {
-                    o.trigger("destroy");
-                    _k.game.events.trigger("destroy", o);
-                    o.children.forEach((child) => trigger(child));
-                };
-
-                trigger(obj);
-            }
+            trigger(obj);
         },
-
         // TODO: recursive
         removeAll(this: GameObj, tag?: Tag) {
             if (tag) {
