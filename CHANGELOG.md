@@ -6,6 +6,32 @@ The format is (mostly) based on
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project
 adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3001.0.9] - 2025-01-15
+
+### Added
+
+- Added new option in `LoadSpriteOpt` for loading sprites in an individual
+  spritesheet - @chqs-git
+  ```js
+  loadSprite(
+      "player",
+      "sprites/player.png",
+      {
+          singular: true,
+      },
+  );
+  ```
+- **(examples)** Added a new `particle` example! - @lajbel
+
+### Changed
+
+- Improved `lifespan()` explanation - @lajbel
+- **(examples)** `particle` example renamed to `lifespan` - @lajbel
+
+### Fixed
+
+- Fixed a bug where `lifespan()` was working incorrectly - @lajbel
+
 ## [3001.0.8] - 2025-01-15
 
 ### Fixed
@@ -19,11 +45,11 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - Added `kaplay({ spriteAtlasPadding })` for setting the space between the
   sprites in the sprite atlas - @marianyp
 
-  ```js
-  kaplay({
-      spriteAtlasPadding: 10, // 10 pixels of space between each sprite
-  });
-  ```
+```js
+kaplay({
+    spriteAtlasPadding: 10, // 10 pixels of space between each sprite
+});
+```
 
 ### Changed
 
