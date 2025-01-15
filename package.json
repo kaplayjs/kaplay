@@ -4,6 +4,7 @@
   "version": "4000.0.0-alpha.15",
   "license": "MIT",
   "homepage": "https://v4000.kaplayjs.com/",
+  "funding": "https://opencollective.com/kaplay",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/kaplayjs/kaplay.git"
