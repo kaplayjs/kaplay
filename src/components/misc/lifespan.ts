@@ -23,7 +23,7 @@ export function lifespan(time: number, opt: LifespanCompOpt = {}): EmptyComp {
     return {
         id: "lifespan",
         require: ["opacity"],
-        async add(this: GameObj<OpacityComp>) {
+        add(this: GameObj<OpacityComp>) {
             _k.game.root.wait(time, () => {
                 this.opacity = this.opacity ?? 1;
                 if (fade > 0) {
