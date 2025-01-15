@@ -6,7 +6,7 @@ const txtEl = add([
             pink: {
                 color: MAGENTA,
             },
-        }
+        },
     }),
     pos(100, 100),
 ]);

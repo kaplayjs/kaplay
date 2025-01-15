@@ -86,7 +86,7 @@ export function compileStyledText(txt: string): {
                     if (x !== undefined) {
                         throw new Error(
                             "Styled text error: mismatched tags. "
-                            + `Expected [/${x}], got [/${gn}]`,
+                                + `Expected [/${x}], got [/${gn}]`,
                         );
                     }
                     else {
@@ -146,14 +146,14 @@ export function formatText(opt: DrawTextOpt): FormattedText {
             outline: Outline | null;
             filter: TexFilter;
         } = font instanceof FontData
-                ? {
-                    outline: font.outline,
-                    filter: font.filter,
-                }
-                : {
-                    outline: null,
-                    filter: DEF_FONT_FILTER,
-                };
+            ? {
+                outline: font.outline,
+                filter: font.filter,
+            }
+            : {
+                outline: null,
+                filter: DEF_FONT_FILTER,
+            };
 
         // TODO: customizable font tex filter
         const atlas: FontAtlas = fontAtlases[fontName] ?? {

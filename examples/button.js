@@ -10,7 +10,11 @@ kaplay({
 onUpdate(() => setCursor("default"));
 
 // Function that adds a button to the game with a given text, position and function
-function addButton(txt = "start game", p = vec2(200, 100), f = () => debug.log("hello")) {
+function addButton(
+    txt = "start game",
+    p = vec2(200, 100),
+    f = () => debug.log("hello"),
+) {
     // add a parent background object
     const btn = add([
         rect(240, 80, { radius: 8 }),

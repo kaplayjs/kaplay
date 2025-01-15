@@ -251,13 +251,13 @@ export function sprite(
             if (!spriteData || !curAnim || curAnimDir === null) {
                 return this.frame;
             }
-            
+
             const anim = spriteData.anims[curAnim.name];
-            
+
             if (typeof anim === "number") {
                 return anim;
             }
-            
+
             return this.frame - Math.min(anim.from, anim.to);
         },
 

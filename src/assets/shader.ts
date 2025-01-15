@@ -200,7 +200,10 @@ export function loadShader(
     vert?: string,
     frag?: string,
 ) {
-    return _k.assets.shaders.addLoaded(name, makeShader(_k.gfx.ggl, vert, frag));
+    return _k.assets.shaders.addLoaded(
+        name,
+        makeShader(_k.gfx.ggl, vert, frag),
+    );
 }
 
 export function loadShaderURL(

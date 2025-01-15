@@ -26,10 +26,14 @@ rotatingBean.animate("angle", [0, 360], {
 
 onClick(() => {
     rotatingBean.animation.seek(0);
-})
+});
 
-rotatingBean.onAnimateChannelFinished(name => { debug.log(`${name} finished`) })
-rotatingBean.onAnimateFinished(() => { debug.log(`All finished`) })
+rotatingBean.onAnimateChannelFinished(name => {
+    debug.log(`${name} finished`);
+});
+rotatingBean.onAnimateFinished(() => {
+    debug.log(`All finished`);
+});
 
 // Now we'll move this bean from left to right
 const movingBean = add([
@@ -48,7 +52,7 @@ movingBean.animate("pos", [vec2(50, 150), vec2(150, 150)], {
 
 onClick(() => {
     movingBean.animation.paused = !movingBean.animation.paused;
-})
+});
 
 // Same animation as before, but relative to the spawn position
 const secondMovingBean = add([
@@ -149,7 +153,7 @@ timedSquaringBean.animate(
     },
 );
 
-// We'll move this bean in a curve 
+// We'll move this bean in a curve
 // Using spline interpolation to move according to a smoothened path
 const curvingBean = add([
     sprite("bean"),
