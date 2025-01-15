@@ -6,6 +6,13 @@ The format is (mostly) based on
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project
 adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3001.0.7] - 2025-01-15
+
+### Changed
+
+- Now you cannot pass parameters that are not a component or string to `.use()`.
+  Otherwise it will throw an error
+
 ## [3001.0.6] "Santa Events" - 2024-12-27
 
 ### Added
