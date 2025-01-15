@@ -1222,11 +1222,13 @@ export interface KAPLAYCtx<
      *
      * @example
      * ```js
-     * // spawn an explosion, destroy after 1 seconds, start fading away after 0.5 second
+     * // spawn an explosion, destroy after 1.5 seconds (time + fade)
      * add([
      *     sprite("explosion", { anim: "burst", }),
-     *     lifespan(1, { fade: 0.5 }),
-     * ])
+     *     lifespan(1, {
+     *         fade: 0.5 // it start fading 0.5 second after time
+     *     }),
+     * ]);
      * ```
      *
      * @returns The lifespan comp.

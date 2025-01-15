@@ -1,43 +1,49 @@
-// @ts-check
-
-// Particle spawning
+// Creating particles using Particle Component
 
 kaplay();
 
-const sprites = [
-    "apple",
-    "heart",
-    "coin",
-    "meat",
-    "lightening",
-];
+loadSprite("star", "./examples/sprites/particle_star_filled.png");
 
-sprites.forEach((spr) => {
-    loadSprite(spr, `/sprites/${spr}.png`);
+onLoad(() => {
+    go("game")
 });
 
-setGravity(800);
-
-// Spawn one particle every 0.1 second
-loop(0.1, () => {
-    // TODO: they are resolving collision with each other for some reason
-    // Compose particle properties with components
-    const item = add([
-        pos(mousePos()),
-        sprite(choose(sprites)),
-        anchor("center"),
-        scale(rand(0.5, 1)),
-        area({ collisionIgnore: ["particle"] }),
-        body(),
-        lifespan(1, { fade: 0.5 }),
-        opacity(1),
-        move(choose([LEFT, RIGHT]), rand(60, 240)),
-        "particle",
+function woah() {
+    const parts = add([
+        pos(center()),
+        particles({
+            max: 20,
+            speed: [50, 100],
+            angle: [0, 360],
+            angularVelocity: [45, 90],
+            lifeTime: [1.0, 1.5],
+            colors: [rgb(128, 128, 255), WHITE],
+            opacities: [0.1, 1.0, 0.0],
+            scales: [1, 2, 1],
+            texture: getSprite("star").data.tex,
+            quads: [getSprite("star").data.frames[0]],
+        }, {
+            lifetime: 1.5,
+            rate: 0,
+            direction: -90,
+            spread: 40,
+        }),
     ]);
 
-    item.onCollide("particle", (p) => {
-        console.log("dea");
+    parts.emit(20);
+}
+
+scene("game", () => {
+    onKeyPress("space", () => {
+        woah();
     });
 
-    item.jump(rand(320, 640));
+    onMousePress(() => {
+        woah();
+    });
+
+    add([
+        text("press space for particles"),
+    ]);
 });
+
