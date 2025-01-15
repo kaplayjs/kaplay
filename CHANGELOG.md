@@ -41,7 +41,7 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - Changed default behaviour of `kaplay({ tagsAsComponents: false })` to `false`.
 - Now if you pass a nullish value to `.use()` it throws an error
 
-## [3001.0.9] - 2025-01-15
+## [3001.0.10] - TBD
 
 ### Added
 
@@ -56,6 +56,11 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
       },
   );
   ```
+
+## [3001.0.9] - 2025-01-15
+
+### Added
+
 - **(examples)** Added a new `particle` example! - @lajbel
 
 ### Changed
