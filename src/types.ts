@@ -7145,6 +7145,12 @@ export interface SpriteCurAnim {
     timer: number;
     loop: boolean;
     speed: number;
+    /**
+     * The current index relative to the start of the
+     * associated `frames` array for this animation.
+     * This may be greater than the number of frames
+     * in the sprite.
+     */
     frameIndex: number;
     pingpong: boolean;
     onEnd: () => void;
