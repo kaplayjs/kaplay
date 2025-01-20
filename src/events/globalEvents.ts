@@ -36,7 +36,7 @@ export function on<Ev extends GameObjEventNames>(
 export const trigger = (event: string, tag: string, ...args: any[]) => {
     for (const obj of _k.game.root.children) {
         if (obj.is(tag)) {
-            obj.trigger(event);
+            obj.trigger(event, args);
         }
     }
 };
