@@ -7,5 +7,26 @@
 			"@experimental This feature is in experimental phase, it will be fully released in v3001.1.0",
 		],
 		"description": "Add @experimental tag in JSDoc"
+	},
+	"Add documentation template": {
+		"scope": "typescript",
+		"prefix": "kpd-doc",
+		"body": [
+			"/**",
+			"* Attach and render a circle to a Game Object.",
+			"*",
+			"* @param radius - The radius of the circle.",
+			"* @param opt - Options for the circle component. See {@link CircleCompOpt `CircleCompOpt`}.",
+			"*",
+			"* @example",
+			"* ```js",
+			"* ```",
+			"*",
+			"* @returns The circle comp.",
+			"* @since v3000.0",
+			"* @group Components",
+			"*/"
+		],
+		"description": "Add the documentation template in a doc entry."
 	}
 }

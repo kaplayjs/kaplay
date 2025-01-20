@@ -124,7 +124,7 @@ import type {
     Texture,
 } from "./gfx";
 import type { GjkCollisionResult } from "./math";
-import type { Color, RGBAValue, RGBValue } from "./math/color";
+import type { Color, CSSColor, RGBAValue, RGBValue } from "./math/color";
 import type {
     Circle,
     Ellipse,
@@ -496,7 +496,7 @@ export interface KAPLAYCtx<
     color(r: number, g: number, b: number): ColorComp;
     color(c: Color): ColorComp;
     color(rgb: [number, number, number]): ColorComp;
-    color(c: string): ColorComp;
+    color(c: CSSColor & (string | {})): ColorComp;
     color(): ColorComp;
     /**
      * Sets the opacity of a Game Object (0.0 - 1.0).
@@ -2899,7 +2899,7 @@ export interface KAPLAYCtx<
     /**
      * Load default sprite "bean".
      *
-     * @param name - The optional name for bean.
+     * @param name - An optional name for bean.
      *
      * @example
      * ```js
@@ -2916,6 +2916,20 @@ export interface KAPLAYCtx<
      * @group Assets
      */
     loadBean(name?: string): Asset<SpriteData>;
+    /**
+     * Load default font "happy".
+     *
+     * @param name - An optional name for happy.
+     *
+     * @example
+     * ```js
+     * loadHappy();
+     *
+     * add([
+     *     text("ohhi", { font: "happy" }),
+     * ]);
+     */
+    loadHappy(name?: string, opt?: LoadBitmapFontOpt): Asset<BitmapFontData>;
     /**
      * Load custom JSON data from url.
      *
@@ -4207,16 +4221,29 @@ export interface KAPLAYCtx<
      * @example
      * ```js
      * sky.color = rgb("#ef6360")
+     * ```
      *
      * @returns The color.
      * @since v2000.0
-     * @group Math
      */
     rgb(hex: string): Color;
     /**
-     * Same as rgb(255, 255, 255).
+     * Create a color from CSS name.
      *
-     * @group Math
+     * @param cssColor - The CSS name.
+     *
+     * @example
+     * ```js
+     * sea.color = rgb("slateblue");
+     * ```
+     *
+     * @returns The color.
+     * @since v3001.0.10
+     * @experimental This feature is in experimental phase, it will be fully released in v3001.1.0
+     */
+    rgb(cssColor: CSSColor): Color;
+    /**
+     * Same as rgb(255, 255, 255).
      */
     rgb(): Color;
     /**

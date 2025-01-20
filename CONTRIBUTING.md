@@ -60,6 +60,7 @@ There is the structure of a JSDoc comment:
 - `@requires` when the member requires something to work. Usually a component.
 - `@param` for each parameter. Each parameter should have - at start.
 - `@example` for 1 (and only one) example.
+- `@static` only if the value is an static method
 - `@returns` for the return value description.
 - `@since` for the version when the member was added.
 - `@group` for the group of the member.

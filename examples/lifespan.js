@@ -1,6 +1,5 @@
 // @ts-check
 
-
 kaplay();
 
 const sprites = [
@@ -30,7 +29,7 @@ loop(0.1, () => {
         // lifespan() comp destroys the object after desired seconds
         lifespan(1, {
             // it will fade after 0.5 seconds
-            fade: 0.5
+            fade: 0.5,
         }),
         opacity(1),
         move(choose([LEFT, RIGHT]), rand(60, 240)),

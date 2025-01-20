@@ -5,7 +5,7 @@ kaplay();
 loadSprite("star", "./examples/sprites/particle_star_filled.png");
 
 onLoad(() => {
-    go("game")
+    go("game");
 });
 
 function woah() {
@@ -46,4 +46,3 @@ scene("game", () => {
         text("press space for particles"),
     ]);
 });
-
