@@ -135,7 +135,7 @@ add([
 also works with CommonJS
 
 ```js
-const kaboom = require("kaplay");
+const kaplay = require("kaplay");
 ```
 
 Note that you'll need to use a bundler like `esbuild` or `webpack` to use KAPLAY
@@ -146,7 +146,7 @@ with NPM
 This exports a global `kaplay` function
 
 ```html
-<script src="https://unpkg.com/kaplay@3000.1.17/dist/kaboom.js"></script>
+<script src="https://unpkg.com/kaplay@3001.0.9/dist/kaplay.js"></script>
 <script>
 kaplay()
 </script>
@@ -156,7 +156,7 @@ or use with es modules
 
 ```html
 <script type="module">
-import kaplay from "https://unpkg.com/kaplay@3000.1.17/dist/kaboom.mjs"
+import kaplay from "https://unpkg.com/kaplay@3001.0.9/dist/kaplay.mjs"
 kaplay()
 </script>
 ```
