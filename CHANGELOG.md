@@ -22,6 +22,10 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   );
   ```
 
+### Fixed
+
+- Fixed a bug where args were not being passed to global `trigger()` - @lajbel
+
 ## [3001.0.9] - 2025-01-15
 
 ### Added
