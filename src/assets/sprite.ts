@@ -14,11 +14,11 @@ export type SpriteAnim = number | {
     /**
      * The starting frame.
      */
-    from: number;
+    from?: number;
     /**
      * The end frame.
      */
-    to: number;
+    to?: number;
     /**
      * If this anim should be played in loop.
      */
@@ -31,6 +31,12 @@ export type SpriteAnim = number | {
      * This anim's speed in frames per second.
      */
     speed?: number;
+    /**
+     * List of frames for the animation.
+     *
+     * If this property exists, **from, to, and pingpong will be ignored**.
+     */
+    frames?: number[];
 };
 
 /**
