@@ -130,13 +130,16 @@ export interface AreaComp extends Comp {
      *
      * @since v2001.0
      */
-    onCollide(tag: Tag, f: (obj: GameObj, col?: Collision) => void): void;
+    onCollide(
+        tag: Tag,
+        f: (obj: GameObj, col?: Collision) => void,
+    ): KEventController;
     /**
      * Register an event runs once when collide with another game obj.
      *
      * @since v2000.1
      */
-    onCollide(f: (obj: GameObj, col?: Collision) => void): void;
+    onCollide(f: (obj: GameObj, col?: Collision) => void): KEventController;
     /**
      * Register an event runs every frame when collide with another game obj with certain tag.
      *
@@ -144,7 +147,7 @@ export interface AreaComp extends Comp {
      */
     onCollideUpdate(
         tag: Tag,
-        f: (obj: GameObj, col?: Collision) => void,
+        f: (obj: GameObj, col?: Collision) => KEventController,
     ): KEventController;
     /**
      * Register an event runs every frame when collide with another game obj.
