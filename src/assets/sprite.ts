@@ -145,7 +145,9 @@ export class SpriteData {
         data: ImageSource,
         opt: LoadSpriteOpt = {},
     ): SpriteData {
-        const [tex, quad, packerId] = opt.singular ? _k.assets.packer.add_single(data) : _k.assets.packer.add(data);
+        const [tex, quad, packerId] = opt.singular
+            ? _k.assets.packer.add_single(data)
+            : _k.assets.packer.add(data);
         const frames = opt.frames
             ? opt.frames.map((f) =>
                 new Quad(

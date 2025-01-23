@@ -41,11 +41,32 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - Changed default behaviour of `kaplay({ tagsAsComponents: false })` to `false`.
 - Now if you pass a nullish value to `.use()` it throws an error
 
-## [3001.0.10] - TBD
+## [3001.0.10] "Happy Colors" - TBD
 
 ### Added
 
-- Added new option in `LoadSpriteOpt` for loading sprites in an individual
+- Added **CSS Colors!** 🎨 **(experimental)** - @lajbel (based on
+  @dragoncoder047 idea)
+
+  ```js
+  color("slateblue");
+  color("red");
+  color("wheat");
+  color("tomato"); // yum!
+  ```
+
+- Added `loadHappy()` font to load a default font, happy :D - @lajbel
+
+  ```js
+  kaplay({ font: "happy" });
+  loadHappy();
+
+  add([
+      text("ohhi"),
+  ]);
+  ```
+
+- Added a new option in `LoadSpriteOpt` for loading sprites in an individual
   spritesheet - @chqs-git
   ```js
   loadSprite(

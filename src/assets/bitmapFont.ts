@@ -1,6 +1,7 @@
 import { ASCII_CHARS } from "../constants";
 import { Texture } from "../gfx";
 import { _k } from "../kaplay";
+import happyFont from "../kassets/happy.png";
 import type { Quad } from "../math/math";
 import type { TexFilter } from "../types";
 import { type Asset, loadImg } from "./asset";
@@ -38,7 +39,7 @@ export function loadBitmapFont(
 
     return _k.assets.bitmapFonts.add(
         name,
-        loadImg(src)
+        loadImg(fontSrc)
             .then((img) => {
                 return makeFont(
                     Texture.fromImage(_k.gfx.ggl, img, opt),
@@ -49,3 +50,11 @@ export function loadBitmapFont(
             }),
     );
 }
+
+// loading happiness...
+export const loadHappy = (
+    fontName: string = "happy",
+    opt?: LoadBitmapFontOpt,
+) => {
+    return loadBitmapFont(fontName, happyFont, 28, 36, opt);
+};
