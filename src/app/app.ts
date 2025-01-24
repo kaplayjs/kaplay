@@ -431,6 +431,32 @@ export const initApp = (opt: {
         state.events.trigger("buttonRelease", btn);
     }
 
+    // #region Pressed keys getters
+    function getKeysPressed(): Key[] {
+        return Array.from(state.keyState.pressed);
+    }
+
+    function getKeysDown(): Key[] {
+        return Array.from(state.keyState.down);
+    }
+
+    function getKeysReleased(): Key[] {
+        return Array.from(state.keyState.released);
+    }
+
+    function getButtonsPressed(): string[] {
+        return Array.from(state.buttonState.pressed);
+    }
+
+    function getButtonsDown(): string[] {
+        return Array.from(state.buttonState.down);
+    }
+
+    function getButtonsReleased(): string[] {
+        return Array.from(state.buttonState.released);
+    }
+    // #endregion
+
     function onResize(action: () => void): KEventController {
         return state.events.on("resize", action);
     }
@@ -1240,6 +1266,12 @@ export const initApp = (opt: {
         getButton,
         pressButton,
         releaseButton,
+        getKeysPressed,
+        getKeysDown,
+        getKeysReleased,
+        getButtonsPressed,
+        getButtonsDown,
+        getButtonsReleased,
         charInputted,
         onResize,
         onKeyDown,

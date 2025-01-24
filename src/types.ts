@@ -3585,6 +3585,30 @@ export interface KAPLAYCtx<
      */
     releaseButton(btn: TButton): void;
     /**
+     * Get all keys that was pressed current frame.
+     *
+     * @example
+     * ```js
+     * onMousePress(() => {
+     *     const keys = getKeysPressed();
+     *
+     *     if(keys.includes("k")) {
+     *         debug.log("You was pressing K!")
+     *     }
+     * });
+     * ```
+     *
+     * @returns A list of pressed keys.
+     * @since v3001.0.10
+     * @group Input
+     * @experimental This feature is in experimental phase, it will be fully released in v3001.1.0
+     */
+    getKeysPressed(): Key[];
+    /**
+     * Get all keys that are held down in current frame.
+     */
+    getKeysDown(): Key[];
+    /**
      * Get stick axis values from a gamepad.
      *
      * @param stick - The stick to get values from.

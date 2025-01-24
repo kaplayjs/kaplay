@@ -64,6 +64,7 @@ There is the structure of a JSDoc comment:
 - `@returns` for the return value description.
 - `@since` for the version when the member was added.
 - `@group` for the group of the member.
+- `@experimental` for indicate smt is in experimental phase
 
 Example:
 
