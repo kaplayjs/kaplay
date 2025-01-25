@@ -31,19 +31,11 @@ export function drawRaw(
     const vertLength = attributes.pos.length / 2;
     const vv: number[] = new Array(vertLength * 8);
 
-    const w = width();
-    const h = height();
     let index = 0;
     for (let i = 0; i < vertLength; i++) {
         scratchPt.x = attributes.pos[i * 2];
         scratchPt.y = attributes.pos[i * 2 + 1];
-        // normalized world space coordinate [-1.0 ~ 1.0]
-        screen2ndc(
-            transform.transformPoint(scratchPt, scratchPt),
-            w,
-            h,
-            scratchPt,
-        );
+        transform.transformPoint(scratchPt, scratchPt)
 
         vv[index++] = scratchPt.x;
         vv[index++] = scratchPt.y;
@@ -62,5 +54,7 @@ export function drawRaw(
         shader,
         parsedTex,
         uniform,
+        width(),
+        height()
     );
 }

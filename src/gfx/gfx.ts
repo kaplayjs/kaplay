@@ -164,6 +164,8 @@ export class BatchRenderer {
         shader: Shader,
         tex: Texture | null = null,
         uniform: Uniform | null = null,
+        width: number,
+        height: number
     ) {
         if (
             primitive !== this.curPrimitive
@@ -172,10 +174,10 @@ export class BatchRenderer {
             || ((this.curUniform != uniform)
                 && !deepEq(this.curUniform, uniform))
             || this.vqueue.length + verts.length * this.stride
-                > this.maxVertices
+            > this.maxVertices
             || this.iqueue.length + indices.length > this.maxIndices
         ) {
-            this.flush();
+            this.flush(width, height);
         }
         const indexOffset = this.vqueue.length / this.stride;
         let l = verts.length;
@@ -192,7 +194,7 @@ export class BatchRenderer {
         this.curUniform = uniform;
     }
 
-    flush() {
+    flush(width: number, height: number) {
         if (
             !this.curPrimitive
             || !this.curShader
@@ -217,6 +219,10 @@ export class BatchRenderer {
         if (this.curUniform) {
             this.curShader.send(this.curUniform);
         }
+        this.curShader.send({
+            width,
+            height
+        });
         this.curTex?.bind();
         gl.drawElements(
             this.curPrimitive,

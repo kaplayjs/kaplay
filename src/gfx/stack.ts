@@ -48,7 +48,7 @@ export function popTransform() {
 }
 
 export function flush() {
-    _k.gfx.renderer.flush();
+    _k.gfx.renderer.flush(width(), height());
 }
 
 // get game width
