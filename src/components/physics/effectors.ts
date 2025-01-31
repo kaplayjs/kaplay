@@ -152,9 +152,12 @@ export function constantForce(opts: ConstantForceCompOpt): ConstantForceComp {
 export type PlatformEffectorCompOpt = {
     /**
      * If the object is about to collide and the collision normal direction is
-     * in here, the object won't collide.
+     * in here (i.e. the object is moving roughly in this direction), the object won't collide.
      *
      * Should be a list of unit vectors `LEFT`, `RIGHT`, `UP`, or `DOWN`.
+     * 
+     * Defaults to `[UP]`, i.e. the object will only be able to pass through when it
+     * is jumping upwards, but will collide when it is moving downwards or sideways.
      */
     ignoreSides?: Vec2[];
     /**
