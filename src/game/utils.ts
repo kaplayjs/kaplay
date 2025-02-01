@@ -13,5 +13,6 @@ export function getRenderProps(obj: GameObj<any>) {
         outline: obj.outline,
         shader: obj.shader,
         uniform: obj.uniform,
+        blend: obj.blend,
     };
 }

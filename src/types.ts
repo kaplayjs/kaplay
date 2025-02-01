@@ -30,6 +30,7 @@ import type {
     AreaCompOpt,
     AreaEffectorComp,
     AreaEffectorCompOpt,
+    BlendComp,
     BodyComp,
     BodyCompOpt,
     BuoyancyEffectorComp,
@@ -498,6 +499,23 @@ export interface KAPLAYCtx<
     color(rgb: [number, number, number]): ColorComp;
     color(c: CSSColor & (string | {})): ColorComp;
     color(): ColorComp;
+    /**
+     * Sets the blend mode of a Game Object.
+     *
+     * @example
+     * ```js
+     * // light
+     * add([
+     *     sprite("light"),
+     *     blend(BlendMode.Add),
+     * ]);
+     * ```
+     *
+     * @returns The blend comp.
+     * @since v4000.0
+     * @group Components
+     */
+    blend(blend: BlendMode): BlendComp;
     /**
      * Sets the opacity of a Game Object (0.0 - 1.0).
      *
@@ -5661,6 +5679,16 @@ export interface KAPLAYCtx<
      */
     KeepFlags: typeof KeepFlags;
     /**
+     * BlendMode.Normal Normal alpha blending
+     * BlendMode.Add Additive blending
+     * BlendMode.Multiply multiplicative blending
+     * BlendMode.Screen Screen blending
+     *
+     * @since v4000.0
+     * @group Constants
+     */
+    BlendMode: typeof BlendMode;
+    /**
      * Current KAPLAY library version.
      *
      * @since v3000.0
@@ -6542,6 +6570,13 @@ export interface Vertex {
     opacity: number;
 }
 
+export enum BlendMode {
+    Normal = 0,
+    Add = 1,
+    Multiply = 2,
+    Screen = 3,
+}
+
 export interface Attributes {
     pos: number[];
     uv: number[];
@@ -6567,6 +6602,7 @@ export interface RenderProps {
     fixed?: boolean;
     shader?: string | ShaderData | Asset<ShaderData> | null;
     uniform?: Uniform | null;
+    blend?: BlendMode;
     outline?: Outline;
 }
 

@@ -1,3 +1,4 @@
+export * from "./blend";
 export * from "./circle";
 export * from "./color";
 export * from "./drawon";

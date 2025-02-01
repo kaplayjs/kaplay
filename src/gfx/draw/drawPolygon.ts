@@ -1,7 +1,7 @@
 import { _k } from "../../kaplay";
 import { Color } from "../../math/color";
 import { triangulate, Vec2 } from "../../math/math";
-import type { DrawPolygonOpt } from "../../types";
+import { BlendMode, type DrawPolygonOpt } from "../../types";
 import {
     popTransform,
     pushRotate,
@@ -103,6 +103,7 @@ export function drawPolygon(opt: DrawPolygonOpt) {
             opt.uv ? opt.tex : _k.gfx.defTex,
             opt.shader,
             opt.uniform ?? undefined,
+            opt.blend ?? BlendMode.Normal,
         );
     }
 

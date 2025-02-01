@@ -38,6 +38,7 @@ export type {
     AreaEffectorComp,
     AreaEffectorCompOpt,
     BaseValues,
+    BlendComp,
     BodyComp,
     BodyCompOpt,
     BuoyancyEffectorComp,
@@ -170,6 +171,7 @@ export type {
 } from "./math";
 export type {
     Anchor,
+    BlendMode,
     Canvas,
     Collision,
     Comp,

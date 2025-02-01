@@ -162,16 +162,17 @@ import {
     KEventHandler,
 } from "./utils";
 
-import type {
-    Debug,
-    GameObj,
-    KAPLAYCtx,
-    KAPLAYInternal,
-    KAPLAYOpt,
-    KAPLAYPlugin,
-    MergePlugins,
-    PluginList,
-    Recording,
+import {
+    BlendMode,
+    type Debug,
+    type GameObj,
+    type KAPLAYCtx,
+    type KAPLAYInternal,
+    type KAPLAYOpt,
+    type KAPLAYPlugin,
+    type MergePlugins,
+    type PluginList,
+    type Recording,
 } from "./types";
 
 import {
@@ -181,6 +182,7 @@ import {
     area,
     type AreaComp,
     areaEffector,
+    blend,
     body,
     buoyancyEffector,
     circle,
@@ -1290,6 +1292,7 @@ const kaplay = <
         scale,
         rotate,
         color,
+        blend,
         opacity,
         anchor,
         area,
@@ -1552,6 +1555,7 @@ const kaplay = <
         KEventController,
         KeepFlags,
         cancel: () => EVENT_CANCEL_SYMBOL,
+        BlendMode,
     };
 
     _k.k = ctx;

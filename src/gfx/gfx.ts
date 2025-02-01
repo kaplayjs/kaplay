@@ -1,5 +1,10 @@
 import type { Shader, Uniform } from "../assets";
-import type { ImageSource, TexFilter, TextureOpt } from "../types";
+import {
+    BlendMode,
+    type ImageSource,
+    type TexFilter,
+    type TextureOpt,
+} from "../types";
 import { deepEq } from "../utils/";
 
 export type GfxCtx = ReturnType<typeof initGfx>;
@@ -124,6 +129,7 @@ export class BatchRenderer {
     curTex: Texture | null = null;
     curShader: Shader | null = null;
     curUniform: Uniform | null = null;
+    curBlend: BlendMode = BlendMode.Normal;
 
     constructor(
         ctx: GfxCtx,
@@ -164,8 +170,9 @@ export class BatchRenderer {
         shader: Shader,
         tex: Texture | null = null,
         uniform: Uniform | null = null,
+        blend: BlendMode,
         width: number,
-        height: number
+        height: number,
     ) {
         if (
             primitive !== this.curPrimitive
@@ -173,11 +180,51 @@ export class BatchRenderer {
             || shader !== this.curShader
             || ((this.curUniform != uniform)
                 && !deepEq(this.curUniform, uniform))
+            || blend !== this.curBlend
             || this.vqueue.length + verts.length * this.stride
-            > this.maxVertices
+                > this.maxVertices
             || this.iqueue.length + indices.length > this.maxIndices
         ) {
             this.flush(width, height);
+
+            if (blend !== this.curBlend) {
+                const gl = this.ctx.gl;
+                this.curBlend = blend;
+                switch (this.curBlend) {
+                    case BlendMode.Normal:
+                        gl.blendFuncSeparate(
+                            gl.ONE,
+                            gl.ONE_MINUS_SRC_ALPHA,
+                            gl.ONE,
+                            gl.ONE_MINUS_SRC_ALPHA,
+                        );
+                        break;
+                    case BlendMode.Add:
+                        gl.blendFuncSeparate(
+                            gl.ONE,
+                            gl.ONE,
+                            gl.ONE,
+                            gl.ONE_MINUS_SRC_ALPHA,
+                        );
+                        break;
+                    case BlendMode.Multiply:
+                        gl.blendFuncSeparate(
+                            gl.DST_COLOR,
+                            gl.ZERO,
+                            gl.ONE,
+                            gl.ONE_MINUS_SRC_ALPHA,
+                        );
+                        break;
+                    case BlendMode.Screen:
+                        gl.blendFuncSeparate(
+                            gl.ONE,
+                            gl.ONE_MINUS_SRC_COLOR,
+                            gl.ONE,
+                            gl.ONE_MINUS_SRC_ALPHA,
+                        );
+                        break;
+                }
+            }
         }
         const indexOffset = this.vqueue.length / this.stride;
         let l = verts.length;
@@ -221,7 +268,7 @@ export class BatchRenderer {
         }
         this.curShader.send({
             width,
-            height
+            height,
         });
         this.curTex?.bind();
         gl.drawElements(

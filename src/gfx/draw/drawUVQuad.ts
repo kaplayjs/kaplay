@@ -1,7 +1,7 @@
 import { DEF_ANCHOR, UV_PAD } from "../../constants";
 import { Color, rgb } from "../../math/color";
 import { Quad, Vec2 } from "../../math/math";
-import type { DrawUVQuadOpt } from "../../types";
+import { BlendMode, type DrawUVQuadOpt } from "../../types";
 import { anchorPt } from "../anchor";
 import {
     popTransform,
@@ -95,6 +95,7 @@ export function drawUVQuad(opt: DrawUVQuadOpt) {
         opt.tex,
         opt.shader,
         opt.uniform ?? undefined,
+        opt.blend ?? BlendMode.Normal,
     );
 
     popTransform();

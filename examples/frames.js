@@ -17,8 +17,8 @@ loadSpriteAtlas("/examples/sprites/dungeon.png", {
             bouncy: {
                 frames: [8, 5, 0, 3, 2, 3, 0, 5],
                 speed: 10,
-                loop: true
-            }
+                loop: true,
+            },
         },
     },
 });

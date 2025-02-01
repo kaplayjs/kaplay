@@ -1,7 +1,7 @@
 import { DEF_ANCHOR } from "../../constants";
 import { Color } from "../../math/color";
 import { Quad, Vec2 } from "../../math/math";
-import type { DrawTextureOpt, Vertex } from "../../types";
+import { BlendMode, type DrawTextureOpt, type Vertex } from "../../types";
 import { anchorPt } from "../anchor";
 import { drawRaw } from "./drawRaw";
 import { drawUVQuad } from "./drawUVQuad";
@@ -144,6 +144,7 @@ export function drawTexture(opt: DrawTextureOpt) {
             opt.tex,
             opt.shader,
             opt.uniform ?? undefined,
+            opt.blend ?? BlendMode.Normal,
         );
     }
     else {

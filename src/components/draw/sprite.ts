@@ -237,7 +237,9 @@ export function sprite(
         }
         const frames = [];
         if (anim.from === undefined || anim.to === undefined) {
-            throw new Error("Sprite anim 'from' and 'to' must be defined if 'frames' is not defined");
+            throw new Error(
+                "Sprite anim 'from' and 'to' must be defined if 'frames' is not defined",
+            );
         }
         const frameSeqLength = Math.abs(anim.to - anim.from) + 1;
         for (let i = 0; i < frameSeqLength; i++) {
@@ -249,7 +251,7 @@ export function sprite(
             }
         }
         return frames;
-    }
+    };
 
     return {
         id: "sprite",
@@ -411,21 +413,26 @@ export function sprite(
                     if (curAnim.pingpong && !anim.pingpong) {
                         curAnimDir = -1;
                         curAnim.frameIndex = frames.length - 2;
-                    } else if (curAnim.loop) {
+                    }
+                    else if (curAnim.loop) {
                         curAnim.frameIndex = 0;
-                    } else {
+                    }
+                    else {
                         this.frame = frames.at(-1)!;
                         curAnim.onEnd();
                         this.stop();
                         return;
                     }
-                } else if (curAnim.frameIndex < 0) {
+                }
+                else if (curAnim.frameIndex < 0) {
                     if (curAnim.pingpong && curAnim.loop) {
                         curAnimDir = 1;
                         curAnim.frameIndex = 1;
-                    } else if (curAnim.loop) {
+                    }
+                    else if (curAnim.loop) {
                         curAnim.frameIndex = frames.length - 1;
-                    } else {
+                    }
+                    else {
                         this.frame = frames[0];
                         curAnim.onEnd();
                         this.stop();
@@ -465,7 +472,7 @@ export function sprite(
                     pingpong: false,
                     speed: 0,
                     frameIndex: 0,
-                    onEnd: () => { },
+                    onEnd: () => {},
                 }
                 : {
                     name: name,
@@ -474,7 +481,7 @@ export function sprite(
                     pingpong: opt.pingpong ?? anim.pingpong ?? false,
                     speed: opt.speed ?? anim.speed ?? 10,
                     frameIndex: 0,
-                    onEnd: opt.onEnd ?? (() => { }),
+                    onEnd: opt.onEnd ?? (() => {}),
                 };
 
             curAnimDir = typeof anim === "number" ? null : 1;
