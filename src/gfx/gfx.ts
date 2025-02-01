@@ -182,7 +182,7 @@ export class BatchRenderer {
                 && !deepEq(this.curUniform, uniform))
             || blend !== this.curBlend
             || this.vqueue.length + verts.length * this.stride
-                > this.maxVertices
+            > this.maxVertices
             || this.iqueue.length + indices.length > this.maxIndices
         ) {
             this.flush(width, height);
@@ -217,12 +217,19 @@ export class BatchRenderer {
                         break;
                     case BlendMode.Screen:
                         gl.blendFuncSeparate(
+                            gl.ONE_MINUS_DST_COLOR,
                             gl.ONE,
-                            gl.ONE_MINUS_SRC_COLOR,
                             gl.ONE,
                             gl.ONE_MINUS_SRC_ALPHA,
                         );
                         break;
+                    case BlendMode.Overlay:
+                        gl.blendFuncSeparate(
+                            gl.DST_COLOR,
+                            gl.ONE_MINUS_SRC_ALPHA,
+                            gl.ONE,
+                            gl.ONE_MINUS_SRC_ALPHA
+                        );
                 }
             }
         }

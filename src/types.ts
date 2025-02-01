@@ -6575,6 +6575,7 @@ export enum BlendMode {
     Add = 1,
     Multiply = 2,
     Screen = 3,
+    Overlay = 4,
 }
 
 export interface Attributes {

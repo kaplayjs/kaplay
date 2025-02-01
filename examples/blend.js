@@ -30,6 +30,11 @@ onDraw(() => {
         pos: vec2(250, 200),
         blend: BlendMode.Screen,
     });
+    drawSprite({
+        sprite: "bean",
+        pos: vec2(300, 200),
+        blend: BlendMode.Overlay,
+    });
 
     drawCircle({
         radius: 25,
@@ -55,6 +60,12 @@ onDraw(() => {
         color: rgb(128, 128, 128),
         blend: BlendMode.Screen,
     });
+    drawCircle({
+        radius: 25,
+        pos: vec2(325, 300),
+        color: rgb(128, 128, 128),
+        blend: BlendMode.Overlay,
+    });
 });
 
 add([
@@ -76,4 +87,9 @@ add([
     sprite("bean"),
     pos(250, 400),
     blend(BlendMode.Screen),
+]);
+add([
+    sprite("bean"),
+    pos(300, 400),
+    blend(BlendMode.Overlay),
 ]);
