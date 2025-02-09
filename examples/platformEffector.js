@@ -78,7 +78,7 @@ onKeyDown("right", () => {
 // Fall through when down is pressed
 onKeyDown("down", () => {
     const p = player.curPlatform();
-    if (p != null && p.is("platformEffector")) {
+    if (p != null && p.has("platformEffector")) {
         p.platformIgnore.add(player);
     }
 });
