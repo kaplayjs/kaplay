@@ -6144,6 +6144,13 @@ export interface GameObjRaw {
      */
     tags: string[];
     /**
+     * @readonly
+     * Get the tags of a game object as a set, for faster comparison.
+     *
+     * @since v4000.0
+     */
+    tagsAsSet: Set<string>;
+    /**
      * Update this game object and all children game objects.
      *
      * @since v3001.0
