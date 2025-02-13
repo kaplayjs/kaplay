@@ -8,7 +8,7 @@ import {
 import { type GfxCtx } from "../gfx";
 import { _k } from "../kaplay";
 import { Color } from "../math/color";
-import { Mat4, Vec2 } from "../math/math";
+import { Mat23, Mat4, Vec2 } from "../math/math";
 import type { RenderProps } from "../types";
 import {
     arrayIsColor,
@@ -30,6 +30,7 @@ export type UniformValue =
     | Vec2
     | Color
     | Mat4
+    | Mat23
     | number[]
     | Vec2[]
     | Color[];
@@ -108,6 +109,15 @@ export class Shader {
             }
             else if (val instanceof Mat4) {
                 gl.uniformMatrix4fv(loc, false, new Float32Array(val.m));
+            }
+            else if (val instanceof Mat23) {
+                gl.uniformMatrix4fv(loc, false, new Float32Array([
+                    val.a, val.b, 0, 0,
+                    val.c, val.d, 0, 0,
+                    0, 0, 1, 0,
+                    val.e, val.f, 0, 1
+                ]));
+                //console.log(val)
             }
             else if (val instanceof Color) {
                 gl.uniform3f(loc, val.r, val.g, val.b);

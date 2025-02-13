@@ -25,9 +25,7 @@ export function drawRaw(
         return;
     }
 
-    const transform = (_k.gfx.fixed || fixed)
-        ? _k.gfx.transform
-        : _k.game.cam.transform.mul(_k.gfx.transform);
+    const transform = _k.gfx.transform;
 
     const vertLength = attributes.pos.length / 2;
     const vv: number[] = new Array(vertLength * 8);
@@ -58,5 +56,6 @@ export function drawRaw(
         blend ?? BlendMode.Normal,
         width(),
         height(),
+        _k.gfx.fixed || fixed
     );
 }
