@@ -9,7 +9,7 @@ export function drawFrame() {
     const shake = Vec2.fromAngle(rand(0, 360)).scale(cam.shake);
 
     cam.shake = lerp(cam.shake, 0, 5 * dt());
-    cam.transform = new Mat23()
+    cam.transform.setIdentity()
         .translateSelfV(center())
         .scaleSelfV(cam.scale)
         .rotateSelf(cam.angle)
