@@ -33,6 +33,8 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   }, [LCEvents.AfterFixedUpdate, LCEvents.AfterUpdate]),
   ```
 - Added LCEvents enum for identify different lifecycle events.
+- Moved camera to the shader - @mflerackers
+- Blend mode
 
 ### Changed
 
