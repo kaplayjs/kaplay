@@ -5994,6 +5994,17 @@ export interface KAPLAYOpt<
      */
     maxFPS?: number;
     /**
+     * The number of fixedUpdate() events that should happen per second.
+     * The fixedUpdate() loop is used for physics.
+     * The average user should never need to change this. If you set it too low
+     * then stuff will start behaving very badly. If you set it too high then
+     * the game will lag.
+     *
+     * @default 50
+     * @experimental
+     */
+    fixedFPS?: number;
+    /**
      * If focus on the canvas on start (default true).
      *
      * @since v3001.0
