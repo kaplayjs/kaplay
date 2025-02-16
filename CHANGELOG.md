@@ -82,7 +82,9 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Fixed
 
-- Fixed a bug where args were not being passed to global `trigger()` - @lajbel
+- Args were not being passed to global `trigger()` - @lajbel
+- AreaComp.onClick now returns the correct type, KEventController, instead of
+  void - @lajbel
 
 ## [3001.0.9] - 2025-01-15
 
