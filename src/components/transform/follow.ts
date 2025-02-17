@@ -9,7 +9,13 @@ import type { PosComp } from "./pos";
  */
 export interface FollowComp extends Comp {
     follow: {
+        /**
+         * The object to follow.
+         */
         obj: GameObj;
+        /**
+         * The offset to follow the object by.
+         */
         offset: Vec2;
     };
 }
