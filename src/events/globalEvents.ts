@@ -41,7 +41,7 @@ export function on<Ev extends GameObjEventNames>(
             obj2Handler.delete(obj);
         }
     });
-    _k.game.root.get("*", { recursive: true }).forEach(handleNew);
+    _k.game.root.get(tag, { recursive: true }).forEach(handleNew);
 
 
     return {
