@@ -4,6 +4,7 @@ import { height, width } from "../../gfx";
 import { Rect, testRectPoint, vec2 } from "../../math/math";
 import type { Comp, GameObj } from "../../types";
 import type { KEventController } from "../../utils/";
+import type { RectComp } from "../draw";
 import type { PosComp } from "./pos";
 
 /**
@@ -14,8 +15,11 @@ import type { PosComp } from "./pos";
 export interface OffScreenComp extends Comp {
     /**
      * The minimum distance that the object must be off the screen by to be considered "offscreen".
+     * 
+     * If it is undefined, it means that the object will be considered to be offscreen when its bounding rectangle
+     * (defined by width and height) is not intersecting with the screen rectangle.
      */
-    offscreenDistance: number;
+    offscreenDistance: number | undefined;
     /**
      * If object is currently out of view.
      */
@@ -87,15 +91,22 @@ export function offscreen(opt: OffScreenCompOpt = {}): OffScreenComp {
         id: "offscreen",
         require: ["pos"],
         offscreenDistance: opt.distance ?? DEF_OFFSCREEN_DIS,
-        isOffScreen(this: GameObj<PosComp | OffScreenComp>): boolean {
+        isOffScreen(this: GameObj<PosComp | OffScreenComp | RectComp>): boolean {
             const pos = this.screenPos();
 
             // This is not possible, screenPos() without arguments returns the pos
             if (!pos) return false;
 
             const screenRect = new Rect(vec2(0), width(), height());
+            if (!this.offscreenDistance && this.width && this.height) {
+                const selfRect = new Rect(pos, this.width, this.height);
+                return selfRect.collides(screenRect);
+            }
+            const sdist = Math.pow(this.offscreenDistance
+                ? this.offscreenDistance
+                : DEF_OFFSCREEN_DIS, 2);
             return !testRectPoint(screenRect, pos)
-                && screenRect.sdistToPoint(pos) > this.offscreenDistance * this.offscreenDistance;
+                && screenRect.sdistToPoint(pos) > sdist;
         },
         onExitScreen(this: GameObj, action: () => void): KEventController {
             return this.on("exitView", action);
