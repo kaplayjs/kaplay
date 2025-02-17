@@ -168,7 +168,6 @@ export function make<T>(comps: CompList<T> = []): GameObj<T> {
                 /*.sort((o1, o2) => (o1.z ?? 0) - (o2.z ?? 0))*/
                 .forEach((child) => child.fixedUpdate());
             fixedUpdateEvents.trigger();
-            _k.game.objEvents.trigger("fixedUpdate", this);
         },
 
         update(this: GameObj) {
@@ -177,7 +176,6 @@ export function make<T>(comps: CompList<T> = []): GameObj<T> {
                 /*.sort((o1, o2) => (o1.z ?? 0) - (o2.z ?? 0))*/
                 .forEach((child) => child.update());
             updateEvents.trigger();
-            _k.game.objEvents.trigger("update", this);
         },
 
         draw(
@@ -216,12 +214,10 @@ export function make<T>(comps: CompList<T> = []): GameObj<T> {
                     }
                 }, () => {
                     drawEvents.trigger();
-                    _k.game.objEvents.trigger("draw", this);
                 });
             }
             else {
                 drawEvents.trigger();
-                _k.game.objEvents.trigger("draw", this);
                 for (let i = 0; i < children.length; i++) {
                     children[i].draw();
                 }
@@ -664,7 +660,6 @@ export function make<T>(comps: CompList<T> = []): GameObj<T> {
 
         trigger(name: string, ...args: unknown[]): void {
             events.trigger(name, ...args);
-            _k.game.objEvents.trigger(name, this, ...args);
         },
 
         destroy() {

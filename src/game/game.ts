@@ -49,9 +49,6 @@ export const initGame = () => {
             sceneEnter: [string];
         }>(),
 
-        // object events
-        objEvents: new KEventHandler<GameObjEvents>(),
-
         // root game object
         root: make([]) as GameObj<TimerComp>,
 

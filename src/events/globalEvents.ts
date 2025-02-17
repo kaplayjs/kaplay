@@ -19,18 +19,43 @@ export function on<Ev extends GameObjEventNames>(
     tag: Tag,
     cb: (obj: GameObj, ...args: TupleWithoutFirst<GameObjEvents[Ev]>) => void,
 ): KEventController {
-    if (!_k.game.objEvents.registers[event]) {
-        _k.game.objEvents.registers[event] = new Registry() as any;
+
+    let paused = false;
+    let ecList: KEventController[] = [];
+    let obj2Handler = new Map<GameObj, KEventController>;
+
+    const handleNew = (obj: GameObj) => {
+        const ec = obj.on(event, (...args) => {
+            cb(obj, ...<TupleWithoutFirst<GameObjEvents[Ev]>>args);
+        });
+        console.log(cb, obj, event);
+        ec.paused = paused;
+        ecList.push(ec);
+        obj2Handler.set(obj, ec);
     }
 
-    return _k.game.objEvents.on(
-        <keyof GameObjEventMap> event,
-        (obj, ...args) => {
-            if (obj.is(tag)) {
-                cb(obj, ...args as TupleWithoutFirst<GameObjEvents[Ev]>);
-            }
-        },
-    );
+    const ecOnTag = _k.game.events.on("tag", (obj, newTag) => {
+        if (newTag === tag) handleNew(obj);
+    });
+    const ecOnUntag = _k.game.events.on("untag", (obj, oldTag) => {
+        if (oldTag === tag) {
+            const ec = obj2Handler.get(obj)!;
+            ec.cancel();
+            ecList.splice(ecList.indexOf(ec), 1);
+        }
+    });
+    _k.game.root.get("*", { recursive: true }).forEach(handleNew);
+
+
+    return {
+        get paused() { return paused; },
+        set paused(p) { paused = p; ecList.forEach(ec => ec.paused = p); },
+        cancel() {
+            ecList.forEach(ec => ec.cancel());
+            ecOnTag.cancel();
+            ecOnUntag.cancel();
+        }
+    }
 }
 
 export const trigger = (event: string, tag: string, ...args: any[]) => {
