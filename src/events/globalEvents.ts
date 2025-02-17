@@ -3,11 +3,10 @@
 import { type Asset, getFailedAssets } from "../assets";
 import { _k } from "../kaplay";
 import type { Collision, GameObj, Tag } from "../types";
-import { KEventController, overload2, Registry } from "../utils";
+import { KEventController, overload2 } from "../utils";
 import type {
-    GameObjEventMap,
     GameObjEventNames,
-    GameObjEvents,
+    GameObjEvents
 } from "./eventMap";
 
 export type TupleWithoutFirst<T extends any[]> = T extends [infer R, ...infer E]
@@ -21,16 +20,14 @@ export function on<Ev extends GameObjEventNames>(
 ): KEventController {
 
     let paused = false;
-    let ecList: KEventController[] = [];
     let obj2Handler = new Map<GameObj, KEventController>;
 
     const handleNew = (obj: GameObj) => {
         const ec = obj.on(event, (...args) => {
             cb(obj, ...<TupleWithoutFirst<GameObjEvents[Ev]>>args);
         });
-        console.log(cb, obj, event);
         ec.paused = paused;
-        ecList.push(ec);
+        if (obj2Handler.has(obj)) obj2Handler.get(obj)!.cancel();
         obj2Handler.set(obj, ec);
     }
 
@@ -41,7 +38,7 @@ export function on<Ev extends GameObjEventNames>(
         if (oldTag === tag) {
             const ec = obj2Handler.get(obj)!;
             ec.cancel();
-            ecList.splice(ecList.indexOf(ec), 1);
+            obj2Handler.delete(obj);
         }
     });
     _k.game.root.get("*", { recursive: true }).forEach(handleNew);
@@ -49,9 +46,10 @@ export function on<Ev extends GameObjEventNames>(
 
     return {
         get paused() { return paused; },
-        set paused(p) { paused = p; ecList.forEach(ec => ec.paused = p); },
+        set paused(p) { paused = p; obj2Handler.forEach(ec => ec.paused = p); },
         cancel() {
-            ecList.forEach(ec => ec.cancel());
+            obj2Handler.forEach(ec => ec.cancel());
+            obj2Handler.clear();
             ecOnTag.cancel();
             ecOnUntag.cancel();
         }

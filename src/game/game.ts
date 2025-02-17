@@ -1,6 +1,5 @@
 import type { Asset } from "../assets";
 import type { TimerComp } from "../components";
-import type { GameObjEventMap, GameObjEvents } from "../events";
 import { Mat23, Vec2 } from "../math/math";
 import { type GameObj, type Key, type MouseButton } from "../types";
 import { KEventHandler } from "../utils";

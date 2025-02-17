@@ -16,8 +16,8 @@ import {
     pushTranslateV,
 } from "../gfx";
 import { _k } from "../kaplay";
-import { Mat23 } from "../math/math";
 import { calcTransform } from "../math";
+import { Mat23 } from "../math/math";
 import {
     type Comp,
     type CompList,
@@ -247,6 +247,8 @@ export function make<T>(comps: CompList<T> = []): GameObj<T> {
         use(this: GameObj, comp: Comp) {
             if (typeof comp == "string") {
                 // for use add(["tag"])
+                this.trigger("tag", comp);
+                _k.game.events.trigger("tag", this, comp);
                 return tags.add(comp);
             }
             else if (!comp || typeof comp != "object") {
@@ -303,15 +305,15 @@ export function make<T>(comps: CompList<T> = []): GameObj<T> {
                             comp[k]?.();
                             onCurCompCleanup = null;
                         }
-                        : comp[<keyof typeof comp> k];
-                    gc.push(this.on(k, <any> func).cancel);
+                        : comp[<keyof typeof comp>k];
+                    gc.push(this.on(k, <any>func).cancel);
                 }
                 else {
                     if (this[k] === undefined) {
                         // assign comp fields to game obj
                         Object.defineProperty(this, k, {
-                            get: () => comp[<keyof typeof comp> k],
-                            set: (val) => comp[<keyof typeof comp> k] = val,
+                            get: () => comp[<keyof typeof comp>k],
+                            set: (val) => comp[<keyof typeof comp>k] = val,
                             configurable: true,
                             enumerable: true,
                         });
@@ -323,9 +325,9 @@ export function make<T>(comps: CompList<T> = []): GameObj<T> {
                         )?.id;
                         throw new Error(
                             `Duplicate component property: "${k}" while adding component "${comp.id}"`
-                                + (originalCompId
-                                    ? ` (originally added by "${originalCompId}")`
-                                    : ""),
+                            + (originalCompId
+                                ? ` (originally added by "${originalCompId}")`
+                                : ""),
                         );
                     }
                 }
