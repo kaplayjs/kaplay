@@ -22,7 +22,6 @@ export function go(name: SceneName, ...args: unknown[]) {
         _k.game.events.trigger("sceneLeave", name);
         _k.app.events.clear();
         _k.game.events.clear();
-        _k.game.objEvents.clear();
 
         [..._k.game.root.children].forEach((obj) => {
             if (
