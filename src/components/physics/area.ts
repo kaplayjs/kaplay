@@ -72,7 +72,13 @@ export interface AreaComp extends Comp {
      * @since v3000.0
      */
     collisionIgnore: Tag[];
+    /**
+     * Restitution ("bounciness") of the object.
+     */
     restitution?: number;
+    /**
+     * Friction of the object.
+     */
     friction?: number;
     /**
      * If was just clicked on last frame.
@@ -273,20 +279,24 @@ export function area(opt: AreaCompOpt = {}): AreaComp {
                 );
             }
 
-            events.push(this.onCollideUpdate((obj, col) => {
-                if (!obj.id) {
-                    throw new Error("area() requires the object to have an id");
-                }
-                if (!colliding[obj.id]) {
-                    this.trigger("collide", obj, col);
-                }
-                if (!col) {
-                    return;
-                }
+            events.push(
+                this.onCollideUpdate((obj, col) => {
+                    if (!obj.id) {
+                        throw new Error(
+                            "area() requires the object to have an id",
+                        );
+                    }
+                    if (!colliding[obj.id]) {
+                        this.trigger("collide", obj, col);
+                    }
+                    if (!col) {
+                        return;
+                    }
 
-                colliding[obj.id] = col;
-                collidingThisFrame.add(obj.id);
-            }));
+                    colliding[obj.id] = col;
+                    collidingThisFrame.add(obj.id);
+                }),
+            );
         },
 
         destroy() {
@@ -524,10 +534,7 @@ export function area(opt: AreaCompOpt = {}): AreaComp {
                 return this.on("collideEnd", tag);
             }
             else if (typeof tag === "string") {
-                return this.on(
-                    "collideEnd",
-                    (obj) => obj.is(tag) && cb?.(obj),
-                );
+                return this.on("collideEnd", (obj) => obj.is(tag) && cb?.(obj));
             }
             else {
                 throw new Error(
@@ -553,12 +560,8 @@ export function area(opt: AreaCompOpt = {}): AreaComp {
             }
         },
 
-        localArea(
-            this: GameObj<AreaComp | { renderArea(): Shape }>,
-        ): Shape {
-            return this.area.shape
-                ? this.area.shape
-                : this.renderArea();
+        localArea(this: GameObj<AreaComp | { renderArea(): Shape }>): Shape {
+            return this.area.shape ? this.area.shape : this.renderArea();
         },
 
         // TODO: cache
@@ -596,9 +599,11 @@ export function area(opt: AreaCompOpt = {}): AreaComp {
                 return `area: ${this.area.scale?.x?.toFixed(1)}x`;
             }
             else {
-                return `area: (${this.area.scale?.x?.toFixed(1)}x, ${
-                    this.area.scale.y?.toFixed(1)
-                }y)`;
+                return `area: (${
+                    this.area.scale?.x?.toFixed(
+                        1,
+                    )
+                }x, ${this.area.scale.y?.toFixed(1)}y)`;
             }
         },
     };
