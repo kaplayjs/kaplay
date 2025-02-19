@@ -247,6 +247,7 @@ export class SweepAndPruneBoth {
                 const pair2 = longest[j];
                 if ((pair1[0] === pair2[0] && pair1[1] === pair2[1]) || (pair1[0] === pair2[1] && pair1[1] === pair2[0])) {
                     yield pair1;
+                    break;
                 }
             }
         }
