@@ -136,7 +136,7 @@ import {
     rgb,
     RNG,
     shuffle,
-    SweepAndPrune,
+    SweepAndPruneHorizontal,
     testCirclePolygon,
     testLineCircle,
     testLineLine,
@@ -855,7 +855,7 @@ const kaplay = <
         return true;
     }
 
-    const sap = new SweepAndPrune();
+    const sap = new SweepAndPruneHorizontal();
     let sapInit = false;
     function broadPhase() {
         if (!usesArea()) {
@@ -1071,7 +1071,7 @@ const kaplay = <
             // clear canvas
             gl.clear(
                 gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT
-                    | gl.STENCIL_BUFFER_BIT,
+                | gl.STENCIL_BUFFER_BIT,
             );
 
             // unbind everything
