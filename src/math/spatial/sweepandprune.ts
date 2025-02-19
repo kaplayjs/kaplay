@@ -237,6 +237,18 @@ export class SweepAndPruneBoth {
         const horizontalColliding = [...this.horizontal];
         const verticalColliding = [...this.vertical];
 
-        // TODO: intersection
+        const [shortest, longest] = horizontalColliding.length < verticalColliding.length ?
+            [horizontalColliding, verticalColliding] :
+            [verticalColliding, horizontalColliding];
+
+        for (let i = 0; i < shortest.length; i++) {
+            const pair1 = shortest[i];
+            for (let j = 0; j < longest.length; j++) {
+                const pair2 = longest[j];
+                if ((pair1[0] === pair2[0] && pair1[1] === pair2[1]) || (pair1[0] === pair2[1] && pair1[1] === pair2[0])) {
+                    yield pair1;
+                }
+            }
+        }
     }
 }
