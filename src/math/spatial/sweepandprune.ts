@@ -234,22 +234,18 @@ export class SweepAndPruneBoth {
     }
 
     *[Symbol.iterator]() {
+        function hash(pair: GameObj<AreaComp>[]) {
+            const [l, h] = pair[0].id! < pair[1].id! ? [pair[0].id!, pair[1].id!] : [pair[1].id! < pair[0].id!];
+            return `${l}-${h}`;
+        }
         const horizontalColliding = [...this.horizontal];
         const verticalColliding = [...this.vertical];
+        const horizontalMap = new Map<string, GameObj<AreaComp>[]>(horizontalColliding.map(c => [hash(c), c]));
+        const verticalMap = new Map<string, GameObj<AreaComp>[]>(verticalColliding.map(c => [hash(c), c]));
+        const intersection = new Set(horizontalMap.keys()).intersection(new Set(verticalMap.keys()));
 
-        const [shortest, longest] = horizontalColliding.length < verticalColliding.length ?
-            [horizontalColliding, verticalColliding] :
-            [verticalColliding, horizontalColliding];
-
-        for (let i = 0; i < shortest.length; i++) {
-            const pair1 = shortest[i];
-            for (let j = 0; j < longest.length; j++) {
-                const pair2 = longest[j];
-                if ((pair1[0] === pair2[0] && pair1[1] === pair2[1]) || (pair1[0] === pair2[1] && pair1[1] === pair2[0])) {
-                    yield pair1;
-                    break;
-                }
-            }
+        for (let key in intersection) {
+            yield horizontalMap.get(key);
         }
     }
 }
