@@ -6027,8 +6027,14 @@ export interface KAPLAYOpt<
     spriteAtlasPadding?: number;
     /**
      * The direction the sweep-and-prune system should run in to speed up collisions.
+     *
+     * XXX: Don't set this to "both" right now, the implementation is extremely slow and laggy.
+     * 
+     * @default "horizontal"
+     * @since v4000
+     * @experimental This feature is unstable, it may be removed at any time.
      */
-    sapDirection?: "both" | "horizontal" | "vertical";
+    sapDirection?: "horizontal" | "vertical" | "both";
 }
 
 /**
