@@ -245,7 +245,7 @@ export class SweepAndPruneBoth {
         const intersection = new Set(horizontalMap.keys()).intersection(new Set(verticalMap.keys()));
 
         for (let key in intersection) {
-            yield horizontalMap.get(key);
+            yield horizontalMap.get(key)!;
         }
     }
 }
