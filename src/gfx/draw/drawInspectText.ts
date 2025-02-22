@@ -14,7 +14,6 @@ import { drawRect } from "./drawRect";
 import { drawUnscaled } from "./drawUnscaled";
 
 export function drawInspectText(pos: Vec2, txt: string) {
-    drawUnscaled(() => {
         const pad = vec2(8);
 
         pushTransform();
@@ -51,5 +50,4 @@ export function drawInspectText(pos: Vec2, txt: string) {
 
         drawFormattedText(ftxt);
         popTransform();
-    });
 }

@@ -4,7 +4,6 @@ import { rgb } from "../../math/color";
 import { vec2, wave } from "../../math/math";
 import { formatText } from "../formatText";
 import {
-    contentToView,
     height,
     mousePos,
     popTransform,
@@ -17,7 +16,6 @@ import { drawFormattedText } from "./drawFormattedText";
 import { drawInspectText } from "./drawInspectText";
 import { drawRect } from "./drawRect";
 import { drawTriangle } from "./drawTriangle";
-import { drawUnscaled } from "./drawUnscaled";
 
 export function drawDebug() {
     if (_k.debug.inspect) {
@@ -47,14 +45,13 @@ export function drawDebug() {
                 }
             }
 
-            drawInspectText(contentToView(mousePos()), lines.join("\n"));
+            drawInspectText(mousePos(), lines.join("\n"));
         }
 
         drawInspectText(vec2(8), `FPS: ${_k.debug.fps()}`);
     }
 
     if (_k.debug.paused) {
-        drawUnscaled(() => {
             // top right corner
             pushTransform();
             pushTranslate(width(), 0);
@@ -87,11 +84,9 @@ export function drawDebug() {
             }
 
             popTransform();
-        });
     }
 
     if (_k.debug.timeScale !== 1) {
-        drawUnscaled(() => {
             // bottom right corner
             pushTransform();
             pushTranslate(width(), height());
@@ -144,11 +139,9 @@ export function drawDebug() {
             drawFormattedText(ftxt);
 
             popTransform();
-        });
     }
 
     if (_k.debug.curRecording) {
-        drawUnscaled(() => {
             pushTransform();
             pushTranslate(0, height());
             pushTranslate(24, -24);
@@ -161,11 +154,9 @@ export function drawDebug() {
             });
 
             popTransform();
-        });
     }
 
     if (_k.debug.showLog && _k.game.logs.length > 0) {
-        drawUnscaled(() => {
             pushTransform();
             pushTranslate(0, height());
             pushTranslate(8, -8);
@@ -216,7 +207,6 @@ export function drawDebug() {
 
             drawFormattedText(ftext);
             popTransform();
-        });
     }
 }
 
