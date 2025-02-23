@@ -34,6 +34,13 @@ class Quadtree {
     }
 
     /**
+     * True if this node is a leaf node.
+     */
+    get isLeaf() {
+        return this.nodes.length === 0;
+    }
+
+    /**
      * Splits the node, but doesn't redistribute objects
      */
     subdivide() {
@@ -57,6 +64,28 @@ class Quadtree {
                 this.maxLevels,
                 level,
             );
+        }
+    }
+
+    /**
+     * Tries to merge and collapse nodes which are no longer overpopulated.
+     */
+    merge() {
+        if (this.nodes.length > 0) {
+            let count = this.objects.size;
+            let allLeaves = true;
+            for (let i = 0; i < 4; i++) {
+                this.nodes[i].merge();
+                allLeaves &&= this.nodes[i].isLeaf;
+                count += this.nodes[i].objects.size;
+            }
+
+            if (allLeaves && count <= this.maxObjects) {
+                for (let i = 0; i < 4; i++) {
+                    this.objects = this.objects.union(this.nodes[i].objects);
+                }
+                this.nodes = [];
+            }
         }
     }
 
@@ -158,7 +187,7 @@ class Quadtree {
         if (this.nodes.length) {
             const index = this.getQuadrant(bbox);
 
-            if (index != -1) {
+            if (index !== -1) {
                 this.nodes[index].insert(obj, bbox);
                 return;
             }
@@ -193,17 +222,22 @@ class Quadtree {
 
     /** 
      * Removes the object
-     * TODO: Collapse the node if child nodes are empty
      * @param obj The object to remove
      * @param fast No node collapse if true
      */
     remove(obj: GameObj<any>, fast = false): boolean {
         if (this.objects.delete(obj)) {
+            if (!fast) {
+                this.merge();
+            }
             return true;
         }
 
         for (let i = 0; i < this.nodes.length; i++) {
-            if (this.nodes[i].remove(obj)) {
+            if (this.nodes[i].remove(obj, fast)) {
+                if (!fast) {
+                    this.merge();
+                }
                 return true;
             }
         }
@@ -244,14 +278,15 @@ class Quadtree {
             const bbox = obj.screenArea().bbox();
             // If the object is outside the bounds, remove it and add it to the root
             if (this.isOutside(bbox)) {
-                this.remove(obj);
+                this.objects.delete(obj);
                 root.insert(obj, bbox);
             }
-            else if (this.nodes.length) {
+            else if (this.nodes.length > 0) {
                 // If the object fits in a quadrant, remove it and add it to the quadrant
                 const index = this.getQuadrant(bbox);
-                if (index != -1) {
-                    this.remove(obj);
+                if (index !== -1) {
+                    // Use fast without merge, since it may remove the quadrant we are going to add it to
+                    this.objects.delete(obj);
                     this.nodes[index].insert(obj, bbox);
                 }
             }
