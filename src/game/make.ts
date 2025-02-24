@@ -445,22 +445,46 @@ export function make<T>(comps: CompList<T> = []): GameObj<T> {
                         }
                     }
                 }));
-                events.push(_k.k.onUse((obj) => {
-                    if (isChild(obj) && checkTagsOrComps(obj, t)) {
-                        const idx = list.findIndex((o) => o.id === obj.id);
-                        if (idx == -1) {
-                            list.push(obj);
+                // If tags are components, we need to use these callbacks, whether watching tags or components
+                // If tags are not components, we only need to use these callbacks if this query looks at components
+                if (treatTagsAsComponents || opts.only !== "tags") {
+                    events.push(_k.k.onUse((obj, id) => {
+                        if (isChild(obj) && checkTagsOrComps(obj, t)) {
+                            const idx = list.findIndex((o) => o.id === obj.id);
+                            if (idx == -1) {
+                                list.push(obj);
+                            }
                         }
-                    }
-                }));
-                events.push(_k.k.onUnuse((obj, id) => {
-                    if (isChild(obj) && !checkTagsOrComps(obj, t)) {
-                        const idx = list.findIndex((o) => o.id === obj.id);
-                        if (idx !== -1) {
-                            list.splice(idx, 1);
+                    }));
+                    events.push(_k.k.onUnuse((obj, id) => {
+                        if (isChild(obj) && !checkTagsOrComps(obj, t)) {
+                            const idx = list.findIndex((o) => o.id === obj.id);
+                            if (idx !== -1) {
+                                list.splice(idx, 1);
+                            }
                         }
-                    }
-                }));
+                    }));
+                }
+                // If tags are are components, we don't need to use these callbacks
+                // If tags are not components, we only need to use these callbacks if this query looks at tags
+                if (!treatTagsAsComponents && opts.only !== "comps") {
+                    events.push(_k.k.onTag((obj, tag) => {
+                        if (isChild(obj) && checkTagsOrComps(obj, t)) {
+                            const idx = list.findIndex((o) => o.id === obj.id);
+                            if (idx == -1) {
+                                list.push(obj);
+                            }
+                        }
+                    }));
+                    events.push(_k.k.onUntag((obj, tag) => {
+                        if (isChild(obj) && !checkTagsOrComps(obj, t)) {
+                            const idx = list.findIndex((o) => o.id === obj.id);
+                            if (idx !== -1) {
+                                list.splice(idx, 1);
+                            }
+                        }
+                    }));
+                }
                 this.onDestroy(() => {
                     for (const ev of events) {
                         ev.cancel();
