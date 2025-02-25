@@ -165,7 +165,7 @@ class Quadtree {
     insert(obj: GameObj<any>, bbox: Rect): void {
         // If we reached max objects, subdivide and redistribute
         if (this.objects.length >= this.maxObjects) {
-            if (this.nodes.length === 0) {
+            if (this.nodes.length === 0 && this.level < this.maxLevels) {
                 this.subdivide();
                 // Redistribute objects
                 let j = 0;
@@ -272,7 +272,7 @@ class Quadtree {
             && bbox.pos.y >= this.bounds.pos.y
             && bbox.pos.x + bbox.width <= this.bounds.pos.x + this.bounds.width
             && bbox.pos.y + bbox.height
-                <= this.bounds.pos.y + this.bounds.height;
+            <= this.bounds.pos.y + this.bounds.height;
     }
 
     /**
