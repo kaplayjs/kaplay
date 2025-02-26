@@ -998,16 +998,28 @@ export class Mat23 {
     getTranslation() {
         return new Vec2(this.e, this.f);
     }
+    get hasTranslation() {
+        return this.e != 0 || this.f != 0;
+    }
     getRotation() {
         return rad2deg(
             Math.atan2(-this.c, this.a),
         );
+    }
+    get hasRotation() {
+        return Math.abs(Math.atan2(-this.c, this.a)) > Number.EPSILON;
     }
     getScale() {
         return new Vec2(
             Math.sqrt(this.a * this.a + this.c * this.c),
             Math.sqrt(this.b * this.b + this.d * this.d),
         );
+    }
+    get hasScale() {
+        return this.a * this.a + this.c * this.c > Number.EPSILON || this.b * this.b + this.d * this.d > Number.EPSILON;
+    }
+    get hasRotationOrSkew() {
+        return this.b > Number.EPSILON || this.c > Number.EPSILON;
     }
 }
 
@@ -2682,10 +2694,16 @@ export class Rect {
             this.pos.add(0, this.height),
         ];
     }
-    transform(m: Mat23): Polygon {
-        return new Polygon(
-            this.points().map((pt) => m.transformPoint(pt, vec2())),
-        );
+    transform(m: Mat23): Rect | Polygon {
+        if (m.hasRotationOrSkew) {
+            return new Polygon(
+                this.points().map((pt) => m.transformPoint(pt, vec2())),
+            );
+        }
+        else {
+            const scale = m.getScale();
+            return new Rect(this.pos.add(m.getTranslation()), this.width * scale.x, this.height * scale.y);
+        }
     }
     bbox(): Rect {
         return this.clone();
