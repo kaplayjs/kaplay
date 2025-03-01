@@ -11,6 +11,7 @@ const fruits = [
     "watermelon",
 ];
 
+loadBean();
 for (const fruit of fruits) {
     loadSprite(fruit, `/sprites/${fruit}.png`);
 }
@@ -41,20 +42,39 @@ function torque() {
 }
 
 onKeyPress(() => {
-    const fruit = add([
-        pos(rand(0, width()), height()),
-        sprite(choose(fruits)),
-        // We need an area, in order to know the screen polygon to cut
-        area({ collisionIgnore: ["fruit"] }),
-        body(),
-        rotate(rand(0, 360)),
-        torque(),
-        offscreen({ destroy: true }),
-        "fruit"
-    ]);
+    if (rand(1) < 0.1) {
+        const fruit = add([
+            pos(rand(0, width()), height()),
+            sprite("bean"),
+            // We need an area, in order to know the screen polygon to cut
+            area({ collisionIgnore: ["fruit", "bean"] }),
+            body(),
+            rotate(rand(0, 360)),
+            torque(),
+            offscreen({ destroy: true }),
+            "fruit",
+            "bean"
+        ]);
 
-    fruit.applyImpulse(vec2(width() / 2, height() / 4).sub(fruit.pos).unit().scale(500));
-    fruit.applyAngularImpulse(45)
+        fruit.applyImpulse(vec2(width() / 2, height() / 4).sub(fruit.pos).unit().scale(500));
+        fruit.applyAngularImpulse(45)
+    }
+    else {
+        const fruit = add([
+            pos(rand(0, width()), height()),
+            sprite(choose(fruits)),
+            // We need an area, in order to know the screen polygon to cut
+            area({ collisionIgnore: ["fruit", "bean"] }),
+            body(),
+            rotate(rand(0, 360)),
+            torque(),
+            offscreen({ destroy: true }),
+            "fruit"
+        ]);
+
+        fruit.applyImpulse(vec2(width() / 2, height() / 4).sub(fruit.pos).unit().scale(500));
+        fruit.applyAngularImpulse(45)
+    }
 });
 
 let sliceTrail = [];
