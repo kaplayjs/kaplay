@@ -66,6 +66,8 @@ export interface OffScreenCompOpt {
 
 export function offscreen(opt: OffScreenCompOpt = {}): OffScreenComp {
     let isOut = false;
+    const screenRect = new Rect(vec2(0), width(), height());
+    const selfRect = new Rect(vec2(0), 0, 0);
 
     const check = (self: GameObj<OffScreenComp>) => {
         if (self.isOffScreen()) {
@@ -97,9 +99,12 @@ export function offscreen(opt: OffScreenCompOpt = {}): OffScreenComp {
             // This is not possible, screenPos() without arguments returns the pos
             if (!pos) return false;
 
-            const screenRect = new Rect(vec2(0), width(), height());
+            screenRect.width = width();
+            screenRect.height = height();
             if (!this.offscreenDistance && this.width && this.height) {
-                const selfRect = new Rect(pos, this.width, this.height);
+                selfRect.width = this.width;
+                selfRect.height = this.height;
+                selfRect.pos = this.pos;
                 return selfRect.collides(screenRect);
             }
             const sdist = Math.pow(this.offscreenDistance
