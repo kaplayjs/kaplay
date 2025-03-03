@@ -4,10 +4,7 @@ import { type Asset, getFailedAssets } from "../assets";
 import { _k } from "../kaplay";
 import type { Collision, GameObj, Tag } from "../types";
 import { KEventController, overload2 } from "../utils";
-import type {
-    GameObjEventNames,
-    GameObjEvents
-} from "./eventMap";
+import type { GameObjEventNames, GameObjEvents } from "./eventMap";
 
 export type TupleWithoutFirst<T extends any[]> = T extends [infer R, ...infer E]
     ? E
@@ -18,18 +15,17 @@ export function on<Ev extends GameObjEventNames>(
     tag: Tag,
     cb: (obj: GameObj, ...args: TupleWithoutFirst<GameObjEvents[Ev]>) => void,
 ): KEventController {
-
     let paused = false;
-    let obj2Handler = new Map<GameObj, KEventController>;
+    let obj2Handler = new Map<GameObj, KEventController>();
 
     const handleNew = (obj: GameObj) => {
         const ec = obj.on(event, (...args) => {
-            cb(obj, ...<TupleWithoutFirst<GameObjEvents[Ev]>>args);
+            cb(obj, ...<TupleWithoutFirst<GameObjEvents[Ev]>> args);
         });
         ec.paused = paused;
         if (obj2Handler.has(obj)) obj2Handler.get(obj)!.cancel();
         obj2Handler.set(obj, ec);
-    }
+    };
 
     const ecOnTag = _k.game.events.on("tag", (obj, newTag) => {
         if (newTag === tag) handleNew(obj);
@@ -43,17 +39,21 @@ export function on<Ev extends GameObjEventNames>(
     });
     _k.game.root.get(tag, { recursive: true }).forEach(handleNew);
 
-
     return {
-        get paused() { return paused; },
-        set paused(p) { paused = p; obj2Handler.forEach(ec => ec.paused = p); },
+        get paused() {
+            return paused;
+        },
+        set paused(p) {
+            paused = p;
+            obj2Handler.forEach(ec => ec.paused = p);
+        },
         cancel() {
             obj2Handler.forEach(ec => ec.cancel());
             obj2Handler.clear();
             ecOnTag.cancel();
             ecOnUntag.cancel();
-        }
-    }
+        },
+    };
 }
 
 export const trigger = (event: string, tag: string, ...args: any[]) => {

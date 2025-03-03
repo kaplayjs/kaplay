@@ -305,15 +305,15 @@ export function make<T>(comps: CompList<T> = []): GameObj<T> {
                             comp[k]?.();
                             onCurCompCleanup = null;
                         }
-                        : comp[<keyof typeof comp>k];
-                    gc.push(this.on(k, <any>func).cancel);
+                        : comp[<keyof typeof comp> k];
+                    gc.push(this.on(k, <any> func).cancel);
                 }
                 else {
                     if (this[k] === undefined) {
                         // assign comp fields to game obj
                         Object.defineProperty(this, k, {
-                            get: () => comp[<keyof typeof comp>k],
-                            set: (val) => comp[<keyof typeof comp>k] = val,
+                            get: () => comp[<keyof typeof comp> k],
+                            set: (val) => comp[<keyof typeof comp> k] = val,
                             configurable: true,
                             enumerable: true,
                         });
@@ -325,9 +325,9 @@ export function make<T>(comps: CompList<T> = []): GameObj<T> {
                         )?.id;
                         throw new Error(
                             `Duplicate component property: "${k}" while adding component "${comp.id}"`
-                            + (originalCompId
-                                ? ` (originally added by "${originalCompId}")`
-                                : ""),
+                                + (originalCompId
+                                    ? ` (originally added by "${originalCompId}")`
+                                    : ""),
                         );
                     }
                 }
@@ -672,10 +672,14 @@ export function make<T>(comps: CompList<T> = []): GameObj<T> {
         ): KEventController {
             const ctrl = ((func) => {
                 switch (name) {
-                    case "fixedUpdate": return fixedUpdateEvents.add(func);
-                    case "update": return updateEvents.add(func);
-                    case "draw": return drawEvents.add(func);
-                    default: return events.on(name, func);
+                    case "fixedUpdate":
+                        return fixedUpdateEvents.add(func);
+                    case "update":
+                        return updateEvents.add(func);
+                    case "draw":
+                        return drawEvents.add(func);
+                    default:
+                        return events.on(name, func);
                 }
             })(action.bind(this));
             if (onCurCompCleanup) {
