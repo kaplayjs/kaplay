@@ -1,4 +1,4 @@
-import { dt } from "../../app";
+import { _k } from "../../kaplay";
 import { vec2 } from "../../math";
 import type { Comp, GameObj } from "../../types";
 import type { ScaleComp } from "../transform/scale";
@@ -13,7 +13,7 @@ export function boom(speed: number = 2, size: number = 1): Comp {
                 this.destroy();
             }
             this.scale = vec2(s);
-            time += dt();
+            time += _k.k.dt();
         },
     };
 }

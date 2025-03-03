@@ -1,4 +1,3 @@
-import { dt } from "../../app";
 import { _k } from "../../kaplay";
 import { Vec2 } from "../../math/math";
 import type { Comp, GameObj, QueryOpt } from "../../types";
@@ -139,7 +138,7 @@ export function sentry(
             return hit != null && hit.object === obj;
         },
         update(this: GameObj<SentryComp | PosComp>) {
-            t += dt();
+            t += _k.k.dt();
             if (t > checkFrequency) {
                 t -= checkFrequency;
                 let objects = get();

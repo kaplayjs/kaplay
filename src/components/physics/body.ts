@@ -1,4 +1,3 @@
-import { dt, fixedDt, restDt } from "../../app";
 import { DEF_JUMP_FORCE, MAX_VEL } from "../../constants";
 import { getGravityDirection } from "../../game";
 import { _k } from "../../kaplay";
@@ -341,7 +340,7 @@ export function body(opt: BodyCompOpt = {}): BodyComp {
                 }
             }
 
-            const dt = restDt();
+            const dt = _k.k.restDt();
             if (dt) {
                 // Check if no external changes were made
                 if (this.pos.x == prevDrawPos.x) {
@@ -349,7 +348,7 @@ export function body(opt: BodyCompOpt = {}): BodyComp {
                     this.pos.x = lerp(
                         prevPhysicsPos!.x,
                         nextPhysicsPos!.x,
-                        dt / fixedDt(),
+                        dt / _k.k.fixedDt(),
                     );
                     // Copy to check for changes
                     prevDrawPos.x = this.pos.x;
@@ -359,7 +358,7 @@ export function body(opt: BodyCompOpt = {}): BodyComp {
                     this.pos.y = lerp(
                         prevPhysicsPos!.y,
                         nextPhysicsPos!.y,
-                        dt / fixedDt(),
+                        dt / _k.k.fixedDt(),
                     );
                     // Copy to check for changes
                     prevDrawPos.y = this.pos.y;
@@ -404,7 +403,7 @@ export function body(opt: BodyCompOpt = {}): BodyComp {
 
                 // Apply gravity
                 this.vel = this.vel.add(
-                    _k.game.gravity.scale(this.gravityScale * dt()),
+                    _k.game.gravity.scale(this.gravityScale * _k.k.dt()),
                 );
 
                 // Clamp velocity
@@ -424,8 +423,8 @@ export function body(opt: BodyCompOpt = {}): BodyComp {
             }
 
             // Apply velocity and position changes
-            this.vel.x += acc.x * dt();
-            this.vel.y += acc.y * dt();
+            this.vel.x += acc.x * _k.k.dt();
+            this.vel.y += acc.y * _k.k.dt();
 
             this.vel.x *= 1 / (1 + this.damping * _k.k.dt());
             this.vel.y *= 1 / (1 + this.damping * _k.k.dt());
@@ -433,13 +432,13 @@ export function body(opt: BodyCompOpt = {}): BodyComp {
             this.move(this.vel);
 
             // If we need to interpolate physics, prepare interpolation data
-            const rDt = restDt();
+            const rDt = _k.k.restDt();
             if (rDt) {
                 // Save this position as previous
                 prevPhysicsPos = this.pos.clone();
                 // Calculate next (future) position
-                const nextVel = this.vel.add(acc.scale(dt()));
-                nextPhysicsPos = this.pos.add(nextVel.scale(dt()));
+                const nextVel = this.vel.add(acc.scale(_k.k.dt()));
+                nextPhysicsPos = this.pos.add(nextVel.scale(_k.k.dt()));
                 // Copy to check for changes
                 prevDrawPos = this.pos.clone();
             }
