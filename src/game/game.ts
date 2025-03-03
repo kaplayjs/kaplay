@@ -1,6 +1,5 @@
 import type { Asset } from "../assets";
 import type { TimerComp } from "../components";
-import type { GameObjEventMap, GameObjEvents } from "../events";
 import { Mat23, Vec2 } from "../math/math";
 import { type GameObj, type Key, type MouseButton } from "../types";
 import { KEventHandler } from "../utils";
@@ -48,9 +47,6 @@ export const initGame = () => {
             sceneLeave: [string];
             sceneEnter: [string];
         }>(),
-
-        // object events
-        objEvents: new KEventHandler<GameObjEvents>(),
 
         // root game object
         root: make([]) as GameObj<TimerComp>,
