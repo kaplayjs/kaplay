@@ -1,10 +1,9 @@
-import { dt } from "../../app";
+import { _k } from "../../kaplay";
 import { Color } from "../../math/color";
 import easings from "../../math/easings";
 import {
     catmullRom,
     clamp,
-    easingLinear,
     hermiteFirstDerivative,
     lerp,
     Vec2,
@@ -555,7 +554,7 @@ export function animate(gopts: AnimateCompOpt = {}): AnimateComp {
             if (this.animation.paused) return;
             let allFinished: boolean = true;
             let localFinished: boolean;
-            t += dt();
+            t += _k.k.dt();
             for (const c of channels) {
                 localFinished = c.update(this as unknown as GameObj<any>, t);
                 if (localFinished && !c.isFinished) {

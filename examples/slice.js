@@ -2,7 +2,7 @@
 
 kaplay();
 
-setGravity(200)
+setGravity(200);
 
 const fruits = [
     "apple",
@@ -33,12 +33,12 @@ function torque() {
         id: "torque",
         requires: ["rotate"],
         applyAngularImpulse(angularVelocity) {
-            _angularVelocity += angularVelocity
+            _angularVelocity += angularVelocity;
         },
         update() {
             this.angle += _angularVelocity * dt();
-        }
-    }
+        },
+    };
 }
 
 onKeyPress(() => {
@@ -53,11 +53,13 @@ onKeyPress(() => {
             torque(),
             offscreen({ destroy: true }),
             "fruit",
-            "bean"
+            "bean",
         ]);
 
-        fruit.applyImpulse(vec2(width() / 2, height() / 4).sub(fruit.pos).unit().scale(500));
-        fruit.applyAngularImpulse(45)
+        fruit.applyImpulse(
+            vec2(width() / 2, height() / 4).sub(fruit.pos).unit().scale(500),
+        );
+        fruit.applyAngularImpulse(45);
     }
     else {
         const fruit = add([
@@ -69,11 +71,13 @@ onKeyPress(() => {
             rotate(rand(0, 360)),
             torque(),
             offscreen({ destroy: true }),
-            "fruit"
+            "fruit",
         ]);
 
-        fruit.applyImpulse(vec2(width() / 2, height() / 4).sub(fruit.pos).unit().scale(500));
-        fruit.applyAngularImpulse(45)
+        fruit.applyImpulse(
+            vec2(width() / 2, height() / 4).sub(fruit.pos).unit().scale(500),
+        );
+        fruit.applyAngularImpulse(45);
     }
 });
 
@@ -101,49 +105,57 @@ onDraw(() => {
 
 onMouseRelease(() => {
     for (let trailIndex = 0; trailIndex < sliceTrail.length - 1; trailIndex++) {
-        const line = new Line(sliceTrail[trailIndex], sliceTrail[trailIndex + 1]);
+        const line = new Line(
+            sliceTrail[trailIndex],
+            sliceTrail[trailIndex + 1],
+        );
         const fruits = get("fruit");
         fruits.forEach(fruit => {
             const shape = fruit.screenArea();
             // If the line crosses the screen rectangle
             if (line.collides(shape)) {
-                const spriteData = getSprite(fruit.sprite)?.data
+                const spriteData = getSprite(fruit.sprite)?.data;
                 const q = spriteData.frames[0];
                 const srcUv = [
                     vec2(q.x, q.y),
                     vec2(q.x + q.w, q.y),
                     vec2(q.x + q.w, q.y + q.h),
-                    vec2(q.x, q.y + q.h)
+                    vec2(q.x, q.y + q.h),
                 ];
                 // Cut the polygon according to the line
                 const dstUv = [[], []];
                 const polygons = shape.cut(line.p1, line.p2, srcUv, dstUv);
-                if (polygons.length < 2) { return; }
+                if (polygons.length < 2) return;
                 // Make a new object for each polygon
                 polygons.forEach((poly, index) => {
                     // This works for convex polygons
-                    const center = poly.pts.reduce((s, p) => p.add(s), vec2()).scale(1 / poly.pts.length);
+                    const center = poly.pts.reduce((s, p) => p.add(s), vec2())
+                        .scale(1 / poly.pts.length);
                     // Offset points so center is zero
                     const points = poly.pts.map((p) => p.sub(center));
                     const piece = add([
                         pos(fruit.pos),
                         polygon(points, {
                             uv: dstUv[index],
-                            tex: spriteData.tex
+                            tex: spriteData.tex,
                         }),
                         body(),
                         rotate(0),
                         torque(),
-                        offscreen({ destroy: true })
+                        offscreen({ destroy: true }),
                     ]);
                     const lineVec = line.p2.sub(line.p1);
                     // This gives us which side the center is from the line
-                    const direction = Math.sign(center.sub(line.p1).cross(lineVec));
+                    const direction = Math.sign(
+                        center.sub(line.p1).cross(lineVec),
+                    );
                     // Give an impulse away from the line. The unit normal gives us the vector perpendicular to the line
                     // while the cross product gives us which side of the line the polygon is
-                    piece.applyImpulse(lineVec.normal().unit().scale(100 * direction));
-                    piece.applyAngularImpulse(45 * direction)
-                })
+                    piece.applyImpulse(
+                        lineVec.normal().unit().scale(100 * direction),
+                    );
+                    piece.applyAngularImpulse(45 * direction);
+                });
                 destroy(fruit);
                 score++;
                 scoreLabel.text = `${score}`;
@@ -151,4 +163,4 @@ onMouseRelease(() => {
         });
     }
     sliceTrail.length = 0;
-})
+});

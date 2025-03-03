@@ -1,5 +1,5 @@
-import { dt } from "../../app";
 import { drawRaw, type Texture } from "../../gfx";
+import { _k } from "../../kaplay.js";
 import {
     Color,
     deg2rad,
@@ -12,7 +12,7 @@ import {
     Vec2,
     vec2,
 } from "../../math";
-import type { Comp, Vertex } from "../../types";
+import type { Comp } from "../../types";
 import { KEvent } from "../../utils/";
 
 /**
@@ -261,7 +261,7 @@ export function particles(popt: ParticlesOpt, eopt: EmitterOpt): ParticlesComp {
                 return;
             }
 
-            const DT = dt();
+            const DT = _k.k.dt();
             // Update all particles
             for (let i = 0; i < particles.length; i++) {
                 const p = particles[i];

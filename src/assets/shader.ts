@@ -111,13 +111,29 @@ export class Shader {
                 gl.uniformMatrix4fv(loc, false, new Float32Array(val.m));
             }
             else if (val instanceof Mat23) {
-                gl.uniformMatrix4fv(loc, false, new Float32Array([
-                    val.a, val.b, 0, 0,
-                    val.c, val.d, 0, 0,
-                    0, 0, 1, 0,
-                    val.e, val.f, 0, 1
-                ]));
-                //console.log(val)
+                gl.uniformMatrix4fv(
+                    loc,
+                    false,
+                    new Float32Array([
+                        val.a,
+                        val.b,
+                        0,
+                        0,
+                        val.c,
+                        val.d,
+                        0,
+                        0,
+                        0,
+                        0,
+                        1,
+                        0,
+                        val.e,
+                        val.f,
+                        0,
+                        1,
+                    ]),
+                );
+                // console.log(val)
             }
             else if (val instanceof Color) {
                 gl.uniform3f(loc, val.r, val.g, val.b);

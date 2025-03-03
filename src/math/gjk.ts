@@ -152,7 +152,10 @@ function evolveSimplex(
         }
         case 2: {
             // We now have a line ab. Take the vector ab and the vector a origin
-            const ab = new Vec2(simplex[1].x - simplex[0].x, simplex[1].y - simplex[0].y);
+            const ab = new Vec2(
+                simplex[1].x - simplex[0].x,
+                simplex[1].y - simplex[0].y,
+            );
             const a0 = new Vec2(-simplex[0].x, -simplex[0].y);
 
             // Get the vector perpendicular to ab and a0
@@ -167,8 +170,14 @@ function evolveSimplex(
             {
                 // We have a triangle, and need to check if it contains the origin
                 const c0 = new Vec2(-simplex[2].x, -simplex[2].y);
-                const bc = new Vec2(simplex[1].x - simplex[2].x, simplex[1].y - simplex[2].y);
-                const ca = new Vec2(simplex[0].x - simplex[2].x, simplex[0].y - simplex[2].y);
+                const bc = new Vec2(
+                    simplex[1].x - simplex[2].x,
+                    simplex[1].y - simplex[2].y,
+                );
+                const ca = new Vec2(
+                    simplex[0].x - simplex[2].x,
+                    simplex[0].y - simplex[2].y,
+                );
 
                 var bcNorm = tripleProduct(ca, bc, bc);
                 var caNorm = tripleProduct(bc, ca, ca);
@@ -255,7 +264,7 @@ function findClosestEdge(simplex: Vec2[], winding: PolygonWinding): Edge {
         // The normal of the edge depends on the polygon winding of the simplex
         switch (winding) {
             case PolygonWinding.Clockwise:
-                norm.x = line.y
+                norm.x = line.y;
                 norm.y = -line.x;
                 break;
             case PolygonWinding.CounterClockwise:
@@ -327,7 +336,7 @@ function getIntersection(
         if (Math.abs(distance - edge.distance) <= EPSILON) {
             const len = intersection.len();
             if (len != 0) {
-                Vec2.scale(intersection, -1 / len, intersection)
+                Vec2.scale(intersection, -1 / len, intersection);
                 return { normal: intersection, distance: len };
             }
             else {
@@ -343,7 +352,7 @@ function getIntersection(
     // Since we did more than the maximum amount of iterations, this may not be optimal
     const len = intersection.len();
     if (len != 0) {
-        Vec2.scale(intersection, -1 / len, intersection)
+        Vec2.scale(intersection, -1 / len, intersection);
         return { normal: intersection, distance: len };
     }
     else {
@@ -362,7 +371,10 @@ function gjkIntersection(
     colliderB: Collider,
 ): GjkCollisionResult | null {
     const vertices: Vec2[] = [];
-    let direction = new Vec2(colliderB.center.x - colliderA.center.x, colliderB.center.y - colliderA.center.y);
+    let direction = new Vec2(
+        colliderB.center.x - colliderA.center.x,
+        colliderB.center.y - colliderA.center.y,
+    );
 
     var result: EvolveResult = EvolveResult.Evolving;
     while (result === EvolveResult.Evolving) {

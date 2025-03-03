@@ -1,11 +1,11 @@
 // TODO: accept canvas
 
-import { dt } from "../../app";
 import type { Asset, SpriteAnim, SpriteData } from "../../assets";
 import { resolveSprite } from "../../assets/sprite";
 import { onLoad } from "../../game";
 import { getRenderProps } from "../../game/utils";
 import { drawTexture, type Texture } from "../../gfx";
+import { _k } from "../../kaplay";
 import { Quad, quad, Rect, Vec2, vec2 } from "../../math";
 import type {
     Comp,
@@ -402,7 +402,7 @@ export function sprite(
                 throw new Error("Sprite anim speed cannot be 0");
             }
 
-            curAnim.timer += dt() * this.animSpeed;
+            curAnim.timer += _k.k.dt() * this.animSpeed;
 
             if (curAnim.timer >= (1 / curAnim.speed)) {
                 curAnim.timer = 0;
