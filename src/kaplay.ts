@@ -597,7 +597,12 @@ const kaplay = <
 
     const debug: Debug = {
         inspect: false,
-        timeScale: 1,
+        set timeScale(timeScale: number) {
+            app.state.timeScale = timeScale;
+        },
+        get timeScale() {
+            return app.state.timeScale;
+        },
         showLog: true,
         fps: () => app.fps(),
         numFrames: () => app.numFrames(),
