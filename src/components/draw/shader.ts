@@ -7,7 +7,13 @@ import type { Comp } from "../../types";
  * @group Component Types
  */
 export interface ShaderComp extends Comp {
+    /**
+     * Uniform values to pass to the shader.
+     */
     uniform?: Uniform;
+    /**
+     * The shader ID.
+     */
     shader: string;
 }
 
