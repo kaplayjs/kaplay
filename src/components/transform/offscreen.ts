@@ -107,11 +107,11 @@ export function offscreen(opt: OffScreenCompOpt = {}): OffScreenComp {
                 selfRect.pos = this.pos;
                 return selfRect.collides(screenRect);
             }
-            const sdist = Math.pow(this.offscreenDistance
+            const dist = this.offscreenDistance
                 ? this.offscreenDistance
-                : DEF_OFFSCREEN_DIS, 2);
+                : DEF_OFFSCREEN_DIS;
             return !testRectPoint(screenRect, pos)
-                && screenRect.sdistToPoint(pos) > sdist;
+                && screenRect.sdistToPoint(pos) > (dist * dist);
         },
         onExitScreen(this: GameObj, action: () => void): KEventController {
             return this.on("exitView", action);
