@@ -9,7 +9,7 @@ export class Vec3 {
     }
 
     dot(other: Vec3) {
-        return this.x * this.x + this.y * this.y + this.z * this.z;
+        return this.x * other.x + this.y * other.y + this.z * other.z;
     }
 
     cross(other: Vec3) {
