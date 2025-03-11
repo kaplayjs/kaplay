@@ -191,7 +191,7 @@ export const initApp = (opt: {
             try {
                 const res = state.canvas
                     .requestPointerLock() as unknown as Promise<void>;
-                if (res.catch) {
+                if (res?.catch) {
                     res.catch((e) => console.error(e));
                 }
             } catch (e) {
