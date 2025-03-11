@@ -7,10 +7,10 @@ test("vec2(2, 1) should return Vec2(2, 1)", () => {
     expect(v.y).toEqual(1);
 });
 
-test("vec2.fromAngle(90) should return Vec2(0, -1)", () => {
+test("vec2.fromAngle(90) should return Vec2(0, 1)", () => {
     const v = Vec2.fromAngle(90);
     expect(v.x).toBeCloseTo(0);
-    expect(v.y).toBeCloseTo(-1);
+    expect(v.y).toBeCloseTo(1);
 });
 
 test("Vec2.fromAngle(45) should return Vec2(Math.cos(Math.PI / 4))", () => {
