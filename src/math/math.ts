@@ -476,7 +476,7 @@ export class Vec2 {
      * @since v3000.0
      */
     static dot(v: Vec2, other: Vec2): number {
-        return v.x * v.x + v.y * v.y;
+        return v.x * other.x + v.y * other.y;
     }
 
     /**
