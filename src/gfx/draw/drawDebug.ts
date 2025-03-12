@@ -39,13 +39,15 @@ export function drawDebug() {
             for (const tag in data) {
                 if (data[tag]) {
                     // pushes the inspect function (eg: `sprite: "bean"`)
-                    lines.push(`${data[tag]}`);
+                    lines.push(data[tag]);
                 }
                 else {
                     // pushes only the tag (name of the component)
-                    lines.push(`${tag}`);
+                    lines.push(tag);
                 }
             }
+
+            lines.push(...inspecting.tags.map(t => `tag: ${t}`));
 
             drawInspectText(contentToView(mousePos()), lines.join("\n"));
         }
