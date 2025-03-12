@@ -6025,6 +6025,14 @@ export interface KAPLAYOpt<
      * @default 0
      */
     spriteAtlasPadding?: number;
+    /**
+     * If the debug inspect view should ignore objects that are paused when choosing
+     * the object to show the inspect view on.
+     * 
+     * @default false
+     * @experimental
+     */
+    inspectOnlyActive?: boolean;
 }
 
 /**
