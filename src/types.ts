@@ -5026,7 +5026,7 @@ export interface KAPLAYCtx<
      * @since v2000.0
      * @group Level
      */
-    addLevel(map: string[], opt: LevelOpt): GameObj;
+    addLevel(map: string[], opt: LevelOpt): GameObj<PosComp | LevelComp>;
     /**
      * Get data from local storage, if not present can set to a default value.
      *
