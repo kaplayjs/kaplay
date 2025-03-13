@@ -316,6 +316,7 @@ export const _k = {
     gscale: null,
     kaSprite: null,
     boomSprite: null,
+    handleErr: null,
     systems: [], // all systems added
     // we allocate systems
     systemsByEvent: [
@@ -1063,6 +1064,8 @@ const kaplay = <
             },
         );
     }
+
+    _k.handleErr = handleErr;
 
     function onCleanup(action: () => void) {
         gc.push(action);
