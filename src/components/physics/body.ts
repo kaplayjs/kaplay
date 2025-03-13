@@ -200,7 +200,6 @@ export function body(opt: BodyCompOpt = {}): BodyComp {
         // TODO: prefer density * area
         mass: opt.mass ?? 1,
         add(this: GameObj<PosComp | BodyComp | AreaComp>) {
-            console.log("executing body.add");
             prevPhysicsPos = this.pos.clone();
             nextPhysicsPos = this.pos.clone();
             prevDrawPos = this.pos.clone();
