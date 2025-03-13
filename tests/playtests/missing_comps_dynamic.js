@@ -1,4 +1,4 @@
-// Test when a dependency is missing on obj creation
+// Test when a dependency is missing on obj.use()
 
 const k = kaplay({});
 
@@ -8,9 +8,7 @@ k.onError((e) => {
     }
 });
 
-k.add([
-    k.body(),
-]);
+const dummy = k.add([]);
 
-
+dummy.use(body());
 

@@ -280,12 +280,16 @@ export function make<T>(comps: CompList<T> = []): GameObj<T> {
             // check for component dependencies
             const checkDeps = () => {
                 if (!comp.require) return;
-                for (const dep of comp.require) {
-                    if (!this.c(dep)) {
-                        throw new Error(
-                            `Component "${comp.id}" requires component "${dep}"`,
-                        );
+                try {
+                    for (const dep of comp.require) {
+                        if (!this.c(dep)) {
+                            throw new Error(
+                                `Component "${comp.id}" requires component "${dep}"`,
+                            );
+                        }
                     }
+                } catch (e) {
+                    _k.handleErr(e);
                 }
             };
 
