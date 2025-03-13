@@ -165,6 +165,7 @@ export type KAPLAYInternal = {
     boomSprite: Asset<SpriteData>;
     systems: System[];
     systemsByEvent: System[][];
+    handleErr: (e: any) => void;
 };
 
 /**

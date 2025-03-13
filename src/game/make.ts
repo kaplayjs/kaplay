@@ -127,7 +127,12 @@ export function make<T>(comps: CompList<T> = []): GameObj<T> {
             obj.parent = this;
             calcTransform(obj, obj.transform);
             // TODO: trigger add for children
-            obj.trigger("add", obj);
+
+            try {
+                obj.trigger("add", obj);
+            } catch (e) {
+                _k.handleErr(e);
+            }
             _k.game.events.trigger("add", obj);
             return obj;
         },
@@ -272,6 +277,45 @@ export function make<T>(comps: CompList<T> = []): GameObj<T> {
                 anonymousCompStates.push(comp);
             }
 
+            // check for component dependencies
+            const checkDeps = () => {
+                if (!comp.require) return;
+                try {
+                    for (const dep of comp.require) {
+                        if (!this.c(dep)) {
+                            throw new Error(
+                                `Component "${comp.id}" requires component "${dep}"`,
+                            );
+                        }
+                    }
+                } catch (e) {
+                    _k.handleErr(e);
+                }
+            };
+
+            if (comp.destroy) {
+                gc.push(comp.destroy.bind(this));
+            }
+
+            // manually trigger add event if object already exist
+            if (this.exists()) {
+                checkDeps();
+                if (comp.add) {
+                    onCurCompCleanup = (c: any) => gc.push(c);
+                    comp.add.call(this);
+                    onCurCompCleanup = null;
+                }
+                if (comp.id) {
+                    this.trigger("use", comp.id);
+                    _k.game.events.trigger("use", this, comp.id);
+                }
+            }
+            else {
+                if (comp.require) {
+                    gc.push(this.on("add", checkDeps).cancel);
+                }
+            }
+
             for (const k in comp) {
                 if (COMP_DESC.has(k)) {
                     continue;
@@ -330,41 +374,6 @@ export function make<T>(comps: CompList<T> = []): GameObj<T> {
                                     : ""),
                         );
                     }
-                }
-            }
-
-            // check for component dependencies
-            const checkDeps = () => {
-                if (!comp.require) return;
-                for (const dep of comp.require) {
-                    if (!this.c(dep)) {
-                        throw new Error(
-                            `Component "${comp.id}" requires component "${dep}"`,
-                        );
-                    }
-                }
-            };
-
-            if (comp.destroy) {
-                gc.push(comp.destroy.bind(this));
-            }
-
-            // manually trigger add event if object already exist
-            if (this.exists()) {
-                checkDeps();
-                if (comp.add) {
-                    onCurCompCleanup = (c: any) => gc.push(c);
-                    comp.add.call(this);
-                    onCurCompCleanup = null;
-                }
-                if (comp.id) {
-                    this.trigger("use", comp.id);
-                    _k.game.events.trigger("use", this, comp.id);
-                }
-            }
-            else {
-                if (comp.require) {
-                    gc.push(this.on("add", checkDeps).cancel);
                 }
             }
         },
