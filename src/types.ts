@@ -6527,6 +6527,12 @@ export interface SpriteAnimPlayOpt {
      */
     speed?: number;
     /**
+     * If the animation should restart from frame 1 and t=0 if it is already playing.
+     * 
+     * @default true
+     */
+    restart?: boolean;
+    /**
      * Runs when this animation ends.
      */
     onEnd?: () => void;
