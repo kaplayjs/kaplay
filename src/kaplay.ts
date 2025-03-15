@@ -463,6 +463,7 @@ const kaplay = <
         gamepads: gopt.gamepads,
         pixelDensity: gopt.pixelDensity,
         maxFPS: gopt.maxFPS,
+        fixedFPS: gopt.fixedFPS,
         buttons: gopt.buttons,
     });
     _k.app = app;
