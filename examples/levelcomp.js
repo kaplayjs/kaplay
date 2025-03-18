@@ -18,31 +18,37 @@ const SPEED = 480;
 setGravity(2400);
 
 const myLevel = add([
-  pos(100, 200),
-  level(
-    [
-      // Design the level layout with symbols
-      "@  ^ $$",
-      "=======",
-    ],
-    {
-      // The size of each grid
-      tileWidth: 64,
-      tileHeight: 64,
-      // Define what each symbol means (in components)
-      tiles: {
-        "@": () => [sprite("bean"), area(), body(), anchor("bot"), "player"],
-        "=": () => [
-          sprite("grass"),
-          area(),
-          body({ isStatic: true }),
-          anchor("bot"),
+    pos(100, 200),
+    level(
+        [
+            // Design the level layout with symbols
+            "@  ^ $$",
+            "=======",
         ],
-        $: () => [sprite("coin"), area(), anchor("bot"), "coin"],
-        "^": () => [sprite("spike"), area(), anchor("bot"), "danger"],
-      },
-    }
-  ),
+        {
+            // The size of each grid
+            tileWidth: 64,
+            tileHeight: 64,
+            // Define what each symbol means (in components)
+            tiles: {
+                "@": () => [
+                    sprite("bean"),
+                    area(),
+                    body(),
+                    anchor("bot"),
+                    "player",
+                ],
+                "=": () => [
+                    sprite("grass"),
+                    area(),
+                    body({ isStatic: true }),
+                    anchor("bot"),
+                ],
+                $: () => [sprite("coin"), area(), anchor("bot"), "coin"],
+                "^": () => [sprite("spike"), area(), anchor("bot"), "danger"],
+            },
+        },
+    ),
 ]);
 
 // Get the player object from tag
@@ -50,26 +56,26 @@ const player = myLevel.get("player")[0];
 
 // Movements
 onKeyPress("space", () => {
-  if (player.isGrounded()) {
-    player.jump();
-  }
+    if (player.isGrounded()) {
+        player.jump();
+    }
 });
 
 onKeyDown("left", () => {
-  player.move(-SPEED, 0);
+    player.move(-SPEED, 0);
 });
 
 onKeyDown("right", () => {
-  player.move(SPEED, 0);
+    player.move(SPEED, 0);
 });
 
 // Back to the original position if hit a "danger" item
 player.onCollide("danger", () => {
-  player.pos = myLevel.tile2Pos(0, 0);
+    player.pos = myLevel.tile2Pos(0, 0);
 });
 
 // Eat the coin!
 player.onCollide("coin", (coin) => {
-  destroy(coin);
-  play("score");
+    destroy(coin);
+    play("score");
 });

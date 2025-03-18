@@ -8,6 +8,7 @@ import type {
   AsepriteData,
   Asset,
   BitmapFontData,
+  initAssets,
   LoadBitmapFontOpt,
   LoadSpriteOpt,
   LoadSpriteSrc,
@@ -16,7 +17,6 @@ import type {
   SpriteAtlasData,
   SpriteData,
   Uniform,
-  initAssets,
 } from "./assets";
 import type { AudioCtx, AudioPlay, AudioPlayOpt } from "./audio";
 import type {
@@ -128,7 +128,7 @@ import type {
   Texture,
 } from "./gfx";
 import type { DrawPictureOpt, Picture } from "./gfx/draw/drawPicture";
-import type { CSSColor, Color, RGBAValue, RGBValue } from "./math/color";
+import type { Color, CSSColor, RGBAValue, RGBValue } from "./math/color";
 import type {
   Circle,
   Ellipse,
@@ -138,9 +138,9 @@ import type {
   Point,
   Polygon,
   Quad,
-  RNG,
   RaycastResult,
   Rect,
+  RNG,
   StepPosition,
   Vec2,
 } from "./math/math";
@@ -1521,7 +1521,7 @@ export interface KAPLAYCtx<
    *             ],
    *         }
    *     })
-     * ])
+   * ])
    * ```
    *
    * @returns A game obj with the level.
