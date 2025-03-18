@@ -1,11 +1,6 @@
 import { Vec2, vec2 } from "../../math/math";
-import {
-    type Comp,
-    type Edge,
-    EdgeMask,
-    type GameObj,
-} from "../../types";
-import type { LevelComp } from './level';
+import { type Comp, type Edge, EdgeMask, type GameObj } from "../../types";
+import type { LevelComp } from "./level";
 
 /**
  * The {@link tile `tile()`} component.

@@ -8,6 +8,7 @@ import type {
     AsepriteData,
     Asset,
     BitmapFontData,
+    initAssets,
     LoadBitmapFontOpt,
     LoadSpriteOpt,
     LoadSpriteSrc,
@@ -16,7 +17,6 @@ import type {
     SpriteAtlasData,
     SpriteData,
     Uniform,
-    initAssets,
 } from "./assets";
 import type { AudioCtx, AudioPlay, AudioPlayOpt } from "./audio";
 import type {
@@ -123,7 +123,7 @@ import type {
     LineJoin,
     Texture,
 } from "./gfx";
-import type { CSSColor, Color, RGBAValue, RGBValue } from "./math/color";
+import type { Color, CSSColor, RGBAValue, RGBValue } from "./math/color";
 import type {
     Circle,
     Ellipse,
@@ -133,9 +133,9 @@ import type {
     Point,
     Polygon,
     Quad,
-    RNG,
     RaycastResult,
     Rect,
+    RNG,
     StepPosition,
     Vec2,
 } from "./math/math";
@@ -1478,7 +1478,7 @@ export interface KAPLAYCtx<
      * @group Components
      */
     pathfinder(opts: PathfinderCompOpt): PathfinderComp;
-    
+
     /**
      * Construct a level based on symbols.
      *
@@ -5079,7 +5079,11 @@ export interface KAPLAYCtx<
      * @since v2000.0
      * @group Level
      */
-    addLevel(map: string[], opt: AddLevelOpt, parent?: GameObj): GameObj<PosComp | LevelComp>;
+    addLevel(
+        map: string[],
+        opt: AddLevelOpt,
+        parent?: GameObj,
+    ): GameObj<PosComp | LevelComp>;
     /**
      * Get data from local storage, if not present can set to a default value.
      *
@@ -7112,10 +7116,10 @@ export enum EdgeMask {
 }
 
 export interface AddLevelOpt extends LevelOpt {
-  /**
-   * Position of the first block.
-   */
-  pos?: Vec2;
+    /**
+     * Position of the first block.
+     */
+    pos?: Vec2;
 }
 
 /**
