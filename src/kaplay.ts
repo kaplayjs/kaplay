@@ -197,6 +197,7 @@ import {
     follow,
     health,
     layer,
+    level,
     lifespan,
     mask,
     move,
@@ -1342,6 +1343,7 @@ const kaplay = <
         sentry,
         patrol,
         pathfinder,
+        level,
         fakeMouse,
         // group events
         trigger,

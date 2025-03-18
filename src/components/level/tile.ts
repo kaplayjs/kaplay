@@ -4,8 +4,8 @@ import {
     type Edge,
     EdgeMask,
     type GameObj,
-    type LevelComp,
 } from "../../types";
+import type { LevelComp } from './level';
 
 /**
  * The {@link tile `tile()`} component.
