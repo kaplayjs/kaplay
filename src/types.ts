@@ -1489,36 +1489,38 @@ export interface KAPLAYCtx<
      * @example
      * ```js
      * const myLevel = add([
-     *     "                          $",
-     *     "                          $",
-     *     "           $$         =   $",
-     *     "  %      ====         =   $",
-     *     "                      =    ",
-     *     "       ^^      = >    =   &",
-     *     "===========================",
-     * ], {
-     *     // define the size of tile block
-     *     tileWidth: 32,
-     *     tileHeight: 32,
-     *     // define what each symbol means, by a function returning a component list (what will be passed to add())
-     *     tiles: {
-     *         "=": () => [
-     *             sprite("floor"),
-     *             area(),
-     *             body({ isStatic: true }),
-     *         ],
-     *         "$": () => [
-     *             sprite("coin"),
-     *             area(),
-     *             pos(0, -9),
-     *         ],
-     *         "^": () => [
-     *             sprite("spike"),
-     *             area(),
-     *             "danger",
-     *         ],
-     *     }
-     * })
+     *     level([
+     *          "                          $",
+     *          "                          $",
+     *          "           $$         =   $",
+     *          "  %      ====         =   $",
+     *          "                      =    ",
+     *          "       ^^      = >    =   &",
+     *          "===========================",
+     *     ], {
+     *         // define the size of tile block
+     *         tileWidth: 32,
+     *         tileHeight: 32,
+     *         // define what each symbol means, by a function returning a component list (what will be passed to add())
+     *         tiles: {
+     *             "=": () => [
+     *                 sprite("floor"),
+     *                 area(),
+     *                 body({ isStatic: true }),
+     *             ],
+     *             "$": () => [
+     *                 sprite("coin"),
+     *                 area(),
+     *                 pos(0, -9),
+     *             ],
+     *             "^": () => [
+     *                 sprite("spike"),
+     *                 area(),
+     *                 "danger",
+     *             ],
+     *         }
+     *     })
+     * ])
      * ```
      *
      * @returns A game obj with the level.
