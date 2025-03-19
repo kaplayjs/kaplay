@@ -330,9 +330,8 @@ export function level(map: string[], opt: LevelOpt): LevelComp {
 
     return {
         id: "level",
-        require: ["pos"],
 
-        add(this: GameObj<LevelComp | PosComp>) {
+        add(this: GameObj<LevelComp>) {
             map.forEach((row, i) => {
                 const keys = row.split("");
                 numColumns = Math.max(keys.length, numColumns);

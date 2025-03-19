@@ -1,6 +1,6 @@
 // @ts-check
 
-// Build levels with addLevel()
+// Build levels with level()
 
 // Start game
 kaplay();
@@ -18,12 +18,13 @@ const SPEED = 480;
 setGravity(2400);
 
 const myLevel = add([
-    pos(100, 200),
     level(
         [
             // Design the level layout with symbols
-            "@  ^ $$",
-            "=======",
+            "         ",
+            "         ",
+            "  @  ^ $$",
+            "  =======",
         ],
         {
             // The size of each grid
