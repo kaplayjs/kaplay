@@ -8,7 +8,7 @@ import {
     type TextureOpt,
 } from "../types";
 import { deepEq } from "../utils/";
-import { Picture } from "../gfx/draw/drawRaw"
+import { Picture } from "../gfx/draw/drawPicture"
 
 export type GfxCtx = ReturnType<typeof initGfx>;
 
