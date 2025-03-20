@@ -15,3 +15,4 @@ export * from "./shader";
 export * from "./sprite";
 export * from "./text";
 export * from "./uvquad";
+export * from "./video";
