@@ -124,6 +124,7 @@ import type {
     LineJoin,
     Texture,
 } from "./gfx";
+import type { DrawPictureOpt, Picture } from "./gfx/draw/drawPicture";
 import type { GjkCollisionResult } from "./math";
 import type { Color, CSSColor, RGBAValue, RGBValue } from "./math/color";
 import type {
@@ -5311,6 +5312,31 @@ export interface KAPLAYCtx<
      * @group Draw
      */
     drawSubtracted(content: () => void, mask: () => void): void;
+    /**
+     * A picture holding drawing data
+     */
+    Picture: typeof Picture;
+    /**
+     * Selects the picture for drawing, erases existing data.
+     * @param picture The picture to write drawing data to.
+     */
+    beginPicture(picture?: Picture): void;
+    /**
+     * Selects the picture for drawing, keeps existing data.
+     * @param picture The picture to write drawing data to.
+     */
+    appendToPicture(picture?: Picture): void;
+    /**
+     * Deselects the current picture for drawing, returning the picture.
+     * @returns The picture which was previously selected.
+     */
+    endPicture(): Picture;
+    /**
+     * Draws a picture to the screen. This function can not be used to draw recursively to a picture.
+     * @param picture The picture to draw
+     * @param opt Drawing options
+     */
+    drawPicture(picture: Picture, opt: DrawPictureOpt): void;
     /**
      * Push current transform matrix to the transform stack.
      *
