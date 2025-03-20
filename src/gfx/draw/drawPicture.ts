@@ -65,6 +65,10 @@ export class Picture {
             }),
         });
     }
+
+    free() {
+        this.mesh?.free();
+    }
 }
 
 const identityMatrix = new Mat4();
@@ -206,6 +210,7 @@ export function endPicture(): Picture {
     }
     _k.gfx.renderer.picture = null;
 
+    picture.free();
     picture.mesh = new Mesh(ctx, _k.gfx.renderer.vertexFormat, picture.vertices, picture.indices);
 
     console.log(picture);
