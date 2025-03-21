@@ -1,4 +1,5 @@
 export * from "./drawBezier";
+export * from "./drawCanvas";
 export * from "./drawCircle";
 export * from "./drawCurve";
 export * from "./drawDebug";
@@ -9,6 +10,7 @@ export * from "./drawInspectText";
 export * from "./drawLine";
 export * from "./drawLoadingScreen";
 export * from "./drawMasked";
+export * from "./drawPicture";
 export * from "./drawPolygon";
 export * from "./drawRaw";
 export * from "./drawRect";
