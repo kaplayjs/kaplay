@@ -47,6 +47,7 @@ import {
     updateViewport,
     width,
     Picture,
+    drawCanvas,
 } from "./gfx";
 
 import {
@@ -169,6 +170,7 @@ import {
 
 import {
     BlendMode,
+    type Canvas,
     type Debug,
     type GameObj,
     type KAPLAYCtx,
@@ -506,7 +508,7 @@ const kaplay = <
         LCEvents.AfterUpdate,
     ]);
 
-    function makeCanvas(w: number, h: number) {
+    function makeCanvas(w: number, h: number): Canvas {
         const fb = new FrameBuffer(ggl, w, h);
 
         return {
@@ -1527,6 +1529,7 @@ const kaplay = <
         pushMatrix,
         usePostEffect,
         makeCanvas,
+        drawCanvas,
         Picture,
         // debug
         debug,

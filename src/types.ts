@@ -110,6 +110,7 @@ import type { LCEvents, System } from "./game/systems";
 import type {
     AppGfxCtx,
     DrawBezierOpt,
+    DrawCanvasOpt,
     DrawCircleOpt,
     DrawCurveOpt,
     DrawLineOpt,
@@ -5455,6 +5456,15 @@ export interface KAPLAYCtx<
      * @group Draw
      */
     makeCanvas(w: number, h: number): Canvas;
+    /**
+     * Draw a canvas.
+     *
+     * @param opt The canvas object.
+     * 
+     * @since v4000.0
+     * @group Draw
+     */
+    drawCanvas(opt: DrawCanvasOpt): void;
     /**
      * The Debug interface for debugging stuff.
      *

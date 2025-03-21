@@ -123,6 +123,7 @@ export type {
     CharTransform,
     CharTransformFunc,
     DrawBezierOpt,
+    DrawCanvasOpt,
     DrawCircleOpt,
     DrawCurveOpt,
     DrawLineOpt,

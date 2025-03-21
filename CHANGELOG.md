@@ -38,6 +38,7 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - Moved camera to the shader - @mflerackers
 - Blend mode - @mflerackers
 - Picture API - @mflerackers
+- drawCanvas - @mflerackers
 
 ### Changed
 
