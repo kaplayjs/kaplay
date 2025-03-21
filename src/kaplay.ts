@@ -235,6 +235,7 @@ import {
     timer,
     usesArea,
     uvquad,
+    video,
     z,
 } from "./components";
 
@@ -1324,6 +1325,7 @@ const kaplay = <
         circle,
         ellipse,
         uvquad,
+        video,
         outline,
         particles,
         body,

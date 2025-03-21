@@ -86,6 +86,8 @@ import type {
     TileCompOpt,
     TimerComp,
     UVQuadComp,
+    VideoComp,
+    VideoCompOpt,
     ZComp,
 } from "./components/";
 import type { EllipseComp } from "./components/draw/ellipse";
@@ -716,6 +718,17 @@ export interface KAPLAYCtx<
      * @group Components
      */
     uvquad(w: number, h: number): UVQuadComp;
+    /**
+     * Draws a video.
+     * 
+     * @param url The video to play. Needs to be on the same webserver due to CORS.
+     * @param opt The video component options
+     * 
+     * @returns The UV quad comp.
+     * @since v4000.0
+     * @group Components
+     */
+    video(url: string, opt?: VideoCompOpt): VideoComp;
     /**
      * Attach a collider area from shape and enables collision detection in a Game Object.
      *
