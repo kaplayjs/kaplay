@@ -1,4 +1,5 @@
 export * from "./drawBezier";
+export * from "./drawCanvas";
 export * from "./drawCircle";
 export * from "./drawCurve";
 export * from "./drawDebug";
