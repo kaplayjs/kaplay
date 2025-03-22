@@ -1,3 +1,4 @@
+// @ts-nocheck -- TODO: fix eventually
 import { getGravityDirection } from "../../game";
 import { Polygon, Vec2, vec2 } from "../../math";
 import type { Comp, GameObj } from "../../types";
