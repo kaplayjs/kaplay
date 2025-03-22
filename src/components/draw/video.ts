@@ -1,5 +1,6 @@
 import { drawRect, drawUVQuad, Texture } from "../../gfx";
 import { _k } from "../../kaplay";
+import { Rect, vec2 } from "../../math";
 import type { Comp, GameObj } from "../../types";
 import type { PosComp } from "../transform";
 
@@ -11,6 +12,7 @@ export interface VideoComp extends Comp {
     play(): void,
     pause(): void,
     mute: boolean,
+    renderArea(): Rect
 }
 
 export type VideoCompOpt = {
@@ -125,6 +127,9 @@ export function video(url: string, opt: VideoCompOpt): VideoComp {
                     height: this.height
                 });
             }
-        }
+        },
+        renderArea() {
+            return new Rect(vec2(0), this.width, this.height);
+        },
     }
 }
