@@ -22,11 +22,37 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   );
   ```
 
+- Frame option for load animations with singular frames (**experimental**) -
+  @dragoncoder047
+  ```js
+  loadSpriteAtlas("/examples/sprites/dungeon.png", {
+      wizard: {
+          x: 128,
+          y: 140,
+          width: 144,
+          height: 28,
+          sliceX: 9,
+          anims: {
+              bouncy: {
+                  frames: [8, 5, 0, 3, 2, 3, 0, 5],
+                  speed: 10,
+                  loop: true,
+              },
+          },
+      },
+  });
+
+  add([sprite("wizard", { anim: "bouncy" }), pos(100, 100)]);
+  ```
+
 ### Fixed
 
 - Args were not being passed to global `trigger()` - @lajbel
 - AreaComp.onClick now returns the correct type, KEventController, instead of
   void - @lajbel
+- Lifespan was using async - @lajbel
+- Wrong calculation in Vector.dot() - @andrenanninga
+- Fixed pointer lock undefined catch error for non-promise version - @imaginarny
 
 ## [3001.0.9] - 2025-01-15
 
