@@ -8,6 +8,7 @@ export * from "./mask";
 export * from "./opacity";
 export * from "./outline";
 export * from "./particles";
+export * from "./picture";
 export * from "./polygon";
 export * from "./raycast";
 export * from "./rect";

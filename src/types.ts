@@ -96,6 +96,7 @@ import type {
     ParticlesComp,
     ParticlesOpt,
 } from "./components/draw/particles";
+import type { PictureComp } from "./components/draw/picture";
 import type {
     BoomOpt,
     Game,
@@ -724,11 +725,21 @@ export interface KAPLAYCtx<
      * @param url The video to play. Needs to be on the same webserver due to CORS.
      * @param opt The video component options
      * 
-     * @returns The UV quad comp.
+     * @returns The video comp.
      * @since v4000.0
      * @group Components
      */
     video(url: string, opt?: VideoCompOpt): VideoComp;
+    /**
+     * Draws a picture.
+     * 
+     * @param picture The picture to draw.
+     * 
+     * @returns The picture comp.
+     * @since v4000.0
+     * @group Components
+     */
+    picture(picture: Picture): PictureComp;
     /**
      * Attach a collider area from shape and enables collision detection in a Game Object.
      *
