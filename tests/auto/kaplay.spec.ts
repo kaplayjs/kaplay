@@ -1,6 +1,6 @@
 import { beforeAll, describe, expect, it } from "vitest";
 import "vitest-puppeteer";
-import "kaplay/global";
+import "../../dist/declaration/global";
 
 describe("KAPLAY Context Initialization", () => {
     beforeAll(async () => {
