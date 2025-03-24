@@ -721,10 +721,10 @@ export interface KAPLAYCtx<
     uvquad(w: number, h: number): UVQuadComp;
     /**
      * Draws a video.
-     * 
+     *
      * @param url The video to play. Needs to be on the same webserver due to CORS.
      * @param opt The video component options
-     * 
+     *
      * @returns The video comp.
      * @since v4000.0
      * @group Components
@@ -732,9 +732,9 @@ export interface KAPLAYCtx<
     video(url: string, opt?: VideoCompOpt): VideoComp;
     /**
      * Draws a picture.
-     * 
+     *
      * @param picture The picture to draw.
-     * 
+     *
      * @returns The picture comp.
      * @since v4000.0
      * @group Components
@@ -5484,7 +5484,7 @@ export interface KAPLAYCtx<
      * Draw a canvas.
      *
      * @param opt The canvas object.
-     * 
+     *
      * @since v4000.0
      * @group Draw
      */
@@ -6089,7 +6089,7 @@ export interface KAPLAYOpt<
     /**
      * If the debug inspect view should ignore objects that are paused when choosing
      * the object to show the inspect view on.
-     * 
+     *
      * @default false
      * @experimental
      */
