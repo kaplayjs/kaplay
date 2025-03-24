@@ -109,7 +109,7 @@ export function drawPolygon(opt: DrawPolygonOpt) {
 
     if (opt.outline) {
         drawLines({
-            pts: [...opt.pts, opt.pts[0]],
+            pts: opt.pts[0].eq(opt.pts[opt.pts.length - 1]) ? opt.pts : [...opt.pts, opt.pts[0]],
             radius: opt.radius,
             width: opt.outline.width,
             color: opt.outline.color,
