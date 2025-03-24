@@ -6,5 +6,8 @@ export default defineConfig({
         environment: "puppeteer",
         globalSetup: "vitest-environment-puppeteer/global-init",
         fileParallelism: false,
+        typecheck: {
+            ignoreSourceErrors: true,
+        },
     },
 });

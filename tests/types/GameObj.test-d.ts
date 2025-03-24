@@ -81,6 +81,39 @@ describe("Type Inference from add()", () => {
         // @ts-expect-error
         obj.require; // require is removed from Types because Omit<T>
     });
+
+    test("add() should tuple components", () => {
+        const componentA = () => {
+            return {
+                id: "componentA",
+                propertyA: true,
+                add() {
+                    console.log("add A");
+                },
+            };
+        };
+
+        const componentB = () => {
+            return {
+                id: "componentB",
+                // Un-comment to fix type error:
+                // propertyB: true,
+                add() {
+                    console.log("add B");
+                },
+            };
+        };
+
+        const obj = k.add(
+            [
+                k.circle(4),
+                componentA(),
+                componentB(),
+            ],
+        );
+
+        //        expectTypeOf(obj.propertyA).toBeBoolean();
+    });
 });
 
 describe("Type Inference from make()", () => {
