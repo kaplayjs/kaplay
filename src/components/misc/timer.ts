@@ -61,7 +61,7 @@ export function timer(maxLoopsPerFrame: number = 1000): TimerComp {
             this: GameObj<TimerComp>,
             time: number,
             action: () => void,
-            count: number = -1,
+            count: number = Infinity,
             waitFirst: boolean = false,
         ): TimerController {
             let t: number = waitFirst ? 0 : time;
@@ -69,16 +69,14 @@ export function timer(maxLoopsPerFrame: number = 1000): TimerComp {
             const ev = this.onUpdate(() => {
                 t += _k.app.state.dt;
                 for (let i = 0; t >= time && i < this.maxLoopsPerFrame; i++) {
-                    if (count != -1) {
-                        count--;
-                        if (count < 0) {
-                            ev.cancel();
-                            onEndEvents.trigger();
-                            return;
-                        }
-                    }
+                    count--;
                     action();
                     t -= time;
+                    if (count <= 0) {
+                        ev.cancel();
+                        onEndEvents.trigger();
+                        return;
+                    }
                 }
             });
             return {
@@ -89,7 +87,9 @@ export function timer(maxLoopsPerFrame: number = 1000): TimerComp {
                     ev.paused = p;
                 },
                 cancel: ev.cancel,
-                onEnd: onEndEvents.add,
+                onEnd(f) {
+                    onEndEvents.add(f);
+                },
                 then(f) {
                     onEndEvents.add(f);
                     return this;
@@ -101,7 +101,7 @@ export function timer(maxLoopsPerFrame: number = 1000): TimerComp {
             time: number,
             action?: () => void,
         ): TimerController {
-            return this.loop(time, action ?? (() => {}), 1, true);
+            return this.loop(time, action ?? (() => { }), 1, true);
         },
         tween<V extends LerpValue>(
             this: GameObj<TimerComp>,
