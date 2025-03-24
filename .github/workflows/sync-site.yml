@@ -1,3 +1,5 @@
+# This works for /lib/kaplay.master.js being deployed on every push to master
+
 name: Update kaplayjs/kaplay-site version
 
 on:
