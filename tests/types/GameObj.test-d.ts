@@ -1,7 +1,10 @@
 import { describe, expectTypeOf } from "vitest";
-import type { AreaComp, ScaleComp, SpriteComp } from "../../src/";
+import type { CircleComp, ScaleComp } from "../../src/";
 import { kaplay } from "../../src/kaplay";
 import type { GameObj } from "../../src/types";
+
+// We use circle() component because it only have 1 prop and 1 method, easy
+// for debugging
 
 describe("Type Inference from add()", () => {
     const k = kaplay();
@@ -22,54 +25,54 @@ describe("Type Inference from add()", () => {
         expectTypeOf(obj).toEqualTypeOf<GameObj<never>>();
     });
 
-    test("add([sprite()] should return GameObj<SpriteComp>", () => {
+    test("add([circle()] should return GameObj<CircleComp>", () => {
         const obj = k.add([
-            k.sprite("bean"),
+            k.circle(4),
         ]);
 
-        expectTypeOf(obj).toEqualTypeOf<GameObj<SpriteComp>>();
+        expectTypeOf(obj).toEqualTypeOf<GameObj<CircleComp>>();
     });
 
-    test("add([sprite(), scale()]) should return GameObj<SpriteComp | ScaleComp>", () => {
+    test("add([circle(), scale()]) should return GameObj<CircleComp | ScaleComp>", () => {
         const obj = k.add([
-            k.sprite("bean"),
+            k.circle(4),
             k.scale(),
         ]);
 
-        expectTypeOf(obj).toEqualTypeOf<GameObj<SpriteComp | ScaleComp>>();
+        expectTypeOf(obj).toEqualTypeOf<GameObj<CircleComp | ScaleComp>>();
     });
 
-    test("add([area(), \"cat\"]) should return GameObj<AreaComp>", () => {
+    test("add([circle(), \"cat\"]) should return GameObj<CircleComp>", () => {
         const obj = k.add([
-            k.area(),
+            k.circle(4),
             "cat",
         ]);
 
-        expectTypeOf(obj).toEqualTypeOf<GameObj<AreaComp>>();
+        expectTypeOf(obj).toEqualTypeOf<GameObj<CircleComp>>();
     });
 
-    test("add([make(sprite())]) should return GameObj<SpriteComp>", () => {
+    test("add([make(circle())]) should return GameObj<CircleComp>", () => {
         const base = k.make([
-            k.sprite("bean"),
+            k.circle(4),
         ]);
 
         const obj = k.add(base);
 
-        expectTypeOf(obj).toEqualTypeOf<GameObj<SpriteComp>>();
+        expectTypeOf(obj).toEqualTypeOf<GameObj<CircleComp>>();
     });
 
-    test("add([sprite(), sprite()]) should return GameObj<SpriteComp>", () => {
+    test("add([circle(), circle()]) should return GameObj<CircleComp>", () => {
         const obj = k.add([
-            k.sprite("mark"),
-            k.sprite("bean"),
+            k.circle(4),
+            k.circle(4),
         ]);
 
-        expectTypeOf(obj).toEqualTypeOf<GameObj<SpriteComp>>();
+        expectTypeOf(obj).toEqualTypeOf<GameObj<CircleComp>>();
     });
 
-    test("add([area(), { require: [] }]) shouldn't let you obj.require", () => {
+    test("add([circle(), { require: [] }]) shouldn't let you obj.require", () => {
         const obj = k.add([
-            k.sprite("mark"),
+            k.circle(4),
             {
                 require: ["love"],
             },
@@ -83,29 +86,45 @@ describe("Type Inference from add()", () => {
 describe("Type Inference from make()", () => {
     const k = kaplay();
 
-    test("make([sprite()] should return GameObj<SpriteComp>", () => {
-        const obj = k.make([
-            k.sprite("bean"),
-        ]);
+    test("make() should return GameObj<unknown>", () => {
+        const obj = k.make();
+        //     ^?
 
-        expectTypeOf(obj).toEqualTypeOf<GameObj<SpriteComp>>();
+        // Actually this test can give falsy true because unknown is acceptable for never
+        expectTypeOf(obj).toEqualTypeOf<GameObj<unknown>>();
     });
 
-    test("make([sprite(), scale()]) should return GameObj<SpriteComp | ScaleComp>", () => {
+    test("make([]) should return GameObj<never>", () => {
+        const obj = k.make([]);
+        //     ^?
+
+        // Actually this test can give falsy true because unknown is acceptable for never
+        expectTypeOf(obj).toEqualTypeOf<GameObj<never>>();
+    });
+
+    test("make([circle()] should return GameObj<CircleComp>", () => {
         const obj = k.make([
-            k.sprite("bean"),
+            k.circle(4),
+        ]);
+
+        expectTypeOf(obj).toEqualTypeOf<GameObj<CircleComp>>();
+    });
+
+    test("make([circle(), scale()]) should return GameObj<CircleComp | ScaleComp>", () => {
+        const obj = k.make([
+            k.circle(4),
             k.scale(),
         ]);
 
-        expectTypeOf(obj).toEqualTypeOf<GameObj<SpriteComp | ScaleComp>>();
+        expectTypeOf(obj).toEqualTypeOf<GameObj<CircleComp | ScaleComp>>();
     });
 
-    test("make([area(), \"cat\"]) should return GameObj<AreaComp>", () => {
+    test("make([circle(), \"cat\"]) should return GameObj<CircleComp>", () => {
         const obj = k.make([
-            k.area(),
+            k.circle(4),
             "cat",
         ]);
 
-        expectTypeOf(obj).toEqualTypeOf<GameObj<AreaComp>>();
+        expectTypeOf(obj).toEqualTypeOf<GameObj<CircleComp>>();
     });
 });
