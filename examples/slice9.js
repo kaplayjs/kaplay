@@ -16,12 +16,14 @@ loadSprite("9slice", "/examples/sprites/9slice.png", {
 });
 
 const g = add([
+    pos(center()),
     sprite("9slice"),
+    anchor("center")
 ]);
 
 onMouseMove(() => {
-    const mpos = mousePos();
+    const size = mousePos().sub(center());
     // Scaling the image will keep the aspect ratio of the sliced frames
-    g.width = mpos.x;
-    g.height = mpos.y;
+    g.width = Math.abs(size.x) * 2;
+    g.height = Math.abs(size.y) * 2;
 });
