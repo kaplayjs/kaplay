@@ -1,0 +1,22 @@
+name: Update kaplayjs/kaplay-site version
+
+on:
+  push:
+    branches: master
+
+jobs:
+  sync:
+    permissions: write-all
+    name: "Dispatch Event"
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/github-script@v6
+        with:
+          github-token: ${{ secrets.PAT_TOKEN }}
+          script: |
+            await github.rest.actions.createWorkflowDispatch({
+              owner: 'kaplayjs',
+              repo: 'kaplay-site',
+              workflow_id: 'upgrade-submodules.yml',
+              ref: 'main'
+            })
