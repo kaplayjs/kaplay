@@ -96,7 +96,6 @@ describe("Type Inference from add()", () => {
         const componentB = () => {
             return {
                 id: "componentB",
-                // Un-comment to fix type error:
                 // propertyB: true,
                 add() {
                     console.log("add B");
@@ -112,7 +111,7 @@ describe("Type Inference from add()", () => {
             ],
         );
 
-        //        expectTypeOf(obj.propertyA).toBeBoolean();
+        expectTypeOf(obj.propertyA).toBeBoolean();
     });
 });
 
@@ -159,5 +158,37 @@ describe("Type Inference from make()", () => {
         ]);
 
         expectTypeOf(obj).toEqualTypeOf<GameObj<CircleComp>>();
+    });
+
+    test("make() should tuple components", () => {
+        const componentA = () => {
+            return {
+                id: "componentA",
+                propertyA: true,
+                add() {
+                    console.log("add A");
+                },
+            };
+        };
+
+        const componentB = () => {
+            return {
+                id: "componentB",
+                // propertyB: true,
+                add() {
+                    console.log("add B");
+                },
+            };
+        };
+
+        const obj = k.make(
+            [
+                k.circle(4),
+                componentA(),
+                componentB(),
+            ],
+        );
+
+        expectTypeOf(obj.propertyA).toBeBoolean();
     });
 });
