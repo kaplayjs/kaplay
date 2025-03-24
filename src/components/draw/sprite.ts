@@ -2,9 +2,10 @@
 
 import type { Asset, SpriteAnim, SpriteData } from "../../assets";
 import { resolveSprite } from "../../assets/sprite";
+import { DEF_ANCHOR } from "../../constants";
 import { onLoad } from "../../game";
 import { getRenderProps } from "../../game/utils";
-import { drawTexture, type Texture } from "../../gfx";
+import { anchorPt, drawTexture, type Texture } from "../../gfx";
 import { _k } from "../../kaplay";
 import { Quad, quad, Rect, Vec2, vec2 } from "../../math";
 import type {
@@ -341,12 +342,20 @@ export function sprite(
                     quad(left, top + ih, iw, bottom),
                     quad(left + iw, top + ih, right, bottom),
                 ];
+                const props = getRenderProps(this);
+                const offset = anchorPt(props.anchor || DEF_ANCHOR);
+                const offsetX = - (offset.x + 1) * 0.5 * this.width;
+                const offsetY = - (offset.y + 1) * 0.5 * this.height;
                 for (let i = 0; i < 9; i++) {
                     const uv = quads[i];
                     const transform = quads[i + 9];
+                    if (transform.w == 0 || transform.h == 0) {
+                        return;
+                    }
                     drawTexture(
-                        Object.assign(getRenderProps(this), {
-                            pos: transform.pos(),
+                        Object.assign(props, {
+                            pos: transform.pos().add(offsetX, offsetY),
+                            anchor: "topleft",
                             tex: spriteData.tex,
                             quad: q.scale(uv),
                             flipX: this.flipX,
@@ -472,7 +481,7 @@ export function sprite(
                     pingpong: false,
                     speed: 0,
                     frameIndex: 0,
-                    onEnd: () => {},
+                    onEnd: () => { },
                 }
                 : {
                     name: name,
@@ -481,7 +490,7 @@ export function sprite(
                     pingpong: opt.pingpong ?? anim.pingpong ?? false,
                     speed: opt.speed ?? anim.speed ?? 10,
                     frameIndex: 0,
-                    onEnd: opt.onEnd ?? (() => {}),
+                    onEnd: opt.onEnd ?? (() => { }),
                 };
 
             curAnimDir = typeof anim === "number" ? null : 1;
