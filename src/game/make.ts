@@ -119,11 +119,11 @@ export function make<const T extends CompList<unknown>>(
             return Array.from(tags);
         },
 
-        add<const T2 extends CompList<unknown> | GameObj<unknown>>(
+        add<const T2 extends CompList<unknown>>(
             this: GameObj,
             a: T2,
-        ): T2 extends CompList<unknown> ? GameObj<T2[number]> : T2 {
-            const obj = a instanceof Array ? make(a) : a as GameObj<unknown>;
+        ): GameObj<T2[number]> {
+            const obj = make(a);
 
             if (obj.parent) {
                 throw new Error(
@@ -142,8 +142,7 @@ export function make<const T extends CompList<unknown>>(
 
             _k.game.events.trigger("add", obj);
 
-            return obj as T2 extends CompList<unknown> ? GameObj<T2[number]>
-                : T2;
+            return obj;
         },
 
         readd(obj: GameObj): GameObj {
