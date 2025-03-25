@@ -101,7 +101,7 @@ export function timer(maxLoopsPerFrame: number = 1000): TimerComp {
             time: number,
             action?: () => void,
         ): TimerController {
-            return this.loop(time, action ?? (() => { }), 1, true);
+            return this.loop(time, action ?? (() => {}), 1, true);
         },
         tween<V extends LerpValue>(
             this: GameObj<TimerComp>,

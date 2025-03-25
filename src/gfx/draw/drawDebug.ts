@@ -24,7 +24,11 @@ export function drawDebug() {
         let inspecting = null;
 
         for (const obj of _k.game.root.get("*", { recursive: true })) {
-            if (obj.c("area") && (_k.globalOpt.inspectOnlyActive ? !obj.paused : true) && obj.isHovering()) {
+            if (
+                obj.c("area")
+                && (_k.globalOpt.inspectOnlyActive ? !obj.paused : true)
+                && obj.isHovering()
+            ) {
                 inspecting = obj;
                 break;
             }

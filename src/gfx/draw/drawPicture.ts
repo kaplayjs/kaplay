@@ -12,13 +12,13 @@ export type Material = {
     shader?: Shader;
     uniform?: Uniform;
     blend?: BlendMode;
-}
+};
 
 export type PictureCommand = {
     material: Material;
     index: number;
     count: number;
-}
+};
 
 /**
  * A picture holding drawing data
@@ -54,14 +54,14 @@ export class Picture {
             commands: this.commands.map(command => {
                 return {
                     material: {
-                        tex: "", // TODO: Find a way to refer to a texture by name (main, font, single, etc) 
+                        tex: "", // TODO: Find a way to refer to a texture by name (main, font, single, etc)
                         shader: "", // TODO: Find a way to refer to a shader by name command.material.shader.name
                         uniform: command.material.uniform,
-                        blend: command.material.blend
+                        blend: command.material.blend,
                     },
                     index: command.index,
                     count: command.count,
-                }
+                };
             }),
         });
     }
@@ -76,9 +76,7 @@ const identityMatrix = new Mat4();
 /**
  * Drawing options for drawPicture
  */
-export type DrawPictureOpt = RenderProps & {
-
-}
+export type DrawPictureOpt = RenderProps & {};
 
 /**
  * Draws a picture to the screen. This function can not be used to draw recursively to a picture.
@@ -86,7 +84,8 @@ export type DrawPictureOpt = RenderProps & {
  * @param opt Drawing options
  */
 export function drawPicture(
-    picture: Picture, opt: DrawPictureOpt
+    picture: Picture,
+    opt: DrawPictureOpt,
 ) {
     const w = width();
     const h = height();
@@ -94,9 +93,9 @@ export function drawPicture(
 
     // This is the transform we will apply
     const transform = _k.gfx.transform.clone();
-    if (opt.pos) { transform.translateSelfV(opt.pos); }
-    if (opt.angle) { transform.rotateSelf(opt.angle); }
-    if (opt.scale) { transform.scaleSelfV(opt.scale); }
+    if (opt.pos) transform.translateSelfV(opt.pos);
+    if (opt.angle) transform.rotateSelf(opt.angle);
+    if (opt.scale) transform.scaleSelfV(opt.scale);
 
     const ctx = _k.gfx.renderer.ctx;
     const gl = ctx.gl;
@@ -211,7 +210,12 @@ export function endPicture(): Picture {
     _k.gfx.renderer.picture = null;
 
     picture.free();
-    picture.mesh = new Mesh(ctx, _k.gfx.renderer.vertexFormat, picture.vertices, picture.indices);
+    picture.mesh = new Mesh(
+        ctx,
+        _k.gfx.renderer.vertexFormat,
+        picture.vertices,
+        picture.indices,
+    );
 
     console.log(picture);
 

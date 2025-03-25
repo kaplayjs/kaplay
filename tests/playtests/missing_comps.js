@@ -3,7 +3,7 @@
 const k = kaplay({});
 
 k.onError((e) => {
-    if (e == 'Error: Component "body" requires component "pos"') {
+    if (e == "Error: Component \"body\" requires component \"pos\"") {
         console.log("TEST PASSED");
     }
 });
@@ -11,6 +11,3 @@ k.onError((e) => {
 k.add([
     k.body(),
 ]);
-
-
-
