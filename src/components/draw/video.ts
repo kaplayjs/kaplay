@@ -5,20 +5,20 @@ import type { Comp, GameObj } from "../../types";
 import type { PosComp } from "../transform";
 
 export interface VideoComp extends Comp {
-    width: number,
-    height: number,
-    currentTime: number,
-    duration: number,
-    play(): void,
-    pause(): void,
-    mute: boolean,
-    renderArea(): Rect
+    width: number;
+    height: number;
+    currentTime: number;
+    duration: number;
+    play(): void;
+    pause(): void;
+    mute: boolean;
+    renderArea(): Rect;
 }
 
 export type VideoCompOpt = {
-    width: number,
-    height: number
-}
+    width: number;
+    height: number;
+};
 
 // region video
 export function video(url: string, opt: VideoCompOpt): VideoComp {
@@ -53,10 +53,10 @@ export function video(url: string, opt: VideoCompOpt): VideoComp {
         },
         add() {
             _video.playsInline = true;
-            //_video.muted = true; Don't use this, sound will not work
+            // _video.muted = true; Don't use this, sound will not work
             _video.loop = true;
             _video.autoplay = false;
-            _video.crossOrigin = 'anonymous';
+            _video.crossOrigin = "anonymous";
 
             _video.addEventListener(
                 "playing",
@@ -77,16 +77,16 @@ export function video(url: string, opt: VideoCompOpt): VideoComp {
             );
 
             if (url.startsWith("http")) { // Make sure redirects work
-                console.log(`Fetching ${url}`)
+                console.log(`Fetching ${url}`);
                 fetch(url, {
-                    method: 'HEAD',
-                    mode: 'no-cors'
+                    method: "HEAD",
+                    mode: "no-cors",
                 }).then((response) => {
                     _video.src = response.url ? response.url : url;
                 });
             }
             else {
-                console.log(`Not fetching ${url}`)
+                console.log(`Not fetching ${url}`);
                 _video.src = url;
             }
 
@@ -118,18 +118,18 @@ export function video(url: string, opt: VideoCompOpt): VideoComp {
                 drawUVQuad({
                     width: this.width,
                     height: this.height,
-                    tex: _texture
+                    tex: _texture,
                 });
             }
             else {
                 drawRect({
                     width: this.width,
-                    height: this.height
+                    height: this.height,
                 });
             }
         },
         renderArea() {
             return new Rect(vec2(0), this.width, this.height);
         },
-    }
+    };
 }

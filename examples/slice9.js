@@ -18,7 +18,7 @@ loadSprite("9slice", "/examples/sprites/9slice.png", {
 const g = add([
     pos(center()),
     sprite("9slice"),
-    anchor("center")
+    anchor("center"),
 ]);
 
 onMouseMove(() => {

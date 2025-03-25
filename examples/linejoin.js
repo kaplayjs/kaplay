@@ -14,7 +14,7 @@ onDraw(() => {
         ],
         join: "bevel",
         width: 20,
-        opacity: 0.75
+        opacity: 0.75,
     });
 
     drawLines({
@@ -28,7 +28,7 @@ onDraw(() => {
         ],
         join: "round",
         width: 20,
-        opacity: 0.75
+        opacity: 0.75,
     });
 
     drawLines({
@@ -42,7 +42,7 @@ onDraw(() => {
         ],
         join: "miter",
         width: 20,
-        opacity: 0.75
+        opacity: 0.75,
     });
 
     // Parallelograms
@@ -57,7 +57,7 @@ onDraw(() => {
         ],
         join: "bevel",
         width: 20,
-        opacity: 0.75
+        opacity: 0.75,
     });
 
     drawLines({
@@ -71,7 +71,7 @@ onDraw(() => {
         ],
         join: "round",
         width: 20,
-        opacity: 0.75
+        opacity: 0.75,
     });
 
     drawLines({
@@ -85,7 +85,7 @@ onDraw(() => {
         ],
         join: "miter",
         width: 20,
-        opacity: 0.75
+        opacity: 0.75,
     });
 });
 
@@ -111,16 +111,16 @@ add([
     pos(125, 700),
     circle(75),
     outline(20, RED, 0.75, "bevel"),
-])
+]);
 
 add([
     pos(325, 700),
     circle(75),
     outline(20, RED, 0.75, "round"),
-])
+]);
 
 add([
     pos(525, 700),
     circle(75),
     outline(20, RED, 0.75, "miter"),
-])
+]);

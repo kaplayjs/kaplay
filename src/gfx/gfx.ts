@@ -1,5 +1,6 @@
 import type { Shader, Uniform } from "../assets";
 import { getCamTransform } from "../game";
+import { Picture } from "../gfx/draw/drawPicture";
 import { Mat23, Mat4 } from "../math";
 import {
     BlendMode,
@@ -8,7 +9,6 @@ import {
     type TextureOpt,
 } from "../types";
 import { deepEq } from "../utils/";
-import { Picture } from "../gfx/draw/drawPicture"
 
 export type GfxCtx = ReturnType<typeof initGfx>;
 
@@ -200,15 +200,17 @@ export class BatchRenderer {
                 tex: tex || undefined,
                 shader,
                 uniform: uniform || undefined,
-                blend
-            }
+                blend,
+            };
             if (this.picture.commands.length) {
-                const lastCommand = this.picture.commands[this.picture.commands.length - 1];
+                const lastCommand =
+                    this.picture.commands[this.picture.commands.length - 1];
                 const lastMaterial = lastCommand.material;
-                if (lastMaterial.tex == material.tex &&
-                    lastMaterial.shader == material.shader &&
-                    lastMaterial.uniform == material.uniform &&
-                    lastMaterial.blend == material.blend
+                if (
+                    lastMaterial.tex == material.tex
+                    && lastMaterial.shader == material.shader
+                    && lastMaterial.uniform == material.uniform
+                    && lastMaterial.blend == material.blend
                 ) {
                     lastCommand.count += count;
                     return;
@@ -217,7 +219,7 @@ export class BatchRenderer {
             const command = {
                 material,
                 index,
-                count
+                count,
             };
             this.picture.commands.push(command);
             return;
@@ -234,7 +236,7 @@ export class BatchRenderer {
             || blend !== this.curBlend
             || fixed !== this.curFixed
             || this.vqueue.length + vertices.length * this.stride
-            > this.maxVertices
+                > this.maxVertices
             || this.iqueue.length + indices.length > this.maxIndices
         ) {
             this.flush(width, height);
@@ -296,7 +298,7 @@ export class BatchRenderer {
             width,
             height,
             camera: this.curFixed ? identityMatrix : getCamTransform(),
-            transform: identityMatrix
+            transform: identityMatrix,
         });
 
         // Bind texture
@@ -404,7 +406,11 @@ export class Mesh {
         this.glVBuf = glVBuf;
 
         ctx.pushArrayBuffer(this.glVBuf);
-        gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
+        gl.bufferData(
+            gl.ARRAY_BUFFER,
+            new Float32Array(vertices),
+            gl.STATIC_DRAW,
+        );
         ctx.popArrayBuffer();
 
         this.glIBuf = gl.createBuffer()!;

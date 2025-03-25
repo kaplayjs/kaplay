@@ -344,8 +344,8 @@ export function sprite(
                 ];
                 const props = getRenderProps(this);
                 const offset = anchorPt(props.anchor || DEF_ANCHOR);
-                const offsetX = - (offset.x + 1) * 0.5 * this.width;
-                const offsetY = - (offset.y + 1) * 0.5 * this.height;
+                const offsetX = -(offset.x + 1) * 0.5 * this.width;
+                const offsetY = -(offset.y + 1) * 0.5 * this.height;
                 for (let i = 0; i < 9; i++) {
                     const uv = quads[i];
                     const transform = quads[i + 9];
@@ -481,7 +481,7 @@ export function sprite(
                     pingpong: false,
                     speed: 0,
                     frameIndex: 0,
-                    onEnd: () => { },
+                    onEnd: () => {},
                 }
                 : {
                     name: name,
@@ -490,7 +490,7 @@ export function sprite(
                     pingpong: opt.pingpong ?? anim.pingpong ?? false,
                     speed: opt.speed ?? anim.speed ?? 10,
                     frameIndex: 0,
-                    onEnd: opt.onEnd ?? (() => { }),
+                    onEnd: opt.onEnd ?? (() => {}),
                 };
 
             curAnimDir = typeof anim === "number" ? null : 1;

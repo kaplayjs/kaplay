@@ -15,7 +15,7 @@ import type { PosComp } from "./pos";
 export interface OffScreenComp extends Comp {
     /**
      * The minimum distance that the object must be off the screen by to be considered "offscreen".
-     * 
+     *
      * If it is undefined, it means that the object will be considered to be offscreen when its bounding rectangle
      * (defined by width and height) is not intersecting with the screen rectangle.
      */
@@ -93,7 +93,9 @@ export function offscreen(opt: OffScreenCompOpt = {}): OffScreenComp {
         id: "offscreen",
         require: ["pos"],
         offscreenDistance: opt.distance ?? DEF_OFFSCREEN_DIS,
-        isOffScreen(this: GameObj<PosComp | OffScreenComp | RectComp>): boolean {
+        isOffScreen(
+            this: GameObj<PosComp | OffScreenComp | RectComp>,
+        ): boolean {
             const pos = this.screenPos();
 
             // This is not possible, screenPos() without arguments returns the pos
