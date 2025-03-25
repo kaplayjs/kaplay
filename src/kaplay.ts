@@ -267,7 +267,6 @@ import {
     initGame,
     KeepFlags,
     layers,
-    make,
     on,
     onAdd,
     onClick,
@@ -1305,7 +1304,6 @@ const kaplay = <
         // obj
         getTreeRoot,
         add,
-        make,
         destroy,
         destroyAll,
         get,

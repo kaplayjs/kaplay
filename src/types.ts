@@ -230,39 +230,11 @@ export interface KAPLAYCtx<
      * });
      * ```
     *
-    * @param comps - List of components to add to the game object, or a game object made with {@link make `make()`}.
+    * @param comps - List of components to add to the game object.
     * @returns The added game object that contains all properties and methods each component offers.
     * @group Game Obj
     */
-    add<const T extends CompList<unknown> | GameObj<unknown>>(
-        comps?: T,
-    ): T extends CompList<unknown> ? GameObj<T[number]> : T;
-    /**
-     * Create a game object like add(), but not adding to the scene.
-     *
-     * @param comps - List of components to add to the game object.
-     *
-     * @example
-     * ```js
-     * const label = make([
-     *     rect(100, 20),
-     * ]);
-     *
-     * // Add a new text to the label
-     * label.add([
-     *     text("Hello, world!"),
-     * ]);
-     *
-     * // Add game object to the scene
-     * // Now it will render
-     * add(label);
-     * ```
-     *
-     * @returns The created game object that contains all properties and methods each component offers.
-     * @since v3000.1
-     * @group Game Obj
-     */
-    make<const T extends CompList<unknown>>(comps?: T): GameObj<T[number]>;
+    add<const T extends CompList<unknown>>(comps?: T): GameObj<T[number]>;
     /**
      * Remove and re-add the game obj, without triggering add / destroy events.
      *
@@ -6171,9 +6143,7 @@ export interface GameObjRaw {
      * @returns The added game object.
      * @since v3000.0
      */
-    add<const T extends CompList<unknown> | GameObj<unknown>>(
-        comps?: T,
-    ): T extends CompList<unknown> ? GameObj<T[number]> : T;
+    add<const T extends CompList<unknown>>(comps?: T): GameObj<T[number]>;
     /**
      * Remove and re-add the game obj, without triggering add / destroy events.
      *
