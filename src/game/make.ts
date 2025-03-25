@@ -40,7 +40,9 @@ export type SetParentOpt = {
     keep: KeepFlags;
 };
 
-export function make<T>(comps: CompList<T> = []): GameObj<T> {
+export function make<const T extends CompList<unknown>>(
+    comps: T = [] as unknown as T,
+): GameObj<T[number]> {
     const compStates = new Map<string, Comp>();
     const anonymousCompStates: Comp[] = [];
     const cleanups = {} as Record<string, (() => unknown)[]>;
@@ -117,8 +119,12 @@ export function make<T>(comps: CompList<T> = []): GameObj<T> {
             return Array.from(tags);
         },
 
-        add<T2>(this: GameObj, a: CompList<T2> | GameObj<T2>): GameObj<T2> {
-            const obj = Array.isArray(a) ? make(a) : a;
+        add<const T2 extends CompList<unknown> | GameObj<unknown>>(
+            this: GameObj,
+            a: T2,
+        ): T2 extends CompList<unknown> ? GameObj<T2[number]> : T2 {
+            const obj = a instanceof Array ? make(a) : a as GameObj<unknown>;
+
             if (obj.parent) {
                 throw new Error(
                     "Cannot add a game obj that already has a parent.",
@@ -126,15 +132,18 @@ export function make<T>(comps: CompList<T> = []): GameObj<T> {
             }
             obj.parent = this;
             calcTransform(obj, obj.transform);
-            // TODO: trigger add for children
 
             try {
                 obj.trigger("add", obj);
+                obj.children.forEach(c => c.trigger("add", c));
             } catch (e) {
                 _k.handleErr(e);
             }
+
             _k.game.events.trigger("add", obj);
-            return obj;
+
+            return obj as T2 extends CompList<unknown> ? GameObj<T2[number]>
+                : T2;
         },
 
         readd(obj: GameObj): GameObj {
@@ -504,7 +513,8 @@ export function make<T>(comps: CompList<T> = []): GameObj<T> {
                     }
                 });
             }
-            return list;
+
+            return list as GameObj<T>[];
         },
 
         query(opt: QueryOpt) {
@@ -828,5 +838,5 @@ export function make<T>(comps: CompList<T> = []): GameObj<T> {
         obj.use(comp as string | Comp);
     }
 
-    return obj as GameObj<T>;
+    return obj as GameObj<T[number]>;
 }

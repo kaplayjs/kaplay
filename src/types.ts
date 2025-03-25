@@ -234,7 +234,9 @@ export interface KAPLAYCtx<
     * @returns The added game object that contains all properties and methods each component offers.
     * @group Game Obj
     */
-    add<T>(comps?: CompList<T> | GameObj<T>): GameObj<T>;
+    add<const T extends CompList<unknown> | GameObj<unknown>>(
+        comps?: T,
+    ): T extends CompList<unknown> ? GameObj<T[number]> : T;
     /**
      * Create a game object like add(), but not adding to the scene.
      *
@@ -260,7 +262,7 @@ export interface KAPLAYCtx<
      * @since v3000.1
      * @group Game Obj
      */
-    make<T>(comps?: CompList<T>): GameObj<T>;
+    make<const T extends CompList<unknown>>(comps?: T): GameObj<T[number]>;
     /**
      * Remove and re-add the game obj, without triggering add / destroy events.
      *
@@ -5760,21 +5762,52 @@ export interface KAPLAYCtx<
 
 export type Tag = string;
 
-type UnionToIntersection<U> = (U extends any ? (k: U) => void : never) extends (
-    k: infer I,
-) => void ? I
-    : never;
-type Defined<T> = T extends any
+/**
+ * The basic unit of object in KAPLAY. The player, a butterfly, a tree, or even a piece of text.
+ *
+ * @group Game Obj
+ */
+export type GameObj<T = any> = GameObjRaw & MergeComps<T>;
+
+export type UnionToIntersection<U> =
+    (U extends any ? (k: U) => void : never) extends (
+        k: infer I,
+    ) => void ? I
+        : never;
+
+// What defined does is remove prop: never types for left types clean.
+// This could work for the proccess of remove Comp properties in XXXXComp types
+export type Defined<T> = T extends any
     ? Pick<T, { [K in keyof T]-?: T[K] extends undefined ? never : K }[keyof T]>
     : never;
-type Expand<T> = T extends infer U ? { [K in keyof U]: U[K] } : never;
-export type MergeObj<T> = Expand<UnionToIntersection<Defined<T>>>;
+
+/**
+ * It obligates to TypeScript to Expand the type.
+ *
+ * Instead of being `{ id: 1 } | { name: "hi" }`
+ * makes
+ * It's `{ id: 1, name: "hi" }`
+ *
+ * https://www.totaltypescript.com/concepts/the-prettify-helper
+ *
+ * Previously Expand<T>
+ */
+export type Prettify<T> = T extends infer U ? { [K in keyof U]: U[K] } : never;
+export type MergeObj<T> = Prettify<UnionToIntersection<Defined<T>>>;
+
+type RemoveCompProps<T> = Defined<
+    {
+        [K in keyof T]: K extends keyof Comp ? never : T[K];
+    }
+>;
+
 /**
  * A type to merge the components of a game object, omitting the default component properties.
  *
  * @group Component Types
  */
-export type MergeComps<T> = Omit<MergeObj<T>, keyof Comp>;
+export type MergeComps<T> = MergeObj<RemoveCompProps<T>>;
+
 export type MergePlugins<T extends PluginList<any>> = MergeObj<
     ReturnType<T[number]>
 >;
@@ -5784,7 +5817,7 @@ export type MergePlugins<T extends PluginList<any>> = MergeObj<
  *
  * @group Component Types
  */
-export type CompList<T> = Array<T | Tag>;
+export type CompList<T extends any | undefined> = (T | Tag)[];
 export type PluginList<T> = Array<T | KAPLAYPlugin<any>>;
 
 /**
@@ -6138,7 +6171,9 @@ export interface GameObjRaw {
      * @returns The added game object.
      * @since v3000.0
      */
-    add<T>(comps?: CompList<T> | GameObj<T>): GameObj<T>;
+    add<const T extends CompList<unknown> | GameObj<unknown>>(
+        comps?: T,
+    ): T extends CompList<unknown> ? GameObj<T[number]> : T;
     /**
      * Remove and re-add the game obj, without triggering add / destroy events.
      *
@@ -6485,13 +6520,6 @@ export interface GameObjRaw {
     onButtonPress: KAPLAYCtx["onButtonPress"];
     onButtonRelease: KAPLAYCtx["onButtonRelease"];
 }
-
-/**
- * The basic unit of object in KAPLAY. The player, a butterfly, a tree, or even a piece of text.
- *
- * @group Game Obj
- */
-export type GameObj<T = any> = GameObjRaw & MergeComps<T>;
 
 /**
  * @group Options
