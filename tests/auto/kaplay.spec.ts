@@ -1,13 +1,13 @@
-import { beforeAll, describe, expect, it } from "vitest";
+import { beforeAll, describe, expect, test } from "vitest";
 import "vitest-puppeteer";
 import "../../dist/declaration/global";
 
-describe("KAPLAY Context Initialization", () => {
+describe("kaplay() initialization", () => {
     beforeAll(async () => {
         await page.addScriptTag({ path: "dist/kaplay.js" });
     });
 
-    it("VERSION should be defined", async () => {
+    test("VERSION constant should be defined in global scope", async () => {
         const version = await page.evaluate(() => {
             kaplay();
             return VERSION;

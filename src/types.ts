@@ -174,7 +174,10 @@ export type KAPLAYInternal = {
 };
 
 /**
- * Context handle that contains every kaboom function.
+ * Context handle that contains every KAPLAY function.
+ *
+ * @template TButtonDef - The button map
+ * @template TButton - The button type
  *
  * @group Start
  */

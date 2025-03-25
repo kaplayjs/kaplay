@@ -1,30 +1,36 @@
-import { beforeAll, describe, expect, it } from "vitest";
+import { beforeAll, describe, expect, test } from "vitest";
 import "vitest-puppeteer";
 import "../../dist/declaration/global";
 
-describe("Missing Comps", async () => {
+// [subject] should [behavior when condition]
+
+describe("Components validation in add()", async () => {
     beforeAll(async () => {
         await page.addScriptTag({ path: "dist/kaplay.js" });
     });
 
-    it("Use body() without pos() in add() should throw an error", async () => {
-        async function useBodyWithoutPos() {
-            return page.evaluate(() => {
-                kaplay();
+    test(
+        "add() should throw an error when a body() without pos() is passed",
+        async () => {
+            async function useBodyWithoutPos() {
+                return page.evaluate(() => {
+                    kaplay();
 
-                return new Promise((res, rej) => {
-                    onError((e) => {
-                        console.log(e);
-                        rej(e.message);
+                    return new Promise((res, rej) => {
+                        onError((e) => {
+                            console.log(e);
+                            rej(e.message);
+                        });
+
+                        add([
+                            body(),
+                        ]);
                     });
-
-                    add([
-                        body(),
-                    ]);
                 });
-            });
-        }
+            }
 
-        await expect(useBodyWithoutPos).rejects.toThrow(/requires/);
-    }, 20000);
+            await expect(useBodyWithoutPos).rejects.toThrow(/requires/);
+        },
+        20000,
+    );
 });
