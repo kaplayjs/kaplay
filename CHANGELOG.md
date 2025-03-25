@@ -41,6 +41,10 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - drawCanvas - @mflerackers
 - Added `video()` component - @mflerackers
 
+### Removed
+
+- `make()` was sent to doom
+
 ### Changed
 
 - Replaced the Separating Axis Theorem (SAT) with the "Gilbert–Johnson–Keerthi"
