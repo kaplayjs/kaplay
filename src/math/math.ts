@@ -1543,7 +1543,7 @@ export class RNG {
    * const vec = rng.genVec2(vec2(0,0), vec2(100,100))
    * ```
    *
-   * @returns A Vec2 between vectors a and b.
+   * @returns A vector between vectors a and b.
    */
   genVec2(a: Vec2, b: Vec2): Vec2 {
     return new Vec2(this.genNumber(a.x, b.x), this.genNumber(a.y, b.y));
@@ -1561,7 +1561,7 @@ export class RNG {
    * const color = rng.genColor(rgb(0,0,0), rgb(255,255,255))
    * ```
    *
-   * @returns A Color between colors a and b.
+   * @returns A color between colors a and b.
    */
   genColor(a: Color, b: Color): Color {
     return new Color(
