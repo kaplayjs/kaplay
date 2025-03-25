@@ -40,6 +40,7 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - Picture API - @mflerackers
 - drawCanvas - @mflerackers
 - Added `video()` component - @mflerackers
+- Added `level()` component and parent argument to `addLevel()` - @KeSuave
 
 ### Removed
 
