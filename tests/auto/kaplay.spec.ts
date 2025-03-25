@@ -2,7 +2,7 @@ import { beforeAll, describe, expect, it } from "vitest";
 import "vitest-puppeteer";
 import "../../dist/declaration/global";
 
-describe("KAPLAY Context Initialization", () => {
+describe("Context Initialization", () => {
     beforeAll(async () => {
         await page.addScriptTag({ path: "dist/kaplay.js" });
     });
