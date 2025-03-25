@@ -4,8 +4,11 @@ const VERSION = "4000.0.0";
 import { type ButtonsDef, initApp } from "./app";
 
 import {
+    appendToPicture,
+    beginPicture,
     center,
     drawBezier,
+    drawCanvas,
     drawCircle,
     drawCurve,
     drawDebug,
@@ -16,6 +19,7 @@ import {
     drawLines,
     drawLoadScreen,
     drawMasked,
+    drawPicture,
     drawPolygon,
     drawRect,
     drawSprite,
@@ -25,10 +29,7 @@ import {
     drawTriangle,
     drawUnscaled,
     drawUVQuad,
-    beginPicture,
-    appendToPicture,
     endPicture,
-    drawPicture,
     flush,
     formatText,
     FrameBuffer,
@@ -37,6 +38,7 @@ import {
     initAppGfx,
     initGfx,
     mousePos,
+    Picture,
     popTransform,
     pushMatrix,
     pushRotate,
@@ -46,8 +48,6 @@ import {
     setBackground,
     updateViewport,
     width,
-    Picture,
-    drawCanvas,
 } from "./gfx";
 
 import {
@@ -267,7 +267,6 @@ import {
     initGame,
     KeepFlags,
     layers,
-    make,
     on,
     onAdd,
     onClick,
@@ -382,7 +381,8 @@ const kaplay = <
 >(
     gopt: KAPLAYOpt<TPlugins, TButtons> = {},
 ): TPlugins extends [undefined] ? KAPLAYCtx<TButtons, TButtonsName>
-    : KAPLAYCtx<TButtons, TButtonsName> & MergePlugins<TPlugins> => {
+    : KAPLAYCtx<TButtons, TButtonsName> & MergePlugins<TPlugins> =>
+{
     if (_k.k) {
         console.warn(
             "KAPLAY already initialized, you are calling kaplay() multiple times, it may lead bugs!",
@@ -1025,7 +1025,7 @@ const kaplay = <
         let errorScreen = false;
 
         app.run(
-            () => { },
+            () => {},
             () => {
                 if (errorScreen) return;
                 errorScreen = true;
@@ -1093,7 +1093,7 @@ const kaplay = <
             // clear canvas
             gl.clear(
                 gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT
-                | gl.STENCIL_BUFFER_BIT,
+                    | gl.STENCIL_BUFFER_BIT,
             );
 
             // unbind everything
@@ -1304,7 +1304,6 @@ const kaplay = <
         // obj
         getTreeRoot,
         add,
-        make,
         destroy,
         destroyAll,
         get,
@@ -1600,7 +1599,7 @@ const kaplay = <
     // export everything to window if global is set
     if (gopt.global !== false) {
         for (const key in ctx) {
-            (<any>window[<any>key]) = ctx[key as keyof KAPLAYCtx];
+            (<any> window[<any> key]) = ctx[key as keyof KAPLAYCtx];
         }
     }
 

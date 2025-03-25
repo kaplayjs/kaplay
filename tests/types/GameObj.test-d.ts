@@ -51,16 +51,6 @@ describe("Type Inference from add()", () => {
         expectTypeOf(obj).toEqualTypeOf<GameObj<CircleComp>>();
     });
 
-    test("add([make(circle())]) should return GameObj<CircleComp>", () => {
-        const base = k.make([
-            k.circle(4),
-        ]);
-
-        const obj = k.add(base);
-
-        expectTypeOf(obj).toEqualTypeOf<GameObj<CircleComp>>();
-    });
-
     test("add([circle(), circle()]) should return GameObj<CircleComp>", () => {
         const obj = k.add([
             k.circle(4),
@@ -104,84 +94,6 @@ describe("Type Inference from add()", () => {
         };
 
         const obj = k.add(
-            [
-                k.circle(4),
-                componentA(),
-                componentB(),
-            ],
-        );
-
-        expectTypeOf(obj.propertyA).toBeBoolean();
-    });
-});
-
-describe("Type Inference from make()", () => {
-    const k = kaplay();
-
-    test("make() should return GameObj<unknown>", () => {
-        const obj = k.make();
-        //     ^?
-
-        // Actually this test can give falsy true because unknown is acceptable for never
-        expectTypeOf(obj).toEqualTypeOf<GameObj<unknown>>();
-    });
-
-    test("make([]) should return GameObj<never>", () => {
-        const obj = k.make([]);
-        //     ^?
-
-        // Actually this test can give falsy true because unknown is acceptable for never
-        expectTypeOf(obj).toEqualTypeOf<GameObj<never>>();
-    });
-
-    test("make([circle()] should return GameObj<CircleComp>", () => {
-        const obj = k.make([
-            k.circle(4),
-        ]);
-
-        expectTypeOf(obj).toEqualTypeOf<GameObj<CircleComp>>();
-    });
-
-    test("make([circle(), scale()]) should return GameObj<CircleComp | ScaleComp>", () => {
-        const obj = k.make([
-            k.circle(4),
-            k.scale(),
-        ]);
-
-        expectTypeOf(obj).toEqualTypeOf<GameObj<CircleComp | ScaleComp>>();
-    });
-
-    test("make([circle(), \"cat\"]) should return GameObj<CircleComp>", () => {
-        const obj = k.make([
-            k.circle(4),
-            "cat",
-        ]);
-
-        expectTypeOf(obj).toEqualTypeOf<GameObj<CircleComp>>();
-    });
-
-    test("make() should tuple components", () => {
-        const componentA = () => {
-            return {
-                id: "componentA",
-                propertyA: true,
-                add() {
-                    console.log("add A");
-                },
-            };
-        };
-
-        const componentB = () => {
-            return {
-                id: "componentB",
-                // propertyB: true,
-                add() {
-                    console.log("add B");
-                },
-            };
-        };
-
-        const obj = k.make(
             [
                 k.circle(4),
                 componentA(),
