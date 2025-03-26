@@ -305,8 +305,9 @@ export function make<const T extends CompList<unknown>>(
                 gc.push(comp.destroy.bind(this));
             }
 
-            // manually trigger add event if object already exist
-            if (this.exists()) {
+            // Manually trigger add event if object already exist
+            // ID == 0 is root
+            if (this.id != 0 && this.exists()) {
                 checkDeps();
                 if (comp.add) {
                     onCurCompCleanup = (c: any) => gc.push(c);

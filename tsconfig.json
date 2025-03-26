@@ -18,6 +18,5 @@
   "include": [
     "src/**/*",
     "scripts/**/*",
-    "tests/**/*"
   ]
 }

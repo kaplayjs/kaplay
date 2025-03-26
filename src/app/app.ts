@@ -1,9 +1,10 @@
-// everything related to canvas, game loop and input
+// App is everything related to canvas, game loop and input
 
 import type {
     Cursor,
     GamepadDef,
     GamepadStick,
+    KAPLAYOpt,
     Key,
     KGamepad,
     KGamepadButton,
@@ -60,8 +61,8 @@ class GamepadState {
 }
 
 class FPSCounter {
-    private dts: number[] = [];
-    private timer: number = 0;
+    dts: number[] = [];
+    timer: number = 0;
     fps: number = 0;
     tick(dt: number) {
         this.dts.push(dt);
@@ -130,14 +131,11 @@ export const initAppState = (opt: {
     };
 };
 
-export const initApp = (opt: {
-    canvas: HTMLCanvasElement;
-    touchToMouse?: boolean;
-    gamepads?: Record<string, GamepadDef>;
-    pixelDensity?: number;
-    maxFPS?: number;
-    buttons?: ButtonsDef;
-}) => {
+export const initApp = (
+    opt: {
+        canvas: HTMLCanvasElement;
+    } & KAPLAYOpt,
+) => {
     if (!opt.canvas) {
         throw new Error("Please provide a canvas");
     }

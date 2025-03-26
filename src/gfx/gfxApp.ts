@@ -140,5 +140,6 @@ export const initAppGfx = (gopt: KAPLAYOpt, ggl: GfxCtx) => {
         },
 
         fixed: false,
+        gl,
     };
 };
