@@ -303,7 +303,7 @@ import {
     trigger,
 } from "./game";
 
-import { startEngine } from "./core/engine";
+import { createEngine } from "./core/engine";
 import { getCollisionSystem } from "./ecs/systems/collision";
 import { LCEvents, system } from "./game/systems";
 import boomSpriteSrc from "./kassets/boom.png";
@@ -406,7 +406,7 @@ const kaplay = <
         gfx,
         app,
         game,
-    } = startEngine(gopt);
+    } = createEngine(gopt);
 
     _k.app = app;
     _k.audio = audio;

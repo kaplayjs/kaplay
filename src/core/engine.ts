@@ -12,7 +12,7 @@ import { createCanvas } from "./canvas";
 import { createFontCache } from "./fontCache";
 import { createFrameRenderer } from "./frameRendering";
 
-export const startEngine = (gopt: KAPLAYOpt) => {
+export const createEngine = (gopt: KAPLAYOpt) => {
     const canvas = createCanvas(gopt);
     const { fontCacheC2d, fontCacheCanvas } = createFontCache();
     const app = initApp({ canvas, ...gopt });
