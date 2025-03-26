@@ -5,7 +5,6 @@ The engine is what KAPLAY needs for running and proccesing all it's stuff
 import { initApp } from "../app";
 import { initAssets } from "../assets";
 import { initAudio } from "../audio";
-import { timer } from "../components";
 import { initGame } from "../game";
 import { initAppGfx, initGfx } from "../gfx";
 import type { KAPLAYOpt } from "../types";
@@ -38,9 +37,6 @@ export const startEngine = (gopt: KAPLAYOpt) => {
     const assets = initAssets(gfx, gopt.spriteAtlasPadding ?? 0);
     const audio = initAudio();
     const game = initGame();
-
-    // TODO: This should go on initGame probably
-    game.root.use(timer());
 
     // Frame rendering
     const { frameStart, frameEnd } = createFrameRenderer(
