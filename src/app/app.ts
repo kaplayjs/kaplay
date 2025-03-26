@@ -85,17 +85,13 @@ const GP_MAP = GAMEPAD_MAP as Record<string, GamepadDef>;
 
 export const initAppState = (opt: {
     canvas: HTMLCanvasElement;
-    touchToMouse?: boolean;
-    gamepads?: Record<string, GamepadDef>;
-    pixelDensity?: number;
-    maxFPS?: number;
     buttons?: ButtonsDef;
+    fixedFPS?: number;
 }) => {
-    const buttons = opt.buttons ?? {};
 
     return {
         canvas: opt.canvas,
-        buttons: buttons,
+        buttons: opt.buttons ?? {},
         buttonsByKey: new Map<Key, string[]>(),
         buttonsByMouse: new Map<MouseButton, string[]>(),
         buttonsByGamepad: new Map<KGamepadButton, string[]>(),
@@ -103,7 +99,7 @@ export const initAppState = (opt: {
         loopID: null as null | number,
         stopped: false,
         dt: 0,
-        fixedDt: 1 / 50,
+        fixedDt: 1 / (opt.fixedFPS ?? 50),
         restDt: 0,
         time: 0,
         realTime: 0,
@@ -136,6 +132,7 @@ export const initApp = (opt: {
     gamepads?: Record<string, GamepadDef>;
     pixelDensity?: number;
     maxFPS?: number;
+    fixedFPS?: number;
     buttons?: ButtonsDef;
 }) => {
     if (!opt.canvas) {
