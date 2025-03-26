@@ -11,6 +11,7 @@ jobs:
     permissions: write-all
     name: "Dispatch Event"
     runs-on: ubuntu-latest
+    if: github.repository_owner == 'kaplayjs'
     steps:
       - uses: actions/github-script@v6
         with:
