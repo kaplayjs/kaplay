@@ -34,9 +34,9 @@ export const startEngine = (gopt: KAPLAYOpt) => {
 
     // TODO: Investigate correctly what's the differente between GFX and AppGFX and reduce to 1 method
     const gfx = initGfx(gl, gopt);
-    const appGfx = initAppGfx(gopt, gfx);
-    const audio = initAudio();
+    const appGfx = initAppGfx(gfx, gopt);
     const assets = initAssets(gfx, gopt.spriteAtlasPadding ?? 0);
+    const audio = initAudio();
     const game = initGame();
 
     // TODO: This should go on initGame probably
