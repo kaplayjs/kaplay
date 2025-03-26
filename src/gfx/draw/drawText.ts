@@ -121,6 +121,22 @@ export interface CharTransform {
      * components' styles.
      */
     override?: boolean;
+
+    /**
+     * If the font for this character should be different from the default font
+     * or the one specified in {@link DrawTextOpt.font}.
+     * Because the font can't be composed like the other properties,
+     * this will override the font even if {@link CharTransform.override} is false.
+     */
+    font?: string | FontData;
+
+    /**
+     * If true, characters that have a X scale that is not 1 won't have the bounding box stretched to fit the character,
+     * and may end up overlapping with adjacent characters.
+     * 
+     * @default false
+     */
+    stretchInPlace?: boolean;
 }
 
 /**
