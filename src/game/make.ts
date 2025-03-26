@@ -58,7 +58,7 @@ export function make<const T extends CompList<unknown>>(
     let _parent: GameObj;
 
     // the game object without the event methods, added later
-    const obj: Omit<GameObj, keyof typeof evs> = {
+    const obj: Omit<GameObj, keyof typeof appEvs> = {
         id: uid(),
         // TODO: a nice way to hide / pause when add()-ing
         hidden: false,
@@ -325,6 +325,8 @@ export function make<const T extends CompList<unknown>>(
             }
 
             for (const k in comp) {
+                // These are properties from the component data (id, require), shouldn't
+                // be added to the game obj prototype, that's why we continue
                 if (COMP_DESC.has(k)) {
                     continue;
                 }
@@ -350,7 +352,7 @@ export function make<const T extends CompList<unknown>>(
                 }
 
                 if (COMP_EVENTS.has(k)) {
-                    // automatically clean up events created by components in add() stage
+                    // Automatically clean up events created by components in add() stage
                     const func = k === "add"
                         ? () => {
                             onCurCompCleanup = (c: any) => gc.push(c);
@@ -362,7 +364,7 @@ export function make<const T extends CompList<unknown>>(
                 }
                 else {
                     if (this[k] === undefined) {
-                        // assign comp fields to game obj
+                        // Assign comp fields to game obj
                         Object.defineProperty(this, k, {
                             get: () => comp[<keyof typeof comp> k],
                             set: (val) => comp[<keyof typeof comp> k] = val,
@@ -786,7 +788,8 @@ export function make<const T extends CompList<unknown>>(
         },
     };
 
-    const evs = [
+    // We add App Events for "attaching" it to game object (not really)
+    const appEvs = [
         "onKeyPress",
         "onKeyPressRepeat",
         "onKeyDown",
@@ -810,15 +813,17 @@ export function make<const T extends CompList<unknown>>(
         "onButtonRelease",
     ] as unknown as [keyof Pick<App, "onKeyPress">];
 
-    for (const e of evs) {
+    for (const e of appEvs) {
         obj[e] = (...args: [any]) => {
             const ev = _k.app[e]?.(...args);
             inputEvents.push(ev);
 
             obj.onDestroy(() => ev.cancel());
+
+            // This only happens if obj.has("stay");
             obj.on("sceneEnter", () => {
                 // All app events are already canceled by changing the scene
-                // not neccesary -> ev.cancel();
+                // so we don't need to event.cancel();
                 inputEvents.splice(inputEvents.indexOf(ev), 1);
                 // create a new event with the same arguments
                 const newEv = _k.app[e]?.(...args);
