@@ -118,6 +118,8 @@ export const initAppGfx = (gfx: GfxCtx, gopt: KAPLAYOpt) => {
         postShader: null as string | null,
         postShaderUniform: null as Uniform | (() => Uniform) | null,
         renderer: renderer,
+        pixelDensity: pixelDensity,
+        gscale,
 
         transform: new Mat23(),
         transformStack: transformStack,

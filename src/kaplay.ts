@@ -1,7 +1,11 @@
-// the definitive version! :bean:
-const VERSION = "4000.0.0";
+// The definitive version!
+import packageJson from "../package.json";
+const VERSION = packageJson.version;
 
-import { type ButtonsDef, initApp } from "./app";
+import { type ButtonsDef } from "./app";
+
+import boomSpriteSrc from "./kassets/boom.png";
+import kaSpriteSrc from "./kassets/ka.png";
 
 import {
     appendToPicture,
@@ -25,9 +29,7 @@ import {
     drawSprite,
     drawSubtracted,
     drawText,
-    drawTexture,
     drawTriangle,
-    drawUnscaled,
     drawUVQuad,
     endPicture,
     flush,
@@ -35,8 +37,6 @@ import {
     FrameBuffer,
     getBackground,
     height,
-    initAppGfx,
-    initGfx,
     mousePos,
     Picture,
     popTransform,
@@ -59,7 +59,6 @@ import {
     getShader,
     getSound,
     getSprite,
-    initAssets,
     load,
     loadAseprite,
     loadBean,
@@ -81,14 +80,7 @@ import {
     type Uniform,
 } from "./assets";
 
-import {
-    ASCII_CHARS,
-    BG_GRID_SIZE,
-    DBG_FONT,
-    EVENT_CANCEL_SYMBOL,
-    LOG_MAX,
-    MAX_TEXT_CACHE_SIZE,
-} from "./constants";
+import { ASCII_CHARS, EVENT_CANCEL_SYMBOL } from "./constants";
 
 import {
     bezier,
@@ -142,7 +134,6 @@ import {
     rgb,
     RNG,
     shuffle,
-    SweepAndPrune,
     testCirclePolygon,
     testLineCircle,
     testLineLine,
@@ -171,10 +162,7 @@ import {
 import {
     BlendMode,
     type Canvas,
-    type Debug,
-    type GameObj,
     type KAPLAYCtx,
-    type KAPLAYInternal,
     type KAPLAYOpt,
     type KAPLAYPlugin,
     type MergePlugins,
@@ -187,7 +175,6 @@ import {
     anchor,
     animate,
     area,
-    type AreaComp,
     areaEffector,
     blend,
     body,
@@ -234,13 +221,12 @@ import {
     textInput,
     tile,
     timer,
-    usesArea,
     uvquad,
     video,
     z,
 } from "./components";
 
-import { burp, getVolume, initAudio, play, setVolume, volume } from "./audio";
+import { burp, getVolume, play, setVolume, volume } from "./audio";
 
 import {
     addKaboom,
@@ -264,7 +250,6 @@ import {
     getTreeRoot,
     go,
     initEvents,
-    initGame,
     KeepFlags,
     layers,
     on,
@@ -304,43 +289,17 @@ import {
 } from "./game";
 
 import { createEngine } from "./core/engine";
+import { handleErr } from "./core/errors";
 import { getCollisionSystem } from "./ecs/systems/collision";
 import { LCEvents, system } from "./game/systems";
-import boomSpriteSrc from "./kassets/boom.png";
-import kaSpriteSrc from "./kassets/ka.png";
 
-// Internal data, shared between all modules
-export const _k = {
-    k: null,
-    globalOpt: null,
-    gfx: null,
-    game: null,
-    app: null,
-    assets: null,
-    fontCacheCanvas: null,
-    fontCacheC2d: null,
-    debug: null,
-    audio: null,
-    pixelDensity: null,
-    canvas: null,
-    gscale: null,
-    kaSprite: null,
-    boomSprite: null,
-    handleErr: null,
-    systems: [], // all systems added
-    // we allocate systems
-    systemsByEvent: [
-        [], // afterDraw
-        [], // afterFixedUpdate
-        [], // afterUpdate
-        [], // beforeDraw
-        [], // beforeFixedUpdate
-        [], // beforeUpdate
-    ],
-} as unknown as KAPLAYInternal;
+/**
+ * KAPLAY.js internal data
+ */
+export let _k: KAPLAYCtx["_k"];
 
 // If KAPLAY crashed
-let crashed = false;
+let initialized = false;
 
 /**
  * Initialize KAPLAY context. The starting point of all KAPLAY games.
@@ -385,38 +344,26 @@ const kaplay = <
 ): TPlugins extends [undefined] ? KAPLAYCtx<TButtons, TButtonsName>
     : KAPLAYCtx<TButtons, TButtonsName> & MergePlugins<TPlugins> =>
 {
-    if (_k.k) {
+    if (initialized) {
         console.warn(
             "KAPLAY already initialized, you are calling kaplay() multiple times, it may lead bugs!",
         );
-        _k.k.quit();
     }
 
-    _k.globalOpt = gopt;
+    initialized = true;
+
+    _k = createEngine(gopt);
 
     const {
-        appGfx,
+        ggl,
         assets,
         audio,
-        canvas,
-        fontCacheC2d,
-        fontCacheCanvas,
-        frameEnd,
-        frameStart,
+        frameRenderer,
         gfx,
         app,
         game,
-    } = createEngine(gopt);
-
-    _k.app = app;
-    _k.audio = audio;
-    _k.canvas = canvas;
-    _k.fontCacheC2d = fontCacheC2d;
-    _k.fontCacheCanvas = fontCacheCanvas, _k.gfx = appGfx;
-    _k.pixelDensity = gopt.pixelDensity ?? 1;
-    _k.gscale = 1;
-    _k.assets = assets;
-    _k.game = game;
+        debug,
+    } = _k;
 
     const { checkFrame } = getCollisionSystem();
 
@@ -425,8 +372,12 @@ const kaplay = <
         LCEvents.AfterUpdate,
     ]);
 
+    // TODO: make this an opt
+    game.kaSprite = loadSprite(null, kaSpriteSrc);
+    game.boomSprite = loadSprite(null, boomSpriteSrc);
+
     function makeCanvas(w: number, h: number): Canvas {
-        const fb = new FrameBuffer(gfx, w, h);
+        const fb = new FrameBuffer(ggl, w, h);
 
         return {
             clear: () => fb.clear(),
@@ -449,57 +400,9 @@ const kaplay = <
     }
 
     function usePostEffect(name: string, uniform?: Uniform | (() => Uniform)) {
-        appGfx.postShader = name;
-        appGfx.postShaderUniform = uniform ?? null;
+        gfx.postShader = name;
+        gfx.postShaderUniform = uniform ?? null;
     }
-
-    let debugPaused = false;
-
-    const debug: Debug = {
-        inspect: false,
-        set timeScale(timeScale: number) {
-            app.state.timeScale = timeScale;
-        },
-        get timeScale() {
-            return app.state.timeScale;
-        },
-        showLog: true,
-        fps: () => app.fps(),
-        numFrames: () => app.numFrames(),
-        stepFrame: updateFrame,
-        drawCalls: () => appGfx.lastDrawCalls,
-        clearLog: () => game.logs = [],
-        log: (...msgs) => {
-            const max = gopt.logMax ?? LOG_MAX;
-            const msg = msgs.length > 1 ? msgs.concat(" ").join(" ") : msgs[0];
-
-            game.logs.unshift({
-                msg: msg,
-                time: app.time(),
-            });
-            if (game.logs.length > max) {
-                game.logs = game.logs.slice(0, max);
-            }
-        },
-        error: (msg) =>
-            debug.log(new Error(msg.toString ? msg.toString() : msg as string)),
-        curRecording: null,
-        numObjects: () => get("*", { recursive: true }).length,
-        get paused() {
-            return debugPaused;
-        },
-        set paused(v) {
-            debugPaused = v;
-            if (v) {
-                audio.ctx.suspend();
-            }
-            else {
-                audio.ctx.resume();
-            }
-        },
-    };
-
-    _k.debug = debug;
 
     function getData<T>(key: string, def?: T): T | null {
         try {
@@ -616,88 +519,6 @@ const kaplay = <
     const query = game.root.query.bind(game.root);
     const tween = game.root.tween.bind(game.root);
 
-    const kaSprite = loadSprite(null, kaSpriteSrc);
-    const boomSprite = loadSprite(null, boomSpriteSrc);
-
-    _k.kaSprite = kaSprite;
-    _k.boomSprite = boomSprite;
-
-    function fixedUpdateFrame() {
-        // update every obj
-        game.root.fixedUpdate();
-    }
-
-    function updateFrame() {
-        game.root.update();
-    }
-
-    function handleErr(err: Error) {
-        if (crashed) return;
-        crashed = true;
-        console.error(err);
-        audio.ctx.suspend();
-        const errorMessage = err.message ?? String(err)
-            ?? "Unknown error, check console for more info";
-        let errorScreen = false;
-
-        app.run(
-            () => {},
-            () => {
-                if (errorScreen) return;
-                errorScreen = true;
-
-                frameStart();
-
-                drawUnscaled(() => {
-                    const pad = 32;
-                    const gap = 16;
-                    const gw = width();
-                    const gh = height();
-
-                    const textStyle = {
-                        size: 36,
-                        width: gw - pad * 2,
-                        letterSpacing: 4,
-                        lineSpacing: 4,
-                        font: DBG_FONT,
-                        fixed: true,
-                    };
-
-                    drawRect({
-                        width: gw,
-                        height: gh,
-                        color: rgb(0, 0, 255),
-                        fixed: true,
-                    });
-
-                    const title = formatText({
-                        ...textStyle,
-                        text: "Error",
-                        pos: vec2(pad),
-                        color: rgb(255, 128, 0),
-                        fixed: true,
-                    });
-
-                    drawFormattedText(title);
-
-                    drawText({
-                        ...textStyle,
-                        text: errorMessage,
-                        pos: vec2(pad, pad + title.height + gap),
-                        fixed: true,
-                    });
-
-                    popTransform();
-                    game.events.trigger("error", err);
-                });
-
-                frameEnd();
-            },
-        );
-    }
-
-    _k.handleErr = handleErr;
-
     const gc: Array<() => void> = [];
 
     function onCleanup(action: () => void) {
@@ -731,7 +552,7 @@ const kaplay = <
             gfx.gl.bindFramebuffer(gfx.gl.FRAMEBUFFER, null);
 
             // run all scattered gc events
-            gfx.destroy();
+            ggl.destroy();
             gc.forEach((f) => f());
         });
     }
@@ -745,16 +566,16 @@ const kaplay = <
                 if (assets.loaded) {
                     if (!debug.paused) {
                         for (
-                            const sys of _k
+                            const sys of game
                                 .systemsByEvent[LCEvents.BeforeFixedUpdate]
                         ) {
                             sys.run();
                         }
 
-                        fixedUpdateFrame();
+                        frameRenderer.fixedUpdateFrame();
 
                         for (
-                            const sys of _k
+                            const sys of game
                                 .systemsByEvent[LCEvents.AfterFixedUpdate]
                         ) {
                             sys.run();
@@ -785,44 +606,47 @@ const kaplay = <
                     !assets.loaded && gopt.loadingScreen !== false
                     || isFirstFrame
                 ) {
-                    frameStart();
+                    frameRenderer.frameStart();
                     // TODO: Currently if assets are not initially loaded no updates or timers will be run, however they will run if loadingScreen is set to false. What's the desired behavior or should we make them consistent?
                     drawLoadScreen();
-                    frameEnd();
+                    frameRenderer.frameEnd();
                 }
                 else {
                     if (!debug.paused) {
                         for (
-                            const sys of _k
+                            const sys of game
                                 .systemsByEvent[LCEvents.BeforeUpdate]
                         ) {
                             sys.run();
                         }
 
-                        updateFrame();
+                        frameRenderer.updateFrame();
 
                         for (
-                            const sys of _k.systemsByEvent[LCEvents.AfterUpdate]
+                            const sys of game
+                                .systemsByEvent[LCEvents.AfterUpdate]
                         ) {
                             sys.run();
                         }
                     }
 
                     // checkFrame();
-                    frameStart();
+                    frameRenderer.frameStart();
 
-                    for (const sys of _k.systemsByEvent[LCEvents.BeforeDraw]) {
+                    for (
+                        const sys of game.systemsByEvent[LCEvents.BeforeDraw]
+                    ) {
                         sys.run();
                     }
 
                     drawFrame();
                     if (gopt.debug !== false) drawDebug();
 
-                    for (const sys of _k.systemsByEvent[LCEvents.AfterDraw]) {
+                    for (const sys of game.systemsByEvent[LCEvents.AfterDraw]) {
                         sys.run();
                     }
 
-                    frameEnd();
+                    frameRenderer.frameEnd();
                 }
 
                 if (isFirstFrame) {
