@@ -1,13 +1,6 @@
 // The E of KAPLAY
 
 import type { App } from "../app";
-import type {
-    FixedComp,
-    MaskComp,
-    PosComp,
-    RotateComp,
-    ScaleComp,
-} from "../components";
 import { COMP_DESC, COMP_EVENTS } from "../constants";
 import { handleErr } from "../core/errors";
 import {
@@ -31,6 +24,13 @@ import {
     type Tag,
 } from "../types";
 import { KEvent, KEventController, KEventHandler, uid } from "../utils";
+import type {
+    FixedComp,
+    MaskComp,
+    PosComp,
+    RotateComp,
+    ScaleComp,
+} from "./components";
 
 export enum KeepFlags {
     Pos = 1,

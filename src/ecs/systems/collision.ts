@@ -1,4 +1,3 @@
-import { type AreaComp, usesArea } from "../../components";
 import { onAdd, onDestroy, onUnuse, onUse } from "../../events";
 import { onSceneLeave } from "../../game";
 import { _k } from "../../kaplay";
@@ -9,6 +8,7 @@ import {
     vec2,
 } from "../../math";
 import type { GameObj } from "../../types";
+import { type AreaComp, usesArea } from "../components";
 
 export const getCollisionSystem = () => {
     class Collision {

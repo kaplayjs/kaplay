@@ -20,6 +20,7 @@ import type {
 } from "./assets";
 import type { FontData } from "./assets/font";
 import type { AudioCtx, AudioPlay, AudioPlayOpt } from "./audio";
+import type { Engine } from "./core/engine";
 import type {
     AgentComp,
     AgentCompOpt,
@@ -89,15 +90,14 @@ import type {
     VideoComp,
     VideoCompOpt,
     ZComp,
-} from "./components/";
-import type { EllipseComp } from "./components/draw/ellipse";
+} from "./ecs/components";
+import type { EllipseComp } from "./ecs/components/draw/ellipse";
 import type {
     EmitterOpt,
     ParticlesComp,
     ParticlesOpt,
-} from "./components/draw/particles";
-import type { PictureComp } from "./components/draw/picture";
-import type { Engine } from "./core/engine";
+} from "./ecs/components/draw/particles";
+import type { PictureComp } from "./ecs/components/draw/picture";
 import type {
     BoomOpt,
     Game,

@@ -1,4 +1,4 @@
-import { pos, type PosComp, tile } from "../components";
+import { pos, type PosComp, tile } from "../ecs/components";
 import { _k } from "../kaplay";
 import {
     raycastGrid,

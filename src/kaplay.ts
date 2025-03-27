@@ -224,7 +224,7 @@ import {
     uvquad,
     video,
     z,
-} from "./components";
+} from "./ecs/components";
 
 import { burp, getVolume, play, setVolume, volume } from "./audio";
 

@@ -10,7 +10,7 @@ import {
     type patrol,
     type sentry,
     type sprite,
-} from "../components";
+} from "../ecs/components";
 import { type addLevel } from "../game/level";
 import type { Vec2 } from "../math";
 import type {
