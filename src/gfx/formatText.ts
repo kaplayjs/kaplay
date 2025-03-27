@@ -1,4 +1,10 @@
-import { Asset, type BitmapFontData, FontData, type GfxFont, resolveFont } from "../assets";
+import {
+    Asset,
+    type BitmapFontData,
+    FontData,
+    type GfxFont,
+    resolveFont,
+} from "../assets";
 import {
     DEF_FONT_FILTER,
     DEF_TEXT_CACHE_SIZE,
@@ -15,7 +21,7 @@ import {
     type CharTransform,
     type DrawTextOpt,
     type FormattedChar,
-    type FormattedText
+    type FormattedText,
 } from "./draw";
 import { Texture } from "./gfx";
 
@@ -30,7 +36,9 @@ const fontAtlases: Record<string, FontAtlas> = {};
 
 function applyCharTransform(fchar: FormattedChar, tr: CharTransform) {
     if (tr.font) fchar.font = tr.font;
-    if (tr.stretchInPlace !== undefined) fchar.stretchInPlace = tr.stretchInPlace;
+    if (tr.stretchInPlace !== undefined) {
+        fchar.stretchInPlace = tr.stretchInPlace;
+    }
     if (tr.override) {
         Object.assign(fchar, tr);
         return;
@@ -85,7 +93,7 @@ export function compileStyledText(txt: string): {
                     if (x !== undefined) {
                         throw new Error(
                             "Styled text error: mismatched tags. "
-                            + `Expected [/${x}], got [/${gn}]`,
+                                + `Expected [/${x}], got [/${gn}]`,
                         );
                     }
                     else {
@@ -132,14 +140,14 @@ function getFontAtlasForFont(font: FontData | string): FontAtlas {
             outline: Outline | null;
             filter: TexFilter;
         } = font instanceof FontData
-                ? {
-                    outline: font.outline,
-                    filter: font.filter,
-                }
-                : {
-                    outline: null,
-                    filter: DEF_FONT_FILTER,
-                };
+            ? {
+                outline: font.outline,
+                filter: font.filter,
+            }
+            : {
+                outline: null,
+                filter: DEF_FONT_FILTER,
+            };
 
         // TODO: customizable font tex filter
         atlas = {
@@ -273,7 +281,9 @@ export function formatText(opt: DrawTextOpt): FormattedText {
     const { charStyleMap, text } = compileStyledText(opt.text + "");
     const chars = runes(text);
 
-    let defGfxFont = (font instanceof FontData || typeof font === "string") ? getFontAtlasForFont(font).font : font;
+    let defGfxFont = (font instanceof FontData || typeof font === "string")
+        ? getFontAtlasForFont(font).font
+        : font;
 
     const size = opt.size || defGfxFont.size;
     const scale = vec2(opt.scale ?? 1).scale(size / defGfxFont.size);
@@ -284,7 +294,7 @@ export function formatText(opt: DrawTextOpt): FormattedText {
     let th = 0;
     const lines: Array<{
         width: number;
-        chars: {ch: FormattedChar, font: GfxFont}[];
+        chars: { ch: FormattedChar; font: GfxFont }[];
     }> = [];
     let curLine: typeof lines[number]["chars"] = [];
     let cursor = 0;
@@ -312,10 +322,17 @@ export function formatText(opt: DrawTextOpt): FormattedText {
             paraIndentX = undefined;
         }
         else {
-
-            const defaultFontValue = (font instanceof FontData || typeof font === "string") ? font : undefined;
-            type PartialBy<T, K extends keyof T> = Omit<T, K> & Partial<Pick<T, K>>
-            const theFChar: PartialBy<FormattedChar, "width" | "height" | "quad"> = {
+            const defaultFontValue =
+                (font instanceof FontData || typeof font === "string")
+                    ? font
+                    : undefined;
+            type PartialBy<T, K extends keyof T> =
+                & Omit<T, K>
+                & Partial<Pick<T, K>>;
+            const theFChar: PartialBy<
+                FormattedChar,
+                "width" | "height" | "quad"
+            > = {
                 tex: defGfxFont.tex,
                 ch: ch,
                 pos: new Vec2(curX, th),
@@ -374,7 +391,10 @@ export function formatText(opt: DrawTextOpt): FormattedText {
 
             // TODO: leave space if character not found?
             if (q) {
-                let gw = q.w * (theFChar.stretchInPlace ? theFChar.oscale : theFChar.scale).x;
+                let gw = q.w
+                    * (theFChar.stretchInPlace
+                        ? theFChar.oscale
+                        : theFChar.scale).x;
                 let move = vec2(0);
 
                 if (opt.width && curX + gw > opt.width) {
