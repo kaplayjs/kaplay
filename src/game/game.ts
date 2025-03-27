@@ -1,5 +1,5 @@
 import type { Asset } from "../assets";
-import type { TimerComp } from "../components";
+import { timer, type TimerComp } from "../components";
 import { Mat23, Vec2 } from "../math/math";
 import { type GameObj, type Key, type MouseButton } from "../types";
 import { KEventHandler } from "../utils";
@@ -70,6 +70,8 @@ export const initGame = () => {
             transform: new Mat23(),
         },
     };
+
+    game.root.use(timer());
 
     return game;
 };

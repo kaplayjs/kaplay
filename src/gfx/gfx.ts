@@ -5,6 +5,7 @@ import { Mat23, Mat4 } from "../math";
 import {
     BlendMode,
     type ImageSource,
+    type KAPLAYOpt,
     type TexFilter,
     type TextureOpt,
 } from "../types";
@@ -462,9 +463,7 @@ function genStack<T>(setFunc: (item: T | null) => void) {
     return [push, pop, cur] as const;
 }
 
-export function initGfx(gl: WebGLRenderingContext, opts: {
-    texFilter?: TexFilter;
-} = {}) {
+export function initGfx(gl: WebGLRenderingContext, opts: KAPLAYOpt = {}) {
     const gc: Array<() => void> = [];
 
     function onDestroy(action: () => unknown) {

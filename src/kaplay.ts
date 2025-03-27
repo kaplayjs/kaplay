@@ -303,6 +303,8 @@ import {
     trigger,
 } from "./game";
 
+import { createEngine } from "./core/engine";
+import { getCollisionSystem } from "./ecs/systems/collision";
 import { LCEvents, system } from "./game/systems";
 import boomSpriteSrc from "./kassets/boom.png";
 import kaSpriteSrc from "./kassets/ka.png";
@@ -391,119 +393,32 @@ const kaplay = <
     }
 
     _k.globalOpt = gopt;
-    const root = gopt.root ?? document.body;
 
-    // if root is not defined (which falls back to <body>) we assume user is using kaboom on a clean page, and modify <body> to better fit a full screen canvas
-    if (root === document.body) {
-        document.body.style["width"] = "100%";
-        document.body.style["height"] = "100%";
-        document.body.style["margin"] = "0px";
-        document.documentElement.style["width"] = "100%";
-        document.documentElement.style["height"] = "100%";
-    }
+    const {
+        appGfx,
+        assets,
+        audio,
+        canvas,
+        fontCacheC2d,
+        fontCacheCanvas,
+        frameEnd,
+        frameStart,
+        gfx,
+        app,
+        game,
+    } = createEngine(gopt);
 
-    // create a <canvas> if user didn't provide one
-    const canvas = gopt.canvas
-        ?? root.appendChild(document.createElement("canvas"));
-    _k.canvas = canvas;
-
-    // global pixel scale
-    const gscale = gopt.scale ?? 1;
-    _k.gscale = gscale;
-    const fixedSize = gopt.width && gopt.height && !gopt.stretch
-        && !gopt.letterbox;
-
-    // adjust canvas size according to user size / viewport settings
-    if (fixedSize) {
-        canvas.width = gopt.width! * gscale;
-        canvas.height = gopt.height! * gscale;
-    }
-    else {
-        canvas.width = canvas.parentElement!.offsetWidth;
-        canvas.height = canvas.parentElement!.offsetHeight;
-    }
-
-    // canvas css styles
-    const styles = [
-        "outline: none",
-        "cursor: default",
-    ];
-
-    if (fixedSize) {
-        const cw = canvas.width;
-        const ch = canvas.height;
-        styles.push(`width: ${cw}px`);
-        styles.push(`height: ${ch}px`);
-    }
-    else {
-        styles.push("width: 100%");
-        styles.push("height: 100%");
-    }
-
-    if (gopt.crisp) {
-        // chrome only supports pixelated and firefox only supports crisp-edges
-        styles.push("image-rendering: pixelated");
-        styles.push("image-rendering: crisp-edges");
-    }
-
-    canvas.style.cssText = styles.join(";");
-
-    const pixelDensity = gopt.pixelDensity || 1;
-    _k.pixelDensity = pixelDensity;
-
-    canvas.width *= pixelDensity;
-    canvas.height *= pixelDensity;
-    // make canvas focusable
-    canvas.tabIndex = 0;
-
-    const fontCacheCanvas = document.createElement("canvas");
-    fontCacheCanvas.width = MAX_TEXT_CACHE_SIZE;
-    fontCacheCanvas.height = MAX_TEXT_CACHE_SIZE;
-    _k.fontCacheCanvas = fontCacheCanvas;
-    const fontCacheC2d = fontCacheCanvas.getContext("2d", {
-        willReadFrequently: true,
-    });
-    _k.fontCacheC2d = fontCacheC2d;
-
-    const app = initApp({
-        canvas: canvas,
-        touchToMouse: gopt.touchToMouse,
-        gamepads: gopt.gamepads,
-        pixelDensity: gopt.pixelDensity,
-        maxFPS: gopt.maxFPS,
-        buttons: gopt.buttons,
-    });
     _k.app = app;
-
-    const gc: Array<() => void> = [];
-
-    const canvasContext = app.canvas
-        .getContext("webgl", {
-            antialias: true,
-            depth: true,
-            stencil: true,
-            alpha: true,
-            preserveDrawingBuffer: true,
-        });
-
-    if (!canvasContext) throw new Error("WebGL not supported");
-
-    const gl = canvasContext;
-
-    const ggl = initGfx(gl, {
-        texFilter: gopt.texFilter,
-    });
-
-    const gfx = initAppGfx(gopt, ggl);
-    _k.gfx = gfx;
-    const audio = initAudio();
     _k.audio = audio;
-    const assets = initAssets(ggl, gopt.spriteAtlasPadding ?? 0);
+    _k.canvas = canvas;
+    _k.fontCacheC2d = fontCacheC2d;
+    _k.fontCacheCanvas = fontCacheCanvas, _k.gfx = appGfx;
+    _k.pixelDensity = gopt.pixelDensity ?? 1;
+    _k.gscale = 1;
     _k.assets = assets;
-    const game = initGame();
     _k.game = game;
 
-    game.root.use(timer());
+    const { checkFrame } = getCollisionSystem();
 
     system("collision", checkFrame, [
         LCEvents.AfterFixedUpdate,
@@ -511,7 +426,7 @@ const kaplay = <
     ]);
 
     function makeCanvas(w: number, h: number): Canvas {
-        const fb = new FrameBuffer(ggl, w, h);
+        const fb = new FrameBuffer(gfx, w, h);
 
         return {
             clear: () => fb.clear(),
@@ -533,77 +448,10 @@ const kaplay = <
         };
     }
 
-    // start a rendering frame, reset some states
-    function frameStart() {
-        // clear backbuffer
-        gl.clear(gl.COLOR_BUFFER_BIT);
-        gfx.frameBuffer.bind();
-        // clear framebuffer
-        gl.clear(gl.COLOR_BUFFER_BIT);
-
-        if (!gfx.bgColor) {
-            drawUnscaled(() => {
-                drawUVQuad({
-                    width: width(),
-                    height: height(),
-                    quad: new Quad(
-                        0,
-                        0,
-                        width() / BG_GRID_SIZE,
-                        height() / BG_GRID_SIZE,
-                    ),
-                    tex: gfx.bgTex,
-                    fixed: true,
-                });
-            });
-        }
-
-        gfx.renderer.numDraws = 0;
-        gfx.fixed = false;
-        gfx.transformStackIndex = -1;
-        gfx.transform.setIdentity();
-    }
-
     function usePostEffect(name: string, uniform?: Uniform | (() => Uniform)) {
-        gfx.postShader = name;
-        gfx.postShaderUniform = uniform ?? null;
+        appGfx.postShader = name;
+        appGfx.postShaderUniform = uniform ?? null;
     }
-
-    function frameEnd() {
-        // TODO: don't render debug UI with framebuffer
-        // TODO: polish framebuffer rendering / sizing issues
-        flush();
-        gfx.lastDrawCalls = gfx.renderer.numDraws;
-        gfx.frameBuffer.unbind();
-        gl.viewport(0, 0, gl.drawingBufferWidth, gl.drawingBufferHeight);
-
-        const ow = gfx.width;
-        const oh = gfx.height;
-        gfx.width = gl.drawingBufferWidth / pixelDensity;
-        gfx.height = gl.drawingBufferHeight / pixelDensity;
-
-        drawTexture({
-            flipY: true,
-            tex: gfx.frameBuffer.tex,
-            pos: new Vec2(gfx.viewport.x, gfx.viewport.y),
-            width: gfx.viewport.width,
-            height: gfx.viewport.height,
-            shader: gfx.postShader,
-            uniform: typeof gfx.postShaderUniform === "function"
-                ? gfx.postShaderUniform()
-                : gfx.postShaderUniform,
-            fixed: true,
-        });
-
-        flush();
-        gfx.width = ow;
-        gfx.height = oh;
-    }
-
-    // TODO: cache formatted text
-    // format text and return a list of chars with their calculated position
-
-    // get game root
 
     let debugPaused = false;
 
@@ -619,7 +467,7 @@ const kaplay = <
         fps: () => app.fps(),
         numFrames: () => app.numFrames(),
         stepFrame: updateFrame,
-        drawCalls: () => gfx.lastDrawCalls,
+        drawCalls: () => appGfx.lastDrawCalls,
         clearLog: () => game.logs = [],
         log: (...msgs) => {
             const max = gopt.logMax ?? LOG_MAX;
@@ -783,238 +631,6 @@ const kaplay = <
         game.root.update();
     }
 
-    class Collision {
-        source: GameObj;
-        target: GameObj;
-        normal: Vec2;
-        distance: number;
-        resolved: boolean = false;
-        constructor(
-            source: GameObj,
-            target: GameObj,
-            normal: Vec2,
-            distance: number,
-            resolved = false,
-        ) {
-            this.source = source;
-            this.target = target;
-            this.normal = normal;
-            this.distance = distance;
-            this.resolved = resolved;
-        }
-        get displacement() {
-            return this.normal.scale(this.distance);
-        }
-        reverse() {
-            return new Collision(
-                this.target,
-                this.source,
-                this.normal.scale(-1),
-                this.distance,
-                this.resolved,
-            );
-        }
-        hasOverlap() {
-            return !this.displacement.isZero();
-        }
-        isLeft() {
-            return this.displacement.cross(game.gravity || vec2(0, 1)) > 0;
-        }
-        isRight() {
-            return this.displacement.cross(game.gravity || vec2(0, 1)) < 0;
-        }
-        isTop() {
-            return this.displacement.dot(game.gravity || vec2(0, 1)) > 0;
-        }
-        isBottom() {
-            return this.displacement.dot(game.gravity || vec2(0, 1)) < 0;
-        }
-        preventResolution() {
-            this.resolved = true;
-        }
-    }
-
-    function narrowPhase(
-        obj: GameObj<AreaComp>,
-        other: GameObj<AreaComp>,
-    ): boolean {
-        if (other.paused) return false;
-        if (!other.exists()) return false;
-        for (const tag of obj.collisionIgnore) {
-            if (other.is(tag)) {
-                return false;
-            }
-        }
-        for (const tag of other.collisionIgnore) {
-            if (obj.is(tag)) {
-                return false;
-            }
-        }
-        const res = gjkShapeIntersection(
-            obj.worldArea(),
-            other.worldArea(),
-        );
-        if (res) {
-            const col1 = new Collision(
-                obj,
-                other,
-                res.normal,
-                res.distance,
-            );
-            obj.trigger("collideUpdate", other, col1);
-            const col2 = col1.reverse();
-            // resolution only has to happen once
-            col2.resolved = col1.resolved;
-            other.trigger("collideUpdate", obj, col2);
-        }
-        return true;
-    }
-
-    const sap = new SweepAndPrune();
-    let sapInit = false;
-    function broadPhase() {
-        if (!usesArea()) {
-            return;
-        }
-
-        if (!sapInit) {
-            sapInit = true;
-            onAdd(obj => {
-                if (obj.has("area")) {
-                    sap.add(obj as GameObj<AreaComp>);
-                }
-            });
-            onDestroy(obj => {
-                sap.remove(obj as GameObj<AreaComp>);
-            });
-            onUse((obj, id) => {
-                if (id === "area") {
-                    sap.add(obj as GameObj<AreaComp>);
-                }
-            });
-            onUnuse((obj, id) => {
-                if (id === "area") {
-                    sap.remove(obj as GameObj<AreaComp>);
-                }
-            });
-            onSceneLeave(scene => {
-                sapInit = false;
-                sap.clear();
-            });
-            for (const obj of get("*", { recursive: true })) {
-                if (obj.has("area")) {
-                    sap.add(obj as GameObj<AreaComp>);
-                }
-            }
-        }
-
-        sap.update();
-        for (const [obj1, obj2] of sap) {
-            narrowPhase(obj1, obj2);
-        }
-    }
-
-    function checkFrame() {
-        if (!usesArea()) {
-            return;
-        }
-
-        return broadPhase();
-
-        /*// TODO: persistent grid?
-        // start a spatial hash grid for more efficient collision detection
-        const grid: Record<number, Record<number, GameObj<AreaComp>[]>> = {};
-        const cellSize = gopt.hashGridSize || DEF_HASH_GRID_SIZE;
-
-        // current transform
-        let tr = new Mat23();
-
-        // a local transform stack
-        const stack: any[] = [];
-
-        function checkObj(obj: GameObj) {
-            stack.push(tr.clone());
-
-            // Update object transform here. This will be the transform later used in rendering.
-            if (obj.pos) tr.translate(obj.pos);
-            if (obj.scale) tr.scale(obj.scale);
-            if (obj.angle) tr.rotate(obj.angle);
-            obj.transform = tr.clone();
-
-            if (obj.c("area") && !obj.paused) {
-                // TODO: only update worldArea if transform changed
-                const aobj = obj as GameObj<AreaComp>;
-                const area = aobj.worldArea();
-                const bbox = area.bbox();
-
-                // Get spatial hash grid coverage
-                const xmin = Math.floor(bbox.pos.x / cellSize);
-                const ymin = Math.floor(bbox.pos.y / cellSize);
-                const xmax = Math.ceil((bbox.pos.x + bbox.width) / cellSize);
-                const ymax = Math.ceil((bbox.pos.y + bbox.height) / cellSize);
-
-                // Cache objs that are already checked
-                const checked = new Set();
-
-                // insert & check against all covered grids
-                for (let x = xmin; x <= xmax; x++) {
-                    for (let y = ymin; y <= ymax; y++) {
-                        if (!grid[x]) {
-                            grid[x] = {};
-                            grid[x][y] = [aobj];
-                        }
-                        else if (!grid[x][y]) {
-                            grid[x][y] = [aobj];
-                        }
-                        else {
-                            const cell = grid[x][y];
-                            check: for (const other of cell) {
-                                if (other.paused) continue;
-                                if (!other.exists()) continue;
-                                if (checked.has(other.id)) continue;
-                                for (const tag of aobj.collisionIgnore) {
-                                    if (other.is(tag)) {
-                                        continue check;
-                                    }
-                                }
-                                for (const tag of other.collisionIgnore) {
-                                    if (aobj.is(tag)) {
-                                        continue check;
-                                    }
-                                }
-                                const res = gjkShapeIntersection( // sat(
-                                    aobj.worldArea(),
-                                    other.worldArea(),
-                                );
-                                if (res) {
-                                    // TODO: rehash if the object position is changed after resolution?
-                                    const col1 = new Collision(
-                                        aobj,
-                                        other,
-                                        res.normal,
-                                        res.distance,
-                                    );
-                                    aobj.trigger("collideUpdate", other, col1);
-                                    const col2 = col1.reverse();
-                                    // resolution only has to happen once
-                                    col2.resolved = col1.resolved;
-                                    other.trigger("collideUpdate", aobj, col2);
-                                }
-                                checked.add(other.id);
-                            }
-                            cell.push(aobj);
-                        }
-                    }
-                }
-            }
-
-            obj.children.forEach(checkObj);
-            tr = stack.pop();
-        }
-
-        checkObj(game.root);*/
-    }
-
     function handleErr(err: Error) {
         if (crashed) return;
         crashed = true;
@@ -1082,6 +698,8 @@ const kaplay = <
 
     _k.handleErr = handleErr;
 
+    const gc: Array<() => void> = [];
+
     function onCleanup(action: () => void) {
         gc.push(action);
     }
@@ -1091,27 +709,29 @@ const kaplay = <
             app.quit();
 
             // clear canvas
-            gl.clear(
-                gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT
-                    | gl.STENCIL_BUFFER_BIT,
+            gfx.gl.clear(
+                gfx.gl.COLOR_BUFFER_BIT | gfx.gl.DEPTH_BUFFER_BIT
+                    | gfx.gl.STENCIL_BUFFER_BIT,
             );
 
             // unbind everything
-            const numTextureUnits = gl.getParameter(gl.MAX_TEXTURE_IMAGE_UNITS);
+            const numTextureUnits = gfx.gl.getParameter(
+                gfx.gl.MAX_TEXTURE_IMAGE_UNITS,
+            );
 
             for (let unit = 0; unit < numTextureUnits; unit++) {
-                gl.activeTexture(gl.TEXTURE0 + unit);
-                gl.bindTexture(gl.TEXTURE_2D, null);
-                gl.bindTexture(gl.TEXTURE_CUBE_MAP, null);
+                gfx.gl.activeTexture(gfx.gl.TEXTURE0 + unit);
+                gfx.gl.bindTexture(gfx.gl.TEXTURE_2D, null);
+                gfx.gl.bindTexture(gfx.gl.TEXTURE_CUBE_MAP, null);
             }
 
-            gl.bindBuffer(gl.ARRAY_BUFFER, null);
-            gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, null);
-            gl.bindRenderbuffer(gl.RENDERBUFFER, null);
-            gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+            gfx.gl.bindBuffer(gfx.gl.ARRAY_BUFFER, null);
+            gfx.gl.bindBuffer(gfx.gl.ELEMENT_ARRAY_BUFFER, null);
+            gfx.gl.bindRenderbuffer(gfx.gl.RENDERBUFFER, null);
+            gfx.gl.bindFramebuffer(gfx.gl.FRAMEBUFFER, null);
 
             // run all scattered gc events
-            ggl.destroy();
+            gfx.destroy();
             gc.forEach((f) => f());
         });
     }
