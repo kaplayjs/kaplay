@@ -49,6 +49,8 @@ import type {
     FollowComp,
     HealthComp,
     LayerComp,
+    LevelComp,
+    LevelOpt,
     LifespanCompOpt,
     MaskComp,
     NamedComp,
@@ -106,7 +108,6 @@ import type {
     GameObjEventNames,
     GameObjEvents,
     KeepFlags,
-    LevelOpt,
     SceneDef,
     SceneName,
     SetParentOpt,
@@ -172,50 +173,50 @@ export interface KAPLAYCtx<
      */
     _k: Engine & { k: KAPLAYCtx };
     /**
-     * Assemble a game object from a list of components, and add it to the game,
-     *
-     * @example
-     * ```js
-     * const player = add([
-     *     // List of components, each offers a set of functionalities
-     *     sprite("mark"),
-     *     pos(100, 200),
-     *     area(),
-     *     body(),
-     *     health(8),
-     *     // Plain strings are tags, a quicker way to let us define behaviors for a group
-     *     "player",
-     *     "friendly",
-     *     // Components are just plain objects, you can pass an object literal as a component.
-     *     {
-     *         dir: LEFT,
-     *         dead: false,
-     *         speed: 240,
-     *     },
-     * ]);
-     *
-     * // .jump is provided by body()
-     * player.jump();
+   * Assemble a game object from a list of components, and add it to the game,
+   *
+   * @example
+   * ```js
+   * const player = add([
+   *     // List of components, each offers a set of functionalities
+   *     sprite("mark"),
+   *     pos(100, 200),
+   *     area(),
+   *     body(),
+   *     health(8),
+   *     // Plain strings are tags, a quicker way to let us define behaviors for a group
+   *     "player",
+   *     "friendly",
+   *     // Components are just plain objects, you can pass an object literal as a component.
+   *     {
+   *         dir: LEFT,
+   *         dead: false,
+   *         speed: 240,
+   *     },
+   * ]);
+   *
+   * // .jump is provided by body()
+   * player.jump();
 
-     * // .moveTo is provided by pos()
-     * player.moveTo(300, 200);
-     *
-     * // .onUpdate() is on every game object, it registers an event that runs every frame
-     * player.onUpdate(() => {
-     *     // .move() is provided by pos()
-     *     player.move(player.dir.scale(player.speed));
-     * });
-     *
-     * // .onCollide is provided by area()
-     * player.onCollide("tree", () => {
-     *     destroy(player);
-     * });
-     * ```
-    *
-    * @param comps - List of components to add to the game object.
-    * @returns The added game object that contains all properties and methods each component offers.
-    * @group Game Obj
-    */
+   * // .moveTo is provided by pos()
+   * player.moveTo(300, 200);
+   *
+   * // .onUpdate() is on every game object, it registers an event that runs every frame
+   * player.onUpdate(() => {
+   *     // .move() is provided by pos()
+   *     player.move(player.dir.scale(player.speed));
+   * });
+   *
+   * // .onCollide is provided by area()
+   * player.onCollide("tree", () => {
+   *     destroy(player);
+   * });
+   * ```
+  *
+  * @param comps - List of components to add to the game object.
+  * @returns The added game object that contains all properties and methods each component offers.
+  * @group Game Obj
+  */
     add<const T extends CompList<unknown>>(comps?: T): GameObj<T[number]>;
     /**
      * Remove and re-add the game obj, without triggering add / destroy events.
@@ -1459,6 +1460,56 @@ export interface KAPLAYCtx<
      * @group Components
      */
     pathfinder(opts: PathfinderCompOpt): PathfinderComp;
+
+    /**
+     * Construct a level based on symbols.
+     *
+     * @param map - The map data.
+     * @param opt - The level options.
+     * @param parent - The parent object of the level. Defaults to root.
+     *
+     * @example
+     * ```js
+     * const myLevel = add([
+     *     level([
+     *          "                          $",
+     *          "                          $",
+     *          "           $$         =   $",
+     *          "  %      ====         =   $",
+     *          "                      =    ",
+     *          "       ^^      = >    =   &",
+     *          "===========================",
+     *     ], {
+     *         // define the size of tile block
+     *         tileWidth: 32,
+     *         tileHeight: 32,
+     *         // define what each symbol means, by a function returning a component list (what will be passed to add())
+     *         tiles: {
+     *             "=": () => [
+     *                 sprite("floor"),
+     *                 area(),
+     *                 body({ isStatic: true }),
+     *             ],
+     *             "$": () => [
+     *                 sprite("coin"),
+     *                 area(),
+     *                 pos(0, -9),
+     *             ],
+     *             "^": () => [
+     *                 sprite("spike"),
+     *                 area(),
+     *                 "danger",
+     *             ],
+     *         }
+     *     })
+     * ])
+     * ```
+     *
+     * @returns A game obj with the level.
+     * @since v4000.0
+     * @group Components
+     */
+    level(map: string[], opt?: LevelOpt): LevelComp;
     /**
      * Create a raycast.
      *
@@ -4969,6 +5020,7 @@ export interface KAPLAYCtx<
      *
      * @param map - The map data.
      * @param opt - The level options.
+     * @param parent - The parent object of the level. Defaults to root.
      *
      * @example
      * ```js
@@ -5009,7 +5061,11 @@ export interface KAPLAYCtx<
      * @since v2000.0
      * @group Level
      */
-    addLevel(map: string[], opt: LevelOpt): GameObj<PosComp | LevelComp>;
+    addLevel(
+        map: string[],
+        opt: AddLevelOpt,
+        parent?: GameObj,
+    ): GameObj<PosComp | LevelComp>;
     /**
      * Get data from local storage, if not present can set to a default value.
      *
@@ -5723,11 +5779,10 @@ export type Tag = string;
  */
 export type GameObj<T = any> = GameObjRaw & MergeComps<T>;
 
-export type UnionToIntersection<U> =
-    (U extends any ? (k: U) => void : never) extends (
-        k: infer I,
-    ) => void ? I
-        : never;
+export type UnionToIntersection<U> = (
+    U extends any ? (k: U) => void : never
+) extends (k: infer I) => void ? I
+    : never;
 
 // What defined does is remove prop: never types for left types clean.
 // This could work for the proccess of remove Comp properties in XXXXComp types
@@ -7115,80 +7170,16 @@ export enum EdgeMask {
 }
 
 /**
- * A level component.
+ * Options for the {@link addLevel `addLevel()`}.
  *
- * @group Component Types
- */
-export interface LevelComp extends Comp {
-    tileWidth(): number;
-    tileHeight(): number;
-    numRows(): number;
-    numColumns(): number;
-    /**
-     * Spawn a tile from a symbol defined previously.
-     */
-    spawn(sym: string, p: Vec2): GameObj | null;
-    spawn(sym: string, x: number, y: number): GameObj | null;
-    /**
-     * Spawn a tile from a component list.
-     *
-     * @returns The spawned game object, or null if the obj hasn't components.
-     */
-    spawn<T>(obj: CompList<T>, p: Vec2): GameObj<T> | null;
-    spawn<T>(sym: CompList<T>, x: number, y: number): GameObj<T> | null;
-    /**
-     * Total width of level in pixels.
-     */
-    levelWidth(): number;
-    /**
-     * Total height of level in pixels.
-     */
-    levelHeight(): number;
-    /**
-     * Get all game objects that's currently inside a given tile.
-     */
-    getAt(tilePos: Vec2): GameObj[];
-    /**
-     * Raycast all game objects on the given path.
-     */
-    raycast(origin: Vec2, direction: Vec2): RaycastResult;
-    /**
-     * Convert tile position to pixel position.
-     */
-    tile2Pos(tilePos: Vec2): Vec2;
-    tile2Pos(x: number, y: number): Vec2;
-    /**
-     * Convert pixel position to tile position.
-     */
-    pos2Tile(pos: Vec2): Vec2;
-    pos2Tile(x: number, y: number): Vec2;
-    /**
-     * Find the path to navigate from one tile to another tile.
-     *
-     * @returns A list of traverse points in tile positions.
-     */
-    getTilePath(from: Vec2, to: Vec2, opts?: PathFindOpt): Vec2[] | null;
-    /**
-     * Find the path to navigate from one tile to another tile.
-     *
-     * @returns A list of traverse points in pixel positions.
-     */
-    getPath(from: Vec2, to: Vec2, opts?: PathFindOpt): Vec2[] | null;
-    getSpatialMap(): GameObj[][];
-    removeFromSpatialMap(obj: GameObj): void;
-    insertIntoSpatialMap(obj: GameObj): void;
-    onSpatialMapChanged(cb: () => void): KEventController;
-    onNavigationMapInvalid(cb: () => void): KEventController;
-    invalidateNavigationMap(): void;
-    onNavigationMapChanged(cb: () => void): KEventController;
-}
-
-/**
  * @group Options
  */
-export type PathFindOpt = {
-    allowDiagonals?: boolean;
-};
+export interface AddLevelOpt extends LevelOpt {
+    /**
+     * Position of the first block.
+     */
+    pos?: Vec2;
+}
 
 /**
  * The list of easing functions available.
