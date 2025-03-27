@@ -1,17 +1,22 @@
 // The E of KAPLAY
 
 import type { App } from "../app";
-import type {
-    FixedComp,
-    MaskComp,
-    PosComp,
-    RotateComp,
-    ScaleComp,
+import {
+    type FixedComp,
+    type MaskComp,
+    picture,
+    type PosComp,
+    type RotateComp,
+    type ScaleComp,
 } from "../components";
 import { COMP_DESC, COMP_EVENTS } from "../constants";
 import { handleErr } from "../core/errors";
 import {
+    beginPicture,
+    endPicture,
     flush,
+    FrameBuffer,
+    Picture,
     popTransform,
     pushRotate,
     pushScaleV,
@@ -203,9 +208,16 @@ export function make<const T extends CompList<unknown>>(
             >,
         ) {
             if (this.hidden) return;
-            if (this.canvas) {
-                flush();
-                this.canvas.bind();
+            if (this.target) {
+                if (!this.target?.refreshOnly || !this.target?.isFresh) {
+                    flush();
+                    if (this.target.destination instanceof FrameBuffer) {
+                        this.target.destination.bind();
+                    }
+                    else if (this.target.destination instanceof Picture) {
+                        beginPicture(this.target.destination);
+                    }
+                }
             }
             const f = _k.gfx.fixed;
             if (this.fixed) _k.gfx.fixed = true;
@@ -236,17 +248,36 @@ export function make<const T extends CompList<unknown>>(
                 });
             }
             else {
-                drawEvents.trigger();
-                for (let i = 0; i < children.length; i++) {
-                    children[i].draw();
+                if (!this.target?.refreshOnly || !this.target?.isFresh) {
+                    // Parent is drawn with children
+                    if (!this.target?.childrenOnly) {
+                        drawEvents.trigger();
+                    }
+                    for (let i = 0; i < children.length; i++) {
+                        children[i].draw();
+                    }
                 }
+            }
+            if (this.target) {
+                if (!this.target?.refreshOnly || !this.target?.isFresh) {
+                    flush();
+                    if (this.target.destination instanceof FrameBuffer) {
+                        this.target.destination.unbind();
+                    }
+                    else if (this.target.destination instanceof Picture) {
+                        endPicture();
+                    }
+                }
+            }
+            if (this.target?.refreshOnly && !this.target?.isFresh) {
+                this.target.isFresh = true;
+            }
+            if (this.target?.childrenOnly) {
+                // Parent is drawn on screen, children are drawn in target
+                drawEvents.trigger();
             }
             popTransform();
             _k.gfx.fixed = f;
-            if (this.canvas) {
-                flush();
-                this.canvas.unbind();
-            }
         },
 
         drawInspect(this: GameObj<PosComp | ScaleComp | RotateComp>) {

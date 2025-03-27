@@ -41,6 +41,8 @@ import type {
     ConstantForceComp,
     ConstantForceCompOpt,
     DoubleJumpComp,
+    DrawonComp,
+    DrawonOpt,
     FakeMouseComp,
     FakeMouseOpt,
     FixedComp,
@@ -1366,7 +1368,7 @@ export interface KAPLAYCtx<
      * @since v3000.0
      * @group Components
      */
-    drawon(canvas: FrameBuffer): Comp;
+    drawon(canvas: FrameBuffer | Picture, opt?: DrawonOpt): DrawonComp;
     /**
      * A tile on a tile map.
      *
@@ -6108,6 +6110,13 @@ export type KAPLAYPlugin<T> = (
     k: KAPLAYCtx,
 ) => T | ((...args: any) => (k: KAPLAYCtx) => T);
 
+type RenderTarget = {
+    destination: FrameBuffer | Picture | null;
+    childrenOnly?: boolean;
+    refreshOnly?: boolean;
+    isFresh?: boolean;
+};
+
 /**
  * Base interface of all game objects.
  *
@@ -6448,7 +6457,7 @@ export interface GameObjRaw {
      *
      * @since v3001.0
      */
-    canvas: FrameBuffer | null;
+    target: RenderTarget;
     onKeyDown: KAPLAYCtx["onKeyDown"];
     onKeyPress: KAPLAYCtx["onKeyPress"];
     onKeyPressRepeat: KAPLAYCtx["onKeyPressRepeat"];
