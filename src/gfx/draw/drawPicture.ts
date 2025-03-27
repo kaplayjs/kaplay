@@ -217,7 +217,5 @@ export function endPicture(): Picture {
         picture.indices,
     );
 
-    console.log(picture);
-
     return picture;
 }
