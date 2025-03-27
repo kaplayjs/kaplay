@@ -7,10 +7,13 @@ import { initAssets } from "../assets";
 import { initAudio } from "../audio";
 import { initGame } from "../game";
 import { initAppGfx, initGfx } from "../gfx";
-import type { KAPLAYOpt } from "../types";
+import type { KAPLAYCtx, KAPLAYOpt } from "../types";
 import { createCanvas } from "./canvas";
+import { initDebug } from "./debug";
 import { createFontCache } from "./fontCache";
 import { createFrameRenderer } from "./frameRendering";
+
+export type Engine = ReturnType<typeof createEngine>;
 
 export const createEngine = (gopt: KAPLAYOpt) => {
     const canvas = createCanvas(gopt);
@@ -39,22 +42,29 @@ export const createEngine = (gopt: KAPLAYOpt) => {
     const game = initGame();
 
     // Frame rendering
-    const { frameStart, frameEnd } = createFrameRenderer(
+    const frameRenderer = createFrameRenderer(
         appGfx,
+        game,
         gopt.pixelDensity ?? 1,
     );
 
+    // Debug mode
+    const debug = initDebug(gopt, app, appGfx, audio, game, frameRenderer);
+
     return {
+        globalOpt: gopt,
         canvas,
         app,
-        gfx,
-        appGfx,
+        ggl: gfx,
+        gfx: appGfx,
         audio,
         assets,
-        frameStart,
-        frameEnd,
+        frameRenderer,
         fontCacheC2d,
         fontCacheCanvas,
         game,
+        debug,
+        // Patch, k it's only avaible after running kaplay()
+        k: null as unknown as KAPLAYCtx,
     };
 };

@@ -24,6 +24,10 @@ export interface BoomOpt {
 }
 
 export function addKaboom(p: Vec2, opt: BoomOpt = {}): GameObj {
+    if (!_k.game.boomSprite || !_k.game.kaSprite) {
+        throw new Error("You can't use addKaboom without the sprites loaded");
+    }
+
     const kaboom = _k.game.root.add([
         pos(p),
         stay(),
@@ -33,7 +37,7 @@ export function addKaboom(p: Vec2, opt: BoomOpt = {}): GameObj {
     const s = opt.scale || 1;
 
     kaboom.add([
-        sprite(_k.boomSprite),
+        sprite(_k.game.boomSprite),
         scale(0),
         anchor("center"),
         boom(speed, s),
@@ -41,7 +45,7 @@ export function addKaboom(p: Vec2, opt: BoomOpt = {}): GameObj {
     ]);
 
     const ka = kaboom.add([
-        sprite(_k.kaSprite),
+        sprite(_k.game.kaSprite),
         scale(0),
         anchor("center"),
         timer(),

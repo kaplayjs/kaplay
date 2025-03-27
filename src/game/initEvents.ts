@@ -24,8 +24,8 @@ export function initEvents() {
             return;
         }
 
-        _k.canvas.width = _k.canvas.offsetWidth * _k.pixelDensity;
-        _k.canvas.height = _k.canvas.offsetHeight * _k.pixelDensity;
+        _k.canvas.width = _k.canvas.offsetWidth * _k.gfx.pixelDensity;
+        _k.canvas.height = _k.canvas.offsetHeight * _k.gfx.pixelDensity;
 
         updateViewport();
 
@@ -36,10 +36,12 @@ export function initEvents() {
                 _k.gfx.ggl.gl.drawingBufferWidth,
                 _k.gfx.ggl.gl.drawingBufferHeight,
             );
-            _k.gfx.width = _k.gfx.ggl.gl.drawingBufferWidth / _k.pixelDensity
-                / _k.gscale;
-            _k.gfx.height = _k.gfx.ggl.gl.drawingBufferHeight / _k.pixelDensity
-                / _k.gscale;
+            _k.gfx.width = _k.gfx.ggl.gl.drawingBufferWidth
+                / _k.gfx.pixelDensity
+                / _k.gfx.gscale;
+            _k.gfx.height = _k.gfx.ggl.gl.drawingBufferHeight
+                / _k.gfx.pixelDensity
+                / _k.gfx.gscale;
         }
     });
 

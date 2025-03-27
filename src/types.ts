@@ -97,6 +97,7 @@ import type {
     ParticlesOpt,
 } from "./components/draw/particles";
 import type { PictureComp } from "./components/draw/picture";
+import type { Engine } from "./core/engine";
 import type {
     BoomOpt,
     Game,
@@ -150,30 +151,6 @@ import type { NavMesh } from "./math/navigationmesh";
 import type { KEvent, KEventController, KEventHandler } from "./utils/";
 
 /**
- * Sensitive KAPLAY data
- */
-export type KAPLAYInternal = {
-    k: KAPLAYCtx;
-    globalOpt: KAPLAYOpt;
-    gfx: AppGfxCtx;
-    game: Game;
-    app: App;
-    assets: ReturnType<typeof initAssets>;
-    fontCacheCanvas: HTMLCanvasElement | null;
-    fontCacheC2d: CanvasRenderingContext2D | null;
-    debug: Debug;
-    audio: AudioCtx;
-    pixelDensity: number;
-    canvas: HTMLCanvasElement;
-    gscale: number;
-    kaSprite: Asset<SpriteData>;
-    boomSprite: Asset<SpriteData>;
-    systems: System[];
-    systemsByEvent: System[][];
-    handleErr: (e: any) => void;
-};
-
-/**
  * Context handle that contains every KAPLAY function.
  *
  * @template TButtonDef - The button map
@@ -191,7 +168,7 @@ export interface KAPLAYCtx<
      * @readonly
      * @group Misc
      */
-    _k: KAPLAYInternal;
+    _k: Engine & { k: KAPLAYCtx };
     /**
      * Assemble a game object from a list of components, and add it to the game,
      *

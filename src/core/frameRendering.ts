@@ -1,4 +1,5 @@
 import { BG_GRID_SIZE } from "../constants";
+import type { Game } from "../game";
 import {
     type AppGfxCtx,
     drawTexture,
@@ -10,7 +11,13 @@ import {
 } from "../gfx";
 import { Quad, Vec2 } from "../math";
 
-export const createFrameRenderer = (gfx: AppGfxCtx, pixelDensity: number) => {
+export type FrameRenderer = ReturnType<typeof createFrameRenderer>;
+
+export const createFrameRenderer = (
+    gfx: AppGfxCtx,
+    game: Game,
+    pixelDensity: number,
+) => {
     // start a rendering frame, reset some states
     function frameStart() {
         // clear backbuffer
@@ -79,5 +86,14 @@ export const createFrameRenderer = (gfx: AppGfxCtx, pixelDensity: number) => {
         gfx.height = oh;
     }
 
-    return { frameStart, frameEnd };
+    function fixedUpdateFrame() {
+        // update every obj
+        game.root.fixedUpdate();
+    }
+
+    function updateFrame() {
+        game.root.update();
+    }
+
+    return { frameStart, frameEnd, fixedUpdateFrame, updateFrame };
 };

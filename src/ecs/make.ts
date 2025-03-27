@@ -1,3 +1,5 @@
+// The E of KAPLAY
+
 import type { App } from "../app";
 import type {
     FixedComp,
@@ -7,6 +9,7 @@ import type {
     ScaleComp,
 } from "../components";
 import { COMP_DESC, COMP_EVENTS } from "../constants";
+import { handleErr } from "../core/errors";
 import {
     flush,
     popTransform,
@@ -43,6 +46,7 @@ export type SetParentOpt = {
 export function make<const T extends CompList<unknown>>(
     comps: T = [] as unknown as T,
 ): GameObj<T[number]> {
+    const id = uid();
     const compStates = new Map<string, Comp>();
     const anonymousCompStates: Comp[] = [];
     const cleanups = {} as Record<string, (() => unknown)[]>;
@@ -52,14 +56,16 @@ export function make<const T extends CompList<unknown>>(
     const drawEvents = new KEvent<[]>();
     const inputEvents: KEventController[] = [];
     const tags = new Set<Tag>("*");
-    const treatTagsAsComponents = _k.globalOpt.tagsAsComponents;
+    const treatTagsAsComponents = id == 0
+        ? false
+        : _k.globalOpt.tagsAsComponents;
     let onCurCompCleanup: Function | null = null;
     let paused = false;
     let _parent: GameObj;
 
     // the game object without the event methods, added later
     const obj: Omit<GameObj, keyof typeof appEvs> = {
-        id: uid(),
+        id: id,
         // TODO: a nice way to hide / pause when add()-ing
         hidden: false,
         transform: new Mat23(),
@@ -137,7 +143,7 @@ export function make<const T extends CompList<unknown>>(
                 obj.trigger("add", obj);
                 obj.children.forEach(c => c.trigger("add", c));
             } catch (e) {
-                _k.handleErr(e);
+                handleErr(e);
             }
 
             _k.game.events.trigger("add", obj);
@@ -297,7 +303,7 @@ export function make<const T extends CompList<unknown>>(
                         }
                     }
                 } catch (e) {
-                    _k.handleErr(e);
+                    handleErr(e);
                 }
             };
 

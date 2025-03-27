@@ -1,3 +1,4 @@
+export * from "../ecs/make";
 export * from "../events";
 export * from "./camera";
 export * from "./game";
@@ -6,7 +7,6 @@ export * from "./initEvents";
 export * from "./kaboom";
 export * from "./layers";
 export * from "./level";
-export * from "./make";
 export * from "./object";
 export * from "./scenes";
 export * from "./utils";
