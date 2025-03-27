@@ -12,15 +12,15 @@
   "type": "module",
   "main": "./dist/kaplay.cjs",
   "module": "./dist/kaplay.mjs",
-  "types": "./dist/declaration/index.d.ts",
+  "types": "./dist/declaration/main.d.ts",
   "exports": {
     ".": {
       "import": {
-        "types": "./dist/declaration/index.d.ts",
+        "types": "./dist/declaration/main.d.ts",
         "default": "./dist/kaplay.mjs"
       },
       "require": {
-        "types": "./dist/declaration/index.d.ts",
+        "types": "./dist/declaration/main.d.ts",
         "default": "./dist/kaplay.cjs"
       }
     },
@@ -51,7 +51,7 @@
     "check": "tsc",
     "fmt": "dprint fmt",
     "test": "node scripts/test.js",
-    "doc-dts": "dts-bundle-generator -o dist/doc.d.ts dist/declaration/index.d.ts",
+    "doc-dts": "dts-bundle-generator -o dist/doc.d.ts dist/declaration/main.d.ts",
     "test:vite": "vitest --typecheck",
     "desktop": "tauri dev",
     "prepare": "npm run build",
