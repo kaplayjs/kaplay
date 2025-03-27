@@ -1,5 +1,6 @@
 import { describe, expectTypeOf } from "vitest";
-import type { CircleComp, ScaleComp } from "../../src";
+import type { CircleComp } from "../../src/ecs/components/draw/circle";
+import type { ScaleComp } from "../../src/ecs/components/transform/scale";
 import { kaplay } from "../../src/kaplay";
 import type { GameObj } from "../../src/types";
 

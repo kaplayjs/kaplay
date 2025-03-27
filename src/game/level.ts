@@ -1,4 +1,5 @@
-import { level, type LevelComp, pos, type PosComp } from "../components";
+import { level, type LevelComp } from "../ecs/components/level/level";
+import { pos, type PosComp } from "../ecs/components/transform/pos";
 import { _k } from "../kaplay";
 import { vec2 } from "../math";
 import type { AddLevelOpt, GameObj } from "../types.ts";

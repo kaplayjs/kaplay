@@ -170,63 +170,6 @@ import {
     type Recording,
 } from "./types";
 
-import {
-    agent,
-    anchor,
-    animate,
-    area,
-    areaEffector,
-    blend,
-    body,
-    buoyancyEffector,
-    circle,
-    color,
-    constantForce,
-    doubleJump,
-    drawon,
-    ellipse,
-    fadeIn,
-    fakeMouse,
-    fixed,
-    follow,
-    health,
-    layer,
-    level,
-    lifespan,
-    mask,
-    move,
-    named,
-    offscreen,
-    opacity,
-    outline,
-    particles,
-    pathfinder,
-    patrol,
-    picture,
-    platformEffector,
-    pointEffector,
-    polygon,
-    pos,
-    raycast,
-    rect,
-    rotate,
-    scale,
-    sentry,
-    serializeAnimation,
-    shader,
-    sprite,
-    state,
-    stay,
-    surfaceEffector,
-    text,
-    textInput,
-    tile,
-    timer,
-    uvquad,
-    video,
-    z,
-} from "./components";
-
 import { burp, getVolume, play, setVolume, volume } from "./audio";
 
 import {
@@ -291,6 +234,61 @@ import {
 
 import { createEngine } from "./core/engine";
 import { handleErr } from "./core/errors";
+import { blend } from "./ecs/components/draw/blend";
+import { circle } from "./ecs/components/draw/circle";
+import { color } from "./ecs/components/draw/color";
+import { drawon } from "./ecs/components/draw/drawon";
+import { ellipse } from "./ecs/components/draw/ellipse";
+import { fadeIn } from "./ecs/components/draw/fadeIn";
+import { mask } from "./ecs/components/draw/mask";
+import { opacity } from "./ecs/components/draw/opacity";
+import { outline } from "./ecs/components/draw/outline";
+import { particles } from "./ecs/components/draw/particles";
+import { picture } from "./ecs/components/draw/picture";
+import { polygon } from "./ecs/components/draw/polygon";
+import { raycast } from "./ecs/components/draw/raycast";
+import { rect } from "./ecs/components/draw/rect";
+import { shader } from "./ecs/components/draw/shader";
+import { sprite } from "./ecs/components/draw/sprite";
+import { text } from "./ecs/components/draw/text";
+import { uvquad } from "./ecs/components/draw/uvquad";
+import { video } from "./ecs/components/draw/video";
+import { agent } from "./ecs/components/level/agent";
+import { level } from "./ecs/components/level/level";
+import { pathfinder } from "./ecs/components/level/pathfinder";
+import { patrol } from "./ecs/components/level/patrol";
+import { sentry } from "./ecs/components/level/sentry";
+import { tile } from "./ecs/components/level/tile";
+import { animate, serializeAnimation } from "./ecs/components/misc/animate";
+import { fakeMouse } from "./ecs/components/misc/fakeMouse";
+import { health } from "./ecs/components/misc/health";
+import { lifespan } from "./ecs/components/misc/lifespan";
+import { named } from "./ecs/components/misc/named";
+import { state } from "./ecs/components/misc/state";
+import { stay } from "./ecs/components/misc/stay";
+import { textInput } from "./ecs/components/misc/textInput";
+import { timer } from "./ecs/components/misc/timer";
+import { area } from "./ecs/components/physics/area";
+import { body } from "./ecs/components/physics/body";
+import { doubleJump } from "./ecs/components/physics/doubleJump";
+import {
+    areaEffector,
+    buoyancyEffector,
+    constantForce,
+    platformEffector,
+    pointEffector,
+    surfaceEffector,
+} from "./ecs/components/physics/effectors";
+import { anchor } from "./ecs/components/transform/anchor";
+import { fixed } from "./ecs/components/transform/fixed";
+import { follow } from "./ecs/components/transform/follow";
+import { layer } from "./ecs/components/transform/layer";
+import { move } from "./ecs/components/transform/move";
+import { offscreen } from "./ecs/components/transform/offscreen";
+import { pos } from "./ecs/components/transform/pos";
+import { rotate } from "./ecs/components/transform/rotate";
+import { scale } from "./ecs/components/transform/scale";
+import { z } from "./ecs/components/transform/z";
 import { getCollisionSystem } from "./ecs/systems/collision";
 import { LCEvents, system } from "./game/systems";
 

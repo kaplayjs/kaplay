@@ -9,7 +9,8 @@
     "/src/components/level",
     "/src/components/misc",
     "/src/components/physics",
-    "/src/components/transform"
+    "/src/components/transform",
+    "/src/ecs/components"
   ],
   "typescript.preferences.importModuleSpecifier": "shortest"
 }

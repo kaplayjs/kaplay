@@ -1,4 +1,10 @@
-import { anchor, boom, pos, scale, sprite, stay, timer } from "../components";
+import { sprite } from "../ecs/components/draw/sprite";
+import { boom } from "../ecs/components/misc/boom";
+import { stay } from "../ecs/components/misc/stay";
+import { timer } from "../ecs/components/misc/timer";
+import { anchor } from "../ecs/components/transform/anchor";
+import { pos } from "../ecs/components/transform/pos";
+import { scale } from "../ecs/components/transform/scale";
 import { _k } from "../kaplay";
 import type { Vec2 } from "../math";
 import type { CompList, GameObj } from "../types";

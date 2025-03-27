@@ -1,5 +1,5 @@
-import { type Asset, loadSprite, type SpriteData } from "../assets";
-import { timer, type TimerComp } from "../components";
+import { type Asset, type SpriteData } from "../assets";
+import { timer, type TimerComp } from "../ecs/components/misc/timer";
 import { make } from "../ecs/make";
 import type { GameEventMap, GameObjEventMap } from "../events";
 import { Mat23, Vec2 } from "../math/math";
