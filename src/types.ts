@@ -5727,7 +5727,7 @@ export type UnionToIntersection<U> =
     (U extends any ? (k: U) => void : never) extends (
         k: infer I,
     ) => void ? I
-    : never;
+        : never;
 
 // What defined does is remove prop: never types for left types clean.
 // This could work for the proccess of remove Comp properties in XXXXComp types
@@ -6115,7 +6115,7 @@ type RenderTarget = {
     childrenOnly?: boolean;
     refreshOnly?: boolean;
     isFresh?: boolean;
-}
+};
 
 /**
  * Base interface of all game objects.

@@ -13,8 +13,8 @@ onLoad(() => {
         {
             draw() {
                 console.log("draw parent");
-            }
-        }
+            },
+        },
     ]);
 
     const screen = new Rect(vec2(100, 100), width() - 200, height() - 200);
@@ -26,8 +26,8 @@ onLoad(() => {
             {
                 draw() {
                     console.log("draw child");
-                }
-            }
+                },
+            },
         ]);
         cached.refresh();
     }
