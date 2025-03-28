@@ -1,5 +1,5 @@
 import { SPRITE_ATLAS_HEIGHT, SPRITE_ATLAS_WIDTH } from "../constants";
-import TexPacker from "../gfx/classes/TexPacker";
+import { TexPacker } from "../gfx/classes/TexPacker";
 import type { GfxCtx } from "../gfx/gfx";
 import { _k } from "../kaplay";
 import { KEvent } from "../utils";
