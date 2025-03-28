@@ -1,10 +1,10 @@
 import type { KEventController } from "../../../events/events";
 import { _k } from "../../../kaplay";
+import { clamp } from "../../../math/clamp";
 import { Color } from "../../../math/color";
 import easings from "../../../math/easings";
 import {
     catmullRom,
-    clamp,
     hermiteFirstDerivative,
     lerp,
     Vec2,
