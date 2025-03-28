@@ -1,19 +1,19 @@
-import { drawRaw, type Texture } from "../../../gfx";
+import { KEvent } from "../../../events/events";
+import { drawRaw } from "../../../gfx/draw/drawRaw";
+import type { Texture } from "../../../gfx/gfx";
 import { _k } from "../../../kaplay.js";
+import { Color } from "../../../math/color";
 import {
-    Color,
     deg2rad,
     lerp,
     map,
     Quad,
     rand,
-    rgb,
     type ShapeType,
     Vec2,
     vec2,
-} from "../../../math";
+} from "../../../math/math";
 import type { Comp } from "../../../types";
-import { KEvent } from "../../../utils";
 
 /**
  * A particle. Used on the {@link particles `particles()`} component.

@@ -1,33 +1,32 @@
 // The E of KAPLAY
 
-import type { App } from "../app";
+import type { App } from "../app/app";
 import { COMP_DESC, COMP_EVENTS } from "../constants";
 import { handleErr } from "../core/errors";
+import { KEvent, KEventController, KEventHandler } from "../events/events";
+import { FrameBuffer } from "../gfx/classes/FrameBuffer";
+import { beginPicture, endPicture, Picture } from "../gfx/draw/drawPicture";
 import {
-    beginPicture,
-    endPicture,
     flush,
-    FrameBuffer,
-    Picture,
     popTransform,
     pushRotate,
     pushScaleV,
     pushTransform,
     pushTranslateV,
-} from "../gfx";
+} from "../gfx/stack";
 import { _k } from "../kaplay";
-import { calcTransform } from "../math";
 import { Mat23 } from "../math/math";
-import {
-    type Comp,
-    type CompList,
-    type GameObj,
-    type GameObjInspect,
-    type GetOpt,
-    type QueryOpt,
-    type Tag,
+import { calcTransform } from "../math/various";
+import type {
+    Comp,
+    CompList,
+    GameObj,
+    GameObjInspect,
+    GetOpt,
+    QueryOpt,
+    Tag,
 } from "../types";
-import { KEvent, KEventController, KEventHandler, uid } from "../utils";
+import { uid } from "../utils/uid";
 import type { MaskComp } from "./components/draw/mask";
 import type { FixedComp } from "./components/transform/fixed";
 import type { PosComp } from "./components/transform/pos";

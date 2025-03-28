@@ -1,10 +1,10 @@
 import { DEF_JUMP_FORCE, MAX_VEL } from "../../../constants";
-import { getGravityDirection } from "../../../game";
+import type { KEventController } from "../../../events/events";
+import { getGravityDirection } from "../../../game/gravity";
 import { _k } from "../../../kaplay";
 import { lerp, type Vec2, vec2 } from "../../../math/math";
 import { calcTransform } from "../../../math/various";
 import type { Collision, Comp, GameObj } from "../../../types";
-import type { KEventController } from "../../../utils";
 import type { PosComp } from "../transform/pos";
 import type { AreaComp } from "./area";
 

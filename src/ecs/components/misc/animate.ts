@@ -1,3 +1,4 @@
+import type { KEventController } from "../../../events/events";
 import { _k } from "../../../kaplay";
 import { Color } from "../../../math/color";
 import easings from "../../../math/easings";
@@ -10,7 +11,6 @@ import {
     vec2,
 } from "../../../math/math";
 import type { Comp, EaseFunc, GameObj, LerpValue } from "../../../types";
-import type { KEventController } from "../../../utils";
 import type { NamedComp } from "./named";
 
 type TimeDirection =

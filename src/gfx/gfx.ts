@@ -1,15 +1,14 @@
-import type { Shader, Uniform } from "../assets";
-import { getCamTransform } from "../game";
-import { Picture } from "../gfx/draw/drawPicture";
-import { Mat23, Mat4 } from "../math";
+import type { Shader, Uniform } from "../assets/shader";
+import { getCamTransform } from "../game/camera";
+import { Mat4 } from "../math/math";
 import {
     BlendMode,
     type ImageSource,
     type KAPLAYOpt,
-    type TexFilter,
     type TextureOpt,
 } from "../types";
-import { deepEq } from "../utils/";
+import { deepEq } from "../utils/deepEq";
+import type { Picture } from "./draw/drawPicture";
 
 export type GfxCtx = ReturnType<typeof initGfx>;
 

@@ -1,6 +1,7 @@
 import { getRenderProps } from "../../../game/utils";
-import { drawPolygon, type Texture } from "../../../gfx";
-import { type Color } from "../../../math/color";
+import { drawPolygon } from "../../../gfx/draw/drawPolygon";
+import type { Texture } from "../../../gfx/gfx";
+import type { Color } from "../../../math/color";
 import { Polygon, type Vec2 } from "../../../math/math";
 import type { Comp, DrawPolygonOpt, GameObj } from "../../../types";
 

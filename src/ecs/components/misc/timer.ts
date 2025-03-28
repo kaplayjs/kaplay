@@ -1,3 +1,4 @@
+import { KEvent } from "../../../events/events";
 import { _k } from "../../../kaplay";
 import easings from "../../../math/easings";
 import { lerp } from "../../../math/math";
@@ -8,7 +9,6 @@ import type {
     TimerController,
     TweenController,
 } from "../../../types";
-import { KEvent } from "../../../utils";
 
 /**
  * The {@link timer `timer()`} component.

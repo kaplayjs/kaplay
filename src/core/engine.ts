@@ -2,11 +2,12 @@
 The engine is what KAPLAY needs for running and proccesing all it's stuff
 **/
 
-import { initApp } from "../app";
-import { initAssets } from "../assets";
-import { initAudio } from "../audio";
-import { initGame } from "../game";
-import { initAppGfx, initGfx } from "../gfx";
+import { initApp } from "../app/app";
+import { initAssets } from "../assets/asset";
+import { initAudio } from "../audio/audio";
+import { initGame } from "../game/game";
+import { initGfx } from "../gfx/gfx";
+import { initAppGfx } from "../gfx/gfxApp";
 import type { KAPLAYCtx, KAPLAYOpt } from "../types";
 import { createCanvas } from "./canvas";
 import { initDebug } from "./debug";

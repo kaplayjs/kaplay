@@ -1,6 +1,6 @@
 import { Quad, Vec2 } from "../../math/math";
 import type { ImageSource } from "../../types";
-import { type GfxCtx, Texture } from "..";
+import { type GfxCtx, Texture } from "../gfx";
 
 export class TexPacker {
     private lastTextureId: number = 0;

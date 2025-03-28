@@ -1,5 +1,5 @@
+import type { KEventController } from "../../../events/events";
 import type { Comp, GameObj } from "../../../types";
-import type { KEventController } from "../../../utils";
 import type { BodyComp } from "./body";
 
 /**

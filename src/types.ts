@@ -1,19 +1,17 @@
-import type { ButtonBinding, ButtonBindingDevice, ButtonsDef } from "./app";
 import type {
-    AsepriteData,
-    Asset,
-    BitmapFontData,
-    LoadBitmapFontOpt,
-    LoadSpriteOpt,
-    LoadSpriteSrc,
-    ShaderData,
-    SoundData,
-    SpriteAtlasData,
-    SpriteData,
-    Uniform,
-} from "./assets";
+    ButtonBinding,
+    ButtonBindingDevice,
+    ButtonsDef,
+} from "./app/inputBindings";
+import type { AsepriteData } from "./assets/aseprite";
+import type { Asset } from "./assets/asset";
+import type { BitmapFontData, LoadBitmapFontOpt } from "./assets/bitmapFont";
 import type { FontData } from "./assets/font";
-import type { AudioPlay, AudioPlayOpt } from "./audio";
+import type { ShaderData, Uniform } from "./assets/shader";
+import type { SoundData } from "./assets/sound";
+import type { LoadSpriteOpt, LoadSpriteSrc, SpriteData } from "./assets/sprite";
+import type { SpriteAtlasData } from "./assets/spriteAtlas";
+import type { AudioPlay, AudioPlayOpt } from "./audio/play";
 import type { Engine } from "./core/engine";
 import type { BlendComp } from "./ecs/components/draw/blend";
 import type { CircleComp, CircleCompOpt } from "./ecs/components/draw/circle";
@@ -96,37 +94,33 @@ import type { PosComp } from "./ecs/components/transform/pos";
 import type { RotateComp } from "./ecs/components/transform/rotate";
 import type { ScaleComp } from "./ecs/components/transform/scale";
 import type { ZComp } from "./ecs/components/transform/z";
-import type {
-    BoomOpt,
-    GameObjEventNames,
-    GameObjEvents,
-    KeepFlags,
-    SceneDef,
-    SceneName,
-    SetParentOpt,
-    TupleWithoutFirst,
-} from "./game";
+import type { KeepFlags, SetParentOpt } from "./ecs/make";
+import type { GameObjEventNames, GameObjEvents } from "./events/eventMap";
+import type { KEvent, KEventController, KEventHandler } from "./events/events";
+import type { TupleWithoutFirst } from "./events/globalEvents";
+import type { BoomOpt } from "./game/kaboom";
+import type { SceneDef, SceneName } from "./game/scenes";
 import type { LCEvents } from "./game/systems";
+import type { FrameBuffer } from "./gfx/classes/FrameBuffer";
+import type { DrawBezierOpt } from "./gfx/draw/drawBezier";
+import type { DrawCanvasOpt } from "./gfx/draw/drawCanvas";
+import type { DrawCircleOpt } from "./gfx/draw/drawCircle";
+import type { DrawCurveOpt } from "./gfx/draw/drawCurve";
+import type { FormattedText } from "./gfx/draw/drawFormattedText";
 import type {
-    DrawBezierOpt,
-    DrawCanvasOpt,
-    DrawCircleOpt,
-    DrawCurveOpt,
     DrawLineOpt,
     DrawLinesOpt,
-    DrawRectOpt,
-    DrawSpriteOpt,
-    DrawTextOpt,
-    DrawTriangleOpt,
-    FormattedText,
-    FrameBuffer,
     LineCap,
     LineJoin,
-    Texture,
-} from "./gfx";
+} from "./gfx/draw/drawLine";
 import type { DrawPictureOpt, Picture } from "./gfx/draw/drawPicture";
-import type { GjkCollisionResult } from "./math";
+import type { DrawRectOpt } from "./gfx/draw/drawRect";
+import type { DrawSpriteOpt } from "./gfx/draw/drawSprite";
+import type { DrawTextOpt } from "./gfx/draw/drawText";
+import type { DrawTriangleOpt } from "./gfx/draw/drawTriangle";
+import type { Texture } from "./gfx/gfx";
 import type { Color, CSSColor, RGBAValue, RGBValue } from "./math/color";
+import type { GjkCollisionResult } from "./math/gjk";
 import type {
     Circle,
     Ellipse,
@@ -143,7 +137,6 @@ import type {
     Vec2,
 } from "./math/math";
 import type { NavMesh } from "./math/navigationmesh";
-import type { KEvent, KEventController, KEventHandler } from "./utils/";
 
 /**
  * Context handle that contains every KAPLAY function.

@@ -1,5 +1,5 @@
 import { _k } from "../../../kaplay";
-import { map } from "../../../math";
+import { map } from "../../../math/math";
 import type { Comp, GameObj } from "../../../types";
 import type { OpacityComp } from "./opacity";
 

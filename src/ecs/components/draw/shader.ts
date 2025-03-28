@@ -1,4 +1,4 @@
-import type { Uniform } from "../../../assets";
+import type { Uniform } from "../../../assets/shader";
 import type { Comp } from "../../../types";
 
 /**

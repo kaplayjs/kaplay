@@ -1,8 +1,7 @@
-import type { Shader, Uniform } from "../../assets";
-import { blend } from "../../ecs/components/draw/blend";
-import { getCamTransform } from "../../game";
+import type { Shader, Uniform } from "../../assets/shader";
+import { getCamTransform } from "../../game/camera";
 import { _k } from "../../kaplay";
-import { Mat4 } from "../../math";
+import { Mat4 } from "../../math/math";
 import type { BlendMode, RenderProps } from "../../types";
 import { Mesh, type Texture } from "../gfx";
 import { height, width } from "../stack";

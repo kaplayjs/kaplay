@@ -1,20 +1,26 @@
 // TODO: accept canvas
 
-import type { Asset, SpriteAnim, SpriteData } from "../../../assets";
-import { resolveSprite } from "../../../assets/sprite";
+import type { Asset } from "../../../assets/asset";
+import {
+    resolveSprite,
+    type SpriteAnim,
+    type SpriteData,
+} from "../../../assets/sprite";
 import { DEF_ANCHOR } from "../../../constants";
-import { onLoad } from "../../../game";
+import { KEvent, type KEventController } from "../../../events/events";
+import { onLoad } from "../../../events/globalEvents";
 import { getRenderProps } from "../../../game/utils";
-import { anchorPt, drawTexture, type Texture } from "../../../gfx";
+import { anchorPt } from "../../../gfx/anchor";
+import { drawTexture } from "../../../gfx/draw/drawTexture";
+import type { Texture } from "../../../gfx/gfx";
 import { _k } from "../../../kaplay";
-import { Quad, quad, Rect, Vec2, vec2 } from "../../../math";
+import { Quad, quad, Rect, type Vec2, vec2 } from "../../../math/math";
 import type {
     Comp,
     GameObj,
     SpriteAnimPlayOpt,
     SpriteCurAnim,
 } from "../../../types";
-import { KEvent, KEventController } from "../../../utils";
 
 /**
  * The {@link sprite `sprite()`} component.

@@ -1,12 +1,9 @@
-import { onAdd, onDestroy, onUnuse, onUse } from "../../events";
-import { onSceneLeave } from "../../game";
+import { onAdd, onDestroy, onUnuse, onUse } from "../../events/globalEvents";
+import { onSceneLeave } from "../../game/scenes";
 import { _k } from "../../kaplay";
-import {
-    gjkShapeIntersection,
-    SweepAndPrune,
-    type Vec2,
-    vec2,
-} from "../../math";
+import { gjkShapeIntersection } from "../../math/gjk";
+import { type Vec2, vec2 } from "../../math/math";
+import { SweepAndPrune } from "../../math/spatial/sweepandprune";
 import type { GameObj } from "../../types";
 import { type AreaComp, usesArea } from "../components/physics/area";
 

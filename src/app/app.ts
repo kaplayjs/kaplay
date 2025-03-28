@@ -13,16 +13,11 @@ import type {
 
 import { map, Vec2, vec2 } from "../math/math";
 
-import {
-    isEqOrIncludes,
-    KEventController,
-    KEventHandler,
-    overload2,
-    setHasOrIncludes,
-} from "../utils";
-
 import GAMEPAD_MAP from "../data/gamepad.json" assert { type: "json" };
-import type { AppEventMap } from "../game";
+import type { AppEventMap } from "../events/eventMap";
+import { type KEventController, KEventHandler } from "../events/events";
+import { overload2 } from "../utils/overload";
+import { isEqOrIncludes, setHasOrIncludes } from "../utils/sets";
 import {
     type ButtonBinding,
     type ButtonsDef,

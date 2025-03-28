@@ -1,5 +1,4 @@
 import { getRenderProps } from "../../../game/utils";
-import { drawUVQuad } from "../../../gfx";
 import { Rect, vec2 } from "../../../math/math";
 import type { Comp, GameObj } from "../../../types";
 
@@ -43,4 +42,17 @@ export function uvquad(w: number, h: number): UVQuadComp {
             })h`;
         },
     };
+}
+function drawUVQuad(
+    arg0: {
+        color: any;
+        opacity: any;
+        anchor: any;
+        outline: any;
+        shader: any;
+        uniform: any;
+        blend: any;
+    } & { width: number; height: number },
+) {
+    throw new Error("Function not implemented.");
 }

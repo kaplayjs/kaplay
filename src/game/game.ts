@@ -1,10 +1,11 @@
-import { type Asset, type SpriteData } from "../assets";
+import type { Asset } from "../assets/asset";
+import type { SpriteData } from "../assets/sprite";
 import { timer, type TimerComp } from "../ecs/components/misc/timer";
 import { make } from "../ecs/make";
-import type { GameEventMap, GameObjEventMap } from "../events";
+import type { GameEventMap, GameObjEventMap } from "../events/eventMap";
+import { KEventHandler } from "../events/events";
 import { Mat23, Vec2 } from "../math/math";
-import { type GameObj } from "../types";
-import { KEventHandler } from "../utils";
+import type { GameObj } from "../types";
 import type { SceneDef, SceneName } from "./scenes";
 import type { System } from "./systems";
 

@@ -1,5 +1,5 @@
 import { ASCII_CHARS } from "../constants";
-import { Texture } from "../gfx";
+import { Texture } from "../gfx/gfx";
 import { _k } from "../kaplay";
 import happyFont from "../kassets/happy.png";
 import type { Quad } from "../math/math";
