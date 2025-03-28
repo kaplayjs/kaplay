@@ -1,25 +1,19 @@
 import { DEF_ANCHOR } from "../../../constants";
+import type { KEventController } from "../../../events/events";
 import { isFixed } from "../../../game/utils";
+import { anchorPt } from "../../../gfx/anchor";
+import { drawCircle } from "../../../gfx/draw/drawCircle";
+import { drawPolygon } from "../../../gfx/draw/drawPolygon";
+import { drawRect } from "../../../gfx/draw/drawRect";
 import {
-    anchorPt,
-    drawCircle,
-    drawPolygon,
-    drawRect,
     getViewportScale,
     popTransform,
     pushTransform,
     pushTranslate,
-} from "../../../gfx";
+} from "../../../gfx/stack";
 import { _k } from "../../../kaplay";
-import {
-    Circle,
-    Polygon,
-    Rect,
-    rgb,
-    testPolygonPoint,
-    Vec2,
-    vec2,
-} from "../../../math";
+import { rgb } from "../../../math/color";
+import { Circle, Polygon, Rect, type Vec2, vec2 } from "../../../math/math";
 import type {
     Collision,
     Comp,
@@ -29,7 +23,6 @@ import type {
     Shape,
     Tag,
 } from "../../../types";
-import type { KEventController } from "../../../utils";
 import type { FakeMouseComp } from "../misc/fakeMouse";
 import type { AnchorComp } from "../transform/anchor";
 import type { FixedComp } from "../transform/fixed";

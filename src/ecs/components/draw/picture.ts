@@ -1,5 +1,5 @@
-import { getRenderProps } from "../../../game";
-import { drawPicture, type Picture } from "../../../gfx";
+import { getRenderProps } from "../../../game/utils";
+import { drawPicture, type Picture } from "../../../gfx/draw/drawPicture";
 import type { Comp, GameObj } from "../../../types";
 
 export interface PictureComp extends Comp {

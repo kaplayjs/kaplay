@@ -1,4 +1,5 @@
-import { Asset, resolveShader, type Uniform } from "../../assets";
+import { Asset } from "../../assets/asset";
+import { resolveShader, type Uniform } from "../../assets/shader";
 import { _k } from "../../kaplay";
 import { Vec2 } from "../../math/math";
 import { type Attributes, BlendMode, type RenderProps } from "../../types";

@@ -1,18 +1,16 @@
-import type { BitmapFontData } from "../../../assets";
+import type { BitmapFontData } from "../../../assets/bitmapFont";
 import { DEF_TEXT_SIZE } from "../../../constants";
-import { onLoad } from "../../../game";
+import { onLoad } from "../../../events/globalEvents";
 import { getRenderProps } from "../../../game/utils";
-import {
-    type CharTransform,
-    type CharTransformFunc,
-    compileStyledText,
-    drawFormattedText,
-    formatText,
-    type TextAlign,
-} from "../../../gfx";
-import { _k } from "../../../kaplay";
+import { drawFormattedText } from "../../../gfx/draw/drawFormattedText";
+import type {
+    CharTransform,
+    CharTransformFunc,
+    TextAlign,
+} from "../../../gfx/draw/drawText";
+import { compileStyledText, formatText } from "../../../gfx/formatText";
 import { Rect, vec2 } from "../../../math/math";
-import type { Comp, GameObj, KAPLAYCtx } from "../../../types";
+import type { Comp, GameObj } from "../../../types";
 
 /**
  * The {@link text `text()`} component.

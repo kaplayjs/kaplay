@@ -1,6 +1,6 @@
-import { Vec2 } from "../../../math/math";
+import type { KEventController } from "../../../events/events";
+import type { Vec2 } from "../../../math/math";
 import type { Comp, GameObj } from "../../../types";
-import type { KEventController } from "../../../utils";
 import type { PosComp } from "../transform/pos";
 
 export interface PatrolComp extends Comp {

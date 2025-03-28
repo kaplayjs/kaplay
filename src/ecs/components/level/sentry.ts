@@ -1,7 +1,7 @@
+import type { KEventController } from "../../../events/events";
 import { _k } from "../../../kaplay";
 import { Vec2 } from "../../../math/math";
 import type { Comp, GameObj, QueryOpt } from "../../../types";
-import type { KEventController } from "../../../utils";
 import { raycast } from "../draw/raycast";
 import type { PosComp } from "../transform/pos";
 

@@ -1,4 +1,4 @@
-import type { LineCap, LineJoin } from "../../../gfx";
+import type { LineCap, LineJoin } from "../../../gfx/draw/drawLine";
 import { Color, rgb } from "../../../math/color";
 import type { Comp, Outline } from "../../../types";
 

@@ -1,5 +1,5 @@
 import { expect, test } from "vitest";
-import { Vec2, vec2 } from "../../src/math";
+import { Vec2, vec2 } from "../../src/math/math";
 
 test("vec2(2, 1) should return Vec2(2, 1)", () => {
     const v = vec2(2, 1);

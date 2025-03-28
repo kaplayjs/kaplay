@@ -1,10 +1,6 @@
-import {
-    Asset,
-    type BitmapFontData,
-    FontData,
-    type GfxFont,
-    resolveFont,
-} from "../assets";
+import { Asset } from "../assets/asset";
+import type { BitmapFontData, GfxFont } from "../assets/bitmapFont";
+import { FontData, resolveFont } from "../assets/font";
 import {
     DEF_FONT_FILTER,
     DEF_TEXT_CACHE_SIZE,
@@ -14,15 +10,11 @@ import {
 import { _k } from "../kaplay";
 import { Color } from "../math/color";
 import { Quad, Vec2, vec2 } from "../math/math";
-import { type Outline, type TexFilter } from "../types";
-import { runes } from "../utils";
+import type { Outline, TexFilter } from "../types";
+import { runes } from "../utils/runes";
 import { alignPt } from "./anchor";
-import {
-    type CharTransform,
-    type DrawTextOpt,
-    type FormattedChar,
-    type FormattedText,
-} from "./draw";
+import type { FormattedChar, FormattedText } from "./draw/drawFormattedText";
+import type { CharTransform, DrawTextOpt } from "./draw/drawText";
 import { Texture } from "./gfx";
 
 type FontAtlas = {

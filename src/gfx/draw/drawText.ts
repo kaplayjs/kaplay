@@ -1,4 +1,5 @@
-import type { Asset, BitmapFontData } from "../../assets";
+import type { Asset } from "../../assets/asset";
+import type { BitmapFontData } from "../../assets/bitmapFont";
 import type { FontData } from "../../assets/font";
 import type { Color } from "../../math/color";
 import type { Vec2 } from "../../math/math";

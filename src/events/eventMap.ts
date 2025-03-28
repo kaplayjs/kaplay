@@ -1,5 +1,4 @@
-import type { Asset } from "../assets";
-
+import type { Asset } from "../assets/asset";
 import { type sprite } from "../ecs/components/draw/sprite";
 import { type agent } from "../ecs/components/level/agent";
 import { type patrol } from "../ecs/components/level/patrol";
@@ -10,9 +9,8 @@ import { type area } from "../ecs/components/physics/area";
 import { type body } from "../ecs/components/physics/body";
 import { type doubleJump } from "../ecs/components/physics/doubleJump";
 import { type offscreen } from "../ecs/components/transform/offscreen";
-
 import { type addLevel } from "../game/level";
-import type { Vec2 } from "../math";
+import type { Vec2 } from "../math/math";
 import type {
     Collision,
     GameObj,

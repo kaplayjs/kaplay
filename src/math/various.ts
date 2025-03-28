@@ -1,4 +1,3 @@
-import { height, width } from "../gfx";
 import type { GameObj } from "../types";
 import { deg2rad, Mat23, Vec2, vec2 } from "./math";
 

@@ -1,4 +1,4 @@
-import { mousePos } from "../../../gfx";
+import { mousePos } from "../../../gfx/stack";
 import { _k } from "../../../kaplay";
 import type { Comp, GameObj } from "../../../types";
 import type { PosComp } from "../transform/pos";

@@ -1,8 +1,8 @@
-import type { App } from "../app";
-import type { AudioCtx } from "../audio";
+import type { App } from "../app/app";
+import type { AudioCtx } from "../audio/audio";
 import { LOG_MAX } from "../constants";
-import type { Game } from "../game";
-import type { AppGfxCtx } from "../gfx";
+import type { Game } from "../game/game";
+import type { AppGfxCtx } from "../gfx/gfxApp";
 import type { Debug, KAPLAYOpt } from "../types";
 import type { FrameRenderer } from "./frameRendering";
 

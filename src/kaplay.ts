@@ -1,237 +1,32 @@
 // The definitive version!
 import packageJson from "../package.json";
-const VERSION = packageJson.version;
-
-import { type ButtonsDef } from "./app";
-
-import boomSpriteSrc from "./kassets/boom.png";
-import kaSpriteSrc from "./kassets/ka.png";
-
-import {
-    appendToPicture,
-    beginPicture,
-    center,
-    drawBezier,
-    drawCanvas,
-    drawCircle,
-    drawCurve,
-    drawDebug,
-    drawEllipse,
-    drawFormattedText,
-    drawFrame,
-    drawLine,
-    drawLines,
-    drawLoadScreen,
-    drawMasked,
-    drawPicture,
-    drawPolygon,
-    drawRect,
-    drawSprite,
-    drawSubtracted,
-    drawText,
-    drawTriangle,
-    drawUVQuad,
-    endPicture,
-    flush,
-    formatText,
-    FrameBuffer,
-    getBackground,
-    height,
-    mousePos,
-    Picture,
-    popTransform,
-    pushMatrix,
-    pushRotate,
-    pushScaleV,
-    pushTransform,
-    pushTranslateV,
-    setBackground,
-    updateViewport,
-    width,
-} from "./gfx";
-
+import type { ButtonsDef } from "./app/inputBindings";
+import { loadAseprite } from "./assets/aseprite";
 import {
     Asset,
     getAsset,
-    getBitmapFont,
     getFailedAssets,
-    getFont,
-    getShader,
-    getSound,
-    getSprite,
     load,
-    loadAseprite,
-    loadBean,
-    loadBitmapFont,
-    loadFont,
-    loadHappy,
     loadJSON,
-    loadMusic,
-    loadPedit,
     loadProgress,
     loadRoot,
+} from "./assets/asset";
+import { getBitmapFont, loadBitmapFont, loadHappy } from "./assets/bitmapFont";
+import { getFont, loadFont } from "./assets/font";
+import { loadPedit } from "./assets/pedit";
+import {
+    getShader,
     loadShader,
     loadShaderURL,
-    loadSound,
-    loadSprite,
-    loadSpriteAtlas,
-    SoundData,
-    SpriteData,
     type Uniform,
-} from "./assets";
-
+} from "./assets/shader";
+import { getSound, loadMusic, loadSound, SoundData } from "./assets/sound";
+import { getSprite, loadBean, loadSprite, SpriteData } from "./assets/sprite";
+import { loadSpriteAtlas } from "./assets/spriteAtlas";
+import { burp } from "./audio/burp";
+import { play } from "./audio/play";
+import { getVolume, setVolume, volume } from "./audio/volume";
 import { ASCII_CHARS, EVENT_CANCEL_SYMBOL } from "./constants";
-
-import {
-    bezier,
-    cardinal,
-    catmullRom,
-    chance,
-    choose,
-    chooseMultiple,
-    Circle,
-    clamp,
-    clipLineToCircle,
-    clipLineToRect,
-    Color,
-    curveLengthApproximation,
-    deg2rad,
-    easingCubicBezier,
-    easingLinear,
-    easingSteps,
-    Ellipse,
-    evaluateBezier,
-    evaluateBezierFirstDerivative,
-    evaluateBezierSecondDerivative,
-    evaluateCatmullRom,
-    evaluateCatmullRomFirstDerivative,
-    evaluateQuadratic,
-    evaluateQuadraticFirstDerivative,
-    evaluateQuadraticSecondDerivative,
-    gjkShapeIntersection,
-    gjkShapeIntersects,
-    hermite,
-    hsl2rgb,
-    isConvex,
-    kochanekBartels,
-    lerp,
-    Line,
-    map,
-    mapc,
-    Mat23,
-    Mat4,
-    NavMesh,
-    normalizedCurve,
-    Point,
-    Polygon,
-    Quad,
-    quad,
-    rad2deg,
-    rand,
-    randi,
-    randSeed,
-    Rect,
-    rgb,
-    RNG,
-    shuffle,
-    testCirclePolygon,
-    testLineCircle,
-    testLineLine,
-    testLinePoint,
-    testRectLine,
-    testRectPoint,
-    testRectRect,
-    triangulate,
-    Vec2,
-    vec2,
-    wave,
-} from "./math";
-
-import easings from "./math/easings";
-
-import {
-    download,
-    downloadBlob,
-    downloadJSON,
-    downloadText,
-    KEvent,
-    KEventController,
-    KEventHandler,
-} from "./utils";
-
-import {
-    BlendMode,
-    type Canvas,
-    type KAPLAYCtx,
-    type KAPLAYOpt,
-    type KAPLAYPlugin,
-    type MergePlugins,
-    type PluginList,
-    type Recording,
-} from "./types";
-
-import { burp, getVolume, play, setVolume, volume } from "./audio";
-
-import {
-    addKaboom,
-    addLevel,
-    camFlash,
-    camPos,
-    camRot,
-    camScale,
-    camTransform,
-    destroy,
-    flash,
-    getCamPos,
-    getCamRot,
-    getCamScale,
-    getCamTransform,
-    getDefaultLayer,
-    getGravity,
-    getGravityDirection,
-    getLayers,
-    getSceneName,
-    getTreeRoot,
-    go,
-    initEvents,
-    KeepFlags,
-    layers,
-    on,
-    onAdd,
-    onClick,
-    onCollide,
-    onCollideEnd,
-    onCollideUpdate,
-    onDestroy,
-    onDraw,
-    onError,
-    onFixedUpdate,
-    onHover,
-    onHoverEnd,
-    onHoverUpdate,
-    onLoad,
-    onLoadError,
-    onLoading,
-    onResize,
-    onSceneLeave,
-    onTag,
-    onUntag,
-    onUnuse,
-    onUpdate,
-    onUse,
-    scene,
-    setCamPos,
-    setCamRot,
-    setCamScale,
-    setGravity,
-    setGravityDirection,
-    setLayers,
-    shake,
-    toScreen,
-    toWorld,
-    trigger,
-} from "./game";
-
 import { createEngine } from "./core/engine";
 import { handleErr } from "./core/errors";
 import { blend } from "./ecs/components/draw/blend";
@@ -289,8 +84,189 @@ import { pos } from "./ecs/components/transform/pos";
 import { rotate } from "./ecs/components/transform/rotate";
 import { scale } from "./ecs/components/transform/scale";
 import { z } from "./ecs/components/transform/z";
+import { KeepFlags } from "./ecs/make";
 import { getCollisionSystem } from "./ecs/systems/collision";
+import { KEvent, KEventController, KEventHandler } from "./events/events";
+import {
+    on,
+    onAdd,
+    onClick,
+    onCollide,
+    onCollideEnd,
+    onCollideUpdate,
+    onDestroy,
+    onDraw,
+    onError,
+    onFixedUpdate,
+    onHover,
+    onHoverEnd,
+    onHoverUpdate,
+    onLoad,
+    onLoadError,
+    onLoading,
+    onResize,
+    onTag,
+    onUntag,
+    onUnuse,
+    onUpdate,
+    onUse,
+    trigger,
+} from "./events/globalEvents";
+import {
+    camFlash,
+    camPos,
+    camRot,
+    camScale,
+    camTransform,
+    flash,
+    getCamPos,
+    getCamRot,
+    getCamScale,
+    getCamTransform,
+    setCamPos,
+    setCamRot,
+    setCamScale,
+    shake,
+    toScreen,
+    toWorld,
+} from "./game/camera";
+import {
+    getGravity,
+    getGravityDirection,
+    setGravity,
+    setGravityDirection,
+} from "./game/gravity";
+import { initEvents } from "./game/initEvents";
+import { addKaboom } from "./game/kaboom";
+import { getDefaultLayer, getLayers, layers, setLayers } from "./game/layers";
+import { addLevel } from "./game/level";
+import { destroy, getTreeRoot } from "./game/object";
+import { getSceneName, go, onSceneLeave, scene } from "./game/scenes";
 import { LCEvents, system } from "./game/systems";
+import { getBackground, setBackground } from "./gfx/bg";
+import { FrameBuffer } from "./gfx/classes/FrameBuffer";
+import { drawBezier } from "./gfx/draw/drawBezier";
+import { drawCanvas } from "./gfx/draw/drawCanvas";
+import { drawCircle } from "./gfx/draw/drawCircle";
+import { drawCurve } from "./gfx/draw/drawCurve";
+import { drawDebug } from "./gfx/draw/drawDebug";
+import { drawEllipse } from "./gfx/draw/drawEllipse";
+import { drawFormattedText } from "./gfx/draw/drawFormattedText";
+import { drawFrame } from "./gfx/draw/drawFrame";
+import { drawLine, drawLines } from "./gfx/draw/drawLine";
+import { drawLoadScreen } from "./gfx/draw/drawLoadingScreen";
+import { drawMasked } from "./gfx/draw/drawMasked";
+import {
+    appendToPicture,
+    beginPicture,
+    drawPicture,
+    endPicture,
+    Picture,
+} from "./gfx/draw/drawPicture";
+import { drawPolygon } from "./gfx/draw/drawPolygon";
+import { drawRect } from "./gfx/draw/drawRect";
+import { drawSprite } from "./gfx/draw/drawSprite";
+import { drawSubtracted } from "./gfx/draw/drawSubstracted";
+import { drawText } from "./gfx/draw/drawText";
+import { drawTriangle } from "./gfx/draw/drawTriangle";
+import { drawUVQuad } from "./gfx/draw/drawUVQuad";
+import { formatText } from "./gfx/formatText";
+import {
+    center,
+    flush,
+    height,
+    mousePos,
+    popTransform,
+    pushMatrix,
+    pushRotate,
+    pushScaleV,
+    pushTransform,
+    pushTranslateV,
+    width,
+} from "./gfx/stack";
+import { updateViewport } from "./gfx/viewport";
+const VERSION = packageJson.version;
+
+import boomSpriteSrc from "./kassets/boom.png";
+import kaSpriteSrc from "./kassets/ka.png";
+import { clamp } from "./math/clamp";
+import { Color, hsl2rgb, rgb } from "./math/color";
+import easings from "./math/easings";
+import { gjkShapeIntersection, gjkShapeIntersects } from "./math/gjk";
+import {
+    bezier,
+    cardinal,
+    catmullRom,
+    chance,
+    choose,
+    chooseMultiple,
+    Circle,
+    clipLineToCircle,
+    clipLineToRect,
+    curveLengthApproximation,
+    deg2rad,
+    easingCubicBezier,
+    easingLinear,
+    easingSteps,
+    Ellipse,
+    evaluateBezier,
+    evaluateBezierFirstDerivative,
+    evaluateBezierSecondDerivative,
+    evaluateCatmullRom,
+    evaluateCatmullRomFirstDerivative,
+    evaluateQuadratic,
+    evaluateQuadraticFirstDerivative,
+    evaluateQuadraticSecondDerivative,
+    hermite,
+    isConvex,
+    kochanekBartels,
+    lerp,
+    Line,
+    map,
+    mapc,
+    Mat23,
+    Mat4,
+    normalizedCurve,
+    Point,
+    Polygon,
+    Quad,
+    quad,
+    rad2deg,
+    rand,
+    randi,
+    randSeed,
+    Rect,
+    RNG,
+    shuffle,
+    testCirclePolygon,
+    testLineCircle,
+    testLineLine,
+    testLinePoint,
+    testRectLine,
+    testRectPoint,
+    testRectRect,
+    triangulate,
+    Vec2,
+    vec2,
+    wave,
+} from "./math/math";
+import { NavMesh } from "./math/navigationmesh";
+import {
+    BlendMode,
+    type Canvas,
+    type KAPLAYCtx,
+    type KAPLAYOpt,
+    type KAPLAYPlugin,
+    type MergePlugins,
+    type PluginList,
+    type Recording,
+} from "./types";
+import {
+    download,
+    downloadBlob,
+    downloadJSON,
+    downloadText,
+} from "./utils/dataURL";
 
 /**
  * KAPLAY.js internal data

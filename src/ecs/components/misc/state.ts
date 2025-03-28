@@ -1,5 +1,5 @@
+import { KEvent, KEventController } from "../../../events/events";
 import type { Comp } from "../../../types";
-import { KEvent, KEventController } from "../../../utils";
 
 /**
  * The {@link state `state()`} component.

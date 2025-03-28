@@ -1,5 +1,5 @@
 import { getRenderProps } from "../../../game/utils";
-import { drawRect } from "../../../gfx";
+import { drawRect } from "../../../gfx/draw/drawRect";
 import { Rect, vec2 } from "../../../math/math";
 import type { Comp, GameObj } from "../../../types";
 

@@ -1,6 +1,6 @@
+import type { KEventController } from "../../../events/events";
 import { _k } from "../../../kaplay";
 import type { Comp, GameObj, KAPLAYCtx } from "../../../types";
-import type { KEventController } from "../../../utils";
 import type { TextComp } from "../draw/text";
 
 /**

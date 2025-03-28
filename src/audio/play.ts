@@ -1,7 +1,8 @@
-import { Asset, resolveSound, type SoundData } from "../assets";
+import { Asset } from "../assets/asset";
+import type { SoundData } from "../assets/sound";
+import { KEvent, type KEventController } from "../events/events";
 import { _k } from "../kaplay";
 import type { MusicData } from "../types";
-import { KEvent, type KEventController } from "../utils";
 import { playMusic } from "./playMusic";
 
 // TODO: enable setting on load, make part of SoundData

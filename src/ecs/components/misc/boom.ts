@@ -1,5 +1,5 @@
 import { _k } from "../../../kaplay";
-import { vec2 } from "../../../math";
+import { vec2 } from "../../../math/math";
 import type { Comp, GameObj } from "../../../types";
 import type { ScaleComp } from "../transform/scale";
 

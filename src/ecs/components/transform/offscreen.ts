@@ -1,9 +1,9 @@
 import { DEF_OFFSCREEN_DIS } from "../../../constants";
-import { onUpdate } from "../../../game";
-import { height, width } from "../../../gfx";
+import type { KEventController } from "../../../events/events";
+import { onUpdate } from "../../../events/globalEvents";
+import { height, width } from "../../../gfx/stack";
 import { Rect, testRectPoint, vec2 } from "../../../math/math";
 import type { Comp, GameObj } from "../../../types";
-import type { KEventController } from "../../../utils";
 import type { RectComp } from "../draw/rect";
 import type { PosComp } from "./pos";
 
