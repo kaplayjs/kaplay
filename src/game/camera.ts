@@ -1,4 +1,7 @@
-import { color, fixed, opacity, rect } from "../components";
+import { color } from "../ecs/components/draw/color";
+import { opacity } from "../ecs/components/draw/opacity";
+import { rect } from "../ecs/components/draw/rect";
+import { fixed } from "../ecs/components/transform/fixed";
 import { center, height, width } from "../gfx";
 import { _k } from "../kaplay";
 import { type Color, rgb } from "../math/color";

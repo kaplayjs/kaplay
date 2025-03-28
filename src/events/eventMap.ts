@@ -1,16 +1,16 @@
 import type { Asset } from "../assets";
-import {
-    type agent,
-    type animate,
-    type area,
-    type body,
-    type doubleJump,
-    type health,
-    type offscreen,
-    type patrol,
-    type sentry,
-    type sprite,
-} from "../components";
+
+import { type sprite } from "../ecs/components/draw/sprite";
+import { type agent } from "../ecs/components/level/agent";
+import { type patrol } from "../ecs/components/level/patrol";
+import { type sentry } from "../ecs/components/level/sentry";
+import { type animate } from "../ecs/components/misc/animate";
+import { type health } from "../ecs/components/misc/health";
+import { type area } from "../ecs/components/physics/area";
+import { type body } from "../ecs/components/physics/body";
+import { type doubleJump } from "../ecs/components/physics/doubleJump";
+import { type offscreen } from "../ecs/components/transform/offscreen";
+
 import { type addLevel } from "../game/level";
 import type { Vec2 } from "../math";
 import type {

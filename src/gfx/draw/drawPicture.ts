@@ -1,5 +1,5 @@
 import type { Shader, Uniform } from "../../assets";
-import { blend } from "../../components";
+import { blend } from "../../ecs/components/draw/blend";
 import { getCamTransform } from "../../game";
 import { _k } from "../../kaplay";
 import { Mat4 } from "../../math";

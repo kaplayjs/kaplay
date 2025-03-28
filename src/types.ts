@@ -1,14 +1,8 @@
-import type {
-    App,
-    ButtonBinding,
-    ButtonBindingDevice,
-    ButtonsDef,
-} from "./app";
+import type { ButtonBinding, ButtonBindingDevice, ButtonsDef } from "./app";
 import type {
     AsepriteData,
     Asset,
     BitmapFontData,
-    initAssets,
     LoadBitmapFontOpt,
     LoadSpriteOpt,
     LoadSpriteSrc,
@@ -19,92 +13,91 @@ import type {
     Uniform,
 } from "./assets";
 import type { FontData } from "./assets/font";
-import type { AudioCtx, AudioPlay, AudioPlayOpt } from "./audio";
-import type {
-    AgentComp,
-    AgentCompOpt,
-    AnchorComp,
-    AnimateComp,
-    AnimateCompOpt,
-    AreaComp,
-    AreaCompOpt,
-    AreaEffectorComp,
-    AreaEffectorCompOpt,
-    BlendComp,
-    BodyComp,
-    BodyCompOpt,
-    BuoyancyEffectorComp,
-    BuoyancyEffectorCompOpt,
-    CircleComp,
-    CircleCompOpt,
-    ColorComp,
-    ConstantForceComp,
-    ConstantForceCompOpt,
-    DoubleJumpComp,
-    DrawonComp,
-    DrawonOpt,
-    FakeMouseComp,
-    FakeMouseOpt,
-    FixedComp,
-    FollowComp,
-    HealthComp,
-    LayerComp,
-    LevelComp,
-    LevelOpt,
-    LifespanCompOpt,
-    MaskComp,
-    NamedComp,
-    OffScreenComp,
-    OffScreenCompOpt,
-    OpacityComp,
-    OutlineComp,
-    PathfinderComp,
-    PathfinderCompOpt,
-    PatrolComp,
-    PatrolCompOpt,
-    PlatformEffectorComp,
-    PlatformEffectorCompOpt,
-    PointEffectorComp,
-    PointEffectorCompOpt,
-    PolygonComp,
-    PolygonCompOpt,
-    PosComp,
-    RectComp,
-    RectCompOpt,
-    RotateComp,
-    ScaleComp,
-    SentryCandidates,
-    SentryComp,
-    SentryCompOpt,
-    ShaderComp,
-    SpriteComp,
-    SpriteCompOpt,
-    StateComp,
-    StayComp,
-    SurfaceEffectorComp,
-    SurfaceEffectorCompOpt,
-    TextComp,
-    TextCompOpt,
-    TextInputComp,
-    TileComp,
-    TileCompOpt,
-    TimerComp,
-    UVQuadComp,
-    VideoComp,
-    VideoCompOpt,
-    ZComp,
-} from "./components/";
-import type { EllipseComp } from "./components/draw/ellipse";
+import type { AudioPlay, AudioPlayOpt } from "./audio";
+import type { Engine } from "./core/engine";
+import type { BlendComp } from "./ecs/components/draw/blend";
+import type { CircleComp, CircleCompOpt } from "./ecs/components/draw/circle";
+import type { ColorComp } from "./ecs/components/draw/color";
+import type { DrawonComp, DrawonOpt } from "./ecs/components/draw/drawon";
+import type { EllipseComp } from "./ecs/components/draw/ellipse";
+import type { MaskComp } from "./ecs/components/draw/mask";
+import type { OpacityComp } from "./ecs/components/draw/opacity";
+import type { OutlineComp } from "./ecs/components/draw/outline";
 import type {
     EmitterOpt,
     ParticlesComp,
     ParticlesOpt,
-} from "./components/draw/particles";
-import type { PictureComp } from "./components/draw/picture";
-import type { Engine } from "./core/engine";
+} from "./ecs/components/draw/particles";
+import type { PictureComp } from "./ecs/components/draw/picture";
+import type {
+    PolygonComp,
+    PolygonCompOpt,
+} from "./ecs/components/draw/polygon";
+import type { RectComp, RectCompOpt } from "./ecs/components/draw/rect";
+import type { ShaderComp } from "./ecs/components/draw/shader";
+import type { SpriteComp, SpriteCompOpt } from "./ecs/components/draw/sprite";
+import type { TextComp, TextCompOpt } from "./ecs/components/draw/text";
+import type { UVQuadComp } from "./ecs/components/draw/uvquad";
+import type { VideoComp, VideoCompOpt } from "./ecs/components/draw/video";
+import type { AgentComp, AgentCompOpt } from "./ecs/components/level/agent";
+import type { LevelComp, LevelOpt } from "./ecs/components/level/level";
+import type {
+    PathfinderComp,
+    PathfinderCompOpt,
+} from "./ecs/components/level/pathfinder";
+import type { PatrolComp, PatrolCompOpt } from "./ecs/components/level/patrol";
+import type {
+    SentryCandidates,
+    SentryComp,
+    SentryCompOpt,
+} from "./ecs/components/level/sentry";
+import type { TileComp, TileCompOpt } from "./ecs/components/level/tile";
+import type {
+    AnimateComp,
+    AnimateCompOpt,
+} from "./ecs/components/misc/animate";
+import type {
+    FakeMouseComp,
+    FakeMouseOpt,
+} from "./ecs/components/misc/fakeMouse";
+import type { HealthComp } from "./ecs/components/misc/health";
+import type { LifespanCompOpt } from "./ecs/components/misc/lifespan";
+import type { NamedComp } from "./ecs/components/misc/named";
+import type { StateComp } from "./ecs/components/misc/state";
+import type { StayComp } from "./ecs/components/misc/stay";
+import type { TextInputComp } from "./ecs/components/misc/textInput";
+import type { TimerComp } from "./ecs/components/misc/timer";
+import type { AreaComp, AreaCompOpt } from "./ecs/components/physics/area";
+import type { BodyComp, BodyCompOpt } from "./ecs/components/physics/body";
+import type { DoubleJumpComp } from "./ecs/components/physics/doubleJump";
+import type {
+    AreaEffectorComp,
+    AreaEffectorCompOpt,
+    BuoyancyEffectorComp,
+    BuoyancyEffectorCompOpt,
+    ConstantForceComp,
+    ConstantForceCompOpt,
+    PlatformEffectorComp,
+    PlatformEffectorCompOpt,
+    PointEffectorComp,
+    PointEffectorCompOpt,
+    SurfaceEffectorComp,
+    SurfaceEffectorCompOpt,
+} from "./ecs/components/physics/effectors";
+import type { AnchorComp } from "./ecs/components/transform/anchor";
+import type { FixedComp } from "./ecs/components/transform/fixed";
+import type { FollowComp } from "./ecs/components/transform/follow";
+import type { LayerComp } from "./ecs/components/transform/layer";
+import type {
+    OffScreenComp,
+    OffScreenCompOpt,
+} from "./ecs/components/transform/offscreen";
+import type { PosComp } from "./ecs/components/transform/pos";
+import type { RotateComp } from "./ecs/components/transform/rotate";
+import type { ScaleComp } from "./ecs/components/transform/scale";
+import type { ZComp } from "./ecs/components/transform/z";
 import type {
     BoomOpt,
-    Game,
     GameObjEventNames,
     GameObjEvents,
     KeepFlags,
@@ -113,9 +106,8 @@ import type {
     SetParentOpt,
     TupleWithoutFirst,
 } from "./game";
-import type { LCEvents, System } from "./game/systems";
+import type { LCEvents } from "./game/systems";
 import type {
-    AppGfxCtx,
     DrawBezierOpt,
     DrawCanvasOpt,
     DrawCircleOpt,
