@@ -174,7 +174,7 @@ works all CDNs that supports NPM packages, e.g. jsdelivr, skypack
 
 - [Discord Server](https://discord.gg/aQ6RuQm3TF)
 - [GitHub Discussions](https://github.com/kaplayjs/kaplay/discussions)
-- [Twitter](https://twitter.com/Kaboomjs)
+- [Twitter](https://twitter.com/kaplayjs)
 
 ### Games
 
