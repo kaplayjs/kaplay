@@ -104,4 +104,12 @@ describe("Type Inference from add()", () => {
 
         expectTypeOf(obj.propertyA).toBeBoolean();
     });
+
+    test("inline component should be writable", () => {
+        const obj = k.add([
+            k.circle(1),
+            { eaten: false }
+        ]);
+        obj.eaten = true;
+    });
 });

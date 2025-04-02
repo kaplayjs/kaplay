@@ -12,5 +12,8 @@
     "/src/components/transform",
     "/src/ecs/components"
   ],
-  "typescript.preferences.importModuleSpecifier": "shortest"
+"typescript.preferences.importModuleSpecifier": "shortest",
+"cSpell.words": [
+    "KAPLAY"
+]
 }
