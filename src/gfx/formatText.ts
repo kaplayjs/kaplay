@@ -31,6 +31,8 @@ function applyCharTransform(fchar: FormattedChar, tr: CharTransform) {
     if (tr.stretchInPlace !== undefined) {
         fchar.stretchInPlace = tr.stretchInPlace;
     }
+    if (tr.shader !== undefined) fchar.shader = tr.shader;
+    if (tr.uniform !== undefined) fchar.uniform = tr.uniform;
     if (tr.override) {
         Object.assign(fchar, tr);
         return;

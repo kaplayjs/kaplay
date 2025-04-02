@@ -1,6 +1,7 @@
 import type { Asset } from "../../assets/asset";
 import type { BitmapFontData } from "../../assets/bitmapFont";
 import type { FontData } from "../../assets/font";
+import type { Uniform } from "../../assets/shader";
 import type { Color } from "../../math/color";
 import type { Vec2 } from "../../math/math";
 import type { Anchor, RenderProps } from "../../types";
@@ -138,6 +139,18 @@ export interface CharTransform {
      * @default false
      */
     stretchInPlace?: boolean;
+
+    /**
+     * A name for a shader that will be applied to this character only.
+     */
+    shader?: string;
+
+    /**
+     * Values to use for the shader's uniform inputs.
+     * If there is no shader set (by this character's transform or an entire-text
+     * transform), this is not used.
+     */
+    uniform?: Uniform;
 }
 
 /**
