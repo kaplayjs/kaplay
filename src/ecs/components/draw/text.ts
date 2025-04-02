@@ -2,13 +2,13 @@ import type { BitmapFontData } from "../../../assets/bitmapFont";
 import { DEF_TEXT_SIZE } from "../../../constants";
 import { onLoad } from "../../../events/globalEvents";
 import { getRenderProps } from "../../../game/utils";
-import { drawFormattedText } from "../../../gfx/draw/drawFormattedText";
+import { drawFormattedText, type FormattedText } from "../../../gfx/draw/drawFormattedText";
 import type {
     CharTransform,
     CharTransformFunc,
     TextAlign,
 } from "../../../gfx/draw/drawText";
-import { compileStyledText, formatText } from "../../../gfx/formatText";
+import { formatText } from "../../../gfx/formatText";
 import { Rect, vec2 } from "../../../math/math";
 import type { Comp, GameObj } from "../../../types";
 
@@ -23,10 +23,6 @@ export interface TextComp extends Comp {
      * The text to render.
      */
     text: string;
-    /**
-     * The text after formatting.
-     */
-    renderedText: string;
     /**
      * The text size.
      */
@@ -77,6 +73,11 @@ export interface TextComp extends Comp {
      * @since v3000.0
      */
     renderArea(): Rect;
+    /**
+     * The text data object after formatting, that contains the
+     * renering info as well as the parse data of the formatting tags.
+     */
+    formattedText(): FormattedText;
 }
 
 /**
@@ -135,8 +136,9 @@ export interface TextCompOpt {
 }
 
 export function text(t: string, opt: TextCompOpt = {}): TextComp {
+    let theFormattedText: FormattedText
     function update(obj: GameObj<TextComp | any>) {
-        const ftext = formatText(Object.assign(getRenderProps(obj), {
+        theFormattedText = formatText(Object.assign(getRenderProps(obj), {
             text: obj.text + "",
             size: obj.textSize,
             font: obj.font,
@@ -144,28 +146,25 @@ export function text(t: string, opt: TextCompOpt = {}): TextComp {
             align: obj.align,
             letterSpacing: obj.letterSpacing,
             lineSpacing: obj.lineSpacing,
-            // TODO: shouldn't run when object / ancestor is paused
             transform: obj.textTransform,
             styles: obj.textStyles,
             indentAll: opt.indentAll,
         }));
 
         if (!opt.width) {
-            obj.width = ftext.width / (obj.scale?.x || 1);
+            obj.width = theFormattedText.width / (obj.scale?.x || 1);
         }
 
-        obj.height = ftext.height / (obj.scale?.y || 1);
-
-        return ftext;
+        obj.height = theFormattedText.height / (obj.scale?.y || 1);
     }
+
 
     const obj = {
         id: "text",
         set text(nt) {
             t = nt;
-            // @ts-ignore
+            // @ts-expect-error
             update(this);
-            this.renderedText = compileStyledText(t).text;
         },
         get text() {
             return t;
@@ -179,14 +178,21 @@ export function text(t: string, opt: TextCompOpt = {}): TextComp {
         letterSpacing: opt.letterSpacing,
         textTransform: opt.transform,
         textStyles: opt.styles,
-        renderedText: t ? compileStyledText(t).text : "",
+
+        formattedText(this: GameObj<TextComp>) {
+            return theFormattedText;
+        },
 
         add(this: GameObj<TextComp>) {
             onLoad(() => update(this));
         },
 
         draw(this: GameObj<TextComp>) {
-            drawFormattedText(update(this));
+            drawFormattedText(theFormattedText);
+        },
+
+        update(this: GameObj<TextComp>) {
+            update(this);
         },
 
         renderArea() {
@@ -194,7 +200,7 @@ export function text(t: string, opt: TextCompOpt = {}): TextComp {
         },
     };
 
-    // @ts-ignore
+    // @ts-expect-error
     update(obj);
 
     // @ts-ignore Deep check in text related methods

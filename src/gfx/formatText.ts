@@ -24,6 +24,11 @@ type FontAtlas = {
     outline: Outline | null;
 };
 
+export type StyledTextInfo = {
+    charStyleMap: Record<number, string[]>;
+    text: string;
+};
+
 const fontAtlases: Record<string, FontAtlas> = {};
 
 function applyCharTransform(fchar: FormattedChar, tr: CharTransform) {
@@ -45,10 +50,7 @@ function applyCharTransform(fchar: FormattedChar, tr: CharTransform) {
     if (tr.opacity != null) fchar.opacity *= tr.opacity;
 }
 
-export function compileStyledText(txt: string): {
-    charStyleMap: Record<number, string[]>;
-    text: string;
-} {
+export function compileStyledText(txt: any): StyledTextInfo {
     const charStyleMap = {} as Record<number, string[]>;
     let renderText = "";
     let styleStack: string[] = [];
@@ -84,8 +86,7 @@ export function compileStyledText(txt: string): {
                 if (x !== gn) {
                     if (x !== undefined) {
                         throw new Error(
-                            "Styled text error: mismatched tags. "
-                                + `Expected [/${x}], got [/${gn}]`,
+                            `Styled text error: mismatched tags. Expected [/${x}], got [/${gn}]`,
                         );
                     }
                     else {
@@ -105,7 +106,7 @@ export function compileStyledText(txt: string): {
 
     if (styleStack.length > 0) {
         throw new Error(
-            `Styled text error: unclosed tags ${styleStack}`,
+            `Styled text error: unclosed tags ${styleStack.join(", ")}`,
         );
     }
 
@@ -132,14 +133,14 @@ function getFontAtlasForFont(font: FontData | string): FontAtlas {
             outline: Outline | null;
             filter: TexFilter;
         } = font instanceof FontData
-            ? {
-                outline: font.outline,
-                filter: font.filter,
-            }
-            : {
-                outline: null,
-                filter: DEF_FONT_FILTER,
-            };
+                ? {
+                    outline: font.outline,
+                    filter: font.filter,
+                }
+                : {
+                    outline: null,
+                    filter: DEF_FONT_FILTER,
+                };
 
         // TODO: customizable font tex filter
         atlas = {
@@ -466,21 +467,21 @@ export function formatText(opt: DrawTextOpt): FormattedText {
         tw = opt.width;
     }
 
-    const fchars: FormattedChar[] = [];
+    const formattedChars: FormattedChar[] = [];
 
     for (let i = 0; i < lines.length; i++) {
         const ox = (tw - lines[i].width) * alignPt(opt.align ?? "left");
-        for (const fchar of lines[i].chars) {
-            fchar.ch.pos = fchar.ch.pos.add(ox, 0);
-            fchars.push(fchar.ch);
+        for (const { ch: fChar } of lines[i].chars) {
+            fChar.pos = fChar.pos.add(ox, 0);
+            formattedChars.push(fChar);
         }
     }
 
     return {
         width: tw,
         height: th,
-        chars: fchars,
-        opt: opt,
+        chars: formattedChars,
+        opt,
         renderedText: text,
     };
 }
