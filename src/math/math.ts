@@ -1460,13 +1460,13 @@ export class Mat4 {
     }
 }
 
-export function wave(
-    lo: number,
-    hi: number,
+export function wave<V extends LerpValue>(
+    lo: V,
+    hi: V,
     t: number,
     f = (t: number) => -Math.cos(t),
-): number {
-    return lo + (f(t) + 1) / 2 * (hi - lo);
+): V {
+    return lerp(lo, hi, (f(t) + 1) / 2);
 }
 
 // basic ANSI C LCG
