@@ -133,14 +133,14 @@ function getFontAtlasForFont(font: FontData | string): FontAtlas {
             outline: Outline | null;
             filter: TexFilter;
         } = font instanceof FontData
-                ? {
-                    outline: font.outline,
-                    filter: font.filter,
-                }
-                : {
-                    outline: null,
-                    filter: DEF_FONT_FILTER,
-                };
+            ? {
+                outline: font.outline,
+                filter: font.filter,
+            }
+            : {
+                outline: null,
+                filter: DEF_FONT_FILTER,
+            };
 
         // TODO: customizable font tex filter
         atlas = {
@@ -300,7 +300,6 @@ export function formatText(opt: DrawTextOpt): FormattedText {
 
         // always new line on '\n'
         if (ch === "\n") {
-
             lines.push({
                 width: curX - letterSpacing,
                 chars: curLine,
@@ -431,9 +430,11 @@ export function formatText(opt: DrawTextOpt): FormattedText {
                     lastSpace = curLine.length;
                     lastSpaceWidth = curX;
                 }
-                if (opt.indentAll
+                if (
+                    opt.indentAll
                     && paraIndentX === undefined
-                    && /\S/.test(ch)) {
+                    && /\S/.test(ch)
+                ) {
                     paraIndentX = curX;
                 }
 
@@ -451,7 +452,6 @@ export function formatText(opt: DrawTextOpt): FormattedText {
         chars: curLine,
     });
 
-
     if (opt.width) {
         tw = opt.width;
     }
@@ -467,8 +467,10 @@ export function formatText(opt: DrawTextOpt): FormattedText {
         for (const { ch } of lines[i].chars) {
             ch.pos = ch.pos.add(ox, th);
             formattedChars.push(ch);
-            thisLineHeight = Math.max(thisLineHeight,
-                size * (ch.stretchInPlace ? scale : ch.scale).y / scale.y)
+            thisLineHeight = Math.max(
+                thisLineHeight,
+                size * (ch.stretchInPlace ? scale : ch.scale).y / scale.y,
+            );
         }
         th += thisLineHeight;
     }

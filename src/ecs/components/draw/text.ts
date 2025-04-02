@@ -2,7 +2,10 @@ import type { BitmapFontData } from "../../../assets/bitmapFont";
 import { DEF_TEXT_SIZE } from "../../../constants";
 import { onLoad } from "../../../events/globalEvents";
 import { getRenderProps } from "../../../game/utils";
-import { drawFormattedText, type FormattedText } from "../../../gfx/draw/drawFormattedText";
+import {
+    drawFormattedText,
+    type FormattedText,
+} from "../../../gfx/draw/drawFormattedText";
 import type {
     CharTransform,
     CharTransformFunc,
@@ -136,7 +139,7 @@ export interface TextCompOpt {
 }
 
 export function text(t: string, opt: TextCompOpt = {}): TextComp {
-    let theFormattedText: FormattedText
+    let theFormattedText: FormattedText;
     function update(obj: GameObj<TextComp | any>) {
         theFormattedText = formatText(Object.assign(getRenderProps(obj), {
             text: obj.text + "",
@@ -157,7 +160,6 @@ export function text(t: string, opt: TextCompOpt = {}): TextComp {
 
         obj.height = theFormattedText.height / (obj.scale?.y || 1);
     }
-
 
     const obj = {
         id: "text",

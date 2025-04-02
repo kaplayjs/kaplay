@@ -1,6 +1,7 @@
 kaplay();
 
-const text = "hello [foo]styled[/foo] world \\[weird tag] with \\] [barbaz]some more [nested]text[/nested][/barbaz] bloop";
+const text =
+    "hello [foo]styled[/foo] world \\[weird tag] with \\] [barbaz]some more [nested]text[/nested][/barbaz] bloop";
 // const text = "hello [a][b]a[/b][/a] goodbye";
 const formatted = compileStyledText(text);
 console.log(formatted);
@@ -8,12 +9,15 @@ console.log(formatted);
 function tagDiff(l1, l2) {
     var min = 0;
     var out = "";
-    while (l1[min] === l2[min] && min < l1.length && min < l2.length)
+    while (l1[min] === l2[min] && min < l1.length && min < l2.length) {
         min++;
-    for (var i = l1.length - 1; i >= min; i--)
+    }
+    for (var i = l1.length - 1; i >= min; i--) {
         out += `[/${l1[i]}]`;
-    for (var j = min; j < l2.length; j++)
+    }
+    for (var j = min; j < l2.length; j++) {
         out += `[${l2[j]}]`;
+    }
     return out;
 }
 
