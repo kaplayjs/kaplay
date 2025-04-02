@@ -5795,12 +5795,23 @@ type RemoveCompProps<T> = Defined<
     }
 >;
 
+type ToPrimitive<T> = T extends string ? string
+    : T extends number ? number
+    : T extends boolean ? boolean
+    : T;
+
+export type WideLiterals<T> = T extends Comp ? T : {
+    -readonly [
+        K in keyof T
+    ]: ToPrimitive<T[K]>;
+};
+
 /**
  * A type to merge the components of a game object, omitting the default component properties.
  *
  * @group Component Types
  */
-export type MergeComps<T> = MergeObj<RemoveCompProps<T>>;
+export type MergeComps<T> = MergeObj<RemoveCompProps<WideLiterals<T>>>;
 
 export type MergePlugins<T extends PluginList<any>> = MergeObj<
     ReturnType<T[number]>

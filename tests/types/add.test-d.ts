@@ -108,8 +108,9 @@ describe("Type Inference from add()", () => {
     test("inline component should be writable", () => {
         const obj = k.add([
             k.circle(1),
-            { eaten: false }
+            { eaten: false },
         ]);
+
         obj.eaten = true;
     });
 });
