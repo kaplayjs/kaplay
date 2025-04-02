@@ -113,4 +113,20 @@ describe("Type Inference from add()", () => {
 
         obj.eaten = true;
     });
+
+    test("readonly on typed component is preserved", () => {
+        const comp: {
+            readonly friendly: boolean;
+        } = {
+            friendly: true
+        };
+
+        const obj = k.add([
+            k.circle(1),
+            comp,
+        ]);
+
+        // @ts-expect-error
+        obj.friendly = true;
+    });
 });
