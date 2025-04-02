@@ -284,7 +284,6 @@ export function formatText(opt: DrawTextOpt): FormattedText {
     const letterSpacing = opt.letterSpacing ?? 0;
     let curX: number = 0;
     let tw = 0;
-    let th = 0;
     const lines: Array<{
         width: number;
         chars: { ch: FormattedChar; font: GfxFont }[];
@@ -301,7 +300,6 @@ export function formatText(opt: DrawTextOpt): FormattedText {
 
         // always new line on '\n'
         if (ch === "\n") {
-            th += size + lineSpacing;
 
             lines.push({
                 width: curX - letterSpacing,
@@ -328,11 +326,10 @@ export function formatText(opt: DrawTextOpt): FormattedText {
             > = {
                 tex: defGfxFont.tex,
                 ch: ch,
-                pos: new Vec2(curX, th),
+                pos: vec2(curX, 0),
                 opacity: opt.opacity ?? 1,
                 color: opt.color ?? Color.WHITE,
                 scale: vec2(scale),
-                oscale: vec2(scale),
                 angle: 0,
                 font: defaultFontValue,
                 stretchInPlace: true,
@@ -386,22 +383,16 @@ export function formatText(opt: DrawTextOpt): FormattedText {
             if (q) {
                 let gw = q.w
                     * (theFChar.stretchInPlace
-                        ? theFChar.oscale
+                        ? scale
                         : theFChar.scale).x;
-                let move = vec2(0);
 
                 if (opt.width && curX + gw > opt.width) {
                     // new line on last word if width exceeds
-                    th += size + lineSpacing;
-                    move.y = size + lineSpacing;
-                    let oldCurX = curX;
-                    let needToRedoLastWord = false;
                     if (lastSpace != null) {
                         cursor -= curLine.length - lastSpace;
                         // omit trailing space
                         curLine = curLine.slice(0, lastSpace - 1);
                         curX = lastSpaceWidth;
-                        needToRedoLastWord = true;
                     }
                     lastSpace = null;
                     lastSpaceWidth = 0;
@@ -413,8 +404,7 @@ export function formatText(opt: DrawTextOpt): FormattedText {
 
                     curX = paraIndentX ?? 0;
                     curLine = [];
-                    if (needToRedoLastWord) continue;
-                    move.x = curX - oldCurX;
+                    continue;
                 }
 
                 theFChar.width = q.w;
@@ -427,8 +417,8 @@ export function formatText(opt: DrawTextOpt): FormattedText {
                 );
 
                 theFChar.pos = theFChar.pos.add(
-                    gw * 0.5 + move.x,
-                    q.h * theFChar.scale.y * 0.5 + move.y,
+                    gw * 0.5,
+                    q.h * theFChar.scale.y * 0.5,
                 );
 
                 // push char
@@ -441,9 +431,9 @@ export function formatText(opt: DrawTextOpt): FormattedText {
                     lastSpace = curLine.length;
                     lastSpaceWidth = curX;
                 }
-                if (
-                    opt.indentAll && paraIndentX === undefined && /\S/.test(ch)
-                ) {
+                if (opt.indentAll
+                    && paraIndentX === undefined
+                    && /\S/.test(ch)) {
                     paraIndentX = curX;
                 }
 
@@ -461,7 +451,6 @@ export function formatText(opt: DrawTextOpt): FormattedText {
         chars: curLine,
     });
 
-    th += size;
 
     if (opt.width) {
         tw = opt.width;
@@ -469,12 +458,19 @@ export function formatText(opt: DrawTextOpt): FormattedText {
 
     const formattedChars: FormattedChar[] = [];
 
+    let th = 0;
+
     for (let i = 0; i < lines.length; i++) {
+        if (i > 0) th += lineSpacing;
         const ox = (tw - lines[i].width) * alignPt(opt.align ?? "left");
-        for (const { ch: fChar } of lines[i].chars) {
-            fChar.pos = fChar.pos.add(ox, 0);
-            formattedChars.push(fChar);
+        var thisLineHeight = size;
+        for (const { ch } of lines[i].chars) {
+            ch.pos = ch.pos.add(ox, th);
+            formattedChars.push(ch);
+            thisLineHeight = Math.max(thisLineHeight,
+                size * (ch.stretchInPlace ? scale : ch.scale).y / scale.y)
         }
+        th += thisLineHeight;
     }
 
     return {

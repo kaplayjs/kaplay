@@ -135,7 +135,7 @@ export interface CharTransform {
      * If true, characters that have a X scale that is not 1 won't have the bounding box stretched to fit the character,
      * and may end up overlapping with adjacent characters.
      *
-     * @default false
+     * @default true
      */
     stretchInPlace?: boolean;
 }
