@@ -1,8 +1,14 @@
-// @ts-check
+/**
+ * @file AI with State Machines
+ * @description How to create simple game AI using state machines.
+ * @difficulty 0
+ * @tags basics, ai
+ * @minver 3001
+ */
 
 // Use state() component to handle basic AI
 
-// Start kaplay
+// Start KAPLAY
 kaplay();
 
 // Load assets

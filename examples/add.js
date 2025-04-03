@@ -1,4 +1,10 @@
-// @ts-check
+/**
+ * @file Add game objects
+ * @description How to create game objects.
+ * @difficulty 0
+ * @tags basics
+ * @minver 3001
+ */
 
 // Adding game objects to screen
 

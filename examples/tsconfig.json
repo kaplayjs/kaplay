@@ -12,6 +12,7 @@
     "strict": true,
     "allowJs": true,
     "moduleDetection": "force",
-    "noImplicitAny": false
+    "noImplicitAny": false,
+    "checkJs": true
   }
 }
