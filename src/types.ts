@@ -118,6 +118,7 @@ import type { DrawRectOpt } from "./gfx/draw/drawRect";
 import type { DrawSpriteOpt } from "./gfx/draw/drawSprite";
 import type { DrawTextOpt } from "./gfx/draw/drawText";
 import type { DrawTriangleOpt } from "./gfx/draw/drawTriangle";
+import type { StyledTextInfo } from "./gfx/formatText";
 import type { Texture } from "./gfx/gfx";
 import type { Color, CSSColor, RGBAValue, RGBValue } from "./math/color";
 import type { GjkCollisionResult } from "./math/gjk";
@@ -5479,6 +5480,15 @@ export interface KAPLAYCtx<
      * @group Draw
      */
     formatText(options: DrawTextOpt): FormattedText;
+    /**
+     * Parses the text that has formatting tags, and returns the unstyled text
+     * (the actual characters that will be displayed) as well as which styles are
+     * active on each character.
+     *
+     * @since v4000
+     * @group Draw
+     */
+    compileStyledText(text: any): StyledTextInfo;
     /**
      * Create a canvas to draw stuff offscreen.
      *

@@ -170,7 +170,7 @@ import { drawSubtracted } from "./gfx/draw/drawSubstracted";
 import { drawText } from "./gfx/draw/drawText";
 import { drawTriangle } from "./gfx/draw/drawTriangle";
 import { drawUVQuad } from "./gfx/draw/drawUVQuad";
-import { formatText } from "./gfx/formatText";
+import { compileStyledText, formatText } from "./gfx/formatText";
 import {
     center,
     flush,
@@ -927,6 +927,7 @@ const kaplay = <
         drawSprite,
         drawText,
         formatText,
+        compileStyledText,
         drawRect,
         drawLine,
         drawLines,

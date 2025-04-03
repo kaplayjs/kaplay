@@ -34,7 +34,6 @@ export interface FormattedChar {
     quad: Quad;
     pos: Vec2;
     scale: Vec2;
-    oscale: Vec2;
     angle: number;
     color: Color;
     opacity: number;
