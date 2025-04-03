@@ -11,6 +11,8 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
         with:
+          token: ${{ secrets.BOT_TOKEN }}
+          submodules: true
           ref: ${{ github.event.pull_request.head.ref }}
       - name: Install Node.js
         uses: actions/setup-node@v4
@@ -20,14 +22,16 @@ jobs:
         name: Install pnpm
         with:
           run_install: false
-      - name: Install dependencies
-        run: pnpm install
+      - name: Install dprint
+        run: pnpm i dprint
       - name: Run Formatter
         run: pnpm run fmt
       - name: Commit and Push
+        env:
+          BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
         run: |
-          git config user.name "Bag Bot"
-          git config user.email "<${{ github.actor_id }}+${{ github.actor }}@users.noreply.github.com"
+          git config --global user.name "Bag Bot"
+          git config --global user.email "lajbel@kaplayjs.com"
           git add .
           git commit -m "style: fmt" || echo "No changes to commit"
-          git push origin HEAD:${{ github.event.pull_request.head.ref }}
+          git push https://x-access-token:$BOT_TOKEN@github.com/${{ github.repository }}.git
