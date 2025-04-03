@@ -1,4 +1,4 @@
-import type { AreaComp } from "../../components";
+import type { AreaComp } from "../../ecs/components/physics/area";
 import type { GameObj } from "../../types";
 import { calcTransform } from "../various";
 

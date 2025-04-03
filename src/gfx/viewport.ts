@@ -7,7 +7,7 @@ export function updateViewport() {
     // window size (will be the same as view size except letterbox mode)
 
     // canvas size
-    const pd = _k.pixelDensity;
+    const pd = _k.gfx.pixelDensity;
     const canvasWidth = _k.gfx.ggl.gl.drawingBufferWidth / pd;
     const canvasHeight = _k.gfx.ggl.gl.drawingBufferHeight / pd;
 

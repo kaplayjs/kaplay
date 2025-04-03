@@ -17,7 +17,9 @@
   },
   "include": [
     "src/**/*",
-    "scripts/**/*",
-    "tests/auto/color.spec.ts"
+    "scripts/**/*"
+  ],
+  "exclude": [
+    "src/index.ts"
   ]
 }

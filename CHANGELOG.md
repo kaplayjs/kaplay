@@ -1,5 +1,7 @@
 # Changelog
 
+<!-- markdownlint-disable no-duplicate-heading -->
+
 All notable changes to this project will be documented in this file.
 
 The format is (mostly) based on
@@ -10,38 +12,93 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Added
 
-- Added `ellipse()` component.
-- Added circle and (rotated) ellipse collision shapes.
-- Added `clipLineToRect()`
-- Added support to circle shapes in `area()`.
-- Added `obj.setParent()` to change the parent of a game object.
-- Added `fakeMouse()` to create a fake mouse cursor.
+- Added `ellipse()` component - @mflerackers
+- Added circle and (rotated) ellipse collision shapes - @mflerackers
+- Added `clipLineToRect()` - @mflerackers
+- Added `obj.setParent()` to change the parent of a game object - @mflerackers
+- Added `fakeMouse()` to create a fake mouse cursor - @lajbel
 
   ```js
   const myCursor = add([fakeMouse(), sprite("kat"), pos(100, 100)]);
 
   myCursor.press(); // trigger onClick events if the mouse is over
   myCursor.release();
-  myCursor.move(vec2(100, 200)); // move as your wish
+  myCursor.moveBy(vec2(100, 200)); // move as your wish
   ```
-- Added restitution and friction.
-- Added `k.system()` to replace internal events or create new.
+
+- Added restitution and friction to physics - @mflerackers
+- Added `k.system()` to replace internal events or create new - @mflerackers
 
   ```js
   system("collision", () => {
     // system code
   }, [LCEvents.AfterFixedUpdate, LCEvents.AfterUpdate]),
   ```
-- Added LCEvents enum for identify different lifecycle events.
-- Moved camera to the shader - @mflerackers
-- Blend mode
+
+- All game objects have methods `onTag()` and `onUntag()` for watching tag
+  changes - @mflerackers
+- Added `LCEvents` enum to identify different lifecycle events in the game
+  loop - @mflerackers
+- Blend mode is selectable to change how sprites are composited on top of each
+  other - @mflerackers
+- Picture API to cache drawing of selected objects - @mflerackers
+- drawCanvas - @mflerackers
+- Added `video()` component to embed a video file into the game - @mflerackers
+- Added `level()` component and parent argument to `addLevel()` - @KeSuave
+- Now there is a global option `sapDirection` so you can change the direction of
+  the physics engine's sweep-and-pruner, to optimize for the shape of your game
+  (mostly horizontal or mostly vertical) - @dragoncoder047, @mflerackers
+- Allow the `text()` component to change the font and apply shaders
+  per-character - @dragoncoder047
+- Allow characters in text to be scaled and have the text flow around it with
+  `stretchInPlace: false` - @dragoncoder047
+- Expose the formatted text parsing functions to allow manipulation of formatted
+  text - @dragoncoder047
+- More errors raised during object creation are caught and cause the blue crash
+  screen - @lajbel
+- Now you can use the global option `inspectOnlyActive: false` to prevent paused
+  objects from showing in the debug inspect view, this is useful if you are
+  swapping out objects for different views - @dragoncoder047
+- The `offscreen()` component now has an option `offscreenDistance` to change
+  the distance at which an object is considered off-screen - @dragoncoder047
+- Now you can cherry-pick specific frames of a sprite sheet by using the
+  `frames` list, instead of being limited to consecutive frames `start` and
+  `end` - @dragoncoder047
+- `wave()` can now go back and forth between any value that is able to be used
+  with `lerp()` - @dragoncoder047, @mflerackers
+
+### Fixed
+
+- Various typescript type fixes - @amyspark-ng, @lajbel, @KeSuave
+- 9slice sprites behave properly when using anchor - @mflerackers
+- Rendering glitches with outlines on circles - @mflerackers
+- `wait()` now fires the callback and its onEnd events at the same time like was
+  intended, instead of onEnd being waiting for twice the duration -
+  @dragoncoder047
+- `Vec2.dot()` now actually does the Correct Calculation&trade; - @andrenanninga
+- `setCursorLocked(true)` doesn't error if the browser is using the old
+  non-Promise-based API return value - @imaginarny
+- changing `debug.timeScale` now actually makes the game change speed by
+  affecting `dt()` - @lajbel
+
+### Removed
+
+- `make()` was sent to doom
 
 ### Changed
 
-- Replaced the Separating Axis Theorem (SAT) with the "Gilbert–Johnson–Keerthi"
-  (`GJK`) distance algorithm.
-- Changed default behaviour of `kaplay({ tagsAsComponents: false })` to `false`.
+- **BREAKING**: Changed default behavior to
+  `kaplay({ tagsAsComponents: false })`.
+- The physics engine creates less garbage - @mflerackers
+- Tag-based events are slightly faster - @dragoncoder047
+- Moved camera to the shader - @mflerackers
+- Replaced the Separating Axis Theorem (SAT) collision detection module with the
+  [Gilbert–Johnson–Keerthi
+  (`GJK`) algorithm](https://en.wikipedia.org/wiki/Gilbert–Johnson–Keerthi_distance_algorithm),
+  which is faster - @mflerackers
 - Now if you pass a nullish value to `.use()` it throws an error
+- Improved TypeScript in game objects - @amyspark-ng, @lajbel, @KeSuave
+  - Added/updated JSDoc comments to some members - @ErikGXDev, @dragoncoder047
 
 ## [3001.0.10] "Happy Colors" - TBD
 
@@ -63,21 +120,15 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   kaplay({ font: "happy" });
   loadHappy();
 
-  add([
-      text("ohhi"),
-  ]);
+  add([text("ohhi")]);
   ```
 
 - Added a new option in `LoadSpriteOpt` for loading sprites in an individual
   spritesheet - @chqs-git
   ```js
-  loadSprite(
-      "player",
-      "sprites/player.png",
-      {
-          singular: true,
-      },
-  );
+  loadSprite("player", "sprites/player.png", {
+      singular: true,
+  });
   ```
 
 ### Fixed
@@ -428,8 +479,8 @@ kaplay({
   ]);
   ```
 
-- (**! break**) removed compatibilty to use two KAPLAY frames in the same page,
-  due to perfomance improvements
+- (**! break**) removed compatibility to use two KAPLAY frames in the same page,
+  due to performance improvements
 
 - fix error screen not showing with not Error object
 

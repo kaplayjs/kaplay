@@ -1,7 +1,7 @@
 {
   "name": "kaplay",
   "description": "KAPLAY is a JavaScript & TypeScript game library that helps you make games fast and fun!",
-  "version": "4000.0.0-alpha.16",
+  "version": "4000.0.0-alpha.17",
   "license": "MIT",
   "homepage": "https://v4000.kaplayjs.com/",
   "funding": "https://opencollective.com/kaplay",
@@ -37,7 +37,9 @@
     "game",
     "gamedev",
     "fun",
-    "mark"
+    "mark",
+    "games",
+    "typescript"
   ],
   "files": [
     "dist/",
@@ -47,26 +49,35 @@
   "scripts": {
     "dev": "NODE_ENV=development node scripts/dev.js",
     "win:dev": "set NODE_ENV=development && node scripts/dev.js",
-    "build": "tsc --p tsconfig.dts.json && node scripts/build.js && npm run doc-dts",
+    "build": "node scripts/generateIndex.js && tsc --p tsconfig.build.json && node scripts/build.js && npm run doc-dts",
     "check": "tsc",
     "fmt": "dprint fmt",
     "test": "node scripts/test.js",
-    "doc-dts": "dts-bundle-generator -o dist/doc.d.ts dist/declaration/index.d.ts",
-    "test:vite": "vitest",
+    "doc-dts": "dts-bundle-generator -o dist/doc.d.ts dist/declaration/kaplay.d.ts",
+    "test:vite": "vitest --typecheck",
     "desktop": "tauri dev",
     "prepare": "npm run build",
     "publish:next": "npm publish --tag next"
   },
   "devDependencies": {
     "@kaplayjs/dprint-config": "^1.1.0",
+    "@types/jest": "^29.5.14",
     "dprint": "^0.45.1",
     "dts-bundle-generator": "^9.5.1",
     "ejs": "^3.1.10",
-    "esbuild": "^0.21.5",
+    "esbuild": "^0.25.0",
     "express": "^4.21.1",
     "puppeteer": "^22.15.0",
     "typescript": "^5.6.3",
-    "vitest": "^2.1.3"
+    "vitest": "^2.1.9",
+    "vitest-environment-puppeteer": "^11.0.3",
+    "vitest-puppeteer": "^11.0.3"
   },
-  "packageManager": "pnpm@9.9.0+sha512.60c18acd138bff695d339be6ad13f7e936eea6745660d4cc4a776d5247c540d0edee1a563695c183a66eb917ef88f2b4feb1fc25f32a7adcadc7aaf3438e99c1"
+  "packageManager": "pnpm@9.9.0+sha512.60c18acd138bff695d339be6ad13f7e936eea6745660d4cc4a776d5247c540d0edee1a563695c183a66eb917ef88f2b4feb1fc25f32a7adcadc7aaf3438e99c1",
+  "vitest-puppeteer": {
+    "launch": {
+      "args": ["--no-sandbox"],
+      "dumpio": true
+    }
+  }
 }

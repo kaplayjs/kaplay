@@ -5,17 +5,13 @@ import {
     VERT_TEMPLATE,
     VERTEX_FORMAT,
 } from "../constants";
-import { type GfxCtx } from "../gfx";
+import type { GfxCtx } from "../gfx/gfx";
 import { _k } from "../kaplay";
 import { Color } from "../math/color";
 import { Mat23, Mat4, Vec2 } from "../math/math";
 import type { RenderProps } from "../types";
-import {
-    arrayIsColor,
-    arrayIsNumber,
-    arrayIsVec2,
-    getErrorMessage,
-} from "../utils";
+import { arrayIsColor, arrayIsNumber, arrayIsVec2 } from "../utils/asserts";
+import { getErrorMessage } from "../utils/log";
 import { fetchText, loadProgress } from "./asset";
 import { Asset } from "./asset";
 import { fixURL } from "./utils";

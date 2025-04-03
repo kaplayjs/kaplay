@@ -1,4 +1,4 @@
-import { SoundData } from "../assets";
+import { SoundData } from "../assets/sound";
 import burpSoundSrc from "../kassets/burp.mp3";
 
 export type AudioCtx = ReturnType<typeof initAudio>;

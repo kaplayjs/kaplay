@@ -17,7 +17,7 @@ export enum LCEvents {
 }
 
 export const system = (name: string, action: () => void, when: LCEvents[]) => {
-    const systems = _k.systems;
+    const systems = _k.game.systems;
     const replacingSystemIdx = systems.findIndex((s) => s.name === name);
 
     // if existent system, remove it
@@ -26,10 +26,10 @@ export const system = (name: string, action: () => void, when: LCEvents[]) => {
         const when = replacingSystem.when;
 
         for (const loc of when) {
-            const idx = _k.systemsByEvent[loc].findIndex(
+            const idx = _k.game.systemsByEvent[loc].findIndex(
                 (s) => s.name === name,
             );
-            _k.systemsByEvent[loc].splice(idx, 1);
+            _k.game.systemsByEvent[loc].splice(idx, 1);
         }
     }
 
@@ -40,7 +40,7 @@ export const system = (name: string, action: () => void, when: LCEvents[]) => {
     };
 
     for (const loc of when) {
-        _k.systemsByEvent[loc].push(system);
+        _k.game.systemsByEvent[loc].push(system);
     }
 
     systems.push({ name, run: action, when });

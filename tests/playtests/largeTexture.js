@@ -13,16 +13,16 @@ add([
 ]);
 
 // Adds a label
-const label = make([
+const label = add([
     text("Click and drag the mouse, scroll the wheel"),
+    z(1),
 ]);
 
 add([
     rect(label.width, label.height),
     color(0, 0, 0),
+    z(0),
 ]);
-
-add(label);
 
 // Mouse handling
 onUpdate(() => {

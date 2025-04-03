@@ -1,4 +1,5 @@
 import type { GameObj, LerpValue, RNGValue } from "../types";
+import { clamp } from "./clamp";
 import { Color, rgb } from "./color";
 
 /**
@@ -19,17 +20,6 @@ export function deg2rad(deg: number): number {
 
 export function rad2deg(rad: number): number {
     return rad * 180 / Math.PI;
-}
-
-export function clamp(
-    val: number,
-    min: number,
-    max: number,
-): number {
-    if (min > max) {
-        return clamp(val, max, min);
-    }
-    return Math.min(Math.max(val, min), max);
 }
 
 export function lerp<V extends LerpValue>(
@@ -1470,13 +1460,13 @@ export class Mat4 {
     }
 }
 
-export function wave(
-    lo: number,
-    hi: number,
+export function wave<V extends LerpValue>(
+    lo: V,
+    hi: V,
     t: number,
     f = (t: number) => -Math.cos(t),
-): number {
-    return lo + (f(t) + 1) / 2 * (hi - lo);
+): V {
+    return lerp(lo, hi, (f(t) + 1) / 2);
 }
 
 // basic ANSI C LCG
@@ -1485,26 +1475,84 @@ const C = 12345;
 const M = 2147483648;
 
 /**
+ * A random number generator using the linear congruential generator algorithm.
+ *
  * @group Math
  */
 export class RNG {
+    /**
+     * The current seed value used by the random number generator.
+     */
     seed: number;
     constructor(seed: number) {
         this.seed = seed;
     }
+
+    /**
+     * Generate a random number between 0 and 1.
+     *
+     * @example
+     * ```js
+     * const rng = new RNG(Date.now())
+     * const value = rng.gen() // Returns number between 0-1
+     * ```
+     *
+     * @returns A number between 0 and 1.
+     */
     gen(): number {
         this.seed = (A * this.seed + C) % M;
         return this.seed / M;
     }
+
+    /**
+     * Generate a random number between two values.
+     *
+     * @param a - The minimum value.
+     * @param b - The maximum value.
+     *
+     * @example
+     * ```js
+     * const rng = new RNG(Date.now())
+     * const value = rng.genNumber(10, 20) // Returns number between 10-20
+     * ```
+     *
+     * @returns A number between a and b.
+     */
     genNumber(a: number, b: number): number {
         return a + this.gen() * (b - a);
     }
+    /**
+     * Generate a random 2D vector between two vectors.
+     *
+     * @param a - The minimum vector.
+     * @param b - The maximum vector.
+     *
+     * @example
+     * ```js
+     * const rng = new RNG(Date.now())
+     * const vec = rng.genVec2(vec2(0,0), vec2(100,100))
+     * ```
+     *
+     * @returns A vector between vectors a and b.
+     */
     genVec2(a: Vec2, b: Vec2): Vec2 {
-        return new Vec2(
-            this.genNumber(a.x, b.x),
-            this.genNumber(a.y, b.y),
-        );
+        return new Vec2(this.genNumber(a.x, b.x), this.genNumber(a.y, b.y));
     }
+
+    /**
+     * Generate a random color between two colors.
+     *
+     * @param a - The first color.
+     * @param b - The second color.
+     *
+     * @example
+     * ```js
+     * const rng = new RNG(Date.now())
+     * const color = rng.genColor(rgb(0,0,0), rgb(255,255,255))
+     * ```
+     *
+     * @returns A color between colors a and b.
+     */
     genColor(a: Color, b: Color): Color {
         return new Color(
             this.genNumber(a.r, b.r),
@@ -1512,6 +1560,22 @@ export class RNG {
             this.genNumber(a.b, b.b),
         );
     }
+
+    /**
+     * Generate a random value of a specific type.
+     *
+     * @param args - No args for [0-1], one arg for [0-arg], or two args for [arg1-arg2].
+     *
+     * @example
+     * ```js
+     * const rng = new RNG(Date.now())
+     * const val = rng.genAny(0, 100) // Number between 0-100
+     * const vec = rng.genAny(vec2(0,0), vec2(100,100)) // Vec2
+     * const col = rng.genAny(rgb(0,0,0), rgb(255,255,255)) // Color
+     * ```
+     *
+     * @returns A random value.
+     */
     genAny<T = RNGValue>(...args: [] | [T] | [T, T]): T {
         if (args.length === 0) {
             return this.gen() as T;

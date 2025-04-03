@@ -40,9 +40,10 @@ varying vec4 v_color;
 uniform float width;
 uniform float height;
 uniform mat4 camera;
+uniform mat4 transform;
 
 vec4 def_vert() {
-	vec4 pos = camera * vec4(a_pos, 0.0, 1.0);
+	vec4 pos = camera * transform * vec4(a_pos, 0.0, 1.0);
 	return vec4(pos.x / width * 2.0 - 1.0, pos.y / -height * 2.0 + 1.0, pos.z, pos.w);
 }
 
