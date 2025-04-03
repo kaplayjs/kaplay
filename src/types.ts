@@ -1,131 +1,127 @@
 import type {
-    App,
     ButtonBinding,
     ButtonBindingDevice,
     ButtonsDef,
-} from "./app";
-import type {
-    AsepriteData,
-    Asset,
-    BitmapFontData,
-    initAssets,
-    LoadBitmapFontOpt,
-    LoadSpriteOpt,
-    LoadSpriteSrc,
-    ShaderData,
-    SoundData,
-    SpriteAtlasData,
-    SpriteData,
-    Uniform,
-} from "./assets";
+} from "./app/inputBindings";
+import type { AsepriteData } from "./assets/aseprite";
+import type { Asset } from "./assets/asset";
+import type { BitmapFontData, LoadBitmapFontOpt } from "./assets/bitmapFont";
 import type { FontData } from "./assets/font";
-import type { AudioCtx, AudioPlay, AudioPlayOpt } from "./audio";
-import type {
-    AgentComp,
-    AgentCompOpt,
-    AnchorComp,
-    AnimateComp,
-    AnimateCompOpt,
-    AreaComp,
-    AreaCompOpt,
-    AreaEffectorComp,
-    AreaEffectorCompOpt,
-    BlendComp,
-    BodyComp,
-    BodyCompOpt,
-    BuoyancyEffectorComp,
-    BuoyancyEffectorCompOpt,
-    CircleComp,
-    CircleCompOpt,
-    ColorComp,
-    ConstantForceComp,
-    ConstantForceCompOpt,
-    DoubleJumpComp,
-    FakeMouseComp,
-    FakeMouseOpt,
-    FixedComp,
-    FollowComp,
-    HealthComp,
-    LayerComp,
-    LifespanCompOpt,
-    MaskComp,
-    NamedComp,
-    OffScreenComp,
-    OffScreenCompOpt,
-    OpacityComp,
-    OutlineComp,
-    PathfinderComp,
-    PathfinderCompOpt,
-    PatrolComp,
-    PatrolCompOpt,
-    PlatformEffectorComp,
-    PlatformEffectorCompOpt,
-    PointEffectorComp,
-    PointEffectorCompOpt,
-    PolygonComp,
-    PolygonCompOpt,
-    PosComp,
-    RectComp,
-    RectCompOpt,
-    RotateComp,
-    ScaleComp,
-    SentryCandidates,
-    SentryComp,
-    SentryCompOpt,
-    ShaderComp,
-    SpriteComp,
-    SpriteCompOpt,
-    StateComp,
-    StayComp,
-    SurfaceEffectorComp,
-    SurfaceEffectorCompOpt,
-    TextComp,
-    TextCompOpt,
-    TextInputComp,
-    TileComp,
-    TileCompOpt,
-    TimerComp,
-    UVQuadComp,
-    ZComp,
-} from "./components/";
-import type { EllipseComp } from "./components/draw/ellipse";
+import type { ShaderData, Uniform } from "./assets/shader";
+import type { SoundData } from "./assets/sound";
+import type { LoadSpriteOpt, LoadSpriteSrc, SpriteData } from "./assets/sprite";
+import type { SpriteAtlasData } from "./assets/spriteAtlas";
+import type { AudioPlay, AudioPlayOpt } from "./audio/play";
+import type { Engine } from "./core/engine";
+import type { BlendComp } from "./ecs/components/draw/blend";
+import type { CircleComp, CircleCompOpt } from "./ecs/components/draw/circle";
+import type { ColorComp } from "./ecs/components/draw/color";
+import type { DrawonComp, DrawonOpt } from "./ecs/components/draw/drawon";
+import type { EllipseComp } from "./ecs/components/draw/ellipse";
+import type { MaskComp } from "./ecs/components/draw/mask";
+import type { OpacityComp } from "./ecs/components/draw/opacity";
+import type { OutlineComp } from "./ecs/components/draw/outline";
 import type {
     EmitterOpt,
     ParticlesComp,
     ParticlesOpt,
-} from "./components/draw/particles";
+} from "./ecs/components/draw/particles";
+import type { PictureComp } from "./ecs/components/draw/picture";
 import type {
-    BoomOpt,
-    Game,
-    GameObjEventNames,
-    GameObjEvents,
-    KeepFlags,
-    LevelOpt,
-    SceneDef,
-    SceneName,
-    SetParentOpt,
-    TupleWithoutFirst,
-} from "./game";
-import type { LCEvents, System } from "./game/systems";
+    PolygonComp,
+    PolygonCompOpt,
+} from "./ecs/components/draw/polygon";
+import type { RectComp, RectCompOpt } from "./ecs/components/draw/rect";
+import type { ShaderComp } from "./ecs/components/draw/shader";
+import type { SpriteComp, SpriteCompOpt } from "./ecs/components/draw/sprite";
+import type { TextComp, TextCompOpt } from "./ecs/components/draw/text";
+import type { UVQuadComp } from "./ecs/components/draw/uvquad";
+import type { VideoComp, VideoCompOpt } from "./ecs/components/draw/video";
+import type { AgentComp, AgentCompOpt } from "./ecs/components/level/agent";
+import type { LevelComp, LevelOpt } from "./ecs/components/level/level";
 import type {
-    AppGfxCtx,
-    DrawBezierOpt,
-    DrawCircleOpt,
-    DrawCurveOpt,
+    PathfinderComp,
+    PathfinderCompOpt,
+} from "./ecs/components/level/pathfinder";
+import type { PatrolComp, PatrolCompOpt } from "./ecs/components/level/patrol";
+import type {
+    SentryCandidates,
+    SentryComp,
+    SentryCompOpt,
+} from "./ecs/components/level/sentry";
+import type { TileComp, TileCompOpt } from "./ecs/components/level/tile";
+import type {
+    AnimateComp,
+    AnimateCompOpt,
+} from "./ecs/components/misc/animate";
+import type {
+    FakeMouseComp,
+    FakeMouseOpt,
+} from "./ecs/components/misc/fakeMouse";
+import type { HealthComp } from "./ecs/components/misc/health";
+import type { LifespanCompOpt } from "./ecs/components/misc/lifespan";
+import type { NamedComp } from "./ecs/components/misc/named";
+import type { StateComp } from "./ecs/components/misc/state";
+import type { StayComp } from "./ecs/components/misc/stay";
+import type { TextInputComp } from "./ecs/components/misc/textInput";
+import type { TimerComp } from "./ecs/components/misc/timer";
+import type { AreaComp, AreaCompOpt } from "./ecs/components/physics/area";
+import type { BodyComp, BodyCompOpt } from "./ecs/components/physics/body";
+import type { DoubleJumpComp } from "./ecs/components/physics/doubleJump";
+import type {
+    AreaEffectorComp,
+    AreaEffectorCompOpt,
+    BuoyancyEffectorComp,
+    BuoyancyEffectorCompOpt,
+    ConstantForceComp,
+    ConstantForceCompOpt,
+    PlatformEffectorComp,
+    PlatformEffectorCompOpt,
+    PointEffectorComp,
+    PointEffectorCompOpt,
+    SurfaceEffectorComp,
+    SurfaceEffectorCompOpt,
+} from "./ecs/components/physics/effectors";
+import type { AnchorComp } from "./ecs/components/transform/anchor";
+import type { FixedComp } from "./ecs/components/transform/fixed";
+import type { FollowComp } from "./ecs/components/transform/follow";
+import type { LayerComp } from "./ecs/components/transform/layer";
+import type {
+    OffScreenComp,
+    OffScreenCompOpt,
+} from "./ecs/components/transform/offscreen";
+import type { PosComp } from "./ecs/components/transform/pos";
+import type { RotateComp } from "./ecs/components/transform/rotate";
+import type { ScaleComp } from "./ecs/components/transform/scale";
+import type { ZComp } from "./ecs/components/transform/z";
+import type { KeepFlags, SetParentOpt } from "./ecs/make";
+import type { GameObjEventNames, GameObjEvents } from "./events/eventMap";
+import type { KEvent, KEventController, KEventHandler } from "./events/events";
+import type { TupleWithoutFirst } from "./events/globalEvents";
+import type { BoomOpt } from "./game/kaboom";
+import type { SceneDef, SceneName } from "./game/scenes";
+import type { LCEvents } from "./game/systems";
+import type { FrameBuffer } from "./gfx/classes/FrameBuffer";
+import type { DrawBezierOpt } from "./gfx/draw/drawBezier";
+import type { DrawCanvasOpt } from "./gfx/draw/drawCanvas";
+import type { DrawCircleOpt } from "./gfx/draw/drawCircle";
+import type { DrawCurveOpt } from "./gfx/draw/drawCurve";
+import type { FormattedText } from "./gfx/draw/drawFormattedText";
+import type {
     DrawLineOpt,
     DrawLinesOpt,
-    DrawRectOpt,
-    DrawSpriteOpt,
-    DrawTextOpt,
-    DrawTriangleOpt,
-    FormattedText,
-    FrameBuffer,
     LineCap,
     LineJoin,
-    Texture,
-} from "./gfx";
-import type { GjkCollisionResult } from "./math";
+} from "./gfx/draw/drawLine";
+import type { DrawPictureOpt, Picture } from "./gfx/draw/drawPicture";
+import type { DrawRectOpt } from "./gfx/draw/drawRect";
+import type { DrawSpriteOpt } from "./gfx/draw/drawSprite";
+import type { DrawTextOpt } from "./gfx/draw/drawText";
+import type { DrawTriangleOpt } from "./gfx/draw/drawTriangle";
+import type { StyledTextInfo } from "./gfx/formatText";
+import type { Texture } from "./gfx/gfx";
 import type { Color, CSSColor, RGBAValue, RGBValue } from "./math/color";
+import type { GjkCollisionResult } from "./math/gjk";
 import type {
     Circle,
     Ellipse,
@@ -142,33 +138,22 @@ import type {
     Vec2,
 } from "./math/math";
 import type { NavMesh } from "./math/navigationmesh";
-import type { KEvent, KEventController, KEventHandler } from "./utils/";
 
-/**
- * Sensitive KAPLAY data
- */
-export type KAPLAYInternal = {
-    k: KAPLAYCtx;
-    globalOpt: KAPLAYOpt;
-    gfx: AppGfxCtx;
-    game: Game;
-    app: App;
-    assets: ReturnType<typeof initAssets>;
-    fontCacheCanvas: HTMLCanvasElement | null;
-    fontCacheC2d: CanvasRenderingContext2D | null;
-    debug: Debug;
-    audio: AudioCtx;
-    pixelDensity: number;
-    canvas: HTMLCanvasElement;
-    gscale: number;
-    kaSprite: Asset<SpriteData>;
-    boomSprite: Asset<SpriteData>;
-    systems: System[];
-    systemsByEvent: System[][];
+type Clean<T extends any[]> = {
+    [K in keyof T]: T[K] extends infer U extends any
+        ? U extends infer F extends Comp ? F : {
+            [K in keyof U]: "f";
+        }
+        : never;
 };
 
+type X = Clean<[SpriteComp, { readonly x: string }]>;
+
 /**
- * Context handle that contains every kaboom function.
+ * Context handle that contains every KAPLAY function.
+ *
+ * @template TButtonDef - The button map
+ * @template TButton - The button type
  *
  * @group Start
  */
@@ -182,79 +167,53 @@ export interface KAPLAYCtx<
      * @readonly
      * @group Misc
      */
-    _k: KAPLAYInternal;
+    _k: Engine & { k: KAPLAYCtx };
     /**
-     * Assemble a game object from a list of components, and add it to the game,
-     *
-     * @example
-     * ```js
-     * const player = add([
-     *     // List of components, each offers a set of functionalities
-     *     sprite("mark"),
-     *     pos(100, 200),
-     *     area(),
-     *     body(),
-     *     health(8),
-     *     // Plain strings are tags, a quicker way to let us define behaviors for a group
-     *     "player",
-     *     "friendly",
-     *     // Components are just plain objects, you can pass an object literal as a component.
-     *     {
-     *         dir: LEFT,
-     *         dead: false,
-     *         speed: 240,
-     *     },
-     * ]);
-     *
-     * // .jump is provided by body()
-     * player.jump();
+   * Assemble a game object from a list of components, and add it to the game,
+   *
+   * @example
+   * ```js
+   * const player = add([
+   *     // List of components, each offers a set of functionalities
+   *     sprite("mark"),
+   *     pos(100, 200),
+   *     area(),
+   *     body(),
+   *     health(8),
+   *     // Plain strings are tags, a quicker way to let us define behaviors for a group
+   *     "player",
+   *     "friendly",
+   *     // Components are just plain objects, you can pass an object literal as a component.
+   *     {
+   *         dir: LEFT,
+   *         dead: false,
+   *         speed: 240,
+   *     },
+   * ]);
+   *
+   * // .jump is provided by body()
+   * player.jump();
 
-     * // .moveTo is provided by pos()
-     * player.moveTo(300, 200);
-     *
-     * // .onUpdate() is on every game object, it registers an event that runs every frame
-     * player.onUpdate(() => {
-     *     // .move() is provided by pos()
-     *     player.move(player.dir.scale(player.speed));
-     * });
-     *
-     * // .onCollide is provided by area()
-     * player.onCollide("tree", () => {
-     *     destroy(player);
-     * });
-     * ```
-    *
-    * @param comps - List of components to add to the game object, or a game object made with {@link make `make()`}.
-    * @returns The added game object that contains all properties and methods each component offers.
-    * @group Game Obj
-    */
-    add<T>(comps?: CompList<T> | GameObj<T>): GameObj<T>;
-    /**
-     * Create a game object like add(), but not adding to the scene.
-     *
-     * @param comps - List of components to add to the game object.
-     *
-     * @example
-     * ```js
-     * const label = make([
-     *     rect(100, 20),
-     * ]);
-     *
-     * // Add a new text to the label
-     * label.add([
-     *     text("Hello, world!"),
-     * ]);
-     *
-     * // Add game object to the scene
-     * // Now it will render
-     * add(label);
-     * ```
-     *
-     * @returns The created game object that contains all properties and methods each component offers.
-     * @since v3000.1
-     * @group Game Obj
-     */
-    make<T>(comps?: CompList<T>): GameObj<T>;
+   * // .moveTo is provided by pos()
+   * player.moveTo(300, 200);
+   *
+   * // .onUpdate() is on every game object, it registers an event that runs every frame
+   * player.onUpdate(() => {
+   *     // .move() is provided by pos()
+   *     player.move(player.dir.scale(player.speed));
+   * });
+   *
+   * // .onCollide is provided by area()
+   * player.onCollide("tree", () => {
+   *     destroy(player);
+   * });
+   * ```
+  *
+  * @param comps - List of components to add to the game object.
+  * @returns The added game object that contains all properties and methods each component offers.
+  * @group Game Obj
+  */
+    add<T extends CompList<unknown>>(comps?: [...T]): GameObj<T[number]>;
     /**
      * Remove and re-add the game obj, without triggering add / destroy events.
      *
@@ -713,6 +672,27 @@ export interface KAPLAYCtx<
      * @group Components
      */
     uvquad(w: number, h: number): UVQuadComp;
+    /**
+     * Draws a video.
+     *
+     * @param url The video to play. Needs to be on the same webserver due to CORS.
+     * @param opt The video component options
+     *
+     * @returns The video comp.
+     * @since v4000.0
+     * @group Components
+     */
+    video(url: string, opt?: VideoCompOpt): VideoComp;
+    /**
+     * Draws a picture.
+     *
+     * @param picture The picture to draw.
+     *
+     * @returns The picture comp.
+     * @since v4000.0
+     * @group Components
+     */
+    picture(picture: Picture): PictureComp;
     /**
      * Attach a collider area from shape and enables collision detection in a Game Object.
      *
@@ -1385,7 +1365,7 @@ export interface KAPLAYCtx<
      * @since v3000.0
      * @group Components
      */
-    drawon(canvas: FrameBuffer): Comp;
+    drawon(canvas: FrameBuffer | Picture, opt?: DrawonOpt): DrawonComp;
     /**
      * A tile on a tile map.
      *
@@ -1476,6 +1456,56 @@ export interface KAPLAYCtx<
      * @group Components
      */
     pathfinder(opts: PathfinderCompOpt): PathfinderComp;
+
+    /**
+     * Construct a level based on symbols.
+     *
+     * @param map - The map data.
+     * @param opt - The level options.
+     * @param parent - The parent object of the level. Defaults to root.
+     *
+     * @example
+     * ```js
+     * const myLevel = add([
+     *     level([
+     *          "                          $",
+     *          "                          $",
+     *          "           $$         =   $",
+     *          "  %      ====         =   $",
+     *          "                      =    ",
+     *          "       ^^      = >    =   &",
+     *          "===========================",
+     *     ], {
+     *         // define the size of tile block
+     *         tileWidth: 32,
+     *         tileHeight: 32,
+     *         // define what each symbol means, by a function returning a component list (what will be passed to add())
+     *         tiles: {
+     *             "=": () => [
+     *                 sprite("floor"),
+     *                 area(),
+     *                 body({ isStatic: true }),
+     *             ],
+     *             "$": () => [
+     *                 sprite("coin"),
+     *                 area(),
+     *                 pos(0, -9),
+     *             ],
+     *             "^": () => [
+     *                 sprite("spike"),
+     *                 area(),
+     *                 "danger",
+     *             ],
+     *         }
+     *     })
+     * ])
+     * ```
+     *
+     * @returns A game obj with the level.
+     * @since v4000.0
+     * @group Components
+     */
+    level(map: string[], opt?: LevelOpt): LevelComp;
     /**
      * Create a raycast.
      *
@@ -2882,7 +2912,7 @@ export interface KAPLAYCtx<
         url: string,
     ): Asset<Record<string, SpriteData>>;
     /**
-     * Load a sprite with aseprite spritesheet json (should use "array" in the export options).
+     * Load a sprite with aseprite spritesheet json (should use "array" in the export options and have tags enabled, that way kaplay can load tagged frames as animations).
      *
      * @param name - The asset name.
      * @param imgSrc - The image resource url.
@@ -4351,7 +4381,7 @@ export interface KAPLAYCtx<
      */
     chance(p: number): boolean;
     /**
-     * Linear interpolation.
+     * Linear interpolation. Can take a number, vector, or color.
      *
      * @group Math
      */
@@ -4455,7 +4485,9 @@ export interface KAPLAYCtx<
      */
     mapc(v: number, l1: number, h1: number, l2: number, h2: number): number;
     /**
-     * Interpolate between 2 values (Optionally takes a custom periodic function, which default to Math.sin).
+     * Interpolate back and forth between 2 values.
+     *
+     * (Optionally takes a custom periodic function, which default to a sine wave.).
      *
      * @example
      * ```js
@@ -4469,12 +4501,12 @@ export interface KAPLAYCtx<
      *
      * @group Math
      */
-    wave(
-        lo: number,
-        hi: number,
+    wave<V extends LerpValue>(
+        lo: V,
+        hi: V,
         t: number,
         func?: (x: number) => number,
-    ): number;
+    ): V;
     /**
      * Convert degrees to radians.
      *
@@ -4986,6 +5018,7 @@ export interface KAPLAYCtx<
      *
      * @param map - The map data.
      * @param opt - The level options.
+     * @param parent - The parent object of the level. Defaults to root.
      *
      * @example
      * ```js
@@ -5026,7 +5059,11 @@ export interface KAPLAYCtx<
      * @since v2000.0
      * @group Level
      */
-    addLevel(map: string[], opt: LevelOpt): GameObj;
+    addLevel(
+        map: string[],
+        opt: AddLevelOpt,
+        parent?: GameObj,
+    ): GameObj<PosComp | LevelComp>;
     /**
      * Get data from local storage, if not present can set to a default value.
      *
@@ -5311,6 +5348,31 @@ export interface KAPLAYCtx<
      */
     drawSubtracted(content: () => void, mask: () => void): void;
     /**
+     * A picture holding drawing data
+     */
+    Picture: typeof Picture;
+    /**
+     * Selects the picture for drawing, erases existing data.
+     * @param picture The picture to write drawing data to.
+     */
+    beginPicture(picture?: Picture): void;
+    /**
+     * Selects the picture for drawing, keeps existing data.
+     * @param picture The picture to write drawing data to.
+     */
+    appendToPicture(picture?: Picture): void;
+    /**
+     * Deselects the current picture for drawing, returning the picture.
+     * @returns The picture which was previously selected.
+     */
+    endPicture(): Picture;
+    /**
+     * Draws a picture to the screen. This function can not be used to draw recursively to a picture.
+     * @param picture The picture to draw
+     * @param opt Drawing options
+     */
+    drawPicture(picture: Picture, opt: DrawPictureOpt): void;
+    /**
      * Push current transform matrix to the transform stack.
      *
      * @example
@@ -5421,6 +5483,15 @@ export interface KAPLAYCtx<
      */
     formatText(options: DrawTextOpt): FormattedText;
     /**
+     * Parses the text that has formatting tags, and returns the unstyled text
+     * (the actual characters that will be displayed) as well as which styles are
+     * active on each character.
+     *
+     * @since v4000
+     * @group Draw
+     */
+    compileStyledText(text: any): StyledTextInfo;
+    /**
      * Create a canvas to draw stuff offscreen.
      *
      * @returns The canvas object.
@@ -5428,6 +5499,15 @@ export interface KAPLAYCtx<
      * @group Draw
      */
     makeCanvas(w: number, h: number): Canvas;
+    /**
+     * Draw a canvas.
+     *
+     * @param opt The canvas object.
+     *
+     * @since v4000.0
+     * @group Draw
+     */
+    drawCanvas(opt: DrawCanvasOpt): void;
     /**
      * The Debug interface for debugging stuff.
      *
@@ -5699,21 +5779,51 @@ export interface KAPLAYCtx<
 
 export type Tag = string;
 
-type UnionToIntersection<U> = (U extends any ? (k: U) => void : never) extends (
-    k: infer I,
-) => void ? I
+/**
+ * The basic unit of object in KAPLAY. The player, a butterfly, a tree, or even a piece of text.
+ *
+ * @group Game Obj
+ */
+export type GameObj<T = any> = GameObjRaw & MergeComps<T>;
+
+export type UnionToIntersection<U> = (
+    U extends any ? (k: U) => void : never
+) extends (k: infer I) => void ? I
     : never;
-type Defined<T> = T extends any
+
+// What defined does is remove prop: never types for left types clean.
+// This could work for the proccess of remove Comp properties in XXXXComp types
+export type Defined<T> = T extends any
     ? Pick<T, { [K in keyof T]-?: T[K] extends undefined ? never : K }[keyof T]>
     : never;
-type Expand<T> = T extends infer U ? { [K in keyof U]: U[K] } : never;
-export type MergeObj<T> = Expand<UnionToIntersection<Defined<T>>>;
+
+/**
+ * It obligates to TypeScript to Expand the type.
+ *
+ * Instead of being `{ id: 1 } | { name: "hi" }`
+ * makes
+ * It's `{ id: 1, name: "hi" }`
+ *
+ * https://www.totaltypescript.com/concepts/the-prettify-helper
+ *
+ * Previously Expand<T>
+ */
+export type Prettify<T> = T extends infer U ? { [K in keyof U]: U[K] } : never;
+export type MergeObj<T> = Prettify<UnionToIntersection<Defined<T>>>;
+
+type RemoveCompProps<T> = Defined<
+    {
+        [K in keyof T]: K extends keyof Comp ? never : T[K];
+    }
+>;
+
 /**
  * A type to merge the components of a game object, omitting the default component properties.
  *
  * @group Component Types
  */
-export type MergeComps<T> = Omit<MergeObj<T>, keyof Comp>;
+export type MergeComps<T> = MergeObj<RemoveCompProps<T>>;
+
 export type MergePlugins<T extends PluginList<any>> = MergeObj<
     ReturnType<T[number]>
 >;
@@ -5723,7 +5833,7 @@ export type MergePlugins<T extends PluginList<any>> = MergeObj<
  *
  * @group Component Types
  */
-export type CompList<T> = Array<T | Tag>;
+export type CompList<T extends any | undefined> = (T | Tag)[];
 export type PluginList<T> = Array<T | KAPLAYPlugin<any>>;
 
 /**
@@ -6025,6 +6135,14 @@ export interface KAPLAYOpt<
      * @default 0
      */
     spriteAtlasPadding?: number;
+    /**
+     * If the debug inspect view should ignore objects that are paused when choosing
+     * the object to show the inspect view on.
+     *
+     * @default false
+     * @experimental
+     */
+    inspectOnlyActive?: boolean;
 }
 
 /**
@@ -6054,6 +6172,13 @@ export type KAPLAYPlugin<T> = (
     k: KAPLAYCtx,
 ) => T | ((...args: any) => (k: KAPLAYCtx) => T);
 
+type RenderTarget = {
+    destination: FrameBuffer | Picture | null;
+    childrenOnly?: boolean;
+    refreshOnly?: boolean;
+    isFresh?: boolean;
+};
+
 /**
  * Base interface of all game objects.
  *
@@ -6069,7 +6194,7 @@ export interface GameObjRaw {
      * @returns The added game object.
      * @since v3000.0
      */
-    add<T>(comps?: CompList<T> | GameObj<T>): GameObj<T>;
+    add<T extends CompList<unknown>>(comps?: [...T]): GameObj<T[number]>;
     /**
      * Remove and re-add the game obj, without triggering add / destroy events.
      *
@@ -6401,7 +6526,7 @@ export interface GameObjRaw {
      *
      * @since v3001.0
      */
-    canvas: FrameBuffer | null;
+    target: RenderTarget;
     onKeyDown: KAPLAYCtx["onKeyDown"];
     onKeyPress: KAPLAYCtx["onKeyPress"];
     onKeyPressRepeat: KAPLAYCtx["onKeyPressRepeat"];
@@ -6423,13 +6548,6 @@ export interface GameObjRaw {
     onButtonPress: KAPLAYCtx["onButtonPress"];
     onButtonRelease: KAPLAYCtx["onButtonRelease"];
 }
-
-/**
- * The basic unit of object in KAPLAY. The player, a butterfly, a tree, or even a piece of text.
- *
- * @group Game Obj
- */
-export type GameObj<T = any> = GameObjRaw & MergeComps<T>;
 
 /**
  * @group Options
@@ -7066,80 +7184,16 @@ export enum EdgeMask {
 }
 
 /**
- * A level component.
+ * Options for the {@link addLevel `addLevel()`}.
  *
- * @group Component Types
- */
-export interface LevelComp extends Comp {
-    tileWidth(): number;
-    tileHeight(): number;
-    numRows(): number;
-    numColumns(): number;
-    /**
-     * Spawn a tile from a symbol defined previously.
-     */
-    spawn(sym: string, p: Vec2): GameObj | null;
-    spawn(sym: string, x: number, y: number): GameObj | null;
-    /**
-     * Spawn a tile from a component list.
-     *
-     * @returns The spawned game object, or null if the obj hasn't components.
-     */
-    spawn<T>(obj: CompList<T>, p: Vec2): GameObj<T> | null;
-    spawn<T>(sym: CompList<T>, x: number, y: number): GameObj<T> | null;
-    /**
-     * Total width of level in pixels.
-     */
-    levelWidth(): number;
-    /**
-     * Total height of level in pixels.
-     */
-    levelHeight(): number;
-    /**
-     * Get all game objects that's currently inside a given tile.
-     */
-    getAt(tilePos: Vec2): GameObj[];
-    /**
-     * Raycast all game objects on the given path.
-     */
-    raycast(origin: Vec2, direction: Vec2): RaycastResult;
-    /**
-     * Convert tile position to pixel position.
-     */
-    tile2Pos(tilePos: Vec2): Vec2;
-    tile2Pos(x: number, y: number): Vec2;
-    /**
-     * Convert pixel position to tile position.
-     */
-    pos2Tile(pos: Vec2): Vec2;
-    pos2Tile(x: number, y: number): Vec2;
-    /**
-     * Find the path to navigate from one tile to another tile.
-     *
-     * @returns A list of traverse points in tile positions.
-     */
-    getTilePath(from: Vec2, to: Vec2, opts?: PathFindOpt): Vec2[] | null;
-    /**
-     * Find the path to navigate from one tile to another tile.
-     *
-     * @returns A list of traverse points in pixel positions.
-     */
-    getPath(from: Vec2, to: Vec2, opts?: PathFindOpt): Vec2[] | null;
-    getSpatialMap(): GameObj[][];
-    removeFromSpatialMap(obj: GameObj): void;
-    insertIntoSpatialMap(obj: GameObj): void;
-    onSpatialMapChanged(cb: () => void): KEventController;
-    onNavigationMapInvalid(cb: () => void): KEventController;
-    invalidateNavigationMap(): void;
-    onNavigationMapChanged(cb: () => void): KEventController;
-}
-
-/**
  * @group Options
  */
-export type PathFindOpt = {
-    allowDiagonals?: boolean;
-};
+export interface AddLevelOpt extends LevelOpt {
+    /**
+     * Position of the first block.
+     */
+    pos?: Vec2;
+}
 
 /**
  * The list of easing functions available.

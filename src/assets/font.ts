@@ -4,8 +4,8 @@ import {
     DEF_TEXT_CACHE_SIZE,
     MAX_TEXT_CACHE_SIZE,
 } from "../constants";
-import type { Texture } from "../gfx";
 import type { DrawTextOpt } from "../gfx/draw/drawText";
+import type { Texture } from "../gfx/gfx";
 import { _k } from "../kaplay";
 import { rgb } from "../math/color";
 import { Quad } from "../math/math";

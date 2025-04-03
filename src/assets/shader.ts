@@ -5,17 +5,13 @@ import {
     VERT_TEMPLATE,
     VERTEX_FORMAT,
 } from "../constants";
-import { type GfxCtx } from "../gfx";
+import type { GfxCtx } from "../gfx/gfx";
 import { _k } from "../kaplay";
 import { Color } from "../math/color";
 import { Mat23, Mat4, Vec2 } from "../math/math";
 import type { RenderProps } from "../types";
-import {
-    arrayIsColor,
-    arrayIsNumber,
-    arrayIsVec2,
-    getErrorMessage,
-} from "../utils";
+import { arrayIsColor, arrayIsNumber, arrayIsVec2 } from "../utils/asserts";
+import { getErrorMessage } from "../utils/log";
 import { fetchText, loadProgress } from "./asset";
 import { Asset } from "./asset";
 import { fixURL } from "./utils";
@@ -111,13 +107,29 @@ export class Shader {
                 gl.uniformMatrix4fv(loc, false, new Float32Array(val.m));
             }
             else if (val instanceof Mat23) {
-                gl.uniformMatrix4fv(loc, false, new Float32Array([
-                    val.a, val.b, 0, 0,
-                    val.c, val.d, 0, 0,
-                    0, 0, 1, 0,
-                    val.e, val.f, 0, 1
-                ]));
-                //console.log(val)
+                gl.uniformMatrix4fv(
+                    loc,
+                    false,
+                    new Float32Array([
+                        val.a,
+                        val.b,
+                        0,
+                        0,
+                        val.c,
+                        val.d,
+                        0,
+                        0,
+                        0,
+                        0,
+                        1,
+                        0,
+                        val.e,
+                        val.f,
+                        0,
+                        1,
+                    ]),
+                );
+                // console.log(val)
             }
             else if (val instanceof Color) {
                 gl.uniform3f(loc, val.r, val.g, val.b);

@@ -1,3 +1,5 @@
+import type { FontData } from "../../assets/font";
+import type { Uniform } from "../../assets/shader";
 import type { Color } from "../../math/color";
 import type { Quad, Vec2 } from "../../math/math";
 import { anchorPt } from "../anchor";
@@ -36,6 +38,10 @@ export interface FormattedChar {
     angle: number;
     color: Color;
     opacity: number;
+    font?: string | FontData;
+    stretchInPlace: boolean;
+    shader?: string;
+    uniform?: Uniform;
 }
 
 export function drawFormattedText(ftext: FormattedText) {
@@ -49,7 +55,17 @@ export function drawFormattedText(ftext: FormattedText) {
         ).scale(-0.5),
     );
 
+    const charsByTexture = new Map<Texture, FormattedChar[]>();
+
     ftext.chars.forEach((ch) => {
+        if (!charsByTexture.has(ch.tex)) charsByTexture.set(ch.tex, []);
+        const chars = charsByTexture.get(ch.tex) ?? [];
+        chars.push(ch);
+    });
+
+    const sortedChars = Array.from(charsByTexture.values()).flat();
+
+    sortedChars.forEach((ch) => {
         drawUVQuad({
             tex: ch.tex,
             width: ch.width,
@@ -61,8 +77,8 @@ export function drawFormattedText(ftext: FormattedText) {
             opacity: ch.opacity,
             quad: ch.quad,
             anchor: "center",
-            uniform: ftext.opt.uniform,
-            shader: ftext.opt.shader,
+            uniform: ch.uniform ?? ftext.opt.uniform,
+            shader: ch.shader ?? ftext.opt.shader,
             fixed: ftext.opt.fixed,
         });
     });

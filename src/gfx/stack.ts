@@ -33,10 +33,9 @@ export function pushScale(x: number, y: number) {
     _k.gfx.transform.scaleSelf(x, y);
 }
 
-export function pushRotate(a: number | undefined) {
-    if (!a) return;
-
-    _k.gfx.transform.rotateSelf(a);
+export function pushRotate(angle: number | undefined) {
+    if (!angle) return;
+    _k.gfx.transform.rotateSelf(angle);
 }
 
 export function popTransform() {

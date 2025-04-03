@@ -1,5 +1,5 @@
 import { _k } from "../kaplay";
-import { deprecateMsg } from "../utils";
+import { deprecateMsg } from "../utils/log";
 
 export function setLayers(layerNames: string[], defaultLayer: string) {
     if (_k.game.layers) {

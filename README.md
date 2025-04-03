@@ -165,16 +165,14 @@ works all CDNs that supports NPM packages, e.g. jsdelivr, skypack
 
 ## Documentation
 
+- **v4000**: https://v4000.kaplayjs.com/
 - **v3001**: https://kaplayjs.com/
-- **v3000**: https://kaboomjs.com/
-- **v2000**: https://2000.kaboomjs.com/
-- **v0.5.0**: https://legacy.kaboomjs.com/
 
 ## Community
 
 - [Discord Server](https://discord.gg/aQ6RuQm3TF)
 - [GitHub Discussions](https://github.com/kaplayjs/kaplay/discussions)
-- [Twitter](https://twitter.com/Kaboomjs)
+- [Twitter](https://twitter.com/kaplayjs)
 
 ### Games
 
@@ -193,7 +191,7 @@ Collections of games made with KAPLAY (and Kaboom), selected by KAPLAY:
 - Thanks to [Pixabay](https://pixabay.com/users/pixabay-1/) for the great
   [burp](https://pixabay.com/sound-effects/burp-104984/) sound, used in `burp()`
   function
-- Thansk to [Kenney](https://kenney.nl/) for all used assets for examples
+- Thanks to [Kenney](https://kenney.nl/) for all used assets for examples
   - [Impact Sound Pack](https://kenney.nl/assets/impact-sounds)
   - [1-Bit Platformer Pack](https://kenney.nl/assets/1-bit-platformer-pack)
 - Thanks to [abrudz](https://github.com/abrudz) for the amazing

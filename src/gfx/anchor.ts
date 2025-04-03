@@ -1,6 +1,6 @@
 import { Vec2 } from "../math/math";
 import { type Anchor } from "../types";
-import type { TextAlign } from "./draw";
+import type { TextAlign } from "./draw/drawText";
 
 const TOP_LEFT = new Vec2(-1, -1);
 const TOP = new Vec2(0, -1);
