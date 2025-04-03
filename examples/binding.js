@@ -1,4 +1,10 @@
-// @ts-check
+/**
+ * @file Button Bindings
+ * @description How to set common names to different inputs ("jump", "shoot").
+ * @difficulty 0
+ * @tags input
+ * @minver 3001
+ */
 
 // You can set the input bindings for your game!
 kaplay({

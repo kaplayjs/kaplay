@@ -1,4 +1,11 @@
-// @ts-check
+/**
+ * @file Audio Playing
+ * @description How to play audio files and change volume, speed, etc.
+ * @difficulty 0
+ * @tags basics, audio
+ * @minver 3001
+ */
+
 // Playing audio and controlling it
 
 kaplay({

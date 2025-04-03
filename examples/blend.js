@@ -1,4 +1,11 @@
-// @ts-check
+/**
+ * @file Button Bindings
+ * @description How to use blend mode with blend() comp
+ * @difficulty 0
+ * @tags draw, visual
+ * @minver 4000
+ * @locked
+ */
 
 // Adding game objects to screen
 
