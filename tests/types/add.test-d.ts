@@ -10,11 +10,11 @@ import type { GameObj } from "../../src/types";
 describe("Type Inference from add()", () => {
     const k = kaplay();
 
-    test("add() should return GameObj<unknown>", () => {
+    test("add() with no args should return GameObj<unknown>", () => {
         const obj = k.add();
         //     ^?
 
-        // Actually this test can give falsy true because unknown is acceptable for never
+        // Actually this test can give false positive success because unknown is acceptable for never
         expectTypeOf(obj).toEqualTypeOf<GameObj<unknown>>();
     });
 
@@ -22,7 +22,7 @@ describe("Type Inference from add()", () => {
         const obj = k.add([]);
         //     ^?
 
-        // Actually this test can give falsy true because unknown is acceptable for never
+        // Actually this test can give false positive success because unknown is acceptable for never
         expectTypeOf(obj).toEqualTypeOf<GameObj<never>>();
     });
 
@@ -43,7 +43,7 @@ describe("Type Inference from add()", () => {
         expectTypeOf(obj).toEqualTypeOf<GameObj<CircleComp | ScaleComp>>();
     });
 
-    test("add([circle(), \"cat\"]) should return GameObj<CircleComp>", () => {
+    test("add([circle(), \"cat\"]) should ignore the tag and return GameObj<CircleComp>", () => {
         const obj = k.add([
             k.circle(4),
             "cat",
@@ -103,5 +103,31 @@ describe("Type Inference from add()", () => {
         );
 
         expectTypeOf(obj.propertyA).toBeBoolean();
+    });
+
+    test("inline component should be writable", () => {
+        const obj = k.add([
+            k.circle(1),
+            { eaten: false },
+        ]);
+
+        obj.eaten = true;
+    });
+
+    test("readonly on typed component is preserved", () => {
+        const comp: {
+            readonly friendly: boolean;
+        } = {
+            friendly: true,
+        };
+
+        const obj = k.add([
+            k.circle(1),
+            comp,
+        ]);
+
+        // @ts-expect-error
+        obj.friendly = true;
+        expectTypeOf(obj.friendly).not.toBeAny();
     });
 });

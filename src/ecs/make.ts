@@ -44,8 +44,8 @@ export type SetParentOpt = {
     keep: KeepFlags;
 };
 
-export function make<const T extends CompList<unknown>>(
-    comps: T = [] as unknown as T,
+export function make<T extends CompList<unknown>>(
+    comps: [...T],
 ): GameObj<T[number]> {
     const id = uid();
     const compStates = new Map<string, Comp>();
@@ -126,9 +126,9 @@ export function make<const T extends CompList<unknown>>(
             return Array.from(tags);
         },
 
-        add<const T2 extends CompList<unknown>>(
+        add<T2 extends CompList<unknown>>(
             this: GameObj,
-            a: T2,
+            a: [...T2],
         ): GameObj<T2[number]> {
             const obj = make(a);
 
