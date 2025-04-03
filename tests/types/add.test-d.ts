@@ -118,7 +118,7 @@ describe("Type Inference from add()", () => {
         const comp: {
             readonly friendly: boolean;
         } = {
-            friendly: true
+            friendly: true,
         };
 
         const obj = k.add([
