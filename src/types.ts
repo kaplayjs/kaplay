@@ -4486,7 +4486,7 @@ export interface KAPLAYCtx<
     mapc(v: number, l1: number, h1: number, l2: number, h2: number): number;
     /**
      * Interpolate back and forth between 2 values.
-     * 
+     *
      * (Optionally takes a custom periodic function, which default to a sine wave.).
      *
      * @example
