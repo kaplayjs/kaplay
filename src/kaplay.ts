@@ -20,7 +20,7 @@ import {
     loadShaderURL,
     type Uniform,
 } from "./assets/shader";
-import { getSound, loadMusic, loadSound, SoundData } from "./assets/sound";
+        import { getSound, loadMusic, loadSound, SoundData } from "./assets/sound";
 import { getSprite, loadBean, loadSprite, SpriteData } from "./assets/sprite";
 import { loadSpriteAtlas } from "./assets/spriteAtlas";
 import { burp } from "./audio/burp";
