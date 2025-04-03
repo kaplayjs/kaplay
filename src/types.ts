@@ -4381,7 +4381,7 @@ export interface KAPLAYCtx<
      */
     chance(p: number): boolean;
     /**
-     * Linear interpolation.
+     * Linear interpolation. Can take a number, vector, or color.
      *
      * @group Math
      */
@@ -4485,7 +4485,9 @@ export interface KAPLAYCtx<
      */
     mapc(v: number, l1: number, h1: number, l2: number, h2: number): number;
     /**
-     * Interpolate between 2 values (Optionally takes a custom periodic function, which default to Math.sin).
+     * Interpolate back and forth between 2 values.
+     * 
+     * (Optionally takes a custom periodic function, which default to a sine wave.).
      *
      * @example
      * ```js
@@ -4499,12 +4501,12 @@ export interface KAPLAYCtx<
      *
      * @group Math
      */
-    wave(
-        lo: number,
-        hi: number,
+    wave<V extends LerpValue>(
+        lo: V,
+        hi: V,
         t: number,
         func?: (x: number) => number,
-    ): number;
+    ): V;
     /**
      * Convert degrees to radians.
      *
