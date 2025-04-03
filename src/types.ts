@@ -139,16 +139,6 @@ import type {
 } from "./math/math";
 import type { NavMesh } from "./math/navigationmesh";
 
-type Clean<T extends any[]> = {
-    [K in keyof T]: T[K] extends infer U extends any
-        ? U extends infer F extends Comp ? F : {
-            [K in keyof U]: "f";
-        }
-        : never;
-};
-
-type X = Clean<[SpriteComp, { readonly x: string }]>;
-
 /**
  * Context handle that contains every KAPLAY function.
  *

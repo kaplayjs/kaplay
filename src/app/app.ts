@@ -16,6 +16,7 @@ import { map, Vec2, vec2 } from "../math/math";
 import GAMEPAD_MAP from "../data/gamepad.json" assert { type: "json" };
 import type { AppEventMap } from "../events/eventMap";
 import { type KEventController, KEventHandler } from "../events/events";
+import { _k } from "../kaplay";
 import { overload2 } from "../utils/overload";
 import { isEqOrIncludes, setHasOrIncludes } from "../utils/sets";
 import {
@@ -835,7 +836,13 @@ export const initApp = (
     const pd = opt.pixelDensity || 1;
 
     canvasEvents.mousemove = (e) => {
-        const mousePos = new Vec2(e.offsetX, e.offsetY);
+        // 🍝 Here we depend of GFX Context even if initGfx needs initApp for being used
+        // Letterbox creates some black bars so we need to remove that for calculating
+        // mouse position
+        const mousePos = new Vec2(
+            e.offsetX - _k.gfx.viewport.x,
+            e.offsetY - _k.gfx.viewport.y,
+        );
         const mouseDeltaPos = new Vec2(e.movementX, e.movementY);
 
         if (isFullscreen()) {
