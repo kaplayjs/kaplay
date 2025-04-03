@@ -66,7 +66,7 @@ export interface AreaComp extends Comp {
      *
      * @since v3000.0
      */
-    collisionIgnore: Set<Tag>
+    collisionIgnore: Set<Tag>;
     /**
      * Restitution ("bounciness") of the object.
      */
@@ -594,7 +594,9 @@ export function area(opt: AreaCompOpt = {}): AreaComp {
                 return `area: ${this.area.scale?.x?.toFixed(1)}x`;
             }
             else {
-                return `area: (${this.area.scale?.x?.toFixed(1)}x, ${this.area.scale.y?.toFixed(1)}y)`;
+                return `area: (${this.area.scale?.x?.toFixed(1)}x, ${
+                    this.area.scale.y?.toFixed(1)
+                }y)`;
             }
         },
     };
