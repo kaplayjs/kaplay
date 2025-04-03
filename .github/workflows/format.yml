@@ -11,7 +11,6 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
         with:
-          token: ${{ secrets.BOT_TOKEN }}
           submodules: true
           ref: ${{ github.event.pull_request.head.ref }}
       - name: Install Node.js
@@ -26,12 +25,7 @@ jobs:
         run: pnpm i dprint
       - name: Run Formatter
         run: pnpm run fmt
-      - name: Commit and Push
-        env:
-          BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
+      - name: Check if it's formatted
         run: |
-          git config --global user.name "Bag Bot"
-          git config --global user.email "lajbel@kaplayjs.com"
-          git add .
-          git commit -m "style: fmt" || echo "No changes to commit"
-          git push https://x-access-token:$BOT_TOKEN@github.com/${{ github.repository }}.git
+          git diff --exit-code || (echo "Please format your code with pnpm fmt." && exit 1)
+          
