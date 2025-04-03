@@ -22,8 +22,8 @@ jobs:
         name: Install pnpm
         with:
           run_install: false
-      - name: Install dependencies
-        run: pnpm install
+      - name: Install dprint
+        run: pnpm i dprint
       - name: Run Formatter
         run: pnpm run fmt
       - name: Commit and Push
