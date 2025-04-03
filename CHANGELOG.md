@@ -36,7 +36,7 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   ```
 
 - All game objects have methods `onTag()` and `onUntag()` for watching tag changes - @mflerackers
-- Added `LCEvents` enum for identify different lifecycle events in the game loop.
+- Added `LCEvents` enum to identify different lifecycle events in the game loop - @mflerackers
 - Blend mode is selectable to change how sprites are composited on top of each other - @mflerackers
 - Picture API to cache drawing of selected objects - @mflerackers
 - drawCanvas - @mflerackers
