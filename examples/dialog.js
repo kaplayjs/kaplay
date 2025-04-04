@@ -1,4 +1,10 @@
-// @ts-check
+/**
+ * @file Dialog
+ * @description How to create a dialog box with a typewriter.
+ * @difficulty medium
+ * @tags ui
+ * @minver 3001.0
+ */
 
 // Simple dialogues with character avatars
 

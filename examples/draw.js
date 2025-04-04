@@ -1,4 +1,10 @@
-// @ts-check
+/**
+ * @file Draw
+ * @description How to use KAPLAY as a canvas draw library.
+ * @difficulty easy
+ * @tags basics
+ * @minver 3001.0
+ */
 
 // Kaplay as pure rendering lib (no component / game obj etc.)
 kaplay();

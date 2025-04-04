@@ -1,4 +1,10 @@
-// @ts-check
+/**
+ * @file Eat Love
+ * @description A simple game to eat love.
+ * @difficulty 1
+ * @tags game
+ * @minver 3001.0
+ */
 
 kaplay();
 

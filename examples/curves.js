@@ -1,4 +1,10 @@
-// @ts-check
+/**
+ * @file Curves
+ * @description TBD
+ * @difficulty hard
+ * @tags math
+ * @minver 3001.0
+ */
 
 kaplay();
 
