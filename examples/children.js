@@ -1,4 +1,10 @@
-// @ts-check
+/**
+ * @file Children
+ * @description How to create children on game objects.
+ * @difficulty 0
+ * @tags basics, gobj
+ * @minver 3001.0
+ */
 
 kaplay();
 

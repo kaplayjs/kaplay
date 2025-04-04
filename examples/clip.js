@@ -58,7 +58,7 @@ scene("rect", () => {
             },
         });
 
-        for (line of testLines) {
+        for (const line of testLines) {
             drawRectClippedLine(r, line);
         }
     });
@@ -80,7 +80,7 @@ scene("circle", () => {
             },
         });
 
-        for (line of testLines) {
+        for (const line of testLines) {
             drawCircleClippedLine(c, line);
         }
     });
