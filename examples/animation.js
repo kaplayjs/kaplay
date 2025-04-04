@@ -3,7 +3,7 @@
  * @description How to animate game object properties with animate() component
  * @difficulty 0
  * @tags components, animation
- * @minver 3001
+ * @minver 3001.0
  */
 
 // Start kaplay

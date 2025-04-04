@@ -3,7 +3,7 @@
  * @description How to use blend mode with blend() comp
  * @difficulty 0
  * @tags draw, visual
- * @minver 4000
+ * @minver 4000.0
  * @locked
  */
 

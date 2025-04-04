@@ -1,4 +1,10 @@
-// @ts-check
+/**
+ * @file Buttons
+ * @description How to create simple UI buttons
+ * @difficulty 0
+ * @tags ui
+ * @minver 3001.0
+ */
 
 // Simple UI and setup for buttons
 

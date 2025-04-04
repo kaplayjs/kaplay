@@ -3,7 +3,7 @@
  * @description How to create game objects.
  * @difficulty 0
  * @tags basics
- * @minver 3001
+ * @minver 3001.0
  */
 
 // Adding game objects to screen

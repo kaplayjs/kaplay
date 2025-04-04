@@ -3,7 +3,7 @@
  * @description How to play audio files and change volume, speed, etc.
  * @difficulty 0
  * @tags basics, audio
- * @minver 3001
+ * @minver 3001.0
  */
 
 // Playing audio and controlling it
