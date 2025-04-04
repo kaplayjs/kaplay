@@ -476,6 +476,7 @@ export function sprite(
             }
 
             if (curAnim) {
+                if (opt.preventRestart && curAnim.name === name) return;
                 this.stop();
             }
 
