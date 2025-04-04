@@ -188,7 +188,7 @@ export function play(
 
     const snd = resolveSound(
         // @ts-expect-error Resolve Type Error
-        src
+        src,
     );
 
     if (snd instanceof Asset) {
