@@ -1,4 +1,11 @@
-// @ts-check
+/**
+ * @file Collision Shapes
+ * @description How to create different collision shapes.
+ * @difficulty 1
+ * @tags basics, comps, physics
+ * @minver 4000.0
+ * @locked
+ */
 
 // How kaplay handles collisions with different shapes
 kaplay();
