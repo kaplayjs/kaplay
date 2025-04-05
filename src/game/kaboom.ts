@@ -1,6 +1,12 @@
-import { anchor, boom, pos, scale, sprite, stay, timer } from "../components";
+import { sprite } from "../ecs/components/draw/sprite";
+import { boom } from "../ecs/components/misc/boom";
+import { stay } from "../ecs/components/misc/stay";
+import { timer } from "../ecs/components/misc/timer";
+import { anchor } from "../ecs/components/transform/anchor";
+import { pos } from "../ecs/components/transform/pos";
+import { scale } from "../ecs/components/transform/scale";
 import { _k } from "../kaplay";
-import type { Vec2 } from "../math";
+import type { Vec2 } from "../math/math";
 import type { CompList, GameObj } from "../types";
 
 /**
@@ -24,6 +30,10 @@ export interface BoomOpt {
 }
 
 export function addKaboom(p: Vec2, opt: BoomOpt = {}): GameObj {
+    if (!_k.game.boomSprite || !_k.game.kaSprite) {
+        throw new Error("You can't use addKaboom without the sprites loaded");
+    }
+
     const kaboom = _k.game.root.add([
         pos(p),
         stay(),
@@ -33,7 +43,7 @@ export function addKaboom(p: Vec2, opt: BoomOpt = {}): GameObj {
     const s = opt.scale || 1;
 
     kaboom.add([
-        sprite(_k.boomSprite),
+        sprite(_k.game.boomSprite),
         scale(0),
         anchor("center"),
         boom(speed, s),
@@ -41,7 +51,7 @@ export function addKaboom(p: Vec2, opt: BoomOpt = {}): GameObj {
     ]);
 
     const ka = kaboom.add([
-        sprite(_k.kaSprite),
+        sprite(_k.game.kaSprite),
         scale(0),
         anchor("center"),
         timer(),

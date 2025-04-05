@@ -1,5 +1,5 @@
 import { _k } from "../kaplay";
-import { type Vec2, vec2 } from "../math";
+import { type Vec2, vec2 } from "../math/math";
 
 export function setGravity(g: number) {
     // If g > 0 use either the current direction or use (0, 1)

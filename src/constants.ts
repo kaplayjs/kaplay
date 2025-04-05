@@ -1,6 +1,6 @@
 // some default charsets for loading bitmap fonts
 export const ASCII_CHARS =
-	" !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~";
+    " !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~";
 export const DEF_ANCHOR = "topleft";
 export const BG_GRID_SIZE = 64;
 export const DEF_FONT = "monospace";
@@ -19,9 +19,9 @@ export const DEF_FONT_FILTER = "linear";
 export const LOG_MAX = 8;
 export const LOG_TIME = 4;
 export const VERTEX_FORMAT = [
-	{ name: "a_pos", size: 2 },
-	{ name: "a_uv", size: 2 },
-	{ name: "a_color", size: 4 },
+    { name: "a_pos", size: 2 },
+    { name: "a_uv", size: 2 },
+    { name: "a_color", size: 4 },
 ];
 const STRIDE = VERTEX_FORMAT.reduce((sum, f) => sum + f.size, 0);
 const MAX_BATCHED_QUAD = 2048;
@@ -40,9 +40,10 @@ varying vec4 v_color;
 uniform float width;
 uniform float height;
 uniform mat4 camera;
+uniform mat4 transform;
 
 vec4 def_vert() {
-	vec4 pos = camera * vec4(a_pos, 0.0, 1.0);
+	vec4 pos = camera * transform * vec4(a_pos, 0.0, 1.0);
 	return vec4(pos.x / width * 2.0 - 1.0, pos.y / -height * 2.0 + 1.0, pos.z, pos.w);
 }
 
@@ -94,13 +95,13 @@ vec4 frag(vec2 pos, vec2 uv, vec4 color, sampler2D tex) {
 `;
 export const COMP_DESC = new Set(["id", "require"]);
 export const COMP_EVENTS = new Set([
-	"add",
-	"fixedUpdate",
-	"update",
-	"draw",
-	"destroy",
-	"inspect",
-	"drawInspect",
+    "add",
+    "fixedUpdate",
+    "update",
+    "draw",
+    "destroy",
+    "inspect",
+    "drawInspect",
 ]);
 export const DEF_OFFSCREEN_DIS = 200;
 // maximum y velocity with body()

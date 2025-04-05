@@ -1,9 +1,10 @@
-// everything related to canvas, game loop and input
+// App is everything related to canvas, game loop and input
 
 import type {
     Cursor,
     GamepadDef,
     GamepadStick,
+    KAPLAYOpt,
     Key,
     KGamepad,
     KGamepadButton,
@@ -12,16 +13,12 @@ import type {
 
 import { map, Vec2, vec2 } from "../math/math";
 
-import {
-    isEqOrIncludes,
-    KEventController,
-    KEventHandler,
-    overload2,
-    setHasOrIncludes,
-} from "../utils";
-
 import GAMEPAD_MAP from "../data/gamepad.json" assert { type: "json" };
-import type { AppEventMap } from "../game";
+import type { AppEventMap } from "../events/eventMap";
+import { type KEventController, KEventHandler } from "../events/events";
+import { _k } from "../kaplay";
+import { overload2 } from "../utils/overload";
+import { isEqOrIncludes, setHasOrIncludes } from "../utils/sets";
 import {
     type ButtonBinding,
     type ButtonsDef,
@@ -60,8 +57,8 @@ class GamepadState {
 }
 
 class FPSCounter {
-    private dts: number[] = [];
-    private timer: number = 0;
+    dts: number[] = [];
+    timer: number = 0;
     fps: number = 0;
     tick(dt: number) {
         this.dts.push(dt);
@@ -126,15 +123,11 @@ export const initAppState = (opt: {
     };
 };
 
-export const initApp = (opt: {
-    canvas: HTMLCanvasElement;
-    touchToMouse?: boolean;
-    gamepads?: Record<string, GamepadDef>;
-    pixelDensity?: number;
-    maxFPS?: number;
-    fixedFPS?: number;
-    buttons?: ButtonsDef;
-}) => {
+export const initApp = (
+    opt: {
+        canvas: HTMLCanvasElement;
+    } & KAPLAYOpt,
+) => {
     if (!opt.canvas) {
         throw new Error("Please provide a canvas");
     }
@@ -188,7 +181,7 @@ export const initApp = (opt: {
             try {
                 const res = state.canvas
                     .requestPointerLock() as unknown as Promise<void>;
-                if (res.catch) {
+                if (res?.catch) {
                     res.catch((e) => console.error(e));
                 }
             } catch (e) {
@@ -839,7 +832,13 @@ export const initApp = (opt: {
     const pd = opt.pixelDensity || 1;
 
     canvasEvents.mousemove = (e) => {
-        const mousePos = new Vec2(e.offsetX, e.offsetY);
+        // 🍝 Here we depend of GFX Context even if initGfx needs initApp for being used
+        // Letterbox creates some black bars so we need to remove that for calculating
+        // mouse position
+        const mousePos = new Vec2(
+            e.offsetX - _k.gfx.viewport.x,
+            e.offsetY - _k.gfx.viewport.y,
+        );
         const mouseDeltaPos = new Vec2(e.movementX, e.movementY);
 
         if (isFullscreen()) {

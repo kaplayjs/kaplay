@@ -1,6 +1,5 @@
 import type { Shape } from "../types";
 import { Circle, Ellipse, Polygon, Rect, Vec2, vec2 } from "./math";
-import { Vec3 } from "./vec3";
 
 interface Collider {
     center: Vec2;
@@ -21,7 +20,11 @@ class CircleCollider implements Collider {
     }
 
     support(direction: Vec2): Vec2 {
-        return this.center.add(direction.unit().scale(this.radius));
+        const s = new Vec2(direction.x, direction.y);
+        Vec2.unit(s, s);
+        Vec2.scale(s, this.radius, s);
+        Vec2.add(s, this.center, s);
+        return s;
     }
 }
 
@@ -41,17 +44,21 @@ class EllipseCollider implements Collider {
     support(direction: Vec2): Vec2 {
         // Axis aligned
         if (this.angle === 0.0) {
-            const axis = direction.unit().scale(this.radiusX, this.radiusY)
-                .unit().scale(this.radiusX, this.radiusY);
-            return this.center.add(axis);
+            let axis = new Vec2(direction.x, direction.y);
+            Vec2.unit(axis, axis);
+            Vec2.scalec(axis, this.radiusX, this.radiusY, axis);
+            Vec2.add(axis, this.center, axis);
+            return axis;
         }
         // Rotated
         else {
-            direction = direction.rotate(-this.angle);
-            let axis = direction.unit().scale(this.radiusX, this.radiusY).unit()
-                .scale(this.radiusX, this.radiusY);
-            axis = axis.rotate(this.angle);
-            return this.center.add(axis);
+            let axis = new Vec2(direction.x, direction.y);
+            Vec2.rotateByAngle(axis, -this.angle, axis);
+            Vec2.unit(axis, axis);
+            Vec2.scalec(axis, this.radiusX, this.radiusY, axis);
+            Vec2.rotateByAngle(axis, this.angle, axis);
+            Vec2.add(axis, this.center, axis);
+            return axis;
         }
     }
 }
@@ -69,7 +76,9 @@ class PolygonCollider implements Collider {
         let maxPoint;
         let maxDistance = Number.NEGATIVE_INFINITY;
 
-        for (const vertex of this.vertices) {
+        let vertex;
+        for (let i = 0; i < this.vertices.length; i++) {
+            vertex = this.vertices[i];
             const distance = vertex.dot(direction);
             if (distance > maxDistance) {
                 maxDistance = distance;
@@ -88,8 +97,10 @@ function calculateSupport(
 ): Vec2 {
     // Calculate the support vector. This is done by calculating the difference between
     // the furthest points found of the shapes along the given direction.
-    var oppositeDirection: Vec2 = direction.scale(-1);
-    return shapeA.support(direction).sub(shapeB.support(oppositeDirection));
+    let oppositeDirection = new Vec2(-direction.x, -direction.y);
+    const supportA = shapeA.support(direction);
+    const supportB = shapeB.support(oppositeDirection);
+    return new Vec2(supportA.x - supportB.x, supportA.y - supportB.y);
 }
 
 function addSupport(
@@ -111,15 +122,12 @@ enum EvolveResult {
 }
 
 function tripleProduct(a: Vec2, b: Vec2, c: Vec2): Vec2 {
-    const A: Vec3 = new Vec3(a.x, a.y, 0);
-    const B: Vec3 = new Vec3(b.x, b.y, 0);
-    const C: Vec3 = new Vec3(c.x, c.y, 0);
-
-    const first: Vec3 = A.cross(B);
-    const second: Vec3 = first.cross(C);
+    // AxB = (0, 0, axb)
+    // AxBxC = (-axb * c.y, axb * c.x, 0)
+    const n = a.x * b.y - a.y * b.x;
 
     // This vector lies in the same plane as a and b and is perpendicular to c
-    return vec2(second.x, second.y);
+    return new Vec2(-n * c.y, n * c.x);
 }
 
 function evolveSimplex(
@@ -144,8 +152,11 @@ function evolveSimplex(
         }
         case 2: {
             // We now have a line ab. Take the vector ab and the vector a origin
-            const ab: Vec2 = simplex[1].sub(simplex[0]);
-            const a0: Vec2 = simplex[0].scale(-1);
+            const ab = new Vec2(
+                simplex[1].x - simplex[0].x,
+                simplex[1].y - simplex[0].y,
+            );
+            const a0 = new Vec2(-simplex[0].x, -simplex[0].y);
 
             // Get the vector perpendicular to ab and a0
             // Then get the vector perpendicular to the result and ab
@@ -158,12 +169,18 @@ function evolveSimplex(
         case 3:
             {
                 // We have a triangle, and need to check if it contains the origin
-                const c0: Vec2 = simplex[2].scale(-1);
-                const bc: Vec2 = simplex[1].sub(simplex[2]);
-                const ca: Vec2 = simplex[0].sub(simplex[2]);
+                const c0 = new Vec2(-simplex[2].x, -simplex[2].y);
+                const bc = new Vec2(
+                    simplex[1].x - simplex[2].x,
+                    simplex[1].y - simplex[2].y,
+                );
+                const ca = new Vec2(
+                    simplex[0].x - simplex[2].x,
+                    simplex[0].y - simplex[2].y,
+                );
 
-                var bcNorm: Vec2 = tripleProduct(ca, bc, bc);
-                var caNorm: Vec2 = tripleProduct(bc, ca, ca);
+                var bcNorm = tripleProduct(ca, bc, bc);
+                var caNorm = tripleProduct(bc, ca, ca);
 
                 if (bcNorm.dot(c0) > 0) {
                     // The origin does not lie within the triangle
@@ -206,7 +223,7 @@ function evolveSimplex(
  */
 function gjkIntersects(colliderA: Collider, colliderB: Collider): boolean {
     const vertices: Vec2[] = [];
-    let direction: Vec2 = vec2();
+    let direction = new Vec2();
 
     var result: EvolveResult = EvolveResult.Evolving;
     while (result === EvolveResult.Evolving) {
@@ -233,31 +250,35 @@ type Edge = {
  * @returns The edge closest to the origin.
  */
 function findClosestEdge(simplex: Vec2[], winding: PolygonWinding): Edge {
-    var minDistance: number = Number.POSITIVE_INFINITY;
-    var minNormal: Vec2 = new Vec2();
-    var minIndex: number = 0;
-    var line: Vec2 = new Vec2();
+    let minDistance: number = Number.POSITIVE_INFINITY;
+    let minNormal = new Vec2();
+    let minIndex = 0;
+    let line = new Vec2();
+    let norm = new Vec2();
     for (let i = 0; i < simplex.length; i++) {
-        let j: number = i + 1;
+        let j = i + 1;
         if (j >= simplex.length) j = 0;
 
-        line = simplex[j].sub(simplex[i]);
+        Vec2.sub(simplex[j], simplex[i], line);
 
         // The normal of the edge depends on the polygon winding of the simplex
-        let norm: Vec2;
         switch (winding) {
             case PolygonWinding.Clockwise:
-                norm = new Vec2(line.y, -line.x);
+                norm.x = line.y;
+                norm.y = -line.x;
+                break;
             case PolygonWinding.CounterClockwise:
-                norm = new Vec2(-line.y, line.x);
+                norm.x = -line.y;
+                norm.y = line.x;
+                break;
         }
-        norm = norm.unit();
+        Vec2.unit(norm, norm);
 
         // Only keep the edge closest to the origin
         var dist: number = norm.dot(simplex[i]);
         if (dist < minDistance) {
             minDistance = dist;
-            minNormal = norm;
+            Vec2.copy(norm, minNormal);
             minIndex = j;
         }
     }
@@ -301,21 +322,22 @@ function getIntersection(
         ? PolygonWinding.Clockwise
         : PolygonWinding.CounterClockwise;
 
-    let intersection: Vec2 = new Vec2();
+    let intersection = new Vec2();
     for (let i = 0; i < MAX_TRIES; i++) {
         var edge: Edge = findClosestEdge(simplex, winding);
         // Calculate the difference for the two vertices furthest along the direction of the edge normal
-        var support: Vec2 = calculateSupport(colliderA, colliderB, edge.normal);
+        var support = calculateSupport(colliderA, colliderB, edge.normal);
         // Check distance to the origin
         var distance: number = support.dot(edge.normal);
 
-        intersection = edge.normal.scale(distance);
+        Vec2.scale(edge.normal, distance, intersection);
 
         // If close enough, return if we need to move a distance greater than 0
         if (Math.abs(distance - edge.distance) <= EPSILON) {
             const len = intersection.len();
             if (len != 0) {
-                return { normal: intersection.scale(-1 / len), distance: len };
+                Vec2.scale(intersection, -1 / len, intersection);
+                return { normal: intersection, distance: len };
             }
             else {
                 return null;
@@ -330,7 +352,8 @@ function getIntersection(
     // Since we did more than the maximum amount of iterations, this may not be optimal
     const len = intersection.len();
     if (len != 0) {
-        return { normal: intersection.scale(-1 / len), distance: len };
+        Vec2.scale(intersection, -1 / len, intersection);
+        return { normal: intersection, distance: len };
     }
     else {
         return null;
@@ -348,7 +371,10 @@ function gjkIntersection(
     colliderB: Collider,
 ): GjkCollisionResult | null {
     const vertices: Vec2[] = [];
-    let direction: Vec2 = colliderB.center.sub(colliderA.center);
+    let direction = new Vec2(
+        colliderB.center.x - colliderA.center.x,
+        colliderB.center.y - colliderA.center.y,
+    );
 
     var result: EvolveResult = EvolveResult.Evolving;
     while (result === EvolveResult.Evolving) {

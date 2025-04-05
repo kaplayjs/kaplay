@@ -1,7 +1,7 @@
-import { Asset, resolveShader, type Uniform } from "../../assets";
+import { Asset } from "../../assets/asset";
+import { resolveShader, type Uniform } from "../../assets/shader";
 import { _k } from "../../kaplay";
-import { Vec2, vec2 } from "../../math/math";
-import { screen2ndc } from "../../math/various";
+import { Vec2 } from "../../math/math";
 import { type Attributes, BlendMode, type RenderProps } from "../../types";
 import type { Texture } from "../gfx";
 import { height, width } from "../stack";
@@ -56,6 +56,6 @@ export function drawRaw(
         blend ?? BlendMode.Normal,
         width(),
         height(),
-        _k.gfx.fixed || fixed
+        _k.gfx.fixed || fixed,
     );
 }

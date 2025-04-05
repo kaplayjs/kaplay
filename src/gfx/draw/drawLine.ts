@@ -1,4 +1,4 @@
-import { opacity } from "../../components";
+import { opacity } from "../../ecs/components/draw/opacity";
 import { _k } from "../../kaplay";
 import { Color } from "../../math/color";
 import { deg2rad, Vec2, vec2 } from "../../math/math";

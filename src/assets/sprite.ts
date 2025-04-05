@@ -1,10 +1,10 @@
-import { Asset, loadImg, loadProgress } from "../assets";
-import type { DrawSpriteOpt } from "../gfx";
+import type { DrawSpriteOpt } from "../gfx/draw/drawSprite";
 import type { Texture } from "../gfx/gfx";
 import { _k } from "../kaplay";
 import beanSpriteSrc from "../kassets/bean.png";
 import { Quad } from "../math/math";
 import { type ImageSource } from "../types";
+import { Asset, loadImg, loadProgress } from "./asset";
 import { fixURL } from "./utils";
 
 /**

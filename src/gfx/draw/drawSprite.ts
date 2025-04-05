@@ -1,5 +1,6 @@
-import { type Asset, resolveSprite, type SpriteData } from "../../assets";
-import { Quad, type Vec2 } from "../../math";
+import type { Asset } from "../../assets/asset";
+import { resolveSprite, type SpriteData } from "../../assets/sprite";
+import { Quad, type Vec2 } from "../../math/math";
 import type { Anchor, RenderProps } from "../../types";
 import { drawTexture } from "./drawTexture";
 

@@ -32,7 +32,7 @@ const trail = [];
 const outline = {
     width: 4,
     color: rgb(0, 0, 0),
-    join: "miter",
+    join: "bevel",
 };
 
 function drawStuff() {

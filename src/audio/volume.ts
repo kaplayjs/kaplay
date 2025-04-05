@@ -1,6 +1,5 @@
 import { _k } from "../kaplay";
-import { deprecate, deprecateMsg } from "../utils";
-
+import { deprecateMsg } from "../utils/log";
 export function setVolume(v: number) {
     _k.audio.masterNode.gain.value = v;
 }

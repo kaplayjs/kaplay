@@ -1,17 +1,16 @@
-import {
-    type agent,
-    type animate,
-    type area,
-    type body,
-    type doubleJump,
-    type health,
-    type offscreen,
-    type patrol,
-    type sentry,
-    type sprite,
-} from "../components";
+import type { Asset } from "../assets/asset";
+import { type sprite } from "../ecs/components/draw/sprite";
+import { type agent } from "../ecs/components/level/agent";
+import { type patrol } from "../ecs/components/level/patrol";
+import { type sentry } from "../ecs/components/level/sentry";
+import { type animate } from "../ecs/components/misc/animate";
+import { type health } from "../ecs/components/misc/health";
+import { type area } from "../ecs/components/physics/area";
+import { type body } from "../ecs/components/physics/body";
+import { type doubleJump } from "../ecs/components/physics/doubleJump";
+import { type offscreen } from "../ecs/components/transform/offscreen";
 import { type addLevel } from "../game/level";
-import type { Vec2 } from "../math";
+import type { Vec2 } from "../math/math";
 import type {
     Collision,
     GameObj,
@@ -30,181 +29,181 @@ import type {
  */
 export type GameObjEventMap = {
     /** Triggered every frame */
-    "update": [GameObj];
+    update: [GameObj];
     /** Triggered every frame at a fixed 50fps rate */
-    "fixedUpdate": [GameObj];
+    fixedUpdate: [GameObj];
     /** Triggered every frame before update */
-    "draw": [GameObj];
+    draw: [GameObj];
     /** Triggered when object is added */
-    "add": [GameObj];
+    add: [GameObj];
     /** Triggered when object is destroyed */
-    "destroy": [GameObj];
+    destroy: [GameObj];
     /** Triggered when component is used */
-    "use": [GameObj, string];
+    use: [GameObj, string];
     /** Triggered when component is unused */
-    "unuse": [GameObj, string];
+    unuse: [GameObj, string];
     /** Triggered when tag is added */
-    "tag": [GameObj, string];
+    tag: [GameObj, string];
     /** Triggered when tag is removed */
-    "untag": [GameObj, string];
+    untag: [GameObj, string];
     /**
      * Triggered when object collides with another object
      *
      * From {@link area `area()`} component
      */
-    "collide": [GameObj, GameObj, Collision];
+    collide: [GameObj, GameObj, Collision];
     /**
      * Triggered every frame when object collides with another object
      *
      * From {@link area `area()`} component
      */
-    "collideUpdate": [GameObj, GameObj, Collision];
+    collideUpdate: [GameObj, GameObj, Collision];
     /**
      * Triggered when object stops colliding with another object
      *
      * From {@link area `area()`} component
      */
-    "collideEnd": [GameObj, GameObj, Collision];
+    collideEnd: [GameObj, GameObj, Collision];
     /**
      * Triggered when object is hurted
      *
      * From {@link health `health()`} component
      */
-    "hurt": [GameObj, hurt: number];
+    hurt: [GameObj, hurt: number];
     /**
      * Triggered when object is healed
      *
      * From {@link health `health()`} component
      */
-    "heal": [GameObj, heal: number];
+    heal: [GameObj, heal: number];
     /**
      * Triggered when object dies
      *
      * From {@link health `health()`} component
      */
-    "death": [GameObj];
+    death: [GameObj];
     /**
      * Triggered before physics resolves
      *
      * From {@link body `body()`} component
      */
-    "beforePhysicsResolve": [GameObj, col: Collision];
+    beforePhysicsResolve: [GameObj, col: Collision];
     /**
      * Triggered after physics resolves
      *
      * From {@link body `body()`} component
      */
-    "physicsResolve": [GameObj, col: Collision];
+    physicsResolve: [GameObj, col: Collision];
     /**
      * Triggered when object is on the ground
      *
      * From {@link body `body()`} component
      */
-    "ground": [GameObj];
+    ground: [GameObj];
     /**
      * Triggered when object is falling
      *
      * From {@link body `body()`} component
      */
-    "fall": [GameObj];
+    fall: [GameObj];
     /**
      * Triggered when object stops falling
      *
      * From {@link body `body()`} component
      */
-    "fallOff": [GameObj];
+    fallOff: [GameObj];
     /**
      * Triggered when object head butt something (like Mario with brick)
      *
      * From {@link body `body()`} component
      */
-    "headbutt": [GameObj];
+    headbutt: [GameObj];
     /**
      * Triggered when an object lands on this object
      *
      * From {@link body `body()`} component
      */
-    "land": [GameObj];
+    land: [GameObj];
     /**
      * Triggered when object is headbutted by another object
      *
      * From {@link body `body()`} component
      */
-    "headbutted": [GameObj];
+    headbutted: [GameObj];
     /**
      * Triggered when object double jumps
      *
      * From {@link doubleJump `doubleJump()`} component
      */
-    "doubleJump": [GameObj];
+    doubleJump: [GameObj];
     /**
      * Triggered when object goes out of view
      *
      * From {@link offscreen `offscreen()`} component
      */
-    "exitView": [GameObj];
+    exitView: [GameObj];
     /**
      * Triggered when object enters view
      *
      * From {@link offscreen `offscreen()`} component
      */
-    "enterView": [GameObj];
+    enterView: [GameObj];
     /**
      * Triggered when a sprite animation starts
      *
      * From {@link sprite `sprite()`} component
      */
-    "animStart": [GameObj, anim: string];
+    animStart: [GameObj, anim: string];
     /**
      * Triggered when a sprite animation ends
      *
      * From {@link sprite `sprite()`} component
      */
-    "animEnd": [GameObj, anim: string];
+    animEnd: [GameObj, anim: string];
     /**
      * From {@link agent `agent()`} component
      */
-    "navigationNext": [GameObj, GameObj, Vec2];
+    navigationNext: [GameObj, GameObj, Vec2];
     /**
      * From {@link agent `agent()`} component
      */
-    "navigationEnded": [GameObj, GameObj];
+    navigationEnded: [GameObj, GameObj];
     /**
      * From {@link agent `agent()`} component
      */
-    "navigationStarted": [GameObj, GameObj];
+    navigationStarted: [GameObj, GameObj];
     /**
      * From {@link agent `agent()`} component
      */
-    "targetReached": [GameObj, GameObj];
+    targetReached: [GameObj, GameObj];
     /**
      * From {@link patrol `patrol()`} component
      */
-    "patrolFinished": [GameObj];
+    patrolFinished: [GameObj];
     /**
      * From {@link sentry `sentry()`} component
      */
-    "objectSpotted": [GameObj, GameObj[]];
+    objectSpotted: [GameObj, GameObj[]];
     /**
      * From {@link animate `animate()`} component
      */
-    "animateChannelFinished": [GameObj, channel: string];
+    animateChannelFinished: [GameObj, channel: string];
     /**
      * From {@link animate `animate()`} component
      */
-    "animateFinished": [GameObj];
+    animateFinished: [GameObj];
     /**
      * From level of {@link addLevel `addLevel()`} function
      */
-    "spatialMapChanged": [GameObj];
+    spatialMapChanged: [GameObj];
     /**
      * From level of {@link addLevel `addLevel()`} function
      */
-    "navigationMapInvalid": [GameObj];
+    navigationMapInvalid: [GameObj];
     /**
      * From level of {@link addLevel `addLevel()`} function
      */
-    "navigationMapChanged": [GameObj];
+    navigationMapChanged: [GameObj];
 };
 
 export type GameObjEvents = GameObjEventMap & {
@@ -243,4 +242,19 @@ export type AppEventMap = {
     show: [];
     resize: [];
     input: [];
+};
+
+/**
+ * All Game State events with their arguments
+ */
+export type GameEventMap = {
+    load: [];
+    loadError: [string, Asset<any>];
+    loading: [number];
+    error: [Error];
+    input: [];
+    frameEnd: [];
+    resize: [];
+    sceneLeave: [string];
+    sceneEnter: [string];
 };

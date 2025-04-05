@@ -1,4 +1,4 @@
-name: test-kaplay
+name: Test KAPLAY
 
 on: [push, pull_request]
 
