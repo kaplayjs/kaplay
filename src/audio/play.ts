@@ -1,5 +1,5 @@
 import { Asset } from "../assets/asset";
-import type { SoundData } from "../assets/sound";
+import { resolveSound, type SoundData } from "../assets/sound";
 import { KEvent, type KEventController } from "../events/events";
 import { _k } from "../kaplay";
 import type { MusicData } from "../types";
@@ -186,8 +186,10 @@ export function play(
         }
     };
 
-    // @ts-ignore
-    const snd = resolveSound(src);
+    const snd = resolveSound(
+        // @ts-expect-error Resolve Type Error
+        src,
+    );
 
     if (snd instanceof Asset) {
         snd.onLoad(start);
