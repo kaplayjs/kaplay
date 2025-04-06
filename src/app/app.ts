@@ -85,7 +85,6 @@ export const initAppState = (opt: {
     buttons?: ButtonsDef;
     fixedFPS?: number;
 }) => {
-
     return {
         canvas: opt.canvas,
         buttons: opt.buttons ?? {},
