@@ -845,10 +845,7 @@ export const initApp = (
 
         // Ironically, e.offsetX and e.offsetY are the mouse position. Is not
         // related to what we call the "offset" in this code
-        _mousePos.x = e.offsetX;
-        _mousePos.y = e.offsetY;
-
-        const mousePos = canvasToViewport(_mousePos);
+        const mousePos = canvasToViewport(new Vec2(e.offsetX, e.offsetY));
         const mouseDeltaPos = new Vec2(e.movementX, e.movementY);
 
         if (isFullscreen()) {

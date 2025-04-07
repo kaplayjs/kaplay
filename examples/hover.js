@@ -57,3 +57,10 @@ blueBean.onHoverUpdate(() => {
 
     debug.log("blue bean on hover");
 });
+
+let cameraScale = 1;
+
+onScroll((delta) => {
+    cameraScale = cameraScale * (1 - 0.1 * Math.sign(delta.y));
+    setCamScale(cameraScale);
+});
