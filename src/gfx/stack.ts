@@ -61,5 +61,5 @@ export function height(): number {
 }
 
 export function center(): Vec2 {
-    return vec2(width() / 2, height() / 2);
+    return vec2(_k.gfx.width / 2, _k.gfx.height / 2);
 }
