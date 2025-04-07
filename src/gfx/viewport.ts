@@ -13,6 +13,9 @@ depending of the
 aspect ratio
 
 - Viewport size: The final rendered size
+
+We update the canvas before run this, you should check initEvents.ts
+in onResize method.
 */
 
 export function updateViewport() {
@@ -32,7 +35,6 @@ export function updateViewport() {
     let y = 0;
     let viewportWidth = canvasWidth;
     let viewportHeight = canvasHeight;
-    let scale = 0;
 
     if (_k.globalOpt.letterbox) {
         if (!desiredWidth || !desiredHeight) {
@@ -48,19 +50,15 @@ export function updateViewport() {
         // depending of what side is larger
         if (canvasAspectRatio > disairedAspectRatio) {
             const scaledWidth = canvasHeight * disairedAspectRatio;
-            const offsetRatio = desiredHeight / canvasHeight;
 
             x = (canvasWidth - scaledWidth) / 2;
             viewportWidth = scaledWidth;
-            scale = offsetRatio;
         }
         else {
             const scaledHeight = canvasWidth / disairedAspectRatio;
-            const offsetRatio = desiredWidth / canvasWidth;
 
             viewportHeight = scaledHeight;
             y = (canvasHeight - scaledHeight) / 2;
-            scale = offsetRatio;
         }
     }
 
