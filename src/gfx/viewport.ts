@@ -24,9 +24,9 @@ export function updateViewport() {
     const canvasWidth = drawingBufferWidth / pixelDensity;
     const canvasHeight = drawingBufferHeight / pixelDensity;
 
-    console.log("[vwp] buffer size", drawingBufferWidth, drawingBufferHeight);
-    console.log("[vwp] desired size", desiredWidth, desiredHeight);
-    console.log("[vwp] canvas size", canvasWidth, canvasHeight);
+    // console.log("[vwp] buffer size", drawingBufferWidth, drawingBufferHeight);
+    // console.log("[vwp] desired size", desiredWidth, desiredHeight);
+    // console.log("[vwp] canvas size", canvasWidth, canvasHeight);
 
     let x = 0;
     let y = 0;
@@ -69,8 +69,9 @@ export function updateViewport() {
         y: y,
         width: viewportWidth,
         height: viewportHeight,
-        scaleFactor: scale,
+        scale: (_k.gfx.viewport.width + _k.gfx.viewport.height)
+            / (_k.gfx.width + _k.gfx.height),
     };
 
-    console.log("[vwp] viewport is", _k.gfx.viewport);
+    // console.log("[vwp] viewport is", _k.gfx.viewport);
 }

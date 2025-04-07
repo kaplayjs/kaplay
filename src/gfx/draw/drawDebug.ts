@@ -62,7 +62,7 @@ export function drawDebug() {
 
         drawCircle({
             pos: _k.k.mousePos(),
-            radius: 4,
+            radius: 4 / _k.gfx.viewport.scale,
             color: Color.GREEN,
         });
     }

@@ -2,7 +2,7 @@ import { color } from "../ecs/components/draw/color";
 import { opacity } from "../ecs/components/draw/opacity";
 import { rect } from "../ecs/components/draw/rect";
 import { fixed } from "../ecs/components/transform/fixed";
-import { center, getViewportScale, height, width } from "../gfx/stack";
+import { center, height, width } from "../gfx/stack";
 import { _k } from "../kaplay";
 import { type Color, rgb } from "../math/color";
 import { type Mat23, type Vec2, vec2, type Vec2Args } from "../math/math";

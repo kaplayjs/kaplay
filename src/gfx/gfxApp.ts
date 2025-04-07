@@ -54,7 +54,7 @@ export type Viewport = {
     y: number;
     width: number;
     height: number;
-    scaleFactor: number;
+    scale: number;
 };
 
 export const initAppGfx = (gfx: GfxCtx, gopt: KAPLAYOpt): AppGfxCtx => {
@@ -183,7 +183,7 @@ export const initAppGfx = (gfx: GfxCtx, gopt: KAPLAYOpt): AppGfxCtx => {
             y: 0,
             width: gl.drawingBufferWidth,
             height: gl.drawingBufferHeight,
-            scaleFactor: 1,
+            scale: 1,
         },
 
         fixed: false,
