@@ -60,11 +60,6 @@ export function height(): number {
     return _k.gfx.height;
 }
 
-export function getViewportScale() {
-    return (_k.gfx.viewport.width + _k.gfx.viewport.height)
-        / (_k.gfx.width + _k.gfx.height);
-}
-
 export function viewportToCanvas(pt: Vec2) {
     return new Vec2(
         pt.x * _k.gfx.viewport.width / _k.gfx.width,
