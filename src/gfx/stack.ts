@@ -1,5 +1,5 @@
 import { _k } from "../kaplay";
-import { type Mat23, Vec2, vec2, type Vec2Args } from "../math/math";
+import { type Mat23, Vec2, vec2 } from "../math/math";
 
 export function pushTranslateV(t: Vec2 | undefined) {
     if (t === undefined) return;
