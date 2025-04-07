@@ -5998,11 +5998,7 @@ export interface KAPLAYOpt<
      */
     scale?: number;
     /**
-     * If stretch canvas to container when width and height is specified
-     */
-    stretch?: boolean;
-    /**
-     * When stretching if keep aspect ratio and leave black bars on remaining spaces.
+     * Keep aspect ratio and leave black bars on remaining spaces.
      */
     letterbox?: boolean;
     /**

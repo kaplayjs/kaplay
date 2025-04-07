@@ -21,7 +21,7 @@ export function initEvents() {
     _k.app.onResize(() => {
         if (_k.app.isFullscreen()) return;
         const fixedSize = _k.globalOpt.width && _k.globalOpt.height;
-        if (fixedSize && !_k.globalOpt.stretch && !_k.globalOpt.letterbox) {
+        if (fixedSize && !_k.globalOpt.letterbox) {
             return;
         }
 

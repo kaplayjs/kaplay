@@ -1,7 +1,7 @@
 kaplay({
-    scale: 7,
-    width: 400,
-    height: 200,
+    scale: 5,
+    width: 200,
+    height: 400,
     letterbox: true,
 });
 

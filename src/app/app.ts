@@ -839,10 +839,20 @@ export const initApp = (
         // 🍝 Here we depend of GFX Context even if initGfx needs initApp for being used
         // Letterbox creates some black bars so we need to remove that for calculating
         // mouse position
-        const mousePos = new Vec2(
-            e.offsetX - _k.gfx.viewport.x,
-            e.offsetY - _k.gfx.viewport.y,
+
+        // Ironically, e.offsetX and e.offsetY are the mouse position. Is not
+        // related to what we call the "offset" in this code
+        const mousePosX = e.offsetX;
+        const mousePosY = e.offsetY;
+        const viewportX = _k.gfx.viewport.x;
+        const viewportY = _k.gfx.viewport.y;
+        const scaledMousePosX = mousePosX - viewportX;
+        const scaledMousePosY = mousePosY - viewportY;
+
+        const mousePos = new Vec2(scaledMousePosX, scaledMousePosY).scale(
+            _k.gfx.viewport.scaleFactor,
         );
+
         const mouseDeltaPos = new Vec2(e.movementX, e.movementY);
 
         if (isFullscreen()) {

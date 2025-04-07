@@ -27,7 +27,7 @@ export const createCanvas = (gopt: KAPLAYOpt) => {
     // Adjust canvas size according to user size / viewport settings
     if (
         // check if isFixed
-        gopt.width && gopt.height && !gopt.stretch && !gopt.letterbox
+        gopt.width && gopt.height && !gopt.letterbox
     ) {
         canvas.width = gopt.width * globalScale;
         canvas.height = gopt.height * globalScale;
