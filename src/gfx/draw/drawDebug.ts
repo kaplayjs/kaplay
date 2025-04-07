@@ -1,15 +1,14 @@
 import { DBG_FONT, LOG_TIME } from "../../constants";
 import { _k } from "../../kaplay";
-import { rgb } from "../../math/color";
+import { Color, rgb } from "../../math/color";
 import { vec2, wave } from "../../math/math";
 import { formatText } from "../formatText";
 import {
-    contentToView,
     height,
-    mousePos,
     popTransform,
     pushTransform,
     pushTranslate,
+    viewportToCanvas,
     width,
 } from "../stack";
 import { drawCircle } from "./drawCircle";
@@ -53,10 +52,19 @@ export function drawDebug() {
 
             lines.push(...inspecting.tags.map(t => `tag: ${t}`));
 
-            drawInspectText(contentToView(mousePos()), lines.join("\n"));
+            drawInspectText(
+                viewportToCanvas(_k.k.mousePos()),
+                lines.join("\n"),
+            );
         }
 
         drawInspectText(vec2(8), `FPS: ${_k.debug.fps()}`);
+
+        drawCircle({
+            pos: _k.k.mousePos(),
+            radius: 4,
+            color: Color.GREEN,
+        });
     }
 
     if (_k.debug.paused) {

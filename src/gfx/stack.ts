@@ -65,24 +65,18 @@ export function getViewportScale() {
         / (_k.gfx.width + _k.gfx.height);
 }
 
-// transform a point from content space to view space
-export function contentToView(pt: Vec2) {
+export function viewportToCanvas(pt: Vec2) {
     return new Vec2(
         pt.x * _k.gfx.viewport.width / _k.gfx.width,
         pt.y * _k.gfx.viewport.height / _k.gfx.height,
     );
 }
 
-// transform a point from window space to content space
-export function windowToContent(pt: Vec2) {
+export function canvasToViewport(pt: Vec2) {
     return new Vec2(
-        (pt.x - _k.gfx.viewport.x) * width() / _k.gfx.viewport.width,
-        (pt.y - _k.gfx.viewport.y) * height() / _k.gfx.viewport.height,
+        (pt.x - _k.gfx.viewport.x) * _k.gfx.width / _k.gfx.viewport.width,
+        (pt.y - _k.gfx.viewport.y) * _k.gfx.height / _k.gfx.viewport.height,
     );
-}
-
-export function mousePos() {
-    return windowToContent(_k.app.mousePos());
 }
 
 export function center(): Vec2 {

@@ -16,6 +16,7 @@ import { map, Vec2, vec2 } from "../math/math";
 import GAMEPAD_MAP from "../data/gamepad.json" assert { type: "json" };
 import type { AppEventMap } from "../events/eventMap";
 import { type KEventController, KEventHandler } from "../events/events";
+import { canvasToViewport } from "../gfx/stack";
 import { _k } from "../kaplay";
 import { overload2 } from "../utils/overload";
 import { isEqOrIncludes, setHasOrIncludes } from "../utils/sets";
@@ -139,6 +140,8 @@ export const initApp = (
     const state = initAppState(opt);
     appState = state;
     parseButtonBindings();
+
+    const _mousePos = new Vec2(0);
 
     function dt() {
         return state.dt * state.timeScale;
@@ -842,17 +845,10 @@ export const initApp = (
 
         // Ironically, e.offsetX and e.offsetY are the mouse position. Is not
         // related to what we call the "offset" in this code
-        const mousePosX = e.offsetX;
-        const mousePosY = e.offsetY;
-        const viewportX = _k.gfx.viewport.x;
-        const viewportY = _k.gfx.viewport.y;
-        const scaledMousePosX = mousePosX - viewportX;
-        const scaledMousePosY = mousePosY - viewportY;
+        _mousePos.x = e.offsetX;
+        _mousePos.y = e.offsetY;
 
-        const mousePos = new Vec2(scaledMousePosX, scaledMousePosY).scale(
-            _k.gfx.viewport.scaleFactor,
-        );
-
+        const mousePos = canvasToViewport(_mousePos);
         const mouseDeltaPos = new Vec2(e.movementX, e.movementY);
 
         if (isFullscreen()) {

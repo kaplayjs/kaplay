@@ -36,8 +36,14 @@ export type AppGfxCtx = {
     bgTex: Texture;
     bgColor: Color | null;
     bgAlpha: number;
+    /**
+     * The
+     */
     width: number;
     height: number;
+    /**
+     * Where the game is rendered.
+     */
     viewport: Viewport;
     fixed: boolean;
     gl: WebGLRenderingContext;

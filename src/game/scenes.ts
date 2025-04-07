@@ -36,7 +36,7 @@ export function go(name: SceneName, ...args: unknown[]) {
         });
 
         _k.game.root.clearEvents();
-        initEvents();
+        initEvents(_k.gfx);
 
         // cam
         _k.game.cam = {

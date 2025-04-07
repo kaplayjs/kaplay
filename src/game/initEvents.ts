@@ -1,11 +1,12 @@
 import { burp } from "../audio/burp";
 import { FrameBuffer } from "../gfx/classes/FrameBuffer";
+import type { AppGfxCtx } from "../gfx/gfxApp";
 import { updateViewport } from "../gfx/viewport";
 import { _k } from "../kaplay";
 import { clamp } from "../math/clamp";
 import { toFixed } from "../utils/numbers";
 
-export function initEvents() {
+export function initEvents(gfx: AppGfxCtx) {
     _k.app.onHide(() => {
         if (!_k.globalOpt.backgroundAudio) {
             _k.audio.ctx.suspend();

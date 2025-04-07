@@ -1,17 +1,38 @@
 import { _k } from "../kaplay";
 
-// update viewport based on user setting and fullscreen state
-export function updateViewport() {
-    // content size (scaled content size, with scale and letterbox)
-    // view size (unscaled viewport size)
-    // window size (will be the same as view size except letterbox mode)
+/*
+The viewport is where the game is rendered. There's various concepts for
+rendering the viewport
 
+- Canvas size: The CSS size of the canvas element
+
+- Buffer size: The quantity of pixels that are rendered by WebGL. It varies
+depending of the
+
+- Desired Size: The desired size is the size the user defines for keeping an
+aspect ratio
+
+- Viewport size: The final rendered size
+*/
+
+export function updateViewport() {
     const pixelDensity = _k.gfx.pixelDensity;
-    // This is the actual TRUE size of the <canvas> element
-    const canvasWidth = _k.gfx.ggl.gl.drawingBufferWidth / pixelDensity;
-    const canvasHeight = _k.gfx.ggl.gl.drawingBufferHeight / pixelDensity;
     const desiredWidth = _k.globalOpt.width;
     const desiredHeight = _k.globalOpt.height;
+    const drawingBufferWidth = _k.gfx.gl.drawingBufferWidth;
+    const drawingBufferHeight = _k.gfx.gl.drawingBufferHeight;
+    const canvasWidth = drawingBufferWidth / pixelDensity;
+    const canvasHeight = drawingBufferHeight / pixelDensity;
+
+    console.log("[vwp] buffer size", drawingBufferWidth, drawingBufferHeight);
+    console.log("[vwp] desired size", desiredWidth, desiredHeight);
+    console.log("[vwp] canvas size", canvasWidth, canvasHeight);
+
+    let x = 0;
+    let y = 0;
+    let viewportWidth = canvasWidth;
+    let viewportHeight = canvasHeight;
+    let scale = 0;
 
     if (_k.globalOpt.letterbox) {
         if (!desiredWidth || !desiredHeight) {
@@ -23,41 +44,33 @@ export function updateViewport() {
         const canvasAspectRatio = canvasWidth / canvasHeight;
         const disairedAspectRatio = desiredWidth / desiredHeight;
 
+        // In letterbox, we scale one width/height for keep aspect ratio,
+        // depending of what side is larger
         if (canvasAspectRatio > disairedAspectRatio) {
             const scaledWidth = canvasHeight * disairedAspectRatio;
-            const x = (canvasWidth - scaledWidth) / 2;
-            const differenceFactor = desiredHeight / canvasHeight;
+            const offsetRatio = desiredHeight / canvasHeight;
 
-            _k.gfx.viewport = {
-                x: x,
-                y: 0,
-                width: scaledWidth,
-                height: canvasHeight,
-                scaleFactor: differenceFactor,
-            };
+            x = (canvasWidth - scaledWidth) / 2;
+            viewportWidth = scaledWidth;
+            scale = offsetRatio;
         }
         else {
             const scaledHeight = canvasWidth / disairedAspectRatio;
-            const y = (canvasHeight - scaledHeight) / 2;
-            const differenceFactor = desiredWidth / canvasWidth;
+            const offsetRatio = desiredWidth / canvasWidth;
 
-            _k.gfx.viewport = {
-                x: 0,
-                y: y,
-                width: canvasWidth,
-                height: scaledHeight,
-                scaleFactor: differenceFactor,
-            };
+            viewportHeight = scaledHeight;
+            y = (canvasHeight - scaledHeight) / 2;
+            scale = offsetRatio;
         }
-
-        return;
     }
 
     _k.gfx.viewport = {
-        x: 0,
-        y: 0,
-        width: canvasWidth,
-        height: canvasHeight,
-        scaleFactor: desiredWidth ? 1 : 1 / _k.gfx.gscale,
+        x: x,
+        y: y,
+        width: viewportWidth,
+        height: viewportHeight,
+        scaleFactor: scale,
     };
+
+    console.log("[vwp] viewport is", _k.gfx.viewport);
 }

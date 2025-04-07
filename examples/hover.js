@@ -3,9 +3,6 @@
 // Differeces between onHover and onHoverUpdate
 
 kaplay({
-    // Use logMax to see more messages on debug.log()
-    logMax: 5,
-
     scale: 2,
 });
 
