@@ -1,4 +1,5 @@
 import { _k } from "../kaplay";
+import { Vec2 } from "../math/math";
 
 /*
 The viewport is where the game is rendered. There's various concepts for
@@ -72,4 +73,18 @@ export function updateViewport() {
     };
 
     // console.log("[vwp] viewport is", _k.gfx.viewport);
+}
+
+export function viewportToCanvas(pt: Vec2) {
+    return new Vec2(
+        pt.x * _k.gfx.viewport.width / _k.gfx.width,
+        pt.y * _k.gfx.viewport.height / _k.gfx.height,
+    );
+}
+
+export function canvasToViewport(pt: Vec2) {
+    return new Vec2(
+        (pt.x - _k.gfx.viewport.x) * _k.gfx.width / _k.gfx.viewport.width,
+        (pt.y - _k.gfx.viewport.y) * _k.gfx.height / _k.gfx.viewport.height,
+    );
 }

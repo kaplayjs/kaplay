@@ -16,7 +16,7 @@ import { map, Vec2, vec2 } from "../math/math";
 import GAMEPAD_MAP from "../data/gamepad.json" assert { type: "json" };
 import type { AppEventMap } from "../events/eventMap";
 import { type KEventController, KEventHandler } from "../events/events";
-import { canvasToViewport } from "../gfx/stack";
+import { canvasToViewport } from "../gfx/viewport";
 import { _k } from "../kaplay";
 import { overload2 } from "../utils/overload";
 import { isEqOrIncludes, setHasOrIncludes } from "../utils/sets";

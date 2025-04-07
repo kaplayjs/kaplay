@@ -8,9 +8,9 @@ import {
     popTransform,
     pushTransform,
     pushTranslate,
-    viewportToCanvas,
     width,
 } from "../stack";
+import { viewportToCanvas } from "../viewport";
 import { drawCircle } from "./drawCircle";
 import { drawFormattedText } from "./drawFormattedText";
 import { drawInspectText } from "./drawInspectText";

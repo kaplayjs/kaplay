@@ -60,20 +60,6 @@ export function height(): number {
     return _k.gfx.height;
 }
 
-export function viewportToCanvas(pt: Vec2) {
-    return new Vec2(
-        pt.x * _k.gfx.viewport.width / _k.gfx.width,
-        pt.y * _k.gfx.viewport.height / _k.gfx.height,
-    );
-}
-
-export function canvasToViewport(pt: Vec2) {
-    return new Vec2(
-        (pt.x - _k.gfx.viewport.x) * _k.gfx.width / _k.gfx.viewport.width,
-        (pt.y - _k.gfx.viewport.y) * _k.gfx.height / _k.gfx.viewport.height,
-    );
-}
-
 export function center(): Vec2 {
     return vec2(width() / 2, height() / 2);
 }
