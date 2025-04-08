@@ -3,11 +3,11 @@ import { Color } from "../../math/color";
 import { triangulate, Vec2 } from "../../math/math";
 import { BlendMode, type DrawPolygonOpt } from "../../types";
 import {
+    multRotate,
+    multScaleV,
+    multTranslateV,
     popTransform,
-    pushRotate,
-    pushScaleV,
     pushTransform,
-    pushTranslateV,
 } from "../stack";
 import { drawLines } from "./drawLine";
 import { drawRaw } from "./drawRaw";
@@ -24,10 +24,10 @@ export function drawPolygon(opt: DrawPolygonOpt) {
     }
 
     pushTransform();
-    pushTranslateV(opt.pos!);
-    pushScaleV(opt.scale);
-    pushRotate(opt.angle);
-    pushTranslateV(opt.offset!);
+    multTranslateV(opt.pos!);
+    multScaleV(opt.scale);
+    multRotate(opt.angle);
+    multTranslateV(opt.offset!);
 
     if (opt.fill !== false) {
         const color = opt.color ?? Color.WHITE;

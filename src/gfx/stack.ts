@@ -1,41 +1,10 @@
 import { _k } from "../kaplay";
 import { type Mat23, Vec2, vec2 } from "../math/math";
 
-export function pushTranslateV(t: Vec2 | undefined) {
-    if (t === undefined) return;
-    if (t.x === 0 && t.y === 0) return;
-    _k.gfx.transform.translateSelfV(t);
-}
-
-export function pushTranslate(x: number, y: number) {
-    if (x === 0 && y === 0) return;
-    _k.gfx.transform.translateSelf(x, y);
-}
-
 export function pushTransform() {
     _k.gfx.transformStack[++_k.gfx.transformStackIndex].setMat23(
         _k.gfx.transform,
     );
-}
-
-export function pushMatrix(m: Mat23) {
-    _k.gfx.transform.setMat23(m);
-}
-
-export function pushScaleV(s: Vec2 | undefined) {
-    if (s === undefined) return;
-    if (s.x === 1 && s.y === 1) return;
-    _k.gfx.transform.scaleSelfV(s);
-}
-
-export function pushScale(x: number, y: number) {
-    if (x === 1 && y === 1) return;
-    _k.gfx.transform.scaleSelf(x, y);
-}
-
-export function pushRotate(angle: number | undefined) {
-    if (!angle) return;
-    _k.gfx.transform.rotateSelf(angle);
 }
 
 export function popTransform() {
@@ -44,6 +13,37 @@ export function popTransform() {
             _k.gfx.transformStack[_k.gfx.transformStackIndex--],
         );
     }
+}
+
+export function multTranslateV(t: Vec2 | undefined) {
+    if (t === undefined) return;
+    if (t.x === 0 && t.y === 0) return;
+    _k.gfx.transform.translateSelfV(t);
+}
+
+export function multTranslate(x: number, y: number) {
+    if (x === 0 && y === 0) return;
+    _k.gfx.transform.translateSelf(x, y);
+}
+
+export function multScaleV(s: Vec2 | undefined) {
+    if (s === undefined) return;
+    if (s.x === 1 && s.y === 1) return;
+    _k.gfx.transform.scaleSelfV(s);
+}
+
+export function multScale(x: number, y: number) {
+    if (x === 1 && y === 1) return;
+    _k.gfx.transform.scaleSelf(x, y);
+}
+
+export function multRotate(angle: number | undefined) {
+    if (!angle) return;
+    _k.gfx.transform.rotateSelf(angle);
+}
+
+export function loadMatrix(m: Mat23) {
+    _k.gfx.transform.setMat23(m);
 }
 
 export function flush() {

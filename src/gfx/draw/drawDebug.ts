@@ -5,9 +5,9 @@ import { vec2, wave } from "../../math/math";
 import { formatText } from "../formatText";
 import {
     height,
+    multTranslate,
     popTransform,
     pushTransform,
-    pushTranslate,
     width,
 } from "../stack";
 import { viewportToCanvas } from "../viewport";
@@ -65,8 +65,8 @@ export function drawDebug() {
         drawUnscaled(() => {
             // top right corner
             pushTransform();
-            pushTranslate(width(), 0);
-            pushTranslate(-8, 8);
+            multTranslate(width(), 0);
+            multTranslate(-8, 8);
 
             const size = 32;
 
@@ -102,8 +102,8 @@ export function drawDebug() {
         drawUnscaled(() => {
             // bottom right corner
             pushTransform();
-            pushTranslate(width(), height());
-            pushTranslate(-8, -8);
+            multTranslate(width(), height());
+            multTranslate(-8, -8);
 
             const pad = 8;
 
@@ -158,8 +158,8 @@ export function drawDebug() {
     if (_k.debug.curRecording) {
         drawUnscaled(() => {
             pushTransform();
-            pushTranslate(0, height());
-            pushTranslate(24, -24);
+            multTranslate(0, height());
+            multTranslate(24, -24);
 
             drawCircle({
                 radius: 12,
@@ -175,8 +175,8 @@ export function drawDebug() {
     if (_k.debug.showLog && _k.game.logs.length > 0) {
         drawUnscaled(() => {
             pushTransform();
-            pushTranslate(0, height());
-            pushTranslate(8, -8);
+            multTranslate(0, height());
+            multTranslate(8, -8);
 
             const pad = 8;
             const logs = [];

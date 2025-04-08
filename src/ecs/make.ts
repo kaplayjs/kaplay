@@ -8,11 +8,11 @@ import { FrameBuffer } from "../gfx/classes/FrameBuffer";
 import { beginPicture, endPicture, Picture } from "../gfx/draw/drawPicture";
 import {
     flush,
+    multRotate,
+    multScaleV,
+    multTranslateV,
     popTransform,
-    pushRotate,
-    pushScaleV,
     pushTransform,
-    pushTranslateV,
 } from "../gfx/stack";
 import { _k } from "../kaplay";
 import { Mat23 } from "../math/math";
@@ -218,9 +218,9 @@ export function make<T extends CompList<unknown>>(
             const f = _k.gfx.fixed;
             if (this.fixed) _k.gfx.fixed = true;
             pushTransform();
-            pushTranslateV(this.pos);
-            pushScaleV(this.scale);
-            pushRotate(this.angle);
+            multTranslateV(this.pos);
+            multScaleV(this.scale);
+            multRotate(this.angle);
             const children = this.children.sort((o1, o2) => {
                 const l1 = o1.layerIndex ?? _k.game.defaultLayerIndex;
                 const l2 = o2.layerIndex ?? _k.game.defaultLayerIndex;
@@ -279,9 +279,9 @@ export function make<T extends CompList<unknown>>(
         drawInspect(this: GameObj<PosComp | ScaleComp | RotateComp>) {
             if (this.hidden) return;
             pushTransform();
-            pushTranslateV(this.pos);
-            pushScaleV(this.scale);
-            pushRotate(this.angle);
+            multTranslateV(this.pos);
+            multScaleV(this.scale);
+            multRotate(this.angle);
             this.children
                 /*.sort((o1, o2) => (o1.z ?? 0) - (o2.z ?? 0))*/
                 .forEach((child) => child.drawInspect());
