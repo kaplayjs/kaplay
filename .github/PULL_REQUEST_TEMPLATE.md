@@ -1,20 +1,7 @@
-<!--
-Before submitting a Pull Request, please ensure you've done the following:
-- Read the Contributing Guide: https://github.com/kaplayjs/kaplay/blob/master/CONTRIBUTING.md (necessary)
-- Create small PRs. In most cases this will be possible.
--->
+<!-- PLEASE CHECK THAT YOUR PR CHECKS OUT WITH THE
+[CONTRIBUTING GUIDE](https://github.com/kaplayjs/kaplay/blob/master/CONTRIBUTING.md).
 
-## Description
+For pull requests that close or relate to an issue, please include typing
+`closes #1234`, this will connect them. -->
 
-### Issues or related
-
-<!--
-For pull requests that relate or close an issue, please include them
-below.
-
-The text `closes #1234` will connect the current PR to that issue, it also closes
-the issue when the PR is merged.
--->
-
-- Related Issue #
-- Closes #
+## Please describe what issue(s) this PR fixes.
