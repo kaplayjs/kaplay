@@ -1,7 +1,6 @@
 import { toScreen, toWorld } from "../../../game/camera";
 import { isFixed } from "../../../game/utils";
 import { drawCircle } from "../../../gfx/draw/drawCircle";
-import { getViewportScale } from "../../../gfx/stack";
 import { _k } from "../../../kaplay";
 import { rgb } from "../../../math/color";
 import { type Vec2, vec2, type Vec2Args } from "../../../math/math";
@@ -210,7 +209,7 @@ export function pos(...args: Vec2Args): PosComp {
         drawInspect() {
             drawCircle({
                 color: rgb(255, 0, 0),
-                radius: 4 / getViewportScale(),
+                radius: 4 / _k.gfx.viewport.scale,
             });
         },
     };

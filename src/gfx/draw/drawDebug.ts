@@ -1,17 +1,16 @@
 import { DBG_FONT, LOG_TIME } from "../../constants";
 import { _k } from "../../kaplay";
-import { rgb } from "../../math/color";
+import { Color, rgb } from "../../math/color";
 import { vec2, wave } from "../../math/math";
 import { formatText } from "../formatText";
 import {
-    contentToView,
     height,
-    mousePos,
     popTransform,
     pushTransform,
     pushTranslate,
     width,
 } from "../stack";
+import { viewportToCanvas } from "../viewport";
 import { drawCircle } from "./drawCircle";
 import { drawFormattedText } from "./drawFormattedText";
 import { drawInspectText } from "./drawInspectText";
@@ -25,7 +24,7 @@ export function drawDebug() {
 
         for (const obj of _k.game.root.get("*", { recursive: true })) {
             if (
-                obj.c("area")
+                obj.has("area")
                 && (_k.globalOpt.inspectOnlyActive ? !obj.paused : true)
                 && obj.isHovering()
             ) {
@@ -53,10 +52,19 @@ export function drawDebug() {
 
             lines.push(...inspecting.tags.map(t => `tag: ${t}`));
 
-            drawInspectText(contentToView(mousePos()), lines.join("\n"));
+            drawInspectText(
+                viewportToCanvas(_k.k.mousePos()),
+                lines.join("\n"),
+            );
         }
 
         drawInspectText(vec2(8), `FPS: ${_k.debug.fps()}`);
+
+        drawCircle({
+            pos: _k.k.mousePos(),
+            radius: 4 / _k.gfx.viewport.scale,
+            color: Color.GREEN,
+        });
     }
 
     if (_k.debug.paused) {

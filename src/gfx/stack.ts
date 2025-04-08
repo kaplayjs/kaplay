@@ -1,5 +1,5 @@
 import { _k } from "../kaplay";
-import { type Mat23, Vec2, vec2, type Vec2Args } from "../math/math";
+import { type Mat23, Vec2, vec2 } from "../math/math";
 
 export function pushTranslateV(t: Vec2 | undefined) {
     if (t === undefined) return;
@@ -60,31 +60,6 @@ export function height(): number {
     return _k.gfx.height;
 }
 
-export function getViewportScale() {
-    return (_k.gfx.viewport.width + _k.gfx.viewport.height)
-        / (_k.gfx.width + _k.gfx.height);
-}
-
-// transform a point from content space to view space
-export function contentToView(pt: Vec2) {
-    return new Vec2(
-        pt.x * _k.gfx.viewport.width / _k.gfx.width,
-        pt.y * _k.gfx.viewport.height / _k.gfx.height,
-    );
-}
-
-// transform a point from window space to content space
-export function windowToContent(pt: Vec2) {
-    return new Vec2(
-        (pt.x - _k.gfx.viewport.x) * width() / _k.gfx.viewport.width,
-        (pt.y - _k.gfx.viewport.y) * height() / _k.gfx.viewport.height,
-    );
-}
-
-export function mousePos() {
-    return windowToContent(_k.app.mousePos());
-}
-
 export function center(): Vec2 {
-    return vec2(width() / 2, height() / 2);
+    return vec2(_k.gfx.width / 2, _k.gfx.height / 2);
 }

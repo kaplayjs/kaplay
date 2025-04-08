@@ -1,4 +1,4 @@
-import { makeShader, type Uniform } from "../assets/shader";
+import { makeShader, type Shader, type Uniform } from "../assets/shader";
 import {
     DEF_FRAG,
     DEF_VERT,
@@ -12,9 +12,52 @@ import type { KAPLAYOpt } from "../types";
 import { FrameBuffer } from "./classes/FrameBuffer";
 import { BatchRenderer, type GfxCtx, Texture } from "./gfx";
 
-export type AppGfxCtx = ReturnType<typeof initAppGfx>;
+export type AppGfxCtx = {
+    /** How many draw calls we're doing last frame */
+    lastDrawCalls: number;
+    ggl: GfxCtx;
+    /** Default shader */
+    defShader: Shader;
+    /** Default texture */
+    defTex: Texture;
+    /** FrameBuffer */
+    frameBuffer: FrameBuffer;
+    /** Post Shader, used in postEffect() */
+    postShader: string | null;
+    postShaderUniform: Uniform | (() => Uniform) | null;
+    renderer: BatchRenderer;
+    pixelDensity: number;
+    /** This is the scale factor that scales pixel "kaplay({ scale })" */
+    gscale: number;
+    transform: Mat23;
+    transformStack: Mat23[];
+    transformStackIndex: number;
+    /** The background texture */
+    bgTex: Texture;
+    bgColor: Color | null;
+    bgAlpha: number;
+    /**
+     * The
+     */
+    width: number;
+    height: number;
+    /**
+     * Where the game is rendered.
+     */
+    viewport: Viewport;
+    fixed: boolean;
+    gl: WebGLRenderingContext;
+};
 
-export const initAppGfx = (gfx: GfxCtx, gopt: KAPLAYOpt) => {
+export type Viewport = {
+    x: number;
+    y: number;
+    width: number;
+    height: number;
+    scale: number;
+};
+
+export const initAppGfx = (gfx: GfxCtx, gopt: KAPLAYOpt): AppGfxCtx => {
     const defShader = makeShader(gfx, DEF_VERT, DEF_FRAG);
     const pixelDensity = gopt.pixelDensity ?? 1;
     const gscale = gopt.scale ?? 1;
@@ -140,6 +183,7 @@ export const initAppGfx = (gfx: GfxCtx, gopt: KAPLAYOpt) => {
             y: 0,
             width: gl.drawingBufferWidth,
             height: gl.drawingBufferHeight,
+            scale: 1,
         },
 
         fixed: false,

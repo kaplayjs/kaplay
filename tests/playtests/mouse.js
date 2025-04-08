@@ -1,8 +1,7 @@
 kaplay({
-    scale: 7,
-    width: 400,
-    height: 200,
-    letterbox: true,
+    width: 1280,
+    height: 720,
+    pixelDensity: 2,
 });
 
 const redDot = add([
@@ -10,6 +9,7 @@ const redDot = add([
     circle(3),
     color(RED),
     pos(),
+    fakeMouse(),
 ]);
 
 onMouseMove(pos => {

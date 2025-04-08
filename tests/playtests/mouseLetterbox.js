@@ -1,5 +1,4 @@
 kaplay({
-    scale: 7,
     width: 400,
     height: 200,
     letterbox: true,
