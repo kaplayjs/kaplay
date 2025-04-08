@@ -1,7 +1,7 @@
 /**
  * @file Components
  * @description How to create and use components.
- * @difficulty medium
+ * @difficulty 0
  * @tags basics, comps
  * @minver 3001.0
  */

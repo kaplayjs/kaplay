@@ -1,7 +1,7 @@
 /**
  * @file Drag
  * @description How to make game objects draggable.
- * @difficulty easy
+ * @difficulty 0
  * @tags ui
  * @minver 3001.0
  */

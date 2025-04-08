@@ -1,7 +1,7 @@
 /**
  * @file Children
  * @description How to create children on game objects.
- * @difficulty medium
+ * @difficulty 1
  * @tags basics, gobj
  * @minver 3001.0
  */

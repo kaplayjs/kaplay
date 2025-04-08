@@ -1,7 +1,7 @@
 /**
  * @file AI with State Machines
  * @description How to create simple game AI using state machines.
- * @difficulty medium
+ * @difficulty 1
  * @tags basics, ai
  * @minver 3001.0
  */

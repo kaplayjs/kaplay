@@ -1,7 +1,7 @@
 /**
  * @file Animate with animate()
  * @description How to animate game object properties with animate() component
- * @difficulty medium
+ * @difficulty 1
  * @tags comps, animation
  * @minver 3001.0
  */

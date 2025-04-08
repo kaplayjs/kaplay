@@ -1,7 +1,7 @@
 /**
  * @file Collision Shapes
  * @description How to create different collision shapes.
- * @difficulty hard
+ * @difficulty 1
  * @tags basics, comps, physics
  * @minver 4000.0
  */

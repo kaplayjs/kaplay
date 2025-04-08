@@ -1,7 +1,7 @@
 /**
  * @file Fake Mouse
  * @description How to create a fake mouse in-game.
- * @difficulty easy
+ * @difficulty 0
  * @tags ui, input
  * @minver 4000.0
  */

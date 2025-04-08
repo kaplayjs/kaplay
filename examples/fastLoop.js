@@ -1,7 +1,7 @@
 /**
  * @file Fast loop
  * @description TBD
- * @difficulty easy
+ * @difficulty 0
  * @tags ui, input
  * @minver 4000.0
  * @locked

@@ -1,7 +1,7 @@
 /**
  * @file Buttons
  * @description How to create simple UI buttons
- * @difficulty medium
+ * @difficulty 1
  * @tags ui
  * @minver 3001.0
  */

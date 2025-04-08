@@ -1,7 +1,7 @@
 /**
  * @file Draw
  * @description How to use KAPLAY as a canvas draw library.
- * @difficulty easy
+ * @difficulty 0
  * @tags basics
  * @minver 3001.0
  */

@@ -1,7 +1,7 @@
 /**
  * @file Clipped lines
  * @description TBD
- * @difficulty hard
+ * @difficulty 2
  * @tags draw, visual
  * @minver 4000.0
  * @locked

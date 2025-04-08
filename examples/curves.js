@@ -1,7 +1,7 @@
 /**
  * @file Curves
  * @description TBD
- * @difficulty hard
+ * @difficulty 2
  * @tags math
  * @minver 3001.0
  */

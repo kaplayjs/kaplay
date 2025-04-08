@@ -1,7 +1,7 @@
 /**
  * @file Blend modes
  * @description How to use blend mode with blend() comp
- * @difficulty medium
+ * @difficulty 1
  * @tags draw, visual
  * @minver 4000.0
  */

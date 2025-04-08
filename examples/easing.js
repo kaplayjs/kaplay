@@ -1,7 +1,7 @@
 /**
  * @file Custom Easings
  * @description How to use custom easing functions on tweens.
- * @difficulty easy
+ * @difficulty 0
  * @tags animation, tween
  * @minver 3001.0
  */

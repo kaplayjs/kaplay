@@ -1,7 +1,7 @@
 /**
  * @file Collision
  * @description How to handle collisions netweem game objects.
- * @difficulty easy
+ * @difficulty 0
  * @tags basics, comps, physics
  * @minver 3001.0
  */

@@ -1,7 +1,7 @@
 /**
  * @file Add game objects
  * @description How to create game objects.
- * @difficulty easy
+ * @difficulty 0
  * @tags basics, gobj
  * @minver 3001.0
  */

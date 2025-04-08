@@ -1,7 +1,7 @@
 /**
  * @file Concert
  * @description Celebrate Kaboom.js v2000 and back to the old days.
- * @difficulty medium
+ * @difficulty 1
  * @tags game
  * @minver 3001.0
  */

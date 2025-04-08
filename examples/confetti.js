@@ -1,7 +1,7 @@
 /**
  * @file Confetti
  * @description How to create a confetti effect.
- * @difficulty medium
+ * @difficulty 1
  * @tags effects
  * @minver 3001.0
  */

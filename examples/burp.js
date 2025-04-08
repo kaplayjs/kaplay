@@ -1,7 +1,7 @@
 /**
  * @file Burp
  * @description How to use burp, the engine core
- * @difficulty medium
+ * @difficulty 0
  * @tags basics, audio
  * @minver 3001.0
  */

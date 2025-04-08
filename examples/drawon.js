@@ -1,7 +1,7 @@
 /**
  * @file Drawon Component
  * @description How to use Frame Buffers
- * @difficulty easy
+ * @difficulty 2
  * @tags draw
  * @minver 3001.0
  */
