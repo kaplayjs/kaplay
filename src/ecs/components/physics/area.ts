@@ -5,7 +5,7 @@ import { anchorPt } from "../../../gfx/anchor";
 import { drawCircle } from "../../../gfx/draw/drawCircle";
 import { drawPolygon } from "../../../gfx/draw/drawPolygon";
 import { drawRect } from "../../../gfx/draw/drawRect";
-import { popTransform, pushTransform, pushTranslate } from "../../../gfx/stack";
+import { multTranslate, popTransform, pushTransform } from "../../../gfx/stack";
 import { _k } from "../../../kaplay";
 import { rgb } from "../../../math/color";
 import { Circle, Polygon, Rect, type Vec2, vec2 } from "../../../math/math";
@@ -310,7 +310,7 @@ export function area(opt: AreaCompOpt = {}): AreaComp {
             const a = this.localArea();
 
             pushTransform();
-            pushTranslate(this.area.offset.x, this.area.offset.y);
+            multTranslate(this.area.offset.x, this.area.offset.y);
 
             const opts = {
                 outline: {
