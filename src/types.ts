@@ -7250,6 +7250,10 @@ export type TimerController = {
  */
 export type TweenController = TimerController & {
     /**
+     * The current time in the duration of the tween
+     */
+    currentTime: number;
+    /**
      * Finish the tween now and cancel.
      */
     finish(): void;

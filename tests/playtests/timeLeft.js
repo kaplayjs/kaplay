@@ -17,5 +17,5 @@ onClick(() => {
 });
 
 onUpdate(() => {
-    debug.log("The time left for the tween to finish is: " + tweening.timeLeft);
+    debug.log(`${tweening.currentTime}/5`);
 });

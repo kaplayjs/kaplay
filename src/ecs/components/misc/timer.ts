@@ -130,6 +130,12 @@ export function timer(maxLoopsPerFrame: number = 1000): TimerComp {
                 }
             });
             return {
+                get currentTime() {
+                    return curTime;
+                },
+                set currentTime(val) {
+                    curTime = val;
+                },
                 get timeLeft() {
                     return duration - curTime;
                 },
