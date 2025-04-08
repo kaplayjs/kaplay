@@ -1,5 +1,5 @@
 import { KEvent } from "../../../events/events";
-import { _k } from "../../../kaplay";
+import kaplay, { _k } from "../../../kaplay";
 import easings from "../../../math/easings";
 import { lerp } from "../../../math/math";
 import type {
@@ -80,6 +80,12 @@ export function timer(maxLoopsPerFrame: number = 1000): TimerComp {
                 }
             });
             return {
+                get timeLeft() {
+                    return t;
+                },
+                set timeLeft(val: number) {
+                    t = val;
+                },
                 get paused() {
                     return ev.paused;
                 },
@@ -124,6 +130,12 @@ export function timer(maxLoopsPerFrame: number = 1000): TimerComp {
                 }
             });
             return {
+                get timeLeft() {
+                    return duration - curTime;
+                },
+                set timeLeft(val: number) {
+                    curTime = duration - val;
+                },
                 get paused() {
                     return ev.paused;
                 },
