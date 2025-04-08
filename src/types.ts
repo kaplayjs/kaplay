@@ -6454,14 +6454,14 @@ export interface GameObjRaw {
      * @returns The event controller.
      * @since v4000.0
      */
-    onCompAdd(action: (id: string) => void): KEventController;
+    onUse(action: (id: string) => void): KEventController;
     /**
      * Register an event that runs when a component is unused.
      *
      * @returns The event controller.
      * @since v4000.0
      */
-    onCompDestroy(action: (id: string) => void): KEventController;
+    onUnuse(action: (id: string) => void): KEventController;
     /**
      * If game obj is attached to the scene graph.
      *
