@@ -7252,6 +7252,10 @@ export type EaseFunc = (t: number) => number;
  */
 export type TimerController = {
     /**
+     * The time left for the action to occur.
+     */
+    timeLeft: number;
+    /**
      * If the event handler is paused.
      */
     paused: boolean;
