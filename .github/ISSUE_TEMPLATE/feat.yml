@@ -2,6 +2,7 @@ name: Feature request
 description: Suggest an idea for kaplayy.
 labels: ["enhancement"]
 title: "feat: your feature request here"
+type: "Feature"
 body:
   - type: textarea
     attributes:
