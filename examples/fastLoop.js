@@ -1,3 +1,12 @@
+/**
+ * @file Fast loop
+ * @description TBD
+ * @difficulty easy
+ * @tags ui, input
+ * @minver 4000.0
+ * @locked
+ */
+
 // @ts-check
 
 kaplay();

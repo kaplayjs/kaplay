@@ -1,10 +1,9 @@
 /**
- * @file Button Bindings
+ * @file Blend modes
  * @description How to use blend mode with blend() comp
- * @difficulty 0
+ * @difficulty medium
  * @tags draw, visual
  * @minver 4000.0
- * @locked
  */
 
 // Adding game objects to screen

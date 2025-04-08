@@ -1,7 +1,7 @@
 /**
  * @file Audio Playing
  * @description How to play audio files and change volume, speed, etc.
- * @difficulty 0
+ * @difficulty easy
  * @tags basics, audio
  * @minver 3001.0
  */

@@ -1,7 +1,7 @@
 /**
  * @file Camera
  * @description How to handle and modify the camera
- * @difficulty 0
+ * @difficulty easy
  * @tags basics
  * @minver 3001.0
  */

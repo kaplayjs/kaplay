@@ -1,7 +1,7 @@
 /**
  * @file Eat Love
  * @description A simple game to eat love.
- * @difficulty 1
+ * @difficulty medium
  * @tags game
  * @minver 3001.0
  */

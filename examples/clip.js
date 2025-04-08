@@ -1,3 +1,12 @@
+/**
+ * @file Clipped lines
+ * @description TBD
+ * @difficulty hard
+ * @tags draw, visual
+ * @minver 4000.0
+ * @locked
+ */
+
 kaplay();
 
 const r = new Rect(vec2(100, 100), 300, 200);

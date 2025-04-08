@@ -1,7 +1,7 @@
 /**
  * @file Egg
  * @description A simple game about eggs.
- * @difficulty 1
+ * @difficulty easy
  * @tags game
  * @minver 3001.0
  */

@@ -1,7 +1,7 @@
 /**
  * @file Button Bindings
  * @description How to set common names to different inputs ("jump", "shoot").
- * @difficulty 0
+ * @difficulty easy
  * @tags input
  * @minver 3001.0
  */

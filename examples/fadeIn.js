@@ -1,7 +1,7 @@
 /**
  * @file Fade In
  * @description How to fade in game objects.
- * @difficulty 0
+ * @difficulty easy
  * @tags visual, effects
  * @minver 3001.0
  */
