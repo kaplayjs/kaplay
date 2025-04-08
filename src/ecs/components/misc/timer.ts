@@ -1,5 +1,5 @@
 import { KEvent } from "../../../events/events";
-import kaplay, { _k } from "../../../kaplay";
+import { _k } from "../../../kaplay";
 import easings from "../../../math/easings";
 import { lerp } from "../../../math/math";
 import type {
