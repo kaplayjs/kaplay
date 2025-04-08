@@ -2,7 +2,6 @@ name: Bug Report
 description: Create a report to help us improve.
 labels: ["bug"]
 title: "bug: your bug here"
-type: "Bug"
 body:
   - type: input
     attributes:
@@ -29,8 +28,8 @@ body:
       required: false
 
   - type: checkboxes
-    label: Summary
     attributes:
+      label: Summary
       options:
         - label: Fixed in Master
         - label: Fixed in v4000
