@@ -59,12 +59,6 @@ export function drawDebug() {
         }
 
         drawInspectText(vec2(8), `FPS: ${_k.debug.fps()}`);
-
-        drawCircle({
-            pos: _k.k.mousePos(),
-            radius: 4 / _k.gfx.viewport.scale,
-            color: Color.GREEN,
-        });
     }
 
     if (_k.debug.paused) {
