@@ -21,7 +21,9 @@ export function drawon(c: FrameBuffer | Picture, opt?: DrawonOpt) {
             };
         },
         refresh(this: GameObj<DrawonComp>) {
-            this.target.isFresh = false;
+            if (this.target) {
+                this.target.isFresh = false;
+            }
         },
     };
 }
