@@ -1,4 +1,11 @@
-// @ts-check
+/**
+ * @file Level component
+ * @description How to understand better level actions.
+ * @difficulty 1
+ * @tags basics, comps
+ * @minver 4000.0
+ * @locked
+ */
 
 // Build levels with level()
 

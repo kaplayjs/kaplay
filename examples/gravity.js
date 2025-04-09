@@ -1,4 +1,10 @@
-// @ts-check
+/**
+ * @file Gravity
+ * @description How to make use of gravity in KAPLAY.
+ * @difficulty 0
+ * @tags basics, physics
+ * @minver 3001.0
+ */
 
 // Responding to gravity & jumping
 

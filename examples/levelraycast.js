@@ -1,4 +1,10 @@
-// @ts-check
+/**
+ * @file Level raycasts
+ * @description How to use raycasts in a level environment.
+ * @difficulty 1
+ * @tags basics, comps
+ * @minver 3001.0
+ */
 
 kaplay({
     background: [31, 16, 42],
