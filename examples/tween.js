@@ -2,7 +2,7 @@
  * @file Tween
  * @description How to use tweens in KAPLAY
  * @difficulty 0
- * @tags animation
+ * @tags basics, animation
  * @minver 3001.0
  */
 
