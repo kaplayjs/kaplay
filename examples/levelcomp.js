@@ -1,6 +1,6 @@
 /**
  * @file Level component
- * @description How to understand better level actions.
+ * @description How to build levels out of tiles using level
  * @difficulty 1
  * @tags basics, comps
  * @minver 4000.0
