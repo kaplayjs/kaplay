@@ -1,4 +1,10 @@
-// @ts-check
+/**
+ * @file Scenes
+ * @description How to use KAPLAY's scene system.
+ * @difficulty 0
+ * @tags basics
+ * @minver 3001.0
+ */
 
 // Extend our game with multiple scenes
 

@@ -1,4 +1,10 @@
-// @ts-check
+/**
+ * @file Drag
+ * @description How to make game objects draggable.
+ * @difficulty 0
+ * @tags ui
+ * @minver 3001.0
+ */
 
 // Drag & drop interaction
 

@@ -1,4 +1,10 @@
-// @ts-check
+/**
+ * @file Large Texture
+ * @description Test how KAPLAY handles large textures (big sprites).
+ * @difficulty 3
+ * @tags basics
+ * @minver 3001.0
+ */
 
 kaplay();
 

@@ -1,4 +1,10 @@
-// @ts-check
+/**
+ * @file Components
+ * @description How to create and use components.
+ * @difficulty 0
+ * @tags basics, comps
+ * @minver 3001.0
+ */
 
 // How to make custom components kaplay
 kaplay();

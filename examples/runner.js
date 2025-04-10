@@ -1,4 +1,10 @@
-// @ts-check
+/**
+ * @file Endless runner
+ * @description How to make an endless runner in KAPLAY.
+ * @difficulty 1
+ * @tags basics, game
+ * @minver 3001.0
+ */
 
 const FLOOR_HEIGHT = 48;
 const JUMP_FORCE = 800;

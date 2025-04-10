@@ -1,3 +1,11 @@
+/**
+ * @file Restitution
+ * @description TBD.
+ * @difficulty 0
+ * @tags physics
+ * @minver 3001.0
+ */
+
 kaplay({ scale: 0.5 });
 loadSprite("bean", "/sprites/bean.png");
 loadSprite("grass", "/sprites/grass.png");

@@ -1,5 +1,10 @@
-// @ts-check
-
+/**
+ * @file One-way platforms
+ * @description How to create one-way walls or platforms.
+ * @difficulty 1
+ * @tags basics, game
+ * @minver 3001.0
+ */
 kaplay();
 
 loadSprite("bean", "/sprites/bean.png");

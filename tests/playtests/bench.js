@@ -1,4 +1,10 @@
-// @ts-config
+/**
+ * @file Bench
+ * @description Bench test for KAPLAY's performance in rendering.
+ * @difficulty 3
+ * @tags basics
+ * @minver 3001.0
+ */
 
 // Bench marking sprite rendering performance
 // We use this example to test and bench the performance of kaplay rendering

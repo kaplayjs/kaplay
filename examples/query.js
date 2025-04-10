@@ -1,4 +1,10 @@
-// @ts-check
+/**
+ * @file Query
+ * @description How to use the query() function.
+ * @difficulty 0
+ * @tags basics
+ * @minver 3001.0
+ */
 
 kaplay();
 

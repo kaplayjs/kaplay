@@ -1,4 +1,10 @@
-// @ts-check
+/**
+ * @file Sprites
+ * @description How to load and animate sprites in KAPLAY.
+ * @difficulty 0
+ * @tags basics, animation
+ * @minver 3001.0
+ */
 
 // Sprite animation
 

@@ -1,4 +1,12 @@
-// @ts-check
+/**
+ * @file Tiled
+ * @description How to use sprites in tiled mode
+ * @difficulty 1
+ * @tags basics, game
+ * @minver 3001.0
+ */
+
+// Tiled sprites!
 
 kaplay();
 
@@ -14,9 +22,4 @@ add([
     anchor("center"),
 ]);
 
-add([
-    circle(4),
-    pos(150, 150),
-]);
-
-// debug.inspect = true
+debug.inspect = true;

@@ -1,4 +1,10 @@
-// @ts-check
+/**
+ * @file Multi-Gamepad
+ * @description How to manage multiple gamepads at the same.
+ * @difficulty 1
+ * @tags input
+ * @minver 3001.0
+ */
 
 kaplay();
 setGravity(2400);

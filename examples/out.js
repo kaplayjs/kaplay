@@ -1,5 +1,10 @@
-// @ts-check
-
+/**
+ * @file Out
+ * @description How to handle objects that are out of screen.
+ * @difficulty 1
+ * @tags project
+ * @minver 3001.0
+ */
 // detect if obj is out of screen
 
 kaplay();

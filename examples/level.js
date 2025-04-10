@@ -1,4 +1,10 @@
-// @ts-check
+/**
+ * @file Level
+ * @description How to build levels from ASCII
+ * @difficulty 0
+ * @tags basics, game
+ * @minver 3001.0
+ */
 
 // Build levels with addLevel()
 

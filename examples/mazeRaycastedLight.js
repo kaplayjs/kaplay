@@ -1,4 +1,11 @@
-// @ts-check
+/**
+ * @file Maze Raycasted Light
+ * @description How to create a maze and a shadow effect with it.
+ * @difficulty 2
+ * @tags math, game, effects
+ * @minver 4000.0
+ * @locked
+ */
 
 kaplay({
     scale: 0.5,

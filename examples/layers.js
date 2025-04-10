@@ -1,4 +1,10 @@
-// @ts-check
+/**
+ * @file Layers
+ * @description How to use KAPLAY's layer system
+ * @difficulty 0
+ * @tags basics, effects
+ * @minver 3001.0
+ */
 
 kaplay();
 

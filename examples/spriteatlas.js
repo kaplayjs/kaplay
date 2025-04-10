@@ -1,4 +1,10 @@
-// @ts-check
+/**
+ * @file Sprite-Atlas
+ * @description How to load a sprite atlas in KAPLAY.
+ * @difficulty 0
+ * @tags animation
+ * @minver 3001.0
+ */
 
 kaplay({
     scale: 4,

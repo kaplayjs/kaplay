@@ -1,8 +1,16 @@
-// @ts-check
+/**
+ * @file Timer
+ * @description How to make count time in KAPLAY.
+ * @difficulty 0
+ * @tags basics
+ * @minver 3001.0
+ */
 
 kaplay();
 
 loadSprite("bean", "/sprites/bean.png");
+
+// FIXME: Maybe this should add some examples by counting dt, using  wait, etc
 
 // Execute something after every 0.5 seconds.
 loop(0.5, () => {

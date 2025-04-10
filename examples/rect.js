@@ -1,4 +1,10 @@
-// @ts-check
+/**
+ * @file Rect
+ * @description The different options for the rect() component.
+ * @difficulty 0
+ * @tags basics
+ * @minver 3001.0
+ */
 
 kaplay();
 

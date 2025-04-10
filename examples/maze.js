@@ -1,4 +1,11 @@
-// @ts-check
+/**
+ * @file Maze
+ * @description How to create a maze using math and addLevel().
+ * @difficulty 2
+ * @tags math, game
+ * @minver 4000.0
+ * @locked
+ */
 
 kaplay({
     scale: 0.5,

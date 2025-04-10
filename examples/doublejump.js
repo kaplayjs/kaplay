@@ -1,4 +1,10 @@
-// @ts-check
+/**
+ * @file Double Jump
+ * @description How to add a double jump.
+ * @difficulty 2
+ * @tags game, comps
+ * @minver 3001.0
+ */
 
 // How to use the doubleJump component in this little game
 kaplay({

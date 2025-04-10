@@ -1,3 +1,11 @@
+/**
+ * @file Sokoban
+ * @description How to make a sokoban-like game in KAPLAY.
+ * @difficulty 1
+ * @tags game
+ * @minver 3001.0
+ */
+
 kaplay({
     background: [45, 33, 51],
 });

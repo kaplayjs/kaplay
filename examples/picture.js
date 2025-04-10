@@ -1,3 +1,12 @@
+/**
+ * @file Picture
+ * @description How to store static drawing data.
+ * @difficulty 2
+ * @tags effects
+ * @minver 4000.0
+ * @locked
+ */
+
 kaplay();
 
 loadSprite("bean", "sprites/bean.png");

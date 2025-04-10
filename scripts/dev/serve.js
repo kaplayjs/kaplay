@@ -3,10 +3,9 @@
 import express from "express";
 import fs from "fs/promises";
 import path from "path";
-import { isFile } from "../lib/util.js";
 
 export function serve(opt = {}) {
-    const port = opt.port || process.env.PORT || 8000;
+    const port = opt.port || process.env.PORT || 2000;
     const app = express();
 
     app.set("view engine", "ejs");

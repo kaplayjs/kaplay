@@ -1,3 +1,11 @@
+/**
+ * @file Style override
+ * @description Test overriding different styles in text objects.
+ * @difficulty 3
+ * @tags basics
+ * @minver 3001.0
+ */
+
 kaplay({ background: "#000000" });
 
 add([

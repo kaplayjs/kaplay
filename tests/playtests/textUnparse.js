@@ -1,3 +1,4 @@
+// FIXME: What is this example?
 kaplay();
 
 const text =

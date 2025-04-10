@@ -1,4 +1,10 @@
-// @ts-check
+/**
+ * @file Egg
+ * @description A simple game about eggs.
+ * @difficulty 0
+ * @tags game
+ * @minver 3001.0
+ */
 
 // Egg minigames (yes, like Peppa)
 kaplay({

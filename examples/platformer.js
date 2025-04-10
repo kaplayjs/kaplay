@@ -1,4 +1,12 @@
-// @ts-check
+/**
+ * @file Platformer
+ * @description How to make a simple platformer.
+ * @difficulty 1
+ * @tags basics, game
+ * @minver 3001.0
+ */
+
+// FIXME: This error crashes (resolveSound() not defined)
 
 kaplay({
     background: [141, 183, 255],

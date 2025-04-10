@@ -1,4 +1,11 @@
-// @ts-check
+/**
+ * @file Burp
+ * @description How to use burp, the engine core
+ * @difficulty 0
+ * @tags basics, audio
+ * @minver 3001.0
+ */
+
 // Core KAPLAY features.
 
 // Start the game in burp mode

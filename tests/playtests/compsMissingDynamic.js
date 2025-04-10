@@ -1,3 +1,11 @@
+/**
+ * @file Missing components on run-time
+ * @description Test missing component dependencies at run-time.
+ * @difficulty 3
+ * @tags comps
+ * @minver 3001.0
+ */
+
 // Test when a dependency is missing on obj.use()
 
 const k = kaplay({});

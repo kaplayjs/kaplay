@@ -1,4 +1,10 @@
-// @ts-check
+/**
+ * @file Camera
+ * @description How to handle and modify the camera
+ * @difficulty 1
+ * @tags basics
+ * @minver 3001.0
+ */
 
 // Adjust camera / viewport
 
@@ -89,15 +95,15 @@ const ui = add([
 ]);
 
 // Add a score counter
-ui.add([
+const scoreCounter = ui.add([
     text("0"),
     pos(12),
-    {
-        update() {
-            this.text = score.toString();
-        },
-    },
 ]);
+
+// We constantly update the scoreCounter text
+scoreCounter.onUpdate(() => {
+    scoreCounter.text = score.toString();
+});
 
 onClick(() => {
     // Use toWorld() to transform a screen-space coordinate (like mousePos()) to

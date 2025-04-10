@@ -1,3 +1,11 @@
+/**
+ * @file Paused text
+ * @description Test paused text objcts and their transforms.
+ * @difficulty 3
+ * @tags basics
+ * @minver 3001.0
+ */
+
 kaplay();
 
 add([

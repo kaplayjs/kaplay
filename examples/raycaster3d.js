@@ -1,5 +1,11 @@
-// @ts-check
-
+/**
+ * @file 3D
+ * @description KAPLAY 3D.
+ * @difficulty 2
+ * @tags game, math
+ * @minver 4000.0
+ * @locked
+ */
 // Start kaplay
 kaplay();
 

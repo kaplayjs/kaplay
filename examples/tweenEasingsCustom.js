@@ -1,6 +1,13 @@
-// @ts-check
+/**
+ * @file Custom Easings
+ * @description How to use custom easing functions on tweens
+ * @difficulty 0
+ * @tags animation, tween
+ * @minver 3001.0
+ */
 
 // Moves objects with custom easings
+
 kaplay();
 
 add([

@@ -1,5 +1,10 @@
-// @ts-check
-
+/**
+ * @file Overlap
+ * @description How to handle overlapping areas.
+ * @difficulty 1
+ * @tags physics
+ * @minver 3001.0
+ */
 kaplay();
 
 add([

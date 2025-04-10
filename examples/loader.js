@@ -1,4 +1,10 @@
-// @ts-check
+/**
+ * @file Loader
+ * @description How to customize the loading screen.
+ * @difficulty 0
+ * @tags effects, animation
+ * @minver 3001.0
+ */
 
 // Customizing the asset loader
 

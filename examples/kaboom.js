@@ -1,6 +1,12 @@
-// @ts-check
+/**
+ * @file Kaboom!
+ * @description How to KABOOM in kaplay
+ * @difficulty 0
+ * @tags basics, effects
+ * @minver 3001.0
+ */
 
-// You can still use kaboom() instead of kaplay()!
+// You can still use kaboom() to initialize the game instead of kaplay()!
 kaboom();
 
 addKaboom(center());

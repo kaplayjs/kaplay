@@ -1,4 +1,10 @@
-// @ts-check
+/**
+ * @file Physics
+ * @description TBD How to predict physics (?) .
+ * @difficulty 2
+ * @tags math
+ * @minver 3001.0
+ */
 
 kaplay();
 

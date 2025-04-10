@@ -1,3 +1,11 @@
+/**
+ * @file Text tags
+ * @description Test the behaviour of text tags in certain cases.
+ * @difficulty 3
+ * @tags basics
+ * @minver 3001.0
+ */
+
 kaplay();
 
 const txtEl = add([

@@ -1,4 +1,10 @@
-// @ts-check
+/**
+ * @file PolygonUV
+ * @description TBD How to edit polygon uv quads.
+ * @difficulty 2
+ * @tags effects
+ * @minver 3001.0
+ */
 
 kaplay();
 

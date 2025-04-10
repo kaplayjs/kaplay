@@ -1,3 +1,11 @@
+/**
+ * @file Time Scale
+ * @description Test time scale and dt() difference.
+ * @difficulty 3
+ * @tags basics
+ * @minver 3001.0
+ */
+
 kaplay();
 
 let firstFrameDt;

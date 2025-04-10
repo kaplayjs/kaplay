@@ -1,5 +1,10 @@
-// @ts-check
-
+/**
+ * @file Particle Trail
+ * @description How to do a mouse-following trail with particles().
+ * @difficulty 1
+ * @tags effects
+ * @minver 3001.0
+ */
 kaplay();
 
 loadSprite("hexagon", "./examples/sprites/particle_hexagon_filled.png");

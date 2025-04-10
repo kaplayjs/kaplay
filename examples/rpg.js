@@ -1,4 +1,10 @@
-// @ts-check
+/**
+ * @file RPG
+ * @description How to make a basic RPG in KAPLAY
+ * @difficulty 1
+ * @tags game, ui
+ * @minver 3001.0
+ */
 
 // simple rpg style walk and talk
 
