@@ -6,35 +6,51 @@
  * @minver 3001.0
  */
 
-// Start kaplay
-kaplay();
+// Using textInput() component to catch user text input easily
 
-setBackground(BLACK);
+kaplay({ font: "happy", background: "#a6555f" });
 
-// Add the game object that asks a question
+loadHappy();
+
+// We will ask something!
 add([
+    pos(width() / 2, 50),
+    text("What's your favorite KAPLAY Crew member", {
+        // Responsive friendly
+        align: "center",
+        width: width(),
+    }),
     anchor("top"),
-    pos(width() / 2, 0),
-    text("Whats your favorite food :D"),
 ]);
 
-// Add the node that you write in
-const food = add([
+// This object will catch user input
+const crew = add([
     text(""),
-    textInput(true, 20), // make it have focus and only be 20 chars max
+    // We pass true so it focus by default. You can also do crew.hasFocus = true;
+    textInput(true, 20), // <- 20 chars at max
     pos(width() / 2, height() / 2),
     anchor("center"),
 ]);
 
-// add the response
-add([
-    text(""),
+// Our response
+const response = add([
+    text("", {
+        align: "center",
+        width: width(),
+    }),
     anchor("bot"),
-    pos(width() / 2, height()),
-    {
-        update() {
-            this.text =
-                `wow i didnt know you love ${food.text} so much, but i like it too :D`;
-        },
-    },
+    pos(width() / 2, height() - 50),
 ]);
+
+// Updating the response, depending on input
+response.onUpdate(() => {
+    if (crew.text == "") {
+        response.text = "...";
+    }
+    else if (crew.text.toLowerCase() === "mark") {
+        response.text = `Yep. Mark the best`;
+    }
+    else {
+        response.text = `I like ${crew.text}, but Mark is better`;
+    }
+});
