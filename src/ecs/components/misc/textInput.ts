@@ -36,7 +36,7 @@ export interface TextInputComp extends Comp {
     /**
      * Event that runs when the user types any character in the text input
      * and causes its value to change.
-     * 
+     *
      * This runs *after* the display text is updated with the escaped version
      * of the typed text, so in the event handler you can override the
      * displayed text with another version (like if you want to add syntax
