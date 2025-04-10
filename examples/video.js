@@ -1,24 +1,31 @@
 /**
  * @file Video
- * @description How to use tweens in KAPLAY.
+ * @description How to play videos.
  * @difficulty 0
- * @tags basics, animation
- * @minver 3001.0
+ * @tags animation
+ * @minver 4000.0
  */
 
-kaplay();
+kaplay({ scale: 2, background: "#4a3052", font: "happy" });
 
-const v = add([
-    pos(100, 100),
-    video("/examples/sprites/video.mp4", {
+loadHappy();
+
+const vid = add([
+    pos(center()),
+    // video() fetches the resource, we have to pass URL
+    video("/examples/videos/dance.mp4", {
         width: 320,
         height: 200,
     }),
+    anchor("center"),
 ]);
 
 add([
-    pos(100, 50),
-    text("click to play"),
+    pos(center().x, 50),
+    text("click to play video"),
+    anchor("center"),
 ]);
 
-onClick(() => v.play());
+onClick(() => {
+    vid.play();
+});

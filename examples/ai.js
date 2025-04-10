@@ -15,6 +15,7 @@ kaplay();
 loadSprite("bean", "/sprites/bean.png");
 loadSprite("ghosty", "/sprites/ghosty.png");
 
+// Some constants
 const SPEED = 320;
 const ENEMY_SPEED = 160;
 const BULLET_SPEED = 800;
