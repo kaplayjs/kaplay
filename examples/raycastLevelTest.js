@@ -1,10 +1,4 @@
-/**
- * @file Post-Effect
- * @description How to use a post effect shader in KAPLAY.
- * @difficulty 1
- * @tags effects
- * @minver 3001.0
- */
+// FIXME: What is this example? I couldn' do anythin with it lol
 
 kaplay();
 

@@ -1,4 +1,10 @@
-// @ts-check
+/**
+ * @file Tiled
+ * @description How to make tile sprites in KAPLAY.
+ * @difficulty 1
+ * @tags basics, game
+ * @minver 3001.0
+ */
 
 kaplay();
 

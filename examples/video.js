@@ -1,3 +1,11 @@
+/**
+ * @file Video
+ * @description How to use tweens in KAPLAY.
+ * @difficulty 0
+ * @tags basics, animation
+ * @minver 3001.0
+ */
+
 kaplay();
 
 const v = add([

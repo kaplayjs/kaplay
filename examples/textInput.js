@@ -1,4 +1,10 @@
-// @ts-check
+/**
+ * @file Text Input
+ * @description How to take input and display it on text.
+ * @difficulty 0
+ * @tags basics
+ * @minver 3001.0
+ */
 
 // Start kaplay
 kaplay();
