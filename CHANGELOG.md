@@ -66,6 +66,7 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   `end` - @dragoncoder047
 - `wave()` can now go back and forth between any value that is able to be used
   with `lerp()` - @dragoncoder047, @mflerackers
+- The `textInput` component has more events: `focus`, `blur`, `input`, and `change`, to better interact with the text input state - @dragoncoder047
 
 ### Fixed
 
