@@ -1,6 +1,6 @@
 /**
  * @file Collision
- * @description How to handle collisions netweem game objects.
+ * @description How to handle collisions betweem game objects.
  * @difficulty 0
  * @tags basics, comps, physics
  * @minver 3001.0
