@@ -8,11 +8,11 @@ import { FrameBuffer } from "../gfx/classes/FrameBuffer";
 import { beginPicture, endPicture, Picture } from "../gfx/draw/drawPicture";
 import {
     flush,
+    multRotate,
+    multScaleV,
+    multTranslateV,
     popTransform,
-    pushRotate,
-    pushScaleV,
     pushTransform,
-    pushTranslateV,
 } from "../gfx/stack";
 import { _k } from "../kaplay";
 import { Mat23 } from "../math/math";
@@ -22,6 +22,7 @@ import type {
     CompList,
     GameObj,
     GameObjInspect,
+    GameObjRaw,
     GetOpt,
     QueryOpt,
     Tag,
@@ -44,10 +45,24 @@ export type SetParentOpt = {
     keep: KeepFlags;
 };
 
+type AppEvents = keyof {
+    [K in keyof App as K extends `on${any}` ? K : never]: [never];
+};
+
+type GameObjTransform = GameObj<PosComp | RotateComp | ScaleComp>;
+
+/*
+Order of making a game object:
+
+1. We receive an array of components and tags from add([])
+2. We create the GameObjRaw interface
+3. We call .use() or .tag() on elements in the compAndTags array
+*/
 export function make<T extends CompList<unknown>>(
-    comps: [...T],
+    compsAndTags: [...T],
 ): GameObj<T[number]> {
     const id = uid();
+    const compIds = new Set<string>();
     const compStates = new Map<string, Comp>();
     const anonymousCompStates: Comp[] = [];
     const cleanups = {} as Record<string, (() => unknown)[]>;
@@ -65,7 +80,7 @@ export function make<T extends CompList<unknown>>(
     let _parent: GameObj;
 
     // the game object without the event methods, added later
-    const obj: Omit<GameObj, keyof typeof appEvs> = {
+    const obj = {
         id: id,
         // TODO: a nice way to hide / pause when add()-ing
         hidden: false,
@@ -90,7 +105,11 @@ export function make<T extends CompList<unknown>>(
             }
         },
 
-        setParent(p: GameObj, opt: SetParentOpt) {
+        setParent(
+            this: GameObjTransform,
+            p: GameObj,
+            opt: SetParentOpt,
+        ) {
             if (_parent === p) return;
             const oldTransform = _parent.transform;
             const newTransform = p.transform;
@@ -152,7 +171,7 @@ export function make<T extends CompList<unknown>>(
             return obj;
         },
 
-        readd(obj: GameObj): GameObj {
+        readd<T>(obj: GameObj<T>): GameObj<T> {
             const idx = this.children.indexOf(obj);
             if (idx !== -1) {
                 this.children.splice(idx, 1);
@@ -218,9 +237,9 @@ export function make<T extends CompList<unknown>>(
             const f = _k.gfx.fixed;
             if (this.fixed) _k.gfx.fixed = true;
             pushTransform();
-            pushTranslateV(this.pos);
-            pushScaleV(this.scale);
-            pushRotate(this.angle);
+            multTranslateV(this.pos);
+            multScaleV(this.scale);
+            multRotate(this.angle);
             const children = this.children.sort((o1, o2) => {
                 const l1 = o1.layerIndex ?? _k.game.defaultLayerIndex;
                 const l2 = o2.layerIndex ?? _k.game.defaultLayerIndex;
@@ -279,9 +298,9 @@ export function make<T extends CompList<unknown>>(
         drawInspect(this: GameObj<PosComp | ScaleComp | RotateComp>) {
             if (this.hidden) return;
             pushTransform();
-            pushTranslateV(this.pos);
-            pushScaleV(this.scale);
-            pushRotate(this.angle);
+            multTranslateV(this.pos);
+            multScaleV(this.scale);
+            multRotate(this.angle);
             this.children
                 /*.sort((o1, o2) => (o1.z ?? 0) - (o2.z ?? 0))*/
                 .forEach((child) => child.drawInspect());
@@ -290,16 +309,14 @@ export function make<T extends CompList<unknown>>(
         },
 
         // use a comp
-        use(this: GameObj, comp: Comp) {
-            if (typeof comp == "string") {
-                // for use add(["tag"])
-                this.trigger("tag", comp);
-                _k.game.events.trigger("tag", this, comp);
-                return tags.add(comp);
-            }
-            else if (!comp || typeof comp != "object") {
+        /*
+        Order of use:
+        1. If we're ovewriting it
+        */
+        use(comp: Comp) {
+            if (!comp || typeof comp != "object") {
                 throw new Error(
-                    `You can only pass a component or a string to .use(), you passed a "${typeof comp}"`,
+                    `You can only pass objects to .use(), you passed a "${typeof comp}"`,
                 );
             }
 
@@ -318,12 +335,78 @@ export function make<T extends CompList<unknown>>(
                 anonymousCompStates.push(comp);
             }
 
-            // check for component dependencies
+            for (const key in comp) {
+                // These are properties from the component data (id, require), shouldn't
+                // be added to the game obj prototype, that's why we continue
+                if (COMP_DESC.has(key)) {
+                    continue;
+                }
+
+                const prop = Object.getOwnPropertyDescriptor(comp, key);
+                if (!prop) continue;
+
+                if (typeof prop.value === "function") {
+                    // @ts-ignore
+                    comp[key] = comp[key].bind(this);
+                }
+
+                if (prop.set) {
+                    Object.defineProperty(comp, key, {
+                        set: prop.set.bind(this),
+                    });
+                }
+
+                if (prop.get) {
+                    Object.defineProperty(comp, key, {
+                        get: prop.get.bind(this),
+                    });
+                }
+
+                if (COMP_EVENTS.has(key)) {
+                    // Automatically clean up events created by components in add() stage
+                    const func = key === "add"
+                        ? () => {
+                            onCurCompCleanup = (c: any) => gc.push(c);
+                            comp[key]?.();
+                            onCurCompCleanup = null;
+                        }
+                        : comp[<keyof typeof comp> key];
+                    gc.push(this.on(key, <any> func).cancel);
+                }
+                else {
+                    // @ts-ignore
+                    if (this[key] === undefined) {
+                        // Assign comp fields to game obj
+                        Object.defineProperty(this, key, {
+                            get: () => comp[<keyof typeof comp> key],
+                            set: (val) => comp[<keyof typeof comp> key] = val,
+                            configurable: true,
+                            enumerable: true,
+                        });
+                        // @ts-ignore
+                        gc.push(() => delete this[key]);
+                    }
+                    else {
+                        const originalCompId = compStates.values().find(c =>
+                            (c as any)[key] !== undefined
+                        )?.id;
+                        throw new Error(
+                            `Duplicate component property: "${key}" while adding component "${comp.id}"`
+                                + (originalCompId
+                                    ? ` (originally added by "${originalCompId}")`
+                                    : ""),
+                        );
+                    }
+                }
+            }
+
+            // Check for component dependencies
             const checkDeps = () => {
                 if (!comp.require) return;
+
                 try {
                     for (const dep of comp.require) {
-                        if (!this.c(dep)) {
+                        if (!compIds.has(dep)) {
                             throw new Error(
                                 `Component "${comp.id}" requires component "${dep}"`,
                             );
@@ -342,6 +425,7 @@ export function make<T extends CompList<unknown>>(
             // ID == 0 is root
             if (this.id != 0 && this.exists()) {
                 checkDeps();
+
                 if (comp.add) {
                     onCurCompCleanup = (c: any) => gc.push(c);
                     comp.add.call(this);
@@ -349,75 +433,12 @@ export function make<T extends CompList<unknown>>(
                 }
                 if (comp.id) {
                     this.trigger("use", comp.id);
-                    _k.game.events.trigger("use", this, comp.id);
+                    _k.game.events.trigger("use", this as GameObj, comp.id);
                 }
             }
             else {
                 if (comp.require) {
-                    gc.push(this.on("add", checkDeps).cancel);
-                }
-            }
-
-            for (const k in comp) {
-                // These are properties from the component data (id, require), shouldn't
-                // be added to the game obj prototype, that's why we continue
-                if (COMP_DESC.has(k)) {
-                    continue;
-                }
-
-                const prop = Object.getOwnPropertyDescriptor(comp, k);
-                if (!prop) continue;
-
-                if (typeof prop.value === "function") {
-                    // @ts-ignore
-                    comp[k] = comp[k].bind(this);
-                }
-
-                if (prop.set) {
-                    Object.defineProperty(comp, k, {
-                        set: prop.set.bind(this),
-                    });
-                }
-
-                if (prop.get) {
-                    Object.defineProperty(comp, k, {
-                        get: prop.get.bind(this),
-                    });
-                }
-
-                if (COMP_EVENTS.has(k)) {
-                    // Automatically clean up events created by components in add() stage
-                    const func = k === "add"
-                        ? () => {
-                            onCurCompCleanup = (c: any) => gc.push(c);
-                            comp[k]?.();
-                            onCurCompCleanup = null;
-                        }
-                        : comp[<keyof typeof comp> k];
-                    gc.push(this.on(k, <any> func).cancel);
-                }
-                else {
-                    if (this[k] === undefined) {
-                        // Assign comp fields to game obj
-                        Object.defineProperty(this, k, {
-                            get: () => comp[<keyof typeof comp> k],
-                            set: (val) => comp[<keyof typeof comp> k] = val,
-                            configurable: true,
-                            enumerable: true,
-                        });
-                        gc.push(() => delete this[k]);
-                    }
-                    else {
-                        const originalCompId = compStates.values().find(c =>
-                            (c as any)[k] !== undefined
-                        )?.id;
-                        throw new Error(
-                            `Duplicate component property: "${k}" while adding component "${comp.id}"`
-                                + (originalCompId
-                                    ? ` (originally added by "${originalCompId}")`
-                                    : ""),
-                        );
-                    }
+                    checkDeps();
                 }
             }
         },
@@ -435,6 +456,7 @@ export function make<T extends CompList<unknown>>(
                 }
 
                 compStates.delete(id);
+                compIds.delete(id);
 
                 this.trigger("unuse", id);
                 _k.game.events.trigger("unuse", this, id);
@@ -445,7 +467,6 @@ export function make<T extends CompList<unknown>>(
 
             if (cleanups[id]) {
                 cleanups[id].forEach((e) => e());
-
                 delete cleanups[id];
             }
         },
@@ -552,7 +573,7 @@ export function make<T extends CompList<unknown>>(
             return list as GameObj<T>[];
         },
 
-        query(opt: QueryOpt) {
+        query(this: GameObjTransform, opt: QueryOpt) {
             const hierarchy = opt.hierarchy || "children";
             const include = opt.include;
             const exclude = opt.exclude;
@@ -674,18 +695,18 @@ export function make<T extends CompList<unknown>>(
         },
 
         // Tag a game object
-        tag(this: GameObj, tag: Tag | Tag[]): void {
+        tag(tag: Tag | Tag[]): void {
             if (Array.isArray(tag)) {
                 for (const t of tag) {
                     tags.add(t);
                     this.trigger("tag", t);
-                    _k.game.events.trigger("tag", this, t);
+                    _k.game.events.trigger("tag", this as GameObj, t);
                 }
             }
             else {
                 tags.add(tag);
                 this.trigger("tag", tag);
-                _k.game.events.trigger("tag", this, tag);
+                _k.game.events.trigger("tag", this as GameObj, tag);
             }
         },
 
@@ -746,7 +767,7 @@ export function make<T extends CompList<unknown>>(
             events.trigger(name, ...args);
         },
 
-        destroy() {
+        destroy(this: GameObj) {
             if (this.parent) {
                 this.parent.remove(this);
             }
@@ -820,9 +841,9 @@ export function make<T extends CompList<unknown>>(
             updateEvents.clear();
             drawEvents.clear();
         },
-    };
+    } satisfies Omit<GameObjRaw, AppEvents>;
 
-    // We add App Events for "attaching" it to game object (not really)
+    // We add App Events for "attaching" it to game object
     const appEvs = [
         "onKeyPress",
         "onKeyPressRepeat",
@@ -845,10 +866,12 @@ export function make<T extends CompList<unknown>>(
         "onButtonPress",
         "onButtonDown",
         "onButtonRelease",
-    ] as unknown as [keyof Pick<App, "onKeyPress">];
+    ] satisfies [...AppEvents[]];
 
     for (const e of appEvs) {
+        // @ts-ignore
         obj[e] = (...args: [any]) => {
+            // @ts-ignore
             const ev = _k.app[e]?.(...args);
             inputEvents.push(ev);
 
@@ -860,6 +883,7 @@ export function make<T extends CompList<unknown>>(
                 // so we don't need to event.cancel();
                 inputEvents.splice(inputEvents.indexOf(ev), 1);
                 // create a new event with the same arguments
+                // @ts-ignore
                 const newEv = _k.app[e]?.(...args);
 
                 // Replace the old event handler with the new one
@@ -872,9 +896,35 @@ export function make<T extends CompList<unknown>>(
         };
     }
 
-    for (const comp of comps) {
-        obj.use(comp as string | Comp);
+    // Adding components passed from add([]);
+    // We register here: The objects, because you can also pass tags to add().
+    let comps = [];
+    let tagList = [];
+
+    for (const compOrTag of compsAndTags) {
+        if (typeof compOrTag == "string") {
+            tagList.push(compOrTag);
+        }
+        else {
+            const compId = (<Comp> compOrTag).id;
+
+            if (compId) {
+                compIds.add(compId);
+                if (treatTagsAsComponents) tagList.push(compId);
+            }
+
+            comps.push(compOrTag);
+        }
     }
 
-    return obj as GameObj<T[number]>;
+    // Using .use and .tag we trigger onUse and onTag events correctly
+    for (const comp of comps) {
+        obj.use(<Comp> comp);
+    }
+
+    for (const tag of tagList) {
+        obj.tag(tag);
+    }
+
+    return obj as unknown as GameObj<T[number]>;
 }

@@ -4,9 +4,9 @@ import { type Vec2, vec2 } from "../../math/math";
 import { formatText } from "../formatText";
 import {
     height,
+    multTranslateV,
     popTransform,
     pushTransform,
-    pushTranslateV,
     width,
 } from "../stack";
 import { drawFormattedText } from "./drawFormattedText";
@@ -18,7 +18,7 @@ export function drawInspectText(pos: Vec2, txt: string) {
         const pad = vec2(8);
 
         pushTransform();
-        pushTranslateV(pos);
+        multTranslateV(pos);
 
         const ftxt = formatText({
             text: txt,
@@ -33,11 +33,11 @@ export function drawInspectText(pos: Vec2, txt: string) {
         const bh = ftxt.height + pad.x * 2;
 
         if (pos.x + bw >= width()) {
-            pushTranslateV(vec2(-bw, 0));
+            multTranslateV(vec2(-bw, 0));
         }
 
         if (pos.y + bh >= height()) {
-            pushTranslateV(vec2(0, -bh));
+            multTranslateV(vec2(0, -bh));
         }
 
         drawRect({

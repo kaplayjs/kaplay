@@ -1,0 +1,36 @@
+name: Bug Report
+description: Create a report to help us improve.
+labels: ["bug"]
+title: "bug: your bug here"
+body:
+  - type: input
+    attributes:
+      label: Describe the bug.
+      description: A clear and concise description of what the bug is.
+      placeholder: ex. the objects are not objecting 😔
+    validations:
+      required: true
+
+  - type: input
+    attributes:
+      label: Version
+      description: What version are you running?
+      placeholder: ex. 3001.0.10 
+    validations:
+      required: false
+
+  - type: textarea
+    attributes:
+      label: Any more information?
+      description: Is there a method to reliably reproduce it? Did you expect something else to happen? Please add screenshots/evidence if possible.
+      placeholder: So, i was kaplaying normally, then all of sudden...
+    validations:
+      required: false
+
+  - type: checkboxes
+    attributes:
+      label: Summary
+      options:
+        - label: Fixed in Master
+        - label: Fixed in v4000
+        - label: Fixed in v3001

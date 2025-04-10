@@ -1,0 +1,21 @@
+name: Feature request
+description: Suggest an idea for kaplayy.
+labels: ["enhancement"]
+title: "feat: your feature request here"
+type: "Feature"
+body:
+  - type: textarea
+    attributes:
+      label: Is your feature request related to a problem? Please describe.
+      description: A clear and concise description of what the problem is. Ex. I'm always frustated when....
+      placeholder: I HATE having to make 3D manually so we should add 3D...
+    validations:
+      required: true
+
+  - type: textarea
+    attributes:
+      label: Any more information?
+      description: Have you found alternatives? How should we make the API for you feature request? Type it here.
+      placeholder: So we could add something like addCube() then...
+    validations:
+      required: false

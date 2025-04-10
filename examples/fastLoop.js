@@ -16,20 +16,14 @@ loadBean();
 const interval = 0.001;
 const delay = 1;
 
-loop(
-    interval,
-    () => {
-        const bean = add([
-            sprite("bean"),
-            pos(rand(vec2(0), vec2(width(), height()))),
-        ]);
-        wait(delay, () => {
-            destroy(bean);
-        });
-    },
-    -1,
-    true,
-);
+loop(interval, () => {
+    add([
+        sprite("bean"),
+        pos(rand(vec2(0), vec2(width(), height()))),
+        lifespan(delay),
+        opacity(1),
+    ]);
+});
 
 const counter = add([
     pos(10, 10),

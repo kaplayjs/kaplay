@@ -12,7 +12,6 @@ kaplay();
 loadSprite("bigyoshi", "/examples/sprites/YOSHI.png");
 
 let cameraPosition = getCamPos();
-let cameraScale = 1;
 
 add([
     sprite("bigyoshi"),
@@ -39,6 +38,8 @@ onUpdate(() => {
         setCamPos(cameraPosition);
     }
 });
+
+let cameraScale = 1;
 
 onScroll((delta) => {
     cameraScale = cameraScale * (1 - 0.1 * Math.sign(delta.y));

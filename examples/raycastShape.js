@@ -196,8 +196,8 @@ onMousePress(() => {
     const pickList = shapes.filter((shape) => shape.getShape().contains(pos));
     const selection = pickList[pickList.length - 1];
     if (selection) {
-        get("selected").forEach(s => s.unuse("selected"));
-        selection.use("selected");
+        get("selected").forEach(s => s.untag("selected"));
+        selection.tag("selected");
     }
 });
 
@@ -213,8 +213,8 @@ onMouseMove((pos, delta) => {
 });
 
 onMouseRelease(() => {
-    get("selected").forEach(s => s.unuse("selected"));
-    get("turn").forEach(s => s.unuse("turn"));
+    get("selected").forEach(s => s.untag("selected"));
+    get("turn").forEach(s => s.untag("turn"));
 });
 
 function laser() {
@@ -296,7 +296,7 @@ const ray = add([
     anchor("center"),
     rect(64, 64),
     area(),
-    laser(0),
+    laser(),
     color(RED),
     opacity(0.0),
     "laser",
@@ -310,12 +310,12 @@ get("laser").forEach(laser => {
         laser.showRing = false;
     });
     laser.onClick(() => {
-        get("selected").forEach(s => s.unuse("selected"));
+        get("selected").forEach(s => s.untag("selected"));
         if (laser.pos.sub(mousePos()).slen() > 28 * 28) {
-            laser.use("turn");
+            laser.tag("turn");
         }
         else {
-            laser.use("selected");
+            laser.tag("selected");
         }
     });
 });

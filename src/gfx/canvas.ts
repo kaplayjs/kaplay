@@ -2,10 +2,12 @@ import type { KAPLAYOpt } from "../types";
 
 export const createCanvas = (gopt: KAPLAYOpt) => {
     const root = gopt.root ?? document.body;
-    const globalScale = gopt.scale ?? 1;
+    const gscale = gopt.scale ?? 1;
     const pixelDensity = gopt.pixelDensity || 1;
 
-    // If root is not defined (which falls back to <body>) we assume user is using kaboom on a clean page, and modify <body> to better fit a full screen canvas
+    // If root is not defined (which falls back to <body>) we assume user is on a clean page,
+    // and modify <body> to better fit a full screen canvas
+
     if (root === document.body) {
         document.body.style["width"] = "100%";
         document.body.style["height"] = "100%";
@@ -24,13 +26,13 @@ export const createCanvas = (gopt: KAPLAYOpt) => {
         "cursor: default",
     ];
 
-    // Adjust canvas size according to user size / viewport settings
+    // Adjust canvas size according to user viewport settings
     if (
         // check if isFixed
-        gopt.width && gopt.height && !gopt.stretch && !gopt.letterbox
+        gopt.width && gopt.height && !gopt.letterbox
     ) {
-        canvas.width = gopt.width * globalScale;
-        canvas.height = gopt.height * globalScale;
+        canvas.width = gopt.width * gscale;
+        canvas.height = gopt.height * gscale;
         styles.push(`width: ${canvas.width}px`);
         styles.push(`height: ${canvas.height}px`);
     }
@@ -54,7 +56,6 @@ export const createCanvas = (gopt: KAPLAYOpt) => {
 
     // Makes canvas focusable
     canvas.tabIndex = 0;
-    // #endregion
 
     return canvas;
 };

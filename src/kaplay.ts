@@ -175,13 +175,12 @@ import {
     center,
     flush,
     height,
-    mousePos,
+    loadMatrix,
+    multRotate,
+    multScaleV,
+    multTranslateV,
     popTransform,
-    pushMatrix,
-    pushRotate,
-    pushScaleV,
     pushTransform,
-    pushTranslateV,
     width,
 } from "./gfx/stack";
 import { updateViewport } from "./gfx/viewport";
@@ -638,7 +637,7 @@ const kaplay = <
     );
 
     updateViewport();
-    initEvents();
+    initEvents(_k.gfx);
 
     // the exported ctx handle
     const ctx: KAPLAYCtx = {
@@ -825,7 +824,7 @@ const kaplay = <
         onButtonPress: app.onButtonPress,
         onButtonDown: app.onButtonDown,
         onButtonRelease: app.onButtonRelease,
-        mousePos: mousePos,
+        mousePos: app.mousePos,
         mouseDeltaPos: app.mouseDeltaPos,
         isKeyDown: app.isKeyDown,
         isKeyPressed: app.isKeyPressed,
@@ -947,10 +946,10 @@ const kaplay = <
         drawPicture,
         pushTransform,
         popTransform,
-        pushTranslate: pushTranslateV,
-        pushScale: pushScaleV,
-        pushRotate,
-        pushMatrix,
+        pushTranslate: multTranslateV,
+        pushScale: multScaleV,
+        pushRotate: multRotate,
+        pushMatrix: loadMatrix,
         usePostEffect,
         makeCanvas,
         drawCanvas,

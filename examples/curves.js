@@ -10,12 +10,12 @@ kaplay();
 
 function addPoint(c, ...args) {
     return add([
+        "point",
         rect(8, 8),
         anchor("center"),
         pos(...args),
         area(),
         color(c),
-        "point",
     ]);
 }
 

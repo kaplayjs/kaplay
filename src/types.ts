@@ -139,16 +139,6 @@ import type {
 } from "./math/math";
 import type { NavMesh } from "./math/navigationmesh";
 
-type Clean<T extends any[]> = {
-    [K in keyof T]: T[K] extends infer U extends any
-        ? U extends infer F extends Comp ? F : {
-            [K in keyof U]: "f";
-        }
-        : never;
-};
-
-type X = Clean<[SpriteComp, { readonly x: string }]>;
-
 /**
  * Context handle that contains every KAPLAY function.
  *
@@ -6008,11 +5998,7 @@ export interface KAPLAYOpt<
      */
     scale?: number;
     /**
-     * If stretch canvas to container when width and height is specified
-     */
-    stretch?: boolean;
-    /**
-     * When stretching if keep aspect ratio and leave black bars on remaining spaces.
+     * Keep aspect ratio and leave black bars on remaining spaces.
      */
     letterbox?: boolean;
     /**
@@ -6449,6 +6435,13 @@ export interface GameObjRaw {
      */
     onUpdate(action: () => void): KEventController;
     /**
+     * Register an event that runs every frame as long as the game obj exists.
+     *
+     * @returns The event controller.
+     * @since v2000.1
+     */
+    onFixedUpdate(action: () => void): KEventController;
+    /**
      * Register an event that runs every frame as long as the game obj exists (this is the same as `onUpdate()`, but all draw events are run after all update events).
      *
      * @returns The event controller.
@@ -6468,14 +6461,28 @@ export interface GameObjRaw {
      * @returns The event controller.
      * @since v4000.0
      */
-    onCompAdd(action: (id: string) => void): KEventController;
+    onUse(action: (id: string) => void): KEventController;
     /**
      * Register an event that runs when a component is unused.
      *
      * @returns The event controller.
      * @since v4000.0
      */
-    onCompDestroy(action: (id: string) => void): KEventController;
+    onUnuse(action: (id: string) => void): KEventController;
+    /**
+     * Register an event that runs when a tag is added.
+     *
+     * @returns The event controller.
+     * @since v4000.0
+     */
+    onTag(action: (tag: string) => void): KEventController;
+    /**
+     * Register an event that runs when a tag is removed.
+     *
+     * @returns The event controller.
+     * @since v4000.0
+     */
+    onUntag(action: (tag: string) => void): KEventController;
     /**
      * If game obj is attached to the scene graph.
      *
@@ -6519,7 +6526,7 @@ export interface GameObjRaw {
      *
      * @since v3001.0
      */
-    target: RenderTarget;
+    target?: RenderTarget;
     onKeyDown: KAPLAYCtx["onKeyDown"];
     onKeyPress: KAPLAYCtx["onKeyPress"];
     onKeyPressRepeat: KAPLAYCtx["onKeyPressRepeat"];

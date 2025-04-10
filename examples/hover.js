@@ -9,8 +9,7 @@
 // Differeces between onHover and onHoverUpdate
 
 kaplay({
-    // Use logMax to see more messages on debug.log()
-    logMax: 5,
+    scale: 2,
 });
 
 loadSprite("bean", "/sprites/bean.png");
@@ -63,4 +62,11 @@ blueBean.onHoverUpdate(() => {
     );
 
     debug.log("blue bean on hover");
+});
+
+let cameraScale = 1;
+
+onScroll((delta) => {
+    cameraScale = cameraScale * (1 - 0.1 * Math.sign(delta.y));
+    setCamScale(cameraScale);
 });

@@ -79,7 +79,8 @@ export function video(url: string, opt: VideoCompOpt): VideoComp {
             );
 
             if (url.startsWith("http")) { // Make sure redirects work
-                console.log(`Fetching ${url}`);
+                // console.log(`Fetching ${url}`);
+
                 fetch(url, {
                     method: "HEAD",
                     mode: "no-cors",
@@ -88,12 +89,14 @@ export function video(url: string, opt: VideoCompOpt): VideoComp {
                 });
             }
             else {
-                console.log(`Not fetching ${url}`);
+                // console.log(`Not fetching ${url}`);
+
                 _video.src = url;
             }
 
             function updateCopyFlag() {
-                console.log(`${_playing} ${_timeupdate}`);
+                // console.log(`${_playing} ${_timeupdate}`);
+
                 if (_playing && _timeupdate) {
                     _canCopyVideo = true;
                 }
@@ -112,7 +115,8 @@ export function video(url: string, opt: VideoCompOpt): VideoComp {
                     _video,
                 );
                 _texture.unbind();
-                console.log(`${this.currentTime}/${this.duration}`);
+
+                // console.log(`${this.currentTime}/${this.duration}`);
             }
         },
         draw(this: GameObj<PosComp | VideoComp>) {
