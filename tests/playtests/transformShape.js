@@ -1,4 +1,10 @@
-// FIXME: What is this example?
+/**
+ * @file Transform Shape
+ * @description Test transforming shapes.
+ * @difficulty 3
+ * @tags basics
+ * @minver 3001.0
+ */
 
 kaplay();
 
@@ -211,10 +217,12 @@ onMousePress(() => {
     const pickList = shapes.filter((shape) =>
         getGlobalShape(shape).contains(pos)
     );
+
     selection = pickList[pickList.length - 1];
+
     if (selection) {
-        get("selected").forEach(s => s.unuse("selected"));
-        selection.use("selected");
+        get("selected").forEach(s => s.untag("selected"));
+        selection.tag("selected");
     }
 });
 
@@ -230,6 +238,6 @@ onMouseMove((pos, delta) => {
 });
 
 onMouseRelease(() => {
-    get("selected").forEach(s => s.unuse("selected"));
-    get("turn").forEach(s => s.unuse("turn"));
+    get("selected").forEach(s => s.untag("selected"));
+    get("turn").forEach(s => s.untag("turn"));
 });

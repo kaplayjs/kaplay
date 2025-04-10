@@ -11,6 +11,5 @@
     "allowJs": true,
     "moduleDetection": "force",
     "noImplicitAny": false,
-    "checkJs": true
   }
 }
