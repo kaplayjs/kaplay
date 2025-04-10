@@ -1427,3 +1427,4 @@ const kaplay = <
 };
 
 export { kaplay };
+export default kaplay;

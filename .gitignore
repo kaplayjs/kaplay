@@ -9,3 +9,5 @@ src-tauri/target/
 replit.nix
 /.obsidian
 .pnpm-store
+tsconfig.vitest-temp.json
+src/index.ts
