@@ -1,12 +1,12 @@
 /**
  * @file Video
- * @description How to play videos.
+ * @description How to play videos
  * @difficulty 0
  * @tags animation
  * @minver 4000.0
  */
 
-// Playing videos
+// Playing videos (🥊 included)
 
 kaplay({ scale: 2, background: "#a32858", font: "happy" });
 
