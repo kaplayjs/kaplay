@@ -183,17 +183,19 @@ function startWriting(dialog, char) {
     isTalking = true;
     txt.letterCount = 0;
     txt.text = dialog;
+    const len = txt.formattedText().renderedText.length;
 
     const writing = loop(0.05, () => {
+
         txt.letterCount = Math.min(
             txt.letterCount + 1,
-            txt.renderedText.length,
+            len,
         );
         play(characters[char].sound, {
             volume: 0.2,
         });
 
-        if (txt.letterCount === txt.renderedText.length) {
+        if (txt.letterCount === len) {
             isTalking = false;
             writing.cancel();
         }
