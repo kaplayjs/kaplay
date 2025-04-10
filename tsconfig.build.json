@@ -13,6 +13,7 @@
     "strict": true
   },
   "include": [
-    "src/**/*"
+    "src/index.ts",
+    "src/.env.d.ts"
   ]
 }

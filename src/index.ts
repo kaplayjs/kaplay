@@ -1,229 +1,78 @@
-import { kaplay } from "./kaplay";
-
-export type {
-    AsepriteData,
-    Asset,
-    AssetBucket,
-    AssetsCtx,
-    BitmapFontData,
-    FontData,
-    GfxFont,
-    LoadBitmapFontOpt,
-    LoadSpriteOpt,
-    LoadSpriteSrc,
-    NineSlice,
-    PeditFile,
-    Shader,
-    ShaderData,
-    SoundData,
-    SpriteAnim,
-    SpriteAnims,
-    SpriteAtlasData,
-    SpriteAtlasEntry,
-    SpriteData,
-    Uniform,
-    UniformKey,
-    UniformValue,
-} from "./assets";
-export type { AudioCtx, AudioPlay, AudioPlayOpt } from "./audio";
-export type {
-    AgentComp,
-    AgentCompOpt,
-    AnchorComp,
-    AnimateComp,
-    AnimateCompOpt,
-    AnimateOpt,
-    AreaComp,
-    AreaCompOpt,
-    AreaEffectorComp,
-    AreaEffectorCompOpt,
-    BaseValues,
-    BodyComp,
-    BodyCompOpt,
-    BuoyancyEffectorComp,
-    BuoyancyEffectorCompOpt,
-    CircleComp,
-    CircleCompOpt,
-    ColorComp,
-    ConstantForceComp,
-    ConstantForceCompOpt,
-    DoubleJumpComp,
-    EmitterOpt,
-    FixedComp,
-    FollowComp,
-    ForceMode,
-    HealthComp,
-    LayerComp,
-    LifespanCompOpt,
-    MaskComp,
-    NamedComp,
-    OffScreenComp,
-    OffScreenCompOpt,
-    OpacityComp,
-    OutlineComp,
-    ParticlesComp,
-    ParticlesOpt,
-    PathfinderComp,
-    PathfinderCompOpt,
-    PathfinderMapComp,
-    PathfinderMapCompOpt,
-    PatrolComp,
-    PatrolCompOpt,
-    PlatformEffectorComp,
-    PlatformEffectorCompOpt,
-    PointEffectorComp,
-    PointEffectorCompOpt,
-    PolygonComp,
-    PolygonCompOpt,
-    PosComp,
-    RectComp,
-    RectCompOpt,
-    RotateComp,
-    ScaleComp,
-    SentryCandidates,
-    SentryCandidatesCb,
-    SentryComp,
-    SentryCompOpt,
-    ShaderComp,
-    SpriteComp,
-    SpriteCompOpt,
-    StateComp,
-    StayComp,
-    SurfaceEffectorComp,
-    SurfaceEffectorCompOpt,
-    TextComp,
-    TextCompOpt,
-    TextInputComp,
-    TileComp,
-    TileCompOpt,
-    TimerComp,
-    UVQuadComp,
-    ZComp,
-} from "./components";
-export type {
-    BoomOpt,
-    Game,
-    GameObjEventMap,
-    GameObjEventNames,
-    LevelOpt,
-    SceneDef,
-    SceneName,
-    TupleWithoutFirst,
-} from "./game";
-export type {
-    AppGfxCtx,
-    BatchRenderer,
-    CharTransform,
-    CharTransformFunc,
-    DrawBezierOpt,
-    DrawCircleOpt,
-    DrawCurveOpt,
-    DrawLineOpt,
-    DrawLinesOpt,
-    DrawRectOpt,
-    DrawSpriteOpt,
-    DrawTextOpt,
-    DrawTriangleOpt,
-    FormattedChar,
-    FormattedText,
-    FrameBuffer,
-    GfxCtx,
-    LineCap,
-    LineJoin,
-    Mesh,
-    TextAlign,
-    Texture,
-    VertexFormat,
-} from "./gfx";
-export type {
-    Circle,
-    Color,
-    ColorArgs,
-    Ellipse,
-    Graph,
-    Grid,
-    Line,
-    Mat4,
-    NavMesh,
-    Point,
-    Polygon,
-    Quad,
-    RaycastHit,
-    RaycastResult,
-    Rect,
-    RGBAValue,
-    RGBValue,
-    RNG,
-    SatResult,
-    ShapeType,
-    StepPosition,
-    Vec2,
-    Vec2Args,
-} from "./math";
-export type {
-    Anchor,
-    Canvas,
-    Collision,
-    Comp,
-    CompList,
-    Cursor,
-    Debug,
-    DrawEllipseOpt,
-    DrawPolygonOpt,
-    DrawTextureOpt,
-    DrawUVQuadOpt,
-    EaseFunc,
-    EaseFuncs,
-    Edge,
-    EdgeMask,
-    EmptyComp,
-    GameObj,
-    GameObjID,
-    GameObjInspect,
-    GameObjRaw,
-    GamepadDef,
-    GamepadStick,
-    GetOpt,
-    ImageSource,
-    KAPLAYCtx,
-    KAPLAYOpt,
-    KAPLAYPlugin,
-    Key,
-    KGamepad,
-    KGamepadButton,
-    LerpValue,
-    LevelComp,
-    LoadFontOpt,
-    Mask,
-    MergeComps,
-    MergeObj,
-    MergePlugins,
-    MouseButton,
-    MusicData,
-    Outline,
-    PathFindOpt,
-    PluginList,
-    QueryOpt,
-    Recording,
-    RenderProps,
-    RNGValue,
-    Shape,
-    SpriteAnimPlayOpt,
-    SpriteCurAnim,
-    Tag,
-    TexFilter,
-    TextureOpt,
-    TexWrap,
-    TimerController,
-    TweenController,
-    Vertex,
-} from "./types";
-export type {
-    BinaryHeap,
-    KEvent,
-    KEventController,
-    KEventHandler,
-    Registry,
-} from "./utils";
-
-export default kaplay;
+export type { ButtonState, App, AppState } from "./app/app";
+export type { ButtonBinding, ButtonsDef, ButtonBindingDevice } from "./app/inputBindings";
+export type { AsepriteData } from "./assets/aseprite";
+export type { Asset, AssetBucket, AssetsCtx } from "./assets/asset";
+export type { GfxFont, BitmapFontData, LoadBitmapFontOpt } from "./assets/bitmapFont";
+export type { FontData } from "./assets/font";
+export type { PeditFile } from "./assets/pedit";
+export type { ShaderData, UniformValue, UniformKey, Uniform, Shader } from "./assets/shader";
+export type { SoundData } from "./assets/sound";
+export type { SpriteAnim, SpriteAnims, LoadSpriteOpt, NineSlice, LoadSpriteSrc, SpriteData } from "./assets/sprite";
+export type { SpriteAtlasData, SpriteAtlasEntry } from "./assets/spriteAtlas";
+export type { AudioCtx } from "./audio/audio";
+export type { AudioPlayOpt, AudioPlay } from "./audio/play";
+export type { CircleComp, CircleCompOpt } from "./components/draw/circle";
+export type { ColorComp } from "./components/draw/color";
+export type { MaskComp } from "./components/draw/mask";
+export type { OpacityComp } from "./components/draw/opacity";
+export type { OutlineComp } from "./components/draw/outline";
+export type { EmitterOpt, ParticlesOpt, ParticlesComp } from "./components/draw/particles";
+export type { PolygonComp, PolygonCompOpt } from "./components/draw/polygon";
+export type { RectComp, RectCompOpt } from "./components/draw/rect";
+export type { ShaderComp } from "./components/draw/shader";
+export type { SpriteComp, SpriteCompOpt } from "./components/draw/sprite";
+export type { TextComp, TextCompOpt } from "./components/draw/text";
+export type { UVQuadComp } from "./components/draw/uvquad";
+export type { AgentComp, AgentCompOpt } from "./components/level/agent";
+export type { PathfinderMapComp, PathfinderMapCompOpt, PathfinderComp, PathfinderCompOpt } from "./components/level/pathfinder";
+export type { PatrolComp, PatrolCompOpt } from "./components/level/patrol";
+export type { SentryComp, SentryCompOpt, SentryCandidatesCb, SentryCandidates } from "./components/level/sentry";
+export type { TileComp, TileCompOpt } from "./components/level/tile";
+export type { AnimateOpt, AnimateCompOpt, BaseValues, AnimateComp } from "./components/misc/animate";
+export type { HealthComp } from "./components/misc/health";
+export type { LifespanCompOpt } from "./components/misc/lifespan";
+export type { NamedComp } from "./components/misc/named";
+export type { StateComp } from "./components/misc/state";
+export type { StayComp } from "./components/misc/stay";
+export type { TextInputComp } from "./components/misc/textInput";
+export type { TimerComp } from "./components/misc/timer";
+export type { AreaComp, AreaCompOpt } from "./components/physics/area";
+export type { BodyComp, BodyCompOpt } from "./components/physics/body";
+export type { DoubleJumpComp } from "./components/physics/doubleJump";
+export type { SurfaceEffectorCompOpt, SurfaceEffectorComp, AreaEffectorCompOpt, AreaEffectorComp, ForceMode, PointEffectorCompOpt, PointEffectorComp, ConstantForceCompOpt, ConstantForceComp, PlatformEffectorCompOpt, PlatformEffectorComp, BuoyancyEffectorCompOpt, BuoyancyEffectorComp } from "./components/physics/effectors";
+export type { AnchorComp } from "./components/transform/anchor";
+export type { FixedComp } from "./components/transform/fixed";
+export type { FollowComp } from "./components/transform/follow";
+export type { LayerComp } from "./components/transform/layer";
+export type { OffScreenComp, OffScreenCompOpt } from "./components/transform/offscreen";
+export type { PosComp } from "./components/transform/pos";
+export type { RotateComp } from "./components/transform/rotate";
+export type { ScaleComp } from "./components/transform/scale";
+export type { ZComp } from "./components/transform/z";
+export type { GameObjEventMap, GameObjEvents, GameObjEventNames, AppEventMap } from "./events/eventMap";
+export type { Registry, KEventController, KEvent, KEventHandler } from "./events/events";
+export type { TupleWithoutFirst } from "./events/globalEvents";
+export type { Game } from "./game/game";
+export type { BoomOpt } from "./game/kaboom";
+export type { LevelOpt } from "./game/level";
+export type { SceneName, SceneDef } from "./game/scenes";
+export type { DrawBezierOpt } from "./gfx/draw/drawBezier";
+export type { DrawCircleOpt } from "./gfx/draw/drawCircle";
+export type { DrawCurveOpt } from "./gfx/draw/drawCurve";
+export type { FormattedText, FormattedChar } from "./gfx/draw/drawFormattedText";
+export type { DrawLineOpt, LineJoin, LineCap, DrawLinesOpt } from "./gfx/draw/drawLine";
+export type { DrawRectOpt } from "./gfx/draw/drawRect";
+export type { DrawSpriteOpt } from "./gfx/draw/drawSprite";
+export type { DrawTextOpt, CharTransformFunc, CharTransform, TextAlign } from "./gfx/draw/drawText";
+export type { DrawTriangleOpt } from "./gfx/draw/drawTriangle";
+export type { GfxCtx, Texture, FrameBuffer, VertexFormat, BatchRenderer, Mesh } from "./gfx/gfx";
+export type { AppGfxCtx } from "./gfx/gfxApp";
+export type { TexPacker } from "./gfx/texPacker";
+export type { RGBValue, RGBAValue, Color, ColorArgs } from "./math/color";
+export type { Vec2Args, Vec2, Quad, Mat4, RNG, ShapeType, RaycastHit, RaycastResult, Point, Line, Rect, Circle, Ellipse, Polygon, StepPosition, SatResult } from "./math/math";
+export type { Graph } from "./math/navigation";
+export type { Grid } from "./math/navigationgrid";
+export type { NavMesh } from "./math/navigationmesh";
+export type { KAPLAYInternal, KAPLAYCtx, Tag, MergeObj, MergeComps, MergePlugins, CompList, PluginList, Key, MouseButton, KGamepadButton, GamepadStick, GamepadDef, KGamepad, GameObjInspect, KAPLAYOpt, KAPLAYPlugin, GameObjRaw, GameObj, GetOpt, QueryOpt, Recording, SpriteAnimPlayOpt, MusicData, LoadFontOpt, TextureOpt, ImageSource, Canvas, Vertex, TexFilter, TexWrap, RenderProps, DrawTextureOpt, DrawUVQuadOpt, DrawEllipseOpt, DrawPolygonOpt, Outline, Cursor, Anchor, LerpValue, RNGValue, Comp, GameObjID, EmptyComp, Collision, Shape, Debug, Mask, Edge, LevelComp, PathFindOpt, EaseFuncs, EaseFunc, TimerController, TweenController, SpriteCurAnim } from "./types";
+export type { BinaryHeap } from "./utils/binaryheap";
+export { kaplay as default} from "./kaplay";

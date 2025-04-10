@@ -2,7 +2,7 @@ import { type GfxCtx, Texture } from "../gfx";
 import { Quad, Vec2 } from "../math/math";
 import type { ImageSource } from "../types";
 
-export default class TexPacker {
+export class TexPacker {
     private lastTextureId: number = 0;
     private textures: Texture[] = [];
     private bigTextures: Texture[] = [];
