@@ -1,11 +1,11 @@
 name: Test KAPLAY
 
-on: [push, pull_request]
+on:
+  push:
 
 jobs:
   build:
     runs-on: ubuntu-latest
-    if: github.repository_owner == 'kaplayjs'
     
     steps:
       - name: Checkout
