@@ -100,6 +100,7 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - Now if you pass a nullish value to `.use()` it throws an error
 - Improved TypeScript in game objects - @amyspark-ng, @lajbel, @KeSuave
   - Added/updated JSDoc comments to some members - @ErikGXDev, @dragoncoder047
+- The `textInput` component's `isFocused` property is now a one-hot lockout, setting it to true (focused) will clear focus from all the other text inputs - @dragoncoder047
 
 ## [3001.0.10] "Happy Colors" - TBD
 

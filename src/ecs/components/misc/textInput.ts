@@ -10,7 +10,10 @@ import type { TextComp } from "../draw/text";
  */
 export interface TextInputComp extends Comp {
     /**
-     * Enable the text input array from being modified by user input.
+     * Enable the text input array to be modified by user input.
+     *
+     * Setting this to true is the same as calling focus(), and will
+     * clear focus on all other active textInput objects.
      */
     hasFocus: boolean;
     /**
@@ -18,7 +21,8 @@ export interface TextInputComp extends Comp {
      */
     typedText: string;
     /**
-     * Focuses this text input so that it will receive input.
+     * Focuses this text input so that it will receive input, and
+     * removes focus from all other text inputs.
      */
     focus(): void;
     /**
@@ -46,6 +50,8 @@ export interface TextInputComp extends Comp {
     onChange(cb: () => void): KEventController;
 }
 
+const allTextInputs: Set<GameObj<TextInputComp>> = new Set();
+
 export function textInput(
     this: KAPLAYCtx,
     hasFocus: boolean = true,
@@ -65,6 +71,12 @@ export function textInput(
             (this as any as GameObj).trigger(hasFocus ? "focus" : "blur");
             if (hasFocus) {
                 origText = this.typedText;
+                allTextInputs.forEach(i => {
+                    // @ts-ignore
+                    if (i !== this) {
+                        i.hasFocus = false;
+                    }
+                });
             }
             else if (origText !== this.typedText) {
                 (this as any as GameObj).trigger("change");
@@ -73,6 +85,7 @@ export function textInput(
         require: ["text"],
         typedText: "",
         add(this: GameObj<TextComp & TextInputComp>) {
+            allTextInputs.add(this);
             const flip = () => {
                 this.text = this.typedText.replace(/([\[\\])/g, "\\$1");
                 this.trigger("input");
@@ -101,9 +114,10 @@ export function textInput(
                 flip();
             });
         },
-        destroy() {
+        destroy(this: GameObj<TextInputComp>) {
             charEv.cancel();
             backEv.cancel();
+            allTextInputs.delete(this);
         },
         focus() {
             this.hasFocus = true;
