@@ -10,6 +10,6 @@
     "forceConsistentCasingInFileNames": true,
     "allowJs": true,
     "moduleDetection": "force",
-    "noImplicitAny": false,
+    "noImplicitAny": false
   }
 }
