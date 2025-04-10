@@ -1606,7 +1606,7 @@ export interface KAPLAYCtx<
      * @param id - The id of the component that was added.
      *
      * @returns The event controller.
-     * @since v3001.1
+     * @since v3001.10
      * @group Events
      */
     onUse(action: (obj: GameObj, id: string) => void): KEventController;
@@ -1617,7 +1617,7 @@ export interface KAPLAYCtx<
      * @param id - The id of the component that was removed.d
      *
      * @returns The event controller.
-     * @since v3001.1
+     * @since v3001.10
      * @group Events
      */
     onUnuse(action: (obj: GameObj, id: string) => void): KEventController;
@@ -1628,7 +1628,7 @@ export interface KAPLAYCtx<
      * @param tag - The tag which was added.
      *
      * @returns The event controller.
-     * @since v3001.1
+     * @since v3001.10
      * @group Events
      */
     onTag(action: (obj: GameObj, tag: string) => void): KEventController;
@@ -1639,7 +1639,7 @@ export interface KAPLAYCtx<
      * @param tag - The tag which was removed.
      *
      * @returns The event controller.
-     * @since v3001.1
+     * @since v3001.10
      * @group Events
      */
     onUntag(action: (obj: GameObj, tag: string) => void): KEventController;
@@ -3158,7 +3158,7 @@ export interface KAPLAYCtx<
      * setCamPos(100); // x and y are the same
      * ```
      *
-     * @since v3001.1
+     * @since v3001.10
      * @group Camera
      */
     setCamPos(pos: Vec2): void;
@@ -3168,7 +3168,7 @@ export interface KAPLAYCtx<
      * Get camera position.
      *
      * @returns The current camera position.
-     * @since v3001.1
+     * @since v3001.10
      * @group Camera
      */
     getCamPos(): Vec2;
@@ -3185,7 +3185,7 @@ export interface KAPLAYCtx<
      * setCamScale(2); // x and y are the same
      * ```
      *
-     * @since v3001.1
+     * @since v3001.10
      * @group Camera
      */
     setCamScale(scale: Vec2): void;
@@ -3195,7 +3195,7 @@ export interface KAPLAYCtx<
      * Get camera scale.
      *
      * @returns The current camera scale.
-     * @since v3001.1
+     * @since v3001.10
      * @group Camera
      */
     getCamScale(): Vec2;
@@ -3210,7 +3210,7 @@ export interface KAPLAYCtx<
      * setCamRot(90);
      * ```
      *
-     * @since v3001.1
+     * @since v3001.10
      * @group Camera
      */
     setCamRot(angle: number): void;
@@ -3218,7 +3218,7 @@ export interface KAPLAYCtx<
      * Get camera rotation.
      *
      * @returns The current camera rotation.
-     * @since v3001.1
+     * @since v3001.10
      * @group Camera
      */
     getCamRot(): number;
@@ -3226,7 +3226,7 @@ export interface KAPLAYCtx<
      * Get camera transform.
      *
      * @returns The current camera transform.
-     * @since v3001.1
+     * @since v3001.10
      * @group Camera
      */
     getCamTransform(): Mat4;
@@ -3594,7 +3594,7 @@ export interface KAPLAYCtx<
      * setVolume(0.5)
      * ```
      *
-     * @since v3001.1
+     * @since v3001.10
      * @group Audio
      */
     setVolume(v: number): void;
@@ -3602,7 +3602,7 @@ export interface KAPLAYCtx<
      * Get the global volume.
      *
      * @returns The current volume.
-     * @since v3001.1
+     * @since v3001.10
      * @group Audio
      */
     getVolume(): number;
@@ -4397,7 +4397,7 @@ export interface KAPLAYCtx<
      * ]);
      * ```
      *
-     * @since v3001.1
+     * @since v3001.10
      * @group Layers
      */
     setLayers(layers: string[], defaultLayer: string): void;
@@ -4405,9 +4405,9 @@ export interface KAPLAYCtx<
      * Get the layer names.
      *
      * @returns The layer names or null if not set.
-     * @since v3001.1
+     * @since v3001.10
      * @group Layers
-     * @experimental This feature is in experimental phase, it will be fully released in v3001.1
+     * @experimental This feature is in experimental phase, it will be fully released in v4000.0
      */
     getLayers(): string[] | null;
     /**
@@ -4416,7 +4416,7 @@ export interface KAPLAYCtx<
      * @returns The default layer name or null if not set.
      * @since v3001.0.5
      * @group Layers
-     * @experimental This feature is in experimental phase, it will be fully released in v3001.1
+     * @experimental This feature is in experimental phase, it will be fully released in v4000.0
      */
     getDefaultLayer(): string | null;
     /**
@@ -5125,7 +5125,7 @@ export interface KAPLAYCtx<
      * @returns The cancel event symbol.
      * @since v3001.0.5
      * @group Events
-     * @experimental This feature is in experimental phase, it will be fully released in v3001.1.0
+     * @experimental This feature is in experimental phase, it will be fully released in v4000.0
      */
     cancel: () => Symbol;
     /**
@@ -5457,14 +5457,14 @@ export interface KAPLAYOpt<
      * That means .is() will return true for components with that id.
      *
      * @default true
-     * @experimental This feature is in experimental phase, it will be fully released in v3001.1.0
+     * @experimental This feature is in experimental phase, it will be fully released in v4000.0
      */
     tagsAsComponents?: boolean;
     /**
      * Padding used when adding sprites to texture atlas.
      *
      * @default 0
-     * @experimental This feature is in experimental phase, it will be fully released in v3001.1.0
+     * @experimental This feature is in experimental phase, it will be fully released in v4000.0
      */
     spriteAtlasPadding?: number;
 }
@@ -5654,7 +5654,7 @@ export interface GameObjRaw {
      *
      * @returns true if has the component(s), false otherwise.
      * @since v3001.0.5
-     * @experimental This feature is in experimental phase, it will be fully released in v3001.1.0
+     * @experimental This feature is in experimental phase, it will be fully released in v4000.0
      */
     has(compId: string | string[], op?: "and" | "or"): boolean;
     /**
@@ -5672,7 +5672,7 @@ export interface GameObjRaw {
      * ```
      *
      * @since v3001.0.5
-     * @experimental This feature is in experimental phase, it will be fully released in v3001.1.0
+     * @experimental This feature is in experimental phase, it will be fully released in v4000.0
      */
     tag(tag: Tag | Tag[]): void;
     /**
@@ -5690,7 +5690,7 @@ export interface GameObjRaw {
      * ```
      *
      * @since v3001.0.5
-     * @experimental This feature is in experimental phase, it will be fully released in v3001.1.0
+     * @experimental This feature is in experimental phase, it will be fully released in v4000.0
      */
     untag(tag: Tag | Tag[]): void;
     /**
@@ -5700,7 +5700,7 @@ export interface GameObjRaw {
      * @param op - The operator to use when searching for multiple tags. Default is "and".
      *
      * @since v3001.0.5
-     * @experimental This feature is in experimental phase, it will be fully released in v3001.1.0
+     * @experimental This feature is in experimental phase, it will be fully released in v4000.0
      */
     is(tag: Tag | Tag[], op?: "and" | "or"): boolean;
     /**
