@@ -1,4 +1,11 @@
-// @ts-check
+/**
+ * @file Slice
+ * @description How to make an "slice" game in KAPLAY.
+ * @difficulty 2
+ * @tags game
+ * @minver 4000.0
+ * @locked
+ */
 
 kaplay();
 

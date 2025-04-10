@@ -1,3 +1,11 @@
+/**
+ * @file Step Frame
+ * @description Test different physics using debug.stepFrame().
+ * @difficulty 3
+ * @tags basics
+ * @minver 3001.0
+ */
+
 // Build levels with addLevel()
 
 // Start game

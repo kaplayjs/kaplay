@@ -1,4 +1,10 @@
-// @ts-check
+/**
+ * @file Slice-9
+ * @description How to make use of slice-9 sprites.
+ * @difficulty 1
+ * @tags animation
+ * @minver 3001.0
+ */
 
 // 9 slice sprite scaling
 

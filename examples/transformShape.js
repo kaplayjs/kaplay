@@ -1,4 +1,4 @@
-// @ts-check
+// FIXME: What is this example?
 
 kaplay();
 
