@@ -10,14 +10,47 @@ import type { TextComp } from "../draw/text";
  */
 export interface TextInputComp extends Comp {
     /**
-     * Enable the text input array from being modified by user input.
+     * Enable the text input array to be modified by user input.
+     *
+     * Setting this to true is the same as calling focus(), and will
+     * clear focus on all other active textInput objects.
      */
     hasFocus: boolean;
     /**
      * The "real" text that the user typed, without any escaping.
      */
     typedText: string;
+    /**
+     * Focuses this text input so that it will receive input, and
+     * removes focus from all other text inputs.
+     */
+    focus(): void;
+    /**
+     * Event that runs when the text input gains focus.
+     */
+    onFocus(cb: () => void): KEventController;
+    /**
+     * Event that runs when the text input loses focus.
+     */
+    onBlur(cb: () => void): KEventController;
+    /**
+     * Event that runs when the user types any character in the text input
+     * and causes its value to change.
+     *
+     * This runs *after* the display text is updated with the escaped version
+     * of the typed text, so in the event handler you can override the
+     * displayed text with another version (like if you want to add syntax
+     * highlighting or something). See also {@link TextComp.text}.
+     */
+    onInput(cb: () => void): KEventController;
+    /**
+     * Runs immediately after onBlur if the value has changed while the text
+     * input has been focused.
+     */
+    onChange(cb: () => void): KEventController;
 }
+
+const allTextInputs: Set<GameObj<TextInputComp>> = new Set();
 
 export function textInput(
     this: KAPLAYCtx,
@@ -26,14 +59,36 @@ export function textInput(
 ): TextInputComp {
     let charEv: KEventController;
     let backEv: KEventController;
+    let origText: string = "";
     return {
         id: "textInput",
-        hasFocus: hasFocus,
+        get hasFocus() {
+            return hasFocus;
+        },
+        set hasFocus(newValue) {
+            if (hasFocus === newValue) return;
+            hasFocus = newValue;
+            (this as any as GameObj).trigger(hasFocus ? "focus" : "blur");
+            if (hasFocus) {
+                origText = this.typedText;
+                allTextInputs.forEach(i => {
+                    // @ts-ignore
+                    if (i !== this) {
+                        i.hasFocus = false;
+                    }
+                });
+            }
+            else if (origText !== this.typedText) {
+                (this as any as GameObj).trigger("change");
+            }
+        },
         require: ["text"],
         typedText: "",
         add(this: GameObj<TextComp & TextInputComp>) {
+            allTextInputs.add(this);
             const flip = () => {
                 this.text = this.typedText.replace(/([\[\\])/g, "\\$1");
+                this.trigger("input");
             };
 
             charEv = _k.k.onCharInput((character) => {
@@ -59,9 +114,25 @@ export function textInput(
                 flip();
             });
         },
-        destroy() {
+        destroy(this: GameObj<TextInputComp>) {
             charEv.cancel();
             backEv.cancel();
+            allTextInputs.delete(this);
+        },
+        focus() {
+            this.hasFocus = true;
+        },
+        onFocus(this: GameObj, cb) {
+            return this.on("focus", cb);
+        },
+        onBlur(this: GameObj, cb) {
+            return this.on("blur", cb);
+        },
+        onInput(this: GameObj, cb) {
+            return this.on("input", cb);
+        },
+        onChange(this: GameObj, cb) {
+            return this.on("change", cb);
         },
     };
 }
