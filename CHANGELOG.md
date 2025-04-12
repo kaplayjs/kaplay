@@ -105,6 +105,12 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   setting it to true (focused) will clear focus from all the other text inputs -
   @dragoncoder047
 
+## [3001.0.12] - 2025-04-12
+
+### Fixed
+
+- Blockers - @lajbel
+
 ## [3001.0.11] - 2025-04-12
 
 ### Added
