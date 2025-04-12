@@ -659,9 +659,6 @@ export const initApp = (
         state.buttonState.down.forEach((btn) => {
             state.events.trigger("buttonDown", btn);
         });
-        document.body.onkeydown = e => {
-            state.capsOn = e.getModifierState("CapsLock");
-        };
 
         processGamepad();
     }
@@ -944,6 +941,8 @@ export const initApp = (
     };
 
     canvasEvents.keydown = (e) => {
+        appState.capsOn = e.getModifierState("CapsLock");
+
         if (PREVENT_DEFAULT_KEYS.has(e.key)) {
             e.preventDefault();
         }
