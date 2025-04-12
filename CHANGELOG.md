@@ -141,6 +141,8 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - Args were not being passed to global `trigger()` - @lajbel
 - AreaComp.onClick now returns the correct type, KEventController, instead of
   void - @lajbel
+- Random errors - @lajbel
+- General type bugs - @lajbel
 
 ## [3001.0.9] - 2025-01-15
 
