@@ -1,4 +1,6 @@
-const VERSION = "3001.0.0";
+import packageJsonData from "../package.json";
+
+const VERSION = packageJsonData.version;
 
 import { type ButtonsDef, initApp } from "./app";
 
