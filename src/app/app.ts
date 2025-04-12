@@ -110,6 +110,7 @@ export const initAppState = (opt: {
         skipTime: false,
         isHidden: false,
         numFrames: 0,
+        capsOn: false,
         mousePos: new Vec2(0),
         mouseDeltaPos: new Vec2(0),
         keyState: new ButtonState<Key>(),
@@ -658,6 +659,9 @@ export const initApp = (
         state.buttonState.down.forEach((btn) => {
             state.events.trigger("buttonDown", btn);
         });
+        document.body.onkeydown = e => {
+            state.capsOn = e.getModifierState("CapsLock");
+        };
 
         processGamepad();
     }
