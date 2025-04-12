@@ -5760,6 +5760,13 @@ export interface GameObjRaw {
      */
     onUpdate(action: () => void): KEventController;
     /**
+     * Register an event that runs every frame as long as the game obj exists.
+     *
+     * @returns The event controller.
+     * @since v2000.1
+     */
+    onFixedUpdate(action: () => void): KEventController;
+    /**
      * Register an event that runs every frame as long as the game obj exists (this is the same as `onUpdate()`, but all draw events are run after all update events).
      *
      * @returns The event controller.
@@ -5787,6 +5794,22 @@ export interface GameObjRaw {
      * @since v3001.0
      */
     onUnuse(action: (id: string) => void): KEventController;
+    /**
+     * Register an event that runs when a tag is added.
+     *
+     * @returns The event controller.
+     * @since v3001.10
+     * @experimental
+     */
+    onTag(action: (tag: string) => void): KEventController;
+    /**
+     * Register an event that runs when a tag is removed.
+     *
+     * @returns The event controller.
+     * @since v3001.10
+     * @experimental
+     */
+    onUntag(action: (tag: string) => void): KEventController;
     /**
      * If game obj is attached to the scene graph.
      *
