@@ -15,9 +15,9 @@ kaplay({
 });
 
 // Loads the bell sound
-loadSound("bell", "//sounds/bell.mp3");
+loadSound("bell", "/sounds/bell.mp3");
 // Load the music, it makes it being streamed, so loading is faster
-loadMusic("OtherworldlyFoe", "//sounds/OtherworldlyFoe.mp3");
+loadMusic("OtherworldlyFoe", "/sounds/OtherworldlyFoe.mp3");
 loadSprite("bag", "/sprites/bag.png");
 
 // Adjust global volume

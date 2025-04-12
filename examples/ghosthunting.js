@@ -16,8 +16,8 @@ kaplay({
 loadSprite("bean", "./sprites/bean.png");
 loadSprite("gun", "./sprites/gun.png");
 loadSprite("ghosty", "./sprites/ghosty.png");
-loadSprite("hexagon", ".//sprites/particle_hexagon_filled.png");
-loadSprite("star", ".//sprites/particle_star_filled.png");
+loadSprite("hexagon", "./sprites/particle_hexagon_filled.png");
+loadSprite("star", "./sprites/particle_star_filled.png");
 
 const nav = new NavMesh();
 // Hallway

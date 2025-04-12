@@ -11,7 +11,7 @@
 kaplay();
 
 // Load a sprite that's made for 9 slice scaling
-loadSprite("9slice", "//sprites/9slice.png", {
+loadSprite("9slice", "/sprites/9slice.png", {
     // Define the slice by the margins of 4 sides
     slice9: {
         left: 32,

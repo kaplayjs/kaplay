@@ -9,7 +9,7 @@
 kaplay();
 
 // Loads a random 2500px image
-loadSprite("bigyoshi", "//sprites/YOSHI.png");
+loadSprite("bigyoshi", "/sprites/YOSHI.png");
 
 let cameraPosition = getCamPos();
 

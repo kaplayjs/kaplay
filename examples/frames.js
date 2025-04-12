@@ -13,8 +13,8 @@ kaplay({
     background: [0, 0, 0],
 });
 
-// https://0x72.itch.io/dungeontileset-ii
-loadSpriteAtlas("//sprites/dungeon.png", {
+/ https:/ / (0x72).itch.io / dungeontileset - ii;
+loadSpriteAtlas("/sprites/dungeon.png", {
     wizard: {
         x: 128,
         y: 140,

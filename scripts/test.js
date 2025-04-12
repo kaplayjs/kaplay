@@ -9,12 +9,12 @@ import { wait } from "./lib/util.js";
 
 const exampleCI = JSON.parse(
     (
-        await fs.readFile(new URL("..//ciTest.json", import.meta.url))
+        await fs.readFile(new URL("../examples/ciTest.json", import.meta.url))
     ).toString(),
 );
 
 await build();
-const port = process.env.PORT || 8001;
+const port = process.env.PORT || 4001;
 const server = serve({ port: port });
 
 let failed = false;

@@ -28,10 +28,10 @@ for (const obj of objs) {
 }
 
 loadBean();
-loadSound("hit", "//sounds/hit.mp3");
-loadSound("shoot", "//sounds/shoot.mp3");
-loadSound("explode", "//sounds/explode.mp3");
-loadSound("OtherworldlyFoe", "//sounds/OtherworldlyFoe.mp3");
+loadSound("hit", "/sounds/hit.mp3");
+loadSound("shoot", "/sounds/shoot.mp3");
+loadSound("explode", "/sounds/explode.mp3");
+loadSound("OtherworldlyFoe", "/sounds/OtherworldlyFoe.mp3");
 
 scene("battle", () => {
     const BULLET_SPEED = 1200;
