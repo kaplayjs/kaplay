@@ -97,7 +97,7 @@ export function textInput(
                     && (!maxInputLength
                         || this.typedText.length < maxInputLength)
                 ) {
-                    if (_k.k.isKeyDown("shift")) {
+                    if ((_k.k.isKeyDown("shift") !== _k.app.state.capsOn)) {
                         this.typedText += character.toUpperCase();
                     }
                     else {

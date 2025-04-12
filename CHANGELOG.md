@@ -82,6 +82,7 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   non-Promise-based API return value - @imaginarny
 - changing `debug.timeScale` now actually makes the game change speed by
   affecting `dt()` - @lajbel
+- CapsLock now affects textInput() - @amyspark-ng
 
 ### Removed
 

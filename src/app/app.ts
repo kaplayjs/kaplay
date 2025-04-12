@@ -110,6 +110,7 @@ export const initAppState = (opt: {
         skipTime: false,
         isHidden: false,
         numFrames: 0,
+        capsOn: false,
         mousePos: new Vec2(0),
         mouseDeltaPos: new Vec2(0),
         keyState: new ButtonState<Key>(),
@@ -940,6 +941,8 @@ export const initApp = (
     };
 
     canvasEvents.keydown = (e) => {
+        appState.capsOn = e.getModifierState("CapsLock");
+
         if (PREVENT_DEFAULT_KEYS.has(e.key)) {
             e.preventDefault();
         }
