@@ -1,6 +1,4 @@
-kaplay({
-    scale: 3,
-});
+kaplay();
 
 const redDot = add([
     anchor("center"),

@@ -1,5 +1,7 @@
 kaplay({
-    scale: 3,
+    width: 200,
+    height: 400,
+    letterbox: true,
 });
 
 const redDot = add([
