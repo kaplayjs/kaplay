@@ -10,8 +10,6 @@ kaplay();
 
 loadSprite("bean", "/sprites/bean.png");
 
-// FIXME: Maybe this should add some examples by counting dt, using  wait, etc
-
 // Execute something after every 0.5 seconds.
 loop(0.5, () => {
     const bean = add([

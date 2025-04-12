@@ -1,4 +1,10 @@
-// FIXME: What is this example? I couldn' do anythin with it lol
+/**
+ * @file Raycast Level Test
+ * @description Ok MF explain this
+ * @difficulty 3
+ * @tags debug
+ * @minver 3001.0
+ */
 
 kaplay();
 

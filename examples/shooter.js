@@ -1,12 +1,10 @@
 /**
  * @file Shooter
- * @description How to make an 2D shooter game in KAPLAY.
+ * @description How to make an 2D shooter game
  * @difficulty 1
  * @tags basics, game
  * @minver 3001.0
  */
-
-// FIXME: broken example, resolveSound doesn't exist
 
 kaplay({
     background: [74, 48, 82],

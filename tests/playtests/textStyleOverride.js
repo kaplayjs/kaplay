@@ -1,8 +1,8 @@
 /**
  * @file Style override
- * @description Test overriding different styles in text objects.
+ * @description Test overriding different styles in text objects
  * @difficulty 3
- * @tags basics
+ * @tags text
  * @minver 3001.0
  */
 
