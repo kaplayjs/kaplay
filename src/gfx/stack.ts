@@ -75,10 +75,6 @@ export function windowToContent(pt: Vec2) {
     );
 }
 
-export function mousePos() {
-    return windowToContent(_k.app.mousePos());
-}
-
 export function center(): Vec2 {
     return vec2(width() / 2, height() / 2);
 }

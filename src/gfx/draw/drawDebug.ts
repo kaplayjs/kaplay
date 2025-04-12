@@ -4,14 +4,13 @@ import { rgb } from "../../math/color";
 import { vec2, wave } from "../../math/math";
 import { formatText } from "../formatText";
 import {
-    contentToView,
     height,
-    mousePos,
     popTransform,
     pushTransform,
     pushTranslate,
     width,
 } from "../stack";
+import { viewportToCanvas } from "../viewport.js";
 import { drawCircle } from "./drawCircle";
 import { drawFormattedText } from "./drawFormattedText";
 import { drawInspectText } from "./drawInspectText";
@@ -24,7 +23,7 @@ export function drawDebug() {
         let inspecting = null;
 
         for (const obj of _k.game.root.get("*", { recursive: true })) {
-            if (obj.c("area") && obj.isHovering()) {
+            if (obj.has("area") && obj.isHovering()) {
                 inspecting = obj;
                 break;
             }
@@ -47,7 +46,10 @@ export function drawDebug() {
                 }
             }
 
-            drawInspectText(contentToView(mousePos()), lines.join("\n"));
+            drawInspectText(
+                viewportToCanvas(_k.k.mousePos()),
+                lines.join("\n"),
+            );
         }
 
         drawInspectText(vec2(8), `FPS: ${_k.debug.fps()}`);

@@ -134,6 +134,7 @@ export const initAppGfx = (gopt: KAPLAYOpt, ggl: GfxCtx) => {
             y: 0,
             width: gl.drawingBufferWidth,
             height: gl.drawingBufferHeight,
+            scale: 1,
         },
 
         fixed: false,

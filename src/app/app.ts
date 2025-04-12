@@ -22,6 +22,7 @@ import {
 
 import GAMEPAD_MAP from "../data/gamepad.json" assert { type: "json" };
 import type { AppEventMap } from "../game";
+import { canvasToViewport } from "../gfx/viewport.js";
 import {
     type ButtonBinding,
     type ButtonsDef,
@@ -842,7 +843,9 @@ export const initApp = (opt: {
     const pd = opt.pixelDensity || 1;
 
     canvasEvents.mousemove = (e) => {
-        const mousePos = new Vec2(e.offsetX, e.offsetY);
+        // Ironically, e.offsetX and e.offsetY are the mouse position. Is not
+        // related to what we call the "offset" in this code
+        const mousePos = canvasToViewport(new Vec2(e.offsetX, e.offsetY));
         const mouseDeltaPos = new Vec2(e.movementX, e.movementY);
 
         if (isFullscreen()) {
