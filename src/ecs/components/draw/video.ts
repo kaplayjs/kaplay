@@ -1,3 +1,4 @@
+import { getRenderProps } from "../../../game/utils";
 import { drawRect } from "../../../gfx/draw/drawRect";
 import { drawUVQuad } from "../../../gfx/draw/drawUVQuad";
 import { Texture } from "../../../gfx/gfx";
@@ -121,17 +122,17 @@ export function video(url: string, opt: VideoCompOpt): VideoComp {
         },
         draw(this: GameObj<PosComp | VideoComp>) {
             if (_canCopyVideo) {
-                drawUVQuad({
+                drawUVQuad(Object.assign(getRenderProps(this), {
                     width: this.width,
                     height: this.height,
                     tex: _texture,
-                });
+                }));
             }
             else {
-                drawRect({
+                drawRect(Object.assign(getRenderProps(this), {
                     width: this.width,
                     height: this.height,
-                });
+                }));
             }
         },
         renderArea() {
