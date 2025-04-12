@@ -41,7 +41,7 @@ load(
 load(fetch("https://kaboomjs.com/"));
 
 // You can also use the handle returned by loadXXX() as the resource handle
-const bugSound = loadSound("bug", "/examples/sounds/bug.mp3");
+const bugSound = loadSound("bug", "//sounds/bug.mp3");
 
 volume(0.1);
 

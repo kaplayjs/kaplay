@@ -15,7 +15,7 @@ loadHappy();
 const vid = add([
     pos(center()),
     // video() fetches the resource, we have to pass URL
-    video("/examples/videos/3d.mp4", {
+    video("/videos/dance.mp4", {
         width: 320,
         height: 200,
     }),
@@ -29,7 +29,7 @@ onClick(() => {
 /* 🥊 Challenge #1 🥊
 Videos are cool! Try replacing the video url by this one:
 
-/examples/videos/3d.mp4
+//videos/3d.mp4
 
 And see how your mind blows
 */

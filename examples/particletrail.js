@@ -7,7 +7,7 @@
  */
 kaplay();
 
-loadSprite("hexagon", "./examples/sprites/particle_hexagon_filled.png");
+loadSprite("hexagon", ".//sprites/particle_hexagon_filled.png");
 
 onLoad(() => {
     const trail = add([

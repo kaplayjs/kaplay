@@ -14,7 +14,7 @@ kaplay({
 });
 
 // https://0x72.itch.io/dungeontileset-ii
-loadSpriteAtlas("/examples/sprites/dungeon.png", {
+loadSpriteAtlas("//sprites/dungeon.png", {
     wizard: {
         x: 128,
         y: 140,

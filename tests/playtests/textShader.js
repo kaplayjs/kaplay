@@ -8,7 +8,7 @@
 
 kaplay({ background: "#000000" });
 
-loadShaderURL("blink", null, "../../examples/shaders/blink.frag");
+loadShaderURL("blink", null, "../..//shaders/blink.frag");
 
 add([
     pos(100, 100),

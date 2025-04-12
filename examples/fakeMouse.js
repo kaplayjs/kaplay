@@ -14,7 +14,7 @@ loadBean();
 loadSprite("door", "/sprites/door.png");
 loadSprite("cursor", "/sprites/cursor_default.png");
 loadSprite("grab", "/sprites/grab.png");
-loadSound("knock", "/examples/sounds/knock.ogg");
+loadSound("knock", "//sounds/knock.ogg");
 
 const MOUSE_VEL = 200;
 const MAX_KNOCKS = 10;

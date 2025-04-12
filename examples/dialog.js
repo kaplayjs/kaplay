@@ -26,7 +26,7 @@ loadSprite("bean", "/sprites/bean.png");
 loadSprite("mark", "/sprites/mark.png");
 loadSound("bean_voice", "examples/sounds/bean_voice.wav");
 loadSound("mark_voice", "examples/sounds/mark_voice.wav");
-loadBitmapFont("happy", "/examples/fonts/happy_28x36.png", 28, 36);
+loadBitmapFont("happy", "//fonts/happy_28x36.png", 28, 36);
 
 // Define the characters data
 const characters = {

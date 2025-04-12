@@ -9,7 +9,7 @@ import { wait } from "./lib/util.js";
 
 const exampleCI = JSON.parse(
     (
-        await fs.readFile(new URL("../examples/ciTest.json", import.meta.url))
+        await fs.readFile(new URL("..//ciTest.json", import.meta.url))
     ).toString(),
 );
 

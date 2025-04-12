@@ -5,15 +5,13 @@ import fs from "fs/promises";
 import path from "path";
 
 export function serve(opt = {}) {
-    const port = opt.port || process.env.PORT || 2000;
+    const port = opt.port || process.env.PORT || 4000;
     const app = express();
 
     app.set("view engine", "ejs");
     app.set("views", path.join(import.meta.dirname, "views"));
-    app.use(express.static("assets"));
     app.use("/dist", express.static("dist"));
-    app.use("/sprites", express.static("sprites"));
-    app.use("/examples", express.static("examples"));
+    app.use(express.static("examples"));
     app.use("/tests/playtests", express.static("tests/playtests"));
 
     app.get("/", async (req, res) => {
@@ -41,7 +39,7 @@ export function serve(opt = {}) {
         const isPlayTest = playtests.includes(name);
         const examplePath = isPlayTest
             ? `tests/playtests/${name}.js`
-            : `examples/${name}.js`;
+            : `${name}.js`;
 
         if (!allPlayTests.includes(name)) {
             res.status(404);
