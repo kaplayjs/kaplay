@@ -1,0 +1,3 @@
+[submodule "kaplay"]
+	path = kaplay
+	url = https://github.com/kaplayjs/kaplay
