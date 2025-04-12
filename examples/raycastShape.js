@@ -1,4 +1,10 @@
-// FIXME: same as raycastObject, what's the difference between both?
+/**
+ * @file Raycast Shape
+ * @description Raycasting with shape
+ * @difficulty 2
+ * @tags math
+ * @minver 3001.0
+ */
 
 kaplay();
 

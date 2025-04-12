@@ -1,11 +1,11 @@
 /**
  * @file 3D
- * @description KAPLAY 3D.
+ * @description KAPLAY 3D
  * @difficulty 2
  * @tags game, math
- * @minver 4000.0
- * @locked
+ * @minver 3001.0
  */
+
 // Start kaplay
 kaplay();
 
@@ -14,6 +14,7 @@ let bean;
 let objSlices = [];
 let wall;
 let slices = [];
+
 loadSprite("bean", "sprites/bean.png");
 loadSprite("wall", "sprites/brick_wall.png");
 

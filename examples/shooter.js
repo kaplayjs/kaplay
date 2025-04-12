@@ -1,12 +1,10 @@
 /**
  * @file Shooter
- * @description How to make an 2D shooter game in KAPLAY.
+ * @description How to make an 2D shooter game
  * @difficulty 1
  * @tags basics, game
  * @minver 3001.0
  */
-
-// FIXME: broken example, resolveSound doesn't exist
 
 kaplay({
     background: [74, 48, 82],
@@ -28,10 +26,10 @@ for (const obj of objs) {
 }
 
 loadBean();
-loadSound("hit", "/examples/sounds/hit.mp3");
-loadSound("shoot", "/examples/sounds/shoot.mp3");
-loadSound("explode", "/examples/sounds/explode.mp3");
-loadSound("OtherworldlyFoe", "/examples/sounds/OtherworldlyFoe.mp3");
+loadSound("hit", "/sounds/hit.mp3");
+loadSound("shoot", "/sounds/shoot.mp3");
+loadSound("explode", "/sounds/explode.mp3");
+loadSound("OtherworldlyFoe", "/sounds/OtherworldlyFoe.mp3");
 
 scene("battle", () => {
     const BULLET_SPEED = 1200;

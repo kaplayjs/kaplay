@@ -7,8 +7,6 @@
  * @locked
  */
 
-// FIXME: maybe this and linecap should both be a single example??????
-
 kaplay();
 
 onDraw(() => {

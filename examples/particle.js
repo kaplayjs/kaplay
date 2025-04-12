@@ -10,7 +10,7 @@
 
 kaplay();
 
-loadSprite("star", "./examples/sprites/particle_star_filled.png");
+loadSprite("star", "./sprites/particle_star_filled.png");
 
 onLoad(() => {
     go("game");

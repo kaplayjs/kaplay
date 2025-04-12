@@ -11,9 +11,9 @@
 kaplay();
 
 loadSprite("bean", "/sprites/bean.png");
-loadSound("score", "/examples/sounds/score.mp3");
-loadSound("wooosh", "/examples/sounds/wooosh.mp3");
-loadSound("hit", "/examples/sounds/hit.mp3");
+loadSound("score", "/sounds/score.mp3");
+loadSound("wooosh", "/sounds/wooosh.mp3");
+loadSound("hit", "/sounds/hit.mp3");
 
 // define gravity
 setGravity(3200);

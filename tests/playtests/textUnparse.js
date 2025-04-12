@@ -1,4 +1,11 @@
-// FIXME: What is this example?
+/**
+ * @file Text unparse
+ * @description Ok dragoncoder explain this
+ * @difficulty 3
+ * @tags text
+ * @minver 3001.0
+ */
+
 kaplay();
 
 const text =

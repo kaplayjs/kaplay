@@ -1,19 +1,17 @@
 /**
  * @file Platformer
- * @description How to make a simple platformer.
+ * @description How to make a simple platformer
  * @difficulty 1
  * @tags basics, game
  * @minver 3001.0
  */
-
-// FIXME: This error crashes (resolveSound() not defined)
 
 kaplay({
     background: [141, 183, 255],
 });
 
 // load assets
-loadSprite("bigyoshi", "/examples/sprites/YOSHI.png");
+loadSprite("bigyoshi", "/YOSHI.png");
 loadSprite("bean", "/sprites/bean.png");
 loadSprite("bag", "/sprites/bag.png");
 loadSprite("ghosty", "/sprites/ghosty.png");
@@ -24,11 +22,11 @@ loadSprite("prize", "/sprites/jumpy.png");
 loadSprite("apple", "/sprites/apple.png");
 loadSprite("portal", "/sprites/portal.png");
 loadSprite("coin", "/sprites/coin.png");
-loadSound("coin", "/examples/sounds/score.mp3");
-loadSound("powerup", "/examples/sounds/powerup.mp3");
-loadSound("blip", "/examples/sounds/blip.mp3");
-loadSound("hit", "/examples/sounds/hit.mp3");
-loadSound("portal", "/examples/sounds/portal.mp3");
+loadSound("coin", "sounds/score.mp3");
+loadSound("powerup", "sounds/powerup.mp3");
+loadSound("blip", "sounds/blip.mp3");
+loadSound("hit", "sounds/hit.mp3");
+loadSound("portal", "sounds/portal.mp3");
 
 setGravity(3200);
 

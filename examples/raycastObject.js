@@ -1,4 +1,10 @@
-// FIXME: I think this example is broken, couldn't release when clicked
+/**
+ * @file Raycast Object
+ * @description Raycasting with objects/area
+ * @difficulty 2
+ * @tags math
+ * @minver 3001.0
+ */
 
 kaplay();
 

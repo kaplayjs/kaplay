@@ -11,17 +11,17 @@ kaplay({
 });
 
 // Load a custom font from a .ttf file
-loadFont("FlowerSketches", "/examples/fonts/FlowerSketches.ttf");
+loadFont("FlowerSketches", "/fonts/FlowerSketches.ttf");
 
 // Load a custom font with options
-loadFont("apl386", "/examples/fonts/apl386.ttf", {
+loadFont("apl386", "/fonts/apl386.ttf", {
     outline: 4,
     filter: "linear",
 });
 
 // Load custom bitmap font, specifying the width and height of each character in the image
-loadBitmapFont("unscii", "/examples/fonts/unscii_8x8.png", 8, 8);
-loadBitmapFont("4x4", "/examples/fonts/4x4.png", 4, 4);
+loadBitmapFont("unscii", "/fonts/unscii_8x8.png", 8, 8);
+loadBitmapFont("4x4", "/fonts/4x4.png", 4, 4);
 
 // List of built-in fonts ("o" at the end means the outlined version)
 const builtinFonts = [

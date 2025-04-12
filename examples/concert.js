@@ -26,9 +26,9 @@ loadSprite("note", "/sprites/note.png");
 loadSprite("grass", "/sprites/grass.png");
 loadSprite("cloud", "/sprites/cloud.png");
 loadSprite("sun", "/sprites/sun.png");
-loadSound("bell", "/examples/sounds/bell.mp3");
-loadSound("kaboom2000", "/examples/sounds/kaboom2000.mp3");
-loadBitmapFont("happy", "/examples/fonts/happy_28x36.png", 28, 36);
+loadSound("bell", "/sounds/bell.mp3");
+loadSound("kaboom2000", "/sounds/kaboom2000.mp3");
+loadBitmapFont("happy", "/fonts/happy_28x36.png", 28, 36);
 
 // An array of friends
 const friends = [

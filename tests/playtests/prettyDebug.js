@@ -1,12 +1,10 @@
 /**
- * @file Post-Effect
- * @description How to use a post effect shader in KAPLAY.
- * @difficulty 1
- * @tags effects
+ * @file Pretty Debug
+ * @description Will see how pretty is our debug log
+ * @difficulty 3
+ * @tags debug
  * @minver 3001.0
  */
-
-// FIXME: Make this is a playtest
 
 kaplay();
 
@@ -23,7 +21,5 @@ const pretty = {
 pretty.recursive = pretty;
 
 debug.log("Text in [brackets] doesn't cause issues");
-
-debug.log(pretty);
-
-debug.error("This is an error message");
+debug.log(pretty); // recursive doesn't cause issues
+debug.error("This is an error message"); // errors in red
