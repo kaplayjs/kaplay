@@ -1,63 +1,67 @@
-// @ts-check
+/**
+ * @file Tween
+ * @description How to use tweens in KAPLAY
+ * @difficulty 0
+ * @tags basics, animation
+ * @minver 3001.0
+ */
 
-// Tweeeeeening!
+// Tweeeeeening! (🥊 included)
 
-kaplay({
-    background: [141, 183, 255],
-});
+kaplay({ background: "#a32858", font: "happy" });
 
-loadSprite("bean", "/sprites/bean.png");
-
-const duration = 1;
-const easeTypes = Object.keys(easings);
-let curEaseType = 0;
+loadBean();
+loadHappy();
 
 const bean = add([
     sprite("bean"),
-    scale(2),
     pos(center()),
-    rotate(0),
     anchor("center"),
+    scale(0.5),
+    opacity(0),
 ]);
 
-const label = add([
-    text(easeTypes[curEaseType], { size: 64 }),
-    pos(24, 24),
-]);
+onMousePress("left", () => {
+    // A tween is a function that can interpolate a value to other with a duration,
+    // and easing, which controls how interpolation jump between values
 
-add([
-    text("Click anywhere & use arrow keys", { width: width() }),
-    anchor("botleft"),
-    pos(24, height() - 24),
-]);
-
-onKeyPress(["left", "a"], () => {
-    curEaseType = curEaseType === 0 ? easeTypes.length - 1 : curEaseType - 1;
-    label.text = easeTypes[curEaseType];
-});
-
-onKeyPress(["right", "d"], () => {
-    curEaseType = (curEaseType + 1) % easeTypes.length;
-    label.text = easeTypes[curEaseType];
-});
-
-let curTween = null;
-
-onMousePress(() => {
-    const easeType = easeTypes[curEaseType];
-    // stop previous lerp, or there will be jittering
-    if (curTween) curTween.cancel();
-    // start the tween
-    curTween = tween(
-        // start value (accepts number, Vec2 and Color)
-        bean.pos,
-        // destination value
-        mousePos(),
-        // duration (in seconds)
-        duration,
-        // how value should be updated
-        (val) => bean.pos = val,
-        // interpolation function (defaults to easings.linear)
-        easings[easeType],
+    // Will tween the opacity from 0 to 1
+    tween(
+        0, // <- From value
+        1, // <- To value
+        1, // <- With duration (in seconds)
+        // This functions runs for every value the tween interpolates.
+        (v) => {
+            bean.opacity = v; // <- Set the opacity to every value
+        },
+        easings.linear, // <- With this easing
     );
 });
+
+onMousePress("right", () => {
+    // Will tween the scale from 0.5 to 2
+    // Tween accept what is called "LerpValues", they are: Vec2, Colors and numbers
+    // As .scale is a vector, we can pass vec2() directly
+    tween(vec2(0.5), vec2(2), 1, (v) => {
+        bean.scale = v;
+    }, easings.linear);
+});
+
+/* 🥊 Challenge #1 🥊
+In line 32 and 42, we use the linear easing function. But there's a lot of
+easings with which you can create cool effecs. Try with one of these:
+
+- easings.easeOutQuint
+- easings.easeOutQuad
+- easings.easeInExpo
+
+You can also check all easings in action in the tweenEasings example.
+*/
+
+// Other visual elements
+
+add([
+    text("left click to make bean appear\nright click to make bean grow"),
+    pos(center().x, 100),
+    anchor("center"),
+]);

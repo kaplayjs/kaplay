@@ -1,4 +1,10 @@
-// @ts-check
+/**
+ * @file Blend modes
+ * @description How to use blend mode with blend() comp
+ * @difficulty 1
+ * @tags draw, visual
+ * @minver 4000.0
+ */
 
 // Adding game objects to screen
 

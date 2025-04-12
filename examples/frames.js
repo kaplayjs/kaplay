@@ -1,3 +1,11 @@
+/**
+ * @file Frames
+ * @description How to define frames in an animation.
+ * @difficulty 0
+ * @tags basics, animation
+ * @minver 3001.0
+ */
+
 // @ts-check
 
 kaplay({

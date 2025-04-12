@@ -1,4 +1,10 @@
-// @ts-check
+/**
+ * @file Post-Effect
+ * @description How to use a post effect shader in KAPLAY.
+ * @difficulty 1
+ * @tags effects
+ * @minver 3001.0
+ */
 
 // Build levels with addLevel()
 

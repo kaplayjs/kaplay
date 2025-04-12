@@ -1,4 +1,10 @@
-// @ts-check
+/**
+ * @file Pong
+ * @description How to make pong in KAPLAY.
+ * @difficulty 1
+ * @tags basics, game
+ * @minver 3001.0
+ */
 
 kaplay({
     background: [255, 255, 128],

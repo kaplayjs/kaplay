@@ -1,3 +1,11 @@
+/**
+ * @file Fixed Update
+ * @description TBD
+ * @difficulty 1
+ * @tags ui, input
+ * @minver 4000.0
+ * @locked
+ */
 // @ts-check
 
 kaplay();

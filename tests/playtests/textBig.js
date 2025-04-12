@@ -1,3 +1,11 @@
+/**
+ * @file Big Text
+ * @description Testing for big big text.
+ * @difficulty 3
+ * @tags basics
+ * @minver 3001.0
+ */
+
 kaplay();
 
 add([

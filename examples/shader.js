@@ -1,4 +1,10 @@
-// @ts-check
+/**
+ * @file Shaders
+ * @description How to use shaders in KAPLAY.
+ * @difficulty 1
+ * @tags basics, effects
+ * @minver 3001.0
+ */
 
 // Custom shader
 kaplay();

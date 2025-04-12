@@ -1,4 +1,4 @@
-// @ts-check
+// FIXME: same as raycastObject, what's the difference between both?
 
 kaplay();
 

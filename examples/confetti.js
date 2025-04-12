@@ -1,4 +1,10 @@
-// @ts-check
+/**
+ * @file Confetti
+ * @description How to create a confetti effect.
+ * @difficulty 1
+ * @tags effects
+ * @minver 3001.0
+ */
 
 // Confetti effect done manually (not using particle component)
 

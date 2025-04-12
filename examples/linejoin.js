@@ -1,4 +1,13 @@
-// @ts-check
+/**
+ * @file Line join
+ * @description The different draw options of a line.
+ * @difficulty 1
+ * @tags effects
+ * @minver 4000.0
+ * @locked
+ */
+
+// FIXME: maybe this and linecap should both be a single example??????
 
 kaplay();
 

@@ -1,4 +1,10 @@
-// @ts-check
+/**
+ * @file Text
+ * @description How to add text objects in KAPLAY.
+ * @difficulty 0
+ * @tags basics
+ * @minver 3001.0
+ */
 
 kaplay({
     background: [212, 110, 179],

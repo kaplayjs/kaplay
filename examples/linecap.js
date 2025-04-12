@@ -1,4 +1,11 @@
-// @ts-check
+/**
+ * @file Lines
+ * @description The different draw options of a line.
+ * @difficulty 1
+ * @tags effects
+ * @minver 4000.0
+ * @locked
+ */
 
 kaplay();
 

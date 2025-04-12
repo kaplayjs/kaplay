@@ -1,4 +1,4 @@
-// @ts-check
+// FIXME: I think this example is broken, couldn't release when clicked
 
 kaplay();
 

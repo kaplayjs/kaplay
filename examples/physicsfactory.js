@@ -1,5 +1,10 @@
-// @ts-check
-
+/**
+ * @file Physics factory
+ * @description TBD the physics factory (?) .
+ * @difficulty 2
+ * @tags math
+ * @minver 3001.0
+ */
 kaplay();
 
 setGravity(300);

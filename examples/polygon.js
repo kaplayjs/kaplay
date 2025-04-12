@@ -1,4 +1,10 @@
-// @ts-check
+/**
+ * @file Polygon
+ * @description How to create polygon-shaped objects.
+ * @difficulty 0
+ * @tags basics, math
+ * @minver 3001.0
+ */
 
 kaplay({
     background: [0, 0, 0],

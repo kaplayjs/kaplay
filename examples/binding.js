@@ -1,69 +1,116 @@
-// @ts-check
+/**
+ * @file Button Bindings
+ * @description How to set common names to different inputs ("move", "shoot").
+ * @difficulty 0
+ * @tags input
+ * @minver 3001.0
+ */
 
-// You can set the input bindings for your game!
+// Using input bindings for use common names like "jump" for buttons like space,
+// click or gamepad A/B
+
 kaplay({
+    // We set the input bindings here
     buttons: {
-        // Buttons for jumping
-        "jump": {
-            // When using a gamepad the button for jumping will be south
-            gamepad: ["south"],
-            // When using a keyboard the button will be "up" or "w"
+        "moveUp": {
             keyboard: ["up", "w"],
-            // When using a mouse the button will be "left"
+            gamepad: ["dpad-up"],
+        },
+        "moveDown": {
+            keyboard: ["down", "s"],
+            gamepad: ["dpad-down"],
+        },
+        "moveLeft": {
+            keyboard: ["left", "a"],
+            gamepad: ["dpad-left"],
+        },
+        "moveRight": {
+            keyboard: ["right", "d"],
+            gamepad: ["dpad-right"],
+        },
+        "mutate": {
+            keyboard: ["space", "t", "enter"],
+            gamepad: ["south"],
+            // Setting mouse binding
             mouse: "left",
         },
-        // Buttons for inspecting
-        "inspect": {
-            gamepad: "east",
-            keyboard: "f",
-            mouse: "right",
-        },
     },
+    background: "#1f102a",
+    font: "happy",
 });
 
-loadBean();
+// Load assets
+loadSprite("zombean", "/sprites/zombean.png");
+loadSprite("bean", "/sprites/bean.png");
+loadHappy();
 
-// Set the gravity acceleration (pixels per second)
-setGravity(1600);
+// Some constants
+const SPEED = 300;
 
 // Add player game object
 const player = add([
     sprite("bean"),
-    pos(center()),
-    area(),
-    // body() component gives the ability to respond to gravity
-    body(),
+    anchor("center"),
+    pos(90, 90),
+    scale(2),
+    {
+        phase: "bean",
+        isMutating: false,
+    },
 ]);
 
-// Add a platform to hold the player
-add([
-    rect(width(), 48),
-    outline(4),
-    area(),
-    pos(0, height() - 48),
-    // Give objects a body() component if you don't want other solid objects pass through
-    body({ isStatic: true }),
-]);
+// This is an effect we will run on onButtonPress("mutate")
+function mutate() {
+    if (player.isMutating) return;
 
-// Adds an object with a text
-add([
-    text("Press jump button", { width: width() / 2 }),
-    pos(12, 12),
-]);
+    const phase = player.phase == "bean" ? "zombean" : "bean";
 
-// This runs when the button for "jump" is pressed (will be on any input device)
-onButtonPress("jump", () => {
-    // You can get the type of device that the last input was inputted in!
-    debug.log(getLastInputDeviceType());
+    player.phase = phase;
+    player.isMutating = true;
 
-    // Now we'll check if the player is on the ground to make it jump
-    if (player.isGrounded()) {
-        // .jump() is provided by body()
-        player.jump();
-    }
+    // Simple animation using tween (check tween example)
+    const smallify = tween(vec2(2), vec2(0), 0.5, (v) => {
+        player.scale = v;
+    }, easings.easeOutCubic);
+
+    smallify.onEnd(() => {
+        player.sprite = phase;
+
+        const normalify = tween(vec2(0), vec2(2), 0.5, (v) => {
+            player.scale = v;
+        }, easings.easeOutCubic);
+
+        normalify.onEnd(() => player.isMutating = false);
+    });
+}
+
+// Player movement (from movement example)
+onButtonDown("moveLeft", () => {
+    player.move(-SPEED, 0);
 });
 
-// When the button for inspecting is pressed we will log in the debug console for our game the text "inspecting"
-onButtonDown("inspect", () => {
-    debug.log("inspecting");
+onButtonDown("moveRight", () => {
+    player.move(SPEED, 0);
 });
+
+onButtonDown("moveUp", () => {
+    player.move(0, -SPEED);
+});
+
+onButtonDown("moveDown", () => {
+    player.move(0, SPEED);
+});
+
+onButtonPress("mutate", () => {
+    mutate();
+});
+
+// Other visual elements
+
+add([
+    text("move with wasd/arrows/dpad\nmutate with south/space/enter/click", {
+        width: width(),
+        align: "center",
+        size: 24,
+    }),
+]);
