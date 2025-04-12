@@ -1,13 +1,5 @@
 {
   "typescript.tsdk": "node_modules/typescript/lib",
-  "exportall.config.folderListener": [
-    "/src/app",
-    "/src/assets",
-    "/src/components",
-    "/src/components/draw",
-    "/src/components/level",
-    "/src/components/misc",
-    "/src/components/physics",
-    "/src/components/transform"
-  ]
+  "typescript.preferences.importModuleSpecifier": "shortest",
+  "typescript.preferences.importModuleSpecifierEnding": "minimal"
 }

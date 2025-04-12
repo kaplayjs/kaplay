@@ -1,10 +1,9 @@
 import { dt } from "../../app";
+import { clamp } from "../../math/clamp.js";
 import { Color } from "../../math/color";
 import easings from "../../math/easings";
 import {
     catmullRom,
-    clamp,
-    easingLinear,
     hermiteFirstDerivative,
     lerp,
     Vec2,

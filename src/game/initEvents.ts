@@ -1,7 +1,7 @@
 import { burp } from "../audio";
 import { FrameBuffer, updateViewport } from "../gfx";
 import { _k } from "../kaplay";
-import { clamp } from "../math/math";
+import { clamp } from "../math/clamp";
 import { toFixed } from "../utils";
 
 export function initEvents() {
