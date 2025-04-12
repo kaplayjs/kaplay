@@ -10,5 +10,6 @@ export default defineConfig({
             ignoreSourceErrors: true,
             tsconfig: "./tsconfig.test.json",
         },
+        exclude: ["./kaplay/**/*", "./node_modules/"],
     },
 });

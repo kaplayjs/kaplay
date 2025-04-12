@@ -1,4 +1,5 @@
 import type { GameObj, LerpValue, RNGValue } from "../types";
+import { clamp } from "./clamp.js";
 import { Color, rgb } from "./color";
 
 /**
@@ -19,17 +20,6 @@ export function deg2rad(deg: number): number {
 
 export function rad2deg(rad: number): number {
     return rad * 180 / Math.PI;
-}
-
-export function clamp(
-    val: number,
-    min: number,
-    max: number,
-): number {
-    if (min > max) {
-        return clamp(val, max, min);
-    }
-    return Math.min(Math.max(val, min), max);
 }
 
 export function lerp<V extends LerpValue>(

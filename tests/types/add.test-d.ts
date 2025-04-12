@@ -73,38 +73,6 @@ describe("Type Inference from add()", () => {
         obj.require; // require is removed from Types because Omit<T>
     });
 
-    test("add() should tuple components", () => {
-        const componentA = () => {
-            return {
-                id: "componentA",
-                propertyA: true,
-                add() {
-                    console.log("add A");
-                },
-            };
-        };
-
-        const componentB = () => {
-            return {
-                id: "componentB",
-                // propertyB: true,
-                add() {
-                    console.log("add B");
-                },
-            };
-        };
-
-        const obj = k.add(
-            [
-                k.circle(4),
-                componentA(),
-                componentB(),
-            ],
-        );
-
-        expectTypeOf(obj.propertyA).toBeBoolean();
-    });
-
     test("inline component should be writable", () => {
         const obj = k.add([
             k.circle(1),

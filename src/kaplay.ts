@@ -92,7 +92,6 @@ import {
     choose,
     chooseMultiple,
     Circle,
-    clamp,
     Color,
     curveLengthApproximation,
     deg2rad,
@@ -288,6 +287,7 @@ import {
 
 import boomSpriteSrc from "./kassets/boom.png";
 import kaSpriteSrc from "./kassets/ka.png";
+import { clamp } from "./math/clamp.js";
 
 // Internal data, shared between all modules
 export const _k = {
