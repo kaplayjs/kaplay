@@ -105,12 +105,12 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   setting it to true (focused) will clear focus from all the other text inputs -
   @dragoncoder047
 
-## [3001.0.10] "Happy Colors" - TBD
+## [3001.0.11] - 2025-04-12
 
 ### Added
 
 - Added **CSS Colors!** 🎨 **(experimental)** - @lajbel (based on
-  @dragoncoder047 idea)
+  @dragoncoder047 idea) (**experimental**)
 
   ```js
   color("slateblue");
@@ -128,12 +128,48 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   add([text("ohhi")]);
   ```
 
-- Added a new option in `LoadSpriteOpt` for loading sprites in an individual
+### Fixed
+
+- Random errors - @lajbel
+- General type bugs - @lajbel
+
+## [3001.0.10] - 2025-03-22
+
+### Added
+
+- Added new option in `LoadSpriteOpt` for loading sprites in an individual
   spritesheet - @chqs-git
   ```js
-  loadSprite("player", "sprites/player.png", {
-      singular: true,
+  loadSprite(
+      "player",
+      "sprites/player.png",
+      {
+          singular: true,
+      },
+  );
+  ```
+
+- Frame option for load animations with singular frames (**experimental**) -
+  @dragoncoder047
+  ```js
+  loadSpriteAtlas("/examples/sprites/dungeon.png", {
+      wizard: {
+          x: 128,
+          y: 140,
+          width: 144,
+          height: 28,
+          sliceX: 9,
+          anims: {
+              bouncy: {
+                  frames: [8, 5, 0, 3, 2, 3, 0, 5],
+                  speed: 10,
+                  loop: true,
+              },
+          },
+      },
   });
+
+  add([sprite("wizard", { anim: "bouncy" }), pos(100, 100)]);
   ```
 
 ### Fixed
@@ -141,8 +177,9 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - Args were not being passed to global `trigger()` - @lajbel
 - AreaComp.onClick now returns the correct type, KEventController, instead of
   void - @lajbel
-- Random errors - @lajbel
-- General type bugs - @lajbel
+- Lifespan was using async - @lajbel
+- Wrong calculation in Vector.dot() - @andrenanninga
+- Fixed pointer lock undefined catch error for non-promise version - @imaginarny
 
 ## [3001.0.9] - 2025-01-15
 
