@@ -66,6 +66,8 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   `end` - @dragoncoder047
 - `wave()` can now go back and forth between any value that is able to be used
   with `lerp()` - @dragoncoder047, @mflerackers
+- The `textInput` component has more events: `focus`, `blur`, `input`, and
+  `change`, to better interact with the text input state - @dragoncoder047
 
 ### Fixed
 
@@ -99,6 +101,9 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - Now if you pass a nullish value to `.use()` it throws an error
 - Improved TypeScript in game objects - @amyspark-ng, @lajbel, @KeSuave
   - Added/updated JSDoc comments to some members - @ErikGXDev, @dragoncoder047
+- The `textInput` component's `isFocused` property is now a one-hot lockout,
+  setting it to true (focused) will clear focus from all the other text inputs -
+  @dragoncoder047
 
 ## [3001.0.10] "Happy Colors" - TBD
 
@@ -136,6 +141,8 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - Args were not being passed to global `trigger()` - @lajbel
 - AreaComp.onClick now returns the correct type, KEventController, instead of
   void - @lajbel
+- Random errors - @lajbel
+- General type bugs - @lajbel
 
 ## [3001.0.9] - 2025-01-15
 
