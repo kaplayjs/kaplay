@@ -1,27 +1,36 @@
 name: Bug Report
 description: Create a report to help us improve.
 labels: ["bug"]
-title: "bug: your bug here"
+title: "bug: "
+type: Bug
 body:
-  - type: input
+  - type: textarea
     attributes:
-      label: Describe the bug.
+      label: Bug Description
       description: A clear and concise description of what the bug is.
-      placeholder: ex. the objects are not objecting 😔
+      placeholder: The objects are not objecting 😔...
     validations:
       required: true
 
   - type: input
     attributes:
       label: Version
-      description: What version are you running?
-      placeholder: ex. 3001.0.10 
+      description: Running Version
+      placeholder: What version are you running? ex. 3001.0.10/master
+    validations:
+      required: false
+
+  - type: input
+    attributes:
+      label: Playground Link
+      description: Link to the playground where the bug can be reproduced.
+      placeholder: https://play.kaplayjs.com/...
     validations:
       required: false
 
   - type: textarea
     attributes:
-      label: Any more information?
+      label: Extra information
       description: Is there a method to reliably reproduce it? Did you expect something else to happen? Please add screenshots/evidence if possible.
       placeholder: So, i was kaplaying normally, then all of sudden...
     validations:
@@ -31,6 +40,5 @@ body:
     attributes:
       label: Summary
       options:
-        - label: Fixed in Master
         - label: Fixed in v4000
         - label: Fixed in v3001
