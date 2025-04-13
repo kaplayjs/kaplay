@@ -265,7 +265,6 @@ export interface KAPLAYCtx<
      *
      * // Recursively get all children and descendents
      * const allObjs = get("*", { recursive: true });
-     * ```
      *
      * // Get a live query which updates in real-time
      * const allObjs = get("*", { liveUpdate: true });
@@ -787,6 +786,7 @@ export interface KAPLAYCtx<
      * ])
      *
      * bean.layer("foreground") // Bean is now in the foreground layer and will be drawn on top of mark
+     * ```
      *
      * @returns The layer comp.
      * @since v3001.0
@@ -2966,6 +2966,7 @@ export interface KAPLAYCtx<
      * add([
      *     text("ohhi", { font: "happy" }),
      * ]);
+     * ```
      */
     loadHappy(name?: string, opt?: LoadBitmapFontOpt): Asset<BitmapFontData>;
     /**
@@ -3035,7 +3036,7 @@ export interface KAPLAYCtx<
      */
     loadFont(
         name: string,
-        src: string | BinaryData,
+        src: string | ArrayBuffer | ArrayBufferView,
         opt?: LoadFontOpt,
     ): Asset<FontData>;
     /**
@@ -4908,6 +4909,7 @@ export interface KAPLAYCtx<
      * scene("game", (opts) => {
      *     debug.log(opts.level);
      * });
+     * ```
      *
      * @group Scene
      */
@@ -5591,6 +5593,7 @@ export interface KAPLAYCtx<
      * onMousePress(() => {
      *     addKaboom(mousePos());
      * });
+     * ```
      *
      * @returns The explosion object.
      * @since v2000.0
