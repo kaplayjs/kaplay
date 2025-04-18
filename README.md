@@ -128,8 +128,9 @@ Include via CDN:
 
 ### 📜 TypeScript Global Types
 
-If you're using **TypeScript** and you used `create-kaplay` or installed with a
-package manager and you want **global types** with the following directive:
+If you're using **TypeScript**, you used `create-kaplay` or installed with a
+package manager and you want **global types**, you can load them using the
+following directive:
 
 ```ts
 import "kaplay/global";
