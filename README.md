@@ -118,10 +118,18 @@ bun add kaplay
 > to setup ESbuild
 > [here](https://kaplayjs.com/guides/install/#setup-your-own-nodejs-environment).
 
-### 📜 TypeScript
+### 🌐 Use in Browser
 
-If using TypeScript and you used `create-kaplay` or installed with a package
-manager, you can import **global types** with the following directive:
+Include via CDN:
+
+```html
+<script src="https://unpkg.com/kaplay@3001.0.12/dist/kaplay.js"></script>
+```
+
+### 📜 TypeScript Global Types
+
+If you're using **TypeScript** and you used `create-kaplay` or installed with a
+package manager and you want **global types** with the following directive:
 
 ```ts
 import "kaplay/global";
@@ -139,38 +147,55 @@ But it's recommended to use `tsconfig.json` to include the types:
 }
 ```
 
-### 🌐 Use in Browser
+You can also use all **KAPLAY** source types importing them:
 
-Include via CDN:
+```js
+import type { TextCompOpt } from "kaplay"
+import type * as KA from "kaplay" // if you prefer a namespace-like import
 
-```html
-<script src="https://unpkg.com/kaplay@3001.0.12/dist/kaplay.js"></script>
+interface MyTextCompOpt extends KA.TextCompOpt {
+  fallback: string;
+}
 ```
 
-## Resources
+## 📚 Resources
 
-- **v3001**: https://kaplayjs.com/
-- **v3000**: https://kaboomjs.com/
-- **v2000**: https://2000.kaboomjs.com/
-- **v0.5.0**: https://legacy.kaboomjs.com/
+### 📖 Docs
 
-## Community
+- [KAPLAY Official Docs](https://kaplayjs.com/docs/)
+- [KAPLAYGROUND](https://play.kaplayjs.com)
+
+### 🎥 Videos
+
+- [KAPLAY Library Crash Course by JSLegend ⚔️](https://www.youtube.com/watch?v=FdEYxGoy5_c)
+
+### 💬 Community
 
 - [Discord Server](https://discord.gg/aQ6RuQm3TF)
 - [GitHub Discussions](https://github.com/kaplayjs/kaplay/discussions)
 - [Twitter](https://twitter.com/Kaboomjs)
 
-### Games
+## 🎮 Games
 
-Collections of games made with KAPLAY (and Kaboom), selected by KAPLAY:
+Collections of games made with KAPLAY, selected by KAPLAY:
 
 - [Itch.io](https://itch.io/c/4494863/kag-collection)
 - [Newgrounds.com](https://www.newgrounds.com/playlist/379920/kaplay-games)
 
 ## Credits
 
-- Thanks to [tga](https://space55.xyz) for all his work on the original
-  Kaboom.js
+KAPLAY is an open-source project,
+[ran by a small team of developers and
+contributors](https://github.com/kaplayjs/kaplay/wiki/Development-Team).
+
+<p align="center">
+  <a href="https://cdn.jsdelivr.net/gh/<owner>/<repo>@main/.github-contributors/<svg-file-name>.svg">
+    <img src="https://cdn.jsdelivr.net/gh/<owner>/<repo>@main/.github-contributors/<svg-file-name>.svg" />
+  </a>
+</p>
+
+### Recognitions
+
 - Thanks to [mulfok](https://twitter.com/MulfoK) for the awesome
   [mulfok32](https://lospec.com/palette-list/mulfok32) color palette, used in
   KAPLAY sprites and art
@@ -186,6 +211,3 @@ Collections of games made with KAPLAY (and Kaboom), selected by KAPLAY:
   [kitchen sink font](https://polyducks.itch.io/kitchen-sink-textmode-font) font
 - Thanks to [0x72](https://0x72.itch.io/) for the amazing
   [Dungeon Tileset](https://0x72.itch.io/dungeontileset-ii)
-
-```
-```
