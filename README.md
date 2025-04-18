@@ -164,9 +164,12 @@ interface MyTextCompOpt extends KA.TextCompOpt {
 - [KAPLAY Official Docs](https://kaplayjs.com/docs/)
 - [KAPLAYGROUND](https://play.kaplayjs.com)
 
-### 🎥 Videos
+### 📺 Tutorials
 
-- [KAPLAY Library Crash Course by JSLegend ⚔️](https://www.youtube.com/watch?v=FdEYxGoy5_c)
+- 🎥
+  [KAPLAY Library Crash Course by JSLegend ⚔️](https://www.youtube.com/watch?v=FdEYxGoy5_c)
+- 📖
+  [Learn JavaScript basics and KAPLAY to make games quickly](https://jslegenddev.substack.com/p/learn-the-basics-of-javascript-and)
 
 ### 💬 Community
 
