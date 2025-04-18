@@ -4,6 +4,12 @@ on:
   push:
     tags:
       - "3001*"
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Version to publish"
+        required: true
+        default: "3001.0.0"
 
 jobs:
   publish:
@@ -16,12 +22,17 @@ jobs:
         with:
           registry-url: "https://registry.npmjs.org"
           node-version: 20
+      - name: Determine version
+        id: determine-version
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            NEW_VERSION="${{ github.event.inputs.version }}"
+          else
+            NEW_VERSION=${GITHUB_REF#refs/tags/}
+          fi
+          echo "NEW_VERSION=$NEW_VERSION" >> $GITHUB_ENV
       - name: Update package.json version
         run: |
-          # Update the version in package.json to the new version
-          NEW_VERSION=${GITHUB_REF#refs/tags/}
-          NEW_VERSION=${NEW_VERSION#3001.}
-          NEW_VERSION="3001.$NEW_VERSION"
           echo "Updating package.json version to $NEW_VERSION"
           jq --arg newVersion "$NEW_VERSION" '.version = $newVersion' package.json > tmp.json && mv tmp.json package.json
       - name: Commit and push changes
@@ -32,7 +43,7 @@ jobs:
           git config --local user.email "lajbel@kaplayjs.com"
           git add .
           git commit -m "chore: bump version" || echo "No changes to commit"
-          git push https://x-access-token:$BOT_TOKEN@github.com/${{ github.repository }}.git
+          git push https://x-access-token:$BOT_TOKEN@github.com/${{ github.repository }}.git HEAD:3001
       - uses: pnpm/action-setup@v4
         name: Install pnpm
         with:
