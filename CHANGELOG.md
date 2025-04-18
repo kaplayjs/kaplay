@@ -110,6 +110,7 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Fixed
 
+- Removed beant - @lajbel
 - Various fixes and improvements - All contributors
 
 [Read commit history](https://github.com/kaplayjs/kaplay/compare/3001.0.15...3001.0.16)
