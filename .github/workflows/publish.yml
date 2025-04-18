@@ -3,7 +3,7 @@ name: Publish to NPM
 on:
   push:
     tags:
-      - '3001*' # Publish on tags like 3001.0.0, 3001.0.1-rc.0, etc.
+      - "3001*"
 
 jobs:
   publish:
@@ -24,7 +24,15 @@ jobs:
           NEW_VERSION="3001.$NEW_VERSION"
           echo "Updating package.json version to $NEW_VERSION"
           jq --arg newVersion "$NEW_VERSION" '.version = $newVersion' package.json > tmp.json && mv tmp.json package.json
-          
+      - name: Commit and push changes
+        env:
+          BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
+        run: |
+          git config --local user.name "Bag Bot"
+          git config --local user.email "lajbel@kaplayjs.com"
+          git add .
+          git commit -m "chore: bump version" || echo "No changes to commit"
+          git push https://x-access-token:$BOT_TOKEN@github.com/${{ github.repository }}.git
       - uses: pnpm/action-setup@v4
         name: Install pnpm
         with:
