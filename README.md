@@ -147,6 +147,9 @@ But it's recommended to use `tsconfig.json` to include the types:
 }
 ```
 
+> If you are writing production code, maybe you don't want to use global.
+> [See why](https://kaplayjs.com/guides/optimization/#avoid-global-namespace).
+
 You can also use all **KAPLAY** source types importing them:
 
 ```js
@@ -182,19 +185,14 @@ Collections of games made with KAPLAY, selected by KAPLAY:
 - [Itch.io](https://itch.io/c/4494863/kag-collection)
 - [Newgrounds.com](https://www.newgrounds.com/playlist/379920/kaplay-games)
 
-## Credits
+## 🙌 Credits
 
-KAPLAY is an open-source project,
-[ran by a small team of developers and
-contributors](https://github.com/kaplayjs/kaplay/wiki/Development-Team).
+KAPLAY is an open-source project, maintained by the
+[KAPLAY Team and core contributors](https://github.com/kaplayjs/kaplay/wiki/Development-Team)
+and with the support of many
+[other amazing contributors](https://github.com/kaplayjs/kaplay/graphs/contributors).
 
-<p align="center">
-  <a href="https://cdn.jsdelivr.net/gh/<owner>/<repo>@main/.github-contributors/<svg-file-name>.svg">
-    <img src="https://cdn.jsdelivr.net/gh/<owner>/<repo>@main/.github-contributors/<svg-file-name>.svg" />
-  </a>
-</p>
-
-### Recognitions
+### 🏆 Recognitions
 
 - Thanks to [mulfok](https://twitter.com/MulfoK) for the awesome
   [mulfok32](https://lospec.com/palette-list/mulfok32) color palette, used in
