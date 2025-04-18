@@ -5,8 +5,8 @@
 </div>
 
 KAPLAY is the **fun-first**, 2D game library for **JavaScript** and
-**TypeScript**. It’s made to **feel like a game** while you make games. Simple.
-Fast. Powerful.
+**TypeScript**. It’s made to **feel like a game** while you're making games.
+Simple. Fast. Powerful.
 
 ✨ Whether you’re a beginner or an experienced dev, **KAPLAY** comes with its
 own **web-based editor** — the [KAPLAYGROUND](https://play.kaplayjs.com) — so
@@ -38,7 +38,7 @@ const player = add([
     pos(100, 200), // it has a position (coordinates)
     area(), // it has a collider
     body(), // it is a physical body which will respond to physics
-    health(8), // it has 8 of health
+    health(8), // it has 8 health points
     // Give it tags for easier group behaviors
     "friendly",
     // Give plain objects fields for associated data
@@ -63,18 +63,12 @@ player.onCollide("enemy", () => {
 player.onUpdate(() => {
     if (player.pos.y >= height()) {
         destroy(player);
-        gameOver();
     }
 });
 
-// if 'player' onCollide with any object with tag "enemy", run the callback
-player.onCollide("enemy", () => {
-    player.hp -= 1;
-});
-
-// all objects with tag "enemy" will move towards 'player' every frame
-onUpdate("enemy", (e) => {
-    e.move(player.pos.sub(e.pos).unit().scale(e.speed));
+// All objects with tag "enemy" will move to the left
+onUpdate("enemy", (enemy) => {
+    enemy.move(-400, 0);
 });
 
 // move up 100 pixels per second every frame when "w" key is held down
@@ -148,8 +142,9 @@ But it's recommended to use `tsconfig.json` to include the types:
 }
 ```
 
-> If you are writing production code, maybe you don't want to use global.
-> [See why](https://kaplayjs.com/guides/optimization/#avoid-global-namespace).
+> If you are publishing a game (and not testing/learning) maybe you don't want
+> to use globals,
+> [see why](https://kaplayjs.com/guides/optimization/#avoid-global-namespace).
 
 You can also use all **KAPLAY** source types importing them:
 
