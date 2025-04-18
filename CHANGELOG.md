@@ -106,6 +106,14 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   setting it to true (focused) will clear focus from all the other text inputs -
   @dragoncoder047
 
+## [3001.0.16] - 2025-04-18
+
+### Fixed
+
+- Various fixes and improvements - All contributors
+
+[Read commit history](https://github.com/kaplayjs/kaplay/compare/3001.0.15...3001.0.16)
+
 ## [3001.0.15] - 2025-04-18
 
 ### Fixed
