@@ -43,7 +43,7 @@ jobs:
           git config --local user.email "lajbel@kaplayjs.com"
           git add .
           git commit -m "chore: bump version" || echo "No changes to commit"
-          git push https://x-access-token:$BOT_TOKEN@github.com/${{ github.repository }}.git HEAD:3001
+          git push https://x-access-token:$BOT_TOKEN@github.com/${{ github.repository }}.git HEAD:v3001
       - uses: pnpm/action-setup@v4
         name: Install pnpm
         with:
