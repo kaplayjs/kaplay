@@ -1,4 +1,4 @@
-# 🎮 KAPLAY.js — a JavaScript & TypeScript Game Library
+# 🎮 KAPLAY.js — A JavaScript & TypeScript Game Library
 
 <div align="center">
   <img src="./kaplay.webp">

@@ -16,6 +16,15 @@ jobs:
         with:
           registry-url: "https://registry.npmjs.org"
           node-version: 20
+      - name: Update package.json version
+        run: |
+          # Update the version in package.json to the new version
+          NEW_VERSION=${GITHUB_REF#refs/tags/}
+          NEW_VERSION=${NEW_VERSION#3001.}
+          NEW_VERSION="3001.$NEW_VERSION"
+          echo "Updating package.json version to $NEW_VERSION"
+          jq --arg newVersion "$NEW_VERSION" '.version = $newVersion' package.json > tmp.json && mv tmp.json package.json
+          
       - uses: pnpm/action-setup@v4
         name: Install pnpm
         with:
