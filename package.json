@@ -12,15 +12,15 @@
   "type": "module",
   "main": "./dist/kaplay.cjs",
   "module": "./dist/kaplay.mjs",
-  "types": "./dist/declaration/index.d.ts",
+  "types": "./dist/doc.d.ts",
   "exports": {
     ".": {
       "import": {
-        "types": "./dist/declaration/index.d.ts",
+        "types": "./dist/doc.d.ts",
         "default": "./dist/kaplay.mjs"
       },
       "require": {
-        "types": "./dist/declaration/index.d.ts",
+        "types": "./dist/doc.d.ts",
         "default": "./dist/kaplay.cjs"
       }
     },
@@ -49,11 +49,11 @@
   "scripts": {
     "dev": "NODE_ENV=development node scripts/dev.js",
     "win:dev": "set NODE_ENV=development && node scripts/dev.js",
-    "build": "node scripts/generateIndex.js && tsc --p tsconfig.build.json && node scripts/build.js && npm run doc-dts",
+    "build": "node scripts/generateIndex.js && node scripts/build.js && npm run doc-dts",
     "check": "tsc",
     "fmt": "dprint fmt",
     "test": "node scripts/test.js",
-    "doc-dts": "dts-bundle-generator -o dist/doc.d.ts dist/declaration/kaplay.d.ts",
+    "doc-dts": "dts-bundle-generator -o dist/doc.d.ts src/index.ts",
     "test:vite": "vitest --typecheck",
     "desktop": "tauri dev",
     "prepare": "npm run build",

@@ -23,12 +23,17 @@ export const fmts = (name) => [
     { format: "esm", outfile: `${DIST_DIR}/${name}.mjs` },
 ];
 
+const kaboom = fmts("kaboom")[0];
+
 /** @type {esbuild.BuildOptions} */
 export const config = {
     bundle: true,
-    sourcemap: true,
     minify: true,
-    keepNames: true,
+    keepNames: false,
+    // MORE MINIFICATION
+    minifyIdentifiers: true,
+    minifySyntax: true,
+    minifyWhitespace: true,
     loader: {
         ".png": "dataurl",
         ".glsl": "text",
@@ -39,11 +44,20 @@ export const config = {
 
 export async function build() {
     return Promise.all(
-        [fmts("kaplay"), fmts("kaboom")].flat().map((fmt) => {
-            return esbuild.build({
-                ...config,
-                ...fmt,
-            }).then(() => console.log(`-> ${fmt.outfile}`));
+        [{
+            formats: fmts("kaplay"),
+            sourceMap: true,
+        }, {
+            formats: [kaboom],
+            sourceMap: false,
+        }].flat().map(({ formats, sourceMap }) => {
+            return formats.map((fmt) => {
+                return esbuild.build({
+                    ...config,
+                    ...fmt,
+                    sourcemap: sourceMap,
+                }).then(() => console.log(`-> ${fmt.outfile}`));
+            });
         }),
     );
 }
