@@ -13,11 +13,14 @@
     "declarationDir": "dist/declaration",
     // always use import type for type only imports
     "verbatimModuleSyntax": true,
-    "strict": true
+    "strict": true,
+    "types": [
+      "./src/.env.d.ts"
+    ]
   },
   "include": [
     "src/**/*",
-    "scripts/**/*"
+    "scripts/**/*",
   ],
   "exclude": [
     "src/index.ts"
