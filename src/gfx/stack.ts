@@ -15,6 +15,11 @@ export function popTransform() {
     }
 }
 
+export function pushMatrix(m: Mat23) {
+    pushTransform();
+    loadMatrix(m);
+}
+
 export function multTranslateV(t: Vec2 | undefined) {
     if (t === undefined) return;
     if (t.x === 0 && t.y === 0) return;
@@ -40,6 +45,10 @@ export function multScale(x: number, y: number) {
 export function multRotate(angle: number | undefined) {
     if (!angle) return;
     _k.gfx.transform.rotateSelf(angle);
+}
+
+export function loadIdentity(m: Mat23) {
+    _k.gfx.transform.setIdentity();
 }
 
 export function loadMatrix(m: Mat23) {

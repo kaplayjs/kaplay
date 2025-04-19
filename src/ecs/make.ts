@@ -8,14 +8,16 @@ import { FrameBuffer } from "../gfx/classes/FrameBuffer";
 import { beginPicture, endPicture, Picture } from "../gfx/draw/drawPicture";
 import {
     flush,
+    loadMatrix,
     multRotate,
     multScaleV,
     multTranslateV,
     popTransform,
+    pushMatrix,
     pushTransform,
 } from "../gfx/stack";
 import { _k } from "../kaplay";
-import { Mat23 } from "../math/math";
+import { Mat23, Vec2 } from "../math/math";
 import { calcTransform } from "../math/various";
 import type {
     Comp,
@@ -211,13 +213,181 @@ export function make<T extends CompList<unknown>>(
 
         update(this: GameObj) {
             if (this.paused) return;
-            this.children
-                /*.sort((o1, o2) => (o1.z ?? 0) - (o2.z ?? 0))*/
-                .forEach((child) => child.update());
             updateEvents.trigger();
+            /*if (transformUpdated) {
+                if (!this.transform2) this.transform2 = new Mat23()
+                if (this.parent) {
+                    this.transform2.setMat23(this.parent.transform2);
+                }
+                else {
+                    this.transform2.setIdentity();
+                }
+                if (this.pos) this.transform2.translateSelfV(this.pos);
+                if (this.angle) this.transform2.rotateSelf(this.angle);
+                if (this.scale) this.transform2.scaleSelfV(this.scale);
+                // TODO: recalculate area if any
+            }*/
+            for (let i = 0; i < this.children.length; i++) {
+                this.children[i].update();
+            }
         },
 
-        draw(
+        draw() {
+            this.drawTree()
+        },
+
+        get drawEvents() {
+            return drawEvents;
+        },
+
+        /**
+         * Called For the root and objects with mask or target
+         * @param this 
+         */
+        drawTree(
+            this: GameObj<
+                PosComp | ScaleComp | RotateComp | FixedComp | MaskComp
+            >
+        ) {
+            if (this.hidden) return;
+
+            const objects = new Array<GameObj<any>>();
+
+            // For each child call collect
+            for (let i = 0; i < this.children.length; i++) {
+                if (this.children[i].hidden) continue;
+                this.children[i].collect(objects);
+            }
+
+            // Sort objects on layer, then z
+            objects.sort((o1, o2) => {
+                const l1 = o1.layerIndex ?? _k.game.defaultLayerIndex;
+                const l2 = o2.layerIndex ?? _k.game.defaultLayerIndex;
+                return (l1 - l2) || (o1.z ?? 0) - (o2.z ?? 0);
+            })
+
+            // If this subtree is masking, the root is drawn into the mask, then the children are drawn
+            if (this.mask) {
+                const maskFunc = {
+                    intersect: _k.k.drawMasked,
+                    subtract: _k.k.drawSubtracted,
+                }[this.mask];
+                if (!maskFunc) {
+                    throw new Error(`Invalid mask func: "${this.mask}"`);
+                }
+                maskFunc(() => {
+                    // Draw children masked
+                    const f = _k.gfx.fixed;
+                    // We push once, then update the current transform only
+                    pushTransform();
+                    for (let i = 0; i < objects.length; i++) {
+                        if (objects[i].fixed) _k.gfx.fixed = true;
+                        loadMatrix(objects[i].parent!.transform);
+                        objects[i].drawEvents.trigger();
+                    }
+                    popTransform();
+                    _k.gfx.fixed = f;
+                }, () => {
+                    // Draw mask
+                    drawEvents.trigger();
+                });
+            }
+            else {
+                // If this subtree is rendered to a target, enable target
+                if (this.target) {
+                    if (!this.target?.refreshOnly || !this.target?.isFresh) {
+                        flush();
+                        if (this.target.destination instanceof FrameBuffer) {
+                            this.target.destination.bind();
+                        }
+                        else if (this.target.destination instanceof Picture) {
+                            beginPicture(this.target.destination);
+                        }
+                    }
+                }
+
+                if (!this.target?.refreshOnly || !this.target?.isFresh) {
+                    // Parent is drawn before children if !childrenOnly
+                    if (!this.target?.childrenOnly) {
+                        drawEvents.trigger();
+                    }
+                    // Draw children
+                    const f = _k.gfx.fixed;
+                    pushTransform();
+                    for (let i = 0; i < objects.length; i++) {
+                        // An object with a mask is drawn at draw time, but the transform still needs to be calculated, 
+                        // so we push the parent's transform and pretend we are 
+                        if (objects[i].fixed) _k.gfx.fixed = true;
+                        if (objects[i].mask) {
+                            loadMatrix(objects[i].parent!.transform);
+                            objects[i].drawTree();
+                        }
+                        else {
+                            loadMatrix(objects[i].transform2);
+                            objects[i].drawEvents.trigger();
+                        }
+                    }
+                    popTransform();
+                    _k.gfx.fixed = f;
+                }
+
+                // If this subtree is rendered to a target, disable target
+                if (this.target) {
+                    if (!this.target?.refreshOnly || !this.target?.isFresh) {
+                        flush();
+                        if (this.target.destination instanceof FrameBuffer) {
+                            this.target.destination.unbind();
+                        }
+                        else if (this.target.destination instanceof Picture) {
+                            endPicture();
+                        }
+                    }
+                }
+
+                // If this object needs the refresh flag in order to draw children, set it to fresh
+                if (this.target?.refreshOnly && !this.target?.isFresh) {
+                    this.target.isFresh = true;
+                }
+
+                // If children only flag is on 
+                if (this.target?.childrenOnly) {
+                    // Parent is drawn on screen, children are drawn in target
+                    loadMatrix(this.transform);
+                    drawEvents.trigger();
+                }
+            }
+        },
+
+        /**
+         * This method is called to transform and collect objects which should be drawn layered
+         * @param this 
+         * @param objects 
+         */
+        collect(
+            this: GameObj<
+                PosComp | ScaleComp | RotateComp | FixedComp | MaskComp
+            >,
+            objects: GameObj<any>[]
+        ) {
+
+            // Add to objects
+            objects.push(this);
+
+            // Recurse on children
+            for (let i = 0; i < this.children.length; i++) {
+                // While we could do this test in collect, it would mean an extra function call
+                // so it is better to do this preemptively
+                if (this.children[i].hidden) continue;
+                if (this.target) {
+                    this.drawTree();
+                }
+                else if (!this.mask) {
+                    this.children[i].collect(objects);
+                }
+            }
+        },
+
+        oldDraw(
             this: GameObj<
                 PosComp | ScaleComp | RotateComp | FixedComp | MaskComp
             >,
@@ -370,16 +540,16 @@ export function make<T extends CompList<unknown>>(
                             comp[key]?.();
                             onCurCompCleanup = null;
                         }
-                        : comp[<keyof typeof comp> key];
-                    gc.push(this.on(key, <any> func).cancel);
+                        : comp[<keyof typeof comp>key];
+                    gc.push(this.on(key, <any>func).cancel);
                 }
                 else {
                     // @ts-ignore
                     if (this[key] === undefined) {
                         // Assign comp fields to game obj
                         Object.defineProperty(this, key, {
-                            get: () => comp[<keyof typeof comp> key],
-                            set: (val) => comp[<keyof typeof comp> key] = val,
+                            get: () => comp[<keyof typeof comp>key],
+                            set: (val) => comp[<keyof typeof comp>key] = val,
                             configurable: true,
                             enumerable: true,
                         });
@@ -392,9 +562,9 @@ export function make<T extends CompList<unknown>>(
                         )?.id;
                         throw new Error(
                             `Duplicate component property: "${key}" while adding component "${comp.id}"`
-                                + (originalCompId
-                                    ? ` (originally added by "${originalCompId}")`
-                                    : ""),
+                            + (originalCompId
+                                ? ` (originally added by "${originalCompId}")`
+                                : ""),
                         );
                     }
                 }
@@ -906,7 +1076,7 @@ export function make<T extends CompList<unknown>>(
             tagList.push(compOrTag);
         }
         else {
-            const compId = (<Comp> compOrTag).id;
+            const compId = (<Comp>compOrTag).id;
 
             if (compId) {
                 compIds.add(compId);
@@ -919,7 +1089,7 @@ export function make<T extends CompList<unknown>>(
 
     // Using .use and .tag we trigger onUse and onTag events correctly
     for (const comp of comps) {
-        obj.use(<Comp> comp);
+        obj.use(<Comp>comp);
     }
 
     for (const tag of tagList) {
