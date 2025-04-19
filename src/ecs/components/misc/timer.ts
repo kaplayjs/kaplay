@@ -80,6 +80,12 @@ export function timer(maxLoopsPerFrame: number = 1000): TimerComp {
                 }
             });
             return {
+                get timeLeft() {
+                    return t;
+                },
+                set timeLeft(val: number) {
+                    t = val;
+                },
                 get paused() {
                     return ev.paused;
                 },
@@ -124,6 +130,18 @@ export function timer(maxLoopsPerFrame: number = 1000): TimerComp {
                 }
             });
             return {
+                get currentTime() {
+                    return curTime;
+                },
+                set currentTime(val) {
+                    curTime = val;
+                },
+                get timeLeft() {
+                    return duration - curTime;
+                },
+                set timeLeft(val: number) {
+                    curTime = duration - val;
+                },
                 get paused() {
                     return ev.paused;
                 },
