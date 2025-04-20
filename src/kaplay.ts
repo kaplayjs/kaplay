@@ -237,8 +237,8 @@ import {
     Rect,
     RNG,
     shuffle,
-    step,
     smoothstep,
+    step,
     testCirclePolygon,
     testLineCircle,
     testLineLine,
@@ -318,7 +318,8 @@ const kaplay = <
 >(
     gopt: KAPLAYOpt<TPlugins, TButtons> = {},
 ): TPlugins extends [undefined] ? KAPLAYCtx<TButtons, TButtonsName>
-    : KAPLAYCtx<TButtons, TButtonsName> & MergePlugins<TPlugins> => {
+    : KAPLAYCtx<TButtons, TButtonsName> & MergePlugins<TPlugins> =>
+{
     if (initialized) {
         console.warn(
             "KAPLAY already initialized, you are calling kaplay() multiple times, it may lead bugs!",
@@ -507,7 +508,7 @@ const kaplay = <
             // clear canvas
             gfx.gl.clear(
                 gfx.gl.COLOR_BUFFER_BIT | gfx.gl.DEPTH_BUFFER_BIT
-                | gfx.gl.STENCIL_BUFFER_BIT,
+                    | gfx.gl.STENCIL_BUFFER_BIT,
             );
 
             // unbind everything
@@ -1022,7 +1023,7 @@ const kaplay = <
     // export everything to window if global is set
     if (gopt.global !== false) {
         for (const key in ctx) {
-            (<any>window[<any>key]) = ctx[key as keyof KAPLAYCtx];
+            (<any> window[<any> key]) = ctx[key as keyof KAPLAYCtx];
         }
     }
 

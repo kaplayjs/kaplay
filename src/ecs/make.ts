@@ -221,7 +221,7 @@ export function make<T extends CompList<unknown>>(
         },
 
         draw() {
-            this.drawTree()
+            this.drawTree();
         },
 
         get drawEvents() {
@@ -230,12 +230,12 @@ export function make<T extends CompList<unknown>>(
 
         /**
          * Called For the root and objects with mask or target
-         * @param this 
+         * @param this
          */
         drawTree(
             this: GameObj<
                 PosComp | ScaleComp | RotateComp | FixedComp | MaskComp
-            >
+            >,
         ) {
             if (this.hidden) return;
 
@@ -262,7 +262,7 @@ export function make<T extends CompList<unknown>>(
                 const l1 = o1.layerIndex ?? _k.game.defaultLayerIndex;
                 const l2 = o2.layerIndex ?? _k.game.defaultLayerIndex;
                 return (l1 - l2) || (o1.z ?? 0) - (o2.z ?? 0);
-            })
+            });
 
             // If this subtree is masking, the root is drawn into the mask, then the children are drawn
             if (this.mask) {
@@ -313,8 +313,8 @@ export function make<T extends CompList<unknown>>(
                     const f = _k.gfx.fixed;
                     pushTransform();
                     for (let i = 0; i < objects.length; i++) {
-                        // An object with a mask is drawn at draw time, but the transform still needs to be calculated, 
-                        // so we push the parent's transform and pretend we are 
+                        // An object with a mask is drawn at draw time, but the transform still needs to be calculated,
+                        // so we push the parent's transform and pretend we are
                         if (objects[i].fixed) _k.gfx.fixed = true;
                         if (objects[i].mask) {
                             loadMatrix(objects[i].parent!.transform);
@@ -347,7 +347,7 @@ export function make<T extends CompList<unknown>>(
                     this.target.isFresh = true;
                 }
 
-                // If children only flag is on 
+                // If children only flag is on
                 if (this.target?.childrenOnly) {
                     // Parent is drawn on screen, children are drawn in target
                     loadMatrix(this.transform);
@@ -358,14 +358,14 @@ export function make<T extends CompList<unknown>>(
 
         /**
          * This method is called to transform and collect objects which should be drawn layered
-         * @param this 
-         * @param objects 
+         * @param this
+         * @param objects
          */
         collectAndTransform(
             this: GameObj<
                 PosComp | ScaleComp | RotateComp | FixedComp | MaskComp
             >,
-            objects: GameObj<any>[]
+            objects: GameObj<any>[],
         ) {
             pushTransform();
             if (this.pos) multTranslateV(this.pos);
@@ -469,16 +469,16 @@ export function make<T extends CompList<unknown>>(
                             comp[key]?.();
                             onCurCompCleanup = null;
                         }
-                        : comp[<keyof typeof comp>key];
-                    gc.push(this.on(key, <any>func).cancel);
+                        : comp[<keyof typeof comp> key];
+                    gc.push(this.on(key, <any> func).cancel);
                 }
                 else {
                     // @ts-ignore
                     if (this[key] === undefined) {
                         // Assign comp fields to game obj
                         Object.defineProperty(this, key, {
-                            get: () => comp[<keyof typeof comp>key],
-                            set: (val) => comp[<keyof typeof comp>key] = val,
+                            get: () => comp[<keyof typeof comp> key],
+                            set: (val) => comp[<keyof typeof comp> key] = val,
                             configurable: true,
                             enumerable: true,
                         });
@@ -491,9 +491,9 @@ export function make<T extends CompList<unknown>>(
                         )?.id;
                         throw new Error(
                             `Duplicate component property: "${key}" while adding component "${comp.id}"`
-                            + (originalCompId
-                                ? ` (originally added by "${originalCompId}")`
-                                : ""),
+                                + (originalCompId
+                                    ? ` (originally added by "${originalCompId}")`
+                                    : ""),
                         );
                     }
                 }
@@ -1005,7 +1005,7 @@ export function make<T extends CompList<unknown>>(
             tagList.push(compOrTag);
         }
         else {
-            const compId = (<Comp>compOrTag).id;
+            const compId = (<Comp> compOrTag).id;
 
             if (compId) {
                 compIds.add(compId);
@@ -1018,7 +1018,7 @@ export function make<T extends CompList<unknown>>(
 
     // Using .use and .tag we trigger onUse and onTag events correctly
     for (const comp of comps) {
-        obj.use(<Comp>comp);
+        obj.use(<Comp> comp);
     }
 
     for (const tag of tagList) {
