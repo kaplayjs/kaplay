@@ -75,6 +75,7 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - Small circles and arcs use now less points than larger ones - @mflerackers
 - Added pushMatrix, storeMatrix and loadIdentity to the stack functions -
   @mflerackers
+- Typed `StateComp` - @amyspark-ng
 
 ### Fixed
 
