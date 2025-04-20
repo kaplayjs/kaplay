@@ -20,7 +20,7 @@
   },
   "include": [
     "src/**/*",
-    "scripts/**/*",
+    "scripts/**/*"
   ],
   "exclude": [
     "src/index.ts"
