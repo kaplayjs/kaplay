@@ -55,6 +55,10 @@ export function loadMatrix(m: Mat23) {
     _k.gfx.transform.setMat23(m);
 }
 
+export function storeMatrix(m: Mat23) {
+    m.setMat23(_k.gfx.transform);
+}
+
 export function flush() {
     _k.gfx.renderer.flush(width(), height());
 }

@@ -15,6 +15,7 @@ import {
     popTransform,
     pushMatrix,
     pushTransform,
+    storeMatrix,
 } from "../gfx/stack";
 import { _k } from "../kaplay";
 import { Mat23, Vec2 } from "../math/math";
@@ -214,19 +215,6 @@ export function make<T extends CompList<unknown>>(
         update(this: GameObj) {
             if (this.paused) return;
             updateEvents.trigger();
-            /*if (transformUpdated) {
-                if (!this.transform2) this.transform2 = new Mat23()
-                if (this.parent) {
-                    this.transform2.setMat23(this.parent.transform2);
-                }
-                else {
-                    this.transform2.setIdentity();
-                }
-                if (this.pos) this.transform2.translateSelfV(this.pos);
-                if (this.angle) this.transform2.rotateSelf(this.angle);
-                if (this.scale) this.transform2.scaleSelfV(this.scale);
-                // TODO: recalculate area if any
-            }*/
             for (let i = 0; i < this.children.length; i++) {
                 this.children[i].update();
             }
@@ -253,11 +241,21 @@ export function make<T extends CompList<unknown>>(
 
             const objects = new Array<GameObj<any>>();
 
+            pushTransform();
+            if (this.pos) multTranslateV(this.pos);
+            if (this.angle) multRotate(this.angle);
+            if (this.scale) multScaleV(this.scale);
+
+            if (!this.transform) this.transform = new Mat23();
+            storeMatrix(this.transform);
+
             // For each child call collect
             for (let i = 0; i < this.children.length; i++) {
                 if (this.children[i].hidden) continue;
                 this.children[i].collect(objects);
             }
+
+            popTransform();
 
             // Sort objects on layer, then z
             objects.sort((o1, o2) => {
@@ -323,7 +321,7 @@ export function make<T extends CompList<unknown>>(
                             objects[i].drawTree();
                         }
                         else {
-                            loadMatrix(objects[i].transform2);
+                            loadMatrix(objects[i].transform);
                             objects[i].drawEvents.trigger();
                         }
                     }
@@ -369,6 +367,13 @@ export function make<T extends CompList<unknown>>(
             >,
             objects: GameObj<any>[]
         ) {
+            pushTransform();
+            if (this.pos) multTranslateV(this.pos);
+            if (this.angle) multRotate(this.angle);
+            if (this.scale) multScaleV(this.scale);
+
+            if (!this.transform) this.transform = new Mat23();
+            storeMatrix(this.transform);
 
             // Add to objects
             objects.push(this);
@@ -385,6 +390,8 @@ export function make<T extends CompList<unknown>>(
                     this.children[i].collect(objects);
                 }
             }
+
+            popTransform();
         },
 
         oldDraw(
