@@ -6315,6 +6315,11 @@ export interface GameObjRaw {
     draw(): void;
     drawTree(): void;
     /**
+     * Internal methods
+     */
+    drawEvents: KEvent<[]>;
+    collectAndTransform(objects: GameObj<any>[]): void;
+    /**
      * Draw debug info in inspect mode
      *
      * @since v3000.0

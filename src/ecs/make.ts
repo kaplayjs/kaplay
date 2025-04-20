@@ -252,7 +252,7 @@ export function make<T extends CompList<unknown>>(
             // For each child call collect
             for (let i = 0; i < this.children.length; i++) {
                 if (this.children[i].hidden) continue;
-                this.children[i].collect(objects);
+                this.children[i].collectAndTransform(objects);
             }
 
             popTransform();
@@ -361,7 +361,7 @@ export function make<T extends CompList<unknown>>(
          * @param this 
          * @param objects 
          */
-        collect(
+        collectAndTransform(
             this: GameObj<
                 PosComp | ScaleComp | RotateComp | FixedComp | MaskComp
             >,
@@ -387,89 +387,11 @@ export function make<T extends CompList<unknown>>(
                     this.drawTree();
                 }
                 else if (!this.mask) {
-                    this.children[i].collect(objects);
+                    this.children[i].collectAndTransform(objects);
                 }
             }
 
             popTransform();
-        },
-
-        oldDraw(
-            this: GameObj<
-                PosComp | ScaleComp | RotateComp | FixedComp | MaskComp
-            >,
-        ) {
-            if (this.hidden) return;
-            if (this.target) {
-                if (!this.target?.refreshOnly || !this.target?.isFresh) {
-                    flush();
-                    if (this.target.destination instanceof FrameBuffer) {
-                        this.target.destination.bind();
-                    }
-                    else if (this.target.destination instanceof Picture) {
-                        beginPicture(this.target.destination);
-                    }
-                }
-            }
-            const f = _k.gfx.fixed;
-            if (this.fixed) _k.gfx.fixed = true;
-            pushTransform();
-            multTranslateV(this.pos);
-            multScaleV(this.scale);
-            multRotate(this.angle);
-            const children = this.children.sort((o1, o2) => {
-                const l1 = o1.layerIndex ?? _k.game.defaultLayerIndex;
-                const l2 = o2.layerIndex ?? _k.game.defaultLayerIndex;
-                return (l1 - l2) || (o1.z ?? 0) - (o2.z ?? 0);
-            });
-            // TODO: automatically don't draw if offscreen
-            if (this.mask) {
-                const maskFunc = {
-                    intersect: _k.k.drawMasked,
-                    subtract: _k.k.drawSubtracted,
-                }[this.mask];
-                if (!maskFunc) {
-                    throw new Error(`Invalid mask func: "${this.mask}"`);
-                }
-                maskFunc(() => {
-                    for (let i = 0; i < children.length; i++) {
-                        children[i].draw();
-                    }
-                }, () => {
-                    drawEvents.trigger();
-                });
-            }
-            else {
-                if (!this.target?.refreshOnly || !this.target?.isFresh) {
-                    // Parent is drawn with children
-                    if (!this.target?.childrenOnly) {
-                        drawEvents.trigger();
-                    }
-                    for (let i = 0; i < children.length; i++) {
-                        children[i].draw();
-                    }
-                }
-            }
-            if (this.target) {
-                if (!this.target?.refreshOnly || !this.target?.isFresh) {
-                    flush();
-                    if (this.target.destination instanceof FrameBuffer) {
-                        this.target.destination.unbind();
-                    }
-                    else if (this.target.destination instanceof Picture) {
-                        endPicture();
-                    }
-                }
-            }
-            if (this.target?.refreshOnly && !this.target?.isFresh) {
-                this.target.isFresh = true;
-            }
-            if (this.target?.childrenOnly) {
-                // Parent is drawn on screen, children are drawn in target
-                drawEvents.trigger();
-            }
-            popTransform();
-            _k.gfx.fixed = f;
         },
 
         drawInspect(this: GameObj<PosComp | ScaleComp | RotateComp>) {
