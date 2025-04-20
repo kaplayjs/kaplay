@@ -7,6 +7,9 @@ import { DIST_DIR, SRC_DIR } from "../constants.js";
 import { writeFile } from "./util.js";
 
 export async function genGlobalDTS() {
+    // ensure declaration dir exists
+    await fs.mkdir(`${DIST_DIR}/declaration`, { recursive: true });
+
     // global dts
     const dts = await fs.readFile(`${SRC_DIR}/types.ts`, "utf-8");
 
@@ -98,8 +101,7 @@ export async function genGlobalDTS() {
     // generate global decls for KAPLAYCtx members
     let globalDts = "";
 
-    globalDts +=
-        "import { KAPLAYCtx } from \"./types\"\nimport { kaplay as KAPLAY } from \"./kaplay\"\n";
+    globalDts += "import { KAPLAYCtx, default as KAPLAY } from \"../doc\"\n";
     globalDts += "declare global {\n";
 
     for (const stmt of stmts) {

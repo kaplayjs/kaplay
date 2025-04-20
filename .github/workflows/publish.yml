@@ -21,6 +21,23 @@ jobs:
         with:
           registry-url: "https://registry.npmjs.org"
           node-version: 20
+      - name: Update package.json version
+        run: |
+          # Update the version in package.json to the new version
+          NEW_VERSION=${GITHUB_REF#refs/tags/}
+          NEW_VERSION=${NEW_VERSION#3001.}
+          NEW_VERSION="3001.$NEW_VERSION"
+          echo "Updating package.json version to $NEW_VERSION"
+          jq --arg newVersion "$NEW_VERSION" '.version = $newVersion' package.json > tmp.json && mv tmp.json package.json
+      - name: Commit and push changes
+        env:
+          BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
+        run: |
+          git config --local user.name "Bag Bot"
+          git config --local user.email "lajbel@kaplayjs.com"
+          git add .
+          git commit -m "chore: bump version" || echo "No changes to commit"
+          git push https://x-access-token:$BOT_TOKEN@github.com/${{ github.repository }}.git HEAD:master
       - uses: pnpm/action-setup@v4
         name: Install pnpm
         with:

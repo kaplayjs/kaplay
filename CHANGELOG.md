@@ -83,6 +83,8 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - changing `debug.timeScale` now actually makes the game change speed by
   affecting `dt()` - @lajbel
 - CapsLock now affects textInput() - @amyspark-ng
+- PatrolComp is not going to last waypoint
+  ([#734](https://github.com/kaplayjs/kaplay/issues/734)) - @nojaf
 
 ### Removed
 
