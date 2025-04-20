@@ -8,14 +8,17 @@ import { FrameBuffer } from "../gfx/classes/FrameBuffer";
 import { beginPicture, endPicture, Picture } from "../gfx/draw/drawPicture";
 import {
     flush,
+    loadMatrix,
     multRotate,
     multScaleV,
     multTranslateV,
     popTransform,
+    pushMatrix,
     pushTransform,
+    storeMatrix,
 } from "../gfx/stack";
 import { _k } from "../kaplay";
-import { Mat23 } from "../math/math";
+import { Mat23, Vec2 } from "../math/math";
 import { calcTransform } from "../math/various";
 import type {
     Comp,
@@ -211,41 +214,57 @@ export function make<T extends CompList<unknown>>(
 
         update(this: GameObj) {
             if (this.paused) return;
-            this.children
-                /*.sort((o1, o2) => (o1.z ?? 0) - (o2.z ?? 0))*/
-                .forEach((child) => child.update());
             updateEvents.trigger();
+            for (let i = 0; i < this.children.length; i++) {
+                this.children[i].update();
+            }
         },
 
-        draw(
+        draw() {
+            this.drawTree();
+        },
+
+        get drawEvents() {
+            return drawEvents;
+        },
+
+        /**
+         * Called For the root and objects with mask or target
+         * @param this
+         */
+        drawTree(
             this: GameObj<
                 PosComp | ScaleComp | RotateComp | FixedComp | MaskComp
             >,
         ) {
             if (this.hidden) return;
-            if (this.target) {
-                if (!this.target?.refreshOnly || !this.target?.isFresh) {
-                    flush();
-                    if (this.target.destination instanceof FrameBuffer) {
-                        this.target.destination.bind();
-                    }
-                    else if (this.target.destination instanceof Picture) {
-                        beginPicture(this.target.destination);
-                    }
-                }
-            }
-            const f = _k.gfx.fixed;
-            if (this.fixed) _k.gfx.fixed = true;
+
+            const objects = new Array<GameObj<any>>();
+
             pushTransform();
-            multTranslateV(this.pos);
-            multScaleV(this.scale);
-            multRotate(this.angle);
-            const children = this.children.sort((o1, o2) => {
+            if (this.pos) multTranslateV(this.pos);
+            if (this.angle) multRotate(this.angle);
+            if (this.scale) multScaleV(this.scale);
+
+            if (!this.transform) this.transform = new Mat23();
+            storeMatrix(this.transform);
+
+            // For each child call collect
+            for (let i = 0; i < this.children.length; i++) {
+                if (this.children[i].hidden) continue;
+                this.children[i].collectAndTransform(objects);
+            }
+
+            popTransform();
+
+            // Sort objects on layer, then z
+            objects.sort((o1, o2) => {
                 const l1 = o1.layerIndex ?? _k.game.defaultLayerIndex;
                 const l2 = o2.layerIndex ?? _k.game.defaultLayerIndex;
                 return (l1 - l2) || (o1.z ?? 0) - (o2.z ?? 0);
             });
-            // TODO: automatically don't draw if offscreen
+
+            // If this subtree is masking, the root is drawn into the mask, then the children are drawn
             if (this.mask) {
                 const maskFunc = {
                     intersect: _k.k.drawMasked,
@@ -255,44 +274,124 @@ export function make<T extends CompList<unknown>>(
                     throw new Error(`Invalid mask func: "${this.mask}"`);
                 }
                 maskFunc(() => {
-                    for (let i = 0; i < children.length; i++) {
-                        children[i].draw();
+                    // Draw children masked
+                    const f = _k.gfx.fixed;
+                    // We push once, then update the current transform only
+                    pushTransform();
+                    for (let i = 0; i < objects.length; i++) {
+                        if (objects[i].fixed) _k.gfx.fixed = true;
+                        loadMatrix(objects[i].parent!.transform);
+                        objects[i].drawEvents.trigger();
                     }
+                    popTransform();
+                    _k.gfx.fixed = f;
                 }, () => {
+                    // Draw mask
                     drawEvents.trigger();
                 });
             }
             else {
+                // If this subtree is rendered to a target, enable target
+                if (this.target) {
+                    if (!this.target?.refreshOnly || !this.target?.isFresh) {
+                        flush();
+                        if (this.target.destination instanceof FrameBuffer) {
+                            this.target.destination.bind();
+                        }
+                        else if (this.target.destination instanceof Picture) {
+                            beginPicture(this.target.destination);
+                        }
+                    }
+                }
+
                 if (!this.target?.refreshOnly || !this.target?.isFresh) {
-                    // Parent is drawn with children
+                    // Parent is drawn before children if !childrenOnly
                     if (!this.target?.childrenOnly) {
                         drawEvents.trigger();
                     }
-                    for (let i = 0; i < children.length; i++) {
-                        children[i].draw();
+                    // Draw children
+                    const f = _k.gfx.fixed;
+                    pushTransform();
+                    for (let i = 0; i < objects.length; i++) {
+                        // An object with a mask is drawn at draw time, but the transform still needs to be calculated,
+                        // so we push the parent's transform and pretend we are
+                        if (objects[i].fixed) _k.gfx.fixed = true;
+                        if (objects[i].mask) {
+                            loadMatrix(objects[i].parent!.transform);
+                            objects[i].drawTree();
+                        }
+                        else {
+                            loadMatrix(objects[i].transform);
+                            objects[i].drawEvents.trigger();
+                        }
+                    }
+                    popTransform();
+                    _k.gfx.fixed = f;
+                }
+
+                // If this subtree is rendered to a target, disable target
+                if (this.target) {
+                    if (!this.target?.refreshOnly || !this.target?.isFresh) {
+                        flush();
+                        if (this.target.destination instanceof FrameBuffer) {
+                            this.target.destination.unbind();
+                        }
+                        else if (this.target.destination instanceof Picture) {
+                            endPicture();
+                        }
                     }
                 }
-            }
-            if (this.target) {
-                if (!this.target?.refreshOnly || !this.target?.isFresh) {
-                    flush();
-                    if (this.target.destination instanceof FrameBuffer) {
-                        this.target.destination.unbind();
-                    }
-                    else if (this.target.destination instanceof Picture) {
-                        endPicture();
-                    }
+
+                // If this object needs the refresh flag in order to draw children, set it to fresh
+                if (this.target?.refreshOnly && !this.target?.isFresh) {
+                    this.target.isFresh = true;
+                }
+
+                // If children only flag is on
+                if (this.target?.childrenOnly) {
+                    // Parent is drawn on screen, children are drawn in target
+                    loadMatrix(this.transform);
+                    drawEvents.trigger();
                 }
             }
-            if (this.target?.refreshOnly && !this.target?.isFresh) {
-                this.target.isFresh = true;
+        },
+
+        /**
+         * This method is called to transform and collect objects which should be drawn layered
+         * @param this
+         * @param objects
+         */
+        collectAndTransform(
+            this: GameObj<
+                PosComp | ScaleComp | RotateComp | FixedComp | MaskComp
+            >,
+            objects: GameObj<any>[],
+        ) {
+            pushTransform();
+            if (this.pos) multTranslateV(this.pos);
+            if (this.angle) multRotate(this.angle);
+            if (this.scale) multScaleV(this.scale);
+
+            if (!this.transform) this.transform = new Mat23();
+            storeMatrix(this.transform);
+
+            // Add to objects
+            objects.push(this);
+
+            // Recurse on children
+            for (let i = 0; i < this.children.length; i++) {
+                // While we could do this test in collect, it would mean an extra function call
+                // so it is better to do this preemptively
+                if (this.children[i].hidden) continue;
+                if (this.target) {
+                    this.drawTree();
+                }
+                else if (!this.mask) {
+                    this.children[i].collectAndTransform(objects);
+                }
             }
-            if (this.target?.childrenOnly) {
-                // Parent is drawn on screen, children are drawn in target
-                drawEvents.trigger();
-            }
+
             popTransform();
-            _k.gfx.fixed = f;
         },
 
         drawInspect(this: GameObj<PosComp | ScaleComp | RotateComp>) {

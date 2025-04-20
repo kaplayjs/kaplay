@@ -4821,10 +4821,23 @@ export interface KAPLAYCtx<
         shapeB: Shape,
     ): GjkCollisionResult | null;
     /**
+     * @returns true if the given polygon is convex
      * @since v3001.0
      * @group Math
      */
     isConvex(pts: Vec2[]): boolean;
+    /**
+     * @returns 1 if over the edge, 0 otherwise
+     * @since v3001.0
+     * @group Math
+     */
+    step(edge: number, x: number): number;
+    /**
+     * @returns 1 if over edge1, 0 if under edge0, a smooth hermite curve value otherwise
+     * @since v3001.0
+     * @group Math
+     */
+    smoothstep(edge0: number, edge1: number, x: number): number;
     /**
      * @since v3001.0
      * @group Math
@@ -6300,6 +6313,12 @@ export interface GameObjRaw {
      * @since v3000.0
      */
     draw(): void;
+    drawTree(): void;
+    /**
+     * Internal methods
+     */
+    drawEvents: KEvent<[]>;
+    collectAndTransform(objects: GameObj<any>[]): void;
     /**
      * Draw debug info in inspect mode
      *

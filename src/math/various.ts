@@ -33,7 +33,9 @@ export function getArcPts(
     if (end <= start) end += Math.PI * 2;
 
     const pts: Vec2[] = [];
-    const nverts = Math.ceil((end - start) / deg2rad(8) * res);
+    const nverts = Math.round(
+        Math.sqrt(((radiusX + radiusY) / 2) * 20) * (end - start) / Math.PI * 2,
+    ); // Math.ceil((end - start) / deg2rad(8) * res);
     const step = (end - start) / nverts;
 
     // Rotate vector v by r nverts+1 times
