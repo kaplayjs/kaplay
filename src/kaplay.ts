@@ -84,7 +84,7 @@ import { pos } from "./ecs/components/transform/pos";
 import { rotate } from "./ecs/components/transform/rotate";
 import { scale } from "./ecs/components/transform/scale";
 import { z } from "./ecs/components/transform/z";
-import { KeepFlags } from "./ecs/make";
+import { KeepFlags } from "./ecs/entity/make";
 import { getCollisionSystem } from "./ecs/systems/collision";
 import { KEvent, KEventController, KEventHandler } from "./events/events";
 import {
