@@ -142,6 +142,7 @@ But it's recommended to use `tsconfig.json` to include the types:
 }
 ```
 
+> [!WARNING]  
 > If you are publishing a game (and not testing/learning) maybe you don't want
 > to use globals,
 > [see why](https://kaplayjs.com/guides/optimization/#avoid-global-namespace).
