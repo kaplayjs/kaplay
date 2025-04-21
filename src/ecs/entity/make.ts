@@ -7,6 +7,7 @@ import type { Comp, CompList, GameObj } from "../../types";
 import { uid } from "../../utils/uid";
 import {
     type AppEvents,
+    attachAppToGameObjRaw,
     type GameObjRaw,
     type GameObjRawProperties,
     GameObjRawPrototype,
@@ -38,149 +39,32 @@ export function make<T extends CompList<unknown>>(
         ? false
         : _k.globalOpt.tagsAsComponents;
 
-    // The game object without the app event methods, added later
-    const obj: GameObjRaw = Object.create(
-        GameObjRawPrototype,
-        {
-            _parent: {
-                value: null,
-                writable: true,
-            },
-            _onCurCompCleanup: {
-                value: null,
-                writable: true,
-                enumerable: true,
-            },
-            children: {
-                value: [],
-                writable: true,
-                enumerable: true,
-            },
-            _cleanups: {
-                value: {},
-            },
-            _compStates: {
-                value: new Map(),
-            },
-            _compsIds: {
-                value: new Set(),
-            },
-            _anonymousCompStates: {
-                value: [],
-            },
-            _tags: {
-                value: new Set("*"),
-            },
-            _events: {
-                value: new KEventHandler(),
-            },
-            _updateEvents: {
-                value: new KEvent<[]>(),
-            },
-            _fixedUpdateEvents: {
-                value: new KEvent<[]>(),
-            },
-            _drawEvents: {
-                value: new KEvent<[]>(),
-            },
-            _inputEvents: {
-                value: [],
-            },
-            id: {
-                value: id,
-            },
-            paused: {
-                value: false,
-            },
-            hidden: {
-                value: false,
-            },
-            parent: {
-                set(this: GameObjRaw, p: GameObj) {
-                    if (this._parent === p) return;
-                    const index = this._parent
-                        ? this._parent.children.indexOf(this)
-                        : -1;
-                    if (index !== -1) {
-                        this._parent.children.splice(index, 1);
-                    }
-                    this._parent = p;
-                    if (p) {
-                        p.children.push(this);
-                    }
-                },
-                get(this: GameObjRaw) {
-                    return this._parent;
-                },
-            },
-            tags: {
-                get(this: GameObjRaw) {
-                    return Array.from(this._tags);
-                },
-            },
-            transform: {
-                value: new Mat23(),
-            },
-            target: {
-                value: null,
-                writable: true,
-            },
-        } as {
-            [K in keyof GameObjRawProperties]: PropertyDescriptor;
-        },
-    );
+    // The game object from the prototype
+    const obj: GameObjRaw = Object.create(GameObjRawPrototype);
 
-    // We add App Events for "attaching" it to game object
-    const appEvs = [
-        "onKeyPress",
-        "onKeyPressRepeat",
-        "onKeyDown",
-        "onKeyRelease",
-        "onMousePress",
-        "onMouseDown",
-        "onMouseRelease",
-        "onMouseMove",
-        "onCharInput",
-        "onMouseMove",
-        "onTouchStart",
-        "onTouchMove",
-        "onTouchEnd",
-        "onScroll",
-        "onGamepadButtonPress",
-        "onGamepadButtonDown",
-        "onGamepadButtonRelease",
-        "onGamepadStick",
-        "onButtonPress",
-        "onButtonDown",
-        "onButtonRelease",
-    ] satisfies [...AppEvents[]];
+    // Shadow individual properties
+    obj._parent = null as unknown as GameObj;
+    obj._onCurCompCleanup = null;
+    obj.children = [];
+    obj._cleanups = {};
+    obj._compStates = new Map();
+    obj._compsIds = new Set();
+    obj._anonymousCompStates = [];
+    obj._tags = new Set("*");
+    obj._events = new KEventHandler();
+    obj._updateEvents = new KEvent<[]>();
+    obj._fixedUpdateEvents = new KEvent<[]>();
+    obj._drawEvents = new KEvent<[]>();
+    obj._inputEvents = [];
+    obj.paused = false;
+    obj.hidden = false;
+    obj.id = id;
+    obj.transform = new Mat23();
 
-    for (const e of appEvs) {
-        // @ts-ignore
-        obj[e] = (...args: [any]) => {
-            // @ts-ignore
-            const ev = _k.app[e]?.(...args);
-            obj._inputEvents.push(ev);
-
-            obj.onDestroy(() => ev.cancel());
-
-            // This only happens if obj.has("stay");
-            obj.on("sceneEnter", () => {
-                // All app events are already canceled by changing the scene
-                // so we don't need to event.cancel();
-                obj._inputEvents.splice(obj._inputEvents.indexOf(ev), 1);
-                // create a new event with the same arguments
-                // @ts-ignore
-                const newEv = _k.app[e]?.(...args);
-
-                // Replace the old event handler with the new one
-                // old KEventController.cancel() => new KEventController.cancel()
-                KEventController.replace(ev, newEv);
-                obj._inputEvents.push(ev);
-            });
-
-            return ev;
-        };
+    // We only need to modify the prototype the first time, when we know App
+    // state is available
+    if (id == 0) {
+        attachAppToGameObjRaw();
     }
 
     // Adding components passed from add([]);

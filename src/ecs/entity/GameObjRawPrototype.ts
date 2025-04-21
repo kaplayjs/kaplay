@@ -2,10 +2,10 @@ import type { App } from "../../app/app";
 import { COMP_DESC, COMP_EVENTS } from "../../constants";
 import { handleErr } from "../../core/errors";
 import type { GameObjEventNames } from "../../events/eventMap";
-import type {
-    KEvent,
+import {
+    type KEvent,
     KEventController,
-    KEventHandler,
+    type KEventHandler,
 } from "../../events/events";
 import { FrameBuffer } from "../../gfx/classes/FrameBuffer";
 import { beginPicture, endPicture, Picture } from "../../gfx/draw/drawPicture";
@@ -82,20 +82,6 @@ export type GameObjRawProperties = Defined<
  * @group Game Obj
  */
 export interface GameObjRaw {
-    /** @readonly */
-    _parent: GameObj;
-    _compsIds: Set<string>;
-    _compStates: Map<string, Comp>;
-    _anonymousCompStates: Comp[];
-    _cleanups: Record<string, (() => any)[]>;
-    _events: KEventHandler<any>;
-    _fixedUpdateEvents: KEvent<[]>;
-    _updateEvents: KEvent<[]>;
-    _drawEvents: KEvent<[]>;
-    _inputEvents: KEventController[];
-    _onCurCompCleanup: Function | null;
-    readonly _tags: Set<Tag>;
-
     /**
      * The unique id of the game obj.
      */
@@ -477,6 +463,19 @@ export interface GameObjRaw {
     onButtonDown: KAPLAYCtx["onButtonDown"];
     onButtonPress: KAPLAYCtx["onButtonPress"];
     onButtonRelease: KAPLAYCtx["onButtonRelease"];
+    /** @readonly */
+    _parent: GameObj;
+    _compsIds: Set<string>;
+    _compStates: Map<string, Comp>;
+    _anonymousCompStates: Comp[];
+    _cleanups: Record<string, (() => any)[]>;
+    _events: KEventHandler<any>;
+    _fixedUpdateEvents: KEvent<[]>;
+    _updateEvents: KEvent<[]>;
+    _drawEvents: KEvent<[]>;
+    _inputEvents: KEventController[];
+    _onCurCompCleanup: Function | null;
+    _tags: Set<Tag>;
 }
 
 type GameObjTransform = GameObj<PosComp | RotateComp | ScaleComp>;
@@ -484,7 +483,54 @@ type GameObjCamTransform = GameObj<
     PosComp | RotateComp | ScaleComp | FixedComp | MaskComp
 >;
 
-export const GameObjRawPrototype: GameObjRawMethods = {
+export const GameObjRawPrototype: Omit<GameObjRaw, AppEvents> = {
+    _anonymousCompStates: null as any,
+    _cleanups: null as any,
+    _compsIds: null as any,
+    _compStates: null as any,
+    _events: null as any,
+    _fixedUpdateEvents: null as any,
+    _inputEvents: null as any,
+    _onCurCompCleanup: null as any,
+    _parent: null as any,
+    _tags: null as any,
+    _updateEvents: null as any,
+    _drawEvents: null as any,
+    children: null as any,
+    hidden: null as any,
+    id: null as any,
+    paused: null as any,
+    transform: null as any,
+    target: null as any,
+
+    // #region Setters and Getters
+    set parent(p: GameObj) {
+        // We assume this will never be ran in root
+        // so this is GameObj
+
+        if (this._parent === p) return;
+        const index = this._parent
+            ? this._parent.children.indexOf(this as GameObj)
+            : -1;
+        if (index !== -1) {
+            this._parent.children.splice(index, 1);
+        }
+        this._parent = p;
+        if (p) {
+            p.children.push(this as GameObj);
+        }
+    },
+
+    get parent() {
+        return this._parent;
+    },
+
+    get tags() {
+        return Array.from(this._tags);
+    },
+
+    // #enedregion
+
     // #region Object
     setParent(
         this: GameObjTransform,
@@ -1314,3 +1360,62 @@ export const GameObjRawPrototype: GameObjRawMethods = {
     },
     // #endregion
 };
+
+// #region App Events in Proto
+export function attachAppToGameObjRaw() {
+    // We add App Events for "attaching" it to game object
+    const appEvs = [
+        "onKeyPress",
+        "onKeyPressRepeat",
+        "onKeyDown",
+        "onKeyRelease",
+        "onMousePress",
+        "onMouseDown",
+        "onMouseRelease",
+        "onMouseMove",
+        "onCharInput",
+        "onMouseMove",
+        "onTouchStart",
+        "onTouchMove",
+        "onTouchEnd",
+        "onScroll",
+        "onGamepadButtonPress",
+        "onGamepadButtonDown",
+        "onGamepadButtonRelease",
+        "onGamepadStick",
+        "onButtonPress",
+        "onButtonDown",
+        "onButtonRelease",
+    ] satisfies [...AppEvents[]];
+
+    for (const e of appEvs) {
+        const obj = GameObjRawPrototype as Record<string, any>;
+
+        obj[e] = function(this: GameObjRaw, ...args: [any]) {
+            // @ts-ignore
+            const ev: KEventController = _k.app[e]?.(...args);
+            this._inputEvents.push(ev);
+
+            this.onDestroy(() => ev.cancel());
+
+            // This only happens if obj.has("stay");
+            this.on("sceneEnter", () => {
+                // All app events are already canceled by changing the scene
+                // so we don't need to event.cancel();
+                this._inputEvents.splice(this._inputEvents.indexOf(ev), 1);
+
+                // create a new event with the same arguments
+                // @ts-ignore
+                const newEv = _k.app[e]?.(...args);
+
+                // Replace the old event handler with the new one
+                // old KEventController.cancel() => new KEventController.cancel()
+                KEventController.replace(ev, newEv);
+                this._inputEvents.push(ev);
+            });
+
+            return ev;
+        };
+    }
+}
+// #endregion
