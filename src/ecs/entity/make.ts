@@ -27,7 +27,7 @@ export function make<T extends CompList<unknown>>(
         : _k.globalOpt.tagsAsComponents;
 
     // The game object from the prototype
-    const obj: GameObjRaw = Object.create(GameObjRawPrototype);
+    const obj: GameObj = Object.create(GameObjRawPrototype);
 
     // Shadow individual properties
     obj._parent = null as unknown as GameObj;
@@ -84,5 +84,6 @@ export function make<T extends CompList<unknown>>(
         obj.tag(tag);
     }
 
-    return obj as unknown as GameObj<T[number]>;
+    // We cast the type as .use() doesn't add the types
+    return obj as GameObj<T[number]>;
 }

@@ -444,6 +444,7 @@ export interface GameObjRaw {
     onButtonDown: KAPLAYCtx["onButtonDown"];
     onButtonPress: KAPLAYCtx["onButtonPress"];
     onButtonRelease: KAPLAYCtx["onButtonRelease"];
+
     /** @readonly */
     _parent: GameObj;
     _compsIds: Set<string>;
@@ -985,17 +986,12 @@ export const GameObjRawPrototype: Omit<GameObjRaw, AppEvents> = {
     drawInspect(this: GameObj<PosComp | ScaleComp | RotateComp>) {
         if (this.hidden) return;
 
-        pushTransform();
-        multTranslateV(this.pos);
-        multScaleV(this.scale);
-        multRotate(this.angle);
+        for (let i = 0; i < this.children.length; i++) {
+            this.children[i].drawInspect();
+        }
 
-        this.children
-            /*.sort((o1, o2) => (o1.z ?? 0) - (o2.z ?? 0))*/
-            .forEach((child) => child.drawInspect());
-
+        loadMatrix(this.transform);
         this.trigger("drawInspect");
-        popTransform();
     },
 
     collectAndTransform(
