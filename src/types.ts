@@ -94,7 +94,7 @@ import type { PosComp } from "./ecs/components/transform/pos";
 import type { RotateComp } from "./ecs/components/transform/rotate";
 import type { ScaleComp } from "./ecs/components/transform/scale";
 import type { ZComp } from "./ecs/components/transform/z";
-import type { GameObjRaw, KeepFlags } from "./ecs/entity/GameObjRawPrototype";
+import type { GameObjRaw, KeepFlags } from "./ecs/entity/GameObjRaw";
 import type { GameObjEventNames, GameObjEvents } from "./events/eventMap";
 import type { KEvent, KEventController, KEventHandler } from "./events/events";
 import type { TupleWithoutFirst } from "./events/globalEvents";

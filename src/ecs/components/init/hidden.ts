@@ -1,5 +1,5 @@
 import type { EmptyComp } from "../../../types";
-import type { GameObjRaw } from "../../entity/GameObjRawPrototype";
+import type { GameObjRaw } from "../../entity/GameObjRaw";
 
 const HiddenComp = {
     id: "hidden",

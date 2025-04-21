@@ -9,13 +9,13 @@ import {
     attachAppToGameObjRaw,
     type GameObjRaw,
     GameObjRawPrototype,
-} from "./GameObjRawPrototype";
+} from "./GameObjRaw";
 
 /*
 Order of making a game object:
 
 1. We receive an array of components and tags from add([])
-2. We create the GameObjRaw interface
+2. We create the GameObjRaw object using our prototype
 3. We call .use() or .tag() on elements in the compAndTags array
 */
 export function make<T extends CompList<unknown>>(
@@ -49,7 +49,7 @@ export function make<T extends CompList<unknown>>(
     obj.transform = new Mat23();
 
     // We only need to modify the prototype the first time, when we know App
-    // state is available
+    // state is available (at the moment of create the root game object)
     if (id == 0) {
         attachAppToGameObjRaw();
     }

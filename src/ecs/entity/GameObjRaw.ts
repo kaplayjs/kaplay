@@ -1,4 +1,6 @@
-import type { App, AppEvents } from "../../app/app";
+// The E of ECS
+
+import type { AppEvents } from "../../app/app";
 import { COMP_DESC, COMP_EVENTS } from "../../constants";
 import { handleErr } from "../../core/errors";
 import type { GameObjEventNames } from "../../events/eventMap";
@@ -25,7 +27,6 @@ import { calcTransform } from "../../math/various";
 import type {
     Comp,
     CompList,
-    Defined,
     GameObj,
     GameObjID,
     GameObjInspect,
@@ -464,6 +465,10 @@ type GameObjCamTransform = GameObj<
 >;
 
 export const GameObjRawPrototype: Omit<GameObjRaw, AppEvents> = {
+    // This chain of `as any`, is because we never should use this object
+    // directly, it's only a prototype. These properties WILL be defined
+    // (by our factory function `make`) when we create a new game object.
+
     _anonymousCompStates: null as any,
     _cleanups: null as any,
     _compsIds: null as any,

@@ -1,4 +1,4 @@
-import type { GameObjRaw } from "../../entity/GameObjRawPrototype";
+import type { GameObjRaw } from "../../entity/GameObjRaw";
 
 const PausedComp = {
     add(this: GameObjRaw) {

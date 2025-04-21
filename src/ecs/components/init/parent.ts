@@ -1,5 +1,5 @@
 import type { EmptyComp, GameObj } from "../../../types";
-import type { GameObjRaw } from "../../entity/GameObjRawPrototype";
+import type { GameObjRaw } from "../../entity/GameObjRaw";
 
 export function parent(obj: GameObj): EmptyComp {
     return {
