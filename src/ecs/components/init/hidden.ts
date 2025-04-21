@@ -1,0 +1,13 @@
+import type { EmptyComp } from "../../../types";
+import type { GameObjRaw } from "../../entity/GameObjRawPrototype";
+
+const HiddenComp = {
+    id: "hidden",
+    add(this: GameObjRaw) {
+        this.hidden = true;
+    },
+};
+
+export function hidden(): EmptyComp {
+    return HiddenComp;
+}

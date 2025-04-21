@@ -1,7 +1,7 @@
-import type { GameObj } from "../../../types";
+import type { GameObjRaw } from "../../entity/GameObjRawPrototype";
 
 const PausedComp = {
-    add(this: GameObj) {
+    add(this: GameObjRaw) {
         this.paused = true;
     },
 };

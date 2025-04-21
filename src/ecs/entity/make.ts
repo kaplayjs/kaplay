@@ -1,28 +1,15 @@
-// The E of KAPLAY
+// Make is the entity factory function
 
-import { KEvent, KEventController, KEventHandler } from "../../events/events";
+import { KEvent, KEventHandler } from "../../events/events";
 import { _k } from "../../kaplay";
 import { Mat23 } from "../../math/math";
 import type { Comp, CompList, GameObj } from "../../types";
 import { uid } from "../../utils/uid";
 import {
-    type AppEvents,
     attachAppToGameObjRaw,
     type GameObjRaw,
-    type GameObjRawProperties,
     GameObjRawPrototype,
 } from "./GameObjRawPrototype";
-
-export enum KeepFlags {
-    Pos = 1,
-    Angle = 2,
-    Scale = 4,
-    All = 7,
-}
-
-export type SetParentOpt = {
-    keep: KeepFlags;
-};
 
 /*
 Order of making a game object:

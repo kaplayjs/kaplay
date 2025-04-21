@@ -1,4 +1,4 @@
-import type { App } from "../../app/app";
+import type { App, AppEvents } from "../../app/app";
 import { COMP_DESC, COMP_EVENTS } from "../../constants";
 import { handleErr } from "../../core/errors";
 import type { GameObjEventNames } from "../../events/eventMap";
@@ -42,38 +42,18 @@ import type { PosComp } from "../components/transform/pos";
 import type { RotateComp } from "../components/transform/rotate";
 import type { ScaleComp } from "../components/transform/scale";
 import type { ZComp } from "../components/transform/z";
-import { KeepFlags, make, type SetParentOpt } from "./make";
+import { make } from "./make";
 
-/**
- * The App method names that will have a helper in GameObjRaw
- */
-export type AppEvents = keyof {
-    [K in keyof App as K extends `on${any}` ? K : never]: [never];
+export enum KeepFlags {
+    Pos = 1,
+    Angle = 2,
+    Scale = 4,
+    All = 7,
+}
+
+export type SetParentOpt = {
+    keep: KeepFlags;
 };
-
-/**
- * Just methods of GameObjRaw
- */
-export type GameObjRawMethods = Omit<
-    Defined<
-        {
-            [K in keyof GameObjRaw]: GameObjRaw[K] extends Function
-                ? GameObjRaw[K]
-                : never;
-        }
-    >,
-    AppEvents
->;
-
-/**
- * Just properties of GameObjRaw
- */
-export type GameObjRawProperties = Defined<
-    {
-        [K in keyof GameObjRaw]: GameObjRaw[K] extends Function ? never
-            : GameObjRaw[K];
-    }
->;
 
 /**
  * Base interface of all game objects.

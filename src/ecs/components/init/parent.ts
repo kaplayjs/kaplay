@@ -1,15 +1,11 @@
-import type { Comp, GameObj } from "../../../types";
+import type { EmptyComp, GameObj } from "../../../types";
+import type { GameObjRaw } from "../../entity/GameObjRawPrototype";
 
-interface ParentComp<T = unknown> extends Comp {
-    /**
-     * The parent of the object
-     */
-    parent: GameObj<T>;
-}
-
-export function parent<T>(obj: GameObj<T>): ParentComp<T> {
+export function parent(obj: GameObj): EmptyComp {
     return {
         id: "parent",
-        parent: obj,
+        add(this: GameObjRaw) {
+            this._parent = obj;
+        },
     };
 }

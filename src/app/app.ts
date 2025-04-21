@@ -77,6 +77,13 @@ class FPSCounter {
 export type App = ReturnType<typeof initApp>;
 export type AppState = ReturnType<typeof initAppState>;
 
+/**
+ * The App method names that will have a helper in GameObjRaw
+ */
+export type AppEvents = keyof {
+    [K in keyof App as K extends `on${any}` ? K : never]: [never];
+};
+
 export let appState: AppState;
 
 const GP_MAP = GAMEPAD_MAP as Record<string, GamepadDef>;
