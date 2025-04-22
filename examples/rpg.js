@@ -1,9 +1,10 @@
 /**
  * @file RPG
- * @description How to make a basic RPG in KAPLAY
+ * @description A basic RPG game
  * @difficulty 1
  * @tags game, ui
  * @minver 3001.0
+ * @category games
  */
 
 // simple rpg style walk and talk

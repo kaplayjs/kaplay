@@ -4,6 +4,7 @@
  * @difficulty 1
  * @tags basics, comps, physics
  * @minver 4000.0
+ * @category basics
  */
 
 // How kaplay handles collisions with different shapes

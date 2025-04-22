@@ -1,9 +1,10 @@
 /**
  * @file Pause Menu
- * @description How to do a basic pause screen.
+ * @description How to do a basic pause screen
  * @difficulty 1
- * @tags basics, ui, project
+ * @tags ui, project
  * @minver 3001.0
+ * @category concepts
  */
 
 kaplay();

@@ -4,6 +4,7 @@
  * @difficulty 1
  * @tags basics
  * @minver 3001.0
+ * @category basics
  */
 
 // Adjust camera / viewport

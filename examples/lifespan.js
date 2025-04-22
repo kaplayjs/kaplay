@@ -4,6 +4,7 @@
  * @difficulty 0
  * @tags basics, comps
  * @minver 3001.0
+ * @category basics
  */
 
 kaplay();

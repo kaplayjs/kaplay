@@ -4,6 +4,7 @@
  * @difficulty 1
  * @tags game
  * @minver 3001.0
+ * @category games
  */
 
 // bean is holding a concert to celebrate kaboom2000!

@@ -1,9 +1,10 @@
 /**
  * @file Scenes
- * @description How to use KAPLAY's scene system.
+ * @description How to use scene system
  * @difficulty 0
  * @tags basics
  * @minver 3001.0
+ * @category basics
  */
 
 // Extend our game with multiple scenes

@@ -1,9 +1,10 @@
 /**
  * @file Platformer
- * @description How to make a simple platformer
+ * @description A simple platformer
  * @difficulty 1
  * @tags basics, game
  * @minver 3001.0
+ * @category game
  */
 
 kaplay({

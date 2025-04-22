@@ -4,6 +4,9 @@
  * @difficulty 0
  * @tags animation
  * @minver 3001.0
+ * @category concepts
+ * @group tween
+ * @groupOrder 1
  */
 
 // See all the tweeen easings

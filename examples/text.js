@@ -2,8 +2,9 @@
  * @file Text
  * @description How to add text objects in KAPLAY.
  * @difficulty 0
- * @tags basics
+ * @tags basics, ui
  * @minver 3001.0
+ * @category basics
  */
 
 kaplay({

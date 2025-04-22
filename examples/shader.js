@@ -1,9 +1,10 @@
 /**
  * @file Shaders
- * @description How to use shaders in KAPLAY.
+ * @description How to use shaders
  * @difficulty 1
  * @tags basics, effects
  * @minver 3001.0
+ * @category basics
  */
 
 // Custom shader
