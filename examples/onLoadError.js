@@ -2,7 +2,7 @@
  * @file Load Error
  * @description How to handle errors on load.
  * @difficulty 1
- * @tags project
+ * @tags loading
  * @minver 3001.0
  */
 
