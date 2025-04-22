@@ -1,9 +1,10 @@
 /**
- * @file Endless runner
- * @description How to make an endless runner in KAPLAY.
+ * @file Runner
+ * @description Endless runner (like Chrome Dino)
  * @difficulty 1
  * @tags basics, game
  * @minver 3001.0
+ * @category games
  */
 
 const FLOOR_HEIGHT = 48;

@@ -4,6 +4,7 @@
  * @difficulty 0
  * @tags animation
  * @minver 4000.0
+ * @category concepts
  */
 
 // Playing videos (🥊 included)

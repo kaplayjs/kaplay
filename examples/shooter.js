@@ -1,9 +1,10 @@
 /**
  * @file Shooter
- * @description How to make an 2D shooter game
+ * @description 2D top-down space shooter game
  * @difficulty 1
  * @tags basics, game
  * @minver 3001.0
+ * @category games
  */
 
 kaplay({

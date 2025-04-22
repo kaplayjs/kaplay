@@ -5,6 +5,7 @@
  * @tags math, game
  * @minver 4000.0
  * @locked
+ * @category concepts
  */
 
 kaplay({

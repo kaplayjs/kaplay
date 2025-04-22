@@ -4,7 +4,9 @@
  * @difficulty 1
  * @tags basics, game
  * @minver 3001.0
+ * @category concepts
  */
+
 kaplay();
 
 loadSprite("bean", "/sprites/bean.png");

@@ -1,9 +1,10 @@
 /**
  * @file Dialog
- * @description How to create a dialog box with a typewriter.
+ * @description How to create a dialog box with a typewriter
  * @difficulty 1
  * @tags ui
  * @minver 3001.0
+ * @category concepts
  */
 
 // Simple dialogues with character avatars

@@ -1,9 +1,10 @@
 /**
  * @file Sprites
- * @description How to load and animate sprites in KAPLAY.
+ * @description How to load and animate sprites
  * @difficulty 0
  * @tags basics, animation
  * @minver 3001.0
+ * @category basics
  */
 
 // Sprite animation

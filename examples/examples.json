@@ -1,0 +1,19 @@
+{
+  "categories": {
+    "basics": {
+      "displayName": "Basics",
+      "description": "Basic examples to get started with the library.",
+      "order": 0
+    },
+    "concepts": {
+      "displayName": "Concepts",
+      "description": "Examples that showcase concepts of the library.",
+      "order": 1
+    },
+    "games": {
+      "displayName": "Games",
+      "description": "Examples that showcase games made with the library.",
+      "order": 2
+    }
+  }
+}
