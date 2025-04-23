@@ -5,6 +5,7 @@
  * @tags animation, draw
  * @minver 3001.0
  * @category concepts
+ * @test
  */
 
 // 9 slice sprite scaling

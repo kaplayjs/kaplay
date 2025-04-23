@@ -5,6 +5,7 @@
  * @tags basics, draw
  * @minver 3001.0
  * @category basics
+ * @test
  */
 
 kaplay();

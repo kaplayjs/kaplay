@@ -13,11 +13,13 @@
     "declarationDir": "dist/declaration",
     // always use import type for type only imports
     "verbatimModuleSyntax": true,
-    "strict": true
+    "strict": true,
+    "types": [
+      "./.env.d.ts",
+      "../node_modules/vitest-puppeteer/dist/index.d.ts",
+    ]
   },
   "include": [
-    "src/**/*",
-    "scripts/**/*",
-    "tests/**/*"
+    "./**/*"
   ]
 }

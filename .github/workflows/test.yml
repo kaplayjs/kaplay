@@ -4,7 +4,8 @@ on:
   push:
 
 jobs:
-  build:
+  test:
+    name: Test
     runs-on: ubuntu-latest
     
     steps:
@@ -19,12 +20,16 @@ jobs:
         with:
           run_install: false
       - name: Install dependencies
-        run: pnpm install
-      - name: Run Checker
+        run: pnpm install --ignore-scripts
+      - name: Install Chrome for Puppeteer
+        run: npx puppeteer browsers install chrome
+      - name: Fast build
+        run: pnpm run build:fast
+      - name: Run checker
         run: pnpm run check
       - name: Run tests
         run: pnpm run test -c
-      - name: Run vitests
+      - name: Run Vitest
         run: pnpm run test:vite
       - name: Upload Package
         if: ${{ github.event_name == 'pull_request' }}

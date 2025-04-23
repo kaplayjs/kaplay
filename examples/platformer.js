@@ -4,7 +4,7 @@
  * @difficulty 1
  * @tags basics, game
  * @minver 3001.0
- * @category game
+ * @category games
  */
 
 kaplay({
@@ -12,7 +12,6 @@ kaplay({
 });
 
 // load assets
-loadSprite("bigyoshi", "/YOSHI.png");
 loadSprite("bean", "/sprites/bean.png");
 loadSprite("bag", "/sprites/bag.png");
 loadSprite("ghosty", "/sprites/ghosty.png");

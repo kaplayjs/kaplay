@@ -8,8 +8,8 @@
 
 kaplay();
 
-// this will not load
-loadSprite("bobo", "notavalidURL");
+// this will not load (uncomment)
+// loadSprite("bobo", "notavalidURL");
 
 // process the load error
 // you decide whether to ignore it, or throw an error and halt the game

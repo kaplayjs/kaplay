@@ -1,6 +1,4 @@
 import { beforeAll, describe, expect, test } from "vitest";
-import "vitest-puppeteer";
-import "../../dist/declaration/global";
 import type { KAPLAYCtx } from "../../src/types";
 
 describe("Plugin loading", () => {

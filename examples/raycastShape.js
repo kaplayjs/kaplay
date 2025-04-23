@@ -5,6 +5,7 @@
  * @tags math
  * @minver 3001.0
  * @category concepts
+ * @test
  */
 
 kaplay();
