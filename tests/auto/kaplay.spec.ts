@@ -1,6 +1,5 @@
 import { beforeAll, describe, expect, test } from "vitest";
 import "vitest-puppeteer";
-import "../../dist/declaration/global";
 
 describe("Context Initialization", () => {
     beforeAll(async () => {
