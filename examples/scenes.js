@@ -5,6 +5,7 @@
  * @tags basics
  * @minver 3001.0
  * @category basics
+ * @test
  */
 
 // Extend our game with multiple scenes

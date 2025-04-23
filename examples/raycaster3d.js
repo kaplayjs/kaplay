@@ -4,7 +4,8 @@
  * @difficulty 2
  * @tags game, math
  * @minver 3001.0
- * @category game
+ * @category games
+ * @test
  */
 
 // Start kaplay

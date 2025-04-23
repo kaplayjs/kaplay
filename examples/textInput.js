@@ -5,6 +5,7 @@
  * @tags basics, ui
  * @minver 3001.0
  * @category basics
+ * @test
  */
 
 // Using textInput() component to catch user text input easily

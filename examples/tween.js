@@ -7,6 +7,7 @@
  * @category concepts
  * @group tween
  * @groupOrder 0
+ * @test
  */
 
 // Tweeeeeening! (🥊 included)

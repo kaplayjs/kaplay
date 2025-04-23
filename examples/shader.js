@@ -5,6 +5,7 @@
  * @tags basics, effects
  * @minver 3001.0
  * @category basics
+ * @test
  */
 
 // Custom shader

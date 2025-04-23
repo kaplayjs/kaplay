@@ -2,7 +2,7 @@
  * @file Pause Menu
  * @description How to do a basic pause screen
  * @difficulty 1
- * @tags ui, project
+ * @tags ui
  * @minver 3001.0
  * @category concepts
  */

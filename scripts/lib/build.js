@@ -23,7 +23,8 @@ export const fmts = (name) => [
     { format: "esm", outfile: `${DIST_DIR}/${name}.mjs` },
 ];
 
-const kaboom = fmts("kaboom")[0];
+const kaplayBuilds = fmts("kaplay");
+const kaboomBuild = fmts("kaboom")[0];
 
 /** @type {esbuild.BuildOptions} */
 export const config = {
@@ -42,13 +43,26 @@ export const config = {
     entryPoints: [SRC_PATH],
 };
 
-export async function build() {
+export async function build(fast = false) {
+    if (fast) {
+        // fast build, no minification, no kabooms
+        return esbuild.build({
+            ...config,
+            ...kaplayBuilds[0],
+            bundle: true,
+            minify: false,
+            sourcemap: false,
+            minifyIdentifiers: false,
+            minifySyntax: false,
+            minifyWhitespace: false,
+        }).then(() => console.log("-> kaplay.js"));
+    }
     return Promise.all(
         [{
             formats: fmts("kaplay"),
             sourceMap: true,
         }, {
-            formats: [kaboom],
+            formats: [kaboomBuild],
             sourceMap: false,
         }].flat().map(({ formats, sourceMap }) => {
             return formats.map((fmt) => {

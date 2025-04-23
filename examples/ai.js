@@ -5,6 +5,7 @@
  * @tags ai
  * @minver 3001.0
  * @category concepts
+ * @test
  */
 
 // Use state() component to handle basic AI

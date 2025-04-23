@@ -26,7 +26,7 @@ export class Texture {
         const glText = ctx.gl.createTexture();
 
         if (!glText) {
-            throw new Error("Failed to create texture");
+            throw new Error("[rendering] Failed to create texture");
         }
 
         this.glTex = glText;
