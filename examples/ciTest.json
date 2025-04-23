@@ -1,6 +1,5 @@
 {
   "order": [
-    "add",
     "movement",
     "collision",
     "gravity",
@@ -17,7 +16,6 @@
     "query",
     "camera",
     "ai",
-    "loader",
     "button",
     "dialog",
     "draw",
@@ -30,7 +28,6 @@
     "largeTexture",
     "maze",
     "mazeRaycastedLight",
-    "multigamepad",
     "out",
     "overlap",
     "pauseMenu",
