@@ -19,7 +19,7 @@
   "main": "./dist/kaplay.cjs",
   "module": "./dist/kaplay.mjs",
   "types": "./dist/doc.d.ts",
-  "readme": "./README.md",
+          "readme": "./README.md",
   "exports": {
     ".": {
       "import": {
