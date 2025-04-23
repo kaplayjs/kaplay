@@ -7,37 +7,23 @@ import { serve } from "./dev/serve.js";
 import { build } from "./lib/build.js";
 import { wait } from "./lib/util.js";
 
-const exampleCI = JSON.parse(
-    (
-        await fs.readFile(new URL("../examples/ciTest.json", import.meta.url))
-    ).toString(),
-);
-
 await build();
 const port = process.env.PORT || 4001;
 const server = serve({ port: port });
 
 let failed = false;
+
 console.log("launching browser");
+
 const browser = await puppeteer.launch({
     args: ["--no-sandbox"],
 });
-console.log("getting examples list");
-let examples;
 
-if (process.argv[2] === "--ci" || process.argv[2] === "-c") {
-    console.log("Testing For Github CI");
-    examples = exampleCI.order;
-}
-else {
-    console.log("Testing For Local Development");
-    examples = (await fs.readdir("examples"))
-        .filter((p) => !p.startsWith(".") && p.endsWith(".js"))
-        .map((d) => path.basename(d, ".js"))
-        // * particle example crashes puppeteer in github action for some reason
-        // * onLoadError fails on purpose
-        .filter((e) => e !== "particle" && e !== "onLoadError");
-}
+console.log("Testing For Local Development");
+
+const examples = (await fs.readdir("examples"))
+    .filter((p) => !p.startsWith(".") && p.endsWith(".js"))
+    .map((d) => path.basename(d, ".js"));
 
 for (const example of examples) {
     console.log(`testing example "${example}"`);
