@@ -12,7 +12,6 @@ kaplay({
 });
 
 // load assets
-loadSprite("bigyoshi", "/YOSHI.png");
 loadSprite("bean", "/sprites/bean.png");
 loadSprite("bag", "/sprites/bag.png");
 loadSprite("ghosty", "/sprites/ghosty.png");

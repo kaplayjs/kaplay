@@ -17,5 +17,5 @@ onLoadError((name, asset) => {
     // ignore it:
     debug.error(`${name} failed to load: ${asset.error}`);
     // throw an error:
-    throw asset.error;
+    // throw asset.error;
 });
