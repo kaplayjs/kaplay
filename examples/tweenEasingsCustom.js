@@ -7,6 +7,7 @@
  * @category concepts
  * @group tween
  * @groupOrder 2
+ * @test
  */
 
 // Moves objects with custom easings

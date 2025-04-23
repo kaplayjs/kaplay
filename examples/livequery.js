@@ -5,6 +5,7 @@
  * @tags basics
  * @minver 3001.0
  * @category concepts
+ * @test
  */
 
 // How to keep a get() always updated

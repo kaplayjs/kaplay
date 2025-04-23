@@ -4,7 +4,8 @@
  * @difficulty 0
  * @tags input
  * @minver 3001.0
- * @category concepets
+ * @category concepts
+ * @test
  */
 
 // Using input bindings for use common names like "jump" for buttons like space,

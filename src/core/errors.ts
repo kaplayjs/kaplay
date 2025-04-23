@@ -14,8 +14,8 @@ let crashed = false;
 export const handleErr = (err: Error | any) => {
     if (crashed) return;
     crashed = true;
-    console.error(err);
     _k.audio.ctx.suspend();
+
     const errorMessage = err.message ?? String(err)
         ?? "Unknown error, check console for more info";
     let errorScreen = false;
@@ -74,4 +74,15 @@ export const handleErr = (err: Error | any) => {
             _k.frameRenderer.frameEnd();
         },
     );
+
+    // TODO: Make this a setting
+    if (!errorMessage.startsWith("[rendering]")) {
+        throw new Error(errorMessage);
+    }
+    else {
+        // We don't throw rendering errors,
+        // but we log them to the console
+        // This is for "headless" rendering
+        console.error(errorMessage);
+    }
 };

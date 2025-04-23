@@ -5,6 +5,7 @@
  * @tags basics, game
  * @minver 3001.0
  * @category concepts
+ * @test
  */
 
 // Tiled sprites!

@@ -49,9 +49,12 @@ export async function build(fast = false) {
         return esbuild.build({
             ...config,
             ...kaplayBuilds[0],
-            bundle: false,
+            bundle: true,
             minify: false,
             sourcemap: false,
+            minifyIdentifiers: false,
+            minifySyntax: false,
+            minifyWhitespace: false,
         }).then(() => console.log("-> kaplay.js"));
     }
     return Promise.all(

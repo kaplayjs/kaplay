@@ -5,7 +5,7 @@
  * @tags game, effects, ai
  * @minver 4000.0
  * @locked
- * @category game
+ * @category games
  */
 
 kaplay({

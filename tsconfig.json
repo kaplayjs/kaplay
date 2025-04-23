@@ -23,6 +23,7 @@
     "scripts/**/*"
   ],
   "exclude": [
-    "src/index.ts"
+    "src/index.ts",
+    "./tests/**"
   ]
 }

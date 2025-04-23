@@ -5,6 +5,7 @@
  * @tags physics
  * @minver 3001.0
  * @category concepts
+ * @test
  */
 
 kaplay({ scale: 0.5 });

@@ -5,6 +5,7 @@
  * @tags basics, audio
  * @minver 3001.0
  * @category basics
+ * @test
  */
 
 // Playing audio and controlling it

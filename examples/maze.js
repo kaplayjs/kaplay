@@ -6,6 +6,7 @@
  * @minver 4000.0
  * @locked
  * @category concepts
+ * @test
  */
 
 kaplay({

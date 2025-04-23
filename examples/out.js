@@ -4,6 +4,7 @@
  * @difficulty 1
  * @tags comps
  * @minver 3001.0
+ * @test
  */
 
 // detect if obj is out of screen
