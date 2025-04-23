@@ -19,7 +19,7 @@ const browser = await puppeteer.launch({
     args: ["--no-sandbox"],
 });
 
-console.log("Testing For Local Development");
+console.log("testing...");
 
 const examples = (await fs.readdir("examples"))
     .filter((p) => !p.startsWith(".") && p.endsWith(".js"))
@@ -51,5 +51,9 @@ for (const example of examples) {
 browser.close();
 server.close();
 
-console.log(failed ? "fail" : "success");
+console.log(
+    failed
+        ? "test suite failed, all is kaboomed"
+        : "GOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOD",
+);
 process.exit(failed ? 1 : 0);
