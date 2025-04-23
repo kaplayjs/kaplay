@@ -10,6 +10,7 @@ describe("Context Initialization", () => {
         async () => {
             const version = await page.evaluate(() => {
                 kaplay({ global: false });
+                // @ts-ignore
                 return window["VERSION"];
             });
 
@@ -23,6 +24,7 @@ describe("Context Initialization", () => {
         async () => {
             const version = await page.evaluate(() => {
                 kaplay();
+                // @ts-ignore
                 return window["VERSION"];
             });
 

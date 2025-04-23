@@ -15,13 +15,11 @@
     "verbatimModuleSyntax": true,
     "strict": true,
     "types": [
-      "./tests/.env.d.ts",
-      "./node_modules/vitest-puppeteer/dist/index.d.ts"
+      "./.env.d.ts",
+      "../node_modules/vitest-puppeteer/dist/index.d.ts",
     ]
   },
   "include": [
-    "./src/**/*",
-    "./scripts/**/*",
-    "./tests/**/*"
+    "./**/*"
   ]
 }

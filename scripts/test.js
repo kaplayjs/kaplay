@@ -31,7 +31,17 @@ const examples = examplesDir.filter((p) => {
     return isTest;
 }).map((d) => path.basename(d, ".js"));
 
-for (const example of examples) {
+const playtestsDir = fs.readdirSync("tests/playtests");
+const playtests = playtestsDir.filter((p) => {
+    const isPlaytest = !p.startsWith(".") && p.endsWith(".js");
+    if (!isPlaytest) return false;
+
+    const fileContent = fs.readFileSync(path.join("tests/playtests", p));
+    const isTest = fileContent.includes("@test");
+    return isTest;
+}).map((d) => path.basename(d, ".js"));
+
+for (const example of [...examples, ...playtests]) {
     console.log(`testing example "${example}"`);
     const page = await browser.newPage();
     page.on("pageerror", (err) => {
