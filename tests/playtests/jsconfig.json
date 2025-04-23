@@ -2,6 +2,6 @@
   "compilerOptions": {
     "types": [
       "../../dist/declaration/global.d.ts"
-    ],
+    ]
   }
 }
