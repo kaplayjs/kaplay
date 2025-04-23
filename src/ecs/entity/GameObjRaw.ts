@@ -880,7 +880,7 @@ export const GameObjRawPrototype: Omit<GameObjRaw, AppEvents> = {
                 // We push once, then update the current transform only
                 pushTransform();
                 for (let i = 0; i < objects.length; i++) {
-                    if (objects[i].fixed) _k.gfx.fixed = true;
+                    _k.gfx.fixed = objects[i].fixed;
                     loadMatrix(objects[i].parent!.transform);
                     objects[i]._drawEvents.trigger();
                 }
@@ -916,7 +916,7 @@ export const GameObjRawPrototype: Omit<GameObjRaw, AppEvents> = {
                 for (let i = 0; i < objects.length; i++) {
                     // An object with a mask is drawn at draw time, but the transform still needs to be calculated,
                     // so we push the parent's transform and pretend we are
-                    if (objects[i].fixed) _k.gfx.fixed = true;
+                    _k.gfx.fixed = objects[i].fixed;
                     if (objects[i].mask) {
                         loadMatrix(objects[i].parent!.transform);
                         objects[i].drawTree();
