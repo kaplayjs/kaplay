@@ -33,15 +33,14 @@ const obj = add([
 ]);
 
 // Modifying the angle of the object (from rotate()):
-
 obj.onUpdate(() => {
-    // rotate() gives you obj.angle, which is the angle in degrees.
-    // We modify it every frame to rotate the object.
+    // obj.angle is a property provided by the rotate() component.
+    // It represents the angle of the object in degrees. We can modify it
+    // to rotate the object.
     obj.angle = obj.angle + 100 * dt();
 });
 
 // Moving the object (from pos()):
-
 obj.onUpdate(() => {
     // We reset the direction vector to 0,
     obj.dir.x = 0;
@@ -54,8 +53,12 @@ obj.onUpdate(() => {
     if (isKeyDown("down")) obj.dir.y = 1;
     // (we will see more about input handling later)
 
-    // We convert the vector to a unit vector. This means that the vector have
-    // a length of 1, but the direction is the same. Then we scale it by the
-    // speed.
-    obj.move(obj.dir.unit().scale(this.speed));
+    // .move() is a method provided by the pos() component.
+    // It moves the object by a given vector.
+    obj.move(
+        // We convert the vector to a unit vector. This means that the vector have
+        // a length of 1, but the direction is the same. Then we scale it by the
+        // speed.
+        obj.dir.unit().scale(this.speed),
+    );
 });
