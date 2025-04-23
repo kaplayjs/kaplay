@@ -29,7 +29,7 @@ jobs:
       - name: Check if it's formatted
         run: |
           FORMATTED=$(git diff --exit-code)
-      - name: Check if it's formatted
+      - name: Fail if not formatted
         run: |
           if [ -n "$FORMATTED" ]; then
             echo "Code is not formatted. Please run 'pnpm run fmt' to format the code."
