@@ -1,12 +1,11 @@
 /**
  * @file Flappy
- * @description How to make a flappy bird clone in KAPLAY.
+ * @description How to make a flappy bird clone
  * @difficulty 1
  * @tags game
  * @minver 3001.0
+ * @category games
  */
-
-// @ts-check
 
 kaplay();
 

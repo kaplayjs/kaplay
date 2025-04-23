@@ -4,6 +4,7 @@
  * @difficulty 3
  * @tags basics
  * @minver 3001.0
+ * @test
  */
 
 kaplay();

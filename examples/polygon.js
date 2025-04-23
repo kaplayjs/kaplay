@@ -4,6 +4,7 @@
  * @difficulty 0
  * @tags basics, math
  * @minver 3001.0
+ * @category concepts
  */
 
 kaplay({

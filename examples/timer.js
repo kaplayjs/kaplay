@@ -4,6 +4,8 @@
  * @difficulty 0
  * @tags basics
  * @minver 3001.0
+ * @category concepts
+ * @test
  */
 
 kaplay();

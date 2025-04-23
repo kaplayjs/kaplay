@@ -1,6 +1,4 @@
 import { beforeAll, describe, expect, test } from "vitest";
-import "vitest-puppeteer";
-import "../../dist/declaration/global";
 
 // [subject] should [behavior when condition]
 
@@ -14,16 +12,16 @@ describe("Components validation in add()", async () => {
         async () => {
             async function useBodyWithoutPos() {
                 return page.evaluate(() => {
-                    kaplay();
+                    const k = kaplay();
 
                     return new Promise((res, rej) => {
-                        onError((e) => {
+                        k.onError((e) => {
                             console.log(e);
                             rej(e.message);
                         });
 
-                        add([
-                            body(),
+                        k.add([
+                            k.body(),
                         ]);
                     });
                 });

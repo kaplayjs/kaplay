@@ -1,9 +1,10 @@
 /**
  * @file Hover
- * @description Understand the different hover methods.
+ * @description Understand the different hover methods
  * @difficulty 0
  * @tags basics
  * @minver 3001.0
+ * @category basics
  */
 
 // Differeces between onHover and onHoverUpdate

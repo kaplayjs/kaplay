@@ -1,10 +1,11 @@
 /**
  * @file Ghost hunting
- * @description How to make a survival game about hunting ghosts.
+ * @description A survival game about hunting ghosts
  * @difficulty 2
  * @tags game, effects, ai
  * @minver 4000.0
  * @locked
+ * @category games
  */
 
 kaplay({

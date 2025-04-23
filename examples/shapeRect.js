@@ -2,8 +2,10 @@
  * @file Rect
  * @description The different options for the rect() component.
  * @difficulty 0
- * @tags basics
+ * @tags basics, draw
  * @minver 3001.0
+ * @category basics
+ * @test
  */
 
 kaplay();

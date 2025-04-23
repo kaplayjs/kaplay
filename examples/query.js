@@ -1,9 +1,10 @@
 /**
  * @file Query
- * @description How to use the query() function.
+ * @description How to query for objects
  * @difficulty 0
  * @tags basics
  * @minver 3001.0
+ * @category concepts
  */
 
 kaplay();

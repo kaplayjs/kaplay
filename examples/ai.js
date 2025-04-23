@@ -2,8 +2,10 @@
  * @file AI with State Machines
  * @description How to create simple game AI using state machines.
  * @difficulty 1
- * @tags basics, ai
+ * @tags ai
  * @minver 3001.0
+ * @category concepts
+ * @test
  */
 
 // Use state() component to handle basic AI

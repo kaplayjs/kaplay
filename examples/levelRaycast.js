@@ -1,9 +1,10 @@
 /**
- * @file Level raycasts
- * @description How to use raycasts in a level environment.
+ * @file Level Raycast
+ * @description How to use raycasts in a level environment
  * @difficulty 1
  * @tags basics, comps
  * @minver 3001.0
+ * @category basics
  */
 
 kaplay({

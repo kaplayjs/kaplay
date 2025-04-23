@@ -1,12 +1,11 @@
 /**
  * @file Flame bar
- * @description How to make mario-like flamebars.
+ * @description How to make mario-like flamebars
  * @difficulty 1
- * @tags basics
+ * @tags visual, effects
  * @minver 3001.0
+ * @category concepts
  */
-
-// @ts-check
 
 // Mario-like flamebar
 

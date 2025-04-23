@@ -2,8 +2,9 @@
  * @file Layer
  * @description How to use the z() component for layering
  * @difficulty 0
- * @tags basics, effects
+ * @tags basics, effects, components
  * @minver 3001.0
+ * @category basics
  */
 
 kaplay();

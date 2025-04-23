@@ -4,6 +4,7 @@
  * @difficulty 1
  * @tags ui
  * @minver 3001.0
+ * @category concepts
  */
 
 // Simple UI and setup for buttons

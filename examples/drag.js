@@ -1,9 +1,10 @@
 /**
  * @file Drag
- * @description How to make game objects draggable.
+ * @description How to make game objects draggable
  * @difficulty 0
  * @tags ui
  * @minver 3001.0
+ * @category concepts
  */
 
 // Drag & drop interaction

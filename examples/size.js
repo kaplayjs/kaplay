@@ -1,9 +1,10 @@
 /**
- * @file Sizing
- * @description How to make set up your game's size.
+ * @file Keep Aspect Ratio
+ * @description How to keep aspect ratio using letterbox
  * @difficulty 0
  * @tags basics
  * @minver 3001.0
+ * @category basics
  */
 
 kaplay({

@@ -4,6 +4,8 @@
  * @difficulty 1
  * @tags draw, visual
  * @minver 4000.0
+ * @category concepts
+ * @test
  */
 
 // Adding game objects to screen

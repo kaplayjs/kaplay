@@ -4,6 +4,9 @@
  * @difficulty 0
  * @tags basics, gobj
  * @minver 3001.0
+ * @category basics
+ * @group basics
+ * @groupOrder 1
  */
 
 // Adding game objects to screen

@@ -1,9 +1,10 @@
 /**
  * @file Layers
- * @description How to use KAPLAY's layer system
+ * @description How to use layer system
  * @difficulty 0
- * @tags basics, effects
+ * @tags basics, effects, ui
  * @minver 3001.0
+ * @category basics
  */
 
 kaplay();

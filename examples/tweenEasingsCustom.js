@@ -4,6 +4,10 @@
  * @difficulty 0
  * @tags animation, tween
  * @minver 3001.0
+ * @category concepts
+ * @group tween
+ * @groupOrder 2
+ * @test
  */
 
 // Moves objects with custom easings

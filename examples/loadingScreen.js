@@ -1,9 +1,10 @@
 /**
- * @file Loader
+ * @file Custom Loading Screen
  * @description How to customize the loading screen.
  * @difficulty 0
  * @tags effects, animation
  * @minver 3001.0
+ * @category concepts
  */
 
 // Customizing the asset loader

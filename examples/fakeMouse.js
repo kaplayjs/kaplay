@@ -1,9 +1,10 @@
 /**
  * @file Fake Mouse
- * @description How to create a fake mouse in-game.
+ * @description How to create a fake mouse in-game
  * @difficulty 0
  * @tags ui, input
  * @minver 4000.0
+ * @category concepts
  */
 
 kaplay({
