@@ -20,6 +20,8 @@ jobs:
           run_install: false
       - name: Install dependencies
         run: pnpm install --ignore-scripts
+      - name: Install Chrome for Puppeteer
+        run: npx puppeteer browsers install chrome
       - name: Fast Build
         run: pnpm run build:fast
       - name: Run Checker
