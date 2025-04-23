@@ -1,6 +1,5 @@
 import { beforeAll, describe, expect, test } from "vitest";
 import type { KAPLAYCtx } from "../../src/types";
-import "vitest-puppeteer";
 
 describe("Plugin loading", () => {
     beforeAll(async () => {

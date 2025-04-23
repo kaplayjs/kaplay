@@ -1,5 +1,4 @@
 import { beforeAll, describe, expect, test } from "vitest";
-import "vitest-puppeteer";
 
 // [subject] should [behavior when condition]
 
