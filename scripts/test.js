@@ -49,7 +49,7 @@ for (const example of examples) {
     // KAPLAY will take the fake clicks, but the <video> elements are
     // controlled by the browser and need a real click.
     await page.click("canvas");
-    await wait(100);
+    await wait(20);
     await page.close();
 }
 
