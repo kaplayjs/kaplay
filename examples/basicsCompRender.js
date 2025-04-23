@@ -6,7 +6,7 @@
  * @minver 3001.0
  * @category basics
  * @group basics
- * @groupOrder 50
+ * @groupOrder 60
  */
 
 // All basic rendering related components. This include rendering shapes,
