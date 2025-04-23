@@ -11,11 +11,13 @@
 
 // Handling basic events in KAPLAY [💡, 🥊]
 
-/* 💡 Events and Event Handlers 💡
-1. The events in KAPLAY are specific points in the game loop.
+/* 💡 Events 💡
+The events in KAPLAY are specific points in the game loop.
+*/
 
-2. The event handlers are function where you pass needed parameters and a function
-to run when an specific event happens.
+/* 💡 Event Handlers 💡
+The event handlers are functions where you pass needed parameters and a callback
+function to run when an specific event happens.
 */
 
 kaplay();

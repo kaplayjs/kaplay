@@ -6,7 +6,7 @@
  * @minver 3001.0
  * @category basics
  * @group basics
- * @groupOrder 40
+ * @groupOrder 50
  */
 
 // Understanding more about components and it's state [💡]
@@ -25,11 +25,16 @@ const obj = add([
     pos(100, 100), // set the position
     rotate(0), // set the rotation
     anchor("center"), // set the pivot point
+    // With plain objects, we can store custom data in the Game Obj
+    {
+        dir: vec2(0, 0), // a direction vector
+        speed: 200, // a speed variable
+    },
 ]);
 
 // Modifying the angle of the object (from rotate()):
 
-onUpdate(() => {
+obj.onUpdate(() => {
     // rotate() gives you obj.angle, which is the angle in degrees.
     // We modify it every frame to rotate the object.
     obj.angle = obj.angle + 100 * dt();
@@ -37,22 +42,20 @@ onUpdate(() => {
 
 // Moving the object (from pos()):
 
-// We define a speed variable to move the object
-const SPEED = 200;
-
-onUpdate(() => {
-    // We will store a direction in a 2D vector.
-    const dir = vec2(0, 0);
+obj.onUpdate(() => {
+    // We reset the direction vector to 0,
+    obj.dir.x = 0;
+    obj.dir.y = 0;
 
     // isKeyDown() is a function that checks if a key is held down.
-    if (isKeyDown("left")) dir.x = -1;
-    if (isKeyDown("right")) dir.x = 1;
-    if (isKeyDown("up")) dir.y = -1;
-    if (isKeyDown("down")) dir.y = 1;
+    if (isKeyDown("left")) obj.dir.x = -1;
+    if (isKeyDown("right")) obj.dir.x = 1;
+    if (isKeyDown("up")) obj.dir.y = -1;
+    if (isKeyDown("down")) obj.dir.y = 1;
     // (we will see more about input handling later)
 
     // We convert the vector to a unit vector. This means that the vector have
     // a length of 1, but the direction is the same. Then we scale it by the
     // speed.
-    obj.move(dir.unit().scale(SPEED));
+    obj.move(obj.dir.unit().scale(this.speed));
 });

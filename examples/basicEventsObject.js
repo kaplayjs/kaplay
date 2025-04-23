@@ -46,8 +46,10 @@ obj.onKeyPress("space", () => {
     obj.destroy();
 });
 
-// We can also if the object exists using obj.exists()
+// Notice we will use global onKeyPress() to handle the event.
+// This is because we want this running even if the object is destroyed.
 onKeyPress("enter", () => {
+    // We can also if the object exists using obj.exists()
     if (obj.exists()) {
         console.log("The object exists!");
     }
