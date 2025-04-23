@@ -38,7 +38,7 @@ jobs:
             echo "Code is formatted correctly."
           fi
       - name: Comment PR
-        if: ${{ github.event_name == 'pull_request' }} && failure()
+        if: failure() && github.event_name == 'pull_request'
         uses: thollander/actions-comment-pull-request@v3
         with:
           message: |
