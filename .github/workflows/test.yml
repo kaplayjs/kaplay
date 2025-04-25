@@ -76,3 +76,35 @@ jobs:
       - name: Upload Package
         if: ${{ github.event_name == 'pull_request' }}
         run: pnpx pkg-pr-new publish
+
+  deploy:
+    name: Upload KAPLAY to CDN
+    runs-on: ubuntu-latest
+    needs: test
+    if: ${{ github.event_name == 'push' && github.ref_name == 'master' }}
+    
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Install Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - uses: pnpm/action-setup@v4
+        name: Install pnpm
+        with:
+          run_install: false
+      - name: Install dependencies
+        run: pnpm install --ignore-scripts
+      - name: Build
+        run: pnpm run build
+      - name: Upload kaplay.js to cdn
+        if: ${{ github.event_name == 'push' }}
+        run: |
+          echo "Uploading kaplay.js to CDN"
+          curl https://cdn.kaplayjs.com/kaplay.{{ github.ref_name }}.js -X PUT --header "X-Auth-Key: {{ secrets.CDN_KEY }}" --upload-file ./dist/kaplay.js
+          curl https://cdn.kaplayjs.com/kaplay.master.js -X PUT --header "X-Auth-Key: {{ secrets.CDN_KEY }}" --upload-file ./dist/kaplay.js
+          curl https://cdn.kaplayjs.com/doc.{{ github.ref_name }}.d.ts -X PUT --header "X-Auth-Key: {{ secrets.CDN_KEY }}" --upload-file ./dist/doc.d.ts
+          curl https://cdn.kaplayjs.com/doc.master.d.ts -X PUT --header "X-Auth-Key: {{ secrets.CDN_KEY }}" --upload-file ./dist/doc.d.ts
+          curl https://cdn.kaplayjs.com/global.{{ github.ref_name }}.d.ts -X PUT --header "X-Auth-Key: {{ secrets.CDN_KEY }}" --upload-file ./dist/global.d.ts
+          curl https://cdn.kaplayjs.com/global.master.d.ts -X PUT --header "X-Auth-Key: {{ secrets.CDN_KEY }}" --upload-file ./dist/global.d.ts
