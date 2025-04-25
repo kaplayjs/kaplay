@@ -110,7 +110,7 @@ jobs:
           curl "https://cdn.kaplayjs.com/kaplay.master.js" -X PUT --header "X-Auth-Key: $CDN_KEY" --upload-file ./dist/kaplay.js
           curl "https://cdn.kaplayjs.com/doc.$SHORT_SHA.d.ts" -X PUT --header "X-Auth-Key: $CDN_KEY" --upload-file ./dist/doc.d.ts
           curl "https://cdn.kaplayjs.com/doc.master.d.ts" -X PUT --header "X-Auth-Key: $CDN_KEY" --upload-file ./dist/doc.d.ts
-          curl "https://cdn.kaplayjs.com/global.{SHORT_SHA.d.ts" -X PUT --header "X-Auth-Key: $CDN_KEY" --upload-file ./dist/global.d.ts
+          curl "https://cdn.kaplayjs.com/global.$SHORT_SHA.d.ts" -X PUT --header "X-Auth-Key: $CDN_KEY" --upload-file ./dist/global.d.ts
           curl "https://cdn.kaplayjs.com/global.master.d.ts" -X PUT --header "X-Auth-Key: $CDN_KEY" --upload-file ./dist/global.d.ts
       - name: Get versions.json from cdn
         run: |
