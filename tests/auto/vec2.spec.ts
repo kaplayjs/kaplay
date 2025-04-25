@@ -1,6 +1,13 @@
 import { expect, test } from "vitest";
 import { Vec2, vec2 } from "../../src/math/math";
 
+test("vec2(0, 0).set(1, 2) should return Vec2(1, 2)", () => {
+    const v = vec2(0, 0);
+    v.set(1, 2);
+    expect(v.x).toEqual(1);
+    expect(v.y).toEqual(2);
+});
+
 test("vec2(2, 1) should return Vec2(2, 1)", () => {
     const v = vec2(2, 1);
     expect(v.x).toEqual(2);

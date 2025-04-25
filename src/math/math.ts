@@ -86,6 +86,13 @@ export class Vec2 {
         this.y = y;
     }
 
+    /** Set the X and Y of this vector */
+    set(x: number, y: number): Vec2 {
+        this.x = x;
+        this.y = y;
+        return this;
+    }
+
     /** Create a new Vec2 from an angle in degrees */
     static fromAngle(deg: number) {
         const angle = deg2rad(deg);
