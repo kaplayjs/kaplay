@@ -346,6 +346,7 @@ export interface KAPLAYCtx<
      * @group Game Obj
      */
     destroyAll(tag: Tag): void;
+    // #region Transform Comps
     /**
      * Set the position of a Game Object.
      *
@@ -422,6 +423,7 @@ export interface KAPLAYCtx<
      * @group Components
      */
     rotate(a?: number): RotateComp;
+    // #endregion
     /**
      * Sets the color of a Game Object (rgb 0-255).
      *
@@ -1521,6 +1523,8 @@ export interface KAPLAYCtx<
      * @group Components
      */
     level(map: string[], opt?: LevelOpt): LevelComp;
+
+    // #endregion
     /**
      * Create a raycast.
      *
