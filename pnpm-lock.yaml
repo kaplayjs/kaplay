@@ -23,6 +23,9 @@ importers:
       dts-bundle-generator:
         specifier: ^9.5.1
         version: 9.5.1
+      dts-minify:
+        specifier: ^0.3.3
+        version: 0.3.3
       ejs:
         specifier: ^3.1.10
         version: 3.1.10
@@ -890,6 +893,9 @@ packages:
     resolution: {integrity: sha512-DxpJOb2FNnEyOzMkG11sxO2dmxPjthoVWxfKqWYJ/bI/rT1rvTMktF5EKjAYrRZu6Z6t3NhOUZ0sZ5ZXevOfbA==}
     engines: {node: '>=14.0.0'}
     hasBin: true
+
+  dts-minify@0.3.3:
+    resolution: {integrity: sha512-REaaCkkcpfG+I3gVwU58xco6NH7ZOE7yCo780L008pONbgHvv6ukKZWxiC2V43JCN36lx4tE8qHctrwWdWZYnQ==}
 
   dunder-proto@1.0.1:
     resolution: {integrity: sha512-KIN/nDJBQRcXw0MLVhZE9iQHmG68qAVIBg9CqmUYjmQIhgij9U5MFvrqkUL5FbtyyzZuOeOt0zdeRe4UY7ct+A==}
@@ -2454,6 +2460,8 @@ snapshots:
     dependencies:
       typescript: 5.6.3
       yargs: 17.7.2
+
+  dts-minify@0.3.3: {}
 
   dunder-proto@1.0.1:
     dependencies:
