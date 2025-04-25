@@ -106,10 +106,10 @@ jobs:
           CDN_KEY: ${{ secrets.CDN_KEY }}
         run: |
           echo "Uploading kaplay.js to CDN"
-          curl "https://cdn.kaplayjs.com/kaplay.$SHORT_SHA.js" -X PUT --header "X-Auth-Key: $CDN_KEY" --upload-file ./dist/kaplay.js
-          curl "https://cdn.kaplayjs.com/kaplay.master.js" -X PUT --header "X-Auth-Key: $CDN_KEY" --upload-file ./dist/kaplay.js
-          curl "https://cdn.kaplayjs.com/types.$SHORT_SHA.d.ts" -X PUT --header "X-Auth-Key: $CDN_KEY" --upload-file ./dist/types.d.ts
-          curl "https://cdn.kaplayjs.com/types.master.d.ts" -X PUT --header "X-Auth-Key: $CDN_KEY" --upload-file ./dist/types.d.ts
+          curl "https://cdn.kaplayjs.com/versions/kaplay.$SHORT_SHA.js" -X PUT --header "X-Auth-Key: $CDN_KEY" --upload-file ./dist/kaplay.js
+          curl "https://cdn.kaplayjs.com/versions/kaplay.master.js" -X PUT --header "X-Auth-Key: $CDN_KEY" --upload-file ./dist/kaplay.js
+          curl "https://cdn.kaplayjs.com/versions/types.$SHORT_SHA.d.ts" -X PUT --header "X-Auth-Key: $CDN_KEY" --upload-file ./dist/types.d.ts
+          curl "https://cdn.kaplayjs.com/versions/types.master.d.ts" -X PUT --header "X-Auth-Key: $CDN_KEY" --upload-file ./dist/types.d.ts
       - name: Get versions.json from cdn
         run: |
           echo "Getting versions.json from CDN"
