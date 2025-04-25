@@ -30,9 +30,25 @@ export function video(url: string, opt: VideoCompOpt): VideoComp {
     let _timeupdate = false;
     let _canCopyVideo = false;
     let _texture = new Texture(_k.gfx.ggl, opt.width, opt.height);
+    let _shape: Rect | undefined;
+    let _width = opt.width;
+    let _height = opt.height;
     return {
-        width: opt.width,
-        height: opt.height,
+        id: "video",
+        get width() {
+            return _width;
+        },
+        set width(value) {
+            _width = value;
+            if (_shape) _shape.width = value;
+        },
+        get height() {
+            return _height;
+        },
+        set height(value) {
+            _height = value;
+            if (_shape) _shape.height = value;
+        },
         get currentTime() {
             return _video.currentTime;
         },
@@ -136,7 +152,10 @@ export function video(url: string, opt: VideoCompOpt): VideoComp {
             }
         },
         renderArea() {
-            return new Rect(vec2(0), this.width, this.height);
+            if (!_shape) {
+                _shape = new Rect(vec2(0), _width, _height);
+            }
+            return _shape;
         },
     };
 }

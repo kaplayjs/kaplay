@@ -45,26 +45,42 @@ export interface RectCompOpt {
 }
 
 export function rect(w: number, h: number, opt: RectCompOpt = {}): RectComp {
+    let _shape: Rect | undefined;
+    let _width = w;
+    let _height = h;
     return {
         id: "rect",
-        width: w,
-        height: h,
+        get width() {
+            return _width;
+        },
+        set width(value) {
+            _width = value;
+            if (_shape) _shape.width = value;
+        },
+        get height() {
+            return _height;
+        },
+        set height(value) {
+            _height = value;
+            if (_shape) _shape.height = value;
+        },
         radius: opt.radius || 0,
         draw(this: GameObj<RectComp>) {
             drawRect(Object.assign(getRenderProps(this), {
-                width: this.width,
-                height: this.height,
+                width: _width,
+                height: _height,
                 radius: this.radius,
                 fill: opt.fill,
             }));
         },
         renderArea() {
-            return new Rect(vec2(0), this.width, this.height);
+            if (!_shape) {
+                _shape = new Rect(vec2(0), _width, _height);
+            }
+            return _shape;
         },
         inspect() {
-            return `rect: (${Math.ceil(this.width)}w, ${
-                Math.ceil(this.height)
-            }h)`;
+            return `rect: (${Math.ceil(_width)}w, ${Math.ceil(_height)}h)`;
         },
     };
 }
