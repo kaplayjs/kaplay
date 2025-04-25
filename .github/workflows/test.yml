@@ -119,6 +119,8 @@ jobs:
           echo "Updating versions.json"
           jq --arg version "$SHORT_SHA" '.versions += [$version]' ./versions.json > ./versions.json.tmp && mv ./versions.json.tmp ./versions.json
       - name: Upload versions.json to cdn
+        env:
+          CDN_KEY: ${{ secrets.CDN_KEY }}
         run: |
           echo "Uploading versions.json to CDN"
           curl https://cdn.kaplayjs.com/versions.json -X PUT --header "X-Auth-Key: $CDN_KEY" --upload-file ./versions.json
