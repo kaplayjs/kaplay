@@ -94,7 +94,7 @@ import type { PosComp } from "./ecs/components/transform/pos";
 import type { RotateComp } from "./ecs/components/transform/rotate";
 import type { ScaleComp } from "./ecs/components/transform/scale";
 import type { ZComp } from "./ecs/components/transform/z";
-import type { KeepFlags, SetParentOpt } from "./ecs/make";
+import type { GameObjRaw, KeepFlags } from "./ecs/entity/GameObjRaw";
 import type { GameObjEventNames, GameObjEvents } from "./events/eventMap";
 import type { KEvent, KEventController, KEventHandler } from "./events/events";
 import type { TupleWithoutFirst } from "./events/globalEvents";
@@ -346,6 +346,7 @@ export interface KAPLAYCtx<
      * @group Game Obj
      */
     destroyAll(tag: Tag): void;
+    // #region Transform Comps
     /**
      * Set the position of a Game Object.
      *
@@ -422,6 +423,7 @@ export interface KAPLAYCtx<
      * @group Components
      */
     rotate(a?: number): RotateComp;
+    // #endregion
     /**
      * Sets the color of a Game Object (rgb 0-255).
      *
@@ -1521,6 +1523,8 @@ export interface KAPLAYCtx<
      * @group Components
      */
     level(map: string[], opt?: LevelOpt): LevelComp;
+
+    // #endregion
     /**
      * Create a raycast.
      *
@@ -6199,402 +6203,12 @@ export type KAPLAYPlugin<T> = (
     k: KAPLAYCtx,
 ) => T | ((...args: any) => (k: KAPLAYCtx) => T);
 
-type RenderTarget = {
+export type RenderTarget = {
     destination: FrameBuffer | Picture | null;
     childrenOnly?: boolean;
     refreshOnly?: boolean;
     isFresh?: boolean;
 };
-
-/**
- * Base interface of all game objects.
- *
- * @since v2000.0
- * @group Game Obj
- */
-export interface GameObjRaw {
-    /**
-     * Add a child.
-     *
-     * @param comps - The components to add.
-     *
-     * @returns The added game object.
-     * @since v3000.0
-     */
-    add<T extends CompList<unknown>>(comps?: [...T]): GameObj<T[number]>;
-    /**
-     * Remove and re-add the game obj, without triggering add / destroy events.
-     *
-     * @param obj - The game object to re-add.
-     *
-     * @returns The re-added game object.
-     * @since v3000.0
-     */
-    readd<T>(obj: GameObj<T>): GameObj<T>;
-    /**
-     * Remove a child.
-     *
-     * @param obj - The game object to remove.
-     *
-     * @since v3000.0
-     */
-    remove(obj: GameObj): void;
-    /**
-     * Remove all children with a certain tag.
-     *
-     * @param tag - The tag to remove.
-     *
-     * @since v3000.0
-     */
-    removeAll(tag: Tag): void;
-    /**
-     * Remove all children.
-     *
-     * @since v3000.0
-     */
-    removeAll(): void;
-    /**
-     * Get a list of all game objs with certain tag.
-     *
-     * @param tag - The tag to get.
-     *
-     * @since v3000.0
-     */
-    get<T = any>(tag: Tag | Tag[], opts?: GetOpt): GameObj<T>[];
-    /**
-     * Get a list of all game objs with certain properties.
-     *
-     * @param opt - The properties to get.
-     *
-     * @since v3001.0
-     */
-    query(opt: QueryOpt): GameObj[];
-    /**
-     * Get or set the parent game obj.
-     *
-     * @since v3000.0
-     */
-    parent: GameObj | null;
-    /**
-     * Set the parent game obj.
-     *
-     * @since v4000.0
-     */
-    setParent(p: GameObj, opt: SetParentOpt): void;
-    /**
-     * @readonly
-     * Get all children game objects.
-     *
-     * @since v3000.0
-     */
-    children: GameObj[];
-    /**
-     * @readonly
-     * Get the tags of a game object. For update it, use `tag()` and `untag()`.
-     *
-     * @since v3001.0
-     */
-    tags: string[];
-    /**
-     * Update this game object and all children game objects.
-     *
-     * @since v3001.0
-     */
-    fixedUpdate(): void;
-    /**
-     * Update this game object and all children game objects.
-     *
-     * @since v3000.0
-     */
-    update(): void;
-    /**
-     * Draw this game object and all children game objects.
-     *
-     * @since v3000.0
-     */
-    draw(): void;
-    drawTree(): void;
-    /**
-     * Internal methods
-     */
-    drawEvents: KEvent<[]>;
-    collectAndTransform(objects: GameObj<any>[]): void;
-    /**
-     * Draw debug info in inspect mode
-     *
-     * @since v3000.0
-     */
-    drawInspect: () => void;
-    clearEvents: () => void;
-    /**
-     * Add a component.
-     *
-     * @example
-     * ```js
-     * const obj = add([
-     *    sprite("bean"),
-     * ]);
-     *
-     * // Add opacity
-     * obj.use(opacity(0.5));
-     * ```
-     *
-     * @since v2000.0
-     */
-    use(comp: Comp | Tag): void;
-    /**
-     * Remove a component with its id (the component name)
-     *
-     * @param comp - The component id to remove. It means the name, if sprite, then it's "sprite".
-     *
-     * @example
-     * ```js
-     * // Remove sprite component
-     * obj.unuse("sprite");
-     * ```
-     *
-     * @since v2000.0
-     */
-    unuse(comp: Tag): void;
-    /**
-     * Check if game object has a certain component.
-     *
-     * @param compId - The component id(s) to check.
-     * @param op - The operator to use when searching for multiple components. Default is "and".
-     *
-     * @example
-     * ```js
-     * // Check if game object has sprite component
-     * if(obj.has("sprite")) {
-     *     debug.log("has sprite component");
-     * }
-     *
-     * // Check if game object has tags
-     * obj.has(["tag1", "tag2"]); // AND, it has both tags
-     * obj.has(["tag1", "tag2"], "or"); // OR, it has either tag1 or tag2
-     * ```
-     *
-     * @returns true if has the component(s), false otherwise.
-     * @since v3001.0.5
-     * @experimental This feature is in experimental phase, it will be fully released in v3001.1.0
-     */
-    has(compId: string | string[], op?: "and" | "or"): boolean;
-    /**
-     * Add a tag(s) to the game obj.
-     *
-     * @param tag - The tag(s) to add.
-     *
-     * @example
-     * ```js
-     * // add enemy tag
-     * obj.tag("enemy");
-     *
-     * // add multiple tags
-     * obj.tag(["enemy", "boss"]);
-     * ```
-     *
-     * @since v3001.0.5
-     * @experimental This feature is in experimental phase, it will be fully released in v3001.1.0
-     */
-    tag(tag: Tag | Tag[]): void;
-    /**
-     * Remove a tag(s) from the game obj.
-     *
-     * @param tag - The tag(s) to remove.
-     *
-     * @example
-     * ```js
-     * // remove enemy tag
-     * obj.untag("enemy");
-     *
-     * // remove multiple tags
-     * obj.untag(["enemy", "boss"]);
-     * ```
-     *
-     * @since v3001.0.5
-     * @experimental This feature is in experimental phase, it will be fully released in v3001.1.0
-     */
-    untag(tag: Tag | Tag[]): void;
-    /**
-     * If there's certain tag(s) on the game obj.
-     *
-     * @param tag - The tag(s) for checking.
-     * @param op - The operator to use when searching for multiple tags. Default is "and".
-     *
-     * @since v3001.0.5
-     * @experimental This feature is in experimental phase, it will be fully released in v3001.1.0
-     */
-    is(tag: Tag | Tag[], op?: "and" | "or"): boolean;
-    /**
-     * Register an event.
-     *
-     * @param event - The event name.
-     * @param action - The action to run when event is triggered.
-     *
-     * @returns The event controller.
-     * @since v2000.0
-     */
-    on(
-        event: GameObjEventNames | (string & {}),
-        action: (...args: any) => void,
-    ): KEventController;
-    /**
-     * Trigger an event.
-     *
-     * @param event - The event name.
-     * @parm args - The arguments to pass to the event action.
-     *
-     * @since v2000.0
-     */
-    trigger(event: string, ...args: any): void;
-    /**
-     * Remove the game obj from scene.
-     *
-     * @since v2000.0
-     */
-    destroy(): void;
-    /**
-     * Get state for a specific comp.
-     *
-     * @param id - The component id.
-     *
-     * @since v2000.0
-     */
-    c(id: string): Comp | null;
-    /**
-     * Gather debug info of all comps.
-     *
-     * @since v2000.0
-     */
-    inspect(): GameObjInspect;
-    /**
-     * Register an event that runs when the game obj is added to the scene.
-     *
-     * @returns The event controller.
-     * @since v2000.0
-     */
-    onAdd(action: () => void): KEventController;
-    /**
-     * Register an event that runs every frame as long as the game obj exists.
-     *
-     * @returns The event controller.
-     * @since v2000.1
-     */
-    onUpdate(action: () => void): KEventController;
-    /**
-     * Register an event that runs every frame as long as the game obj exists.
-     *
-     * @returns The event controller.
-     * @since v2000.1
-     */
-    onFixedUpdate(action: () => void): KEventController;
-    /**
-     * Register an event that runs every frame as long as the game obj exists (this is the same as `onUpdate()`, but all draw events are run after all update events).
-     *
-     * @returns The event controller.
-     * @since v2000.1
-     */
-    onDraw(action: () => void): KEventController;
-    /**
-     * Register an event that runs when the game obj is destroyed.
-     *
-     * @returns The event controller.
-     * @since v2000.1
-     */
-    onDestroy(action: () => void): KEventController;
-    /**
-     * Register an event that runs when a component is used.
-     *
-     * @returns The event controller.
-     * @since v4000.0
-     */
-    onUse(action: (id: string) => void): KEventController;
-    /**
-     * Register an event that runs when a component is unused.
-     *
-     * @returns The event controller.
-     * @since v4000.0
-     */
-    onUnuse(action: (id: string) => void): KEventController;
-    /**
-     * Register an event that runs when a tag is added.
-     *
-     * @returns The event controller.
-     * @since v4000.0
-     */
-    onTag(action: (tag: string) => void): KEventController;
-    /**
-     * Register an event that runs when a tag is removed.
-     *
-     * @returns The event controller.
-     * @since v4000.0
-     */
-    onUntag(action: (tag: string) => void): KEventController;
-    /**
-     * If game obj is attached to the scene graph.
-     *
-     * @returns true if attached, false otherwise.
-     * @since v2000.0
-     */
-    exists(): boolean;
-    /**
-     * Check if is an ancestor (recursive parent) of another game object
-     *
-     * @returns true if is ancestor, false otherwise.
-     * @since v3000.0
-     */
-    isAncestorOf(obj: GameObj): boolean;
-    /**
-     * Calculated transform matrix of a game object.
-     *
-     * @since v3000.0
-     */
-    transform: Mat23;
-    /**
-     * If draw the game obj (run "draw" event or not).
-     *
-     * @since v2000.0
-     */
-    hidden: boolean;
-    /**
-     * If update the game obj (run "update" event or not).
-     *
-     * @since v2000.0
-     */
-    paused: boolean;
-    /**
-     * A unique number ID for each game object.
-     *
-     * @since v2000.0
-     */
-    id: GameObjID | null;
-    /**
-     * The canvas to draw this game object on
-     *
-     * @since v3001.0
-     */
-    target?: RenderTarget;
-    onKeyDown: KAPLAYCtx["onKeyDown"];
-    onKeyPress: KAPLAYCtx["onKeyPress"];
-    onKeyPressRepeat: KAPLAYCtx["onKeyPressRepeat"];
-    onKeyRelease: KAPLAYCtx["onKeyRelease"];
-    onCharInput: KAPLAYCtx["onCharInput"];
-    onMouseDown: KAPLAYCtx["onMouseDown"];
-    onMousePress: KAPLAYCtx["onMousePress"];
-    onMouseRelease: KAPLAYCtx["onMouseRelease"];
-    onMouseMove: KAPLAYCtx["onMouseMove"];
-    onTouchStart: KAPLAYCtx["onTouchStart"];
-    onTouchMove: KAPLAYCtx["onTouchMove"];
-    onTouchEnd: KAPLAYCtx["onTouchEnd"];
-    onScroll: KAPLAYCtx["onScroll"];
-    onGamepadButtonDown: KAPLAYCtx["onGamepadButtonDown"];
-    onGamepadButtonPress: KAPLAYCtx["onGamepadButtonPress"];
-    onGamepadButtonRelease: KAPLAYCtx["onGamepadButtonRelease"];
-    onGamepadStick: KAPLAYCtx["onGamepadStick"];
-    onButtonDown: KAPLAYCtx["onButtonDown"];
-    onButtonPress: KAPLAYCtx["onButtonPress"];
-    onButtonRelease: KAPLAYCtx["onButtonRelease"];
-}
 
 /**
  * @group Options
