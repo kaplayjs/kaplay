@@ -161,6 +161,10 @@ export function text(t: string, opt: TextCompOpt = {}): TextComp {
         obj.height = theFormattedText.height / (obj.scale?.y || 1);
     }
 
+    let _shape: Rect | undefined;
+    let _width = opt.width ?? 0;
+    let _height = 0;
+
     const obj = {
         id: "text",
         set text(nt) {
@@ -173,8 +177,20 @@ export function text(t: string, opt: TextCompOpt = {}): TextComp {
         },
         textSize: opt.size ?? DEF_TEXT_SIZE,
         font: opt.font,
-        width: opt.width ?? 0,
-        height: 0,
+        get width() {
+            return _width;
+        },
+        set width(value) {
+            _width = value;
+            if (_shape) _shape.width = value;
+        },
+        get height() {
+            return _height;
+        },
+        set height(value) {
+            _height = value;
+            if (_shape) _shape.height = value;
+        },
         align: opt.align,
         lineSpacing: opt.lineSpacing,
         letterSpacing: opt.letterSpacing,
@@ -198,7 +214,10 @@ export function text(t: string, opt: TextCompOpt = {}): TextComp {
         },
 
         renderArea() {
-            return new Rect(vec2(0), this.width, this.height);
+            if (!_shape) {
+                _shape = new Rect(vec2(0), _width, _height);
+            }
+            return _shape;
         },
     };
 
