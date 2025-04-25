@@ -86,6 +86,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+      - name: Get short commit hash
+        run: echo "SHORT_SHA=${GITHUB_SHA::7}" >> $GITHUB_ENV
       - name: Install Node.js
         uses: actions/setup-node@v4
         with:
@@ -100,11 +102,26 @@ jobs:
         run: pnpm run build
       - name: Upload kaplay.js to cdn
         if: ${{ github.event_name == 'push' }}
+        env:
+          CDN_KEY: ${{ secrets.CDN_KEY }}
         run: |
           echo "Uploading kaplay.js to CDN"
-          curl https://cdn.kaplayjs.com/kaplay.{{ github.ref_name }}.js -X PUT --header "X-Auth-Key: {{ secrets.CDN_KEY }}" --upload-file ./dist/kaplay.js
-          curl https://cdn.kaplayjs.com/kaplay.master.js -X PUT --header "X-Auth-Key: {{ secrets.CDN_KEY }}" --upload-file ./dist/kaplay.js
-          curl https://cdn.kaplayjs.com/doc.{{ github.ref_name }}.d.ts -X PUT --header "X-Auth-Key: {{ secrets.CDN_KEY }}" --upload-file ./dist/doc.d.ts
-          curl https://cdn.kaplayjs.com/doc.master.d.ts -X PUT --header "X-Auth-Key: {{ secrets.CDN_KEY }}" --upload-file ./dist/doc.d.ts
-          curl https://cdn.kaplayjs.com/global.{{ github.ref_name }}.d.ts -X PUT --header "X-Auth-Key: {{ secrets.CDN_KEY }}" --upload-file ./dist/global.d.ts
-          curl https://cdn.kaplayjs.com/global.master.d.ts -X PUT --header "X-Auth-Key: {{ secrets.CDN_KEY }}" --upload-file ./dist/global.d.ts
+          curl "https://cdn.kaplayjs.com/kaplay.$SHORT_SHA.js" -X PUT --header "X-Auth-Key: $CDN_KEY" --upload-file ./dist/kaplay.js
+          curl "https://cdn.kaplayjs.com/kaplay.master.js" -X PUT --header "X-Auth-Key: $CDN_KEY" --upload-file ./dist/kaplay.js
+          curl "https://cdn.kaplayjs.com/doc.$SHORT_SHA.d.ts" -X PUT --header "X-Auth-Key: $CDN_KEY" --upload-file ./dist/doc.d.ts
+          curl "https://cdn.kaplayjs.com/doc.master.d.ts" -X PUT --header "X-Auth-Key: $CDN_KEY" --upload-file ./dist/doc.d.ts
+          curl "https://cdn.kaplayjs.com/global.{SHORT_SHA.d.ts" -X PUT --header "X-Auth-Key: $CDN_KEY" --upload-file ./dist/global.d.ts
+          curl "https://cdn.kaplayjs.com/global.master.d.ts" -X PUT --header "X-Auth-Key: $CDN_KEY" --upload-file ./dist/global.d.ts
+      - name: Get versions.json from cdn
+        run: |
+          echo "Getting versions.json from CDN"
+          curl https://cdn.kaplayjs.com/versions.json -X GET --header "X-Auth-Key: $CDN_KEY" --output ./versions.json
+      - name: Update versions.json adding new deployed version in versions array
+        run: |
+          echo "Updating versions.json"
+          jq --arg version "$SHORT_SHA" '.versions += [$version]' ./versions.json > ./versions.json.tmp && mv ./versions.json.tmp ./versions.json
+      - name: Upload versions.json to cdn
+        run: |
+          echo "Uploading versions.json to CDN"
+          curl https://cdn.kaplayjs.com/versions.json -X PUT --header "X-Auth-Key: $CDN_KEY" --upload-file ./versions.json
+          
