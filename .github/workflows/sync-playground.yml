@@ -17,13 +17,11 @@ jobs:
           fetch-depth: 0
       - name: Check if there are changes in examples/ folder between HEAD and last commit
         run: |
-          git diff --exit-code HEAD^ HEAD -- examples/
-          if [ $? -eq 0 ]; then
-            echo "No changes in examples/ folder"
-            echo "changes=false" >> $GITHUB_ENV
-          else
-            echo "Changes detected in examples/ folder"
+          CHANGES=$(git diff --exit-code HEAD^ HEAD -- examples/)
+          if [ -n "$CHANGES" ]; then
             echo "changes=true" >> $GITHUB_ENV
+          else
+            echo "changes=false" >> $GITHUB_ENV
           fi
       - name: Dispatch Event
         uses: actions/github-script@v6
