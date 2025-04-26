@@ -527,8 +527,8 @@ export const GameObjRawPrototype: Omit<GameObjRaw, AppEvents> = {
         const oldTransform = this._parent?.transform;
         const newTransform = p.transform;
         if ((opt.keep & KeepFlags.Pos) && this.pos !== undefined) {
-            oldTransform.transformPoint(this.pos, this.pos);
-            newTransform.inverse.transformPoint(this.pos, this.pos);
+            oldTransform.transformPointV(this.pos, this.pos);
+            newTransform.inverse.transformPointV(this.pos, this.pos);
         }
         if ((opt.keep & KeepFlags.Angle) && this.angle !== undefined) {
             this.angle += newTransform.getRotation()

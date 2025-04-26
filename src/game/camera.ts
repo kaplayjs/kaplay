@@ -57,11 +57,11 @@ export function shake(intensity: number = 12) {
 }
 
 export function toScreen(p: Vec2): Vec2 {
-    return _k.game.cam.transform.transformPoint(p, new Vec2());
+    return _k.game.cam.transform.transformPointV(p, new Vec2());
 }
 
 export function toWorld(p: Vec2): Vec2 {
-    return _k.game.cam.transform.inverse.transformPoint(p, new Vec2());
+    return _k.game.cam.transform.inverse.transformPointV(p, new Vec2());
 }
 
 export function camPos(...pos: Vec2Args): Vec2 {
