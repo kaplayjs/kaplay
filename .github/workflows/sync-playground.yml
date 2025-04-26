@@ -16,7 +16,6 @@ jobs:
         with:
           fetch-depth: 0
       - name: Check if there are changes in examples/ folder
-        id: check_changes
         run: |
           git config --global user.name "Bag Bot"
           git config --global user.email "lajbel@kaplayjs.com"
@@ -29,7 +28,8 @@ jobs:
             echo "No changes detected in examples/ folder."
             echo "changes=false" >> $GITHUB_ENV
           fi
-      - uses: actions/github-script@v6
+      - name: Dispatch Event
+        uses: actions/github-script@v6
         if: env.changes == 'true'
         with:
           github-token: ${{ secrets.PAT_TOKEN }}
