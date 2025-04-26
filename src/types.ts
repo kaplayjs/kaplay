@@ -348,7 +348,7 @@ export interface KAPLAYCtx<
     destroyAll(tag: Tag): void;
     // #region Transform Comps
     /**
-     * Set the position of a Game Object.
+     * Set the position of a Game Object, relative to its parent.
      *
      * @param x - The x position to set.
      * @param y - The y position to set.
@@ -356,10 +356,17 @@ export interface KAPLAYCtx<
      * @example
      * ```js
      * // This game object will draw a "bean" sprite at (100, 200)
-     * add([
+     * let bean =add([
      *     pos(100, 200),
      *     sprite("bean"),
      * ]);
+     *
+     * // This game object will draw a rectangle at (105, 205) world coordinate.
+     * // The position will be 5 pixels to the right and 5 pixels down from the parent bean.
+     * let rect = bean.add([
+     *     pos(5, 5),
+     *     rect(100, 100),
+     * ])
      * ```
      *
      * @returns The position comp.
