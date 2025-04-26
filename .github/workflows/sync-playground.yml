@@ -19,9 +19,10 @@ jobs:
         id: check_changes
         run: |
           CHANGES=$(git diff --name-only HEAD^ HEAD -- examples/)
+          echo "changes=$CHANGES" >> $GITHUB_OUTPUT 
       - name: Dispatch Event
         uses: actions/github-script@v6
-        if: steps.check_changes.outputs.CHANGES != ''
+        if: steps.check_changes.outputs.changes != ''
         with:
           github-token: ${{ secrets.PAT_TOKEN }}
           script: |
