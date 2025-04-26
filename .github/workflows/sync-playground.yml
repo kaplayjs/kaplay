@@ -29,6 +29,6 @@ jobs:
             await github.rest.actions.createWorkflowDispatch({
               owner: 'kaplayjs',
               repo: 'kaplayground',
-              workflow_id: 'upgrade-submodules.yml',
+              workflow_id: 'sync-submodules.yml',
               ref: 'master'
             })
