@@ -16,16 +16,12 @@ jobs:
         with:
           fetch-depth: 0
       - name: Check if there are changes in examples/ folder between HEAD and last commit
+        id: check_changes
         run: |
-          CHANGES=$(git diff --exit-code HEAD^ HEAD -- examples/)
-          if [ -n "$CHANGES" ]; then
-            echo "changes=true" >> $GITHUB_ENV
-          else
-            echo "changes=false" >> $GITHUB_ENV
-          fi
+          CHANGES=$(git diff --name-only HEAD^ HEAD -- examples/)
       - name: Dispatch Event
         uses: actions/github-script@v6
-        if: env.changes == 'true'
+        if: steps.check_changes.outputs.CHANGES != ''
         with:
           github-token: ${{ secrets.PAT_TOKEN }}
           script: |
