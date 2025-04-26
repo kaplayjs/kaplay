@@ -59,6 +59,6 @@ obj.onUpdate(() => {
         // We convert the vector to a unit vector. This means that the vector have
         // a length of 1, but the direction is the same. Then we scale it by the
         // speed.
-        obj.dir.unit().scale(this.speed),
+        obj.dir.unit().scale(obj.speed),
     );
 });
