@@ -20,8 +20,8 @@ jobs:
         run: |
           git config --global user.name "Bag Bot"
           git config --global user.email "lajbel@kaplayjs.com"
-          git fetch origin main
-          git diff --exit-code origin/main -- examples/
+          git fetch origin master
+          git diff --exit-code origin/master -- examples/
           if [ $? -ne 0 ]; then
             echo "Changes detected in examples/ folder."
             echo "changes=true" >> $GITHUB_ENV
