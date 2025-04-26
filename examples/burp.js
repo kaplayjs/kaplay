@@ -7,7 +7,13 @@
  * @category basics
  */
 
-// Core KAPLAY features.
+// Core KAPLAY features [💡]
+
+/* 💡 Burp 💡
+Burp is the engine core, it handles everything.
+Is not needed in most cases, unless you don't want your game crashing
+or freezing randomly.
+*/
 
 // Start the game in burp mode
 kaplay({
@@ -15,7 +21,7 @@ kaplay({
     background: "cc425e",
 });
 
-// "b" triggers a burp in burp mode
+// "b" triggers burp() on press
 add([
     text("Press B to burp"),
     anchor("center"),
