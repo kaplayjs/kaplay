@@ -249,6 +249,7 @@ export function area(opt: AreaCompOpt = {}): AreaComp {
     const colliding: Record<string, Collision> = {};
     const collidingThisFrame = new Set();
     const events: KEventController[] = [];
+    let oldShape: Shape | undefined;
 
     if (!fakeMouse && !fakeMouseChecked) {
         fakeMouse = _k.k.get<FakeMouseComp | PosComp>("fakeMouse")[0];
@@ -555,23 +556,28 @@ export function area(opt: AreaCompOpt = {}): AreaComp {
         },
 
         // TODO: cache
-        worldArea(this: GameObj<AreaComp | AnchorComp>): Polygon {
+        worldArea(this: GameObj<AreaComp | AnchorComp>): Shape {
             const localArea = this.localArea();
 
-            const transform = this.transform
-                .clone()
-                .translateSelfV(this.area.offset)
-                .scaleSelfV(vec2(this.area.scale ?? 1));
-
-            if (localArea instanceof Rect) {
+            // World transform
+            const transform = this.transform.clone();
+            // Optional area offset
+            if (this.area.offset.x !== 0 || this.area.offset.y !== 0) {
+                transform.translateSelfV(this.area.offset);
+            }
+            // Optional area scale
+            if (this.area.scale.x !== 1 || this.area.scale.y !== 1) {
+                transform.scaleSelfV(this.area.scale);
+            }
+            // Optional anchor offset (Rect only??)
+            if (localArea instanceof Rect && this.anchor !== "topleft") {
                 const offset = anchorPt(this.anchor || DEF_ANCHOR)
                     .add(1, 1)
-                    .scale(-0.5)
-                    .scale(localArea.width, localArea.height);
+                    .scale(-0.5 * localArea.width, -0.5 * localArea.height);
                 transform.translateSelfV(offset);
             }
 
-            return localArea.transform(transform) as Polygon;
+            return oldShape = localArea.transform(transform, oldShape);
         },
 
         screenArea(this: GameObj<AreaComp | FixedComp>): Shape {
@@ -580,7 +586,10 @@ export function area(opt: AreaCompOpt = {}): AreaComp {
                 return area;
             }
             else {
-                return area.transform(_k.game.cam.transform);
+                return oldShape = area.transform(
+                    _k.game.cam.transform,
+                    oldShape,
+                );
             }
         },
 
