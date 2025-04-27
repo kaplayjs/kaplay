@@ -63,20 +63,20 @@ onLoad(() => {
         else if (mode == 2) {
             backgroundColor = darkColor;
 
-            // These lines make it so bean now follows center and makes its scale always 1
+            // These lines make it so bean now follows center and makes it's scale always 1
             bean.pos = lerp(bean.pos, center(), 0.5);
             bean.scale = lerp(bean.scale, vec2(1), 0.5);
             numberMode.color = lerp(numberMode.color, lightColor, 0.5);
 
-            // When bean is being hovered, now its opacity will follow 1, highlighting it on hover
+            // When bean is being hovered, now it's opacity will follow 1, highlighting it on hover
             if (bean.isHovering()) {
                 bean.opacity = lerp(bean.opacity, 1, 0.1);
-                // If we press click, its scale will go to 2, and since its following a scale of 1, it wil go back to that
+                // If we press click, it's scale will go to 2, and since it's following a scale of 1, it wil go back to that
                 if (isMousePressed("left")) {
                     bean.scale = vec2(2);
                 }
             }
-            // When bean is not being followed, its opacity follows 0.1 very slowly
+            // When bean is not being followed, it's opacity follows 0.1 very slowly
             else {
                 bean.opacity = lerp(bean.opacity, 0.1, 0.1);
             }
