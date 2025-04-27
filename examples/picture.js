@@ -1,13 +1,21 @@
 /**
  * @file Picture
  * @description How to store static drawing data
- * @difficulty 2
+ * @difficulty 0
  * @tags effects, optimization, draw
  * @minver 4000.0
  * @locked
  * @category concepts
  * @test
  */
+
+// Optimized drawing using Picture API [💡]
+
+/* 💡 Picture API 💡
+The Picture API is a way to store static drawing data. It allows you to
+draw a lot of sprites in a single draw call. This is useful for
+optimizing performance and reducing draw calls.
+*/
 
 kaplay();
 

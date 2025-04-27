@@ -8,10 +8,10 @@
  * @test
  */
 
-// Start kaplay
+// Literally KAPLAY 3D
+
 kaplay();
 
-// load assets
 let bean;
 let objSlices = [];
 let wall;

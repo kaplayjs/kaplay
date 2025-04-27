@@ -1,7 +1,7 @@
 /**
  * @file Double Jump
  * @description How to add a double jump
- * @difficulty 2
+ * @difficulty 1
  * @tags game, comps
  * @minver 3001.0
  * @category concepts

@@ -1,4 +1,4 @@
-import type { GameObj, LerpValue, RNGValue } from "../types";
+import type { GameObj, LerpValue, RNGValue, Shape } from "../types";
 import { clamp } from "./clamp";
 import { Color, rgb } from "./color";
 
@@ -964,16 +964,28 @@ export class Mat23 {
             this.b * p.x + this.d * p.y + this.f,
         );
     }
-    transformPoint(p: Vec2, o: Vec2): Vec2 {
+    transformPointV(p: Vec2, o: Vec2): Vec2 {
         const tmp = p.x;
         o.x = this.a * p.x + this.c * p.y + this.e;
         o.y = this.b * tmp + this.d * p.y + this.f;
         return o;
     }
-    transformVector(v: Vec2, o: Vec2): Vec2 {
+    transformVectorV(v: Vec2, o: Vec2): Vec2 {
         const tmp = v.x;
         o.x = this.a * v.x + this.c * v.y;
         o.y = this.b * tmp + this.d * v.y;
+        return o;
+    }
+    transformPoint(x: number, y: number, o: Vec2): Vec2 {
+        const tmp = x;
+        o.x = this.a * x + this.c * y + this.e;
+        o.y = this.b * tmp + this.d * y + this.f;
+        return o;
+    }
+    transformVector(x: number, y: number, o: Vec2): Vec2 {
+        const tmp = x;
+        o.x = this.a * x + this.c * y;
+        o.y = this.b * tmp + this.d * y;
         return o;
     }
 
@@ -2658,8 +2670,12 @@ export class Point {
     constructor(pt: Vec2) {
         this.pt = pt.clone();
     }
-    transform(m: Mat23): Point {
-        return new Point(m.transformPoint(this.pt, vec2()));
+    transform(m: Mat23, s?: Shape): Point {
+        if (s && s instanceof Point) {
+            m.transformPointV(this.pt, s.pt);
+            return s;
+        }
+        return new Point(m.transformPointV(this.pt, vec2()));
     }
     bbox(): Rect {
         return new Rect(this.pt, 0, 0);
@@ -2694,10 +2710,15 @@ export class Line {
         this.p1 = p1.clone();
         this.p2 = p2.clone();
     }
-    transform(m: Mat23): Line {
+    transform(m: Mat23, s?: Shape): Line {
+        if (s && s instanceof Line) {
+            m.transformPointV(this.p1, s.p1);
+            m.transformPointV(this.p2, s.p2);
+            return s;
+        }
         return new Line(
-            m.transformPoint(this.p1, vec2()),
-            m.transformPoint(this.p2, vec2()),
+            m.transformPointV(this.p1, vec2()),
+            m.transformPointV(this.p2, vec2()),
         );
     }
     bbox(): Rect {
@@ -2753,10 +2774,28 @@ export class Rect {
             this.pos.add(0, this.height),
         ];
     }
-    transform(m: Mat23): Polygon {
-        return new Polygon(
-            this.points().map((pt) => m.transformPoint(pt, vec2())),
+    transform(m: Mat23, s?: Shape): Polygon {
+        // TODO: resize existing pts array?
+        const p = (s && s instanceof Polygon && s.pts.length == 4)
+            ? s
+            : new Polygon([new Vec2(), new Vec2(), new Vec2(), new Vec2()]);
+        p.pts[0] = m.transformPointV(this.pos, p.pts[0]);
+        p.pts[1] = m.transformPoint(
+            this.pos.x + this.width,
+            this.pos.y,
+            p.pts[1],
         );
+        p.pts[2] = m.transformPoint(
+            this.pos.x + this.width,
+            this.pos.y + this.height,
+            p.pts[2],
+        );
+        p.pts[3] = m.transformPoint(
+            this.pos.x,
+            this.pos.y + this.height,
+            p.pts[3],
+        );
+        return p;
     }
     bbox(): Rect {
         return this.clone();
@@ -2803,7 +2842,7 @@ export class Circle {
         this.center = center.clone();
         this.radius = radius;
     }
-    transform(tr: Mat23): Ellipse {
+    transform(tr: Mat23, s?: Shape): Ellipse {
         return new Ellipse(this.center, this.radius, this.radius).transform(tr);
     }
     bbox(): Rect {
@@ -2890,7 +2929,7 @@ export class Ellipse {
         if (this.angle == 0 && tr.getRotation() == 0) {
             // No rotation, so we can just take the scale and translation
             return new Ellipse(
-                tr.transformPoint(this.center, vec2()),
+                tr.transformPointV(this.center, vec2()),
                 tr.a * this.radiusX,
                 tr.d * this.radiusY,
             );
@@ -2907,7 +2946,7 @@ export class Ellipse {
             T = M.toMat2();
             // Return the ellipse made from the transformed unit circle
             const ellipse = Ellipse.fromMat2(T);
-            ellipse.center = tr.transformPoint(this.center, vec2());
+            ellipse.center = tr.transformPointV(this.center, vec2());
             return ellipse;
         }
     }
@@ -2993,8 +3032,15 @@ export class Polygon {
         }
         this.pts = pts;
     }
-    transform(m: Mat23): Polygon {
-        return new Polygon(this.pts.map((pt) => m.transformPoint(pt, vec2())));
+    transform(m: Mat23, s?: Shape): Polygon {
+        // TODO: resize existing pts array?
+        if (s && s instanceof Polygon && s.pts.length == this.pts.length) {
+            for (let i = 0; i < this.pts.length; i++) {
+                m.transformPointV(this.pts[i], s.pts[i]);
+            }
+            return s;
+        }
+        return new Polygon(this.pts.map((pt) => m.transformPointV(pt, vec2())));
     }
     bbox(): Rect {
         const p1 = vec2(Number.MAX_VALUE);

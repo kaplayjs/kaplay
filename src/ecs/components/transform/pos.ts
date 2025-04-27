@@ -126,7 +126,7 @@ export function pos(...args: Vec2Args): PosComp {
             }
             else {
                 return this.parent
-                    ? this.parent.transform.transformPoint(this.pos, vec2())
+                    ? this.parent.transform.transformPointV(this.pos, vec2())
                     : this.pos;
             }
         },
@@ -134,14 +134,14 @@ export function pos(...args: Vec2Args): PosComp {
         // Transform a local point to a world point
         toWorld(this: GameObj<PosComp>, p: Vec2): Vec2 {
             return this.parent
-                ? this.parent.transform.transformPoint(this.pos.add(p), vec2())
+                ? this.parent.transform.transformPointV(this.pos.add(p), vec2())
                 : this.pos.add(p);
         },
 
         // Transform a world point (relative to the root) to a local point (relative to this)
         fromWorld(this: GameObj<PosComp>, p: Vec2): Vec2 {
             return this.parent
-                ? this.parent.transform.inverse.transformPoint(p, vec2()).sub(
+                ? this.parent.transform.inverse.transformPointV(p, vec2()).sub(
                     this.pos,
                 )
                 : p.sub(this.pos);

@@ -1,10 +1,10 @@
 /**
- * @file Dialog
- * @description How to create a dialog box with a typewriter
+ * @file Visual Novel
+ * @description Little visual novel with typewriter effect
  * @difficulty 1
- * @tags ui
+ * @tags ui, game, effects
  * @minver 3001.0
- * @category concepts
+ * @category games
  */
 
 // Simple dialogues with character avatars

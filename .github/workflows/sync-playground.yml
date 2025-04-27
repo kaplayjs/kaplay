@@ -1,0 +1,34 @@
+name: Bump kaplayjs/kaplayground submodule
+
+on:
+  push:
+    branches: master
+
+jobs:
+  sync:
+    permissions: write-all
+    name: "Dispatch Event"
+    runs-on: ubuntu-latest
+    if: github.repository_owner == 'kaplayjs'
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Check if there are changes in examples/ folder between HEAD and last commit
+        id: check_changes
+        run: |
+          CHANGES=$(git diff --name-only HEAD^ HEAD -- examples/)
+          echo "changes=$CHANGES" >> $GITHUB_OUTPUT 
+      - name: Dispatch Event
+        uses: actions/github-script@v6
+        if: steps.check_changes.outputs.changes != ''
+        with:
+          github-token: ${{ secrets.PAT_TOKEN }}
+          script: |
+            await github.rest.actions.createWorkflowDispatch({
+              owner: 'kaplayjs',
+              repo: 'kaplayground',
+              workflow_id: 'sync-submodules.yml',
+              ref: 'master'
+            })
