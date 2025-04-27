@@ -1,6 +1,6 @@
 /**
  * @file Lerp
- * @description How to use lerp to make simple tweenings.
+ * @description How to use lerp to make simple tweenings
  * @difficulty 0
  * @tags basics, animation
  * @minver 3001.0
