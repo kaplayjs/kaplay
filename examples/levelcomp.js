@@ -5,6 +5,7 @@
  * @tags basics, comps
  * @minver 4000.0
  * @locked
+ * @category concepts
  */
 
 // Build levels with level()

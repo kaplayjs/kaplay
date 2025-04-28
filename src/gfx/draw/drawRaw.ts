@@ -34,7 +34,7 @@ export function drawRaw(
     for (let i = 0; i < vertLength; i++) {
         scratchPt.x = attributes.pos[i * 2];
         scratchPt.y = attributes.pos[i * 2 + 1];
-        transform.transformPoint(scratchPt, scratchPt);
+        transform.transformPointV(scratchPt, scratchPt);
 
         vv[index++] = scratchPt.x;
         vv[index++] = scratchPt.y;

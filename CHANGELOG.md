@@ -76,6 +76,8 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - Added pushMatrix, storeMatrix and loadIdentity to the stack functions -
   @mflerackers
 - Typed `StateComp` - @amyspark-ng
+- Added bias to line drawing, which controls the offset from the center of the
+  line - @mflerackers
 
 ### Fixed
 

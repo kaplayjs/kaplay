@@ -60,7 +60,8 @@
   "scripts": {
     "dev": "NODE_ENV=development node scripts/dev.js",
     "win:dev": "set NODE_ENV=development && node scripts/dev.js",
-    "build": "node scripts/generateIndex.js && node scripts/build.js && npm run doc-dts",
+    "build": "node scripts/generateIndex.js && npm run doc-dts && node scripts/build.js",
+    "build:fast": "node scripts/buildFast.js",
     "check": "tsc",
     "fmt": "dprint fmt",
     "test": "node scripts/test.js",
@@ -72,9 +73,11 @@
   },
   "devDependencies": {
     "@kaplayjs/dprint-config": "^1.2.0",
+    "@types/express": "^5.0.1",
     "@types/jest": "^29.5.14",
     "dprint": "^0.49.1",
     "dts-bundle-generator": "^9.5.1",
+    "dts-minify": "^0.3.3",
     "ejs": "^3.1.10",
     "esbuild": "^0.25.2",
     "express": "^5.1.0",

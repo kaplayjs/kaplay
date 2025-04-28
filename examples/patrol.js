@@ -4,7 +4,9 @@
  * @difficulty 1
  * @tags physics
  * @minver 3001.0
+ * @category concepts
  */
+
 kaplay();
 
 loadBean();

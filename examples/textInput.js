@@ -2,8 +2,10 @@
  * @file Text Input
  * @description How to take input and display it on text
  * @difficulty 0
- * @tags basics
+ * @tags basics, ui
  * @minver 3001.0
+ * @category basics
+ * @test
  */
 
 // Using textInput() component to catch user text input easily

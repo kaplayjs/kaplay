@@ -5,6 +5,7 @@
  * @tags effects
  * @minver 4000.0
  * @locked
+ * @category concepts
  */
 
 kaplay();
@@ -20,6 +21,7 @@ onDraw(() => {
         ],
         join: "bevel",
         width: 20,
+        opacity: 0.75,
     });
     drawCircle({
         pos: vec2(50, 50),
@@ -42,6 +44,7 @@ onDraw(() => {
         ],
         join: "round",
         width: 20,
+        opacity: 0.75,
     });
     drawCircle({
         pos: vec2(250, 50),
@@ -64,6 +67,7 @@ onDraw(() => {
         ],
         join: "miter",
         width: 20,
+        opacity: 0.75,
     });
     drawCircle({
         pos: vec2(450, 50),
@@ -88,6 +92,7 @@ onDraw(() => {
         join: "bevel",
         cap: "square",
         width: 20,
+        opacity: 0.75,
     });
     drawCircle({
         pos: vec2(50, 300),
@@ -111,9 +116,20 @@ onDraw(() => {
         join: "round",
         cap: "square",
         width: 20,
+        opacity: 0.75,
     });
     drawCircle({
         pos: vec2(250, 300),
+        radius: 4,
+        color: RED,
+    });
+    drawCircle({
+        pos: vec2(400, 300),
+        radius: 4,
+        color: RED,
+    });
+    drawCircle({
+        pos: vec2(400, 450),
         radius: 4,
         color: RED,
     });
@@ -134,6 +150,7 @@ onDraw(() => {
         join: "miter",
         cap: "square",
         width: 20,
+        opacity: 0.75,
     });
     drawCircle({
         pos: vec2(450, 300),
@@ -158,6 +175,7 @@ onDraw(() => {
         join: "bevel",
         cap: "round",
         width: 20,
+        opacity: 0.75,
     });
     drawCircle({
         pos: vec2(50, 550),
@@ -181,6 +199,7 @@ onDraw(() => {
         join: "round",
         cap: "round",
         width: 20,
+        opacity: 0.75,
     });
     drawCircle({
         pos: vec2(250, 550),
@@ -204,9 +223,20 @@ onDraw(() => {
         join: "miter",
         cap: "round",
         width: 20,
+        opacity: 0.75,
     });
     drawCircle({
         pos: vec2(450, 550),
+        radius: 4,
+        color: RED,
+    });
+    drawCircle({
+        pos: vec2(600, 550),
+        radius: 4,
+        color: RED,
+    });
+    drawCircle({
+        pos: vec2(600, 700),
         radius: 4,
         color: RED,
     });

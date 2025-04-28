@@ -1,9 +1,12 @@
 /**
  * @file Particle
- * @description How to use particles().
+ * @description How to use particles()
  * @difficulty 1
  * @tags effects
  * @minver 3001.0
+ * @category concepts
+ * @group particles
+ * @groupOrder 0
  */
 
 // Creating particles using Particle Component

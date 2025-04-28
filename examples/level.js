@@ -4,6 +4,8 @@
  * @difficulty 0
  * @tags basics, game
  * @minver 3001.0
+ * @category basics
+ * @test
  */
 
 // Build levels with addLevel()

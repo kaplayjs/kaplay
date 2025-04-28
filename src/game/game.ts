@@ -1,7 +1,7 @@
 import type { Asset } from "../assets/asset";
 import type { SpriteData } from "../assets/sprite";
 import { timer, type TimerComp } from "../ecs/components/misc/timer";
-import { make } from "../ecs/make";
+import { make } from "../ecs/entity/make";
 import type { GameEventMap, GameObjEventMap } from "../events/eventMap";
 import { KEventHandler } from "../events/events";
 import { Mat23, Vec2 } from "../math/math";

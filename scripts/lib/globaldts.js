@@ -1,6 +1,7 @@
 // Generate global.d.ts
 // @ts-check
 
+import { createMinifier } from "dts-minify";
 import fs from "fs/promises";
 import ts from "typescript";
 import { DIST_DIR, SRC_DIR } from "../constants.js";
@@ -12,6 +13,7 @@ export async function genGlobalDTS() {
 
     // global dts
     const dts = await fs.readFile(`${SRC_DIR}/types.ts`, "utf-8");
+    const docts = await fs.readFile(`${DIST_DIR}/doc.d.ts`, "utf-8");
 
     // we create this file to get information about the typescript
     const f = ts.createSourceFile(
@@ -100,8 +102,8 @@ export async function genGlobalDTS() {
 
     // generate global decls for KAPLAYCtx members
     let globalDts = "";
+    const imp = "import { KAPLAYCtx, default as KAPLAY } from \"../doc\"\n";
 
-    globalDts += "import { KAPLAYCtx, default as KAPLAY } from \"../doc\"\n";
     globalDts += "declare global {\n";
 
     for (const stmt of stmts) {
@@ -125,6 +127,14 @@ export async function genGlobalDTS() {
         throw new Error("KAPLAYCtx not found, failed to generate global defs.");
     }
 
-    writeFile(`${DIST_DIR}/declaration/global.d.ts`, globalDts);
+    // minify globalDts with esbuild
+    const minifier = createMinifier(ts);
+
+    const minified = minifier.minify(docts, {
+        keepJsDocs: true,
+    });
+
+    writeFile(`${DIST_DIR}/declaration/global.d.ts`, imp + globalDts);
     writeFile(`${DIST_DIR}/declaration/global.js`, "");
+    writeFile(`${DIST_DIR}/types.d.ts`, minified + globalDts);
 }

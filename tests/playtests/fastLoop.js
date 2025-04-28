@@ -4,10 +4,9 @@
  * @difficulty 0
  * @tags ui, input
  * @minver 4000.0
+ * @category concepts
  * @locked
  */
-
-// @ts-check
 
 kaplay();
 

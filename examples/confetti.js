@@ -4,6 +4,8 @@
  * @difficulty 1
  * @tags effects
  * @minver 3001.0
+ * @category concepts
+ * @test
  */
 
 // Confetti effect done manually (not using particle component)

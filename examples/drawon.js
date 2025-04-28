@@ -4,6 +4,7 @@
  * @difficulty 2
  * @tags draw
  * @minver 3001.0
+ * @category concepts
  */
 
 kaplay();

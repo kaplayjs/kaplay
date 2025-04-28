@@ -2,9 +2,11 @@
  * @file Out
  * @description How to handle objects that are out of screen.
  * @difficulty 1
- * @tags project
+ * @tags comps
  * @minver 3001.0
+ * @test
  */
+
 // detect if obj is out of screen
 
 kaplay();

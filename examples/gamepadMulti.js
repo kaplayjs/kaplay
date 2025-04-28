@@ -4,6 +4,7 @@
  * @difficulty 1
  * @tags input
  * @minver 3001.0
+ * @category concepts
  */
 
 kaplay();

@@ -8,7 +8,7 @@ export default defineConfig({
         fileParallelism: false,
         typecheck: {
             ignoreSourceErrors: true,
-            tsconfig: "./tsconfig.test.json",
+            tsconfig: "./tests/tsconfig.json",
         },
     },
 });

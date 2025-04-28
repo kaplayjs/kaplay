@@ -1,9 +1,10 @@
 /**
  * @file Platformer
- * @description How to make a simple platformer
+ * @description A simple platformer
  * @difficulty 1
  * @tags basics, game
  * @minver 3001.0
+ * @category games
  */
 
 kaplay({
@@ -11,7 +12,6 @@ kaplay({
 });
 
 // load assets
-loadSprite("bigyoshi", "/YOSHI.png");
 loadSprite("bean", "/sprites/bean.png");
 loadSprite("bag", "/sprites/bag.png");
 loadSprite("ghosty", "/sprites/ghosty.png");

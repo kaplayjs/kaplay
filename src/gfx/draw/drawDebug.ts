@@ -33,7 +33,9 @@ export function drawDebug() {
             }
         }
 
+        pushTransform();
         _k.game.root.drawInspect();
+        popTransform();
 
         if (inspecting) {
             const lines = [];

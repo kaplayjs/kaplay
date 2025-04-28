@@ -4,16 +4,16 @@
  * @difficulty 0
  * @tags basics, animation
  * @minver 3001.0
+ * @category concepts
+ * @test
  */
-
-// @ts-check
 
 kaplay({
     scale: 4,
     background: [0, 0, 0],
 });
 
-/ https:/ / (0x72).itch.io / dungeontileset - ii;
+// https:/ / (0x72).itch.io / dungeontileset - ii;
 loadSpriteAtlas("/sprites/dungeon.png", {
     wizard: {
         x: 128,

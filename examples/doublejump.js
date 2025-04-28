@@ -1,9 +1,10 @@
 /**
  * @file Double Jump
- * @description How to add a double jump.
- * @difficulty 2
+ * @description How to add a double jump
+ * @difficulty 1
  * @tags game, comps
  * @minver 3001.0
+ * @category concepts
  */
 
 // How to use the doubleJump component in this little game

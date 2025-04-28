@@ -4,6 +4,7 @@
  * @difficulty 2
  * @tags draw, visual
  * @minver 4000.0
+ * @category concepts
  * @locked
  */
 

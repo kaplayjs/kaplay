@@ -1,9 +1,11 @@
 /**
- * @file Components
+ * @file Custom Components
  * @description How to create and use components.
  * @difficulty 0
  * @tags basics, comps
  * @minver 3001.0
+ * @category basics
+ * @test
  */
 
 // How to make custom components kaplay

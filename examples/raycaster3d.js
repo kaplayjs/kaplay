@@ -4,12 +4,14 @@
  * @difficulty 2
  * @tags game, math
  * @minver 3001.0
+ * @category games
+ * @test
  */
 
-// Start kaplay
+// Literally KAPLAY 3D
+
 kaplay();
 
-// load assets
 let bean;
 let objSlices = [];
 let wall;

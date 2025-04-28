@@ -260,11 +260,27 @@ export function sprite(
         return frames;
     };
 
+    let _shape: Rect | undefined;
+    let _width = 0;
+    let _height = 0;
+
     return {
         id: "sprite",
         // TODO: allow update
-        width: 0,
-        height: 0,
+        get width() {
+            return _width;
+        },
+        set width(value) {
+            _width = value;
+            if (_shape) _shape.width = value;
+        },
+        get height() {
+            return _height;
+        },
+        set height(value) {
+            _height = value;
+            if (_shape) _shape.height = value;
+        },
         frame: opt.frame || 0,
         quad: opt.quad || new Quad(0, 0, 1, 1),
         animSpeed: opt.animSpeed ?? 1,
@@ -549,7 +565,10 @@ export function sprite(
         },
 
         renderArea() {
-            return new Rect(vec2(0), this.width, this.height);
+            if (!_shape) {
+                _shape = new Rect(vec2(0), _width, _height);
+            }
+            return _shape;
         },
 
         inspect() {

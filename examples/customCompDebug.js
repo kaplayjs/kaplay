@@ -4,6 +4,7 @@
  * @difficulty 0
  * @tags comps, debug
  * @minver 3001.0
+ * @category concepts
  */
 
 // Press F1 to enable debug mode and see how custom properties appear in the
