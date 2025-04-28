@@ -1,4 +1,4 @@
-import { SPRITE_ATLAS_HEIGHT, SPRITE_ATLAS_WIDTH } from "../constants";
+import { SPRITE_ATLAS_HEIGHT, SPRITE_ATLAS_WIDTH } from "../constants/general";
 import { KEvent } from "../events/events";
 import { TexPacker } from "../gfx/classes/TexPacker";
 import type { GfxCtx } from "../gfx/gfx";

@@ -6,7 +6,7 @@ import {
     type SpriteAnim,
     type SpriteData,
 } from "../../../assets/sprite";
-import { DEF_ANCHOR } from "../../../constants";
+import { DEF_ANCHOR } from "../../../constants/general";
 import { KEvent, type KEventController } from "../../../events/events";
 import { onLoad } from "../../../events/globalEvents";
 import { getRenderProps } from "../../../game/utils";

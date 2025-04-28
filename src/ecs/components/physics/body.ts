@@ -1,4 +1,4 @@
-import { DEF_JUMP_FORCE, MAX_VEL } from "../../../constants";
+import { DEF_JUMP_FORCE, MAX_VEL } from "../../../constants/general";
 import type { KEventController } from "../../../events/events";
 import { getGravityDirection } from "../../../game/gravity";
 import { _k } from "../../../kaplay";

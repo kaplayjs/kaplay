@@ -1,4 +1,4 @@
-import { DEF_ANCHOR } from "../../constants";
+import { DEF_ANCHOR } from "../../constants/general";
 import type { Color } from "../../math/color";
 import { Vec2, vec2 } from "../../math/math";
 import { getArcPts } from "../../math/various";

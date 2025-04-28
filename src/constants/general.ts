@@ -1,4 +1,13 @@
-// Be sure of these constants not being dependent on the Engine context.
+/*
+As KAPLAY support creating and destroying context, we really need to track all
+our global constants not being dependent on the context. If it's a constant, it
+never should depend on the context. If it does, should be a variable of Engine
+(app, game, gfx, etc)
+
+Constants should be SNAKE_CASE
+*/
+
+import GAMEPAD_MAP from "../data/gamepad.json" assert { type: "json" };
 
 // some default charsets for loading bitmap fonts
 export const ASCII_CHARS =
@@ -110,3 +119,7 @@ export const DEF_OFFSCREEN_DIS = 200;
 export const DEF_JUMP_FORCE = 640;
 export const MAX_VEL = 65536;
 export const EVENT_CANCEL_SYMBOL = Symbol.for("kaplay.cancel");
+
+export const GP_MAP = GAMEPAD_MAP as unknown as Record<string, string>;
+
+export const MAX_TRIES = 20;

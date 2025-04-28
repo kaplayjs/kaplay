@@ -11,13 +11,12 @@ import type {
     MouseButton,
 } from "../types";
 
-import { map, Vec2, vec2 } from "../math/math";
-
-import GAMEPAD_MAP from "../data/gamepad.json" assert { type: "json" };
+import { GP_MAP } from "../constants/general";
 import type { AppEventMap } from "../events/eventMap";
 import { type KEventController, KEventHandler } from "../events/events";
 import { canvasToViewport } from "../gfx/viewport";
 import { _k } from "../kaplay";
+import { map, Vec2, vec2 } from "../math/math";
 import { overload2 } from "../utils/overload";
 import { isEqOrIncludes, setHasOrIncludes } from "../utils/sets";
 import {
@@ -82,8 +81,6 @@ export type AppState = ReturnType<typeof initAppState>;
 export type AppEvents = keyof {
     [K in keyof App as K extends `on${any}` ? K : never]: [never];
 };
-
-const GP_MAP = GAMEPAD_MAP as Record<string, GamepadDef>;
 
 export const initAppState = (opt: {
     canvas: HTMLCanvasElement;

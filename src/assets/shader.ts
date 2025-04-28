@@ -4,7 +4,7 @@ import {
     FRAG_TEMPLATE,
     VERT_TEMPLATE,
     VERTEX_FORMAT,
-} from "../constants";
+} from "../constants/general";
 import type { GfxCtx } from "../gfx/gfx";
 import { _k } from "../kaplay";
 import { Color } from "../math/color";

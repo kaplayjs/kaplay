@@ -6,7 +6,7 @@ import {
     DEF_TEXT_CACHE_SIZE,
     FONT_ATLAS_HEIGHT,
     FONT_ATLAS_WIDTH,
-} from "../constants";
+} from "../constants/general";
 import { _k } from "../kaplay";
 import { Color } from "../math/color";
 import { Quad, Vec2, vec2 } from "../math/math";

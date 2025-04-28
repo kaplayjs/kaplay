@@ -1,4 +1,4 @@
-import { DBG_FONT } from "../constants";
+import { DBG_FONT } from "../constants/general";
 import { drawFormattedText } from "../gfx/draw/drawFormattedText";
 import { drawRect } from "../gfx/draw/drawRect";
 import { drawText } from "../gfx/draw/drawText";
@@ -9,11 +9,9 @@ import { _k } from "../kaplay";
 import { rgb } from "../math/color";
 import { vec2 } from "../math/math";
 
-let crashed = false;
-
 export const handleErr = (err: Error | any) => {
-    if (crashed) return;
-    crashed = true;
+    if (_k.game.crashed) return;
+    _k.game.crashed = true;
     _k.audio.ctx.suspend();
 
     const errorMessage = err.message ?? String(err)

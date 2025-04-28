@@ -1,4 +1,4 @@
-import { DEF_ANCHOR } from "../../constants";
+import { DEF_ANCHOR } from "../../constants/general";
 import { Color } from "../../math/color";
 import { Quad, Vec2 } from "../../math/math";
 import { BlendMode, type DrawTextureOpt, type Vertex } from "../../types";

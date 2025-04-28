@@ -1,4 +1,4 @@
-import { DEF_ANCHOR, UV_PAD } from "../../constants";
+import { DEF_ANCHOR, UV_PAD } from "../../constants/general";
 import { Color, rgb } from "../../math/color";
 import { Quad, Vec2 } from "../../math/math";
 import { BlendMode, type DrawUVQuadOpt } from "../../types";

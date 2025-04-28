@@ -1,3 +1,8 @@
+// TODO: A lot
+// - move RNG to it's own file
+// - move Vec2 to it's own file
+
+import { _k } from "../kaplay";
 import type { GameObj, LerpValue, RNGValue, Shape } from "../types";
 import { clamp } from "./clamp";
 import { Color, rgb } from "./color";
@@ -1489,9 +1494,9 @@ export function wave<V extends LerpValue>(
 }
 
 // basic ANSI C LCG
-const A = 1103515245;
-const C = 12345;
-const M = 2147483648;
+export const A = 1103515245;
+export const C = 12345;
+export const M = 2147483648;
 
 /**
  * A random number generator using the linear congruential generator algorithm.
@@ -1626,18 +1631,15 @@ export class RNG {
     }
 }
 
-// TODO: let user pass seed
-const defRNG = new RNG(Date.now());
-
 export function randSeed(seed?: number): number {
     if (seed != null) {
-        defRNG.seed = seed;
+        _k.game.defRNG.seed = seed;
     }
-    return defRNG.seed;
+    return _k.game.defRNG.seed;
 }
 
 export function rand<T = number>(...args: [] | [T] | [T, T]) {
-    return defRNG.genAny(...args);
+    return _k.game.defRNG.genAny(...args);
 }
 
 export function randi(...args: [] | [number] | [number, number]) {

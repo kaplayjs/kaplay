@@ -1,7 +1,7 @@
 // The E of ECS
 
 import type { AppEvents } from "../../app/app";
-import { COMP_DESC, COMP_EVENTS } from "../../constants";
+import { COMP_DESC, COMP_EVENTS } from "../../constants/general";
 import { handleErr } from "../../core/errors";
 import type { GameObjEventNames } from "../../events/eventMap";
 import {
