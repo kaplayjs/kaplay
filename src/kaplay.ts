@@ -324,6 +324,8 @@ const kaplay = <
         console.warn(
             "KAPLAY already initialized, you are calling kaplay() multiple times, it may lead bugs!",
         );
+        // @ts-ignore
+        _k = {};
     }
 
     initialized = true;
@@ -639,7 +641,7 @@ const kaplay = <
     );
 
     updateViewport();
-    initEvents(_k.gfx);
+    initEvents(gfx);
 
     // the exported ctx handle
     const ctx: KAPLAYCtx = {

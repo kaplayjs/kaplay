@@ -1,6 +1,6 @@
 import type { KAPLAYCtx, Key, KGamepadButton, MouseButton } from "../types";
 import { mapAddOrPush } from "../utils/sets";
-import { appState } from "./app";
+import type { AppState } from "./app";
 
 /**
  * A button binding.
@@ -28,13 +28,8 @@ export type ButtonsDef = Record<string, ButtonBinding>;
  */
 export type ButtonBindingDevice = "keyboard" | "gamepad" | "mouse";
 
-export const getLastInputDeviceType: KAPLAYCtx["getLastInputDeviceType"] =
-    () => {
-        return appState.lastInputDevice;
-    };
-
 // pass the user `buttons` definition to different keymaps
-export const parseButtonBindings = () => {
+export const parseButtonBindings = (appState: AppState) => {
     const btns = appState.buttons;
 
     for (const b in btns) {

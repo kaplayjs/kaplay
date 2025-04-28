@@ -17,7 +17,7 @@ import type { FormattedChar, FormattedText } from "./draw/drawFormattedText";
 import type { CharTransform, DrawTextOpt } from "./draw/drawText";
 import { Texture } from "./gfx";
 
-type FontAtlas = {
+export type FontAtlas = {
     font: BitmapFontData;
     cursor: Vec2;
     maxHeight: number;
@@ -28,8 +28,6 @@ export type StyledTextInfo = {
     charStyleMap: Record<number, string[]>;
     text: string;
 };
-
-const fontAtlases: Record<string, FontAtlas> = {};
 
 function applyCharTransform(fchar: FormattedChar, tr: CharTransform) {
     if (tr.font) fchar.font = tr.font;
@@ -125,7 +123,7 @@ function getFontName(font: FontData | string): string {
 }
 
 function getFontAtlasForFont(font: FontData | string): FontAtlas {
-    let atlas = fontAtlases[getFontName(font)];
+    let atlas = _k.gfx.fontAtlases[getFontName(font)];
     if (!atlas) {
         // create a new atlas
         const fontName = font instanceof FontData
@@ -163,7 +161,7 @@ function getFontAtlasForFont(font: FontData | string): FontAtlas {
             outline: opts.outline,
         };
 
-        fontAtlases[fontName] = atlas;
+        _k.gfx.fontAtlases[fontName] = atlas;
     }
     return atlas;
 }

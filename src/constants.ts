@@ -1,3 +1,5 @@
+// Be sure of these constants not being dependent on the Engine context.
+
 // some default charsets for loading bitmap fonts
 export const ASCII_CHARS =
     " !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~";

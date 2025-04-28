@@ -1,7 +1,7 @@
 import type { Asset } from "../assets/asset";
 import type { SpriteData } from "../assets/sprite";
 import { timer, type TimerComp } from "../ecs/components/misc/timer";
-import { make } from "../ecs/entity/make";
+import { makeInternal } from "../ecs/entity/make";
 import type { GameEventMap, GameObjEventMap } from "../events/eventMap";
 import { KEventHandler } from "../events/events";
 import { Mat23, Vec2 } from "../math/math";
@@ -13,6 +13,10 @@ import type { System } from "./systems";
  * The "Game" it's all the state related to the game running
  */
 export type Game = {
+    /**
+     * The last game object id used.
+     */
+    gameObjLastId: number;
     /**
      * Where game object global events are stored.
      */
@@ -43,10 +47,11 @@ export type Game = {
 
 export const initGame = (): Game => {
     const game = {
+        gameObjLastId: 0,
         // general events
         events: new KEventHandler<GameEventMap & GameObjEventMap>(),
         // root game object
-        root: make([]) as GameObj<TimerComp>,
+        root: makeInternal([], 0) as GameObj<TimerComp>,
 
         // misc
         gravity: null as Vec2 | null,
