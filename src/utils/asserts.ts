@@ -1,5 +1,5 @@
 import { Color } from "../math/color";
-import { Vec2 } from "../math/math";
+import { Vec2 } from "../math/Vec2";
 
 export const arrayIsColor = (arr: unknown[]): arr is Color[] => {
     return arr[0] instanceof Color;

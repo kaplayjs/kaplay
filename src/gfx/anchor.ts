@@ -1,16 +1,17 @@
-import { Vec2 } from "../math/math";
+import {
+    BOTTOM,
+    BOTTOM_LEFT,
+    BOTTOM_RIGHT,
+    CENTER,
+    LEFT,
+    RIGHT,
+    TOP,
+    TOP_LEFT,
+    TOP_RIGHT,
+} from "../constants/math";
+import { Vec2 } from "../math/Vec2";
 import { type Anchor } from "../types";
 import type { TextAlign } from "./draw/drawText";
-
-const TOP_LEFT = new Vec2(-1, -1);
-const TOP = new Vec2(0, -1);
-const TOP_RIGHT = new Vec2(1, -1);
-const LEFT = new Vec2(-1, 0);
-const CENTER = new Vec2(0, 0);
-const RIGHT = new Vec2(1, 0);
-const BOTTOM_LEFT = new Vec2(-1, 1);
-const BOTTOM = new Vec2(0, 1);
-const BOTTOM_RIGHT = new Vec2(1, 1);
 
 // convert anchor string to a vec2 offset
 export function anchorPt(orig: Anchor | Vec2): Vec2 {

@@ -1,5 +1,6 @@
 import { _k } from "../../../kaplay";
-import type { RaycastResult, Vec2 } from "../../../math/math";
+import type { RaycastResult } from "../../../math/math";
+import type { Vec2 } from "../../../math/Vec2";
 
 // this is not a component lol
 export function raycast(

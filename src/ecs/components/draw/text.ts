@@ -1,5 +1,5 @@
 import type { BitmapFontData } from "../../../assets/bitmapFont";
-import { DEF_TEXT_SIZE } from "../../../constants";
+import { DEF_TEXT_SIZE } from "../../../constants/general";
 import { onLoad } from "../../../events/globalEvents";
 import { getRenderProps } from "../../../game/utils";
 import {

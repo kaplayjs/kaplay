@@ -1,6 +1,6 @@
 import type { App } from "../app/app";
 import type { AudioCtx } from "../audio/audio";
-import { LOG_MAX } from "../constants";
+import { LOG_MAX } from "../constants/general";
 import type { Game } from "../game/game";
 import type { AppGfxCtx } from "../gfx/gfxApp";
 import type { Debug, KAPLAYOpt } from "../types";

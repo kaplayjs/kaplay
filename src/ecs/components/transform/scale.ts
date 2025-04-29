@@ -1,4 +1,5 @@
-import { Vec2, vec2, type Vec2Args } from "../../../math/math";
+import { vec2, type Vec2Args } from "../../../math/math";
+import { Vec2 } from "../../../math/Vec2";
 import type { Comp } from "../../../types";
 
 /**

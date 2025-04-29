@@ -1,4 +1,5 @@
-import { Quad, Vec2 } from "../../math/math";
+import { Quad } from "../../math/math";
+import { Vec2 } from "../../math/Vec2";
 import type { ImageSource } from "../../types";
 import { type GfxCtx, Texture } from "../gfx";
 

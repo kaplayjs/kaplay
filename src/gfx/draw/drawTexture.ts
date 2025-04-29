@@ -1,6 +1,7 @@
-import { DEF_ANCHOR } from "../../constants";
+import { DEF_ANCHOR } from "../../constants/general";
 import { Color } from "../../math/color";
-import { Quad, Vec2 } from "../../math/math";
+import { Quad } from "../../math/math";
+import { Vec2 } from "../../math/Vec2";
 import { BlendMode, type DrawTextureOpt, type Vertex } from "../../types";
 import { anchorPt } from "../anchor";
 import { drawRaw } from "./drawRaw";

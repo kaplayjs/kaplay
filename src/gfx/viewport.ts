@@ -1,5 +1,5 @@
 import { _k } from "../kaplay";
-import { Vec2 } from "../math/math";
+import { Vec2 } from "../math/Vec2";
 
 /*
 The viewport is where the game is rendered. There's various concepts for

@@ -26,7 +26,7 @@ import { loadSpriteAtlas } from "./assets/spriteAtlas";
 import { burp } from "./audio/burp";
 import { play } from "./audio/play";
 import { getVolume, setVolume, volume } from "./audio/volume";
-import { ASCII_CHARS, EVENT_CANCEL_SYMBOL } from "./constants";
+import { ASCII_CHARS, EVENT_CANCEL_SYMBOL } from "./constants/general";
 import { createEngine } from "./core/engine";
 import { handleErr } from "./core/errors";
 import { blend } from "./ecs/components/draw/blend";
@@ -184,7 +184,6 @@ import {
     width,
 } from "./gfx/stack";
 import { updateViewport } from "./gfx/viewport";
-const VERSION = packageJson.version;
 
 import boomSpriteSrc from "./kassets/boom.png";
 import kaSpriteSrc from "./kassets/ka.png";
@@ -192,6 +191,7 @@ import { clamp } from "./math/clamp";
 import { Color, hsl2rgb, rgb } from "./math/color";
 import easings from "./math/easings";
 import { gjkShapeIntersection, gjkShapeIntersects } from "./math/gjk";
+import { Mat4 } from "./math/Mat4";
 import {
     bezier,
     cardinal,
@@ -224,7 +224,6 @@ import {
     map,
     mapc,
     Mat23,
-    Mat4,
     normalizedCurve,
     Point,
     Polygon,
@@ -247,11 +246,11 @@ import {
     testRectPoint,
     testRectRect,
     triangulate,
-    Vec2,
     vec2,
     wave,
 } from "./math/math";
 import { NavMesh } from "./math/navigationmesh";
+import { Vec2 } from "./math/Vec2";
 import {
     BlendMode,
     type Canvas,
@@ -274,8 +273,8 @@ import {
  */
 export let _k: KAPLAYCtx["_k"];
 
-// If KAPLAY crashed
-let initialized = false;
+// If KAPLAY was runned before
+let runned = false;
 
 /**
  * Initialize KAPLAY context. The starting point of all KAPLAY games.
@@ -320,13 +319,17 @@ const kaplay = <
 ): TPlugins extends [undefined] ? KAPLAYCtx<TButtons, TButtonsName>
     : KAPLAYCtx<TButtons, TButtonsName> & MergePlugins<TPlugins> =>
 {
-    if (initialized) {
+    if (runned) {
         console.warn(
-            "KAPLAY already initialized, you are calling kaplay() multiple times, it may lead bugs!",
+            "KAPLAY was runned before, cleaning state",
         );
+
+        // cleanup
+        // @ts-ignore
+        _k = null;
     }
 
-    initialized = true;
+    runned = true;
 
     _k = createEngine(gopt);
 
@@ -530,6 +533,9 @@ const kaplay = <
             // run all scattered gc events
             ggl.destroy();
             gc.forEach((f) => f());
+
+            // remove canvas
+            app.canvas.remove();
         });
     }
 
@@ -639,12 +645,12 @@ const kaplay = <
     );
 
     updateViewport();
-    initEvents(_k.gfx);
+    initEvents(gfx);
 
     // the exported ctx handle
     const ctx: KAPLAYCtx = {
         _k,
-        VERSION,
+        VERSION: packageJson.version,
         // asset load
         loadRoot,
         loadProgress,

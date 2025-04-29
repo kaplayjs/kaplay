@@ -1,4 +1,4 @@
-import type { Vec2 } from "../../../math/math";
+import type { Vec2 } from "../../../math/Vec2";
 import type { Anchor, Comp } from "../../../types";
 
 /**

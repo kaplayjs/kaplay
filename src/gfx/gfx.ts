@@ -1,6 +1,6 @@
 import type { Shader, Uniform } from "../assets/shader";
+import { IDENTITY_MATRIX } from "../constants/math";
 import { getCamTransform } from "../game/camera";
-import { Mat4 } from "../math/math";
 import {
     BlendMode,
     type ImageSource,
@@ -113,8 +113,6 @@ export type VertexFormat = {
     name: string;
     size: number;
 }[];
-
-const identityMatrix = new Mat4();
 
 export class BatchRenderer {
     ctx: GfxCtx;
@@ -297,8 +295,8 @@ export class BatchRenderer {
         this.curShader.send({
             width,
             height,
-            camera: this.curFixed ? identityMatrix : getCamTransform(),
-            transform: identityMatrix,
+            camera: this.curFixed ? IDENTITY_MATRIX : getCamTransform(),
+            transform: IDENTITY_MATRIX,
         });
 
         // Bind texture
