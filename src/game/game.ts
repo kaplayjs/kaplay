@@ -123,6 +123,7 @@ export const initGame = (): Game => {
     } satisfies Game;
 
     game.root.use(timer());
+    game.gameObjLastId++;
 
     return game;
 };
