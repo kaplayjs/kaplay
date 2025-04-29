@@ -1,5 +1,5 @@
 import type { KEventController } from "../../../events/events";
-import type { Vec2 } from "../../../math/math";
+import type { Vec2 } from "../../../math/Vec2";
 import type { Comp, GameObj } from "../../../types";
 import type { PosComp } from "../transform/pos";
 import type { TileComp } from "./tile";

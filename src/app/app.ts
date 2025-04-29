@@ -16,7 +16,8 @@ import type { AppEventMap } from "../events/eventMap";
 import { type KEventController, KEventHandler } from "../events/events";
 import { canvasToViewport } from "../gfx/viewport";
 import { _k } from "../kaplay";
-import { map, Vec2, vec2 } from "../math/math";
+import { map, vec2 } from "../math/math";
+import { Vec2 } from "../math/Vec2";
 import { overload2 } from "../utils/overload";
 import { isEqOrIncludes, setHasOrIncludes } from "../utils/sets";
 import {

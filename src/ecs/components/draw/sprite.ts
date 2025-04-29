@@ -14,7 +14,8 @@ import { anchorPt } from "../../../gfx/anchor";
 import { drawTexture } from "../../../gfx/draw/drawTexture";
 import type { Texture } from "../../../gfx/gfx";
 import { _k } from "../../../kaplay";
-import { Quad, quad, Rect, type Vec2, vec2 } from "../../../math/math";
+import { Quad, quad, Rect, vec2 } from "../../../math/math";
+import { type Vec2 } from "../../../math/Vec2";
 import type {
     Comp,
     GameObj,

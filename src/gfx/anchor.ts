@@ -9,7 +9,7 @@ import {
     TOP_LEFT,
     TOP_RIGHT,
 } from "../constants/math";
-import { Vec2 } from "../math/math";
+import { Vec2 } from "../math/Vec2";
 import { type Anchor } from "../types";
 import type { TextAlign } from "./draw/drawText";
 

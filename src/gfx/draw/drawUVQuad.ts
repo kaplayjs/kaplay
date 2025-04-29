@@ -1,6 +1,7 @@
 import { DEF_ANCHOR, UV_PAD } from "../../constants/general";
 import { Color, rgb } from "../../math/color";
-import { Quad, Vec2 } from "../../math/math";
+import { Quad } from "../../math/math";
+import { Vec2 } from "../../math/Vec2";
 import { BlendMode, type DrawUVQuadOpt } from "../../types";
 import { anchorPt } from "../anchor";
 import {

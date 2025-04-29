@@ -191,6 +191,7 @@ import { clamp } from "./math/clamp";
 import { Color, hsl2rgb, rgb } from "./math/color";
 import easings from "./math/easings";
 import { gjkShapeIntersection, gjkShapeIntersects } from "./math/gjk";
+import { Mat4 } from "./math/Mat4";
 import {
     bezier,
     cardinal,
@@ -223,7 +224,6 @@ import {
     map,
     mapc,
     Mat23,
-    Mat4,
     normalizedCurve,
     Point,
     Polygon,
@@ -246,11 +246,11 @@ import {
     testRectPoint,
     testRectRect,
     triangulate,
-    Vec2,
     vec2,
     wave,
 } from "./math/math";
 import { NavMesh } from "./math/navigationmesh";
+import { Vec2 } from "./math/Vec2";
 import {
     BlendMode,
     type Canvas,

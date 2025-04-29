@@ -7,9 +7,9 @@ import {
     catmullRom,
     hermiteFirstDerivative,
     lerp,
-    Vec2,
     vec2,
 } from "../../../math/math";
+import { Vec2 } from "../../../math/Vec2";
 import type { Comp, EaseFunc, GameObj, LerpValue } from "../../../types";
 import type { NamedComp } from "./named";
 

@@ -7,7 +7,8 @@ import {
     VERTEX_FORMAT,
 } from "../constants/general";
 import { type Color, rgb } from "../math/color";
-import { Mat23, Vec2 } from "../math/math";
+import { Mat23 } from "../math/math";
+import { Vec2 } from "../math/Vec2";
 import type { KAPLAYOpt } from "../types";
 import { FrameBuffer } from "./classes/FrameBuffer";
 import type { FontAtlas } from "./formatText";

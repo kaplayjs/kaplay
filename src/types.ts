@@ -122,12 +122,12 @@ import type { StyledTextInfo } from "./gfx/formatText";
 import type { Texture } from "./gfx/gfx";
 import type { Color, CSSColor, RGBAValue, RGBValue } from "./math/color";
 import type { GjkCollisionResult } from "./math/gjk";
+import type { Mat4 } from "./math/Mat4";
 import type {
     Circle,
     Ellipse,
     Line,
     Mat23,
-    Mat4,
     Point,
     Polygon,
     Quad,
@@ -135,9 +135,9 @@ import type {
     Rect,
     RNG,
     StepPosition,
-    Vec2,
 } from "./math/math";
 import type { NavMesh } from "./math/navigationmesh";
+import type { Vec2 } from "./math/Vec2";
 
 /**
  * Context handle that contains every KAPLAY function.

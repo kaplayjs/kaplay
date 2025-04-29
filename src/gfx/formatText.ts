@@ -9,7 +9,8 @@ import {
 } from "../constants/general";
 import { _k } from "../kaplay";
 import { Color } from "../math/color";
-import { Quad, Vec2, vec2 } from "../math/math";
+import { Quad, vec2 } from "../math/math";
+import { Vec2 } from "../math/Vec2";
 import type { Outline, TexFilter } from "../types";
 import { runes } from "../utils/runes";
 import { alignPt } from "./anchor";

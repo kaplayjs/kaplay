@@ -1,7 +1,8 @@
 import type { FontData } from "../../assets/font";
 import type { Uniform } from "../../assets/shader";
 import type { Color } from "../../math/color";
-import type { Quad, Vec2 } from "../../math/math";
+import type { Quad } from "../../math/math";
+import type { Vec2 } from "../../math/Vec2";
 import { anchorPt } from "../anchor";
 import type { Texture } from "../gfx";
 import {
