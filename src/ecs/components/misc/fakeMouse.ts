@@ -38,7 +38,7 @@ export type FakeMouseOpt = {
     followMouse?: boolean;
 };
 
-type FakeMouse = GameObj<PosComp>;
+type FakeMouse = GameObj<FakeMouseComp | PosComp>;
 
 export const fakeMouse = (opt: FakeMouseOpt = {
     followMouse: true,
@@ -48,6 +48,16 @@ export const fakeMouse = (opt: FakeMouseOpt = {
     return {
         id: "fakeMouse",
         require: ["pos"],
+        add(this: GameObj<FakeMouse>) {
+            if (_k.game.fakeMouse) {
+                throw new Error("Fake mouse already exists");
+            }
+
+            _k.game.fakeMouse = this;
+        },
+        destroy() {
+            _k.game.fakeMouse = null;
+        },
         get isPressed() {
             return isPressed;
         },

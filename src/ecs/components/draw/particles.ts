@@ -10,9 +10,9 @@ import {
     Quad,
     rand,
     type ShapeType,
-    Vec2,
     vec2,
 } from "../../../math/math";
+import { Vec2 } from "../../../math/Vec2";
 import type { Comp } from "../../../types";
 
 /**

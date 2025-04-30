@@ -1,6 +1,7 @@
-import { DBG_FONT } from "../../constants";
+import { DBG_FONT } from "../../constants/general";
 import { rgb } from "../../math/color";
-import { type Vec2, vec2 } from "../../math/math";
+import { vec2 } from "../../math/math";
+import { type Vec2 } from "../../math/Vec2";
 import { formatText } from "../formatText";
 import {
     height,

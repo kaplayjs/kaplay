@@ -4,12 +4,7 @@ import { KEvent, KEventHandler } from "../../events/events";
 import { _k } from "../../kaplay";
 import { Mat23 } from "../../math/math";
 import type { Comp, CompList, GameObj } from "../../types";
-import { uid } from "../../utils/uid";
-import {
-    attachAppToGameObjRaw,
-    type GameObjRaw,
-    GameObjRawPrototype,
-} from "./GameObjRaw";
+import { attachAppToGameObjRaw, GameObjRawPrototype } from "./GameObjRaw";
 
 /*
 Order of making a game object:
@@ -18,10 +13,15 @@ Order of making a game object:
 2. We create the GameObjRaw object using our prototype
 3. We call .use() or .tag() on elements in the compAndTags array
 */
-export function make<T extends CompList<unknown>>(
+
+/*
+We use makeInternal() to create the root game object, and make() to create
+the rest of the game objects.
+*/
+export function makeInternal<T extends CompList<unknown>>(
     compsAndTags: [...T],
+    id: number,
 ): GameObj<T[number]> {
-    const id = uid();
     const addCompIdsToTags = id == 0
         ? false
         : _k.globalOpt.tagsAsComponents;
@@ -86,4 +86,12 @@ export function make<T extends CompList<unknown>>(
 
     // We cast the type as .use() doesn't add the types
     return obj as GameObj<T[number]>;
+}
+
+export function make<T extends CompList<unknown>>(
+    compsAndTags: [...T],
+): GameObj<T[number]> {
+    const obj = makeInternal(compsAndTags, _k.game.gameObjLastId);
+    _k.game.gameObjLastId++;
+    return obj;
 }

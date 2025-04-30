@@ -5,7 +5,8 @@ import { fixed } from "../ecs/components/transform/fixed";
 import { center, height, width } from "../gfx/stack";
 import { _k } from "../kaplay";
 import { type Color, rgb } from "../math/color";
-import { type Mat23, Vec2, vec2, type Vec2Args } from "../math/math";
+import { type Mat23, vec2, type Vec2Args } from "../math/math";
+import { Vec2 } from "../math/Vec2";
 import { deprecateMsg } from "../utils/log";
 import { destroy } from "./object";
 

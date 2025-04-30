@@ -1,5 +1,6 @@
 import { _k } from "../kaplay";
-import { type Mat23, Vec2, vec2 } from "../math/math";
+import { type Mat23, vec2 } from "../math/math";
+import { Vec2 } from "../math/Vec2";
 
 export function pushTransform() {
     _k.gfx.transformStack[++_k.gfx.transformStackIndex].setMat23(

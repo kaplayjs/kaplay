@@ -1,5 +1,7 @@
+import { MAX_TRIES } from "../constants/general";
 import type { Shape } from "../types";
-import { Circle, Ellipse, Polygon, Rect, Vec2, vec2 } from "./math";
+import { Circle, Ellipse, Polygon, Rect, vec2 } from "./math";
+import { Vec2 } from "./Vec2";
 
 interface Collider {
     center: Vec2;
@@ -296,8 +298,6 @@ export type GjkCollisionResult = {
      */
     distance: number;
 };
-
-const MAX_TRIES = 20;
 
 /**
  * Returns true if the shapes collide

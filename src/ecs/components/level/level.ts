@@ -2,11 +2,11 @@ import type { KEventController } from "../../../events/events";
 import {
     raycastGrid,
     type RaycastResult,
-    type Vec2,
     vec2,
     type Vec2Args,
 } from "../../../math/math";
 import { calcTransform } from "../../../math/various";
+import { type Vec2 } from "../../../math/Vec2";
 import {
     type Comp,
     type CompList,

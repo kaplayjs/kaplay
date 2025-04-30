@@ -1,4 +1,4 @@
-import { DEF_OFFSCREEN_DIS } from "../../../constants";
+import { DEF_OFFSCREEN_DIS } from "../../../constants/general";
 import type { KEventController } from "../../../events/events";
 import { onUpdate } from "../../../events/globalEvents";
 import { height, width } from "../../../gfx/stack";

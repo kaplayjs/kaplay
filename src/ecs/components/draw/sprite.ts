@@ -6,7 +6,7 @@ import {
     type SpriteAnim,
     type SpriteData,
 } from "../../../assets/sprite";
-import { DEF_ANCHOR } from "../../../constants";
+import { DEF_ANCHOR } from "../../../constants/general";
 import { KEvent, type KEventController } from "../../../events/events";
 import { onLoad } from "../../../events/globalEvents";
 import { getRenderProps } from "../../../game/utils";
@@ -14,7 +14,8 @@ import { anchorPt } from "../../../gfx/anchor";
 import { drawTexture } from "../../../gfx/draw/drawTexture";
 import type { Texture } from "../../../gfx/gfx";
 import { _k } from "../../../kaplay";
-import { Quad, quad, Rect, type Vec2, vec2 } from "../../../math/math";
+import { Quad, quad, Rect, vec2 } from "../../../math/math";
+import { type Vec2 } from "../../../math/Vec2";
 import type {
     Comp,
     GameObj,

@@ -1,11 +1,13 @@
-import { BG_GRID_SIZE } from "../constants";
+import { BG_GRID_SIZE } from "../constants/general";
 import type { Game } from "../game/game";
 import { drawTexture } from "../gfx/draw/drawTexture";
 import { drawUnscaled } from "../gfx/draw/drawUnscaled";
 import { drawUVQuad } from "../gfx/draw/drawUVQuad";
 import type { AppGfxCtx } from "../gfx/gfxApp";
 import { flush, height, width } from "../gfx/stack";
-import { Quad, Vec2 } from "../math/math";
+import { Quad } from "../math/math";
+import { Vec2 } from "../math/Vec2";
+
 export type FrameRenderer = ReturnType<typeof createFrameRenderer>;
 
 export const createFrameRenderer = (

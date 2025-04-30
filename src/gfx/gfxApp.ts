@@ -5,16 +5,21 @@ import {
     MAX_BATCHED_INDICES,
     MAX_BATCHED_VERTS,
     VERTEX_FORMAT,
-} from "../constants";
+} from "../constants/general";
 import { type Color, rgb } from "../math/color";
 import { Mat23 } from "../math/math";
+import { Vec2 } from "../math/Vec2";
 import type { KAPLAYOpt } from "../types";
 import { FrameBuffer } from "./classes/FrameBuffer";
+import type { FontAtlas } from "./formatText";
 import { BatchRenderer, type GfxCtx, Texture } from "./gfx";
 
 export type AppGfxCtx = {
     /** How many draw calls we're doing last frame */
     lastDrawCalls: number;
+    /** Font atlases */
+    fontAtlases: Record<string, FontAtlas>;
+    /** The graphics context */
     ggl: GfxCtx;
     /** Default shader */
     defShader: Shader;
@@ -47,6 +52,10 @@ export type AppGfxCtx = {
     viewport: Viewport;
     fixed: boolean;
     gl: WebGLRenderingContext;
+    /**
+     * Scratch vec2
+     */
+    scratchPt: Vec2;
 };
 
 export type Viewport = {
@@ -153,6 +162,8 @@ export const initAppGfx = (gfx: GfxCtx, gopt: KAPLAYOpt): AppGfxCtx => {
     return {
         // how many draw calls we're doing last frame, this is the number we give to users
         lastDrawCalls: 0,
+        fontAtlases: {} as Record<string, FontAtlas>,
+
         ggl: gfx,
 
         // gfx states
@@ -188,5 +199,7 @@ export const initAppGfx = (gfx: GfxCtx, gopt: KAPLAYOpt): AppGfxCtx => {
 
         fixed: false,
         gl,
+
+        scratchPt: new Vec2(0, 0),
     };
 };

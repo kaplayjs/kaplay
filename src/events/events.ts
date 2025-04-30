@@ -1,4 +1,4 @@
-import { EVENT_CANCEL_SYMBOL } from "../constants";
+import { EVENT_CANCEL_SYMBOL } from "../constants/general";
 
 export class Registry<T> extends Map<number, T> {
     private lastID: number = 0;

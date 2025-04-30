@@ -1,7 +1,8 @@
-import { DEF_ANCHOR } from "../../constants";
+import { DEF_ANCHOR } from "../../constants/general";
 import type { Color } from "../../math/color";
-import { Vec2, vec2 } from "../../math/math";
+import { vec2 } from "../../math/math";
 import { getArcPts } from "../../math/various";
+import { Vec2 } from "../../math/Vec2";
 import type { Anchor, RenderProps } from "../../types";
 import { anchorPt } from "../anchor";
 import { drawPolygon } from "./drawPolygon";

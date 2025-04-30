@@ -1,6 +1,7 @@
 import { getRenderProps } from "../../../game/utils";
 import { drawEllipse } from "../../../gfx/draw/drawEllipse";
-import { Ellipse, Vec2 } from "../../../math/math";
+import { Ellipse } from "../../../math/math";
+import { Vec2 } from "../../../math/Vec2";
 import type { Comp, GameObj } from "../../../types";
 import type { AnchorComp } from "../transform/anchor";
 import type { outline } from "./outline";

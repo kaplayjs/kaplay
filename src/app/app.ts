@@ -11,19 +11,18 @@ import type {
     MouseButton,
 } from "../types";
 
-import { map, Vec2, vec2 } from "../math/math";
-
-import GAMEPAD_MAP from "../data/gamepad.json" assert { type: "json" };
+import { GP_MAP } from "../constants/general";
 import type { AppEventMap } from "../events/eventMap";
 import { type KEventController, KEventHandler } from "../events/events";
 import { canvasToViewport } from "../gfx/viewport";
 import { _k } from "../kaplay";
+import { map, vec2 } from "../math/math";
+import { Vec2 } from "../math/Vec2";
 import { overload2 } from "../utils/overload";
 import { isEqOrIncludes, setHasOrIncludes } from "../utils/sets";
 import {
     type ButtonBinding,
     type ButtonsDef,
-    getLastInputDeviceType,
     parseButtonBindings,
 } from "./inputBindings";
 
@@ -84,10 +83,6 @@ export type AppEvents = keyof {
     [K in keyof App as K extends `on${any}` ? K : never]: [never];
 };
 
-export let appState: AppState;
-
-const GP_MAP = GAMEPAD_MAP as Record<string, GamepadDef>;
-
 export const initAppState = (opt: {
     canvas: HTMLCanvasElement;
     touchToMouse?: boolean;
@@ -146,8 +141,7 @@ export const initApp = (
     }
 
     const state = initAppState(opt);
-    appState = state;
-    parseButtonBindings();
+    parseButtonBindings(state);
 
     const _mousePos = new Vec2(0);
 
@@ -657,6 +651,10 @@ export const initApp = (
         );
     });
 
+    const getLastInputDeviceType = () => {
+        return state.lastInputDevice;
+    };
+
     function processInput() {
         state.events.trigger("input");
         state.keyState.down.forEach((k) => state.events.trigger("keyDown", k));
@@ -948,7 +946,7 @@ export const initApp = (
     };
 
     canvasEvents.keydown = (e) => {
-        appState.capsOn = e.getModifierState("CapsLock");
+        state.capsOn = e.getModifierState("CapsLock");
 
         if (PREVENT_DEFAULT_KEYS.has(e.key)) {
             e.preventDefault();

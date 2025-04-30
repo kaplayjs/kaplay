@@ -50,8 +50,6 @@ export interface TextInputComp extends Comp {
     onChange(cb: () => void): KEventController;
 }
 
-const allTextInputs: Set<GameObj<TextInputComp>> = new Set();
-
 export function textInput(
     this: KAPLAYCtx,
     hasFocus: boolean = true,
@@ -71,7 +69,7 @@ export function textInput(
             (this as any as GameObj).trigger(hasFocus ? "focus" : "blur");
             if (hasFocus) {
                 origText = this.typedText;
-                allTextInputs.forEach(i => {
+                _k.game.allTextInputs.forEach(i => {
                     // @ts-ignore
                     if (i !== this) {
                         i.hasFocus = false;
@@ -85,7 +83,7 @@ export function textInput(
         require: ["text"],
         typedText: "",
         add(this: GameObj<TextComp & TextInputComp>) {
-            allTextInputs.add(this);
+            _k.game.allTextInputs.add(this);
             const flip = () => {
                 this.text = this.typedText.replace(/([\[\\])/g, "\\$1");
                 this.trigger("input");
@@ -117,7 +115,7 @@ export function textInput(
         destroy(this: GameObj<TextInputComp>) {
             charEv.cancel();
             backEv.cancel();
-            allTextInputs.delete(this);
+            _k.game.allTextInputs.delete(this);
         },
         focus() {
             this.hasFocus = true;

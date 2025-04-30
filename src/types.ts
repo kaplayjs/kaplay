@@ -122,12 +122,12 @@ import type { StyledTextInfo } from "./gfx/formatText";
 import type { Texture } from "./gfx/gfx";
 import type { Color, CSSColor, RGBAValue, RGBValue } from "./math/color";
 import type { GjkCollisionResult } from "./math/gjk";
+import type { Mat4 } from "./math/Mat4";
 import type {
     Circle,
     Ellipse,
     Line,
     Mat23,
-    Mat4,
     Point,
     Polygon,
     Quad,
@@ -135,9 +135,9 @@ import type {
     Rect,
     RNG,
     StepPosition,
-    Vec2,
 } from "./math/math";
 import type { NavMesh } from "./math/navigationmesh";
+import type { Vec2 } from "./math/Vec2";
 
 /**
  * Context handle that contains every KAPLAY function.
@@ -6914,6 +6914,10 @@ export type EaseFunc = (t: number) => number;
  */
 export type TimerController = {
     /**
+     * The time left for the callback to be called.
+     */
+    timeLeft: number;
+    /**
      * If the event handler is paused.
      */
     paused: boolean;
@@ -6934,6 +6938,10 @@ export type TimerController = {
  * @group Timer
  */
 export type TweenController = TimerController & {
+    /**
+     * The current time in the duration of the tween
+     */
+    currentTime: number;
     /**
      * Finish the tween now and cancel.
      */

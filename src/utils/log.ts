@@ -1,4 +1,4 @@
-const warned = new Set();
+import { _k } from "../kaplay";
 
 export const getErrorMessage = (error: unknown) =>
     (error instanceof Error) ? error.message : String(error);
@@ -15,8 +15,8 @@ export function deprecate(
 }
 
 export function warn(msg: string) {
-    if (!warned.has(msg)) {
-        warned.add(msg);
+    if (!_k.game.warned.has(msg)) {
+        _k.game.warned.add(msg);
         console.warn(msg);
     }
 }
