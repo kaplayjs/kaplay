@@ -1,4 +1,6 @@
 import type { KEventController } from "../../../events/events";
+import { _k } from "../../../kaplay";
+import { clamp } from "../../../math/clamp";
 import type { Comp, GameObj } from "../../../types";
 
 /**
@@ -18,19 +20,15 @@ export interface HealthComp extends Comp {
     /**
      * Current health points.
      */
-    hp(): number;
-    /**
-     * Set current health points.
-     */
-    setHP(hp: number): void;
+    hp: number;
     /**
      * Max amount of HP.
      */
-    maxHP(): number | null;
+    maxHP: number | null;
     /**
-     * Set max amount of HP.
+     * Wheter hp is 0.
      */
-    setMaxHP(hp: number): void;
+    dead: boolean;
     /**
      * Register an event that runs when hurt() is called upon the object.
      *
@@ -61,29 +59,23 @@ export function health(
 
     return {
         id: "health",
-        hurt(this: GameObj, n: number = 1) {
-            this.setHP(hp - n);
+        hp: hp,
+        maxHP: maxHP as number | null,
+        get dead() {
+            return this.hp <= 0;
+        },
+        hurt(this: GameObj<HealthComp>, n: number = 1) {
+            this.hp = maxHP ? Math.min(maxHP, this.hp - n) : this.hp - n;
             this.trigger("hurt", n);
+            if (this.hp <= 0) {
+                this.trigger("death");
+            }
         },
         heal(this: GameObj, n: number = 1) {
             const origHP = hp;
+            this.hp += n;
             this.setHP(hp + n);
             this.trigger("heal", hp - origHP);
-        },
-        hp(): number {
-            return hp;
-        },
-        maxHP(): number | null {
-            return maxHP ?? null;
-        },
-        setMaxHP(n: number): void {
-            maxHP = n;
-        },
-        setHP(this: GameObj, n: number) {
-            hp = maxHP ? Math.min(maxHP, n) : n;
-            if (hp <= 0) {
-                this.trigger("death");
-            }
         },
         onHurt(
             this: GameObj,
