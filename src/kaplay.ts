@@ -66,7 +66,7 @@ let runned = false;
  *
  * @group Start
  */
-const kaplay = <
+export const kaplay = <
     TPlugins extends PluginList<unknown> = [undefined],
     TButtons extends ButtonsDef = {},
     TButtonsName extends string = keyof TButtons & string,
