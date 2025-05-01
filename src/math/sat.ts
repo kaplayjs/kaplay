@@ -1,10 +1,21 @@
-import { type Polygon, vec2 } from "./math";
+import type { Shape } from "../types";
+import { Polygon, vec2 } from "./math";
 import { Vec2 } from "./Vec2";
 
 export type SatResult = {
     normal: Vec2;
     distance: number;
 };
+
+export function satShapeIntersection(shape1: Shape, shape2: Shape) {
+    const s1 = shape1 instanceof Polygon
+        ? shape1
+        : new Polygon(shape1.bbox().points());
+    const s2 = shape2 instanceof Polygon
+        ? shape2
+        : new Polygon(shape2.bbox().points());
+    return sat(s1, s2);
+}
 
 export function sat(p1: Polygon, p2: Polygon): SatResult | null {
     let overlap = Number.MAX_VALUE;
@@ -36,8 +47,8 @@ export function sat(p1: Polygon, p2: Polygon): SatResult | null {
                 const o1 = max2 - min1;
                 const o2 = min2 - max1;
                 overlap = Math.abs(o1) < Math.abs(o2) ? o1 : o2;
-                result.normal = axisProj;
-                result.distance = overlap;
+                result.normal = axisProj.scale(Math.sign(overlap));
+                result.distance = Math.abs(overlap);
             }
         }
     }
