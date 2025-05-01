@@ -10,6 +10,7 @@ on:
         description: "Version to publish"
         required: true
         default: "4000.0.0"
+
 jobs:
   publish:
     runs-on: ubuntu-latest
@@ -37,7 +38,7 @@ jobs:
           git config --local user.email "lajbel@kaplayjs.com"
           git add .
           git commit -m "chore: bump version" || echo "No changes to commit"
-          git push https://x-access-token:$BOT_TOKEN@github.com/${{ github.repository }}.git HEAD:master
+          git push https://x-access-token:$BOT_TOKEN@github.com/${{ github.repository }}.git HEAD:master --force
       - uses: pnpm/action-setup@v4
         name: Install pnpm
         with:
