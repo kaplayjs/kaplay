@@ -65,6 +65,7 @@ export const createEngine = (gopt: KAPLAYOpt) => {
         fontCacheCanvas,
         game,
         debug,
+        gc: [] as (() => void)[],
         // Patch, k it's only avaible after running kaplay()
         k: null as unknown as KAPLAYCtx,
     };

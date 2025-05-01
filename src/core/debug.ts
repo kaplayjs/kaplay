@@ -3,7 +3,8 @@ import type { AudioCtx } from "../audio/audio";
 import { LOG_MAX } from "../constants/general";
 import type { Game } from "../game/game";
 import type { AppGfxCtx } from "../gfx/gfxApp";
-import type { Debug, KAPLAYOpt } from "../types";
+import { _k } from "../kaplay";
+import type { Debug, KAPLAYOpt, Recording } from "../types";
 import type { FrameRenderer } from "./frameRendering";
 
 export const initDebug = (
@@ -61,4 +62,64 @@ export const initDebug = (
     } satisfies Debug;
 
     return debug;
+};
+
+// TODO: Move all to a debug folder maybe
+export const record = (frameRate?: number): Recording => {
+    const stream = _k.app.canvas.captureStream(frameRate);
+    const audioDest = _k.audio.ctx.createMediaStreamDestination();
+
+    _k.audio.masterNode.connect(audioDest);
+
+    // TODO: Enabling audio results in empty video if no audio received
+    // const audioStream = audioDest.stream
+    // const [firstAudioTrack] = audioStream.getAudioTracks()
+
+    // stream.addTrack(firstAudioTrack);
+
+    const recorder = new MediaRecorder(stream);
+    const chunks: any[] = [];
+
+    recorder.ondataavailable = (e) => {
+        if (e.data.size > 0) {
+            chunks.push(e.data);
+        }
+    };
+
+    recorder.onerror = () => {
+        _k.audio.masterNode.disconnect(audioDest);
+        stream.getTracks().forEach(t => t.stop());
+    };
+
+    recorder.start();
+
+    return {
+        resume() {
+            recorder.resume();
+        },
+
+        pause() {
+            recorder.pause();
+        },
+
+        stop(): Promise<Blob> {
+            recorder.stop();
+            // cleanup
+            _k.audio.masterNode.disconnect(audioDest);
+            stream.getTracks().forEach(t => t.stop());
+            return new Promise((resolve) => {
+                recorder.onstop = () => {
+                    resolve(
+                        new Blob(chunks, {
+                            type: "video/mp4",
+                        }),
+                    );
+                };
+            });
+        },
+
+        download(filename = "kaboom.mp4") {
+            this.stop().then((blob) => _k.k.downloadBlob(filename, blob));
+        },
+    };
 };

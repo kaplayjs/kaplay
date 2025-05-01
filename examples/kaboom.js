@@ -9,8 +9,7 @@
 
 // KAPLAY born as the direct successor of Kaboom.js!
 
-// TIP: You can use kaboom() instead of kaplay()!
-kaboom();
+kaplay();
 
 // The addKaboom() effect is a fun way to add explosions to your game.
 addKaboom(center());

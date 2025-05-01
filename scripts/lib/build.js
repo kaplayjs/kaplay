@@ -2,7 +2,15 @@
 // @ts-check
 
 import * as esbuild from "esbuild";
+import fs from "fs";
+import path from "path";
 import { DIST_DIR, SRC_PATH } from "../constants.js";
+
+// KAPLAY Package.json
+
+const pkgFile = path.join(import.meta.dirname, "../../package.json");
+const pkg = JSON.parse(fs.readFileSync(pkgFile, "utf-8"));
+const pkgVersion = pkg.version;
 
 /**
  * Different formats for the build
@@ -41,6 +49,9 @@ export const config = {
         ".mp3": "binary",
     },
     entryPoints: [SRC_PATH],
+    define: {
+        "KAPLAY_VERSION": JSON.stringify(pkgVersion),
+    },
 };
 
 export async function build(fast = false) {
