@@ -4,6 +4,7 @@ import { _k } from "../../kaplay";
 import { gjkShapeIntersection } from "../../math/gjk";
 import { vec2 } from "../../math/math";
 import { satShapeIntersection } from "../../math/sat";
+import { minkowskiRectShapeIntersection } from "../../math/minkowski";
 import { SweepAndPrune } from "../../math/spatial/sweepandprune";
 import { type Vec2 } from "../../math/Vec2";
 import type { GameObj } from "../../types";
@@ -13,7 +14,9 @@ export const getCollisionSystem = ({ narrow = "gjk" } = {}) => {
 
     const narrowPhaseIntersection = narrow === "gjk"
         ? gjkShapeIntersection
-        : satShapeIntersection;
+        : narrow === "sat" ? satShapeIntersection
+            : narrow === "box" ? minkowskiRectShapeIntersection
+                : gjkShapeIntersection;
 
     class Collision {
         source: GameObj;
