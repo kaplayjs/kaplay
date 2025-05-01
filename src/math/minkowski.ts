@@ -1,11 +1,15 @@
 import type { Shape } from "../types";
-import { vec2, Rect } from "./math";
+import { Rect, vec2 } from "./math";
 import { Vec2 } from "./Vec2";
 
 function minkowskiRectDifference(r1: Rect, r2: Rect): Rect {
     return new Rect(
-        vec2(r1.pos.x - (r2.pos.x + r2.width), r1.pos.y - (r2.pos.y + r2.height)),
-        r1.width + r2.width, r1.height + r2.height
+        vec2(
+            r1.pos.x - (r2.pos.x + r2.width),
+            r1.pos.y - (r2.pos.y + r2.height),
+        ),
+        r1.width + r2.width,
+        r1.height + r2.height,
     );
 }
 
@@ -32,14 +36,22 @@ export function minkowskiRectShapeIntersection(shape1: Shape, shape2: Shape) {
     let normal = vec2();
 
     switch (distance) {
-        case Math.abs(res.pos.x): normal = vec2(1, 0); break;
-        case Math.abs(res.pos.x + res.width): normal = vec2(-1, 0); break;
-        case Math.abs(res.pos.y): normal = vec2(0, 1); break;
-        case Math.abs(res.pos.y + res.height): normal = vec2(0, -1); break;
+        case Math.abs(res.pos.x):
+            normal = vec2(1, 0);
+            break;
+        case Math.abs(res.pos.x + res.width):
+            normal = vec2(-1, 0);
+            break;
+        case Math.abs(res.pos.y):
+            normal = vec2(0, 1);
+            break;
+        case Math.abs(res.pos.y + res.height):
+            normal = vec2(0, -1);
+            break;
     }
 
     return {
         normal,
-        distance
+        distance,
     };
 }
