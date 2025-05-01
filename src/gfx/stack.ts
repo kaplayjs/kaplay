@@ -1,3 +1,4 @@
+import type { Uniform } from "../assets/shader";
 import { _k } from "../kaplay";
 import { type Mat23, vec2 } from "../math/math";
 import { Vec2 } from "../math/Vec2";
@@ -77,3 +78,11 @@ export function height(): number {
 export function center(): Vec2 {
     return vec2(_k.gfx.width / 2, _k.gfx.height / 2);
 }
+
+export const usePostEffect = (
+    name: string,
+    uniform?: Uniform | (() => Uniform),
+) => {
+    _k.gfx.postShader = name;
+    _k.gfx.postShaderUniform = uniform ?? null;
+};

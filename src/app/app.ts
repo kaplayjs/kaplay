@@ -234,6 +234,10 @@ export const initApp = (
             || document.webkitFullscreenElement === state.canvas;
     }
 
+    const isFocused = () => {
+        return document.activeElement === state.canvas;
+    };
+
     function quit() {
         state.stopped = true;
         const ce = Object.entries(canvasEvents);
@@ -1243,6 +1247,7 @@ export const initApp = (
         isGamepadButtonPressed,
         isGamepadButtonDown,
         isGamepadButtonReleased,
+        isFocused,
         getGamepadStick,
         isButtonPressed,
         isButtonDown,
