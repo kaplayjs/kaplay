@@ -1,4 +1,4 @@
-import { expectTypeOf } from "vitest";
+import { describe, expectTypeOf, test } from "vitest";
 import type { StateComp } from "../../src/ecs/components/misc/state";
 import type { KEventController } from "../../src/events/events";
 import kaplay from "../../src/kaplay";
