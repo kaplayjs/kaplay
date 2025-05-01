@@ -50,7 +50,9 @@
     "webgl",
     "canvas",
     "game library",
-    "kaplay"
+    "kaplay",
+    "kaboom",
+    "kaboomjs"
   ],
   "files": [
     "dist/",
