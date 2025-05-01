@@ -344,7 +344,9 @@ const kaplay = <
         debug,
     } = _k;
 
-    const { checkFrame } = getCollisionSystem();
+    const { checkFrame } = getCollisionSystem({
+        narrow: gopt.narrowPhaseCollisionAlgorithm || "gjk",
+    });
 
     system("collision", checkFrame, [
         LCEvents.AfterFixedUpdate,

@@ -6181,6 +6181,11 @@ export interface KAPLAYOpt<
      * @experimental
      */
     inspectOnlyActive?: boolean;
+    /**
+     * Which strategy to use for narrow phase collision, gjk or sat
+     * @default "gjk"
+     */
+    narrowPhaseCollisionAlgorithm?: string;
 }
 
 /**

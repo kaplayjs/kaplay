@@ -9,6 +9,7 @@
 
 kaplay({
     background: [141, 183, 255],
+    narrowPhaseCollisionAlgorithm: "sat",
 });
 
 // load assets
@@ -31,14 +32,17 @@ loadSound("portal", "sounds/portal.mp3");
 setGravity(3200);
 
 // custom component controlling enemy patrol movement
-function patrol(speed = 60, dir = 1) {
+function customPatrol(speed = 60, dir = 1) {
     return {
         id: "patrol",
         require: ["pos", "area"],
         add() {
             this.on("collide", (obj, col) => {
-                if (col.isLeft() || col.isRight()) {
-                    dir = -dir;
+                if (col.isLeft()) {
+                    dir = 1;
+                }
+                else if (col.isRight()) {
+                    dir = -1;
                 }
             });
         },
@@ -190,7 +194,7 @@ const levelConf = {
             area(),
             anchor("bot"),
             body(),
-            patrol(),
+            customPatrol(),
             offscreen({ hide: true }),
             "enemy",
         ],
