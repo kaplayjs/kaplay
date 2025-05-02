@@ -9,10 +9,12 @@ const implicitTestPlug = (k: KAPLAYCtx) => ({
 });
 
 describe("Type Inference from plugins", () => {
-    // Inferred Plugin
-
-    test("type of plugin should be inferred from kaplay({ plugins: [ implicitTestPlug ] })", () => {
-        const k = kaplay({ plugins: [implicitTestPlug] });
+    test("kaplay() should infer plugin methods and add them to context", () => {
+        const k = kaplay({
+            plugins: [
+                implicitTestPlug,
+            ],
+        });
 
         expectTypeOf(k.getVersion).toEqualTypeOf<() => string>();
     });

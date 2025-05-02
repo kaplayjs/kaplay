@@ -182,15 +182,17 @@ export type Opt = Pick<KAPLAYOpt, "buttons" | "plugins"> & KAPLAYTypeOpt;
 export type InfOpt<T extends Opt = Opt> = {
     Scenes: T extends { Scenes: infer S } ? S : undefined;
     Tags: T extends { Tags: infer T } ? T : undefined;
-    StrictScenes: T extends { StrictScenes: infer S } ? S : false;
-    StrictTags: T extends { StrictTags: infer T } ? T : false;
-    ButtonMap: T extends { buttons: infer B } ? B : {};
-    Plugins: T extends { plugins: infer P }
-        ? P extends undefined ? PluginList<any> : P
-        : PluginList<any>;
+    StrictScenes: T extends { StrictScenes: infer S } ? S : undefined;
+    StrictTags: T extends { StrictTags: infer T } ? T : undefined;
+    ButtonMap: T extends { buttons: infer B } ? B : undefined;
+    Plugins: T extends { plugins: infer P } ? P : undefined;
 };
 
-type SceneName<TOpt extends InfOpt> = TOpt["Scenes"] extends undefined ? string
+export type CreateTypeOpt<T extends Opt> = Prettify<
+    Defined<Prettify<InfOpt<T>>>
+>;
+
+type SceneName<TOpt extends Opt> = TOpt["Scenes"] extends undefined ? string
     : TOpt["StrictScenes"] extends true ? keyof TOpt["Scenes"]
     : OptionalString<Extract<keyof TOpt["Scenes"], string>>;
 
@@ -198,23 +200,24 @@ type SceneArgs<TScene, TSceneMap> = TScene extends keyof TSceneMap
     ? TSceneMap[TScene] extends Array<any> ? TSceneMap[TScene] : any[]
     : any[];
 
-export type TagName<TOpt extends InfOpt> = keyof TOpt["Tags"] extends undefined
+export type TagName<TOpt extends Opt> = keyof TOpt["Tags"] extends undefined
     ? string
     : TOpt["StrictTags"] extends true ? Extract<keyof TOpt["Tags"], string>
     : OptionalString<Extract<keyof TOpt["Tags"], string>>;
 
-export type ButtonName<TOpt extends InfOpt> = keyof TOpt["ButtonMap"] extends
+export type ButtonName<TOpt extends Opt> = keyof TOpt["buttons"] extends
     undefined ? string
-    : TOpt["ButtonMap"] extends Record<string, ButtonBinding>
-        ? Extract<keyof TOpt["ButtonMap"], string>
-    : OptionalString<Extract<keyof TOpt["ButtonMap"], string>>;
+    : TOpt["buttons"] extends Record<string, ButtonBinding>
+        ? Extract<keyof TOpt["buttons"], string>
+    : OptionalString<Extract<keyof TOpt["buttons"], string>>;
 
-export type CompFromTag<O extends InfOpt, TTag> = TTag extends keyof O["Tags"]
+export type CompFromTag<O extends Opt, TTag> = TTag extends keyof O["Tags"]
     ? O["Tags"][TTag]
     : any;
 
-export type CGameObj<TOpt extends InfOpt = never, T = any> = [TOpt] extends
-    [never] ? GameObj<T> : GameObjT<T, TOpt>;
+export type CGameObj<TOpt extends Opt = never, T = any> = [TOpt] extends [never]
+    ? GameObj<T>
+    : GameObjT<T, TOpt>;
 
 /**
  * Context handle that contains every KAPLAY function.
@@ -235,51 +238,53 @@ export interface KAPLAYCtx<
      */
     _k: Engine & { k: KAPLAYCtx };
     /**
-   * Assemble a game object from a list of components, and add it to the game,
-   *
-   * @example
-   * ```js
-   * const player = add([
-   *     // List of components, each offers a set of functionalities
-   *     sprite("mark"),
-   *     pos(100, 200),
-   *     area(),
-   *     body(),
-   *     health(8),
-   *     // Plain strings are tags, a quicker way to let us define behaviors for a group
-   *     "player",
-   *     "friendly",
-   *     // Components are just plain objects, you can pass an object literal as a component.
-   *     {
-   *         dir: LEFT,
-   *         dead: false,
-   *         speed: 240,
-   *     },
-   * ]);
-   *
-   * // .jump is provided by body()
-   * player.jump();
-
-   * // .moveTo is provided by pos()
-   * player.moveTo(300, 200);
-   *
-   * // .onUpdate() is on every game object, it registers an event that runs every frame
-   * player.onUpdate(() => {
-   *     // .move() is provided by pos()
-   *     player.move(player.dir.scale(player.speed));
-   * });
-   *
-   * // .onCollide is provided by area()
-   * player.onCollide("tree", () => {
-   *     destroy(player);
-   * });
-   * ```
-  *
-  * @param comps - List of components to add to the game object.
-  * @returns The added game object that contains all properties and methods each component offers.
-  * @group Game Obj
-  */
-    add<T extends CompList<unknown>>(comps?: [...T]): CGameObj<O, T>;
+     * Assemble a game object from a list of components, and add it to the game,
+     *
+     * @example
+     * ```js
+     * const player = add([
+     *     // List of components, each offers a set of functionalities
+     *     sprite("mark"),
+     *     pos(100, 200),
+     *     area(),
+     *     body(),
+     *     health(8),
+     *     // Plain strings are tags, a quicker way to let us define behaviors for a group
+     *     "player",
+     *     "friendly",
+     *     // Components are just plain objects, you can pass an object literal as a component.
+     *     {
+     *         dir: LEFT,
+     *         dead: false,
+     *         speed: 240,
+     *     },
+     * ]);
+     *
+     * // .jump is provided by body()
+     * player.jump();
+     *
+     * // .moveTo is provided by pos()
+     * player.moveTo(300, 200);
+     *
+     * // .onUpdate() is on every game object, it registers an event that runs every frame
+     * player.onUpdate(() => {
+     *     // .move() is provided by pos()
+     *     player.move(player.dir.scale(player.speed));
+     * });
+     *
+     * // .onCollide is provided by area()
+     * player.onCollide("tree", () => {
+     *     destroy(player);
+     * });
+     * ```
+     *
+     * @param comps - List of components to add to the game object.
+     * @returns The added game object that contains all properties and methods each component offers.
+     * @group Game Obj
+     */
+    add<T extends CompList<unknown, O>>(
+        comps?: [...T],
+    ): CGameObj<O, T[number]>;
     /**
      * Remove and re-add the game obj, without triggering add / destroy events.
      *
@@ -5920,19 +5925,18 @@ export interface KAPLAYCtx<
  *
  * @group Game Obj
  */
-export type GameObj<T = any> =
-    & GameObjRaw
-    & MergeComps<T>;
+export type GameObj<T = any> = GameObjRaw & MergeComps<T>;
 
-export type GameObjT<T = any, O extends InfOpt = InfOpt> =
+export type GameObjT<T = any, O extends Opt = Opt> =
     & GameObjRawT<O>
     & MergeComps<T>;
 
-interface GameObjRawT<
-    O extends InfOpt,
-    Tag extends string = TagName<O>,
-> extends GameObjRaw {
-    tag(tag: Tag | Tag[]): void;
+interface GameObjRawT<O extends Opt> extends GameObjRaw {
+    tag(tag: TagName<O> | TagName<O>[]): void;
+    untag(tag: TagName<O> | TagName<O>[]): void;
+    is<T extends TagName<O> | TagName<O>[]>(
+        tag: T,
+    ): this is GameObjT<CompFromTag<O, T>, O>;
 }
 
 export type UnionToIntersection<U> = (
@@ -5982,7 +5986,7 @@ export type MergePlugins<T extends PluginList<any>> = MergeObj<
  *
  * @group Component Types
  */
-export type CompList<T extends any | undefined> = (T | string)[];
+export type CompList<T, O extends Opt = any> = (Comp | TagName<O>)[];
 export type PluginList<T> = (T | KAPLAYPlugin<any>)[];
 
 /**
