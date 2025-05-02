@@ -12,6 +12,12 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Added
 
+#### TypeScript API
+
+- Added `InfTypeOpt` for passing to `kaplay()` - @lajbel
+  ```ts
+  ```
+
 - Added `ellipse()` component - @mflerackers
 - Added circle and (rotated) ellipse collision shapes - @mflerackers
 - Added `clipLineToRect()` - @mflerackers
@@ -25,7 +31,6 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   myCursor.release();
   myCursor.moveBy(vec2(100, 200)); // move as your wish
   ```
-
 - Added restitution and friction to physics - @mflerackers
 - Added `k.system()` to replace internal events or create new - @mflerackers
 
@@ -34,7 +39,6 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
     // system code
   }, [LCEvents.AfterFixedUpdate, LCEvents.AfterUpdate]),
   ```
-
 - All game objects have methods `onTag()` and `onUntag()` for watching tag
   changes - @mflerackers
 - Added `LCEvents` enum to identify different lifecycle events in the game

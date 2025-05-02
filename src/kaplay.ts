@@ -17,10 +17,12 @@ import { updateViewport } from "./gfx/viewport";
 import boomSpriteSrc from "./kassets/boom.png";
 import kaSpriteSrc from "./kassets/ka.png";
 import {
+    type InfOpt,
     type KAPLAYCtx,
     type KAPLAYOpt,
     type KAPLAYPlugin,
     type MergePlugins,
+    type Opt,
     type PluginList,
 } from "./types";
 
@@ -31,6 +33,16 @@ export let _k: KAPLAYCtx["_k"];
 
 // If KAPLAY was runned before
 let runned = false;
+
+type KAPLAYGame<O extends Opt | undefined> = O extends Opt
+    ? InfOpt<O>["Plugins"] extends PluginList<any>
+        ? KAPLAYCtx<O> & MergePlugins<InfOpt<O>["Plugins"]>
+    : KAPLAYCtx<O>
+    : KAPLAYCtx;
+
+// extends undefined
+//     ? KAPLAYCtx<O>
+//     : KAPLAYCtx<O> & MergePlugins<O["Plugins"]>;
 
 /**
  * Initialize KAPLAY context. The starting point of all KAPLAY games.
@@ -67,14 +79,12 @@ let runned = false;
  * @group Start
  */
 export const kaplay = <
-    TPlugins extends PluginList<unknown> = [undefined],
-    TButtons extends ButtonsDef = {},
-    TButtonsName extends string = keyof TButtons & string,
+    const O extends Opt | undefined = undefined,
 >(
-    gopt: KAPLAYOpt<TPlugins, TButtons> = {},
-): TPlugins extends [undefined] ? KAPLAYCtx<TButtons, TButtonsName>
-    : KAPLAYCtx<TButtons, TButtonsName> & MergePlugins<TPlugins> =>
-{
+    opt?: O extends undefined ? O : KAPLAYOpt,
+): KAPLAYGame<O> => {
+    const gopt: KAPLAYOpt = opt ?? {};
+
     if (runned) {
         console.warn(
             "KAPLAY was runned before, cleaning state",
@@ -221,7 +231,9 @@ export const kaplay = <
     ctx._k = _k;
     _k.k = ctx;
 
-    const plugins = gopt.plugins as KAPLAYPlugin<Record<string, unknown>>[];
+    const plugins = gopt.plugins as unknown as KAPLAYPlugin<
+        Record<string, unknown>
+    >[];
 
     if (plugins) {
         plugins.forEach(plug);
@@ -238,9 +250,8 @@ export const kaplay = <
         app.canvas.focus();
     }
 
-    return ctx as unknown as TPlugins extends [undefined]
-        ? KAPLAYCtx<TButtons, TButtonsName>
-        : KAPLAYCtx<TButtons, TButtonsName> & MergePlugins<TPlugins>;
+    // @ts-ignore Just believe it's the correct type
+    return ctx;
 };
 
 export default kaplay;

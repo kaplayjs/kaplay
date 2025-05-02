@@ -34,7 +34,6 @@ import type {
     KAPLAYCtx,
     QueryOpt,
     RenderTarget,
-    Tag,
 } from "../../types";
 import type { MaskComp } from "../components/draw/mask";
 import type { FixedComp } from "../components/transform/fixed";
@@ -150,7 +149,7 @@ export interface GameObjRaw {
      *
      * @since v3000.0
      */
-    removeAll(tag: Tag): void;
+    removeAll(tag: string): void;
     /**
      * Remove this game obj from scene.
      *
@@ -184,7 +183,7 @@ export interface GameObjRaw {
      *
      * @since v3000.0
      */
-    get<T = any>(tag: Tag | Tag[], opts?: GetOpt): GameObj<T>[];
+    get<T = any>(tag: string | string[], opts?: GetOpt): GameObj<T>[];
     /**
      * Get a list of all game objs with certain properties.
      *
@@ -306,7 +305,7 @@ export interface GameObjRaw {
      * @since v3001.0.5
      * @experimental This feature is in experimental phase, it will be fully released in v3001.1.0
      */
-    tag(tag: Tag | Tag[]): void;
+    tag(tag: string | string[]): void;
     /**
      * Remove a tag(s) from the game obj.
      *
@@ -324,7 +323,7 @@ export interface GameObjRaw {
      * @since v3001.0.5
      * @experimental This feature is in experimental phase, it will be fully released in v3001.1.0
      */
-    untag(tag: Tag | Tag[]): void;
+    untag(tag: string | string[]): void;
     /**
      * If there's certain tag(s) on the game obj.
      *
@@ -334,7 +333,7 @@ export interface GameObjRaw {
      * @since v3001.0.5
      * @experimental This feature is in experimental phase, it will be fully released in v3001.1.0
      */
-    is(tag: Tag | Tag[], op?: "and" | "or"): boolean;
+    is(tag: string | string[], op?: "and" | "or"): boolean;
     /**
      * Register an event.
      *
@@ -457,7 +456,7 @@ export interface GameObjRaw {
     _drawEvents: KEvent<[]>;
     _inputEvents: KEventController[];
     _onCurCompCleanup: Function | null;
-    _tags: Set<Tag>;
+    _tags: Set<string>;
 }
 
 type GameObjTransform = GameObj<PosComp | RotateComp | ScaleComp>;
@@ -593,7 +592,7 @@ export const GameObjRawPrototype: Omit<GameObjRaw, AppEvents> = {
         trigger(obj);
     },
 
-    removeAll(this: GameObjRaw, tag?: Tag): void {
+    removeAll(this: GameObjRaw, tag?: string): void {
         if (tag) {
             this.get(tag).forEach((obj) => this.remove(obj));
         }
@@ -623,12 +622,12 @@ export const GameObjRawPrototype: Omit<GameObjRaw, AppEvents> = {
     // #region Get & Query
     get<T = any>(
         this: GameObjRaw,
-        t: Tag | Tag[],
+        t: string | string[],
         opts: GetOpt = {},
     ): GameObj<T>[] {
         const compIdAreTags = _k.globalOpt.tagsAsComponents;
 
-        const checkTagsOrComps = (child: GameObj, t: Tag | Tag[]) => {
+        const checkTagsOrComps = (child: GameObj, t: string | string[]) => {
             if (opts.only === "comps") {
                 return child.has(t);
             }
@@ -1220,7 +1219,7 @@ export const GameObjRawPrototype: Omit<GameObjRaw, AppEvents> = {
     // #endregion
 
     // #region Tags
-    tag(this: GameObjRaw, tag: Tag | Tag[]): void {
+    tag(this: GameObjRaw, tag: string | string[]): void {
         if (Array.isArray(tag)) {
             for (const t of tag) {
                 this._tags.add(t);
@@ -1235,7 +1234,7 @@ export const GameObjRawPrototype: Omit<GameObjRaw, AppEvents> = {
         }
     },
 
-    untag(this: GameObjRaw, tag: Tag | Tag[]): void {
+    untag(this: GameObjRaw, tag: string | string[]): void {
         if (Array.isArray(tag)) {
             for (const t of tag) {
                 this._tags.delete(t);
@@ -1250,7 +1249,11 @@ export const GameObjRawPrototype: Omit<GameObjRaw, AppEvents> = {
         }
     },
 
-    is(this: GameObjRaw, tag: Tag | Tag[], op: "or" | "and" = "and"): boolean {
+    is(
+        this: GameObjRaw,
+        tag: string | string[],
+        op: "or" | "and" = "and",
+    ): boolean {
         if (Array.isArray(tag)) {
             if (op === "and") {
                 return tag.every(tag => this._tags.has(tag));

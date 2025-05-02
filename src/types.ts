@@ -99,7 +99,6 @@ import type { GameObjEventNames, GameObjEvents } from "./events/eventMap";
 import type { KEvent, KEventController, KEventHandler } from "./events/events";
 import type { TupleWithoutFirst } from "./events/globalEvents";
 import type { BoomOpt } from "./game/kaboom";
-import type { SceneDef, SceneName } from "./game/scenes";
 import type { LCEvents } from "./game/systems";
 import type { FrameBuffer } from "./gfx/classes/FrameBuffer";
 import type { DrawBezierOpt } from "./gfx/draw/drawBezier";
@@ -140,6 +139,84 @@ import type { NavMesh } from "./math/navigationmesh";
 import type { Vec2 } from "./math/Vec2";
 
 /**
+ * Utils
+ */
+type OptionalString<T extends string> = T | {} & string;
+
+/**
+ * Type options for the KAPLAY context.
+ */
+export type KAPLAYTypeOpt = {
+    /**
+     * (**TYPE OPTIONS**) Scene types, made for inference in
+     *
+     * - `go()`
+     * - `scene()`
+     * - `stay()`
+     */
+    Scenes?: {
+        [key in string]?: any[];
+    };
+    /**
+     * Tag types, made for inference in
+     *
+     * - `get()`
+     * - all `on()` functions
+     */
+    Tags?: {
+        [key in string]: Comp;
+    };
+    /**
+     * If `true`, the scene name must be only the ones defined in `Scenes`.
+     */
+    StrictScenes?: boolean;
+    /**
+     * If `true`, the tag name must be only the ones defined in `Tags`.
+     */
+    StrictTags?: boolean;
+};
+
+/** */
+export type Opt = Pick<KAPLAYOpt, "buttons" | "plugins"> & KAPLAYTypeOpt;
+
+export type InfOpt<T extends Opt = Opt> = {
+    Scenes: T extends { Scenes: infer S } ? S : undefined;
+    Tags: T extends { Tags: infer T } ? T : undefined;
+    StrictScenes: T extends { StrictScenes: infer S } ? S : false;
+    StrictTags: T extends { StrictTags: infer T } ? T : false;
+    ButtonMap: T extends { buttons: infer B } ? B : {};
+    Plugins: T extends { plugins: infer P }
+        ? P extends undefined ? PluginList<any> : P
+        : PluginList<any>;
+};
+
+type SceneName<TOpt extends InfOpt> = TOpt["Scenes"] extends undefined ? string
+    : TOpt["StrictScenes"] extends true ? keyof TOpt["Scenes"]
+    : OptionalString<Extract<keyof TOpt["Scenes"], string>>;
+
+type SceneArgs<TScene, TSceneMap> = TScene extends keyof TSceneMap
+    ? TSceneMap[TScene] extends Array<any> ? TSceneMap[TScene] : any[]
+    : any[];
+
+export type TagName<TOpt extends InfOpt> = keyof TOpt["Tags"] extends undefined
+    ? string
+    : TOpt["StrictTags"] extends true ? Extract<keyof TOpt["Tags"], string>
+    : OptionalString<Extract<keyof TOpt["Tags"], string>>;
+
+export type ButtonName<TOpt extends InfOpt> = keyof TOpt["ButtonMap"] extends
+    undefined ? string
+    : TOpt["ButtonMap"] extends Record<string, ButtonBinding>
+        ? Extract<keyof TOpt["ButtonMap"], string>
+    : OptionalString<Extract<keyof TOpt["ButtonMap"], string>>;
+
+export type CompFromTag<O extends InfOpt, TTag> = TTag extends keyof O["Tags"]
+    ? O["Tags"][TTag]
+    : any;
+
+export type CGameObj<TOpt extends InfOpt = never, T = any> = [TOpt] extends
+    [never] ? GameObj<T> : GameObjT<T, TOpt>;
+
+/**
  * Context handle that contains every KAPLAY function.
  *
  * @template TButtonDef - The button map
@@ -148,8 +225,7 @@ import type { Vec2 } from "./math/Vec2";
  * @group Start
  */
 export interface KAPLAYCtx<
-    TButtonDef extends ButtonsDef = {},
-    TButton extends string = string,
+    O extends Opt = never,
 > {
     /**
      * Internal data that should not be accessed directly.
@@ -203,7 +279,7 @@ export interface KAPLAYCtx<
   * @returns The added game object that contains all properties and methods each component offers.
   * @group Game Obj
   */
-    add<T extends CompList<unknown>>(comps?: [...T]): GameObj<T[number]>;
+    add<T extends CompList<unknown>>(comps?: [...T]): CGameObj<O, T>;
     /**
      * Remove and re-add the game obj, without triggering add / destroy events.
      *
@@ -274,7 +350,10 @@ export interface KAPLAYCtx<
      * @since v2000.0
      * @group Game Obj
      */
-    get<T = any>(tag: Tag | Tag[], opts?: GetOpt): GameObj<T>[];
+    get<TTag extends TagName<O>, T = CompFromTag<O, TTag>>(
+        tag: TagName<O>,
+        opts?: GetOpt,
+    ): GameObj<T>[];
     /**
      * Get a list of game objects in an advanced way.
      *
@@ -345,7 +424,7 @@ export interface KAPLAYCtx<
      *
      * @group Game Obj
      */
-    destroyAll(tag: Tag): void;
+    destroyAll(tag: TagName<O>): void;
     // #region Transform Comps
     /**
      * Set the position of a Game Object, relative to its parent.
@@ -1173,7 +1252,7 @@ export interface KAPLAYCtx<
      * @since v2000.0
      * @group Components
      */
-    stay(scenesToStay?: string[]): StayComp;
+    stay(scenesToStay?: SceneName<O>[]): StayComp;
     /**
      * Handles health related logic and events.
      *
@@ -1600,7 +1679,7 @@ export interface KAPLAYCtx<
      */
     on<Ev extends GameObjEventNames | (string & {})>(
         event: Ev,
-        tag: Tag,
+        tag: TagName<O>,
         action: (
             obj: GameObj,
             ...args: TupleWithoutFirst<GameObjEvents[Ev]>
@@ -1616,7 +1695,10 @@ export interface KAPLAYCtx<
      * @group Events
      */
     onFixedUpdate(action: () => void): KEventController;
-    onFixedUpdate(tag: Tag, action: (obj: GameObj) => void): KEventController;
+    onFixedUpdate(
+        tag: TagName<O>,
+        action: (obj: GameObj) => void,
+    ): KEventController;
     /**
      * Register an event that runs every frame (~60 times per second) for all game objs with certain tag.
      *
@@ -1639,7 +1721,7 @@ export interface KAPLAYCtx<
      * @since v2000.1
      * @group Events
      */
-    onUpdate(tag: Tag, action: (obj: GameObj) => void): KEventController;
+    onUpdate(tag: TagName<O>, action: (obj: GameObj) => void): KEventController;
     /**
      * Register an event that runs every frame (~60 times per second).
      *
@@ -1668,7 +1750,7 @@ export interface KAPLAYCtx<
      * @since v2000.1
      * @group Events
      */
-    onDraw(tag: Tag, action: (obj: GameObj) => void): KEventController;
+    onDraw(tag: TagName<O>, action: (obj: GameObj) => void): KEventController;
     /**
      * Register an event that runs every frame (~60 times per second) (this is the same as onUpdate but all draw events are run after update events, drawXXX() functions only work in this phase).
      *
@@ -1711,7 +1793,7 @@ export interface KAPLAYCtx<
      * @since v2000.0
      * @group Events
      */
-    onAdd(tag: Tag, action: (obj: GameObj) => void): KEventController;
+    onAdd(tag: TagName<O>, action: (obj: GameObj) => void): KEventController;
     /**
      * Register an event that runs when an object is added
      *
@@ -1760,7 +1842,10 @@ export interface KAPLAYCtx<
      * @since v2000.0
      * @group Events
      */
-    onDestroy(tag: Tag, action: (obj: GameObj) => void): KEventController;
+    onDestroy(
+        tag: TagName<O>,
+        action: (obj: GameObj) => void,
+    ): KEventController;
     /**
      * Register an event that runs when an object is destroyed.
      *
@@ -1818,7 +1903,7 @@ export interface KAPLAYCtx<
      * @since v3001.1
      * @group Events
      */
-    onTag(action: (obj: GameObj, tag: string) => void): KEventController;
+    onTag(action: (obj: GameObj, tag: TagName<O>) => void): KEventController;
     /**
      * Register an event that runs when an object loses a tag.
      *
@@ -1829,7 +1914,7 @@ export interface KAPLAYCtx<
      * @since v3001.1
      * @group Events
      */
-    onUntag(action: (obj: GameObj, tag: string) => void): KEventController;
+    onUntag(action: (obj: GameObj, tag: TagName<O>) => void): KEventController;
     /**
      * Register an event that runs when all assets finished loading.
      *
@@ -2051,8 +2136,8 @@ export interface KAPLAYCtx<
      * @group Events
      */
     onCollide(
-        t1: Tag,
-        t2: Tag,
+        t1: TagName<O>,
+        t2: TagName<O>,
         action: (a: GameObj, b: GameObj, col?: Collision) => void,
     ): KEventController;
     /**
@@ -2074,8 +2159,8 @@ export interface KAPLAYCtx<
      * @group Events
      */
     onCollideUpdate(
-        t1: Tag,
-        t2: Tag,
+        t1: TagName<O>,
+        t2: TagName<O>,
         action: (a: GameObj, b: GameObj, col?: Collision) => void,
     ): KEventController;
     /**
@@ -2097,8 +2182,8 @@ export interface KAPLAYCtx<
      * @group Physics
      */
     onCollideEnd(
-        t1: Tag,
-        t2: Tag,
+        t1: TagName<O>,
+        t2: TagName<O>,
         action: (a: GameObj, b: GameObj, col?: Collision) => void,
     ): KEventController;
     /**
@@ -2117,7 +2202,7 @@ export interface KAPLAYCtx<
      * @since v2000.1
      * @group Input
      */
-    onClick(tag: Tag, action: (a: GameObj) => void): KEventController;
+    onClick(tag: TagName<O>, action: (a: GameObj) => void): KEventController;
     /**
      * Register an event that runs when users clicks.
      *
@@ -2144,7 +2229,7 @@ export interface KAPLAYCtx<
      * @since v3000.0
      * @group Events
      */
-    onHover(tag: Tag, action: (a: GameObj) => void): KEventController;
+    onHover(tag: TagName<O>, action: (a: GameObj) => void): KEventController;
     /**
      * Register an event that runs every frame when game objs with certain tags are hovered (required to have area() component).
      *
@@ -2163,7 +2248,10 @@ export interface KAPLAYCtx<
      * @since v3000.0
      * @group Events
      */
-    onHoverUpdate(tag: Tag, action: (a: GameObj) => void): KEventController;
+    onHoverUpdate(
+        tag: TagName<O>,
+        action: (a: GameObj) => void,
+    ): KEventController;
     /**
      * Register an event that runs once when game objs with certain tags are unhovered (required to have area() component).
      *
@@ -2174,7 +2262,7 @@ export interface KAPLAYCtx<
      * @since v3000.0
      * @group Events
      */
-    onHoverEnd(tag: Tag, action: (a: GameObj) => void): KEventController;
+    onHoverEnd(tag: TagName<O>, action: (a: GameObj) => void): KEventController;
     /**
      * Register an event that runs every frame when a key is held down.
      *
@@ -2762,8 +2850,8 @@ export interface KAPLAYCtx<
      * @group Input
      */
     onButtonPress(
-        btn: TButton | TButton[],
-        action: (btn: TButton) => void,
+        btn: ButtonName<O> | ButtonName<O>[],
+        action: (btn: ButtonName<O>) => void,
     ): KEventController;
     /**
      * Register an event that runs when user release a defined button
@@ -2777,10 +2865,10 @@ export interface KAPLAYCtx<
      * @group Input
      */
     onButtonRelease(
-        btn: TButton | TButton[],
-        action: (btn: TButton) => void,
+        btn: ButtonName<O> | ButtonName<O>[],
+        action: (btn: ButtonName<O>) => void,
     ): KEventController;
-    onButtonRelease(action: (btn: TButton) => void): KEventController;
+    onButtonRelease(action: (btn: ButtonName<O>) => void): KEventController;
     /**
      * Register an event that runs when user press a defined button
      * (like "jump") on any input (keyboard, gamepad).
@@ -2793,10 +2881,10 @@ export interface KAPLAYCtx<
      * @group Input
      */
     onButtonDown(
-        btn: TButton | TButton[],
-        action: (btn: TButton) => void,
+        btn: ButtonName<O> | ButtonName<O>[],
+        action: (btn: ButtonName<O>) => void,
     ): KEventController;
-    onButtonDown(action: (btn: TButton) => void): KEventController;
+    onButtonDown(action: (btn: ButtonName<O>) => void): KEventController;
     /**
      * Register an event that runs when current scene ends.
      *
@@ -3570,7 +3658,7 @@ export interface KAPLAYCtx<
      * @since v3001.0
      * @group Input
      */
-    isButtonPressed(btn?: TButton | TButton[]): boolean;
+    isButtonPressed(btn?: ButtonName<O> | ButtonName<O>[]): boolean;
     /**
      * If any or certain bound button(s) are currently held down on any input (keyboard, gamepad).
      *
@@ -3589,7 +3677,7 @@ export interface KAPLAYCtx<
      * @since v3001.0
      * @group Input
      */
-    isButtonDown(btn?: TButton | TButton[]): boolean;
+    isButtonDown(btn?: ButtonName<O> | ButtonName<O>[]): boolean;
     /**
      * If any or certain bound button(s) are just released last frame on any input (keyboard, gamepad).
      *
@@ -3608,7 +3696,7 @@ export interface KAPLAYCtx<
      * @since v3001.0
      * @group Input
      */
-    isButtonReleased(btn?: TButton | TButton[]): boolean;
+    isButtonReleased(btn?: ButtonName<O> | ButtonName<O>[]): boolean;
     /**
      * Get a input binding from a button name.
      *
@@ -3617,7 +3705,7 @@ export interface KAPLAYCtx<
      * @since v3001.0
      * @group Input
      */
-    getButton(btn: keyof TButtonDef): ButtonBinding;
+    getButton(btn: ButtonName<O>): ButtonBinding;
     /**
      * Set a input binding for a button name.
      *
@@ -3642,7 +3730,7 @@ export interface KAPLAYCtx<
      * @since v3001.0
      * @group Input
      */
-    pressButton(btn: TButton): void;
+    pressButton(btn: ButtonName<O>): void;
     /**
      * Release a button virtually.
      *
@@ -3658,7 +3746,7 @@ export interface KAPLAYCtx<
      * @since v3001.0
      * @group Input
      */
-    releaseButton(btn: TButton): void;
+    releaseButton(btn: ButtonName<O>): void;
     /**
      * Get stick axis values from a gamepad.
      *
@@ -4962,7 +5050,12 @@ export interface KAPLAYCtx<
      *
      * @group Scene
      */
-    scene(name: SceneName, def: SceneDef): void;
+    scene<T extends SceneName<O>>(
+        name: T,
+        def: (
+            ...args: SceneArgs<T, O["Scenes"]>
+        ) => void,
+    ): void;
     /**
      * Go to a scene, passing all rest args to scene callback.
      *
@@ -4981,7 +5074,10 @@ export interface KAPLAYCtx<
      * @since v2000.0
      * @group Scene
      */
-    go(name: SceneName, ...args: any): void;
+    go<T extends SceneName<O>>(
+        name: T,
+        ...args: SceneArgs<T, O["Scenes"]>
+    ): void;
     /**
      * Define the layer names. Should be called before any objects are made.
      *
@@ -5819,14 +5915,25 @@ export interface KAPLAYCtx<
     VERSION: string;
 }
 
-export type Tag = string;
-
 /**
  * The basic unit of object in KAPLAY. The player, a butterfly, a tree, or even a piece of text.
  *
  * @group Game Obj
  */
-export type GameObj<T = any> = GameObjRaw & MergeComps<T>;
+export type GameObj<T = any> =
+    & GameObjRaw
+    & MergeComps<T>;
+
+export type GameObjT<T = any, O extends InfOpt = InfOpt> =
+    & GameObjRawT<O>
+    & MergeComps<T>;
+
+interface GameObjRawT<
+    O extends InfOpt,
+    Tag extends string = TagName<O>,
+> extends GameObjRaw {
+    tag(tag: Tag | Tag[]): void;
+}
 
 export type UnionToIntersection<U> = (
     U extends any ? (k: U) => void : never
@@ -5875,8 +5982,8 @@ export type MergePlugins<T extends PluginList<any>> = MergeObj<
  *
  * @group Component Types
  */
-export type CompList<T extends any | undefined> = (T | Tag)[];
-export type PluginList<T> = Array<T | KAPLAYPlugin<any>>;
+export type CompList<T extends any | undefined> = (T | string)[];
+export type PluginList<T> = (T | KAPLAYPlugin<any>)[];
 
 /**
  * A key.
@@ -6026,17 +6133,14 @@ export type KGamepad = {
 /**
  * Inspect info for a game object.
  */
-export type GameObjInspect = Record<Tag, string | null>;
+export type GameObjInspect = Record<string, string | null>;
 
 /**
  * KAPLAY configurations.
  *
  * @group Start
  */
-export interface KAPLAYOpt<
-    TPlugin extends PluginList<any> = any,
-    TButtonDef extends ButtonsDef = any,
-> {
+export interface KAPLAYOpt {
     /**
      * Width of game.
      */
@@ -6134,7 +6238,7 @@ export interface KAPLAYOpt<
      *
      * @since v30010
      */
-    buttons?: TButtonDef;
+    buttons?: ButtonsDef;
     /**
      * Limit framerate to an amount per second.
      *
@@ -6154,7 +6258,7 @@ export interface KAPLAYOpt<
     /**
      * List of plugins to import.
      */
-    plugins?: TPlugin;
+    plugins?: PluginList<any>;
     /**
      * Enter burp mode.
      */
@@ -6645,11 +6749,11 @@ export interface Comp {
     /**
      * Component ID (if left out won't be treated as a comp).
      */
-    id?: Tag;
+    id?: string;
     /**
      * What other comps this comp depends on.
      */
-    require?: Tag[];
+    require?: string[];
     /**
      * Event that runs when host game obj is added to scene.
      */
