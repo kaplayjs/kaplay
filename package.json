@@ -1,7 +1,7 @@
 {
   "name": "kaplay",
   "description": "KAPLAY is a JavaScript & TypeScript game library that helps you make games fast and fun!",
-  "version": "3001.0.16",
+  "version": "3001.0.17",
   "license": "MIT",
   "homepage": "https://kaplayjs.com/",
   "bugs": {
@@ -50,7 +50,10 @@
     "webgl",
     "canvas",
     "game library",
-    "kaplay"
+    "kaplay",
+    "kaboom",
+    "kaboomjs",
+    "kaboom.js"
   ],
   "files": [
     "dist/",

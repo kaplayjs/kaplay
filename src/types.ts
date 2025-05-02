@@ -198,7 +198,7 @@ export interface KAPLAYCtx<
      *
      * // .jump is provided by body()
      * player.jump();
-
+     *
      * // .moveTo is provided by pos()
      * player.moveTo(300, 200);
      *
@@ -213,11 +213,11 @@ export interface KAPLAYCtx<
      *     destroy(player);
      * });
      * ```
-    *
-    * @param comps - List of components to add to the game object, or a game object made with {@link make `make()`}.
-    * @returns The added game object that contains all properties and methods each component offers.
-    * @group Game Obj
-    */
+     *
+     * @param comps - List of components to add to the game object, or a game object made with {@link make `make()`}.
+     * @returns The added game object that contains all properties and methods each component offers.
+     * @group Game Obj
+     */
     add<T>(comps?: CompList<T> | GameObj<T>): GameObj<T>;
     /**
      * Create a game object like add(), but not adding to the scene.
@@ -1391,6 +1391,31 @@ export interface KAPLAYCtx<
     /**
      * A patrol which can follow waypoints to a goal.
      *
+     * @param opts - Options for the patrol component. See {@link PatrolCompOpt `PatrolCompOpt`}.
+     *
+     * @example
+     * ```js
+     * const bean = add([
+     *     sprite("bean"),
+     *     pos(40, 30),
+     *     patrol({
+     *         waypoints: [
+     *             vec2(100, 100),
+     *             vec2(120, 170),
+     *             vec2(50, 50),
+     *             vec2(300, 100),
+     *         ],
+     *     }),
+     * ]);
+     *
+     * bean.onPatrolFinished(gb => {
+     *     // Note that the position doesn't exactly match the last waypoint,
+     *     // this is an approximation.
+     *     debug.log(`Bean reached the end of the patrol at ${gb.pos.x}, ${gb.pos.y}`);
+     * });
+     * ```
+     *
+     * @returns The patrol comp.
      * @since v3001.0
      * @group Components
      */
