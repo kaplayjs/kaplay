@@ -21,7 +21,7 @@ loadSprite("bag", `/sprites/bag.png`);
 loadSprite("ghosty", "/sprites/ghosty.png");
 loadSprite("bobo", `/sprites/bobo.png`);
 loadSprite("gigagantrum", "/sprites/gigagantrum.png");
-loadSprite("tga", "/sprites/dino.png");
+loadSprite("tga", "/sprites/tga.png");
 loadSprite("ghostiny", "/sprites/ghostiny.png");
 loadSprite("note", "/sprites/note.png");
 loadSprite("grass", "/sprites/grass.png");
