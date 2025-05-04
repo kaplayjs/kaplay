@@ -1,7 +1,6 @@
 {
   "$schema": "https://unpkg.com/makeman@*/help.schema.json",
   "name": "KAPLAY",
-  "author": "KAPLAY Team",
   "description": "KAPLAY is a JavaScript & TypeScript game library that helps you make games fast and fun!",
   "styles": {
     "titleFont": "Standard",
