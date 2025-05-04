@@ -71,7 +71,8 @@
     "test:vite": "vitest --typecheck",
     "desktop": "tauri dev",
     "prepare": "npm run build",
-    "publish:next": "npm publish --tag next"
+    "publish:next": "npm publish --tag next",
+    "help": "makeman help.json"
   },
   "devDependencies": {
     "@kaplayjs/dprint-config": "^1.2.0",
@@ -83,6 +84,7 @@
     "ejs": "^3.1.10",
     "esbuild": "^0.25.2",
     "express": "^5.1.0",
+    "makeman": "^1.2.6",
     "puppeteer": "^22.15.0",
     "tar-fs": "3.0.8",
     "typescript": "5.6.3",
