@@ -51,19 +51,19 @@ export const getCollisionSystem = ({ narrow = "gjk" } = {}) => {
             );
         }
         hasOverlap() {
-            return !this.displacement.isZero();
+            return this.distance > 0;
         }
         isLeft() {
-            return this.displacement.cross(_k.game.gravity || vec2(0, 1)) > 0;
+            return this.normal.cross(_k.game.gravity || vec2(0, 1)) > 0;
         }
         isRight() {
-            return this.displacement.cross(_k.game.gravity || vec2(0, 1)) < 0;
+            return this.normal.cross(_k.game.gravity || vec2(0, 1)) < 0;
         }
         isTop() {
-            return this.displacement.dot(_k.game.gravity || vec2(0, 1)) > 0;
+            return this.normal.dot(_k.game.gravity || vec2(0, 1)) > 0;
         }
         isBottom() {
-            return this.displacement.dot(_k.game.gravity || vec2(0, 1)) < 0;
+            return this.normal.dot(_k.game.gravity || vec2(0, 1)) < 0;
         }
         preventResolution() {
             this.resolved = true;
