@@ -145,8 +145,10 @@ type OptionalString<T extends string> = T | {} & string;
 
 /**
  * Type options for the KAPLAY context.
+ *
+ * @group Start
  */
-export type KAPLAYTypeOpt = {
+export type TypeOpt = {
     /**
      * (**TYPE OPTIONS**) Scene types, made for inference in
      *
@@ -176,10 +178,9 @@ export type KAPLAYTypeOpt = {
     StrictTags?: boolean;
 };
 
-/** */
-export type Opt = Pick<KAPLAYOpt, "buttons" | "plugins"> & KAPLAYTypeOpt;
+export type KAPLAYTypeOpt = Pick<KAPLAYOpt, "buttons" | "plugins"> & TypeOpt;
 
-export type InfOpt<T extends Opt = Opt> = {
+export type InfOpt<T extends KAPLAYTypeOpt = KAPLAYTypeOpt> = {
     Scenes: T extends { Scenes: infer S } ? S : undefined;
     Tags: T extends { Tags: infer T } ? T : undefined;
     StrictScenes: T extends { StrictScenes: infer S } ? S : undefined;
@@ -188,11 +189,12 @@ export type InfOpt<T extends Opt = Opt> = {
     Plugins: T extends { plugins: infer P } ? P : undefined;
 };
 
-export type CreateTypeOpt<T extends Opt> = Prettify<
+export type CreateTypeOpt<T extends KAPLAYTypeOpt> = Prettify<
     Defined<Prettify<InfOpt<T>>>
 >;
 
-type SceneName<TOpt extends Opt> = TOpt["Scenes"] extends undefined ? string
+type SceneName<TOpt extends KAPLAYTypeOpt> = TOpt["Scenes"] extends undefined
+    ? string
     : TOpt["StrictScenes"] extends true ? keyof TOpt["Scenes"]
     : OptionalString<Extract<keyof TOpt["Scenes"], string>>;
 
@@ -200,24 +202,24 @@ type SceneArgs<TScene, TSceneMap> = TScene extends keyof TSceneMap
     ? TSceneMap[TScene] extends Array<any> ? TSceneMap[TScene] : any[]
     : any[];
 
-export type TagName<TOpt extends Opt> = keyof TOpt["Tags"] extends undefined
-    ? string
+export type TagName<TOpt extends KAPLAYTypeOpt> = keyof TOpt["Tags"] extends
+    undefined ? string
     : TOpt["StrictTags"] extends true ? Extract<keyof TOpt["Tags"], string>
     : OptionalString<Extract<keyof TOpt["Tags"], string>>;
 
-export type ButtonName<TOpt extends Opt> = keyof TOpt["buttons"] extends
-    undefined ? string
-    : TOpt["buttons"] extends Record<string, ButtonBinding>
-        ? Extract<keyof TOpt["buttons"], string>
-    : OptionalString<Extract<keyof TOpt["buttons"], string>>;
+export type ButtonName<TOpt extends KAPLAYTypeOpt> =
+    keyof TOpt["buttons"] extends undefined ? string
+        : TOpt["buttons"] extends Record<string, ButtonBinding>
+            ? Extract<keyof TOpt["buttons"], string>
+        : OptionalString<Extract<keyof TOpt["buttons"], string>>;
 
-export type CompFromTag<O extends Opt, TTag> = TTag extends keyof O["Tags"]
-    ? O["Tags"][TTag]
+export type CompFromTag<O extends KAPLAYTypeOpt, TTag> = TTag extends
+    keyof O["Tags"] ? O["Tags"][TTag]
     : any;
 
-export type CGameObj<TOpt extends Opt = never, T = any> = [TOpt] extends [never]
-    ? GameObj<T>
-    : GameObjT<T, TOpt>;
+export type CGameObj<TOpt extends KAPLAYTypeOpt = never, T = any> =
+    [TOpt] extends [never] ? GameObj<T>
+        : GameObjT<T, TOpt>;
 
 /**
  * Context handle that contains every KAPLAY function.
@@ -228,7 +230,7 @@ export type CGameObj<TOpt extends Opt = never, T = any> = [TOpt] extends [never]
  * @group Start
  */
 export interface KAPLAYCtx<
-    O extends Opt = never,
+    O extends KAPLAYTypeOpt = never,
 > {
     /**
      * Internal data that should not be accessed directly.
@@ -5927,11 +5929,11 @@ export interface KAPLAYCtx<
  */
 export type GameObj<T = any> = GameObjRaw & MergeComps<T>;
 
-export type GameObjT<T = any, O extends Opt = Opt> =
+export type GameObjT<T = any, O extends KAPLAYTypeOpt = KAPLAYTypeOpt> =
     & GameObjRawT<O>
     & MergeComps<T>;
 
-interface GameObjRawT<O extends Opt> extends GameObjRaw {
+interface GameObjRawT<O extends KAPLAYTypeOpt> extends GameObjRaw {
     tag(tag: TagName<O> | TagName<O>[]): void;
     untag(tag: TagName<O> | TagName<O>[]): void;
     is<T extends TagName<O> | TagName<O>[]>(
@@ -5986,7 +5988,7 @@ export type MergePlugins<T extends PluginList<any>> = MergeObj<
  *
  * @group Component Types
  */
-export type CompList<T, O extends Opt = any> = (Comp | TagName<O>)[];
+export type CompList<T, O extends KAPLAYTypeOpt = any> = (Comp | TagName<O>)[];
 export type PluginList<T> = (T | KAPLAYPlugin<any>)[];
 
 /**

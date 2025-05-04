@@ -21,8 +21,8 @@ import {
     type KAPLAYCtx,
     type KAPLAYOpt,
     type KAPLAYPlugin,
+    type KAPLAYTypeOpt,
     type MergePlugins,
-    type Opt,
     type PluginList,
 } from "./types";
 
@@ -34,7 +34,7 @@ export let _k: KAPLAYCtx["_k"];
 // If KAPLAY was runned before
 let runned = false;
 
-type KAPLAYGame<O extends Opt | undefined> = O extends Opt
+type KAPLAYGame<O extends KAPLAYTypeOpt | undefined> = O extends KAPLAYTypeOpt
     ? InfOpt<O>["Plugins"] extends PluginList<any>
         ? KAPLAYCtx<O> & MergePlugins<InfOpt<O>["Plugins"]>
     : KAPLAYCtx<O>
@@ -79,7 +79,7 @@ type KAPLAYGame<O extends Opt | undefined> = O extends Opt
  * @group Start
  */
 export const kaplay = <
-    const O extends Opt | undefined = undefined,
+    const O extends KAPLAYTypeOpt | undefined = undefined,
 >(
     opt?: O extends undefined ? O : KAPLAYOpt,
 ): KAPLAYGame<O> => {

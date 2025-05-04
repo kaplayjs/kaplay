@@ -15,9 +15,6 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 #### TypeScript API
 
 - Added `InfTypeOpt` for passing to `kaplay()` - @lajbel
-  ```ts
-  ```
-
 - Added `ellipse()` component - @mflerackers
 - Added circle and (rotated) ellipse collision shapes - @mflerackers
 - Added `clipLineToRect()` - @mflerackers
