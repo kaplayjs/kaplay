@@ -8,37 +8,25 @@ import type { Comp, GameObj } from "../../../types";
  */
 export interface HealthComp extends Comp {
     /**
-     * Decrease HP by n (defaults to 1).
+     * Current health points. Setting it to a lower or higher value will trigger onHurt() and onHeal()
      */
-    hurt(n?: number): void;
-    /**
-     * Increase HP by n (defaults to 1).
-     */
-    heal(n?: number): void;
-    /**
-     * Current health points.
-     */
-    hp(): number;
-    /**
-     * Set current health points.
-     */
-    setHP(hp: number): void;
+    hp: number;
     /**
      * Max amount of HP.
      */
-    maxHP(): number | null;
+    maxHP: number;
     /**
-     * Set max amount of HP.
+     * Wheter hp is 0.
      */
-    setMaxHP(hp: number): void;
+    readonly dead: boolean;
     /**
-     * Register an event that runs when hurt() is called upon the object.
+     * Register an event that runs when the hp is lowered.
      *
      * @since v2000.1
      */
     onHurt(action: (amount?: number) => void): KEventController;
     /**
-     * Register an event that runs when heal() is called upon the object.
+     * Register an event that runs when the hp is increased.
      *
      * @since v2000.1
      */
@@ -61,29 +49,31 @@ export function health(
 
     return {
         id: "health",
-        hurt(this: GameObj, n: number = 1) {
-            this.setHP(hp - n);
-            this.trigger("hurt", n);
+        add() {
+            if (!this.maxHP) this.maxHP = this.hp;
         },
-        heal(this: GameObj, n: number = 1) {
-            const origHP = hp;
-            this.setHP(hp + n);
-            this.trigger("heal", hp - origHP);
-        },
-        hp(): number {
+        get hp() {
             return hp;
         },
-        maxHP(): number | null {
-            return maxHP ?? null;
-        },
-        setMaxHP(n: number): void {
-            maxHP = n;
-        },
-        setHP(this: GameObj, n: number) {
-            hp = maxHP ? Math.min(maxHP, n) : n;
-            if (hp <= 0) {
-                this.trigger("death");
+        set hp(val: number) {
+            const origHP = this.hp;
+            hp = this.maxHP ? Math.min(this.maxHP, val) : val;
+            if (hp < origHP) {
+                (this as unknown as GameObj).trigger("hurt", origHP - hp);
             }
+            else if (hp > origHP) {
+                (this as unknown as GameObj).trigger("heal", origHP - hp);
+            }
+            if (hp <= 0) (this as unknown as GameObj).trigger("death");
+        },
+        get maxHP() {
+            return maxHP as number;
+        },
+        set maxHP(val: number) {
+            maxHP = val;
+        },
+        get dead() {
+            return this.hp <= 0;
         },
         onHurt(
             this: GameObj,

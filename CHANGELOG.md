@@ -116,6 +116,7 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - The `textInput` component's `isFocused` property is now a one-hot lockout,
   setting it to true (focused) will clear focus from all the other text inputs -
   @dragoncoder047
+- Changed the API of `HealthComp` - @amyspark-ng
 
 ## [3001.0.16] - 2025-04-18
 
