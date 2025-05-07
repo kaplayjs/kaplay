@@ -160,5 +160,3 @@ export function state<T extends string>(
         },
     };
 }
-
-const comp = state("hello", ["hello", "chao", "buenas tardes"]);
