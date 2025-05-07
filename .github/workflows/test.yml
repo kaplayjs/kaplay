@@ -2,10 +2,6 @@ name: Test KAPLAY
 
 on:
   push:
-    branches: 
-      - master
-      - v3001
-  pull_request:
 
 jobs:
   check-format:
@@ -37,13 +33,6 @@ jobs:
           else
             echo "Code is formatted correctly."
           fi
-      - name: Comment PR
-        if: failure() && github.event_name == 'pull_request'
-        uses: thollander/actions-comment-pull-request@v3
-        with:
-          message: |
-            Hey! Please run `pnpm run fmt` to format the code.
-          github-token: ${{ secrets.BOT_TOKEN }}
         
   test:
     name: Test
