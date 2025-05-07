@@ -1187,20 +1187,20 @@ export interface KAPLAYCtx<
      * ])
      *
      * player.onCollide("bad", (bad) => {
-     *     player.health--;
-     *     bad.health--;
+     *     player.hp--;
+     *     bad.hp--;
      * })
      *
      * player.onCollide("apple", () => {
-     *     player.health++;
+     *     player.hp++;
      * })
      *
-     * player.on("hurt", () => {
+     * player.onHurt(() => {
      *     play("ouch")
      * })
      *
      * // triggers when hp reaches 0
-     * player.on("death", () => {
+     * player.onDeath(() => {
      *     destroy(player)
      *     go("lose")
      * })
