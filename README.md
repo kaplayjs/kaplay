@@ -55,8 +55,8 @@ Blocky imperative syntax for describing behaviors
 ```js
 // .onCollide() comes from "area" component
 player.onCollide("enemy", () => {
-    // .hurt() comes from "health" component
-    player.hurt(1);
+    // .health comes from "health" component
+    player.health--;
 });
 
 // check fall death

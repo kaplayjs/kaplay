@@ -1187,12 +1187,12 @@ export interface KAPLAYCtx<
      * ])
      *
      * player.onCollide("bad", (bad) => {
-     *     player.hurt(1)
-     *     bad.hurt(1)
+     *     player.health--;
+     *     bad.health--;
      * })
      *
      * player.onCollide("apple", () => {
-     *     player.heal(1)
+     *     player.health++;
      * })
      *
      * player.on("hurt", () => {

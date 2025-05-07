@@ -1,4 +1,5 @@
 import type { KEventController } from "../../../events/events";
+import { clamp } from "../../../math/clamp";
 import type { Comp, GameObj } from "../../../types";
 
 /**
@@ -8,7 +9,9 @@ import type { Comp, GameObj } from "../../../types";
  */
 export interface HealthComp extends Comp {
     /**
-     * Current health points. Setting it to a lower or higher value will trigger onHurt() and onHeal()
+     * Current health points. Setting it to a lower or higher value will trigger onHurt() and onHeal().
+     * Setting it to a value greater than maxHP will set it to maxHP.
+     * Setting it to a value less than 0 will set it to 0 and trigger onDeath().
      */
     hp: number;
     /**
@@ -16,7 +19,7 @@ export interface HealthComp extends Comp {
      */
     maxHP: number;
     /**
-     * Wheter hp is 0.
+     * Whether hp is 0.
      */
     readonly dead: boolean;
     /**
@@ -24,15 +27,15 @@ export interface HealthComp extends Comp {
      *
      * @since v2000.1
      */
-    onHurt(action: (amount?: number) => void): KEventController;
+    onHurt(action: (deltaHP?: number) => void): KEventController;
     /**
      * Register an event that runs when the hp is increased.
      *
      * @since v2000.1
      */
-    onHeal(action: (amount?: number) => void): KEventController;
+    onHeal(action: (deltaHP?: number) => void): KEventController;
     /**
-     * Register an event that runs when object's HP is equal or below 0.
+     * Register an event that runs when object's HP becomes zero.
      *
      * @since v2000.1
      */
@@ -57,7 +60,7 @@ export function health(
         },
         set hp(val: number) {
             const origHP = this.hp;
-            hp = this.maxHP ? Math.min(this.maxHP, val) : val;
+            hp = this.maxHP ? clamp(val, 0, this.maxHP) : val;
             if (hp < origHP) {
                 (this as unknown as GameObj).trigger("hurt", origHP - hp);
             }
@@ -77,13 +80,13 @@ export function health(
         },
         onHurt(
             this: GameObj,
-            action: (amount?: number) => void,
+            action: (deltaHP?: number) => void,
         ): KEventController {
             return this.on("hurt", action);
         },
         onHeal(
             this: GameObj,
-            action: (amount?: number) => void,
+            action: (deltaHP?: number) => void,
         ): KEventController {
             return this.on("heal", action);
         },

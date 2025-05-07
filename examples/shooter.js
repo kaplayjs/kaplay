@@ -48,7 +48,7 @@ scene("battle", () => {
 
     const music = play("OtherworldlyFoe");
 
-    volume(0.5);
+    setVolume(0.5);
 
     function grow(rate) {
         return {
@@ -293,7 +293,7 @@ scene("battle", () => {
 
     onCollide("bullet", "enemy", (b, e) => {
         destroy(b);
-        e.hurt(insaneMode ? 10 : 1);
+        e.hp -= insaneMode ? 10 : 1;
         addExplode(b.pos, 1, 24, 1);
     });
 
@@ -315,7 +315,7 @@ scene("battle", () => {
     });
 
     boss.onHurt(() => {
-        healthbar.set(boss.hp());
+        healthbar.set(boss.hp);
     });
 
     boss.onDeath(() => {
