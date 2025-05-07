@@ -206,7 +206,7 @@ function addEnemy(p) {
         {
             add() {
                 this.onHurt(() => {
-                    this.opacity = this.hp() / 100;
+                    this.opacity = this.hp / 100;
                 });
                 this.onDeath(() => {
                     const rect = this.localArea();
@@ -372,7 +372,7 @@ onMousePress(() => {
         });
         if (hit.object && hit.object.is("enemy")) {
             hit.object.moveBy(dir.unit().scale(10));
-            hit.object.hurt(20);
+            hit.object.hp -= 20;
         }
     }
 });
