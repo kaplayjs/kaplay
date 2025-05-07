@@ -1286,7 +1286,7 @@ export interface KAPLAYCtx<
      * @since v2000.1
      * @group Components
      */
-    state(initialState: string, stateList?: string[]): StateComp;
+    state<T extends string>(initialState: T, stateList?: T[]): StateComp<T>;
     /**
      * state() with pre-defined transitions.
      *
@@ -1316,11 +1316,11 @@ export interface KAPLAYCtx<
      * @since v2000.2
      * @group Components
      */
-    state(
-        initialState: string,
-        stateList: string[],
-        transitions: Record<string, string | string[]>,
-    ): StateComp;
+    state<T extends string>(
+        initialState: T,
+        stateList: T[],
+        transitions: Record<T, T | T[]>,
+    ): StateComp<T>;
     /**
      * @deprecated since v3001.0
      * @requires {@link opacity `opacity()`}
