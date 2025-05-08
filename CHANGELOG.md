@@ -119,6 +119,17 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   @dragoncoder047
 - Changed the API of `HealthComp` - @amyspark-ng
 
+## [3001.0.17] - 2025-05-08
+
+### Added
+
+- New way to import globals in JS `/dist/types.d.ts`
+
+### Fixed
+
+- Removed beant - @lajbel
+- Various fixes and improvements - All Contributors
+
 ## [3001.0.16] - 2025-04-18
 
 ### Fixed
