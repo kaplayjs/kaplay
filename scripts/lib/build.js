@@ -2,7 +2,14 @@
 // @ts-check
 
 import * as esbuild from "esbuild";
+import fs from "fs";
+import path from "path";
 import { DIST_DIR, SRC_PATH } from "../constants.js";
+
+// KAPLAY Package.json
+const pkgFile = path.join(import.meta.dirname, "../../package.json");
+const pkg = JSON.parse(fs.readFileSync(pkgFile, "utf-8"));
+const pkgVersion = pkg.version;
 
 /**
  * Different formats for the build
@@ -23,7 +30,8 @@ export const fmts = (name) => [
     { format: "esm", outfile: `${DIST_DIR}/${name}.mjs` },
 ];
 
-const kaboom = fmts("kaboom")[0];
+const kaplayBuilds = fmts("kaplay");
+const kaboomBuild = fmts("kaboom")[0];
 
 /** @type {esbuild.BuildOptions} */
 export const config = {
@@ -40,15 +48,31 @@ export const config = {
         ".mp3": "binary",
     },
     entryPoints: [SRC_PATH],
+    define: {
+        "KAPLAY_VERSION": JSON.stringify(pkgVersion),
+    },
 };
 
-export async function build() {
+export async function build(fast = false) {
+    if (fast) {
+        // fast build, no minification, no kabooms
+        return esbuild.build({
+            ...config,
+            ...kaplayBuilds[0],
+            bundle: true,
+            minify: false,
+            sourcemap: false,
+            minifyIdentifiers: false,
+            minifySyntax: false,
+            minifyWhitespace: false,
+        }).then(() => console.log("-> kaplay.js"));
+    }
     return Promise.all(
         [{
             formats: fmts("kaplay"),
             sourceMap: true,
         }, {
-            formats: [kaboom],
+            formats: [kaboomBuild],
             sourceMap: false,
         }].flat().map(({ formats, sourceMap }) => {
             return formats.map((fmt) => {
