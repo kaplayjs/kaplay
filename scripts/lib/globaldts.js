@@ -101,7 +101,10 @@ export async function genGlobalDTS() {
 
     // generate global decls for KAPLAYCtx members
     let globalDts = "";
+    let globalDts2 = "";
+
     const imp = "import { KAPLAYCtx, default as KAPLAY } from \"../doc\"\n";
+    const imp2 = "type KAPLAY = typeof kaplay;";
 
     globalDts += "declare global {\n";
 
@@ -117,10 +120,14 @@ export async function genGlobalDTS() {
         }
     }
 
+    globalDts2 = globalDts;
+    globalDts2 += "const kaplay: KAPLAY;\n";
+    globalDts2 += "const kaboom: KAPLAY;\n";
     globalDts += `\tconst kaplay: typeof KAPLAY\n`;
     globalDts += `\tconst kaboom: typeof KAPLAY\n`;
 
     globalDts += "}\n";
+    globalDts2 += "}\n";
 
     if (!globalGenerated) {
         throw new Error("KAPLAYCtx not found, failed to generate global defs.");
@@ -130,6 +137,6 @@ export async function genGlobalDTS() {
     writeFile(`${DIST_DIR}/declaration/global.js`, "");
     writeFile(
         `${DIST_DIR}/types.d.ts`,
-        docts + `declare const KAPLAY = kaplay;` + globalDts,
+        docts + imp2 + globalDts2,
     );
 }
