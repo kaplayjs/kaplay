@@ -1,6 +1,6 @@
 {
   "name": "kaplay",
-  "description": "KAPLAY is a JavaScript & TypeScript game library that helps you make games fast and fun!",
+  "description": "KAPLAY is a JavaScript & TypeScript game library that helps you make games fast and fun! (formerly known as Kaboom.js)",
   "version": "3001.0.17",
   "license": "MIT",
   "homepage": "https://kaplayjs.com/",
@@ -63,7 +63,8 @@
   "scripts": {
     "dev": "NODE_ENV=development node scripts/dev.js",
     "win:dev": "set NODE_ENV=development && node scripts/dev.js",
-    "build": "node scripts/generateIndex.js && node scripts/build.js && npm run doc-dts",
+    "build": "node scripts/generateIndex.js && npm run doc-dts && node scripts/build.js",
+    "build:fast": "node scripts/buildFast.js",
     "check": "tsc",
     "fmt": "dprint fmt",
     "test": "node scripts/test.js",
