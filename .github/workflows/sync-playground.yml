@@ -2,7 +2,9 @@ name: Bump kaplayjs/kaplayground submodule
 
 on:
   push:
-    branches: master
+    branches: [master]
+  workflow_dispatch:
+    
 
 jobs:
   sync:
@@ -18,7 +20,7 @@ jobs:
       - name: Check if there are changes in examples/ folder between HEAD and last commit
         id: check_changes
         run: |
-          CHANGES=$(git diff --name-only HEAD^ HEAD -- examples/)
+          CHANGES=$(git diff --name-only HEAD^ HEAD -- examples/ | paste -sd "," -)
           echo "changes=$CHANGES" >> $GITHUB_OUTPUT 
       - name: Dispatch Event
         uses: actions/github-script@v6

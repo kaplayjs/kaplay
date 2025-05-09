@@ -880,7 +880,7 @@ export const GameObjRawPrototype: Omit<GameObjRaw, AppEvents> = {
                 pushTransform();
                 for (let i = 0; i < objects.length; i++) {
                     _k.gfx.fixed = objects[i].fixed;
-                    loadMatrix(objects[i].parent!.transform);
+                    loadMatrix(objects[i].transform);
                     objects[i]._drawEvents.trigger();
                 }
                 popTransform();
@@ -905,13 +905,15 @@ export const GameObjRawPrototype: Omit<GameObjRaw, AppEvents> = {
             }
 
             if (!this.target?.refreshOnly || !this.target?.isFresh) {
+                const f = _k.gfx.fixed;
+                pushTransform();
                 // Parent is drawn before children if !childrenOnly
                 if (!this.target?.childrenOnly) {
+                    _k.gfx.fixed = this.fixed;
+                    loadMatrix(this.transform);
                     this._drawEvents.trigger();
                 }
                 // Draw children
-                const f = _k.gfx.fixed;
-                pushTransform();
                 for (let i = 0; i < objects.length; i++) {
                     // An object with a mask is drawn at draw time, but the transform still needs to be calculated,
                     // so we push the parent's transform and pretend we are
@@ -950,8 +952,13 @@ export const GameObjRawPrototype: Omit<GameObjRaw, AppEvents> = {
             // If children only flag is on
             if (this.target?.childrenOnly) {
                 // Parent is drawn on screen, children are drawn in target
+                const f = _k.gfx.fixed;
+                _k.gfx.fixed = this.fixed;
+                pushTransform();
                 loadMatrix(this.transform);
                 this._drawEvents.trigger();
+                popTransform();
+                _k.gfx.fixed = f;
             }
         }
     },

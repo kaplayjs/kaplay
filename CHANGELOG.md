@@ -76,6 +76,7 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - Small circles and arcs use now less points than larger ones - @mflerackers
 - Added pushMatrix, storeMatrix and loadIdentity to the stack functions -
   @mflerackers
+- Typed `StateComp` - @amyspark-ng
 - Added bias to line drawing, which controls the offset from the center of the
   line - @mflerackers
 
@@ -117,6 +118,18 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - The `textInput` component's `isFocused` property is now a one-hot lockout,
   setting it to true (focused) will clear focus from all the other text inputs -
   @dragoncoder047
+- Changed the API of `HealthComp` - @amyspark-ng
+
+## [3001.0.17] - 2025-05-08
+
+### Added
+
+- New way to import globals in JS `/dist/types.d.ts`
+
+### Fixed
+
+- Removed beant - @lajbel
+- Various fixes and improvements - All Contributors
 
 ## [3001.0.16] - 2025-04-18
 

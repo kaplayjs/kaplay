@@ -18,7 +18,7 @@ kaplay({
 });
 
 // Loading a multi-frame sprite
-loadSprite("dino", "/sprites/dino.png", {
+loadSprite("dino", "/sprites/dungeon-dino.png", {
     // The image contains 9 frames layed out horizontally, slice it into individual frames
     sliceX: 9,
     // Define animations

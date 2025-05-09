@@ -1273,20 +1273,20 @@ export interface KAPLAYCtx<
      * ])
      *
      * player.onCollide("bad", (bad) => {
-     *     player.hurt(1)
-     *     bad.hurt(1)
+     *     player.hp--;
+     *     bad.hp--;
      * })
      *
      * player.onCollide("apple", () => {
-     *     player.heal(1)
+     *     player.hp++;
      * })
      *
-     * player.on("hurt", () => {
+     * player.onHurt(() => {
      *     play("ouch")
      * })
      *
      * // triggers when hp reaches 0
-     * player.on("death", () => {
+     * player.onDeath(() => {
      *     destroy(player)
      *     go("lose")
      * })
@@ -1372,7 +1372,7 @@ export interface KAPLAYCtx<
      * @since v2000.1
      * @group Components
      */
-    state(initialState: string, stateList?: string[]): StateComp;
+    state<T extends string>(initialState: T, stateList?: T[]): StateComp<T>;
     /**
      * state() with pre-defined transitions.
      *
@@ -1402,11 +1402,11 @@ export interface KAPLAYCtx<
      * @since v2000.2
      * @group Components
      */
-    state(
-        initialState: string,
-        stateList: string[],
-        transitions: Record<string, string | string[]>,
-    ): StateComp;
+    state<T extends string>(
+        initialState: T,
+        stateList: T[],
+        transitions: Record<T, T | T[]>,
+    ): StateComp<T>;
     /**
      * @deprecated since v3001.0
      * @requires {@link opacity `opacity()`}
