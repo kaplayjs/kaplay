@@ -202,10 +202,11 @@ type SceneArgs<TScene, TSceneMap> = TScene extends keyof TSceneMap
     ? TSceneMap[TScene] extends Array<any> ? TSceneMap[TScene] : any[]
     : any[];
 
-export type TagName<TOpt extends KAPLAYTypeOpt> = keyof TOpt["Tags"] extends
-    undefined ? string
-    : TOpt["StrictTags"] extends true ? Extract<keyof TOpt["Tags"], string>
-    : OptionalString<Extract<keyof TOpt["Tags"], string>>;
+export type TagName<O extends KAPLAYTypeOpt = any> = O extends KAPLAYTypeOpt
+    ? keyof O["Tags"] extends undefined ? string
+    : O["StrictTags"] extends true ? Extract<keyof O["Tags"], string>
+    : OptionalString<Extract<keyof O["Tags"], string>>
+    : string;
 
 export type ButtonName<TOpt extends KAPLAYTypeOpt> =
     keyof TOpt["buttons"] extends undefined ? string
@@ -216,10 +217,6 @@ export type ButtonName<TOpt extends KAPLAYTypeOpt> =
 export type CompFromTag<O extends KAPLAYTypeOpt, TTag> = TTag extends
     keyof O["Tags"] ? O["Tags"][TTag]
     : any;
-
-export type CGameObj<TOpt extends KAPLAYTypeOpt = never, T = any> =
-    [TOpt] extends [never] ? GameObj<T>
-        : GameObjT<T, TOpt>;
 
 /**
  * Context handle that contains every KAPLAY function.
@@ -284,9 +281,8 @@ export interface KAPLAYCtx<
      * @returns The added game object that contains all properties and methods each component offers.
      * @group Game Obj
      */
-    add<T extends CompList<unknown, O>>(
-        comps?: [...T],
-    ): CGameObj<O, T[number]>;
+    add<T extends CompList>(comps?: [...T]): GameObj<T[number]>;
+
     /**
      * Remove and re-add the game obj, without triggering add / destroy events.
      *
@@ -357,10 +353,7 @@ export interface KAPLAYCtx<
      * @since v2000.0
      * @group Game Obj
      */
-    get<TTag extends TagName<O>, T = CompFromTag<O, TTag>>(
-        tag: TagName<O>,
-        opts?: GetOpt,
-    ): GameObj<T>[];
+    get<T = any>(tag: string | string[], opts?: GetOpt): GameObj<T>[];
     /**
      * Get a list of game objects in an advanced way.
      *
@@ -5922,6 +5915,20 @@ export interface KAPLAYCtx<
     VERSION: string;
 }
 
+export type KAPLAYCtxT<O extends KAPLAYTypeOpt = any> =
+    & KAPLAYCtxTMethods<O>
+    & Omit<KAPLAYCtx<O>, keyof KAPLAYCtxTMethods<O>>;
+
+export type KAPLAYCtxTMethods<
+    O extends KAPLAYTypeOpt = any,
+> = {
+    add<T extends CompListT<O>>(compsT?: [...T]): GameObjT<T[number], O>;
+    get<Tag extends TagName<O>, T = CompFromTag<O, Tag>>(
+        tag: TagName<O>,
+        opts?: GetOpt,
+    ): GameObjT<T, O>[];
+};
+
 /**
  * The basic unit of object in KAPLAY. The player, a butterfly, a tree, or even a piece of text.
  *
@@ -5988,7 +5995,14 @@ export type MergePlugins<T extends PluginList<any>> = MergeObj<
  *
  * @group Component Types
  */
-export type CompList<T, O extends KAPLAYTypeOpt = any> = (Comp | TagName<O>)[];
+export type CompList = readonly (
+    string | object
+)[];
+
+export type CompListT<O extends KAPLAYTypeOpt = any> = readonly (
+    TagName<O> | object
+)[];
+
 export type PluginList<T> = (T | KAPLAYPlugin<any>)[];
 
 /**

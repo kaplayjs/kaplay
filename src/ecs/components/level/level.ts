@@ -370,6 +370,7 @@ export function level(map: string[], opt: LevelOpt): LevelComp {
                                 "Level symbol def must be a function returning a component list",
                             );
                         }
+                        opt.tiles[key](p);
                         return opt.tiles[key](p);
                     }
                     else if (opt.wildcardTile) {
@@ -393,20 +394,23 @@ export function level(map: string[], opt: LevelOpt): LevelComp {
             let hasTile = false;
 
             for (const comp of comps) {
-                if (comp.id === "tile") hasTile = true;
-                if (comp.id === "pos") hasPos = true;
+                // Casting here because if comp is a string, no problem
+                // because comp.id will be undefined
+                if ((comp as Comp).id === "tile") hasTile = true;
+                if ((comp as Comp).id === "pos") hasPos = true;
             }
 
             if (!hasPos) comps.push(pos(this.tile2Pos(p)));
             if (!hasTile) comps.push(tile());
 
-            const obj = this.add(comps);
+            const obj = this.add<CompList<PosComp | LevelComp>>();
 
             if (hasPos) {
-                obj.tilePosOffset = obj.pos.clone();
+                (obj as GameObj).tilePosOffset = (obj as GameObj).pos.clone();
             }
 
             obj.tilePos = p;
+
             // Stale, so recalculate
             calcTransform(obj, obj.transform);
 

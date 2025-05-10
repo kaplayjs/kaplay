@@ -19,11 +19,13 @@ import kaSpriteSrc from "./kassets/ka.png";
 import {
     type InfOpt,
     type KAPLAYCtx,
+    type KAPLAYCtxT,
     type KAPLAYOpt,
     type KAPLAYPlugin,
     type KAPLAYTypeOpt,
     type MergePlugins,
     type PluginList,
+    type TypeOpt,
 } from "./types";
 
 /**
@@ -33,16 +35,19 @@ export let _k: KAPLAYCtx["_k"];
 
 // If KAPLAY was runned before
 let runned = false;
+type HasDefinedKeys<TObj, TCheck> = {
+    [K in keyof TCheck & keyof TObj]: TObj[K] extends undefined ? never : K;
+}[keyof TCheck & keyof TObj] extends never ? never : TObj;
+
+type CKAPLAYCtx<O extends KAPLAYTypeOpt> = HasDefinedKeys<O, TypeOpt> extends
+    never ? KAPLAYCtx<O>
+    : KAPLAYCtxT<O>;
 
 type KAPLAYGame<O extends KAPLAYTypeOpt | undefined> = O extends KAPLAYTypeOpt
     ? InfOpt<O>["Plugins"] extends PluginList<any>
-        ? KAPLAYCtx<O> & MergePlugins<InfOpt<O>["Plugins"]>
-    : KAPLAYCtx<O>
+        ? CKAPLAYCtx<O> & MergePlugins<InfOpt<O>["Plugins"]>
+    : CKAPLAYCtx<O>
     : KAPLAYCtx;
-
-// extends undefined
-//     ? KAPLAYCtx<O>
-//     : KAPLAYCtx<O> & MergePlugins<O["Plugins"]>;
 
 /**
  * Initialize KAPLAY context. The starting point of all KAPLAY games.

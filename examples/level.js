@@ -65,6 +65,15 @@ const level = addLevel([
     },
 });
 
+level.spawn(
+    [
+        sprite("ghosty"),
+        "f",
+    ],
+    0,
+    0,
+);
+
 // Get the player object from tag
 const player = level.get("player")[0];
 

@@ -137,28 +137,42 @@ describe("TypeOpt", () => {
     test("add() should let you use other tags", () => {
         ctxTags.add([
             ctxTags.sprite("bean"),
-            "sea",
+            "zimbie",
         ]);
     });
 
     test("GameObjT.tag() should let you use other tags", () => {
         const obj = ctxTags.add([]);
 
-        obj.tag("sea");
+        obj.tag("zimbie");
     });
 
     test("add() with StrictTags should only let you use defined tags", () => {
-        ctxTagsStrict.add([
+        const obj = ctxTagsStrict.add([
             ctxTagsStrict.sprite("bean"),
             // @ts-expect-error Use invalid tag
-            "sea",
+            "zimbie",
         ]);
+
+        // @ts-expect-error No inference
+        obj.sprite;
     });
 
     test("GameObjT.tag() with StrictTags should only let you use defined tags", () => {
         const obj = ctxTagsStrict.add([]);
 
         // @ts-expect-error Use invalid tag
-        obj.tag("sea");
+        obj.tag("zimbie");
+    });
+
+    test("get() should return the correct type when tag is defined", () => {
+        const obj = ctxTagsStrict.get("zombie");
+
+        // @ts-expect-error Use invalid tag
+        obj.get("zimbie");
+
+        expectTypeOf(obj).toEqualTypeOf<
+            Array<GameObjT<SpriteComp | PosComp, StrictTagsOpt>>
+        >();
     });
 });
