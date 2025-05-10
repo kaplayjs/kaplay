@@ -8,3 +8,8 @@ export function destroy(obj: GameObj) {
 export function getTreeRoot(): GameObj {
     return _k.game.root;
 }
+
+export function isFixed(obj: GameObj): boolean {
+    if (obj.fixed) return true;
+    return obj.parent ? isFixed(obj.parent) : false;
+}

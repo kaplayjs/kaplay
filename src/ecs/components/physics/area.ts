@@ -1,6 +1,5 @@
 import { DEF_ANCHOR } from "../../../constants/general";
 import type { KEventController } from "../../../events/events";
-import { isFixed } from "../../../game/utils";
 import { anchorPt } from "../../../gfx/anchor";
 import { drawCircle } from "../../../gfx/draw/drawCircle";
 import { drawPolygon } from "../../../gfx/draw/drawPolygon";
@@ -19,6 +18,7 @@ import type {
     Shape,
     Tag,
 } from "../../../types";
+import { isFixed } from "../../entity/utils";
 import type { FakeMouseComp } from "../misc/fakeMouse";
 import type { AnchorComp } from "../transform/anchor";
 import type { FixedComp } from "../transform/fixed";

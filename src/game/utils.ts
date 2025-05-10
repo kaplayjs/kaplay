@@ -1,10 +1,5 @@
 import type { GameObj } from "../types";
 
-export function isFixed(obj: GameObj): boolean {
-    if (obj.fixed) return true;
-    return obj.parent ? isFixed(obj.parent) : false;
-}
-
 // Note: I will doom this soon 😈😈😈😈
 export function getRenderProps(obj: GameObj<any>) {
     return {
