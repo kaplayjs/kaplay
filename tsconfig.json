@@ -7,10 +7,8 @@
     "noImplicitThis": true,
     "skipLibCheck": true,
     "resolveJsonModule": true,
-    "emitDeclarationOnly": true,
-    "declaration": true,
-    "declarationMap": true,
-    "declarationDir": "dist/declaration",
+    "declaration": false,
+    "noEmit": true,
     // always use import type for type only imports
     "verbatimModuleSyntax": true,
     "strict": true,

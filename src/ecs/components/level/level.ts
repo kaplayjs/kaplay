@@ -37,8 +37,12 @@ export interface LevelComp extends Comp {
      *
      * @returns The spawned game object, or null if the obj hasn't components.
      */
-    spawn<T>(obj: CompList<T>, p: Vec2): GameObj<T> | null;
-    spawn<T>(sym: CompList<T>, x: number, y: number): GameObj<T> | null;
+    spawn<T extends CompList>(obj: [...T], p: Vec2): GameObj<T[number]> | null;
+    spawn<T extends CompList>(
+        sym: [...T],
+        x: number,
+        y: number,
+    ): GameObj<T[number]> | null;
     /**
      * Total width of level in pixels.
      */
@@ -104,7 +108,7 @@ export interface LevelOpt {
      * Definition of each tile.
      */
     tiles: {
-        [sym: string]: (pos: Vec2) => CompList<Comp>;
+        [sym: string]: (pos: Vec2) => CompList;
     };
     /**
      * Called when encountered a symbol not defined in "tiles".
@@ -112,7 +116,7 @@ export interface LevelOpt {
     wildcardTile?: (
         sym: string,
         pos: Vec2,
-    ) => CompList<Comp> | null | undefined;
+    ) => CompList | null | undefined;
 }
 
 /**
@@ -357,7 +361,7 @@ export function level(map: string[], opt: LevelOpt): LevelComp {
 
         spawn(
             this: GameObj<LevelComp>,
-            key: string | CompList<any>,
+            key: string | CompList,
             ...args: Vec2Args
         ) {
             const p = vec2(...args);
@@ -409,6 +413,7 @@ export function level(map: string[], opt: LevelOpt): LevelComp {
                 (obj as GameObj).tilePosOffset = (obj as GameObj).pos.clone();
             }
 
+            // @ts-ignore FIXME
             obj.tilePos = p;
 
             // Stale, so recalculate

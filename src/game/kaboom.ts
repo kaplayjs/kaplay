@@ -26,7 +26,7 @@ export interface BoomOpt {
      *
      * @since v3000.0
      */
-    comps?: CompList<any>;
+    comps?: CompList;
 }
 
 export function addKaboom(p: Vec2, opt: BoomOpt = {}): GameObj {

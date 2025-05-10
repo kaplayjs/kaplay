@@ -18,7 +18,7 @@ Order of making a game object:
 We use makeInternal() to create the root game object, and make() to create
 the rest of the game objects.
 */
-export function makeInternal<T extends CompList<unknown>>(
+export function makeInternal<T extends CompList>(
     compsAndTags: [...T],
     id: number,
 ): GameObj<T[number]> {
@@ -88,7 +88,7 @@ export function makeInternal<T extends CompList<unknown>>(
     return obj as GameObj<T[number]>;
 }
 
-export function make<T extends CompList<unknown>>(
+export function make<T extends CompList>(
     compsAndTags: [...T],
 ): GameObj<T[number]> {
     const obj = makeInternal(compsAndTags, _k.game.gameObjLastId);

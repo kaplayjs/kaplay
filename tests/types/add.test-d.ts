@@ -10,17 +10,14 @@ import type { GameObj } from "../../src/types";
 describe("Type Inference from add()", () => {
     const k = kaplay();
 
-    test("add() with no args should return GameObj<unknown>", () => {
+    test("add() with no args should return GameObj<any>", () => {
         const obj = k.add();
-        //     ^?
 
-        // Actually this test can give false positive success because unknown is acceptable for never
-        expectTypeOf(obj).toEqualTypeOf<GameObj<unknown>>();
+        expectTypeOf(obj).toEqualTypeOf<GameObj<any>>();
     });
 
     test("add([]) should return GameObj<never>", () => {
         const obj = k.add([]);
-        //     ^?
 
         // Actually this test can give false positive success because unknown is acceptable for never
         expectTypeOf(obj).toEqualTypeOf<GameObj<never>>();

@@ -124,7 +124,7 @@ export interface GameObjRaw {
      * @returns The added game object.
      * @since v3000.0
      */
-    add<T extends CompList<unknown>>(comps?: [...T]): GameObj<T[number]>;
+    add<T extends CompList>(comps?: [...T]): GameObj<T[number]>;
     /**
      * Remove and re-add the game obj, without triggering add / destroy events.
      *
@@ -541,7 +541,7 @@ export const GameObjRawPrototype: Omit<GameObjRaw, AppEvents> = {
         this.parent = p;
     },
 
-    add<T2 extends CompList<unknown>>(
+    add<T2 extends CompList>(
         this: GameObjRaw,
         a: [...T2],
     ): GameObj<T2[number]> {

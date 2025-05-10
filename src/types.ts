@@ -150,6 +150,10 @@ type OptionalString<T extends string> = T | {} & string;
  */
 export type TypeOpt = {
     /**
+     * Enable TAF
+     */
+    Enable?: boolean;
+    /**
      * (**TYPE OPTIONS**) Scene types, made for inference in
      *
      * - `go()`
@@ -1903,7 +1907,7 @@ export interface KAPLAYCtx<
      * @since v3001.1
      * @group Events
      */
-    onTag(action: (obj: GameObj, tag: TagName<O>) => void): KEventController;
+    onTag(action: (obj: GameObj, tag: string) => void): KEventController;
     /**
      * Register an event that runs when an object loses a tag.
      *
@@ -1914,7 +1918,7 @@ export interface KAPLAYCtx<
      * @since v3001.1
      * @group Events
      */
-    onUntag(action: (obj: GameObj, tag: TagName<O>) => void): KEventController;
+    onUntag(action: (obj: GameObj, tag: string) => void): KEventController;
     /**
      * Register an event that runs when all assets finished loading.
      *
@@ -5924,9 +5928,16 @@ export type KAPLAYCtxTMethods<
 > = {
     add<T extends CompListT<O>>(compsT?: [...T]): GameObjT<T[number], O>;
     get<Tag extends TagName<O>, T = CompFromTag<O, Tag>>(
-        tag: TagName<O>,
+        tag: Tag,
         opts?: GetOpt,
     ): GameObjT<T, O>[];
+
+    onTag<Tag extends TagName<O>, T = CompFromTag<O, Tag>>(
+        action: (obj: GameObjT<T, O>, tag: TagName<O>) => void,
+    ): KEventController;
+    onUntag<Tag extends TagName<O>, T = CompFromTag<O, Tag>>(
+        action: (obj: GameObjT<T, O>, tag: TagName<O>) => void,
+    ): KEventController;
 };
 
 /**
@@ -5995,11 +6006,9 @@ export type MergePlugins<T extends PluginList<any>> = MergeObj<
  *
  * @group Component Types
  */
-export type CompList = readonly (
-    string | object
-)[];
+export type CompList<T = any> = (T | string)[];
 
-export type CompListT<O extends KAPLAYTypeOpt = any> = readonly (
+export type CompListT<O extends KAPLAYTypeOpt = any> = (
     TagName<O> | object
 )[];
 

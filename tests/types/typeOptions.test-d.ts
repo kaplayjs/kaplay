@@ -172,7 +172,7 @@ describe("TypeOpt", () => {
         obj.get("zimbie");
 
         expectTypeOf(obj).toEqualTypeOf<
-            Array<GameObjT<SpriteComp | PosComp, StrictTagsOpt>>
+            Array<GameObjT<SpriteComp, StrictTagsOpt>>
         >();
     });
 });

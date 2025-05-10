@@ -17,9 +17,7 @@ import type {
     GameObj,
     MouseButton,
     Shape,
-    Tag,
 } from "../../../types";
-import type { FakeMouseComp } from "../misc/fakeMouse";
 import type { AnchorComp } from "../transform/anchor";
 import type { FixedComp } from "../transform/fixed";
 import type { PosComp } from "../transform/pos";
@@ -60,7 +58,7 @@ export interface AreaComp extends Comp {
      *
      * @since v3000.0
      */
-    collisionIgnore: Tag[];
+    collisionIgnore: string[];
     /**
      * Restitution ("bounciness") of the object.
      */
@@ -127,7 +125,7 @@ export interface AreaComp extends Comp {
      * @since v2001.0
      */
     onCollide(
-        tag: Tag,
+        tag: string,
         f: (obj: GameObj, col?: Collision) => void,
     ): KEventController;
     /**
@@ -142,7 +140,7 @@ export interface AreaComp extends Comp {
      * @since v3000.0
      */
     onCollideUpdate(
-        tag: Tag,
+        tag: string,
         f: (obj: GameObj, col?: Collision) => void,
     ): KEventController;
     /**
@@ -158,7 +156,7 @@ export interface AreaComp extends Comp {
      *
      * @since v3000.0
      */
-    onCollideEnd(tag: Tag, f: (obj: GameObj) => void): KEventController;
+    onCollideEnd(tag: string, f: (obj: GameObj) => void): KEventController;
     /**
      * Register an event runs once when stopped colliding with another game obj.
      *
@@ -226,7 +224,7 @@ export interface AreaCompOpt {
      *
      * @since v3000.0
      */
-    collisionIgnore?: Tag[];
+    collisionIgnore?: string[];
     /**
      * Bounciness factor between 0 and 1.
      *
@@ -466,7 +464,7 @@ export function area(opt: AreaCompOpt = {}): AreaComp {
 
         onCollide(
             this: GameObj,
-            tag: Tag | ((obj: GameObj, col?: Collision) => void),
+            tag: string | ((obj: GameObj, col?: Collision) => void),
             cb?: (obj: GameObj, col?: Collision) => void,
         ): KEventController {
             if (typeof tag === "function" && cb === undefined) {
@@ -488,7 +486,7 @@ export function area(opt: AreaCompOpt = {}): AreaComp {
 
         onCollideUpdate(
             this: GameObj<AreaComp>,
-            tag: Tag | ((obj: GameObj, col?: Collision) => void),
+            tag: string | ((obj: GameObj, col?: Collision) => void),
             cb?: (obj: GameObj, col?: Collision) => void,
         ): KEventController {
             if (typeof tag === "function" && cb === undefined) {
@@ -509,7 +507,7 @@ export function area(opt: AreaCompOpt = {}): AreaComp {
 
         onCollideEnd(
             this: GameObj<AreaComp>,
-            tag: Tag | ((obj: GameObj) => void),
+            tag: string | ((obj: GameObj) => void),
             cb?: (obj: GameObj) => void,
         ): KEventController {
             if (typeof tag === "function" && cb === undefined) {
