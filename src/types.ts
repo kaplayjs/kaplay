@@ -65,7 +65,11 @@ import type { NamedComp } from "./ecs/components/misc/named";
 import type { StateComp } from "./ecs/components/misc/state";
 import type { StayComp } from "./ecs/components/misc/stay";
 import type { TextInputComp } from "./ecs/components/misc/textInput";
-import type { TimerComp } from "./ecs/components/misc/timer";
+import type {
+    TimerComp,
+    TimerController,
+    TweenController,
+} from "./ecs/components/misc/timer";
 import type { AreaComp, AreaCompOpt } from "./ecs/components/physics/area";
 import type { BodyComp, BodyCompOpt } from "./ecs/components/physics/body";
 import type { DoubleJumpComp } from "./ecs/components/physics/doubleJump";
@@ -6876,46 +6880,6 @@ export type EaseFuncs =
  * @group Math
  */
 export type EaseFunc = (t: number) => number;
-
-// TODO: use PromiseLike or extend Promise?
-/**
- * @group Timer
- */
-export type TimerController = {
-    /**
-     * The time left for the callback to be called.
-     */
-    timeLeft: number;
-    /**
-     * If the event handler is paused.
-     */
-    paused: boolean;
-    /**
-     * Cancel the event handler.
-     */
-    cancel(): void;
-    /**
-     * Register an event when finished.
-     */
-    onEnd(action: () => void): void;
-    then(action: () => void): TimerController;
-};
-
-/**
- * Event controller for tween.
- *
- * @group Timer
- */
-export type TweenController = TimerController & {
-    /**
-     * The current time in the duration of the tween
-     */
-    currentTime: number;
-    /**
-     * Finish the tween now and cancel.
-     */
-    finish(): void;
-};
 
 export interface SpriteCurAnim {
     name: string;

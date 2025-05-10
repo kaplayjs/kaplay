@@ -2,13 +2,46 @@ import { KEvent } from "../../../events/events";
 import { _k } from "../../../kaplay";
 import easings from "../../../math/easings";
 import { lerp } from "../../../math/math";
-import type {
-    Comp,
-    GameObj,
-    LerpValue,
-    TimerController,
-    TweenController,
-} from "../../../types";
+import type { Comp, GameObj, LerpValue } from "../../../types";
+
+/**
+ * @group Timer
+ */
+export interface TimerController {
+    /**
+     * The time left for the callback to be called.
+     */
+    timeLeft: number;
+    /**
+     * If the event handler is paused.
+     */
+    paused: boolean;
+    /**
+     * Cancel the event handler.
+     */
+    cancel(): void;
+    /**
+     * Register an event when finished.
+     */
+    onEnd(action: () => void): void;
+    then(action: () => void): TimerController;
+}
+
+/**
+ * Event controller for tween.
+ *
+ * @group Timer
+ */
+export interface TweenController extends TimerController {
+    /**
+     * The current time in the duration of the tween
+     */
+    currentTime: number;
+    /**
+     * Finish the tween now and cancel.
+     */
+    finish(): void;
+}
 
 /**
  * The {@link timer `timer()`} component.

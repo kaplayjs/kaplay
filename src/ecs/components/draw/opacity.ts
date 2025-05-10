@@ -1,6 +1,7 @@
 import { _k } from "../../../kaplay";
-import type { Comp, EaseFunc, TweenController } from "../../../types";
+import type { Comp, EaseFunc } from "../../../types";
 import { toFixed } from "../../../utils/numbers";
+import type { TweenController } from "../misc/timer";
 
 /**
  * The {@link opacity `opacity()`} component.
