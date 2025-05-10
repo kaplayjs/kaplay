@@ -237,7 +237,12 @@ import {
 } from "../math/math";
 import { NavMesh } from "../math/navigationmesh";
 import { Vec2 } from "../math/Vec2";
-import { BlendMode, type KAPLAYCtx } from "../types";
+import {
+    BlendMode,
+    type KAPLAYCtx,
+    type KAPLAYPlugin,
+    type PluginList,
+} from "../types";
 import {
     download,
     downloadBlob,
@@ -250,12 +255,12 @@ import { onCleanup, quit } from "./quit";
 
 // The context is the way the user interact with a KAPLAY game.
 export const createContext = (
-    game: Game,
-    app: App,
-    audio: AudioCtx,
-    debug: Debug,
+    e: Engine,
+    plugins?: KAPLAYPlugin<Record<string, unknown>>[],
+    exportToGlobal?: boolean,
 ): KAPLAYCtx => {
     // aliases for root Game Obj operations
+    const { game, app, audio, debug } = e;
     const add = game.root.add.bind(game.root);
     const readd = game.root.readd.bind(game.root);
     const destroyAll = game.root.removeAll.bind(game.root);
@@ -266,7 +271,7 @@ export const createContext = (
     const tween = game.root.tween.bind(game.root);
 
     const ctx: KAPLAYCtx = {
-        _k: null as unknown as Engine,
+        _k: e,
         // @ts-ignore
         VERSION: KAPLAY_VERSION,
         // asset load
@@ -635,6 +640,16 @@ export const createContext = (
         cancel: () => EVENT_CANCEL_SYMBOL,
         BlendMode,
     };
+
+    if (plugins) {
+        plugins.forEach(plug);
+    }
+
+    if (exportToGlobal) {
+        for (const key in ctx) {
+            ((window as any)[key]) = ctx[key as keyof KAPLAYCtx];
+        }
+    }
 
     return ctx;
 };
