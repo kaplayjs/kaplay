@@ -20,6 +20,7 @@ import { burp } from "../audio/burp";
 import { play } from "../audio/play";
 import { getVolume, setVolume, volume } from "../audio/volume";
 import { ASCII_CHARS, EVENT_CANCEL_SYMBOL } from "../constants/general";
+import { record } from "../debug/record";
 import { blend } from "../ecs/components/draw/blend";
 import { circle } from "../ecs/components/draw/circle";
 import { color } from "../ecs/components/draw/color";
@@ -242,7 +243,6 @@ import {
     downloadJSON,
     downloadText,
 } from "../utils/dataURL";
-import { record } from "./debug";
 import type { Engine } from "./engine";
 import { plug } from "./plug";
 import { onCleanup, quit } from "./quit";

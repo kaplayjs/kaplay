@@ -13,6 +13,7 @@ import type { LoadSpriteOpt, LoadSpriteSrc, SpriteData } from "./assets/sprite";
 import type { SpriteAtlasData } from "./assets/spriteAtlas";
 import type { AudioPlay, AudioPlayOpt } from "./audio/play";
 import type { Engine } from "./core/engine";
+import type { Recording } from "./debug/record";
 import type { BlendComp } from "./ecs/components/draw/blend";
 import type { CircleComp, CircleCompOpt } from "./ecs/components/draw/circle";
 import type { ColorComp } from "./ecs/components/draw/color";
@@ -6281,32 +6282,6 @@ export type QueryOpt = {
      */
     name?: string;
 };
-
-/**
- * Screen recording control handle.
- *
- * @group Data
- */
-export interface Recording {
-    /**
-     * Pause the recording.
-     */
-    pause(): void;
-    /**
-     * Resume the recording.
-     */
-    resume(): void;
-    /**
-     * Stop the recording and get the video data as mp4 Blob.
-     *
-     * @since v3000.0
-     */
-    stop(): Promise<Blob>;
-    /**
-     * Stop the recording and downloads the file as mp4. Trying to resume later will lead to error.
-     */
-    download(filename?: string): void;
-}
 
 /**
  * Sprite animation configuration when playing.

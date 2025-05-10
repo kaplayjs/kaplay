@@ -5,12 +5,12 @@ The engine is what KAPLAY needs for running and proccesing all it's stuff
 import { initApp } from "../app/app";
 import { initAssets } from "../assets/asset";
 import { initAudio } from "../audio/audio";
+import { createDebug } from "../debug/debug";
 import { initGame } from "../game/game";
 import { createCanvas } from "../gfx/canvas";
 import { initGfx } from "../gfx/gfx";
 import { initAppGfx } from "../gfx/gfxApp";
 import type { KAPLAYCtx, KAPLAYOpt } from "../types";
-import { initDebug } from "./debug";
 import { createFontCache } from "./fontCache";
 import { createFrameRenderer } from "./frameRendering";
 
@@ -50,7 +50,7 @@ export const createEngine = (gopt: KAPLAYOpt) => {
     );
 
     // Debug mode
-    const debug = initDebug(gopt, app, appGfx, audio, game, frameRenderer);
+    const debug = createDebug(gopt, app, appGfx, audio, game, frameRenderer);
 
     return {
         globalOpt: gopt,
