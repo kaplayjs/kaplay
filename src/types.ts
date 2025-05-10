@@ -106,7 +106,6 @@ import type { AddLevelOpt } from "./ecs/entity/premade/addLevel";
 import type { LCEvents } from "./ecs/systems/systems";
 import type { GameObjEventNames, GameObjEvents } from "./events/eventMap";
 import type { KEvent, KEventController, KEventHandler } from "./events/events";
-import type { TupleWithoutFirst } from "./events/globalEvents";
 import type { SceneDef, SceneName } from "./game/scenes";
 import type { DrawBezierOpt } from "./gfx/draw/drawBezier";
 import type { DrawCanvasOpt } from "./gfx/draw/drawCanvas";
@@ -147,7 +146,7 @@ import type {
 } from "./math/math";
 import type { NavMesh } from "./math/navigationmesh";
 import type { Vec2 } from "./math/Vec2";
-import type { Defined, MergeObj } from "./utils/types";
+import type { Defined, MergeObj, TupleWithoutFirst } from "./utils/types";
 
 /**
  * Context handle that contains every KAPLAY function.

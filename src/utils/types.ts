@@ -28,3 +28,7 @@ export type Expand<T> = T extends infer U ? { [K in keyof U]: U[K] } : never;
  * It merges all the objects into one.
  */
 export type MergeObj<T> = Expand<UnionToIntersection<Defined<T>>>;
+
+export type TupleWithoutFirst<T extends any[]> = T extends [infer R, ...infer E]
+    ? E
+    : never;
