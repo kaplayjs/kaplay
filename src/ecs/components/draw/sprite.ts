@@ -16,12 +16,26 @@ import type { Texture } from "../../../gfx/gfx";
 import { _k } from "../../../kaplay";
 import { Quad, quad, Rect, vec2 } from "../../../math/math";
 import { type Vec2 } from "../../../math/Vec2";
-import type {
-    Comp,
-    GameObj,
-    SpriteAnimPlayOpt,
-    SpriteCurAnim,
-} from "../../../types";
+import type { Comp, GameObj, SpriteAnimPlayOpt } from "../../../types";
+
+/**
+ * Current animation data.
+ */
+export interface SpriteCurAnim {
+    name: string;
+    timer: number;
+    loop: boolean;
+    speed: number;
+    /**
+     * The current index relative to the start of the
+     * associated `frames` array for this animation.
+     * This may be greater than the number of frames
+     * in the sprite.
+     */
+    frameIndex: number;
+    pingpong: boolean;
+    onEnd: () => void;
+}
 
 /**
  * The {@link sprite `sprite()`} component.

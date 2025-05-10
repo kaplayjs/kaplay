@@ -1,5 +1,6 @@
 import { _k } from "../../../kaplay";
-import type { Comp, EaseFunc } from "../../../types";
+import type { EaseFunc } from "../../../math/easings";
+import type { Comp } from "../../../types";
 import { toFixed } from "../../../utils/numbers";
 import type { TweenController } from "../misc/timer";
 

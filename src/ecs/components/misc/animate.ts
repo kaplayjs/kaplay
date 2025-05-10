@@ -2,7 +2,7 @@ import type { KEventController } from "../../../events/events";
 import { _k } from "../../../kaplay";
 import { clamp } from "../../../math/clamp";
 import { Color } from "../../../math/color";
-import easings from "../../../math/easings";
+import { type EaseFunc, easings } from "../../../math/easings";
 import {
     catmullRom,
     hermiteFirstDerivative,
@@ -10,7 +10,7 @@ import {
     vec2,
 } from "../../../math/math";
 import { Vec2 } from "../../../math/Vec2";
-import type { Comp, EaseFunc, GameObj, LerpValue } from "../../../types";
+import type { Comp, GameObj, LerpValue } from "../../../types";
 import type { NamedComp } from "./named";
 
 type TimeDirection =

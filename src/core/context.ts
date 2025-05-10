@@ -174,7 +174,7 @@ import {
 } from "../gfx/stack";
 import { clamp } from "../math/clamp";
 import { Color, hsl2rgb, rgb } from "../math/color";
-import easings from "../math/easings";
+import { easings } from "../math/easings";
 import { gjkShapeIntersection, gjkShapeIntersects } from "../math/gjk";
 import { Mat4 } from "../math/Mat4";
 import {

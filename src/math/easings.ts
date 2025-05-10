@@ -1,3 +1,48 @@
+/**
+ * The list of easing functions available.
+ *
+ * @group Math
+ */
+export type EaseFuncs =
+    | "linear"
+    | "easeInSine"
+    | "easeOutSine"
+    | "easeInOutSine"
+    | "easeInQuad"
+    | "easeOutQuad"
+    | "easeInOutQuad"
+    | "easeInCubic"
+    | "easeOutCubic"
+    | "easeInOutCubic"
+    | "easeInQuart"
+    | "easeOutQuart"
+    | "easeInOutQuart"
+    | "easeInQuint"
+    | "easeOutQuint"
+    | "easeInOutQuint"
+    | "easeInExpo"
+    | "easeOutExpo"
+    | "easeInOutExpo"
+    | "easeInCirc"
+    | "easeOutCirc"
+    | "easeInOutCirc"
+    | "easeInBack"
+    | "easeOutBack"
+    | "easeInOutBack"
+    | "easeInElastic"
+    | "easeOutElastic"
+    | "easeInOutElastic"
+    | "easeInBounce"
+    | "easeOutBounce"
+    | "easeInOutBounce";
+
+/**
+ * A function that takes a time value and returns a new time value.
+ *
+ * @group Math
+ */
+export type EaseFunc = (t: number) => number;
+
 // https://easings.net/
 const c1 = 1.70158;
 const c2 = c1 * 1.525;
@@ -5,7 +50,7 @@ const c3 = c1 + 1;
 const c4 = (2 * Math.PI) / 3;
 const c5 = (2 * Math.PI) / 4.5;
 
-const easings = {
+export const easings = {
     linear: (x: number) => x,
     easeInSine: (x: number) => 1 - Math.cos((x * Math.PI) / 2),
     easeOutSine: (x: number) => Math.sin((x * Math.PI) / 2),
@@ -99,5 +144,3 @@ const easings = {
             : (1 + easings.easeOutBounce(2 * x - 1)) / 2;
     },
 };
-
-export default easings;

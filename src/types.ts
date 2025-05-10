@@ -127,6 +127,7 @@ import type { StyledTextInfo } from "./gfx/formatText";
 import type { FrameBuffer } from "./gfx/FrameBuffer";
 import type { Texture } from "./gfx/gfx";
 import type { Color, CSSColor, RGBAValue, RGBValue } from "./math/color";
+import type { EaseFunc, EaseFuncs } from "./math/easings";
 import type { GjkCollisionResult } from "./math/gjk";
 import type { Mat4 } from "./math/Mat4";
 import type {
@@ -6834,65 +6835,4 @@ export enum EdgeMask {
     HorizontalBottom = 13,
     RightVertical = 14,
     All = 15,
-}
-
-/**
- * The list of easing functions available.
- *
- * @group Math
- */
-export type EaseFuncs =
-    | "linear"
-    | "easeInSine"
-    | "easeOutSine"
-    | "easeInOutSine"
-    | "easeInQuad"
-    | "easeOutQuad"
-    | "easeInOutQuad"
-    | "easeInCubic"
-    | "easeOutCubic"
-    | "easeInOutCubic"
-    | "easeInQuart"
-    | "easeOutQuart"
-    | "easeInOutQuart"
-    | "easeInQuint"
-    | "easeOutQuint"
-    | "easeInOutQuint"
-    | "easeInExpo"
-    | "easeOutExpo"
-    | "easeInOutExpo"
-    | "easeInCirc"
-    | "easeOutCirc"
-    | "easeInOutCirc"
-    | "easeInBack"
-    | "easeOutBack"
-    | "easeInOutBack"
-    | "easeInElastic"
-    | "easeOutElastic"
-    | "easeInOutElastic"
-    | "easeInBounce"
-    | "easeOutBounce"
-    | "easeInOutBounce";
-
-/**
- * A function that takes a time value and returns a new time value.
- *
- * @group Math
- */
-export type EaseFunc = (t: number) => number;
-
-export interface SpriteCurAnim {
-    name: string;
-    timer: number;
-    loop: boolean;
-    speed: number;
-    /**
-     * The current index relative to the start of the
-     * associated `frames` array for this animation.
-     * This may be greater than the number of frames
-     * in the sprite.
-     */
-    frameIndex: number;
-    pingpong: boolean;
-    onEnd: () => void;
 }
