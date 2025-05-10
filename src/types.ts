@@ -6390,22 +6390,34 @@ export type TexFilter = "nearest" | "linear";
 export type TexWrap = "repeat" | "clampToEdge";
 
 /**
- * Common render properties.
+ * Common transform properties.
  */
-export interface RenderProps {
+export interface TransformProps {
     pos?: Vec2;
     scale?: Vec2;
     angle?: number;
+    fixed?: boolean;
+    anchor?: Vec2;
+}
+
+/**
+ * Common render properties.
+ */
+export interface RenderProps {
     color?: Color;
     opacity?: number;
-    fixed?: boolean;
     shader?: string | ShaderData | Asset<ShaderData> | null;
     uniform?: Uniform | null;
     blend?: BlendMode;
     outline?: Outline;
 }
 
-export type DrawTextureOpt = RenderProps & {
+/**
+ * Common render properties.
+ */
+export type DrawProps = RenderProps & TransformProps;
+
+export type DrawTextureOpt = DrawProps & {
     tex: Texture;
     width?: number;
     height?: number;
@@ -6416,7 +6428,7 @@ export type DrawTextureOpt = RenderProps & {
     anchor?: Anchor | Vec2;
 };
 
-export type DrawUVQuadOpt = RenderProps & {
+export type DrawUVQuadOpt = DrawProps & {
     /**
      * Width of the UV quad.
      */
@@ -6450,7 +6462,7 @@ export type DrawUVQuadOpt = RenderProps & {
 /**
  * How the ellipse should look like.
  */
-export type DrawEllipseOpt = RenderProps & {
+export type DrawEllipseOpt = DrawProps & {
     /**
      * The horizontal radius.
      */
@@ -6490,7 +6502,7 @@ export type DrawEllipseOpt = RenderProps & {
 /**
  * How the polygon should look like.
  */
-export type DrawPolygonOpt = RenderProps & {
+export type DrawPolygonOpt = DrawProps & {
     /**
      * The points that make up the polygon
      */

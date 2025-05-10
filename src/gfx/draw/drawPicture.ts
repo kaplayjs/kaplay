@@ -2,7 +2,7 @@ import type { Shader, Uniform } from "../../assets/shader";
 import { IDENTITY_MATRIX } from "../../constants/math";
 import { getCamTransform } from "../../game/camera";
 import { _k } from "../../kaplay";
-import type { BlendMode, RenderProps } from "../../types";
+import type { BlendMode, DrawProps } from "../../types";
 import { Mesh, type Texture } from "../gfx";
 import { height, width } from "../stack";
 
@@ -73,7 +73,7 @@ export class Picture {
 /**
  * Drawing options for drawPicture
  */
-export type DrawPictureOpt = RenderProps & {};
+export type DrawPictureOpt = DrawProps & {};
 
 /**
  * Draws a picture to the screen. This function can not be used to draw recursively to a picture.

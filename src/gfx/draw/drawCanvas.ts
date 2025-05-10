@@ -1,4 +1,4 @@
-import type { Canvas, DrawUVQuadOpt, RenderProps } from "../../types";
+import type { Canvas, DrawProps, DrawUVQuadOpt } from "../../types";
 import { drawUVQuad } from "./drawUVQuad";
 
 export type DrawCanvasOpt = DrawUVQuadOpt & {

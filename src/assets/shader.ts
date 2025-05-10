@@ -11,7 +11,7 @@ import { Color } from "../math/color";
 import { Mat4 } from "../math/Mat4";
 import { Mat23 } from "../math/math";
 import { Vec2 } from "../math/Vec2";
-import type { RenderProps } from "../types";
+import type { DrawProps } from "../types";
 import { arrayIsColor, arrayIsNumber, arrayIsVec2 } from "../utils/asserts";
 import { getErrorMessage } from "../utils/log";
 import { fetchText, loadProgress } from "./asset";
@@ -191,7 +191,7 @@ export function makeShader(
 }
 
 export function resolveShader(
-    src: RenderProps["shader"],
+    src: DrawProps["shader"],
 ): ShaderData | Asset<ShaderData> | null {
     if (!src) {
         return _k.gfx.defShader;

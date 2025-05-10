@@ -1,12 +1,12 @@
 import type { Color } from "../../math/color";
 import type { Vec2 } from "../../math/Vec2";
-import type { Anchor, RenderProps } from "../../types";
+import type { Anchor, DrawProps } from "../../types";
 import { drawEllipse } from "./drawEllipse";
 
 /**
  * How the circle should look like.
  */
-export type DrawCircleOpt = Omit<RenderProps, "angle"> & {
+export type DrawCircleOpt = Omit<DrawProps, "angle"> & {
     /**
      * Radius of the circle.
      */

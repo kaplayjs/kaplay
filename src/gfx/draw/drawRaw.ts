@@ -1,7 +1,7 @@
 import { Asset } from "../../assets/asset";
 import { resolveShader, type Uniform } from "../../assets/shader";
 import { _k } from "../../kaplay";
-import { type Attributes, BlendMode, type RenderProps } from "../../types";
+import { type Attributes, BlendMode, type DrawProps } from "../../types";
 import type { Texture } from "../gfx";
 import { height, width } from "../stack";
 
@@ -10,7 +10,7 @@ export function drawRaw(
     indices: number[],
     fixed: boolean = false,
     tex?: Texture,
-    shaderSrc?: RenderProps["shader"],
+    shaderSrc?: DrawProps["shader"],
     uniform?: Uniform,
     blend?: BlendMode,
 ) {

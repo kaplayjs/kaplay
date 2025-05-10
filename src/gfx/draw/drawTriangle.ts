@@ -1,11 +1,11 @@
 import type { Vec2 } from "../../math/Vec2";
-import type { RenderProps } from "../../types";
+import type { DrawProps } from "../../types";
 import { drawPolygon } from "./drawPolygon";
 
 /**
  * How the triangle should look like.
  */
-export type DrawTriangleOpt = RenderProps & {
+export type DrawTriangleOpt = DrawProps & {
     /**
      * First point of triangle.
      */

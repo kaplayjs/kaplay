@@ -2,13 +2,13 @@ import type { Asset } from "../../assets/asset";
 import { resolveSprite, type SpriteData } from "../../assets/sprite";
 import { Quad } from "../../math/math";
 import { type Vec2 } from "../../math/Vec2";
-import type { Anchor, RenderProps } from "../../types";
+import type { Anchor, DrawProps } from "../../types";
 import { drawTexture } from "./drawTexture";
 
 /**
  * How the sprite should look like.
  */
-export type DrawSpriteOpt = RenderProps & {
+export type DrawSpriteOpt = DrawProps & {
     /**
      * The sprite name in the asset manager, or the raw sprite data.
      */

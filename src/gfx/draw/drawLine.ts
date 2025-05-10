@@ -3,7 +3,7 @@ import { _k } from "../../kaplay";
 import { Color } from "../../math/color";
 import { deg2rad, lerp, vec2 } from "../../math/math";
 import { Vec2 } from "../../math/Vec2";
-import type { RenderProps } from "../../types";
+import type { DrawProps } from "../../types";
 import { center } from "../stack";
 import { drawCircle } from "./drawCircle";
 import { drawRaw } from "./drawRaw";
@@ -11,7 +11,7 @@ import { drawRaw } from "./drawRaw";
 /**
  * How the line should look like.
  */
-export type DrawLineOpt = Omit<RenderProps, "angle" | "scale"> & {
+export type DrawLineOpt = Omit<DrawProps, "angle" | "scale"> & {
     /**
      * Starting point of the line.
      */
@@ -123,7 +123,7 @@ export type LineCap =
 /**
  * How the lines should look like.
  */
-export type DrawLinesOpt = Omit<RenderProps, "angle" | "scale"> & {
+export type DrawLinesOpt = Omit<DrawProps, "angle" | "scale"> & {
     /**
      * The points that should be connected with a line.
      */

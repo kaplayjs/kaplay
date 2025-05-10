@@ -48,6 +48,7 @@ export function rect(w: number, h: number, opt: RectCompOpt = {}): RectComp {
     let _shape: Rect | undefined;
     let _width = w;
     let _height = h;
+
     return {
         id: "rect",
         get width() {

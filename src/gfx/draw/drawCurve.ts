@@ -1,8 +1,8 @@
 import type { Vec2 } from "../../math/Vec2";
-import type { RenderProps } from "../../types";
+import type { DrawProps } from "../../types";
 import { drawLines } from "./drawLine";
 
-export type DrawCurveOpt = RenderProps & {
+export type DrawCurveOpt = DrawProps & {
     /**
      * The amount of line segments to draw.
      */

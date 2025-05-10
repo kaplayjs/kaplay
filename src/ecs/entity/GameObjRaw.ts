@@ -33,6 +33,7 @@ import type {
     GetOpt,
     KAPLAYCtx,
     QueryOpt,
+    RenderProps,
     RenderTarget,
     Tag,
 } from "../../types";
@@ -111,6 +112,10 @@ export interface GameObjRaw {
      * @since v3001.0
      */
     target?: RenderTarget;
+    /**
+     * Rendering properties related to this Game Obj.
+     */
+    render?: RenderProps;
     /**
      * Set the parent game obj with additional options.
      *

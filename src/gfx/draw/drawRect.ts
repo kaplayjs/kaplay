@@ -3,14 +3,14 @@ import type { Color } from "../../math/color";
 import { vec2 } from "../../math/math";
 import { getArcPts } from "../../math/various";
 import { Vec2 } from "../../math/Vec2";
-import type { Anchor, RenderProps } from "../../types";
+import type { Anchor, DrawProps } from "../../types";
 import { anchorPt } from "../anchor";
 import { drawPolygon } from "./drawPolygon";
 
 /**
  * How the rectangle should look like.
  */
-export type DrawRectOpt = RenderProps & {
+export type DrawRectOpt = DrawProps & {
     /**
      * Width of the rectangle.
      */
