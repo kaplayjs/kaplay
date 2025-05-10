@@ -1,3 +1,6 @@
+// The game is the interface that connects all related to a KAPLAY game state.
+// It contains the game object tree, game object events, scenes, etc.
+
 import type { Asset } from "../assets/asset";
 import type { SpriteData } from "../assets/sprite";
 import type { FakeMouseComp } from "../ecs/components/misc/fakeMouse";
@@ -28,12 +31,33 @@ export type Game = {
      * The root game object, parent of all game objects.
      */
     root: GameObj<TimerComp>;
+    /**
+     * The gravity vector of the game.
+     */
     gravity: Vec2 | null;
+    /**
+     * The scenes of the game.
+     */
     scenes: Record<SceneName, SceneDef>;
+    /**
+     * The current scene of the game.
+     */
     currentScene: string | null;
+    /**
+     * The layers of the game.
+     */
     layers: string[] | null;
+    /**
+     * The default layer index of the game.
+     */
     defaultLayerIndex: number;
+    /**
+     * All systems added to the game.
+     */
     systems: System[];
+    /**
+     * The systems added to the game, sorted by event.
+     */
     systemsByEvent: [
         System[],
         System[],
