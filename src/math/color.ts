@@ -1,6 +1,7 @@
 import { CSS_COLOR_MAP } from "../constants/colorMap";
+import { _k } from "../kaplay";
 import { clamp } from "./clamp";
-import { lerp } from "./lerp";
+import { lerpNumber } from "./lerpNumber";
 
 export type RGBValue = [number, number, number];
 export type RGBAValue = [number, number, number, number];
@@ -173,9 +174,9 @@ export class Color {
      */
     lerp(dest: Color, t: number): Color {
         return new Color(
-            lerp(this.r, dest.r, t),
-            lerp(this.g, dest.g, t),
-            lerp(this.b, dest.b, t),
+            lerpNumber(this.r, dest.r, t),
+            lerpNumber(this.g, dest.g, t),
+            lerpNumber(this.b, dest.b, t),
         );
     }
 

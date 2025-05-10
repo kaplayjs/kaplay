@@ -1,4 +1,5 @@
-import { lerp } from "./lerp";
+import { _k } from "../kaplay";
+import { lerpNumber } from "./lerpNumber";
 import type { Mat4 } from "./Mat4";
 import { deg2rad, rad2deg, Rect, vec2, type Vec2Args } from "./math";
 
@@ -468,7 +469,10 @@ export class Vec2 {
      * Linear interpolate to a destination vector (for positions).
      */
     lerp(dest: Vec2, t: number): Vec2 {
-        return new Vec2(lerp(this.x, dest.x, t), lerp(this.y, dest.y, t));
+        return new Vec2(
+            lerpNumber(this.x, dest.x, t),
+            lerpNumber(this.y, dest.y, t),
+        );
     }
 
     /**
