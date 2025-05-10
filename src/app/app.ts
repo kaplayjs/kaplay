@@ -143,8 +143,6 @@ export const initApp = (
     const state = initAppState(opt);
     parseButtonBindings(state);
 
-    const _mousePos = new Vec2(0);
-
     function dt() {
         return state.dt * state.timeScale;
     }
