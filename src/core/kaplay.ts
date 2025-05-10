@@ -1,118 +1,27 @@
-// The definitive version!
-import { initAppEvents } from "./app/appEvents";
-import type { ButtonsDef } from "./app/inputBindings";
-import { getFailedAssets, loadProgress } from "./assets/asset";
-import { loadSprite } from "./assets/sprite";
-import { createContext } from "./core/context";
-import { createEngine } from "./core/engine";
-import { handleErr } from "./core/errors";
-import { plug } from "./core/plug";
-import boomSpriteSrc from "./data/assets/boom.png";
-import kaSpriteSrc from "./data/assets/ka.png";
-import { createCollisionSystem } from "./ecs/systems/createCollisionSystem";
-import { LCEvents, system } from "./ecs/systems/systems";
-import { drawDebug } from "./gfx/draw/drawDebug";
-import { drawFrame } from "./gfx/draw/drawFrame";
-import { drawLoadScreen } from "./gfx/draw/drawLoadingScreen";
-import { updateViewport } from "./gfx/viewport";
-import {
-    type KAPLAYCtx,
-    type KAPLAYOpt,
-    type KAPLAYPlugin,
-    type MergePlugins,
-    type PluginList,
-} from "./types";
+import type { App } from "../app/app";
+import { initAppEvents } from "../app/appEvents";
+import { type AssetsCtx, getFailedAssets, loadProgress } from "../assets/asset";
+import type { Debug } from "../debug/debug";
+import { LCEvents } from "../ecs/systems/systems";
+import type { Game } from "../game/game";
+import { drawDebug } from "../gfx/draw/drawDebug";
+import { drawFrame } from "../gfx/draw/drawFrame";
+import { drawLoadScreen } from "../gfx/draw/drawLoadingScreen";
+import { updateViewport } from "../gfx/viewport";
+import type { KAPLAYOpt } from "../types";
+import { handleErr } from "./errors";
+import type { FrameRenderer } from "./frameRendering";
 
-/**
- * KAPLAY.js internal data
- */
-export let _k: KAPLAYCtx["_k"];
-
-// If KAPLAY was runned before
-let runned = false;
-
-/**
- * Initialize KAPLAY context. The starting point of all KAPLAY games.
- *
- * @example
- * ```js
- * // Start KAPLAY with default options (will create a fullscreen canvas under <body>)
- * kaplay()
- *
- * // Init with some options
- * kaplay({
- *     width: 320,
- *     height: 240,
- *     font: "sans-serif",
- *     canvas: document.querySelector("#mycanvas"),
- *     background: [ 0, 0, 255, ],
- * })
- *
- * // All KAPLAY functions are imported to global after calling kaplay()
- * add()
- * onUpdate()
- * onKeyPress()
- * vec2()
- *
- * // If you want to prevent KAPLAY from importing all functions to global and use a context handle for all KAPLAY functions
- * const k = kaplay({ global: false })
- *
- * k.add(...)
- * k.onUpdate(...)
- * k.onKeyPress(...)
- * k.vec2(...)
- * ```
- *
- * @group Start
- */
-export const kaplay = <
-    TPlugins extends PluginList<unknown> = [undefined],
-    TButtons extends ButtonsDef = {},
-    TButtonsName extends string = keyof TButtons & string,
->(
-    gopt: KAPLAYOpt<TPlugins, TButtons> = {},
-): TPlugins extends [undefined] ? KAPLAYCtx<TButtons, TButtonsName>
-    : KAPLAYCtx<TButtons, TButtonsName> & MergePlugins<TPlugins> =>
-{
-    if (runned) {
-        console.warn(
-            "KAPLAY was runned before, cleaning state",
-        );
-
-        // cleanup
-        // @ts-ignore
-        _k = null;
-    }
-
-    runned = true;
-
-    _k = createEngine(gopt);
-
-    const {
-        assets,
-        audio,
-        frameRenderer,
-        app,
-        game,
-        debug,
-    } = _k;
-
-    const { checkFrame } = createCollisionSystem({
-        narrow: gopt.narrowPhaseCollisionAlgorithm || "gjk",
-    });
-
-    system("collision", checkFrame, [
-        LCEvents.AfterFixedUpdate,
-        LCEvents.AfterUpdate,
-    ]);
-
-    // TODO: make this an opt
-    game.kaSprite = loadSprite(null, kaSpriteSrc);
-    game.boomSprite = loadSprite(null, boomSpriteSrc);
-
+export function startEngineLoop(
+    app: App,
+    game: Game,
+    assets: AssetsCtx,
+    gopt: KAPLAYOpt,
+    frameRenderer: FrameRenderer,
+    debug: Debug,
+) {
     let isFirstFrame = true;
 
-    // main game loop
     app.run(() => {
         try {
             if (assets.loaded) {
@@ -214,32 +123,4 @@ export const kaplay = <
 
     updateViewport();
     initAppEvents();
-
-    // the exported ctx handle
-    const ctx: KAPLAYCtx = createContext(game, app, audio, debug);
-    ctx._k = _k;
-    _k.k = ctx;
-
-    const plugins = gopt.plugins as KAPLAYPlugin<Record<string, unknown>>[];
-
-    if (plugins) {
-        plugins.forEach(plug);
-    }
-
-    // export everything to window if global is set
-    if (gopt.global !== false) {
-        for (const key in ctx) {
-            (<any> window[<any> key]) = ctx[key as keyof KAPLAYCtx];
-        }
-    }
-
-    if (gopt.focus !== false) {
-        app.canvas.focus();
-    }
-
-    return ctx as unknown as TPlugins extends [undefined]
-        ? KAPLAYCtx<TButtons, TButtonsName>
-        : KAPLAYCtx<TButtons, TButtonsName> & MergePlugins<TPlugins>;
-};
-
-export default kaplay;
+}
