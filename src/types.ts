@@ -145,6 +145,7 @@ import type {
 } from "./math/math";
 import type { NavMesh } from "./math/navigationmesh";
 import type { Vec2 } from "./math/Vec2";
+import type { Defined, MergeObj } from "./utils/types";
 
 /**
  * Context handle that contains every KAPLAY function.
@@ -5834,31 +5835,6 @@ export type Tag = string;
  * @group Game Obj
  */
 export type GameObj<T = any> = GameObjRaw & MergeComps<T>;
-
-export type UnionToIntersection<U> = (
-    U extends any ? (k: U) => void : never
-) extends (k: infer I) => void ? I
-    : never;
-
-// What defined does is remove prop: never types for left types clean.
-// This could work for the proccess of remove Comp properties in XXXXComp types
-export type Defined<T> = T extends any
-    ? Pick<T, { [K in keyof T]-?: T[K] extends undefined ? never : K }[keyof T]>
-    : never;
-
-/**
- * It obligates to TypeScript to Expand the type.
- *
- * Instead of being `{ id: 1 } | { name: "hi" }`
- * makes
- * It's `{ id: 1, name: "hi" }`
- *
- * https://www.totaltypescript.com/concepts/the-prettify-helper
- *
- * Previously Expand<T>
- */
-export type Prettify<T> = T extends infer U ? { [K in keyof U]: U[K] } : never;
-export type MergeObj<T> = Prettify<UnionToIntersection<Defined<T>>>;
 
 type RemoveCompProps<T> = Defined<
     {
