@@ -5,7 +5,9 @@ import { _k } from "../kaplay";
 import { clamp } from "../math/clamp";
 import { toFixed } from "../utils/numbers";
 
-export function initEvents() {
+// Events used at the start of a game
+
+export function initAppEvents() {
     _k.app.onHide(() => {
         if (!_k.globalOpt.backgroundAudio) {
             _k.audio.ctx.suspend();

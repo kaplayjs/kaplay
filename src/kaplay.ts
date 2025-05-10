@@ -1,4 +1,5 @@
 // The definitive version!
+import { initAppEvents } from "./app/appEvents";
 import type { ButtonsDef } from "./app/inputBindings";
 import { getFailedAssets, loadProgress } from "./assets/asset";
 import { loadSprite } from "./assets/sprite";
@@ -10,7 +11,6 @@ import boomSpriteSrc from "./data/assets/boom.png";
 import kaSpriteSrc from "./data/assets/ka.png";
 import { createCollisionSystem } from "./ecs/systems/createCollisionSystem";
 import { LCEvents, system } from "./ecs/systems/systems";
-import { initEvents } from "./events/initEvents";
 import { drawDebug } from "./gfx/draw/drawDebug";
 import { drawFrame } from "./gfx/draw/drawFrame";
 import { drawLoadScreen } from "./gfx/draw/drawLoadingScreen";
@@ -213,7 +213,7 @@ export const kaplay = <
     });
 
     updateViewport();
-    initEvents();
+    initAppEvents();
 
     // the exported ctx handle
     const ctx: KAPLAYCtx = createContext(game, app, audio, debug);
