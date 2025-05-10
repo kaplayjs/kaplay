@@ -1,6 +1,6 @@
 import { _k } from "../kaplay";
 import type { Canvas } from "../types";
-import { FrameBuffer } from "./classes/FrameBuffer";
+import { FrameBuffer } from "./FrameBuffer";
 import { flush } from "./stack";
 
 export const makeCanvas = (w: number, h: number): Canvas => {

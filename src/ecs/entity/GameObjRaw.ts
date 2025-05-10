@@ -9,8 +9,8 @@ import {
     KEventController,
     type KEventHandler,
 } from "../../events/events";
-import { FrameBuffer } from "../../gfx/classes/FrameBuffer";
 import { beginPicture, endPicture, Picture } from "../../gfx/draw/drawPicture";
+import { FrameBuffer } from "../../gfx/FrameBuffer";
 import {
     flush,
     loadMatrix,

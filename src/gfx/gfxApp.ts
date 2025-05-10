@@ -10,8 +10,8 @@ import { type Color, rgb } from "../math/color";
 import { Mat23 } from "../math/math";
 import { Vec2 } from "../math/Vec2";
 import type { KAPLAYOpt } from "../types";
-import { FrameBuffer } from "./classes/FrameBuffer";
 import type { FontAtlas } from "./formatText";
+import { FrameBuffer } from "./FrameBuffer";
 import { BatchRenderer, type GfxCtx, Texture } from "./gfx";
 
 export type AppGfxCtx = {

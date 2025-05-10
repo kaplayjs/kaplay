@@ -1,5 +1,5 @@
-import type { TextureOpt } from "../../types";
-import { type GfxCtx, Texture } from "../gfx";
+import type { TextureOpt } from "../types";
+import { type GfxCtx, Texture } from "./gfx";
 
 /**
  * @group GFX

@@ -1,5 +1,5 @@
-import type { FrameBuffer } from "../../../gfx/classes/FrameBuffer";
 import type { Picture } from "../../../gfx/draw/drawPicture";
+import type { FrameBuffer } from "../../../gfx/FrameBuffer";
 import type { Comp, GameObj } from "../../../types";
 
 export type DrawonOpt = {
