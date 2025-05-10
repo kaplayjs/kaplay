@@ -11,9 +11,9 @@ import { createCanvas } from "../gfx/canvas";
 import { initGfx } from "../gfx/gfx";
 import { initAppGfx } from "../gfx/gfxApp";
 import type { KAPLAYCtx, KAPLAYOpt } from "../types";
+import { startEngineLoop } from "./engineLoop";
 import { createFontCache } from "./fontCache";
 import { createFrameRenderer } from "./frameRendering";
-import { startEngineLoop } from "./kaplay";
 
 export type Engine = ReturnType<typeof createEngine>;
 
