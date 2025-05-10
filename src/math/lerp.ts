@@ -1,5 +1,4 @@
 import { Color } from "./color";
-import { lerpNumber } from "./lerpNumber";
 import { Vec2 } from "./Vec2";
 
 /**
