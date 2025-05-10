@@ -39,6 +39,7 @@ import { sprite } from "../ecs/components/draw/sprite";
 import { text } from "../ecs/components/draw/text";
 import { uvquad } from "../ecs/components/draw/uvquad";
 import { video } from "../ecs/components/draw/video";
+import { hidden } from "../ecs/components/init/hidden";
 import { agent } from "../ecs/components/level/agent";
 import { level } from "../ecs/components/level/level";
 import { pathfinder } from "../ecs/components/level/pathfinder";
@@ -407,6 +408,7 @@ export const createContext = (
         pathfinder,
         level,
         fakeMouse,
+        hidden,
         // group events
         trigger,
         on: on as KAPLAYCtx["on"], // our internal on should be strict, user shouldn't

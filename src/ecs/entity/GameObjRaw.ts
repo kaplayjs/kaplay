@@ -1072,7 +1072,7 @@ export const GameObjRawPrototype: Omit<GameObjRaw, AppEvents> = {
             const prop = Object.getOwnPropertyDescriptor(comp, key);
             if (!prop) continue;
 
-            if (typeof prop.value === "function") {
+            if (key !== "use" && typeof prop.value === "function") {
                 // @ts-ignore
                 comp[key] = comp[key].bind(this);
             }
@@ -1089,7 +1089,10 @@ export const GameObjRawPrototype: Omit<GameObjRaw, AppEvents> = {
                 });
             }
 
-            if (COMP_EVENTS.has(key)) {
+            if (key == "use") {
+                comp[key as "use"]?.call(this);
+            }
+            else if (COMP_EVENTS.has(key)) {
                 // Automatically clean up events created by components in add() stage
                 const func = key === "add"
                     ? () => {
@@ -1098,6 +1101,7 @@ export const GameObjRawPrototype: Omit<GameObjRaw, AppEvents> = {
                         this._onCurCompCleanup = null;
                     }
                     : comp[<keyof typeof comp> key];
+
                 gc.push(this.on(key, <any> func).cancel);
             }
             else {
@@ -1159,6 +1163,10 @@ export const GameObjRawPrototype: Omit<GameObjRaw, AppEvents> = {
                 this._onCurCompCleanup = null;
             }
             if (comp.id) {
+                if (comp.use) {
+                    comp.use.call(this);
+                }
+
                 this.trigger("use", comp.id);
                 _k.game.events.trigger("use", this as GameObj, comp.id);
             }
@@ -1186,6 +1194,7 @@ export const GameObjRawPrototype: Omit<GameObjRaw, AppEvents> = {
                 }
             }
 
+            this._compStates.get(id)?.unuse?.call(this);
             this._compStates.delete(id);
             this._compsIds.delete(id);
 

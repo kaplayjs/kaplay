@@ -346,7 +346,26 @@ export interface KAPLAYCtx<
      * @group Game Obj
      */
     destroyAll(tag: Tag): void;
-    // #region Transform Comps
+    // #region Transform
+    // #region Init
+    /**
+     * Set the Game Object as hidden. Useful for setting it as hidden on start.
+     *
+     * @param hide - Whether to hide the Game Object or not.
+     *
+     * @example
+     * ```js
+     * const bean = add([
+     *     sprite("bean"),
+     *     hidden(),
+     * ]);
+     *
+     * // This will make the bean visible
+     * bean.hidden = false;
+     * ```
+     */
+    hidden(hide?: boolean): EmptyComp;
+    // #endregion
     /**
      * Set the position of a Game Object, relative to its parent.
      *
@@ -6650,6 +6669,14 @@ export interface Comp {
      * What other comps this comp depends on.
      */
     require?: Tag[];
+    /**
+     * Event that runs when the component is added to the game object.
+     */
+    use?: () => void;
+    /**
+     * Event that runs when the component is removed from the game object.
+     */
+    unuse?: () => void;
     /**
      * Event that runs when host game obj is added to scene.
      */
