@@ -6,7 +6,7 @@ import { initApp } from "../app/app";
 import { initAssets } from "../assets/asset";
 import { initAudio } from "../audio/audio";
 import { createDebug } from "../debug/debug";
-import { initGame } from "../game/game";
+import { createGame } from "../game/game";
 import { createCanvas } from "../gfx/canvas";
 import { initGfx } from "../gfx/gfx";
 import { initAppGfx } from "../gfx/gfxApp";
@@ -40,7 +40,7 @@ export const createEngine = (gopt: KAPLAYOpt) => {
     const appGfx = initAppGfx(gfx, gopt);
     const assets = initAssets(gfx, gopt.spriteAtlasPadding ?? 0);
     const audio = initAudio();
-    const game = initGame();
+    const game = createGame();
 
     // Frame rendering
     const frameRenderer = createFrameRenderer(

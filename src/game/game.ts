@@ -97,7 +97,17 @@ export type Game = {
     warned: Set<string>;
 };
 
-export const initGame = (): Game => {
+type Log = { msg: string | { toString(): string }; time: number };
+
+type CamData = {
+    pos: Vec2 | null;
+    scale: Vec2;
+    angle: number;
+    shake: number;
+    transform: Mat23;
+};
+
+export const createGame = (): Game => {
     const game = {
         gameObjLastId: 0,
         // general events
@@ -150,15 +160,4 @@ export const initGame = (): Game => {
     game.gameObjLastId++;
 
     return game;
-};
-
-// TODO: Move
-type Log = { msg: string | { toString(): string }; time: number };
-
-type CamData = {
-    pos: Vec2 | null;
-    scale: Vec2;
-    angle: number;
-    shake: number;
-    transform: Mat23;
 };
