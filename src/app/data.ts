@@ -1,4 +1,6 @@
-export const getData = <T>(key: string, def?: T): T | null => {
+// Related to load and save data
+
+export function getData<T>(key: string, def?: T): T | null {
     try {
         return JSON.parse(window.localStorage[key]);
     } catch {
@@ -10,8 +12,8 @@ export const getData = <T>(key: string, def?: T): T | null => {
             return null;
         }
     }
-};
+}
 
-export const setData = (key: string, data: any) => {
+export function setData(key: string, data: any) {
     window.localStorage[key] = JSON.stringify(data);
-};
+}

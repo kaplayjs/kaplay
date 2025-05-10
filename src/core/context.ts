@@ -1,4 +1,5 @@
 import type { App } from "../app/app";
+import { getData, setData } from "../app/data";
 import { loadAseprite } from "../assets/aseprite";
 import {
     Asset,
@@ -134,7 +135,6 @@ import {
     setGravityDirection,
 } from "../game/gravity";
 import { getDefaultLayer, getLayers, layers, setLayers } from "../game/layers";
-import { getData, setData } from "../game/savedata";
 import { getSceneName, go, onSceneLeave, scene } from "../game/scenes";
 import { getBackground, setBackground } from "../gfx/bg";
 import { makeCanvas } from "../gfx/canvasBuffer";

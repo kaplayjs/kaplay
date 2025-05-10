@@ -1,6 +1,8 @@
 import { _k } from "../kaplay";
 import { deprecateMsg } from "../utils/log";
 
+// Layering
+
 export function setLayers(layerNames: string[], defaultLayer: string) {
     if (_k.game.layers) {
         throw Error("Layers can only be assigned once.");
