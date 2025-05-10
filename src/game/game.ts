@@ -1,5 +1,7 @@
-// The game is the interface that connects all related to a KAPLAY game state.
+// The Game is the interface that connects all related to a KAPLAY game state.
 // It contains the game object tree, game object events, scenes, etc.
+
+// All in /game folder is stuff that uses/modify the game state.
 
 import type { Asset } from "../assets/asset";
 import type { SpriteData } from "../assets/sprite";
@@ -107,22 +109,33 @@ type CamData = {
     transform: Mat23;
 };
 
+/**
+ * Creates the Game interface.
+ *
+ * This will create:
+ *
+ * - The root game object
+ * - The game object events
+ * - The camera data
+ *
+ * @returns A Game
+ */
 export const createGame = (): Game => {
-    const game = {
+    const game: Game = {
         gameObjLastId: 0,
-        // general events
-        events: new KEventHandler<GameEventMap & GameObjEventMap>(),
-        // root game object
         root: makeInternal([], 0) as GameObj<TimerComp>,
+        events: new KEventHandler<GameEventMap & GameObjEventMap>(),
+        cam: {
+            pos: null as Vec2 | null,
+            scale: new Vec2(1),
+            angle: 0,
+            shake: 0,
+            transform: new Mat23(),
+        },
 
-        // misc
-        gravity: null as Vec2 | null,
-        scenes: {} as Record<SceneName, SceneDef>,
-        currentScene: null as SceneName | null,
-        layers: null as string[] | null,
-        defaultLayerIndex: 0,
+        // Systems
         systems: [], // all systems added
-        // we allocate systems
+        // we allocate systems here
         systemsByEvent: [
             [], // afterDraw
             [], // afterFixedUpdate
@@ -132,29 +145,34 @@ export const createGame = (): Game => {
             [], // beforeUpdate
         ],
 
-        // default assets
+        // Scenes
+        scenes: {} as Record<SceneName, SceneDef>,
+        currentScene: null as SceneName | null,
+
+        // Layers
+        layers: null as string[] | null,
+        defaultLayerIndex: 0,
+
+        // Gravity
+        gravity: null as Vec2 | null,
+
+        // Assets
         kaSprite: null as unknown as Asset<SpriteData>,
         boomSprite: null as unknown as Asset<SpriteData>,
 
-        // on screen log
+        // Logs
         logs: [] as { msg: string | { toString(): string }; time: number }[],
 
-        // camera
-        cam: {
-            pos: null as Vec2 | null,
-            scale: new Vec2(1),
-            angle: 0,
-            shake: 0,
-            transform: new Mat23(),
-        },
+        // Fake mouse API
+        fakeMouse: null,
 
-        defRNG: new RNG(Date.now()),
+        // Some state
         crashed: false,
         areaCount: 0,
-        fakeMouse: null,
         allTextInputs: new Set<GameObj>(),
+        defRNG: new RNG(Date.now()),
         warned: new Set<string>(),
-    } satisfies Game;
+    };
 
     game.root.use(timer());
     game.gameObjLastId++;
