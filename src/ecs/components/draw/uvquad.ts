@@ -1,4 +1,5 @@
 import { getRenderProps } from "../../../game/utils";
+import { drawUVQuad } from "../../../gfx/draw/drawUVQuad";
 import { Rect, vec2 } from "../../../math/math";
 import type { Comp, GameObj } from "../../../types";
 
@@ -22,6 +23,7 @@ export interface UVQuadComp extends Comp {
      */
     renderArea(): Rect;
 }
+
 export function uvquad(w: number, h: number): UVQuadComp {
     let _shape: Rect | undefined;
     let _width = w;
@@ -58,17 +60,4 @@ export function uvquad(w: number, h: number): UVQuadComp {
             return `uvquad: (${Math.ceil(_width)}w, ${Math.ceil(_height)})h`;
         },
     };
-}
-function drawUVQuad(
-    arg0: {
-        color: any;
-        opacity: any;
-        anchor: any;
-        outline: any;
-        shader: any;
-        uniform: any;
-        blend: any;
-    } & { width: number; height: number },
-) {
-    throw new Error("Function not implemented.");
 }
