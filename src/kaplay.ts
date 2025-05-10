@@ -14,8 +14,8 @@ import { drawFrame } from "./gfx/draw/drawFrame";
 import { drawLoadScreen } from "./gfx/draw/drawLoadingScreen";
 import { updateViewport } from "./gfx/viewport";
 
-import boomSpriteSrc from "./kassets/boom.png";
-import kaSpriteSrc from "./kassets/ka.png";
+import boomSpriteSrc from "./data/assets/boom.png";
+import kaSpriteSrc from "./data/assets/ka.png";
 import {
     type KAPLAYCtx,
     type KAPLAYOpt,

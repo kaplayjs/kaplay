@@ -1,7 +1,7 @@
 import { ASCII_CHARS } from "../constants/general";
+import happyFont from "../data/assets/happy.png";
 import { Texture } from "../gfx/gfx";
 import { _k } from "../kaplay";
-import happyFont from "../kassets/happy.png";
 import type { Quad } from "../math/math";
 import type { TexFilter } from "../types";
 import { type Asset, loadImg } from "./asset";
