@@ -96,12 +96,13 @@ import type { RotateComp } from "./ecs/components/transform/rotate";
 import type { ScaleComp } from "./ecs/components/transform/scale";
 import type { ZComp } from "./ecs/components/transform/z";
 import type { GameObjRaw, KeepFlags } from "./ecs/entity/GameObjRaw";
+import type { BoomOpt } from "./ecs/entity/premade/addKaboom";
+import type { AddLevelOpt } from "./ecs/entity/premade/addLevel";
+import type { LCEvents } from "./ecs/systems/systems";
 import type { GameObjEventNames, GameObjEvents } from "./events/eventMap";
 import type { KEvent, KEventController, KEventHandler } from "./events/events";
 import type { TupleWithoutFirst } from "./events/globalEvents";
-import type { BoomOpt } from "./game/kaboom";
 import type { SceneDef, SceneName } from "./game/scenes";
-import type { LCEvents } from "./game/systems";
 import type { FrameBuffer } from "./gfx/classes/FrameBuffer";
 import type { DrawBezierOpt } from "./gfx/draw/drawBezier";
 import type { DrawCanvasOpt } from "./gfx/draw/drawCanvas";
@@ -6829,18 +6830,6 @@ export enum EdgeMask {
     HorizontalBottom = 13,
     RightVertical = 14,
     All = 15,
-}
-
-/**
- * Options for the {@link addLevel `addLevel()`}.
- *
- * @group Options
- */
-export interface AddLevelOpt extends LevelOpt {
-    /**
-     * Position of the first block.
-     */
-    pos?: Vec2;
 }
 
 /**

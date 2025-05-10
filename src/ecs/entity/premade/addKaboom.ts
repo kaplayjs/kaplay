@@ -1,13 +1,13 @@
-import { sprite } from "../ecs/components/draw/sprite";
-import { boom } from "../ecs/components/misc/boom";
-import { stay } from "../ecs/components/misc/stay";
-import { timer } from "../ecs/components/misc/timer";
-import { anchor } from "../ecs/components/transform/anchor";
-import { pos } from "../ecs/components/transform/pos";
-import { scale } from "../ecs/components/transform/scale";
-import { _k } from "../kaplay";
-import type { Vec2 } from "../math/Vec2";
-import type { CompList, GameObj } from "../types";
+import { _k } from "../../../kaplay";
+import type { Vec2 } from "../../../math/Vec2";
+import type { CompList, GameObj } from "../../../types";
+import { sprite } from "../../components/draw/sprite";
+import { boom } from "../../components/misc/boom";
+import { stay } from "../../components/misc/stay";
+import { timer } from "../../components/misc/timer";
+import { anchor } from "../../components/transform/anchor";
+import { pos } from "../../components/transform/pos";
+import { scale } from "../../components/transform/scale";
 
 /**
  * @group Options

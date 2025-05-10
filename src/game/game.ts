@@ -4,13 +4,13 @@ import type { FakeMouseComp } from "../ecs/components/misc/fakeMouse";
 import { timer, type TimerComp } from "../ecs/components/misc/timer";
 import type { PosComp } from "../ecs/components/transform/pos";
 import { makeInternal } from "../ecs/entity/make";
+import type { System } from "../ecs/systems/systems";
 import type { GameEventMap, GameObjEventMap } from "../events/eventMap";
 import { KEventHandler } from "../events/events";
 import { Mat23, RNG } from "../math/math";
 import { Vec2 } from "../math/Vec2";
 import type { GameObj } from "../types";
 import type { SceneDef, SceneName } from "./scenes";
-import type { System } from "./systems";
 
 /**
  * The "Game" it's all the state related to the game running

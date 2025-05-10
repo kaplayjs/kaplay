@@ -2,13 +2,13 @@ import { color } from "../ecs/components/draw/color";
 import { opacity } from "../ecs/components/draw/opacity";
 import { rect } from "../ecs/components/draw/rect";
 import { fixed } from "../ecs/components/transform/fixed";
+import { destroy } from "../ecs/entity/utils";
 import { center, height, width } from "../gfx/stack";
 import { _k } from "../kaplay";
 import { type Color, rgb } from "../math/color";
 import { type Mat23, vec2, type Vec2Args } from "../math/math";
 import { Vec2 } from "../math/Vec2";
 import { deprecateMsg } from "../utils/log";
-import { destroy } from "./object";
 
 export function setCamPos(...pos: Vec2Args) {
     _k.game.cam.pos = vec2(...pos);

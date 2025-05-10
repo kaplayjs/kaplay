@@ -10,7 +10,7 @@ import { type Vec2 } from "../../math/Vec2";
 import type { GameObj } from "../../types";
 import { type AreaComp, usesArea } from "../components/physics/area";
 
-export const getCollisionSystem = ({ narrow = "gjk" } = {}) => {
+export const createCollisionSystem = ({ narrow = "gjk" } = {}) => {
     const narrowPhaseIntersection = narrow === "gjk"
         ? gjkShapeIntersection
         : narrow === "sat"

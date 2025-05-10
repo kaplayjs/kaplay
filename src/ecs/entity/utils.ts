@@ -1,5 +1,5 @@
-import { _k } from "../kaplay";
-import type { GameObj } from "../types";
+import { _k } from "../../kaplay";
+import type { GameObj } from "../../types";
 
 export function destroy(obj: GameObj) {
     obj.destroy();

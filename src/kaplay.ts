@@ -6,9 +6,9 @@ import { createContext } from "./core/context";
 import { createEngine } from "./core/engine";
 import { handleErr } from "./core/errors";
 import { plug } from "./core/plug";
-import { getCollisionSystem } from "./ecs/systems/collision";
+import { createCollisionSystem } from "./ecs/systems/createCollisionSystem";
+import { LCEvents, system } from "./ecs/systems/systems";
 import { initEvents } from "./game/initEvents";
-import { LCEvents, system } from "./game/systems";
 import { drawDebug } from "./gfx/draw/drawDebug";
 import { drawFrame } from "./gfx/draw/drawFrame";
 import { drawLoadScreen } from "./gfx/draw/drawLoadingScreen";
@@ -98,7 +98,7 @@ export const kaplay = <
         debug,
     } = _k;
 
-    const { checkFrame } = getCollisionSystem({
+    const { checkFrame } = createCollisionSystem({
         narrow: gopt.narrowPhaseCollisionAlgorithm || "gjk",
     });
 

@@ -5,6 +5,7 @@ export function isFixed(obj: GameObj): boolean {
     return obj.parent ? isFixed(obj.parent) : false;
 }
 
+// Note: I will doom this soon 😈😈😈😈
 export function getRenderProps(obj: GameObj<any>) {
     return {
         color: obj.color,

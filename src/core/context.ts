@@ -77,6 +77,10 @@ import { rotate } from "../ecs/components/transform/rotate";
 import { scale } from "../ecs/components/transform/scale";
 import { z } from "../ecs/components/transform/z";
 import { KeepFlags } from "../ecs/entity/GameObjRaw";
+import { addKaboom } from "../ecs/entity/premade/addKaboom";
+import { addLevel } from "../ecs/entity/premade/addLevel";
+import { destroy, getTreeRoot } from "../ecs/entity/utils";
+import { system } from "../ecs/systems/systems";
 import { KEvent, KEventController, KEventHandler } from "../events/events";
 import {
     on,
@@ -128,13 +132,9 @@ import {
     setGravity,
     setGravityDirection,
 } from "../game/gravity";
-import { addKaboom } from "../game/kaboom";
 import { getDefaultLayer, getLayers, layers, setLayers } from "../game/layers";
-import { addLevel } from "../game/level";
-import { destroy, getTreeRoot } from "../game/object";
 import { getData, setData } from "../game/savedata";
 import { getSceneName, go, onSceneLeave, scene } from "../game/scenes";
-import { system } from "../game/systems";
 import { getBackground, setBackground } from "../gfx/bg";
 import { makeCanvas } from "../gfx/canvasBuffer";
 import { drawBezier } from "../gfx/draw/drawBezier";
