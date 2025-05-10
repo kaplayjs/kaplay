@@ -140,8 +140,6 @@ export class Shader {
                 gl.uniform2f(loc, val.x, val.y);
             }
             else if (Array.isArray(val)) {
-                const first = val[0];
-
                 if (arrayIsNumber(val)) {
                     gl.uniform1fv(loc, val as number[]);
                 }
