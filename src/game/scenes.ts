@@ -1,7 +1,7 @@
 import type { KEventController } from "../events/events";
+import { initEvents } from "../events/initEvents";
 import { _k } from "../kaplay";
 import { Mat23, vec2 } from "../math/math";
-import { initEvents } from "./initEvents";
 
 /**
  * The name of a scene.
