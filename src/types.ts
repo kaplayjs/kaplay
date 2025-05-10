@@ -13,6 +13,7 @@ import type { LoadSpriteOpt, LoadSpriteSrc, SpriteData } from "./assets/sprite";
 import type { SpriteAtlasData } from "./assets/spriteAtlas";
 import type { AudioPlay, AudioPlayOpt } from "./audio/play";
 import type { Engine } from "./core/engine";
+import type { Debug } from "./debug/debug";
 import type { Recording } from "./debug/record";
 import type { BlendComp } from "./ecs/components/draw/blend";
 import type { CircleComp, CircleCompOpt } from "./ecs/components/draw/circle";
@@ -6715,70 +6716,6 @@ export interface Collision {
  * @group Draw
  */
 export type Shape = Rect | Line | Point | Circle | Ellipse | Polygon;
-
-/**
- * @group Debug
- */
-export interface Debug {
-    /**
-     * Pause the whole game.
-     */
-    paused: boolean;
-    /**
-     * Draw bounding boxes of all objects with `area()` component, hover to inspect their states.
-     */
-    inspect: boolean;
-    /**
-     * Global time scale.
-     */
-    timeScale: number;
-    /**
-     * Show the debug log or not.
-     */
-    showLog: boolean;
-    /**
-     * Current frames per second.
-     */
-    fps(): number;
-    /**
-     * Total number of frames elapsed.
-     *
-     * @since v3000.0
-     */
-    numFrames(): number;
-    /**
-     * Number of draw calls made last frame.
-     */
-    drawCalls(): number;
-    /**
-     * Step to the next frame. Useful with pausing.
-     */
-    stepFrame(): void;
-    /**
-     * Clear the debug log.
-     */
-    clearLog(): void;
-    /**
-     * Log some text to on screen debug log.
-     */
-    log(...msg: any): void;
-    /**
-     * Log an error message to on screen debug log.
-     */
-    error(msg: any): void;
-    /**
-     * The recording handle if currently in recording mode.
-     *
-     * @since v2000.1
-     */
-    curRecording: Recording | null;
-    /**
-     * Get total number of objects.
-     *
-     * @since v3001.0
-     */
-    numObjects(): number;
-}
 
 export type Mask = "intersect" | "subtract";
 

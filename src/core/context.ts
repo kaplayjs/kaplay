@@ -20,6 +20,7 @@ import { burp } from "../audio/burp";
 import { play } from "../audio/play";
 import { getVolume, setVolume, volume } from "../audio/volume";
 import { ASCII_CHARS, EVENT_CANCEL_SYMBOL } from "../constants/general";
+import type { Debug } from "../debug/debug";
 import { record } from "../debug/record";
 import { blend } from "../ecs/components/draw/blend";
 import { circle } from "../ecs/components/draw/circle";
@@ -236,7 +237,7 @@ import {
 } from "../math/math";
 import { NavMesh } from "../math/navigationmesh";
 import { Vec2 } from "../math/Vec2";
-import { BlendMode, type Debug, type KAPLAYCtx } from "../types";
+import { BlendMode, type KAPLAYCtx } from "../types";
 import {
     download,
     downloadBlob,
