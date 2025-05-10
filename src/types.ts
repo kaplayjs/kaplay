@@ -129,6 +129,7 @@ import type { Texture } from "./gfx/gfx";
 import type { Color, CSSColor, RGBAValue, RGBValue } from "./math/color";
 import type { EaseFunc, EaseFuncs } from "./math/easings";
 import type { GjkCollisionResult } from "./math/gjk";
+import type { LerpValue } from "./math/lerp";
 import type { Mat4 } from "./math/Mat4";
 import type {
     Circle,
@@ -6584,11 +6585,6 @@ export type Anchor =
     | "botleft"
     | "bot"
     | "botright";
-
-/**
- * @group Math
- */
-export type LerpValue = number | Vec2 | Color;
 
 /**
  * @group Math

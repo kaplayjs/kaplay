@@ -1,8 +1,8 @@
 import { KEvent } from "../../../events/events";
 import { _k } from "../../../kaplay";
 import { easings } from "../../../math/easings";
-import { lerp } from "../../../math/math";
-import type { Comp, GameObj, LerpValue } from "../../../types";
+import { lerp, type LerpValue } from "../../../math/lerp";
+import type { Comp, GameObj } from "../../../types";
 
 /**
  * @group Timer

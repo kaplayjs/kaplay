@@ -3,9 +3,10 @@
 // - move Vec2 to it's own file
 
 import { _k } from "../kaplay";
-import type { GameObj, LerpValue, RNGValue, Shape } from "../types";
+import type { GameObj, RNGValue, Shape } from "../types";
 import { clamp } from "./clamp";
 import { Color, rgb } from "./color";
+import { lerp, type LerpValue } from "./lerp";
 import { Vec2 } from "./Vec2";
 
 /**
@@ -26,25 +27,6 @@ export function deg2rad(deg: number): number {
 
 export function rad2deg(rad: number): number {
     return rad * 180 / Math.PI;
-}
-
-export function lerp<V extends LerpValue>(
-    a: V,
-    b: V,
-    t: number,
-): V {
-    if (typeof a === "number" && typeof b === "number") {
-        return a + (b - a) * t as V;
-    }
-    else if (a instanceof Vec2 && b instanceof Vec2) {
-        return a.lerp(b, t) as V;
-    }
-    else if (a instanceof Color && b instanceof Color) {
-        return a.lerp(b, t) as V;
-    }
-    throw new Error(
-        `Bad value for lerp(): ${a}, ${b}. Only number, Vec2 and Color is supported.`,
-    );
 }
 
 export function map(

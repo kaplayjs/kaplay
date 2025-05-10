@@ -6,6 +6,8 @@ import { createContext } from "./core/context";
 import { createEngine } from "./core/engine";
 import { handleErr } from "./core/errors";
 import { plug } from "./core/plug";
+import boomSpriteSrc from "./data/assets/boom.png";
+import kaSpriteSrc from "./data/assets/ka.png";
 import { createCollisionSystem } from "./ecs/systems/createCollisionSystem";
 import { LCEvents, system } from "./ecs/systems/systems";
 import { initEvents } from "./game/initEvents";
@@ -13,9 +15,6 @@ import { drawDebug } from "./gfx/draw/drawDebug";
 import { drawFrame } from "./gfx/draw/drawFrame";
 import { drawLoadScreen } from "./gfx/draw/drawLoadingScreen";
 import { updateViewport } from "./gfx/viewport";
-
-import boomSpriteSrc from "./data/assets/boom.png";
-import kaSpriteSrc from "./data/assets/ka.png";
 import {
     type KAPLAYCtx,
     type KAPLAYOpt,

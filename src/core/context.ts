@@ -176,6 +176,7 @@ import { clamp } from "../math/clamp";
 import { Color, hsl2rgb, rgb } from "../math/color";
 import { easings } from "../math/easings";
 import { gjkShapeIntersection, gjkShapeIntersects } from "../math/gjk";
+import { lerp } from "../math/lerp";
 import { Mat4 } from "../math/Mat4";
 import {
     bezier,
@@ -204,7 +205,6 @@ import {
     hermite,
     isConvex,
     kochanekBartels,
-    lerp,
     Line,
     map,
     mapc,

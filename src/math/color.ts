@@ -1,6 +1,6 @@
 import { CSS_COLOR_MAP } from "../constants/colorMap";
 import { clamp } from "./clamp";
-import { lerp } from "./math";
+import { lerp } from "./lerp";
 
 export type RGBValue = [number, number, number];
 export type RGBAValue = [number, number, number, number];

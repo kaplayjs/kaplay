@@ -1,5 +1,6 @@
 import { _k } from "../../kaplay";
-import { lerp, rand } from "../../math/math";
+import { lerp } from "../../math/lerp";
+import { rand } from "../../math/math";
 import { Vec2 } from "../../math/Vec2";
 import { center, flush } from "../stack";
 

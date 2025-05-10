@@ -1,5 +1,6 @@
+import { lerp } from "./lerp";
 import type { Mat4 } from "./Mat4";
-import { deg2rad, lerp, rad2deg, Rect, vec2, type Vec2Args } from "./math";
+import { deg2rad, rad2deg, Rect, vec2, type Vec2Args } from "./math";
 
 /**
  * A 2D vector.
