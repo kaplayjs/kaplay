@@ -1,5 +1,5 @@
-import { _k } from "../../../_k";
 import { map } from "../../../math/math";
+import { _k } from "../../../shared";
 import type { Comp, GameObj } from "../../../types";
 import type { OpacityComp } from "./opacity";
 

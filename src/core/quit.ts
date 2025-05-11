@@ -1,4 +1,4 @@
-import { _k } from "../_k";
+import { _k } from "../shared";
 
 export const quit = () => {
     const { game, app, gfx, ggl, gc } = _k;

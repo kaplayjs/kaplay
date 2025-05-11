@@ -1,6 +1,5 @@
 // TODO: accept canvas
 
-import { _k } from "../../../_k";
 import type { Asset } from "../../../assets/asset";
 import {
     resolveSprite,
@@ -16,6 +15,7 @@ import { drawTexture } from "../../../gfx/draw/drawTexture";
 import type { Texture } from "../../../gfx/gfx";
 import { Quad, quad, Rect, vec2 } from "../../../math/math";
 import { type Vec2 } from "../../../math/Vec2";
+import { _k } from "../../../shared";
 import type { Comp, GameObj, SpriteAnimPlayOpt } from "../../../types";
 
 /**

@@ -1,4 +1,3 @@
-import { _k } from "../_k";
 import { Asset } from "../assets/asset";
 import type { BitmapFontData, GfxFont } from "../assets/bitmapFont";
 import { FontData, resolveFont } from "../assets/font";
@@ -11,6 +10,7 @@ import {
 import { Color } from "../math/color";
 import { Quad, vec2 } from "../math/math";
 import { Vec2 } from "../math/Vec2";
+import { _k } from "../shared";
 import type { Outline, TexFilter } from "../types";
 import { runes } from "../utils/runes";
 import { alignPt } from "./anchor";

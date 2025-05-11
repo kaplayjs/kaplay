@@ -1,9 +1,9 @@
-import { _k } from "../../../_k";
 import { toScreen, toWorld } from "../../../game/camera";
 import { drawCircle } from "../../../gfx/draw/drawCircle";
 import { rgb } from "../../../math/color";
 import { vec2, type Vec2Args } from "../../../math/math";
 import { type Vec2 } from "../../../math/Vec2";
+import { _k } from "../../../shared";
 import type { Comp, GameObj } from "../../../types";
 import { isFixed } from "../../entity/utils";
 import type { FixedComp } from "./fixed";

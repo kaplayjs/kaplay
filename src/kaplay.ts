@@ -1,5 +1,4 @@
 // The definitive version!
-import { _k, updateEngine } from "./_k";
 import type { ButtonsDef } from "./app/inputBindings";
 import { SoundData } from "./assets/sound";
 import { loadSprite } from "./assets/sprite";
@@ -13,6 +12,7 @@ import happyFontSrc from "./data/assets/happy.png";
 import kaSpriteSrc from "./data/assets/ka.png";
 import { createCollisionSystem } from "./ecs/systems/createCollisionSystem";
 import { LCEvents, system } from "./ecs/systems/systems";
+import { _k, updateEngine } from "./shared";
 import {
     type KAPLAYCtx,
     type KAPLAYOpt,

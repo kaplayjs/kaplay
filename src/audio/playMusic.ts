@@ -1,6 +1,6 @@
-import { _k } from "../_k";
 import { KEvent } from "../events/events";
 import { clamp } from "../math/clamp";
+import { _k } from "../shared";
 import type { AudioPlay, AudioPlayOpt } from "./play";
 
 export function playMusic(url: string, opt: AudioPlayOpt = {}): AudioPlay {

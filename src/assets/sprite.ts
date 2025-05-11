@@ -1,7 +1,7 @@
-import { _k } from "../_k";
 import type { DrawSpriteOpt } from "../gfx/draw/drawSprite";
 import type { Texture } from "../gfx/gfx";
 import { Quad } from "../math/math";
+import { _k } from "../shared";
 import { type ImageSource } from "../types";
 import { Asset, loadImg, loadProgress } from "./asset";
 import { fixURL } from "./utils";

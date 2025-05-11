@@ -1,5 +1,5 @@
-import { _k } from "../_k";
 import { Vec2 } from "../math/Vec2";
+import { _k } from "../shared";
 
 /*
 The viewport is where the game is rendered. There's various concepts for

@@ -1,9 +1,9 @@
-import { _k } from "../../../_k";
 import { getRenderProps } from "../../../game/utils";
 import { drawRect } from "../../../gfx/draw/drawRect";
 import { drawUVQuad } from "../../../gfx/draw/drawUVQuad";
 import { Texture } from "../../../gfx/gfx";
 import { Rect, vec2 } from "../../../math/math";
+import { _k } from "../../../shared";
 import type { Comp, GameObj } from "../../../types";
 import type { PosComp } from "../transform/pos";
 

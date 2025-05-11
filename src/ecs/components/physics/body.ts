@@ -1,4 +1,3 @@
-import { _k } from "../../../_k";
 import { DEF_JUMP_FORCE, MAX_VEL } from "../../../constants/general";
 import type { KEventController } from "../../../events/events";
 import { getGravityDirection } from "../../../game/gravity";
@@ -6,6 +5,7 @@ import { lerp } from "../../../math/lerp";
 import { vec2 } from "../../../math/math";
 import { calcTransform } from "../../../math/various";
 import { type Vec2 } from "../../../math/Vec2";
+import { _k } from "../../../shared";
 import type { Collision, Comp, GameObj } from "../../../types";
 import type { PosComp } from "../transform/pos";
 import type { AreaComp } from "./area";

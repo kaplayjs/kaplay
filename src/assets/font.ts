@@ -1,4 +1,3 @@
-import { _k } from "../_k";
 import {
     DEF_FONT,
     DEF_FONT_FILTER,
@@ -9,6 +8,7 @@ import type { DrawTextOpt } from "../gfx/draw/drawText";
 import type { Texture } from "../gfx/gfx";
 import { rgb } from "../math/color";
 import { Quad } from "../math/math";
+import { _k } from "../shared";
 import type { LoadFontOpt, Outline, TexFilter } from "../types";
 import { Asset, loadProgress } from "./asset";
 import { type BitmapFontData, getBitmapFont, type GfxFont } from "./bitmapFont";

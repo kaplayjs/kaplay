@@ -1,4 +1,3 @@
-import { _k } from "../../_k";
 import { onAdd, onDestroy, onUnuse, onUse } from "../../events/globalEvents";
 import { onSceneLeave } from "../../game/scenes";
 import { gjkShapeIntersection } from "../../math/gjk";
@@ -7,6 +6,7 @@ import { minkowskiRectShapeIntersection } from "../../math/minkowski";
 import { satShapeIntersection } from "../../math/sat";
 import { SweepAndPrune } from "../../math/spatial/sweepandprune";
 import { type Vec2 } from "../../math/Vec2";
+import { _k } from "../../shared";
 import type { GameObj } from "../../types";
 import { type AreaComp, usesArea } from "../components/physics/area";
 

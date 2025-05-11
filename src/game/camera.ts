@@ -1,4 +1,3 @@
-import { _k } from "../_k";
 import { color } from "../ecs/components/draw/color";
 import { opacity } from "../ecs/components/draw/opacity";
 import { rect } from "../ecs/components/draw/rect";
@@ -8,6 +7,7 @@ import { center, height, width } from "../gfx/stack";
 import { type Color, rgb } from "../math/color";
 import { type Mat23, vec2, type Vec2Args } from "../math/math";
 import { Vec2 } from "../math/Vec2";
+import { _k } from "../shared";
 import { deprecateMsg } from "../utils/log";
 
 export function setCamPos(...pos: Vec2Args) {

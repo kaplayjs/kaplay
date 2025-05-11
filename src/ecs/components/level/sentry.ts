@@ -1,6 +1,6 @@
-import { _k } from "../../../_k";
 import type { KEventController } from "../../../events/events";
 import { Vec2 } from "../../../math/Vec2";
+import { _k } from "../../../shared";
 import type { Comp, GameObj, QueryOpt } from "../../../types";
 import { raycast } from "../draw/raycast";
 import type { PosComp } from "../transform/pos";

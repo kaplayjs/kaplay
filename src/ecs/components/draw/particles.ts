@@ -1,4 +1,3 @@
-import { _k } from "../../../_k";
 import { KEvent } from "../../../events/events";
 import { drawRaw } from "../../../gfx/draw/drawRaw";
 import type { Texture } from "../../../gfx/gfx";
@@ -13,6 +12,7 @@ import {
     vec2,
 } from "../../../math/math";
 import { Vec2 } from "../../../math/Vec2";
+import { _k } from "../../../shared";
 import type { Comp } from "../../../types";
 
 /**

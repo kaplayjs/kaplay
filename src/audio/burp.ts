@@ -1,4 +1,4 @@
-import { _k } from "../_k";
+import { _k } from "../shared";
 import { type AudioPlay, type AudioPlayOpt, play } from "./play";
 
 // core KAPLAY logic

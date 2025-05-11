@@ -1,8 +1,8 @@
 // Gravity manipulation
 
-import { _k } from "../_k";
 import { vec2 } from "../math/math";
 import { type Vec2 } from "../math/Vec2";
+import { _k } from "../shared";
 
 export function setGravity(g: number) {
     // If g > 0 use either the current direction or use (0, 1)

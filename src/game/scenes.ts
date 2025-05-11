@@ -1,7 +1,7 @@
-import { _k } from "../_k";
 import { initAppEvents } from "../app/appEvents";
 import type { KEventController } from "../events/events";
 import { Mat23, vec2 } from "../math/math";
+import { _k } from "../shared";
 
 /**
  * The name of a scene.

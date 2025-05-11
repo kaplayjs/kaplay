@@ -1,5 +1,5 @@
-import { _k } from "../../../_k";
 import { easings } from "../../../math/easings";
+import { _k } from "../../../shared";
 import type { EmptyComp, GameObj } from "../../../types";
 import type { OpacityComp } from "../draw/opacity";
 

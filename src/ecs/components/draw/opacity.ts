@@ -1,5 +1,5 @@
-import { _k } from "../../../_k";
 import { type EaseFunc, easings } from "../../../math/easings";
+import { _k } from "../../../shared";
 import type { Comp } from "../../../types";
 import { toFixed } from "../../../utils/numbers";
 import type { TweenController } from "../misc/timer";

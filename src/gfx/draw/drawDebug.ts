@@ -1,7 +1,7 @@
-import { _k } from "../../_k";
 import { DBG_FONT, LOG_TIME } from "../../constants/general";
 import { Color, rgb } from "../../math/color";
 import { vec2, wave } from "../../math/math";
+import { _k } from "../../shared";
 import { formatText } from "../formatText";
 import {
     height,

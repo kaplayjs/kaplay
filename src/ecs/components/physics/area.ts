@@ -1,4 +1,3 @@
-import { _k } from "../../../_k";
 import { DEF_ANCHOR } from "../../../constants/general";
 import type { KEventController } from "../../../events/events";
 import { toWorld } from "../../../game/camera";
@@ -10,6 +9,7 @@ import { multTranslate, popTransform, pushTransform } from "../../../gfx/stack";
 import { rgb } from "../../../math/color";
 import { Circle, Polygon, Rect, vec2 } from "../../../math/math";
 import { type Vec2 } from "../../../math/Vec2";
+import { _k } from "../../../shared";
 import type {
     Collision,
     Comp,

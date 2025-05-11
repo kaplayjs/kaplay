@@ -1,6 +1,5 @@
 // The E of ECS
 
-import { _k } from "../../_k";
 import type { AppEvents } from "../../app/app";
 import { COMP_DESC, COMP_EVENTS } from "../../constants/general";
 import { handleErr } from "../../core/errors";
@@ -34,6 +33,7 @@ import {
 } from "../../gfx/stack";
 import { Mat23 } from "../../math/math";
 import { calcTransform } from "../../math/various";
+import { _k } from "../../shared";
 import type {
     Comp,
     CompList,

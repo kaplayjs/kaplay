@@ -1,4 +1,3 @@
-import { _k } from "../_k";
 import { DBG_FONT } from "../constants/general";
 import { drawFormattedText } from "../gfx/draw/drawFormattedText";
 import { drawRect } from "../gfx/draw/drawRect";
@@ -8,6 +7,7 @@ import { formatText } from "../gfx/formatText";
 import { height, popTransform, width } from "../gfx/stack";
 import { rgb } from "../math/color";
 import { vec2 } from "../math/math";
+import { _k } from "../shared";
 
 export const handleErr = (err: Error | any) => {
     if (_k.game.crashed) return;

@@ -1,4 +1,4 @@
-import { _k } from "../_k";
+import { _k } from "../shared";
 import { deprecateMsg } from "../utils/log";
 
 // Layering

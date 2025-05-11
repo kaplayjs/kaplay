@@ -1,8 +1,8 @@
-import { _k } from "../_k";
 import { burp } from "../audio/burp";
 import { FrameBuffer } from "../gfx/FrameBuffer";
 import { updateViewport } from "../gfx/viewport";
 import { clamp } from "../math/clamp";
+import { _k } from "../shared";
 import { toFixed } from "../utils/numbers";
 
 // Events used at the start of a game

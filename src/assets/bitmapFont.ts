@@ -1,7 +1,7 @@
-import { _k } from "../_k";
 import { ASCII_CHARS } from "../constants/general";
 import { Texture } from "../gfx/gfx";
 import type { Quad } from "../math/math";
+import { _k } from "../shared";
 import type { TexFilter } from "../types";
 import { type Asset, loadImg } from "./asset";
 import { makeFont } from "./font";

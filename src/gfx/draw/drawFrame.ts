@@ -1,7 +1,7 @@
-import { _k } from "../../_k";
 import { lerp } from "../../math/lerp";
 import { rand } from "../../math/math";
 import { Vec2 } from "../../math/Vec2";
+import { _k } from "../../shared";
 import { center, flush } from "../stack";
 
 export function drawFrame() {
