@@ -237,12 +237,7 @@ import {
 } from "../math/math";
 import { NavMesh } from "../math/navigationmesh";
 import { Vec2 } from "../math/Vec2";
-import {
-    BlendMode,
-    type KAPLAYCtx,
-    type KAPLAYPlugin,
-    type PluginList,
-} from "../types";
+import { BlendMode, type KAPLAYCtx, type KAPLAYPlugin } from "../types";
 import {
     download,
     downloadBlob,

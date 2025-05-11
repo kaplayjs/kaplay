@@ -4,7 +4,7 @@
 import * as esbuild from "esbuild";
 import fs from "fs";
 import path from "path";
-import { DIST_DIR, SRC_PATH, SRC_PATH_MINI } from "../constants.js";
+import { DIST_DIR, SRC_PATH } from "../constants.js";
 
 // KAPLAY Package.json
 
@@ -33,7 +33,6 @@ export const fmts = (name) => [
 
 const kaplayBuilds = fmts("kaplay");
 const kaboomBuild = fmts("kaboom")[0];
-const kaplayMiniBuild = fmts("mini")[2];
 
 /** @type {esbuild.BuildOptions} */
 export const config = {
@@ -71,25 +70,18 @@ export async function build(fast = false) {
     }
     return Promise.all(
         [{
-            formats: kaplayBuilds,
+            formats: fmts("kaplay"),
             sourceMap: true,
         }, {
             formats: [kaboomBuild],
             sourceMap: false,
-        }, {
-            formats: [kaplayMiniBuild],
-            sourceMap: false,
-            entryPoints: [SRC_PATH_MINI],
-        }].flat().map(({ formats, sourceMap, entryPoints }) => {
-            const entry = entryPoints ?? config.entryPoints;
-
+        }].flat().map(({ formats, sourceMap }) => {
             return formats.map((fmt) => {
                 return esbuild.build({
                     ...config,
                     ...fmt,
                     sourcemap: sourceMap,
-                    entryPoints: entry,
-                }).then(() => console.log(`${entry?.[0]} -> ${fmt.outfile}`));
+                }).then(() => console.log(`-> ${fmt.outfile}`));
             });
         }),
     );
