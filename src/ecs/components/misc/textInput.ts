@@ -89,13 +89,13 @@ export function textInput(
                 this.trigger("input");
             };
 
-            charEv = _k.k.onCharInput((character) => {
+            charEv = _k.app.onCharInput((character) => {
                 if (
                     this.hasFocus
                     && (!maxInputLength
                         || this.typedText.length < maxInputLength)
                 ) {
-                    if ((_k.k.isKeyDown("shift") !== _k.app.state.capsOn)) {
+                    if ((_k.app.isKeyDown("shift") !== _k.app.state.capsOn)) {
                         this.typedText += character.toUpperCase();
                     }
                     else {
@@ -105,7 +105,7 @@ export function textInput(
                 }
             });
 
-            backEv = _k.k.onKeyPressRepeat("backspace", () => {
+            backEv = _k.app.onKeyPressRepeat("backspace", () => {
                 if (this.hasFocus) {
                     this.typedText = this.typedText.slice(0, -1);
                 }

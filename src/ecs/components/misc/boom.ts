@@ -13,7 +13,7 @@ export function boom(speed: number = 2, size: number = 1): Comp {
                 this.destroy();
             }
             this.scale = vec2(s);
-            time += _k.k.dt();
+            time += _k.app.dt();
         },
     };
 }

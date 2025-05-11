@@ -342,7 +342,7 @@ export function body(opt: BodyCompOpt = {}): BodyComp {
                 }
             }
 
-            const dt = _k.k.restDt();
+            const dt = _k.app.restDt();
             if (dt) {
                 // Check if no external changes were made
                 if (this.pos.x == prevDrawPos.x) {
@@ -350,7 +350,7 @@ export function body(opt: BodyCompOpt = {}): BodyComp {
                     this.pos.x = lerp(
                         prevPhysicsPos!.x,
                         nextPhysicsPos!.x,
-                        dt / _k.k.fixedDt(),
+                        dt / _k.app.fixedDt(),
                     );
                     // Copy to check for changes
                     prevDrawPos.x = this.pos.x;
@@ -360,7 +360,7 @@ export function body(opt: BodyCompOpt = {}): BodyComp {
                     this.pos.y = lerp(
                         prevPhysicsPos!.y,
                         nextPhysicsPos!.y,
-                        dt / _k.k.fixedDt(),
+                        dt / _k.app.fixedDt(),
                     );
                     // Copy to check for changes
                     prevDrawPos.y = this.pos.y;
@@ -405,7 +405,7 @@ export function body(opt: BodyCompOpt = {}): BodyComp {
 
                 // Apply gravity
                 this.vel = this.vel.add(
-                    _k.game.gravity.scale(this.gravityScale * _k.k.dt()),
+                    _k.game.gravity.scale(this.gravityScale * _k.app.dt()),
                 );
 
                 // Clamp velocity
@@ -425,22 +425,22 @@ export function body(opt: BodyCompOpt = {}): BodyComp {
             }
 
             // Apply velocity and position changes
-            this.vel.x += acc.x * _k.k.dt();
-            this.vel.y += acc.y * _k.k.dt();
+            this.vel.x += acc.x * _k.app.dt();
+            this.vel.y += acc.y * _k.app.dt();
 
-            this.vel.x *= 1 / (1 + this.damping * _k.k.dt());
-            this.vel.y *= 1 / (1 + this.damping * _k.k.dt());
+            this.vel.x *= 1 / (1 + this.damping * _k.app.dt());
+            this.vel.y *= 1 / (1 + this.damping * _k.app.dt());
 
             this.move(this.vel);
 
             // If we need to interpolate physics, prepare interpolation data
-            const rDt = _k.k.restDt();
+            const rDt = _k.app.restDt();
             if (rDt) {
                 // Save this position as previous
                 prevPhysicsPos = this.pos.clone();
                 // Calculate next (future) position
-                const nextVel = this.vel.add(acc.scale(_k.k.dt()));
-                nextPhysicsPos = this.pos.add(nextVel.scale(_k.k.dt()));
+                const nextVel = this.vel.add(acc.scale(_k.app.dt()));
+                nextPhysicsPos = this.pos.add(nextVel.scale(_k.app.dt()));
                 // Copy to check for changes
                 prevDrawPos = this.pos.clone();
             }

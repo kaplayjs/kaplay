@@ -10,7 +10,17 @@ import {
     KEventController,
     type KEventHandler,
 } from "../../events/events";
+import {
+    onAdd,
+    onDestroy,
+    onTag,
+    onUntag,
+    onUnuse,
+    onUse,
+} from "../../events/globalEvents";
+import { drawMasked } from "../../gfx/draw/drawMasked";
 import { beginPicture, endPicture, Picture } from "../../gfx/draw/drawPicture";
+import { drawSubtracted } from "../../gfx/draw/drawSubstracted";
 import { FrameBuffer } from "../../gfx/FrameBuffer";
 import {
     flush,
@@ -660,12 +670,12 @@ export const GameObjRawPrototype: Omit<GameObjRaw, AppEvents> = {
             const events: KEventController[] = [];
 
             // TODO: clean up when obj destroyed
-            events.push(_k.k.onAdd((obj) => {
+            events.push(onAdd((obj) => {
                 if (isChild(obj) && checkTagsOrComps(obj, t)) {
                     list.push(obj);
                 }
             }));
-            events.push(_k.k.onDestroy((obj) => {
+            events.push(onDestroy((obj) => {
                 if (checkTagsOrComps(obj, t)) {
                     const idx = list.findIndex((o) => o.id === obj.id);
                     if (idx !== -1) {
@@ -676,7 +686,7 @@ export const GameObjRawPrototype: Omit<GameObjRaw, AppEvents> = {
             // If tags are components, we need to use these callbacks, whether watching tags or components
             // If tags are not components, we only need to use these callbacks if this query looks at components
             if (compIdAreTags || opts.only !== "tags") {
-                events.push(_k.k.onUse((obj, id) => {
+                events.push(onUse((obj, id) => {
                     if (isChild(obj) && checkTagsOrComps(obj, t)) {
                         const idx = list.findIndex((o) => o.id === obj.id);
                         if (idx == -1) {
@@ -684,7 +694,7 @@ export const GameObjRawPrototype: Omit<GameObjRaw, AppEvents> = {
                         }
                     }
                 }));
-                events.push(_k.k.onUnuse((obj, id) => {
+                events.push(onUnuse((obj, id) => {
                     if (isChild(obj) && !checkTagsOrComps(obj, t)) {
                         const idx = list.findIndex((o) => o.id === obj.id);
                         if (idx !== -1) {
@@ -696,7 +706,7 @@ export const GameObjRawPrototype: Omit<GameObjRaw, AppEvents> = {
             // If tags are are components, we don't need to use these callbacks
             // If tags are not components, we only need to use these callbacks if this query looks at tags
             if (!compIdAreTags && opts.only !== "comps") {
-                events.push(_k.k.onTag((obj, tag) => {
+                events.push(onTag((obj, tag) => {
                     if (isChild(obj) && checkTagsOrComps(obj, t)) {
                         const idx = list.findIndex((o) => o.id === obj.id);
                         if (idx == -1) {
@@ -704,7 +714,7 @@ export const GameObjRawPrototype: Omit<GameObjRaw, AppEvents> = {
                         }
                     }
                 }));
-                events.push(_k.k.onUntag((obj, tag) => {
+                events.push(onUntag((obj, tag) => {
                     if (isChild(obj) && !checkTagsOrComps(obj, t)) {
                         const idx = list.findIndex((o) => o.id === obj.id);
                         if (idx !== -1) {
@@ -868,8 +878,8 @@ export const GameObjRawPrototype: Omit<GameObjRaw, AppEvents> = {
         // If this subtree is masking, the root is drawn into the mask, then the children are drawn
         if (this.mask) {
             const maskFunc = {
-                intersect: _k.k.drawMasked,
-                subtract: _k.k.drawSubtracted,
+                intersect: drawMasked,
+                subtract: drawSubtracted,
             }[this.mask];
             if (!maskFunc) {
                 throw new Error(`Invalid mask func: "${this.mask}"`);

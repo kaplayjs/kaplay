@@ -261,7 +261,7 @@ export function particles(popt: ParticlesOpt, eopt: EmitterOpt): ParticlesComp {
                 return;
             }
 
-            const DT = _k.k.dt();
+            const DT = _k.app.dt();
             // Update all particles
             for (let i = 0; i < particles.length; i++) {
                 const p = particles[i];

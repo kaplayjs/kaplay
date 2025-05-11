@@ -55,7 +55,7 @@ export function drawDebug() {
             lines.push(...inspecting.tags.map(t => `tag: ${t}`));
 
             drawInspectText(
-                viewportToCanvas(_k.k.mousePos()),
+                viewportToCanvas(_k.app.mousePos()),
                 lines.join("\n"),
             );
         }

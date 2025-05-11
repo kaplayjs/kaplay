@@ -138,7 +138,7 @@ export function sentry(
             return hit != null && hit.object === obj;
         },
         update(this: GameObj<SentryComp | PosComp>) {
-            t += _k.k.dt();
+            t += _k.app.dt();
             if (t > checkFrequency) {
                 t -= checkFrequency;
                 let objects = get();

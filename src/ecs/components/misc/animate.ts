@@ -550,7 +550,7 @@ export function animate(gopts: AnimateCompOpt = {}): AnimateComp {
             if (this.animation.paused) return;
             let allFinished: boolean = true;
             let localFinished: boolean;
-            t += _k.k.dt();
+            t += _k.app.dt();
             for (const c of channels) {
                 localFinished = c.update(this as unknown as GameObj<any>, t);
                 if (localFinished && !c.isFinished) {
