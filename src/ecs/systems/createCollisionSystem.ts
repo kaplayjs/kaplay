@@ -1,6 +1,6 @@
+import { _k } from "../../_k";
 import { onAdd, onDestroy, onUnuse, onUse } from "../../events/globalEvents";
 import { onSceneLeave } from "../../game/scenes";
-import { _k } from "../../kaplay";
 import { gjkShapeIntersection } from "../../math/gjk";
 import { vec2 } from "../../math/math";
 import { minkowskiRectShapeIntersection } from "../../math/minkowski";

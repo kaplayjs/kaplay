@@ -1,7 +1,7 @@
+import { _k } from "../../../_k";
 import { KEvent } from "../../../events/events";
 import { drawRaw } from "../../../gfx/draw/drawRaw";
 import type { Texture } from "../../../gfx/gfx";
-import { _k } from "../../../kaplay.js";
 import { Color } from "../../../math/color";
 import { lerp } from "../../../math/lerp";
 import {

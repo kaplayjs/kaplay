@@ -1,7 +1,7 @@
 // add an event to a tag
 
+import { _k } from "../_k";
 import { type Asset, getFailedAssets } from "../assets/asset";
-import { _k } from "../kaplay";
 import type { Collision, GameObj, Tag } from "../types";
 import { overload2 } from "../utils/overload";
 import type { TupleWithoutFirst } from "../utils/types";

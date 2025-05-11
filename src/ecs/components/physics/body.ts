@@ -1,7 +1,7 @@
+import { _k } from "../../../_k";
 import { DEF_JUMP_FORCE, MAX_VEL } from "../../../constants/general";
 import type { KEventController } from "../../../events/events";
 import { getGravityDirection } from "../../../game/gravity";
-import { _k } from "../../../kaplay";
 import { lerp } from "../../../math/lerp";
 import { vec2 } from "../../../math/math";
 import { calcTransform } from "../../../math/various";

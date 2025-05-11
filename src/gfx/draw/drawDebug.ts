@@ -1,5 +1,5 @@
+import { _k } from "../../_k";
 import { DBG_FONT, LOG_TIME } from "../../constants/general";
-import { _k } from "../../kaplay";
 import { Color, rgb } from "../../math/color";
 import { vec2, wave } from "../../math/math";
 import { formatText } from "../formatText";

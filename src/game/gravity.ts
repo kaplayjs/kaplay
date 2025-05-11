@@ -1,6 +1,6 @@
 // Gravity manipulation
 
-import { _k } from "../kaplay";
+import { _k } from "../_k";
 import { vec2 } from "../math/math";
 import { type Vec2 } from "../math/Vec2";
 

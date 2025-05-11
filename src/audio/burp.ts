@@ -1,7 +1,11 @@
-import { _k } from "../kaplay";
-import { type AudioPlay, type AudioPlayOpt, play } from "./play";
+import { _k } from "../_k";
+import { type AudioPlay, type AudioPlayOpt } from "./play";
 
 // core KAPLAY logic
 export function burp(opt?: AudioPlayOpt): AudioPlay {
-    return _k.k.play(_k.audio.burpSnd, opt);
+    if (!_k.game.defaultAssets.burp) {
+        throw new Error("You can't use burp in kaplay/mini");
+    }
+
+    return _k.k.play(_k.game.defaultAssets.burp, opt);
 }

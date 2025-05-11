@@ -1,6 +1,6 @@
+import { _k } from "../../../_k";
 import { toScreen, toWorld } from "../../../game/camera";
 import { drawCircle } from "../../../gfx/draw/drawCircle";
-import { _k } from "../../../kaplay";
 import { rgb } from "../../../math/color";
 import { vec2, type Vec2Args } from "../../../math/math";
 import { type Vec2 } from "../../../math/Vec2";

@@ -1,3 +1,4 @@
+import { _k } from "../../../_k";
 import { DEF_ANCHOR } from "../../../constants/general";
 import type { KEventController } from "../../../events/events";
 import { anchorPt } from "../../../gfx/anchor";
@@ -5,7 +6,6 @@ import { drawCircle } from "../../../gfx/draw/drawCircle";
 import { drawPolygon } from "../../../gfx/draw/drawPolygon";
 import { drawRect } from "../../../gfx/draw/drawRect";
 import { multTranslate, popTransform, pushTransform } from "../../../gfx/stack";
-import { _k } from "../../../kaplay";
 import { rgb } from "../../../math/color";
 import { Circle, Polygon, Rect, vec2 } from "../../../math/math";
 import { type Vec2 } from "../../../math/Vec2";

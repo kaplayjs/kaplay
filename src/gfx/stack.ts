@@ -1,5 +1,5 @@
+import { _k } from "../_k";
 import type { Uniform } from "../assets/shader";
-import { _k } from "../kaplay";
 import { type Mat23, vec2 } from "../math/math";
 import { Vec2 } from "../math/Vec2";
 

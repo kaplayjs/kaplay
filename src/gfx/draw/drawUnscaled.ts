@@ -1,4 +1,4 @@
-import { _k } from "../../kaplay";
+import { _k } from "../../_k";
 import { flush } from "../stack";
 
 export function drawUnscaled(content: () => void) {

@@ -1,4 +1,4 @@
-import { _k } from "../kaplay";
+import { _k } from "../_k";
 import { type Asset, fetchJSON, loadImg } from "./asset";
 import { loadSprite, type SpriteAnims, type SpriteData } from "./sprite";
 import { fixURL } from "./utils";

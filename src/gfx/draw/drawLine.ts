@@ -1,5 +1,5 @@
+import { _k } from "../../_k";
 import { opacity } from "../../ecs/components/draw/opacity";
-import { _k } from "../../kaplay";
 import { Color } from "../../math/color";
 import { lerp } from "../../math/lerp";
 import { deg2rad, vec2 } from "../../math/math";

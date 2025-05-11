@@ -641,6 +641,9 @@ export const createContext = (
         BlendMode,
     };
 
+    // Export context to Engine
+    e.k = ctx;
+
     if (plugins) {
         plugins.forEach(plug);
     }

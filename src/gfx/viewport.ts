@@ -1,4 +1,4 @@
-import { _k } from "../kaplay";
+import { _k } from "../_k";
 import { Vec2 } from "../math/Vec2";
 
 /*

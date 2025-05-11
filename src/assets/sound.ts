@@ -1,4 +1,4 @@
-import { _k } from "../kaplay";
+import { _k } from "../_k";
 import { dataURLToArrayBuffer, isDataURL } from "../utils/dataURL";
 import { Asset, fetchArrayBuffer, loadProgress } from "./asset";
 import { fixURL } from "./utils";

@@ -1,4 +1,4 @@
-import { _k } from "../kaplay";
+import { _k } from "../_k";
 import { type ColorArgs, rgb } from "../math/color";
 
 export function setBackground(...args: ColorArgs) {

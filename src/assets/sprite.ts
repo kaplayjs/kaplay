@@ -1,7 +1,6 @@
-import beanSpriteSrc from "../data/assets/bean.png";
+import { _k } from "../_k";
 import type { DrawSpriteOpt } from "../gfx/draw/drawSprite";
 import type { Texture } from "../gfx/gfx";
-import { _k } from "../kaplay";
 import { Quad } from "../math/math";
 import { type ImageSource } from "../types";
 import { Asset, loadImg, loadProgress } from "./asset";
@@ -305,5 +304,9 @@ export function createSpriteSheet(
 }
 
 export function loadBean(name: string = "bean"): Asset<SpriteData> {
-    return loadSprite(name, beanSpriteSrc);
+    if (!_k.game.defaultAssets.bean) {
+        throw new Error("You can't use bean in kaplay/mini");
+    }
+
+    return loadSprite(name, _k.game.defaultAssets.bean);
 }

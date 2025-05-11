@@ -1,4 +1,4 @@
-import { _k } from "../../kaplay";
+import { _k } from "../../_k";
 import { lerp } from "../../math/lerp";
 import { rand } from "../../math/math";
 import { Vec2 } from "../../math/Vec2";

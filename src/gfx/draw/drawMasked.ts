@@ -1,4 +1,4 @@
-import { _k } from "../../kaplay";
+import { _k } from "../../_k";
 import { drawStenciled } from "./drawStenciled";
 
 export function drawMasked(content: () => void, mask: () => void) {

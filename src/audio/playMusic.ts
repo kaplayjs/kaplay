@@ -1,5 +1,5 @@
+import { _k } from "../_k";
 import { KEvent } from "../events/events";
-import { _k } from "../kaplay";
 import { clamp } from "../math/clamp";
 import type { AudioPlay, AudioPlayOpt } from "./play";
 

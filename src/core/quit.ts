@@ -1,4 +1,4 @@
-import { _k } from "../kaplay";
+import { _k } from "../_k";
 
 export const quit = () => {
     const { game, app, gfx, ggl, gc } = _k;

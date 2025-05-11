@@ -1,10 +1,10 @@
+import { _k } from "../_k";
 import type { App } from "../app/app";
 import type { AudioCtx } from "../audio/audio";
 import { LOG_MAX } from "../constants/general";
 import type { FrameRenderer } from "../core/frameRendering";
 import type { Game } from "../game/game";
 import type { AppGfxCtx } from "../gfx/gfxApp";
-import { _k } from "../kaplay";
 import type { KAPLAYOpt } from "../types";
 import type { Recording } from "./record";
 

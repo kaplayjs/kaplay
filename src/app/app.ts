@@ -11,11 +11,11 @@ import type {
     MouseButton,
 } from "../types";
 
+import { _k } from "../_k";
 import { GP_MAP } from "../constants/general";
 import type { AppEventMap } from "../events/eventMap";
 import { type KEventController, KEventHandler } from "../events/events";
 import { canvasToViewport } from "../gfx/viewport";
-import { _k } from "../kaplay";
 import { map, vec2 } from "../math/math";
 import { Vec2 } from "../math/Vec2";
 import { overload2 } from "../utils/overload";

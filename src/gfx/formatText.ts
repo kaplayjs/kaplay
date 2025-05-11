@@ -1,3 +1,4 @@
+import { _k } from "../_k";
 import { Asset } from "../assets/asset";
 import type { BitmapFontData, GfxFont } from "../assets/bitmapFont";
 import { FontData, resolveFont } from "../assets/font";
@@ -7,7 +8,6 @@ import {
     FONT_ATLAS_HEIGHT,
     FONT_ATLAS_WIDTH,
 } from "../constants/general";
-import { _k } from "../kaplay";
 import { Color } from "../math/color";
 import { Quad, vec2 } from "../math/math";
 import { Vec2 } from "../math/Vec2";

@@ -1,25 +1,17 @@
 // The definitive version!
-import { _k, updateEngine } from "./_k";
-import type { ButtonsDef } from "./app/inputBindings";
-import { SoundData } from "./assets/sound";
-import { loadSprite } from "./assets/sprite";
-import { createEmptyAudioBuffer } from "./audio/audio";
-import { createContext } from "./core/context";
-import { createEngine } from "./core/engine";
-import beanSrc from "./data/assets/bean.png";
-import boomSpriteSrc from "./data/assets/boom.png";
-import burpSoundSrc from "./data/assets/burp.mp3";
-import happyFontSrc from "./data/assets/happy.png";
-import kaSpriteSrc from "./data/assets/ka.png";
-import { createCollisionSystem } from "./ecs/systems/createCollisionSystem";
-import { LCEvents, system } from "./ecs/systems/systems";
+import { _k, updateEngine } from "../_k";
+import type { ButtonsDef } from "../app/inputBindings";
+import { createContext } from "../core/context";
+import { createEngine } from "../core/engine";
+import { createCollisionSystem } from "../ecs/systems/createCollisionSystem";
+import { LCEvents, system } from "../ecs/systems/systems";
 import {
     type KAPLAYCtx,
     type KAPLAYOpt,
     type KAPLAYPlugin,
     type MergePlugins,
     type PluginList,
-} from "./types";
+} from "../types";
 
 // If KAPLAY was runned before
 let runned = false;
@@ -81,11 +73,7 @@ export const kaplay = <
 
     updateEngine(createEngine(gopt));
 
-    const {
-        app,
-        game,
-        audio,
-    } = _k;
+    const { app } = _k;
 
     const { checkFrame } = createCollisionSystem({
         narrow: gopt.narrowPhaseCollisionAlgorithm || "gjk",
@@ -95,25 +83,6 @@ export const kaplay = <
         LCEvents.AfterFixedUpdate,
         LCEvents.AfterUpdate,
     ]);
-
-    // #region Loading default assets
-    game.defaultAssets.ka = loadSprite(null, kaSpriteSrc);
-    game.defaultAssets.boom = loadSprite(null, boomSpriteSrc);
-
-    // by default browsers can only load audio async, we don't deal with that and just start with an empty audio buffer
-    const burpSnd = new SoundData(createEmptyAudioBuffer(audio.ctx));
-
-    // load that burp sound
-    audio.ctx.decodeAudioData(burpSoundSrc.buffer.slice(0)).then((buf) => {
-        burpSnd.buf = buf;
-        game.defaultAssets.burp = burpSnd;
-    }).catch((err) => {
-        console.error("Failed to load burp: ", err);
-    });
-
-    game.defaultAssets.bean = beanSrc;
-    game.defaultAssets.happy = happyFontSrc;
-    // #endregion
 
     _k.startLoop();
 

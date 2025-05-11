@@ -71,12 +71,12 @@ export const createEngine = (gopt: KAPLAYOpt) => {
         k: null as unknown as KAPLAYCtx,
         startLoop() {
             startEngineLoop(
-                this.app,
-                this.game,
-                this.assets,
-                this.globalOpt,
-                this.frameRenderer,
-                this.debug,
+                app,
+                game,
+                assets,
+                gopt,
+                frameRenderer,
+                debug,
             );
         },
     };

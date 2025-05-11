@@ -1,6 +1,6 @@
+import { _k } from "../../_k";
 import { Asset } from "../../assets/asset";
 import { resolveShader, type Uniform } from "../../assets/shader";
-import { _k } from "../../kaplay";
 import { type Attributes, BlendMode, type RenderProps } from "../../types";
 import type { Texture } from "../gfx";
 import { height, width } from "../stack";

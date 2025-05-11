@@ -1,4 +1,4 @@
-import { _k } from "../../kaplay";
+import { _k } from "../../_k";
 import { Color } from "../../math/color";
 import { triangulate } from "../../math/math";
 import { Vec2 } from "../../math/Vec2";

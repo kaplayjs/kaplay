@@ -1,6 +1,6 @@
+import { _k } from "../_k";
 import { initAppEvents } from "../app/appEvents";
 import type { KEventController } from "../events/events";
-import { _k } from "../kaplay";
 import { Mat23, vec2 } from "../math/math";
 
 /**

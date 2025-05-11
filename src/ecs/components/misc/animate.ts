@@ -1,5 +1,5 @@
+import { _k } from "../../../_k";
 import type { KEventController } from "../../../events/events";
-import { _k } from "../../../kaplay";
 import { clamp } from "../../../math/clamp";
 import { Color } from "../../../math/color";
 import { type EaseFunc, easings } from "../../../math/easings";

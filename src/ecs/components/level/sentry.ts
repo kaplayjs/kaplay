@@ -1,5 +1,5 @@
+import { _k } from "../../../_k";
 import type { KEventController } from "../../../events/events";
-import { _k } from "../../../kaplay";
 import { Vec2 } from "../../../math/Vec2";
 import type { Comp, GameObj, QueryOpt } from "../../../types";
 import { raycast } from "../draw/raycast";

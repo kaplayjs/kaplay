@@ -1,3 +1,4 @@
+import { _k } from "../_k";
 import {
     DEF_FONT,
     DEF_FONT_FILTER,
@@ -6,7 +7,6 @@ import {
 } from "../constants/general";
 import type { DrawTextOpt } from "../gfx/draw/drawText";
 import type { Texture } from "../gfx/gfx";
-import { _k } from "../kaplay";
 import { rgb } from "../math/color";
 import { Quad } from "../math/math";
 import type { LoadFontOpt, Outline, TexFilter } from "../types";

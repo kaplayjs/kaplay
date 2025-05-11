@@ -1,5 +1,6 @@
 // TODO: accept canvas
 
+import { _k } from "../../../_k";
 import type { Asset } from "../../../assets/asset";
 import {
     resolveSprite,
@@ -13,7 +14,6 @@ import { getRenderProps } from "../../../game/utils";
 import { anchorPt } from "../../../gfx/anchor";
 import { drawTexture } from "../../../gfx/draw/drawTexture";
 import type { Texture } from "../../../gfx/gfx";
-import { _k } from "../../../kaplay";
 import { Quad, quad, Rect, vec2 } from "../../../math/math";
 import { type Vec2 } from "../../../math/Vec2";
 import type { Comp, GameObj, SpriteAnimPlayOpt } from "../../../types";

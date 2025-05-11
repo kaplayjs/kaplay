@@ -1,3 +1,4 @@
+import { _k } from "../_k";
 import {
     DEF_FRAG,
     DEF_VERT,
@@ -6,7 +7,6 @@ import {
     VERTEX_FORMAT,
 } from "../constants/general";
 import type { GfxCtx } from "../gfx/gfx";
-import { _k } from "../kaplay";
 import { Color } from "../math/color";
 import { Mat4 } from "../math/Mat4";
 import { Mat23 } from "../math/math";

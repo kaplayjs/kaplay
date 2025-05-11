@@ -1,4 +1,4 @@
-import { _k } from "../../../kaplay";
+import { _k } from "../../../_k";
 import type { EaseFunc } from "../../../math/easings";
 import type { Comp } from "../../../types";
 import { toFixed } from "../../../utils/numbers";
