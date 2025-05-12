@@ -1,4 +1,4 @@
-import { _k } from "../kaplay";
+import { _k } from "../shared";
 import { lerpNumber } from "./lerpNumber";
 import type { Mat4 } from "./Mat4";
 import { deg2rad, rad2deg, Rect, vec2, type Vec2Args } from "./math";

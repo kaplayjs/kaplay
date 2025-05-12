@@ -11,6 +11,7 @@ import { createCanvas } from "../gfx/canvas";
 import { initGfx } from "../gfx/gfx";
 import { initAppGfx } from "../gfx/gfxApp";
 import type { KAPLAYCtx, KAPLAYOpt } from "../types";
+import { startEngineLoop } from "./engineLoop";
 import { createFontCache } from "./fontCache";
 import { createFrameRenderer } from "./frameRendering";
 
@@ -68,5 +69,15 @@ export const createEngine = (gopt: KAPLAYOpt) => {
         gc: [] as (() => void)[],
         // Patch, k it's only avaible after running kaplay()
         k: null as unknown as KAPLAYCtx,
+        startLoop() {
+            startEngineLoop(
+                app,
+                game,
+                assets,
+                gopt,
+                frameRenderer,
+                debug,
+            );
+        },
     };
 };

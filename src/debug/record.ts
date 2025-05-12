@@ -1,4 +1,5 @@
-import { _k } from "../kaplay";
+import { _k } from "../shared";
+import { downloadBlob } from "../utils/dataURL";
 
 /**
  * Screen recording control handle.
@@ -80,7 +81,7 @@ export const record = (frameRate?: number): Recording => {
         },
 
         download(filename = "kaboom.mp4") {
-            this.stop().then((blob) => _k.k.downloadBlob(filename, blob));
+            this.stop().then((blob) => downloadBlob(filename, blob));
         },
     };
 };

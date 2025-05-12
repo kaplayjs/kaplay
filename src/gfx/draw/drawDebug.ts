@@ -1,7 +1,7 @@
 import { DBG_FONT, LOG_TIME } from "../../constants/general";
-import { _k } from "../../kaplay";
 import { Color, rgb } from "../../math/color";
 import { vec2, wave } from "../../math/math";
+import { _k } from "../../shared";
 import { formatText } from "../formatText";
 import {
     height,
@@ -55,7 +55,7 @@ export function drawDebug() {
             lines.push(...inspecting.tags.map(t => `tag: ${t}`));
 
             drawInspectText(
-                viewportToCanvas(_k.k.mousePos()),
+                viewportToCanvas(_k.app.mousePos()),
                 lines.join("\n"),
             );
         }

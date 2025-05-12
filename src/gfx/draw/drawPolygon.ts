@@ -1,7 +1,7 @@
-import { _k } from "../../kaplay";
 import { Color } from "../../math/color";
 import { triangulate } from "../../math/math";
 import { Vec2 } from "../../math/Vec2";
+import { _k } from "../../shared";
 import { BlendMode, type DrawPolygonOpt } from "../../types";
 import {
     multRotate,

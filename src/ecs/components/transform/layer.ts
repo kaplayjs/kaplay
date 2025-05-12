@@ -1,4 +1,4 @@
-import { _k } from "../../../kaplay";
+import { _k } from "../../../shared";
 import type { Comp } from "../../../types";
 
 /**

@@ -1,8 +1,8 @@
 // Make is the entity factory function
 
 import { KEvent, KEventHandler } from "../../events/events";
-import { _k } from "../../kaplay";
 import { Mat23 } from "../../math/math";
+import { _k } from "../../shared";
 import type { Comp, CompList, GameObj } from "../../types";
 import { attachAppToGameObjRaw, GameObjRawPrototype } from "./GameObjRaw";
 

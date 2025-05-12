@@ -1,4 +1,4 @@
-import { _k } from "../kaplay";
+import { _k } from "../shared";
 import type { KAPLAYCtx, KAPLAYPlugin } from "../types";
 
 export const plug = <T extends Record<string, any>>(

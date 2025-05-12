@@ -1,14 +1,15 @@
 import { DEF_ANCHOR } from "../../../constants/general";
 import type { KEventController } from "../../../events/events";
+import { toWorld } from "../../../game/camera";
 import { anchorPt } from "../../../gfx/anchor";
 import { drawCircle } from "../../../gfx/draw/drawCircle";
 import { drawPolygon } from "../../../gfx/draw/drawPolygon";
 import { drawRect } from "../../../gfx/draw/drawRect";
 import { multTranslate, popTransform, pushTransform } from "../../../gfx/stack";
-import { _k } from "../../../kaplay";
 import { rgb } from "../../../math/color";
 import { Circle, Polygon, Rect, vec2 } from "../../../math/math";
 import { type Vec2 } from "../../../math/Vec2";
+import { _k } from "../../../shared";
 import type {
     Collision,
     Comp,
@@ -359,14 +360,14 @@ export function area(opt: AreaCompOpt = {}): AreaComp {
             if (_k.game.fakeMouse) {
                 const mpos = isFixed(this)
                     ? _k.game.fakeMouse.pos
-                    : _k.k.toWorld(_k.game.fakeMouse.pos);
+                    : toWorld(_k.game.fakeMouse.pos);
 
                 return this.hasPoint(mpos);
             }
 
             const mpos = isFixed(this)
-                ? _k.k.mousePos()
-                : _k.k.toWorld(_k.k.mousePos());
+                ? _k.app.mousePos()
+                : toWorld(_k.app.mousePos());
             return this.hasPoint(mpos);
         },
 
@@ -416,7 +417,7 @@ export function area(opt: AreaCompOpt = {}): AreaComp {
                 });
             }
 
-            const e = _k.k.onMousePress(btn, () => {
+            const e = _k.app.onMousePress(btn, () => {
                 if (this.isHovering()) {
                     action();
                 }

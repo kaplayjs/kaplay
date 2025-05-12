@@ -1,5 +1,5 @@
-import { _k } from "../../../kaplay";
 import { easings } from "../../../math/easings";
+import { _k } from "../../../shared";
 import type { EmptyComp, GameObj } from "../../../types";
 import type { OpacityComp } from "../draw/opacity";
 

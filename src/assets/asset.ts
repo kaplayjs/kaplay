@@ -2,7 +2,7 @@ import { SPRITE_ATLAS_HEIGHT, SPRITE_ATLAS_WIDTH } from "../constants/general";
 import { KEvent } from "../events/events";
 import type { GfxCtx } from "../gfx/gfx";
 import { TexPacker } from "../gfx/TexPacker";
-import { _k } from "../kaplay";
+import { _k } from "../shared";
 import type { BitmapFontData } from "./bitmapFont";
 import type { FontData } from "./font";
 import type { ShaderData } from "./shader";

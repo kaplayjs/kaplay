@@ -1,9 +1,9 @@
 import { toScreen, toWorld } from "../../../game/camera";
 import { drawCircle } from "../../../gfx/draw/drawCircle";
-import { _k } from "../../../kaplay";
 import { rgb } from "../../../math/color";
 import { vec2, type Vec2Args } from "../../../math/math";
 import { type Vec2 } from "../../../math/Vec2";
+import { _k } from "../../../shared";
 import type { Comp, GameObj } from "../../../types";
 import { isFixed } from "../../entity/utils";
 import type { FixedComp } from "./fixed";
@@ -92,7 +92,7 @@ export function pos(...args: Vec2Args): PosComp {
 
         // move with velocity (pixels per second)
         move(...args: Vec2Args) {
-            this.moveBy(vec2(...args).scale(_k.k.dt()));
+            this.moveBy(vec2(...args).scale(_k.app.dt()));
         },
 
         // move to a destination, with optional speed
@@ -112,7 +112,7 @@ export function pos(...args: Vec2Args): PosComp {
             }
             // @ts-ignore
             const diff = dest.sub(this.pos);
-            if (diff.len() <= speed * _k.k.dt()) {
+            if (diff.len() <= speed * _k.app.dt()) {
                 this.pos = vec2(dest);
                 return;
             }

@@ -5,9 +5,9 @@ import { drawText } from "../gfx/draw/drawText";
 import { drawUnscaled } from "../gfx/draw/drawUnscaled";
 import { formatText } from "../gfx/formatText";
 import { height, popTransform, width } from "../gfx/stack";
-import { _k } from "../kaplay";
 import { rgb } from "../math/color";
 import { vec2 } from "../math/math";
+import { _k } from "../shared";
 
 export const handleErr = (err: Error | any) => {
     if (_k.game.crashed) return;

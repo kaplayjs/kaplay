@@ -6,9 +6,9 @@ import {
 } from "../constants/general";
 import type { DrawTextOpt } from "../gfx/draw/drawText";
 import type { Texture } from "../gfx/gfx";
-import { _k } from "../kaplay";
 import { rgb } from "../math/color";
 import { Quad } from "../math/math";
+import { _k } from "../shared";
 import type { LoadFontOpt, Outline, TexFilter } from "../types";
 import { Asset, loadProgress } from "./asset";
 import { type BitmapFontData, getBitmapFont, type GfxFont } from "./bitmapFont";

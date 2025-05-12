@@ -1,7 +1,7 @@
 import type { Shader, Uniform } from "../../assets/shader";
 import { IDENTITY_MATRIX } from "../../constants/math";
 import { getCamTransform } from "../../game/camera";
-import { _k } from "../../kaplay";
+import { _k } from "../../shared";
 import type { BlendMode, RenderProps } from "../../types";
 import { Mesh, type Texture } from "../gfx";
 import { height, width } from "../stack";

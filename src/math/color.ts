@@ -1,5 +1,5 @@
 import { CSS_COLOR_MAP } from "../constants/colorMap";
-import { _k } from "../kaplay";
+import { _k } from "../shared";
 import { clamp } from "./clamp";
 import { lerpNumber } from "./lerpNumber";
 

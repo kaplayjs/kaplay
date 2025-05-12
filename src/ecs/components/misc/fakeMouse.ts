@@ -1,4 +1,4 @@
-import { _k } from "../../../kaplay";
+import { _k } from "../../../shared";
 import type { Comp, GameObj } from "../../../types";
 import type { PosComp } from "../transform/pos";
 
@@ -64,8 +64,8 @@ export const fakeMouse = (opt: FakeMouseOpt = {
         update(this: FakeMouse) {
             if (!opt.followMouse) return;
 
-            if (_k.k.isMouseMoved()) {
-                this.pos = _k.k.mousePos();
+            if (_k.app.isMouseMoved()) {
+                this.pos = _k.app.mousePos();
             }
         },
         press(this: FakeMouse) {

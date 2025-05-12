@@ -1,7 +1,7 @@
 import type { Uniform } from "../assets/shader";
-import { _k } from "../kaplay";
 import { type Mat23, vec2 } from "../math/math";
 import { Vec2 } from "../math/Vec2";
+import { _k } from "../shared";
 
 export function pushTransform() {
     _k.gfx.transformStack[++_k.gfx.transformStackIndex].setMat23(

@@ -4,6 +4,8 @@
 // All in /game folder is stuff that uses/modify the game state.
 
 import type { Asset } from "../assets/asset";
+import type { BitmapFontData } from "../assets/bitmapFont";
+import type { SoundData } from "../assets/sound";
 import type { SpriteData } from "../assets/sprite";
 import type { FakeMouseComp } from "../ecs/components/misc/fakeMouse";
 import { timer, type TimerComp } from "../ecs/components/misc/timer";
@@ -68,8 +70,13 @@ export type Game = {
         System[],
         System[],
     ];
-    kaSprite: Asset<SpriteData> | null;
-    boomSprite: Asset<SpriteData> | null;
+    defaultAssets: {
+        ka?: Asset<SpriteData>;
+        boom?: Asset<SpriteData>;
+        burp?: SoundData;
+        happy?: string;
+        bean?: string;
+    };
     logs: Log[];
     cam: CamData;
     /**
@@ -156,9 +163,8 @@ export const createGame = (): Game => {
         // Gravity
         gravity: null as Vec2 | null,
 
-        // Assets
-        kaSprite: null as unknown as Asset<SpriteData>,
-        boomSprite: null as unknown as Asset<SpriteData>,
+        // Default assets
+        defaultAssets: {},
 
         // Logs
         logs: [] as { msg: string | { toString(): string }; time: number }[],

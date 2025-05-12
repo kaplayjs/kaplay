@@ -1,4 +1,4 @@
-import { _k } from "../kaplay";
+import { _k } from "../shared";
 import type { Canvas } from "../types";
 import { FrameBuffer } from "./FrameBuffer";
 import { flush } from "./stack";

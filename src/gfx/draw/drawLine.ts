@@ -1,9 +1,9 @@
 import { opacity } from "../../ecs/components/draw/opacity";
-import { _k } from "../../kaplay";
 import { Color } from "../../math/color";
 import { lerp } from "../../math/lerp";
 import { deg2rad, vec2 } from "../../math/math";
 import { Vec2 } from "../../math/Vec2";
+import { _k } from "../../shared";
 import type { RenderProps } from "../../types";
 import { center } from "../stack";
 import { drawCircle } from "./drawCircle";

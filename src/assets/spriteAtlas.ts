@@ -1,6 +1,6 @@
 import { SPRITE_ATLAS_HEIGHT, SPRITE_ATLAS_WIDTH } from "../constants/general";
-import { _k } from "../kaplay";
 import { Quad } from "../math/math";
+import { _k } from "../shared";
 import { type Asset, fetchJSON, load } from "./asset";
 import {
     type LoadSpriteOpt,

@@ -1,7 +1,7 @@
 import { KEvent } from "../../../events/events";
-import { _k } from "../../../kaplay";
 import { easings } from "../../../math/easings";
 import { lerp, type LerpValue } from "../../../math/lerp";
+import { _k } from "../../../shared";
 import type { Comp, GameObj } from "../../../types";
 
 /**

@@ -1,5 +1,5 @@
-import { _k } from "../../../kaplay";
 import type { Vec2 } from "../../../math/Vec2";
+import { _k } from "../../../shared";
 import type { CompList, GameObj } from "../../../types";
 import { sprite } from "../../components/draw/sprite";
 import { boom } from "../../components/misc/boom";
@@ -30,8 +30,8 @@ export interface BoomOpt {
 }
 
 export function addKaboom(p: Vec2, opt: BoomOpt = {}): GameObj {
-    if (!_k.game.boomSprite || !_k.game.kaSprite) {
-        throw new Error("You can't use addKaboom without the sprites loaded");
+    if (!_k.game.defaultAssets.boom || !_k.game.defaultAssets.ka) {
+        throw new Error("You can't use addKaboom with kaplay/mini");
     }
 
     const kaboom = _k.game.root.add([
@@ -43,7 +43,7 @@ export function addKaboom(p: Vec2, opt: BoomOpt = {}): GameObj {
     const s = opt.scale || 1;
 
     kaboom.add([
-        sprite(_k.game.boomSprite),
+        sprite(_k.game.defaultAssets.boom),
         scale(0),
         anchor("center"),
         boom(speed, s),
@@ -51,7 +51,7 @@ export function addKaboom(p: Vec2, opt: BoomOpt = {}): GameObj {
     ]);
 
     const ka = kaboom.add([
-        sprite(_k.game.kaSprite),
+        sprite(_k.game.defaultAssets.ka),
         scale(0),
         anchor("center"),
         timer(),

@@ -1,7 +1,7 @@
 import { Asset } from "../assets/asset";
 import { resolveSound, type SoundData } from "../assets/sound";
 import { KEvent, type KEventController } from "../events/events";
-import { _k } from "../kaplay";
+import { _k } from "../shared";
 import type { MusicData } from "../types";
 import { playMusic } from "./playMusic";
 

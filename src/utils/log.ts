@@ -1,4 +1,4 @@
-import { _k } from "../kaplay";
+import { _k } from "../shared";
 
 export const getErrorMessage = (error: unknown) =>
     (error instanceof Error) ? error.message : String(error);

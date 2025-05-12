@@ -2,7 +2,7 @@
 // - move RNG to it's own file
 // - move Vec2 to it's own file
 
-import { _k } from "../kaplay";
+import { _k } from "../shared";
 import type { GameObj, RNGValue, Shape } from "../types";
 import { clamp } from "./clamp";
 import { Color, rgb } from "./color";
