@@ -49,7 +49,7 @@ export class TexPacker {
         if (
             paddedWidth > this.canvas.width || paddedHeight > this.canvas.height
         ) {
-            this.add_single(img);
+            return this.add_single(img);
         }
 
         // next row
