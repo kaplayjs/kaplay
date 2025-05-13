@@ -8,6 +8,9 @@ importers:
 
   .:
     devDependencies:
+      '@kaplayjs/crew':
+        specifier: 2.0.0-beta.6
+        version: 2.0.0-beta.6(typescript@5.6.3)
       '@kaplayjs/dprint-config':
         specifier: ^1.2.0
         version: 1.2.0
@@ -545,6 +548,11 @@ packages:
 
   '@jridgewell/sourcemap-codec@1.5.0':
     resolution: {integrity: sha512-gv3ZRaISU3fjPAgNsriBRqGWQL6quFx04YMPW/zD8XMLsU32mhCCbfbO6KZFLjvYpCZ8zyDEgqsgf+PwPaM7GQ==}
+
+  '@kaplayjs/crew@2.0.0-beta.6':
+    resolution: {integrity: sha512-ApfZIzKYJuX50UDawqzqUL3lG9MRs6A+/rLuHg0+Ddzz+7XyznxTbReOCAv2Ut2AaTyVBlCfDsxjVPeq/ARukA==}
+    peerDependencies:
+      typescript: ^5.0.0
 
   '@kaplayjs/dprint-config@1.2.0':
     resolution: {integrity: sha512-rgvqu2WGGbexOdG22J/q8WWkqGN7kBqXyFHm95UhYk2j7CiTHrNr+58mNiinQ1FNHFkqO0Ae9H//18ecO0sw6w==}
@@ -2316,6 +2324,10 @@ snapshots:
       chalk: 4.1.2
 
   '@jridgewell/sourcemap-codec@1.5.0': {}
+
+  '@kaplayjs/crew@2.0.0-beta.6(typescript@5.6.3)':
+    dependencies:
+      typescript: 5.6.3
 
   '@kaplayjs/dprint-config@1.2.0':
     dependencies:

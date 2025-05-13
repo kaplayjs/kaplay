@@ -468,6 +468,7 @@ export interface GameObjRaw {
     _inputEvents: KEventController[];
     _onCurCompCleanup: Function | null;
     _tags: Set<Tag>;
+    _paused: boolean;
 }
 
 type GameObjTransform = GameObj<PosComp | RotateComp | ScaleComp>;
@@ -479,7 +480,7 @@ export const GameObjRawPrototype: Omit<GameObjRaw, AppEvents> = {
     // This chain of `as any`, is because we never should use this object
     // directly, it's only a prototype. These properties WILL be defined
     // (by our factory function `make`) when we create a new game object.
-
+    _paused: null as any,
     _anonymousCompStates: null as any,
     _cleanups: null as any,
     _compsIds: null as any,
@@ -495,7 +496,6 @@ export const GameObjRawPrototype: Omit<GameObjRaw, AppEvents> = {
     children: null as any,
     hidden: null as any,
     id: null as any,
-    paused: null as any,
     transform: null as any,
     target: null as any,
 
@@ -515,6 +515,19 @@ export const GameObjRawPrototype: Omit<GameObjRaw, AppEvents> = {
         if (p) {
             p.children.push(this as GameObj);
         }
+    },
+
+    set paused(paused: boolean) {
+        if (this._paused === paused) return;
+        this._paused = paused;
+
+        for (const e of this._inputEvents) {
+            e.paused = paused;
+        }
+    },
+
+    get paused() {
+        return this._paused;
     },
 
     get parent() {
@@ -1392,6 +1405,8 @@ export function attachAppToGameObjRaw() {
         obj[e] = function(this: GameObjRaw, ...args: [any]) {
             // @ts-ignore
             const ev: KEventController = _k.app[e]?.(...args);
+            ev.paused = this.paused;
+
             this._inputEvents.push(ev);
 
             this.onDestroy(() => ev.cancel());

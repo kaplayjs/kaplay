@@ -1,5 +1,6 @@
 // @ts-check
 
+import { assets } from "@kaplayjs/crew";
 import express from "express";
 import fs from "fs/promises";
 import path from "path";
@@ -13,6 +14,37 @@ export function serve(opt = {}) {
     app.use("/dist", express.static("dist"));
     app.use(express.static("examples"));
     app.use("/tests/playtests", express.static("tests/playtests"));
+    for (const [name, asset] of Object.entries(assets)) {
+        const outlined = asset.outlined;
+
+        app.get(`/crew/${name}.png`, (req, res) => {
+            const img = Buffer.from(
+                asset.sprite.replace(/data:image\/png;base64,/, ""),
+                "base64",
+            );
+
+            res.writeHead(200, {
+                "Content-Type": "image/png",
+                "Content-Length": img.length,
+            });
+            res.end(img);
+        });
+
+        if (!outlined) continue;
+
+        app.get(`/crew/${name}-o.png`, (req, res) => {
+            const img = Buffer.from(
+                outlined.replace(/data:image\/png;base64,/, ""),
+                "base64",
+            );
+
+            res.writeHead(200, {
+                "Content-Type": "image/png",
+                "Content-Length": img.length,
+            });
+            res.end(img);
+        });
+    }
 
     app.get("/", async (req, res) => {
         const examples = (await fs.readdir("examples"))
