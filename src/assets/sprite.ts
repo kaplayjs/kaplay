@@ -143,7 +143,7 @@ export class SpriteData {
         opt: LoadSpriteOpt = {},
     ): SpriteData {
         const [tex, quad] = opt.singular
-            ? _k.assets.packer.add_single(data)
+            ? _k.assets.packer.addSingle(data)
             : _k.assets.packer.add(data);
         const frames = opt.frames
             ? opt.frames.map((f) =>
