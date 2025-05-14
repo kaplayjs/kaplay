@@ -119,6 +119,14 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   @dragoncoder047
 - Changed the API of `HealthComp` - @amyspark-ng
 
+## [3001.0.18] - 2025-05-13
+
+### Fixed
+
+- Removed beant - @lajbel
+- Fixed TexPacker loading big images - @lajbel, @mflerackers
+- Various fixes and improvements - All Contributors
+
 ## [3001.0.17] - 2025-05-08
 
 ### Added

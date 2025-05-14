@@ -36,7 +36,7 @@ export class TexPacker {
     }
 
     // create a image with a single texture
-    add_single(img: ImageSource): [Texture, Quad, number] {
+    addSingle(img: ImageSource): [Texture, Quad, number] {
         const tex = Texture.fromImage(this.gfx, img);
         this.bigTextures.push(tex);
         return [tex, new Quad(0, 0, 1, 1), 0];
@@ -49,7 +49,7 @@ export class TexPacker {
         if (
             paddedWidth > this.canvas.width || paddedHeight > this.canvas.height
         ) {
-            this.add_single(img);
+            return this.addSingle(img);
         }
 
         // next row
