@@ -1,6 +1,6 @@
 /**
  * @file Restitution
- * @description TBD.
+ * @description How to make objects bounce
  * @difficulty 0
  * @tags physics
  * @minver 3001.0

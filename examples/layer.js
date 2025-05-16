@@ -2,7 +2,8 @@
  * @file Layer
  * @description How to use the z() component for layering
  * @difficulty 0
- * @tags basics, effects, components
+ * @tags basics, effects, comps
+ * @ver 4000.0.0-alpha.18
  * @minver 3001.0
  * @category basics
  */

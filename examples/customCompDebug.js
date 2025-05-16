@@ -1,5 +1,5 @@
 /**
- * @file Curves
+ * @file Custom Components Debug
  * @description How to display custom properties in custom components
  * @difficulty 0
  * @tags comps, debug
