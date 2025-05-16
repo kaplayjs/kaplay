@@ -51,18 +51,18 @@ scene("game", () => {
     });
 
     // jump
-    onKeyPress("space", () => {
+    game.onKeyPress("space", () => {
         bean.jump(JUMP_FORCE);
         play("wooosh");
     });
 
-    onGamepadButtonPress("south", () => {
+    game.onGamepadButtonPress("south", () => {
         bean.jump(JUMP_FORCE);
         play("wooosh");
     });
 
-    // mobile
-    onClick(() => {
+    // mouse and touch
+    game.onMousePress("left", () => {
         bean.jump(JUMP_FORCE);
         play("wooosh");
     });
