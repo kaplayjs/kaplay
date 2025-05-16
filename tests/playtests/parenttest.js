@@ -4,7 +4,6 @@
  * @difficulty 1
  * @tags basics
  * @minver 4000.0
- * @locked
  */
 
 kaplay();

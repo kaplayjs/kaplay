@@ -4,7 +4,6 @@
  * @difficulty 0
  * @tags effects, optimization, draw
  * @minver 4000.0
- * @locked
  * @category concepts
  * @test
  */

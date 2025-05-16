@@ -5,7 +5,6 @@
  * @tags ui, input
  * @minver 4000.0
  * @category concepts
- * @locked
  */
 
 kaplay();

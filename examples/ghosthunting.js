@@ -4,7 +4,6 @@
  * @difficulty 2
  * @tags game, effects, ai
  * @minver 4000.0
- * @locked
  * @category games
  */
 
