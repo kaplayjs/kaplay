@@ -3,6 +3,7 @@
  * @description How to handle and modify the camera
  * @difficulty 1
  * @tags basics, effects
+ * @ver 4000.0.0-alpha.18
  * @minver 3001.0
  * @category basics
  */
