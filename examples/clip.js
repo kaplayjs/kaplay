@@ -1,6 +1,6 @@
 /**
- * @file Clipped lines
- * @description TBD
+ * @file Clipped Lines
+ * @description Highlight intersecting parts of drawn lines
  * @difficulty 2
  * @tags draw, visual
  * @minver 4000.0

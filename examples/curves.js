@@ -1,6 +1,6 @@
 /**
  * @file Curves
- * @description TBD
+ * @description Normalize speed on Bezier curves and track direction using derivatives over time
  * @difficulty 2
  * @tags math
  * @minver 3001.0

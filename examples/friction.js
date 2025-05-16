@@ -1,6 +1,6 @@
 /**
  * @file Friction
- * @description TBD.
+ * @description How to apply friction to objects
  * @difficulty 0
  * @tags physics
  * @minver 3001.0

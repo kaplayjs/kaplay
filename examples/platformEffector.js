@@ -1,5 +1,5 @@
 /**
- * @file One-way platforms 2
+ * @file One-way Platforms
  * @description How to create one-way walls or platforms.
  * @difficulty 1
  * @tags basics, game
