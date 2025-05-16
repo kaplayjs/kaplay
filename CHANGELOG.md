@@ -119,7 +119,7 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   @dragoncoder047
 - Changed the API of `HealthComp` - @amyspark-ng
 
-## [3001.0.18] - 2025-05-13
+## [3001.0.18] - 2025-05-16
 
 ### Fixed
 
