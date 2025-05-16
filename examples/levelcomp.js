@@ -1,4 +1,11 @@
-// @ts-check
+/**
+ * @file Level component
+ * @description How to build levels out of tiles using level
+ * @difficulty 1
+ * @tags basics, comps
+ * @minver 4000.0
+ * @category concepts
+ */
 
 // Build levels with level()
 
@@ -11,7 +18,7 @@ loadSprite("coin", "/sprites/coin.png");
 loadSprite("spike", "/sprites/spike.png");
 loadSprite("grass", "/sprites/grass.png");
 loadSprite("ghosty", "/sprites/ghosty.png");
-loadSound("score", "/examples/sounds/score.mp3");
+loadSound("score", "/sounds/score.mp3");
 
 const SPEED = 480;
 

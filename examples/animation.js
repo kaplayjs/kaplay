@@ -1,9 +1,15 @@
-// @ts-check
+/**
+ * @file Animate with animate()
+ * @description How to animate game object properties with animate() component
+ * @difficulty 1
+ * @tags comps, animation
+ * @minver 3001.0
+ * @category concepts
+ * @test
+ */
 
-// Start kaplay
 kaplay();
 
-// We use the default function to load the bean sprite
 loadBean();
 
 // We add a bean that rotates with the animate component

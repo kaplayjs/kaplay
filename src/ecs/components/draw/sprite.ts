@@ -6,21 +6,36 @@ import {
     type SpriteAnim,
     type SpriteData,
 } from "../../../assets/sprite";
-import { DEF_ANCHOR } from "../../../constants";
+import { DEF_ANCHOR } from "../../../constants/general";
 import { KEvent, type KEventController } from "../../../events/events";
 import { onLoad } from "../../../events/globalEvents";
 import { getRenderProps } from "../../../game/utils";
 import { anchorPt } from "../../../gfx/anchor";
 import { drawTexture } from "../../../gfx/draw/drawTexture";
 import type { Texture } from "../../../gfx/gfx";
-import { _k } from "../../../kaplay";
-import { Quad, quad, Rect, type Vec2, vec2 } from "../../../math/math";
-import type {
-    Comp,
-    GameObj,
-    SpriteAnimPlayOpt,
-    SpriteCurAnim,
-} from "../../../types";
+import { Quad, quad, Rect, vec2 } from "../../../math/math";
+import { type Vec2 } from "../../../math/Vec2";
+import { _k } from "../../../shared";
+import type { Comp, GameObj, SpriteAnimPlayOpt } from "../../../types";
+
+/**
+ * Current animation data.
+ */
+export interface SpriteCurAnim {
+    name: string;
+    timer: number;
+    loop: boolean;
+    speed: number;
+    /**
+     * The current index relative to the start of the
+     * associated `frames` array for this animation.
+     * This may be greater than the number of frames
+     * in the sprite.
+     */
+    frameIndex: number;
+    pingpong: boolean;
+    onEnd: () => void;
+}
 
 /**
  * The {@link sprite `sprite()`} component.
@@ -260,11 +275,27 @@ export function sprite(
         return frames;
     };
 
+    let _shape: Rect | undefined;
+    let _width = 0;
+    let _height = 0;
+
     return {
         id: "sprite",
         // TODO: allow update
-        width: 0,
-        height: 0,
+        get width() {
+            return _width;
+        },
+        set width(value) {
+            _width = value;
+            if (_shape) _shape.width = value;
+        },
+        get height() {
+            return _height;
+        },
+        set height(value) {
+            _height = value;
+            if (_shape) _shape.height = value;
+        },
         frame: opt.frame || 0,
         quad: opt.quad || new Quad(0, 0, 1, 1),
         animSpeed: opt.animSpeed ?? 1,
@@ -417,7 +448,7 @@ export function sprite(
                 throw new Error("Sprite anim speed cannot be 0");
             }
 
-            curAnim.timer += _k.k.dt() * this.animSpeed;
+            curAnim.timer += _k.app.dt() * this.animSpeed;
 
             if (curAnim.timer >= (1 / curAnim.speed)) {
                 curAnim.timer = 0;
@@ -550,7 +581,10 @@ export function sprite(
         },
 
         renderArea() {
-            return new Rect(vec2(0), this.width, this.height);
+            if (!_shape) {
+                _shape = new Rect(vec2(0), _width, _height);
+            }
+            return _shape;
         },
 
         inspect() {

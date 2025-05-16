@@ -1,7 +1,7 @@
+import { initAppEvents } from "../app/appEvents";
 import type { KEventController } from "../events/events";
-import { _k } from "../kaplay";
 import { Mat23, vec2 } from "../math/math";
-import { initEvents } from "./initEvents";
+import { _k } from "../shared";
 
 /**
  * The name of a scene.
@@ -36,7 +36,7 @@ export function go(name: SceneName, ...args: unknown[]) {
         });
 
         _k.game.root.clearEvents();
-        initEvents();
+        initAppEvents();
 
         // cam
         _k.game.cam = {

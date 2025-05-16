@@ -1,4 +1,11 @@
-// @ts-check
+/**
+ * @file Sprites
+ * @description How to load and animate sprites
+ * @difficulty 0
+ * @tags basics, animation
+ * @minver 3001.0
+ * @category basics
+ */
 
 // Sprite animation
 
@@ -11,7 +18,7 @@ kaplay({
 });
 
 // Loading a multi-frame sprite
-loadSprite("dino", "/examples/sprites/dino.png", {
+loadSprite("dino", "/sprites/dungeon-dino.png", {
     // The image contains 9 frames layed out horizontally, slice it into individual frames
     sliceX: 9,
     // Define animations

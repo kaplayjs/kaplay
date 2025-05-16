@@ -1,6 +1,7 @@
 import { getRenderProps } from "../../../game/utils";
 import { drawCircle } from "../../../gfx/draw/drawCircle";
-import { Circle, Rect, Vec2 } from "../../../math/math";
+import { Circle, Rect } from "../../../math/math";
+import { Vec2 } from "../../../math/Vec2";
 import type { Comp, GameObj } from "../../../types";
 import type { AnchorComp } from "../transform/anchor";
 import type { outline } from "./outline";
@@ -36,23 +37,34 @@ export interface CircleCompOpt {
 }
 
 export function circle(radius: number, opt: CircleCompOpt = {}): CircleComp {
+    let _shape: Circle | undefined;
+    let _radius = radius;
     return {
         id: "circle",
-        radius: radius,
+        get radius() {
+            return _radius;
+        },
+        set radius(value: number) {
+            _radius = value;
+            if (_shape) _shape.radius = value;
+        },
         draw(this: GameObj<CircleComp>) {
             drawCircle(Object.assign(getRenderProps(this), {
-                radius: this.radius,
+                radius: _radius,
                 fill: opt.fill,
             }));
         },
         renderArea(this: GameObj<AnchorComp | CircleComp>) {
-            return new Circle(
-                new Vec2(0),
-                this.radius,
-            );
+            if (!_shape) {
+                _shape = new Circle(
+                    new Vec2(0),
+                    _radius,
+                );
+            }
+            return _shape;
         },
         inspect() {
-            return `radius: ${Math.ceil(this.radius)}`;
+            return `radius: ${Math.ceil(_radius)}`;
         },
     };
 }

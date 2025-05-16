@@ -1,5 +1,5 @@
-import { Vec2 } from "../../../math/math";
 import { type Graph } from "../../../math/navigation";
+import { Vec2 } from "../../../math/Vec2";
 import type { Comp, GameObj } from "../../../types";
 import type { PosComp } from "../transform/pos";
 

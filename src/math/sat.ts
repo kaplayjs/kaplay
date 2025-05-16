@@ -1,13 +1,25 @@
-import { type Polygon, Vec2, vec2 } from "./math";
+import type { Shape } from "../types";
+import { Polygon, vec2 } from "./math";
+import { Vec2 } from "./Vec2";
 
 export type SatResult = {
     normal: Vec2;
     distance: number;
 };
 
+export function satShapeIntersection(shape1: Shape, shape2: Shape) {
+    const s1 = shape1 instanceof Polygon
+        ? shape1
+        : new Polygon(shape1.bbox().points());
+    const s2 = shape2 instanceof Polygon
+        ? shape2
+        : new Polygon(shape2.bbox().points());
+    return sat(s1, s2);
+}
+
 export function sat(p1: Polygon, p2: Polygon): SatResult | null {
     let overlap = Number.MAX_VALUE;
-    let result: SatResult = { normal: vec2(0), distance: 0 };
+    let result: SatResult | null = null;
     for (const poly of [p1, p2]) {
         for (let i = 0; i < poly.pts.length; i++) {
             const a = poly.pts[i];
@@ -28,15 +40,29 @@ export function sat(p1: Polygon, p2: Polygon): SatResult | null {
                 max2 = Math.max(max2, q);
             }
             const o = Math.min(max1, max2) - Math.max(min1, min2);
-            if (o < 0) {
+            if (o < 0) { // This should be <= 0 !!!!
                 return null;
             }
             if (o < Math.abs(overlap)) {
                 const o1 = max2 - min1;
                 const o2 = min2 - max1;
                 overlap = Math.abs(o1) < Math.abs(o2) ? o1 : o2;
-                result.normal = axisProj;
-                result.distance = overlap;
+                if (!result) {
+                    result = {
+                        normal: overlap !== 0
+                            ? axisProj.scale(Math.sign(overlap))
+                            : axisProj.scale(Math.sign(min1 - max2)),
+                        distance: Math.abs(overlap),
+                    };
+                }
+                else {
+                    const s = overlap !== 0
+                        ? Math.sign(overlap)
+                        : Math.sign(min1 - max2);
+                    result.normal.x = s * axisProj.x;
+                    result.normal.y = s * axisProj.y;
+                    result.distance = Math.abs(overlap);
+                }
             }
         }
     }

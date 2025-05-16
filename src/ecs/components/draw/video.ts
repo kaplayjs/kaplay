@@ -1,8 +1,9 @@
+import { getRenderProps } from "../../../game/utils";
 import { drawRect } from "../../../gfx/draw/drawRect";
 import { drawUVQuad } from "../../../gfx/draw/drawUVQuad";
 import { Texture } from "../../../gfx/gfx";
-import { _k } from "../../../kaplay";
 import { Rect, vec2 } from "../../../math/math";
+import { _k } from "../../../shared";
 import type { Comp, GameObj } from "../../../types";
 import type { PosComp } from "../transform/pos";
 
@@ -29,9 +30,25 @@ export function video(url: string, opt: VideoCompOpt): VideoComp {
     let _timeupdate = false;
     let _canCopyVideo = false;
     let _texture = new Texture(_k.gfx.ggl, opt.width, opt.height);
+    let _shape: Rect | undefined;
+    let _width = opt.width;
+    let _height = opt.height;
     return {
-        width: opt.width,
-        height: opt.height,
+        id: "video",
+        get width() {
+            return _width;
+        },
+        set width(value) {
+            _width = value;
+            if (_shape) _shape.width = value;
+        },
+        get height() {
+            return _height;
+        },
+        set height(value) {
+            _height = value;
+            if (_shape) _shape.height = value;
+        },
         get currentTime() {
             return _video.currentTime;
         },
@@ -121,21 +138,24 @@ export function video(url: string, opt: VideoCompOpt): VideoComp {
         },
         draw(this: GameObj<PosComp | VideoComp>) {
             if (_canCopyVideo) {
-                drawUVQuad({
+                drawUVQuad(Object.assign(getRenderProps(this), {
                     width: this.width,
                     height: this.height,
                     tex: _texture,
-                });
+                }));
             }
             else {
-                drawRect({
+                drawRect(Object.assign(getRenderProps(this), {
                     width: this.width,
                     height: this.height,
-                });
+                }));
             }
         },
         renderArea() {
-            return new Rect(vec2(0), this.width, this.height);
+            if (!_shape) {
+                _shape = new Rect(vec2(0), _width, _height);
+            }
+            return _shape;
         },
     };
 }

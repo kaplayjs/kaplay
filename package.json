@@ -1,10 +1,16 @@
 {
   "name": "kaplay",
   "description": "KAPLAY is a JavaScript & TypeScript game library that helps you make games fast and fun!",
-  "version": "4000.0.0-alpha.17",
+  "version": "4000.0.0-alpha.19",
   "license": "MIT",
   "homepage": "https://v4000.kaplayjs.com/",
-  "funding": "https://opencollective.com/kaplay",
+  "bugs": {
+    "url": "https://github.com/kaplayjs/kaplay/issues"
+  },
+  "funding": {
+    "type": "opencollective",
+    "url": "https://opencollective.com/kaplay"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/kaplayjs/kaplay.git"
@@ -12,15 +18,16 @@
   "type": "module",
   "main": "./dist/kaplay.cjs",
   "module": "./dist/kaplay.mjs",
-  "types": "./dist/declaration/index.d.ts",
+  "types": "./dist/doc.d.ts",
+  "readme": "./README.md",
   "exports": {
     ".": {
       "import": {
-        "types": "./dist/declaration/index.d.ts",
+        "types": "./dist/doc.d.ts",
         "default": "./dist/kaplay.mjs"
       },
       "require": {
-        "types": "./dist/declaration/index.d.ts",
+        "types": "./dist/doc.d.ts",
         "default": "./dist/kaplay.cjs"
       }
     },
@@ -34,12 +41,18 @@
     }
   },
   "keywords": [
-    "game",
-    "gamedev",
-    "fun",
-    "mark",
-    "games",
-    "typescript"
+    "game development",
+    "javascript",
+    "typescript",
+    "game engine",
+    "2d games",
+    "physics engine",
+    "webgl",
+    "canvas",
+    "game library",
+    "kaplay",
+    "kaboom",
+    "kaboomjs"
   ],
   "files": [
     "dist/",
@@ -49,39 +62,39 @@
   "scripts": {
     "dev": "NODE_ENV=development node scripts/dev.js",
     "win:dev": "set NODE_ENV=development && node scripts/dev.js",
-    "build": "node scripts/generateIndex.js && tsc --p tsconfig.build.json && node scripts/build.js && npm run doc-dts",
+    "build": "node scripts/generateIndex.js && npm run doc-dts && node scripts/build.js",
+    "build:fast": "node scripts/buildFast.js",
     "check": "tsc",
     "fmt": "dprint fmt",
     "test": "node scripts/test.js",
-    "doc-dts": "dts-bundle-generator -o dist/doc.d.ts dist/declaration/kaplay.d.ts",
+    "doc-dts": "dts-bundle-generator -o dist/doc.d.ts src/index.ts",
     "test:vite": "vitest --typecheck",
     "desktop": "tauri dev",
     "prepare": "npm run build",
-    "publish:next": "npm publish --tag next"
+    "publish:next": "npm publish --tag next",
+    "help": "makeman help.json"
   },
   "devDependencies": {
+    "@kaplayjs/crew": "2.0.0-beta.6",
     "@kaplayjs/dprint-config": "^1.2.0",
+    "@types/express": "^5.0.1",
     "@types/jest": "^29.5.14",
     "dprint": "^0.49.1",
     "dts-bundle-generator": "^9.5.1",
     "ejs": "^3.1.10",
     "esbuild": "^0.25.2",
     "express": "^5.1.0",
+    "makeman": "^1.2.6",
     "puppeteer": "^22.15.0",
     "tar-fs": "3.0.8",
-    "typescript": "^5.6.3",
+    "typescript": "5.6.3",
     "vite": "5.4.16",
     "vitest": "^3.1.1",
     "vitest-environment-puppeteer": "^11.0.3",
     "vitest-puppeteer": "^11.0.3"
   },
-  "packageManager": "pnpm@9.9.0+sha512.60c18acd138bff695d339be6ad13f7e936eea6745660d4cc4a776d5247c540d0edee1a563695c183a66eb917ef88f2b4feb1fc25f32a7adcadc7aaf3438e99c1",
-  "vitest-puppeteer": {
-    "launch": {
-      "args": [
-        "--no-sandbox"
-      ],
-      "dumpio": true
-    }
-  }
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "packageManager": "pnpm@9.9.0+sha512.60c18acd138bff695d339be6ad13f7e936eea6745660d4cc4a776d5247c540d0edee1a563695c183a66eb917ef88f2b4feb1fc25f32a7adcadc7aaf3438e99c1"
 }

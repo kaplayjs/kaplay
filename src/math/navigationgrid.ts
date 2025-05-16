@@ -1,5 +1,6 @@
-import { Vec2, vec2 } from "./math";
+import { vec2 } from "./math";
 import { aStarSearch, type Graph } from "./navigation";
+import { Vec2 } from "./Vec2";
 
 /**
  * A grid is a graph consisting of connected grid cells

@@ -1,4 +1,11 @@
-// @ts-check
+/**
+ * @file One-way Platforms
+ * @description How to create one-way walls or platforms.
+ * @difficulty 1
+ * @tags basics, game
+ * @minver 3001.0
+ * @category concepts
+ */
 
 kaplay();
 

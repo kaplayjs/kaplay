@@ -11,7 +11,9 @@ export async function dev() {
     const ctx = await esbuild.context({
         ...config,
         ...fmts("kaplay")[0],
+        sourcemap: true,
         minify: false,
+        keepNames: true,
         plugins: [
             {
                 name: "logger",

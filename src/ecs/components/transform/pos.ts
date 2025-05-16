@@ -1,11 +1,11 @@
 import { toScreen, toWorld } from "../../../game/camera";
-import { isFixed } from "../../../game/utils";
 import { drawCircle } from "../../../gfx/draw/drawCircle";
-import { getViewportScale } from "../../../gfx/stack";
-import { _k } from "../../../kaplay";
 import { rgb } from "../../../math/color";
-import { type Vec2, vec2, type Vec2Args } from "../../../math/math";
+import { vec2, type Vec2Args } from "../../../math/math";
+import { type Vec2 } from "../../../math/Vec2";
+import { _k } from "../../../shared";
 import type { Comp, GameObj } from "../../../types";
+import { isFixed } from "../../entity/utils";
 import type { FixedComp } from "./fixed";
 
 /**
@@ -92,7 +92,7 @@ export function pos(...args: Vec2Args): PosComp {
 
         // move with velocity (pixels per second)
         move(...args: Vec2Args) {
-            this.moveBy(vec2(...args).scale(_k.k.dt()));
+            this.moveBy(vec2(...args).scale(_k.app.dt()));
         },
 
         // move to a destination, with optional speed
@@ -112,7 +112,7 @@ export function pos(...args: Vec2Args): PosComp {
             }
             // @ts-ignore
             const diff = dest.sub(this.pos);
-            if (diff.len() <= speed * _k.k.dt()) {
+            if (diff.len() <= speed * _k.app.dt()) {
                 this.pos = vec2(dest);
                 return;
             }
@@ -127,7 +127,7 @@ export function pos(...args: Vec2Args): PosComp {
             }
             else {
                 return this.parent
-                    ? this.parent.transform.transformPoint(this.pos, vec2())
+                    ? this.parent.transform.transformPointV(this.pos, vec2())
                     : this.pos;
             }
         },
@@ -135,14 +135,14 @@ export function pos(...args: Vec2Args): PosComp {
         // Transform a local point to a world point
         toWorld(this: GameObj<PosComp>, p: Vec2): Vec2 {
             return this.parent
-                ? this.parent.transform.transformPoint(this.pos.add(p), vec2())
+                ? this.parent.transform.transformPointV(this.pos.add(p), vec2())
                 : this.pos.add(p);
         },
 
         // Transform a world point (relative to the root) to a local point (relative to this)
         fromWorld(this: GameObj<PosComp>, p: Vec2): Vec2 {
             return this.parent
-                ? this.parent.transform.inverse.transformPoint(p, vec2()).sub(
+                ? this.parent.transform.inverse.transformPointV(p, vec2()).sub(
                     this.pos,
                 )
                 : p.sub(this.pos);
@@ -210,7 +210,7 @@ export function pos(...args: Vec2Args): PosComp {
         drawInspect() {
             drawCircle({
                 color: rgb(255, 0, 0),
-                radius: 4 / getViewportScale(),
+                radius: 4 / _k.gfx.viewport.scale,
             });
         },
     };

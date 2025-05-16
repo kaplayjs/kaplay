@@ -5,12 +5,13 @@ The engine is what KAPLAY needs for running and proccesing all it's stuff
 import { initApp } from "../app/app";
 import { initAssets } from "../assets/asset";
 import { initAudio } from "../audio/audio";
-import { initGame } from "../game/game";
+import { createDebug } from "../debug/debug";
+import { createGame } from "../game/game";
+import { createCanvas } from "../gfx/canvas";
 import { initGfx } from "../gfx/gfx";
 import { initAppGfx } from "../gfx/gfxApp";
 import type { KAPLAYCtx, KAPLAYOpt } from "../types";
-import { createCanvas } from "./canvas";
-import { initDebug } from "./debug";
+import { startEngineLoop } from "./engineLoop";
 import { createFontCache } from "./fontCache";
 import { createFrameRenderer } from "./frameRendering";
 
@@ -40,7 +41,7 @@ export const createEngine = (gopt: KAPLAYOpt) => {
     const appGfx = initAppGfx(gfx, gopt);
     const assets = initAssets(gfx, gopt.spriteAtlasPadding ?? 0);
     const audio = initAudio();
-    const game = initGame();
+    const game = createGame();
 
     // Frame rendering
     const frameRenderer = createFrameRenderer(
@@ -50,7 +51,7 @@ export const createEngine = (gopt: KAPLAYOpt) => {
     );
 
     // Debug mode
-    const debug = initDebug(gopt, app, appGfx, audio, game, frameRenderer);
+    const debug = createDebug(gopt, app, appGfx, audio, game, frameRenderer);
 
     return {
         globalOpt: gopt,
@@ -65,7 +66,18 @@ export const createEngine = (gopt: KAPLAYOpt) => {
         fontCacheCanvas,
         game,
         debug,
+        gc: [] as (() => void)[],
         // Patch, k it's only avaible after running kaplay()
         k: null as unknown as KAPLAYCtx,
+        startLoop() {
+            startEngineLoop(
+                app,
+                game,
+                assets,
+                gopt,
+                frameRenderer,
+                debug,
+            );
+        },
     };
 };

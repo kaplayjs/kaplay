@@ -1,15 +1,22 @@
-// @ts-check
+/**
+ * @file Curves
+ * @description Normalize speed on Bezier curves and track direction using derivatives over time
+ * @difficulty 2
+ * @tags math
+ * @minver 3001.0
+ * @category concepts
+ */
 
 kaplay();
 
 function addPoint(c, ...args) {
     return add([
+        "point",
         rect(8, 8),
         anchor("center"),
         pos(...args),
         area(),
         color(c),
-        "point",
     ]);
 }
 

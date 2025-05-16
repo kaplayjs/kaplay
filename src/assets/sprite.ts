@@ -1,8 +1,7 @@
 import type { DrawSpriteOpt } from "../gfx/draw/drawSprite";
 import type { Texture } from "../gfx/gfx";
-import { _k } from "../kaplay";
-import beanSpriteSrc from "../kassets/bean.png";
 import { Quad } from "../math/math";
+import { _k } from "../shared";
 import { type ImageSource } from "../types";
 import { Asset, loadImg, loadProgress } from "./asset";
 import { fixURL } from "./utils";
@@ -146,7 +145,7 @@ export class SpriteData {
         opt: LoadSpriteOpt = {},
     ): SpriteData {
         const [tex, quad, packerId] = opt.singular
-            ? _k.assets.packer.add_single(data)
+            ? _k.assets.packer.addSingle(data)
             : _k.assets.packer.add(data);
         const frames = opt.frames
             ? opt.frames.map((f) =>
@@ -305,5 +304,9 @@ export function createSpriteSheet(
 }
 
 export function loadBean(name: string = "bean"): Asset<SpriteData> {
-    return loadSprite(name, beanSpriteSrc);
+    if (!_k.game.defaultAssets.bean) {
+        throw new Error("You can't use bean in kaplay/mini");
+    }
+
+    return loadSprite(name, _k.game.defaultAssets.bean);
 }

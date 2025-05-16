@@ -1,14 +1,15 @@
 import type { FontData } from "../../assets/font";
 import type { Uniform } from "../../assets/shader";
 import type { Color } from "../../math/color";
-import type { Quad, Vec2 } from "../../math/math";
+import type { Quad } from "../../math/math";
+import type { Vec2 } from "../../math/Vec2";
 import { anchorPt } from "../anchor";
 import type { Texture } from "../gfx";
 import {
+    multRotate,
+    multTranslateV,
     popTransform,
-    pushRotate,
     pushTransform,
-    pushTranslateV,
 } from "../stack";
 import type { DrawTextOpt } from "./drawText";
 import { drawUVQuad } from "./drawUVQuad";
@@ -46,9 +47,9 @@ export interface FormattedChar {
 
 export function drawFormattedText(ftext: FormattedText) {
     pushTransform();
-    pushTranslateV(ftext.opt.pos!);
-    pushRotate(ftext.opt.angle!);
-    pushTranslateV(
+    multTranslateV(ftext.opt.pos!);
+    multRotate(ftext.opt.angle!);
+    multTranslateV(
         anchorPt(ftext.opt.anchor ?? "topleft").add(1, 1).scale(
             ftext.width,
             ftext.height,

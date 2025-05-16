@@ -1,6 +1,6 @@
 import type { KEventController } from "../../../events/events";
-import { _k } from "../../../kaplay";
-import { Vec2 } from "../../../math/math";
+import { Vec2 } from "../../../math/Vec2";
+import { _k } from "../../../shared";
 import type { Comp, GameObj, QueryOpt } from "../../../types";
 import { raycast } from "../draw/raycast";
 import type { PosComp } from "../transform/pos";
@@ -138,7 +138,7 @@ export function sentry(
             return hit != null && hit.object === obj;
         },
         update(this: GameObj<SentryComp | PosComp>) {
-            t += _k.k.dt();
+            t += _k.app.dt();
             if (t > checkFrequency) {
                 t -= checkFrequency;
                 let objects = get();

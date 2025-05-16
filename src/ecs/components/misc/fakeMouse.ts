@@ -1,5 +1,4 @@
-import { mousePos } from "../../../gfx/stack";
-import { _k } from "../../../kaplay";
+import { _k } from "../../../shared";
 import type { Comp, GameObj } from "../../../types";
 import type { PosComp } from "../transform/pos";
 
@@ -39,7 +38,7 @@ export type FakeMouseOpt = {
     followMouse?: boolean;
 };
 
-type FakeMouse = GameObj<PosComp>;
+type FakeMouse = GameObj<FakeMouseComp | PosComp>;
 
 export const fakeMouse = (opt: FakeMouseOpt = {
     followMouse: true,
@@ -49,14 +48,24 @@ export const fakeMouse = (opt: FakeMouseOpt = {
     return {
         id: "fakeMouse",
         require: ["pos"],
+        add(this: GameObj<FakeMouse>) {
+            if (_k.game.fakeMouse) {
+                throw new Error("Fake mouse already exists");
+            }
+
+            _k.game.fakeMouse = this;
+        },
+        destroy() {
+            _k.game.fakeMouse = null;
+        },
         get isPressed() {
             return isPressed;
         },
         update(this: FakeMouse) {
             if (!opt.followMouse) return;
 
-            if (_k.k.isMouseMoved()) {
-                this.pos = mousePos();
+            if (_k.app.isMouseMoved()) {
+                this.pos = _k.app.mousePos();
             }
         },
         press(this: FakeMouse) {

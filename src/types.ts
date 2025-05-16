@@ -13,6 +13,8 @@ import type { LoadSpriteOpt, LoadSpriteSrc, SpriteData } from "./assets/sprite";
 import type { SpriteAtlasData } from "./assets/spriteAtlas";
 import type { AudioPlay, AudioPlayOpt } from "./audio/play";
 import type { Engine } from "./core/engine";
+import type { Debug } from "./debug/debug";
+import type { Recording } from "./debug/record";
 import type { BlendComp } from "./ecs/components/draw/blend";
 import type { CircleComp, CircleCompOpt } from "./ecs/components/draw/circle";
 import type { ColorComp } from "./ecs/components/draw/color";
@@ -64,7 +66,11 @@ import type { NamedComp } from "./ecs/components/misc/named";
 import type { StateComp } from "./ecs/components/misc/state";
 import type { StayComp } from "./ecs/components/misc/stay";
 import type { TextInputComp } from "./ecs/components/misc/textInput";
-import type { TimerComp } from "./ecs/components/misc/timer";
+import type {
+    TimerComp,
+    TimerController,
+    TweenController,
+} from "./ecs/components/misc/timer";
 import type { AreaComp, AreaCompOpt } from "./ecs/components/physics/area";
 import type { BodyComp, BodyCompOpt } from "./ecs/components/physics/body";
 import type { DoubleJumpComp } from "./ecs/components/physics/doubleJump";
@@ -94,14 +100,13 @@ import type { PosComp } from "./ecs/components/transform/pos";
 import type { RotateComp } from "./ecs/components/transform/rotate";
 import type { ScaleComp } from "./ecs/components/transform/scale";
 import type { ZComp } from "./ecs/components/transform/z";
-import type { KeepFlags, SetParentOpt } from "./ecs/make";
+import type { GameObjRaw, KeepFlags } from "./ecs/entity/GameObjRaw";
+import type { BoomOpt } from "./ecs/entity/premade/addKaboom";
+import type { AddLevelOpt } from "./ecs/entity/premade/addLevel";
+import type { LCEvents } from "./ecs/systems/systems";
 import type { GameObjEventNames, GameObjEvents } from "./events/eventMap";
 import type { KEvent, KEventController, KEventHandler } from "./events/events";
-import type { TupleWithoutFirst } from "./events/globalEvents";
-import type { BoomOpt } from "./game/kaboom";
 import type { SceneDef, SceneName } from "./game/scenes";
-import type { LCEvents } from "./game/systems";
-import type { FrameBuffer } from "./gfx/classes/FrameBuffer";
 import type { DrawBezierOpt } from "./gfx/draw/drawBezier";
 import type { DrawCanvasOpt } from "./gfx/draw/drawCanvas";
 import type { DrawCircleOpt } from "./gfx/draw/drawCircle";
@@ -119,15 +124,18 @@ import type { DrawSpriteOpt } from "./gfx/draw/drawSprite";
 import type { DrawTextOpt } from "./gfx/draw/drawText";
 import type { DrawTriangleOpt } from "./gfx/draw/drawTriangle";
 import type { StyledTextInfo } from "./gfx/formatText";
+import type { FrameBuffer } from "./gfx/FrameBuffer";
 import type { Texture } from "./gfx/gfx";
 import type { Color, CSSColor, RGBAValue, RGBValue } from "./math/color";
+import type { EaseFunc, EaseFuncs } from "./math/easings";
 import type { GjkCollisionResult } from "./math/gjk";
+import type { LerpValue } from "./math/lerp";
+import type { Mat4 } from "./math/Mat4";
 import type {
     Circle,
     Ellipse,
     Line,
     Mat23,
-    Mat4,
     Point,
     Polygon,
     Quad,
@@ -135,9 +143,10 @@ import type {
     Rect,
     RNG,
     StepPosition,
-    Vec2,
 } from "./math/math";
 import type { NavMesh } from "./math/navigationmesh";
+import type { Vec2 } from "./math/Vec2";
+import type { Defined, MergeObj, TupleWithoutFirst } from "./utils/types";
 
 /**
  * Context handle that contains every KAPLAY function.
@@ -265,7 +274,6 @@ export interface KAPLAYCtx<
      *
      * // Recursively get all children and descendents
      * const allObjs = get("*", { recursive: true });
-     * ```
      *
      * // Get a live query which updates in real-time
      * const allObjs = get("*", { liveUpdate: true });
@@ -347,8 +355,9 @@ export interface KAPLAYCtx<
      * @group Game Obj
      */
     destroyAll(tag: Tag): void;
+    // #region Transform Comps
     /**
-     * Set the position of a Game Object.
+     * Set the position of a Game Object, relative to its parent.
      *
      * @param x - The x position to set.
      * @param y - The y position to set.
@@ -356,10 +365,17 @@ export interface KAPLAYCtx<
      * @example
      * ```js
      * // This game object will draw a "bean" sprite at (100, 200)
-     * add([
+     * let bean =add([
      *     pos(100, 200),
      *     sprite("bean"),
      * ]);
+     *
+     * // This game object will draw a rectangle at (105, 205) world coordinate.
+     * // The position will be 5 pixels to the right and 5 pixels down from the parent bean.
+     * let rect = bean.add([
+     *     pos(5, 5),
+     *     rect(100, 100),
+     * ])
      * ```
      *
      * @returns The position comp.
@@ -423,6 +439,7 @@ export interface KAPLAYCtx<
      * @group Components
      */
     rotate(a?: number): RotateComp;
+    // #endregion
     /**
      * Sets the color of a Game Object (rgb 0-255).
      *
@@ -787,6 +804,7 @@ export interface KAPLAYCtx<
      * ])
      *
      * bean.layer("foreground") // Bean is now in the foreground layer and will be drawn on top of mark
+     * ```
      *
      * @returns The layer comp.
      * @since v3001.0
@@ -1178,20 +1196,20 @@ export interface KAPLAYCtx<
      * ])
      *
      * player.onCollide("bad", (bad) => {
-     *     player.hurt(1)
-     *     bad.hurt(1)
+     *     player.hp--;
+     *     bad.hp--;
      * })
      *
      * player.onCollide("apple", () => {
-     *     player.heal(1)
+     *     player.hp++;
      * })
      *
-     * player.on("hurt", () => {
+     * player.onHurt(() => {
      *     play("ouch")
      * })
      *
      * // triggers when hp reaches 0
-     * player.on("death", () => {
+     * player.onDeath(() => {
      *     destroy(player)
      *     go("lose")
      * })
@@ -1277,7 +1295,7 @@ export interface KAPLAYCtx<
      * @since v2000.1
      * @group Components
      */
-    state(initialState: string, stateList?: string[]): StateComp;
+    state<T extends string>(initialState: T, stateList?: T[]): StateComp<T>;
     /**
      * state() with pre-defined transitions.
      *
@@ -1307,11 +1325,11 @@ export interface KAPLAYCtx<
      * @since v2000.2
      * @group Components
      */
-    state(
-        initialState: string,
-        stateList: string[],
-        transitions: Record<string, string | string[]>,
-    ): StateComp;
+    state<T extends string>(
+        initialState: T,
+        stateList: T[],
+        transitions: Record<T, T | T[]>,
+    ): StateComp<T>;
     /**
      * @deprecated since v3001.0
      * @requires {@link opacity `opacity()`}
@@ -1435,6 +1453,31 @@ export interface KAPLAYCtx<
     /**
      * A patrol which can follow waypoints to a goal.
      *
+     * @param opts - Options for the patrol component. See {@link PatrolCompOpt `PatrolCompOpt`}.
+     *
+     * @example
+     * ```js
+     * const bean = add([
+     *     sprite("bean"),
+     *     pos(40, 30),
+     *     patrol({
+     *         waypoints: [
+     *             vec2(100, 100),
+     *             vec2(120, 170),
+     *             vec2(50, 50),
+     *             vec2(300, 100),
+     *         ],
+     *     }),
+     * ]);
+     *
+     * bean.onPatrolFinished(gb => {
+     *     // Note that the position doesn't exactly match the last waypoint,
+     *     // this is an approximation.
+     *     debug.log(`Bean reached the end of the patrol at ${gb.pos.x}, ${gb.pos.y}`);
+     * });
+     * ```
+     *
+     * @returns The patrol comp.
      * @since v3001.0
      * @group Components
      */
@@ -1496,6 +1539,8 @@ export interface KAPLAYCtx<
      * @group Components
      */
     level(map: string[], opt?: LevelOpt): LevelComp;
+
+    // #endregion
     /**
      * Create a raycast.
      *
@@ -2966,6 +3011,7 @@ export interface KAPLAYCtx<
      * add([
      *     text("ohhi", { font: "happy" }),
      * ]);
+     * ```
      */
     loadHappy(name?: string, opt?: LoadBitmapFontOpt): Asset<BitmapFontData>;
     /**
@@ -3035,7 +3081,7 @@ export interface KAPLAYCtx<
      */
     loadFont(
         name: string,
-        src: string | BinaryData,
+        src: string | ArrayBuffer | ArrayBufferView,
         opt?: LoadFontOpt,
     ): Asset<FontData>;
     /**
@@ -4795,10 +4841,23 @@ export interface KAPLAYCtx<
         shapeB: Shape,
     ): GjkCollisionResult | null;
     /**
+     * @returns true if the given polygon is convex
      * @since v3001.0
      * @group Math
      */
     isConvex(pts: Vec2[]): boolean;
+    /**
+     * @returns 1 if over the edge, 0 otherwise
+     * @since v3001.0
+     * @group Math
+     */
+    step(edge: number, x: number): number;
+    /**
+     * @returns 1 if over edge1, 0 if under edge0, a smooth hermite curve value otherwise
+     * @since v3001.0
+     * @group Math
+     */
+    smoothstep(edge0: number, edge1: number, x: number): number;
     /**
      * @since v3001.0
      * @group Math
@@ -4908,6 +4967,7 @@ export interface KAPLAYCtx<
      * scene("game", (opts) => {
      *     debug.log(opts.level);
      * });
+     * ```
      *
      * @group Scene
      */
@@ -5591,6 +5651,7 @@ export interface KAPLAYCtx<
      * onMousePress(() => {
      *     addKaboom(mousePos());
      * });
+     * ```
      *
      * @returns The explosion object.
      * @since v2000.0
@@ -5775,31 +5836,6 @@ export type Tag = string;
  * @group Game Obj
  */
 export type GameObj<T = any> = GameObjRaw & MergeComps<T>;
-
-export type UnionToIntersection<U> = (
-    U extends any ? (k: U) => void : never
-) extends (k: infer I) => void ? I
-    : never;
-
-// What defined does is remove prop: never types for left types clean.
-// This could work for the proccess of remove Comp properties in XXXXComp types
-export type Defined<T> = T extends any
-    ? Pick<T, { [K in keyof T]-?: T[K] extends undefined ? never : K }[keyof T]>
-    : never;
-
-/**
- * It obligates to TypeScript to Expand the type.
- *
- * Instead of being `{ id: 1 } | { name: "hi" }`
- * makes
- * It's `{ id: 1, name: "hi" }`
- *
- * https://www.totaltypescript.com/concepts/the-prettify-helper
- *
- * Previously Expand<T>
- */
-export type Prettify<T> = T extends infer U ? { [K in keyof U]: U[K] } : never;
-export type MergeObj<T> = Prettify<UnionToIntersection<Defined<T>>>;
 
 type RemoveCompProps<T> = Defined<
     {
@@ -5998,11 +6034,7 @@ export interface KAPLAYOpt<
      */
     scale?: number;
     /**
-     * If stretch canvas to container when width and height is specified
-     */
-    stretch?: boolean;
-    /**
-     * When stretching if keep aspect ratio and leave black bars on remaining spaces.
+     * Keep aspect ratio and leave black bars on remaining spaces.
      */
     letterbox?: boolean;
     /**
@@ -6133,6 +6165,11 @@ export interface KAPLAYOpt<
      * @experimental
      */
     inspectOnlyActive?: boolean;
+    /**
+     * Which strategy to use for narrow phase collision, gjk or sat
+     * @default "gjk"
+     */
+    narrowPhaseCollisionAlgorithm?: string;
 }
 
 /**
@@ -6162,375 +6199,12 @@ export type KAPLAYPlugin<T> = (
     k: KAPLAYCtx,
 ) => T | ((...args: any) => (k: KAPLAYCtx) => T);
 
-type RenderTarget = {
+export type RenderTarget = {
     destination: FrameBuffer | Picture | null;
     childrenOnly?: boolean;
     refreshOnly?: boolean;
     isFresh?: boolean;
 };
-
-/**
- * Base interface of all game objects.
- *
- * @since v2000.0
- * @group Game Obj
- */
-export interface GameObjRaw {
-    /**
-     * Add a child.
-     *
-     * @param comps - The components to add.
-     *
-     * @returns The added game object.
-     * @since v3000.0
-     */
-    add<T extends CompList<unknown>>(comps?: [...T]): GameObj<T[number]>;
-    /**
-     * Remove and re-add the game obj, without triggering add / destroy events.
-     *
-     * @param obj - The game object to re-add.
-     *
-     * @returns The re-added game object.
-     * @since v3000.0
-     */
-    readd<T>(obj: GameObj<T>): GameObj<T>;
-    /**
-     * Remove a child.
-     *
-     * @param obj - The game object to remove.
-     *
-     * @since v3000.0
-     */
-    remove(obj: GameObj): void;
-    /**
-     * Remove all children with a certain tag.
-     *
-     * @param tag - The tag to remove.
-     *
-     * @since v3000.0
-     */
-    removeAll(tag: Tag): void;
-    /**
-     * Remove all children.
-     *
-     * @since v3000.0
-     */
-    removeAll(): void;
-    /**
-     * Get a list of all game objs with certain tag.
-     *
-     * @param tag - The tag to get.
-     *
-     * @since v3000.0
-     */
-    get<T = any>(tag: Tag | Tag[], opts?: GetOpt): GameObj<T>[];
-    /**
-     * Get a list of all game objs with certain properties.
-     *
-     * @param opt - The properties to get.
-     *
-     * @since v3001.0
-     */
-    query(opt: QueryOpt): GameObj[];
-    /**
-     * Get or set the parent game obj.
-     *
-     * @since v3000.0
-     */
-    parent: GameObj | null;
-    /**
-     * Set the parent game obj.
-     *
-     * @since v4000.0
-     */
-    setParent(p: GameObj, opt: SetParentOpt): void;
-    /**
-     * @readonly
-     * Get all children game objects.
-     *
-     * @since v3000.0
-     */
-    children: GameObj[];
-    /**
-     * @readonly
-     * Get the tags of a game object. For update it, use `tag()` and `untag()`.
-     *
-     * @since v3001.0
-     */
-    tags: string[];
-    /**
-     * Update this game object and all children game objects.
-     *
-     * @since v3001.0
-     */
-    fixedUpdate(): void;
-    /**
-     * Update this game object and all children game objects.
-     *
-     * @since v3000.0
-     */
-    update(): void;
-    /**
-     * Draw this game object and all children game objects.
-     *
-     * @since v3000.0
-     */
-    draw(): void;
-    /**
-     * Draw debug info in inspect mode
-     *
-     * @since v3000.0
-     */
-    drawInspect: () => void;
-    clearEvents: () => void;
-    /**
-     * Add a component.
-     *
-     * @example
-     * ```js
-     * const obj = add([
-     *    sprite("bean"),
-     * ]);
-     *
-     * // Add opacity
-     * obj.use(opacity(0.5));
-     * ```
-     *
-     * @since v2000.0
-     */
-    use(comp: Comp | Tag): void;
-    /**
-     * Remove a component with its id (the component name)
-     *
-     * @param comp - The component id to remove. It means the name, if sprite, then it's "sprite".
-     *
-     * @example
-     * ```js
-     * // Remove sprite component
-     * obj.unuse("sprite");
-     * ```
-     *
-     * @since v2000.0
-     */
-    unuse(comp: Tag): void;
-    /**
-     * Check if game object has a certain component.
-     *
-     * @param compId - The component id(s) to check.
-     * @param op - The operator to use when searching for multiple components. Default is "and".
-     *
-     * @example
-     * ```js
-     * // Check if game object has sprite component
-     * if(obj.has("sprite")) {
-     *     debug.log("has sprite component");
-     * }
-     *
-     * // Check if game object has tags
-     * obj.has(["tag1", "tag2"]); // AND, it has both tags
-     * obj.has(["tag1", "tag2"], "or"); // OR, it has either tag1 or tag2
-     * ```
-     *
-     * @returns true if has the component(s), false otherwise.
-     * @since v3001.0.5
-     * @experimental This feature is in experimental phase, it will be fully released in v3001.1.0
-     */
-    has(compId: string | string[], op?: "and" | "or"): boolean;
-    /**
-     * Add a tag(s) to the game obj.
-     *
-     * @param tag - The tag(s) to add.
-     *
-     * @example
-     * ```js
-     * // add enemy tag
-     * obj.tag("enemy");
-     *
-     * // add multiple tags
-     * obj.tag(["enemy", "boss"]);
-     * ```
-     *
-     * @since v3001.0.5
-     * @experimental This feature is in experimental phase, it will be fully released in v3001.1.0
-     */
-    tag(tag: Tag | Tag[]): void;
-    /**
-     * Remove a tag(s) from the game obj.
-     *
-     * @param tag - The tag(s) to remove.
-     *
-     * @example
-     * ```js
-     * // remove enemy tag
-     * obj.untag("enemy");
-     *
-     * // remove multiple tags
-     * obj.untag(["enemy", "boss"]);
-     * ```
-     *
-     * @since v3001.0.5
-     * @experimental This feature is in experimental phase, it will be fully released in v3001.1.0
-     */
-    untag(tag: Tag | Tag[]): void;
-    /**
-     * If there's certain tag(s) on the game obj.
-     *
-     * @param tag - The tag(s) for checking.
-     * @param op - The operator to use when searching for multiple tags. Default is "and".
-     *
-     * @since v3001.0.5
-     * @experimental This feature is in experimental phase, it will be fully released in v3001.1.0
-     */
-    is(tag: Tag | Tag[], op?: "and" | "or"): boolean;
-    /**
-     * Register an event.
-     *
-     * @param event - The event name.
-     * @param action - The action to run when event is triggered.
-     *
-     * @returns The event controller.
-     * @since v2000.0
-     */
-    on(
-        event: GameObjEventNames | (string & {}),
-        action: (...args: any) => void,
-    ): KEventController;
-    /**
-     * Trigger an event.
-     *
-     * @param event - The event name.
-     * @parm args - The arguments to pass to the event action.
-     *
-     * @since v2000.0
-     */
-    trigger(event: string, ...args: any): void;
-    /**
-     * Remove the game obj from scene.
-     *
-     * @since v2000.0
-     */
-    destroy(): void;
-    /**
-     * Get state for a specific comp.
-     *
-     * @param id - The component id.
-     *
-     * @since v2000.0
-     */
-    c(id: string): Comp | null;
-    /**
-     * Gather debug info of all comps.
-     *
-     * @since v2000.0
-     */
-    inspect(): GameObjInspect;
-    /**
-     * Register an event that runs when the game obj is added to the scene.
-     *
-     * @returns The event controller.
-     * @since v2000.0
-     */
-    onAdd(action: () => void): KEventController;
-    /**
-     * Register an event that runs every frame as long as the game obj exists.
-     *
-     * @returns The event controller.
-     * @since v2000.1
-     */
-    onUpdate(action: () => void): KEventController;
-    /**
-     * Register an event that runs every frame as long as the game obj exists (this is the same as `onUpdate()`, but all draw events are run after all update events).
-     *
-     * @returns The event controller.
-     * @since v2000.1
-     */
-    onDraw(action: () => void): KEventController;
-    /**
-     * Register an event that runs when the game obj is destroyed.
-     *
-     * @returns The event controller.
-     * @since v2000.1
-     */
-    onDestroy(action: () => void): KEventController;
-    /**
-     * Register an event that runs when a component is used.
-     *
-     * @returns The event controller.
-     * @since v4000.0
-     */
-    onCompAdd(action: (id: string) => void): KEventController;
-    /**
-     * Register an event that runs when a component is unused.
-     *
-     * @returns The event controller.
-     * @since v4000.0
-     */
-    onCompDestroy(action: (id: string) => void): KEventController;
-    /**
-     * If game obj is attached to the scene graph.
-     *
-     * @returns true if attached, false otherwise.
-     * @since v2000.0
-     */
-    exists(): boolean;
-    /**
-     * Check if is an ancestor (recursive parent) of another game object
-     *
-     * @returns true if is ancestor, false otherwise.
-     * @since v3000.0
-     */
-    isAncestorOf(obj: GameObj): boolean;
-    /**
-     * Calculated transform matrix of a game object.
-     *
-     * @since v3000.0
-     */
-    transform: Mat23;
-    /**
-     * If draw the game obj (run "draw" event or not).
-     *
-     * @since v2000.0
-     */
-    hidden: boolean;
-    /**
-     * If update the game obj (run "update" event or not).
-     *
-     * @since v2000.0
-     */
-    paused: boolean;
-    /**
-     * A unique number ID for each game object.
-     *
-     * @since v2000.0
-     */
-    id: GameObjID | null;
-    /**
-     * The canvas to draw this game object on
-     *
-     * @since v3001.0
-     */
-    target: RenderTarget;
-    onKeyDown: KAPLAYCtx["onKeyDown"];
-    onKeyPress: KAPLAYCtx["onKeyPress"];
-    onKeyPressRepeat: KAPLAYCtx["onKeyPressRepeat"];
-    onKeyRelease: KAPLAYCtx["onKeyRelease"];
-    onCharInput: KAPLAYCtx["onCharInput"];
-    onMouseDown: KAPLAYCtx["onMouseDown"];
-    onMousePress: KAPLAYCtx["onMousePress"];
-    onMouseRelease: KAPLAYCtx["onMouseRelease"];
-    onMouseMove: KAPLAYCtx["onMouseMove"];
-    onTouchStart: KAPLAYCtx["onTouchStart"];
-    onTouchMove: KAPLAYCtx["onTouchMove"];
-    onTouchEnd: KAPLAYCtx["onTouchEnd"];
-    onScroll: KAPLAYCtx["onScroll"];
-    onGamepadButtonDown: KAPLAYCtx["onGamepadButtonDown"];
-    onGamepadButtonPress: KAPLAYCtx["onGamepadButtonPress"];
-    onGamepadButtonRelease: KAPLAYCtx["onGamepadButtonRelease"];
-    onGamepadStick: KAPLAYCtx["onGamepadStick"];
-    onButtonDown: KAPLAYCtx["onButtonDown"];
-    onButtonPress: KAPLAYCtx["onButtonPress"];
-    onButtonRelease: KAPLAYCtx["onButtonRelease"];
-}
 
 /**
  * @group Options
@@ -6591,32 +6265,6 @@ export type QueryOpt = {
      */
     name?: string;
 };
-
-/**
- * Screen recording control handle.
- *
- * @group Data
- */
-export interface Recording {
-    /**
-     * Pause the recording.
-     */
-    pause(): void;
-    /**
-     * Resume the recording.
-     */
-    resume(): void;
-    /**
-     * Stop the recording and get the video data as mp4 Blob.
-     *
-     * @since v3000.0
-     */
-    stop(): Promise<Blob>;
-    /**
-     * Stop the recording and downloads the file as mp4. Trying to resume later will lead to error.
-     */
-    download(filename?: string): void;
-}
 
 /**
  * Sprite animation configuration when playing.
@@ -6947,11 +6595,6 @@ export type Anchor =
 /**
  * @group Math
  */
-export type LerpValue = number | Vec2 | Color;
-
-/**
- * @group Math
- */
 export type RNGValue = number | Vec2 | Color;
 
 /**
@@ -7079,70 +6722,6 @@ export interface Collision {
  */
 export type Shape = Rect | Line | Point | Circle | Ellipse | Polygon;
 
-/**
- * @group Debug
- */
-export interface Debug {
-    /**
-     * Pause the whole game.
-     */
-    paused: boolean;
-    /**
-     * Draw bounding boxes of all objects with `area()` component, hover to inspect their states.
-     */
-    inspect: boolean;
-    /**
-     * Global time scale.
-     */
-    timeScale: number;
-    /**
-     * Show the debug log or not.
-     */
-    showLog: boolean;
-    /**
-     * Current frames per second.
-     */
-    fps(): number;
-    /**
-     * Total number of frames elapsed.
-     *
-     * @since v3000.0
-     */
-    numFrames(): number;
-    /**
-     * Number of draw calls made last frame.
-     */
-    drawCalls(): number;
-    /**
-     * Step to the next frame. Useful with pausing.
-     */
-    stepFrame(): void;
-    /**
-     * Clear the debug log.
-     */
-    clearLog(): void;
-    /**
-     * Log some text to on screen debug log.
-     */
-    log(...msg: any): void;
-    /**
-     * Log an error message to on screen debug log.
-     */
-    error(msg: any): void;
-    /**
-     * The recording handle if currently in recording mode.
-     *
-     * @since v2000.1
-     */
-    curRecording: Recording | null;
-    /**
-     * Get total number of objects.
-     *
-     * @since v3001.0
-     */
-    numObjects(): number;
-}
-
 export type Mask = "intersect" | "subtract";
 
 /**
@@ -7170,109 +6749,4 @@ export enum EdgeMask {
     HorizontalBottom = 13,
     RightVertical = 14,
     All = 15,
-}
-
-/**
- * Options for the {@link addLevel `addLevel()`}.
- *
- * @group Options
- */
-export interface AddLevelOpt extends LevelOpt {
-    /**
-     * Position of the first block.
-     */
-    pos?: Vec2;
-}
-
-/**
- * The list of easing functions available.
- *
- * @group Math
- */
-export type EaseFuncs =
-    | "linear"
-    | "easeInSine"
-    | "easeOutSine"
-    | "easeInOutSine"
-    | "easeInQuad"
-    | "easeOutQuad"
-    | "easeInOutQuad"
-    | "easeInCubic"
-    | "easeOutCubic"
-    | "easeInOutCubic"
-    | "easeInQuart"
-    | "easeOutQuart"
-    | "easeInOutQuart"
-    | "easeInQuint"
-    | "easeOutQuint"
-    | "easeInOutQuint"
-    | "easeInExpo"
-    | "easeOutExpo"
-    | "easeInOutExpo"
-    | "easeInCirc"
-    | "easeOutCirc"
-    | "easeInOutCirc"
-    | "easeInBack"
-    | "easeOutBack"
-    | "easeInOutBack"
-    | "easeInElastic"
-    | "easeOutElastic"
-    | "easeInOutElastic"
-    | "easeInBounce"
-    | "easeOutBounce"
-    | "easeInOutBounce";
-
-/**
- * A function that takes a time value and returns a new time value.
- *
- * @group Math
- */
-export type EaseFunc = (t: number) => number;
-
-// TODO: use PromiseLike or extend Promise?
-/**
- * @group Timer
- */
-export type TimerController = {
-    /**
-     * If the event handler is paused.
-     */
-    paused: boolean;
-    /**
-     * Cancel the event handler.
-     */
-    cancel(): void;
-    /**
-     * Register an event when finished.
-     */
-    onEnd(action: () => void): void;
-    then(action: () => void): TimerController;
-};
-
-/**
- * Event controller for tween.
- *
- * @group Timer
- */
-export type TweenController = TimerController & {
-    /**
-     * Finish the tween now and cancel.
-     */
-    finish(): void;
-};
-
-export interface SpriteCurAnim {
-    name: string;
-    timer: number;
-    loop: boolean;
-    speed: number;
-    /**
-     * The current index relative to the start of the
-     * associated `frames` array for this animation.
-     * This may be greater than the number of frames
-     * in the sprite.
-     */
-    frameIndex: number;
-    pingpong: boolean;
-    onEnd: () => void;
 }

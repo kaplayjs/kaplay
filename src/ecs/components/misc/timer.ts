@@ -1,14 +1,47 @@
 import { KEvent } from "../../../events/events";
-import { _k } from "../../../kaplay";
-import easings from "../../../math/easings";
-import { lerp } from "../../../math/math";
-import type {
-    Comp,
-    GameObj,
-    LerpValue,
-    TimerController,
-    TweenController,
-} from "../../../types";
+import { easings } from "../../../math/easings";
+import { lerp, type LerpValue } from "../../../math/lerp";
+import { _k } from "../../../shared";
+import type { Comp, GameObj } from "../../../types";
+
+/**
+ * @group Timer
+ */
+export interface TimerController {
+    /**
+     * The time left for the callback to be called.
+     */
+    timeLeft: number;
+    /**
+     * If the event handler is paused.
+     */
+    paused: boolean;
+    /**
+     * Cancel the event handler.
+     */
+    cancel(): void;
+    /**
+     * Register an event when finished.
+     */
+    onEnd(action: () => void): void;
+    then(action: () => void): TimerController;
+}
+
+/**
+ * Event controller for tween.
+ *
+ * @group Timer
+ */
+export interface TweenController extends TimerController {
+    /**
+     * The current time in the duration of the tween
+     */
+    currentTime: number;
+    /**
+     * Finish the tween now and cancel.
+     */
+    finish(): void;
+}
 
 /**
  * The {@link timer `timer()`} component.
@@ -80,6 +113,12 @@ export function timer(maxLoopsPerFrame: number = 1000): TimerComp {
                 }
             });
             return {
+                get timeLeft() {
+                    return t;
+                },
+                set timeLeft(val: number) {
+                    t = val;
+                },
                 get paused() {
                     return ev.paused;
                 },
@@ -124,6 +163,18 @@ export function timer(maxLoopsPerFrame: number = 1000): TimerComp {
                 }
             });
             return {
+                get currentTime() {
+                    return curTime;
+                },
+                set currentTime(val) {
+                    curTime = val;
+                },
+                get timeLeft() {
+                    return duration - curTime;
+                },
+                set timeLeft(val: number) {
+                    curTime = duration - val;
+                },
                 get paused() {
                     return ev.paused;
                 },

@@ -1,5 +1,5 @@
-import { _k } from "../kaplay";
 import { Quad } from "../math/math";
+import { _k } from "../shared";
 import { getFileName } from "../utils/dataURL";
 import { type Asset, fetchJSON } from "./asset";
 import { type LoadSpriteSrc, type SpriteAnim, SpriteData } from "./sprite";

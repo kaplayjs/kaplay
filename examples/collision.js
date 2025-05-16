@@ -1,4 +1,11 @@
-// @ts-check
+/**
+ * @file Collision
+ * @description How to handle collisions betweem game objects.
+ * @difficulty 0
+ * @tags basics, comps, physics
+ * @minver 3001.0
+ * @category basics
+ */
 
 // Collision handling
 

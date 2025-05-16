@@ -1,5 +1,7 @@
-import { _k } from "../../kaplay";
-import { lerp, rand, Vec2 } from "../../math/math";
+import { lerp } from "../../math/lerp";
+import { rand } from "../../math/math";
+import { Vec2 } from "../../math/Vec2";
+import { _k } from "../../shared";
 import { center, flush } from "../stack";
 
 export function drawFrame() {
@@ -7,7 +9,7 @@ export function drawFrame() {
     const cam = _k.game.cam;
     const shake = Vec2.fromAngle(rand(0, 360)).scale(cam.shake);
 
-    cam.shake = lerp(cam.shake, 0, 5 * _k.k.dt());
+    cam.shake = lerp(cam.shake, 0, 5 * _k.app.dt());
     cam.transform.setIdentity()
         .translateSelfV(center())
         .scaleSelfV(cam.scale)

@@ -1,16 +1,12 @@
 import type { KEventController } from "../../../events/events";
-import { _k } from "../../../kaplay";
 import { clamp } from "../../../math/clamp";
 import { Color } from "../../../math/color";
-import easings from "../../../math/easings";
-import {
-    catmullRom,
-    hermiteFirstDerivative,
-    lerp,
-    Vec2,
-    vec2,
-} from "../../../math/math";
-import type { Comp, EaseFunc, GameObj, LerpValue } from "../../../types";
+import { type EaseFunc, easings } from "../../../math/easings";
+import { lerp, type LerpValue } from "../../../math/lerp";
+import { catmullRom, hermiteFirstDerivative, vec2 } from "../../../math/math";
+import { Vec2 } from "../../../math/Vec2";
+import { _k } from "../../../shared";
+import type { Comp, GameObj } from "../../../types";
 import type { NamedComp } from "./named";
 
 type TimeDirection =
@@ -554,7 +550,7 @@ export function animate(gopts: AnimateCompOpt = {}): AnimateComp {
             if (this.animation.paused) return;
             let allFinished: boolean = true;
             let localFinished: boolean;
-            t += _k.k.dt();
+            t += _k.app.dt();
             for (const c of channels) {
                 localFinished = c.update(this as unknown as GameObj<any>, t);
                 if (localFinished && !c.isFinished) {

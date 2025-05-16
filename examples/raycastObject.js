@@ -1,4 +1,12 @@
-// @ts-check
+/**
+ * @file Raycast Object
+ * @description Raycasting with objects/area
+ * @difficulty 2
+ * @tags math
+ * @minver 3001.0
+ * @category concepts
+ * @test
+ */
 
 kaplay();
 
@@ -49,7 +57,7 @@ onUpdate(() => {
     shapes.forEach(s1 => {
         if (
             shapes.some(s2 =>
-                s1 !== s2 && s1.getShape().collides(s2.getShape())
+                s1 !== s2 && s1.worldArea().collides(s2.worldArea())
             )
         ) {
             s1.color = RED;
@@ -80,8 +88,8 @@ onMousePress(() => {
     const pickList = shapes.filter((shape) => shape.hasPoint(pos));
     const selection = pickList[pickList.length - 1];
     if (selection) {
-        get("selected").forEach(s => s.unuse("selected"));
-        selection.use("selected");
+        get("selected").forEach(s => s.untag("selected"));
+        selection.tag("selected");
     }
 });
 
@@ -97,8 +105,8 @@ onMouseMove((pos, delta) => {
 });
 
 onMouseRelease(() => {
-    get("selected").forEach(s => s.unuse("selected"));
-    get("turn").forEach(s => s.unuse("turn"));
+    get("selected").forEach(s => s.untag("selected"));
+    get("turn").forEach(s => s.untag("turn"));
 });
 
 function laser() {
@@ -180,7 +188,7 @@ const ray = add([
     anchor("center"),
     rect(64, 64),
     area(),
-    laser(0),
+    laser(),
     color(RED),
     opacity(0.0),
     "laser",
@@ -194,12 +202,12 @@ get("laser").forEach(laser => {
         laser.showRing = false;
     });
     laser.onClick(() => {
-        get("selected").forEach(s => s.unuse("selected"));
+        get("selected").forEach(s => s.untag("selected"));
         if (laser.pos.sub(mousePos()).slen() > 28 * 28) {
-            laser.use("turn");
+            laser.tag("turn");
         }
         else {
-            laser.use("selected");
+            laser.tag("selected");
         }
     });
 });

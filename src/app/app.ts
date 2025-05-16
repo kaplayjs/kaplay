@@ -11,18 +11,18 @@ import type {
     MouseButton,
 } from "../types";
 
-import { map, Vec2, vec2 } from "../math/math";
-
-import GAMEPAD_MAP from "../data/gamepad.json" assert { type: "json" };
+import { GP_MAP } from "../constants/general";
 import type { AppEventMap } from "../events/eventMap";
 import { type KEventController, KEventHandler } from "../events/events";
-import { _k } from "../kaplay";
+import { canvasToViewport } from "../gfx/viewport";
+import { map, vec2 } from "../math/math";
+import { Vec2 } from "../math/Vec2";
+import { _k } from "../shared";
 import { overload2 } from "../utils/overload";
 import { isEqOrIncludes, setHasOrIncludes } from "../utils/sets";
 import {
     type ButtonBinding,
     type ButtonsDef,
-    getLastInputDeviceType,
     parseButtonBindings,
 } from "./inputBindings";
 
@@ -76,9 +76,12 @@ class FPSCounter {
 export type App = ReturnType<typeof initApp>;
 export type AppState = ReturnType<typeof initAppState>;
 
-export let appState: AppState;
-
-const GP_MAP = GAMEPAD_MAP as Record<string, GamepadDef>;
+/**
+ * The App method names that will have a helper in GameObjRaw
+ */
+export type AppEvents = keyof {
+    [K in keyof App as K extends `on${any}` ? K : never]: [never];
+};
 
 export const initAppState = (opt: {
     canvas: HTMLCanvasElement;
@@ -109,6 +112,7 @@ export const initAppState = (opt: {
         skipTime: false,
         isHidden: false,
         numFrames: 0,
+        capsOn: false,
         mousePos: new Vec2(0),
         mouseDeltaPos: new Vec2(0),
         keyState: new ButtonState<Key>(),
@@ -137,8 +141,7 @@ export const initApp = (
     }
 
     const state = initAppState(opt);
-    appState = state;
-    parseButtonBindings();
+    parseButtonBindings(state);
 
     function dt() {
         return state.dt * state.timeScale;
@@ -228,6 +231,10 @@ export const initApp = (
             // @ts-ignore
             || document.webkitFullscreenElement === state.canvas;
     }
+
+    const isFocused = () => {
+        return document.activeElement === state.canvas;
+    };
 
     function quit() {
         state.stopped = true;
@@ -646,6 +653,10 @@ export const initApp = (
         );
     });
 
+    const getLastInputDeviceType = () => {
+        return state.lastInputDevice;
+    };
+
     function processInput() {
         state.events.trigger("input");
         state.keyState.down.forEach((k) => state.events.trigger("keyDown", k));
@@ -839,10 +850,10 @@ export const initApp = (
         // 🍝 Here we depend of GFX Context even if initGfx needs initApp for being used
         // Letterbox creates some black bars so we need to remove that for calculating
         // mouse position
-        const mousePos = new Vec2(
-            e.offsetX - _k.gfx.viewport.x,
-            e.offsetY - _k.gfx.viewport.y,
-        );
+
+        // Ironically, e.offsetX and e.offsetY are the mouse position. Is not
+        // related to what we call the "offset" in this code
+        const mousePos = canvasToViewport(new Vec2(e.offsetX, e.offsetY));
         const mouseDeltaPos = new Vec2(e.movementX, e.movementY);
 
         if (isFullscreen()) {
@@ -937,6 +948,8 @@ export const initApp = (
     };
 
     canvasEvents.keydown = (e) => {
+        state.capsOn = e.getModifierState("CapsLock");
+
         if (PREVENT_DEFAULT_KEYS.has(e.key)) {
             e.preventDefault();
         }
@@ -1232,6 +1245,7 @@ export const initApp = (
         isGamepadButtonPressed,
         isGamepadButtonDown,
         isGamepadButtonReleased,
+        isFocused,
         getGamepadStick,
         isButtonPressed,
         isButtonDown,

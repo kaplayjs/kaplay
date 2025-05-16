@@ -1,3 +1,11 @@
+/**
+ * @file Text Wrap
+ * @description Test text wrap.
+ * @difficulty 3
+ * @tags basics
+ * @minver 3001.0
+ */
+
 kaplay({ background: "#000000" });
 
 const theText = `MAN PAGE

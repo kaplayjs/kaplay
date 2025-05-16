@@ -1,8 +1,7 @@
-import { ASCII_CHARS } from "../constants";
+import { ASCII_CHARS } from "../constants/general";
 import { Texture } from "../gfx/gfx";
-import { _k } from "../kaplay";
-import happyFont from "../kassets/happy.png";
 import type { Quad } from "../math/math";
+import { _k } from "../shared";
 import type { TexFilter } from "../types";
 import { type Asset, loadImg } from "./asset";
 import { makeFont } from "./font";
@@ -52,9 +51,13 @@ export function loadBitmapFont(
 }
 
 // loading happiness...
-export const loadHappy = (
+export function loadHappy(
     fontName: string = "happy",
     opt?: LoadBitmapFontOpt,
-) => {
-    return loadBitmapFont(fontName, happyFont, 28, 36, opt);
-};
+) {
+    if (!_k.game.defaultAssets.happy) {
+        throw new Error("You can't use loadHappy with kaplay/mini");
+    }
+
+    return loadBitmapFont(fontName, _k.game.defaultAssets.happy, 28, 36, opt);
+}

@@ -1,5 +1,5 @@
-import { Vec2 } from "../../math/math";
 import { getArcPts } from "../../math/various";
+import { Vec2 } from "../../math/Vec2";
 import type { DrawEllipseOpt } from "../../types";
 import { anchorPt } from "../anchor";
 import { drawPolygon } from "./drawPolygon";

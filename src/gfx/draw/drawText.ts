@@ -3,7 +3,7 @@ import type { BitmapFontData } from "../../assets/bitmapFont";
 import type { FontData } from "../../assets/font";
 import type { Uniform } from "../../assets/shader";
 import type { Color } from "../../math/color";
-import type { Vec2 } from "../../math/math";
+import type { Vec2 } from "../../math/Vec2";
 import type { Anchor, RenderProps } from "../../types";
 import { formatText } from "../formatText";
 import { drawFormattedText } from "./drawFormattedText";

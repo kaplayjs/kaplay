@@ -1,5 +1,5 @@
-import type { FrameBuffer } from "../../../gfx/classes/FrameBuffer";
 import type { Picture } from "../../../gfx/draw/drawPicture";
+import type { FrameBuffer } from "../../../gfx/FrameBuffer";
 import type { Comp, GameObj } from "../../../types";
 
 export type DrawonOpt = {
@@ -21,7 +21,9 @@ export function drawon(c: FrameBuffer | Picture, opt?: DrawonOpt) {
             };
         },
         refresh(this: GameObj<DrawonComp>) {
-            this.target.isFresh = false;
+            if (this.target) {
+                this.target.isFresh = false;
+            }
         },
     };
 }

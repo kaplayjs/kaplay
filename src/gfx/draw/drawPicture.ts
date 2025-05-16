@@ -1,7 +1,7 @@
 import type { Shader, Uniform } from "../../assets/shader";
+import { IDENTITY_MATRIX } from "../../constants/math";
 import { getCamTransform } from "../../game/camera";
-import { _k } from "../../kaplay";
-import { Mat4 } from "../../math/math";
+import { _k } from "../../shared";
 import type { BlendMode, RenderProps } from "../../types";
 import { Mesh, type Texture } from "../gfx";
 import { height, width } from "../stack";
@@ -70,8 +70,6 @@ export class Picture {
     }
 }
 
-const identityMatrix = new Mat4();
-
 /**
  * Drawing options for drawPicture
  */
@@ -130,7 +128,7 @@ export function drawPicture(
             shader.send({
                 width: w,
                 height: h,
-                camera: opt.fixed ? identityMatrix : getCamTransform(),
+                camera: opt.fixed ? IDENTITY_MATRIX : getCamTransform(),
                 transform: transform,
             });
         }
