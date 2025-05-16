@@ -21,17 +21,11 @@ const browser = await puppeteer.launch({
 
 console.log("testing...");
 
-const examplesDir = fs.readdirSync(path.join("kaplay", "examples"));
+const examplesDir = fs.readdirSync(path.join("examples"));
 
 const examples = examplesDir.filter((p) => {
     const isExample = !p.startsWith(".") && p.endsWith(".js");
     if (!isExample) return false;
-
-    const fileContent = fs.readFileSync(path.join("kaplay", "examples", p));
-    const isTest = fileContent.includes("@test");
-    const isV3001 = fileContent.includes("@minver 3001.0");
-
-    return isTest && isV3001;
 }).map((d) => path.basename(d, ".js"));
 
 const playtestsDir = fs.readdirSync("tests/playtests");

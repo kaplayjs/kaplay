@@ -3772,6 +3772,7 @@ export interface KAPLAYCtx<
      * @example
      * ```js
      * sky.color = rgb("#ef6360")
+     * ```
      *
      * @returns The color.
      * @since v2000.0
