@@ -1049,10 +1049,16 @@ export const initApp = (
                 state.mouseState.press("left");
                 state.events.trigger("mousePress", "left");
             }
+
             touches.forEach((t) => {
                 state.events.trigger(
                     "touchStart",
-                    touchPos,
+                    canvasToViewport(
+                        new Vec2(
+                            t.clientX - box.x,
+                            t.clientY - box.y,
+                        ),
+                    ),
                     t,
                 );
             });
@@ -1082,7 +1088,12 @@ export const initApp = (
             touches.forEach((t) => {
                 state.events.trigger(
                     "touchMove",
-                    touchPos,
+                    canvasToViewport(
+                        new Vec2(
+                            t.clientX - box.x,
+                            t.clientY - box.y,
+                        ),
+                    ),
                     t,
                 );
             });
@@ -1119,7 +1130,12 @@ export const initApp = (
             touches.forEach((t) => {
                 state.events.trigger(
                     "touchEnd",
-                    touchPos,
+                    canvasToViewport(
+                        new Vec2(
+                            t.clientX - box.x,
+                            t.clientY - box.y,
+                        ),
+                    ),
                     t,
                 );
             });
@@ -1145,7 +1161,12 @@ export const initApp = (
             touches.forEach((t) => {
                 state.events.trigger(
                     "touchEnd",
-                    touchPos,
+                    canvasToViewport(
+                        new Vec2(
+                            t.clientX - box.x,
+                            t.clientY - box.y,
+                        ),
+                    ),
                     t,
                 );
             });
