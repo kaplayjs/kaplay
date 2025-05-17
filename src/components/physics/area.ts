@@ -381,7 +381,7 @@ export function area(opt: AreaCompOpt = {}): AreaComp {
             f: () => void,
             btn: MouseButton = "left",
         ): KEventController {
-            const e = _k.app.onMousePress(btn, () => {
+            const e = this.onMousePress(btn, () => {
                 if (this.isHovering()) {
                     f();
                 }
