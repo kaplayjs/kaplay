@@ -1018,10 +1018,13 @@ export const initApp = (opt: {
         state.events.onOnce("input", () => {
             const touches = [...e.changedTouches];
             const box = state.canvas.getBoundingClientRect();
+
             if (opt.touchToMouse !== false) {
-                state.mousePos = new Vec2(
-                    touches[0].clientX - box.x,
-                    touches[0].clientY - box.y,
+                state.mousePos = canvasToViewport(
+                    new Vec2(
+                        touches[0].clientX - box.x,
+                        touches[0].clientY - box.y,
+                    ),
                 );
 
                 state.lastInputDevice = "mouse";
@@ -1036,10 +1039,13 @@ export const initApp = (opt: {
                 state.mouseState.press("left");
                 state.events.trigger("mousePress", "left");
             }
+
             touches.forEach((t) => {
                 state.events.trigger(
                     "touchStart",
-                    new Vec2(t.clientX - box.x, t.clientY - box.y),
+                    canvasToViewport(
+                        new Vec2(t.clientX - box.x, t.clientY - box.y),
+                    ),
                     t,
                 );
             });
@@ -1052,19 +1058,25 @@ export const initApp = (opt: {
         state.events.onOnce("input", () => {
             const touches = [...e.changedTouches];
             const box = state.canvas.getBoundingClientRect();
+
             if (opt.touchToMouse !== false) {
                 const lastMousePos = state.mousePos;
-                state.mousePos = new Vec2(
-                    touches[0].clientX - box.x,
-                    touches[0].clientY - box.y,
+                state.mousePos = canvasToViewport(
+                    new Vec2(
+                        touches[0].clientX - box.x,
+                        touches[0].clientY - box.y,
+                    ),
                 );
                 state.mouseDeltaPos = state.mousePos.sub(lastMousePos);
                 state.events.trigger("mouseMove");
             }
+
             touches.forEach((t) => {
                 state.events.trigger(
                     "touchMove",
-                    new Vec2(t.clientX - box.x, t.clientY - box.y),
+                    canvasToViewport(
+                        new Vec2(t.clientX - box.x, t.clientY - box.y),
+                    ),
                     t,
                 );
             });
@@ -1075,11 +1087,15 @@ export const initApp = (opt: {
         state.events.onOnce("input", () => {
             const touches = [...e.changedTouches];
             const box = state.canvas.getBoundingClientRect();
+
             if (opt.touchToMouse !== false) {
-                state.mousePos = new Vec2(
-                    touches[0].clientX - box.x,
-                    touches[0].clientY - box.y,
+                state.mousePos = canvasToViewport(
+                    new Vec2(
+                        touches[0].clientX - box.x,
+                        touches[0].clientY - box.y,
+                    ),
                 );
+
                 state.mouseDeltaPos = new Vec2(0, 0);
 
                 if (state.buttonsByMouse.has("left")) {
@@ -1092,10 +1108,13 @@ export const initApp = (opt: {
                 state.mouseState.release("left");
                 state.events.trigger("mouseRelease", "left");
             }
+
             touches.forEach((t) => {
                 state.events.trigger(
                     "touchEnd",
-                    new Vec2(t.clientX - box.x, t.clientY - box.y),
+                    canvasToViewport(
+                        new Vec2(t.clientX - box.x, t.clientY - box.y),
+                    ),
                     t,
                 );
             });
@@ -1106,18 +1125,24 @@ export const initApp = (opt: {
         state.events.onOnce("input", () => {
             const touches = [...e.changedTouches];
             const box = state.canvas.getBoundingClientRect();
+
             if (opt.touchToMouse !== false) {
-                state.mousePos = new Vec2(
-                    touches[0].clientX - box.x,
-                    touches[0].clientY - box.y,
+                state.mousePos = canvasToViewport(
+                    new Vec2(
+                        touches[0].clientX - box.x,
+                        touches[0].clientY - box.y,
+                    ),
                 );
                 state.mouseState.release("left");
                 state.events.trigger("mouseRelease", "left");
             }
+
             touches.forEach((t) => {
                 state.events.trigger(
                     "touchEnd",
-                    new Vec2(t.clientX - box.x, t.clientY - box.y),
+                    canvasToViewport(
+                        new Vec2(t.clientX - box.x, t.clientY - box.y),
+                    ),
                     t,
                 );
             });
