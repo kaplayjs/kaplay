@@ -417,11 +417,12 @@ export function area(opt: AreaCompOpt = {}): AreaComp {
                 });
             }
 
-            const e = _k.app.onMousePress(btn, () => {
+            const e = this.onMousePress(btn, () => {
                 if (this.isHovering()) {
                     action();
                 }
             });
+
             events.push(e);
 
             return e;
