@@ -222,6 +222,7 @@ export class Mat23 {
     d: number; // 0
     e: number;
     f: number; // 1
+    _inverse: Mat23 | null = null;
     constructor(
         a: number = 1,
         b: number = 0,
@@ -304,6 +305,7 @@ export class Mat23 {
         this.d = m.d;
         this.e = m.e;
         this.f = m.f;
+        this._inverse = m._inverse;
         return this;
     }
     setIdentity() {
@@ -313,6 +315,7 @@ export class Mat23 {
         this.d = 1;
         this.e = 0;
         this.f = 0;
+        this._inverse = null;
         return this;
     }
     mul(other: Mat23): Mat23 {
@@ -328,11 +331,13 @@ export class Mat23 {
     translateSelfV(t: Vec2): Mat23 {
         this.e += t.x * this.a + t.y * this.c;
         this.f += t.x * this.b + t.y * this.d;
+        this._inverse = null;
         return this;
     }
     translateSelf(x: number, y: number): Mat23 {
         this.e += x * this.a + y * this.c;
         this.f += x * this.b + y * this.d;
+        this._inverse = null;
         return this;
     }
     rotateSelf(degrees: number): Mat23 {
@@ -345,6 +350,7 @@ export class Mat23 {
         this.b = c * this.b + s * this.d;
         this.c = c * this.c - s * oldA;
         this.d = c * this.d - s * oldB;
+        this._inverse = null;
         return this;
     }
     scaleSelfV(s: Vec2): Mat23 {
@@ -352,6 +358,7 @@ export class Mat23 {
         this.b *= s.x;
         this.c *= s.y;
         this.d *= s.y;
+        this._inverse = null;
         return this;
     }
     scaleSelf(x: number, y: number): Mat23 {
@@ -359,9 +366,10 @@ export class Mat23 {
         this.b *= x;
         this.c *= y;
         this.d *= y;
+        this._inverse = null;
         return this;
     }
-    mulSelf(other: Mat23) {
+    mulSelf(other: Mat23): Mat23 {
         const a = other.a * this.a + other.b * this.c;
         const b = other.a * this.b + other.b * this.d;
         const c = other.c * this.a + other.d * this.c;
@@ -374,6 +382,8 @@ export class Mat23 {
         this.d = d;
         this.e = e;
         this.f = f;
+        this._inverse = null;
+        return this;
     }
     transform(p: Vec2) {
         return vec2(
@@ -411,8 +421,9 @@ export class Mat23 {
     }
 
     get inverse() {
+        if (this._inverse) return this._inverse;
         const det = this.det;
-        return new Mat23(
+        this._inverse = new Mat23(
             this.d / det,
             -this.b / det,
             -this.c / det,
@@ -420,6 +431,7 @@ export class Mat23 {
             (this.c * this.f - this.d * this.e) / det,
             (this.b * this.e - this.a * this.f) / det,
         );
+        return this._inverse;
     }
     getTranslation() {
         return new Vec2(this.e, this.f);
