@@ -64,6 +64,12 @@ onLoad(() => {
                             vec2(q.x + q.w, q.y + q.h),
                             vec2(q.x, q.y + q.h),
                         ],
+                        opacities: [
+                            1,
+                            1,
+                            0,
+                            0,
+                        ],
                         tex: tex,
                     });
                 },
