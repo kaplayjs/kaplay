@@ -391,8 +391,8 @@ export function area(opt: AreaCompOpt = {}): AreaComp {
         ) {
             if (typeof otherOrTag === "string") {
                 return this.getCollisions().some(c =>
-                    c.source === this && c.target.is("Monster")
-                    || c.target === this && c.source.is("Monster")
+                    c.source === this && c.target.is(otherOrTag)
+                    || c.target === this && c.source.is(otherOrTag)
                 );
             }
             else {
