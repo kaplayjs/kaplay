@@ -385,13 +385,25 @@ export function area(opt: AreaCompOpt = {}): AreaComp {
         },
 
         // TODO: perform check instead of use cache
-        isColliding(other: GameObj<AreaComp>) {
-            if (!other.id) {
-                throw new Error(
-                    "isColliding() requires the object to have an id",
+        isColliding(
+            this: GameObj<AreaComp>,
+            otherOrTag: GameObj<AreaComp> | string,
+        ) {
+            if (typeof otherOrTag === "string") {
+                return this.getCollisions().some(c =>
+                    c.source === this && c.target.is("Monster")
+                    || c.target === this && c.source.is("Monster")
                 );
             }
-            return Boolean(colliding[other.id]);
+            else {
+                if (!otherOrTag.id) {
+                    throw new Error(
+                        "isColliding() requires the object to have an id",
+                    );
+                }
+                return Boolean(colliding[otherOrTag.id]);
+            }
+            return false;
         },
 
         isOverlapping(other) {
