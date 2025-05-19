@@ -18,7 +18,12 @@ import { createFrameRenderer } from "./frameRendering";
 export type Engine = ReturnType<typeof createEngine>;
 
 export const createEngine = (gopt: KAPLAYOpt) => {
-    const canvas = createCanvas(gopt);
+    // Default options
+    const opt = Object.assign({
+        scale: 1,
+    }, gopt);
+
+    const canvas = createCanvas(opt);
     const { fontCacheC2d, fontCacheCanvas } = createFontCache();
     const app = initApp({ canvas, ...gopt });
 
@@ -37,9 +42,9 @@ export const createEngine = (gopt: KAPLAYOpt) => {
     const gl = canvasContext;
 
     // TODO: Investigate correctly what's the differente between GFX and AppGFX and reduce to 1 method
-    const gfx = initGfx(gl, gopt);
-    const appGfx = initAppGfx(gfx, gopt);
-    const assets = initAssets(gfx, gopt.spriteAtlasPadding ?? 0);
+    const gfx = initGfx(gl, opt);
+    const appGfx = initAppGfx(gfx, opt);
+    const assets = initAssets(gfx, opt.spriteAtlasPadding ?? 0);
     const audio = initAudio();
     const game = createGame();
 
@@ -47,14 +52,14 @@ export const createEngine = (gopt: KAPLAYOpt) => {
     const frameRenderer = createFrameRenderer(
         appGfx,
         game,
-        gopt.pixelDensity ?? 1,
+        opt.pixelDensity ?? 1,
     );
 
     // Debug mode
-    const debug = createDebug(gopt, app, appGfx, audio, game, frameRenderer);
+    const debug = createDebug(opt, app, appGfx, audio, game, frameRenderer);
 
     return {
-        globalOpt: gopt,
+        globalOpt: opt,
         canvas,
         app,
         ggl: gfx,
@@ -74,7 +79,7 @@ export const createEngine = (gopt: KAPLAYOpt) => {
                 app,
                 game,
                 assets,
-                gopt,
+                opt,
                 frameRenderer,
                 debug,
             );

@@ -1,8 +1,7 @@
-import type { KAPLAYOpt } from "../types";
+import type { KAPLAYOpt, MustKAPLAYOpt } from "../types";
 
-export const createCanvas = (gopt: KAPLAYOpt) => {
+export const createCanvas = (gopt: MustKAPLAYOpt) => {
     const root = gopt.root ?? document.body;
-    const gscale = gopt.scale ?? 1;
     const pixelDensity = gopt.pixelDensity || 1;
 
     // If root is not defined (which falls back to <body>) we assume user is on a clean page,
@@ -31,8 +30,8 @@ export const createCanvas = (gopt: KAPLAYOpt) => {
         // check if isFixed
         gopt.width && gopt.height && !gopt.letterbox
     ) {
-        canvas.width = gopt.width * gscale;
-        canvas.height = gopt.height * gscale;
+        canvas.width = gopt.width * gopt.scale;
+        canvas.height = gopt.height * gopt.scale;
         styles.push(`width: ${canvas.width}px`);
         styles.push(`height: ${canvas.height}px`);
     }

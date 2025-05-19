@@ -41,10 +41,10 @@ export function initAppEvents() {
             );
             _k.gfx.width = _k.gfx.ggl.gl.drawingBufferWidth
                 / _k.gfx.pixelDensity
-                / _k.gfx.gscale;
+                / _k.globalOpt.scale;
             _k.gfx.height = _k.gfx.ggl.gl.drawingBufferHeight
                 / _k.gfx.pixelDensity
-                / _k.gfx.gscale;
+                / _k.globalOpt.scale;
         }
     });
 
