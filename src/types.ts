@@ -6476,6 +6476,12 @@ export type DrawPolygonOpt = RenderProps & {
      */
     colors?: Color[];
     /**
+     * The opacity of each vertex.
+     *
+     * @since v4000.0
+     */
+    opacities?: number[];
+    /**
      * The uv of each vertex.
      *
      * @since v3001.0

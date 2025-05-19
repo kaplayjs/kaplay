@@ -27,6 +27,10 @@ export interface PolygonComp extends Comp {
      */
     colors?: Color[];
     /**
+     * The opacity of each vertex.
+     */
+    opacities?: number[];
+    /**
      * The uv of each vertex.
      *
      * @since v3001.0
@@ -58,6 +62,7 @@ export function polygon(pts: Vec2[], opt: PolygonCompOpt = {}): PolygonComp {
         id: "polygon",
         pts,
         colors: opt.colors,
+        opacities: opt.opacities,
         uv: opt.uv,
         tex: opt.tex,
         radius: opt.radius,
@@ -65,6 +70,7 @@ export function polygon(pts: Vec2[], opt: PolygonCompOpt = {}): PolygonComp {
             drawPolygon(Object.assign(getRenderProps(this), {
                 pts: this.pts,
                 colors: this.colors,
+                opacities: this.opacities,
                 uv: this.uv,
                 tex: this.tex,
                 radius: this.radius,
