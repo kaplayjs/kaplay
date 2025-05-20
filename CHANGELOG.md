@@ -119,6 +119,20 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   @dragoncoder047
 - Changed the API of `HealthComp` - @amyspark-ng
 
+## [4000.0.0-alpha.20] - TBD
+
+### Fixed
+
+- Fixed `AreaComp#onClick()` attaching events to app, instead of object, so
+  event wasn't being paused with `obj.paused` - @lajbel
+- Fixed all touch events having a bad transform - @lajbel
+
+## [3001.0.19] - TBD
+
+- Fixed `AreaComp#onClick()` attaching events to app, instead of object, so
+  event wasn't being paused with `obj.paused` - @lajbel
+- Fixed all touch events having a bad transform - @lajbel
+
 ## [3001.0.18] - 2025-05-16
 
 ### Fixed

@@ -6012,6 +6012,12 @@ export type KGamepad = {
  */
 export type GameObjInspect = Record<Tag, string | null>;
 
+export type MustKAPLAYOpt =
+    & {
+        [K in keyof Pick<KAPLAYOpt, "scale">]-?: KAPLAYOpt[K];
+    }
+    & KAPLAYOpt;
+
 /**
  * KAPLAY configurations.
  *
@@ -6481,6 +6487,12 @@ export type DrawPolygonOpt = RenderProps & {
      * @since v3000.0
      */
     colors?: Color[];
+    /**
+     * The opacity of each vertex.
+     *
+     * @since v4000.0
+     */
+    opacities?: number[];
     /**
      * The uv of each vertex.
      *

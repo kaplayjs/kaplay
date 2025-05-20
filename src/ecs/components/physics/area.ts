@@ -8,7 +8,7 @@ import { drawRect } from "../../../gfx/draw/drawRect";
 import { multTranslate, popTransform, pushTransform } from "../../../gfx/stack";
 import { rgb } from "../../../math/color";
 import { Circle, Polygon, Rect, vec2 } from "../../../math/math";
-import { type Vec2 } from "../../../math/Vec2";
+import { Vec2 } from "../../../math/Vec2";
 import { _k } from "../../../shared";
 import type {
     Collision,
@@ -385,13 +385,25 @@ export function area(opt: AreaCompOpt = {}): AreaComp {
         },
 
         // TODO: perform check instead of use cache
-        isColliding(other: GameObj<AreaComp>) {
-            if (!other.id) {
-                throw new Error(
-                    "isColliding() requires the object to have an id",
+        isColliding(
+            this: GameObj<AreaComp>,
+            otherOrTag: GameObj<AreaComp> | string,
+        ) {
+            if (typeof otherOrTag === "string") {
+                return this.getCollisions().some(c =>
+                    c.source === this && c.target.is(otherOrTag)
+                    || c.target === this && c.source.is(otherOrTag)
                 );
             }
-            return Boolean(colliding[other.id]);
+            else {
+                if (!otherOrTag.id) {
+                    throw new Error(
+                        "isColliding() requires the object to have an id",
+                    );
+                }
+                return Boolean(colliding[otherOrTag.id]);
+            }
+            return false;
         },
 
         isOverlapping(other) {
@@ -417,11 +429,12 @@ export function area(opt: AreaCompOpt = {}): AreaComp {
                 });
             }
 
-            const e = _k.app.onMousePress(btn, () => {
+            const e = this.onMousePress(btn, () => {
                 if (this.isHovering()) {
                     action();
                 }
             });
+
             events.push(e);
 
             return e;
@@ -526,9 +539,21 @@ export function area(opt: AreaCompOpt = {}): AreaComp {
             }
         },
 
-        hasPoint(pt: Vec2): boolean {
-            // TODO: convert to pt to local space instead
-            return this.worldArea().contains(pt);
+        hasPoint(
+            this: GameObj<AreaComp | PosComp | AnchorComp>,
+            pt: Vec2,
+        ): boolean {
+            const localArea = this.localArea();
+            pt = this.transform.inverse.transform(pt);
+            Vec2.sub(pt, this.area.offset, pt);
+            Vec2.scalec(pt, 1 / this.area.scale.x, 1 / this.area.scale.y, pt);
+            if (localArea instanceof Rect && this.anchor !== "topleft") {
+                const offset = anchorPt(this.anchor || DEF_ANCHOR)
+                    .add(1, 1)
+                    .scale(-0.5 * localArea.width, -0.5 * localArea.height);
+                Vec2.sub(pt, offset, pt);
+            }
+            return this.localArea().contains(pt);
         },
 
         // push an obj out of another if they're overlapped

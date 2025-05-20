@@ -70,7 +70,14 @@ export function drawPolygon(opt: DrawPolygonOpt) {
             }
         }
 
-        attributes.opacity.fill(opt.opacity ?? 1);
+        if (opt.opacities) {
+            for (let i = 0; i < opt.pts.length; i++) {
+                attributes.opacity[i] = opt.opacities[i];
+            }
+        }
+        else {
+            attributes.opacity.fill(opt.opacity ?? 1);
+        }
 
         /*const verts = opt.pts.map((pt, i) => ({
             pos: new Vec2(pt.x, pt.y),

@@ -6,10 +6,11 @@ import {
     MAX_BATCHED_VERTS,
     VERTEX_FORMAT,
 } from "../constants/general";
+import { go } from "../game/scenes";
 import { type Color, rgb } from "../math/color";
 import { Mat23 } from "../math/math";
 import { Vec2 } from "../math/Vec2";
-import type { KAPLAYOpt } from "../types";
+import type { KAPLAYOpt, MustKAPLAYOpt } from "../types";
 import type { FontAtlas } from "./formatText";
 import { FrameBuffer } from "./FrameBuffer";
 import { BatchRenderer, type GfxCtx, Texture } from "./gfx";
@@ -32,8 +33,6 @@ export type AppGfxCtx = {
     postShaderUniform: Uniform | (() => Uniform) | null;
     renderer: BatchRenderer;
     pixelDensity: number;
-    /** This is the scale factor that scales pixel "kaplay({ scale })" */
-    gscale: number;
     transform: Mat23;
     transformStack: Mat23[];
     transformStackIndex: number;
@@ -66,10 +65,9 @@ export type Viewport = {
     scale: number;
 };
 
-export const initAppGfx = (gfx: GfxCtx, gopt: KAPLAYOpt): AppGfxCtx => {
+export const initAppGfx = (gfx: GfxCtx, gopt: MustKAPLAYOpt): AppGfxCtx => {
     const defShader = makeShader(gfx, DEF_VERT, DEF_FRAG);
     const pixelDensity = gopt.pixelDensity ?? 1;
-    const gscale = gopt.scale ?? 1;
     const { gl } = gfx;
 
     // a 1x1 white texture to draw raw shapes like rectangles and polygons
@@ -82,8 +80,8 @@ export const initAppGfx = (gfx: GfxCtx, gopt: KAPLAYOpt): AppGfxCtx => {
     const frameBuffer = (gopt.width && gopt.height)
         ? new FrameBuffer(
             gfx,
-            gopt.width * pixelDensity * gscale,
-            gopt.height * pixelDensity * gscale,
+            gopt.width * pixelDensity * gopt.scale,
+            gopt.height * pixelDensity * gopt.scale,
         )
         : new FrameBuffer(
             gfx,
@@ -174,7 +172,6 @@ export const initAppGfx = (gfx: GfxCtx, gopt: KAPLAYOpt): AppGfxCtx => {
         postShaderUniform: null as Uniform | (() => Uniform) | null,
         renderer: renderer,
         pixelDensity: pixelDensity,
-        gscale,
 
         transform: new Mat23(),
         transformStack: transformStack,
@@ -185,9 +182,9 @@ export const initAppGfx = (gfx: GfxCtx, gopt: KAPLAYOpt): AppGfxCtx => {
         bgAlpha: bgAlpha,
 
         width: gopt.width
-            ?? gl.drawingBufferWidth / pixelDensity / gscale,
+            ?? gl.drawingBufferWidth / pixelDensity / gopt.scale,
         height: gopt.height
-            ?? gl.drawingBufferHeight / pixelDensity / gscale,
+            ?? gl.drawingBufferHeight / pixelDensity / gopt.scale,
 
         viewport: {
             x: 0,
