@@ -11,7 +11,6 @@ import {
 } from "../assets/asset";
 import { getBitmapFont, loadBitmapFont, loadHappy } from "../assets/bitmapFont";
 import { getFont, loadFont } from "../assets/font";
-import { loadPedit } from "../assets/pedit";
 import { getShader, loadShader, loadShaderURL } from "../assets/shader";
 import { getSound, loadMusic, loadSound, SoundData } from "../assets/sound";
 import { getSprite, loadBean, loadSprite, SpriteData } from "../assets/sprite";
@@ -281,7 +280,6 @@ export const createContext = (
         loadShader,
         loadShaderURL,
         loadAseprite,
-        loadPedit,
         loadBean,
         loadHappy: loadHappy,
         loadJSON,
