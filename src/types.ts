@@ -2967,19 +2967,6 @@ export interface KAPLAYCtx<
         jsonSrc: string | AsepriteData,
     ): Asset<SpriteData>;
     /**
-     * @deprecated The format is not supported anymore.
-     *
-     * @param name - The asset name.
-     * @param src - The resource url.
-     *
-     * Load .pedit file.
-     *
-     * @returns The asset data.
-     * @since v2000.0
-     * @group Assets
-     */
-    loadPedit(name: string | null, src: string): Asset<SpriteData>;
-    /**
      * Load default sprite "bean".
      *
      * @param name - An optional name for bean.
