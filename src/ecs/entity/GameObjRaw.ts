@@ -454,29 +454,47 @@ export interface GameObjRaw {
     onButtonDown: KAPLAYCtx["onButtonDown"];
     onButtonPress: KAPLAYCtx["onButtonPress"];
     onButtonRelease: KAPLAYCtx["onButtonRelease"];
-
-    /** @readonly */
-    _parent: GameObj;
-    _compsIds: Set<string>;
-    _compStates: Map<string, Comp>;
-    _anonymousCompStates: Comp[];
-    _cleanups: Record<string, (() => any)[]>;
-    _events: KEventHandler<any>;
-    _fixedUpdateEvents: KEvent<[]>;
-    _updateEvents: KEvent<[]>;
-    _drawEvents: KEvent<[]>;
-    _inputEvents: KEventController[];
-    _onCurCompCleanup: Function | null;
-    _tags: Set<Tag>;
-    _paused: boolean;
 }
 
-type GameObjTransform = GameObj<PosComp | RotateComp | ScaleComp>;
-type GameObjCamTransform = GameObj<
-    PosComp | RotateComp | ScaleComp | FixedComp | MaskComp
->;
+export type InternalGameObjRaw = GameObjRaw & {
+    /** @readonly */
+    _parent: GameObj;
+    /** @readonly */
+    _compsIds: Set<string>;
+    /** @readonly */
+    _compStates: Map<string, Comp>;
+    /** @readonly */
+    _anonymousCompStates: Comp[];
+    /** @readonly */
+    _cleanups: Record<string, (() => any)[]>;
+    /** @readonly */
+    _events: KEventHandler<any>;
+    /** @readonly */
+    _fixedUpdateEvents: KEvent<[]>;
+    /** @readonly */
+    _updateEvents: KEvent<[]>;
+    /** @readonly */
+    _drawEvents: KEvent<[]>;
+    /** @readonly */
+    _inputEvents: KEventController[];
+    /** @readonly */
+    _onCurCompCleanup: Function | null;
+    /** @readonly */
+    _tags: Set<Tag>;
+    /** @readonly */
+    _paused: boolean;
+};
 
-export const GameObjRawPrototype: Omit<GameObjRaw, AppEvents> = {
+type GameObjTransform =
+    & GameObj<PosComp | RotateComp | ScaleComp>
+    & InternalGameObjRaw;
+type GameObjCamTransform =
+    & GameObj<
+        PosComp | RotateComp | ScaleComp | FixedComp | MaskComp
+    >
+    & InternalGameObjRaw;
+
+export const GameObjRawPrototype: Omit<InternalGameObjRaw, AppEvents> = {
     // This chain of `as any`, is because we never should use this object
     // directly, it's only a prototype. These properties WILL be defined
     // (by our factory function `make`) when we create a new game object.
@@ -506,14 +524,14 @@ export const GameObjRawPrototype: Omit<GameObjRaw, AppEvents> = {
 
         if (this._parent === p) return;
         const index = this._parent
-            ? this._parent.children.indexOf(this as GameObj)
+            ? this._parent.children.indexOf(this as unknown as GameObj)
             : -1;
         if (index !== -1) {
             this._parent.children.splice(index, 1);
         }
         this._parent = p;
         if (p) {
-            p.children.push(this as GameObj);
+            p.children.push(this as unknown as GameObj);
         }
     },
 
@@ -566,7 +584,7 @@ export const GameObjRawPrototype: Omit<GameObjRaw, AppEvents> = {
     },
 
     add<T2 extends CompList<unknown>>(
-        this: GameObjRaw,
+        this: InternalGameObjRaw,
         a: [...T2],
     ): GameObj<T2[number]> {
         const obj = make(a);
@@ -593,7 +611,7 @@ export const GameObjRawPrototype: Omit<GameObjRaw, AppEvents> = {
         return obj;
     },
 
-    readd<T>(this: GameObjRaw, obj: GameObj<T>): GameObj<T> {
+    readd<T>(this: InternalGameObjRaw, obj: GameObj<T>): GameObj<T> {
         const idx = this.children.indexOf(obj);
 
         if (idx !== -1) {
@@ -604,7 +622,7 @@ export const GameObjRawPrototype: Omit<GameObjRaw, AppEvents> = {
         return obj;
     },
 
-    remove(this: GameObjRaw, obj: GameObj): void {
+    remove(this: InternalGameObjRaw, obj: GameObj): void {
         obj.parent = null;
 
         const trigger = (o: GameObj) => {
@@ -616,7 +634,7 @@ export const GameObjRawPrototype: Omit<GameObjRaw, AppEvents> = {
         trigger(obj);
     },
 
-    removeAll(this: GameObjRaw, tag?: Tag): void {
+    removeAll(this: InternalGameObjRaw, tag?: Tag): void {
         if (tag) {
             this.get(tag).forEach((obj) => this.remove(obj));
         }
@@ -625,17 +643,17 @@ export const GameObjRawPrototype: Omit<GameObjRaw, AppEvents> = {
         }
     },
 
-    destroy(this: GameObjRaw) {
+    destroy(this: InternalGameObjRaw) {
         if (this.parent) {
             this.parent.remove(this);
         }
     },
 
-    exists(this: GameObjRaw) {
+    exists(this: InternalGameObjRaw) {
         return this.parent !== null;
     },
 
-    isAncestorOf(this: GameObjRaw, obj: GameObj) {
+    isAncestorOf(this: InternalGameObjRaw, obj: GameObj) {
         if (!obj.parent) {
             return false;
         }
@@ -645,7 +663,7 @@ export const GameObjRawPrototype: Omit<GameObjRaw, AppEvents> = {
 
     // #region Get & Query
     get<T = any>(
-        this: GameObjRaw,
+        this: InternalGameObjRaw,
         t: Tag | Tag[],
         opts: GetOpt = {},
     ): GameObj<T>[] {
@@ -838,7 +856,7 @@ export const GameObjRawPrototype: Omit<GameObjRaw, AppEvents> = {
     // #endregion
 
     // #region Lifecycle
-    update(this: GameObjRaw) {
+    update(this: InternalGameObjRaw) {
         if (this.paused) return;
         this._updateEvents.trigger();
         for (let i = 0; i < this.children.length; i++) {
@@ -846,7 +864,7 @@ export const GameObjRawPrototype: Omit<GameObjRaw, AppEvents> = {
         }
     },
 
-    fixedUpdate(this: GameObjRaw) {
+    fixedUpdate(this: InternalGameObjRaw) {
         if (this.paused) return;
         this._fixedUpdateEvents.trigger();
         for (let i = 0; i < this.children.length; i++) {
@@ -854,7 +872,7 @@ export const GameObjRawPrototype: Omit<GameObjRaw, AppEvents> = {
         }
     },
 
-    draw(this: GameObjRaw) {
+    draw(this: InternalGameObjRaw) {
         this.drawTree();
     },
 
@@ -862,7 +880,8 @@ export const GameObjRawPrototype: Omit<GameObjRaw, AppEvents> = {
         if (this.hidden) return;
 
         const objects = new Array<
-            GameObj<LayerComp | ZComp | FixedComp | MaskComp>
+            & GameObj<LayerComp | ZComp | FixedComp | MaskComp>
+            & InternalGameObjRaw
         >();
 
         pushTransform();
@@ -987,7 +1006,7 @@ export const GameObjRawPrototype: Omit<GameObjRaw, AppEvents> = {
         }
     },
 
-    inspect(this: GameObjRaw): GameObjInspect {
+    inspect(this: InternalGameObjRaw): GameObjInspect {
         const info = {} as GameObjInspect;
 
         for (const [tag, comp] of this._compStates) {
@@ -1059,7 +1078,7 @@ export const GameObjRawPrototype: Omit<GameObjRaw, AppEvents> = {
     // #endregion
 
     // #region Comps
-    use(this: GameObjRaw, comp: Comp) {
+    use(this: InternalGameObjRaw, comp: Comp) {
         if (!comp || typeof comp != "object") {
             throw new Error(
                 `You can only pass objects to .use(), you passed a "${typeof comp}"`,
@@ -1194,7 +1213,7 @@ export const GameObjRawPrototype: Omit<GameObjRaw, AppEvents> = {
     },
 
     // Remove components
-    unuse(this: GameObjRaw, id: string) {
+    unuse(this: InternalGameObjRaw, id: string) {
         const addCompIdAsTag = this.id === 0
             ? false
             : _k.globalOpt.tagsAsComponents;
@@ -1226,7 +1245,7 @@ export const GameObjRawPrototype: Omit<GameObjRaw, AppEvents> = {
     },
 
     has(
-        this: GameObjRaw,
+        this: InternalGameObjRaw,
         compList: string | string[],
         op: "and" | "or" = "and",
     ): boolean {
@@ -1243,14 +1262,14 @@ export const GameObjRawPrototype: Omit<GameObjRaw, AppEvents> = {
         }
     },
 
-    c(this: GameObjRaw, id: string): Comp | null {
+    c(this: InternalGameObjRaw, id: string): Comp | null {
         return this._compStates.get(id) ?? null;
     },
 
     // #endregion
 
     // #region Tags
-    tag(this: GameObjRaw, tag: Tag | Tag[]): void {
+    tag(this: InternalGameObjRaw, tag: Tag | Tag[]): void {
         if (Array.isArray(tag)) {
             for (const t of tag) {
                 this._tags.add(t);
@@ -1265,7 +1284,7 @@ export const GameObjRawPrototype: Omit<GameObjRaw, AppEvents> = {
         }
     },
 
-    untag(this: GameObjRaw, tag: Tag | Tag[]): void {
+    untag(this: InternalGameObjRaw, tag: Tag | Tag[]): void {
         if (Array.isArray(tag)) {
             for (const t of tag) {
                 this._tags.delete(t);
@@ -1280,7 +1299,11 @@ export const GameObjRawPrototype: Omit<GameObjRaw, AppEvents> = {
         }
     },
 
-    is(this: GameObjRaw, tag: Tag | Tag[], op: "or" | "and" = "and"): boolean {
+    is(
+        this: InternalGameObjRaw,
+        tag: Tag | Tag[],
+        op: "or" | "and" = "and",
+    ): boolean {
         if (Array.isArray(tag)) {
             if (op === "and") {
                 return tag.every(tag => this._tags.has(tag));
@@ -1297,7 +1320,7 @@ export const GameObjRawPrototype: Omit<GameObjRaw, AppEvents> = {
 
     // #region Events
     on(
-        this: GameObjRaw,
+        this: InternalGameObjRaw,
         name: string,
         action: (...args: unknown[]) => void,
     ): KEventController {
@@ -1321,11 +1344,11 @@ export const GameObjRawPrototype: Omit<GameObjRaw, AppEvents> = {
         return ctrl;
     },
 
-    trigger(this: GameObjRaw, name: string, ...args: unknown[]): void {
+    trigger(this: InternalGameObjRaw, name: string, ...args: unknown[]): void {
         this._events.trigger(name, ...args);
     },
 
-    clearEvents(this: GameObjRaw) {
+    clearEvents(this: InternalGameObjRaw) {
         this._events.clear();
         this._drawEvents.clear();
         this._updateEvents.clear();
@@ -1402,7 +1425,7 @@ export function attachAppToGameObjRaw() {
     for (const e of appEvs) {
         const obj = GameObjRawPrototype as Record<string, any>;
 
-        obj[e] = function(this: GameObjRaw, ...args: [any]) {
+        obj[e] = function(this: InternalGameObjRaw, ...args: [any]) {
             // @ts-ignore
             const ev: KEventController = _k.app[e]?.(...args);
             ev.paused = this.paused;
