@@ -149,26 +149,12 @@ export function drawTexture(opt: DrawTextureOpt) {
         );
     }
     else {
-        // TODO: should this ignore scale?
-        if (opt.width && opt.height) {
-            scale.x = opt.width / w;
-            scale.y = opt.height / h;
-        }
-        else if (opt.width) {
-            scale.x = opt.width / w;
-            scale.y = scale.x;
-        }
-        else if (opt.height) {
-            scale.y = opt.height / h;
-            scale.x = scale.y;
-        }
-
         drawUVQuad(Object.assign({}, opt, {
-            scale: opt.scale ? scale.scale(opt.scale) : scale,
+            scale: opt.scale ?? Vec2.ONE,
             tex: opt.tex,
             quad: q,
-            width: w,
-            height: h,
+            width: opt.width ?? w,
+            height: opt.height ?? h,
         }));
     }
 }
