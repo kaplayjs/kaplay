@@ -127,6 +127,7 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - Fixed `AreaComp#onClick()` attaching events to app, instead of object, so
   event wasn't being paused with `obj.paused` - @lajbel
 - Fixed all touch events having a bad transform - @lajbel
+- Fixed sprite scaling not working properly when letterbox - @mflerackers
 
 ### Removed
 
