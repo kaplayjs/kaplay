@@ -268,6 +268,7 @@ export const initApp = (
         const frame = (t: number) => {
             if (state.stopped) return;
 
+            // TODO: allow background actions?
             if (document.visibilityState !== "visible") {
                 state.loopID = requestAnimationFrame(frame);
                 return;
