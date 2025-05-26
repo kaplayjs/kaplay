@@ -9,21 +9,16 @@ import { rgb } from "../math/color";
 import { vec2 } from "../math/math";
 import { _k } from "../shared";
 
-export const handleErr = (err: Error | any) => {
+export const handleErr = (err: Error) => {
     if (_k.game.crashed) return;
     _k.game.crashed = true;
     _k.audio.ctx.suspend();
 
     const errorMessage = err.message ?? String(err)
         ?? "Unknown error, check console for more info";
-    let errorScreen = false;
 
-    _k.app.run(
-        () => {},
+    _k.app.runOnce(
         () => {
-            if (errorScreen) return;
-            errorScreen = true;
-
             _k.frameRenderer.frameStart();
 
             drawUnscaled(() => {
@@ -75,7 +70,7 @@ export const handleErr = (err: Error | any) => {
 
     // TODO: Make this a setting
     if (!errorMessage.startsWith("[rendering]")) {
-        throw new Error(errorMessage);
+        throw err;
     }
     else {
         // We don't throw rendering errors,

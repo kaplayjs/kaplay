@@ -268,7 +268,6 @@ export const initApp = (
         const frame = (t: number) => {
             if (state.stopped) return;
 
-            // TODO: allow background actions?
             if (document.visibilityState !== "visible") {
                 state.loopID = requestAnimationFrame(frame);
                 return;
@@ -309,6 +308,12 @@ export const initApp = (
         };
 
         frame(0);
+    }
+
+    function runOnce(
+        update: () => void,
+    ) {
+        update();
     }
 
     function isTouchscreen() {
@@ -1253,6 +1258,7 @@ export const initApp = (
         restDt,
         time,
         run,
+        runOnce,
         canvas: state.canvas,
         fps,
         numFrames,
