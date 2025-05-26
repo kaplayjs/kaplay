@@ -403,7 +403,6 @@ export function area(opt: AreaCompOpt = {}): AreaComp {
                 }
                 return Boolean(colliding[otherOrTag.id]);
             }
-            return false;
         },
 
         isOverlapping(other) {
