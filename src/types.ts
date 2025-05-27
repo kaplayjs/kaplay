@@ -168,50 +168,50 @@ export interface KAPLAYCtx<
      */
     _k: Engine & { k: KAPLAYCtx };
     /**
-   * Assemble a game object from a list of components, and add it to the game,
-   *
-   * @example
-   * ```js
-   * const player = add([
-   *     // List of components, each offers a set of functionalities
-   *     sprite("mark"),
-   *     pos(100, 200),
-   *     area(),
-   *     body(),
-   *     health(8),
-   *     // Plain strings are tags, a quicker way to let us define behaviors for a group
-   *     "player",
-   *     "friendly",
-   *     // Components are just plain objects, you can pass an object literal as a component.
-   *     {
-   *         dir: LEFT,
-   *         dead: false,
-   *         speed: 240,
-   *     },
-   * ]);
-   *
-   * // .jump is provided by body()
-   * player.jump();
-
-   * // .moveTo is provided by pos()
-   * player.moveTo(300, 200);
-   *
-   * // .onUpdate() is on every game object, it registers an event that runs every frame
-   * player.onUpdate(() => {
-   *     // .move() is provided by pos()
-   *     player.move(player.dir.scale(player.speed));
-   * });
-   *
-   * // .onCollide is provided by area()
-   * player.onCollide("tree", () => {
-   *     destroy(player);
-   * });
-   * ```
-  *
-  * @param comps - List of components to add to the game object.
-  * @returns The added game object that contains all properties and methods each component offers.
-  * @group Game Obj
-  */
+     * Assemble a game object from a list of components, and add it to the game,
+     *
+     * @param comps - List of components to add to the game object.
+     *
+     * @example
+     * ```js
+     * const player = add([
+     *     // List of components, each offers a set of functionalities
+     *     sprite("mark"),
+     *     pos(100, 200),
+     *     area(),
+     *     body(),
+     *     health(8),
+     *     // Plain strings are tags, a quicker way to let us define behaviors for a group
+     *     "player",
+     *     "friendly",
+     *     // Components are just plain objects, you can pass an object literal as a component.
+     *     {
+     *         dir: LEFT,
+     *         dead: false,
+     *         speed: 240,
+     *     },
+     * ]);
+     *
+     * // .jump is provided by body()
+     * player.jump();
+     * // .moveTo is provided by pos()
+     * player.moveTo(300, 200);
+     *
+     * // .onUpdate() is on every game object, it registers an event that runs every frame
+     * player.onUpdate(() => {
+     *     // .move() is provided by pos()
+     *     player.move(player.dir.scale(player.speed));
+     * });
+     *
+     * // .onCollide is provided by area()
+     * player.onCollide("tree", () => {
+     *     destroy(player);
+     * });
+     * ```
+     *
+     * @returns The added game object that contains all properties and methods each component offers.
+     * @group Game Obj
+     */
     add<T extends CompList<unknown>>(comps?: [...T]): GameObj<T[number]>;
     /**
      * Remove and re-add the game obj, without triggering add / destroy events.
@@ -253,6 +253,7 @@ export interface KAPLAYCtx<
      *     readd(purpleBean);
      * });
      * ```
+     *
      * @returns The re-added game object.
      * @since v3001.0
      * @group Game Obj
@@ -434,6 +435,7 @@ export interface KAPLAYCtx<
      * // bean will be upside down!
      * bean.angle = 180
      * ```
+     *
      * @returns The rotate comp.
      * @since v2000.0
      * @group Components
@@ -1002,18 +1004,18 @@ export interface KAPLAYCtx<
     /**
      * Enables double jump.
      *
-     * @requires {@link body `body()`}
      * @param numJumps - The number of jumps allowed. Defaults to 1.
      *
      * @returns The double jump comp.
      * @since v3000.0
      * @group Components
+     *
+     * @requires {@link body `body()`}
      */
     doubleJump(numJumps?: number): DoubleJumpComp;
     /**
      * Move towards a direction infinitely, and destroys when it leaves game view.
      *
-     * @requires {@link pos `pos()`}
      * @param dir - The direction to move towards.
      * @param speed - The speed to move at.
      *
@@ -1032,6 +1034,8 @@ export interface KAPLAYCtx<
      * @returns The move comp.
      * @since v2000.0
      * @group Components
+     *
+     * @requires {@link pos `pos()`}
      */
     move(dir: number | Vec2, speed: number): EmptyComp;
     /**
@@ -1332,15 +1336,16 @@ export interface KAPLAYCtx<
     ): StateComp<T>;
     /**
      * @deprecated since v3001.0
+     *
+     * @returns An empty comp.
+     * @since v3000.0
+     * @group Components
+     *
      * @requires {@link opacity `opacity()`}
      *
      * Fade object in.
      *
      * Uses opacity for finding what to fade into and to set opacity during fade animation.
-     *
-     * @returns An empty comp.
-     * @since v3000.0
-     * @group Components
      */
     fadeIn(time: number): Comp;
     /**
@@ -3144,7 +3149,7 @@ export interface KAPLAYCtx<
      * loadShaderURL("outline", null, "/shaders/outline.glsl")
      * ```
      *
-     * @retunrs The asset data.
+     * @returns The asset data.
      * @since v3000.0
      * @group Assets
      */
@@ -3676,7 +3681,7 @@ export interface KAPLAYCtx<
     /**
      * List of characters inputted since last frame.
      *
-     * @returnns An array of characters inputted.
+     * @returns An array of characters inputted.
      * @since v3000.0
      * @group Input
      */
@@ -4412,14 +4417,13 @@ export interface KAPLAYCtx<
     /**
      * Tweeeeeeeening!
      *
-     * @since v3000.0
-     *
      * @example
      * ```js
      * // tween bean to mouse position
      * tween(bean.pos, mousePos(), 1, (p) => bean.pos = p, easings.easeOutBounce)
      * ```
      *
+     * @since v3000.0
      * @group Math
      */
     tween<V extends LerpValue>(
@@ -4665,6 +4669,7 @@ export interface KAPLAYCtx<
      * @param m1 - First control point (tangent)
      * @param m2 - Second control point (tangent)
      * @param pt2 - Second point
+     *
      * @returns A function which gives the value on the 1D Hermite curve at t
      */
     hermite(
@@ -4680,6 +4685,7 @@ export interface KAPLAYCtx<
      * @param pt3 - Second point
      * @param pt4 - Next point
      * @param tension - The tension of the curve, [0..1] from round to tight.
+     *
      * @returns A function which gives the value on the 2D Cardinal curve at t
      */
     cardinal(
@@ -4695,6 +4701,7 @@ export interface KAPLAYCtx<
      * @param pt2 - First point
      * @param pt3 - Second point
      * @param pt4 - Next point
+     *
      * @returns A function which gives the value on the 2D Catmull-Rom curve at t
      */
     catmullRom(pt1: Vec2, m1: Vec2, m2: Vec2, pt2: Vec2): (t: number) => Vec2;
@@ -4704,6 +4711,7 @@ export interface KAPLAYCtx<
      * @param pt2 - First control point
      * @param pt3 - Second control point
      * @param pt4 - Second point
+     *
      * @returns A function which gives the value on the 2D quadratic Bezier curve at t
      */
     bezier(pt1: Vec2, pt2: Vec2, pt3: Vec2, pt4: Vec2): (t: number) => Vec2;
@@ -4716,6 +4724,7 @@ export interface KAPLAYCtx<
      * @param tension - The tension of the curve, [-1..1] from round to tight.
      * @param continuity - The continuity of the curve, [-1..1] from box corners to inverted corners.
      * @param bias - The bias of the curve, [-1..1] from pre-shoot to post-shoot.
+     *
      * @returns A function which gives the value on the 2D Kochanek–Bartels curve at t
      */
     kochanekBartels(
@@ -4744,7 +4753,7 @@ export interface KAPLAYCtx<
      * @param l1 - The first line.
      * @param l2 - The second line.
      *
-     * @return The intersection point, or null if the lines are parallel.
+     * @returns The intersection point, or null if the lines are parallel.
      * @since v2000.0
      * @group Math
      */
@@ -5514,6 +5523,7 @@ export interface KAPLAYCtx<
      *
      * drawFormattedText(txt);
      * ```
+     *
      * @returns The formatted text object.
      * @since v2000.2
      * @group Draw

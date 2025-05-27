@@ -362,7 +362,7 @@ export interface GameObjRaw {
      * Trigger an event.
      *
      * @param event - The event name.
-     * @parm args - The arguments to pass to the event action.
+     * @param args - The arguments to pass to the event action.
      *
      * @since v2000.0
      */
