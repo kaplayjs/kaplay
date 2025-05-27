@@ -170,6 +170,7 @@ class AnimateChannel {
      * Returns the first key index for the given time, as well as the relative time towards the second key.
      * @param t - The time in seconds.
      * @param timing - The optional timestamps in percent.
+     *
      * @returns The first key index for the given time, as well as the relative time towards the second key.
      */
     getLowerKeyIndexAndRelativeTime(
@@ -269,6 +270,7 @@ class AnimateChannel {
  * Reflects a point around another point
  * @param a - Point to reflect
  * @param b - Point to reflect around
+ *
  * @returns Reflected point
  */
 function reflect(a: Vec2, b: Vec2) {
@@ -647,6 +649,7 @@ export function animate(gopts: AnimateCompOpt = {}): AnimateComp {
  * Serializes an animation to javascript objects for serialization to JSON.
  * @param obj - The root object to serialize from.
  * @param name - Optional name of the root object.
+ *
  * @returns A javascript object serialization of the animation.
  */
 export function serializeAnimation(obj: GameObj<any>, name: string): any {
