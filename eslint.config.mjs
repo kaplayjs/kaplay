@@ -10,7 +10,7 @@ export default tseslint.config(
             jsdoc,
         },
         rules: {
-            "jsdoc/require-jsdoc": "warn",
+            "jsdoc/require-hyphen-before-param-description": "error",
         },
         files: ["./src/**/*.ts"],
     },

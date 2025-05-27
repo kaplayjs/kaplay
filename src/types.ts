@@ -682,8 +682,8 @@ export interface KAPLAYCtx<
     /**
      * Draws a video.
      *
-     * @param url The video to play. Needs to be on the same webserver due to CORS.
-     * @param opt The video component options
+     * @param url - The video to play. Needs to be on the same webserver due to CORS.
+     * @param opt - The video component options
      *
      * @returns The video comp.
      * @since v4000.0
@@ -693,7 +693,7 @@ export interface KAPLAYCtx<
     /**
      * Draws a picture.
      *
-     * @param picture The picture to draw.
+     * @param picture - The picture to draw.
      *
      * @returns The picture comp.
      * @since v4000.0
@@ -1865,7 +1865,7 @@ export interface KAPLAYCtx<
      * Register an event that runs once for each asset that failed to load,
      * after all others have completed.
      *
-     * @param action The function to run when the event is triggered.
+     * @param action - The function to run when the event is triggered.
      *
      * @example
      * ```js
@@ -2281,7 +2281,7 @@ export interface KAPLAYCtx<
     /**
      * Register an event that runs when user release certain keys.
      *
-     * @param k = The key(s) to listen for. See {@link Key `Key`}.
+     * @param k - = The key(s) to listen for. See {@link Key `Key`}.
      * @param action - The function that runs when a user releases certain keys
      *
      * @example
@@ -4464,11 +4464,11 @@ export interface KAPLAYCtx<
      *
      * For clamping check {@link mapc}
      *
-     * @param v The value the function will depend on.
-     * @param l1 The minimum value of the source range.
-     * @param h1 The minimum result value.
-     * @param l2 The maximum value of the source range.
-     * @param h2 The maximum result value.
+     * @param v - The value the function will depend on.
+     * @param l1 - The minimum value of the source range.
+     * @param h1 - The minimum result value.
+     * @param l2 - The maximum value of the source range.
+     * @param h2 - The maximum result value.
      *
      * @example
      * ```js
@@ -4487,11 +4487,11 @@ export interface KAPLAYCtx<
     /**
      * Map a value from one range to another range, and clamp to the dest range.
      *
-     * @param v The value the function will depend on.
-     * @param l1 The minimum value of the source range.
-     * @param h1 The minimum result value.
-     * @param l2 The maximum value of the source range.
-     * @param h2 The maximum result value.
+     * @param v - The value the function will depend on.
+     * @param l1 - The minimum value of the source range.
+     * @param h1 - The minimum result value.
+     * @param l2 - The maximum value of the source range.
+     * @param h2 - The maximum result value.
      *
      * @example
      * ```js
@@ -4679,7 +4679,7 @@ export interface KAPLAYCtx<
      * @param pt2 - First point
      * @param pt3 - Second point
      * @param pt4 - Next point
-     * @param tension The tension of the curve, [0..1] from round to tight.
+     * @param tension - The tension of the curve, [0..1] from round to tight.
      * @returns A function which gives the value on the 2D Cardinal curve at t
      */
     cardinal(
@@ -5390,12 +5390,12 @@ export interface KAPLAYCtx<
     Picture: typeof Picture;
     /**
      * Selects the picture for drawing, erases existing data.
-     * @param picture The picture to write drawing data to.
+     * @param picture - The picture to write drawing data to.
      */
     beginPicture(picture?: Picture): void;
     /**
      * Selects the picture for drawing, keeps existing data.
-     * @param picture The picture to write drawing data to.
+     * @param picture - The picture to write drawing data to.
      */
     appendToPicture(picture?: Picture): void;
     /**
@@ -5405,8 +5405,8 @@ export interface KAPLAYCtx<
     endPicture(): Picture;
     /**
      * Draws a picture to the screen. This function can not be used to draw recursively to a picture.
-     * @param picture The picture to draw
-     * @param opt Drawing options
+     * @param picture - The picture to draw
+     * @param opt - Drawing options
      */
     drawPicture(picture: Picture, opt: DrawPictureOpt): void;
     /**
@@ -5539,7 +5539,7 @@ export interface KAPLAYCtx<
     /**
      * Draw a canvas.
      *
-     * @param opt The canvas object.
+     * @param opt - The canvas object.
      *
      * @since v4000.0
      * @group Draw
@@ -5575,9 +5575,9 @@ export interface KAPLAYCtx<
     /**
      * Runs a system at the specified events in the pipeline
      *
-     * @param name The name of the system. Overwrites an existing system if the name has been used before.
-     * @param cb The function to run.
-     * @param when When to run the function.
+     * @param name - The name of the system. Overwrites an existing system if the name has been used before.
+     * @param cb - The function to run.
+     * @param when - When to run the function.
      *
      * @since v4000.0
      * @group Plugins

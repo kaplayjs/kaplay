@@ -7,7 +7,7 @@ interface Collider {
     center: Vec2;
     /**
      * This function needs to return the furthest point of the collider in the given direction.
-     * @param direction The direction to search in.
+     * @param direction - The direction to search in.
      */
     support(direction: Vec2): Vec2;
 }
@@ -219,8 +219,8 @@ function evolveSimplex(
 
 /**
  * Returns true if the colliders intersect.
- * @param colliderA The first collider to test
- * @param colliderB The second collider to test
+ * @param colliderA - The first collider to test
+ * @param colliderB - The second collider to test
  * @returns True if the colliders intersect
  */
 function gjkIntersects(colliderA: Collider, colliderB: Collider): boolean {
@@ -247,8 +247,8 @@ type Edge = {
 
 /**
  * Returns the edge closest to the origin.
- * @param simplex The simplex whose edges we will check to find the closest edge to the origin
- * @param winding The winding order of the simplex
+ * @param simplex - The simplex whose edges we will check to find the closest edge to the origin
+ * @param winding - The winding order of the simplex
  * @returns The edge closest to the origin.
  */
 function findClosestEdge(simplex: Vec2[], winding: PolygonWinding): Edge {
@@ -301,8 +301,8 @@ export type GjkCollisionResult = {
 
 /**
  * Returns true if the shapes collide
- * @param colliderA The first collider to test
- * @param colliderB The second collider to test
+ * @param colliderA - The first collider to test
+ * @param colliderB - The second collider to test
  * @returns True if the shapes collide
  */
 function getIntersection(
@@ -362,8 +362,8 @@ function getIntersection(
 
 /**
  * Returns a collision result if there was a collision
- * @param colliderA The first collider to test
- * @param colliderB The second collider to test
+ * @param colliderA - The first collider to test
+ * @param colliderB - The second collider to test
  * @returns A collision result or null
  */
 function gjkIntersection(
@@ -388,7 +388,7 @@ function gjkIntersection(
 
 /**
  * Returns a collider for the given shape.
- * @param shape The shape to get a collider for.
+ * @param shape - The shape to get a collider for.
  * @returns
  */
 function shapeToCollider(shape: Shape): Collider {
@@ -419,8 +419,8 @@ function shapeToCollider(shape: Shape): Collider {
 
 /**
  * Returns true if the shapes collide
- * @param shapeA The first shape to test
- * @param shapeB The second shape to test
+ * @param shapeA - The first shape to test
+ * @param shapeB - The second shape to test
  * @returns True if the shapes collide
  */
 export function gjkShapeIntersects(shapeA: Shape, shapeB: Shape): boolean {
@@ -431,8 +431,8 @@ export function gjkShapeIntersects(shapeA: Shape, shapeB: Shape): boolean {
 
 /**
  * Returns a collision result if there was a collision
- * @param shapeA The first shape to test
- * @param shapeB The second shape to test
+ * @param shapeA - The first shape to test
+ * @param shapeB - The second shape to test
  * @returns A collision result or null
  */
 export function gjkShapeIntersection(
