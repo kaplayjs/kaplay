@@ -31,7 +31,7 @@ export class SweepAndPrune {
 
     /**
      * Add the object and its edges to the list
-     * @param obj The object to add
+     * @param obj - The object to add
      */
     add(obj: GameObj<AreaComp>) {
         const left = new Edge(obj, true);
@@ -43,7 +43,7 @@ export class SweepAndPrune {
 
     /**
      * Remove the object and its edges from the list
-     * @param obj The object to remove
+     * @param obj - The object to remove
      */
     remove(obj: GameObj<AreaComp>) {
         const pair = this.objects.get(obj);

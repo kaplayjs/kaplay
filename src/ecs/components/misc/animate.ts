@@ -79,9 +79,9 @@ export interface BaseValues {
 export interface AnimateComp extends Comp {
     /**
      * Animates a property on this object.
-     * @param name Name of the property to animate.
-     * @param keys Keys determining the value at a certain point in time.
-     * @param opts Options.
+     * @param name - Name of the property to animate.
+     * @param keys - Keys determining the value at a certain point in time.
+     * @param opts - Options.
      */
     animate<T extends LerpValue>(
         name: string,
@@ -90,7 +90,7 @@ export interface AnimateComp extends Comp {
     ): void;
     /**
      * Removes the animation from the given property.
-     * @param name Name of the property to remove the animation from.
+     * @param name - Name of the property to remove the animation from.
      */
     unanimate(name: string): void;
     /**
@@ -99,12 +99,12 @@ export interface AnimateComp extends Comp {
     unanimateAll(): void;
     /**
      * Attaches an event handler which is called when all the animation channels have finished.
-     * @param cb The event handler called when the animation finishes.
+     * @param cb - The event handler called when the animation finishes.
      */
     onAnimateFinished(cb: () => void): KEventController;
     /**
      * Attaches an event handler which is called when an animation channels has finished.
-     * @param cb The event handler called when an animation channel finishes.
+     * @param cb - The event handler called when an animation channel finishes.
      */
     onAnimateChannelFinished(cb: (name: string) => void): KEventController;
     /**
@@ -168,8 +168,8 @@ class AnimateChannel {
 
     /**
      * Returns the first key index for the given time, as well as the relative time towards the second key.
-     * @param t The time in seconds.
-     * @param timing The optional timestamps in percent.
+     * @param t - The time in seconds.
+     * @param timing - The optional timestamps in percent.
      * @returns The first key index for the given time, as well as the relative time towards the second key.
      */
     getLowerKeyIndexAndRelativeTime(
@@ -267,8 +267,8 @@ class AnimateChannel {
 
 /**
  * Reflects a point around another point
- * @param a Point to reflect
- * @param b Point to reflect around
+ * @param a - Point to reflect
+ * @param b - Point to reflect around
  * @returns Reflected point
  */
 function reflect(a: Vec2, b: Vec2) {
@@ -645,8 +645,8 @@ export function animate(gopts: AnimateCompOpt = {}): AnimateComp {
 
 /**
  * Serializes an animation to javascript objects for serialization to JSON.
- * @param obj The root object to serialize from.
- * @param name Optional name of the root object.
+ * @param obj - The root object to serialize from.
+ * @param name - Optional name of the root object.
  * @returns A javascript object serialization of the animation.
  */
 export function serializeAnimation(obj: GameObj<any>, name: string): any {
@@ -694,8 +694,8 @@ function deserializeOptions(options: AnimationOptions) {
 
 /**
  * Applies the animation to this object and its named children
- * @param obj The root object to deserialize to.
- * @param animation A javascript object serialization of the animation.
+ * @param obj - The root object to deserialize to.
+ * @param animation - A javascript object serialization of the animation.
  */
 export function applyAnimation(obj: GameObj<any>, animation: Animation) {
     // TODO: test this
