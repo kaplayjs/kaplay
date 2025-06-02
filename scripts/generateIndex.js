@@ -26,14 +26,8 @@ async function getAllDeclarationFiles(dir, baseDir = dir) {
     return files.flat();
 }
 
-async function extractTypes(filePath) {
-    const program = ts.createProgram([filePath], {});
-    const sourceFile = program.getSourceFile(filePath);
-
-    if (!sourceFile) return null;
-
+async function extractTypesFromSourceFile(sourceFile) {
     let types = [];
-
     ts.forEachChild(sourceFile, (node) => {
         if (
             ts.isTypeAliasDeclaration(node)
@@ -49,24 +43,30 @@ async function extractTypes(filePath) {
             }
         }
     });
-
     return types.length ? types : null;
 }
 
 async function genIndex() {
-    console.log("generating src/index.ts");
+    console.log("Generating src/index.ts");
     try {
         const files = await getAllDeclarationFiles(typesDir);
         const exports = [];
 
-        console.log("extracting types");
+        // Only .ts files, skip index.ts and kaplay.ts
+        const filteredFiles = files.filter(
+            (file) => file !== "index.ts" && file !== "kaplay.ts",
+        );
+        const fullPaths = filteredFiles.map((file) => resolve(typesDir, file));
 
-        for (const file of files) {
-            if (file === "index.ts" || file === "kaplay.ts") continue;
+        const program = ts.createProgram(fullPaths, {});
+        console.log("Extracting types");
 
-            const fullPath = resolve(typesDir, file);
-            const types = await extractTypes(fullPath);
-
+        for (let i = 0; i < filteredFiles.length; ++i) {
+            const file = filteredFiles[i];
+            const fullPath = fullPaths[i];
+            const sourceFile = program.getSourceFile(fullPath);
+            if (!sourceFile) continue;
+            const types = await extractTypesFromSourceFile(sourceFile);
             if (types) {
                 const { dir, name } = parse(file);
                 const importPath = `./${dir ? `${dir}/` : ""}${name}`;

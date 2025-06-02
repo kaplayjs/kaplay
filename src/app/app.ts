@@ -311,6 +311,12 @@ export const initApp = (
         frame(0);
     }
 
+    function runOnce(
+        update: () => void,
+    ) {
+        update();
+    }
+
     function isTouchscreen() {
         return ("ontouchstart" in window) || navigator.maxTouchPoints > 0;
     }
@@ -1253,6 +1259,7 @@ export const initApp = (
         restDt,
         time,
         run,
+        runOnce,
         canvas: state.canvas,
         fps,
         numFrames,

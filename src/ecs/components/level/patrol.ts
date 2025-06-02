@@ -18,7 +18,7 @@ export interface PatrolComp extends Comp {
     nextLocation: Vec2 | undefined;
     /**
      * Attaches an event handler which is called when using "stop" and the end of the path is reached.
-     * @param cb The event handler called when the patrol finishes.
+     * @param cb - The event handler called when the patrol finishes.
      */
     onPatrolFinished(cb: (objects: GameObj[]) => void): KEventController;
 }

@@ -2400,10 +2400,11 @@ export function curveLengthApproximation(
 
 /**
  * A second order function returning an evaluator for the given 1D Hermite curve
- * @param pt1 First point
- * @param m1 First control point (tangent)
- * @param m2 Second control point (tangent)
- * @param pt2 Second point
+ * @param pt1 - First point
+ * @param m1 - First control point (tangent)
+ * @param m2 - Second control point (tangent)
+ * @param pt2 - Second point
+ *
  * @returns A function which gives the value on the 1D Hermite curve at t
  */
 export function hermite(pt1: number, m1: number, m2: number, pt2: number) {
@@ -2421,12 +2422,13 @@ export function hermite(pt1: number, m1: number, m2: number, pt2: number) {
 
 /**
  * A second order function returning an evaluator for the given 2D Cardinal curve
- * @param pt1 Previous point
- * @param pt2 First point
- * @param pt3 Second point
- * @param pt4 Next point
- * @param tension The tension of the curve, [0..1] from round to tight.
- * @param h The hermite function or one of its derivatives.
+ * @param pt1 - Previous point
+ * @param pt2 - First point
+ * @param pt3 - Second point
+ * @param pt4 - Next point
+ * @param tension - The tension of the curve, [0..1] from round to tight.
+ * @param h - The hermite function or one of its derivatives.
+ *
  * @returns A function which gives the value on the 2D Cardinal curve at t
  */
 export function cardinal(
@@ -2456,10 +2458,11 @@ export function cardinal(
 
 /**
  * A second order function returning an evaluator for the given 2D Catmull-Rom curve
- * @param pt1 Previous point
- * @param pt2 First point
- * @param pt3 Second point
- * @param pt4 Next point
+ * @param pt1 - Previous point
+ * @param pt2 - First point
+ * @param pt3 - Second point
+ * @param pt4 - Next point
+ *
  * @returns A function which gives the value on the 2D Catmull-Rom curve at t
  */
 export function catmullRom(
@@ -2475,10 +2478,11 @@ export function catmullRom(
 
 /**
  * A second order function returning an evaluator for the given 2D quadratic Bezier curve
- * @param pt1 First point
- * @param pt2 First control point
- * @param pt3 Second control point
- * @param pt4 Second point
+ * @param pt1 - First point
+ * @param pt2 - First control point
+ * @param pt3 - Second control point
+ * @param pt4 - Second point
+ *
  * @returns A function which gives the value on the 2D quadratic Bezier curve at t
  */
 export function bezier(
@@ -2500,13 +2504,14 @@ export function bezier(
 
 /**
  * A second order function returning an evaluator for the given 2D Kochanek–Bartels curve
- * @param pt1 Previous point
- * @param pt2 First point
- * @param pt3 Second point
- * @param pt4 Next point
- * @param tension The tension of the curve, [-1..1] from round to tight.
- * @param continuity The continuity of the curve, [-1..1] from box corners to inverted corners.
- * @param bias The bias of the curve, [-1..1] from pre-shoot to post-shoot.
+ * @param pt1 - Previous point
+ * @param pt2 - First point
+ * @param pt3 - Second point
+ * @param pt4 - Next point
+ * @param tension - The tension of the curve, [-1..1] from round to tight.
+ * @param continuity - The continuity of the curve, [-1..1] from box corners to inverted corners.
+ * @param bias - The bias of the curve, [-1..1] from pre-shoot to post-shoot.
+ *
  * @returns A function which gives the value on the 2D Kochanek–Bartels curve at t
  */
 export function kochanekBartels(
@@ -2546,10 +2551,11 @@ export function kochanekBartels(
 
 /**
  * A second order function returning an evaluator for the derivative of the given 1D Hermite curve
- * @param pt1 First point
- * @param m1 First control point (tangent)
- * @param m2 Second control point (tangent)
- * @param pt2 Second point
+ * @param pt1 - First point
+ * @param m1 - First control point (tangent)
+ * @param m2 - Second control point (tangent)
+ * @param pt2 - Second point
+ *
  * @returns A function which gives the first derivative on the 1D Hermite curve at t
  */
 export function hermiteFirstDerivative(

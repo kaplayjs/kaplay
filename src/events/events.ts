@@ -31,6 +31,7 @@ export class Registry<T> extends Map<number, T> {
  * logHi.cancel();
  *
  * ```
+ *
  * @group Events
  */
 export class KEventController {

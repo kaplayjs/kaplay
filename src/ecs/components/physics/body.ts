@@ -77,12 +77,12 @@ export interface BodyComp extends Comp {
     isJumping(): boolean;
     /**
      * Applies an impulse
-     * @param impulse The impulse vector, applied directly
+     * @param impulse - The impulse vector, applied directly
      */
     applyImpulse(impulse: Vec2): void;
     /**
      * Applies a force
-     * @param force The force vector, applied after scaled by the inverse mass
+     * @param force - The force vector, applied after scaled by the inverse mass
      */
     addForce(force: Vec2): void;
     /**

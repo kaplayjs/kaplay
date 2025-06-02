@@ -85,10 +85,11 @@ export class Vec2 {
 
     /**
      * Calculates the sum of the vectors
-     * @param v The first term
-     * @param x The x of the second term
-     * @param y The y of the second term
-     * @param out The vector sum
+     * @param v - The first term
+     * @param x - The x of the second term
+     * @param y - The y of the second term
+     * @param out - The vector sum
+     *
      * @returns The sum of the vectors
      */
     static addc(v: Vec2, x: number, y: number, out: Vec2): Vec2 {
@@ -99,9 +100,10 @@ export class Vec2 {
 
     /**
      * Calculates the sum of the vectors
-     * @param v The first term
-     * @param other The second term
-     * @param out The vector sum
+     * @param v - The first term
+     * @param other - The second term
+     * @param out - The vector sum
+     *
      * @returns The sum of the vectors
      */
     static add(v: Vec2, other: Vec2, out: Vec2): Vec2 {
@@ -118,10 +120,11 @@ export class Vec2 {
 
     /**
      * Calculates the difference of the vectors
-     * @param v The first term
-     * @param x The x of the second term
-     * @param y The y of the second term
-     * @param out The vector difference
+     * @param v - The first term
+     * @param x - The x of the second term
+     * @param y - The y of the second term
+     * @param out - The vector difference
+     *
      * @returns The difference of the vectors
      */
     static subc(v: Vec2, x: number, y: number, out: Vec2): Vec2 {
@@ -132,9 +135,10 @@ export class Vec2 {
 
     /**
      * Calculates the difference of the vectors
-     * @param v The first term
-     * @param other The second term
-     * @param out The vector difference
+     * @param v - The first term
+     * @param other - The second term
+     * @param out - The vector difference
+     *
      * @returns The difference of the vectors
      */
     static sub(v: Vec2, other: Vec2, out: Vec2): Vec2 {
@@ -151,10 +155,11 @@ export class Vec2 {
 
     /**
      * Calculates the scale of the vector
-     * @param v The vector
-     * @param x The x scale
-     * @param y The y scale
-     * @param out The scaled vector
+     * @param v - The vector
+     * @param x - The x scale
+     * @param y - The y scale
+     * @param out - The scaled vector
+     *
      * @returns The scale of the vector
      */
     static scale(v: Vec2, s: number, out: Vec2): Vec2 {
@@ -165,10 +170,11 @@ export class Vec2 {
 
     /**
      * Calculates the scale of the vector
-     * @param v The vector
-     * @param x The x scale
-     * @param y The y scale
-     * @param out The scaled vector
+     * @param v - The vector
+     * @param x - The x scale
+     * @param y - The y scale
+     * @param out - The scaled vector
+     *
      * @returns The scale of the vector
      */
     static scalec(v: Vec2, x: number, y: number, out: Vec2): Vec2 {
@@ -179,9 +185,10 @@ export class Vec2 {
 
     /**
      * Calculates the scale of the vector
-     * @param v The vector
-     * @param other The scale
-     * @param out The scaled vector
+     * @param v - The vector
+     * @param other - The scale
+     * @param out - The scaled vector
+     *
      * @returns The scale of the vector
      */
     static scalev(v: Vec2, other: Vec2, out: Vec2): Vec2 {
@@ -204,8 +211,9 @@ export class Vec2 {
 
     /**
      * Calculates the distance between the vectors
-     * @param v The vector
-     * @param other The other vector
+     * @param v - The vector
+     * @param other - The other vector
+     *
      * @returns The between the vectors
      */
     static dist(v: Vec2, other: Vec2): number {
@@ -222,8 +230,9 @@ export class Vec2 {
 
     /**
      * Calculates the squared distance between the vectors
-     * @param v The vector
-     * @param other The other vector
+     * @param v - The vector
+     * @param other - The other vector
+     *
      * @returns The distance between the vectors
      */
     static sdist(v: Vec2, other: Vec2): number {
@@ -243,7 +252,8 @@ export class Vec2 {
 
     /**
      * Calculates the length of the vector
-     * @param v The vector
+     * @param v - The vector
+     *
      * @returns The length of the vector
      */
     static len(v: Vec2) {
@@ -261,7 +271,8 @@ export class Vec2 {
 
     /**
      * Calculates the squared length of the vector
-     * @param v The vector
+     * @param v - The vector
+     *
      * @returns The squared length of the vector
      */
     static slen(v: Vec2) {
@@ -343,9 +354,10 @@ export class Vec2 {
 
     /**
      * Calculates the rotated vector
-     * @param v The vector
-     * @param dir The rotation vector
-     * @param out The rotated vector
+     * @param v - The vector
+     * @param dir - The rotation vector
+     * @param out - The rotated vector
+     *
      * @returns The rotated vector
      */
     static rotate(v: Vec2, dir: Vec2, out: Vec2): Vec2 {
@@ -357,9 +369,10 @@ export class Vec2 {
 
     /**
      * Calculates the rotated vector
-     * @param v The vector
-     * @param angle The angle in radians
-     * @param out The rotated vector
+     * @param v - The vector
+     * @param angle - The angle in radians
+     * @param out - The rotated vector
+     *
      * @returns The rotated vector
      */
     static rotateByAngle(v: Vec2, angle: number, out: Vec2): Vec2 {
@@ -382,9 +395,10 @@ export class Vec2 {
 
     /**
      * Calculates the inverse rotated vector
-     * @param v The vector
-     * @param dir The rotation vector
-     * @param out The rotated vector
+     * @param v - The vector
+     * @param dir - The rotation vector
+     * @param out - The rotated vector
+     *
      * @returns The rotated vector
      */
     static inverseRotate(v: Vec2, dir: Vec2, out: Vec2): Vec2 {
@@ -438,7 +452,8 @@ export class Vec2 {
 
     /**
      * Calculates the angle represented by the vector in radians
-     * @param v The vector
+     * @param v - The vector
+     *
      * @returns Angle represented by the vector in radians
      */
     static toAngle(v: Vec2) {
@@ -457,8 +472,9 @@ export class Vec2 {
 
     /**
      * Calculates the angle between the vectors in radians
-     * @param v First vector
-     * @param other Second vector
+     * @param v - First vector
+     * @param other - Second vector
+     *
      * @returns Angle between the vectors in radians
      */
     static angleBetween(v: Vec2, other: Vec2) {
@@ -477,10 +493,11 @@ export class Vec2 {
 
     /**
      * Linear interpolate src and dst by t
-     * @param src First vector
-     * @param dst Second vector
-     * @param t Percentage
-     * @param out The linear interpolation between src and dst by t
+     * @param src - First vector
+     * @param dst - Second vector
+     * @param t - Percentage
+     * @param out - The linear interpolation between src and dst by t
+     *
      * @returns The linear interpolation between src and dst by t
      */
     static lerp(src: Vec2, dst: Vec2, t: number, out: Vec2): Vec2 {
@@ -506,10 +523,11 @@ export class Vec2 {
 
     /**
      * Spherical interpolate src and dst by t
-     * @param src First vector
-     * @param dst Second vector
-     * @param t Percentage
-     * @param out The spherical interpolation between src and dst by t
+     * @param src - First vector
+     * @param dst - Second vector
+     * @param t - Percentage
+     * @param out - The spherical interpolation between src and dst by t
+     *
      * @returns The spherical interpolation between src and dst by t
      */
     static slerp(src: Vec2, dst: Vec2, t: number, out: Vec2): Vec2 {
