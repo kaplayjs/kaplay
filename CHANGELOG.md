@@ -79,7 +79,7 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - Added bias to line drawing, which controls the offset from the center of the
   line - @mflerackers
 - Added `sprite.play("anim", {preventRestart: true})` to allow play() to be
-  called from update() and not reset the animation to frame 0
+  called from update() and not reset the animation to frame 0 - @dragoncoder047
 
 ### Fixed
 
