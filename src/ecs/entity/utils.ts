@@ -13,3 +13,8 @@ export function isFixed(obj: GameObj): boolean {
     if (obj.fixed) return true;
     return obj.parent ? isFixed(obj.parent) : false;
 }
+
+export function isPaused(obj: GameObj): boolean {
+    if (obj.paused) return true;
+    return obj.parent ? isPaused(obj.parent) : false;
+}
