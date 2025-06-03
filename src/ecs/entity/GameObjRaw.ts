@@ -866,9 +866,6 @@ export const GameObjRawPrototype: Omit<InternalGameObjRaw, AppEvents> = {
             ?? (this.parent
                 ? this.parent._drawLayerIndex
                 : _k.game.defaultLayerIndex);
-        console.log(
-            `obj ${this.id} - ${this.layerIndex} - ${this._drawLayerIndex}`,
-        );
         for (let i = 0; i < this.children.length; i++) {
             this.children[i].update();
         }
