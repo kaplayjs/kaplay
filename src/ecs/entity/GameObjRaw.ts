@@ -483,6 +483,8 @@ export type InternalGameObjRaw = GameObjRaw & {
     _tags: Set<Tag>;
     /** @readonly */
     _paused: boolean;
+    /** @readonly */
+    _drawLayerIndex: number;
 };
 
 type GameObjTransform =
@@ -511,6 +513,7 @@ export const GameObjRawPrototype: Omit<InternalGameObjRaw, AppEvents> = {
     _tags: null as any,
     _updateEvents: null as any,
     _drawEvents: null as any,
+    _drawLayerIndex: null as any,
     children: null as any,
     hidden: null as any,
     id: null as any,
@@ -856,9 +859,16 @@ export const GameObjRawPrototype: Omit<InternalGameObjRaw, AppEvents> = {
     // #endregion
 
     // #region Lifecycle
-    update(this: InternalGameObjRaw) {
+    update(this: GameObj<LayerComp> & InternalGameObjRaw) {
         if (this.paused) return;
         this._updateEvents.trigger();
+        this._drawLayerIndex = this.layerIndex
+            ?? (this.parent
+                ? this.parent._drawLayerIndex
+                : _k.game.defaultLayerIndex);
+        console.log(
+            `obj ${this.id} - ${this.layerIndex} - ${this._drawLayerIndex}`,
+        );
         for (let i = 0; i < this.children.length; i++) {
             this.children[i].update();
         }
@@ -902,8 +912,8 @@ export const GameObjRawPrototype: Omit<InternalGameObjRaw, AppEvents> = {
 
         // Sort objects on layer, then z
         objects.sort((o1, o2) => {
-            const l1 = o1.layerIndex ?? _k.game.defaultLayerIndex;
-            const l2 = o2.layerIndex ?? _k.game.defaultLayerIndex;
+            const l1 = o1._drawLayerIndex;
+            const l2 = o2._drawLayerIndex;
             return (l1 - l2) || (o1.z ?? 0) - (o2.z ?? 0);
         });
 
