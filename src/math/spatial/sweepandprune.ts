@@ -94,8 +94,9 @@ export class SweepAndPrune {
             if (edge.isLeft) {
                 if (!shouldIgnore(edge.obj)) {
                     for (const obj of touching) {
-                        if (!shouldIgnore(obj))
+                        if (!shouldIgnore(obj)) {
                             yield [obj, edge.obj];
+                        }
                     }
                 }
                 touching.add(edge.obj);
