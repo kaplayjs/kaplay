@@ -108,8 +108,8 @@ export function textInput(
             backEv = _k.app.onKeyPressRepeat("backspace", () => {
                 if (this.hasFocus) {
                     this.typedText = this.typedText.slice(0, -1);
+                    flip();
                 }
-                flip();
             });
         },
         destroy(this: GameObj<TextInputComp>) {
