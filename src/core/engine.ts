@@ -1,6 +1,4 @@
-/**
-The engine is what KAPLAY needs for running and proccesing all it's stuff
-**/
+// The engine is what KAPLAY needs for running and proccesing all it's stuff
 
 import { initApp } from "../app/app";
 import { initAssets } from "../assets/asset";

@@ -54,6 +54,7 @@ import type { RotateComp } from "../components/transform/rotate";
 import type { ScaleComp } from "../components/transform/scale";
 import type { ZComp } from "../components/transform/z";
 import { make } from "./make";
+import { isFixed } from "./utils";
 
 export enum KeepFlags {
     Pos = 1,
@@ -362,7 +363,7 @@ export interface GameObjRaw {
      * Trigger an event.
      *
      * @param event - The event name.
-     * @parm args - The arguments to pass to the event action.
+     * @param args - The arguments to pass to the event action.
      *
      * @since v2000.0
      */
@@ -483,6 +484,8 @@ export type InternalGameObjRaw = GameObjRaw & {
     _tags: Set<Tag>;
     /** @readonly */
     _paused: boolean;
+    /** @readonly */
+    _drawLayerIndex: number;
 };
 
 type GameObjTransform =
@@ -511,6 +514,7 @@ export const GameObjRawPrototype: Omit<InternalGameObjRaw, AppEvents> = {
     _tags: null as any,
     _updateEvents: null as any,
     _drawEvents: null as any,
+    _drawLayerIndex: null as any,
     children: null as any,
     hidden: null as any,
     id: null as any,
@@ -856,9 +860,13 @@ export const GameObjRawPrototype: Omit<InternalGameObjRaw, AppEvents> = {
     // #endregion
 
     // #region Lifecycle
-    update(this: InternalGameObjRaw) {
+    update(this: GameObj<LayerComp> & InternalGameObjRaw) {
         if (this.paused) return;
         this._updateEvents.trigger();
+        this._drawLayerIndex = this.layerIndex
+            ?? (this.parent
+                ? this.parent._drawLayerIndex
+                : _k.game.defaultLayerIndex);
         for (let i = 0; i < this.children.length; i++) {
             this.children[i].update();
         }
@@ -902,8 +910,8 @@ export const GameObjRawPrototype: Omit<InternalGameObjRaw, AppEvents> = {
 
         // Sort objects on layer, then z
         objects.sort((o1, o2) => {
-            const l1 = o1.layerIndex ?? _k.game.defaultLayerIndex;
-            const l2 = o2.layerIndex ?? _k.game.defaultLayerIndex;
+            const l1 = o1._drawLayerIndex;
+            const l2 = o2._drawLayerIndex;
             return (l1 - l2) || (o1.z ?? 0) - (o2.z ?? 0);
         });
 
@@ -922,7 +930,7 @@ export const GameObjRawPrototype: Omit<InternalGameObjRaw, AppEvents> = {
                 // We push once, then update the current transform only
                 pushTransform();
                 for (let i = 0; i < objects.length; i++) {
-                    _k.gfx.fixed = objects[i].fixed;
+                    _k.gfx.fixed = isFixed(objects[i]);
                     loadMatrix(objects[i].transform);
                     objects[i]._drawEvents.trigger();
                 }
@@ -952,7 +960,7 @@ export const GameObjRawPrototype: Omit<InternalGameObjRaw, AppEvents> = {
                 pushTransform();
                 // Parent is drawn before children if !childrenOnly
                 if (!this.target?.childrenOnly) {
-                    _k.gfx.fixed = this.fixed;
+                    _k.gfx.fixed = isFixed(this);
                     loadMatrix(this.transform);
                     this._drawEvents.trigger();
                 }
@@ -960,7 +968,7 @@ export const GameObjRawPrototype: Omit<InternalGameObjRaw, AppEvents> = {
                 for (let i = 0; i < objects.length; i++) {
                     // An object with a mask is drawn at draw time, but the transform still needs to be calculated,
                     // so we push the parent's transform and pretend we are
-                    _k.gfx.fixed = objects[i].fixed;
+                    _k.gfx.fixed = isFixed(objects[i]);
                     if (objects[i].mask) {
                         loadMatrix(objects[i].parent!.transform);
                         objects[i].drawTree();
@@ -996,7 +1004,7 @@ export const GameObjRawPrototype: Omit<InternalGameObjRaw, AppEvents> = {
             if (this.target?.childrenOnly) {
                 // Parent is drawn on screen, children are drawn in target
                 const f = _k.gfx.fixed;
-                _k.gfx.fixed = this.fixed;
+                _k.gfx.fixed = isFixed(this);
                 pushTransform();
                 loadMatrix(this.transform);
                 this._drawEvents.trigger();

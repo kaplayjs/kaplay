@@ -30,7 +30,7 @@ export class Picture {
 
     /**
      * Creates an empty picture if no data is given, otherwise deserializes the data
-     * @param data Optional archived picture data
+     * @param data - Optional archived picture data
      */
     constructor(data?: string) {
         this.vertices = [];
@@ -77,8 +77,8 @@ export type DrawPictureOpt = RenderProps & {};
 
 /**
  * Draws a picture to the screen. This function can not be used to draw recursively to a picture.
- * @param picture The picture to draw
- * @param opt Drawing options
+ * @param picture - The picture to draw
+ * @param opt - Drawing options
  */
 export function drawPicture(
     picture: Picture,
@@ -173,7 +173,7 @@ export function drawPicture(
 
 /**
  * Selects the picture for drawing, erases existing data.
- * @param picture The picture to write drawing data to.
+ * @param picture - The picture to write drawing data to.
  */
 export function beginPicture(picture?: Picture) {
     picture ??= new Picture();
@@ -185,7 +185,7 @@ export function beginPicture(picture?: Picture) {
 
 /**
  * Selects the picture for drawing, keeps existing data.
- * @param picture The picture to write drawing data to.
+ * @param picture - The picture to write drawing data to.
  */
 export function appendToPicture(picture?: Picture) {
     picture ??= new Picture();

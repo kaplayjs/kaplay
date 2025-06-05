@@ -9,21 +9,25 @@ import { rgb } from "../math/color";
 import { vec2 } from "../math/math";
 import { _k } from "../shared";
 
-export const handleErr = (err: Error | any) => {
+export const handleErr = (err: unknown) => {
     if (_k.game.crashed) return;
     _k.game.crashed = true;
     _k.audio.ctx.suspend();
+    let error: Error;
 
-    const errorMessage = err.message ?? String(err)
-        ?? "Unknown error, check console for more info";
-    let errorScreen = false;
+    if (err instanceof Error) {
+        error = err;
+    }
+    else {
+        error = new Error(String(err));
+    }
 
-    _k.app.run(
-        () => {},
+    if (!error.message) {
+        error.message = "Uknown error, check console for more info";
+    }
+
+    _k.app.runOnce(
         () => {
-            if (errorScreen) return;
-            errorScreen = true;
-
             _k.frameRenderer.frameStart();
 
             drawUnscaled(() => {
@@ -60,13 +64,13 @@ export const handleErr = (err: Error | any) => {
 
                 drawText({
                     ...textStyle,
-                    text: errorMessage,
+                    text: error.message,
                     pos: vec2(pad, pad + title.height + gap),
                     fixed: true,
                 });
 
                 popTransform();
-                _k.game.events.trigger("error", err);
+                _k.game.events.trigger("error", error);
             });
 
             _k.frameRenderer.frameEnd();
@@ -74,13 +78,13 @@ export const handleErr = (err: Error | any) => {
     );
 
     // TODO: Make this a setting
-    if (!errorMessage.startsWith("[rendering]")) {
-        throw new Error(errorMessage);
+    if (!error.message.startsWith("[rendering]")) {
+        throw error;
     }
     else {
         // We don't throw rendering errors,
         // but we log them to the console
         // This is for "headless" rendering
-        console.error(errorMessage);
+        console.error(error);
     }
 };
