@@ -74,10 +74,9 @@ export class SweepAndPrune {
         for (let i = 1; i < this.edges.length; i++) {
             for (let j = i - 1; j >= 0; j--) {
                 if (this.edges[j].x < this.edges[j + 1].x) break;
-                [this.edges[j], this.edges[j + 1]] = [
-                    this.edges[j + 1],
-                    this.edges[j],
-                ];
+                const temp = this.edges[j];
+                this.edges[j] = this.edges[j + 1];
+                this.edges[j] = temp;
             }
         }
     }
