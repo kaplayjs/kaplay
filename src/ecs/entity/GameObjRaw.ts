@@ -54,6 +54,7 @@ import type { RotateComp } from "../components/transform/rotate";
 import type { ScaleComp } from "../components/transform/scale";
 import type { ZComp } from "../components/transform/z";
 import { make } from "./make";
+import { isFixed } from "./utils";
 
 export enum KeepFlags {
     Pos = 1,
@@ -929,7 +930,7 @@ export const GameObjRawPrototype: Omit<InternalGameObjRaw, AppEvents> = {
                 // We push once, then update the current transform only
                 pushTransform();
                 for (let i = 0; i < objects.length; i++) {
-                    _k.gfx.fixed = objects[i].fixed;
+                    _k.gfx.fixed = isFixed(objects[i]);
                     loadMatrix(objects[i].transform);
                     objects[i]._drawEvents.trigger();
                 }
@@ -959,7 +960,7 @@ export const GameObjRawPrototype: Omit<InternalGameObjRaw, AppEvents> = {
                 pushTransform();
                 // Parent is drawn before children if !childrenOnly
                 if (!this.target?.childrenOnly) {
-                    _k.gfx.fixed = this.fixed;
+                    _k.gfx.fixed = isFixed(this);
                     loadMatrix(this.transform);
                     this._drawEvents.trigger();
                 }
@@ -967,7 +968,7 @@ export const GameObjRawPrototype: Omit<InternalGameObjRaw, AppEvents> = {
                 for (let i = 0; i < objects.length; i++) {
                     // An object with a mask is drawn at draw time, but the transform still needs to be calculated,
                     // so we push the parent's transform and pretend we are
-                    _k.gfx.fixed = objects[i].fixed;
+                    _k.gfx.fixed = isFixed(objects[i]);
                     if (objects[i].mask) {
                         loadMatrix(objects[i].parent!.transform);
                         objects[i].drawTree();
@@ -1003,7 +1004,7 @@ export const GameObjRawPrototype: Omit<InternalGameObjRaw, AppEvents> = {
             if (this.target?.childrenOnly) {
                 // Parent is drawn on screen, children are drawn in target
                 const f = _k.gfx.fixed;
-                _k.gfx.fixed = this.fixed;
+                _k.gfx.fixed = isFixed(this);
                 pushTransform();
                 loadMatrix(this.transform);
                 this._drawEvents.trigger();
