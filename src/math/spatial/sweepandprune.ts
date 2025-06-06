@@ -76,7 +76,7 @@ export class SweepAndPrune {
                 if (this.edges[j].x < this.edges[j + 1].x) break;
                 const temp = this.edges[j];
                 this.edges[j] = this.edges[j + 1];
-                this.edges[j] = temp;
+                this.edges[j + 1] = temp;
             }
         }
     }
