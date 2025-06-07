@@ -21,7 +21,7 @@ export interface LayerComp extends Comp {
     get layer(): string | null;
     /**
      * Set the name of the layer the object should be assigned to.
-     * 
+     *
      * Throws an error if the game uses layers and the requested layer
      * wasn't defined.
      */
@@ -30,8 +30,9 @@ export interface LayerComp extends Comp {
 
 export function layer(layer: string): LayerComp {
     let _layerIndex = _k.game.layers?.indexOf(layer);
-    if (_layerIndex == -1)
+    if (_layerIndex == -1) {
         throw new Error(`Layer "${layer}" does not exist`);
+    }
 
     return {
         id: "layer",
@@ -46,8 +47,9 @@ export function layer(layer: string): LayerComp {
         set layer(value: string) {
             _layerIndex = _k.game.layers?.indexOf(value);
 
-            if (_layerIndex == -1)
+            if (_layerIndex == -1) {
                 throw new Error(`Layer "${value}" does not exist`);
+            }
         },
         inspect() {
             return `layer: ${this.layer}`;
