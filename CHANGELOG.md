@@ -124,6 +124,10 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [4000.0.0-alpha.20] - TBD
 
+### Added
+
+- Improved various doc entries.
+
 ### Fixed
 
 - Fixed `AreaComp#onClick()` attaching events to app, instead of object, so
