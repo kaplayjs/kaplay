@@ -10,7 +10,7 @@ loadSpriteAtlas("/sprites/dungeon.png", {
     },
 });
 
-loadBitmapFontFromSprite("hero", "abc", 3);
+loadBitmapFontFromSprite("hero", "abc");
 
 add([
     pos(100, 100),
