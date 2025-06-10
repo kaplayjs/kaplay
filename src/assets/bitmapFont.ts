@@ -1,6 +1,6 @@
 import { ASCII_CHARS } from "../constants/general";
 import { Texture } from "../gfx/gfx";
-import type { Quad } from "../math/math";
+import { Quad } from "../math/math";
 import { _k } from "../shared";
 import type { TexFilter } from "../types";
 import { type Asset, loadImg } from "./asset";
@@ -47,6 +47,53 @@ export function loadBitmapFont(
                     opt.chars ?? ASCII_CHARS,
                 );
             }),
+    );
+}
+
+export function loadBitmapFontFromSprite(
+    spriteID: string,
+    chars: string,
+): Asset<BitmapFontData> {
+    return _k.assets.bitmapFonts.add(
+        spriteID,
+        (async () => {
+            if (/[\n ]/.test(chars)) {
+                throw new Error(
+                    `While defining sprite font "${spriteID}": spaces are not allowed in chars`,
+                );
+            }
+            const splittedChars = chars.split("");
+            if (new Set(splittedChars).size !== splittedChars.length) {
+                throw new Error(
+                    `Duplicate characters given when defining sprite font "${spriteID}": ${chars}`,
+                );
+            }
+            const spr = await _k.assets.sprites.waitFor(spriteID);
+            const frames = spr.frames;
+            if (frames.length < splittedChars.length) {
+                throw new Error(
+                    `Tried to define ${splittedChars.length} characters for sprite font "${spriteID}", but there are only ${frames.length} frames defined`,
+                );
+            }
+            const tex = spr.tex;
+            const h = Math.max(...frames.map(q => q.h)) * tex.height;
+            return {
+                tex,
+                map: Object.fromEntries(
+                    splittedChars.map((c, i) => {
+                        const q = frames[i];
+                        const q2 = new Quad(
+                            q.x * tex.width,
+                            q.y * tex.height,
+                            q.w * tex.width,
+                            q.h * tex.height,
+                        );
+                        return [c, q2];
+                    }),
+                ),
+                size: h,
+            };
+        })(),
     );
 }
 

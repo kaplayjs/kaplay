@@ -1,5 +1,5 @@
 import { SPRITE_ATLAS_HEIGHT, SPRITE_ATLAS_WIDTH } from "../constants/general";
-import { KEvent } from "../events/events";
+import { KEvent, KEventHandler } from "../events/events";
 import type { GfxCtx } from "../gfx/gfx";
 import { TexPacker } from "../gfx/TexPacker";
 import { _k } from "../shared";
@@ -88,6 +88,8 @@ export class Asset<D> {
 
 export class AssetBucket<D> {
     assets: Map<string, Asset<D>> = new Map();
+    waiters: KEventHandler<any> = new KEventHandler();
+    errorWaiters: KEventHandler<any> = new KEventHandler();
     lastUID: number = 0;
 
     add(name: string | null, loader: Promise<D>): Asset<D> {
@@ -95,6 +97,12 @@ export class AssetBucket<D> {
         const id = name ?? (this.lastUID++ + "");
         const asset = new Asset(loader);
         this.assets.set(id, asset);
+        asset.onLoad(d => {
+            this.waiters.trigger(id, d);
+        });
+        asset.onError(d => {
+            this.errorWaiters.trigger(id, d);
+        });
 
         return asset;
     }
@@ -102,6 +110,8 @@ export class AssetBucket<D> {
         const id = name ?? (this.lastUID++ + "");
         const asset = Asset.loaded(data);
         this.assets.set(id, asset);
+        this.waiters.trigger(id, data);
+        this.errorWaiters.remove(id);
 
         return asset;
     }
@@ -128,6 +138,23 @@ export class AssetBucket<D> {
         return Array.from(this.assets.keys()).filter(a =>
             this.assets.get(a)!.error !== null
         ).map(a => [a, this.assets.get(a)!]);
+    }
+
+    waitFor(name: string): PromiseLike<D> {
+        const asset = this.get(name);
+        if (asset) {
+            if (asset.loaded) return Promise.resolve(asset.data!);
+            else {
+                return new Promise((res, rej) => {
+                    asset.onLoad(res);
+                    asset.onError(rej);
+                });
+            }
+        }
+        const x = Promise.withResolvers<D>();
+        this.waiters.onOnce(name, x.resolve);
+        this.errorWaiters.onOnce(name, x.reject);
+        return x.promise;
     }
 }
 
