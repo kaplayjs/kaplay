@@ -55,8 +55,9 @@ export function textInput(
             backEv = _k.k.onKeyPressRepeat("backspace", () => {
                 if (this.hasFocus) {
                     this.typedText = this.typedText.slice(0, -1);
+
+                    flip();
                 }
-                flip();
             });
         },
         destroy() {
