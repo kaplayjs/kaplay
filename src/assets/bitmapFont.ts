@@ -20,12 +20,15 @@ export function getBitmapFont(name: string): Asset<BitmapFontData> | null {
 }
 
 export interface LoadBitmapFontOpt {
+    /**
+     * A string of characters to map to every sprite in the characters grid
+     *
+     * @default " !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~";
+     */
     chars?: string;
     filter?: TexFilter;
-    outline?: number;
 }
 
-// TODO: support outline
 // TODO: support LoadSpriteSrc
 export function loadBitmapFont(
     name: string | null,

@@ -99,6 +99,7 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - CapsLock now affects textInput() - @amyspark-ng
 - PatrolComp is not going to last waypoint
   ([#734](https://github.com/kaplayjs/kaplay/issues/734)) - @nojaf
+- Fixed non-focused textInput component backspace - @KeSuave
 
 ### Removed
 
@@ -125,6 +126,10 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - Changed the API of `HealthComp` - @amyspark-ng
 
 ## [4000.0.0-alpha.20] - TBD
+
+### Added
+
+- Improved various doc entries.
 
 ### Fixed
 
