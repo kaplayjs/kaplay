@@ -68,7 +68,10 @@ export function loadBitmapFontFromSprite(
                     `Duplicate characters given when defining sprite font "${spriteID}": ${chars}`,
                 );
             }
-            const spr = await _k.assets.sprites.waitFor(spriteID);
+            const spr = await _k.assets.sprites.waitFor(
+                spriteID,
+                _k.globalOpt.loadTimeout ?? 3000,
+            );
             const frames = spr.frames;
             if (frames.length < splittedChars.length) {
                 throw new Error(

@@ -140,20 +140,32 @@ export class AssetBucket<D> {
         ).map(a => [a, this.assets.get(a)!]);
     }
 
-    waitFor(name: string): PromiseLike<D> {
+    waitFor(name: string, timeout: number): PromiseLike<D> {
         const asset = this.get(name);
         if (asset) {
             if (asset.loaded) return Promise.resolve(asset.data!);
             else {
-                return new Promise((res, rej) => {
-                    asset.onLoad(res);
-                    asset.onError(rej);
-                });
+                return Promise.race([
+                    new Promise<D>((res, rej) => {
+                        asset.onLoad(res);
+                        asset.onError(rej);
+                    }),
+                    new Promise<never>((_, rej) =>
+                        setTimeout(
+                            () => rej("timed out waiting for asset " + name),
+                            timeout,
+                        )
+                    ),
+                ]);
             }
         }
         const x = Promise.withResolvers<D>();
         this.waiters.onOnce(name, x.resolve);
         this.errorWaiters.onOnce(name, x.reject);
+        setTimeout(
+            () => x.reject("timed out waiting for asset " + name),
+            timeout,
+        );
         return x.promise;
     }
 }
