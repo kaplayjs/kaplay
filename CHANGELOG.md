@@ -78,6 +78,8 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - Typed `StateComp` - @amyspark-ng
 - Added bias to line drawing, which controls the offset from the center of the
   line - @mflerackers
+- Added `sprite.play("anim", {preventRestart: true})` to allow play() to be
+  called from update() and not reset the animation to frame 0 - @dragoncoder047
 
 ### Fixed
 
@@ -95,6 +97,7 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - CapsLock now affects textInput() - @amyspark-ng
 - PatrolComp is not going to last waypoint
   ([#734](https://github.com/kaplayjs/kaplay/issues/734)) - @nojaf
+- Fixed non-focused textInput component backspace - @KeSuave
 
 ### Removed
 
@@ -121,6 +124,10 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - Changed the API of `HealthComp` - @amyspark-ng
 
 ## [4000.0.0-alpha.20] - TBD
+
+### Added
+
+- Improved various doc entries.
 
 ### Fixed
 
