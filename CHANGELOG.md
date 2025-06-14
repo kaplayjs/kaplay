@@ -54,6 +54,8 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   `stretchInPlace: false` - @dragoncoder047
 - Expose the formatted text parsing functions to allow manipulation of formatted
   text - @dragoncoder047
+- Now you can use the frames of a sprite in an atlas also as a font -
+  @dragoncoder047
 - More errors raised during object creation are caught and cause the blue crash
   screen - @lajbel
 - Now you can use the global option `inspectOnlyActive: false` to prevent paused
@@ -135,6 +137,11 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   event wasn't being paused with `obj.paused` - @lajbel
 - Fixed all touch events having a bad transform - @lajbel
 - Fixed sprite scaling not working properly when letterbox - @mflerackers
+
+### Added
+
+- Now you can use the frames of a sprite in an atlas also as a font -
+  @dragoncoder047
 
 ### Removed
 
