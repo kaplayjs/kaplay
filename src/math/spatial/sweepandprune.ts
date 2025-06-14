@@ -1,4 +1,5 @@
 import type { AreaComp } from "../../ecs/components/physics/area";
+import { isPaused } from "../../ecs/entity/utils";
 import type { GameObj } from "../../types";
 import { calcTransform } from "../various";
 
@@ -65,6 +66,7 @@ export class SweepAndPrune {
     update() {
         // Update edge data
         for (const [obj, edges] of this.objects.entries()) {
+            if (shouldIgnore(obj)) continue;
             calcTransform(obj, obj.transform);
             const bbox = obj.worldArea().bbox();
             edges[0].x = bbox.pos.x;
@@ -89,8 +91,12 @@ export class SweepAndPrune {
 
         for (const edge of this.edges) {
             if (edge.isLeft) {
-                for (const obj of touching) {
-                    yield [obj, edge.obj];
+                if (!shouldIgnore(edge.obj)) {
+                    for (const obj of touching) {
+                        if (!shouldIgnore(obj)) {
+                            yield [obj, edge.obj];
+                        }
+                    }
                 }
                 touching.add(edge.obj);
             }
@@ -99,4 +105,8 @@ export class SweepAndPrune {
             }
         }
     }
+}
+
+function shouldIgnore(obj: GameObj) {
+    return !obj.exists() || isPaused(obj);
 }

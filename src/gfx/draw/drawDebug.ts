@@ -1,5 +1,6 @@
 import { DBG_FONT, LOG_TIME } from "../../constants/general";
-import { Color, rgb } from "../../math/color";
+import { isPaused } from "../../ecs/entity/utils";
+import { rgb } from "../../math/color";
 import { vec2, wave } from "../../math/math";
 import { _k } from "../../shared";
 import { formatText } from "../formatText";
@@ -25,7 +26,7 @@ export function drawDebug() {
         for (const obj of _k.game.root.get("*", { recursive: true })) {
             if (
                 obj.has("area")
-                && (_k.globalOpt.inspectOnlyActive ? !obj.paused : true)
+                && (_k.globalOpt.inspectOnlyActive ? !isPaused(obj) : true)
                 && obj.isHovering()
             ) {
                 inspecting = obj;
