@@ -3107,6 +3107,30 @@ export interface KAPLAYCtx<
         opt?: LoadBitmapFontOpt,
     ): Asset<BitmapFontData>;
     /**
+     * Define the frames of an existing sprite as characters that can be used as a font.
+     *
+     * This was primarily intended for use with {@link loadSpriteAtlas} because the sprite in
+     * question usually isn't the whole image and so can't be also passed to {@link loadBitmapFont}
+     * as its own font.
+     *
+     * WARNING - since this waits for the sprite to load before doing anything, if you don't
+     * define the sprite or it fails to load, your game will get stuck on the loading screen.
+     * Take care to actually make sure your sprite will load reliably before adding this function.
+     *
+     * @param sprite - The ID of the sprite to use as a font. Must already have frames defined
+     * @param chars - The characters that correspond to each of the frames in the sprite. You can't use
+     * space or newline here because those are hard-coded to special behaviors in the text layout code.
+     *
+     * @returns The generated font data.
+     * @group Assets
+     *
+     * @see {@link LoadSpriteOpt LoadSpriteOpt}
+     */
+    loadBitmapFontFromSprite(
+        sprite: string,
+        chars: string,
+    ): Asset<BitmapFontData>;
+    /**
      * Load a shader with vertex and fragment code.
      *
      * @param name - The asset name.

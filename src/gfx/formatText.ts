@@ -124,12 +124,10 @@ function getFontName(font: FontData | string): string {
 }
 
 function getFontAtlasForFont(font: FontData | string): FontAtlas {
-    let atlas = _k.gfx.fontAtlases[getFontName(font)];
+    const fontName = getFontName(font);
+    let atlas = _k.gfx.fontAtlases[fontName];
     if (!atlas) {
         // create a new atlas
-        const fontName = font instanceof FontData
-            ? font.fontface.family
-            : font;
         const opts: {
             outline: Outline | null;
             filter: TexFilter;
@@ -372,10 +370,20 @@ export function formatText(opt: DrawTextOpt): FormattedText {
             }
             var requestedFontData = defGfxFont;
             if (requestedFont && requestedFont !== defaultFontValue) {
-                requestedFontData = getFontAtlasForFont(requestedFont).font;
+                if (
+                    resolvedFont instanceof FontData
+                    || typeof resolvedFont === "string"
+                ) {
+                    requestedFontData = getFontAtlasForFont(requestedFont).font;
+                }
+                else requestedFontData = resolvedFont;
                 theFChar.tex = requestedFontData.tex;
             }
-            if (requestedFont) updateFontAtlas(requestedFont, ch);
+            if (
+                requestedFont
+                && (resolvedFont instanceof FontData
+                    || typeof resolvedFont === "string")
+            ) updateFontAtlas(requestedFont, ch);
 
             let q = requestedFontData.map[ch];
 

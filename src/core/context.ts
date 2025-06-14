@@ -1,4 +1,3 @@
-import type { App } from "../app/app";
 import { getData, setData } from "../app/data";
 import { loadAseprite } from "../assets/aseprite";
 import {
@@ -9,18 +8,21 @@ import {
     loadProgress,
     loadRoot,
 } from "../assets/asset";
-import { getBitmapFont, loadBitmapFont, loadHappy } from "../assets/bitmapFont";
+import {
+    getBitmapFont,
+    loadBitmapFont,
+    loadBitmapFontFromSprite,
+    loadHappy,
+} from "../assets/bitmapFont";
 import { getFont, loadFont } from "../assets/font";
 import { getShader, loadShader, loadShaderURL } from "../assets/shader";
 import { getSound, loadMusic, loadSound, SoundData } from "../assets/sound";
 import { getSprite, loadBean, loadSprite, SpriteData } from "../assets/sprite";
 import { loadSpriteAtlas } from "../assets/spriteAtlas";
-import type { AudioCtx } from "../audio/audio";
 import { burp } from "../audio/burp";
 import { play } from "../audio/play";
 import { getVolume, setVolume, volume } from "../audio/volume";
 import { ASCII_CHARS, EVENT_CANCEL_SYMBOL } from "../constants/general";
-import type { Debug } from "../debug/debug";
 import { record } from "../debug/record";
 import { blend } from "../ecs/components/draw/blend";
 import { circle } from "../ecs/components/draw/circle";
@@ -126,7 +128,6 @@ import {
     toScreen,
     toWorld,
 } from "../game/camera";
-import type { Game } from "../game/game";
 import {
     getGravity,
     getGravityDirection,
@@ -277,6 +278,7 @@ export const createContext = (
         loadMusic,
         loadBitmapFont,
         loadFont,
+        loadBitmapFontFromSprite,
         loadShader,
         loadShaderURL,
         loadAseprite,
