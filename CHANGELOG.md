@@ -129,7 +129,9 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Added
 
-- Improved various doc entries.
+- Now you can use the frames of a sprite in an atlas also as a font -
+  @dragoncoder047
+- Improved various doc entries. - All Contributors.
 
 ### Fixed
 
@@ -138,11 +140,7 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - Fixed all touch events having a bad transform - @lajbel
 - Fixed sprite scaling not working properly when letterbox - @mflerackers
 - Fixed "add" event running twice in `addLevel()` tiles - @lajbel
-
-### Added
-
-- Now you can use the frames of a sprite in an atlas also as a font -
-  @dragoncoder047
+- Fixed blend component having a wrong ID - @lajbel
 
 ### Removed
 
