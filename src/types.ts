@@ -3136,6 +3136,29 @@ export interface KAPLAYCtx<
         opt?: LoadBitmapFontOpt,
     ): Asset<BitmapFontData>;
     /**
+     * Define the frames of an existing sprite as characters that can be used as a font.
+     *
+     * This was primarily intended for use with {@link loadSpriteAtlas} because the sprite in
+     * question usually isn't the whole image and so can't be also passed to {@link loadBitmapFont}
+     * as its own font.
+     *
+     * This waits for the sprite to load before doing anything, but if the sprite doesn't load, the game
+     * will transition to the error screen after a timeout (which is set by {@link KAPLAYOpt.loadTimeout}).
+     *
+     * @param sprite - The ID of the sprite to use as a font. Must already have frames defined
+     * @param chars - The characters that correspond to each of the frames in the sprite. You can't use
+     * space or newline here because those are hard-coded to special behaviors in the text layout code.
+     *
+     * @returns The generated font data.
+     * @group Assets
+     *
+     * @see {@link LoadSpriteOpt}
+     */
+    loadBitmapFontFromSprite(
+        sprite: string,
+        chars: string,
+    ): Asset<BitmapFontData>;
+    /**
      * Load a shader with vertex and fragment code.
      *
      * @param name - The asset name.
@@ -6202,6 +6225,15 @@ export interface KAPLAYOpt<
      * @default "gjk"
      */
     narrowPhaseCollisionAlgorithm?: string;
+    /**
+     * Timeout (in milliseconds) at which other loaders waiting on sprites will give
+     * up and throw an error.
+     *
+     * Currently this is only used by {@link KAPLAYCtx.loadBitmapFontFromSprite}.
+     *
+     * @default 3000
+     */
+    loadTimeout?: number;
 }
 
 /**
@@ -6314,6 +6346,12 @@ export interface SpriteAnimPlayOpt {
      * This anim's speed in frames per second.
      */
     speed?: number;
+    /**
+     * If the animation should not restart from frame 1 and t=0 if it is already playing.
+     *
+     * @default false
+     */
+    preventRestart?: boolean;
     /**
      * Runs when this animation ends.
      */
