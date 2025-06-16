@@ -1427,25 +1427,25 @@ export interface KAPLAYCtx<
      *     area(),
      *     color("#FF0000"),
      *     animate(),
-     * ])
-     *
+     * ]);
+
      * // The internal clock starts when the object is added.
      * // We need to reset the animation when the object is hovered.
      * obj.onHover(() => {
-     *    obj.animation.seek(0); // reset the animation to the start
-     *    obj.animate(
-     *        "color",
-     *        // We can use the current color property as the start value.
-     *        // It doesn't make sense to have only one value in the array as it's a transition.
-     *        [obj.color, Color.fromHex("#0000FF")],
-     *        { duration: 0.5, loops: 1 }
-     *    )
-     * })
-     *
+     *     obj.animation.seek(0); // reset the animation to the start
+     *     obj.animate(
+     *         "color",
+     *         // We can use the current color property as the start value.
+     *         // It doesn't make sense to have only one value in the array as it's a transition.
+     *         [obj.color, Color.fromHex("#0000FF")],
+     *         { duration: 0.5, loops: 1 },
+         * );
+     * });
+
      * obj.onHoverEnd(() => {
-     *    // We need to unanimate the color property to reset it to the original value.
-     *    obj.unanimate("color");
-     *    obj.color = Color.fromHex("#FF0000");
+     *     // We need to unanimate the color property to reset it to the original value.
+     *     obj.unanimate("color");
+     *     obj.color = Color.fromHex("#FF0000");
      * });
      * ```
      *
