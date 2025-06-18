@@ -605,7 +605,6 @@ export const GameObjRawPrototype: Omit<InternalGameObjRaw, AppEvents> = {
 
         try {
             obj.trigger("add", obj);
-            obj.children.forEach(c => c.trigger("add", c));
         } catch (e) {
             handleErr(e);
         }
@@ -738,7 +737,7 @@ export const GameObjRawPrototype: Omit<InternalGameObjRaw, AppEvents> = {
                     }
                 }));
             }
-            // If tags are are components, we don't need to use these callbacks
+            // If tags are components, we don't need to use these callbacks
             // If tags are not components, we only need to use these callbacks if this query looks at tags
             if (!compIdAreTags && opts.only !== "comps") {
                 events.push(onTag((obj, tag) => {

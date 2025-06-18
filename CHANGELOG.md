@@ -54,6 +54,8 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   `stretchInPlace: false` - @dragoncoder047
 - Expose the formatted text parsing functions to allow manipulation of formatted
   text - @dragoncoder047
+- Now you can use the frames of a sprite in an atlas also as a font -
+  @dragoncoder047
 - More errors raised during object creation are caught and cause the blue crash
   screen - @lajbel
 - Now you can use the global option `inspectOnlyActive: false` to prevent paused
@@ -78,6 +80,8 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - Typed `StateComp` - @amyspark-ng
 - Added bias to line drawing, which controls the offset from the center of the
   line - @mflerackers
+- Added `sprite.play("anim", {preventRestart: true})` to allow play() to be
+  called from update() and not reset the animation to frame 0 - @dragoncoder047
 
 ### Fixed
 
@@ -95,6 +99,7 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - CapsLock now affects textInput() - @amyspark-ng
 - PatrolComp is not going to last waypoint
   ([#734](https://github.com/kaplayjs/kaplay/issues/734)) - @nojaf
+- Fixed non-focused textInput component backspace - @KeSuave
 
 ### Removed
 
@@ -120,7 +125,13 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   @dragoncoder047
 - Changed the API of `HealthComp` - @amyspark-ng
 
-## [4000.0.0-alpha.20] - TBD
+## [4000.0.0-alpha.20] - 2025-06-15
+
+### Added
+
+- Now you can use the frames of a sprite in an atlas also as a font -
+  @dragoncoder047
+- Improved various doc entries. - All Contributors.
 
 ### Fixed
 
@@ -128,12 +139,14 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   event wasn't being paused with `obj.paused` - @lajbel
 - Fixed all touch events having a bad transform - @lajbel
 - Fixed sprite scaling not working properly when letterbox - @mflerackers
+- Fixed "add" event running twice in `addLevel()` tiles - @lajbel
+- Fixed blend component having a wrong ID - @lajbel
 
 ### Removed
 
 - `loadPedit` was removed - @lajbel
 
-## [3001.0.19] - TBD
+## [3001.0.19] - 2025-06-15
 
 - Fixed `AreaComp#onClick()` attaching events to app, instead of object, so
   event wasn't being paused with `obj.paused` - @lajbel

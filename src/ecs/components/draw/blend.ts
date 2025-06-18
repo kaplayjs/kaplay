@@ -11,7 +11,7 @@ export interface BlendComp extends Comp {
 
 export function blend(blend: BlendMode): BlendComp {
     return {
-        id: "color",
+        id: "blend",
         blend: blend ?? BlendMode.Normal,
         inspect() {
             return `blend: ${
