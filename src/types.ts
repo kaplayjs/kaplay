@@ -1407,28 +1407,25 @@ export interface KAPLAYCtx<
      *
      * @example
      * ```js
+     * // First example
      * let movingBean = add([
      *       sprite("bean"),
      *       pos(50, 150),
      *       anchor("center"),
      *       animate(),
      * ]);
-     *
      * // Moving right to left using ping-pong
      * movingBean.animate("pos", [vec2(50, 150), vec2(150, 150)], {
      *     duration: 2,
      *     direction: "ping-pong",
      * });
-     * ```
      *
-     * @example
-     * ```js
+     * // Second example
      * const obj = add([
      *     area(),
      *     color("#FF0000"),
      *     animate(),
      * ]);
-
      * // The internal clock starts when the object is added.
      * // We need to reset the animation when the object is hovered.
      * obj.onHover(() => {
@@ -1439,9 +1436,8 @@ export interface KAPLAYCtx<
      *         // It doesn't make sense to have only one value in the array as it's a transition.
      *         [obj.color, Color.fromHex("#0000FF")],
      *         { duration: 0.5, loops: 1 },
-         * );
      * });
-
+     *
      * obj.onHoverEnd(() => {
      *     // We need to unanimate the color property to reset it to the original value.
      *     obj.unanimate("color");
@@ -5875,6 +5871,13 @@ export interface KAPLAYCtx<
      * @group Info
      */
     VERSION: string;
+    /**
+     * A KAPLAY error object. You can instantiate it and it will also throw
+     * the blue error screen.
+     *
+     * @example
+     */
+    KError: typeof KError;
 }
 
 export type Tag = string;
