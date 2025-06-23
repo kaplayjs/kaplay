@@ -5871,13 +5871,6 @@ export interface KAPLAYCtx<
      * @group Info
      */
     VERSION: string;
-    /**
-     * A KAPLAY error object. You can instantiate it and it will also throw
-     * the blue error screen.
-     *
-     * @example
-     */
-    KError: typeof KError;
 }
 
 export type Tag = string;
