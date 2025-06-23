@@ -936,8 +936,11 @@ export const GameObjRawPrototype: Omit<InternalGameObjRaw, AppEvents> = {
                 popTransform();
                 _k.gfx.fixed = f;
             }, () => {
+                pushTransform();
+                loadMatrix(this.transform);
                 // Draw mask
                 this._drawEvents.trigger();
+                popTransform();
             });
         }
         else {
