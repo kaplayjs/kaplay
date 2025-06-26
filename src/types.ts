@@ -5809,6 +5809,12 @@ export interface KAPLAYCtx<
      */
     quit: () => void;
     /**
+     * Throws a new error and show up the Blue Screen.
+     *
+     * @param msg - The message for showing in the Blue Screen.
+     */
+    throwError: (msg: string) => void;
+    /**
      * EventHandler for one single event.
      *
      * @since v3000.0
