@@ -15,6 +15,9 @@ import { createFrameRenderer } from "./frameRendering";
 
 export type Engine = ReturnType<typeof createEngine>;
 
+// Create global variables
+window.kaplayjs_assetsAliases = {};
+
 export const createEngine = (gopt: KAPLAYOpt) => {
     // Default options
     const opt = Object.assign({
