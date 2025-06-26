@@ -23,7 +23,7 @@ export const handleErr = (err: unknown) => {
     }
 
     if (!error.message) {
-        error.message = "Uknown error, check console for more info";
+        error.message = "Unknown error, check console for more info";
     }
 
     _k.app.runOnce(
@@ -64,7 +64,7 @@ export const handleErr = (err: unknown) => {
 
                 drawText({
                     ...textStyle,
-                    text: error.message,
+                    text: esc(error.message),
                     pos: vec2(pad, pad + title.height + gap),
                     fixed: true,
                 });
@@ -88,3 +88,7 @@ export const handleErr = (err: unknown) => {
         console.error(error);
     }
 };
+
+function esc(t: string) {
+    return t.replaceAll(/(?<!\\)\[/g, "\\[");
+}
