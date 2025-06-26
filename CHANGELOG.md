@@ -82,6 +82,8 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   line - @mflerackers
 - Added `sprite.play("anim", {preventRestart: true})` to allow play() to be
   called from update() and not reset the animation to frame 0 - @dragoncoder047
+- Added `throwError()` for trowing custom errors in the blue screen, even errors
+  KAPLAY can't handle. - @lajbel
 
 ### Fixed
 
@@ -124,6 +126,13 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   setting it to true (focused) will clear focus from all the other text inputs -
   @dragoncoder047
 - Changed the API of `HealthComp` - @amyspark-ng
+
+## [4000.0.0-alpha.21] - 2025-06-26
+
+### Added
+
+- Added `throwError()` for trowing custom errors in the blue screen, even errors
+  KAPLAY can't handle. - @lajbel
 
 ## [4000.0.0-alpha.20] - 2025-06-15
 
