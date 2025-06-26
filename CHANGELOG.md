@@ -58,7 +58,8 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   @dragoncoder047
 - More errors raised during object creation are caught and cause the blue crash
   screen - @lajbel
-- The blue crash screen will no longer fail to draw if the error message contains brackets - @dragoncoder047
+- The blue crash screen will no longer fail to draw if the error message
+  contains brackets - @dragoncoder047
 - Now you can use the global option `inspectOnlyActive: false` to prevent paused
   objects from showing in the debug inspect view, this is useful if you are
   swapping out objects for different views - @dragoncoder047
