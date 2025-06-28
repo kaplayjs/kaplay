@@ -131,8 +131,8 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Added
 
-- Added `throwError()` for trowing custom errors in the blue screen, even errors
-  KAPLAY can't handle. - @lajbel
+- Added `throwError()` for throwing custom errors to the blue screen, even
+  errors KAPLAY can't handle. - @lajbel
 
 ## [4000.0.0-alpha.20] - 2025-06-15
 
