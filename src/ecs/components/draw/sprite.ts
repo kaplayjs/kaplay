@@ -34,7 +34,6 @@ export interface SpriteCurAnim {
      */
     frameIndex: number;
     pingpong: boolean;
-    onEnd: () => void;
 }
 
 /**
@@ -120,6 +119,12 @@ export interface SpriteComp extends Comp {
      * Register an event that runs when an animation is ended.
      */
     onAnimEnd(action: (anim: string) => void): KEventController;
+    /**
+     * Register an event that runs when an animation is looped.
+     *
+     * @since v4000.0
+     */
+    onAnimLoop(action: (anim: string) => void): KEventController;
     /**
      * @since v3000.0
      */
@@ -462,10 +467,10 @@ export function sprite(
                     }
                     else if (curAnim.loop) {
                         curAnim.frameIndex = 0;
+                        this.trigger("animLoop", curAnim.name);
                     }
                     else {
                         this.frame = frames.at(-1)!;
-                        curAnim.onEnd();
                         this.stop();
                         return;
                     }
@@ -477,10 +482,10 @@ export function sprite(
                     }
                     else if (curAnim.loop) {
                         curAnim.frameIndex = frames.length - 1;
+                        this.trigger("animLoop", curAnim.name);
                     }
                     else {
                         this.frame = frames[0];
-                        curAnim.onEnd();
                         this.stop();
                         return;
                     }
@@ -519,7 +524,6 @@ export function sprite(
                     pingpong: false,
                     speed: 0,
                     frameIndex: 0,
-                    onEnd: () => {},
                 }
                 : {
                     name: name,
@@ -528,7 +532,6 @@ export function sprite(
                     pingpong: opt.pingpong ?? anim.pingpong ?? false,
                     speed: opt.speed ?? anim.speed ?? 10,
                     frameIndex: 0,
-                    onEnd: opt.onEnd ?? (() => {}),
                 };
 
             curAnimDir = typeof anim === "number" ? null : 1;
@@ -578,6 +581,13 @@ export function sprite(
             action: (name: string) => void,
         ): KEventController {
             return this.on("animStart", action);
+        },
+
+        onAnimLoop(
+            this: GameObj<SpriteComp>,
+            action: (name: string) => void,
+        ): KEventController {
+            return this.on("animLoop", action);
         },
 
         renderArea() {

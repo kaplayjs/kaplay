@@ -12,7 +12,7 @@
 // This example may be large, so use regions for navigating faster. Important
 // content is marked with 👁️
 
-kaplay({ scale: 4, font: "happy", background: "#aee2ff" });
+kaplay({ scale: 4, font: "happy" });
 
 const SPEED = 120;
 const JUMP_FORCE = 240;
@@ -127,21 +127,11 @@ player.onGround(() => {
 
 // #endregion
 
-// You can run functions on specific animation moments 👁️
-let loopCount = 0;
-
-player.onAnimStart((anim) => {
-    loopCount = 0;
-});
-
+// You can run functions when a specific animation ends 👁️
 player.onAnimEnd((anim) => {
     if (anim === "idle") {
         debug.log("hi!");
     }
-});
-
-player.onAnimLoop((anim) => {
-    loopCount++;
 });
 
 // #region UI
@@ -149,7 +139,6 @@ const getInfo = () =>
     `
 Anim: ${player.getCurAnim()?.name}
 Frame: ${player.frame}
-Loops: ${loopCount}
 `.trim();
 
 // Add some text to show the current animation
