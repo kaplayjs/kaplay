@@ -34,6 +34,8 @@ export interface SpriteCurAnim {
      */
     frameIndex: number;
     pingpong: boolean;
+    onEnd?: () => void;
+    onLoop?: () => void;
 }
 
 /**
@@ -70,7 +72,7 @@ export interface SpriteComp extends Comp {
     /**
      * Play a piece of anim.
      */
-    play(anim: string, options?: SpriteAnimPlayOpt): void;
+    play(anim: string, opt?: SpriteAnimPlayOpt): void;
     /**
      * Stop current anim.
      */
@@ -467,10 +469,12 @@ export function sprite(
                     }
                     else if (curAnim.loop) {
                         curAnim.frameIndex = 0;
+                        curAnim.onLoop?.();
                         this.trigger("animLoop", curAnim.name);
                     }
                     else {
                         this.frame = frames.at(-1)!;
+                        curAnim.onEnd?.();
                         this.stop();
                         return;
                     }
@@ -482,11 +486,13 @@ export function sprite(
                     }
                     else if (curAnim.loop) {
                         curAnim.frameIndex = frames.length - 1;
+                        curAnim.onLoop?.();
                         this.trigger("animLoop", curAnim.name);
                     }
                     else {
                         this.frame = frames[0];
                         this.stop();
+                        curAnim.onEnd?.();
                         return;
                     }
                 }
@@ -532,6 +538,8 @@ export function sprite(
                     pingpong: opt.pingpong ?? anim.pingpong ?? false,
                     speed: opt.speed ?? anim.speed ?? 10,
                     frameIndex: 0,
+                    onEnd: opt.onEnd,
+                    onLoop: opt.onLoop,
                 };
 
             curAnimDir = typeof anim === "number" ? null : 1;

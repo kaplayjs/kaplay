@@ -6358,6 +6358,10 @@ export interface SpriteAnimPlayOpt {
      * Runs when this animation ends.
      */
     onEnd?: () => void;
+    /**
+     * Runs when this animation loops.
+     */
+    onLoop?: () => void;
 }
 
 export type MusicData = string;
