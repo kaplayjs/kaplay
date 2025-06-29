@@ -491,8 +491,8 @@ export function sprite(
                     }
                     else {
                         this.frame = frames[0];
-                        this.stop();
                         curAnim.onEnd?.();
+                        this.stop();
                         return;
                     }
                 }
