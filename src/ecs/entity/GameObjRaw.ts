@@ -1,7 +1,6 @@
 // The E of ECS
 
 import type { AppEvents } from "../../app/app";
-import { COMP_DESC, COMP_EVENTS } from "../../constants/general";
 import { handleErr } from "../../core/errors";
 import type { GameObjEventNames } from "../../events/eventMap";
 import {
@@ -496,6 +495,18 @@ type GameObjCamTransform =
         PosComp | RotateComp | ScaleComp | FixedComp | MaskComp
     >
     & InternalGameObjRaw;
+
+const COMP_DESC = new Set(["id", "require"]);
+const COMP_EVENTS = new Set([
+    "add",
+    "fixedUpdate",
+    "update",
+    "draw",
+    "destroy",
+    "inspect",
+    "drawInspect",
+    "serialize",
+]);
 
 export const GameObjRawPrototype: Omit<InternalGameObjRaw, AppEvents> = {
     // This chain of `as any`, is because we never should use this object

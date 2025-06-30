@@ -48,16 +48,6 @@ export const DEF_VERT =
 export const DEF_FRAG =
     `vec4 frag(vec2 pos,vec2 uv,vec4 color,sampler2D tex){return def_frag();}`;
 
-export const COMP_DESC = new Set(["id", "require"]);
-export const COMP_EVENTS = new Set([
-    "add",
-    "fixedUpdate",
-    "update",
-    "draw",
-    "destroy",
-    "inspect",
-    "drawInspect",
-]);
 export const DEF_OFFSCREEN_DIS = 200;
 // maximum y velocity with body()
 export const DEF_JUMP_FORCE = 640;
