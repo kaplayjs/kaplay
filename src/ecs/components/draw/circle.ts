@@ -21,6 +21,8 @@ export interface CircleComp extends Comp {
      * @since v3000.0
      */
     renderArea(): Circle;
+
+    serialize(): any;
 }
 
 /**
@@ -66,5 +68,19 @@ export function circle(radius: number, opt: CircleCompOpt = {}): CircleComp {
         inspect() {
             return `radius: ${Math.ceil(_radius)}`;
         },
+        serialize() {
+            const data: any = { radius: _radius };
+            if (opt.fill) data.fill = true;
+            return data;
+        },
     };
+}
+
+export function circleFactory(data: any) {
+    const opt: CircleCompOpt = {};
+    if (data.fill) opt.fill = data.fill;
+    return circle(
+        data.radius,
+        opt,
+    );
 }
