@@ -11,7 +11,16 @@ export interface ZComp extends Comp {
      */
     z: number;
 
-    serialize(): any;
+    serialize(): SerializeZComp;
+}
+
+/**
+ * The serialized {@link z `z()`} component.
+ *
+ * @group Component Serializations
+ */
+export interface SerializeZComp {
+    z: number;
 }
 
 export function z(z: number): ZComp {
