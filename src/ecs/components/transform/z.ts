@@ -11,7 +11,7 @@ export interface ZComp extends Comp {
      */
     z: number;
 
-    serialize(): any
+    serialize(): any;
 }
 
 export function z(z: number): ZComp {
@@ -22,8 +22,8 @@ export function z(z: number): ZComp {
             return `z: ${this.z}`;
         },
         serialize() {
-            return { z: this.z }
-        }
+            return { z: this.z };
+        },
     };
 }
 

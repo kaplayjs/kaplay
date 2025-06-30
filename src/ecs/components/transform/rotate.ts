@@ -38,8 +38,8 @@ export function rotate(a?: number): RotateComp {
             return `angle: ${Math.round(this.angle)}`;
         },
         serialize() {
-            return { angle: this.angle }
-        }
+            return { angle: this.angle };
+        },
     };
 }
 

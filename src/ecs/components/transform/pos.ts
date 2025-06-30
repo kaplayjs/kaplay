@@ -204,8 +204,9 @@ export function pos(...args: Vec2Args): PosComp {
         },
 
         inspect() {
-            return `pos: (${Math.round(this.pos.x)}x, ${Math.round(this.pos.y)
-                }y)`;
+            return `pos: (${Math.round(this.pos.x)}x, ${
+                Math.round(this.pos.y)
+            }y)`;
         },
 
         drawInspect() {
@@ -216,8 +217,8 @@ export function pos(...args: Vec2Args): PosComp {
         },
 
         serialize() {
-            return { pos: { x: this.pos.x, y: this.pos.y } }
-        }
+            return { pos: { x: this.pos.x, y: this.pos.y } };
+        },
     };
 }
 

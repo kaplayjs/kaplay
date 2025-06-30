@@ -1,13 +1,16 @@
-import type { Comp, GameObj } from "../../types"
-import { _k } from "../../shared"; import { Asset, AssetBucket, fetchJSON, loadJSON } from "../../assets/asset";
+import { Asset, AssetBucket, fetchJSON, loadJSON } from "../../assets/asset";
 import { fixURL } from "../../assets/utils";
-;
+import { _k } from "../../shared";
+import type { Comp, GameObj } from "../../types";
 
 const factoryMethods: { [key: string]: (data: object) => Comp } = {};
 const prefabAssets = new AssetBucket<any>();
 
 // Deserialization
-function registerPrefabFactory(id: string, factoryMethod: (data: object) => Comp) {
+function registerPrefabFactory(
+    id: string,
+    factoryMethod: (data: object) => Comp,
+) {
     factoryMethods[id] = factoryMethod;
 }
 
@@ -36,7 +39,10 @@ export function createPrefab(nameOrObject: string | GameObj, object?: GameObj) {
         }
     }
     if (object) {
-        prefabAssets.add(nameOrObject as string, Promise.resolve(new Asset<any>(data as any)));
+        prefabAssets.add(
+            nameOrObject as string,
+            Promise.resolve(new Asset<any>(data as any)),
+        );
     }
     return data;
 }

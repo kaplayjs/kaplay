@@ -32,11 +32,19 @@ export function anchor(o: Anchor | Vec2): AnchorComp {
             }
         },
         serialize() {
-            return { anchor: this.anchor instanceof Vec2 ? { x: this.anchor.x, y: this.anchor.y } : this.anchor };
-        }
+            return {
+                anchor: this.anchor instanceof Vec2
+                    ? { x: this.anchor.x, y: this.anchor.y }
+                    : this.anchor,
+            };
+        },
     };
 }
 
 export function anchorFactory(data: any) {
-    return anchor(typeof data.anchor === "string" ? data.anchor : vec2(data.anchor.x, data.anchor.y));
+    return anchor(
+        typeof data.anchor === "string"
+            ? data.anchor
+            : vec2(data.anchor.x, data.anchor.y),
+    );
 }

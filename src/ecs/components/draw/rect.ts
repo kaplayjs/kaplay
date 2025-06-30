@@ -26,6 +26,8 @@ export interface RectComp extends Comp {
      * @since v3000.0
      */
     renderArea(): Rect;
+
+    serialize(): any;
 }
 
 /**
@@ -82,5 +84,18 @@ export function rect(w: number, h: number, opt: RectCompOpt = {}): RectComp {
         inspect() {
             return `rect: (${Math.ceil(_width)}w, ${Math.ceil(_height)}h)`;
         },
+        serialize() {
+            const data: any = { width: _width, height: _height };
+            if (this.radius) data.radius = this.radius;
+            return data;
+        },
     };
+}
+
+export function rectFactory(data: any) {
+    return rect(
+        data.width,
+        data.height,
+        data.radius ? { radius: data.radius } : {},
+    );
 }

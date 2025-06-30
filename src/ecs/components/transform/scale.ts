@@ -74,13 +74,14 @@ export function scale(...args: Vec2Args): ScaleComp {
                 return `scale: ${_scale.x.toFixed(1)}x`;
             }
             else {
-                return `scale: (${_scale.x.toFixed(1)}x, ${_scale.y.toFixed(1)
-                    }y)`;
+                return `scale: (${_scale.x.toFixed(1)}x, ${
+                    _scale.y.toFixed(1)
+                }y)`;
             }
         },
         serialize() {
-            return { scale: { x: this.scale.x, y: this.scale.y } }
-        }
+            return { scale: { x: this.scale.x, y: this.scale.y } };
+        },
     };
 }
 

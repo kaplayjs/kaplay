@@ -27,7 +27,7 @@ export interface LayerComp extends Comp {
      */
     set layer(name: string);
 
-    serialize(): any
+    serialize(): any;
 }
 
 export function layer(layer: string): LayerComp {
@@ -57,8 +57,8 @@ export function layer(layer: string): LayerComp {
             return `layer: ${this.layer}`;
         },
         serialize() {
-            return { layer: this.layer }
-        }
+            return { layer: this.layer };
+        },
     };
 }
 
