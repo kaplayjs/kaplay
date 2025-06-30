@@ -598,9 +598,22 @@ export function sprite(
 
         serialize() {
             const data: any = { sprite: this.sprite };
+            if (opt.frame) data.frame = opt.frame;
+            if (opt.tiled) data.tiled = opt.tiled;
+            if (opt.width) data.width = opt.width;
+            if (opt.height) data.height = opt.height;
+            if (opt.anim) data.anim = opt.anim;
+            if (opt.animSpeed) data.animSpeed = opt.animSpeed;
             if (this.flipX) data.flipX = this.flipX;
             if (this.flipY) data.flipY = this.flipY;
-            // TODO: lots of properties
+            if (opt.quad) {
+                data.quad = {
+                    x: opt.quad.x,
+                    y: opt.quad.y,
+                    w: opt.quad.w,
+                    h: opt.quad.h,
+                };
+            }
             return data;
         },
     };
@@ -608,9 +621,17 @@ export function sprite(
 
 export function spriteFactory(data: any) {
     const opt: SpriteCompOpt = {};
+    if (data.frame) opt.frame = data.frame;
+    if (data.tiled) opt.tiled = data.tiled;
+    if (data.width) opt.width = data.width;
+    if (data.height) opt.height = data.height;
+    if (data.anim) opt.anim = data.anim;
+    if (data.animSpeed) opt.animSpeed = data.animSpeed;
     if (data.flipX) opt.flipX = data.flipX;
     if (data.flipY) opt.flipY = data.flipY;
-    // TODO: lots of properties
+    if (data.quad) {
+        opt.quad = quad(data.quad.x, data.quad.y, data.quad.w, data.quad.h);
+    }
     return sprite(
         data.sprite,
         opt,
