@@ -80,6 +80,7 @@ import { rotate } from "../ecs/components/transform/rotate";
 import { scale } from "../ecs/components/transform/scale";
 import { z } from "../ecs/components/transform/z";
 import { KeepFlags } from "../ecs/entity/GameObjRaw";
+import { loadPrefab } from "../ecs/entity/prefab";
 import { addKaboom } from "../ecs/entity/premade/addKaboom";
 import { addLevel } from "../ecs/entity/premade/addLevel";
 import { destroy, getTreeRoot } from "../ecs/entity/utils";
@@ -284,8 +285,9 @@ export const createContext = (
         loadShaderURL,
         loadAseprite,
         loadBean,
-        loadHappy: loadHappy,
+        loadHappy,
         loadJSON,
+        loadPrefab,
         load,
         getSound,
         getFont,
