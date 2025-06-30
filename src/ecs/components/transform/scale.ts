@@ -38,6 +38,8 @@ export interface ScaleComp extends Comp {
      * Scale the object by a number for x and y
      */
     scaleBy(sx: number, sy: number): void;
+
+    serialize(): any;
 }
 
 export function scale(...args: Vec2Args): ScaleComp {
@@ -71,9 +73,17 @@ export function scale(...args: Vec2Args): ScaleComp {
             if (_scale.x == _scale.y) {
                 return `scale: ${_scale.x.toFixed(1)}x`;
             }
-            else {return `scale: (${_scale.x.toFixed(1)}x, ${
-                    _scale.y.toFixed(1)
-                }y)`;}
+            else {
+                return `scale: (${_scale.x.toFixed(1)}x, ${_scale.y.toFixed(1)
+                    }y)`;
+            }
         },
+        serialize() {
+            return { scale: { x: this.scale.x, y: this.scale.y } }
+        }
     };
+}
+
+export function scaleFactory(data: any) {
+    return scale(data.scale.x, data.scale.y);
 }

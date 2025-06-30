@@ -222,5 +222,5 @@ export function pos(...args: Vec2Args): PosComp {
 }
 
 export function posFactory(data: any) {
-    return pos(data.x, data.y);
+    return pos(data.pos.x, data.pos.y);
 }

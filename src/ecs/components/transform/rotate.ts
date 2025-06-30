@@ -20,6 +20,8 @@ export interface RotateComp extends Comp {
      * @since v3000.0
      */
     rotateTo(s: number): void;
+
+    serialize(): any;
 }
 
 export function rotate(a?: number): RotateComp {
@@ -35,5 +37,12 @@ export function rotate(a?: number): RotateComp {
         inspect() {
             return `angle: ${Math.round(this.angle)}`;
         },
+        serialize() {
+            return { angle: this.angle }
+        }
     };
+}
+
+export function rotateFactory(data: any) {
+    return rotate(data.angle);
 }
