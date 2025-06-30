@@ -124,6 +124,8 @@ export interface SpriteComp extends Comp {
      * @since v3000.0
      */
     renderArea(): Rect;
+
+    serialize(): any;
 }
 
 /**
@@ -593,5 +595,24 @@ export function sprite(
             }
             return null;
         },
+
+        serialize() {
+            const data: any = { sprite: this.sprite };
+            if (this.flipX) data.flipX = this.flipX;
+            if (this.flipY) data.flipY = this.flipY;
+            // TODO: lots of properties
+            return data;
+        },
     };
+}
+
+export function spriteFactory(data: any) {
+    const opt: SpriteCompOpt = {};
+    if (data.flipX) opt.flipX = data.flipX;
+    if (data.flipY) opt.flipY = data.flipY;
+    // TODO: lots of properties
+    return sprite(
+        data.sprite,
+        opt,
+    );
 }
