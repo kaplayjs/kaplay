@@ -2871,6 +2871,7 @@ export interface KAPLAYCtx<
      *
      * @group Assets
      */
+    // #region Loaders
     loadRoot(path?: string): string;
     /**
      * Load a sprite into asset manager, with name and resource url and optional config.
@@ -3224,6 +3225,11 @@ export interface KAPLAYCtx<
      * @group Assets
      */
     load<T>(l: Promise<T>): Asset<T>;
+    /**
+     * Load a prefab.
+     */
+    loadPrefab: (name: string, url: string) => Asset<any>;
+    // #endregion
     /**
      * Get the global asset loading progress (0.0 - 1.0).
      *

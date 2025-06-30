@@ -2,6 +2,7 @@ import { Asset, AssetBucket, fetchJSON, loadJSON } from "../../assets/asset";
 import { fixURL } from "../../assets/utils";
 import { _k } from "../../shared";
 import type { Comp, GameObj } from "../../types";
+import type { InternalGameObjRaw } from "./GameObjRaw";
 
 const factoryMethods: { [key: string]: (data: object) => Comp } = {};
 const prefabAssets = new AssetBucket<any>();
@@ -31,10 +32,12 @@ export function loadPrefab(name: string, url: string) {
 // Serialization
 export function createPrefab(nameOrObject: string | GameObj, object?: GameObj) {
     const data: { [key: string]: any } = {};
-    const obj: GameObj = object ? object : nameOrObject as GameObj;
-    for (const id in obj.ids) {
-        const c = obj.c(id);
-        if (c && "serialize" in c) {
+    const obj: InternalGameObjRaw = object
+        ? object as InternalGameObjRaw
+        : nameOrObject as InternalGameObjRaw;
+
+    for (const [id, c] of obj._compStates) {
+        if ("serialize" in c) {
             data[id] = (c.serialize as () => any)();
         }
     }
