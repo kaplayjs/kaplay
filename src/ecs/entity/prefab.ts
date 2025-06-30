@@ -15,7 +15,7 @@ function registerPrefabFactory(
     factoryMethods[id] = factoryMethod;
 }
 
-function deserializePrefabAsset(prefabAsset: { [key: string]: any }) {
+export function deserializePrefabAsset(prefabAsset: { [key: string]: any }) {
     const list: Comp[] = [];
     for (const id in prefabAsset) {
         if (id in factoryMethods) {
@@ -51,23 +51,5 @@ export function createPrefab(nameOrObject: string | GameObj, object?: GameObj) {
         );
     }
     return data;
-}
-// #endregion
-
-// #region Instancing
-export function addPrefab(name: object | string) {
-    let data: object;
-    if (typeof name === "string") {
-        if (name in prefabAssets) {
-            data = prefabAssets.get("name")?.data;
-        }
-        else {
-            throw new Error(`Can't add unknown prefab named ${name}`);
-        }
-    }
-    else {
-        data = name;
-    }
-    return _k.game.root.add(deserializePrefabAsset(data));
 }
 // #endregion

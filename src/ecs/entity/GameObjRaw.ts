@@ -53,6 +53,7 @@ import type { RotateComp } from "../components/transform/rotate";
 import type { ScaleComp } from "../components/transform/scale";
 import type { ZComp } from "../components/transform/z";
 import { make } from "./make";
+import { deserializePrefabAsset } from "./prefab";
 import { isFixed } from "./utils";
 
 export enum KeepFlags {
@@ -136,6 +137,17 @@ export interface GameObjRaw {
      * @since v3000.0
      */
     add<T extends CompList<unknown>>(comps?: [...T]): GameObj<T[number]>;
+    /**
+     * Add a prefab.
+     *
+     * @param nameOrObject - Name of registered prefab using loadPrefab() or plain obj returned by createPrefab().
+     *
+     * @returns The added game object.
+     * @since v4000.0
+     */
+    addPrefab<T extends CompList<unknown>>(
+        nameOrObject: object | string,
+    ): GameObj<T[number]>;
     /**
      * Remove and re-add the game obj, without triggering add / destroy events.
      *
@@ -623,6 +635,23 @@ export const GameObjRawPrototype: Omit<InternalGameObjRaw, AppEvents> = {
         _k.game.events.trigger("add", obj);
 
         return obj;
+    },
+
+    addPrefab<T>(name: string | object) {
+        let data: object;
+        if (typeof name === "string") {
+            if (name in _k.assets.prefabAssets) {
+                data = _k.assets.prefabAssets.get(name)?.data;
+            }
+            else {
+                throw new Error(`Can't add unknown prefab named ${name}`);
+            }
+        }
+        else {
+            data = name;
+        }
+
+        return this.add(deserializePrefabAsset(data)) as GameObj<T>;
     },
 
     readd<T>(this: InternalGameObjRaw, obj: GameObj<T>): GameObj<T> {
