@@ -263,6 +263,7 @@ export const initAssets = (ggl: GfxCtx, spriteAtlasPadding: number) => {
         sounds: new AssetBucket<SoundData>(),
         shaders: new AssetBucket<ShaderData>(),
         custom: new AssetBucket<any>(),
+        prefabAssets: new AssetBucket<any>(),
         music: {} as Record<string, string>,
         packer: new TexPacker(
             ggl,

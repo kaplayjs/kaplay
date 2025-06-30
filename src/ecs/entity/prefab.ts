@@ -1,11 +1,11 @@
-import { Asset, AssetBucket, fetchJSON, loadJSON } from "../../assets/asset";
+import { Asset, fetchJSON } from "../../assets/asset";
 import { fixURL } from "../../assets/utils";
 import { _k } from "../../shared";
 import type { Comp, GameObj } from "../../types";
 import type { InternalGameObjRaw } from "./GameObjRaw";
 
 const factoryMethods: { [key: string]: (data: object) => Comp } = {};
-const prefabAssets = new AssetBucket<any>();
+const prefabAssets = _k.assets.prefabAssets;
 
 // Deserialization
 function registerPrefabFactory(
@@ -26,7 +26,7 @@ function deserializePrefabAsset(prefabAsset: { [key: string]: any }) {
 }
 
 export function loadPrefab(name: string, url: string) {
-    return prefabAssets.add(name, fetchJSON(fixURL(url)));
+    return _k.assets.prefabAssets.add(name, fetchJSON(fixURL(url)));
 }
 
 // Serialization
