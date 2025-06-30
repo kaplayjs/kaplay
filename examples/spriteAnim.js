@@ -78,7 +78,7 @@ This time we're defining a function for executing animations conditionally.
 const playerPlayRun = () => {
     // obj.play() will reset to the first frame of the animation
     // so we want to make sure it only runs when the current animation is not "run"
-    if (player.isGrounded() && player.getCurAnim().name !== "run") {
+    if (player.isGrounded() && player.getCurAnim()?.name !== "run") {
         player.play("run");
     }
 };
@@ -115,6 +115,10 @@ onKeyPress(["space", "up"], () => {
     }
 });
 
+onKeyPress("x", () => {
+    player.stop();
+});
+
 // Switch to "idle" or "run" animation when player hits ground
 player.onGround(() => {
     if (!isKeyDown("left") && !isKeyDown("right")) {
@@ -136,7 +140,17 @@ player.onAnimStart((anim) => {
 
 player.onAnimEnd((anim) => {
     if (anim === "idle") {
-        debug.log("hi!");
+        // Will never run as idle is set to loop: true
+        debug.log("idle animation ended");
+    }
+    else if (anim === "jump") {
+        debug.log("jump animation ended");
+    }
+});
+
+player.onAnimStop((anim) => {
+    if (anim === "idle") {
+        debug.log("idle animation stopped");
     }
 });
 
@@ -150,6 +164,7 @@ const getInfo = () =>
 Anim: ${player.getCurAnim()?.name}
 Frame: ${player.frame}
 Loops: ${loopCount}
+Press (x) to stop anim
 `.trim();
 
 // Add some text to show the current animation
