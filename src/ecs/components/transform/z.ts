@@ -10,6 +10,8 @@ export interface ZComp extends Comp {
      * Defines the z-index of this game obj
      */
     z: number;
+
+    serialize(): any
 }
 
 export function z(z: number): ZComp {
@@ -19,5 +21,12 @@ export function z(z: number): ZComp {
         inspect() {
             return `z: ${this.z}`;
         },
+        serialize() {
+            return { z: this.z }
+        }
     };
+}
+
+export function zFactory(data: any) {
+    return z(data.z);
 }
