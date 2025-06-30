@@ -7,7 +7,7 @@ import type { InternalGameObjRaw } from "./GameObjRaw";
 const factoryMethods: { [key: string]: (data: object) => Comp } = {};
 const prefabAssets = _k.assets.prefabAssets;
 
-// Deserialization
+// #region Deserialization
 function registerPrefabFactory(
     id: string,
     factoryMethod: (data: object) => Comp,
@@ -24,12 +24,15 @@ function deserializePrefabAsset(prefabAsset: { [key: string]: any }) {
     }
     return list;
 }
+// #endregion
 
+// #region Loading
 export function loadPrefab(name: string, url: string) {
     return _k.assets.prefabAssets.add(name, fetchJSON(fixURL(url)));
 }
+// #endregion
 
-// Serialization
+// #region Serialization
 export function createPrefab(nameOrObject: string | GameObj, object?: GameObj) {
     const data: { [key: string]: any } = {};
     const obj: InternalGameObjRaw = object
@@ -49,8 +52,9 @@ export function createPrefab(nameOrObject: string | GameObj, object?: GameObj) {
     }
     return data;
 }
+// #endregion
 
-// Instancing
+// #region Instancing
 export function addPrefab(name: object | string) {
     let data: object;
     if (typeof name === "string") {
@@ -66,3 +70,4 @@ export function addPrefab(name: object | string) {
     }
     return _k.game.root.add(deserializePrefabAsset(data));
 }
+// #endregion
