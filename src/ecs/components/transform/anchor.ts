@@ -1,4 +1,5 @@
-import type { Vec2 } from "../../../math/Vec2";
+import { vec2 } from "../../../math/math";
+import { Vec2 } from "../../../math/Vec2";
 import type { Anchor, Comp } from "../../../types";
 
 /**
@@ -11,6 +12,8 @@ export interface AnchorComp extends Comp {
      * Anchor point for render.
      */
     anchor: Anchor | Vec2;
+
+    serialize(): any;
 }
 
 export function anchor(o: Anchor | Vec2): AnchorComp {
@@ -28,5 +31,12 @@ export function anchor(o: Anchor | Vec2): AnchorComp {
                 return `anchor: ` + this.anchor.toString();
             }
         },
+        serialize() {
+            return { anchor: this.anchor instanceof Vec2 ? { x: this.anchor.x, y: this.anchor.y } : this.anchor };
+        }
     };
+}
+
+export function anchorFactory(data: any) {
+    return anchor(typeof data.anchor === "string" ? data.anchor : vec2(data.anchor.x, data.anchor.y));
 }
