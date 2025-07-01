@@ -149,6 +149,13 @@ export interface GameObjRaw {
         nameOrObject: object | string,
     ): GameObj<T[number]>;
     /**
+     * Create a serialized version of this Game Object.
+     *
+     * @returns The serialized game object
+     * @since v4000.0
+     */
+    serialize(): any;
+    /**
      * Remove and re-add the game obj, without triggering add / destroy events.
      *
      * @param obj - The game object to re-add.
@@ -583,7 +590,7 @@ export const GameObjRawPrototype: Omit<InternalGameObjRaw, AppEvents> = {
         return Array.from(this._tags);
     },
 
-    // #enedregion
+    // #endregion
 
     // #region Object
     setParent(
@@ -652,6 +659,18 @@ export const GameObjRawPrototype: Omit<InternalGameObjRaw, AppEvents> = {
         }
 
         return this.add(deserializePrefabAsset(data)) as GameObj<T>;
+    },
+
+    serialize(this: InternalGameObjRaw) {
+        const data: { [key: string]: any } = {};
+
+        for (const [id, c] of this._compStates) {
+            if ("serialize" in c) {
+                data[id] = (c.serialize as () => any)();
+            }
+        }
+
+        return data;
     },
 
     readd<T>(this: InternalGameObjRaw, obj: GameObj<T>): GameObj<T> {
