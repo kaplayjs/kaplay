@@ -10,11 +10,16 @@ export interface FixedComp extends Comp {
      * If the obj is unaffected by camera
      */
     fixed: boolean;
+
+    serialize(): { fixed?: boolean }
 }
 
 export function fixed(): FixedComp {
     return {
         id: "fixed",
         fixed: true,
+        serialize() {
+            return {fixed: this.fixed}
+        },
     };
 }

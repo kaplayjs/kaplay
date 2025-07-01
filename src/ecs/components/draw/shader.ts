@@ -15,6 +15,8 @@ export interface ShaderComp extends Comp {
      * The shader ID.
      */
     shader: string;
+    
+    serialize(): { shader: string }
 }
 
 export function shader(
@@ -36,6 +38,9 @@ export function shader(
             }),
         inspect() {
             return `shader: ${id}`;
+        },
+        serialize() {
+            return { shader: this.shader }
         },
     };
 }

@@ -22,7 +22,7 @@ export interface CircleComp extends Comp {
      */
     renderArea(): Circle;
 
-    serialize(): any;
+    serialize(): { radius: number, fill?: boolean };
 }
 
 /**

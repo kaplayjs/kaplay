@@ -7,6 +7,7 @@ import { BlendMode, type Comp } from "../../../types";
  */
 export interface BlendComp extends Comp {
     blend: BlendMode;
+    serialize(): { blend: BlendMode },
 }
 
 export function blend(blend: BlendMode): BlendComp {
@@ -24,5 +25,12 @@ export function blend(blend: BlendMode): BlendComp {
                     : "screen"
             }`;
         },
+        serialize() {
+            return { blend: this.blend }
+        }
     };
+}
+
+export function blendFactory(data: { blend: BlendMode }) {
+    return blend(data.blend)
 }

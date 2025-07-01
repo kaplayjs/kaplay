@@ -27,7 +27,7 @@ export interface RectComp extends Comp {
      */
     renderArea(): Rect;
 
-    serialize(): any;
+    serialize(): { width: number, height: number };
 }
 
 /**

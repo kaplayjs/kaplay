@@ -9,6 +9,14 @@ import type { Comp, Outline } from "../../../types";
  */
 export interface OutlineComp extends Comp {
     outline: Outline;
+    serialize() : { 
+        width?: number, 
+        color?: { r: number, g: number, b: number },
+        opacity?: number,
+        join?: LineJoin,
+        miterLimit?: number
+        cap?: LineCap,
+    },
 }
 
 export function outline(
@@ -32,5 +40,19 @@ export function outline(
         inspect() {
             return `outline: ${this.outline.width}px, ${this.outline.color}`;
         },
+        serialize(): ReturnType<OutlineComp["serialize"]> {
+          return {
+            cap: this.outline.cap,
+            color: this.outline.color,
+            join: this.outline.join,
+            miterLimit: this.outline.miterLimit,
+            opacity: this.outline.opacity,
+            width: this.outline.width
+          }  
+        },
     };
+}
+
+export function rectFactory(data: ReturnType<OutlineComp["serialize"]>) {
+    return outline(data.width, rgb(data.color?.r, data.color?.g, data.color?.b), data.opacity, data.join, data.miterLimit, data.cap)
 }
