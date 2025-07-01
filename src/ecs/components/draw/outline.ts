@@ -53,6 +53,6 @@ export function outline(
     };
 }
 
-export function rectFactory(data: ReturnType<OutlineComp["serialize"]>) {
-    return outline(data.width, rgb(data.color?.r, data.color?.g, data.color?.b), data.opacity, data.join, data.miterLimit, data.cap)
+export function outlineFactory(data: ReturnType<OutlineComp["serialize"]>) {
+    return outline(data.width, rgb(data.color?.r ?? 255, data.color?.g ?? 255, data.color?.b ?? 255), data.opacity, data.join, data.miterLimit, data.cap)
 }
