@@ -1,13 +1,22 @@
 import { BlendMode, type Comp } from "../../../types";
 
 /**
+ * The serialized {@link blend `blend()`} component.
+ *
+ * @group Component Serializations
+ */
+export interface SerializeBlendComp {
+    blend: BlendMode
+}
+
+/**
  * The {@link blend `blend()`} component.
  *
  * @group Component Types
  */
 export interface BlendComp extends Comp {
     blend: BlendMode;
-    serialize(): { blend: BlendMode },
+    serialize(): SerializeBlendComp,
 }
 
 export function blend(blend: BlendMode): BlendComp {
@@ -31,6 +40,6 @@ export function blend(blend: BlendMode): BlendComp {
     };
 }
 
-export function blendFactory(data: { blend: BlendMode }) {
+export function blendFactory(data: any) {
     return blend(data.blend)
 }

@@ -9,6 +9,15 @@ import { isFixed } from "../../entity/utils";
 import type { FixedComp } from "./fixed";
 
 /**
+ * The serialized {@link pos `pos()`} component.
+ *
+ * @group Component Serializations
+ */
+export interface SerializePosComp {
+    pos: { x: number, y: number }
+}
+
+/**
  * The {@link pos `pos()`} component.
  *
  * @group Component Types
@@ -79,8 +88,10 @@ export interface PosComp extends Comp {
      * @since v3001.0
      */
     fromOther(this: GameObj<PosComp>, other: GameObj<PosComp>, p: Vec2): Vec2;
-
-    serialize(): any;
+    /**
+     * Serialize the current state comp
+     */
+    serialize(): SerializePosComp;
 }
 
 export function pos(...args: Vec2Args): PosComp {

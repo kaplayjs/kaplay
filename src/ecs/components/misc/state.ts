@@ -2,6 +2,16 @@ import { KEvent, KEventController } from "../../../events/events";
 import type { Comp } from "../../../types";
 
 /**
+ * The serialized {@link state `state()`} component.
+ *
+ * @group Component Serializations
+ */
+export interface SerializeStateComp {
+    initState: string,
+    stateList: string[]
+}
+
+/**
  * The {@link state `state()`} component.
  *
  * @group Component Types
@@ -44,6 +54,7 @@ export interface StateComp<T extends string> extends Comp {
      * Register an event that runs every frame when in a specific state.
      */
     onStateDraw: (state: T, action: () => void) => KEventController;
+    serialize(): SerializeStateComp;
 }
 
 export function state<T extends string>(
@@ -158,5 +169,16 @@ export function state<T extends string>(
         inspect() {
             return `state: ${this.state}`;
         },
+
+        serialize() {
+            return {
+                initState: initState,
+                stateList: stateList ?? [initState]
+            }
+        },
     };
+}
+
+export function stateFactory(data: SerializeStateComp) {
+    return state(data.initState, data.stateList)
 }

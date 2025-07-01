@@ -10,7 +10,9 @@ export interface ZComp extends Comp {
      * Defines the z-index of this game obj
      */
     z: number;
-
+    /**
+     * Serialize the current state comp
+     */
     serialize(): SerializeZComp;
 }
 

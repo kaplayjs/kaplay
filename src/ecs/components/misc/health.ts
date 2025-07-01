@@ -3,6 +3,16 @@ import { clamp } from "../../../math/clamp";
 import type { Comp, GameObj } from "../../../types";
 
 /**
+ * The serialized {@link health `health()`} component.
+ *
+ * @group Component Serializations
+ */
+export interface SerializeHealthComp {
+    hp: number
+    maxHP: number
+}
+
+/**
  * The {@link health `health()`} component.
  *
  * @group Component Types
@@ -40,6 +50,7 @@ export interface HealthComp extends Comp {
      * @since v2000.1
      */
     onDeath(action: () => void): KEventController;
+    serialize(): SerializeHealthComp,
 }
 
 export function health(
@@ -95,6 +106,12 @@ export function health(
         },
         inspect() {
             return `health: ${hp}`;
+        },
+        serialize() {
+            return {
+                hp: this.hp,
+                maxHP: this.maxHP ?? this.hp
+            }
         },
     };
 }

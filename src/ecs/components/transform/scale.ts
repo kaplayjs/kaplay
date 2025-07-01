@@ -38,8 +38,19 @@ export interface ScaleComp extends Comp {
      * Scale the object by a number for x and y
      */
     scaleBy(sx: number, sy: number): void;
+    /**
+     * Serialize the current state comp
+     */
+    serialize(): SerializeScaleComp;
+}
 
-    serialize(): any;
+/**
+ * The serialized {@link scale `scale()`} component.
+ *
+ * @group Component Serializations
+ */
+export interface SerializeScaleComp {
+    scale: { x: number, y: number }
 }
 
 export function scale(...args: Vec2Args): ScaleComp {
