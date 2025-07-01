@@ -4,6 +4,10 @@ import { initApp } from "../app/app";
 import { initAssets } from "../assets/asset";
 import { initAudio } from "../audio/audio";
 import { createDebug } from "../debug/debug";
+import { spriteFactory } from "../ecs/components/draw/sprite";
+import { moveFactory } from "../ecs/components/transform/move";
+import { posFactory } from "../ecs/components/transform/pos";
+import { registerPrefabFactory } from "../ecs/entity/prefab";
 import { createGame } from "../game/game";
 import { createCanvas } from "../gfx/canvas";
 import { initGfx } from "../gfx/gfx";
@@ -58,6 +62,11 @@ export const createEngine = (gopt: KAPLAYOpt) => {
 
     // Debug mode
     const debug = createDebug(opt, app, appGfx, audio, game, frameRenderer);
+
+    // Register default factories
+    registerPrefabFactory("pos", posFactory);
+    registerPrefabFactory("sprite", spriteFactory);
+    registerPrefabFactory("move", moveFactory);
 
     return {
         globalOpt: opt,

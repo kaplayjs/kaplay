@@ -5,10 +5,9 @@ import type { Comp, GameObj } from "../../types";
 import type { InternalGameObjRaw } from "./GameObjRaw";
 
 const factoryMethods: { [key: string]: (data: object) => Comp } = {};
-const prefabAssets = _k.assets.prefabAssets;
 
 // #region Deserialization
-function registerPrefabFactory(
+export function registerPrefabFactory(
     id: string,
     factoryMethod: (data: object) => Comp,
 ) {
@@ -22,6 +21,7 @@ export function deserializePrefabAsset(prefabAsset: { [key: string]: any }) {
             list.push(factoryMethods[id](prefabAsset[id]));
         }
     }
+
     return list;
 }
 // #endregion
@@ -45,7 +45,7 @@ export function createPrefab(nameOrObject: string | GameObj, object?: GameObj) {
         }
     }
     if (object) {
-        prefabAssets.add(
+        _k.assets.prefabAssets.add(
             nameOrObject as string,
             Promise.resolve(new Asset<any>(data as any)),
         );

@@ -23,5 +23,5 @@ export function move(
 }
 
 export function moveFactory(data: any) {
-    return move(data.dir, data.speed);
+    return move(new Vec2(data.dir), data.speed);
 }
