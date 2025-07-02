@@ -12,9 +12,9 @@ import type { outline } from "./outline";
  * @group Component Serializations
  */
 export interface SerializeEllipseComp {
-    radiusX: number,
-    radiusY: number,
-    fill?: boolean
+    radiusX: number;
+    radiusY: number;
+    fill?: boolean;
 }
 
 /**
@@ -32,7 +32,7 @@ export interface EllipseComp extends Comp {
      * Render area of the ellipse.
      */
     renderArea(): Ellipse;
-    serialize(): SerializeEllipseComp
+    serialize(): SerializeEllipseComp;
 }
 
 /**
@@ -95,7 +95,11 @@ export function ellipse(
             }`;
         },
         serialize() {
-            return { radiusX: this.radiusX, radiusY: this.radiusY, fill: opt.fill }
+            return {
+                radiusX: this.radiusX,
+                radiusY: this.radiusY,
+                fill: opt.fill,
+            };
         },
     };
 }

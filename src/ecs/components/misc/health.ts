@@ -8,8 +8,8 @@ import type { Comp, GameObj } from "../../../types";
  * @group Component Serializations
  */
 export interface SerializeHealthComp {
-    hp: number
-    maxHP: number
+    hp: number;
+    maxHP: number;
 }
 
 /**
@@ -50,7 +50,7 @@ export interface HealthComp extends Comp {
      * @since v2000.1
      */
     onDeath(action: () => void): KEventController;
-    serialize(): SerializeHealthComp,
+    serialize(): SerializeHealthComp;
 }
 
 export function health(
@@ -110,8 +110,8 @@ export function health(
         serialize() {
             return {
                 hp: this.hp,
-                maxHP: this.maxHP ?? this.hp
-            }
+                maxHP: this.maxHP ?? this.hp,
+            };
         },
     };
 }

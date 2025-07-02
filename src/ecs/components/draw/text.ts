@@ -82,16 +82,16 @@ export interface TextComp extends Comp {
      */
     formattedText(): FormattedText;
 
-    serialize(): { 
-        text: string,
-        size?: number,
-        font?: string,
-        width?: number,
-        align?: TextAlign,
-        lineSpacing?: number,
-        letterSpacing?: number
-        indentAll?: boolean
-    }
+    serialize(): {
+        text: string;
+        size?: number;
+        font?: string;
+        width?: number;
+        align?: TextAlign;
+        lineSpacing?: number;
+        letterSpacing?: number;
+        indentAll?: boolean;
+    };
 }
 
 /**
@@ -248,5 +248,5 @@ export function textFactory(data: ReturnType<TextComp["serialize"]>) {
         indentAll: data.indentAll,
         letterSpacing: data.letterSpacing,
         lineSpacing: data.letterSpacing,
-    })
+    });
 }

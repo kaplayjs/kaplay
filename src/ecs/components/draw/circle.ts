@@ -12,8 +12,8 @@ import type { outline } from "./outline";
  * @group Component Serializations
  */
 export interface SerializeCircleComp {
-    radius: number,
-    fill?: boolean
+    radius: number;
+    fill?: boolean;
 }
 
 /**
@@ -31,7 +31,7 @@ export interface CircleComp extends Comp {
      * @since v3000.0
      */
     renderArea(): Circle;
-    serialize(): SerializeCircleComp
+    serialize(): SerializeCircleComp;
 }
 
 /**

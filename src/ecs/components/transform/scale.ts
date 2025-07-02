@@ -50,7 +50,7 @@ export interface ScaleComp extends Comp {
  * @group Component Serializations
  */
 export interface SerializeScaleComp {
-    scale: { x: number, y: number }
+    scale: { x: number; y: number };
 }
 
 export function scale(...args: Vec2Args): ScaleComp {

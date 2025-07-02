@@ -6,7 +6,7 @@ import type { Comp } from "../../../types";
  * @group Component Serializations
  */
 export interface SerializeStayComp {
-    scenesToStay: string[],
+    scenesToStay: string[];
 }
 
 /**
@@ -23,7 +23,7 @@ export interface StayComp extends Comp {
      * Array of scenes that the obj will stay on.
      */
     scenesToStay?: string[];
-    serialize(): SerializeStayComp
+    serialize(): SerializeStayComp;
 }
 
 export function stay(scenesToStay?: string[]): StayComp {
@@ -33,13 +33,12 @@ export function stay(scenesToStay?: string[]): StayComp {
         scenesToStay,
         serialize() {
             return {
-                scenesToStay: scenesToStay ?? []
-            }
+                scenesToStay: scenesToStay ?? [],
+            };
         },
     };
 }
 
 export function stayFactory(data: SerializeStayComp) {
-    return stay(data.scenesToStay)
+    return stay(data.scenesToStay);
 }
-

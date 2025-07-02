@@ -1,4 +1,9 @@
-import { type Color, type ColorArgs, rgb, type RGBValue } from "../../../math/color";
+import {
+    type Color,
+    type ColorArgs,
+    rgb,
+    type RGBValue,
+} from "../../../math/color";
 import type { Comp } from "../../../types";
 
 /**
@@ -7,7 +12,7 @@ import type { Comp } from "../../../types";
  * @group Component Serializations
  */
 export interface SerializeColorComp {
-    color: { r: number, g: number, b: number }
+    color: { r: number; g: number; b: number };
 }
 
 /**
@@ -17,7 +22,7 @@ export interface SerializeColorComp {
  */
 export interface ColorComp extends Comp {
     color: Color;
-    serialize(): SerializeColorComp
+    serialize(): SerializeColorComp;
 }
 
 export function color(...args: ColorArgs): ColorComp {
@@ -32,9 +37,9 @@ export function color(...args: ColorArgs): ColorComp {
                 color: {
                     r: this.color.r,
                     g: this.color.b,
-                    b: this.color.b
-                }
-            } 
+                    b: this.color.b,
+                },
+            };
         },
     };
 }

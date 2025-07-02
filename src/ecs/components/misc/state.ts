@@ -7,8 +7,8 @@ import type { Comp } from "../../../types";
  * @group Component Serializations
  */
 export interface SerializeStateComp {
-    initState: string,
-    stateList: string[]
+    initState: string;
+    stateList: string[];
 }
 
 /**
@@ -173,12 +173,12 @@ export function state<T extends string>(
         serialize() {
             return {
                 initState: initState,
-                stateList: stateList ?? [initState]
-            }
+                stateList: stateList ?? [initState],
+            };
         },
     };
 }
 
 export function stateFactory(data: SerializeStateComp) {
-    return state(data.initState, data.stateList)
+    return state(data.initState, data.stateList);
 }

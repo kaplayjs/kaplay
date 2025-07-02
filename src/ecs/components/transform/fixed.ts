@@ -11,7 +11,7 @@ export interface FixedComp extends Comp {
      */
     fixed: boolean;
 
-    serialize(): { fixed?: boolean }
+    serialize(): { fixed?: boolean };
 }
 
 export function fixed(): FixedComp {
@@ -19,7 +19,7 @@ export function fixed(): FixedComp {
         id: "fixed",
         fixed: true,
         serialize() {
-            return {fixed: this.fixed}
+            return { fixed: this.fixed };
         },
     };
 }

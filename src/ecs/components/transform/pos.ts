@@ -14,7 +14,7 @@ import type { FixedComp } from "./fixed";
  * @group Component Serializations
  */
 export interface SerializePosComp {
-    pos: { x: number, y: number }
+    pos: { x: number; y: number };
 }
 
 /**

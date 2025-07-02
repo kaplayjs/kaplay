@@ -244,6 +244,14 @@ export class Color {
     toArray(): Array<number> {
         return [this.r, this.g, this.b];
     }
+
+    serialize(): any {
+        return { r: this.r, g: this.g, b: this.b };
+    }
+
+    static deserialize(data: any): Color {
+        return new Color(data.r, data.g, data.b);
+    }
 }
 
 export type ColorArgs =

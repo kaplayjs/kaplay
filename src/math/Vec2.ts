@@ -594,4 +594,12 @@ export class Vec2 {
     toArray(): Array<number> {
         return [this.x, this.y];
     }
+
+    serialize(): any {
+        return { x: this.x, y: this.y };
+    }
+
+    static deserialize(data: any): Vec2 {
+        return vec2(data.x, data.y);
+    }
 }

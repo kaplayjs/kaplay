@@ -9,13 +9,13 @@ import type { Comp, Outline } from "../../../types";
  */
 export interface SerializeOutlineComp {
     outline: {
-        width: number,
-        color: { r: number, g: number, b: number },
-        opacity: number,
-        join: LineJoin,
-        miterLimit: number,
-        cap: LineCap
-    }
+        width: number;
+        color: { r: number; g: number; b: number };
+        opacity: number;
+        join: LineJoin;
+        miterLimit: number;
+        cap: LineCap;
+    };
 }
 
 /**
@@ -25,7 +25,7 @@ export interface SerializeOutlineComp {
  */
 export interface OutlineComp extends Comp {
     outline: Outline;
-    serialize(): SerializeOutlineComp
+    serialize(): SerializeOutlineComp;
 }
 
 export function outline(
@@ -53,7 +53,7 @@ export function outline(
             return {
                 outline: {
                     width: this.outline.width ?? 1,
-                    color: { 
+                    color: {
                         r: this.outline.color?.r ?? 255,
                         g: this.outline.color?.g ?? 255,
                         b: this.outline.color?.b ?? 255,
@@ -61,13 +61,20 @@ export function outline(
                     opacity: this.outline.opacity ?? 1,
                     join: this.outline.join ?? "miter",
                     miterLimit: this.outline.miterLimit ?? 10,
-                    cap: this.outline.cap ?? "butt"
-                }
-            }
+                    cap: this.outline.cap ?? "butt",
+                },
+            };
         },
     };
 }
 
 export function outlineFactory(data: SerializeOutlineComp) {
-    return outline(data.outline.width, rgb(data.outline.color.r, data.outline.color.g, data.outline.color.b), data.outline.opacity, data.outline.join, data.outline.miterLimit, data.outline.cap)
+    return outline(
+        data.outline.width,
+        rgb(data.outline.color.r, data.outline.color.g, data.outline.color.b),
+        data.outline.opacity,
+        data.outline.join,
+        data.outline.miterLimit,
+        data.outline.cap,
+    );
 }

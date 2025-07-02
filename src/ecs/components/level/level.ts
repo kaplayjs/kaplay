@@ -84,6 +84,8 @@ export interface LevelComp extends Comp {
     onNavigationMapInvalid(cb: () => void): KEventController;
     invalidateNavigationMap(): void;
     onNavigationMapChanged(cb: () => void): KEventController;
+
+    serialize(): any;
 }
 
 /**
@@ -690,6 +692,31 @@ export function level(map: string[], opt: LevelOpt): LevelComp {
             else {
                 return null;
             }
+        },
+
+        serialize(): any {
+            const data: any = {};
+            data.tileWidth = opt.tileWidth;
+            data.tileHeight = opt.tileHeight;
+            data.tiles = {}; // { symbol: prefab };
+            for (const key in Object.keys(opt.tiles)) {
+                const compsAndTags = opt.tiles[key](vec2());
+                const comps: any = {};
+                const tags = [];
+                for (const compOrTag of compsAndTags) {
+                    if (typeof compOrTag === "string") {
+                        tags.push(compOrTag);
+                    }
+                    else {
+                        if ("serialize" in compOrTag) {
+                            // TODO comps[(compOrTag as Comp).id] = compOrTag.serialize();
+                        }
+                    }
+                }
+                data.tiles[key] = comps;
+            }
+            data.wildcardTile = {}; // prefab
+            return data;
         },
     };
 }

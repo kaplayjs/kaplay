@@ -6,7 +6,7 @@ import type { Comp } from "../../../types";
  * @group Component Serializations
  */
 export interface SerializeNameComp {
-    name: string
+    name: string;
 }
 
 /**
@@ -17,7 +17,7 @@ export interface SerializeNameComp {
 export interface NamedComp extends Comp {
     /** The name assigned to this object. */
     name: string;
-    serialize(): SerializeNameComp
+    serialize(): SerializeNameComp;
 }
 
 export function named(name: string): NamedComp {
@@ -26,12 +26,12 @@ export function named(name: string): NamedComp {
         name,
         serialize() {
             return {
-                name: name
-            }
+                name: name,
+            };
         },
     };
 }
 
 export function nameFactory(data: any) {
-    return named(data.name)
+    return named(data.name);
 }

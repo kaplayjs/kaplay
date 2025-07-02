@@ -10,7 +10,7 @@ import type { TweenController } from "../misc/timer";
  * @group Component Serializations
  */
 export interface SerializeOpacityComp {
-    opacity: number,
+    opacity: number;
 }
 
 /**
@@ -25,7 +25,7 @@ export interface OpacityComp extends Comp {
     fadeIn(time?: number, easeFunc?: EaseFunc): TweenController;
     /** Fade out at the start. */
     fadeOut(time?: number, easeFunc?: EaseFunc): TweenController;
-    serialize(): SerializeOpacityComp,
+    serialize(): SerializeOpacityComp;
 }
 
 export function opacity(a: number): OpacityComp {
@@ -54,11 +54,11 @@ export function opacity(a: number): OpacityComp {
             return `opacity: ${toFixed(this.opacity, 1)}`;
         },
         serialize() {
-            return { opacity: this.opacity }
+            return { opacity: this.opacity };
         },
     };
 }
 
 export function opacityFactory(data: any) {
-    return opacity(data.opacity)
+    return opacity(data.opacity);
 }
