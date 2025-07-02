@@ -228,7 +228,7 @@ export function pos(...args: Vec2Args): PosComp {
         },
 
         serialize() {
-            return { pos: { x: this.pos.x, y: this.pos.y } };
+            return { pos: this.pos.serialize() };
         },
     };
 }

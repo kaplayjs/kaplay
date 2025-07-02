@@ -595,11 +595,11 @@ export class Vec2 {
         return [this.x, this.y];
     }
 
-    serialize(): any {
+    serialize(): { x: number, y: number } {
         return { x: this.x, y: this.y };
     }
 
-    static deserialize(data: any): Vec2 {
+    static deserialize(data: { x: number, y: number }): Vec2 {
         return vec2(data.x, data.y);
     }
 }

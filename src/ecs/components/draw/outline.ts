@@ -71,7 +71,7 @@ export function outline(
 export function outlineFactory(data: SerializeOutlineComp) {
     return outline(
         data.outline.width,
-        rgb(data.outline.color.r, data.outline.color.g, data.outline.color.b),
+        Color.deserialize(data.outline.color),
         data.outline.opacity,
         data.outline.join,
         data.outline.miterLimit,

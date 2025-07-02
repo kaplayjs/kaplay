@@ -245,11 +245,11 @@ export class Color {
         return [this.r, this.g, this.b];
     }
 
-    serialize(): any {
+    serialize(): { r: number, g: number, b: number } {
         return { r: this.r, g: this.g, b: this.b };
     }
 
-    static deserialize(data: any): Color {
+    static deserialize(data: { r: number, g: number, b: number }): Color {
         return new Color(data.r, data.g, data.b);
     }
 }
