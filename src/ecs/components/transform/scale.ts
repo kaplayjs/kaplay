@@ -91,7 +91,7 @@ export function scale(...args: Vec2Args): ScaleComp {
             }
         },
         serialize() {
-            return { scale: { x: this.scale.x, y: this.scale.y } };
+            return { scale: this.scale.serialize() };
         },
     };
 }

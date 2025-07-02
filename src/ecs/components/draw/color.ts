@@ -1,5 +1,5 @@
 import {
-    type Color,
+    Color,
     type ColorArgs,
     rgb,
     type RGBValue,
@@ -34,16 +34,12 @@ export function color(...args: ColorArgs): ColorComp {
         },
         serialize() {
             return {
-                color: {
-                    r: this.color.r,
-                    g: this.color.b,
-                    b: this.color.b,
-                },
+                color: this.color.serialize()
             };
         },
     };
 }
 
 export function colorFactory(data: any) {
-    return color(data.color.r, data.color.g, data.color.b);
+    return color(Color.deserialize(data));
 }
