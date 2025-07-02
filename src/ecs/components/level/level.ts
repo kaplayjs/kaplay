@@ -14,6 +14,7 @@ import {
     type GameObj,
 } from "../../../types";
 import { BinaryHeap } from "../../../utils/binaryheap";
+import { deserializeComp } from "../../entity/prefab";
 import { pos, type PosComp } from "../transform/pos";
 import { tile } from "./tile";
 
@@ -733,8 +734,7 @@ export function levelFactory(data: any) {
         const d = data.tiles[key];
         const tags = d.tags;
         opt.tiles[key] = (pos: Vec2) => {
-            // TODO: deserialize components
-            const comps: Comp[] = [];
+            const comps: Comp[] = Object.keys(d).filter(k => k != "tags").map(id => deserializeComp(id, d[id]));
             return [...comps, ...tags];
         }
     }

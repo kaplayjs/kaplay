@@ -24,6 +24,13 @@ export function deserializePrefabAsset(prefabAsset: { [key: string]: any }) {
 
     return list;
 }
+
+export function deserializeComp(id: string, data: any) {
+    if (id in factoryMethods) {
+        return factoryMethods[id](data);
+    }
+    throw new Error(`No factory found to deserialize component with id ${id}`);
+}
 // #endregion
 
 // #region Loading
