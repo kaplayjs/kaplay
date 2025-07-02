@@ -708,11 +708,12 @@ export function level(map: string[], opt: LevelOpt): LevelComp {
                         tags.push(compOrTag);
                     }
                     else {
-                        if ("serialize" in compOrTag) {
-                            // TODO comps[(compOrTag as Comp).id] = compOrTag.serialize();
+                        if ("id" in compOrTag && "serialize" in compOrTag) {
+                            comps[compOrTag.id!] = (compOrTag.serialize as () => any)();
                         }
                     }
                 }
+                if (tags.length) { comps.tags = tags; }
                 data.tiles[key] = comps;
             }
             data.wildcardTile = {}; // prefab
