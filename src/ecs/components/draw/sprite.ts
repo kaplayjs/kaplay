@@ -18,6 +18,19 @@ import { type Vec2 } from "../../../math/Vec2";
 import { _k } from "../../../shared";
 import type { Comp, GameObj, SpriteAnimPlayOpt } from "../../../types";
 
+type serializedSprite = { 
+    sprite: string,
+    frame?: number,
+    tiled?: boolean,
+    width?: number,
+    height?: number
+    anim?: string
+    animSpeed?: number
+    flipX?: boolean,
+    flipY?: boolean,
+    quad?: Quad
+}
+
 /**
  * Current animation data.
  */
@@ -125,7 +138,7 @@ export interface SpriteComp extends Comp {
      */
     renderArea(): Rect;
 
-    serialize(): any;
+    serialize(): serializedSprite;
 }
 
 /**
@@ -619,7 +632,7 @@ export function sprite(
     };
 }
 
-export function spriteFactory(data: any) {
+export function spriteFactory(data: serializedSprite) {
     const opt: SpriteCompOpt = {};
     if (data.frame) opt.frame = data.frame;
     if (data.tiled) opt.tiled = data.tiled;

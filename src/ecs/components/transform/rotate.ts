@@ -21,7 +21,7 @@ export interface RotateComp extends Comp {
      */
     rotateTo(s: number): void;
 
-    serialize(): any;
+    serialize(): { angle: number };
 }
 
 export function rotate(a?: number): RotateComp {

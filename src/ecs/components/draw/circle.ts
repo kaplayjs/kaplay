@@ -7,6 +7,16 @@ import type { AnchorComp } from "../transform/anchor";
 import type { outline } from "./outline";
 
 /**
+ * The serialized {@link circle `circle()`} component.
+ *
+ * @group Component Serializations
+ */
+export interface SerializeCircleComp {
+    radius: number,
+    fill?: boolean
+}
+
+/**
  * The {@link circle `circle()`} component.
  *
  * @group Component Types
@@ -21,8 +31,7 @@ export interface CircleComp extends Comp {
      * @since v3000.0
      */
     renderArea(): Circle;
-
-    serialize(): any;
+    serialize(): SerializeCircleComp
 }
 
 /**

@@ -3,12 +3,29 @@ import { Color, rgb } from "../../../math/color";
 import type { Comp, Outline } from "../../../types";
 
 /**
+ * The serialized {@link outline `outline()`} component.
+ *
+ * @group Component Serializations
+ */
+export interface SerializeOutlineComp {
+    outline: {
+        width: number,
+        color: { r: number, g: number, b: number },
+        opacity: number,
+        join: LineJoin,
+        miterLimit: number,
+        cap: LineCap
+    }
+}
+
+/**
  * The {@link outline `outline()`} component.
  *
  * @group Component Types
  */
 export interface OutlineComp extends Comp {
     outline: Outline;
+    serialize(): SerializeOutlineComp
 }
 
 export function outline(
@@ -32,5 +49,25 @@ export function outline(
         inspect() {
             return `outline: ${this.outline.width}px, ${this.outline.color}`;
         },
+        serialize() {
+            return {
+                outline: {
+                    width: this.outline.width ?? 1,
+                    color: { 
+                        r: this.outline.color?.r ?? 255,
+                        g: this.outline.color?.g ?? 255,
+                        b: this.outline.color?.b ?? 255,
+                    },
+                    opacity: this.outline.opacity ?? 1,
+                    join: this.outline.join ?? "miter",
+                    miterLimit: this.outline.miterLimit ?? 10,
+                    cap: this.outline.cap ?? "butt"
+                }
+            }
+        },
     };
+}
+
+export function outlineFactory(data: SerializeOutlineComp) {
+    return outline(data.outline.width, rgb(data.outline.color.r, data.outline.color.g, data.outline.color.b), data.outline.opacity, data.outline.join, data.outline.miterLimit, data.outline.cap)
 }
