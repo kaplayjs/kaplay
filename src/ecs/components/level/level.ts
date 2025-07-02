@@ -699,6 +699,8 @@ export function level(map: string[], opt: LevelOpt): LevelComp {
             data.tileWidth = opt.tileWidth;
             data.tileHeight = opt.tileHeight;
             data.tiles = {}; // { symbol: prefab };
+            // tiles maps symbols to functions returning a list of components
+            // To serialize this, we get the list of components for each symbol, and serialize them
             for (const key in Object.keys(opt.tiles)) {
                 const compsAndTags = opt.tiles[key](vec2());
                 const comps: any = {};
@@ -709,13 +711,15 @@ export function level(map: string[], opt: LevelOpt): LevelComp {
                     }
                     else {
                         if ("id" in compOrTag && "serialize" in compOrTag) {
-                            comps[compOrTag.id!] = (compOrTag.serialize as () => any)();
+                            comps[compOrTag.id!] =
+                                (compOrTag.serialize as () => any)();
                         }
                     }
                 }
-                if (tags.length) { comps.tags = tags; }
+                if (tags.length) comps.tags = tags;
                 data.tiles[key] = comps;
             }
+            // No idea how to handle this yet
             data.wildcardTile = {}; // prefab
             return data;
         },

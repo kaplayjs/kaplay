@@ -9,6 +9,7 @@ import type { Comp } from "../../../types";
 export interface SerializeStateComp {
     initState: string;
     stateList: string[];
+    transitions: Record<string, string | string[]>;
 }
 
 /**
@@ -171,14 +172,15 @@ export function state<T extends string>(
         },
 
         serialize() {
-            return {
-                initState: initState,
-                stateList: stateList ?? [initState],
-            };
+            const data: any = {};
+            data.initState = initState;
+            if (stateList) data.stateList = stateList.slice();
+            if (transitions) data.transitions = Object.assign({}, transitions);
+            return data;
         },
     };
 }
 
 export function stateFactory(data: SerializeStateComp) {
-    return state(data.initState, data.stateList);
+    return state(data.initState, data.stateList, data.transitions);
 }
