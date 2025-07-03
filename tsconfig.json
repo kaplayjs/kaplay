@@ -2,8 +2,8 @@
   "compilerOptions": {
     "esModuleInterop": true,
     "target": "ESNext",
-    "module": "ESNext",
-    "moduleResolution": "Node",
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
     "noImplicitThis": true,
     "skipLibCheck": true,
     "resolveJsonModule": true,
