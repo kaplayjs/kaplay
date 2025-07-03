@@ -31,7 +31,9 @@ function drawLine(opt) {
         color: opt.color ?? Color.WHITE,
         opacity: opt.opacity ?? 1,
     }));*/
-    var color = (_a = opt.color) !== null && _a !== void 0 ? _a : color_1.Color.WHITE;
+    var color = (_a = opt.color) !== null && _a !== void 0
+        ? _a
+        : color_1.Color.WHITE;
     var opacity = (_b = opt.opacity) !== null && _b !== void 0 ? _b : 1;
     var attributes = {
         pos: [
@@ -75,7 +77,14 @@ function drawLine(opt) {
             opacity,
         ],
     };
-    (0, drawRaw_1.drawRaw)(attributes, [0, 1, 3, 1, 2, 3], opt.fixed, shared_1._k.gfx.defTex, opt.shader, (_c = opt.uniform) !== null && _c !== void 0 ? _c : undefined);
+    (0, drawRaw_1.drawRaw)(
+        attributes,
+        [0, 1, 3, 1, 2, 3],
+        opt.fixed,
+        shared_1._k.gfx.defTex,
+        opt.shader,
+        (_c = opt.uniform) !== null && _c !== void 0 ? _c : undefined,
+    );
 }
 function _drawLinesBevel(opt) {
     var _a, _b;
@@ -102,8 +111,12 @@ function _drawLinesBevel(opt) {
         switch (opt.cap) {
             case "square": {
                 var dir = segment.scale(-halfWidth / length);
-                vertices.push(pt2.add(dir).add(normal.scale(centerOffset - halfWidth)));
-                vertices.push(pt2.add(dir).add(normal.scale(centerOffset + halfWidth)));
+                vertices.push(
+                    pt2.add(dir).add(normal.scale(centerOffset - halfWidth)),
+                );
+                vertices.push(
+                    pt2.add(dir).add(normal.scale(centerOffset + halfWidth)),
+                );
                 break;
             }
             case "round": {
@@ -116,14 +129,18 @@ function _drawLinesBevel(opt) {
                 for (var j = 0; j < n; j++) {
                     vertices.push(p);
                     vertices.push(p.sub(vector));
-                    vector = (0, math_1.vec2)(vector.x * cs - vector.y * sn, vector.x * sn + vector.y * cs);
+                    vector = (0, math_1.vec2)(
+                        vector.x * cs - vector.y * sn,
+                        vector.x * sn + vector.y * cs,
+                    );
                 }
             }
         }
     }
     for (var i = 1; i < pts.length; i++) {
-        if (pt2 === pts[i] || pt2.eq(pts[i]))
+        if (pt2 === pts[i] || pt2.eq(pts[i])) {
             continue;
+        }
         pt1 = pt2;
         pt2 = pts[i];
         var nextSegment = pt2.sub(pt1);
@@ -144,16 +161,24 @@ function _drawLinesBevel(opt) {
             continue;
         }
         if (det > 0) {
-            var lambda = (nextNormal.scale(centerOffset - halfWidth).sub(normal.scale(centerOffset - halfWidth))).cross(nextSegment) / det;
-            var d = normal.scale(centerOffset - halfWidth).add(segment.scale(lambda));
+            var lambda = (nextNormal.scale(centerOffset - halfWidth).sub(
+                normal.scale(centerOffset - halfWidth),
+            )).cross(nextSegment) / det;
+            var d = normal.scale(centerOffset - halfWidth).add(
+                segment.scale(lambda),
+            );
             vertices.push(pt1.add(d));
             vertices.push(pt1.add(normal.scale(centerOffset + halfWidth)));
             vertices.push(pt1.add(d));
             vertices.push(pt1.add(nextNormal.scale(centerOffset + halfWidth)));
         }
         else {
-            var lambda = (nextNormal.scale(centerOffset + halfWidth).sub(normal.scale(centerOffset + halfWidth))).cross(nextSegment) / det;
-            var d = normal.scale(centerOffset + halfWidth).add(segment.scale(lambda));
+            var lambda = (nextNormal.scale(centerOffset + halfWidth).sub(
+                normal.scale(centerOffset + halfWidth),
+            )).cross(nextSegment) / det;
+            var d = normal.scale(centerOffset + halfWidth).add(
+                segment.scale(lambda),
+            );
             vertices.push(pt1.add(normal.scale(centerOffset - halfWidth)));
             vertices.push(pt1.add(d));
             vertices.push(pt1.add(nextNormal.scale(centerOffset - halfWidth)));
@@ -169,8 +194,12 @@ function _drawLinesBevel(opt) {
         switch (opt.cap) {
             case "square": {
                 var dir = segment.scale(halfWidth / length);
-                vertices.push(pt2.add(dir).add(normal.scale(centerOffset - halfWidth)));
-                vertices.push(pt2.add(dir).add(normal.scale(centerOffset + halfWidth)));
+                vertices.push(
+                    pt2.add(dir).add(normal.scale(centerOffset - halfWidth)),
+                );
+                vertices.push(
+                    pt2.add(dir).add(normal.scale(centerOffset + halfWidth)),
+                );
                 break;
             }
             case "round": {
@@ -181,15 +210,19 @@ function _drawLinesBevel(opt) {
                 var sn = Math.sin(angle);
                 var p = pt2.add(normal.scale(centerOffset));
                 for (var j = 0; j < n; j++) {
-                    vector = (0, math_1.vec2)(vector.x * cs - vector.y * sn, vector.x * sn + vector.y * cs);
+                    vector = (0, math_1.vec2)(
+                        vector.x * cs - vector.y * sn,
+                        vector.x * sn + vector.y * cs,
+                    );
                     vertices.push(p);
                     vertices.push(p.add(vector));
                 }
             }
         }
     }
-    if (vertices.length < 4)
+    if (vertices.length < 4) {
         return;
+    }
     var indices = [];
     var index = 0;
     for (var i = 0; i < vertices.length - 2; i += 2) {
@@ -218,7 +251,9 @@ function _drawLinesBevel(opt) {
         pos: new Array(vertices.length * 2),
         uv: new Array(vertices.length * 2).fill(0),
         color: new Array(vertices.length * 3).fill(255),
-        opacity: new Array(vertices.length).fill((_a = opt.opacity) !== null && _a !== void 0 ? _a : 1),
+        opacity: new Array(vertices.length).fill(
+            (_a = opt.opacity) !== null && _a !== void 0 ? _a : 1,
+        ),
     };
     for (var i = 0; i < vertices.length; i++) {
         attributes.pos[i * 2] = vertices[i].x + offset.x;
@@ -229,14 +264,22 @@ function _drawLinesBevel(opt) {
             attributes.color[i * 3 + 2] = opt.color.b;
         }
     }
-    (0, drawRaw_1.drawRaw)(attributes, indices, opt.fixed, shared_1._k.gfx.defTex, opt.shader, (_b = opt.uniform) !== null && _b !== void 0 ? _b : undefined);
+    (0, drawRaw_1.drawRaw)(
+        attributes,
+        indices,
+        opt.fixed,
+        shared_1._k.gfx.defTex,
+        opt.shader,
+        (_b = opt.uniform) !== null && _b !== void 0 ? _b : undefined,
+    );
 }
 function _drawLinesRound(opt) {
     var _a, _b;
     var pts = opt.pts;
     var vertices = [];
     var halfWidth = (opt.width || 1) * 0.5;
-    var centerOffset = halfWidth * (0, lerp_1.lerp)(-1, 1, ((opt.bias || 0.0) + 1) * 0.5);
+    var centerOffset = halfWidth
+        * (0, lerp_1.lerp)(-1, 1, ((opt.bias || 0.0) + 1) * 0.5);
     var isLoop = pts[0] === pts[pts.length - 1]
         || pts[0].eq(pts[pts.length - 1]);
     var offset = opt.pos || (0, math_1.vec2)(0, 0);
@@ -255,8 +298,12 @@ function _drawLinesRound(opt) {
         switch (opt.cap) {
             case "square": {
                 var dir = segment.scale(-halfWidth / length);
-                vertices.push(pt2.add(dir).add(normal.scale(centerOffset - halfWidth)));
-                vertices.push(pt2.add(dir).add(normal.scale(centerOffset + halfWidth)));
+                vertices.push(
+                    pt2.add(dir).add(normal.scale(centerOffset - halfWidth)),
+                );
+                vertices.push(
+                    pt2.add(dir).add(normal.scale(centerOffset + halfWidth)),
+                );
                 break;
             }
             case "round": {
@@ -269,14 +316,18 @@ function _drawLinesRound(opt) {
                 for (var j = 0; j < n; j++) {
                     vertices.push(p);
                     vertices.push(p.sub(vector));
-                    vector = (0, math_1.vec2)(vector.x * cs - vector.y * sn, vector.x * sn + vector.y * cs);
+                    vector = (0, math_1.vec2)(
+                        vector.x * cs - vector.y * sn,
+                        vector.x * sn + vector.y * cs,
+                    );
                 }
             }
         }
     }
     for (var i = 1; i < pts.length; i++) {
-        if (pt2 === pts[i] || pt2.eq(pts[i]))
+        if (pt2 === pts[i] || pt2.eq(pts[i])) {
             continue;
+        }
         pt1 = pt2;
         pt2 = pts[i];
         var nextSegment = pt2.sub(pt1);
@@ -298,10 +349,16 @@ function _drawLinesRound(opt) {
         }
         if (det > 0) {
             // Calculate the vector d from pt1 towards the intersection of the offset lines on the inner side
-            var lambda = (nextNormal.scale(centerOffset - halfWidth).sub(normal.scale(centerOffset - halfWidth))).cross(nextSegment) / det;
-            var d = normal.scale(centerOffset - halfWidth).add(segment.scale(lambda));
+            var lambda = (nextNormal.scale(centerOffset - halfWidth).sub(
+                normal.scale(centerOffset - halfWidth),
+            )).cross(nextSegment) / det;
+            var d = normal.scale(centerOffset - halfWidth).add(
+                segment.scale(lambda),
+            );
             var n = Math.max(halfWidth, 10);
-            var angle = (0, math_1.deg2rad)(normal.angleBetween(nextNormal) / n);
+            var angle = (0, math_1.deg2rad)(
+                normal.angleBetween(nextNormal) / n,
+            );
             var vector = normal.scale(halfWidth * 2);
             var fixedPoint = pt1.add(d);
             var cs = Math.cos(angle);
@@ -309,15 +366,24 @@ function _drawLinesRound(opt) {
             for (var j = 0; j < n; j++) {
                 vertices.push(fixedPoint);
                 vertices.push(fixedPoint.add(vector));
-                vector = (0, math_1.vec2)(vector.x * cs - vector.y * sn, vector.x * sn + vector.y * cs);
+                vector = (0, math_1.vec2)(
+                    vector.x * cs - vector.y * sn,
+                    vector.x * sn + vector.y * cs,
+                );
             }
         }
         else {
             // Calculate the vector d from pt1 towards the intersection of the offset lines on the inner side
-            var lambda = (nextNormal.scale(centerOffset + halfWidth).sub(normal.scale(centerOffset + halfWidth))).cross(nextSegment) / det;
-            var d = normal.scale(centerOffset + halfWidth).add(segment.scale(lambda));
+            var lambda = (nextNormal.scale(centerOffset + halfWidth).sub(
+                normal.scale(centerOffset + halfWidth),
+            )).cross(nextSegment) / det;
+            var d = normal.scale(centerOffset + halfWidth).add(
+                segment.scale(lambda),
+            );
             var n = Math.max(halfWidth, 10);
-            var angle = (0, math_1.deg2rad)(normal.angleBetween(nextNormal) / n);
+            var angle = (0, math_1.deg2rad)(
+                normal.angleBetween(nextNormal) / n,
+            );
             var vector = normal.scale(halfWidth * 2);
             var fixedPoint = pt1.add(d);
             var cs = Math.cos(angle);
@@ -325,7 +391,10 @@ function _drawLinesRound(opt) {
             for (var j = 0; j < n; j++) {
                 vertices.push(fixedPoint.sub(vector));
                 vertices.push(fixedPoint);
-                vector = (0, math_1.vec2)(vector.x * cs - vector.y * sn, vector.x * sn + vector.y * cs);
+                vector = (0, math_1.vec2)(
+                    vector.x * cs - vector.y * sn,
+                    vector.x * sn + vector.y * cs,
+                );
             }
         }
         segment = nextSegment;
@@ -338,8 +407,12 @@ function _drawLinesRound(opt) {
         switch (opt.cap) {
             case "square": {
                 var dir = segment.scale(halfWidth / length);
-                vertices.push(pt2.add(dir).add(normal.scale(centerOffset - halfWidth)));
-                vertices.push(pt2.add(dir).add(normal.scale(centerOffset + halfWidth)));
+                vertices.push(
+                    pt2.add(dir).add(normal.scale(centerOffset - halfWidth)),
+                );
+                vertices.push(
+                    pt2.add(dir).add(normal.scale(centerOffset + halfWidth)),
+                );
                 break;
             }
             case "round": {
@@ -350,16 +423,20 @@ function _drawLinesRound(opt) {
                 var sn = Math.sin(angle);
                 var p = pt2.add(normal.scale(centerOffset));
                 for (var j = 0; j < n; j++) {
-                    vector = (0, math_1.vec2)(vector.x * cs - vector.y * sn, vector.x * sn + vector.y * cs);
+                    vector = (0, math_1.vec2)(
+                        vector.x * cs - vector.y * sn,
+                        vector.x * sn + vector.y * cs,
+                    );
                     vertices.push(p);
                     vertices.push(p.add(vector));
                 }
             }
         }
     }
-    if (vertices.length < 4)
+    if (vertices.length < 4) {
         return;
-    var verts = vertices.map(function (v) {
+    }
+    var verts = vertices.map(function(v) {
         var _a;
         return ({
             pos: offset.add(v),
@@ -390,7 +467,9 @@ function _drawLinesRound(opt) {
         pos: new Array(vertices.length * 2),
         uv: new Array(vertices.length * 2).fill(0),
         color: new Array(vertices.length * 3).fill(255),
-        opacity: new Array(vertices.length).fill((_a = opt.opacity) !== null && _a !== void 0 ? _a : 1),
+        opacity: new Array(vertices.length).fill(
+            (_a = opt.opacity) !== null && _a !== void 0 ? _a : 1,
+        ),
     };
     for (var i = 0; i < vertices.length; i++) {
         attributes.pos[i * 2] = vertices[i].x + offset.x;
@@ -401,14 +480,22 @@ function _drawLinesRound(opt) {
             attributes.color[i * 3 + 2] = opt.color.b;
         }
     }
-    (0, drawRaw_1.drawRaw)(attributes, indices, opt.fixed, shared_1._k.gfx.defTex, opt.shader, (_b = opt.uniform) !== null && _b !== void 0 ? _b : undefined);
+    (0, drawRaw_1.drawRaw)(
+        attributes,
+        indices,
+        opt.fixed,
+        shared_1._k.gfx.defTex,
+        opt.shader,
+        (_b = opt.uniform) !== null && _b !== void 0 ? _b : undefined,
+    );
 }
 function _drawLinesMiter(opt) {
     var _a, _b;
     var pts = opt.pts;
     var vertices = [];
     var halfWidth = (opt.width || 1) * 0.5;
-    var centerOffset = halfWidth * (0, lerp_1.lerp)(-1, 1, ((opt.bias || 0.0) + 1) * 0.5);
+    var centerOffset = halfWidth
+        * (0, lerp_1.lerp)(-1, 1, ((opt.bias || 0.0) + 1) * 0.5);
     var isLoop = pts[0] === pts[pts.length - 1]
         || pts[0].eq(pts[pts.length - 1]);
     var offset = opt.pos || (0, math_1.vec2)(0, 0);
@@ -427,8 +514,12 @@ function _drawLinesMiter(opt) {
         switch (opt.cap) {
             case "square": {
                 var dir = segment.scale(-halfWidth / length);
-                vertices.push(pt2.add(dir).add(normal.scale(centerOffset - halfWidth)));
-                vertices.push(pt2.add(dir).add(normal.scale(centerOffset + halfWidth)));
+                vertices.push(
+                    pt2.add(dir).add(normal.scale(centerOffset - halfWidth)),
+                );
+                vertices.push(
+                    pt2.add(dir).add(normal.scale(centerOffset + halfWidth)),
+                );
                 break;
             }
             case "round": {
@@ -441,14 +532,18 @@ function _drawLinesMiter(opt) {
                 for (var j = 0; j < n; j++) {
                     vertices.push(p);
                     vertices.push(p.sub(vector));
-                    vector = (0, math_1.vec2)(vector.x * cs - vector.y * sn, vector.x * sn + vector.y * cs);
+                    vector = (0, math_1.vec2)(
+                        vector.x * cs - vector.y * sn,
+                        vector.x * sn + vector.y * cs,
+                    );
                 }
             }
         }
     }
     for (var i = 1; i < pts.length; i++) {
-        if (pt2 === pts[i] || pt2.eq(pts[i]))
+        if (pt2 === pts[i] || pt2.eq(pts[i])) {
             continue;
+        }
         pt1 = pt2;
         pt2 = pts[i];
         var nextSegment = pt2.sub(pt1);
@@ -468,10 +563,16 @@ function _drawLinesMiter(opt) {
             normal = nextNormal;
             continue;
         }
-        var lambda = (nextNormal.scale(centerOffset - halfWidth).sub(normal.scale(centerOffset - halfWidth))).cross(nextSegment) / det;
-        var d = normal.scale(centerOffset - halfWidth).add(segment.scale(lambda));
+        var lambda = (nextNormal.scale(centerOffset - halfWidth).sub(
+            normal.scale(centerOffset - halfWidth),
+        )).cross(nextSegment) / det;
+        var d = normal.scale(centerOffset - halfWidth).add(
+            segment.scale(lambda),
+        );
         vertices.push(pt1.add(d));
-        lambda = (nextNormal.scale(centerOffset + halfWidth).sub(normal.scale(centerOffset + halfWidth))).cross(nextSegment) / det;
+        lambda = (nextNormal.scale(centerOffset + halfWidth).sub(
+            normal.scale(centerOffset + halfWidth),
+        )).cross(nextSegment) / det;
         d = normal.scale(centerOffset + halfWidth).add(segment.scale(lambda));
         vertices.push(pt1.add(d));
         segment = nextSegment;
@@ -484,8 +585,12 @@ function _drawLinesMiter(opt) {
         switch (opt.cap) {
             case "square": {
                 var dir = segment.scale(halfWidth / length);
-                vertices.push(pt2.add(dir).add(normal.scale(centerOffset - halfWidth)));
-                vertices.push(pt2.add(dir).add(normal.scale(centerOffset + halfWidth)));
+                vertices.push(
+                    pt2.add(dir).add(normal.scale(centerOffset - halfWidth)),
+                );
+                vertices.push(
+                    pt2.add(dir).add(normal.scale(centerOffset + halfWidth)),
+                );
                 break;
             }
             case "round": {
@@ -496,16 +601,20 @@ function _drawLinesMiter(opt) {
                 var sn = Math.sin(angle);
                 var p = pt2.add(normal.scale(centerOffset));
                 for (var j = 0; j < n; j++) {
-                    vector = (0, math_1.vec2)(vector.x * cs - vector.y * sn, vector.x * sn + vector.y * cs);
+                    vector = (0, math_1.vec2)(
+                        vector.x * cs - vector.y * sn,
+                        vector.x * sn + vector.y * cs,
+                    );
                     vertices.push(p);
                     vertices.push(p.add(vector));
                 }
             }
         }
     }
-    if (vertices.length < 4)
+    if (vertices.length < 4) {
         return;
-    var verts = vertices.map(function (v) {
+    }
+    var verts = vertices.map(function(v) {
         var _a;
         return ({
             pos: offset.add(v),
@@ -536,7 +645,9 @@ function _drawLinesMiter(opt) {
         pos: new Array(vertices.length * 2),
         uv: new Array(vertices.length * 2).fill(0),
         color: new Array(vertices.length * 3).fill(255),
-        opacity: new Array(vertices.length).fill((_a = opt.opacity) !== null && _a !== void 0 ? _a : 1),
+        opacity: new Array(vertices.length).fill(
+            (_a = opt.opacity) !== null && _a !== void 0 ? _a : 1,
+        ),
     };
     for (var i = 0; i < vertices.length; i++) {
         attributes.pos[i * 2] = vertices[i].x + offset.x;
@@ -547,7 +658,14 @@ function _drawLinesMiter(opt) {
             attributes.color[i * 3 + 2] = opt.color.b;
         }
     }
-    (0, drawRaw_1.drawRaw)(attributes, indices, opt.fixed, shared_1._k.gfx.defTex, opt.shader, (_b = opt.uniform) !== null && _b !== void 0 ? _b : undefined);
+    (0, drawRaw_1.drawRaw)(
+        attributes,
+        indices,
+        opt.fixed,
+        shared_1._k.gfx.defTex,
+        opt.shader,
+        (_b = opt.uniform) !== null && _b !== void 0 ? _b : undefined,
+    );
 }
 function drawLines(opt) {
     var _a;

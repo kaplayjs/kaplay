@@ -1,16 +1,20 @@
-import type { App } from "../app/app";
-import { initAppEvents } from "../app/appEvents";
-import { type AssetsCtx, getFailedAssets, loadProgress } from "../assets/asset";
-import type { Debug } from "../debug/debug";
-import { LCEvents } from "../ecs/systems/systems";
-import type { Game } from "../game/game";
-import { drawDebug } from "../gfx/draw/drawDebug";
-import { drawFrame } from "../gfx/draw/drawFrame";
-import { drawLoadScreen } from "../gfx/draw/drawLoadingScreen";
-import { updateViewport } from "../gfx/viewport";
-import type { KAPLAYOpt } from "../types";
-import { handleErr } from "./errors";
-import type { FrameRenderer } from "./frameRendering";
+import type { App } from "../app/app.js";
+import { initAppEvents } from "../app/appEvents.js";
+import {
+    type AssetsCtx,
+    getFailedAssets,
+    loadProgress,
+} from "../assets/asset.js";
+import type { Debug } from "../debug/debug.js";
+import { LCEvents } from "../ecs/systems/systems.js";
+import type { Game } from "../game/game.js";
+import { drawDebug } from "../gfx/draw/drawDebug.js";
+import { drawFrame } from "../gfx/draw/drawFrame.js";
+import { drawLoadScreen } from "../gfx/draw/drawLoadingScreen.js";
+import { updateViewport } from "../gfx/viewport.js";
+import type { KAPLAYOpt } from "../types.js";
+import { handleErr } from "./errors.js";
+import type { FrameRenderer } from "./frameRendering.js";
 
 export function startEngineLoop(
     app: App,

@@ -61,14 +61,23 @@ function updateViewport() {
         y: y,
         width: viewportWidth,
         height: viewportHeight,
-        scale: (shared_1._k.gfx.viewport.width + shared_1._k.gfx.viewport.height)
+        scale:
+            (shared_1._k.gfx.viewport.width + shared_1._k.gfx.viewport.height)
             / (shared_1._k.gfx.width + shared_1._k.gfx.height),
     };
     // console.log("[vwp] viewport is", _k.gfx.viewport);
 }
 function viewportToCanvas(pt) {
-    return new Vec2_1.Vec2(pt.x * shared_1._k.gfx.viewport.width / shared_1._k.gfx.width, pt.y * shared_1._k.gfx.viewport.height / shared_1._k.gfx.height);
+    return new Vec2_1.Vec2(
+        pt.x * shared_1._k.gfx.viewport.width / shared_1._k.gfx.width,
+        pt.y * shared_1._k.gfx.viewport.height / shared_1._k.gfx.height,
+    );
 }
 function canvasToViewport(pt) {
-    return new Vec2_1.Vec2((pt.x - shared_1._k.gfx.viewport.x) * shared_1._k.gfx.width / shared_1._k.gfx.viewport.width, (pt.y - shared_1._k.gfx.viewport.y) * shared_1._k.gfx.height / shared_1._k.gfx.viewport.height);
+    return new Vec2_1.Vec2(
+        (pt.x - shared_1._k.gfx.viewport.x) * shared_1._k.gfx.width
+            / shared_1._k.gfx.viewport.width,
+        (pt.y - shared_1._k.gfx.viewport.y) * shared_1._k.gfx.height
+            / shared_1._k.gfx.viewport.height,
+    );
 }

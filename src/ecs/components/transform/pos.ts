@@ -1,12 +1,12 @@
-import { toScreen, toWorld } from "../../../game/camera";
-import { drawCircle } from "../../../gfx/draw/drawCircle";
-import { rgb } from "../../../math/color";
-import { vec2, type Vec2Args } from "../../../math/math";
-import { type Vec2 } from "../../../math/Vec2";
-import { _k } from "../../../shared";
-import type { Comp, GameObj } from "../../../types";
-import { isFixed } from "../../entity/utils";
-import type { FixedComp } from "./fixed";
+import { toScreen, toWorld } from "../../../game/camera.js";
+import { drawCircle } from "../../../gfx/draw/drawCircle.js";
+import { rgb } from "../../../math/color.js";
+import { vec2, type Vec2Args } from "../../../math/math.js";
+import { type Vec2 } from "../../../math/Vec2.js";
+import { _k } from "../../../shared.js";
+import type { Comp, GameObj } from "../../../types.js";
+import { isFixed } from "../../entity/utils.js";
+import type { FixedComp } from "./fixed.js";
 
 /**
  * The {@link pos `pos()`} component.

@@ -5,12 +5,12 @@ exports.gjkShapeIntersection = gjkShapeIntersection;
 var general_1 = require("../constants/general");
 var math_1 = require("./math");
 var Vec2_1 = require("./Vec2");
-var CircleCollider = /** @class */ (function () {
+var CircleCollider = /** @class */ function() {
     function CircleCollider(center, radius) {
         this.center = center;
         this.radius = radius;
     }
-    CircleCollider.prototype.support = function (direction) {
+    CircleCollider.prototype.support = function(direction) {
         var s = new Vec2_1.Vec2(direction.x, direction.y);
         Vec2_1.Vec2.unit(s, s);
         Vec2_1.Vec2.scale(s, this.radius, s);
@@ -18,15 +18,15 @@ var CircleCollider = /** @class */ (function () {
         return s;
     };
     return CircleCollider;
-}());
-var EllipseCollider = /** @class */ (function () {
+}();
+var EllipseCollider = /** @class */ function() {
     function EllipseCollider(center, radiusX, radiusY, angle) {
         this.center = center;
         this.radiusX = radiusX;
         this.radiusY = radiusY;
         this.angle = angle;
     }
-    EllipseCollider.prototype.support = function (direction) {
+    EllipseCollider.prototype.support = function(direction) {
         // Axis aligned
         if (this.angle === 0.0) {
             var axis = new Vec2_1.Vec2(direction.x, direction.y);
@@ -47,13 +47,13 @@ var EllipseCollider = /** @class */ (function () {
         }
     };
     return EllipseCollider;
-}());
-var PolygonCollider = /** @class */ (function () {
+}();
+var PolygonCollider = /** @class */ function() {
     function PolygonCollider(vertices) {
         this.vertices = vertices;
         this.center = this.vertices[0];
     }
-    PolygonCollider.prototype.support = function (direction) {
+    PolygonCollider.prototype.support = function(direction) {
         var maxPoint;
         var maxDistance = Number.NEGATIVE_INFINITY;
         var vertex;
@@ -68,7 +68,7 @@ var PolygonCollider = /** @class */ (function () {
         return maxPoint;
     };
     return PolygonCollider;
-}());
+}();
 function calculateSupport(shapeA, shapeB, direction) {
     // Calculate the support vector. This is done by calculating the difference between
     // the furthest points found of the shapes along the given direction.
@@ -84,7 +84,7 @@ function addSupport(vertices, shapeA, shapeB, direction) {
     return direction.dot(support) >= 0;
 }
 var EvolveResult;
-(function (EvolveResult) {
+(function(EvolveResult) {
     EvolveResult[EvolveResult["NoIntersection"] = 0] = "NoIntersection";
     EvolveResult[EvolveResult["FoundIntersection"] = 1] = "FoundIntersection";
     EvolveResult[EvolveResult["Evolving"] = 2] = "Evolving";
@@ -113,7 +113,10 @@ function evolveSimplex(simplex, colliderA, colliderB, direction) {
         }
         case 2: {
             // We now have a line ab. Take the vector ab and the vector a origin
-            var ab = new Vec2_1.Vec2(simplex[1].x - simplex[0].x, simplex[1].y - simplex[0].y);
+            var ab = new Vec2_1.Vec2(
+                simplex[1].x - simplex[0].x,
+                simplex[1].y - simplex[0].y,
+            );
             var a0 = new Vec2_1.Vec2(-simplex[0].x, -simplex[0].y);
             // Get the vector perpendicular to ab and a0
             // Then get the vector perpendicular to the result and ab
@@ -127,8 +130,14 @@ function evolveSimplex(simplex, colliderA, colliderB, direction) {
             {
                 // We have a triangle, and need to check if it contains the origin
                 var c0 = new Vec2_1.Vec2(-simplex[2].x, -simplex[2].y);
-                var bc = new Vec2_1.Vec2(simplex[1].x - simplex[2].x, simplex[1].y - simplex[2].y);
-                var ca = new Vec2_1.Vec2(simplex[0].x - simplex[2].x, simplex[0].y - simplex[2].y);
+                var bc = new Vec2_1.Vec2(
+                    simplex[1].x - simplex[2].x,
+                    simplex[1].y - simplex[2].y,
+                );
+                var ca = new Vec2_1.Vec2(
+                    simplex[0].x - simplex[2].x,
+                    simplex[0].y - simplex[2].y,
+                );
                 var bcNorm = tripleProduct(ca, bc, bc);
                 var caNorm = tripleProduct(bc, ca, ca);
                 if (bcNorm.dot(c0) > 0) {
@@ -152,7 +161,12 @@ function evolveSimplex(simplex, colliderA, colliderB, direction) {
             }
             break;
         default:
-            throw Error("Can't have s simplex with ".concat(simplex.length, " vertices!"));
+            throw Error(
+                "Can't have s simplex with ".concat(
+                    simplex.length,
+                    " vertices!",
+                ),
+            );
     }
     // Try to add a new support point to the simplex
     // If successful, continue evolving
@@ -177,7 +191,7 @@ function gjkIntersects(colliderA, colliderB) {
     return result === EvolveResult.FoundIntersection;
 }
 var PolygonWinding;
-(function (PolygonWinding) {
+(function(PolygonWinding) {
     PolygonWinding[PolygonWinding["Clockwise"] = 0] = "Clockwise";
     PolygonWinding[PolygonWinding["CounterClockwise"] = 1] = "CounterClockwise";
 })(PolygonWinding || (PolygonWinding = {}));
@@ -196,8 +210,9 @@ function findClosestEdge(simplex, winding) {
     var norm = new Vec2_1.Vec2();
     for (var i = 0; i < simplex.length; i++) {
         var j = i + 1;
-        if (j >= simplex.length)
+        if (j >= simplex.length) {
             j = 0;
+        }
         Vec2_1.Vec2.sub(simplex[j], simplex[i], line);
         // The normal of the edge depends on the polygon winding of the simplex
         switch (winding) {
@@ -282,7 +297,10 @@ function getIntersection(colliderA, colliderB, simplex) {
  */
 function gjkIntersection(colliderA, colliderB) {
     var vertices = [];
-    var direction = new Vec2_1.Vec2(colliderB.center.x - colliderA.center.x, colliderB.center.y - colliderA.center.y);
+    var direction = new Vec2_1.Vec2(
+        colliderB.center.x - colliderA.center.x,
+        colliderB.center.y - colliderA.center.y,
+    );
     var result = EvolveResult.Evolving;
     while (result === EvolveResult.Evolving) {
         result = evolveSimplex(vertices, colliderA, colliderB, direction);
@@ -309,7 +327,12 @@ function shapeToCollider(shape) {
         return new PolygonCollider(shape.pts);
     }
     else if (shape instanceof math_1.Ellipse) {
-        return new EllipseCollider(shape.center, shape.radiusX, shape.radiusY, shape.angle);
+        return new EllipseCollider(
+            shape.center,
+            shape.radiusX,
+            shape.radiusY,
+            shape.angle,
+        );
     }
     else {
         return new PolygonCollider(shape.bbox().points());

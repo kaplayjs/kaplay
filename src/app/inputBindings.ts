@@ -1,6 +1,6 @@
-import type { KAPLAYCtx, Key, KGamepadButton, MouseButton } from "../types";
-import { mapAddOrPush } from "../utils/sets";
-import type { AppState } from "./app";
+import type { KAPLAYCtx, Key, KGamepadButton, MouseButton } from "../types.js";
+import { mapAddOrPush } from "../utils/sets.js";
+import type { AppState } from "./app.js";
 
 /**
  * A button binding.

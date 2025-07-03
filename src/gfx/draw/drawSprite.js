@@ -14,12 +14,21 @@ function drawSprite(opt) {
     if (!spr || !spr.data) {
         return;
     }
-    var q = spr.data.frames[(_a = opt.frame) !== null && _a !== void 0 ? _a : 0];
+    var q =
+        spr.data.frames[(_a = opt.frame) !== null && _a !== void 0 ? _a : 0];
     if (!q) {
-        throw new Error("Frame not found: ".concat((_b = opt.frame) !== null && _b !== void 0 ? _b : 0));
+        throw new Error(
+            "Frame not found: ".concat(
+                (_b = opt.frame) !== null && _b !== void 0 ? _b : 0,
+            ),
+        );
     }
     (0, drawTexture_1.drawTexture)(Object.assign({}, opt, {
         tex: spr.data.tex,
-        quad: q.scale((_c = opt.quad) !== null && _c !== void 0 ? _c : new math_1.Quad(0, 0, 1, 1)),
+        quad: q.scale(
+            (_c = opt.quad) !== null && _c !== void 0
+                ? _c
+                : new math_1.Quad(0, 0, 1, 1),
+        ),
     }));
 }

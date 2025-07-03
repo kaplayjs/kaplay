@@ -2,7 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.patrol = patrol;
 function patrol(opts) {
-    if (opts === void 0) { opts = {}; }
+    if (opts === void 0) opts = {};
     var waypoints = opts.waypoints;
     var speed = opts.speed || 100; // Or throw error?
     var endBehavior = opts.endBehavior || "stop"; // Default is stop.
@@ -28,10 +28,11 @@ function patrol(opts) {
         get nextLocation() {
             return waypoints ? waypoints[index] : undefined;
         },
-        update: function () {
+        update: function() {
             var nextWaypoint = this.nextLocation;
-            if (!waypoints || !nextWaypoint || finished)
+            if (!waypoints || !nextWaypoint || finished) {
                 return;
+            }
             this.moveTo(nextWaypoint, speed);
             if (this.pos.sdist(nextWaypoint) < 9) {
                 switch (endBehavior) {
@@ -57,7 +58,7 @@ function patrol(opts) {
                 }
             }
         },
-        onPatrolFinished: function (cb) {
+        onPatrolFinished: function(cb) {
             return this.on("patrolFinished", cb);
         },
     };

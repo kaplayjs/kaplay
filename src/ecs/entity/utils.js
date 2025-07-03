@@ -12,12 +12,14 @@ function getTreeRoot() {
     return shared_1._k.game.root;
 }
 function isFixed(obj) {
-    if (obj.fixed)
+    if (obj.fixed) {
         return true;
+    }
     return obj.parent ? isFixed(obj.parent) : false;
 }
 function isPaused(obj) {
-    if (obj.paused)
+    if (obj.paused) {
         return true;
+    }
     return obj.parent ? isPaused(obj.parent) : false;
 }

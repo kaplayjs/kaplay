@@ -1,15 +1,19 @@
-import { DEF_ANCHOR } from "../../../constants/general";
-import type { KEventController } from "../../../events/events";
-import { toWorld } from "../../../game/camera";
-import { anchorPt } from "../../../gfx/anchor";
-import { drawCircle } from "../../../gfx/draw/drawCircle";
-import { drawPolygon } from "../../../gfx/draw/drawPolygon";
-import { drawRect } from "../../../gfx/draw/drawRect";
-import { multTranslate, popTransform, pushTransform } from "../../../gfx/stack";
-import { rgb } from "../../../math/color";
-import { Circle, Polygon, Rect, vec2 } from "../../../math/math";
-import { Vec2 } from "../../../math/Vec2";
-import { _k } from "../../../shared";
+import { DEF_ANCHOR } from "../../../constants/general.js";
+import type { KEventController } from "../../../events/events.js";
+import { toWorld } from "../../../game/camera.js";
+import { anchorPt } from "../../../gfx/anchor.js";
+import { drawCircle } from "../../../gfx/draw/drawCircle.js";
+import { drawPolygon } from "../../../gfx/draw/drawPolygon.js";
+import { drawRect } from "../../../gfx/draw/drawRect.js";
+import {
+    multTranslate,
+    popTransform,
+    pushTransform,
+} from "../../../gfx/stack.js";
+import { rgb } from "../../../math/color.js";
+import { Circle, Polygon, Rect, vec2 } from "../../../math/math.js";
+import { Vec2 } from "../../../math/Vec2.js";
+import { _k } from "../../../shared.js";
 import type {
     Collision,
     Comp,
@@ -18,12 +22,12 @@ import type {
     MouseButton,
     Shape,
     Tag,
-} from "../../../types";
-import { isFixed } from "../../entity/utils";
-import type { FakeMouseComp } from "../misc/fakeMouse";
-import type { AnchorComp } from "../transform/anchor";
-import type { FixedComp } from "../transform/fixed";
-import type { PosComp } from "../transform/pos";
+} from "../../../types.js";
+import { isFixed } from "../../entity/utils.js";
+import type { FakeMouseComp } from "../misc/fakeMouse.js";
+import type { AnchorComp } from "../transform/anchor.js";
+import type { FixedComp } from "../transform/fixed.js";
+import type { PosComp } from "../transform/pos.js";
 
 export function usesArea() {
     return _k.game.areaCount > 0;

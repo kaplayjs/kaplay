@@ -7,7 +7,8 @@ function fixURL(url) {
     if (typeof url == "string" && window.kaplayjs_assetsAliases[url]) {
         url = window.kaplayjs_assetsAliases[url];
     }
-    if (typeof url !== "string" || (0, dataURL_1.isDataURL)(url))
+    if (typeof url !== "string" || (0, dataURL_1.isDataURL)(url)) {
         return url;
+    }
     return shared_1._k.assets.urlPrefix + url;
 }

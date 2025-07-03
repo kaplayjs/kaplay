@@ -8,7 +8,7 @@ var drawUVQuad_1 = require("../gfx/draw/drawUVQuad");
 var stack_1 = require("../gfx/stack");
 var math_1 = require("../math/math");
 var Vec2_1 = require("../math/Vec2");
-var createFrameRenderer = function (gfx, game, pixelDensity) {
+var createFrameRenderer = function(gfx, game, pixelDensity) {
     // start a rendering frame, reset some states
     function frameStart() {
         // clear backbuffer
@@ -18,11 +18,16 @@ var createFrameRenderer = function (gfx, game, pixelDensity) {
         gfx.gl.clear(gfx.gl.COLOR_BUFFER_BIT);
         // Iconic background
         if (!gfx.bgColor) {
-            (0, drawUnscaled_1.drawUnscaled)(function () {
+            (0, drawUnscaled_1.drawUnscaled)(function() {
                 (0, drawUVQuad_1.drawUVQuad)({
                     width: (0, stack_1.width)(),
                     height: (0, stack_1.height)(),
-                    quad: new math_1.Quad(0, 0, (0, stack_1.width)() / general_1.BG_GRID_SIZE, (0, stack_1.height)() / general_1.BG_GRID_SIZE),
+                    quad: new math_1.Quad(
+                        0,
+                        0,
+                        (0, stack_1.width)() / general_1.BG_GRID_SIZE,
+                        (0, stack_1.height)() / general_1.BG_GRID_SIZE,
+                    ),
                     tex: gfx.bgTex,
                     fixed: true,
                 });
@@ -39,7 +44,12 @@ var createFrameRenderer = function (gfx, game, pixelDensity) {
         (0, stack_1.flush)();
         gfx.lastDrawCalls = gfx.renderer.numDraws;
         gfx.frameBuffer.unbind();
-        gfx.gl.viewport(0, 0, gfx.gl.drawingBufferWidth, gfx.gl.drawingBufferHeight);
+        gfx.gl.viewport(
+            0,
+            0,
+            gfx.gl.drawingBufferWidth,
+            gfx.gl.drawingBufferHeight,
+        );
         var ow = gfx.width;
         var oh = gfx.height;
         gfx.width = gfx.gl.drawingBufferWidth / pixelDensity;
@@ -67,6 +77,11 @@ var createFrameRenderer = function (gfx, game, pixelDensity) {
     function updateFrame() {
         game.root.update();
     }
-    return { frameStart: frameStart, frameEnd: frameEnd, fixedUpdateFrame: fixedUpdateFrame, updateFrame: updateFrame };
+    return {
+        frameStart: frameStart,
+        frameEnd: frameEnd,
+        fixedUpdateFrame: fixedUpdateFrame,
+        updateFrame: updateFrame,
+    };
 };
 exports.createFrameRenderer = createFrameRenderer;

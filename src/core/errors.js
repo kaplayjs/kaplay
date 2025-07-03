@@ -1,10 +1,13 @@
 "use strict";
-var __assign = (this && this.__assign) || function () {
+var __assign = (this && this.__assign) || function() {
     __assign = Object.assign || function(t) {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
             s = arguments[i];
-            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
-                t[p] = s[p];
+            for (var p in s) {
+                if (Object.prototype.hasOwnProperty.call(s, p)) {
+                    t[p] = s[p];
+                }
+            }
         }
         return t;
     };
@@ -22,13 +25,14 @@ var stack_1 = require("../gfx/stack");
 var color_1 = require("../math/color");
 var math_1 = require("../math/math");
 var shared_1 = require("../shared");
-var throwError = function (err) {
+var throwError = function(err) {
     (0, exports.handleErr)(err);
 };
 exports.throwError = throwError;
-var handleErr = function (err) {
-    if (shared_1._k.game.crashed)
+var handleErr = function(err) {
+    if (shared_1._k.game.crashed) {
         return;
+    }
     shared_1._k.game.crashed = true;
     shared_1._k.audio.ctx.suspend();
     var error;
@@ -41,10 +45,10 @@ var handleErr = function (err) {
     if (!error.message) {
         error.message = "Unknown error, check console for more info";
     }
-    shared_1._k.app.run(function () { }, function () {
+    shared_1._k.app.run(function() {}, function() {
         shared_1._k.app.state.stopped = true;
         shared_1._k.frameRenderer.frameStart();
-        (0, drawUnscaled_1.drawUnscaled)(function () {
+        (0, drawUnscaled_1.drawUnscaled)(function() {
             var pad = 32;
             var gap = 16;
             var gw = (0, stack_1.width)();
@@ -63,9 +67,22 @@ var handleErr = function (err) {
                 color: (0, color_1.rgb)(0, 0, 255),
                 fixed: true,
             });
-            var title = (0, formatText_1.formatText)(__assign(__assign({}, textStyle), { text: "Error", pos: (0, math_1.vec2)(pad), color: (0, color_1.rgb)(255, 128, 0), fixed: true }));
+            var title = (0, formatText_1.formatText)(
+                __assign(__assign({}, textStyle), {
+                    text: "Error",
+                    pos: (0, math_1.vec2)(pad),
+                    color: (0, color_1.rgb)(255, 128, 0),
+                    fixed: true,
+                }),
+            );
             (0, drawFormattedText_1.drawFormattedText)(title);
-            (0, drawText_1.drawText)(__assign(__assign({}, textStyle), { text: esc(error.message), pos: (0, math_1.vec2)(pad, pad + title.height + gap), fixed: true }));
+            (0, drawText_1.drawText)(
+                __assign(__assign({}, textStyle), {
+                    text: esc(error.message),
+                    pos: (0, math_1.vec2)(pad, pad + title.height + gap),
+                    fixed: true,
+                }),
+            );
             (0, stack_1.popTransform)();
             shared_1._k.game.events.trigger("error", error);
         });

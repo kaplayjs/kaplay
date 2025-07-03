@@ -7,12 +7,13 @@ function named(name) {
     var comp = {
         id: "named",
         name: name,
-        serialize: function () {
+        serialize: function() {
             return { name: this.name };
         },
-        deserialize: function (data) {
-            if (typeof data.name === "string")
+        deserialize: function(data) {
+            if (typeof data.name === "string") {
                 this.name = data.name;
+            }
         },
     };
     (0, SerializableComponent_1.registerSerializableComponent)("named", comp);

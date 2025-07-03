@@ -8,7 +8,7 @@ var shared_1 = require("../shared");
 var playMusic_1 = require("./playMusic");
 function play(src, opt) {
     var _a, _b, _c, _d, _e, _f, _g;
-    if (opt === void 0) { opt = {}; }
+    if (opt === void 0) opt = {};
     if (typeof src === "string" && shared_1._k.assets.music[src]) {
         return (0, playMusic_1.playMusic)(shared_1._k.assets.music[src], opt);
     }
@@ -24,20 +24,32 @@ function play(src, opt) {
     var started = false;
     srcNode.loop = Boolean(opt.loop);
     srcNode.detune.value = (_c = opt.detune) !== null && _c !== void 0 ? _c : 0;
-    srcNode.playbackRate.value = (_d = opt.speed) !== null && _d !== void 0 ? _d : 1;
+    srcNode.playbackRate.value = (_d = opt.speed) !== null && _d !== void 0
+        ? _d
+        : 1;
     srcNode.connect(panNode);
-    srcNode.onended = function () {
+    srcNode.onended = function() {
         var _a, _b;
-        if (getTime()
-            >= ((_b = (_a = srcNode.buffer) === null || _a === void 0 ? void 0 : _a.duration) !== null && _b !== void 0 ? _b : Number.POSITIVE_INFINITY)) {
+        if (
+            getTime()
+                >= ((_b = (_a = srcNode.buffer) === null || _a === void 0
+                                ? void 0
+                                : _a.duration) !== null && _b !== void 0
+                    ? _b
+                    : Number.POSITIVE_INFINITY)
+        ) {
             onEndEvents.trigger();
         }
     };
     panNode.pan.value = (_e = opt.pan) !== null && _e !== void 0 ? _e : 0;
     panNode.connect(gainNode);
-    gainNode.connect((_f = opt.connectTo) !== null && _f !== void 0 ? _f : shared_1._k.audio.masterNode);
+    gainNode.connect(
+        (_f = opt.connectTo) !== null && _f !== void 0
+            ? _f
+            : shared_1._k.audio.masterNode,
+    );
     gainNode.gain.value = (_g = opt.volume) !== null && _g !== void 0 ? _g : 1;
-    var start = function (data) {
+    var start = function(data) {
         srcNode.buffer = data.buf;
         if (!paused) {
             startTime = ctx.currentTime;
@@ -46,21 +58,23 @@ function play(src, opt) {
         }
     };
     var snd = (0, sound_1.resolveSound)(
-    // @ts-expect-error Resolve Type Error
-    src);
+        // @ts-expect-error Resolve Type Error
+        src,
+    );
     if (snd instanceof asset_1.Asset) {
         snd.onLoad(start);
     }
-    var getTime = function () {
-        if (!srcNode.buffer)
+    var getTime = function() {
+        if (!srcNode.buffer) {
             return 0;
+        }
         var t = paused
             ? stopTime - startTime
             : ctx.currentTime - startTime;
         var d = srcNode.buffer.duration;
         return srcNode.loop ? t % d : Math.min(t, d);
     };
-    var cloneNode = function (oldNode) {
+    var cloneNode = function(oldNode) {
         var newNode = ctx.createBufferSource();
         newNode.buffer = oldNode.buffer;
         newNode.loop = oldNode.loop;
@@ -71,13 +85,14 @@ function play(src, opt) {
         return newNode;
     };
     return {
-        stop: function () {
+        stop: function() {
             this.paused = true;
             this.seek(0);
         },
         set paused(p) {
-            if (paused === p)
+            if (paused === p) {
                 return;
+            }
             paused = p;
             if (p) {
                 if (started) {
@@ -98,17 +113,23 @@ function play(src, opt) {
         get paused() {
             return paused;
         },
-        play: function (time) {
-            if (time === void 0) { time = 0; }
+        play: function(time) {
+            if (time === void 0) time = 0;
             this.seek(time);
             this.paused = false;
         },
-        seek: function (time) {
+        seek: function(time) {
             var _a;
-            if (!((_a = srcNode.buffer) === null || _a === void 0 ? void 0 : _a.duration))
+            if (
+                !((_a = srcNode.buffer) === null || _a === void 0
+                    ? void 0
+                    : _a.duration)
+            ) {
                 return;
-            if (time > srcNode.buffer.duration)
+            }
+            if (time > srcNode.buffer.duration) {
                 return;
+            }
             if (paused) {
                 srcNode = cloneNode(srcNode);
                 startTime = stopTime - time;
@@ -153,22 +174,30 @@ function play(src, opt) {
         get loop() {
             return srcNode.loop;
         },
-        duration: function () {
+        duration: function() {
             var _a, _b;
-            return (_b = (_a = srcNode.buffer) === null || _a === void 0 ? void 0 : _a.duration) !== null && _b !== void 0 ? _b : 0;
+            return (_b = (_a = srcNode.buffer) === null || _a === void 0
+                            ? void 0
+                            : _a.duration) !== null && _b !== void 0
+                ? _b
+                : 0;
         },
-        time: function () {
+        time: function() {
             return getTime() % this.duration();
         },
-        onEnd: function (action) {
+        onEnd: function(action) {
             return onEndEvents.add(action);
         },
-        then: function (action) {
+        then: function(action) {
             return this.onEnd(action);
         },
-        connect: function (node) {
+        connect: function(node) {
             gainNode.disconnect();
-            gainNode.connect(node !== null && node !== void 0 ? node : shared_1._k.audio.masterNode);
+            gainNode.connect(
+                node !== null && node !== void 0
+                    ? node
+                    : shared_1._k.audio.masterNode,
+            );
         },
     };
 }

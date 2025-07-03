@@ -1,6 +1,6 @@
-import type { Vec2 } from "../../math/Vec2";
-import type { RenderProps } from "../../types";
-import { drawPolygon } from "./drawPolygon";
+import type { Vec2 } from "../../math/Vec2.js";
+import type { RenderProps } from "../../types.js";
+import { drawPolygon } from "./drawPolygon.js";
 
 /**
  * How the triangle should look like.

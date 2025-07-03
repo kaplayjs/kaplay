@@ -1,8 +1,8 @@
+import type { SerializableComponent } from "../../../core/SerializableComponent.js";
+import { registerSerializableComponent } from "../../../core/SerializableComponent.js";
 import type { KEventController } from "../../../events/events.js";
 import { clamp } from "../../../math/clamp.js";
 import type { Comp, GameObj } from "../../../types.js";
-import type { SerializableComponent } from "../../../core/SerializableComponent.js";
-import { registerSerializableComponent } from "../../../core/SerializableComponent.js";
 
 /**
  * The {@link health `health()`} component.

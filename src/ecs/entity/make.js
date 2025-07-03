@@ -51,7 +51,11 @@ function makeInternal(compsAndTags, id) {
     // We register here: The objects, because you can also pass tags to add().
     var comps = [];
     var tagList = [];
-    for (var _i = 0, compsAndTags_1 = compsAndTags; _i < compsAndTags_1.length; _i++) {
+    for (
+        var _i = 0, compsAndTags_1 = compsAndTags;
+        _i < compsAndTags_1.length;
+        _i++
+    ) {
         var compOrTag = compsAndTags_1[_i];
         if (typeof compOrTag == "string") {
             tagList.push(compOrTag);
@@ -60,8 +64,9 @@ function makeInternal(compsAndTags, id) {
             var compId = compOrTag.id;
             if (compId) {
                 obj._compsIds.add(compId);
-                if (addCompIdsToTags)
+                if (addCompIdsToTags) {
                     tagList.push(compId);
+                }
             }
             comps.push(compOrTag);
         }

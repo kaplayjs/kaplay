@@ -1,9 +1,13 @@
 "use strict";
-var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
-    if (pack || arguments.length === 2) for (var i = 0, l = from.length, ar; i < l; i++) {
-        if (ar || !(i in from)) {
-            if (!ar) ar = Array.prototype.slice.call(from, 0, i);
-            ar[i] = from[i];
+var __spreadArray = (this && this.__spreadArray) || function(to, from, pack) {
+    if (pack || arguments.length === 2) {
+        for (var i = 0, l = from.length, ar; i < l; i++) {
+            if (ar || !(i in from)) {
+                if (!ar) {
+                    ar = Array.prototype.slice.call(from, 0, i);
+                }
+                ar[i] = from[i];
+            }
         }
     }
     return to.concat(ar || Array.prototype.slice.call(from));
@@ -27,20 +31,24 @@ function go(name) {
     if (!shared_1._k.game.scenes[name]) {
         throw new Error("Scene not found: ".concat(name));
     }
-    shared_1._k.game.events.onOnce("frameEnd", function () {
+    shared_1._k.game.events.onOnce("frameEnd", function() {
         var _a;
         shared_1._k.game.events.trigger("sceneLeave", name);
         shared_1._k.app.events.clear();
         shared_1._k.game.events.clear();
-        __spreadArray([], shared_1._k.game.root.children, true).forEach(function (obj) {
-            if (!obj.stay
-                || (obj.scenesToStay && !obj.scenesToStay.includes(name))) {
-                shared_1._k.game.root.remove(obj);
-            }
-            else {
-                obj.trigger("sceneEnter", name);
-            }
-        });
+        __spreadArray([], shared_1._k.game.root.children, true).forEach(
+            function(obj) {
+                if (
+                    !obj.stay
+                    || (obj.scenesToStay && !obj.scenesToStay.includes(name))
+                ) {
+                    shared_1._k.game.root.remove(obj);
+                }
+                else {
+                    obj.trigger("sceneEnter", name);
+                }
+            },
+        );
         shared_1._k.game.root.clearEvents();
         (0, appEvents_1.initAppEvents)();
         // cam

@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.createCanvas = void 0;
-var createCanvas = function (gopt) {
+var createCanvas = function(gopt) {
     var _a, _b;
     var root = (_a = gopt.root) !== null && _a !== void 0 ? _a : document.body;
     var pixelDensity = gopt.pixelDensity || 1;
@@ -15,7 +15,9 @@ var createCanvas = function (gopt) {
         document.documentElement.style["height"] = "100%";
     }
     // Create a <canvas> if user didn't provide one
-    var canvas = (_b = gopt.canvas) !== null && _b !== void 0 ? _b : root.appendChild(document.createElement("canvas"));
+    var canvas = (_b = gopt.canvas) !== null && _b !== void 0
+        ? _b
+        : root.appendChild(document.createElement("canvas"));
     // canvas css styles
     var styles = [
         "outline: none",
@@ -23,8 +25,9 @@ var createCanvas = function (gopt) {
     ];
     // Adjust canvas size according to user viewport settings
     if (
-    // check if isFixed
-    gopt.width && gopt.height && !gopt.letterbox) {
+        // check if isFixed
+        gopt.width && gopt.height && !gopt.letterbox
+    ) {
         canvas.width = gopt.width * gopt.scale;
         canvas.height = gopt.height * gopt.scale;
         styles.push("width: ".concat(canvas.width, "px"));

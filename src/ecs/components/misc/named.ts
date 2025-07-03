@@ -1,13 +1,12 @@
-import type { Comp } from "../../../types.js";
 import type { SerializableComponent } from "../../../core/SerializableComponent.js";
 import { registerSerializableComponent } from "../../../core/SerializableComponent.js";
+import type { Comp } from "../../../types.js";
 
 /**
  * The {@link named `named()`} component.
  *
  * @group Component Types
  */
-
 
 export interface NamedComp extends Comp, SerializableComponent {
     /** The name assigned to this object. */
@@ -30,4 +29,3 @@ export function named(name: string): NamedComp {
     registerSerializableComponent("named", comp);
     return comp;
 }
-

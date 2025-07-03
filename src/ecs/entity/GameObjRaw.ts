@@ -1,14 +1,14 @@
 // The E of ECS
 
-import type { AppEvents } from "../../app/app";
-import { COMP_DESC, COMP_EVENTS } from "../../constants/general";
-import { handleErr } from "../../core/errors";
-import type { GameObjEventNames } from "../../events/eventMap";
+import type { AppEvents } from "../../app/app.js";
+import { COMP_DESC, COMP_EVENTS } from "../../constants/general.js";
+import { handleErr } from "../../core/errors.js";
+import type { GameObjEventNames } from "../../events/eventMap.js";
 import {
     type KEvent,
     KEventController,
     type KEventHandler,
-} from "../../events/events";
+} from "../../events/events.js";
 import {
     onAdd,
     onDestroy,
@@ -16,11 +16,15 @@ import {
     onUntag,
     onUnuse,
     onUse,
-} from "../../events/globalEvents";
-import { drawMasked } from "../../gfx/draw/drawMasked";
-import { beginPicture, endPicture, Picture } from "../../gfx/draw/drawPicture";
-import { drawSubtracted } from "../../gfx/draw/drawSubstracted";
-import { FrameBuffer } from "../../gfx/FrameBuffer";
+} from "../../events/globalEvents.js";
+import { drawMasked } from "../../gfx/draw/drawMasked.js";
+import {
+    beginPicture,
+    endPicture,
+    Picture,
+} from "../../gfx/draw/drawPicture.js";
+import { drawSubtracted } from "../../gfx/draw/drawSubstracted.js";
+import { FrameBuffer } from "../../gfx/FrameBuffer.js";
 import {
     flush,
     loadMatrix,
@@ -30,10 +34,10 @@ import {
     popTransform,
     pushTransform,
     storeMatrix,
-} from "../../gfx/stack";
-import { Mat23 } from "../../math/math";
-import { calcTransform } from "../../math/various";
-import { _k } from "../../shared";
+} from "../../gfx/stack.js";
+import { Mat23 } from "../../math/math.js";
+import { calcTransform } from "../../math/various.js";
+import { _k } from "../../shared.js";
 import type {
     Comp,
     CompList,
@@ -45,16 +49,16 @@ import type {
     QueryOpt,
     RenderTarget,
     Tag,
-} from "../../types";
-import type { MaskComp } from "../components/draw/mask";
-import type { FixedComp } from "../components/transform/fixed";
-import type { LayerComp } from "../components/transform/layer";
-import type { PosComp } from "../components/transform/pos";
-import type { RotateComp } from "../components/transform/rotate";
-import type { ScaleComp } from "../components/transform/scale";
-import type { ZComp } from "../components/transform/z";
-import { make } from "./make";
-import { isFixed } from "./utils";
+} from "../../types.js";
+import type { MaskComp } from "../components/draw/mask.js";
+import type { FixedComp } from "../components/transform/fixed.js";
+import type { LayerComp } from "../components/transform/layer.js";
+import type { PosComp } from "../components/transform/pos.js";
+import type { RotateComp } from "../components/transform/rotate.js";
+import type { ScaleComp } from "../components/transform/scale.js";
+import type { ZComp } from "../components/transform/z.js";
+import { make } from "./make.js";
+import { isFixed } from "./utils.js";
 
 export enum KeepFlags {
     Pos = 1,

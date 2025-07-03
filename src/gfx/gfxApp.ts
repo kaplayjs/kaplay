@@ -1,19 +1,19 @@
-import { makeShader, type Shader, type Uniform } from "../assets/shader";
+import { makeShader, type Shader, type Uniform } from "../assets/shader.js";
 import {
     DEF_FRAG,
     DEF_VERT,
     MAX_BATCHED_INDICES,
     MAX_BATCHED_VERTS,
     VERTEX_FORMAT,
-} from "../constants/general";
-import { go } from "../game/scenes";
-import { type Color, rgb } from "../math/color";
-import { Mat23 } from "../math/math";
-import { Vec2 } from "../math/Vec2";
-import type { KAPLAYOpt, MustKAPLAYOpt } from "../types";
-import type { FontAtlas } from "./formatText";
-import { FrameBuffer } from "./FrameBuffer";
-import { BatchRenderer, type GfxCtx, Texture } from "./gfx";
+} from "../constants/general.js";
+import { go } from "../game/scenes.js";
+import { type Color, rgb } from "../math/color.js";
+import { Mat23 } from "../math/math.js";
+import { Vec2 } from "../math/Vec2.js";
+import type { KAPLAYOpt, MustKAPLAYOpt } from "../types.js";
+import type { FontAtlas } from "./formatText.js";
+import { FrameBuffer } from "./FrameBuffer.js";
+import { BatchRenderer, type GfxCtx, Texture } from "./gfx.js";
 
 export type AppGfxCtx = {
     /** How many draw calls we're doing last frame */

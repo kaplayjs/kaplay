@@ -14,10 +14,13 @@ function drawLoadScreen() {
         shared_1._k.game.events.trigger("loading", progress);
     }
     else {
-        (0, drawUnscaled_1.drawUnscaled)(function () {
+        (0, drawUnscaled_1.drawUnscaled)(function() {
             var w = (0, stack_1.width)() / 2;
             var h = 24;
-            var pos = (0, math_1.vec2)((0, stack_1.width)() / 2, (0, stack_1.height)() / 2).sub((0, math_1.vec2)(w / 2, h / 2));
+            var pos = (0, math_1.vec2)(
+                (0, stack_1.width)() / 2,
+                (0, stack_1.height)() / 2,
+            ).sub((0, math_1.vec2)(w / 2, h / 2));
             (0, drawRect_1.drawRect)({
                 pos: (0, math_1.vec2)(0),
                 width: (0, stack_1.width)(),

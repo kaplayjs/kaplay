@@ -1,18 +1,18 @@
-import type { FontData } from "../../assets/font";
-import type { Uniform } from "../../assets/shader";
-import type { Color } from "../../math/color";
-import type { Quad } from "../../math/math";
-import type { Vec2 } from "../../math/Vec2";
-import { anchorPt } from "../anchor";
-import type { Texture } from "../gfx";
+import type { FontData } from "../../assets/font.js";
+import type { Uniform } from "../../assets/shader.js";
+import type { Color } from "../../math/color.js";
+import type { Quad } from "../../math/math.js";
+import type { Vec2 } from "../../math/Vec2.js";
+import { anchorPt } from "../anchor.js";
+import type { Texture } from "../gfx.js";
 import {
     multRotate,
     multTranslateV,
     popTransform,
     pushTransform,
-} from "../stack";
-import type { DrawTextOpt } from "./drawText";
-import { drawUVQuad } from "./drawUVQuad";
+} from "../stack.js";
+import type { DrawTextOpt } from "./drawText.js";
+import { drawUVQuad } from "./drawUVQuad.js";
 
 /**
  * Formatted text with info on how and where to render each character.

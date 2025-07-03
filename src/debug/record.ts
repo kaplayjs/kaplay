@@ -1,5 +1,5 @@
-import { _k } from "../shared";
-import { downloadBlob } from "../utils/dataURL";
+import { _k } from "../shared.js";
+import { downloadBlob } from "../utils/dataURL.js";
 
 /**
  * Screen recording control handle.

@@ -1,11 +1,11 @@
-import { DEF_OFFSCREEN_DIS } from "../../../constants/general";
-import type { KEventController } from "../../../events/events";
-import { onUpdate } from "../../../events/globalEvents";
-import { height, width } from "../../../gfx/stack";
-import { Rect, testRectPoint, vec2 } from "../../../math/math";
-import type { Comp, GameObj } from "../../../types";
-import type { RectComp } from "../draw/rect";
-import type { PosComp } from "./pos";
+import { DEF_OFFSCREEN_DIS } from "../../../constants/general.js";
+import type { KEventController } from "../../../events/events.js";
+import { onUpdate } from "../../../events/globalEvents.js";
+import { height, width } from "../../../gfx/stack.js";
+import { Rect, testRectPoint, vec2 } from "../../../math/math.js";
+import type { Comp, GameObj } from "../../../types.js";
+import type { RectComp } from "../draw/rect.js";
+import type { PosComp } from "./pos.js";
 
 /**
  * The {@link offscreen `offscreen()`} component.

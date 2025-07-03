@@ -1,22 +1,22 @@
 // TODO: accept canvas
 
-import type { Asset } from "../../../assets/asset";
+import type { Asset } from "../../../assets/asset.js";
 import {
     resolveSprite,
     type SpriteAnim,
     type SpriteData,
-} from "../../../assets/sprite";
-import { DEF_ANCHOR } from "../../../constants/general";
-import { KEvent, type KEventController } from "../../../events/events";
-import { onLoad } from "../../../events/globalEvents";
-import { getRenderProps } from "../../../game/utils";
-import { anchorPt } from "../../../gfx/anchor";
-import { drawTexture } from "../../../gfx/draw/drawTexture";
-import type { Texture } from "../../../gfx/gfx";
-import { Quad, quad, Rect, vec2 } from "../../../math/math";
-import { type Vec2 } from "../../../math/Vec2";
-import { _k } from "../../../shared";
-import type { Comp, GameObj, SpriteAnimPlayOpt } from "../../../types";
+} from "../../../assets/sprite.js";
+import { DEF_ANCHOR } from "../../../constants/general.js";
+import { KEvent, type KEventController } from "../../../events/events.js";
+import { onLoad } from "../../../events/globalEvents.js";
+import { getRenderProps } from "../../../game/utils.js";
+import { anchorPt } from "../../../gfx/anchor.js";
+import { drawTexture } from "../../../gfx/draw/drawTexture.js";
+import type { Texture } from "../../../gfx/gfx.js";
+import { Quad, quad, Rect, vec2 } from "../../../math/math.js";
+import { type Vec2 } from "../../../math/Vec2.js";
+import { _k } from "../../../shared.js";
+import type { Comp, GameObj, SpriteAnimPlayOpt } from "../../../types.js";
 
 /**
  * Current animation data.

@@ -1,6 +1,6 @@
-import { evaluateBezier } from "../../math/math";
-import { type Vec2 } from "../../math/Vec2";
-import { drawCurve, type DrawCurveOpt } from "./drawCurve";
+import { evaluateBezier } from "../../math/math.js";
+import { type Vec2 } from "../../math/Vec2.js";
+import { drawCurve, type DrawCurveOpt } from "./drawCurve.js";
 
 export type DrawBezierOpt = DrawCurveOpt & {
     /**

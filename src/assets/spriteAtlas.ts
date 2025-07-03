@@ -1,14 +1,17 @@
-import { SPRITE_ATLAS_HEIGHT, SPRITE_ATLAS_WIDTH } from "../constants/general";
-import { Quad } from "../math/math";
-import { _k } from "../shared";
-import { type Asset, fetchJSON, load } from "./asset";
+import {
+    SPRITE_ATLAS_HEIGHT,
+    SPRITE_ATLAS_WIDTH,
+} from "../constants/general.js";
+import { Quad } from "../math/math.js";
+import { _k } from "../shared.js";
+import { type Asset, fetchJSON, load } from "./asset.js";
 import {
     type LoadSpriteOpt,
     type LoadSpriteSrc,
     slice,
     SpriteData,
-} from "./sprite";
-import { fixURL } from "./utils";
+} from "./sprite.js";
+import { fixURL } from "./utils.js";
 
 export type SpriteAtlasData = Record<string, SpriteAtlasEntry>;
 

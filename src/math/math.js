@@ -2,17 +2,33 @@
 // TODO: A lot
 // - move RNG to it's own file
 // - move Vec2 to it's own file
-var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
-    if (pack || arguments.length === 2) for (var i = 0, l = from.length, ar; i < l; i++) {
-        if (ar || !(i in from)) {
-            if (!ar) ar = Array.prototype.slice.call(from, 0, i);
-            ar[i] = from[i];
+var __spreadArray = (this && this.__spreadArray) || function(to, from, pack) {
+    if (pack || arguments.length === 2) {
+        for (var i = 0, l = from.length, ar; i < l; i++) {
+            if (ar || !(i in from)) {
+                if (!ar) {
+                    ar = Array.prototype.slice.call(from, 0, i);
+                }
+                ar[i] = from[i];
+            }
         }
     }
     return to.concat(ar || Array.prototype.slice.call(from));
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.Polygon = exports.Ellipse = exports.Circle = exports.Rect = exports.Line = exports.Point = exports.RNG = exports.M = exports.C = exports.A = exports.Mat23 = exports.Quad = void 0;
+exports.Polygon =
+    exports.Ellipse =
+    exports.Circle =
+    exports.Rect =
+    exports.Line =
+    exports.Point =
+    exports.RNG =
+    exports.M =
+    exports.C =
+    exports.A =
+    exports.Mat23 =
+    exports.Quad =
+        void 0;
 exports.deg2rad = deg2rad;
 exports.rad2deg = rad2deg;
 exports.map = map;
@@ -118,16 +134,22 @@ function vec2() {
             return new Vec2_1.Vec2(args[0].x, args[0].y);
         }
         else if (Array.isArray(args[0]) && args[0].length === 2) {
-            return new (Vec2_1.Vec2.bind.apply(Vec2_1.Vec2, __spreadArray([void 0], args[0], false)))();
+            return new (Vec2_1.Vec2.bind.apply(
+                Vec2_1.Vec2,
+                __spreadArray([void 0], args[0], false),
+            ))();
         }
     }
     // @ts-ignore
-    return new (Vec2_1.Vec2.bind.apply(Vec2_1.Vec2, __spreadArray([void 0], args, false)))();
+    return new (Vec2_1.Vec2.bind.apply(
+        Vec2_1.Vec2,
+        __spreadArray([void 0], args, false),
+    ))();
 }
 /**
  * @group Math
  */
-var Quad = /** @class */ (function () {
+var Quad = /** @class */ function() {
     function Quad(x, y, w, h) {
         this.x = 0;
         this.y = 0;
@@ -138,61 +160,82 @@ var Quad = /** @class */ (function () {
         this.w = w;
         this.h = h;
     }
-    Quad.prototype.scale = function (other) {
-        return new Quad(this.x + this.w * other.x, this.y + this.h * other.y, this.w * other.w, this.h * other.h);
+    Quad.prototype.scale = function(other) {
+        return new Quad(
+            this.x + this.w * other.x,
+            this.y + this.h * other.y,
+            this.w * other.w,
+            this.h * other.h,
+        );
     };
-    Quad.prototype.pos = function () {
+    Quad.prototype.pos = function() {
         return new Vec2_1.Vec2(this.x, this.y);
     };
-    Quad.prototype.clone = function () {
+    Quad.prototype.clone = function() {
         return new Quad(this.x, this.y, this.w, this.h);
     };
-    Quad.prototype.eq = function (other) {
+    Quad.prototype.eq = function(other) {
         return this.x === other.x
             && this.y === other.y
             && this.w === other.w
             && this.h === other.h;
     };
-    Quad.prototype.toString = function () {
-        return "quad(".concat(this.x, ", ").concat(this.y, ", ").concat(this.w, ", ").concat(this.h, ")");
+    Quad.prototype.toString = function() {
+        return "quad(".concat(this.x, ", ").concat(this.y, ", ").concat(
+            this.w,
+            ", ",
+        ).concat(this.h, ")");
     };
     return Quad;
-}());
+}();
 exports.Quad = Quad;
 function quad(x, y, w, h) {
     return new Quad(x, y, w, h);
 }
 // Internal class
-var Mat2 = /** @class */ (function () {
+var Mat2 = /** @class */ function() {
     function Mat2(a, b, c, d) {
         this.a = a;
         this.b = b;
         this.c = c;
         this.d = d;
     }
-    Mat2.prototype.mul = function (other) {
-        return new Mat2(this.a * other.a + this.b * other.c, this.a * other.b + this.b * other.d, this.c * other.a + this.d * other.c, this.c * other.b + this.d * other.d);
+    Mat2.prototype.mul = function(other) {
+        return new Mat2(
+            this.a * other.a + this.b * other.c,
+            this.a * other.b + this.b * other.d,
+            this.c * other.a + this.d * other.c,
+            this.c * other.b + this.d * other.d,
+        );
     };
-    Mat2.prototype.transform = function (point) {
-        return vec2(this.a * point.x + this.b * point.y, this.c * point.x + this.d * point.y);
+    Mat2.prototype.transform = function(point) {
+        return vec2(
+            this.a * point.x + this.b * point.y,
+            this.c * point.x + this.d * point.y,
+        );
     };
     Object.defineProperty(Mat2.prototype, "inverse", {
-        get: function () {
+        get: function() {
             var det = this.det;
-            return new Mat2(this.d / det, -this.b / det, -this.c / det, this.a / det);
+            return new Mat2(
+                this.d / det,
+                -this.b / det,
+                -this.c / det,
+                this.a / det,
+            );
         },
         enumerable: false,
-        configurable: true
+        configurable: true,
     });
     Object.defineProperty(Mat2.prototype, "transpose", {
-        get: function () {
+        get: function() {
             return new Mat2(this.a, this.c, this.b, this.d);
         },
         enumerable: false,
-        configurable: true
+        configurable: true,
     });
     Object.defineProperty(Mat2.prototype, "eigenvalues", {
-        get: function () {
+        get: function() {
             var m = this.trace / 2;
             var d = this.det;
             var e1 = m + Math.sqrt(m * m - d);
@@ -200,9 +243,9 @@ var Mat2 = /** @class */ (function () {
             return [e1, e2];
         },
         enumerable: false,
-        configurable: true
+        configurable: true,
     });
-    Mat2.prototype.eigenvectors = function (e1, e2) {
+    Mat2.prototype.eigenvectors = function(e1, e2) {
         if (this.c != 0) {
             return [[e1 - this.d, this.c], [e2 - this.d, this.c]];
         }
@@ -219,38 +262,38 @@ var Mat2 = /** @class */ (function () {
         }
     };
     Object.defineProperty(Mat2.prototype, "det", {
-        get: function () {
+        get: function() {
             return this.a * this.d - this.b * this.c;
         },
         enumerable: false,
-        configurable: true
+        configurable: true,
     });
     Object.defineProperty(Mat2.prototype, "trace", {
-        get: function () {
+        get: function() {
             return this.a + this.d;
         },
         enumerable: false,
-        configurable: true
+        configurable: true,
     });
-    Mat2.rotation = function (radians) {
+    Mat2.rotation = function(radians) {
         var c = Math.cos(radians);
         var s = Math.sin(radians);
         return new Mat2(c, s, -s, c);
     };
-    Mat2.scale = function (x, y) {
+    Mat2.scale = function(x, y) {
         return new Mat2(x, 0, 0, y);
     };
     return Mat2;
-}());
+}();
 // Internal class
-var Mat23 = /** @class */ (function () {
+var Mat23 = /** @class */ function() {
     function Mat23(a, b, c, d, e, f) {
-        if (a === void 0) { a = 1; }
-        if (b === void 0) { b = 0; }
-        if (c === void 0) { c = 0; }
-        if (d === void 0) { d = 1; }
-        if (e === void 0) { e = 0; }
-        if (f === void 0) { f = 0; }
+        if (a === void 0) a = 1;
+        if (b === void 0) b = 0;
+        if (c === void 0) c = 0;
+        if (d === void 0) d = 1;
+        if (e === void 0) e = 0;
+        if (f === void 0) f = 0;
         this._inverse = null;
         this.a = a;
         this.b = b;
@@ -259,27 +302,27 @@ var Mat23 = /** @class */ (function () {
         this.e = e;
         this.f = f;
     }
-    Mat23.fromMat2 = function (m) {
+    Mat23.fromMat2 = function(m) {
         return new Mat23(m.a, m.b, m.c, m.d, 0, 0);
     };
-    Mat23.prototype.toMat2 = function () {
+    Mat23.prototype.toMat2 = function() {
         return new Mat2(this.a, this.b, this.c, this.d);
     };
-    Mat23.fromTranslation = function (t) {
+    Mat23.fromTranslation = function(t) {
         return new Mat23(1, 0, 0, 1, t.x, t.y);
     };
-    Mat23.fromRotation = function (radians) {
+    Mat23.fromRotation = function(radians) {
         var c = Math.cos(radians);
         var s = Math.sin(radians);
         return new Mat23(c, s, -s, c, 0, 0);
     };
-    Mat23.fromScale = function (s) {
+    Mat23.fromScale = function(s) {
         return new Mat23(s.x, 0, 0, s.y, 0, 0);
     };
-    Mat23.prototype.clone = function () {
+    Mat23.prototype.clone = function() {
         return new Mat23(this.a, this.b, this.c, this.d, this.e, this.f);
     };
-    Mat23.prototype.setMat23 = function (m) {
+    Mat23.prototype.setMat23 = function(m) {
         this.a = m.a;
         this.b = m.b;
         this.c = m.c;
@@ -289,7 +332,7 @@ var Mat23 = /** @class */ (function () {
         this._inverse = m._inverse;
         return this;
     };
-    Mat23.prototype.setIdentity = function () {
+    Mat23.prototype.setIdentity = function() {
         this.a = 1;
         this.b = 0;
         this.c = 0;
@@ -299,22 +342,29 @@ var Mat23 = /** @class */ (function () {
         this._inverse = null;
         return this;
     };
-    Mat23.prototype.mul = function (other) {
-        return new Mat23(other.a * this.a + other.b * this.c, other.a * this.b + other.b * this.d, other.c * this.a + other.d * this.c, other.c * this.b + other.d * this.d, other.e * this.a + other.f * this.c + this.e, other.e * this.b + other.f * this.d + this.f);
+    Mat23.prototype.mul = function(other) {
+        return new Mat23(
+            other.a * this.a + other.b * this.c,
+            other.a * this.b + other.b * this.d,
+            other.c * this.a + other.d * this.c,
+            other.c * this.b + other.d * this.d,
+            other.e * this.a + other.f * this.c + this.e,
+            other.e * this.b + other.f * this.d + this.f,
+        );
     };
-    Mat23.prototype.translateSelfV = function (t) {
+    Mat23.prototype.translateSelfV = function(t) {
         this.e += t.x * this.a + t.y * this.c;
         this.f += t.x * this.b + t.y * this.d;
         this._inverse = null;
         return this;
     };
-    Mat23.prototype.translateSelf = function (x, y) {
+    Mat23.prototype.translateSelf = function(x, y) {
         this.e += x * this.a + y * this.c;
         this.f += x * this.b + y * this.d;
         this._inverse = null;
         return this;
     };
-    Mat23.prototype.rotateSelf = function (degrees) {
+    Mat23.prototype.rotateSelf = function(degrees) {
         var radians = deg2rad(degrees);
         var c = Math.cos(radians);
         var s = Math.sin(radians);
@@ -327,7 +377,7 @@ var Mat23 = /** @class */ (function () {
         this._inverse = null;
         return this;
     };
-    Mat23.prototype.scaleSelfV = function (s) {
+    Mat23.prototype.scaleSelfV = function(s) {
         this.a *= s.x;
         this.b *= s.x;
         this.c *= s.y;
@@ -335,7 +385,7 @@ var Mat23 = /** @class */ (function () {
         this._inverse = null;
         return this;
     };
-    Mat23.prototype.scaleSelf = function (x, y) {
+    Mat23.prototype.scaleSelf = function(x, y) {
         this.a *= x;
         this.b *= x;
         this.c *= y;
@@ -343,7 +393,7 @@ var Mat23 = /** @class */ (function () {
         this._inverse = null;
         return this;
     };
-    Mat23.prototype.mulSelf = function (other) {
+    Mat23.prototype.mulSelf = function(other) {
         var a = other.a * this.a + other.b * this.c;
         var b = other.a * this.b + other.b * this.d;
         var c = other.c * this.a + other.d * this.c;
@@ -359,65 +409,79 @@ var Mat23 = /** @class */ (function () {
         this._inverse = null;
         return this;
     };
-    Mat23.prototype.transform = function (p) {
-        return vec2(this.a * p.x + this.c * p.y + this.e, this.b * p.x + this.d * p.y + this.f);
+    Mat23.prototype.transform = function(p) {
+        return vec2(
+            this.a * p.x + this.c * p.y + this.e,
+            this.b * p.x + this.d * p.y + this.f,
+        );
     };
-    Mat23.prototype.transformPointV = function (p, o) {
+    Mat23.prototype.transformPointV = function(p, o) {
         var tmp = p.x;
         o.x = this.a * p.x + this.c * p.y + this.e;
         o.y = this.b * tmp + this.d * p.y + this.f;
         return o;
     };
-    Mat23.prototype.transformVectorV = function (v, o) {
+    Mat23.prototype.transformVectorV = function(v, o) {
         var tmp = v.x;
         o.x = this.a * v.x + this.c * v.y;
         o.y = this.b * tmp + this.d * v.y;
         return o;
     };
-    Mat23.prototype.transformPoint = function (x, y, o) {
+    Mat23.prototype.transformPoint = function(x, y, o) {
         var tmp = x;
         o.x = this.a * x + this.c * y + this.e;
         o.y = this.b * tmp + this.d * y + this.f;
         return o;
     };
-    Mat23.prototype.transformVector = function (x, y, o) {
+    Mat23.prototype.transformVector = function(x, y, o) {
         var tmp = x;
         o.x = this.a * x + this.c * y;
         o.y = this.b * tmp + this.d * y;
         return o;
     };
     Object.defineProperty(Mat23.prototype, "det", {
-        get: function () {
+        get: function() {
             return this.a * this.d - this.b * this.c;
         },
         enumerable: false,
-        configurable: true
+        configurable: true,
     });
     Object.defineProperty(Mat23.prototype, "inverse", {
-        get: function () {
-            if (this._inverse)
+        get: function() {
+            if (this._inverse) {
                 return this._inverse;
+            }
             var det = this.det;
-            this._inverse = new Mat23(this.d / det, -this.b / det, -this.c / det, this.a / det, (this.c * this.f - this.d * this.e) / det, (this.b * this.e - this.a * this.f) / det);
+            this._inverse = new Mat23(
+                this.d / det,
+                -this.b / det,
+                -this.c / det,
+                this.a / det,
+                (this.c * this.f - this.d * this.e) / det,
+                (this.b * this.e - this.a * this.f) / det,
+            );
             return this._inverse;
         },
         enumerable: false,
-        configurable: true
+        configurable: true,
     });
-    Mat23.prototype.getTranslation = function () {
+    Mat23.prototype.getTranslation = function() {
         return new Vec2_1.Vec2(this.e, this.f);
     };
-    Mat23.prototype.getRotation = function () {
+    Mat23.prototype.getRotation = function() {
         return rad2deg(Math.atan2(-this.c, this.a));
     };
-    Mat23.prototype.getScale = function () {
-        return new Vec2_1.Vec2(Math.sqrt(this.a * this.a + this.c * this.c), Math.sqrt(this.b * this.b + this.d * this.d));
+    Mat23.prototype.getScale = function() {
+        return new Vec2_1.Vec2(
+            Math.sqrt(this.a * this.a + this.c * this.c),
+            Math.sqrt(this.b * this.b + this.d * this.d),
+        );
     };
     return Mat23;
-}());
+}();
 exports.Mat23 = Mat23;
 // Internal class
-var Mat3 = /** @class */ (function () {
+var Mat3 = /** @class */ function() {
     function Mat3(m11, m12, m13, m21, m22, m23, m31, m32, m33) {
         this.m11 = m11;
         this.m12 = m12;
@@ -429,25 +493,38 @@ var Mat3 = /** @class */ (function () {
         this.m32 = m32;
         this.m33 = m33;
     }
-    Mat3.fromMat2 = function (m) {
+    Mat3.fromMat2 = function(m) {
         return new Mat3(m.a, m.b, 0, m.c, m.d, 0, 0, 0, 1);
     };
-    Mat3.prototype.toMat2 = function () {
+    Mat3.prototype.toMat2 = function() {
         return new Mat2(this.m11, this.m12, this.m21, this.m22);
     };
-    Mat3.prototype.mul = function (other) {
-        return new Mat3(this.m11 * other.m11 + this.m12 * other.m21 + this.m13 * other.m31, this.m11 * other.m12 + this.m12 * other.m22 + this.m13 * other.m32, this.m11 * other.m13 + this.m12 * other.m23 + this.m13 * other.m33, this.m21 * other.m11 + this.m22 * other.m21 + this.m23 * other.m31, this.m21 * other.m12 + this.m22 * other.m22 + this.m23 * other.m32, this.m21 * other.m13 + this.m22 * other.m23 + this.m23 * other.m33, this.m31 * other.m11 + this.m32 * other.m21 + this.m33 * other.m31, this.m31 * other.m12 + this.m32 * other.m22 + this.m33 * other.m32, this.m31 * other.m13 + this.m32 * other.m23 + this.m33 * other.m33);
+    Mat3.prototype.mul = function(other) {
+        return new Mat3(
+            this.m11 * other.m11 + this.m12 * other.m21 + this.m13 * other.m31,
+            this.m11 * other.m12 + this.m12 * other.m22 + this.m13 * other.m32,
+            this.m11 * other.m13 + this.m12 * other.m23 + this.m13 * other.m33,
+            this.m21 * other.m11 + this.m22 * other.m21 + this.m23 * other.m31,
+            this.m21 * other.m12 + this.m22 * other.m22 + this.m23 * other.m32,
+            this.m21 * other.m13 + this.m22 * other.m23 + this.m23 * other.m33,
+            this.m31 * other.m11 + this.m32 * other.m21 + this.m33 * other.m31,
+            this.m31 * other.m12 + this.m32 * other.m22 + this.m33 * other.m32,
+            this.m31 * other.m13 + this.m32 * other.m23 + this.m33 * other.m33,
+        );
     };
     Object.defineProperty(Mat3.prototype, "det", {
-        get: function () {
-            return this.m11 * this.m22 * this.m33 + this.m12 * this.m23 * this.m31
-                + this.m13 * this.m21 * this.m32 - this.m13 * this.m22 * this.m31
-                - this.m12 * this.m21 * this.m33 - this.m11 * this.m23 * this.m32;
+        get: function() {
+            return this.m11 * this.m22 * this.m33
+                + this.m12 * this.m23 * this.m31
+                + this.m13 * this.m21 * this.m32
+                - this.m13 * this.m22 * this.m31
+                - this.m12 * this.m21 * this.m33
+                - this.m11 * this.m23 * this.m32;
         },
         enumerable: false,
-        configurable: true
+        configurable: true,
     });
-    Mat3.prototype.rotate = function (radians) {
+    Mat3.prototype.rotate = function(radians) {
         var c = Math.cos(radians);
         var s = Math.sin(radians);
         var oldA = this.m11;
@@ -458,7 +535,7 @@ var Mat3 = /** @class */ (function () {
         this.m22 = c * this.m22 - s * oldB;
         return this;
     };
-    Mat3.prototype.scale = function (x, y) {
+    Mat3.prototype.scale = function(x, y) {
         this.m11 *= x;
         this.m12 *= x;
         this.m21 *= y;
@@ -466,24 +543,48 @@ var Mat3 = /** @class */ (function () {
         return this;
     };
     Object.defineProperty(Mat3.prototype, "inverse", {
-        get: function () {
+        get: function() {
             var det = this.det;
-            return new Mat3((this.m22 * this.m33 - this.m23 * this.m32) / det, (this.m13 * this.m32 - this.m12 * this.m33) / det, (this.m12 * this.m23 - this.m13 * this.m22) / det, (this.m23 * this.m31 - this.m21 * this.m33) / det, (this.m11 * this.m33 - this.m13 * this.m31) / det, (this.m13 * this.m21 - this.m11 * this.m23) / det, (this.m21 * this.m32 - this.m22 * this.m31) / det, (this.m12 * this.m31 - this.m11 * this.m32) / det, (this.m11 * this.m22 - this.m12 * this.m21) / det);
+            return new Mat3(
+                (this.m22 * this.m33 - this.m23 * this.m32) / det,
+                (this.m13 * this.m32 - this.m12 * this.m33) / det,
+                (this.m12 * this.m23 - this.m13 * this.m22) / det,
+                (this.m23 * this.m31 - this.m21 * this.m33) / det,
+                (this.m11 * this.m33 - this.m13 * this.m31) / det,
+                (this.m13 * this.m21 - this.m11 * this.m23) / det,
+                (this.m21 * this.m32 - this.m22 * this.m31) / det,
+                (this.m12 * this.m31 - this.m11 * this.m32) / det,
+                (this.m11 * this.m22 - this.m12 * this.m21) / det,
+            );
         },
         enumerable: false,
-        configurable: true
+        configurable: true,
     });
     Object.defineProperty(Mat3.prototype, "transpose", {
-        get: function () {
-            return new Mat3(this.m11, this.m21, this.m31, this.m12, this.m22, this.m32, this.m13, this.m23, this.m33);
+        get: function() {
+            return new Mat3(
+                this.m11,
+                this.m21,
+                this.m31,
+                this.m12,
+                this.m22,
+                this.m32,
+                this.m13,
+                this.m23,
+                this.m33,
+            );
         },
         enumerable: false,
-        configurable: true
+        configurable: true,
     });
     return Mat3;
-}());
+}();
 function wave(lo, hi, t, f) {
-    if (f === void 0) { f = function (t) { return -Math.cos(t); }; }
+    if (f === void 0) {
+        f = function(t) {
+            return -Math.cos(t);
+        };
+    }
     return (0, lerp_1.lerp)(lo, hi, (f(t) + 1) / 2);
 }
 // basic ANSI C LCG
@@ -495,7 +596,7 @@ exports.M = 2147483648;
  *
  * @group Math
  */
-var RNG = /** @class */ (function () {
+var RNG = /** @class */ function() {
     function RNG(seed) {
         this.seed = seed;
     }
@@ -510,7 +611,7 @@ var RNG = /** @class */ (function () {
      *
      * @returns A number between 0 and 1.
      */
-    RNG.prototype.gen = function () {
+    RNG.prototype.gen = function() {
         this.seed = (exports.A * this.seed + exports.C) % exports.M;
         return this.seed / exports.M;
     };
@@ -528,7 +629,7 @@ var RNG = /** @class */ (function () {
      *
      * @returns A number between a and b.
      */
-    RNG.prototype.genNumber = function (a, b) {
+    RNG.prototype.genNumber = function(a, b) {
         return a + this.gen() * (b - a);
     };
     /**
@@ -545,8 +646,11 @@ var RNG = /** @class */ (function () {
      *
      * @returns A vector between vectors a and b.
      */
-    RNG.prototype.genVec2 = function (a, b) {
-        return new Vec2_1.Vec2(this.genNumber(a.x, b.x), this.genNumber(a.y, b.y));
+    RNG.prototype.genVec2 = function(a, b) {
+        return new Vec2_1.Vec2(
+            this.genNumber(a.x, b.x),
+            this.genNumber(a.y, b.y),
+        );
     };
     /**
      * Generate a random color between two colors.
@@ -562,8 +666,12 @@ var RNG = /** @class */ (function () {
      *
      * @returns A color between colors a and b.
      */
-    RNG.prototype.genColor = function (a, b) {
-        return new color_1.Color(this.genNumber(a.r, b.r), this.genNumber(a.g, b.g), this.genNumber(a.b, b.b));
+    RNG.prototype.genColor = function(a, b) {
+        return new color_1.Color(
+            this.genNumber(a.r, b.r),
+            this.genNumber(a.g, b.g),
+            this.genNumber(a.b, b.b),
+        );
     };
     /**
      * Generate a random value of a specific type.
@@ -580,7 +688,7 @@ var RNG = /** @class */ (function () {
      *
      * @returns A random value.
      */
-    RNG.prototype.genAny = function () {
+    RNG.prototype.genAny = function() {
         var args = [];
         for (var _i = 0; _i < arguments.length; _i++) {
             args[_i] = arguments[_i];
@@ -603,17 +711,22 @@ var RNG = /** @class */ (function () {
             if (typeof args[0] === "number" && typeof args[1] === "number") {
                 return this.genNumber(args[0], args[1]);
             }
-            else if (args[0] instanceof Vec2_1.Vec2 && args[1] instanceof Vec2_1.Vec2) {
+            else if (
+                args[0] instanceof Vec2_1.Vec2 && args[1] instanceof Vec2_1.Vec2
+            ) {
                 return this.genVec2(args[0], args[1]);
             }
-            else if (args[0] instanceof color_1.Color && args[1] instanceof color_1.Color) {
+            else if (
+                args[0] instanceof color_1.Color
+                && args[1] instanceof color_1.Color
+            ) {
                 return this.genColor(args[0], args[1]);
             }
         }
         throw new Error("More than 2 arguments not supported");
     };
     return RNG;
-}());
+}();
 exports.RNG = RNG;
 function randSeed(seed) {
     if (seed != null) {
@@ -634,7 +747,7 @@ function randi() {
     for (var _i = 0; _i < arguments.length; _i++) {
         args[_i] = arguments[_i];
     }
-    return Math.floor(rand.apply(void 0, (args.length > 0 ? args : [2])));
+    return Math.floor(rand.apply(void 0, args.length > 0 ? args : [2]));
 }
 function chance(p) {
     return rand() <= p;
@@ -670,8 +783,10 @@ function testRectRect(r1, r2) {
 }
 // TODO: better name
 function testLineLineT(l1, l2) {
-    if ((l1.p1.x === l1.p2.x && l1.p1.y === l1.p2.y)
-        || (l2.p1.x === l2.p2.x && l2.p1.y === l2.p2.y)) {
+    if (
+        (l1.p1.x === l1.p2.x && l1.p1.y === l1.p2.y)
+        || (l2.p1.x === l2.p2.x && l2.p1.y === l2.p2.y)
+    ) {
         return null;
     }
     var denom = (l2.p2.y - l2.p1.y) * (l1.p2.x - l1.p1.x)
@@ -692,9 +807,13 @@ function testLineLineT(l1, l2) {
 }
 function testLineLine(l1, l2) {
     var t = testLineLineT(l1, l2);
-    if (!t)
+    if (!t) {
         return null;
-    return vec2(l1.p1.x + t * (l1.p2.x - l1.p1.x), l1.p1.y + t * (l1.p2.y - l1.p1.y));
+    }
+    return vec2(
+        l1.p1.x + t * (l1.p2.x - l1.p1.x),
+        l1.p1.y + t * (l1.p2.y - l1.p1.y),
+    );
 }
 function clipLineToRect(r, l, result) {
     var dir = l.p2.sub(l.p1);
@@ -929,13 +1048,24 @@ function testCirclePolygon(c, p) {
 }
 function testPolygonPolygon(p1, p2) {
     for (var i = 0; i < p1.pts.length; i++) {
-        if (testLinePolygon(new Line(p1.pts[i], p1.pts[(i + 1) % p1.pts.length]), p2)) {
+        if (
+            testLinePolygon(
+                new Line(p1.pts[i], p1.pts[(i + 1) % p1.pts.length]),
+                p2,
+            )
+        ) {
             return true;
         }
     }
     // Check if any of the points of the polygon lie in the other polygon
-    if (p1.pts.some(function (p) { return testPolygonPoint(p2, p); })
-        || p2.pts.some(function (p) { return testPolygonPoint(p1, p); })) {
+    if (
+        p1.pts.some(function(p) {
+            return testPolygonPoint(p2, p);
+        })
+        || p2.pts.some(function(p) {
+            return testPolygonPoint(p1, p);
+        })
+    ) {
         return true;
     }
     return false;
@@ -945,10 +1075,12 @@ function testPolygonPoint(poly, pt) {
     var c = false;
     var p = poly.pts;
     for (var i = 0, j = p.length - 1; i < p.length; j = i++) {
-        if (((p[i].y > pt.y) != (p[j].y > pt.y))
+        if (
+            ((p[i].y > pt.y) != (p[j].y > pt.y))
             && (pt.x
                 < (p[j].x - p[i].x) * (pt.y - p[i].y) / (p[j].y - p[i].y)
-                    + p[i].x)) {
+                    + p[i].x)
+        ) {
             c = !c;
         }
     }
@@ -963,7 +1095,7 @@ function testEllipsePoint(ellipse, pt) {
     var vx = pt.x * c + pt.y * s;
     var vy = -pt.x * s + pt.y * c;
     return vx * vx / (ellipse.radiusX * ellipse.radiusX)
-        + vy * vy / (ellipse.radiusY * ellipse.radiusY) < 1;
+            + vy * vy / (ellipse.radiusY * ellipse.radiusY) < 1;
 }
 function testEllipseCircle(ellipse, circle) {
     // This is an approximation, because the parallel curve of an ellipse is an octic algebraic curve, not just a larger ellipse.
@@ -975,36 +1107,93 @@ function testEllipseCircle(ellipse, circle) {
     var cx = center.x * c + center.y * s;
     var cy = -center.x * s + center.y * c;
     // Test with an approximate Minkowski sum of the ellipse and the circle
-    return testEllipsePoint(new Ellipse(vec2(), ellipse.radiusX + circle.radius, ellipse.radiusY + circle.radius, 0), vec2(cx, cy));
+    return testEllipsePoint(
+        new Ellipse(
+            vec2(),
+            ellipse.radiusX + circle.radius,
+            ellipse.radiusY + circle.radius,
+            0,
+        ),
+        vec2(cx, cy),
+    );
 }
 function testEllipseLine(ellipse, line) {
     // Transform the line to the coordinate system where the ellipse is a unit circle
     var T = ellipse.toMat2().inverse;
-    line = new Line(T.transform(line.p1.sub(ellipse.center)), T.transform(line.p2.sub(ellipse.center)));
+    line = new Line(
+        T.transform(line.p1.sub(ellipse.center)),
+        T.transform(line.p2.sub(ellipse.center)),
+    );
     return testLineCircle(line, new Circle(vec2(), 1));
 }
 function testEllipseEllipse(ellipse1, ellipse2) {
     // First check if one of the ellipses isn't secretly a circle
     if (ellipse1.radiusX === ellipse1.radiusY) {
-        return testEllipseCircle(ellipse2, new Circle(ellipse1.center, ellipse1.radiusX));
+        return testEllipseCircle(
+            ellipse2,
+            new Circle(ellipse1.center, ellipse1.radiusX),
+        );
     }
     else if (ellipse2.radiusX === ellipse2.radiusY) {
-        return testEllipseCircle(ellipse1, new Circle(ellipse2.center, ellipse2.radiusX));
+        return testEllipseCircle(
+            ellipse1,
+            new Circle(ellipse2.center, ellipse2.radiusX),
+        );
     }
     // No luck, we need to solve the equation
     /*
     Etayo, Fernando, Laureano Gonzalez-Vega, and Natalia del Rio. "A new approach to characterizing the relative position of two ellipses depending on one parameter." Computer aided geometric design 23, no. 4 (2006): 324-350.
     */
-    var A1 = new Mat3(1 / Math.pow(ellipse1.radiusX, 2), 0, 0, 0, 1 / Math.pow(ellipse1.radiusY, 2), 0, 0, 0, -1);
-    var A2 = new Mat3(1 / Math.pow(ellipse2.radiusX, 2), 0, 0, 0, 1 / Math.pow(ellipse2.radiusY, 2), 0, 0, 0, -1);
+    var A1 = new Mat3(
+        1 / Math.pow(ellipse1.radiusX, 2),
+        0,
+        0,
+        0,
+        1 / Math.pow(ellipse1.radiusY, 2),
+        0,
+        0,
+        0,
+        -1,
+    );
+    var A2 = new Mat3(
+        1 / Math.pow(ellipse2.radiusX, 2),
+        0,
+        0,
+        0,
+        1 / Math.pow(ellipse2.radiusY, 2),
+        0,
+        0,
+        0,
+        -1,
+    );
     var x1 = ellipse1.center.x;
     var y1 = ellipse1.center.y;
     var x2 = ellipse2.center.x;
     var y2 = ellipse2.center.y;
     var theta1 = deg2rad(ellipse1.angle);
     var theta2 = deg2rad(ellipse2.angle);
-    var M1 = new Mat3(Math.cos(theta1), -Math.sin(theta1), x1, Math.sin(theta1), Math.cos(theta1), y1, 0, 0, 1);
-    var M2 = new Mat3(Math.cos(theta2), -Math.sin(theta2), x2, Math.sin(theta2), Math.cos(theta2), y2, 0, 0, 1);
+    var M1 = new Mat3(
+        Math.cos(theta1),
+        -Math.sin(theta1),
+        x1,
+        Math.sin(theta1),
+        Math.cos(theta1),
+        y1,
+        0,
+        0,
+        1,
+    );
+    var M2 = new Mat3(
+        Math.cos(theta2),
+        -Math.sin(theta2),
+        x2,
+        Math.sin(theta2),
+        Math.cos(theta2),
+        y2,
+        0,
+        0,
+        1,
+    );
     var M1inv = M1.inverse;
     var M2inv = M2.inverse;
     var A = M1inv.transpose.mul(A1).mul(M1inv);
@@ -1029,24 +1218,28 @@ function testEllipseEllipse(ellipse1, ellipse2) {
     var b33 = B.m33;
     var factor = a11 * a22 * a33 - a11 * a23 * a32 - a12 * a21 * a33
         + a12 * a23 * a31 + a13 * a21 * a32 - a13 * a22 * a31;
-    var a = (a11 * a22 * b33 - a11 * a23 * b32 - a11 * a32 * b23 + a11 * a33 * b22
-        - a12 * a21 * b33 + a12 * a23 * b31 + a12 * a31 * b23
-        - a12 * a33 * b21 + a13 * a21 * b32 - a13 * a22 * b31
-        - a13 * a31 * b22 + a13 * a32 * b21 + a21 * a32 * b13
-        - a21 * a33 * b12 - a22 * a31 * b13 + a22 * a33 * b11
-        + a23 * a31 * b12 - a23 * a32 * b11) / factor;
-    var b = (a11 * b22 * b33 - a11 * b23 * b32 - a12 * b21 * b33 + a12 * b23 * b31
-        + a13 * b21 * b32 - a13 * b22 * b31 - a21 * b12 * b33
-        + a21 * b13 * b32 + a22 * b11 * b33 - a22 * b13 * b31
-        - a23 * b11 * b32 + a23 * b12 * b31 + a31 * b12 * b23
-        - a31 * b13 * b22 - a32 * b11 * b23 + a32 * b13 * b21
-        + a33 * b11 * b22 - a33 * b12 * b21) / factor;
-    var c = (b11 * b22 * b33 - b11 * b23 * b32 - b12 * b21 * b33 + b12 * b23 * b31
-        + b13 * b21 * b32 - b13 * b22 * b31) / factor;
+    var a =
+        (a11 * a22 * b33 - a11 * a23 * b32 - a11 * a32 * b23 + a11 * a33 * b22
+            - a12 * a21 * b33 + a12 * a23 * b31 + a12 * a31 * b23
+            - a12 * a33 * b21 + a13 * a21 * b32 - a13 * a22 * b31
+            - a13 * a31 * b22 + a13 * a32 * b21 + a21 * a32 * b13
+            - a21 * a33 * b12 - a22 * a31 * b13 + a22 * a33 * b11
+            + a23 * a31 * b12 - a23 * a32 * b11) / factor;
+    var b =
+        (a11 * b22 * b33 - a11 * b23 * b32 - a12 * b21 * b33 + a12 * b23 * b31
+            + a13 * b21 * b32 - a13 * b22 * b31 - a21 * b12 * b33
+            + a21 * b13 * b32 + a22 * b11 * b33 - a22 * b13 * b31
+            - a23 * b11 * b32 + a23 * b12 * b31 + a31 * b12 * b23
+            - a31 * b13 * b22 - a32 * b11 * b23 + a32 * b13 * b21
+            + a33 * b11 * b22 - a33 * b12 * b21) / factor;
+    var c =
+        (b11 * b22 * b33 - b11 * b23 * b32 - b12 * b21 * b33 + b12 * b23 * b31
+            + b13 * b21 * b32 - b13 * b22 * b31) / factor;
     if (a >= 0) {
         var condition1 = -3 * b + Math.pow(a, 2);
         var condition2 = 3 * a * c + b * Math.pow(a, 2) - 4 * Math.pow(b, 2);
-        var condition3 = -27 * Math.pow(c, 2) + 18 * c * a * b + Math.pow(a, 2) * Math.pow(b, 2)
+        var condition3 = -27 * Math.pow(c, 2) + 18 * c * a * b
+            + Math.pow(a, 2) * Math.pow(b, 2)
             - 4 * Math.pow(a, 3) * c - 4 * Math.pow(b, 3);
         if (condition1 > 0 && condition2 < 0 && condition3 > 0) {
             return false;
@@ -1057,7 +1250,8 @@ function testEllipseEllipse(ellipse1, ellipse2) {
     }
     else {
         var condition1 = -3 * b + Math.pow(a, 2);
-        var condition2 = -27 * Math.pow(c, 2) + 18 * c * a * b + Math.pow(a, 2) * Math.pow(b, 2)
+        var condition2 = -27 * Math.pow(c, 2) + 18 * c * a * b
+            + Math.pow(a, 2) * Math.pow(b, 2)
             - 4 * Math.pow(a, 3) * c - 4 * Math.pow(b, 3);
         if (condition1 > 0 && condition2 > 0) {
             return false;
@@ -1073,7 +1267,9 @@ function testEllipseRect(ellipse, rect) {
 function testEllipsePolygon(ellipse, poly) {
     // Transform the polygon to the coordinate system where the ellipse is a unit circle
     var T = ellipse.toMat2().inverse;
-    poly = new Polygon(poly.pts.map(function (p) { return T.transform(p.sub(ellipse.center)); }));
+    poly = new Polygon(poly.pts.map(function(p) {
+        return T.transform(p.sub(ellipse.center));
+    }));
     return testCirclePolygon(new Circle(vec2(), 1), poly);
 }
 function testPointPoint(p1, p2) {
@@ -1388,14 +1584,19 @@ function raycastEllipse(origin, direction, ellipse) {
         return {
             point: point,
             // Calculate the normal at the unrotated ellipse, then rotate the normal to the rotated ellipse
-            normal: R.transform(vec2(Math.pow(ellipse.radiusY, 2) * p.x, Math.pow(ellipse.radiusX, 2) * p.y)).unit(),
+            normal: R.transform(
+                vec2(
+                    Math.pow(ellipse.radiusY, 2) * p.x,
+                    Math.pow(ellipse.radiusX, 2) * p.y,
+                ),
+            ).unit(),
             fraction: fraction,
         };
     }
     return result;
 }
 function raycastGrid(origin, direction, gridPosHit, maxDistance) {
-    if (maxDistance === void 0) { maxDistance = 64; }
+    if (maxDistance === void 0) maxDistance = 64;
     var pos = origin;
     var len = direction.len();
     var dir = direction.scale(1 / len);
@@ -1403,15 +1604,24 @@ function raycastGrid(origin, direction, gridPosHit, maxDistance) {
     var gridPos = vec2(Math.floor(origin.x), Math.floor(origin.y));
     var step = vec2(dir.x > 0 ? 1 : -1, dir.y > 0 ? 1 : -1);
     var tDelta = vec2(Math.abs(1 / dir.x), Math.abs(1 / dir.y));
-    var dist = vec2((step.x > 0) ? (gridPos.x + 1 - origin.x) : (origin.x - gridPos.x), (step.y > 0) ? (gridPos.y + 1 - origin.y) : (origin.y - gridPos.y));
-    var tMax = vec2((tDelta.x < Infinity) ? tDelta.x * dist.x : Infinity, (tDelta.y < Infinity) ? tDelta.y * dist.y : Infinity);
+    var dist = vec2(
+        (step.x > 0) ? (gridPos.x + 1 - origin.x) : (origin.x - gridPos.x),
+        (step.y > 0) ? (gridPos.y + 1 - origin.y) : (origin.y - gridPos.y),
+    );
+    var tMax = vec2(
+        (tDelta.x < Infinity) ? tDelta.x * dist.x : Infinity,
+        (tDelta.y < Infinity) ? tDelta.y * dist.y : Infinity,
+    );
     var steppedIndex = -1;
     while (t <= maxDistance) {
         var hit = gridPosHit(gridPos);
         if (hit === true) {
             return {
                 point: pos.add(dir.scale(t)),
-                normal: vec2(steppedIndex === 0 ? -step.x : 0, steppedIndex === 1 ? -step.y : 0),
+                normal: vec2(
+                    steppedIndex === 0 ? -step.x : 0,
+                    steppedIndex === 1 ? -step.y : 0,
+                ),
                 fraction: t / len, // Since dir is normalized, t is len times too large
                 gridPos: gridPos,
             };
@@ -1434,98 +1644,104 @@ function raycastGrid(origin, direction, gridPosHit, maxDistance) {
     }
     return null;
 }
-var Point = /** @class */ (function () {
+var Point = /** @class */ function() {
     function Point(pt) {
         this.pt = pt.clone();
     }
-    Point.prototype.transform = function (m, s) {
+    Point.prototype.transform = function(m, s) {
         if (s && s instanceof Point) {
             m.transformPointV(this.pt, s.pt);
             return s;
         }
         return new Point(m.transformPointV(this.pt, vec2()));
     };
-    Point.prototype.bbox = function () {
+    Point.prototype.bbox = function() {
         return new Rect(this.pt, 0, 0);
     };
-    Point.prototype.area = function () {
+    Point.prototype.area = function() {
         return 0;
     };
-    Point.prototype.clone = function () {
+    Point.prototype.clone = function() {
         return new Point(this.pt);
     };
-    Point.prototype.collides = function (shape) {
+    Point.prototype.collides = function(shape) {
         return testPointShape(this, shape);
     };
-    Point.prototype.contains = function (point) {
+    Point.prototype.contains = function(point) {
         return this.pt.eq(point);
     };
-    Point.prototype.raycast = function (origin, direction) {
+    Point.prototype.raycast = function(origin, direction) {
         return null;
     };
-    Point.prototype.random = function () {
+    Point.prototype.random = function() {
         return this.pt.clone();
     };
     return Point;
-}());
+}();
 exports.Point = Point;
 /**
  * @group Math
  */
-var Line = /** @class */ (function () {
+var Line = /** @class */ function() {
     function Line(p1, p2) {
         this.p1 = p1.clone();
         this.p2 = p2.clone();
     }
-    Line.prototype.transform = function (m, s) {
+    Line.prototype.transform = function(m, s) {
         if (s && s instanceof Line) {
             m.transformPointV(this.p1, s.p1);
             m.transformPointV(this.p2, s.p2);
             return s;
         }
-        return new Line(m.transformPointV(this.p1, vec2()), m.transformPointV(this.p2, vec2()));
+        return new Line(
+            m.transformPointV(this.p1, vec2()),
+            m.transformPointV(this.p2, vec2()),
+        );
     };
-    Line.prototype.bbox = function () {
+    Line.prototype.bbox = function() {
         return Rect.fromPoints(this.p1, this.p2);
     };
-    Line.prototype.area = function () {
+    Line.prototype.area = function() {
         return this.p1.dist(this.p2);
     };
-    Line.prototype.clone = function () {
+    Line.prototype.clone = function() {
         return new Line(this.p1, this.p2);
     };
-    Line.prototype.collides = function (shape) {
+    Line.prototype.collides = function(shape) {
         return testLineShape(this, shape);
     };
-    Line.prototype.contains = function (point) {
+    Line.prototype.contains = function(point) {
         return this.collides(point);
     };
-    Line.prototype.raycast = function (origin, direction) {
+    Line.prototype.raycast = function(origin, direction) {
         return raycastLine(origin, direction, this);
     };
-    Line.prototype.random = function () {
+    Line.prototype.random = function() {
         return this.p1.add(this.p2.sub(this.p1).scale(rand(1)));
     };
     return Line;
-}());
+}();
 exports.Line = Line;
 // TODO: use x: number y: number (x, y, width, height)
 /**
  * @group Math
  */
-var Rect = /** @class */ (function () {
+var Rect = /** @class */ function() {
     function Rect(pos, width, height) {
         this.pos = pos.clone();
         this.width = width;
         this.height = height;
     }
-    Rect.fromPoints = function (p1, p2) {
+    Rect.fromPoints = function(p1, p2) {
         return new Rect(p1.clone(), p2.x - p1.x, p2.y - p1.y);
     };
-    Rect.prototype.center = function () {
-        return new Vec2_1.Vec2(this.pos.x + this.width / 2, this.pos.y + this.height / 2);
+    Rect.prototype.center = function() {
+        return new Vec2_1.Vec2(
+            this.pos.x + this.width / 2,
+            this.pos.y + this.height / 2,
+        );
     };
-    Rect.prototype.points = function () {
+    Rect.prototype.points = function() {
         return [
             this.pos,
             this.pos.add(this.width, 0),
@@ -1533,101 +1749,123 @@ var Rect = /** @class */ (function () {
             this.pos.add(0, this.height),
         ];
     };
-    Rect.prototype.transform = function (m, s) {
+    Rect.prototype.transform = function(m, s) {
         // TODO: resize existing pts array?
         var p = (s && s instanceof Polygon && s.pts.length == 4)
             ? s
-            : new Polygon([new Vec2_1.Vec2(), new Vec2_1.Vec2(), new Vec2_1.Vec2(), new Vec2_1.Vec2()]);
+            : new Polygon([
+                new Vec2_1.Vec2(),
+                new Vec2_1.Vec2(),
+                new Vec2_1.Vec2(),
+                new Vec2_1.Vec2(),
+            ]);
         p.pts[0] = m.transformPointV(this.pos, p.pts[0]);
-        p.pts[1] = m.transformPoint(this.pos.x + this.width, this.pos.y, p.pts[1]);
-        p.pts[2] = m.transformPoint(this.pos.x + this.width, this.pos.y + this.height, p.pts[2]);
-        p.pts[3] = m.transformPoint(this.pos.x, this.pos.y + this.height, p.pts[3]);
+        p.pts[1] = m.transformPoint(
+            this.pos.x + this.width,
+            this.pos.y,
+            p.pts[1],
+        );
+        p.pts[2] = m.transformPoint(
+            this.pos.x + this.width,
+            this.pos.y + this.height,
+            p.pts[2],
+        );
+        p.pts[3] = m.transformPoint(
+            this.pos.x,
+            this.pos.y + this.height,
+            p.pts[3],
+        );
         return p;
     };
-    Rect.prototype.bbox = function () {
+    Rect.prototype.bbox = function() {
         return this.clone();
     };
-    Rect.prototype.area = function () {
+    Rect.prototype.area = function() {
         return this.width * this.height;
     };
-    Rect.prototype.clone = function () {
+    Rect.prototype.clone = function() {
         return new Rect(this.pos.clone(), this.width, this.height);
     };
-    Rect.prototype.distToPoint = function (p) {
+    Rect.prototype.distToPoint = function(p) {
         return Math.sqrt(this.sdistToPoint(p));
     };
-    Rect.prototype.sdistToPoint = function (p) {
+    Rect.prototype.sdistToPoint = function(p) {
         var min = this.pos;
         var max = this.pos.add(this.width, this.height);
         var dx = Math.max(min.x - p.x, 0, p.x - max.x);
         var dy = Math.max(min.y - p.y, 0, p.y - max.y);
         return dx * dx + dy * dy;
     };
-    Rect.prototype.collides = function (shape) {
+    Rect.prototype.collides = function(shape) {
         return testRectShape(this, shape);
     };
-    Rect.prototype.contains = function (point) {
+    Rect.prototype.contains = function(point) {
         return this.collides(point);
     };
-    Rect.prototype.raycast = function (origin, direction) {
+    Rect.prototype.raycast = function(origin, direction) {
         // Further type checking is needed here @mflerackers
         // @ts-ignore
         return raycastRect(origin, direction, this);
     };
-    Rect.prototype.random = function () {
+    Rect.prototype.random = function() {
         return this.pos.add(rand(this.width), rand(this.height));
     };
     return Rect;
-}());
+}();
 exports.Rect = Rect;
 /**
  * @group Math
  */
-var Circle = /** @class */ (function () {
+var Circle = /** @class */ function() {
     function Circle(center, radius) {
         this.center = center.clone();
         this.radius = radius;
     }
-    Circle.prototype.transform = function (tr, s) {
+    Circle.prototype.transform = function(tr, s) {
         return new Ellipse(this.center, this.radius, this.radius).transform(tr);
     };
-    Circle.prototype.bbox = function () {
-        return Rect.fromPoints(this.center.sub(vec2(this.radius)), this.center.add(vec2(this.radius)));
+    Circle.prototype.bbox = function() {
+        return Rect.fromPoints(
+            this.center.sub(vec2(this.radius)),
+            this.center.add(vec2(this.radius)),
+        );
     };
-    Circle.prototype.area = function () {
+    Circle.prototype.area = function() {
         return this.radius * this.radius * Math.PI;
     };
-    Circle.prototype.clone = function () {
+    Circle.prototype.clone = function() {
         return new Circle(this.center, this.radius);
     };
-    Circle.prototype.collides = function (shape) {
+    Circle.prototype.collides = function(shape) {
         return testCircleShape(this, shape);
     };
-    Circle.prototype.contains = function (point) {
+    Circle.prototype.contains = function(point) {
         return this.collides(point);
     };
-    Circle.prototype.raycast = function (origin, direction) {
+    Circle.prototype.raycast = function(origin, direction) {
         return raycastCircle(origin, direction, this);
     };
-    Circle.prototype.random = function () {
+    Circle.prototype.random = function() {
         // TODO: Not uniform!!
-        return this.center.add(Vec2_1.Vec2.fromAngle(rand(360)).scale(rand(this.radius)));
+        return this.center.add(
+            Vec2_1.Vec2.fromAngle(rand(360)).scale(rand(this.radius)),
+        );
     };
     return Circle;
-}());
+}();
 exports.Circle = Circle;
 /**
  * @group Math
  */
-var Ellipse = /** @class */ (function () {
+var Ellipse = /** @class */ function() {
     function Ellipse(center, rx, ry, degrees) {
-        if (degrees === void 0) { degrees = 0; }
+        if (degrees === void 0) degrees = 0;
         this.center = center.clone();
         this.radiusX = rx;
         this.radiusY = ry;
         this.angle = degrees;
     }
-    Ellipse.fromMat2 = function (tr) {
+    Ellipse.fromMat2 = function(tr) {
         var inv = tr.inverse;
         var M = inv.transpose.mul(inv);
         var _a = M.eigenvalues, e1 = _a[0], e2 = _a[1];
@@ -1635,22 +1873,41 @@ var Ellipse = /** @class */ (function () {
         var _c = [1 / Math.sqrt(e1), 1 / Math.sqrt(e2)], a = _c[0], b = _c[1];
         // Make sure we use the semi-major axis for the rotation
         if (a > b) {
-            return new Ellipse(vec2(), a, b, rad2deg(Math.atan2(-v1[1], v1[0])));
+            return new Ellipse(
+                vec2(),
+                a,
+                b,
+                rad2deg(Math.atan2(-v1[1], v1[0])),
+            );
         }
         else {
-            return new Ellipse(vec2(), b, a, rad2deg(Math.atan2(-v2[1], v2[0])));
+            return new Ellipse(
+                vec2(),
+                b,
+                a,
+                rad2deg(Math.atan2(-v2[1], v2[0])),
+            );
         }
     };
-    Ellipse.prototype.toMat2 = function () {
+    Ellipse.prototype.toMat2 = function() {
         var a = deg2rad(this.angle);
         var c = Math.cos(a);
         var s = Math.sin(a);
-        return new Mat2(c * this.radiusX, -s * this.radiusY, s * this.radiusX, c * this.radiusY);
+        return new Mat2(
+            c * this.radiusX,
+            -s * this.radiusY,
+            s * this.radiusX,
+            c * this.radiusY,
+        );
     };
-    Ellipse.prototype.transform = function (tr) {
+    Ellipse.prototype.transform = function(tr) {
         if (this.angle == 0 && tr.getRotation() == 0) {
             // No rotation, so we can just take the scale and translation
-            return new Ellipse(tr.transformPointV(this.center, vec2()), tr.a * this.radiusX, tr.d * this.radiusY);
+            return new Ellipse(
+                tr.transformPointV(this.center, vec2()),
+                tr.a * this.radiusX,
+                tr.d * this.radiusY,
+            );
         }
         else {
             // Rotation. We can't just add angles, as the scale can squeeze the
@@ -1668,10 +1925,13 @@ var Ellipse = /** @class */ (function () {
             return ellipse;
         }
     };
-    Ellipse.prototype.bbox = function () {
+    Ellipse.prototype.bbox = function() {
         if (this.angle == 0) {
             // No rotation, so the semi-major and semi-minor axis give the extends
-            return Rect.fromPoints(this.center.sub(vec2(this.radiusX, this.radiusY)), this.center.add(vec2(this.radiusX, this.radiusY)));
+            return Rect.fromPoints(
+                this.center.sub(vec2(this.radiusX, this.radiusY)),
+                this.center.add(vec2(this.radiusX, this.radiusY)),
+            );
         }
         else {
             // Rotation. We need to find the maximum x and y distance from the
@@ -1685,19 +1945,22 @@ var Ellipse = /** @class */ (function () {
             var vy = this.radiusY * c;
             var halfwidth = Math.sqrt(ux * ux + vx * vx);
             var halfheight = Math.sqrt(uy * uy + vy * vy);
-            return Rect.fromPoints(this.center.sub(vec2(halfwidth, halfheight)), this.center.add(vec2(halfwidth, halfheight)));
+            return Rect.fromPoints(
+                this.center.sub(vec2(halfwidth, halfheight)),
+                this.center.add(vec2(halfwidth, halfheight)),
+            );
         }
     };
-    Ellipse.prototype.area = function () {
+    Ellipse.prototype.area = function() {
         return this.radiusX * this.radiusY * Math.PI;
     };
-    Ellipse.prototype.clone = function () {
+    Ellipse.prototype.clone = function() {
         return new Ellipse(this.center, this.radiusX, this.radiusY, this.angle);
     };
-    Ellipse.prototype.collides = function (shape) {
+    Ellipse.prototype.collides = function(shape) {
         return testEllipseShape(this, shape);
     };
-    Ellipse.prototype.contains = function (point) {
+    Ellipse.prototype.contains = function(point) {
         // Both methods work, but the second one is faster
         /*let T = this.toTransform()
         point = point.sub(this.center)
@@ -1710,40 +1973,42 @@ var Ellipse = /** @class */ (function () {
         var vx = point.x * c + point.y * s;
         var vy = -point.x * s + point.y * c;
         return vx * vx / (this.radiusX * this.radiusX)
-            + vy * vy / (this.radiusY * this.radiusY) < 1;
+                + vy * vy / (this.radiusY * this.radiusY) < 1;
     };
-    Ellipse.prototype.raycast = function (origin, direction) {
+    Ellipse.prototype.raycast = function(origin, direction) {
         return raycastEllipse(origin, direction, this);
     };
-    Ellipse.prototype.random = function () {
+    Ellipse.prototype.random = function() {
         return this.center;
     };
     return Ellipse;
-}());
+}();
 exports.Ellipse = Ellipse;
 function segmentLineIntersection(a, b, c, d) {
     var ab = b.sub(a);
     var cd = d.sub(c);
     var s = ab.cross(cd);
-    if (s < 0.00001 && s > -0.00001)
+    if (s < 0.00001 && s > -0.00001) {
         return null;
+    }
     var ac = c.sub(a);
     s = ac.cross(cd) / s;
-    if (s < 0 || s > 1)
+    if (s < 0 || s > 1) {
         return null;
+    }
     return a.add(ab.scale(s));
 }
 /**
  * @group Math
  */
-var Polygon = /** @class */ (function () {
+var Polygon = /** @class */ function() {
     function Polygon(pts) {
         if (pts.length < 3) {
             throw new Error("Polygons should have at least 3 vertices");
         }
         this.pts = pts;
     }
-    Polygon.prototype.transform = function (m, s) {
+    Polygon.prototype.transform = function(m, s) {
         // TODO: resize existing pts array?
         if (s && s instanceof Polygon && s.pts.length == this.pts.length) {
             for (var i = 0; i < this.pts.length; i++) {
@@ -1751,9 +2016,11 @@ var Polygon = /** @class */ (function () {
             }
             return s;
         }
-        return new Polygon(this.pts.map(function (pt) { return m.transformPointV(pt, vec2()); }));
+        return new Polygon(this.pts.map(function(pt) {
+            return m.transformPointV(pt, vec2());
+        }));
     };
-    Polygon.prototype.bbox = function () {
+    Polygon.prototype.bbox = function() {
         var p1 = vec2(Number.MAX_VALUE);
         var p2 = vec2(-Number.MAX_VALUE);
         for (var _i = 0, _a = this.pts; _i < _a.length; _i++) {
@@ -1765,7 +2032,7 @@ var Polygon = /** @class */ (function () {
         }
         return Rect.fromPoints(p1, p2);
     };
-    Polygon.prototype.area = function () {
+    Polygon.prototype.area = function() {
         var total = 0;
         var l = this.pts.length;
         for (var i = 0; i < l; i++) {
@@ -1776,19 +2043,21 @@ var Polygon = /** @class */ (function () {
         }
         return Math.abs(total);
     };
-    Polygon.prototype.clone = function () {
-        return new Polygon(this.pts.map(function (pt) { return pt.clone(); }));
+    Polygon.prototype.clone = function() {
+        return new Polygon(this.pts.map(function(pt) {
+            return pt.clone();
+        }));
     };
-    Polygon.prototype.collides = function (shape) {
+    Polygon.prototype.collides = function(shape) {
         return testPolygonShape(this, shape);
     };
-    Polygon.prototype.contains = function (point) {
+    Polygon.prototype.contains = function(point) {
         return this.collides(point);
     };
-    Polygon.prototype.raycast = function (origin, direction) {
+    Polygon.prototype.raycast = function(origin, direction) {
         return raycastPolygon(origin, direction, this);
     };
-    Polygon.prototype.random = function () {
+    Polygon.prototype.random = function() {
         /**
          * TODO:
          * - cut into triangles
@@ -1797,7 +2066,7 @@ var Polygon = /** @class */ (function () {
          */
         return vec2();
     };
-    Polygon.prototype.cut = function (a, b, srcUv, dstUv) {
+    Polygon.prototype.cut = function(a, b, srcUv, dstUv) {
         var surfaceLine = new Line(a, b);
         var left = [];
         var right = [];
@@ -1805,7 +2074,7 @@ var Polygon = /** @class */ (function () {
         var prev = this.pts[this.pts.length - 1];
         var ap = prev.sub(a);
         var wasLeft = ab.cross(ap) > 0;
-        this.pts.forEach(function (p, index) {
+        this.pts.forEach(function(p, index) {
             ap = p.sub(a);
             var isLeft = ab.cross(ap) > 0;
             if (wasLeft != isLeft) {
@@ -1837,7 +2106,7 @@ var Polygon = /** @class */ (function () {
         ];
     };
     return Polygon;
-}());
+}();
 exports.Polygon = Polygon;
 function evaluateQuadratic(pt1, pt2, pt3, t) {
     var t2 = t * t;
@@ -1858,17 +2127,23 @@ function evaluateBezier(pt1, pt2, pt3, pt4, t) {
     var mt = 1 - t;
     var mt2 = mt * mt;
     var mt3 = mt2 * mt;
-    return pt1.scale(mt3).add(pt2.scale(3 * mt2 * t)).add(pt3.scale(3 * mt * t2)).add(pt4.scale(t3));
+    return pt1.scale(mt3).add(pt2.scale(3 * mt2 * t)).add(
+        pt3.scale(3 * mt * t2),
+    ).add(pt4.scale(t3));
 }
 function evaluateBezierFirstDerivative(pt1, pt2, pt3, pt4, t) {
     var t2 = t * t;
     var mt = 1 - t;
     var mt2 = mt * mt;
-    return pt2.sub(pt1).scale(3 * mt2).add(pt3.sub(pt2).scale(6 * mt * t)).add(pt4.sub(pt3).scale(3 * t2));
+    return pt2.sub(pt1).scale(3 * mt2).add(pt3.sub(pt2).scale(6 * mt * t)).add(
+        pt4.sub(pt3).scale(3 * t2),
+    );
 }
 function evaluateBezierSecondDerivative(pt1, pt2, pt3, pt4, t) {
     var mt = 1 - t;
-    return pt3.sub(pt2.scale(2)).add(pt1).scale(6 * mt).add(pt4.sub(pt3.scale(2)).add(pt2).scale(6 * t));
+    return pt3.sub(pt2.scale(2)).add(pt1).scale(6 * mt).add(
+        pt4.sub(pt3.scale(2)).add(pt2).scale(6 * t),
+    );
 }
 function evaluateCatmullRom(pt1, pt2, pt3, pt4, t) {
     var A = 0.5 * (((-t + 2) * t - 1) * t);
@@ -1887,15 +2162,15 @@ function evaluateCatmullRomFirstDerivative(pt1, pt2, pt3, pt4, t) {
 function normalizedCurve(curve) {
     var curveLength = curveLengthApproximation(curve);
     var length = curveLength(1);
-    return function (s) {
+    return function(s) {
         var l = s * length;
         var t = curveLength(l, true);
         return curve(t);
     };
 }
 function curveLengthApproximation(curve, entries, detail) {
-    if (entries === void 0) { entries = 10; }
-    if (detail === void 0) { detail = 10; }
+    if (entries === void 0) entries = 10;
+    if (detail === void 0) detail = 10;
     var llut = [0];
     var tlut = [0];
     var dt = 1 / (entries - 1);
@@ -1915,17 +2190,20 @@ function curveLengthApproximation(curve, entries, detail) {
         tlut[e] = t;
     }
     tlut[entries - 1] = 1;
-    return function (t, inverse) {
-        if (inverse === void 0) { inverse = false; }
+    return function(t, inverse) {
+        if (inverse === void 0) inverse = false;
         if (inverse) {
             var l = t;
-            if (l <= 0)
+            if (l <= 0) {
                 return 0;
-            if (l >= length)
+            }
+            if (l >= length) {
                 return 1;
+            }
             var index = 0;
-            while (llut[index + 1] < l)
+            while (llut[index + 1] < l) {
                 index++;
+            }
             var t1 = tlut[index];
             var t2 = tlut[index + 1];
             var l1 = llut[index];
@@ -1934,13 +2212,16 @@ function curveLengthApproximation(curve, entries, detail) {
             return t1 + (t2 - t1) * a;
         }
         else {
-            if (t <= 0)
+            if (t <= 0) {
                 return 0;
-            if (t >= 1)
+            }
+            if (t >= 1) {
                 return llut[entries - 1];
+            }
             var index = 0;
-            while (tlut[index + 1] < t)
+            while (tlut[index + 1] < t) {
                 index++;
+            }
             var t1 = tlut[index];
             var t2 = tlut[index + 1];
             var l1 = llut[index];
@@ -1964,7 +2245,7 @@ function hermite(pt1, m1, m2, pt2) {
     var B = -3 * pt1 + 3 * pt2 - 2 * m1 - m2;
     var C = m1;
     var D = pt1;
-    return function (t) {
+    return function(t) {
         var t2 = t * t;
         var t3 = t2 * t;
         return A * t3 + B * t2 + C * t + D;
@@ -1982,10 +2263,20 @@ function hermite(pt1, m1, m2, pt2) {
  * @returns A function which gives the value on the 2D Cardinal curve at t
  */
 function cardinal(pt1, pt2, pt3, pt4, tension, h) {
-    if (h === void 0) { h = hermite; }
-    var hx = h(pt2.x, (1 - tension) * (pt3.x - pt1.x), (1 - tension) * (pt4.x - pt2.x), pt3.x);
-    var hy = h(pt2.y, (1 - tension) * (pt3.y - pt1.y), (1 - tension) * (pt4.y - pt2.y), pt3.y);
-    return function (t) {
+    if (h === void 0) h = hermite;
+    var hx = h(
+        pt2.x,
+        (1 - tension) * (pt3.x - pt1.x),
+        (1 - tension) * (pt4.x - pt2.x),
+        pt3.x,
+    );
+    var hy = h(
+        pt2.y,
+        (1 - tension) * (pt3.y - pt1.y),
+        (1 - tension) * (pt4.y - pt2.y),
+        pt3.y,
+    );
+    return function(t) {
         return new Vec2_1.Vec2(hx(t), hy(t));
     };
 }
@@ -1999,7 +2290,7 @@ function cardinal(pt1, pt2, pt3, pt4, tension, h) {
  * @returns A function which gives the value on the 2D Catmull-Rom curve at t
  */
 function catmullRom(pt1, pt2, pt3, pt4, h) {
-    if (h === void 0) { h = hermite; }
+    if (h === void 0) h = hermite;
     // A Catmull-Rom curve is a Cardinal curve with as tension 0.5
     return cardinal(pt1, pt2, pt3, pt4, 0.5, h);
 }
@@ -2013,9 +2304,15 @@ function catmullRom(pt1, pt2, pt3, pt4, h) {
  * @returns A function which gives the value on the 2D quadratic Bezier curve at t
  */
 function bezier(pt1, pt2, pt3, pt4, h) {
-    if (h === void 0) { h = hermite; }
+    if (h === void 0) h = hermite;
     // Convert the Bezier to a Catmull-Rom curve
-    return catmullRom(pt4.add(pt1.sub(pt2).scale(6)), pt1, pt4, pt1.add(pt4.sub(pt3).scale(6)), h);
+    return catmullRom(
+        pt4.add(pt1.sub(pt2).scale(6)),
+        pt1,
+        pt4,
+        pt1.add(pt4.sub(pt3).scale(6)),
+        h,
+    );
 }
 /**
  * A second order function returning an evaluator for the given 2D Kochanek–Bartels curve
@@ -2030,18 +2327,28 @@ function bezier(pt1, pt2, pt3, pt4, h) {
  * @returns A function which gives the value on the 2D Kochanek–Bartels curve at t
  */
 function kochanekBartels(pt1, pt2, pt3, pt4, tension, continuity, bias, h) {
-    if (h === void 0) { h = hermite; }
-    var hx = h(pt2.x, 0.5 * (1 - tension) * (1 + bias) * (1 + continuity) * (pt2.x - pt1.x)
-        + 0.5 * (1 - tension) * (1 - bias) * (1 - continuity)
-            * (pt3.x - pt2.x), 0.5 * (1 - tension) * (1 + bias) * (1 - continuity) * (pt3.x - pt2.x)
-        + 0.5 * (1 - tension) * (1 - bias) * (1 + continuity)
-            * (pt4.x - pt3.x), pt3.x);
-    var hy = h(pt2.y, 0.5 * (1 - tension) * (1 + bias) * (1 + continuity) * (pt2.y - pt1.y)
-        + 0.5 * (1 - tension) * (1 - bias) * (1 - continuity)
-            * (pt3.y - pt2.y), 0.5 * (1 - tension) * (1 + bias) * (1 - continuity) * (pt3.y - pt2.y)
-        + 0.5 * (1 - tension) * (1 - bias) * (1 + continuity)
-            * (pt4.y - pt3.y), pt3.y);
-    return function (t) {
+    if (h === void 0) h = hermite;
+    var hx = h(
+        pt2.x,
+        0.5 * (1 - tension) * (1 + bias) * (1 + continuity) * (pt2.x - pt1.x)
+            + 0.5 * (1 - tension) * (1 - bias) * (1 - continuity)
+                * (pt3.x - pt2.x),
+        0.5 * (1 - tension) * (1 + bias) * (1 - continuity) * (pt3.x - pt2.x)
+            + 0.5 * (1 - tension) * (1 - bias) * (1 + continuity)
+                * (pt4.x - pt3.x),
+        pt3.x,
+    );
+    var hy = h(
+        pt2.y,
+        0.5 * (1 - tension) * (1 + bias) * (1 + continuity) * (pt2.y - pt1.y)
+            + 0.5 * (1 - tension) * (1 - bias) * (1 - continuity)
+                * (pt3.y - pt2.y),
+        0.5 * (1 - tension) * (1 + bias) * (1 - continuity) * (pt3.y - pt2.y)
+            + 0.5 * (1 - tension) * (1 - bias) * (1 + continuity)
+                * (pt4.y - pt3.y),
+        pt3.y,
+    );
+    return function(t) {
         return new Vec2_1.Vec2(hx(t), hy(t));
     };
 }
@@ -2058,7 +2365,7 @@ function hermiteFirstDerivative(pt1, m1, m2, pt2) {
     var A = 2 * pt1 + m1 - 2 * pt2 + m2;
     var B = -3 * pt1 + 3 * pt2 - 2 * m1 + m2;
     var C = m1;
-    return function (t) {
+    return function(t) {
         var t2 = t * t;
         return 3 * A * t2 + 2 * B * t + C;
     };
@@ -2146,7 +2453,7 @@ function easingLinear(keys) {
         throw new Error("Need at least one point for easingLinear.");
     }
     var len = keys.length;
-    return function (x) {
+    return function(x) {
         // Before start
         if (x <= 0 || keys.length == 1 || x <= keys[0].x) {
             return keys[0].y;
@@ -2154,7 +2461,13 @@ function easingLinear(keys) {
         for (var i = 0; i < len; i++) {
             if (keys[i].x >= x) {
                 // Linear map
-                return map(x, keys[i - 1].x, keys[i].x, keys[i - 1].y, keys[i].y);
+                return map(
+                    x,
+                    keys[i - 1].x,
+                    keys[i].x,
+                    keys[i - 1].y,
+                    keys[i].y,
+                );
             }
         }
         // After end
@@ -2162,18 +2475,18 @@ function easingLinear(keys) {
     };
 }
 function easingCubicBezier(p1, p2) {
-    return function (x) {
+    return function(x) {
         return cubicBezierYforX(vec2(0, 0), p1, p2, vec2(1, 1), x);
     };
 }
 function easingSteps(steps, position) {
-    if (position === void 0) { position = "jump-end"; }
+    if (position === void 0) position = "jump-end";
     var xdist = 1 / steps;
     var jumpStart = position == "jump-start" || position == "jump-both";
     var jumpEnd = position == "jump-end" || position == "jump-both";
     var ydist = 1 / (steps + (jumpEnd ? 1 : 0));
     var startY = jumpStart ? ydist : 0;
-    return function (x) {
+    return function(x) {
         var step = Math.floor(x / xdist);
         return startY + step * ydist;
     };
@@ -2210,7 +2523,9 @@ function pointInTriangle(p, a, b, c) {
 function someInTriangle(vertices, a, b, c) {
     for (var _i = 0, vertices_1 = vertices; _i < vertices_1.length; _i++) {
         var p = vertices_1[_i];
-        if ((p !== a) && (p !== b) && (p !== c) && pointInTriangle(p, a, b, c)) {
+        if (
+            (p !== a) && (p !== b) && (p !== c) && pointInTriangle(p, a, b, c)
+        ) {
             return true;
         }
     }

@@ -9,22 +9,22 @@ import type {
     KGamepad,
     KGamepadButton,
     MouseButton,
-} from "../types";
+} from "../types.js";
 
-import { GP_MAP } from "../constants/general";
-import type { AppEventMap } from "../events/eventMap";
-import { type KEventController, KEventHandler } from "../events/events";
-import { canvasToViewport } from "../gfx/viewport";
-import { map, vec2 } from "../math/math";
-import { Vec2 } from "../math/Vec2";
-import { _k } from "../shared";
-import { overload2 } from "../utils/overload";
-import { isEqOrIncludes, setHasOrIncludes } from "../utils/sets";
+import { GP_MAP } from "../constants/general.js";
+import type { AppEventMap } from "../events/eventMap.js";
+import { type KEventController, KEventHandler } from "../events/events.js";
+import { canvasToViewport } from "../gfx/viewport.js";
+import { map, vec2 } from "../math/math.js";
+import { Vec2 } from "../math/Vec2.js";
+import { _k } from "../shared.js";
+import { overload2 } from "../utils/overload.js";
+import { isEqOrIncludes, setHasOrIncludes } from "../utils/sets.js";
 import {
     type ButtonBinding,
     type ButtonsDef,
     parseButtonBindings,
-} from "./inputBindings";
+} from "./inputBindings.js";
 
 export class ButtonState<T = string> {
     pressed: Set<T> = new Set([]);

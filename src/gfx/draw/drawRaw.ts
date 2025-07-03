@@ -1,9 +1,9 @@
-import { Asset } from "../../assets/asset";
-import { resolveShader, type Uniform } from "../../assets/shader";
-import { _k } from "../../shared";
-import { type Attributes, BlendMode, type RenderProps } from "../../types";
-import type { Texture } from "../gfx";
-import { height, width } from "../stack";
+import { Asset } from "../../assets/asset.js";
+import { resolveShader, type Uniform } from "../../assets/shader.js";
+import { _k } from "../../shared.js";
+import { type Attributes, BlendMode, type RenderProps } from "../../types.js";
+import type { Texture } from "../gfx.js";
+import { height, width } from "../stack.js";
 
 export function drawRaw(
     attributes: Attributes,

@@ -2,12 +2,12 @@
 // - move RNG to it's own file
 // - move Vec2 to it's own file
 
-import { _k } from "../shared";
-import type { GameObj, RNGValue, Shape } from "../types";
-import { clamp } from "./clamp";
-import { Color, rgb } from "./color";
-import { lerp, type LerpValue } from "./lerp";
-import { Vec2 } from "./Vec2";
+import { _k } from "../shared.js";
+import type { GameObj, RNGValue, Shape } from "../types.js";
+import { clamp } from "./clamp.js";
+import { Color, rgb } from "./color.js";
+import { lerp, type LerpValue } from "./lerp.js";
+import { Vec2 } from "./Vec2.js";
 
 /**
  * Possible arguments for a Vec2.

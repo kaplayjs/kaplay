@@ -1,11 +1,11 @@
-import { ASCII_CHARS } from "../constants/general";
-import { Texture } from "../gfx/gfx";
-import { Quad } from "../math/math";
-import { _k } from "../shared";
-import type { TexFilter } from "../types";
-import { type Asset, loadImg } from "./asset";
-import { makeFont } from "./font";
-import { fixURL } from "./utils";
+import { ASCII_CHARS } from "../constants/general.js";
+import { Texture } from "../gfx/gfx.js";
+import { Quad } from "../math/math.js";
+import { _k } from "../shared.js";
+import type { TexFilter } from "../types.js";
+import { type Asset, loadImg } from "./asset.js";
+import { makeFont } from "./font.js";
+import { fixURL } from "./utils.js";
 
 export interface GfxFont {
     tex: Texture;

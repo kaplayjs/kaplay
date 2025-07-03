@@ -10,7 +10,7 @@ var drawFormattedText_1 = require("./drawFormattedText");
 var drawRect_1 = require("./drawRect");
 var drawUnscaled_1 = require("./drawUnscaled");
 function drawInspectText(pos, txt) {
-    (0, drawUnscaled_1.drawUnscaled)(function () {
+    (0, drawUnscaled_1.drawUnscaled)(function() {
         var pad = (0, math_1.vec2)(8);
         (0, stack_1.pushTransform)();
         (0, stack_1.multTranslateV)(pos);

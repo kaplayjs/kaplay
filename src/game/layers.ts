@@ -1,5 +1,5 @@
-import { _k } from "../shared";
-import { deprecateMsg } from "../utils/log";
+import { _k } from "../shared.js";
+import { deprecateMsg } from "../utils/log.js";
 
 // Layering
 

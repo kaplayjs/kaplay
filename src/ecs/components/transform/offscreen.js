@@ -7,43 +7,55 @@ var stack_1 = require("../../../gfx/stack");
 var math_1 = require("../../../math/math");
 function offscreen(opt) {
     var _a;
-    if (opt === void 0) { opt = {}; }
+    if (opt === void 0) opt = {};
     var isOut = false;
-    var screenRect = new math_1.Rect((0, math_1.vec2)(0), (0, stack_1.width)(), (0, stack_1.height)());
+    var screenRect = new math_1.Rect(
+        (0, math_1.vec2)(0),
+        (0, stack_1.width)(),
+        (0, stack_1.height)(),
+    );
     var selfRect = new math_1.Rect((0, math_1.vec2)(0), 0, 0);
-    var check = function (self) {
+    var check = function(self) {
         if (self.isOffScreen()) {
             if (!isOut) {
                 self.trigger("exitView");
                 isOut = true;
             }
-            if (opt.hide)
+            if (opt.hide) {
                 self.hidden = true;
-            if (opt.pause)
+            }
+            if (opt.pause) {
                 self.paused = true;
-            if (opt.destroy)
+            }
+            if (opt.destroy) {
                 self.destroy();
+            }
         }
         else {
             if (isOut) {
                 self.trigger("enterView");
                 isOut = false;
             }
-            if (opt.hide)
+            if (opt.hide) {
                 self.hidden = false;
-            if (opt.pause)
+            }
+            if (opt.pause) {
                 self.paused = false;
+            }
         }
     };
     return {
         id: "offscreen",
         require: ["pos"],
-        offscreenDistance: (_a = opt.distance) !== null && _a !== void 0 ? _a : general_1.DEF_OFFSCREEN_DIS,
-        isOffScreen: function () {
+        offscreenDistance: (_a = opt.distance) !== null && _a !== void 0
+            ? _a
+            : general_1.DEF_OFFSCREEN_DIS,
+        isOffScreen: function() {
             var pos = this.screenPos();
             // This is not possible, screenPos() without arguments returns the pos
-            if (!pos)
+            if (!pos) {
                 return false;
+            }
             screenRect.width = (0, stack_1.width)();
             screenRect.height = (0, stack_1.height)();
             if (!this.offscreenDistance && this.width && this.height) {
@@ -58,18 +70,24 @@ function offscreen(opt) {
             return !(0, math_1.testRectPoint)(screenRect, pos)
                 && screenRect.sdistToPoint(pos) > (dist * dist);
         },
-        onExitScreen: function (action) {
+        onExitScreen: function(action) {
             return this.on("exitView", action);
         },
-        onEnterScreen: function (action) {
+        onEnterScreen: function(action) {
             return this.on("enterView", action);
         },
-        add: function () {
+        add: function() {
             var _this = this;
-            if (opt.pause && opt.unpause)
-                (0, globalEvents_1.onUpdate)(function () { return check(_this); });
-            else
-                this.onUpdate(function () { return check(_this); });
+            if (opt.pause && opt.unpause) {
+                (0, globalEvents_1.onUpdate)(function() {
+                    return check(_this);
+                });
+            }
+            else {
+                this.onUpdate(function() {
+                    return check(_this);
+                });
+            }
         },
     };
 }

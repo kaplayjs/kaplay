@@ -9,30 +9,34 @@ var shared_1 = require("../shared");
 var dataURL_1 = require("../utils/dataURL");
 var asset_1 = require("./asset");
 var utils_1 = require("./utils");
-var SoundData = /** @class */ (function () {
+var SoundData = /** @class */ function() {
     function SoundData(buf) {
         this.buf = buf;
     }
-    SoundData.fromAudioBuffer = function (buf) {
+    SoundData.fromAudioBuffer = function(buf) {
         return new SoundData(buf);
     };
-    SoundData.fromArrayBuffer = function (buf) {
-        return new Promise(function (resolve, reject) {
+    SoundData.fromArrayBuffer = function(buf) {
+        return new Promise(function(resolve, reject) {
             return shared_1._k.audio.ctx.decodeAudioData(buf, resolve, reject);
-        }).then(function (buf) { return new SoundData(buf); });
+        }).then(function(buf) {
+            return new SoundData(buf);
+        });
     };
-    SoundData.fromURL = function (url) {
+    SoundData.fromURL = function(url) {
         if ((0, dataURL_1.isDataURL)(url)) {
-            return SoundData.fromArrayBuffer((0, dataURL_1.dataURLToArrayBuffer)(url));
+            return SoundData.fromArrayBuffer(
+                (0, dataURL_1.dataURLToArrayBuffer)(url),
+            );
         }
         else {
-            return (0, asset_1.fetchArrayBuffer)(url).then(function (buf) {
+            return (0, asset_1.fetchArrayBuffer)(url).then(function(buf) {
                 return SoundData.fromArrayBuffer(buf);
             });
         }
     };
     return SoundData;
-}());
+}();
 exports.SoundData = SoundData;
 function resolveSound(src) {
     if (typeof src === "string") {
@@ -59,7 +63,9 @@ function resolveSound(src) {
 }
 function getSound(name) {
     var _a;
-    return (_a = shared_1._k.assets.sounds.get(name)) !== null && _a !== void 0 ? _a : null;
+    return (_a = shared_1._k.assets.sounds.get(name)) !== null && _a !== void 0
+        ? _a
+        : null;
 }
 // load a sound to asset manager
 function loadSound(name, src) {

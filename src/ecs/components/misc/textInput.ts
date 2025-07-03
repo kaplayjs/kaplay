@@ -1,7 +1,7 @@
-import type { KEventController } from "../../../events/events";
-import { _k } from "../../../shared";
-import type { Comp, GameObj, KAPLAYCtx } from "../../../types";
-import type { TextComp } from "../draw/text";
+import type { KEventController } from "../../../events/events.js";
+import { _k } from "../../../shared.js";
+import type { Comp, GameObj, KAPLAYCtx } from "../../../types.js";
+import type { TextComp } from "../draw/text.js";
 
 /**
  * The {@link textInput `textInput()`} component.

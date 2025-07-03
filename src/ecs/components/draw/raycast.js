@@ -6,9 +6,14 @@ var shared_1 = require("../../../shared");
 function raycast(origin, direction, exclude) {
     var minHit;
     var shapes = shared_1._k.game.root.get("area");
-    shapes.forEach(function (s) {
-        if (exclude && exclude.some(function (tag) { return s.is(tag); }))
+    shapes.forEach(function(s) {
+        if (
+            exclude && exclude.some(function(tag) {
+                return s.is(tag);
+            })
+        ) {
             return;
+        }
         var shape = s.worldArea();
         var hit = shape.raycast(origin, direction);
         if (hit) {

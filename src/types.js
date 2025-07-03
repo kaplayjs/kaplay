@@ -2,7 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.EdgeMask = exports.BlendMode = void 0;
 var BlendMode;
-(function (BlendMode) {
+(function(BlendMode) {
     BlendMode[BlendMode["Normal"] = 0] = "Normal";
     BlendMode[BlendMode["Add"] = 1] = "Add";
     BlendMode[BlendMode["Multiply"] = 2] = "Multiply";
@@ -13,7 +13,7 @@ var BlendMode;
  * @group Math
  */
 var EdgeMask;
-(function (EdgeMask) {
+(function(EdgeMask) {
     EdgeMask[EdgeMask["None"] = 0] = "None";
     EdgeMask[EdgeMask["Left"] = 1] = "Left";
     EdgeMask[EdgeMask["Top"] = 2] = "Top";

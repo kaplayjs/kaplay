@@ -8,10 +8,10 @@ import {
     TOP,
     TOP_LEFT,
     TOP_RIGHT,
-} from "../constants/math";
-import { Vec2 } from "../math/Vec2";
-import { type Anchor } from "../types";
-import type { TextAlign } from "./draw/drawText";
+} from "../constants/math.js";
+import { Vec2 } from "../math/Vec2.js";
+import { type Anchor } from "../types.js";
+import type { TextAlign } from "./draw/drawText.js";
 
 // convert anchor string to a vec2 offset
 export function anchorPt(orig: Anchor | Vec2): Vec2 {

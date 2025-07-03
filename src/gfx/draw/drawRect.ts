@@ -1,11 +1,11 @@
-import { DEF_ANCHOR } from "../../constants/general";
-import type { Color } from "../../math/color";
-import { vec2 } from "../../math/math";
-import { getArcPts } from "../../math/various";
-import { Vec2 } from "../../math/Vec2";
-import type { Anchor, RenderProps } from "../../types";
-import { anchorPt } from "../anchor";
-import { drawPolygon } from "./drawPolygon";
+import { DEF_ANCHOR } from "../../constants/general.js";
+import type { Color } from "../../math/color.js";
+import { vec2 } from "../../math/math.js";
+import { getArcPts } from "../../math/various.js";
+import { Vec2 } from "../../math/Vec2.js";
+import type { Anchor, RenderProps } from "../../types.js";
+import { anchorPt } from "../anchor.js";
+import { drawPolygon } from "./drawPolygon.js";
 
 /**
  * How the rectangle should look like.

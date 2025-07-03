@@ -1,6 +1,6 @@
-import type { LineCap, LineJoin } from "../../../gfx/draw/drawLine";
-import { Color, rgb } from "../../../math/color";
-import type { Comp, Outline } from "../../../types";
+import type { LineCap, LineJoin } from "../../../gfx/draw/drawLine.js";
+import { Color, rgb } from "../../../math/color.js";
+import type { Comp, Outline } from "../../../types.js";
 
 /**
  * The {@link outline `outline()`} component.

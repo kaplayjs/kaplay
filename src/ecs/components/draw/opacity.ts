@@ -1,8 +1,8 @@
-import { type EaseFunc, easings } from "../../../math/easings";
-import { _k } from "../../../shared";
-import type { Comp } from "../../../types";
-import { toFixed } from "../../../utils/numbers";
-import type { TweenController } from "../misc/timer";
+import { type EaseFunc, easings } from "../../../math/easings.js";
+import { _k } from "../../../shared.js";
+import type { Comp } from "../../../types.js";
+import { toFixed } from "../../../utils/numbers.js";
+import type { TweenController } from "../misc/timer.js";
 
 /**
  * The {@link opacity `opacity()`} component.

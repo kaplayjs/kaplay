@@ -1,9 +1,9 @@
-import type { Asset } from "../../assets/asset";
-import { resolveSprite, type SpriteData } from "../../assets/sprite";
-import { Quad } from "../../math/math";
-import { type Vec2 } from "../../math/Vec2";
-import type { Anchor, RenderProps } from "../../types";
-import { drawTexture } from "./drawTexture";
+import type { Asset } from "../../assets/asset.js";
+import { resolveSprite, type SpriteData } from "../../assets/sprite.js";
+import { Quad } from "../../math/math.js";
+import { type Vec2 } from "../../math/Vec2.js";
+import type { Anchor, RenderProps } from "../../types.js";
+import { drawTexture } from "./drawTexture.js";
 
 /**
  * How the sprite should look like.

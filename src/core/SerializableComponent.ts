@@ -7,7 +7,10 @@ export interface SerializableComponent {
 // Registro global de componentes serializables
 const serializableRegistry: Map<string, SerializableComponent> = new Map();
 
-export function registerSerializableComponent(id: string, comp: SerializableComponent) {
+export function registerSerializableComponent(
+    id: string,
+    comp: SerializableComponent,
+) {
     serializableRegistry.set(id, comp);
 }
 

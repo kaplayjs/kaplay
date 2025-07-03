@@ -8,14 +8,16 @@ function follow(obj, offset) {
         require: ["pos"],
         follow: {
             obj: obj,
-            offset: offset !== null && offset !== void 0 ? offset : (0, math_1.vec2)(0),
+            offset: offset !== null && offset !== void 0
+                ? offset
+                : (0, math_1.vec2)(0),
         },
-        add: function () {
+        add: function() {
             if (obj.exists()) {
                 this.pos = this.follow.obj.pos.add(this.follow.offset);
             }
         },
-        update: function () {
+        update: function() {
             if (obj.exists()) {
                 this.pos = this.follow.obj.pos.add(this.follow.offset);
             }

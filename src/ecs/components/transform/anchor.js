@@ -8,7 +8,7 @@ function anchor(o) {
     return {
         id: "anchor",
         anchor: o,
-        inspect: function () {
+        inspect: function() {
             if (typeof this.anchor === "string") {
                 return "anchor: " + this.anchor;
             }

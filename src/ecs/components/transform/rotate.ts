@@ -1,4 +1,4 @@
-import type { Comp } from "../../../types";
+import type { Comp } from "../../../types.js";
 
 /**
  * The {@link rotate `rotate()`} component.

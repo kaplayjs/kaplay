@@ -5,12 +5,12 @@ exports.deprecate = deprecate;
 exports.warn = warn;
 exports.deprecateMsg = deprecateMsg;
 var shared_1 = require("../shared");
-var getErrorMessage = function (error) {
+var getErrorMessage = function(error) {
     return (error instanceof Error) ? error.message : String(error);
 };
 exports.getErrorMessage = getErrorMessage;
 function deprecate(oldName, newName, newFunc) {
-    return function () {
+    return function() {
         var args = [];
         for (var _i = 0; _i < arguments.length; _i++) {
             args[_i] = arguments[_i];
@@ -26,5 +26,7 @@ function warn(msg) {
     }
 }
 function deprecateMsg(oldName, newName) {
-    warn("".concat(oldName, " is deprecated. Use ").concat(newName, " instead."));
+    warn(
+        "".concat(oldName, " is deprecated. Use ").concat(newName, " instead."),
+    );
 }

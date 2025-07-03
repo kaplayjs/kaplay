@@ -1,6 +1,6 @@
+import { loadAll, saveAll } from "../src/core/SerializableComponent.js";
 import { health } from "../src/ecs/components/misc/health.js";
 import { named } from "../src/ecs/components/misc/named.js";
-import { saveAll, loadAll } from "../src/core/SerializableComponent.js";
 
 // Crear instancias de componentes
 const healthComp = health(10, 20);

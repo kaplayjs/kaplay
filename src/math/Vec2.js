@@ -8,10 +8,10 @@ var math_1 = require("./math");
  *
  * @group Math
  */
-var Vec2 = /** @class */ (function () {
+var Vec2 = /** @class */ function() {
     function Vec2(x, y) {
-        if (x === void 0) { x = 0; }
-        if (y === void 0) { y = x; }
+        if (x === void 0) x = 0;
+        if (y === void 0) y = x;
         /** The x coordinate */
         this.x = 0;
         /** The y coordinate */
@@ -20,39 +20,39 @@ var Vec2 = /** @class */ (function () {
         this.y = y;
     }
     /** Set the X and Y of this vector */
-    Vec2.prototype.set = function (x, y) {
+    Vec2.prototype.set = function(x, y) {
         this.x = x;
         this.y = y;
         return this;
     };
     /** Create a new Vec2 from an angle in degrees */
-    Vec2.fromAngle = function (deg) {
+    Vec2.fromAngle = function(deg) {
         var angle = (0, math_1.deg2rad)(deg);
         return new Vec2(Math.cos(angle), Math.sin(angle));
     };
     /** Create a new Vec2 from an array */
-    Vec2.fromArray = function (arr) {
+    Vec2.fromArray = function(arr) {
         return new Vec2(arr[0], arr[1]);
     };
     /** Closest orthogonal direction: LEFT, RIGHT, UP, or DOWN */
-    Vec2.prototype.toAxis = function () {
+    Vec2.prototype.toAxis = function() {
         return Math.abs(this.x) > Math.abs(this.y)
             ? this.x < 0 ? Vec2.LEFT : Vec2.RIGHT
             : this.y < 0
-                ? Vec2.UP
-                : Vec2.DOWN;
+            ? Vec2.UP
+            : Vec2.DOWN;
     };
     /** Clone the vector */
-    Vec2.prototype.clone = function () {
+    Vec2.prototype.clone = function() {
         return new Vec2(this.x, this.y);
     };
-    Vec2.copy = function (v, out) {
+    Vec2.copy = function(v, out) {
         out.x = v.x;
         out.y = v.y;
         return out;
     };
     /** Returns the sum with another vector. */
-    Vec2.prototype.add = function () {
+    Vec2.prototype.add = function() {
         var args = [];
         for (var _i = 0; _i < arguments.length; _i++) {
             args[_i] = arguments[_i];
@@ -60,7 +60,7 @@ var Vec2 = /** @class */ (function () {
         var p2 = math_1.vec2.apply(void 0, args);
         return new Vec2(this.x + p2.x, this.y + p2.y);
     };
-    Vec2.addScaled = function (v, other, s, out) {
+    Vec2.addScaled = function(v, other, s, out) {
         out.x = v.x + other.x * s;
         out.y = v.y + other.y * s;
         return out;
@@ -74,7 +74,7 @@ var Vec2 = /** @class */ (function () {
      *
      * @returns The sum of the vectors
      */
-    Vec2.addc = function (v, x, y, out) {
+    Vec2.addc = function(v, x, y, out) {
         out.x = v.x + x;
         out.y = v.y + y;
         return out;
@@ -87,13 +87,13 @@ var Vec2 = /** @class */ (function () {
      *
      * @returns The sum of the vectors
      */
-    Vec2.add = function (v, other, out) {
+    Vec2.add = function(v, other, out) {
         out.x = v.x + other.x;
         out.y = v.y + other.y;
         return out;
     };
     /** Returns the difference with another vector. */
-    Vec2.prototype.sub = function () {
+    Vec2.prototype.sub = function() {
         var args = [];
         for (var _i = 0; _i < arguments.length; _i++) {
             args[_i] = arguments[_i];
@@ -110,7 +110,7 @@ var Vec2 = /** @class */ (function () {
      *
      * @returns The difference of the vectors
      */
-    Vec2.subc = function (v, x, y, out) {
+    Vec2.subc = function(v, x, y, out) {
         out.x = v.x - x;
         out.y = v.y - y;
         return out;
@@ -123,13 +123,13 @@ var Vec2 = /** @class */ (function () {
      *
      * @returns The difference of the vectors
      */
-    Vec2.sub = function (v, other, out) {
+    Vec2.sub = function(v, other, out) {
         out.x = v.x - other.x;
         out.y = v.y - other.y;
         return out;
     };
     /** Scale by another vector. or a single number */
-    Vec2.prototype.scale = function () {
+    Vec2.prototype.scale = function() {
         var args = [];
         for (var _i = 0; _i < arguments.length; _i++) {
             args[_i] = arguments[_i];
@@ -146,7 +146,7 @@ var Vec2 = /** @class */ (function () {
      *
      * @returns The scale of the vector
      */
-    Vec2.scale = function (v, s, out) {
+    Vec2.scale = function(v, s, out) {
         out.x = v.x * s;
         out.y = v.y * s;
         return out;
@@ -160,7 +160,7 @@ var Vec2 = /** @class */ (function () {
      *
      * @returns The scale of the vector
      */
-    Vec2.scalec = function (v, x, y, out) {
+    Vec2.scalec = function(v, x, y, out) {
         out.x = v.x * x;
         out.y = v.y * y;
         return out;
@@ -173,13 +173,13 @@ var Vec2 = /** @class */ (function () {
      *
      * @returns The scale of the vector
      */
-    Vec2.scalev = function (v, other, out) {
+    Vec2.scalev = function(v, other, out) {
         out.x = v.x * other.x;
         out.y = v.y * other.y;
         return out;
     };
     /** Scale by the inverse of another vector. or a single number */
-    Vec2.prototype.invScale = function () {
+    Vec2.prototype.invScale = function() {
         var args = [];
         for (var _i = 0; _i < arguments.length; _i++) {
             args[_i] = arguments[_i];
@@ -188,7 +188,7 @@ var Vec2 = /** @class */ (function () {
         return new Vec2(this.x / s.x, this.y / s.y);
     };
     /** Get distance between another vector */
-    Vec2.prototype.dist = function () {
+    Vec2.prototype.dist = function() {
         var args = [];
         for (var _i = 0; _i < arguments.length; _i++) {
             args[_i] = arguments[_i];
@@ -203,13 +203,13 @@ var Vec2 = /** @class */ (function () {
      *
      * @returns The between the vectors
      */
-    Vec2.dist = function (v, other) {
+    Vec2.dist = function(v, other) {
         var x = v.x - other.x;
         var y = v.y - other.y;
         return Math.sqrt(x * x + y * y);
     };
     /** Get squared distance between another vector */
-    Vec2.prototype.sdist = function () {
+    Vec2.prototype.sdist = function() {
         var args = [];
         for (var _i = 0; _i < arguments.length; _i++) {
             args[_i] = arguments[_i];
@@ -224,7 +224,7 @@ var Vec2 = /** @class */ (function () {
      *
      * @returns The distance between the vectors
      */
-    Vec2.sdist = function (v, other) {
+    Vec2.sdist = function(v, other) {
         var x = v.x - other.x;
         var y = v.y - other.y;
         return x * x + y * y;
@@ -234,7 +234,7 @@ var Vec2 = /** @class */ (function () {
      *
      * @since v3000.0
      */
-    Vec2.prototype.len = function () {
+    Vec2.prototype.len = function() {
         return Math.sqrt(this.dot(this));
     };
     /**
@@ -243,7 +243,7 @@ var Vec2 = /** @class */ (function () {
      *
      * @returns The length of the vector
      */
-    Vec2.len = function (v) {
+    Vec2.len = function(v) {
         return Math.sqrt(v.x * v.x + v.y * v.y);
     };
     /**
@@ -251,7 +251,7 @@ var Vec2 = /** @class */ (function () {
      *
      * @since v3000.0
      */
-    Vec2.prototype.slen = function () {
+    Vec2.prototype.slen = function() {
         return this.dot(this);
     };
     /**
@@ -260,17 +260,17 @@ var Vec2 = /** @class */ (function () {
      *
      * @returns The squared length of the vector
      */
-    Vec2.slen = function (v) {
+    Vec2.slen = function(v) {
         return v.x * v.x + v.y * v.y;
     };
     /**
      * Get the unit vector (length of 1).
      */
-    Vec2.prototype.unit = function () {
+    Vec2.prototype.unit = function() {
         var len = this.len();
         return len === 0 ? new Vec2(0) : this.scale(1 / len);
     };
-    Vec2.unit = function (v, out) {
+    Vec2.unit = function(v, out) {
         var len = Vec2.len(v);
         out.x = v.x / len;
         out.y = v.y / len;
@@ -279,10 +279,10 @@ var Vec2 = /** @class */ (function () {
     /**
      * Get the perpendicular vector.
      */
-    Vec2.prototype.normal = function () {
+    Vec2.prototype.normal = function() {
         return new Vec2(this.y, -this.x);
     };
-    Vec2.normal = function (v, out) {
+    Vec2.normal = function(v, out) {
         out.x = v.y;
         out.y = -v.x;
         return out;
@@ -292,7 +292,7 @@ var Vec2 = /** @class */ (function () {
      *
      * @since v3000.0
      */
-    Vec2.prototype.reflect = function (normal) {
+    Vec2.prototype.reflect = function(normal) {
         return this.sub(normal.scale(2 * this.dot(normal)));
     };
     /**
@@ -300,7 +300,7 @@ var Vec2 = /** @class */ (function () {
      *
      * @since v3000.0
      */
-    Vec2.prototype.project = function (on) {
+    Vec2.prototype.project = function(on) {
         return on.scale(on.dot(this) / on.len());
     };
     /**
@@ -308,12 +308,15 @@ var Vec2 = /** @class */ (function () {
      *
      * @since v3000.0
      */
-    Vec2.prototype.reject = function (on) {
+    Vec2.prototype.reject = function(on) {
         return this.sub(this.project(on));
     };
-    Vec2.prototype.rotate = function (vecOrAngle) {
+    Vec2.prototype.rotate = function(vecOrAngle) {
         if (vecOrAngle instanceof Vec2) {
-            return new Vec2(this.x * vecOrAngle.x - this.y * vecOrAngle.y, this.x * vecOrAngle.y + this.y * vecOrAngle.x);
+            return new Vec2(
+                this.x * vecOrAngle.x - this.y * vecOrAngle.y,
+                this.x * vecOrAngle.y + this.y * vecOrAngle.x,
+            );
         }
         else {
             var angle = (0, math_1.deg2rad)(vecOrAngle);
@@ -330,7 +333,7 @@ var Vec2 = /** @class */ (function () {
      *
      * @returns The rotated vector
      */
-    Vec2.rotate = function (v, dir, out) {
+    Vec2.rotate = function(v, dir, out) {
         var tmp = v.x;
         out.x = v.x * dir.x - v.y * dir.y;
         out.y = tmp * dir.y + v.y * dir.x;
@@ -344,7 +347,7 @@ var Vec2 = /** @class */ (function () {
      *
      * @returns The rotated vector
      */
-    Vec2.rotateByAngle = function (v, angle, out) {
+    Vec2.rotateByAngle = function(v, angle, out) {
         var c = Math.cos(angle);
         var s = Math.sin(angle);
         var tmp = v.x;
@@ -352,7 +355,7 @@ var Vec2 = /** @class */ (function () {
         out.y = tmp * s + v.y * c;
         return out;
     };
-    Vec2.prototype.invRotate = function (vecOrAngle) {
+    Vec2.prototype.invRotate = function(vecOrAngle) {
         if (vecOrAngle instanceof Vec2) {
             return this.rotate(new Vec2(vecOrAngle.x, -vecOrAngle.y));
         }
@@ -368,7 +371,7 @@ var Vec2 = /** @class */ (function () {
      *
      * @returns The rotated vector
      */
-    Vec2.inverseRotate = function (v, dir, out) {
+    Vec2.inverseRotate = function(v, dir, out) {
         var tmp = v.x;
         out.x = v.x * dir.x + v.y * dir.y;
         out.y = -tmp * dir.y + v.y * dir.x;
@@ -377,7 +380,7 @@ var Vec2 = /** @class */ (function () {
     /**
      * Get the dot product with another vector.
      */
-    Vec2.prototype.dot = function (p2) {
+    Vec2.prototype.dot = function(p2) {
         return this.x * p2.x + this.y * p2.y;
     };
     /**
@@ -385,7 +388,7 @@ var Vec2 = /** @class */ (function () {
      *
      * @since v3000.0
      */
-    Vec2.dot = function (v, other) {
+    Vec2.dot = function(v, other) {
         return v.x * other.x + v.y * other.y;
     };
     /**
@@ -393,7 +396,7 @@ var Vec2 = /** @class */ (function () {
      *
      * @since v3000.0
      */
-    Vec2.prototype.cross = function (p2) {
+    Vec2.prototype.cross = function(p2) {
         return this.x * p2.y - this.y * p2.x;
     };
     /**
@@ -401,13 +404,13 @@ var Vec2 = /** @class */ (function () {
      *
      * @since v3000.0
      */
-    Vec2.cross = function (v, other) {
+    Vec2.cross = function(v, other) {
         return v.x * other.y - v.y * other.x;
     };
     /**
      * Get the angle of the vector in degrees.
      */
-    Vec2.prototype.angle = function () {
+    Vec2.prototype.angle = function() {
         var args = [];
         for (var _i = 0; _i < arguments.length; _i++) {
             args[_i] = arguments[_i];
@@ -421,7 +424,7 @@ var Vec2 = /** @class */ (function () {
      *
      * @returns Angle represented by the vector in radians
      */
-    Vec2.toAngle = function (v) {
+    Vec2.toAngle = function(v) {
         return Math.atan2(v.y, v.x);
     };
     /**
@@ -429,7 +432,7 @@ var Vec2 = /** @class */ (function () {
      *
      * @since v3000.0
      */
-    Vec2.prototype.angleBetween = function () {
+    Vec2.prototype.angleBetween = function() {
         var args = [];
         for (var _i = 0; _i < arguments.length; _i++) {
             args[_i] = arguments[_i];
@@ -444,14 +447,17 @@ var Vec2 = /** @class */ (function () {
      *
      * @returns Angle between the vectors in radians
      */
-    Vec2.angleBetween = function (v, other) {
+    Vec2.angleBetween = function(v, other) {
         return Math.atan2(Vec2.cross(v, other), Vec2.dot(v, other));
     };
     /**
      * Linear interpolate to a destination vector (for positions).
      */
-    Vec2.prototype.lerp = function (dest, t) {
-        return new Vec2((0, lerpNumber_1.lerpNumber)(this.x, dest.x, t), (0, lerpNumber_1.lerpNumber)(this.y, dest.y, t));
+    Vec2.prototype.lerp = function(dest, t) {
+        return new Vec2(
+            (0, lerpNumber_1.lerpNumber)(this.x, dest.x, t),
+            (0, lerpNumber_1.lerpNumber)(this.y, dest.y, t),
+        );
     };
     /**
      * Linear interpolate src and dst by t
@@ -462,7 +468,7 @@ var Vec2 = /** @class */ (function () {
      *
      * @returns The linear interpolation between src and dst by t
      */
-    Vec2.lerp = function (src, dst, t, out) {
+    Vec2.lerp = function(src, dst, t, out) {
         out.x = src.x * (dst.x - src.x) * t;
         out.y = src.y * (dst.y - src.y) * t;
         return out;
@@ -472,7 +478,7 @@ var Vec2 = /** @class */ (function () {
      *
      * @since v3000.0
      */
-    Vec2.prototype.slerp = function (dest, t) {
+    Vec2.prototype.slerp = function(dest, t) {
         var cos = this.dot(dest);
         var sin = this.cross(dest);
         var angle = Math.atan2(sin, cos);
@@ -490,7 +496,7 @@ var Vec2 = /** @class */ (function () {
      *
      * @returns The spherical interpolation between src and dst by t
      */
-    Vec2.slerp = function (src, dst, t, out) {
+    Vec2.slerp = function(src, dst, t, out) {
         var cos = Vec2.dot(src, dst);
         var sin = Vec2.cross(src, dst);
         var angle = Math.atan2(sin, cos);
@@ -506,13 +512,13 @@ var Vec2 = /** @class */ (function () {
      *
      * @since v3000.0
      */
-    Vec2.prototype.isZero = function () {
+    Vec2.prototype.isZero = function() {
         return this.x === 0 && this.y === 0;
     };
     /**
      * To n precision floating point.
      */
-    Vec2.prototype.toFixed = function (n) {
+    Vec2.prototype.toFixed = function(n) {
         return new Vec2(Number(this.x.toFixed(n)), Number(this.y.toFixed(n)));
     };
     /**
@@ -520,7 +526,7 @@ var Vec2 = /** @class */ (function () {
      *
      * @since v3000.0
      */
-    Vec2.prototype.transform = function (m) {
+    Vec2.prototype.transform = function(m) {
         return m.multVec2(this);
     };
     /**
@@ -528,23 +534,26 @@ var Vec2 = /** @class */ (function () {
      *
      * @since v3000.0
      */
-    Vec2.prototype.eq = function (other) {
+    Vec2.prototype.eq = function(other) {
         return this.x === other.x && this.y === other.y;
     };
     /** Converts the vector to a {@link Rect `Rect()`} with the vector as the origin.
      * @since v3000.0.
      */
-    Vec2.prototype.bbox = function () {
+    Vec2.prototype.bbox = function() {
         return new math_1.Rect(this, 0, 0);
     };
     /** Converts the vector to a readable string. */
-    Vec2.prototype.toString = function () {
-        return "vec2(".concat(this.x.toFixed(2), ", ").concat(this.y.toFixed(2), ")");
+    Vec2.prototype.toString = function() {
+        return "vec2(".concat(this.x.toFixed(2), ", ").concat(
+            this.y.toFixed(2),
+            ")",
+        );
     };
     /** Converts the vector to an array.
      * @since v3001.0
      */
-    Vec2.prototype.toArray = function () {
+    Vec2.prototype.toArray = function() {
         return [this.x, this.y];
     };
     /** An empty vector. (0, 0) */
@@ -560,5 +569,5 @@ var Vec2 = /** @class */ (function () {
     /** A vector signaling down. (0, 1) */
     Vec2.DOWN = new Vec2(0, 1);
     return Vec2;
-}());
+}();
 exports.Vec2 = Vec2;

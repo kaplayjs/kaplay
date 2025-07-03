@@ -1,6 +1,6 @@
-import { _k } from "../../../shared";
-import type { Comp, GameObj } from "../../../types";
-import type { PosComp } from "../transform/pos";
+import { _k } from "../../../shared.js";
+import type { Comp, GameObj } from "../../../types.js";
+import type { PosComp } from "../transform/pos.js";
 
 /**
  * The {@link fakeMouse `fakeMouse()`} component.

@@ -1,7 +1,7 @@
-import { map } from "../../../math/math";
-import { _k } from "../../../shared";
-import type { Comp, GameObj } from "../../../types";
-import type { OpacityComp } from "./opacity";
+import { map } from "../../../math/math.js";
+import { _k } from "../../../shared.js";
+import type { Comp, GameObj } from "../../../types.js";
+import type { OpacityComp } from "./opacity.js";
 
 export function fadeIn(time: number = 1): Comp {
     let finalOpacity: number;

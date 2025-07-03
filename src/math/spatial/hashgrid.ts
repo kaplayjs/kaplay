@@ -1,7 +1,7 @@
-import { DEF_HASH_GRID_SIZE } from "../../constants/general";
-import type { AreaComp } from "../../ecs/components/physics/area";
-import type { GameObj } from "../../types";
-import { calcTransform } from "../various";
+import { DEF_HASH_GRID_SIZE } from "../../constants/general.js";
+import type { AreaComp } from "../../ecs/components/physics/area.js";
+import type { GameObj } from "../../types.js";
+import { calcTransform } from "../various.js";
 
 class HashGrid {
     grid: Record<number, Record<number, GameObj<AreaComp>[]>> = {};

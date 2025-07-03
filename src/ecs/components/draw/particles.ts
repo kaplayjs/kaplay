@@ -1,8 +1,8 @@
-import { KEvent } from "../../../events/events";
-import { drawRaw } from "../../../gfx/draw/drawRaw";
-import type { Texture } from "../../../gfx/gfx";
-import { Color } from "../../../math/color";
-import { lerp } from "../../../math/lerp";
+import { KEvent } from "../../../events/events.js";
+import { drawRaw } from "../../../gfx/draw/drawRaw.js";
+import type { Texture } from "../../../gfx/gfx.js";
+import { Color } from "../../../math/color.js";
+import { lerp } from "../../../math/lerp.js";
 import {
     deg2rad,
     map,
@@ -10,10 +10,10 @@ import {
     rand,
     type ShapeType,
     vec2,
-} from "../../../math/math";
-import { Vec2 } from "../../../math/Vec2";
-import { _k } from "../../../shared";
-import type { Comp } from "../../../types";
+} from "../../../math/math.js";
+import { Vec2 } from "../../../math/Vec2.js";
+import { _k } from "../../../shared.js";
+import type { Comp } from "../../../types.js";
 
 /**
  * A particle. Used on the {@link particles `particles()`} component.

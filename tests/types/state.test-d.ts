@@ -1,8 +1,8 @@
 import { describe, expectTypeOf, test } from "vitest";
-import type { StateComp } from "../../src/ecs/components/misc/state";
-import type { KEventController } from "../../src/events/events";
-import kaplay from "../../src/kaplay";
-import type { GameObj } from "../../src/types";
+import type { StateComp } from "../../src/ecs/components/misc/state.js";
+import type { KEventController } from "../../src/events/events.js";
+import kaplay from "../../src/kaplay.js";
+import type { GameObj } from "../../src/types.js";
 
 describe("Type Inference from state()", () => {
     const k = kaplay();

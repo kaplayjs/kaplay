@@ -1,21 +1,21 @@
-import type { KEventController } from "../../../events/events";
+import type { KEventController } from "../../../events/events.js";
 import {
     raycastGrid,
     type RaycastResult,
     vec2,
     type Vec2Args,
-} from "../../../math/math";
-import { calcTransform } from "../../../math/various";
-import { type Vec2 } from "../../../math/Vec2";
+} from "../../../math/math.js";
+import { calcTransform } from "../../../math/various.js";
+import { type Vec2 } from "../../../math/Vec2.js";
 import {
     type Comp,
     type CompList,
     EdgeMask,
     type GameObj,
-} from "../../../types";
-import { BinaryHeap } from "../../../utils/binaryheap";
-import { pos, type PosComp } from "../transform/pos";
-import { tile } from "./tile";
+} from "../../../types.js";
+import { BinaryHeap } from "../../../utils/binaryheap.js";
+import { pos, type PosComp } from "../transform/pos.js";
+import { tile } from "./tile.js";
 
 /**
  * The {@link level `level()`} component.

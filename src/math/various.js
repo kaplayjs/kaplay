@@ -11,12 +11,15 @@ function calcTransform(obj, tr) {
     else {
         tr.setIdentity();
     }
-    if (obj.pos)
+    if (obj.pos) {
         tr.translateSelfV(obj.pos);
-    if (obj.angle)
+    }
+    if (obj.angle) {
         tr.rotateSelf(obj.angle);
-    if (obj.scale)
+    }
+    if (obj.scale) {
         tr.scaleSelfV(obj.scale);
+    }
     return tr;
 }
 // convert a screen space coordinate to webgl normalized device coordinate
@@ -25,15 +28,18 @@ function screen2ndc(pt, width, height, out) {
     out.y = -pt.y / height * 2 + 1;
 }
 function getArcPts(pos, radiusX, radiusY, start, end, res) {
-    if (res === void 0) { res = 1; }
+    if (res === void 0) res = 1;
     // normalize and turn start and end angles to radians
     start = (0, math_1.deg2rad)(start % 360);
     end = (0, math_1.deg2rad)(end % 360);
     var isLoop = (end - start) == 0;
-    if (end <= start)
+    if (end <= start) {
         end += Math.PI * 2;
+    }
     var pts = [];
-    var nverts = Math.round(Math.sqrt(((radiusX + radiusY) / 2) * 20) * (end - start) / Math.PI * 2); // Math.ceil((end - start) / deg2rad(8) * res);
+    var nverts = Math.round(
+        Math.sqrt(((radiusX + radiusY) / 2) * 20) * (end - start) / Math.PI * 2,
+    ); // Math.ceil((end - start) / deg2rad(8) * res);
     var step = (end - start) / nverts;
     // Rotate vector v by r nverts+1 times
     var v = (0, math_1.vec2)(Math.cos(start), Math.sin(start));

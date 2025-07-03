@@ -1,9 +1,13 @@
 "use strict";
-var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
-    if (pack || arguments.length === 2) for (var i = 0, l = from.length, ar; i < l; i++) {
-        if (ar || !(i in from)) {
-            if (!ar) ar = Array.prototype.slice.call(from, 0, i);
-            ar[i] = from[i];
+var __spreadArray = (this && this.__spreadArray) || function(to, from, pack) {
+    if (pack || arguments.length === 2) {
+        for (var i = 0, l = from.length, ar; i < l; i++) {
+            if (ar || !(i in from)) {
+                if (!ar) {
+                    ar = Array.prototype.slice.call(from, 0, i);
+                }
+                ar[i] = from[i];
+            }
         }
     }
     return to.concat(ar || Array.prototype.slice.call(from));
@@ -32,7 +36,9 @@ function drawPolygon(opt) {
     (0, stack_1.multRotate)(opt.angle);
     (0, stack_1.multTranslateV)(opt.offset);
     if (opt.fill !== false) {
-        var color = (_a = opt.color) !== null && _a !== void 0 ? _a : color_1.Color.WHITE;
+        var color = (_a = opt.color) !== null && _a !== void 0
+            ? _a
+            : color_1.Color.WHITE;
         var attributes = {
             pos: new Array(opt.pts.length * 2),
             uv: new Array(opt.pts.length * 2),
@@ -72,7 +78,9 @@ function drawPolygon(opt) {
             }
         }
         else {
-            attributes.opacity.fill((_b = opt.opacity) !== null && _b !== void 0 ? _b : 1);
+            attributes.opacity.fill(
+                (_b = opt.opacity) !== null && _b !== void 0 ? _b : 1,
+            );
         }
         /*const verts = opt.pts.map((pt, i) => ({
             pos: new Vec2(pt.x, pt.y),
@@ -88,27 +96,51 @@ function drawPolygon(opt) {
         if (opt.triangulate /* && !isConvex(opt.pts)*/) {
             var triangles = (0, math_1.triangulate)(opt.pts);
             // TODO rewrite triangulate to just return new indices
-            indices = triangles.map(function (t) { return t.map(function (p) { return opt.pts.indexOf(p); }); })
+            indices = triangles.map(function(t) {
+                return t.map(function(p) {
+                    return opt.pts.indexOf(p);
+                });
+            })
                 .flat();
         }
         else {
-            indices = __spreadArray([], Array(npts - 2).keys(), true).map(function (n) { return [0, n + 1, n + 2]; })
+            indices = __spreadArray([], Array(npts - 2).keys(), true).map(
+                function(n) {
+                    return [0, n + 1, n + 2];
+                },
+            )
                 .flat();
         }
-        (0, drawRaw_1.drawRaw)(attributes, (_c = opt.indices) !== null && _c !== void 0 ? _c : indices, opt.fixed, opt.uv ? opt.tex : shared_1._k.gfx.defTex, opt.shader, (_d = opt.uniform) !== null && _d !== void 0 ? _d : undefined, (_e = opt.blend) !== null && _e !== void 0 ? _e : types_1.BlendMode.Normal);
+        (0, drawRaw_1.drawRaw)(
+            attributes,
+            (_c = opt.indices) !== null && _c !== void 0 ? _c : indices,
+            opt.fixed,
+            opt.uv ? opt.tex : shared_1._k.gfx.defTex,
+            opt.shader,
+            (_d = opt.uniform) !== null && _d !== void 0 ? _d : undefined,
+            (_e = opt.blend) !== null && _e !== void 0
+                ? _e
+                : types_1.BlendMode.Normal,
+        );
     }
     if (opt.outline) {
         (0, drawLine_1.drawLines)({
             pts: opt.pts[0].eq(opt.pts[opt.pts.length - 1])
                 ? opt.pts
-                : __spreadArray(__spreadArray([], opt.pts, true), [opt.pts[0]], false),
+                : __spreadArray(
+                    __spreadArray([], opt.pts, true),
+                    [opt.pts[0]],
+                    false,
+                ),
             radius: opt.radius,
             width: opt.outline.width,
             color: opt.outline.color,
             join: opt.outline.join,
             uniform: opt.uniform,
             fixed: opt.fixed,
-            opacity: (_f = opt.opacity) !== null && _f !== void 0 ? _f : opt.outline.opacity,
+            opacity: (_f = opt.opacity) !== null && _f !== void 0
+                ? _f
+                : opt.outline.opacity,
         });
     }
     (0, stack_1.popTransform)();

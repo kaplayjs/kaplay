@@ -2,7 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.createFontCache = void 0;
 var general_1 = require("../constants/general");
-var createFontCache = function () {
+var createFontCache = function() {
     var fontCacheCanvas = document.createElement("canvas");
     fontCacheCanvas.width = general_1.MAX_TEXT_CACHE_SIZE;
     fontCacheCanvas.height = general_1.MAX_TEXT_CACHE_SIZE;

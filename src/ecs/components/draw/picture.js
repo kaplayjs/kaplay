@@ -7,8 +7,11 @@ function picture(picture) {
     return {
         id: "picture",
         picture: picture,
-        draw: function () {
-            (0, drawPicture_1.drawPicture)(this.picture, (0, utils_1.getRenderProps)(this));
+        draw: function() {
+            (0, drawPicture_1.drawPicture)(
+                this.picture,
+                (0, utils_1.getRenderProps)(this),
+            );
         },
     };
 }

@@ -1,9 +1,13 @@
 "use strict";
-var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
-    if (pack || arguments.length === 2) for (var i = 0, l = from.length, ar; i < l; i++) {
-        if (ar || !(i in from)) {
-            if (!ar) ar = Array.prototype.slice.call(from, 0, i);
-            ar[i] = from[i];
+var __spreadArray = (this && this.__spreadArray) || function(to, from, pack) {
+    if (pack || arguments.length === 2) {
+        for (var i = 0, l = from.length, ar; i < l; i++) {
+            if (ar || !(i in from)) {
+                if (!ar) {
+                    ar = Array.prototype.slice.call(from, 0, i);
+                }
+                ar[i] = from[i];
+            }
         }
     }
     return to.concat(ar || Array.prototype.slice.call(from));
@@ -43,7 +47,7 @@ function state(initState, stateList, transitions) {
     return {
         id: "state",
         state: initState,
-        enterState: function (state) {
+        enterState: function(state) {
             var args = [];
             for (var _i = 1; _i < arguments.length; _i++) {
                 args[_i - 1] = arguments[_i];
@@ -55,37 +59,60 @@ function state(initState, stateList, transitions) {
             var oldState = this.state;
             if (transitions) {
                 // check if the transition is legal, if transition graph is defined
-                if (!(transitions === null || transitions === void 0 ? void 0 : transitions[oldState])) {
+                if (
+                    !(transitions === null || transitions === void 0
+                        ? void 0
+                        : transitions[oldState])
+                ) {
                     return;
                 }
                 var available = typeof transitions[oldState] === "string"
                     ? [transitions[oldState]]
                     : transitions[oldState];
                 if (!available.includes(state)) {
-                    throw new Error("Cannot transition state from \"".concat(oldState, "\" to \"").concat(state, "\". Available transitions: ").concat(available.map(function (s) { return "\"".concat(s, "\""); }).join(", ")));
+                    throw new Error(
+                        "Cannot transition state from \"".concat(
+                            oldState,
+                            "\" to \"",
+                        ).concat(state, "\". Available transitions: ").concat(
+                            available.map(function(s) {
+                                return "\"".concat(s, "\"");
+                            }).join(", "),
+                        ),
+                    );
                 }
             }
-            trigger.apply(void 0, __spreadArray(["end", oldState], args, false));
+            trigger.apply(
+                void 0,
+                __spreadArray(["end", oldState], args, false),
+            );
             this.state = state;
             trigger.apply(void 0, __spreadArray(["enter", state], args, false));
-            trigger.apply(void 0, __spreadArray(["enter", "".concat(oldState, " -> ").concat(state)], args, false));
+            trigger.apply(
+                void 0,
+                __spreadArray(
+                    ["enter", "".concat(oldState, " -> ").concat(state)],
+                    args,
+                    false,
+                ),
+            );
         },
-        onStateTransition: function (from, to, action) {
+        onStateTransition: function(from, to, action) {
             return on("enter", "".concat(from, " -> ").concat(to), action);
         },
-        onStateEnter: function (state, action) {
+        onStateEnter: function(state, action) {
             return on("enter", state, action);
         },
-        onStateUpdate: function (state, action) {
+        onStateUpdate: function(state, action) {
             return on("update", state, action);
         },
-        onStateDraw: function (state, action) {
+        onStateDraw: function(state, action) {
             return on("draw", state, action);
         },
-        onStateEnd: function (state, action) {
+        onStateEnd: function(state, action) {
             return on("end", state, action);
         },
-        update: function () {
+        update: function() {
             // execute the enter event for initState
             if (!didFirstEnter) {
                 trigger("enter", initState);
@@ -93,10 +120,10 @@ function state(initState, stateList, transitions) {
             }
             trigger("update", this.state);
         },
-        draw: function () {
+        draw: function() {
             trigger("draw", this.state);
         },
-        inspect: function () {
+        inspect: function() {
             return "state: ".concat(this.state);
         },
     };

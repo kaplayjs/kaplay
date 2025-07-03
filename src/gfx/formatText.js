@@ -13,38 +13,45 @@ var runes_1 = require("../utils/runes");
 var anchor_1 = require("./anchor");
 var gfx_1 = require("./gfx");
 function applyCharTransform(fchar, tr) {
-    if (tr.font)
+    if (tr.font) {
         fchar.font = tr.font;
+    }
     if (tr.stretchInPlace !== undefined) {
         fchar.stretchInPlace = tr.stretchInPlace;
     }
-    if (tr.shader !== undefined)
+    if (tr.shader !== undefined) {
         fchar.shader = tr.shader;
-    if (tr.uniform !== undefined)
+    }
+    if (tr.uniform !== undefined) {
         fchar.uniform = tr.uniform;
+    }
     if (tr.override) {
         Object.assign(fchar, tr);
         return;
     }
-    if (tr.pos)
+    if (tr.pos) {
         fchar.pos = fchar.pos.add(tr.pos);
-    if (tr.scale)
+    }
+    if (tr.scale) {
         fchar.scale = fchar.scale.scale((0, math_1.vec2)(tr.scale));
-    if (tr.angle)
+    }
+    if (tr.angle) {
         fchar.angle += tr.angle;
+    }
     if (tr.color && fchar.ch.length === 1) {
         fchar.color = fchar.color.mult(tr.color);
     }
     // attention to type coercion, 0 is a valid value, only null & undefined are not
-    if (tr.opacity != null)
+    if (tr.opacity != null) {
         fchar.opacity *= tr.opacity;
+    }
 }
 function compileStyledText(txt) {
     var charStyleMap = {};
     var renderText = "";
     var styleStack = [];
     var text = String(txt);
-    var emit = function (ch) {
+    var emit = function(ch) {
         if (styleStack.length > 0) {
             charStyleMap[renderText.length] = styleStack.slice();
         }
@@ -72,15 +79,24 @@ function compileStyledText(txt) {
                 var x = styleStack.pop();
                 if (x !== gn) {
                     if (x !== undefined) {
-                        throw new Error("Styled text error: mismatched tags. Expected [/".concat(x, "], got [/").concat(gn, "]"));
+                        throw new Error(
+                            "Styled text error: mismatched tags. Expected [/"
+                                .concat(x, "], got [/").concat(gn, "]"),
+                        );
                     }
                     else {
-                        throw new Error("Styled text error: stray end tag [/".concat(gn, "]"));
+                        throw new Error(
+                            "Styled text error: stray end tag [/".concat(
+                                gn,
+                                "]",
+                            ),
+                        );
                     }
                 }
             }
-            else
+            else {
                 styleStack.push(gn);
+            }
             text = text.slice(m.length);
             continue;
         }
@@ -88,7 +104,9 @@ function compileStyledText(txt) {
         text = text.slice(1);
     }
     if (styleStack.length > 0) {
-        throw new Error("Styled text error: unclosed tags ".concat(styleStack.join(", ")));
+        throw new Error(
+            "Styled text error: unclosed tags ".concat(styleStack.join(", ")),
+        );
     }
     return {
         charStyleMap: charStyleMap,
@@ -117,9 +135,14 @@ function getFontAtlasForFont(font) {
         // TODO: customizable font tex filter
         atlas = {
             font: {
-                tex: new gfx_1.Texture(shared_1._k.gfx.ggl, general_1.FONT_ATLAS_WIDTH, general_1.FONT_ATLAS_HEIGHT, {
-                    filter: opts.filter,
-                }),
+                tex: new gfx_1.Texture(
+                    shared_1._k.gfx.ggl,
+                    general_1.FONT_ATLAS_WIDTH,
+                    general_1.FONT_ATLAS_HEIGHT,
+                    {
+                        filter: opts.filter,
+                    },
+                ),
                 map: {},
                 size: general_1.DEF_TEXT_CACHE_SIZE,
             },
@@ -138,25 +161,34 @@ function updateFontAtlas(font, ch) {
     if (!atlas.font.map[ch]) {
         // TODO: use assets.packer to pack font texture
         var c2d = shared_1._k.fontCacheC2d;
-        if (!c2d)
+        if (!c2d) {
             throw new Error("fontCacheC2d is not defined.");
+        }
         if (!shared_1._k.fontCacheCanvas) {
             throw new Error("fontCacheCanvas is not defined.");
         }
-        c2d.clearRect(0, 0, shared_1._k.fontCacheCanvas.width, shared_1._k.fontCacheCanvas.height);
+        c2d.clearRect(
+            0,
+            0,
+            shared_1._k.fontCacheCanvas.width,
+            shared_1._k.fontCacheCanvas.height,
+        );
         c2d.font = "".concat(atlas.font.size, "px ").concat(fontName);
         c2d.textBaseline = "top";
         c2d.textAlign = "left";
         c2d.fillStyle = "#ffffff";
         var m = c2d.measureText(ch);
         var w = Math.ceil(m.width);
-        if (!w)
+        if (!w) {
             return;
+        }
         var h = Math.ceil(Math.abs(m.actualBoundingBoxAscent))
             + Math.ceil(Math.abs(m.actualBoundingBoxDescent));
         // TODO: Test if this works with the verification of width and color
-        if (atlas.outline && atlas.outline.width
-            && atlas.outline.color) {
+        if (
+            atlas.outline && atlas.outline.width
+            && atlas.outline.color
+        ) {
             c2d.lineJoin = "round";
             c2d.lineWidth = atlas.outline.width * 2;
             c2d.strokeStyle = atlas.outline.color.toHex();
@@ -164,7 +196,19 @@ function updateFontAtlas(font, ch) {
             w += atlas.outline.width * 2;
             h += atlas.outline.width * 3;
         }
-        c2d.fillText(ch, (_b = (_a = atlas.outline) === null || _a === void 0 ? void 0 : _a.width) !== null && _b !== void 0 ? _b : 0, (_d = (_c = atlas.outline) === null || _c === void 0 ? void 0 : _c.width) !== null && _d !== void 0 ? _d : 0);
+        c2d.fillText(
+            ch,
+            (_b = (_a = atlas.outline) === null || _a === void 0
+                        ? void 0
+                        : _a.width) !== null && _b !== void 0
+                ? _b
+                : 0,
+            (_d = (_c = atlas.outline) === null || _c === void 0
+                        ? void 0
+                        : _c.width) !== null && _d !== void 0
+                ? _d
+                : 0,
+        );
         var img = c2d.getImageData(0, 0, w, h);
         // if we are about to exceed the X axis of the texture, go to another line
         if (atlas.cursor.x + w > general_1.FONT_ATLAS_WIDTH) {
@@ -177,7 +221,12 @@ function updateFontAtlas(font, ch) {
             }
         }
         atlas.font.tex.update(img, atlas.cursor.x, atlas.cursor.y);
-        atlas.font.map[ch] = new math_1.Quad(atlas.cursor.x, atlas.cursor.y, w, h);
+        atlas.font.map[ch] = new math_1.Quad(
+            atlas.cursor.x,
+            atlas.cursor.y,
+            w,
+            h,
+        );
         atlas.cursor.x += w + 1;
         atlas.maxHeight = Math.max(atlas.maxHeight, h);
     }
@@ -189,7 +238,9 @@ function formatText(opt) {
     }
     var font = (0, font_1.resolveFont)(opt.font);
     // if it's still loading
-    if (!opt.text || opt.text === "" || font instanceof asset_1.Asset || !font) {
+    if (
+        !opt.text || opt.text === "" || font instanceof asset_1.Asset || !font
+    ) {
         return {
             width: 0,
             height: 0,
@@ -198,15 +249,22 @@ function formatText(opt) {
             renderedText: "",
         };
     }
-    var _h = compileStyledText(opt.text + ""), charStyleMap = _h.charStyleMap, text = _h.text;
+    var _h = compileStyledText(opt.text + ""),
+        charStyleMap = _h.charStyleMap,
+        text = _h.text;
     var chars = (0, runes_1.runes)(text);
-    var defGfxFont = (font instanceof font_1.FontData || typeof font === "string")
-        ? getFontAtlasForFont(font).font
-        : font;
+    var defGfxFont =
+        (font instanceof font_1.FontData || typeof font === "string")
+            ? getFontAtlasForFont(font).font
+            : font;
     var size = opt.size || defGfxFont.size;
-    var scale = (0, math_1.vec2)((_a = opt.scale) !== null && _a !== void 0 ? _a : 1).scale(size / defGfxFont.size);
+    var scale = (0, math_1.vec2)(
+        (_a = opt.scale) !== null && _a !== void 0 ? _a : 1,
+    ).scale(size / defGfxFont.size);
     var lineSpacing = (_b = opt.lineSpacing) !== null && _b !== void 0 ? _b : 0;
-    var letterSpacing = (_c = opt.letterSpacing) !== null && _c !== void 0 ? _c : 0;
+    var letterSpacing = (_c = opt.letterSpacing) !== null && _c !== void 0
+        ? _c
+        : 0;
     var curX = 0;
     var tw = 0;
     var lines = [];
@@ -231,15 +289,18 @@ function formatText(opt) {
             paraIndentX = undefined;
         }
         else {
-            var defaultFontValue = (font instanceof font_1.FontData || typeof font === "string")
-                ? font
-                : undefined;
+            var defaultFontValue =
+                (font instanceof font_1.FontData || typeof font === "string")
+                    ? font
+                    : undefined;
             var theFChar = {
                 tex: defGfxFont.tex,
                 ch: ch,
                 pos: (0, math_1.vec2)(curX, 0),
                 opacity: (_d = opt.opacity) !== null && _d !== void 0 ? _d : 1,
-                color: (_e = opt.color) !== null && _e !== void 0 ? _e : color_1.Color.WHITE,
+                color: (_e = opt.color) !== null && _e !== void 0
+                    ? _e
+                    : color_1.Color.WHITE,
                 scale: (0, math_1.vec2)(scale),
                 angle: 0,
                 font: defaultFontValue,
@@ -255,9 +316,15 @@ function formatText(opt) {
             }
             if (charStyleMap[cursor]) {
                 var styles = charStyleMap[cursor];
-                for (var _i = 0, styles_1 = styles; _i < styles_1.length; _i++) {
+                for (
+                    var _i = 0, styles_1 = styles;
+                    _i < styles_1.length;
+                    _i++
+                ) {
                     var name_1 = styles_1[_i];
-                    var style = (_f = opt.styles) === null || _f === void 0 ? void 0 : _f[name_1];
+                    var style = (_f = opt.styles) === null || _f === void 0
+                        ? void 0
+                        : _f[name_1];
                     var tr = typeof style === "function"
                         ? style(cursor, ch)
                         : style;
@@ -280,18 +347,24 @@ function formatText(opt) {
             }
             var requestedFontData = defGfxFont;
             if (requestedFont && requestedFont !== defaultFontValue) {
-                if (resolvedFont instanceof font_1.FontData
-                    || typeof resolvedFont === "string") {
+                if (
+                    resolvedFont instanceof font_1.FontData
+                    || typeof resolvedFont === "string"
+                ) {
                     requestedFontData = getFontAtlasForFont(requestedFont).font;
                 }
-                else
+                else {
                     requestedFontData = resolvedFont;
+                }
                 theFChar.tex = requestedFontData.tex;
             }
-            if (requestedFont
+            if (
+                requestedFont
                 && (resolvedFont instanceof font_1.FontData
-                    || typeof resolvedFont === "string"))
+                    || typeof resolvedFont === "string")
+            ) {
                 updateFontAtlas(requestedFont, ch);
+            }
             var q = requestedFontData.map[ch];
             // TODO: leave space if character not found?
             if (q) {
@@ -313,14 +386,24 @@ function formatText(opt) {
                         width: curX - letterSpacing,
                         chars: curLine,
                     });
-                    curX = paraIndentX !== null && paraIndentX !== void 0 ? paraIndentX : 0;
+                    curX = paraIndentX !== null && paraIndentX !== void 0
+                        ? paraIndentX
+                        : 0;
                     curLine = [];
                     continue;
                 }
                 theFChar.width = q.w;
                 theFChar.height = q.h;
-                theFChar.quad = new math_1.Quad(q.x / requestedFontData.tex.width, q.y / requestedFontData.tex.height, q.w / requestedFontData.tex.width, q.h / requestedFontData.tex.height);
-                theFChar.pos = theFChar.pos.add(gw * 0.5, q.h * theFChar.scale.y * 0.5);
+                theFChar.quad = new math_1.Quad(
+                    q.x / requestedFontData.tex.width,
+                    q.y / requestedFontData.tex.height,
+                    q.w / requestedFontData.tex.width,
+                    q.h / requestedFontData.tex.height,
+                );
+                theFChar.pos = theFChar.pos.add(
+                    gw * 0.5,
+                    q.h * theFChar.scale.y * 0.5,
+                );
                 // push char
                 curLine.push({
                     ch: theFChar,
@@ -330,9 +413,11 @@ function formatText(opt) {
                     lastSpace = curLine.length;
                     lastSpaceWidth = curX;
                 }
-                if (opt.indentAll
+                if (
+                    opt.indentAll
                     && paraIndentX === undefined
-                    && /\S/.test(ch)) {
+                    && /\S/.test(ch)
+                ) {
                     paraIndentX = curX;
                 }
                 curX += gw;
@@ -352,15 +437,22 @@ function formatText(opt) {
     var formattedChars = [];
     var th = 0;
     for (var i = 0; i < lines.length; i++) {
-        if (i > 0)
+        if (i > 0) {
             th += lineSpacing;
-        var ox = (tw - lines[i].width) * (0, anchor_1.alignPt)((_g = opt.align) !== null && _g !== void 0 ? _g : "left");
+        }
+        var ox = (tw - lines[i].width)
+            * (0, anchor_1.alignPt)(
+                (_g = opt.align) !== null && _g !== void 0 ? _g : "left",
+            );
         var thisLineHeight = size;
         for (var _j = 0, _l = lines[i].chars; _j < _l.length; _j++) {
             var ch = _l[_j].ch;
             ch.pos = ch.pos.add(ox, th);
             formattedChars.push(ch);
-            thisLineHeight = Math.max(thisLineHeight, size * (ch.stretchInPlace ? scale : ch.scale).y / scale.y);
+            thisLineHeight = Math.max(
+                thisLineHeight,
+                size * (ch.stretchInPlace ? scale : ch.scale).y / scale.y,
+            );
         }
         th += thisLineHeight;
     }

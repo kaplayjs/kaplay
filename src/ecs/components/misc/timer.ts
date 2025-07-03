@@ -1,8 +1,8 @@
-import { KEvent } from "../../../events/events";
-import { easings } from "../../../math/easings";
-import { lerp, type LerpValue } from "../../../math/lerp";
-import { _k } from "../../../shared";
-import type { Comp, GameObj } from "../../../types";
+import { KEvent } from "../../../events/events.js";
+import { easings } from "../../../math/easings.js";
+import { lerp, type LerpValue } from "../../../math/lerp.js";
+import { _k } from "../../../shared.js";
+import type { Comp, GameObj } from "../../../types.js";
 
 /**
  * @group Timer

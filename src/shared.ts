@@ -1,4 +1,4 @@
-import type { Engine } from "./core/engine";
+import type { Engine } from "./core/engine.js";
 
 /**
  * KAPLAY.js internal data

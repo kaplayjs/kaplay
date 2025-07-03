@@ -10,7 +10,11 @@ function registerSerializableComponent(id, comp) {
 }
 function saveAll() {
     var state = {};
-    for (var _i = 0, _a = serializableRegistry.entries(); _i < _a.length; _i++) {
+    for (
+        var _i = 0, _a = serializableRegistry.entries();
+        _i < _a.length;
+        _i++
+    ) {
         var _b = _a[_i], id = _b[0], comp = _b[1];
         state[id] = comp.serialize();
     }

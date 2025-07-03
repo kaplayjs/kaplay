@@ -4,7 +4,7 @@ exports.system = exports.LCEvents = void 0;
 var shared_1 = require("../../shared");
 // Lifecycle events
 var LCEvents;
-(function (LCEvents) {
+(function(LCEvents) {
     LCEvents[LCEvents["BeforeUpdate"] = 0] = "BeforeUpdate";
     LCEvents[LCEvents["BeforeFixedUpdate"] = 1] = "BeforeFixedUpdate";
     LCEvents[LCEvents["BeforeDraw"] = 2] = "BeforeDraw";
@@ -12,16 +12,22 @@ var LCEvents;
     LCEvents[LCEvents["AfterFixedUpdate"] = 4] = "AfterFixedUpdate";
     LCEvents[LCEvents["AfterDraw"] = 5] = "AfterDraw";
 })(LCEvents || (exports.LCEvents = LCEvents = {}));
-var system = function (name, action, when) {
+var system = function(name, action, when) {
     var systems = shared_1._k.game.systems;
-    var replacingSystemIdx = systems.findIndex(function (s) { return s.name === name; });
+    var replacingSystemIdx = systems.findIndex(function(s) {
+        return s.name === name;
+    });
     // if existent system, remove it
     if (replacingSystemIdx != -1) {
         var replacingSystem = systems[replacingSystemIdx];
         var when_3 = replacingSystem.when;
         for (var _i = 0, when_1 = when_3; _i < when_1.length; _i++) {
             var loc = when_1[_i];
-            var idx = shared_1._k.game.systemsByEvent[loc].findIndex(function (s) { return s.name === name; });
+            var idx = shared_1._k.game.systemsByEvent[loc].findIndex(
+                function(s) {
+                    return s.name === name;
+                },
+            );
             shared_1._k.game.systemsByEvent[loc].splice(idx, 1);
         }
     }

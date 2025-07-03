@@ -1,4 +1,4 @@
-import { _k } from "../shared";
+import { _k } from "../shared.js";
 
 export const getErrorMessage = (error: unknown) =>
     (error instanceof Error) ? error.message : String(error);

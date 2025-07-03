@@ -14,15 +14,19 @@ function drawTexture(opt) {
     if (!opt.tex) {
         throw new Error("drawTexture() requires property \"tex\".");
     }
-    var q = (_a = opt.quad) !== null && _a !== void 0 ? _a : new math_1.Quad(0, 0, 1, 1);
+    var q = (_a = opt.quad) !== null && _a !== void 0
+        ? _a
+        : new math_1.Quad(0, 0, 1, 1);
     var w = opt.tex.width * q.w;
     var h = opt.tex.height * q.h;
     var scale = Vec2_1.Vec2.ONE;
     if (opt.tiled) {
         var offset = (0, anchor_1.anchorPt)(opt.anchor || general_1.DEF_ANCHOR);
-        var offsetX_1 = (((_b = opt.pos) === null || _b === void 0 ? void 0 : _b.x) || 0)
+        var offsetX_1 =
+            (((_b = opt.pos) === null || _b === void 0 ? void 0 : _b.x) || 0)
             - (offset.x + 1) * 0.5 * (opt.width || w);
-        var offsetY_1 = (((_c = opt.pos) === null || _c === void 0 ? void 0 : _c.y) || 0)
+        var offsetY_1 =
+            (((_c = opt.pos) === null || _c === void 0 ? void 0 : _c.y) || 0)
             - (offset.y + 1) * 0.5 * (opt.height || h);
         var fcols = (opt.width || w) / w;
         var frows = (opt.height || h) / h;
@@ -44,7 +48,7 @@ function drawTexture(opt) {
         }));*/
         var color_2 = opt.color || color_1.Color.WHITE;
         var opacity_1 = opt.opacity || 1;
-        var addQuad = function (x, y, w, h, q) {
+        var addQuad = function(x, y, w, h, q) {
             indices_1[index_1 * 6 + 0] = index_1 * 4 + 0;
             indices_1[index_1 * 6 + 1] = index_1 * 4 + 1;
             indices_1[index_1 * 6 + 2] = index_1 * 4 + 3;
@@ -94,22 +98,52 @@ function drawTexture(opt) {
                 addQuad(i * w, j * h, w, h, q);
             }
             if (fracX) {
-                addQuad(cols * w, j * h, w * fracX, h, new math_1.Quad(q.x, q.y, q.w * fracX, q.h));
+                addQuad(
+                    cols * w,
+                    j * h,
+                    w * fracX,
+                    h,
+                    new math_1.Quad(q.x, q.y, q.w * fracX, q.h),
+                );
             }
         }
         if (fracY) {
             for (var i = 0; i < cols; i++) {
-                addQuad(i * w, rows * h, w, h * fracY, new math_1.Quad(q.x, q.y, q.w, q.h * fracY));
+                addQuad(
+                    i * w,
+                    rows * h,
+                    w,
+                    h * fracY,
+                    new math_1.Quad(q.x, q.y, q.w, q.h * fracY),
+                );
             }
             if (fracX) {
-                addQuad(cols * w, rows * h, w * fracX, h * fracY, new math_1.Quad(q.x, q.y, q.w * fracX, q.h * fracY));
+                addQuad(
+                    cols * w,
+                    rows * h,
+                    w * fracX,
+                    h * fracY,
+                    new math_1.Quad(q.x, q.y, q.w * fracX, q.h * fracY),
+                );
             }
         }
-        (0, drawRaw_1.drawRaw)(attributes_1, indices_1, opt.fixed, opt.tex, opt.shader, (_d = opt.uniform) !== null && _d !== void 0 ? _d : undefined, (_e = opt.blend) !== null && _e !== void 0 ? _e : types_1.BlendMode.Normal);
+        (0, drawRaw_1.drawRaw)(
+            attributes_1,
+            indices_1,
+            opt.fixed,
+            opt.tex,
+            opt.shader,
+            (_d = opt.uniform) !== null && _d !== void 0 ? _d : undefined,
+            (_e = opt.blend) !== null && _e !== void 0
+                ? _e
+                : types_1.BlendMode.Normal,
+        );
     }
     else {
         (0, drawUVQuad_1.drawUVQuad)(Object.assign({}, opt, {
-            scale: (_f = opt.scale) !== null && _f !== void 0 ? _f : Vec2_1.Vec2.ONE,
+            scale: (_f = opt.scale) !== null && _f !== void 0
+                ? _f
+                : Vec2_1.Vec2.ONE,
             tex: opt.tex,
             quad: q,
             width: (_g = opt.width) !== null && _g !== void 0 ? _g : w,

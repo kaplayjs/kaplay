@@ -13,7 +13,7 @@ var stack_1 = require("../stack");
 /**
  * A picture holding drawing data
  */
-var Picture = /** @class */ (function () {
+var Picture = /** @class */ function() {
     /**
      * Creates an empty picture if no data is given, otherwise deserializes the data
      * @param data - Optional archived picture data
@@ -30,11 +30,11 @@ var Picture = /** @class */ (function () {
      * Serializes this picture to a JSON string
      * @returns a string containing JSON picture data
      */
-    Picture.prototype.archive = function () {
+    Picture.prototype.archive = function() {
         return JSON.stringify({
             vertices: this.vertices,
             indices: this.indices,
-            commands: this.commands.map(function (command) {
+            commands: this.commands.map(function(command) {
                 return {
                     material: {
                         tex: "", // TODO: Find a way to refer to a texture by name (main, font, single, etc)
@@ -48,12 +48,12 @@ var Picture = /** @class */ (function () {
             }),
         });
     };
-    Picture.prototype.free = function () {
+    Picture.prototype.free = function() {
         var _a;
         (_a = this.mesh) === null || _a === void 0 ? void 0 : _a.free();
     };
     return Picture;
-}());
+}();
 exports.Picture = Picture;
 /**
  * Draws a picture to the screen. This function can not be used to draw recursively to a picture.
@@ -67,22 +67,34 @@ function drawPicture(picture, opt) {
     shared_1._k.gfx.renderer.flush(w, h);
     // This is the transform we will apply
     var transform = shared_1._k.gfx.transform.clone();
-    if (opt.pos)
+    if (opt.pos) {
         transform.translateSelfV(opt.pos);
-    if (opt.angle)
+    }
+    if (opt.angle) {
         transform.rotateSelf(opt.angle);
-    if (opt.scale)
+    }
+    if (opt.scale) {
         transform.scaleSelfV(opt.scale);
+    }
     var ctx = shared_1._k.gfx.renderer.ctx;
     var gl = ctx.gl;
     // This binds the vertex buffer
     ctx.pushArrayBuffer(picture.mesh.glVBuf);
     // Once bound, we set the pointers, which are offsets relative to the pointer of the array buffer we just bound
-    var a_pos = gl.getAttribLocation(shared_1._k.gfx.defShader.glProgram, "a_pos");
+    var a_pos = gl.getAttribLocation(
+        shared_1._k.gfx.defShader.glProgram,
+        "a_pos",
+    );
     gl.vertexAttribPointer(a_pos, 2, gl.FLOAT, false, 32, 0);
-    var a_uv = gl.getAttribLocation(shared_1._k.gfx.defShader.glProgram, "a_uv");
+    var a_uv = gl.getAttribLocation(
+        shared_1._k.gfx.defShader.glProgram,
+        "a_uv",
+    );
     gl.vertexAttribPointer(a_uv, 2, gl.FLOAT, false, 32, 8);
-    var a_color = gl.getAttribLocation(shared_1._k.gfx.defShader.glProgram, "a_color");
+    var a_color = gl.getAttribLocation(
+        shared_1._k.gfx.defShader.glProgram,
+        "a_color",
+    );
     gl.vertexAttribPointer(a_color, 4, gl.FLOAT, false, 32, 16);
     // Bind the index buffer as well
     ctx.pushElementArrayBuffer(picture.mesh.glIBuf);
@@ -91,36 +103,55 @@ function drawPicture(picture, opt) {
     // Execute all commands, basically drawing ranges using a given material
     for (var _i = 0, _c = picture.commands; _i < _c.length; _i++) {
         var command = _c[_i];
-        var texture = (_a = command.material.tex) !== null && _a !== void 0 ? _a : shared_1._k.gfx.defTex;
-        var shader = (_b = command.material.shader) !== null && _b !== void 0 ? _b : shared_1._k.gfx.defShader;
+        var texture = (_a = command.material.tex) !== null && _a !== void 0
+            ? _a
+            : shared_1._k.gfx.defTex;
+        var shader = (_b = command.material.shader) !== null && _b !== void 0
+            ? _b
+            : shared_1._k.gfx.defShader;
         if (command.material.blend) {
             shared_1._k.gfx.renderer.setBlend(command.material.blend);
         }
         if (shader != lastShader) {
-            lastShader === null || lastShader === void 0 ? void 0 : lastShader.unbind();
+            lastShader === null || lastShader === void 0
+                ? void 0
+                : lastShader.unbind();
             shader.bind();
             lastShader = shader;
             shader.send({
                 width: w,
                 height: h,
-                camera: opt.fixed ? math_1.IDENTITY_MATRIX : (0, camera_1.getCamTransform)(),
+                camera: opt.fixed
+                    ? math_1.IDENTITY_MATRIX
+                    : (0, camera_1.getCamTransform)(),
                 transform: transform,
             });
         }
         if (command.material.uniform) {
-            shader === null || shader === void 0 ? void 0 : shader.send(command.material.uniform);
+            shader === null || shader === void 0
+                ? void 0
+                : shader.send(command.material.uniform);
         }
         if (texture != lastTexture) {
-            lastTexture === null || lastTexture === void 0 ? void 0 : lastTexture.unbind();
+            lastTexture === null || lastTexture === void 0
+                ? void 0
+                : lastTexture.unbind();
             texture === null || texture === void 0 ? void 0 : texture.bind();
             lastTexture = texture;
         }
         // Do the actual draw
         // TODO: put the mode into the command
-        gl.drawElements(gl.TRIANGLES, command.count, gl.UNSIGNED_SHORT, command.index * 2);
+        gl.drawElements(
+            gl.TRIANGLES,
+            command.count,
+            gl.UNSIGNED_SHORT,
+            command.index * 2,
+        );
     }
     lastShader === null || lastShader === void 0 ? void 0 : lastShader.unbind();
-    lastTexture === null || lastTexture === void 0 ? void 0 : lastTexture.unbind();
+    lastTexture === null || lastTexture === void 0
+        ? void 0
+        : lastTexture.unbind();
     // Pop these to balance the stack
     ctx.popArrayBuffer();
     ctx.popElementArrayBuffer();
@@ -139,7 +170,9 @@ function drawPicture(picture, opt) {
  * @param picture - The picture to write drawing data to.
  */
 function beginPicture(picture) {
-    picture !== null && picture !== void 0 ? picture : (picture = new Picture());
+    picture !== null && picture !== void 0
+        ? picture
+        : (picture = new Picture());
     picture.vertices.length = 0;
     picture.indices.length = 0;
     picture.commands.length = 0;
@@ -150,7 +183,9 @@ function beginPicture(picture) {
  * @param picture - The picture to write drawing data to.
  */
 function appendToPicture(picture) {
-    picture !== null && picture !== void 0 ? picture : (picture = new Picture());
+    picture !== null && picture !== void 0
+        ? picture
+        : (picture = new Picture());
     shared_1._k.gfx.renderer.picture = picture;
 }
 /**
@@ -166,6 +201,11 @@ function endPicture() {
     }
     shared_1._k.gfx.renderer.picture = null;
     picture.free();
-    picture.mesh = new gfx_1.Mesh(ctx, shared_1._k.gfx.renderer.vertexFormat, picture.vertices, picture.indices);
+    picture.mesh = new gfx_1.Mesh(
+        ctx,
+        shared_1._k.gfx.renderer.vertexFormat,
+        picture.vertices,
+        picture.indices,
+    );
     return picture;
 }

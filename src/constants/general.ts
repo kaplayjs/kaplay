@@ -7,7 +7,7 @@ never should depend on the context. If it does, should be a variable of Engine
 Constants should be SNAKE_CASE
 */
 
-import GAMEPAD_MAP from "../data/gamepad.json" assert { type: "json" };
+import GAMEPAD_MAP from "../data/gamepad.json" with { type: "json" };
 
 // some default charsets for loading bitmap fonts
 export const ASCII_CHARS =

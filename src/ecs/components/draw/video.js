@@ -13,7 +13,11 @@ function video(url, opt) {
     var _playing = false;
     var _timeupdate = false;
     var _canCopyVideo = false;
-    var _texture = new gfx_1.Texture(shared_1._k.gfx.ggl, opt.width, opt.height);
+    var _texture = new gfx_1.Texture(
+        shared_1._k.gfx.ggl,
+        opt.width,
+        opt.height,
+    );
     var _shape;
     var _width = opt.width;
     var _height = opt.height;
@@ -24,16 +28,18 @@ function video(url, opt) {
         },
         set width(value) {
             _width = value;
-            if (_shape)
+            if (_shape) {
                 _shape.width = value;
+            }
         },
         get height() {
             return _height;
         },
         set height(value) {
             _height = value;
-            if (_shape)
+            if (_shape) {
                 _shape.height = value;
+            }
         },
         get currentTime() {
             return _video.currentTime;
@@ -44,10 +50,10 @@ function video(url, opt) {
         get duration() {
             return _video.duration;
         },
-        play: function () {
+        play: function() {
             _video.play();
         },
-        pause: function () {
+        pause: function() {
             _video.pause();
         },
         get mute() {
@@ -56,17 +62,17 @@ function video(url, opt) {
         set mute(value) {
             _video.muted = value;
         },
-        add: function () {
+        add: function() {
             _video.playsInline = true;
             // _video.muted = true; Don't use this, sound will not work
             _video.loop = true;
             _video.autoplay = false;
             _video.crossOrigin = "anonymous";
-            _video.addEventListener("playing", function () {
+            _video.addEventListener("playing", function() {
                 _playing = true;
                 updateCopyFlag();
             }, true);
-            _video.addEventListener("timeupdate", function () {
+            _video.addEventListener("timeupdate", function() {
                 _timeupdate = true;
                 updateCopyFlag();
             }, true);
@@ -75,7 +81,7 @@ function video(url, opt) {
                 fetch(url, {
                     method: "HEAD",
                     mode: "no-cors",
-                }).then(function (response) {
+                }).then(function(response) {
                     _video.src = response.url ? response.url : url;
                 });
             }
@@ -90,31 +96,42 @@ function video(url, opt) {
                 }
             }
         },
-        update: function () {
+        update: function() {
             if (_canCopyVideo) {
                 var gl = shared_1._k.gfx.ggl.gl;
                 _texture.bind();
-                gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, _video);
+                gl.texImage2D(
+                    gl.TEXTURE_2D,
+                    0,
+                    gl.RGBA,
+                    gl.RGBA,
+                    gl.UNSIGNED_BYTE,
+                    _video,
+                );
                 _texture.unbind();
                 // console.log(`${this.currentTime}/${this.duration}`);
             }
         },
-        draw: function () {
+        draw: function() {
             if (_canCopyVideo) {
-                (0, drawUVQuad_1.drawUVQuad)(Object.assign((0, utils_1.getRenderProps)(this), {
-                    width: this.width,
-                    height: this.height,
-                    tex: _texture,
-                }));
+                (0, drawUVQuad_1.drawUVQuad)(
+                    Object.assign((0, utils_1.getRenderProps)(this), {
+                        width: this.width,
+                        height: this.height,
+                        tex: _texture,
+                    }),
+                );
             }
             else {
-                (0, drawRect_1.drawRect)(Object.assign((0, utils_1.getRenderProps)(this), {
-                    width: this.width,
-                    height: this.height,
-                }));
+                (0, drawRect_1.drawRect)(
+                    Object.assign((0, utils_1.getRenderProps)(this), {
+                        width: this.width,
+                        height: this.height,
+                    }),
+                );
             }
         },
-        renderArea: function () {
+        renderArea: function() {
             if (!_shape) {
                 _shape = new math_1.Rect((0, math_1.vec2)(0), _width, _height);
             }

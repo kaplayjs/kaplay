@@ -1,10 +1,13 @@
 "use strict";
-var __assign = (this && this.__assign) || function () {
+var __assign = (this && this.__assign) || function() {
     __assign = Object.assign || function(t) {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
             s = arguments[i];
-            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
-                t[p] = s[p];
+            for (var p in s) {
+                if (Object.prototype.hasOwnProperty.call(s, p)) {
+                    t[p] = s[p];
+                }
+            }
         }
         return t;
     };
@@ -30,23 +33,27 @@ function usesArea() {
 }
 function area(opt) {
     var _a, _b, _c, _d;
-    if (opt === void 0) { opt = {}; }
+    if (opt === void 0) opt = {};
     var colliding = {};
     var collidingThisFrame = new Set();
     var events = [];
     var oldShape;
     return {
         id: "area",
-        collisionIgnore: (_a = opt.collisionIgnore) !== null && _a !== void 0 ? _a : [],
+        collisionIgnore: (_a = opt.collisionIgnore) !== null && _a !== void 0
+            ? _a
+            : [],
         restitution: opt.restitution,
         friction: opt.friction,
-        add: function () {
+        add: function() {
             var _this = this;
             shared_1._k.game.areaCount++;
             if (this.area.cursor) {
-                events.push(this.onHover(function () { return shared_1._k.app.setCursor(_this.area.cursor); }));
+                events.push(this.onHover(function() {
+                    return shared_1._k.app.setCursor(_this.area.cursor);
+                }));
             }
-            events.push(this.onCollideUpdate(function (obj, col) {
+            events.push(this.onCollideUpdate(function(obj, col) {
                 if (!obj.id) {
                     throw new Error("area() requires the object to have an id");
                 }
@@ -60,14 +67,14 @@ function area(opt) {
                 collidingThisFrame.add(obj.id);
             }));
         },
-        destroy: function () {
+        destroy: function() {
             shared_1._k.game.areaCount--;
             for (var _i = 0, events_1 = events; _i < events_1.length; _i++) {
                 var event_1 = events_1[_i];
                 event_1.cancel();
             }
         },
-        fixedUpdate: function () {
+        fixedUpdate: function() {
             for (var id in colliding) {
                 if (!collidingThisFrame.has(Number(id))) {
                     this.trigger("collideEnd", colliding[id].target);
@@ -76,7 +83,7 @@ function area(opt) {
             }
             collidingThisFrame.clear();
         },
-        drawInspect: function () {
+        drawInspect: function() {
             var a = this.localArea();
             (0, stack_1.pushTransform)();
             (0, stack_1.multTranslate)(this.area.offset.x, this.area.offset.y);
@@ -90,29 +97,50 @@ function area(opt) {
                 fixed: (0, utils_1.isFixed)(this),
             };
             if (a instanceof math_1.Rect) {
-                (0, drawRect_1.drawRect)(__assign(__assign({}, opts), { pos: a.pos, width: a.width * this.area.scale.x, height: a.height * this.area.scale.y }));
+                (0, drawRect_1.drawRect)(
+                    __assign(__assign({}, opts), {
+                        pos: a.pos,
+                        width: a.width * this.area.scale.x,
+                        height: a.height * this.area.scale.y,
+                    }),
+                );
             }
             else if (a instanceof math_1.Polygon) {
-                (0, drawPolygon_1.drawPolygon)(__assign(__assign({}, opts), { pts: a.pts, scale: this.area.scale }));
+                (0, drawPolygon_1.drawPolygon)(
+                    __assign(__assign({}, opts), {
+                        pts: a.pts,
+                        scale: this.area.scale,
+                    }),
+                );
             }
             else if (a instanceof math_1.Circle) {
-                (0, drawCircle_1.drawCircle)(__assign(__assign({}, opts), { pos: a.center, radius: a.radius }));
+                (0, drawCircle_1.drawCircle)(
+                    __assign(__assign({}, opts), {
+                        pos: a.center,
+                        radius: a.radius,
+                    }),
+                );
             }
             (0, stack_1.popTransform)();
         },
         area: {
             shape: (_b = opt.shape) !== null && _b !== void 0 ? _b : null,
-            scale: opt.scale ? (0, math_1.vec2)(opt.scale) : (0, math_1.vec2)(1),
-            offset: (_c = opt.offset) !== null && _c !== void 0 ? _c : (0, math_1.vec2)(0),
+            scale: opt.scale
+                ? (0, math_1.vec2)(opt.scale)
+                : (0, math_1.vec2)(1),
+            offset: (_c = opt.offset) !== null && _c !== void 0
+                ? _c
+                : (0, math_1.vec2)(0),
             cursor: (_d = opt.cursor) !== null && _d !== void 0 ? _d : null,
         },
-        isClicked: function () {
+        isClicked: function() {
             if (shared_1._k.game.fakeMouse) {
-                return shared_1._k.game.fakeMouse.isPressed && this.isHovering();
+                return shared_1._k.game.fakeMouse.isPressed
+                    && this.isHovering();
             }
             return shared_1._k.app.isMousePressed() && this.isHovering();
         },
-        isHovering: function () {
+        isHovering: function() {
             if (shared_1._k.game.fakeMouse) {
                 var mpos_1 = (0, utils_1.isFixed)(this)
                     ? shared_1._k.game.fakeMouse.pos
@@ -124,50 +152,58 @@ function area(opt) {
                 : (0, camera_1.toWorld)(shared_1._k.app.mousePos());
             return this.hasPoint(mpos);
         },
-        checkCollision: function (other) {
+        checkCollision: function(other) {
             var _a;
             if (!other.id) {
-                throw new Error("checkCollision() requires the object to have an id");
+                throw new Error(
+                    "checkCollision() requires the object to have an id",
+                );
             }
-            return (_a = colliding[other.id]) !== null && _a !== void 0 ? _a : null;
+            return (_a = colliding[other.id]) !== null && _a !== void 0
+                ? _a
+                : null;
         },
-        getCollisions: function () {
+        getCollisions: function() {
             return Object.values(colliding);
         },
         // TODO: perform check instead of use cache
-        isColliding: function (otherOrTag) {
+        isColliding: function(otherOrTag) {
             var _this = this;
             if (typeof otherOrTag === "string") {
-                return this.getCollisions().some(function (c) {
+                return this.getCollisions().some(function(c) {
                     return c.source === _this && c.target.is(otherOrTag)
                         || c.target === _this && c.source.is(otherOrTag);
                 });
             }
             else {
                 if (!otherOrTag.id) {
-                    throw new Error("isColliding() requires the object to have an id");
+                    throw new Error(
+                        "isColliding() requires the object to have an id",
+                    );
                 }
                 return Boolean(colliding[otherOrTag.id]);
             }
         },
-        isOverlapping: function (other) {
+        isOverlapping: function(other) {
             if (!other.id) {
-                throw new Error("isOverlapping() requires the object to have an id");
+                throw new Error(
+                    "isOverlapping() requires the object to have an id",
+                );
             }
             var col = colliding[other.id];
             return col && col.hasOverlap();
         },
-        onClick: function (action, btn) {
+        onClick: function(action, btn) {
             var _this = this;
-            if (btn === void 0) { btn = "left"; }
+            if (btn === void 0) btn = "left";
             if (shared_1._k.game.fakeMouse) {
-                shared_1._k.game.fakeMouse.onPress(function () {
+                shared_1._k.game.fakeMouse.onPress(function() {
                     if (_this.isHovering()) {
                         action();
                     }
                 });
             }
-            var e = this.onMousePress(btn, function () {
+            var e = this.onMousePress(btn, function() {
                 if (_this.isHovering()) {
                     action();
                 }
@@ -175,10 +211,10 @@ function area(opt) {
             events.push(e);
             return e;
         },
-        onHover: function (action) {
+        onHover: function(action) {
             var _this = this;
             var hovering = false;
-            return this.onUpdate(function () {
+            return this.onUpdate(function() {
                 if (!hovering) {
                     if (_this.isHovering()) {
                         hovering = true;
@@ -190,18 +226,18 @@ function area(opt) {
                 }
             });
         },
-        onHoverUpdate: function (onHover) {
+        onHoverUpdate: function(onHover) {
             var _this = this;
-            return this.onUpdate(function () {
+            return this.onUpdate(function() {
                 if (_this.isHovering()) {
                     onHover();
                 }
             });
         },
-        onHoverEnd: function (action) {
+        onHoverEnd: function(action) {
             var _this = this;
             var hovering = false;
-            return this.onUpdate(function () {
+            return this.onUpdate(function() {
                 if (hovering) {
                     if (!_this.isHovering()) {
                         hovering = false;
@@ -213,50 +249,71 @@ function area(opt) {
                 }
             });
         },
-        onCollide: function (tag, cb) {
+        onCollide: function(tag, cb) {
             if (typeof tag === "function" && cb === undefined) {
                 return this.on("collide", tag);
             }
             else if (typeof tag === "string") {
-                return this.onCollide(function (obj, col) {
+                return this.onCollide(function(obj, col) {
                     if (obj.is(tag)) {
                         cb === null || cb === void 0 ? void 0 : cb(obj, col);
                     }
                 });
             }
             else {
-                throw new Error("onCollide() requires either a function or a tag");
+                throw new Error(
+                    "onCollide() requires either a function or a tag",
+                );
             }
         },
-        onCollideUpdate: function (tag, cb) {
+        onCollideUpdate: function(tag, cb) {
             if (typeof tag === "function" && cb === undefined) {
                 return this.on("collideUpdate", tag);
             }
             else if (typeof tag === "string") {
-                return this.on("collideUpdate", function (obj, col) { return obj.is(tag) && (cb === null || cb === void 0 ? void 0 : cb(obj, col)); });
+                return this.on("collideUpdate", function(obj, col) {
+                    return obj.is(tag)
+                        && (cb === null || cb === void 0
+                            ? void 0
+                            : cb(obj, col));
+                });
             }
             else {
-                throw new Error("onCollideUpdate() requires either a function or a tag");
+                throw new Error(
+                    "onCollideUpdate() requires either a function or a tag",
+                );
             }
         },
-        onCollideEnd: function (tag, cb) {
+        onCollideEnd: function(tag, cb) {
             if (typeof tag === "function" && cb === undefined) {
                 return this.on("collideEnd", tag);
             }
             else if (typeof tag === "string") {
-                return this.on("collideEnd", function (obj) { return obj.is(tag) && (cb === null || cb === void 0 ? void 0 : cb(obj)); });
+                return this.on("collideEnd", function(obj) {
+                    return obj.is(tag)
+                        && (cb === null || cb === void 0 ? void 0 : cb(obj));
+                });
             }
             else {
-                throw new Error("onCollideEnd() requires either a function or a tag");
+                throw new Error(
+                    "onCollideEnd() requires either a function or a tag",
+                );
             }
         },
-        hasPoint: function (pt) {
+        hasPoint: function(pt) {
             var localArea = this.localArea();
             pt = this.transform.inverse.transform(pt);
             Vec2_1.Vec2.sub(pt, this.area.offset, pt);
-            Vec2_1.Vec2.scalec(pt, 1 / this.area.scale.x, 1 / this.area.scale.y, pt);
+            Vec2_1.Vec2.scalec(
+                pt,
+                1 / this.area.scale.x,
+                1 / this.area.scale.y,
+                pt,
+            );
             if (localArea instanceof math_1.Rect && this.anchor !== "topleft") {
-                var offset = (0, anchor_1.anchorPt)(this.anchor || general_1.DEF_ANCHOR)
+                var offset = (0, anchor_1.anchorPt)(
+                    this.anchor || general_1.DEF_ANCHOR,
+                )
                     .add(1, 1)
                     .scale(-0.5 * localArea.width, -0.5 * localArea.height);
                 Vec2_1.Vec2.sub(pt, offset, pt);
@@ -264,18 +321,18 @@ function area(opt) {
             return this.localArea().contains(pt);
         },
         // push an obj out of another if they're overlapped
-        resolveCollision: function (obj) {
+        resolveCollision: function(obj) {
             var col = this.checkCollision(obj);
             if (col && !col.resolved) {
                 this.pos = this.pos.add(col.displacement);
                 col.resolved = true;
             }
         },
-        localArea: function () {
+        localArea: function() {
             return this.area.shape ? this.area.shape : this.renderArea();
         },
         // TODO: cache
-        worldArea: function () {
+        worldArea: function() {
             var localArea = this.localArea();
             // World transform
             var transform = this.transform.clone();
@@ -289,29 +346,59 @@ function area(opt) {
             }
             // Optional anchor offset (Rect only??)
             if (localArea instanceof math_1.Rect && this.anchor !== "topleft") {
-                var offset = (0, anchor_1.anchorPt)(this.anchor || general_1.DEF_ANCHOR)
+                var offset = (0, anchor_1.anchorPt)(
+                    this.anchor || general_1.DEF_ANCHOR,
+                )
                     .add(1, 1)
                     .scale(-0.5 * localArea.width, -0.5 * localArea.height);
                 transform.translateSelfV(offset);
             }
             return oldShape = localArea.transform(transform, oldShape);
         },
-        screenArea: function () {
+        screenArea: function() {
             var area = this.worldArea();
             if ((0, utils_1.isFixed)(this)) {
                 return area;
             }
             else {
-                return oldShape = area.transform(shared_1._k.game.cam.transform, oldShape);
+                return oldShape = area.transform(
+                    shared_1._k.game.cam.transform,
+                    oldShape,
+                );
             }
         },
-        inspect: function () {
+        inspect: function() {
             var _a, _b, _c, _d, _e, _f, _g;
-            if (((_a = this.area.scale) === null || _a === void 0 ? void 0 : _a.x) == ((_b = this.area.scale) === null || _b === void 0 ? void 0 : _b.y)) {
-                return "area: ".concat((_d = (_c = this.area.scale) === null || _c === void 0 ? void 0 : _c.x) === null || _d === void 0 ? void 0 : _d.toFixed(1), "x");
+            if (
+                ((_a = this.area.scale) === null || _a === void 0
+                    ? void 0
+                    : _a.x) == ((_b = this.area.scale) === null || _b === void 0
+                        ? void 0
+                        : _b.y)
+            ) {
+                return "area: ".concat(
+                    (_d = (_c = this.area.scale) === null || _c === void 0
+                                ? void 0
+                                : _c.x) === null || _d === void 0
+                        ? void 0
+                        : _d.toFixed(1),
+                    "x",
+                );
             }
             else {
-                return "area: (".concat((_f = (_e = this.area.scale) === null || _e === void 0 ? void 0 : _e.x) === null || _f === void 0 ? void 0 : _f.toFixed(1), "x, ").concat((_g = this.area.scale.y) === null || _g === void 0 ? void 0 : _g.toFixed(1), "y)");
+                return "area: (".concat(
+                    (_f = (_e = this.area.scale) === null || _e === void 0
+                                ? void 0
+                                : _e.x) === null || _f === void 0
+                        ? void 0
+                        : _f.toFixed(1),
+                    "x, ",
+                ).concat(
+                    (_g = this.area.scale.y) === null || _g === void 0
+                        ? void 0
+                        : _g.toFixed(1),
+                    "y)",
+                );
             }
         },
     };

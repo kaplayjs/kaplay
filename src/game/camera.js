@@ -35,7 +35,9 @@ function setCamPos() {
     shared_1._k.game.cam.pos = math_1.vec2.apply(void 0, pos);
 }
 function getCamPos() {
-    return shared_1._k.game.cam.pos ? shared_1._k.game.cam.pos.clone() : (0, stack_1.center)();
+    return shared_1._k.game.cam.pos
+        ? shared_1._k.game.cam.pos.clone()
+        : (0, stack_1.center)();
 }
 function setCamScale() {
     var scale = [];
@@ -57,8 +59,8 @@ function getCamTransform() {
     return shared_1._k.game.cam.transform.clone();
 }
 function flash(flashColor, fadeOutTime) {
-    if (flashColor === void 0) { flashColor = (0, color_2.rgb)(255, 255, 255); }
-    if (fadeOutTime === void 0) { fadeOutTime = 1; }
+    if (flashColor === void 0) flashColor = (0, color_2.rgb)(255, 255, 255);
+    if (fadeOutTime === void 0) fadeOutTime = 1;
     var flash = shared_1._k.game.root.add([
         (0, rect_1.rect)((0, stack_1.width)(), (0, stack_1.height)()),
         (0, color_1.color)(flashColor),
@@ -66,18 +68,23 @@ function flash(flashColor, fadeOutTime) {
         (0, fixed_1.fixed)(),
     ]);
     var fade = flash.fadeOut(fadeOutTime);
-    fade.onEnd(function () { return (0, utils_1.destroy)(flash); });
+    fade.onEnd(function() {
+        return (0, utils_1.destroy)(flash);
+    });
     return fade;
 }
 function shake(intensity) {
-    if (intensity === void 0) { intensity = 12; }
+    if (intensity === void 0) intensity = 12;
     shared_1._k.game.cam.shake += intensity;
 }
 function toScreen(p) {
     return shared_1._k.game.cam.transform.transformPointV(p, new Vec2_1.Vec2());
 }
 function toWorld(p) {
-    return shared_1._k.game.cam.transform.inverse.transformPointV(p, new Vec2_1.Vec2());
+    return shared_1._k.game.cam.transform.inverse.transformPointV(
+        p,
+        new Vec2_1.Vec2(),
+    );
 }
 function camPos() {
     var pos = [];
@@ -109,8 +116,8 @@ function camRot(angle) {
     return getCamRot();
 }
 function camFlash(flashColor, fadeOutTime) {
-    if (flashColor === void 0) { flashColor = (0, color_2.rgb)(255, 255, 255); }
-    if (fadeOutTime === void 0) { fadeOutTime = 1; }
+    if (flashColor === void 0) flashColor = (0, color_2.rgb)(255, 255, 255);
+    if (fadeOutTime === void 0) fadeOutTime = 1;
     (0, log_1.deprecateMsg)("camFlash", "flash");
     return flash(flashColor, fadeOutTime);
 }

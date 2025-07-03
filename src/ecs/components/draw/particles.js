@@ -11,7 +11,7 @@ var shared_1 = require("../../../shared");
 /**
  * A particle. Used on the {@link particles `particles()`} component.
  */
-var Particle = /** @class */ (function () {
+var Particle = /** @class */ function() {
     function Particle() {
         this.pos = (0, math_1.vec2)(0);
         this.vel = (0, math_1.vec2)(0);
@@ -24,14 +24,14 @@ var Particle = /** @class */ (function () {
         this.gc = true;
     }
     Object.defineProperty(Particle.prototype, "progress", {
-        get: function () {
+        get: function() {
             return this.lt ? this.t / this.lt : this.t;
         },
         enumerable: false,
-        configurable: true
+        configurable: true,
     });
     return Particle;
-}());
+}();
 function particles(popt, eopt) {
     var emitterLifetime = eopt.lifetime;
     var particles = new Array(popt.max);
@@ -44,7 +44,8 @@ function particles(popt, eopt) {
     var speed = popt.speed || [0, 0];
     var angleRange = popt.angle || [0, 0];
     var angularVelocityRange = popt.angularVelocity || [0, 0];
-    var accelerationRange = popt.acceleration || [(0, math_1.vec2)(0), (0, math_1.vec2)(0)];
+    var accelerationRange = popt.acceleration
+        || [(0, math_1.vec2)(0), (0, math_1.vec2)(0)];
     var dampingRange = popt.damping || [0, 0];
     var indices = new Array(popt.max * 6);
     var attributes = {
@@ -70,7 +71,7 @@ function particles(popt, eopt) {
     }
     var onEndEvents = new events_1.KEvent();
     function nextFree(index) {
-        if (index === void 0) { index = 0; }
+        if (index === void 0) index = 0;
         while (index < popt.max) {
             if (particles[index].gc) {
                 return index;
@@ -85,23 +86,48 @@ function particles(popt, eopt) {
             position: eopt.position || (0, math_1.vec2)(),
             direction: eopt.direction || 0,
         },
-        emit: function (n) {
+        emit: function(n) {
             n = Math.min(n, popt.max - count);
             var index = 0;
             for (var i = 0; i < n; i++) {
                 index = nextFree(index);
-                if (index == null)
+                if (index == null) {
                     return;
-                var velocityAngle = (0, math_1.rand)(this.emitter.direction - spread, this.emitter.direction + spread);
-                var vel = Vec2_1.Vec2.fromAngle(velocityAngle).scale((0, math_1.rand)(speed[0], speed[1]));
+                }
+                var velocityAngle = (0, math_1.rand)(
+                    this.emitter.direction - spread,
+                    this.emitter.direction + spread,
+                );
+                var vel = Vec2_1.Vec2.fromAngle(velocityAngle).scale(
+                    (0, math_1.rand)(speed[0], speed[1]),
+                );
                 var angle = (0, math_1.rand)(angleRange[0], angleRange[1]);
-                var angularVelocity = (0, math_1.rand)(angularVelocityRange[0], angularVelocityRange[1]);
-                var acceleration = (0, math_1.vec2)((0, math_1.rand)(accelerationRange[0].x, accelerationRange[1].x), (0, math_1.rand)(accelerationRange[0].y, accelerationRange[1].y));
-                var damping = (0, math_1.rand)(dampingRange[0], dampingRange[1]);
-                var lt = lifetime ? (0, math_1.rand)(lifetime[0], lifetime[1]) : null;
-                var pos = this.emitter.position.add(eopt.shape
-                    ? eopt.shape.random()
-                    : (0, math_1.vec2)());
+                var angularVelocity = (0, math_1.rand)(
+                    angularVelocityRange[0],
+                    angularVelocityRange[1],
+                );
+                var acceleration = (0, math_1.vec2)(
+                    (0, math_1.rand)(
+                        accelerationRange[0].x,
+                        accelerationRange[1].x,
+                    ),
+                    (0, math_1.rand)(
+                        accelerationRange[0].y,
+                        accelerationRange[1].y,
+                    ),
+                );
+                var damping = (0, math_1.rand)(
+                    dampingRange[0],
+                    dampingRange[1],
+                );
+                var lt = lifetime
+                    ? (0, math_1.rand)(lifetime[0], lifetime[1])
+                    : null;
+                var pos = this.emitter.position.add(
+                    eopt.shape
+                        ? eopt.shape.random()
+                        : (0, math_1.vec2)(),
+                );
                 var p = particles[index];
                 p.t = 0;
                 p.lt = lt;
@@ -115,7 +141,7 @@ function particles(popt, eopt) {
             }
             count += n;
         },
-        update: function () {
+        update: function() {
             if (emitterLifetime !== undefined && emitterLifetime <= 0) {
                 return;
             }
@@ -145,15 +171,19 @@ function particles(popt, eopt) {
             }
             // Create new particles according to accumulated time
             time += DT;
-            while (count < popt.max && eopt.rate
-                && time > 1 / eopt.rate) {
+            while (
+                count < popt.max && eopt.rate
+                && time > 1 / eopt.rate
+            ) {
                 this.emit(1);
                 time -= 1 / eopt.rate;
             }
         },
-        draw: function () {
-            if ((emitterLifetime !== undefined && emitterLifetime <= 0)
-                || count == 0) {
+        draw: function() {
+            if (
+                (emitterLifetime !== undefined && emitterLifetime <= 0)
+                || count == 0
+            ) {
                 return;
             }
             // Draw active particles
@@ -169,11 +199,31 @@ function particles(popt, eopt) {
                 var progress = p.progress;
                 var colorIndex = Math.floor(progress * colors.length);
                 var color = colorIndex < colors.length - 1
-                    ? (0, lerp_1.lerp)(colors[colorIndex], colors[colorIndex + 1], (0, math_1.map)(progress, colorIndex / colors.length, (colorIndex + 1) / colors.length, 0, 1))
+                    ? (0, lerp_1.lerp)(
+                        colors[colorIndex],
+                        colors[colorIndex + 1],
+                        (0, math_1.map)(
+                            progress,
+                            colorIndex / colors.length,
+                            (colorIndex + 1) / colors.length,
+                            0,
+                            1,
+                        ),
+                    )
                     : colors[colorIndex];
                 var opacityIndex = Math.floor(progress * opacities.length);
                 var opacity = opacityIndex < opacities.length - 1
-                    ? (0, lerp_1.lerp)(opacities[opacityIndex], opacities[opacityIndex + 1], (0, math_1.map)(progress, opacityIndex / opacities.length, (opacityIndex + 1) / opacities.length, 0, 1))
+                    ? (0, lerp_1.lerp)(
+                        opacities[opacityIndex],
+                        opacities[opacityIndex + 1],
+                        (0, math_1.map)(
+                            progress,
+                            opacityIndex / opacities.length,
+                            (opacityIndex + 1) / opacities.length,
+                            0,
+                            1,
+                        ),
+                    )
                     : opacities[opacityIndex];
                 var quadIndex = Math.floor(progress * quads.length);
                 var quad = quads[quadIndex];
@@ -234,12 +284,19 @@ function particles(popt, eopt) {
                 attributes.color[j * 3 + 2] = color.b;
                 attributes.opacity[j] = opacity;
             }
-            (0, drawRaw_1.drawRaw)(attributes, indices, this.fixed, popt.texture, this.shader, this.uniform);
+            (0, drawRaw_1.drawRaw)(
+                attributes,
+                indices,
+                this.fixed,
+                popt.texture,
+                this.shader,
+                this.uniform,
+            );
         },
-        onEnd: function (action) {
+        onEnd: function(action) {
             return onEndEvents.add(action);
         },
-        inspect: function () {
+        inspect: function() {
             return "count: ".concat(count, "/").concat(popt.max);
         },
     };

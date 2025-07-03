@@ -19,7 +19,7 @@ var Vec2_1 = require("../math/Vec2");
  *
  * @returns A Game
  */
-var createGame = function () {
+var createGame = function() {
     var game = {
         gameObjLastId: 0,
         root: (0, make_1.makeInternal)([], 0),

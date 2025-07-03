@@ -1,5 +1,5 @@
-import { _k } from "../../shared";
-import { flush } from "../stack";
+import { _k } from "../../shared.js";
+import { flush } from "../stack.js";
 
 export function drawUnscaled(content: () => void) {
     flush();

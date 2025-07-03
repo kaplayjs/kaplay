@@ -10,7 +10,7 @@ var lerpNumber_1 = require("./lerpNumber");
  *
  * @group Math
  */
-var Color = /** @class */ (function () {
+var Color = /** @class */ function() {
     function Color(r, g, b) {
         /** Red (0-255. */
         this.r = 255;
@@ -22,7 +22,7 @@ var Color = /** @class */ (function () {
         this.g = (0, clamp_1.clamp)(g, 0, 255);
         this.b = (0, clamp_1.clamp)(b, 0, 255);
     }
-    Color.fromArray = function (arr) {
+    Color.fromArray = function(arr) {
         return new Color(arr[0], arr[1], arr[2]);
     };
     /**
@@ -37,36 +37,50 @@ var Color = /** @class */ (function () {
      *
      * @since v3000.0
      */
-    Color.fromHex = function (hex) {
+    Color.fromHex = function(hex) {
         if (typeof hex === "number") {
-            return new Color((hex >> 16) & 0xff, (hex >> 8) & 0xff, (hex >> 0) & 0xff);
+            return new Color(
+                (hex >> 16) & 0xff,
+                (hex >> 8) & 0xff,
+                (hex >> 0) & 0xff,
+            );
         }
         else if (typeof hex === "string") {
             var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
-            if (!result)
+            if (!result) {
                 throw new Error("Invalid hex color format");
-            return new Color(parseInt(result[1], 16), parseInt(result[2], 16), parseInt(result[3], 16));
+            }
+            return new Color(
+                parseInt(result[1], 16),
+                parseInt(result[2], 16),
+                parseInt(result[3], 16),
+            );
         }
         else {
             throw new Error("Invalid hex color format");
         }
     };
     // TODO: use range of [0, 360] [0, 100] [0, 100]?
-    Color.fromHSL = function (h, s, l) {
+    Color.fromHSL = function(h, s, l) {
         if (s == 0) {
             return new Color(255 * l, 255 * l, 255 * l);
         }
-        var hue2rgb = function (p, q, t) {
-            if (t < 0)
+        var hue2rgb = function(p, q, t) {
+            if (t < 0) {
                 t += 1;
-            if (t > 1)
+            }
+            if (t > 1) {
                 t -= 1;
-            if (t < 1 / 6)
+            }
+            if (t < 1 / 6) {
                 return p + (q - p) * 6 * t;
-            if (t < 1 / 2)
+            }
+            if (t < 1 / 2) {
                 return q;
-            if (t < 2 / 3)
+            }
+            if (t < 2 / 3) {
                 return p + (q - p) * (2 / 3 - t) * 6;
+            }
             return p;
         };
         var q = l < 0.5 ? l * (1 + s) : l + s - l * s;
@@ -74,7 +88,11 @@ var Color = /** @class */ (function () {
         var r = hue2rgb(p, q, h + 1 / 3);
         var g = hue2rgb(p, q, h);
         var b = hue2rgb(p, q, h - 1 / 3);
-        return new Color(Math.round(r * 255), Math.round(g * 255), Math.round(b * 255));
+        return new Color(
+            Math.round(r * 255),
+            Math.round(g * 255),
+            Math.round(b * 255),
+        );
     };
     /**
      * Create a color from a CSS color name
@@ -103,44 +121,53 @@ var Color = /** @class */ (function () {
      * @returns The color.
      * @experimental This feature is in experimental phase, it will be fully released in v3001.1.0
      */
-    Color.fromCSS = function (cssColor) {
+    Color.fromCSS = function(cssColor) {
         var color = colorMap_1.CSS_COLOR_MAP[cssColor];
         // for js users
-        if (!color)
+        if (!color) {
             throw new Error("Can't use an invalid CSS color");
+        }
         return Color.fromHex(color);
     };
-    Color.prototype.clone = function () {
+    Color.prototype.clone = function() {
         return new Color(this.r, this.g, this.b);
     };
     /** Lighten the color (adds RGB by n). */
-    Color.prototype.lighten = function (a) {
+    Color.prototype.lighten = function(a) {
         return new Color(this.r + a, this.g + a, this.b + a);
     };
     /** Darkens the color (subtracts RGB by n). */
-    Color.prototype.darken = function (a) {
+    Color.prototype.darken = function(a) {
         return this.lighten(-a);
     };
-    Color.prototype.invert = function () {
+    Color.prototype.invert = function() {
         return new Color(255 - this.r, 255 - this.g, 255 - this.b);
     };
-    Color.prototype.mult = function (other) {
-        return new Color(this.r * other.r / 255, this.g * other.g / 255, this.b * other.b / 255);
+    Color.prototype.mult = function(other) {
+        return new Color(
+            this.r * other.r / 255,
+            this.g * other.g / 255,
+            this.b * other.b / 255,
+        );
     };
     /**
      * Linear interpolate to a destination color.
      *
      * @since v3000.0
      */
-    Color.prototype.lerp = function (dest, t) {
-        return new Color((0, lerpNumber_1.lerpNumber)(this.r, dest.r, t), (0, lerpNumber_1.lerpNumber)(this.g, dest.g, t), (0, lerpNumber_1.lerpNumber)(this.b, dest.b, t));
+    Color.prototype.lerp = function(dest, t) {
+        return new Color(
+            (0, lerpNumber_1.lerpNumber)(this.r, dest.r, t),
+            (0, lerpNumber_1.lerpNumber)(this.g, dest.g, t),
+            (0, lerpNumber_1.lerpNumber)(this.b, dest.b, t),
+        );
     };
     /**
      * Convert color into HSL format.
      *
      * @since v3001.0
      */
-    Color.prototype.toHSL = function () {
+    Color.prototype.toHSL = function() {
         var r = this.r / 255;
         var g = this.g / 255;
         var b = this.b / 255;
@@ -169,20 +196,23 @@ var Color = /** @class */ (function () {
         }
         return [h, s, l];
     };
-    Color.prototype.eq = function (other) {
+    Color.prototype.eq = function(other) {
         return this.r === other.r
             && this.g === other.g
             && this.b === other.b;
     };
-    Color.prototype.toString = function () {
-        return "rgb(".concat(this.r, ", ").concat(this.g, ", ").concat(this.b, ")");
+    Color.prototype.toString = function() {
+        return "rgb(".concat(this.r, ", ").concat(this.g, ", ").concat(
+            this.b,
+            ")",
+        );
     };
     /**
      * Return the hex string of color.
      *
      * @since v3000.0
      */
-    Color.prototype.toHex = function () {
+    Color.prototype.toHex = function() {
         return "#"
             + ((1 << 24) + (this.r << 16) + (this.g << 8) + this.b).toString(16)
                 .slice(1);
@@ -192,7 +222,7 @@ var Color = /** @class */ (function () {
      *
      * @since v3001.0
      */
-    Color.prototype.toArray = function () {
+    Color.prototype.toArray = function() {
         return [this.r, this.g, this.b];
     };
     Color.RED = new Color(255, 0, 0);
@@ -204,7 +234,7 @@ var Color = /** @class */ (function () {
     Color.WHITE = new Color(255, 255, 255);
     Color.BLACK = new Color(0, 0, 0);
     return Color;
-}());
+}();
 exports.Color = Color;
 function rgb() {
     var args = [];
@@ -241,7 +271,7 @@ function rgb() {
     }
     throw new Error("Invalid color arguments");
 }
-var hsl2rgb = function (h, s, l) {
+var hsl2rgb = function(h, s, l) {
     return Color.fromHSL(h, s, l);
 };
 exports.hsl2rgb = hsl2rgb;

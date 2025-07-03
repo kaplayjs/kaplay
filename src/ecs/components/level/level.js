@@ -1,9 +1,13 @@
 "use strict";
-var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
-    if (pack || arguments.length === 2) for (var i = 0, l = from.length, ar; i < l; i++) {
-        if (ar || !(i in from)) {
-            if (!ar) ar = Array.prototype.slice.call(from, 0, i);
-            ar[i] = from[i];
+var __spreadArray = (this && this.__spreadArray) || function(to, from, pack) {
+    if (pack || arguments.length === 2) {
+        for (var i = 0, l = from.length, ar; i < l; i++) {
+            if (ar || !(i in from)) {
+                if (!ar) {
+                    ar = Array.prototype.slice.call(from, 0, i);
+                }
+                ar[i] = from[i];
+            }
         }
     }
     return to.concat(ar || Array.prototype.slice.call(from));
@@ -24,18 +28,23 @@ function level(map, opt) {
     var costMap = null;
     var edgeMap = null;
     var connectivityMap = null;
-    var tile2Hash = function (tilePos) { return tilePos.x + tilePos.y * numColumns; };
-    var hash2Tile = function (hash) {
-        return (0, math_1.vec2)(Math.floor(hash % numColumns), Math.floor(hash / numColumns));
+    var tile2Hash = function(tilePos) {
+        return tilePos.x + tilePos.y * numColumns;
     };
-    var createSpatialMap = function (level) {
+    var hash2Tile = function(hash) {
+        return (0, math_1.vec2)(
+            Math.floor(hash % numColumns),
+            Math.floor(hash / numColumns),
+        );
+    };
+    var createSpatialMap = function(level) {
         spatialMap = [];
         for (var _i = 0, _a = level.children; _i < _a.length; _i++) {
             var child = _a[_i];
             insertIntoSpatialMap(child);
         }
     };
-    var insertIntoSpatialMap = function (obj) {
+    var insertIntoSpatialMap = function(obj) {
         var i = tile2Hash(obj.tilePos);
         if (spatialMap[i]) {
             spatialMap[i].push(obj);
@@ -44,7 +53,7 @@ function level(map, opt) {
             spatialMap[i] = [obj];
         }
     };
-    var removeFromSpatialMap = function (obj) {
+    var removeFromSpatialMap = function(obj) {
         var i = tile2Hash(obj.tilePos);
         if (spatialMap[i]) {
             var index = spatialMap[i].indexOf(obj);
@@ -53,7 +62,7 @@ function level(map, opt) {
             }
         }
     };
-    var updateSpatialMap = function (level) {
+    var updateSpatialMap = function(level) {
         var spatialMapChanged = false;
         for (var _i = 0, _a = level.children; _i < _a.length; _i++) {
             var child = _a[_i];
@@ -73,7 +82,7 @@ function level(map, opt) {
     // The obstacle map tells which tiles are accessible
     // Cost: accessible with cost
     // Infinite: inaccessible
-    var createCostMap = function (level) {
+    var createCostMap = function(level) {
         var spatialMap = level.getSpatialMap();
         var size = level.numRows() * level.numColumns();
         if (!costMap) {
@@ -87,7 +96,11 @@ function level(map, opt) {
             var objects = spatialMap[i];
             if (objects) {
                 var cost = 0;
-                for (var _i = 0, objects_1 = objects; _i < objects_1.length; _i++) {
+                for (
+                    var _i = 0, objects_1 = objects;
+                    _i < objects_1.length;
+                    _i++
+                ) {
                     var obj = objects_1[_i];
                     if (obj.isObstacle) {
                         cost = Infinity;
@@ -102,7 +115,7 @@ function level(map, opt) {
         }
     };
     // The edge map tells which edges between nodes are walkable
-    var createEdgeMap = function (level) {
+    var createEdgeMap = function(level) {
         var spatialMap = level.getSpatialMap();
         var size = level.numRows() * level.numColumns();
         if (!edgeMap) {
@@ -126,15 +139,15 @@ function level(map, opt) {
     };
     // The connectivity map is used to see whether two locations are connected
     // -1: inaccesible n: connectivity group
-    var createConnectivityMap = function (level) {
+    var createConnectivityMap = function(level) {
         var size = level.numRows() * level.numColumns();
-        var traverse = function (i, index) {
+        var traverse = function(i, index) {
             var frontier = [];
             frontier.push(i);
             while (frontier.length > 0) {
                 // TODO: Remove non-null assertion
                 var i_1 = frontier.pop();
-                getNeighbours(i_1).forEach(function (i) {
+                getNeighbours(i_1).forEach(function(i) {
                     if (connectivityMap[i] < 0) {
                         connectivityMap[i] = index;
                         frontier.push(i);
@@ -159,17 +172,17 @@ function level(map, opt) {
             index++;
         }
     };
-    var getCost = function (node, neighbour) {
+    var getCost = function(node, neighbour) {
         // Cost of destination tile
         return costMap[neighbour];
     };
-    var getHeuristic = function (node, goal) {
+    var getHeuristic = function(node, goal) {
         // Euclidian distance to target
         var p1 = hash2Tile(node);
         var p2 = hash2Tile(goal);
         return p1.dist(p2);
     };
-    var getNeighbours = function (node, diagonals) {
+    var getNeighbours = function(node, diagonals) {
         var n = [];
         var x = Math.floor(node % numColumns);
         var left = x > 0
@@ -186,21 +199,25 @@ function level(map, opt) {
             && costMap[node + numColumns] !== Infinity;
         if (diagonals) {
             if (left) {
-                if (top)
+                if (top) {
                     n.push(node - numColumns - 1);
+                }
                 n.push(node - 1);
-                if (bottom)
+                if (bottom) {
                     n.push(node + numColumns - 1);
+                }
             }
             if (top) {
                 n.push(node - numColumns);
             }
             if (right) {
-                if (top)
+                if (top) {
                     n.push(node - numColumns + 1);
+                }
                 n.push(node + 1);
-                if (bottom)
+                if (bottom) {
                     n.push(node + numColumns + 1);
+                }
             }
             if (bottom) {
                 n.push(node + numColumns);
@@ -224,33 +241,35 @@ function level(map, opt) {
     };
     return {
         id: "level",
-        add: function () {
+        add: function() {
             var _this = this;
-            map.forEach(function (row, i) {
+            map.forEach(function(row, i) {
                 var keys = row.split("");
                 numColumns = Math.max(keys.length, numColumns);
-                keys.forEach(function (key, j) {
+                keys.forEach(function(key, j) {
                     _this.spawn(key, (0, math_1.vec2)(j, i));
                 });
             });
         },
-        tileWidth: function () {
+        tileWidth: function() {
             return opt.tileWidth;
         },
-        tileHeight: function () {
+        tileHeight: function() {
             return opt.tileHeight;
         },
-        spawn: function (key) {
+        spawn: function(key) {
             var args = [];
             for (var _i = 1; _i < arguments.length; _i++) {
                 args[_i - 1] = arguments[_i];
             }
             var p = math_1.vec2.apply(void 0, args);
-            var comps = (function () {
+            var comps = (function() {
                 if (typeof key === "string") {
                     if (opt.tiles[key]) {
                         if (typeof opt.tiles[key] !== "function") {
-                            throw new Error("Level symbol def must be a function returning a component list");
+                            throw new Error(
+                                "Level symbol def must be a function returning a component list",
+                            );
                         }
                         return opt.tiles[key](p);
                     }
@@ -273,15 +292,19 @@ function level(map, opt) {
             var hasTile = false;
             for (var _a = 0, comps_1 = comps; _a < comps_1.length; _a++) {
                 var comp = comps_1[_a];
-                if (comp.id === "tile")
+                if (comp.id === "tile") {
                     hasTile = true;
-                if (comp.id === "pos")
+                }
+                if (comp.id === "pos") {
                     hasPos = true;
+                }
             }
-            if (!hasPos)
+            if (!hasPos) {
                 comps.push((0, pos_1.pos)(this.tile2Pos(p)));
-            if (!hasTile)
+            }
+            if (!hasTile) {
                 comps.push((0, tile_1.tile)());
+            }
             var obj = this.add(comps);
             if (hasPos) {
                 obj.tilePosOffset = obj.pos.clone();
@@ -296,34 +319,40 @@ function level(map, opt) {
             }
             return obj;
         },
-        numColumns: function () {
+        numColumns: function() {
             return numColumns;
         },
-        numRows: function () {
+        numRows: function() {
             return numRows;
         },
-        levelWidth: function () {
+        levelWidth: function() {
             return numColumns * this.tileWidth();
         },
-        levelHeight: function () {
+        levelHeight: function() {
             return numRows * this.tileHeight();
         },
-        tile2Pos: function () {
+        tile2Pos: function() {
             var args = [];
             for (var _i = 0; _i < arguments.length; _i++) {
                 args[_i] = arguments[_i];
             }
-            return math_1.vec2.apply(void 0, args).scale(this.tileWidth(), this.tileHeight());
+            return math_1.vec2.apply(void 0, args).scale(
+                this.tileWidth(),
+                this.tileHeight(),
+            );
         },
-        pos2Tile: function () {
+        pos2Tile: function() {
             var args = [];
             for (var _i = 0; _i < arguments.length; _i++) {
                 args[_i] = arguments[_i];
             }
             var p = math_1.vec2.apply(void 0, args);
-            return (0, math_1.vec2)(Math.floor(p.x / this.tileWidth()), Math.floor(p.y / this.tileHeight()));
+            return (0, math_1.vec2)(
+                Math.floor(p.x / this.tileWidth()),
+                Math.floor(p.y / this.tileHeight()),
+            );
         },
-        getSpatialMap: function () {
+        getSpatialMap: function() {
             if (!spatialMap) {
                 createSpatialMap(this);
             }
@@ -331,76 +360,96 @@ function level(map, opt) {
         },
         removeFromSpatialMap: removeFromSpatialMap,
         insertIntoSpatialMap: insertIntoSpatialMap,
-        onSpatialMapChanged: function (cb) {
+        onSpatialMapChanged: function(cb) {
             return this.on("spatialMapChanged", cb);
         },
-        onNavigationMapInvalid: function (cb) {
+        onNavigationMapInvalid: function(cb) {
             return this.on("navigationMapInvalid", cb);
         },
-        getAt: function (tilePos) {
+        getAt: function(tilePos) {
             if (!spatialMap) {
                 createSpatialMap(this);
             }
             var hash = tile2Hash(tilePos);
             return spatialMap[hash] || [];
         },
-        raycast: function (origin, direction) {
+        raycast: function(origin, direction) {
             var _this = this;
             var worldOrigin = this.toWorld(origin);
-            var worldDirection = this.toWorld(origin.add(direction)).sub(worldOrigin);
+            var worldDirection = this.toWorld(origin.add(direction)).sub(
+                worldOrigin,
+            );
             var invTileWidth = 1 / this.tileWidth();
             var levelOrigin = origin.scale(invTileWidth);
-            var hit = (0, math_1.raycastGrid)(levelOrigin, direction, function (tilePos) {
-                var tiles = _this.getAt(tilePos);
-                if (tiles.some(function (t) { return t.isObstacle; })) {
-                    return true;
-                }
-                var minHit = null;
-                for (var _i = 0, tiles_1 = tiles; _i < tiles_1.length; _i++) {
-                    var tile_2 = tiles_1[_i];
-                    if (tile_2.has("area")) {
-                        var shape = tile_2.worldArea();
-                        var hit_1 = shape.raycast(worldOrigin, worldDirection);
-                        if (hit_1) {
-                            if (minHit) {
-                                if (hit_1.fraction < minHit.fraction) {
+            var hit = (0, math_1.raycastGrid)(
+                levelOrigin,
+                direction,
+                function(tilePos) {
+                    var tiles = _this.getAt(tilePos);
+                    if (
+                        tiles.some(function(t) {
+                            return t.isObstacle;
+                        })
+                    ) {
+                        return true;
+                    }
+                    var minHit = null;
+                    for (
+                        var _i = 0, tiles_1 = tiles;
+                        _i < tiles_1.length;
+                        _i++
+                    ) {
+                        var tile_2 = tiles_1[_i];
+                        if (tile_2.has("area")) {
+                            var shape = tile_2.worldArea();
+                            var hit_1 = shape.raycast(
+                                worldOrigin,
+                                worldDirection,
+                            );
+                            if (hit_1) {
+                                if (minHit) {
+                                    if (hit_1.fraction < minHit.fraction) {
+                                        minHit = hit_1;
+                                        minHit.object = tile_2;
+                                    }
+                                }
+                                else {
                                     minHit = hit_1;
                                     minHit.object = tile_2;
                                 }
                             }
-                            else {
-                                minHit = hit_1;
-                                minHit.object = tile_2;
-                            }
                         }
                     }
-                }
-                if (minHit) {
-                    minHit.point = _this.fromWorld(minHit.point).scale(invTileWidth);
-                }
-                return minHit || false;
-            }, 64);
+                    if (minHit) {
+                        minHit.point = _this.fromWorld(minHit.point).scale(
+                            invTileWidth,
+                        );
+                    }
+                    return minHit || false;
+                },
+                64,
+            );
             if (hit) {
                 hit.point = hit.point.scale(this.tileWidth());
             }
             return hit;
         },
-        update: function () {
+        update: function() {
             if (spatialMap) {
                 updateSpatialMap(this);
             }
         },
-        invalidateNavigationMap: function () {
+        invalidateNavigationMap: function() {
             costMap = null;
             edgeMap = null;
             connectivityMap = null;
         },
-        onNavigationMapChanged: function (cb) {
+        onNavigationMapChanged: function(cb) {
             return this.on("navigationMapChanged", cb);
         },
-        getTilePath: function (from, to, opts) {
+        getTilePath: function(from, to, opts) {
             var _a;
-            if (opts === void 0) { opts = {}; }
+            if (opts === void 0) opts = {};
             if (!costMap) {
                 createCostMap(this);
             }
@@ -411,10 +460,12 @@ function level(map, opt) {
                 createConnectivityMap(this);
             }
             // Tiles are outside the grid
-            if (from.x < 0
+            if (
+                from.x < 0
                 || from.x >= numColumns
                 || from.y < 0
-                || from.y >= numRows) {
+                || from.y >= numRows
+            ) {
                 return null;
             }
             if (to.x < 0 || to.x >= numColumns || to.y < 0 || to.y >= numRows) {
@@ -437,11 +488,13 @@ function level(map, opt) {
             // Tiles are not within the same section
             // If we test the start tile when invalid, we may get stuck
             // TODO: Remove non-null assertion
-            if (connectivityMap[start] != -1
-                && connectivityMap[start] !== connectivityMap[goal]) {
+            if (
+                connectivityMap[start] != -1
+                && connectivityMap[start] !== connectivityMap[goal]
+            ) {
                 return null;
             }
-            var frontier = new binaryheap_1.BinaryHeap(function (a, b) {
+            var frontier = new binaryheap_1.BinaryHeap(function(a, b) {
                 return a.cost < b.cost;
             });
             frontier.insert({ cost: 0, node: start });
@@ -451,19 +504,27 @@ function level(map, opt) {
             costSoFar.set(start, 0);
             while (frontier.length !== 0) {
                 // TODO: Remove non-null assertion
-                var current = (_a = frontier.remove()) === null || _a === void 0 ? void 0 : _a.node;
+                var current = (_a = frontier.remove()) === null || _a === void 0
+                    ? void 0
+                    : _a.node;
                 if (current === goal) {
                     break;
                 }
                 var neighbours = getNeighbours(current, opts.allowDiagonals);
-                for (var _i = 0, neighbours_1 = neighbours; _i < neighbours_1.length; _i++) {
+                for (
+                    var _i = 0, neighbours_1 = neighbours;
+                    _i < neighbours_1.length;
+                    _i++
+                ) {
                     var next = neighbours_1[_i];
                     var newCost = (costSoFar.get(current) || 0)
                         + getCost(current, next)
                         + getHeuristic(next, goal);
-                    if (!costSoFar.has(next)
+                    if (
+                        !costSoFar.has(next)
                         // TODO: Remove non-null assertion
-                        || newCost < costSoFar.get(next)) {
+                        || newCost < costSoFar.get(next)
+                    ) {
                         costSoFar.set(next, newCost);
                         frontier.insert({ cost: newCost, node: next });
                         cameFrom.set(next, current);
@@ -485,21 +546,36 @@ function level(map, opt) {
             }
             return path.reverse();
         },
-        getPath: function (from, to, opts) {
-            if (opts === void 0) { opts = {}; }
+        getPath: function(from, to, opts) {
+            if (opts === void 0) opts = {};
             var tw = this.tileWidth();
             var th = this.tileHeight();
-            var path = this.getTilePath(this.pos2Tile(from), this.pos2Tile(to), opts);
+            var path = this.getTilePath(
+                this.pos2Tile(from),
+                this.pos2Tile(to),
+                opts,
+            );
             if (path) {
-                return __spreadArray(__spreadArray([
-                    from
-                ], path
-                    .slice(1, -1)
-                    .map(function (tilePos) {
-                    return tilePos.scale(tw, th).add(tw / 2, th / 2);
-                }), true), [
-                    to,
-                ], false);
+                return __spreadArray(
+                    __spreadArray(
+                        [
+                            from,
+                        ],
+                        path
+                            .slice(1, -1)
+                            .map(function(tilePos) {
+                                return tilePos.scale(tw, th).add(
+                                    tw / 2,
+                                    th / 2,
+                                );
+                            }),
+                        true,
+                    ),
+                    [
+                        to,
+                    ],
+                    false,
+                );
             }
             else {
                 return null;

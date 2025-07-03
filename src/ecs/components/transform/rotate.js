@@ -5,13 +5,13 @@ function rotate(a) {
     return {
         id: "rotate",
         angle: a !== null && a !== void 0 ? a : 0,
-        rotateBy: function (angle) {
+        rotateBy: function(angle) {
             this.angle += angle;
         },
-        rotateTo: function (angle) {
+        rotateTo: function(angle) {
             this.angle = angle;
         },
-        inspect: function () {
+        inspect: function() {
             return "angle: ".concat(Math.round(this.angle));
         },
     };

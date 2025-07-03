@@ -1,9 +1,13 @@
 "use strict";
-var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
-    if (pack || arguments.length === 2) for (var i = 0, l = from.length, ar; i < l; i++) {
-        if (ar || !(i in from)) {
-            if (!ar) ar = Array.prototype.slice.call(from, 0, i);
-            ar[i] = from[i];
+var __spreadArray = (this && this.__spreadArray) || function(to, from, pack) {
+    if (pack || arguments.length === 2) {
+        for (var i = 0, l = from.length, ar; i < l; i++) {
+            if (ar || !(i in from)) {
+                if (!ar) {
+                    ar = Array.prototype.slice.call(from, 0, i);
+                }
+                ar[i] = from[i];
+            }
         }
     }
     return to.concat(ar || Array.prototype.slice.call(from));
@@ -15,7 +19,7 @@ var Vec2_1 = require("./Vec2");
 /**
  * @group Math
  */
-var Mat4 = /** @class */ (function () {
+var Mat4 = /** @class */ function() {
     function Mat4(m) {
         this.m = [
             1,
@@ -39,7 +43,7 @@ var Mat4 = /** @class */ (function () {
             this.m = m;
         }
     }
-    Mat4.translate = function (p) {
+    Mat4.translate = function(p) {
         return new Mat4([
             1,
             0,
@@ -59,7 +63,7 @@ var Mat4 = /** @class */ (function () {
             1,
         ]);
     };
-    Mat4.scale = function (s) {
+    Mat4.scale = function(s) {
         return new Mat4([
             s.x,
             0,
@@ -79,7 +83,7 @@ var Mat4 = /** @class */ (function () {
             1,
         ]);
     };
-    Mat4.rotateX = function (a) {
+    Mat4.rotateX = function(a) {
         a = (0, math_1.deg2rad)(-a);
         var c = Math.cos(a);
         var s = Math.sin(a);
@@ -102,7 +106,7 @@ var Mat4 = /** @class */ (function () {
             1,
         ]);
     };
-    Mat4.rotateY = function (a) {
+    Mat4.rotateY = function(a) {
         a = (0, math_1.deg2rad)(-a);
         var c = Math.cos(a);
         var s = Math.sin(a);
@@ -125,7 +129,7 @@ var Mat4 = /** @class */ (function () {
             1,
         ]);
     };
-    Mat4.rotateZ = function (a) {
+    Mat4.rotateZ = function(a) {
         a = (0, math_1.deg2rad)(-a);
         var c = Math.cos(a);
         var s = Math.sin(a);
@@ -148,14 +152,14 @@ var Mat4 = /** @class */ (function () {
             1,
         ]);
     };
-    Mat4.prototype.translate = function (p) {
+    Mat4.prototype.translate = function(p) {
         this.m[12] += this.m[0] * p.x + this.m[4] * p.y;
         this.m[13] += this.m[1] * p.x + this.m[5] * p.y;
         this.m[14] += this.m[2] * p.x + this.m[6] * p.y;
         this.m[15] += this.m[3] * p.x + this.m[7] * p.y;
         return this;
     };
-    Mat4.prototype.scale = function (p) {
+    Mat4.prototype.scale = function(p) {
         this.m[0] *= p.x;
         this.m[4] *= p.y;
         this.m[1] *= p.x;
@@ -166,7 +170,7 @@ var Mat4 = /** @class */ (function () {
         this.m[7] *= p.y;
         return this;
     };
-    Mat4.prototype.rotate = function (a) {
+    Mat4.prototype.rotate = function(a) {
         a = (0, math_1.deg2rad)(-a);
         var c = Math.cos(a);
         var s = Math.sin(a);
@@ -181,7 +185,7 @@ var Mat4 = /** @class */ (function () {
         return this;
     };
     // TODO: in-place variant
-    Mat4.prototype.mult = function (other) {
+    Mat4.prototype.mult = function(other) {
         var out = [];
         for (var i = 0; i < 4; i++) {
             for (var j = 0; j < 4; j++) {
@@ -193,13 +197,16 @@ var Mat4 = /** @class */ (function () {
         }
         return new Mat4(out);
     };
-    Mat4.prototype.multVec2 = function (p) {
-        return new Vec2_1.Vec2(p.x * this.m[0] + p.y * this.m[4] + this.m[12], p.x * this.m[1] + p.y * this.m[5] + this.m[13]);
+    Mat4.prototype.multVec2 = function(p) {
+        return new Vec2_1.Vec2(
+            p.x * this.m[0] + p.y * this.m[4] + this.m[12],
+            p.x * this.m[1] + p.y * this.m[5] + this.m[13],
+        );
     };
-    Mat4.prototype.getTranslation = function () {
+    Mat4.prototype.getTranslation = function() {
         return new Vec2_1.Vec2(this.m[12], this.m[13]);
     };
-    Mat4.prototype.getScale = function () {
+    Mat4.prototype.getScale = function() {
         if (this.m[0] != 0 || this.m[1] != 0) {
             var det = this.m[0] * this.m[5] - this.m[1] * this.m[4];
             var r = Math.sqrt(this.m[0] * this.m[0] + this.m[1] * this.m[1]);
@@ -214,39 +221,49 @@ var Mat4 = /** @class */ (function () {
             return new Vec2_1.Vec2(0, 0);
         }
     };
-    Mat4.prototype.getRotation = function () {
+    Mat4.prototype.getRotation = function() {
         if (this.m[0] != 0 || this.m[1] != 0) {
             var r = Math.sqrt(this.m[0] * this.m[0] + this.m[1] * this.m[1]);
-            return (0, math_1.rad2deg)(this.m[1] > 0
-                ? Math.acos(this.m[0] / r)
-                : -Math.acos(this.m[0] / r));
+            return (0, math_1.rad2deg)(
+                this.m[1] > 0
+                    ? Math.acos(this.m[0] / r)
+                    : -Math.acos(this.m[0] / r),
+            );
         }
         else if (this.m[4] != 0 || this.m[5] != 0) {
             var s = Math.sqrt(this.m[4] * this.m[4] + this.m[5] * this.m[5]);
-            return (0, math_1.rad2deg)(Math.PI / 2 - (this.m[5] > 0
-                ? Math.acos(-this.m[4] / s)
-                : -Math.acos(this.m[4] / s)));
+            return (0, math_1.rad2deg)(
+                Math.PI / 2 - (this.m[5] > 0
+                    ? Math.acos(-this.m[4] / s)
+                    : -Math.acos(this.m[4] / s)),
+            );
         }
         else {
             return 0;
         }
     };
-    Mat4.prototype.getSkew = function () {
+    Mat4.prototype.getSkew = function() {
         if (this.m[0] != 0 || this.m[1] != 0) {
             var r = Math.sqrt(this.m[0] * this.m[0] + this.m[1] * this.m[1]);
-            return new Vec2_1.Vec2(Math.atan(this.m[0] * this.m[4] + this.m[1] * this.m[5])
-                / (r * r), 0);
+            return new Vec2_1.Vec2(
+                Math.atan(this.m[0] * this.m[4] + this.m[1] * this.m[5])
+                    / (r * r),
+                0,
+            );
         }
         else if (this.m[4] != 0 || this.m[5] != 0) {
             var s = Math.sqrt(this.m[4] * this.m[4] + this.m[5] * this.m[5]);
-            return new Vec2_1.Vec2(0, Math.atan(this.m[0] * this.m[4] + this.m[1] * this.m[5])
-                / (s * s));
+            return new Vec2_1.Vec2(
+                0,
+                Math.atan(this.m[0] * this.m[4] + this.m[1] * this.m[5])
+                    / (s * s),
+            );
         }
         else {
             return new Vec2_1.Vec2(0, 0);
         }
     };
-    Mat4.prototype.invert = function () {
+    Mat4.prototype.invert = function() {
         var out = [];
         var f00 = this.m[10] * this.m[15] - this.m[14] * this.m[11];
         var f01 = this.m[9] * this.m[15] - this.m[13] * this.m[11];
@@ -294,12 +311,12 @@ var Mat4 = /** @class */ (function () {
         }
         return new Mat4(out);
     };
-    Mat4.prototype.clone = function () {
+    Mat4.prototype.clone = function() {
         return new Mat4(__spreadArray([], this.m, true));
     };
-    Mat4.prototype.toString = function () {
+    Mat4.prototype.toString = function() {
         return this.m.toString();
     };
     return Mat4;
-}());
+}();
 exports.Mat4 = Mat4;

@@ -12,9 +12,11 @@ function pathfinderMap(opts) {
         set graph(value) {
             graph = value;
         },
-        navigate: function (origin, target, navigationOpt) {
-            if (navigationOpt === void 0) { navigationOpt = {}; }
-            return graph === null || graph === void 0 ? void 0 : graph.getWaypointPath(origin, target, navigationOpt);
+        navigate: function(origin, target, navigationOpt) {
+            if (navigationOpt === void 0) navigationOpt = {};
+            return graph === null || graph === void 0
+                ? void 0
+                : graph.getWaypointPath(origin, target, navigationOpt);
         },
     };
 }
@@ -23,9 +25,11 @@ function pathfinder(opts) {
     return {
         id: "pathfinder",
         require: ["pos"],
-        navigateTo: function (target) {
+        navigateTo: function(target) {
             var graph = this.graph;
-            return graph === null || graph === void 0 ? void 0 : graph.getWaypointPath(this.pos, target, opts.navigationOpt);
+            return graph === null || graph === void 0
+                ? void 0
+                : graph.getWaypointPath(this.pos, target, opts.navigationOpt);
         },
         get graph() {
             if (graph) {

@@ -1,5 +1,5 @@
-import { _k } from "../../../shared";
-import type { Comp } from "../../../types";
+import { _k } from "../../../shared.js";
+import type { Comp } from "../../../types.js";
 
 /**
  * The {@link layer `layer()`} component.

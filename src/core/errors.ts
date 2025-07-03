@@ -1,13 +1,13 @@
-import { DBG_FONT } from "../constants/general";
-import { drawFormattedText } from "../gfx/draw/drawFormattedText";
-import { drawRect } from "../gfx/draw/drawRect";
-import { drawText } from "../gfx/draw/drawText";
-import { drawUnscaled } from "../gfx/draw/drawUnscaled";
-import { formatText } from "../gfx/formatText";
-import { height, popTransform, width } from "../gfx/stack";
-import { rgb } from "../math/color";
-import { vec2 } from "../math/math";
-import { _k } from "../shared";
+import { DBG_FONT } from "../constants/general.js";
+import { drawFormattedText } from "../gfx/draw/drawFormattedText.js";
+import { drawRect } from "../gfx/draw/drawRect.js";
+import { drawText } from "../gfx/draw/drawText.js";
+import { drawUnscaled } from "../gfx/draw/drawUnscaled.js";
+import { formatText } from "../gfx/formatText.js";
+import { height, popTransform, width } from "../gfx/stack.js";
+import { rgb } from "../math/color.js";
+import { vec2 } from "../math/math.js";
+import { _k } from "../shared.js";
 
 export const throwError = (err: string) => {
     handleErr(err);

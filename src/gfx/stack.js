@@ -19,11 +19,15 @@ exports.center = center;
 var math_1 = require("../math/math");
 var shared_1 = require("../shared");
 function pushTransform() {
-    shared_1._k.gfx.transformStack[++shared_1._k.gfx.transformStackIndex].setMat23(shared_1._k.gfx.transform);
+    shared_1._k.gfx.transformStack[++shared_1._k.gfx.transformStackIndex]
+        .setMat23(shared_1._k.gfx.transform);
 }
 function popTransform() {
     if (shared_1._k.gfx.transformStackIndex >= 0) {
-        shared_1._k.gfx.transform.setMat23(shared_1._k.gfx.transformStack[shared_1._k.gfx.transformStackIndex--]);
+        shared_1._k.gfx.transform.setMat23(
+            shared_1._k.gfx
+                .transformStack[shared_1._k.gfx.transformStackIndex--],
+        );
     }
 }
 function pushMatrix(m) {
@@ -31,32 +35,39 @@ function pushMatrix(m) {
     loadMatrix(m);
 }
 function multTranslateV(t) {
-    if (t === undefined)
+    if (t === undefined) {
         return;
-    if (t.x === 0 && t.y === 0)
+    }
+    if (t.x === 0 && t.y === 0) {
         return;
+    }
     shared_1._k.gfx.transform.translateSelfV(t);
 }
 function multTranslate(x, y) {
-    if (x === 0 && y === 0)
+    if (x === 0 && y === 0) {
         return;
+    }
     shared_1._k.gfx.transform.translateSelf(x, y);
 }
 function multScaleV(s) {
-    if (s === undefined)
+    if (s === undefined) {
         return;
-    if (s.x === 1 && s.y === 1)
+    }
+    if (s.x === 1 && s.y === 1) {
         return;
+    }
     shared_1._k.gfx.transform.scaleSelfV(s);
 }
 function multScale(x, y) {
-    if (x === 1 && y === 1)
+    if (x === 1 && y === 1) {
         return;
+    }
     shared_1._k.gfx.transform.scaleSelf(x, y);
 }
 function multRotate(angle) {
-    if (!angle)
+    if (!angle) {
         return;
+    }
     shared_1._k.gfx.transform.rotateSelf(angle);
 }
 function loadIdentity(m) {
@@ -80,10 +91,15 @@ function height() {
     return shared_1._k.gfx.height;
 }
 function center() {
-    return (0, math_1.vec2)(shared_1._k.gfx.width / 2, shared_1._k.gfx.height / 2);
+    return (0, math_1.vec2)(
+        shared_1._k.gfx.width / 2,
+        shared_1._k.gfx.height / 2,
+    );
 }
-var usePostEffect = function (name, uniform) {
+var usePostEffect = function(name, uniform) {
     shared_1._k.gfx.postShader = name;
-    shared_1._k.gfx.postShaderUniform = uniform !== null && uniform !== void 0 ? uniform : null;
+    shared_1._k.gfx.postShaderUniform = uniform !== null && uniform !== void 0
+        ? uniform
+        : null;
 };
 exports.usePostEffect = usePostEffect;

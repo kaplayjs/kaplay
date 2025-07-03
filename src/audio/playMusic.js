@@ -6,18 +6,26 @@ var clamp_1 = require("../math/clamp");
 var shared_1 = require("../shared");
 function playMusic(url, opt) {
     var _a;
-    if (opt === void 0) { opt = {}; }
+    if (opt === void 0) opt = {};
     var onEndEvents = new events_1.KEvent();
     var el = new Audio(url);
     el.crossOrigin = "anonymous";
     el.loop = Boolean(opt.loop);
     var src = shared_1._k.audio.ctx.createMediaElementSource(el);
-    src.connect((_a = opt.connectTo) !== null && _a !== void 0 ? _a : shared_1._k.audio.masterNode);
+    src.connect(
+        (_a = opt.connectTo) !== null && _a !== void 0
+            ? _a
+            : shared_1._k.audio.masterNode,
+    );
     function resumeAudioCtx() {
-        if (shared_1._k.debug.paused)
+        if (shared_1._k.debug.paused) {
             return;
-        if (shared_1._k.app.isHidden() && !shared_1._k.globalOpt.backgroundAudio)
+        }
+        if (
+            shared_1._k.app.isHidden() && !shared_1._k.globalOpt.backgroundAudio
+        ) {
             return;
+        }
         shared_1._k.audio.ctx.resume();
     }
     function play() {
@@ -27,15 +35,17 @@ function playMusic(url, opt) {
     if (!opt.paused) {
         play();
     }
-    el.onended = function () { return onEndEvents.trigger(); };
+    el.onended = function() {
+        return onEndEvents.trigger();
+    };
     return {
-        play: function () {
+        play: function() {
             play();
         },
-        seek: function (time) {
+        seek: function(time) {
             el.currentTime = time;
         },
-        stop: function () {
+        stop: function() {
             el.pause();
             this.seek(0);
         },
@@ -56,10 +66,10 @@ function playMusic(url, opt) {
         get paused() {
             return el.paused;
         },
-        time: function () {
+        time: function() {
             return el.currentTime;
         },
-        duration: function () {
+        duration: function() {
             return el.duration;
         },
         set volume(val) {
@@ -81,15 +91,19 @@ function playMusic(url, opt) {
             // TODO
             return 0;
         },
-        onEnd: function (action) {
+        onEnd: function(action) {
             return onEndEvents.add(action);
         },
-        then: function (action) {
+        then: function(action) {
             return this.onEnd(action);
         },
-        connect: function (node) {
+        connect: function(node) {
             src.disconnect();
-            src.connect(node !== null && node !== void 0 ? node : shared_1._k.audio.masterNode);
+            src.connect(
+                node !== null && node !== void 0
+                    ? node
+                    : shared_1._k.audio.masterNode,
+            );
         },
     };
 }

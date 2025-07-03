@@ -1,6 +1,6 @@
 import { describe, expectTypeOf, test } from "vitest";
-import { kaplay } from "../../src/kaplay";
-import type { KAPLAYCtx } from "../../src/types";
+import { kaplay } from "../../src/kaplay.js";
+import type { KAPLAYCtx } from "../../src/types.js";
 
 type ImplicitTestPlug = ReturnType<typeof implicitTestPlug>;
 

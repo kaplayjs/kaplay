@@ -1,9 +1,9 @@
-import { burp } from "../audio/burp";
-import { FrameBuffer } from "../gfx/FrameBuffer";
-import { updateViewport } from "../gfx/viewport";
-import { clamp } from "../math/clamp";
-import { _k } from "../shared";
-import { toFixed } from "../utils/numbers";
+import { burp } from "../audio/burp.js";
+import { FrameBuffer } from "../gfx/FrameBuffer.js";
+import { updateViewport } from "../gfx/viewport.js";
+import { clamp } from "../math/clamp.js";
+import { _k } from "../shared.js";
+import { toFixed } from "../utils/numbers.js";
 
 // Events used at the start of a game
 

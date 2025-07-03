@@ -1,7 +1,7 @@
-import { vec2 } from "../../math/math";
-import type { Canvas, DrawUVQuadOpt, RenderProps } from "../../types";
-import { height } from "../stack";
-import { drawUVQuad } from "./drawUVQuad";
+import { vec2 } from "../../math/math.js";
+import type { Canvas, DrawUVQuadOpt, RenderProps } from "../../types.js";
+import { height } from "../stack.js";
+import { drawUVQuad } from "./drawUVQuad.js";
 
 export type DrawCanvasOpt = DrawUVQuadOpt & {
     canvas: Canvas;

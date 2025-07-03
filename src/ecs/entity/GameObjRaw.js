@@ -1,10 +1,14 @@
 "use strict";
 // The E of ECS
-var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
-    if (pack || arguments.length === 2) for (var i = 0, l = from.length, ar; i < l; i++) {
-        if (ar || !(i in from)) {
-            if (!ar) ar = Array.prototype.slice.call(from, 0, i);
-            ar[i] = from[i];
+var __spreadArray = (this && this.__spreadArray) || function(to, from, pack) {
+    if (pack || arguments.length === 2) {
+        for (var i = 0, l = from.length, ar; i < l; i++) {
+            if (ar || !(i in from)) {
+                if (!ar) {
+                    ar = Array.prototype.slice.call(from, 0, i);
+                }
+                ar[i] = from[i];
+            }
         }
     }
     return to.concat(ar || Array.prototype.slice.call(from));
@@ -27,7 +31,7 @@ var shared_1 = require("../../shared");
 var make_1 = require("./make");
 var utils_1 = require("./utils");
 var KeepFlags;
-(function (KeepFlags) {
+(function(KeepFlags) {
     KeepFlags[KeepFlags["Pos"] = 1] = "Pos";
     KeepFlags[KeepFlags["Angle"] = 2] = "Angle";
     KeepFlags[KeepFlags["Scale"] = 4] = "Scale";
@@ -60,8 +64,9 @@ exports.GameObjRawPrototype = {
     set parent(p) {
         // We assume this will never be ran in root
         // so this is GameObj
-        if (this._parent === p)
+        if (this._parent === p) {
             return;
+        }
         var index = this._parent
             ? this._parent.children.indexOf(this)
             : -1;
@@ -74,8 +79,9 @@ exports.GameObjRawPrototype = {
         }
     },
     set paused(paused) {
-        if (this._paused === paused)
+        if (this._paused === paused) {
             return;
+        }
         this._paused = paused;
         for (var _i = 0, _a = this._inputEvents; _i < _a.length; _i++) {
             var e = _a[_i];
@@ -93,11 +99,14 @@ exports.GameObjRawPrototype = {
     },
     // #enedregion
     // #region Object
-    setParent: function (p, opt) {
+    setParent: function(p, opt) {
         var _a;
-        if (this._parent === p)
+        if (this._parent === p) {
             return;
-        var oldTransform = (_a = this._parent) === null || _a === void 0 ? void 0 : _a.transform;
+        }
+        var oldTransform = (_a = this._parent) === null || _a === void 0
+            ? void 0
+            : _a.transform;
         var newTransform = p.transform;
         if ((opt.keep & KeepFlags.Pos) && this.pos !== undefined) {
             oldTransform.transformPointV(this.pos, this.pos);
@@ -108,11 +117,13 @@ exports.GameObjRawPrototype = {
                 - oldTransform.getRotation();
         }
         if ((opt.keep & KeepFlags.Scale) && this.scale !== undefined) {
-            this.scale = this.scale.scale(oldTransform.getScale().invScale(newTransform.getScale()));
+            this.scale = this.scale.scale(
+                oldTransform.getScale().invScale(newTransform.getScale()),
+            );
         }
         this.parent = p;
     },
-    add: function (a) {
+    add: function(a) {
         var obj = (0, make_1.make)(a);
         if (obj.parent) {
             throw new Error("Cannot add a game obj that already has a parent.");
@@ -121,14 +132,13 @@ exports.GameObjRawPrototype = {
         (0, various_1.calcTransform)(obj, obj.transform);
         try {
             obj.trigger("add", obj);
-        }
-        catch (e) {
+        } catch (e) {
             (0, errors_1.handleErr)(e);
         }
         shared_1._k.game.events.trigger("add", obj);
         return obj;
     },
-    readd: function (obj) {
+    readd: function(obj) {
         var idx = this.children.indexOf(obj);
         if (idx !== -1) {
             this.children.splice(idx, 1);
@@ -136,36 +146,44 @@ exports.GameObjRawPrototype = {
         }
         return obj;
     },
-    remove: function (obj) {
+    remove: function(obj) {
         obj.parent = null;
-        var trigger = function (o) {
+        var trigger = function(o) {
             o.trigger("destroy");
             shared_1._k.game.events.trigger("destroy", o);
-            o.children.forEach(function (child) { return trigger(child); });
+            o.children.forEach(function(child) {
+                return trigger(child);
+            });
         };
         trigger(obj);
     },
-    removeAll: function (tag) {
+    removeAll: function(tag) {
         var _this = this;
         if (tag) {
-            this.get(tag).forEach(function (obj) { return _this.remove(obj); });
+            this.get(tag).forEach(function(obj) {
+                return _this.remove(obj);
+            });
         }
         else {
-            for (var _i = 0, _a = __spreadArray([], this.children, true); _i < _a.length; _i++) {
+            for (
+                var _i = 0, _a = __spreadArray([], this.children, true);
+                _i < _a.length;
+                _i++
+            ) {
                 var child = _a[_i];
                 this.remove(child);
             }
         }
     },
-    destroy: function () {
+    destroy: function() {
         if (this.parent) {
             this.parent.remove(this);
         }
     },
-    exists: function () {
+    exists: function() {
         return this.parent !== null;
     },
-    isAncestorOf: function (obj) {
+    isAncestorOf: function(obj) {
         if (!obj.parent) {
             return false;
         }
@@ -173,11 +191,11 @@ exports.GameObjRawPrototype = {
     },
     // #endregion
     // #region Get & Query
-    get: function (t, opts) {
+    get: function(t, opts) {
         var _this = this;
-        if (opts === void 0) { opts = {}; }
+        if (opts === void 0) opts = {};
         var compIdAreTags = shared_1._k.globalOpt.tagsAsComponents;
-        var checkTagsOrComps = function (child, t) {
+        var checkTagsOrComps = function(child, t) {
             if (opts.only === "comps") {
                 return child.has(t);
             }
@@ -190,26 +208,34 @@ exports.GameObjRawPrototype = {
         };
         var list = opts.recursive
             ? this.children.flatMap(function recurse(child) {
-                return __spreadArray([child], child.children.flatMap(recurse), true);
+                return __spreadArray(
+                    [child],
+                    child.children.flatMap(recurse),
+                    true,
+                );
             })
             : this.children;
-        list = list.filter(function (child) { return t ? checkTagsOrComps(child, t) : true; });
+        list = list.filter(function(child) {
+            return t ? checkTagsOrComps(child, t) : true;
+        });
         if (opts.liveUpdate) {
-            var isChild_1 = function (obj) {
+            var isChild_1 = function(obj) {
                 return opts.recursive
                     ? _this.isAncestorOf(obj)
                     : obj.parent === _this;
             };
             var events_2 = [];
             // TODO: clean up when obj destroyed
-            events_2.push((0, globalEvents_1.onAdd)(function (obj) {
+            events_2.push((0, globalEvents_1.onAdd)(function(obj) {
                 if (isChild_1(obj) && checkTagsOrComps(obj, t)) {
                     list.push(obj);
                 }
             }));
-            events_2.push((0, globalEvents_1.onDestroy)(function (obj) {
+            events_2.push((0, globalEvents_1.onDestroy)(function(obj) {
                 if (checkTagsOrComps(obj, t)) {
-                    var idx = list.findIndex(function (o) { return o.id === obj.id; });
+                    var idx = list.findIndex(function(o) {
+                        return o.id === obj.id;
+                    });
                     if (idx !== -1) {
                         list.splice(idx, 1);
                     }
@@ -218,17 +244,21 @@ exports.GameObjRawPrototype = {
             // If tags are components, we need to use these callbacks, whether watching tags or components
             // If tags are not components, we only need to use these callbacks if this query looks at components
             if (compIdAreTags || opts.only !== "tags") {
-                events_2.push((0, globalEvents_1.onUse)(function (obj, id) {
+                events_2.push((0, globalEvents_1.onUse)(function(obj, id) {
                     if (isChild_1(obj) && checkTagsOrComps(obj, t)) {
-                        var idx = list.findIndex(function (o) { return o.id === obj.id; });
+                        var idx = list.findIndex(function(o) {
+                            return o.id === obj.id;
+                        });
                         if (idx == -1) {
                             list.push(obj);
                         }
                     }
                 }));
-                events_2.push((0, globalEvents_1.onUnuse)(function (obj, id) {
+                events_2.push((0, globalEvents_1.onUnuse)(function(obj, id) {
                     if (isChild_1(obj) && !checkTagsOrComps(obj, t)) {
-                        var idx = list.findIndex(function (o) { return o.id === obj.id; });
+                        var idx = list.findIndex(function(o) {
+                            return o.id === obj.id;
+                        });
                         if (idx !== -1) {
                             list.splice(idx, 1);
                         }
@@ -238,25 +268,33 @@ exports.GameObjRawPrototype = {
             // If tags are components, we don't need to use these callbacks
             // If tags are not components, we only need to use these callbacks if this query looks at tags
             if (!compIdAreTags && opts.only !== "comps") {
-                events_2.push((0, globalEvents_1.onTag)(function (obj, tag) {
+                events_2.push((0, globalEvents_1.onTag)(function(obj, tag) {
                     if (isChild_1(obj) && checkTagsOrComps(obj, t)) {
-                        var idx = list.findIndex(function (o) { return o.id === obj.id; });
+                        var idx = list.findIndex(function(o) {
+                            return o.id === obj.id;
+                        });
                         if (idx == -1) {
                             list.push(obj);
                         }
                     }
                 }));
-                events_2.push((0, globalEvents_1.onUntag)(function (obj, tag) {
+                events_2.push((0, globalEvents_1.onUntag)(function(obj, tag) {
                     if (isChild_1(obj) && !checkTagsOrComps(obj, t)) {
-                        var idx = list.findIndex(function (o) { return o.id === obj.id; });
+                        var idx = list.findIndex(function(o) {
+                            return o.id === obj.id;
+                        });
                         if (idx !== -1) {
                             list.splice(idx, 1);
                         }
                     }
                 }));
             }
-            this.onDestroy(function () {
-                for (var _i = 0, events_3 = events_2; _i < events_3.length; _i++) {
+            this.onDestroy(function() {
+                for (
+                    var _i = 0, events_3 = events_2;
+                    _i < events_3.length;
+                    _i++
+                ) {
                     var ev = events_3[_i];
                     ev.cancel();
                 }
@@ -264,7 +302,7 @@ exports.GameObjRawPrototype = {
         }
         return list;
     },
-    query: function (opt) {
+    query: function(opt) {
         var _this = this;
         var hierarchy = opt.hierarchy || "children";
         var include = opt.include;
@@ -276,7 +314,9 @@ exports.GameObjRawPrototype = {
                 break;
             case "siblings":
                 list = this.parent
-                    ? this.parent.children.filter(function (o) { return o !== _this; })
+                    ? this.parent.children.filter(function(o) {
+                        return o !== _this;
+                    })
                     : [];
                 break;
             case "ancestors":
@@ -288,9 +328,13 @@ exports.GameObjRawPrototype = {
                 break;
             case "descendants":
                 list = this.children.flatMap(function recurse(child) {
-                    return __spreadArray([
-                        child
-                    ], child.children.flatMap(recurse), true);
+                    return __spreadArray(
+                        [
+                            child,
+                        ],
+                        child.children.flatMap(recurse),
+                        true,
+                    );
                 });
                 break;
         }
@@ -298,12 +342,16 @@ exports.GameObjRawPrototype = {
             var includeOp = opt.includeOp || "and";
             if (includeOp === "and" || !Array.isArray(opt.include)) {
                 // Accept if all match
-                list = list.filter(function (o) { return o.is(include); });
+                list = list.filter(function(o) {
+                    return o.is(include);
+                });
             }
             else { // includeOp == "or"
                 // Accept if some match
-                list = list.filter(function (o) {
-                    return opt.include.some(function (t) { return o.is(t); });
+                list = list.filter(function(o) {
+                    return opt.include.some(function(t) {
+                        return o.is(t);
+                    });
                 });
             }
         }
@@ -311,92 +359,116 @@ exports.GameObjRawPrototype = {
             var excludeOp = opt.includeOp || "and";
             if (excludeOp === "and" || !Array.isArray(opt.include)) {
                 // Reject if all match
-                list = list.filter(function (o) { return !o.is(exclude); });
+                list = list.filter(function(o) {
+                    return !o.is(exclude);
+                });
             }
             else { // includeOp == "or"
                 // Reject if some match
-                list = list.filter(function (o) {
-                    return !opt.exclude.some(function (t) { return o.is(t); });
+                list = list.filter(function(o) {
+                    return !opt.exclude.some(function(t) {
+                        return o.is(t);
+                    });
                 });
             }
         }
         if (opt.visible === true) {
-            list = list.filter(function (o) { return o.visible; });
+            list = list.filter(function(o) {
+                return o.visible;
+            });
         }
         if (opt.distance) {
             if (!this.pos) {
-                throw Error("Can't do a distance query from an object without pos");
+                throw Error(
+                    "Can't do a distance query from an object without pos",
+                );
             }
             var distanceOp = opt.distanceOp || "near";
             var sdist_1 = opt.distance * opt.distance;
             if (distanceOp === "near") {
-                list = list.filter(function (o) {
+                list = list.filter(function(o) {
                     return o.pos && _this.pos.sdist(o.pos) <= sdist_1;
                 });
             }
             else { // distanceOp === "far"
-                list = list.filter(function (o) { return o.pos && _this.pos.sdist(o.pos) > sdist_1; });
+                list = list.filter(function(o) {
+                    return o.pos && _this.pos.sdist(o.pos) > sdist_1;
+                });
             }
         }
         if (opt.name) {
-            list = list.filter(function (o) { return o.name === opt.name; });
+            list = list.filter(function(o) {
+                return o.name === opt.name;
+            });
         }
         return list;
     },
     // #endregion
     // #region Lifecycle
-    update: function () {
+    update: function() {
         var _a;
-        if (this.paused)
+        if (this.paused) {
             return;
+        }
         this._updateEvents.trigger();
-        this._drawLayerIndex = (_a = this.layerIndex) !== null && _a !== void 0 ? _a : (this.parent
-            ? this.parent._drawLayerIndex
-            : shared_1._k.game.defaultLayerIndex);
+        this._drawLayerIndex = (_a = this.layerIndex) !== null && _a !== void 0
+            ? _a
+            : (this.parent
+                ? this.parent._drawLayerIndex
+                : shared_1._k.game.defaultLayerIndex);
         for (var i = 0; i < this.children.length; i++) {
             this.children[i].update();
         }
     },
-    fixedUpdate: function () {
-        if (this.paused)
+    fixedUpdate: function() {
+        if (this.paused) {
             return;
+        }
         this._fixedUpdateEvents.trigger();
         for (var i = 0; i < this.children.length; i++) {
             this.children[i].fixedUpdate();
         }
     },
-    draw: function () {
+    draw: function() {
         this.drawTree();
     },
-    drawTree: function () {
+    drawTree: function() {
         var _this = this;
         var _a, _b, _c, _d, _e, _f, _g, _h, _j, _l;
-        if (this.hidden)
+        if (this.hidden) {
             return;
+        }
         var objects = new Array();
         (0, stack_1.pushTransform)();
-        if (this.pos)
+        if (this.pos) {
             (0, stack_1.multTranslateV)(this.pos);
-        if (this.angle)
+        }
+        if (this.angle) {
             (0, stack_1.multRotate)(this.angle);
-        if (this.scale)
+        }
+        if (this.scale) {
             (0, stack_1.multScaleV)(this.scale);
-        if (!this.transform)
+        }
+        if (!this.transform) {
             this.transform = new math_1.Mat23();
+        }
         (0, stack_1.storeMatrix)(this.transform);
         // For each child call collect
         for (var i = 0; i < this.children.length; i++) {
-            if (this.children[i].hidden)
+            if (this.children[i].hidden) {
                 continue;
+            }
             this.children[i].collectAndTransform(objects);
         }
         (0, stack_1.popTransform)();
         // Sort objects on layer, then z
-        objects.sort(function (o1, o2) {
+        objects.sort(function(o1, o2) {
             var _a, _b;
             var l1 = o1._drawLayerIndex;
             var l2 = o2._drawLayerIndex;
-            return (l1 - l2) || ((_a = o1.z) !== null && _a !== void 0 ? _a : 0) - ((_b = o2.z) !== null && _b !== void 0 ? _b : 0);
+            return (l1 - l2)
+                || ((_a = o1.z) !== null && _a !== void 0 ? _a : 0)
+                    - ((_b = o2.z) !== null && _b !== void 0 ? _b : 0);
         });
         // If this subtree is masking, the root is drawn into the mask, then the children are drawn
         if (this.mask) {
@@ -405,9 +477,11 @@ exports.GameObjRawPrototype = {
                 subtract: drawSubstracted_1.drawSubtracted,
             }[this.mask];
             if (!maskFunc) {
-                throw new Error("Invalid mask func: \"".concat(this.mask, "\""));
+                throw new Error(
+                    "Invalid mask func: \"".concat(this.mask, "\""),
+                );
             }
-            maskFunc(function () {
+            maskFunc(function() {
                 // Draw children masked
                 var f = shared_1._k.gfx.fixed;
                 // We push once, then update the current transform only
@@ -419,7 +493,7 @@ exports.GameObjRawPrototype = {
                 }
                 (0, stack_1.popTransform)();
                 shared_1._k.gfx.fixed = f;
-            }, function () {
+            }, function() {
                 (0, stack_1.pushTransform)();
                 (0, stack_1.loadMatrix)(_this.transform);
                 // Draw mask
@@ -430,21 +504,46 @@ exports.GameObjRawPrototype = {
         else {
             // If this subtree is rendered to a target, enable target
             if (this.target) {
-                if (!((_a = this.target) === null || _a === void 0 ? void 0 : _a.refreshOnly) || !((_b = this.target) === null || _b === void 0 ? void 0 : _b.isFresh)) {
+                if (
+                    !((_a = this.target) === null || _a === void 0
+                        ? void 0
+                        : _a.refreshOnly)
+                    || !((_b = this.target) === null || _b === void 0
+                        ? void 0
+                        : _b.isFresh)
+                ) {
                     (0, stack_1.flush)();
-                    if (this.target.destination instanceof FrameBuffer_1.FrameBuffer) {
+                    if (
+                        this.target.destination
+                            instanceof FrameBuffer_1.FrameBuffer
+                    ) {
                         this.target.destination.bind();
                     }
-                    else if (this.target.destination instanceof drawPicture_1.Picture) {
-                        (0, drawPicture_1.beginPicture)(this.target.destination);
+                    else if (
+                        this.target.destination instanceof drawPicture_1.Picture
+                    ) {
+                        (0, drawPicture_1.beginPicture)(
+                            this.target.destination,
+                        );
                     }
                 }
             }
-            if (!((_c = this.target) === null || _c === void 0 ? void 0 : _c.refreshOnly) || !((_d = this.target) === null || _d === void 0 ? void 0 : _d.isFresh)) {
+            if (
+                !((_c = this.target) === null || _c === void 0
+                    ? void 0
+                    : _c.refreshOnly)
+                || !((_d = this.target) === null || _d === void 0
+                    ? void 0
+                    : _d.isFresh)
+            ) {
                 var f = shared_1._k.gfx.fixed;
                 (0, stack_1.pushTransform)();
                 // Parent is drawn before children if !childrenOnly
-                if (!((_e = this.target) === null || _e === void 0 ? void 0 : _e.childrenOnly)) {
+                if (
+                    !((_e = this.target) === null || _e === void 0
+                        ? void 0
+                        : _e.childrenOnly)
+                ) {
                     shared_1._k.gfx.fixed = (0, utils_1.isFixed)(this);
                     (0, stack_1.loadMatrix)(this.transform);
                     this._drawEvents.trigger();
@@ -468,22 +567,45 @@ exports.GameObjRawPrototype = {
             }
             // If this subtree is rendered to a target, disable target
             if (this.target) {
-                if (!((_f = this.target) === null || _f === void 0 ? void 0 : _f.refreshOnly) || !((_g = this.target) === null || _g === void 0 ? void 0 : _g.isFresh)) {
+                if (
+                    !((_f = this.target) === null || _f === void 0
+                        ? void 0
+                        : _f.refreshOnly)
+                    || !((_g = this.target) === null || _g === void 0
+                        ? void 0
+                        : _g.isFresh)
+                ) {
                     (0, stack_1.flush)();
-                    if (this.target.destination instanceof FrameBuffer_1.FrameBuffer) {
+                    if (
+                        this.target.destination
+                            instanceof FrameBuffer_1.FrameBuffer
+                    ) {
                         this.target.destination.unbind();
                     }
-                    else if (this.target.destination instanceof drawPicture_1.Picture) {
+                    else if (
+                        this.target.destination instanceof drawPicture_1.Picture
+                    ) {
                         (0, drawPicture_1.endPicture)();
                     }
                 }
             }
             // If this object needs the refresh flag in order to draw children, set it to fresh
-            if (((_h = this.target) === null || _h === void 0 ? void 0 : _h.refreshOnly) && !((_j = this.target) === null || _j === void 0 ? void 0 : _j.isFresh)) {
+            if (
+                ((_h = this.target) === null || _h === void 0
+                    ? void 0
+                    : _h.refreshOnly)
+                && !((_j = this.target) === null || _j === void 0
+                    ? void 0
+                    : _j.isFresh)
+            ) {
                 this.target.isFresh = true;
             }
             // If children only flag is on
-            if ((_l = this.target) === null || _l === void 0 ? void 0 : _l.childrenOnly) {
+            if (
+                (_l = this.target) === null || _l === void 0
+                    ? void 0
+                    : _l.childrenOnly
+            ) {
                 // Parent is drawn on screen, children are drawn in target
                 var f = shared_1._k.gfx.fixed;
                 shared_1._k.gfx.fixed = (0, utils_1.isFixed)(this);
@@ -495,14 +617,22 @@ exports.GameObjRawPrototype = {
             }
         }
     },
-    inspect: function () {
+    inspect: function() {
         var _a, _b;
         var info = {};
         for (var _i = 0, _c = this._compStates; _i < _c.length; _i++) {
             var _d = _c[_i], tag = _d[0], comp = _d[1];
-            info[tag] = (_b = (_a = comp.inspect) === null || _a === void 0 ? void 0 : _a.call(comp)) !== null && _b !== void 0 ? _b : null;
+            info[tag] = (_b = (_a = comp.inspect) === null || _a === void 0
+                            ? void 0
+                            : _a.call(comp)) !== null && _b !== void 0
+                ? _b
+                : null;
         }
-        for (var _e = 0, _f = this._anonymousCompStates.entries(); _e < _f.length; _e++) {
+        for (
+            var _e = 0, _f = this._anonymousCompStates.entries();
+            _e < _f.length;
+            _e++
+        ) {
             var _g = _f[_e], i = _g[0], comp = _g[1];
             if (comp.inspect) {
                 info[i] = comp.inspect();
@@ -520,25 +650,30 @@ exports.GameObjRawPrototype = {
         }
         return info;
     },
-    drawInspect: function () {
-        if (this.hidden)
+    drawInspect: function() {
+        if (this.hidden) {
             return;
+        }
         for (var i = 0; i < this.children.length; i++) {
             this.children[i].drawInspect();
         }
         (0, stack_1.loadMatrix)(this.transform);
         this.trigger("drawInspect");
     },
-    collectAndTransform: function (objects) {
+    collectAndTransform: function(objects) {
         (0, stack_1.pushTransform)();
-        if (this.pos)
+        if (this.pos) {
             (0, stack_1.multTranslateV)(this.pos);
-        if (this.angle)
+        }
+        if (this.angle) {
             (0, stack_1.multRotate)(this.angle);
-        if (this.scale)
+        }
+        if (this.scale) {
             (0, stack_1.multScaleV)(this.scale);
-        if (!this.transform)
+        }
+        if (!this.transform) {
             this.transform = new math_1.Mat23();
+        }
         (0, stack_1.storeMatrix)(this.transform);
         // Add to objects
         objects.push(this);
@@ -546,8 +681,9 @@ exports.GameObjRawPrototype = {
         for (var i = 0; i < this.children.length; i++) {
             // While we could do this test in collect, it would mean an extra function call
             // so it is better to do this preemptively
-            if (this.children[i].hidden)
+            if (this.children[i].hidden) {
                 continue;
+            }
             if (this.target) {
                 this.drawTree();
             }
@@ -559,11 +695,16 @@ exports.GameObjRawPrototype = {
     },
     // #endregion
     // #region Comps
-    use: function (comp) {
+    use: function(comp) {
         var _this = this;
         var _a;
         if (!comp || typeof comp != "object") {
-            throw new Error("You can only pass objects to .use(), you passed a \"".concat(typeof comp, "\""));
+            throw new Error(
+                "You can only pass objects to .use(), you passed a \"".concat(
+                    typeof comp,
+                    "\"",
+                ),
+            );
         }
         var addCompIdAsTag = this.id === 0
             ? false
@@ -575,21 +716,23 @@ exports.GameObjRawPrototype = {
             this._cleanups[comp.id] = [];
             gc = this._cleanups[comp.id];
             this._compStates.set(comp.id, comp);
-            if (addCompIdAsTag)
+            if (addCompIdAsTag) {
                 this._tags.add(comp.id);
+            }
         }
         else {
             this._anonymousCompStates.push(comp);
         }
-        var _loop_1 = function (key) {
+        var _loop_1 = function(key) {
             // These are properties from the component data (id, require), shouldn't
             // be added to the game obj prototype, that's why we continue
             if (general_1.COMP_DESC.has(key)) {
                 return "continue";
             }
             var prop = Object.getOwnPropertyDescriptor(comp, key);
-            if (!prop)
+            if (!prop) {
                 return "continue";
+            }
             if (typeof prop.value === "function") {
                 // @ts-ignore
                 comp[key] = comp[key].bind(this_1);
@@ -607,10 +750,14 @@ exports.GameObjRawPrototype = {
             if (general_1.COMP_EVENTS.has(key)) {
                 // Automatically clean up events created by components in add() stage
                 var func = key === "add"
-                    ? function () {
+                    ? function() {
                         var _a;
-                        _this._onCurCompCleanup = function (c) { return gc.push(c); };
-                        (_a = comp[key]) === null || _a === void 0 ? void 0 : _a.call(comp);
+                        _this._onCurCompCleanup = function(c) {
+                            return gc.push(c);
+                        };
+                        (_a = comp[key]) === null || _a === void 0
+                            ? void 0
+                            : _a.call(comp);
                         _this._onCurCompCleanup = null;
                     }
                     : comp[key];
@@ -621,22 +768,39 @@ exports.GameObjRawPrototype = {
                 if (this_1[key] === undefined) {
                     // Assign comp fields to game obj
                     Object.defineProperty(this_1, key, {
-                        get: function () { return comp[key]; },
-                        set: function (val) { return comp[key] = val; },
+                        get: function() {
+                            return comp[key];
+                        },
+                        set: function(val) {
+                            return comp[key] = val;
+                        },
                         configurable: true,
                         enumerable: true,
                     });
                     // @ts-ignore
-                    gc.push(function () { return delete _this[key]; });
+                    gc.push(function() {
+                        return delete _this[key];
+                    });
                 }
                 else {
-                    var originalCompId = (_a = this_1._compStates.values().find(function (c) {
-                        return c[key] !== undefined;
-                    })) === null || _a === void 0 ? void 0 : _a.id;
-                    throw new Error("Duplicate component property: \"".concat(key, "\" while adding component \"").concat(comp.id, "\"")
-                        + (originalCompId
-                            ? " (originally added by \"".concat(originalCompId, "\")")
-                            : ""));
+                    var originalCompId =
+                        (_a = this_1._compStates.values().find(function(c) {
+                                    return c[key] !== undefined;
+                                })) === null || _a === void 0
+                            ? void 0
+                            : _a.id;
+                    throw new Error(
+                        "Duplicate component property: \"".concat(
+                            key,
+                            "\" while adding component \"",
+                        ).concat(comp.id, "\"")
+                            + (originalCompId
+                                ? " (originally added by \"".concat(
+                                    originalCompId,
+                                    "\")",
+                                )
+                                : ""),
+                    );
                 }
             }
         };
@@ -645,18 +809,23 @@ exports.GameObjRawPrototype = {
             _loop_1(key);
         }
         // Check for component dependencies
-        var checkDeps = function () {
-            if (!comp.require)
+        var checkDeps = function() {
+            if (!comp.require) {
                 return;
+            }
             try {
                 for (var _i = 0, _a = comp.require; _i < _a.length; _i++) {
                     var dep = _a[_i];
                     if (!_this._compsIds.has(dep)) {
-                        throw new Error("Component \"".concat(comp.id, "\" requires component \"").concat(dep, "\""));
+                        throw new Error(
+                            "Component \"".concat(
+                                comp.id,
+                                "\" requires component \"",
+                            ).concat(dep, "\""),
+                        );
                     }
                 }
-            }
-            catch (e) {
+            } catch (e) {
                 (0, errors_1.handleErr)(e);
             }
         };
@@ -668,7 +837,9 @@ exports.GameObjRawPrototype = {
         if (this.id != 0 && this.exists()) {
             checkDeps();
             if (comp.add) {
-                this._onCurCompCleanup = function (c) { return gc.push(c); };
+                this._onCurCompCleanup = function(c) {
+                    return gc.push(c);
+                };
                 comp.add.call(this);
                 this._onCurCompCleanup = null;
             }
@@ -684,16 +855,25 @@ exports.GameObjRawPrototype = {
         }
     },
     // Remove components
-    unuse: function (id) {
+    unuse: function(id) {
         var addCompIdAsTag = this.id === 0
             ? false
             : shared_1._k.globalOpt.tagsAsComponents;
         if (this._compStates.has(id)) {
             // check all components for a dependent, if there's one, throw an error
-            for (var _i = 0, _a = this._compStates.values(); _i < _a.length; _i++) {
+            for (
+                var _i = 0, _a = this._compStates.values();
+                _i < _a.length;
+                _i++
+            ) {
                 var comp = _a[_i];
                 if (comp.require && comp.require.includes(id)) {
-                    throw new Error("Can't unuse. Component \"".concat(comp.id, "\" requires component \"").concat(id, "\""));
+                    throw new Error(
+                        "Can't unuse. Component \"".concat(
+                            comp.id,
+                            "\" requires component \"",
+                        ).concat(id, "\""),
+                    );
                 }
             }
             this._compStates.delete(id);
@@ -705,32 +885,40 @@ exports.GameObjRawPrototype = {
             this._tags.delete(id);
         }
         if (this._cleanups[id]) {
-            this._cleanups[id].forEach(function (e) { return e(); });
+            this._cleanups[id].forEach(function(e) {
+                return e();
+            });
             delete this._cleanups[id];
         }
     },
-    has: function (compList, op) {
+    has: function(compList, op) {
         var _this = this;
-        if (op === void 0) { op = "and"; }
+        if (op === void 0) op = "and";
         if (Array.isArray(compList)) {
             if (op === "and") {
-                return compList.every(function (c) { return _this._compStates.has(c); });
+                return compList.every(function(c) {
+                    return _this._compStates.has(c);
+                });
             }
             else {
-                return compList.some(function (c) { return _this._compStates.has(c); });
+                return compList.some(function(c) {
+                    return _this._compStates.has(c);
+                });
             }
         }
         else {
             return this._compStates.has(compList);
         }
     },
-    c: function (id) {
+    c: function(id) {
         var _a;
-        return (_a = this._compStates.get(id)) !== null && _a !== void 0 ? _a : null;
+        return (_a = this._compStates.get(id)) !== null && _a !== void 0
+            ? _a
+            : null;
     },
     // #endregion
     // #region Tags
-    tag: function (tag) {
+    tag: function(tag) {
         if (Array.isArray(tag)) {
             for (var _i = 0, tag_1 = tag; _i < tag_1.length; _i++) {
                 var t = tag_1[_i];
@@ -745,7 +933,7 @@ exports.GameObjRawPrototype = {
             shared_1._k.game.events.trigger("tag", this, tag);
         }
     },
-    untag: function (tag) {
+    untag: function(tag) {
         if (Array.isArray(tag)) {
             for (var _i = 0, tag_2 = tag; _i < tag_2.length; _i++) {
                 var t = tag_2[_i];
@@ -760,15 +948,19 @@ exports.GameObjRawPrototype = {
             shared_1._k.game.events.trigger("untag", this, tag);
         }
     },
-    is: function (tag, op) {
+    is: function(tag, op) {
         var _this = this;
-        if (op === void 0) { op = "and"; }
+        if (op === void 0) op = "and";
         if (Array.isArray(tag)) {
             if (op === "and") {
-                return tag.every(function (tag) { return _this._tags.has(tag); });
+                return tag.every(function(tag) {
+                    return _this._tags.has(tag);
+                });
             }
             else {
-                return tag.some(function (tag) { return _this._tags.has(tag); });
+                return tag.some(function(tag) {
+                    return _this._tags.has(tag);
+                });
             }
         }
         else {
@@ -777,9 +969,9 @@ exports.GameObjRawPrototype = {
     },
     // #endregion
     // #region Events
-    on: function (name, action) {
+    on: function(name, action) {
         var _this = this;
-        var ctrl = (function (func) {
+        var ctrl = (function(func) {
             switch (name) {
                 case "fixedUpdate":
                     return _this._fixedUpdateEvents.add(func);
@@ -792,19 +984,24 @@ exports.GameObjRawPrototype = {
             }
         })(action.bind(this));
         if (this._onCurCompCleanup) {
-            this._onCurCompCleanup(function () { return ctrl.cancel(); });
+            this._onCurCompCleanup(function() {
+                return ctrl.cancel();
+            });
         }
         return ctrl;
     },
-    trigger: function (name) {
+    trigger: function(name) {
         var _a;
         var args = [];
         for (var _i = 1; _i < arguments.length; _i++) {
             args[_i - 1] = arguments[_i];
         }
-        (_a = this._events).trigger.apply(_a, __spreadArray([name], args, false));
+        (_a = this._events).trigger.apply(
+            _a,
+            __spreadArray([name], args, false),
+        );
     },
-    clearEvents: function () {
+    clearEvents: function() {
         this._events.clear();
         this._drawEvents.clear();
         this._updateEvents.clear();
@@ -812,31 +1009,31 @@ exports.GameObjRawPrototype = {
     },
     // #endregion
     // #region Helper Events
-    onAdd: function (cb) {
+    onAdd: function(cb) {
         return this.on("add", cb);
     },
-    onFixedUpdate: function (cb) {
+    onFixedUpdate: function(cb) {
         return this.on("fixedUpdate", cb);
     },
-    onUpdate: function (cb) {
+    onUpdate: function(cb) {
         return this.on("update", cb);
     },
-    onDraw: function (cb) {
+    onDraw: function(cb) {
         return this.on("draw", cb);
     },
-    onDestroy: function (action) {
+    onDestroy: function(action) {
         return this.on("destroy", action);
     },
-    onTag: function (action) {
+    onTag: function(action) {
         return this.on("tag", action);
     },
-    onUntag: function (action) {
+    onUntag: function(action) {
         return this.on("untag", action);
     },
-    onUse: function (action) {
+    onUse: function(action) {
         return this.on("use", action);
     },
-    onUnuse: function (action) {
+    onUnuse: function(action) {
         return this.on("unuse", action);
     },
     // #endregion
@@ -867,9 +1064,9 @@ function attachAppToGameObjRaw() {
         "onButtonDown",
         "onButtonRelease",
     ];
-    var _loop_2 = function (e) {
+    var _loop_2 = function(e) {
         var obj = exports.GameObjRawPrototype;
-        obj[e] = function () {
+        obj[e] = function() {
             var _this = this;
             var _a, _b;
             var args = [];
@@ -877,19 +1074,26 @@ function attachAppToGameObjRaw() {
                 args[_i] = arguments[_i];
             }
             // @ts-ignore
-            var ev = (_b = (_a = shared_1._k.app)[e]) === null || _b === void 0 ? void 0 : _b.call.apply(_b, __spreadArray([_a], args, false));
+            var ev = (_b = (_a = shared_1._k.app)[e]) === null || _b === void 0
+                ? void 0
+                : _b.call.apply(_b, __spreadArray([_a], args, false));
             ev.paused = this.paused;
             this._inputEvents.push(ev);
-            this.onDestroy(function () { return ev.cancel(); });
+            this.onDestroy(function() {
+                return ev.cancel();
+            });
             // This only happens if obj.has("stay");
-            this.on("sceneEnter", function () {
+            this.on("sceneEnter", function() {
                 var _a, _b;
                 // All app events are already canceled by changing the scene
                 // so we don't need to event.cancel();
                 _this._inputEvents.splice(_this._inputEvents.indexOf(ev), 1);
                 // create a new event with the same arguments
                 // @ts-ignore
-                var newEv = (_b = (_a = shared_1._k.app)[e]) === null || _b === void 0 ? void 0 : _b.call.apply(_b, __spreadArray([_a], args, false));
+                var newEv =
+                    (_b = (_a = shared_1._k.app)[e]) === null || _b === void 0
+                        ? void 0
+                        : _b.call.apply(_b, __spreadArray([_a], args, false));
                 // Replace the old event handler with the new one
                 // old KEventController.cancel() => new KEventController.cancel()
                 events_1.KEventController.replace(ev, newEv);

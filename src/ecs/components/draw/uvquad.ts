@@ -1,7 +1,7 @@
-import { getRenderProps } from "../../../game/utils";
-import { drawUVQuad } from "../../../gfx/draw/drawUVQuad";
-import { Rect, vec2 } from "../../../math/math";
-import type { Comp, GameObj } from "../../../types";
+import { getRenderProps } from "../../../game/utils.js";
+import { drawUVQuad } from "../../../gfx/draw/drawUVQuad.js";
+import { Rect, vec2 } from "../../../math/math.js";
+import type { Comp, GameObj } from "../../../types.js";
 
 /**
  * The {@link uvquad `uvquad()`} component.

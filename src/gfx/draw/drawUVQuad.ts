@@ -1,9 +1,9 @@
-import { DEF_ANCHOR, UV_PAD } from "../../constants/general";
-import { Color, rgb } from "../../math/color";
-import { Quad } from "../../math/math";
-import { Vec2 } from "../../math/Vec2";
-import { BlendMode, type DrawUVQuadOpt } from "../../types";
-import { anchorPt } from "../anchor";
+import { DEF_ANCHOR, UV_PAD } from "../../constants/general.js";
+import { Color, rgb } from "../../math/color.js";
+import { Quad } from "../../math/math.js";
+import { Vec2 } from "../../math/Vec2.js";
+import { BlendMode, type DrawUVQuadOpt } from "../../types.js";
+import { anchorPt } from "../anchor.js";
 import {
     multRotate,
     multScaleV,
@@ -11,8 +11,8 @@ import {
     multTranslateV,
     popTransform,
     pushTransform,
-} from "../stack";
-import { drawRaw } from "./drawRaw";
+} from "../stack.js";
+import { drawRaw } from "./drawRaw.js";
 
 export function drawUVQuad(opt: DrawUVQuadOpt) {
     if (opt.width === undefined || opt.height === undefined) {

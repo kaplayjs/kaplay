@@ -1,6 +1,6 @@
-import type { Vec2 } from "../../math/Vec2";
-import type { RenderProps } from "../../types";
-import { drawLines } from "./drawLine";
+import type { Vec2 } from "../../math/Vec2.js";
+import type { RenderProps } from "../../types.js";
+import { drawLines } from "./drawLine.js";
 
 export type DrawCurveOpt = RenderProps & {
     /**

@@ -2,19 +2,19 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.doubleJump = doubleJump;
 function doubleJump(numJumps) {
-    if (numJumps === void 0) { numJumps = 2; }
+    if (numJumps === void 0) numJumps = 2;
     var jumpsLeft = numJumps;
     return {
         id: "doubleJump",
         require: ["body"],
         numJumps: numJumps,
-        add: function () {
+        add: function() {
             var _this = this;
-            this.onGround(function () {
+            this.onGround(function() {
                 jumpsLeft = _this.numJumps;
             });
         },
-        doubleJump: function (force) {
+        doubleJump: function(force) {
             if (jumpsLeft <= 0) {
                 return;
             }
@@ -24,10 +24,10 @@ function doubleJump(numJumps) {
             jumpsLeft--;
             this.jump(force);
         },
-        onDoubleJump: function (action) {
+        onDoubleJump: function(action) {
             return this.on("doubleJump", action);
         },
-        inspect: function () {
+        inspect: function() {
             return "jumpsLeft: ".concat(jumpsLeft);
         },
     };

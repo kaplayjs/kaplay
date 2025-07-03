@@ -36,7 +36,11 @@ function downloadBlob(filename, blob) {
     download(filename, url);
     URL.revokeObjectURL(url);
 }
-var isDataURL = function (str) { return str.match(/^data:\w+\/\w+;base64,.+/); };
+var isDataURL = function(str) {
+    return str.match(/^data:\w+\/\w+;base64,.+/);
+};
 exports.isDataURL = isDataURL;
-var getFileName = function (p) { return p.split(".").slice(0, -1).join("."); };
+var getFileName = function(p) {
+    return p.split(".").slice(0, -1).join(".");
+};
 exports.getFileName = getFileName;

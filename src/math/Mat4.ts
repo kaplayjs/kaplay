@@ -1,5 +1,5 @@
-import { deg2rad, rad2deg } from "./math";
-import { Vec2 } from "./Vec2";
+import { deg2rad, rad2deg } from "./math.js";
+import { Vec2 } from "./Vec2.js";
 
 /**
  * @group Math

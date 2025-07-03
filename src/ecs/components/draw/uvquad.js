@@ -15,31 +15,38 @@ function uvquad(w, h) {
         },
         set width(value) {
             _width = value;
-            if (_shape)
+            if (_shape) {
                 _shape.width = value;
+            }
         },
         get height() {
             return _height;
         },
         set height(value) {
             _height = value;
-            if (_shape)
+            if (_shape) {
                 _shape.height = value;
+            }
         },
-        draw: function () {
-            (0, drawUVQuad_1.drawUVQuad)(Object.assign((0, utils_1.getRenderProps)(this), {
-                width: _width,
-                height: _height,
-            }));
+        draw: function() {
+            (0, drawUVQuad_1.drawUVQuad)(
+                Object.assign((0, utils_1.getRenderProps)(this), {
+                    width: _width,
+                    height: _height,
+                }),
+            );
         },
-        renderArea: function () {
+        renderArea: function() {
             if (!_shape) {
                 _shape = new math_1.Rect((0, math_1.vec2)(0), _width, _height);
             }
             return _shape;
         },
-        inspect: function () {
-            return "uvquad: (".concat(Math.ceil(_width), "w, ").concat(Math.ceil(_height), ")h");
+        inspect: function() {
+            return "uvquad: (".concat(Math.ceil(_width), "w, ").concat(
+                Math.ceil(_height),
+                ")h",
+            );
         },
     };
 }

@@ -1,13 +1,17 @@
-import type { KEventController } from "../../../events/events";
-import { clamp } from "../../../math/clamp";
-import { Color } from "../../../math/color";
-import { type EaseFunc, easings } from "../../../math/easings";
-import { lerp, type LerpValue } from "../../../math/lerp";
-import { catmullRom, hermiteFirstDerivative, vec2 } from "../../../math/math";
-import { Vec2 } from "../../../math/Vec2";
-import { _k } from "../../../shared";
-import type { Comp, GameObj } from "../../../types";
-import type { NamedComp } from "./named";
+import type { KEventController } from "../../../events/events.js";
+import { clamp } from "../../../math/clamp.js";
+import { Color } from "../../../math/color.js";
+import { type EaseFunc, easings } from "../../../math/easings.js";
+import { lerp, type LerpValue } from "../../../math/lerp.js";
+import {
+    catmullRom,
+    hermiteFirstDerivative,
+    vec2,
+} from "../../../math/math.js";
+import { Vec2 } from "../../../math/Vec2.js";
+import { _k } from "../../../shared.js";
+import type { Comp, GameObj } from "../../../types.js";
+import type { NamedComp } from "./named.js";
 
 type TimeDirection =
     /* Animate forward */

@@ -1,18 +1,18 @@
-import { DBG_FONT } from "../../constants/general";
-import { rgb } from "../../math/color";
-import { vec2 } from "../../math/math";
-import { type Vec2 } from "../../math/Vec2";
-import { formatText } from "../formatText";
+import { DBG_FONT } from "../../constants/general.js";
+import { rgb } from "../../math/color.js";
+import { vec2 } from "../../math/math.js";
+import { type Vec2 } from "../../math/Vec2.js";
+import { formatText } from "../formatText.js";
 import {
     height,
     multTranslateV,
     popTransform,
     pushTransform,
     width,
-} from "../stack";
-import { drawFormattedText } from "./drawFormattedText";
-import { drawRect } from "./drawRect";
-import { drawUnscaled } from "./drawUnscaled";
+} from "../stack.js";
+import { drawFormattedText } from "./drawFormattedText.js";
+import { drawRect } from "./drawRect.js";
+import { drawUnscaled } from "./drawUnscaled.js";
 
 export function drawInspectText(pos: Vec2, txt: string) {
     drawUnscaled(() => {

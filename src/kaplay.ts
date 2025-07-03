@@ -1,25 +1,25 @@
 // The definitive version!
-import type { ButtonsDef } from "./app/inputBindings";
-import { SoundData } from "./assets/sound";
-import { loadSprite } from "./assets/sprite";
-import { createEmptyAudioBuffer } from "./audio/audio";
-import { createContext } from "./core/context";
-import { createEngine } from "./core/engine";
+import type { ButtonsDef } from "./app/inputBindings.js";
+import { SoundData } from "./assets/sound.js";
+import { loadSprite } from "./assets/sprite.js";
+import { createEmptyAudioBuffer } from "./audio/audio.js";
+import { createContext } from "./core/context.js";
+import { createEngine } from "./core/engine.js";
 import beanSrc from "./data/assets/bean.png";
 import boomSpriteSrc from "./data/assets/boom.png";
 import burpSoundSrc from "./data/assets/burp.mp3";
 import happyFontSrc from "./data/assets/happy.png";
 import kaSpriteSrc from "./data/assets/ka.png";
-import { createCollisionSystem } from "./ecs/systems/createCollisionSystem";
-import { LCEvents, system } from "./ecs/systems/systems";
-import { _k, updateEngine } from "./shared";
+import { createCollisionSystem } from "./ecs/systems/createCollisionSystem.js";
+import { LCEvents, system } from "./ecs/systems/systems.js";
+import { _k, updateEngine } from "./shared.js";
 import {
     type KAPLAYCtx,
     type KAPLAYOpt,
     type KAPLAYPlugin,
     type MergePlugins,
     type PluginList,
-} from "./types";
+} from "./types.js";
 
 // If KAPLAY was runned before
 let runned = false;
@@ -104,8 +104,34 @@ export const kaplay = <
     const burpSnd = new SoundData(createEmptyAudioBuffer(audio.ctx));
 
     // load that burp sound
-    audio.ctx.decodeAudioData(burpSoundSrc.buffer.slice(0)).then((buf) => {
-        burpSnd.buf = buf;
+    // Cargar el asset de sonido correctamente como ArrayBuffer
+    // burpSoundSrc es una URL, usar SoundData.fromURL para cargar y decodificar
+    // Si burpSoundSrc es Uint8Array, convertir a ArrayBuffer
+    // Si burpSoundSrc es Uint8Array, crear un ArrayBuffer copiado
+    function toArrayBuffer(data: any): ArrayBuffer {
+        if (data instanceof ArrayBuffer) return data;
+        if (data instanceof Uint8Array) {
+            const arr = data;
+            const ab = new ArrayBuffer(arr.byteLength);
+            new Uint8Array(ab).set(arr);
+            return ab;
+        }
+        if (
+            typeof SharedArrayBuffer !== "undefined"
+            && data instanceof SharedArrayBuffer
+        ) {
+            const arr = new Uint8Array(data);
+            const ab = new ArrayBuffer(arr.byteLength);
+            new Uint8Array(ab).set(arr);
+            return ab;
+        }
+        throw new Error(
+            "Tipo de burpSoundSrc no soportado para decodificación de audio",
+        );
+    }
+    const burpBuffer = toArrayBuffer(burpSoundSrc);
+    SoundData.fromArrayBuffer(burpBuffer).then((soundData) => {
+        burpSnd.buf = soundData.buf;
         game.defaultAssets.burp = burpSnd;
     }).catch((err) => {
         console.error("Failed to load burp: ", err);

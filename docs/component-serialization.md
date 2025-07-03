@@ -54,8 +54,8 @@ loadAll(state);
 Suppose you have a component called `health`:
 
 ```typescript
-import type { SerializableComponent } from "../core/SerializableComponent.js";
-import { registerSerializableComponent } from "../core/SerializableComponent.js";
+import type { SerializableComponent } from "../core/SerializableComponent";
+import { registerSerializableComponent } from "../core/SerializableComponent";
 
 export interface HealthComp extends SerializableComponent {
     hp: number;
@@ -92,8 +92,8 @@ export function health(hp: number, maxHP?: number): HealthComp {
 
 **Template:**
 ```typescript
-import type { SerializableComponent } from "../core/SerializableComponent.js";
-import { registerSerializableComponent } from "../core/SerializableComponent.js";
+import type { SerializableComponent } from "../core/SerializableComponent";
+import { registerSerializableComponent } from "../core/SerializableComponent";
 
 export interface MyComp extends SerializableComponent {
     // ...your properties...

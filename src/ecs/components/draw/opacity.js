@@ -8,19 +8,35 @@ function opacity(a) {
     return {
         id: "opacity",
         opacity: a !== null && a !== void 0 ? a : 1,
-        fadeIn: function (time, easeFunc) {
+        fadeIn: function(time, easeFunc) {
             var _this = this;
-            if (time === void 0) { time = 1; }
-            if (easeFunc === void 0) { easeFunc = easings_1.easings.linear; }
-            return shared_1._k.game.root.tween(0, this.opacity, time, function (a) { return _this.opacity = a; }, easeFunc);
+            if (time === void 0) time = 1;
+            if (easeFunc === void 0) easeFunc = easings_1.easings.linear;
+            return shared_1._k.game.root.tween(
+                0,
+                this.opacity,
+                time,
+                function(a) {
+                    return _this.opacity = a;
+                },
+                easeFunc,
+            );
         },
-        fadeOut: function (time, easeFunc) {
+        fadeOut: function(time, easeFunc) {
             var _this = this;
-            if (time === void 0) { time = 1; }
-            if (easeFunc === void 0) { easeFunc = easings_1.easings.linear; }
-            return shared_1._k.game.root.tween(this.opacity, 0, time, function (a) { return _this.opacity = a; }, easeFunc);
+            if (time === void 0) time = 1;
+            if (easeFunc === void 0) easeFunc = easings_1.easings.linear;
+            return shared_1._k.game.root.tween(
+                this.opacity,
+                0,
+                time,
+                function(a) {
+                    return _this.opacity = a;
+                },
+                easeFunc,
+            );
         },
-        inspect: function () {
+        inspect: function() {
             return "opacity: ".concat((0, numbers_1.toFixed)(this.opacity, 1));
         },
     };

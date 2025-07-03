@@ -10,7 +10,7 @@ function color() {
     return {
         id: "color",
         color: color_1.rgb.apply(void 0, args),
-        inspect: function () {
+        inspect: function() {
             return "color: ".concat(this.color.toString());
         },
     };

@@ -11,7 +11,9 @@ var drawRaw_1 = require("./drawRaw");
 function drawUVQuad(opt) {
     var _a, _b, _c;
     if (opt.width === undefined || opt.height === undefined) {
-        throw new Error("drawUVQuad() requires property \"width\" and \"height\".");
+        throw new Error(
+            "drawUVQuad() requires property \"width\" and \"height\".",
+        );
     }
     if (opt.width <= 0 || opt.height <= 0) {
         return;
@@ -36,47 +38,57 @@ function drawUVQuad(opt) {
     (0, stack_1.multRotate)(opt.angle);
     (0, stack_1.multScaleV)(opt.scale);
     (0, stack_1.multTranslate)(offsetX, offsetY);
-    (0, drawRaw_1.drawRaw)({
-        pos: [
-            -w / 2,
-            h / 2,
-            -w / 2,
-            -h / 2,
-            w / 2,
-            -h / 2,
-            w / 2,
-            h / 2,
-        ],
-        uv: [
-            opt.flipX ? qx + qw : qx,
-            opt.flipY ? qy : qy + qh,
-            opt.flipX ? qx + qw : qx,
-            opt.flipY ? qy + qh : qy,
-            opt.flipX ? qx : qx + qw,
-            opt.flipY ? qy + qh : qy,
-            opt.flipX ? qx : qx + qw,
-            opt.flipY ? qy : qy + qh,
-        ],
-        color: [
-            color.r,
-            color.g,
-            color.b,
-            color.r,
-            color.g,
-            color.b,
-            color.r,
-            color.g,
-            color.b,
-            color.r,
-            color.g,
-            color.b,
-        ],
-        opacity: [
-            opacity,
-            opacity,
-            opacity,
-            opacity,
-        ],
-    }, [0, 1, 3, 1, 2, 3], opt.fixed, opt.tex, opt.shader, (_b = opt.uniform) !== null && _b !== void 0 ? _b : undefined, (_c = opt.blend) !== null && _c !== void 0 ? _c : types_1.BlendMode.Normal);
+    (0, drawRaw_1.drawRaw)(
+        {
+            pos: [
+                -w / 2,
+                h / 2,
+                -w / 2,
+                -h / 2,
+                w / 2,
+                -h / 2,
+                w / 2,
+                h / 2,
+            ],
+            uv: [
+                opt.flipX ? qx + qw : qx,
+                opt.flipY ? qy : qy + qh,
+                opt.flipX ? qx + qw : qx,
+                opt.flipY ? qy + qh : qy,
+                opt.flipX ? qx : qx + qw,
+                opt.flipY ? qy + qh : qy,
+                opt.flipX ? qx : qx + qw,
+                opt.flipY ? qy : qy + qh,
+            ],
+            color: [
+                color.r,
+                color.g,
+                color.b,
+                color.r,
+                color.g,
+                color.b,
+                color.r,
+                color.g,
+                color.b,
+                color.r,
+                color.g,
+                color.b,
+            ],
+            opacity: [
+                opacity,
+                opacity,
+                opacity,
+                opacity,
+            ],
+        },
+        [0, 1, 3, 1, 2, 3],
+        opt.fixed,
+        opt.tex,
+        opt.shader,
+        (_b = opt.uniform) !== null && _b !== void 0 ? _b : undefined,
+        (_c = opt.blend) !== null && _c !== void 0
+            ? _c
+            : types_1.BlendMode.Normal,
+    );
     (0, stack_1.popTransform)();
 }

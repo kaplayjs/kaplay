@@ -20,11 +20,13 @@ var utils_1 = require("./utils");
 /**
  * @group GFX
  */
-var Shader = /** @class */ (function () {
+var Shader = /** @class */ function() {
     function Shader(ctx, vert, frag, attribs) {
         var _this = this;
         this.ctx = ctx;
-        ctx.onDestroy(function () { return _this.free(); });
+        ctx.onDestroy(function() {
+            return _this.free();
+        });
         var gl = ctx.gl;
         var vertShader = gl.createShader(gl.VERTEX_SHADER);
         var fragShader = gl.createShader(gl.FRAGMENT_SHADER);
@@ -40,26 +42,30 @@ var Shader = /** @class */ (function () {
         this.glProgram = prog;
         gl.attachShader(prog, vertShader);
         gl.attachShader(prog, fragShader);
-        attribs.forEach(function (attrib, i) { return gl.bindAttribLocation(prog, i, attrib); });
+        attribs.forEach(function(attrib, i) {
+            return gl.bindAttribLocation(prog, i, attrib);
+        });
         gl.linkProgram(prog);
         if (!gl.getProgramParameter(prog, gl.LINK_STATUS)) {
             var vertError = gl.getShaderInfoLog(vertShader);
-            if (vertError)
+            if (vertError) {
                 throw new Error("VERTEX SHADER " + vertError);
+            }
             var fragError = gl.getShaderInfoLog(fragShader);
-            if (fragError)
+            if (fragError) {
                 throw new Error("FRAGMENT SHADER " + fragError);
+            }
         }
         gl.deleteShader(vertShader);
         gl.deleteShader(fragShader);
     }
-    Shader.prototype.bind = function () {
+    Shader.prototype.bind = function() {
         this.ctx.pushProgram(this.glProgram);
     };
-    Shader.prototype.unbind = function () {
+    Shader.prototype.unbind = function() {
         this.ctx.popProgram();
     };
-    Shader.prototype.send = function (uniform) {
+    Shader.prototype.send = function(uniform) {
         var gl = this.ctx.gl;
         for (var name_1 in uniform) {
             var val = uniform[name_1];
@@ -71,24 +77,28 @@ var Shader = /** @class */ (function () {
                 gl.uniformMatrix4fv(loc, false, new Float32Array(val.m));
             }
             else if (val instanceof math_1.Mat23) {
-                gl.uniformMatrix4fv(loc, false, new Float32Array([
-                    val.a,
-                    val.b,
-                    0,
-                    0,
-                    val.c,
-                    val.d,
-                    0,
-                    0,
-                    0,
-                    0,
-                    1,
-                    0,
-                    val.e,
-                    val.f,
-                    0,
-                    1,
-                ]));
+                gl.uniformMatrix4fv(
+                    loc,
+                    false,
+                    new Float32Array([
+                        val.a,
+                        val.b,
+                        0,
+                        0,
+                        val.c,
+                        val.d,
+                        0,
+                        0,
+                        0,
+                        0,
+                        1,
+                        0,
+                        val.e,
+                        val.f,
+                        0,
+                        1,
+                    ]),
+                );
                 // console.log(val)
             }
             else if (val instanceof color_1.Color) {
@@ -102,10 +112,20 @@ var Shader = /** @class */ (function () {
                     gl.uniform1fv(loc, val);
                 }
                 else if ((0, asserts_1.arrayIsVec2)(val)) {
-                    gl.uniform2fv(loc, val.map(function (v) { return [v.x, v.y]; }).flat());
+                    gl.uniform2fv(
+                        loc,
+                        val.map(function(v) {
+                            return [v.x, v.y];
+                        }).flat(),
+                    );
                 }
                 else if ((0, asserts_1.arrayIsColor)(val)) {
-                    gl.uniform3fv(loc, val.map(function (v) { return [v.r, v.g, v.b]; }).flat());
+                    gl.uniform3fv(
+                        loc,
+                        val.map(function(v) {
+                            return [v.r, v.g, v.b];
+                        }).flat(),
+                    );
                 }
             }
             else {
@@ -113,30 +133,45 @@ var Shader = /** @class */ (function () {
             }
         }
     };
-    Shader.prototype.free = function () {
+    Shader.prototype.free = function() {
         this.ctx.gl.deleteProgram(this.glProgram);
     };
     return Shader;
-}());
+}();
 exports.Shader = Shader;
 function makeShader(ggl, vertSrc, fragSrc) {
-    if (vertSrc === void 0) { vertSrc = general_1.DEF_VERT; }
-    if (fragSrc === void 0) { fragSrc = general_1.DEF_FRAG; }
-    var vcode = general_1.VERT_TEMPLATE.replace("{{user}}", vertSrc !== null && vertSrc !== void 0 ? vertSrc : general_1.DEF_VERT);
-    var fcode = general_1.FRAG_TEMPLATE.replace("{{user}}", fragSrc !== null && fragSrc !== void 0 ? fragSrc : general_1.DEF_FRAG);
+    if (vertSrc === void 0) vertSrc = general_1.DEF_VERT;
+    if (fragSrc === void 0) fragSrc = general_1.DEF_FRAG;
+    var vcode = general_1.VERT_TEMPLATE.replace(
+        "{{user}}",
+        vertSrc !== null && vertSrc !== void 0 ? vertSrc : general_1.DEF_VERT,
+    );
+    var fcode = general_1.FRAG_TEMPLATE.replace(
+        "{{user}}",
+        fragSrc !== null && fragSrc !== void 0 ? fragSrc : general_1.DEF_FRAG,
+    );
     try {
-        return new Shader(ggl, vcode, fcode, general_1.VERTEX_FORMAT.map(function (vert) { return vert.name; }));
-    }
-    catch (e) {
+        return new Shader(
+            ggl,
+            vcode,
+            fcode,
+            general_1.VERTEX_FORMAT.map(function(vert) {
+                return vert.name;
+            }),
+        );
+    } catch (e) {
         var lineOffset = 14;
         var fmt = /(?<type>^\w+) SHADER ERROR: 0:(?<line>\d+): (?<msg>.+)/;
         var match = (0, log_1.getErrorMessage)(e).match(fmt);
-        if (!(match === null || match === void 0 ? void 0 : match.groups))
+        if (!(match === null || match === void 0 ? void 0 : match.groups)) {
             throw e;
+        }
         var line = Number(match.groups.line) - lineOffset;
         var msg = match.groups.msg.trim();
         var ty = match.groups.type.toLowerCase();
-        throw new Error("".concat(ty, " shader line ").concat(line, ": ").concat(msg));
+        throw new Error(
+            "".concat(ty, " shader line ").concat(line, ": ").concat(msg),
+        );
     }
 }
 function resolveShader(src) {
@@ -163,23 +198,28 @@ function resolveShader(src) {
 }
 function getShader(name) {
     var _a;
-    return (_a = shared_1._k.assets.shaders.get(name)) !== null && _a !== void 0 ? _a : null;
+    return (_a = shared_1._k.assets.shaders.get(name)) !== null && _a !== void 0
+        ? _a
+        : null;
 }
 function loadShader(name, vert, frag) {
-    return shared_1._k.assets.shaders.addLoaded(name, makeShader(shared_1._k.gfx.ggl, vert, frag));
+    return shared_1._k.assets.shaders.addLoaded(
+        name,
+        makeShader(shared_1._k.gfx.ggl, vert, frag),
+    );
 }
 function loadShaderURL(name, vert, frag) {
     vert = (0, utils_1.fixURL)(vert);
     frag = (0, utils_1.fixURL)(frag);
-    var resolveUrl = function (url) {
+    var resolveUrl = function(url) {
         return url
             ? (0, asset_1.fetchText)(url)
             : Promise.resolve(null);
     };
     var load = Promise.all([resolveUrl(vert), resolveUrl(frag)])
-        .then(function (_a) {
-        var vcode = _a[0], fcode = _a[1];
-        return makeShader(shared_1._k.gfx.ggl, vcode, fcode);
-    });
+        .then(function(_a) {
+            var vcode = _a[0], fcode = _a[1];
+            return makeShader(shared_1._k.gfx.ggl, vcode, fcode);
+        });
     return shared_1._k.assets.shaders.add(name, load);
 }

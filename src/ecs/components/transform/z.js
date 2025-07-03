@@ -5,7 +5,7 @@ function z(z) {
     return {
         id: "z",
         z: z,
-        inspect: function () {
+        inspect: function() {
             return "z: ".concat(this.z);
         },
     };

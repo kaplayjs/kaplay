@@ -15,5 +15,10 @@ function lerp(a, b, t) {
     else if (a instanceof color_1.Color && b instanceof color_1.Color) {
         return a.lerp(b, t);
     }
-    throw new Error("Bad value for lerp(): ".concat(a, ", ").concat(b, ". Only number, Vec2 and Color is supported."));
+    throw new Error(
+        "Bad value for lerp(): ".concat(a, ", ").concat(
+            b,
+            ". Only number, Vec2 and Color is supported.",
+        ),
+    );
 }

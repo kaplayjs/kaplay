@@ -1,17 +1,17 @@
 // The engine is what KAPLAY needs for running and proccesing all it's stuff
 
-import { initApp } from "../app/app";
-import { initAssets } from "../assets/asset";
-import { initAudio } from "../audio/audio";
-import { createDebug } from "../debug/debug";
-import { createGame } from "../game/game";
-import { createCanvas } from "../gfx/canvas";
-import { initGfx } from "../gfx/gfx";
-import { initAppGfx } from "../gfx/gfxApp";
-import type { KAPLAYCtx, KAPLAYOpt } from "../types";
-import { startEngineLoop } from "./engineLoop";
-import { createFontCache } from "./fontCache";
-import { createFrameRenderer } from "./frameRendering";
+import { initApp } from "../app/app.js";
+import { initAssets } from "../assets/asset.js";
+import { initAudio } from "../audio/audio.js";
+import { createDebug } from "../debug/debug.js";
+import { createGame } from "../game/game.js";
+import { createCanvas } from "../gfx/canvas.js";
+import { initGfx } from "../gfx/gfx.js";
+import { initAppGfx } from "../gfx/gfxApp.js";
+import type { KAPLAYCtx, KAPLAYOpt } from "../types.js";
+import { startEngineLoop } from "./engineLoop.js";
+import { createFontCache } from "./fontCache.js";
+import { createFrameRenderer } from "./frameRendering.js";
 
 export type Engine = ReturnType<typeof createEngine>;
 

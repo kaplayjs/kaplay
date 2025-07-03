@@ -1,6 +1,6 @@
-import { vec2 } from "./math";
-import { aStarSearch, type Graph } from "./navigation";
-import { Vec2 } from "./Vec2";
+import { vec2 } from "./math.js";
+import { aStarSearch, type Graph } from "./navigation.js";
+import { Vec2 } from "./Vec2.js";
 
 class NavEdge {
     a: Vec2;
