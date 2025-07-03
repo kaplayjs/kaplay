@@ -1,9 +1,9 @@
-import { Quad } from "../math/math";
-import { _k } from "../shared";
-import { getFileName } from "../utils/dataURL";
-import { type Asset, fetchJSON } from "./asset";
-import { type LoadSpriteSrc, type SpriteAnim, SpriteData } from "./sprite";
-import { fixURL } from "./utils";
+import { Quad } from "../math/math.js";
+import { _k } from "../shared.js";
+import { getFileName } from "../utils/dataURL.js";
+import { type Asset, fetchJSON } from "./asset.js";
+import { type LoadSpriteSrc, type SpriteAnim, SpriteData } from "./sprite.js";
+import { fixURL } from "./utils.js";
 
 export type AsepriteData = {
     frames: Array<{

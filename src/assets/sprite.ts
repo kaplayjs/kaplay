@@ -1,10 +1,10 @@
-import type { DrawSpriteOpt } from "../gfx/draw/drawSprite";
-import type { Texture } from "../gfx/gfx";
-import { Quad } from "../math/math";
-import { _k } from "../shared";
-import { type ImageSource } from "../types";
-import { Asset, loadImg, loadProgress } from "./asset";
-import { fixURL } from "./utils";
+import type { DrawSpriteOpt } from "../gfx/draw/drawSprite.js";
+import type { Texture } from "../gfx/gfx.js";
+import { Quad } from "../math/math.js";
+import { _k } from "../shared.js";
+import { type ImageSource } from "../types.js";
+import { Asset, loadImg, loadProgress } from "./asset.js";
+import { fixURL } from "./utils.js";
 
 /**
  * Frame-based animation configuration.

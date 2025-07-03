@@ -1,10 +1,10 @@
-import { loadProgress } from "../../assets/asset";
-import { rgb } from "../../math/color";
-import { vec2 } from "../../math/math";
-import { _k } from "../../shared";
-import { height, width } from "../stack";
-import { drawRect } from "./drawRect";
-import { drawUnscaled } from "./drawUnscaled";
+import { loadProgress } from "../../assets/asset.js";
+import { rgb } from "../../math/color.js";
+import { vec2 } from "../../math/math.js";
+import { _k } from "../../shared.js";
+import { height, width } from "../stack.js";
+import { drawRect } from "./drawRect.js";
+import { drawUnscaled } from "./drawUnscaled.js";
 
 export function drawLoadScreen() {
     const progress = loadProgress();

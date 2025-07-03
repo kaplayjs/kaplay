@@ -1,7 +1,7 @@
-import { _k } from "../shared";
-import type { Canvas } from "../types";
-import { FrameBuffer } from "./FrameBuffer";
-import { flush } from "./stack";
+import { _k } from "../shared.js";
+import type { Canvas } from "../types.js";
+import { FrameBuffer } from "./FrameBuffer.js";
+import { flush } from "./stack.js";
 
 export const makeCanvas = (w: number, h: number): Canvas => {
     const fb = new FrameBuffer(_k.ggl, w, h);

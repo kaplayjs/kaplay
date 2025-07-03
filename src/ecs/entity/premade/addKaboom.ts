@@ -1,13 +1,13 @@
-import type { Vec2 } from "../../../math/Vec2";
-import { _k } from "../../../shared";
-import type { CompList, GameObj } from "../../../types";
-import { sprite } from "../../components/draw/sprite";
-import { boom } from "../../components/misc/boom";
-import { stay } from "../../components/misc/stay";
-import { timer } from "../../components/misc/timer";
-import { anchor } from "../../components/transform/anchor";
-import { pos } from "../../components/transform/pos";
-import { scale } from "../../components/transform/scale";
+import type { Vec2 } from "../../../math/Vec2.js";
+import { _k } from "../../../shared.js";
+import type { CompList, GameObj } from "../../../types.js";
+import { sprite } from "../../components/draw/sprite.js";
+import { boom } from "../../components/misc/boom.js";
+import { stay } from "../../components/misc/stay.js";
+import { timer } from "../../components/misc/timer.js";
+import { anchor } from "../../components/transform/anchor.js";
+import { pos } from "../../components/transform/pos.js";
+import { scale } from "../../components/transform/scale.js";
 
 /**
  * @group Options

@@ -1,10 +1,10 @@
-import { getRenderProps } from "../../../game/utils";
-import { drawEllipse } from "../../../gfx/draw/drawEllipse";
-import { Ellipse } from "../../../math/math";
-import { Vec2 } from "../../../math/Vec2";
-import type { Comp, GameObj } from "../../../types";
-import type { AnchorComp } from "../transform/anchor";
-import type { outline } from "./outline";
+import { getRenderProps } from "../../../game/utils.js";
+import { drawEllipse } from "../../../gfx/draw/drawEllipse.js";
+import { Ellipse } from "../../../math/math.js";
+import { Vec2 } from "../../../math/Vec2.js";
+import type { Comp, GameObj } from "../../../types.js";
+import type { AnchorComp } from "../transform/anchor.js";
+import type { outline } from "./outline.js";
 
 /**
  * The {@link ellipse `ellipse()`} component.

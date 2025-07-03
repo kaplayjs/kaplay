@@ -3,21 +3,21 @@
 
 // All in /game folder is stuff that uses/modify the game state.
 
-import type { Asset } from "../assets/asset";
-import type { BitmapFontData } from "../assets/bitmapFont";
-import type { SoundData } from "../assets/sound";
-import type { SpriteData } from "../assets/sprite";
-import type { FakeMouseComp } from "../ecs/components/misc/fakeMouse";
-import { timer, type TimerComp } from "../ecs/components/misc/timer";
-import type { PosComp } from "../ecs/components/transform/pos";
-import { makeInternal } from "../ecs/entity/make";
-import type { System } from "../ecs/systems/systems";
-import type { GameEventMap, GameObjEventMap } from "../events/eventMap";
-import { KEventHandler } from "../events/events";
-import { Mat23, RNG } from "../math/math";
-import { Vec2 } from "../math/Vec2";
-import type { GameObj } from "../types";
-import type { SceneDef, SceneName } from "./scenes";
+import type { Asset } from "../assets/asset.js";
+import type { BitmapFontData } from "../assets/bitmapFont.js";
+import type { SoundData } from "../assets/sound.js";
+import type { SpriteData } from "../assets/sprite.js";
+import type { FakeMouseComp } from "../ecs/components/misc/fakeMouse.js";
+import { timer, type TimerComp } from "../ecs/components/misc/timer.js";
+import type { PosComp } from "../ecs/components/transform/pos.js";
+import { makeInternal } from "../ecs/entity/make.js";
+import type { System } from "../ecs/systems/systems.js";
+import type { GameEventMap, GameObjEventMap } from "../events/eventMap.js";
+import { KEventHandler } from "../events/events.js";
+import { Mat23, RNG } from "../math/math.js";
+import { Vec2 } from "../math/Vec2.js";
+import type { GameObj } from "../types.js";
+import type { SceneDef, SceneName } from "./scenes.js";
 
 /**
  * The "Game" it's all the state related to the game running

@@ -1,8 +1,8 @@
-import { getArcPts } from "../../math/various";
-import { Vec2 } from "../../math/Vec2";
-import type { DrawEllipseOpt } from "../../types";
-import { anchorPt } from "../anchor";
-import { drawPolygon } from "./drawPolygon";
+import { getArcPts } from "../../math/various.js";
+import { Vec2 } from "../../math/Vec2.js";
+import type { DrawEllipseOpt } from "../../types.js";
+import { anchorPt } from "../anchor.js";
+import { drawPolygon } from "./drawPolygon.js";
 
 export function drawEllipse(opt: DrawEllipseOpt) {
     if (opt.radiusX === undefined || opt.radiusY === undefined) {

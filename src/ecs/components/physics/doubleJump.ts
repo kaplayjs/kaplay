@@ -1,6 +1,6 @@
-import type { KEventController } from "../../../events/events";
-import type { Comp, GameObj } from "../../../types";
-import type { BodyComp } from "./body";
+import type { KEventController } from "../../../events/events.js";
+import type { Comp, GameObj } from "../../../types.js";
+import type { BodyComp } from "./body.js";
 
 /**
  * The {@link doubleJump `doubleJump()`} component.

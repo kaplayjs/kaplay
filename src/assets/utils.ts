@@ -1,5 +1,5 @@
-import { _k } from "../shared";
-import { isDataURL } from "../utils/dataURL";
+import { _k } from "../shared.js";
+import { isDataURL } from "../utils/dataURL.js";
 
 export function fixURL<D>(url: D): D {
     if (typeof url == "string" && window.kaplayjs_assetsAliases[url]) {

@@ -1,22 +1,22 @@
-import { Asset } from "../assets/asset";
-import type { BitmapFontData, GfxFont } from "../assets/bitmapFont";
-import { FontData, resolveFont } from "../assets/font";
+import { Asset } from "../assets/asset.js";
+import type { BitmapFontData, GfxFont } from "../assets/bitmapFont.js";
+import { FontData, resolveFont } from "../assets/font.js";
 import {
     DEF_FONT_FILTER,
     DEF_TEXT_CACHE_SIZE,
     FONT_ATLAS_HEIGHT,
     FONT_ATLAS_WIDTH,
-} from "../constants/general";
-import { Color } from "../math/color";
-import { Quad, vec2 } from "../math/math";
-import { Vec2 } from "../math/Vec2";
-import { _k } from "../shared";
-import type { Outline, TexFilter } from "../types";
-import { runes } from "../utils/runes";
-import { alignPt } from "./anchor";
-import type { FormattedChar, FormattedText } from "./draw/drawFormattedText";
-import type { CharTransform, DrawTextOpt } from "./draw/drawText";
-import { Texture } from "./gfx";
+} from "../constants/general.js";
+import { Color } from "../math/color.js";
+import { Quad, vec2 } from "../math/math.js";
+import { Vec2 } from "../math/Vec2.js";
+import { _k } from "../shared.js";
+import type { Outline, TexFilter } from "../types.js";
+import { runes } from "../utils/runes.js";
+import { alignPt } from "./anchor.js";
+import type { FormattedChar, FormattedText } from "./draw/drawFormattedText.js";
+import type { CharTransform, DrawTextOpt } from "./draw/drawText.js";
+import { Texture } from "./gfx.js";
 
 export type FontAtlas = {
     font: BitmapFontData;

@@ -1,7 +1,7 @@
-import { vec2 } from "../../../math/math";
-import { Vec2 } from "../../../math/Vec2";
-import type { Comp, GameObj } from "../../../types";
-import type { PosComp } from "./pos";
+import { vec2 } from "../../../math/math.js";
+import { Vec2 } from "../../../math/Vec2.js";
+import type { Comp, GameObj } from "../../../types.js";
+import type { PosComp } from "./pos.js";
 
 /**
  * The {@link follow `follow()`} component.

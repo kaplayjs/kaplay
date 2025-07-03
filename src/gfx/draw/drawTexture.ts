@@ -1,11 +1,11 @@
-import { DEF_ANCHOR } from "../../constants/general";
-import { Color } from "../../math/color";
-import { Quad } from "../../math/math";
-import { Vec2 } from "../../math/Vec2";
-import { BlendMode, type DrawTextureOpt, type Vertex } from "../../types";
-import { anchorPt } from "../anchor";
-import { drawRaw } from "./drawRaw";
-import { drawUVQuad } from "./drawUVQuad";
+import { DEF_ANCHOR } from "../../constants/general.js";
+import { Color } from "../../math/color.js";
+import { Quad } from "../../math/math.js";
+import { Vec2 } from "../../math/Vec2.js";
+import { BlendMode, type DrawTextureOpt, type Vertex } from "../../types.js";
+import { anchorPt } from "../anchor.js";
+import { drawRaw } from "./drawRaw.js";
+import { drawUVQuad } from "./drawUVQuad.js";
 
 export function drawTexture(opt: DrawTextureOpt) {
     if (!opt.tex) {

@@ -1,5 +1,5 @@
-import { KEvent, KEventController } from "../../../events/events";
-import type { Comp } from "../../../types";
+import { KEvent, KEventController } from "../../../events/events.js";
+import type { Comp } from "../../../types.js";
 
 /**
  * The {@link state `state()`} component.

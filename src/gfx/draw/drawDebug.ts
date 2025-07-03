@@ -1,23 +1,23 @@
-import { DBG_FONT, LOG_TIME } from "../../constants/general";
-import { isPaused } from "../../ecs/entity/utils";
-import { rgb } from "../../math/color";
-import { vec2, wave } from "../../math/math";
-import { _k } from "../../shared";
-import { formatText } from "../formatText";
+import { DBG_FONT, LOG_TIME } from "../../constants/general.js";
+import { isPaused } from "../../ecs/entity/utils.js";
+import { rgb } from "../../math/color.js";
+import { vec2, wave } from "../../math/math.js";
+import { _k } from "../../shared.js";
+import { formatText } from "../formatText.js";
 import {
     height,
     multTranslate,
     popTransform,
     pushTransform,
     width,
-} from "../stack";
-import { viewportToCanvas } from "../viewport";
-import { drawCircle } from "./drawCircle";
-import { drawFormattedText } from "./drawFormattedText";
-import { drawInspectText } from "./drawInspectText";
-import { drawRect } from "./drawRect";
-import { drawTriangle } from "./drawTriangle";
-import { drawUnscaled } from "./drawUnscaled";
+} from "../stack.js";
+import { viewportToCanvas } from "../viewport.js";
+import { drawCircle } from "./drawCircle.js";
+import { drawFormattedText } from "./drawFormattedText.js";
+import { drawInspectText } from "./drawInspectText.js";
+import { drawRect } from "./drawRect.js";
+import { drawTriangle } from "./drawTriangle.js";
+import { drawUnscaled } from "./drawUnscaled.js";
 
 export function drawDebug() {
     if (_k.debug.inspect) {

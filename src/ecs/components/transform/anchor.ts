@@ -1,5 +1,5 @@
-import type { Vec2 } from "../../../math/Vec2";
-import type { Anchor, Comp } from "../../../types";
+import type { Vec2 } from "../../../math/Vec2.js";
+import type { Anchor, Comp } from "../../../types.js";
 
 /**
  * The {@link anchor `anchor()`} component.

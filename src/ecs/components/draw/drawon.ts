@@ -1,6 +1,6 @@
-import type { Picture } from "../../../gfx/draw/drawPicture";
-import type { FrameBuffer } from "../../../gfx/FrameBuffer";
-import type { Comp, GameObj } from "../../../types";
+import type { Picture } from "../../../gfx/draw/drawPicture.js";
+import type { FrameBuffer } from "../../../gfx/FrameBuffer.js";
+import type { Comp, GameObj } from "../../../types.js";
 
 export type DrawonOpt = {
     childrenOnly?: boolean;

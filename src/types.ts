@@ -2,78 +2,91 @@ import type {
     ButtonBinding,
     ButtonBindingDevice,
     ButtonsDef,
-} from "./app/inputBindings";
-import type { AsepriteData } from "./assets/aseprite";
-import type { Asset } from "./assets/asset";
-import type { BitmapFontData, LoadBitmapFontOpt } from "./assets/bitmapFont";
-import type { FontData } from "./assets/font";
-import type { ShaderData, Uniform } from "./assets/shader";
-import type { SoundData } from "./assets/sound";
-import type { LoadSpriteOpt, LoadSpriteSrc, SpriteData } from "./assets/sprite";
-import type { SpriteAtlasData } from "./assets/spriteAtlas";
-import type { AudioPlay, AudioPlayOpt } from "./audio/play";
-import type { Engine } from "./core/engine";
-import type { Debug } from "./debug/debug";
-import type { Recording } from "./debug/record";
-import type { BlendComp } from "./ecs/components/draw/blend";
-import type { CircleComp, CircleCompOpt } from "./ecs/components/draw/circle";
-import type { ColorComp } from "./ecs/components/draw/color";
-import type { DrawonComp, DrawonOpt } from "./ecs/components/draw/drawon";
-import type { EllipseComp } from "./ecs/components/draw/ellipse";
-import type { MaskComp } from "./ecs/components/draw/mask";
-import type { OpacityComp } from "./ecs/components/draw/opacity";
-import type { OutlineComp } from "./ecs/components/draw/outline";
+} from "./app/inputBindings.js";
+import type { AsepriteData } from "./assets/aseprite.js";
+import type { Asset } from "./assets/asset.js";
+import type { BitmapFontData, LoadBitmapFontOpt } from "./assets/bitmapFont.js";
+import type { FontData } from "./assets/font.js";
+import type { ShaderData, Uniform } from "./assets/shader.js";
+import type { SoundData } from "./assets/sound.js";
+import type {
+    LoadSpriteOpt,
+    LoadSpriteSrc,
+    SpriteData,
+} from "./assets/sprite.js";
+import type { SpriteAtlasData } from "./assets/spriteAtlas.js";
+import type { AudioPlay, AudioPlayOpt } from "./audio/play.js";
+import type { Engine } from "./core/engine.js";
+import type { Debug } from "./debug/debug.js";
+import type { Recording } from "./debug/record.js";
+import type { BlendComp } from "./ecs/components/draw/blend.js";
+import type {
+    CircleComp,
+    CircleCompOpt,
+} from "./ecs/components/draw/circle.js";
+import type { ColorComp } from "./ecs/components/draw/color.js";
+import type { DrawonComp, DrawonOpt } from "./ecs/components/draw/drawon.js";
+import type { EllipseComp } from "./ecs/components/draw/ellipse.js";
+import type { MaskComp } from "./ecs/components/draw/mask.js";
+import type { OpacityComp } from "./ecs/components/draw/opacity.js";
+import type { OutlineComp } from "./ecs/components/draw/outline.js";
 import type {
     EmitterOpt,
     ParticlesComp,
     ParticlesOpt,
-} from "./ecs/components/draw/particles";
-import type { PictureComp } from "./ecs/components/draw/picture";
+} from "./ecs/components/draw/particles.js";
+import type { PictureComp } from "./ecs/components/draw/picture.js";
 import type {
     PolygonComp,
     PolygonCompOpt,
-} from "./ecs/components/draw/polygon";
-import type { RectComp, RectCompOpt } from "./ecs/components/draw/rect";
-import type { ShaderComp } from "./ecs/components/draw/shader";
-import type { SpriteComp, SpriteCompOpt } from "./ecs/components/draw/sprite";
-import type { TextComp, TextCompOpt } from "./ecs/components/draw/text";
-import type { UVQuadComp } from "./ecs/components/draw/uvquad";
-import type { VideoComp, VideoCompOpt } from "./ecs/components/draw/video";
-import type { AgentComp, AgentCompOpt } from "./ecs/components/level/agent";
-import type { LevelComp, LevelOpt } from "./ecs/components/level/level";
+} from "./ecs/components/draw/polygon.js";
+import type { RectComp, RectCompOpt } from "./ecs/components/draw/rect.js";
+import type { ShaderComp } from "./ecs/components/draw/shader.js";
+import type {
+    SpriteComp,
+    SpriteCompOpt,
+} from "./ecs/components/draw/sprite.js";
+import type { TextComp, TextCompOpt } from "./ecs/components/draw/text.js";
+import type { UVQuadComp } from "./ecs/components/draw/uvquad.js";
+import type { VideoComp, VideoCompOpt } from "./ecs/components/draw/video.js";
+import type { AgentComp, AgentCompOpt } from "./ecs/components/level/agent.js";
+import type { LevelComp, LevelOpt } from "./ecs/components/level/level.js";
 import type {
     PathfinderComp,
     PathfinderCompOpt,
-} from "./ecs/components/level/pathfinder";
-import type { PatrolComp, PatrolCompOpt } from "./ecs/components/level/patrol";
+} from "./ecs/components/level/pathfinder.js";
+import type {
+    PatrolComp,
+    PatrolCompOpt,
+} from "./ecs/components/level/patrol.js";
 import type {
     SentryCandidates,
     SentryComp,
     SentryCompOpt,
-} from "./ecs/components/level/sentry";
-import type { TileComp, TileCompOpt } from "./ecs/components/level/tile";
+} from "./ecs/components/level/sentry.js";
+import type { TileComp, TileCompOpt } from "./ecs/components/level/tile.js";
 import type {
     AnimateComp,
     AnimateCompOpt,
-} from "./ecs/components/misc/animate";
+} from "./ecs/components/misc/animate.js";
 import type {
     FakeMouseComp,
     FakeMouseOpt,
-} from "./ecs/components/misc/fakeMouse";
-import type { HealthComp } from "./ecs/components/misc/health";
-import type { LifespanCompOpt } from "./ecs/components/misc/lifespan";
-import type { NamedComp } from "./ecs/components/misc/named";
-import type { StateComp } from "./ecs/components/misc/state";
-import type { StayComp } from "./ecs/components/misc/stay";
-import type { TextInputComp } from "./ecs/components/misc/textInput";
+} from "./ecs/components/misc/fakeMouse.js";
+import type { HealthComp } from "./ecs/components/misc/health.js";
+import type { LifespanCompOpt } from "./ecs/components/misc/lifespan.js";
+import type { NamedComp } from "./ecs/components/misc/named.js";
+import type { StateComp } from "./ecs/components/misc/state.js";
+import type { StayComp } from "./ecs/components/misc/stay.js";
+import type { TextInputComp } from "./ecs/components/misc/textInput.js";
 import type {
     TimerComp,
     TimerController,
     TweenController,
-} from "./ecs/components/misc/timer";
-import type { AreaComp, AreaCompOpt } from "./ecs/components/physics/area";
-import type { BodyComp, BodyCompOpt } from "./ecs/components/physics/body";
-import type { DoubleJumpComp } from "./ecs/components/physics/doubleJump";
+} from "./ecs/components/misc/timer.js";
+import type { AreaComp, AreaCompOpt } from "./ecs/components/physics/area.js";
+import type { BodyComp, BodyCompOpt } from "./ecs/components/physics/body.js";
+import type { DoubleJumpComp } from "./ecs/components/physics/doubleJump.js";
 import type {
     AreaEffectorComp,
     AreaEffectorCompOpt,
@@ -87,50 +100,54 @@ import type {
     PointEffectorCompOpt,
     SurfaceEffectorComp,
     SurfaceEffectorCompOpt,
-} from "./ecs/components/physics/effectors";
-import type { AnchorComp } from "./ecs/components/transform/anchor";
-import type { FixedComp } from "./ecs/components/transform/fixed";
-import type { FollowComp } from "./ecs/components/transform/follow";
-import type { LayerComp } from "./ecs/components/transform/layer";
+} from "./ecs/components/physics/effectors.js";
+import type { AnchorComp } from "./ecs/components/transform/anchor.js";
+import type { FixedComp } from "./ecs/components/transform/fixed.js";
+import type { FollowComp } from "./ecs/components/transform/follow.js";
+import type { LayerComp } from "./ecs/components/transform/layer.js";
 import type {
     OffScreenComp,
     OffScreenCompOpt,
-} from "./ecs/components/transform/offscreen";
-import type { PosComp } from "./ecs/components/transform/pos";
-import type { RotateComp } from "./ecs/components/transform/rotate";
-import type { ScaleComp } from "./ecs/components/transform/scale";
-import type { ZComp } from "./ecs/components/transform/z";
-import type { GameObjRaw, KeepFlags } from "./ecs/entity/GameObjRaw";
-import type { BoomOpt } from "./ecs/entity/premade/addKaboom";
-import type { AddLevelOpt } from "./ecs/entity/premade/addLevel";
-import type { LCEvents } from "./ecs/systems/systems";
-import type { GameObjEventNames, GameObjEvents } from "./events/eventMap";
-import type { KEvent, KEventController, KEventHandler } from "./events/events";
-import type { SceneDef, SceneName } from "./game/scenes";
-import type { DrawBezierOpt } from "./gfx/draw/drawBezier";
-import type { DrawCanvasOpt } from "./gfx/draw/drawCanvas";
-import type { DrawCircleOpt } from "./gfx/draw/drawCircle";
-import type { DrawCurveOpt } from "./gfx/draw/drawCurve";
-import type { FormattedText } from "./gfx/draw/drawFormattedText";
+} from "./ecs/components/transform/offscreen.js";
+import type { PosComp } from "./ecs/components/transform/pos.js";
+import type { RotateComp } from "./ecs/components/transform/rotate.js";
+import type { ScaleComp } from "./ecs/components/transform/scale.js";
+import type { ZComp } from "./ecs/components/transform/z.js";
+import type { GameObjRaw, KeepFlags } from "./ecs/entity/GameObjRaw.js";
+import type { BoomOpt } from "./ecs/entity/premade/addKaboom.js";
+import type { AddLevelOpt } from "./ecs/entity/premade/addLevel.js";
+import type { LCEvents } from "./ecs/systems/systems.js";
+import type { GameObjEventNames, GameObjEvents } from "./events/eventMap.js";
+import type {
+    KEvent,
+    KEventController,
+    KEventHandler,
+} from "./events/events.js";
+import type { SceneDef, SceneName } from "./game/scenes.js";
+import type { DrawBezierOpt } from "./gfx/draw/drawBezier.js";
+import type { DrawCanvasOpt } from "./gfx/draw/drawCanvas.js";
+import type { DrawCircleOpt } from "./gfx/draw/drawCircle.js";
+import type { DrawCurveOpt } from "./gfx/draw/drawCurve.js";
+import type { FormattedText } from "./gfx/draw/drawFormattedText.js";
 import type {
     DrawLineOpt,
     DrawLinesOpt,
     LineCap,
     LineJoin,
-} from "./gfx/draw/drawLine";
-import type { DrawPictureOpt, Picture } from "./gfx/draw/drawPicture";
-import type { DrawRectOpt } from "./gfx/draw/drawRect";
-import type { DrawSpriteOpt } from "./gfx/draw/drawSprite";
-import type { DrawTextOpt } from "./gfx/draw/drawText";
-import type { DrawTriangleOpt } from "./gfx/draw/drawTriangle";
-import type { StyledTextInfo } from "./gfx/formatText";
-import type { FrameBuffer } from "./gfx/FrameBuffer";
-import type { Texture } from "./gfx/gfx";
-import type { Color, CSSColor, RGBAValue, RGBValue } from "./math/color";
-import type { EaseFunc, EaseFuncs } from "./math/easings";
-import type { GjkCollisionResult } from "./math/gjk";
-import type { LerpValue } from "./math/lerp";
-import type { Mat4 } from "./math/Mat4";
+} from "./gfx/draw/drawLine.js";
+import type { DrawPictureOpt, Picture } from "./gfx/draw/drawPicture.js";
+import type { DrawRectOpt } from "./gfx/draw/drawRect.js";
+import type { DrawSpriteOpt } from "./gfx/draw/drawSprite.js";
+import type { DrawTextOpt } from "./gfx/draw/drawText.js";
+import type { DrawTriangleOpt } from "./gfx/draw/drawTriangle.js";
+import type { StyledTextInfo } from "./gfx/formatText.js";
+import type { FrameBuffer } from "./gfx/FrameBuffer.js";
+import type { Texture } from "./gfx/gfx.js";
+import type { Color, CSSColor, RGBAValue, RGBValue } from "./math/color.js";
+import type { EaseFunc, EaseFuncs } from "./math/easings.js";
+import type { GjkCollisionResult } from "./math/gjk.js";
+import type { LerpValue } from "./math/lerp.js";
+import type { Mat4 } from "./math/Mat4.js";
 import type {
     Circle,
     Ellipse,
@@ -143,10 +160,10 @@ import type {
     Rect,
     RNG,
     StepPosition,
-} from "./math/math";
-import type { NavMesh } from "./math/navigationmesh";
-import type { Vec2 } from "./math/Vec2";
-import type { Defined, MergeObj, TupleWithoutFirst } from "./utils/types";
+} from "./math/math.js";
+import type { NavMesh } from "./math/navigationmesh.js";
+import type { Vec2 } from "./math/Vec2.js";
+import type { Defined, MergeObj, TupleWithoutFirst } from "./utils/types.js";
 
 /**
  * Context handle that contains every KAPLAY function.

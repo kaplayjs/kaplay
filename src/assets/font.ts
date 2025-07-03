@@ -3,15 +3,19 @@ import {
     DEF_FONT_FILTER,
     DEF_TEXT_CACHE_SIZE,
     MAX_TEXT_CACHE_SIZE,
-} from "../constants/general";
-import type { DrawTextOpt } from "../gfx/draw/drawText";
-import type { Texture } from "../gfx/gfx";
-import { rgb } from "../math/color";
-import { Quad } from "../math/math";
-import { _k } from "../shared";
-import type { LoadFontOpt, Outline, TexFilter } from "../types";
-import { Asset, loadProgress } from "./asset";
-import { type BitmapFontData, getBitmapFont, type GfxFont } from "./bitmapFont";
+} from "../constants/general.js";
+import type { DrawTextOpt } from "../gfx/draw/drawText.js";
+import type { Texture } from "../gfx/gfx.js";
+import { rgb } from "../math/color.js";
+import { Quad } from "../math/math.js";
+import { _k } from "../shared.js";
+import type { LoadFontOpt, Outline, TexFilter } from "../types.js";
+import { Asset, loadProgress } from "./asset.js";
+import {
+    type BitmapFontData,
+    getBitmapFont,
+    type GfxFont,
+} from "./bitmapFont.js";
 
 export class FontData {
     fontface: FontFace;

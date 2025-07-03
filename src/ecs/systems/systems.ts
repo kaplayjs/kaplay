@@ -1,4 +1,4 @@
-import { _k } from "../../shared";
+import { _k } from "../../shared.js";
 
 export type System = {
     name: string;

@@ -1,12 +1,12 @@
 // add an event to a tag
 
-import { type Asset, getFailedAssets } from "../assets/asset";
-import { _k } from "../shared";
-import type { Collision, GameObj, Tag } from "../types";
-import { overload2 } from "../utils/overload";
-import type { TupleWithoutFirst } from "../utils/types";
-import type { GameObjEventNames, GameObjEvents } from "./eventMap";
-import { KEventController } from "./events";
+import { type Asset, getFailedAssets } from "../assets/asset.js";
+import { _k } from "../shared.js";
+import type { Collision, GameObj, Tag } from "../types.js";
+import { overload2 } from "../utils/overload.js";
+import type { TupleWithoutFirst } from "../utils/types.js";
+import type { GameObjEventNames, GameObjEvents } from "./eventMap.js";
+import { KEventController } from "./events.js";
 
 export function on<Ev extends GameObjEventNames>(
     event: Ev,

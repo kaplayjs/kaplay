@@ -1,10 +1,10 @@
 // Make is the entity factory function
 
-import { KEvent, KEventHandler } from "../../events/events";
-import { Mat23 } from "../../math/math";
-import { _k } from "../../shared";
-import type { Comp, CompList, GameObj } from "../../types";
-import { attachAppToGameObjRaw, GameObjRawPrototype } from "./GameObjRaw";
+import { KEvent, KEventHandler } from "../../events/events.js";
+import { Mat23 } from "../../math/math.js";
+import { _k } from "../../shared.js";
+import type { Comp, CompList, GameObj } from "../../types.js";
+import { attachAppToGameObjRaw, GameObjRawPrototype } from "./GameObjRaw.js";
 
 /*
 Order of making a game object:

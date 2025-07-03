@@ -1,12 +1,12 @@
-import { BG_GRID_SIZE } from "../constants/general";
-import type { Game } from "../game/game";
-import { drawTexture } from "../gfx/draw/drawTexture";
-import { drawUnscaled } from "../gfx/draw/drawUnscaled";
-import { drawUVQuad } from "../gfx/draw/drawUVQuad";
-import type { AppGfxCtx } from "../gfx/gfxApp";
-import { flush, height, width } from "../gfx/stack";
-import { Quad } from "../math/math";
-import { Vec2 } from "../math/Vec2";
+import { BG_GRID_SIZE } from "../constants/general.js";
+import type { Game } from "../game/game.js";
+import { drawTexture } from "../gfx/draw/drawTexture.js";
+import { drawUnscaled } from "../gfx/draw/drawUnscaled.js";
+import { drawUVQuad } from "../gfx/draw/drawUVQuad.js";
+import type { AppGfxCtx } from "../gfx/gfxApp.js";
+import { flush, height, width } from "../gfx/stack.js";
+import { Quad } from "../math/math.js";
+import { Vec2 } from "../math/Vec2.js";
 
 export type FrameRenderer = ReturnType<typeof createFrameRenderer>;
 

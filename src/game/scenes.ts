@@ -1,7 +1,7 @@
-import { initAppEvents } from "../app/appEvents";
-import type { KEventController } from "../events/events";
-import { Mat23, vec2 } from "../math/math";
-import { _k } from "../shared";
+import { initAppEvents } from "../app/appEvents.js";
+import type { KEventController } from "../events/events.js";
+import { Mat23, vec2 } from "../math/math.js";
+import { _k } from "../shared.js";
 
 /**
  * The name of a scene.

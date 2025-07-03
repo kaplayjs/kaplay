@@ -1,5 +1,5 @@
-import { _k } from "../shared";
-import type { KAPLAYCtx, KAPLAYPlugin } from "../types";
+import { _k } from "../shared.js";
+import type { KAPLAYCtx, KAPLAYPlugin } from "../types.js";
 
 export const plug = <T extends Record<string, any>>(
     plugin: KAPLAYPlugin<T>,

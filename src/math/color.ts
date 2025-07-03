@@ -1,7 +1,7 @@
-import { CSS_COLOR_MAP } from "../constants/colorMap";
-import { _k } from "../shared";
-import { clamp } from "./clamp";
-import { lerpNumber } from "./lerpNumber";
+import { CSS_COLOR_MAP } from "../constants/colorMap.js";
+import { _k } from "../shared.js";
+import { clamp } from "./clamp.js";
+import { lerpNumber } from "./lerpNumber.js";
 
 export type RGBValue = [number, number, number];
 export type RGBAValue = [number, number, number, number];

@@ -1,14 +1,17 @@
-import { SPRITE_ATLAS_HEIGHT, SPRITE_ATLAS_WIDTH } from "../constants/general";
-import { KEvent, KEventHandler } from "../events/events";
-import type { GfxCtx } from "../gfx/gfx";
-import { TexPacker } from "../gfx/TexPacker";
-import { _k } from "../shared";
-import type { BitmapFontData } from "./bitmapFont";
-import type { FontData } from "./font";
-import type { ShaderData } from "./shader";
-import type { SoundData } from "./sound";
-import type { SpriteData } from "./sprite";
-import { fixURL } from "./utils";
+import {
+    SPRITE_ATLAS_HEIGHT,
+    SPRITE_ATLAS_WIDTH,
+} from "../constants/general.js";
+import { KEvent, KEventHandler } from "../events/events.js";
+import type { GfxCtx } from "../gfx/gfx.js";
+import { TexPacker } from "../gfx/TexPacker.js";
+import { _k } from "../shared.js";
+import type { BitmapFontData } from "./bitmapFont.js";
+import type { FontData } from "./font.js";
+import type { ShaderData } from "./shader.js";
+import type { SoundData } from "./sound.js";
+import type { SpriteData } from "./sprite.js";
+import { fixURL } from "./utils.js";
 
 /**
  * An asset is a resource that is loaded asynchronously.

@@ -1,4 +1,4 @@
-import type { GameObj } from "../types";
+import type { GameObj } from "../types.js";
 
 // Note: I will doom this soon 😈😈😈😈
 export function getRenderProps(obj: GameObj<any>) {

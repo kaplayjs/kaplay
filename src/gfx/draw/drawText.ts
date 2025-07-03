@@ -1,12 +1,12 @@
-import type { Asset } from "../../assets/asset";
-import type { BitmapFontData } from "../../assets/bitmapFont";
-import type { FontData } from "../../assets/font";
-import type { Uniform } from "../../assets/shader";
-import type { Color } from "../../math/color";
-import type { Vec2 } from "../../math/Vec2";
-import type { Anchor, RenderProps } from "../../types";
-import { formatText } from "../formatText";
-import { drawFormattedText } from "./drawFormattedText";
+import type { Asset } from "../../assets/asset.js";
+import type { BitmapFontData } from "../../assets/bitmapFont.js";
+import type { FontData } from "../../assets/font.js";
+import type { Uniform } from "../../assets/shader.js";
+import type { Color } from "../../math/color.js";
+import type { Vec2 } from "../../math/Vec2.js";
+import type { Anchor, RenderProps } from "../../types.js";
+import { formatText } from "../formatText.js";
+import { drawFormattedText } from "./drawFormattedText.js";
 
 /**
  * How the text should look like.

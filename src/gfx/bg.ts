@@ -1,5 +1,5 @@
-import { type ColorArgs, rgb } from "../math/color";
-import { _k } from "../shared";
+import { type ColorArgs, rgb } from "../math/color.js";
+import { _k } from "../shared.js";
 
 export function setBackground(...args: ColorArgs) {
     const color = rgb(...args);

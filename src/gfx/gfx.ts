@@ -1,14 +1,14 @@
-import type { Shader, Uniform } from "../assets/shader";
-import { IDENTITY_MATRIX } from "../constants/math";
-import { getCamTransform } from "../game/camera";
+import type { Shader, Uniform } from "../assets/shader.js";
+import { IDENTITY_MATRIX } from "../constants/math.js";
+import { getCamTransform } from "../game/camera.js";
 import {
     BlendMode,
     type ImageSource,
     type KAPLAYOpt,
     type TextureOpt,
-} from "../types";
-import { deepEq } from "../utils/deepEq";
-import type { Picture } from "./draw/drawPicture";
+} from "../types.js";
+import { deepEq } from "../utils/deepEq.js";
+import type { Picture } from "./draw/drawPicture.js";
 
 export type GfxCtx = ReturnType<typeof initGfx>;
 

@@ -1,10 +1,10 @@
-import { getRenderProps } from "../../../game/utils";
-import { drawCircle } from "../../../gfx/draw/drawCircle";
-import { Circle, Rect } from "../../../math/math";
-import { Vec2 } from "../../../math/Vec2";
-import type { Comp, GameObj } from "../../../types";
-import type { AnchorComp } from "../transform/anchor";
-import type { outline } from "./outline";
+import { getRenderProps } from "../../../game/utils.js";
+import { drawCircle } from "../../../gfx/draw/drawCircle.js";
+import { Circle, Rect } from "../../../math/math.js";
+import { Vec2 } from "../../../math/Vec2.js";
+import type { Comp, GameObj } from "../../../types.js";
+import type { AnchorComp } from "../transform/anchor.js";
+import type { outline } from "./outline.js";
 
 /**
  * The {@link circle `circle()`} component.

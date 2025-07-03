@@ -1,17 +1,17 @@
-import { Color } from "../../math/color";
-import { triangulate } from "../../math/math";
-import { Vec2 } from "../../math/Vec2";
-import { _k } from "../../shared";
-import { BlendMode, type DrawPolygonOpt } from "../../types";
+import { Color } from "../../math/color.js";
+import { triangulate } from "../../math/math.js";
+import { Vec2 } from "../../math/Vec2.js";
+import { _k } from "../../shared.js";
+import { BlendMode, type DrawPolygonOpt } from "../../types.js";
 import {
     multRotate,
     multScaleV,
     multTranslateV,
     popTransform,
     pushTransform,
-} from "../stack";
-import { drawLines } from "./drawLine";
-import { drawRaw } from "./drawRaw";
+} from "../stack.js";
+import { drawLines } from "./drawLine.js";
+import { drawRaw } from "./drawRaw.js";
 
 export function drawPolygon(opt: DrawPolygonOpt) {
     if (!opt.pts) {

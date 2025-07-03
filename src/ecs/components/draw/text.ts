@@ -1,19 +1,19 @@
-import type { BitmapFontData } from "../../../assets/bitmapFont";
-import { DEF_TEXT_SIZE } from "../../../constants/general";
-import { onLoad } from "../../../events/globalEvents";
-import { getRenderProps } from "../../../game/utils";
+import type { BitmapFontData } from "../../../assets/bitmapFont.js";
+import { DEF_TEXT_SIZE } from "../../../constants/general.js";
+import { onLoad } from "../../../events/globalEvents.js";
+import { getRenderProps } from "../../../game/utils.js";
 import {
     drawFormattedText,
     type FormattedText,
-} from "../../../gfx/draw/drawFormattedText";
+} from "../../../gfx/draw/drawFormattedText.js";
 import type {
     CharTransform,
     CharTransformFunc,
     TextAlign,
-} from "../../../gfx/draw/drawText";
-import { formatText } from "../../../gfx/formatText";
-import { Rect, vec2 } from "../../../math/math";
-import type { Comp, GameObj } from "../../../types";
+} from "../../../gfx/draw/drawText.js";
+import { formatText } from "../../../gfx/formatText.js";
+import { Rect, vec2 } from "../../../math/math.js";
+import type { Comp, GameObj } from "../../../types.js";
 
 /**
  * The {@link text `text()`} component.

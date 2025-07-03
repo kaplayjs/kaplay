@@ -1,4 +1,4 @@
-import type { Comp } from "../../../types";
+import type { Comp } from "../../../types.js";
 
 /**
  * The {@link z `z()`} component.

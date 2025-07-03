@@ -1,7 +1,7 @@
-import { _k } from "../shared";
-import { dataURLToArrayBuffer, isDataURL } from "../utils/dataURL";
-import { Asset, fetchArrayBuffer, loadProgress } from "./asset";
-import { fixURL } from "./utils";
+import { _k } from "../shared.js";
+import { dataURLToArrayBuffer, isDataURL } from "../utils/dataURL.js";
+import { Asset, fetchArrayBuffer, loadProgress } from "./asset.js";
+import { fixURL } from "./utils.js";
 
 export class SoundData {
     buf: AudioBuffer;

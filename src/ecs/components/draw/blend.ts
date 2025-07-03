@@ -1,4 +1,4 @@
-import { BlendMode, type Comp } from "../../../types";
+import { BlendMode, type Comp } from "../../../types.js";
 
 /**
  * The {@link blend `blend()`} component.

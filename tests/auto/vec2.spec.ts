@@ -1,6 +1,6 @@
 import { expect, test } from "vitest";
-import { vec2 } from "../../src/math/math";
-import { Vec2 } from "../../src/math/Vec2";
+import { vec2 } from "../../src/math/math.js";
+import { Vec2 } from "../../src/math/Vec2.js";
 
 test("vec2(0, 0).set(1, 2) should return Vec2(1, 2)", () => {
     const v = vec2(0, 0);

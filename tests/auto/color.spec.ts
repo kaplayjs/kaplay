@@ -1,5 +1,5 @@
 import { describe, expect, test } from "vitest";
-import { Color, rgb } from "../../src/math/color";
+import { Color, rgb } from "../../src/math/color.js";
 
 describe("Color creation using class", () => {
     test("new Color(44, 44, 44) should return Color(44, 44, 44)", () => {

@@ -1,7 +1,7 @@
-import { type Graph } from "../../../math/navigation";
-import { Vec2 } from "../../../math/Vec2";
-import type { Comp, GameObj } from "../../../types";
-import type { PosComp } from "../transform/pos";
+import { type Graph } from "../../../math/navigation.js";
+import { Vec2 } from "../../../math/Vec2.js";
+import type { Comp, GameObj } from "../../../types.js";
+import type { PosComp } from "../transform/pos.js";
 
 export interface PathfinderMapComp extends Comp {
     /**

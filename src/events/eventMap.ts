@@ -1,16 +1,16 @@
-import type { Asset } from "../assets/asset";
-import { type sprite } from "../ecs/components/draw/sprite";
-import { type agent } from "../ecs/components/level/agent";
-import { type patrol } from "../ecs/components/level/patrol";
-import { type sentry } from "../ecs/components/level/sentry";
-import { type animate } from "../ecs/components/misc/animate";
-import { type health } from "../ecs/components/misc/health";
-import { type area } from "../ecs/components/physics/area";
-import { type body } from "../ecs/components/physics/body";
-import { type doubleJump } from "../ecs/components/physics/doubleJump";
-import { type offscreen } from "../ecs/components/transform/offscreen";
-import { type addLevel } from "../ecs/entity/premade/addLevel";
-import type { Vec2 } from "../math/Vec2";
+import type { Asset } from "../assets/asset.js";
+import { type sprite } from "../ecs/components/draw/sprite.js";
+import { type agent } from "../ecs/components/level/agent.js";
+import { type patrol } from "../ecs/components/level/patrol.js";
+import { type sentry } from "../ecs/components/level/sentry.js";
+import { type animate } from "../ecs/components/misc/animate.js";
+import { type health } from "../ecs/components/misc/health.js";
+import { type area } from "../ecs/components/physics/area.js";
+import { type body } from "../ecs/components/physics/body.js";
+import { type doubleJump } from "../ecs/components/physics/doubleJump.js";
+import { type offscreen } from "../ecs/components/transform/offscreen.js";
+import { type addLevel } from "../ecs/entity/premade/addLevel.js";
+import type { Vec2 } from "../math/Vec2.js";
 import type {
     Collision,
     GameObj,
@@ -18,7 +18,7 @@ import type {
     KGamepad,
     KGamepadButton,
     MouseButton,
-} from "../types";
+} from "../types.js";
 
 /**
  * Game Object events with their arguments.

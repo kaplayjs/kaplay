@@ -1,7 +1,7 @@
-import type { Color } from "../../math/color";
-import type { Vec2 } from "../../math/Vec2";
-import type { Anchor, RenderProps } from "../../types";
-import { drawEllipse } from "./drawEllipse";
+import type { Color } from "../../math/color.js";
+import type { Vec2 } from "../../math/Vec2.js";
+import type { Anchor, RenderProps } from "../../types.js";
+import { drawEllipse } from "./drawEllipse.js";
 
 /**
  * How the circle should look like.

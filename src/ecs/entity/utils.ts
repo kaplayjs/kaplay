@@ -1,5 +1,5 @@
-import { _k } from "../../shared";
-import type { GameObj } from "../../types";
+import { _k } from "../../shared.js";
+import type { GameObj } from "../../types.js";
 
 export function destroy(obj: GameObj) {
     obj.destroy();

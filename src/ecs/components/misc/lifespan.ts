@@ -1,7 +1,7 @@
-import { easings } from "../../../math/easings";
-import { _k } from "../../../shared";
-import type { EmptyComp, GameObj } from "../../../types";
-import type { OpacityComp } from "../draw/opacity";
+import { easings } from "../../../math/easings.js";
+import { _k } from "../../../shared.js";
+import type { EmptyComp, GameObj } from "../../../types.js";
+import type { OpacityComp } from "../draw/opacity.js";
 
 /**
  * The {@link lifespan `lifespan()`} component.

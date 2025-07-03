@@ -1,10 +1,10 @@
-import { getRenderProps } from "../../../game/utils";
-import { drawPolygon } from "../../../gfx/draw/drawPolygon";
-import type { Texture } from "../../../gfx/gfx";
-import type { Color } from "../../../math/color";
-import { Polygon } from "../../../math/math";
-import { type Vec2 } from "../../../math/Vec2";
-import type { Comp, DrawPolygonOpt, GameObj } from "../../../types";
+import { getRenderProps } from "../../../game/utils.js";
+import { drawPolygon } from "../../../gfx/draw/drawPolygon.js";
+import type { Texture } from "../../../gfx/gfx.js";
+import type { Color } from "../../../math/color.js";
+import { Polygon } from "../../../math/math.js";
+import { type Vec2 } from "../../../math/Vec2.js";
+import type { Comp, DrawPolygonOpt, GameObj } from "../../../types.js";
 
 /**
  * The {@link polygon `polygon()`} component.

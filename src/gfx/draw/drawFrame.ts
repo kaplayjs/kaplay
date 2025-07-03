@@ -1,8 +1,8 @@
-import { lerp } from "../../math/lerp";
-import { rand } from "../../math/math";
-import { Vec2 } from "../../math/Vec2";
-import { _k } from "../../shared";
-import { center, flush } from "../stack";
+import { lerp } from "../../math/lerp.js";
+import { rand } from "../../math/math.js";
+import { Vec2 } from "../../math/Vec2.js";
+import { _k } from "../../shared.js";
+import { center, flush } from "../stack.js";
 
 export function drawFrame() {
     // calculate camera matrix

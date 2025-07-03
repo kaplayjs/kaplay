@@ -1,6 +1,6 @@
-import { Vec2 } from "../../../math/Vec2";
-import type { EmptyComp, GameObj } from "../../../types";
-import type { PosComp } from "./pos";
+import { Vec2 } from "../../../math/Vec2.js";
+import type { EmptyComp, GameObj } from "../../../types.js";
+import type { PosComp } from "./pos.js";
 
 export function move(dir: number | Vec2, speed: number): EmptyComp {
     const d = typeof dir === "number" ? Vec2.fromAngle(dir) : dir.unit();

@@ -1,8 +1,8 @@
-import type { KEventController } from "../../../events/events";
-import type { Vec2 } from "../../../math/Vec2";
-import type { Comp, GameObj } from "../../../types";
-import type { PosComp } from "../transform/pos";
-import type { TileComp } from "./tile";
+import type { KEventController } from "../../../events/events.js";
+import type { Vec2 } from "../../../math/Vec2.js";
+import type { Comp, GameObj } from "../../../types.js";
+import type { PosComp } from "../transform/pos.js";
+import type { TileComp } from "./tile.js";
 
 /**
  * The {@link agent `agent()`} component.

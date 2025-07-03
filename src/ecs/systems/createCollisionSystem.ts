@@ -1,14 +1,14 @@
-import { onAdd, onDestroy, onUnuse, onUse } from "../../events/globalEvents";
-import { onSceneLeave } from "../../game/scenes";
-import { gjkShapeIntersection } from "../../math/gjk";
-import { vec2 } from "../../math/math";
-import { minkowskiRectShapeIntersection } from "../../math/minkowski";
-import { satShapeIntersection } from "../../math/sat";
-import { SweepAndPrune } from "../../math/spatial/sweepandprune";
-import { type Vec2 } from "../../math/Vec2";
-import { _k } from "../../shared";
-import type { GameObj } from "../../types";
-import { type AreaComp, usesArea } from "../components/physics/area";
+import { onAdd, onDestroy, onUnuse, onUse } from "../../events/globalEvents.js";
+import { onSceneLeave } from "../../game/scenes.js";
+import { gjkShapeIntersection } from "../../math/gjk.js";
+import { vec2 } from "../../math/math.js";
+import { minkowskiRectShapeIntersection } from "../../math/minkowski.js";
+import { satShapeIntersection } from "../../math/sat.js";
+import { SweepAndPrune } from "../../math/spatial/sweepandprune.js";
+import { type Vec2 } from "../../math/Vec2.js";
+import { _k } from "../../shared.js";
+import type { GameObj } from "../../types.js";
+import { type AreaComp, usesArea } from "../components/physics/area.js";
 
 export const createCollisionSystem = ({ narrow = "gjk" } = {}) => {
     const narrowPhaseIntersection = narrow === "gjk"

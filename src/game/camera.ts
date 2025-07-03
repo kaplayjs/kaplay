@@ -1,14 +1,14 @@
-import { color } from "../ecs/components/draw/color";
-import { opacity } from "../ecs/components/draw/opacity";
-import { rect } from "../ecs/components/draw/rect";
-import { fixed } from "../ecs/components/transform/fixed";
-import { destroy } from "../ecs/entity/utils";
-import { center, height, width } from "../gfx/stack";
-import { type Color, rgb } from "../math/color";
-import { type Mat23, vec2, type Vec2Args } from "../math/math";
-import { Vec2 } from "../math/Vec2";
-import { _k } from "../shared";
-import { deprecateMsg } from "../utils/log";
+import { color } from "../ecs/components/draw/color.js";
+import { opacity } from "../ecs/components/draw/opacity.js";
+import { rect } from "../ecs/components/draw/rect.js";
+import { fixed } from "../ecs/components/transform/fixed.js";
+import { destroy } from "../ecs/entity/utils.js";
+import { center, height, width } from "../gfx/stack.js";
+import { type Color, rgb } from "../math/color.js";
+import { type Mat23, vec2, type Vec2Args } from "../math/math.js";
+import { Vec2 } from "../math/Vec2.js";
+import { _k } from "../shared.js";
+import { deprecateMsg } from "../utils/log.js";
 
 export function setCamPos(...pos: Vec2Args) {
     _k.game.cam.pos = vec2(...pos);

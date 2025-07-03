@@ -1,6 +1,6 @@
-import type { RaycastResult } from "../../../math/math";
-import type { Vec2 } from "../../../math/Vec2";
-import { _k } from "../../../shared";
+import type { RaycastResult } from "../../../math/math.js";
+import type { Vec2 } from "../../../math/Vec2.js";
+import { _k } from "../../../shared.js";
 
 // this is not a component lol
 export function raycast(

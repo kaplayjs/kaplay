@@ -1,13 +1,16 @@
-import type { KEventController } from "../../../events/events";
-import { clamp } from "../../../math/clamp";
-import type { Comp, GameObj } from "../../../types";
+import type { SerializableComponent } from "../../../core/SerializableComponent.js";
+import { registerSerializableComponent } from "../../../core/SerializableComponent.js";
+import type { KEventController } from "../../../events/events.js";
+import { clamp } from "../../../math/clamp.js";
+import type { Comp, GameObj } from "../../../types.js";
 
 /**
  * The {@link health `health()`} component.
  *
  * @group Component Types
  */
-export interface HealthComp extends Comp {
+export interface HealthComp extends Comp, SerializableComponent {
+    id?: string;
     /**
      * Current health points. Setting it to a lower or higher value will trigger onHurt() and onHeal().
      * Setting it to a value greater than maxHP will set it to maxHP.
@@ -50,7 +53,7 @@ export function health(
         throw new Error("health() requires the initial amount of hp");
     }
 
-    return {
+    const comp: HealthComp = {
         id: "health",
         add() {
             if (!this.maxHP) this.maxHP = this.hp;
@@ -96,5 +99,14 @@ export function health(
         inspect() {
             return `health: ${hp}`;
         },
+        serialize() {
+            return { hp, maxHP };
+        },
+        deserialize(data: Record<string, any>) {
+            if (typeof data.hp === "number") hp = data.hp;
+            if (typeof data.maxHP === "number") maxHP = data.maxHP;
+        },
     };
+    registerSerializableComponent("health", comp);
+    return comp;
 }

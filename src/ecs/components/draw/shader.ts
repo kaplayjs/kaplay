@@ -1,5 +1,5 @@
-import type { Uniform } from "../../../assets/shader";
-import type { Comp } from "../../../types";
+import type { Uniform } from "../../../assets/shader.js";
+import type { Comp } from "../../../types.js";
 
 /**
  * The {@link shader `shader()`} component.

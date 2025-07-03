@@ -1,6 +1,6 @@
-import type { GameObj } from "../types";
-import { deg2rad, Mat23, vec2 } from "./math";
-import { Vec2 } from "./Vec2";
+import type { GameObj } from "../types.js";
+import { deg2rad, Mat23, vec2 } from "./math.js";
+import { Vec2 } from "./Vec2.js";
 
 export function calcTransform(obj: GameObj, tr: Mat23): Mat23 {
     if (obj.parent) {

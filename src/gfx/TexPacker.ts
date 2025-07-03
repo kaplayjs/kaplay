@@ -1,7 +1,7 @@
-import { Quad } from "../math/math";
-import { Vec2 } from "../math/Vec2";
-import type { ImageSource } from "../types";
-import { type GfxCtx, Texture } from "./gfx";
+import { Quad } from "../math/math.js";
+import { Vec2 } from "../math/Vec2.js";
+import type { ImageSource } from "../types.js";
+import { type GfxCtx, Texture } from "./gfx.js";
 
 export class TexPacker {
     private lastTextureId: number = 0;

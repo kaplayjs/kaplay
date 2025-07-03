@@ -1,4 +1,4 @@
-import type { Comp, Mask } from "../../../types";
+import type { Comp, Mask } from "../../../types.js";
 
 /**
  * The {@link mask `mask()`} component.

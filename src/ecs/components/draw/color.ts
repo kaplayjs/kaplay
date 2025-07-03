@@ -1,5 +1,5 @@
-import { type Color, type ColorArgs, rgb } from "../../../math/color";
-import type { Comp } from "../../../types";
+import { type Color, type ColorArgs, rgb } from "../../../math/color.js";
+import type { Comp } from "../../../types.js";
 
 /**
  * The {@link color `color()`} component.

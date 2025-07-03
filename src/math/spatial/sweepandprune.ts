@@ -1,7 +1,7 @@
-import type { AreaComp } from "../../ecs/components/physics/area";
-import { isPaused } from "../../ecs/entity/utils";
-import type { GameObj } from "../../types";
-import { calcTransform } from "../various";
+import type { AreaComp } from "../../ecs/components/physics/area.js";
+import { isPaused } from "../../ecs/entity/utils.js";
+import type { GameObj } from "../../types.js";
+import { calcTransform } from "../various.js";
 
 /**
  * Left or right edge of an object's bbox

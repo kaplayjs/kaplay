@@ -1,4 +1,4 @@
-import type { KAPLAYOpt, MustKAPLAYOpt } from "../types";
+import type { KAPLAYOpt, MustKAPLAYOpt } from "../types.js";
 
 export const createCanvas = (gopt: MustKAPLAYOpt) => {
     const root = gopt.root ?? document.body;

@@ -1,5 +1,5 @@
-import { getData, setData } from "../app/data";
-import { loadAseprite } from "../assets/aseprite";
+import { getData, setData } from "../app/data.js";
+import { loadAseprite } from "../assets/aseprite.js";
 import {
     Asset,
     getAsset,
@@ -7,60 +7,65 @@ import {
     loadJSON,
     loadProgress,
     loadRoot,
-} from "../assets/asset";
+} from "../assets/asset.js";
 import {
     getBitmapFont,
     loadBitmapFont,
     loadBitmapFontFromSprite,
     loadHappy,
-} from "../assets/bitmapFont";
-import { getFont, loadFont } from "../assets/font";
-import { getShader, loadShader, loadShaderURL } from "../assets/shader";
-import { getSound, loadMusic, loadSound, SoundData } from "../assets/sound";
-import { getSprite, loadBean, loadSprite, SpriteData } from "../assets/sprite";
-import { loadSpriteAtlas } from "../assets/spriteAtlas";
-import { burp } from "../audio/burp";
-import { play } from "../audio/play";
-import { getVolume, setVolume, volume } from "../audio/volume";
-import { ASCII_CHARS, EVENT_CANCEL_SYMBOL } from "../constants/general";
-import { record } from "../debug/record";
-import { blend } from "../ecs/components/draw/blend";
-import { circle } from "../ecs/components/draw/circle";
-import { color } from "../ecs/components/draw/color";
-import { drawon } from "../ecs/components/draw/drawon";
-import { ellipse } from "../ecs/components/draw/ellipse";
-import { fadeIn } from "../ecs/components/draw/fadeIn";
-import { mask } from "../ecs/components/draw/mask";
-import { opacity } from "../ecs/components/draw/opacity";
-import { outline } from "../ecs/components/draw/outline";
-import { particles } from "../ecs/components/draw/particles";
-import { picture } from "../ecs/components/draw/picture";
-import { polygon } from "../ecs/components/draw/polygon";
-import { raycast } from "../ecs/components/draw/raycast";
-import { rect } from "../ecs/components/draw/rect";
-import { shader } from "../ecs/components/draw/shader";
-import { sprite } from "../ecs/components/draw/sprite";
-import { text } from "../ecs/components/draw/text";
-import { uvquad } from "../ecs/components/draw/uvquad";
-import { video } from "../ecs/components/draw/video";
-import { agent } from "../ecs/components/level/agent";
-import { level } from "../ecs/components/level/level";
-import { pathfinder } from "../ecs/components/level/pathfinder";
-import { patrol } from "../ecs/components/level/patrol";
-import { sentry } from "../ecs/components/level/sentry";
-import { tile } from "../ecs/components/level/tile";
-import { animate, serializeAnimation } from "../ecs/components/misc/animate";
-import { fakeMouse } from "../ecs/components/misc/fakeMouse";
-import { health } from "../ecs/components/misc/health";
-import { lifespan } from "../ecs/components/misc/lifespan";
-import { named } from "../ecs/components/misc/named";
-import { state } from "../ecs/components/misc/state";
-import { stay } from "../ecs/components/misc/stay";
-import { textInput } from "../ecs/components/misc/textInput";
-import { timer } from "../ecs/components/misc/timer";
-import { area } from "../ecs/components/physics/area";
-import { body } from "../ecs/components/physics/body";
-import { doubleJump } from "../ecs/components/physics/doubleJump";
+} from "../assets/bitmapFont.js";
+import { getFont, loadFont } from "../assets/font.js";
+import { getShader, loadShader, loadShaderURL } from "../assets/shader.js";
+import { getSound, loadMusic, loadSound, SoundData } from "../assets/sound.js";
+import {
+    getSprite,
+    loadBean,
+    loadSprite,
+    SpriteData,
+} from "../assets/sprite.js";
+import { loadSpriteAtlas } from "../assets/spriteAtlas.js";
+import { burp } from "../audio/burp.js";
+import { play } from "../audio/play.js";
+import { getVolume, setVolume, volume } from "../audio/volume.js";
+import { ASCII_CHARS, EVENT_CANCEL_SYMBOL } from "../constants/general.js";
+import { record } from "../debug/record.js";
+import { blend } from "../ecs/components/draw/blend.js";
+import { circle } from "../ecs/components/draw/circle.js";
+import { color } from "../ecs/components/draw/color.js";
+import { drawon } from "../ecs/components/draw/drawon.js";
+import { ellipse } from "../ecs/components/draw/ellipse.js";
+import { fadeIn } from "../ecs/components/draw/fadeIn.js";
+import { mask } from "../ecs/components/draw/mask.js";
+import { opacity } from "../ecs/components/draw/opacity.js";
+import { outline } from "../ecs/components/draw/outline.js";
+import { particles } from "../ecs/components/draw/particles.js";
+import { picture } from "../ecs/components/draw/picture.js";
+import { polygon } from "../ecs/components/draw/polygon.js";
+import { raycast } from "../ecs/components/draw/raycast.js";
+import { rect } from "../ecs/components/draw/rect.js";
+import { shader } from "../ecs/components/draw/shader.js";
+import { sprite } from "../ecs/components/draw/sprite.js";
+import { text } from "../ecs/components/draw/text.js";
+import { uvquad } from "../ecs/components/draw/uvquad.js";
+import { video } from "../ecs/components/draw/video.js";
+import { agent } from "../ecs/components/level/agent.js";
+import { level } from "../ecs/components/level/level.js";
+import { pathfinder } from "../ecs/components/level/pathfinder.js";
+import { patrol } from "../ecs/components/level/patrol.js";
+import { sentry } from "../ecs/components/level/sentry.js";
+import { tile } from "../ecs/components/level/tile.js";
+import { animate, serializeAnimation } from "../ecs/components/misc/animate.js";
+import { fakeMouse } from "../ecs/components/misc/fakeMouse.js";
+import { health } from "../ecs/components/misc/health.js";
+import { lifespan } from "../ecs/components/misc/lifespan.js";
+import { named } from "../ecs/components/misc/named.js";
+import { state } from "../ecs/components/misc/state.js";
+import { stay } from "../ecs/components/misc/stay.js";
+import { textInput } from "../ecs/components/misc/textInput.js";
+import { timer } from "../ecs/components/misc/timer.js";
+import { area } from "../ecs/components/physics/area.js";
+import { body } from "../ecs/components/physics/body.js";
+import { doubleJump } from "../ecs/components/physics/doubleJump.js";
 import {
     areaEffector,
     buoyancyEffector,
@@ -68,23 +73,23 @@ import {
     platformEffector,
     pointEffector,
     surfaceEffector,
-} from "../ecs/components/physics/effectors";
-import { anchor } from "../ecs/components/transform/anchor";
-import { fixed } from "../ecs/components/transform/fixed";
-import { follow } from "../ecs/components/transform/follow";
-import { layer } from "../ecs/components/transform/layer";
-import { move } from "../ecs/components/transform/move";
-import { offscreen } from "../ecs/components/transform/offscreen";
-import { pos } from "../ecs/components/transform/pos";
-import { rotate } from "../ecs/components/transform/rotate";
-import { scale } from "../ecs/components/transform/scale";
-import { z } from "../ecs/components/transform/z";
-import { KeepFlags } from "../ecs/entity/GameObjRaw";
-import { addKaboom } from "../ecs/entity/premade/addKaboom";
-import { addLevel } from "../ecs/entity/premade/addLevel";
-import { destroy, getTreeRoot } from "../ecs/entity/utils";
-import { system } from "../ecs/systems/systems";
-import { KEvent, KEventController, KEventHandler } from "../events/events";
+} from "../ecs/components/physics/effectors.js";
+import { anchor } from "../ecs/components/transform/anchor.js";
+import { fixed } from "../ecs/components/transform/fixed.js";
+import { follow } from "../ecs/components/transform/follow.js";
+import { layer } from "../ecs/components/transform/layer.js";
+import { move } from "../ecs/components/transform/move.js";
+import { offscreen } from "../ecs/components/transform/offscreen.js";
+import { pos } from "../ecs/components/transform/pos.js";
+import { rotate } from "../ecs/components/transform/rotate.js";
+import { scale } from "../ecs/components/transform/scale.js";
+import { z } from "../ecs/components/transform/z.js";
+import { KeepFlags } from "../ecs/entity/GameObjRaw.js";
+import { addKaboom } from "../ecs/entity/premade/addKaboom.js";
+import { addLevel } from "../ecs/entity/premade/addLevel.js";
+import { destroy, getTreeRoot } from "../ecs/entity/utils.js";
+import { system } from "../ecs/systems/systems.js";
+import { KEvent, KEventController, KEventHandler } from "../events/events.js";
 import {
     on,
     onAdd,
@@ -109,7 +114,7 @@ import {
     onUpdate,
     onUse,
     trigger,
-} from "../events/globalEvents";
+} from "../events/globalEvents.js";
 import {
     camFlash,
     camPos,
@@ -127,40 +132,45 @@ import {
     shake,
     toScreen,
     toWorld,
-} from "../game/camera";
+} from "../game/camera.js";
 import {
     getGravity,
     getGravityDirection,
     setGravity,
     setGravityDirection,
-} from "../game/gravity";
-import { getDefaultLayer, getLayers, layers, setLayers } from "../game/layers";
-import { getSceneName, go, onSceneLeave, scene } from "../game/scenes";
-import { getBackground, setBackground } from "../gfx/bg";
-import { makeCanvas } from "../gfx/canvasBuffer";
-import { drawBezier } from "../gfx/draw/drawBezier";
-import { drawCanvas } from "../gfx/draw/drawCanvas";
-import { drawCircle } from "../gfx/draw/drawCircle";
-import { drawCurve } from "../gfx/draw/drawCurve";
-import { drawEllipse } from "../gfx/draw/drawEllipse";
-import { drawFormattedText } from "../gfx/draw/drawFormattedText";
-import { drawLine, drawLines } from "../gfx/draw/drawLine";
-import { drawMasked } from "../gfx/draw/drawMasked";
+} from "../game/gravity.js";
+import {
+    getDefaultLayer,
+    getLayers,
+    layers,
+    setLayers,
+} from "../game/layers.js";
+import { getSceneName, go, onSceneLeave, scene } from "../game/scenes.js";
+import { getBackground, setBackground } from "../gfx/bg.js";
+import { makeCanvas } from "../gfx/canvasBuffer.js";
+import { drawBezier } from "../gfx/draw/drawBezier.js";
+import { drawCanvas } from "../gfx/draw/drawCanvas.js";
+import { drawCircle } from "../gfx/draw/drawCircle.js";
+import { drawCurve } from "../gfx/draw/drawCurve.js";
+import { drawEllipse } from "../gfx/draw/drawEllipse.js";
+import { drawFormattedText } from "../gfx/draw/drawFormattedText.js";
+import { drawLine, drawLines } from "../gfx/draw/drawLine.js";
+import { drawMasked } from "../gfx/draw/drawMasked.js";
 import {
     appendToPicture,
     beginPicture,
     drawPicture,
     endPicture,
     Picture,
-} from "../gfx/draw/drawPicture";
-import { drawPolygon } from "../gfx/draw/drawPolygon";
-import { drawRect } from "../gfx/draw/drawRect";
-import { drawSprite } from "../gfx/draw/drawSprite";
-import { drawSubtracted } from "../gfx/draw/drawSubstracted";
-import { drawText } from "../gfx/draw/drawText";
-import { drawTriangle } from "../gfx/draw/drawTriangle";
-import { drawUVQuad } from "../gfx/draw/drawUVQuad";
-import { compileStyledText, formatText } from "../gfx/formatText";
+} from "../gfx/draw/drawPicture.js";
+import { drawPolygon } from "../gfx/draw/drawPolygon.js";
+import { drawRect } from "../gfx/draw/drawRect.js";
+import { drawSprite } from "../gfx/draw/drawSprite.js";
+import { drawSubtracted } from "../gfx/draw/drawSubstracted.js";
+import { drawText } from "../gfx/draw/drawText.js";
+import { drawTriangle } from "../gfx/draw/drawTriangle.js";
+import { drawUVQuad } from "../gfx/draw/drawUVQuad.js";
+import { compileStyledText, formatText } from "../gfx/formatText.js";
 import {
     center,
     height,
@@ -172,13 +182,13 @@ import {
     pushTransform,
     usePostEffect,
     width,
-} from "../gfx/stack";
-import { clamp } from "../math/clamp";
-import { Color, hsl2rgb, rgb } from "../math/color";
-import { easings } from "../math/easings";
-import { gjkShapeIntersection, gjkShapeIntersects } from "../math/gjk";
-import { lerp } from "../math/lerp";
-import { Mat4 } from "../math/Mat4";
+} from "../gfx/stack.js";
+import { clamp } from "../math/clamp.js";
+import { Color, hsl2rgb, rgb } from "../math/color.js";
+import { easings } from "../math/easings.js";
+import { gjkShapeIntersection, gjkShapeIntersects } from "../math/gjk.js";
+import { lerp } from "../math/lerp.js";
+import { Mat4 } from "../math/Mat4.js";
 import {
     bezier,
     cardinal,
@@ -234,20 +244,20 @@ import {
     triangulate,
     vec2,
     wave,
-} from "../math/math";
-import { NavMesh } from "../math/navigationmesh";
-import { Vec2 } from "../math/Vec2";
-import { BlendMode, type KAPLAYCtx, type KAPLAYPlugin } from "../types";
+} from "../math/math.js";
+import { NavMesh } from "../math/navigationmesh.js";
+import { Vec2 } from "../math/Vec2.js";
+import { BlendMode, type KAPLAYCtx, type KAPLAYPlugin } from "../types.js";
 import {
     download,
     downloadBlob,
     downloadJSON,
     downloadText,
-} from "../utils/dataURL";
-import type { Engine } from "./engine";
-import { throwError } from "./errors";
-import { plug } from "./plug";
-import { onCleanup, quit } from "./quit";
+} from "../utils/dataURL.js";
+import type { Engine } from "./engine.js";
+import { throwError } from "./errors.js";
+import { plug } from "./plug.js";
+import { onCleanup, quit } from "./quit.js";
 
 // The context is the way the user interact with a KAPLAY game.
 export const createContext = (

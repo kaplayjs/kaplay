@@ -1,8 +1,8 @@
 import { describe, expectTypeOf, test } from "vitest";
-import type { CircleComp } from "../../src/ecs/components/draw/circle";
-import type { ScaleComp } from "../../src/ecs/components/transform/scale";
-import { kaplay } from "../../src/kaplay";
-import type { GameObj } from "../../src/types";
+import type { CircleComp } from "../../src/ecs/components/draw/circle.js";
+import type { ScaleComp } from "../../src/ecs/components/transform/scale.js";
+import { kaplay } from "../../src/kaplay.js";
+import type { GameObj } from "../../src/types.js";
 
 // We use circle() component because it only have 1 prop and 1 method, easy
 // for debugging

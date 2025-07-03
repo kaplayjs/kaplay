@@ -1,5 +1,5 @@
-import { _k } from "../shared";
-import { type AudioPlay, type AudioPlayOpt, play } from "./play";
+import { _k } from "../shared.js";
+import { type AudioPlay, type AudioPlayOpt, play } from "./play.js";
 
 // core KAPLAY logic
 export function burp(opt?: AudioPlayOpt): AudioPlay {

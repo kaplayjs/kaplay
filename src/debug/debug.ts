@@ -1,12 +1,12 @@
-import type { App } from "../app/app";
-import type { AudioCtx } from "../audio/audio";
-import { LOG_MAX } from "../constants/general";
-import type { FrameRenderer } from "../core/frameRendering";
-import type { Game } from "../game/game";
-import type { AppGfxCtx } from "../gfx/gfxApp";
-import { _k } from "../shared";
-import type { KAPLAYOpt } from "../types";
-import type { Recording } from "./record";
+import type { App } from "../app/app.js";
+import type { AudioCtx } from "../audio/audio.js";
+import { LOG_MAX } from "../constants/general.js";
+import type { FrameRenderer } from "../core/frameRendering.js";
+import type { Game } from "../game/game.js";
+import type { AppGfxCtx } from "../gfx/gfxApp.js";
+import { _k } from "../shared.js";
+import type { KAPLAYOpt } from "../types.js";
+import type { Recording } from "./record.js";
 
 /**
  * An interface for debugging the game.

@@ -1,13 +1,13 @@
-import { vec2 } from "../../../math/math";
-import type { Vec2 } from "../../../math/Vec2";
-import { _k } from "../../../shared";
-import type { GameObj } from "../../../types";
+import { vec2 } from "../../../math/math.js";
+import type { Vec2 } from "../../../math/Vec2.js";
+import { _k } from "../../../shared.js";
+import type { GameObj } from "../../../types.js";
 import {
     level,
     type LevelComp,
     type LevelOpt,
-} from "../../components/level/level";
-import { pos, type PosComp } from "../../components/transform/pos";
+} from "../../components/level/level.js";
+import { pos, type PosComp } from "../../components/transform/pos.js";
 
 /**
  * Options for the {@link addLevel `addLevel()`}.

@@ -1,7 +1,7 @@
-import { KEvent } from "../events/events";
-import { clamp } from "../math/clamp";
-import { _k } from "../shared";
-import type { AudioPlay, AudioPlayOpt } from "./play";
+import { KEvent } from "../events/events.js";
+import { clamp } from "../math/clamp.js";
+import { _k } from "../shared.js";
+import type { AudioPlay, AudioPlayOpt } from "./play.js";
 
 export function playMusic(url: string, opt: AudioPlayOpt = {}): AudioPlay {
     const onEndEvents = new KEvent();

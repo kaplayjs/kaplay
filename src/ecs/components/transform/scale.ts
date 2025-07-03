@@ -1,6 +1,6 @@
-import { vec2, type Vec2Args } from "../../../math/math";
-import { Vec2 } from "../../../math/Vec2";
-import type { Comp } from "../../../types";
+import { vec2, type Vec2Args } from "../../../math/math.js";
+import { Vec2 } from "../../../math/Vec2.js";
+import type { Comp } from "../../../types.js";
 
 /**
  * The {@link scale `scale()`} component.

@@ -1,7 +1,7 @@
-import { vec2 } from "../../../math/math";
-import { _k } from "../../../shared";
-import type { Comp, GameObj } from "../../../types";
-import type { ScaleComp } from "../transform/scale";
+import { vec2 } from "../../../math/math.js";
+import { _k } from "../../../shared.js";
+import type { Comp, GameObj } from "../../../types.js";
+import type { ScaleComp } from "../transform/scale.js";
 
 export function boom(speed: number = 2, size: number = 1): Comp {
     let time = 0;

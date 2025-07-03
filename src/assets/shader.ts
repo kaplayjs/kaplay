@@ -4,19 +4,19 @@ import {
     FRAG_TEMPLATE,
     VERT_TEMPLATE,
     VERTEX_FORMAT,
-} from "../constants/general";
-import type { GfxCtx } from "../gfx/gfx";
-import { Color } from "../math/color";
-import { Mat4 } from "../math/Mat4";
-import { Mat23 } from "../math/math";
-import { Vec2 } from "../math/Vec2";
-import { _k } from "../shared";
-import type { RenderProps } from "../types";
-import { arrayIsColor, arrayIsNumber, arrayIsVec2 } from "../utils/asserts";
-import { getErrorMessage } from "../utils/log";
-import { fetchText, loadProgress } from "./asset";
-import { Asset } from "./asset";
-import { fixURL } from "./utils";
+} from "../constants/general.js";
+import type { GfxCtx } from "../gfx/gfx.js";
+import { Color } from "../math/color.js";
+import { Mat4 } from "../math/Mat4.js";
+import { Mat23 } from "../math/math.js";
+import { Vec2 } from "../math/Vec2.js";
+import { _k } from "../shared.js";
+import type { RenderProps } from "../types.js";
+import { arrayIsColor, arrayIsNumber, arrayIsVec2 } from "../utils/asserts.js";
+import { getErrorMessage } from "../utils/log.js";
+import { fetchText, loadProgress } from "./asset.js";
+import { Asset } from "./asset.js";
+import { fixURL } from "./utils.js";
 
 export type ShaderData = Shader;
 

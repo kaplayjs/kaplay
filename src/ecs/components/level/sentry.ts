@@ -1,9 +1,9 @@
-import type { KEventController } from "../../../events/events";
-import { Vec2 } from "../../../math/Vec2";
-import { _k } from "../../../shared";
-import type { Comp, GameObj, QueryOpt } from "../../../types";
-import { raycast } from "../draw/raycast";
-import type { PosComp } from "../transform/pos";
+import type { KEventController } from "../../../events/events.js";
+import { Vec2 } from "../../../math/Vec2.js";
+import { _k } from "../../../shared.js";
+import type { Comp, GameObj, QueryOpt } from "../../../types.js";
+import { raycast } from "../draw/raycast.js";
+import type { PosComp } from "../transform/pos.js";
 
 /**
  * The {@link sentry `sentry()`} component.
