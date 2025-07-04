@@ -108,6 +108,7 @@ import type { SystemPhase } from "./ecs/systems/systems";
 import type { GameObjEventNames, GameObjEvents } from "./events/eventMap";
 import type { KEvent, KEventController, KEventHandler } from "./events/events";
 import type { SceneDef, SceneName } from "./game/scenes";
+import type { anchorPt } from "./gfx/anchor";
 import type { DrawBezierOpt } from "./gfx/draw/drawBezier";
 import type { DrawCanvasOpt } from "./gfx/draw/drawCanvas";
 import type { DrawCircleOpt } from "./gfx/draw/drawCircle";
@@ -4880,6 +4881,20 @@ export interface KAPLAYCtx<
      * @group Math
      */
     clipLineToCircle(c: Circle, l: Line, result: Line): boolean;
+    /**
+     * Returns a vector representing the anchor coordinates relative to the object's half-width, half-height, and center.
+     *
+     * For example: `anchorPt("right")` returns `vec2(1, 0)`, which means
+     * the anchor is fully to the right horizontally (1), and in-line with the
+     * centerpoint vertically (0).
+     *
+     * Or, `anchorPt("botleft")` returns `vec2(-1, 1)`, which means fully to the
+     * left (-1), and fully to the bottom (1).
+     *
+     * @since v4000.0
+     * @group Math
+     */
+    anchorPt: typeof anchorPt;
     /**
      * @since v4000.0
      * @group Math

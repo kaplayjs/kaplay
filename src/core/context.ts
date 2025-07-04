@@ -137,6 +137,7 @@ import {
 } from "../game/gravity";
 import { getDefaultLayer, getLayers, layers, setLayers } from "../game/layers";
 import { getSceneName, go, onSceneLeave, scene } from "../game/scenes";
+import { anchorPt } from "../gfx/anchor";
 import { getBackground, setBackground } from "../gfx/bg";
 import { makeCanvas } from "../gfx/canvasBuffer";
 import { drawBezier } from "../gfx/draw/drawBezier";
@@ -548,6 +549,7 @@ export const createContext = (
         testLineCircle,
         clipLineToRect,
         clipLineToCircle,
+        anchorPt,
         gjkShapeIntersects,
         gjkShapeIntersection,
         isConvex,
