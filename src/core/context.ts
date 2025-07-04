@@ -245,6 +245,7 @@ import {
     downloadText,
 } from "../utils/dataURL";
 import type { Engine } from "./engine";
+import { throwError } from "./errors";
 import { plug } from "./plug";
 import { onCleanup, quit } from "./quit";
 
@@ -628,6 +629,7 @@ export const createContext = (
         WHITE: Color.WHITE,
         BLACK: Color.BLACK,
         quit,
+        throwError,
         // helpers
         KEvent,
         KEventHandler,

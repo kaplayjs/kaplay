@@ -9,6 +9,10 @@ import { rgb } from "../math/color";
 import { vec2 } from "../math/math";
 import { _k } from "../shared";
 
+export const throwError = (err: string) => {
+    handleErr(err);
+};
+
 export const handleErr = (err: unknown) => {
     if (_k.game.crashed) return;
     _k.game.crashed = true;
@@ -26,8 +30,10 @@ export const handleErr = (err: unknown) => {
         error.message = "Unknown error, check console for more info";
     }
 
-    _k.app.runOnce(
+    _k.app.run(
+        () => {},
         () => {
+            _k.app.state.stopped = true;
             _k.frameRenderer.frameStart();
 
             drawUnscaled(() => {
