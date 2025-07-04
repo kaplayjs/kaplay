@@ -35,7 +35,7 @@ export class Collision {
         target: GameObj,
         normal: Vec2,
         distance: number,
-        resolved = false
+        resolved = false,
     ) {
         this.source = source;
         this.target = target;
@@ -58,7 +58,7 @@ export class Collision {
             this.source,
             this.normal.scale(-1),
             this.distance,
-            this.resolved
+            this.resolved,
         );
     }
     /**

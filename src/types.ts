@@ -5671,7 +5671,7 @@ export interface KAPLAYCtx<
      * * `BeforeUpdate` and `AfterUpdate` - run once at the start of the frame, before and after all objects' `update()` hooks are run
      * * `BeforeDraw` and `AfterDraw` - run once per frame while the graphics context is setup, before and after all objects' `draw()` hooks are run
      * * `BeforeFixedUpdate` and `AfterFixedUpdate` - run 50 times per second independent of graphics/update framerate, before and after all objects' `fixedUpdate()` hooks are run
-     * 
+     *
      * @group Plugins
      */
     SystemPhase: typeof SystemPhase;
