@@ -6,7 +6,8 @@ import { vec2 } from "../../../math/math";
 import { calcTransform } from "../../../math/various";
 import { type Vec2 } from "../../../math/Vec2";
 import { _k } from "../../../shared";
-import type { Collision, Comp, GameObj } from "../../../types";
+import type { Comp, GameObj } from "../../../types";
+import type { Collision } from "../../systems/Collision";
 import type { PosComp } from "../transform/pos";
 import type { AreaComp } from "./area";
 

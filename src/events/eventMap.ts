@@ -10,9 +10,9 @@ import { type body } from "../ecs/components/physics/body";
 import { type doubleJump } from "../ecs/components/physics/doubleJump";
 import { type offscreen } from "../ecs/components/transform/offscreen";
 import { type addLevel } from "../ecs/entity/premade/addLevel";
+import type { Collision } from "../ecs/systems/Collision";
 import type { Vec2 } from "../math/Vec2";
 import type {
-    Collision,
     GameObj,
     Key,
     KGamepad,

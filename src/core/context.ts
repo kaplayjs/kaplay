@@ -83,6 +83,7 @@ import { KeepFlags } from "../ecs/entity/GameObjRaw";
 import { addKaboom } from "../ecs/entity/premade/addKaboom";
 import { addLevel } from "../ecs/entity/premade/addLevel";
 import { destroy, getTreeRoot } from "../ecs/entity/utils";
+import { Collision } from "../ecs/systems/Collision";
 import { system, SystemPhase } from "../ecs/systems/systems";
 import { KEvent, KEventController, KEventHandler } from "../events/events";
 import {
@@ -491,6 +492,7 @@ export const createContext = (
         Ellipse,
         Point,
         Polygon,
+        Collision,
         Vec2,
         Color,
         Mat4,
