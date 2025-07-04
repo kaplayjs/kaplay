@@ -8,12 +8,12 @@ export type System = {
 
 // Lifecycle events
 export enum LCEvents {
-    "BeforeUpdate",
-    "BeforeFixedUpdate",
-    "BeforeDraw",
-    "AfterUpdate",
-    "AfterFixedUpdate",
-    "AfterDraw",
+    BeforeUpdate,
+    BeforeFixedUpdate,
+    BeforeDraw,
+    AfterUpdate,
+    AfterFixedUpdate,
+    AfterDraw,
 }
 
 export const system = (name: string, action: () => void, when: LCEvents[]) => {

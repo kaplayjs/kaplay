@@ -5635,12 +5635,20 @@ export interface KAPLAYCtx<
      *
      * @param name - The name of the system. Overwrites an existing system if the name has been used before.
      * @param cb - The function to run.
-     * @param when - When to run the function.
+     * @param when - When to run the function. See {@link LCEvents} for more info on the 6 phases when the system can be run.
      *
      * @since v4000.0
      * @group Plugins
      */
     system(name: string, cb: () => void, when: LCEvents[]): void;
+    /**
+     * This enum defines the 6 places where a new system can hook into in KAPLAY's update loop.
+     *
+     * * `BeforeUpdate` and `AfterUpdate` - run once at the start of the frame, before and after all objects' `update()` hooks are run
+     * * `BeforeDraw` and `AfterDraw` - run once per frame while the graphics context is setup, before and after all objects' `draw()` hooks are run
+     * * `BeforeFixedUpdate` and `AfterFixedUpdate` - run 50 times per second independent of graphics/update framerate, before and after all objects' `fixedUpdate()` hooks are run
+     */
+    LCEvents: typeof LCEvents;
     /**
      * Take a screenshot and get the data url of the image.
      *

@@ -144,12 +144,12 @@ export const createGame = (): Game => {
         systems: [], // all systems added
         // we allocate systems here
         systemsByEvent: [
-            [], // afterDraw
-            [], // afterFixedUpdate
-            [], // afterUpdate
-            [], // beforeDraw
-            [], // beforeFixedUpdate
             [], // beforeUpdate
+            [], // beforeFixedUpdate
+            [], // beforeDraw
+            [], // afterUpdate
+            [], // afterFixedUpdate
+            [], // afterDraw
         ],
 
         // Scenes
