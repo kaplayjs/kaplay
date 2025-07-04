@@ -3,11 +3,11 @@ import { _k } from "../../shared";
 export type System = {
     name: string;
     run: () => void;
-    when: LCEvents[];
+    when: SystemPhase[];
 };
 
 // Lifecycle events
-export enum LCEvents {
+export enum SystemPhase {
     BeforeUpdate,
     BeforeFixedUpdate,
     BeforeDraw,
@@ -16,7 +16,11 @@ export enum LCEvents {
     AfterDraw,
 }
 
-export const system = (name: string, action: () => void, when: LCEvents[]) => {
+export const system = (
+    name: string,
+    action: () => void,
+    when: SystemPhase[],
+) => {
     const systems = _k.game.systems;
     const replacingSystemIdx = systems.findIndex((s) => s.name === name);
 
