@@ -289,6 +289,11 @@ export class Vec2 {
 
     static unit(v: Vec2, out: Vec2): Vec2 {
         const len = Vec2.len(v);
+        if (len === 0) {
+            out.x = 0;
+            out.y = 0;
+            return out;
+        }
         out.x = v.x / len;
         out.y = v.y / len;
         return out;
@@ -595,11 +600,11 @@ export class Vec2 {
         return [this.x, this.y];
     }
 
-    serialize(): { x: number, y: number } {
+    serialize(): { x: number; y: number } {
         return { x: this.x, y: this.y };
     }
 
-    static deserialize(data: { x: number, y: number }): Vec2 {
+    static deserialize(data: { x: number; y: number }): Vec2 {
         return vec2(data.x, data.y);
     }
 }
