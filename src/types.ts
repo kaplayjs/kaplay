@@ -4884,17 +4884,17 @@ export interface KAPLAYCtx<
     /**
      * Returns a vector representing the anchor coordinates relative to the object's half-width, half-height, and center.
      *
-     * For example: `anchorPt("right")` returns `vec2(1, 0)`, which means
+     * For example: `anchorToVec2("right")` returns `vec2(1, 0)`, which means
      * the anchor is fully to the right horizontally (1), and in-line with the
      * centerpoint vertically (0).
      *
-     * Or, `anchorPt("botleft")` returns `vec2(-1, 1)`, which means fully to the
+     * Or, `anchorToVec2("botleft")` returns `vec2(-1, 1)`, which means fully to the
      * left (-1), and fully to the bottom (1).
      *
      * @since v4000.0
      * @group Math
      */
-    anchorPt: typeof anchorPt;
+    anchorToVec2: typeof anchorPt;
     /**
      * @since v4000.0
      * @group Math

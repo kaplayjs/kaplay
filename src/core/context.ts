@@ -549,7 +549,7 @@ export const createContext = (
         testLineCircle,
         clipLineToRect,
         clipLineToCircle,
-        anchorPt,
+        anchorToVec2: anchorPt,
         gjkShapeIntersects,
         gjkShapeIntersection,
         isConvex,
