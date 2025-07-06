@@ -1,7 +1,7 @@
 // The E of ECS
 
 import type { AppEvents } from "../../app/app";
-import { handleErr } from "../../core/errors";
+import { throwError } from "../../core/errors";
 import type { GameObjEventNames } from "../../events/eventMap";
 import {
     type KEvent,
@@ -504,6 +504,29 @@ export type InternalGameObjRaw = GameObjRaw & {
     _paused: boolean;
     /** @readonly */
     _drawLayerIndex: number;
+
+    /**
+     * Adds a component or anonymous component.
+     */
+    _addComp(comp: Comp): void;
+    /**
+     * Removes a component without checking for dependencies
+     */
+    _removeComp(id: string): void;
+    /**
+     * Check if any id of a component's require is not present in `_compsIds`, if
+     * there's, throw an error.
+     *
+     * @param comp - The component for checking.
+     */
+    _checkDependencies(comp: Comp): void;
+    /**
+     * Check if any component (in `_compStates`) is dependent of compId, if
+     * there's, throw an error.
+     *
+     * @param compId - Component ID for searching.
+     */
+    _checkDependents(compId: string): void;
 };
 
 type GameObjTransform =
@@ -526,6 +549,8 @@ const COMP_EVENTS = new Set([
     "drawInspect",
     "serialize",
 ]);
+
+type GarbageCollectorArray = (() => any)[];
 
 export const GameObjRawPrototype: Omit<InternalGameObjRaw, AppEvents> = {
     // This chain of `as any`, is because we never should use this object
@@ -633,12 +658,7 @@ export const GameObjRawPrototype: Omit<InternalGameObjRaw, AppEvents> = {
 
         calcTransform(obj, obj.transform);
 
-        try {
-            obj.trigger("add", obj);
-        } catch (e) {
-            handleErr(e);
-        }
-
+        obj.trigger("add", obj);
         _k.game.events.trigger("add", obj);
 
         return obj;
@@ -1147,32 +1167,28 @@ export const GameObjRawPrototype: Omit<InternalGameObjRaw, AppEvents> = {
     // #endregion
 
     // #region Comps
-    use(this: InternalGameObjRaw, comp: Comp) {
-        if (!comp || typeof comp != "object") {
-            throw new Error(
-                `You can only pass objects to .use(), you passed a "${typeof comp}"`,
-            );
-        }
-
-        const addCompIdAsTag = this.id === 0
+    _addComp(comp: Comp) {
+        const addCompIdAsTag = this.id == 0
             ? false
             : _k.globalOpt.tagsAsComponents;
 
-        let gc = [];
+        /** Garbage Collector */
+        if (comp.id) this._compsIds.add(comp.id);
+        let gc: GarbageCollectorArray;
 
-        // clear if overwrite
+        // If that component got an ID, we need to create the cleanups[compId]
+        // data for cleaning later on removing
         if (comp.id) {
-            this.unuse(comp.id);
             this._cleanups[comp.id] = [];
             gc = this._cleanups[comp.id];
             this._compStates.set(comp.id, comp);
-
-            if (addCompIdAsTag) this._tags.add(comp.id);
         }
         else {
+            gc = [];
             this._anonymousCompStates.push(comp);
         }
 
+        // We assign every property to the GameObj prototype
         for (const key in comp) {
             // These are properties from the component data (id, require), shouldn't
             // be added to the game obj prototype, that's why we continue
@@ -1184,7 +1200,7 @@ export const GameObjRawPrototype: Omit<InternalGameObjRaw, AppEvents> = {
             if (!prop) continue;
 
             if (typeof prop.value === "function") {
-                // @ts-ignore
+                // @ts-expect-error Yeah
                 comp[key] = comp[key].bind(this);
             }
 
@@ -1200,16 +1216,23 @@ export const GameObjRawPrototype: Omit<InternalGameObjRaw, AppEvents> = {
                 });
             }
 
+            // For component events: add, update, destroy
             if (COMP_EVENTS.has(key)) {
                 // Automatically clean up events created by components in add() stage
-                const func = key === "add"
-                    ? () => {
+                if (key == "add") {
+                    const func = () => {
                         this._onCurCompCleanup = (c: any) => gc.push(c);
                         comp[key]?.();
                         this._onCurCompCleanup = null;
-                    }
-                    : comp[<keyof typeof comp> key];
-                gc.push(this.on(key, <any> func).cancel);
+                    };
+
+                    gc.push(this.on(key, <any> func).cancel);
+                }
+                else {
+                    const func = comp[<keyof typeof comp> key];
+
+                    gc.push(this.on(key, <any> func).cancel);
+                }
             }
             else {
                 // @ts-ignore
@@ -1238,79 +1261,93 @@ export const GameObjRawPrototype: Omit<InternalGameObjRaw, AppEvents> = {
             }
         }
 
-        // Check for component dependencies
-        const checkDeps = () => {
-            if (!comp.require) return;
-
-            try {
-                for (const dep of comp.require) {
-                    if (!this._compsIds.has(dep)) {
-                        throw new Error(
-                            `Component "${comp.id}" requires component "${dep}"`,
-                        );
-                    }
-                }
-            } catch (e) {
-                handleErr(e);
-            }
-        };
-
+        // We add it to gc in case of obj.unuse()
         if (comp.destroy) {
             gc.push(comp.destroy.bind(this));
         }
 
-        // Manually trigger add event if object already exist
-        // ID == 0 is root
-        if (this.id != 0 && this.exists()) {
-            checkDeps();
-
-            if (comp.add) {
-                this._onCurCompCleanup = (c: any) => gc.push(c);
-                comp.add.call(this);
-                this._onCurCompCleanup = null;
-            }
-            if (comp.id) {
-                this.trigger("use", comp.id);
-                _k.game.events.trigger("use", this as GameObj, comp.id);
-            }
+        if (comp.id && addCompIdAsTag) {
+            this.tag(comp.id);
         }
-        else {
-            if (comp.require) {
-                checkDeps();
-            }
+
+        // If the object already exists and add hook is present, run it
+        if (this.id != 0 && this.exists() && comp.add) {
+            this._onCurCompCleanup = (c: any) => gc.push(c);
+            comp.add.call(this);
+            this._onCurCompCleanup = null;
+        }
+
+        if (this.id != 0 && comp.id) {
+            this.trigger("use", comp.id);
+            _k.game.events.trigger(
+                "use",
+                this as unknown as GameObj,
+                comp.id,
+            );
         }
     },
 
-    // Remove components
-    unuse(this: InternalGameObjRaw, id: string) {
+    _removeComp(this: InternalGameObjRaw, id) {
         const addCompIdAsTag = this.id === 0
             ? false
             : _k.globalOpt.tagsAsComponents;
 
-        if (this._compStates.has(id)) {
-            // check all components for a dependent, if there's one, throw an error
-            for (const comp of this._compStates.values()) {
-                if (comp.require && comp.require.includes(id)) {
-                    throw new Error(
-                        `Can't unuse. Component "${comp.id}" requires component "${id}"`,
-                    );
-                }
-            }
+        this._compsIds.delete(id);
+        this._compStates.delete(id);
+        if (addCompIdAsTag) this._tags.delete(id);
 
-            this._compStates.delete(id);
-            this._compsIds.delete(id);
-
-            this.trigger("unuse", id);
-            _k.game.events.trigger("unuse", this, id);
-        }
-        else if (addCompIdAsTag && this._tags.has(id)) {
-            this._tags.delete(id);
-        }
+        this.trigger("unuse", id);
+        _k.game.events.trigger("unuse", this, id);
 
         if (this._cleanups[id]) {
             this._cleanups[id].forEach((e) => e());
             delete this._cleanups[id];
         }
+    },
+
+    _checkDependencies(comp: Comp) {
+        if (!comp.require) return;
+
+        for (const dep of comp.require) {
+            if (!this._compsIds.has(dep)) {
+                throwError(
+                    `Component "${comp.id}" requires component "${dep}"`,
+                );
+            }
+        }
+    },
+
+    _checkDependents(compId: string) {
+        for (const comp of this._compStates.values()) {
+            if (comp.require && comp.require.includes(compId)) {
+                throwError(
+                    `Can't remove ${compId} component, it is required by "${comp.id}" component"`,
+                );
+            }
+        }
+    },
+
+    use(this: InternalGameObjRaw, comp: Comp) {
+        if (!comp || typeof comp != "object") {
+            throw new Error(
+                `You can only pass objects to .use(), you passed a "${typeof comp}"`,
+            );
+        }
+
+        if (comp.id && this.has(comp.id)) {
+            this._removeComp(comp.id);
+        }
+
+        this._addComp(comp);
+        this._checkDependencies(comp);
+    },
+
+    // Remove components
+    unuse(this: InternalGameObjRaw, id: string) {
+        if (!this.has(id)) return;
+
+        this._removeComp(id);
+        this._checkDependents(id);
     },
 
     has(

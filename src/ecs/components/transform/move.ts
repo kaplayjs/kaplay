@@ -15,7 +15,7 @@ export function move(
         },
         serialize() {
             return {
-                dir: dir instanceof Vec2 ? { x: dir.x, y: dir.y } : dir,
+                dir: dir instanceof Vec2 ? dir.serialize() : dir,
                 speed: speed,
             };
         },
@@ -23,5 +23,10 @@ export function move(
 }
 
 export function moveFactory(data: any) {
-    return move(new Vec2(data.dir), data.speed);
+    if (typeof data.dir == "object") {
+        return move(new Vec2(data.dir.x, data.dir.y), data.speed);
+    }
+    else {
+        return move(data.dir, data.speed);
+    }
 }
