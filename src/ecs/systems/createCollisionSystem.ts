@@ -1,14 +1,13 @@
 import { onAdd, onDestroy, onUnuse, onUse } from "../../events/globalEvents";
 import { onSceneLeave } from "../../game/scenes";
 import { gjkShapeIntersection } from "../../math/gjk";
-import { vec2 } from "../../math/math";
 import { minkowskiRectShapeIntersection } from "../../math/minkowski";
 import { satShapeIntersection } from "../../math/sat";
 import { SweepAndPrune } from "../../math/spatial/sweepandprune";
-import { type Vec2 } from "../../math/Vec2";
 import { _k } from "../../shared";
 import type { GameObj } from "../../types";
 import { type AreaComp, usesArea } from "../components/physics/area";
+import { Collision } from "./Collision";
 
 export const createCollisionSystem = ({ narrow = "gjk" } = {}) => {
     const narrowPhaseIntersection = narrow === "gjk"
@@ -18,57 +17,6 @@ export const createCollisionSystem = ({ narrow = "gjk" } = {}) => {
         : narrow === "box"
         ? minkowskiRectShapeIntersection
         : gjkShapeIntersection;
-
-    class Collision {
-        source: GameObj;
-        target: GameObj;
-        normal: Vec2;
-        distance: number;
-        resolved: boolean = false;
-        constructor(
-            source: GameObj,
-            target: GameObj,
-            normal: Vec2,
-            distance: number,
-            resolved = false,
-        ) {
-            this.source = source;
-            this.target = target;
-            this.normal = normal;
-            this.distance = distance;
-            this.resolved = resolved;
-        }
-        get displacement() {
-            return this.normal.scale(this.distance);
-        }
-        reverse() {
-            return new Collision(
-                this.target,
-                this.source,
-                this.normal.scale(-1),
-                this.distance,
-                this.resolved,
-            );
-        }
-        hasOverlap() {
-            return this.distance > 0;
-        }
-        isLeft() {
-            return this.normal.cross(_k.game.gravity || vec2(0, 1)) > 0;
-        }
-        isRight() {
-            return this.normal.cross(_k.game.gravity || vec2(0, 1)) < 0;
-        }
-        isTop() {
-            return this.normal.dot(_k.game.gravity || vec2(0, 1)) > 0;
-        }
-        isBottom() {
-            return this.normal.dot(_k.game.gravity || vec2(0, 1)) < 0;
-        }
-        preventResolution() {
-            this.resolved = true;
-        }
-    }
 
     function narrowPhase(
         obj: GameObj<AreaComp>,

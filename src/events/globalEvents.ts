@@ -1,8 +1,9 @@
 // add an event to a tag
 
 import { type Asset, getFailedAssets } from "../assets/asset";
+import type { Collision } from "../ecs/systems/Collision";
 import { _k } from "../shared";
-import type { Collision, GameObj, Tag } from "../types";
+import type { GameObj, Tag } from "../types";
 import { overload2 } from "../utils/overload";
 import type { TupleWithoutFirst } from "../utils/types";
 import type { GameObjEventNames, GameObjEvents } from "./eventMap";
