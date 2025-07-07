@@ -6717,6 +6717,12 @@ export interface Comp {
      * @since v3000.0
      */
     drawInspect?: () => void;
+    /**
+     * Serializes the component.
+     *
+     * @since v4000.0
+     */
+    serialize?: () => any;
 }
 
 /**

@@ -18,17 +18,13 @@ import { type Vec2 } from "../../../math/Vec2";
 import { _k } from "../../../shared";
 import type { Comp, GameObj, SpriteAnimPlayOpt } from "../../../types";
 
-type serializedSprite = {
+/**
+ * The serialized {@link sprite `sprite()`} component.
+ *
+ * @group Component Serializations
+ */
+export type SerializedSpriteComp = SpriteCompOpt & {
     sprite: string;
-    frame?: number;
-    tiled?: boolean;
-    width?: number;
-    height?: number;
-    anim?: string;
-    animSpeed?: number;
-    flipX?: boolean;
-    flipY?: boolean;
-    quad?: Quad;
 };
 
 /**
@@ -138,7 +134,7 @@ export interface SpriteComp extends Comp {
      */
     renderArea(): Rect;
 
-    serialize(): serializedSprite;
+    serialize(): SerializedSpriteComp;
 }
 
 /**
@@ -632,7 +628,7 @@ export function sprite(
     };
 }
 
-export function spriteFactory(data: serializedSprite) {
+export function spriteFactory(data: SerializedSpriteComp) {
     const opt: SpriteCompOpt = {};
     if (data.frame) opt.frame = data.frame;
     if (data.tiled) opt.tiled = data.tiled;

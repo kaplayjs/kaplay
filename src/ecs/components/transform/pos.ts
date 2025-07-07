@@ -13,7 +13,7 @@ import type { FixedComp } from "./fixed";
  *
  * @group Component Serializations
  */
-export interface SerializePosComp {
+export interface SerializedPosComp {
     pos: { x: number; y: number };
 }
 
@@ -91,7 +91,7 @@ export interface PosComp extends Comp {
     /**
      * Serialize the current state comp
      */
-    serialize(): SerializePosComp;
+    serialize(): SerializedPosComp;
 }
 
 export function pos(...args: Vec2Args): PosComp {
@@ -233,6 +233,6 @@ export function pos(...args: Vec2Args): PosComp {
     };
 }
 
-export function posFactory(data: any) {
+export function posFactory(data: SerializedPosComp) {
     return pos(data.pos.x, data.pos.y);
 }

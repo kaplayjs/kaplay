@@ -11,7 +11,7 @@ const factoryMethods: { [key: string]: (data: object) => Comp } = {};
 // #region Deserialization
 export function registerPrefabFactory(
     id: string,
-    factoryMethod: (data: object) => Comp,
+    factoryMethod: (data: any) => Comp,
 ) {
     factoryMethods[id] = factoryMethod;
 }

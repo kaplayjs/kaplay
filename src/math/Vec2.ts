@@ -3,12 +3,16 @@ import { lerpNumber } from "./lerpNumber";
 import type { Mat4 } from "./Mat4";
 import { deg2rad, rad2deg, Rect, vec2, type Vec2Args } from "./math";
 
+export interface SerializedVec2 {
+    x: number;
+    y: number;
+}
+
 /**
  * A 2D vector.
  *
  * @group Math
  */
-
 export class Vec2 {
     /** The x coordinate */
     x: number = 0;
@@ -600,11 +604,11 @@ export class Vec2 {
         return [this.x, this.y];
     }
 
-    serialize(): { x: number; y: number } {
+    serialize(): SerializedVec2 {
         return { x: this.x, y: this.y };
     }
 
-    static deserialize(data: { x: number; y: number }): Vec2 {
+    static deserialize(data: SerializedVec2): Vec2 {
         return vec2(data.x, data.y);
     }
 }
