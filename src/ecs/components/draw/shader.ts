@@ -4,7 +4,7 @@ import type { Comp } from "../../../types";
 /**
  * The serialized {@link shader `shader()`} component.
  *
- * @group Component Serializations
+ * @group Component Serialization
  */
 export interface SerializeShaderComp {
     shader: string;

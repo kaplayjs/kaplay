@@ -1,4 +1,20 @@
 {
+	"Add serialization type in a Component": {
+		"scope": "javascript,typescript",
+		// kpd = KAPLAY Development
+		"prefix": "kpd-comp-serialization-type",
+		"body": [
+			"/**",
+			" * The serialized {@link ${TM_FILENAME_BASE} `${TM_FILENAME_BASE}()`} component.",
+			" *",
+			" * @group Component Serialization",
+			" */",
+			"interface Serialized${TM_FILENAME_BASE/(.)(.*)/${1:/upcase}${2}/}Comp {",
+			"",
+			"}"
+		],
+		"description": "Add @experimental tag in JSDoc"
+	},
 	"Add experimental message": {
 		"scope": "javascript,typescript",
 		// kpd = KAPLAY Development

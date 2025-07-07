@@ -19,7 +19,7 @@ export interface ZComp extends Comp {
 /**
  * The serialized {@link z `z()`} component.
  *
- * @group Component Serializations
+ * @group Component Serialization
  */
 export interface SerializeZComp {
     z: number;

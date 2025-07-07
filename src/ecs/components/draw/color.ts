@@ -1,15 +1,10 @@
-import {
-    Color,
-    type ColorArgs,
-    rgb,
-    type RGBValue,
-} from "../../../math/color";
+import { Color, type ColorArgs, rgb, type RGBValue } from "../../../math/color";
 import type { Comp } from "../../../types";
 
 /**
  * The serialized {@link color `color()`} component.
  *
- * @group Component Serializations
+ * @group Component Serialization
  */
 export interface SerializeColorComp {
     color: { r: number; g: number; b: number };
@@ -34,7 +29,7 @@ export function color(...args: ColorArgs): ColorComp {
         },
         serialize() {
             return {
-                color: this.color.serialize()
+                color: this.color.serialize(),
             };
         },
     };

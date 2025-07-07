@@ -5,7 +5,7 @@ import type { Comp, Outline } from "../../../types";
 /**
  * The serialized {@link outline `outline()`} component.
  *
- * @group Component Serializations
+ * @group Component Serialization
  */
 export interface SerializeOutlineComp {
     outline: {

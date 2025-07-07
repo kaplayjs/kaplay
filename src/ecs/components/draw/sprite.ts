@@ -21,7 +21,7 @@ import type { Comp, GameObj, SpriteAnimPlayOpt } from "../../../types";
 /**
  * The serialized {@link sprite `sprite()`} component.
  *
- * @group Component Serializations
+ * @group Component Serialization
  */
 export type SerializedSpriteComp = SpriteCompOpt & {
     sprite: string;

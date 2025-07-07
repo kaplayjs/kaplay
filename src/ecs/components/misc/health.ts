@@ -5,7 +5,7 @@ import type { Comp, GameObj } from "../../../types";
 /**
  * The serialized {@link health `health()`} component.
  *
- * @group Component Serializations
+ * @group Component Serialization
  */
 export interface SerializeHealthComp {
     hp: number;

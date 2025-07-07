@@ -3,7 +3,7 @@ import type { Comp } from "../../../types";
 /**
  * The serialized {@link stay `stay()`} component.
  *
- * @group Component Serializations
+ * @group Component Serialization
  */
 export interface SerializeStayComp {
     scenesToStay: string[];

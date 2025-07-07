@@ -47,7 +47,7 @@ export interface ScaleComp extends Comp {
 /**
  * The serialized {@link scale `scale()`} component.
  *
- * @group Component Serializations
+ * @group Component Serialization
  */
 export interface SerializeScaleComp {
     scale: { x: number; y: number };

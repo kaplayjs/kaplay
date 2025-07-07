@@ -4,7 +4,7 @@ import type { Comp } from "../../../types";
 /**
  * The serialized {@link state `state()`} component.
  *
- * @group Component Serializations
+ * @group Component Serialization
  */
 export interface SerializeStateComp {
     initState: string;

@@ -9,7 +9,7 @@ import type { outline } from "./outline";
 /**
  * The serialized {@link ellipse `ellipse()`} component.
  *
- * @group Component Serializations
+ * @group Component Serialization
  */
 export interface SerializeEllipseComp {
     radiusX: number;
