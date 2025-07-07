@@ -1,6 +1,15 @@
 import type { Comp } from "../../../types";
 
 /**
+ * The serialized {@link z `z()`} component.
+ *
+ * @group Component Serialization
+ */
+export interface SerializedZComp {
+    z: number;
+}
+
+/**
  * The {@link z `z()`} component.
  *
  * @group Component Types
@@ -13,16 +22,7 @@ export interface ZComp extends Comp {
     /**
      * Serialize the current state comp
      */
-    serialize(): SerializeZComp;
-}
-
-/**
- * The serialized {@link z `z()`} component.
- *
- * @group Component Serialization
- */
-export interface SerializeZComp {
-    z: number;
+    serialize(): SerializedZComp;
 }
 
 export function z(z: number): ZComp {
@@ -38,6 +38,6 @@ export function z(z: number): ZComp {
     };
 }
 
-export function zFactory(data: any) {
+export function zFactory(data: SerializedZComp) {
     return z(data.z);
 }

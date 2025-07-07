@@ -1,6 +1,15 @@
 import { vec2, type Vec2Args } from "../../../math/math";
-import { Vec2 } from "../../../math/Vec2";
+import { type SerializedVec2, Vec2 } from "../../../math/Vec2";
 import type { Comp } from "../../../types";
+
+/**
+ * The serialized {@link scale `scale()`} component.
+ *
+ * @group Component Serialization
+ */
+export interface SerializedScaleComp {
+    scale: SerializedVec2;
+}
 
 /**
  * The {@link scale `scale()`} component.
@@ -41,16 +50,7 @@ export interface ScaleComp extends Comp {
     /**
      * Serialize the current state comp
      */
-    serialize(): SerializeScaleComp;
-}
-
-/**
- * The serialized {@link scale `scale()`} component.
- *
- * @group Component Serialization
- */
-export interface SerializeScaleComp {
-    scale: { x: number; y: number };
+    serialize(): SerializedScaleComp;
 }
 
 export function scale(...args: Vec2Args): ScaleComp {
@@ -96,6 +96,6 @@ export function scale(...args: Vec2Args): ScaleComp {
     };
 }
 
-export function scaleFactory(data: any) {
+export function scaleFactory(data: SerializedScaleComp) {
     return scale(data.scale.x, data.scale.y);
 }

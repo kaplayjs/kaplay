@@ -5,8 +5,13 @@ import { initAssets } from "../assets/asset";
 import { initAudio } from "../audio/audio";
 import { createDebug } from "../debug/debug";
 import { spriteFactory } from "../ecs/components/draw/sprite";
+import { anchorFactory } from "../ecs/components/transform/anchor";
+import { fixedFactory } from "../ecs/components/transform/fixed";
 import { moveFactory } from "../ecs/components/transform/move";
 import { posFactory } from "../ecs/components/transform/pos";
+import { rotateFactory } from "../ecs/components/transform/rotate";
+import { scaleFactory } from "../ecs/components/transform/scale";
+import { zFactory } from "../ecs/components/transform/z";
 import { registerPrefabFactory } from "../ecs/entity/prefab";
 import { createGame } from "../game/game";
 import { createCanvas } from "../gfx/canvas";
@@ -64,9 +69,21 @@ export const createEngine = (gopt: KAPLAYOpt) => {
     const debug = createDebug(opt, app, appGfx, audio, game, frameRenderer);
 
     // Register default factories
-    registerPrefabFactory("pos", posFactory);
-    registerPrefabFactory("sprite", spriteFactory);
+
+    // Transform Serialization
+    registerPrefabFactory("anchor", anchorFactory);
+    registerPrefabFactory("fixed", fixedFactory);
+    // `follow()` missing, we should figure a way to serialize an object reference (probably use named())
+    // `layer()` missing, needs investigation
     registerPrefabFactory("move", moveFactory);
+    // `offscreen()` missing
+    registerPrefabFactory("pos", posFactory);
+    registerPrefabFactory("rotate", rotateFactory);
+    registerPrefabFactory("scale", scaleFactory);
+    registerPrefabFactory("z", zFactory);
+
+    // Draw Serialization
+    registerPrefabFactory("sprite", spriteFactory);
 
     return {
         globalOpt: opt,

@@ -1,6 +1,16 @@
+import { anchorPt } from "../../../gfx/anchor";
 import { vec2 } from "../../../math/math";
-import { Vec2 } from "../../../math/Vec2";
+import { type SerializedVec2, Vec2 } from "../../../math/Vec2";
 import type { Anchor, Comp } from "../../../types";
+
+/**
+ * The serialized {@link anchor `anchor()`} component.
+ *
+ * @group Component Serialization
+ */
+export interface SerializedAnchorComp {
+    anchor: SerializedVec2;
+}
 
 /**
  * The {@link anchor `anchor()`} component.
@@ -13,7 +23,7 @@ export interface AnchorComp extends Comp {
      */
     anchor: Anchor | Vec2;
 
-    serialize(): any;
+    serialize(): SerializedAnchorComp;
 }
 
 export function anchor(o: Anchor | Vec2): AnchorComp {
@@ -34,17 +44,13 @@ export function anchor(o: Anchor | Vec2): AnchorComp {
         serialize() {
             return {
                 anchor: this.anchor instanceof Vec2
-                    ? { x: this.anchor.x, y: this.anchor.y }
-                    : this.anchor,
+                    ? this.anchor.serialize()
+                    : anchorPt(this.anchor).serialize(),
             };
         },
     };
 }
 
-export function anchorFactory(data: any) {
-    return anchor(
-        typeof data.anchor === "string"
-            ? data.anchor
-            : vec2(data.anchor.x, data.anchor.y),
-    );
+export function anchorFactory(data: SerializedAnchorComp) {
+    return anchor(new Vec2(data.anchor.x, data.anchor.y));
 }

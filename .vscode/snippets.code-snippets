@@ -8,7 +8,7 @@
 			" *",
 			" * @group Component Serialization",
 			" */",
-			"interface Serialized${TM_FILENAME_BASE/(.)(.*)/${1:/upcase}${2}/}Comp {",
+			"export interface Serialized${TM_FILENAME_BASE/(.)(.*)/${1:/upcase}${2}/}Comp {",
 			"",
 			"}"
 		],

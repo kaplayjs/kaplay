@@ -1151,6 +1151,8 @@ export interface KAPLAYCtx<
      * Make a game obj unaffected by camera or parent object transforms, and render at last.
      * Useful for UI elements.
      *
+     * @param fixed - Default fixed value.
+     *
      * @example
      * ```js
      * // this will be be fixed on top left and not affected by camera
@@ -1165,7 +1167,7 @@ export interface KAPLAYCtx<
      * @since v2000.0
      * @group Components
      */
-    fixed(): FixedComp;
+    fixed(fixed?: boolean): FixedComp;
     /**
      * Don't get destroyed on scene switch. Only works in objects attached to root.
      *

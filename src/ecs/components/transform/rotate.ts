@@ -1,6 +1,15 @@
 import type { Comp } from "../../../types";
 
 /**
+ * The serialized {@link rotate `rotate()`} component.
+ *
+ * @group Component Serialization
+ */
+export interface SerializedRotateComp {
+    angle: number;
+}
+
+/**
  * The {@link rotate `rotate()`} component.
  *
  * @group Component Types
@@ -43,6 +52,6 @@ export function rotate(a?: number): RotateComp {
     };
 }
 
-export function rotateFactory(data: any) {
+export function rotateFactory(data: SerializedRotateComp) {
     return rotate(data.angle);
 }
