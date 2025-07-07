@@ -4,6 +4,8 @@ import { _k } from "../../shared";
 import type { Comp, GameObj } from "../../types";
 import type { InternalGameObjRaw } from "./GameObjRaw";
 
+type PrefabAsset = { [key: string]: any };
+
 const factoryMethods: { [key: string]: (data: object) => Comp } = {};
 
 // #region Deserialization
@@ -14,8 +16,9 @@ export function registerPrefabFactory(
     factoryMethods[id] = factoryMethod;
 }
 
-export function deserializePrefabAsset(prefabAsset: { [key: string]: any }) {
+export function deserializePrefabAsset(prefabAsset: PrefabAsset) {
     const list: Comp[] = [];
+
     for (const id in prefabAsset) {
         if (id in factoryMethods) {
             list.push(factoryMethods[id](prefabAsset[id]));

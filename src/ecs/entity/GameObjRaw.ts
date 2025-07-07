@@ -147,6 +147,7 @@ export interface GameObjRaw {
      */
     addPrefab<T extends CompList<unknown>>(
         nameOrObject: object | string,
+        compList?: [...T],
     ): GameObj<T[number]>;
     /**
      * Create a serialized version of this Game Object.
@@ -664,7 +665,7 @@ export const GameObjRawPrototype: Omit<InternalGameObjRaw, AppEvents> = {
         return obj;
     },
 
-    addPrefab<T>(name: string | object) {
+    addPrefab<T extends CompList<unknown>>(name: string | object, comps?: T) {
         let data: object;
         if (typeof name === "string") {
             if (name in _k.assets.prefabAssets) {
@@ -678,7 +679,10 @@ export const GameObjRawPrototype: Omit<InternalGameObjRaw, AppEvents> = {
             data = name;
         }
 
-        return this.add(deserializePrefabAsset(data)) as GameObj<T>;
+        const deserializedComps = deserializePrefabAsset(data);
+        if (comps) deserializedComps.push(...comps as Comp[]);
+
+        return this.add(deserializedComps) as GameObj<T[number]>;
     },
 
     serialize(this: InternalGameObjRaw) {
