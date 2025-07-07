@@ -32,13 +32,13 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   ```js
   system("collision", () => {
     // system code
-  }, [LCEvents.AfterFixedUpdate, LCEvents.AfterUpdate]),
+  }, [SystemPhase.AfterFixedUpdate, SystemPhase.AfterUpdate]),
   ```
 
 - All game objects have methods `onTag()` and `onUntag()` for watching tag
   changes - @mflerackers
-- Added `LCEvents` enum to identify different lifecycle events in the game
-  loop - @mflerackers
+- Added `SystemPhase` enum to identify different lifecycle events in the game
+  loop that systems can hook into - @mflerackers
 - Blend mode is selectable to change how sprites are composited on top of each
   other - @mflerackers
 - Picture API to cache drawing of selected objects - @mflerackers

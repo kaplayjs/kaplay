@@ -103,7 +103,7 @@ import type { ZComp } from "./ecs/components/transform/z";
 import type { GameObjRaw, KeepFlags } from "./ecs/entity/GameObjRaw";
 import type { BoomOpt } from "./ecs/entity/premade/addKaboom";
 import type { AddLevelOpt } from "./ecs/entity/premade/addLevel";
-import type { LCEvents } from "./ecs/systems/systems";
+import type { SystemPhase } from "./ecs/systems/systems";
 import type { GameObjEventNames, GameObjEvents } from "./events/eventMap";
 import type { KEvent, KEventController, KEventHandler } from "./events/events";
 import type { SceneDef, SceneName } from "./game/scenes";
@@ -5641,12 +5641,20 @@ export interface KAPLAYCtx<
      *
      * @param name - The name of the system. Overwrites an existing system if the name has been used before.
      * @param cb - The function to run.
-     * @param when - When to run the function.
+     * @param when - When to run the function. See {@link SystemPhase} for more info on the 6 phases when the system can be run.
      *
      * @since v4000.0
      * @group Plugins
      */
-    system(name: string, cb: () => void, when: LCEvents[]): void;
+    system(name: string, cb: () => void, when: SystemPhase[]): void;
+    /**
+     * This enum defines the 6 places where a new system can hook into in KAPLAY's update loop.
+     *
+     * * `BeforeUpdate` and `AfterUpdate` - run once at the start of the frame, before and after all objects' `update()` hooks are run
+     * * `BeforeDraw` and `AfterDraw` - run once per frame while the graphics context is setup, before and after all objects' `draw()` hooks are run
+     * * `BeforeFixedUpdate` and `AfterFixedUpdate` - run 50 times per second independent of graphics/update framerate, before and after all objects' `fixedUpdate()` hooks are run
+     */
+    SystemPhase: typeof SystemPhase;
     /**
      * Take a screenshot and get the data url of the image.
      *

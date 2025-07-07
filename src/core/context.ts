@@ -84,7 +84,7 @@ import { loadPrefab } from "../ecs/entity/prefab";
 import { addKaboom } from "../ecs/entity/premade/addKaboom";
 import { addLevel } from "../ecs/entity/premade/addLevel";
 import { destroy, getTreeRoot } from "../ecs/entity/utils";
-import { system } from "../ecs/systems/systems";
+import { system, SystemPhase } from "../ecs/systems/systems";
 import { KEvent, KEventController, KEventHandler } from "../events/events";
 import {
     on,
@@ -609,6 +609,7 @@ export const createContext = (
         // plugin
         plug,
         system,
+        SystemPhase,
         // char sets
         ASCII_CHARS,
         // dom
