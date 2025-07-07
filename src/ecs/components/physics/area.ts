@@ -11,7 +11,6 @@ import { Circle, Polygon, Rect, shapeFactory, vec2 } from "../../../math/math";
 import { Vec2 } from "../../../math/Vec2";
 import { _k } from "../../../shared";
 import type {
-    Collision,
     Comp,
     Cursor,
     GameObj,
@@ -20,7 +19,7 @@ import type {
     Tag,
 } from "../../../types";
 import { isFixed } from "../../entity/utils";
-import type { FakeMouseComp } from "../misc/fakeMouse";
+import type { Collision } from "../../systems/Collision";
 import type { AnchorComp } from "../transform/anchor";
 import type { FixedComp } from "../transform/fixed";
 import type { PosComp } from "../transform/pos";

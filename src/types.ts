@@ -103,10 +103,12 @@ import type { ZComp } from "./ecs/components/transform/z";
 import type { GameObjRaw, KeepFlags } from "./ecs/entity/GameObjRaw";
 import type { BoomOpt } from "./ecs/entity/premade/addKaboom";
 import type { AddLevelOpt } from "./ecs/entity/premade/addLevel";
+import type { Collision } from "./ecs/systems/Collision";
 import type { SystemPhase } from "./ecs/systems/systems";
 import type { GameObjEventNames, GameObjEvents } from "./events/eventMap";
 import type { KEvent, KEventController, KEventHandler } from "./events/events";
 import type { SceneDef, SceneName } from "./game/scenes";
+import type { anchorPt } from "./gfx/anchor";
 import type { DrawBezierOpt } from "./gfx/draw/drawBezier";
 import type { DrawCanvasOpt } from "./gfx/draw/drawCanvas";
 import type { DrawCircleOpt } from "./gfx/draw/drawCircle";
@@ -2133,7 +2135,7 @@ export interface KAPLAYCtx<
      *
      * @returns The event controller.
      * @since v3000.0
-     * @group Physics
+     * @group Events
      */
     onCollideEnd(
         t1: Tag,
@@ -3999,6 +4001,14 @@ export interface KAPLAYCtx<
      */
     getGravityDirection(): Vec2;
     /**
+     * An object containing the data for when two objects with area()s
+     * overlap or collide with each other.
+     *
+     * @since v4000.0
+     * @group Physics
+     */
+    Collision: typeof Collision;
+    /**
      * Set background color.
      *
      * @since v3000.0
@@ -4878,6 +4888,20 @@ export interface KAPLAYCtx<
      */
     clipLineToCircle(c: Circle, l: Line, result: Line): boolean;
     /**
+     * Returns a vector representing the anchor coordinates relative to the object's half-width, half-height, and center.
+     *
+     * For example: `anchorToVec2("right")` returns `vec2(1, 0)`, which means
+     * the anchor is fully to the right horizontally (1), and in-line with the
+     * centerpoint vertically (0).
+     *
+     * Or, `anchorToVec2("botleft")` returns `vec2(-1, 1)`, which means fully to the
+     * left (-1), and fully to the bottom (1).
+     *
+     * @since v4000.0
+     * @group Math
+     */
+    anchorToVec2: typeof anchorPt;
+    /**
      * @since v4000.0
      * @group Math
      */
@@ -5653,6 +5677,8 @@ export interface KAPLAYCtx<
      * * `BeforeUpdate` and `AfterUpdate` - run once at the start of the frame, before and after all objects' `update()` hooks are run
      * * `BeforeDraw` and `AfterDraw` - run once per frame while the graphics context is setup, before and after all objects' `draw()` hooks are run
      * * `BeforeFixedUpdate` and `AfterFixedUpdate` - run 50 times per second independent of graphics/update framerate, before and after all objects' `fixedUpdate()` hooks are run
+     *
+     * @group Plugins
      */
     SystemPhase: typeof SystemPhase;
     /**
@@ -6744,70 +6770,6 @@ export type GameObjID = number;
  * @group Component Types
  */
 export type EmptyComp = { id: string } & Comp;
-
-/**
- * Collision resolution data.
- *
- * @group Math
- */
-export interface Collision {
-    /**
-     * The first game object in the collision.
-     */
-    source: GameObj;
-    /**
-     * The second game object in the collision.
-     */
-    target: GameObj;
-    /**
-     * The contact normal.
-     */
-    normal: Vec2;
-    /**
-     * The length of the displacement.
-     */
-    distance: Vec2;
-    /**
-     * The displacement source game object have to make to avoid the collision.
-     */
-    displacement: Vec2;
-    /**
-     * If the collision is resolved.
-     */
-    resolved: boolean;
-    /**
-     * Prevent collision resolution if not yet resolved.
-     *
-     * @since v3000.0
-     */
-    preventResolution(): void;
-    /**
-     * If the 2 objects have any overlap, or they're just touching edges.
-     *
-     * @since v3000.0
-     */
-    hasOverlap(): boolean;
-    /**
-     * Get a new collision with reversed source and target relationship.
-     */
-    reverse(): Collision;
-    /**
-     * If the collision happened (roughly) on the top side.
-     */
-    isTop(): boolean;
-    /**
-     * If the collision happened (roughly) on the bottom side.
-     */
-    isBottom(): boolean;
-    /**
-     * If the collision happened (roughly) on the left side.
-     */
-    isLeft(): boolean;
-    /**
-     * If the collision happened (roughly) on the right side.
-     */
-    isRight(): boolean;
-}
 
 /**
  * @group Draw

@@ -84,6 +84,7 @@ import { loadPrefab } from "../ecs/entity/prefab";
 import { addKaboom } from "../ecs/entity/premade/addKaboom";
 import { addLevel } from "../ecs/entity/premade/addLevel";
 import { destroy, getTreeRoot } from "../ecs/entity/utils";
+import { Collision } from "../ecs/systems/Collision";
 import { system, SystemPhase } from "../ecs/systems/systems";
 import { KEvent, KEventController, KEventHandler } from "../events/events";
 import {
@@ -137,6 +138,7 @@ import {
 } from "../game/gravity";
 import { getDefaultLayer, getLayers, layers, setLayers } from "../game/layers";
 import { getSceneName, go, onSceneLeave, scene } from "../game/scenes";
+import { anchorPt } from "../gfx/anchor";
 import { getBackground, setBackground } from "../gfx/bg";
 import { makeCanvas } from "../gfx/canvasBuffer";
 import { drawBezier } from "../gfx/draw/drawBezier";
@@ -493,6 +495,7 @@ export const createContext = (
         Ellipse,
         Point,
         Polygon,
+        Collision,
         Vec2,
         Color,
         Mat4,
@@ -548,6 +551,7 @@ export const createContext = (
         testLineCircle,
         clipLineToRect,
         clipLineToCircle,
+        anchorToVec2: anchorPt,
         gjkShapeIntersects,
         gjkShapeIntersection,
         isConvex,
