@@ -9,6 +9,17 @@ export type RGBAValue = [number, number, number, number];
 export type CSSColor = keyof typeof CSS_COLOR_MAP;
 
 /**
+ * A serialized color.
+ *
+ * @group Component Serialization
+ */
+export interface SerializedColor {
+    r: number;
+    g: number;
+    b: number;
+}
+
+/**
  * 0-255 RGBA color.
  *
  * @group Math
@@ -245,11 +256,11 @@ export class Color {
         return [this.r, this.g, this.b];
     }
 
-    serialize(): { r: number, g: number, b: number } {
+    serialize(): { r: number; g: number; b: number } {
         return { r: this.r, g: this.g, b: this.b };
     }
 
-    static deserialize(data: { r: number, g: number, b: number }): Color {
+    static deserialize(data: { r: number; g: number; b: number }): Color {
         return new Color(data.r, data.g, data.b);
     }
 }

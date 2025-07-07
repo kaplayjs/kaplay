@@ -11,7 +11,7 @@ import type { outline } from "./outline";
  *
  * @group Component Serialization
  */
-export interface SerializeCircleComp {
+export interface SerializedCircleComp {
     radius: number;
     fill?: boolean;
 }
@@ -31,7 +31,7 @@ export interface CircleComp extends Comp {
      * @since v3000.0
      */
     renderArea(): Circle;
-    serialize(): SerializeCircleComp;
+    serialize(): SerializedCircleComp;
 }
 
 /**
@@ -78,14 +78,14 @@ export function circle(radius: number, opt: CircleCompOpt = {}): CircleComp {
             return `radius: ${Math.ceil(_radius)}`;
         },
         serialize() {
-            const data: any = { radius: _radius };
+            const data: SerializedCircleComp = { radius: _radius };
             if (opt.fill) data.fill = true;
             return data;
         },
     };
 }
 
-export function circleFactory(data: any) {
+export function circleFactory(data: SerializedCircleComp) {
     const opt: CircleCompOpt = {};
     if (data.fill) opt.fill = data.fill;
     return circle(

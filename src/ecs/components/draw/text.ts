@@ -16,6 +16,22 @@ import { Rect, vec2 } from "../../../math/math";
 import type { Comp, GameObj } from "../../../types";
 
 /**
+ * The serialized {@link text `text()`} component.
+ *
+ * @group Component Serialization
+ */
+export interface SerializedTextComp {
+    text: string;
+    size?: number;
+    font?: string;
+    width?: number;
+    align?: TextAlign;
+    lineSpacing?: number;
+    letterSpacing?: number;
+    indentAll?: boolean;
+}
+
+/**
  * The {@link text `text()`} component.
  *
  * @group Component Types
@@ -82,16 +98,7 @@ export interface TextComp extends Comp {
      */
     formattedText(): FormattedText;
 
-    serialize(): {
-        text: string;
-        size?: number;
-        font?: string;
-        width?: number;
-        align?: TextAlign;
-        lineSpacing?: number;
-        letterSpacing?: number;
-        indentAll?: boolean;
-    };
+    serialize(): SerializedTextComp;
 }
 
 /**
@@ -239,7 +246,7 @@ export function text(t: string, opt: TextCompOpt = {}): TextComp {
     return obj;
 }
 
-export function textFactory(data: ReturnType<TextComp["serialize"]>) {
+export function textFactory(data: SerializedTextComp) {
     return text(data.text, {
         align: data.align,
         font: data.font,

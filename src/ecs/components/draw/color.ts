@@ -6,7 +6,7 @@ import type { Comp } from "../../../types";
  *
  * @group Component Serialization
  */
-export interface SerializeColorComp {
+export interface SerializedColorComp {
     color: { r: number; g: number; b: number };
 }
 
@@ -17,7 +17,7 @@ export interface SerializeColorComp {
  */
 export interface ColorComp extends Comp {
     color: Color;
-    serialize(): SerializeColorComp;
+    serialize(): SerializedColorComp;
 }
 
 export function color(...args: ColorArgs): ColorComp {

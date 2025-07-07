@@ -5,7 +5,7 @@ import type { Comp, Mask } from "../../../types";
  *
  * @group Component Serialization
  */
-export interface SerializeMaskComp {
+export interface SerializedMaskComp {
     mask: Mask;
 }
 
@@ -16,7 +16,7 @@ export interface SerializeMaskComp {
  */
 export interface MaskComp extends Comp {
     mask: Mask;
-    serialize(): SerializeMaskComp;
+    serialize(): SerializedMaskComp;
 }
 
 export function mask(m: Mask = "intersect"): MaskComp {
@@ -27,4 +27,8 @@ export function mask(m: Mask = "intersect"): MaskComp {
             return { mask: this.mask };
         },
     };
+}
+
+export function maskFactory(data: SerializedMaskComp) {
+    return mask(data.mask);
 }

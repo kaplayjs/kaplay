@@ -4,7 +4,16 @@ import { initApp } from "../app/app";
 import { initAssets } from "../assets/asset";
 import { initAudio } from "../audio/audio";
 import { createDebug } from "../debug/debug";
+import { blendFactory } from "../ecs/components/draw/blend";
+import { circleFactory } from "../ecs/components/draw/circle";
+import { colorFactory } from "../ecs/components/draw/color";
+import { ellipseFactory } from "../ecs/components/draw/ellipse";
+import { maskFactory } from "../ecs/components/draw/mask";
+import { opacityFactory } from "../ecs/components/draw/opacity";
+import { outlineFactory } from "../ecs/components/draw/outline";
+import { rectFactory } from "../ecs/components/draw/rect";
 import { spriteFactory } from "../ecs/components/draw/sprite";
+import { textFactory } from "../ecs/components/draw/text";
 import { anchorFactory } from "../ecs/components/transform/anchor";
 import { fixedFactory } from "../ecs/components/transform/fixed";
 import { moveFactory } from "../ecs/components/transform/move";
@@ -83,7 +92,23 @@ export const createEngine = (gopt: KAPLAYOpt) => {
     registerPrefabFactory("z", zFactory);
 
     // Draw Serialization
+    registerPrefabFactory("blend", blendFactory);
+    registerPrefabFactory("circle", circleFactory);
+    registerPrefabFactory("color", colorFactory);
+    // `drawon()` missing
+    registerPrefabFactory("ellipse", ellipseFactory);
+    // `fadeIn()` missing
+    registerPrefabFactory("mask", maskFactory);
+    registerPrefabFactory("opacity", opacityFactory);
+    registerPrefabFactory("outline", outlineFactory);
+    // `particles()` missing
+    // `picture()` missing
+    // `raycast()` missing, anyway, is not a component
+    registerPrefabFactory("rect", rectFactory);
     registerPrefabFactory("sprite", spriteFactory);
+    registerPrefabFactory("text", textFactory);
+    // `uvquad()` missing
+    // `video()` missing
 
     return {
         globalOpt: opt,

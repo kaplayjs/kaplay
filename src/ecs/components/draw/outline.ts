@@ -1,5 +1,5 @@
 import type { LineCap, LineJoin } from "../../../gfx/draw/drawLine";
-import { Color, rgb } from "../../../math/color";
+import { Color, rgb, type SerializedColor } from "../../../math/color";
 import type { Comp, Outline } from "../../../types";
 
 /**
@@ -7,10 +7,10 @@ import type { Comp, Outline } from "../../../types";
  *
  * @group Component Serialization
  */
-export interface SerializeOutlineComp {
+export interface SerializedOutlineComp {
     outline: {
         width: number;
-        color: { r: number; g: number; b: number };
+        color: SerializedColor;
         opacity: number;
         join: LineJoin;
         miterLimit: number;
@@ -25,7 +25,7 @@ export interface SerializeOutlineComp {
  */
 export interface OutlineComp extends Comp {
     outline: Outline;
-    serialize(): SerializeOutlineComp;
+    serialize(): SerializedOutlineComp;
 }
 
 export function outline(
@@ -68,7 +68,7 @@ export function outline(
     };
 }
 
-export function outlineFactory(data: SerializeOutlineComp) {
+export function outlineFactory(data: SerializedOutlineComp) {
     return outline(
         data.outline.width,
         Color.deserialize(data.outline.color),

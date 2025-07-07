@@ -11,7 +11,7 @@ import type { outline } from "./outline";
  *
  * @group Component Serialization
  */
-export interface SerializeEllipseComp {
+export interface SerializedEllipseComp {
     radiusX: number;
     radiusY: number;
     fill?: boolean;
@@ -32,7 +32,7 @@ export interface EllipseComp extends Comp {
      * Render area of the ellipse.
      */
     renderArea(): Ellipse;
-    serialize(): SerializeEllipseComp;
+    serialize(): SerializedEllipseComp;
 }
 
 /**
@@ -102,4 +102,12 @@ export function ellipse(
             };
         },
     };
+}
+
+export function ellipseFactory(data: SerializedEllipseComp) {
+    const opt: EllipseCompOpt = {};
+
+    if (data.fill) opt.fill = data.fill;
+
+    return ellipse(data.radiusX, data.radiusY, opt);
 }
