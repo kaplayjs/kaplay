@@ -44,6 +44,10 @@ export type Game = {
      */
     scenes: Record<SceneName, SceneDef>;
     /**
+     * The scene stack that stores the scene name
+     */
+    sceneStack: Array<string | null>;
+    /**
      * The current scene of the game.
      */
     currentScene: string | null;
@@ -139,6 +143,8 @@ export const createGame = (): Game => {
             shake: 0,
             transform: new Mat23(),
         },
+
+        sceneStack: [], // stores the scene names //
 
         // Systems
         systems: [], // all systems added

@@ -6,7 +6,7 @@ import {
     MAX_BATCHED_VERTS,
     VERTEX_FORMAT,
 } from "../constants/general";
-import { go } from "../game/scenes";
+import { go, pushScene, popScene } from "../game/scenes";
 import { type Color, rgb } from "../math/color";
 import { Mat23 } from "../math/math";
 import { Vec2 } from "../math/Vec2";

@@ -136,7 +136,7 @@ import {
     setGravityDirection,
 } from "../game/gravity";
 import { getDefaultLayer, getLayers, layers, setLayers } from "../game/layers";
-import { getSceneName, go, onSceneLeave, scene } from "../game/scenes";
+import { getSceneName, go, onSceneLeave, scene, pushScene, popScene } from "../game/scenes";
 import { anchorPt } from "../gfx/anchor";
 import { getBackground, setBackground } from "../gfx/bg";
 import { makeCanvas } from "../gfx/canvasBuffer";
@@ -594,6 +594,8 @@ export const createContext = (
         getSceneName,
         go,
         onSceneLeave,
+        pushScene,
+        popScene,
         // layers
         layers: layers,
         getLayers: getLayers,
