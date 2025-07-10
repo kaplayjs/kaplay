@@ -21,17 +21,23 @@ scene("first", () => {
     ]);
 
     const b = add([
-        sprite("bean"),
+        rect(32, 32),
         pos(64, 64),
-        scale(0.5),
         area(),
         stay(),
     ]);
 
     const bimpostor = add([
-        sprite("bean"),
+        rect(32, 32),
         pos(100, 64),
-        scale(0.5),
+        color(YELLOW),
+        area(),
+        stay(),
+    ]);
+
+    const berror = add([
+        rect(32, 32),
+        pos(200, 64),
         color(RED),
         area(),
         stay(),
@@ -46,6 +52,10 @@ scene("first", () => {
         debug.log("back page")
         popScene();
     });
+
+    berror.onClick(() => {
+        pushScene("unexistent");
+    })
 
     //onKeyDown("1", () => debug.log("aaaa"))
 });

@@ -59,22 +59,24 @@ export function go(name: SceneName, ...args: unknown[]) {
 
 export function pushScene(id: SceneName, ...args: unknown[])
 {
-    //if (_k.game.scenes[_k.game.currentScene])
     if (_k.game.scenes[id] === undefined)
+    {
+        _k.game.sceneStack.push({
+            sceneID: id,
+            args: args,
+        });
+        go(id, args);
         return;
-    
-    _k.game.sceneStack.push(_k.game.currentScene);
-    go(id, args);
-
+    }
 }
 
 export function popScene()
 {
-    const sceneData: any = _k.game.sceneStack.pop();
+    const sceneData: SceneState | undefined  = _k.game.sceneStack.pop();
     if (sceneData === undefined)
         return;
 
-    go(sceneData);
+    go(sceneData.sceneID, sceneData.args);
 }
 
 export function onSceneLeave(

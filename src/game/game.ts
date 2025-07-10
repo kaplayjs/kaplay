@@ -17,7 +17,7 @@ import { KEventHandler } from "../events/events";
 import { Mat23, RNG } from "../math/math";
 import { Vec2 } from "../math/Vec2";
 import type { GameObj } from "../types";
-import type { SceneDef, SceneName } from "./scenes";
+import type { SceneDef, SceneName, SceneState } from "./scenes";
 
 /**
  * The "Game" it's all the state related to the game running
@@ -46,7 +46,7 @@ export type Game = {
     /**
      * The scene stack that stores the scene name
      */
-    sceneStack: Array<string | null>;
+    sceneStack: Array<SceneState>;
     /**
      * The current scene of the game.
      */
