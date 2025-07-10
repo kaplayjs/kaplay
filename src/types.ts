@@ -5059,6 +5059,58 @@ export interface KAPLAYCtx<
      * @group Scene
      */
     go(name: SceneName, ...args: any): void;
+
+    /**
+     * Push the current active scene to a stack and enters in the new scene
+     *
+     * @param id - The scene name.
+     * @param args - The args passed to the scene defition.
+     *
+     * @example
+     * ```js
+     *  add([
+     *    text("this is the first scene", {size: 32 }),
+     *    pos(center()),
+     *  ]);
+     * scene("main", () => {
+     *  add([
+     *    sprite("bean"),
+     *    pos(center()),
+     *  ]);
+     * });
+     *
+     * pushScene("main")
+     * ```
+     *
+     * @since v3001.1
+     * @group Layers
+     */
+    pushScene(id: SceneName, ...args: unknown[]): void;
+
+    /**
+     * Pops the scene from the stack and set as current active scene.
+     *
+     * @example
+     * ```js
+     *  add([
+     *    text("this is the first scene", {size: 32 }),
+     *    pos(center()),
+     *  ]);
+     * scene("main", () => {
+     *  add([
+     *    sprite("bean"),
+     *    pos(center()),
+     *  ]);
+     * });
+     *
+     * go("mainScene");
+     * popScene();  // when triggered the text should appear on the center screen //
+     * ```
+     *
+     * @since v3001.1
+     * @group Layers
+     */
+    popScene(id: SceneName, ...args: unknown[]): void;
     /**
      * Define the layer names. Should be called before any objects are made.
      *
