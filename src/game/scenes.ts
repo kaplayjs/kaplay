@@ -71,7 +71,7 @@ export function popScene()
 {
     const sceneData: SceneState | undefined  = _k.game.sceneStack.pop();
     if (sceneData === undefined)
-        return;
+        throw new Error("No more scenes to pop!");
 
     go(sceneData.sceneID, sceneData.args);
 }
