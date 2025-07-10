@@ -5078,18 +5078,17 @@ export interface KAPLAYCtx<
      *    pos(center()),
      *  ]);
      * });
-     * 
+     *
      * pushScene("main")
      * ```
      *
      * @since v3001.1
      * @group Layers
      */
-    pushScene(id: SceneName, ...args: unknown[]): void
+    pushScene(id: SceneName, ...args: unknown[]): void;
 
     /**
      * Pops the scene from the stack and set as current active scene.
-     *
      *
      * @example
      * ```js
@@ -5103,7 +5102,7 @@ export interface KAPLAYCtx<
      *    pos(center()),
      *  ]);
      * });
-     * 
+     *
      * go("mainScene");
      * popScene();  // when triggered the text should appear on the center screen //
      * ```
@@ -5111,7 +5110,7 @@ export interface KAPLAYCtx<
      * @since v3001.1
      * @group Layers
      */
-    popScene(id: SceneName, ...args: unknown[]): void
+    popScene(id: SceneName, ...args: unknown[]): void;
     /**
      * Define the layer names. Should be called before any objects are made.
      *
