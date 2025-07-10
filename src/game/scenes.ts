@@ -51,11 +51,7 @@ export function go(name: SceneName, ...args: unknown[]) {
             transform: new Mat23(),
         };
 
-        // clear the arguments //
-        _k.game.currentSceneArgs.splice(0, _k.game.currentSceneArgs.length);
-
         _k.game.currentSceneArgs = args;
-
         _k.game.scenes[name](...args);
     });
 
