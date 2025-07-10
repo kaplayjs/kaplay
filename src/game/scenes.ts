@@ -59,15 +59,12 @@ export function go(name: SceneName, ...args: unknown[]) {
 
 export function pushScene(id: SceneName, ...args: unknown[])
 {
-    if (_k.game.scenes[id] === undefined)
-    {
-        _k.game.sceneStack.push({
-            sceneID: id,
-            args: args,
-        });
-        go(id, args);
-        return;
-    }
+    _k.game.sceneStack.push({
+        sceneID: id,
+        args: args,
+    });
+    go(id, args);
+    return;
 }
 
 export function popScene()
