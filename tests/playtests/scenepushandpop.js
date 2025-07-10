@@ -31,6 +31,7 @@ scene("first", () => {
     const b = add([
         rect(32, 32),
         pos(64, 64),
+        color(BLUE),
         area(),
         stay(),
     ]);

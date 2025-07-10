@@ -9,7 +9,7 @@ import { _k } from "../shared";
 export type SceneName = string;
 export type SceneDef = (...args: any) => void;
 export type SceneState = {
-    sceneID: string;
+    sceneID: string | null;
     args: unknown[];
 };
 
@@ -51,6 +51,11 @@ export function go(name: SceneName, ...args: unknown[]) {
             transform: new Mat23(),
         };
 
+        // clear the arguments //
+        _k.game.currentSceneArgs.splice(0, _k.game.currentSceneArgs.length);
+
+        _k.game.currentSceneArgs = args;
+
         _k.game.scenes[name](...args);
     });
 
@@ -60,8 +65,8 @@ export function go(name: SceneName, ...args: unknown[]) {
 export function pushScene(id: SceneName, ...args: unknown[])
 {
     _k.game.sceneStack.push({
-        sceneID: id,
-        args: args,
+        sceneID: _k.game.currentScene,
+        args: _k.game.currentSceneArgs,
     });
     go(id, args);
     return;
@@ -70,10 +75,11 @@ export function pushScene(id: SceneName, ...args: unknown[])
 export function popScene()
 {
     const sceneData: SceneState | undefined  = _k.game.sceneStack.pop();
+    console.log(sceneData);
     if (sceneData === undefined)
         throw new Error("No more scenes to pop!");
 
-    go(sceneData.sceneID, sceneData.args);
+    go(sceneData.sceneID ?? "", sceneData.args);
 }
 
 export function onSceneLeave(
@@ -84,4 +90,9 @@ export function onSceneLeave(
 
 export function getSceneName() {
     return _k.game.currentScene;
+}
+
+export function getSceneArgs()
+{
+    return _k.game.currentSceneArgs;
 }

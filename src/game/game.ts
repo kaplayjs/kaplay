@@ -48,6 +48,10 @@ export type Game = {
      */
     sceneStack: Array<SceneState>;
     /**
+     * The current active scene arguments
+     */
+    currentSceneArgs: unknown[];
+    /**
      * The current scene of the game.
      */
     currentScene: string | null;
@@ -144,6 +148,7 @@ export const createGame = (): Game => {
             transform: new Mat23(),
         },
 
+        currentSceneArgs: [], // stores the current scene arguments //
         sceneStack: [], // stores the scene names //
 
         // Systems
