@@ -52,7 +52,7 @@ export function go(name: SceneName, ...args: unknown[]) {
         };
 
         // clear the arguments //
-        _k.game.currentSceneArgs.splice(0, _k.game.currentSceneArgs.length);
+        _k.game.currentSceneArgs.length = 0;
 
         _k.game.currentSceneArgs = args;
 
@@ -75,11 +75,14 @@ export function pushScene(id: SceneName, ...args: unknown[])
 export function popScene()
 {
     const sceneData: SceneState | undefined  = _k.game.sceneStack.pop();
-    console.log(sceneData);
+
     if (sceneData === undefined)
         throw new Error("No more scenes to pop!");
 
-    go(sceneData.sceneID ?? "", sceneData.args);
+    if (sceneData.sceneID === null)
+        throw new Error("The scene ID should not be null");
+
+    go(sceneData.sceneID, sceneData.args);
 }
 
 export function onSceneLeave(

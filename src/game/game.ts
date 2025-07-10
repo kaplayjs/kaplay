@@ -44,7 +44,7 @@ export type Game = {
      */
     scenes: Record<SceneName, SceneDef>;
     /**
-     * The scene stack that stores the scene name
+     * The scene stack that stores the scene states
      */
     sceneStack: Array<SceneState>;
     /**
