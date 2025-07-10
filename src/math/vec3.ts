@@ -3,14 +3,14 @@ export class Vec3 {
     y: number;
     z: number;
 
-    static LEFT    = new Vec3(-1,  0,  0);
-    static RIGHT   = new Vec3( 1,  0,  0);
-    static UP      = new Vec3( 0, -1,  0);
-    static DOWN    = new Vec3( 0,  1,  0);
-    static FORWARD = new Vec3( 0,  0,  1);
-    static BACK    = new Vec3( 0,  0, -1);
-    static ZERO    = new Vec3( 0,  0,  0);
-    static ONE     = new Vec3( 1,  1,  1);
+    static LEFT = new Vec3(-1, 0, 0);
+    static RIGHT = new Vec3(1, 0, 0);
+    static UP = new Vec3(0, -1, 0);
+    static DOWN = new Vec3(0, 1, 0);
+    static FORWARD = new Vec3(0, 0, 1);
+    static BACK = new Vec3(0, 0, -1);
+    static ZERO = new Vec3(0, 0, 0);
+    static ONE = new Vec3(1, 1, 1);
 
     constructor(x: number, y: number, z: number) {
         this.x = x;
@@ -37,9 +37,11 @@ export class Vec3 {
 
         if (ax >= ay && ax >= az) {
             return this.x < 0 ? Vec3.LEFT : Vec3.RIGHT;
-        } else if (ay >= az) {
-            return this.y < 0 ? Vec3.UP   : Vec3.DOWN;
-        } else {
+        }
+        else if (ay >= az) {
+            return this.y < 0 ? Vec3.UP : Vec3.DOWN;
+        }
+        else {
             return this.z < 0 ? Vec3.BACK : Vec3.FORWARD;
         }
     }

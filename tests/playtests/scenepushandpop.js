@@ -11,9 +11,12 @@ kaplay();
 loadBean();
 
 add([
-    text("(BLUE) Back from last scene\n(YELLOW) push to second scene\n(RED) Force error to a unexistent scene", {
-        size: 18,
-    }),
+    text(
+        "(BLUE) Back from last scene\n(YELLOW) push to second scene\n(RED) Force error to a unexistent scene",
+        {
+            size: 18,
+        },
+    ),
     pos(5, height() - 100),
     stay(),
 ]);
@@ -53,20 +56,20 @@ scene("first", () => {
     ]);
 
     b.onClick(() => {
-        debug.log("adding page")
-        pushScene("second")
+        debug.log("adding page");
+        pushScene("second");
     });
 
     bimpostor.onClick(() => {
-        debug.log("back page")
+        debug.log("back page");
         popScene();
     });
 
     berror.onClick(() => {
         pushScene("unexistent");
-    })
+    });
 
-    //onKeyDown("1", () => debug.log("aaaa"))
+    // onKeyDown("1", () => debug.log("aaaa"))
 });
 
 scene("second", () => {
@@ -80,5 +83,4 @@ scene("second", () => {
 
 go("first");
 
-//pushScene()
-
+// pushScene()

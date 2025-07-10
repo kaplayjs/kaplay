@@ -58,8 +58,7 @@ export function go(name: SceneName, ...args: unknown[]) {
     _k.game.currentScene = name;
 }
 
-export function pushScene(id: SceneName, ...args: unknown[])
-{
+export function pushScene(id: SceneName, ...args: unknown[]) {
     _k.game.sceneStack.push({
         sceneID: _k.game.currentScene,
         args: _k.game.currentSceneArgs,
@@ -68,15 +67,16 @@ export function pushScene(id: SceneName, ...args: unknown[])
     return;
 }
 
-export function popScene()
-{
-    const sceneData: SceneState | undefined  = _k.game.sceneStack.pop();
+export function popScene() {
+    const sceneData: SceneState | undefined = _k.game.sceneStack.pop();
 
-    if (sceneData === undefined)
+    if (sceneData === undefined) {
         throw new Error("No more scenes to pop!");
+    }
 
-    if (sceneData.sceneID === null)
+    if (sceneData.sceneID === null) {
         throw new Error("The scene ID should not be null");
+    }
 
     go(sceneData.sceneID, sceneData.args);
 }
@@ -91,7 +91,6 @@ export function getSceneName() {
     return _k.game.currentScene;
 }
 
-export function getSceneArgs()
-{
+export function getSceneArgs() {
     return _k.game.currentSceneArgs;
 }
