@@ -52,7 +52,7 @@ export function go(name: SceneName, ...args: unknown[]) {
         };
 
         // clear the arguments //
-        _k.game.currentSceneArgs.length = 0;
+        _k.game.currentSceneArgs.splice(0, _k.game.currentSceneArgs.length);
 
         _k.game.currentSceneArgs = args;
 
