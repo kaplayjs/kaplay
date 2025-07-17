@@ -729,14 +729,16 @@ export function level(map: string[], opt: LevelOpt): LevelComp {
 
 export function levelFactory(data: any) {
     const opt: any = { tileWidth: data.tileWidth, tileHeight: data.tileHeight };
-    opt.tiles = {}
+    opt.tiles = {};
     for (const key in Object.keys(data.tiles)) {
         const d = data.tiles[key];
         const tags = d.tags;
         opt.tiles[key] = (pos: Vec2) => {
-            const comps: Comp[] = Object.keys(d).filter(k => k != "tags").map(id => deserializeComp(id, d[id]));
+            const comps: Comp[] = Object.keys(d).filter(k => k != "tags").map(
+                id => deserializeComp(id, d[id]),
+            );
             return [...comps, ...tags];
-        }
+        };
     }
     return level([], opt);
 }
