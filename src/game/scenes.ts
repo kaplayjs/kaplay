@@ -8,6 +8,10 @@ import { _k } from "../shared";
  */
 export type SceneName = string;
 export type SceneDef = (...args: any) => void;
+export type SceneState = {
+    sceneID: string | null;
+    args: unknown[];
+};
 
 export function scene(id: SceneName, def: SceneDef) {
     _k.game.scenes[id] = def;
@@ -47,10 +51,34 @@ export function go(name: SceneName, ...args: unknown[]) {
             transform: new Mat23(),
         };
 
+        _k.game.currentSceneArgs = args;
         _k.game.scenes[name](...args);
     });
 
     _k.game.currentScene = name;
+}
+
+export function pushScene(id: SceneName, ...args: unknown[]) {
+    _k.game.sceneStack.push({
+        sceneID: _k.game.currentScene,
+        args: _k.game.currentSceneArgs,
+    });
+    go(id, args);
+    return;
+}
+
+export function popScene() {
+    const sceneData: SceneState | undefined = _k.game.sceneStack.pop();
+
+    if (sceneData === undefined) {
+        throw new Error("No more scenes to pop!");
+    }
+
+    if (sceneData.sceneID === null) {
+        throw new Error("The scene ID should not be null");
+    }
+
+    go(sceneData.sceneID, sceneData.args);
 }
 
 export function onSceneLeave(
@@ -61,4 +89,8 @@ export function onSceneLeave(
 
 export function getSceneName() {
     return _k.game.currentScene;
+}
+
+export function getSceneArgs() {
+    return _k.game.currentSceneArgs;
 }
