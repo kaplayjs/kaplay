@@ -53,7 +53,7 @@ import type { RotateComp } from "../components/transform/rotate";
 import type { ScaleComp } from "../components/transform/scale";
 import type { ZComp } from "../components/transform/z";
 import { make } from "./make";
-import { deserializePrefabAsset } from "./prefab";
+import { deserializePrefabAsset, type SerializedGameObj } from "./prefab";
 import { isFixed } from "./utils";
 
 export enum KeepFlags {
@@ -155,7 +155,7 @@ export interface GameObjRaw {
      * @returns The serialized game object
      * @since v4000.0
      */
-    serialize(): any;
+    serialize(): SerializedGameObj;
     /**
      * Remove and re-add the game obj, without triggering add / destroy events.
      *
@@ -665,11 +665,16 @@ export const GameObjRawPrototype: Omit<InternalGameObjRaw, AppEvents> = {
         return obj;
     },
 
-    addPrefab<T extends CompList<unknown>>(name: string | object, comps?: T) {
-        let data: object;
+    addPrefab<T extends CompList<unknown>>(
+        name: string | SerializedGameObj,
+        comps?: T,
+    ) {
+        let data: SerializedGameObj;
+
         if (typeof name === "string") {
             if (name in _k.assets.prefabAssets) {
-                data = _k.assets.prefabAssets.get(name)?.data;
+                // Non-Null Assertion: TypeScript doesn't narrow with .has()
+                data = _k.assets.prefabAssets.get(name)?.data!;
             }
             else {
                 throw new Error(`Can't add unknown prefab named ${name}`);
@@ -679,20 +684,41 @@ export const GameObjRawPrototype: Omit<InternalGameObjRaw, AppEvents> = {
             data = name;
         }
 
-        const deserializedComps = deserializePrefabAsset(data);
-        if (comps) deserializedComps.push(...comps as Comp[]);
+        const deserializedCompList = deserializePrefabAsset(data);
+        if (comps) deserializedCompList.push(...comps as Comp[]);
 
-        return this.add(deserializedComps) as GameObj<T[number]>;
+        const obj = this.add(deserializedCompList) as GameObj<T[number]>;
+
+        if (data.children) {
+            for (const child of data.children) {
+                obj.addPrefab(child);
+            }
+        }
+
+        return obj;
     },
 
     serialize(this: InternalGameObjRaw) {
-        const data: { [key: string]: any } = {};
+        const data: SerializedGameObj = {
+            components: {},
+            tags: [],
+        };
 
         for (const [id, c] of this._compStates) {
             if ("serialize" in c) {
-                data[id] = (c.serialize as () => any)();
+                data.components[id] = (c.serialize as () => any)();
             }
         }
+
+        if (this.children.length > 0) {
+            data.children = [];
+
+            for (const children of this.children) {
+                data.children.push(children.serialize());
+            }
+        }
+
+        data.tags = [...this.tags];
 
         return data;
     },

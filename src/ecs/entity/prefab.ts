@@ -1,10 +1,20 @@
 import { Asset, fetchJSON } from "../../assets/asset";
 import { fixURL } from "../../assets/utils";
 import { _k } from "../../shared";
-import type { Comp, GameObj } from "../../types";
-import type { InternalGameObjRaw } from "./GameObjRaw";
+import type { Comp, CompList, GameObj } from "../../types";
+import type { GameObjRaw, InternalGameObjRaw } from "./GameObjRaw";
 
-type PrefabAsset = { [key: string]: any };
+/**
+ * A serialized game object. Created using {@link GameObjRaw.serialize `GameObjRaw.serialize()` } method.
+ *
+ * @since v4000.0
+ * @group Serialization
+ */
+export interface SerializedGameObj {
+    components: Record<string, any>;
+    tags: string[];
+    children?: SerializedGameObj[];
+}
 
 const factoryMethods: { [key: string]: (data: object) => Comp } = {};
 
@@ -16,13 +26,17 @@ export function registerPrefabFactory(
     factoryMethods[id] = factoryMethod;
 }
 
-export function deserializePrefabAsset(prefabAsset: PrefabAsset) {
-    const list: Comp[] = [];
+export function deserializePrefabAsset(serializedPrefab: SerializedGameObj) {
+    const list: CompList<unknown> = [];
 
-    for (const id in prefabAsset) {
+    for (const id in serializedPrefab.components) {
         if (id in factoryMethods) {
-            list.push(factoryMethods[id](prefabAsset[id]));
+            list.push(factoryMethods[id](serializedPrefab.components[id]));
         }
+    }
+
+    for (const tag of serializedPrefab.tags) {
+        list.push(tag);
     }
 
     return list;

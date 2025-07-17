@@ -92,6 +92,7 @@ import type { AnchorComp } from "./ecs/components/transform/anchor";
 import type { FixedComp } from "./ecs/components/transform/fixed";
 import type { FollowComp } from "./ecs/components/transform/follow";
 import type { LayerComp } from "./ecs/components/transform/layer";
+import type { MoveComp } from "./ecs/components/transform/move";
 import type {
     OffScreenComp,
     OffScreenCompOpt,
@@ -1039,7 +1040,7 @@ export interface KAPLAYCtx<
      *
      * @requires {@link pos `pos()`}
      */
-    move(dir: number | Vec2, speed: number): EmptyComp;
+    move(dir: number | Vec2, speed: number): MoveComp;
     /**
      * Control the behavior of object when it goes out of view.
      *
@@ -6748,7 +6749,7 @@ export interface Comp {
      */
     inspect?: () => string | null;
     /**
-     * Draw debug info in inspect mode
+     * Draw debug info in inspect mode.
      *
      * @since v3000.0
      */
