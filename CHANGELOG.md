@@ -86,6 +86,7 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   called from update() and not reset the animation to frame 0 - @dragoncoder047
 - Added `throwError()` for trowing custom errors in the blue screen, even errors
   KAPLAY can't handle. - @lajbel
+- Added Prefabs - @mflerackers, @lajbel, @amyspark-ng and other contributors.
 
 ### Fixed
 
@@ -129,12 +130,13 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   @dragoncoder047
 - Changed the API of `HealthComp` - @amyspark-ng
 
-## [4000.0.0-alpha.21] - 2025-06-26
+## [4000.0.0-alpha.21] - TBD
 
 ### Added
 
 - Added `throwError()` for throwing custom errors to the blue screen, even
   errors KAPLAY can't handle. - @lajbel
+- Added Prefabs - @mflerackers, @lajbel, @amyspark-ng and other contributors.
 
 ## [4000.0.0-alpha.20] - 2025-06-15
 

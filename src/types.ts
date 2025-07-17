@@ -102,6 +102,7 @@ import type { RotateComp } from "./ecs/components/transform/rotate";
 import type { ScaleComp } from "./ecs/components/transform/scale";
 import type { ZComp } from "./ecs/components/transform/z";
 import type { GameObjRaw, KeepFlags } from "./ecs/entity/GameObjRaw";
+import type { SerializedGameObj } from "./ecs/entity/prefab";
 import type { BoomOpt } from "./ecs/entity/premade/addKaboom";
 import type { AddLevelOpt } from "./ecs/entity/premade/addLevel";
 import type { Collision } from "./ecs/systems/Collision";
@@ -216,6 +217,60 @@ export interface KAPLAYCtx<
      * @group Game Obj
      */
     add<T extends CompList<unknown>>(comps?: [...T]): GameObj<T[number]>;
+    /**
+     * Assemble a game object from a prefab asset loaded with {@link loadPrefab `loadPrefab()`} or using {@link createPrefab `createPrefab()`}.
+     *
+     * @example
+     * ```js
+     * loadPrefab("bean", "/prefabs/bean.kaprefab")
+     *
+     * addPrefab("bean", [
+     *     pos(40, 40)
+     * ])
+     * ```
+     *
+     * @returns The added game object that contains all properties and methods each component offers.
+     * @group Game Obj
+     */
+    addPrefab<T extends CompList<unknown>>(
+        nameOrObject: SerializedGameObj | string,
+        compList?: [...T],
+    ): GameObj<T[number]>;
+    /**
+     * Serialize a game object and register it (like {@link loadPrefab `loadPrefab()`} does).
+     *
+     * @param name - Name to register the prefab.
+     * @param obj - The game object to serialize.
+     *
+     * @example
+     * ```js
+     * const beanObj = add([ sprite("bean") ]);
+     * createPrefab("bean", beanObj);
+     *
+     * addPrefab("bean"); // Now you can use as prefab
+     * ```
+     *
+     * @returns The serialized game object.
+     * @since v4000.0
+     */
+    createPrefab(name: string, obj: GameObj): SerializedGameObj;
+    /**
+     * Serialize a game object.
+     *
+     * @param obj - The game object to serialize.
+     *
+     * @example
+     * ```js
+     * const beanObj = add([ sprite("bean") ]);
+     * const beanPrefab = createPrefab(beanObj);
+     *
+     * addPrefab(beanPrefab); // Now you can use as prefab
+     * ```
+     *
+     * @returns The serialized game object.
+     * @since v4000.0
+     */
+    createPrefab(obj: GameObj): SerializedGameObj;
     /**
      * Remove and re-add the game obj, without triggering add / destroy events.
      *
@@ -3232,8 +3287,12 @@ export interface KAPLAYCtx<
     load<T>(l: Promise<T>): Asset<T>;
     /**
      * Load a prefab.
+     *
+     * @since v4000.0.0
+     * @group Prefab
+     * @experimental
      */
-    loadPrefab: (name: string, url: string) => Asset<any>;
+    loadPrefab: (name: string, url: string) => Asset<SerializedGameObj>;
     // #endregion
     /**
      * Get the global asset loading progress (0.0 - 1.0).

@@ -58,20 +58,18 @@ export function loadPrefab(name: string, url: string) {
 
 // #region Serialization
 export function createPrefab(nameOrObject: string | GameObj, object?: GameObj) {
-    const data: { [key: string]: any } = {};
     const obj: InternalGameObjRaw = object
         ? object as InternalGameObjRaw
         : nameOrObject as InternalGameObjRaw;
 
-    for (const [id, c] of obj._compStates) {
-        if ("serialize" in c) {
-            data[id] = (c.serialize as () => any)();
-        }
-    }
+    const data = obj.serialize();
+
     if (object) {
         _k.assets.prefabAssets.add(
             nameOrObject as string,
-            Promise.resolve(new Asset<any>(data as any)),
+            Promise.resolve(
+                new Asset<SerializedGameObj>(Promise.resolve(data)),
+            ),
         );
     }
     return data;

@@ -1,10 +1,5 @@
 kaplay();
-
 loadBean();
-
-// #region Prefab made with an object
-
-const root = getTreeRoot();
 
 const bean = add([
     pos(10, 10),
@@ -22,14 +17,10 @@ r.add([
 
 const beanPrefab = bean.serialize();
 
-console.log(beanPrefab);
-
 onClick(() => {
-    const bean2 = root.addPrefab(beanPrefab, [
+    const bean2 = addPrefab(beanPrefab, [
         pos(20, rand(40, height() - 40)),
     ]);
 
     debug.log(bean2.tags);
 });
-
-// #endregion
