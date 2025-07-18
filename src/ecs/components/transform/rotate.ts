@@ -1,6 +1,15 @@
 import type { Comp } from "../../../types";
 
 /**
+ * The serialized {@link rotate `rotate()`} component.
+ *
+ * @group Component Serialization
+ */
+export interface SerializedRotateComp {
+    angle: number;
+}
+
+/**
  * The {@link rotate `rotate()`} component.
  *
  * @group Component Types
@@ -20,6 +29,8 @@ export interface RotateComp extends Comp {
      * @since v3000.0
      */
     rotateTo(s: number): void;
+
+    serialize(): { angle: number };
 }
 
 export function rotate(a?: number): RotateComp {
@@ -35,5 +46,12 @@ export function rotate(a?: number): RotateComp {
         inspect() {
             return `angle: ${Math.round(this.angle)}`;
         },
+        serialize() {
+            return { angle: this.angle };
+        },
     };
+}
+
+export function rotateFactory(data: SerializedRotateComp) {
+    return rotate(data.angle);
 }

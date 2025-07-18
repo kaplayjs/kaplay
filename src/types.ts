@@ -92,6 +92,7 @@ import type { AnchorComp } from "./ecs/components/transform/anchor";
 import type { FixedComp } from "./ecs/components/transform/fixed";
 import type { FollowComp } from "./ecs/components/transform/follow";
 import type { LayerComp } from "./ecs/components/transform/layer";
+import type { MoveComp } from "./ecs/components/transform/move";
 import type {
     OffScreenComp,
     OffScreenCompOpt,
@@ -101,6 +102,7 @@ import type { RotateComp } from "./ecs/components/transform/rotate";
 import type { ScaleComp } from "./ecs/components/transform/scale";
 import type { ZComp } from "./ecs/components/transform/z";
 import type { GameObjRaw, KeepFlags } from "./ecs/entity/GameObjRaw";
+import type { SerializedGameObj } from "./ecs/entity/prefab";
 import type { BoomOpt } from "./ecs/entity/premade/addKaboom";
 import type { AddLevelOpt } from "./ecs/entity/premade/addLevel";
 import type { Collision } from "./ecs/systems/Collision";
@@ -215,6 +217,60 @@ export interface KAPLAYCtx<
      * @group Game Obj
      */
     add<T extends CompList<unknown>>(comps?: [...T]): GameObj<T[number]>;
+    /**
+     * Assemble a game object from a prefab asset loaded with {@link loadPrefab `loadPrefab()`} or using {@link createPrefab `createPrefab()`}.
+     *
+     * @example
+     * ```js
+     * loadPrefab("bean", "/prefabs/bean.kaprefab")
+     *
+     * addPrefab("bean", [
+     *     pos(40, 40)
+     * ])
+     * ```
+     *
+     * @returns The added game object that contains all properties and methods each component offers.
+     * @group Game Obj
+     */
+    addPrefab<T extends CompList<unknown>>(
+        nameOrObject: SerializedGameObj | string,
+        compList?: [...T],
+    ): GameObj<T[number]>;
+    /**
+     * Serialize a game object and register it (like {@link loadPrefab `loadPrefab()`} does).
+     *
+     * @param name - Name to register the prefab.
+     * @param obj - The game object to serialize.
+     *
+     * @example
+     * ```js
+     * const beanObj = add([ sprite("bean") ]);
+     * createPrefab("bean", beanObj);
+     *
+     * addPrefab("bean"); // Now you can use as prefab
+     * ```
+     *
+     * @returns The serialized game object.
+     * @since v4000.0
+     */
+    createPrefab(name: string, obj: GameObj): SerializedGameObj;
+    /**
+     * Serialize a game object.
+     *
+     * @param obj - The game object to serialize.
+     *
+     * @example
+     * ```js
+     * const beanObj = add([ sprite("bean") ]);
+     * const beanPrefab = createPrefab(beanObj);
+     *
+     * addPrefab(beanPrefab); // Now you can use as prefab
+     * ```
+     *
+     * @returns The serialized game object.
+     * @since v4000.0
+     */
+    createPrefab(obj: GameObj): SerializedGameObj;
     /**
      * Remove and re-add the game obj, without triggering add / destroy events.
      *
@@ -1039,7 +1095,7 @@ export interface KAPLAYCtx<
      *
      * @requires {@link pos `pos()`}
      */
-    move(dir: number | Vec2, speed: number): EmptyComp;
+    move(dir: number | Vec2, speed: number): MoveComp;
     /**
      * Control the behavior of object when it goes out of view.
      *
@@ -1151,6 +1207,8 @@ export interface KAPLAYCtx<
      * Make a game obj unaffected by camera or parent object transforms, and render at last.
      * Useful for UI elements.
      *
+     * @param fixed - Default fixed value.
+     *
      * @example
      * ```js
      * // this will be be fixed on top left and not affected by camera
@@ -1165,7 +1223,7 @@ export interface KAPLAYCtx<
      * @since v2000.0
      * @group Components
      */
-    fixed(): FixedComp;
+    fixed(fixed?: boolean): FixedComp;
     /**
      * Don't get destroyed on scene switch. Only works in objects attached to root.
      *
@@ -2873,6 +2931,7 @@ export interface KAPLAYCtx<
      *
      * @group Assets
      */
+    // #region Loaders
     loadRoot(path?: string): string;
     /**
      * Load a sprite into asset manager, with name and resource url and optional config.
@@ -3226,6 +3285,15 @@ export interface KAPLAYCtx<
      * @group Assets
      */
     load<T>(l: Promise<T>): Asset<T>;
+    /**
+     * Load a prefab.
+     *
+     * @since v4000.0.0
+     * @group Prefab
+     * @experimental
+     */
+    loadPrefab: (name: string, url: string) => Asset<SerializedGameObj>;
+    // #endregion
     /**
      * Get the global asset loading progress (0.0 - 1.0).
      *
@@ -6792,11 +6860,17 @@ export interface Comp {
      */
     inspect?: () => string | null;
     /**
-     * Draw debug info in inspect mode
+     * Draw debug info in inspect mode.
      *
      * @since v3000.0
      */
     drawInspect?: () => void;
+    /**
+     * Serializes the component.
+     *
+     * @since v4000.0
+     */
+    serialize?: () => any;
 }
 
 /**

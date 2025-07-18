@@ -1,7 +1,31 @@
 {
+	"Add component serialization type": {
+		"scope": "javascript,typescript",
+		"prefix": "kpd-comp-serialization-type",
+		"body": [
+			"/**",
+			" * The serialized {@link ${TM_FILENAME_BASE} `${TM_FILENAME_BASE}()`} component.",
+			" *",
+			" * @group Component Serialization",
+			" */",
+			"export interface Serialized${TM_FILENAME_BASE/(.)(.*)/${1:/upcase}${2}/}Comp {",
+			"",
+			"}"
+		],
+		"description": "Add a serialization component type to a component file"
+	},
+	"Add component factory function": {
+		"scope": "javascript,typescript",
+		"prefix": "kpd-comp-factory",
+		"body": [
+			"export function ${TM_FILENAME_BASE/(.)(.*)/${1:/downcase}${2}/}Factory(data: Serialized${TM_FILENAME_BASE/(.)(.*)/${1:/upcase}${2}/}Comp) {",
+			"  ",
+			"}"
+		],
+		"description": "Add a factory function based on the serialized component type"
+	},
 	"Add experimental message": {
 		"scope": "javascript,typescript",
-		// kpd = KAPLAY Development
 		"prefix": "kpd-experimental",
 		"body": [
 			"@experimental This feature is in experimental phase, it will be fully released in v3001.1.0",

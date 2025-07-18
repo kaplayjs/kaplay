@@ -4,11 +4,20 @@ import type { Mat4 } from "./Mat4";
 import { deg2rad, rad2deg, Rect, vec2, type Vec2Args } from "./math";
 
 /**
+ * A serialized 2d vector.
+ *
+ * @group Component Serialization
+ */
+export interface SerializedVec2 {
+    x: number;
+    y: number;
+}
+
+/**
  * A 2D vector.
  *
  * @group Math
  */
-
 export class Vec2 {
     /** The x coordinate */
     x: number = 0;
@@ -289,6 +298,11 @@ export class Vec2 {
 
     static unit(v: Vec2, out: Vec2): Vec2 {
         const len = Vec2.len(v);
+        if (len === 0) {
+            out.x = 0;
+            out.y = 0;
+            return out;
+        }
         out.x = v.x / len;
         out.y = v.y / len;
         return out;
@@ -593,5 +607,13 @@ export class Vec2 {
      */
     toArray(): Array<number> {
         return [this.x, this.y];
+    }
+
+    serialize(): SerializedVec2 {
+        return { x: this.x, y: this.y };
+    }
+
+    static deserialize(data: SerializedVec2): Vec2 {
+        return vec2(data.x, data.y);
     }
 }
