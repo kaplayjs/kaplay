@@ -2131,6 +2131,7 @@ export class Ellipse {
                 center: this.center.serialize(),
                 radiusX: this.radiusX,
                 radiusY: this.radiusY,
+                angle: this.angle,
             },
         };
     }
@@ -2274,7 +2275,12 @@ export function shapeFactory(data: any): Shape {
         case "Circle":
             return new Circle(Vec2.deserialize(d.pos), d.radius);
         case "Ellipse":
-            return new Ellipse(Vec2.deserialize(d.pos), d.radiusX, d.radiusY);
+            return new Ellipse(
+                Vec2.deserialize(d.pos),
+                d.radiusX,
+                d.radiusY,
+                d.angle,
+            );
         case "Polygon":
             return new Polygon(data.pts.map((p: any) => Vec2.deserialize(p)));
     }
