@@ -5986,12 +5986,20 @@ export interface KAPLAYCtx<
      */
     canvas: HTMLCanvasElement;
     /**
-     * End everything.
+     * End everything by cancelling all events and removing game canvas.
+     *
+     * @example
+     * ```js
+     * kaplay();
+     *
+     * // End everything.
+     * quit();
+     * ```
      *
      * @since v2000.0
      * @group Start
      */
-    quit: () => void;
+    quit(): void;
     /**
      * Throws a new error and show up the Blue Screen.
      *
