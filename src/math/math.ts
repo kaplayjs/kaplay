@@ -1795,6 +1795,9 @@ export class Point {
     random(): Vec2 {
         return this.pt.clone();
     }
+    serialize(): any {
+        return { "Point": { pt: this.pt.serialize() } };
+    }
 }
 
 /**
@@ -1838,6 +1841,9 @@ export class Line {
     }
     random(): Vec2 {
         return this.p1.add(this.p2.sub(this.p1).scale(rand(1)));
+    }
+    serialize(): any {
+        return { Line: { p1: this.p1.serialize(), p2: this.p2.serialize() } };
     }
 }
 
@@ -1927,6 +1933,15 @@ export class Rect {
     random(): Vec2 {
         return this.pos.add(rand(this.width), rand(this.height));
     }
+    serialize(): any {
+        return {
+            Rect: {
+                pos: this.pos.serialize(),
+                width: this.width,
+                height: this.height,
+            },
+        };
+    }
 }
 
 /**
@@ -1968,6 +1983,11 @@ export class Circle {
         return this.center.add(
             Vec2.fromAngle(rand(360)).scale(rand(this.radius)),
         );
+    }
+    serialize(): any {
+        return {
+            Circle: { center: this.center.serialize(), radius: this.radius },
+        };
     }
 }
 
@@ -2105,6 +2125,16 @@ export class Ellipse {
     random(): Vec2 {
         return this.center;
     }
+    serialize(): any {
+        return {
+            Ellipse: {
+                center: this.center.serialize(),
+                radiusX: this.radiusX,
+                radiusY: this.radiusY,
+                angle: this.angle,
+            },
+        };
+    }
 }
 
 function segmentLineIntersection(a: Vec2, b: Vec2, c: Vec2, d: Vec2) {
@@ -2227,6 +2257,34 @@ export class Polygon {
             right.length ? new Polygon(right) : null,
         ];
     }
+    serialize(): any {
+        return { Polygon: { pts: this.pts.map(p => p.serialize()) } };
+    }
+}
+
+export function shapeFactory(data: any): Shape {
+    const type = Object.keys(data)[0];
+    const d = data[type];
+    switch (type) {
+        case "Point":
+            return new Point(Vec2.deserialize(d.pt));
+        case "Line":
+            return new Line(Vec2.deserialize(d.p1), Vec2.deserialize(d.p2));
+        case "Rect":
+            return new Rect(Vec2.deserialize(d.pos), d.width, d.height);
+        case "Circle":
+            return new Circle(Vec2.deserialize(d.pos), d.radius);
+        case "Ellipse":
+            return new Ellipse(
+                Vec2.deserialize(d.pos),
+                d.radiusX,
+                d.radiusY,
+                d.angle,
+            );
+        case "Polygon":
+            return new Polygon(data.pts.map((p: any) => Vec2.deserialize(p)));
+    }
+    throw new Error(`Unknown shape type ${type} in serialized data`);
 }
 
 export function evaluateQuadratic(

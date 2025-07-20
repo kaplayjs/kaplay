@@ -92,6 +92,7 @@ import type { AnchorComp } from "./ecs/components/transform/anchor";
 import type { FixedComp } from "./ecs/components/transform/fixed";
 import type { FollowComp } from "./ecs/components/transform/follow";
 import type { LayerComp } from "./ecs/components/transform/layer";
+import type { MoveComp } from "./ecs/components/transform/move";
 import type {
     OffScreenComp,
     OffScreenCompOpt,
@@ -101,12 +102,15 @@ import type { RotateComp } from "./ecs/components/transform/rotate";
 import type { ScaleComp } from "./ecs/components/transform/scale";
 import type { ZComp } from "./ecs/components/transform/z";
 import type { GameObjRaw, KeepFlags } from "./ecs/entity/GameObjRaw";
+import type { SerializedGameObj } from "./ecs/entity/prefab";
 import type { BoomOpt } from "./ecs/entity/premade/addKaboom";
 import type { AddLevelOpt } from "./ecs/entity/premade/addLevel";
+import type { Collision } from "./ecs/systems/Collision";
 import type { SystemPhase } from "./ecs/systems/systems";
 import type { GameObjEventNames, GameObjEvents } from "./events/eventMap";
 import type { KEvent, KEventController, KEventHandler } from "./events/events";
 import type { SceneDef, SceneName } from "./game/scenes";
+import type { anchorPt } from "./gfx/anchor";
 import type { DrawBezierOpt } from "./gfx/draw/drawBezier";
 import type { DrawCanvasOpt } from "./gfx/draw/drawCanvas";
 import type { DrawCircleOpt } from "./gfx/draw/drawCircle";
@@ -213,6 +217,60 @@ export interface KAPLAYCtx<
      * @group Game Obj
      */
     add<T extends CompList<unknown>>(comps?: [...T]): GameObj<T[number]>;
+    /**
+     * Assemble a game object from a prefab asset loaded with {@link loadPrefab `loadPrefab()`} or using {@link createPrefab `createPrefab()`}.
+     *
+     * @example
+     * ```js
+     * loadPrefab("bean", "/prefabs/bean.kaprefab")
+     *
+     * addPrefab("bean", [
+     *     pos(40, 40)
+     * ])
+     * ```
+     *
+     * @returns The added game object that contains all properties and methods each component offers.
+     * @group Game Obj
+     */
+    addPrefab<T extends CompList<unknown>>(
+        nameOrObject: SerializedGameObj | string,
+        compList?: [...T],
+    ): GameObj<T[number]>;
+    /**
+     * Serialize a game object and register it (like {@link loadPrefab `loadPrefab()`} does).
+     *
+     * @param name - Name to register the prefab.
+     * @param obj - The game object to serialize.
+     *
+     * @example
+     * ```js
+     * const beanObj = add([ sprite("bean") ]);
+     * createPrefab("bean", beanObj);
+     *
+     * addPrefab("bean"); // Now you can use as prefab
+     * ```
+     *
+     * @returns The serialized game object.
+     * @since v4000.0
+     */
+    createPrefab(name: string, obj: GameObj): SerializedGameObj;
+    /**
+     * Serialize a game object.
+     *
+     * @param obj - The game object to serialize.
+     *
+     * @example
+     * ```js
+     * const beanObj = add([ sprite("bean") ]);
+     * const beanPrefab = createPrefab(beanObj);
+     *
+     * addPrefab(beanPrefab); // Now you can use as prefab
+     * ```
+     *
+     * @returns The serialized game object.
+     * @since v4000.0
+     */
+    createPrefab(obj: GameObj): SerializedGameObj;
     /**
      * Remove and re-add the game obj, without triggering add / destroy events.
      *
@@ -1037,7 +1095,7 @@ export interface KAPLAYCtx<
      *
      * @requires {@link pos `pos()`}
      */
-    move(dir: number | Vec2, speed: number): EmptyComp;
+    move(dir: number | Vec2, speed: number): MoveComp;
     /**
      * Control the behavior of object when it goes out of view.
      *
@@ -1149,6 +1207,8 @@ export interface KAPLAYCtx<
      * Make a game obj unaffected by camera or parent object transforms, and render at last.
      * Useful for UI elements.
      *
+     * @param fixed - Default fixed value.
+     *
      * @example
      * ```js
      * // this will be be fixed on top left and not affected by camera
@@ -1163,7 +1223,7 @@ export interface KAPLAYCtx<
      * @since v2000.0
      * @group Components
      */
-    fixed(): FixedComp;
+    fixed(fixed?: boolean): FixedComp;
     /**
      * Don't get destroyed on scene switch. Only works in objects attached to root.
      *
@@ -2133,7 +2193,7 @@ export interface KAPLAYCtx<
      *
      * @returns The event controller.
      * @since v3000.0
-     * @group Physics
+     * @group Events
      */
     onCollideEnd(
         t1: Tag,
@@ -2871,6 +2931,7 @@ export interface KAPLAYCtx<
      *
      * @group Assets
      */
+    // #region Loaders
     loadRoot(path?: string): string;
     /**
      * Load a sprite into asset manager, with name and resource url and optional config.
@@ -3224,6 +3285,15 @@ export interface KAPLAYCtx<
      * @group Assets
      */
     load<T>(l: Promise<T>): Asset<T>;
+    /**
+     * Load a prefab.
+     *
+     * @since v4000.0.0
+     * @group Prefab
+     * @experimental
+     */
+    loadPrefab: (name: string, url: string) => Asset<SerializedGameObj>;
+    // #endregion
     /**
      * Get the global asset loading progress (0.0 - 1.0).
      *
@@ -3992,6 +4062,14 @@ export interface KAPLAYCtx<
      * @group Physics
      */
     getGravityDirection(): Vec2;
+    /**
+     * An object containing the data for when two objects with area()s
+     * overlap or collide with each other.
+     *
+     * @since v4000.0
+     * @group Physics
+     */
+    Collision: typeof Collision;
     /**
      * Set background color.
      *
@@ -4872,6 +4950,20 @@ export interface KAPLAYCtx<
      */
     clipLineToCircle(c: Circle, l: Line, result: Line): boolean;
     /**
+     * Returns a vector representing the anchor coordinates relative to the object's half-width, half-height, and center.
+     *
+     * For example: `anchorToVec2("right")` returns `vec2(1, 0)`, which means
+     * the anchor is fully to the right horizontally (1), and in-line with the
+     * centerpoint vertically (0).
+     *
+     * Or, `anchorToVec2("botleft")` returns `vec2(-1, 1)`, which means fully to the
+     * left (-1), and fully to the bottom (1).
+     *
+     * @since v4000.0
+     * @group Math
+     */
+    anchorToVec2: typeof anchorPt;
+    /**
      * @since v4000.0
      * @group Math
      */
@@ -5035,6 +5127,58 @@ export interface KAPLAYCtx<
      * @group Scene
      */
     go(name: SceneName, ...args: any): void;
+
+    /**
+     * Push the current active scene to a stack and enters in the new scene
+     *
+     * @param id - The scene name.
+     * @param args - The args passed to the scene defition.
+     *
+     * @example
+     * ```js
+     *  add([
+     *    text("this is the first scene", {size: 32 }),
+     *    pos(center()),
+     *  ]);
+     * scene("main", () => {
+     *  add([
+     *    sprite("bean"),
+     *    pos(center()),
+     *  ]);
+     * });
+     *
+     * pushScene("main")
+     * ```
+     *
+     * @since v3001.1
+     * @group Layers
+     */
+    pushScene(id: SceneName, ...args: unknown[]): void;
+
+    /**
+     * Pops the scene from the stack and set as current active scene.
+     *
+     * @example
+     * ```js
+     *  add([
+     *    text("this is the first scene", {size: 32 }),
+     *    pos(center()),
+     *  ]);
+     * scene("main", () => {
+     *  add([
+     *    sprite("bean"),
+     *    pos(center()),
+     *  ]);
+     * });
+     *
+     * go("mainScene");
+     * popScene();  // when triggered the text should appear on the center screen //
+     * ```
+     *
+     * @since v3001.1
+     * @group Layers
+     */
+    popScene(id: SceneName, ...args: unknown[]): void;
     /**
      * Define the layer names. Should be called before any objects are made.
      *
@@ -5647,6 +5791,8 @@ export interface KAPLAYCtx<
      * * `BeforeUpdate` and `AfterUpdate` - run once at the start of the frame, before and after all objects' `update()` hooks are run
      * * `BeforeDraw` and `AfterDraw` - run once per frame while the graphics context is setup, before and after all objects' `draw()` hooks are run
      * * `BeforeFixedUpdate` and `AfterFixedUpdate` - run 50 times per second independent of graphics/update framerate, before and after all objects' `fixedUpdate()` hooks are run
+     *
+     * @group Plugins
      */
     SystemPhase: typeof SystemPhase;
     /**
@@ -6714,11 +6860,17 @@ export interface Comp {
      */
     inspect?: () => string | null;
     /**
-     * Draw debug info in inspect mode
+     * Draw debug info in inspect mode.
      *
      * @since v3000.0
      */
     drawInspect?: () => void;
+    /**
+     * Serializes the component.
+     *
+     * @since v4000.0
+     */
+    serialize?: () => any;
 }
 
 /**
@@ -6732,70 +6884,6 @@ export type GameObjID = number;
  * @group Component Types
  */
 export type EmptyComp = { id: string } & Comp;
-
-/**
- * Collision resolution data.
- *
- * @group Math
- */
-export interface Collision {
-    /**
-     * The first game object in the collision.
-     */
-    source: GameObj;
-    /**
-     * The second game object in the collision.
-     */
-    target: GameObj;
-    /**
-     * The contact normal.
-     */
-    normal: Vec2;
-    /**
-     * The length of the displacement.
-     */
-    distance: Vec2;
-    /**
-     * The displacement source game object have to make to avoid the collision.
-     */
-    displacement: Vec2;
-    /**
-     * If the collision is resolved.
-     */
-    resolved: boolean;
-    /**
-     * Prevent collision resolution if not yet resolved.
-     *
-     * @since v3000.0
-     */
-    preventResolution(): void;
-    /**
-     * If the 2 objects have any overlap, or they're just touching edges.
-     *
-     * @since v3000.0
-     */
-    hasOverlap(): boolean;
-    /**
-     * Get a new collision with reversed source and target relationship.
-     */
-    reverse(): Collision;
-    /**
-     * If the collision happened (roughly) on the top side.
-     */
-    isTop(): boolean;
-    /**
-     * If the collision happened (roughly) on the bottom side.
-     */
-    isBottom(): boolean;
-    /**
-     * If the collision happened (roughly) on the left side.
-     */
-    isLeft(): boolean;
-    /**
-     * If the collision happened (roughly) on the right side.
-     */
-    isRight(): boolean;
-}
 
 /**
  * @group Draw

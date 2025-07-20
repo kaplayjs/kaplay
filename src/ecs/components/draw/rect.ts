@@ -2,6 +2,17 @@ import { getRenderProps } from "../../../game/utils";
 import { drawRect } from "../../../gfx/draw/drawRect";
 import { Rect, vec2 } from "../../../math/math";
 import type { Comp, GameObj } from "../../../types";
+/**
+ * The serialized {@link rect `rect()`} component.
+ *
+ * @group Component Serialization
+ */
+export interface SerializedRectComp {
+    width: number;
+    height: number;
+    radius?: number | [number, number, number, number];
+    fill?: boolean;
+}
 
 /**
  * The {@link rect `rect()`} component.
@@ -26,6 +37,8 @@ export interface RectComp extends Comp {
      * @since v3000.0
      */
     renderArea(): Rect;
+
+    serialize(): SerializedRectComp;
 }
 
 /**
@@ -82,5 +95,23 @@ export function rect(w: number, h: number, opt: RectCompOpt = {}): RectComp {
         inspect() {
             return `rect: (${Math.ceil(_width)}w, ${Math.ceil(_height)}h)`;
         },
+        serialize() {
+            const data: SerializedRectComp = { width: _width, height: _height };
+            if (this.radius) data.radius = this.radius;
+            if (opt.fill) data.fill = opt.fill;
+            return data;
+        },
     };
+}
+
+export function rectFactory(data: SerializedRectComp) {
+    const opt: RectCompOpt = {};
+    if (data.radius) opt.radius = data.radius;
+    if (data.fill) opt.fill = data.fill;
+
+    return rect(
+        data.width,
+        data.height,
+        opt,
+    );
 }

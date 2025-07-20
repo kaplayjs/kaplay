@@ -7,6 +7,16 @@ import type { AnchorComp } from "../transform/anchor";
 import type { outline } from "./outline";
 
 /**
+ * The serialized {@link circle `circle()`} component.
+ *
+ * @group Component Serialization
+ */
+export interface SerializedCircleComp {
+    radius: number;
+    fill?: boolean;
+}
+
+/**
  * The {@link circle `circle()`} component.
  *
  * @group Component Types
@@ -21,6 +31,7 @@ export interface CircleComp extends Comp {
      * @since v3000.0
      */
     renderArea(): Circle;
+    serialize(): SerializedCircleComp;
 }
 
 /**
@@ -66,5 +77,19 @@ export function circle(radius: number, opt: CircleCompOpt = {}): CircleComp {
         inspect() {
             return `radius: ${Math.ceil(_radius)}`;
         },
+        serialize() {
+            const data: SerializedCircleComp = { radius: _radius };
+            if (opt.fill) data.fill = true;
+            return data;
+        },
     };
+}
+
+export function circleFactory(data: SerializedCircleComp) {
+    const opt: CircleCompOpt = {};
+    if (data.fill) opt.fill = data.fill;
+    return circle(
+        data.radius,
+        opt,
+    );
 }
