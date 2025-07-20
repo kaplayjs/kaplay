@@ -2,78 +2,81 @@ import type {
     ButtonBinding,
     ButtonBindingDevice,
     ButtonsDef,
-} from "./app/inputBindings";
-import type { AsepriteData } from "./assets/aseprite";
-import type { Asset } from "./assets/asset";
-import type { BitmapFontData, LoadBitmapFontOpt } from "./assets/bitmapFont";
-import type { FontData } from "./assets/font";
-import type { ShaderData, Uniform } from "./assets/shader";
-import type { SoundData } from "./assets/sound";
-import type { LoadSpriteOpt, LoadSpriteSrc, SpriteData } from "./assets/sprite";
-import type { SpriteAtlasData } from "./assets/spriteAtlas";
-import type { AudioPlay, AudioPlayOpt } from "./audio/play";
-import type { Engine } from "./core/engine";
-import type { Debug } from "./debug/debug";
-import type { Recording } from "./debug/record";
-import type { BlendComp } from "./ecs/components/draw/blend";
-import type { CircleComp, CircleCompOpt } from "./ecs/components/draw/circle";
-import type { ColorComp } from "./ecs/components/draw/color";
-import type { DrawonComp, DrawonOpt } from "./ecs/components/draw/drawon";
-import type { EllipseComp } from "./ecs/components/draw/ellipse";
-import type { MaskComp } from "./ecs/components/draw/mask";
-import type { OpacityComp } from "./ecs/components/draw/opacity";
-import type { OutlineComp } from "./ecs/components/draw/outline";
+} from "../app/inputBindings";
+import type { AsepriteData } from "../assets/aseprite";
+import type { Asset } from "../assets/asset";
+import type { BitmapFontData, LoadBitmapFontOpt } from "../assets/bitmapFont";
+import type { FontData } from "../assets/font";
+import type { ShaderData, Uniform } from "../assets/shader";
+import type { SoundData } from "../assets/sound";
+import type {
+    LoadSpriteOpt,
+    LoadSpriteSrc,
+    SpriteData,
+} from "../assets/sprite";
+import type { SpriteAtlasData } from "../assets/spriteAtlas";
+import type { AudioPlay, AudioPlayOpt } from "../audio/play";
+import type { Debug } from "../debug/debug";
+import type { Recording } from "../debug/record";
+import type { BlendComp } from "../ecs/components/draw/blend";
+import type { CircleComp, CircleCompOpt } from "../ecs/components/draw/circle";
+import type { ColorComp } from "../ecs/components/draw/color";
+import type { DrawonComp, DrawonOpt } from "../ecs/components/draw/drawon";
+import type { EllipseComp } from "../ecs/components/draw/ellipse";
+import type { MaskComp } from "../ecs/components/draw/mask";
+import type { OpacityComp } from "../ecs/components/draw/opacity";
+import type { OutlineComp } from "../ecs/components/draw/outline";
 import type {
     EmitterOpt,
     ParticlesComp,
     ParticlesOpt,
-} from "./ecs/components/draw/particles";
-import type { PictureComp } from "./ecs/components/draw/picture";
+} from "../ecs/components/draw/particles";
+import type { PictureComp } from "../ecs/components/draw/picture";
 import type {
     PolygonComp,
     PolygonCompOpt,
-} from "./ecs/components/draw/polygon";
-import type { RectComp, RectCompOpt } from "./ecs/components/draw/rect";
-import type { ShaderComp } from "./ecs/components/draw/shader";
-import type { SpriteComp, SpriteCompOpt } from "./ecs/components/draw/sprite";
-import type { TextComp, TextCompOpt } from "./ecs/components/draw/text";
-import type { UVQuadComp } from "./ecs/components/draw/uvquad";
-import type { VideoComp, VideoCompOpt } from "./ecs/components/draw/video";
-import type { AgentComp, AgentCompOpt } from "./ecs/components/level/agent";
-import type { LevelComp, LevelOpt } from "./ecs/components/level/level";
+} from "../ecs/components/draw/polygon";
+import type { RectComp, RectCompOpt } from "../ecs/components/draw/rect";
+import type { ShaderComp } from "../ecs/components/draw/shader";
+import type { SpriteComp, SpriteCompOpt } from "../ecs/components/draw/sprite";
+import type { TextComp, TextCompOpt } from "../ecs/components/draw/text";
+import type { UVQuadComp } from "../ecs/components/draw/uvquad";
+import type { VideoComp, VideoCompOpt } from "../ecs/components/draw/video";
+import type { AgentComp, AgentCompOpt } from "../ecs/components/level/agent";
+import type { LevelComp, LevelOpt } from "../ecs/components/level/level";
 import type {
     PathfinderComp,
     PathfinderCompOpt,
-} from "./ecs/components/level/pathfinder";
-import type { PatrolComp, PatrolCompOpt } from "./ecs/components/level/patrol";
+} from "../ecs/components/level/pathfinder";
+import type { PatrolComp, PatrolCompOpt } from "../ecs/components/level/patrol";
 import type {
     SentryCandidates,
     SentryComp,
     SentryCompOpt,
-} from "./ecs/components/level/sentry";
-import type { TileComp, TileCompOpt } from "./ecs/components/level/tile";
+} from "../ecs/components/level/sentry";
+import type { TileComp, TileCompOpt } from "../ecs/components/level/tile";
 import type {
     AnimateComp,
     AnimateCompOpt,
-} from "./ecs/components/misc/animate";
+} from "../ecs/components/misc/animate";
 import type {
     FakeMouseComp,
     FakeMouseOpt,
-} from "./ecs/components/misc/fakeMouse";
-import type { HealthComp } from "./ecs/components/misc/health";
-import type { LifespanCompOpt } from "./ecs/components/misc/lifespan";
-import type { NamedComp } from "./ecs/components/misc/named";
-import type { StateComp } from "./ecs/components/misc/state";
-import type { StayComp } from "./ecs/components/misc/stay";
-import type { TextInputComp } from "./ecs/components/misc/textInput";
+} from "../ecs/components/misc/fakeMouse";
+import type { HealthComp } from "../ecs/components/misc/health";
+import type { LifespanCompOpt } from "../ecs/components/misc/lifespan";
+import type { NamedComp } from "../ecs/components/misc/named";
+import type { StateComp } from "../ecs/components/misc/state";
+import type { StayComp } from "../ecs/components/misc/stay";
+import type { TextInputComp } from "../ecs/components/misc/textInput";
 import type {
     TimerComp,
     TimerController,
     TweenController,
-} from "./ecs/components/misc/timer";
-import type { AreaComp, AreaCompOpt } from "./ecs/components/physics/area";
-import type { BodyComp, BodyCompOpt } from "./ecs/components/physics/body";
-import type { DoubleJumpComp } from "./ecs/components/physics/doubleJump";
+} from "../ecs/components/misc/timer";
+import type { AreaComp, AreaCompOpt } from "../ecs/components/physics/area";
+import type { BodyComp, BodyCompOpt } from "../ecs/components/physics/body";
+import type { DoubleJumpComp } from "../ecs/components/physics/doubleJump";
 import type {
     AreaEffectorComp,
     AreaEffectorCompOpt,
@@ -87,54 +90,53 @@ import type {
     PointEffectorCompOpt,
     SurfaceEffectorComp,
     SurfaceEffectorCompOpt,
-} from "./ecs/components/physics/effectors";
-import type { AnchorComp } from "./ecs/components/transform/anchor";
-import type { FixedComp } from "./ecs/components/transform/fixed";
-import type { FollowComp } from "./ecs/components/transform/follow";
-import type { LayerComp } from "./ecs/components/transform/layer";
-import type { MoveComp } from "./ecs/components/transform/move";
+} from "../ecs/components/physics/effectors";
+import type { AnchorComp } from "../ecs/components/transform/anchor";
+import type { FixedComp } from "../ecs/components/transform/fixed";
+import type { FollowComp } from "../ecs/components/transform/follow";
+import type { LayerComp } from "../ecs/components/transform/layer";
+import type { MoveComp } from "../ecs/components/transform/move";
 import type {
     OffScreenComp,
     OffScreenCompOpt,
-} from "./ecs/components/transform/offscreen";
-import type { PosComp } from "./ecs/components/transform/pos";
-import type { RotateComp } from "./ecs/components/transform/rotate";
-import type { ScaleComp } from "./ecs/components/transform/scale";
-import type { ZComp } from "./ecs/components/transform/z";
-import type { GameObjRaw, KeepFlags } from "./ecs/entity/GameObjRaw";
-import type { SerializedGameObj } from "./ecs/entity/prefab";
-import type { BoomOpt } from "./ecs/entity/premade/addKaboom";
-import type { AddLevelOpt } from "./ecs/entity/premade/addLevel";
-import type { Collision } from "./ecs/systems/Collision";
-import type { SystemPhase } from "./ecs/systems/systems";
-import type { GameObjEventNames, GameObjEvents } from "./events/eventMap";
-import type { KEvent, KEventController, KEventHandler } from "./events/events";
-import type { SceneDef, SceneName } from "./game/scenes";
-import type { anchorPt } from "./gfx/anchor";
-import type { DrawBezierOpt } from "./gfx/draw/drawBezier";
-import type { DrawCanvasOpt } from "./gfx/draw/drawCanvas";
-import type { DrawCircleOpt } from "./gfx/draw/drawCircle";
-import type { DrawCurveOpt } from "./gfx/draw/drawCurve";
-import type { FormattedText } from "./gfx/draw/drawFormattedText";
+} from "../ecs/components/transform/offscreen";
+import type { PosComp } from "../ecs/components/transform/pos";
+import type { RotateComp } from "../ecs/components/transform/rotate";
+import type { ScaleComp } from "../ecs/components/transform/scale";
+import type { ZComp } from "../ecs/components/transform/z";
+import type { KeepFlags } from "../ecs/entity/GameObjRaw";
+import type { SerializedGameObj } from "../ecs/entity/prefab";
+import type { BoomOpt } from "../ecs/entity/premade/addKaboom";
+import type { AddLevelOpt } from "../ecs/entity/premade/addLevel";
+import type { Collision } from "../ecs/systems/Collision";
+import type { SystemPhase } from "../ecs/systems/systems";
+import type { GameObjEventNames, GameObjEvents } from "../events/eventMap";
+import type { KEvent, KEventController, KEventHandler } from "../events/events";
+import type { SceneDef, SceneName } from "../game/scenes";
+import type { anchorPt } from "../gfx/anchor";
+import type { DrawBezierOpt } from "../gfx/draw/drawBezier";
+import type { DrawCanvasOpt } from "../gfx/draw/drawCanvas";
+import type { DrawCircleOpt } from "../gfx/draw/drawCircle";
+import type { DrawCurveOpt } from "../gfx/draw/drawCurve";
+import type { FormattedText } from "../gfx/draw/drawFormattedText";
 import type {
     DrawLineOpt,
     DrawLinesOpt,
     LineCap,
     LineJoin,
-} from "./gfx/draw/drawLine";
-import type { DrawPictureOpt, Picture } from "./gfx/draw/drawPicture";
-import type { DrawRectOpt } from "./gfx/draw/drawRect";
-import type { DrawSpriteOpt } from "./gfx/draw/drawSprite";
-import type { DrawTextOpt } from "./gfx/draw/drawText";
-import type { DrawTriangleOpt } from "./gfx/draw/drawTriangle";
-import type { StyledTextInfo } from "./gfx/formatText";
-import type { FrameBuffer } from "./gfx/FrameBuffer";
-import type { Texture } from "./gfx/gfx";
-import type { Color, CSSColor, RGBAValue, RGBValue } from "./math/color";
-import type { EaseFunc, EaseFuncs } from "./math/easings";
-import type { GjkCollisionResult } from "./math/gjk";
-import type { LerpValue } from "./math/lerp";
-import type { Mat4 } from "./math/Mat4";
+} from "../gfx/draw/drawLine";
+import type { DrawPictureOpt, Picture } from "../gfx/draw/drawPicture";
+import type { DrawRectOpt } from "../gfx/draw/drawRect";
+import type { DrawSpriteOpt } from "../gfx/draw/drawSprite";
+import type { DrawTextOpt } from "../gfx/draw/drawText";
+import type { DrawTriangleOpt } from "../gfx/draw/drawTriangle";
+import type { StyledTextInfo } from "../gfx/formatText";
+import type { FrameBuffer } from "../gfx/FrameBuffer";
+import type { Color, CSSColor } from "../math/color";
+import type { EaseFunc, EaseFuncs } from "../math/easings";
+import type { GjkCollisionResult } from "../math/gjk";
+import type { LerpValue } from "../math/lerp";
+import type { Mat4 } from "../math/Mat4";
 import type {
     Circle,
     Ellipse,
@@ -147,10 +149,38 @@ import type {
     Rect,
     RNG,
     StepPosition,
-} from "./math/math";
-import type { NavMesh } from "./math/navigationmesh";
-import type { Vec2 } from "./math/Vec2";
-import type { Defined, MergeObj, TupleWithoutFirst } from "./utils/types";
+} from "../math/math";
+import type { NavMesh } from "../math/navigationmesh";
+import type { Vec2 } from "../math/Vec2";
+import type {
+    Anchor,
+    BlendMode,
+    Canvas,
+    Comp,
+    CompList,
+    Cursor,
+    DrawEllipseOpt,
+    DrawPolygonOpt,
+    DrawUVQuadOpt,
+    EmptyComp,
+    GameObj,
+    GamepadStick,
+    GetOpt,
+    KAPLAYPlugin,
+    Key,
+    KGamepad,
+    KGamepadButton,
+    LoadFontOpt,
+    Mask,
+    MouseButton,
+    MusicData,
+    QueryOpt,
+    RNGValue,
+    Shape,
+    Tag,
+} from "../types";
+import type { TupleWithoutFirst } from "../utils/types";
+import type { Engine } from "./engine";
 
 /**
  * Context handle that contains every KAPLAY function.
@@ -6031,890 +6061,4 @@ export interface KAPLAYCtx<
      * @group Info
      */
     VERSION: string;
-}
-
-export type Tag = string;
-
-/**
- * The basic unit of object in KAPLAY. The player, a butterfly, a tree, or even a piece of text.
- *
- * @group Game Obj
- */
-export type GameObj<T = any> = GameObjRaw & MergeComps<T>;
-
-type RemoveCompProps<T> = Defined<
-    {
-        [K in keyof T]: K extends keyof Comp ? never : T[K];
-    }
->;
-
-/**
- * A type to merge the components of a game object, omitting the default component properties.
- *
- * @group Component Types
- */
-export type MergeComps<T> = MergeObj<RemoveCompProps<T>>;
-
-export type MergePlugins<T extends PluginList<any>> = MergeObj<
-    ReturnType<T[number]>
->;
-
-/**
- * A component list.
- *
- * @group Component Types
- */
-export type CompList<T extends any | undefined> = (T | Tag)[];
-export type PluginList<T> = Array<T | KAPLAYPlugin<any>>;
-
-/**
- * A key.
- *
- * @group Input
- */
-export type Key =
-    | (
-        | "f1"
-        | "f2"
-        | "f3"
-        | "f4"
-        | "f5"
-        | "f6"
-        | "f7"
-        | "f8"
-        | "f9"
-        | "f10"
-        | "f11"
-        | "f12"
-        | "`"
-        | "1"
-        | "2"
-        | "3"
-        | "4"
-        | "5"
-        | "6"
-        | "7"
-        | "8"
-        | "9"
-        | "0"
-        | "-"
-        | "+"
-        | "="
-        | "q"
-        | "w"
-        | "e"
-        | "r"
-        | "t"
-        | "y"
-        | "u"
-        | "i"
-        | "o"
-        | "p"
-        | "["
-        | "]"
-        | "\\"
-        | "a"
-        | "s"
-        | "d"
-        | "f"
-        | "g"
-        | "h"
-        | "j"
-        | "k"
-        | "l"
-        | ";"
-        | "'"
-        | "z"
-        | "x"
-        | "c"
-        | "v"
-        | "b"
-        | "n"
-        | "m"
-        | ","
-        | "."
-        | "/"
-        | "escape"
-        | "backspace"
-        | "enter"
-        | "tab"
-        | "control"
-        | "alt"
-        | "meta"
-        | "space"
-        | " "
-        | "left"
-        | "right"
-        | "up"
-        | "down"
-        | "shift"
-    )
-    | (string & {});
-
-/**
- * A mouse button.
- *
- * @group Input
- */
-export type MouseButton = "left" | "right" | "middle" | "back" | "forward";
-
-/**
- * A gamepad button.
- *
- * @group Input
- */
-export type KGamepadButton =
-    | "north"
-    | "east"
-    | "south"
-    | "west"
-    | "ltrigger"
-    | "rtrigger"
-    | "lshoulder"
-    | "rshoulder"
-    | "select"
-    | "start"
-    | "lstick"
-    | "rstick"
-    | "dpad-up"
-    | "dpad-right"
-    | "dpad-down"
-    | "dpad-left"
-    | "home"
-    | "capture";
-
-/**
- * A gamepad stick.
- *
- * @group Input
- */
-export type GamepadStick = "left" | "right";
-
-/**
- * A gamepad definition.
- */
-export type GamepadDef = {
-    buttons: Record<string, KGamepadButton>;
-    sticks: Partial<Record<GamepadStick, { x: number; y: number }>>;
-};
-
-/** A KAPLAY gamepad */
-export type KGamepad = {
-    /** The order of the gamepad in the gamepad list. */
-    index: number;
-    /** If certain button is pressed. */
-    isPressed(b: KGamepadButton): boolean;
-    /** If certain button is held down. */
-    isDown(b: KGamepadButton): boolean;
-    /** If certain button is released. */
-    isReleased(b: KGamepadButton): boolean;
-    /** Get the value of a stick. */
-    getStick(stick: GamepadStick): Vec2;
-};
-
-/**
- * Inspect info for a game object.
- */
-export type GameObjInspect = Record<Tag, string | null>;
-
-export type MustKAPLAYOpt =
-    & {
-        [K in keyof Pick<KAPLAYOpt, "scale">]-?: KAPLAYOpt[K];
-    }
-    & KAPLAYOpt;
-
-/**
- * KAPLAY configurations.
- *
- * @group Start
- */
-export interface KAPLAYOpt<
-    TPlugin extends PluginList<any> = any,
-    TButtonDef extends ButtonsDef = any,
-> {
-    /**
-     * Width of game.
-     */
-    width?: number;
-    /**
-     * Height of game.
-     */
-    height?: number;
-    /**
-     * Pixel scale / size.
-     */
-    scale?: number;
-    /**
-     * Keep aspect ratio and leave black bars on remaining spaces.
-     */
-    letterbox?: boolean;
-    /**
-     * If register debug buttons (default true)
-     */
-    debug?: boolean;
-    /**
-     * Key that toggles debug mode
-     */
-    debugKey?: Key;
-    /**
-     * Default font (defaults to "monospace").
-     */
-    font?: string;
-    /**
-     * Device pixel scale (defaults to 1, high pixel density will hurt performance).
-     *
-     * @since v3000.0
-     */
-    pixelDensity?: number;
-    /**
-     * Disable antialias and enable sharp pixel display.
-     */
-    crisp?: boolean;
-    /**
-     * The canvas DOM element to use. If empty will create one.
-     */
-    canvas?: HTMLCanvasElement;
-    /**
-     * The container DOM element to insert the canvas if created. Defaults to document.body.
-     */
-    root?: HTMLElement;
-    /**
-     * Background color. E.g. [ 0, 0, 255 ] for solid blue background, or [ 0, 0, 0, 0 ] for transparent background. Accepts RGB value array or string hex codes.
-     */
-    background?: RGBValue | RGBAValue | string;
-    /**
-     * Default texture filter.
-     */
-    texFilter?: TexFilter;
-    /**
-     * How many log messages can there be on one screen (default 8).
-     */
-    logMax?: number;
-    /**
-     * How many seconds log messages stay on screen (default 4).
-     *
-     * @since v3000.1
-     */
-    logTime?: number;
-    /**
-     * Size of the spatial hash grid for collision detection (default 64).
-     *
-     * @since v3000.0
-     */
-    hashGridSize?: number;
-    /**
-     * If translate touch events as mouse clicks (default true).
-     */
-    touchToMouse?: boolean;
-    /**
-     * If KAPLAY should render a default loading screen when assets are not fully ready (default true).
-     *
-     * @since v3000.0
-     */
-    loadingScreen?: boolean;
-    /**
-     * If pause audio when tab is not active (default false).
-     *
-     * @since v3000.0
-     */
-    backgroundAudio?: boolean;
-    /**
-     * Custom gamepad definitions (see gamepad.json for reference of the format).
-     *
-     * @since v3000.0
-     */
-    gamepads?: Record<string, GamepadDef>;
-    /**
-     * Defined buttons for input binding.
-     *
-     * @since v30010
-     */
-    buttons?: TButtonDef;
-    /**
-     * Limit framerate to an amount per second.
-     *
-     * @since v3000.0
-     */
-    maxFPS?: number;
-    /**
-     * If focus on the canvas on start (default true).
-     *
-     * @since v3001.0
-     */
-    focus?: boolean;
-    /**
-     * If import all KAPLAY functions to global (default true).
-     */
-    global?: boolean;
-    /**
-     * List of plugins to import.
-     */
-    plugins?: TPlugin;
-    /**
-     * Enter burp mode.
-     */
-    burp?: boolean;
-    /**
-     * Make component's id ("sprite" for sprite() comp) be added as tags.
-     *
-     * That means .is() will return true for components with that id.
-     *
-     * @default true
-     * @experimental This feature is in experimental phase, it will be fully released in v3001.1.0
-     */
-    tagsAsComponents?: boolean;
-    /**
-     * Padding used when adding sprites to texture atlas.
-     * @default 0
-     */
-    spriteAtlasPadding?: number;
-    /**
-     * If the debug inspect view should ignore objects that are paused when choosing
-     * the object to show the inspect view on.
-     *
-     * @default false
-     * @experimental
-     */
-    inspectOnlyActive?: boolean;
-    /**
-     * Which strategy to use for narrow phase collision, gjk or sat
-     * @default "gjk"
-     */
-    narrowPhaseCollisionAlgorithm?: string;
-    /**
-     * Timeout (in milliseconds) at which other loaders waiting on sprites will give
-     * up and throw an error.
-     *
-     * Currently this is only used by {@link KAPLAYCtx.loadBitmapFontFromSprite}.
-     *
-     * @default 3000
-     */
-    loadTimeout?: number;
-}
-
-/**
- * A plugin for KAPLAY.
- *
- * @example
- * ```js
- * // a plugin that adds a new function to KAPLAY
- * const myPlugin = (k) => ({
- *    myFunc: () => {
- *       k.debug.log("hello from my plugin")
- *   }
- * })
- *
- * // use the plugin
- * kaplay({
- *   plugins: [ myPlugin ]
- * })
- *
- * // now you can use the new function
- * myFunc()
- * ```
- *
- * @group Plugins
- */
-export type KAPLAYPlugin<T> = (
-    k: KAPLAYCtx,
-) => T | ((...args: any) => (k: KAPLAYCtx) => T);
-
-export type RenderTarget = {
-    destination: FrameBuffer | Picture | null;
-    childrenOnly?: boolean;
-    refreshOnly?: boolean;
-    isFresh?: boolean;
-};
-
-/**
- * @group Options
- */
-export type GetOpt = {
-    /**
-     * Recursively get all children and their descendants.
-     */
-    recursive?: boolean;
-    /**
-     * Live update the returned list every time object is added / removed.
-     */
-    liveUpdate?: boolean;
-    /**
-     * Get only by tags or components.
-     */
-    only?: "tags" | "comps";
-};
-
-/**
- * @group Options
- */
-export type QueryOpt = {
-    /**
-     * All objects which include all or any of these tags, depending on includeOp.
-     */
-    include?: string | string[];
-    /**
-     * Selects the operator to use. Defaults to and.
-     */
-    includeOp?: "and" | "or";
-    /**
-     * All objects which do not have all or any of these tags, depending on excludeOp.
-     */
-    exclude?: string | string[];
-    /**
-     * Selects the operator to use. Defaults to and.
-     */
-    excludeOp?: "and" | "or";
-    /**
-     * All objects which are near or far to the position of this, depending on distanceOp.
-     */
-    distance?: number;
-    /**
-     * Selects the operator to use. Defaults to near.
-     */
-    distanceOp?: "near" | "far";
-    /**
-     * All objects visible from this standpoint.
-     */
-    visible?: boolean;
-    /**
-     * All objects in the given group. Defaults to children.
-     */
-    hierarchy?: "children" | "siblings" | "ancestors" | "descendants";
-    /**
-     * All objects matching name
-     */
-    name?: string;
-};
-
-/**
- * Sprite animation configuration when playing.
- */
-export interface SpriteAnimPlayOpt {
-    /**
-     * If this anim should be played in loop.
-     */
-    loop?: boolean;
-    /**
-     * When looping should it move back instead of go to start frame again.
-     */
-    pingpong?: boolean;
-    /**
-     * This anim's speed in frames per second.
-     */
-    speed?: number;
-    /**
-     * If the animation should not restart from frame 1 and t=0 if it is already playing.
-     *
-     * @default false
-     */
-    preventRestart?: boolean;
-    /**
-     * Runs when this animation ends.
-     */
-    onEnd?: () => void;
-}
-
-export type MusicData = string;
-
-export interface LoadFontOpt {
-    filter?: TexFilter;
-    outline?: number | Outline;
-    /**
-     * The size to load the font in (default 64).
-     *
-     * @since v3001.0
-     */
-    size?: number;
-}
-
-export type TextureOpt = {
-    filter?: TexFilter;
-    wrap?: TexWrap;
-};
-
-export type ImageSource = Exclude<TexImageSource, VideoFrame>;
-
-export type Canvas = {
-    width: number;
-    height: number;
-    toImageData(): ImageData;
-    toDataURL(): string;
-    clear(): void;
-    draw(action: () => void): void;
-    free(): void;
-    readonly fb: FrameBuffer;
-};
-
-export interface Vertex {
-    pos: Vec2;
-    uv: Vec2;
-    color: Color;
-    opacity: number;
-}
-
-export enum BlendMode {
-    Normal = 0,
-    Add = 1,
-    Multiply = 2,
-    Screen = 3,
-    Overlay = 4,
-}
-
-export interface Attributes {
-    pos: number[];
-    uv: number[];
-    color: number[];
-    opacity: number[];
-}
-
-/**
- * Texture scaling filter. "nearest" is mainly for sharp pixelated scaling, "linear" means linear interpolation.
- */
-export type TexFilter = "nearest" | "linear";
-export type TexWrap = "repeat" | "clampToEdge";
-
-/**
- * Common render properties.
- */
-export interface RenderProps {
-    pos?: Vec2;
-    scale?: Vec2;
-    angle?: number;
-    color?: Color;
-    opacity?: number;
-    fixed?: boolean;
-    shader?: string | ShaderData | Asset<ShaderData> | null;
-    uniform?: Uniform | null;
-    blend?: BlendMode;
-    outline?: Outline;
-}
-
-export type DrawTextureOpt = RenderProps & {
-    tex: Texture;
-    width?: number;
-    height?: number;
-    tiled?: boolean;
-    flipX?: boolean;
-    flipY?: boolean;
-    quad?: Quad;
-    anchor?: Anchor | Vec2;
-};
-
-export type DrawUVQuadOpt = RenderProps & {
-    /**
-     * Width of the UV quad.
-     */
-    width: number;
-    /**
-     * Height of the UV quad.
-     */
-    height: number;
-    /**
-     * If flip the texture horizontally.
-     */
-    flipX?: boolean;
-    /**
-     * If flip the texture vertically.
-     */
-    flipY?: boolean;
-    /**
-     * The texture to sample for this quad.
-     */
-    tex?: Texture;
-    /**
-     * The texture sampling area.
-     */
-    quad?: Quad;
-    /**
-     * The anchor point, or the pivot point. Default to "topleft".
-     */
-    anchor?: Anchor | Vec2;
-};
-
-/**
- * How the ellipse should look like.
- */
-export type DrawEllipseOpt = RenderProps & {
-    /**
-     * The horizontal radius.
-     */
-    radiusX: number;
-    /**
-     * The vertical radius.
-     */
-    radiusY: number;
-    /**
-     * Starting angle.
-     */
-    start?: number;
-    /**
-     * Ending angle.
-     */
-    end?: number;
-    /**
-     * If fill the shape with color (set this to false if you only want an outline).
-     */
-    fill?: boolean;
-    /**
-     * Use gradient instead of solid color.
-     *
-     * @since v3000.0
-     */
-    gradient?: [Color, Color];
-    /**
-     * Multiplier for circle vertices resolution (default 1)
-     */
-    resolution?: number;
-    /**
-     * The anchor point, or the pivot point. Default to "topleft".
-     */
-    anchor?: Anchor | Vec2;
-};
-
-/**
- * How the polygon should look like.
- */
-export type DrawPolygonOpt = RenderProps & {
-    /**
-     * The points that make up the polygon
-     */
-    pts: Vec2[];
-    /**
-     * If fill the shape with color (set this to false if you only want an outline).
-     */
-    fill?: boolean;
-    /**
-     * Manual triangulation.
-     */
-    indices?: number[];
-    /**
-     * The center point of transformation in relation to the position.
-     */
-    offset?: Vec2;
-    /**
-     * The radius of each corner.
-     */
-    radius?: number | number[];
-    /**
-     * The color of each vertex.
-     *
-     * @since v3000.0
-     */
-    colors?: Color[];
-    /**
-     * The opacity of each vertex.
-     *
-     * @since v4000.0
-     */
-    opacities?: number[];
-    /**
-     * The uv of each vertex.
-     *
-     * @since v3001.0
-     */
-    uv?: Vec2[];
-    /**
-     * The texture if uv are supplied.
-     *
-     * @since v3001.0
-     */
-    tex?: Texture;
-    /**
-     * Triangulate concave polygons.
-     *
-     * @since v3001.0
-     */
-    triangulate?: boolean;
-};
-
-export interface Outline {
-    /**
-     * The width, or thickness of the line.
-     */
-    width?: number;
-    /**
-     * The color of the line.
-     */
-    color?: Color;
-    /**
-     * Opacity (overrides fill opacity).
-     *
-     * @since v3001.0
-     */
-    opacity?: number;
-    /**
-     * Line join.
-     *
-     * @since v3000.0
-     */
-    join?: LineJoin;
-    /**
-     * Miter limit. If the length of the miter divided by the line width exceeds this limit, the style is converted to a bevel.
-     *
-     * @since v3001.0
-     */
-    miterLimit?: number;
-    /**
-     * Line cap.
-     *
-     * @since v3001.0
-     */
-    cap?: LineCap;
-}
-
-/**
- * @group Draw
- */
-export type Cursor =
-    | string
-    | "auto"
-    | "default"
-    | "none"
-    | "context-menu"
-    | "help"
-    | "pointer"
-    | "progress"
-    | "wait"
-    | "cell"
-    | "crosshair"
-    | "text"
-    | "vertical-text"
-    | "alias"
-    | "copy"
-    | "move"
-    | "no-drop"
-    | "not-allowed"
-    | "grab"
-    | "grabbing"
-    | "all-scroll"
-    | "col-resize"
-    | "row-resize"
-    | "n-resize"
-    | "e-resize"
-    | "s-resize"
-    | "w-resize"
-    | "ne-resize"
-    | "nw-resize"
-    | "se-resize"
-    | "sw-resize"
-    | "ew-resize"
-    | "ns-resize"
-    | "nesw-resize"
-    | "nwse-resize"
-    | "zoom-int"
-    | "zoom-out";
-
-/**
- * @group Draw
- */
-export type Anchor =
-    | "topleft"
-    | "top"
-    | "topright"
-    | "left"
-    | "center"
-    | "right"
-    | "botleft"
-    | "bot"
-    | "botright";
-
-/**
- * @group Math
- */
-export type RNGValue = number | Vec2 | Color;
-
-/**
- * @group Components
- */
-export interface Comp {
-    /**
-     * Component ID (if left out won't be treated as a comp).
-     */
-    id?: Tag;
-    /**
-     * What other comps this comp depends on.
-     */
-    require?: Tag[];
-    /**
-     * Event that runs when host game obj is added to scene.
-     */
-    add?: () => void;
-    /**
-     * Event that runs at a fixed frame rate.
-     */
-    fixedUpdate?: () => void;
-    /**
-     * Event that runs every frame.
-     */
-    update?: () => void;
-    /**
-     * Event that runs every frame after update.
-     */
-    draw?: () => void;
-    /**
-     * Event that runs when obj is removed from scene.
-     */
-    destroy?: () => void;
-    /**
-     * Debug info for inspect mode.
-     */
-    inspect?: () => string | null;
-    /**
-     * Draw debug info in inspect mode.
-     *
-     * @since v3000.0
-     */
-    drawInspect?: () => void;
-    /**
-     * Serializes the component.
-     *
-     * @since v4000.0
-     */
-    serialize?: () => any;
-}
-
-/**
- * @group Game Obj
- */
-export type GameObjID = number;
-
-/**
- * A component without own properties.
- *
- * @group Component Types
- */
-export type EmptyComp = { id: string } & Comp;
-
-/**
- * @group Draw
- */
-export type Shape = Rect | Line | Point | Circle | Ellipse | Polygon;
-
-export type Mask = "intersect" | "subtract";
-
-/**
- * @group Math
- */
-export type Edge = "left" | "right" | "top" | "bottom";
-
-/**
- * @group Math
- */
-export enum EdgeMask {
-    None = 0,
-    Left = 1,
-    Top = 2,
-    LeftTop = 3,
-    Right = 4,
-    Horizontal = 5,
-    RightTop = 6,
-    HorizontalTop = 7,
-    Bottom = 8,
-    LeftBottom = 9,
-    Vertical = 10,
-    LeftVertical = 11,
-    RightBottom = 12,
-    HorizontalBottom = 13,
-    RightVertical = 14,
-    All = 15,
 }
