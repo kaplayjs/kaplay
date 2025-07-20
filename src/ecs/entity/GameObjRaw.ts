@@ -1,6 +1,7 @@
 // The E of ECS
 
 import type { AppEvents } from "../../app/app";
+import type { KAPLAYCtx } from "../../core/contextType";
 import { throwError } from "../../core/errors";
 import type { GameObjEventNames } from "../../events/eventMap";
 import {
@@ -40,7 +41,6 @@ import type {
     GameObjID,
     GameObjInspect,
     GetOpt,
-    KAPLAYCtx,
     QueryOpt,
     RenderTarget,
     Tag,

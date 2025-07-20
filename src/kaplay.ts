@@ -4,6 +4,7 @@ import { SoundData } from "./assets/sound";
 import { loadSprite } from "./assets/sprite";
 import { createEmptyAudioBuffer } from "./audio/audio";
 import { createContext } from "./core/context";
+import type { KAPLAYCtx } from "./core/contextType";
 import { createEngine } from "./core/engine";
 import beanSrc from "./data/assets/bean.png";
 import boomSpriteSrc from "./data/assets/boom.png";
@@ -14,7 +15,6 @@ import { createCollisionSystem } from "./ecs/systems/createCollisionSystem";
 import { system, SystemPhase } from "./ecs/systems/systems";
 import { _k, updateEngine } from "./shared";
 import {
-    type KAPLAYCtx,
     type KAPLAYOpt,
     type KAPLAYPlugin,
     type MergePlugins,

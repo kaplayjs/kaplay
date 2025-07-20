@@ -1,4 +1,4 @@
-import type { KAPLAYCtx, Key, KGamepadButton, MouseButton } from "../types";
+import type { Key, KGamepadButton, MouseButton } from "../types";
 import { mapAddOrPush } from "../utils/sets";
 import type { AppState } from "./app";
 
