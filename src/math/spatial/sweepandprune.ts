@@ -95,7 +95,7 @@ export class SweepAndPrune {
 
         for (const edge of this.edges) {
             if (edge.isLeft) {
-                if (!edge.obj.exists()) {
+                if (edge.obj.exists()) {
                     for (const obj of touching) {
                         if (obj.exists()) {
                             collisionCb(obj, edge.obj);
