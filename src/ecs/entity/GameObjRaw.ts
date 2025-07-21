@@ -758,15 +758,8 @@ export const GameObjRawPrototype: Omit<InternalGameObjRaw, AppEvents> = {
 
         calcTransform(obj, obj.transform);
 
-        const trigger = (obj: GameObj) => {
-            obj.trigger("add", obj);
-            _k.game.events.trigger("add", obj);
-            // normally new objects have no children so this usually does nothing
-            // but if we're re-adding an object that was previously removed,
-            // we need to trigger the add event for all children
-            obj.children.forEach((child) => trigger(child));
-        };
-        trigger(obj);
+        obj.trigger("add", obj);
+        _k.game.events.trigger("add", obj);
 
         return obj;
     },
