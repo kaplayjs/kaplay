@@ -5,6 +5,8 @@ import type { Color } from "../../../math/color";
 import { Polygon } from "../../../math/math";
 import { type Vec2 } from "../../../math/Vec2";
 import type { Comp, DrawPolygonOpt, GameObj } from "../../../types";
+import { proxySetter } from "../../../utils/proxySetter";
+import type { AreaComp } from "../physics/area";
 
 /**
  * The {@link polygon `polygon()`} component.
@@ -60,12 +62,37 @@ export function polygon(pts: Vec2[], opt: PolygonCompOpt = {}): PolygonComp {
     }
     return {
         id: "polygon",
-        pts,
+        get pts() {
+            return pts;
+        },
+        set pts(newPts: Vec2[]) {
+            pts = newPts;
+            for (var k in pts) {
+                proxySetter(
+                    pts,
+                    k,
+                    () =>
+                        (this as any as GameObj<AreaComp>)._worldAreaDirty =
+                            true,
+                );
+            }
+        },
         colors: opt.colors,
         opacities: opt.opacities,
         uv: opt.uv,
         tex: opt.tex,
         radius: opt.radius,
+        add(this: GameObj<PolygonComp>) {
+            for (var k in this.pts) {
+                proxySetter(
+                    this.pts,
+                    k,
+                    () =>
+                        (this as any as GameObj<AreaComp>)._worldAreaDirty =
+                            true,
+                );
+            }
+        },
         draw(this: GameObj<PolygonComp>) {
             drawPolygon(Object.assign(getRenderProps(this), {
                 pts: this.pts,
@@ -82,7 +109,7 @@ export function polygon(pts: Vec2[], opt: PolygonCompOpt = {}): PolygonComp {
             return new Polygon(this.pts);
         },
         inspect() {
-            return `polygon: ${this.pts.map(p => `[${p.x},${p.y}]`).join(",")}`;
+            return `polygon: ${this.pts.map(p => `(${p.x},${p.y})`).join(",")}`;
         },
     };
 }

@@ -1,6 +1,6 @@
 import { MAX_TRIES } from "../constants/general";
 import type { Shape } from "../types";
-import { Circle, Ellipse, Polygon, Rect, vec2 } from "./math";
+import { Circle, Ellipse, Line, Polygon, Rect, vec2 } from "./math";
 import { Vec2 } from "./Vec2";
 
 interface Collider {
@@ -99,10 +99,13 @@ function calculateSupport(
 ): Vec2 {
     // Calculate the support vector. This is done by calculating the difference between
     // the furthest points found of the shapes along the given direction.
-    let oppositeDirection = new Vec2(-direction.x, -direction.y);
-    const supportA = shapeA.support(direction);
-    const supportB = shapeB.support(oppositeDirection);
-    return new Vec2(supportA.x - supportB.x, supportA.y - supportB.y);
+    const { x: supportAX, y: supportAY } = shapeA.support(direction);
+    direction.x *= -1;
+    direction.y *= -1;
+    const { x: supportBX, y: supportBY } = shapeB.support(direction);
+    direction.x *= -1;
+    direction.y *= -1;
+    return new Vec2(supportAX - supportBX, supportAY - supportBY);
 }
 
 function addSupport(
@@ -129,7 +132,7 @@ function tripleProduct(a: Vec2, b: Vec2, c: Vec2): Vec2 {
     const n = a.x * b.y - a.y * b.x;
 
     // This vector lies in the same plane as a and b and is perpendicular to c
-    return new Vec2(-n * c.y, n * c.x);
+    return Vec2._fromPool().set(-n * c.y, n * c.x);
 }
 
 function evolveSimplex(
@@ -154,11 +157,11 @@ function evolveSimplex(
         }
         case 2: {
             // We now have a line ab. Take the vector ab and the vector a origin
-            const ab = new Vec2(
+            const ab = Vec2._fromPool().set(
                 simplex[1].x - simplex[0].x,
                 simplex[1].y - simplex[0].y,
             );
-            const a0 = new Vec2(-simplex[0].x, -simplex[0].y);
+            const a0 = Vec2._fromPool().set(-simplex[0].x, -simplex[0].y);
 
             // Get the vector perpendicular to ab and a0
             // Then get the vector perpendicular to the result and ab
@@ -166,6 +169,9 @@ function evolveSimplex(
             // This is our new direction to form a triangle
             direction.x = tp.x;
             direction.y = tp.y;
+            Vec2._returnPool(ab);
+            Vec2._returnPool(a0);
+            Vec2._returnPool(tp);
             break;
         }
         case 3:
@@ -253,12 +259,18 @@ type Edge = {
  *
  * @returns The edge closest to the origin.
  */
-function findClosestEdge(simplex: Vec2[], winding: PolygonWinding): Edge {
+function findClosestEdge(
+    simplex: Vec2[],
+    winding: PolygonWinding,
+    scratchPt1: Vec2,
+    scratchPt2: Vec2,
+    scratchPt3: Vec2,
+): Edge {
     let minDistance: number = Number.POSITIVE_INFINITY;
-    let minNormal = new Vec2();
+    let minNormal = scratchPt1;
     let minIndex = 0;
-    let line = new Vec2();
-    let norm = new Vec2();
+    let line = scratchPt2;
+    let norm = scratchPt3;
     for (let i = 0; i < simplex.length; i++) {
         let j = i + 1;
         if (j >= simplex.length) j = 0;
@@ -314,52 +326,58 @@ function getIntersection(
     simplex: Vec2[],
 ): GjkCollisionResult | null {
     const EPSILON = 0.00001;
+    const s1 = Vec2._fromPool(), s2 = Vec2._fromPool(), s3 = Vec2._fromPool();
+    try {
+        const e0: number = (simplex[1].x - simplex[0].x)
+            * (simplex[1].y + simplex[0].y);
+        const e1: number = (simplex[2].x - simplex[1].x)
+            * (simplex[2].y + simplex[1].y);
+        const e2: number = (simplex[0].x - simplex[2].x)
+            * (simplex[0].y + simplex[2].y);
+        var winding: PolygonWinding = (e0 + e1 + e2 >= 0)
+            ? PolygonWinding.Clockwise
+            : PolygonWinding.CounterClockwise;
 
-    const e0: number = (simplex[1].x - simplex[0].x)
-        * (simplex[1].y + simplex[0].y);
-    const e1: number = (simplex[2].x - simplex[1].x)
-        * (simplex[2].y + simplex[1].y);
-    const e2: number = (simplex[0].x - simplex[2].x)
-        * (simplex[0].y + simplex[2].y);
-    var winding: PolygonWinding = (e0 + e1 + e2 >= 0)
-        ? PolygonWinding.Clockwise
-        : PolygonWinding.CounterClockwise;
+        let intersection = new Vec2();
+        for (let i = 0; i < MAX_TRIES; i++) {
+            var edge: Edge = findClosestEdge(simplex, winding, s1, s2, s3);
+            // Calculate the difference for the two vertices furthest along the direction of the edge normal
+            var support = calculateSupport(colliderA, colliderB, edge.normal);
+            // Check distance to the origin
+            var distance: number = support.dot(edge.normal);
 
-    let intersection = new Vec2();
-    for (let i = 0; i < MAX_TRIES; i++) {
-        var edge: Edge = findClosestEdge(simplex, winding);
-        // Calculate the difference for the two vertices furthest along the direction of the edge normal
-        var support = calculateSupport(colliderA, colliderB, edge.normal);
-        // Check distance to the origin
-        var distance: number = support.dot(edge.normal);
+            Vec2.scale(edge.normal, distance, intersection);
 
-        Vec2.scale(edge.normal, distance, intersection);
-
-        // If close enough, return if we need to move a distance greater than 0
-        if (Math.abs(distance - edge.distance) <= EPSILON) {
-            const len = intersection.len();
-            if (len != 0) {
-                Vec2.scale(intersection, -1 / len, intersection);
-                return { normal: intersection, distance: len };
+            // If close enough, return if we need to move a distance greater than 0
+            if (Math.abs(distance - edge.distance) <= EPSILON) {
+                const len = intersection.len();
+                if (len != 0) {
+                    Vec2.scale(intersection, -1 / len, intersection);
+                    return { normal: intersection, distance: len };
+                }
+                else {
+                    return null;
+                }
             }
             else {
-                return null;
+                simplex.splice(edge.index, 0, support);
             }
         }
-        else {
-            simplex.splice(edge.index, 0, support);
-        }
-    }
 
-    // Return if we need to move a distance greater than 0
-    // Since we did more than the maximum amount of iterations, this may not be optimal
-    const len = intersection.len();
-    if (len != 0) {
-        Vec2.scale(intersection, -1 / len, intersection);
-        return { normal: intersection, distance: len };
-    }
-    else {
-        return null;
+        // Return if we need to move a distance greater than 0
+        // Since we did more than the maximum amount of iterations, this may not be optimal
+        const len = intersection.len();
+        if (len != 0) {
+            Vec2.scale(intersection, -1 / len, intersection);
+            return { normal: intersection, distance: len };
+        }
+        else {
+            return null;
+        }
+    } finally {
+        Vec2._returnPool(s1);
+        Vec2._returnPool(s2);
+        Vec2._returnPool(s3);
     }
 }
 
@@ -375,7 +393,7 @@ function gjkIntersection(
     colliderB: Collider,
 ): GjkCollisionResult | null {
     const vertices: Vec2[] = [];
-    let direction = new Vec2(
+    let direction = Vec2._fromPool().set(
         colliderB.center.x - colliderA.center.x,
         colliderB.center.y - colliderA.center.y,
     );
@@ -384,6 +402,7 @@ function gjkIntersection(
     while (result === EvolveResult.Evolving) {
         result = evolveSimplex(vertices, colliderA, colliderB, direction);
     }
+    Vec2._returnPool(direction);
     if (result !== EvolveResult.FoundIntersection) {
         return null;
     }
@@ -416,6 +435,9 @@ function shapeToCollider(shape: Shape): Collider {
             (shape as Ellipse).radiusY,
             (shape as Ellipse).angle,
         );
+    }
+    else if (shape instanceof Line) {
+        return new PolygonCollider([shape.p1, shape.p1, shape.p2, shape.p2]);
     }
     else {
         return new PolygonCollider(shape.bbox().points());

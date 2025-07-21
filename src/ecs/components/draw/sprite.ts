@@ -17,6 +17,7 @@ import { Quad, quad, Rect, vec2 } from "../../../math/math";
 import { type Vec2 } from "../../../math/Vec2";
 import { _k } from "../../../shared";
 import type { Comp, GameObj, SpriteAnimPlayOpt } from "../../../types";
+import type { AreaComp } from "../physics/area";
 
 /**
  * The serialized {@link sprite `sprite()`} component.
@@ -299,6 +300,7 @@ export function sprite(
         set width(value) {
             _width = value;
             if (_shape) _shape.width = value;
+            (this as any as GameObj<AreaComp>)._worldAreaDirty = true;
         },
         get height() {
             return _height;
@@ -306,6 +308,7 @@ export function sprite(
         set height(value) {
             _height = value;
             if (_shape) _shape.height = value;
+            (this as any as GameObj<AreaComp>)._worldAreaDirty = true;
         },
         frame: opt.frame || 0,
         quad: opt.quad || new Quad(0, 0, 1, 1),

@@ -3,11 +3,22 @@ import type { KEventController } from "../../../events/events";
 import { toWorld } from "../../../game/camera";
 import { anchorPt } from "../../../gfx/anchor";
 import { drawCircle } from "../../../gfx/draw/drawCircle";
+import { drawEllipse } from "../../../gfx/draw/drawEllipse";
+import { drawLine } from "../../../gfx/draw/drawLine";
 import { drawPolygon } from "../../../gfx/draw/drawPolygon";
 import { drawRect } from "../../../gfx/draw/drawRect";
 import { multTranslate, popTransform, pushTransform } from "../../../gfx/stack";
 import { rgb } from "../../../math/color";
-import { Circle, Polygon, Rect, shapeFactory, vec2 } from "../../../math/math";
+import {
+    Circle,
+    Ellipse,
+    Line,
+    Mat23,
+    Polygon,
+    Rect,
+    shapeFactory,
+    vec2,
+} from "../../../math/math";
 import { Vec2 } from "../../../math/Vec2";
 import { _k } from "../../../shared";
 import type {
@@ -18,6 +29,8 @@ import type {
     Shape,
     Tag,
 } from "../../../types";
+import { proxySetter } from "../../../utils/proxySetter";
+import type { InternalGameObjRaw } from "../../entity/GameObjRaw";
 import { isFixed } from "../../entity/utils";
 import type { Collision } from "../../systems/Collision";
 import type { AnchorComp } from "../transform/anchor";
@@ -26,6 +39,71 @@ import type { PosComp } from "../transform/pos";
 
 export function usesArea() {
     return _k.game.areaCount > 0;
+}
+
+class AreaInfo {
+    private _object: GameObj<AreaComp> | null = null;
+    private _shape: Shape | null = null;
+    private _scale: Vec2 = vec2(1);
+    private _offset: Vec2 = vec2(0);
+    private _dirty() {
+        if (this._object) {
+            this._object._worldAreaDirty = true;
+        }
+    }
+    /**
+     * If we use a custom shape over render shape.
+     */
+    get shape(): Shape | null {
+        return this._shape;
+    }
+    set shape(value: Shape | null) {
+        if (this._shape !== value) {
+            this._shape = value;
+            this._dirty();
+            proxySetter(this, "shape", this._dirty);
+        }
+    }
+    /**
+     * Area scale.
+     */
+    get scale(): Vec2 {
+        return this._scale;
+    }
+    set scale(value: Vec2) {
+        if (!this._scale.eq(value)) {
+            this._scale = value;
+            this._dirty();
+            proxySetter(this, "scale", this._dirty);
+        }
+    }
+    /**
+     * Area offset.
+     */
+    get offset(): Vec2 {
+        return this._offset;
+    }
+    set offset(value: Vec2) {
+        if (!this._offset.eq(value)) {
+            this._offset = value;
+            this._dirty();
+            proxySetter(this, "offset", this._dirty);
+        }
+    }
+    /**
+     * Cursor on hover.
+     */
+    cursor: Cursor | null;
+    constructor(opts: AreaCompOpt) {
+        this.shape = opts.shape ?? null;
+        this.scale = vec2(opts.scale ?? 1);
+        this.offset = opts.offset ?? vec2(0);
+        this.cursor = opts.cursor ?? null;
+        this._dirty = this._dirty.bind(this);
+        if (this.shape) proxySetter(this, "shape", this._dirty);
+        proxySetter(this, "scale", this._dirty);
+        proxySetter(this, "offset", this._dirty);
+    }
 }
 
 /**
@@ -37,24 +115,7 @@ export interface AreaComp extends Comp {
     /**
      * Collider area info.
      */
-    area: {
-        /**
-         * If we use a custom shape over render shape.
-         */
-        shape: Shape | null;
-        /**
-         * Area scale.
-         */
-        scale: Vec2;
-        /**
-         * Area offset.
-         */
-        offset: Vec2;
-        /**
-         * Cursor on hover.
-         */
-        cursor: Cursor | null;
-    };
+    readonly area: AreaInfo;
     /**
      * If this object should ignore collisions against certain other objects.
      *
@@ -189,6 +250,8 @@ export interface AreaComp extends Comp {
     screenArea(): Shape;
 
     serialize(): any;
+
+    _worldAreaDirty: boolean;
 }
 
 /**
@@ -247,7 +310,7 @@ export function area(opt: AreaCompOpt = {}): AreaComp {
     const colliding: Record<string, Collision> = {};
     const collidingThisFrame = new Set();
     const events: KEventController[] = [];
-    let oldShape: Shape | undefined;
+    let _worldArea: Shape | undefined;
 
     return {
         id: "area",
@@ -255,39 +318,39 @@ export function area(opt: AreaCompOpt = {}): AreaComp {
         restitution: opt.restitution,
         friction: opt.friction,
 
+        _worldAreaDirty: true,
+
         add(this: GameObj<AreaComp>) {
+            (this.area as any)._object = this;
+            // do some monkey patching so I will be notified when the transform is dirty
+            (this as any as InternalGameObjRaw)._dirtyTransform = () => {
+                (this as any as InternalGameObjRaw)._transformDirty = true;
+                this._worldAreaDirty = true;
+            };
             _k.game.areaCount++;
             if (this.area.cursor) {
-                events.push(
-                    this.onHover(() => _k.app.setCursor(this.area.cursor!)),
-                );
+                this.onHover(() => _k.app.setCursor(this.area.cursor!));
             }
+            this.onCollideUpdate((obj, col) => {
+                if (!obj.id) {
+                    throw new Error(
+                        "collided with object with no id (this should not happen)",
+                    );
+                }
+                if (!colliding[obj.id]) {
+                    this.trigger("collide", obj, col);
+                }
+                if (!col) {
+                    return;
+                }
 
-            events.push(
-                this.onCollideUpdate((obj, col) => {
-                    if (!obj.id) {
-                        throw new Error(
-                            "area() requires the object to have an id",
-                        );
-                    }
-                    if (!colliding[obj.id]) {
-                        this.trigger("collide", obj, col);
-                    }
-                    if (!col) {
-                        return;
-                    }
-
-                    colliding[obj.id] = col;
-                    collidingThisFrame.add(obj.id);
-                }),
-            );
+                colliding[obj.id] = col;
+                collidingThisFrame.add(obj.id);
+            });
         },
 
         destroy() {
             _k.game.areaCount--;
-            for (const event of events) {
-                event.cancel();
-            }
         },
 
         fixedUpdate(this: GameObj<AreaComp>) {
@@ -338,16 +401,30 @@ export function area(opt: AreaCompOpt = {}): AreaComp {
                     radius: a.radius,
                 });
             }
+            else if (a instanceof Ellipse) {
+                const transformedEllipse = a.transform(
+                    Mat23.fromScale(this.area.scale),
+                );
+                drawEllipse({
+                    ...opts,
+                    pos: transformedEllipse.center,
+                    radiusX: transformedEllipse.radiusX,
+                    radiusY: transformedEllipse.radiusY,
+                    angle: transformedEllipse.angle,
+                });
+            }
+            else if (a instanceof Line) {
+                drawLine({
+                    ...opts,
+                    p1: a.p1,
+                    p2: a.p2,
+                });
+            }
 
             popTransform();
         },
 
-        area: {
-            shape: opt.shape ?? null,
-            scale: opt.scale ? vec2(opt.scale) : vec2(1),
-            offset: opt.offset ?? vec2(0),
-            cursor: opt.cursor ?? null,
-        },
+        area: new AreaInfo(opt),
 
         isClicked(): boolean {
             if (_k.game.fakeMouse) {
@@ -574,27 +651,31 @@ export function area(opt: AreaCompOpt = {}): AreaComp {
 
         // TODO: cache
         worldArea(this: GameObj<AreaComp | AnchorComp>): Shape {
-            const localArea = this.localArea();
+            if (this._worldAreaDirty) {
+                const localArea = this.localArea();
 
-            // World transform
-            const transform = this.transform.clone();
-            // Optional area offset
-            if (this.area.offset.x !== 0 || this.area.offset.y !== 0) {
-                transform.translateSelfV(this.area.offset);
-            }
-            // Optional area scale
-            if (this.area.scale.x !== 1 || this.area.scale.y !== 1) {
-                transform.scaleSelfV(this.area.scale);
-            }
-            // Optional anchor offset (Rect only??)
-            if (localArea instanceof Rect && this.anchor !== "topleft") {
-                const offset = anchorPt(this.anchor || DEF_ANCHOR)
-                    .add(1, 1)
-                    .scale(-0.5 * localArea.width, -0.5 * localArea.height);
-                transform.translateSelfV(offset);
+                // World transform
+                const transform = this.transform.clone();
+                // Optional area offset
+                if (this.area.offset.x !== 0 || this.area.offset.y !== 0) {
+                    transform.translateSelfV(this.area.offset);
+                }
+                // Optional area scale
+                if (this.area.scale.x !== 1 || this.area.scale.y !== 1) {
+                    transform.scaleSelfV(this.area.scale);
+                }
+                // Optional anchor offset (Rect only??)
+                if (localArea instanceof Rect && this.anchor !== "topleft") {
+                    const offset = anchorPt(this.anchor || DEF_ANCHOR)
+                        .add(1, 1)
+                        .scale(-0.5 * localArea.width, -0.5 * localArea.height);
+                    transform.translateSelfV(offset);
+                }
+                _worldArea = localArea.transform(transform, _worldArea);
+                this._worldAreaDirty = false;
             }
 
-            return oldShape = localArea.transform(transform, oldShape);
+            return _worldArea!;
         },
 
         screenArea(this: GameObj<AreaComp | FixedComp>): Shape {
@@ -603,9 +684,9 @@ export function area(opt: AreaCompOpt = {}): AreaComp {
                 return area;
             }
             else {
-                return oldShape = area.transform(
+                return _worldArea = area.transform(
                     _k.game.cam.transform,
-                    oldShape,
+                    _worldArea,
                 );
             }
         },
