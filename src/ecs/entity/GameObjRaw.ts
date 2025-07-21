@@ -477,7 +477,7 @@ export interface GameObjRaw {
      * @returns The event controller.
      * @since v4000.0
      */
-    onNoDraw(action: () => void): KEventController;
+    onHide(action: () => void): KEventController;
     /**
      * Register an event that runs when the object becomes visible (either directly
      * or by a parent being set to visible).
@@ -485,7 +485,7 @@ export interface GameObjRaw {
      * @returns The event controller.
      * @since v4000.0
      */
-    onBeginDraw(action: () => void): KEventController;
+    onShow(action: () => void): KEventController;
     onKeyDown: KAPLAYCtx["onKeyDown"];
     onKeyPress: KAPLAYCtx["onKeyPress"];
     onKeyPressRepeat: KAPLAYCtx["onKeyPressRepeat"];
@@ -696,7 +696,7 @@ export const GameObjRawPrototype: Omit<InternalGameObjRaw, AppEvents> = {
 
     _updateHiddenState(oldHidden, newHidden) {
         if (oldHidden === newHidden) return;
-        const eventName = newHidden ? "nodraw" : "begindraw";
+        const eventName = newHidden ? "hide" : "show";
         const recurse = (obj: GameObj, first: boolean) => {
             obj.trigger(eventName);
             if (obj.hidden && !first) return;
@@ -1634,12 +1634,12 @@ export const GameObjRawPrototype: Omit<InternalGameObjRaw, AppEvents> = {
         return this.on("unpause", action);
     },
 
-    onBeginDraw(action: () => void): KEventController {
-        return this.on("begindraw", action);
+    onShow(action: () => void): KEventController {
+        return this.on("show", action);
     },
 
-    onNoDraw(action: () => void): KEventController {
-        return this.on("nodraw", action);
+    onHide(action: () => void): KEventController {
+        return this.on("hide", action);
     },
     // #endregion
 };

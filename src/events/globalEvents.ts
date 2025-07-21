@@ -262,8 +262,8 @@ export function onLoading(action: (progress: number) => void) {
     return _k.game.events.on("loading", action);
 }
 
-export function onResize(action: () => void) {
-    return _k.app.onResize(action);
+export function onTabResize(action: () => void) {
+    return _k.app.onTabResize(action);
 }
 
 export function onError(action: (err: Error) => void) {

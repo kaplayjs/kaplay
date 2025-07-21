@@ -2092,7 +2092,7 @@ export interface KAPLAYCtx<
      * ]);
      *
      * // resize the rectangle to screen size
-     * onResize(() => {
+     * Tab(() => {
      *     debug.log(`Old Size: ${rectangle.width}x${rectangle.height}`);
      *     rectangle.width = width();
      *     rectangle.height = height();
@@ -2104,7 +2104,7 @@ export interface KAPLAYCtx<
      * @since v3000.0
      * @group Events
      */
-    onResize(action: () => void): KEventController;
+    onTabResize(action: () => void): KEventController;
     /**
      * Cleanup function to run when quit() is called.
      *
@@ -2677,7 +2677,7 @@ export interface KAPLAYCtx<
      * ]);
      *
      * // when switching tabs, this runs
-     * onHide(() => {
+     * onTabHide(() => {
      *     destroy(ghosty);
      *     add([
      *         text("There was never aa ghosttttt"),
@@ -2691,7 +2691,7 @@ export interface KAPLAYCtx<
      * @since v3001.0
      * @group Events
      */
-    onHide(action: () => void): KEventController;
+    onTabHide(action: () => void): KEventController;
     /**
      * Register an event that runs when tab is shown.
      *
@@ -2700,7 +2700,7 @@ export interface KAPLAYCtx<
      * @example
      * ```js
      * // user has returned to this tab
-     * onShow(() => {
+     * onTabShow(() => {
      *     burp();
      * });
      * ```
@@ -2709,7 +2709,7 @@ export interface KAPLAYCtx<
      * @since v3001.0
      * @group Events
      */
-    onShow(action: () => void): KEventController;
+    onTabShow(action: () => void): KEventController;
     /**
      * Register an event that runs every frame when certain gamepad buttons are held down.
      *

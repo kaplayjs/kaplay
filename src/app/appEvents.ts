@@ -8,19 +8,19 @@ import { toFixed } from "../utils/numbers";
 // Events used at the start of a game
 
 export function initAppEvents() {
-    _k.app.onHide(() => {
+    _k.app.onTabHide(() => {
         if (!_k.globalOpt.backgroundAudio) {
             _k.audio.ctx.suspend();
         }
     });
 
-    _k.app.onShow(() => {
+    _k.app.onTabShow(() => {
         if (!_k.globalOpt.backgroundAudio && !_k.debug.paused) {
             _k.audio.ctx.resume();
         }
     });
 
-    _k.app.onResize(() => {
+    _k.app.onTabResize(() => {
         if (_k.app.isFullscreen()) return;
         const fixedSize = _k.globalOpt.width && _k.globalOpt.height;
         if (fixedSize && !_k.globalOpt.letterbox) {

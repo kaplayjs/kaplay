@@ -238,9 +238,9 @@ export type AppEventMap = {
     buttonPress: [string];
     buttonRelease: [string];
     scroll: [Vec2];
-    hide: [];
-    show: [];
-    resize: [];
+    tabHide: [];
+    tabShow: [];
+    tabResize: [];
     input: [];
 };
 
