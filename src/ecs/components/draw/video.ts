@@ -42,7 +42,7 @@ export function video(url: string, opt: VideoCompOpt): VideoComp {
         set width(value) {
             _width = value;
             if (_shape) _shape.width = value;
-            if ((this as any as GameObj).has("area")) {
+            if ((this as any as GameObj).has?.("area")) {
                 (this as any as GameObj<AreaComp>)._worldAreaDirty = true;
             }
         },
@@ -52,7 +52,7 @@ export function video(url: string, opt: VideoCompOpt): VideoComp {
         set height(value) {
             _height = value;
             if (_shape) _shape.height = value;
-            if ((this as any as GameObj).has("area")) {
+            if ((this as any as GameObj).has?.("area")) {
                 (this as any as GameObj<AreaComp>)._worldAreaDirty = true;
             }
         },

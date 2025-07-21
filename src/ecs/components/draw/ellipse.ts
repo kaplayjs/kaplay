@@ -65,7 +65,7 @@ export function ellipse(
         set radiusX(value: number) {
             _radiusX = value;
             if (_shape) _shape.radiusX = value;
-            if ((this as any as GameObj).has("area")) {
+            if ((this as any as GameObj).has?.("area")) {
                 (this as any as GameObj<AreaComp>)._worldAreaDirty = true;
             }
         },
@@ -75,7 +75,7 @@ export function ellipse(
         set radiusY(value: number) {
             _radiusY = value;
             if (_shape) _shape.radiusY = value;
-            if ((this as any as GameObj).has("area")) {
+            if ((this as any as GameObj).has?.("area")) {
                 (this as any as GameObj<AreaComp>)._worldAreaDirty = true;
             }
         },

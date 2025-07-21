@@ -59,7 +59,7 @@ export function circle(radius: number, opt: CircleCompOpt = {}): CircleComp {
         set radius(value: number) {
             _radius = value;
             if (_shape) _shape.radius = value;
-            if ((this as any as GameObj).has("area")) {
+            if ((this as any as GameObj).has?.("area")) {
                 (this as any as GameObj<AreaComp>)._worldAreaDirty = true;
             }
         },
