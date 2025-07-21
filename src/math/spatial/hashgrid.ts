@@ -37,7 +37,9 @@ class HashGrid {
     /**
      * Iterates all object pairs which potentially collide
      */
-    *[Symbol.iterator]() {
+    process(
+        collisionCb: (obj1: GameObj<AreaComp>, obj2: GameObj<AreaComp>) => void,
+    ) {
         for (const obj of this.objects) {
             const area = obj.worldArea();
             const bbox = area.bbox();
@@ -65,7 +67,7 @@ class HashGrid {
                         const cell = this.grid[x][y];
                         for (const other of cell) {
                             if (checked.has(other.id)) continue;
-                            yield [obj, other];
+                            collisionCb(obj, other);
                             checked.add(other.id);
                         }
                         cell.push(obj);
