@@ -1,4 +1,11 @@
-import { onAdd, onDestroy, onPause, onUnpause, onUnuse, onUse } from "../../events/globalEvents";
+import {
+    onAdd,
+    onDestroy,
+    onPause,
+    onUnpause,
+    onUnuse,
+    onUse,
+} from "../../events/globalEvents";
 import { onSceneLeave } from "../../game/scenes";
 import { gjkShapeIntersection } from "../../math/gjk";
 import { minkowskiRectShapeIntersection } from "../../math/minkowski";

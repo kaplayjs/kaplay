@@ -88,7 +88,9 @@ export class SweepAndPrune {
      * Iterates all object pairs which potentially collide and
      * passes them to the collision callback.
      */
-    process(collisionCb: (obj1: GameObj<AreaComp>, obj2: GameObj<AreaComp>) => void) {
+    process(
+        collisionCb: (obj1: GameObj<AreaComp>, obj2: GameObj<AreaComp>) => void,
+    ) {
         const touching = new Set<GameObj<AreaComp>>();
 
         for (const edge of this.edges) {

@@ -1362,12 +1362,12 @@ export const GameObjRawPrototype: Omit<InternalGameObjRaw, AppEvents> = {
                         this._onCurCompCleanup = null;
                     };
 
-                    gc.push(this.on(key, <any>func).cancel);
+                    gc.push(this.on(key, <any> func).cancel);
                 }
                 else {
-                    const func = comp[<keyof typeof comp>key];
+                    const func = comp[<keyof typeof comp> key];
 
-                    gc.push(this.on(key, <any>func).cancel);
+                    gc.push(this.on(key, <any> func).cancel);
                 }
             }
             else {
@@ -1375,8 +1375,8 @@ export const GameObjRawPrototype: Omit<InternalGameObjRaw, AppEvents> = {
                 if (this[key] === undefined) {
                     // Assign comp fields to game obj
                     Object.defineProperty(this, key, {
-                        get: () => comp[<keyof typeof comp>key],
-                        set: (val) => comp[<keyof typeof comp>key] = val,
+                        get: () => comp[<keyof typeof comp> key],
+                        set: (val) => comp[<keyof typeof comp> key] = val,
                         configurable: true,
                         enumerable: true,
                     });
@@ -1389,9 +1389,9 @@ export const GameObjRawPrototype: Omit<InternalGameObjRaw, AppEvents> = {
                     )?.id;
                     throw new Error(
                         `Duplicate component property: "${key}" while adding component "${comp.id}"`
-                        + (originalCompId
-                            ? ` (originally added by "${originalCompId}")`
-                            : ""),
+                            + (originalCompId
+                                ? ` (originally added by "${originalCompId}")`
+                                : ""),
                     );
                 }
             }
@@ -1683,7 +1683,7 @@ export function attachAppToGameObjRaw() {
     for (const e of appEvs) {
         const obj = GameObjRawPrototype as Record<string, any>;
 
-        obj[e] = function (this: InternalGameObjRaw, ...args: [any]) {
+        obj[e] = function(this: InternalGameObjRaw, ...args: [any]) {
             // @ts-ignore
             const ev: KEventController = _k.app[e]?.(...args);
             ev.paused = this.paused;
