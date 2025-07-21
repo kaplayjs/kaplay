@@ -244,6 +244,7 @@ export interface KAPLAYCtx<
      * ```
      *
      * @returns The added game object that contains all properties and methods each component offers.
+     * @since v2000.0
      * @group Game Obj
      */
     add<T extends CompList<unknown>>(comps?: [...T]): GameObj<T[number]>;
@@ -252,14 +253,15 @@ export interface KAPLAYCtx<
      *
      * @example
      * ```js
-     * loadPrefab("bean", "/prefabs/bean.kaprefab")
+     * loadPrefab("bean", "/prefabs/bean.kaprefab");
      *
      * addPrefab("bean", [
-     *     pos(40, 40)
-     * ])
+     *     pos(40, 40),
+     * ]);
      * ```
      *
      * @returns The added game object that contains all properties and methods each component offers.
+     * @since v4000.0
      * @group Game Obj
      */
     addPrefab<T extends CompList<unknown>>(
@@ -282,6 +284,7 @@ export interface KAPLAYCtx<
      *
      * @returns The serialized game object.
      * @since v4000.0
+     * @group Game Obj
      */
     createPrefab(name: string, obj: GameObj): SerializedGameObj;
     /**
@@ -299,6 +302,7 @@ export interface KAPLAYCtx<
      *
      * @returns The serialized game object.
      * @since v4000.0
+     * @group Game Obj
      */
     createPrefab(obj: GameObj): SerializedGameObj;
     /**
@@ -326,13 +330,7 @@ export interface KAPLAYCtx<
      *     area(),
      * ]);
      *
-     * // Example 1: simply call readd() on the target you want on top.
-     * readd(greenBean);
-     *
-     * // Example 2: using onClick() or other functions with readd().
-     * // If you comment out the first example, and use this readd() with a function like onClick(), you
-     * can keep switching which sprite is above the other ( click on edge of face ).
-     *
+     * // Switch which sprite is above other:
      * purpleBean.onClick(() => {
      *     readd(greenBean);
      * });
@@ -351,7 +349,7 @@ export interface KAPLAYCtx<
      * Get a list of all game objs with certain tag.
      *
      * @param tag - The tag to search for. Use "*" to get all objects.
-     * @param opts - Additional options.
+     * @param opt - Additional options.
      *
      * @example
      * ```js
@@ -372,9 +370,9 @@ export interface KAPLAYCtx<
      * @since v2000.0
      * @group Game Obj
      */
-    get<T = any>(tag: Tag | Tag[], opts?: GetOpt): GameObj<T>[];
+    get<T = any>(tag: Tag | Tag[], opt?: GetOpt): GameObj<T>[];
     /**
-     * Get a list of game objects in an advanced way.
+     * Get a list of game objects based in a query.
      *
      * @param opt - The query options.
      *
@@ -384,31 +382,32 @@ export interface KAPLAYCtx<
      * const bean2 = k.add(["friend", "bean"]);
      * const bag = k.add(["friend", "bag"]);
      *
-     * // get bean
+     * // Get bean
      * query({
      *     include: "bean",
-     * }) // will return [bean, bean2];
+     * }); // will return [bean, bean2];
      *
-     * // get all friends excluding bean
+     * // Get all friends excluding bean
      * query({
      *     include: "friend",
      *     exclude: "bean",
      * }); // will return [bag]
      *
-     * // get all visible friends
+     * // Get all visible friends
      * query({
      *     include: "friend",
      *     visible: true,
      * });
      *
-     * // get all friends less than 150 pixels from bean
+     * // Get all friends less than 150 pixels from bean
      * bean.query({
      *     include: "friend",
      *     distance: 150,
      * });
-     *
      * ```
      *
+     * @returns A list of game objects that match the query.
+     * @since v3001.0
      * @group Game Obj
      */
     query(opt: QueryOpt): GameObj[];
@@ -425,6 +424,7 @@ export interface KAPLAYCtx<
      * });
      * ```
      *
+     * @since v2000.0
      * @group Game Obj
      */
     destroy(obj: GameObj): void;
@@ -441,12 +441,13 @@ export interface KAPLAYCtx<
      * });
      * ```
      *
+     * @since v2000.0
      * @group Game Obj
      */
     destroyAll(tag: Tag): void;
     // #region Transform Comps
     /**
-     * Set the position of a Game Object, relative to its parent.
+     * Set the position of a game object, relative to its parent.
      *
      * @param x - The x position to set.
      * @param y - The y position to set.
@@ -472,11 +473,53 @@ export interface KAPLAYCtx<
      * @group Components
      */
     pos(x: number, y: number): PosComp;
+    /**
+     * Set the position of a game object, relative to its parent.
+     *
+     * @param xy - The position to set in x and y.
+     *
+     * @example
+     * ```js
+     * // This game object will draw a "bean" sprite at (100, 100)
+     * let bean =add([
+     *     pos(100),
+     *     sprite("bean"),
+     * ]);
+     * ```
+     *
+     * @returns The position comp.
+     * @since v2000.0
+     * @group Components
+     */
     pos(xy: number): PosComp;
+    /**
+     * Set the position of a game object, relative to its parent.
+     *
+     * @param p - The position vector to clone and set.
+     *
+     * @example
+     * ```js
+     * // This game object will draw a "bean" sprite at (100, 100)
+     * let bean =add([
+     *     pos(vec2(100, 100)), // Important: Position is cloned, not referenced
+     *     sprite("bean"),
+     * ]);
+     *
+     * @returns The position comp.
+     * @since v2000.0
+     * @group Components
+     */
     pos(p: Vec2): PosComp;
+    /**
+     * Set the position of a game object to (0, 0), relative to its parent.
+     *
+     * @returns The position comp.
+     * @since v2000.0
+     * @group Components
+     */
     pos(): PosComp;
     /**
-     * Set the scale of a Game Object.
+     * Set the scale of a game object.
      *
      * @param x - The x scale to set.
      * @param y - The y scale to set.
@@ -497,7 +540,6 @@ export interface KAPLAYCtx<
      *
      *  // scale with vec2(x,y).
      * bean.scale = vec2(2,4);
-     *
      * ```
      *
      * @returns The scale comp.
@@ -505,13 +547,54 @@ export interface KAPLAYCtx<
      * @group Components
      */
     scale(x: number, y: number): ScaleComp;
+    /**
+     * Set the scale of a game object.
+     *
+     * @param xy - The x and y scale to set.
+     *
+     * @example
+     * ```js
+     * add([
+     *     sprite("bean"),
+     * 	   scale(3),
+     * ]);
+     * ```
+     *
+     * @returns The scale comp.
+     * @since v2000.0
+     * @group Components
+     */
     scale(xy: number): ScaleComp;
+    /**
+     * Set the scale of a game object.
+     *
+     * @param s - The scale vector to clone and set.
+     *
+     * @example
+     * ```js
+     * add([
+     *     sprite("bean"),
+     * 	   scale(vec2(3, 4)),
+     * ]);
+     * ```
+     *
+     * @returns The scale comp.
+     * @since v2000.0
+     * @group Components
+     */
     scale(s: Vec2): ScaleComp;
+    /**
+     * Set the scale of a game object to 1.
+     *
+     * @returns The scale comp.
+     * @since v2000.0
+     * @group Components
+     */
     scale(): ScaleComp;
     /**
-     * Rotates a Game Object (in degrees).
+     * Set the rotation of a game object (in degrees, 0-360).
      *
-     * @param a - The angle to rotate by. Defaults to 0.
+     * @param a - The angle to set. Defaults to 0.
      *
      * @example
      * ```js
@@ -530,8 +613,9 @@ export interface KAPLAYCtx<
      */
     rotate(a?: number): RotateComp;
     // #endregion
+    // #region Draw Components
     /**
-     * Sets the color of a Game Object (rgb 0-255).
+     * Set the color of a game object (rgb 0-255).
      *
      * @param r - The red value to set.
      * @param g - The green value to set.
@@ -539,7 +623,7 @@ export interface KAPLAYCtx<
      *
      * @example
      * ```js
-     * // blue frog
+     * // Blue bean
      * add([
      *     sprite("bean"),
      *     color(0, 0, 255),
@@ -551,16 +635,70 @@ export interface KAPLAYCtx<
      * @group Components
      */
     color(r: number, g: number, b: number): ColorComp;
+    /**
+     * Set the color of a game object (rgb 0-255).
+     *
+     * @param c - The color to clone and set.
+     *
+     * @example
+     * ```
+     * const LOYAL_PURPLE = new Color(114, 81, 181);
+     *
+     * add([
+     *     sprite("bean"),
+     *     color(LOYAL_PURPLE),
+     * ]);
+     *
+     * add([
+     *     sprite("ghosty"),
+     *     color(LOYAL_PURPLE),
+     * ]);
+     * ```
+     *
+     * @returns The color comp.
+     * @since v2000.0
+     * @group Components
+     */
     color(c: Color): ColorComp;
-    color(rgb: [number, number, number]): ColorComp;
+    /**
+     * Set the color of a game object to a CSS value or a hex code.
+     *
+     * @param c - A valid CSS color or hex string to set.
+     *
+     * @example
+     * ```js
+     * add([
+     *    circle(50),
+     *    color("purple"),
+     * ]);
+     *
+     * add([
+     *    circle(20),
+     *    color("#ff00ff"),
+     * ]);
+     * ```
+     *
+     * @returns The color comp.
+     * @since v2000.0
+     * @group Components
+     */
     color(c: CSSColor & (string | {})): ColorComp;
+    /**
+     * Set the color of a game object to (255, 255, 255).
+     *
+     * @returns The color comp.
+     * @since v2000.0
+     * @group Components
+     */
     color(): ColorComp;
     /**
      * Sets the blend mode of a Game Object.
      *
+     * @param blend - Blend mode to set to.
+     *
      * @example
      * ```js
-     * // light
+     * // Light
      * add([
      *     sprite("light"),
      *     blend(BlendMode.Add),
@@ -573,16 +711,16 @@ export interface KAPLAYCtx<
      */
     blend(blend: BlendMode): BlendComp;
     /**
-     * Sets the opacity of a Game Object (0.0 - 1.0).
+     * Set the opacity of a game object (0.0 - 1.0).
      *
-     * @param o - The opacity value to set.
+     * @param o - The opacity value to set. Defaults to 1.
      *
      * @example
      * ```js
      * const bean = add([
      *     sprite("bean"),
-     *     opacity(0.5) // Make bean 50% transparent
-     * ])
+     *     opacity(0.5), // Make bean 50% transparent
+     * ]);
      *
      * // Make bean invisible
      * bean.opacity = 0
@@ -597,17 +735,17 @@ export interface KAPLAYCtx<
      */
     opacity(o?: number): OpacityComp;
     /**
-     * Attach and render a sprite to a Game Object.
+     * Attach a sprite to a game object.
      *
-     * @param spr - The sprite to render.
-     * @param opt - Options for the sprite component. See {@link SpriteCompOpt `SpriteCompOpt`}.
+     * @param spr - The sprite to attach.
+     * @param opt - Options for the rendered sprite.
      *
      * @example
      * ```js
      * // minimal setup
      * add([
      *     sprite("bean"),
-     * ])
+     * ]);
      *
      * // with options
      * const bean = add([
@@ -615,14 +753,14 @@ export interface KAPLAYCtx<
      *         // start with animation "idle"
      *         anim: "idle",
      *     }),
-     * ])
+     * ]);
      *
      * // play / stop an anim
-     * bean.play("jump")
-     * bean.stop()
+     * bean.play("jump");
+     * bean.stop();
      *
      * // manually setting a frame
-     * bean.frame = 3
+     * bean.frame = 3;
      * ```
      *
      * @returns The sprite comp.
@@ -634,26 +772,26 @@ export interface KAPLAYCtx<
         opt?: SpriteCompOpt,
     ): SpriteComp;
     /**
-     * Attach and render a text to a Game Object.
+     * Attach a text to a game object.
      *
-     * @param txt - The text to display.
-     * @param opt - Options for the text component. See {@link TextCompOpt}.
+     * @param txt - The text to display. Defaults to "".
+     * @param opt - Options for the rendered text.
      *
      * @example
      * ```js
-     * // a simple score counter
+     * // A simple score counter
      * const score = add([
      *     text("Score: 0"),
      *     pos(24, 24),
      *     { value: 0 },
-     * ])
+     * ]);
      *
      * player.onCollide("coin", () => {
      *     score.value += 1
      *     score.text = "Score:" + score.value
      * })
      *
-     * // with options
+     * // Options for text
      * add([
      *     pos(24, 24),
      *     text("ohhi", {
@@ -670,20 +808,35 @@ export interface KAPLAYCtx<
      */
     text(txt?: string, opt?: TextCompOpt): TextComp;
     /**
-     * Attach and render a polygon to a Game Object.
+     * Attach a polygon to a game object.
      *
      * @param pts - The points to render the polygon.
-     * @param opt - Options for the polygon component. See {@link PolygonCompOpt `PolygonCompOpt`}.
+     * @param opt - Options for the rendered polygon.
      *
      * @example
      * ```js
-     * // Make a square the hard way
-     * add([
+     * // An hexagon
+     * const hexagon = add([
      *     pos(80, 120),
-     *     polygon([vec2(0,0), vec2(50,0), vec2(50,50), vec2(0,50)]),
+     *     polygon([
+     *         vec2(25, 0),
+     *         vec2(50, 13),
+     *         vec2(50, 38),
+     *         vec2(25, 50),
+     *         vec2(0, 38),
+     *         vec2(0, 13),
+     *     ]),
      *     outline(4),
      *     area(),
-     * ])
+     * ]);
+     *
+     * // Simple clicker game
+     * let clicks = 0;
+     *
+     * hexagon.onClick(() => {
+     *     clicks++;
+     *     debug.log("+1", "total score:", clicks);
+     * });
      * ```
      *
      * @returns The polygon comp.
@@ -692,11 +845,11 @@ export interface KAPLAYCtx<
      */
     polygon(pts: Vec2[], opt?: PolygonCompOpt): PolygonComp;
     /**
-     * Attach and render a rectangle to a Game Object.
+     * Attach a rectangle to a game object.
      *
      * @param w - The width of the rectangle.
      * @param h - The height of the rectangle.
-     * @param opt - Options for the rectangle component. See {@link RectCompOpt `RectCompOpt`}.
+     * @param opt - Options for the rendered rectangle.
      *
      * @example
      * ```js
@@ -705,25 +858,26 @@ export interface KAPLAYCtx<
      *     rect(20, 40),
      *     outline(4),
      *     area(),
-     * ])
+     * ]);
      * ```
      *
      * @returns The rectangle component.
+     * @since v2000.0
      * @group Components
      */
     rect(w: number, h: number, opt?: RectCompOpt): RectComp;
     /**
-     * Attach and render a circle to a Game Object.
+     * Attach a circle to a game object.
      *
      * @param radius - The radius of the circle.
-     * @param opt - Options for the circle component. See {@link CircleCompOpt `CircleCompOpt`}.
+     * @param opt - Options for the rendered circle.
      *
      * @example
      * ```js
      * add([
      *     pos(80, 120),
      *     circle(16),
-     * ])
+     * ]);
      * ```
      *
      * @returns The circle comp.
@@ -732,7 +886,7 @@ export interface KAPLAYCtx<
      */
     circle(radius: number, opt?: CircleCompOpt): CircleComp;
     /**
-     * Attach and render an ellipse to a Game Object.
+     * Attach an ellipse to a game object.
      *
      * @param radiusX - The radius of the ellipse on the x-axis.
      * @param radiusY - The radius of the ellipse on the y-axis.
@@ -742,26 +896,27 @@ export interface KAPLAYCtx<
      * add([
      *     pos(80, 120),
      *     ellipse(16, 8),
-     * ])
+     * ]);
      * ```
      *
      * @returns The ellipse comp.
-     * @since v2000.0
+     * @since v4000.0
      * @group Components
      */
     ellipse(radiusX: number, radiusY: number): EllipseComp;
     /**
-     * Attach and render a UV quad to a Game Object.
+     * Attach a UV quad to a game object.
      *
      * @param w - The width of the quad.
      * @param h - The height of the quad.
      *
      * @example
      * ```js
+     * // Render a shader in all the screen
      * add([
      *     uvquad(width(), height()),
      *     shader("spiral"),
-     * ])
+     * ]);
      * ```
      *
      * @returns The UV quad comp.
@@ -770,10 +925,19 @@ export interface KAPLAYCtx<
      */
     uvquad(w: number, h: number): UVQuadComp;
     /**
-     * Draws a video.
+     * Attach a video to a game object.
      *
-     * @param url - The video to play. Needs to be on the same webserver due to CORS.
-     * @param opt - The video component options
+     * @param url - Video's url to play. Needs to be on the same webserver due to CORS.
+     * @param opt - Options for the rendered video.
+     *
+     * @example
+     * ```js
+     * add([
+     *     video("/videos/3d.mp4", { width: 320, height: 200 }),
+     *     pos(center()),
+     *     anchor("center"),
+     * ]);
+     * ```
      *
      * @returns The video comp.
      * @since v4000.0
@@ -781,15 +945,19 @@ export interface KAPLAYCtx<
      */
     video(url: string, opt?: VideoCompOpt): VideoComp;
     /**
-     * Draws a picture.
+     * Attach a picture to a game object.
      *
      * @param picture - The picture to draw.
      *
      * @returns The picture comp.
      * @since v4000.0
      * @group Components
+     *
+     * @see {@link https://play.kaplayjs.com/?example=picture/|Picture Example}
      */
     picture(picture: Picture): PictureComp;
+    // #endregion
+    // #region ❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗
     /**
      * Attach a collider area from shape and enables collision detection in a Game Object.
      *
@@ -5864,6 +6032,8 @@ export interface KAPLAYCtx<
     /**
      * Start recording the canvas into a video. If framerate is not specified, a new frame will be captured each time the canvas changes.
      *
+     * @param frameRate - Frame rate (frames per second) for capturating the video.
+     *
      * @returns A control handle.
      * @since v2000.1
      * @group Data
@@ -5882,7 +6052,7 @@ export interface KAPLAYCtx<
      * });
      * ```
      *
-     * @returns The explosion object.
+     * @returns The explosion game object.
      * @since v2000.0
      * @group Misc
      */
@@ -5986,12 +6156,23 @@ export interface KAPLAYCtx<
      */
     canvas: HTMLCanvasElement;
     /**
-     * End everything.
+     * Remove all event listeners and destroy game canvas. (Note: This is very destructive).
+     *
+     * @example
+     * ```js
+     * kaplay();
+     *
+     * // End everything by pressing (E)
+     *
+     * onKeyPress("e", () => {
+     *     quit();
+     * });
+     * ```
      *
      * @since v2000.0
      * @group Start
      */
-    quit: () => void;
+    quit(): void;
     /**
      * Throws a new error and show up the Blue Screen.
      *
@@ -6030,9 +6211,8 @@ export interface KAPLAYCtx<
      * ```
      *
      * @returns The cancel event symbol.
-     * @since v3001.0.5
+     * @since v4000.0
      * @group Events
-     * @experimental This feature is in experimental phase, it will be fully released in v3001.1.0
      */
     cancel: () => Symbol;
     /**
@@ -6051,7 +6231,7 @@ export interface KAPLAYCtx<
      * BlendMode.Screen Screen blending
      *
      * @since v4000.0
-     * @group Constants
+     * @group Draw
      */
     BlendMode: typeof BlendMode;
     /**
