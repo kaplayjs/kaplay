@@ -54,7 +54,7 @@ import type { ScaleComp } from "../components/transform/scale";
 import type { ZComp } from "../components/transform/z";
 import { make } from "./make";
 import { deserializePrefabAsset, type SerializedGameObj } from "./prefab";
-import { isFixed } from "./utils";
+import { isFixed, isHidden, isPaused } from "./utils";
 
 export enum KeepFlags {
     Pos = 1,
@@ -454,6 +454,38 @@ export interface GameObjRaw {
      * @since v4000.0
      */
     onUntag(action: (tag: string) => void): KEventController;
+    /**
+     * Register an event that runs when the object becomes paused (either directly
+     * or by a parent being set to paused).
+     *
+     * @returns The event controller.
+     * @since v4000.0
+     */
+    onPause(action: () => void): KEventController;
+    /**
+     * Register an event that runs when the object becomes unpaused (either directly
+     * or by a parent being set to unpaused).
+     *
+     * @returns The event controller.
+     * @since v4000.0
+     */
+    onUnpause(action: () => void): KEventController;
+    /**
+     * Register an event that runs when the object becomes hidden (either directly
+     * or by a parent being set to hidden).
+     *
+     * @returns The event controller.
+     * @since v4000.0
+     */
+    onNoDraw(action: () => void): KEventController;
+    /**
+     * Register an event that runs when the object becomes visible (either directly
+     * or by a parent being set to visible).
+     *
+     * @returns The event controller.
+     * @since v4000.0
+     */
+    onBeginDraw(action: () => void): KEventController;
     onKeyDown: KAPLAYCtx["onKeyDown"];
     onKeyPress: KAPLAYCtx["onKeyPress"];
     onKeyPressRepeat: KAPLAYCtx["onKeyPressRepeat"];
@@ -504,6 +536,8 @@ export type InternalGameObjRaw = GameObjRaw & {
     /** @readonly */
     _paused: boolean;
     /** @readonly */
+    _hidden: boolean;
+    /** @readonly */
     _drawLayerIndex: number;
 
     /**
@@ -528,6 +562,22 @@ export type InternalGameObjRaw = GameObjRaw & {
      * @param compId - Component ID for searching.
      */
     _checkDependents(compId: string): void;
+    /**
+     * Check if the game obj changed the effective paused state
+     * and trigger the onPause / onUnpause events recursively if needed
+     *
+     * @param oldPaused - previous effective paused state
+     * @param newPaused - current effective paused state
+     */
+    _updatePausedState(oldPaused: boolean, newPaused: boolean): void;
+    /**
+     * Check if the game obj changed the effective hidden state
+     * and trigger the onHide / onShow events recursively if needed
+     *
+     * @param oldHidden - previous effective hidden state
+     * @param newHidden - current effective hidden state
+     */
+    _updateHiddenState(oldHidden: boolean, newHidden: boolean): void;
 };
 
 type GameObjTransform =
@@ -558,6 +608,7 @@ export const GameObjRawPrototype: Omit<InternalGameObjRaw, AppEvents> = {
     // directly, it's only a prototype. These properties WILL be defined
     // (by our factory function `make`) when we create a new game object.
     _paused: null as any,
+    _hidden: null as any,
     _anonymousCompStates: null as any,
     _cleanups: null as any,
     _compsIds: null as any,
@@ -572,7 +623,6 @@ export const GameObjRawPrototype: Omit<InternalGameObjRaw, AppEvents> = {
     _drawEvents: null as any,
     _drawLayerIndex: null as any,
     children: null as any,
-    hidden: null as any,
     id: null as any,
     transform: null as any,
     target: null as any,
@@ -583,6 +633,11 @@ export const GameObjRawPrototype: Omit<InternalGameObjRaw, AppEvents> = {
         // so this is GameObj
 
         if (this._parent === p) return;
+
+        // save the old paused and hidden states
+        const oldPaused = isPaused(this as any);
+        const oldHidden = isHidden(this as any);
+
         const index = this._parent
             ? this._parent.children.indexOf(this as unknown as GameObj)
             : -1;
@@ -593,19 +648,61 @@ export const GameObjRawPrototype: Omit<InternalGameObjRaw, AppEvents> = {
         if (p) {
             p.children.push(this as unknown as GameObj);
         }
+
+        const newPaused = isPaused(this as any);
+        const newHidden = isHidden(this as any);
+
+        this._updatePausedState(oldPaused, newPaused);
+        this._updateHiddenState(oldHidden, newHidden);
     },
 
     set paused(paused: boolean) {
         if (this._paused === paused) return;
+        const oldPaused = isPaused(this as any);
         this._paused = paused;
-
-        for (const e of this._inputEvents) {
-            e.paused = paused;
-        }
+        const newPaused = isPaused(this as any);
+        this._updatePausedState(oldPaused, newPaused);
     },
 
     get paused() {
         return this._paused;
+    },
+
+    _updatePausedState(oldPaused, newPaused) {
+        if (oldPaused === newPaused) return;
+        const eventName = newPaused ? "pause" : "unpause";
+        const recurse = (obj: GameObj, first: boolean) => {
+            obj.trigger(eventName);
+            for (const e of obj._inputEvents) {
+                e.paused = newPaused;
+            }
+            if (obj.paused && !first) return;
+            obj.children.forEach(c => recurse(c, false));
+        };
+        recurse(this as any, true);
+    },
+
+    set hidden(hidden: boolean) {
+        if (this._hidden === hidden) return;
+        const oldHidden = isHidden(this as any);
+        this._hidden = hidden;
+        const newHidden = isHidden(this as any);
+        this._updateHiddenState(oldHidden, newHidden);
+    },
+
+    get hidden() {
+        return this._hidden;
+    },
+
+    _updateHiddenState(oldHidden, newHidden) {
+        if (oldHidden === newHidden) return;
+        const eventName = newHidden ? "nodraw" : "begindraw";
+        const recurse = (obj: GameObj, first: boolean) => {
+            obj.trigger(eventName);
+            if (obj.hidden && !first) return;
+            obj.children.forEach(c => recurse(c, false));
+        };
+        recurse(this as any, true);
     },
 
     get parent() {
@@ -1527,6 +1624,22 @@ export const GameObjRawPrototype: Omit<InternalGameObjRaw, AppEvents> = {
 
     onUnuse(action: (id: string) => void): KEventController {
         return this.on("unuse", action);
+    },
+
+    onPause(action: () => void): KEventController {
+        return this.on("pause", action);
+    },
+
+    onUnpause(action: () => void): KEventController {
+        return this.on("unpause", action);
+    },
+
+    onBeginDraw(action: () => void): KEventController {
+        return this.on("begindraw", action);
+    },
+
+    onNoDraw(action: () => void): KEventController {
+        return this.on("nodraw", action);
     },
     // #endregion
 };

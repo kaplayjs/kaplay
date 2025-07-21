@@ -9,12 +9,11 @@ export function getTreeRoot(): GameObj {
     return _k.game.root;
 }
 
-export function isFixed(obj: GameObj): boolean {
-    if (obj.fixed) return true;
-    return obj.parent ? isFixed(obj.parent) : false;
-}
+const is = (
+    obj: GameObj | null,
+    field: "paused" | "fixed" | "hidden",
+): boolean => obj ? (obj[field] ? true : is(obj.parent, field)) : false;
 
-export function isPaused(obj: GameObj): boolean {
-    if (obj.paused) return true;
-    return obj.parent ? isPaused(obj.parent) : false;
-}
+export const isFixed = (obj: GameObj): boolean => is(obj, "fixed");
+export const isPaused = (obj: GameObj): boolean => is(obj, "paused");
+export const isHidden = (obj: GameObj): boolean => is(obj, "hidden");
