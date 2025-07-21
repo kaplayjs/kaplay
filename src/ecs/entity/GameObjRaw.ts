@@ -33,6 +33,7 @@ import {
 } from "../../gfx/stack";
 import { Mat23 } from "../../math/math";
 import { calcTransform } from "../../math/various";
+import { Vec2 } from "../../math/Vec2";
 import { _k } from "../../shared";
 import type {
     Comp,
@@ -45,6 +46,7 @@ import type {
     RenderTarget,
     Tag,
 } from "../../types";
+import { proxySetter } from "../../utils/proxySetter";
 import type { MaskComp } from "../components/draw/mask";
 import type { FixedComp } from "../components/transform/fixed";
 import type { LayerComp } from "../components/transform/layer";
@@ -103,7 +105,7 @@ export interface GameObjRaw {
      *
      * @since v3000.0
      */
-    transform: Mat23;
+    readonly transform: Mat23;
     /**
      * If draw the game obj (run "draw" event or not).
      *
@@ -505,6 +507,10 @@ export type InternalGameObjRaw = GameObjRaw & {
     _paused: boolean;
     /** @readonly */
     _drawLayerIndex: number;
+    /** @readonly */
+    _transform: Mat23;
+    /** @readonly */
+    _transformDirty: boolean;
 
     /**
      * Adds a component or anonymous component.
@@ -528,6 +534,11 @@ export type InternalGameObjRaw = GameObjRaw & {
      * @param compId - Component ID for searching.
      */
     _checkDependents(compId: string): void;
+    /**
+     * Marks the object and all of its descendants as needing a
+     * transformation matrix update
+     */
+    _dirtyTransform(): void;
 };
 
 type GameObjTransform =
@@ -553,6 +564,12 @@ const COMP_EVENTS = new Set([
 
 type GarbageCollectorArray = (() => any)[];
 
+const PROPS_AFFECTING_TRANSFORM = new Set([
+    "pos",
+    "angle",
+    "scale",
+]);
+
 export const GameObjRawPrototype: Omit<InternalGameObjRaw, AppEvents> = {
     // This chain of `as any`, is because we never should use this object
     // directly, it's only a prototype. These properties WILL be defined
@@ -571,10 +588,11 @@ export const GameObjRawPrototype: Omit<InternalGameObjRaw, AppEvents> = {
     _updateEvents: null as any,
     _drawEvents: null as any,
     _drawLayerIndex: null as any,
+    _transform: null as any,
+    _transformDirty: null as any,
     children: null as any,
     hidden: null as any,
     id: null as any,
-    transform: null as any,
     target: null as any,
 
     // #region Setters and Getters
@@ -593,6 +611,7 @@ export const GameObjRawPrototype: Omit<InternalGameObjRaw, AppEvents> = {
         if (p) {
             p.children.push(this as unknown as GameObj);
         }
+        this._dirtyTransform();
     },
 
     set paused(paused: boolean) {
@@ -614,6 +633,19 @@ export const GameObjRawPrototype: Omit<InternalGameObjRaw, AppEvents> = {
 
     get tags() {
         return Array.from(this._tags);
+    },
+
+    get transform() {
+        if (this._transformDirty) {
+            calcTransform(this as any, this._transform);
+            this._transformDirty = false;
+        }
+        return this._transform;
+    },
+
+    _dirtyTransform() {
+        this._transformDirty = true;
+        this.children.forEach(child => child._dirtyTransform());
     },
 
     // #endregion
@@ -656,8 +688,6 @@ export const GameObjRawPrototype: Omit<InternalGameObjRaw, AppEvents> = {
         }
 
         obj.parent = this;
-
-        calcTransform(obj, obj.transform);
 
         obj.trigger("add", obj);
         _k.game.events.trigger("add", obj);
@@ -1005,7 +1035,6 @@ export const GameObjRawPrototype: Omit<InternalGameObjRaw, AppEvents> = {
         if (this.angle) multRotate(this.angle);
         if (this.scale) multScaleV(this.scale);
 
-        if (!this.transform) this.transform = new Mat23();
         storeMatrix(this.transform);
 
         // For each child call collect
@@ -1173,7 +1202,6 @@ export const GameObjRawPrototype: Omit<InternalGameObjRaw, AppEvents> = {
         if (this.angle) multRotate(this.angle);
         if (this.scale) multScaleV(this.scale);
 
-        if (!this.transform) this.transform = new Mat23();
         storeMatrix(this.transform);
 
         // Add to objects
@@ -1256,21 +1284,36 @@ export const GameObjRawPrototype: Omit<InternalGameObjRaw, AppEvents> = {
                         this._onCurCompCleanup = null;
                     };
 
-                    gc.push(this.on(key, <any> func).cancel);
+                    gc.push(this.on(key, <any>func).cancel);
                 }
                 else {
-                    const func = comp[<keyof typeof comp> key];
+                    const func = comp[<keyof typeof comp>key];
 
-                    gc.push(this.on(key, <any> func).cancel);
+                    gc.push(this.on(key, <any>func).cancel);
                 }
             }
             else {
                 // @ts-ignore
                 if (this[key] === undefined) {
                     // Assign comp fields to game obj
+                    let get = () => comp[<keyof typeof comp>key];
+                    let set = (val: any) => comp[<keyof typeof comp>key] = val;
+                    if (PROPS_AFFECTING_TRANSFORM.has(key)) {
+                        set = (val: any) => {
+                            comp[<keyof typeof comp>key] = val;
+                            this._dirtyTransform();
+                        };
+                        if (comp[<keyof typeof comp>key] instanceof Vec2) {
+                            proxySetter(comp, key, () => this._dirtyTransform());
+                            set = (val: any) => {
+                                comp[<keyof typeof comp>key] = val;
+                                proxySetter(comp, key, () => this._dirtyTransform());
+                                this._dirtyTransform();
+                            }
+                        }
+                    }
                     Object.defineProperty(this, key, {
-                        get: () => comp[<keyof typeof comp> key],
-                        set: (val) => comp[<keyof typeof comp> key] = val,
+                        get, set,
                         configurable: true,
                         enumerable: true,
                     });
@@ -1283,9 +1326,9 @@ export const GameObjRawPrototype: Omit<InternalGameObjRaw, AppEvents> = {
                     )?.id;
                     throw new Error(
                         `Duplicate component property: "${key}" while adding component "${comp.id}"`
-                            + (originalCompId
-                                ? ` (originally added by "${originalCompId}")`
-                                : ""),
+                        + (originalCompId
+                            ? ` (originally added by "${originalCompId}")`
+                            : ""),
                     );
                 }
             }
@@ -1561,7 +1604,7 @@ export function attachAppToGameObjRaw() {
     for (const e of appEvs) {
         const obj = GameObjRawPrototype as Record<string, any>;
 
-        obj[e] = function(this: InternalGameObjRaw, ...args: [any]) {
+        obj[e] = function (this: InternalGameObjRaw, ...args: [any]) {
             // @ts-ignore
             const ev: KEventController = _k.app[e]?.(...args);
             ev.paused = this.paused;

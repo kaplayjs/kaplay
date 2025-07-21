@@ -43,10 +43,11 @@ export function makeInternal<T extends CompList<unknown>>(
     obj._fixedUpdateEvents = new KEvent<[]>();
     obj._drawEvents = new KEvent<[]>();
     obj._inputEvents = [];
+    obj._transform = new Mat23();
+    obj._transformDirty = true;
     obj.paused = false;
     obj.hidden = false;
     obj.id = id;
-    obj.transform = new Mat23();
 
     // We only need to modify the prototype the first time, when we know App
     // state is available (at the moment of create the root game object)

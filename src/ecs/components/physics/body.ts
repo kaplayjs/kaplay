@@ -3,7 +3,6 @@ import type { KEventController } from "../../../events/events";
 import { getGravityDirection } from "../../../game/gravity";
 import { lerp } from "../../../math/lerp";
 import { vec2 } from "../../../math/math";
-import { calcTransform } from "../../../math/various";
 import { type Vec2 } from "../../../math/Vec2";
 import { _k } from "../../../shared";
 import type { Comp, GameObj } from "../../../types";
@@ -243,8 +242,6 @@ export function body(opt: BodyCompOpt = {}): BodyComp {
                             other.pos = other.pos.add(
                                 col.displacement.scale(-this.mass / tmass),
                             );
-                            calcTransform(this, this.transform);
-                            calcTransform(other, other.transform);
                         }
                         else {
                             // if one is static and on is not, resolve the non static one
@@ -254,7 +251,6 @@ export function body(opt: BodyCompOpt = {}): BodyComp {
                             col2.source.pos = col2.source.pos.add(
                                 col2.displacement,
                             );
-                            calcTransform(col2.source, col2.source.transform);
                         }
 
                         col.resolved = true;

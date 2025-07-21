@@ -1,7 +1,6 @@
 import { DEF_HASH_GRID_SIZE } from "../../constants/general";
 import type { AreaComp } from "../../ecs/components/physics/area";
 import type { GameObj } from "../../types";
-import { calcTransform } from "../various";
 
 class HashGrid {
     grid: Record<number, Record<number, GameObj<AreaComp>[]>> = {};
@@ -28,10 +27,6 @@ class HashGrid {
     }
 
     update() {
-        // Update edge data
-        for (const obj of this.objects) {
-            calcTransform(obj, obj.transform);
-        }
     }
 
     /**
