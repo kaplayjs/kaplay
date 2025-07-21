@@ -2124,7 +2124,7 @@ export interface KAPLAYCtx<
      * ]);
      *
      * // resize the rectangle to screen size
-     * Tab(() => {
+     * onTabResize(() => {
      *     debug.log(`Old Size: ${rectangle.width}x${rectangle.height}`);
      *     rectangle.width = width();
      *     rectangle.height = height();
