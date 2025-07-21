@@ -1960,6 +1960,38 @@ export interface KAPLAYCtx<
      */
     onUntag(action: (obj: GameObj, tag: string) => void): KEventController;
     /**
+     * Register an event that runs when an object becomes paused (either directly
+     * or by a parent being set to paused).
+     *
+     * @returns The event controller.
+     * @since v4000.0
+     */
+    onPause(action: () => void): KEventController;
+    /**
+     * Register an event that runs when an object becomes unpaused (either directly
+     * or by a parent being set to unpaused).
+     *
+     * @returns The event controller.
+     * @since v4000.0
+     */
+    onUnpause(action: () => void): KEventController;
+    /**
+     * Register an event that runs when an object becomes hidden (either directly
+     * or by a parent being set to hidden).
+     *
+     * @returns The event controller.
+     * @since v4000.0
+     */
+    onHide(action: () => void): KEventController;
+    /**
+     * Register an event that runs when an object becomes visible (either directly
+     * or by a parent being set to visible).
+     *
+     * @returns The event controller.
+     * @since v4000.0
+     */
+    onShow(action: () => void): KEventController;
+    /**
      * Register an event that runs when all assets finished loading.
      *
      * @param action - The function to run when the event is triggered.

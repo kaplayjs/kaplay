@@ -12,8 +12,8 @@ const t = add([text("testing..."), pos(100, 100)]);
 
 const a = add([]);
 const b = a.add([]);
-const c = b.add([]);
-c.onPause(() => {
+const c = b.add(["final"]);
+onPause("final", () => {
     t.text += "\nPASSED!";
 });
 c.onUnpause(() => {

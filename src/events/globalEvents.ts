@@ -289,3 +289,27 @@ export function onLoadError(
         return _k.game.events.on("loadError", cb);
     }
 }
+
+export const onHide = overload2((cb: (x: GameObj) => void) => {
+    return _k.game.events.on("hide", cb);
+}, (tag: Tag, cb: (x: GameObj) => void) => {
+    return on("hide", tag, cb);
+});
+
+export const onShow = overload2((cb: (x: GameObj) => void) => {
+    return _k.game.events.on("show", cb);
+}, (tag: Tag, cb: (x: GameObj) => void) => {
+    return on("show", tag, cb);
+});
+
+export const onPause = overload2((cb: () => void) => {
+    return _k.game.events.on("pause", cb);
+}, (tag: Tag, cb: () => void) => {
+    return on("pause", tag, cb);
+});
+
+export const onUnpause = overload2((cb: () => void) => {
+    return _k.game.events.on("unpause", cb);
+}, (tag: Tag, cb: () => void) => {
+    return on("unpause", tag, cb);
+});
