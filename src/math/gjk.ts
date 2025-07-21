@@ -20,6 +20,11 @@ class CircleCollider implements Collider {
         this.center = center;
         this.radius = radius;
     }
+    set(center: Vec2, radius: number): this {
+        this.center = center;
+        this.radius = radius;
+        return this;
+    }
 
     support(direction: Vec2): Vec2 {
         const s = new Vec2(direction.x, direction.y);
@@ -41,6 +46,13 @@ class EllipseCollider implements Collider {
         this.radiusX = radiusX;
         this.radiusY = radiusY;
         this.angle = angle;
+    }
+    set(center: Vec2, radiusX: number, radiusY: number, angle: number): this {
+        this.center = center;
+        this.radiusX = radiusX;
+        this.radiusY = radiusY;
+        this.angle = angle;
+        return this;
     }
 
     support(direction: Vec2): Vec2 {
@@ -72,6 +84,11 @@ class PolygonCollider implements Collider {
     constructor(vertices: Vec2[]) {
         this.vertices = vertices;
         this.center = this.vertices[0];
+    }
+    set(vertices: Vec2[]): this {
+        this.vertices = vertices;
+        this.center = this.vertices[0];
+        return this;
     }
 
     support(direction: Vec2): Vec2 {
@@ -409,6 +426,8 @@ function gjkIntersection(
     return getIntersection(colliderA, colliderB, vertices);
 }
 
+const colliderCache = new WeakMap<Shape, Collider>();
+
 /**
  * Returns a collider for the given shape.
  * @param shape - The shape to get a collider for.
@@ -416,32 +435,70 @@ function gjkIntersection(
  * @returns
  */
 function shapeToCollider(shape: Shape): Collider {
+    var cachedCollider = colliderCache.get(shape);
     if (shape instanceof Rect) {
-        return new PolygonCollider((shape as Rect).points());
+        if (cachedCollider) {
+            return (cachedCollider as PolygonCollider).set(shape.points());
+        }
+        cachedCollider = new PolygonCollider(shape.points());
     }
     else if (shape instanceof Circle) {
-        return new CircleCollider(
-            (shape as Circle).center,
-            (shape as Circle).radius,
-        );
+        if (cachedCollider) {
+            return (cachedCollider as CircleCollider).set(
+                shape.center,
+                shape.radius,
+            );
+        }
+        cachedCollider = new CircleCollider(shape.center, shape.radius);
     }
     else if (shape instanceof Polygon) {
-        return new PolygonCollider((shape as Polygon).pts);
+        if (cachedCollider) {
+            return (cachedCollider as PolygonCollider).set(shape.pts);
+        }
+        cachedCollider = new PolygonCollider(shape.pts);
     }
     else if (shape instanceof Ellipse) {
-        return new EllipseCollider(
-            (shape as Ellipse).center,
-            (shape as Ellipse).radiusX,
-            (shape as Ellipse).radiusY,
-            (shape as Ellipse).angle,
+        if (cachedCollider) {
+            return (cachedCollider as EllipseCollider).set(
+                shape.center,
+                shape.radiusX,
+                shape.radiusY,
+                shape.angle,
+            );
+        }
+        cachedCollider = new EllipseCollider(
+            shape.center,
+            shape.radiusX,
+            shape.radiusY,
+            shape.angle,
         );
     }
     else if (shape instanceof Line) {
-        return new PolygonCollider([shape.p1, shape.p1, shape.p2, shape.p2]);
+        if (cachedCollider) {
+            return (cachedCollider as PolygonCollider).set([
+                shape.p1,
+                shape.p1,
+                shape.p2,
+                shape.p2,
+            ]);
+        }
+        cachedCollider = new PolygonCollider([
+            shape.p1,
+            shape.p1,
+            shape.p2,
+            shape.p2,
+        ]);
     }
     else {
-        return new PolygonCollider(shape.bbox().points());
+        if (cachedCollider) {
+            return (cachedCollider as PolygonCollider).set(
+                shape.bbox().points(),
+            );
+        }
+        cachedCollider = new PolygonCollider(shape.bbox().points());
     }
+    colliderCache.set(shape, cachedCollider);
+    return cachedCollider;
 }
 
 /**
