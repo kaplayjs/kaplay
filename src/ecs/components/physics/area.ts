@@ -29,7 +29,7 @@ import type {
     Shape,
     Tag,
 } from "../../../types";
-import { proxySetter } from "../../../utils/proxySetter";
+import { wrapProxy } from "../../../utils/proxySetter";
 import type { InternalGameObjRaw } from "../../entity/GameObjRaw";
 import { isFixed } from "../../entity/utils";
 import type { Collision } from "../../systems/Collision";
@@ -59,9 +59,8 @@ class AreaInfo {
     }
     set shape(value: Shape | null) {
         if (this._shape !== value) {
-            this._shape = value;
+            this._shape = wrapProxy(value, this._dirty);
             this._dirty();
-            proxySetter(this, "shape", this._dirty);
         }
     }
     /**
@@ -72,9 +71,8 @@ class AreaInfo {
     }
     set scale(value: Vec2) {
         if (!this._scale.eq(value)) {
-            this._scale = value;
+            this._scale = wrapProxy(value, this._dirty);
             this._dirty();
-            proxySetter(this, "scale", this._dirty);
         }
     }
     /**
@@ -85,9 +83,8 @@ class AreaInfo {
     }
     set offset(value: Vec2) {
         if (!this._offset.eq(value)) {
-            this._offset = value;
+            this._offset = wrapProxy(value, this._dirty);
             this._dirty();
-            proxySetter(this, "offset", this._dirty);
         }
     }
     /**
@@ -95,14 +92,11 @@ class AreaInfo {
      */
     cursor: Cursor | null;
     constructor(opts: AreaCompOpt) {
-        this.shape = opts.shape ?? null;
-        this.scale = vec2(opts.scale ?? 1);
-        this.offset = opts.offset ?? vec2(0);
-        this.cursor = opts.cursor ?? null;
         this._dirty = this._dirty.bind(this);
-        if (this.shape) proxySetter(this, "shape", this._dirty);
-        proxySetter(this, "scale", this._dirty);
-        proxySetter(this, "offset", this._dirty);
+        this.shape = opts.shape ? wrapProxy(opts.shape, this._dirty) : null;
+        this.scale = wrapProxy(vec2(opts.scale ?? 1), this._dirty);
+        this.offset = wrapProxy(opts.offset ?? vec2(0), this._dirty);
+        this.cursor = opts.cursor ?? null;
     }
 }
 
