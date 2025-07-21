@@ -37,7 +37,9 @@ export function uvquad(w: number, h: number): UVQuadComp {
         set width(value) {
             _width = value;
             if (_shape) _shape.width = value;
-            (this as any as GameObj<AreaComp>)._worldAreaDirty = true;
+            if ((this as any as GameObj).has("area")) {
+                (this as any as GameObj<AreaComp>)._worldAreaDirty = true;
+            }
         },
         get height() {
             return _height;
@@ -45,7 +47,9 @@ export function uvquad(w: number, h: number): UVQuadComp {
         set height(value) {
             _height = value;
             if (_shape) _shape.height = value;
-            (this as any as GameObj<AreaComp>)._worldAreaDirty = true;
+            if ((this as any as GameObj).has("area")) {
+                (this as any as GameObj<AreaComp>)._worldAreaDirty = true;
+            }
         },
         draw(this: GameObj<UVQuadComp>) {
             drawUVQuad(Object.assign(getRenderProps(this), {

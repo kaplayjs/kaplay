@@ -70,7 +70,9 @@ export function rect(w: number, h: number, opt: RectCompOpt = {}): RectComp {
         set width(value) {
             _width = value;
             if (_shape) _shape.width = value;
-            (this as any as GameObj<AreaComp>)._worldAreaDirty = true;
+            if ((this as any as GameObj).has("area")) {
+                (this as any as GameObj<AreaComp>)._worldAreaDirty = true;
+            }
         },
         get height() {
             return _height;
@@ -78,7 +80,9 @@ export function rect(w: number, h: number, opt: RectCompOpt = {}): RectComp {
         set height(value) {
             _height = value;
             if (_shape) _shape.height = value;
-            (this as any as GameObj<AreaComp>)._worldAreaDirty = true;
+            if ((this as any as GameObj).has("area")) {
+                (this as any as GameObj<AreaComp>)._worldAreaDirty = true;
+            }
         },
         radius: opt.radius || 0,
         draw(this: GameObj<RectComp>) {

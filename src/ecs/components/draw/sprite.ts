@@ -300,7 +300,9 @@ export function sprite(
         set width(value) {
             _width = value;
             if (_shape) _shape.width = value;
-            (this as any as GameObj<AreaComp>)._worldAreaDirty = true;
+            if ((this as any as GameObj).has("area")) {
+                (this as any as GameObj<AreaComp>)._worldAreaDirty = true;
+            }
         },
         get height() {
             return _height;
@@ -308,7 +310,9 @@ export function sprite(
         set height(value) {
             _height = value;
             if (_shape) _shape.height = value;
-            (this as any as GameObj<AreaComp>)._worldAreaDirty = true;
+            if ((this as any as GameObj).has("area")) {
+                (this as any as GameObj<AreaComp>)._worldAreaDirty = true;
+            }
         },
         frame: opt.frame || 0,
         quad: opt.quad || new Quad(0, 0, 1, 1),

@@ -59,7 +59,9 @@ export function circle(radius: number, opt: CircleCompOpt = {}): CircleComp {
         set radius(value: number) {
             _radius = value;
             if (_shape) _shape.radius = value;
-            (this as any as GameObj<AreaComp>)._worldAreaDirty = true;
+            if ((this as any as GameObj).has("area")) {
+                (this as any as GameObj<AreaComp>)._worldAreaDirty = true;
+            }
         },
         draw(this: GameObj<CircleComp>) {
             drawCircle(Object.assign(getRenderProps(this), {

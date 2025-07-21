@@ -65,7 +65,9 @@ export function ellipse(
         set radiusX(value: number) {
             _radiusX = value;
             if (_shape) _shape.radiusX = value;
-            (this as any as GameObj<AreaComp>)._worldAreaDirty = true;
+            if ((this as any as GameObj).has("area")) {
+                (this as any as GameObj<AreaComp>)._worldAreaDirty = true;
+            }
         },
         get radiusY() {
             return _radiusY;
@@ -73,7 +75,9 @@ export function ellipse(
         set radiusY(value: number) {
             _radiusY = value;
             if (_shape) _shape.radiusY = value;
-            (this as any as GameObj<AreaComp>)._worldAreaDirty = true;
+            if ((this as any as GameObj).has("area")) {
+                (this as any as GameObj<AreaComp>)._worldAreaDirty = true;
+            }
         },
         draw(this: GameObj<EllipseComp>) {
             drawEllipse(Object.assign(getRenderProps(this), {

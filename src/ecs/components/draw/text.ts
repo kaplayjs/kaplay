@@ -202,7 +202,9 @@ export function text(t: string, opt: TextCompOpt = {}): TextComp {
         set width(value) {
             _width = value;
             if (_shape) _shape.width = value;
-            (this as any as GameObj<AreaComp>)._worldAreaDirty = true;
+            if ((this as any as GameObj).has("area")) {
+                (this as any as GameObj<AreaComp>)._worldAreaDirty = true;
+            }
         },
         get height() {
             return _height;
@@ -210,7 +212,9 @@ export function text(t: string, opt: TextCompOpt = {}): TextComp {
         set height(value) {
             _height = value;
             if (_shape) _shape.height = value;
-            (this as any as GameObj<AreaComp>)._worldAreaDirty = true;
+            if ((this as any as GameObj).has("area")) {
+                (this as any as GameObj<AreaComp>)._worldAreaDirty = true;
+            }
         },
         align: opt.align,
         lineSpacing: opt.lineSpacing,
