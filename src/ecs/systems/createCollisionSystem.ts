@@ -1,4 +1,4 @@
-import { onAdd, onDestroy, onUnuse, onUse } from "../../events/globalEvents";
+import { onAdd, onDestroy, onPause, onUnpause, onUnuse, onUse } from "../../events/globalEvents";
 import { onSceneLeave } from "../../game/scenes";
 import { gjkShapeIntersection } from "../../math/gjk";
 import { minkowskiRectShapeIntersection } from "../../math/minkowski";
@@ -7,6 +7,7 @@ import { SweepAndPrune } from "../../math/spatial/sweepandprune";
 import { _k } from "../../shared";
 import type { GameObj } from "../../types";
 import { type AreaComp, usesArea } from "../components/physics/area";
+import { isPaused } from "../entity/utils";
 import { Collision } from "./Collision";
 
 export const createCollisionSystem = ({ narrow = "gjk" } = {}) => {
@@ -77,22 +78,30 @@ export const createCollisionSystem = ({ narrow = "gjk" } = {}) => {
                     sap.remove(obj as GameObj<AreaComp>);
                 }
             });
-            onSceneLeave(scene => {
+            onSceneLeave(() => {
                 sapInit = false;
                 sap.clear();
             });
+            onPause(obj => {
+                if (obj.has("area")) {
+                    sap.remove(obj as GameObj<AreaComp>);
+                }
+            });
+            onUnpause(obj => {
+                if (obj.has("area")) {
+                    sap.add(obj as GameObj<AreaComp>);
+                }
+            });
 
             for (const obj of _k.game.root.get("*", { recursive: true })) {
-                if (obj.has("area")) {
+                if (obj.has("area") && !isPaused(obj)) {
                     sap.add(obj as GameObj<AreaComp>);
                 }
             }
         }
 
         sap.update();
-        for (const [obj1, obj2] of sap) {
-            narrowPhase(obj1, obj2);
-        }
+        sap.process(narrowPhase);
     }
 
     function checkFrame() {
