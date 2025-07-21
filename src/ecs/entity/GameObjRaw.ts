@@ -673,6 +673,7 @@ export const GameObjRawPrototype: Omit<InternalGameObjRaw, AppEvents> = {
         const eventName = newPaused ? "pause" : "unpause";
         const recurse = (obj: GameObj, first: boolean) => {
             obj.trigger(eventName);
+            _k.game.events.trigger(eventName, obj);
             for (const e of obj._inputEvents) {
                 e.paused = newPaused;
             }
@@ -699,6 +700,7 @@ export const GameObjRawPrototype: Omit<InternalGameObjRaw, AppEvents> = {
         const eventName = newHidden ? "hide" : "show";
         const recurse = (obj: GameObj, first: boolean) => {
             obj.trigger(eventName);
+            _k.game.events.trigger(eventName, obj);
             if (obj.hidden && !first) return;
             obj.children.forEach(c => recurse(c, false));
         };
