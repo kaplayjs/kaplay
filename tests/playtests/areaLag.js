@@ -25,5 +25,5 @@ for (var i = 0; i < 500; i++) {
 var frames = 0;
 onUpdate(() => {
     frames++;
-    debug.log((frames / time()).toFixed());
+    debug.log((frames / time()).toFixed(), "fps");
 });

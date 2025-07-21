@@ -16,5 +16,5 @@ for (var i = 0; i < 500; i++) {
 }
 
 onUpdate(() => {
-    debug.log(debug.fps());
+    debug.log(debug.fps(), "fps");
 });
