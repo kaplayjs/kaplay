@@ -6,6 +6,6 @@ export function proxySetter(obj: any, key: any, onChange: () => void) {
                 onChange();
             }
             return true;
-        }
+        },
     });
 }

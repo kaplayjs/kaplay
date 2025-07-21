@@ -1284,36 +1284,45 @@ export const GameObjRawPrototype: Omit<InternalGameObjRaw, AppEvents> = {
                         this._onCurCompCleanup = null;
                     };
 
-                    gc.push(this.on(key, <any>func).cancel);
+                    gc.push(this.on(key, <any> func).cancel);
                 }
                 else {
-                    const func = comp[<keyof typeof comp>key];
+                    const func = comp[<keyof typeof comp> key];
 
-                    gc.push(this.on(key, <any>func).cancel);
+                    gc.push(this.on(key, <any> func).cancel);
                 }
             }
             else {
                 // @ts-ignore
                 if (this[key] === undefined) {
                     // Assign comp fields to game obj
-                    let get = () => comp[<keyof typeof comp>key];
-                    let set = (val: any) => comp[<keyof typeof comp>key] = val;
+                    let get = () => comp[<keyof typeof comp> key];
+                    let set = (val: any) => comp[<keyof typeof comp> key] = val;
                     if (PROPS_AFFECTING_TRANSFORM.has(key)) {
                         set = (val: any) => {
-                            comp[<keyof typeof comp>key] = val;
+                            comp[<keyof typeof comp> key] = val;
                             this._dirtyTransform();
                         };
-                        if (comp[<keyof typeof comp>key] instanceof Vec2) {
-                            proxySetter(comp, key, () => this._dirtyTransform());
+                        if (comp[<keyof typeof comp> key] instanceof Vec2) {
+                            proxySetter(
+                                comp,
+                                key,
+                                () => this._dirtyTransform(),
+                            );
                             set = (val: any) => {
-                                comp[<keyof typeof comp>key] = val;
-                                proxySetter(comp, key, () => this._dirtyTransform());
+                                comp[<keyof typeof comp> key] = val;
+                                proxySetter(
+                                    comp,
+                                    key,
+                                    () => this._dirtyTransform(),
+                                );
                                 this._dirtyTransform();
-                            }
+                            };
                         }
                     }
                     Object.defineProperty(this, key, {
-                        get, set,
+                        get,
+                        set,
                         configurable: true,
                         enumerable: true,
                     });
@@ -1326,9 +1335,9 @@ export const GameObjRawPrototype: Omit<InternalGameObjRaw, AppEvents> = {
                     )?.id;
                     throw new Error(
                         `Duplicate component property: "${key}" while adding component "${comp.id}"`
-                        + (originalCompId
-                            ? ` (originally added by "${originalCompId}")`
-                            : ""),
+                            + (originalCompId
+                                ? ` (originally added by "${originalCompId}")`
+                                : ""),
                     );
                 }
             }
@@ -1604,7 +1613,7 @@ export function attachAppToGameObjRaw() {
     for (const e of appEvs) {
         const obj = GameObjRawPrototype as Record<string, any>;
 
-        obj[e] = function (this: InternalGameObjRaw, ...args: [any]) {
+        obj[e] = function(this: InternalGameObjRaw, ...args: [any]) {
             // @ts-ignore
             const ev: KEventController = _k.app[e]?.(...args);
             ev.paused = this.paused;
