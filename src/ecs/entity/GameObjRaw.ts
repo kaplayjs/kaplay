@@ -1489,6 +1489,7 @@ export const GameObjRawPrototype: Omit<InternalGameObjRaw, AppEvents> = {
         this._drawEvents.clear();
         this._updateEvents.clear();
         this._fixedUpdateEvents.clear();
+        while (this._inputEvents.length) this._inputEvents.pop()?.cancel()
     },
     // #endregion
 
