@@ -735,7 +735,6 @@ export const GameObjRawPrototype: Omit<InternalGameObjRaw, AppEvents> = {
     },
 
     remove(this: InternalGameObjRaw, obj: GameObj): void {
-
         const trigger = (o: GameObj) => {
             o.parent = null;
             o.trigger("destroy");
