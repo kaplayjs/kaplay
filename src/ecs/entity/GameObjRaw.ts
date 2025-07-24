@@ -762,7 +762,7 @@ export const GameObjRawPrototype: Omit<InternalGameObjRaw, AppEvents> = {
     },
 
     exists(this: InternalGameObjRaw) {
-        return this.parent !== null;
+        return _k.game.root.isAncestorOf(this);
     },
 
     isAncestorOf(this: InternalGameObjRaw, obj: GameObj) {
