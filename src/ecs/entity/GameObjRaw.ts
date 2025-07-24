@@ -735,9 +735,9 @@ export const GameObjRawPrototype: Omit<InternalGameObjRaw, AppEvents> = {
     },
 
     remove(this: InternalGameObjRaw, obj: GameObj): void {
-        obj.parent = null;
 
         const trigger = (o: GameObj) => {
+            o.parent = null;
             o.trigger("destroy");
             _k.game.events.trigger("destroy", o);
             o.children.forEach((child) => trigger(child));
@@ -762,7 +762,7 @@ export const GameObjRawPrototype: Omit<InternalGameObjRaw, AppEvents> = {
     },
 
     exists(this: InternalGameObjRaw) {
-        return _k.game.root.isAncestorOf(this);
+        return this.parent !== null;
     },
 
     isAncestorOf(this: InternalGameObjRaw, obj: GameObj) {
