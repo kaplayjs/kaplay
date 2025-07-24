@@ -43,7 +43,9 @@ export interface SpriteCurAnim {
      */
     frameIndex: number;
     pingpong: boolean;
-    onEnd: () => void;
+    onEnd?: () => void;
+    onLoop?: () => void;
+    onStop?: () => void;
 }
 
 /**
@@ -80,7 +82,7 @@ export interface SpriteComp extends Comp {
     /**
      * Play a piece of anim.
      */
-    play(anim: string, options?: SpriteAnimPlayOpt): void;
+    play(anim: string, opt?: SpriteAnimPlayOpt): void;
     /**
      * Stop current anim.
      */
@@ -127,8 +129,34 @@ export interface SpriteComp extends Comp {
     onAnimStart(action: (anim: string) => void): KEventController;
     /**
      * Register an event that runs when an animation is ended.
+     *
+     * End is triggered by:
+     *
+     * - Animation reaching the last frame.
      */
     onAnimEnd(action: (anim: string) => void): KEventController;
+    /**
+     * Register an event that runs when an animation is looped.
+     *
+     * Loop is triggered by:
+     *
+     * - Animation reaching the last frame for looping (last one or first/last in pingpong)
+     *
+     * @since v4000.0
+     */
+    onAnimLoop(action: (anim: string) => void): KEventController;
+    /**
+     * Register an event that runs when an animation is stopped.
+     *
+     * Stop is triggered by:
+     *
+     * - obj.stop();
+     * - obj.play();
+     * - Animation ending (like onEnd)
+     *
+     * @since v4000.0
+     */
+    onAnimStop(action: (anim: string) => void): KEventController;
     /**
      * @since v3000.0
      */
@@ -473,10 +501,13 @@ export function sprite(
                     }
                     else if (curAnim.loop) {
                         curAnim.frameIndex = 0;
+                        curAnim.onLoop?.();
+                        this.trigger("animLoop", curAnim.name);
                     }
                     else {
                         this.frame = frames.at(-1)!;
-                        curAnim.onEnd();
+                        this.trigger("animEnd", curAnim.name);
+                        curAnim.onEnd?.();
                         this.stop();
                         return;
                     }
@@ -488,10 +519,13 @@ export function sprite(
                     }
                     else if (curAnim.loop) {
                         curAnim.frameIndex = frames.length - 1;
+                        curAnim.onLoop?.();
+                        this.trigger("animLoop", curAnim.name);
                     }
                     else {
                         this.frame = frames[0];
-                        curAnim.onEnd();
+                        this.trigger("animEnd", curAnim.name);
+                        curAnim.onEnd?.();
                         this.stop();
                         return;
                     }
@@ -530,7 +564,6 @@ export function sprite(
                     pingpong: false,
                     speed: 0,
                     frameIndex: 0,
-                    onEnd: () => {},
                 }
                 : {
                     name: name,
@@ -539,7 +572,9 @@ export function sprite(
                     pingpong: opt.pingpong ?? anim.pingpong ?? false,
                     speed: opt.speed ?? anim.speed ?? 10,
                     frameIndex: 0,
-                    onEnd: opt.onEnd ?? (() => {}),
+                    onEnd: opt.onEnd,
+                    onLoop: opt.onLoop,
+                    onStop: opt.onStop,
                 };
 
             curAnimDir = typeof anim === "number" ? null : 1;
@@ -552,9 +587,10 @@ export function sprite(
             if (!curAnim) {
                 return;
             }
+            curAnim.onStop?.();
             const prevAnim = curAnim.name;
             curAnim = null;
-            this.trigger("animEnd", prevAnim);
+            this.trigger("animStop", prevAnim);
         },
 
         numFrames() {
@@ -589,6 +625,20 @@ export function sprite(
             action: (name: string) => void,
         ): KEventController {
             return this.on("animStart", action);
+        },
+
+        onAnimLoop(
+            this: GameObj<SpriteComp>,
+            action: (name: string) => void,
+        ): KEventController {
+            return this.on("animLoop", action);
+        },
+
+        onAnimStop(
+            this: GameObj<SpriteComp>,
+            action: (name: string) => void,
+        ) {
+            return this.on("animStop", action);
         },
 
         renderArea() {
