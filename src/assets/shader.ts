@@ -177,14 +177,15 @@ export function makeShader(
             VERTEX_FORMAT.map((vert) => vert.name),
         );
     } catch (e) {
-        const lineOffset = 14;
         const fmt = /(?<type>^\w+) SHADER ERROR: 0:(?<line>\d+): (?<msg>.+)/;
         const match = getErrorMessage(e).match(fmt);
         if (!match?.groups) throw e;
-        const line = Number(match.groups.line) - lineOffset;
+        const line = Number(match.groups.line);
         const msg = match.groups.msg.trim();
         const ty = match.groups.type.toLowerCase();
-        throw new Error(`${ty} shader line ${line}: ${msg}`);
+        const lines = (ty == "vertex" ? vcode : fcode).split("\n");
+        const lineContents = lines[line - 1];
+        throw new Error(`${ty} shader line ${line}: ${msg}\n${lineContents}`);
     }
 }
 
