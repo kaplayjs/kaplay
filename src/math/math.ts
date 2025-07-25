@@ -1115,7 +1115,7 @@ export function testPolygonPoint(poly: Polygon, pt: Vec2): boolean {
             ((p[i].y > pt.y) != (p[j].y > pt.y))
             && (pt.x
                 < (p[j].x - p[i].x) * (pt.y - p[i].y) / (p[j].y - p[i].y)
-                    + p[i].x)
+                + p[i].x)
         ) {
             c = !c;
         }
@@ -1133,7 +1133,7 @@ export function testEllipsePoint(ellipse: Ellipse, pt: Vec2): boolean {
     const vx = pt.x * c + pt.y * s;
     const vy = -pt.x * s + pt.y * c;
     return vx * vx / (ellipse.radiusX * ellipse.radiusX)
-            + vy * vy / (ellipse.radiusY * ellipse.radiusY) < 1;
+        + vy * vy / (ellipse.radiusY * ellipse.radiusY) < 1;
 }
 
 export function testEllipseCircle(ellipse: Ellipse, circle: Circle): boolean {
@@ -1798,6 +1798,12 @@ export class Point {
     serialize(): any {
         return { "Point": { pt: this.pt.serialize() } };
     }
+    support(direction: Vec2): Vec2 {
+        return this.pt;
+    }
+    get gjkCenter(): Vec2 {
+        return this.pt;
+    }
 }
 
 /**
@@ -1844,6 +1850,12 @@ export class Line {
     }
     serialize(): any {
         return { Line: { p1: this.p1.serialize(), p2: this.p2.serialize() } };
+    }
+    support(direction: Vec2): Vec2 {
+        return this.p1.dot(direction) > this.p2.dot(direction) ? this.p1 : this.p2;
+    }
+    get gjkCenter(): Vec2 {
+        return new Vec2((this.p1.x + this.p2.x) / 2, (this.p1.y + this.p2.y) / 2);
     }
 }
 
@@ -1942,6 +1954,25 @@ export class Rect {
             },
         };
     }
+    support(direction: Vec2): Vec2 {
+        const pts = this.points();
+        let maxPoint = this.points()[0];
+        let maxDistance = Number.NEGATIVE_INFINITY;
+        let vertex;
+        for (let i = 1; i < pts.length; i++) {
+            vertex = pts[i];
+            const distance = vertex.dot(direction);
+            if (distance > maxDistance) {
+                maxDistance = distance;
+                maxPoint = vertex;
+            }
+        }
+
+        return maxPoint;
+    }
+    get gjkCenter(): Vec2 {
+        return this.pos;
+    }
 }
 
 /**
@@ -1988,6 +2019,16 @@ export class Circle {
         return {
             Circle: { center: this.center.serialize(), radius: this.radius },
         };
+    }
+    support(direction: Vec2): Vec2 {
+        const s = new Vec2(direction.x, direction.y);
+        Vec2.unit(s, s);
+        Vec2.scale(s, this.radius, s);
+        Vec2.add(s, this.center, s);
+        return s;
+    }
+    get gjkCenter(): Vec2 {
+        return this.center;
     }
 }
 
@@ -2117,7 +2158,7 @@ export class Ellipse {
         const vx = point.x * c + point.y * s;
         const vy = -point.x * s + point.y * c;
         return vx * vx / (this.radiusX * this.radiusX)
-                + vy * vy / (this.radiusY * this.radiusY) < 1;
+            + vy * vy / (this.radiusY * this.radiusY) < 1;
     }
     raycast(origin: Vec2, direction: Vec2): RaycastResult {
         return raycastEllipse(origin, direction, this);
@@ -2134,6 +2175,29 @@ export class Ellipse {
                 angle: this.angle,
             },
         };
+    }
+    support(direction: Vec2): Vec2 {
+        // Axis aligned
+        if (this.angle === 0.0) {
+            let axis = new Vec2(direction.x, direction.y);
+            Vec2.unit(axis, axis);
+            Vec2.scalec(axis, this.radiusX, this.radiusY, axis);
+            Vec2.add(axis, this.center, axis);
+            return axis;
+        }
+        // Rotated
+        else {
+            let axis = new Vec2(direction.x, direction.y);
+            Vec2.rotateByAngle(axis, -this.angle, axis);
+            Vec2.unit(axis, axis);
+            Vec2.scalec(axis, this.radiusX, this.radiusY, axis);
+            Vec2.rotateByAngle(axis, this.angle, axis);
+            Vec2.add(axis, this.center, axis);
+            return axis;
+        }
+    }
+    get gjkCenter(): Vec2 {
+        return this.center;
     }
 }
 
@@ -2158,6 +2222,13 @@ export class Polygon {
             throw new Error("Polygons should have at least 3 vertices");
         }
         this.pts = pts;
+        /*this.center = new Vec2(pts[0].x, pts[0].y);
+        for (let i = 1; i < pts.length; i++) {
+            this.center.x += pts[i].x;
+            this.center.y += pts[i].y;
+        }
+        this.center.x /= pts.length;
+        this.center.y /= pts.length;*/
     }
     transform(m: Mat23, s?: Shape): Polygon {
         // TODO: resize existing pts array?
@@ -2259,6 +2330,25 @@ export class Polygon {
     }
     serialize(): any {
         return { Polygon: { pts: this.pts.map(p => p.serialize()) } };
+    }
+    support(direction: Vec2): Vec2 {
+        let maxPoint = this.pts[0];
+        let maxDistance = maxPoint.dot(direction);
+
+        let vertex;
+        for (let i = 1; i < this.pts.length; i++) {
+            vertex = this.pts[i];
+            const distance = vertex.dot(direction);
+            if (distance > maxDistance) {
+                maxDistance = distance;
+                maxPoint = vertex;
+            }
+        }
+
+        return maxPoint;
+    }
+    get gjkCenter(): Vec2 {
+        return this.pts[0];
     }
 }
 
@@ -2585,21 +2675,21 @@ export function kochanekBartels(
     const hx = h(
         pt2.x,
         0.5 * (1 - tension) * (1 + bias) * (1 + continuity) * (pt2.x - pt1.x)
-            + 0.5 * (1 - tension) * (1 - bias) * (1 - continuity)
-                * (pt3.x - pt2.x),
+        + 0.5 * (1 - tension) * (1 - bias) * (1 - continuity)
+        * (pt3.x - pt2.x),
         0.5 * (1 - tension) * (1 + bias) * (1 - continuity) * (pt3.x - pt2.x)
-            + 0.5 * (1 - tension) * (1 - bias) * (1 + continuity)
-                * (pt4.x - pt3.x),
+        + 0.5 * (1 - tension) * (1 - bias) * (1 + continuity)
+        * (pt4.x - pt3.x),
         pt3.x,
     );
     const hy = h(
         pt2.y,
         0.5 * (1 - tension) * (1 + bias) * (1 + continuity) * (pt2.y - pt1.y)
-            + 0.5 * (1 - tension) * (1 - bias) * (1 - continuity)
-                * (pt3.y - pt2.y),
+        + 0.5 * (1 - tension) * (1 - bias) * (1 - continuity)
+        * (pt3.y - pt2.y),
         0.5 * (1 - tension) * (1 + bias) * (1 - continuity) * (pt3.y - pt2.y)
-            + 0.5 * (1 - tension) * (1 - bias) * (1 + continuity)
-                * (pt4.y - pt3.y),
+        + 0.5 * (1 - tension) * (1 - bias) * (1 + continuity)
+        * (pt4.y - pt3.y),
         pt3.y,
     );
     return (t: number) => {
