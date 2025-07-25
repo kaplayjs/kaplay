@@ -2,6 +2,7 @@ import { getRenderProps } from "../../../game/utils";
 import { drawRect } from "../../../gfx/draw/drawRect";
 import { Rect, vec2 } from "../../../math/math";
 import type { Comp, GameObj } from "../../../types";
+import type { AreaComp } from "../physics/area";
 /**
  * The serialized {@link rect `rect()`} component.
  *
@@ -69,6 +70,9 @@ export function rect(w: number, h: number, opt: RectCompOpt = {}): RectComp {
         set width(value) {
             _width = value;
             if (_shape) _shape.width = value;
+            if ((this as any as GameObj).has?.("area")) {
+                (this as any as GameObj<AreaComp>)._worldAreaDirty = true;
+            }
         },
         get height() {
             return _height;
@@ -76,6 +80,9 @@ export function rect(w: number, h: number, opt: RectCompOpt = {}): RectComp {
         set height(value) {
             _height = value;
             if (_shape) _shape.height = value;
+            if ((this as any as GameObj).has?.("area")) {
+                (this as any as GameObj<AreaComp>)._worldAreaDirty = true;
+            }
         },
         radius: opt.radius || 0,
         draw(this: GameObj<RectComp>) {

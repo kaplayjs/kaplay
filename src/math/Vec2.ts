@@ -29,8 +29,19 @@ export class Vec2 {
         this.y = y;
     }
 
-    /** Set the X and Y of this vector */
-    set(x: number, y: number): Vec2 {
+    private static _pool: Vec2[] = [];
+    /** Object pooling. For advanced users only */
+    static _fromPool(): Vec2 {
+        return Vec2._pool.pop() ?? new Vec2();
+    }
+    /** Object pooling. For advanced users only */
+    static _returnPool(v: Vec2) {
+        v.set(NaN, NaN);
+        Vec2._pool.push(v);
+    }
+
+    /** Set the X and Y of this vector and return this */
+    set(x: number, y: number): this {
         this.x = x;
         this.y = y;
         return this;

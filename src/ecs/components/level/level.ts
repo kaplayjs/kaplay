@@ -5,7 +5,6 @@ import {
     vec2,
     type Vec2Args,
 } from "../../../math/math";
-import { calcTransform } from "../../../math/various";
 import { type Vec2 } from "../../../math/Vec2";
 import {
     type Comp,
@@ -410,8 +409,6 @@ export function level(map: string[], opt: LevelOpt): LevelComp {
             }
 
             obj.tilePos = p;
-            // Stale, so recalculate
-            calcTransform(obj, obj.transform);
 
             if (spatialMap) {
                 insertIntoSpatialMap(obj);

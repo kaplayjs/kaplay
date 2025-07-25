@@ -1,114 +1,27 @@
 import { MAX_TRIES } from "../constants/general";
 import type { Shape } from "../types";
-import { Circle, Ellipse, Polygon, Rect, vec2 } from "./math";
 import { Vec2 } from "./Vec2";
 
-interface Collider {
-    center: Vec2;
-    /**
-     * This function needs to return the furthest point of the collider in the given direction.
-     * @param direction - The direction to search in.
-     */
-    support(direction: Vec2): Vec2;
-}
-
-class CircleCollider implements Collider {
-    center: Vec2;
-    radius: number;
-
-    constructor(center: Vec2, radius: number) {
-        this.center = center;
-        this.radius = radius;
-    }
-
-    support(direction: Vec2): Vec2 {
-        const s = new Vec2(direction.x, direction.y);
-        Vec2.unit(s, s);
-        Vec2.scale(s, this.radius, s);
-        Vec2.add(s, this.center, s);
-        return s;
-    }
-}
-
-class EllipseCollider implements Collider {
-    center: Vec2;
-    radiusX: number;
-    radiusY: number;
-    angle: number;
-
-    constructor(center: Vec2, radiusX: number, radiusY: number, angle: number) {
-        this.center = center;
-        this.radiusX = radiusX;
-        this.radiusY = radiusY;
-        this.angle = angle;
-    }
-
-    support(direction: Vec2): Vec2 {
-        // Axis aligned
-        if (this.angle === 0.0) {
-            let axis = new Vec2(direction.x, direction.y);
-            Vec2.unit(axis, axis);
-            Vec2.scalec(axis, this.radiusX, this.radiusY, axis);
-            Vec2.add(axis, this.center, axis);
-            return axis;
-        }
-        // Rotated
-        else {
-            let axis = new Vec2(direction.x, direction.y);
-            Vec2.rotateByAngle(axis, -this.angle, axis);
-            Vec2.unit(axis, axis);
-            Vec2.scalec(axis, this.radiusX, this.radiusY, axis);
-            Vec2.rotateByAngle(axis, this.angle, axis);
-            Vec2.add(axis, this.center, axis);
-            return axis;
-        }
-    }
-}
-
-class PolygonCollider implements Collider {
-    vertices: Vec2[];
-    center: Vec2;
-
-    constructor(vertices: Vec2[]) {
-        this.vertices = vertices;
-        this.center = this.vertices[0];
-    }
-
-    support(direction: Vec2): Vec2 {
-        let maxPoint;
-        let maxDistance = Number.NEGATIVE_INFINITY;
-
-        let vertex;
-        for (let i = 0; i < this.vertices.length; i++) {
-            vertex = this.vertices[i];
-            const distance = vertex.dot(direction);
-            if (distance > maxDistance) {
-                maxDistance = distance;
-                maxPoint = vertex;
-            }
-        }
-
-        return maxPoint!;
-    }
-}
-
 function calculateSupport(
-    shapeA: Collider,
-    shapeB: Collider,
+    shapeA: Shape,
+    shapeB: Shape,
     direction: Vec2,
 ): Vec2 {
     // Calculate the support vector. This is done by calculating the difference between
     // the furthest points found of the shapes along the given direction.
-    let oppositeDirection = new Vec2(-direction.x, -direction.y);
-    const supportA = shapeA.support(direction);
-    const supportB = shapeB.support(oppositeDirection);
-    return new Vec2(supportA.x - supportB.x, supportA.y - supportB.y);
+    const { x: supportAX, y: supportAY } = shapeA.support(direction);
+    direction.x *= -1;
+    direction.y *= -1;
+    const { x: supportBX, y: supportBY } = shapeB.support(direction);
+    direction.x *= -1;
+    direction.y *= -1;
+    return new Vec2(supportAX - supportBX, supportAY - supportBY);
 }
 
 function addSupport(
     vertices: Array<Vec2>,
-    shapeA: Collider,
-    shapeB: Collider,
+    shapeA: Shape,
+    shapeB: Shape,
     direction: Vec2,
 ): boolean {
     var support: Vec2 = calculateSupport(shapeA, shapeB, direction);
@@ -129,21 +42,21 @@ function tripleProduct(a: Vec2, b: Vec2, c: Vec2): Vec2 {
     const n = a.x * b.y - a.y * b.x;
 
     // This vector lies in the same plane as a and b and is perpendicular to c
-    return new Vec2(-n * c.y, n * c.x);
+    return Vec2._fromPool().set(-n * c.y, n * c.x);
 }
 
 function evolveSimplex(
     simplex: Vec2[],
-    colliderA: Collider,
-    colliderB: Collider,
+    colliderA: Shape,
+    colliderB: Shape,
     direction: Vec2,
 ): EvolveResult {
     switch (simplex.length) {
         case 0: {
             // Zero points, set the direction the center of colliderA
             // towards the center of of colliderB
-            direction.x = colliderB.center.x - colliderA.center.x;
-            direction.y = colliderB.center.y - colliderA.center.y;
+            direction.x = colliderB.gjkCenter.x - colliderA.gjkCenter.x;
+            direction.y = colliderB.gjkCenter.y - colliderA.gjkCenter.y;
             break;
         }
         case 1: {
@@ -154,11 +67,11 @@ function evolveSimplex(
         }
         case 2: {
             // We now have a line ab. Take the vector ab and the vector a origin
-            const ab = new Vec2(
+            const ab = Vec2._fromPool().set(
                 simplex[1].x - simplex[0].x,
                 simplex[1].y - simplex[0].y,
             );
-            const a0 = new Vec2(-simplex[0].x, -simplex[0].y);
+            const a0 = Vec2._fromPool().set(-simplex[0].x, -simplex[0].y);
 
             // Get the vector perpendicular to ab and a0
             // Then get the vector perpendicular to the result and ab
@@ -166,6 +79,9 @@ function evolveSimplex(
             // This is our new direction to form a triangle
             direction.x = tp.x;
             direction.y = tp.y;
+            Vec2._returnPool(ab);
+            Vec2._returnPool(a0);
+            Vec2._returnPool(tp);
             break;
         }
         case 3:
@@ -224,7 +140,7 @@ function evolveSimplex(
  *
  * @returns True if the colliders intersect
  */
-function gjkIntersects(colliderA: Collider, colliderB: Collider): boolean {
+function gjkIntersects(colliderA: Shape, colliderB: Shape): boolean {
     const vertices: Vec2[] = [];
     let direction = new Vec2();
 
@@ -253,12 +169,18 @@ type Edge = {
  *
  * @returns The edge closest to the origin.
  */
-function findClosestEdge(simplex: Vec2[], winding: PolygonWinding): Edge {
+function findClosestEdge(
+    simplex: Vec2[],
+    winding: PolygonWinding,
+    scratchPt1: Vec2,
+    scratchPt2: Vec2,
+    scratchPt3: Vec2,
+): Edge {
     let minDistance: number = Number.POSITIVE_INFINITY;
-    let minNormal = new Vec2();
+    let minNormal = scratchPt1;
     let minIndex = 0;
-    let line = new Vec2();
-    let norm = new Vec2();
+    let line = scratchPt2;
+    let norm = scratchPt3;
     for (let i = 0; i < simplex.length; i++) {
         let j = i + 1;
         if (j >= simplex.length) j = 0;
@@ -309,57 +231,63 @@ export type GjkCollisionResult = {
  * @returns True if the shapes collide
  */
 function getIntersection(
-    colliderA: Collider,
-    colliderB: Collider,
+    colliderA: Shape,
+    colliderB: Shape,
     simplex: Vec2[],
 ): GjkCollisionResult | null {
     const EPSILON = 0.00001;
+    const s1 = Vec2._fromPool(), s2 = Vec2._fromPool(), s3 = Vec2._fromPool();
+    try {
+        const e0: number = (simplex[1].x - simplex[0].x)
+            * (simplex[1].y + simplex[0].y);
+        const e1: number = (simplex[2].x - simplex[1].x)
+            * (simplex[2].y + simplex[1].y);
+        const e2: number = (simplex[0].x - simplex[2].x)
+            * (simplex[0].y + simplex[2].y);
+        var winding: PolygonWinding = (e0 + e1 + e2 >= 0)
+            ? PolygonWinding.Clockwise
+            : PolygonWinding.CounterClockwise;
 
-    const e0: number = (simplex[1].x - simplex[0].x)
-        * (simplex[1].y + simplex[0].y);
-    const e1: number = (simplex[2].x - simplex[1].x)
-        * (simplex[2].y + simplex[1].y);
-    const e2: number = (simplex[0].x - simplex[2].x)
-        * (simplex[0].y + simplex[2].y);
-    var winding: PolygonWinding = (e0 + e1 + e2 >= 0)
-        ? PolygonWinding.Clockwise
-        : PolygonWinding.CounterClockwise;
+        let intersection = new Vec2();
+        for (let i = 0; i < MAX_TRIES; i++) {
+            var edge: Edge = findClosestEdge(simplex, winding, s1, s2, s3);
+            // Calculate the difference for the two vertices furthest along the direction of the edge normal
+            var support = calculateSupport(colliderA, colliderB, edge.normal);
+            // Check distance to the origin
+            var distance: number = support.dot(edge.normal);
 
-    let intersection = new Vec2();
-    for (let i = 0; i < MAX_TRIES; i++) {
-        var edge: Edge = findClosestEdge(simplex, winding);
-        // Calculate the difference for the two vertices furthest along the direction of the edge normal
-        var support = calculateSupport(colliderA, colliderB, edge.normal);
-        // Check distance to the origin
-        var distance: number = support.dot(edge.normal);
+            Vec2.scale(edge.normal, distance, intersection);
 
-        Vec2.scale(edge.normal, distance, intersection);
-
-        // If close enough, return if we need to move a distance greater than 0
-        if (Math.abs(distance - edge.distance) <= EPSILON) {
-            const len = intersection.len();
-            if (len != 0) {
-                Vec2.scale(intersection, -1 / len, intersection);
-                return { normal: intersection, distance: len };
+            // If close enough, return if we need to move a distance greater than 0
+            if (Math.abs(distance - edge.distance) <= EPSILON) {
+                const len = intersection.len();
+                if (len != 0) {
+                    Vec2.scale(intersection, -1 / len, intersection);
+                    return { normal: intersection, distance: len };
+                }
+                else {
+                    return null;
+                }
             }
             else {
-                return null;
+                simplex.splice(edge.index, 0, support);
             }
         }
-        else {
-            simplex.splice(edge.index, 0, support);
-        }
-    }
 
-    // Return if we need to move a distance greater than 0
-    // Since we did more than the maximum amount of iterations, this may not be optimal
-    const len = intersection.len();
-    if (len != 0) {
-        Vec2.scale(intersection, -1 / len, intersection);
-        return { normal: intersection, distance: len };
-    }
-    else {
-        return null;
+        // Return if we need to move a distance greater than 0
+        // Since we did more than the maximum amount of iterations, this may not be optimal
+        const len = intersection.len();
+        if (len != 0) {
+            Vec2.scale(intersection, -1 / len, intersection);
+            return { normal: intersection, distance: len };
+        }
+        else {
+            return null;
+        }
+    } finally {
+        Vec2._returnPool(s1);
+        Vec2._returnPool(s2);
+        Vec2._returnPool(s3);
     }
 }
 
@@ -371,55 +299,24 @@ function getIntersection(
  * @returns A collision result or null
  */
 function gjkIntersection(
-    colliderA: Collider,
-    colliderB: Collider,
+    colliderA: Shape,
+    colliderB: Shape,
 ): GjkCollisionResult | null {
     const vertices: Vec2[] = [];
-    let direction = new Vec2(
-        colliderB.center.x - colliderA.center.x,
-        colliderB.center.y - colliderA.center.y,
+    let direction = Vec2._fromPool().set(
+        colliderB.gjkCenter.x - colliderA.gjkCenter.x,
+        colliderB.gjkCenter.y - colliderA.gjkCenter.y,
     );
 
     var result: EvolveResult = EvolveResult.Evolving;
     while (result === EvolveResult.Evolving) {
         result = evolveSimplex(vertices, colliderA, colliderB, direction);
     }
+    Vec2._returnPool(direction);
     if (result !== EvolveResult.FoundIntersection) {
         return null;
     }
     return getIntersection(colliderA, colliderB, vertices);
-}
-
-/**
- * Returns a collider for the given shape.
- * @param shape - The shape to get a collider for.
- *
- * @returns
- */
-function shapeToCollider(shape: Shape): Collider {
-    if (shape instanceof Rect) {
-        return new PolygonCollider((shape as Rect).points());
-    }
-    else if (shape instanceof Circle) {
-        return new CircleCollider(
-            (shape as Circle).center,
-            (shape as Circle).radius,
-        );
-    }
-    else if (shape instanceof Polygon) {
-        return new PolygonCollider((shape as Polygon).pts);
-    }
-    else if (shape instanceof Ellipse) {
-        return new EllipseCollider(
-            (shape as Ellipse).center,
-            (shape as Ellipse).radiusX,
-            (shape as Ellipse).radiusY,
-            (shape as Ellipse).angle,
-        );
-    }
-    else {
-        return new PolygonCollider(shape.bbox().points());
-    }
 }
 
 /**
@@ -430,9 +327,7 @@ function shapeToCollider(shape: Shape): Collider {
  * @returns True if the shapes collide
  */
 export function gjkShapeIntersects(shapeA: Shape, shapeB: Shape): boolean {
-    const colliderA = shapeToCollider(shapeA);
-    const colliderB = shapeToCollider(shapeB);
-    return gjkIntersects(colliderA, colliderB);
+    return gjkIntersects(shapeA, shapeB);
 }
 
 /**
@@ -446,7 +341,5 @@ export function gjkShapeIntersection(
     shapeA: Shape,
     shapeB: Shape,
 ): GjkCollisionResult | null {
-    const colliderA = shapeToCollider(shapeA);
-    const colliderB = shapeToCollider(shapeB);
-    return gjkIntersection(colliderA, colliderB);
+    return gjkIntersection(shapeA, shapeB);
 }
