@@ -672,9 +672,10 @@ export const GameObjRawPrototype: Omit<InternalGameObjRaw, AppEvents> = {
         let data: SerializedGameObj;
 
         if (typeof name === "string") {
-            if (name in _k.assets.prefabAssets) {
-                // Non-Null Assertion: TypeScript doesn't narrow with .has()
-                data = _k.assets.prefabAssets.get(name)?.data!;
+            const prefabAsset = _k.assets.prefabAssets.get(name);
+
+            if (prefabAsset) {
+                data = prefabAsset.data!;
             }
             else {
                 throw new Error(`Can't add unknown prefab named ${name}`);
