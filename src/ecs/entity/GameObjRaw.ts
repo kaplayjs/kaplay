@@ -582,6 +582,10 @@ export const GameObjRawPrototype: Omit<InternalGameObjRaw, AppEvents> = {
         // We assume this will never be ran in root
         // so this is GameObj
 
+        if (this.id === null) {
+            throw new Error("Can't re-parent destroyed object");
+        }
+
         if (this._parent === p) return;
         const index = this._parent
             ? this._parent.children.indexOf(this as unknown as GameObj)
@@ -647,6 +651,10 @@ export const GameObjRawPrototype: Omit<InternalGameObjRaw, AppEvents> = {
         this: InternalGameObjRaw,
         a: [...T2],
     ): GameObj<T2[number]> {
+        if (this.id === null) {
+            throw new Error("Can't add child to destroyed object");
+        }
+
         const obj = make(a);
 
         if (obj.parent) {
@@ -669,6 +677,10 @@ export const GameObjRawPrototype: Omit<InternalGameObjRaw, AppEvents> = {
         name: string | SerializedGameObj,
         comps?: T,
     ) {
+        if (this.id === null) {
+            throw new Error("Can't add child to destroyed object");
+        }
+
         let data: SerializedGameObj;
 
         if (typeof name === "string") {
@@ -700,6 +712,10 @@ export const GameObjRawPrototype: Omit<InternalGameObjRaw, AppEvents> = {
     },
 
     serialize(this: InternalGameObjRaw) {
+        if (this.id === null) {
+            throw new Error("Can't serialize destroyed object");
+        }
+
         const data: SerializedGameObj = {
             components: {},
             tags: [],
@@ -742,6 +758,7 @@ export const GameObjRawPrototype: Omit<InternalGameObjRaw, AppEvents> = {
             o.trigger("destroy");
             _k.game.events.trigger("destroy", o);
             o.children.forEach((child) => trigger(child));
+            o.id = null as any;
         };
 
         trigger(obj);
@@ -763,7 +780,7 @@ export const GameObjRawPrototype: Omit<InternalGameObjRaw, AppEvents> = {
     },
 
     exists(this: InternalGameObjRaw) {
-        return this.parent !== null;
+        return this.id !== null && this.parent !== null;
     },
 
     isAncestorOf(this: InternalGameObjRaw, obj: GameObj) {
