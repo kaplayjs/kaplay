@@ -107,6 +107,10 @@
         "name": "Buttons API",
         "description": "Work with the Buttons API, an api that let you convine various input methods."
       },
+      "Touch": {
+        "name": "Touch",
+        "description": "Work with touch devices"
+      },
       "Util": {
         "name": "Util",
         "description": "Util methods when working with input."
