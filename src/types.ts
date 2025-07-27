@@ -821,11 +821,13 @@ export type Anchor =
 
 /**
  * @group Math
+ * @subgroup Random
  */
 export type RNGValue = number | Vec2 | Color;
 
 /**
  * @group Components
+ * @subgroup Component Types
  */
 export interface Comp {
     /**
