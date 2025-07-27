@@ -7,7 +7,8 @@ import type { TweenController } from "../misc/timer";
 /**
  * The serialized {@link opacity `opacity()`} component.
  *
- * @group Component Serialization
+ * @group Components
+ * @subgroup Component Serialization
  */
 export interface SerializedOpacityComp {
     opacity: number;

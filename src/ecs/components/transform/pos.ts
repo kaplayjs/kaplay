@@ -11,7 +11,8 @@ import type { FixedComp } from "./fixed";
 /**
  * The serialized {@link pos `pos()`} component.
  *
- * @group Component Serialization
+ * @group Components
+ * @subgroup Component Serialization
  */
 export interface SerializedPosComp {
     pos: { x: number; y: number };

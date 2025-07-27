@@ -18,7 +18,8 @@ import type { Comp, GameObj } from "../../../types";
 /**
  * The serialized {@link text `text()`} component.
  *
- * @group Component Serialization
+ * @group Components
+ * @subgroup Component Serialization
  */
 export interface SerializedTextComp {
     text: string;

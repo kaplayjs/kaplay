@@ -9,7 +9,8 @@ import type { outline } from "./outline";
 /**
  * The serialized {@link circle `circle()`} component.
  *
- * @group Component Serialization
+ * @group Components
+ * @subgroup Component Serialization
  */
 export interface SerializedCircleComp {
     radius: number;

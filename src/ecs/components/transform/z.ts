@@ -3,7 +3,8 @@ import type { Comp } from "../../../types";
 /**
  * The serialized {@link z `z()`} component.
  *
- * @group Component Serialization
+ * @group Components
+ * @subgroup Component Serialization
  */
 export interface SerializedZComp {
     z: number;

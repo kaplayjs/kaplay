@@ -5,7 +5,8 @@ import type { Comp, GameObj } from "../../../types";
 /**
  * The serialized {@link rect `rect()`} component.
  *
- * @group Component Serialization
+ * @group Components
+ * @subgroup Component Serialization
  */
 export interface SerializedRectComp {
     width: number;

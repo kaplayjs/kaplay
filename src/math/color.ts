@@ -11,7 +11,8 @@ export type CSSColor = keyof typeof CSS_COLOR_MAP;
 /**
  * A serialized color.
  *
- * @group Component Serialization
+ * @group Components
+ * @subgroup Component Serialization
  */
 export interface SerializedColor {
     r: number;

@@ -6,7 +6,8 @@ import { deg2rad, rad2deg, Rect, vec2, type Vec2Args } from "./math";
 /**
  * A serialized 2d vector.
  *
- * @group Component Serialization
+ * @group Components
+ * @subgroup Component Serialization
  */
 export interface SerializedVec2 {
     x: number;

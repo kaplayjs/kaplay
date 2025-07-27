@@ -5,7 +5,8 @@ import type { Comp } from "../../../types";
 /**
  * The serialized {@link scale `scale()`} component.
  *
- * @group Component Serialization
+ * @group Components
+ * @subgroup Component Serialization
  */
 export interface SerializedScaleComp {
     scale: SerializedVec2;

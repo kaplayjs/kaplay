@@ -4,7 +4,8 @@ import type { Comp } from "../../../types";
 /**
  * The serialized {@link color `color()`} component.
  *
- * @group Component Serialization
+ * @group Components
+ * @subgroup Component Serialization
  */
 export interface SerializedColorComp {
     color: { r: number; g: number; b: number };

@@ -3,7 +3,8 @@ import type { Comp } from "../../../types";
 /**
  * The serialized {@link rotate `rotate()`} component.
  *
- * @group Component Serialization
+ * @group Components
+ * @subgroup Component Serialization
  */
 export interface SerializedRotateComp {
     angle: number;

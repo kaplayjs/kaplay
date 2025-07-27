@@ -5,7 +5,8 @@ import type { PosComp } from "./pos";
 /**
  * The serialized {@link move `move()`} component.
  *
- * @group Component Serialization
+ * @group Components
+ * @subgroup Component Serialization
  */
 interface SerializedMoveComp {
     dir: SerializedVec2 | number;
