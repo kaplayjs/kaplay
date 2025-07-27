@@ -18,10 +18,17 @@ import { fetchText, loadProgress } from "./asset";
 import { Asset } from "./asset";
 import { fixURL } from "./utils";
 
+/**
+ * @group Assets
+ * @subgroup Shaders
+ */
 export type ShaderData = Shader;
 
 /**
- * @group Math
+ * Possible values for a shader Uniform.
+ *
+ * @group Assets
+ * @subgroup Shaders
  */
 export type UniformValue =
     | number
@@ -34,16 +41,24 @@ export type UniformValue =
     | Color[];
 
 /**
- * @group Math
+ * Possible uniform value, basically any but "u_tex".
+ *
+ * @group Assets
+ * @subgroup Shaders
  */
-export type UniformKey = Exclude<string, "u_tex">;
+export type UniformKey = string;
+
 /**
- * @group Math
+ * @group Assets
+ * @subgroup Shaders
  */
 export type Uniform = Record<UniformKey, UniformValue>;
 
 /**
- * @group GFX
+ * A shader, yeah.
+ *
+ * @group Assets
+ * @subgroup Shaders
  */
 export class Shader {
     ctx: GfxCtx;

@@ -1,10 +1,16 @@
-export type AudioCtx = ReturnType<typeof initAudio>;
+/** @ignore */
+export interface InternalAudioCtx {
+    ctx: AudioContext;
+    masterNode: GainNode;
+}
 
+/** @ignore */
 export function createEmptyAudioBuffer(ctx: AudioContext) {
     return ctx.createBuffer(1, 1, 44100);
 }
 
-export const initAudio = () => {
+/** @ignore */
+export const initAudio = (): InternalAudioCtx => {
     const audio = (() => {
         const ctx = new (
             window.AudioContext || (window as any).webkitAudioContext

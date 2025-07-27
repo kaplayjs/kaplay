@@ -252,8 +252,10 @@ export function load<T>(prom: Promise<T>): Asset<T> {
 }
 
 // create assets
-export type AssetsCtx = ReturnType<typeof initAssets>;
+/** @ignore */
+export type InternalAssetsCtx = ReturnType<typeof initAssets>;
 
+/** @ignore */
 export const initAssets = (ggl: GfxCtx, spriteAtlasPadding: number) => {
     const assets = {
         urlPrefix: "",

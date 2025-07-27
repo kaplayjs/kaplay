@@ -20,6 +20,8 @@ class SapEdge {
 
 /**
  * One dimensional sweep and prune
+ *
+ * @ignore
  */
 export class SweepAndPrune {
     edges: Array<SapEdge>;

@@ -1,3 +1,8 @@
+/**
+ * A 3D vector.
+ *
+ * @group Math
+ */
 export class Vec3 {
     x: number;
     y: number;

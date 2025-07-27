@@ -83,6 +83,15 @@ export type AppEvents = keyof {
     [K in keyof App as K extends `on${any}` ? K : never]: [never];
 };
 
+/**
+ * Create the App state object.
+ *
+ * @ignore
+ *
+ * @param opt - Options.
+ *
+ * @returns The app state.
+ */
 export const initAppState = (opt: {
     canvas: HTMLCanvasElement;
     touchToMouse?: boolean;
@@ -131,6 +140,16 @@ export const initAppState = (opt: {
     };
 };
 
+/**
+ * Create the App, the context, and handler for all things related to the game
+ * canvas, input, and DOM interaction.
+ *
+ * @ignore
+ *
+ * @param opt - Options.
+ *
+ * @returns The app context.
+ */
 export const initApp = (
     opt: {
         canvas: HTMLCanvasElement;

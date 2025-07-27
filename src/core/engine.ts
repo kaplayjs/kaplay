@@ -37,6 +37,15 @@ export type Engine = ReturnType<typeof createEngine>;
 // Create global variables
 window.kaplayjs_assetsAliases = {};
 
+/**
+ * Creates all necessary contexts and variables for running a KAPLAY instance.
+ *
+ * @ignore
+ *
+ * @param gopt - Global options for create the engine.
+ *
+ * @returns Engine.
+ */
 export const createEngine = (gopt: KAPLAYOpt) => {
     // Default options
     const opt = Object.assign({
