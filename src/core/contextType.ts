@@ -5207,7 +5207,7 @@ export interface KAPLAYCtx<
      *
      * @since v4000.0
      * @group Math
-     * @subgroup Vector
+     * @subgroup Vectors
      */
     anchorToVec2: typeof anchorPt;
     /**

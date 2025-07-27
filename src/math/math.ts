@@ -1331,7 +1331,7 @@ export function testPointPoint(p1: Vec2, p2: Vec2): boolean {
 
 /**
  * @group Math
- * @subgroup ShapeType
+ * @subgroup Shapes
  */
 export type ShapeType = Point | Circle | Line | Rect | Polygon | Ellipse;
 
