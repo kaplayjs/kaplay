@@ -5,7 +5,7 @@ import { Vec2 } from "./Vec2";
  * A valid value for lerp.
  *
  * @group Math
- * @subgroup Tweens
+ * @subgroup Tween
  */
 export type LerpValue = number | Vec2 | Color;
 

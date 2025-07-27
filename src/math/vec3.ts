@@ -2,6 +2,7 @@
  * A 3D vector.
  *
  * @group Math
+ * @subgroup Vectors
  */
 export class Vec3 {
     x: number;

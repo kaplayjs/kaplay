@@ -1331,6 +1331,7 @@ export function testPointPoint(p1: Vec2, p2: Vec2): boolean {
 
 /**
  * @group Math
+ * @subgroup ShapeType
  */
 export type ShapeType = Point | Circle | Line | Rect | Polygon | Ellipse;
 
@@ -1510,6 +1511,7 @@ export function testShapeShape(shape1: ShapeType, shape2: ShapeType): boolean {
 
 /**
  * @group Math
+ * @subgroup Raycast
  */
 export type RaycastHit = {
     fraction: number;
@@ -1521,6 +1523,7 @@ export type RaycastHit = {
 
 /**
  * @group Math
+ * @subgroup Raycast
  */
 export type RaycastResult = RaycastHit | null;
 
