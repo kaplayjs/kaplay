@@ -80,11 +80,11 @@
         "description": "TODO"
       },
       "Component Types": {
-        "name": "Component Types",
+        "name": "Types",
         "description": "TODO"
       },
       "Component Serialization": {
-        "name": "Component Serialization",
+        "name": "Serialization",
         "description": "TODO"
       }
     }
