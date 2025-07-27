@@ -163,6 +163,10 @@
         "name": "Raycast",
         "description": "Work with raycasts."
       },
+      "Shapes": {
+        "name": "Shapes",
+        "description": "F"
+      },
       "Advanced": {
         "name": "Advanced",
         "description": "For pro players."

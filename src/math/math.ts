@@ -13,6 +13,7 @@ import { Vec2 } from "./Vec2";
  * Possible arguments for a Vec2.
  *
  * @group Math
+ * @subgroup Vectors
  */
 export type Vec2Args =
     | [number, number]
@@ -73,6 +74,7 @@ export function vec2(...args: Vec2Args): Vec2 {
 
 /**
  * @group Math
+ * @subgroup Advanced
  */
 export class Quad {
     x: number = 0;
@@ -597,6 +599,7 @@ export const M = 2147483648;
  * A random number generator using the linear congruential generator algorithm.
  *
  * @group Math
+ * @subgroup Random
  */
 export class RNG {
     /**
@@ -1806,9 +1809,6 @@ export class Point {
     }
 }
 
-/**
- * @group Math
- */
 export class Line {
     p1: Vec2;
     p2: Vec2;

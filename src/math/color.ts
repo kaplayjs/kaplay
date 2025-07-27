@@ -24,6 +24,7 @@ export interface SerializedColor {
  * 0-255 RGBA color.
  *
  * @group Math
+ * @subgroup Colors
  */
 export class Color {
     /** Red (0-255. */

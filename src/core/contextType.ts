@@ -4664,7 +4664,7 @@ export interface KAPLAYCtx<
      * @returns The color.
      * @since v2000.1
      * @group Math
-     * @subgroup Color
+     * @subgroup Colors
      */
     hsl2rgb(hue: number, saturation: number, lightness: number): Color;
     /**
@@ -5265,7 +5265,7 @@ export interface KAPLAYCtx<
      *
      * @since v3001.0
      * @group Math
-     * @subgroup Advanced
+     * @subgroup Shapes
      */
     Point: typeof Point;
     /**
@@ -5273,14 +5273,14 @@ export interface KAPLAYCtx<
      *
      * @since v2000.0
      * @group Math
-     * @subgroup Advanced
+     * @subgroup Shapes
      */
     Line: typeof Line;
     /**
      * A rectangle shape.
      *
      * @since v2000.0
-     * @group Physics
+     * @group Math
      * @subgroup Shapes
      */
     Rect: typeof Rect;

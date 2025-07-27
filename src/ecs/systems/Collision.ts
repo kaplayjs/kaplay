@@ -6,7 +6,7 @@ import type { GameObj } from "../../types";
 /**
  * Collision resolution data.
  *
- * @group Math
+ * @group Physics
  */
 
 export class Collision {
