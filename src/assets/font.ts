@@ -13,6 +13,10 @@ import type { LoadFontOpt, Outline, TexFilter } from "../types";
 import { Asset, loadProgress } from "./asset";
 import { type BitmapFontData, getBitmapFont, type GfxFont } from "./bitmapFont";
 
+/**
+ * @group Assets
+ * @subgroup Fonts
+ */
 export class FontData {
     fontface: FontFace;
     filter: TexFilter = DEF_FONT_FILTER;

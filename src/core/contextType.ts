@@ -3148,7 +3148,7 @@ export interface KAPLAYCtx<
      * @returns The asset data.
      * @since v2000.0
      * @group Assets
-     * @subgroup Defaults
+     * @subgroup Default
      */
     loadBean(name?: string): Asset<SpriteData>;
     /**
@@ -3169,7 +3169,7 @@ export interface KAPLAYCtx<
      * @returns The asset data.
      * @since v4000.0
      * @group Assets
-     * @subgroup Defaults
+     * @subgroup Default
      */
     loadHappy(name?: string, opt?: LoadBitmapFontOpt): Asset<BitmapFontData>;
     /**
@@ -3371,14 +3371,15 @@ export interface KAPLAYCtx<
      * @returns The asset data.
      * @since v3000.0
      * @group Assets
-     * @subgroup Other
+     * @subgroup Util
      */
     load<T>(l: Promise<T>): Asset<T>;
     /**
      * Load a prefab.
      *
      * @since v4000.0.0
-     * @group Prefab
+     * @group Assets
+     * @subgroup Prefabs
      * @experimental
      */
     loadPrefab: (name: string, url: string) => Asset<SerializedGameObj>;
@@ -3389,7 +3390,7 @@ export interface KAPLAYCtx<
      * @returns The loading progress.
      * @since v3000.0
      * @group Assets
-     * @subgroup Info
+     * @subgroup Util
      */
     loadProgress(): number;
     /**
@@ -3455,14 +3456,14 @@ export interface KAPLAYCtx<
      * @returns The asset data.
      * @since v3000.0
      * @group Assets
-     * @subgroup Other
+     * @subgroup Util
      */
     getAsset(name: string): Asset<any> | null;
     /**
      * The asset data.
      *
      * @group Assets
-     * @subgroup Other
+     * @subgroup Util
      */
     Asset: typeof Asset;
     /**
