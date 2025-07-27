@@ -1726,6 +1726,7 @@ export interface KAPLAYCtx<
      *
      * @since v3001.0
      * @group Math
+     * @subgroup Raycast
      */
     raycast(origin: Vec2, direction: Vec2, exclude?: string[]): RaycastResult;
     /**
@@ -4588,7 +4589,6 @@ export interface KAPLAYCtx<
      * @returns The vector.
      * @since v2000.0
      * @group Math
-     * @subgroup Vector
      */
     vec2(x: number, y: number): Vec2;
     vec2(p: Vec2): Vec2;
@@ -4610,7 +4610,6 @@ export interface KAPLAYCtx<
      * @returns The color.
      * @since v2000.0
      * @group Math
-     * @subgroup Color
      */
     rgb(r: number, g: number, b: number): Color;
     /**
@@ -4626,7 +4625,6 @@ export interface KAPLAYCtx<
      * @returns The color.
      * @since v2000.0
      * @group Math
-     * @subgroup Color
      */
     rgb(hex: string): Color;
     /**
@@ -4737,7 +4735,7 @@ export interface KAPLAYCtx<
      * ```
      *
      * @group Math
-     * @subgroup Math
+     * @subgroup Random
      */
     chance(p: number): boolean;
     /**
@@ -4890,7 +4888,6 @@ export interface KAPLAYCtx<
      * Return a value clamped to an inclusive range of min and max.
      *
      * @group Math
-     * @subgroup Util
      */
     clamp(n: number, min: number, max: number): number;
     /**
@@ -5111,6 +5108,7 @@ export interface KAPLAYCtx<
      * @returns true if the line and point intersects.
      * @since v2000.0
      * @group Math
+     * @subgroup Advanced
      */
     testLinePoint(l: Line, pt: Vec2): boolean;
     /**
@@ -5122,6 +5120,7 @@ export interface KAPLAYCtx<
      * @returns The intersection point, or null if the lines are parallel.
      * @since v2000.0
      * @group Math
+     * @subgroup Advanced
      */
     testLineLine(l1: Line, l2: Line): Vec2 | null;
     /**
@@ -5133,6 +5132,7 @@ export interface KAPLAYCtx<
      * @returns true if the line and circle intersects.
      * @since v2000.0
      * @group Math
+     * @subgroup Advanced
      */
     testLineCircle(l: Line, c: Circle): boolean;
     /**
@@ -5144,6 +5144,7 @@ export interface KAPLAYCtx<
      * @returns true if the rectangles overlap.
      * @since v2000.0
      * @group Math
+     * @subgroup Advanced
      */
     testRectRect(r1: Rect, r2: Rect): boolean;
     /**
@@ -5155,6 +5156,7 @@ export interface KAPLAYCtx<
      * @returns true if the line and rectangle overlaps.
      * @since v2000.0
      * @group Math
+     * @subgroup Advanced
      */
     testRectLine(r: Rect, l: Line): boolean;
     /**
@@ -5166,6 +5168,7 @@ export interface KAPLAYCtx<
      * @returns true if the point is inside the rectangle.
      * @since v2000.0
      * @group Math
+     * @subgroup Advanced
      */
     testRectPoint(r: Rect, pt: Vec2): boolean;
     /**
@@ -5177,16 +5180,19 @@ export interface KAPLAYCtx<
      * @returns true if the circle and polygon intersect linewise.
      * @since v2000.0
      * @group Math
+     * @subgroup Advanced
      */
     testCirclePolygon(c: Circle, p: Polygon): boolean;
     /**
      * @since v4000.0
      * @group Math
+     * @subgroup Advanced
      */
     clipLineToRect(r: Rect, l: Line, result: Line): boolean;
     /**
      * @since v4000.0
      * @group Math
+     * @subgroup Advanced
      */
     clipLineToCircle(c: Circle, l: Line, result: Line): boolean;
     /**
@@ -5223,23 +5229,27 @@ export interface KAPLAYCtx<
      * @returns true if the given polygon is convex
      * @since v3001.0
      * @group Math
+     * @subgroup Advanced
      */
     isConvex(pts: Vec2[]): boolean;
     /**
      * @returns 1 if over the edge, 0 otherwise
      * @since v3001.0
      * @group Math
+     * @subgroup Advanced
      */
     step(edge: number, x: number): number;
     /**
      * @returns 1 if over edge1, 0 if under edge0, a smooth hermite curve value otherwise
      * @since v3001.0
      * @group Math
+     * @subgroup Advanced
      */
     smoothstep(edge0: number, edge1: number, x: number): number;
     /**
      * @since v3001.0
      * @group Math
+     * @subgroup Advanced
      */
     triangulate(pts: Vec2[]): Vec2[][];
     /**
@@ -5247,6 +5257,7 @@ export interface KAPLAYCtx<
      *
      * @since v3001.0
      * @group Math
+     * @subgroup Advanced
      */
     NavMesh: typeof NavMesh;
     /**
@@ -5254,6 +5265,7 @@ export interface KAPLAYCtx<
      *
      * @since v3001.0
      * @group Math
+     * @subgroup Advanced
      */
     Point: typeof Point;
     /**
@@ -5261,13 +5273,15 @@ export interface KAPLAYCtx<
      *
      * @since v2000.0
      * @group Math
+     * @subgroup Advanced
      */
     Line: typeof Line;
     /**
      * A rectangle shape.
      *
      * @since v2000.0
-     * @group Math
+     * @group Physics
+     * @subgroup Shapes
      */
     Rect: typeof Rect;
     /**
@@ -5275,6 +5289,7 @@ export interface KAPLAYCtx<
      *
      * @since v2000.0
      * @group Math
+     * @subgroup Shapes
      */
     Circle: typeof Circle;
     /**
@@ -5282,6 +5297,7 @@ export interface KAPLAYCtx<
      *
      * @since v3001.0
      * @group Math
+     * @subgroup Shapes
      */
     Ellipse: typeof Ellipse;
     /**
@@ -5289,6 +5305,7 @@ export interface KAPLAYCtx<
      *
      * @since v2000.0
      * @group Math
+     * @subgroup Shapes
      */
     Polygon: typeof Polygon;
     /**
@@ -5296,6 +5313,7 @@ export interface KAPLAYCtx<
      *
      * @since v2000.0
      * @group Math
+     * @subgroup Vectors
      */
     Vec2: typeof Vec2;
     /**
@@ -5303,23 +5321,25 @@ export interface KAPLAYCtx<
      *
      * @since v2000.0
      * @group Math
+     * @subgroup Vectors
      */
     Color: typeof Color;
     /**
      * @since v3001.0
      * @group Math
+     * @subgroup Advanced
      */
     Mat4: typeof Mat4;
     /**
      * @since v4000.0
-     * @group Math
+     * @subgroup Advanced
      */
     Mat23: typeof Mat23;
     /**
      * A 2D quad.
      *
      * @since v3001.0
-     * @group Math
+     * @subgroup Advanced
      */
     Quad: typeof Quad;
     /**
@@ -5327,6 +5347,7 @@ export interface KAPLAYCtx<
      *
      * @since v2000.0
      * @group Math
+     * @subgroup Random
      */
     RNG: typeof RNG;
     /**
@@ -5445,7 +5466,8 @@ export interface KAPLAYCtx<
      * ```
      *
      * @since v3001.1
-     * @group Layers
+     * @group Rendering
+     * @subgroup Layers
      */
     setLayers(layers: string[], defaultLayer: string): void;
     /**
@@ -5453,7 +5475,8 @@ export interface KAPLAYCtx<
      *
      * @returns The layer names or null if not set.
      * @since v3001.1
-     * @group Layers
+     * @group Rendering
+     * @subgroup Layers
      * @experimental This feature is in experimental phase, it will be fully released in v3001.1
      */
     getLayers(): string[] | null;
@@ -5462,7 +5485,8 @@ export interface KAPLAYCtx<
      *
      * @returns The default layer name or null if not set.
      * @since v3001.0.5
-     * @group Layers
+     * @group Rendering
+     * @subgroup Layers
      * @experimental This feature is in experimental phase, it will be fully released in v3001.1
      */
     getDefaultLayer(): string | null;
@@ -5491,7 +5515,8 @@ export interface KAPLAYCtx<
      * ```
      *
      * @since v3001.0
-     * @group Layers
+     * @group Rendering
+     * @subgroup Layers
      */
     layers(layers: string[], defaultLayer: string): void;
     /**

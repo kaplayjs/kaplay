@@ -136,8 +136,38 @@
     "description": "Work with timers."
   },
   "Math": {
-    "name": "Math",
-    "description": "Work with math."
+    "name": "MF's Place",
+    "description": "Work with math.",
+    "subgroups": {
+      "Vectors": {
+        "name": "Vectors",
+        "description": "Work with vectors."
+      },
+      "Colors": {
+        "name": "Colors",
+        "description": "Work with colors."
+      },
+      "Angle": {
+        "name": "Angle",
+        "description": "Work with angles."
+      },
+      "Random": {
+        "name": "Random",
+        "description": "Work with random values."
+      },
+      "Tween": {
+        "name": "Tweenks",
+        "description": "Work with tweens and interpolations."
+      },
+      "Raycast": {
+        "name": "Raycast",
+        "description": "Work with raycasts."
+      },
+      "Advanced": {
+        "name": "Advanced",
+        "description": "For pro players."
+      }
+    }
   },
   "Physics": {
     "name": "Physics",
@@ -157,13 +187,29 @@
       }
     }
   },
+  "Draw": {
+    "name": "Drawing",
+    "description": "f"
+  },
   "Info": {
     "name": "Info",
     "description": "IDK"
   },
+  "Data": {
+    "name": "Data",
+    "description": "f"
+  },
+  "Debug": {
+    "name": "Debug",
+    "description": "Debug"
+  },
   "Constants": {
     "name": "Constants",
     "description": "IDK"
+  },
+  "Plugins": {
+    "name": "Plugin",
+    "description": "Idk"
   },
   "Misc": {
     "name": "Other",

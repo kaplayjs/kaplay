@@ -898,11 +898,13 @@ export type Mask = "intersect" | "subtract";
 
 /**
  * @group Math
+ * @subgroup Advanced
  */
 export type Edge = "left" | "right" | "top" | "bottom";
 
 /**
  * @group Math
+ * @subgroup Advanced
  */
 export enum EdgeMask {
     None = 0,
