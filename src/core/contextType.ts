@@ -2128,44 +2128,6 @@ export interface KAPLAYCtx<
      */
     onCleanup(action: () => void): void;
     /**
-     * Register an event that runs when a gamepad is connected.
-     *
-     * @param action - The function that runs when quit() is called.
-     *
-     * @example
-     * ```js
-     * // watch for a controller connecting
-     * onGamepadConnect((gp) => {
-     *     debug.log(`ohhi player ${gp.index + 1}`);
-     * });
-     * ```
-     *
-     * @returns The event controller.
-     * @since v3000.0
-     * @group Input
-     * @subgroup Gamepad
-     */
-    onGamepadConnect(action: (gamepad: KGamepad) => void): KEventController;
-    /**
-     * Register an event that runs when a gamepad is disconnected.
-     *
-     * @param action - The function that runs when quit() is called.
-     *
-     * @example
-     * ```js
-     * // watch for a controller disconnecting
-     * onGamepadDisconnect((gp) => {
-     *     debug.log(`ohbye player ${gp.index + 1}`);
-     * });
-     * ```
-     *
-     * @returns The event controller.
-     * @since v3000.0
-     * @group Input
-     * @subgroup Gamepad
-     */
-    onGamepadDisconnect(action: (gamepad: KGamepad) => void): KEventController;
-    /**
      * Register an event that runs once when 2 game objs with certain tags collides (required to have area() component).
      *
      * @param t1 - The tag of the first game obj.
@@ -2733,6 +2695,44 @@ export interface KAPLAYCtx<
      * @group Events
      */
     onShow(action: () => void): KEventController;
+    /**
+     * Register an event that runs when a gamepad is connected.
+     *
+     * @param action - The function that runs when quit() is called.
+     *
+     * @example
+     * ```js
+     * // watch for a controller connecting
+     * onGamepadConnect((gp) => {
+     *     debug.log(`ohhi player ${gp.index + 1}`);
+     * });
+     * ```
+     *
+     * @returns The event controller.
+     * @since v3000.0
+     * @group Input
+     * @subgroup Gamepad
+     */
+    onGamepadConnect(action: (gamepad: KGamepad) => void): KEventController;
+    /**
+     * Register an event that runs when a gamepad is disconnected.
+     *
+     * @param action - The function that runs when quit() is called.
+     *
+     * @example
+     * ```js
+     * // watch for a controller disconnecting
+     * onGamepadDisconnect((gp) => {
+     *     debug.log(`ohbye player ${gp.index + 1}`);
+     * });
+     * ```
+     *
+     * @returns The event controller.
+     * @since v3000.0
+     * @group Input
+     * @subgroup Gamepad
+     */
+    onGamepadDisconnect(action: (gamepad: KGamepad) => void): KEventController;
     /**
      * Register an event that runs every frame when certain gamepad buttons are held down.
      *
@@ -3896,7 +3896,7 @@ export interface KAPLAYCtx<
      * @returns An array of characters inputted.
      * @since v3000.0
      * @group Input
-     * @group Keyboard
+     * @subgroup Keyboard
      */
     charInputted(): string[];
     /**
