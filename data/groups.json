@@ -1,0 +1,158 @@
+{
+  "Start": {
+    "name": "Start",
+    "description": "TODO"
+  },
+  "Assets": {
+    "name": "Assets",
+    "description": "Work with game assets",
+    "subgroups": [
+      {
+        "Sprite": {
+          "name": "Sprite",
+          "description": "TODO"
+        },
+        "Audio": {
+          "name": "Audio",
+          "description": "TODO"
+        },
+        "Font": {
+          "name": "Font",
+          "description": "TODO"
+        },
+        "Shader": {
+          "name": "Shader",
+          "description": "TODO"
+        },
+        "Data": {
+          "name": "Data",
+          "description": "Default assets for prototyping"
+        },
+        "Util": {
+          "name": "Util",
+          "description": "Util information when working with assets."
+        }
+      }
+    ]
+  },
+  "Game Obj": {
+    "name": "Game Object",
+    "description": "Work with game objects",
+    "subgroups": {
+      "Prefab": {
+        "name": "Prefab",
+        "description": "Use game object serialization"
+      }
+    }
+  },
+  "Components": {
+    "name": "Components",
+    "description": "All components",
+    "subgroups": {
+      "Transform": {
+        "name": "Transform",
+        "description": "TODO"
+      },
+      "Rendering": {
+        "name": "Rendering",
+        "description": "TODO"
+      },
+      "Behaviour": {
+        "name": "Behaviour",
+        "description": "Components that may change Game Object general behaviour in relation to the scene."
+      },
+      "Physics": {
+        "name": "Physics",
+        "description": "TODO"
+      },
+      "Level": {
+        "name": "Level",
+        "description": "TODO"
+      },
+      "UI": {
+        "name": "UI",
+        "description": "TODO"
+      },
+      "Other": {
+        "name": "Other",
+        "description": "TODO"
+      }
+    }
+  },
+  "Input": {
+    "name": "Input",
+    "description": "All input",
+    "subgroups": {
+      "Keyboard": {
+        "name": "Keyboard",
+        "description": "Work with the keyboard input."
+      },
+      "Mouse": {
+        "name": "Mouse",
+        "description": "Work with the mouse/touch input."
+      },
+      "Gamepad": {
+        "name": "Gamepad",
+        "description": "Work with the gamepad input."
+      },
+      "Buttons API": {
+        "name": "Buttons API",
+        "description": "Work with the Buttons API, an api that let you convine various input methods."
+      },
+      "Util": {
+        "name": "Util",
+        "description": "Util methods when working with input."
+      }
+    }
+  },
+  "Audio": {
+    "name": "Audio",
+    "description": "Work with sounds and music."
+  },
+  "Scenes": {
+    "name": "Scenes",
+    "description": "F"
+  },
+  "Events": {
+    "name": "Events",
+    "description": "TODO"
+  },
+  "Timer": {
+    "name": "Timer",
+    "description": "Work with timers."
+  },
+  "Math": {
+    "name": "Math",
+    "description": "Work with math."
+  },
+  "Physics": {
+    "name": "Physics",
+    "description": "Work with physics."
+  },
+  "Rendering": {
+    "name": "Rendering",
+    "description": "Canvas API and more.",
+    "subgroups": {
+      "Layers": {
+        "name": "Layers",
+        "description": "Layers let you define what is rendered first."
+      },
+      "Camera": {
+        "name": "Camera",
+        "description": "Work with the camera."
+      }
+    }
+  },
+  "Info": {
+    "name": "Info",
+    "description": "IDK"
+  },
+  "Constants": {
+    "name": "Constants",
+    "description": "IDK"
+  },
+  "Misc": {
+    "name": "Other",
+    "description": "Uncategorized keywords."
+  }
+}

@@ -304,6 +304,8 @@ export interface KAPLAYCtx<
      *
      * @returns The serialized game object.
      * @since v4000.0
+     * @group Game Obj
+     * @subgroup Prefabs
      */
     createPrefab(obj: GameObj): SerializedGameObj;
     /**
@@ -4456,7 +4458,8 @@ export interface KAPLAYCtx<
      * ```
      *
      * @since v2000.0
-     * @group Random
+     * @group Math
+     * @subgroup Random
      */
     rand<T = RNGValue>(a?: T, b?: T): T;
     /**
@@ -4474,7 +4477,8 @@ export interface KAPLAYCtx<
      *
      * @returns A random integer between 0 and 1.
      * @since v2000.0
-     * @group Random
+     * @group Math
+     * @subgroup Random
      */
     randi(a?: number, b?: number): number;
     /**
@@ -4489,7 +4493,8 @@ export interface KAPLAYCtx<
      *
      * @returns The new seed.
      * @since v2000.0
-     * @group Random
+     * @group Math
+     * @subgroup Random
      */
     randSeed(seed?: number): number;
     /**
@@ -4513,6 +4518,7 @@ export interface KAPLAYCtx<
      * @returns The vector.
      * @since v2000.0
      * @group Math
+     * @subgroup Vector
      */
     vec2(x: number, y: number): Vec2;
     vec2(p: Vec2): Vec2;
@@ -4534,6 +4540,7 @@ export interface KAPLAYCtx<
      * @returns The color.
      * @since v2000.0
      * @group Math
+     * @subgroup Color
      */
     rgb(r: number, g: number, b: number): Color;
     /**
@@ -4548,6 +4555,8 @@ export interface KAPLAYCtx<
      *
      * @returns The color.
      * @since v2000.0
+     * @group Math
+     * @subgroup Color
      */
     rgb(hex: string): Color;
     /**
@@ -4587,6 +4596,7 @@ export interface KAPLAYCtx<
      * @returns The color.
      * @since v2000.1
      * @group Math
+     * @subgroup Color
      */
     hsl2rgb(hue: number, saturation: number, lightness: number): Color;
     /**
@@ -4600,6 +4610,7 @@ export interface KAPLAYCtx<
      * @returns A Quad object.
      * @since v3001.0
      * @group Math
+     * @subgroup Advanced
      */
     quad(x: number, y: number, w: number, h: number): Quad;
     /**
@@ -4615,7 +4626,8 @@ export interface KAPLAYCtx<
      *
      * @returns A random item from the list.
      * @since v3001.0
-     * @group Random
+     * @group Math
+     * @subgroup Random
      */
     choose<T>(lst: T[]): T;
     /**
@@ -4626,7 +4638,8 @@ export interface KAPLAYCtx<
      *
      * @returns An array of random items from the list.
      * @since v3001.0
-     * @group Random
+     * @group Math
+     * @subgroup Random
      */
     chooseMultiple<T>(lst: T[], count: number): T[];
     /**
@@ -4636,7 +4649,8 @@ export interface KAPLAYCtx<
      *
      * @returns A shuffled array.
      * @since v3001.0
-     * @group Random
+     * @group Math
+     * @subgroup Random
      */
     shuffle<T>(lst: T[]): T[];
     /**
@@ -4653,12 +4667,14 @@ export interface KAPLAYCtx<
      * ```
      *
      * @group Math
+     * @subgroup Math
      */
     chance(p: number): boolean;
     /**
      * Linear interpolation. Can take a number, vector, or color.
      *
      * @group Math
+     * @subgroup Tween
      */
     lerp<V extends LerpValue>(from: V, to: V, t: number): V;
     /**
@@ -4672,6 +4688,7 @@ export interface KAPLAYCtx<
      *
      * @since v3000.0
      * @group Math
+     * @subgroup Tween
      */
     tween<V extends LerpValue>(
         from: V,
@@ -4685,6 +4702,7 @@ export interface KAPLAYCtx<
      *
      * @since v3000.0
      * @group Math
+     * @subgroup Tween
      */
     easings: Record<EaseFuncs, EaseFunc>;
     /**
@@ -4692,13 +4710,15 @@ export interface KAPLAYCtx<
      *
      * @since v3001.0
      * @group Math
+     * @subgroup Tween
      */
     easingSteps(steps: number, position: StepPosition): (x: number) => number;
     /**
-     * Linear easing with keyframes
+     * Linear easing with keyframes.
      *
      * @since v3001.0
      * @group Math
+     * @subgroup Tween
      */
     easingLinear(keys: Vec2[]): (x: number) => number;
     /**
@@ -4706,6 +4726,7 @@ export interface KAPLAYCtx<
      *
      * @since v3001.0
      * @group Math
+     * @subgroup Tween
      */
     easingCubicBezier(p1: Vec2, p2: Vec2): (x: number) => number;
     /**
@@ -4785,31 +4806,36 @@ export interface KAPLAYCtx<
      * Convert degrees to radians.
      *
      * @group Math
+     * @subgroup Angle
      */
     deg2rad(deg: number): number;
     /**
      * Convert radians to degrees.
      *
      * @group Math
+     * @subgroup Angle
      */
     rad2deg(rad: number): number;
     /**
      * Return a value clamped to an inclusive range of min and max.
      *
      * @group Math
+     * @subgroup Util
      */
     clamp(n: number, min: number, max: number): number;
     /**
-     * Evaluate the quadratic Bezier at the given t
+     * Evaluate the quadratic Bezier at the given t.
      *
      * @group Math
+     * @subgroup Advanced
      */
     evaluateQuadratic(pt1: Vec2, pt2: Vec2, pt3: Vec2, t: number): Vec2;
     /**
-     * Evaluate the first derivative of a quadratic bezier at the given t
+     * Evaluate the first derivative of a quadratic bezier at the given t.
      *
      * @since v3001.0
      * @group Math
+     * @subgroup Advanced
      */
     evaluateQuadraticFirstDerivative(
         pt1: Vec2,
@@ -4822,6 +4848,7 @@ export interface KAPLAYCtx<
      *
      * @since v3001.0
      * @group Math
+     * @subgroup Advanced
      */
     evaluateQuadraticSecondDerivative(
         pt1: Vec2,
@@ -4830,16 +4857,18 @@ export interface KAPLAYCtx<
         t: number,
     ): Vec2;
     /**
-     * Evaluate the cubic Bezier at the given t
+     * Evaluate the cubic Bezier at the given t.
      *
      * @since v3001.0
      * @group Math
+     * @subgroup Advanced
      */
     evaluateBezier(pt1: Vec2, pt2: Vec2, pt3: Vec2, pt4: Vec2, t: number): Vec2;
     /**
-     * Evaluate the first derivative of a cubic Bezier at the given t
+     * Evaluate the first derivative of a cubic Bezier at the given t.
      *
      * @group Math
+     * @subgroup Advanced
      */
     evaluateBezierFirstDerivative(
         pt1: Vec2,
@@ -4849,10 +4878,11 @@ export interface KAPLAYCtx<
         t: number,
     ): Vec2;
     /**
-     * Evaluate the second derivative of a cubic bezier at the given t
+     * Evaluate the second derivative of a cubic bezier at the given t.
      *
      * @since v3001.0
      * @group Math
+     * @subgroup Advanced
      */
     evaluateBezierSecondDerivative(
         pt1: Vec2,
@@ -4862,10 +4892,11 @@ export interface KAPLAYCtx<
         t: number,
     ): Vec2;
     /**
-     * Evaluate the Catmull-Rom spline at the given t
+     * Evaluate the Catmull-Rom spline at the given t.
      *
      * @since v3001.0
      * @group Math
+     * @subgroup Advanced
      */
     evaluateCatmullRom(
         pt1: Vec2,
@@ -4875,10 +4906,11 @@ export interface KAPLAYCtx<
         t: number,
     ): Vec2;
     /**
-     * Evaluate the first derivative of a Catmull-Rom spline at the given t
+     * Evaluate the first derivative of a Catmull-Rom spline at the given t.
      *
      * @since v3001.0
      * @group Math
+     * @subgroup Advanced
      */
     evaluateCatmullRomFirstDerivative(
         pt1: Vec2,
@@ -4895,6 +4927,7 @@ export interface KAPLAYCtx<
      *
      * @since v3001.0
      * @group Math
+     * @subgroup Advanced
      */
     curveLengthApproximation(
         curve: (t: number) => Vec2,
@@ -4908,6 +4941,7 @@ export interface KAPLAYCtx<
      *
      * @since v3001.0
      * @group Math
+     * @subgroup Advanced
      */
     normalizedCurve(curve: (t: number) => Vec2): (s: number) => Vec2;
     /**
@@ -5097,16 +5131,19 @@ export interface KAPLAYCtx<
      *
      * @since v4000.0
      * @group Math
+     * @subgroup Vector
      */
     anchorToVec2: typeof anchorPt;
     /**
      * @since v4000.0
      * @group Math
+     * @subgroup Advanced
      */
     gjkShapeIntersects(shapeA: Shape, shapeB: Shape): boolean;
     /**
      * @since v4000.0
      * @group Math
+     * @subgroup Advanced
      */
     gjkShapeIntersection(
         shapeA: Shape,
@@ -5287,7 +5324,7 @@ export interface KAPLAYCtx<
      * ```
      *
      * @since v3001.1
-     * @group Layers
+     * @group Scene
      */
     pushScene(id: SceneName, ...args: unknown[]): void;
 
@@ -5312,7 +5349,7 @@ export interface KAPLAYCtx<
      * ```
      *
      * @since v3001.1
-     * @group Layers
+     * @group Scene
      */
     popScene(id: SceneName, ...args: unknown[]): void;
     /**
@@ -5384,7 +5421,7 @@ export interface KAPLAYCtx<
      * ```
      *
      * @since v3001.0
-     * @group Scene
+     * @group Layers
      */
     layers(layers: string[], defaultLayer: string): void;
     /**
@@ -6102,6 +6139,9 @@ export interface KAPLAYCtx<
      * Throws a new error and show up the Blue Screen.
      *
      * @param msg - The message for showing in the Blue Screen.
+     *
+     * @since v4000.0
+     * @group Start
      */
     throwError: (msg: string) => void;
     /**
