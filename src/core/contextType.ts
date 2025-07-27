@@ -2994,6 +2994,7 @@ export interface KAPLAYCtx<
      * ```
      *
      * @group Assets
+     * @subgroup Other
      */
     loadRoot(path?: string): string;
     /**
@@ -3029,6 +3030,7 @@ export interface KAPLAYCtx<
      * @returns The asset data.
      * @since v2000.0
      * @group Assets
+     * @subgroup Sprites
      */
     loadSprite(
         name: string | null,
@@ -3069,6 +3071,7 @@ export interface KAPLAYCtx<
      * @returns The asset data.
      * @since v2000.0
      * @group Assets
+     * @subgroup Sprites
      */
     loadSpriteAtlas(
         src: LoadSpriteSrc,
@@ -3095,6 +3098,7 @@ export interface KAPLAYCtx<
      * @returns The asset data.
      * @since v2000.0
      * @group Assets
+     * @subgroup Sprites
      */
     loadSpriteAtlas(
         src: LoadSpriteSrc,
@@ -3114,6 +3118,7 @@ export interface KAPLAYCtx<
      * @returns The asset data.
      * @since v2000.0
      * @group Assets
+     * @subgroup Sprites
      */
     loadAseprite(
         name: string | null,
@@ -3138,6 +3143,7 @@ export interface KAPLAYCtx<
      * @returns The asset data.
      * @since v2000.0
      * @group Assets
+     * @subgroup Defaults
      */
     loadBean(name?: string): Asset<SpriteData>;
     /**
@@ -3158,6 +3164,7 @@ export interface KAPLAYCtx<
      * @returns The asset data.
      * @since v4000.0
      * @group Assets
+     * @subgroup Defaults
      */
     loadHappy(name?: string, opt?: LoadBitmapFontOpt): Asset<BitmapFontData>;
     /**
@@ -3169,6 +3176,7 @@ export interface KAPLAYCtx<
      * @returns The asset data.
      * @since v3000.0
      * @group Assets
+     * @subgroup Data
      */
     loadJSON(name: string | null, url: string): Asset<any>;
     /**
@@ -3189,6 +3197,7 @@ export interface KAPLAYCtx<
      * @returns  The asset data.
      * @since v2000.0
      * @group Assets
+     * @subgroup Audio
      */
     loadSound(
         name: string | null,
@@ -3208,6 +3217,7 @@ export interface KAPLAYCtx<
      * @returns The asset data.
      * @since v3001.0
      * @group Assets
+     * @subgroup Audio
      */
     loadMusic(name: string | null, url: string): void;
     /**
@@ -3224,6 +3234,7 @@ export interface KAPLAYCtx<
      * @returns The asset data.
      * @since v3000.0
      * @group Assets
+     * @subgroup Fonts
      */
     loadFont(
         name: string,
@@ -3252,6 +3263,7 @@ export interface KAPLAYCtx<
      * @returns The asset data.
      * @since v3000.0
      * @group Assets
+     * @subgroup Fonts
      */
     loadBitmapFont(
         name: string | null,
@@ -3276,6 +3288,7 @@ export interface KAPLAYCtx<
      *
      * @returns The generated font data.
      * @group Assets
+     * @subgroup Fonts
      *
      * @see {@link LoadSpriteOpt}
      */
@@ -3353,6 +3366,7 @@ export interface KAPLAYCtx<
      * @returns The asset data.
      * @since v3000.0
      * @group Assets
+     * @subgroup Other
      */
     load<T>(l: Promise<T>): Asset<T>;
     /**
@@ -3370,6 +3384,7 @@ export interface KAPLAYCtx<
      * @returns The loading progress.
      * @since v3000.0
      * @group Assets
+     * @subgroup Info
      */
     loadProgress(): number;
     /**
@@ -3380,6 +3395,7 @@ export interface KAPLAYCtx<
      * @returns The asset data.
      * @since v3000.0
      * @group Assets
+     * @subgroup Sprites
      */
     getSprite(name: string): Asset<SpriteData> | null;
     /**
@@ -3390,6 +3406,7 @@ export interface KAPLAYCtx<
      * @returns The asset data.
      * @since v3000.0
      * @group Assets
+     * @subgroup Audio
      */
     getSound(name: string): Asset<SoundData> | null;
     /**
@@ -3400,6 +3417,7 @@ export interface KAPLAYCtx<
      * @returns The asset data.
      * @since v3000.0
      * @group Assets
+     * @subgroup Fonts
      */
     getFont(name: string): Asset<FontData> | null;
     /**
@@ -3410,6 +3428,7 @@ export interface KAPLAYCtx<
      * @returns The asset data.
      * @since v3000.0
      * @group Assets
+     * @subgroup Fonts
      */
     getBitmapFont(name: string): Asset<BitmapFontData> | null;
     /**
@@ -3431,22 +3450,26 @@ export interface KAPLAYCtx<
      * @returns The asset data.
      * @since v3000.0
      * @group Assets
+     * @subgroup Other
      */
     getAsset(name: string): Asset<any> | null;
     /**
      * The asset data.
      *
      * @group Assets
+     * @subgroup Other
      */
     Asset: typeof Asset;
     /**
      * The sprite data.
      *
      * @group Assets
+     * @subgroup Sprites
      */
     SpriteData: typeof SpriteData;
     /**
      * @group Assets
+     * @subgroup Audio
      */
     SoundData: typeof SoundData;
     /**

@@ -7,12 +7,20 @@ import { type Asset, loadImg } from "./asset";
 import { makeFont } from "./font";
 import { fixURL } from "./utils";
 
+/**
+ * @group Assets
+ * @subgroup Fonts
+ */
 export interface GfxFont {
     tex: Texture;
     map: Record<string, Quad>;
     size: number;
 }
 
+/**
+ * @group Assets
+ * @subgroup Fonts
+ */
 export type BitmapFontData = GfxFont;
 
 export function getBitmapFont(name: string): Asset<BitmapFontData> | null {
