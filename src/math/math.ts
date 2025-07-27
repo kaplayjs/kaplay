@@ -117,6 +117,7 @@ export function quad(x: number, y: number, w: number, h: number): Quad {
 }
 
 // Internal class
+/** @ignore */
 class Mat2 {
     // 2x2 matrix
     a: number;
@@ -2854,6 +2855,10 @@ export function easingCubicBezier(p1: Vec2, p2: Vec2) {
     };
 }
 
+/**
+ * @group Math
+ * @subgroup Tween
+ */
 export type StepPosition =
     | "jump-start"
     | "jump-end"

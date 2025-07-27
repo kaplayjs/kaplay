@@ -188,12 +188,23 @@
       "Camera": {
         "name": "Camera",
         "description": "Work with the camera."
+      },
+
+      "Canvas": {
+        "name": "Canvas",
+        "description": "Work with Canvas API."
       }
     }
   },
   "Draw": {
     "name": "Drawing",
-    "description": "f"
+    "description": "f",
+    "subgroups": {
+      "Picture": {
+        "name": "Picture",
+        "description": "Work with Picture API."
+      }
+    }
   },
   "Info": {
     "name": "Info",

@@ -5332,6 +5332,7 @@ export interface KAPLAYCtx<
     Mat4: typeof Mat4;
     /**
      * @since v4000.0
+     * @group Math
      * @subgroup Advanced
      */
     Mat23: typeof Mat23;
@@ -5339,6 +5340,7 @@ export interface KAPLAYCtx<
      * A 2D quad.
      *
      * @since v3001.0
+     * @group Math
      * @subgroup Advanced
      */
     Quad: typeof Quad;
@@ -5859,23 +5861,42 @@ export interface KAPLAYCtx<
     Picture: typeof Picture;
     /**
      * Selects the picture for drawing, erases existing data.
+     *
      * @param picture - The picture to write drawing data to.
+     *
+     * @since v4000.0
+     * @group Draw
+     * @subgroup Picture
      */
     beginPicture(picture?: Picture): void;
     /**
      * Selects the picture for drawing, keeps existing data.
+     *
      * @param picture - The picture to write drawing data to.
+     *
+     * @since v4000.0
+     * @group Draw
+     * @subgroup Picture
      */
     appendToPicture(picture?: Picture): void;
     /**
      * Deselects the current picture for drawing, returning the picture.
+     *
      * @returns The picture which was previously selected.
+     * @since v4000.0
+     * @group Draw
+     * @subgroup Picture
      */
     endPicture(): Picture;
     /**
      * Draws a picture to the screen. This function can not be used to draw recursively to a picture.
+     *
      * @param picture - The picture to draw
-     * @param opt - Drawing options
+     * @param opt - Drawing
+     *
+     * @since v4000.0
+     * @group Draw
+     * @subgroup Picture
      */
     drawPicture(picture: Picture, opt: DrawPictureOpt): void;
     /**
@@ -6122,7 +6143,8 @@ export interface KAPLAYCtx<
      *
      * @returns The explosion object.
      * @since v2000.0
-     * @group Misc
+     * @group Game Obj
+     * @subgroup Util
      */
     addKaboom(pos: Vec2, opt?: BoomOpt): GameObj;
     /**

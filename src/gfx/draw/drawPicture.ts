@@ -6,6 +6,10 @@ import type { BlendMode, RenderProps } from "../../types";
 import { Mesh, type Texture } from "../gfx";
 import { height, width } from "../stack";
 
+/**
+ * @group Draw
+ * @subgroup Picture
+ */
 export type Material = {
     tex?: Texture;
     shader?: Shader;
@@ -13,6 +17,10 @@ export type Material = {
     blend?: BlendMode;
 };
 
+/**
+ * @group Draw
+ * @subgroup Picture
+ */
 export type PictureCommand = {
     material: Material;
     index: number;
@@ -21,6 +29,9 @@ export type PictureCommand = {
 
 /**
  * A picture holding drawing data
+ *
+ * @group Draw
+ * @subgroup Picture
  */
 export class Picture {
     vertices: number[];
@@ -72,6 +83,9 @@ export class Picture {
 
 /**
  * Drawing options for drawPicture
+ *
+ * @group Draw
+ * @subgroup Types
  */
 export type DrawPictureOpt = RenderProps & {};
 

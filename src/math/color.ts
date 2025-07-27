@@ -3,9 +3,22 @@ import { _k } from "../shared";
 import { clamp } from "./clamp";
 import { lerpNumber } from "./lerpNumber";
 
+/**
+ * @group Math
+ * @subgroup Colors
+ */
 export type RGBValue = [number, number, number];
+
+/**
+ * @group Math
+ * @subgroup Colors
+ */
 export type RGBAValue = [number, number, number, number];
 
+/**
+ * @group Math
+ * @subgroup Colors
+ */
 export type CSSColor = keyof typeof CSS_COLOR_MAP;
 
 /**
@@ -267,6 +280,12 @@ export class Color {
     }
 }
 
+/**
+ * Possible color arguments for various functions.
+ *
+ * @group Math
+ * @subgroup Colors
+ */
 export type ColorArgs =
     // rgb(new Color(255, 255, 255))
     | [Color]
