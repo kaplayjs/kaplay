@@ -892,7 +892,7 @@ export interface KAPLAYCtx<
      * @returns The z comp.
      * @since v2000.0
      * @group Components
-     * @subgroup Rendering
+     * @subgroup Transform
      */
     z(z: number): ZComp;
     /**
@@ -1215,7 +1215,7 @@ export interface KAPLAYCtx<
      * @returns The follow comp.
      * @since v2000.0
      * @group Components
-     * @subgroup Transform
+     * @subgroup Behaviour
      */
     follow(obj: GameObj | null, offset?: Vec2): FollowComp;
     /**
