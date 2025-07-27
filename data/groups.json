@@ -6,42 +6,40 @@
   "Assets": {
     "name": "Assets",
     "description": "Work with game assets",
-    "subgroups": [
-      {
-        "Sprite": {
-          "name": "Sprites",
-          "description": "TODO"
-        },
-        "Audio": {
-          "name": "Audio",
-          "description": "TODO"
-        },
-        "Font": {
-          "name": "Fonts",
-          "description": "TODO"
-        },
-        "Shader": {
-          "name": "Shaders",
-          "description": "TODO"
-        },
-        "Prefabs": {
-          "name": "Prefabs",
-          "description": "Assets for storing prefabs."
-        },
-        "Data": {
-          "name": "Data",
-          "description": "Assets for storing various data."
-        },
-        "Default": {
-          "name": "Default",
-          "description": "Default assets for prototyping"
-        },
-        "Util": {
-          "name": "Util",
-          "description": "Util information when working with assets."
-        }
+    "subgroups": {
+      "Sprite": {
+        "name": "Sprites",
+        "description": "TODO"
+      },
+      "Audio": {
+        "name": "Audio",
+        "description": "TODO"
+      },
+      "Font": {
+        "name": "Fonts",
+        "description": "TODO"
+      },
+      "Shader": {
+        "name": "Shaders",
+        "description": "TODO"
+      },
+      "Prefabs": {
+        "name": "Prefabs",
+        "description": "Assets for storing prefabs."
+      },
+      "Data": {
+        "name": "Data",
+        "description": "Assets for storing various data."
+      },
+      "Default": {
+        "name": "Default",
+        "description": "Default assets for prototyping"
+      },
+      "Util": {
+        "name": "Util",
+        "description": "Util information when working with assets."
       }
-    ]
+    }
   },
   "Game Obj": {
     "name": "Game Object",
