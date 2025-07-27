@@ -7,7 +7,7 @@
     "name": "Assets",
     "description": "Work with game assets",
     "subgroups": {
-      "Sprite": {
+      "Sprites": {
         "name": "Sprites",
         "description": "TODO"
       },
@@ -15,11 +15,11 @@
         "name": "Audio",
         "description": "TODO"
       },
-      "Font": {
+      "Fonts": {
         "name": "Fonts",
         "description": "TODO"
       },
-      "Shader": {
+      "Shaders": {
         "name": "Shaders",
         "description": "TODO"
       },
