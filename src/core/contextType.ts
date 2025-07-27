@@ -923,7 +923,7 @@ export interface KAPLAYCtx<
      *
      * @returns The layer comp.
      * @since v3001.0
-     * @group Layer
+     * @group Components
      * @subgroup Rendering
      */
     layer(name: string): LayerComp;
@@ -3995,7 +3995,8 @@ export interface KAPLAYCtx<
      * ```
      *
      * @since v3001.1
-     * @group Camera
+     * @group Rendering
+     * @subgroup Camera
      */
     setCamPos(pos: Vec2): void;
     setCamPos(x: number, y: number): void;
@@ -4005,7 +4006,8 @@ export interface KAPLAYCtx<
      *
      * @returns The current camera position.
      * @since v3001.1
-     * @group Camera
+     * @group Rendering
+     * @subgroup Camera
      */
     getCamPos(): Vec2;
     /**
@@ -4022,7 +4024,8 @@ export interface KAPLAYCtx<
      * ```
      *
      * @since v3001.1
-     * @group Camera
+     * @group Rendering
+     * @subgroup Camera
      */
     setCamScale(scale: Vec2): void;
     setCamScale(x: number, y: number): void;
@@ -4032,7 +4035,8 @@ export interface KAPLAYCtx<
      *
      * @returns The current camera scale.
      * @since v3001.1
-     * @group Camera
+     * @group Rendering
+     * @subgroup Camera
      */
     getCamScale(): Vec2;
     /**
@@ -4047,7 +4051,8 @@ export interface KAPLAYCtx<
      * ```
      *
      * @since v3001.1
-     * @group Camera
+     * @group Rendering
+     * @subgroup Camera
      */
     setCamRot(angle: number): void;
     /**
@@ -4055,7 +4060,8 @@ export interface KAPLAYCtx<
      *
      * @returns The current camera rotation.
      * @since v3001.1
-     * @group Camera
+     * @group Rendering
+     * @subgroup Camera
      */
     getCamRot(): number;
     /**
@@ -4063,7 +4069,8 @@ export interface KAPLAYCtx<
      *
      * @returns The current camera transform.
      * @since v3001.1
-     * @group Camera
+     * @group Rendering
+     * @subgroup Camera
      */
     getCamTransform(): Mat23;
     /**
@@ -4080,7 +4087,8 @@ export interface KAPLAYCtx<
      * ```
      *
      * @since v3000.0
-     * @group Camera
+     * @group Rendering
+     * @subgroup Camera
      */
     shake(intensity?: number): void;
     /**
@@ -4099,7 +4107,8 @@ export interface KAPLAYCtx<
      *
      * @returns A timer controller.
      * @since v3001.0
-     * @group Camera
+     * @group Rendering
+     * @subgroup Camera
      */
     flash(flashColor: Color, fadeOutTime: number): TimerController;
     // #region DEPRECATED CAMERA METHODS ---------------------------------------
@@ -4120,7 +4129,8 @@ export interface KAPLAYCtx<
      *
      * @returns The current camera position.
      * @since v2000.0
-     * @group Camera
+     * @group Rendering
+     * @subgroup Camera
      */
     camPos(pos: Vec2): Vec2;
     /** @deprecated */
@@ -4139,7 +4149,8 @@ export interface KAPLAYCtx<
      *
      * @returns The current camera scale.
      * @since v2000.0
-     * @group Camera
+     * @group Rendering
+     * @subgroup Camera
      */
     camScale(scale: Vec2): Vec2;
     /** @deprecated */
@@ -4157,7 +4168,8 @@ export interface KAPLAYCtx<
      *
      * @returns The current camera rotation.
      * @since v2000.0
-     * @group Camera
+     * @group Rendering
+     * @subgroup Camera
      */
     camRot(angle?: number): number;
     /**
@@ -4178,7 +4190,8 @@ export interface KAPLAYCtx<
      *
      * @returns A timer controller.
      * @since v3001.0
-     * @group Camera
+     * @group Rendering
+     * @subgroup Camera
      */
     camFlash(flashColor: Color, fadeOutTime: number): TimerController;
     /**
@@ -4186,7 +4199,8 @@ export interface KAPLAYCtx<
      *
      * Get camera transform.
      *
-     * @group Camera
+     * @group Rendering
+     * @subgroup Camera
      */
     camTransform(): Mat23;
     // #endregion DEPRECATED CAMERA METHODS ------------------------------------
@@ -4196,7 +4210,8 @@ export interface KAPLAYCtx<
      * @param p - The point to transform.
      *
      * @since v3001.0
-     * @group Camera
+     * @group Rendering
+     * @subgroup Camera
      */
     toScreen(p: Vec2): Vec2;
     /**
@@ -4205,7 +4220,8 @@ export interface KAPLAYCtx<
      * @param p - The point to transform.
      *
      * @since v3001.0
-     * @group Camera
+     * @group Rendering
+     * @subgroup Camera
      */
     toWorld(p: Vec2): Vec2;
     /**
