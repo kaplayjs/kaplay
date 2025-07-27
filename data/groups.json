@@ -45,7 +45,7 @@
     "name": "Game Object",
     "description": "Work with game objects",
     "subgroups": {
-      "Prefab": {
+      "Prefabs": {
         "name": "Prefab",
         "description": "Use game object serialization"
       }
@@ -81,6 +81,14 @@
       },
       "Other": {
         "name": "Other",
+        "description": "TODO"
+      },
+      "Component Types": {
+        "name": "Component Types",
+        "description": "TODO"
+      },
+      "Component Serialization": {
+        "name": "Component Serialization",
         "description": "TODO"
       }
     }

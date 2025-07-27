@@ -477,6 +477,7 @@ export interface KAPLAYCtx<
      * @returns The position comp.
      * @since v2000.0
      * @group Components
+     * @subgroup Transform
      */
     pos(x: number, y: number): PosComp;
     pos(xy: number): PosComp;
@@ -510,6 +511,7 @@ export interface KAPLAYCtx<
      * @returns The scale comp.
      * @since v2000.0
      * @group Components
+     * @subgroup Transform
      */
     scale(x: number, y: number): ScaleComp;
     scale(xy: number): ScaleComp;
@@ -534,6 +536,7 @@ export interface KAPLAYCtx<
      * @returns The rotate comp.
      * @since v2000.0
      * @group Components
+     * @subgroup Transform
      */
     rotate(a?: number): RotateComp;
     // #endregion
@@ -556,6 +559,7 @@ export interface KAPLAYCtx<
      * @returns The color comp.
      * @since v2000.0
      * @group Components
+     * @subgroup Rendering
      */
     color(r: number, g: number, b: number): ColorComp;
     color(c: Color): ColorComp;
@@ -577,6 +581,7 @@ export interface KAPLAYCtx<
      * @returns The blend comp.
      * @since v4000.0
      * @group Components
+     * @subgroup Rendering
      */
     blend(blend: BlendMode): BlendComp;
     /**
@@ -601,6 +606,7 @@ export interface KAPLAYCtx<
      * @returns The opacity comp.
      * @since v2000.0
      * @group Components
+     * @subgroup Rendering
      */
     opacity(o?: number): OpacityComp;
     /**
@@ -635,6 +641,7 @@ export interface KAPLAYCtx<
      * @returns The sprite comp.
      * @since v2000.0
      * @group Components
+     * @subgroup Rendering
      */
     sprite(
         spr: string | SpriteData | Asset<SpriteData>,
@@ -674,6 +681,7 @@ export interface KAPLAYCtx<
      * @returns The text comp.
      * @since v2000.0
      * @group Components
+     * @subgroup Rendering
      */
     text(txt?: string, opt?: TextCompOpt): TextComp;
     /**
@@ -696,6 +704,7 @@ export interface KAPLAYCtx<
      * @returns The polygon comp.
      * @since v3001.0
      * @group Components
+     * @subgroup Rendering
      */
     polygon(pts: Vec2[], opt?: PolygonCompOpt): PolygonComp;
     /**
@@ -717,6 +726,7 @@ export interface KAPLAYCtx<
      *
      * @returns The rectangle component.
      * @group Components
+     * @subgroup Rendering
      */
     rect(w: number, h: number, opt?: RectCompOpt): RectComp;
     /**
@@ -736,6 +746,7 @@ export interface KAPLAYCtx<
      * @returns The circle comp.
      * @since v2000.0
      * @group Components
+     * @subgroup Rendering
      */
     circle(radius: number, opt?: CircleCompOpt): CircleComp;
     /**
@@ -755,6 +766,7 @@ export interface KAPLAYCtx<
      * @returns The ellipse comp.
      * @since v2000.0
      * @group Components
+     * @subgroup Rendering
      */
     ellipse(radiusX: number, radiusY: number): EllipseComp;
     /**
@@ -774,6 +786,7 @@ export interface KAPLAYCtx<
      * @returns The UV quad comp.
      * @since v2000.0
      * @group Components
+     * @subgroup Rendering
      */
     uvquad(w: number, h: number): UVQuadComp;
     /**
@@ -785,16 +798,18 @@ export interface KAPLAYCtx<
      * @returns The video comp.
      * @since v4000.0
      * @group Components
+     * @subgroup Rendering
      */
     video(url: string, opt?: VideoCompOpt): VideoComp;
     /**
-     * Draws a picture.
+     * Draws a picture, using the Picture API.
      *
      * @param picture - The picture to draw.
      *
      * @returns The picture comp.
      * @since v4000.0
      * @group Components
+     * @subgroup Rendering
      */
     picture(picture: Picture): PictureComp;
     /**
@@ -827,6 +842,7 @@ export interface KAPLAYCtx<
      * @returns The area comp.
      * @since v2000.0
      * @group Components
+     * @subgroup Physics
      */
     area(opt?: AreaCompOpt): AreaComp;
     /**
@@ -847,6 +863,7 @@ export interface KAPLAYCtx<
      * @returns The anchor comp.
      * @since v2000.0
      * @group Components
+     * @subgroup Rendering
      */
     anchor(o: Anchor | Vec2): AnchorComp;
     /**
@@ -875,6 +892,7 @@ export interface KAPLAYCtx<
      * @returns The z comp.
      * @since v2000.0
      * @group Components
+     * @subgroup Rendering
      */
     z(z: number): ZComp;
     /**
@@ -906,6 +924,7 @@ export interface KAPLAYCtx<
      * @returns The layer comp.
      * @since v3001.0
      * @group Layer
+     * @subgroup Rendering
      */
     layer(name: string): LayerComp;
     /**
@@ -931,6 +950,7 @@ export interface KAPLAYCtx<
      * @returns The outline comp.
      * @since v2000.0
      * @group Components
+     * @subgroup Rendering
      */
     outline(
         width?: number,
@@ -975,6 +995,7 @@ export interface KAPLAYCtx<
      * @returns The particles comp.
      * @since v3001.0
      * @group Components
+     * @subgroup Rendering
      */
     particles(popt: ParticlesOpt, eopt: EmitterOpt): ParticlesComp;
     /**
@@ -1010,6 +1031,7 @@ export interface KAPLAYCtx<
      * @returns The body comp.
      * @since v2000.0
      * @group Components
+     * @subgroup Physics
      */
     body(opt?: BodyCompOpt): BodyComp;
     /**
@@ -1038,6 +1060,7 @@ export interface KAPLAYCtx<
      * @returns The surface effector comp.
      * @since v3001.0
      * @group Components
+     * @subgroup Physics
      */
     surfaceEffector(opt: SurfaceEffectorCompOpt): SurfaceEffectorComp;
     /**
@@ -1049,6 +1072,7 @@ export interface KAPLAYCtx<
      * @returns The area effector comp.
      * @since v3001.0
      * @group Components
+     * @subgroup Physics
      */
     areaEffector(opt: AreaEffectorCompOpt): AreaEffectorComp;
     /**
@@ -1060,6 +1084,7 @@ export interface KAPLAYCtx<
      * @returns The point effector comp.
      * @since v3001.0
      * @group Components
+     * @subgroup Physics
      */
     pointEffector(opt: PointEffectorCompOpt): PointEffectorComp;
     /**
@@ -1072,6 +1097,7 @@ export interface KAPLAYCtx<
      * @returns The platform effector comp.
      * @since v3001.0
      * @group Components
+     * @subgroup Physics
      */
     platformEffector(opt?: PlatformEffectorCompOpt): PlatformEffectorComp;
     /**
@@ -1083,6 +1109,7 @@ export interface KAPLAYCtx<
      * @returns The buoyancy effector comp.
      * @since v3001.0
      * @group Components
+     * @subgroup Physics
      */
     buoyancyEffector(opt: BuoyancyEffectorCompOpt): BuoyancyEffectorComp;
     /**
@@ -1094,6 +1121,7 @@ export interface KAPLAYCtx<
      * @returns The constant force comp.
      * @since v3001.0
      * @group Components
+     * @subgroup Physics
      */
     constantForce(opt: ConstantForceCompOpt): ConstantForceComp;
     /**
@@ -1104,6 +1132,7 @@ export interface KAPLAYCtx<
      * @returns The double jump comp.
      * @since v3000.0
      * @group Components
+     * @subgroup Physics
      *
      * @requires {@link body `body()`}
      */
@@ -1129,6 +1158,7 @@ export interface KAPLAYCtx<
      * @returns The move comp.
      * @since v2000.0
      * @group Components
+     * @subgroup Behaviour
      *
      * @requires {@link pos `pos()`}
      */
@@ -1151,6 +1181,7 @@ export interface KAPLAYCtx<
      * @returns The offscreen comp.
      * @since v2000.2
      * @group Components
+     * @subgroup Behaviour
      */
     offscreen(opt?: OffScreenCompOpt): OffScreenComp;
     /**
@@ -1184,6 +1215,7 @@ export interface KAPLAYCtx<
      * @returns The follow comp.
      * @since v2000.0
      * @group Components
+     * @subgroup Transform
      */
     follow(obj: GameObj | null, offset?: Vec2): FollowComp;
     /**
@@ -1195,6 +1227,7 @@ export interface KAPLAYCtx<
      * @returns The shader comp.
      * @since v2000.0
      * @group Components
+     * @subgroup Rendering
      */
     shader(id: string, uniform?: Uniform | (() => Uniform)): ShaderComp;
     /**
@@ -1217,6 +1250,7 @@ export interface KAPLAYCtx<
      * @returns The text input comp.
      * @since v3001.0
      * @group Components
+     * @subgroup UI
      */
     textInput(hasFocus?: boolean, maxInputLength?: number): TextInputComp;
     /**
@@ -1238,6 +1272,7 @@ export interface KAPLAYCtx<
      * @returns The timer comp.
      * @since v2000.0
      * @group Components
+     * @subgroup Behaviour
      */
     timer(maxLoopsPerFrame?: number): TimerComp;
     /**
@@ -1259,6 +1294,7 @@ export interface KAPLAYCtx<
      * @returns The fixed comp.
      * @since v2000.0
      * @group Components
+     * @subgroup Rendering
      */
     fixed(fixed?: boolean): FixedComp;
     /**
@@ -1282,6 +1318,7 @@ export interface KAPLAYCtx<
      * @returns The stay comp.
      * @since v2000.0
      * @group Components
+     * @subgroup Behaviour
      */
     stay(scenesToStay?: string[]): StayComp;
     /**
@@ -1319,6 +1356,7 @@ export interface KAPLAYCtx<
      * @returns The health comp.
      * @since v2000.0
      * @group Components
+     * @subgroup Behaviour
      */
     health(hp: number, maxHP?: number): HealthComp;
     /**
@@ -1341,6 +1379,7 @@ export interface KAPLAYCtx<
      * @returns The lifespan comp.
      * @since v2000.0
      * @group Components
+     * @subgroup Behaviour
      */
     lifespan(time: number, options?: LifespanCompOpt): EmptyComp;
     /**
@@ -1351,6 +1390,7 @@ export interface KAPLAYCtx<
      * @returns The named comp.
      * @since v3001.0
      * @group Components
+     * @subgroup Behaviour
      */
     named(name: string): NamedComp;
     /**
@@ -1395,6 +1435,7 @@ export interface KAPLAYCtx<
      * @returns The state comp.
      * @since v2000.1
      * @group Components
+     * @subgroup Behaviour
      */
     state<T extends string>(initialState: T, stateList?: T[]): StateComp<T>;
     /**
@@ -1425,6 +1466,7 @@ export interface KAPLAYCtx<
      * @returns The state comp.
      * @since v2000.2
      * @group Components
+     * @subgroup Behaviour
      */
     state<T extends string>(
         initialState: T,
@@ -1434,15 +1476,16 @@ export interface KAPLAYCtx<
     /**
      * @deprecated since v3001.0
      *
-     * @returns An empty comp.
-     * @since v3000.0
-     * @group Components
-     *
-     * @requires {@link opacity `opacity()`}
-     *
      * Fade object in.
      *
      * Uses opacity for finding what to fade into and to set opacity during fade animation.
+     *
+     * @returns An empty comp.
+     * @since v3000.0
+     * @group Components
+     * @subgroup Behaviour
+     *
+     * @requires {@link opacity `opacity()`}
      */
     fadeIn(time: number): Comp;
     /**
@@ -1453,6 +1496,7 @@ export interface KAPLAYCtx<
      * @returns The mask comp.
      * @since v3001.0
      * @group Components
+     * @subgroup Rendering
      */
     mask(maskType?: Mask): MaskComp;
     /**
@@ -1474,6 +1518,7 @@ export interface KAPLAYCtx<
      * @returns The drawon comp.
      * @since v3000.0
      * @group Components
+     * @subgroup Rendering
      */
     drawon(canvas: FrameBuffer | Picture, opt?: DrawonOpt): DrawonComp;
     /**
@@ -1484,6 +1529,7 @@ export interface KAPLAYCtx<
      * @returns The tile comp.
      * @since v3000.0
      * @group Components
+     * @subgroup Behaviour
      */
     tile(opt?: TileCompOpt): TileComp;
     /**
@@ -1494,6 +1540,7 @@ export interface KAPLAYCtx<
      * @returns The agent comp.
      * @since v3000.0
      * @group Components
+     * @subgroup Level
      */
     agent(opt?: AgentCompOpt): AgentComp;
     /**
@@ -1545,6 +1592,7 @@ export interface KAPLAYCtx<
      * @returns The animate comp.
      * @since v3001.0
      * @group Components
+     * @subgroup Behaviour
      */
     animate(opt?: AnimateCompOpt): AnimateComp;
     /**
@@ -1557,6 +1605,7 @@ export interface KAPLAYCtx<
      * @returns The fake mouse comp.
      * @since v3001.0
      * @group Components
+     * @subgroup Behaviour
      */
     fakeMouse(opt?: FakeMouseOpt): FakeMouseComp;
     /**
@@ -1567,6 +1616,7 @@ export interface KAPLAYCtx<
      * @returns The serialized animation.
      * @since v3001.0
      * @group Components
+     * @subgroup Component Serialization
      */
     serializeAnimation(obj: GameObj, name: string): Animation;
     /**
@@ -1575,6 +1625,7 @@ export interface KAPLAYCtx<
      * @returns The sentry comp.
      * @since v3001.0
      * @group Components
+     * @subgroup Level
      */
     sentry(candidates: SentryCandidates, opt?: SentryCompOpt): SentryComp;
     /**
@@ -1607,6 +1658,7 @@ export interface KAPLAYCtx<
      * @returns The patrol comp.
      * @since v3001.0
      * @group Components
+     * @subgroup Level
      */
     patrol(opts: PatrolCompOpt): PatrolComp;
     /**
@@ -1614,9 +1666,9 @@ export interface KAPLAYCtx<
      *
      * @since v3001.0
      * @group Components
+     * @subgroup Level
      */
     pathfinder(opts: PathfinderCompOpt): PathfinderComp;
-
     /**
      * Construct a level based on symbols.
      *
@@ -1664,6 +1716,7 @@ export interface KAPLAYCtx<
      * @returns A game obj with the level.
      * @since v4000.0
      * @group Components
+     * @subgroup Level
      */
     level(map: string[], opt?: LevelOpt): LevelComp;
 
@@ -2999,7 +3052,7 @@ export interface KAPLAYCtx<
      * ```
      *
      * @group Assets
-     * @subgroup Other
+     * @subgroup Util
      */
     loadRoot(path?: string): string;
     /**
