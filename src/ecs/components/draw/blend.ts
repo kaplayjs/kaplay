@@ -12,7 +12,8 @@ export interface SerializedBlendComp {
 /**
  * The {@link blend `blend()`} component.
  *
- * @group Component Types
+ * @group Components
+ * @subgroup Component Types
  */
 export interface BlendComp extends Comp {
     blend: BlendMode;

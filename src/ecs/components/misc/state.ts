@@ -15,7 +15,8 @@ export interface SerializeStateComp {
 /**
  * The {@link state `state()`} component.
  *
- * @group Component Types
+ * @group Components
+ * @subgroup Component Types
  */
 export interface StateComp<T extends string> extends Comp {
     /**

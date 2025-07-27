@@ -19,7 +19,8 @@ export interface SerializedCircleComp {
 /**
  * The {@link circle `circle()`} component.
  *
- * @group Component Types
+ * @group Components
+ * @subgroup Component Types
  */
 export interface CircleComp extends Comp {
     draw: Comp["draw"];
@@ -37,7 +38,8 @@ export interface CircleComp extends Comp {
 /**
  * Options for the {@link circle `circle()``} component.
  *
- * @group Component Types
+ * @group Components
+ * @subgroup Component Types
  */
 export interface CircleCompOpt {
     /**

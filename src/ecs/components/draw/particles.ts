@@ -70,7 +70,8 @@ export type EmitterOpt = {
 /**
  * Options for the {@link particles `particles()`}'s component
  *
- * @group Component Types
+ * @group Components
+ * @subgroup Component Types
  */
 export type ParticlesOpt = {
     /**
@@ -126,7 +127,8 @@ export type ParticlesOpt = {
 /**
  * The {@link particles `particles()`} component.
  *
- * @group Component Types
+ * @group Components
+ * @subgroup Component Types
  */
 export interface ParticlesComp extends Comp {
     emitter: {

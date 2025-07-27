@@ -21,7 +21,8 @@ import { tile } from "./tile";
 /**
  * The {@link level `level()`} component.
  *
- * @group Component Types
+ * @group Components
+ * @subgroup Component Types
  */
 export interface LevelComp extends Comp {
     tileWidth(): number;
@@ -119,7 +120,8 @@ export interface LevelOpt {
 }
 
 /**
- * @group Component Types
+ * @group Components
+ * @subgroup Component Types
  */
 export type PathFindOpt = {
     allowDiagonals?: boolean;

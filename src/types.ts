@@ -38,7 +38,8 @@ type RemoveCompProps<T> = Defined<
 /**
  * A type to merge the components of a game object, omitting the default component properties.
  *
- * @group Component Types
+ * @group Components
+ * @subgroup Component Types
  */
 export type MergeComps<T> = MergeObj<RemoveCompProps<T>>;
 
@@ -49,7 +50,8 @@ export type MergePlugins<T extends PluginList<any>> = MergeObj<
 /**
  * A component list.
  *
- * @group Component Types
+ * @group Components
+ * @subgroup Component Types
  */
 export type CompList<T extends any | undefined> = (T | Tag)[];
 export type PluginList<T> = Array<T | KAPLAYPlugin<any>>;
@@ -868,7 +870,8 @@ export type GameObjID = number;
 /**
  * A component without own properties.
  *
- * @group Component Types
+ * @group Components
+ * @subgroup Component Types
  */
 export type EmptyComp = { id: string } & Comp;
 

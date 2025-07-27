@@ -12,7 +12,8 @@ export interface SerializedZComp {
 /**
  * The {@link z `z()`} component.
  *
- * @group Component Types
+ * @group Components
+ * @subgroup Component Types
  */
 export interface ZComp extends Comp {
     /**

@@ -20,7 +20,8 @@ export interface SerializedPosComp {
 /**
  * The {@link pos `pos()`} component.
  *
- * @group Component Types
+ * @group Components
+ * @subgroup Component Types
  */
 export interface PosComp extends Comp {
     /**

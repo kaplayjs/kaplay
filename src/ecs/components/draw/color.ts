@@ -13,7 +13,8 @@ export interface SerializedColorComp {
 /**
  * The {@link color `color()`} component.
  *
- * @group Component Types
+ * @group Components
+ * @subgroup Component Types
  */
 export interface ColorComp extends Comp {
     color: Color;

@@ -12,7 +12,8 @@ export interface SerializeStayComp {
 /**
  * The {@link stay `stay()`} component.
  *
- * @group Component Types
+ * @group Components
+ * @subgroup Component Types
  */
 export interface StayComp extends Comp {
     /**

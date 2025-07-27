@@ -46,7 +46,8 @@ export interface TweenController extends TimerController {
 /**
  * The {@link timer `timer()`} component.
  *
- * @group Component Types
+ * @group Components
+ * @subgroup Component Types
  */
 export interface TimerComp extends Comp {
     /**

@@ -15,7 +15,8 @@ interface SerializedMoveComp {
 /**
  * The {@link move `move()`} component.
  *
- * @group Component Types
+ * @group Components
+ * @subgroup Component Types
  */
 export interface MoveComp extends Comp {
     serialize: () => SerializedMoveComp;

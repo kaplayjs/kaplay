@@ -21,7 +21,8 @@ export interface SerializedOutlineComp {
 /**
  * The {@link outline `outline()`} component.
  *
- * @group Component Types
+ * @group Components
+ * @subgroup Component Types
  */
 export interface OutlineComp extends Comp {
     outline: Outline;

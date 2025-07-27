@@ -17,7 +17,8 @@ export interface SerializedRectComp {
 /**
  * The {@link rect `rect()`} component.
  *
- * @group Component Types
+ * @group Components
+ * @subgroup Component Types
  */
 export interface RectComp extends Comp {
     draw: Comp["draw"];
@@ -44,7 +45,8 @@ export interface RectComp extends Comp {
 /**
  * Options for the {@link rect `rect()`} component.
  *
- * @group Component Types
+ * @group Components
+ * @subgroup Component Types
  */
 export interface RectCompOpt {
     /**

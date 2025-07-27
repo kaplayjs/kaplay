@@ -5,7 +5,8 @@ import type { BodyComp } from "./body";
 /**
  * The {@link doubleJump `doubleJump()`} component.
  *
- * @group Component Types
+ * @group Components
+ * @subgroup Component Types
  */
 export interface DoubleJumpComp extends Comp {
     /**

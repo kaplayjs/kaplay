@@ -12,7 +12,8 @@ export interface SerializedFixedComp {
 /**
  * The {@link fixed `fixed()`} component.
  *
- * @group Component Types
+ * @group Components
+ * @subgroup Component Types
  */
 export interface FixedComp extends Comp {
     /**

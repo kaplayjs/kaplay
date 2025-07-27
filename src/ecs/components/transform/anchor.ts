@@ -15,7 +15,8 @@ export interface SerializedAnchorComp {
 /**
  * The {@link anchor `anchor()`} component.
  *
- * @group Component Types
+ * @group Components
+ * @subgroup Component Types
  */
 export interface AnchorComp extends Comp {
     /**

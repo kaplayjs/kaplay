@@ -15,7 +15,8 @@ export interface SerializeHealthComp {
 /**
  * The {@link health `health()`} component.
  *
- * @group Component Types
+ * @group Components
+ * @subgroup Component Types
  */
 export interface HealthComp extends Comp {
     /**

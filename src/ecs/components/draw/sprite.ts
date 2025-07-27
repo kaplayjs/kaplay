@@ -49,7 +49,8 @@ export interface SpriteCurAnim {
 /**
  * The {@link sprite `sprite()`} component.
  *
- * @group Component Types
+ * @group Components
+ * @subgroup Component Types
  */
 export interface SpriteComp extends Comp {
     draw: Comp["draw"];
@@ -140,7 +141,8 @@ export interface SpriteComp extends Comp {
 /**
  * Options for the {@link sprite `sprite()`} component.
  *
- * @group Component Types
+ * @group Components
+ * @subgroup Component Types
  */
 export interface SpriteCompOpt {
     /**

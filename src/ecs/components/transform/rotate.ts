@@ -12,7 +12,8 @@ export interface SerializedRotateComp {
 /**
  * The {@link rotate `rotate()`} component.
  *
- * @group Component Types
+ * @group Components
+ * @subgroup Component Types
  */
 export interface RotateComp extends Comp {
     /**

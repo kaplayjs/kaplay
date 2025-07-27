@@ -7,7 +7,8 @@ import type { TileComp } from "./tile";
 /**
  * The {@link agent `agent()`} component.
  *
- * @group Component Types
+ * @group Components
+ * @subgroup Component Types
  */
 export interface AgentComp extends Comp {
     agentSpeed: number;
@@ -29,7 +30,8 @@ export interface AgentComp extends Comp {
 /**
  * Options for the {@link agent `agent()`} component.
  *
- * @group Component Types
+ * @group Components
+ * @subgroup Component Types
  */
 export type AgentCompOpt = {
     speed?: number;

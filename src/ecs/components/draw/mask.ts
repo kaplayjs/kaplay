@@ -12,7 +12,8 @@ export interface SerializedMaskComp {
 /**
  * The {@link mask `mask()`} component.
  *
- * @group Component Types
+ * @group Components
+ * @subgroup Component Types
  */
 export interface MaskComp extends Comp {
     mask: Mask;

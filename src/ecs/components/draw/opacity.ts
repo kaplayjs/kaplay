@@ -16,7 +16,8 @@ export interface SerializedOpacityComp {
 /**
  * The {@link opacity `opacity()`} component.
  *
- * @group Component Types
+ * @group Components
+ * @subgroup Component Types
  */
 export interface OpacityComp extends Comp {
     /** Opacity of the current object. */

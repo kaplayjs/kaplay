@@ -13,7 +13,8 @@ export interface SerializeShaderComp {
 /**
  * The {@link shader `shader()`} component.
  *
- * @group Component Types
+ * @group Components
+ * @subgroup Component Types
  */
 export interface ShaderComp extends Comp {
     /**
