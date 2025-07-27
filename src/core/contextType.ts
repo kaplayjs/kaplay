@@ -164,12 +164,12 @@ import type {
     DrawUVQuadOpt,
     EmptyComp,
     GameObj,
-    GamepadStick,
     GetOpt,
     KAPLAYPlugin,
     Key,
     KGamepad,
     KGamepadButton,
+    KGamepadStick,
     LoadFontOpt,
     Mask,
     MouseButton,
@@ -2143,6 +2143,7 @@ export interface KAPLAYCtx<
      * @returns The event controller.
      * @since v3000.0
      * @group Input
+     * @subgroup Gamepad
      */
     onGamepadConnect(action: (gamepad: KGamepad) => void): KEventController;
     /**
@@ -2161,6 +2162,7 @@ export interface KAPLAYCtx<
      * @returns The event controller.
      * @since v3000.0
      * @group Input
+     * @subgroup Gamepad
      */
     onGamepadDisconnect(action: (gamepad: KGamepad) => void): KEventController;
     /**
@@ -2247,6 +2249,7 @@ export interface KAPLAYCtx<
      * @returns The event controller.
      * @since v2000.1
      * @group Input
+     * @subgroup Mouse
      */
     onClick(tag: Tag, action: (a: GameObj) => void): KEventController;
     /**
@@ -2323,6 +2326,7 @@ export interface KAPLAYCtx<
      * @returns The event controller.
      * @since v2000.1
      * @group Input
+     * @subgroup Keyboard
      */
     onKeyDown(key: Key | Key[], action: (key: Key) => void): KEventController;
     /**
@@ -2333,6 +2337,7 @@ export interface KAPLAYCtx<
      * @returns The event controller.
      * @since v2000.1
      * @group Input
+     * @subgroup Keyboard
      */
     onKeyDown(action: (key: Key) => void): KEventController;
     /**
@@ -2356,6 +2361,7 @@ export interface KAPLAYCtx<
      * @returns The event controller.
      * @since v2000.1
      * @group Input
+     * @subgroup Keyboard
      */
     onKeyPress(key: Key | Key[], action: (key: Key) => void): KEventController;
     /**
@@ -2375,6 +2381,7 @@ export interface KAPLAYCtx<
      * @returns The event controller.
      * @since v3001.0
      * @group Input
+     * @subgroup Keyboard
      */
     onKeyPress(action: (key: Key) => void): KEventController;
     /**
@@ -2394,6 +2401,7 @@ export interface KAPLAYCtx<
      * @returns The event controller.
      * @since v3000.1
      * @group Input
+     * @subgroup Keyboard
      */
     onKeyPressRepeat(
         k: Key | Key[],
@@ -2417,6 +2425,7 @@ export interface KAPLAYCtx<
      * @returns The event controller.
      * @since v2000.1
      * @group Input
+     * @subgroup Keyboard
      */
     onKeyRelease(k: Key | Key[], action: (k: Key) => void): KEventController;
     /**
@@ -2453,6 +2462,7 @@ export interface KAPLAYCtx<
      * @returns The event controller.
      * @since v2000.1
      * @group Input
+     * @subgroup Keyboard
      */
     onCharInput(action: (ch: string) => void): KEventController;
     /**
@@ -2474,6 +2484,7 @@ export interface KAPLAYCtx<
      * @returns The event controller.
      * @since v3001.0
      * @group Input
+     * @subgroup Mouse
      */
     onMouseDown(
         btn: MouseButton | MouseButton[],
@@ -2496,6 +2507,7 @@ export interface KAPLAYCtx<
      * @returns The event controller.
      * @since v3001.0
      * @group Input
+     * @subgroup Mouse
      */
     onMouseDown(action: (m: MouseButton) => void): KEventController;
     /**
@@ -2519,6 +2531,7 @@ export interface KAPLAYCtx<
      * @returns The event controller.
      * @since v3001.0
      * @group Input
+     * @subgroup Mouse
      */
     onMousePress(action: (m: MouseButton) => void): KEventController;
     /**
@@ -2540,6 +2553,7 @@ export interface KAPLAYCtx<
      * @returns The event controller.
      * @since v3001.0
      * @group Input
+     * @subgroup Mouse
      */
     onMousePress(
         btn: MouseButton | MouseButton[],
@@ -2566,6 +2580,7 @@ export interface KAPLAYCtx<
      * @returns The event controller.
      * @since v3001.0
      * @group Input
+     * @subgroup Mouse
      */
     onMouseRelease(action: (m: MouseButton) => void): KEventController;
     /**
@@ -2592,6 +2607,7 @@ export interface KAPLAYCtx<
      * @returns The event controller.
      * @since v3001.0
      * @group Input
+     * @subgroup Mouse
      */
     onMouseRelease(
         btn: MouseButton | MouseButton[],
@@ -2613,6 +2629,7 @@ export interface KAPLAYCtx<
      * @returns The event controller.
      * @since v2000.1
      * @group Input
+     * @subgroup Mouse
      */
     onMouseMove(action: (pos: Vec2, delta: Vec2) => void): KEventController;
     /**
@@ -2623,6 +2640,7 @@ export interface KAPLAYCtx<
      * @returns The event controller.
      * @since v2000.1
      * @group Input
+     * @subgroup Touch
      */
     onTouchStart(action: (pos: Vec2, t: Touch) => void): KEventController;
     /**
@@ -2633,6 +2651,7 @@ export interface KAPLAYCtx<
      * @returns The event controller.
      * @since v2000.1
      * @group Input
+     * @subgroup Touch
      */
     onTouchMove(action: (pos: Vec2, t: Touch) => void): KEventController;
     /**
@@ -2643,6 +2662,7 @@ export interface KAPLAYCtx<
      * @returns The event controller.
      * @since v2000.1
      * @group Input
+     * @subgroup Touch
      */
     onTouchEnd(action: (pos: Vec2, t: Touch) => void): KEventController;
     /**
@@ -2662,6 +2682,7 @@ export interface KAPLAYCtx<
      * @returns The event controller.
      * @since v3000.0
      * @group Input
+     * @subgroup Mouse
      */
     onScroll(action: (delta: Vec2) => void): KEventController;
     /**
@@ -2729,6 +2750,7 @@ export interface KAPLAYCtx<
      * @returns The event controller.
      * @since v3001.0
      * @group Input
+     * @subgroup Gamepad
      */
     onGamepadButtonDown(
         btn: KGamepadButton | KGamepadButton[],
@@ -2754,6 +2776,7 @@ export interface KAPLAYCtx<
      * @returns The event controller.
      * @since v3001.0
      * @group Input
+     * @subgroup Gamepad
      */
     onGamepadButtonDown(
         action: (btn: KGamepadButton, gamepad: KGamepad) => void,
@@ -2775,6 +2798,7 @@ export interface KAPLAYCtx<
      * @returns The event controller.
      * @since v3001.0
      * @group Input
+     * @subgroup Gamepad
      */
     onGamepadButtonPress(
         btn: KGamepadButton | KGamepadButton[],
@@ -2798,6 +2822,7 @@ export interface KAPLAYCtx<
      * @returns The event controller.
      * @since v3001.0
      * @group Input
+     * @subgroup Gamepad
      */
     onGamepadButtonPress(
         action: (btn: KGamepadButton, gamepad: KGamepad) => void,
@@ -2826,6 +2851,7 @@ export interface KAPLAYCtx<
      * @returns The event controller.
      * @since v3001.0
      * @group Input
+     * @subgroup Gamepad
      */
     onGamepadButtonRelease(
         btn: KGamepadButton | KGamepadButton[],
@@ -2849,6 +2875,7 @@ export interface KAPLAYCtx<
      * @returns The event controller.
      * @since v3000.0
      * @group Input
+     * @subgroup Gamepad
      */
     onGamepadButtonRelease(
         action: (btn: KGamepadButton, gamepad: KGamepad) => void,
@@ -2856,7 +2883,7 @@ export interface KAPLAYCtx<
     /**
      * Register an event that runs when the gamepad axis exists.
      *
-     * @param button - The stick to listen for. See {@link GamepadStick `GamepadStick`}.
+     * @param button - The stick to listen for. See {@link KGamepadStick `GamepadStick`}.
      * @param action - The function that is run when a specific gamepad stick is moved.
      *
      * @example
@@ -2876,9 +2903,10 @@ export interface KAPLAYCtx<
      * @returns The event controller.
      * @since v3000.0
      * @group Input
+     * @subgroup Gamepad
      */
     onGamepadStick(
-        stick: GamepadStick,
+        stick: KGamepadStick,
         action: (value: Vec2, gameepad: KGamepad) => void,
     ): KEventController;
     /**
@@ -2891,6 +2919,7 @@ export interface KAPLAYCtx<
      * @returns The event controller.
      * @since v3001.0
      * @group Input
+     * @subgroup Buttons API
      */
     onButtonPress(
         btn: TButton | TButton[],
@@ -2906,6 +2935,7 @@ export interface KAPLAYCtx<
      * @returns The event controller.
      * @since v3001.0
      * @group Input
+     * @subgroup Buttons API
      */
     onButtonRelease(
         btn: TButton | TButton[],
@@ -2922,6 +2952,7 @@ export interface KAPLAYCtx<
      * @returns The event controller.
      * @since v3001.0
      * @group Input
+     * @subgroup Buttons API
      */
     onButtonDown(
         btn: TButton | TButton[],
@@ -3510,6 +3541,7 @@ export interface KAPLAYCtx<
      * @returns true if on a touch screen device.
      * @since v3000.0
      * @group Input
+     * @subgroup Touch
      */
     isTouchscreen(): boolean;
     /**
@@ -3518,6 +3550,7 @@ export interface KAPLAYCtx<
      * @returns The current mouse position.
      * @since v2000.0
      * @group Input
+     * @subgroup Mouse
      */
     mousePos(): Vec2;
     /**
@@ -3526,6 +3559,7 @@ export interface KAPLAYCtx<
      * @returns The delta mouse position.
      * @since v2000.0
      * @group Input
+     * @subgroup Mouse
      */
     mouseDeltaPos(): Vec2;
     /**
@@ -3573,6 +3607,7 @@ export interface KAPLAYCtx<
      *
      * @since v2000.0
      * @group Input
+     * @subgroup Keyboard
      */
     isKeyDown(k?: Key | Key[]): boolean;
     /**
@@ -3592,6 +3627,7 @@ export interface KAPLAYCtx<
      *
      * @since v2000.0
      * @group Input
+     * @subgroup Keyboard
      */
     isKeyPressed(k?: Key | Key[]): boolean;
     /**
@@ -3629,6 +3665,7 @@ export interface KAPLAYCtx<
      *
      * @since v2000.0
      * @group Input
+     * @subgroup Keyboard
      */
     isKeyPressedRepeat(k?: Key | Key[]): boolean;
     /**
@@ -3648,6 +3685,7 @@ export interface KAPLAYCtx<
      *
      * @since v2000.0
      * @group Input
+     * @subgroup Keyboard
      */
     isKeyReleased(k?: Key | Key[]): boolean;
     /**
@@ -3657,6 +3695,7 @@ export interface KAPLAYCtx<
      *
      * @since v2000.0
      * @group Input
+     * @subgroup Mouse
      */
     isMouseDown(btn?: MouseButton | MouseButton[]): boolean;
     /**
@@ -3666,6 +3705,7 @@ export interface KAPLAYCtx<
      *
      * @since v2000.0
      * @group Input
+     * @subgroup Mouse
      */
     isMousePressed(btn?: MouseButton | MouseButton[]): boolean;
     /**
@@ -3675,6 +3715,7 @@ export interface KAPLAYCtx<
      *
      * @since v2000.0
      * @group Input
+     * @subgroup Mouse
      */
     isMouseReleased(btn?: MouseButton | MouseButton[]): boolean;
     /**
@@ -3682,6 +3723,7 @@ export interface KAPLAYCtx<
      *
      * @since v2000.1
      * @group Input
+     * @subgroup Mouse
      */
     isMouseMoved(): boolean;
     /**
@@ -3691,6 +3733,7 @@ export interface KAPLAYCtx<
      *
      * @since v3000.0
      * @group Input
+     * @subgroup Gamepad
      */
     isGamepadButtonPressed(btn?: KGamepadButton | KGamepadButton[]): boolean;
     /**
@@ -3700,6 +3743,7 @@ export interface KAPLAYCtx<
      *
      * @since v3000.0
      * @group Input
+     * @subgroup Gamepad
      */
     isGamepadButtonDown(btn?: KGamepadButton | KGamepadButton): boolean;
     /**
@@ -3709,6 +3753,7 @@ export interface KAPLAYCtx<
      *
      * @since v3000.0
      * @group Input
+     * @subgroup Gamepad
      */
     isGamepadButtonReleased(btn?: KGamepadButton | KGamepadButton[]): boolean;
     /**
@@ -3728,6 +3773,7 @@ export interface KAPLAYCtx<
      *
      * @since v3001.0
      * @group Input
+     * @subgroup Buttons API
      */
     isButtonPressed(btn?: TButton | TButton[]): boolean;
     /**
@@ -3747,6 +3793,7 @@ export interface KAPLAYCtx<
      *
      * @since v3001.0
      * @group Input
+     * @subgroup Buttons API
      */
     isButtonDown(btn?: TButton | TButton[]): boolean;
     /**
@@ -3766,6 +3813,7 @@ export interface KAPLAYCtx<
      *
      * @since v3001.0
      * @group Input
+     * @subgroup Buttons API
      */
     isButtonReleased(btn?: TButton | TButton[]): boolean;
     /**
@@ -3775,6 +3823,7 @@ export interface KAPLAYCtx<
      *
      * @since v3001.0
      * @group Input
+     * @subgroup Buttons API
      */
     getButton(btn: keyof TButtonDef): ButtonBinding;
     /**
@@ -3784,6 +3833,7 @@ export interface KAPLAYCtx<
      *
      * @since v3001.0
      * @group Input
+     * @subgroup Buttons API
      */
     setButton(btn: string, def: ButtonBinding): void;
     /**
@@ -3800,6 +3850,7 @@ export interface KAPLAYCtx<
      *
      * @since v3001.0
      * @group Input
+     * @subgroup Buttons API
      */
     pressButton(btn: TButton): void;
     /**
@@ -3816,6 +3867,7 @@ export interface KAPLAYCtx<
      *
      * @since v3001.0
      * @group Input
+     * @subgroup Buttons API
      */
     releaseButton(btn: TButton): void;
     /**
@@ -3826,14 +3878,16 @@ export interface KAPLAYCtx<
      * @returns The stick axis Vec2.
      * @since v3001.0
      * @group Input
+     * @subgroup Gamepad
      */
-    getGamepadStick(stick: GamepadStick): Vec2;
+    getGamepadStick(stick: KGamepadStick): Vec2;
     /**
      * Get the latest input device type that triggered the input event.
      *
      * @returns The last input device type, or null if no input event has been triggered.
      * @since v3001.0
      * @group Input
+     * @subgroup Util
      */
     getLastInputDeviceType(): ButtonBindingDevice | null;
     /**
@@ -3842,6 +3896,7 @@ export interface KAPLAYCtx<
      * @returns An array of characters inputted.
      * @since v3000.0
      * @group Input
+     * @group Keyboard
      */
     charInputted(): string[];
     /**

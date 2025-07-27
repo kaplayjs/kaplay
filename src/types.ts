@@ -60,6 +60,7 @@ export type PluginList<T> = Array<T | KAPLAYPlugin<any>>;
  * A key.
  *
  * @group Input
+ * @subgroup Keyboard
  */
 export type Key =
     | (
@@ -144,6 +145,7 @@ export type Key =
  * A mouse button.
  *
  * @group Input
+ * @subgroup Mouse
  */
 export type MouseButton = "left" | "right" | "middle" | "back" | "forward";
 
@@ -151,6 +153,7 @@ export type MouseButton = "left" | "right" | "middle" | "back" | "forward";
  * A gamepad button.
  *
  * @group Input
+ * @subgroup Gamepad
  */
 export type KGamepadButton =
     | "north"
@@ -176,18 +179,27 @@ export type KGamepadButton =
  * A gamepad stick.
  *
  * @group Input
+ * @subgroup Gamepad
  */
-export type GamepadStick = "left" | "right";
+export type KGamepadStick = "left" | "right";
 
 /**
- * A gamepad definition.
+ * A gamepad definition. Used in {@link KAPLAYOpt `KAPLAYOpt`}
+ *
+ * @group Input
+ * @subgroup Gamepad
  */
 export type GamepadDef = {
     buttons: Record<string, KGamepadButton>;
-    sticks: Partial<Record<GamepadStick, { x: number; y: number }>>;
+    sticks: Partial<Record<KGamepadStick, { x: number; y: number }>>;
 };
 
-/** A KAPLAY gamepad */
+/**
+ *  A KAPLAY gamepad
+ *
+ * @group Input
+ * @subgroup Gamepad
+ */
 export type KGamepad = {
     /** The order of the gamepad in the gamepad list. */
     index: number;
@@ -198,7 +210,7 @@ export type KGamepad = {
     /** If certain button is released. */
     isReleased(b: KGamepadButton): boolean;
     /** Get the value of a stick. */
-    getStick(stick: GamepadStick): Vec2;
+    getStick(stick: KGamepadStick): Vec2;
 };
 
 /**

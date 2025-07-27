@@ -3,11 +3,11 @@
 import type {
     Cursor,
     GamepadDef,
-    GamepadStick,
     KAPLAYOpt,
     Key,
     KGamepad,
     KGamepadButton,
+    KGamepadStick,
     MouseButton,
 } from "../types";
 
@@ -53,7 +53,7 @@ export class ButtonState<T = string> {
 
 class GamepadState {
     buttonState: ButtonState<KGamepadButton> = new ButtonState();
-    stickState: Map<GamepadStick, Vec2> = new Map();
+    stickState: Map<KGamepadStick, Vec2> = new Map();
 }
 
 class FPSCounter {
@@ -616,7 +616,7 @@ export const initApp = (
     );
 
     function onGamepadStick(
-        stick: GamepadStick,
+        stick: KGamepadStick,
         action: (value: Vec2, gp: KGamepad) => void,
     ): KEventController {
         return state.events.on(
@@ -633,7 +633,7 @@ export const initApp = (
         return state.events.on("gamepadDisconnect", action);
     }
 
-    function getGamepadStick(stick: GamepadStick): Vec2 {
+    function getGamepadStick(stick: KGamepadStick): Vec2 {
         return state.mergedGamepadState.stickState.get(stick) || new Vec2(0);
     }
 
@@ -729,7 +729,7 @@ export const initApp = (
                     ?.buttonState
                     .released.has(btn) || false;
             },
-            getStick: (stick: GamepadStick) => {
+            getStick: (stick: KGamepadStick) => {
                 return state.gamepadStates.get(browserGamepad.index)?.stickState
                     .get(stick) || vec2();
             },
@@ -839,15 +839,15 @@ export const initApp = (
             }
 
             for (const stickName in map.sticks) {
-                const stick = map.sticks[stickName as GamepadStick];
+                const stick = map.sticks[stickName as KGamepadStick];
                 if (!stick) continue;
                 const value = new Vec2(
                     browserGamepad.axes[stick.x],
                     browserGamepad.axes[stick.y],
                 );
-                gamepadState.stickState.set(stickName as GamepadStick, value);
+                gamepadState.stickState.set(stickName as KGamepadStick, value);
                 state.mergedGamepadState.stickState.set(
-                    stickName as GamepadStick,
+                    stickName as KGamepadStick,
                     value,
                 );
                 state.events.trigger("gamepadStick", stickName, value, gamepad);
