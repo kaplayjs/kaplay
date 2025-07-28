@@ -2,6 +2,10 @@ import type { Vec2 } from "../../math/Vec2";
 import type { RenderProps } from "../../types";
 import { drawLines } from "./drawLine";
 
+/**
+ * @group Draw
+ * @subgroup Types
+ */
 export type DrawCurveOpt = RenderProps & {
     /**
      * The amount of line segments to draw.

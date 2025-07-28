@@ -235,10 +235,10 @@
         "name": "Picture",
         "description": "Work with Picture API."
       },
-
       "Types": {
         "name": "Types",
-        "description": "Various types related to Draw."
+        "description": "Various types related to Draw.",
+        "closed": true
       }
     }
   },

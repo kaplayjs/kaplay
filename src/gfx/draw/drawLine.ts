@@ -1,16 +1,16 @@
-import { opacity } from "../../ecs/components/draw/opacity";
 import { Color } from "../../math/color";
 import { lerp } from "../../math/lerp";
 import { deg2rad, vec2 } from "../../math/math";
 import { Vec2 } from "../../math/Vec2";
 import { _k } from "../../shared";
 import type { RenderProps } from "../../types";
-import { center } from "../stack";
-import { drawCircle } from "./drawCircle";
 import { drawRaw } from "./drawRaw";
 
 /**
  * How the line should look like.
+ *
+ * @group Draw
+ * @subgroup Types
  */
 export type DrawLineOpt = Omit<RenderProps, "angle" | "scale"> & {
     /**

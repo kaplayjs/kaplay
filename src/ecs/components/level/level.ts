@@ -94,7 +94,7 @@ export interface LevelComp extends Comp {
  * Options for the {@link level `level()`} component.
  *
  * @group Components
- * @subgroup Types
+ * @subgroup Component Types
  */
 export interface LevelCompOpt {
     /**

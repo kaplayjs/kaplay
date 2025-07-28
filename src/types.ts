@@ -6,7 +6,6 @@ import type { GameObjRaw } from "./ecs/entity/GameObjRaw";
 import type { LineCap, LineJoin } from "./gfx/draw/drawLine";
 import type { Picture } from "./gfx/draw/drawPicture";
 import type { FrameBuffer } from "./gfx/FrameBuffer";
-import type { Texture } from "./gfx/gfx";
 import type { Color, RGBAValue, RGBValue } from "./math/color";
 import type {
     Circle,
@@ -631,144 +630,6 @@ export interface RenderProps {
     outline?: Outline;
 }
 
-export type DrawTextureOpt = RenderProps & {
-    tex: Texture;
-    width?: number;
-    height?: number;
-    tiled?: boolean;
-    flipX?: boolean;
-    flipY?: boolean;
-    quad?: Quad;
-    anchor?: Anchor | Vec2;
-};
-
-export type DrawUVQuadOpt = RenderProps & {
-    /**
-     * Width of the UV quad.
-     */
-    width: number;
-    /**
-     * Height of the UV quad.
-     */
-    height: number;
-    /**
-     * If flip the texture horizontally.
-     */
-    flipX?: boolean;
-    /**
-     * If flip the texture vertically.
-     */
-    flipY?: boolean;
-    /**
-     * The texture to sample for this quad.
-     */
-    tex?: Texture;
-    /**
-     * The texture sampling area.
-     */
-    quad?: Quad;
-    /**
-     * The anchor point, or the pivot point. Default to "topleft".
-     */
-    anchor?: Anchor | Vec2;
-};
-
-/**
- * How the ellipse should look like.
- */
-export type DrawEllipseOpt = RenderProps & {
-    /**
-     * The horizontal radius.
-     */
-    radiusX: number;
-    /**
-     * The vertical radius.
-     */
-    radiusY: number;
-    /**
-     * Starting angle.
-     */
-    start?: number;
-    /**
-     * Ending angle.
-     */
-    end?: number;
-    /**
-     * If fill the shape with color (set this to false if you only want an outline).
-     */
-    fill?: boolean;
-    /**
-     * Use gradient instead of solid color.
-     *
-     * @since v3000.0
-     */
-    gradient?: [Color, Color];
-    /**
-     * Multiplier for circle vertices resolution (default 1)
-     */
-    resolution?: number;
-    /**
-     * The anchor point, or the pivot point. Default to "topleft".
-     */
-    anchor?: Anchor | Vec2;
-};
-
-/**
- * How the polygon should look like.
- */
-export type DrawPolygonOpt = RenderProps & {
-    /**
-     * The points that make up the polygon
-     */
-    pts: Vec2[];
-    /**
-     * If fill the shape with color (set this to false if you only want an outline).
-     */
-    fill?: boolean;
-    /**
-     * Manual triangulation.
-     */
-    indices?: number[];
-    /**
-     * The center point of transformation in relation to the position.
-     */
-    offset?: Vec2;
-    /**
-     * The radius of each corner.
-     */
-    radius?: number | number[];
-    /**
-     * The color of each vertex.
-     *
-     * @since v3000.0
-     */
-    colors?: Color[];
-    /**
-     * The opacity of each vertex.
-     *
-     * @since v4000.0
-     */
-    opacities?: number[];
-    /**
-     * The uv of each vertex.
-     *
-     * @since v3001.0
-     */
-    uv?: Vec2[];
-    /**
-     * The texture if uv are supplied.
-     *
-     * @since v3001.0
-     */
-    tex?: Texture;
-    /**
-     * Triangulate concave polygons.
-     *
-     * @since v3001.0
-     */
-    triangulate?: boolean;
-};
-
 export interface Outline {
     /**
      * The width, or thickness of the line.
@@ -805,7 +666,8 @@ export interface Outline {
 }
 
 /**
- * @group Draw
+ * @group Rendering
+ * @subgroup Screen
  */
 export type Cursor =
     | string

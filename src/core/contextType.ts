@@ -118,6 +118,7 @@ import type { DrawBezierOpt } from "../gfx/draw/drawBezier";
 import type { DrawCanvasOpt } from "../gfx/draw/drawCanvas";
 import type { DrawCircleOpt } from "../gfx/draw/drawCircle";
 import type { DrawCurveOpt } from "../gfx/draw/drawCurve";
+import type { DrawEllipseOpt } from "../gfx/draw/drawEllipse";
 import type { FormattedText } from "../gfx/draw/drawFormattedText";
 import type {
     DrawLineOpt,
@@ -126,10 +127,12 @@ import type {
     LineJoin,
 } from "../gfx/draw/drawLine";
 import type { DrawPictureOpt, Picture } from "../gfx/draw/drawPicture";
+import type { DrawPolygonOpt } from "../gfx/draw/drawPolygon";
 import type { DrawRectOpt } from "../gfx/draw/drawRect";
 import type { DrawSpriteOpt } from "../gfx/draw/drawSprite";
 import type { DrawTextOpt } from "../gfx/draw/drawText";
 import type { DrawTriangleOpt } from "../gfx/draw/drawTriangle";
+import type { DrawUVQuadOpt } from "../gfx/draw/drawUVQuad";
 import type { StyledTextInfo } from "../gfx/formatText";
 import type { FrameBuffer } from "../gfx/FrameBuffer";
 import type { Color, CSSColor } from "../math/color";
@@ -159,9 +162,6 @@ import type {
     Comp,
     CompList,
     Cursor,
-    DrawEllipseOpt,
-    DrawPolygonOpt,
-    DrawUVQuadOpt,
     EmptyComp,
     GameObj,
     GetOpt,

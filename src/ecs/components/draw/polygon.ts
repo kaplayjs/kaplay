@@ -1,10 +1,13 @@
 import { getRenderProps } from "../../../game/utils";
-import { drawPolygon } from "../../../gfx/draw/drawPolygon";
+import {
+    drawPolygon,
+    type DrawPolygonOpt,
+} from "../../../gfx/draw/drawPolygon";
 import type { Texture } from "../../../gfx/gfx";
 import type { Color } from "../../../math/color";
 import { Polygon } from "../../../math/math";
 import { type Vec2 } from "../../../math/Vec2";
-import type { Comp, DrawPolygonOpt, GameObj } from "../../../types";
+import type { Comp, GameObj } from "../../../types";
 
 /**
  * The {@link polygon `polygon()`} component.
