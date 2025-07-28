@@ -43,7 +43,7 @@ import type { TextComp, TextCompOpt } from "../ecs/components/draw/text";
 import type { UVQuadComp } from "../ecs/components/draw/uvquad";
 import type { VideoComp, VideoCompOpt } from "../ecs/components/draw/video";
 import type { AgentComp, AgentCompOpt } from "../ecs/components/level/agent";
-import type { LevelComp, LevelOpt } from "../ecs/components/level/level";
+import type { LevelComp, LevelCompOpt } from "../ecs/components/level/level";
 import type {
     PathfinderComp,
     PathfinderCompOpt,
@@ -1718,7 +1718,7 @@ export interface KAPLAYCtx<
      * @group Components
      * @subgroup Level
      */
-    level(map: string[], opt?: LevelOpt): LevelComp;
+    level(map: string[], opt?: LevelCompOpt): LevelComp;
 
     // #endregion
     /**
@@ -5565,7 +5565,9 @@ export interface KAPLAYCtx<
      *
      * @returns A game obj with the level.
      * @since v2000.0
-     * @group Level
+     * @group Game Obj
+     *
+     * @see {@link LevelComp `LevelComp`} The level component for more information in level methods.
      */
     addLevel(
         map: string[],

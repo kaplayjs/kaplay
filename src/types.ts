@@ -420,6 +420,10 @@ export type KAPLAYPlugin<T> = (
     k: KAPLAYCtx,
 ) => T | ((...args: any) => (k: KAPLAYCtx) => T);
 
+/**
+ * @group Rendering
+ * @subgroup Canvas
+ */
 export type RenderTarget = {
     destination: FrameBuffer | Picture | null;
     childrenOnly?: boolean;
@@ -428,7 +432,8 @@ export type RenderTarget = {
 };
 
 /**
- * @group Options
+ * @group Game Obj
+ * @subgroup Types
  */
 export type GetOpt = {
     /**
@@ -446,7 +451,8 @@ export type GetOpt = {
 };
 
 /**
- * @group Options
+ * @group Game Obj
+ * @subgroup Types
  */
 export type QueryOpt = {
     /**
@@ -489,6 +495,9 @@ export type QueryOpt = {
 
 /**
  * Sprite animation configuration when playing.
+ *
+ * @group Components
+ * @subgroup Component Types
  */
 export interface SpriteAnimPlayOpt {
     /**
