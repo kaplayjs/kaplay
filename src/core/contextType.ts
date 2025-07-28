@@ -21,7 +21,7 @@ import type { Recording } from "../debug/record";
 import type { BlendComp } from "../ecs/components/draw/blend";
 import type { CircleComp, CircleCompOpt } from "../ecs/components/draw/circle";
 import type { ColorComp } from "../ecs/components/draw/color";
-import type { DrawonComp, DrawonOpt } from "../ecs/components/draw/drawon";
+import type { DrawonComp, DrawonCompOpt } from "../ecs/components/draw/drawon";
 import type { EllipseComp } from "../ecs/components/draw/ellipse";
 import type { MaskComp } from "../ecs/components/draw/mask";
 import type { OpacityComp } from "../ecs/components/draw/opacity";
@@ -1520,7 +1520,7 @@ export interface KAPLAYCtx<
      * @group Components
      * @subgroup Rendering
      */
-    drawon(canvas: FrameBuffer | Picture, opt?: DrawonOpt): DrawonComp;
+    drawon(canvas: FrameBuffer | Picture, opt?: DrawonCompOpt): DrawonComp;
     /**
      * A tile on a tile map.
      *
@@ -5858,7 +5858,18 @@ export interface KAPLAYCtx<
      */
     drawSubtracted(content: () => void, mask: () => void): void;
     /**
-     * A picture holding drawing data
+     * The exported Picture class to KAPLAY Context.
+     *
+     * @example
+     * ```js
+     * const k = kaplay();
+     *
+     * // You can use Picture class
+     * new k.Picture()
+     * ```
+     *
+     * @group Draw
+     * @subgroup Picture
      */
     Picture: typeof Picture;
     /**
@@ -6084,6 +6095,7 @@ export interface KAPLAYCtx<
      *
      * @since v4000.0
      * @group Plugins
+     * @subgroup Systems
      */
     system(name: string, cb: () => void, when: SystemPhase[]): void;
     /**

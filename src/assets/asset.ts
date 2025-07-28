@@ -87,6 +87,10 @@ export class Asset<D> {
     }
 }
 
+/**
+ * @group Assets
+ * @subgroup Types
+ */
 export class AssetBucket<D> {
     assets: Map<string, Asset<D>> = new Map();
     waiters: KEventHandler<any> = new KEventHandler();

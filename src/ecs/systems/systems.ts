@@ -1,12 +1,19 @@
 import { _k } from "../../shared";
 
+/**
+ * @group Plugins
+ * @subgroup Systems
+ */
 export type System = {
     name: string;
     run: () => void;
     when: SystemPhase[];
 };
 
-// Lifecycle events
+/**
+ * @group Plugins
+ * @subgroup Systems
+ */
 export enum SystemPhase {
     BeforeUpdate,
     BeforeFixedUpdate,

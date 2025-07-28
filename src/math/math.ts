@@ -116,8 +116,10 @@ export function quad(x: number, y: number, w: number, h: number): Quad {
     return new Quad(x, y, w, h);
 }
 
-// Internal class
-/** @ignore */
+/**
+ * @group Math
+ * @subgroup Advanced
+ */
 export class Mat2 {
     // 2x2 matrix
     a: number;
@@ -216,7 +218,6 @@ export class Mat2 {
     }
 }
 
-// Internal class
 export class Mat23 {
     // 2x3 matrix, since the last column is always (0, 0, 1)
     a: number;
@@ -452,7 +453,6 @@ export class Mat23 {
     }
 }
 
-// Internal class
 class Mat3 {
     // m11 m12 m13
     // m21 m22 m23

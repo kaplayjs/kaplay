@@ -5,9 +5,26 @@ import { _k } from "../shared";
 
 /**
  * The name of a scene.
+ *
+ * @group Scenes
+ * @subgroup Types
  */
 export type SceneName = string;
+
+/**
+ * The function definition for a scene
+ *
+ * @group Scenes
+ * @subgroup Types
+ */
 export type SceneDef = (...args: any) => void;
+
+/**
+ * The state of a scene.
+ *
+ * @group Scenes
+ * @subgroup Types
+ */
 export type SceneState = {
     sceneID: string | null;
     args: unknown[];

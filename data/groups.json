@@ -135,7 +135,14 @@
   },
   "Scene": {
     "name": "Scenes",
-    "description": "F"
+    "description": "Work with game scenes.",
+    "subgroups": {
+      "Types": {
+        "name": "Types",
+        "description": "Types related to scenes.",
+        "closed": true
+      }
+    }
   },
   "Events": {
     "name": "Events",
@@ -204,6 +211,10 @@
       "Camera": {
         "name": "Camera",
         "description": "Work with the camera."
+      },
+      "Shaders": {
+        "name": "Shaders",
+        "description": "Work with shaders."
       },
       "Canvas": {
         "name": "Canvas",

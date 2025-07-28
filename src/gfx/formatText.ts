@@ -18,6 +18,10 @@ import type { FormattedChar, FormattedText } from "./draw/drawFormattedText";
 import type { CharTransform, DrawTextOpt } from "./draw/drawText";
 import { Texture } from "./gfx";
 
+/**
+ * @group Rendering
+ * @subgroup Text
+ */
 export type FontAtlas = {
     font: BitmapFontData;
     cursor: Vec2;
@@ -25,6 +29,10 @@ export type FontAtlas = {
     outline: Outline | null;
 };
 
+/**
+ * @group Rendering
+ * @subgroup Text
+ */
 export type StyledTextInfo = {
     charStyleMap: Record<number, string[]>;
     text: string;

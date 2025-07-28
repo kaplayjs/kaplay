@@ -12,6 +12,10 @@ import type { Picture } from "./draw/drawPicture";
 
 export type GfxCtx = ReturnType<typeof initGfx>;
 
+/**
+ * @group Rendering
+ * @subgroup Canvas
+ */
 export class Texture {
     ctx: GfxCtx;
     src: null | ImageSource = null;
@@ -109,11 +113,19 @@ export class Texture {
     }
 }
 
+/**
+ * @group Rendering
+ * @subgroup Shaders
+ */
 export type VertexFormat = {
     name: string;
     size: number;
 }[];
 
+/**
+ * @group Rendering
+ * @subgroup Canvas
+ */
 export class BatchRenderer {
     ctx: GfxCtx;
 
@@ -381,6 +393,10 @@ export class BatchRenderer {
     }
 }
 
+/**
+ * @group Rendering
+ * @subgroup Shaders
+ */
 export class Mesh {
     ctx: GfxCtx;
     glVBuf: WebGLBuffer;
