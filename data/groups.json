@@ -19,6 +19,10 @@
         "name": "Fonts",
         "description": "Load different kinds of fonts."
       },
+      "Shaders": {
+        "name": "Shaders",
+        "description": "Load different kinds of shaders."
+      },
       "Util": {
         "name": "Various",
         "description": "Load various stuff."

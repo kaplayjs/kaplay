@@ -515,8 +515,16 @@ export interface SpriteAnimPlayOpt {
     onEnd?: () => void;
 }
 
+/**
+ * @group Assets
+ * @subgroup Data
+ */
 export type MusicData = string;
 
+/**
+ * @group Assets
+ * @subgroup Types
+ */
 export interface LoadFontOpt {
     filter?: TexFilter;
     outline?: number | Outline;
@@ -528,13 +536,25 @@ export interface LoadFontOpt {
     size?: number;
 }
 
+/**
+ * @group Assets
+ * @subgroup Types
+ */
 export type TextureOpt = {
     filter?: TexFilter;
     wrap?: TexWrap;
 };
 
+/**
+ * @group Assets
+ * @subgroup Types
+ */
 export type ImageSource = Exclude<TexImageSource, VideoFrame>;
 
+/**
+ * @group Rendering
+ * @subgroup Canvas
+ */
 export type Canvas = {
     width: number;
     height: number;
@@ -546,6 +566,10 @@ export type Canvas = {
     readonly fb: FrameBuffer;
 };
 
+/**
+ * @group Rendering
+ * @subgroup Shaders
+ */
 export interface Vertex {
     pos: Vec2;
     uv: Vec2;
@@ -553,6 +577,10 @@ export interface Vertex {
     opacity: number;
 }
 
+/**
+ * @group Rendering
+ * @subgroup Shaders
+ */
 export enum BlendMode {
     Normal = 0,
     Add = 1,
@@ -561,6 +589,10 @@ export enum BlendMode {
     Overlay = 4,
 }
 
+/**
+ * @group Rendering
+ * @subgroup Shaders
+ */
 export interface Attributes {
     pos: number[];
     uv: number[];

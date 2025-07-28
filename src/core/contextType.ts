@@ -3433,7 +3433,7 @@ export interface KAPLAYCtx<
      *
      * @since v4000.0.0
      * @group Assets
-     * @subgroup Prefabs
+     * @subgroup Util
      * @experimental
      */
     loadPrefab: (name: string, url: string) => Asset<SerializedGameObj>;
