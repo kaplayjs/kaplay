@@ -3032,7 +3032,7 @@ export interface KAPLAYCtx<
      * Gets the name of the current scene. Returns null if no scene is active.
      *
      * @since v3001.0
-     * @group Scene
+     * @group Scenes
      */
     getSceneName(): string | null;
     // #region Loaders
@@ -5371,7 +5371,7 @@ export interface KAPLAYCtx<
      * });
      * ```
      *
-     * @group Scene
+     * @group Scenes
      */
     scene(name: SceneName, def: SceneDef): void;
     /**
@@ -5390,7 +5390,7 @@ export interface KAPLAYCtx<
      * ```
      *
      * @since v2000.0
-     * @group Scene
+     * @group Scenes
      */
     go(name: SceneName, ...args: any): void;
 
@@ -5417,7 +5417,7 @@ export interface KAPLAYCtx<
      * ```
      *
      * @since v3001.1
-     * @group Scene
+     * @group Scenes
      */
     pushScene(id: SceneName, ...args: unknown[]): void;
 
@@ -5442,7 +5442,7 @@ export interface KAPLAYCtx<
      * ```
      *
      * @since v3001.1
-     * @group Scene
+     * @group Scenes
      */
     popScene(id: SceneName, ...args: unknown[]): void;
     /**

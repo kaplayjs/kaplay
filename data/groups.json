@@ -133,7 +133,7 @@
     "name": "Audio",
     "description": "Work with sounds and music."
   },
-  "Scene": {
+  "Scenes": {
     "name": "Scenes",
     "description": "Work with game scenes.",
     "subgroups": {
