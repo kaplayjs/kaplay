@@ -9,35 +9,31 @@
     "subgroups": {
       "Sprites": {
         "name": "Sprites",
-        "description": "TODO"
+        "description": "Load different kinds of sprites."
       },
       "Audio": {
         "name": "Audio",
-        "description": "TODO"
+        "description": "Load different kinds of audio."
       },
       "Fonts": {
         "name": "Fonts",
-        "description": "TODO"
+        "description": "Load different kinds of fonts."
       },
-      "Shaders": {
-        "name": "Shaders",
-        "description": "TODO"
+      "Util": {
+        "name": "Various",
+        "description": "Load various stuff."
       },
-      "Prefabs": {
-        "name": "Prefabs",
-        "description": "Assets for storing prefabs."
+      "Getters": {
+        "name": "Getters",
+        "description": "Get related data information."
       },
       "Data": {
         "name": "Data",
-        "description": "Assets for storing various data."
+        "description": "The data classes used to create asset data."
       },
-      "Default": {
-        "name": "Default",
-        "description": "Default assets for prototyping"
-      },
-      "Util": {
-        "name": "Util",
-        "description": "Util information when working with assets."
+      "Types": {
+        "name": "Types",
+        "description": "The types used to create asset data."
       }
     }
   },

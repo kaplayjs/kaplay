@@ -15,7 +15,7 @@ import { type BitmapFontData, getBitmapFont, type GfxFont } from "./bitmapFont";
 
 /**
  * @group Assets
- * @subgroup Fonts
+ * @subgroup Data
  */
 export class FontData {
     fontface: FontFace;

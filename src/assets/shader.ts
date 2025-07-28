@@ -20,14 +20,14 @@ import { fixURL } from "./utils";
 
 /**
  * @group Assets
- * @subgroup Shaders
+ * @subgroup Data
  */
 export type ShaderData = Shader;
 
 /**
  * Possible values for a shader Uniform.
  *
- * @group Assets
+ * @group Rendering
  * @subgroup Shaders
  */
 export type UniformValue =
@@ -43,13 +43,13 @@ export type UniformValue =
 /**
  * Possible uniform value, basically any but "u_tex".
  *
- * @group Assets
+ * @group Rendering
  * @subgroup Shaders
  */
 export type UniformKey = string;
 
 /**
- * @group Assets
+ * @group Rendering
  * @subgroup Shaders
  */
 export type Uniform = Record<UniformKey, UniformValue>;
@@ -57,7 +57,7 @@ export type Uniform = Record<UniformKey, UniformValue>;
 /**
  * A shader, yeah.
  *
- * @group Assets
+ * @group Rendering
  * @subgroup Shaders
  */
 export class Shader {

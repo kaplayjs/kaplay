@@ -9,7 +9,7 @@ import { fixURL } from "./utils";
 
 /**
  * @group Assets
- * @subgroup Fonts
+ * @subgroup Types
  */
 export interface GfxFont {
     tex: Texture;
@@ -19,7 +19,7 @@ export interface GfxFont {
 
 /**
  * @group Assets
- * @subgroup Fonts
+ * @subgroup Data
  */
 export type BitmapFontData = GfxFont;
 
@@ -27,6 +27,10 @@ export function getBitmapFont(name: string): Asset<BitmapFontData> | null {
     return _k.assets.bitmapFonts.get(name) ?? null;
 }
 
+/**
+ * @group Assets
+ * @subgroup Types
+ */
 export interface LoadBitmapFontOpt {
     /**
      * A string of characters to map to every sprite in the characters grid
