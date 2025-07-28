@@ -38,7 +38,10 @@ class Particle {
 }
 
 /**
- * Options for the {@link particles `particles()`}'s component
+ * Options for the {@link particles `particles()`}'s component.
+ *
+ * @group Components
+ * @subgroup Component Types
  */
 export type EmitterOpt = {
     /**

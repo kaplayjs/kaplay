@@ -6016,7 +6016,7 @@ export interface KAPLAYCtx<
      *
      * @returns The formatted text object.
      * @since v2000.2
-     * @group Draw
+     * @group Rendering
      * @subgroup Text
      */
     formatText(options: DrawTextOpt): FormattedText;
@@ -6026,7 +6026,7 @@ export interface KAPLAYCtx<
      * active on each character.
      *
      * @since v4000
-     * @group Draw
+     * @group Rendering
      * @subgroup Text
      */
     compileStyledText(text: any): StyledTextInfo;
@@ -6035,7 +6035,7 @@ export interface KAPLAYCtx<
      *
      * @returns The canvas object.
      * @since v3001.0
-     * @group Draw
+     * @group Rendering
      * @subgroup Canvas
      */
     makeCanvas(w: number, h: number): Canvas;
@@ -6046,7 +6046,6 @@ export interface KAPLAYCtx<
      *
      * @since v4000.0
      * @group Draw
-     * @subgroup Canvas
      */
     drawCanvas(opt: DrawCanvasOpt): void;
     /**

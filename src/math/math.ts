@@ -118,7 +118,7 @@ export function quad(x: number, y: number, w: number, h: number): Quad {
 
 // Internal class
 /** @ignore */
-class Mat2 {
+export class Mat2 {
     // 2x2 matrix
     a: number;
     b: number;
