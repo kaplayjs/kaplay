@@ -29,15 +29,18 @@
       },
       "Getters": {
         "name": "Getters",
-        "description": "Get related data information."
+        "description": "Get related data information.",
+        "closed": true
       },
       "Data": {
         "name": "Data",
-        "description": "The data classes used to create asset data."
+        "description": "The data classes used to create asset data.",
+        "closed": true
       },
       "Types": {
         "name": "Types",
-        "description": "The types used to create asset data."
+        "description": "The types used to create asset data.",
+        "closed": true
       }
     }
   },
@@ -81,11 +84,13 @@
       },
       "Component Types": {
         "name": "Types",
-        "description": "TODO"
+        "description": "TODO",
+        "closed": true
       },
       "Component Serialization": {
         "name": "Serialization",
-        "description": "TODO"
+        "description": "TODO",
+        "closed": true
       }
     }
   },
