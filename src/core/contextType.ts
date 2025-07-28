@@ -5920,6 +5920,7 @@ export interface KAPLAYCtx<
      *
      * @since v2000.0
      * @group Draw
+     * @subgroup Stack
      */
     pushTransform(): void;
     /**
@@ -5927,6 +5928,7 @@ export interface KAPLAYCtx<
      *
      * @since v2000.0
      * @group Draw
+     * @subgroup Stack
      */
     popTransform(): void;
     /**
@@ -5945,6 +5947,7 @@ export interface KAPLAYCtx<
      *
      * @since v2000.0
      * @group Draw
+     * @subgroup Stack
      */
     pushTranslate(t?: Vec2): void;
     /**
@@ -5952,6 +5955,7 @@ export interface KAPLAYCtx<
      *
      * @since v2000.0
      * @group Draw
+     * @subgroup Stack
      */
     pushScale(s?: Vec2): void;
     /**
@@ -5959,6 +5963,7 @@ export interface KAPLAYCtx<
      *
      * @since v2000.0
      * @group Draw
+     * @subgroup Stack
      */
     pushRotate(angle?: number): void;
     /**
@@ -5966,6 +5971,7 @@ export interface KAPLAYCtx<
      *
      * @since v3000.0
      * @group Draw
+     * @subgroup Stack
      */
     pushMatrix(mat?: Mat23): void;
     /**
@@ -5984,7 +5990,8 @@ export interface KAPLAYCtx<
      * ```
      *
      * @since v3000.0
-     * @group Draw
+     * @group Rendering
+     * @subgroup Shaders
      */
     usePostEffect(name: string, uniform?: Uniform | (() => Uniform)): void;
     /**
@@ -6008,6 +6015,7 @@ export interface KAPLAYCtx<
      * @returns The formatted text object.
      * @since v2000.2
      * @group Draw
+     * @subgroup Text
      */
     formatText(options: DrawTextOpt): FormattedText;
     /**
@@ -6017,6 +6025,7 @@ export interface KAPLAYCtx<
      *
      * @since v4000
      * @group Draw
+     * @subgroup Text
      */
     compileStyledText(text: any): StyledTextInfo;
     /**
@@ -6025,6 +6034,7 @@ export interface KAPLAYCtx<
      * @returns The canvas object.
      * @since v3001.0
      * @group Draw
+     * @subgroup Canvas
      */
     makeCanvas(w: number, h: number): Canvas;
     /**
@@ -6034,6 +6044,7 @@ export interface KAPLAYCtx<
      *
      * @since v4000.0
      * @group Draw
+     * @subgroup Canvas
      */
     drawCanvas(opt: DrawCanvasOpt): void;
     /**
@@ -6089,7 +6100,7 @@ export interface KAPLAYCtx<
      *
      * @returns The dataURL of the image.
      * @since v2000.0
-     * @group Data
+     * @group Debug
      */
     screenshot(): string;
     /**
@@ -6125,7 +6136,7 @@ export interface KAPLAYCtx<
      *
      * @returns A control handle.
      * @since v2000.1
-     * @group Data
+     * @group Debug
      */
     record(frameRate?: number): Recording;
     /**
@@ -6293,9 +6304,8 @@ export interface KAPLAYCtx<
      * ```
      *
      * @returns The cancel event symbol.
-     * @since v3001.0.5
+     * @since v4000.0
      * @group Events
-     * @experimental This feature is in experimental phase, it will be fully released in v3001.1.0
      */
     cancel: () => Symbol;
     /**

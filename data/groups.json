@@ -148,7 +148,7 @@
         "description": "Work with colors."
       },
       "Angle": {
-        "name": "Angle",
+        "name": "Angles",
         "description": "Work with angles."
       },
       "Random": {
@@ -203,6 +203,14 @@
       "Picture": {
         "name": "Picture",
         "description": "Work with Picture API."
+      },
+      "Stack": {
+        "name": "Stack",
+        "description": "Work with transformation stack."
+      },
+      "Types": {
+        "name": "Types",
+        "description": "Various types related to Draw."
       }
     }
   },
