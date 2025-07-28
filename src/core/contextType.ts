@@ -5921,7 +5921,7 @@ export interface KAPLAYCtx<
      * ```
      *
      * @since v2000.0
-     * @group Draw
+     * @group Rendering
      * @subgroup Stack
      */
     pushTransform(): void;
@@ -5929,7 +5929,7 @@ export interface KAPLAYCtx<
      * Pop the topmost transform matrix from the transform stack.
      *
      * @since v2000.0
-     * @group Draw
+     * @group Rendering
      * @subgroup Stack
      */
     popTransform(): void;
@@ -5948,7 +5948,7 @@ export interface KAPLAYCtx<
      * ```
      *
      * @since v2000.0
-     * @group Draw
+     * @group Rendering
      * @subgroup Stack
      */
     pushTranslate(t?: Vec2): void;
@@ -5956,7 +5956,7 @@ export interface KAPLAYCtx<
      * Scale all subsequent draws.
      *
      * @since v2000.0
-     * @group Draw
+     * @group Rendering
      * @subgroup Stack
      */
     pushScale(s?: Vec2): void;
@@ -5964,7 +5964,7 @@ export interface KAPLAYCtx<
      * Rotate all subsequent draws.
      *
      * @since v2000.0
-     * @group Draw
+     * @group Rendering
      * @subgroup Stack
      */
     pushRotate(angle?: number): void;
@@ -5972,7 +5972,7 @@ export interface KAPLAYCtx<
      * Apply a transform matrix, ignore all prior transforms.
      *
      * @since v3000.0
-     * @group Draw
+     * @group Rendering
      * @subgroup Stack
      */
     pushMatrix(mat?: Mat23): void;
@@ -6157,7 +6157,6 @@ export interface KAPLAYCtx<
      * @returns The explosion object.
      * @since v2000.0
      * @group Game Obj
-     * @subgroup Util
      */
     addKaboom(pos: Vec2, opt?: BoomOpt): GameObj;
     /**

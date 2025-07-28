@@ -146,40 +146,46 @@
     "description": "Work with timers."
   },
   "Math": {
-    "name": "MF's Place",
+    "name": "Math",
     "description": "Work with math.",
     "subgroups": {
-      "Vectors": {
-        "name": "Vectors",
-        "description": "Work with vectors."
-      },
-      "Colors": {
-        "name": "Colors",
-        "description": "Work with colors."
-      },
-      "Angle": {
-        "name": "Angles",
-        "description": "Work with angles."
-      },
       "Random": {
         "name": "Random",
         "description": "Work with random values."
       },
       "Tween": {
-        "name": "Tweenks",
+        "name": "Tweens",
         "description": "Work with tweens and interpolations."
+      },
+      "Vectors": {
+        "name": "Vectors",
+        "description": "Work with vectors.",
+        "closed": true
+      },
+      "Colors": {
+        "name": "Colors",
+        "description": "Work with colors.",
+        "closed": true
+      },
+      "Angle": {
+        "name": "Angles",
+        "description": "Work with angles.",
+        "closed": true
       },
       "Raycast": {
         "name": "Raycast",
-        "description": "Work with raycasts."
+        "description": "Work with raycasts.",
+        "closed": true
       },
       "Shapes": {
         "name": "Shapes",
-        "description": "F"
+        "description": "Work with shapes.",
+        "closed": true
       },
       "Advanced": {
         "name": "Advanced",
-        "description": "For pro players."
+        "description": "For pro players.",
+        "closed": true
       }
     }
   },
@@ -199,25 +205,26 @@
         "name": "Camera",
         "description": "Work with the camera."
       },
-
       "Canvas": {
         "name": "Canvas",
-        "description": "Work with Canvas API."
+        "description": "Work with Canvas API.",
+        "closed": true
+      },
+      "Stack": {
+        "name": "Stack",
+        "description": "Work with transformation stack."
       }
     }
   },
   "Draw": {
     "name": "Drawing",
-    "description": "f",
+    "description": "Draw in the KAPLAY Canvas",
     "subgroups": {
       "Picture": {
         "name": "Picture",
         "description": "Work with Picture API."
       },
-      "Stack": {
-        "name": "Stack",
-        "description": "Work with transformation stack."
-      },
+
       "Types": {
         "name": "Types",
         "description": "Various types related to Draw."
