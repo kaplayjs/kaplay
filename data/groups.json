@@ -48,10 +48,6 @@
     "name": "Game Object",
     "description": "Work with game objects.",
     "subgroups": {
-      "Prefabs": {
-        "name": "Prefab",
-        "description": "Use game object serialization."
-      },
       "Types": {
         "name": "Types",
         "description": "Game Obj related types.",

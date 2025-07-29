@@ -2,7 +2,6 @@ import { _k } from "../../shared";
 
 /**
  * @group Plugins
- * @subgroup Systems
  */
 export type System = {
     name: string;
@@ -10,10 +9,6 @@ export type System = {
     when: SystemPhase[];
 };
 
-/**
- * @group Plugins
- * @subgroup Systems
- */
 export enum SystemPhase {
     BeforeUpdate,
     BeforeFixedUpdate,

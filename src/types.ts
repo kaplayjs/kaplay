@@ -25,6 +25,7 @@ export type Tag = string;
  * The basic unit of object in KAPLAY. The player, a butterfly, a tree, or even a piece of text.
  *
  * @group Game Obj
+ * @subgroup Types
  */
 export type GameObj<T = any> = GameObjRaw & MergeComps<T>;
 
@@ -780,7 +781,10 @@ export interface Comp {
 }
 
 /**
+ * A valid game object id.
+ *
  * @group Game Obj
+ * @subgroup GameObjID
  */
 export type GameObjID = number;
 

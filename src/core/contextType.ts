@@ -263,7 +263,6 @@ export interface KAPLAYCtx<
      *
      * @returns The added game object that contains all properties and methods each component offers.
      * @group Game Obj
-     * @subgroup Prefabs
      */
     addPrefab<T extends CompList<unknown>>(
         nameOrObject: SerializedGameObj | string,
@@ -286,7 +285,6 @@ export interface KAPLAYCtx<
      * @returns The serialized game object.
      * @since v4000.0
      * @group Game Obj
-     * @subgroup Prefabs
      */
     createPrefab(name: string, obj: GameObj): SerializedGameObj;
     /**
@@ -6095,7 +6093,6 @@ export interface KAPLAYCtx<
      *
      * @since v4000.0
      * @group Plugins
-     * @subgroup Systems
      */
     system(name: string, cb: () => void, when: SystemPhase[]): void;
     /**
@@ -6327,6 +6324,7 @@ export interface KAPLAYCtx<
      *
      * @since v3000.0
      * @group Game Obj
+     * @subgroup Types
      */
     KeepFlags: typeof KeepFlags;
     /**
