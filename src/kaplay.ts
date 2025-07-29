@@ -13,7 +13,6 @@ import happyFontSrc from "./data/assets/happy.png";
 import kaSpriteSrc from "./data/assets/ka.png";
 import { createCollisionSystem } from "./ecs/systems/createCollisionSystem";
 import { system, SystemPhase } from "./ecs/systems/systems";
-import { Vec2 } from "./math/Vec2";
 import { _k, updateEngine } from "./shared";
 import {
     type KAPLAYOpt,
