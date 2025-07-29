@@ -24,7 +24,7 @@ export function makeInternal<T extends CompList<unknown>>(
 ): GameObj<T[number]> {
     const addCompIdsToTags = id == 0
         ? false
-        : _k.globalOpt.tagsAsComponents;
+        : _k.globalOpt.tagComponentIds;
 
     // The game object from the prototype
     const obj: GameObj = Object.create(GameObjRawPrototype);

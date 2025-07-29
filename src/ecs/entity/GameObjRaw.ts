@@ -798,7 +798,7 @@ export const GameObjRawPrototype: Omit<InternalGameObjRaw, AppEvents> = {
         t: Tag | Tag[],
         opts: GetOpt = {},
     ): GameObj<T>[] {
-        const compIdAreTags = _k.globalOpt.tagsAsComponents;
+        const compIdAreTags = _k.globalOpt.tagComponentIds;
 
         const checkTagsOrComps = (child: GameObj, t: Tag | Tag[]) => {
             if (opts.only === "comps") {
@@ -1219,7 +1219,7 @@ export const GameObjRawPrototype: Omit<InternalGameObjRaw, AppEvents> = {
     _addComp(comp: Comp) {
         const addCompIdAsTag = this.id == 0
             ? false
-            : _k.globalOpt.tagsAsComponents;
+            : _k.globalOpt.tagComponentIds;
 
         /** Garbage Collector */
         if (comp.id) this._compsIds.add(comp.id);
@@ -1339,7 +1339,7 @@ export const GameObjRawPrototype: Omit<InternalGameObjRaw, AppEvents> = {
     _removeComp(this: InternalGameObjRaw, id) {
         const addCompIdAsTag = this.id === 0
             ? false
-            : _k.globalOpt.tagsAsComponents;
+            : _k.globalOpt.tagComponentIds;
 
         this._compsIds.delete(id);
         this._compStates.delete(id);
