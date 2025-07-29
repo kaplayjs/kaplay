@@ -25,11 +25,11 @@ export function drawCurve(curve: (t: number) => Vec2, opt: DrawCurveOpt) {
         p.push(curve(i / segments));
     }
 
-    drawLines({
+    drawLines(Object.assign({}, opt, {
         pts: p,
         width: opt.width || 1,
         pos: opt.pos,
         color: opt.color,
         opacity: opt.opacity,
-    });
+    }));
 }
