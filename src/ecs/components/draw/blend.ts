@@ -3,7 +3,8 @@ import { BlendMode, type Comp } from "../../../types";
 /**
  * The serialized {@link blend `blend()`} component.
  *
- * @group Component Serialization
+ * @group Components
+ * @subgroup Component Serialization
  */
 export interface SerializedBlendComp {
     blend: BlendMode;
@@ -12,7 +13,8 @@ export interface SerializedBlendComp {
 /**
  * The {@link blend `blend()`} component.
  *
- * @group Component Types
+ * @group Components
+ * @subgroup Component Types
  */
 export interface BlendComp extends Comp {
     blend: BlendMode;

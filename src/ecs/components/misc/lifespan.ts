@@ -6,7 +6,8 @@ import type { OpacityComp } from "../draw/opacity";
 /**
  * The {@link lifespan `lifespan()`} component.
  *
- * @group Component Types
+ * @group Components
+ * @subgroup Component Types
  */
 export interface LifespanCompOpt {
     /**

@@ -21,7 +21,8 @@ import { tile } from "./tile";
 /**
  * The {@link level `level()`} component.
  *
- * @group Component Types
+ * @group Components
+ * @subgroup Component Types
  */
 export interface LevelComp extends Comp {
     tileWidth(): number;
@@ -92,9 +93,10 @@ export interface LevelComp extends Comp {
 /**
  * Options for the {@link level `level()`} component.
  *
- * @group Options
+ * @group Components
+ * @subgroup Component Types
  */
-export interface LevelOpt {
+export interface LevelCompOpt {
     /**
      * Width of each block.
      */
@@ -119,13 +121,14 @@ export interface LevelOpt {
 }
 
 /**
- * @group Component Types
+ * @group Components
+ * @subgroup Component Types
  */
 export type PathFindOpt = {
     allowDiagonals?: boolean;
 };
 
-export function level(map: string[], opt: LevelOpt): LevelComp {
+export function level(map: string[], opt: LevelCompOpt): LevelComp {
     const numRows = map.length;
     let numColumns = 0;
 

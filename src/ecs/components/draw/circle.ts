@@ -9,7 +9,8 @@ import type { outline } from "./outline";
 /**
  * The serialized {@link circle `circle()`} component.
  *
- * @group Component Serialization
+ * @group Components
+ * @subgroup Component Serialization
  */
 export interface SerializedCircleComp {
     radius: number;
@@ -19,7 +20,8 @@ export interface SerializedCircleComp {
 /**
  * The {@link circle `circle()`} component.
  *
- * @group Component Types
+ * @group Components
+ * @subgroup Component Types
  */
 export interface CircleComp extends Comp {
     draw: Comp["draw"];
@@ -37,7 +39,8 @@ export interface CircleComp extends Comp {
 /**
  * Options for the {@link circle `circle()``} component.
  *
- * @group Component Types
+ * @group Components
+ * @subgroup Component Types
  */
 export interface CircleCompOpt {
     /**

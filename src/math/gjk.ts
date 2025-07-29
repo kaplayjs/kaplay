@@ -151,7 +151,7 @@ enum PolygonWinding {
     CounterClockwise,
 }
 
-type Edge = {
+type GjkEdge = {
     distance: number;
     normal: Vec2;
     index: number;
@@ -164,7 +164,7 @@ type Edge = {
  *
  * @returns The edge closest to the origin.
  */
-function findClosestEdge(simplex: Vec2[], winding: PolygonWinding): Edge {
+function findClosestEdge(simplex: Vec2[], winding: PolygonWinding): GjkEdge {
     let minDistance: number = Number.POSITIVE_INFINITY;
     let minNormal = new Vec2();
     let minIndex = 0;
@@ -238,7 +238,7 @@ function getIntersection(
 
     let intersection = new Vec2();
     for (let i = 0; i < MAX_TRIES; i++) {
-        var edge: Edge = findClosestEdge(simplex, winding);
+        var edge: GjkEdge = findClosestEdge(simplex, winding);
         // Calculate the difference for the two vertices furthest along the direction of the edge normal
         var support = calculateSupport(colliderA, colliderB, edge.normal);
         // Check distance to the origin

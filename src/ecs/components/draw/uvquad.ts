@@ -6,7 +6,8 @@ import type { Comp, GameObj } from "../../../types";
 /**
  * The {@link uvquad `uvquad()`} component.
  *
- * @group Component Types
+ * @group Components
+ * @subgroup Component Types
  */
 export interface UVQuadComp extends Comp {
     draw: Comp["draw"];

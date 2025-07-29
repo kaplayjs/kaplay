@@ -72,6 +72,7 @@ export type SetParentOpt = {
  *
  * @since v2000.0
  * @group Game Obj
+ * @subgroup Types
  */
 export interface GameObjRaw {
     /**

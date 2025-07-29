@@ -8,6 +8,8 @@ import { playMusic } from "./playMusic";
 // TODO: enable setting on load, make part of SoundData
 /**
  * Audio play configurations.
+ *
+ * @group Audio
  */
 export interface AudioPlayOpt {
     /**
@@ -57,6 +59,9 @@ export interface AudioPlayOpt {
     connectTo?: AudioNode;
 }
 
+/**
+ * @group Audio
+ */
 export interface AudioPlay {
     /**
      * Start playing audio.

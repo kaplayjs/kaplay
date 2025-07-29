@@ -5,16 +5,17 @@ import type { GameObj } from "../../../types";
 import {
     level,
     type LevelComp,
-    type LevelOpt,
+    type LevelCompOpt,
 } from "../../components/level/level";
 import { pos, type PosComp } from "../../components/transform/pos";
 
 /**
  * Options for the {@link addLevel `addLevel()`}.
  *
- * @group Options
+ * @group Game Obj
+ * @subgroup Types
  */
-export interface AddLevelOpt extends LevelOpt {
+export interface AddLevelOpt extends LevelCompOpt {
     /**
      * Position of the first block.
      */

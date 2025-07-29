@@ -6,7 +6,8 @@ import type { Anchor, Comp } from "../../../types";
 /**
  * The serialized {@link anchor `anchor()`} component.
  *
- * @group Component Serialization
+ * @group Components
+ * @subgroup Component Serialization
  */
 export interface SerializedAnchorComp {
     anchor: SerializedVec2;
@@ -15,7 +16,8 @@ export interface SerializedAnchorComp {
 /**
  * The {@link anchor `anchor()`} component.
  *
- * @group Component Types
+ * @group Components
+ * @subgroup Component Types
  */
 export interface AnchorComp extends Comp {
     /**

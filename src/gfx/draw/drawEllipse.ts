@@ -1,8 +1,52 @@
+import type { Color } from "../../math/color";
 import { getArcPts } from "../../math/various";
 import { Vec2 } from "../../math/Vec2";
-import type { DrawEllipseOpt } from "../../types";
+import type { Anchor, RenderProps } from "../../types";
 import { anchorPt } from "../anchor";
 import { drawPolygon } from "./drawPolygon";
+
+/**
+ * How the ellipse should look like.
+ *
+ * @group Draw
+ * @subgroup Types
+ */
+export type DrawEllipseOpt = RenderProps & {
+    /**
+     * The horizontal radius.
+     */
+    radiusX: number;
+    /**
+     * The vertical radius.
+     */
+    radiusY: number;
+    /**
+     * Starting angle.
+     */
+    start?: number;
+    /**
+     * Ending angle.
+     */
+    end?: number;
+    /**
+     * If fill the shape with color (set this to false if you only want an outline).
+     */
+    fill?: boolean;
+    /**
+     * Use gradient instead of solid color.
+     *
+     * @since v3000.0
+     */
+    gradient?: [Color, Color];
+    /**
+     * Multiplier for circle vertices resolution (default 1)
+     */
+    resolution?: number;
+    /**
+     * The anchor point, or the pivot point. Default to "topleft".
+     */
+    anchor?: Anchor | Vec2;
+};
 
 export function drawEllipse(opt: DrawEllipseOpt) {
     if (opt.radiusX === undefined || opt.radiusY === undefined) {

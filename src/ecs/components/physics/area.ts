@@ -31,7 +31,8 @@ export function usesArea() {
 /**
  * The {@link area `area()`} component.
  *
- * @group Component Types
+ * @group Components
+ * @subgroup Component Types
  */
 export interface AreaComp extends Comp {
     /**
@@ -194,7 +195,8 @@ export interface AreaComp extends Comp {
 /**
  * Options for the {@link area `area()`} component.
  *
- * @group Component Types
+ * @group Components
+ * @subgroup Component Types
  */
 export interface AreaCompOpt {
     /**

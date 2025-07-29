@@ -114,8 +114,15 @@ export type Game = {
     warned: Set<string>;
 };
 
+/**
+ * @group Debug
+ */
 type Log = { msg: string | { toString(): string }; time: number };
 
+/**
+ * @group Rendering
+ * @subgroup Camera
+ */
 type CamData = {
     pos: Vec2 | null;
     scale: Vec2;

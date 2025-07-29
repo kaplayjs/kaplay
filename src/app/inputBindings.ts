@@ -5,7 +5,8 @@ import type { AppState } from "./app";
 /**
  * A button binding.
  *
- * @group Button Bindings
+ * @group Input
+ * @subgroup Buttons API
  */
 export type ButtonBinding = {
     keyboard?: Key | Key[];
@@ -17,14 +18,16 @@ export type ButtonBinding = {
 /**
  * A buttons definition for an action (jump, walk-left, run).
  *
- * @group Button Bindings
+ * @group Input
+ * @subgroup Buttons API
  */
 export type ButtonsDef = Record<string, ButtonBinding>;
 
 /**
  * A button binding device
  *
- * @group Button Bindings
+ * @group Input
+ * @subgroup Buttons API
  */
 export type ButtonBindingDevice = "keyboard" | "gamepad" | "mouse";
 

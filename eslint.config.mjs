@@ -13,12 +13,13 @@ export default tseslint.config(
             "jsdoc/require-hyphen-before-param-description": "error",
             "jsdoc/check-alignment": "warn",
             "jsdoc/check-tag-names": ["error", {
-                "definedTags": ["group", "experimental"],
+                "definedTags": ["group", "subgroup", "experimental"],
             }],
             "jsdoc/sort-tags": ["error", {
                 tagSequence: [{
                     tags: [
                         "deprecated",
+                        "ignore",
                     ],
                 }, {
                     tags: [
@@ -40,6 +41,7 @@ export default tseslint.config(
                         "returns",
                         "since",
                         "group",
+                        "subgroup",
                         "experimental",
                     ],
                 }],

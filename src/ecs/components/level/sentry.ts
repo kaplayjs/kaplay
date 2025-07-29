@@ -8,7 +8,8 @@ import type { PosComp } from "../transform/pos";
 /**
  * The {@link sentry `sentry()`} component.
  *
- * @group Component Types
+ * @group Components
+ * @subgroup Component Types
  */
 export interface SentryComp extends Comp {
     /**
@@ -53,7 +54,8 @@ export interface SentryComp extends Comp {
 /**
  * Options for the {@link sentry `sentry()`} component.
  *
- * @group Component Types
+ * @group Components
+ * @subgroup Component Types
  */
 export interface SentryCompOpt {
     /**

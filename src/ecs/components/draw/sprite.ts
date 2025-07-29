@@ -21,7 +21,8 @@ import type { Comp, GameObj, SpriteAnimPlayOpt } from "../../../types";
 /**
  * The serialized {@link sprite `sprite()`} component.
  *
- * @group Component Serialization
+ * @group Components
+ * @subgroup Component Serialization
  */
 export type SerializedSpriteComp = SpriteCompOpt & {
     sprite: string;
@@ -49,7 +50,8 @@ export interface SpriteCurAnim {
 /**
  * The {@link sprite `sprite()`} component.
  *
- * @group Component Types
+ * @group Components
+ * @subgroup Component Types
  */
 export interface SpriteComp extends Comp {
     draw: Comp["draw"];
@@ -140,7 +142,8 @@ export interface SpriteComp extends Comp {
 /**
  * Options for the {@link sprite `sprite()`} component.
  *
- * @group Component Types
+ * @group Components
+ * @subgroup Component Types
  */
 export interface SpriteCompOpt {
     /**
