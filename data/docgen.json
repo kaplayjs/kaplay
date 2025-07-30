@@ -9,10 +9,17 @@
     "App",
     "AppState",
     "initApp",
-    "initAsses",
+    "initAppState",
+    "initAssets",
     "createEngine",
-    "anchorPt",
-    "MustKAPLAYOpt"
+    "MustKAPLAYOpt",
+    "Engine",
+    "UnionToIntersection",
+    "Defined",
+    "Expand",
+    "MergeObj",
+    "TupleWithoutFirst",
+    "RemoveCompProps"
   ],
   "groups": {
     "Start": {
