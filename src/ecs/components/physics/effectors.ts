@@ -5,12 +5,24 @@ import type { PosComp } from "../transform/pos";
 import type { AreaComp } from "./area";
 import type { BodyComp } from "./body";
 
-export type SurfaceEffectorCompOpt = {
+/**
+ * Options for the {@link surfaceEffector `surfaceEffector()`} component.
+ *
+ * @group Components
+ * @subgroup Component Types
+ */
+export interface SurfaceEffectorCompOpt {
     speed: number;
     speedVariation?: number;
     forceScale?: number;
-};
+}
 
+/**
+ * The {@link surfaceEffector `surfaceEffector()`} component.
+ *
+ * @group Components
+ * @subgroup Component Types
+ */
 export interface SurfaceEffectorComp extends Comp {
     speed: number;
     speedVariation: number;
@@ -39,12 +51,24 @@ export function surfaceEffector(
     };
 }
 
-export type AreaEffectorCompOpt = {
+/**
+ * Options for the {@link areaEffector `areaEffector()`} component.
+ *
+ * @group Components
+ * @subgroup Component Types
+ */
+export interface AreaEffectorCompOpt {
     useGlobalAngle?: boolean;
     force: Vec2;
     linearDrag?: number;
-};
+}
 
+/**
+ * The {@link areaEffector `areaEffector()`} component.
+ *
+ * @group Components
+ * @subgroup Component Types
+ */
 export interface AreaEffectorComp extends Comp {
     useGlobalAngle: boolean;
     force: Vec2;
@@ -74,15 +98,31 @@ export function areaEffector(opts: AreaEffectorCompOpt): AreaEffectorComp {
     };
 }
 
+/**
+ * @group Components
+ * @subgroup Component Types
+ */
 export type ForceMode = "constant" | "inverseLinear" | "inverseSquared";
 
-export type PointEffectorCompOpt = {
+/**
+ * Options for the {@link pointEffector `pointEffector()`} component.
+ *
+ * @group Components
+ * @subgroup Component Types
+ */
+export interface PointEffectorCompOpt {
     forceMagnitude: number;
     distanceScale?: number;
     forceMode?: ForceMode;
     linearDrag?: number;
-};
+}
 
+/**
+ * The {@link pointEffector `pointEffector()`} component.
+ *
+ * @group Components
+ * @subgroup Component Types
+ */
 export interface PointEffectorComp extends Comp {
     forceMagnitude: number;
     distanceScale: number;
@@ -122,11 +162,23 @@ export function pointEffector(opts: PointEffectorCompOpt): PointEffectorComp {
     };
 }
 
-export type ConstantForceCompOpt = {
+/**
+ * Options for the {@link constantForce `constantForce()`} component.
+ *
+ * @group Components
+ * @subgroup Component Types
+ */
+export interface ConstantForceCompOpt {
     force?: Vec2;
     useGlobalAngle?: boolean;
-};
+}
 
+/**
+ * The {@link constantForce `constantForce()`} component.
+ *
+ * @group Components
+ * @subgroup Component Types
+ */
 export interface ConstantForceComp extends Comp {
     force: Vec2 | undefined;
     useGlobalAngle: boolean;
@@ -150,6 +202,12 @@ export function constantForce(opts: ConstantForceCompOpt): ConstantForceComp {
     };
 }
 
+/**
+ * Options for the {@link platformEffector `platformEffector()`} component.
+ *
+ * @group Components
+ * @subgroup Component Types
+ */
 export type PlatformEffectorCompOpt = {
     /**
      * If the object is about to collide and the collision normal direction is
@@ -174,6 +232,12 @@ export type PlatformEffectorCompOpt = {
     ) => boolean;
 };
 
+/**
+ * The {@link platformEffector `platformEffector()`} component.
+ *
+ * @group Components
+ * @subgroup Component Types
+ */
 export interface PlatformEffectorComp extends Comp {
     /**
      * A set of the objects that should not collide with this, because `shouldCollide` returned true.
@@ -220,7 +284,13 @@ export function platformEffector(
     };
 }
 
-export type BuoyancyEffectorCompOpt = {
+/**
+ * Options for the {@link buoyancyEffector `buoyancyEffector()`} component.
+ *
+ * @group Components
+ * @subgroup Component Types
+ */
+export interface BuoyancyEffectorCompOpt {
     surfaceLevel: number;
     density?: number;
     linearDrag?: number;
@@ -228,8 +298,14 @@ export type BuoyancyEffectorCompOpt = {
     flowAngle?: number;
     flowMagnitude?: number;
     flowVariation?: number;
-};
+}
 
+/**
+ * The {@link buoyancyEffector `buoyancyEffector()`} component.
+ *
+ * @group Components
+ * @subgroup Component Types
+ */
 export interface BuoyancyEffectorComp extends Comp {
     surfaceLevel: number;
     density: number;

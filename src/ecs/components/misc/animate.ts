@@ -9,6 +9,10 @@ import { _k } from "../../../shared";
 import type { Comp, GameObj } from "../../../types";
 import type { NamedComp } from "./named";
 
+/**
+ * @group Components
+ * @subgroup Component Types
+ */
 type TimeDirection =
     /* Animate forward */
     | "forward"
@@ -17,6 +21,10 @@ type TimeDirection =
     /* Alternate animating forward and reverse */
     | "ping-pong";
 
+/**
+ * @group Components
+ * @subgroup Component Types
+ */
 type Interpolation =
     /* No interpolation */
     | "none"
@@ -58,6 +66,12 @@ export interface AnimateOpt {
     easings?: EaseFunc[];
 }
 
+/**
+ * Options for the {@link animate `animate()`} component.
+ *
+ * @group Components
+ * @subgroup Component Types
+ */
 export interface AnimateCompOpt {
     /**
      * Changes the angle so it follows the motion, requires the rotate component
@@ -69,6 +83,10 @@ export interface AnimateCompOpt {
     relative?: boolean;
 }
 
+/**
+ * @group Components
+ * @subgroup Component Types
+ */
 export interface BaseValues {
     pos: Vec2;
     angle: number;
@@ -78,6 +96,9 @@ export interface BaseValues {
 
 /**
  * The {@link animate `animate()`} component.
+ *
+ * @group Components
+ * @subgroup Component Types
  */
 export interface AnimateComp extends Comp {
     /**
@@ -140,6 +161,9 @@ export interface AnimateComp extends Comp {
 
 /**
  * Baseclass for animation channels, only handles parameter normalization and keyframe searches
+ *
+ * @group Components
+ * @subgroup Component Types
  */
 class AnimateChannel {
     name: string;
@@ -282,6 +306,9 @@ function reflect(a: Vec2, b: Vec2) {
 
 /**
  * Subclass handling number keys
+ *
+ * @group Components
+ * @subgroup Component Types
  */
 class AnimateChannelNumber extends AnimateChannel {
     keys: number[];
@@ -327,6 +354,9 @@ class AnimateChannelNumber extends AnimateChannel {
 
 /**
  * Subclass handling vector keys
+ *
+ * @group Component
+ * @subgroup Component Types
  */
 class AnimateChannelVec2 extends AnimateChannel {
     keys: Vec2[];
@@ -440,6 +470,9 @@ class AnimateChannelVec2 extends AnimateChannel {
 
 /**
  * Subclass handling color keys
+ *
+ * @group Components
+ * @subgroup Component Types
  */
 class AnimateChannelColor extends AnimateChannel {
     keys: Color[];
@@ -482,8 +515,16 @@ class AnimateChannelColor extends AnimateChannel {
     }
 }
 
+/**
+ * @group Components
+ * @subgroup Component Types
+ */
 type AnimationChannelKeys = number[] | number[][];
 
+/**
+ * @group Components
+ * @subgroup Component Types
+ */
 type AnimationOptions = {
     duration: number;
     loops?: number;
@@ -494,10 +535,18 @@ type AnimationOptions = {
     easings?: string[];
 };
 
+/**
+ * @group Components
+ * @subgroup Component Types
+ */
 type AnimationChannel = {
     keys: AnimationChannelKeys;
 } & AnimationOptions;
 
+/**
+ * @group Components
+ * @subgroup Component Types
+ */
 type Animation = {
     name: string;
     followMotion?: boolean;

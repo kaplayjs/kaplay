@@ -7,6 +7,12 @@ import { _k } from "../../../shared";
 import type { Comp, GameObj } from "../../../types";
 import type { PosComp } from "../transform/pos";
 
+/**
+ * The {@link video `video()`} component.
+ *
+ * @group Components
+ * @subgroup Component Types
+ */
 export interface VideoComp extends Comp {
     width: number;
     height: number;
@@ -18,6 +24,12 @@ export interface VideoComp extends Comp {
     renderArea(): Rect;
 }
 
+/**
+ * Options for the {@link video `video()`} component.
+ *
+ * @group Components
+ * @subgroup Component Types
+ */
 export type VideoCompOpt = {
     width: number;
     height: number;

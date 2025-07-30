@@ -110,12 +110,20 @@ export function drawLine(opt: DrawLineOpt) {
     );
 }
 
+/**
+ * @group Draw
+ * @subgroup Types
+ */
 export type LineJoin =
     | "none"
     | "round"
     | "bevel"
     | "miter";
 
+/**
+ * @group Draw
+ * @subgroup Types
+ */
 export type LineCap =
     | "butt"
     | "round"
@@ -123,6 +131,9 @@ export type LineCap =
 
 /**
  * How the lines should look like.
+ *
+ * @group Draw
+ * @subgroup Types
  */
 export type DrawLinesOpt = Omit<RenderProps, "angle" | "scale"> & {
     /**

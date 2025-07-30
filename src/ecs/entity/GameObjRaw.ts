@@ -56,6 +56,10 @@ import { make } from "./make";
 import { deserializePrefabAsset, type SerializedGameObj } from "./prefab";
 import { isFixed } from "./utils";
 
+/**
+ * @group Game Obj
+ * @subgroup Types
+ */
 export enum KeepFlags {
     Pos = 1,
     Angle = 2,
@@ -63,6 +67,10 @@ export enum KeepFlags {
     All = 7,
 }
 
+/**
+ * @group Game Obj
+ * @subgroup Types
+ */
 export type SetParentOpt = {
     keep: KeepFlags;
 };

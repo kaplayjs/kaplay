@@ -3,6 +3,12 @@ import type { Vec2 } from "../../../math/Vec2";
 import type { Comp, GameObj } from "../../../types";
 import type { PosComp } from "../transform/pos";
 
+/**
+ * The {@link patron `patrol()`} component.
+ *
+ * @group Components
+ * @subgroup Component Types
+ */
 export interface PatrolComp extends Comp {
     /**
      * Path to follow. If null, doesn't move.
@@ -23,6 +29,10 @@ export interface PatrolComp extends Comp {
     onPatrolFinished(cb: (objects: GameObj[]) => void): KEventController;
 }
 
+/**
+ * @group Components
+ * @subgroup Component Types
+ */
 type PatrolEndBehavior =
     /* Go directly back to the start */
     | "loop"
@@ -31,6 +41,12 @@ type PatrolEndBehavior =
     /* Stop */
     | "stop";
 
+/**
+ * Options for the {@link patrol `patrol()`} component.
+ *
+ * @group Components
+ * @subgroup Component Types
+ */
 export interface PatrolCompOpt {
     /**
      * Path to follow. If null, starts suspended.
