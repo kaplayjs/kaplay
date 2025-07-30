@@ -4,7 +4,7 @@ import { vec2 } from "../../math/math";
 import { getArcPts } from "../../math/various";
 import { Vec2 } from "../../math/Vec2";
 import type { Anchor, RenderProps } from "../../types";
-import { anchorPt } from "../anchor";
+import { anchorToVec2 } from "../anchor";
 import { drawPolygon } from "./drawPolygon";
 
 /**
@@ -61,7 +61,7 @@ export function drawRect(opt: DrawRectOpt) {
 
     const w = opt.width;
     const h = opt.height;
-    const anchor = anchorPt(opt.anchor || DEF_ANCHOR).add(1, 1);
+    const anchor = anchorToVec2(opt.anchor || DEF_ANCHOR).add(1, 1);
     const offset = anchor.scale(new Vec2(w, h).scale(-0.5));
 
     let pts = [

@@ -3,7 +3,7 @@ import type { Uniform } from "../../assets/shader";
 import type { Color } from "../../math/color";
 import type { Quad } from "../../math/math";
 import type { Vec2 } from "../../math/Vec2";
-import { anchorPt } from "../anchor";
+import { anchorToVec2 } from "../anchor";
 import type { Texture } from "../gfx";
 import {
     multRotate,
@@ -56,7 +56,7 @@ export function drawFormattedText(ftext: FormattedText) {
     multTranslateV(ftext.opt.pos!);
     multRotate(ftext.opt.angle!);
     multTranslateV(
-        anchorPt(ftext.opt.anchor ?? "topleft").add(1, 1).scale(
+        anchorToVec2(ftext.opt.anchor ?? "topleft").add(1, 1).scale(
             ftext.width,
             ftext.height,
         ).scale(-0.5),

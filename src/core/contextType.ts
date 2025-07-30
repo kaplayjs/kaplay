@@ -113,7 +113,6 @@ import type { SystemPhase } from "../ecs/systems/systems";
 import type { GameObjEventNames, GameObjEvents } from "../events/eventMap";
 import type { KEvent, KEventController, KEventHandler } from "../events/events";
 import type { SceneDef, SceneName } from "../game/scenes";
-import type { anchorPt } from "../gfx/anchor";
 import type { DrawBezierOpt } from "../gfx/draw/drawBezier";
 import type { DrawCanvasOpt } from "../gfx/draw/drawCanvas";
 import type { DrawCircleOpt } from "../gfx/draw/drawCircle";
@@ -5207,7 +5206,7 @@ export interface KAPLAYCtx<
      * @group Math
      * @subgroup Vectors
      */
-    anchorToVec2: typeof anchorPt;
+    anchorToVec2: (orig: Anchor | Vec2) => Vec2;
     /**
      * @since v4000.0
      * @group Math

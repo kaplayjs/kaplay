@@ -14,7 +14,7 @@ import { type Anchor } from "../types";
 import type { TextAlign } from "./draw/drawText";
 
 // convert anchor string to a vec2 offset
-export function anchorPt(orig: Anchor | Vec2): Vec2 {
+export function anchorToVec2(orig: Anchor | Vec2): Vec2 {
     switch (orig) {
         case "topleft":
             return TOP_LEFT;

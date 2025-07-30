@@ -145,7 +145,7 @@ import {
     pushScene,
     scene,
 } from "../game/scenes";
-import { anchorPt } from "../gfx/anchor";
+import { anchorToVec2 } from "../gfx/anchor";
 import { getBackground, setBackground } from "../gfx/bg";
 import { makeCanvas } from "../gfx/canvasBuffer";
 import { drawBezier } from "../gfx/draw/drawBezier";
@@ -562,7 +562,7 @@ export const createContext = (
         testLineCircle,
         clipLineToRect,
         clipLineToCircle,
-        anchorToVec2: anchorPt,
+        anchorToVec2,
         gjkShapeIntersects,
         gjkShapeIntersection,
         isConvex,

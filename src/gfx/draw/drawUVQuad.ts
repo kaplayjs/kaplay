@@ -3,7 +3,7 @@ import { Color } from "../../math/color";
 import { Quad } from "../../math/math";
 import { Vec2 } from "../../math/Vec2";
 import { type Anchor, BlendMode, type RenderProps } from "../../types";
-import { anchorPt } from "../anchor";
+import { anchorToVec2 } from "../anchor";
 import type { Texture } from "../gfx";
 import {
     multRotate,
@@ -65,7 +65,7 @@ export function drawUVQuad(opt: DrawUVQuadOpt) {
 
     const w = opt.width;
     const h = opt.height;
-    const anchor = anchorPt(opt.anchor || DEF_ANCHOR);
+    const anchor = anchorToVec2(opt.anchor || DEF_ANCHOR);
     const offsetX = anchor.x * w * -0.5;
     const offsetY = anchor.y * h * -0.5;
     const q = opt.quad || new Quad(0, 0, 1, 1);

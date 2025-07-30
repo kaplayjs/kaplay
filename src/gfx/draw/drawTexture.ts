@@ -3,7 +3,7 @@ import { Color } from "../../math/color";
 import { Quad } from "../../math/math";
 import { Vec2 } from "../../math/Vec2";
 import { type Anchor, BlendMode, type RenderProps } from "../../types";
-import { anchorPt } from "../anchor";
+import { anchorToVec2 } from "../anchor";
 import type { Texture } from "../gfx";
 import { drawRaw } from "./drawRaw";
 import { drawUVQuad } from "./drawUVQuad";
@@ -36,7 +36,7 @@ export function drawTexture(opt: DrawTextureOpt) {
     const scale = Vec2.ONE;
 
     if (opt.tiled) {
-        const offset = anchorPt(opt.anchor || DEF_ANCHOR);
+        const offset = anchorToVec2(opt.anchor || DEF_ANCHOR);
         const offsetX = (opt.pos?.x || 0)
             - (offset.x + 1) * 0.5 * (opt.width || w);
         const offsetY = (opt.pos?.y || 0)

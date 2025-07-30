@@ -2,7 +2,7 @@ import type { Color } from "../../math/color";
 import { getArcPts } from "../../math/various";
 import { Vec2 } from "../../math/Vec2";
 import type { Anchor, RenderProps } from "../../types";
-import { anchorPt } from "../anchor";
+import { anchorToVec2 } from "../anchor";
 import { drawPolygon } from "./drawPolygon";
 
 /**
@@ -61,7 +61,7 @@ export function drawEllipse(opt: DrawEllipseOpt) {
 
     const start = opt.start ?? 0;
     const end = opt.end ?? 360;
-    const offset = anchorPt(opt.anchor ?? "center").scale(
+    const offset = anchorToVec2(opt.anchor ?? "center").scale(
         new Vec2(-opt.radiusX, -opt.radiusY),
     );
 

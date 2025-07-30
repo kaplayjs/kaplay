@@ -10,7 +10,7 @@ import { DEF_ANCHOR } from "../../../constants/general";
 import { KEvent, type KEventController } from "../../../events/events";
 import { onLoad } from "../../../events/globalEvents";
 import { getRenderProps } from "../../../game/utils";
-import { anchorPt } from "../../../gfx/anchor";
+import { anchorToVec2 } from "../../../gfx/anchor";
 import { drawTexture } from "../../../gfx/draw/drawTexture";
 import type { Texture } from "../../../gfx/gfx";
 import { Quad, quad, Rect, vec2 } from "../../../math/math";
@@ -394,7 +394,7 @@ export function sprite(
                     quad(left + iw, top + ih, right, bottom),
                 ];
                 const props = getRenderProps(this);
-                const offset = anchorPt(props.anchor || DEF_ANCHOR);
+                const offset = anchorToVec2(props.anchor || DEF_ANCHOR);
                 const offsetX = -(offset.x + 1) * 0.5 * this.width;
                 const offsetY = -(offset.y + 1) * 0.5 * this.height;
                 for (let i = 0; i < 9; i++) {

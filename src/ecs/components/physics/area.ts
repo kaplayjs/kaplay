@@ -1,7 +1,7 @@
 import { DEF_ANCHOR } from "../../../constants/general";
 import type { KEventController } from "../../../events/events";
 import { toWorld } from "../../../game/camera";
-import { anchorPt } from "../../../gfx/anchor";
+import { anchorToVec2 } from "../../../gfx/anchor";
 import { drawCircle } from "../../../gfx/draw/drawCircle";
 import { drawPolygon } from "../../../gfx/draw/drawPolygon";
 import { drawRect } from "../../../gfx/draw/drawRect";
@@ -550,7 +550,7 @@ export function area(opt: AreaCompOpt = {}): AreaComp {
             Vec2.sub(pt, this.area.offset, pt);
             Vec2.scalec(pt, 1 / this.area.scale.x, 1 / this.area.scale.y, pt);
             if (localArea instanceof Rect && this.anchor !== "topleft") {
-                const offset = anchorPt(this.anchor || DEF_ANCHOR)
+                const offset = anchorToVec2(this.anchor || DEF_ANCHOR)
                     .add(1, 1)
                     .scale(-0.5 * localArea.width, -0.5 * localArea.height);
                 Vec2.sub(pt, offset, pt);
@@ -590,7 +590,7 @@ export function area(opt: AreaCompOpt = {}): AreaComp {
             }
             // Optional anchor offset (Rect only??)
             if (localArea instanceof Rect && this.anchor !== "topleft") {
-                const offset = anchorPt(this.anchor || DEF_ANCHOR)
+                const offset = anchorToVec2(this.anchor || DEF_ANCHOR)
                     .add(1, 1)
                     .scale(-0.5 * localArea.width, -0.5 * localArea.height);
                 transform.translateSelfV(offset);
