@@ -19,7 +19,12 @@
     "Expand",
     "MergeObj",
     "TupleWithoutFirst",
-    "RemoveCompProps"
+    "RemoveCompProps",
+    "BinaryHeap",
+    "SapEdge",
+    "SatResult",
+    "Grid",
+    "FPSCounter"
   ],
   "groups": {
     "Start": {

@@ -48,6 +48,12 @@ export function pathfinderMap(
     };
 }
 
+/**
+ * The {@link pathfinder `pathfinder()`} component.
+ *
+ * @group Components
+ * @subgroup Component Types
+ */
 export interface PathfinderComp extends Comp {
     /**
      * Get navigation waypoints to reach the given target from the current position.
@@ -59,6 +65,12 @@ export interface PathfinderComp extends Comp {
     graph: Graph | undefined;
 }
 
+/**
+ * Options for the {@link pathfinder `pathfinder()`} component.
+ *
+ * @group Components
+ * @subgroup Component Types
+ */
 export interface PathfinderCompOpt {
     /**
      * The graph to use for navigation. If null, the ancestors are queried for a pathfinderMap component.
