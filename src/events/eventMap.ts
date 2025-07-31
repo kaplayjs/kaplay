@@ -47,6 +47,14 @@ export type GameObjEventMap = {
     tag: [GameObj, string];
     /** Triggered when tag is removed */
     untag: [GameObj, string];
+    /** Triggered when object becomes paused */
+    pause: [GameObj];
+    /** Triggered when object becomes unpaused */
+    unpause: [GameObj];
+    /** Triggered when an object becomes hidden */
+    hide: [GameObj];
+    /** Triggered when an object becomes visible */
+    show: [GameObj];
     /**
      * Triggered when object collides with another object
      *
@@ -249,9 +257,9 @@ export type AppEventMap = {
     buttonPress: [string];
     buttonRelease: [string];
     scroll: [Vec2];
-    hide: [];
-    show: [];
-    resize: [];
+    tabHide: [];
+    tabShow: [];
+    tabResize: [];
     input: [];
 };
 
