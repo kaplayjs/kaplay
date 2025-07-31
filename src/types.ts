@@ -7,15 +7,7 @@ import type { LineCap, LineJoin } from "./gfx/draw/drawLine";
 import type { Picture } from "./gfx/draw/drawPicture";
 import type { FrameBuffer } from "./gfx/FrameBuffer";
 import type { Color, RGBAValue, RGBValue } from "./math/color";
-import type {
-    Circle,
-    Ellipse,
-    Line,
-    Point,
-    Polygon,
-    Quad,
-    Rect,
-} from "./math/math";
+import type { Circle, Ellipse, Line, Point, Polygon, Rect } from "./math/math";
 import type { Vec2 } from "./math/Vec2";
 import type { Defined, MergeObj } from "./utils/types";
 
