@@ -268,6 +268,7 @@ export function area(opt: AreaCompOpt = {}): AreaComp {
             events.push(
                 this.onCollideUpdate((obj, col) => {
                     if (!obj.id) {
+                        if (!obj.exists()) return;
                         throw new Error(
                             "area() requires the object to have an id",
                         );
