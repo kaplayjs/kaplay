@@ -8,6 +8,9 @@ import { fixURL } from "./utils";
 
 /**
  * Frame-based animation configuration.
+ *
+ * @group Assets
+ * @subgroup Types
  */
 export type SpriteAnim = number | {
     /**
@@ -40,12 +43,18 @@ export type SpriteAnim = number | {
 
 /**
  * A dict of name <-> animation.
+ *
+ * @group Assets
+ * @subgroup Types
  */
 export type SpriteAnims = Record<string, SpriteAnim>;
 
 // TODO: support frameWidth and frameHeight as alternative to slice
 /**
- * Sprite loading configuration.
+ * Sprite loading options.
+ *
+ * @group Assets
+ * @subgroup Types
  */
 export interface LoadSpriteOpt {
     /**
@@ -78,6 +87,10 @@ export interface LoadSpriteOpt {
     singular?: boolean;
 }
 
+/**
+ * @group Assets
+ * @subgroup Types
+ */
 export type NineSlice = {
     /**
      * The width of the 9-slice's left column.
@@ -97,6 +110,12 @@ export type NineSlice = {
     bottom: number;
 };
 
+/**
+ * Possible values for loading an sprite using {@link loadSprite `loadSprite`}.
+ *
+ * @group Assets
+ * @subgroup Types
+ */
 export type LoadSpriteSrc = string | ImageSource;
 
 export class SpriteData {

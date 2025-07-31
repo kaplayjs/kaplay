@@ -3,7 +3,8 @@ import type { Comp, Mask } from "../../../types";
 /**
  * The serialized {@link mask `mask()`} component.
  *
- * @group Component Serialization
+ * @group Components
+ * @subgroup Component Serialization
  */
 export interface SerializedMaskComp {
     mask: Mask;
@@ -12,7 +13,8 @@ export interface SerializedMaskComp {
 /**
  * The {@link mask `mask()`} component.
  *
- * @group Component Types
+ * @group Components
+ * @subgroup Component Types
  */
 export interface MaskComp extends Comp {
     mask: Mask;

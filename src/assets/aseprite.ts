@@ -5,6 +5,10 @@ import { type Asset, fetchJSON } from "./asset";
 import { type LoadSpriteSrc, type SpriteAnim, SpriteData } from "./sprite";
 import { fixURL } from "./utils";
 
+/**
+ * @group Assets
+ * @subgroup Data
+ */
 export type AsepriteData = {
     frames: Array<{
         frame: {

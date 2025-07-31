@@ -1,10 +1,13 @@
 import { getRenderProps } from "../../../game/utils";
-import { drawPolygon } from "../../../gfx/draw/drawPolygon";
+import {
+    drawPolygon,
+    type DrawPolygonOpt,
+} from "../../../gfx/draw/drawPolygon";
 import type { Texture } from "../../../gfx/gfx";
 import type { Color } from "../../../math/color";
 import { Polygon } from "../../../math/math";
 import { type Vec2 } from "../../../math/Vec2";
-import type { Comp, DrawPolygonOpt, GameObj } from "../../../types";
+import type { Comp, GameObj } from "../../../types";
 import { proxySetter } from "../../../utils/proxySetter";
 import type { AreaComp } from "../physics/area";
 
@@ -12,7 +15,8 @@ import type { AreaComp } from "../physics/area";
  * The {@link polygon `polygon()`} component.
  *
  * @since v3001.0
- * @group Component Types
+ * @group Components
+ * @subgroup Component Types
  */
 export interface PolygonComp extends Comp {
     draw: Comp["draw"];
@@ -50,7 +54,8 @@ export interface PolygonComp extends Comp {
 /**
  * Options for the {@link polygon `polygon()`} component.
  *
- * @group Component Types
+ * @group Components
+ * @subgroup Component Types
  */
 export type PolygonCompOpt = Omit<DrawPolygonOpt, "pts">;
 

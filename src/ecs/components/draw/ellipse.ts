@@ -10,7 +10,8 @@ import type { outline } from "./outline";
 /**
  * The serialized {@link ellipse `ellipse()`} component.
  *
- * @group Component Serialization
+ * @group Components
+ * @subgroup Component Serialization
  */
 export interface SerializedEllipseComp {
     radiusX: number;
@@ -21,7 +22,8 @@ export interface SerializedEllipseComp {
 /**
  * The {@link ellipse `ellipse()`} component.
  *
- * @group Component Types
+ * @group Components
+ * @subgroup Component Types
  */
 export interface EllipseComp extends Comp {
     draw: Comp["draw"];
@@ -39,7 +41,8 @@ export interface EllipseComp extends Comp {
 /**
  * Options for the {@link ellipse `ellipse()``} component.
  *
- * @group Component Types
+ * @group Components
+ * @subgroup Component Types
  */
 export interface EllipseCompOpt {
     /**

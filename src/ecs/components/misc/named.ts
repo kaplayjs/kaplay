@@ -3,7 +3,8 @@ import type { Comp } from "../../../types";
 /**
  * The serialized {@link color `color()`} component.
  *
- * @group Component Serialization
+ * @group Components
+ * @subgroup Component Serialization
  */
 export interface SerializeNameComp {
     name: string;
@@ -12,7 +13,8 @@ export interface SerializeNameComp {
 /**
  * The {@link named `named()`} component.
  *
- * @group Component Types
+ * @group Components
+ * @subgroup Component Types
  */
 export interface NamedComp extends Comp {
     /** The name assigned to this object. */

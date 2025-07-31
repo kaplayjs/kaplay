@@ -2,7 +2,8 @@ import { Color } from "../../math/color";
 import { triangulate } from "../../math/math";
 import { Vec2 } from "../../math/Vec2";
 import { _k } from "../../shared";
-import { BlendMode, type DrawPolygonOpt } from "../../types";
+import { BlendMode, type RenderProps } from "../../types";
+import type { Texture } from "../gfx";
 import {
     multRotate,
     multScaleV,
@@ -12,6 +13,65 @@ import {
 } from "../stack";
 import { drawLines } from "./drawLine";
 import { drawRaw } from "./drawRaw";
+
+/**
+ * How the polygon should look like.
+ *
+ * @group Draw
+ * @subgroup Types
+ */
+export type DrawPolygonOpt = RenderProps & {
+    /**
+     * The points that make up the polygon
+     */
+    pts: Vec2[];
+    /**
+     * If fill the shape with color (set this to false if you only want an outline).
+     */
+    fill?: boolean;
+    /**
+     * Manual triangulation.
+     */
+    indices?: number[];
+    /**
+     * The center point of transformation in relation to the position.
+     */
+    offset?: Vec2;
+    /**
+     * The radius of each corner.
+     */
+    radius?: number | number[];
+    /**
+     * The color of each vertex.
+     *
+     * @since v3000.0
+     */
+    colors?: Color[];
+    /**
+     * The opacity of each vertex.
+     *
+     * @since v4000.0
+     */
+    opacities?: number[];
+    /**
+     * The uv of each vertex.
+     *
+     * @since v3001.0
+     */
+    uv?: Vec2[];
+    /**
+     * The texture if uv are supplied.
+     *
+     * @since v3001.0
+     */
+    tex?: Texture;
+    /**
+     * Triangulate concave polygons.
+     *
+     * @since v3001.0
+     */
+    triangulate?: boolean;
+};
 
 export function drawPolygon(opt: DrawPolygonOpt) {
     if (!opt.pts) {

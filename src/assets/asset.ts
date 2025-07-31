@@ -87,6 +87,10 @@ export class Asset<D> {
     }
 }
 
+/**
+ * @group Assets
+ * @subgroup Types
+ */
 export class AssetBucket<D> {
     assets: Map<string, Asset<D>> = new Map();
     waiters: KEventHandler<any> = new KEventHandler();
@@ -252,8 +256,10 @@ export function load<T>(prom: Promise<T>): Asset<T> {
 }
 
 // create assets
-export type AssetsCtx = ReturnType<typeof initAssets>;
+/** @ignore */
+export type InternalAssetsCtx = ReturnType<typeof initAssets>;
 
+/** @ignore */
 export const initAssets = (ggl: GfxCtx, spriteAtlasPadding: number) => {
     const assets = {
         urlPrefix: "",

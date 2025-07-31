@@ -1,8 +1,12 @@
 import { vec2 } from "../../math/math";
-import type { Canvas, DrawUVQuadOpt, RenderProps } from "../../types";
+import type { Canvas } from "../../types";
 import { height } from "../stack";
-import { drawUVQuad } from "./drawUVQuad";
+import { drawUVQuad, type DrawUVQuadOpt } from "./drawUVQuad";
 
+/**
+ * @group Draw
+ * @subgroup Types
+ */
 export type DrawCanvasOpt = DrawUVQuadOpt & {
     canvas: Canvas;
 };

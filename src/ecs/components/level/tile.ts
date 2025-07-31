@@ -6,7 +6,8 @@ import type { LevelComp } from "./level";
 /**
  * The {@link tile `tile()`} component.
  *
- * @group Component Types
+ * @group Components
+ * @subgroup Component Types
  */
 export interface TileComp extends Comp {
     /**
@@ -41,7 +42,8 @@ export interface TileComp extends Comp {
 /**
  * Options for the {@link tile `tile()`} component.
  *
- * @group Component Types
+ * @group Components
+ * @subgroup Component Types
  */
 export type TileCompOpt = {
     /**

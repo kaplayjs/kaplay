@@ -10,10 +10,17 @@ import {
 } from "./sprite";
 import { fixURL } from "./utils";
 
+/**
+ * @group Assets
+ * @subgroup Data
+ */
 export type SpriteAtlasData = Record<string, SpriteAtlasEntry>;
 
 /**
  * A sprite in a sprite atlas.
+ *
+ * @group Assets
+ * @subgroup Types
  */
 export type SpriteAtlasEntry = LoadSpriteOpt & {
     /**

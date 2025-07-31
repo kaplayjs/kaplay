@@ -2,6 +2,7 @@
  * The list of easing functions available.
  *
  * @group Math
+ * @subgroup Tween
  */
 export type EaseFuncs =
     | "linear"
@@ -40,6 +41,7 @@ export type EaseFuncs =
  * A function that takes a time value and returns a new time value.
  *
  * @group Math
+ * @subgroup Tween
  */
 export type EaseFunc = (t: number) => number;
 

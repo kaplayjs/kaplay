@@ -13,6 +13,7 @@ import { Vec2 } from "./Vec2";
  * Possible arguments for a Vec2.
  *
  * @group Math
+ * @subgroup Vectors
  */
 export type Vec2Args =
     | [number, number]
@@ -73,6 +74,7 @@ export function vec2(...args: Vec2Args): Vec2 {
 
 /**
  * @group Math
+ * @subgroup Advanced
  */
 export class Quad {
     x: number = 0;
@@ -114,8 +116,11 @@ export function quad(x: number, y: number, w: number, h: number): Quad {
     return new Quad(x, y, w, h);
 }
 
-// Internal class
-class Mat2 {
+/**
+ * @group Math
+ * @subgroup Advanced
+ */
+export class Mat2 {
     // 2x2 matrix
     a: number;
     b: number;
@@ -213,7 +218,6 @@ class Mat2 {
     }
 }
 
-// Internal class
 export class Mat23 {
     // 2x3 matrix, since the last column is always (0, 0, 1)
     a: number;
@@ -449,7 +453,6 @@ export class Mat23 {
     }
 }
 
-// Internal class
 class Mat3 {
     // m11 m12 m13
     // m21 m22 m23
@@ -597,6 +600,7 @@ export const M = 2147483648;
  * A random number generator using the linear congruential generator algorithm.
  *
  * @group Math
+ * @subgroup Random
  */
 export class RNG {
     /**
@@ -1328,6 +1332,7 @@ export function testPointPoint(p1: Vec2, p2: Vec2): boolean {
 
 /**
  * @group Math
+ * @subgroup Shapes
  */
 export type ShapeType = Point | Circle | Line | Rect | Polygon | Ellipse;
 
@@ -1507,6 +1512,7 @@ export function testShapeShape(shape1: ShapeType, shape2: ShapeType): boolean {
 
 /**
  * @group Math
+ * @subgroup Raycast
  */
 export type RaycastHit = {
     fraction: number;
@@ -1518,6 +1524,7 @@ export type RaycastHit = {
 
 /**
  * @group Math
+ * @subgroup Raycast
  */
 export type RaycastResult = RaycastHit | null;
 
@@ -1806,9 +1813,6 @@ export class Point {
     }
 }
 
-/**
- * @group Math
- */
 export class Line {
     p1: Vec2;
     p2: Vec2;
@@ -2851,6 +2855,10 @@ export function easingCubicBezier(p1: Vec2, p2: Vec2) {
     };
 }
 
+/**
+ * @group Math
+ * @subgroup Tween
+ */
 export type StepPosition =
     | "jump-start"
     | "jump-end"
