@@ -6,7 +6,8 @@
 			"/**",
 			" * The serialized {@link ${TM_FILENAME_BASE} `${TM_FILENAME_BASE}()`} component.",
 			" *",
-			" * @group Component Serialization",
+			" * @group Components
+ * @subgroup Component Serialization",
 			" */",
 			"export interface Serialized${TM_FILENAME_BASE/(.)(.*)/${1:/upcase}${2}/}Comp {",
 			"",

@@ -13,6 +13,7 @@ import { Vec2 } from "./Vec2";
  * Possible arguments for a Vec2.
  *
  * @group Math
+ * @subgroup Vectors
  */
 export type Vec2Args =
     | [number, number]
@@ -73,6 +74,7 @@ export function vec2(...args: Vec2Args): Vec2 {
 
 /**
  * @group Math
+ * @subgroup Advanced
  */
 export class Quad {
     x: number = 0;
@@ -114,8 +116,11 @@ export function quad(x: number, y: number, w: number, h: number): Quad {
     return new Quad(x, y, w, h);
 }
 
-// Internal class
-class Mat2 {
+/**
+ * @group Math
+ * @subgroup Advanced
+ */
+export class Mat2 {
     // 2x2 matrix
     a: number;
     b: number;
@@ -213,7 +218,6 @@ class Mat2 {
     }
 }
 
-// Internal class
 export class Mat23 {
     // 2x3 matrix, since the last column is always (0, 0, 1)
     a: number;
@@ -449,7 +453,6 @@ export class Mat23 {
     }
 }
 
-// Internal class
 class Mat3 {
     // m11 m12 m13
     // m21 m22 m23
@@ -597,6 +600,7 @@ export const M = 2147483648;
  * A random number generator using the linear congruential generator algorithm.
  *
  * @group Math
+ * @subgroup Random
  */
 export class RNG {
     /**
@@ -1328,6 +1332,7 @@ export function testPointPoint(p1: Vec2, p2: Vec2): boolean {
 
 /**
  * @group Math
+ * @subgroup Shapes
  */
 export type ShapeType = Point | Circle | Line | Rect | Polygon | Ellipse;
 
@@ -1507,6 +1512,7 @@ export function testShapeShape(shape1: ShapeType, shape2: ShapeType): boolean {
 
 /**
  * @group Math
+ * @subgroup Raycast
  */
 export type RaycastHit = {
     fraction: number;
@@ -1518,6 +1524,7 @@ export type RaycastHit = {
 
 /**
  * @group Math
+ * @subgroup Raycast
  */
 export type RaycastResult = RaycastHit | null;
 
@@ -1798,11 +1805,14 @@ export class Point {
     serialize(): any {
         return { "Point": { pt: this.pt.serialize() } };
     }
+    support(direction: Vec2): Vec2 {
+        return this.pt;
+    }
+    get gjkCenter(): Vec2 {
+        return this.pt;
+    }
 }
 
-/**
- * @group Math
- */
 export class Line {
     p1: Vec2;
     p2: Vec2;
@@ -1844,6 +1854,17 @@ export class Line {
     }
     serialize(): any {
         return { Line: { p1: this.p1.serialize(), p2: this.p2.serialize() } };
+    }
+    support(direction: Vec2): Vec2 {
+        return this.p1.dot(direction) > this.p2.dot(direction)
+            ? this.p1
+            : this.p2;
+    }
+    get gjkCenter(): Vec2 {
+        return new Vec2(
+            (this.p1.x + this.p2.x) / 2,
+            (this.p1.y + this.p2.y) / 2,
+        );
     }
 }
 
@@ -1942,6 +1963,25 @@ export class Rect {
             },
         };
     }
+    support(direction: Vec2): Vec2 {
+        const pts = this.points();
+        let maxPoint = this.points()[0];
+        let maxDistance = Number.NEGATIVE_INFINITY;
+        let vertex;
+        for (let i = 1; i < pts.length; i++) {
+            vertex = pts[i];
+            const distance = vertex.dot(direction);
+            if (distance > maxDistance) {
+                maxDistance = distance;
+                maxPoint = vertex;
+            }
+        }
+
+        return maxPoint;
+    }
+    get gjkCenter(): Vec2 {
+        return this.pos;
+    }
 }
 
 /**
@@ -1988,6 +2028,16 @@ export class Circle {
         return {
             Circle: { center: this.center.serialize(), radius: this.radius },
         };
+    }
+    support(direction: Vec2): Vec2 {
+        const s = new Vec2(direction.x, direction.y);
+        Vec2.unit(s, s);
+        Vec2.scale(s, this.radius, s);
+        Vec2.add(s, this.center, s);
+        return s;
+    }
+    get gjkCenter(): Vec2 {
+        return this.center;
     }
 }
 
@@ -2135,6 +2185,29 @@ export class Ellipse {
             },
         };
     }
+    support(direction: Vec2): Vec2 {
+        // Axis aligned
+        if (this.angle === 0.0) {
+            let axis = new Vec2(direction.x, direction.y);
+            Vec2.unit(axis, axis);
+            Vec2.scalec(axis, this.radiusX, this.radiusY, axis);
+            Vec2.add(axis, this.center, axis);
+            return axis;
+        }
+        // Rotated
+        else {
+            let axis = new Vec2(direction.x, direction.y);
+            Vec2.rotateByAngle(axis, -this.angle, axis);
+            Vec2.unit(axis, axis);
+            Vec2.scalec(axis, this.radiusX, this.radiusY, axis);
+            Vec2.rotateByAngle(axis, this.angle, axis);
+            Vec2.add(axis, this.center, axis);
+            return axis;
+        }
+    }
+    get gjkCenter(): Vec2 {
+        return this.center;
+    }
 }
 
 function segmentLineIntersection(a: Vec2, b: Vec2, c: Vec2, d: Vec2) {
@@ -2158,6 +2231,13 @@ export class Polygon {
             throw new Error("Polygons should have at least 3 vertices");
         }
         this.pts = pts;
+        /*this.center = new Vec2(pts[0].x, pts[0].y);
+        for (let i = 1; i < pts.length; i++) {
+            this.center.x += pts[i].x;
+            this.center.y += pts[i].y;
+        }
+        this.center.x /= pts.length;
+        this.center.y /= pts.length;*/
     }
     transform(m: Mat23, s?: Shape): Polygon {
         // TODO: resize existing pts array?
@@ -2259,6 +2339,25 @@ export class Polygon {
     }
     serialize(): any {
         return { Polygon: { pts: this.pts.map(p => p.serialize()) } };
+    }
+    support(direction: Vec2): Vec2 {
+        let maxPoint = this.pts[0];
+        let maxDistance = maxPoint.dot(direction);
+
+        let vertex;
+        for (let i = 1; i < this.pts.length; i++) {
+            vertex = this.pts[i];
+            const distance = vertex.dot(direction);
+            if (distance > maxDistance) {
+                maxDistance = distance;
+                maxPoint = vertex;
+            }
+        }
+
+        return maxPoint;
+    }
+    get gjkCenter(): Vec2 {
+        return this.pts[0];
     }
 }
 
@@ -2756,6 +2855,10 @@ export function easingCubicBezier(p1: Vec2, p2: Vec2) {
     };
 }
 
+/**
+ * @group Math
+ * @subgroup Tween
+ */
 export type StepPosition =
     | "jump-start"
     | "jump-end"

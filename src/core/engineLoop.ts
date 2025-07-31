@@ -1,6 +1,10 @@
 import type { App } from "../app/app";
 import { initAppEvents } from "../app/appEvents";
-import { type AssetsCtx, getFailedAssets, loadProgress } from "../assets/asset";
+import {
+    getFailedAssets,
+    type InternalAssetsCtx,
+    loadProgress,
+} from "../assets/asset";
 import type { Debug } from "../debug/debug";
 import { SystemPhase } from "../ecs/systems/systems";
 import type { Game } from "../game/game";
@@ -15,7 +19,7 @@ import type { FrameRenderer } from "./frameRendering";
 export function startEngineLoop(
     app: App,
     game: Game,
-    assets: AssetsCtx,
+    assets: InternalAssetsCtx,
     gopt: KAPLAYOpt,
     frameRenderer: FrameRenderer,
     debug: Debug,

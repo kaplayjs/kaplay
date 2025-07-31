@@ -21,7 +21,7 @@ import type { Recording } from "../debug/record";
 import type { BlendComp } from "../ecs/components/draw/blend";
 import type { CircleComp, CircleCompOpt } from "../ecs/components/draw/circle";
 import type { ColorComp } from "../ecs/components/draw/color";
-import type { DrawonComp, DrawonOpt } from "../ecs/components/draw/drawon";
+import type { DrawonComp, DrawonCompOpt } from "../ecs/components/draw/drawon";
 import type { EllipseComp } from "../ecs/components/draw/ellipse";
 import type { MaskComp } from "../ecs/components/draw/mask";
 import type { OpacityComp } from "../ecs/components/draw/opacity";
@@ -43,7 +43,7 @@ import type { TextComp, TextCompOpt } from "../ecs/components/draw/text";
 import type { UVQuadComp } from "../ecs/components/draw/uvquad";
 import type { VideoComp, VideoCompOpt } from "../ecs/components/draw/video";
 import type { AgentComp, AgentCompOpt } from "../ecs/components/level/agent";
-import type { LevelComp, LevelOpt } from "../ecs/components/level/level";
+import type { LevelComp, LevelCompOpt } from "../ecs/components/level/level";
 import type {
     PathfinderComp,
     PathfinderCompOpt,
@@ -118,6 +118,7 @@ import type { DrawBezierOpt } from "../gfx/draw/drawBezier";
 import type { DrawCanvasOpt } from "../gfx/draw/drawCanvas";
 import type { DrawCircleOpt } from "../gfx/draw/drawCircle";
 import type { DrawCurveOpt } from "../gfx/draw/drawCurve";
+import type { DrawEllipseOpt } from "../gfx/draw/drawEllipse";
 import type { FormattedText } from "../gfx/draw/drawFormattedText";
 import type {
     DrawLineOpt,
@@ -126,10 +127,12 @@ import type {
     LineJoin,
 } from "../gfx/draw/drawLine";
 import type { DrawPictureOpt, Picture } from "../gfx/draw/drawPicture";
+import type { DrawPolygonOpt } from "../gfx/draw/drawPolygon";
 import type { DrawRectOpt } from "../gfx/draw/drawRect";
 import type { DrawSpriteOpt } from "../gfx/draw/drawSprite";
 import type { DrawTextOpt } from "../gfx/draw/drawText";
 import type { DrawTriangleOpt } from "../gfx/draw/drawTriangle";
+import type { DrawUVQuadOpt } from "../gfx/draw/drawUVQuad";
 import type { StyledTextInfo } from "../gfx/formatText";
 import type { FrameBuffer } from "../gfx/FrameBuffer";
 import type { Color, CSSColor } from "../math/color";
@@ -159,17 +162,14 @@ import type {
     Comp,
     CompList,
     Cursor,
-    DrawEllipseOpt,
-    DrawPolygonOpt,
-    DrawUVQuadOpt,
     EmptyComp,
     GameObj,
-    GamepadStick,
     GetOpt,
     KAPLAYPlugin,
     Key,
     KGamepad,
     KGamepadButton,
+    KGamepadStick,
     LoadFontOpt,
     Mask,
     MouseButton,
@@ -196,6 +196,8 @@ export interface KAPLAYCtx<
 > {
     /**
      * Internal data that should not be accessed directly.
+     *
+     * @ignore
      *
      * @readonly
      * @group Misc
@@ -282,6 +284,7 @@ export interface KAPLAYCtx<
      *
      * @returns The serialized game object.
      * @since v4000.0
+     * @group Game Obj
      */
     createPrefab(name: string, obj: GameObj): SerializedGameObj;
     /**
@@ -299,6 +302,8 @@ export interface KAPLAYCtx<
      *
      * @returns The serialized game object.
      * @since v4000.0
+     * @group Game Obj
+     * @subgroup Prefabs
      */
     createPrefab(obj: GameObj): SerializedGameObj;
     /**
@@ -470,6 +475,7 @@ export interface KAPLAYCtx<
      * @returns The position comp.
      * @since v2000.0
      * @group Components
+     * @subgroup Transform
      */
     pos(x: number, y: number): PosComp;
     pos(xy: number): PosComp;
@@ -503,6 +509,7 @@ export interface KAPLAYCtx<
      * @returns The scale comp.
      * @since v2000.0
      * @group Components
+     * @subgroup Transform
      */
     scale(x: number, y: number): ScaleComp;
     scale(xy: number): ScaleComp;
@@ -527,6 +534,7 @@ export interface KAPLAYCtx<
      * @returns The rotate comp.
      * @since v2000.0
      * @group Components
+     * @subgroup Transform
      */
     rotate(a?: number): RotateComp;
     // #endregion
@@ -549,6 +557,7 @@ export interface KAPLAYCtx<
      * @returns The color comp.
      * @since v2000.0
      * @group Components
+     * @subgroup Rendering
      */
     color(r: number, g: number, b: number): ColorComp;
     color(c: Color): ColorComp;
@@ -570,6 +579,7 @@ export interface KAPLAYCtx<
      * @returns The blend comp.
      * @since v4000.0
      * @group Components
+     * @subgroup Rendering
      */
     blend(blend: BlendMode): BlendComp;
     /**
@@ -594,6 +604,7 @@ export interface KAPLAYCtx<
      * @returns The opacity comp.
      * @since v2000.0
      * @group Components
+     * @subgroup Rendering
      */
     opacity(o?: number): OpacityComp;
     /**
@@ -628,6 +639,7 @@ export interface KAPLAYCtx<
      * @returns The sprite comp.
      * @since v2000.0
      * @group Components
+     * @subgroup Rendering
      */
     sprite(
         spr: string | SpriteData | Asset<SpriteData>,
@@ -667,6 +679,7 @@ export interface KAPLAYCtx<
      * @returns The text comp.
      * @since v2000.0
      * @group Components
+     * @subgroup Rendering
      */
     text(txt?: string, opt?: TextCompOpt): TextComp;
     /**
@@ -689,6 +702,7 @@ export interface KAPLAYCtx<
      * @returns The polygon comp.
      * @since v3001.0
      * @group Components
+     * @subgroup Rendering
      */
     polygon(pts: Vec2[], opt?: PolygonCompOpt): PolygonComp;
     /**
@@ -710,6 +724,7 @@ export interface KAPLAYCtx<
      *
      * @returns The rectangle component.
      * @group Components
+     * @subgroup Rendering
      */
     rect(w: number, h: number, opt?: RectCompOpt): RectComp;
     /**
@@ -729,6 +744,7 @@ export interface KAPLAYCtx<
      * @returns The circle comp.
      * @since v2000.0
      * @group Components
+     * @subgroup Rendering
      */
     circle(radius: number, opt?: CircleCompOpt): CircleComp;
     /**
@@ -748,6 +764,7 @@ export interface KAPLAYCtx<
      * @returns The ellipse comp.
      * @since v2000.0
      * @group Components
+     * @subgroup Rendering
      */
     ellipse(radiusX: number, radiusY: number): EllipseComp;
     /**
@@ -767,6 +784,7 @@ export interface KAPLAYCtx<
      * @returns The UV quad comp.
      * @since v2000.0
      * @group Components
+     * @subgroup Rendering
      */
     uvquad(w: number, h: number): UVQuadComp;
     /**
@@ -778,16 +796,18 @@ export interface KAPLAYCtx<
      * @returns The video comp.
      * @since v4000.0
      * @group Components
+     * @subgroup Rendering
      */
     video(url: string, opt?: VideoCompOpt): VideoComp;
     /**
-     * Draws a picture.
+     * Draws a picture, using the Picture API.
      *
      * @param picture - The picture to draw.
      *
      * @returns The picture comp.
      * @since v4000.0
      * @group Components
+     * @subgroup Rendering
      */
     picture(picture: Picture): PictureComp;
     /**
@@ -820,6 +840,7 @@ export interface KAPLAYCtx<
      * @returns The area comp.
      * @since v2000.0
      * @group Components
+     * @subgroup Physics
      */
     area(opt?: AreaCompOpt): AreaComp;
     /**
@@ -840,6 +861,7 @@ export interface KAPLAYCtx<
      * @returns The anchor comp.
      * @since v2000.0
      * @group Components
+     * @subgroup Rendering
      */
     anchor(o: Anchor | Vec2): AnchorComp;
     /**
@@ -868,6 +890,7 @@ export interface KAPLAYCtx<
      * @returns The z comp.
      * @since v2000.0
      * @group Components
+     * @subgroup Transform
      */
     z(z: number): ZComp;
     /**
@@ -898,7 +921,8 @@ export interface KAPLAYCtx<
      *
      * @returns The layer comp.
      * @since v3001.0
-     * @group Layer
+     * @group Components
+     * @subgroup Rendering
      */
     layer(name: string): LayerComp;
     /**
@@ -924,6 +948,7 @@ export interface KAPLAYCtx<
      * @returns The outline comp.
      * @since v2000.0
      * @group Components
+     * @subgroup Rendering
      */
     outline(
         width?: number,
@@ -968,6 +993,7 @@ export interface KAPLAYCtx<
      * @returns The particles comp.
      * @since v3001.0
      * @group Components
+     * @subgroup Rendering
      */
     particles(popt: ParticlesOpt, eopt: EmitterOpt): ParticlesComp;
     /**
@@ -1003,6 +1029,7 @@ export interface KAPLAYCtx<
      * @returns The body comp.
      * @since v2000.0
      * @group Components
+     * @subgroup Physics
      */
     body(opt?: BodyCompOpt): BodyComp;
     /**
@@ -1031,6 +1058,7 @@ export interface KAPLAYCtx<
      * @returns The surface effector comp.
      * @since v3001.0
      * @group Components
+     * @subgroup Physics
      */
     surfaceEffector(opt: SurfaceEffectorCompOpt): SurfaceEffectorComp;
     /**
@@ -1042,6 +1070,7 @@ export interface KAPLAYCtx<
      * @returns The area effector comp.
      * @since v3001.0
      * @group Components
+     * @subgroup Physics
      */
     areaEffector(opt: AreaEffectorCompOpt): AreaEffectorComp;
     /**
@@ -1053,6 +1082,7 @@ export interface KAPLAYCtx<
      * @returns The point effector comp.
      * @since v3001.0
      * @group Components
+     * @subgroup Physics
      */
     pointEffector(opt: PointEffectorCompOpt): PointEffectorComp;
     /**
@@ -1065,6 +1095,7 @@ export interface KAPLAYCtx<
      * @returns The platform effector comp.
      * @since v3001.0
      * @group Components
+     * @subgroup Physics
      */
     platformEffector(opt?: PlatformEffectorCompOpt): PlatformEffectorComp;
     /**
@@ -1076,6 +1107,7 @@ export interface KAPLAYCtx<
      * @returns The buoyancy effector comp.
      * @since v3001.0
      * @group Components
+     * @subgroup Physics
      */
     buoyancyEffector(opt: BuoyancyEffectorCompOpt): BuoyancyEffectorComp;
     /**
@@ -1087,6 +1119,7 @@ export interface KAPLAYCtx<
      * @returns The constant force comp.
      * @since v3001.0
      * @group Components
+     * @subgroup Physics
      */
     constantForce(opt: ConstantForceCompOpt): ConstantForceComp;
     /**
@@ -1097,6 +1130,7 @@ export interface KAPLAYCtx<
      * @returns The double jump comp.
      * @since v3000.0
      * @group Components
+     * @subgroup Physics
      *
      * @requires {@link body `body()`}
      */
@@ -1122,6 +1156,7 @@ export interface KAPLAYCtx<
      * @returns The move comp.
      * @since v2000.0
      * @group Components
+     * @subgroup Behaviour
      *
      * @requires {@link pos `pos()`}
      */
@@ -1144,6 +1179,7 @@ export interface KAPLAYCtx<
      * @returns The offscreen comp.
      * @since v2000.2
      * @group Components
+     * @subgroup Behaviour
      */
     offscreen(opt?: OffScreenCompOpt): OffScreenComp;
     /**
@@ -1177,6 +1213,7 @@ export interface KAPLAYCtx<
      * @returns The follow comp.
      * @since v2000.0
      * @group Components
+     * @subgroup Behaviour
      */
     follow(obj: GameObj | null, offset?: Vec2): FollowComp;
     /**
@@ -1188,6 +1225,7 @@ export interface KAPLAYCtx<
      * @returns The shader comp.
      * @since v2000.0
      * @group Components
+     * @subgroup Rendering
      */
     shader(id: string, uniform?: Uniform | (() => Uniform)): ShaderComp;
     /**
@@ -1210,6 +1248,7 @@ export interface KAPLAYCtx<
      * @returns The text input comp.
      * @since v3001.0
      * @group Components
+     * @subgroup UI
      */
     textInput(hasFocus?: boolean, maxInputLength?: number): TextInputComp;
     /**
@@ -1231,6 +1270,7 @@ export interface KAPLAYCtx<
      * @returns The timer comp.
      * @since v2000.0
      * @group Components
+     * @subgroup Behaviour
      */
     timer(maxLoopsPerFrame?: number): TimerComp;
     /**
@@ -1252,6 +1292,7 @@ export interface KAPLAYCtx<
      * @returns The fixed comp.
      * @since v2000.0
      * @group Components
+     * @subgroup Rendering
      */
     fixed(fixed?: boolean): FixedComp;
     /**
@@ -1275,6 +1316,7 @@ export interface KAPLAYCtx<
      * @returns The stay comp.
      * @since v2000.0
      * @group Components
+     * @subgroup Behaviour
      */
     stay(scenesToStay?: string[]): StayComp;
     /**
@@ -1312,6 +1354,7 @@ export interface KAPLAYCtx<
      * @returns The health comp.
      * @since v2000.0
      * @group Components
+     * @subgroup Behaviour
      */
     health(hp: number, maxHP?: number): HealthComp;
     /**
@@ -1334,6 +1377,7 @@ export interface KAPLAYCtx<
      * @returns The lifespan comp.
      * @since v2000.0
      * @group Components
+     * @subgroup Behaviour
      */
     lifespan(time: number, options?: LifespanCompOpt): EmptyComp;
     /**
@@ -1344,6 +1388,7 @@ export interface KAPLAYCtx<
      * @returns The named comp.
      * @since v3001.0
      * @group Components
+     * @subgroup Behaviour
      */
     named(name: string): NamedComp;
     /**
@@ -1388,6 +1433,7 @@ export interface KAPLAYCtx<
      * @returns The state comp.
      * @since v2000.1
      * @group Components
+     * @subgroup Behaviour
      */
     state<T extends string>(initialState: T, stateList?: T[]): StateComp<T>;
     /**
@@ -1418,6 +1464,7 @@ export interface KAPLAYCtx<
      * @returns The state comp.
      * @since v2000.2
      * @group Components
+     * @subgroup Behaviour
      */
     state<T extends string>(
         initialState: T,
@@ -1427,15 +1474,16 @@ export interface KAPLAYCtx<
     /**
      * @deprecated since v3001.0
      *
-     * @returns An empty comp.
-     * @since v3000.0
-     * @group Components
-     *
-     * @requires {@link opacity `opacity()`}
-     *
      * Fade object in.
      *
      * Uses opacity for finding what to fade into and to set opacity during fade animation.
+     *
+     * @returns An empty comp.
+     * @since v3000.0
+     * @group Components
+     * @subgroup Behaviour
+     *
+     * @requires {@link opacity `opacity()`}
      */
     fadeIn(time: number): Comp;
     /**
@@ -1446,6 +1494,7 @@ export interface KAPLAYCtx<
      * @returns The mask comp.
      * @since v3001.0
      * @group Components
+     * @subgroup Rendering
      */
     mask(maskType?: Mask): MaskComp;
     /**
@@ -1467,8 +1516,9 @@ export interface KAPLAYCtx<
      * @returns The drawon comp.
      * @since v3000.0
      * @group Components
+     * @subgroup Rendering
      */
-    drawon(canvas: FrameBuffer | Picture, opt?: DrawonOpt): DrawonComp;
+    drawon(canvas: FrameBuffer | Picture, opt?: DrawonCompOpt): DrawonComp;
     /**
      * A tile on a tile map.
      *
@@ -1477,6 +1527,7 @@ export interface KAPLAYCtx<
      * @returns The tile comp.
      * @since v3000.0
      * @group Components
+     * @subgroup Behaviour
      */
     tile(opt?: TileCompOpt): TileComp;
     /**
@@ -1487,6 +1538,7 @@ export interface KAPLAYCtx<
      * @returns The agent comp.
      * @since v3000.0
      * @group Components
+     * @subgroup Level
      */
     agent(opt?: AgentCompOpt): AgentComp;
     /**
@@ -1538,6 +1590,7 @@ export interface KAPLAYCtx<
      * @returns The animate comp.
      * @since v3001.0
      * @group Components
+     * @subgroup Behaviour
      */
     animate(opt?: AnimateCompOpt): AnimateComp;
     /**
@@ -1550,6 +1603,7 @@ export interface KAPLAYCtx<
      * @returns The fake mouse comp.
      * @since v3001.0
      * @group Components
+     * @subgroup Behaviour
      */
     fakeMouse(opt?: FakeMouseOpt): FakeMouseComp;
     /**
@@ -1560,6 +1614,7 @@ export interface KAPLAYCtx<
      * @returns The serialized animation.
      * @since v3001.0
      * @group Components
+     * @subgroup Component Serialization
      */
     serializeAnimation(obj: GameObj, name: string): Animation;
     /**
@@ -1568,6 +1623,7 @@ export interface KAPLAYCtx<
      * @returns The sentry comp.
      * @since v3001.0
      * @group Components
+     * @subgroup Level
      */
     sentry(candidates: SentryCandidates, opt?: SentryCompOpt): SentryComp;
     /**
@@ -1600,6 +1656,7 @@ export interface KAPLAYCtx<
      * @returns The patrol comp.
      * @since v3001.0
      * @group Components
+     * @subgroup Level
      */
     patrol(opts: PatrolCompOpt): PatrolComp;
     /**
@@ -1607,9 +1664,9 @@ export interface KAPLAYCtx<
      *
      * @since v3001.0
      * @group Components
+     * @subgroup Level
      */
     pathfinder(opts: PathfinderCompOpt): PathfinderComp;
-
     /**
      * Construct a level based on symbols.
      *
@@ -1657,8 +1714,9 @@ export interface KAPLAYCtx<
      * @returns A game obj with the level.
      * @since v4000.0
      * @group Components
+     * @subgroup Level
      */
-    level(map: string[], opt?: LevelOpt): LevelComp;
+    level(map: string[], opt?: LevelCompOpt): LevelComp;
 
     // #endregion
     /**
@@ -1666,6 +1724,7 @@ export interface KAPLAYCtx<
      *
      * @since v3001.0
      * @group Math
+     * @subgroup Raycast
      */
     raycast(origin: Vec2, direction: Vec2, exclude?: string[]): RaycastResult;
     /**
@@ -2158,42 +2217,6 @@ export interface KAPLAYCtx<
      */
     onCleanup(action: () => void): void;
     /**
-     * Register an event that runs when a gamepad is connected.
-     *
-     * @param action - The function that runs when quit() is called.
-     *
-     * @example
-     * ```js
-     * // watch for a controller connecting
-     * onGamepadConnect((gp) => {
-     *     debug.log(`ohhi player ${gp.index + 1}`);
-     * });
-     * ```
-     *
-     * @returns The event controller.
-     * @since v3000.0
-     * @group Input
-     */
-    onGamepadConnect(action: (gamepad: KGamepad) => void): KEventController;
-    /**
-     * Register an event that runs when a gamepad is disconnected.
-     *
-     * @param action - The function that runs when quit() is called.
-     *
-     * @example
-     * ```js
-     * // watch for a controller disconnecting
-     * onGamepadDisconnect((gp) => {
-     *     debug.log(`ohbye player ${gp.index + 1}`);
-     * });
-     * ```
-     *
-     * @returns The event controller.
-     * @since v3000.0
-     * @group Input
-     */
-    onGamepadDisconnect(action: (gamepad: KGamepad) => void): KEventController;
-    /**
      * Register an event that runs once when 2 game objs with certain tags collides (required to have area() component).
      *
      * @param t1 - The tag of the first game obj.
@@ -2277,6 +2300,7 @@ export interface KAPLAYCtx<
      * @returns The event controller.
      * @since v2000.1
      * @group Input
+     * @subgroup Mouse
      */
     onClick(tag: Tag, action: (a: GameObj) => void): KEventController;
     /**
@@ -2353,6 +2377,7 @@ export interface KAPLAYCtx<
      * @returns The event controller.
      * @since v2000.1
      * @group Input
+     * @subgroup Keyboard
      */
     onKeyDown(key: Key | Key[], action: (key: Key) => void): KEventController;
     /**
@@ -2363,6 +2388,7 @@ export interface KAPLAYCtx<
      * @returns The event controller.
      * @since v2000.1
      * @group Input
+     * @subgroup Keyboard
      */
     onKeyDown(action: (key: Key) => void): KEventController;
     /**
@@ -2386,6 +2412,7 @@ export interface KAPLAYCtx<
      * @returns The event controller.
      * @since v2000.1
      * @group Input
+     * @subgroup Keyboard
      */
     onKeyPress(key: Key | Key[], action: (key: Key) => void): KEventController;
     /**
@@ -2405,6 +2432,7 @@ export interface KAPLAYCtx<
      * @returns The event controller.
      * @since v3001.0
      * @group Input
+     * @subgroup Keyboard
      */
     onKeyPress(action: (key: Key) => void): KEventController;
     /**
@@ -2424,6 +2452,7 @@ export interface KAPLAYCtx<
      * @returns The event controller.
      * @since v3000.1
      * @group Input
+     * @subgroup Keyboard
      */
     onKeyPressRepeat(
         k: Key | Key[],
@@ -2447,6 +2476,7 @@ export interface KAPLAYCtx<
      * @returns The event controller.
      * @since v2000.1
      * @group Input
+     * @subgroup Keyboard
      */
     onKeyRelease(k: Key | Key[], action: (k: Key) => void): KEventController;
     /**
@@ -2483,6 +2513,7 @@ export interface KAPLAYCtx<
      * @returns The event controller.
      * @since v2000.1
      * @group Input
+     * @subgroup Keyboard
      */
     onCharInput(action: (ch: string) => void): KEventController;
     /**
@@ -2504,6 +2535,7 @@ export interface KAPLAYCtx<
      * @returns The event controller.
      * @since v3001.0
      * @group Input
+     * @subgroup Mouse
      */
     onMouseDown(
         btn: MouseButton | MouseButton[],
@@ -2526,6 +2558,7 @@ export interface KAPLAYCtx<
      * @returns The event controller.
      * @since v3001.0
      * @group Input
+     * @subgroup Mouse
      */
     onMouseDown(action: (m: MouseButton) => void): KEventController;
     /**
@@ -2549,6 +2582,7 @@ export interface KAPLAYCtx<
      * @returns The event controller.
      * @since v3001.0
      * @group Input
+     * @subgroup Mouse
      */
     onMousePress(action: (m: MouseButton) => void): KEventController;
     /**
@@ -2570,6 +2604,7 @@ export interface KAPLAYCtx<
      * @returns The event controller.
      * @since v3001.0
      * @group Input
+     * @subgroup Mouse
      */
     onMousePress(
         btn: MouseButton | MouseButton[],
@@ -2596,6 +2631,7 @@ export interface KAPLAYCtx<
      * @returns The event controller.
      * @since v3001.0
      * @group Input
+     * @subgroup Mouse
      */
     onMouseRelease(action: (m: MouseButton) => void): KEventController;
     /**
@@ -2622,6 +2658,7 @@ export interface KAPLAYCtx<
      * @returns The event controller.
      * @since v3001.0
      * @group Input
+     * @subgroup Mouse
      */
     onMouseRelease(
         btn: MouseButton | MouseButton[],
@@ -2643,6 +2680,7 @@ export interface KAPLAYCtx<
      * @returns The event controller.
      * @since v2000.1
      * @group Input
+     * @subgroup Mouse
      */
     onMouseMove(action: (pos: Vec2, delta: Vec2) => void): KEventController;
     /**
@@ -2653,6 +2691,7 @@ export interface KAPLAYCtx<
      * @returns The event controller.
      * @since v2000.1
      * @group Input
+     * @subgroup Touch
      */
     onTouchStart(action: (pos: Vec2, t: Touch) => void): KEventController;
     /**
@@ -2663,6 +2702,7 @@ export interface KAPLAYCtx<
      * @returns The event controller.
      * @since v2000.1
      * @group Input
+     * @subgroup Touch
      */
     onTouchMove(action: (pos: Vec2, t: Touch) => void): KEventController;
     /**
@@ -2673,6 +2713,7 @@ export interface KAPLAYCtx<
      * @returns The event controller.
      * @since v2000.1
      * @group Input
+     * @subgroup Touch
      */
     onTouchEnd(action: (pos: Vec2, t: Touch) => void): KEventController;
     /**
@@ -2692,6 +2733,7 @@ export interface KAPLAYCtx<
      * @returns The event controller.
      * @since v3000.0
      * @group Input
+     * @subgroup Mouse
      */
     onScroll(action: (delta: Vec2) => void): KEventController;
     /**
@@ -2743,6 +2785,44 @@ export interface KAPLAYCtx<
      */
     onTabShow(action: () => void): KEventController;
     /**
+     * Register an event that runs when a gamepad is connected.
+     *
+     * @param action - The function that runs when quit() is called.
+     *
+     * @example
+     * ```js
+     * // watch for a controller connecting
+     * onGamepadConnect((gp) => {
+     *     debug.log(`ohhi player ${gp.index + 1}`);
+     * });
+     * ```
+     *
+     * @returns The event controller.
+     * @since v3000.0
+     * @group Input
+     * @subgroup Gamepad
+     */
+    onGamepadConnect(action: (gamepad: KGamepad) => void): KEventController;
+    /**
+     * Register an event that runs when a gamepad is disconnected.
+     *
+     * @param action - The function that runs when quit() is called.
+     *
+     * @example
+     * ```js
+     * // watch for a controller disconnecting
+     * onGamepadDisconnect((gp) => {
+     *     debug.log(`ohbye player ${gp.index + 1}`);
+     * });
+     * ```
+     *
+     * @returns The event controller.
+     * @since v3000.0
+     * @group Input
+     * @subgroup Gamepad
+     */
+    onGamepadDisconnect(action: (gamepad: KGamepad) => void): KEventController;
+    /**
      * Register an event that runs every frame when certain gamepad buttons are held down.
      *
      * @param btn - The button(s) to listen for. See {@link KGamepadButton `KGamepadButton`}.
@@ -2759,6 +2839,7 @@ export interface KAPLAYCtx<
      * @returns The event controller.
      * @since v3001.0
      * @group Input
+     * @subgroup Gamepad
      */
     onGamepadButtonDown(
         btn: KGamepadButton | KGamepadButton[],
@@ -2784,6 +2865,7 @@ export interface KAPLAYCtx<
      * @returns The event controller.
      * @since v3001.0
      * @group Input
+     * @subgroup Gamepad
      */
     onGamepadButtonDown(
         action: (btn: KGamepadButton, gamepad: KGamepad) => void,
@@ -2805,6 +2887,7 @@ export interface KAPLAYCtx<
      * @returns The event controller.
      * @since v3001.0
      * @group Input
+     * @subgroup Gamepad
      */
     onGamepadButtonPress(
         btn: KGamepadButton | KGamepadButton[],
@@ -2828,6 +2911,7 @@ export interface KAPLAYCtx<
      * @returns The event controller.
      * @since v3001.0
      * @group Input
+     * @subgroup Gamepad
      */
     onGamepadButtonPress(
         action: (btn: KGamepadButton, gamepad: KGamepad) => void,
@@ -2856,6 +2940,7 @@ export interface KAPLAYCtx<
      * @returns The event controller.
      * @since v3001.0
      * @group Input
+     * @subgroup Gamepad
      */
     onGamepadButtonRelease(
         btn: KGamepadButton | KGamepadButton[],
@@ -2879,6 +2964,7 @@ export interface KAPLAYCtx<
      * @returns The event controller.
      * @since v3000.0
      * @group Input
+     * @subgroup Gamepad
      */
     onGamepadButtonRelease(
         action: (btn: KGamepadButton, gamepad: KGamepad) => void,
@@ -2886,7 +2972,7 @@ export interface KAPLAYCtx<
     /**
      * Register an event that runs when the gamepad axis exists.
      *
-     * @param button - The stick to listen for. See {@link GamepadStick `GamepadStick`}.
+     * @param button - The stick to listen for. See {@link KGamepadStick `GamepadStick`}.
      * @param action - The function that is run when a specific gamepad stick is moved.
      *
      * @example
@@ -2906,9 +2992,10 @@ export interface KAPLAYCtx<
      * @returns The event controller.
      * @since v3000.0
      * @group Input
+     * @subgroup Gamepad
      */
     onGamepadStick(
-        stick: GamepadStick,
+        stick: KGamepadStick,
         action: (value: Vec2, gameepad: KGamepad) => void,
     ): KEventController;
     /**
@@ -2921,6 +3008,7 @@ export interface KAPLAYCtx<
      * @returns The event controller.
      * @since v3001.0
      * @group Input
+     * @subgroup Buttons API
      */
     onButtonPress(
         btn: TButton | TButton[],
@@ -2936,6 +3024,7 @@ export interface KAPLAYCtx<
      * @returns The event controller.
      * @since v3001.0
      * @group Input
+     * @subgroup Buttons API
      */
     onButtonRelease(
         btn: TButton | TButton[],
@@ -2952,6 +3041,7 @@ export interface KAPLAYCtx<
      * @returns The event controller.
      * @since v3001.0
      * @group Input
+     * @subgroup Buttons API
      */
     onButtonDown(
         btn: TButton | TButton[],
@@ -2972,9 +3062,10 @@ export interface KAPLAYCtx<
      * Gets the name of the current scene. Returns null if no scene is active.
      *
      * @since v3001.0
-     * @group Scene
+     * @group Scenes
      */
     getSceneName(): string | null;
+    // #region Loaders
     /**
      * Sets the root for all subsequent resource urls.
      *
@@ -2992,8 +3083,8 @@ export interface KAPLAYCtx<
      * ```
      *
      * @group Assets
+     * @subgroup Util
      */
-    // #region Loaders
     loadRoot(path?: string): string;
     /**
      * Load a sprite into asset manager, with name and resource url and optional config.
@@ -3028,6 +3119,7 @@ export interface KAPLAYCtx<
      * @returns The asset data.
      * @since v2000.0
      * @group Assets
+     * @subgroup Sprites
      */
     loadSprite(
         name: string | null,
@@ -3068,6 +3160,7 @@ export interface KAPLAYCtx<
      * @returns The asset data.
      * @since v2000.0
      * @group Assets
+     * @subgroup Sprites
      */
     loadSpriteAtlas(
         src: LoadSpriteSrc,
@@ -3094,6 +3187,7 @@ export interface KAPLAYCtx<
      * @returns The asset data.
      * @since v2000.0
      * @group Assets
+     * @subgroup Sprites
      */
     loadSpriteAtlas(
         src: LoadSpriteSrc,
@@ -3113,6 +3207,7 @@ export interface KAPLAYCtx<
      * @returns The asset data.
      * @since v2000.0
      * @group Assets
+     * @subgroup Sprites
      */
     loadAseprite(
         name: string | null,
@@ -3137,12 +3232,14 @@ export interface KAPLAYCtx<
      * @returns The asset data.
      * @since v2000.0
      * @group Assets
+     * @subgroup Sprites
      */
     loadBean(name?: string): Asset<SpriteData>;
     /**
      * Load default font "happy".
      *
-     * @param name - An optional name for happy.
+     * @param name - Optional name for happy. Default to happy.
+     * @param opt - Optional config for {@link loadBitmapFont `loadBitmapFont`}.
      *
      * @example
      * ```js
@@ -3152,6 +3249,11 @@ export interface KAPLAYCtx<
      *     text("ohhi", { font: "happy" }),
      * ]);
      * ```
+     *
+     * @returns The asset data.
+     * @since v4000.0
+     * @group Assets
+     * @subgroup Fonts
      */
     loadHappy(name?: string, opt?: LoadBitmapFontOpt): Asset<BitmapFontData>;
     /**
@@ -3163,6 +3265,7 @@ export interface KAPLAYCtx<
      * @returns The asset data.
      * @since v3000.0
      * @group Assets
+     * @subgroup Util
      */
     loadJSON(name: string | null, url: string): Asset<any>;
     /**
@@ -3183,6 +3286,7 @@ export interface KAPLAYCtx<
      * @returns  The asset data.
      * @since v2000.0
      * @group Assets
+     * @subgroup Audio
      */
     loadSound(
         name: string | null,
@@ -3202,6 +3306,7 @@ export interface KAPLAYCtx<
      * @returns The asset data.
      * @since v3001.0
      * @group Assets
+     * @subgroup Audio
      */
     loadMusic(name: string | null, url: string): void;
     /**
@@ -3218,6 +3323,7 @@ export interface KAPLAYCtx<
      * @returns The asset data.
      * @since v3000.0
      * @group Assets
+     * @subgroup Fonts
      */
     loadFont(
         name: string,
@@ -3246,6 +3352,7 @@ export interface KAPLAYCtx<
      * @returns The asset data.
      * @since v3000.0
      * @group Assets
+     * @subgroup Fonts
      */
     loadBitmapFont(
         name: string | null,
@@ -3270,6 +3377,7 @@ export interface KAPLAYCtx<
      *
      * @returns The generated font data.
      * @group Assets
+     * @subgroup Fonts
      *
      * @see {@link LoadSpriteOpt}
      */
@@ -3301,6 +3409,7 @@ export interface KAPLAYCtx<
      * @returns The asset data.
      * @since v2000.0
      * @group Assets
+     * @subgroup Shaders
      */
     loadShader(
         name: string | null,
@@ -3323,6 +3432,7 @@ export interface KAPLAYCtx<
      * @returns The asset data.
      * @since v3000.0
      * @group Assets
+     * @subgroup Shaders
      */
     loadShaderURL(
         name: string | null,
@@ -3345,13 +3455,15 @@ export interface KAPLAYCtx<
      * @returns The asset data.
      * @since v3000.0
      * @group Assets
+     * @subgroup Util
      */
     load<T>(l: Promise<T>): Asset<T>;
     /**
      * Load a prefab.
      *
      * @since v4000.0.0
-     * @group Prefab
+     * @group Assets
+     * @subgroup Util
      * @experimental
      */
     loadPrefab: (name: string, url: string) => Asset<SerializedGameObj>;
@@ -3362,6 +3474,7 @@ export interface KAPLAYCtx<
      * @returns The loading progress.
      * @since v3000.0
      * @group Assets
+     * @subgroup Util
      */
     loadProgress(): number;
     /**
@@ -3372,6 +3485,7 @@ export interface KAPLAYCtx<
      * @returns The asset data.
      * @since v3000.0
      * @group Assets
+     * @subgroup Getters
      */
     getSprite(name: string): Asset<SpriteData> | null;
     /**
@@ -3382,6 +3496,7 @@ export interface KAPLAYCtx<
      * @returns The asset data.
      * @since v3000.0
      * @group Assets
+     * @subgroup Getters
      */
     getSound(name: string): Asset<SoundData> | null;
     /**
@@ -3392,6 +3507,7 @@ export interface KAPLAYCtx<
      * @returns The asset data.
      * @since v3000.0
      * @group Assets
+     * @subgroup Getters
      */
     getFont(name: string): Asset<FontData> | null;
     /**
@@ -3402,6 +3518,7 @@ export interface KAPLAYCtx<
      * @returns The asset data.
      * @since v3000.0
      * @group Assets
+     * @subgroup Getters
      */
     getBitmapFont(name: string): Asset<BitmapFontData> | null;
     /**
@@ -3412,6 +3529,7 @@ export interface KAPLAYCtx<
      * @returns The asset data.
      * @since v3000.0
      * @group Assets
+     * @subgroup Getters
      */
     getShader(name: string): Asset<ShaderData> | null;
     /**
@@ -3422,22 +3540,26 @@ export interface KAPLAYCtx<
      * @returns The asset data.
      * @since v3000.0
      * @group Assets
+     * @subgroup Getters
      */
     getAsset(name: string): Asset<any> | null;
     /**
      * The asset data.
      *
      * @group Assets
+     * @subgroup Data
      */
     Asset: typeof Asset;
     /**
      * The sprite data.
      *
      * @group Assets
+     * @subgroup Data
      */
     SpriteData: typeof SpriteData;
     /**
      * @group Assets
+     * @subgroup Data
      */
     SoundData: typeof SoundData;
     /**
@@ -3453,7 +3575,7 @@ export interface KAPLAYCtx<
      *
      * @returns The root object.
      * @since v2000.0
-     * @group Info
+     * @group Game Obj
      */
     getTreeRoot(): GameObj;
     /**
@@ -3532,6 +3654,7 @@ export interface KAPLAYCtx<
      * @returns true if on a touch screen device.
      * @since v3000.0
      * @group Input
+     * @subgroup Touch
      */
     isTouchscreen(): boolean;
     /**
@@ -3540,6 +3663,7 @@ export interface KAPLAYCtx<
      * @returns The current mouse position.
      * @since v2000.0
      * @group Input
+     * @subgroup Mouse
      */
     mousePos(): Vec2;
     /**
@@ -3548,6 +3672,7 @@ export interface KAPLAYCtx<
      * @returns The delta mouse position.
      * @since v2000.0
      * @group Input
+     * @subgroup Mouse
      */
     mouseDeltaPos(): Vec2;
     /**
@@ -3595,6 +3720,7 @@ export interface KAPLAYCtx<
      *
      * @since v2000.0
      * @group Input
+     * @subgroup Keyboard
      */
     isKeyDown(k?: Key | Key[]): boolean;
     /**
@@ -3614,6 +3740,7 @@ export interface KAPLAYCtx<
      *
      * @since v2000.0
      * @group Input
+     * @subgroup Keyboard
      */
     isKeyPressed(k?: Key | Key[]): boolean;
     /**
@@ -3651,6 +3778,7 @@ export interface KAPLAYCtx<
      *
      * @since v2000.0
      * @group Input
+     * @subgroup Keyboard
      */
     isKeyPressedRepeat(k?: Key | Key[]): boolean;
     /**
@@ -3670,6 +3798,7 @@ export interface KAPLAYCtx<
      *
      * @since v2000.0
      * @group Input
+     * @subgroup Keyboard
      */
     isKeyReleased(k?: Key | Key[]): boolean;
     /**
@@ -3679,6 +3808,7 @@ export interface KAPLAYCtx<
      *
      * @since v2000.0
      * @group Input
+     * @subgroup Mouse
      */
     isMouseDown(btn?: MouseButton | MouseButton[]): boolean;
     /**
@@ -3688,6 +3818,7 @@ export interface KAPLAYCtx<
      *
      * @since v2000.0
      * @group Input
+     * @subgroup Mouse
      */
     isMousePressed(btn?: MouseButton | MouseButton[]): boolean;
     /**
@@ -3697,6 +3828,7 @@ export interface KAPLAYCtx<
      *
      * @since v2000.0
      * @group Input
+     * @subgroup Mouse
      */
     isMouseReleased(btn?: MouseButton | MouseButton[]): boolean;
     /**
@@ -3704,6 +3836,7 @@ export interface KAPLAYCtx<
      *
      * @since v2000.1
      * @group Input
+     * @subgroup Mouse
      */
     isMouseMoved(): boolean;
     /**
@@ -3713,6 +3846,7 @@ export interface KAPLAYCtx<
      *
      * @since v3000.0
      * @group Input
+     * @subgroup Gamepad
      */
     isGamepadButtonPressed(btn?: KGamepadButton | KGamepadButton[]): boolean;
     /**
@@ -3722,6 +3856,7 @@ export interface KAPLAYCtx<
      *
      * @since v3000.0
      * @group Input
+     * @subgroup Gamepad
      */
     isGamepadButtonDown(btn?: KGamepadButton | KGamepadButton): boolean;
     /**
@@ -3731,6 +3866,7 @@ export interface KAPLAYCtx<
      *
      * @since v3000.0
      * @group Input
+     * @subgroup Gamepad
      */
     isGamepadButtonReleased(btn?: KGamepadButton | KGamepadButton[]): boolean;
     /**
@@ -3750,6 +3886,7 @@ export interface KAPLAYCtx<
      *
      * @since v3001.0
      * @group Input
+     * @subgroup Buttons API
      */
     isButtonPressed(btn?: TButton | TButton[]): boolean;
     /**
@@ -3769,6 +3906,7 @@ export interface KAPLAYCtx<
      *
      * @since v3001.0
      * @group Input
+     * @subgroup Buttons API
      */
     isButtonDown(btn?: TButton | TButton[]): boolean;
     /**
@@ -3788,6 +3926,7 @@ export interface KAPLAYCtx<
      *
      * @since v3001.0
      * @group Input
+     * @subgroup Buttons API
      */
     isButtonReleased(btn?: TButton | TButton[]): boolean;
     /**
@@ -3797,6 +3936,7 @@ export interface KAPLAYCtx<
      *
      * @since v3001.0
      * @group Input
+     * @subgroup Buttons API
      */
     getButton(btn: keyof TButtonDef): ButtonBinding;
     /**
@@ -3806,6 +3946,7 @@ export interface KAPLAYCtx<
      *
      * @since v3001.0
      * @group Input
+     * @subgroup Buttons API
      */
     setButton(btn: string, def: ButtonBinding): void;
     /**
@@ -3822,6 +3963,7 @@ export interface KAPLAYCtx<
      *
      * @since v3001.0
      * @group Input
+     * @subgroup Buttons API
      */
     pressButton(btn: TButton): void;
     /**
@@ -3838,6 +3980,7 @@ export interface KAPLAYCtx<
      *
      * @since v3001.0
      * @group Input
+     * @subgroup Buttons API
      */
     releaseButton(btn: TButton): void;
     /**
@@ -3848,14 +3991,16 @@ export interface KAPLAYCtx<
      * @returns The stick axis Vec2.
      * @since v3001.0
      * @group Input
+     * @subgroup Gamepad
      */
-    getGamepadStick(stick: GamepadStick): Vec2;
+    getGamepadStick(stick: KGamepadStick): Vec2;
     /**
      * Get the latest input device type that triggered the input event.
      *
      * @returns The last input device type, or null if no input event has been triggered.
      * @since v3001.0
      * @group Input
+     * @subgroup Util
      */
     getLastInputDeviceType(): ButtonBindingDevice | null;
     /**
@@ -3864,6 +4009,7 @@ export interface KAPLAYCtx<
      * @returns An array of characters inputted.
      * @since v3000.0
      * @group Input
+     * @subgroup Keyboard
      */
     charInputted(): string[];
     /**
@@ -3880,7 +4026,8 @@ export interface KAPLAYCtx<
      * ```
      *
      * @since v3001.1
-     * @group Camera
+     * @group Rendering
+     * @subgroup Camera
      */
     setCamPos(pos: Vec2): void;
     setCamPos(x: number, y: number): void;
@@ -3890,7 +4037,8 @@ export interface KAPLAYCtx<
      *
      * @returns The current camera position.
      * @since v3001.1
-     * @group Camera
+     * @group Rendering
+     * @subgroup Camera
      */
     getCamPos(): Vec2;
     /**
@@ -3907,7 +4055,8 @@ export interface KAPLAYCtx<
      * ```
      *
      * @since v3001.1
-     * @group Camera
+     * @group Rendering
+     * @subgroup Camera
      */
     setCamScale(scale: Vec2): void;
     setCamScale(x: number, y: number): void;
@@ -3917,7 +4066,8 @@ export interface KAPLAYCtx<
      *
      * @returns The current camera scale.
      * @since v3001.1
-     * @group Camera
+     * @group Rendering
+     * @subgroup Camera
      */
     getCamScale(): Vec2;
     /**
@@ -3932,7 +4082,8 @@ export interface KAPLAYCtx<
      * ```
      *
      * @since v3001.1
-     * @group Camera
+     * @group Rendering
+     * @subgroup Camera
      */
     setCamRot(angle: number): void;
     /**
@@ -3940,7 +4091,8 @@ export interface KAPLAYCtx<
      *
      * @returns The current camera rotation.
      * @since v3001.1
-     * @group Camera
+     * @group Rendering
+     * @subgroup Camera
      */
     getCamRot(): number;
     /**
@@ -3948,7 +4100,8 @@ export interface KAPLAYCtx<
      *
      * @returns The current camera transform.
      * @since v3001.1
-     * @group Camera
+     * @group Rendering
+     * @subgroup Camera
      */
     getCamTransform(): Mat23;
     /**
@@ -3965,7 +4118,8 @@ export interface KAPLAYCtx<
      * ```
      *
      * @since v3000.0
-     * @group Camera
+     * @group Rendering
+     * @subgroup Camera
      */
     shake(intensity?: number): void;
     /**
@@ -3984,7 +4138,8 @@ export interface KAPLAYCtx<
      *
      * @returns A timer controller.
      * @since v3001.0
-     * @group Camera
+     * @group Rendering
+     * @subgroup Camera
      */
     flash(flashColor: Color, fadeOutTime: number): TimerController;
     // #region DEPRECATED CAMERA METHODS ---------------------------------------
@@ -4005,7 +4160,8 @@ export interface KAPLAYCtx<
      *
      * @returns The current camera position.
      * @since v2000.0
-     * @group Camera
+     * @group Rendering
+     * @subgroup Camera
      */
     camPos(pos: Vec2): Vec2;
     /** @deprecated */
@@ -4024,7 +4180,8 @@ export interface KAPLAYCtx<
      *
      * @returns The current camera scale.
      * @since v2000.0
-     * @group Camera
+     * @group Rendering
+     * @subgroup Camera
      */
     camScale(scale: Vec2): Vec2;
     /** @deprecated */
@@ -4042,7 +4199,8 @@ export interface KAPLAYCtx<
      *
      * @returns The current camera rotation.
      * @since v2000.0
-     * @group Camera
+     * @group Rendering
+     * @subgroup Camera
      */
     camRot(angle?: number): number;
     /**
@@ -4063,7 +4221,8 @@ export interface KAPLAYCtx<
      *
      * @returns A timer controller.
      * @since v3001.0
-     * @group Camera
+     * @group Rendering
+     * @subgroup Camera
      */
     camFlash(flashColor: Color, fadeOutTime: number): TimerController;
     /**
@@ -4071,7 +4230,8 @@ export interface KAPLAYCtx<
      *
      * Get camera transform.
      *
-     * @group Camera
+     * @group Rendering
+     * @subgroup Camera
      */
     camTransform(): Mat23;
     // #endregion DEPRECATED CAMERA METHODS ------------------------------------
@@ -4081,7 +4241,8 @@ export interface KAPLAYCtx<
      * @param p - The point to transform.
      *
      * @since v3001.0
-     * @group Camera
+     * @group Rendering
+     * @subgroup Camera
      */
     toScreen(p: Vec2): Vec2;
     /**
@@ -4090,7 +4251,8 @@ export interface KAPLAYCtx<
      * @param p - The point to transform.
      *
      * @since v3001.0
-     * @group Camera
+     * @group Rendering
+     * @subgroup Camera
      */
     toWorld(p: Vec2): Vec2;
     /**
@@ -4397,7 +4559,8 @@ export interface KAPLAYCtx<
      * ```
      *
      * @since v2000.0
-     * @group Random
+     * @group Math
+     * @subgroup Random
      */
     rand<T = RNGValue>(a?: T, b?: T): T;
     /**
@@ -4415,7 +4578,8 @@ export interface KAPLAYCtx<
      *
      * @returns A random integer between 0 and 1.
      * @since v2000.0
-     * @group Random
+     * @group Math
+     * @subgroup Random
      */
     randi(a?: number, b?: number): number;
     /**
@@ -4430,7 +4594,8 @@ export interface KAPLAYCtx<
      *
      * @returns The new seed.
      * @since v2000.0
-     * @group Random
+     * @group Math
+     * @subgroup Random
      */
     randSeed(seed?: number): number;
     /**
@@ -4489,6 +4654,7 @@ export interface KAPLAYCtx<
      *
      * @returns The color.
      * @since v2000.0
+     * @group Math
      */
     rgb(hex: string): Color;
     /**
@@ -4528,6 +4694,7 @@ export interface KAPLAYCtx<
      * @returns The color.
      * @since v2000.1
      * @group Math
+     * @subgroup Colors
      */
     hsl2rgb(hue: number, saturation: number, lightness: number): Color;
     /**
@@ -4541,6 +4708,7 @@ export interface KAPLAYCtx<
      * @returns A Quad object.
      * @since v3001.0
      * @group Math
+     * @subgroup Advanced
      */
     quad(x: number, y: number, w: number, h: number): Quad;
     /**
@@ -4556,7 +4724,8 @@ export interface KAPLAYCtx<
      *
      * @returns A random item from the list.
      * @since v3001.0
-     * @group Random
+     * @group Math
+     * @subgroup Random
      */
     choose<T>(lst: T[]): T;
     /**
@@ -4567,7 +4736,8 @@ export interface KAPLAYCtx<
      *
      * @returns An array of random items from the list.
      * @since v3001.0
-     * @group Random
+     * @group Math
+     * @subgroup Random
      */
     chooseMultiple<T>(lst: T[], count: number): T[];
     /**
@@ -4577,7 +4747,8 @@ export interface KAPLAYCtx<
      *
      * @returns A shuffled array.
      * @since v3001.0
-     * @group Random
+     * @group Math
+     * @subgroup Random
      */
     shuffle<T>(lst: T[]): T[];
     /**
@@ -4594,12 +4765,14 @@ export interface KAPLAYCtx<
      * ```
      *
      * @group Math
+     * @subgroup Random
      */
     chance(p: number): boolean;
     /**
      * Linear interpolation. Can take a number, vector, or color.
      *
      * @group Math
+     * @subgroup Tween
      */
     lerp<V extends LerpValue>(from: V, to: V, t: number): V;
     /**
@@ -4613,6 +4786,7 @@ export interface KAPLAYCtx<
      *
      * @since v3000.0
      * @group Math
+     * @subgroup Tween
      */
     tween<V extends LerpValue>(
         from: V,
@@ -4626,6 +4800,7 @@ export interface KAPLAYCtx<
      *
      * @since v3000.0
      * @group Math
+     * @subgroup Tween
      */
     easings: Record<EaseFuncs, EaseFunc>;
     /**
@@ -4633,13 +4808,15 @@ export interface KAPLAYCtx<
      *
      * @since v3001.0
      * @group Math
+     * @subgroup Tween
      */
     easingSteps(steps: number, position: StepPosition): (x: number) => number;
     /**
-     * Linear easing with keyframes
+     * Linear easing with keyframes.
      *
      * @since v3001.0
      * @group Math
+     * @subgroup Tween
      */
     easingLinear(keys: Vec2[]): (x: number) => number;
     /**
@@ -4647,6 +4824,7 @@ export interface KAPLAYCtx<
      *
      * @since v3001.0
      * @group Math
+     * @subgroup Tween
      */
     easingCubicBezier(p1: Vec2, p2: Vec2): (x: number) => number;
     /**
@@ -4726,12 +4904,14 @@ export interface KAPLAYCtx<
      * Convert degrees to radians.
      *
      * @group Math
+     * @subgroup Angle
      */
     deg2rad(deg: number): number;
     /**
      * Convert radians to degrees.
      *
      * @group Math
+     * @subgroup Angle
      */
     rad2deg(rad: number): number;
     /**
@@ -4741,16 +4921,18 @@ export interface KAPLAYCtx<
      */
     clamp(n: number, min: number, max: number): number;
     /**
-     * Evaluate the quadratic Bezier at the given t
+     * Evaluate the quadratic Bezier at the given t.
      *
      * @group Math
+     * @subgroup Advanced
      */
     evaluateQuadratic(pt1: Vec2, pt2: Vec2, pt3: Vec2, t: number): Vec2;
     /**
-     * Evaluate the first derivative of a quadratic bezier at the given t
+     * Evaluate the first derivative of a quadratic bezier at the given t.
      *
      * @since v3001.0
      * @group Math
+     * @subgroup Advanced
      */
     evaluateQuadraticFirstDerivative(
         pt1: Vec2,
@@ -4763,6 +4945,7 @@ export interface KAPLAYCtx<
      *
      * @since v3001.0
      * @group Math
+     * @subgroup Advanced
      */
     evaluateQuadraticSecondDerivative(
         pt1: Vec2,
@@ -4771,16 +4954,18 @@ export interface KAPLAYCtx<
         t: number,
     ): Vec2;
     /**
-     * Evaluate the cubic Bezier at the given t
+     * Evaluate the cubic Bezier at the given t.
      *
      * @since v3001.0
      * @group Math
+     * @subgroup Advanced
      */
     evaluateBezier(pt1: Vec2, pt2: Vec2, pt3: Vec2, pt4: Vec2, t: number): Vec2;
     /**
-     * Evaluate the first derivative of a cubic Bezier at the given t
+     * Evaluate the first derivative of a cubic Bezier at the given t.
      *
      * @group Math
+     * @subgroup Advanced
      */
     evaluateBezierFirstDerivative(
         pt1: Vec2,
@@ -4790,10 +4975,11 @@ export interface KAPLAYCtx<
         t: number,
     ): Vec2;
     /**
-     * Evaluate the second derivative of a cubic bezier at the given t
+     * Evaluate the second derivative of a cubic bezier at the given t.
      *
      * @since v3001.0
      * @group Math
+     * @subgroup Advanced
      */
     evaluateBezierSecondDerivative(
         pt1: Vec2,
@@ -4803,10 +4989,11 @@ export interface KAPLAYCtx<
         t: number,
     ): Vec2;
     /**
-     * Evaluate the Catmull-Rom spline at the given t
+     * Evaluate the Catmull-Rom spline at the given t.
      *
      * @since v3001.0
      * @group Math
+     * @subgroup Advanced
      */
     evaluateCatmullRom(
         pt1: Vec2,
@@ -4816,10 +5003,11 @@ export interface KAPLAYCtx<
         t: number,
     ): Vec2;
     /**
-     * Evaluate the first derivative of a Catmull-Rom spline at the given t
+     * Evaluate the first derivative of a Catmull-Rom spline at the given t.
      *
      * @since v3001.0
      * @group Math
+     * @subgroup Advanced
      */
     evaluateCatmullRomFirstDerivative(
         pt1: Vec2,
@@ -4836,6 +5024,7 @@ export interface KAPLAYCtx<
      *
      * @since v3001.0
      * @group Math
+     * @subgroup Advanced
      */
     curveLengthApproximation(
         curve: (t: number) => Vec2,
@@ -4849,16 +5038,20 @@ export interface KAPLAYCtx<
      *
      * @since v3001.0
      * @group Math
+     * @subgroup Advanced
      */
     normalizedCurve(curve: (t: number) => Vec2): (s: number) => Vec2;
     /**
-     * A second order function returning an evaluator for the given 1D Hermite curve
-     * @param pt1 - First point
-     * @param m1 - First control point (tangent)
-     * @param m2 - Second control point (tangent)
-     * @param pt2 - Second point
+     * A second order function returning an evaluator for the given 1D Hermite curve.
      *
-     * @returns A function which gives the value on the 1D Hermite curve at t
+     * @param pt1 - First point.
+     * @param m1 - First control point (tangent).
+     * @param m2 - Second control point (tangent).
+     * @param pt2 - Second point.
+     *
+     * @returns A function which gives the value on the 1D Hermite curve at t.
+     * @group Math
+     * @subgroup Advanced
      */
     hermite(
         pt1: number,
@@ -4867,14 +5060,17 @@ export interface KAPLAYCtx<
         pt2: number,
     ): (t: number) => number;
     /**
-     * A second order function returning an evaluator for the given 2D Cardinal curve
-     * @param pt1 - Previous point
-     * @param pt2 - First point
-     * @param pt3 - Second point
-     * @param pt4 - Next point
+     * A second order function returning an evaluator for the given 2D Cardinal curve.
+     *
+     * @param pt1 - Previous point.
+     * @param pt2 - First point.
+     * @param pt3 - Second point.
+     * @param pt4 - Next point.
      * @param tension - The tension of the curve, [0..1] from round to tight.
      *
-     * @returns A function which gives the value on the 2D Cardinal curve at t
+     * @returns A function which gives the value on the 2D Cardinal curve at t.
+     * @group Math
+     * @subgroup Advanced
      */
     cardinal(
         pt1: Vec2,
@@ -4884,36 +5080,45 @@ export interface KAPLAYCtx<
         tension: number,
     ): (t: number) => Vec2;
     /**
-     * A second order function returning an evaluator for the given 2D Catmull-Rom curve
-     * @param pt1 - Previous point
-     * @param pt2 - First point
-     * @param pt3 - Second point
-     * @param pt4 - Next point
+     * A second order function returning an evaluator for the given 2D Catmull-Rom curve.
      *
-     * @returns A function which gives the value on the 2D Catmull-Rom curve at t
+     * @param pt1 - Previous point.
+     * @param pt2 - First point.
+     * @param pt3 - Second point.
+     * @param pt4 - Next point.
+     *
+     * @returns A function which gives the value on the 2D Catmull-Rom curve at t.
+     * @group Math
+     * @subgroup Advanced
      */
     catmullRom(pt1: Vec2, m1: Vec2, m2: Vec2, pt2: Vec2): (t: number) => Vec2;
     /**
-     * A second order function returning an evaluator for the given 2D quadratic Bezier curve
-     * @param pt1 - First point
-     * @param pt2 - First control point
-     * @param pt3 - Second control point
-     * @param pt4 - Second point
+     * A second order function returning an evaluator for the given 2D quadratic Bezier curve.
      *
-     * @returns A function which gives the value on the 2D quadratic Bezier curve at t
+     * @param pt1 - First point.
+     * @param pt2 - First control point.
+     * @param pt3 - Second control point.
+     * @param pt4 - Second point.
+     *
+     * @returns A function which gives the value on the 2D quadratic Bezier curve at t.
+     * @group Math
+     * @subgroup Advanced
      */
     bezier(pt1: Vec2, pt2: Vec2, pt3: Vec2, pt4: Vec2): (t: number) => Vec2;
     /**
-     * A second order function returning an evaluator for the given 2D Kochanek–Bartels curve
-     * @param pt1 - Previous point
-     * @param pt2 - First point
-     * @param pt3 - Second point
-     * @param pt4 - Next point
+     * A second order function returning an evaluator for the given 2D Kochanek–Bartels curve.
+     *
+     * @param pt1 - Previous point.
+     * @param pt2 - First point.
+     * @param pt3 - Second point.
+     * @param pt4 - Next point.
      * @param tension - The tension of the curve, [-1..1] from round to tight.
      * @param continuity - The continuity of the curve, [-1..1] from box corners to inverted corners.
      * @param bias - The bias of the curve, [-1..1] from pre-shoot to post-shoot.
      *
      * @returns A function which gives the value on the 2D Kochanek–Bartels curve at t
+     * @group Math
+     * @subgroup Advanced
      */
     kochanekBartels(
         pt1: Vec2,
@@ -4933,6 +5138,7 @@ export interface KAPLAYCtx<
      * @returns true if the line and point intersects.
      * @since v2000.0
      * @group Math
+     * @subgroup Advanced
      */
     testLinePoint(l: Line, pt: Vec2): boolean;
     /**
@@ -4944,6 +5150,7 @@ export interface KAPLAYCtx<
      * @returns The intersection point, or null if the lines are parallel.
      * @since v2000.0
      * @group Math
+     * @subgroup Advanced
      */
     testLineLine(l1: Line, l2: Line): Vec2 | null;
     /**
@@ -4955,6 +5162,7 @@ export interface KAPLAYCtx<
      * @returns true if the line and circle intersects.
      * @since v2000.0
      * @group Math
+     * @subgroup Advanced
      */
     testLineCircle(l: Line, c: Circle): boolean;
     /**
@@ -4966,6 +5174,7 @@ export interface KAPLAYCtx<
      * @returns true if the rectangles overlap.
      * @since v2000.0
      * @group Math
+     * @subgroup Advanced
      */
     testRectRect(r1: Rect, r2: Rect): boolean;
     /**
@@ -4977,6 +5186,7 @@ export interface KAPLAYCtx<
      * @returns true if the line and rectangle overlaps.
      * @since v2000.0
      * @group Math
+     * @subgroup Advanced
      */
     testRectLine(r: Rect, l: Line): boolean;
     /**
@@ -4988,6 +5198,7 @@ export interface KAPLAYCtx<
      * @returns true if the point is inside the rectangle.
      * @since v2000.0
      * @group Math
+     * @subgroup Advanced
      */
     testRectPoint(r: Rect, pt: Vec2): boolean;
     /**
@@ -4999,16 +5210,19 @@ export interface KAPLAYCtx<
      * @returns true if the circle and polygon intersect linewise.
      * @since v2000.0
      * @group Math
+     * @subgroup Advanced
      */
     testCirclePolygon(c: Circle, p: Polygon): boolean;
     /**
      * @since v4000.0
      * @group Math
+     * @subgroup Advanced
      */
     clipLineToRect(r: Rect, l: Line, result: Line): boolean;
     /**
      * @since v4000.0
      * @group Math
+     * @subgroup Advanced
      */
     clipLineToCircle(c: Circle, l: Line, result: Line): boolean;
     /**
@@ -5023,16 +5237,19 @@ export interface KAPLAYCtx<
      *
      * @since v4000.0
      * @group Math
+     * @subgroup Vectors
      */
     anchorToVec2: typeof anchorPt;
     /**
      * @since v4000.0
      * @group Math
+     * @subgroup Advanced
      */
     gjkShapeIntersects(shapeA: Shape, shapeB: Shape): boolean;
     /**
      * @since v4000.0
      * @group Math
+     * @subgroup Advanced
      */
     gjkShapeIntersection(
         shapeA: Shape,
@@ -5042,23 +5259,27 @@ export interface KAPLAYCtx<
      * @returns true if the given polygon is convex
      * @since v3001.0
      * @group Math
+     * @subgroup Advanced
      */
     isConvex(pts: Vec2[]): boolean;
     /**
      * @returns 1 if over the edge, 0 otherwise
      * @since v3001.0
      * @group Math
+     * @subgroup Advanced
      */
     step(edge: number, x: number): number;
     /**
      * @returns 1 if over edge1, 0 if under edge0, a smooth hermite curve value otherwise
      * @since v3001.0
      * @group Math
+     * @subgroup Advanced
      */
     smoothstep(edge0: number, edge1: number, x: number): number;
     /**
      * @since v3001.0
      * @group Math
+     * @subgroup Advanced
      */
     triangulate(pts: Vec2[]): Vec2[][];
     /**
@@ -5066,6 +5287,7 @@ export interface KAPLAYCtx<
      *
      * @since v3001.0
      * @group Math
+     * @subgroup Advanced
      */
     NavMesh: typeof NavMesh;
     /**
@@ -5073,6 +5295,7 @@ export interface KAPLAYCtx<
      *
      * @since v3001.0
      * @group Math
+     * @subgroup Shapes
      */
     Point: typeof Point;
     /**
@@ -5080,6 +5303,7 @@ export interface KAPLAYCtx<
      *
      * @since v2000.0
      * @group Math
+     * @subgroup Shapes
      */
     Line: typeof Line;
     /**
@@ -5087,6 +5311,7 @@ export interface KAPLAYCtx<
      *
      * @since v2000.0
      * @group Math
+     * @subgroup Shapes
      */
     Rect: typeof Rect;
     /**
@@ -5094,6 +5319,7 @@ export interface KAPLAYCtx<
      *
      * @since v2000.0
      * @group Math
+     * @subgroup Shapes
      */
     Circle: typeof Circle;
     /**
@@ -5101,6 +5327,7 @@ export interface KAPLAYCtx<
      *
      * @since v3001.0
      * @group Math
+     * @subgroup Shapes
      */
     Ellipse: typeof Ellipse;
     /**
@@ -5108,6 +5335,7 @@ export interface KAPLAYCtx<
      *
      * @since v2000.0
      * @group Math
+     * @subgroup Shapes
      */
     Polygon: typeof Polygon;
     /**
@@ -5115,6 +5343,7 @@ export interface KAPLAYCtx<
      *
      * @since v2000.0
      * @group Math
+     * @subgroup Vectors
      */
     Vec2: typeof Vec2;
     /**
@@ -5122,16 +5351,19 @@ export interface KAPLAYCtx<
      *
      * @since v2000.0
      * @group Math
+     * @subgroup Vectors
      */
     Color: typeof Color;
     /**
      * @since v3001.0
      * @group Math
+     * @subgroup Advanced
      */
     Mat4: typeof Mat4;
     /**
      * @since v4000.0
      * @group Math
+     * @subgroup Advanced
      */
     Mat23: typeof Mat23;
     /**
@@ -5139,6 +5371,7 @@ export interface KAPLAYCtx<
      *
      * @since v3001.0
      * @group Math
+     * @subgroup Advanced
      */
     Quad: typeof Quad;
     /**
@@ -5146,6 +5379,7 @@ export interface KAPLAYCtx<
      *
      * @since v2000.0
      * @group Math
+     * @subgroup Random
      */
     RNG: typeof RNG;
     /**
@@ -5167,7 +5401,7 @@ export interface KAPLAYCtx<
      * });
      * ```
      *
-     * @group Scene
+     * @group Scenes
      */
     scene(name: SceneName, def: SceneDef): void;
     /**
@@ -5186,7 +5420,7 @@ export interface KAPLAYCtx<
      * ```
      *
      * @since v2000.0
-     * @group Scene
+     * @group Scenes
      */
     go(name: SceneName, ...args: any): void;
 
@@ -5213,7 +5447,7 @@ export interface KAPLAYCtx<
      * ```
      *
      * @since v3001.1
-     * @group Layers
+     * @group Scenes
      */
     pushScene(id: SceneName, ...args: unknown[]): void;
 
@@ -5238,7 +5472,7 @@ export interface KAPLAYCtx<
      * ```
      *
      * @since v3001.1
-     * @group Layers
+     * @group Scenes
      */
     popScene(id: SceneName, ...args: unknown[]): void;
     /**
@@ -5264,7 +5498,8 @@ export interface KAPLAYCtx<
      * ```
      *
      * @since v3001.1
-     * @group Layers
+     * @group Rendering
+     * @subgroup Layers
      */
     setLayers(layers: string[], defaultLayer: string): void;
     /**
@@ -5272,7 +5507,8 @@ export interface KAPLAYCtx<
      *
      * @returns The layer names or null if not set.
      * @since v3001.1
-     * @group Layers
+     * @group Rendering
+     * @subgroup Layers
      * @experimental This feature is in experimental phase, it will be fully released in v3001.1
      */
     getLayers(): string[] | null;
@@ -5281,7 +5517,8 @@ export interface KAPLAYCtx<
      *
      * @returns The default layer name or null if not set.
      * @since v3001.0.5
-     * @group Layers
+     * @group Rendering
+     * @subgroup Layers
      * @experimental This feature is in experimental phase, it will be fully released in v3001.1
      */
     getDefaultLayer(): string | null;
@@ -5310,7 +5547,8 @@ export interface KAPLAYCtx<
      * ```
      *
      * @since v3001.0
-     * @group Scene
+     * @group Rendering
+     * @subgroup Layers
      */
     layers(layers: string[], defaultLayer: string): void;
     /**
@@ -5357,7 +5595,9 @@ export interface KAPLAYCtx<
      *
      * @returns A game obj with the level.
      * @since v2000.0
-     * @group Level
+     * @group Game Obj
+     *
+     * @see {@link LevelComp `LevelComp`} The level component for more information in level methods.
      */
     addLevel(
         map: string[],
@@ -5648,28 +5888,58 @@ export interface KAPLAYCtx<
      */
     drawSubtracted(content: () => void, mask: () => void): void;
     /**
-     * A picture holding drawing data
+     * The exported Picture class to KAPLAY Context.
+     *
+     * @example
+     * ```js
+     * const k = kaplay();
+     *
+     * // You can use Picture class
+     * new k.Picture()
+     * ```
+     *
+     * @group Draw
+     * @subgroup Picture
      */
     Picture: typeof Picture;
     /**
      * Selects the picture for drawing, erases existing data.
+     *
      * @param picture - The picture to write drawing data to.
+     *
+     * @since v4000.0
+     * @group Draw
+     * @subgroup Picture
      */
     beginPicture(picture?: Picture): void;
     /**
      * Selects the picture for drawing, keeps existing data.
+     *
      * @param picture - The picture to write drawing data to.
+     *
+     * @since v4000.0
+     * @group Draw
+     * @subgroup Picture
      */
     appendToPicture(picture?: Picture): void;
     /**
      * Deselects the current picture for drawing, returning the picture.
+     *
      * @returns The picture which was previously selected.
+     * @since v4000.0
+     * @group Draw
+     * @subgroup Picture
      */
     endPicture(): Picture;
     /**
      * Draws a picture to the screen. This function can not be used to draw recursively to a picture.
+     *
      * @param picture - The picture to draw
-     * @param opt - Drawing options
+     * @param opt - Drawing
+     *
+     * @since v4000.0
+     * @group Draw
+     * @subgroup Picture
      */
     drawPicture(picture: Picture, opt: DrawPictureOpt): void;
     /**
@@ -5692,14 +5962,16 @@ export interface KAPLAYCtx<
      * ```
      *
      * @since v2000.0
-     * @group Draw
+     * @group Rendering
+     * @subgroup Stack
      */
     pushTransform(): void;
     /**
      * Pop the topmost transform matrix from the transform stack.
      *
      * @since v2000.0
-     * @group Draw
+     * @group Rendering
+     * @subgroup Stack
      */
     popTransform(): void;
     /**
@@ -5717,28 +5989,32 @@ export interface KAPLAYCtx<
      * ```
      *
      * @since v2000.0
-     * @group Draw
+     * @group Rendering
+     * @subgroup Stack
      */
     pushTranslate(t?: Vec2): void;
     /**
      * Scale all subsequent draws.
      *
      * @since v2000.0
-     * @group Draw
+     * @group Rendering
+     * @subgroup Stack
      */
     pushScale(s?: Vec2): void;
     /**
      * Rotate all subsequent draws.
      *
      * @since v2000.0
-     * @group Draw
+     * @group Rendering
+     * @subgroup Stack
      */
     pushRotate(angle?: number): void;
     /**
      * Apply a transform matrix, ignore all prior transforms.
      *
      * @since v3000.0
-     * @group Draw
+     * @group Rendering
+     * @subgroup Stack
      */
     pushMatrix(mat?: Mat23): void;
     /**
@@ -5757,7 +6033,8 @@ export interface KAPLAYCtx<
      * ```
      *
      * @since v3000.0
-     * @group Draw
+     * @group Rendering
+     * @subgroup Shaders
      */
     usePostEffect(name: string, uniform?: Uniform | (() => Uniform)): void;
     /**
@@ -5780,7 +6057,8 @@ export interface KAPLAYCtx<
      *
      * @returns The formatted text object.
      * @since v2000.2
-     * @group Draw
+     * @group Rendering
+     * @subgroup Text
      */
     formatText(options: DrawTextOpt): FormattedText;
     /**
@@ -5789,7 +6067,8 @@ export interface KAPLAYCtx<
      * active on each character.
      *
      * @since v4000
-     * @group Draw
+     * @group Rendering
+     * @subgroup Text
      */
     compileStyledText(text: any): StyledTextInfo;
     /**
@@ -5797,7 +6076,8 @@ export interface KAPLAYCtx<
      *
      * @returns The canvas object.
      * @since v3001.0
-     * @group Draw
+     * @group Rendering
+     * @subgroup Canvas
      */
     makeCanvas(w: number, h: number): Canvas;
     /**
@@ -5862,7 +6142,7 @@ export interface KAPLAYCtx<
      *
      * @returns The dataURL of the image.
      * @since v2000.0
-     * @group Data
+     * @group Debug
      */
     screenshot(): string;
     /**
@@ -5898,7 +6178,7 @@ export interface KAPLAYCtx<
      *
      * @returns A control handle.
      * @since v2000.1
-     * @group Data
+     * @group Debug
      */
     record(frameRate?: number): Recording;
     /**
@@ -5916,7 +6196,7 @@ export interface KAPLAYCtx<
      *
      * @returns The explosion object.
      * @since v2000.0
-     * @group Misc
+     * @group Game Obj
      */
     addKaboom(pos: Vec2, opt?: BoomOpt): GameObj;
     /**
@@ -6028,6 +6308,9 @@ export interface KAPLAYCtx<
      * Throws a new error and show up the Blue Screen.
      *
      * @param msg - The message for showing in the Blue Screen.
+     *
+     * @since v4000.0
+     * @group Start
      */
     throwError: (msg: string) => void;
     /**
@@ -6062,9 +6345,8 @@ export interface KAPLAYCtx<
      * ```
      *
      * @returns The cancel event symbol.
-     * @since v3001.0.5
+     * @since v4000.0
      * @group Events
-     * @experimental This feature is in experimental phase, it will be fully released in v3001.1.0
      */
     cancel: () => Symbol;
     /**
@@ -6074,6 +6356,7 @@ export interface KAPLAYCtx<
      *
      * @since v3000.0
      * @group Game Obj
+     * @subgroup Types
      */
     KeepFlags: typeof KeepFlags;
     /**

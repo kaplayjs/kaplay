@@ -6,7 +6,6 @@ import type { GameObjRaw } from "./ecs/entity/GameObjRaw";
 import type { LineCap, LineJoin } from "./gfx/draw/drawLine";
 import type { Picture } from "./gfx/draw/drawPicture";
 import type { FrameBuffer } from "./gfx/FrameBuffer";
-import type { Texture } from "./gfx/gfx";
 import type { Color, RGBAValue, RGBValue } from "./math/color";
 import type {
     Circle,
@@ -26,6 +25,7 @@ export type Tag = string;
  * The basic unit of object in KAPLAY. The player, a butterfly, a tree, or even a piece of text.
  *
  * @group Game Obj
+ * @subgroup Types
  */
 export type GameObj<T = any> = GameObjRaw & MergeComps<T>;
 
@@ -38,7 +38,8 @@ type RemoveCompProps<T> = Defined<
 /**
  * A type to merge the components of a game object, omitting the default component properties.
  *
- * @group Component Types
+ * @group Components
+ * @subgroup Component Types
  */
 export type MergeComps<T> = MergeObj<RemoveCompProps<T>>;
 
@@ -49,7 +50,8 @@ export type MergePlugins<T extends PluginList<any>> = MergeObj<
 /**
  * A component list.
  *
- * @group Component Types
+ * @group Components
+ * @subgroup Component Types
  */
 export type CompList<T extends any | undefined> = (T | Tag)[];
 export type PluginList<T> = Array<T | KAPLAYPlugin<any>>;
@@ -58,6 +60,7 @@ export type PluginList<T> = Array<T | KAPLAYPlugin<any>>;
  * A key.
  *
  * @group Input
+ * @subgroup Keyboard
  */
 export type Key =
     | (
@@ -142,6 +145,7 @@ export type Key =
  * A mouse button.
  *
  * @group Input
+ * @subgroup Mouse
  */
 export type MouseButton = "left" | "right" | "middle" | "back" | "forward";
 
@@ -149,6 +153,7 @@ export type MouseButton = "left" | "right" | "middle" | "back" | "forward";
  * A gamepad button.
  *
  * @group Input
+ * @subgroup Gamepad
  */
 export type KGamepadButton =
     | "north"
@@ -174,18 +179,27 @@ export type KGamepadButton =
  * A gamepad stick.
  *
  * @group Input
+ * @subgroup Gamepad
  */
-export type GamepadStick = "left" | "right";
+export type KGamepadStick = "left" | "right";
 
 /**
- * A gamepad definition.
+ * A gamepad definition. Used in {@link KAPLAYOpt `KAPLAYOpt`}
+ *
+ * @group Input
+ * @subgroup Gamepad
  */
 export type GamepadDef = {
     buttons: Record<string, KGamepadButton>;
-    sticks: Partial<Record<GamepadStick, { x: number; y: number }>>;
+    sticks: Partial<Record<KGamepadStick, { x: number; y: number }>>;
 };
 
-/** A KAPLAY gamepad */
+/**
+ *  A KAPLAY gamepad
+ *
+ * @group Input
+ * @subgroup Gamepad
+ */
 export type KGamepad = {
     /** The order of the gamepad in the gamepad list. */
     index: number;
@@ -196,7 +210,7 @@ export type KGamepad = {
     /** If certain button is released. */
     isReleased(b: KGamepadButton): boolean;
     /** Get the value of a stick. */
-    getStick(stick: GamepadStick): Vec2;
+    getStick(stick: KGamepadStick): Vec2;
 };
 
 /**
@@ -406,6 +420,10 @@ export type KAPLAYPlugin<T> = (
     k: KAPLAYCtx,
 ) => T | ((...args: any) => (k: KAPLAYCtx) => T);
 
+/**
+ * @group Rendering
+ * @subgroup Canvas
+ */
 export type RenderTarget = {
     destination: FrameBuffer | Picture | null;
     childrenOnly?: boolean;
@@ -414,7 +432,8 @@ export type RenderTarget = {
 };
 
 /**
- * @group Options
+ * @group Game Obj
+ * @subgroup Types
  */
 export type GetOpt = {
     /**
@@ -432,7 +451,8 @@ export type GetOpt = {
 };
 
 /**
- * @group Options
+ * @group Game Obj
+ * @subgroup Types
  */
 export type QueryOpt = {
     /**
@@ -475,6 +495,9 @@ export type QueryOpt = {
 
 /**
  * Sprite animation configuration when playing.
+ *
+ * @group Components
+ * @subgroup Component Types
  */
 export interface SpriteAnimPlayOpt {
     /**
@@ -501,8 +524,16 @@ export interface SpriteAnimPlayOpt {
     onEnd?: () => void;
 }
 
+/**
+ * @group Assets
+ * @subgroup Data
+ */
 export type MusicData = string;
 
+/**
+ * @group Assets
+ * @subgroup Types
+ */
 export interface LoadFontOpt {
     filter?: TexFilter;
     outline?: number | Outline;
@@ -514,13 +545,25 @@ export interface LoadFontOpt {
     size?: number;
 }
 
+/**
+ * @group Assets
+ * @subgroup Types
+ */
 export type TextureOpt = {
     filter?: TexFilter;
     wrap?: TexWrap;
 };
 
+/**
+ * @group Assets
+ * @subgroup Types
+ */
 export type ImageSource = Exclude<TexImageSource, VideoFrame>;
 
+/**
+ * @group Rendering
+ * @subgroup Canvas
+ */
 export type Canvas = {
     width: number;
     height: number;
@@ -532,6 +575,10 @@ export type Canvas = {
     readonly fb: FrameBuffer;
 };
 
+/**
+ * @group Rendering
+ * @subgroup Shaders
+ */
 export interface Vertex {
     pos: Vec2;
     uv: Vec2;
@@ -539,6 +586,10 @@ export interface Vertex {
     opacity: number;
 }
 
+/**
+ * @group Rendering
+ * @subgroup Shaders
+ */
 export enum BlendMode {
     Normal = 0,
     Add = 1,
@@ -547,6 +598,10 @@ export enum BlendMode {
     Overlay = 4,
 }
 
+/**
+ * @group Rendering
+ * @subgroup Shaders
+ */
 export interface Attributes {
     pos: number[];
     uv: number[];
@@ -575,144 +630,6 @@ export interface RenderProps {
     blend?: BlendMode;
     outline?: Outline;
 }
-
-export type DrawTextureOpt = RenderProps & {
-    tex: Texture;
-    width?: number;
-    height?: number;
-    tiled?: boolean;
-    flipX?: boolean;
-    flipY?: boolean;
-    quad?: Quad;
-    anchor?: Anchor | Vec2;
-};
-
-export type DrawUVQuadOpt = RenderProps & {
-    /**
-     * Width of the UV quad.
-     */
-    width: number;
-    /**
-     * Height of the UV quad.
-     */
-    height: number;
-    /**
-     * If flip the texture horizontally.
-     */
-    flipX?: boolean;
-    /**
-     * If flip the texture vertically.
-     */
-    flipY?: boolean;
-    /**
-     * The texture to sample for this quad.
-     */
-    tex?: Texture;
-    /**
-     * The texture sampling area.
-     */
-    quad?: Quad;
-    /**
-     * The anchor point, or the pivot point. Default to "topleft".
-     */
-    anchor?: Anchor | Vec2;
-};
-
-/**
- * How the ellipse should look like.
- */
-export type DrawEllipseOpt = RenderProps & {
-    /**
-     * The horizontal radius.
-     */
-    radiusX: number;
-    /**
-     * The vertical radius.
-     */
-    radiusY: number;
-    /**
-     * Starting angle.
-     */
-    start?: number;
-    /**
-     * Ending angle.
-     */
-    end?: number;
-    /**
-     * If fill the shape with color (set this to false if you only want an outline).
-     */
-    fill?: boolean;
-    /**
-     * Use gradient instead of solid color.
-     *
-     * @since v3000.0
-     */
-    gradient?: [Color, Color];
-    /**
-     * Multiplier for circle vertices resolution (default 1)
-     */
-    resolution?: number;
-    /**
-     * The anchor point, or the pivot point. Default to "topleft".
-     */
-    anchor?: Anchor | Vec2;
-};
-
-/**
- * How the polygon should look like.
- */
-export type DrawPolygonOpt = RenderProps & {
-    /**
-     * The points that make up the polygon
-     */
-    pts: Vec2[];
-    /**
-     * If fill the shape with color (set this to false if you only want an outline).
-     */
-    fill?: boolean;
-    /**
-     * Manual triangulation.
-     */
-    indices?: number[];
-    /**
-     * The center point of transformation in relation to the position.
-     */
-    offset?: Vec2;
-    /**
-     * The radius of each corner.
-     */
-    radius?: number | number[];
-    /**
-     * The color of each vertex.
-     *
-     * @since v3000.0
-     */
-    colors?: Color[];
-    /**
-     * The opacity of each vertex.
-     *
-     * @since v4000.0
-     */
-    opacities?: number[];
-    /**
-     * The uv of each vertex.
-     *
-     * @since v3001.0
-     */
-    uv?: Vec2[];
-    /**
-     * The texture if uv are supplied.
-     *
-     * @since v3001.0
-     */
-    tex?: Texture;
-    /**
-     * Triangulate concave polygons.
-     *
-     * @since v3001.0
-     */
-    triangulate?: boolean;
-};
 
 export interface Outline {
     /**
@@ -750,7 +667,8 @@ export interface Outline {
 }
 
 /**
- * @group Draw
+ * @group Rendering
+ * @subgroup Screen
  */
 export type Cursor =
     | string
@@ -807,11 +725,13 @@ export type Anchor =
 
 /**
  * @group Math
+ * @subgroup Random
  */
 export type RNGValue = number | Vec2 | Color;
 
 /**
  * @group Components
+ * @subgroup Component Types
  */
 export interface Comp {
     /**
@@ -861,14 +781,18 @@ export interface Comp {
 }
 
 /**
+ * A valid game object id.
+ *
  * @group Game Obj
+ * @subgroup GameObjID
  */
 export type GameObjID = number;
 
 /**
  * A component without own properties.
  *
- * @group Component Types
+ * @group Components
+ * @subgroup Component Types
  */
 export type EmptyComp = { id: string } & Comp;
 
@@ -881,11 +805,13 @@ export type Mask = "intersect" | "subtract";
 
 /**
  * @group Math
+ * @subgroup Advanced
  */
 export type Edge = "left" | "right" | "top" | "bottom";
 
 /**
  * @group Math
+ * @subgroup Advanced
  */
 export enum EdgeMask {
     None = 0,

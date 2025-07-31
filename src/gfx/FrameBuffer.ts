@@ -2,9 +2,9 @@ import type { TextureOpt } from "../types";
 import { type GfxCtx, Texture } from "./gfx";
 
 /**
- * @group GFX
+ * @group Rendering
+ * @subgroup Canvas
  */
-
 export class FrameBuffer {
     ctx: GfxCtx;
     tex: Texture;

@@ -7,6 +7,9 @@ import { drawTexture } from "./drawTexture";
 
 /**
  * How the sprite should look like.
+ *
+ * @group Draw
+ * @subgroup Types
  */
 export type DrawSpriteOpt = RenderProps & {
     /**

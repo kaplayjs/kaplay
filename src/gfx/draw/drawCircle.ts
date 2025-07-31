@@ -5,6 +5,8 @@ import { drawEllipse } from "./drawEllipse";
 
 /**
  * How the circle should look like.
+ * @group Draw
+ * @subgroup Types
  */
 export type DrawCircleOpt = Omit<RenderProps, "angle"> & {
     /**

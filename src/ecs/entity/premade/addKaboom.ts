@@ -10,7 +10,8 @@ import { pos } from "../../components/transform/pos";
 import { scale } from "../../components/transform/scale";
 
 /**
- * @group Options
+ * @group Game Obj
+ * @subgroup Types
  */
 export interface BoomOpt {
     /**

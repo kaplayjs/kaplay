@@ -4,6 +4,9 @@ import { drawPolygon } from "./drawPolygon";
 
 /**
  * How the triangle should look like.
+ *
+ * @group Draw
+ * @subgroup Types
  */
 export type DrawTriangleOpt = RenderProps & {
     /**

@@ -16,6 +16,9 @@ import { drawUVQuad } from "./drawUVQuad";
 
 /**
  * Formatted text with info on how and where to render each character.
+ *
+ * @group Rendering
+ * @subgroup Text
  */
 export type FormattedText = {
     width: number;
@@ -26,7 +29,10 @@ export type FormattedText = {
 };
 
 /**
- * One formated character.
+ * One formatted character.
+ *
+ * @group Rendering
+ * @subgroup Text
  */
 export interface FormattedChar {
     ch: string;

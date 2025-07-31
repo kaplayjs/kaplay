@@ -1,5 +1,5 @@
 import type { App } from "../app/app";
-import type { AudioCtx } from "../audio/audio";
+import type { InternalAudioCtx } from "../audio/audio";
 import { LOG_MAX } from "../constants/general";
 import type { FrameRenderer } from "../core/frameRendering";
 import type { Game } from "../game/game";
@@ -78,7 +78,7 @@ export const createDebug = (
     gopt: KAPLAYOpt,
     app: App,
     appGfx: AppGfxCtx,
-    audio: AudioCtx,
+    audio: InternalAudioCtx,
     game: Game,
     fr: FrameRenderer,
 ): Debug => {

@@ -93,6 +93,8 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Fixed
 
+- `obj.exists()` now correctly returns false if the parent was destroyed but obj
+  wasn't - @dragoncoder047
 - Various typescript type fixes - @amyspark-ng, @lajbel, @KeSuave
 - 9slice sprites behave properly when using anchor - @mflerackers
 - Rendering glitches with outlines on circles - @mflerackers

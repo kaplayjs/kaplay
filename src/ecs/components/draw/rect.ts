@@ -5,7 +5,8 @@ import type { Comp, GameObj } from "../../../types";
 /**
  * The serialized {@link rect `rect()`} component.
  *
- * @group Component Serialization
+ * @group Components
+ * @subgroup Component Serialization
  */
 export interface SerializedRectComp {
     width: number;
@@ -17,7 +18,8 @@ export interface SerializedRectComp {
 /**
  * The {@link rect `rect()`} component.
  *
- * @group Component Types
+ * @group Components
+ * @subgroup Component Types
  */
 export interface RectComp extends Comp {
     draw: Comp["draw"];
@@ -44,7 +46,8 @@ export interface RectComp extends Comp {
 /**
  * Options for the {@link rect `rect()`} component.
  *
- * @group Component Types
+ * @group Components
+ * @subgroup Component Types
  */
 export interface RectCompOpt {
     /**

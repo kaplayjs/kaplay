@@ -6,7 +6,8 @@ import type { TextComp } from "../draw/text";
 /**
  * The {@link textInput `textInput()`} component.
  *
- * @group Component Types
+ * @group Components
+ * @subgroup Component Types
  */
 export interface TextInputComp extends Comp {
     /**

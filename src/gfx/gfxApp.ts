@@ -57,6 +57,10 @@ export type AppGfxCtx = {
     scratchPt: Vec2;
 };
 
+/**
+ * @group Rendering
+ * @subgroup Canvas
+ */
 export type Viewport = {
     x: number;
     y: number;

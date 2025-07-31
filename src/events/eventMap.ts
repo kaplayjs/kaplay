@@ -26,6 +26,7 @@ import type {
  * If looking for use it with `obj.on()`, ignore first parameter (Game Obj)
  *
  * @group Events
+ * @subgroup Game Obj
  */
 export type GameObjEventMap = {
     /** Triggered every frame */
@@ -214,14 +215,24 @@ export type GameObjEventMap = {
     navigationMapChanged: [GameObj];
 };
 
+/**
+ * @group Events
+ * @subgroup Game Obj
+ */
 export type GameObjEvents = GameObjEventMap & {
     [key: string]: any[];
 };
 
+/**
+ * @group Events
+ * @subgroup Game Obj
+ */
 export type GameObjEventNames = keyof GameObjEventMap;
 
 /**
  * App events with their arguments
+ *
+ * @group Events
  */
 export type AppEventMap = {
     mouseMove: [];
@@ -254,6 +265,8 @@ export type AppEventMap = {
 
 /**
  * All Game State events with their arguments
+ *
+ * @group Events
  */
 export type GameEventMap = {
     load: [];

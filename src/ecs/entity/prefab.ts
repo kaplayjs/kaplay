@@ -8,7 +8,8 @@ import type { GameObjRaw, InternalGameObjRaw } from "./GameObjRaw";
  * A serialized game object. Created using {@link GameObjRaw.serialize `GameObjRaw.serialize()` } method.
  *
  * @since v4000.0
- * @group Serialization
+ * @group Game Obj
+ * @subgroup Prefabs
  */
 export interface SerializedGameObj {
     components: Record<string, any>;

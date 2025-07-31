@@ -76,6 +76,9 @@ export interface BaseValues {
     opacity: number;
 }
 
+/**
+ * The {@link animate `animate()`} component.
+ */
 export interface AnimateComp extends Comp {
     /**
      * Animates a property on this object.

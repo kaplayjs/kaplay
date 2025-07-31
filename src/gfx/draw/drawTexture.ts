@@ -2,10 +2,28 @@ import { DEF_ANCHOR } from "../../constants/general";
 import { Color } from "../../math/color";
 import { Quad } from "../../math/math";
 import { Vec2 } from "../../math/Vec2";
-import { BlendMode, type DrawTextureOpt, type Vertex } from "../../types";
+import { type Anchor, BlendMode, type RenderProps } from "../../types";
 import { anchorPt } from "../anchor";
+import type { Texture } from "../gfx";
 import { drawRaw } from "./drawRaw";
 import { drawUVQuad } from "./drawUVQuad";
+
+/**
+ * How the texture should look like.
+ *
+ * @group Draw
+ * @subgroup Types
+ */
+export type DrawTextureOpt = RenderProps & {
+    tex: Texture;
+    width?: number;
+    height?: number;
+    tiled?: boolean;
+    flipX?: boolean;
+    flipY?: boolean;
+    quad?: Quad;
+    anchor?: Anchor | Vec2;
+};
 
 export function drawTexture(opt: DrawTextureOpt) {
     if (!opt.tex) {

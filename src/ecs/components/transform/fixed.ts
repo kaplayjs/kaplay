@@ -3,7 +3,8 @@ import type { Comp } from "../../../types";
 /**
  * The serialized {@link fixed `fixed()`} component.
  *
- * @group Component Serialization
+ * @group Components
+ * @subgroup Component Serialization
  */
 export interface SerializedFixedComp {
     fixed?: boolean;
@@ -12,7 +13,8 @@ export interface SerializedFixedComp {
 /**
  * The {@link fixed `fixed()`} component.
  *
- * @group Component Types
+ * @group Components
+ * @subgroup Component Types
  */
 export interface FixedComp extends Comp {
     /**
