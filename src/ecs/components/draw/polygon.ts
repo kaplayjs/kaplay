@@ -81,6 +81,7 @@ export function polygon(pts: Vec2[], opt: PolygonCompOpt = {}): PolygonComp {
                             true,
                 );
             }
+            (this as any as GameObj<AreaComp>)._worldAreaDirty = true;
         },
         colors: opt.colors,
         opacities: opt.opacities,
