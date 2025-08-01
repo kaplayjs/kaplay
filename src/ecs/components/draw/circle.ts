@@ -3,6 +3,7 @@ import { drawCircle } from "../../../gfx/draw/drawCircle";
 import { Circle, Rect } from "../../../math/math";
 import { Vec2 } from "../../../math/Vec2";
 import type { Comp, GameObj } from "../../../types";
+import type { AreaComp } from "../physics/area";
 import type { AnchorComp } from "../transform/anchor";
 import type { outline } from "./outline";
 
@@ -61,6 +62,9 @@ export function circle(radius: number, opt: CircleCompOpt = {}): CircleComp {
         set radius(value: number) {
             _radius = value;
             if (_shape) _shape.radius = value;
+            if ((this as any as GameObj).has?.("area")) {
+                (this as any as GameObj<AreaComp>)._worldAreaDirty = true;
+            }
         },
         draw(this: GameObj<CircleComp>) {
             drawCircle(Object.assign(getRenderProps(this), {
