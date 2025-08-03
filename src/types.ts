@@ -268,7 +268,8 @@ export interface KAPLAYOpt<
      */
     pixelDensity?: number;
     /**
-     * Disable antialias and enable sharp pixel display. If you see rendering artifacts, play with "pixelDensity" and "scale" params (set them to 2, for start).
+     * Disable antialias and enable sharp pixel display. If you see rendering artifacts, set `pixelDensity` 
+     * param to `Math.min(devicePixelRatio, 2)` and `scale` to FHD resolution (e.g. 960x540 would need scale 2). Will result in up to 4K.
      */
     crisp?: boolean;
     /**
