@@ -71,7 +71,6 @@ export class Shader {
     }
 
     compile(vert: string, frag: string, attribs: string[]) {
-
         const gl = this.ctx.gl;
         const vertShader = gl.createShader(gl.VERTEX_SHADER);
         const fragShader = gl.createShader(gl.FRAGMENT_SHADER);
