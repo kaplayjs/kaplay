@@ -896,6 +896,7 @@ export const initApp = (
             }
         }
 
+        state.lastInputDevice = "mouse"
         state.events.onOnce("input", () => {
             state.isMouseMoved = true;
             state.mousePos = mousePos;
