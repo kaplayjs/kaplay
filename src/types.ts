@@ -268,7 +268,7 @@ export interface KAPLAYOpt<
      */
     pixelDensity?: number;
     /**
-     * Disable antialias and enable sharp pixel display.
+     * Disable antialias and enable sharp pixel display. If you see rendering artifacts, play with "pixelDensity" and "scale" params (set them to 2, for start).
      */
     crisp?: boolean;
     /**
