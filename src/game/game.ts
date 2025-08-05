@@ -145,7 +145,7 @@ type CamData = {
 export const createGame = (): Game => {
     const game: Game = {
         gameObjLastId: 0,
-        root: makeInternal([], 0) as GameObj<TimerComp>,
+        root: makeInternal(0) as GameObj<TimerComp>,
         events: new KEventHandler<GameEventMap & GameObjEventMap>(),
         cam: {
             pos: null as Vec2 | null,
