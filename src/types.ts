@@ -348,14 +348,13 @@ export interface KAPLAYOpt<
      */
     burp?: boolean;
     /**
-     * Make component's id ("sprite" for sprite() comp) be added as tags.
+     * Make components ids be added as tags.
      *
      * That means .is() will return true for components with that id.
      *
      * @default true
-     * @experimental This feature is in experimental phase, it will be fully released in v3001.1.0
      */
-    tagsAsComponents?: boolean;
+    tagComponentIds?: boolean;
     /**
      * Padding used when adding sprites to texture atlas.
      * @default 0

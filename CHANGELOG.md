@@ -137,6 +137,10 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   errors KAPLAY can't handle. - @lajbel
 - Added Prefabs - @mflerackers, @lajbel, @amyspark-ng and other contributors.
 
+### Changed
+
+- Renamed `KAPLAYOpt.tagsAsComponents` to `KAPLAYOpt.tagComponentIds` - @lajbel
+
 ## [4000.0.0-alpha.20] - 2025-06-15
 
 ### Added
