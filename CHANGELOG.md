@@ -45,9 +45,6 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - drawCanvas - @mflerackers
 - Added `video()` component to embed a video file into the game - @mflerackers
 - Added `level()` component and parent argument to `addLevel()` - @KeSuave
-- Now there is a global option `sapDirection` so you can change the direction of
-  the physics engine's sweep-and-pruner, to optimize for the shape of your game
-  (mostly horizontal or mostly vertical) - @dragoncoder047, @mflerackers
 - Allow the `text()` component to change the font and apply shaders
   per-character - @dragoncoder047
 - Allow characters in text to be scaled and have the text flow around it with
