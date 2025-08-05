@@ -104,6 +104,9 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - PatrolComp is not going to last waypoint
   ([#734](https://github.com/kaplayjs/kaplay/issues/734)) - @nojaf
 - Fixed non-focused textInput component backspace - @KeSuave
+- `loadShader()` now also checks for link errors as well as compile errors and
+  reports them rather than just silently trying to use a borked shader -
+  @dragoncoder047
 
 ### Removed
 
