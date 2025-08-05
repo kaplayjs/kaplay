@@ -19,8 +19,8 @@ We use makeInternal() to create the root game object, and make() to create
 the rest of the game objects.
 */
 export function makeInternal<T extends CompList<unknown>>(
-    compsAndTags: [...T],
     id: number,
+    compsAndTags?: [...T],
 ): GameObj<T[number]> {
     const addCompIdsToTags = id == 0
         ? false
@@ -56,6 +56,8 @@ export function makeInternal<T extends CompList<unknown>>(
 
     // Adding components passed from add([]);
     // We register here: The objects, because you can also pass tags to add().
+    if (!compsAndTags) return obj as GameObj<T[number]>;
+
     let comps = [];
     let tagList = [];
 
@@ -91,7 +93,7 @@ export function makeInternal<T extends CompList<unknown>>(
 export function make<T extends CompList<unknown>>(
     compsAndTags: [...T],
 ): GameObj<T[number]> {
-    const obj = makeInternal(compsAndTags, _k.game.gameObjLastId);
+    const obj = makeInternal(_k.game.gameObjLastId, compsAndTags);
     _k.game.gameObjLastId++;
     return obj;
 }
