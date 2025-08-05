@@ -5357,6 +5357,10 @@ export interface KAPLAYCtx<
      * be returned by {@link get `get`} with the `liveUpdate` option enabled, and then stored somewhere.)
      *
      * @param compare - returns true if `[left, right]` is the correct order, false if `[right, left]` is the correct order.
+     *
+     * @since v4000.0
+     * @group Math
+     * @subgroup Advanced
      */
     insertionSort<T>(array: T[], compare: (left: T, right: T) => boolean): void;
     /**
