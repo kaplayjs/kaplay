@@ -1,14 +1,17 @@
 import type { GameObj } from "../types";
-import { deg2rad, Mat23, Vec2, vec2 } from "./math";
+import { deg2rad, Mat23, vec2 } from "./math";
+import { Vec2 } from "./Vec2";
 
 export function calcTransform(obj: GameObj, tr: Mat23): Mat23 {
-    tr.setIdentity();
-    if (obj.pos) tr.translateSelfV(obj.pos);
-    if (obj.scale) tr.scaleSelfV(obj.scale);
-    if (obj.angle) tr.rotateSelf(obj.angle);
     if (obj.parent) {
-        tr.mulSelf(obj.parent.transform);
+        tr.setMat23(obj.parent.transform);
     }
+    else {
+        tr.setIdentity();
+    }
+    if (obj.pos) tr.translateSelfV(obj.pos);
+    if (obj.angle) tr.rotateSelf(obj.angle);
+    if (obj.scale) tr.scaleSelfV(obj.scale);
     return tr;
 }
 
@@ -33,7 +36,9 @@ export function getArcPts(
     if (end <= start) end += Math.PI * 2;
 
     const pts: Vec2[] = [];
-    const nverts = Math.ceil((end - start) / deg2rad(8) * res);
+    const nverts = Math.round(
+        Math.sqrt(((radiusX + radiusY) / 2) * 20) * (end - start) / Math.PI * 2,
+    ); // Math.ceil((end - start) / deg2rad(8) * res);
     const step = (end - start) / nverts;
 
     // Rotate vector v by r nverts+1 times

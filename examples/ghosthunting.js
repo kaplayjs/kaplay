@@ -1,4 +1,11 @@
-// @ts-check
+/**
+ * @file Ghost hunting
+ * @description A survival game about hunting ghosts
+ * @difficulty 2
+ * @tags game, effects, ai
+ * @minver 4000.0
+ * @category games
+ */
 
 kaplay({
     width: 1024,
@@ -9,8 +16,8 @@ kaplay({
 loadSprite("bean", "./sprites/bean.png");
 loadSprite("gun", "./sprites/gun.png");
 loadSprite("ghosty", "./sprites/ghosty.png");
-loadSprite("hexagon", "./examples/sprites/particle_hexagon_filled.png");
-loadSprite("star", "./examples/sprites/particle_star_filled.png");
+loadSprite("hexagon", "./sprites/particle_hexagon_filled.png");
+loadSprite("star", "./sprites/particle_star_filled.png");
 
 const nav = new NavMesh();
 // Hallway
@@ -198,7 +205,7 @@ function addEnemy(p) {
         {
             add() {
                 this.onHurt(() => {
-                    this.opacity = this.hp() / 100;
+                    this.opacity = this.hp / 100;
                 });
                 this.onDeath(() => {
                     const rect = this.localArea();
@@ -364,7 +371,7 @@ onMousePress(() => {
         });
         if (hit.object && hit.object.is("enemy")) {
             hit.object.moveBy(dir.unit().scale(10));
-            hit.object.hurt(20);
+            hit.object.hp -= 20;
         }
     }
 });

@@ -1,21 +1,21 @@
 kaplay({
-    scale: 3,
-    width: 20,
-    height: 40,
+    scale: 7,
+    width: 400,
+    height: 200,
     letterbox: true,
-    crisp: true,
-    texFilter: "nearest",
 });
 
-const x = add([
+const redDot = add([
     anchor("center"),
     circle(3),
     color(RED),
     pos(),
 ]);
 
-getTreeRoot().use(pos());
-
 onMouseMove(pos => {
-    x.pos = getTreeRoot().fromScreen(pos);
+    redDot.pos = toWorld(pos);
+});
+
+onKeyPress("f", () => {
+    setFullscreen(!isFullscreen());
 });

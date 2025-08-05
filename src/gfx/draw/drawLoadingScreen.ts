@@ -1,7 +1,7 @@
 import { loadProgress } from "../../assets/asset";
-import { _k } from "../../kaplay";
 import { rgb } from "../../math/color";
 import { vec2 } from "../../math/math";
+import { _k } from "../../shared";
 import { height, width } from "../stack";
 import { drawRect } from "./drawRect";
 import { drawUnscaled } from "./drawUnscaled";

@@ -1,15 +1,20 @@
 import { getRenderProps } from "../../../game/utils";
-import { drawPolygon } from "../../../gfx/draw/drawPolygon";
+import {
+    drawPolygon,
+    type DrawPolygonOpt,
+} from "../../../gfx/draw/drawPolygon";
 import type { Texture } from "../../../gfx/gfx";
 import type { Color } from "../../../math/color";
-import { Polygon, type Vec2 } from "../../../math/math";
-import type { Comp, DrawPolygonOpt, GameObj } from "../../../types";
+import { Polygon } from "../../../math/math";
+import { type Vec2 } from "../../../math/Vec2";
+import type { Comp, GameObj } from "../../../types";
 
 /**
  * The {@link polygon `polygon()`} component.
  *
  * @since v3001.0
- * @group Component Types
+ * @group Components
+ * @subgroup Component Types
  */
 export interface PolygonComp extends Comp {
     draw: Comp["draw"];
@@ -25,6 +30,10 @@ export interface PolygonComp extends Comp {
      * The color of each vertex.
      */
     colors?: Color[];
+    /**
+     * The opacity of each vertex.
+     */
+    opacities?: number[];
     /**
      * The uv of each vertex.
      *
@@ -43,7 +52,8 @@ export interface PolygonComp extends Comp {
 /**
  * Options for the {@link polygon `polygon()`} component.
  *
- * @group Component Types
+ * @group Components
+ * @subgroup Component Types
  */
 export type PolygonCompOpt = Omit<DrawPolygonOpt, "pts">;
 
@@ -57,6 +67,7 @@ export function polygon(pts: Vec2[], opt: PolygonCompOpt = {}): PolygonComp {
         id: "polygon",
         pts,
         colors: opt.colors,
+        opacities: opt.opacities,
         uv: opt.uv,
         tex: opt.tex,
         radius: opt.radius,
@@ -64,6 +75,7 @@ export function polygon(pts: Vec2[], opt: PolygonCompOpt = {}): PolygonComp {
             drawPolygon(Object.assign(getRenderProps(this), {
                 pts: this.pts,
                 colors: this.colors,
+                opacities: this.opacities,
                 uv: this.uv,
                 tex: this.tex,
                 radius: this.radius,

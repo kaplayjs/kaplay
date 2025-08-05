@@ -1,10 +1,44 @@
 name: Test KAPLAY
 
-on: [push, pull_request]
+on:
+  push:
+  pull_request:
 
 jobs:
-  build:
+  check-format:
+    name: Check Format
     runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Install Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - uses: pnpm/action-setup@v4
+        name: Install pnpm
+        with:
+          run_install: false
+      - name: Install dprint
+        run: pnpm i dprint
+      - name: Run Formatter
+        run: pnpm run fmt
+      - name: Check if it's formatted
+        run: |
+          FORMATTED=$(git diff --exit-code)
+      - name: Fail if not formatted
+        run: |
+          if [ -n "$FORMATTED" ]; then
+            echo "Code is not formatted. Please run 'pnpm run fmt' to format the code."
+            exit 1
+          else
+            echo "Code is formatted correctly."
+          fi
+        
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+    needs: check-format
     
     steps:
       - name: Checkout
@@ -18,13 +52,68 @@ jobs:
         with:
           run_install: false
       - name: Install dependencies
-        run: pnpm install
-      - name: Run Checker
+        run: pnpm install --ignore-scripts
+      - name: Install Chrome for Puppeteer
+        run: npx puppeteer browsers install chrome
+      - name: Fast build
+        run: pnpm run build:fast
+      - name: Run checker
         run: pnpm run check
       - name: Run tests
         run: pnpm run test -c
-      - name: Run vitests
+      - name: Run Vitest
         run: pnpm run test:vite
       - name: Upload Package
         if: ${{ github.event_name == 'pull_request' }}
         run: pnpx pkg-pr-new publish
+
+  deploy:
+    name: Upload KAPLAY to CDN
+    runs-on: ubuntu-latest
+    needs: test
+    if: ${{ github.event_name == 'push' && github.ref_name == 'master' }}
+    
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Get short commit hash
+        run: echo "SHORT_SHA=${GITHUB_SHA::7}" >> $GITHUB_ENV
+      - name: Install Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - uses: pnpm/action-setup@v4
+        name: Install pnpm
+        with:
+          run_install: false
+      - name: Install dependencies
+        run: pnpm install --ignore-scripts
+      - name: Build
+        run: pnpm run build
+      - name: Upload kaplay.js to cdn
+        if: ${{ github.event_name == 'push' }}
+        env:
+          CDN_KEY: ${{ secrets.CDN_KEY }}
+        run: |
+          echo "Uploading kaplay.js to CDN"
+          curl "https://cdn.kaplayjs.com/versions/kaplay.$SHORT_SHA.js" -X PUT --header "X-Auth-Key: $CDN_KEY" --upload-file ./dist/kaplay.js
+          curl "https://cdn.kaplayjs.com/versions/kaplay.master.js" -X PUT --header "X-Auth-Key: $CDN_KEY" --upload-file ./dist/kaplay.js
+          curl "https://cdn.kaplayjs.com/versions/types.$SHORT_SHA.d.ts" -X PUT --header "X-Auth-Key: $CDN_KEY" --upload-file ./dist/types.d.ts
+          curl "https://cdn.kaplayjs.com/versions/types.master.d.ts" -X PUT --header "X-Auth-Key: $CDN_KEY" --upload-file ./dist/types.d.ts
+          curl "https://cdn.kaplayjs.com/versions/kaplay.$SHORT_SHA.mjs" -X PUT --header "X-Auth-Key: $CDN_KEY" --upload-file ./dist/kaplay.mjs
+          curl "https://cdn.kaplayjs.com/versions/kaplay.master.mjs" -X PUT --header "X-Auth-Key: $CDN_KEY" --upload-file ./dist/kaplay.mjs
+      - name: Get versions.json from cdn
+        run: |
+          echo "Getting versions.json from CDN"
+          curl https://cdn.kaplayjs.com/versions.json -X GET --header "X-Auth-Key: $CDN_KEY" --output ./versions.json
+      - name: Update versions.json adding new deployed version in versions array
+        run: |
+          echo "Updating versions.json"
+          jq --arg version "$SHORT_SHA" '.versions += [$version]' ./versions.json > ./versions.json.tmp && mv ./versions.json.tmp ./versions.json
+      - name: Upload versions.json to cdn
+        env:
+          CDN_KEY: ${{ secrets.CDN_KEY }}
+        run: |
+          echo "Uploading versions.json to CDN"
+          curl https://cdn.kaplayjs.com/versions.json -X PUT --header "X-Auth-Key: $CDN_KEY" --upload-file ./versions.json
+          

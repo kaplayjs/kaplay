@@ -1,13 +1,16 @@
-import { opacity } from "../../ecs/components/draw/opacity";
-import { _k } from "../../kaplay";
 import { Color } from "../../math/color";
-import { deg2rad, Vec2, vec2 } from "../../math/math";
+import { lerp } from "../../math/lerp";
+import { deg2rad, vec2 } from "../../math/math";
+import { Vec2 } from "../../math/Vec2";
+import { _k } from "../../shared";
 import type { RenderProps } from "../../types";
-import { drawCircle } from "./drawCircle";
 import { drawRaw } from "./drawRaw";
 
 /**
  * How the line should look like.
+ *
+ * @group Draw
+ * @subgroup Types
  */
 export type DrawLineOpt = Omit<RenderProps, "angle" | "scale"> & {
     /**
@@ -143,6 +146,10 @@ export type DrawLinesOpt = Omit<RenderProps, "angle" | "scale"> & {
      */
     cap?: LineCap;
     /**
+     * Line bias, the position of the line relative to its center (default 0).
+     */
+    bias?: number;
+    /**
      * Maximum miter length, anything longer becomes bevel.
      */
     miterLimit?: number;
@@ -152,6 +159,8 @@ export function _drawLinesBevel(opt: DrawLinesOpt) {
     const pts = opt.pts;
     const vertices = [];
     const halfWidth = (opt.width || 1) * 0.5;
+    const centerOffset = halfWidth
+        * lerp(-1, 1, ((opt.bias || 0.0) + 1) * 0.5);
     const isLoop = pts[0] === pts[pts.length - 1]
         || pts[0].eq(pts[pts.length - 1]);
     const offset = opt.pos || vec2(0, 0);
@@ -165,7 +174,7 @@ export function _drawLinesBevel(opt: DrawLinesOpt) {
     }
 
     let length = segment.len();
-    let normal = segment.normal().scale(-halfWidth / length);
+    let normal = segment.normal().scale(1 / length);
 
     let pt1;
     let pt2 = pts[0];
@@ -174,19 +183,24 @@ export function _drawLinesBevel(opt: DrawLinesOpt) {
         switch (opt.cap) {
             case "square": {
                 const dir = segment.scale(-halfWidth / length);
-                vertices.push(pt2.add(dir).add(normal));
-                vertices.push(pt2.add(dir).sub(normal));
+                vertices.push(
+                    pt2.add(dir).add(normal.scale(centerOffset - halfWidth)),
+                );
+                vertices.push(
+                    pt2.add(dir).add(normal.scale(centerOffset + halfWidth)),
+                );
                 break;
             }
             case "round": {
                 const n = Math.max(halfWidth, 10);
                 const angle = Math.PI / n;
-                let vector = normal.scale(-1);
+                let vector = normal.scale(halfWidth);
                 const cs = Math.cos(angle);
                 const sn = Math.sin(angle);
+                const p = pt2.add(normal.scale(centerOffset));
                 for (let j = 0; j < n; j++) {
-                    vertices.push(pt2);
-                    vertices.push(pt2.sub(vector));
+                    vertices.push(p);
+                    vertices.push(p.sub(vector));
                     vector = vec2(
                         vector.x * cs - vector.y * sn,
                         vector.x * sn + vector.y * cs,
@@ -203,20 +217,18 @@ export function _drawLinesBevel(opt: DrawLinesOpt) {
 
         const nextSegment = pt2.sub(pt1);
         const nextLength = nextSegment.len();
-        const nextNormal = nextSegment.normal().scale(
-            -halfWidth / nextLength,
-        );
+        const nextNormal = nextSegment.normal().scale(1 / nextLength);
 
         const det = segment.cross(nextSegment);
 
         if (Math.abs(det) / (length * nextLength) < 0.05) {
             // Parallel
-            vertices.push(pt1.add(normal));
-            vertices.push(pt1.sub(normal));
+            vertices.push(pt1.add(normal.scale(centerOffset - halfWidth)));
+            vertices.push(pt1.add(normal.scale(centerOffset + halfWidth)));
 
             if (segment.dot(nextSegment) < 0) {
-                vertices.push(pt1.sub(normal));
-                vertices.push(pt1.add(normal));
+                vertices.push(pt1.add(normal.scale(centerOffset + halfWidth)));
+                vertices.push(pt1.add(normal.scale(centerOffset - halfWidth)));
             }
 
             segment = nextSegment;
@@ -225,20 +237,31 @@ export function _drawLinesBevel(opt: DrawLinesOpt) {
             continue;
         }
 
-        const lambda = (nextNormal.sub(normal)).cross(nextSegment) / det;
-        const d = normal.add(segment.scale(lambda));
-
         if (det > 0) {
+            const lambda = (nextNormal.scale(centerOffset - halfWidth).sub(
+                normal.scale(centerOffset - halfWidth),
+            )).cross(nextSegment) / det;
+            const d = normal.scale(centerOffset - halfWidth).add(
+                segment.scale(lambda),
+            );
+
             vertices.push(pt1.add(d));
-            vertices.push(pt1.sub(normal));
+            vertices.push(pt1.add(normal.scale(centerOffset + halfWidth)));
             vertices.push(pt1.add(d));
-            vertices.push(pt1.sub(nextNormal));
+            vertices.push(pt1.add(nextNormal.scale(centerOffset + halfWidth)));
         }
         else {
-            vertices.push(pt1.add(normal));
-            vertices.push(pt1.sub(d));
-            vertices.push(pt1.add(nextNormal));
-            vertices.push(pt1.sub(d));
+            const lambda = (nextNormal.scale(centerOffset + halfWidth).sub(
+                normal.scale(centerOffset + halfWidth),
+            )).cross(nextSegment) / det;
+            const d = normal.scale(centerOffset + halfWidth).add(
+                segment.scale(lambda),
+            );
+
+            vertices.push(pt1.add(normal.scale(centerOffset - halfWidth)));
+            vertices.push(pt1.add(d));
+            vertices.push(pt1.add(nextNormal.scale(centerOffset - halfWidth)));
+            vertices.push(pt1.add(d));
         }
 
         segment = nextSegment;
@@ -247,28 +270,33 @@ export function _drawLinesBevel(opt: DrawLinesOpt) {
     }
 
     if (!isLoop) {
-        vertices.push(pt2.add(normal));
-        vertices.push(pt2.sub(normal));
+        vertices.push(pt2.add(normal.scale(centerOffset - halfWidth)));
+        vertices.push(pt2.add(normal.scale(centerOffset + halfWidth)));
         switch (opt.cap) {
             case "square": {
                 const dir = segment.scale(halfWidth / length);
-                vertices.push(pt2.add(dir).add(normal));
-                vertices.push(pt2.add(dir).sub(normal));
+                vertices.push(
+                    pt2.add(dir).add(normal.scale(centerOffset - halfWidth)),
+                );
+                vertices.push(
+                    pt2.add(dir).add(normal.scale(centerOffset + halfWidth)),
+                );
                 break;
             }
             case "round": {
                 const n = Math.max(halfWidth, 10);
                 const angle = Math.PI / n;
-                let vector = normal.scale(1);
+                let vector = normal.scale(halfWidth);
                 const cs = Math.cos(angle);
                 const sn = Math.sin(angle);
+                const p = pt2.add(normal.scale(centerOffset));
                 for (let j = 0; j < n; j++) {
                     vector = vec2(
                         vector.x * cs - vector.y * sn,
                         vector.x * sn + vector.y * cs,
                     );
-                    vertices.push(pt2);
-                    vertices.push(pt2.sub(vector));
+                    vertices.push(p);
+                    vertices.push(p.add(vector));
                 }
             }
         }
@@ -334,6 +362,7 @@ export function _drawLinesRound(opt: DrawLinesOpt) {
     const pts = opt.pts;
     const vertices = [];
     const halfWidth = (opt.width || 1) * 0.5;
+    const centerOffset = halfWidth * lerp(-1, 1, ((opt.bias || 0.0) + 1) * 0.5);
     const isLoop = pts[0] === pts[pts.length - 1]
         || pts[0].eq(pts[pts.length - 1]);
     const offset = opt.pos || vec2(0, 0);
@@ -347,7 +376,7 @@ export function _drawLinesRound(opt: DrawLinesOpt) {
     }
 
     let length = segment.len();
-    let normal = segment.normal().scale(-halfWidth / length);
+    let normal = segment.normal().scale(1 / length);
 
     let pt1;
     let pt2 = pts[0];
@@ -356,19 +385,24 @@ export function _drawLinesRound(opt: DrawLinesOpt) {
         switch (opt.cap) {
             case "square": {
                 const dir = segment.scale(-halfWidth / length);
-                vertices.push(pt2.add(dir).add(normal));
-                vertices.push(pt2.add(dir).sub(normal));
+                vertices.push(
+                    pt2.add(dir).add(normal.scale(centerOffset - halfWidth)),
+                );
+                vertices.push(
+                    pt2.add(dir).add(normal.scale(centerOffset + halfWidth)),
+                );
                 break;
             }
             case "round": {
                 const n = Math.max(halfWidth, 10);
                 const angle = Math.PI / n;
-                let vector = normal.scale(-1);
+                let vector = normal.scale(halfWidth);
                 const cs = Math.cos(angle);
                 const sn = Math.sin(angle);
+                const p = pt2.add(normal.scale(centerOffset));
                 for (let j = 0; j < n; j++) {
-                    vertices.push(pt2);
-                    vertices.push(pt2.sub(vector));
+                    vertices.push(p);
+                    vertices.push(p.sub(vector));
                     vector = vec2(
                         vector.x * cs - vector.y * sn,
                         vector.x * sn + vector.y * cs,
@@ -385,20 +419,18 @@ export function _drawLinesRound(opt: DrawLinesOpt) {
 
         const nextSegment = pt2.sub(pt1);
         const nextLength = nextSegment.len();
-        const nextNormal = nextSegment.normal().scale(
-            -halfWidth / nextLength,
-        );
+        const nextNormal = nextSegment.normal().scale(1 / nextLength);
 
         const det = segment.cross(nextSegment);
 
         if (Math.abs(det) / (length * nextLength) < 0.05) {
             // Parallel
-            vertices.push(pt1.add(normal));
-            vertices.push(pt1.sub(normal));
+            vertices.push(pt1.add(normal.scale(centerOffset - halfWidth)));
+            vertices.push(pt1.add(normal.scale(centerOffset + halfWidth)));
 
             if (segment.dot(nextSegment) < 0) {
-                vertices.push(pt1.sub(normal));
-                vertices.push(pt1.add(normal));
+                vertices.push(pt1.add(normal.scale(centerOffset + halfWidth)));
+                vertices.push(pt1.add(normal.scale(centerOffset - halfWidth)));
             }
 
             segment = nextSegment;
@@ -407,19 +439,24 @@ export function _drawLinesRound(opt: DrawLinesOpt) {
             continue;
         }
 
-        const lambda = (nextNormal.sub(normal)).cross(nextSegment) / det;
-        const d = normal.add(segment.scale(lambda));
-
         if (det > 0) {
-            const fixedPoint = pt1.add(d);
+            // Calculate the vector d from pt1 towards the intersection of the offset lines on the inner side
+            const lambda = (nextNormal.scale(centerOffset - halfWidth).sub(
+                normal.scale(centerOffset - halfWidth),
+            )).cross(nextSegment) / det;
+            const d = normal.scale(centerOffset - halfWidth).add(
+                segment.scale(lambda),
+            );
+
             const n = Math.max(halfWidth, 10);
             const angle = deg2rad(normal.angleBetween(nextNormal) / n);
-            let vector = normal;
+            let vector = normal.scale(halfWidth * 2);
+            const fixedPoint = pt1.add(d);
             const cs = Math.cos(angle);
             const sn = Math.sin(angle);
             for (let j = 0; j < n; j++) {
                 vertices.push(fixedPoint);
-                vertices.push(pt1.sub(vector));
+                vertices.push(fixedPoint.add(vector));
                 vector = vec2(
                     vector.x * cs - vector.y * sn,
                     vector.x * sn + vector.y * cs,
@@ -427,14 +464,22 @@ export function _drawLinesRound(opt: DrawLinesOpt) {
             }
         }
         else {
-            const fixedPoint = pt1.sub(d);
+            // Calculate the vector d from pt1 towards the intersection of the offset lines on the inner side
+            const lambda = (nextNormal.scale(centerOffset + halfWidth).sub(
+                normal.scale(centerOffset + halfWidth),
+            )).cross(nextSegment) / det;
+            const d = normal.scale(centerOffset + halfWidth).add(
+                segment.scale(lambda),
+            );
+
             const n = Math.max(halfWidth, 10);
             const angle = deg2rad(normal.angleBetween(nextNormal) / n);
-            let vector = normal;
+            let vector = normal.scale(halfWidth * 2);
+            const fixedPoint = pt1.add(d);
             const cs = Math.cos(angle);
             const sn = Math.sin(angle);
             for (let j = 0; j < n; j++) {
-                vertices.push(pt1.add(vector));
+                vertices.push(fixedPoint.sub(vector));
                 vertices.push(fixedPoint);
                 vector = vec2(
                     vector.x * cs - vector.y * sn,
@@ -449,28 +494,33 @@ export function _drawLinesRound(opt: DrawLinesOpt) {
     }
 
     if (!isLoop) {
-        vertices.push(pt2.add(normal));
-        vertices.push(pt2.sub(normal));
+        vertices.push(pt2.add(normal.scale(centerOffset - halfWidth)));
+        vertices.push(pt2.add(normal.scale(centerOffset + halfWidth)));
         switch (opt.cap) {
             case "square": {
                 const dir = segment.scale(halfWidth / length);
-                vertices.push(pt2.add(dir).add(normal));
-                vertices.push(pt2.add(dir).sub(normal));
+                vertices.push(
+                    pt2.add(dir).add(normal.scale(centerOffset - halfWidth)),
+                );
+                vertices.push(
+                    pt2.add(dir).add(normal.scale(centerOffset + halfWidth)),
+                );
                 break;
             }
             case "round": {
                 const n = Math.max(halfWidth, 10);
                 const angle = Math.PI / n;
-                let vector = normal.scale(1);
+                let vector = normal.scale(halfWidth);
                 const cs = Math.cos(angle);
                 const sn = Math.sin(angle);
+                const p = pt2.add(normal.scale(centerOffset));
                 for (let j = 0; j < n; j++) {
                     vector = vec2(
                         vector.x * cs - vector.y * sn,
                         vector.x * sn + vector.y * cs,
                     );
-                    vertices.push(pt2);
-                    vertices.push(pt2.sub(vector));
+                    vertices.push(p);
+                    vertices.push(p.add(vector));
                 }
             }
         }
@@ -536,6 +586,7 @@ export function _drawLinesMiter(opt: DrawLinesOpt) {
     const pts = opt.pts;
     const vertices = [];
     const halfWidth = (opt.width || 1) * 0.5;
+    const centerOffset = halfWidth * lerp(-1, 1, ((opt.bias || 0.0) + 1) * 0.5);
     const isLoop = pts[0] === pts[pts.length - 1]
         || pts[0].eq(pts[pts.length - 1]);
     const offset = opt.pos || vec2(0, 0);
@@ -549,7 +600,7 @@ export function _drawLinesMiter(opt: DrawLinesOpt) {
     }
 
     let length = segment.len();
-    let normal = segment.normal().scale(-halfWidth / length);
+    let normal = segment.normal().scale(1 / length);
 
     let pt1;
     let pt2 = pts[0];
@@ -558,19 +609,24 @@ export function _drawLinesMiter(opt: DrawLinesOpt) {
         switch (opt.cap) {
             case "square": {
                 const dir = segment.scale(-halfWidth / length);
-                vertices.push(pt2.add(dir).add(normal));
-                vertices.push(pt2.add(dir).sub(normal));
+                vertices.push(
+                    pt2.add(dir).add(normal.scale(centerOffset - halfWidth)),
+                );
+                vertices.push(
+                    pt2.add(dir).add(normal.scale(centerOffset + halfWidth)),
+                );
                 break;
             }
             case "round": {
                 const n = Math.max(halfWidth, 10);
                 const angle = Math.PI / n;
-                let vector = normal.scale(-1);
+                let vector = normal.scale(halfWidth);
                 const cs = Math.cos(angle);
                 const sn = Math.sin(angle);
+                const p = pt2.add(normal.scale(centerOffset));
                 for (let j = 0; j < n; j++) {
-                    vertices.push(pt2);
-                    vertices.push(pt2.sub(vector));
+                    vertices.push(p);
+                    vertices.push(p.sub(vector));
                     vector = vec2(
                         vector.x * cs - vector.y * sn,
                         vector.x * sn + vector.y * cs,
@@ -587,20 +643,18 @@ export function _drawLinesMiter(opt: DrawLinesOpt) {
 
         const nextSegment = pt2.sub(pt1);
         const nextLength = nextSegment.len();
-        const nextNormal = nextSegment.normal().scale(
-            -halfWidth / nextLength,
-        );
+        const nextNormal = nextSegment.normal().scale(1 / nextLength);
 
         const det = segment.cross(nextSegment);
 
         if (Math.abs(det) / (length * nextLength) < 0.05) {
             // Parallel
-            vertices.push(pt1.add(normal));
-            vertices.push(pt1.sub(normal));
+            vertices.push(pt1.add(normal.scale(centerOffset - halfWidth)));
+            vertices.push(pt1.add(normal.scale(centerOffset + halfWidth)));
 
             if (segment.dot(nextSegment) < 0) {
-                vertices.push(pt1.sub(normal));
-                vertices.push(pt1.add(normal));
+                vertices.push(pt1.add(normal.scale(centerOffset + halfWidth)));
+                vertices.push(pt1.add(normal.scale(centerOffset - halfWidth)));
             }
 
             segment = nextSegment;
@@ -609,11 +663,19 @@ export function _drawLinesMiter(opt: DrawLinesOpt) {
             continue;
         }
 
-        const lambda = (nextNormal.sub(normal)).cross(nextSegment) / det;
-        const d = normal.add(segment.scale(lambda));
-
+        let lambda = (nextNormal.scale(centerOffset - halfWidth).sub(
+            normal.scale(centerOffset - halfWidth),
+        )).cross(nextSegment) / det;
+        let d = normal.scale(centerOffset - halfWidth).add(
+            segment.scale(lambda),
+        );
         vertices.push(pt1.add(d));
-        vertices.push(pt1.sub(d));
+
+        lambda = (nextNormal.scale(centerOffset + halfWidth).sub(
+            normal.scale(centerOffset + halfWidth),
+        )).cross(nextSegment) / det;
+        d = normal.scale(centerOffset + halfWidth).add(segment.scale(lambda));
+        vertices.push(pt1.add(d));
 
         segment = nextSegment;
         length = nextLength;
@@ -621,28 +683,33 @@ export function _drawLinesMiter(opt: DrawLinesOpt) {
     }
 
     if (!isLoop) {
-        vertices.push(pt2.add(normal));
-        vertices.push(pt2.sub(normal));
+        vertices.push(pt2.add(normal.scale(centerOffset - halfWidth)));
+        vertices.push(pt2.add(normal.scale(centerOffset + halfWidth)));
         switch (opt.cap) {
             case "square": {
                 const dir = segment.scale(halfWidth / length);
-                vertices.push(pt2.add(dir).add(normal));
-                vertices.push(pt2.add(dir).sub(normal));
+                vertices.push(
+                    pt2.add(dir).add(normal.scale(centerOffset - halfWidth)),
+                );
+                vertices.push(
+                    pt2.add(dir).add(normal.scale(centerOffset + halfWidth)),
+                );
                 break;
             }
             case "round": {
                 const n = Math.max(halfWidth, 10);
                 const angle = Math.PI / n;
-                let vector = normal.scale(1);
+                let vector = normal.scale(halfWidth);
                 const cs = Math.cos(angle);
                 const sn = Math.sin(angle);
+                const p = pt2.add(normal.scale(centerOffset));
                 for (let j = 0; j < n; j++) {
                     vector = vec2(
                         vector.x * cs - vector.y * sn,
                         vector.x * sn + vector.y * cs,
                     );
-                    vertices.push(pt2);
-                    vertices.push(pt2.sub(vector));
+                    vertices.push(p);
+                    vertices.push(p.add(vector));
                 }
             }
         }
@@ -728,37 +795,9 @@ export function drawLines(opt: DrawLinesOpt) {
     }
 
     if (opt.radius && pts.length >= 3) {
-        // TODO: line joines
-        // TODO: rounded vertices for arbitrary polygonic shape
-        drawLine(Object.assign({}, opt, { p1: pts[0], p2: pts[1] }));
-
-        for (let i = 1; i < pts.length - 2; i++) {
-            const p1 = pts[i];
-            const p2 = pts[i + 1];
-            drawLine(Object.assign({}, opt, {
-                p1: p1,
-                p2: p2,
-            }));
-        }
-
-        drawLine(Object.assign({}, opt, {
-            p1: pts[pts.length - 2],
-            p2: pts[pts.length - 1],
-        }));
+        return _drawLinesBevel(opt);
     }
     else {
-        for (let i = 0; i < pts.length - 1; i++) {
-            drawLine(Object.assign({}, opt, {
-                p1: pts[i],
-                p2: pts[i + 1],
-            }));
-            // TODO: other line join types
-            if (opt.join !== "none") {
-                drawCircle(Object.assign({}, opt, {
-                    pos: pts[i],
-                    radius: width / 2,
-                }));
-            }
-        }
+        return _drawLinesRound(opt);
     }
 }

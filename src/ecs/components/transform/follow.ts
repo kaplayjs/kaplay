@@ -1,11 +1,13 @@
-import { Vec2, vec2 } from "../../../math/math";
+import { vec2 } from "../../../math/math";
+import { Vec2 } from "../../../math/Vec2";
 import type { Comp, GameObj } from "../../../types";
 import type { PosComp } from "./pos";
 
 /**
  * The {@link follow `follow()`} component.
  *
- * @group Component Types
+ * @group Components
+ * @subgroup Component Types
  */
 export interface FollowComp extends Comp {
     follow: {

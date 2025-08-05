@@ -1,4 +1,4 @@
-import { MAX_TEXT_CACHE_SIZE } from "../constants";
+import { MAX_TEXT_CACHE_SIZE } from "../constants/general";
 
 export const createFontCache = () => {
     const fontCacheCanvas = document.createElement("canvas");

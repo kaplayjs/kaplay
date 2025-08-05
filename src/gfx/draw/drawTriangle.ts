@@ -1,9 +1,12 @@
-import type { Vec2 } from "../../math/math";
+import type { Vec2 } from "../../math/Vec2";
 import type { RenderProps } from "../../types";
 import { drawPolygon } from "./drawPolygon";
 
 /**
  * How the triangle should look like.
+ *
+ * @group Draw
+ * @subgroup Types
  */
 export type DrawTriangleOpt = RenderProps & {
     /**

@@ -1,16 +1,77 @@
-import { _k } from "../../kaplay";
 import { Color } from "../../math/color";
-import { triangulate, Vec2 } from "../../math/math";
-import { BlendMode, type DrawPolygonOpt } from "../../types";
+import { triangulate } from "../../math/math";
+import { Vec2 } from "../../math/Vec2";
+import { _k } from "../../shared";
+import { BlendMode, type RenderProps } from "../../types";
+import type { Texture } from "../gfx";
 import {
+    multRotate,
+    multScaleV,
+    multTranslateV,
     popTransform,
-    pushRotate,
-    pushScaleV,
     pushTransform,
-    pushTranslateV,
 } from "../stack";
 import { drawLines } from "./drawLine";
 import { drawRaw } from "./drawRaw";
+
+/**
+ * How the polygon should look like.
+ *
+ * @group Draw
+ * @subgroup Types
+ */
+export type DrawPolygonOpt = RenderProps & {
+    /**
+     * The points that make up the polygon
+     */
+    pts: Vec2[];
+    /**
+     * If fill the shape with color (set this to false if you only want an outline).
+     */
+    fill?: boolean;
+    /**
+     * Manual triangulation.
+     */
+    indices?: number[];
+    /**
+     * The center point of transformation in relation to the position.
+     */
+    offset?: Vec2;
+    /**
+     * The radius of each corner.
+     */
+    radius?: number | number[];
+    /**
+     * The color of each vertex.
+     *
+     * @since v3000.0
+     */
+    colors?: Color[];
+    /**
+     * The opacity of each vertex.
+     *
+     * @since v4000.0
+     */
+    opacities?: number[];
+    /**
+     * The uv of each vertex.
+     *
+     * @since v3001.0
+     */
+    uv?: Vec2[];
+    /**
+     * The texture if uv are supplied.
+     *
+     * @since v3001.0
+     */
+    tex?: Texture;
+    /**
+     * Triangulate concave polygons.
+     *
+     * @since v3001.0
+     */
+    triangulate?: boolean;
+};
 
 export function drawPolygon(opt: DrawPolygonOpt) {
     if (!opt.pts) {
@@ -24,10 +85,10 @@ export function drawPolygon(opt: DrawPolygonOpt) {
     }
 
     pushTransform();
-    pushTranslateV(opt.pos!);
-    pushScaleV(opt.scale);
-    pushRotate(opt.angle);
-    pushTranslateV(opt.offset!);
+    multTranslateV(opt.pos!);
+    multScaleV(opt.scale);
+    multRotate(opt.angle);
+    multTranslateV(opt.offset!);
 
     if (opt.fill !== false) {
         const color = opt.color ?? Color.WHITE;
@@ -69,7 +130,14 @@ export function drawPolygon(opt: DrawPolygonOpt) {
             }
         }
 
-        attributes.opacity.fill(opt.opacity ?? 1);
+        if (opt.opacities) {
+            for (let i = 0; i < opt.pts.length; i++) {
+                attributes.opacity[i] = opt.opacities[i];
+            }
+        }
+        else {
+            attributes.opacity.fill(opt.opacity ?? 1);
+        }
 
         /*const verts = opt.pts.map((pt, i) => ({
             pos: new Vec2(pt.x, pt.y),

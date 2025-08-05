@@ -1,11 +1,24 @@
-import { _k } from "../../../kaplay";
-import type { Comp, EaseFunc, TweenController } from "../../../types";
+import { type EaseFunc, easings } from "../../../math/easings";
+import { _k } from "../../../shared";
+import type { Comp } from "../../../types";
 import { toFixed } from "../../../utils/numbers";
+import type { TweenController } from "../misc/timer";
+
+/**
+ * The serialized {@link opacity `opacity()`} component.
+ *
+ * @group Components
+ * @subgroup Component Serialization
+ */
+export interface SerializedOpacityComp {
+    opacity: number;
+}
 
 /**
  * The {@link opacity `opacity()`} component.
  *
- * @group Component Types
+ * @group Components
+ * @subgroup Component Types
  */
 export interface OpacityComp extends Comp {
     /** Opacity of the current object. */
@@ -14,13 +27,14 @@ export interface OpacityComp extends Comp {
     fadeIn(time?: number, easeFunc?: EaseFunc): TweenController;
     /** Fade out at the start. */
     fadeOut(time?: number, easeFunc?: EaseFunc): TweenController;
+    serialize(): SerializedOpacityComp;
 }
 
 export function opacity(a: number): OpacityComp {
     return {
         id: "opacity",
         opacity: a ?? 1,
-        fadeIn(time = 1, easeFunc = _k.k.easings.linear): TweenController {
+        fadeIn(time = 1, easeFunc = easings.linear): TweenController {
             return _k.game.root.tween(
                 0,
                 this.opacity,
@@ -29,7 +43,7 @@ export function opacity(a: number): OpacityComp {
                 easeFunc,
             );
         },
-        fadeOut(time = 1, easeFunc = _k.k.easings.linear): TweenController {
+        fadeOut(time = 1, easeFunc = easings.linear): TweenController {
             return _k.game.root.tween(
                 this.opacity,
                 0,
@@ -41,5 +55,12 @@ export function opacity(a: number): OpacityComp {
         inspect() {
             return `opacity: ${toFixed(this.opacity, 1)}`;
         },
+        serialize() {
+            return { opacity: this.opacity };
+        },
     };
+}
+
+export function opacityFactory(data: SerializedOpacityComp) {
+    return opacity(data.opacity);
 }

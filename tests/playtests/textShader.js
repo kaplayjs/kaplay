@@ -1,6 +1,14 @@
+/**
+ * @file Shader text with text styles
+ * @description Test adding shaders to a text style.
+ * @difficulty 3
+ * @tags basics
+ * @minver 3001.0
+ */
+
 kaplay({ background: "#000000" });
 
-loadShaderURL("blink", null, "../../examples/shaders/blink.frag");
+loadShaderURL("blink", null, "../..//shaders/blink.frag");
 
 add([
     pos(100, 100),

@@ -1,16 +1,12 @@
 import type { KEventController } from "../../../events/events";
-import { _k } from "../../../kaplay";
 import { clamp } from "../../../math/clamp";
 import { Color } from "../../../math/color";
-import easings from "../../../math/easings";
-import {
-    catmullRom,
-    hermiteFirstDerivative,
-    lerp,
-    Vec2,
-    vec2,
-} from "../../../math/math";
-import type { Comp, EaseFunc, GameObj, LerpValue } from "../../../types";
+import { type EaseFunc, easings } from "../../../math/easings";
+import { lerp, type LerpValue } from "../../../math/lerp";
+import { catmullRom, hermiteFirstDerivative, vec2 } from "../../../math/math";
+import { Vec2 } from "../../../math/Vec2";
+import { _k } from "../../../shared";
+import type { Comp, GameObj } from "../../../types";
 import type { NamedComp } from "./named";
 
 type TimeDirection =
@@ -80,12 +76,15 @@ export interface BaseValues {
     opacity: number;
 }
 
+/**
+ * The {@link animate `animate()`} component.
+ */
 export interface AnimateComp extends Comp {
     /**
      * Animates a property on this object.
-     * @param name Name of the property to animate.
-     * @param keys Keys determining the value at a certain point in time.
-     * @param opts Options.
+     * @param name - Name of the property to animate.
+     * @param keys - Keys determining the value at a certain point in time.
+     * @param opts - Options.
      */
     animate<T extends LerpValue>(
         name: string,
@@ -94,7 +93,7 @@ export interface AnimateComp extends Comp {
     ): void;
     /**
      * Removes the animation from the given property.
-     * @param name Name of the property to remove the animation from.
+     * @param name - Name of the property to remove the animation from.
      */
     unanimate(name: string): void;
     /**
@@ -103,12 +102,12 @@ export interface AnimateComp extends Comp {
     unanimateAll(): void;
     /**
      * Attaches an event handler which is called when all the animation channels have finished.
-     * @param cb The event handler called when the animation finishes.
+     * @param cb - The event handler called when the animation finishes.
      */
     onAnimateFinished(cb: () => void): KEventController;
     /**
      * Attaches an event handler which is called when an animation channels has finished.
-     * @param cb The event handler called when an animation channel finishes.
+     * @param cb - The event handler called when an animation channel finishes.
      */
     onAnimateChannelFinished(cb: (name: string) => void): KEventController;
     /**
@@ -172,8 +171,9 @@ class AnimateChannel {
 
     /**
      * Returns the first key index for the given time, as well as the relative time towards the second key.
-     * @param t The time in seconds.
-     * @param timing The optional timestamps in percent.
+     * @param t - The time in seconds.
+     * @param timing - The optional timestamps in percent.
+     *
      * @returns The first key index for the given time, as well as the relative time towards the second key.
      */
     getLowerKeyIndexAndRelativeTime(
@@ -271,8 +271,9 @@ class AnimateChannel {
 
 /**
  * Reflects a point around another point
- * @param a Point to reflect
- * @param b Point to reflect around
+ * @param a - Point to reflect
+ * @param b - Point to reflect around
+ *
  * @returns Reflected point
  */
 function reflect(a: Vec2, b: Vec2) {
@@ -554,7 +555,7 @@ export function animate(gopts: AnimateCompOpt = {}): AnimateComp {
             if (this.animation.paused) return;
             let allFinished: boolean = true;
             let localFinished: boolean;
-            t += _k.k.dt();
+            t += _k.app.dt();
             for (const c of channels) {
                 localFinished = c.update(this as unknown as GameObj<any>, t);
                 if (localFinished && !c.isFinished) {
@@ -649,8 +650,9 @@ export function animate(gopts: AnimateCompOpt = {}): AnimateComp {
 
 /**
  * Serializes an animation to javascript objects for serialization to JSON.
- * @param obj The root object to serialize from.
- * @param name Optional name of the root object.
+ * @param obj - The root object to serialize from.
+ * @param name - Optional name of the root object.
+ *
  * @returns A javascript object serialization of the animation.
  */
 export function serializeAnimation(obj: GameObj<any>, name: string): any {
@@ -698,8 +700,8 @@ function deserializeOptions(options: AnimationOptions) {
 
 /**
  * Applies the animation to this object and its named children
- * @param obj The root object to deserialize to.
- * @param animation A javascript object serialization of the animation.
+ * @param obj - The root object to deserialize to.
+ * @param animation - A javascript object serialization of the animation.
  */
 export function applyAnimation(obj: GameObj<any>, animation: Animation) {
     // TODO: test this

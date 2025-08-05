@@ -1,17 +1,21 @@
-import { DEF_JUMP_FORCE, MAX_VEL } from "../../../constants";
+import { DEF_JUMP_FORCE, MAX_VEL } from "../../../constants/general";
 import type { KEventController } from "../../../events/events";
 import { getGravityDirection } from "../../../game/gravity";
-import { _k } from "../../../kaplay";
-import { lerp, type Vec2, vec2 } from "../../../math/math";
+import { lerp } from "../../../math/lerp";
+import { vec2 } from "../../../math/math";
 import { calcTransform } from "../../../math/various";
-import type { Collision, Comp, GameObj } from "../../../types";
+import { type Vec2 } from "../../../math/Vec2";
+import { _k } from "../../../shared";
+import type { Comp, GameObj } from "../../../types";
+import type { Collision } from "../../systems/Collision";
 import type { PosComp } from "../transform/pos";
 import type { AreaComp } from "./area";
 
 /**
  * The {@link body `body()`} component.
  *
- * @group Component Types
+ * @group Components
+ * @subgroup Component Types
  */
 export interface BodyComp extends Comp {
     /**
@@ -75,12 +79,12 @@ export interface BodyComp extends Comp {
     isJumping(): boolean;
     /**
      * Applies an impulse
-     * @param impulse The impulse vector, applied directly
+     * @param impulse - The impulse vector, applied directly
      */
     applyImpulse(impulse: Vec2): void;
     /**
      * Applies a force
-     * @param force The force vector, applied after scaled by the inverse mass
+     * @param force - The force vector, applied after scaled by the inverse mass
      */
     addForce(force: Vec2): void;
     /**
@@ -133,12 +137,15 @@ export interface BodyComp extends Comp {
      * Register an event that runs when the object is bumped by another object head.
      */
     onHeadbutted(action: (obj: GameObj) => void): KEventController;
+
+    serialize(): any;
 }
 
 /**
  * Options for the {@link body `body()`} component.
  *
- * @group Component Types
+ * @group Components
+ * @subgroup Component Types
  */
 export interface BodyCompOpt {
     /**
@@ -340,7 +347,7 @@ export function body(opt: BodyCompOpt = {}): BodyComp {
                 }
             }
 
-            const dt = _k.k.restDt();
+            const dt = _k.app.restDt();
             if (dt) {
                 // Check if no external changes were made
                 if (this.pos.x == prevDrawPos.x) {
@@ -348,7 +355,7 @@ export function body(opt: BodyCompOpt = {}): BodyComp {
                     this.pos.x = lerp(
                         prevPhysicsPos!.x,
                         nextPhysicsPos!.x,
-                        dt / _k.k.fixedDt(),
+                        dt / _k.app.fixedDt(),
                     );
                     // Copy to check for changes
                     prevDrawPos.x = this.pos.x;
@@ -358,7 +365,7 @@ export function body(opt: BodyCompOpt = {}): BodyComp {
                     this.pos.y = lerp(
                         prevPhysicsPos!.y,
                         nextPhysicsPos!.y,
-                        dt / _k.k.fixedDt(),
+                        dt / _k.app.fixedDt(),
                     );
                     // Copy to check for changes
                     prevDrawPos.y = this.pos.y;
@@ -403,7 +410,7 @@ export function body(opt: BodyCompOpt = {}): BodyComp {
 
                 // Apply gravity
                 this.vel = this.vel.add(
-                    _k.game.gravity.scale(this.gravityScale * _k.k.dt()),
+                    _k.game.gravity.scale(this.gravityScale * _k.app.dt()),
                 );
 
                 // Clamp velocity
@@ -423,22 +430,22 @@ export function body(opt: BodyCompOpt = {}): BodyComp {
             }
 
             // Apply velocity and position changes
-            this.vel.x += acc.x * _k.k.dt();
-            this.vel.y += acc.y * _k.k.dt();
+            this.vel.x += acc.x * _k.app.dt();
+            this.vel.y += acc.y * _k.app.dt();
 
-            this.vel.x *= 1 / (1 + this.damping * _k.k.dt());
-            this.vel.y *= 1 / (1 + this.damping * _k.k.dt());
+            this.vel.x *= 1 / (1 + this.damping * _k.app.dt());
+            this.vel.y *= 1 / (1 + this.damping * _k.app.dt());
 
             this.move(this.vel);
 
             // If we need to interpolate physics, prepare interpolation data
-            const rDt = _k.k.restDt();
+            const rDt = _k.app.restDt();
             if (rDt) {
                 // Save this position as previous
                 prevPhysicsPos = this.pos.clone();
                 // Calculate next (future) position
-                const nextVel = this.vel.add(acc.scale(_k.k.dt()));
-                nextPhysicsPos = this.pos.add(nextVel.scale(_k.k.dt()));
+                const nextVel = this.vel.add(acc.scale(_k.app.dt()));
+                nextPhysicsPos = this.pos.add(nextVel.scale(_k.app.dt()));
                 // Copy to check for changes
                 prevDrawPos = this.pos.clone();
             }
@@ -519,5 +526,27 @@ export function body(opt: BodyCompOpt = {}): BodyComp {
         inspect() {
             return `gravityScale: ${this.gravityScale}x`;
         },
+
+        serialize(): any {
+            const data: any = {};
+            if (opt.jumpForce) data.jumpForce = opt.jumpForce;
+            if (opt.maxVelocity) data.maxVelocity = opt.maxVelocity;
+            if (opt.gravityScale) data.gravityScale = opt.gravityScale;
+            if (opt.isStatic) data.isStatic = opt.isStatic;
+            if (opt.stickToPlatform) data.stickToPlatform = opt.stickToPlatform;
+            if (opt.mass) data.mass = opt.mass;
+            return data;
+        },
     };
+}
+
+export function bodyFactory(data: any) {
+    const opt: any = {};
+    if (data.jumpForce) opt.jumpForce = data.jumpForce;
+    if (data.maxVelocity) opt.maxVelocity = data.maxVelocity;
+    if (data.gravityScale) opt.gravityScale = data.gravityScale;
+    if (data.isStatic) opt.isStatic = opt.isStatic;
+    if (data.stickToPlatform) opt.stickToPlatform = data.stickToPlatform;
+    if (data.mass) opt.mass = data.mass;
+    return body(opt);
 }

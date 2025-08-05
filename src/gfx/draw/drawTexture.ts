@@ -1,10 +1,29 @@
-import { DEF_ANCHOR } from "../../constants";
+import { DEF_ANCHOR } from "../../constants/general";
 import { Color } from "../../math/color";
-import { Quad, Vec2 } from "../../math/math";
-import { BlendMode, type DrawTextureOpt, type Vertex } from "../../types";
+import { Quad } from "../../math/math";
+import { Vec2 } from "../../math/Vec2";
+import { type Anchor, BlendMode, type RenderProps } from "../../types";
 import { anchorPt } from "../anchor";
+import type { Texture } from "../gfx";
 import { drawRaw } from "./drawRaw";
 import { drawUVQuad } from "./drawUVQuad";
+
+/**
+ * How the texture should look like.
+ *
+ * @group Draw
+ * @subgroup Types
+ */
+export type DrawTextureOpt = RenderProps & {
+    tex: Texture;
+    width?: number;
+    height?: number;
+    tiled?: boolean;
+    flipX?: boolean;
+    flipY?: boolean;
+    quad?: Quad;
+    anchor?: Anchor | Vec2;
+};
 
 export function drawTexture(opt: DrawTextureOpt) {
     if (!opt.tex) {
@@ -148,26 +167,12 @@ export function drawTexture(opt: DrawTextureOpt) {
         );
     }
     else {
-        // TODO: should this ignore scale?
-        if (opt.width && opt.height) {
-            scale.x = opt.width / w;
-            scale.y = opt.height / h;
-        }
-        else if (opt.width) {
-            scale.x = opt.width / w;
-            scale.y = scale.x;
-        }
-        else if (opt.height) {
-            scale.y = opt.height / h;
-            scale.x = scale.y;
-        }
-
         drawUVQuad(Object.assign({}, opt, {
-            scale: opt.scale ? scale.scale(opt.scale) : scale,
+            scale: opt.scale ?? Vec2.ONE,
             tex: opt.tex,
             quad: q,
-            width: w,
-            height: h,
+            width: opt.width ?? w,
+            height: opt.height ?? h,
         }));
     }
 }

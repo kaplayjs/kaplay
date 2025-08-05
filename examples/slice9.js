@@ -1,11 +1,19 @@
-// @ts-check
+/**
+ * @file Slice-9
+ * @description How to make use of slice-9 sprites.
+ * @difficulty 1
+ * @tags animation, draw
+ * @minver 3001.0
+ * @category concepts
+ * @test
+ */
 
 // 9 slice sprite scaling
 
 kaplay();
 
 // Load a sprite that's made for 9 slice scaling
-loadSprite("9slice", "/examples/sprites/9slice.png", {
+loadSprite("9slice", "/sprites/9slice.png", {
     // Define the slice by the margins of 4 sides
     slice9: {
         left: 32,

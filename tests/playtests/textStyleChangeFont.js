@@ -1,5 +1,13 @@
+/**
+ * @file Style change font
+ * @description Test how text handles changing font on styles.
+ * @difficulty 3
+ * @tags basics
+ * @minver 3001.0
+ */
+
 kaplay({ background: "#000000", crisp: true });
-loadFont("Romantique", "/examples/fonts/Romantique.ttf", { filter: "nearest" });
+loadFont("Romantique", "//fonts/Romantique.ttf", { filter: "nearest" });
 
 const x = add([
     text(

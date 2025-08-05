@@ -1,3 +1,11 @@
+/**
+ * @file Missing comps
+ * @description Test behaviour when missing components at add().
+ * @difficulty 3
+ * @tags comps
+ * @minver 3001.0
+ */
+
 // Test when a dependency is missing on obj creation
 
 const k = kaplay({});

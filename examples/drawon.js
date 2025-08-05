@@ -1,4 +1,11 @@
-// @ts-check
+/**
+ * @file Drawon Component
+ * @description How to use Frame Buffers
+ * @difficulty 2
+ * @tags draw
+ * @minver 3001.0
+ * @category concepts
+ */
 
 kaplay();
 

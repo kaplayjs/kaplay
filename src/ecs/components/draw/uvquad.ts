@@ -1,11 +1,13 @@
 import { getRenderProps } from "../../../game/utils";
+import { drawUVQuad } from "../../../gfx/draw/drawUVQuad";
 import { Rect, vec2 } from "../../../math/math";
 import type { Comp, GameObj } from "../../../types";
 
 /**
  * The {@link uvquad `uvquad()`} component.
  *
- * @group Component Types
+ * @group Components
+ * @subgroup Component Types
  */
 export interface UVQuadComp extends Comp {
     draw: Comp["draw"];
@@ -22,37 +24,41 @@ export interface UVQuadComp extends Comp {
      */
     renderArea(): Rect;
 }
+
 export function uvquad(w: number, h: number): UVQuadComp {
+    let _shape: Rect | undefined;
+    let _width = w;
+    let _height = h;
     return {
-        id: "rect",
-        width: w,
-        height: h,
+        id: "uvquad",
+        get width() {
+            return _width;
+        },
+        set width(value) {
+            _width = value;
+            if (_shape) _shape.width = value;
+        },
+        get height() {
+            return _height;
+        },
+        set height(value) {
+            _height = value;
+            if (_shape) _shape.height = value;
+        },
         draw(this: GameObj<UVQuadComp>) {
             drawUVQuad(Object.assign(getRenderProps(this), {
-                width: this.width,
-                height: this.height,
+                width: _width,
+                height: _height,
             }));
         },
         renderArea() {
-            return new Rect(vec2(0), this.width, this.height);
+            if (!_shape) {
+                _shape = new Rect(vec2(0), _width, _height);
+            }
+            return _shape;
         },
         inspect() {
-            return `uvquad: (${Math.ceil(this.width)}w, ${
-                Math.ceil(this.height)
-            })h`;
+            return `uvquad: (${Math.ceil(_width)}w, ${Math.ceil(_height)})h`;
         },
     };
-}
-function drawUVQuad(
-    arg0: {
-        color: any;
-        opacity: any;
-        anchor: any;
-        outline: any;
-        shader: any;
-        uniform: any;
-        blend: any;
-    } & { width: number; height: number },
-) {
-    throw new Error("Function not implemented.");
 }

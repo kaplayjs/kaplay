@@ -1,4 +1,4 @@
-import { describe, expectTypeOf } from "vitest";
+import { describe, expectTypeOf, test } from "vitest";
 import type { CircleComp } from "../../src/ecs/components/draw/circle";
 import type { ScaleComp } from "../../src/ecs/components/transform/scale";
 import { kaplay } from "../../src/kaplay";

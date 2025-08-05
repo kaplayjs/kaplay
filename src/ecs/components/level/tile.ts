@@ -1,11 +1,13 @@
-import { Vec2, vec2 } from "../../../math/math";
+import { vec2 } from "../../../math/math";
+import { Vec2 } from "../../../math/Vec2";
 import { type Comp, type Edge, EdgeMask, type GameObj } from "../../../types";
 import type { LevelComp } from "./level";
 
 /**
  * The {@link tile `tile()`} component.
  *
- * @group Component Types
+ * @group Components
+ * @subgroup Component Types
  */
 export interface TileComp extends Comp {
     /**
@@ -40,7 +42,8 @@ export interface TileComp extends Comp {
 /**
  * Options for the {@link tile `tile()`} component.
  *
- * @group Component Types
+ * @group Components
+ * @subgroup Component Types
  */
 export type TileCompOpt = {
     /**

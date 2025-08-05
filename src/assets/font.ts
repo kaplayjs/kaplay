@@ -3,16 +3,20 @@ import {
     DEF_FONT_FILTER,
     DEF_TEXT_CACHE_SIZE,
     MAX_TEXT_CACHE_SIZE,
-} from "../constants";
+} from "../constants/general";
 import type { DrawTextOpt } from "../gfx/draw/drawText";
 import type { Texture } from "../gfx/gfx";
-import { _k } from "../kaplay";
 import { rgb } from "../math/color";
 import { Quad } from "../math/math";
+import { _k } from "../shared";
 import type { LoadFontOpt, Outline, TexFilter } from "../types";
 import { Asset, loadProgress } from "./asset";
 import { type BitmapFontData, getBitmapFont, type GfxFont } from "./bitmapFont";
 
+/**
+ * @group Assets
+ * @subgroup Data
+ */
 export class FontData {
     fontface: FontFace;
     filter: TexFilter = DEF_FONT_FILTER;
@@ -94,7 +98,7 @@ export function getFont(name: string): Asset<FontData> | null {
 // TODO: pass in null src to store opt for default fonts like "monospace"
 export function loadFont(
     name: string,
-    src: string | BinaryData,
+    src: string | ArrayBuffer | ArrayBufferView,
     opt: LoadFontOpt = {},
 ): Asset<FontData> {
     const font = new FontFace(

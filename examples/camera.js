@@ -1,4 +1,12 @@
-// @ts-check
+/**
+ * @file Camera
+ * @description How to handle and modify the camera
+ * @difficulty 1
+ * @tags basics, effects
+ * @ver 4000.0.0-alpha.18
+ * @minver 3001.0
+ * @category basics
+ */
 
 // Adjust camera / viewport
 
@@ -9,7 +17,7 @@ kaplay();
 loadSprite("bean", "/sprites/bean.png");
 loadSprite("coin", "/sprites/coin.png");
 loadSprite("grass", "/sprites/grass.png");
-loadSound("score", "/examples/sounds/score.mp3");
+loadSound("score", "/sounds/score.mp3");
 
 const SPEED = 480;
 let score = 0;
@@ -89,15 +97,15 @@ const ui = add([
 ]);
 
 // Add a score counter
-ui.add([
+const scoreCounter = ui.add([
     text("0"),
     pos(12),
-    {
-        update() {
-            this.text = score.toString();
-        },
-    },
 ]);
+
+// We constantly update the scoreCounter text
+scoreCounter.onUpdate(() => {
+    scoreCounter.text = score.toString();
+});
 
 onClick(() => {
     // Use toWorld() to transform a screen-space coordinate (like mousePos()) to

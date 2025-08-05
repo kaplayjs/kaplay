@@ -1,6 +1,6 @@
 import type { KEventController } from "../../../events/events";
-import { _k } from "../../../kaplay";
-import { Vec2 } from "../../../math/math";
+import { Vec2 } from "../../../math/Vec2";
+import { _k } from "../../../shared";
 import type { Comp, GameObj, QueryOpt } from "../../../types";
 import { raycast } from "../draw/raycast";
 import type { PosComp } from "../transform/pos";
@@ -8,7 +8,8 @@ import type { PosComp } from "../transform/pos";
 /**
  * The {@link sentry `sentry()`} component.
  *
- * @group Component Types
+ * @group Components
+ * @subgroup Component Types
  */
 export interface SentryComp extends Comp {
     /**
@@ -29,14 +30,14 @@ export interface SentryComp extends Comp {
     spotted: GameObj<any>[];
     /**
      * Attaches an event handler which is called when objects of interest are spotted.
-     * @param cb The event handler called when objects are spotted.
+     * @param cb - The event handler called when objects are spotted.
      */
     onObjectsSpotted(cb: (objects: GameObj[]) => void): KEventController;
     /**
      * Returns true if the object is within the field of view.
-     * @param obj The object to test.
-     * @param direction The direction to look at.
-     * @param fieldOfView The field of view in degrees.
+     * @param obj - The object to test.
+     * @param direction - The direction to look at.
+     * @param fieldOfView - The field of view in degrees.
      */
     isWithinFieldOfView(
         obj: GameObj<PosComp>,
@@ -45,7 +46,7 @@ export interface SentryComp extends Comp {
     ): boolean;
     /**
      * Returns true if there is a line of sight to the object.
-     * @param obj The object to test.
+     * @param obj - The object to test.
      */
     hasLineOfSight(obj: GameObj<PosComp>): boolean;
 }
@@ -53,7 +54,8 @@ export interface SentryComp extends Comp {
 /**
  * Options for the {@link sentry `sentry()`} component.
  *
- * @group Component Types
+ * @group Components
+ * @subgroup Component Types
  */
 export interface SentryCompOpt {
     /**
@@ -138,7 +140,7 @@ export function sentry(
             return hit != null && hit.object === obj;
         },
         update(this: GameObj<SentryComp | PosComp>) {
-            t += _k.k.dt();
+            t += _k.app.dt();
             if (t > checkFrequency) {
                 t -= checkFrequency;
                 let objects = get();

@@ -1,4 +1,11 @@
-// @ts-check
+/**
+ * @file Runner
+ * @description Endless runner (like Chrome Dino)
+ * @difficulty 1
+ * @tags basics, game
+ * @minver 3001.0
+ * @category games
+ */
 
 const FLOOR_HEIGHT = 48;
 const JUMP_FORCE = 800;

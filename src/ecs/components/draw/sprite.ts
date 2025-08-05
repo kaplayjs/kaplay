@@ -6,26 +6,52 @@ import {
     type SpriteAnim,
     type SpriteData,
 } from "../../../assets/sprite";
-import { DEF_ANCHOR } from "../../../constants";
+import { DEF_ANCHOR } from "../../../constants/general";
 import { KEvent, type KEventController } from "../../../events/events";
 import { onLoad } from "../../../events/globalEvents";
 import { getRenderProps } from "../../../game/utils";
 import { anchorPt } from "../../../gfx/anchor";
 import { drawTexture } from "../../../gfx/draw/drawTexture";
 import type { Texture } from "../../../gfx/gfx";
-import { _k } from "../../../kaplay";
-import { Quad, quad, Rect, type Vec2, vec2 } from "../../../math/math";
-import type {
-    Comp,
-    GameObj,
-    SpriteAnimPlayOpt,
-    SpriteCurAnim,
-} from "../../../types";
+import { Quad, quad, Rect, vec2 } from "../../../math/math";
+import { type Vec2 } from "../../../math/Vec2";
+import { _k } from "../../../shared";
+import type { Comp, GameObj, SpriteAnimPlayOpt } from "../../../types";
+
+/**
+ * The serialized {@link sprite `sprite()`} component.
+ *
+ * @group Components
+ * @subgroup Component Serialization
+ */
+export type SerializedSpriteComp = SpriteCompOpt & {
+    sprite: string;
+};
+
+/**
+ * Current animation data.
+ */
+export interface SpriteCurAnim {
+    name: string;
+    timer: number;
+    loop: boolean;
+    speed: number;
+    /**
+     * The current index relative to the start of the
+     * associated `frames` array for this animation.
+     * This may be greater than the number of frames
+     * in the sprite.
+     */
+    frameIndex: number;
+    pingpong: boolean;
+    onEnd: () => void;
+}
 
 /**
  * The {@link sprite `sprite()`} component.
  *
- * @group Component Types
+ * @group Components
+ * @subgroup Component Types
  */
 export interface SpriteComp extends Comp {
     draw: Comp["draw"];
@@ -109,12 +135,15 @@ export interface SpriteComp extends Comp {
      * @since v3000.0
      */
     renderArea(): Rect;
+
+    serialize(): SerializedSpriteComp;
 }
 
 /**
  * Options for the {@link sprite `sprite()`} component.
  *
- * @group Component Types
+ * @group Components
+ * @subgroup Component Types
  */
 export interface SpriteCompOpt {
     /**
@@ -260,11 +289,27 @@ export function sprite(
         return frames;
     };
 
+    let _shape: Rect | undefined;
+    let _width = 0;
+    let _height = 0;
+
     return {
         id: "sprite",
         // TODO: allow update
-        width: 0,
-        height: 0,
+        get width() {
+            return _width;
+        },
+        set width(value) {
+            _width = value;
+            if (_shape) _shape.width = value;
+        },
+        get height() {
+            return _height;
+        },
+        set height(value) {
+            _height = value;
+            if (_shape) _shape.height = value;
+        },
         frame: opt.frame || 0,
         quad: opt.quad || new Quad(0, 0, 1, 1),
         animSpeed: opt.animSpeed ?? 1,
@@ -417,7 +462,7 @@ export function sprite(
                 throw new Error("Sprite anim speed cannot be 0");
             }
 
-            curAnim.timer += _k.k.dt() * this.animSpeed;
+            curAnim.timer += _k.app.dt() * this.animSpeed;
 
             if (curAnim.timer >= (1 / curAnim.speed)) {
                 curAnim.timer = 0;
@@ -476,6 +521,7 @@ export function sprite(
             }
 
             if (curAnim) {
+                if (opt.preventRestart && curAnim.name === name) return;
                 this.stop();
             }
 
@@ -549,7 +595,10 @@ export function sprite(
         },
 
         renderArea() {
-            return new Rect(vec2(0), this.width, this.height);
+            if (!_shape) {
+                _shape = new Rect(vec2(0), _width, _height);
+            }
+            return _shape;
         },
 
         inspect() {
@@ -558,5 +607,45 @@ export function sprite(
             }
             return null;
         },
+
+        serialize() {
+            const data: any = { sprite: this.sprite };
+            if (opt.frame) data.frame = opt.frame;
+            if (opt.tiled) data.tiled = opt.tiled;
+            if (opt.width) data.width = opt.width;
+            if (opt.height) data.height = opt.height;
+            if (opt.anim) data.anim = opt.anim;
+            if (opt.animSpeed) data.animSpeed = opt.animSpeed;
+            if (this.flipX) data.flipX = this.flipX;
+            if (this.flipY) data.flipY = this.flipY;
+            if (opt.quad) {
+                data.quad = {
+                    x: opt.quad.x,
+                    y: opt.quad.y,
+                    w: opt.quad.w,
+                    h: opt.quad.h,
+                };
+            }
+            return data;
+        },
     };
+}
+
+export function spriteFactory(data: SerializedSpriteComp) {
+    const opt: SpriteCompOpt = {};
+    if (data.frame) opt.frame = data.frame;
+    if (data.tiled) opt.tiled = data.tiled;
+    if (data.width) opt.width = data.width;
+    if (data.height) opt.height = data.height;
+    if (data.anim) opt.anim = data.anim;
+    if (data.animSpeed) opt.animSpeed = data.animSpeed;
+    if (data.flipX) opt.flipX = data.flipX;
+    if (data.flipY) opt.flipY = data.flipY;
+    if (data.quad) {
+        opt.quad = quad(data.quad.x, data.quad.y, data.quad.w, data.quad.h);
+    }
+    return sprite(
+        data.sprite,
+        opt,
+    );
 }

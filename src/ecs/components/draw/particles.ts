@@ -1,18 +1,18 @@
 import { KEvent } from "../../../events/events";
 import { drawRaw } from "../../../gfx/draw/drawRaw";
 import type { Texture } from "../../../gfx/gfx";
-import { _k } from "../../../kaplay.js";
 import { Color } from "../../../math/color";
+import { lerp } from "../../../math/lerp";
 import {
     deg2rad,
-    lerp,
     map,
     Quad,
     rand,
     type ShapeType,
-    Vec2,
     vec2,
 } from "../../../math/math";
+import { Vec2 } from "../../../math/Vec2";
+import { _k } from "../../../shared";
 import type { Comp } from "../../../types";
 
 /**
@@ -38,7 +38,10 @@ class Particle {
 }
 
 /**
- * Options for the {@link particles `particles()`}'s component
+ * Options for the {@link particles `particles()`}'s component.
+ *
+ * @group Components
+ * @subgroup Component Types
  */
 export type EmitterOpt = {
     /**
@@ -70,7 +73,8 @@ export type EmitterOpt = {
 /**
  * Options for the {@link particles `particles()`}'s component
  *
- * @group Component Types
+ * @group Components
+ * @subgroup Component Types
  */
 export type ParticlesOpt = {
     /**
@@ -126,7 +130,8 @@ export type ParticlesOpt = {
 /**
  * The {@link particles `particles()`} component.
  *
- * @group Component Types
+ * @group Components
+ * @subgroup Component Types
  */
 export interface ParticlesComp extends Comp {
     emitter: {
@@ -261,7 +266,7 @@ export function particles(popt: ParticlesOpt, eopt: EmitterOpt): ParticlesComp {
                 return;
             }
 
-            const DT = _k.k.dt();
+            const DT = _k.app.dt();
             // Update all particles
             for (let i = 0; i < particles.length; i++) {
                 const p = particles[i];

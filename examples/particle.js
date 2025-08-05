@@ -1,8 +1,19 @@
+/**
+ * @file Particle
+ * @description How to use particles()
+ * @difficulty 1
+ * @tags effects
+ * @minver 3001.0
+ * @category concepts
+ * @group particles
+ * @groupOrder 0
+ */
+
 // Creating particles using Particle Component
 
 kaplay();
 
-loadSprite("star", "./examples/sprites/particle_star_filled.png");
+loadSprite("star", "./sprites/particle_star_filled.png");
 
 onLoad(() => {
     go("game");

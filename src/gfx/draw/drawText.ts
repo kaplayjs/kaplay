@@ -3,7 +3,7 @@ import type { BitmapFontData } from "../../assets/bitmapFont";
 import type { FontData } from "../../assets/font";
 import type { Uniform } from "../../assets/shader";
 import type { Color } from "../../math/color";
-import type { Vec2 } from "../../math/math";
+import type { Vec2 } from "../../math/Vec2";
 import type { Anchor, RenderProps } from "../../types";
 import { formatText } from "../formatText";
 import { drawFormattedText } from "./drawFormattedText";
@@ -12,6 +12,7 @@ import { drawFormattedText } from "./drawFormattedText";
  * How the text should look like.
  *
  * @group Draw
+ * @subgroup Types
  */
 export type DrawTextOpt = RenderProps & {
     /**
@@ -78,13 +79,17 @@ export type DrawTextOpt = RenderProps & {
 
 /**
  * A function that returns a character transform config. Useful if you're generating dynamic styles.
+ *
+ * @group Rendering
+ * @subgroup Text
  */
 export type CharTransformFunc = (idx: number, ch: string) => CharTransform;
 
 /**
  * Describes how to transform each character.
  *
- * @group Options
+ * @group Rendering
+ * @subgroup Text
  */
 export interface CharTransform {
     /**
@@ -156,7 +161,8 @@ export interface CharTransform {
 /**
  * How the text should be aligned.
  *
- * @group Draw
+ * @group Rendering
+ * @subgroup Text
  */
 export type TextAlign =
     | "center"

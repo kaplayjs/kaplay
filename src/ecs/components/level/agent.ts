@@ -1,5 +1,5 @@
 import type { KEventController } from "../../../events/events";
-import type { Vec2 } from "../../../math/math";
+import type { Vec2 } from "../../../math/Vec2";
 import type { Comp, GameObj } from "../../../types";
 import type { PosComp } from "../transform/pos";
 import type { TileComp } from "./tile";
@@ -7,7 +7,8 @@ import type { TileComp } from "./tile";
 /**
  * The {@link agent `agent()`} component.
  *
- * @group Component Types
+ * @group Components
+ * @subgroup Component Types
  */
 export interface AgentComp extends Comp {
     agentSpeed: number;
@@ -29,7 +30,8 @@ export interface AgentComp extends Comp {
 /**
  * Options for the {@link agent `agent()`} component.
  *
- * @group Component Types
+ * @group Components
+ * @subgroup Component Types
  */
 export type AgentCompOpt = {
     speed?: number;

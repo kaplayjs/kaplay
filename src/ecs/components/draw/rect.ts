@@ -2,11 +2,24 @@ import { getRenderProps } from "../../../game/utils";
 import { drawRect } from "../../../gfx/draw/drawRect";
 import { Rect, vec2 } from "../../../math/math";
 import type { Comp, GameObj } from "../../../types";
+/**
+ * The serialized {@link rect `rect()`} component.
+ *
+ * @group Components
+ * @subgroup Component Serialization
+ */
+export interface SerializedRectComp {
+    width: number;
+    height: number;
+    radius?: number | [number, number, number, number];
+    fill?: boolean;
+}
 
 /**
  * The {@link rect `rect()`} component.
  *
- * @group Component Types
+ * @group Components
+ * @subgroup Component Types
  */
 export interface RectComp extends Comp {
     draw: Comp["draw"];
@@ -26,12 +39,15 @@ export interface RectComp extends Comp {
      * @since v3000.0
      */
     renderArea(): Rect;
+
+    serialize(): SerializedRectComp;
 }
 
 /**
  * Options for the {@link rect `rect()`} component.
  *
- * @group Component Types
+ * @group Components
+ * @subgroup Component Types
  */
 export interface RectCompOpt {
     /**
@@ -45,26 +61,60 @@ export interface RectCompOpt {
 }
 
 export function rect(w: number, h: number, opt: RectCompOpt = {}): RectComp {
+    let _shape: Rect | undefined;
+    let _width = w;
+    let _height = h;
     return {
         id: "rect",
-        width: w,
-        height: h,
+        get width() {
+            return _width;
+        },
+        set width(value) {
+            _width = value;
+            if (_shape) _shape.width = value;
+        },
+        get height() {
+            return _height;
+        },
+        set height(value) {
+            _height = value;
+            if (_shape) _shape.height = value;
+        },
         radius: opt.radius || 0,
         draw(this: GameObj<RectComp>) {
             drawRect(Object.assign(getRenderProps(this), {
-                width: this.width,
-                height: this.height,
+                width: _width,
+                height: _height,
                 radius: this.radius,
                 fill: opt.fill,
             }));
         },
         renderArea() {
-            return new Rect(vec2(0), this.width, this.height);
+            if (!_shape) {
+                _shape = new Rect(vec2(0), _width, _height);
+            }
+            return _shape;
         },
         inspect() {
-            return `rect: (${Math.ceil(this.width)}w, ${
-                Math.ceil(this.height)
-            }h)`;
+            return `rect: (${Math.ceil(_width)}w, ${Math.ceil(_height)}h)`;
+        },
+        serialize() {
+            const data: SerializedRectComp = { width: _width, height: _height };
+            if (this.radius) data.radius = this.radius;
+            if (opt.fill) data.fill = opt.fill;
+            return data;
         },
     };
+}
+
+export function rectFactory(data: SerializedRectComp) {
+    const opt: RectCompOpt = {};
+    if (data.radius) opt.radius = data.radius;
+    if (data.fill) opt.fill = data.fill;
+
+    return rect(
+        data.width,
+        data.height,
+        opt,
+    );
 }

@@ -2,55 +2,69 @@ import { KEvent, KEventController } from "../../../events/events";
 import type { Comp } from "../../../types";
 
 /**
+ * The serialized {@link state `state()`} component.
+ *
+ * @group Components
+ * @subgroup Component Serialization
+ */
+export interface SerializeStateComp {
+    initState: string;
+    stateList: string[];
+    transitions: Record<string, string | string[]>;
+}
+
+/**
  * The {@link state `state()`} component.
  *
- * @group Component Types
+ * @group Components
+ * @subgroup Component Types
  */
-export interface StateComp extends Comp {
+export interface StateComp<T extends string> extends Comp {
     /**
      * Current state.
      */
-    state: string;
+    state: T;
     /**
      * Enter a state, trigger onStateEnd for previous state and onStateEnter for the new State state.
      */
-    enterState: (state: string, ...args: any) => void;
+    enterState: (state: T, ...args: any) => void;
     /**
      * Register event that runs once when a specific state transition happens. Accepts arguments passed from `enterState(name, ...args)`.
      *
      * @since v2000.2
      */
     onStateTransition(
-        from: string,
-        to: string,
+        from: T,
+        to: T,
         action: () => void,
     ): KEventController;
     /**
      * Register event that runs once when enters a specific state. Accepts arguments passed from `enterState(name, ...args)`.
      */
     onStateEnter: (
-        state: string,
+        state: T,
         action: (...args: any) => void,
     ) => KEventController;
     /**
      * Register an event that runs once when leaves a specific state.
      */
-    onStateEnd: (state: string, action: () => void) => KEventController;
+    onStateEnd: (state: T, action: () => void) => KEventController;
     /**
      * Register an event that runs every frame when in a specific state.
      */
-    onStateUpdate: (state: string, action: () => void) => KEventController;
+    onStateUpdate: (state: T, action: () => void) => KEventController;
     /**
      * Register an event that runs every frame when in a specific state.
      */
-    onStateDraw: (state: string, action: () => void) => KEventController;
+    onStateDraw: (state: T, action: () => void) => KEventController;
+    serialize(): SerializeStateComp;
 }
 
-export function state(
-    initState: string,
-    stateList?: string[],
-    transitions?: Record<string, string | string[]>,
-): StateComp {
+export function state<T extends string>(
+    initState: T,
+    stateList?: T[],
+    transitions?: Record<T, T | T[]>,
+): StateComp<T> {
     if (!initState) {
         throw new Error("state() requires an initial state");
     }
@@ -84,7 +98,7 @@ export function state(
         id: "state",
         state: initState,
 
-        enterState(state: string, ...args) {
+        enterState(state, ...args) {
             didFirstEnter = true;
 
             if (stateList && !stateList.includes(state)) {
@@ -158,5 +172,17 @@ export function state(
         inspect() {
             return `state: ${this.state}`;
         },
+
+        serialize() {
+            const data: any = {};
+            data.initState = initState;
+            if (stateList) data.stateList = stateList.slice();
+            if (transitions) data.transitions = Object.assign({}, transitions);
+            return data;
+        },
     };
+}
+
+export function stateFactory(data: SerializeStateComp) {
+    return state(data.initState, data.stateList, data.transitions);
 }

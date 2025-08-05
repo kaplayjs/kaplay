@@ -1,6 +1,6 @@
-import { SPRITE_ATLAS_HEIGHT, SPRITE_ATLAS_WIDTH } from "../constants";
-import { _k } from "../kaplay";
+import { SPRITE_ATLAS_HEIGHT, SPRITE_ATLAS_WIDTH } from "../constants/general";
 import { Quad } from "../math/math";
+import { _k } from "../shared";
 import { type Asset, fetchJSON, load } from "./asset";
 import {
     type LoadSpriteOpt,
@@ -10,10 +10,17 @@ import {
 } from "./sprite";
 import { fixURL } from "./utils";
 
+/**
+ * @group Assets
+ * @subgroup Data
+ */
 export type SpriteAtlasData = Record<string, SpriteAtlasEntry>;
 
 /**
  * A sprite in a sprite atlas.
+ *
+ * @group Assets
+ * @subgroup Types
  */
 export type SpriteAtlasEntry = LoadSpriteOpt & {
     /**

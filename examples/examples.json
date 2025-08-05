@@ -1,0 +1,99 @@
+{
+  "categories": {
+    "basics": {
+      "displayName": "Basics",
+      "description": "Basic examples to get started with the library",
+      "order": 0
+    },
+    "concepts": {
+      "displayName": "Concepts",
+      "description": "Examples that showcase concepts of the library",
+      "order": 1
+    },
+    "games": {
+      "displayName": "Games",
+      "description": "Examples that showcase games made with the library",
+      "order": 2
+    }
+  },
+  "tags": {
+    "basics": {
+      "displayName": "Basics",
+      "description": "Learn the KAPLAY basics"
+    },
+    "gobj": {
+      "displayName": "Game Object",
+      "description": "Related to game objects"
+    },
+    "ai": {
+      "displayName": "AI",
+      "description": "Related to AI"
+    },
+    "comps": {
+      "displayName": "Components",
+      "description": "Related to a component or components"
+    },
+    "animation": {
+      "displayName": "Animation",
+      "description": "Related to animation"
+    },
+    "physics": {
+      "displayName": "Physics",
+      "description": "Related to physics"
+    },
+    "audio": {
+      "displayName": "Audio",
+      "description": "Related to audio"
+    },
+    "input": {
+      "displayName": "Input",
+      "description": "Related to input handling"
+    },
+    "draw": {
+      "displayName": "Draw",
+      "description": "Related to drawing api"
+    },
+    "visual": {
+      "displayName": "Visual",
+      "description": "Related to rendering"
+    },
+    "ui": {
+      "displayName": "UI",
+      "description": "Related to user interface"
+    },
+    "game": {
+      "displayName": "Game",
+      "description": "Examples that may work as a game"
+    },
+    "effects": {
+      "displayName": "Effects",
+      "description": "Related to visual effects"
+    },
+    "math": {
+      "displayName": "Math",
+      "description": "Just for nerds"
+    },
+    "debug": {
+      "displayName": "Debug",
+      "description": "Related to debugging"
+    },
+    "tween": {
+      "displayName": "Tween",
+      "description": "Related to tweening"
+    }
+  },
+  "difficulties": [
+    {
+      "displayName": "Easy"
+    },
+    {
+      "displayName": "Medium"
+    },
+    {
+      "displayName": "Hard"
+    },
+    {
+      "displayName": "Auto"
+    }
+  ]
+}

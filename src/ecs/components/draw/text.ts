@@ -1,5 +1,5 @@
 import type { BitmapFontData } from "../../../assets/bitmapFont";
-import { DEF_TEXT_SIZE } from "../../../constants";
+import { DEF_TEXT_SIZE } from "../../../constants/general";
 import { onLoad } from "../../../events/globalEvents";
 import { getRenderProps } from "../../../game/utils";
 import {
@@ -16,9 +16,27 @@ import { Rect, vec2 } from "../../../math/math";
 import type { Comp, GameObj } from "../../../types";
 
 /**
+ * The serialized {@link text `text()`} component.
+ *
+ * @group Components
+ * @subgroup Component Serialization
+ */
+export interface SerializedTextComp {
+    text: string;
+    size?: number;
+    font?: string;
+    width?: number;
+    align?: TextAlign;
+    lineSpacing?: number;
+    letterSpacing?: number;
+    indentAll?: boolean;
+}
+
+/**
  * The {@link text `text()`} component.
  *
- * @group Component Types
+ * @group Components
+ * @subgroup Component Types
  */
 export interface TextComp extends Comp {
     draw: Comp["draw"];
@@ -81,12 +99,15 @@ export interface TextComp extends Comp {
      * renering info as well as the parse data of the formatting tags.
      */
     formattedText(): FormattedText;
+
+    serialize(): SerializedTextComp;
 }
 
 /**
  * Options for the {@link text `text()`} component.
  *
- * @group Component Types
+ * @group Components
+ * @subgroup Component Types
  */
 export interface TextCompOpt {
     /**
@@ -161,6 +182,10 @@ export function text(t: string, opt: TextCompOpt = {}): TextComp {
         obj.height = theFormattedText.height / (obj.scale?.y || 1);
     }
 
+    let _shape: Rect | undefined;
+    let _width = opt.width ?? 0;
+    let _height = 0;
+
     const obj = {
         id: "text",
         set text(nt) {
@@ -173,8 +198,20 @@ export function text(t: string, opt: TextCompOpt = {}): TextComp {
         },
         textSize: opt.size ?? DEF_TEXT_SIZE,
         font: opt.font,
-        width: opt.width ?? 0,
-        height: 0,
+        get width() {
+            return _width;
+        },
+        set width(value) {
+            _width = value;
+            if (_shape) _shape.width = value;
+        },
+        get height() {
+            return _height;
+        },
+        set height(value) {
+            _height = value;
+            if (_shape) _shape.height = value;
+        },
         align: opt.align,
         lineSpacing: opt.lineSpacing,
         letterSpacing: opt.letterSpacing,
@@ -198,7 +235,10 @@ export function text(t: string, opt: TextCompOpt = {}): TextComp {
         },
 
         renderArea() {
-            return new Rect(vec2(0), this.width, this.height);
+            if (!_shape) {
+                _shape = new Rect(vec2(0), _width, _height);
+            }
+            return _shape;
         },
     };
 
@@ -207,4 +247,16 @@ export function text(t: string, opt: TextCompOpt = {}): TextComp {
 
     // @ts-ignore Deep check in text related methods
     return obj;
+}
+
+export function textFactory(data: SerializedTextComp) {
+    return text(data.text, {
+        align: data.align,
+        font: data.font,
+        width: data.width,
+        size: data.size,
+        indentAll: data.indentAll,
+        letterSpacing: data.letterSpacing,
+        lineSpacing: data.letterSpacing,
+    });
 }

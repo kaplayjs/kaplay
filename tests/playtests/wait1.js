@@ -1,3 +1,11 @@
+/**
+ * @file Wait
+ * @description Test the behaviour of wait().
+ * @difficulty 3
+ * @tags basics
+ * @minver 3001.0
+ */
+
 kaplay();
 
 const txt = add([

@@ -4,11 +4,13 @@ import {
     FRAG_TEMPLATE,
     VERT_TEMPLATE,
     VERTEX_FORMAT,
-} from "../constants";
+} from "../constants/general";
 import type { GfxCtx } from "../gfx/gfx";
-import { _k } from "../kaplay";
 import { Color } from "../math/color";
-import { Mat23, Mat4, Vec2 } from "../math/math";
+import { Mat4 } from "../math/Mat4";
+import { Mat23 } from "../math/math";
+import { Vec2 } from "../math/Vec2";
+import { _k } from "../shared";
 import type { RenderProps } from "../types";
 import { arrayIsColor, arrayIsNumber, arrayIsVec2 } from "../utils/asserts";
 import { getErrorMessage } from "../utils/log";
@@ -16,10 +18,17 @@ import { fetchText, loadProgress } from "./asset";
 import { Asset } from "./asset";
 import { fixURL } from "./utils";
 
+/**
+ * @group Assets
+ * @subgroup Data
+ */
 export type ShaderData = Shader;
 
 /**
- * @group Math
+ * Possible values for a shader Uniform.
+ *
+ * @group Rendering
+ * @subgroup Shaders
  */
 export type UniformValue =
     | number
@@ -32,16 +41,24 @@ export type UniformValue =
     | Color[];
 
 /**
- * @group Math
+ * Possible uniform value, basically any but "u_tex".
+ *
+ * @group Rendering
+ * @subgroup Shaders
  */
-export type UniformKey = Exclude<string, "u_tex">;
+export type UniformKey = string;
+
 /**
- * @group Math
+ * @group Rendering
+ * @subgroup Shaders
  */
 export type Uniform = Record<UniformKey, UniformValue>;
 
 /**
- * @group GFX
+ * A shader, yeah.
+ *
+ * @group Rendering
+ * @subgroup Shaders
  */
 export class Shader {
     ctx: GfxCtx;
@@ -138,8 +155,6 @@ export class Shader {
                 gl.uniform2f(loc, val.x, val.y);
             }
             else if (Array.isArray(val)) {
-                const first = val[0];
-
                 if (arrayIsNumber(val)) {
                     gl.uniform1fv(loc, val as number[]);
                 }
@@ -177,14 +192,15 @@ export function makeShader(
             VERTEX_FORMAT.map((vert) => vert.name),
         );
     } catch (e) {
-        const lineOffset = 14;
         const fmt = /(?<type>^\w+) SHADER ERROR: 0:(?<line>\d+): (?<msg>.+)/;
         const match = getErrorMessage(e).match(fmt);
         if (!match?.groups) throw e;
-        const line = Number(match.groups.line) - lineOffset;
+        const line = Number(match.groups.line);
         const msg = match.groups.msg.trim();
         const ty = match.groups.type.toLowerCase();
-        throw new Error(`${ty} shader line ${line}: ${msg}`);
+        const lines = (ty == "vertex" ? vcode : fcode).split("\n");
+        const lineContents = lines[line - 1];
+        throw new Error(`${ty} shader line ${line}: ${msg}\n${lineContents}`);
     }
 }
 

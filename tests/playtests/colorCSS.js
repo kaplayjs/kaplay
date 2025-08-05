@@ -1,3 +1,12 @@
+/**
+ * @file CSS Colors
+ * @description Use CSS-defined colors colors in KAPLAY.
+ * @difficulty 3
+ * @tags basics
+ * @minver 3001.0
+ * @test
+ */
+
 kaplay();
 loadHappy();
 

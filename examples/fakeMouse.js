@@ -1,8 +1,11 @@
-// @ts-check
-// Only works with v4000
-
-// A fake mouse that can be controlled with the keyboard, controller or
-// any other input
+/**
+ * @file Fake Mouse
+ * @description How to create a fake mouse in-game
+ * @difficulty 0
+ * @tags ui, input
+ * @minver 4000.0
+ * @category concepts
+ */
 
 kaplay({
     background: "4a3052",
@@ -12,7 +15,7 @@ loadBean();
 loadSprite("door", "/sprites/door.png");
 loadSprite("cursor", "/sprites/cursor_default.png");
 loadSprite("grab", "/sprites/grab.png");
-loadSound("knock", "/examples/sounds/knock.ogg");
+loadSound("knock", "/sounds/knock.ogg");
 
 const MOUSE_VEL = 200;
 const MAX_KNOCKS = 10;

@@ -1,5 +1,5 @@
-import { _k } from "../../../kaplay";
 import { map } from "../../../math/math";
+import { _k } from "../../../shared";
 import type { Comp, GameObj } from "../../../types";
 import type { OpacityComp } from "./opacity";
 
@@ -16,7 +16,7 @@ export function fadeIn(time: number = 1): Comp {
         },
         update(this: GameObj<OpacityComp>) {
             if (done) return;
-            t += _k.k.dt();
+            t += _k.app.dt();
             this.opacity = map(t, 0, time, 0, finalOpacity);
 
             if (t >= time) {

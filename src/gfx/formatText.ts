@@ -6,10 +6,11 @@ import {
     DEF_TEXT_CACHE_SIZE,
     FONT_ATLAS_HEIGHT,
     FONT_ATLAS_WIDTH,
-} from "../constants";
-import { _k } from "../kaplay";
+} from "../constants/general";
 import { Color } from "../math/color";
-import { Quad, Vec2, vec2 } from "../math/math";
+import { Quad, vec2 } from "../math/math";
+import { Vec2 } from "../math/Vec2";
+import { _k } from "../shared";
 import type { Outline, TexFilter } from "../types";
 import { runes } from "../utils/runes";
 import { alignPt } from "./anchor";
@@ -17,19 +18,25 @@ import type { FormattedChar, FormattedText } from "./draw/drawFormattedText";
 import type { CharTransform, DrawTextOpt } from "./draw/drawText";
 import { Texture } from "./gfx";
 
-type FontAtlas = {
+/**
+ * @group Rendering
+ * @subgroup Text
+ */
+export type FontAtlas = {
     font: BitmapFontData;
     cursor: Vec2;
     maxHeight: number;
     outline: Outline | null;
 };
 
+/**
+ * @group Rendering
+ * @subgroup Text
+ */
 export type StyledTextInfo = {
     charStyleMap: Record<number, string[]>;
     text: string;
 };
-
-const fontAtlases: Record<string, FontAtlas> = {};
 
 function applyCharTransform(fchar: FormattedChar, tr: CharTransform) {
     if (tr.font) fchar.font = tr.font;
@@ -125,12 +132,10 @@ function getFontName(font: FontData | string): string {
 }
 
 function getFontAtlasForFont(font: FontData | string): FontAtlas {
-    let atlas = fontAtlases[getFontName(font)];
+    const fontName = getFontName(font);
+    let atlas = _k.gfx.fontAtlases[fontName];
     if (!atlas) {
         // create a new atlas
-        const fontName = font instanceof FontData
-            ? font.fontface.family
-            : font;
         const opts: {
             outline: Outline | null;
             filter: TexFilter;
@@ -163,7 +168,7 @@ function getFontAtlasForFont(font: FontData | string): FontAtlas {
             outline: opts.outline,
         };
 
-        fontAtlases[fontName] = atlas;
+        _k.gfx.fontAtlases[fontName] = atlas;
     }
     return atlas;
 }
@@ -373,10 +378,20 @@ export function formatText(opt: DrawTextOpt): FormattedText {
             }
             var requestedFontData = defGfxFont;
             if (requestedFont && requestedFont !== defaultFontValue) {
-                requestedFontData = getFontAtlasForFont(requestedFont).font;
+                if (
+                    resolvedFont instanceof FontData
+                    || typeof resolvedFont === "string"
+                ) {
+                    requestedFontData = getFontAtlasForFont(requestedFont).font;
+                }
+                else requestedFontData = resolvedFont;
                 theFChar.tex = requestedFontData.tex;
             }
-            if (requestedFont) updateFontAtlas(requestedFont, ch);
+            if (
+                requestedFont
+                && (resolvedFont instanceof FontData
+                    || typeof resolvedFont === "string")
+            ) updateFontAtlas(requestedFont, ch);
 
             let q = requestedFontData.map[ch];
 

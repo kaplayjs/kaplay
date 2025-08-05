@@ -1,6 +1,6 @@
 import type { Shader, Uniform } from "../assets/shader";
+import { IDENTITY_MATRIX } from "../constants/math";
 import { getCamTransform } from "../game/camera";
-import { Mat4 } from "../math/math";
 import {
     BlendMode,
     type ImageSource,
@@ -12,6 +12,10 @@ import type { Picture } from "./draw/drawPicture";
 
 export type GfxCtx = ReturnType<typeof initGfx>;
 
+/**
+ * @group Rendering
+ * @subgroup Canvas
+ */
 export class Texture {
     ctx: GfxCtx;
     src: null | ImageSource = null;
@@ -26,7 +30,7 @@ export class Texture {
         const glText = ctx.gl.createTexture();
 
         if (!glText) {
-            throw new Error("Failed to create texture");
+            throw new Error("[rendering] Failed to create texture");
         }
 
         this.glTex = glText;
@@ -109,13 +113,19 @@ export class Texture {
     }
 }
 
+/**
+ * @group Rendering
+ * @subgroup Shaders
+ */
 export type VertexFormat = {
     name: string;
     size: number;
 }[];
 
-const identityMatrix = new Mat4();
-
+/**
+ * @group Rendering
+ * @subgroup Canvas
+ */
 export class BatchRenderer {
     ctx: GfxCtx;
 
@@ -297,8 +307,8 @@ export class BatchRenderer {
         this.curShader.send({
             width,
             height,
-            camera: this.curFixed ? identityMatrix : getCamTransform(),
-            transform: identityMatrix,
+            camera: this.curFixed ? IDENTITY_MATRIX : getCamTransform(),
+            transform: IDENTITY_MATRIX,
         });
 
         // Bind texture
@@ -383,6 +393,10 @@ export class BatchRenderer {
     }
 }
 
+/**
+ * @group Rendering
+ * @subgroup Shaders
+ */
 export class Mesh {
     ctx: GfxCtx;
     glVBuf: WebGLBuffer;

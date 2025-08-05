@@ -1,5 +1,5 @@
 import type { KEventController } from "../../../events/events";
-import type { Vec2 } from "../../../math/math";
+import type { Vec2 } from "../../../math/Vec2";
 import type { Comp, GameObj } from "../../../types";
 import type { PosComp } from "../transform/pos";
 
@@ -18,7 +18,7 @@ export interface PatrolComp extends Comp {
     nextLocation: Vec2 | undefined;
     /**
      * Attaches an event handler which is called when using "stop" and the end of the path is reached.
-     * @param cb The event handler called when the patrol finishes.
+     * @param cb - The event handler called when the patrol finishes.
      */
     onPatrolFinished(cb: (objects: GameObj[]) => void): KEventController;
 }
@@ -91,10 +91,12 @@ export function patrol(
                         }
                         break;
                     case "stop":
-                        index = Math.min(index + 1, waypoints.length - 1);
-                        if (index == waypoints.length - 1) {
+                        if (index < waypoints.length - 1) {
+                            index += 1;
+                        }
+                        else if (!finished) {
                             finished = true;
-                            this.trigger("patrolFinished");
+                            this.trigger("patrolFinished", this);
                         }
                         break;
                 }
