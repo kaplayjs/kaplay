@@ -635,7 +635,7 @@ export function area(opt: AreaCompOpt = {}): AreaComp {
             if (opt.cursor) data.cursor = opt.cursor;
             // Make a copy, since it might be changed later
             if (this.collisionIgnore) {
-                data.collisionIgnore = this.collisionIgnore.slice();
+                data.collisionIgnore = [...this.collisionIgnore];
             }
             if (this.restitution) data.restitution = this.restitution;
             if (this.friction) data.friction = this.friction;
