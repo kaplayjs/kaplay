@@ -8,6 +8,17 @@ The format is (mostly) based on
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project
 adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+<!--
+Hey, KAPLAY Dev, you must changelog here, in unreleased, so later your
+best friend, lajbel, can put the correct version name here
+-->
+
+## [unreleased]
+
+## [unreleased] (v3001)
+
+---
+
 ## [4000.0.0-alpha.21] - 2025-08-5
 
 ### Added
