@@ -5,6 +5,7 @@ import { Texture } from "../../../gfx/gfx";
 import { Rect, vec2 } from "../../../math/math";
 import { _k } from "../../../shared";
 import type { Comp, GameObj } from "../../../types";
+import type { AreaComp } from "../physics/area";
 import type { PosComp } from "../transform/pos";
 
 export interface VideoComp extends Comp {
@@ -41,6 +42,9 @@ export function video(url: string, opt: VideoCompOpt): VideoComp {
         set width(value) {
             _width = value;
             if (_shape) _shape.width = value;
+            if ((this as any as GameObj).has?.("area")) {
+                (this as any as GameObj<AreaComp>)._worldAreaDirty = true;
+            }
         },
         get height() {
             return _height;
@@ -48,6 +52,9 @@ export function video(url: string, opt: VideoCompOpt): VideoComp {
         set height(value) {
             _height = value;
             if (_shape) _shape.height = value;
+            if ((this as any as GameObj).has?.("area")) {
+                (this as any as GameObj<AreaComp>)._worldAreaDirty = true;
+            }
         },
         get currentTime() {
             return _video.currentTime;
