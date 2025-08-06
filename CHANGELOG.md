@@ -172,7 +172,7 @@ best friend, lajbel, can put the correct version name here
 ### Changed
 
 - **BREAKING**: Changed default behavior to
-  `kaplay({ tagComponentIds: false })`. Also the flag has been renamed!
+  `kaplay({ tagsAsComponents: false })`.
 - The physics engine creates less garbage - @mflerackers
 - Tag-based events are slightly faster - @dragoncoder047
 - Moved camera to the shader - @mflerackers
