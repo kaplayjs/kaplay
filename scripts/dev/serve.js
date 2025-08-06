@@ -3,6 +3,7 @@
 import { assets } from "@kaplayjs/crew";
 import express from "express";
 import fs from "fs/promises";
+import os from "os";
 import path from "path";
 
 export function serve(opt = {}) {
@@ -93,7 +94,18 @@ export function serve(opt = {}) {
         });
     });
 
-    return app.listen(port, () => {
-        console.log(`server started at http://localhost:${port}`);
+    return app.listen(port, "0.0.0.0", () => {
+        // Detect local IP for LAN access
+        const nets = os.networkInterfaces();
+        const localIP = Object.values(nets)
+            .flat()
+            .find(iface => iface?.family === "IPv4" && !iface.internal)
+            ?.address;
+
+        console.log(`
+Server running:
+  Local:   http://localhost:${port}
+  Network: http://${localIP}:${port}
+  `);
     });
 }
