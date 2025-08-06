@@ -84,8 +84,8 @@ function installGestureDetector() {
                             touches.set(touch.identifier, pos.clone());
                             p = [...touches.values()];
                             const newDistance = p[0].dist(p[1]);
-                            //events.trigger(`swipe_${touches.size}`, scaleCenter, newDistance / oldDistance);
                             debug.log("pinch", scaleCenter, newDistance / oldDistance);
+                            events.trigger(`pinch_${touches.size}`, scaleCenter, newDistance / oldDistance);
                             return;
                         }
                         break;
@@ -97,8 +97,8 @@ function installGestureDetector() {
                             touches.set(touch.identifier, pos.clone());
                             p = [...touches.values()];
                             const newVector = p[0].sub(p[1]);
-                            //events.trigger(`rotate_${touches.size}`, Vec2.angleBetween(oldVector, newVector));
                             debug.log("rotate", Vec2.angleBetween(oldVector, newVector));
+                            events.trigger(`rotate_${touches.size}`, Vec2.angleBetween(oldVector, newVector));
                             return;
                         }
                         break;
