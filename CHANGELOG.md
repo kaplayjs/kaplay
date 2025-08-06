@@ -8,7 +8,61 @@ The format is (mostly) based on
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project
 adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [4000.0.0] - TBD
+<!--
+Hey, KAPLAY Dev, you must changelog here, in unreleased, so later your
+best friend, lajbel, can put the correct version name here
+-->
+
+## [unreleased]
+
+## [unreleased] (v3001)
+
+---
+
+## [4000.0.0-alpha.21] - 2025-08-5
+
+### Added
+
+- Added Prefabs - @mflerackers, @lajbel, @amyspark-ng and other contributors.
+- Added new scene methods `pushScene()` and `popScene()`, for stack behaviour in
+  scenes - @itzKiwiSky
+- Added `throwError()` for throwing custom errors to the blue screen, even
+  errors KAPLAY can't handle. - @lajbel
+- Added `insertionSort()` - @dragoncoder047
+
+### Changed
+
+- Renamed `KAPLAYOpt.tagsAsComponents` to `KAPLAYOpt.tagComponentIds` - @lajbel
+- Now moving mouse changes the value of `getLastInputDevice()` - @amyspark-ng
+- Now `GameObjRaw.exists()` work for nested objects
+
+### Fixed
+
+- Fixed shader error messages - @dragoncoder047
+-
+
+## [4000.0.0-alpha.20] - 2025-06-15
+
+### Added
+
+- Now you can use the frames of a sprite in an atlas also as a font -
+  @dragoncoder047
+- Improved various doc entries. - All Contributors.
+
+### Fixed
+
+- Fixed `AreaComp#onClick()` attaching events to app, instead of object, so
+  event wasn't being paused with `obj.paused` - @lajbel
+- Fixed all touch events having a bad transform - @lajbel
+- Fixed sprite scaling not working properly when letterbox - @mflerackers
+- Fixed "add" event running twice in `addLevel()` tiles - @lajbel
+- Fixed blend component having a wrong ID - @lajbel
+
+### Removed
+
+- `loadPedit` was removed - @lajbel
+
+## [4000.0.0-alpha.0 to 4000.0.0-alpha.19]
 
 ### Added
 
@@ -45,9 +99,6 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - drawCanvas - @mflerackers
 - Added `video()` component to embed a video file into the game - @mflerackers
 - Added `level()` component and parent argument to `addLevel()` - @KeSuave
-- Now there is a global option `sapDirection` so you can change the direction of
-  the physics engine's sweep-and-pruner, to optimize for the shape of your game
-  (mostly horizontal or mostly vertical) - @dragoncoder047, @mflerackers
 - Allow the `text()` component to change the font and apply shaders
   per-character - @dragoncoder047
 - Allow characters in text to be scaled and have the text flow around it with
@@ -131,35 +182,6 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   setting it to true (focused) will clear focus from all the other text inputs -
   @dragoncoder047
 - Changed the API of `HealthComp` - @amyspark-ng
-
-## [4000.0.0-alpha.21] - TBD
-
-### Added
-
-- Added `throwError()` for throwing custom errors to the blue screen, even
-  errors KAPLAY can't handle. - @lajbel
-- Added Prefabs - @mflerackers, @lajbel, @amyspark-ng and other contributors.
-
-## [4000.0.0-alpha.20] - 2025-06-15
-
-### Added
-
-- Now you can use the frames of a sprite in an atlas also as a font -
-  @dragoncoder047
-- Improved various doc entries. - All Contributors.
-
-### Fixed
-
-- Fixed `AreaComp#onClick()` attaching events to app, instead of object, so
-  event wasn't being paused with `obj.paused` - @lajbel
-- Fixed all touch events having a bad transform - @lajbel
-- Fixed sprite scaling not working properly when letterbox - @mflerackers
-- Fixed "add" event running twice in `addLevel()` tiles - @lajbel
-- Fixed blend component having a wrong ID - @lajbel
-
-### Removed
-
-- `loadPedit` was removed - @lajbel
 
 ## [3001.0.19] - 2025-06-15
 

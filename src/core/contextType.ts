@@ -5351,6 +5351,19 @@ export interface KAPLAYCtx<
      */
     RNG: typeof RNG;
     /**
+     * Sorts the array in-place using {@link https://en.wikipedia.org/wiki/Insertion_sort insertion sort}.
+     * This is useful when you have a persistent (not per-frame) array of objects and they change
+     * on each frame but not by much, but the list must remain sorted. (For example, the list could
+     * be returned by {@link get `get`} with the `liveUpdate` option enabled, and then stored somewhere.)
+     *
+     * @param compare - returns true if `[left, right]` is the correct order, false if `[right, left]` is the correct order.
+     *
+     * @since v4000.0
+     * @group Math
+     * @subgroup Advanced
+     */
+    insertionSort<T>(array: T[], compare: (left: T, right: T) => boolean): void;
+    /**
      * Define a scene.
      *
      * @param name - The scene name.
