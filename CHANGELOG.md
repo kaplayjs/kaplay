@@ -15,6 +15,11 @@ best friend, lajbel, can put the correct version name here
 
 ## [unreleased]
 
+### Added
+
+- Added a mapping for PS5 (DualSense) gamepads, so now you can bind actions to
+  the touchpad press (only works in Chrome for some reason) - @dragoncoder047
+
 ## [unreleased] (v3001)
 
 ---
@@ -167,7 +172,7 @@ best friend, lajbel, can put the correct version name here
 ### Changed
 
 - **BREAKING**: Changed default behavior to
-  `kaplay({ tagsAsComponents: false })`.
+  `kaplay({ tagComponentIds: false })`. Also the flag has been renamed!
 - The physics engine creates less garbage - @mflerackers
 - Tag-based events are slightly faster - @dragoncoder047
 - Moved camera to the shader - @mflerackers
