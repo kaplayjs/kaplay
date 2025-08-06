@@ -1606,6 +1606,12 @@ export interface KAPLAYCtx<
      * @subgroup Behaviour
      */
     fakeMouse(opt?: FakeMouseOpt): FakeMouseComp;
+    gestures: {
+        onTap(fingers: number, cb: (point: Vec2) => void): void;
+        onSwipe(fingers: number, cb: (delta: Vec2) => void): void;
+        onPinch(cb: (center: Vec2, scale: Vec2) => void): void;
+        onRotate(cb: (center: Vec2, angle: number) => void): void;
+    }
     /**
      * Serializes the animation to plain objects
      *

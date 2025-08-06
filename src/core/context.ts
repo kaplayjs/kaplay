@@ -1,4 +1,5 @@
 import { getData, setData } from "../app/data";
+import { gestures } from "../app/gestures";
 import { loadAseprite } from "../assets/aseprite";
 import {
     Asset,
@@ -425,6 +426,7 @@ export const createContext = (
         pathfinder,
         level,
         fakeMouse,
+        gestures,
         // group events
         trigger,
         on: on as KAPLAYCtx["on"], // our internal on should be strict, user shouldn't
