@@ -15,6 +15,10 @@ best friend, lajbel, can put the correct version name here
 
 ## [unreleased]
 
+- `loadShader()` now also checks for link errors as well as compile errors and
+  reports them rather than just silently trying to use a borked shader -
+  @dragoncoder047
+
 ## [unreleased] (v3001)
 
 ---
@@ -159,9 +163,6 @@ best friend, lajbel, can put the correct version name here
 - PatrolComp is not going to last waypoint
   ([#734](https://github.com/kaplayjs/kaplay/issues/734)) - @nojaf
 - Fixed non-focused textInput component backspace - @KeSuave
-- `loadShader()` now also checks for link errors as well as compile errors and
-  reports them rather than just silently trying to use a borked shader -
-  @dragoncoder047
 
 ### Removed
 
