@@ -165,7 +165,8 @@ export type KGamepadButton =
     | "dpad-down"
     | "dpad-left"
     | "home"
-    | "capture";
+    | "capture"
+    | "touchpad";
 
 /**
  * A gamepad stick.

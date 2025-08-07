@@ -15,6 +15,11 @@ best friend, lajbel, can put the correct version name here
 
 ## [unreleased]
 
+### Added
+
+- Added a mapping for PS5 (DualSense) gamepads, so now you can bind actions to
+  the touchpad press (only works in Chrome for some reason) - @dragoncoder047
+
 ## [unreleased] (v3001)
 
 ---
