@@ -15,6 +15,10 @@ best friend, lajbel, can put the correct version name here
 
 ## [unreleased]
 
+- `loadShader()` now also checks for link errors as well as compile errors and
+  reports them rather than just silently trying to use a borked shader -
+  @dragoncoder047
+
 ## [unreleased] (v3001)
 
 ---

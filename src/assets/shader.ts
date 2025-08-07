@@ -100,6 +100,9 @@ export class Shader {
             if (vertError) throw new Error("VERTEX SHADER " + vertError);
             const fragError = gl.getShaderInfoLog(fragShader!);
             if (fragError) throw new Error("FRAGMENT SHADER " + fragError);
+            const linkError = gl.getProgramInfoLog(prog!);
+            if (linkError) throw new Error("LINK ERROR: " + linkError);
+            throw new Error("Unknown shader error (gl.LINK_STATUS was false)");
         }
 
         gl.deleteShader(vertShader);
