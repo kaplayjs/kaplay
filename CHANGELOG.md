@@ -19,7 +19,7 @@ best friend, lajbel, can put the correct version name here
 
 ---
 
-## [4000.0.0-alpha.21] - 2025-08-5
+## [4000.0.0-alpha.21] - 2025-08-07
 
 ### Added
 
@@ -39,7 +39,6 @@ best friend, lajbel, can put the correct version name here
 ### Fixed
 
 - Fixed shader error messages - @dragoncoder047
--
 
 ## [4000.0.0-alpha.20] - 2025-06-15
 
