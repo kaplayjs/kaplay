@@ -6119,13 +6119,21 @@ export interface KAPLAYCtx<
      */
     SystemPhase: typeof SystemPhase;
     /**
-     * Take a screenshot and get the data url of the image.
+     * Take a screenshot and get the PNG data url of the image.
      *
-     * @returns The dataURL of the image.
+     * @returns The dataURL of the PNG image.
      * @since v2000.0
      * @group Debug
      */
     screenshot(): string;
+    /**
+     * Take a screenshot and get the PNG data as a blob.
+     *
+     * @returns The blob of the image.
+     * @since v4000.0
+     * @group Debug
+     */
+    screenshotBlob(): Promise<Blob>;
     /**
      * Trigger a file download from a url.
      *

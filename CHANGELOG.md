@@ -15,6 +15,8 @@ best friend, lajbel, can put the correct version name here
 
 ## [unreleased]
 
+- Added `screenshotBlob()` to get a screenshot as a `Blob` - @dragoncoder047
+
 ## [unreleased] (v3001)
 
 ---

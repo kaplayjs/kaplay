@@ -194,6 +194,14 @@ export const initApp = (
         return state.canvas.toDataURL();
     }
 
+    function screenshotBlob(): Promise<Blob> {
+        const p = Promise.withResolvers<Blob>();
+        state.canvas.toBlob(b =>
+            b !== null ? p.resolve(b) : p.reject("failed to make blob")
+        );
+        return p.promise;
+    }
+
     function setCursor(c: Cursor): void {
         state.canvas.style.cursor = c;
     }
@@ -1282,6 +1290,7 @@ export const initApp = (
         isFullscreen,
         setCursor,
         screenshot,
+        screenshotBlob,
         getGamepads,
         getCursor,
         setCursorLocked,
