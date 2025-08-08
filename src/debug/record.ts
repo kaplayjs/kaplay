@@ -1,3 +1,5 @@
+import { SoundData } from "../assets/sound";
+import { play } from "../audio/play";
 import { _k } from "../shared";
 import { downloadBlob } from "../utils/dataURL";
 
@@ -33,11 +35,10 @@ export const record = (frameRate?: number): Recording => {
 
     _k.audio.masterNode.connect(audioDest);
 
-    // TODO: Enabling audio results in empty video if no audio received
-    // const audioStream = audioDest.stream
-    // const [firstAudioTrack] = audioStream.getAudioTracks()
+    const audioStream = audioDest.stream;
+    const [firstAudioTrack] = audioStream.getAudioTracks();
 
-    // stream.addTrack(firstAudioTrack);
+    stream.addTrack(firstAudioTrack);
 
     const recorder = new MediaRecorder(stream);
     const chunks: any[] = [];
