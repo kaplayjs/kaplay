@@ -86,8 +86,6 @@ export const record = (frameRate?: number, mimeTypes?: string[]): Recording => {
     }
 
     const audioDest = _k.audio.ctx.createMediaStreamDestination();
-    // dummy to make audio work
-    play(dummy);
 
     _k.audio.masterNode.connect(audioDest);
 
@@ -100,6 +98,10 @@ export const record = (frameRate?: number, mimeTypes?: string[]): Recording => {
         new MediaStream([firstAudioTrack, firstCanvasTrack]),
         options,
     );
+
+    // dummy to make audio work
+    play(dummy);
+
     const chunks: any[] = [];
 
     const defaultExt = /\/(.+?)(;|$)/.exec(recorder.mimeType)![1]!;
