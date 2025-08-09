@@ -195,11 +195,12 @@ export const initApp = (
     }
 
     function screenshotBlob(): Promise<Blob> {
-        const p = Promise.withResolvers<Blob>();
-        state.canvas.toBlob(b =>
-            b !== null ? p.resolve(b) : p.reject("failed to make blob")
-        );
-        return p.promise;
+        return new Promise<Blob>((resolve, reject) => {
+            state.canvas.toBlob(b => {
+                if (b !== null) resolve(b);
+                else reject(new Error("failed to make blob"));
+            });
+        });
     }
 
     function setCursor(c: Cursor): void {
