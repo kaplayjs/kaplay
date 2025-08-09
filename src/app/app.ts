@@ -451,8 +451,8 @@ export const initApp = (
         state.events.trigger("buttonRelease", btn);
     }
 
-    function onResize(action: () => void): KEventController {
-        return state.events.on("resize", action);
+    function onTabResize(action: () => void): KEventController {
+        return state.events.on("tabResize", action);
     }
 
     // input callbacks
@@ -553,12 +553,12 @@ export const initApp = (
         return state.events.on("scroll", action);
     }
 
-    function onHide(action: () => void): KEventController {
-        return state.events.on("hide", action);
+    function onTabHide(action: () => void): KEventController {
+        return state.events.on("tabHide", action);
     }
 
-    function onShow(action: () => void): KEventController {
-        return state.events.on("show", action);
+    function onTabShow(action: () => void): KEventController {
+        return state.events.on("tabShow", action);
     }
 
     const onGamepadButtonPress = overload2(
@@ -1204,11 +1204,11 @@ export const initApp = (
             // prevent a surge of dt when switch back after the tab being hidden for a while
             state.skipTime = true;
             state.isHidden = false;
-            state.events.trigger("show");
+            state.events.trigger("tabShow");
         }
         else {
             state.isHidden = true;
-            state.events.trigger("hide");
+            state.events.trigger("tabHide");
         }
     };
 
@@ -1259,7 +1259,7 @@ export const initApp = (
             state.lastWidth = state.canvas.offsetWidth;
             state.lastHeight = state.canvas.offsetHeight;
             state.events.onOnce("input", () => {
-                state.events.trigger("resize");
+                state.events.trigger("tabResize");
             });
         }
     });
@@ -1310,7 +1310,7 @@ export const initApp = (
         pressButton,
         releaseButton,
         charInputted,
-        onResize,
+        onTabResize,
         onKeyDown,
         onKeyPress,
         onKeyPressRepeat,
@@ -1324,8 +1324,8 @@ export const initApp = (
         onTouchMove,
         onTouchEnd,
         onScroll,
-        onHide,
-        onShow,
+        onTabHide,
+        onTabShow,
         onGamepadButtonDown,
         onGamepadButtonPress,
         onGamepadButtonRelease,
