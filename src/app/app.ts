@@ -194,7 +194,7 @@ export const initApp = (
         return state.canvas.toDataURL();
     }
 
-    function screenshotBlob(): Promise<Blob> {
+    function screenshotToBlob(): Promise<Blob> {
         return new Promise<Blob>((resolve, reject) => {
             state.canvas.toBlob(b => {
                 if (b !== null) resolve(b);
@@ -1291,7 +1291,7 @@ export const initApp = (
         isFullscreen,
         setCursor,
         screenshot,
-        screenshotBlob,
+        screenshotToBlob,
         getGamepads,
         getCursor,
         setCursorLocked,

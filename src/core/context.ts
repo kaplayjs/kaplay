@@ -319,7 +319,7 @@ export const createContext = (
         restDt: app.restDt,
         time: app.time,
         screenshot: app.screenshot,
-        screenshotBlob: app.screenshotBlob,
+        screenshotToBlob: app.screenshotToBlob,
         record,
         isFocused: app.isFocused,
         setCursor: app.setCursor,

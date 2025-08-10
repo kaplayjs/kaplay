@@ -6133,7 +6133,7 @@ export interface KAPLAYCtx<
      * @since v4000.0
      * @group Debug
      */
-    screenshotBlob(): Promise<Blob>;
+    screenshotToBlob(): Promise<Blob>;
     /**
      * Trigger a file download from a url.
      *

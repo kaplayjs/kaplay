@@ -15,7 +15,7 @@ best friend, lajbel, can put the correct version name here
 
 ## [unreleased]
 
-- Added `screenshotBlob()` to get a screenshot as a `Blob` - @dragoncoder047
+- Added `screenshotToBlob()` to get a screenshot as a `Blob` - @dragoncoder047
 - The debug `record()` function now records with sound enabled like it should -
   @dragoncoder047
 
