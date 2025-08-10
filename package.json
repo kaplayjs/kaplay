@@ -67,6 +67,7 @@
     "check": "tsc",
     "lint": "eslint .",
     "fmt": "dprint fmt",
+    "fmt:commit": "dprint fmt && git add . && git commit -m \"style: fmt\"",
     "test": "node scripts/test.js",
     "doc-dts": "dts-bundle-generator -o dist/doc.d.ts src/index.ts",
     "test:vite": "vitest --typecheck",
