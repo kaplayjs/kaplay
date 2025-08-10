@@ -15,7 +15,16 @@ best friend, lajbel, can put the correct version name here
 
 ## [unreleased]
 
+
+### Added
+
 - Added `screenshotToBlob()` to get a screenshot as a `Blob` - @dragoncoder047
+
+### Changed
+
+- `loadShader()` now also checks for link errors as well as compile errors and
+  reports them rather than just silently trying to use a borked shader -
+  
 - The debug `record()` function now records with sound enabled like it should -
   @dragoncoder047
 
