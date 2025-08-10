@@ -6119,13 +6119,21 @@ export interface KAPLAYCtx<
      */
     SystemPhase: typeof SystemPhase;
     /**
-     * Take a screenshot and get the data url of the image.
+     * Take a screenshot and get the PNG data url of the image.
      *
-     * @returns The dataURL of the image.
+     * @returns The dataURL of the PNG image.
      * @since v2000.0
      * @group Debug
      */
     screenshot(): string;
+    /**
+     * Take a screenshot and get the PNG data as a blob.
+     *
+     * @returns The blob of the image.
+     * @since v4000.0
+     * @group Debug
+     */
+    screenshotToBlob(): Promise<Blob>;
     /**
      * Trigger a file download from a url.
      *
@@ -6155,13 +6163,36 @@ export interface KAPLAYCtx<
      */
     downloadBlob(filename: string, blob: Blob): void;
     /**
-     * Start recording the canvas into a video. If framerate is not specified, a new frame will be captured each time the canvas changes.
+     * Start recording the canvas into a video.
+     *
+     * Note: This relies on the browser's support using the `MediaRecorder`
+     * API, and support is buggy at best from my (@dragoncoder047)'s testing.
+     * The best results I have gotten are with explicitly specifying `video/webm`
+     * and 60 FPS.
+     *
+     * Results with the default values are usually no good and even if both MIME
+     * type and framerate are specified, dropped frames, truncated videos,
+     * audio desynchronization, and even completely corrupted files have been gotten
+     * from this. `video/mp4` is technically supported by some browsers but I can't
+     * recommend it as MP4 has produced glitched and/or corrupted files much more often
+     * than WebM in my testing.
+     *
+     * If your players want to get a nice clean recording it's probably a better
+     * idea to point them to an external screen-recording program such as
+     * [OBS](https://obsproject.com).
+     *
+     * @param frameRate - Target frame rate for the output video.
+     * If framerate is not specified, a new frame will be captured each
+     * time the canvas changes.
+     * @param mimeTypes - A list of MIME types such as `video/mp4`, `video/webm`.
+     * The browser will select the first one it can do when the recording is started.
+     * If none are supported, an error will be thrown.
      *
      * @returns A control handle.
      * @since v2000.1
      * @group Debug
      */
-    record(frameRate?: number): Recording;
+    record(frameRate?: number, mimeTypes?: string[]): Recording;
     /**
      * Add an explosion effect.
      *
