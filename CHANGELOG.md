@@ -16,6 +16,8 @@ best friend, lajbel, can put the correct version name here
 ## [unreleased]
 
 - Added `screenshotBlob()` to get a screenshot as a `Blob` - @dragoncoder047
+- The debug `record()` function now records with sound enabled like it should -
+  @dragoncoder047
 
 ## [unreleased] (v3001)
 
@@ -427,6 +429,7 @@ kaplay({
 - Added events for listen to comps being removed or added `onUse()` and
   `onUnused()` (**experimental**)
 - Added `k.cancel()` to cancel the current event (**experimental**)
+
 - ```js
   onKeyPress("space", () => {
       // do something
@@ -434,6 +437,7 @@ kaplay({
       return cancel();
   });
   ```
+
 - Added `getDefaultLayer()` to get the default layer (**experimental**)
 - Added `getLayers()` to get the layers list (**experimental**)
 - Added many JSDoc specifiers on many functions (@require, @deprecated, @since,
