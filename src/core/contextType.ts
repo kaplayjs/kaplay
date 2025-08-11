@@ -204,6 +204,22 @@ export interface KAPLAYCtx<
      */
     _k: Engine & { k: KAPLAYCtx };
     /**
+     * End everything.
+     *
+     * @since v2000.0
+     * @group Start
+     */
+    quit(): void;
+    /**
+     * Throws a new error and show up the Blue Screen.
+     *
+     * @param msg - The message for showing in the Blue Screen.
+     *
+     * @since v4000.0
+     * @group Start
+     */
+    throwError(msg: string): void;
+    /**
      * Assemble a game object from a list of components, and add it to the game,
      *
      * @param comps - List of components to add to the game object.
@@ -6310,22 +6326,6 @@ export interface KAPLAYCtx<
      * @group Info
      */
     canvas: HTMLCanvasElement;
-    /**
-     * End everything.
-     *
-     * @since v2000.0
-     * @group Start
-     */
-    quit: () => void;
-    /**
-     * Throws a new error and show up the Blue Screen.
-     *
-     * @param msg - The message for showing in the Blue Screen.
-     *
-     * @since v4000.0
-     * @group Start
-     */
-    throwError: (msg: string) => void;
     /**
      * EventHandler for one single event.
      *
