@@ -7,15 +7,7 @@ import type { LineCap, LineJoin } from "./gfx/draw/drawLine";
 import type { Picture } from "./gfx/draw/drawPicture";
 import type { FrameBuffer } from "./gfx/FrameBuffer";
 import type { Color, RGBAValue, RGBValue } from "./math/color";
-import type {
-    Circle,
-    Ellipse,
-    Line,
-    Point,
-    Polygon,
-    Quad,
-    Rect,
-} from "./math/math";
+import type { Circle, Ellipse, Line, Point, Polygon, Rect } from "./math/math";
 import type { Vec2 } from "./math/Vec2";
 import type { Defined, MergeObj } from "./utils/types";
 
@@ -173,7 +165,8 @@ export type KGamepadButton =
     | "dpad-down"
     | "dpad-left"
     | "home"
-    | "capture";
+    | "capture"
+    | "touchpad";
 
 /**
  * A gamepad stick.
@@ -268,7 +261,8 @@ export interface KAPLAYOpt<
      */
     pixelDensity?: number;
     /**
-     * Disable antialias and enable sharp pixel display.
+     * Disable antialias and enable sharp pixel display. If you see rendering artifacts, set `pixelDensity`
+     * param to `Math.min(devicePixelRatio, 2)` and `scale` to FHD resolution (e.g. 960x540 would need scale 2). Will result in up to 4K.
      */
     crisp?: boolean;
     /**
@@ -356,14 +350,13 @@ export interface KAPLAYOpt<
      */
     burp?: boolean;
     /**
-     * Make component's id ("sprite" for sprite() comp) be added as tags.
+     * Make components ids be added as tags.
      *
      * That means .is() will return true for components with that id.
      *
      * @default true
-     * @experimental This feature is in experimental phase, it will be fully released in v3001.1.0
      */
-    tagsAsComponents?: boolean;
+    tagComponentIds?: boolean;
     /**
      * Padding used when adding sprites to texture atlas.
      * @default 0

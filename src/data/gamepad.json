@@ -83,6 +83,32 @@
       "right": { "x": 2, "y": 3 }
     }
   },
+  "DualSense Wireless Controller (STANDARD GAMEPAD Vendor: 054c Product: 0ce6)": {
+    "buttons": {
+      "0": "south",
+      "1": "east",
+      "2": "west",
+      "3": "north",
+      "4": "lshoulder",
+      "5": "rshoulder",
+      "6": "ltrigger",
+      "7": "rtrigger",
+      "8": "select",
+      "9": "start",
+      "10": "lstick",
+      "11": "rstick",
+      "12": "dpad-up",
+      "13": "dpad-down",
+      "14": "dpad-left",
+      "15": "dpad-right",
+      "16": "home",
+      "17": "touchpad"
+    },
+    "sticks": {
+      "left": { "x": 0, "y": 1 },
+      "right": { "x": 2, "y": 3 }
+    }
+  },
   "default": {
     "buttons": {
       "0": "south",

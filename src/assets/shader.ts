@@ -67,8 +67,11 @@ export class Shader {
     constructor(ctx: GfxCtx, vert: string, frag: string, attribs: string[]) {
         this.ctx = ctx;
         ctx.onDestroy(() => this.free());
+        this.glProgram = this.compile(vert, frag, attribs);
+    }
 
-        const gl = ctx.gl;
+    compile(vert: string, frag: string, attribs: string[]) {
+        const gl = this.ctx.gl;
         const vertShader = gl.createShader(gl.VERTEX_SHADER);
         const fragShader = gl.createShader(gl.FRAGMENT_SHADER);
 
@@ -84,7 +87,6 @@ export class Shader {
         gl.compileShader(fragShader);
 
         const prog = gl.createProgram();
-        this.glProgram = prog!;
 
         gl.attachShader(prog!, vertShader!);
         gl.attachShader(prog!, fragShader!);
@@ -98,10 +100,15 @@ export class Shader {
             if (vertError) throw new Error("VERTEX SHADER " + vertError);
             const fragError = gl.getShaderInfoLog(fragShader!);
             if (fragError) throw new Error("FRAGMENT SHADER " + fragError);
+            const linkError = gl.getProgramInfoLog(prog!);
+            if (linkError) throw new Error("LINK ERROR: " + linkError);
+            throw new Error("Unknown shader error (gl.LINK_STATUS was false)");
         }
 
         gl.deleteShader(vertShader);
         gl.deleteShader(fragShader);
+
+        return prog!;
     }
 
     bind() {

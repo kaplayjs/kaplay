@@ -408,7 +408,7 @@ export function sprite(
                     const uv = quads[i];
                     const transform = quads[i + 9];
                     if (transform.w == 0 || transform.h == 0) {
-                        return;
+                        continue;
                     }
                     drawTexture(
                         Object.assign(props, {

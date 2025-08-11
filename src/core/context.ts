@@ -246,6 +246,7 @@ import {
     wave,
 } from "../math/math";
 import { NavMesh } from "../math/navigationmesh";
+import { insertionSort } from "../math/sort";
 import { Vec2 } from "../math/Vec2";
 import { BlendMode, type KAPLAYPlugin } from "../types";
 import {
@@ -318,6 +319,7 @@ export const createContext = (
         restDt: app.restDt,
         time: app.time,
         screenshot: app.screenshot,
+        screenshotToBlob: app.screenshotToBlob,
         record,
         isFocused: app.isFocused,
         setCursor: app.setCursor,
@@ -513,6 +515,7 @@ export const createContext = (
         Mat23,
         Quad,
         RNG,
+        insertionSort,
         rand,
         randi,
         randSeed,
