@@ -3925,6 +3925,15 @@ export interface KAPLAYCtx<
      */
     getButton(btn: keyof TButtonDef): ButtonBinding;
     /**
+     * Get all the input bindings.
+     *
+     * @returns The button definition.
+     * @since v4000.0
+     * @group Input
+     * @subgroup Buttons API
+     */
+    getButtons(): TButtonDef;
+    /**
      * Set a input binding for a button name.
      *
      * @param btn - The button to set binding for.
