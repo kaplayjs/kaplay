@@ -2982,6 +2982,7 @@ export interface KAPLAYCtx<
         btn: TButton | TButton[],
         action: (btn: TButton) => void,
     ): KEventController;
+    onButtonPress(action: (btn: TButton) => void): KEventController;
     /**
      * Register an event that runs when user release a defined button
      * (like "jump") on any input (keyboard, gamepad).
