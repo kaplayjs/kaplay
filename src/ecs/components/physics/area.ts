@@ -7,11 +7,10 @@ import { drawPolygon } from "../../../gfx/draw/drawPolygon";
 import { drawRect } from "../../../gfx/draw/drawRect";
 import { multTranslate, popTransform, pushTransform } from "../../../gfx/stack";
 import { rgb } from "../../../math/color";
-import { Circle, Polygon, Rect, vec2 } from "../../../math/math";
+import { Circle, Polygon, Rect, shapeFactory, vec2 } from "../../../math/math";
 import { Vec2 } from "../../../math/Vec2";
 import { _k } from "../../../shared";
 import type {
-    Collision,
     Comp,
     Cursor,
     GameObj,
@@ -20,7 +19,7 @@ import type {
     Tag,
 } from "../../../types";
 import { isFixed } from "../../entity/utils";
-import type { FakeMouseComp } from "../misc/fakeMouse";
+import type { Collision } from "../../systems/Collision";
 import type { AnchorComp } from "../transform/anchor";
 import type { FixedComp } from "../transform/fixed";
 import type { PosComp } from "../transform/pos";
@@ -32,7 +31,8 @@ export function usesArea() {
 /**
  * The {@link area `area()`} component.
  *
- * @group Component Types
+ * @group Components
+ * @subgroup Component Types
  */
 export interface AreaComp extends Comp {
     /**
@@ -188,12 +188,15 @@ export interface AreaComp extends Comp {
      * Get the geometry data for the collider in screen coordinate space.
      */
     screenArea(): Shape;
+
+    serialize(): any;
 }
 
 /**
  * Options for the {@link area `area()`} component.
  *
- * @group Component Types
+ * @group Components
+ * @subgroup Component Types
  */
 export interface AreaCompOpt {
     /**
@@ -264,11 +267,7 @@ export function area(opt: AreaCompOpt = {}): AreaComp {
 
             events.push(
                 this.onCollideUpdate((obj, col) => {
-                    if (!obj.id) {
-                        throw new Error(
-                            "area() requires the object to have an id",
-                        );
-                    }
+                    if (!obj.exists()) return;
                     if (!colliding[obj.id]) {
                         this.trigger("collide", obj, col);
                     }
@@ -621,5 +620,43 @@ export function area(opt: AreaCompOpt = {}): AreaComp {
                 }x, ${this.area.scale.y?.toFixed(1)}y)`;
             }
         },
+
+        serialize() {
+            const data: any = {};
+            if (this.area.shape) data.shape = this.area.shape.serialize();
+            if (this.area.scale) {
+                data.scale = this.area.scale instanceof Vec2
+                    ? this.area.scale.serialize()
+                    : opt.scale;
+            }
+            if (this.area.offset) data.offset = this.area.offset.serialize();
+            if (opt.cursor) data.cursor = opt.cursor;
+            // Make a copy, since it might be changed later
+            if (this.collisionIgnore) {
+                data.collisionIgnore = this.collisionIgnore.slice();
+            }
+            if (this.restitution) data.restitution = this.restitution;
+            if (this.friction) data.friction = this.friction;
+            return data;
+        },
     };
+}
+
+export function areaFactory(data: any) {
+    const opt: any = {};
+    if (data.shape) opt.shape = shapeFactory(data.shape);
+    if (data.scale) {
+        opt.scale = typeof data.scale === "number"
+            ? data.scale
+            : Vec2.deserialize(data.scale);
+    }
+    if (data.offset) opt.offset = Vec2.deserialize(data.offset);
+    if (data.cursor) opt.cursor = opt.cursor;
+    // Make a copy, since it might be changed later
+    if (data.collisionIgnore) {
+        opt.collisionIgnore = data.collisionIgnore.slice();
+    }
+    if (data.restitution) opt.restitution = data.restitution;
+    if (data.friction) opt.friction = data.friction;
+    return area(opt);
 }

@@ -19,6 +19,16 @@ import { _k } from "../../../shared";
 import type { Comp, GameObj, SpriteAnimPlayOpt } from "../../../types";
 
 /**
+ * The serialized {@link sprite `sprite()`} component.
+ *
+ * @group Components
+ * @subgroup Component Serialization
+ */
+export type SerializedSpriteComp = SpriteCompOpt & {
+    sprite: string;
+};
+
+/**
  * Current animation data.
  */
 export interface SpriteCurAnim {
@@ -42,7 +52,8 @@ export interface SpriteCurAnim {
 /**
  * The {@link sprite `sprite()`} component.
  *
- * @group Component Types
+ * @group Components
+ * @subgroup Component Types
  */
 export interface SpriteComp extends Comp {
     draw: Comp["draw"];
@@ -152,12 +163,15 @@ export interface SpriteComp extends Comp {
      * @since v3000.0
      */
     renderArea(): Rect;
+
+    serialize(): SerializedSpriteComp;
 }
 
 /**
  * Options for the {@link sprite `sprite()`} component.
  *
- * @group Component Types
+ * @group Components
+ * @subgroup Component Types
  */
 export interface SpriteCompOpt {
     /**
@@ -415,7 +429,7 @@ export function sprite(
                     const uv = quads[i];
                     const transform = quads[i + 9];
                     if (transform.w == 0 || transform.h == 0) {
-                        return;
+                        continue;
                     }
                     drawTexture(
                         Object.assign(props, {
@@ -643,5 +657,45 @@ export function sprite(
             }
             return null;
         },
+
+        serialize() {
+            const data: any = { sprite: this.sprite };
+            if (opt.frame) data.frame = opt.frame;
+            if (opt.tiled) data.tiled = opt.tiled;
+            if (opt.width) data.width = opt.width;
+            if (opt.height) data.height = opt.height;
+            if (opt.anim) data.anim = opt.anim;
+            if (opt.animSpeed) data.animSpeed = opt.animSpeed;
+            if (this.flipX) data.flipX = this.flipX;
+            if (this.flipY) data.flipY = this.flipY;
+            if (opt.quad) {
+                data.quad = {
+                    x: opt.quad.x,
+                    y: opt.quad.y,
+                    w: opt.quad.w,
+                    h: opt.quad.h,
+                };
+            }
+            return data;
+        },
     };
+}
+
+export function spriteFactory(data: SerializedSpriteComp) {
+    const opt: SpriteCompOpt = {};
+    if (data.frame) opt.frame = data.frame;
+    if (data.tiled) opt.tiled = data.tiled;
+    if (data.width) opt.width = data.width;
+    if (data.height) opt.height = data.height;
+    if (data.anim) opt.anim = data.anim;
+    if (data.animSpeed) opt.animSpeed = data.animSpeed;
+    if (data.flipX) opt.flipX = data.flipX;
+    if (data.flipY) opt.flipY = data.flipY;
+    if (data.quad) {
+        opt.quad = quad(data.quad.x, data.quad.y, data.quad.w, data.quad.h);
+    }
+    return sprite(
+        data.sprite,
+        opt,
+    );
 }

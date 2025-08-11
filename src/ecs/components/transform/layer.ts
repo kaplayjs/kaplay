@@ -4,7 +4,8 @@ import type { Comp } from "../../../types";
 /**
  * The {@link layer `layer()`} component.
  *
- * @group Component Types
+ * @group Components
+ * @subgroup Component Types
  */
 export interface LayerComp extends Comp {
     /**
@@ -26,6 +27,8 @@ export interface LayerComp extends Comp {
      * wasn't defined.
      */
     set layer(name: string);
+
+    serialize(): any;
 }
 
 export function layer(layer: string): LayerComp {
@@ -54,5 +57,12 @@ export function layer(layer: string): LayerComp {
         inspect() {
             return `layer: ${this.layer}`;
         },
+        serialize() {
+            return { layer: this.layer };
+        },
     };
+}
+
+export function layerFactory(data: any) {
+    return layer(data.layer);
 }

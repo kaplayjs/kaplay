@@ -1,12 +1,13 @@
 import type { KEventController } from "../../../events/events";
 import { _k } from "../../../shared";
-import type { Comp, GameObj, KAPLAYCtx } from "../../../types";
+import type { Comp, GameObj } from "../../../types";
 import type { TextComp } from "../draw/text";
 
 /**
  * The {@link textInput `textInput()`} component.
  *
- * @group Component Types
+ * @group Components
+ * @subgroup Component Types
  */
 export interface TextInputComp extends Comp {
     /**
@@ -51,7 +52,6 @@ export interface TextInputComp extends Comp {
 }
 
 export function textInput(
-    this: KAPLAYCtx,
     hasFocus: boolean = true,
     maxInputLength?: number,
 ): TextInputComp {

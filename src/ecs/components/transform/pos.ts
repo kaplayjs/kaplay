@@ -9,9 +9,20 @@ import { isFixed } from "../../entity/utils";
 import type { FixedComp } from "./fixed";
 
 /**
+ * The serialized {@link pos `pos()`} component.
+ *
+ * @group Components
+ * @subgroup Component Serialization
+ */
+export interface SerializedPosComp {
+    pos: { x: number; y: number };
+}
+
+/**
  * The {@link pos `pos()`} component.
  *
- * @group Component Types
+ * @group Components
+ * @subgroup Component Types
  */
 export interface PosComp extends Comp {
     /**
@@ -79,6 +90,10 @@ export interface PosComp extends Comp {
      * @since v3001.0
      */
     fromOther(this: GameObj<PosComp>, other: GameObj<PosComp>, p: Vec2): Vec2;
+    /**
+     * Serialize the current state comp
+     */
+    serialize(): SerializedPosComp;
 }
 
 export function pos(...args: Vec2Args): PosComp {
@@ -213,5 +228,13 @@ export function pos(...args: Vec2Args): PosComp {
                 radius: 4 / _k.gfx.viewport.scale,
             });
         },
+
+        serialize() {
+            return { pos: this.pos.serialize() };
+        },
     };
+}
+
+export function posFactory(data: SerializedPosComp) {
+    return pos(data.pos.x, data.pos.y);
 }

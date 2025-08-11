@@ -8,8 +8,21 @@ import { flush, height, width } from "../gfx/stack";
 import { Quad } from "../math/math";
 import { Vec2 } from "../math/Vec2";
 
-export type FrameRenderer = ReturnType<typeof createFrameRenderer>;
+/**
+ * A frame renderer.
+ *
+ * @ignore
+ */
+export interface FrameRenderer {
+    frameStart: () => void;
+    frameEnd: () => void;
+    fixedUpdateFrame: () => void;
+    updateFrame: () => void;
+}
 
+/**
+ * @ignore
+ */
 export const createFrameRenderer = (
     gfx: AppGfxCtx,
     game: Game,

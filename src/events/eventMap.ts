@@ -10,9 +10,9 @@ import { type body } from "../ecs/components/physics/body";
 import { type doubleJump } from "../ecs/components/physics/doubleJump";
 import { type offscreen } from "../ecs/components/transform/offscreen";
 import { type addLevel } from "../ecs/entity/premade/addLevel";
+import type { Collision } from "../ecs/systems/Collision";
 import type { Vec2 } from "../math/Vec2";
 import type {
-    Collision,
     GameObj,
     Key,
     KGamepad,
@@ -26,6 +26,7 @@ import type {
  * If looking for use it with `obj.on()`, ignore first parameter (Game Obj)
  *
  * @group Events
+ * @subgroup Game Obj
  */
 export type GameObjEventMap = {
     /** Triggered every frame */
@@ -206,14 +207,24 @@ export type GameObjEventMap = {
     navigationMapChanged: [GameObj];
 };
 
+/**
+ * @group Events
+ * @subgroup Game Obj
+ */
 export type GameObjEvents = GameObjEventMap & {
     [key: string]: any[];
 };
 
+/**
+ * @group Events
+ * @subgroup Game Obj
+ */
 export type GameObjEventNames = keyof GameObjEventMap;
 
 /**
  * App events with their arguments
+ *
+ * @group Events
  */
 export type AppEventMap = {
     mouseMove: [];
@@ -246,6 +257,8 @@ export type AppEventMap = {
 
 /**
  * All Game State events with their arguments
+ *
+ * @group Events
  */
 export type GameEventMap = {
     load: [];

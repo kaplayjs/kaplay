@@ -1,5 +1,8 @@
 import { EVENT_CANCEL_SYMBOL } from "../constants/general";
 
+/**
+ * @group Events
+ */
 export class Registry<T> extends Map<number, T> {
     private lastID: number = 0;
     push(v: T): number {

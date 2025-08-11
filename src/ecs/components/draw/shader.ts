@@ -2,9 +2,20 @@ import type { Uniform } from "../../../assets/shader";
 import type { Comp } from "../../../types";
 
 /**
+ * The serialized {@link shader `shader()`} component.
+ *
+ * @group Components
+ * @subgroup Component Serialization
+ */
+export interface SerializeShaderComp {
+    shader: string;
+}
+
+/**
  * The {@link shader `shader()`} component.
  *
- * @group Component Types
+ * @group Components
+ * @subgroup Component Types
  */
 export interface ShaderComp extends Comp {
     /**
@@ -15,6 +26,7 @@ export interface ShaderComp extends Comp {
      * The shader ID.
      */
     shader: string;
+    serialize(): SerializeShaderComp;
 }
 
 export function shader(
@@ -37,5 +49,12 @@ export function shader(
         inspect() {
             return `shader: ${id}`;
         },
+        serialize() {
+            return { shader: this.shader };
+        },
     };
+}
+
+export function shaderFactory(data: any) {
+    return shader(data.shader);
 }

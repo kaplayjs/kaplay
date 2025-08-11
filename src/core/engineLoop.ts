@@ -1,8 +1,12 @@
 import type { App } from "../app/app";
 import { initAppEvents } from "../app/appEvents";
-import { type AssetsCtx, getFailedAssets, loadProgress } from "../assets/asset";
+import {
+    getFailedAssets,
+    type InternalAssetsCtx,
+    loadProgress,
+} from "../assets/asset";
 import type { Debug } from "../debug/debug";
-import { LCEvents } from "../ecs/systems/systems";
+import { SystemPhase } from "../ecs/systems/systems";
 import type { Game } from "../game/game";
 import { drawDebug } from "../gfx/draw/drawDebug";
 import { drawFrame } from "../gfx/draw/drawFrame";
@@ -15,7 +19,7 @@ import type { FrameRenderer } from "./frameRendering";
 export function startEngineLoop(
     app: App,
     game: Game,
-    assets: AssetsCtx,
+    assets: InternalAssetsCtx,
     gopt: KAPLAYOpt,
     frameRenderer: FrameRenderer,
     debug: Debug,
@@ -28,7 +32,7 @@ export function startEngineLoop(
                 if (!debug.paused) {
                     for (
                         const sys of game
-                            .systemsByEvent[LCEvents.BeforeFixedUpdate]
+                            .systemsByEvent[SystemPhase.BeforeFixedUpdate]
                     ) {
                         sys.run();
                     }
@@ -37,7 +41,7 @@ export function startEngineLoop(
 
                     for (
                         const sys of game
-                            .systemsByEvent[LCEvents.AfterFixedUpdate]
+                            .systemsByEvent[SystemPhase.AfterFixedUpdate]
                     ) {
                         sys.run();
                     }
@@ -75,7 +79,7 @@ export function startEngineLoop(
                 if (!debug.paused) {
                     for (
                         const sys of game
-                            .systemsByEvent[LCEvents.BeforeUpdate]
+                            .systemsByEvent[SystemPhase.BeforeUpdate]
                     ) {
                         sys.run();
                     }
@@ -84,7 +88,7 @@ export function startEngineLoop(
 
                     for (
                         const sys of game
-                            .systemsByEvent[LCEvents.AfterUpdate]
+                            .systemsByEvent[SystemPhase.AfterUpdate]
                     ) {
                         sys.run();
                     }
@@ -94,7 +98,7 @@ export function startEngineLoop(
                 frameRenderer.frameStart();
 
                 for (
-                    const sys of game.systemsByEvent[LCEvents.BeforeDraw]
+                    const sys of game.systemsByEvent[SystemPhase.BeforeDraw]
                 ) {
                     sys.run();
                 }
@@ -102,7 +106,7 @@ export function startEngineLoop(
                 drawFrame();
                 if (gopt.debug !== false) drawDebug();
 
-                for (const sys of game.systemsByEvent[LCEvents.AfterDraw]) {
+                for (const sys of game.systemsByEvent[SystemPhase.AfterDraw]) {
                     sys.run();
                 }
 

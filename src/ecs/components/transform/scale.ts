@@ -1,11 +1,22 @@
 import { vec2, type Vec2Args } from "../../../math/math";
-import { Vec2 } from "../../../math/Vec2";
+import { type SerializedVec2, Vec2 } from "../../../math/Vec2";
 import type { Comp } from "../../../types";
+
+/**
+ * The serialized {@link scale `scale()`} component.
+ *
+ * @group Components
+ * @subgroup Component Serialization
+ */
+export interface SerializedScaleComp {
+    scale: SerializedVec2;
+}
 
 /**
  * The {@link scale `scale()`} component.
  *
- * @group Component Types
+ * @group Components
+ * @subgroup Component Types
  */
 export interface ScaleComp extends Comp {
     /**
@@ -38,6 +49,10 @@ export interface ScaleComp extends Comp {
      * Scale the object by a number for x and y
      */
     scaleBy(sx: number, sy: number): void;
+    /**
+     * Serialize the current state comp
+     */
+    serialize(): SerializedScaleComp;
 }
 
 export function scale(...args: Vec2Args): ScaleComp {
@@ -71,9 +86,18 @@ export function scale(...args: Vec2Args): ScaleComp {
             if (_scale.x == _scale.y) {
                 return `scale: ${_scale.x.toFixed(1)}x`;
             }
-            else {return `scale: (${_scale.x.toFixed(1)}x, ${
+            else {
+                return `scale: (${_scale.x.toFixed(1)}x, ${
                     _scale.y.toFixed(1)
-                }y)`;}
+                }y)`;
+            }
+        },
+        serialize() {
+            return { scale: this.scale.serialize() };
         },
     };
+}
+
+export function scaleFactory(data: SerializedScaleComp) {
+    return scale(data.scale.x, data.scale.y);
 }

@@ -6,7 +6,7 @@ import {
     MAX_BATCHED_VERTS,
     VERTEX_FORMAT,
 } from "../constants/general";
-import { go } from "../game/scenes";
+import { go, popScene, pushScene } from "../game/scenes";
 import { type Color, rgb } from "../math/color";
 import { Mat23 } from "../math/math";
 import { Vec2 } from "../math/Vec2";
@@ -57,6 +57,10 @@ export type AppGfxCtx = {
     scratchPt: Vec2;
 };
 
+/**
+ * @group Rendering
+ * @subgroup Canvas
+ */
 export type Viewport = {
     x: number;
     y: number;

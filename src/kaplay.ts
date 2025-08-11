@@ -4,6 +4,7 @@ import { SoundData } from "./assets/sound";
 import { loadSprite } from "./assets/sprite";
 import { createEmptyAudioBuffer } from "./audio/audio";
 import { createContext } from "./core/context";
+import type { KAPLAYCtx } from "./core/contextType";
 import { createEngine } from "./core/engine";
 import beanSrc from "./data/assets/bean.png";
 import boomSpriteSrc from "./data/assets/boom.png";
@@ -11,10 +12,9 @@ import burpSoundSrc from "./data/assets/burp.mp3";
 import happyFontSrc from "./data/assets/happy.png";
 import kaSpriteSrc from "./data/assets/ka.png";
 import { createCollisionSystem } from "./ecs/systems/createCollisionSystem";
-import { LCEvents, system } from "./ecs/systems/systems";
+import { system, SystemPhase } from "./ecs/systems/systems";
 import { _k, updateEngine } from "./shared";
 import {
-    type KAPLAYCtx,
     type KAPLAYOpt,
     type KAPLAYPlugin,
     type MergePlugins,
@@ -92,8 +92,8 @@ export const kaplay = <
     });
 
     system("collision", checkFrame, [
-        LCEvents.AfterFixedUpdate,
-        LCEvents.AfterUpdate,
+        SystemPhase.AfterFixedUpdate,
+        SystemPhase.AfterUpdate,
     ]);
 
     // #region Loading default assets

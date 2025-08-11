@@ -80,10 +80,12 @@ import { rotate } from "../ecs/components/transform/rotate";
 import { scale } from "../ecs/components/transform/scale";
 import { z } from "../ecs/components/transform/z";
 import { KeepFlags } from "../ecs/entity/GameObjRaw";
+import { createPrefab, loadPrefab } from "../ecs/entity/prefab";
 import { addKaboom } from "../ecs/entity/premade/addKaboom";
 import { addLevel } from "../ecs/entity/premade/addLevel";
 import { destroy, getTreeRoot } from "../ecs/entity/utils";
-import { system } from "../ecs/systems/systems";
+import { Collision } from "../ecs/systems/Collision";
+import { system, SystemPhase } from "../ecs/systems/systems";
 import { KEvent, KEventController, KEventHandler } from "../events/events";
 import {
     on,
@@ -135,7 +137,15 @@ import {
     setGravityDirection,
 } from "../game/gravity";
 import { getDefaultLayer, getLayers, layers, setLayers } from "../game/layers";
-import { getSceneName, go, onSceneLeave, scene } from "../game/scenes";
+import {
+    getSceneName,
+    go,
+    onSceneLeave,
+    popScene,
+    pushScene,
+    scene,
+} from "../game/scenes";
+import { anchorPt } from "../gfx/anchor";
 import { getBackground, setBackground } from "../gfx/bg";
 import { makeCanvas } from "../gfx/canvasBuffer";
 import { drawBezier } from "../gfx/draw/drawBezier";
@@ -236,14 +246,16 @@ import {
     wave,
 } from "../math/math";
 import { NavMesh } from "../math/navigationmesh";
+import { insertionSort } from "../math/sort";
 import { Vec2 } from "../math/Vec2";
-import { BlendMode, type KAPLAYCtx, type KAPLAYPlugin } from "../types";
+import { BlendMode, type KAPLAYPlugin } from "../types";
 import {
     download,
     downloadBlob,
     downloadJSON,
     downloadText,
 } from "../utils/dataURL";
+import type { KAPLAYCtx } from "./contextType";
 import type { Engine } from "./engine";
 import { throwError } from "./errors";
 import { plug } from "./plug";
@@ -258,6 +270,7 @@ export const createContext = (
     // aliases for root Game Obj operations
     const { game, app, audio, debug } = e;
     const add = game.root.add.bind(game.root);
+    const addPrefab = game.root.addPrefab.bind(game.root);
     const readd = game.root.readd.bind(game.root);
     const destroyAll = game.root.removeAll.bind(game.root);
     const get = game.root.get.bind(game.root);
@@ -284,8 +297,9 @@ export const createContext = (
         loadShaderURL,
         loadAseprite,
         loadBean,
-        loadHappy: loadHappy,
+        loadHappy,
         loadJSON,
+        loadPrefab,
         load,
         getSound,
         getFont,
@@ -305,6 +319,7 @@ export const createContext = (
         restDt: app.restDt,
         time: app.time,
         screenshot: app.screenshot,
+        screenshotToBlob: app.screenshotToBlob,
         record,
         isFocused: app.isFocused,
         setCursor: app.setCursor,
@@ -349,6 +364,8 @@ export const createContext = (
         // obj
         getTreeRoot,
         add,
+        addPrefab,
+        createPrefab,
         destroy,
         destroyAll,
         get,
@@ -468,8 +485,9 @@ export const createContext = (
         isButtonPressed: app.isButtonPressed,
         isButtonDown: app.isButtonDown,
         isButtonReleased: app.isButtonReleased,
-        setButton: app.setButton,
         getButton: app.getButton,
+        getButtons: app.getButtons,
+        setButton: app.setButton,
         pressButton: app.pressButton,
         releaseButton: app.releaseButton,
         getLastInputDeviceType: app.getLastInputDeviceType,
@@ -491,12 +509,14 @@ export const createContext = (
         Ellipse,
         Point,
         Polygon,
+        Collision,
         Vec2,
         Color,
         Mat4,
         Mat23,
         Quad,
         RNG,
+        insertionSort,
         rand,
         randi,
         randSeed,
@@ -546,6 +566,7 @@ export const createContext = (
         testLineCircle,
         clipLineToRect,
         clipLineToCircle,
+        anchorToVec2: anchorPt,
         gjkShapeIntersects,
         gjkShapeIntersection,
         isConvex,
@@ -590,6 +611,8 @@ export const createContext = (
         getSceneName,
         go,
         onSceneLeave,
+        pushScene,
+        popScene,
         // layers
         layers: layers,
         getLayers: getLayers,
@@ -607,6 +630,7 @@ export const createContext = (
         // plugin
         plug,
         system,
+        SystemPhase,
         // char sets
         ASCII_CHARS,
         // dom

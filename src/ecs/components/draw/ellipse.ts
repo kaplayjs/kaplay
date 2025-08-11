@@ -7,9 +7,22 @@ import type { AnchorComp } from "../transform/anchor";
 import type { outline } from "./outline";
 
 /**
+ * The serialized {@link ellipse `ellipse()`} component.
+ *
+ * @group Components
+ * @subgroup Component Serialization
+ */
+export interface SerializedEllipseComp {
+    radiusX: number;
+    radiusY: number;
+    fill?: boolean;
+}
+
+/**
  * The {@link ellipse `ellipse()`} component.
  *
- * @group Component Types
+ * @group Components
+ * @subgroup Component Types
  */
 export interface EllipseComp extends Comp {
     draw: Comp["draw"];
@@ -21,12 +34,14 @@ export interface EllipseComp extends Comp {
      * Render area of the ellipse.
      */
     renderArea(): Ellipse;
+    serialize(): SerializedEllipseComp;
 }
 
 /**
  * Options for the {@link ellipse `ellipse()``} component.
  *
- * @group Component Types
+ * @group Components
+ * @subgroup Component Types
  */
 export interface EllipseCompOpt {
     /**
@@ -82,5 +97,20 @@ export function ellipse(
                 Math.ceil(_radiusY)
             }`;
         },
+        serialize() {
+            return {
+                radiusX: this.radiusX,
+                radiusY: this.radiusY,
+                fill: opt.fill,
+            };
+        },
     };
+}
+
+export function ellipseFactory(data: SerializedEllipseComp) {
+    const opt: EllipseCompOpt = {};
+
+    if (data.fill) opt.fill = data.fill;
+
+    return ellipse(data.radiusX, data.radiusY, opt);
 }

@@ -11,12 +11,12 @@ if ! git diff --quiet || ! git diff --cached --quiet; then
 fi
 
 git mv "$1" "$2"
-git commit -n -m "Split history $1 to $2 - rename file to target-name"
+git commit -n -m "chore: Split history $1 to $2 - rename file to target-name"
 REV=`git rev-parse HEAD`
 git reset --hard HEAD^
 git mv "$1" temp
-git commit -n -m "Split history $1 to $2 - rename source-file to temp"
+git commit -n -m "chore: Split history $1 to $2 - rename source-file to temp"
 git merge $REV
-git commit -a -n -m "Split history $1 to $2 - resolve conflict and keep both files"
+git commit -a -n -m "chore: Split history $1 to $2 - resolve conflict and keep both files"
 git mv temp "$1"
-git commit -n -m "Split history $1 to $2 - restore name of source-file"
+git commit -n -m "chore: Split history $1 to $2 - restore name of source-file"

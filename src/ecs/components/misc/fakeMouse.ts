@@ -4,6 +4,9 @@ import type { PosComp } from "../transform/pos";
 
 /**
  * The {@link fakeMouse `fakeMouse()`} component.
+ *
+ * @group Components
+ * @subgroup Component Types
  */
 export interface FakeMouseComp extends Comp {
     /**
@@ -30,6 +33,9 @@ export interface FakeMouseComp extends Comp {
 
 /**
  * Options for the {@link fakeMouse `fakeMouse()`} component.
+ *
+ * @group Components
+ * @subgroup Component Types
  */
 export type FakeMouseOpt = {
     /**

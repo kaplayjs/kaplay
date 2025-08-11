@@ -6,14 +6,16 @@ import { vec2 } from "../../../math/math";
 import { calcTransform } from "../../../math/various";
 import { type Vec2 } from "../../../math/Vec2";
 import { _k } from "../../../shared";
-import type { Collision, Comp, GameObj } from "../../../types";
+import type { Comp, GameObj } from "../../../types";
+import type { Collision } from "../../systems/Collision";
 import type { PosComp } from "../transform/pos";
 import type { AreaComp } from "./area";
 
 /**
  * The {@link body `body()`} component.
  *
- * @group Component Types
+ * @group Components
+ * @subgroup Component Types
  */
 export interface BodyComp extends Comp {
     /**
@@ -135,12 +137,15 @@ export interface BodyComp extends Comp {
      * Register an event that runs when the object is bumped by another object head.
      */
     onHeadbutted(action: (obj: GameObj) => void): KEventController;
+
+    serialize(): any;
 }
 
 /**
  * Options for the {@link body `body()`} component.
  *
- * @group Component Types
+ * @group Components
+ * @subgroup Component Types
  */
 export interface BodyCompOpt {
     /**
@@ -521,5 +526,27 @@ export function body(opt: BodyCompOpt = {}): BodyComp {
         inspect() {
             return `gravityScale: ${this.gravityScale}x`;
         },
+
+        serialize(): any {
+            const data: any = {};
+            if (opt.jumpForce) data.jumpForce = opt.jumpForce;
+            if (opt.maxVelocity) data.maxVelocity = opt.maxVelocity;
+            if (opt.gravityScale) data.gravityScale = opt.gravityScale;
+            if (opt.isStatic) data.isStatic = opt.isStatic;
+            if (opt.stickToPlatform) data.stickToPlatform = opt.stickToPlatform;
+            if (opt.mass) data.mass = opt.mass;
+            return data;
+        },
     };
+}
+
+export function bodyFactory(data: any) {
+    const opt: any = {};
+    if (data.jumpForce) opt.jumpForce = data.jumpForce;
+    if (data.maxVelocity) opt.maxVelocity = data.maxVelocity;
+    if (data.gravityScale) opt.gravityScale = data.gravityScale;
+    if (data.isStatic) opt.isStatic = opt.isStatic;
+    if (data.stickToPlatform) opt.stickToPlatform = data.stickToPlatform;
+    if (data.mass) opt.mass = data.mass;
+    return body(opt);
 }

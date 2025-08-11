@@ -9,6 +9,9 @@ import { drawPolygon } from "./drawPolygon";
 
 /**
  * How the rectangle should look like.
+ *
+ * @group Draw
+ * @subgroup Types
  */
 export type DrawRectOpt = RenderProps & {
     /**

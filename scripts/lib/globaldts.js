@@ -11,13 +11,12 @@ export async function genGlobalDTS() {
     await fs.mkdir(`${DIST_DIR}/declaration`, { recursive: true });
 
     // global dts
-    const dts = await fs.readFile(`${SRC_DIR}/types.ts`, "utf-8");
     const docts = await fs.readFile(`${DIST_DIR}/doc.d.ts`, "utf-8");
 
     // we create this file to get information about the typescript
     const f = ts.createSourceFile(
         "ts",
-        dts,
+        docts,
         ts.ScriptTarget.Latest,
         true,
     );

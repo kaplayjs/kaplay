@@ -1,5 +1,6 @@
 import { _k } from "../shared";
-import type { KAPLAYCtx, KAPLAYPlugin } from "../types";
+import type { KAPLAYPlugin } from "../types";
+import type { KAPLAYCtx } from "./contextType";
 
 export const plug = <T extends Record<string, any>>(
     plugin: KAPLAYPlugin<T>,

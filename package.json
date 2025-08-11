@@ -1,7 +1,7 @@
 {
   "name": "kaplay",
   "description": "KAPLAY is a JavaScript & TypeScript game library that helps you make games fast and fun!",
-  "version": "4000.0.0-alpha.20",
+  "version": "4000.0.0-alpha.21",
   "license": "MIT",
   "homepage": "https://v4000.kaplayjs.com/",
   "bugs": {
@@ -67,6 +67,7 @@
     "check": "tsc",
     "lint": "eslint .",
     "fmt": "dprint fmt",
+    "fmt:commit": "dprint fmt && git diff --quiet --cached && echo \"No changes\" || (git add . && git commit -m \"style: fmt\")",
     "test": "node scripts/test.js",
     "doc-dts": "dts-bundle-generator -o dist/doc.d.ts src/index.ts",
     "test:vite": "vitest --typecheck",

@@ -3,11 +3,11 @@
 import type {
     Cursor,
     GamepadDef,
-    GamepadStick,
     KAPLAYOpt,
     Key,
     KGamepad,
     KGamepadButton,
+    KGamepadStick,
     MouseButton,
 } from "../types";
 
@@ -20,6 +20,13 @@ import { Vec2 } from "../math/Vec2";
 import { _k } from "../shared";
 import { overload2 } from "../utils/overload";
 import { isEqOrIncludes, setHasOrIncludes } from "../utils/sets";
+import {
+    getButton,
+    getButtons,
+    pressButton,
+    releaseButton,
+    setButton,
+} from "./buttons";
 import {
     type ButtonBinding,
     type ButtonsDef,
@@ -53,7 +60,7 @@ export class ButtonState<T = string> {
 
 class GamepadState {
     buttonState: ButtonState<KGamepadButton> = new ButtonState();
-    stickState: Map<GamepadStick, Vec2> = new Map();
+    stickState: Map<KGamepadStick, Vec2> = new Map();
 }
 
 class FPSCounter {
@@ -83,6 +90,15 @@ export type AppEvents = keyof {
     [K in keyof App as K extends `on${any}` ? K : never]: [never];
 };
 
+/**
+ * Create the App state object.
+ *
+ * @ignore
+ *
+ * @param opt - Options.
+ *
+ * @returns The app state.
+ */
 export const initAppState = (opt: {
     canvas: HTMLCanvasElement;
     touchToMouse?: boolean;
@@ -131,6 +147,16 @@ export const initAppState = (opt: {
     };
 };
 
+/**
+ * Create the App, the context, and handler for all things related to the game
+ * canvas, input, and DOM interaction.
+ *
+ * @ignore
+ *
+ * @param opt - Options.
+ *
+ * @returns The app context.
+ */
 export const initApp = (
     opt: {
         canvas: HTMLCanvasElement;
@@ -173,6 +199,15 @@ export const initApp = (
 
     function screenshot(): string {
         return state.canvas.toDataURL();
+    }
+
+    function screenshotToBlob(): Promise<Blob> {
+        return new Promise<Blob>((resolve, reject) => {
+            state.canvas.toBlob(b => {
+                if (b !== null) resolve(b);
+                else reject(new Error("failed to make blob"));
+            });
+        });
     }
 
     function setCursor(c: Cursor): void {
@@ -411,27 +446,6 @@ export const initApp = (
             : setHasOrIncludes(state.buttonState.released, btn);
     }
 
-    function getButton(btn: string): ButtonBinding {
-        return state.buttons?.[btn];
-    }
-
-    function setButton(btn: string, binding: ButtonBinding) {
-        state.buttons[btn] = {
-            ...state.buttons[btn],
-            ...binding,
-        };
-    }
-
-    function pressButton(btn: string) {
-        state.buttonState.press(btn);
-        state.events.trigger("buttonPress", btn);
-    }
-
-    function releaseButton(btn: string) {
-        state.buttonState.release(btn);
-        state.events.trigger("buttonRelease", btn);
-    }
-
     function onResize(action: () => void): KEventController {
         return state.events.on("resize", action);
     }
@@ -597,7 +611,7 @@ export const initApp = (
     );
 
     function onGamepadStick(
-        stick: GamepadStick,
+        stick: KGamepadStick,
         action: (value: Vec2, gp: KGamepad) => void,
     ): KEventController {
         return state.events.on(
@@ -614,7 +628,7 @@ export const initApp = (
         return state.events.on("gamepadDisconnect", action);
     }
 
-    function getGamepadStick(stick: GamepadStick): Vec2 {
+    function getGamepadStick(stick: KGamepadStick): Vec2 {
         return state.mergedGamepadState.stickState.get(stick) || new Vec2(0);
     }
 
@@ -710,7 +724,7 @@ export const initApp = (
                     ?.buttonState
                     .released.has(btn) || false;
             },
-            getStick: (stick: GamepadStick) => {
+            getStick: (stick: KGamepadStick) => {
                 return state.gamepadStates.get(browserGamepad.index)?.stickState
                     .get(stick) || vec2();
             },
@@ -820,15 +834,15 @@ export const initApp = (
             }
 
             for (const stickName in map.sticks) {
-                const stick = map.sticks[stickName as GamepadStick];
+                const stick = map.sticks[stickName as KGamepadStick];
                 if (!stick) continue;
                 const value = new Vec2(
                     browserGamepad.axes[stick.x],
                     browserGamepad.axes[stick.y],
                 );
-                gamepadState.stickState.set(stickName as GamepadStick, value);
+                gamepadState.stickState.set(stickName as KGamepadStick, value);
                 state.mergedGamepadState.stickState.set(
-                    stickName as GamepadStick,
+                    stickName as KGamepadStick,
                     value,
                 );
                 state.events.trigger("gamepadStick", stickName, value, gamepad);
@@ -877,6 +891,7 @@ export const initApp = (
             }
         }
 
+        state.lastInputDevice = "mouse";
         state.events.onOnce("input", () => {
             state.isMouseMoved = true;
             state.mousePos = mousePos;
@@ -1262,6 +1277,7 @@ export const initApp = (
         isFullscreen,
         setCursor,
         screenshot,
+        screenshotToBlob,
         getGamepads,
         getCursor,
         setCursorLocked,
@@ -1285,8 +1301,9 @@ export const initApp = (
         isButtonPressed,
         isButtonDown,
         isButtonReleased,
-        setButton,
         getButton,
+        getButtons,
+        setButton,
         pressButton,
         releaseButton,
         charInputted,

@@ -3,15 +3,41 @@ import { _k } from "../shared";
 import { clamp } from "./clamp";
 import { lerpNumber } from "./lerpNumber";
 
+/**
+ * @group Math
+ * @subgroup Colors
+ */
 export type RGBValue = [number, number, number];
+
+/**
+ * @group Math
+ * @subgroup Colors
+ */
 export type RGBAValue = [number, number, number, number];
 
+/**
+ * @group Math
+ * @subgroup Colors
+ */
 export type CSSColor = keyof typeof CSS_COLOR_MAP;
+
+/**
+ * A serialized color.
+ *
+ * @group Components
+ * @subgroup Component Serialization
+ */
+export interface SerializedColor {
+    r: number;
+    g: number;
+    b: number;
+}
 
 /**
  * 0-255 RGBA color.
  *
  * @group Math
+ * @subgroup Colors
  */
 export class Color {
     /** Red (0-255. */
@@ -244,8 +270,22 @@ export class Color {
     toArray(): Array<number> {
         return [this.r, this.g, this.b];
     }
+
+    serialize(): { r: number; g: number; b: number } {
+        return { r: this.r, g: this.g, b: this.b };
+    }
+
+    static deserialize(data: { r: number; g: number; b: number }): Color {
+        return new Color(data.r, data.g, data.b);
+    }
 }
 
+/**
+ * Possible color arguments for various functions.
+ *
+ * @group Math
+ * @subgroup Colors
+ */
 export type ColorArgs =
     // rgb(new Color(255, 255, 255))
     | [Color]

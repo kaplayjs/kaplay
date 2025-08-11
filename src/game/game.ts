@@ -17,7 +17,7 @@ import { KEventHandler } from "../events/events";
 import { Mat23, RNG } from "../math/math";
 import { Vec2 } from "../math/Vec2";
 import type { GameObj } from "../types";
-import type { SceneDef, SceneName } from "./scenes";
+import type { SceneDef, SceneName, SceneState } from "./scenes";
 
 /**
  * The "Game" it's all the state related to the game running
@@ -43,6 +43,14 @@ export type Game = {
      * The scenes of the game.
      */
     scenes: Record<SceneName, SceneDef>;
+    /**
+     * The scene stack that stores the scene states
+     */
+    sceneStack: Array<SceneState>;
+    /**
+     * The current active scene arguments
+     */
+    currentSceneArgs: unknown[];
     /**
      * The current scene of the game.
      */
@@ -106,8 +114,15 @@ export type Game = {
     warned: Set<string>;
 };
 
+/**
+ * @group Debug
+ */
 type Log = { msg: string | { toString(): string }; time: number };
 
+/**
+ * @group Rendering
+ * @subgroup Camera
+ */
 type CamData = {
     pos: Vec2 | null;
     scale: Vec2;
@@ -130,7 +145,7 @@ type CamData = {
 export const createGame = (): Game => {
     const game: Game = {
         gameObjLastId: 0,
-        root: makeInternal([], 0) as GameObj<TimerComp>,
+        root: makeInternal(0) as GameObj<TimerComp>,
         events: new KEventHandler<GameEventMap & GameObjEventMap>(),
         cam: {
             pos: null as Vec2 | null,
@@ -140,16 +155,19 @@ export const createGame = (): Game => {
             transform: new Mat23(),
         },
 
+        currentSceneArgs: [], // stores the current scene arguments //
+        sceneStack: [], // stores the scene names //
+
         // Systems
         systems: [], // all systems added
         // we allocate systems here
         systemsByEvent: [
-            [], // afterDraw
-            [], // afterFixedUpdate
-            [], // afterUpdate
-            [], // beforeDraw
-            [], // beforeFixedUpdate
             [], // beforeUpdate
+            [], // beforeFixedUpdate
+            [], // beforeDraw
+            [], // afterUpdate
+            [], // afterFixedUpdate
+            [], // afterDraw
         ],
 
         // Scenes

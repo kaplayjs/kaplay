@@ -7,18 +7,30 @@ import { type Asset, loadImg } from "./asset";
 import { makeFont } from "./font";
 import { fixURL } from "./utils";
 
+/**
+ * @group Assets
+ * @subgroup Types
+ */
 export interface GfxFont {
     tex: Texture;
     map: Record<string, Quad>;
     size: number;
 }
 
+/**
+ * @group Assets
+ * @subgroup Data
+ */
 export type BitmapFontData = GfxFont;
 
 export function getBitmapFont(name: string): Asset<BitmapFontData> | null {
     return _k.assets.bitmapFonts.get(name) ?? null;
 }
 
+/**
+ * @group Assets
+ * @subgroup Types
+ */
 export interface LoadBitmapFontOpt {
     /**
      * A string of characters to map to every sprite in the characters grid
