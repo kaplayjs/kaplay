@@ -104,6 +104,9 @@ best friend, lajbel, can put the correct version name here
 
 - All game objects have methods `onTag()` and `onUntag()` for watching tag
   changes - @mflerackers
+- All game objects have methods `onPause()`, `onUnpause()`, `onShow()`, and
+  `onHide()` for watching objects' lifecycle states. These work recursively and
+  obey the object tree. - @dragoncoder047
 - Added `SystemPhase` enum to identify different lifecycle events in the game
   loop that systems can hook into - @mflerackers
 - Blend mode is selectable to change how sprites are composited on top of each
@@ -179,6 +182,11 @@ best friend, lajbel, can put the correct version name here
 
 ### Changed
 
+- **BREAKING**: `onHide()`, `onShow()`, which previously meant tab visibility
+  hidden and shown, now refer to objects being hidden and shown via the
+  `.hidden` property. The tab-based ones have been renamed to `onTabHide()` and
+  `onTabShow()` as well as `onResize()` being renamed to `onTabResize()` -
+  @dragoncoder047
 - **BREAKING**: Changed default behavior to
   `kaplay({ tagsAsComponents: false })`.
 - The physics engine creates less garbage - @mflerackers
