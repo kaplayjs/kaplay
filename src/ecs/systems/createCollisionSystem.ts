@@ -12,7 +12,10 @@ import { Collision } from "./Collision";
 import { Rect, vec2 } from "../../math/math";
 import { height, width } from "../../gfx/stack";
 
-export const createCollisionSystem = ({ broad = "sap", narrow = "gjk" } = {}) => {
+export type BroadPhaseType = "sap" | "quadtree";
+export type NarrowPhaseType = "gjk" | "sat" | "box";
+
+export const createCollisionSystem = ({ broad = "sap", narrow = "gjk" }: { broad?: BroadPhaseType, narrow?: NarrowPhaseType } = {}) => {
     const broadPhaseIntersection = broad === "sap"
         ? new SweepAndPrune()
         : broad === "quadtree"
