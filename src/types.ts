@@ -3,6 +3,7 @@ import type { Asset } from "./assets/asset";
 import type { ShaderData, Uniform } from "./assets/shader";
 import type { KAPLAYCtx } from "./core/contextType";
 import type { GameObjRaw } from "./ecs/entity/GameObjRaw";
+import type { BroadPhaseType, NarrowPhaseType } from "./ecs/systems/createCollisionSystem";
 import type { LineCap, LineJoin } from "./gfx/draw/drawLine";
 import type { Picture } from "./gfx/draw/drawPicture";
 import type { FrameBuffer } from "./gfx/FrameBuffer";
@@ -374,7 +375,12 @@ export interface KAPLAYOpt<
      * Which strategy to use for narrow phase collision, gjk or sat
      * @default "gjk"
      */
-    narrowPhaseCollisionAlgorithm?: string;
+    broadPhaseCollisionAlgorithm?: BroadPhaseType;
+    /**
+     * Which strategy to use for narrow phase collision, gjk or sat
+     * @default "gjk"
+     */
+    narrowPhaseCollisionAlgorithm?: NarrowPhaseType;
     /**
      * Timeout (in milliseconds) at which other loaders waiting on sprites will give
      * up and throw an error.

@@ -65,8 +65,7 @@ export const kaplay = <
 >(
     gopt: KAPLAYOpt<TPlugins, TButtons> = {},
 ): TPlugins extends [undefined] ? KAPLAYCtx<TButtons, TButtonsName>
-    : KAPLAYCtx<TButtons, TButtonsName> & MergePlugins<TPlugins> =>
-{
+    : KAPLAYCtx<TButtons, TButtonsName> & MergePlugins<TPlugins> => {
     if (runned) {
         console.warn(
             "KAPLAY was runned before, cleaning state",
@@ -88,6 +87,7 @@ export const kaplay = <
     } = _k;
 
     const { checkFrame } = createCollisionSystem({
+        broad: gopt.broadPhaseCollisionAlgorithm || "sap",
         narrow: gopt.narrowPhaseCollisionAlgorithm || "gjk",
     });
 
