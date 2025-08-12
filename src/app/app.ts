@@ -21,6 +21,13 @@ import { _k } from "../shared";
 import { overload2 } from "../utils/overload";
 import { isEqOrIncludes, setHasOrIncludes } from "../utils/sets";
 import {
+    getButton,
+    getButtons,
+    pressButton,
+    releaseButton,
+    setButton,
+} from "./buttons";
+import {
     type ButtonBinding,
     type ButtonsDef,
     parseButtonBindings,
@@ -192,6 +199,15 @@ export const initApp = (
 
     function screenshot(): string {
         return state.canvas.toDataURL();
+    }
+
+    function screenshotToBlob(): Promise<Blob> {
+        return new Promise<Blob>((resolve, reject) => {
+            state.canvas.toBlob(b => {
+                if (b !== null) resolve(b);
+                else reject(new Error("failed to make blob"));
+            });
+        });
     }
 
     function setCursor(c: Cursor): void {
@@ -428,27 +444,6 @@ export const initApp = (
         return btn === undefined
             ? state.buttonState.released.size > 0
             : setHasOrIncludes(state.buttonState.released, btn);
-    }
-
-    function getButton(btn: string): ButtonBinding {
-        return state.buttons?.[btn];
-    }
-
-    function setButton(btn: string, binding: ButtonBinding) {
-        state.buttons[btn] = {
-            ...state.buttons[btn],
-            ...binding,
-        };
-    }
-
-    function pressButton(btn: string) {
-        state.buttonState.press(btn);
-        state.events.trigger("buttonPress", btn);
-    }
-
-    function releaseButton(btn: string) {
-        state.buttonState.release(btn);
-        state.events.trigger("buttonRelease", btn);
     }
 
     function onResize(action: () => void): KEventController {
@@ -1282,6 +1277,7 @@ export const initApp = (
         isFullscreen,
         setCursor,
         screenshot,
+        screenshotToBlob,
         getGamepads,
         getCursor,
         setCursorLocked,
@@ -1305,8 +1301,9 @@ export const initApp = (
         isButtonPressed,
         isButtonDown,
         isButtonReleased,
-        setButton,
         getButton,
+        getButtons,
+        setButton,
         pressButton,
         releaseButton,
         charInputted,

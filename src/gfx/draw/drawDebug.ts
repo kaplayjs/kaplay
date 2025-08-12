@@ -158,11 +158,10 @@ export function drawDebug() {
         });
     }
 
-    if (_k.debug.curRecording) {
+    if (_k.debug.curRecording !== null) {
         drawUnscaled(() => {
             pushTransform();
-            multTranslate(0, height());
-            multTranslate(24, -24);
+            multTranslate(width() - 24, 24);
 
             drawCircle({
                 radius: 12,

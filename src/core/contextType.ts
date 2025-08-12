@@ -204,6 +204,22 @@ export interface KAPLAYCtx<
      */
     _k: Engine & { k: KAPLAYCtx };
     /**
+     * End everything.
+     *
+     * @since v2000.0
+     * @group Start
+     */
+    quit(): void;
+    /**
+     * Throws a new error and show up the Blue Screen.
+     *
+     * @param msg - The message for showing in the Blue Screen.
+     *
+     * @since v4000.0
+     * @group Start
+     */
+    throwError(msg: string): void;
+    /**
      * Assemble a game object from a list of components, and add it to the game,
      *
      * @param comps - List of components to add to the game object.
@@ -2988,6 +3004,7 @@ export interface KAPLAYCtx<
         btn: TButton | TButton[],
         action: (btn: TButton) => void,
     ): KEventController;
+    onButtonPress(action: (btn: TButton) => void): KEventController;
     /**
      * Register an event that runs when user release a defined button
      * (like "jump") on any input (keyboard, gamepad).
@@ -3913,6 +3930,15 @@ export interface KAPLAYCtx<
      * @subgroup Buttons API
      */
     getButton(btn: keyof TButtonDef): ButtonBinding;
+    /**
+     * Get all the input bindings.
+     *
+     * @returns The button definition.
+     * @since v4000.0
+     * @group Input
+     * @subgroup Buttons API
+     */
+    getButtons(): TButtonDef;
     /**
      * Set a input binding for a button name.
      *
@@ -5257,6 +5283,19 @@ export interface KAPLAYCtx<
      */
     triangulate(pts: Vec2[]): Vec2[][];
     /**
+     * Sorts the array in-place using {@link https://en.wikipedia.org/wiki/Insertion_sort insertion sort}.
+     * This is useful when you have a persistent (not per-frame) array of objects and they change
+     * on each frame but not by much, but the list must remain sorted. (For example, the list could
+     * be returned by {@link get `get`} with the `liveUpdate` option enabled, and then stored somewhere.)
+     *
+     * @param compare - returns true if `[left, right]` is the correct order, false if `[right, left]` is the correct order.
+     *
+     * @since v4000.0
+     * @group Math
+     * @subgroup Advanced
+     */
+    insertionSort<T>(array: T[], compare: (left: T, right: T) => boolean): void;
+    /**
      * A Navigation Mesh.
      *
      * @since v3001.0
@@ -5356,15 +5395,6 @@ export interface KAPLAYCtx<
      * @subgroup Random
      */
     RNG: typeof RNG;
-    /**
-     * Sorts the array in-place using {@link https://en.wikipedia.org/wiki/Insertion_sort insertion sort}.
-     * This is useful when you have a persistent (not per-frame) array of objects and they change
-     * on each frame but not by much, but the list must remain sorted. (For example, the list could
-     * be returned by {@link get `get`} with the `liveUpdate` option enabled, and then stored somewhere.)
-     *
-     * @param compare - returns true if `[left, right]` is the correct order, false if `[right, left]` is the correct order.
-     */
-    insertionSort<T>(array: T[], compare: (left: T, right: T) => boolean): void;
     /**
      * Define a scene.
      *
@@ -6121,13 +6151,21 @@ export interface KAPLAYCtx<
      */
     SystemPhase: typeof SystemPhase;
     /**
-     * Take a screenshot and get the data url of the image.
+     * Take a screenshot and get the PNG data url of the image.
      *
-     * @returns The dataURL of the image.
+     * @returns The dataURL of the PNG image.
      * @since v2000.0
      * @group Debug
      */
     screenshot(): string;
+    /**
+     * Take a screenshot and get the PNG data as a blob.
+     *
+     * @returns The blob of the image.
+     * @since v4000.0
+     * @group Debug
+     */
+    screenshotToBlob(): Promise<Blob>;
     /**
      * Trigger a file download from a url.
      *
@@ -6157,13 +6195,36 @@ export interface KAPLAYCtx<
      */
     downloadBlob(filename: string, blob: Blob): void;
     /**
-     * Start recording the canvas into a video. If framerate is not specified, a new frame will be captured each time the canvas changes.
+     * Start recording the canvas into a video.
+     *
+     * Note: This relies on the browser's support using the `MediaRecorder`
+     * API, and support is buggy at best from my (@dragoncoder047)'s testing.
+     * The best results I have gotten are with explicitly specifying `video/webm`
+     * and 60 FPS.
+     *
+     * Results with the default values are usually no good and even if both MIME
+     * type and framerate are specified, dropped frames, truncated videos,
+     * audio desynchronization, and even completely corrupted files have been gotten
+     * from this. `video/mp4` is technically supported by some browsers but I can't
+     * recommend it as MP4 has produced glitched and/or corrupted files much more often
+     * than WebM in my testing.
+     *
+     * If your players want to get a nice clean recording it's probably a better
+     * idea to point them to an external screen-recording program such as
+     * [OBS](https://obsproject.com).
+     *
+     * @param frameRate - Target frame rate for the output video.
+     * If framerate is not specified, a new frame will be captured each
+     * time the canvas changes.
+     * @param mimeTypes - A list of MIME types such as `video/mp4`, `video/webm`.
+     * The browser will select the first one it can do when the recording is started.
+     * If none are supported, an error will be thrown.
      *
      * @returns A control handle.
      * @since v2000.1
      * @group Debug
      */
-    record(frameRate?: number): Recording;
+    record(frameRate?: number, mimeTypes?: string[]): Recording;
     /**
      * Add an explosion effect.
      *
@@ -6280,22 +6341,6 @@ export interface KAPLAYCtx<
      * @group Info
      */
     canvas: HTMLCanvasElement;
-    /**
-     * End everything.
-     *
-     * @since v2000.0
-     * @group Start
-     */
-    quit: () => void;
-    /**
-     * Throws a new error and show up the Blue Screen.
-     *
-     * @param msg - The message for showing in the Blue Screen.
-     *
-     * @since v4000.0
-     * @group Start
-     */
-    throwError: (msg: string) => void;
     /**
      * EventHandler for one single event.
      *

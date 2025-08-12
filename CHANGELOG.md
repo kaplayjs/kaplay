@@ -8,7 +8,74 @@ The format is (mostly) based on
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project
 adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [4000.0.0] - TBD
+<!--
+Hey, KAPLAY Dev, you must changelog here, in unreleased, so later your
+best friend, lajbel, can put the correct version name here
+-->
+
+## [unreleased]
+
+### Added
+
+- Added `screenshotToBlob()` to get a screenshot as a `Blob` - @dragoncoder047
+- Added `getButtons()` to get the input binding buttons definition - @lajbel
+
+### Changed
+
+- `loadShader()` now also checks for link errors as well as compile errors and
+  reports them rather than just silently trying to use a borked shader -
+- The debug `record()` function now records with sound enabled like it should -
+  @dragoncoder047
+
+## [unreleased] (v3001)
+
+---
+
+## [4000.0.0-alpha.21] - 2025-08-07
+
+### Added
+
+- Added Prefabs - @mflerackers, @lajbel, @amyspark-ng and other contributors.
+- Added new scene methods `pushScene()` and `popScene()`, for stack behaviour in
+  scenes - @itzKiwiSky
+- Added `throwError()` for throwing custom errors to the blue screen, even
+  errors KAPLAY can't handle. - @lajbel
+- Added `insertionSort()` - @dragoncoder047
+- Added a mapping for PS5 (DualSense) gamepads, so now you can bind actions to
+  the touchpad press (only works in Chrome for some reason) - @dragoncoder047
+
+### Changed
+
+- Renamed `KAPLAYOpt.tagsAsComponents` to `KAPLAYOpt.tagComponentIds` - @lajbel
+- Now moving mouse changes the value of `getLastInputDevice()` - @amyspark-ng
+- Now `GameObjRaw.exists()` work for nested objects
+
+### Fixed
+
+- Fixed shader error messages - @dragoncoder047
+
+## [4000.0.0-alpha.20] - 2025-06-15
+
+### Added
+
+- Now you can use the frames of a sprite in an atlas also as a font -
+  @dragoncoder047
+- Improved various doc entries. - All Contributors.
+
+### Fixed
+
+- Fixed `AreaComp#onClick()` attaching events to app, instead of object, so
+  event wasn't being paused with `obj.paused` - @lajbel
+- Fixed all touch events having a bad transform - @lajbel
+- Fixed sprite scaling not working properly when letterbox - @mflerackers
+- Fixed "add" event running twice in `addLevel()` tiles - @lajbel
+- Fixed blend component having a wrong ID - @lajbel
+
+### Removed
+
+- `loadPedit` was removed - @lajbel
+
+## [4000.0.0-alpha.0 to 4000.0.0-alpha.19]
 
 ### Added
 
@@ -128,39 +195,6 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   setting it to true (focused) will clear focus from all the other text inputs -
   @dragoncoder047
 - Changed the API of `HealthComp` - @amyspark-ng
-
-## [4000.0.0-alpha.21] - TBD
-
-### Added
-
-- Added `throwError()` for throwing custom errors to the blue screen, even
-  errors KAPLAY can't handle. - @lajbel
-- Added Prefabs - @mflerackers, @lajbel, @amyspark-ng and other contributors.
-
-### Changed
-
-- Renamed `KAPLAYOpt.tagsAsComponents` to `KAPLAYOpt.tagComponentIds` - @lajbel
-
-## [4000.0.0-alpha.20] - 2025-06-15
-
-### Added
-
-- Now you can use the frames of a sprite in an atlas also as a font -
-  @dragoncoder047
-- Improved various doc entries. - All Contributors.
-
-### Fixed
-
-- Fixed `AreaComp#onClick()` attaching events to app, instead of object, so
-  event wasn't being paused with `obj.paused` - @lajbel
-- Fixed all touch events having a bad transform - @lajbel
-- Fixed sprite scaling not working properly when letterbox - @mflerackers
-- Fixed "add" event running twice in `addLevel()` tiles - @lajbel
-- Fixed blend component having a wrong ID - @lajbel
-
-### Removed
-
-- `loadPedit` was removed - @lajbel
 
 ## [3001.0.19] - 2025-06-15
 
@@ -403,6 +437,7 @@ kaplay({
 - Added events for listen to comps being removed or added `onUse()` and
   `onUnused()` (**experimental**)
 - Added `k.cancel()` to cancel the current event (**experimental**)
+
 - ```js
   onKeyPress("space", () => {
       // do something
@@ -410,6 +445,7 @@ kaplay({
       return cancel();
   });
   ```
+
 - Added `getDefaultLayer()` to get the default layer (**experimental**)
 - Added `getLayers()` to get the layers list (**experimental**)
 - Added many JSDoc specifiers on many functions (@require, @deprecated, @since,
