@@ -1,16 +1,17 @@
+import type { AreaComp } from "../../ecs/components/physics/area";
 import type { GameObj } from "../../types";
 import { Rect, vec2 } from "../math";
 
 /**
  * A quadtree structure
  */
-class Quadtree {
+export class Quadtree {
     bounds: Rect;
     maxObjects: number;
     maxLevels: number;
     level: number;
     nodes: Quadtree[];
-    objects: GameObj[];
+    objects: GameObj<AreaComp>[];
 
     /**
      * Creates a new quadtree
@@ -162,7 +163,7 @@ class Quadtree {
      * @param obj The object to add
      * @param bbox The bounding box of the object
      */
-    insert(obj: GameObj<any>, bbox: Rect): void {
+    insert(obj: GameObj<AreaComp>, bbox: Rect): void {
         // If we reached max objects, subdivide and redistribute
         if (this.objects.length >= this.maxObjects) {
             if (this.nodes.length === 0 && this.level < this.maxLevels) {
@@ -198,11 +199,19 @@ class Quadtree {
     }
 
     /**
+     * Add the object
+     * @param obj - The object to add
+     */
+    add(obj: GameObj<AreaComp>) {
+        this.insert(obj, obj.screenArea().bbox());
+    }
+
+    /**
      * Retrieves all objects potentially intersecting the rectangle
      * @param rect The rect to test with
      * @returns A set of objects potentially intersecting the rectangle
      */
-    retrieve(rect: Rect, objects: GameObj[]): GameObj[] {
+    retrieve(rect: Rect, objects: GameObj[]) {
         objects.push(...this.objects);
 
         if (this.nodes.length) {
@@ -218,7 +227,7 @@ class Quadtree {
      * @param obj The object to remove
      * @param fast No node collapse if true
      */
-    remove(obj: GameObj<any>, fast = false): boolean {
+    remove(obj: GameObj<AreaComp>, fast = false): boolean {
         let index = this.objects.indexOf(obj);
         if (index != -1) {
             this.objects.splice(index, 1);
@@ -247,7 +256,7 @@ class Quadtree {
      * @param obj The object to update
      * @param bbox The new bounding box
      */
-    updateObject(root: Quadtree, obj: GameObj<any>, bbox: Rect): void {
+    updateObject(root: Quadtree, obj: GameObj<AreaComp>, bbox: Rect): void {
         this.remove(obj);
         root.insert(obj, bbox);
     }
@@ -312,7 +321,7 @@ class Quadtree {
      * Update this tree
      */
     update() {
-        const orphans: [GameObj, Rect][] = [];
+        const orphans: [GameObj<AreaComp>, Rect][] = [];
         this.updateNode(orphans);
         // Reinsert all objects that were removed because they went outside the bounds of their quadrant
         for (let i = 0; i < orphans.length; i++) {
@@ -342,8 +351,8 @@ class Quadtree {
      * @param pairs The pairs being gathered
      */
     gatherPairs(
-        ancestorObjects: Array<GameObj>,
-        pairs: Array<[GameObj, GameObj]>,
+        ancestorObjects: Array<GameObj<AreaComp>>,
+        pairs: Array<[GameObj<AreaComp>, GameObj<AreaComp>]>,
     ) {
         // The objects in this node potentially collide with each other
         for (let i = 0; i < this.objects.length; i++) {
@@ -372,7 +381,7 @@ class Quadtree {
     }
 
     *[Symbol.iterator]() {
-        const pairs: [GameObj, GameObj][] = [];
+        const pairs: [GameObj<AreaComp>, GameObj<AreaComp>][] = [];
         this.gatherPairs([], pairs);
         for (let i = 0; i < pairs.length; i++) {
             yield pairs[i];

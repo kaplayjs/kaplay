@@ -4,19 +4,27 @@ import { gjkShapeIntersection } from "../../math/gjk";
 import { minkowskiRectShapeIntersection } from "../../math/minkowski";
 import { satShapeIntersection } from "../../math/sat";
 import { SweepAndPrune } from "../../math/spatial/sweepandprune";
+import { Quadtree } from "../../math/spatial/quadtree";
 import { _k } from "../../shared";
 import type { GameObj } from "../../types";
 import { type AreaComp, usesArea } from "../components/physics/area";
 import { Collision } from "./Collision";
+import { Rect, vec2 } from "../../math/math";
+import { height, width } from "../../gfx/stack";
 
-export const createCollisionSystem = ({ narrow = "gjk" } = {}) => {
+export const createCollisionSystem = ({ broad = "sap", narrow = "gjk" } = {}) => {
+    const broadPhaseIntersection = broad === "sap"
+        ? new SweepAndPrune()
+        : broad === "quadtree"
+            ? new Quadtree(new Rect(vec2(0, 0), width(), height()), 256, 8)
+            : new SweepAndPrune()
     const narrowPhaseIntersection = narrow === "gjk"
         ? gjkShapeIntersection
         : narrow === "sat"
-        ? satShapeIntersection
-        : narrow === "box"
-        ? minkowskiRectShapeIntersection
-        : gjkShapeIntersection;
+            ? satShapeIntersection
+            : narrow === "box"
+                ? minkowskiRectShapeIntersection
+                : gjkShapeIntersection;
 
     function narrowPhase(
         obj: GameObj<AreaComp>,
@@ -49,48 +57,47 @@ export const createCollisionSystem = ({ narrow = "gjk" } = {}) => {
         return true;
     }
 
-    const sap = new SweepAndPrune();
-    let sapInit = false;
+    let broadInit = false;
 
     function broadPhase() {
         if (!usesArea()) {
             return;
         }
 
-        if (!sapInit) {
-            sapInit = true;
+        if (!broadInit) {
+            broadInit = true;
             onAdd(obj => {
                 if (obj.has("area")) {
-                    sap.add(obj as GameObj<AreaComp>);
+                    broadPhaseIntersection.add(obj as GameObj<AreaComp>);
                 }
             });
             onDestroy(obj => {
-                sap.remove(obj as GameObj<AreaComp>);
+                broadPhaseIntersection.remove(obj as GameObj<AreaComp>);
             });
             onUse((obj, id) => {
                 if (id === "area") {
-                    sap.add(obj as GameObj<AreaComp>);
+                    broadPhaseIntersection.add(obj as GameObj<AreaComp>);
                 }
             });
             onUnuse((obj, id) => {
                 if (id === "area") {
-                    sap.remove(obj as GameObj<AreaComp>);
+                    broadPhaseIntersection.remove(obj as GameObj<AreaComp>);
                 }
             });
             onSceneLeave(scene => {
-                sapInit = false;
-                sap.clear();
+                broadInit = false;
+                broadPhaseIntersection.clear();
             });
 
             for (const obj of _k.game.root.get("*", { recursive: true })) {
                 if (obj.has("area")) {
-                    sap.add(obj as GameObj<AreaComp>);
+                    broadPhaseIntersection.add(obj as GameObj<AreaComp>);
                 }
             }
         }
 
-        sap.update();
-        for (const [obj1, obj2] of sap) {
+        broadPhaseIntersection.update();
+        for (const [obj1, obj2] of broadPhaseIntersection) {
             narrowPhase(obj1, obj2);
         }
     }
