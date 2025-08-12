@@ -7,13 +7,16 @@ import { DIST_DIR, SRC_DIR } from "../constants.js";
 import { writeFile } from "./util.js";
 
 export async function genGlobalDTS() {
+    // ensure declaration dir exists
+    await fs.mkdir(`${DIST_DIR}/declaration`, { recursive: true });
+
     // global dts
-    const dts = await fs.readFile(`${SRC_DIR}/types.ts`, "utf-8");
+    const docts = await fs.readFile(`${DIST_DIR}/doc.d.ts`, "utf-8");
 
     // we create this file to get information about the typescript
     const f = ts.createSourceFile(
         "ts",
-        dts,
+        docts,
         ts.ScriptTarget.Latest,
         true,
     );
@@ -97,9 +100,11 @@ export async function genGlobalDTS() {
 
     // generate global decls for KAPLAYCtx members
     let globalDts = "";
+    let globalDts2 = "";
 
-    globalDts +=
-        "import { KAPLAYCtx } from \"./types\"\nimport { kaplay as KAPLAY } from \"./kaplay\"\n";
+    const imp = "import { KAPLAYCtx, default as KAPLAY } from \"../doc\"\n";
+    const imp2 = "type KAPLAY = typeof kaplay;";
+
     globalDts += "declare global {\n";
 
     for (const stmt of stmts) {
@@ -114,15 +119,23 @@ export async function genGlobalDTS() {
         }
     }
 
+    globalDts2 = globalDts;
+    globalDts2 += "const kaplay: KAPLAY;\n";
+    globalDts2 += "const kaboom: KAPLAY;\n";
     globalDts += `\tconst kaplay: typeof KAPLAY\n`;
     globalDts += `\tconst kaboom: typeof KAPLAY\n`;
 
     globalDts += "}\n";
+    globalDts2 += "}\n";
 
     if (!globalGenerated) {
         throw new Error("KAPLAYCtx not found, failed to generate global defs.");
     }
 
-    writeFile(`${DIST_DIR}/declaration/global.d.ts`, globalDts);
+    writeFile(`${DIST_DIR}/declaration/global.d.ts`, imp + globalDts);
     writeFile(`${DIST_DIR}/declaration/global.js`, "");
+    writeFile(
+        `${DIST_DIR}/types.d.ts`,
+        docts + imp2 + globalDts2,
+    );
 }

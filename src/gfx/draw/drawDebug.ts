@@ -1,17 +1,17 @@
-import { DBG_FONT, LOG_TIME } from "../../constants";
-import { _k } from "../../kaplay";
+import { DBG_FONT, LOG_TIME } from "../../constants/general";
+import { isPaused } from "../../ecs/entity/utils";
 import { rgb } from "../../math/color";
 import { vec2, wave } from "../../math/math";
+import { _k } from "../../shared";
 import { formatText } from "../formatText";
 import {
-    contentToView,
     height,
-    mousePos,
+    multTranslate,
     popTransform,
     pushTransform,
-    pushTranslate,
     width,
 } from "../stack";
+import { viewportToCanvas } from "../viewport";
 import { drawCircle } from "./drawCircle";
 import { drawFormattedText } from "./drawFormattedText";
 import { drawInspectText } from "./drawInspectText";
@@ -24,13 +24,19 @@ export function drawDebug() {
         let inspecting = null;
 
         for (const obj of _k.game.root.get("*", { recursive: true })) {
-            if (obj.c("area") && obj.isHovering()) {
+            if (
+                obj.has("area")
+                && (_k.globalOpt.inspectOnlyActive ? !isPaused(obj) : true)
+                && obj.isHovering()
+            ) {
                 inspecting = obj;
                 break;
             }
         }
 
+        pushTransform();
         _k.game.root.drawInspect();
+        popTransform();
 
         if (inspecting) {
             const lines = [];
@@ -39,15 +45,20 @@ export function drawDebug() {
             for (const tag in data) {
                 if (data[tag]) {
                     // pushes the inspect function (eg: `sprite: "bean"`)
-                    lines.push(`${data[tag]}`);
+                    lines.push(data[tag]);
                 }
                 else {
                     // pushes only the tag (name of the component)
-                    lines.push(`${tag}`);
+                    lines.push(tag);
                 }
             }
 
-            drawInspectText(contentToView(mousePos()), lines.join("\n"));
+            lines.push(...inspecting.tags.map(t => `tag: ${t}`));
+
+            drawInspectText(
+                viewportToCanvas(_k.app.mousePos()),
+                lines.join("\n"),
+            );
         }
 
         drawInspectText(vec2(8), `FPS: ${_k.debug.fps()}`);
@@ -57,8 +68,8 @@ export function drawDebug() {
         drawUnscaled(() => {
             // top right corner
             pushTransform();
-            pushTranslate(width(), 0);
-            pushTranslate(-8, 8);
+            multTranslate(width(), 0);
+            multTranslate(-8, 8);
 
             const size = 32;
 
@@ -94,8 +105,8 @@ export function drawDebug() {
         drawUnscaled(() => {
             // bottom right corner
             pushTransform();
-            pushTranslate(width(), height());
-            pushTranslate(-8, -8);
+            multTranslate(width(), height());
+            multTranslate(-8, -8);
 
             const pad = 8;
 
@@ -147,11 +158,10 @@ export function drawDebug() {
         });
     }
 
-    if (_k.debug.curRecording) {
+    if (_k.debug.curRecording !== null) {
         drawUnscaled(() => {
             pushTransform();
-            pushTranslate(0, height());
-            pushTranslate(24, -24);
+            multTranslate(width() - 24, 24);
 
             drawCircle({
                 radius: 12,
@@ -167,8 +177,8 @@ export function drawDebug() {
     if (_k.debug.showLog && _k.game.logs.length > 0) {
         drawUnscaled(() => {
             pushTransform();
-            pushTranslate(0, height());
-            pushTranslate(8, -8);
+            multTranslate(0, height());
+            multTranslate(8, -8);
 
             const pad = 8;
             const logs = [];

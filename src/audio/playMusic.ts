@@ -1,6 +1,6 @@
-import { _k } from "../kaplay";
-import { clamp } from "../math/math";
-import { KEvent } from "../utils";
+import { KEvent } from "../events/events";
+import { clamp } from "../math/clamp";
+import { _k } from "../shared";
 import type { AudioPlay, AudioPlayOpt } from "./play";
 
 export function playMusic(url: string, opt: AudioPlayOpt = {}): AudioPlay {

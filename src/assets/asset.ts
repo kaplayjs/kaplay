@@ -1,8 +1,9 @@
-import { SPRITE_ATLAS_HEIGHT, SPRITE_ATLAS_WIDTH } from "../constants";
-import TexPacker from "../gfx/classes/TexPacker";
+import { SPRITE_ATLAS_HEIGHT, SPRITE_ATLAS_WIDTH } from "../constants/general";
+import type { SerializedGameObj } from "../ecs/entity/prefab";
+import { KEvent, KEventHandler } from "../events/events";
 import type { GfxCtx } from "../gfx/gfx";
-import { _k } from "../kaplay";
-import { KEvent } from "../utils";
+import { TexPacker } from "../gfx/TexPacker";
+import { _k } from "../shared";
 import type { BitmapFontData } from "./bitmapFont";
 import type { FontData } from "./font";
 import type { ShaderData } from "./shader";
@@ -86,8 +87,14 @@ export class Asset<D> {
     }
 }
 
+/**
+ * @group Assets
+ * @subgroup Types
+ */
 export class AssetBucket<D> {
     assets: Map<string, Asset<D>> = new Map();
+    waiters: KEventHandler<any> = new KEventHandler();
+    errorWaiters: KEventHandler<any> = new KEventHandler();
     lastUID: number = 0;
 
     add(name: string | null, loader: Promise<D>): Asset<D> {
@@ -95,6 +102,12 @@ export class AssetBucket<D> {
         const id = name ?? (this.lastUID++ + "");
         const asset = new Asset(loader);
         this.assets.set(id, asset);
+        asset.onLoad(d => {
+            this.waiters.trigger(id, d);
+        });
+        asset.onError(d => {
+            this.errorWaiters.trigger(id, d);
+        });
 
         return asset;
     }
@@ -102,6 +115,8 @@ export class AssetBucket<D> {
         const id = name ?? (this.lastUID++ + "");
         const asset = Asset.loaded(data);
         this.assets.set(id, asset);
+        this.waiters.trigger(id, data);
+        this.errorWaiters.remove(id);
 
         return asset;
     }
@@ -128,6 +143,35 @@ export class AssetBucket<D> {
         return Array.from(this.assets.keys()).filter(a =>
             this.assets.get(a)!.error !== null
         ).map(a => [a, this.assets.get(a)!]);
+    }
+
+    waitFor(name: string, timeout: number): PromiseLike<D> {
+        const asset = this.get(name);
+        if (asset) {
+            if (asset.loaded) return Promise.resolve(asset.data!);
+            else {
+                return Promise.race([
+                    new Promise<D>((res, rej) => {
+                        asset.onLoad(res);
+                        asset.onError(rej);
+                    }),
+                    new Promise<never>((_, rej) =>
+                        setTimeout(
+                            () => rej("timed out waiting for asset " + name),
+                            timeout,
+                        )
+                    ),
+                ]);
+            }
+        }
+        const x = Promise.withResolvers<D>();
+        this.waiters.onOnce(name, x.resolve);
+        this.errorWaiters.onOnce(name, x.reject);
+        setTimeout(
+            () => x.reject("timed out waiting for asset " + name),
+            timeout,
+        );
+        return x.promise;
     }
 }
 
@@ -212,8 +256,10 @@ export function load<T>(prom: Promise<T>): Asset<T> {
 }
 
 // create assets
-export type AssetsCtx = ReturnType<typeof initAssets>;
+/** @ignore */
+export type InternalAssetsCtx = ReturnType<typeof initAssets>;
 
+/** @ignore */
 export const initAssets = (ggl: GfxCtx, spriteAtlasPadding: number) => {
     const assets = {
         urlPrefix: "",
@@ -224,6 +270,7 @@ export const initAssets = (ggl: GfxCtx, spriteAtlasPadding: number) => {
         sounds: new AssetBucket<SoundData>(),
         shaders: new AssetBucket<ShaderData>(),
         custom: new AssetBucket<any>(),
+        prefabAssets: new AssetBucket<SerializedGameObj>(),
         music: {} as Record<string, string>,
         packer: new TexPacker(
             ggl,

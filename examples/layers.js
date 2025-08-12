@@ -1,4 +1,11 @@
-// @ts-check
+/**
+ * @file Layers
+ * @description How to use layer system
+ * @difficulty 0
+ * @tags basics, effects, ui
+ * @minver 3001.0
+ * @category basics
+ */
 
 kaplay();
 
@@ -12,14 +19,6 @@ add([
     // opacity(0.5)
 ]).add([text("BG")]);
 
-// game layer explicit
-add([
-    pos(width() / 5, height() / 5),
-    rect(width() / 3, height() / 3),
-    layer("game"),
-    color(rgb(255, 128, 64)),
-]).add([text("GAME")]);
-
 // game layer implicit
 add([
     pos(3 * width() / 5, 3 * height() / 5),
@@ -32,5 +31,14 @@ add([
     pos(center()),
     rect(width() / 2, height() / 2),
     anchor("center"),
+    layer("ui"),
     color(rgb(64, 255, 128)),
 ]).add([text("UI"), anchor("center")]);
+
+// game layer explicit
+add([
+    pos(width() / 5, height() / 5),
+    rect(width() / 3, height() / 3),
+    layer("game"),
+    color(rgb(255, 128, 64)),
+]).add([text("GAME")]);

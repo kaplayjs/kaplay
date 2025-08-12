@@ -1,4 +1,11 @@
-// @ts-check
+/**
+ * @file Double Jump
+ * @description How to add a double jump
+ * @difficulty 1
+ * @tags game, comps
+ * @minver 3001.0
+ * @category concepts
+ */
 
 // How to use the doubleJump component in this little game
 kaplay({
@@ -10,7 +17,7 @@ loadSprite("bean", "/sprites/bean.png");
 loadSprite("coin", "/sprites/coin.png");
 loadSprite("grass", "/sprites/grass.png");
 loadSprite("spike", "/sprites/spike.png");
-loadSound("coin", "/examples/sounds/score.mp3");
+loadSound("coin", "/sounds/score.mp3");
 
 // Set the gravity acceleration (pixels per second)
 setGravity(4000);

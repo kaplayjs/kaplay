@@ -1,3 +1,11 @@
+/**
+ * @file Offscreen test
+ * @description Test for offscreening with camera.
+ * @difficulty 3
+ * @tags basics
+ * @minver 3001.0
+ */
+
 kaplay();
 
 loadBean();

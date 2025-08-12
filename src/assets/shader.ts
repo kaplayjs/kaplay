@@ -4,26 +4,31 @@ import {
     FRAG_TEMPLATE,
     VERT_TEMPLATE,
     VERTEX_FORMAT,
-} from "../constants";
-import { type GfxCtx } from "../gfx";
-import { _k } from "../kaplay";
+} from "../constants/general";
+import type { GfxCtx } from "../gfx/gfx";
 import { Color } from "../math/color";
-import { Mat23, Mat4, Vec2 } from "../math/math";
+import { Mat4 } from "../math/Mat4";
+import { Mat23 } from "../math/math";
+import { Vec2 } from "../math/Vec2";
+import { _k } from "../shared";
 import type { RenderProps } from "../types";
-import {
-    arrayIsColor,
-    arrayIsNumber,
-    arrayIsVec2,
-    getErrorMessage,
-} from "../utils";
+import { arrayIsColor, arrayIsNumber, arrayIsVec2 } from "../utils/asserts";
+import { getErrorMessage } from "../utils/log";
 import { fetchText, loadProgress } from "./asset";
 import { Asset } from "./asset";
 import { fixURL } from "./utils";
 
+/**
+ * @group Assets
+ * @subgroup Data
+ */
 export type ShaderData = Shader;
 
 /**
- * @group Math
+ * Possible values for a shader Uniform.
+ *
+ * @group Rendering
+ * @subgroup Shaders
  */
 export type UniformValue =
     | number
@@ -36,16 +41,24 @@ export type UniformValue =
     | Color[];
 
 /**
- * @group Math
+ * Possible uniform value, basically any but "u_tex".
+ *
+ * @group Rendering
+ * @subgroup Shaders
  */
-export type UniformKey = Exclude<string, "u_tex">;
+export type UniformKey = string;
+
 /**
- * @group Math
+ * @group Rendering
+ * @subgroup Shaders
  */
 export type Uniform = Record<UniformKey, UniformValue>;
 
 /**
- * @group GFX
+ * A shader, yeah.
+ *
+ * @group Rendering
+ * @subgroup Shaders
  */
 export class Shader {
     ctx: GfxCtx;
@@ -54,8 +67,11 @@ export class Shader {
     constructor(ctx: GfxCtx, vert: string, frag: string, attribs: string[]) {
         this.ctx = ctx;
         ctx.onDestroy(() => this.free());
+        this.glProgram = this.compile(vert, frag, attribs);
+    }
 
-        const gl = ctx.gl;
+    compile(vert: string, frag: string, attribs: string[]) {
+        const gl = this.ctx.gl;
         const vertShader = gl.createShader(gl.VERTEX_SHADER);
         const fragShader = gl.createShader(gl.FRAGMENT_SHADER);
 
@@ -71,7 +87,6 @@ export class Shader {
         gl.compileShader(fragShader);
 
         const prog = gl.createProgram();
-        this.glProgram = prog!;
 
         gl.attachShader(prog!, vertShader!);
         gl.attachShader(prog!, fragShader!);
@@ -85,10 +100,15 @@ export class Shader {
             if (vertError) throw new Error("VERTEX SHADER " + vertError);
             const fragError = gl.getShaderInfoLog(fragShader!);
             if (fragError) throw new Error("FRAGMENT SHADER " + fragError);
+            const linkError = gl.getProgramInfoLog(prog!);
+            if (linkError) throw new Error("LINK ERROR: " + linkError);
+            throw new Error("Unknown shader error (gl.LINK_STATUS was false)");
         }
 
         gl.deleteShader(vertShader);
         gl.deleteShader(fragShader);
+
+        return prog!;
     }
 
     bind() {
@@ -111,13 +131,29 @@ export class Shader {
                 gl.uniformMatrix4fv(loc, false, new Float32Array(val.m));
             }
             else if (val instanceof Mat23) {
-                gl.uniformMatrix4fv(loc, false, new Float32Array([
-                    val.a, val.b, 0, 0,
-                    val.c, val.d, 0, 0,
-                    0, 0, 1, 0,
-                    val.e, val.f, 0, 1
-                ]));
-                //console.log(val)
+                gl.uniformMatrix4fv(
+                    loc,
+                    false,
+                    new Float32Array([
+                        val.a,
+                        val.b,
+                        0,
+                        0,
+                        val.c,
+                        val.d,
+                        0,
+                        0,
+                        0,
+                        0,
+                        1,
+                        0,
+                        val.e,
+                        val.f,
+                        0,
+                        1,
+                    ]),
+                );
+                // console.log(val)
             }
             else if (val instanceof Color) {
                 gl.uniform3f(loc, val.r, val.g, val.b);
@@ -126,8 +162,6 @@ export class Shader {
                 gl.uniform2f(loc, val.x, val.y);
             }
             else if (Array.isArray(val)) {
-                const first = val[0];
-
                 if (arrayIsNumber(val)) {
                     gl.uniform1fv(loc, val as number[]);
                 }
@@ -165,14 +199,15 @@ export function makeShader(
             VERTEX_FORMAT.map((vert) => vert.name),
         );
     } catch (e) {
-        const lineOffset = 14;
         const fmt = /(?<type>^\w+) SHADER ERROR: 0:(?<line>\d+): (?<msg>.+)/;
         const match = getErrorMessage(e).match(fmt);
         if (!match?.groups) throw e;
-        const line = Number(match.groups.line) - lineOffset;
+        const line = Number(match.groups.line);
         const msg = match.groups.msg.trim();
         const ty = match.groups.type.toLowerCase();
-        throw new Error(`${ty} shader line ${line}: ${msg}`);
+        const lines = (ty == "vertex" ? vcode : fcode).split("\n");
+        const lineContents = lines[line - 1];
+        throw new Error(`${ty} shader line ${line}: ${msg}\n${lineContents}`);
     }
 }
 

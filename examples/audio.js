@@ -1,4 +1,13 @@
-// @ts-check
+/**
+ * @file Audio Playing
+ * @description How to play audio files and change volume, speed, etc.
+ * @difficulty 0
+ * @tags basics, audio
+ * @minver 3001.0
+ * @category basics
+ * @test
+ */
+
 // Playing audio and controlling it
 
 kaplay({
@@ -8,9 +17,9 @@ kaplay({
 });
 
 // Loads the bell sound
-loadSound("bell", "/examples/sounds/bell.mp3");
+loadSound("bell", "/sounds/bell.mp3");
 // Load the music, it makes it being streamed, so loading is faster
-loadMusic("OtherworldlyFoe", "/examples/sounds/OtherworldlyFoe.mp3");
+loadMusic("OtherworldlyFoe", "/sounds/OtherworldlyFoe.mp3");
 loadSprite("bag", "/sprites/bag.png");
 
 // Adjust global volume

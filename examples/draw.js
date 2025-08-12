@@ -1,7 +1,17 @@
-// @ts-check
+/**
+ * @file Draw
+ * @description How to use the drawing API
+ * @difficulty 0
+ * @tags basics
+ * @minver 3001.0
+ * @category basics
+ * @test
+ */
 
-// Kaplay as pure rendering lib (no component / game obj etc.)
+// This example shows how to use the drawing API.
+
 kaplay();
+
 loadSprite("bean", "/sprites/bean.png");
 
 // Loads a spiral shader
@@ -32,7 +42,7 @@ const trail = [];
 const outline = {
     width: 4,
     color: rgb(0, 0, 0),
-    join: "miter",
+    join: "bevel",
 };
 
 function drawStuff() {

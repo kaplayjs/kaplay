@@ -1,11 +1,18 @@
-// @ts-check
+/**
+ * @file Pause Menu
+ * @description How to do a basic pause screen
+ * @difficulty 1
+ * @tags ui
+ * @minver 3001.0
+ * @category concepts
+ */
 
 kaplay();
 
 loadSprite("bean", "/sprites/bean.png");
-loadSound("score", "/examples/sounds/score.mp3");
-loadSound("wooosh", "/examples/sounds/wooosh.mp3");
-loadSound("hit", "/examples/sounds/hit.mp3");
+loadSound("score", "/sounds/score.mp3");
+loadSound("wooosh", "/sounds/wooosh.mp3");
+loadSound("hit", "/sounds/hit.mp3");
 
 // define gravity
 setGravity(3200);
@@ -44,18 +51,18 @@ scene("game", () => {
     });
 
     // jump
-    onKeyPress("space", () => {
+    game.onKeyPress("space", () => {
         bean.jump(JUMP_FORCE);
         play("wooosh");
     });
 
-    onGamepadButtonPress("south", () => {
+    game.onGamepadButtonPress("south", () => {
         bean.jump(JUMP_FORCE);
         play("wooosh");
     });
 
-    // mobile
-    onClick(() => {
+    // mouse and touch
+    game.onMousePress("left", () => {
         bean.jump(JUMP_FORCE);
         play("wooosh");
     });

@@ -1,4 +1,12 @@
-// @ts-check
+/**
+ * @file Shooter
+ * @description 2D top-down space shooter game
+ * @difficulty 1
+ * @tags basics, game
+ * @minver 3001.0
+ * @category games
+ * @test
+ */
 
 kaplay({
     background: [74, 48, 82],
@@ -20,10 +28,10 @@ for (const obj of objs) {
 }
 
 loadBean();
-loadSound("hit", "/examples/sounds/hit.mp3");
-loadSound("shoot", "/examples/sounds/shoot.mp3");
-loadSound("explode", "/examples/sounds/explode.mp3");
-loadSound("OtherworldlyFoe", "/examples/sounds/OtherworldlyFoe.mp3");
+loadSound("hit", "/sounds/hit.mp3");
+loadSound("shoot", "/sounds/shoot.mp3");
+loadSound("explode", "/sounds/explode.mp3");
+loadSound("OtherworldlyFoe", "/sounds/OtherworldlyFoe.mp3");
 
 scene("battle", () => {
     const BULLET_SPEED = 1200;
@@ -40,7 +48,7 @@ scene("battle", () => {
 
     const music = play("OtherworldlyFoe");
 
-    volume(0.5);
+    setVolume(0.5);
 
     function grow(rate) {
         return {
@@ -285,7 +293,7 @@ scene("battle", () => {
 
     onCollide("bullet", "enemy", (b, e) => {
         destroy(b);
-        e.hurt(insaneMode ? 10 : 1);
+        e.hp -= insaneMode ? 10 : 1;
         addExplode(b.pos, 1, 24, 1);
     });
 
@@ -307,7 +315,7 @@ scene("battle", () => {
     });
 
     boss.onHurt(() => {
-        healthbar.set(boss.hp());
+        healthbar.set(boss.hp);
     });
 
     boss.onDeath(() => {

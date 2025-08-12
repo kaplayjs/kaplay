@@ -1,5 +1,5 @@
-import type { AreaComp } from "../../components/physics/area";
-import { DEF_HASH_GRID_SIZE } from "../../constants";
+import { DEF_HASH_GRID_SIZE } from "../../constants/general";
+import type { AreaComp } from "../../ecs/components/physics/area";
 import type { GameObj } from "../../types";
 import { calcTransform } from "../various";
 

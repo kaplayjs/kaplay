@@ -1,4 +1,11 @@
-// @ts-check
+/**
+ * @file Gamepad
+ * @description How to manage gamepad input.
+ * @difficulty 0
+ * @tags basics, input
+ * @minver 3001.0
+ * @category concepts
+ */
 
 kaplay({
     background: [0, 0, 0],

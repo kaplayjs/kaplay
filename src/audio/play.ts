@@ -1,12 +1,15 @@
-import { Asset, resolveSound, type SoundData } from "../assets";
-import { _k } from "../kaplay";
+import { Asset } from "../assets/asset";
+import { resolveSound, type SoundData } from "../assets/sound";
+import { KEvent, type KEventController } from "../events/events";
+import { _k } from "../shared";
 import type { MusicData } from "../types";
-import { KEvent, type KEventController } from "../utils";
 import { playMusic } from "./playMusic";
 
 // TODO: enable setting on load, make part of SoundData
 /**
  * Audio play configurations.
+ *
+ * @group Audio
  */
 export interface AudioPlayOpt {
     /**
@@ -56,6 +59,9 @@ export interface AudioPlayOpt {
     connectTo?: AudioNode;
 }
 
+/**
+ * @group Audio
+ */
 export interface AudioPlay {
     /**
      * Start playing audio.
@@ -185,8 +191,10 @@ export function play(
         }
     };
 
-    // @ts-ignore
-    const snd = resolveSound(src);
+    const snd = resolveSound(
+        // @ts-expect-error Resolve Type Error
+        src,
+    );
 
     if (snd instanceof Asset) {
         snd.onLoad(start);

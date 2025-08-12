@@ -1,12 +1,9 @@
-import { Asset, resolveShader, type Uniform } from "../../assets";
-import { _k } from "../../kaplay";
-import { Vec2, vec2 } from "../../math/math";
-import { screen2ndc } from "../../math/various";
+import { Asset } from "../../assets/asset";
+import { resolveShader, type Uniform } from "../../assets/shader";
+import { _k } from "../../shared";
 import { type Attributes, BlendMode, type RenderProps } from "../../types";
 import type { Texture } from "../gfx";
 import { height, width } from "../stack";
-
-const scratchPt = new Vec2();
 
 export function drawRaw(
     attributes: Attributes,
@@ -32,12 +29,12 @@ export function drawRaw(
 
     let index = 0;
     for (let i = 0; i < vertLength; i++) {
-        scratchPt.x = attributes.pos[i * 2];
-        scratchPt.y = attributes.pos[i * 2 + 1];
-        transform.transformPoint(scratchPt, scratchPt);
+        _k.gfx.scratchPt.x = attributes.pos[i * 2];
+        _k.gfx.scratchPt.y = attributes.pos[i * 2 + 1];
+        transform.transformPointV(_k.gfx.scratchPt, _k.gfx.scratchPt);
 
-        vv[index++] = scratchPt.x;
-        vv[index++] = scratchPt.y;
+        vv[index++] = _k.gfx.scratchPt.x;
+        vv[index++] = _k.gfx.scratchPt.y;
         vv[index++] = attributes.uv[i * 2];
         vv[index++] = attributes.uv[i * 2 + 1];
         vv[index++] = attributes.color[i * 3] / 255;
@@ -56,6 +53,6 @@ export function drawRaw(
         blend ?? BlendMode.Normal,
         width(),
         height(),
-        _k.gfx.fixed || fixed
+        _k.gfx.fixed || fixed,
     );
 }

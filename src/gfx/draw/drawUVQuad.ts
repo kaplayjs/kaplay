@@ -1,17 +1,56 @@
-import { DEF_ANCHOR, UV_PAD } from "../../constants";
-import { Color, rgb } from "../../math/color";
-import { Quad, Vec2 } from "../../math/math";
-import { BlendMode, type DrawUVQuadOpt } from "../../types";
+import { DEF_ANCHOR, UV_PAD } from "../../constants/general";
+import { Color } from "../../math/color";
+import { Quad } from "../../math/math";
+import { Vec2 } from "../../math/Vec2";
+import { type Anchor, BlendMode, type RenderProps } from "../../types";
 import { anchorPt } from "../anchor";
+import type { Texture } from "../gfx";
 import {
+    multRotate,
+    multScaleV,
+    multTranslate,
+    multTranslateV,
     popTransform,
-    pushRotate,
-    pushScaleV,
     pushTransform,
-    pushTranslate,
-    pushTranslateV,
 } from "../stack";
 import { drawRaw } from "./drawRaw";
+
+/**
+ * How the UV Quad should look like.
+ *
+ * @group Draw
+ * @subgroup Types
+ */
+export type DrawUVQuadOpt = RenderProps & {
+    /**
+     * Width of the UV quad.
+     */
+    width: number;
+    /**
+     * Height of the UV quad.
+     */
+    height: number;
+    /**
+     * If flip the texture horizontally.
+     */
+    flipX?: boolean;
+    /**
+     * If flip the texture vertically.
+     */
+    flipY?: boolean;
+    /**
+     * The texture to sample for this quad.
+     */
+    tex?: Texture;
+    /**
+     * The texture sampling area.
+     */
+    quad?: Quad;
+    /**
+     * The anchor point, or the pivot point. Default to "topleft".
+     */
+    anchor?: Anchor | Vec2;
+};
 
 export function drawUVQuad(opt: DrawUVQuadOpt) {
     if (opt.width === undefined || opt.height === undefined) {
@@ -42,10 +81,10 @@ export function drawUVQuad(opt: DrawUVQuadOpt) {
     const qh = q.h - uvPadY * 2;
 
     pushTransform();
-    pushTranslateV(opt.pos);
-    pushRotate(opt.angle);
-    pushScaleV(opt.scale);
-    pushTranslate(offsetX, offsetY);
+    multTranslateV(opt.pos);
+    multRotate(opt.angle);
+    multScaleV(opt.scale);
+    multTranslate(offsetX, offsetY);
 
     drawRaw(
         {

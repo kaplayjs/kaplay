@@ -1,7 +1,9 @@
-import type { Asset, BitmapFontData } from "../../assets";
+import type { Asset } from "../../assets/asset";
+import type { BitmapFontData } from "../../assets/bitmapFont";
 import type { FontData } from "../../assets/font";
+import type { Uniform } from "../../assets/shader";
 import type { Color } from "../../math/color";
-import type { Vec2 } from "../../math/math";
+import type { Vec2 } from "../../math/Vec2";
 import type { Anchor, RenderProps } from "../../types";
 import { formatText } from "../formatText";
 import { drawFormattedText } from "./drawFormattedText";
@@ -10,6 +12,7 @@ import { drawFormattedText } from "./drawFormattedText";
  * How the text should look like.
  *
  * @group Draw
+ * @subgroup Types
  */
 export type DrawTextOpt = RenderProps & {
     /**
@@ -76,13 +79,17 @@ export type DrawTextOpt = RenderProps & {
 
 /**
  * A function that returns a character transform config. Useful if you're generating dynamic styles.
+ *
+ * @group Rendering
+ * @subgroup Text
  */
 export type CharTransformFunc = (idx: number, ch: string) => CharTransform;
 
 /**
  * Describes how to transform each character.
  *
- * @group Options
+ * @group Rendering
+ * @subgroup Text
  */
 export interface CharTransform {
     /**
@@ -121,12 +128,41 @@ export interface CharTransform {
      * components' styles.
      */
     override?: boolean;
+
+    /**
+     * If the font for this character should be different from the default font
+     * or the one specified in {@link DrawTextOpt.font}.
+     * Because the font can't be composed like the other properties,
+     * this will override the font even if {@link CharTransform.override} is false.
+     */
+    font?: string | FontData;
+
+    /**
+     * If true, characters that have a X scale that is not 1 won't have the bounding box stretched to fit the character,
+     * and may end up overlapping with adjacent characters.
+     *
+     * @default true
+     */
+    stretchInPlace?: boolean;
+
+    /**
+     * A name for a shader that will be applied to this character only.
+     */
+    shader?: string;
+
+    /**
+     * Values to use for the shader's uniform inputs.
+     * If there is no shader set (by this character's transform or an entire-text
+     * transform), this is not used.
+     */
+    uniform?: Uniform;
 }
 
 /**
  * How the text should be aligned.
  *
- * @group Draw
+ * @group Rendering
+ * @subgroup Text
  */
 export type TextAlign =
     | "center"

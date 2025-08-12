@@ -1,14 +1,16 @@
-import { Asset, loadImg, loadProgress } from "../assets";
-import type { DrawSpriteOpt } from "../gfx";
+import type { DrawSpriteOpt } from "../gfx/draw/drawSprite";
 import type { Texture } from "../gfx/gfx";
-import { _k } from "../kaplay";
-import beanSpriteSrc from "../kassets/bean.png";
 import { Quad } from "../math/math";
+import { _k } from "../shared";
 import { type ImageSource } from "../types";
+import { Asset, loadImg, loadProgress } from "./asset";
 import { fixURL } from "./utils";
 
 /**
  * Frame-based animation configuration.
+ *
+ * @group Assets
+ * @subgroup Types
  */
 export type SpriteAnim = number | {
     /**
@@ -41,12 +43,18 @@ export type SpriteAnim = number | {
 
 /**
  * A dict of name <-> animation.
+ *
+ * @group Assets
+ * @subgroup Types
  */
 export type SpriteAnims = Record<string, SpriteAnim>;
 
 // TODO: support frameWidth and frameHeight as alternative to slice
 /**
- * Sprite loading configuration.
+ * Sprite loading options.
+ *
+ * @group Assets
+ * @subgroup Types
  */
 export interface LoadSpriteOpt {
     /**
@@ -79,6 +87,10 @@ export interface LoadSpriteOpt {
     singular?: boolean;
 }
 
+/**
+ * @group Assets
+ * @subgroup Types
+ */
 export type NineSlice = {
     /**
      * The width of the 9-slice's left column.
@@ -98,6 +110,12 @@ export type NineSlice = {
     bottom: number;
 };
 
+/**
+ * Possible values for loading an sprite using {@link loadSprite `loadSprite`}.
+ *
+ * @group Assets
+ * @subgroup Types
+ */
 export type LoadSpriteSrc = string | ImageSource;
 
 export class SpriteData {
@@ -146,7 +164,7 @@ export class SpriteData {
         opt: LoadSpriteOpt = {},
     ): SpriteData {
         const [tex, quad, packerId] = opt.singular
-            ? _k.assets.packer.add_single(data)
+            ? _k.assets.packer.addSingle(data)
             : _k.assets.packer.add(data);
         const frames = opt.frames
             ? opt.frames.map((f) =>
@@ -305,5 +323,9 @@ export function createSpriteSheet(
 }
 
 export function loadBean(name: string = "bean"): Asset<SpriteData> {
-    return loadSprite(name, beanSpriteSrc);
+    if (!_k.game.defaultAssets.bean) {
+        throw new Error("You can't use bean in kaplay/mini");
+    }
+
+    return loadSprite(name, _k.game.defaultAssets.bean);
 }

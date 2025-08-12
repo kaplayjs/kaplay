@@ -1,6 +1,11 @@
-import { evaluateBezier, type Vec2 } from "../../math/math";
+import { evaluateBezier } from "../../math/math";
+import { type Vec2 } from "../../math/Vec2";
 import { drawCurve, type DrawCurveOpt } from "./drawCurve";
 
+/**
+ * @group Draw
+ * @subgroup Types
+ */
 export type DrawBezierOpt = DrawCurveOpt & {
     /**
      * The first point.

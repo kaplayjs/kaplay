@@ -1,3 +1,12 @@
+/**
+ * @file Clipped Lines
+ * @description Highlight intersecting parts of drawn lines
+ * @difficulty 2
+ * @tags draw, visual
+ * @minver 4000.0
+ * @category concepts
+ */
+
 kaplay();
 
 const r = new Rect(vec2(100, 100), 300, 200);
@@ -58,7 +67,7 @@ scene("rect", () => {
             },
         });
 
-        for (line of testLines) {
+        for (const line of testLines) {
             drawRectClippedLine(r, line);
         }
     });
@@ -80,7 +89,7 @@ scene("circle", () => {
             },
         });
 
-        for (line of testLines) {
+        for (const line of testLines) {
             drawCircleClippedLine(c, line);
         }
     });

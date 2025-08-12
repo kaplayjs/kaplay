@@ -1,36 +1,58 @@
 // add an event to a tag
 
-import { type Asset, getFailedAssets } from "../assets";
-import { _k } from "../kaplay";
-import type { Collision, GameObj, Tag } from "../types";
-import { KEventController, overload2, Registry } from "../utils";
-import type {
-    GameObjEventMap,
-    GameObjEventNames,
-    GameObjEvents,
-} from "./eventMap";
-
-export type TupleWithoutFirst<T extends any[]> = T extends [infer R, ...infer E]
-    ? E
-    : never;
+import { type Asset, getFailedAssets } from "../assets/asset";
+import type { Collision } from "../ecs/systems/Collision";
+import { _k } from "../shared";
+import type { GameObj, Tag } from "../types";
+import { overload2 } from "../utils/overload";
+import type { TupleWithoutFirst } from "../utils/types";
+import type { GameObjEventNames, GameObjEvents } from "./eventMap";
+import { KEventController } from "./events";
 
 export function on<Ev extends GameObjEventNames>(
     event: Ev,
     tag: Tag,
     cb: (obj: GameObj, ...args: TupleWithoutFirst<GameObjEvents[Ev]>) => void,
 ): KEventController {
-    if (!_k.game.objEvents.registers[event]) {
-        _k.game.objEvents.registers[event] = new Registry() as any;
-    }
+    let paused = false;
+    let obj2Handler = new Map<GameObj, KEventController>();
 
-    return _k.game.objEvents.on(
-        <keyof GameObjEventMap> event,
-        (obj, ...args) => {
-            if (obj.is(tag)) {
-                cb(obj, ...args as TupleWithoutFirst<GameObjEvents[Ev]>);
-            }
+    const handleNew = (obj: GameObj) => {
+        const ec = obj.on(event, (...args) => {
+            cb(obj, ...<TupleWithoutFirst<GameObjEvents[Ev]>> args);
+        });
+        ec.paused = paused;
+        if (obj2Handler.has(obj)) obj2Handler.get(obj)!.cancel();
+        obj2Handler.set(obj, ec);
+    };
+
+    const ecOnTag = _k.game.events.on("tag", (obj, newTag) => {
+        if (newTag === tag) handleNew(obj);
+    });
+    const ecOnUntag = _k.game.events.on("untag", (obj, oldTag) => {
+        if (oldTag === tag) {
+            const ec = obj2Handler.get(obj)!;
+            ec.cancel();
+            obj2Handler.delete(obj);
+        }
+    });
+    _k.game.root.get(tag, { recursive: true }).forEach(handleNew);
+
+    return {
+        get paused() {
+            return paused;
         },
-    );
+        set paused(p) {
+            paused = p;
+            obj2Handler.forEach(ec => ec.paused = p);
+        },
+        cancel() {
+            obj2Handler.forEach(ec => ec.cancel());
+            obj2Handler.clear();
+            ecOnTag.cancel();
+            ecOnUntag.cancel();
+        },
+    };
 }
 
 export const trigger = (event: string, tag: string, ...args: any[]) => {

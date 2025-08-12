@@ -1,4 +1,11 @@
-// @ts-check
+/**
+ * @file Lifespan
+ * @description How to use the lifespan component.
+ * @difficulty 0
+ * @tags basics, comps
+ * @minver 3001.0
+ * @category basics
+ */
 
 kaplay();
 

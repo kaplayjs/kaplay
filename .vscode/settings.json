@@ -1,5 +1,6 @@
 {
   "typescript.tsdk": "node_modules/typescript/lib",
+  "typescript.preferences.importModuleSpecifierEnding": "minimal",
   "exportall.config.folderListener": [
     "/src/app",
     "/src/assets",
@@ -8,6 +9,11 @@
     "/src/components/level",
     "/src/components/misc",
     "/src/components/physics",
-    "/src/components/transform"
+    "/src/components/transform",
+    "/src/ecs/components"
+  ],
+  "typescript.preferences.importModuleSpecifier": "shortest",
+  "cSpell.words": [
+    "KAPLAY"
   ]
 }

@@ -1,4 +1,12 @@
-// @ts-check
+/**
+ * @file Timer
+ * @description How to make count time in KAPLAY.
+ * @difficulty 0
+ * @tags basics
+ * @minver 3001.0
+ * @category concepts
+ * @test
+ */
 
 kaplay();
 

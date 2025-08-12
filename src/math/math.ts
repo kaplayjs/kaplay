@@ -1,10 +1,19 @@
-import type { GameObj, LerpValue, RNGValue } from "../types";
+// TODO: A lot
+// - move RNG to it's own file
+// - move Vec2 to it's own file
+
+import { _k } from "../shared";
+import type { GameObj, RNGValue, Shape } from "../types";
+import { clamp } from "./clamp";
 import { Color, rgb } from "./color";
+import { lerp, type LerpValue } from "./lerp";
+import { Vec2 } from "./Vec2";
 
 /**
  * Possible arguments for a Vec2.
  *
  * @group Math
+ * @subgroup Vectors
  */
 export type Vec2Args =
     | [number, number]
@@ -19,36 +28,6 @@ export function deg2rad(deg: number): number {
 
 export function rad2deg(rad: number): number {
     return rad * 180 / Math.PI;
-}
-
-export function clamp(
-    val: number,
-    min: number,
-    max: number,
-): number {
-    if (min > max) {
-        return clamp(val, max, min);
-    }
-    return Math.min(Math.max(val, min), max);
-}
-
-export function lerp<V extends LerpValue>(
-    a: V,
-    b: V,
-    t: number,
-): V {
-    if (typeof a === "number" && typeof b === "number") {
-        return a + (b - a) * t as V;
-    }
-    else if (a instanceof Vec2 && b instanceof Vec2) {
-        return a.lerp(b, t) as V;
-    }
-    else if (a instanceof Color && b instanceof Color) {
-        return a.lerp(b, t) as V;
-    }
-    throw new Error(
-        `Bad value for lerp(): ${a}, ${b}. Only number, Vec2 and Color is supported.`,
-    );
 }
 
 export function map(
@@ -80,570 +59,6 @@ export function smoothstep(edge0: number, edge1: number, x: number) {
     return x * x * (3.0 - 2.0 * x);
 }
 
-/**
- * A 2D vector.
- *
- * @group Math
- */
-export class Vec2 {
-    /** The x coordinate */
-    x: number = 0;
-    /** The y coordinate */
-    y: number = 0;
-
-    constructor(x: number = 0, y: number = x) {
-        this.x = x;
-        this.y = y;
-    }
-
-    /** Create a new Vec2 from an angle in degrees */
-    static fromAngle(deg: number) {
-        const angle = deg2rad(deg);
-        return new Vec2(Math.cos(angle), Math.sin(angle));
-    }
-
-    /** Create a new Vec2 from an array */
-    static fromArray(arr: Array<number>) {
-        return new Vec2(arr[0], arr[1]);
-    }
-
-    /** An empty vector. (0, 0) */
-    static ZERO = new Vec2(0, 0);
-    /** A vector with both components of 1. (1, 1) */
-    static ONE = new Vec2(1, 1);
-    /** A vector signaling to the left. (-1, 0) */
-    static LEFT = new Vec2(-1, 0);
-    /** A vector signaling to the right. (1, 0) */
-    static RIGHT = new Vec2(1, 0);
-    /** A vector signaling up. (0, -1) */
-    static UP = new Vec2(0, -1);
-    /** A vector signaling down. (0, 1) */
-    static DOWN = new Vec2(0, 1);
-
-    /** Closest orthogonal direction: LEFT, RIGHT, UP, or DOWN */
-    toAxis(): Vec2 {
-        return Math.abs(this.x) > Math.abs(this.y)
-            ? this.x < 0 ? Vec2.LEFT : Vec2.RIGHT
-            : this.y < 0
-                ? Vec2.UP
-                : Vec2.DOWN;
-    }
-
-    /** Clone the vector */
-    clone(): Vec2 {
-        return new Vec2(this.x, this.y);
-    }
-
-    static copy(v: Vec2, out: Vec2): Vec2 {
-        out.x = v.x;
-        out.y = v.y;
-        return out;
-    }
-
-    /** Returns the sum with another vector. */
-    add(...args: Vec2Args): Vec2 {
-        const p2 = vec2(...args);
-        return new Vec2(this.x + p2.x, this.y + p2.y);
-    }
-
-    static addScaled(v: Vec2, other: Vec2, s: number, out: Vec2): Vec2 {
-        out.x = v.x + other.x * s;
-        out.y = v.y + other.y * s;
-        return out;
-    }
-
-    /**
-     * Calculates the sum of the vectors
-     * @param v The first term
-     * @param x The x of the second term
-     * @param y The y of the second term
-     * @param out The vector sum
-     * @returns The sum of the vectors
-     */
-    static addc(v: Vec2, x: number, y: number, out: Vec2): Vec2 {
-        out.x = v.x + x;
-        out.y = v.y + y;
-        return out;
-    }
-
-    /**
-     * Calculates the sum of the vectors
-     * @param v The first term
-     * @param other The second term
-     * @param out The vector sum
-     * @returns The sum of the vectors
-     */
-    static add(v: Vec2, other: Vec2, out: Vec2): Vec2 {
-        out.x = v.x + other.x;
-        out.y = v.y + other.y;
-        return out;
-    }
-
-    /** Returns the difference with another vector. */
-    sub(...args: Vec2Args): Vec2 {
-        const p2 = vec2(...args);
-        return new Vec2(this.x - p2.x, this.y - p2.y);
-    }
-
-    /**
-     * Calculates the difference of the vectors
-     * @param v The first term
-     * @param x The x of the second term
-     * @param y The y of the second term
-     * @param out The vector difference
-     * @returns The difference of the vectors
-     */
-    static subc(v: Vec2, x: number, y: number, out: Vec2): Vec2 {
-        out.x = v.x - x;
-        out.y = v.y - y;
-        return out;
-    }
-
-    /**
-     * Calculates the difference of the vectors
-     * @param v The first term
-     * @param other The second term
-     * @param out The vector difference
-     * @returns The difference of the vectors
-     */
-    static sub(v: Vec2, other: Vec2, out: Vec2): Vec2 {
-        out.x = v.x - other.x;
-        out.y = v.y - other.y;
-        return out;
-    }
-
-    /** Scale by another vector. or a single number */
-    scale(...args: Vec2Args): Vec2 {
-        const s = vec2(...args);
-        return new Vec2(this.x * s.x, this.y * s.y);
-    }
-
-    /**
-     * Calculates the scale of the vector
-     * @param v The vector
-     * @param x The x scale
-     * @param y The y scale
-     * @param out The scaled vector
-     * @returns The scale of the vector
-     */
-    static scale(v: Vec2, s: number, out: Vec2): Vec2 {
-        out.x = v.x * s;
-        out.y = v.y * s;
-        return out;
-    }
-
-    /**
-     * Calculates the scale of the vector
-     * @param v The vector
-     * @param x The x scale
-     * @param y The y scale
-     * @param out The scaled vector
-     * @returns The scale of the vector
-     */
-    static scalec(v: Vec2, x: number, y: number, out: Vec2): Vec2 {
-        out.x = v.x * x;
-        out.y = v.y * y;
-        return out;
-    }
-
-    /**
-     * Calculates the scale of the vector
-     * @param v The vector
-     * @param other The scale
-     * @param out The scaled vector
-     * @returns The scale of the vector
-     */
-    static scalev(v: Vec2, other: Vec2, out: Vec2): Vec2 {
-        out.x = v.x * other.x;
-        out.y = v.y * other.y;
-        return out;
-    }
-
-    /** Scale by the inverse of another vector. or a single number */
-    invScale(...args: Vec2Args): Vec2 {
-        const s = vec2(...args);
-        return new Vec2(this.x / s.x, this.y / s.y);
-    }
-
-    /** Get distance between another vector */
-    dist(...args: Vec2Args): number {
-        const p2 = vec2(...args);
-        return this.sub(p2).len();
-    }
-
-    /**
-     * Calculates the distance between the vectors
-     * @param v The vector
-     * @param other The other vector
-     * @returns The between the vectors
-     */
-    static dist(v: Vec2, other: Vec2): number {
-        const x = v.x - other.x;
-        const y = v.y - other.y;
-        return Math.sqrt(x * x + y * y);
-    }
-
-    /** Get squared distance between another vector */
-    sdist(...args: Vec2Args): number {
-        const p2 = vec2(...args);
-        return this.sub(p2).slen();
-    }
-
-    /**
-     * Calculates the squared distance between the vectors
-     * @param v The vector
-     * @param other The other vector
-     * @returns The distance between the vectors
-     */
-    static sdist(v: Vec2, other: Vec2): number {
-        const x = v.x - other.x;
-        const y = v.y - other.y;
-        return x * x + y * y;
-    }
-
-    /**
-     * Get length of the vector
-     *
-     * @since v3000.0
-     */
-    len(): number {
-        return Math.sqrt(this.dot(this));
-    }
-
-    /**
-     * Calculates the length of the vector
-     * @param v The vector
-     * @returns The length of the vector
-     */
-    static len(v: Vec2) {
-        return Math.sqrt(v.x * v.x + v.y * v.y);
-    }
-
-    /**
-     * Get squared length of the vector
-     *
-     * @since v3000.0
-     */
-    slen(): number {
-        return this.dot(this);
-    }
-
-    /**
-     * Calculates the squared length of the vector
-     * @param v The vector
-     * @returns The squared length of the vector
-     */
-    static slen(v: Vec2) {
-        return v.x * v.x + v.y * v.y;
-    }
-
-    /**
-     * Get the unit vector (length of 1).
-     */
-    unit(): Vec2 {
-        const len = this.len();
-        return len === 0 ? new Vec2(0) : this.scale(1 / len);
-    }
-
-    static unit(v: Vec2, out: Vec2): Vec2 {
-        const len = Vec2.len(v);
-        out.x = v.x / len;
-        out.y = v.y / len;
-        return out;
-    }
-
-    /**
-     * Get the perpendicular vector.
-     */
-    normal(): Vec2 {
-        return new Vec2(this.y, -this.x);
-    }
-
-    static normal(v: Vec2, out: Vec2): Vec2 {
-        out.x = v.y;
-        out.y = -v.x;
-        return out;
-    }
-
-    /**
-     * Get the reflection of a vector with a normal.
-     *
-     * @since v3000.0
-     */
-    reflect(normal: Vec2) {
-        return this.sub(normal.scale(2 * this.dot(normal)));
-    }
-
-    /**
-     * Get the projection of a vector onto another vector.
-     *
-     * @since v3000.0
-     */
-    project(on: Vec2) {
-        return on.scale(on.dot(this) / on.len());
-    }
-
-    /**
-     * Get the rejection of a vector onto another vector.
-     *
-     * @since v3000.0
-     */
-    reject(on: Vec2) {
-        return this.sub(this.project(on));
-    }
-
-    rotate(vecOrAngle: Vec2 | number) {
-        if (vecOrAngle instanceof Vec2) {
-            return new Vec2(
-                this.x * vecOrAngle.x - this.y * vecOrAngle.y,
-                this.x * vecOrAngle.y + this.y * vecOrAngle.x,
-            );
-        }
-        else {
-            const angle = deg2rad(vecOrAngle);
-            const c = Math.cos(angle);
-            const s = Math.sin(angle);
-            return new Vec2(
-                this.x * c - this.y * s,
-                this.x * s + this.y * c,
-            );
-        }
-    }
-
-    /**
-     * Calculates the rotated vector
-     * @param v The vector
-     * @param dir The rotation vector
-     * @param out The rotated vector
-     * @returns The rotated vector
-     */
-    static rotate(v: Vec2, dir: Vec2, out: Vec2): Vec2 {
-        const tmp = v.x;
-        out.x = v.x * dir.x - v.y * dir.y;
-        out.y = tmp * dir.y + v.y * dir.x;
-        return out;
-    }
-
-    /**
-     * Calculates the rotated vector
-     * @param v The vector
-     * @param angle The angle in radians
-     * @param out The rotated vector
-     * @returns The rotated vector
-     */
-    static rotateByAngle(v: Vec2, angle: number, out: Vec2): Vec2 {
-        const c = Math.cos(angle);
-        const s = Math.sin(angle);
-        const tmp = v.x;
-        out.x = v.x * c - v.y * s;
-        out.y = tmp * s + v.y * c;
-        return out;
-    }
-
-    invRotate(vecOrAngle: Vec2 | number) {
-        if (vecOrAngle instanceof Vec2) {
-            return this.rotate(new Vec2(vecOrAngle.x, -vecOrAngle.y));
-        }
-        else {
-            return this.rotate(-vecOrAngle);
-        }
-    }
-
-    /**
-     * Calculates the inverse rotated vector
-     * @param v The vector
-     * @param dir The rotation vector
-     * @param out The rotated vector
-     * @returns The rotated vector
-     */
-    static inverseRotate(v: Vec2, dir: Vec2, out: Vec2): Vec2 {
-        const tmp = v.x;
-        out.x = v.x * dir.x + v.y * dir.y;
-        out.y = -tmp * dir.y + v.y * dir.x;
-        return out;
-    }
-
-    /**
-     * Get the dot product with another vector.
-     */
-    dot(p2: Vec2): number {
-        return this.x * p2.x + this.y * p2.y;
-    }
-
-    /**
-     * Get the dot product between 2 vectors.
-     *
-     * @since v3000.0
-     */
-    static dot(v: Vec2, other: Vec2): number {
-        return v.x * v.x + v.y * v.y;
-    }
-
-    /**
-     * Get the cross product with another vector.
-     *
-     * @since v3000.0
-     */
-    cross(p2: Vec2): number {
-        return this.x * p2.y - this.y * p2.x;
-    }
-
-    /**
-     * Get the cross product between 2 vectors.
-     *
-     * @since v3000.0
-     */
-    static cross(v: Vec2, other: Vec2): number {
-        return v.x * other.y - v.y * other.x;
-    }
-
-    /**
-     * Get the angle of the vector in degrees.
-     */
-    angle(...args: Vec2Args): number {
-        const p2 = vec2(...args);
-        return rad2deg(Math.atan2(this.y - p2.y, this.x - p2.x));
-    }
-
-    /**
-     * Calculates the angle represented by the vector in radians
-     * @param v The vector
-     * @returns Angle represented by the vector in radians
-     */
-    static toAngle(v: Vec2) {
-        return Math.atan2(v.y, v.x);
-    }
-
-    /**
-     * Get the angle between this vector and another vector.
-     *
-     * @since v3000.0
-     */
-    angleBetween(...args: Vec2Args): number {
-        const p2 = vec2(...args);
-        return rad2deg(Math.atan2(this.cross(p2), this.dot(p2)));
-    }
-
-    /**
-     * Calculates the angle between the vectors in radians
-     * @param v First vector
-     * @param other Second vector
-     * @returns Angle between the vectors in radians
-     */
-    static angleBetween(v: Vec2, other: Vec2) {
-        return Math.atan2(Vec2.cross(v, other), Vec2.dot(v, other));
-    }
-
-    /**
-     * Linear interpolate to a destination vector (for positions).
-     */
-    lerp(dest: Vec2, t: number): Vec2 {
-        return new Vec2(lerp(this.x, dest.x, t), lerp(this.y, dest.y, t));
-    }
-
-    /**
-     * Linear interpolate src and dst by t
-     * @param src First vector
-     * @param dst Second vector
-     * @param t Percentage
-     * @param out The linear interpolation between src and dst by t
-     * @returns The linear interpolation between src and dst by t
-     */
-    static lerp(src: Vec2, dst: Vec2, t: number, out: Vec2): Vec2 {
-        out.x = src.x * (dst.x - src.x) * t;
-        out.y = src.y * (dst.y - src.y) * t;
-        return out;
-    }
-
-    /**
-     * Spherical linear interpolate to a destination vector (for rotations).
-     *
-     * @since v3000.0
-     */
-    slerp(dest: Vec2, t: number): Vec2 {
-        const cos = this.dot(dest);
-        const sin = this.cross(dest);
-        const angle = Math.atan2(sin, cos);
-        return this
-            .scale(Math.sin((1 - t) * angle))
-            .add(dest.scale(Math.sin(t * angle)))
-            .scale(1 / sin);
-    }
-
-    /**
-     * Spherical interpolate src and dst by t
-     * @param src First vector
-     * @param dst Second vector
-     * @param t Percentage
-     * @param out The spherical interpolation between src and dst by t
-     * @returns The spherical interpolation between src and dst by t
-     */
-    static slerp(src: Vec2, dst: Vec2, t: number, out: Vec2): Vec2 {
-        const cos = Vec2.dot(src, dst);
-        const sin = Vec2.cross(src, dst);
-        const angle = Math.atan2(sin, cos);
-        const t1 = Math.sin((1 - t) * angle);
-        const t2 = Math.sin(t * angle);
-        const invSin = 1 / sin;
-        out.x = (src.x * t1 + dst.x * t2) * invSin;
-        out.y = (src.y * t1 + dst.y * t2) * invSin;
-        return out;
-    }
-
-    /**
-     * If the vector (x, y) is zero.
-     *
-     * @since v3000.0
-     */
-    isZero(): boolean {
-        return this.x === 0 && this.y === 0;
-    }
-
-    /**
-     * To n precision floating point.
-     */
-    toFixed(n: number): Vec2 {
-        return new Vec2(Number(this.x.toFixed(n)), Number(this.y.toFixed(n)));
-    }
-
-    /**
-     * Multiply by a Mat4.
-     *
-     * @since v3000.0
-     */
-    transform(m: Mat4): Vec2 {
-        return m.multVec2(this);
-    }
-
-    /**
-     * See if one vector is equal to another.
-     *
-     * @since v3000.0
-     */
-    eq(other: Vec2): boolean {
-        return this.x === other.x && this.y === other.y;
-    }
-
-    /** Converts the vector to a {@link Rect `Rect()`} with the vector as the origin.
-     * @since v3000.0.
-     */
-    bbox(): Rect {
-        return new Rect(this, 0, 0);
-    }
-
-    /** Converts the vector to a readable string. */
-    toString(): string {
-        return `vec2(${this.x.toFixed(2)}, ${this.y.toFixed(2)})`;
-    }
-
-    /** Converts the vector to an array.
-     * @since v3001.0
-     */
-    toArray(): Array<number> {
-        return [this.x, this.y];
-    }
-}
-
 export function vec2(...args: Vec2Args): Vec2 {
     if (args.length === 1) {
         if (args[0] instanceof Vec2) {
@@ -659,6 +74,7 @@ export function vec2(...args: Vec2Args): Vec2 {
 
 /**
  * @group Math
+ * @subgroup Advanced
  */
 export class Quad {
     x: number = 0;
@@ -700,8 +116,11 @@ export function quad(x: number, y: number, w: number, h: number): Quad {
     return new Quad(x, y, w, h);
 }
 
-// Internal class
-class Mat2 {
+/**
+ * @group Math
+ * @subgroup Advanced
+ */
+export class Mat2 {
     // 2x2 matrix
     a: number;
     b: number;
@@ -799,7 +218,6 @@ class Mat2 {
     }
 }
 
-// Internal class
 export class Mat23 {
     // 2x3 matrix, since the last column is always (0, 0, 1)
     a: number;
@@ -808,6 +226,7 @@ export class Mat23 {
     d: number; // 0
     e: number;
     f: number; // 1
+    _inverse: Mat23 | null = null;
     constructor(
         a: number = 1,
         b: number = 0,
@@ -890,6 +309,7 @@ export class Mat23 {
         this.d = m.d;
         this.e = m.e;
         this.f = m.f;
+        this._inverse = m._inverse;
         return this;
     }
     setIdentity() {
@@ -899,6 +319,7 @@ export class Mat23 {
         this.d = 1;
         this.e = 0;
         this.f = 0;
+        this._inverse = null;
         return this;
     }
     mul(other: Mat23): Mat23 {
@@ -914,11 +335,13 @@ export class Mat23 {
     translateSelfV(t: Vec2): Mat23 {
         this.e += t.x * this.a + t.y * this.c;
         this.f += t.x * this.b + t.y * this.d;
+        this._inverse = null;
         return this;
     }
     translateSelf(x: number, y: number): Mat23 {
         this.e += x * this.a + y * this.c;
         this.f += x * this.b + y * this.d;
+        this._inverse = null;
         return this;
     }
     rotateSelf(degrees: number): Mat23 {
@@ -931,6 +354,7 @@ export class Mat23 {
         this.b = c * this.b + s * this.d;
         this.c = c * this.c - s * oldA;
         this.d = c * this.d - s * oldB;
+        this._inverse = null;
         return this;
     }
     scaleSelfV(s: Vec2): Mat23 {
@@ -938,6 +362,7 @@ export class Mat23 {
         this.b *= s.x;
         this.c *= s.y;
         this.d *= s.y;
+        this._inverse = null;
         return this;
     }
     scaleSelf(x: number, y: number): Mat23 {
@@ -945,9 +370,10 @@ export class Mat23 {
         this.b *= x;
         this.c *= y;
         this.d *= y;
+        this._inverse = null;
         return this;
     }
-    mulSelf(other: Mat23) {
+    mulSelf(other: Mat23): Mat23 {
         const a = other.a * this.a + other.b * this.c;
         const b = other.a * this.b + other.b * this.d;
         const c = other.c * this.a + other.d * this.c;
@@ -960,6 +386,8 @@ export class Mat23 {
         this.d = d;
         this.e = e;
         this.f = f;
+        this._inverse = null;
+        return this;
     }
     transform(p: Vec2) {
         return vec2(
@@ -967,16 +395,28 @@ export class Mat23 {
             this.b * p.x + this.d * p.y + this.f,
         );
     }
-    transformPoint(p: Vec2, o: Vec2): Vec2 {
+    transformPointV(p: Vec2, o: Vec2): Vec2 {
         const tmp = p.x;
         o.x = this.a * p.x + this.c * p.y + this.e;
         o.y = this.b * tmp + this.d * p.y + this.f;
         return o;
     }
-    transformVector(v: Vec2, o: Vec2): Vec2 {
+    transformVectorV(v: Vec2, o: Vec2): Vec2 {
         const tmp = v.x;
         o.x = this.a * v.x + this.c * v.y;
         o.y = this.b * tmp + this.d * v.y;
+        return o;
+    }
+    transformPoint(x: number, y: number, o: Vec2): Vec2 {
+        const tmp = x;
+        o.x = this.a * x + this.c * y + this.e;
+        o.y = this.b * tmp + this.d * y + this.f;
+        return o;
+    }
+    transformVector(x: number, y: number, o: Vec2): Vec2 {
+        const tmp = x;
+        o.x = this.a * x + this.c * y;
+        o.y = this.b * tmp + this.d * y;
         return o;
     }
 
@@ -985,8 +425,9 @@ export class Mat23 {
     }
 
     get inverse() {
+        if (this._inverse) return this._inverse;
         const det = this.det;
-        return new Mat23(
+        this._inverse = new Mat23(
             this.d / det,
             -this.b / det,
             -this.c / det,
@@ -994,6 +435,7 @@ export class Mat23 {
             (this.c * this.f - this.d * this.e) / det,
             (this.b * this.e - this.a * this.f) / det,
         );
+        return this._inverse;
     }
     getTranslation() {
         return new Vec2(this.e, this.f);
@@ -1011,7 +453,6 @@ export class Mat23 {
     }
 }
 
-// Internal class
 class Mat3 {
     // m11 m12 m13
     // m21 m22 m23
@@ -1141,370 +582,100 @@ class Mat3 {
     }
 }
 
-/**
- * @group Math
- */
-export class Mat4 {
-    m: number[] = [
-        1,
-        0,
-        0,
-        0,
-        0,
-        1,
-        0,
-        0,
-        0,
-        0,
-        1,
-        0,
-        0,
-        0,
-        0,
-        1,
-    ];
-
-    constructor(m?: number[]) {
-        if (m) {
-            this.m = m;
-        }
-    }
-
-    static translate(p: Vec2): Mat4 {
-        return new Mat4([
-            1,
-            0,
-            0,
-            0,
-            0,
-            1,
-            0,
-            0,
-            0,
-            0,
-            1,
-            0,
-            p.x,
-            p.y,
-            0,
-            1,
-        ]);
-    }
-
-    static scale(s: Vec2): Mat4 {
-        return new Mat4([
-            s.x,
-            0,
-            0,
-            0,
-            0,
-            s.y,
-            0,
-            0,
-            0,
-            0,
-            1,
-            0,
-            0,
-            0,
-            0,
-            1,
-        ]);
-    }
-
-    static rotateX(a: number): Mat4 {
-        a = deg2rad(-a);
-        const c = Math.cos(a);
-        const s = Math.sin(a);
-        return new Mat4([
-            1,
-            0,
-            0,
-            0,
-            0,
-            c,
-            -s,
-            0,
-            0,
-            s,
-            c,
-            0,
-            0,
-            0,
-            0,
-            1,
-        ]);
-    }
-
-    static rotateY(a: number): Mat4 {
-        a = deg2rad(-a);
-        const c = Math.cos(a);
-        const s = Math.sin(a);
-        return new Mat4([
-            c,
-            0,
-            s,
-            0,
-            0,
-            1,
-            0,
-            0,
-            -s,
-            0,
-            c,
-            0,
-            0,
-            0,
-            0,
-            1,
-        ]);
-    }
-
-    static rotateZ(a: number): Mat4 {
-        a = deg2rad(-a);
-        const c = Math.cos(a);
-        const s = Math.sin(a);
-        return new Mat4([
-            c,
-            -s,
-            0,
-            0,
-            s,
-            c,
-            0,
-            0,
-            0,
-            0,
-            1,
-            0,
-            0,
-            0,
-            0,
-            1,
-        ]);
-    }
-
-    translate(p: Vec2) {
-        this.m[12] += this.m[0] * p.x + this.m[4] * p.y;
-        this.m[13] += this.m[1] * p.x + this.m[5] * p.y;
-        this.m[14] += this.m[2] * p.x + this.m[6] * p.y;
-        this.m[15] += this.m[3] * p.x + this.m[7] * p.y;
-        return this;
-    }
-
-    scale(p: Vec2) {
-        this.m[0] *= p.x;
-        this.m[4] *= p.y;
-        this.m[1] *= p.x;
-        this.m[5] *= p.y;
-        this.m[2] *= p.x;
-        this.m[6] *= p.y;
-        this.m[3] *= p.x;
-        this.m[7] *= p.y;
-        return this;
-    }
-
-    rotate(a: number): Mat4 {
-        a = deg2rad(-a);
-        const c = Math.cos(a);
-        const s = Math.sin(a);
-        const m0 = this.m[0];
-        const m1 = this.m[1];
-        const m4 = this.m[4];
-        const m5 = this.m[5];
-        this.m[0] = m0 * c + m1 * s;
-        this.m[1] = -m0 * s + m1 * c;
-        this.m[4] = m4 * c + m5 * s;
-        this.m[5] = -m4 * s + m5 * c;
-        return this;
-    }
-
-    // TODO: in-place variant
-    mult(other: Mat4): Mat4 {
-        const out = [];
-        for (let i = 0; i < 4; i++) {
-            for (let j = 0; j < 4; j++) {
-                out[i * 4 + j] = this.m[0 * 4 + j] * other.m[i * 4 + 0]
-                    + this.m[1 * 4 + j] * other.m[i * 4 + 1]
-                    + this.m[2 * 4 + j] * other.m[i * 4 + 2]
-                    + this.m[3 * 4 + j] * other.m[i * 4 + 3];
-            }
-        }
-        return new Mat4(out);
-    }
-
-    multVec2(p: Vec2): Vec2 {
-        return new Vec2(
-            p.x * this.m[0] + p.y * this.m[4] + this.m[12],
-            p.x * this.m[1] + p.y * this.m[5] + this.m[13],
-        );
-    }
-
-    getTranslation() {
-        return new Vec2(this.m[12], this.m[13]);
-    }
-
-    getScale() {
-        if (this.m[0] != 0 || this.m[1] != 0) {
-            const det = this.m[0] * this.m[5] - this.m[1] * this.m[4];
-            const r = Math.sqrt(this.m[0] * this.m[0] + this.m[1] * this.m[1]);
-            return new Vec2(r, det / r);
-        }
-        else if (this.m[4] != 0 || this.m[5] != 0) {
-            const det = this.m[0] * this.m[5] - this.m[1] * this.m[4];
-            const s = Math.sqrt(this.m[4] * this.m[4] + this.m[5] * this.m[5]);
-            return new Vec2(det / s, s);
-        }
-        else {
-            return new Vec2(0, 0);
-        }
-    }
-
-    getRotation() {
-        if (this.m[0] != 0 || this.m[1] != 0) {
-            const r = Math.sqrt(this.m[0] * this.m[0] + this.m[1] * this.m[1]);
-            return rad2deg(
-                this.m[1] > 0
-                    ? Math.acos(this.m[0] / r)
-                    : -Math.acos(this.m[0] / r),
-            );
-        }
-        else if (this.m[4] != 0 || this.m[5] != 0) {
-            const s = Math.sqrt(this.m[4] * this.m[4] + this.m[5] * this.m[5]);
-            return rad2deg(
-                Math.PI / 2 - (this.m[5] > 0
-                    ? Math.acos(-this.m[4] / s)
-                    : -Math.acos(this.m[4] / s)),
-            );
-        }
-        else {
-            return 0;
-        }
-    }
-
-    getSkew() {
-        if (this.m[0] != 0 || this.m[1] != 0) {
-            const r = Math.sqrt(this.m[0] * this.m[0] + this.m[1] * this.m[1]);
-            return new Vec2(
-                Math.atan(this.m[0] * this.m[4] + this.m[1] * this.m[5])
-                / (r * r),
-                0,
-            );
-        }
-        else if (this.m[4] != 0 || this.m[5] != 0) {
-            const s = Math.sqrt(this.m[4] * this.m[4] + this.m[5] * this.m[5]);
-            return new Vec2(
-                0,
-                Math.atan(this.m[0] * this.m[4] + this.m[1] * this.m[5])
-                / (s * s),
-            );
-        }
-        else {
-            return new Vec2(0, 0);
-        }
-    }
-
-    invert(): Mat4 {
-        const out = [];
-
-        const f00 = this.m[10] * this.m[15] - this.m[14] * this.m[11];
-        const f01 = this.m[9] * this.m[15] - this.m[13] * this.m[11];
-        const f02 = this.m[9] * this.m[14] - this.m[13] * this.m[10];
-        const f03 = this.m[8] * this.m[15] - this.m[12] * this.m[11];
-        const f04 = this.m[8] * this.m[14] - this.m[12] * this.m[10];
-        const f05 = this.m[8] * this.m[13] - this.m[12] * this.m[9];
-        const f06 = this.m[6] * this.m[15] - this.m[14] * this.m[7];
-        const f07 = this.m[5] * this.m[15] - this.m[13] * this.m[7];
-        const f08 = this.m[5] * this.m[14] - this.m[13] * this.m[6];
-        const f09 = this.m[4] * this.m[15] - this.m[12] * this.m[7];
-        const f10 = this.m[4] * this.m[14] - this.m[12] * this.m[6];
-        const f11 = this.m[5] * this.m[15] - this.m[13] * this.m[7];
-        const f12 = this.m[4] * this.m[13] - this.m[12] * this.m[5];
-        const f13 = this.m[6] * this.m[11] - this.m[10] * this.m[7];
-        const f14 = this.m[5] * this.m[11] - this.m[9] * this.m[7];
-        const f15 = this.m[5] * this.m[10] - this.m[9] * this.m[6];
-        const f16 = this.m[4] * this.m[11] - this.m[8] * this.m[7];
-        const f17 = this.m[4] * this.m[10] - this.m[8] * this.m[6];
-        const f18 = this.m[4] * this.m[9] - this.m[8] * this.m[5];
-
-        out[0] = this.m[5] * f00 - this.m[6] * f01 + this.m[7] * f02;
-        out[4] = -(this.m[4] * f00 - this.m[6] * f03 + this.m[7] * f04);
-        out[8] = this.m[4] * f01 - this.m[5] * f03 + this.m[7] * f05;
-        out[12] = -(this.m[4] * f02 - this.m[5] * f04 + this.m[6] * f05);
-
-        out[1] = -(this.m[1] * f00 - this.m[2] * f01 + this.m[3] * f02);
-        out[5] = this.m[0] * f00 - this.m[2] * f03 + this.m[3] * f04;
-        out[9] = -(this.m[0] * f01 - this.m[1] * f03 + this.m[3] * f05);
-        out[13] = this.m[0] * f02 - this.m[1] * f04 + this.m[2] * f05;
-
-        out[2] = this.m[1] * f06 - this.m[2] * f07 + this.m[3] * f08;
-        out[6] = -(this.m[0] * f06 - this.m[2] * f09 + this.m[3] * f10);
-        out[10] = this.m[0] * f11 - this.m[1] * f09 + this.m[3] * f12;
-        out[14] = -(this.m[0] * f08 - this.m[1] * f10 + this.m[2] * f12);
-
-        out[3] = -(this.m[1] * f13 - this.m[2] * f14 + this.m[3] * f15);
-        out[7] = this.m[0] * f13 - this.m[2] * f16 + this.m[3] * f17;
-        out[11] = -(this.m[0] * f14 - this.m[1] * f16 + this.m[3] * f18);
-        out[15] = this.m[0] * f15 - this.m[1] * f17 + this.m[2] * f18;
-
-        const det = this.m[0] * out[0]
-            + this.m[1] * out[4]
-            + this.m[2] * out[8]
-            + this.m[3] * out[12];
-
-        for (let i = 0; i < 4; i++) {
-            for (let j = 0; j < 4; j++) {
-                out[i * 4 + j] *= 1.0 / det;
-            }
-        }
-
-        return new Mat4(out);
-    }
-
-    clone(): Mat4 {
-        return new Mat4([...this.m]);
-    }
-
-    toString(): string {
-        return this.m.toString();
-    }
-}
-
-export function wave(
-    lo: number,
-    hi: number,
+export function wave<V extends LerpValue>(
+    lo: V,
+    hi: V,
     t: number,
     f = (t: number) => -Math.cos(t),
-): number {
-    return lo + (f(t) + 1) / 2 * (hi - lo);
+): V {
+    return lerp(lo, hi, (f(t) + 1) / 2);
 }
 
 // basic ANSI C LCG
-const A = 1103515245;
-const C = 12345;
-const M = 2147483648;
+export const A = 1103515245;
+export const C = 12345;
+export const M = 2147483648;
 
 /**
+ * A random number generator using the linear congruential generator algorithm.
+ *
  * @group Math
+ * @subgroup Random
  */
 export class RNG {
+    /**
+     * The current seed value used by the random number generator.
+     */
     seed: number;
     constructor(seed: number) {
         this.seed = seed;
     }
+
+    /**
+     * Generate a random number between 0 and 1.
+     *
+     * @example
+     * ```js
+     * const rng = new RNG(Date.now())
+     * const value = rng.gen() // Returns number between 0-1
+     * ```
+     *
+     * @returns A number between 0 and 1.
+     */
     gen(): number {
         this.seed = (A * this.seed + C) % M;
         return this.seed / M;
     }
+
+    /**
+     * Generate a random number between two values.
+     *
+     * @param a - The minimum value.
+     * @param b - The maximum value.
+     *
+     * @example
+     * ```js
+     * const rng = new RNG(Date.now())
+     * const value = rng.genNumber(10, 20) // Returns number between 10-20
+     * ```
+     *
+     * @returns A number between a and b.
+     */
     genNumber(a: number, b: number): number {
         return a + this.gen() * (b - a);
     }
+    /**
+     * Generate a random 2D vector between two vectors.
+     *
+     * @param a - The minimum vector.
+     * @param b - The maximum vector.
+     *
+     * @example
+     * ```js
+     * const rng = new RNG(Date.now())
+     * const vec = rng.genVec2(vec2(0,0), vec2(100,100))
+     * ```
+     *
+     * @returns A vector between vectors a and b.
+     */
     genVec2(a: Vec2, b: Vec2): Vec2 {
-        return new Vec2(
-            this.genNumber(a.x, b.x),
-            this.genNumber(a.y, b.y),
-        );
+        return new Vec2(this.genNumber(a.x, b.x), this.genNumber(a.y, b.y));
     }
+
+    /**
+     * Generate a random color between two colors.
+     *
+     * @param a - The first color.
+     * @param b - The second color.
+     *
+     * @example
+     * ```js
+     * const rng = new RNG(Date.now())
+     * const color = rng.genColor(rgb(0,0,0), rgb(255,255,255))
+     * ```
+     *
+     * @returns A color between colors a and b.
+     */
     genColor(a: Color, b: Color): Color {
         return new Color(
             this.genNumber(a.r, b.r),
@@ -1512,6 +683,22 @@ export class RNG {
             this.genNumber(a.b, b.b),
         );
     }
+
+    /**
+     * Generate a random value of a specific type.
+     *
+     * @param args - No args for [0-1], one arg for [0-arg], or two args for [arg1-arg2].
+     *
+     * @example
+     * ```js
+     * const rng = new RNG(Date.now())
+     * const val = rng.genAny(0, 100) // Number between 0-100
+     * const vec = rng.genAny(vec2(0,0), vec2(100,100)) // Vec2
+     * const col = rng.genAny(rgb(0,0,0), rgb(255,255,255)) // Color
+     * ```
+     *
+     * @returns A random value.
+     */
     genAny<T = RNGValue>(...args: [] | [T] | [T, T]): T {
         if (args.length === 0) {
             return this.gen() as T;
@@ -1543,18 +730,15 @@ export class RNG {
     }
 }
 
-// TODO: let user pass seed
-const defRNG = new RNG(Date.now());
-
 export function randSeed(seed?: number): number {
     if (seed != null) {
-        defRNG.seed = seed;
+        _k.game.defRNG.seed = seed;
     }
-    return defRNG.seed;
+    return _k.game.defRNG.seed;
 }
 
 export function rand<T = number>(...args: [] | [T] | [T, T]) {
-    return defRNG.genAny(...args);
+    return _k.game.defRNG.genAny(...args);
 }
 
 export function randi(...args: [] | [number] | [number, number]) {
@@ -1935,7 +1119,7 @@ export function testPolygonPoint(poly: Polygon, pt: Vec2): boolean {
             ((p[i].y > pt.y) != (p[j].y > pt.y))
             && (pt.x
                 < (p[j].x - p[i].x) * (pt.y - p[i].y) / (p[j].y - p[i].y)
-                + p[i].x)
+                    + p[i].x)
         ) {
             c = !c;
         }
@@ -1953,7 +1137,7 @@ export function testEllipsePoint(ellipse: Ellipse, pt: Vec2): boolean {
     const vx = pt.x * c + pt.y * s;
     const vy = -pt.x * s + pt.y * c;
     return vx * vx / (ellipse.radiusX * ellipse.radiusX)
-        + vy * vy / (ellipse.radiusY * ellipse.radiusY) < 1;
+            + vy * vy / (ellipse.radiusY * ellipse.radiusY) < 1;
 }
 
 export function testEllipseCircle(ellipse: Ellipse, circle: Circle): boolean {
@@ -2148,6 +1332,7 @@ export function testPointPoint(p1: Vec2, p2: Vec2): boolean {
 
 /**
  * @group Math
+ * @subgroup Shapes
  */
 export type ShapeType = Point | Circle | Line | Rect | Polygon | Ellipse;
 
@@ -2327,6 +1512,7 @@ export function testShapeShape(shape1: ShapeType, shape2: ShapeType): boolean {
 
 /**
  * @group Math
+ * @subgroup Raycast
  */
 export type RaycastHit = {
     fraction: number;
@@ -2338,6 +1524,7 @@ export type RaycastHit = {
 
 /**
  * @group Math
+ * @subgroup Raycast
  */
 export type RaycastResult = RaycastHit | null;
 
@@ -2587,8 +1774,12 @@ export class Point {
     constructor(pt: Vec2) {
         this.pt = pt.clone();
     }
-    transform(m: Mat23): Point {
-        return new Point(m.transformPoint(this.pt, vec2()));
+    transform(m: Mat23, s?: Shape): Point {
+        if (s && s instanceof Point) {
+            m.transformPointV(this.pt, s.pt);
+            return s;
+        }
+        return new Point(m.transformPointV(this.pt, vec2()));
     }
     bbox(): Rect {
         return new Rect(this.pt, 0, 0);
@@ -2611,11 +1802,17 @@ export class Point {
     random(): Vec2 {
         return this.pt.clone();
     }
+    serialize(): any {
+        return { "Point": { pt: this.pt.serialize() } };
+    }
+    support(direction: Vec2): Vec2 {
+        return this.pt;
+    }
+    get gjkCenter(): Vec2 {
+        return this.pt;
+    }
 }
 
-/**
- * @group Math
- */
 export class Line {
     p1: Vec2;
     p2: Vec2;
@@ -2623,10 +1820,15 @@ export class Line {
         this.p1 = p1.clone();
         this.p2 = p2.clone();
     }
-    transform(m: Mat23): Line {
+    transform(m: Mat23, s?: Shape): Line {
+        if (s && s instanceof Line) {
+            m.transformPointV(this.p1, s.p1);
+            m.transformPointV(this.p2, s.p2);
+            return s;
+        }
         return new Line(
-            m.transformPoint(this.p1, vec2()),
-            m.transformPoint(this.p2, vec2()),
+            m.transformPointV(this.p1, vec2()),
+            m.transformPointV(this.p2, vec2()),
         );
     }
     bbox(): Rect {
@@ -2649,6 +1851,20 @@ export class Line {
     }
     random(): Vec2 {
         return this.p1.add(this.p2.sub(this.p1).scale(rand(1)));
+    }
+    serialize(): any {
+        return { Line: { p1: this.p1.serialize(), p2: this.p2.serialize() } };
+    }
+    support(direction: Vec2): Vec2 {
+        return this.p1.dot(direction) > this.p2.dot(direction)
+            ? this.p1
+            : this.p2;
+    }
+    get gjkCenter(): Vec2 {
+        return new Vec2(
+            (this.p1.x + this.p2.x) / 2,
+            (this.p1.y + this.p2.y) / 2,
+        );
     }
 }
 
@@ -2682,10 +1898,28 @@ export class Rect {
             this.pos.add(0, this.height),
         ];
     }
-    transform(m: Mat23): Polygon {
-        return new Polygon(
-            this.points().map((pt) => m.transformPoint(pt, vec2())),
+    transform(m: Mat23, s?: Shape): Polygon {
+        // TODO: resize existing pts array?
+        const p = (s && s instanceof Polygon && s.pts.length == 4)
+            ? s
+            : new Polygon([new Vec2(), new Vec2(), new Vec2(), new Vec2()]);
+        p.pts[0] = m.transformPointV(this.pos, p.pts[0]);
+        p.pts[1] = m.transformPoint(
+            this.pos.x + this.width,
+            this.pos.y,
+            p.pts[1],
         );
+        p.pts[2] = m.transformPoint(
+            this.pos.x + this.width,
+            this.pos.y + this.height,
+            p.pts[2],
+        );
+        p.pts[3] = m.transformPoint(
+            this.pos.x,
+            this.pos.y + this.height,
+            p.pts[3],
+        );
+        return p;
     }
     bbox(): Rect {
         return this.clone();
@@ -2720,6 +1954,34 @@ export class Rect {
     random(): Vec2 {
         return this.pos.add(rand(this.width), rand(this.height));
     }
+    serialize(): any {
+        return {
+            Rect: {
+                pos: this.pos.serialize(),
+                width: this.width,
+                height: this.height,
+            },
+        };
+    }
+    support(direction: Vec2): Vec2 {
+        const pts = this.points();
+        let maxPoint = this.points()[0];
+        let maxDistance = Number.NEGATIVE_INFINITY;
+        let vertex;
+        for (let i = 1; i < pts.length; i++) {
+            vertex = pts[i];
+            const distance = vertex.dot(direction);
+            if (distance > maxDistance) {
+                maxDistance = distance;
+                maxPoint = vertex;
+            }
+        }
+
+        return maxPoint;
+    }
+    get gjkCenter(): Vec2 {
+        return this.pos;
+    }
 }
 
 /**
@@ -2732,7 +1994,7 @@ export class Circle {
         this.center = center.clone();
         this.radius = radius;
     }
-    transform(tr: Mat23): Ellipse {
+    transform(tr: Mat23, s?: Shape): Ellipse {
         return new Ellipse(this.center, this.radius, this.radius).transform(tr);
     }
     bbox(): Rect {
@@ -2761,6 +2023,21 @@ export class Circle {
         return this.center.add(
             Vec2.fromAngle(rand(360)).scale(rand(this.radius)),
         );
+    }
+    serialize(): any {
+        return {
+            Circle: { center: this.center.serialize(), radius: this.radius },
+        };
+    }
+    support(direction: Vec2): Vec2 {
+        const s = new Vec2(direction.x, direction.y);
+        Vec2.unit(s, s);
+        Vec2.scale(s, this.radius, s);
+        Vec2.add(s, this.center, s);
+        return s;
+    }
+    get gjkCenter(): Vec2 {
+        return this.center;
     }
 }
 
@@ -2819,7 +2096,7 @@ export class Ellipse {
         if (this.angle == 0 && tr.getRotation() == 0) {
             // No rotation, so we can just take the scale and translation
             return new Ellipse(
-                tr.transformPoint(this.center, vec2()),
+                tr.transformPointV(this.center, vec2()),
                 tr.a * this.radiusX,
                 tr.d * this.radiusY,
             );
@@ -2836,7 +2113,7 @@ export class Ellipse {
             T = M.toMat2();
             // Return the ellipse made from the transformed unit circle
             const ellipse = Ellipse.fromMat2(T);
-            ellipse.center = tr.transformPoint(this.center, vec2());
+            ellipse.center = tr.transformPointV(this.center, vec2());
             return ellipse;
         }
     }
@@ -2890,12 +2167,45 @@ export class Ellipse {
         const vx = point.x * c + point.y * s;
         const vy = -point.x * s + point.y * c;
         return vx * vx / (this.radiusX * this.radiusX)
-            + vy * vy / (this.radiusY * this.radiusY) < 1;
+                + vy * vy / (this.radiusY * this.radiusY) < 1;
     }
     raycast(origin: Vec2, direction: Vec2): RaycastResult {
         return raycastEllipse(origin, direction, this);
     }
     random(): Vec2 {
+        return this.center;
+    }
+    serialize(): any {
+        return {
+            Ellipse: {
+                center: this.center.serialize(),
+                radiusX: this.radiusX,
+                radiusY: this.radiusY,
+                angle: this.angle,
+            },
+        };
+    }
+    support(direction: Vec2): Vec2 {
+        // Axis aligned
+        if (this.angle === 0.0) {
+            let axis = new Vec2(direction.x, direction.y);
+            Vec2.unit(axis, axis);
+            Vec2.scalec(axis, this.radiusX, this.radiusY, axis);
+            Vec2.add(axis, this.center, axis);
+            return axis;
+        }
+        // Rotated
+        else {
+            let axis = new Vec2(direction.x, direction.y);
+            Vec2.rotateByAngle(axis, -this.angle, axis);
+            Vec2.unit(axis, axis);
+            Vec2.scalec(axis, this.radiusX, this.radiusY, axis);
+            Vec2.rotateByAngle(axis, this.angle, axis);
+            Vec2.add(axis, this.center, axis);
+            return axis;
+        }
+    }
+    get gjkCenter(): Vec2 {
         return this.center;
     }
 }
@@ -2921,9 +2231,23 @@ export class Polygon {
             throw new Error("Polygons should have at least 3 vertices");
         }
         this.pts = pts;
+        /*this.center = new Vec2(pts[0].x, pts[0].y);
+        for (let i = 1; i < pts.length; i++) {
+            this.center.x += pts[i].x;
+            this.center.y += pts[i].y;
+        }
+        this.center.x /= pts.length;
+        this.center.y /= pts.length;*/
     }
-    transform(m: Mat23): Polygon {
-        return new Polygon(this.pts.map((pt) => m.transformPoint(pt, vec2())));
+    transform(m: Mat23, s?: Shape): Polygon {
+        // TODO: resize existing pts array?
+        if (s && s instanceof Polygon && s.pts.length == this.pts.length) {
+            for (let i = 0; i < this.pts.length; i++) {
+                m.transformPointV(this.pts[i], s.pts[i]);
+            }
+            return s;
+        }
+        return new Polygon(this.pts.map((pt) => m.transformPointV(pt, vec2())));
     }
     bbox(): Rect {
         const p1 = vec2(Number.MAX_VALUE);
@@ -2968,7 +2292,12 @@ export class Polygon {
          */
         return vec2();
     }
-    cut(a: Vec2, b: Vec2): [Polygon | null, Polygon | null] {
+    cut(
+        a: Vec2,
+        b: Vec2,
+        srcUv?: Vec2[],
+        dstUv?: [Vec2[], Vec2[]],
+    ): [Polygon | null, Polygon | null] {
         const surfaceLine = new Line(a, b);
         const left: Array<Vec2> = [];
         const right: Array<Vec2> = [];
@@ -2976,17 +2305,31 @@ export class Polygon {
         let prev = this.pts[this.pts.length - 1];
         let ap = prev.sub(a);
         let wasLeft = ab.cross(ap) > 0;
-        this.pts.forEach(p => {
+        this.pts.forEach((p, index) => {
             ap = p.sub(a);
             const isLeft = ab.cross(ap) > 0;
             if (wasLeft != isLeft) {
                 // Since the points are on opposite sides of the line, we know they intersect
-                const intersection = segmentLineIntersection(prev, p, a, b);
-                left.push(intersection!);
-                right.push(intersection!);
+                const intersection = segmentLineIntersection(prev, p, a, b)!;
+                left.push(intersection);
+                right.push(intersection);
+                if (srcUv && dstUv) {
+                    const uv1 =
+                        srcUv[index === 0 ? srcUv.length - 1 : index - 1];
+                    const uv2 = srcUv[index];
+                    const ab = p.sub(prev);
+                    const ac = intersection.sub(prev);
+                    const alpha = ac.dot(ab) / ab.dot(ab);
+                    const uv = lerp(uv1, uv2, alpha);
+                    dstUv[0].push(uv);
+                    dstUv[1].push(uv);
+                }
                 wasLeft = isLeft;
             }
             (isLeft ? left : right).push(p);
+            if (srcUv && dstUv) {
+                (isLeft ? dstUv[0] : dstUv[1]).push(srcUv[index]);
+            }
             prev = p;
         });
         return [
@@ -2994,6 +2337,53 @@ export class Polygon {
             right.length ? new Polygon(right) : null,
         ];
     }
+    serialize(): any {
+        return { Polygon: { pts: this.pts.map(p => p.serialize()) } };
+    }
+    support(direction: Vec2): Vec2 {
+        let maxPoint = this.pts[0];
+        let maxDistance = maxPoint.dot(direction);
+
+        let vertex;
+        for (let i = 1; i < this.pts.length; i++) {
+            vertex = this.pts[i];
+            const distance = vertex.dot(direction);
+            if (distance > maxDistance) {
+                maxDistance = distance;
+                maxPoint = vertex;
+            }
+        }
+
+        return maxPoint;
+    }
+    get gjkCenter(): Vec2 {
+        return this.pts[0];
+    }
+}
+
+export function shapeFactory(data: any): Shape {
+    const type = Object.keys(data)[0];
+    const d = data[type];
+    switch (type) {
+        case "Point":
+            return new Point(Vec2.deserialize(d.pt));
+        case "Line":
+            return new Line(Vec2.deserialize(d.p1), Vec2.deserialize(d.p2));
+        case "Rect":
+            return new Rect(Vec2.deserialize(d.pos), d.width, d.height);
+        case "Circle":
+            return new Circle(Vec2.deserialize(d.pos), d.radius);
+        case "Ellipse":
+            return new Ellipse(
+                Vec2.deserialize(d.pos),
+                d.radiusX,
+                d.radiusY,
+                d.angle,
+            );
+        case "Polygon":
+            return new Polygon(data.pts.map((p: any) => Vec2.deserialize(p)));
+    }
+    throw new Error(`Unknown shape type ${type} in serialized data`);
 }
 
 export function evaluateQuadratic(
@@ -3167,10 +2557,11 @@ export function curveLengthApproximation(
 
 /**
  * A second order function returning an evaluator for the given 1D Hermite curve
- * @param pt1 First point
- * @param m1 First control point (tangent)
- * @param m2 Second control point (tangent)
- * @param pt2 Second point
+ * @param pt1 - First point
+ * @param m1 - First control point (tangent)
+ * @param m2 - Second control point (tangent)
+ * @param pt2 - Second point
+ *
  * @returns A function which gives the value on the 1D Hermite curve at t
  */
 export function hermite(pt1: number, m1: number, m2: number, pt2: number) {
@@ -3188,12 +2579,13 @@ export function hermite(pt1: number, m1: number, m2: number, pt2: number) {
 
 /**
  * A second order function returning an evaluator for the given 2D Cardinal curve
- * @param pt1 Previous point
- * @param pt2 First point
- * @param pt3 Second point
- * @param pt4 Next point
- * @param tension The tension of the curve, [0..1] from round to tight.
- * @param h The hermite function or one of its derivatives.
+ * @param pt1 - Previous point
+ * @param pt2 - First point
+ * @param pt3 - Second point
+ * @param pt4 - Next point
+ * @param tension - The tension of the curve, [0..1] from round to tight.
+ * @param h - The hermite function or one of its derivatives.
+ *
  * @returns A function which gives the value on the 2D Cardinal curve at t
  */
 export function cardinal(
@@ -3223,10 +2615,11 @@ export function cardinal(
 
 /**
  * A second order function returning an evaluator for the given 2D Catmull-Rom curve
- * @param pt1 Previous point
- * @param pt2 First point
- * @param pt3 Second point
- * @param pt4 Next point
+ * @param pt1 - Previous point
+ * @param pt2 - First point
+ * @param pt3 - Second point
+ * @param pt4 - Next point
+ *
  * @returns A function which gives the value on the 2D Catmull-Rom curve at t
  */
 export function catmullRom(
@@ -3242,10 +2635,11 @@ export function catmullRom(
 
 /**
  * A second order function returning an evaluator for the given 2D quadratic Bezier curve
- * @param pt1 First point
- * @param pt2 First control point
- * @param pt3 Second control point
- * @param pt4 Second point
+ * @param pt1 - First point
+ * @param pt2 - First control point
+ * @param pt3 - Second control point
+ * @param pt4 - Second point
+ *
  * @returns A function which gives the value on the 2D quadratic Bezier curve at t
  */
 export function bezier(
@@ -3267,13 +2661,14 @@ export function bezier(
 
 /**
  * A second order function returning an evaluator for the given 2D Kochanek–Bartels curve
- * @param pt1 Previous point
- * @param pt2 First point
- * @param pt3 Second point
- * @param pt4 Next point
- * @param tension The tension of the curve, [-1..1] from round to tight.
- * @param continuity The continuity of the curve, [-1..1] from box corners to inverted corners.
- * @param bias The bias of the curve, [-1..1] from pre-shoot to post-shoot.
+ * @param pt1 - Previous point
+ * @param pt2 - First point
+ * @param pt3 - Second point
+ * @param pt4 - Next point
+ * @param tension - The tension of the curve, [-1..1] from round to tight.
+ * @param continuity - The continuity of the curve, [-1..1] from box corners to inverted corners.
+ * @param bias - The bias of the curve, [-1..1] from pre-shoot to post-shoot.
+ *
  * @returns A function which gives the value on the 2D Kochanek–Bartels curve at t
  */
 export function kochanekBartels(
@@ -3289,21 +2684,21 @@ export function kochanekBartels(
     const hx = h(
         pt2.x,
         0.5 * (1 - tension) * (1 + bias) * (1 + continuity) * (pt2.x - pt1.x)
-        + 0.5 * (1 - tension) * (1 - bias) * (1 - continuity)
-        * (pt3.x - pt2.x),
+            + 0.5 * (1 - tension) * (1 - bias) * (1 - continuity)
+                * (pt3.x - pt2.x),
         0.5 * (1 - tension) * (1 + bias) * (1 - continuity) * (pt3.x - pt2.x)
-        + 0.5 * (1 - tension) * (1 - bias) * (1 + continuity)
-        * (pt4.x - pt3.x),
+            + 0.5 * (1 - tension) * (1 - bias) * (1 + continuity)
+                * (pt4.x - pt3.x),
         pt3.x,
     );
     const hy = h(
         pt2.y,
         0.5 * (1 - tension) * (1 + bias) * (1 + continuity) * (pt2.y - pt1.y)
-        + 0.5 * (1 - tension) * (1 - bias) * (1 - continuity)
-        * (pt3.y - pt2.y),
+            + 0.5 * (1 - tension) * (1 - bias) * (1 - continuity)
+                * (pt3.y - pt2.y),
         0.5 * (1 - tension) * (1 + bias) * (1 - continuity) * (pt3.y - pt2.y)
-        + 0.5 * (1 - tension) * (1 - bias) * (1 + continuity)
-        * (pt4.y - pt3.y),
+            + 0.5 * (1 - tension) * (1 - bias) * (1 + continuity)
+                * (pt4.y - pt3.y),
         pt3.y,
     );
     return (t: number) => {
@@ -3313,10 +2708,11 @@ export function kochanekBartels(
 
 /**
  * A second order function returning an evaluator for the derivative of the given 1D Hermite curve
- * @param pt1 First point
- * @param m1 First control point (tangent)
- * @param m2 Second control point (tangent)
- * @param pt2 Second point
+ * @param pt1 - First point
+ * @param m1 - First control point (tangent)
+ * @param m2 - Second control point (tangent)
+ * @param pt2 - Second point
+ *
  * @returns A function which gives the first derivative on the 1D Hermite curve at t
  */
 export function hermiteFirstDerivative(
@@ -3459,6 +2855,10 @@ export function easingCubicBezier(p1: Vec2, p2: Vec2) {
     };
 }
 
+/**
+ * @group Math
+ * @subgroup Tween
+ */
 export type StepPosition =
     | "jump-start"
     | "jump-end"

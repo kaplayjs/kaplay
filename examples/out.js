@@ -1,4 +1,12 @@
-// @ts-check
+/**
+ * @file Out of Screen
+ * @description How to handle objects that are out of screen.
+ * @difficulty 1
+ * @tags comps
+ * @minver 3001.0
+ * @category concepts
+ * @test
+ */
 
 // detect if obj is out of screen
 

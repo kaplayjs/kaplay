@@ -1,10 +1,14 @@
-import { color, fixed, opacity, rect } from "../components";
-import { center, height, width } from "../gfx";
-import { _k } from "../kaplay";
+import { color } from "../ecs/components/draw/color";
+import { opacity } from "../ecs/components/draw/opacity";
+import { rect } from "../ecs/components/draw/rect";
+import { fixed } from "../ecs/components/transform/fixed";
+import { destroy } from "../ecs/entity/utils";
+import { center, height, width } from "../gfx/stack";
 import { type Color, rgb } from "../math/color";
-import { type Mat23, type Vec2, vec2, type Vec2Args } from "../math/math";
-import { deprecateMsg } from "../utils";
-import { destroy } from ".";
+import { type Mat23, vec2, type Vec2Args } from "../math/math";
+import { Vec2 } from "../math/Vec2";
+import { _k } from "../shared";
+import { deprecateMsg } from "../utils/log";
 
 export function setCamPos(...pos: Vec2Args) {
     _k.game.cam.pos = vec2(...pos);
@@ -54,11 +58,11 @@ export function shake(intensity: number = 12) {
 }
 
 export function toScreen(p: Vec2): Vec2 {
-    return _k.game.cam.transform.transformPoint(p, vec2());
+    return _k.game.cam.transform.transformPointV(p, new Vec2());
 }
 
 export function toWorld(p: Vec2): Vec2 {
-    return _k.game.cam.transform.inverse.transformPoint(p, vec2());
+    return _k.game.cam.transform.inverse.transformPointV(p, new Vec2());
 }
 
 export function camPos(...pos: Vec2Args): Vec2 {
