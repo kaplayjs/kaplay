@@ -1,6 +1,7 @@
 import type { AreaComp } from "../../ecs/components/physics/area";
 import type { GameObj } from "../../types";
 import { Rect, vec2 } from "../math";
+import type { Vec2 } from "../Vec2";
 
 /**
  * A quadtree structure
@@ -211,7 +212,7 @@ export class Quadtree {
      * @param rect The rect to test with
      * @returns A set of objects potentially intersecting the rectangle
      */
-    retrieve(rect: Rect, objects: GameObj[]) {
+    retrieve(rect: Rect, objects: GameObj<AreaComp>[]): void {
         objects.push(...this.objects);
 
         if (this.nodes.length) {
@@ -222,7 +223,7 @@ export class Quadtree {
         }
     }
 
-    /**
+    /** 
      * Removes the object
      * @param obj The object to remove
      * @param fast No node collapse if true
@@ -249,19 +250,20 @@ export class Quadtree {
         return false;
     }
 
-    /**
+    /** 
      * Updates a single object
      * Note that no testing is done here. Make sure the object needs to be actually updated.
      * @param root The tree root, since insertion happens from the root
      * @param obj The object to update
      * @param bbox The new bounding box
+     * 
      */
     updateObject(root: Quadtree, obj: GameObj<AreaComp>, bbox: Rect): void {
         this.remove(obj);
         root.insert(obj, bbox);
     }
 
-    /**
+    /** 
      * True if the rectangle is completely outside this node's bounds
      * @param bbox The bounding box to test
      */
@@ -272,7 +274,7 @@ export class Quadtree {
             || bbox.pos.y > this.bounds.pos.y + this.bounds.height;
     }
 
-    /**
+    /** 
      * True if the rectangle is completely outside this node's bounds
      * @param bbox The bounding box to test
      */
@@ -280,15 +282,14 @@ export class Quadtree {
         return bbox.pos.x >= this.bounds.pos.x
             && bbox.pos.y >= this.bounds.pos.y
             && bbox.pos.x + bbox.width <= this.bounds.pos.x + this.bounds.width
-            && bbox.pos.y + bbox.height
-            <= this.bounds.pos.y + this.bounds.height;
+            && bbox.pos.y + bbox.height <= this.bounds.pos.y + this.bounds.height;
     }
 
     /**
      * Updates all objects in this node and the objects of its children
      * @param root The tree root, since insertion happens from the root
      */
-    updateNode(orphans: [GameObj, Rect][]) {
+    updateNode(orphans: [GameObj<AreaComp>, Rect][]) {
         let i = 0;
         while (i < this.objects.length) {
             const obj = this.objects[i];
@@ -321,7 +322,7 @@ export class Quadtree {
      * Update this tree
      */
     update() {
-        const orphans: [GameObj<AreaComp>, Rect][] = [];
+        const orphans: [GameObj<AreaComp>, Rect][] = []
         this.updateNode(orphans);
         // Reinsert all objects that were removed because they went outside the bounds of their quadrant
         for (let i = 0; i < orphans.length; i++) {
@@ -387,4 +388,11 @@ export class Quadtree {
             yield pairs[i];
         }
     }
+}
+
+export function makeQuadtree(
+    pos: Vec2, width: number, height: number,
+    maxObjects: number = 8,
+    maxLevels: number = 4) {
+    return new Quadtree(new Rect(pos, width, height), maxObjects, maxLevels, 0);
 }

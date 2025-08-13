@@ -154,6 +154,7 @@ import type {
     StepPosition,
 } from "../math/math";
 import type { NavMesh } from "../math/navigationmesh";
+import type { Quadtree } from "../math/spatial/quadtree";
 import type { Vec2 } from "../math/Vec2";
 import type {
     Anchor,
@@ -5381,6 +5382,24 @@ export interface KAPLAYCtx<
      * @subgroup Advanced
      */
     Quad: typeof Quad;
+    /**
+     * A quadtree
+     * 
+     * @since 4000
+     * @group Math
+     * @subgroup Advanced
+     */
+    Quadtree: typeof Quadtree;
+    /**
+     * Make a new quadtree
+     * 
+     * @param pos The position of the top level node
+     * @param width The width of the top level node
+     * @param height The height of the top level node
+     * @param maxObjects The maximum amount of objects per node before splitting
+     * @param maxLevels The maximum amount of levels
+     */
+    makeQuadtree(pos: Vec2, width: number, height: number, maxObjects: number, maxLevels: number): Quadtree;
     /**
      * The Random Number Generator.
      *

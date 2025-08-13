@@ -247,6 +247,7 @@ import {
 } from "../math/math";
 import { NavMesh } from "../math/navigationmesh";
 import { insertionSort } from "../math/sort";
+import { makeQuadtree, Quadtree } from "../math/spatial/quadtree";
 import { Vec2 } from "../math/Vec2";
 import { BlendMode, type KAPLAYPlugin } from "../types";
 import {
@@ -515,6 +516,8 @@ export const createContext = (
         Mat4,
         Mat23,
         Quad,
+        Quadtree,
+        makeQuadtree,
         RNG,
         insertionSort,
         rand,
