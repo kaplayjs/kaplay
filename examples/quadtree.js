@@ -56,15 +56,48 @@ onLoad(() => {
     }
 });
 
-onMouseMove(() => {
+const selection = [];
+
+onMouseDown(() => {
     const pos = mousePos();
-    const objects = [];
     const rect = new Rect(pos.sub(4, 4), 8, 8);
+    const objects = [];
+    selection.length = 0;
     quadtree.retrieve(rect, objects);
-    get("*").forEach(bean => {
-        bean.color = WHITE;
-    });
-    objects.forEach(bean => {
-        bean.color = RED;
-    });
+    if (objects.length > 0) {
+        get("*").forEach(bean => {
+            bean.color = WHITE;
+        });
+        objects.forEach(obj => {
+            if (obj.screenArea().contains(pos)) {
+                selection.push(obj);
+                obj.color = GREEN;
+            }
+        });
+    }
 })
+
+onMouseMove((pos, dpos) => {
+    if (selection.length) {
+        selection.forEach(obj => {
+            obj.pos = obj.pos.add(dpos)
+        });
+        quadtree.update();
+    }
+    else {
+        const pos = mousePos();
+        const rect = new Rect(pos.sub(4, 4), 8, 8);
+        const objects = [];
+        quadtree.retrieve(rect, objects);
+        get("*").forEach(bean => {
+            bean.color = WHITE;
+        });
+        objects.forEach(bean => {
+            bean.color = RED;
+        });
+    }
+})
+
+onMouseRelease(() => {
+    selection.length = 0;
+});
