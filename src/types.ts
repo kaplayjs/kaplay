@@ -358,7 +358,8 @@ export interface KAPLAYOpt<
     tagComponentIds?: boolean;
     /**
      * Padding used when adding sprites to texture atlas.
-     * @default 0
+     *
+     * @default 2
      */
     spriteAtlasPadding?: number;
     /**

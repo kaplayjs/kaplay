@@ -24,8 +24,10 @@ best friend, lajbel, can put the correct version name here
 
 - `loadShader()` now also checks for link errors as well as compile errors and
   reports them rather than just silently trying to use a borked shader -
+  @dragoncoder047
 - The debug `record()` function now records with sound enabled like it should -
   @dragoncoder047
+- Now `KAPLAYOpt.spriteAtlasPadding` is set to `2` by default
 
 ## [unreleased] (v3001)
 
