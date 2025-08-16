@@ -27,7 +27,7 @@ best friend, lajbel, can put the correct version name here
   @dragoncoder047
 - The debug `record()` function now records with sound enabled like it should -
   @dragoncoder047
-- Now `KAPLAYOpt.spriteAtlasPadding` is set to `2` by default
+- Now `KAPLAYOpt.spriteAtlasPadding` is set to `2` by default - @lajbel
 
 ## [unreleased] (v3001)
 
