@@ -211,11 +211,10 @@ export type KGamepad = {
  */
 export type GameObjInspect = Record<Tag, string | null>;
 
-export type MustKAPLAYOpt =
-    & {
-        [K in keyof Pick<KAPLAYOpt, "scale">]-?: KAPLAYOpt[K];
-    }
-    & KAPLAYOpt;
+export type MustKAPLAYOpt = {
+    scale: number;
+    spriteAtlasPadding: number;
+} & KAPLAYOpt;
 
 /**
  * KAPLAY configurations.
