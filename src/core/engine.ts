@@ -48,9 +48,13 @@ window.kaplayjs_assetsAliases = {};
  */
 export const createEngine = (gopt: KAPLAYOpt) => {
     // Default options
-    const opt = Object.assign({
-        scale: 1,
-    }, gopt);
+    const opt = Object.assign(
+        {
+            scale: 1,
+            spriteAtlasPadding: 2,
+        } satisfies KAPLAYOpt,
+        gopt,
+    );
 
     const canvas = createCanvas(opt);
     const { fontCacheC2d, fontCacheCanvas } = createFontCache();
@@ -73,7 +77,7 @@ export const createEngine = (gopt: KAPLAYOpt) => {
     // TODO: Investigate correctly what's the differente between GFX and AppGFX and reduce to 1 method
     const gfx = initGfx(gl, opt);
     const appGfx = initAppGfx(gfx, opt);
-    const assets = initAssets(gfx, opt.spriteAtlasPadding ?? 0);
+    const assets = initAssets(gfx, opt);
     const audio = initAudio();
     const game = createGame();
 

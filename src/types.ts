@@ -211,11 +211,10 @@ export type KGamepad = {
  */
 export type GameObjInspect = Record<Tag, string | null>;
 
-export type MustKAPLAYOpt =
-    & {
-        [K in keyof Pick<KAPLAYOpt, "scale">]-?: KAPLAYOpt[K];
-    }
-    & KAPLAYOpt;
+export type MustKAPLAYOpt = {
+    scale: number;
+    spriteAtlasPadding: number;
+} & KAPLAYOpt;
 
 /**
  * KAPLAY configurations.
@@ -359,7 +358,8 @@ export interface KAPLAYOpt<
     tagComponentIds?: boolean;
     /**
      * Padding used when adding sprites to texture atlas.
-     * @default 0
+     *
+     * @default 2
      */
     spriteAtlasPadding?: number;
     /**
