@@ -31,7 +31,7 @@ rotatingBean.animate("angle", [0, 360], {
 });
 
 onClick(() => {
-    rotatingBean.animation.seek(0);
+    rotatingBean.animation.play();
 });
 
 rotatingBean.onAnimateChannelFinished(name => {
@@ -206,10 +206,11 @@ const littleBean = littleBeanPivot.add([
 ]);
 
 // And here we animate the little bean
-littleBean.animate("angle", [0, 360], {
+littleBean.animation.get("rotate").animate("angle", [0, 360], {
     duration: 2,
     direction: "forward",
 });
+littleBean.animation.play("rotate");
 
 // We'll the serialize an animation and log it to the console so we can see all the current animation channels
 console.log(JSON.stringify(serializeAnimation(curvingBean, "root"), null, 2));
