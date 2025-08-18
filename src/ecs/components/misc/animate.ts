@@ -821,12 +821,16 @@ export function applyAnimation(obj: GameObj<any>, animation: Animation) {
     }));
     if (animation.anims) {
         for (const name in animation.anims) {
-            const channel = animation.anims[name];
-            obj.animate(
-                name,
-                deserializeKeys(channel.keys),
-                deserializeOptions(channel),
-            );
+            const anim = obj.animation.get(name);
+            const propchannels = animation.anims[name];
+            for (const prop in propchannels) {
+                const channel = propchannels[prop];
+                obj.animate(
+                    prop,
+                    deserializeKeys(channel.keys),
+                    deserializeOptions(channel),
+                );
+            }
         }
     }
     if (animation.children) {
