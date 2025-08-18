@@ -146,7 +146,7 @@ export interface AnimateComp extends Comp {
     /**
      * Serializes the animation of this object to plain Javascript types
      */
-    serializeAnimationChannels(): Record<string, AnimationChannel>;
+    serializeAnimations(): Record<string, AnimationChannels>;
     /**
      * Serializes the options of this object to plain Javascript types
      */
@@ -513,11 +513,13 @@ type AnimationChannel = {
     keys: AnimationChannelKeys;
 } & AnimationOptions;
 
+type AnimationChannels = Record<string, AnimationChannel>
+
 type Animation = {
     name: string;
     followMotion?: boolean;
     relative?: boolean;
-    channels?: Record<string, AnimationChannel>;
+    anims?: Record<string, AnimationChannels>;
     children?: Animation[];
 };
 
@@ -600,6 +602,13 @@ class Anim {
         this.isFinished = true;
     }
 
+    serialize() {
+        return this.channels.reduce((o: Record<string, AnimationChannel>, c) => {
+            o[c.name] = c.serialize();
+            return o;
+        }, {});
+    }
+
     // Internal update
     _update(obj: GameObj<AnimateComp>, t: number) {
         if (this.isFinished) {
@@ -629,7 +638,6 @@ class Anim {
 
 export function animate(gopts: AnimateCompOpt = {}): AnimateComp {
     const anims: Anim[] = [];
-    const channels: AnimateChannel[] = [];
     let currentAnim: Anim | null = null;
     let t = 0;
     let isFinished = false;
@@ -730,9 +738,9 @@ export function animate(gopts: AnimateCompOpt = {}): AnimateComp {
         },
 
         // Serialization
-        serializeAnimationChannels() {
-            return channels.reduce((o: Record<string, AnimationChannel>, c) => {
-                o[c.name] = c.serialize();
+        serializeAnimations() {
+            return anims.reduce((o: any, anim) => {
+                o[anim.name] = anim.serialize();
                 return o;
             }, {});
         },
@@ -757,10 +765,11 @@ export function animate(gopts: AnimateCompOpt = {}): AnimateComp {
  * @returns A javascript object serialization of the animation.
  */
 export function serializeAnimation(obj: GameObj<any>, name: string): any {
-    let serialization: Animation = { name: obj.name };
+    let serialization: Animation = { name: obj.name || name };
     if (obj.has("animate")) {
-        serialization.channels = (obj as GameObj<AnimateComp>)
-            .serializeAnimationChannels();
+        serialization.anims = (obj as GameObj<AnimateComp>)
+            .serializeAnimations();
+        console.log(serialization);
         Object.assign(
             serialization,
             (obj as GameObj<NamedComp | AnimateComp>)
@@ -810,9 +819,9 @@ export function applyAnimation(obj: GameObj<any>, animation: Animation) {
         followMotion: animation.followMotion,
         relative: animation.relative,
     }));
-    if (animation.channels) {
-        for (const name in animation.channels) {
-            const channel = animation.channels[name];
+    if (animation.anims) {
+        for (const name in animation.anims) {
+            const channel = animation.anims[name];
             obj.animate(
                 name,
                 deserializeKeys(channel.keys),
