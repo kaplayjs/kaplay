@@ -513,7 +513,7 @@ type AnimationChannel = {
     keys: AnimationChannelKeys;
 } & AnimationOptions;
 
-type AnimationChannels = Record<string, AnimationChannel>
+type AnimationChannels = Record<string, AnimationChannel>;
 
 type Animation = {
     name: string;
@@ -603,10 +603,13 @@ class Anim {
     }
 
     serialize() {
-        return this.channels.reduce((o: Record<string, AnimationChannel>, c) => {
-            o[c.name] = c.serialize();
-            return o;
-        }, {});
+        return this.channels.reduce(
+            (o: Record<string, AnimationChannel>, c) => {
+                o[c.name] = c.serialize();
+                return o;
+            },
+            {},
+        );
     }
 
     // Internal update
