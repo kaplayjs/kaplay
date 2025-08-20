@@ -19,6 +19,7 @@ best friend, lajbel, can put the correct version name here
 
 - Added `screenshotToBlob()` to get a screenshot as a `Blob` - @dragoncoder047
 - Added `getButtons()` to get the input binding buttons definition - @lajbel
+- Added `RuleSystem` for enemy AI - @mflerackers
 
 ### Changed
 
