@@ -17,6 +17,14 @@ best friend, lajbel, can put the correct version name here
 
 ### Added
 
+- Added named animations - @mflerackers
+
+  By giving a name to an animation, you can define more than one animation
+
+  ```js
+  const anim = obj.animation.get("idle");
+  anim.animate("pos", [0, 5, 0], { relative: true });
+  ```
 - Added `screenshotToBlob()` to get a screenshot as a `Blob` - @dragoncoder047
 - Added `getButtons()` to get the input binding buttons definition - @lajbel
 
@@ -28,14 +36,7 @@ best friend, lajbel, can put the correct version name here
 - The debug `record()` function now records with sound enabled like it should -
   @dragoncoder047
 - Now `KAPLAYOpt.spriteAtlasPadding` is set to `2` by default - @lajbel
-- Added named animations
 
-  By giving a name to an animation, you can define more than one animation
-
-  ```js
-  const anim = obj.animation.get("idle");
-  anim.animate("pos", [0, 5, 0], { relative: true });
-  ```
 
 ## [unreleased] (v3001)
 
