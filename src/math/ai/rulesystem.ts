@@ -1,7 +1,7 @@
 type Predicate = (system: RuleSystem) => boolean;
 type Action = (system: RuleSystem) => void;
 
-class Rule {
+export class Rule {
     predicate: Predicate;
     salience;
     constructor(predicate: Predicate, salience: number) {
@@ -67,7 +67,7 @@ class RetractRule extends Rule {
     }
 }
 
-class RuleSystem {
+export class RuleSystem {
     // Rules to evaluate and execute
     agenda: Rule[] = [];
     // Game state
