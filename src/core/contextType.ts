@@ -135,6 +135,8 @@ import type { DrawTriangleOpt } from "../gfx/draw/drawTriangle";
 import type { DrawUVQuadOpt } from "../gfx/draw/drawUVQuad";
 import type { StyledTextInfo } from "../gfx/formatText";
 import type { FrameBuffer } from "../gfx/FrameBuffer";
+import type { DecisionNode, DecisionTree } from "../math/ai/decisiontree";
+import type { Rule, RuleSystem } from "../math/ai/rulesystem";
 import type { Color, CSSColor } from "../math/color";
 import type { EaseFunc, EaseFuncs } from "../math/easings";
 import type { GjkCollisionResult } from "../math/gjk";
@@ -5389,6 +5391,38 @@ export interface KAPLAYCtx<
      * @subgroup Random
      */
     RNG: typeof RNG;
+    /**
+     * A rule in a rule system for AI. Note that this is only for advanced scenarios where the default rules are inadequate.
+     *
+     * @since v4000.0
+     * @group Math
+     * @subgroup AI
+     */
+    Rule: typeof Rule;
+    /**
+     * A rule system for AI.
+     *
+     * @since v4000.0
+     * @group Math
+     * @subgroup AI
+     */
+    RuleSystem: typeof RuleSystem;
+    /**
+     * A node in a decision tree for AI.
+     *
+     * @since v4000.0
+     * @group Math
+     * @subgroup AI
+     */
+    DecisionNode: typeof DecisionNode;
+    /**
+     * A decision tree for AI.
+     *
+     * @since v4000.0
+     * @group Math
+     * @subgroup AI
+     */
+    DecisionTree: typeof DecisionTree;
     /**
      * Define a scene.
      *
