@@ -125,7 +125,8 @@ function entropy(outcomes: boolean[]) {
     }
     const negative = (outcomes.length - positive) / outcomes.length;
     positive = positive / outcomes.length;
-    return -(positive * (positive ? Math.log2(positive) : 0) + negative * (negative ? Math.log2(negative) : 0));
+    return -(positive * (positive ? Math.log2(positive) : 0)
+        + negative * (negative ? Math.log2(negative) : 0));
 }
 
 function gain(values: any[], outcomes: boolean[]) {
