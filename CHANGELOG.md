@@ -104,7 +104,7 @@ best friend, lajbel, can put the correct version name here
 
 ### Changed
 
-- Improved various doc entries. - Many contributors.
+- Improved various doc entries. - Many contributors
 
 ### Fixed
 
@@ -196,7 +196,7 @@ best friend, lajbel, can put the correct version name here
 ### Changed
 
 - **BREAKING**: Changed default behavior to
-  `kaplay({ tagsAsComponents: false })`.
+  `kaplay({ tagsAsComponents: false })`
 - The physics engine creates less garbage - @mflerackers
 - Tag-based events are slightly faster - @dragoncoder047
 - Moved camera to the shader - @mflerackers
@@ -500,21 +500,21 @@ kaplay({
 
 - Deprecated camera methods `camScale()`, `camPos()` and `camRot()` in favor of
   `setCamScale()`, `getCamScale()`, `setCamPos()`, `getCamPos()`, `setCamRot()`
-  and `getCamRot`.
-- Deprecated `camTransform()` in favor of `getCamTransform()`.
-- Deprecated `camFlash()` in favor of `flash()`, for a `shake()`-like name.
+  and `getCamRot`
+- Deprecated `camTransform()` in favor of `getCamTransform()`
+- Deprecated `camFlash()` in favor of `flash()`, for a `shake()`-like name
 
 ### Fixed
 
-- Fixed artifacts present in some TrueType fonts.
-- Fixed `.use()` and `.unuse()` with area components.
+- Fixed artifacts present in some TrueType fonts
+- Fixed `.use()` and `.unuse()` with area components
 
 ## [3001.0.0] - 2024-10-31
 
 ### Added
 
 - Added `getTreeRoot()` to get the game's root object, which is the parent of
-  all other objects.
+  all other objects
 
   ```js
   // get the root object
@@ -524,7 +524,7 @@ kaplay({
   ```
 - Added Buttons API for using Input bindings, `onButtonPress`,
   `onButtonRelease`, `onButtonDown`, and it's corresponding boolean versions,
-  `isButtonPressed`, `isButtonDown` and `isButtonReleased`.
+  `isButtonPressed`, `isButtonDown` and `isButtonReleased`
 
   ```js
   kaplay({
@@ -569,7 +569,7 @@ kaplay({
   pressButton("jump"); // triggers onButtonPress and starts onButtonDown
   releaseButton("jump"); // triggers onButtonRelease and stops onButtonDown
   ```
-- Added `GameObjRaw.tags` to get a game object's tags.
+- Added `GameObjRaw.tags` to get a game object's tags
 
   ```js
   const obj = add([sprite("bean"), "enemy", "dangerous"]);
@@ -588,7 +588,7 @@ kaplay({
       direction: "forward",
   });
   ```
-- Readded `layers()` and the `layer()` component.
+- Readded `layers()` and the `layer()` component
 
   Before the `z()` component, there was a `layer()` component that allowed you
   to control the draw order of objects. It was removed in v3000, but now it's
@@ -644,12 +644,12 @@ kaplay({
   // get the current animation name
   debug.log(obj.getCurAnim().name); // "walk"
   ```
-- Added `camFlash()` to flash the screen.
+- Added `camFlash()` to flash the screen
 
   ```js
   camFlash(0.5, 0.5, 0.5, 0.5);
   ```
-- Added support for radius in individual corners for `RectComp,radius`.
+- Added support for radius in individual corners for `RectComp,radius`
 
   ```js
   add([
@@ -658,7 +658,7 @@ kaplay({
       }),
   ]);
   ```
-- Added `loadMusic()` to load streaming audio (doesn't block in loading screen).
+- Added `loadMusic()` to load streaming audio (doesn't block in loading screen)
 
   ```js
   loadMusic("bgm", "bgm.mp3");
@@ -666,34 +666,30 @@ kaplay({
   // play the music
   play("bgm");
   ```
-
-- Added `Vec2.fromArray()` to convert an array to a `Vec2`.
+- Added `Vec2.fromArray()` to convert an array to a `Vec2`
 
   ```js
   const point = Vec2.fromArray([100, 200]); // vec2(100, 200);
   ```
-
-- Added `Vec2.toArray()` to convert a `Vec2` to an array.
+- Added `Vec2.toArray()` to convert a `Vec2` to an array
 
   ```js
   const point = vec2(100, 200);
   const arr = point.toArray(); // [100, 200]
   ```
-
-- Added `chooseMultiple()` to choose a random element from an array.
+- Added `chooseMultiple()` to choose a random element from an array
 
   ```js
   const numbers = [1, 2, 3, 4, 5];
   const random = chooseMultiple(numbers, 3); // [3, 1, 5]
   ```
-
-- Added `shuffle()` to shuffle an array.
+- Added `shuffle()` to shuffle an array
 
   ```js
   const numbers = [1, 2, 3, 4, 5];
   shuffle(numbers); // [3, 1, 5, 2, 4]
   ```
-- Added `KAPLAYOpt.debugKey` for customizing the key used to toggle debug mode.
+- Added `KAPLAYOpt.debugKey` for customizing the key used to toggle debug mode
 
   ```js
   kaplay({
@@ -718,16 +714,16 @@ kaplay({
   debug.inspect = true;
   ```
 - Added effector components: `areaEffector()`, `buoyancyEffector()`,
-  `pointEffector()`, `surfaceEffector()`.
-- Added `constantForce()` component.
-- Added `pathfinder()` component to calculate a list of waypoints on a graph.
-- Added `patrol()` component to move along a list of waypoints.
-- Added `sentry()` component to notify when certain objects are in sight.
-- Added `NavMesh` class for pathfinding on a mesh.
-- Added `particles()` component to emit and draw particles.
+  `pointEffector()`, `surfaceEffector()`
+- Added `constantForce()` component
+- Added `pathfinder()` component to calculate a list of waypoints on a graph
+- Added `patrol()` component to move along a list of waypoints
+- Added `sentry()` component to notify when certain objects are in sight
+- Added `NavMesh` class for pathfinding on a mesh
+- Added `particles()` component to emit and draw particles
 - Added `SpriteComp.animFrame` to get the frame of the current animation (not on
   the spritesheet)
-- Added `outline()`, `shader()`, and `area()` properties to `debug.inspect`.
+- Added `outline()`, `shader()`, and `area()` properties to `debug.inspect`
 - Added `getSceneName()` to get the current scene name
 - Added `Color.toArray()` to convert a color to an array
 - Added `raycast` and `LevelComp.raycast` method to level
@@ -743,15 +739,15 @@ kaplay({
 
 ### Changed
 
-- Now collision checks are only done if there's area objects.
-- Now you can use arrays in all input handlers.
+- Now collision checks are only done if there's area objects
+- Now you can use arrays in all input handlers
 
   ```js
   onKeyPress(["w", "up"], () => {
       player.jump();
   });
   ```
-- Now gamepad events return what gamepad triggered the action.
+- Now gamepad events return what gamepad triggered the action
 
   ```js
   onGamepadButtonPress("south", (btn, gp) => {
@@ -767,19 +763,19 @@ kaplay({
   obj.scale = vec2(3, 4);
   obj.sprite = "bag";
   ```
-- Now you can type `get()` with a type parameter and passing component types.
+- Now you can type `get()` with a type parameter and passing component types
 
   ```ts
   const player = get<BodyComp>("player");
   ```
 - Now you can pass an `AudioBuffer` to `loadSound()`
-- Now `debug.log()` accepts multiple argument of any type, like `console.log()`.
-- Now `Key` also accepts a string as an acceptable value.
-- Now `text()` component doesn't require to pass a string.
-- Now `camScale()` and `camPos()` accept only 1 number as parameter.
-- Now `shake()` can be called without args.
-- Now `loadShader()` and `loadShaderURL()` accepts null for unused parameters.
-- Now `RectCompOpt` accepts a array of numbers for `radius`.
+- Now `debug.log()` accepts multiple argument of any type, like `console.log()`
+- Now `Key` also accepts a string as an acceptable value
+- Now `text()` component doesn't require to pass a string
+- Now `camScale()` and `camPos()` accept only 1 number as parameter
+- Now `shake()` can be called without args
+- Now `loadShader()` and `loadShaderURL()` accepts null for unused parameters
+- Now `RectCompOpt` accepts a array of numbers for `radius`
 
 ### Deprecated
 
@@ -791,7 +787,7 @@ kaplay({
 
 ### Removed
 
-- **(!)** Removed compatibility to use two KAPLAY frames in the same page.
+- **(!)** Removed compatibility to use two KAPLAY frames in the same page
 - **(!)** Much typescript definitions was fixed, if you use typescript now maybe
   you see new errors that make your code strict
 - Fix error screen not showing with not Error object
