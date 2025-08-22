@@ -17,15 +17,27 @@ best friend, lajbel, can put the correct version name here
 
 ### Added
 
+- Added named animations - @mflerackers
+
+  By giving a name to an animation, you can define more than one animation
+
+  ```js
+  const anim = obj.animation.get("idle");
+  anim.animate("pos", [0, 5, 0], { relative: true });
+  ```
 - Added `screenshotToBlob()` to get a screenshot as a `Blob` - @dragoncoder047
+- Added `getButtons()` to get the input binding buttons definition - @lajbel
+- Added `RuleSystem` for enemy AI - @mflerackers
+- Added `DecisionTree` for enemy AI - @mflerackers
 
 ### Changed
 
 - `loadShader()` now also checks for link errors as well as compile errors and
   reports them rather than just silently trying to use a borked shader -
-
+  @dragoncoder047
 - The debug `record()` function now records with sound enabled like it should -
   @dragoncoder047
+- Now `KAPLAYOpt.spriteAtlasPadding` is set to `2` by default - @lajbel
 
 ## [unreleased] (v3001)
 

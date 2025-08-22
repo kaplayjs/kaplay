@@ -187,6 +187,8 @@ import {
     usePostEffect,
     width,
 } from "../gfx/stack";
+import { DecisionNode, DecisionTree } from "../math/ai/decisiontree";
+import { Rule, RuleSystem } from "../math/ai/rulesystem";
 import { clamp } from "../math/clamp";
 import { Color, hsl2rgb, rgb } from "../math/color";
 import { easings } from "../math/easings";
@@ -493,8 +495,9 @@ export const createContext = (
         isButtonPressed: app.isButtonPressed,
         isButtonDown: app.isButtonDown,
         isButtonReleased: app.isButtonReleased,
-        setButton: app.setButton,
         getButton: app.getButton,
+        getButtons: app.getButtons,
+        setButton: app.setButton,
         pressButton: app.pressButton,
         releaseButton: app.releaseButton,
         getLastInputDeviceType: app.getLastInputDeviceType,
@@ -523,6 +526,10 @@ export const createContext = (
         Mat23,
         Quad,
         RNG,
+        Rule,
+        RuleSystem,
+        DecisionNode,
+        DecisionTree,
         insertionSort,
         rand,
         randi,
