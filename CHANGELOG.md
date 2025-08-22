@@ -240,15 +240,11 @@ best friend, lajbel, can put the correct version name here
 - Removed beant - @lajbel
 - Various fixes and improvements - All contributors
 
-[Read commit history](https://github.com/kaplayjs/kaplay/compare/3001.0.15...3001.0.16)
-
 ## [3001.0.15] - 2025-04-18
 
 ### Fixed
 
 - Various fixes and improvements - All contributors
-
-[Read commit history](https://github.com/kaplayjs/kaplay/compare/3001.0.14...3001.0.15)
 
 ## [3001.0.14] - 2025-04-18
 
@@ -256,15 +252,11 @@ best friend, lajbel, can put the correct version name here
 
 - Various fixes and improvements - All contributors
 
-[Read commit history](https://github.com/kaplayjs/kaplay/compare/3001.0.13...3001.0.14)
-
 ## [3001.0.13] - 2025-04-18
 
 ### Fixed
 
 - Various fixes and improvements - All contributors
-
-[Read commit history](https://github.com/kaplayjs/kaplay/compare/3001.0.12...3001.0.13)
 
 ## [3001.0.12] - 2025-04-12
 
@@ -482,13 +474,22 @@ kaplay({
 - Fixed artifacts present in some TrueType fonts.
 - Fixed `.use()` and `.unuse()` with area components.
 
-## [3001.0.0] "Spooky Beans!" - 2024-10-31
+## [3001.0.0] - 2024-10-31
 
-### Input
+### Added
 
-- Added input bindings, `onButtonPress`, `onButtonRelease`, `onButtonDown`, and
-  it's corresponding boolean versions, `isButtonPressed`, `isButtonDown` and
-  `isButtonReleased`.
+- Added `getTreeRoot()` to get the game's root object, which is the parent of
+  all other objects.
+
+  ```js
+  // get the root object
+  const root = getTreeRoot();
+  root.add(); // same as add()
+  root.get(); // same as get()
+  ```
+- Added Buttons API for using Input bindings, `onButtonPress`,
+  `onButtonRelease`, `onButtonDown`, and it's corresponding boolean versions,
+  `isButtonPressed`, `isButtonDown` and `isButtonReleased`.
 
   ```js
   kaplay({
@@ -506,8 +507,7 @@ kaplay({
       player.jump();
   });
   ```
-
-- added `getButton(btn)` and `setButton(btn)` to get and set button bindings
+- Added `getButton(btn)` and `setButton(btn)` to get and set button bindings
 
   ```js
   // ["space", "up"]
@@ -519,8 +519,7 @@ kaplay({
       // gamepad binding is not changed
   });
   ```
-
-- added `getLastInputDeviceType()` to get what was the last pressed device
+- Added `getLastInputDeviceType()` to get what was the last pressed device
 
   ```js
   onButtonPress(() => {
@@ -528,55 +527,14 @@ kaplay({
       // change icons, etc
   });
   ```
-
-- added `pressButton(btn)` and `releaseButton(btn)` to simulate button press and
+- Added `pressButton(btn)` and `releaseButton(btn)` to simulate button press and
   release
 
   ```js
   pressButton("jump"); // triggers onButtonPress and starts onButtonDown
   releaseButton("jump"); // triggers onButtonRelease and stops onButtonDown
   ```
-
-- added the possibility of use arrays in all input handlers
-
-  ```js
-  onKeyPress(["w", "up"], () => {
-      player.jump();
-  });
-  ```
-
-- now gamepad events return what gamepad triggered the action
-
-  ```js
-  onGamepadButtonPress("south", (btn, gp) => {
-      console.log(gp.index); // gamepad number on navigator's gamepad list
-  });
-  ```
-
-### Physics
-
-- added effector components: `areaEffector()`, `buoyancyEffector()`,
-  `pointEffector()`, `surfaceEffector()`.
-- added `constantForce()` component.
-- added `patrol()` component to move along a list of waypoints.
-- added `sentry()` component to notify when certain objects are in sight.
-- added `NavMesh` class for pathfinding on a mesh.
-- added `pathfinder()` component to calculate a list of waypoints on a graph.
-- now collision checks are only done if there's area objects.
-
-### Game Object
-
-- added `getTreeRoot()` to get the game's root object, which is the parent of
-  all other objects
-
-  ```js
-  // get the root object
-  const root = getTreeRoot();
-  root.add(); // same as add()
-  root.get(); // same as get()
-  ```
-
-- added `GameObjRaw.tags` to get a game object's tags.
+- Added `GameObjRaw.tags` to get a game object's tags.
 
   ```js
   const obj = add([sprite("bean"), "enemy", "dangerous"]);
@@ -584,23 +542,7 @@ kaplay({
   // get the tags
   debug.log(obj.tags); // ["enemy", "dangerous"]
   ```
-
-### Components
-
-- added support to setters/getters syntax in `ScaleComp` and `SpriteComp`
-  components
-
-  ```js
-  const obj = add([sprite("bean"), scale(2)]);
-
-  // set it with = syntax
-  obj.scale = vec2(3, 4);
-  obj.sprite = "bag";
-  ```
-
-### Rendering and Animation
-
-- added the `animate()` component to _animate_ the properties of an object using
+- Added the `animate()` component to _animate_ the properties of an object using
   keyframes. Check out
   [Animation Example](https://play.kaplayjs.com/?example=animation)
 
@@ -611,10 +553,7 @@ kaplay({
       direction: "forward",
   });
   ```
-
-- added `particles()` component to emit and draw particles.
-
-- readded `layers()` and the `layer()` component.
+- Readded `layers()` and the `layer()` component.
 
   Before the `z()` component, there was a `layer()` component that allowed you
   to control the draw order of objects. It was removed in v3000, but now it's
@@ -635,17 +574,15 @@ kaplay({
   // use the layer component
   add([sprite("bg"), layer("bg")]);
   ```
-
-- added `SpriteComp.getCurAnim()` to get the current animation data
+- Added `SpriteComp.hasAnim()` to check if an animation exists
 
   ```js
   const obj = add([sprite("bean", { anim: "walk" })]);
 
-  // get the current animation name
-  debug.log(obj.getCurAnim().name); // "walk"
+  // check if an animation exists
+  debug.log(obj.hasAnim("walk")); // true
   ```
-
-- added `SpriteComp.getAnim()` for get any animation data
+- Added `SpriteComp.getAnim()` for get any animation data
 
   ```js
   loadSprite("bean", "bean.png", {
@@ -664,23 +601,20 @@ kaplay({
   // get the animation data
   debug.log(obj.getAnim("walk")); // { from: 0, to: 3 }
   ```
-
-- added `SpriteComp.hasAnim()` to check if an animation exists
+- Added `SpriteComp.getCurAnim()` to get the current animation data
 
   ```js
   const obj = add([sprite("bean", { anim: "walk" })]);
 
-  // check if an animation exists
-  debug.log(obj.hasAnim("walk")); // true
+  // get the current animation name
+  debug.log(obj.getCurAnim().name); // "walk"
   ```
-
-- added `camFlash()` to flash the screen.
+- Added `camFlash()` to flash the screen.
 
   ```js
   camFlash(0.5, 0.5, 0.5, 0.5);
   ```
-
-- added support for radius in individual corners for `RectComp` component.
+- Added support for radius in individual corners for `RectComp,radius`.
 
   ```js
   add([
@@ -689,19 +623,7 @@ kaplay({
       }),
   ]);
   ```
-
-- (**! break**) removed compatibility to use two KAPLAY frames in the same page,
-  due to performance improvements
-
-- fix error screen not showing with not Error object
-
-- Added `SpriteComp.animFrame` to get the frame of the current animation (not on
-  the spritesheet)
-
-### Audio
-
-- now you can pass an `AudioBuffer` to `loadSound()`
-- added `loadMusic()` to load streaming audio (doesn't block in loading screen).
+- Added `loadMusic()` to load streaming audio (doesn't block in loading screen).
 
   ```js
   loadMusic("bgm", "bgm.mp3");
@@ -710,47 +632,40 @@ kaplay({
   play("bgm");
   ```
 
-### Math
-
-- added `Vec2.fromArray()` to convert an array to a `Vec2`.
+- Added `Vec2.fromArray()` to convert an array to a `Vec2`.
 
   ```js
   const point = Vec2.fromArray([100, 200]); // vec2(100, 200);
   ```
 
-- added `Vec2.toArray()` to convert a `Vec2` to an array.
+- Added `Vec2.toArray()` to convert a `Vec2` to an array.
 
   ```js
   const point = vec2(100, 200);
   const arr = point.toArray(); // [100, 200]
   ```
 
-- added `chooseMultiple()` to choose a random element from an array.
+- Added `chooseMultiple()` to choose a random element from an array.
 
   ```js
   const numbers = [1, 2, 3, 4, 5];
   const random = chooseMultiple(numbers, 3); // [3, 1, 5]
   ```
 
-- added `shuffle()` to shuffle an array.
+- Added `shuffle()` to shuffle an array.
 
   ```js
   const numbers = [1, 2, 3, 4, 5];
   shuffle(numbers); // [3, 1, 5, 2, 4]
   ```
-
-### Debug mode
-
-- added `outline()`, `shader()`, and `area()` properties to `debug.inspect`.
-- added `KAPLAYOpt.debugKey` for customizing the key used to toggle debug mode.
+- Added `KAPLAYOpt.debugKey` for customizing the key used to toggle debug mode.
 
   ```js
   kaplay({
       debugKey: "l",
   });
   ```
-
-- added compatibility with custom properties in debug mode
+- Added compatibility with custom properties in debug mode
 
   ```js
   const obj = add([
@@ -767,33 +682,63 @@ kaplay({
   // see the custom properties in debug mode
   debug.inspect = true;
   ```
+- Added effector components: `areaEffector()`, `buoyancyEffector()`,
+  `pointEffector()`, `surfaceEffector()`.
+- Added `constantForce()` component.
+- Added `pathfinder()` component to calculate a list of waypoints on a graph.
+- Added `patrol()` component to move along a list of waypoints.
+- Added `sentry()` component to notify when certain objects are in sight.
+- Added `NavMesh` class for pathfinding on a mesh.
+- Added `particles()` component to emit and draw particles.
+- Added `SpriteComp.animFrame` to get the frame of the current animation (not on
+  the spritesheet)
+- Added `outline()`, `shader()`, and `area()` properties to `debug.inspect`.
+- Added `getSceneName()` to get the current scene name
+- Added `Color.toArray()` to convert a color to an array
+- Added `raycast` and `LevelComp.raycast` method to level
+- Added support for textured polygons
+- Added support for concave polygon drawing
+- Added support for arrays in uniforms
+- Added support for texture larger than 2048x2048
+- Added support for gravity direction
+- Added line join (bevel, miter, round) and line caps (square, round)
+- Added quadratic bezier and Catmull-Rom evaluation
+- Added evaluation of the first and second derivatives for all splines
+- Added higher order easing functions linear, steps and cubic-bezier
 
-- Now `debug.log()` accepts multiple argument of any type, like `console.log()`.
+### Changed
 
-### Helpers
+- Now collision checks are only done if there's area objects.
+- Now you can use arrays in all input handlers.
 
-- added `getSceneName()` to get the current scene name
-- added `Color.toArray()` to convert a color to an array
-- added global raycast function and raycast method to level
-- added support for textured polygons
-- added support for concave polygon drawing
-- added support for arrays in uniforms
-- added support for texture larger than 2048x2048
-- added support for gravity direction
-- added line join (bevel, miter, round) and line caps (square, round)
-- added quadratic bezier and Catmull-Rom evaluation
-- added evaluation of the first and second derivatives for all splines
-- added higher order easing functions linear, steps and cubic-bezier
+  ```js
+  onKeyPress(["w", "up"], () => {
+      player.jump();
+  });
+  ```
+- Now gamepad events return what gamepad triggered the action.
 
-### TypeScript
+  ```js
+  onGamepadButtonPress("south", (btn, gp) => {
+      console.log(gp.index); // gamepad number on navigator's gamepad list
+  });
+  ```
+- Now `ScaleComp` and `SpriteComp` uses setters/getters for it's state
 
+  ```js
+  const obj = add([sprite("bean"), scale(2)]);
+
+  // set it with = syntax
+  obj.scale = vec2(3, 4);
+  obj.sprite = "bag";
+  ```
 - Now you can type `get()` with a type parameter and passing component types.
-  (**v4000**)
 
   ```ts
   const player = get<BodyComp>("player");
   ```
-
+- Now you can pass an `AudioBuffer` to `loadSound()`
+- Now `debug.log()` accepts multiple argument of any type, like `console.log()`.
 - Now `Key` also accepts a string as an acceptable value.
 - Now `text()` component doesn't require to pass a string.
 - Now `camScale()` and `camPos()` accept only 1 number as parameter.
@@ -801,25 +746,22 @@ kaplay({
 - Now `loadShader()` and `loadShaderURL()` accepts null for unused parameters.
 - Now `RectCompOpt` accepts a array of numbers for `radius`.
 
-### Deprecations
+### Deprecated
 
-> All changes applies for both v3001 and v4000
-
-- deprecated `kaboom()` in favor of `kaplay()` (you can still use `kaboom*`)
-- deprecated `SpriteComp.curAnim()` in favor of `SpriteComp.getCurAnim().name`
-- deprecated `fadeIn` component in favor of `OpacityComp.fadeIn()`
-- deprecated `Event`, `EventHandler` and `EventController` in favor of `KEvent`,
+- Deprecated `kaboom()` in favor of `kaplay()` (you can still use `kaboom*`)
+- Deprecated `SpriteComp.curAnim()` in favor of `SpriteComp.getCurAnim().name`
+- Deprecated `fadeIn` component in favor of `OpacityComp.fadeIn()`
+- Deprecated `Event`, `EventHandler` and `EventController` in favor of `KEvent`,
   `KEventHandler` and `KEventController`
 
-### Bug fixes
+### Removed
 
-> All changes applies for both v3001 and v4000
-
-- **(break)** much typescript definitions was fixed, if you use typescript now
-  maybe you see new errors that make your code strict
-- fix error screen not showing with not Error object
-- fix error where debug screen was scaling bad the blue rectangles
-- fix error where error screen was not showing when the error was thrown in a
+- **(!)** Removed compatibility to use two KAPLAY frames in the same page.
+- **(!)** Much typescript definitions was fixed, if you use typescript now maybe
+  you see new errors that make your code strict
+- Fix error screen not showing with not Error object
+- Fix error where debug screen was scaling bad the blue rectangles
+- Fix error where error screen was not showing when the error was thrown in a
   input event
-- fix error where fonts was cropped in the bottom
-- fix an error where `stay()` object loose their input events on scene change
+- Fix error where fonts was cropped in the bottom
+- Fix an error where `stay()` object loose their input events on scene change
