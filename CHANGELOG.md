@@ -220,7 +220,7 @@ best friend, lajbel, can put the correct version name here
 - `GameObjRaw.exists()` now correctly returns false if the parent was destroyed
   but obj wasn't - @dragoncoder047
 - `Vec2.dot()` now actually does the Correct Calculation&trade; - @andrenanninga
-- Fixed `debug.timeScale` not affecting `dt()` scale
+- Fixed `debug.timeScale` not affecting `dt()` scale - @lajbel
 - Fixed `wait()`'s `TimerComp.onEnd()` being waiting for twice the duration -
   @dragoncoder047
 - Fixed non-focused `TextInputComp` backspace - @KeSuave
