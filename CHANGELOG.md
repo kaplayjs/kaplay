@@ -226,8 +226,8 @@ best friend, lajbel, can put the correct version name here
 - Fixed non-focused `TextInputComp` backspace - @KeSuave
 - Fixed 9slice sprites behaving wrong when using `Anchor` - @mflerackers
 - Fixed rendering glitches with outlines on circles - @mflerackers
-- Fixed `setCursorLocked(true)` trowing error if the browser is using the old
-  non-Promise-based API return value - @imaginarny affecting `dt()` - @lajbel
+- Fixed `setCursorLocked(true)` throwing error if the browser is using the old
+  non-Promise-based API return value - @imaginarny
 - Fixed `PatrolComp` not going to last waypoint - @nojaf
 - Fixed various TypeScript types - @amyspark-ng, @lajbel, @KeSuave
 
