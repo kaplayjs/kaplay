@@ -193,6 +193,25 @@ best friend, lajbel, can put the correct version name here
 - Added `sprite.play("anim", {preventRestart: true})` to allow play() to be
   called from update() and not reset the animation to frame 0 - @dragoncoder047
 
+### Changed
+
+- **BREAKING**: Changed default behavior to
+  `kaplay({ tagsAsComponents: false })`.
+- The physics engine creates less garbage - @mflerackers
+- Tag-based events are slightly faster - @dragoncoder047
+- Moved camera to the shader - @mflerackers
+- Replaced the Separating Axis Theorem (SAT) collision detection module with the
+  [Gilbert–Johnson–Keerthi
+  (`GJK`) algorithm](https://en.wikipedia.org/wiki/Gilbert–Johnson–Keerthi_distance_algorithm),
+  which is faster - @mflerackers
+- Now if you pass a nullish value to `.use()` it throws an error
+- Improved TypeScript in game objects - @amyspark-ng, @lajbel, @KeSuave
+  - Added/updated JSDoc comments to some members - @ErikGXDev, @dragoncoder047
+- The `textInput` component's `isFocused` property is now a one-hot lockout,
+  setting it to true (focused) will clear focus from all the other text inputs -
+  @dragoncoder047
+- Changed the API of `HealthComp` - @amyspark-ng
+
 ### Fixed
 
 - `obj.exists()` now correctly returns false if the parent was destroyed but obj
@@ -217,25 +236,6 @@ best friend, lajbel, can put the correct version name here
 
 - `make()` was sent to doom - @lajbel
 - `loadPedit` was removed - @lajbel
-
-### Changed
-
-- **BREAKING**: Changed default behavior to
-  `kaplay({ tagsAsComponents: false })`.
-- The physics engine creates less garbage - @mflerackers
-- Tag-based events are slightly faster - @dragoncoder047
-- Moved camera to the shader - @mflerackers
-- Replaced the Separating Axis Theorem (SAT) collision detection module with the
-  [Gilbert–Johnson–Keerthi
-  (`GJK`) algorithm](https://en.wikipedia.org/wiki/Gilbert–Johnson–Keerthi_distance_algorithm),
-  which is faster - @mflerackers
-- Now if you pass a nullish value to `.use()` it throws an error
-- Improved TypeScript in game objects - @amyspark-ng, @lajbel, @KeSuave
-  - Added/updated JSDoc comments to some members - @ErikGXDev, @dragoncoder047
-- The `textInput` component's `isFocused` property is now a one-hot lockout,
-  setting it to true (focused) will clear focus from all the other text inputs -
-  @dragoncoder047
-- Changed the API of `HealthComp` - @amyspark-ng
 
 ---
 
