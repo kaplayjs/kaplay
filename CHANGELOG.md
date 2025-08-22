@@ -8,8 +8,8 @@ The format is (mostly) based on
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project
 adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-- Breaking changes are marked with: **(!)**
-- [Jump to v3001]() changelog.
+- Breaking changes are marked with: **(!)**.
+- [Jump to v3001 changelog](#changelog-for-v3001).
 
 <!--
 Hey, KAPLAY Dev, you must changelog here, in unreleased, so later your
