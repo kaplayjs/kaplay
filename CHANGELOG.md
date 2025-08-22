@@ -118,7 +118,7 @@ best friend, lajbel, can put the correct version name here
 
 ### Removed
 
-- **(!)** `loadPedit` was removed - @lajbel
+- **(!)** `loadPedit()` was removed - @lajbel
 
 ## [4000.0.0-alpha.19] - 2025-05-16
 
@@ -212,31 +212,27 @@ best friend, lajbel, can put the correct version name here
   setting it to true (focused) will clear focus from all the other text inputs -
   @dragoncoder047
 - Changed the API of `HealthComp` - @amyspark-ng
+- CapsLock now affects `TextInputComp` - @amyspark-ng
 
 ### Fixed
 
-- `obj.exists()` now correctly returns false if the parent was destroyed but obj
-  wasn't - @dragoncoder047
-- Various typescript type fixes - @amyspark-ng, @lajbel, @KeSuave
-- 9slice sprites behave properly when using anchor - @mflerackers
-- Rendering glitches with outlines on circles - @mflerackers
-- `wait()` now fires the callback and its onEnd events at the same time like was
-  intended, instead of onEnd being waiting for twice the duration -
-  @dragoncoder047
+- `GameObjRaw.exists()` now correctly returns false if the parent was destroyed
+  but obj wasn't - @dragoncoder047
 - `Vec2.dot()` now actually does the Correct Calculation&trade; - @andrenanninga
-- `setCursorLocked(true)` doesn't error if the browser is using the old
-  non-Promise-based API return value - @imaginarny
-- changing `debug.timeScale` now actually makes the game change speed by
-  affecting `dt()` - @lajbel
-- CapsLock now affects textInput() - @amyspark-ng
-- PatrolComp is not going to last waypoint
-  ([#734](https://github.com/kaplayjs/kaplay/issues/734)) - @nojaf
-- Fixed non-focused textInput component backspace - @KeSuave
+- Fixed `debug.timeScale` not affecting `dt()` scale
+- Fixed `wait()`'s `TimerComp.onEnd()` being waiting for twice the duration -
+  @dragoncoder047
+- Fixed non-focused `TextInputComp` backspace - @KeSuave
+- Fixed 9slice sprites behaving wrong when using `Anchor` - @mflerackers
+- Fixed rendering glitches with outlines on circles - @mflerackers
+- Fixed `setCursorLocked(true)` trowing error if the browser is using the old
+  non-Promise-based API return value - @imaginarny affecting `dt()` - @lajbel
+- Fixed `PatrolComp` not going to last waypoint - @nojaf
+- Fixed various TypeScript types - @amyspark-ng, @lajbel, @KeSuave
 
 ### Removed
 
-- `make()` was sent to doom - @lajbel
-- `loadPedit` was removed - @lajbel
+- **(!)** `make()` was sent to doom - @lajbel
 
 ---
 
