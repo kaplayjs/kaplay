@@ -8,6 +8,9 @@ The format is (mostly) based on
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project
 adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+- Breaking changes are marked with: **(!)**
+- [Jump to v3001]() changelog.
+
 <!--
 Hey, KAPLAY Dev, you must changelog here, in unreleased, so later your
 best friend, lajbel, can put the correct version name here
@@ -39,15 +42,40 @@ best friend, lajbel, can put the correct version name here
   @dragoncoder047
 - Now `KAPLAYOpt.spriteAtlasPadding` is set to `2` by default - @lajbel
 
-## [unreleased] (v3001)
-
----
-
 ## [4000.0.0-alpha.21] - 2025-08-07
 
 ### Added
 
-- Added Prefabs - @mflerackers, @lajbel, @amyspark-ng and other contributors.
+- Added `GameObjRaw.serialize()` for serializing the game object and its
+  components. - @mflerackers, lajbel
+
+  ```js
+  const bean = add([sprite("prefab")]);
+  const beanSerialized = bean.serialize();
+  ```
+- Added `createPrefab()` for serializing an object and register it (or not) as a
+  prefab from a Game Object. - @mflerackers, lajbel
+
+  ```js
+  const beanObj = add([sprite("bean")]);
+
+  // Serialize game object and register it as a prefab asset
+  createPrefab("bean", beanObj);
+
+  addPrefab("bean");
+
+  // Just get serialized data
+  const serializedBean = createPrefab(beanObj);
+
+  addPrefab(beanObj);
+  ```
+- Added `addPrefab()` for creating an object previously serialitazed -
+  @mflerackers, @lajbel
+  ```js
+  loadPrefab("bean", "/bean.kaprefab");
+
+  addPrefab("bean");
+  ```
 - Added new scene methods `pushScene()` and `popScene()`, for stack behaviour in
   scenes - @itzKiwiSky
 - Added `throwError()` for throwing custom errors to the blue screen, even
@@ -58,9 +86,10 @@ best friend, lajbel, can put the correct version name here
 
 ### Changed
 
-- Renamed `KAPLAYOpt.tagsAsComponents` to `KAPLAYOpt.tagComponentIds` - @lajbel
-- Now moving mouse changes the value of `getLastInputDevice()` - @amyspark-ng
 - Now `GameObjRaw.exists()` work for nested objects
+- Now moving mouse changes the value of `getLastInputDevice()` - @amyspark-ng
+- (**!**) Renamed `KAPLAYOpt.tagsAsComponents` to `KAPLAYOpt.tagComponentIds` -
+  @lajbel
 
 ### Fixed
 
@@ -70,16 +99,20 @@ best friend, lajbel, can put the correct version name here
 
 ### Added
 
-- Now you can use the frames of a sprite in an atlas also as a font -
+- Added `loadSpriteFromFont()` for loading a bitmap font from a loaded sprite. -
   @dragoncoder047
-- Improved various doc entries. - All Contributors.
+
+### Changed
+
+- Improved various doc entries. - Many contributors.
 
 ### Fixed
 
 - Fixed `AreaComp#onClick()` attaching events to app, instead of object, so
   event wasn't being paused with `obj.paused` - @lajbel
-- Fixed all touch events having a bad transform - @lajbel
-- Fixed sprite scaling not working properly when letterbox - @mflerackers
+- Fixed all touch events having a bad transformation - @lajbel
+- Fixed sprite scaling not working properly with `KAPLAYOpt.letterbox` -
+  @mflerackers
 - Fixed "add" event running twice in `addLevel()` tiles - @lajbel
 - Fixed blend component having a wrong ID - @lajbel
 
@@ -87,16 +120,14 @@ best friend, lajbel, can put the correct version name here
 
 - **(!)** `loadPedit` was removed - @lajbel
 
-## [4000.0.0-alpha.0 to 4000.0.0-alpha.19]
+## [4000.0.0-alpha.19] - 2025-05-16
+
+> This version changelog covers versions 4000.0.0-alpha.0 through
+> 4000.0.0-alpha.19, as we didn't have a concise changelog strategy before.
 
 ### Added
 
-- Added `ellipse()` component - @mflerackers
-- Added circle and (rotated) ellipse collision shapes - @mflerackers
-- Added `clipLineToRect()` - @mflerackers
-- Added `obj.setParent()` to change the parent of a game object - @mflerackers
 - Added `fakeMouse()` to create a fake mouse cursor - @lajbel
-
   ```js
   const myCursor = add([fakeMouse(), sprite("kat"), pos(100, 100)]);
 
@@ -104,24 +135,25 @@ best friend, lajbel, can put the correct version name here
   myCursor.release();
   myCursor.moveBy(vec2(100, 200)); // move as your wish
   ```
-
-- Added restitution and friction to physics - @mflerackers
-- Added `k.system()` to replace internal events or create new - @mflerackers
-
+- Added `system()` to replace internal events or create new - @mflerackers
   ```js
   system("collision", () => {
     // system code
   }, [SystemPhase.AfterFixedUpdate, SystemPhase.AfterUpdate]),
   ```
-
+- Added `ellipse()` component - @mflerackers
+- Added circle and (rotated) ellipse collision shapes - @mflerackers
+- Added `clipLineToRect()` - @mflerackers
+- Added `obj.setParent()` to change the parent of a game object - @mflerackers
+- Added restitution and friction to physics - @mflerackers
 - All game objects have methods `onTag()` and `onUntag()` for watching tag
   changes - @mflerackers
 - Added `SystemPhase` enum to identify different lifecycle events in the game
   loop that systems can hook into - @mflerackers
-- Blend mode is selectable to change how sprites are composited on top of each
-  other - @mflerackers
-- Picture API to cache drawing of selected objects - @mflerackers
-- drawCanvas - @mflerackers
+- Added Blend mode is selectable to change how sprites are composited on top of
+  each other - @mflerackers
+- Added Picture API to cache drawing of selected objects - @mflerackers
+- Added `drawCanvas` - @mflerackers
 - Added `video()` component to embed a video file into the game - @mflerackers
 - Added `level()` component and parent argument to `addLevel()` - @KeSuave
 - Allow the `text()` component to change the font and apply shaders
@@ -160,9 +192,6 @@ best friend, lajbel, can put the correct version name here
   line - @mflerackers
 - Added `sprite.play("anim", {preventRestart: true})` to allow play() to be
   called from update() and not reset the animation to frame 0 - @dragoncoder047
-- Added `throwError()` for trowing custom errors in the blue screen, even errors
-  KAPLAY can't handle. - @lajbel
-- Added Prefabs - @mflerackers, @lajbel, @amyspark-ng and other contributors.
 
 ### Fixed
 
@@ -207,6 +236,12 @@ best friend, lajbel, can put the correct version name here
   setting it to true (focused) will clear focus from all the other text inputs -
   @dragoncoder047
 - Changed the API of `HealthComp` - @amyspark-ng
+
+---
+
+# Changelog for v3001
+
+## [unreleased]
 
 ## [3001.0.19] - 2025-06-15
 
