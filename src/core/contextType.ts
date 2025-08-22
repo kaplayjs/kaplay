@@ -276,7 +276,7 @@ export interface KAPLAYCtx<
      *
      * addPrefab("bean", [
      *     pos(40, 40)
-     * ])
+     * ]);
      * ```
      *
      * @returns The added game object that contains all properties and methods each component offers.
