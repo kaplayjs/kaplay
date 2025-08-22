@@ -47,14 +47,14 @@ best friend, lajbel, can put the correct version name here
 ### Added
 
 - Added `GameObjRaw.serialize()` for serializing the game object and its
-  components. - @mflerackers, lajbel
+  components. - @mflerackers, @lajbel
 
   ```js
   const bean = add([sprite("prefab")]);
   const beanSerialized = bean.serialize();
   ```
 - Added `createPrefab()` for serializing an object and register it (or not) as a
-  prefab from a Game Object. - @mflerackers, lajbel
+  prefab from a Game Object. - @mflerackers, @lajbel
 
   ```js
   const beanObj = add([sprite("bean")]);
@@ -69,7 +69,7 @@ best friend, lajbel, can put the correct version name here
 
   addPrefab(beanObj);
   ```
-- Added `addPrefab()` for creating an object previously serialitazed -
+- Added `addPrefab()` for creating an object previously serialized -
   @mflerackers, @lajbel
   ```js
   loadPrefab("bean", "/bean.kaprefab");
@@ -153,7 +153,7 @@ best friend, lajbel, can put the correct version name here
 - Added Blend mode is selectable to change how sprites are composited on top of
   each other - @mflerackers
 - Added Picture API to cache drawing of selected objects - @mflerackers
-- Added `drawCanvas` - @mflerackers
+- Added `drawCanvas()` - @mflerackers
 - Added `video()` component to embed a video file into the game - @mflerackers
 - Added `level()` component and parent argument to `addLevel()` - @KeSuave
 - Allow the `text()` component to change the font and apply shaders
@@ -171,16 +171,15 @@ best friend, lajbel, can put the correct version name here
 - Now you can use the global option `inspectOnlyActive: false` to prevent paused
   objects from showing in the debug inspect view, this is useful if you are
   swapping out objects for different views - @dragoncoder047
-- The `offscreen()` component now has an option `offscreenDistance` to change
-  the distance at which an object is considered off-screen - @dragoncoder047
+- The `OffScreenComp` now has an option `offscreenDistance` to change the
+  distance at which an object is considered off-screen - @dragoncoder047
 - Now you can cherry-pick specific frames of a sprite sheet by using the
   `frames` list, instead of being limited to consecutive frames `start` and
   `end` - @dragoncoder047
 - `wave()` can now go back and forth between any value that is able to be used
   with `lerp()` - @dragoncoder047, @mflerackers
-- The `textInput` component has more events: `focus`, `blur`, `input`, and
-  `change`, to better interact with the text input state - @dragoncoder047
-- Layers now work globally, no longer only between siblings. @mflerackers
+- The `TextInputComp` has more events: `focus`, `blur`, `input`, and `change`,
+  to better interact with the text input state - @dragoncoder047
 - Areas no longer struggle with parents whose transform inst't up-to-date -
   @mflerackers
 - Exported step and smoothstep - @mflerackers
@@ -195,8 +194,10 @@ best friend, lajbel, can put the correct version name here
 
 ### Changed
 
-- **BREAKING**: Changed default behavior to
-  `kaplay({ tagsAsComponents: false })`
+- **(!)** - Now `z()` is global instead of relative - @mflerackers
+- **(!)** Layers now work globally, no longer only between siblings -
+  @mflerackers
+- **(!)**: Changed default behavior to `kaplay({ tagsAsComponents: false })`
 - The physics engine creates less garbage - @mflerackers
 - Tag-based events are slightly faster - @dragoncoder047
 - Moved camera to the shader - @mflerackers
@@ -303,8 +304,7 @@ best friend, lajbel, can put the correct version name here
 
 ### Added
 
-- Added **CSS Colors!** 🎨 **(experimental)** - @lajbel (based on
-  @dragoncoder047 idea) (**experimental**)
+- Added **CSS Colors!** 🎨 - @lajbel (based on @dragoncoder047 idea)
 
   ```js
   color("slateblue");
@@ -340,8 +340,7 @@ best friend, lajbel, can put the correct version name here
   });
   ```
 
-- Frame option for load animations with singular frames (**experimental**) -
-  @dragoncoder047
+- Frame option for load animations with singular frames - @dragoncoder047
 
   ```js
   loadSpriteAtlas("/examples/sprites/dungeon.png", {
@@ -421,7 +420,7 @@ kaplay({
 ### Added
 
 - Added `trigger(event, tag, ...args)` for global triggering events on a
-  specific tag (**experimental**) - @lajbel
+  specific tag - @lajbel
 
   ```js
   trigger("shoot", "target", 140);
@@ -452,7 +451,7 @@ kaplay({
   ]);
   ```
 
-- Added `{ indentAll?: boolean }` in `TextCompOpt` to indent every new line -
+- Added `TextCompOpt.identAll` boolean to indent every new line -
   @dragoncoder047
 
 - Added TypeScript definition for all App Events and missing Game Object
@@ -468,16 +467,13 @@ kaplay({
 ### Added
 
 - Added tags and components separation in `KAPLAYOpt.tagsAsComponents`
-  (**experimental**)
-- Added `.is()`, `.tag()` and `.untag()` to `GameObjRaw`, check, add and remove
-  (**experimental**)
-- Added `.has()` to `GameObjRaw`, to check if a game object has a component tags
-  (**experimental**)
+- Added `GameObjRaw.is()`, `GameObjRaw.tag()` and `GameObjRaw.untag()` to check,
+  add and remove tags
+- Added `GameObjRaw.has()` to check if a game object has a component tags
 - Added events for listen to comps being removed or added `onUse()` and
-  `onUnused()` (**experimental**)
-- Added `k.cancel()` to cancel the current event (**experimental**)
-
-- ```js
+  `onUnused()`
+- Added `cancel()` to cancel the current event
+  ```js
   onKeyPress("space", () => {
       // do something
       // cancel the event
@@ -485,8 +481,8 @@ kaplay({
   });
   ```
 
-- Added `getDefaultLayer()` to get the default layer (**experimental**)
-- Added `getLayers()` to get the layers list (**experimental**)
+- Added `getDefaultLayer()` to get the default layer
+- Added `getLayers()` to get the layers list
 - Added many JSDoc specifiers on many functions (@require, @deprecated, @since,
   @group, etc)
 
@@ -494,13 +490,13 @@ kaplay({
 
 - Added `.use()`, `.unuse()` and `.has()` to `GameObjRaw`, to add, remove and
   check components. This only works with `KAPLAYOpt.tagsAsComponents` set to
-  `true` (**experimental**)
+  `true`
 
 ### Deprecated
 
 - Deprecated camera methods `camScale()`, `camPos()` and `camRot()` in favor of
   `setCamScale()`, `getCamScale()`, `setCamPos()`, `getCamPos()`, `setCamRot()`
-  and `getCamRot`
+  and `getCamRot()`
 - Deprecated `camTransform()` in favor of `getCamTransform()`
 - Deprecated `camFlash()` in favor of `flash()`, for a `shake()`-like name
 
@@ -522,9 +518,9 @@ kaplay({
   root.add(); // same as add()
   root.get(); // same as get()
   ```
-- Added Buttons API for using Input bindings, `onButtonPress`,
-  `onButtonRelease`, `onButtonDown`, and it's corresponding boolean versions,
-  `isButtonPressed`, `isButtonDown` and `isButtonReleased`
+- Added Buttons API for using Input bindings, `onButtonPress()`,
+  `onButtonRelease()`, `onButtonDown()`, and it's corresponding boolean
+  versions, `isButtonPressed()`, `isButtonDown()` and `isButtonReleased()`
 
   ```js
   kaplay({
@@ -788,8 +784,8 @@ kaplay({
 ### Removed
 
 - **(!)** Removed compatibility to use two KAPLAY frames in the same page
-- **(!)** Much typescript definitions was fixed, if you use typescript now maybe
-  you see new errors that make your code strict
+- **(!)** Many TypeScript definitions were fixed, if you use TypeScript now
+  maybe you see new errors that make your code strict
 - Fix error screen not showing with not Error object
 - Fix error where debug screen was scaling bad the blue rectangles
 - Fix error where error screen was not showing when the error was thrown in a
