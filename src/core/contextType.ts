@@ -135,6 +135,8 @@ import type { DrawTriangleOpt } from "../gfx/draw/drawTriangle";
 import type { DrawUVQuadOpt } from "../gfx/draw/drawUVQuad";
 import type { StyledTextInfo } from "../gfx/formatText";
 import type { FrameBuffer } from "../gfx/FrameBuffer";
+import type { DecisionNode, DecisionTree } from "../math/ai/decisiontree";
+import type { Rule, RuleSystem } from "../math/ai/rulesystem";
 import type { Color, CSSColor } from "../math/color";
 import type { EaseFunc, EaseFuncs } from "../math/easings";
 import type { GjkCollisionResult } from "../math/gjk";
@@ -203,6 +205,22 @@ export interface KAPLAYCtx<
      * @group Misc
      */
     _k: Engine & { k: KAPLAYCtx };
+    /**
+     * End everything.
+     *
+     * @since v2000.0
+     * @group Start
+     */
+    quit(): void;
+    /**
+     * Throws a new error and show up the Blue Screen.
+     *
+     * @param msg - The message for showing in the Blue Screen.
+     *
+     * @since v4000.0
+     * @group Start
+     */
+    throwError(msg: string): void;
     /**
      * Assemble a game object from a list of components, and add it to the game,
      *
@@ -2982,6 +3000,7 @@ export interface KAPLAYCtx<
         btn: TButton | TButton[],
         action: (btn: TButton) => void,
     ): KEventController;
+    onButtonPress(action: (btn: TButton) => void): KEventController;
     /**
      * Register an event that runs when user release a defined button
      * (like "jump") on any input (keyboard, gamepad).
@@ -3907,6 +3926,15 @@ export interface KAPLAYCtx<
      * @subgroup Buttons API
      */
     getButton(btn: keyof TButtonDef): ButtonBinding;
+    /**
+     * Get all the input bindings.
+     *
+     * @returns The button definition.
+     * @since v4000.0
+     * @group Input
+     * @subgroup Buttons API
+     */
+    getButtons(): TButtonDef;
     /**
      * Set a input binding for a button name.
      *
@@ -5364,6 +5392,38 @@ export interface KAPLAYCtx<
      */
     RNG: typeof RNG;
     /**
+     * A rule in a rule system for AI. Note that this is only for advanced scenarios where the default rules are inadequate.
+     *
+     * @since v4000.0
+     * @group Math
+     * @subgroup AI
+     */
+    Rule: typeof Rule;
+    /**
+     * A rule system for AI.
+     *
+     * @since v4000.0
+     * @group Math
+     * @subgroup AI
+     */
+    RuleSystem: typeof RuleSystem;
+    /**
+     * A node in a decision tree for AI.
+     *
+     * @since v4000.0
+     * @group Math
+     * @subgroup AI
+     */
+    DecisionNode: typeof DecisionNode;
+    /**
+     * A decision tree for AI.
+     *
+     * @since v4000.0
+     * @group Math
+     * @subgroup AI
+     */
+    DecisionTree: typeof DecisionTree;
+    /**
      * Define a scene.
      *
      * @param name - The scene name.
@@ -6309,22 +6369,6 @@ export interface KAPLAYCtx<
      * @group Info
      */
     canvas: HTMLCanvasElement;
-    /**
-     * End everything.
-     *
-     * @since v2000.0
-     * @group Start
-     */
-    quit: () => void;
-    /**
-     * Throws a new error and show up the Blue Screen.
-     *
-     * @param msg - The message for showing in the Blue Screen.
-     *
-     * @since v4000.0
-     * @group Start
-     */
-    throwError: (msg: string) => void;
     /**
      * EventHandler for one single event.
      *

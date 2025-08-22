@@ -4,6 +4,7 @@ import { KEvent, KEventHandler } from "../events/events";
 import type { GfxCtx } from "../gfx/gfx";
 import { TexPacker } from "../gfx/TexPacker";
 import { _k } from "../shared";
+import type { MustKAPLAYOpt } from "../types";
 import type { BitmapFontData } from "./bitmapFont";
 import type { FontData } from "./font";
 import type { ShaderData } from "./shader";
@@ -260,7 +261,7 @@ export function load<T>(prom: Promise<T>): Asset<T> {
 export type InternalAssetsCtx = ReturnType<typeof initAssets>;
 
 /** @ignore */
-export const initAssets = (ggl: GfxCtx, spriteAtlasPadding: number) => {
+export const initAssets = (ggl: GfxCtx, opt: MustKAPLAYOpt) => {
     const assets = {
         urlPrefix: "",
         // asset holders
@@ -276,7 +277,7 @@ export const initAssets = (ggl: GfxCtx, spriteAtlasPadding: number) => {
             ggl,
             SPRITE_ATLAS_WIDTH,
             SPRITE_ATLAS_HEIGHT,
-            spriteAtlasPadding,
+            opt.spriteAtlasPadding,
         ),
         // if we finished initially loading all assets
         loaded: false,
