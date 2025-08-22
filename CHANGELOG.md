@@ -85,7 +85,7 @@ best friend, lajbel, can put the correct version name here
 
 ### Removed
 
-- `loadPedit` was removed - @lajbel
+- **(!)** `loadPedit` was removed - @lajbel
 
 ## [4000.0.0-alpha.0 to 4000.0.0-alpha.19]
 
