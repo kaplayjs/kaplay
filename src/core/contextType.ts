@@ -1921,7 +1921,6 @@ export interface KAPLAYCtx<
     /**
      * Register an event that runs when an object is added
      *
-     * @param tag - The tag to match, only called for objects with a matching tag.
      * @param action - The function that runs when an object is added.
      *
      * @example
