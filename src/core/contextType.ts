@@ -137,6 +137,7 @@ import type { StyledTextInfo } from "../gfx/formatText";
 import type { FrameBuffer } from "../gfx/FrameBuffer";
 import type { DecisionNode, DecisionTree } from "../math/ai/decisiontree";
 import type { Rule, RuleSystem } from "../math/ai/rulesystem";
+import type { StateMachine } from "../math/ai/statemachine";
 import type { Color, CSSColor } from "../math/color";
 import type { EaseFunc, EaseFuncs } from "../math/easings";
 import type { GjkCollisionResult } from "../math/gjk";
@@ -5422,6 +5423,14 @@ export interface KAPLAYCtx<
      * @subgroup AI
      */
     DecisionTree: typeof DecisionTree;
+    /**
+     * A state machine for AI.
+     *
+     * @since v4000.0
+     * @group Math
+     * @subgroup AI
+     */
+    StateMachine: typeof StateMachine;
     /**
      * Define a scene.
      *
