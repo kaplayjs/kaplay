@@ -67,7 +67,10 @@ export class StateMachine {
      * @param name The state
      * @param cb The callback
      */
-    onStateEnter(name: string, cb: EnterCallback) {
+    onStateEnter(
+        name: string,
+        cb: (sm: StateMachine, previous: string) => void,
+    ) {
         const state = this.stateMap[name];
         if (state) {
             state.callbacks.enter = cb;
@@ -79,7 +82,10 @@ export class StateMachine {
      * @param name The state
      * @param cb The callback
      */
-    onStateUpdate(name: string, cb: UpdateCallback) {
+    onStateUpdate(
+        name: string,
+        cb: (sm: StateMachine, current: string) => void,
+    ) {
         const state = this.stateMap[name];
         if (state) {
             state.callbacks.update = cb;
@@ -91,7 +97,7 @@ export class StateMachine {
      * @param name The state
      * @param cb The callback
      */
-    onStateDraw(name: string, cb: DrawCallback) {
+    onStateDraw(name: string, cb: (sm: StateMachine, current: string) => void) {
         const state = this.stateMap[name];
         if (state) {
             state.callbacks.draw = cb;
@@ -103,7 +109,7 @@ export class StateMachine {
      * @param name The state
      * @param cb The callback
      */
-    onStateExit(name: string, cb: ExitCallback) {
+    onStateExit(name: string, cb: (sm: StateMachine, next: string) => void) {
         const state = this.stateMap[name];
         if (state) {
             state.callbacks.exit = cb;
@@ -116,7 +122,11 @@ export class StateMachine {
      * @param to The state which is entered
      * @param cb The callback
      */
-    onStateTransition(from: string, to: string, cb: TransitionCallback) {
+    onStateTransition(
+        from: string,
+        to: string,
+        cb: (sm: StateMachine, from: string, to: string) => void,
+    ) {
         const state = this.stateMap[from];
         if (state) {
             state.transitions[to] = cb;
