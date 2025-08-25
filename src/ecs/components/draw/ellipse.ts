@@ -3,6 +3,7 @@ import { drawEllipse } from "../../../gfx/draw/drawEllipse";
 import { Ellipse } from "../../../math/math";
 import { Vec2 } from "../../../math/Vec2";
 import type { Comp, GameObj } from "../../../types";
+import type { AreaComp } from "../physics/area";
 import type { AnchorComp } from "../transform/anchor";
 import type { outline } from "./outline";
 
@@ -67,6 +68,9 @@ export function ellipse(
         set radiusX(value: number) {
             _radiusX = value;
             if (_shape) _shape.radiusX = value;
+            if ((this as any as GameObj).has?.("area")) {
+                (this as any as GameObj<AreaComp>)._worldAreaDirty = true;
+            }
         },
         get radiusY() {
             return _radiusY;
@@ -74,6 +78,9 @@ export function ellipse(
         set radiusY(value: number) {
             _radiusY = value;
             if (_shape) _shape.radiusY = value;
+            if ((this as any as GameObj).has?.("area")) {
+                (this as any as GameObj<AreaComp>)._worldAreaDirty = true;
+            }
         },
         draw(this: GameObj<EllipseComp>) {
             drawEllipse(Object.assign(getRenderProps(this), {

@@ -13,6 +13,9 @@ export async function dev() {
         ...fmts("kaplay")[0],
         sourcemap: true,
         minify: false,
+        minifyIdentifiers: false,
+        minifySyntax: false,
+        minifyWhitespace: false,
         keepNames: true,
         plugins: [
             {
