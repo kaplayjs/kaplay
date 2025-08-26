@@ -137,6 +137,7 @@ import type { StyledTextInfo } from "../gfx/formatText";
 import type { FrameBuffer } from "../gfx/FrameBuffer";
 import type { DecisionNode, DecisionTree } from "../math/ai/decisiontree";
 import type { Rule, RuleSystem } from "../math/ai/rulesystem";
+import type { StateMachine } from "../math/ai/statemachine";
 import type { Color, CSSColor } from "../math/color";
 import type { EaseFunc, EaseFuncs } from "../math/easings";
 import type { GjkCollisionResult } from "../math/gjk";
@@ -276,7 +277,7 @@ export interface KAPLAYCtx<
      *
      * addPrefab("bean", [
      *     pos(40, 40)
-     * ])
+     * ]);
      * ```
      *
      * @returns The added game object that contains all properties and methods each component offers.
@@ -1921,7 +1922,6 @@ export interface KAPLAYCtx<
     /**
      * Register an event that runs when an object is added
      *
-     * @param tag - The tag to match, only called for objects with a matching tag.
      * @param action - The function that runs when an object is added.
      *
      * @example
@@ -5455,6 +5455,14 @@ export interface KAPLAYCtx<
      * @subgroup AI
      */
     DecisionTree: typeof DecisionTree;
+    /**
+     * A state machine for AI.
+     *
+     * @since v4000.0
+     * @group Math
+     * @subgroup AI
+     */
+    StateMachine: typeof StateMachine;
     /**
      * Define a scene.
      *
