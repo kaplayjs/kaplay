@@ -251,8 +251,8 @@ export function text(t: string, opt: TextCompOpt = {}): TextComp {
                 lineSpacing: this.lineSpacing,
                 letterSpacing: this.letterSpacing,
                 indentAll: opt.indentAll,
-            }
-        }
+            };
+        },
     };
 
     // @ts-expect-error
