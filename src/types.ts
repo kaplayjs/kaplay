@@ -2,6 +2,7 @@ import type { ButtonsDef } from "./app/inputBindings";
 import type { Asset } from "./assets/asset";
 import type { ShaderData, Uniform } from "./assets/shader";
 import type { KAPLAYCtx } from "./core/contextType";
+import type { TypesOpt } from "./core/taf";
 import type { GameObjRaw } from "./ecs/entity/GameObjRaw";
 import type { LineCap, LineJoin } from "./gfx/draw/drawLine";
 import type { Picture } from "./gfx/draw/drawPicture";
@@ -221,10 +222,7 @@ export type MustKAPLAYOpt = {
  *
  * @group Start
  */
-export interface KAPLAYOpt<
-    TPlugin extends PluginList<any> = any,
-    TButtonDef extends ButtonsDef = any,
-> {
+export interface KAPLAYOpt {
     /**
      * Width of game.
      */
@@ -323,7 +321,7 @@ export interface KAPLAYOpt<
      *
      * @since v30010
      */
-    buttons?: TButtonDef;
+    buttons?: ButtonsDef;
     /**
      * Limit framerate to an amount per second.
      *
@@ -343,7 +341,7 @@ export interface KAPLAYOpt<
     /**
      * List of plugins to import.
      */
-    plugins?: TPlugin;
+    plugins?: PluginList<any>;
     /**
      * Enter burp mode.
      */
@@ -384,6 +382,21 @@ export interface KAPLAYOpt<
      * @default 3000
      */
     loadTimeout?: number;
+    /**
+     * TypeScript Advanced Features (TAF) are a serie of options for TypeScript
+     * only features.
+     *
+     * It should be created using the helper function `kaplayTypes`.
+     *
+     * ```ts
+     * kaplay({
+     *    types: kaplayTypes<Opt<{
+     *        scenes: {}
+     *    }>>();
+     * });
+     * ```
+     */
+    types?: TypesOpt;
 }
 
 /**

@@ -112,7 +112,7 @@ import type { Collision } from "../ecs/systems/Collision";
 import type { SystemPhase } from "../ecs/systems/systems";
 import type { GameObjEventNames, GameObjEvents } from "../events/eventMap";
 import type { KEvent, KEventController, KEventHandler } from "../events/events";
-import type { SceneDef, SceneName } from "../game/scenes";
+import type { SceneDef } from "../game/scenes";
 import type { anchorPt } from "../gfx/anchor";
 import type { DrawBezierOpt } from "../gfx/draw/drawBezier";
 import type { DrawCanvasOpt } from "../gfx/draw/drawCanvas";
@@ -193,10 +193,7 @@ import type { Engine } from "./engine";
  *
  * @group Start
  */
-export interface KAPLAYCtx<
-    TButtonDef extends ButtonsDef = {},
-    TButton extends string = string,
-> {
+export interface KAPLAYCtx {
     /**
      * Internal data that should not be accessed directly.
      *
@@ -2997,10 +2994,10 @@ export interface KAPLAYCtx<
      * @subgroup Buttons API
      */
     onButtonPress(
-        btn: TButton | TButton[],
-        action: (btn: TButton) => void,
+        btn: string | string[],
+        action: (btn: string) => void,
     ): KEventController;
-    onButtonPress(action: (btn: TButton) => void): KEventController;
+    onButtonPress(action: (btn: string) => void): KEventController;
     /**
      * Register an event that runs when user release a defined button
      * (like "jump") on any input (keyboard, gamepad).
@@ -3014,10 +3011,10 @@ export interface KAPLAYCtx<
      * @subgroup Buttons API
      */
     onButtonRelease(
-        btn: TButton | TButton[],
-        action: (btn: TButton) => void,
+        btn: string | string[],
+        action: (btn: string) => void,
     ): KEventController;
-    onButtonRelease(action: (btn: TButton) => void): KEventController;
+    onButtonRelease(action: (btn: string) => void): KEventController;
     /**
      * Register an event that runs when user press a defined button
      * (like "jump") on any input (keyboard, gamepad).
@@ -3031,10 +3028,10 @@ export interface KAPLAYCtx<
      * @subgroup Buttons API
      */
     onButtonDown(
-        btn: TButton | TButton[],
-        action: (btn: TButton) => void,
+        btn: string | string[],
+        action: (btn: string) => void,
     ): KEventController;
-    onButtonDown(action: (btn: TButton) => void): KEventController;
+    onButtonDown(action: (btn: string) => void): KEventController;
     /**
      * Register an event that runs when current scene ends.
      *
@@ -3875,7 +3872,7 @@ export interface KAPLAYCtx<
      * @group Input
      * @subgroup Buttons API
      */
-    isButtonPressed(btn?: TButton | TButton[]): boolean;
+    isButtonPressed(btn?: string | string[]): boolean;
     /**
      * If any or certain bound button(s) are currently held down on any input (keyboard, gamepad).
      *
@@ -3895,7 +3892,7 @@ export interface KAPLAYCtx<
      * @group Input
      * @subgroup Buttons API
      */
-    isButtonDown(btn?: TButton | TButton[]): boolean;
+    isButtonDown(btn?: string | []): boolean;
     /**
      * If any or certain bound button(s) are just released last frame on any input (keyboard, gamepad).
      *
@@ -3915,7 +3912,7 @@ export interface KAPLAYCtx<
      * @group Input
      * @subgroup Buttons API
      */
-    isButtonReleased(btn?: TButton | TButton[]): boolean;
+    isButtonReleased(btn?: string | string[]): boolean;
     /**
      * Get a input binding from a button name.
      *
@@ -3925,7 +3922,7 @@ export interface KAPLAYCtx<
      * @group Input
      * @subgroup Buttons API
      */
-    getButton(btn: keyof TButtonDef): ButtonBinding;
+    getButton(btn: string): ButtonBinding;
     /**
      * Get all the input bindings.
      *
@@ -3934,7 +3931,7 @@ export interface KAPLAYCtx<
      * @group Input
      * @subgroup Buttons API
      */
-    getButtons(): TButtonDef;
+    getButtons(): ButtonsDef;
     /**
      * Set a input binding for a button name.
      *
@@ -3961,7 +3958,7 @@ export interface KAPLAYCtx<
      * @group Input
      * @subgroup Buttons API
      */
-    pressButton(btn: TButton): void;
+    pressButton(btn: string): void;
     /**
      * Release a button virtually.
      *
@@ -3978,7 +3975,7 @@ export interface KAPLAYCtx<
      * @group Input
      * @subgroup Buttons API
      */
-    releaseButton(btn: TButton): void;
+    releaseButton(btn: string): void;
     /**
      * Get stick axis values from a gamepad.
      *
@@ -5452,7 +5449,7 @@ export interface KAPLAYCtx<
      *
      * @group Scenes
      */
-    scene(name: SceneName, def: SceneDef): void;
+    scene(name: string, def: SceneDef): void;
     /**
      * Go to a scene, passing all rest args to scene callback.
      *
@@ -5471,7 +5468,7 @@ export interface KAPLAYCtx<
      * @since v2000.0
      * @group Scenes
      */
-    go(name: SceneName, ...args: any): void;
+    go(name: string, ...args: any): void;
 
     /**
      * Push the current active scene to a stack and enters in the new scene
@@ -5498,7 +5495,7 @@ export interface KAPLAYCtx<
      * @since v3001.1
      * @group Scenes
      */
-    pushScene(id: SceneName, ...args: unknown[]): void;
+    pushScene(id: string, ...args: unknown[]): void;
 
     /**
      * Pops the scene from the stack and set as current active scene.
@@ -5523,7 +5520,7 @@ export interface KAPLAYCtx<
      * @since v3001.1
      * @group Scenes
      */
-    popScene(id: SceneName, ...args: unknown[]): void;
+    popScene(id: string, ...args: unknown[]): void;
     /**
      * Define the layer names. Should be called before any objects are made.
      *
