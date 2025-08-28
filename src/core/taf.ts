@@ -93,9 +93,9 @@ export type ButtonName<TOpt extends KAPLAYOptTypeOptions> =
 
 // Typed Context
 
-export type KAPLAYCtxTMethods<
+export interface KAPLAYCtxTMethods<
     O extends KAPLAYOptTypeOptions = any,
-> = {
+> {
     scene<T extends SceneName<O>>(
         name: T,
         def: (
@@ -140,7 +140,7 @@ export type KAPLAYCtxTMethods<
 
     pressButton(btn: ButtonName<O>): void;
     releaseButton(btn: ButtonName<O>): void;
-};
+}
 
 export type KAPLAYCtxT<O extends KAPLAYOptTypeOptions = any> =
     & KAPLAYCtxTMethods<O>
