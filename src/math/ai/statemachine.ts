@@ -30,8 +30,8 @@ export class StateMachine {
 
     /**
      * Create a machine given the states and initial state
-     * @param states The states the machine can be in
-     * @param initialState The initial state it will enter if given
+     * @param states - The states the machine can be in
+     * @param initialState - The initial state it will enter if given
      */
     constructor(states: string[]) {
         states.forEach(name => {
@@ -41,7 +41,7 @@ export class StateMachine {
 
     /**
      * Make the machine enter a state
-     * @param name The new state
+     * @param name - The new state
      */
     enterState(name: string) {
         let oldStateName = this.state?.name || "";
@@ -64,8 +64,8 @@ export class StateMachine {
 
     /**
      * Set a callback for when the machine enters a state
-     * @param name The state
-     * @param cb The callback
+     * @param name - The state
+     * @param cb - The callback
      */
     onStateEnter(
         name: string,
@@ -79,8 +79,8 @@ export class StateMachine {
 
     /**
      * Set a callback for when the machine updates a state
-     * @param name The state
-     * @param cb The callback
+     * @param name - The state
+     * @param cb - The callback
      */
     onStateUpdate(
         name: string,
@@ -94,8 +94,8 @@ export class StateMachine {
 
     /**
      * Set a callback for when the machine draws a state
-     * @param name The state
-     * @param cb The callback
+     * @param name - The state
+     * @param cb - The callback
      */
     onStateDraw(name: string, cb: (sm: StateMachine, current: string) => void) {
         const state = this.stateMap[name];
@@ -106,8 +106,8 @@ export class StateMachine {
 
     /**
      * Set a callback for when the machine exits a state
-     * @param name The state
-     * @param cb The callback
+     * @param name - The state
+     * @param cb - The callback
      */
     onStateExit(name: string, cb: (sm: StateMachine, next: string) => void) {
         const state = this.stateMap[name];
@@ -118,9 +118,9 @@ export class StateMachine {
 
     /**
      * Set a callback for when the machine transitions from one state to the other state
-     * @param from The state which is exited
-     * @param to The state which is entered
-     * @param cb The callback
+     * @param from - The state which is exited
+     * @param to - The state which is entered
+     * @param cb - The callback
      */
     onStateTransition(
         from: string,
