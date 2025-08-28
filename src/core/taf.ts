@@ -1,6 +1,6 @@
 import type { ButtonBinding } from "../app/inputBindings";
 import type { KEventController } from "../events/events";
-import type { Comp, KAPLAYOpt } from "../types";
+import type { KAPLAYOpt } from "../types";
 import type { KAPLAYCtx } from "./contextType";
 
 export type InfKAPLAYOpt<T extends KAPLAYOpt = KAPLAYOpt> = {
@@ -19,15 +19,6 @@ export type InfKAPLAYOpt<T extends KAPLAYOpt = KAPLAYOpt> = {
         ? P extends { strictTags: infer T } ? T : undefined
         : undefined;
 };
-
-type X = InfKAPLAYOpt<{
-    background: "red";
-    types: {
-        scenes: {
-            "go": [score: string];
-        };
-    };
-}>;
 
 type OptionalString<T extends string> = T | {} & string;
 
