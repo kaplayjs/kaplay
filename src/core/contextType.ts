@@ -2037,6 +2037,38 @@ export interface KAPLAYCtx<
      */
     onUntag(action: (obj: GameObj, tag: string) => void): KEventController;
     /**
+     * Register an event that runs when an object becomes paused (either directly
+     * or by a parent being set to paused).
+     *
+     * @returns The event controller.
+     * @since v4000.0
+     */
+    onPause(action: () => void): KEventController;
+    /**
+     * Register an event that runs when an object becomes unpaused (either directly
+     * or by a parent being set to unpaused).
+     *
+     * @returns The event controller.
+     * @since v4000.0
+     */
+    onUnpause(action: () => void): KEventController;
+    /**
+     * Register an event that runs when an object becomes hidden (either directly
+     * or by a parent being set to hidden).
+     *
+     * @returns The event controller.
+     * @since v4000.0
+     */
+    onHide(action: () => void): KEventController;
+    /**
+     * Register an event that runs when an object becomes visible (either directly
+     * or by a parent being set to visible).
+     *
+     * @returns The event controller.
+     * @since v4000.0
+     */
+    onShow(action: () => void): KEventController;
+    /**
      * Register an event that runs when all assets finished loading.
      *
      * @param action - The function to run when the event is triggered.
@@ -2169,7 +2201,7 @@ export interface KAPLAYCtx<
      * ]);
      *
      * // resize the rectangle to screen size
-     * onResize(() => {
+     * onTabResize(() => {
      *     debug.log(`Old Size: ${rectangle.width}x${rectangle.height}`);
      *     rectangle.width = width();
      *     rectangle.height = height();
@@ -2181,7 +2213,7 @@ export interface KAPLAYCtx<
      * @since v3000.0
      * @group Events
      */
-    onResize(action: () => void): KEventController;
+    onTabResize(action: () => void): KEventController;
     /**
      * Cleanup function to run when quit() is called.
      *
@@ -2737,7 +2769,7 @@ export interface KAPLAYCtx<
      * ]);
      *
      * // when switching tabs, this runs
-     * onHide(() => {
+     * onTabHide(() => {
      *     destroy(ghosty);
      *     add([
      *         text("There was never aa ghosttttt"),
@@ -2751,7 +2783,7 @@ export interface KAPLAYCtx<
      * @since v3001.0
      * @group Events
      */
-    onHide(action: () => void): KEventController;
+    onTabHide(action: () => void): KEventController;
     /**
      * Register an event that runs when tab is shown.
      *
@@ -2760,7 +2792,7 @@ export interface KAPLAYCtx<
      * @example
      * ```js
      * // user has returned to this tab
-     * onShow(() => {
+     * onTabShow(() => {
      *     burp();
      * });
      * ```
@@ -2769,7 +2801,7 @@ export interface KAPLAYCtx<
      * @since v3001.0
      * @group Events
      */
-    onShow(action: () => void): KEventController;
+    onTabShow(action: () => void): KEventController;
     /**
      * Register an event that runs when a gamepad is connected.
      *
