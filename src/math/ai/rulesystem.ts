@@ -80,9 +80,9 @@ export class RuleSystem {
 
     /**
      * Adds a rule which runs an action if its predicate evaluates to true.
-     * @param predicate Predicate to evaluate. A function taking the system as parameter.
-     * @param action Action to execute. A function taking the system as parameter.
-     * @param salience Priority of the rule.
+     * @param predicate - Predicate to evaluate. A function taking the system as parameter.
+     * @param action - Action to execute. A function taking the system as parameter.
+     * @param salience - Priority of the rule.
      */
     addRuleExecutingAction(
         predicate: Predicate,
@@ -94,10 +94,10 @@ export class RuleSystem {
 
     /**
      * Add a rule which asserts a fact if its predicate evaluates to true.
-     * @param predicate Predicate to evaluate. A function taking the system as parameter.
-     * @param fact The fact to assert.
-     * @param grade The optional grade to use when asserting the fact.
-     * @param salience Priority of the rule.
+     * @param predicate - Predicate to evaluate. A function taking the system as parameter.
+     * @param fact - The fact to assert.
+     * @param grade - The optional grade to use when asserting the fact.
+     * @param salience - Priority of the rule.
      */
     addRuleAssertingFact(
         predicate: Predicate,
@@ -110,10 +110,10 @@ export class RuleSystem {
 
     /**
      * Add a rule which retracts a fact if its predicate evaluates to true.
-     * @param predicate Predicate to evaluate. A function taking the system as parameter.
-     * @param fact The fact to retract.
-     * @param grade The optional grade to use when retracting the fact.
-     * @param salience Priority of the rule.
+     * @param predicate - Predicate to evaluate. A function taking the system as parameter.
+     * @param fact - The fact to retract.
+     * @param grade - The optional grade to use when retracting the fact.
+     * @param salience - Priority of the rule.
      */
     addRuleRetractingFact(
         predicate: Predicate,
@@ -126,7 +126,7 @@ export class RuleSystem {
 
     /**
      * Add a custom rule.
-     * @param rule The rule to add.
+     * @param rule - The rule to add.
      */
     addRule(rule: Rule) {
         this.agenda.push(rule);
@@ -153,8 +153,8 @@ export class RuleSystem {
 
     /**
      * Asserts a fact.
-     * @param fact The fact to assert.
-     * @param grade The optional grade to use.
+     * @param fact - The fact to assert.
+     * @param grade - The optional grade to use.
      */
     assertFact(fact: string, grade: number = 1) {
         this.facts.set(fact, Math.min(1, this.gradeForFact(fact) + grade));
@@ -162,8 +162,8 @@ export class RuleSystem {
 
     /**
      * Retracts a fact.
-     * @param fact The fact to retract.
-     * @param grade The optional grade to use.
+     * @param fact - The fact to retract.
+     * @param grade - The optional grade to use.
      */
     retractFact(fact: string, grade: number = 1) {
         this.facts.set(fact, Math.max(0, this.gradeForFact(fact) - grade));
@@ -171,7 +171,8 @@ export class RuleSystem {
 
     /**
      * Returns the grade for the specified fact.
-     * @param fact The fact to obtain the grade from.
+     * @param fact - The fact to obtain the grade from.
+     *
      * @returns The grade for the fact.
      */
     gradeForFact(fact: string) {
@@ -180,7 +181,8 @@ export class RuleSystem {
 
     /**
      * Returns the minimum grade for the specified facts.
-     * @param facts The facts to obtain the minimum grade from.
+     * @param facts - The facts to obtain the minimum grade from.
+     *
      * @returns The minimum grade for the facts.
      */
     minimumGradeForFacts(...facts: string[]) {
@@ -189,7 +191,8 @@ export class RuleSystem {
 
     /**
      * Returns the maximum grade for the specified facts.
-     * @param facts The facts to obtain the maximum grade from.
+     * @param facts - The facts to obtain the maximum grade from.
+     *
      * @returns The maximum grade for the facts.
      */
     maximumGradeForFacts(...facts: string[]) {
