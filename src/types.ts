@@ -383,7 +383,7 @@ export interface KAPLAYOpt {
      */
     loadTimeout?: number;
     /**
-     * TypeScript Advanced Features (TAF) are a serie of options for TypeScript
+     * TypeScript Advanced Features (TAF) are a series of options for TypeScript
      * only features.
      *
      * It should be created using the helper function `kaplayTypes`.
@@ -395,6 +395,8 @@ export interface KAPLAYOpt {
      *    }>>();
      * });
      * ```
+     *
+     * @since v4000.0
      */
     types?: TypesOpt;
 }
