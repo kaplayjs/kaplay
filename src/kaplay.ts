@@ -6,10 +6,10 @@ import { createContext } from "./core/context";
 import type { KAPLAYCtx } from "./core/contextType";
 import { createEngine } from "./core/engine";
 import type {
-    InfKAPLAYOpt,
     KAPLAYCtxT,
-    KAPLAYTypeOpt,
+    KAPLAYOptTypeOptions,
     KAPLAYTypeOptWithoutPlugins,
+    TypesOpt,
 } from "./core/taf";
 import beanSrc from "./data/assets/bean.png";
 import boomSpriteSrc from "./data/assets/boom.png";
@@ -33,15 +33,15 @@ type HasDefinedKeys<TObj, TCheck> = {
     [K in keyof TCheck & keyof TObj]: TObj[K] extends undefined ? never : K;
 }[keyof TCheck & keyof TObj] extends never ? never : TObj;
 
-type ChooseKAPLAYCtx<O extends KAPLAYTypeOpt> =
+type ChooseKAPLAYCtx<O extends KAPLAYOptTypeOptions> =
     HasDefinedKeys<O, KAPLAYTypeOptWithoutPlugins> extends never ? KAPLAYCtx
         : KAPLAYCtxT<O>;
 
-type KAPLAYGame<O extends KAPLAYTypeOpt | undefined> = O extends KAPLAYTypeOpt
-    ? InfKAPLAYOpt<O>["plugins"] extends PluginList<any> ?
-            & ChooseKAPLAYCtx<InfKAPLAYOpt<O>>
-            & MergePlugins<InfKAPLAYOpt<O>["plugins"]>
-    : ChooseKAPLAYCtx<InfKAPLAYOpt<O>>
+type KAPLAYGame<O extends KAPLAYOptTypeOptions | undefined> = O extends
+    KAPLAYOptTypeOptions ? O["plugins"] extends PluginList<any> ?
+            & ChooseKAPLAYCtx<O>
+            & MergePlugins<O["plugins"]>
+    : ChooseKAPLAYCtx<O>
     : KAPLAYCtx;
 
 /**
@@ -79,9 +79,9 @@ type KAPLAYGame<O extends KAPLAYTypeOpt | undefined> = O extends KAPLAYTypeOpt
  * @group Start
  */
 export const kaplay = <
-    const O extends KAPLAYTypeOpt | undefined = undefined,
+    O extends KAPLAYOpt,
 >(
-    opt?: O extends undefined ? O : KAPLAYOpt,
+    opt?: O,
 ): KAPLAYGame<O> => {
     if (runned) {
         console.warn(
@@ -149,7 +149,7 @@ export const kaplay = <
     return ctx as KAPLAYGame<O>;
 };
 
-export const kaplayTypes = <T extends KAPLAYTypeOpt = KAPLAYTypeOpt>(): T => {
+export const kaplayTypes = <T extends TypesOpt = TypesOpt>(): T => {
     return null as unknown as T;
 };
 

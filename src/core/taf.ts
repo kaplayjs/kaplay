@@ -57,17 +57,19 @@ export type TypesOpt = {
 
 export type Opt<T extends TypesOpt = TypesOpt> = T;
 
-export type KAPLAYTypeOpt =
-    & Pick<KAPLAYOpt, "buttons" | "plugins">
-    & TypesOpt;
+export type KAPLAYOptTypeOptions = Pick<
+    KAPLAYOpt,
+    "buttons" | "plugins" | "types"
+>;
 
-export type KAPLAYTypeOptWithoutPlugins = Omit<KAPLAYTypeOpt, "plugins">;
+export type KAPLAYTypeOptWithoutPlugins = Omit<KAPLAYOptTypeOptions, "plugins">;
 // Helpers
 
-type SceneName<TOpt extends KAPLAYTypeOpt> = TOpt["scenes"] extends undefined
-    ? string
-    : TOpt["strictScenes"] extends true ? keyof TOpt["scenes"]
-    : OptionalString<Extract<keyof TOpt["scenes"], string>>;
+type SceneName<O extends KAPLAYOptTypeOptions> =
+    InfKAPLAYOpt<O>["scenes"] extends undefined ? string
+        : InfKAPLAYOpt<O>["strictScenes"] extends true
+            ? keyof InfKAPLAYOpt<O>["scenes"]
+        : OptionalString<Extract<keyof InfKAPLAYOpt<O>["scenes"], string>>;
 
 type SceneArgs<TScene, TSceneMap> = TScene extends keyof TSceneMap
     ? TSceneMap[TScene] extends Array<any> ? TSceneMap[TScene] : any[]
@@ -79,7 +81,7 @@ type SceneArgs<TScene, TSceneMap> = TScene extends keyof TSceneMap
 //     : OptionalString<Extract<keyof O["tags"], string>>
 //     : string;
 
-export type ButtonName<TOpt extends KAPLAYTypeOpt> =
+export type ButtonName<TOpt extends KAPLAYOptTypeOptions> =
     keyof TOpt["buttons"] extends undefined ? string
         : TOpt["buttons"] extends Record<string, ButtonBinding>
             ? Extract<keyof TOpt["buttons"], string>
@@ -92,23 +94,23 @@ export type ButtonName<TOpt extends KAPLAYTypeOpt> =
 // Typed Context
 
 export type KAPLAYCtxTMethods<
-    O extends KAPLAYTypeOpt = any,
+    O extends KAPLAYOptTypeOptions = any,
 > = {
     scene<T extends SceneName<O>>(
         name: T,
         def: (
-            ...args: SceneArgs<T, O["scenes"]>
+            ...args: SceneArgs<T, InfKAPLAYOpt<O>["scenes"]>
         ) => void,
     ): void;
 
     go<T extends SceneName<O>>(
         name: T,
-        ...args: SceneArgs<T, O["scenes"]>
+        ...args: SceneArgs<T, InfKAPLAYOpt<O>["scenes"]>
     ): void;
 
     pushScene<T extends SceneName<O>>(
         T: string,
-        ...args: SceneArgs<T, O["scenes"]>
+        ...args: SceneArgs<T, InfKAPLAYOpt<O>["scenes"]>
     ): void;
 
     // Buttons API
@@ -140,6 +142,6 @@ export type KAPLAYCtxTMethods<
     releaseButton(btn: ButtonName<O>): void;
 };
 
-export type KAPLAYCtxT<O extends KAPLAYTypeOpt = any> =
+export type KAPLAYCtxT<O extends KAPLAYOptTypeOptions = any> =
     & KAPLAYCtxTMethods<O>
     & Omit<KAPLAYCtx, keyof KAPLAYCtxTMethods<O>>;
