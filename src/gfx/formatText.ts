@@ -204,8 +204,9 @@ export function formatText(opt: DrawTextOpt): FormattedText {
                 const m = c2d.measureText(ch);
                 let w = Math.ceil(m.width);
                 if (!w) continue;
-                let h = Math.ceil(Math.abs(m.actualBoundingBoxAscent))
-                    + Math.ceil(Math.abs(m.actualBoundingBoxDescent));
+                let h = (Math.ceil(Math.abs(m.actualBoundingBoxAscent))
+                    + Math.ceil(Math.abs(m.actualBoundingBoxDescent)))
+                    || atlas.font.size;
 
                 // TODO: Test if this works with the verification of width and color
                 if (
