@@ -161,9 +161,9 @@ export class DecisionTree {
 
     /**
      * Computes a decision tree from example data
-     * @param data Example data, a list of columns, where each column contains values for an attribute in attributes.
-     * @param attributes The names of the columns.
-     * @param outcomes The outcomes for each row.
+     * @param data - Example data, a list of columns, where each column contains values for an attribute in attributes.
+     * @param attributes - The names of the columns.
+     * @param outcomes - The outcomes for each row.
      */
     static learnFromExamples(
         data: any[][],
