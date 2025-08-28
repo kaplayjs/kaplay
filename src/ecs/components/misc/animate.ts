@@ -121,7 +121,7 @@ export interface AnimateComp extends Comp {
         paused: boolean;
         /**
          * Move the animation to a specific point in time
-         * @param time Time to move the animation to in seconds
+         * @param time - Time to move the animation to in seconds
          */
         seek(time: number): void;
         /**
@@ -130,7 +130,7 @@ export interface AnimateComp extends Comp {
         duration: number;
         /**
          * Returns the animation with the specified name
-         * @param name Name of the animation to retrieve
+         * @param name - Name of the animation to retrieve
          */
         get(name: string): Anim;
         /**
