@@ -5520,7 +5520,7 @@ export interface KAPLAYCtx {
      * @since v3001.1
      * @group Scenes
      */
-    popScene(id: string, ...args: unknown[]): void;
+    popScene(): void;
     /**
      * Define the layer names. Should be called before any objects are made.
      *

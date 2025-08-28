@@ -106,6 +106,11 @@ export type KAPLAYCtxTMethods<
         ...args: SceneArgs<T, O["scenes"]>
     ): void;
 
+    pushScene<T extends SceneName<O>>(
+        T: string,
+        ...args: SceneArgs<T, O["scenes"]>
+    ): void;
+
     // Buttons API
     onButtonPress(
         btn: ButtonName<O> | ButtonName<O>[],
