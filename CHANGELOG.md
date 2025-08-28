@@ -26,7 +26,7 @@ best friend, lajbel, can put the correct version name here
   ```ts
   kaplay({
       types: kaplayTypes<
-          // Opt<> is optional but recommended for using autocomplete
+          // Opt<> is optional but recommended to get autocomplete
           Opt<{
               scenes: {}; // define scenes and arguments
               strictScenes: true; // you can only use defined scenes
@@ -92,8 +92,8 @@ best friend, lajbel, can put the correct version name here
 
 ### Changed
 
-- (**!** )`KAPLAYCtx` don't use generics anymore, as now it is done with
-  `KAPLAYCtxT` - @lajbel
+- (**!**) `KAPLAYCtx` don't use generics anymore, since now, if it's necessary,
+  `KAPLAYCtxT` use them - @lajbel
 - Now, `kaplay` will return `KAPLAYCtx` or `KAPLAYCtxT` depending if it's using
   Advanced TypeScript Features or not - @lajbel
 - `loadShader()` now also checks for link errors as well as compile errors and
