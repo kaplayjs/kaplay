@@ -252,6 +252,11 @@ best friend, lajbel, can put the correct version name here
 
 ## [unreleased]
 
+### Fixed
+
+- Fixed compatibility issues when calculating font height with missing
+  TextMetrics props - @imaginarny
+
 ## [3001.0.19] - 2025-06-15
 
 - Fixed `AreaComp#onClick()` attaching events to app, instead of object, so
