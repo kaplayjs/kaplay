@@ -57,6 +57,12 @@ best friend, lajbel, can put the correct version name here
       k.go("gameOver", "10", 10); //
   });
   ```
+  The methods that support this are:
+  - `scene`
+  - `go`
+  - `onSceneLeave`
+  - `getSceneName`
+
 - Added `TypesOpt.strictScenes` to make usable scenes just the ones defined -
   @lajbel
 
