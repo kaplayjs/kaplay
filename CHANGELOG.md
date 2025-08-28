@@ -57,7 +57,8 @@ best friend, lajbel, can put the correct version name here
       k.go("gameOver", "10", 10); //
   });
   ```
-- Added `TypesOpt.strictScenes` to make usable scenes just the ones defined
+- Added `TypesOpt.strictScenes` to make usable scenes just the ones defined -
+  @lajbel
 
   ```ts
   const k = kaplay({
