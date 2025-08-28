@@ -92,8 +92,8 @@ best friend, lajbel, can put the correct version name here
 
 ### Changed
 
-- (**!**) `KAPLAYCtx` don't use generics anymore, since now, if it's necessary,
-  `KAPLAYCtxT` use them - @lajbel
+- (**!**) `KAPLAYCtx` doesn't use generics anymore. Now, `KAPLAYCtxT` use them -
+  @lajbel
 - Now, `kaplay` will return `KAPLAYCtx` or `KAPLAYCtxT` depending if it's using
   Advanced TypeScript Features or not - @lajbel
 - `loadShader()` now also checks for link errors as well as compile errors and
