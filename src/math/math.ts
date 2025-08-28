@@ -292,6 +292,18 @@ export class Mat23 {
             0,
         );
     }
+    static fromSkew(s: Vec2): Mat23 {
+        const x = Math.tan(s.x);
+        const y = Math.tan(s.y);
+        return new Mat23(
+            1,
+            y,
+            x,
+            1,
+            0,
+            0,
+        );
+    }
     clone() {
         return new Mat23(
             this.a,
@@ -321,6 +333,17 @@ export class Mat23 {
         this.f = 0;
         this._inverse = null;
         return this;
+    }
+    setTRS(x: number, y: number, angle: number, sx: number, sy: number) {
+        const radians = angle * Math.PI / 180;
+        const c = Math.cos(radians);
+        const s = Math.sin(radians);
+        this.a = c * sx;
+        this.b = s * sx;
+        this.c = -s * sy;
+        this.d = c * sy;
+        this.e = x;
+        this.f = y;
     }
     mul(other: Mat23): Mat23 {
         return new Mat23(
@@ -370,6 +393,30 @@ export class Mat23 {
         this.b *= x;
         this.c *= y;
         this.d *= y;
+        this._inverse = null;
+        return this;
+    }
+    skewSelfV(s: Vec2): Mat23 {
+        const x = Math.tan(deg2rad(s.x));
+        const y = Math.tan(deg2rad(s.y));
+        const oldA = this.a;
+        const oldB = this.b;
+        this.a += this.c * y;
+        this.b += this.d * y;
+        this.c += oldA * x;
+        this.d += oldB * x;
+        this._inverse = null;
+        return this;
+    }
+    skewSelf(x: number, y: number): Mat23 {
+        x = Math.tan(deg2rad(x));
+        y = Math.tan(deg2rad(y));
+        const oldA = this.a;
+        const oldB = this.b;
+        this.a += this.c * y;
+        this.b += this.d * y;
+        this.c += oldA * x;
+        this.d += oldB * x;
         this._inverse = null;
         return this;
     }
@@ -442,13 +489,24 @@ export class Mat23 {
     }
     getRotation() {
         return rad2deg(
-            Math.atan2(-this.c, this.a),
+            Math.atan2(this.b, this.a),
         );
     }
     getScale() {
         return new Vec2(
-            Math.sqrt(this.a * this.a + this.c * this.c),
-            Math.sqrt(this.b * this.b + this.d * this.d),
+            Math.sqrt(this.a * this.a + this.b * this.b),
+            Math.sqrt(this.c * this.c + this.d * this.d),
+        );
+    }
+    getSkew() {
+        return new Vec2(
+            rad2deg(
+                Math.atan2(
+                    this.a * this.c + this.b * this.d,
+                    this.a * this.a + this.b * this.b,
+                ),
+            ),
+            0,
         );
     }
 }

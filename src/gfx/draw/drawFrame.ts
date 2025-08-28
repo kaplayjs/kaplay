@@ -4,6 +4,10 @@ import { Vec2 } from "../../math/Vec2";
 import { _k } from "../../shared";
 import { center, flush } from "../stack";
 
+export function transformFrame() {
+    _k.game.root.transformTree();
+}
+
 export function drawFrame() {
     // calculate camera matrix
     const cam = _k.game.cam;

@@ -7,6 +7,8 @@ import type { Texture } from "../gfx";
 import {
     multRotate,
     multScaleV,
+    multSkew,
+    multSkewV,
     multTranslateV,
     popTransform,
     pushTransform,
@@ -86,8 +88,9 @@ export function drawPolygon(opt: DrawPolygonOpt) {
 
     pushTransform();
     multTranslateV(opt.pos!);
-    multScaleV(opt.scale);
     multRotate(opt.angle);
+    multScaleV(opt.scale);
+    multSkewV(opt.skew);
     multTranslateV(opt.offset!);
 
     if (opt.fill !== false) {
