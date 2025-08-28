@@ -94,6 +94,8 @@ best friend, lajbel, can put the correct version name here
 ### Fixed
 
 - Fixed shader error messages - @dragoncoder047
+- Fixed compatibility issues when calculating font height with missing TextMetrics
+  props - @imaginarny
 
 ## [4000.0.0-alpha.20] - 2025-06-15
 
