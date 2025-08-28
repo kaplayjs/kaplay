@@ -113,7 +113,7 @@ export interface KAPLAYCtxTMethods<
         ...args: SceneArgs<T, InfKAPLAYOpt<O>["scenes"]>
     ): void;
 
-    getSceneName():  SceneName<O> | null;
+    getSceneName(): SceneName<O> | null;
 
     // Buttons API
     onButtonPress(
