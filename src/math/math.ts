@@ -488,9 +488,16 @@ export class Mat23 {
         return new Vec2(this.e, this.f);
     }
     getRotation() {
-        return rad2deg(
-            Math.atan2(this.b, this.a),
-        );
+        if (this.a || this.b) {
+            return rad2deg(
+                Math.atan2(this.b, this.a),
+            );
+        }
+        else {
+            return 90 - rad2deg(
+                Math.atan2(this.d, this.c),
+            );
+        }
     }
     getScale() {
         return new Vec2(
@@ -499,15 +506,28 @@ export class Mat23 {
         );
     }
     getSkew() {
-        return new Vec2(
-            rad2deg(
-                Math.atan2(
-                    this.a * this.c + this.b * this.d,
-                    this.a * this.a + this.b * this.b,
+        if (this.a || this.b) {
+            return new Vec2(
+                rad2deg(
+                    Math.atan2(
+                        this.a * this.c + this.b * this.d,
+                        this.a * this.a + this.b * this.b,
+                    ),
                 ),
-            ),
-            0,
-        );
+                0,
+            );
+        }
+        else {
+            return new Vec2(
+                0,
+                rad2deg(
+                    Math.atan2(
+                        this.a * this.c + this.b * this.d,
+                        this.c * this.c + this.d * this.d,
+                    ),
+                ),
+            );
+        }
     }
 }
 

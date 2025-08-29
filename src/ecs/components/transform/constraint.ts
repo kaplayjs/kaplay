@@ -4,6 +4,9 @@ import { vec2 } from "../../../math/math";
 import { Vec2 } from "../../../math/Vec2";
 import type { Comp, GameObj } from "../../../types";
 import { system, SystemPhase } from "../../systems/systems";
+import type { PosComp } from "./pos";
+import type { RotateComp } from "./rotate";
+import type { ScaleComp } from "./scale";
 
 export interface Constraint extends Comp {
     constraint: {
@@ -12,11 +15,22 @@ export interface Constraint extends Comp {
     apply: () => void;
 }
 
-export type DistanceMode = "closer" | "further" | "exact";
+export type DistanceMode = "maximum" | "minimum" | "equal";
 
 export type DistanceConstraintOpt = {
+    /**
+     * The desired distance between this and target
+     */
     distance: number;
+    /**
+     * If maximum, the distance is maximum distance
+     * If equal, the distance is the desired distance
+     * If minimum, the distance is minimum distance
+     */
     mode: DistanceMode;
+    /**
+     * Between 0 and 1. The percentage of the property being overwritten
+     */
     strength?: number;
 };
 
@@ -30,7 +44,13 @@ export interface DistanceConstraintComp extends Constraint {
 }
 
 export type TranslationConstraintOpt = {
+    /**
+     * The offset added after applying the constraint
+     */
     offset?: Vec2;
+    /**
+     * Between 0 and 1. The percentage of the property being overwritten
+     */
     strength?: number;
 };
 
@@ -43,8 +63,17 @@ export interface TranslationConstraintComp extends Constraint {
 }
 
 export type RotationConstraintOpt = {
+    /**
+     * The offset added after applying the constraint
+     */
     offset?: number;
+    /**
+     * The factor applied before applying the constraint. For example 0.5 will only apply half of the rotation of the target
+     */
     scale?: number;
+    /**
+     * Between 0 and 1. The percentage of the property being overwritten
+     */
     strength?: number;
 };
 
@@ -58,6 +87,9 @@ export interface RotationConstraintComp extends Constraint {
 }
 
 export type ScaleConstraintOpt = {
+    /**
+     * Between 0 and 1. The percentage of the property being overwritten
+     */
     strength?: number;
 };
 
@@ -69,6 +101,9 @@ export interface ScaleConstraintComp extends Constraint {
 }
 
 export type TransformConstraintOpt = {
+    /**
+     * Between 0 and 1. The percentage of the property being overwritten
+     */
     strength?: number;
 };
 
@@ -114,7 +149,16 @@ function installSystem() {
 }
 
 export const constraint = {
-    distance(target: GameObj, opt: DistanceConstraintOpt) {
+    /**
+     * A distance constraint
+     * @param target The object to keep within distance off
+     * @param opt Options
+     * @returns DistanceConstraintComp
+     */
+    distance(
+        target: GameObj,
+        opt: DistanceConstraintOpt,
+    ): DistanceConstraintComp {
         installSystem();
         return {
             id: "constraint",
@@ -124,7 +168,7 @@ export const constraint = {
                 mode: opt.mode,
                 strength: opt.strength || 1,
             },
-            apply(this: GameObj<any>) {
+            apply(this: GameObj<PosComp | DistanceConstraintComp>) {
                 const d = vec2(
                     // We use world distance
                     this.transform.e - this.constraint.target.transform.e,
@@ -132,9 +176,9 @@ export const constraint = {
                 );
                 const dd = this.constraint.distance * this.constraint.distance;
                 if (
-                    (this.constraint.mode === "closer" && d.slen() > dd)
-                    || (this.constraint.mode === "further" && d.slen() < dd)
-                    || (this.constraint.mode === "exact" && d.slen() != dd)
+                    (this.constraint.mode === "maximum" && d.slen() > dd)
+                    || (this.constraint.mode === "minimum" && d.slen() < dd)
+                    || (this.constraint.mode === "equal" && d.slen() != dd)
                 ) {
                     const l = d.len();
                     // Modify world position
@@ -166,10 +210,17 @@ export const constraint = {
             },
         };
     },
+    /**
+     * A translation constraint
+     * @param target The object to copy the translation from
+     * @param opt Options
+     * @returns TranslationConstraintComp
+     */
     translation(
         target: GameObj,
         opt: TranslationConstraintOpt,
     ): TranslationConstraintComp {
+        installSystem();
         return {
             id: "constraint",
             constraint: {
@@ -177,7 +228,7 @@ export const constraint = {
                 strength: opt.strength || 1,
                 offset: opt.offset || new Vec2(),
             },
-            apply(this: GameObj<any>) {
+            apply(this: GameObj<PosComp | TranslationConstraintComp>) {
                 // We use world translation
                 this.transform.e = lerp(
                     this.transform.e,
@@ -206,10 +257,17 @@ export const constraint = {
             },
         };
     },
+    /**
+     * A rotation constraint
+     * @param target The object to copy the rotation from
+     * @param opt Options
+     * @returns RotationConstraintComp
+     */
     rotation(
         target: GameObj,
         opt: RotationConstraintOpt,
     ): RotationConstraintComp {
+        installSystem();
         return {
             id: "constraint",
             constraint: {
@@ -218,7 +276,7 @@ export const constraint = {
                 strength: opt.strength || 1,
                 offset: opt.offset || 0,
             },
-            apply(this: GameObj<any>) {
+            apply(this: GameObj<RotateComp | RotationConstraintComp>) {
                 // We use world rotation
                 const srcAngle = this.transform.getRotation();
                 const dstAngle = this.constraint.target.transform.getRotation();
@@ -249,17 +307,24 @@ export const constraint = {
             },
         };
     },
+    /**
+     * A scale constraint
+     * @param target The object to copy the scale from
+     * @param opt Options
+     * @returns ScaleConstraintComp
+     */
     scale(
         target: GameObj,
         opt: ScaleConstraintOpt,
     ): ScaleConstraintComp {
+        installSystem();
         return {
             id: "constraint",
             constraint: {
                 target: target,
                 strength: opt.strength || 1,
             },
-            apply(this: GameObj<any>) {
+            apply(this: GameObj<ScaleConstraintComp | ScaleComp>) {
                 // We use world scale
                 const srcScale = this.transform.getScale();
                 const dstScale = this.constraint.target.transform.getScale();
@@ -290,17 +355,28 @@ export const constraint = {
             },
         };
     },
+    /**
+     * A transform constraint
+     * @param target The object to copy the transform from
+     * @param opt Options
+     * @returns TransformConstraintComp
+     */
     transform(
         target: GameObj,
         opt: TransformConstraintOpt,
     ): TransformConstraintComp {
+        installSystem();
         return {
             id: "constraint",
             constraint: {
                 target: target,
                 strength: opt.strength || 1,
             },
-            apply(this: GameObj<any>) {
+            apply(
+                this: GameObj<
+                    PosComp | RotateComp | ScaleComp | TransformConstraintComp
+                >,
+            ) {
                 // We use world properties
                 const newX = lerp(
                     this.transform.e,

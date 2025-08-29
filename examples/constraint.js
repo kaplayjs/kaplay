@@ -28,7 +28,7 @@ const obj2 = add([
     sprite("bean"),
     anchor("center"),
     area(),
-    constraint.distance(obj1, { distance: 100, mode: "closer", strength: 1 }),
+    constraint.distance(obj1, { distance: 100, mode: "maximum", strength: 1 }),
     // constraint.translation(obj1, { strength: 0.75, offset: vec2(50, 0) }),
     "obj",
     "constraint",

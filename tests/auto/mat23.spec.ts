@@ -46,6 +46,7 @@ test("Mat23.fromSkew(0, 45) should return skew matrix", () => {
 test("Mat23.fromSkew(45, 0).getSkew() should return 45", () => {
     const m = Mat23.fromSkew(vec2(deg2rad(45), 0));
     const t = m.getSkew();
+    console.log(m);
     expect(t.x).toEqual(45);
     expect(t.y).toEqual(0);
 });
@@ -87,7 +88,7 @@ test("new Mat23().skewSelf(45, 0).transform(1, 1) should skew right", () => {
     expect(t.y).toEqual(1);
 });
 
-test("new Mat23().skewSelf(0, 45).transform(1, 1) should not skew", () => {
+test("new Mat23().skewSelf(0, 45).transform(0, 1) should not skew", () => {
     const m = new Mat23().skewSelf(0, 45);
     const t = m.transform(vec2(0, 1));
     expect(t.x).toEqual(0);
