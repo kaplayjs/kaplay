@@ -309,7 +309,8 @@ export type ColorArgs =
     | [string]
     | [number[]]
     | []
-    | [CSSColor & (string & {})];
+    | [CSSColor & (string & {})]
+    | [number];
 
 export function rgb(...args: ColorArgs): Color {
     if (args.length === 0) {
@@ -328,6 +329,9 @@ export function rgb(...args: ColorArgs): Color {
             }
 
             return Color.fromHex(args[0]);
+        }
+        else if (typeof cl === "number") {
+            return Color.fromHex(cl);
         }
         else if (Array.isArray(args[0]) && args[0].length === 3) {
             // rgb([255, 255, 255])
