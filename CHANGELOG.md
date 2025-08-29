@@ -20,6 +20,69 @@ best friend, lajbel, can put the correct version name here
 
 ### Added
 
+- Added `KAPLAYOpt.types`, `kaplayTypes()` and `Opt` to config specific
+  TypeScript Advanced Features (TAF) - @lajbel
+
+  ```ts
+  kaplay({
+      types: kaplayTypes<
+          // Opt<> is optional but recommended to get autocomplete
+          Opt<{
+              scenes: {}; // define scenes and arguments
+              strictScenes: true; // you can only use defined scenes
+          }>
+      >(),
+  });
+  ```
+- Added `TypesOpt.scenes` to type scenes and parameters - @lajbel
+
+  ```ts
+  const k = kaplay({
+      types: kaplayTypes<
+          Opt<{
+              scenes: {
+                  "game": [gamemode: "normal" | "hard"];
+                  "gameOver": [score: number, highScore: number];
+              };
+          }>
+      >(),
+  });
+
+  // If you trigger autocomplete it shows "game" or "gameOver"
+  k.scene("game", (gamemode) => {
+      // gamemode is now type "normal" | "hard"
+
+      // @ts-expect-error Argument of type 'string' is not assignable
+      // to parameter of type 'number'.
+      k.go("gameOver", "10", 10); //
+  });
+  ```
+  The methods that support this are:
+  - `scene`
+  - `go`
+  - `onSceneLeave`
+  - `getSceneName`
+
+- Added `TypesOpt.strictScenes` to make usable scenes just the ones defined -
+  @lajbel
+
+  ```ts
+  const k = kaplay({
+      types: kaplayTypes<
+          Opt<{
+              scenes: {
+                  "game": [gamemode: "normal" | "hard"];
+                  "gameOver": [score: number, highScore: number];
+              };
+              strictScenes: true;
+          }>
+      >(),
+  });
+
+  // @ts-expect-error Argument of type '"hi"' is not assignable to
+  // parameter of type '"game" | "gameOver"'.
+  k.scene("hi", () => {});
+  ```
 - Added named animations - @mflerackers
 
   By giving a name to an animation, you can define more than one animation
@@ -40,6 +103,10 @@ best friend, lajbel, can put the correct version name here
 
 ### Changed
 
+- **(!)** `KAPLAYCtx` doesn't use generics anymore. Now, `KAPLAYCtxT` uses
+  them - @lajbel
+- Now, `kaplay` will return `KAPLAYCtx` or `KAPLAYCtxT` depending if it's using
+  Advanced TypeScript Features or not - @lajbel
 - `loadShader()` now also checks for link errors as well as compile errors and
   reports them rather than just silently trying to use a borked shader -
   @dragoncoder047
