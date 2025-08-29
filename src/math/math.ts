@@ -219,13 +219,17 @@ export class Mat2 {
 }
 
 export class Mat23 {
-    // 2x3 matrix, since the last column is always (0, 0, 1)
+    // 2x3 matrix, 2 rows and 3 columns, since the last row is always (0, 0, 1)
+    // | a c e |
+    // | b d f |
+    // | 0 0 1 |
+    // Actually would like a Mat2 + Vec2, but that would be 3 objects for 1 matrix
     a: number;
-    b: number; // 0
+    b: number;
     c: number;
-    d: number; // 0
+    d: number;
     e: number;
-    f: number; // 1
+    f: number;
     _inverse: Mat23 | null = null;
     constructor(
         a: number = 1,
@@ -260,6 +264,9 @@ export class Mat23 {
             this.d,
         );
     }
+    // | 1 0 x |
+    // | 0 1 y |
+    // | 0 0 1 |
     static fromTranslation(t: Vec2) {
         return new Mat23(
             1,
@@ -270,6 +277,9 @@ export class Mat23 {
             t.y,
         );
     }
+    // | c -s 0 |
+    // | s  c 0 |
+    // | 0 0 1 |
     static fromRotation(radians: number) {
         const c = Math.cos(radians);
         const s = Math.sin(radians);
@@ -282,6 +292,9 @@ export class Mat23 {
             0,
         );
     }
+    // | x 0 0 |
+    // | 0 y 0 |
+    // | 0 0 1 |
     static fromScale(s: Vec2): Mat23 {
         return new Mat23(
             s.x,
@@ -292,6 +305,9 @@ export class Mat23 {
             0,
         );
     }
+    // | 1 x 0 |
+    // | y 1 0 |
+    // | 0 0 1 |
     static fromSkew(s: Vec2): Mat23 {
         const x = Math.tan(s.x);
         const y = Math.tan(s.y);
@@ -324,6 +340,9 @@ export class Mat23 {
         this._inverse = m._inverse;
         return this;
     }
+    // | 1 0 0 |
+    // | 0 1 0 |
+    // | 0 0 1 |
     setIdentity() {
         this.a = 1;
         this.b = 0;
@@ -355,18 +374,27 @@ export class Mat23 {
             other.e * this.b + other.f * this.d + this.f,
         );
     }
+    // | a c e |   | 1 0 x |
+    // | b d f | * | 0 1 y |
+    // | 0 0 1 |   | 0 0 1 |
     translateSelfV(t: Vec2): Mat23 {
         this.e += t.x * this.a + t.y * this.c;
         this.f += t.x * this.b + t.y * this.d;
         this._inverse = null;
         return this;
     }
+    // | a c e |   | 1 0 x |
+    // | b d f | * | 0 1 y |
+    // | 0 0 1 |   | 0 0 1 |
     translateSelf(x: number, y: number): Mat23 {
         this.e += x * this.a + y * this.c;
         this.f += x * this.b + y * this.d;
         this._inverse = null;
         return this;
     }
+    // | a c e |   | c -s 0 |
+    // | b d f | * | s  c 0 |
+    // | 0 0 1 |   | 0  0 1 |
     rotateSelf(degrees: number): Mat23 {
         const radians = deg2rad(degrees);
         const c = Math.cos(radians);
@@ -380,6 +408,9 @@ export class Mat23 {
         this._inverse = null;
         return this;
     }
+    // | a c e |   | x 0 0 |
+    // | b d f | * | 0 y 0 |
+    // | 0 0 1 |   | 0 0 1 |
     scaleSelfV(s: Vec2): Mat23 {
         this.a *= s.x;
         this.b *= s.x;
@@ -388,6 +419,9 @@ export class Mat23 {
         this._inverse = null;
         return this;
     }
+    // | a c e |   | x 0 0 |
+    // | b d f | * | 0 y 0 |
+    // | 0 0 1 |   | 0 0 1 |
     scaleSelf(x: number, y: number): Mat23 {
         this.a *= x;
         this.b *= x;
@@ -396,6 +430,9 @@ export class Mat23 {
         this._inverse = null;
         return this;
     }
+    // | a c e |   | 1 x 0 |
+    // | b d f | * | y 1 0 |
+    // | 0 0 1 |   | 0 0 1 |
     skewSelfV(s: Vec2): Mat23 {
         const x = Math.tan(deg2rad(s.x));
         const y = Math.tan(deg2rad(s.y));
@@ -408,6 +445,9 @@ export class Mat23 {
         this._inverse = null;
         return this;
     }
+    // | a c e |   | 1 x 0 |
+    // | b d f | * | y 1 0 |
+    // | 0 0 1 |   | 0 0 1 |
     skewSelf(x: number, y: number): Mat23 {
         x = Math.tan(deg2rad(x));
         y = Math.tan(deg2rad(y));
@@ -436,30 +476,45 @@ export class Mat23 {
         this._inverse = null;
         return this;
     }
+    // | a c e |   | x |
+    // | b d f | * | y |
+    // | 0 0 1 |   | 1 |
     transform(p: Vec2) {
         return vec2(
             this.a * p.x + this.c * p.y + this.e,
             this.b * p.x + this.d * p.y + this.f,
         );
     }
+    // | a c e |   | x |
+    // | b d f | * | y |
+    // | 0 0 1 |   | 1 |
     transformPointV(p: Vec2, o: Vec2): Vec2 {
         const tmp = p.x;
         o.x = this.a * p.x + this.c * p.y + this.e;
         o.y = this.b * tmp + this.d * p.y + this.f;
         return o;
     }
+    // | a c e |   | x |
+    // | b d f | * | y |
+    // | 0 0 1 |   | 0 |
     transformVectorV(v: Vec2, o: Vec2): Vec2 {
         const tmp = v.x;
         o.x = this.a * v.x + this.c * v.y;
         o.y = this.b * tmp + this.d * v.y;
         return o;
     }
+    // | a c e |   | x |
+    // | b d f | * | y |
+    // | 0 0 1 |   | 1 |
     transformPoint(x: number, y: number, o: Vec2): Vec2 {
         const tmp = x;
         o.x = this.a * x + this.c * y + this.e;
         o.y = this.b * tmp + this.d * y + this.f;
         return o;
     }
+    // | a c e |   | x |
+    // | b d f | * | y |
+    // | 0 0 1 |   | 0 |
     transformVector(x: number, y: number, o: Vec2): Vec2 {
         const tmp = x;
         o.x = this.a * x + this.c * y;
@@ -484,9 +539,14 @@ export class Mat23 {
         );
         return this._inverse;
     }
+    // The translation is directly accessible
     getTranslation() {
         return new Vec2(this.e, this.f);
     }
+    // Using atan2(y, x) = angle
+    // since a = sx * cos(angle)
+    //       b = sx * sin(angle)
+    // and atan2 does y / x, thus sx is eliminated
     getRotation() {
         if (this.a || this.b) {
             return rad2deg(
@@ -499,6 +559,9 @@ export class Mat23 {
             );
         }
     }
+    // Using cos^2 + sin^2 = 1, thus sqrt(a^2 + b^2) contains the scale
+    // since a = sx * cos(angle)
+    //       b = sx * sin(angle)
     getScale() {
         return new Vec2(
             Math.sqrt(this.a * this.a + this.b * this.b),
