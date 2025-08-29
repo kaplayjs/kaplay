@@ -122,7 +122,7 @@ export const kaplay = <
     const burpSnd = new SoundData(createEmptyAudioBuffer(audio.ctx));
 
     // load that burp sound
-    audio.ctx.decodeAudioData(burpSoundSrc.buffer.slice(0)).then((buf) => {
+    audio.ctx.decodeAudioData(burpSoundSrc.buffer.slice(0) as ArrayBuffer).then((buf) => {
         burpSnd.buf = buf;
         game.defaultAssets.burp = burpSnd;
     }).catch((err) => {
