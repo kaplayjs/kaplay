@@ -103,7 +103,8 @@ best friend, lajbel, can put the correct version name here
 
 ### Changed
 
-- Now, you can use `color(c)` with a hexadecimal literal number (ex: 0x00ff00) - @lajbel
+- Now, you can use `color(c)` with a hexadecimal literal number (ex: 0x00ff00) -
+  @lajbel
   ```js
   // blue frog
   add([
