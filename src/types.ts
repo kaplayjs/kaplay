@@ -615,6 +615,7 @@ export interface RenderProps {
     pos?: Vec2;
     scale?: Vec2;
     angle?: number;
+    skew?: Vec2;
     color?: Color;
     opacity?: number;
     fixed?: boolean;

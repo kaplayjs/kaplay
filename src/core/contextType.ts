@@ -92,6 +92,7 @@ import type {
     SurfaceEffectorCompOpt,
 } from "../ecs/components/physics/effectors";
 import type { AnchorComp } from "../ecs/components/transform/anchor";
+import type { constraint } from "../ecs/components/transform/constraint";
 import type { FixedComp } from "../ecs/components/transform/fixed";
 import type { FollowComp } from "../ecs/components/transform/follow";
 import type { LayerComp } from "../ecs/components/transform/layer";
@@ -103,6 +104,7 @@ import type {
 import type { PosComp } from "../ecs/components/transform/pos";
 import type { RotateComp } from "../ecs/components/transform/rotate";
 import type { ScaleComp } from "../ecs/components/transform/scale";
+import type { SkewComp } from "../ecs/components/transform/skew";
 import type { ZComp } from "../ecs/components/transform/z";
 import type { KeepFlags } from "../ecs/entity/GameObjRaw";
 import type { SerializedGameObj } from "../ecs/entity/prefab";
@@ -556,6 +558,28 @@ export interface KAPLAYCtx<
      * @subgroup Transform
      */
     rotate(a?: number): RotateComp;
+    /**
+     * Set the skew of a Game Object.
+     *
+     * @param x - The x skew to set.
+     * @param y - The y skew to set.
+     *
+     * @example
+     * ```js
+     * // skew x
+     * add([
+     *     sprite("bean"),
+     * 	   skew(45, 0),
+     * ]);
+     * ```
+     *
+     * @returns The skew comp.
+     * @since v4000.0
+     * @group Components
+     * @subgroup Transform
+     */
+    skew(x: number, y: number): SkewComp;
+    skew(s: Vec2): SkewComp;
     // #endregion
     /**
      * Sets the color of a Game Object (rgb 0-255).
@@ -1180,6 +1204,10 @@ export interface KAPLAYCtx<
      * @requires {@link pos `pos()`}
      */
     move(dir: number | Vec2, speed: number): MoveComp;
+    /**
+     * Constraint components
+     */
+    constraint: typeof constraint;
     /**
      * Control the behavior of object when it goes out of view.
      *

@@ -33,6 +33,10 @@ best friend, lajbel, can put the correct version name here
 - Added `getButtons()` to get the input binding buttons definition - @lajbel
 - Added `RuleSystem` for enemy AI - @mflerackers
 - Added `DecisionTree` for enemy AI - @mflerackers
+- Added constraint components for distance, translation, rotation, scale and
+  transform constraints - @mflerackers
+- Added skew to Mat23, transformation stack, RenderProps, GameObjRaw as well as
+  a component - @mflerackers
 
 ### Changed
 
@@ -42,6 +46,8 @@ best friend, lajbel, can put the correct version name here
 - The debug `record()` function now records with sound enabled like it should -
   @dragoncoder047
 - Now `KAPLAYOpt.spriteAtlasPadding` is set to `2` by default - @lajbel
+- Transformation and drawing is split now, so the transform can be modified
+  before drawing - @mflerackers
 
 ## [4000.0.0-alpha.21] - 2025-08-07
 
