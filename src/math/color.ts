@@ -310,7 +310,7 @@ export type ColorArgs =
     | [number[]]
     | []
     | [CSSColor & (string & {})]
-    | [number]
+    | [number];
 
 export function rgb(...args: ColorArgs): Color {
     if (args.length === 0) {
