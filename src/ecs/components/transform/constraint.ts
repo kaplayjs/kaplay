@@ -1,6 +1,6 @@
 import { onAdd, onDestroy, onUnuse, onUse } from "../../../events/globalEvents";
 import { lerp } from "../../../math/lerp";
-import { vec2 } from "../../../math/math";
+import { rad2deg, vec2 } from "../../../math/math";
 import { Vec2 } from "../../../math/Vec2";
 import type { Comp, GameObj } from "../../../types";
 import { system, SystemPhase } from "../../systems/systems";
@@ -110,6 +110,39 @@ export type TransformConstraintOpt = {
 export interface TransformConstraintComp extends Constraint {
     constraint: {
         target: GameObj;
+        strength: number;
+    };
+}
+
+/**
+ * "FABRIK": Use Forward And Backward Reaching Inverse Kinematics
+ * "CCD" : Use Cyclic Coordinate Descent
+ */
+type InverseKinematicsAlgorithm = "FABRIK" | "CCD";
+
+export type IKConstraintOpt = {
+    /**
+     * The algorithm to use. Default is FABRIK.
+     */
+    algorithm?: InverseKinematicsAlgorithm;
+    /**
+     * Amount of bones. Default is 1.
+     */
+    depth: number;
+    /**
+     * Amount of ik iterations. Default is 10.
+     */
+    iterations?: number;
+    /**
+     * Between 0 and 1. The percentage of the property being overwritten. Default is 1.
+     */
+    strength?: number;
+};
+
+export interface IKConstraintComp extends Constraint {
+    constraint: {
+        target: GameObj;
+        iterations: number;
         strength: number;
     };
 }
@@ -428,5 +461,147 @@ export const constraint = {
                 }
             },
         };
+    },
+    ik(target: GameObj, opt: IKConstraintOpt): IKConstraintComp {
+        const algorithm = opt.algorithm || "FABRIK";
+        const depth = opt.depth || 1;
+        const iterations = opt.iterations || 10;
+        const chain: GameObj[] = [];
+        const length: number[] = [];
+        if (algorithm === "CCD") {
+            return {
+                id: "constraint",
+                constraint: {
+                    target: target,
+                    iterations: iterations,
+                    strength: opt.strength || 1,
+                },
+                apply() {
+                    // TODO
+                },
+            };
+        }
+        else {
+            return {
+                id: "constraint",
+                constraint: {
+                    target: target,
+                    iterations: iterations,
+                    strength: opt.strength || 1,
+                },
+                apply(this: GameObj<PosComp | IKConstraintComp>) {
+                    for (let it = 0; it < iterations; it++) {
+                        // Get IK chain from end effector to root
+                        const endEffector = chain[0] = this;
+                        // The end effector does not have a length
+                        length[0] = 0;
+                        let dx, dy;
+                        for (let i = 1; i <= depth; i++) {
+                            chain[i] = chain[i - 1].parent!;
+                            dx = chain[i].transform.e
+                                - chain[i - 1].transform.e;
+                            dy = chain[i].transform.f
+                                - chain[i - 1].transform.f;
+                            // Calculate the length of the other effectors
+                            length[i] = Math.sqrt(dx * dx + dy * dy);
+                        }
+                        const root = chain[depth];
+                        const rootPosX = root.transform.e;
+                        const rootPosY = root.transform.f;
+                        let l;
+                        // Forward step, pull end effector towards target
+                        endEffector.transform.e = target.transform.e;
+                        endEffector.transform.f = target.transform.f;
+                        // Pull effectors in sequence to restore length
+                        for (let i = 1; i <= depth; i++) {
+                            // Vector towards previous effector
+                            dx = chain[i].transform.e
+                                - chain[i - 1].transform.e;
+                            dy = chain[i].transform.f
+                                - chain[i - 1].transform.f;
+                            l = Math.sqrt(dx * dx + dy * dy);
+                            chain[i].transform.e = chain[i - 1].transform.e
+                                + dx * length[i] / l;
+                            chain[i].transform.f = chain[i - 1].transform.f
+                                + dy * length[i] / l;
+                        }
+                        // Backward step, pull root back to its original position
+                        root.transform.e = rootPosX;
+                        root.transform.f = rootPosY;
+                        // Pull effectors in reverse sequence to restore length
+                        for (let i = depth - 1; i >= 0; i--) {
+                            // Vector towards previous effector
+                            dx = chain[i].transform.e
+                                - chain[i + 1].transform.e;
+                            dy = chain[i].transform.f
+                                - chain[i + 1].transform.f;
+                            l = Math.sqrt(dx * dx + dy * dy);
+                            chain[i].transform.e = chain[i + 1].transform.e
+                                + dx * length[i + 1] / l;
+                            chain[i].transform.f = chain[i + 1].transform.f
+                                + dy * length[i + 1] / l;
+                        }
+                    }
+                    // Modify local position or angle depending on the presence of a rotate
+                    for (let i = depth; i >= 0; i--) {
+                        const obj = chain[i];
+                        // If i < depth, obviously the object has a rent
+                        if (i < depth || obj.parent) {
+                            const parent = obj.parent!;
+                            if (parent.has("rotate")) {
+                                // If the parent has an angle, use the parent's angle and local length
+                                const parentTransform = parent.transform;
+                                // Calculate the difference in angle
+                                const angle = rad2deg(
+                                    Math.atan2(
+                                        obj.transform.f - parentTransform.f,
+                                        obj.transform.e - parentTransform.e,
+                                    ),
+                                );
+                                // Keep the scale
+                                const scale = parentTransform.getScale();
+                                parentTransform.setTRS(
+                                    parentTransform.e,
+                                    parentTransform.f,
+                                    angle, // orient the parent towards the object
+                                    scale.x,
+                                    scale.y,
+                                );
+                                if (parent.parent) {
+                                    const transform = parent.parent.transform
+                                        .inverse.mul(
+                                            parent.transform,
+                                        );
+                                    parent.angle = transform.getRotation();
+                                }
+                                else {
+                                    parent.angle = angle;
+                                }
+
+                                // Update the local properties
+                                const transform = parentTransform.inverse.mul(
+                                    obj.transform,
+                                );
+                                obj.pos.x = transform.e;
+                                obj.pos.y = transform.f;
+                            }
+                            else {
+                                // If there is no angle, just use position
+                                const transform = obj.parent!.transform.inverse
+                                    .mul(
+                                        obj.transform,
+                                    );
+                                obj.pos.x = transform.e;
+                                obj.pos.y = transform.f;
+                            }
+                        }
+                        else {
+                            obj.pos.x = obj.transform.e;
+                            obj.pos.y = obj.transform.f;
+                        }
+                    }
+                },
+            };
+        }
     },
 };

@@ -62,6 +62,7 @@ obj4.add([
     scale(0.2),
 ]);
 
+// Scale constraint
 const obj5 = add([
     pos(100, 600),
     scale(1),
@@ -80,6 +81,61 @@ const obj6 = add([
     constraint.scale(obj5, { strength: 1 }),
     "obj",
     "constraint",
+]);
+
+// IK constraint
+const obj10 = add([
+    pos(500, 100),
+    sprite("bean"),
+    anchor("center"),
+    area(),
+    "obj",
+    color(RED),
+]);
+
+const obj7 = add([
+    pos(300, 100),
+    rotate(),
+    sprite("bean"),
+    anchor("center"),
+    {
+        draw() {
+            drawPolygon({
+                pts: [
+                    vec2(0, 0),
+                    vec2(10, -10),
+                    vec2(Math.sqrt(20000), 0),
+                    vec2(10, 10),
+                ],
+            });
+        },
+    },
+]);
+
+const obj8 = obj7.add([
+    pos(100, 100),
+    rotate(),
+    sprite("bean"),
+    anchor("center"),
+    {
+        draw() {
+            drawPolygon({
+                pts: [
+                    vec2(0, 0),
+                    vec2(10, -10),
+                    vec2(Math.sqrt(20000), 0),
+                    vec2(10, 10),
+                ],
+            });
+        },
+    },
+]);
+
+const obj9 = obj8.add([
+    pos(100, -100),
+    sprite("bean"),
+    anchor("center"),
+    constraint.ik(obj10, { strength: 1, iterations: 1, depth: 2 }),
 ]);
 
 let obj;
