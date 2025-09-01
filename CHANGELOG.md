@@ -20,6 +20,69 @@ best friend, lajbel, can put the correct version name here
 
 ### Added
 
+- Added `KAPLAYOpt.types`, `kaplayTypes()` and `Opt` to config specific
+  TypeScript Advanced Features (TAF) - @lajbel
+
+  ```ts
+  kaplay({
+      types: kaplayTypes<
+          // Opt<> is optional but recommended to get autocomplete
+          Opt<{
+              scenes: {}; // define scenes and arguments
+              strictScenes: true; // you can only use defined scenes
+          }>
+      >(),
+  });
+  ```
+- Added `TypesOpt.scenes` to type scenes and parameters - @lajbel
+
+  ```ts
+  const k = kaplay({
+      types: kaplayTypes<
+          Opt<{
+              scenes: {
+                  "game": [gamemode: "normal" | "hard"];
+                  "gameOver": [score: number, highScore: number];
+              };
+          }>
+      >(),
+  });
+
+  // If you trigger autocomplete it shows "game" or "gameOver"
+  k.scene("game", (gamemode) => {
+      // gamemode is now type "normal" | "hard"
+
+      // @ts-expect-error Argument of type 'string' is not assignable
+      // to parameter of type 'number'.
+      k.go("gameOver", "10", 10); //
+  });
+  ```
+  The methods that support this are:
+  - `scene`
+  - `go`
+  - `onSceneLeave`
+  - `getSceneName`
+
+- Added `TypesOpt.strictScenes` to make usable scenes just the ones defined -
+  @lajbel
+
+  ```ts
+  const k = kaplay({
+      types: kaplayTypes<
+          Opt<{
+              scenes: {
+                  "game": [gamemode: "normal" | "hard"];
+                  "gameOver": [score: number, highScore: number];
+              };
+              strictScenes: true;
+          }>
+      >(),
+  });
+
+  // @ts-expect-error Argument of type '"hi"' is not assignable to
+  // parameter of type '"game" | "gameOver"'.
+  k.scene("hi", () => {});
+  ```
 - Added named animations - @mflerackers
 
   By giving a name to an animation, you can define more than one animation
@@ -28,19 +91,30 @@ best friend, lajbel, can put the correct version name here
   const anim = obj.animation.get("idle");
   anim.animate("pos", [0, 5, 0], { relative: true });
   ```
+
 - Added `screenshotToBlob()` to get a screenshot as a `Blob` - @dragoncoder047
 - Added `getButtons()` to get the input binding buttons definition - @lajbel
 - Added `RuleSystem` for enemy AI - @mflerackers
 - Added `DecisionTree` for enemy AI - @mflerackers
+- Added constraint components for distance, translation, rotation, scale and
+  transform constraints - @mflerackers
+- Added skew to Mat23, transformation stack, RenderProps, GameObjRaw as well as
+  a component - @mflerackers
 
 ### Changed
 
+- **(!)** `KAPLAYCtx` doesn't use generics anymore. Now, `KAPLAYCtxT` uses
+  them - @lajbel
+- Now, `kaplay` will return `KAPLAYCtx` or `KAPLAYCtxT` depending if it's using
+  Advanced TypeScript Features or not - @lajbel
 - `loadShader()` now also checks for link errors as well as compile errors and
   reports them rather than just silently trying to use a borked shader -
   @dragoncoder047
 - The debug `record()` function now records with sound enabled like it should -
   @dragoncoder047
 - Now `KAPLAYOpt.spriteAtlasPadding` is set to `2` by default - @lajbel
+- Transformation and drawing is split now, so the transform can be modified
+  before drawing - @mflerackers
 
 ## [4000.0.0-alpha.21] - 2025-08-07
 
@@ -53,6 +127,7 @@ best friend, lajbel, can put the correct version name here
   const bean = add([sprite("prefab")]);
   const beanSerialized = bean.serialize();
   ```
+
 - Added `createPrefab()` for serializing an object and register it (or not) as a
   prefab from a Game Object. - @mflerackers, @lajbel
 
@@ -69,13 +144,16 @@ best friend, lajbel, can put the correct version name here
 
   addPrefab(beanObj);
   ```
+
 - Added `addPrefab()` for creating an object previously serialized -
   @mflerackers, @lajbel
+
   ```js
   loadPrefab("bean", "/bean.kaprefab");
 
   addPrefab("bean");
   ```
+
 - Added new scene methods `pushScene()` and `popScene()`, for stack behaviour in
   scenes - @itzKiwiSky
 - Added `throwError()` for throwing custom errors to the blue screen, even
@@ -94,6 +172,8 @@ best friend, lajbel, can put the correct version name here
 ### Fixed
 
 - Fixed shader error messages - @dragoncoder047
+- Fixed compatibility issues when calculating font height with missing
+  TextMetrics props - @imaginarny
 
 ## [4000.0.0-alpha.20] - 2025-06-15
 
@@ -128,6 +208,7 @@ best friend, lajbel, can put the correct version name here
 ### Added
 
 - Added `fakeMouse()` to create a fake mouse cursor - @lajbel
+
   ```js
   const myCursor = add([fakeMouse(), sprite("kat"), pos(100, 100)]);
 
@@ -135,12 +216,15 @@ best friend, lajbel, can put the correct version name here
   myCursor.release();
   myCursor.moveBy(vec2(100, 200)); // move as your wish
   ```
+
 - Added `system()` to replace internal events or create new - @mflerackers
+
   ```js
   system("collision", () => {
     // system code
   }, [SystemPhase.AfterFixedUpdate, SystemPhase.AfterUpdate]),
   ```
+
 - Added `ellipse()` component - @mflerackers
 - Added circle and (rotated) ellipse collision shapes - @mflerackers
 - Added `clipLineToRect()` - @mflerackers
@@ -240,6 +324,11 @@ best friend, lajbel, can put the correct version name here
 # Changelog for v3001
 
 ## [unreleased]
+
+### Fixed
+
+- Fixed compatibility issues when calculating font height with missing
+  TextMetrics props - @imaginarny
 
 ## [3001.0.19] - 2025-06-15
 
@@ -470,6 +559,7 @@ kaplay({
 - Added events for listen to comps being removed or added `onUse()` and
   `onUnused()`
 - Added `cancel()` to cancel the current event
+
   ```js
   onKeyPress("space", () => {
       // do something
@@ -515,6 +605,7 @@ kaplay({
   root.add(); // same as add()
   root.get(); // same as get()
   ```
+
 - Added Buttons API for using Input bindings, `onButtonPress()`,
   `onButtonRelease()`, `onButtonDown()`, and it's corresponding boolean
   versions, `isButtonPressed()`, `isButtonDown()` and `isButtonReleased()`
@@ -535,6 +626,7 @@ kaplay({
       player.jump();
   });
   ```
+
 - Added `getButton(btn)` and `setButton(btn)` to get and set button bindings
 
   ```js
@@ -547,6 +639,7 @@ kaplay({
       // gamepad binding is not changed
   });
   ```
+
 - Added `getLastInputDeviceType()` to get what was the last pressed device
 
   ```js
@@ -555,6 +648,7 @@ kaplay({
       // change icons, etc
   });
   ```
+
 - Added `pressButton(btn)` and `releaseButton(btn)` to simulate button press and
   release
 
@@ -562,6 +656,7 @@ kaplay({
   pressButton("jump"); // triggers onButtonPress and starts onButtonDown
   releaseButton("jump"); // triggers onButtonRelease and stops onButtonDown
   ```
+
 - Added `GameObjRaw.tags` to get a game object's tags
 
   ```js
@@ -570,6 +665,7 @@ kaplay({
   // get the tags
   debug.log(obj.tags); // ["enemy", "dangerous"]
   ```
+
 - Added the `animate()` component to _animate_ the properties of an object using
   keyframes. Check out
   [Animation Example](https://play.kaplayjs.com/?example=animation)
@@ -581,6 +677,7 @@ kaplay({
       direction: "forward",
   });
   ```
+
 - Readded `layers()` and the `layer()` component
 
   Before the `z()` component, there was a `layer()` component that allowed you
@@ -602,6 +699,7 @@ kaplay({
   // use the layer component
   add([sprite("bg"), layer("bg")]);
   ```
+
 - Added `SpriteComp.hasAnim()` to check if an animation exists
 
   ```js
@@ -610,6 +708,7 @@ kaplay({
   // check if an animation exists
   debug.log(obj.hasAnim("walk")); // true
   ```
+
 - Added `SpriteComp.getAnim()` for get any animation data
 
   ```js
@@ -629,6 +728,7 @@ kaplay({
   // get the animation data
   debug.log(obj.getAnim("walk")); // { from: 0, to: 3 }
   ```
+
 - Added `SpriteComp.getCurAnim()` to get the current animation data
 
   ```js
@@ -637,11 +737,13 @@ kaplay({
   // get the current animation name
   debug.log(obj.getCurAnim().name); // "walk"
   ```
+
 - Added `camFlash()` to flash the screen
 
   ```js
   camFlash(0.5, 0.5, 0.5, 0.5);
   ```
+
 - Added support for radius in individual corners for `RectComp,radius`
 
   ```js
@@ -651,6 +753,7 @@ kaplay({
       }),
   ]);
   ```
+
 - Added `loadMusic()` to load streaming audio (doesn't block in loading screen)
 
   ```js
@@ -659,29 +762,34 @@ kaplay({
   // play the music
   play("bgm");
   ```
+
 - Added `Vec2.fromArray()` to convert an array to a `Vec2`
 
   ```js
   const point = Vec2.fromArray([100, 200]); // vec2(100, 200);
   ```
+
 - Added `Vec2.toArray()` to convert a `Vec2` to an array
 
   ```js
   const point = vec2(100, 200);
   const arr = point.toArray(); // [100, 200]
   ```
+
 - Added `chooseMultiple()` to choose a random element from an array
 
   ```js
   const numbers = [1, 2, 3, 4, 5];
   const random = chooseMultiple(numbers, 3); // [3, 1, 5]
   ```
+
 - Added `shuffle()` to shuffle an array
 
   ```js
   const numbers = [1, 2, 3, 4, 5];
   shuffle(numbers); // [3, 1, 5, 2, 4]
   ```
+
 - Added `KAPLAYOpt.debugKey` for customizing the key used to toggle debug mode
 
   ```js
@@ -689,6 +797,7 @@ kaplay({
       debugKey: "l",
   });
   ```
+
 - Added compatibility with custom properties in debug mode
 
   ```js
@@ -706,6 +815,7 @@ kaplay({
   // see the custom properties in debug mode
   debug.inspect = true;
   ```
+
 - Added effector components: `areaEffector()`, `buoyancyEffector()`,
   `pointEffector()`, `surfaceEffector()`
 - Added `constantForce()` component
@@ -740,6 +850,7 @@ kaplay({
       player.jump();
   });
   ```
+
 - Now gamepad events return what gamepad triggered the action
 
   ```js
@@ -747,6 +858,7 @@ kaplay({
       console.log(gp.index); // gamepad number on navigator's gamepad list
   });
   ```
+
 - Now `ScaleComp` and `SpriteComp` uses setters/getters for it's state
 
   ```js
@@ -756,11 +868,13 @@ kaplay({
   obj.scale = vec2(3, 4);
   obj.sprite = "bag";
   ```
+
 - Now you can type `get()` with a type parameter and passing component types
 
   ```ts
   const player = get<BodyComp>("player");
   ```
+
 - Now you can pass an `AudioBuffer` to `loadSound()`
 - Now `debug.log()` accepts multiple argument of any type, like `console.log()`
 - Now `Key` also accepts a string as an acceptable value

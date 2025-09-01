@@ -4,14 +4,6 @@ import { Mat23, vec2 } from "../math/math";
 import { _k } from "../shared";
 
 /**
- * The name of a scene.
- *
- * @group Scenes
- * @subgroup Types
- */
-export type SceneName = string;
-
-/**
  * The function definition for a scene
  *
  * @group Scenes
@@ -30,11 +22,11 @@ export type SceneState = {
     args: unknown[];
 };
 
-export function scene(id: SceneName, def: SceneDef) {
+export function scene(id: string, def: SceneDef) {
     _k.game.scenes[id] = def;
 }
 
-export function go(name: SceneName, ...args: unknown[]) {
+export function go(name: string, ...args: unknown[]) {
     if (!_k.game.scenes[name]) {
         throw new Error(`Scene not found: ${name}`);
     }
@@ -75,7 +67,7 @@ export function go(name: SceneName, ...args: unknown[]) {
     _k.game.currentScene = name;
 }
 
-export function pushScene(id: SceneName, ...args: unknown[]) {
+export function pushScene(id: string, ...args: unknown[]) {
     _k.game.sceneStack.push({
         sceneID: _k.game.currentScene,
         args: _k.game.currentSceneArgs,
