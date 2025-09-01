@@ -8,6 +8,7 @@ import type { Texture } from "../gfx";
 import {
     multRotate,
     multScaleV,
+    multSkewV,
     multTranslate,
     multTranslateV,
     popTransform,
@@ -76,6 +77,7 @@ export function drawUVQuad(opt: DrawUVQuadOpt) {
     multTranslateV(opt.pos);
     multRotate(opt.angle);
     multScaleV(opt.scale);
+    multSkewV(opt.skew);
     multTranslate(offsetX, offsetY);
 
     drawRaw(

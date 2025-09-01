@@ -9,7 +9,7 @@ import type { Debug } from "../debug/debug";
 import { SystemPhase } from "../ecs/systems/systems";
 import type { Game } from "../game/game";
 import { drawDebug } from "../gfx/draw/drawDebug";
-import { drawFrame } from "../gfx/draw/drawFrame";
+import { drawFrame, transformFrame } from "../gfx/draw/drawFrame";
 import { drawLoadScreen } from "../gfx/draw/drawLoadingScreen";
 import { updateViewport } from "../gfx/viewport";
 import type { KAPLAYOpt } from "../types";
@@ -96,6 +96,8 @@ export function startEngineLoop(
 
                 // checkFrame();
                 frameRenderer.frameStart();
+
+                transformFrame();
 
                 for (
                     const sys of game.systemsByEvent[SystemPhase.BeforeDraw]

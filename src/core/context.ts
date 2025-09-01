@@ -70,6 +70,7 @@ import {
     surfaceEffector,
 } from "../ecs/components/physics/effectors";
 import { anchor } from "../ecs/components/transform/anchor";
+import { constraint } from "../ecs/components/transform/constraint";
 import { fixed } from "../ecs/components/transform/fixed";
 import { follow } from "../ecs/components/transform/follow";
 import { layer } from "../ecs/components/transform/layer";
@@ -78,6 +79,7 @@ import { offscreen } from "../ecs/components/transform/offscreen";
 import { pos } from "../ecs/components/transform/pos";
 import { rotate } from "../ecs/components/transform/rotate";
 import { scale } from "../ecs/components/transform/scale";
+import { skew } from "../ecs/components/transform/skew";
 import { z } from "../ecs/components/transform/z";
 import { KeepFlags } from "../ecs/entity/GameObjRaw";
 import { createPrefab, loadPrefab } from "../ecs/entity/prefab";
@@ -380,8 +382,9 @@ export const createContext = (
         readd,
         // comps
         pos,
-        scale,
         rotate,
+        scale,
+        skew,
         color,
         blend,
         opacity,
@@ -418,6 +421,7 @@ export const createContext = (
         z,
         layer,
         move,
+        constraint,
         offscreen,
         follow,
         fadeIn,
