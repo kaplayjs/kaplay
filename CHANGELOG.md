@@ -34,6 +34,7 @@ best friend, lajbel, can put the correct version name here
       >(),
   });
   ```
+
 - Added `TypesOpt.scenes` to type scenes and parameters - @lajbel
 
   ```ts
@@ -41,8 +42,8 @@ best friend, lajbel, can put the correct version name here
       types: kaplayTypes<
           Opt<{
               scenes: {
-                  "game": [gamemode: "normal" | "hard"];
-                  "gameOver": [score: number, highScore: number];
+                  game: [gamemode: "normal" | "hard"];
+                  gameOver: [score: number, highScore: number];
               };
           }>
       >(),
@@ -57,7 +58,9 @@ best friend, lajbel, can put the correct version name here
       k.go("gameOver", "10", 10); //
   });
   ```
+
   The methods that support this are:
+
   - `scene`
   - `go`
   - `onSceneLeave`
@@ -71,8 +74,8 @@ best friend, lajbel, can put the correct version name here
       types: kaplayTypes<
           Opt<{
               scenes: {
-                  "game": [gamemode: "normal" | "hard"];
-                  "gameOver": [score: number, highScore: number];
+                  game: [gamemode: "normal" | "hard"];
+                  gameOver: [score: number, highScore: number];
               };
               strictScenes: true;
           }>
@@ -83,6 +86,7 @@ best friend, lajbel, can put the correct version name here
   // parameter of type '"game" | "gameOver"'.
   k.scene("hi", () => {});
   ```
+
 - Added named animations - @mflerackers
 
   By giving a name to an animation, you can define more than one animation
@@ -98,6 +102,8 @@ best friend, lajbel, can put the correct version name here
 - Added `DecisionTree` for enemy AI - @mflerackers
 - Added constraint components for distance, translation, rotation, scale and
   transform constraints - @mflerackers
+- Added inverse kinematics constraint components using FABRIK and CCD, the
+  latter one can use bone constraints to constrain the angle - @mflerackers
 - Added skew to Mat23, transformation stack, RenderProps, GameObjRaw as well as
   a component - @mflerackers
 
