@@ -1,12 +1,33 @@
 import { onAdd, onDestroy, onUnuse, onUse } from "../../../events/globalEvents";
 import { lerp } from "../../../math/lerp";
 import { rad2deg, vec2 } from "../../../math/math";
+import {
+    calcTransform,
+    clampAngle,
+    updateChildrenTransformRecursive,
+    updateTransformRecursive,
+} from "../../../math/various";
 import { Vec2 } from "../../../math/Vec2";
 import type { Comp, GameObj } from "../../../types";
 import { system, SystemPhase } from "../../systems/systems";
 import type { PosComp } from "./pos";
 import type { RotateComp } from "./rotate";
 import type { ScaleComp } from "./scale";
+
+export type BoneOpt = {
+    /* Minimum angle should be between -180 and 180, and smaller than maximum angle */
+    minAngle?: number;
+    /* Maximum angle should be between -180 and 180, and greater than minimum angle */
+    maxAngle?: number;
+};
+
+export interface BoneComp extends Comp {
+    /* Minimum angle should be between -180 and 180, and smaller than maximum angle */
+    minAngle: number;
+    /* Maximum angle should be between -180 and 180, and greater than minimum angle */
+    maxAngle: number;
+    setAngles(minAngle: number, maxAngle: number): void;
+}
 
 export interface Constraint extends Comp {
     constraint: {
@@ -198,8 +219,8 @@ export const constraint = {
             constraint: {
                 target: target,
                 distance: opt.distance,
-                mode: opt.mode,
-                strength: opt.strength || 1,
+                mode: opt.mode || "equal",
+                strength: opt.strength ?? 1,
             },
             apply(this: GameObj<PosComp | DistanceConstraintComp>) {
                 const d = vec2(
@@ -258,7 +279,7 @@ export const constraint = {
             id: "constraint",
             constraint: {
                 target: target,
-                strength: opt.strength || 1,
+                strength: opt.strength ?? 1,
                 offset: opt.offset || new Vec2(),
             },
             apply(this: GameObj<PosComp | TranslationConstraintComp>) {
@@ -305,8 +326,8 @@ export const constraint = {
             id: "constraint",
             constraint: {
                 target: target,
-                scale: opt.scale || 1,
-                strength: opt.strength || 1,
+                scale: opt.scale ?? 1,
+                strength: opt.strength ?? 1,
                 offset: opt.offset || 0,
             },
             apply(this: GameObj<RotateComp | RotationConstraintComp>) {
@@ -355,7 +376,7 @@ export const constraint = {
             id: "constraint",
             constraint: {
                 target: target,
-                strength: opt.strength || 1,
+                strength: opt.strength ?? 1,
             },
             apply(this: GameObj<ScaleConstraintComp | ScaleComp>) {
                 // We use world scale
@@ -403,7 +424,7 @@ export const constraint = {
             id: "constraint",
             constraint: {
                 target: target,
-                strength: opt.strength || 1,
+                strength: opt.strength ?? 1,
             },
             apply(
                 this: GameObj<
@@ -462,10 +483,39 @@ export const constraint = {
             },
         };
     },
+    bone(minAngle?: number, maxAngle?: number) {
+        let _minAngle = Math.max(
+            -180,
+            Math.min(minAngle ?? -180, maxAngle ?? 180),
+        );
+        let _maxAngle = Math.min(
+            180,
+            Math.max(minAngle ?? -180, maxAngle ?? 180),
+        );
+        return {
+            id: "bone",
+            get minAngle() {
+                return _minAngle;
+            },
+            get maxAngle() {
+                return _maxAngle;
+            },
+            setAngles(minAngle?: number, maxAngle?: number) {
+                _minAngle = Math.max(
+                    -180,
+                    Math.min(minAngle ?? -180, maxAngle ?? 180),
+                );
+                _maxAngle = Math.min(
+                    180,
+                    Math.max(minAngle ?? -180, maxAngle ?? 180),
+                );
+            },
+        };
+    },
     ik(target: GameObj, opt: IKConstraintOpt): IKConstraintComp {
         const algorithm = opt.algorithm || "FABRIK";
-        const depth = opt.depth || 1;
-        const iterations = opt.iterations || 10;
+        const depth = opt.depth ?? 1;
+        const iterations = opt.iterations ?? 10;
         const chain: GameObj[] = [];
         const length: number[] = [];
         if (algorithm === "CCD") {
@@ -476,8 +526,95 @@ export const constraint = {
                     iterations: iterations,
                     strength: opt.strength || 1,
                 },
-                apply() {
-                    // TODO
+                apply(this: GameObj<PosComp | IKConstraintComp>) {
+                    // Get IK chain from end effector to root
+                    const endEffector = chain[0] = this;
+                    for (let i = 1; i <= depth; i++) {
+                        chain[i] = chain[i - 1].parent!;
+                    }
+                    let dx, dy;
+                    for (let it = 0; it < iterations; it++) {
+                        // Rotate every effector in the chain to point towards the target
+                        for (let i = depth; i > 0; i--) {
+                            const effector = chain[i];
+                            const effectorTransform = effector.transform;
+                            if (i !== depth) {
+                                // We updated the transform of the parent, so update this transform
+                                calcTransform(effector, effectorTransform);
+                            }
+
+                            // Angle of effector to target
+                            dx = target.transform.e
+                                - effectorTransform.e;
+                            dy = target.transform.f
+                                - effectorTransform.f;
+                            const angleToTarget = rad2deg(Math.atan2(dy, dx));
+
+                            // Angle of effector to end effector
+                            dx = endEffector.transform.e
+                                - effectorTransform.e;
+                            dy = endEffector.transform.f
+                                - effectorTransform.f;
+                            const angleToEndEffector = rad2deg(
+                                Math.atan2(dy, dx),
+                            );
+
+                            // Rotation to move end effector towards target
+                            const angleCorrection = angleToTarget
+                                - angleToEndEffector;
+
+                            // Update global transform
+                            const rotation = effectorTransform.getRotation();
+                            const scale = effectorTransform.getScale();
+                            effectorTransform.setTRS(
+                                effectorTransform.e,
+                                effectorTransform.f,
+                                rotation + angleCorrection,
+                                scale.x,
+                                scale.y,
+                            );
+                            if (effector.parent) {
+                                // Calculate local rotation
+                                const transform = effector.parent.transform
+                                    .inverse.mul(
+                                        effectorTransform,
+                                    );
+                                let newAngle = clampAngle(
+                                    transform.getRotation(),
+                                );
+                                // If constraint on angle, apply
+                                if (effector.minAngle && effector.maxAngle) {
+                                    newAngle = Math.min(
+                                        Math.max(newAngle, effector.minAngle),
+                                        effector.maxAngle,
+                                    );
+                                }
+                                effector.angle = newAngle;
+                            }
+                            else {
+                                // Local rotation is global rotation
+                                let newAngle = clampAngle(
+                                    rotation + angleCorrection,
+                                );
+                                // If constraint on angle, apply
+                                if (effector.minAngle && effector.maxAngle) {
+                                    newAngle = Math.min(
+                                        Math.max(newAngle, effector.minAngle),
+                                        effector.maxAngle,
+                                    );
+                                }
+                                effector.angle = newAngle;
+                            }
+
+                            if (effector.minAngle && effector.maxAngle) {
+                                // We changed the local angle, so the current effector's transform needs to be updated
+                                updateTransformRecursive(effector);
+                            }
+                            else {
+                                updateChildrenTransformRecursive(effector);
+                            }
+                        }
+                    }
                 },
             };
         }
@@ -490,24 +627,25 @@ export const constraint = {
                     strength: opt.strength || 1,
                 },
                 apply(this: GameObj<PosComp | IKConstraintComp>) {
+                    // Get IK chain from end effector to root
+                    const endEffector = chain[0] = this;
+                    // The end effector does not have a length
+                    length[0] = 0;
+                    let dx, dy;
+                    for (let i = 1; i <= depth; i++) {
+                        chain[i] = chain[i - 1].parent!;
+                        dx = chain[i].transform.e
+                            - chain[i - 1].transform.e;
+                        dy = chain[i].transform.f
+                            - chain[i - 1].transform.f;
+                        // Calculate the length of the other effectors
+                        length[i] = Math.sqrt(dx * dx + dy * dy);
+                    }
+                    const root = chain[depth];
+                    const rootPosX = root.transform.e;
+                    const rootPosY = root.transform.f;
+                    // Perform FABRIK
                     for (let it = 0; it < iterations; it++) {
-                        // Get IK chain from end effector to root
-                        const endEffector = chain[0] = this;
-                        // The end effector does not have a length
-                        length[0] = 0;
-                        let dx, dy;
-                        for (let i = 1; i <= depth; i++) {
-                            chain[i] = chain[i - 1].parent!;
-                            dx = chain[i].transform.e
-                                - chain[i - 1].transform.e;
-                            dy = chain[i].transform.f
-                                - chain[i - 1].transform.f;
-                            // Calculate the length of the other effectors
-                            length[i] = Math.sqrt(dx * dx + dy * dy);
-                        }
-                        const root = chain[depth];
-                        const rootPosX = root.transform.e;
-                        const rootPosY = root.transform.f;
                         let l;
                         // Forward step, pull end effector towards target
                         endEffector.transform.e = target.transform.e;
@@ -558,7 +696,7 @@ export const constraint = {
                                         obj.transform.e - parentTransform.e,
                                     ),
                                 );
-                                // Keep the scale
+                                // Keep the translation and scale
                                 const scale = parentTransform.getScale();
                                 parentTransform.setTRS(
                                     parentTransform.e,
