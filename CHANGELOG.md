@@ -98,14 +98,16 @@ best friend, lajbel, can put the correct version name here
 
 - Added `screenshotToBlob()` to get a screenshot as a `Blob` - @dragoncoder047
 - Added `getButtons()` to get the input binding buttons definition - @lajbel
-- Added `RuleSystem` for enemy AI - @mflerackers
-- Added `DecisionTree` for enemy AI - @mflerackers
+- Added `RuleSystem`, `DecisionTree` and `StateMachine` for enemy AI -
+  @mflerackers
 - Added constraint components for distance, translation, rotation, scale and
   transform constraints - @mflerackers
 - Added inverse kinematics constraint components using FABRIK and CCD, the
   latter one can use bone constraints to constrain the angle - @mflerackers
 - Added skew to Mat23, transformation stack, RenderProps, GameObjRaw as well as
   a component - @mflerackers
+- Added texture uniforms, in order to access more than one texture at a time in
+  shaders - @mflerackers
 
 ### Changed
 
