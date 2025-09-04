@@ -186,7 +186,7 @@ export function text(t: string, opt: TextCompOpt = {}): TextComp {
     let _width = opt.width ?? 0;
     let _height = 0;
 
-    const obj = {
+    const obj: TextComp = {
         id: "text",
         set text(nt) {
             t = nt;
@@ -197,7 +197,7 @@ export function text(t: string, opt: TextCompOpt = {}): TextComp {
             return t;
         },
         textSize: opt.size ?? DEF_TEXT_SIZE,
-        font: opt.font,
+        font: opt.font!,
         get width() {
             return _width;
         },
@@ -212,11 +212,11 @@ export function text(t: string, opt: TextCompOpt = {}): TextComp {
             _height = value;
             if (_shape) _shape.height = value;
         },
-        align: opt.align,
-        lineSpacing: opt.lineSpacing,
-        letterSpacing: opt.letterSpacing,
-        textTransform: opt.transform,
-        textStyles: opt.styles,
+        align: opt.align!,
+        lineSpacing: opt.lineSpacing!,
+        letterSpacing: opt.letterSpacing!,
+        textTransform: opt.transform!,
+        textStyles: opt.styles!,
 
         formattedText(this: GameObj<TextComp>) {
             return theFormattedText;
@@ -239,6 +239,19 @@ export function text(t: string, opt: TextCompOpt = {}): TextComp {
                 _shape = new Rect(vec2(0), _width, _height);
             }
             return _shape;
+        },
+
+        serialize() {
+            return {
+                text: this.text,
+                size: this.textSize,
+                font: typeof this.font === "string" ? this.font : undefined,
+                width: this.width,
+                align: this.align,
+                lineSpacing: this.lineSpacing,
+                letterSpacing: this.letterSpacing,
+                indentAll: opt.indentAll,
+            };
         },
     };
 
