@@ -27,6 +27,7 @@ function addButton(
         rect(240, 80, { radius: 8 }),
         pos(p),
         area(),
+        hover(),
         scale(1),
         anchor("center"),
         outline(4),

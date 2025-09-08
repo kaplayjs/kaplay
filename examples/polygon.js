@@ -42,6 +42,7 @@ const poly = add([
     }),
     pos(150, 150),
     area(),
+    hover(),
     color(),
 ]);
 

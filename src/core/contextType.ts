@@ -59,11 +59,13 @@ import type {
     AnimateComp,
     AnimateCompOpt,
 } from "../ecs/components/misc/animate";
+import type { CursorComp, CursorCompOpt } from "../ecs/components/misc/cursor";
 import type {
     FakeMouseComp,
     FakeMouseOpt,
 } from "../ecs/components/misc/fakeMouse";
 import type { HealthComp } from "../ecs/components/misc/health";
+import type { HoverComp, HoverCompOpt } from "../ecs/components/misc/hover";
 import type { LifespanCompOpt } from "../ecs/components/misc/lifespan";
 import type { NamedComp } from "../ecs/components/misc/named";
 import type { StateComp } from "../ecs/components/misc/state";
@@ -1424,6 +1426,24 @@ export interface KAPLAYCtx {
      * @subgroup Behaviour
      */
     lifespan(time: number, options?: LifespanCompOpt): EmptyComp;
+    /**
+     * Adds click and hover events to an object, making it interactive.
+     *
+     * @returns The hover comp.
+     * @since v4000.0
+     * @group Components
+     * @subgroup Behaviour
+     */
+    hover(opt: HoverCompOpt): HoverComp;
+    /**
+     * Adds cursor on hover to an object.
+     *
+     * @returns The cursor comp.
+     * @since v4000.0
+     * @group Components
+     * @subgroup Behaviour
+     */
+    cursor(opt: string | CursorCompOpt): CursorComp;
     /**
      * Names an game obj.
      *

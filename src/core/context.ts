@@ -50,8 +50,10 @@ import { patrol } from "../ecs/components/level/patrol";
 import { sentry } from "../ecs/components/level/sentry";
 import { tile } from "../ecs/components/level/tile";
 import { animate, serializeAnimation } from "../ecs/components/misc/animate";
+import { cursor } from "../ecs/components/misc/cursor";
 import { fakeMouse } from "../ecs/components/misc/fakeMouse";
 import { health } from "../ecs/components/misc/health";
+import { hover } from "../ecs/components/misc/hover";
 import { lifespan } from "../ecs/components/misc/lifespan";
 import { named } from "../ecs/components/misc/named";
 import { state } from "../ecs/components/misc/state";
@@ -411,6 +413,8 @@ export const createContext = (
         fixed,
         stay,
         health,
+        hover,
+        cursor,
         lifespan,
         named,
         state,

@@ -29,6 +29,7 @@ const orbitingBean = centerBean.add([
     anchor("center"),
     sprite("bean"),
     area(),
+    hover(),
     rotate(0),
     scale(1),
     color(),

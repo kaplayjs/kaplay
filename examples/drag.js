@@ -84,6 +84,7 @@ for (let i = 0; i < 48; i++) {
         sprite("bean"),
         pos(rand(width()), rand(height())),
         area({ cursor: "pointer" }),
+        hover(),
         scale(5),
         anchor("center"),
         // using our custom component here

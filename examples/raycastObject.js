@@ -188,6 +188,7 @@ const ray = add([
     anchor("center"),
     rect(64, 64),
     area(),
+    hover(),
     laser(),
     color(RED),
     opacity(0.0),
