@@ -123,6 +123,8 @@ best friend, lajbel, can put the correct version name here
 - Now `KAPLAYOpt.spriteAtlasPadding` is set to `2` by default - @lajbel
 - Transformation and drawing is split now, so the transform can be modified
   before drawing - @mflerackers
+- Hover logic has been moved to a component and a system
+- Cursor is a component now
 
 ## [4000.0.0-alpha.21] - 2025-08-07
 

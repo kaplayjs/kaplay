@@ -2,7 +2,7 @@ import { KEventController } from "../../../events/events";
 import { _k } from "../../../shared";
 import type { Comp, Cursor, GameObj } from "../../../types";
 import type { AreaComp } from "../physics/area";
-import { hover, type HoverComp } from "./hover";
+import { type HoverComp } from "./hover";
 
 export interface CursorComp extends Comp {
     /**
@@ -34,7 +34,6 @@ export function cursor(opt: string | CursorCompOpt = {}): CursorComp {
             }
             if (this.area.cursor) {
                 _events.push(
-                    // Should this go into a cursor comp?
                     this.onHover(() => _k.app.setCursor(this.area.cursor!)),
                 );
             }
@@ -55,7 +54,6 @@ export function cursor(opt: string | CursorCompOpt = {}): CursorComp {
             area.cursor = value;
             if (area.cursor && _events.length == 0) {
                 _events.push(
-                    // Should this go into a cursor comp?
                     (this as unknown as HoverComp).onHover(() =>
                         _k.app.setCursor(area.cursor!)
                     ),
@@ -70,7 +68,7 @@ export function cursor(opt: string | CursorCompOpt = {}): CursorComp {
     };
 }
 
-export function areaFactory(data: any) {
+export function cursorFactory(data: any) {
     const opt: any = {};
     return cursor(opt);
 }

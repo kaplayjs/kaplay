@@ -1,16 +1,15 @@
-import { DEF_ANCHOR } from "../../../constants/general";
 import type { KEventController } from "../../../events/events";
-import { toWorld } from "../../../game/camera";
-import { anchorPt } from "../../../gfx/anchor";
-import { Rect } from "../../../math/math";
-import { Vec2 } from "../../../math/Vec2";
+import { onAdd, onDestroy, onUnuse, onUse } from "../../../events/globalEvents";
 import { _k } from "../../../shared";
 import type { Comp, GameObj, MouseButton } from "../../../types";
-import { isFixed } from "../../entity/utils";
+import { system, SystemPhase } from "../../systems/systems";
 import type { AreaComp } from "../physics/area";
-import type { AnchorComp } from "../transform/anchor";
 
-export interface HoverComp extends Comp {
+interface HoverCompPrivate extends Comp {
+    setHoverAndClickState(isHovering: boolean, isClicked: boolean): void;
+}
+
+export interface HoverComp extends HoverCompPrivate {
     /**
      * True if the object has been clicked.
      */
@@ -49,21 +48,55 @@ export interface HoverComp extends Comp {
 
 export type HoverCompOpt = {};
 
+let systemInstalled = false;
+
+function installSystem() {
+    if (systemInstalled) return;
+    systemInstalled = true;
+    // TODO: use a live query for this
+    const hovers: Set<GameObj<HoverComp | AreaComp>> = new Set();
+    onAdd(obj => {
+        if (obj.has("hover")) {
+            hovers.add(obj as GameObj<HoverComp | AreaComp>);
+        }
+    });
+    onDestroy(obj => {
+        hovers.delete(obj as GameObj<HoverComp | AreaComp>);
+    });
+    onUse((obj, id) => {
+        if ("hover" === id) {
+            hovers.add(obj as GameObj<HoverComp | AreaComp>);
+        }
+    });
+    onUnuse((obj, id) => {
+        if ("hover" === id) {
+            hovers.delete(obj as GameObj<HoverComp | AreaComp>);
+        }
+    });
+    system("hover", () => {
+        const m = _k.game.fakeMouse ? _k.game.fakeMouse.pos : _k.app.mousePos();
+        const isClicked = _k.game.fakeMouse
+            ? _k.game.fakeMouse.isPressed
+            : _k.app.isMousePressed();
+        hovers.forEach(hover => {
+            const isHovering = hover.hasScreenPoint(m);
+            hover.setHoverAndClickState(isHovering, isClicked && isHovering);
+        });
+    }, [
+        SystemPhase.BeforeUpdate, // Because we use these states in update
+    ]);
+}
+
 export function hover(opt: HoverCompOpt = {}): HoverComp {
     const _events: KEventController[] = [];
+    let _isHovering: boolean = false;
+    let _isClicked: boolean = false;
+
+    installSystem();
 
     return {
         id: "hover",
         require: ["area"],
-
-        add(this: GameObj<AreaComp | HoverComp>) {
-            if (this.area.cursor) {
-                _events.push(
-                    // Should this go into a cursor comp?
-                    this.onHover(() => _k.app.setCursor(this.area.cursor!)),
-                );
-            }
-        },
 
         destroy() {
             for (const event of _events) {
@@ -72,81 +105,78 @@ export function hover(opt: HoverCompOpt = {}): HoverComp {
         },
 
         isClicked(): boolean {
-            if (_k.game.fakeMouse) {
-                return _k.game.fakeMouse.isPressed && this.isHovering();
-            }
-
-            return _k.app.isMousePressed() && this.isHovering();
+            return _isClicked;
         },
 
         isHovering(this: GameObj<AreaComp>) {
-            if (_k.game.fakeMouse) {
-                return this.hasScreenPoint(_k.game.fakeMouse.pos);
-            }
-
-            return this.hasScreenPoint(_k.app.mousePos());
+            return _isHovering;
         },
 
+        // TODO: use just one onPress to check all hovers in one go
         onClick(
-            this: GameObj<HoverComp>,
+            this: GameObj<HoverComp | AreaComp>,
             action: () => void,
             btn: MouseButton = "left",
         ): KEventController {
             if (_k.game.fakeMouse) {
+                // TODO: What about this one? It can't be cancelled
                 _k.game.fakeMouse.onPress(() => {
-                    if (this.isHovering()) {
+                    const isHovering = this.hasScreenPoint(
+                        _k.game.fakeMouse
+                            ? _k.game.fakeMouse.pos
+                            : _k.app.mousePos(),
+                    );
+                    if (isHovering) {
                         action();
                     }
                 });
             }
 
             const e = this.onMousePress(btn, () => {
-                if (this.isHovering()) {
+                const isHovering = this.hasScreenPoint(
+                    _k.game.fakeMouse
+                        ? _k.game.fakeMouse.pos
+                        : _k.app.mousePos(),
+                );
+                if (isHovering) {
                     action();
                 }
             });
-
-            _events.push(e);
 
             return e;
         },
 
         onHover(this: GameObj, action: () => void): KEventController {
-            let hovering = false;
-            return this.onUpdate(() => {
-                if (!hovering) {
-                    if (this.isHovering()) {
-                        hovering = true;
-                        action();
-                    }
-                }
-                else {
-                    hovering = this.isHovering();
-                }
-            });
+            return this.on("hoverBegin", action);
         },
 
-        onHoverUpdate(this: GameObj, onHover: () => void): KEventController {
-            return this.onUpdate(() => {
-                if (this.isHovering()) {
-                    onHover();
-                }
-            });
+        onHoverUpdate(this: GameObj, action: () => void): KEventController {
+            return this.on("hoverUpdate", action);
         },
 
         onHoverEnd(this: GameObj, action: () => void): KEventController {
-            let hovering = false;
-            return this.onUpdate(() => {
-                if (hovering) {
-                    if (!this.isHovering()) {
-                        hovering = false;
-                        action();
-                    }
+            return this.on("hoverEnd", action);
+        },
+
+        setHoverAndClickState(
+            this: GameObj<HoverComp>,
+            isHovering: boolean,
+            isClicked: boolean,
+        ) {
+            if (_isHovering != isHovering) {
+                _isHovering = isHovering;
+                if (isHovering) {
+                    this.trigger("hoverBegin");
                 }
                 else {
-                    hovering = this.isHovering();
+                    this.trigger("hoverEnd");
                 }
-            });
+            }
+            else {
+                this.trigger("hoverUpdate");
+            }
+
+            _isClicked = isClicked;
         },
 
         serialize() {
@@ -156,7 +186,7 @@ export function hover(opt: HoverCompOpt = {}): HoverComp {
     };
 }
 
-export function areaFactory(data: any) {
+export function hoverFactory(data: any) {
     const opt: any = {};
     return hover(opt);
 }
