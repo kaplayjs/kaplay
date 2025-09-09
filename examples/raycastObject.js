@@ -85,7 +85,7 @@ onDraw("selected", (s) => {
 onMousePress(() => {
     const shapes = get("area");
     const pos = mousePos();
-    const pickList = shapes.filter((shape) => shape.hasPoint(pos));
+    const pickList = shapes.filter((shape) => shape.hasScreenPoint(pos));
     const selection = pickList[pickList.length - 1];
     if (selection) {
         get("selected").forEach(s => s.untag("selected"));
