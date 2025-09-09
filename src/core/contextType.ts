@@ -140,7 +140,7 @@ import type { FrameBuffer } from "../gfx/FrameBuffer";
 import type { DecisionNode, DecisionTree } from "../math/ai/decisiontree";
 import type { Rule, RuleSystem } from "../math/ai/rulesystem";
 import type { StateMachine } from "../math/ai/statemachine";
-import type { Color, CSSColor } from "../math/color";
+import type { Color, CSSColorKeywords } from "../math/color";
 import type { EaseFunc, EaseFuncs } from "../math/easings";
 import type { GjkCollisionResult } from "../math/gjk";
 import type { LerpValue } from "../math/lerp";
@@ -624,7 +624,7 @@ export interface KAPLAYCtx {
      */
     color(c: Color): ColorComp;
     /**
-     * Sets the color of a Game Object using an array (rgb 255).
+     * Sets the color of a Game Object using an array (rgb 0-255).
      *
      * @param rgb - The color array to set [r, g, b].
      *
@@ -644,9 +644,9 @@ export interface KAPLAYCtx {
      */
     color(rgb: [number, number, number]): ColorComp;
     /**
-     * Sets the color of a Game Object using a CSS color or Hex string.
+     * Sets the color of a Game Object using a CSS color keywords or hexadecimal string.
      *
-     * @param c - The CSS color name or Hex code to set.
+     * @param c - The CSS color keyword or hexadecimal code to set.
      *
      * @example
      * ```js
@@ -668,11 +668,11 @@ export interface KAPLAYCtx {
      * @group Components
      * @subgroup Rendering
      */
-    color(c: OptionalString<CSSColor>): ColorComp;
+    color(c: OptionalString<CSSColorKeywords>): ColorComp;
     /**
-     * Sets the color of a Game Object using a CSS color or Hex string.
+     * Sets the color of a Game Object using a hexadecimal literal number.
      *
-     * @param c - The CSS color HEX number.
+     * @param c - The hexadecimal literal number.
      *
      * @example
      * ```js
@@ -4782,9 +4782,9 @@ export interface KAPLAYCtx {
      */
     rgb(hex: string): Color;
     /**
-     * Create a color from CSS name.
+     * Create a color from CSS keyword.
      *
-     * @param cssColor - The CSS name.
+     * @param cssColor - The CSS keyword.
      *
      * @example
      * ```js
@@ -4795,7 +4795,7 @@ export interface KAPLAYCtx {
      * @since v3001.0.10
      * @experimental This feature is in experimental phase, it will be fully released in v3001.1.0
      */
-    rgb(cssColor: CSSColor): Color;
+    rgb(cssColor: CSSColorKeywords): Color;
     /**
      * Same as rgb(255, 255, 255).
      */
