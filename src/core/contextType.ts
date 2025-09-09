@@ -140,7 +140,7 @@ import type { FrameBuffer } from "../gfx/FrameBuffer";
 import type { DecisionNode, DecisionTree } from "../math/ai/decisiontree";
 import type { Rule, RuleSystem } from "../math/ai/rulesystem";
 import type { StateMachine } from "../math/ai/statemachine";
-import type { Color, CSSColor } from "../math/color";
+import type { Color, CSSColorKeywords } from "../math/color";
 import type { EaseFunc, EaseFuncs } from "../math/easings";
 import type { GjkCollisionResult } from "../math/gjk";
 import type { LerpValue } from "../math/lerp";
@@ -186,6 +186,7 @@ import type {
 } from "../types";
 import type { TupleWithoutFirst } from "../utils/types";
 import type { Engine } from "./engine";
+import type { OptionalString } from "./taf";
 
 /**
  * Context handle that contains every KAPLAY function.
@@ -600,9 +601,111 @@ export interface KAPLAYCtx {
      * @subgroup Rendering
      */
     color(r: number, g: number, b: number): ColorComp;
+    /**
+     * Sets the color of a Game Object using a previously created Color Object.
+     *
+     * @param c - The color to clone and set.
+     *
+     * @example
+     * ```js
+     * // blue frog
+     * const blue = rgb(0, 0, 255);
+     *
+     * add([
+     *     sprite("bean"),
+     *     color(blue),
+     * ]);
+     * ```
+     *
+     * @returns The color comp.
+     * @since v2000.0
+     * @group Components
+     * @subgroup Rendering
+     */
     color(c: Color): ColorComp;
+    /**
+     * Sets the color of a Game Object using an array (rgb 0-255).
+     *
+     * @param rgb - The color array to set [r, g, b].
+     *
+     * @example
+     * ```js
+     * // blue frog
+     * add([
+     *     sprite("bean"),
+     *     color([0, 0, 255]),
+     * ]);
+     * ```
+     *
+     * @returns The color comp.
+     * @since v2000.0
+     * @group Components
+     * @subgroup Rendering
+     */
     color(rgb: [number, number, number]): ColorComp;
-    color(c: CSSColor & (string | {})): ColorComp;
+    /**
+     * Sets the color of a Game Object using a CSS color keywords or hexadecimal string.
+     *
+     * @param c - The CSS color keyword or hexadecimal code to set.
+     *
+     * @example
+     * ```js
+     * // blue frog (HEX)
+     * add([
+     *     sprite("bean"),
+     *     color("#0000ff"),
+     * ]);
+     *
+     * // red cheese (CSS)
+     * add([
+     *     sprite("mark"),
+     *     color("red"),
+     * ]);
+     * ```
+     *
+     * @returns The color comp.
+     * @since v2000.0
+     * @group Components
+     * @subgroup Rendering
+     */
+    color(c: OptionalString<CSSColorKeywords>): ColorComp;
+    /**
+     * Sets the color of a Game Object using a hexadecimal literal number.
+     *
+     * @param c - The hexadecimal literal number.
+     *
+     * @example
+     * ```js
+     * // blue frog
+     * add([
+     *     sprite("bean"),
+     *     color(0x0000ff),
+     * ]);
+     * ```
+     *
+     * @returns The color comp.
+     * @since v2000.0
+     * @group Components
+     * @subgroup Rendering
+     */
+    color(c: number): ColorComp;
+    /**
+     * Sets the color of a Game Object to white (no effect).
+     *
+     * @example
+     * ```js
+     * // normal frog
+     * add([
+     *     sprite("bean"),
+     *     color(),
+     * ]);
+     * ```
+     *
+     * @returns The color comp.
+     * @since v2000.0
+     * @group Components
+     * @subgroup Rendering
+     */
     color(): ColorComp;
     /**
      * Sets the blend mode of a Game Object.
@@ -4679,9 +4782,9 @@ export interface KAPLAYCtx {
      */
     rgb(hex: string): Color;
     /**
-     * Create a color from CSS name.
+     * Create a color from CSS keyword.
      *
-     * @param cssColor - The CSS name.
+     * @param cssColor - The CSS keyword.
      *
      * @example
      * ```js
@@ -4692,7 +4795,7 @@ export interface KAPLAYCtx {
      * @since v3001.0.10
      * @experimental This feature is in experimental phase, it will be fully released in v3001.1.0
      */
-    rgb(cssColor: CSSColor): Color;
+    rgb(cssColor: CSSColorKeywords): Color;
     /**
      * Same as rgb(255, 255, 255).
      */

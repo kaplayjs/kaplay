@@ -19,7 +19,7 @@ export type RGBAValue = [number, number, number, number];
  * @group Math
  * @subgroup Colors
  */
-export type CSSColor = keyof typeof CSS_COLOR_MAP;
+export type CSSColorKeywords = keyof typeof CSS_COLOR_MAP;
 
 /**
  * A serialized color.
@@ -150,7 +150,7 @@ export class Color {
      * @returns The color.
      * @experimental This feature is in experimental phase, it will be fully released in v3001.1.0
      */
-    static fromCSS(cssColor: CSSColor) {
+    static fromCSS(cssColor: CSSColorKeywords) {
         const color = CSS_COLOR_MAP[cssColor];
         // for js users
         if (!color) throw new Error("Can't use an invalid CSS color");
@@ -309,7 +309,8 @@ export type ColorArgs =
     | [string]
     | [number[]]
     | []
-    | [CSSColor & (string & {})];
+    | [CSSColorKeywords & (string & {})]
+    | [number];
 
 export function rgb(...args: ColorArgs): Color {
     if (args.length === 0) {
@@ -323,11 +324,14 @@ export function rgb(...args: ColorArgs): Color {
             return cl.clone();
         }
         else if (typeof cl === "string") {
-            if (cl[0] != "#" && CSS_COLOR_MAP[cl as CSSColor]) {
-                return Color.fromCSS(cl as CSSColor);
+            if (cl[0] != "#" && CSS_COLOR_MAP[cl as CSSColorKeywords]) {
+                return Color.fromCSS(cl as CSSColorKeywords);
             }
 
             return Color.fromHex(args[0]);
+        }
+        else if (typeof cl === "number") {
+            return Color.fromHex(cl);
         }
         else if (Array.isArray(args[0]) && args[0].length === 3) {
             // rgb([255, 255, 255])

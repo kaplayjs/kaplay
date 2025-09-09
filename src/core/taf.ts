@@ -20,7 +20,7 @@ export type InfKAPLAYOpt<T extends KAPLAYOpt = KAPLAYOpt> = {
         : undefined;
 };
 
-type OptionalString<T extends string> = T | {} & string;
+export type OptionalString<T extends string> = T | {} & string;
 
 /**
  * Type options for the KAPLAY context.

@@ -111,6 +111,15 @@ best friend, lajbel, can put the correct version name here
 
 ### Changed
 
+- Now, you can use `color(c)` with a hexadecimal literal number (ex: 0x00ff00) -
+  @lajbel
+  ```js
+  // blue frog
+  add([
+      sprite("bean"),
+      color(0x0000ff),
+  ]);
+  ```
 - **(!)** `KAPLAYCtx` doesn't use generics anymore. Now, `KAPLAYCtxT` uses
   them - @lajbel
 - Now, `kaplay` will return `KAPLAYCtx` or `KAPLAYCtxT` depending if it's using
