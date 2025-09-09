@@ -20,6 +20,7 @@ add([
     color(WHITE),
     timer(),
     area(),
+    hover(),
     "steps",
 ]);
 
@@ -41,6 +42,7 @@ add([
     color(WHITE),
     timer(),
     area(),
+    hover(),
     "stepsmove",
 ]);
 
@@ -62,6 +64,7 @@ add([
     color(WHITE),
     timer(),
     area(),
+    hover(),
     "linear",
 ]);
 
@@ -81,6 +84,7 @@ add([
     color(WHITE),
     timer(),
     area(),
+    hover(),
     "linearmove",
 ]);
 
@@ -102,6 +106,7 @@ add([
     color(WHITE),
     timer(),
     area(),
+    hover(),
     "bezier",
 ]);
 
@@ -121,6 +126,7 @@ add([
     color(WHITE),
     timer(),
     area(),
+    hover(),
     "beziermove",
 ]);
 
