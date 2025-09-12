@@ -12,6 +12,7 @@ export function calcTransform(obj: GameObj, tr: Mat23): Mat23 {
     if (obj.pos) tr.translateSelfV(obj.pos);
     if (obj.angle) tr.rotateSelf(obj.angle);
     if (obj.scale) tr.scaleSelfV(obj.scale);
+    if (obj.skew) tr.skewSelfV(obj.skew);
     return tr;
 }
 

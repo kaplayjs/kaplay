@@ -143,7 +143,7 @@ add([
             return new Ellipse(vec2(), 40, 15, 45);
         },
         draw() {
-            pushRotate(45);
+            pushRotate(-45);
             drawEllipse({
                 radiusX: 40,
                 radiusY: 15,
