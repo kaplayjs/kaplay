@@ -24,7 +24,7 @@ export interface GfxFont {
 export type BitmapFontData = GfxFont;
 
 export function getBitmapFont(name: string): Asset<BitmapFontData> | null {
-    return _k.assets.bitmapFonts.get(name) ?? null;
+    return _k.assets.buckets.bitmapFonts.get(name) ?? null;
 }
 
 /**
@@ -51,7 +51,7 @@ export function loadBitmapFont(
 ): Asset<BitmapFontData> {
     const fontSrc = fixURL(src);
 
-    return _k.assets.bitmapFonts.add(
+    return _k.assets.buckets.bitmapFonts.add(
         name,
         loadImg(fontSrc)
             .then((img) => {
@@ -69,7 +69,7 @@ export function loadBitmapFontFromSprite(
     spriteID: string,
     chars: string,
 ): Asset<BitmapFontData> {
-    return _k.assets.bitmapFonts.add(
+    return _k.assets.buckets.bitmapFonts.add(
         spriteID,
         (async () => {
             if (/[\n ]/.test(chars)) {
@@ -83,7 +83,7 @@ export function loadBitmapFontFromSprite(
                     `Duplicate characters given when defining sprite font "${spriteID}": ${chars}`,
                 );
             }
-            const spr = await _k.assets.sprites.waitFor(
+            const spr = await _k.assets.buckets.sprites.waitFor(
                 spriteID,
                 _k.globalOpt.loadTimeout ?? 3000,
             );

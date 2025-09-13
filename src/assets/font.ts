@@ -92,7 +92,7 @@ export function resolveFont(
 }
 
 export function getFont(name: string): Asset<FontData> | null {
-    return _k.assets.fonts.get(name) ?? null;
+    return _k.assets.buckets.fonts.get(name) ?? null;
 }
 
 // TODO: pass in null src to store opt for default fonts like "monospace"
@@ -107,7 +107,7 @@ export function loadFont(
     );
     document.fonts.add(font);
 
-    return _k.assets.fonts.add(
+    return _k.assets.buckets.fonts.add(
         name,
         font.load().catch((err) => {
             throw new Error(`Failed to load font from "${src}": ${err}`);

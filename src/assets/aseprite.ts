@@ -45,7 +45,7 @@ export function loadAseprite(
         ? fetchJSON(jsonSrc)
         : Promise.resolve(jsonSrc);
 
-    return _k.assets.sprites.add(
+    return _k.assets.buckets.sprites.add(
         name,
         resolveJSON.then((data: AsepriteData) => {
             const size = data.meta.size;

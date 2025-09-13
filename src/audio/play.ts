@@ -150,8 +150,8 @@ export function play(
         | Asset<MusicData>,
     opt: AudioPlayOpt = {},
 ): AudioPlay {
-    if (typeof src === "string" && _k.assets.music[src]) {
-        return playMusic(_k.assets.music[src], opt);
+    if (typeof src === "string" && _k.assets.buckets.music.get(src)) {
+        return playMusic(src, opt);
     }
 
     const ctx = _k.audio.ctx;

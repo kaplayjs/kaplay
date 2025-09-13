@@ -274,7 +274,7 @@ export function resolveShader(
 }
 
 export function getShader(name: string): Asset<ShaderData> | null {
-    return _k.assets.shaders.get(name) ?? null;
+    return _k.assets.buckets.shaders.get(name) ?? null;
 }
 
 export function loadShader(
@@ -282,7 +282,7 @@ export function loadShader(
     vert?: string,
     frag?: string,
 ) {
-    return _k.assets.shaders.addLoaded(
+    return _k.assets.buckets.shaders.addLoaded(
         name,
         makeShader(_k.gfx.ggl, vert, frag),
     );
@@ -303,5 +303,5 @@ export function loadShaderURL(
         .then(([vcode, fcode]: [string | null, string | null]) => {
             return makeShader(_k.gfx.ggl, vcode, fcode);
         });
-    return _k.assets.shaders.add(name, load);
+    return _k.assets.buckets.shaders.add(name, load);
 }

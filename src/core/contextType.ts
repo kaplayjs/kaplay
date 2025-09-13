@@ -4,7 +4,7 @@ import type {
     ButtonsDef,
 } from "../app/inputBindings";
 import type { AsepriteData } from "../assets/aseprite";
-import type { Asset } from "../assets/asset";
+import type { Asset, AssetBucket } from "../assets/asset";
 import type { BitmapFontData, LoadBitmapFontOpt } from "../assets/bitmapFont";
 import type { FontData } from "../assets/font";
 import type { ShaderData, Uniform } from "../assets/shader";
@@ -3555,16 +3555,36 @@ export interface KAPLAYCtx {
         frag?: string | null,
     ): Asset<ShaderData>;
     /**
-     * Add a new loader to wait for before starting the game.
+     * Load an asset into the "custom" asset bucket.
      *
-     * @param l - The loader to wait for.
+     * @param name - The asset name.
+     * @param loader - The loader to wait for.
      *
      * @example
      * ```js
-     * load(new Promise((resolve, reject) => {
-     *     // anything you want to do that stalls the game in loading state
-     *     resolve("ok")
-     * }))
+     * // Load something into the "custom" bucket.
+     * loadAsset(
+     *     "quote",
+     *     // While this promise is not resolved, loading screen will persists as it means
+     *     // the asset is still loading.
+     *     new Promise(
+     *         // Resolve is when the asset is loaded, reject when the asset get into
+     *         // an error while loading
+     *         (resolve, reject) => {
+     *             fetch("https://dummyjson.com/quotes/1")
+     *                 .then(res => res.json())
+     *                 .then(data => {
+     *                     resolve(data);
+     *                 });
+     *         },
+     *     ),
+     * );
+     *
+     * onLoad(() => {
+     *     const quoteData = getAsset("quote").data.quote;
+     *
+     *     debug.log(quoteData);
+     * });
      * ```
      *
      * @returns The asset data.
@@ -3572,7 +3592,54 @@ export interface KAPLAYCtx {
      * @group Assets
      * @subgroup Util
      */
-    load<T>(l: Promise<T>): Asset<T>;
+    loadAsset<T>(
+        name: string | null,
+        loader: Promise<T>,
+    ): Asset<T>;
+    /**
+     * Load an asset in the "custom" asset bucket.
+     *
+     * @param name - The asset name.
+     * @param bucket - The bucket name to load to.
+     * @param loader - The Promise to wait for.
+     *
+     * @example
+     * ```js
+     * // Load something into the "custom" bucket.
+     * loadAsset(
+     *     "quote",
+     *     // While this promise is not resolved, loading screen will persists as it means
+     *     // the asset is still loading.
+     *     new Promise(
+     *         // Resolve is when the asset is loaded, reject when the asset get into
+     *         // an error while loading
+     *         (resolve, reject) => {
+     *             fetch("https://dummyjson.com/quotes/1")
+     *                 .then(res => res.json())
+     *                 .then(data => {
+     *                     resolve(data);
+     *                 });
+     *         },
+     *     ),
+     * );
+     *
+     * onLoad(() => {
+     *     const quoteData = getAsset("quote").data.quote;
+     *
+     *     debug.log(quoteData);
+     * });
+     * ```
+     *
+     * @returns The asset data.
+     * @since v3000.0
+     * @group Assets
+     * @subgroup Util
+     */
+    loadAsset<T>(
+        name: string | null,
+        bucket: string,
+        loader: Promise<T>,
+    ): Asset<T>;
     /**
      * Load a prefab.
      *
@@ -3582,6 +3649,23 @@ export interface KAPLAYCtx {
      * @experimental
      */
     loadPrefab: (name: string, url: string) => Asset<SerializedGameObj>;
+    // #endregion
+    // #region Buckets API
+    /**
+     * Create and register a new asset bucket.
+     *
+     * @param name - The name to register the asset bucket.
+     *
+     * @example
+     * ```js
+     * ```
+     *
+     * @returns The new asset bucket.
+     * @since v4000.0
+     * @group Assets
+     * @subgroup Util
+     */
+    addAssetBucket<T>(name: string): AssetBucket<T>;
     // #endregion
     /**
      * Get the global asset loading progress (0.0 - 1.0).
@@ -3648,16 +3732,17 @@ export interface KAPLAYCtx {
      */
     getShader(name: string): Asset<ShaderData> | null;
     /**
-     * Get custom data from name.
+     * Get custom asset data from name.
      *
      * @param name - The asset name.
+     * @param bucket - The bucket name to search for. Default to "custom".
      *
      * @returns The asset data.
      * @since v3000.0
      * @group Assets
      * @subgroup Getters
      */
-    getAsset(name: string): Asset<any> | null;
+    getAsset(name: string, bucket?: string): Asset<any> | null;
     /**
      * The asset data.
      *

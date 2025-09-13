@@ -1,19 +1,13 @@
 import { getData, setData } from "../app/data";
 import { loadAseprite } from "../assets/aseprite";
-import {
-    Asset,
-    getAsset,
-    load,
-    loadJSON,
-    loadProgress,
-    loadRoot,
-} from "../assets/asset";
+import { Asset, loadJSON, loadProgress, loadRoot } from "../assets/asset";
 import {
     getBitmapFont,
     loadBitmapFont,
     loadBitmapFontFromSprite,
     loadHappy,
 } from "../assets/bitmapFont";
+import { addAssetBucket, getAsset, loadAsset } from "../assets/buckets";
 import { getFont, loadFont } from "../assets/font";
 import { getShader, loadShader, loadShaderURL } from "../assets/shader";
 import { getSound, loadMusic, loadSound, SoundData } from "../assets/sound";
@@ -305,7 +299,8 @@ export const createContext = (
         loadHappy,
         loadJSON,
         loadPrefab,
-        load,
+        loadAsset,
+        addAssetBucket,
         getSound,
         getFont,
         getBitmapFont,

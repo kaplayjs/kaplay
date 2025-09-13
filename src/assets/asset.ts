@@ -204,7 +204,7 @@ export function loadRoot(path?: string): string {
 }
 
 export function loadJSON(name: string, url: string) {
-    return _k.assets.custom.add(name, fetchJSON(fixURL(url)));
+    return _k.assets.buckets.custom.add(name, fetchJSON(fixURL(url)));
 }
 
 // wrapper around image loader to get a Promise
@@ -221,65 +221,64 @@ export function loadImg(src: string): Promise<HTMLImageElement> {
 }
 
 export function loadProgress(): number {
-    const buckets = [
-        _k.assets.sprites,
-        _k.assets.sounds,
-        _k.assets.shaders,
-        _k.assets.fonts,
-        _k.assets.bitmapFonts,
-        _k.assets.custom,
-    ];
+    const buckets = Object.values(_k.assets.buckets);
+
     return buckets.reduce((n, bucket) => n + bucket.progress(), 0)
         / buckets.length;
 }
 
 export function getFailedAssets(): [string, Asset<any>][] {
-    const buckets = [
-        _k.assets.sprites,
-        _k.assets.sounds,
-        _k.assets.shaders,
-        _k.assets.fonts,
-        _k.assets.bitmapFonts,
-        _k.assets.custom,
-    ];
+    const buckets = Object.values(_k.assets.buckets);
+
     return buckets.reduce(
         (fails, bucket) => fails.concat(bucket.getFailedAssets()),
         [] as [string, Asset<any>][],
     );
 }
-export function getAsset(name: string): Asset<any> | null {
-    return _k.assets.custom.get(name) ?? null;
-}
 
 // wrap individual loaders with global loader counter, for stuff like progress bar
-export function load<T>(prom: Promise<T>): Asset<T> {
-    return _k.assets.custom.add(null, prom);
-}
 
 // create assets
 /** @ignore */
-export type InternalAssetsCtx = ReturnType<typeof initAssets>;
+export type AssetsCtx = {
+    urlPrefix: string;
+    buckets: {
+        [k: string]: AssetBucket<any>;
+        sprites: AssetBucket<SpriteData>;
+        fonts: AssetBucket<FontData>;
+        bitmapFonts: AssetBucket<BitmapFontData>;
+        sounds: AssetBucket<SoundData>;
+        shaders: AssetBucket<ShaderData>;
+        custom: AssetBucket<any>;
+        prefabAssets: AssetBucket<SerializedGameObj>;
+        music: AssetBucket<string>;
+    };
+    packer: TexPacker;
+    loaded: boolean;
+};
 
 /** @ignore */
-export const initAssets = (ggl: GfxCtx, opt: MustKAPLAYOpt) => {
-    const assets = {
+export const initAssets = (ggl: GfxCtx, opt: MustKAPLAYOpt): AssetsCtx => {
+    const assets: AssetsCtx = {
         urlPrefix: "",
         // asset holders
-        sprites: new AssetBucket<SpriteData>(),
-        fonts: new AssetBucket<FontData>(),
-        bitmapFonts: new AssetBucket<BitmapFontData>(),
-        sounds: new AssetBucket<SoundData>(),
-        shaders: new AssetBucket<ShaderData>(),
-        custom: new AssetBucket<any>(),
-        prefabAssets: new AssetBucket<SerializedGameObj>(),
-        music: {} as Record<string, string>,
+        buckets: {
+            sprites: new AssetBucket<SpriteData>(),
+            fonts: new AssetBucket<FontData>(),
+            bitmapFonts: new AssetBucket<BitmapFontData>(),
+            sounds: new AssetBucket<SoundData>(),
+            shaders: new AssetBucket<ShaderData>(),
+            custom: new AssetBucket<any>(),
+            prefabAssets: new AssetBucket<SerializedGameObj>(),
+            music: new AssetBucket<string>(),
+        },
         packer: new TexPacker(
             ggl,
             SPRITE_ATLAS_WIDTH,
             SPRITE_ATLAS_HEIGHT,
             opt.spriteAtlasPadding,
         ),
-        // if we finished initially loading all assets
+        // If we finished initially loading all assets
         loaded: false,
     };
 

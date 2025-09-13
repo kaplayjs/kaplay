@@ -225,7 +225,7 @@ export function resolveSprite(
 }
 
 export function getSprite(name: string): Asset<SpriteData> | null {
-    return _k.assets.sprites.get(name) ?? null;
+    return _k.assets.buckets.sprites.get(name) ?? null;
 }
 
 // load a sprite to asset manager
@@ -242,7 +242,7 @@ export function loadSprite(
 
     if (Array.isArray(src)) {
         if (src.some((s) => typeof s === "string")) {
-            return _k.assets.sprites.add(
+            return _k.assets.buckets.sprites.add(
                 name,
                 Promise.all(src.map((s) => {
                     return typeof s === "string"
@@ -252,7 +252,7 @@ export function loadSprite(
             );
         }
         else {
-            return _k.assets.sprites.addLoaded(
+            return _k.assets.buckets.sprites.addLoaded(
                 name,
                 createSpriteSheet(src as ImageSource[], opt),
             );
@@ -260,10 +260,13 @@ export function loadSprite(
     }
     else {
         if (typeof src === "string") {
-            return _k.assets.sprites.add(name, SpriteData.from(src, opt));
+            return _k.assets.buckets.sprites.add(
+                name,
+                SpriteData.from(src, opt),
+            );
         }
         else {
-            return _k.assets.sprites.addLoaded(
+            return _k.assets.buckets.sprites.addLoaded(
                 name,
                 SpriteData.fromImage(src, opt),
             );

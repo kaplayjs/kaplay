@@ -1,9 +1,18 @@
+import { throwError } from "../core/errors";
 import { KEvent } from "../events/events";
 import { clamp } from "../math/clamp";
 import { _k } from "../shared";
 import type { AudioPlay, AudioPlayOpt } from "./play";
 
-export function playMusic(url: string, opt: AudioPlayOpt = {}): AudioPlay {
+export function playMusic(name: string, opt: AudioPlayOpt = {}): AudioPlay {
+    const url = _k.assets.buckets.music.get(name)?.data;
+
+    if (!url) {
+        throw throwError(
+            `Music Data for ${url} doesn't exist, remember to use loadMusic().`,
+        );
+    }
+
     const onEndEvents = new KEvent();
     const el = new Audio(url);
     el.crossOrigin = "anonymous";

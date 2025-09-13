@@ -1,7 +1,8 @@
 import { SPRITE_ATLAS_HEIGHT, SPRITE_ATLAS_WIDTH } from "../constants/general";
 import { Quad } from "../math/math";
 import { _k } from "../shared";
-import { type Asset, fetchJSON, load } from "./asset";
+import { type Asset, fetchJSON } from "./asset";
+import { loadAsset } from "./buckets";
 import {
     type LoadSpriteOpt,
     type LoadSpriteSrc,
@@ -47,7 +48,7 @@ export function loadSpriteAtlas(
 ): Asset<Record<string, SpriteData>> {
     src = fixURL(src);
     if (typeof data === "string") {
-        return load(
+        return loadAsset(
             new Promise((res, rej) => {
                 fetchJSON(data).then((json) => {
                     loadSpriteAtlas(src, json).then(res).catch(rej);
@@ -55,7 +56,7 @@ export function loadSpriteAtlas(
             }),
         );
     }
-    return load(
+    return loadAsset(
         SpriteData.from(src).then((atlas) => {
             const map: Record<string, SpriteData> = {};
 
@@ -82,7 +83,7 @@ export function loadSpriteAtlas(
                         info.height / h * quad.h,
                     );
                 const spr = new SpriteData(atlas.tex, frames, info.anims);
-                _k.assets.sprites.addLoaded(name, spr);
+                _k.assets.buckets.sprites.addLoaded(name, spr);
                 map[name] = spr;
             }
             return map;

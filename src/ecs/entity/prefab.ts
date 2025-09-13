@@ -53,7 +53,7 @@ export function deserializeComp(id: string, data: any) {
 
 // #region Loading
 export function loadPrefab(name: string, url: string) {
-    return _k.assets.prefabAssets.add(name, fetchJSON(fixURL(url)));
+    return _k.assets.buckets.prefabAssets.add(name, fetchJSON(fixURL(url)));
 }
 // #endregion
 
@@ -66,7 +66,7 @@ export function createPrefab(nameOrObject: string | GameObj, object?: GameObj) {
     const data = obj.serialize();
 
     if (object) {
-        _k.assets.prefabAssets.add(
+        _k.assets.buckets.prefabAssets.add(
             nameOrObject as string,
             Promise.resolve(
                 new Asset<SerializedGameObj>(Promise.resolve(data)),

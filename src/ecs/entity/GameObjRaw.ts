@@ -691,7 +691,7 @@ export const GameObjRawPrototype: Omit<InternalGameObjRaw, AppEvents> = {
         let data: SerializedGameObj;
 
         if (typeof name === "string") {
-            const prefabAsset = _k.assets.prefabAssets.get(name);
+            const prefabAsset = _k.assets.buckets.prefabAssets.get(name);
 
             if (prefabAsset) {
                 data = prefabAsset.data!;

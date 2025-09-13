@@ -59,7 +59,7 @@ export function resolveSound(
 }
 
 export function getSound(name: string): Asset<SoundData> | null {
-    return _k.assets.sounds.get(name) ?? null;
+    return _k.assets.buckets.sounds.get(name) ?? null;
 }
 
 // load a sound to asset manager
@@ -80,7 +80,7 @@ export function loadSound(
         sound = Promise.resolve(SoundData.fromAudioBuffer(fixedSrc));
     }
 
-    return _k.assets.sounds.add(name, sound);
+    return _k.assets.buckets.sounds.add(name, sound);
 }
 
 export function loadMusic(
@@ -91,5 +91,5 @@ export function loadMusic(
     const a = new Audio(musicUrl);
     a.preload = "auto";
 
-    return _k.assets.music[name as keyof typeof _k.assets.music] = musicUrl;
+    return _k.assets.buckets.music.addLoaded(name, musicUrl);
 }
