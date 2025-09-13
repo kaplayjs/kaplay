@@ -92,6 +92,7 @@ import type {
     SurfaceEffectorCompOpt,
 } from "../ecs/components/physics/effectors";
 import type { AnchorComp } from "../ecs/components/transform/anchor";
+import type { constraint } from "../ecs/components/transform/constraint";
 import type { FixedComp } from "../ecs/components/transform/fixed";
 import type { FollowComp } from "../ecs/components/transform/follow";
 import type { LayerComp } from "../ecs/components/transform/layer";
@@ -103,6 +104,7 @@ import type {
 import type { PosComp } from "../ecs/components/transform/pos";
 import type { RotateComp } from "../ecs/components/transform/rotate";
 import type { ScaleComp } from "../ecs/components/transform/scale";
+import type { SkewComp } from "../ecs/components/transform/skew";
 import type { ZComp } from "../ecs/components/transform/z";
 import type { KeepFlags } from "../ecs/entity/GameObjRaw";
 import type { SerializedGameObj } from "../ecs/entity/prefab";
@@ -112,7 +114,7 @@ import type { Collision } from "../ecs/systems/Collision";
 import type { SystemPhase } from "../ecs/systems/systems";
 import type { GameObjEventNames, GameObjEvents } from "../events/eventMap";
 import type { KEvent, KEventController, KEventHandler } from "../events/events";
-import type { SceneDef, SceneName } from "../game/scenes";
+import type { SceneDef } from "../game/scenes";
 import type { anchorPt } from "../gfx/anchor";
 import type { DrawBezierOpt } from "../gfx/draw/drawBezier";
 import type { DrawCanvasOpt } from "../gfx/draw/drawCanvas";
@@ -135,7 +137,10 @@ import type { DrawTriangleOpt } from "../gfx/draw/drawTriangle";
 import type { DrawUVQuadOpt } from "../gfx/draw/drawUVQuad";
 import type { StyledTextInfo } from "../gfx/formatText";
 import type { FrameBuffer } from "../gfx/FrameBuffer";
-import type { Color, CSSColor } from "../math/color";
+import type { DecisionNode, DecisionTree } from "../math/ai/decisiontree";
+import type { Rule, RuleSystem } from "../math/ai/rulesystem";
+import type { StateMachine } from "../math/ai/statemachine";
+import type { Color, CSSColorKeywords } from "../math/color";
 import type { EaseFunc, EaseFuncs } from "../math/easings";
 import type { GjkCollisionResult } from "../math/gjk";
 import type { LerpValue } from "../math/lerp";
@@ -181,6 +186,7 @@ import type {
 } from "../types";
 import type { TupleWithoutFirst } from "../utils/types";
 import type { Engine } from "./engine";
+import type { OptionalString } from "./taf";
 
 /**
  * Context handle that contains every KAPLAY function.
@@ -190,10 +196,7 @@ import type { Engine } from "./engine";
  *
  * @group Start
  */
-export interface KAPLAYCtx<
-    TButtonDef extends ButtonsDef = {},
-    TButton extends string = string,
-> {
+export interface KAPLAYCtx {
     /**
      * Internal data that should not be accessed directly.
      *
@@ -203,6 +206,22 @@ export interface KAPLAYCtx<
      * @group Misc
      */
     _k: Engine & { k: KAPLAYCtx };
+    /**
+     * End everything.
+     *
+     * @since v2000.0
+     * @group Start
+     */
+    quit(): void;
+    /**
+     * Throws a new error and show up the Blue Screen.
+     *
+     * @param msg - The message for showing in the Blue Screen.
+     *
+     * @since v4000.0
+     * @group Start
+     */
+    throwError(msg: string): void;
     /**
      * Assemble a game object from a list of components, and add it to the game,
      *
@@ -258,7 +277,7 @@ export interface KAPLAYCtx<
      *
      * addPrefab("bean", [
      *     pos(40, 40)
-     * ])
+     * ]);
      * ```
      *
      * @returns The added game object that contains all properties and methods each component offers.
@@ -537,6 +556,28 @@ export interface KAPLAYCtx<
      * @subgroup Transform
      */
     rotate(a?: number): RotateComp;
+    /**
+     * Set the skew of a Game Object.
+     *
+     * @param x - The x skew to set.
+     * @param y - The y skew to set.
+     *
+     * @example
+     * ```js
+     * // skew x
+     * add([
+     *     sprite("bean"),
+     * 	   skew(45, 0),
+     * ]);
+     * ```
+     *
+     * @returns The skew comp.
+     * @since v4000.0
+     * @group Components
+     * @subgroup Transform
+     */
+    skew(x: number, y: number): SkewComp;
+    skew(s: Vec2): SkewComp;
     // #endregion
     /**
      * Sets the color of a Game Object (rgb 0-255).
@@ -560,9 +601,111 @@ export interface KAPLAYCtx<
      * @subgroup Rendering
      */
     color(r: number, g: number, b: number): ColorComp;
+    /**
+     * Sets the color of a Game Object using a previously created Color Object.
+     *
+     * @param c - The color to clone and set.
+     *
+     * @example
+     * ```js
+     * // blue frog
+     * const blue = rgb(0, 0, 255);
+     *
+     * add([
+     *     sprite("bean"),
+     *     color(blue),
+     * ]);
+     * ```
+     *
+     * @returns The color comp.
+     * @since v2000.0
+     * @group Components
+     * @subgroup Rendering
+     */
     color(c: Color): ColorComp;
+    /**
+     * Sets the color of a Game Object using an array (rgb 0-255).
+     *
+     * @param rgb - The color array to set [r, g, b].
+     *
+     * @example
+     * ```js
+     * // blue frog
+     * add([
+     *     sprite("bean"),
+     *     color([0, 0, 255]),
+     * ]);
+     * ```
+     *
+     * @returns The color comp.
+     * @since v2000.0
+     * @group Components
+     * @subgroup Rendering
+     */
     color(rgb: [number, number, number]): ColorComp;
-    color(c: CSSColor & (string | {})): ColorComp;
+    /**
+     * Sets the color of a Game Object using a CSS color keywords or hexadecimal string.
+     *
+     * @param c - The CSS color keyword or hexadecimal code to set.
+     *
+     * @example
+     * ```js
+     * // blue frog (HEX)
+     * add([
+     *     sprite("bean"),
+     *     color("#0000ff"),
+     * ]);
+     *
+     * // red cheese (CSS)
+     * add([
+     *     sprite("mark"),
+     *     color("red"),
+     * ]);
+     * ```
+     *
+     * @returns The color comp.
+     * @since v2000.0
+     * @group Components
+     * @subgroup Rendering
+     */
+    color(c: OptionalString<CSSColorKeywords>): ColorComp;
+    /**
+     * Sets the color of a Game Object using a hexadecimal literal number.
+     *
+     * @param c - The hexadecimal literal number.
+     *
+     * @example
+     * ```js
+     * // blue frog
+     * add([
+     *     sprite("bean"),
+     *     color(0x0000ff),
+     * ]);
+     * ```
+     *
+     * @returns The color comp.
+     * @since v2000.0
+     * @group Components
+     * @subgroup Rendering
+     */
+    color(c: number): ColorComp;
+    /**
+     * Sets the color of a Game Object to white (no effect).
+     *
+     * @example
+     * ```js
+     * // normal frog
+     * add([
+     *     sprite("bean"),
+     *     color(),
+     * ]);
+     * ```
+     *
+     * @returns The color comp.
+     * @since v2000.0
+     * @group Components
+     * @subgroup Rendering
+     */
     color(): ColorComp;
     /**
      * Sets the blend mode of a Game Object.
@@ -1161,6 +1304,10 @@ export interface KAPLAYCtx<
      * @requires {@link pos `pos()`}
      */
     move(dir: number | Vec2, speed: number): MoveComp;
+    /**
+     * Constraint components
+     */
+    constraint: typeof constraint;
     /**
      * Control the behavior of object when it goes out of view.
      *
@@ -1909,7 +2056,6 @@ export interface KAPLAYCtx<
     /**
      * Register an event that runs when an object is added
      *
-     * @param tag - The tag to match, only called for objects with a matching tag.
      * @param action - The function that runs when an object is added.
      *
      * @example
@@ -2985,9 +3131,10 @@ export interface KAPLAYCtx<
      * @subgroup Buttons API
      */
     onButtonPress(
-        btn: TButton | TButton[],
-        action: (btn: TButton) => void,
+        btn: string | string[],
+        action: (btn: string) => void,
     ): KEventController;
+    onButtonPress(action: (btn: string) => void): KEventController;
     /**
      * Register an event that runs when user release a defined button
      * (like "jump") on any input (keyboard, gamepad).
@@ -3001,10 +3148,10 @@ export interface KAPLAYCtx<
      * @subgroup Buttons API
      */
     onButtonRelease(
-        btn: TButton | TButton[],
-        action: (btn: TButton) => void,
+        btn: string | string[],
+        action: (btn: string) => void,
     ): KEventController;
-    onButtonRelease(action: (btn: TButton) => void): KEventController;
+    onButtonRelease(action: (btn: string) => void): KEventController;
     /**
      * Register an event that runs when user press a defined button
      * (like "jump") on any input (keyboard, gamepad).
@@ -3018,10 +3165,10 @@ export interface KAPLAYCtx<
      * @subgroup Buttons API
      */
     onButtonDown(
-        btn: TButton | TButton[],
-        action: (btn: TButton) => void,
+        btn: string | string[],
+        action: (btn: string) => void,
     ): KEventController;
-    onButtonDown(action: (btn: TButton) => void): KEventController;
+    onButtonDown(action: (btn: string) => void): KEventController;
     /**
      * Register an event that runs when current scene ends.
      *
@@ -3862,7 +4009,7 @@ export interface KAPLAYCtx<
      * @group Input
      * @subgroup Buttons API
      */
-    isButtonPressed(btn?: TButton | TButton[]): boolean;
+    isButtonPressed(btn?: string | string[]): boolean;
     /**
      * If any or certain bound button(s) are currently held down on any input (keyboard, gamepad).
      *
@@ -3882,7 +4029,7 @@ export interface KAPLAYCtx<
      * @group Input
      * @subgroup Buttons API
      */
-    isButtonDown(btn?: TButton | TButton[]): boolean;
+    isButtonDown(btn?: string | []): boolean;
     /**
      * If any or certain bound button(s) are just released last frame on any input (keyboard, gamepad).
      *
@@ -3902,7 +4049,7 @@ export interface KAPLAYCtx<
      * @group Input
      * @subgroup Buttons API
      */
-    isButtonReleased(btn?: TButton | TButton[]): boolean;
+    isButtonReleased(btn?: string | string[]): boolean;
     /**
      * Get a input binding from a button name.
      *
@@ -3912,7 +4059,16 @@ export interface KAPLAYCtx<
      * @group Input
      * @subgroup Buttons API
      */
-    getButton(btn: keyof TButtonDef): ButtonBinding;
+    getButton(btn: string): ButtonBinding;
+    /**
+     * Get all the input bindings.
+     *
+     * @returns The button definition.
+     * @since v4000.0
+     * @group Input
+     * @subgroup Buttons API
+     */
+    getButtons(): ButtonsDef;
     /**
      * Set a input binding for a button name.
      *
@@ -3939,7 +4095,7 @@ export interface KAPLAYCtx<
      * @group Input
      * @subgroup Buttons API
      */
-    pressButton(btn: TButton): void;
+    pressButton(btn: string): void;
     /**
      * Release a button virtually.
      *
@@ -3956,7 +4112,7 @@ export interface KAPLAYCtx<
      * @group Input
      * @subgroup Buttons API
      */
-    releaseButton(btn: TButton): void;
+    releaseButton(btn: string): void;
     /**
      * Get stick axis values from a gamepad.
      *
@@ -4632,9 +4788,9 @@ export interface KAPLAYCtx<
      */
     rgb(hex: string): Color;
     /**
-     * Create a color from CSS name.
+     * Create a color from CSS keyword.
      *
-     * @param cssColor - The CSS name.
+     * @param cssColor - The CSS keyword.
      *
      * @example
      * ```js
@@ -4645,7 +4801,7 @@ export interface KAPLAYCtx<
      * @since v3001.0.10
      * @experimental This feature is in experimental phase, it will be fully released in v3001.1.0
      */
-    rgb(cssColor: CSSColor): Color;
+    rgb(cssColor: CSSColorKeywords): Color;
     /**
      * Same as rgb(255, 255, 255).
      */
@@ -5257,6 +5413,19 @@ export interface KAPLAYCtx<
      */
     triangulate(pts: Vec2[]): Vec2[][];
     /**
+     * Sorts the array in-place using {@link https://en.wikipedia.org/wiki/Insertion_sort insertion sort}.
+     * This is useful when you have a persistent (not per-frame) array of objects and they change
+     * on each frame but not by much, but the list must remain sorted. (For example, the list could
+     * be returned by {@link get `get`} with the `liveUpdate` option enabled, and then stored somewhere.)
+     *
+     * @param compare - returns true if `[left, right]` is the correct order, false if `[right, left]` is the correct order.
+     *
+     * @since v4000.0
+     * @group Math
+     * @subgroup Advanced
+     */
+    insertionSort<T>(array: T[], compare: (left: T, right: T) => boolean): void;
+    /**
      * A Navigation Mesh.
      *
      * @since v3001.0
@@ -5357,14 +5526,45 @@ export interface KAPLAYCtx<
      */
     RNG: typeof RNG;
     /**
-     * Sorts the array in-place using {@link https://en.wikipedia.org/wiki/Insertion_sort insertion sort}.
-     * This is useful when you have a persistent (not per-frame) array of objects and they change
-     * on each frame but not by much, but the list must remain sorted. (For example, the list could
-     * be returned by {@link get `get`} with the `liveUpdate` option enabled, and then stored somewhere.)
+     * A rule in a rule system for AI. Note that this is only for advanced scenarios where the default rules are inadequate.
      *
-     * @param compare - returns true if `[left, right]` is the correct order, false if `[right, left]` is the correct order.
+     * @since v4000.0
+     * @group Math
+     * @subgroup AI
      */
-    insertionSort<T>(array: T[], compare: (left: T, right: T) => boolean): void;
+    Rule: typeof Rule;
+    /**
+     * A rule system for AI.
+     *
+     * @since v4000.0
+     * @group Math
+     * @subgroup AI
+     */
+    RuleSystem: typeof RuleSystem;
+    /**
+     * A node in a decision tree for AI.
+     *
+     * @since v4000.0
+     * @group Math
+     * @subgroup AI
+     */
+    DecisionNode: typeof DecisionNode;
+    /**
+     * A decision tree for AI.
+     *
+     * @since v4000.0
+     * @group Math
+     * @subgroup AI
+     */
+    DecisionTree: typeof DecisionTree;
+    /**
+     * A state machine for AI.
+     *
+     * @since v4000.0
+     * @group Math
+     * @subgroup AI
+     */
+    StateMachine: typeof StateMachine;
     /**
      * Define a scene.
      *
@@ -5386,7 +5586,7 @@ export interface KAPLAYCtx<
      *
      * @group Scenes
      */
-    scene(name: SceneName, def: SceneDef): void;
+    scene(name: string, def: SceneDef): void;
     /**
      * Go to a scene, passing all rest args to scene callback.
      *
@@ -5405,7 +5605,7 @@ export interface KAPLAYCtx<
      * @since v2000.0
      * @group Scenes
      */
-    go(name: SceneName, ...args: any): void;
+    go(name: string, ...args: any): void;
 
     /**
      * Push the current active scene to a stack and enters in the new scene
@@ -5432,7 +5632,7 @@ export interface KAPLAYCtx<
      * @since v3001.1
      * @group Scenes
      */
-    pushScene(id: SceneName, ...args: unknown[]): void;
+    pushScene(id: string, ...args: unknown[]): void;
 
     /**
      * Pops the scene from the stack and set as current active scene.
@@ -5457,7 +5657,7 @@ export interface KAPLAYCtx<
      * @since v3001.1
      * @group Scenes
      */
-    popScene(id: SceneName, ...args: unknown[]): void;
+    popScene(): void;
     /**
      * Define the layer names. Should be called before any objects are made.
      *
@@ -6121,13 +6321,21 @@ export interface KAPLAYCtx<
      */
     SystemPhase: typeof SystemPhase;
     /**
-     * Take a screenshot and get the data url of the image.
+     * Take a screenshot and get the PNG data url of the image.
      *
-     * @returns The dataURL of the image.
+     * @returns The dataURL of the PNG image.
      * @since v2000.0
      * @group Debug
      */
     screenshot(): string;
+    /**
+     * Take a screenshot and get the PNG data as a blob.
+     *
+     * @returns The blob of the image.
+     * @since v4000.0
+     * @group Debug
+     */
+    screenshotToBlob(): Promise<Blob>;
     /**
      * Trigger a file download from a url.
      *
@@ -6157,13 +6365,36 @@ export interface KAPLAYCtx<
      */
     downloadBlob(filename: string, blob: Blob): void;
     /**
-     * Start recording the canvas into a video. If framerate is not specified, a new frame will be captured each time the canvas changes.
+     * Start recording the canvas into a video.
+     *
+     * Note: This relies on the browser's support using the `MediaRecorder`
+     * API, and support is buggy at best from my (@dragoncoder047)'s testing.
+     * The best results I have gotten are with explicitly specifying `video/webm`
+     * and 60 FPS.
+     *
+     * Results with the default values are usually no good and even if both MIME
+     * type and framerate are specified, dropped frames, truncated videos,
+     * audio desynchronization, and even completely corrupted files have been gotten
+     * from this. `video/mp4` is technically supported by some browsers but I can't
+     * recommend it as MP4 has produced glitched and/or corrupted files much more often
+     * than WebM in my testing.
+     *
+     * If your players want to get a nice clean recording it's probably a better
+     * idea to point them to an external screen-recording program such as
+     * [OBS](https://obsproject.com).
+     *
+     * @param frameRate - Target frame rate for the output video.
+     * If framerate is not specified, a new frame will be captured each
+     * time the canvas changes.
+     * @param mimeTypes - A list of MIME types such as `video/mp4`, `video/webm`.
+     * The browser will select the first one it can do when the recording is started.
+     * If none are supported, an error will be thrown.
      *
      * @returns A control handle.
      * @since v2000.1
      * @group Debug
      */
-    record(frameRate?: number): Recording;
+    record(frameRate?: number, mimeTypes?: string[]): Recording;
     /**
      * Add an explosion effect.
      *
@@ -6280,22 +6511,6 @@ export interface KAPLAYCtx<
      * @group Info
      */
     canvas: HTMLCanvasElement;
-    /**
-     * End everything.
-     *
-     * @since v2000.0
-     * @group Start
-     */
-    quit: () => void;
-    /**
-     * Throws a new error and show up the Blue Screen.
-     *
-     * @param msg - The message for showing in the Blue Screen.
-     *
-     * @since v4000.0
-     * @group Start
-     */
-    throwError: (msg: string) => void;
     /**
      * EventHandler for one single event.
      *

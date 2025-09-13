@@ -107,6 +107,7 @@ export function drawPicture(
     if (opt.pos) transform.translateSelfV(opt.pos);
     if (opt.angle) transform.rotateSelf(opt.angle);
     if (opt.scale) transform.scaleSelfV(opt.scale);
+    if (opt.skew) transform.skewSelfV(opt.skew);
 
     const ctx = _k.gfx.renderer.ctx;
     const gl = ctx.gl;

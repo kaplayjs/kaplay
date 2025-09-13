@@ -2,6 +2,7 @@ import type { ButtonsDef } from "./app/inputBindings";
 import type { Asset } from "./assets/asset";
 import type { ShaderData, Uniform } from "./assets/shader";
 import type { KAPLAYCtx } from "./core/contextType";
+import type { TypesOpt } from "./core/taf";
 import type { GameObjRaw } from "./ecs/entity/GameObjRaw";
 import type { LineCap, LineJoin } from "./gfx/draw/drawLine";
 import type { Picture } from "./gfx/draw/drawPicture";
@@ -165,7 +166,8 @@ export type KGamepadButton =
     | "dpad-down"
     | "dpad-left"
     | "home"
-    | "capture";
+    | "capture"
+    | "touchpad";
 
 /**
  * A gamepad stick.
@@ -210,21 +212,17 @@ export type KGamepad = {
  */
 export type GameObjInspect = Record<Tag, string | null>;
 
-export type MustKAPLAYOpt =
-    & {
-        [K in keyof Pick<KAPLAYOpt, "scale">]-?: KAPLAYOpt[K];
-    }
-    & KAPLAYOpt;
+export type MustKAPLAYOpt = {
+    scale: number;
+    spriteAtlasPadding: number;
+} & KAPLAYOpt;
 
 /**
  * KAPLAY configurations.
  *
  * @group Start
  */
-export interface KAPLAYOpt<
-    TPlugin extends PluginList<any> = any,
-    TButtonDef extends ButtonsDef = any,
-> {
+export interface KAPLAYOpt {
     /**
      * Width of game.
      */
@@ -260,7 +258,8 @@ export interface KAPLAYOpt<
      */
     pixelDensity?: number;
     /**
-     * Disable antialias and enable sharp pixel display.
+     * Disable antialias and enable sharp pixel display. If you see rendering artifacts, set `pixelDensity`
+     * param to `Math.min(devicePixelRatio, 2)` and `scale` to FHD resolution (e.g. 960x540 would need scale 2). Will result in up to 4K.
      */
     crisp?: boolean;
     /**
@@ -322,7 +321,7 @@ export interface KAPLAYOpt<
      *
      * @since v30010
      */
-    buttons?: TButtonDef;
+    buttons?: ButtonsDef;
     /**
      * Limit framerate to an amount per second.
      *
@@ -342,7 +341,7 @@ export interface KAPLAYOpt<
     /**
      * List of plugins to import.
      */
-    plugins?: TPlugin;
+    plugins?: PluginList<any>;
     /**
      * Enter burp mode.
      */
@@ -357,7 +356,8 @@ export interface KAPLAYOpt<
     tagComponentIds?: boolean;
     /**
      * Padding used when adding sprites to texture atlas.
-     * @default 0
+     *
+     * @default 2
      */
     spriteAtlasPadding?: number;
     /**
@@ -382,6 +382,23 @@ export interface KAPLAYOpt<
      * @default 3000
      */
     loadTimeout?: number;
+    /**
+     * TypeScript Advanced Features (TAF) are a series of options for TypeScript
+     * only features.
+     *
+     * It should be created using the helper function `kaplayTypes`.
+     *
+     * ```ts
+     * kaplay({
+     *    types: kaplayTypes<Opt<{
+     *        scenes: {}
+     *    }>>();
+     * });
+     * ```
+     *
+     * @since v4000.0
+     */
+    types?: TypesOpt;
 }
 
 /**
@@ -613,6 +630,7 @@ export interface RenderProps {
     pos?: Vec2;
     scale?: Vec2;
     angle?: number;
+    skew?: Vec2;
     color?: Color;
     opacity?: number;
     fixed?: boolean;

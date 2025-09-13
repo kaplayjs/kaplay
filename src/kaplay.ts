@@ -1,11 +1,16 @@
 // The definitive version!
-import type { ButtonsDef } from "./app/inputBindings";
 import { SoundData } from "./assets/sound";
 import { loadSprite } from "./assets/sprite";
 import { createEmptyAudioBuffer } from "./audio/audio";
 import { createContext } from "./core/context";
 import type { KAPLAYCtx } from "./core/contextType";
 import { createEngine } from "./core/engine";
+import type {
+    KAPLAYCtxT,
+    KAPLAYOptTypeOptions,
+    KAPLAYTypeOptWithoutPlugins,
+    TypesOpt,
+} from "./core/taf";
 import beanSrc from "./data/assets/bean.png";
 import boomSpriteSrc from "./data/assets/boom.png";
 import burpSoundSrc from "./data/assets/burp.mp3";
@@ -23,6 +28,21 @@ import {
 
 // If KAPLAY was runned before
 let runned = false;
+
+type HasDefinedKeys<TObj, TCheck> = {
+    [K in keyof TCheck & keyof TObj]: TObj[K] extends undefined ? never : K;
+}[keyof TCheck & keyof TObj] extends never ? never : TObj;
+
+type ChooseKAPLAYCtx<O extends KAPLAYOptTypeOptions> =
+    HasDefinedKeys<O, KAPLAYTypeOptWithoutPlugins> extends never ? KAPLAYCtx
+        : KAPLAYCtxT<O>;
+
+type KAPLAYGame<O extends KAPLAYOptTypeOptions | undefined> = O extends
+    KAPLAYOptTypeOptions ? O["plugins"] extends PluginList<any> ?
+            & ChooseKAPLAYCtx<O>
+            & MergePlugins<O["plugins"]>
+    : ChooseKAPLAYCtx<O>
+    : KAPLAYCtx;
 
 /**
  * Initialize KAPLAY context. The starting point of all KAPLAY games.
@@ -59,14 +79,10 @@ let runned = false;
  * @group Start
  */
 export const kaplay = <
-    TPlugins extends PluginList<unknown> = [undefined],
-    TButtons extends ButtonsDef = {},
-    TButtonsName extends string = keyof TButtons & string,
+    O extends KAPLAYOpt,
 >(
-    gopt: KAPLAYOpt<TPlugins, TButtons> = {},
-): TPlugins extends [undefined] ? KAPLAYCtx<TButtons, TButtonsName>
-    : KAPLAYCtx<TButtons, TButtonsName> & MergePlugins<TPlugins> =>
-{
+    opt?: O,
+): KAPLAYGame<O> => {
     if (runned) {
         console.warn(
             "KAPLAY was runned before, cleaning state",
@@ -76,6 +92,8 @@ export const kaplay = <
         // @ts-ignore
         updateEngine(null);
     }
+
+    const gopt = opt ?? {} as KAPLAYOpt;
 
     runned = true;
 
@@ -104,10 +122,12 @@ export const kaplay = <
     const burpSnd = new SoundData(createEmptyAudioBuffer(audio.ctx));
 
     // load that burp sound
-    audio.ctx.decodeAudioData(burpSoundSrc.buffer.slice(0)).then((buf) => {
-        burpSnd.buf = buf;
-        game.defaultAssets.burp = burpSnd;
-    }).catch((err) => {
+    audio.ctx.decodeAudioData(burpSoundSrc.buffer.slice(0) as ArrayBuffer).then(
+        (buf) => {
+            burpSnd.buf = buf;
+            game.defaultAssets.burp = burpSnd;
+        },
+    ).catch((err) => {
         console.error("Failed to load burp: ", err);
     });
 
@@ -128,9 +148,11 @@ export const kaplay = <
         app.canvas.focus();
     }
 
-    return ctx as unknown as TPlugins extends [undefined]
-        ? KAPLAYCtx<TButtons, TButtonsName>
-        : KAPLAYCtx<TButtons, TButtonsName> & MergePlugins<TPlugins>;
+    return ctx as KAPLAYGame<O>;
+};
+
+export const kaplayTypes = <T extends TypesOpt = TypesOpt>(): T => {
+    return null as unknown as T;
 };
 
 export default kaplay;

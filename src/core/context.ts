@@ -71,6 +71,7 @@ import {
     surfaceEffector,
 } from "../ecs/components/physics/effectors";
 import { anchor } from "../ecs/components/transform/anchor";
+import { constraint } from "../ecs/components/transform/constraint";
 import { fixed } from "../ecs/components/transform/fixed";
 import { follow } from "../ecs/components/transform/follow";
 import { layer } from "../ecs/components/transform/layer";
@@ -79,6 +80,7 @@ import { offscreen } from "../ecs/components/transform/offscreen";
 import { pos } from "../ecs/components/transform/pos";
 import { rotate } from "../ecs/components/transform/rotate";
 import { scale } from "../ecs/components/transform/scale";
+import { skew } from "../ecs/components/transform/skew";
 import { z } from "../ecs/components/transform/z";
 import { KeepFlags } from "../ecs/entity/GameObjRaw";
 import { createPrefab, loadPrefab } from "../ecs/entity/prefab";
@@ -184,6 +186,9 @@ import {
     usePostEffect,
     width,
 } from "../gfx/stack";
+import { DecisionNode, DecisionTree } from "../math/ai/decisiontree";
+import { Rule, RuleSystem } from "../math/ai/rulesystem";
+import { StateMachine } from "../math/ai/statemachine";
 import { clamp } from "../math/clamp";
 import { Color, hsl2rgb, rgb } from "../math/color";
 import { easings } from "../math/easings";
@@ -320,6 +325,7 @@ export const createContext = (
         restDt: app.restDt,
         time: app.time,
         screenshot: app.screenshot,
+        screenshotToBlob: app.screenshotToBlob,
         record,
         isFocused: app.isFocused,
         setCursor: app.setCursor,
@@ -373,8 +379,9 @@ export const createContext = (
         readd,
         // comps
         pos,
-        scale,
         rotate,
+        scale,
+        skew,
         color,
         blend,
         opacity,
@@ -411,6 +418,7 @@ export const createContext = (
         z,
         layer,
         move,
+        constraint,
         offscreen,
         follow,
         fadeIn,
@@ -486,8 +494,9 @@ export const createContext = (
         isButtonPressed: app.isButtonPressed,
         isButtonDown: app.isButtonDown,
         isButtonReleased: app.isButtonReleased,
-        setButton: app.setButton,
         getButton: app.getButton,
+        getButtons: app.getButtons,
+        setButton: app.setButton,
         pressButton: app.pressButton,
         releaseButton: app.releaseButton,
         getLastInputDeviceType: app.getLastInputDeviceType,
@@ -516,6 +525,11 @@ export const createContext = (
         Mat23,
         Quad,
         RNG,
+        Rule,
+        RuleSystem,
+        DecisionNode,
+        DecisionTree,
+        StateMachine,
         insertionSort,
         rand,
         randi,
