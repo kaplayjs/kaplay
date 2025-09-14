@@ -6,11 +6,10 @@ import {
     MAX_BATCHED_VERTS,
     VERTEX_FORMAT,
 } from "../constants/general";
-import { go, popScene, pushScene } from "../game/scenes";
 import { type Color, rgb } from "../math/color";
 import { Mat23 } from "../math/math";
 import { Vec2 } from "../math/Vec2";
-import type { KAPLAYOpt, MustKAPLAYOpt } from "../types";
+import type { MustKAPLAYOpt } from "../types";
 import type { FontAtlas } from "./formatText";
 import { FrameBuffer } from "./FrameBuffer";
 import { BatchRenderer, type GfxCtx, Texture } from "./gfx";

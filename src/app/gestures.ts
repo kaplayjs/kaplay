@@ -11,12 +11,12 @@ enum Gesture {
     NotTap,
     Swipe,
     Rotate,
-    Pinch
+    Pinch,
 }
 let currentGesture = Gesture.None;
 
 function installGestureDetector() {
-    if (gestureDetectorInstalled) { return; }
+    if (gestureDetectorInstalled) return;
     gestureDetectorInstalled = true;
 
     let touches: Map<number, Vec2> = new Map<number, Vec2>();
@@ -44,7 +44,7 @@ function installGestureDetector() {
                         const index = keys.indexOf(touch.identifier);
                         const otherKey = keys[(index + 1) % keys.length];
                         const prevPos = touches.get(touch.identifier)!;
-                        const otherPos = touches.get(otherKey)!
+                        const otherPos = touches.get(otherKey)!;
                         const prevDist = otherPos.dist(prevPos);
                         const nextDist = otherPos.dist(pos);
                         // If touches are drifting, it is not a swipe
@@ -53,27 +53,35 @@ function installGestureDetector() {
                             currentGesture = Gesture.Pinch;
                         }
                         // If one touch is orbiting around the other, it is not a swipe
-                        else if (Vec2.angleBetween(prevPos.sub(otherPos), pos.sub(prevPos)) > 1) {
+                        else if (
+                            Vec2.angleBetween(
+                                prevPos.sub(otherPos),
+                                pos.sub(prevPos),
+                            ) > 1
+                        ) {
                             debug.log("Gesture.Rotate");
                             currentGesture = Gesture.Rotate;
                         }
                         else {
                             debug.log("Gesture.Swipe");
-                            currentGesture = Gesture.Swipe
+                            currentGesture = Gesture.Swipe;
                         }
                     }
                     else {
-                        currentGesture = Gesture.Swipe
+                        currentGesture = Gesture.Swipe;
                     }
                 }
             }
-            if (currentGesture)
+            if (currentGesture) {
                 switch (currentGesture) {
                     case Gesture.Tap:
                         // Triggered after lifting the touch
                         break;
                     case Gesture.Swipe:
-                        events.trigger(`swipe_${touches.size}`, pos.sub(touches.get(touch.identifier)!));
+                        events.trigger(
+                            `swipe_${touches.size}`,
+                            pos.sub(touches.get(touch.identifier)!),
+                        );
                         break;
                     case Gesture.Pinch:
                         // The pinch gesture uses 2 fingers, although 3 of 4 fingers should also work
@@ -84,8 +92,16 @@ function installGestureDetector() {
                             touches.set(touch.identifier, pos.clone());
                             p = [...touches.values()];
                             const newDistance = p[0].dist(p[1]);
-                            debug.log("pinch", scaleCenter, newDistance / oldDistance);
-                            events.trigger(`pinch_${touches.size}`, scaleCenter, newDistance / oldDistance);
+                            debug.log(
+                                "pinch",
+                                scaleCenter,
+                                newDistance / oldDistance,
+                            );
+                            events.trigger(
+                                `pinch_${touches.size}`,
+                                scaleCenter,
+                                newDistance / oldDistance,
+                            );
                             return;
                         }
                         break;
@@ -97,12 +113,19 @@ function installGestureDetector() {
                             touches.set(touch.identifier, pos.clone());
                             p = [...touches.values()];
                             const newVector = p[0].sub(p[1]);
-                            debug.log("rotate", Vec2.angleBetween(oldVector, newVector));
-                            events.trigger(`rotate_${touches.size}`, Vec2.angleBetween(oldVector, newVector));
+                            debug.log(
+                                "rotate",
+                                Vec2.angleBetween(oldVector, newVector),
+                            );
+                            events.trigger(
+                                `rotate_${touches.size}`,
+                                Vec2.angleBetween(oldVector, newVector),
+                            );
                             return;
                         }
                         break;
                 }
+            }
             touches.set(touch.identifier, pos.clone());
         });
 

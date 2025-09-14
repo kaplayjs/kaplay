@@ -16,7 +16,7 @@ gestures.onSwipe(2, (delta) => {
     debug.log(`two finger swipe by ${delta}, `);
 });
 
-gestures.onPinch(2, (center, scale) => {
+gestures.onPinch((center, scale) => {
     debug.log(`two finger pinch of ${scale} around ${center}`);
 });
 

@@ -15,6 +15,30 @@ export function calcTransform(obj: GameObj, tr: Mat23): Mat23 {
     return tr;
 }
 
+export function updateTransformRecursive(obj: GameObj) {
+    calcTransform(obj, obj.transform);
+    for (let i = 0; i < obj.children.length; i++) {
+        updateTransformRecursive(obj.children[i]);
+    }
+}
+
+export function updateChildrenTransformRecursive(obj: GameObj) {
+    for (let i = 0; i < obj.children.length; i++) {
+        updateTransformRecursive(obj.children[i]);
+    }
+}
+
+export function clampAngle(angle: number) {
+    angle = angle % 360;
+    if (angle < -180) {
+        angle += 360;
+    }
+    else if (angle > 180) {
+        angle -= 360;
+    }
+    return angle;
+}
+
 // convert a screen space coordinate to webgl normalized device coordinate
 export function screen2ndc(pt: Vec2, width: number, height: number, out: Vec2) {
     out.x = pt.x / width * 2 - 1;

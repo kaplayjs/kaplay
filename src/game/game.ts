@@ -17,7 +17,7 @@ import { KEventHandler } from "../events/events";
 import { Mat23, RNG } from "../math/math";
 import { Vec2 } from "../math/Vec2";
 import type { GameObj } from "../types";
-import type { SceneDef, SceneName, SceneState } from "./scenes";
+import type { SceneDef, SceneState } from "./scenes";
 
 /**
  * The "Game" it's all the state related to the game running
@@ -42,7 +42,7 @@ export type Game = {
     /**
      * The scenes of the game.
      */
-    scenes: Record<SceneName, SceneDef>;
+    scenes: Record<string, SceneDef>;
     /**
      * The scene stack that stores the scene states
      */
@@ -171,8 +171,8 @@ export const createGame = (): Game => {
         ],
 
         // Scenes
-        scenes: {} as Record<SceneName, SceneDef>,
-        currentScene: null as SceneName | null,
+        scenes: {} as Record<string, SceneDef>,
+        currentScene: null as string | null,
 
         // Layers
         layers: null as string[] | null,

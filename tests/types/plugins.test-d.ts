@@ -11,7 +11,7 @@ const implicitTestPlug = (k: KAPLAYCtx) => ({
 });
 
 describe("Type Inference from plugins", () => {
-    // Inferred Plugin
+    // Inferred plugins
 
     test("type of plugin should be inferred from kaplay({ plugins: [ implicitTestPlug ] })", () => {
         const k = kaplay({ plugins: [implicitTestPlug] });
@@ -19,7 +19,7 @@ describe("Type Inference from plugins", () => {
         k.getVersion;
 
         expectTypeOf(k).toEqualTypeOf<
-            KAPLAYCtx<{}, never> & ImplicitTestPlug
+            KAPLAYCtx & ImplicitTestPlug
         >();
     });
 });

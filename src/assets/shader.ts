@@ -5,7 +5,7 @@ import {
     VERT_TEMPLATE,
     VERTEX_FORMAT,
 } from "../constants/general";
-import type { GfxCtx } from "../gfx/gfx";
+import { type GfxCtx, Texture } from "../gfx/gfx";
 import { Color } from "../math/color";
 import { Mat4 } from "../math/Mat4";
 import { Mat23 } from "../math/math";
@@ -17,6 +17,40 @@ import { getErrorMessage } from "../utils/log";
 import { fetchText, loadProgress } from "./asset";
 import { Asset } from "./asset";
 import { fixURL } from "./utils";
+
+class TextureUnitManager {
+    private static textureMap = new Map<Texture, number>();
+    private static maxUnit = 1;
+
+    constructor() {}
+
+    static getUnitForTexture(texture: Texture): number {
+        let unit = TextureUnitManager.textureMap.get(texture);
+
+        if (unit === undefined) {
+            // Assign new unit
+            unit = TextureUnitManager.maxUnit++;
+
+            // Check if this unit is actually available
+            const gl = _k.gfx.gl;
+            if (gl.getParameter(gl.MAX_COMBINED_TEXTURE_IMAGE_UNITS) < unit) {
+                throw new Error(
+                    "Using too many concurrent textures. Try to use less additional textures as uniforms",
+                );
+            }
+
+            // Assign texture to unit
+            gl.activeTexture(gl.TEXTURE0 + unit);
+            gl.bindTexture(gl.TEXTURE_2D, texture.glTex);
+            gl.activeTexture(gl.TEXTURE0);
+
+            // Remember location
+            TextureUnitManager.textureMap.set(texture, unit);
+        }
+
+        return unit;
+    }
+}
 
 /**
  * @group Assets
@@ -160,6 +194,9 @@ export class Shader {
             }
             else if (val instanceof Vec2) {
                 gl.uniform2f(loc, val.x, val.y);
+            }
+            else if (val instanceof Texture) {
+                gl.uniform1i(loc, TextureUnitManager.getUnitForTexture(val));
             }
             else if (Array.isArray(val)) {
                 if (arrayIsNumber(val)) {

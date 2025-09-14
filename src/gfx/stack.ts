@@ -33,6 +33,11 @@ export function multTranslate(x: number, y: number) {
     _k.gfx.transform.translateSelf(x, y);
 }
 
+export function multRotate(angle: number | undefined) {
+    if (!angle) return;
+    _k.gfx.transform.rotateSelf(angle);
+}
+
 export function multScaleV(s: Vec2 | undefined) {
     if (s === undefined) return;
     if (s.x === 1 && s.y === 1) return;
@@ -44,9 +49,15 @@ export function multScale(x: number, y: number) {
     _k.gfx.transform.scaleSelf(x, y);
 }
 
-export function multRotate(angle: number | undefined) {
-    if (!angle) return;
-    _k.gfx.transform.rotateSelf(angle);
+export function multSkewV(s: Vec2 | undefined) {
+    if (s === undefined) return;
+    if (s.x === 0 && s.y === 0) return;
+    _k.gfx.transform.skewSelfV(s);
+}
+
+export function multSkew(x: number, y: number) {
+    if (x === 0 && y === 0) return;
+    _k.gfx.transform.skewSelf(x, y);
 }
 
 export function loadIdentity(m: Mat23) {
