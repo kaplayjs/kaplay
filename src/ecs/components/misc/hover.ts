@@ -15,33 +15,53 @@ export interface HoverComp extends HoverCompPrivate {
      */
     isClicked(): boolean;
     /**
-     * True if the object is being hovered over.
-     */
-    isHovering(): boolean;
-    /**
      * Register an event runs when clicked.
      *
      * @since v2000.1
      */
     onClick(f: () => void, btn?: MouseButton): KEventController;
+
     /**
-     * Register an event runs once when hovered.
+     * True if the object is being hovered over.
+     */
+    isHovering(): boolean;
+    /**
+     * Register an event which is triggered when the object is going from a non-hovered to a hovered state.
      *
      * @since v3000.0
      */
     onHover(action: () => void): KEventController;
     /**
-     * Register an event runs every frame when hovered.
+     * Register an event which is triggered when the object is being hovered over.
      *
      * @since v3000.0
      */
     onHoverUpdate(action: () => void): KEventController;
     /**
-     * Register an event runs once when unhovered.
+     * Register an event which is triggered when the object is going from a hovered to a non-hovered state.
      *
      * @since v3000.0
      */
     onHoverEnd(action: () => void): KEventController;
+
+    /**
+     * Returns true if the object has the focus.
+     *
+     * @since v4000.0
+     */
+    isFocus(): boolean;
+    /**
+     * Register an event which is triggered when the object receives the focus.
+     *
+     * @since v4000.0
+     */
+    onFocus(action: () => void): KEventController;
+    /**
+     * Register an event which is triggered when the object loses the focus.
+     *
+     * @since v4000.0
+     */
+    onBlur(action: () => void): KEventController;
 
     serialize(): any;
 }
@@ -87,6 +107,8 @@ function installSystem() {
     ]);
 }
 
+let _focus: GameObj | null = null;
+
 export function hover(opt: HoverCompOpt = {}): HoverComp {
     const _events: KEventController[] = [];
     let _isHovering: boolean = false;
@@ -98,9 +120,12 @@ export function hover(opt: HoverCompOpt = {}): HoverComp {
         id: "hover",
         require: ["area"],
 
-        destroy() {
+        destroy(this: GameObj) {
             for (const event of _events) {
                 event.cancel();
+            }
+            if (this === _focus) {
+                _focus = null;
             }
         },
 
@@ -110,6 +135,10 @@ export function hover(opt: HoverCompOpt = {}): HoverComp {
 
         isHovering(this: GameObj<AreaComp>) {
             return _isHovering;
+        },
+
+        isFocus(this: GameObj) {
+            return this === _focus;
         },
 
         // TODO: use just one onPress to check all hovers in one go
@@ -177,6 +206,14 @@ export function hover(opt: HoverCompOpt = {}): HoverComp {
             }
 
             _isClicked = isClicked;
+        },
+
+        onFocus(this: GameObj, action: () => void): KEventController {
+            return this.on("focus", action);
+        },
+
+        onBlur(this: GameObj, action: () => void): KEventController {
+            return this.on("blur", action);
         },
 
         serialize() {
