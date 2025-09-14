@@ -49,7 +49,19 @@ export interface HoverComp extends HoverCompPrivate {
      *
      * @since v4000.0
      */
-    isFocus(): boolean;
+    isFocus: boolean;
+    /**
+     * Returns the object which has the focus.
+     *
+     * @since v4000.0
+     */
+    currentFocus: GameObj;
+    /**
+     * Makes this object the focus.
+     *
+     * @since v4000.0
+     */
+    makeFocus(): void;
     /**
      * Register an event which is triggered when the object receives the focus.
      *
@@ -137,10 +149,6 @@ export function hover(opt: HoverCompOpt = {}): HoverComp {
             return _isHovering;
         },
 
-        isFocus(this: GameObj) {
-            return this === _focus;
-        },
-
         // TODO: use just one onPress to check all hovers in one go
         onClick(
             this: GameObj<HoverComp | AreaComp>,
@@ -206,6 +214,25 @@ export function hover(opt: HoverCompOpt = {}): HoverComp {
             }
 
             _isClicked = isClicked;
+        },
+
+        get isFocus() {
+            return this as unknown as GameObj === _focus;
+        },
+
+        get currentFocus() {
+            return _focus;
+        },
+
+        makeFocus(this: GameObj) {
+            if (this === _focus) {
+                return;
+            }
+            if (_focus) {
+                _focus.trigger("blur");
+            }
+            _focus = this;
+            this.trigger("focus");
         },
 
         onFocus(this: GameObj, action: () => void): KEventController {
