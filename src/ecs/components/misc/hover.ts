@@ -6,7 +6,11 @@ import { system, SystemPhase } from "../../systems/systems";
 import type { AreaComp } from "../physics/area";
 
 interface HoverCompPrivate extends Comp {
-    setHoverAndClickState(isHovering: boolean, isClicked: boolean): void;
+    setHoverAndMouseState(
+        isHovering: boolean,
+        isPressed: boolean,
+        isDown: boolean,
+    ): void;
 }
 
 export interface HoverComp extends HoverCompPrivate {
@@ -14,6 +18,10 @@ export interface HoverComp extends HoverCompPrivate {
      * True if the object has been clicked.
      */
     isClicked(): boolean;
+    /**
+     * True if the object is being pressed.
+     */
+    isPressed: boolean;
     /**
      * Register an event runs when clicked.
      *
@@ -45,6 +53,13 @@ export interface HoverComp extends HoverCompPrivate {
     onHoverEnd(action: () => void): KEventController;
 
     /**
+     * Register an event which is triggered when the object is invoked, aka both mouse down and up inside the area.
+     *
+     * @since v4000.0
+     */
+    onInvoke(action: () => void): KEventController;
+
+    /**
      * Returns true if the object has the focus.
      *
      * @since v4000.0
@@ -55,7 +70,7 @@ export interface HoverComp extends HoverCompPrivate {
      *
      * @since v4000.0
      */
-    currentFocus: GameObj;
+    currentFocus: GameObj | null;
     /**
      * Makes this object the focus.
      *
@@ -107,12 +122,15 @@ function installSystem() {
     });
     system("hover", () => {
         const m = _k.game.fakeMouse ? _k.game.fakeMouse.pos : _k.app.mousePos();
-        const isClicked = _k.game.fakeMouse
+        const isPressed = _k.game.fakeMouse
             ? _k.game.fakeMouse.isPressed
             : _k.app.isMousePressed();
+        const isDown = _k.game.fakeMouse
+            ? _k.game.fakeMouse.isPressed
+            : _k.app.isMouseDown();
         hovers.forEach(hover => {
             const isHovering = hover.hasScreenPoint(m);
-            hover.setHoverAndClickState(isHovering, isClicked && isHovering);
+            hover.setHoverAndMouseState(isHovering, isPressed, isDown);
         });
     }, [
         SystemPhase.BeforeUpdate, // Because we use these states in update
@@ -124,7 +142,8 @@ let _focus: GameObj | null = null;
 export function hover(opt: HoverCompOpt = {}): HoverComp {
     const _events: KEventController[] = [];
     let _isHovering: boolean = false;
-    let _isClicked: boolean = false;
+    let _wasPressed: boolean = false;
+    let _isDown: boolean = false;
 
     installSystem();
 
@@ -142,7 +161,11 @@ export function hover(opt: HoverCompOpt = {}): HoverComp {
         },
 
         isClicked(): boolean {
-            return _isClicked;
+            return _isDown && _isHovering;
+        },
+
+        get isPressed(): boolean {
+            return _wasPressed && _isHovering;
         },
 
         isHovering(this: GameObj<AreaComp>) {
@@ -195,10 +218,11 @@ export function hover(opt: HoverCompOpt = {}): HoverComp {
             return this.on("hoverEnd", action);
         },
 
-        setHoverAndClickState(
+        setHoverAndMouseState(
             this: GameObj<HoverComp>,
             isHovering: boolean,
-            isClicked: boolean,
+            isPressed: boolean,
+            isDown: boolean,
         ) {
             if (_isHovering != isHovering) {
                 _isHovering = isHovering;
@@ -213,7 +237,24 @@ export function hover(opt: HoverCompOpt = {}): HoverComp {
                 this.trigger("hoverUpdate");
             }
 
-            _isClicked = isClicked;
+            // If the mouse just went down, and we were inside the area, we go into the pressed state
+            if (isPressed && isHovering) {
+                _wasPressed = true;
+            }
+            // If the mouse was released, we leave the pressed state
+            else if (_wasPressed && !(isPressed || isDown)) {
+                _wasPressed = false;
+                // If we were hovering, we were invoked
+                if (isHovering) {
+                    this.trigger("invoke");
+                }
+            }
+
+            _isDown = isDown;
+        },
+
+        onInvoke(this: GameObj, action: () => void) {
+            return this.on("invoke", action);
         },
 
         get isFocus() {
