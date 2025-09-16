@@ -111,7 +111,7 @@ best friend, lajbel, can put the correct version name here
 
 ### Fixed
 
-- Now error screen should be instantly showed - @lajbel
+- Now error screen should be instantly shown - @lajbel
 
 ### Changed
 
