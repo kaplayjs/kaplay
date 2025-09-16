@@ -100,7 +100,11 @@ export interface GameObjRaw {
      * @readonly
      * @since v3001.0
      */
-    tags: string[];
+    readonly tags: readonly Tag[];
+    /*
+     * Tags as a set for faster testing operations.
+     */
+    readonly tagsAsSet: Set<Tag>;
     /**
      * Calculated transform matrix of a game object.
      *
@@ -625,6 +629,10 @@ export const GameObjRawPrototype: Omit<InternalGameObjRaw, AppEvents> = {
 
     get tags() {
         return Array.from(this._tags);
+    },
+
+    get tagsAsSet() {
+        return this._tags;
     },
 
     // #endregion
