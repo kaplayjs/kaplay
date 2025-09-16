@@ -43,7 +43,7 @@ export function skew(...args: Vec2Args): SkewComp {
         set skew(value: Vec2) {
             if (value instanceof Vec2 === false) {
                 throw Error(
-                    "The scale property on skew is a vector.",
+                    "The skew property on skew is a vector.",
                 );
             }
 
