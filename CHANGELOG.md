@@ -109,6 +109,10 @@ best friend, lajbel, can put the correct version name here
 - Added texture uniforms, in order to access more than one texture at a time in
   shaders - @mflerackers
 
+### Fixed
+
+- Now error screen should be instantly shown - @lajbel
+
 ### Changed
 
 - Now, you can use `color(c)` with a hexadecimal literal number (ex: 0x00ff00) -
