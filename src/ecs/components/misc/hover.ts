@@ -1,7 +1,9 @@
 import type { KEventController } from "../../../events/events";
 import { onAdd, onDestroy, onUnuse, onUse } from "../../../events/globalEvents";
+import { onSceneLeave } from "../../../game/scenes";
 import { _k } from "../../../shared";
-import type { Comp, GameObj, MouseButton } from "../../../types";
+import type { Comp, GameObj, Key, MouseButton } from "../../../types";
+import { getTreeRoot } from "../../entity/utils";
 import { system, SystemPhase } from "../../systems/systems";
 import type { AreaComp } from "../physics/area";
 
@@ -96,12 +98,13 @@ export interface HoverComp extends HoverCompPrivate {
 export type HoverCompOpt = {};
 
 let systemInstalled = false;
+// TODO: use a live query for this
+const hovers: Set<GameObj<HoverComp | AreaComp>> = new Set();
 
 function installSystem() {
     if (systemInstalled) return;
     systemInstalled = true;
-    // TODO: use a live query for this
-    const hovers: Set<GameObj<HoverComp | AreaComp>> = new Set();
+
     onAdd(obj => {
         if (obj.has("hover")) {
             hovers.add(obj as GameObj<HoverComp | AreaComp>);
@@ -135,6 +138,51 @@ function installSystem() {
     }, [
         SystemPhase.BeforeUpdate, // Because we use these states in update
     ]);
+
+    installMouseHandlers();
+    getTreeRoot().on("sceneEnter", () => {
+        installMouseHandlers();
+    });
+}
+
+function installMouseHandlers() {
+    if (_k.game.fakeMouse) {
+        _k.game.fakeMouse.onPress(() => {
+            const p = _k.game.fakeMouse
+                ? _k.game.fakeMouse.pos
+                : _k.app.mousePos();
+            hovers.forEach(hover => {
+                if (hover.hasScreenPoint(p)) {
+                    hover.trigger("click");
+                }
+            });
+        });
+    }
+
+    _k.app.onMousePress((m: MouseButton) => {
+        const p = _k.game.fakeMouse ? _k.game.fakeMouse.pos : _k.app.mousePos();
+        hovers.forEach(hover => {
+            if (hover.hasScreenPoint(p)) {
+                hover.trigger("click");
+            }
+        });
+    });
+}
+
+function installKeyboardHandler() {
+    _k.app.onKeyPress((key: Key) => {
+        switch (key) {
+            case "enter":
+                _focus?.trigger("invoke");
+                break;
+            case "tab":
+                if (_k.app.isKeyDown("shift")) {
+                }
+                else {
+                }
+                break;
+        }
+    });
 }
 
 let _focus: GameObj | null = null;
@@ -178,7 +226,9 @@ export function hover(opt: HoverCompOpt = {}): HoverComp {
             action: () => void,
             btn: MouseButton = "left",
         ): KEventController {
-            if (_k.game.fakeMouse) {
+            return this.on("click", action);
+        },
+        /*    if (_k.game.fakeMouse) {
                 // TODO: What about this one? It can't be cancelled
                 _k.game.fakeMouse.onPress(() => {
                     const isHovering = this.hasScreenPoint(
@@ -204,7 +254,7 @@ export function hover(opt: HoverCompOpt = {}): HoverComp {
             });
 
             return e;
-        },
+        },*/
 
         onHover(this: GameObj, action: () => void): KEventController {
             return this.on("hoverBegin", action);
@@ -237,6 +287,7 @@ export function hover(opt: HoverCompOpt = {}): HoverComp {
                 this.trigger("hoverUpdate");
             }
 
+            // TODO: We should actually do this with the top most hovered object only
             // If the mouse just went down, and we were inside the area, we go into the pressed state
             if (isPressed && isHovering) {
                 _wasPressed = true;
