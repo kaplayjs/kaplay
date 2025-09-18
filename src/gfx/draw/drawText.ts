@@ -106,6 +106,13 @@ export interface CharTransform {
     scale?: Vec2 | number;
 
     /**
+     * Skew transformation to skew each of the characters, in degrees of tilt.
+     * When a number, it skews the text to the right as with italic text.
+     * Given a 2D vector, it affects the skew of the horizontal and vertical sides.
+     */
+    skew?: Vec2 | number;
+
+    /**
      * Increases the amount of degrees to rotate the text character.
      */
     angle?: number;

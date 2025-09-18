@@ -45,12 +45,14 @@ function applyCharTransform(fchar: FormattedChar, tr: CharTransform) {
     }
     if (tr.shader !== undefined) fchar.shader = tr.shader;
     if (tr.uniform !== undefined) fchar.uniform = tr.uniform;
+    if (typeof tr.skew === "number") tr.skew = vec2(-tr.skew, 0);
     if (tr.override) {
         Object.assign(fchar, tr);
         return;
     }
     if (tr.pos) fchar.pos = fchar.pos.add(tr.pos);
     if (tr.scale) fchar.scale = fchar.scale.scale(vec2(tr.scale));
+    if (tr.skew) fchar.skew = fchar.skew.add(vec2(tr.skew));
     if (tr.angle) fchar.angle += tr.angle;
     if (tr.color && fchar.ch.length === 1) {
         fchar.color = fchar.color.mult(tr.color);
@@ -337,6 +339,7 @@ export function formatText(opt: DrawTextOpt): FormattedText {
                 opacity: opt.opacity ?? 1,
                 color: opt.color ?? Color.WHITE,
                 scale: vec2(scale),
+                skew: vec2(0),
                 angle: 0,
                 font: defaultFontValue,
                 stretchInPlace: true,
