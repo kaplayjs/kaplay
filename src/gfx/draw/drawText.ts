@@ -106,9 +106,9 @@ export interface CharTransform {
     scale?: Vec2 | number;
 
     /**
-     * Scale transformation to apply to the text character's current scale.
-     * When a number, it is scaled uniformly.
-     * Given a 2D vector, it is scaled independently along the X and Y axis.
+     * Skew transformation to skew each of the characters, in degrees of tilt.
+     * When a number, it skews the text to the right as with italic text.
+     * Given a 2D vector, it affects the skew of the horizontal and vertical sides.
      */
     skew?: Vec2 | number;
 
