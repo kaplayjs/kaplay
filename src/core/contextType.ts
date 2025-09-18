@@ -114,6 +114,7 @@ import type { Collision } from "../ecs/systems/Collision";
 import type { SystemPhase } from "../ecs/systems/systems";
 import type { GameObjEventNames, GameObjEvents } from "../events/eventMap";
 import type { KEvent, KEventController, KEventHandler } from "../events/events";
+import type { AppScope, SceneScope } from "../events/scopes";
 import type { SceneDef } from "../game/scenes";
 import type { anchorPt } from "../gfx/anchor";
 import type { DrawBezierOpt } from "../gfx/draw/drawBezier";
@@ -205,7 +206,7 @@ export interface KAPLAYCtx {
      * @readonly
      * @group Misc
      */
-    _k: Engine & { k: KAPLAYCtx };
+    _k: Engine & { k: KAPLAYCtx; };
     /**
      * End everything.
      *
@@ -5580,7 +5581,7 @@ export interface KAPLAYCtx {
      *
      * @group Scenes
      */
-    scene(name: string, def: SceneDef): void;
+    scene: SceneScope;
     /**
      * Go to a scene, passing all rest args to scene callback.
      *
@@ -6283,6 +6284,17 @@ export interface KAPLAYCtx {
      * @group Debug
      */
     debug: Debug;
+    /**
+     * The app scope for creating global events that doesn't stop in scene change.
+     * 
+     * @example
+     * ```js
+     * app.onKeyPress("f", () => {
+     *     // This gonna run in all scenes
+     * });
+     * ```
+     */
+    app: AppScope;
     /**
      * Import a plugin.
      *

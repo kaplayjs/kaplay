@@ -1603,22 +1603,6 @@ export function attachAppToGameObjRaw() {
 
             this.onDestroy(() => ev.cancel());
 
-            // This only happens if obj.has("stay");
-            this.on("sceneEnter", () => {
-                // All app events are already canceled by changing the scene
-                // so we don't need to event.cancel();
-                this._inputEvents.splice(this._inputEvents.indexOf(ev), 1);
-
-                // create a new event with the same arguments
-                // @ts-ignore
-                const newEv = _k.app[e]?.(...args);
-
-                // Replace the old event handler with the new one
-                // old KEventController.cancel() => new KEventController.cancel()
-                KEventController.replace(ev, newEv);
-                this._inputEvents.push(ev);
-            });
-
             return ev;
         };
     }
