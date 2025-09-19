@@ -4,7 +4,11 @@ import {
     type InternalGameObjRaw,
 } from "../ecs/entity/GameObjRaw";
 import { scene, type SceneDef } from "../game/scenes";
+import { _k } from "../shared";
 import type { KEventController } from "./events";
+import type { GameEventHandlers } from "./scopedHandlers";
+
+type HasAllRequiredKeys<T, K extends string> = K extends keyof T ? true : false;
 
 export type SceneScope =
     & {
@@ -37,6 +41,9 @@ const appEvs = [
     "onButtonDown",
     "onButtonRelease",
 ] satisfies [...AppEvents[]];
+
+type Events = (typeof appEvs)[number];
+type Check = HasAllRequiredKeys<GameEventHandlers, Events>;
 
 // TODO: Maybe reach a better solution so we can properly clear the EventController instead qof just cancel the controllers?
 export const initCanvasAppSceneScope = (app: App): SceneScope => {
