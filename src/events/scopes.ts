@@ -1,7 +1,11 @@
 import type { App, AppEvents } from "../app/app";
-import { type InternalGameObjRaw } from "../ecs/entity/GameObjRaw";
+import { GameObjRawPrototype, type InternalGameObjRaw } from "../ecs/entity/GameObjRaw";
 import { scene, type SceneDef } from "../game/scenes";
 import type { KEventController } from "./events";
+
+export interface CanvasAppHandlers {
+    
+}
 
 export type SceneScope = {
 	(id: string, def: SceneDef): void;
@@ -66,3 +70,21 @@ export const initCanvasAppAppScope = (app: App): AppScope => {
 
 	return appScope as SceneScope;
 };
+
+export function attachAppToGameObjRaw(app: App) {
+    for (const e of appEvs) {
+        const obj = GameObjRawPrototype as Record<string, any>;
+
+        obj[e] = function(this: InternalGameObjRaw, ...args: [any]) {
+            // @ts-ignore
+            const ev: KEventController = app[e]?.(...args);
+            ev.paused = this.paused;
+
+            this._inputEvents.push(ev);
+
+            this.onDestroy(() => ev.cancel());
+
+            return ev;
+        };
+    }
+}

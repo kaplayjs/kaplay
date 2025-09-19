@@ -206,7 +206,7 @@ export interface KAPLAYCtx {
      * @readonly
      * @group Misc
      */
-    _k: Engine & { k: KAPLAYCtx; };
+    _k: Engine & { k: KAPLAYCtx };
     /**
      * End everything.
      *
@@ -6286,7 +6286,7 @@ export interface KAPLAYCtx {
     debug: Debug;
     /**
      * The app scope for creating global events that doesn't stop in scene change.
-     * 
+     *
      * @example
      * ```js
      * app.onKeyPress("f", () => {
