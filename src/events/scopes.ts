@@ -3,9 +3,7 @@ import { GameObjRawPrototype, type InternalGameObjRaw } from "../ecs/entity/Game
 import { scene, type SceneDef } from "../game/scenes";
 import type { KEventController } from "./events";
 
-export interface CanvasAppHandlers {
-    
-}
+
 
 export type SceneScope = {
 	(id: string, def: SceneDef): void;
