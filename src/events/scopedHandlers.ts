@@ -1,7 +1,16 @@
 import type { Vec2 } from "../math/Vec2";
-import type { Key, MouseButton, KGamepad, KGamepadButton, KGamepadStick } from "../types";
+import type {
+    Key,
+    KGamepad,
+    KGamepadButton,
+    KGamepadStick,
+    MouseButton,
+} from "../types";
 import type { KEventController } from "./events";
 
+/**
+ * General usage event handlers that are used across KAPLAYCtx, app & scene scopes and object.
+ */
 export interface GameEventHandlers {
     /**
      * Register an event that runs every frame when a key is held down.
@@ -101,6 +110,24 @@ export interface GameEventHandlers {
         k: Key | Key[],
         action: (k: Key) => void,
     ): KEventController;
+    /**
+     * Register an event that runs when user presses any key and fires repeatedly when the keys are being held down.
+     *
+     * @param action - The function to run when the event is triggered.
+     *
+     * @example
+     * ```js
+     * // delete last character when "backspace" is being pressed and held
+     * onKeyPressRepeat((key) => {
+     *     debug.log(`key ${key} is being repeatedly pressed`)
+     * });
+     * ```
+     *
+     * @returns The event controller.
+     * @since v3000.1
+     * @group Input
+     * @subgroup Keyboard
+     */
     onKeyPressRepeat(action: (k: Key) => void): KEventController;
     /**
      * Register an event that runs when user release certain keys.
@@ -692,14 +719,4 @@ export interface GameEventHandlers {
         action: (btn: string) => void,
     ): KEventController;
     onButtonDown(action: (btn: string) => void): KEventController;
-    /**
-     * Register an event that runs when current scene ends.
-     *
-     * @param action - The function to run when the event is triggered.
-     *
-     * @returns The event controller.
-     * @since v3000.0
-     * @group Events
-     */
- 
 }
