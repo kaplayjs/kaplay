@@ -129,21 +129,19 @@ function installSystem() {
             hovers.delete(obj as GameObj<HoverComp | AreaComp>);
         }
     });
-    system("hover",
-        () => {
-            const m = _k.game.fakeMouse ? _k.game.fakeMouse.pos : _k.app.mousePos();
-            const isPressed = _k.game.fakeMouse
-                ? _k.game.fakeMouse.isPressed
-                : _k.app.isMousePressed();
-            const isDown = _k.game.fakeMouse
-                ? _k.game.fakeMouse.isPressed
-                : _k.app.isMouseDown();
-            hovers.forEach(hover => {
-                const isHovering = hover.hasScreenPoint(m);
-                hover.setHoverAndMouseState(isHovering, isPressed, isDown);
-            });
-        },
-        [SystemPhase.BeforeUpdate] // Because we use these states in update
+    system("hover", () => {
+        const m = _k.game.fakeMouse ? _k.game.fakeMouse.pos : _k.app.mousePos();
+        const isPressed = _k.game.fakeMouse
+            ? _k.game.fakeMouse.isPressed
+            : _k.app.isMousePressed();
+        const isDown = _k.game.fakeMouse
+            ? _k.game.fakeMouse.isPressed
+            : _k.app.isMouseDown();
+        hovers.forEach(hover => {
+            const isHovering = hover.hasScreenPoint(m);
+            hover.setHoverAndMouseState(isHovering, isPressed, isDown);
+        });
+    }, [SystemPhase.BeforeUpdate] // Because we use these states in update
     );
 
     installMouseHandlers();
@@ -187,7 +185,11 @@ function installKeyboardHandler() {
                     const children = _focus.parent!.children;
                     const index = children.indexOf(_focus);
                     const nextIndex = (index + 1) % children.length;
-                    for (let i = nextIndex; i != index; i = (i + 1) % children.length) {
+                    for (
+                        let i = nextIndex;
+                        i != index;
+                        i = (i + 1) % children.length
+                    ) {
                         const child = children[i];
                         if (child.canFocus) {
                             child.makeFocus();
@@ -201,7 +203,11 @@ function installKeyboardHandler() {
                     const children = _focus.parent!.children;
                     const index = children.indexOf(_focus);
                     const prevIndex = (index - 1) % children.length;
-                    for (let i = prevIndex; i != index; i = (i - 1) % children.length) {
+                    for (
+                        let i = prevIndex;
+                        i != index;
+                        i = (i - 1) % children.length
+                    ) {
                         const child = children[i];
                         if (child.canFocus) {
                             child.makeFocus();
