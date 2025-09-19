@@ -17,6 +17,10 @@ interface HoverCompPrivate extends Comp {
 
 export interface HoverComp extends HoverCompPrivate {
     /**
+     * True if the object can receive the focus.
+     */
+    canFocus: boolean;
+    /**
      * True if the object has been clicked.
      */
     isClicked(): boolean;
@@ -95,7 +99,9 @@ export interface HoverComp extends HoverCompPrivate {
     serialize(): any;
 }
 
-export type HoverCompOpt = {};
+export type HoverCompOpt = {
+    canFocus?: boolean;
+};
 
 let systemInstalled = false;
 // TODO: use a live query for this
@@ -123,21 +129,22 @@ function installSystem() {
             hovers.delete(obj as GameObj<HoverComp | AreaComp>);
         }
     });
-    system("hover", () => {
-        const m = _k.game.fakeMouse ? _k.game.fakeMouse.pos : _k.app.mousePos();
-        const isPressed = _k.game.fakeMouse
-            ? _k.game.fakeMouse.isPressed
-            : _k.app.isMousePressed();
-        const isDown = _k.game.fakeMouse
-            ? _k.game.fakeMouse.isPressed
-            : _k.app.isMouseDown();
-        hovers.forEach(hover => {
-            const isHovering = hover.hasScreenPoint(m);
-            hover.setHoverAndMouseState(isHovering, isPressed, isDown);
-        });
-    }, [
-        SystemPhase.BeforeUpdate, // Because we use these states in update
-    ]);
+    system("hover",
+        () => {
+            const m = _k.game.fakeMouse ? _k.game.fakeMouse.pos : _k.app.mousePos();
+            const isPressed = _k.game.fakeMouse
+                ? _k.game.fakeMouse.isPressed
+                : _k.app.isMousePressed();
+            const isDown = _k.game.fakeMouse
+                ? _k.game.fakeMouse.isPressed
+                : _k.app.isMouseDown();
+            hovers.forEach(hover => {
+                const isHovering = hover.hasScreenPoint(m);
+                hover.setHoverAndMouseState(isHovering, isPressed, isDown);
+            });
+        },
+        [SystemPhase.BeforeUpdate] // Because we use these states in update
+    );
 
     installMouseHandlers();
     getTreeRoot().on("sceneEnter", () => {
@@ -170,17 +177,41 @@ function installMouseHandlers() {
 }
 
 function installKeyboardHandler() {
-    _k.app.onKeyPress((key: Key) => {
-        switch (key) {
+    _k.app.onButtonPress((button: string) => {
+        switch (button) {
             case "enter":
                 _focus?.trigger("invoke");
                 break;
-            case "tab":
-                if (_k.app.isKeyDown("shift")) {
-                }
-                else {
+            case "focus-next": // tab
+                if (_focus) {
+                    const children = _focus.parent!.children;
+                    const index = children.indexOf(_focus);
+                    const nextIndex = (index + 1) % children.length;
+                    for (let i = nextIndex; i != index; i = (i + 1) % children.length) {
+                        const child = children[i];
+                        if (child.canFocus) {
+                            child.makeFocus();
+                            return;
+                        }
+                    }
                 }
                 break;
+            case "focus-prev": // shift-tab
+                if (_focus) {
+                    const children = _focus.parent!.children;
+                    const index = children.indexOf(_focus);
+                    const prevIndex = (index - 1) % children.length;
+                    for (let i = prevIndex; i != index; i = (i - 1) % children.length) {
+                        const child = children[i];
+                        if (child.canFocus) {
+                            child.makeFocus();
+                            return;
+                        }
+                    }
+                }
+                break;
+            case "tab-next": // ctrl-tab
+            case "tab-prev": // shift-ctrl-tab
         }
     });
 }
@@ -188,9 +219,8 @@ function installKeyboardHandler() {
 let _focus: GameObj | null = null;
 
 export function hover(opt: HoverCompOpt = {}): HoverComp {
-    const _events: KEventController[] = [];
-    let _isHovering: boolean = false;
-    let _wasPressed: boolean = false;
+    let _isHovering: boolean = false; // True if currently hovering
+    let _wasPressed: boolean = false; // True if hovering when the mouse went down
     let _isDown: boolean = false;
 
     installSystem();
@@ -198,11 +228,9 @@ export function hover(opt: HoverCompOpt = {}): HoverComp {
     return {
         id: "hover",
         require: ["area"],
+        canFocus: opt.canFocus ?? false,
 
         destroy(this: GameObj) {
-            for (const event of _events) {
-                event.cancel();
-            }
             if (this === _focus) {
                 _focus = null;
             }
@@ -220,7 +248,6 @@ export function hover(opt: HoverCompOpt = {}): HoverComp {
             return _isHovering;
         },
 
-        // TODO: use just one onPress to check all hovers in one go
         onClick(
             this: GameObj<HoverComp | AreaComp>,
             action: () => void,
@@ -228,33 +255,6 @@ export function hover(opt: HoverCompOpt = {}): HoverComp {
         ): KEventController {
             return this.on("click", action);
         },
-        /*    if (_k.game.fakeMouse) {
-                // TODO: What about this one? It can't be cancelled
-                _k.game.fakeMouse.onPress(() => {
-                    const isHovering = this.hasScreenPoint(
-                        _k.game.fakeMouse
-                            ? _k.game.fakeMouse.pos
-                            : _k.app.mousePos(),
-                    );
-                    if (isHovering) {
-                        action();
-                    }
-                });
-            }
-
-            const e = this.onMousePress(btn, () => {
-                const isHovering = this.hasScreenPoint(
-                    _k.game.fakeMouse
-                        ? _k.game.fakeMouse.pos
-                        : _k.app.mousePos(),
-                );
-                if (isHovering) {
-                    action();
-                }
-            });
-
-            return e;
-        },*/
 
         onHover(this: GameObj, action: () => void): KEventController {
             return this.on("hoverBegin", action);
@@ -291,6 +291,9 @@ export function hover(opt: HoverCompOpt = {}): HoverComp {
             // If the mouse just went down, and we were inside the area, we go into the pressed state
             if (isPressed && isHovering) {
                 _wasPressed = true;
+                if (this.canFocus) {
+                    this.makeFocus();
+                }
             }
             // If the mouse was released, we leave the pressed state
             else if (_wasPressed && !(isPressed || isDown)) {
