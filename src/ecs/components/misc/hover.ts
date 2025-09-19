@@ -129,19 +129,25 @@ function installSystem() {
             hovers.delete(obj as GameObj<HoverComp | AreaComp>);
         }
     });
-    system("hover", () => {
-        const m = _k.game.fakeMouse ? _k.game.fakeMouse.pos : _k.app.mousePos();
-        const isPressed = _k.game.fakeMouse
-            ? _k.game.fakeMouse.isPressed
-            : _k.app.isMousePressed();
-        const isDown = _k.game.fakeMouse
-            ? _k.game.fakeMouse.isPressed
-            : _k.app.isMouseDown();
-        hovers.forEach(hover => {
-            const isHovering = hover.hasScreenPoint(m);
-            hover.setHoverAndMouseState(isHovering, isPressed, isDown);
-        });
-    }, [SystemPhase.BeforeUpdate] // Because we use these states in update
+    system<HoverComp | AreaComp>(
+        "hover",
+        (hovers) => {
+            const m = _k.game.fakeMouse
+                ? _k.game.fakeMouse.pos
+                : _k.app.mousePos();
+            const isPressed = _k.game.fakeMouse
+                ? _k.game.fakeMouse.isPressed
+                : _k.app.isMousePressed();
+            const isDown = _k.game.fakeMouse
+                ? _k.game.fakeMouse.isPressed
+                : _k.app.isMouseDown();
+            for (const hover of hovers) {
+                const isHovering = hover.hasScreenPoint(m);
+                hover.setHoverAndMouseState(isHovering, isPressed, isDown);
+            }
+        },
+        [SystemPhase.BeforeUpdate], // Because we use these states in update
+        hovers,
     );
 
     installMouseHandlers();
