@@ -108,7 +108,6 @@ export const initAppState = (opt: {
     buttons?: ButtonsDef;
 }) => {
     const buttons = opt.buttons ?? {};
-
     return {
         canvas: opt.canvas,
         buttons: buttons,
@@ -144,6 +143,7 @@ export const initAppState = (opt: {
         lastWidth: opt.canvas.offsetWidth,
         lastHeight: opt.canvas.offsetHeight,
         events: new KEventHandler<AppEventMap>(),
+        sceneEvents: [] as KEventController[],
     };
 };
 

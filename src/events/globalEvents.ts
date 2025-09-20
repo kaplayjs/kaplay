@@ -9,7 +9,7 @@ import type { TupleWithoutFirst } from "../utils/types";
 import type { GameObjEventNames, GameObjEvents } from "./eventMap";
 import { KEventController } from "./events";
 
-export function on<Ev extends GameObjEventNames>(
+export function on<Ev extends GameObjEventNames | string & {}>(
     event: Ev,
     tag: Tag,
     cb: (obj: GameObj, ...args: TupleWithoutFirst<GameObjEvents[Ev]>) => void,
@@ -19,7 +19,7 @@ export function on<Ev extends GameObjEventNames>(
 
     const handleNew = (obj: GameObj) => {
         const ec = obj.on(event, (...args) => {
-            cb(obj, ...<TupleWithoutFirst<GameObjEvents[Ev]>> args);
+            cb(obj, ...<TupleWithoutFirst<GameObjEvents[Ev]>>args);
         });
         ec.paused = paused;
         if (obj2Handler.has(obj)) obj2Handler.get(obj)!.cancel();
@@ -112,9 +112,9 @@ export const onDraw = overload2((action: () => void): KEventController => {
 });
 
 export const onAdd = overload2((action: (obj: GameObj) => void) => {
-    return _k.game.events.on("add", action);
+    return _k.game.events.on("add", action); // [game] version
 }, (tag: Tag, action: (obj: GameObj) => void) => {
-    return on("add", tag, action);
+    return on("add", tag, action); // "on" version
 });
 
 export const onDestroy = overload2((action: (obj: GameObj) => void) => {
