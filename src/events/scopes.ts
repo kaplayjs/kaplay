@@ -8,8 +8,6 @@ import { _k } from "../shared";
 import type { KEventController } from "./events";
 import type { GameEventHandlers } from "./scopedHandlers";
 
-type HasAllRequiredKeys<T, K extends string> = K extends keyof T ? true : false;
-
 export type SceneScope =
     & {
         (id: string, def: SceneDef): void;
@@ -42,18 +40,15 @@ const appEvs = [
     "onButtonRelease",
 ] satisfies [...AppEvents[]];
 
-type Events = (typeof appEvs)[number];
-type Check = HasAllRequiredKeys<GameEventHandlers, Events>;
-
 // TODO: Maybe reach a better solution so we can properly clear the EventController instead qof just cancel the controllers?
-export const initCanvasAppSceneScope = (app: App): SceneScope => {
+export const createAppScope = (app: App, gameHandlers: GameEventHandlers): SceneScope => {
     const sceneScope = scene;
 
     for (const e of appEvs) {
         // @ts-expect-error
-        sceneScope[e] = function(this: InternalGameObjRaw, ...args: [any]) {
+        sceneScope[e] = function (this: InternalGameObjRaw, ...args: [any]) {
             // @ts-expect-error
-            const ev: KEventController = app[e]?.(...args);
+            const ev: KEventController = gameHandlers[e]?.(...args);
 
             app.state.sceneEvents.push(ev);
 
@@ -68,11 +63,11 @@ export type AppScope = {
     [K in keyof App as K extends `on${any}` ? K : never]: App[K];
 };
 
-export const initCanvasAppAppScope = (app: App): AppScope => {
+export const initCanvasAppAppScope = (gameHandlers: GameEventHandlers): AppScope => {
     const appScope = {} as Record<string, any>;
 
     for (const e of appEvs) {
-        appScope[e] = app[e];
+        appScope[e] = gameHandlers[e];
     }
 
     return appScope as SceneScope;
@@ -82,7 +77,7 @@ export function attachAppToGameObjRaw(app: App) {
     for (const e of appEvs) {
         const obj = GameObjRawPrototype as Record<string, any>;
 
-        obj[e] = function(this: InternalGameObjRaw, ...args: [any]) {
+        obj[e] = function (this: InternalGameObjRaw, ...args: [any]) {
             // @ts-ignore
             const ev: KEventController = app[e]?.(...args);
             ev.paused = this.paused;

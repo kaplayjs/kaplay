@@ -25,7 +25,7 @@ import { registerPrefabFactory } from "../ecs/entity/prefab";
 import {
     attachAppToGameObjRaw,
     initCanvasAppAppScope,
-    initCanvasAppSceneScope,
+    createAppScope,
 } from "../events/scopes";
 import { createGame } from "../game/game";
 import { createCanvas } from "../gfx/canvas";
@@ -64,7 +64,7 @@ export const createEngine = (gopt: KAPLAYOpt) => {
     const canvas = createCanvas(opt);
     const { fontCacheC2d, fontCacheCanvas } = createFontCache();
     const app = initApp({ canvas, ...gopt });
-    const sceneScope = initCanvasAppSceneScope(app);
+    const sceneScope = createAppScope(app);
     const appScope = initCanvasAppAppScope(app);
     attachAppToGameObjRaw(app);
 

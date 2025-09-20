@@ -10,10 +10,10 @@ import type {
     MouseButton,
     Tag,
 } from "../types";
-import { overload2 } from "../utils/overload";
 import type { TupleWithoutFirst } from "../utils/types";
 import type { GameObjEventNames, GameObjEvents } from "./eventMap";
 import type { KEventController } from "./events";
+import { on, onAdd, onDestroy, onDraw, onFixedUpdate, onTag, onUntag, onUnuse, onUpdate, onUse } from "./globalEvents";
 
 /**
  * General usage event handlers that are used across KAPLAYCtx, app & scene scopes and object.
@@ -414,54 +414,6 @@ export interface GameEventHandlers {
      * @subgroup Mouse
      */
     onScroll(action: (delta: Vec2) => void): KEventController;
-    /**
-     * Register an event that runs when tab is hidden.
-     *
-     * @param action - The function that is run what the tab is hidden.
-     *
-     * @example
-     * ```js
-     * // spooky ghost
-     * let ghosty = add([
-     *     pos(center()),
-     *     sprite("ghosty"),
-     *     anchor("center"),
-     * ]);
-     *
-     * // when switching tabs, this runs
-     * onHide(() => {
-     *     destroy(ghosty);
-     *     add([
-     *         text("There was never aa ghosttttt"),
-     *         pos(center()),
-     *         anchor("center")
-     *     ]);
-     * });
-     * ```
-     *
-     * @returns The event controller.
-     * @since v3001.0
-     * @group Events
-     */
-    onHide(action: () => void): KEventController;
-    /**
-     * Register an event that runs when tab is shown.
-     *
-     * @param action - The function that is run when the tab is shown.
-     *
-     * @example
-     * ```js
-     * // user has returned to this tab
-     * onShow(() => {
-     *     burp();
-     * });
-     * ```
-     *
-     * @returns The event controller.
-     * @since v3001.0
-     * @group Events
-     */
-    onShow(action: () => void): KEventController;
     /**
      * Register an event that runs when a gamepad is connected.
      *
@@ -988,36 +940,55 @@ export interface GameEventHandlers {
      * @group Events
      */
     onTag(action: (obj: GameObj, tag: string) => void): KEventController;
+    /**
+     * Register an event that runs when an object loses a tag.
+     *
+     * @param action - The function that runs when an object loses a tag.
+     * @param tag - The tag which was removed.
+     *
+     * @returns The event controller.
+     * @since v3001.1
+     * @group Events
+     */
+    onUntag(action: (obj: GameObj, tag: string) => void): KEventController;
     // #endregion
 }
 
-export const createGameEventHandlers = (app: App, root: GameObj) => {
+export const createGameEventHandlers = (app: App) => {
     const gameEventHandlers: GameEventHandlers = {
         // app related
-        onKeyDown: root.onKeyDown,
-        onKeyPress: root.onKeyPress,
-        onKeyPressRepeat: root.onKeyPressRepeat,
-        onKeyRelease: root.onKeyRelease,
-        onCharInput: root.onCharInput,
-        onMouseDown: root.onMouseDown,
-        onMousePress: root.onMousePress,
-        onMouseRelease: root.onMouseRelease,
-        onMouseMove: root.onMouseMove,
-        onTouchStart: root.onTouchStart,
-        onTouchEnd: root.onTouchEnd,
-        onTouchMove: root.onTouchMove,
-        onScroll: root.onScroll,
-        onHide: app.onHide,
-        onShow: app.onShow,
+        onKeyDown: app.onKeyDown,
+        onKeyPress: app.onKeyPress,
+        onKeyPressRepeat: app.onKeyPressRepeat,
+        onKeyRelease: app.onKeyRelease,
+        onCharInput: app.onCharInput,
+        onMouseDown: app.onMouseDown,
+        onMousePress: app.onMousePress,
+        onMouseRelease: app.onMouseRelease,
+        onMouseMove: app.onMouseMove,
+        onTouchStart: app.onTouchStart,
+        onTouchEnd: app.onTouchEnd,
+        onTouchMove: app.onTouchMove,
+        onScroll: app.onScroll,
         onGamepadConnect: app.onGamepadConnect,
         onGamepadDisconnect: app.onGamepadDisconnect,
-        onGamepadButtonDown: root.onGamepadButtonDown,
-        onGamepadButtonPress: root.onGamepadButtonPress,
-        onGamepadButtonRelease: root.onGamepadButtonRelease,
-        onGamepadStick: root.onGamepadStick,
-        onButtonDown: root.onButtonDown,
-        onButtonPress: root.onButtonPress,
-        onButtonRelease: root.onButtonRelease,
+        onGamepadButtonDown: app.onGamepadButtonDown,
+        onGamepadButtonPress: app.onGamepadButtonPress,
+        onGamepadButtonRelease: app.onGamepadButtonRelease,
+        onGamepadStick: app.onGamepadStick,
+        onButtonDown: app.onButtonDown,
+        onButtonPress: app.onButtonPress,
+        onButtonRelease: app.onButtonRelease,
+        on: on,
+        onFixedUpdate: onFixedUpdate,
+        onUpdate: onUpdate,
+        onDraw: onDraw,
+        onAdd: onAdd,
+        onDestroy: onDestroy,
+        onUse: onUse,
+        onUnuse: onUnuse,
+        onTag: onTag,
+        onUntag: onUntag,
     };
 
     return gameEventHandlers;

@@ -14,7 +14,7 @@ import {
     onDestroy,
     onTag,
     onUntag,
-    onUnuse,
+        onUnuse,
     onUse,
 } from "../../events/globalEvents";
 import { drawMasked } from "../../gfx/draw/drawMasked";
