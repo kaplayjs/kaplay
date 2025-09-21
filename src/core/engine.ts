@@ -22,10 +22,11 @@ import { rotateFactory } from "../ecs/components/transform/rotate";
 import { scaleFactory } from "../ecs/components/transform/scale";
 import { zFactory } from "../ecs/components/transform/z";
 import { registerPrefabFactory } from "../ecs/entity/prefab";
+import { createGameEventHandlers } from "../events/gameEventHandlers";
 import {
     attachAppToGameObjRaw,
-    initCanvasAppAppScope,
     createAppScope,
+    createSceneScope,
 } from "../events/scopes";
 import { createGame } from "../game/game";
 import { createCanvas } from "../gfx/canvas";
@@ -64,8 +65,9 @@ export const createEngine = (gopt: KAPLAYOpt) => {
     const canvas = createCanvas(opt);
     const { fontCacheC2d, fontCacheCanvas } = createFontCache();
     const app = initApp({ canvas, ...gopt });
-    const sceneScope = createAppScope(app);
-    const appScope = initCanvasAppAppScope(app);
+    const gameEventHandler = createGameEventHandlers(app);
+    const sceneScope = createSceneScope(app, gameEventHandler);
+    const appScope = createAppScope(gameEventHandler);
     attachAppToGameObjRaw(app);
 
     // TODO: Probably we should move this to initGfx

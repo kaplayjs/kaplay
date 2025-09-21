@@ -6,15 +6,11 @@ import {
 import { scene, type SceneDef } from "../game/scenes";
 import { _k } from "../shared";
 import type { KEventController } from "./events";
-import type { GameEventHandlers } from "./scopedHandlers";
+import type { GameEventHandlers } from "./gameEventHandlers";
 
-export type SceneScope =
-    & {
-        (id: string, def: SceneDef): void;
-    }
-    & {
-        [K in keyof App as K extends `on${any}` ? K : never]: App[K];
-    };
+export type SceneScope = GameEventHandlers & {
+    (id: string, def: SceneDef): void;
+};
 
 const appEvs = [
     "onKeyPress",
@@ -40,13 +36,15 @@ const appEvs = [
     "onButtonRelease",
 ] satisfies [...AppEvents[]];
 
-// TODO: Maybe reach a better solution so we can properly clear the EventController instead qof just cancel the controllers?
-export const createAppScope = (app: App, gameHandlers: GameEventHandlers): SceneScope => {
+export const createSceneScope = (
+    app: App,
+    gameHandlers: GameEventHandlers,
+): SceneScope => {
     const sceneScope = scene;
 
-    for (const e of appEvs) {
+    for (const e of Object.keys(gameHandlers)) {
         // @ts-expect-error
-        sceneScope[e] = function (this: InternalGameObjRaw, ...args: [any]) {
+        sceneScope[e] = function(this: InternalGameObjRaw, ...args: [any]) {
             // @ts-expect-error
             const ev: KEventController = gameHandlers[e]?.(...args);
 
@@ -63,21 +61,21 @@ export type AppScope = {
     [K in keyof App as K extends `on${any}` ? K : never]: App[K];
 };
 
-export const initCanvasAppAppScope = (gameHandlers: GameEventHandlers): AppScope => {
+export const createAppScope = (gameHandlers: GameEventHandlers): AppScope => {
     const appScope = {} as Record<string, any>;
 
-    for (const e of appEvs) {
-        appScope[e] = gameHandlers[e];
+    for (const e of Object.keys(gameHandlers)) {
+        appScope[e] = gameHandlers[e as keyof GameEventHandlers];
     }
 
-    return appScope as SceneScope;
+    return appScope as AppScope;
 };
 
 export function attachAppToGameObjRaw(app: App) {
     for (const e of appEvs) {
         const obj = GameObjRawPrototype as Record<string, any>;
 
-        obj[e] = function (this: InternalGameObjRaw, ...args: [any]) {
+        obj[e] = function(this: InternalGameObjRaw, ...args: [any]) {
             // @ts-ignore
             const ev: KEventController = app[e]?.(...args);
             ev.paused = this.paused;

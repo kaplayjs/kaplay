@@ -13,7 +13,18 @@ import type {
 import type { TupleWithoutFirst } from "../utils/types";
 import type { GameObjEventNames, GameObjEvents } from "./eventMap";
 import type { KEventController } from "./events";
-import { on, onAdd, onDestroy, onDraw, onFixedUpdate, onTag, onUntag, onUnuse, onUpdate, onUse } from "./globalEvents";
+import {
+    on,
+    onAdd,
+    onDestroy,
+    onDraw,
+    onFixedUpdate,
+    onTag,
+    onUntag,
+    onUnuse,
+    onUpdate,
+    onUse,
+} from "./globalEvents";
 
 /**
  * General usage event handlers that are used across KAPLAYCtx, app & scene scopes and object.
