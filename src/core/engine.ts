@@ -21,6 +21,7 @@ import { posFactory } from "../ecs/components/transform/pos";
 import { rotateFactory } from "../ecs/components/transform/rotate";
 import { scaleFactory } from "../ecs/components/transform/scale";
 import { zFactory } from "../ecs/components/transform/z";
+import { scrollcam } from "../ecs/components/transform/camscroll";
 import { registerPrefabFactory } from "../ecs/entity/prefab";
 import { createGame } from "../game/game";
 import { createCanvas } from "../gfx/canvas";

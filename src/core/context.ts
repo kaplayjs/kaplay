@@ -76,6 +76,7 @@ import { follow } from "../ecs/components/transform/follow";
 import { layer } from "../ecs/components/transform/layer";
 import { move } from "../ecs/components/transform/move";
 import { offscreen } from "../ecs/components/transform/offscreen";
+import { scrollcam } from "../ecs/components/transform/camscroll";
 import { pos } from "../ecs/components/transform/pos";
 import { rotate } from "../ecs/components/transform/rotate";
 import { scale } from "../ecs/components/transform/scale";
@@ -419,6 +420,7 @@ export const createContext = (
         move,
         constraint,
         offscreen,
+        scrollcam,
         follow,
         fadeIn,
         mask,
