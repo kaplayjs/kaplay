@@ -32,8 +32,6 @@ export interface CamScrollComp extends Comp
      * @returns The current factor of the object as a {@link Vec2 `Vec2`}
      */
     getScrollFactor(): Vec2;
-
-    update(): void;
 }
 
 
@@ -51,7 +49,6 @@ export function scrollcam(x: number = 1, y: number = 1): CamScrollComp
         add()
         {
             let self = this as unknown as GameObj<PosComp>;
-            //self.baseObj = self.pos.clone();
             console.log(x, y);
         },
 
