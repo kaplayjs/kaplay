@@ -4,12 +4,13 @@ for(i = 0; i < 20; i++)
 {
     let randPosX = randi(64, width() - 64);
     let randPosY = randi(64, width() - 64);
+    let randFactor = rand(0.1, 0.75);
     add([
         pos(randPosX, randPosY),
         z(20),
         rect(64, 64),
         color(RED),
-        scrollcam(0.5, 0.5),
+        scrollcam(randFactor, randFactor),
     ]);
 }
 

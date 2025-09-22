@@ -37,8 +37,6 @@ export interface CamScrollComp extends Comp
 
 export function scrollcam(x: number = 1, y: number = 1): CamScrollComp 
 {
-    let baseObjPos: Vec2;
-    
     return {
         id: "scroll",
         require: ["pos"],
