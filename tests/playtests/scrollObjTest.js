@@ -1,7 +1,5 @@
 kaplay();
 
-
-
 for(i = 0; i < 20; i++)
 {
     let randPosX = randi(64, width() - 64);
@@ -39,5 +37,10 @@ onUpdate(() => {
     if(isKeyDown("down"))
         setCamPos(getCamPos().x, getCamPos().y + 3);
 });
+
+add([
+    pos(10, height - 64),
+    text("Oh Hi! Use the arrows to move the camera"),
+])
 
 setCamScale(0.9);
