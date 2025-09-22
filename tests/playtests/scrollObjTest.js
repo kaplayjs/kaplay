@@ -1,7 +1,6 @@
 kaplay();
 
-for(i = 0; i < 20; i++)
-{
+for (i = 0; i < 20; i++) {
     let randPosX = randi(64, width() - 64);
     let randPosY = randi(64, width() - 64);
     let randFactor = rand(0.1, 0.75);
@@ -14,8 +13,7 @@ for(i = 0; i < 20; i++)
     ]);
 }
 
-for(i = 0; i < 20; i++)
-{
+for (i = 0; i < 20; i++) {
     let randPosX = randi(32, width() - 32);
     let randPosY = randi(32, width() - 32);
     let randFactor = rand(0.1, 0.75);
@@ -29,19 +27,23 @@ for(i = 0; i < 20; i++)
 }
 
 onUpdate(() => {
-    if(isKeyDown("left"))
+    if (isKeyDown("left")) {
         setCamPos(getCamPos().x - 3, getCamPos().y);
-    if(isKeyDown("right"))
+    }
+    if (isKeyDown("right")) {
         setCamPos(getCamPos().x + 3, getCamPos().y);
-    if(isKeyDown("up"))
+    }
+    if (isKeyDown("up")) {
         setCamPos(getCamPos().x, getCamPos().y - 3);
-    if(isKeyDown("down"))
+    }
+    if (isKeyDown("down")) {
         setCamPos(getCamPos().x, getCamPos().y + 3);
+    }
 });
 
 add([
     pos(10, height - 64),
     text("Oh Hi! Use the arrows to move the camera"),
-])
+]);
 
 setCamScale(0.9);

@@ -92,12 +92,12 @@ import type {
     SurfaceEffectorCompOpt,
 } from "../ecs/components/physics/effectors";
 import type { AnchorComp } from "../ecs/components/transform/anchor";
+import type { CamScrollComp } from "../ecs/components/transform/camscroll";
 import type { constraint } from "../ecs/components/transform/constraint";
 import type { FixedComp } from "../ecs/components/transform/fixed";
 import type { FollowComp } from "../ecs/components/transform/follow";
 import type { LayerComp } from "../ecs/components/transform/layer";
 import type { MoveComp } from "../ecs/components/transform/move";
-import type { CamScrollComp } from "../ecs/components/transform/camscroll";
 import type {
     OffScreenComp,
     OffScreenCompOpt,
@@ -1449,7 +1449,7 @@ export interface KAPLAYCtx {
      * @param y number
      * @returns the camera scroll comp
      */
-    scrollcam(x: number, y: number): CamScrollComp
+    scrollcam(x: number, y: number): CamScrollComp;
     /**
      * Don't get destroyed on scene switch. Only works in objects attached to root.
      *

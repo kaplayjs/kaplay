@@ -1,9 +1,8 @@
 import { getCamPos } from "../../../game/camera";
-import { vec2 } from "../../../math/math";
+import { vec2, type Vec2Args } from "../../../math/math";
 import { Vec2 } from "../../../math/Vec2";
 import type { Comp, GameObj } from "../../../types";
 import type { PosComp } from "./pos";
-
 
 /**
  * The {@link camscroll `camscroll()`} component.
@@ -11,21 +10,22 @@ import type { PosComp } from "./pos";
  * @group Components
  * @subgroup Component Types
  */
-export interface CamScrollComp extends Comp 
-{
+export interface CamScrollComp extends Comp {
     /**
      * The current factor for object scroll
-     * 
+     *
      * @returns The current factor of the object as a {@link Vec2 `Vec2`}
      */
     factor: Vec2;
+
+    basePos: Vec2;
 
     /**
      * Set the object scroll factor
      * @param x number
      * @param y number
      */
-    setScrollFactor(x: number, y: number): void;
+    setScrollFactor(...args: Vec2Args): void;
 
     /**
      * Get the current object scroll factor
@@ -34,27 +34,18 @@ export interface CamScrollComp extends Comp
     getScrollFactor(): Vec2;
 }
 
-
-export function scrollcam(x: number = 1, y: number = 1): CamScrollComp 
-{
+export function scrollcam(...args: Vec2Args): CamScrollComp {
     return {
         id: "scroll",
         require: ["pos"],
-        factor: new Vec2(x, y),
-        //@ts-ignore
-        basePos: null as Vec2 | null,
+        factor: vec2(...args),
+        basePos: vec2(),
 
-        add()
-        {
-            let self = this as unknown as GameObj<PosComp>;
-            console.log(x, y);
-        },
-
-        update() 
-        {
-            const obj = this as unknown as GameObj<PosComp> & { basePos: Vec2 | null };
+        update() {
+            const obj = this as unknown as GameObj<PosComp> & {
+                basePos: Vec2 | null;
+            };
             const cam = getCamPos();
-
 
             if (!obj.basePos) {
                 obj.basePos = obj.pos.clone();
@@ -64,13 +55,17 @@ export function scrollcam(x: number = 1, y: number = 1): CamScrollComp
             obj.pos.y = obj.basePos.y - cam.y * this.factor.y;
         },
 
-        setScrollFactor(x: number, y: number) { 
+        setScrollFactor(x: number, y: number) {
             this.factor.x = x;
-            this.factor.y =  y; 
+            this.factor.y = y;
         },
 
-        getScrollFactor() { return this.factor.clone() },
+        getScrollFactor() {
+            return this.factor.clone();
+        },
 
-        inspect() { return `scrollFactor: vec2(${this.factor.x}, ${this.factor.x})`; }
+        inspect() {
+            return `scrollFactor: vec2(${this.factor.x}, ${this.factor.x})`;
+        },
     };
 }

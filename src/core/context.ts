@@ -70,13 +70,13 @@ import {
     surfaceEffector,
 } from "../ecs/components/physics/effectors";
 import { anchor } from "../ecs/components/transform/anchor";
+import { scrollcam } from "../ecs/components/transform/camscroll";
 import { constraint } from "../ecs/components/transform/constraint";
 import { fixed } from "../ecs/components/transform/fixed";
 import { follow } from "../ecs/components/transform/follow";
 import { layer } from "../ecs/components/transform/layer";
 import { move } from "../ecs/components/transform/move";
 import { offscreen } from "../ecs/components/transform/offscreen";
-import { scrollcam } from "../ecs/components/transform/camscroll";
 import { pos } from "../ecs/components/transform/pos";
 import { rotate } from "../ecs/components/transform/rotate";
 import { scale } from "../ecs/components/transform/scale";
