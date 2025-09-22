@@ -19,19 +19,6 @@ export interface CamScrollComp extends Comp {
     factor: Vec2;
 
     basePos: Vec2;
-
-    /**
-     * Set the object scroll factor
-     * @param x number
-     * @param y number
-     */
-    setScrollFactor(...args: Vec2Args): void;
-
-    /**
-     * Get the current object scroll factor
-     * @returns The current factor of the object as a {@link Vec2 `Vec2`}
-     */
-    getScrollFactor(): Vec2;
 }
 
 export function scrollcam(...args: Vec2Args): CamScrollComp {
@@ -53,15 +40,6 @@ export function scrollcam(...args: Vec2Args): CamScrollComp {
 
             obj.pos.x = obj.basePos.x - cam.x * this.factor.x;
             obj.pos.y = obj.basePos.y - cam.y * this.factor.y;
-        },
-
-        setScrollFactor(x: number, y: number) {
-            this.factor.x = x;
-            this.factor.y = y;
-        },
-
-        getScrollFactor() {
-            return this.factor.clone();
         },
 
         inspect() {
