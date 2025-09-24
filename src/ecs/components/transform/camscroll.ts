@@ -44,8 +44,7 @@ export function scrollcam(...args: Vec2Args): CamScrollComp {
             obj.pos.y = obj.basePos.y - cam.y * this.factor.y;
         },
 
-        getScroll()
-        {
+        getScroll() {
             return this.factor.clone();
         },
 
