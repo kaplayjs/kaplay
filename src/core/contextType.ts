@@ -1447,10 +1447,10 @@ export interface KAPLAYCtx {
 
     /**
      * Make the object scrolls with camera based on a factor
-     * @param vecArgs ...
+     * @param args {@link Vec2Args `Vec2Args`}
      * @returns the camera scroll comp
      */
-    scrollcam(...vecArgs: Vec2Args): CamScrollComp;
+    scrollcam(...args: Vec2Args): CamScrollComp;
     /**
      * Don't get destroyed on scene switch. Only works in objects attached to root.
      *

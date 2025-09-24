@@ -19,15 +19,13 @@ export interface CamScrollComp extends Comp {
     factor: Vec2;
 
     basePos: Vec2;
-
-    getScroll(): Vec2;
 }
 
-export function scrollcam(...vecArgs: Vec2Args): CamScrollComp {
+export function scrollcam(...args: Vec2Args): CamScrollComp {
     return {
         id: "scroll",
         require: ["pos"],
-        factor: vec2(...vecArgs),
+        factor: vec2(...args),
         basePos: vec2(),
 
         update(this: GameObj<PosComp | CamScrollComp>) {
@@ -39,10 +37,6 @@ export function scrollcam(...vecArgs: Vec2Args): CamScrollComp {
 
             this.pos.x = this.basePos.x - cam.x * this.factor.x;
             this.pos.y = this.basePos.y - cam.y * this.factor.y;
-        },
-
-        getScroll() {
-            return this.factor.clone();
         },
 
         inspect() {
