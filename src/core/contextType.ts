@@ -1444,10 +1444,10 @@ export interface KAPLAYCtx {
      * @subgroup Rendering
      */
     fixed(fixed?: boolean): FixedComp;
+
     /**
      * Make the object scrolls with camera based on a factor
-     * @param x number
-     * @param y number
+     * @param vecArgs ...
      * @returns the camera scroll comp
      */
     scrollcam(...vecArgs: Vec2Args): CamScrollComp;
