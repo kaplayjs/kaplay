@@ -158,6 +158,7 @@ import type {
     Rect,
     RNG,
     StepPosition,
+    Vec2Args,
 } from "../math/math";
 import type { NavMesh } from "../math/navigationmesh";
 import type { Vec2 } from "../math/Vec2";
@@ -1449,7 +1450,7 @@ export interface KAPLAYCtx {
      * @param y number
      * @returns the camera scroll comp
      */
-    scrollcam(x: number, y: number): CamScrollComp;
+    scrollcam(...vecArgs: Vec2Args): CamScrollComp;
     /**
      * Don't get destroyed on scene switch. Only works in objects attached to root.
      *
