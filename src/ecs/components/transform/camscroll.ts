@@ -30,18 +30,15 @@ export function scrollcam(...args: Vec2Args): CamScrollComp {
         factor: vec2(...args),
         basePos: vec2(),
 
-        update() {
-            const obj = this as unknown as GameObj<PosComp> & {
-                basePos: Vec2 | null;
-            };
+        update(this: GameObj<PosComp | CamScrollComp>) {
             const cam = getCamPos();
 
-            if (!obj.basePos) {
-                obj.basePos = obj.pos.clone();
+            if (!this.basePos) {
+                this.basePos = this.pos.clone();
             }
 
-            obj.pos.x = obj.basePos.x - cam.x * this.factor.x;
-            obj.pos.y = obj.basePos.y - cam.y * this.factor.y;
+            this.pos.x = this.basePos.x - cam.x * this.factor.x;
+            this.pos.y = this.basePos.y - cam.y * this.factor.y;
         },
 
         getScroll() {
