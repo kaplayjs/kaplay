@@ -414,6 +414,7 @@ export function _drawLinesRound(opt: DrawLinesOpt) {
 
     for (let i = 1; i < pts.length; i++) {
         if (pt2 === pts[i] || pt2.eq(pts[i])) continue;
+
         pt1 = pt2;
         pt2 = pts[i];
 
@@ -527,13 +528,6 @@ export function _drawLinesRound(opt: DrawLinesOpt) {
     }
 
     if (vertices.length < 4) return;
-
-    const verts = vertices.map(v => ({
-        pos: offset.add(v),
-        uv: vec2(),
-        color: opt.color || Color.WHITE,
-        opacity: opt.opacity ?? 1,
-    }));
 
     const indices = [];
     let index = 0;
@@ -798,6 +792,6 @@ export function drawLines(opt: DrawLinesOpt) {
         return _drawLinesBevel(opt);
     }
     else {
-        return _drawLinesRound(opt);
+        return _drawLinesMiter(opt);
     }
 }

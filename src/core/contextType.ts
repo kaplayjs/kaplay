@@ -65,7 +65,7 @@ import type {
     FakeMouseOpt,
 } from "../ecs/components/misc/fakeMouse";
 import type { HealthComp } from "../ecs/components/misc/health";
-import type { HoverComp, HoverCompOpt } from "../ecs/components/misc/hover";
+import type { UIComp, UICompOpt } from "../ecs/components/misc/ui";
 import type { LifespanCompOpt } from "../ecs/components/misc/lifespan";
 import type { NamedComp } from "../ecs/components/misc/named";
 import type { StateComp } from "../ecs/components/misc/state";
@@ -188,6 +188,8 @@ import type {
 } from "../types";
 import type { TupleWithoutFirst } from "../utils/types";
 import type { Engine } from "./engine";
+import type { ButtonComp, SliderComp, SliderCompOpt } from "../ecs/components/misc/button";
+import type { LayoutElementComp as LayoutComp, LayoutElementCompOpt as LayoutCompOpt } from "../ecs/components/misc/layout";
 
 /**
  * Context handle that contains every KAPLAY function.
@@ -1434,7 +1436,20 @@ export interface KAPLAYCtx {
      * @group Components
      * @subgroup Behaviour
      */
-    hover(opt: HoverCompOpt): HoverComp;
+    ui(opt: UICompOpt): UIComp;
+    /**
+     * A button.
+     *
+     * @returns The button comp.
+     * @since v4000.0
+     * @group Components
+     * @subgroup Behaviour
+     */
+    button(label: string): ButtonComp;
+    checkbox(label: string): ButtonComp;
+    radio(label: string, group: string): ButtonComp;
+    slider(opt: SliderCompOpt): SliderComp;
+    layout(opt: LayoutCompOpt): LayoutComp;
     /**
      * Adds cursor on hover to an object.
      *

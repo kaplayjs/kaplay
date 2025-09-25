@@ -2,7 +2,7 @@ import { KEventController } from "../../../events/events";
 import { _k } from "../../../shared";
 import type { Comp, Cursor, GameObj } from "../../../types";
 import type { AreaComp } from "../physics/area";
-import { type HoverComp } from "./hover";
+import { type UIComp } from "./ui";
 
 export interface CursorComp extends Comp {
     /**
@@ -27,7 +27,7 @@ export function cursor(opt: string | CursorCompOpt = {}): CursorComp {
         id: "cursor",
         require: ["area", "hover"],
 
-        add(this: GameObj<AreaComp | HoverComp | CursorComp>) {
+        add(this: GameObj<AreaComp | UIComp | CursorComp>) {
             const cursor = typeof opt === "string" ? opt : opt.cursor;
             if (cursor) {
                 this.area.cursor = cursor;
@@ -54,7 +54,7 @@ export function cursor(opt: string | CursorCompOpt = {}): CursorComp {
             area.cursor = value;
             if (area.cursor && _events.length == 0) {
                 _events.push(
-                    (this as unknown as HoverComp).onHover(() =>
+                    (this as unknown as UIComp).onHover(() =>
                         _k.app.setCursor(area.cursor!)
                     ),
                 );

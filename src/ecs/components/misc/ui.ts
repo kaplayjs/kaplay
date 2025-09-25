@@ -7,7 +7,7 @@ import { getTreeRoot } from "../../entity/utils";
 import { system, SystemPhase } from "../../systems/systems";
 import type { AreaComp } from "../physics/area";
 
-interface HoverCompPrivate extends Comp {
+interface UICompPrivate extends Comp {
     setHoverAndMouseState(
         isHovering: boolean,
         isPressed: boolean,
@@ -15,7 +15,7 @@ interface HoverCompPrivate extends Comp {
     ): void;
 }
 
-export interface HoverComp extends HoverCompPrivate {
+export interface UIComp extends UICompPrivate {
     /**
      * True if the object can receive the focus.
      */
@@ -99,37 +99,38 @@ export interface HoverComp extends HoverCompPrivate {
     serialize(): any;
 }
 
-export type HoverCompOpt = {
+export type UICompOpt = {
     canFocus?: boolean;
 };
 
 let systemInstalled = false;
-// TODO: use a live query for this
-const hovers: Set<GameObj<HoverComp | AreaComp>> = new Set();
+// TODO: use a live query for this, once it can use a Set
+const hovers: Set<GameObj<UIComp | AreaComp>> = new Set();
 
 function installSystem() {
     if (systemInstalled) return;
     systemInstalled = true;
 
     onAdd(obj => {
-        if (obj.has("hover")) {
-            hovers.add(obj as GameObj<HoverComp | AreaComp>);
+        if (obj.has("ui")) {
+            hovers.add(obj as GameObj<UIComp | AreaComp>);
         }
     });
     onDestroy(obj => {
-        hovers.delete(obj as GameObj<HoverComp | AreaComp>);
+        hovers.delete(obj as GameObj<UIComp | AreaComp>);
     });
     onUse((obj, id) => {
-        if ("hover" === id) {
-            hovers.add(obj as GameObj<HoverComp | AreaComp>);
+        if ("ui" === id) {
+            hovers.add(obj as GameObj<UIComp | AreaComp>);
         }
     });
     onUnuse((obj, id) => {
-        if ("hover" === id) {
-            hovers.delete(obj as GameObj<HoverComp | AreaComp>);
+        if ("ui" === id) {
+            hovers.delete(obj as GameObj<UIComp | AreaComp>);
         }
     });
-    system<HoverComp | AreaComp>(
+
+    system<UIComp | AreaComp>(
         "hover",
         (hovers) => {
             const m = _k.game.fakeMouse
@@ -151,9 +152,7 @@ function installSystem() {
     );
 
     installMouseHandlers();
-    getTreeRoot().on("sceneEnter", () => {
-        installMouseHandlers();
-    });
+    installKeyboardHandlers();
 }
 
 function installMouseHandlers() {
@@ -180,7 +179,7 @@ function installMouseHandlers() {
     });
 }
 
-function installKeyboardHandler() {
+function installKeyboardHandlers() {
     _k.app.onButtonPress((button: string) => {
         switch (button) {
             case "enter":
@@ -230,7 +229,7 @@ function installKeyboardHandler() {
 
 let _focus: GameObj | null = null;
 
-export function hover(opt: HoverCompOpt = {}): HoverComp {
+export function ui(opt: UICompOpt = {}): UIComp {
     let _isHovering: boolean = false; // True if currently hovering
     let _wasPressed: boolean = false; // True if hovering when the mouse went down
     let _isDown: boolean = false;
@@ -238,7 +237,7 @@ export function hover(opt: HoverCompOpt = {}): HoverComp {
     installSystem();
 
     return {
-        id: "hover",
+        id: "ui",
         require: ["area"],
         canFocus: opt.canFocus ?? false,
 
@@ -261,7 +260,7 @@ export function hover(opt: HoverCompOpt = {}): HoverComp {
         },
 
         onClick(
-            this: GameObj<HoverComp | AreaComp>,
+            this: GameObj<UIComp | AreaComp>,
             action: () => void,
             btn: MouseButton = "left",
         ): KEventController {
@@ -281,7 +280,7 @@ export function hover(opt: HoverCompOpt = {}): HoverComp {
         },
 
         setHoverAndMouseState(
-            this: GameObj<HoverComp>,
+            this: GameObj<UIComp>,
             isHovering: boolean,
             isPressed: boolean,
             isDown: boolean,
@@ -324,7 +323,7 @@ export function hover(opt: HoverCompOpt = {}): HoverComp {
         },
 
         get isFocus() {
-            return this as unknown as GameObj === _focus;
+            return (this as unknown as GameObj) === _focus;
         },
 
         get currentFocus() {
@@ -359,5 +358,5 @@ export function hover(opt: HoverCompOpt = {}): HoverComp {
 
 export function hoverFactory(data: any) {
     const opt: any = {};
-    return hover(opt);
+    return ui(opt);
 }

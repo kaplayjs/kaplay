@@ -53,7 +53,7 @@ import { animate, serializeAnimation } from "../ecs/components/misc/animate";
 import { cursor } from "../ecs/components/misc/cursor";
 import { fakeMouse } from "../ecs/components/misc/fakeMouse";
 import { health } from "../ecs/components/misc/health";
-import { hover } from "../ecs/components/misc/hover";
+import { ui } from "../ecs/components/misc/ui";
 import { lifespan } from "../ecs/components/misc/lifespan";
 import { named } from "../ecs/components/misc/named";
 import { state } from "../ecs/components/misc/state";
@@ -267,6 +267,8 @@ import type { Engine } from "./engine";
 import { throwError } from "./errors";
 import { plug } from "./plug";
 import { onCleanup, quit } from "./quit";
+import { button, checkbox, radio, slider } from "../ecs/components/misc/button";
+import { layout } from "../ecs/components/misc/layout";
 
 // The context is the way the user interact with a KAPLAY game.
 export const createContext = (
@@ -413,7 +415,12 @@ export const createContext = (
         fixed,
         stay,
         health,
-        hover,
+        ui,
+        button,
+        checkbox,
+        radio,
+        slider,
+        layout,
         cursor,
         lifespan,
         named,
