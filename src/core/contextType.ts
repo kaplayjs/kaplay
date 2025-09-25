@@ -59,13 +59,21 @@ import type {
     AnimateComp,
     AnimateCompOpt,
 } from "../ecs/components/misc/animate";
+import type {
+    ButtonComp,
+    SliderComp,
+    SliderCompOpt,
+} from "../ecs/components/misc/button";
 import type { CursorComp, CursorCompOpt } from "../ecs/components/misc/cursor";
 import type {
     FakeMouseComp,
     FakeMouseOpt,
 } from "../ecs/components/misc/fakeMouse";
 import type { HealthComp } from "../ecs/components/misc/health";
-import type { UIComp, UICompOpt } from "../ecs/components/misc/ui";
+import type {
+    LayoutElementComp as LayoutComp,
+    LayoutElementCompOpt as LayoutCompOpt,
+} from "../ecs/components/misc/layout";
 import type { LifespanCompOpt } from "../ecs/components/misc/lifespan";
 import type { NamedComp } from "../ecs/components/misc/named";
 import type { StateComp } from "../ecs/components/misc/state";
@@ -76,6 +84,7 @@ import type {
     TimerController,
     TweenController,
 } from "../ecs/components/misc/timer";
+import type { UIComp, UICompOpt } from "../ecs/components/misc/ui";
 import type { AreaComp, AreaCompOpt } from "../ecs/components/physics/area";
 import type { BodyComp, BodyCompOpt } from "../ecs/components/physics/body";
 import type { DoubleJumpComp } from "../ecs/components/physics/doubleJump";
@@ -188,8 +197,6 @@ import type {
 } from "../types";
 import type { TupleWithoutFirst } from "../utils/types";
 import type { Engine } from "./engine";
-import type { ButtonComp, SliderComp, SliderCompOpt } from "../ecs/components/misc/button";
-import type { LayoutElementComp as LayoutComp, LayoutElementCompOpt as LayoutCompOpt } from "../ecs/components/misc/layout";
 
 /**
  * Context handle that contains every KAPLAY function.

@@ -21,16 +21,18 @@ export interface ButtonComp extends Comp {
     value: boolean;
 
     renderArea(): Rect;
-};
+}
 
 export function button(label: string): ButtonComp {
     let _shape: Rect | undefined;
-    let formattedText = label ? formatText({
-        pos: vec2(2, 2),
-        text: label,
-        size: 20,
-        color: Color.BLACK
-    }) : null;
+    let formattedText = label
+        ? formatText({
+            pos: vec2(2, 2),
+            text: label,
+            size: 20,
+            color: Color.BLACK,
+        })
+        : null;
     let _width = formattedText ? formattedText.width + 4 : 100;
     let _height = formattedText ? formattedText.height + 4 : 25;
     let _value = false;
@@ -50,8 +52,12 @@ export function button(label: string): ButtonComp {
             _height = value;
             if (_shape) _shape.height = value;
         },
-        get value() { return _value || (this as unknown as UIComp).isPressed },
-        set value(value: boolean) { _value = value; },
+        get value() {
+            return _value || (this as unknown as UIComp).isPressed;
+        },
+        set value(value: boolean) {
+            _value = value;
+        },
         add(this: GameObj<ButtonComp>) {
             if (!this.has("ui")) {
                 this.use(ui({ canFocus: true }));
@@ -65,7 +71,7 @@ export function button(label: string): ButtonComp {
             drawSprite({
                 sprite: this.value ? "buttonpressed" : "button",
                 width: this.width,
-                height: this.height
+                height: this.height,
             });
             // If label, draw label
             if (formattedText) {
@@ -80,7 +86,7 @@ export function button(label: string): ButtonComp {
                     outline: {
                         width: 1,
                         color: hoverColor,
-                    }
+                    },
                 });
             }
         },
@@ -90,17 +96,19 @@ export function button(label: string): ButtonComp {
             }
             return _shape;
         },
-    }
+    };
 }
 
 export function checkbox(label: string): ButtonComp {
     let _shape: Rect | undefined;
-    let formattedText = label ? formatText({
-        pos: vec2(2 + 16, 2),
-        text: label,
-        size: 20,
-        color: Color.BLACK
-    }) : null;
+    let formattedText = label
+        ? formatText({
+            pos: vec2(2 + 16, 2),
+            text: label,
+            size: 20,
+            color: Color.BLACK,
+        })
+        : null;
     let _width = formattedText ? formattedText.width + 4 + 16 : 100;
     let _height = formattedText ? formattedText.height + 4 : 25;
     let _value = false;
@@ -120,8 +128,12 @@ export function checkbox(label: string): ButtonComp {
             _height = value;
             if (_shape) _shape.height = value;
         },
-        get value() { return _value || (this as unknown as UIComp).isPressed },
-        set value(value: boolean) { _value = value; },
+        get value() {
+            return _value || (this as unknown as UIComp).isPressed;
+        },
+        set value(value: boolean) {
+            _value = value;
+        },
         add(this: GameObj<ButtonComp | UIComp>) {
             if (!this.has("ui")) {
                 this.use(ui({ canFocus: true }));
@@ -151,7 +163,7 @@ export function checkbox(label: string): ButtonComp {
                     outline: {
                         width: 1,
                         color: hoverColor,
-                    }
+                    },
                 });
             }
         },
@@ -161,21 +173,23 @@ export function checkbox(label: string): ButtonComp {
             }
             return _shape;
         },
-    }
+    };
 }
 
 export interface RadioComp extends ButtonComp {
     group: string;
-};
+}
 
 export function radio(label: string, group: string): RadioComp {
     let _shape: Rect | undefined;
-    let formattedText = label ? formatText({
-        pos: vec2(2 + 16, 2),
-        text: label,
-        size: 20,
-        color: Color.BLACK
-    }) : null;
+    let formattedText = label
+        ? formatText({
+            pos: vec2(2 + 16, 2),
+            text: label,
+            size: 20,
+            color: Color.BLACK,
+        })
+        : null;
     let _width = formattedText ? formattedText.width + 4 + 16 : 100;
     let _height = formattedText ? formattedText.height + 4 : 25;
     let _value = false;
@@ -196,7 +210,9 @@ export function radio(label: string, group: string): RadioComp {
             _height = value;
             if (_shape) _shape.height = value;
         },
-        get value() { return _value || (this as unknown as UIComp).isPressed },
+        get value() {
+            return _value || (this as unknown as UIComp).isPressed;
+        },
         set value(value: boolean) {
             if (value) {
                 const that = this as unknown as GameObj<ButtonComp | UIComp>;
@@ -237,7 +253,7 @@ export function radio(label: string, group: string): RadioComp {
                     outline: {
                         width: 1,
                         color: hoverColor,
-                    }
+                    },
                 });
             }
         },
@@ -247,16 +263,16 @@ export function radio(label: string, group: string): RadioComp {
             }
             return _shape;
         },
-    }
+    };
 }
 
 export type UIOrientation = "horizontal" | "vertical";
 
 export type SliderCompOpt = {
-    position?: Vec2,
-    size?: Vec2,
-    label?: string,
-    orientation?: UIOrientation
+    position?: Vec2;
+    size?: Vec2;
+    label?: string;
+    orientation?: UIOrientation;
 };
 
 export interface SliderComp extends Comp {
@@ -269,20 +285,26 @@ export interface SliderComp extends Comp {
 
 export function slider(opt: SliderCompOpt): SliderComp {
     let _shape: Rect | undefined;
-    let formattedText = opt.label ? formatText({
-        pos: vec2(2, 2),
-        text: opt.label,
-        size: 20,
-        color: Color.BLACK
-    }) : null;
+    let formattedText = opt.label
+        ? formatText({
+            pos: vec2(2, 2),
+            text: opt.label,
+            size: 20,
+            color: Color.BLACK,
+        })
+        : null;
     let _width = formattedText ? formattedText.width + 100 + 4 : 100;
     let _height = formattedText ? formattedText.height + 4 : 20;
     let _value = 0;
     let _sliderRect = new Rect(vec2(_width - 100, 0), 100, _height);
-    let _gutterRect = opt.orientation === "vertical" ?
-        new Rect(_sliderRect.pos.add(_width / 2 - 2, 0), 4, _height) :
-        new Rect(_sliderRect.pos.add(0, _height / 2 - 2), 100, 4);
-    let _thumbRect = new Rect(vec2(_sliderRect.pos.x + 2, _sliderRect.pos.y + 2), 10, _height - 4);
+    let _gutterRect = opt.orientation === "vertical"
+        ? new Rect(_sliderRect.pos.add(_width / 2 - 2, 0), 4, _height)
+        : new Rect(_sliderRect.pos.add(0, _height / 2 - 2), 100, 4);
+    let _thumbRect = new Rect(
+        vec2(_sliderRect.pos.x + 2, _sliderRect.pos.y + 2),
+        10,
+        _height - 4,
+    );
     let _grabPos: Vec2 | null = null;
     return {
         id: "slider",
@@ -300,7 +322,9 @@ export function slider(opt: SliderCompOpt): SliderComp {
             _height = value;
             if (_shape) _shape.height = value;
         },
-        get value() { return _value },
+        get value() {
+            return _value;
+        },
         set value(value: number) {
             _value = value;
         },
@@ -324,13 +348,15 @@ export function slider(opt: SliderCompOpt): SliderComp {
                 this.transform.inverse.transformPointV(pt, pt);
                 if (opt.orientation === "vertical") {
                     const minY = _gutterRect.pos.y + 2;
-                    const maxY = _gutterRect.pos.y + _gutterRect.height - _thumbRect.height - 2;
+                    const maxY = _gutterRect.pos.y + _gutterRect.height
+                        - _thumbRect.height - 2;
                     _thumbRect.pos.y = clamp(pt.y - _grabPos.y, minY, maxY);
                     _value = (_thumbRect.pos.y - minY) / (maxY - minY);
                 }
                 else {
                     const minX = _gutterRect.pos.x + 2;
-                    const maxX = _gutterRect.pos.x + _gutterRect.width - _thumbRect.width - 2;
+                    const maxX = _gutterRect.pos.x + _gutterRect.width
+                        - _thumbRect.width - 2;
                     _thumbRect.pos.x = clamp(pt.x - _grabPos.x, minX, maxX);
                     _value = (_thumbRect.pos.y - minX) / (maxX - minX);
                 }
@@ -349,14 +375,14 @@ export function slider(opt: SliderCompOpt): SliderComp {
                 pos: _gutterRect.pos,
                 sprite: "buttonpressed",
                 width: _gutterRect.width,
-                height: _gutterRect.height
+                height: _gutterRect.height,
             });
             // Draw slider thumb
             drawSprite({
                 pos: _thumbRect.pos,
                 sprite: "button",
                 width: _thumbRect.width,
-                height: _thumbRect.height
+                height: _thumbRect.height,
             });
             if (this.isFocus) {
                 drawRect({
@@ -367,7 +393,7 @@ export function slider(opt: SliderCompOpt): SliderComp {
                     outline: {
                         width: 1,
                         color: hoverColor,
-                    }
+                    },
                 });
             }
         },
@@ -377,5 +403,5 @@ export function slider(opt: SliderCompOpt): SliderComp {
             }
             return _shape;
         },
-    }
+    };
 }

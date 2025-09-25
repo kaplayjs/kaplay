@@ -1,7 +1,7 @@
 import type { Asset } from "../../assets/asset";
 import { resolveSprite, type SpriteData } from "../../assets/sprite";
 import { DEF_ANCHOR } from "../../constants/general";
-import { quad, Quad } from "../../math/math";
+import { Quad, quad } from "../../math/math";
 import { Vec2 } from "../../math/Vec2";
 import type { Anchor, RenderProps } from "../../types";
 import { anchorPt } from "../anchor";

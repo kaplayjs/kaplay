@@ -50,16 +50,18 @@ import { patrol } from "../ecs/components/level/patrol";
 import { sentry } from "../ecs/components/level/sentry";
 import { tile } from "../ecs/components/level/tile";
 import { animate, serializeAnimation } from "../ecs/components/misc/animate";
+import { button, checkbox, radio, slider } from "../ecs/components/misc/button";
 import { cursor } from "../ecs/components/misc/cursor";
 import { fakeMouse } from "../ecs/components/misc/fakeMouse";
 import { health } from "../ecs/components/misc/health";
-import { ui } from "../ecs/components/misc/ui";
+import { layout } from "../ecs/components/misc/layout";
 import { lifespan } from "../ecs/components/misc/lifespan";
 import { named } from "../ecs/components/misc/named";
 import { state } from "../ecs/components/misc/state";
 import { stay } from "../ecs/components/misc/stay";
 import { textInput } from "../ecs/components/misc/textInput";
 import { timer } from "../ecs/components/misc/timer";
+import { ui } from "../ecs/components/misc/ui";
 import { area } from "../ecs/components/physics/area";
 import { body } from "../ecs/components/physics/body";
 import { doubleJump } from "../ecs/components/physics/doubleJump";
@@ -267,8 +269,6 @@ import type { Engine } from "./engine";
 import { throwError } from "./errors";
 import { plug } from "./plug";
 import { onCleanup, quit } from "./quit";
-import { button, checkbox, radio, slider } from "../ecs/components/misc/button";
-import { layout } from "../ecs/components/misc/layout";
 
 // The context is the way the user interact with a KAPLAY game.
 export const createContext = (
