@@ -5,5 +5,5 @@
   "cSpell.words": [
     "KAPLAY"
   ],
-  "dprint.path": "./node_modules/dprint/dprint",
+  "dprint.path": "./node_modules/dprint/dprint"
 }

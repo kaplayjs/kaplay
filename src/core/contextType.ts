@@ -5562,7 +5562,7 @@ export interface KAPLAYCtx {
     StateMachine: typeof StateMachine;
     /**
      * This object serves 2 purposes:
-     * 
+     *
      * * When called as a function, it defines a new scene with the
      *   name and the initializer function.
      * * It can also be used to register scene-local event handlers
@@ -5623,7 +5623,7 @@ export interface KAPLAYCtx {
      *
      * @param id - The scene name.
      * @param args - The args passed to the scene definition.
-     * 
+     *
      * @example
      * ```js
      * scene("mainScene", () => {
@@ -5646,13 +5646,12 @@ export interface KAPLAYCtx {
      * @group Scenes
      *
      * @see {@link popScene}
-     *
      */
     pushScene(id: string, ...args: unknown[]): void;
 
     /**
      * Pops the scene from the stack and set as current active scene.
-     * 
+     *
      * Only works if the current scene was entered using {@link pushScene}.
      *
      * @example
@@ -6318,7 +6317,7 @@ export interface KAPLAYCtx {
      * app.onKeyPress("f", () => {
      *     debug.log("i run in every scene from now on");
      * });
-     * 
+     *
      * // will NOT cancel the event
      * go("someScene");
      * ```
