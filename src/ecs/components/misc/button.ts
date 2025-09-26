@@ -1,3 +1,5 @@
+import type { Asset } from "../../../assets/asset";
+import type { SpriteData } from "../../../assets/sprite";
 import { toWorld } from "../../../game/camera";
 import { drawFormattedText } from "../../../gfx/draw/drawFormattedText";
 import { drawRect } from "../../../gfx/draw/drawRect";
@@ -12,8 +14,96 @@ import type { Comp, GameObj } from "../../../types";
 import { isFixed } from "../../entity/utils";
 import { ui, type UIComp } from "./ui";
 
+export type Theme = {
+    hoverColor: Color;
+    backgroundColor: Color;
+    button: {
+        normal: {
+            sprite: string | SpriteData | Asset<SpriteData>;
+            frame?: number;
+        };
+        pressed: {
+            sprite: string | SpriteData | Asset<SpriteData>;
+            frame?: number;
+        };
+    };
+    checkbox: {
+        normal: {
+            sprite: string | SpriteData | Asset<SpriteData>;
+            frame?: number;
+        };
+        pressed: {
+            sprite: string | SpriteData | Asset<SpriteData>;
+            frame?: number;
+        };
+    };
+    radio: {
+        normal: {
+            sprite: string | SpriteData | Asset<SpriteData>;
+            frame?: number;
+        };
+        pressed: {
+            sprite: string | SpriteData | Asset<SpriteData>;
+            frame?: number;
+        };
+    };
+    slider: {
+        gutter: {
+            sprite: string | SpriteData | Asset<SpriteData>;
+            frame?: number;
+        };
+        thumb: {
+            sprite: string | SpriteData | Asset<SpriteData>;
+            frame?: number;
+        };
+    };
+};
+
+export const DefaultTheme: Theme = {
+    hoverColor: rgb(80, 80, 255),
+    backgroundColor: rgb(144, 163, 174),
+    button: {
+        normal: {
+            sprite: "button",
+        },
+        pressed: {
+            sprite: "buttonpressed",
+        },
+    },
+    checkbox: {
+        normal: {
+            sprite: "ui",
+            frame: 0,
+        },
+        pressed: {
+            sprite: "ui",
+            frame: 1,
+        },
+    },
+    radio: {
+        normal: {
+            sprite: "ui",
+            frame: 2,
+        },
+        pressed: {
+            sprite: "ui",
+            frame: 3,
+        },
+    },
+    slider: {
+        gutter: {
+            sprite: "buttonpressed",
+        },
+        thumb: {
+            sprite: "button",
+        },
+    },
+};
+
 const hoverColor = rgb(80, 80, 255);
 const backgroundColor = rgb(144, 163, 174);
+
+let _theme = DefaultTheme;
 
 export interface ButtonComp extends Comp {
     width: number;
@@ -69,7 +159,9 @@ export function button(label: string): ButtonComp {
             }
             // Draw button bg
             drawSprite({
-                sprite: this.value ? "buttonpressed" : "button",
+                sprite: this.value
+                    ? _theme.button.pressed.sprite
+                    : _theme.button.normal.sprite,
                 width: this.width,
                 height: this.height,
             });
@@ -147,8 +239,12 @@ export function checkbox(label: string): ButtonComp {
             // Draw button bg
             drawSprite({
                 pos: vec2(2, this.height / 2 - 8),
-                sprite: "ui",
-                frame: this.value ? 1 : 0,
+                sprite: this.value
+                    ? _theme.checkbox.pressed.sprite
+                    : _theme.checkbox.normal.sprite,
+                frame: this.value
+                    ? _theme.checkbox.pressed.frame
+                    : _theme.checkbox.normal.frame,
             });
             // If label, draw label
             if (formattedText) {
@@ -237,8 +333,12 @@ export function radio(label: string, group: string): RadioComp {
             // Draw button bg
             drawSprite({
                 pos: vec2(2, this.height / 2 - 8),
-                sprite: "ui",
-                frame: this.value ? 3 : 2,
+                sprite: this.value
+                    ? _theme.radio.pressed.sprite
+                    : _theme.radio.normal.sprite,
+                frame: this.value
+                    ? _theme.radio.pressed.frame
+                    : _theme.radio.normal.frame,
             });
             // If label, draw label
             if (formattedText) {
@@ -370,17 +470,19 @@ export function slider(opt: SliderCompOpt): SliderComp {
             if (formattedText) {
                 drawFormattedText(formattedText);
             }
-            // Draw slider bg
+            // Draw slider gutter
             drawSprite({
                 pos: _gutterRect.pos,
-                sprite: "buttonpressed",
+                sprite: _theme.slider.gutter.sprite,
+                frame: _theme.slider.gutter.frame,
                 width: _gutterRect.width,
                 height: _gutterRect.height,
             });
             // Draw slider thumb
             drawSprite({
                 pos: _thumbRect.pos,
-                sprite: "button",
+                sprite: _theme.slider.thumb.sprite,
+                frame: _theme.slider.thumb.frame,
                 width: _thumbRect.width,
                 height: _thumbRect.height,
             });
