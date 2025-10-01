@@ -518,6 +518,7 @@ export const constraint = {
         };
     },
     ik(target: GameObj, opt: IKConstraintOpt): IKConstraintComp {
+        installSystem();
         const algorithm = opt.algorithm || "FABRIK";
         const depth = opt.depth ?? 1;
         const iterations = opt.iterations ?? 10;
