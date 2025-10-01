@@ -694,6 +694,54 @@ export interface GameEventHandlers {
 
     // #region Game Root Events
     /**
+     * Register an event that runs when tab is hidden.
+     *
+     * @param action - The function that is run what the tab is hidden.
+     *
+     * @example
+     * ```js
+     * // spooky ghost
+     * let ghosty = add([
+     *     pos(center()),
+     *     sprite("ghosty"),
+     *     anchor("center"),
+     * ]);
+     *
+     * // when switching tabs, this runs
+     * onHide(() => {
+     *     destroy(ghosty);
+     *     add([
+     *         text("There was never aa ghosttttt"),
+     *         pos(center()),
+     *         anchor("center")
+     *     ]);
+     * });
+     * ```
+     *
+     * @returns The event controller.
+     * @since v3001.0
+     * @group Events
+     */
+    onHide(action: () => void): KEventController;
+    /**
+     * Register an event that runs when tab is shown.
+     *
+     * @param action - The function that is run when the tab is shown.
+     *
+     * @example
+     * ```js
+     * // user has returned to this tab
+     * onShow(() => {
+     *     burp();
+     * });
+     * ```
+     *
+     * @returns The event controller.
+     * @since v3001.0
+     * @group Events
+     */
+    onShow(action: () => void): KEventController;
+    /**
      * Register an event on all game objs with certain tag.
      *
      * @param tag - The tag to listen for.
@@ -990,6 +1038,8 @@ export const createGameEventHandlers = (app: App) => {
         onButtonDown: app.onButtonDown,
         onButtonPress: app.onButtonPress,
         onButtonRelease: app.onButtonRelease,
+        onShow: app.onShow,
+        onHide: app.onHide,
         on: on,
         onFixedUpdate: onFixedUpdate,
         onUpdate: onUpdate,

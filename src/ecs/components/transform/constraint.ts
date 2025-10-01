@@ -205,8 +205,9 @@ function installSystem() {
 export const constraint = {
     /**
      * A distance constraint
-     * @param target The object to keep within distance off
-     * @param opt Options
+     * @param target - The object to keep within distance off
+     * @param opt - Options
+     *
      * @returns DistanceConstraintComp
      */
     distance(
@@ -266,8 +267,9 @@ export const constraint = {
     },
     /**
      * A translation constraint
-     * @param target The object to copy the translation from
-     * @param opt Options
+     * @param target - The object to copy the translation from
+     * @param opt - Options
+     *
      * @returns TranslationConstraintComp
      */
     translation(
@@ -313,8 +315,9 @@ export const constraint = {
     },
     /**
      * A rotation constraint
-     * @param target The object to copy the rotation from
-     * @param opt Options
+     * @param target - The object to copy the rotation from
+     * @param opt - Options
+     *
      * @returns RotationConstraintComp
      */
     rotation(
@@ -363,8 +366,9 @@ export const constraint = {
     },
     /**
      * A scale constraint
-     * @param target The object to copy the scale from
-     * @param opt Options
+     * @param target - The object to copy the scale from
+     * @param opt - Options
+     *
      * @returns ScaleConstraintComp
      */
     scale(
@@ -411,8 +415,9 @@ export const constraint = {
     },
     /**
      * A transform constraint
-     * @param target The object to copy the transform from
-     * @param opt Options
+     * @param target - The object to copy the transform from
+     * @param opt - Options
+     *
      * @returns TransformConstraintComp
      */
     transform(

@@ -5561,7 +5561,12 @@ export interface KAPLAYCtx {
      */
     StateMachine: typeof StateMachine;
     /**
-     * Define a scene.
+     * This object serves 2 purposes:
+     *
+     * * When called as a function, it defines a new scene with the
+     *   name and the initializer function.
+     * * It can also be used to register scene-local event handlers
+     *   that will be automatically cancelled when the scene is left.
      *
      * @param name - The scene name.
      * @param def - The scene definition.
@@ -5570,12 +5575,23 @@ export interface KAPLAYCtx {
      * ```js
      * // define a scene
      * scene("game", () => {
-     * // ...
+     *     // ...
      * });
-     *
      * // get options
      * scene("game", (opts) => {
      *     debug.log(opts.level);
+     * });
+     * ```
+     * @example
+     * ```js
+     * scene("pauseMenu", () => {
+     *     scene.onKeyPress("tab", () => {
+     *         debug.log("go to next menu item");
+     *     });
+     *     scene.onKeyPress("esc", () => {
+     *         // go back to game and cancel menu events
+     *         popScene();
+     *     });
      * });
      * ```
      *
@@ -5603,50 +5619,58 @@ export interface KAPLAYCtx {
     go(name: string, ...args: any): void;
 
     /**
-     * Push the current active scene to a stack and enters in the new scene
+     * Push the current active scene to a stack and then goes to the new scene
      *
      * @param id - The scene name.
-     * @param args - The args passed to the scene defition.
+     * @param args - The args passed to the scene definition.
      *
      * @example
      * ```js
-     *  add([
-     *    text("this is the first scene", {size: 32 }),
-     *    pos(center()),
-     *  ]);
-     * scene("main", () => {
-     *  add([
-     *    sprite("bean"),
-     *    pos(center()),
-     *  ]);
+     * scene("mainScene", () => {
+     *     add([
+     *         text("this is the first scene", { size: 32 }),
+     *         pos(center()),
+     *     ]);
+     * });
+     * scene("otherScene", () => {
+     *     add([
+     *         sprite("bean"),
+     *         pos(center()),
+     *     ]);
      * });
      *
-     * pushScene("main")
+     * pushScene("mainScene")
      * ```
      *
      * @since v3001.1
      * @group Scenes
+     *
+     * @see {@link popScene}
      */
     pushScene(id: string, ...args: unknown[]): void;
 
     /**
      * Pops the scene from the stack and set as current active scene.
      *
+     * Only works if the current scene was entered using {@link pushScene}.
+     *
      * @example
      * ```js
-     *  add([
-     *    text("this is the first scene", {size: 32 }),
-     *    pos(center()),
-     *  ]);
-     * scene("main", () => {
-     *  add([
-     *    sprite("bean"),
-     *    pos(center()),
-     *  ]);
+     * scene("mainScene", () => {
+     *     add([
+     *         text("this is the first scene", { size: 32 }),
+     *         pos(center()),
+     *     ]);
+     * });
+     * scene("otherScene", () => {
+     *     add([
+     *         sprite("bean"),
+     *         pos(center()),
+     *     ]);
      * });
      *
-     * go("mainScene");
-     * popScene();  // when triggered the text should appear on the center screen //
+     * pushScene("mainScene");
+     * popScene(); // return to the current scene
      * ```
      *
      * @since v3001.1
@@ -6285,13 +6309,17 @@ export interface KAPLAYCtx {
      */
     debug: Debug;
     /**
-     * The app scope for creating global events that doesn't stop in scene change.
+     * The app scope for creating global events that won't be automatically cancelled
+     * when the scene is changed.
      *
      * @example
      * ```js
      * app.onKeyPress("f", () => {
-     *     // This gonna run in all scenes
+     *     debug.log("i run in every scene from now on");
      * });
+     *
+     * // will NOT cancel the event
+     * go("someScene");
      * ```
      */
     app: AppScope;
