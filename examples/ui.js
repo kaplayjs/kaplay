@@ -6,6 +6,8 @@ kaplay({
     },
 });
 
+loadBean();
+
 loadAseprite("ui", "/sprites/ui.png", "/sprites/ui.json");
 loadSprite("button", "/sprites/button.png", {
     slice9: { left: 3, top: 3, right: 3, bottom: 3 },
@@ -20,7 +22,7 @@ const container = add([
 ]);
 
 container.add([
-    pos(100, 100),
+    pos(),
     area(),
     button("test"),
 ]).onInvoke(() => {
@@ -28,7 +30,7 @@ container.add([
 });
 
 container.add([
-    pos(100, 150),
+    pos(),
     area(),
     button("test2"),
 ]).onInvoke(() => {
@@ -36,7 +38,7 @@ container.add([
 });
 
 container.add([
-    pos(100, 200),
+    pos(),
     area(),
     checkbox("check"),
 ]).onInvoke(() => {
@@ -44,7 +46,7 @@ container.add([
 });
 
 container.add([
-    pos(100, 250),
+    pos(),
     area(),
     radio("English", "options"),
     "options",
@@ -52,7 +54,7 @@ container.add([
     debug.log("check");
 });
 container.add([
-    pos(100, 300),
+    pos(),
     area(),
     radio("日本語", "options"),
     "options",
@@ -61,9 +63,32 @@ container.add([
 });
 
 container.add([
-    pos(100, 350),
+    pos(),
     area(),
-    slider({ label: "slide" }),
+    slider({ label: "slide", width: 100 }),
 ]);
 
 container.doLayout();
+
+mask = add([
+    pos(100, 400),
+    mask(),
+    rect(100, 100),
+]);
+
+const bean = mask.add([
+    pos(),
+    sprite("bean", { width: 61 * 3, height: 53 * 3 }),
+]);
+
+add([
+    pos(200, 400),
+    area(),
+    slider({ scrollObject: bean, height: 100, orientation: "vertical" }),
+]);
+
+add([
+    pos(100, 500),
+    area(),
+    slider({ scrollObject: bean, width: 100, orientation: "horizontal" }),
+]);

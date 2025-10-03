@@ -1,17 +1,13 @@
 import type { Asset } from "../../../assets/asset";
 import type { SpriteData } from "../../../assets/sprite";
-import { toWorld } from "../../../game/camera";
 import { drawFormattedText } from "../../../gfx/draw/drawFormattedText";
 import { drawRect } from "../../../gfx/draw/drawRect";
 import { drawSprite } from "../../../gfx/draw/drawSprite";
 import { formatText } from "../../../gfx/formatText";
-import { clamp } from "../../../math/clamp";
 import { Color, rgb } from "../../../math/color";
 import { Rect, vec2 } from "../../../math/math";
-import type { Vec2 } from "../../../math/Vec2";
 import { _k } from "../../../shared";
 import type { Comp, GameObj } from "../../../types";
-import { isFixed } from "../../entity/utils";
 import { ui, type UIComp } from "./ui";
 
 export type Theme = {
@@ -103,7 +99,7 @@ export const DefaultTheme: Theme = {
 const hoverColor = rgb(80, 80, 255);
 const backgroundColor = rgb(144, 163, 174);
 
-let _theme = DefaultTheme;
+export let _theme = DefaultTheme;
 
 export interface ButtonComp extends Comp {
     width: number;
@@ -344,148 +340,6 @@ export function radio(label: string, group: string): RadioComp {
             if (formattedText) {
                 drawFormattedText(formattedText);
             }
-            if (this.isFocus) {
-                drawRect({
-                    pos: vec2(0, -1),
-                    width: this.width + 1,
-                    height: this.height + 1,
-                    fill: false,
-                    outline: {
-                        width: 1,
-                        color: hoverColor,
-                    },
-                });
-            }
-        },
-        renderArea() {
-            if (!_shape) {
-                _shape = new Rect(vec2(0), _width, _height);
-            }
-            return _shape;
-        },
-    };
-}
-
-export type UIOrientation = "horizontal" | "vertical";
-
-export type SliderCompOpt = {
-    position?: Vec2;
-    size?: Vec2;
-    label?: string;
-    orientation?: UIOrientation;
-};
-
-export interface SliderComp extends Comp {
-    width: number;
-    height: number;
-    value: number;
-
-    renderArea(): Rect;
-}
-
-export function slider(opt: SliderCompOpt): SliderComp {
-    let _shape: Rect | undefined;
-    let formattedText = opt.label
-        ? formatText({
-            pos: vec2(2, 2),
-            text: opt.label,
-            size: 20,
-            color: Color.BLACK,
-        })
-        : null;
-    let _width = formattedText ? formattedText.width + 100 + 4 : 100;
-    let _height = formattedText ? formattedText.height + 4 : 20;
-    let _value = 0;
-    let _sliderRect = new Rect(vec2(_width - 100, 0), 100, _height);
-    let _gutterRect = opt.orientation === "vertical"
-        ? new Rect(_sliderRect.pos.add(_width / 2 - 2, 0), 4, _height)
-        : new Rect(_sliderRect.pos.add(0, _height / 2 - 2), 100, 4);
-    let _thumbRect = new Rect(
-        vec2(_sliderRect.pos.x + 2, _sliderRect.pos.y + 2),
-        10,
-        _height - 4,
-    );
-    let _grabPos: Vec2 | null = null;
-    return {
-        id: "slider",
-        get width() {
-            return _width;
-        },
-        set width(value) {
-            _width = value;
-            if (_shape) _shape.width = value;
-        },
-        get height() {
-            return _height;
-        },
-        set height(value) {
-            _height = value;
-            if (_shape) _shape.height = value;
-        },
-        get value() {
-            return _value;
-        },
-        set value(value: number) {
-            _value = value;
-        },
-        add(this: GameObj<SliderComp | UIComp>) {
-            if (!this.has("ui")) {
-                this.use(ui({ canFocus: true }));
-            }
-            this.onClick(() => {
-                let pt = _k.k.mousePos();
-                pt = isFixed(this) ? pt : toWorld(pt);
-                this.transform.inverse.transformPointV(pt, pt);
-                if (_thumbRect.contains(pt)) {
-                    _grabPos = pt.sub(_thumbRect.pos);
-                }
-            });
-        },
-        update(this: GameObj<SliderComp | UIComp>) {
-            if (_grabPos && _k.k.isMouseDown()) {
-                let pt = _k.k.mousePos();
-                pt = isFixed(this) ? pt : toWorld(pt);
-                this.transform.inverse.transformPointV(pt, pt);
-                if (opt.orientation === "vertical") {
-                    const minY = _gutterRect.pos.y + 2;
-                    const maxY = _gutterRect.pos.y + _gutterRect.height
-                        - _thumbRect.height - 2;
-                    _thumbRect.pos.y = clamp(pt.y - _grabPos.y, minY, maxY);
-                    _value = (_thumbRect.pos.y - minY) / (maxY - minY);
-                }
-                else {
-                    const minX = _gutterRect.pos.x + 2;
-                    const maxX = _gutterRect.pos.x + _gutterRect.width
-                        - _thumbRect.width - 2;
-                    _thumbRect.pos.x = clamp(pt.x - _grabPos.x, minX, maxX);
-                    _value = (_thumbRect.pos.y - minX) / (maxX - minX);
-                }
-            }
-            else if (_grabPos) {
-                _grabPos = null;
-            }
-        },
-        draw(this: GameObj<SliderComp | UIComp>) {
-            // If label, draw label
-            if (formattedText) {
-                drawFormattedText(formattedText);
-            }
-            // Draw slider gutter
-            drawSprite({
-                pos: _gutterRect.pos,
-                sprite: _theme.slider.gutter.sprite,
-                frame: _theme.slider.gutter.frame,
-                width: _gutterRect.width,
-                height: _gutterRect.height,
-            });
-            // Draw slider thumb
-            drawSprite({
-                pos: _thumbRect.pos,
-                sprite: _theme.slider.thumb.sprite,
-                frame: _theme.slider.thumb.frame,
-                width: _thumbRect.width,
-                height: _thumbRect.height,
-            });
             if (this.isFocus) {
                 drawRect({
                     pos: vec2(0, -1),
