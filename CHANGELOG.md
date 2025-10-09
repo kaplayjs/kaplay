@@ -255,6 +255,9 @@ best friend, lajbel, can put the correct version name here
 - Added restitution and friction to physics - @mflerackers
 - All game objects have methods `onTag()` and `onUntag()` for watching tag
   changes - @mflerackers
+- All game objects have methods `onPause()`, `onUnpause()`, `onShow()`, and
+  `onHide()` for watching objects' lifecycle states. These work recursively and
+  obey the object tree. - @dragoncoder047
 - Added `SystemPhase` enum to identify different lifecycle events in the game
   loop that systems can hook into - @mflerackers
 - Added Blend mode is selectable to change how sprites are composited on top of
@@ -302,10 +305,8 @@ best friend, lajbel, can put the correct version name here
 
 ### Changed
 
-- **(!)** - Now `z()` is global instead of relative - @mflerackers
-- **(!)** Layers now work globally, no longer only between siblings -
-  @mflerackers
-- **(!)**: Changed default behavior to `kaplay({ tagsAsComponents: false })`
+- **BREAKING**: Changed default behavior to
+  `kaplay({ tagsAsComponents: false })`.
 - The physics engine creates less garbage - @mflerackers
 - Tag-based events are slightly faster - @dragoncoder047
 - Moved camera to the shader - @mflerackers

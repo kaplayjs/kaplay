@@ -37,6 +37,7 @@ export class SweepAndPrune {
      * @param obj - The object to add
      */
     add(obj: GameObj<AreaComp>) {
+        if (this.objects.has(obj)) return;
         const left = new SapEdge(obj, true);
         const right = new SapEdge(obj, false);
         this.edges.push(left);
@@ -68,7 +69,7 @@ export class SweepAndPrune {
     update() {
         // Update edge data
         for (const [obj, edges] of this.objects.entries()) {
-            if (shouldIgnore(obj)) continue;
+            if (!obj.exists()) continue;
             calcTransform(obj, obj.transform);
             const bbox = obj.worldArea().bbox();
             edges[0].x = bbox.pos.x;
@@ -94,17 +95,20 @@ export class SweepAndPrune {
     }
 
     /**
-     * Iterates all object pairs which potentially collide
+     * Iterates all object pairs which potentially collide and
+     * passes them to the collision callback.
      */
-    *[Symbol.iterator]() {
+    process(
+        collisionCb: (obj1: GameObj<AreaComp>, obj2: GameObj<AreaComp>) => void,
+    ) {
         const touching = new Set<GameObj<AreaComp>>();
 
         for (const edge of this.edges) {
             if (edge.isLeft) {
-                if (!shouldIgnore(edge.obj)) {
+                if (edge.obj.exists()) {
                     for (const obj of touching) {
-                        if (!shouldIgnore(obj)) {
-                            yield [obj, edge.obj];
+                        if (obj.exists()) {
+                            collisionCb(obj, edge.obj);
                         }
                     }
                 }
@@ -115,8 +119,4 @@ export class SweepAndPrune {
             }
         }
     }
-}
-
-function shouldIgnore(obj: GameObj) {
-    return !obj.exists() || isPaused(obj);
 }
