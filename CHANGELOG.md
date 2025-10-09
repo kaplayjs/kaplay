@@ -18,7 +18,7 @@ best friend, lajbel, can put the correct version name here
 
 ## [unreleased]
 
-## [4000.0.0-alpha.22] - 2025-10-7
+## [4000.0.0-alpha.22] - 2025-10-9
 
 ### Added
 
