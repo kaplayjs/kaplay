@@ -18,6 +18,10 @@ best friend, lajbel, can put the correct version name here
 
 ## [unreleased]
 
+### Added
+
+- Added italics to text formatting using `skew` - @dragoncoder047
+
 ## [4000.0.0-alpha.22] - 2025-10-9
 
 ### Added
@@ -197,7 +201,6 @@ best friend, lajbel, can put the correct version name here
   anim.animate("pos", [0, 5, 0], { relative: true });
   ```
 
-- Added italics to text formatting using `skew` - @dragoncoder047
 - Added `screenshotToBlob()` to get a screenshot as a `Blob` - @dragoncoder047
 - Added `getButtons()` to get the input binding buttons definition - @lajbel
 - Added `RuleSystem`, `DecisionTree` and `StateMachine` for enemy AI -
