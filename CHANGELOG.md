@@ -18,6 +18,10 @@ best friend, lajbel, can put the correct version name here
 
 ## [unreleased]
 
+### Added
+
+- Added `skew` to text formatting, so now italics is possible - @dragoncoder047
+
 ## [4000.0.0-alpha.22] - 2025-10-9
 
 ### Added
