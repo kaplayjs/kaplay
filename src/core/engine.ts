@@ -22,6 +22,12 @@ import { rotateFactory } from "../ecs/components/transform/rotate";
 import { scaleFactory } from "../ecs/components/transform/scale";
 import { zFactory } from "../ecs/components/transform/z";
 import { registerPrefabFactory } from "../ecs/entity/prefab";
+import { createGameEventHandlers } from "../events/gameEventHandlers";
+import {
+    attachAppToGameObjRaw,
+    createAppScope,
+    createSceneScope,
+} from "../events/scopes";
 import { createGame } from "../game/game";
 import { createCanvas } from "../gfx/canvas";
 import { initGfx } from "../gfx/gfx";
@@ -52,6 +58,7 @@ export const createEngine = (gopt: KAPLAYOpt) => {
         {
             scale: 1,
             spriteAtlasPadding: 2,
+            defaultLifetimeScope: "scene" as "scene" | "app",
         } satisfies KAPLAYOpt,
         gopt,
     );
@@ -59,6 +66,10 @@ export const createEngine = (gopt: KAPLAYOpt) => {
     const canvas = createCanvas(opt);
     const { fontCacheC2d, fontCacheCanvas } = createFontCache();
     const app = initApp({ canvas, ...gopt });
+    const gameEventHandler = createGameEventHandlers(app);
+    const sceneScope = createSceneScope(app, gameEventHandler);
+    const appScope = createAppScope(gameEventHandler);
+    attachAppToGameObjRaw(app);
 
     // TODO: Probably we should move this to initGfx
     const canvasContext = app.canvas
@@ -138,6 +149,8 @@ export const createEngine = (gopt: KAPLAYOpt) => {
         game,
         debug,
         gc: [] as (() => void)[],
+        sceneScope,
+        appScope,
         // Patch, k it's only avaible after running kaplay()
         k: null as unknown as KAPLAYCtx,
         startLoop() {

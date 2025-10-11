@@ -18,6 +18,107 @@ best friend, lajbel, can put the correct version name here
 
 ## [unreleased]
 
+## [4000.0.0-alpha.22] - 2025-10-9
+
+### Added
+
+- Added **lifetime scopes**, a way to define the lifetime of an event handler
+  using a specific scope, `scene`, `app` or a game object - @lajbel,
+  @dragoncoder047
+
+  ```js
+  app.onUpdate(() => {
+      // runs until it is cancelled
+  });
+
+  scene("game", () => {
+      const obj = add([]);
+
+      obj.onUpdate(() => {
+          // runs until obj is destroyed
+      });
+
+      scene.onUpdate(() => { // or just onUpdate(() => {
+          // runs until scene is changed
+      });
+  });
+  ```
+
+  All the available handlers in the scopes are `GameEventHandlers` ones:
+  - `onKeyDown()`
+  - `onKeyPress()`
+  - `onKeyPressRepeat()`
+  - `onKeyRelease()`
+  - `onCharInput()`
+  - `onMouseDown()`
+  - `onMousePress()`
+  - `onMouseRelease()`
+  - `onMouseMove()`
+  - `onScroll()`
+  - `onTouchStart()`
+  - `onTouchMove()`
+  - `onTouchEnd()`
+  - `onGamepadConnect()`
+  - `onGamepadDisconnect()`
+  - `onGamepadButtonDown()`
+  - `onGamepadButtonPress()`
+  - `onGamepadButtonRelease()`
+  - `onGamepadStick()`
+  - `onButtonDown()`
+  - `onButtonPress()`
+  - `onButtonRelease()`
+  - `onHide()`
+  - `onShow()`
+
+  And this game object handlers may differ when using it with `obj` and
+  `scene`/`app`:
+
+  - `on()`
+  - `onFixedUpdate()`
+  - `onUpdate()`
+  - `onDraw()`
+  - `onAdd()`
+  - `onDestroy()`
+  - `onUse()`
+  - `onUnused()`
+  - `onTag()`
+  - `onUntag()`
+
+- Added `app` scope for app event handlers - @lajbel
+  ```js
+  app.onUpdate(() => {
+      // runs until it is cancelled
+  });
+  ```
+
+- Added `KAPLAYOpt.defaultLifetimeScope` for setting the default lifetime scope
+  used for event handlers - @lajbel
+
+  ```js
+  kaplay({
+      defaultLifetimeScope: "app", // default is "scene"
+  });
+
+  onKeyPress("space", () => {
+      // runs until is cancelled
+  });
+  ```
+
+### Changed
+
+- In addition to being the `scene()` function, now `scene` is also a scope for
+  scene event handlers - @lajbel
+
+  ```js
+  scene("game", () => {
+      scene.onUpdate(() => { // or just onUpdate(() => {
+          // runs until scene is changed
+      });
+  });
+  ```
+
+## [4000.0.0-alpha.22] - 2025-10-9
+
 ### Added
 
 - Added `KAPLAYOpt.types`, `kaplayTypes()` and `Opt` to config specific
