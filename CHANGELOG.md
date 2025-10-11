@@ -21,7 +21,8 @@ best friend, lajbel, can put the correct version name here
 ### Added
 
 - Added **lifetime scopes**, a way to define the lifetime of an event handler
-  using a specific scope, `scene`, `app` or a game object - @lajbel
+  using a specific scope, `scene`, `app` or a game object - @lajbel,
+  @dragoncoder047
 
   ```js
   app.onUpdate(() => {
