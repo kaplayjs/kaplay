@@ -77,6 +77,10 @@
       "displayName": "Debug",
       "description": "Related to debugging"
     },
+    "events": {
+      "displayName": "Events",
+      "description": "Related to event handling"
+    },
     "tween": {
       "displayName": "Tween",
       "description": "Related to tweening"
