@@ -20,7 +20,8 @@ best friend, lajbel, can put the correct version name here
 
 ### Added
 
-- Added **scopes**, a way to define the life cycle of an event handler - @lajbel
+- Added **lifetime scopes**, a way to define the lifetime of an event handler
+  using a specific scope, `scene`, `app` or a game object - @lajbel
 
   ```js
   app.onUpdate(() => {
@@ -84,6 +85,19 @@ best friend, lajbel, can put the correct version name here
   ```js
   app.onUpdate(() => {
       // runs until it is cancelled
+  });
+  ```
+
+- Added `KAPLAYOpt.defaultLifetimeScope` for setting the default lifetime scope
+  used for event handlers - @lajbel
+
+  ```js
+  kaplay({
+      defaultLifetimeScope: "app", // default is "scene"
+  });
+
+  onKeyPress("space", () => {
+      // runs until is cancelled
   });
   ```
 

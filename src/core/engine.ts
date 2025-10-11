@@ -58,6 +58,7 @@ export const createEngine = (gopt: KAPLAYOpt) => {
         {
             scale: 1,
             spriteAtlasPadding: 2,
+            defaultLifetimeScope: "scene" as "scene" | "app",
         } satisfies KAPLAYOpt,
         gopt,
     );

@@ -273,7 +273,7 @@ export const createContext = (
     exportToGlobal?: boolean,
 ): KAPLAYCtx => {
     // aliases for root Game Obj operations
-    const { game, app, audio, debug } = e;
+    const { game, app, audio, debug, globalOpt } = e;
     const add = game.root.add.bind(game.root);
     const addPrefab = game.root.addPrefab.bind(game.root);
     const readd = game.root.readd.bind(game.root);
@@ -283,6 +283,10 @@ export const createContext = (
     const loop = game.root.loop.bind(game.root);
     const query = game.root.query.bind(game.root);
     const tween = game.root.tween.bind(game.root);
+
+    const defaultScope = globalOpt.defaultLifetimeScope == "app"
+        ? e.appScope
+        : e.sceneScope;
 
     const ctx: KAPLAYCtx = {
         _k: e,
@@ -453,28 +457,28 @@ export const createContext = (
         onHoverUpdate,
         onHoverEnd,
         // input
-        onKeyDown: e.sceneScope.onKeyDown,
-        onKeyPress: e.sceneScope.onKeyPress,
-        onKeyPressRepeat: e.sceneScope.onKeyPressRepeat,
-        onKeyRelease: e.sceneScope.onKeyRelease,
-        onMouseDown: e.sceneScope.onMouseDown,
-        onMousePress: e.sceneScope.onMousePress,
-        onMouseRelease: e.sceneScope.onMouseRelease,
-        onMouseMove: e.sceneScope.onMouseMove,
-        onCharInput: e.sceneScope.onCharInput,
-        onTouchStart: e.sceneScope.onTouchStart,
-        onTouchMove: e.sceneScope.onTouchMove,
-        onTouchEnd: e.sceneScope.onTouchEnd,
-        onScroll: e.sceneScope.onScroll,
-        onHide: e.sceneScope.onHide,
-        onShow: e.sceneScope.onShow,
-        onGamepadButtonDown: e.sceneScope.onGamepadButtonDown,
-        onGamepadButtonPress: e.sceneScope.onGamepadButtonPress,
-        onGamepadButtonRelease: e.sceneScope.onGamepadButtonRelease,
-        onGamepadStick: e.sceneScope.onGamepadStick,
-        onButtonPress: e.sceneScope.onButtonPress,
-        onButtonDown: e.sceneScope.onButtonDown,
-        onButtonRelease: e.sceneScope.onButtonRelease,
+        onKeyDown: defaultScope.onKeyDown,
+        onKeyPress: defaultScope.onKeyPress,
+        onKeyPressRepeat: defaultScope.onKeyPressRepeat,
+        onKeyRelease: defaultScope.onKeyRelease,
+        onMouseDown: defaultScope.onMouseDown,
+        onMousePress: defaultScope.onMousePress,
+        onMouseRelease: defaultScope.onMouseRelease,
+        onMouseMove: defaultScope.onMouseMove,
+        onCharInput: defaultScope.onCharInput,
+        onTouchStart: defaultScope.onTouchStart,
+        onTouchMove: defaultScope.onTouchMove,
+        onTouchEnd: defaultScope.onTouchEnd,
+        onScroll: defaultScope.onScroll,
+        onHide: defaultScope.onHide,
+        onShow: defaultScope.onShow,
+        onGamepadButtonDown: defaultScope.onGamepadButtonDown,
+        onGamepadButtonPress: defaultScope.onGamepadButtonPress,
+        onGamepadButtonRelease: defaultScope.onGamepadButtonRelease,
+        onGamepadStick: defaultScope.onGamepadStick,
+        onButtonPress: defaultScope.onButtonPress,
+        onButtonDown: defaultScope.onButtonDown,
+        onButtonRelease: defaultScope.onButtonRelease,
         mousePos: app.mousePos,
         mouseDeltaPos: app.mouseDeltaPos,
         isKeyDown: app.isKeyDown,
