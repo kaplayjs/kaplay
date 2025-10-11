@@ -690,9 +690,24 @@ export interface GameEventHandlers {
         action: (btn: string) => void,
     ): KEventController;
     onButtonRelease(action: (btn: string) => void): KEventController;
-    // #endregion
-
-    // #region Game Root Events
+    /**
+     * Register an event that runs when tab is shown.
+     *
+     * @param action - The function that is run when the tab is shown.
+     *
+     * @example
+     * ```js
+     * // User has returned to this tab
+     * onTabShow(() => {
+     *     burp();
+     * });
+     * ```
+     *
+     * @returns The event controller.
+     * @since v3001.0
+     * @group Events
+     */
+    onTabShow(action: () => void): KEventController;
     /**
      * Register an event that runs when tab is hidden.
      *
@@ -708,7 +723,7 @@ export interface GameEventHandlers {
      * ]);
      *
      * // when switching tabs, this runs
-     * onHide(() => {
+     * onTabHide(() => {
      *     destroy(ghosty);
      *     add([
      *         text("There was never aa ghosttttt"),
@@ -722,25 +737,10 @@ export interface GameEventHandlers {
      * @since v3001.0
      * @group Events
      */
-    onHide(action: () => void): KEventController;
-    /**
-     * Register an event that runs when tab is shown.
-     *
-     * @param action - The function that is run when the tab is shown.
-     *
-     * @example
-     * ```js
-     * // user has returned to this tab
-     * onShow(() => {
-     *     burp();
-     * });
-     * ```
-     *
-     * @returns The event controller.
-     * @since v3001.0
-     * @group Events
-     */
-    onShow(action: () => void): KEventController;
+    onTabHide(action: () => void): KEventController;
+    // #endregion
+
+    // #region Game Root Events
     /**
      * Register an event on all game objs with certain tag.
      *
@@ -1011,6 +1011,60 @@ export interface GameEventHandlers {
      */
     onUntag(action: (obj: GameObj, tag: string) => void): KEventController;
     // #endregion
+    // #region Deprecated
+    /**
+     * @deprecated use `onTabHide` instead
+     *
+     * Register an event that runs when tab is hidden.
+     *
+     * @param action - The function that is run what the tab is hidden.
+     *
+     * @example
+     * ```js
+     * // spooky ghost
+     * let ghosty = add([
+     *     pos(center()),
+     *     sprite("ghosty"),
+     *     anchor("center"),
+     * ]);
+     *
+     * // when switching tabs, this runs
+     * onHide(() => {
+     *     destroy(ghosty);
+     *     add([
+     *         text("There was never aa ghosttttt"),
+     *         pos(center()),
+     *         anchor("center")
+     *     ]);
+     * });
+     * ```
+     *
+     * @returns The event controller.
+     * @since v3001.0
+     * @group Events
+     */
+    onHide(action: () => void): KEventController;
+    /**
+     * @deprecated use `onTabShow` instead
+     *
+     * Register an event that runs when tab is shown.
+     *
+     * @param action - The function that is run when the tab is shown.
+     *
+     * @example
+     * ```js
+     * // user has returned to this tab
+     * onShow(() => {
+     *     burp();
+     * });
+     * ```
+     *
+     * @returns The event controller.
+     * @since v3001.0
+     * @group Events
+     */
+    onShow(action: () => void): KEventController;
+    // #endregion
 }
 
 export const createGameEventHandlers = (app: App) => {
@@ -1040,6 +1094,9 @@ export const createGameEventHandlers = (app: App) => {
         onButtonRelease: app.onButtonRelease,
         onShow: app.onShow,
         onHide: app.onHide,
+        onTabShow: app.onTabShow,
+        onTabHide: app.onTabHide,
+        // game related
         on: on,
         onFixedUpdate: onFixedUpdate,
         onUpdate: onUpdate,
