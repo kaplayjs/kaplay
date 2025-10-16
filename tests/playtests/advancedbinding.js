@@ -1,3 +1,11 @@
+/**
+ * @file Advanced Bindings
+ * @description Bind multiple actions to the same key, using modifier keys.
+ * @difficulty 3
+ * @tags ui, input
+ * @minver 4000.0
+ */
+
 kaplay({
     buttons: {
         next: {
