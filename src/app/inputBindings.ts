@@ -44,25 +44,25 @@ export const parseButtonBindings = (appState: AppState) => {
 
         if (keyboardBtns) {
             keyboardBtns.forEach((k) => {
-                mapAddOrPush(appState.buttonsByKey, k, b);
+                mapAddOrPush(appState.buttonHandler.byKey, k, b);
             });
         }
 
         if (keyboardCodes) {
             keyboardCodes.forEach((k) => {
-                mapAddOrPush(appState.buttonsByKeyCode, k, b);
+                mapAddOrPush(appState.buttonHandler.byKeyCode, k, b);
             });
         }
 
         if (gamepadBtns) {
             gamepadBtns.forEach((g) => {
-                mapAddOrPush(appState.buttonsByGamepad, g, b);
+                mapAddOrPush(appState.buttonHandler.byGamepad, g, b);
             });
         }
 
         if (mouseBtns) {
             mouseBtns.forEach((m) => {
-                mapAddOrPush(appState.buttonsByMouse, m, b);
+                mapAddOrPush(appState.buttonHandler.byMouse, m, b);
             });
         }
     }
