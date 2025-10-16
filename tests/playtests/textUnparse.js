@@ -1,17 +1,17 @@
 /**
  * @file Text unparse
- * @description Ok dragoncoder explain this
+ * @description How to slice formatted text without breaking styles
  * @difficulty 3
  * @tags text
  * @minver 3001.0
  */
 
-kaplay();
+kaplay({ font: "happy", background: "black" });
 
-const text =
+const str =
     "hello [foo]styled[/foo] world \\[weird tag] with \\] [barbaz]some more [nested]text[/nested][/barbaz] bloop";
-// const text = "hello [a][b]a[/b][/a] goodbye";
-const formatted = compileStyledText(text);
+// const str = "hello [a][b]a[/b][/a] goodbye";
+const formatted = compileStyledText(str);
 console.log(formatted);
 
 function tagDiff(l1, l2) {
@@ -43,9 +43,64 @@ function sliceUnparse(formatted, start, end) {
     return out;
 }
 
-for (var start = 0; start < formatted.text.length; start++) {
-    for (var end = start + 1; end <= formatted.text.length; end++) {
-        const t = sliceUnparse(formatted, start, end);
-        console.log(t);
-    }
-}
+const theTextObj = add([
+    pos(100, 200),
+    text("", {
+        size: 20,
+        styles: {
+            foo: {
+                color: RED,
+            },
+            barbaz: {
+                scale: 2,
+                pos: vec2(0, -16),
+            },
+            nested: {
+                skew: 30,
+            },
+        },
+    }),
+]);
+
+loadBean();
+loadHappy();
+loadSprite("beant", "/crew/beant.png");
+
+var draggin = null;
+const startSlider = add([
+    sprite("bean"),
+    pos(100, 100),
+    area(),
+    anchor("center"),
+    {
+        add() {
+            this.onMousePress(() => this.isHovering() && (draggin = this));
+        },
+    },
+]);
+const endSlider = add([
+    sprite("beant"),
+    pos(width() - 100, 100),
+    area(),
+    anchor("center"),
+    {
+        add() {
+            this.onMousePress(() => this.isHovering() && (draggin = this));
+        },
+    },
+]);
+onMouseRelease(() => draggin = null);
+onMouseMove(pos => {
+    if (draggin) draggin.pos.x = pos.x;
+});
+onUpdate(() => {
+    startSlider.pos.x = clamp(startSlider.pos.x, 100, endSlider.pos.x);
+    endSlider.pos.x = clamp(endSlider.pos.x, startSlider.pos.x, width() - 100);
+    const startIndex =
+        map(startSlider.pos.x, 100, width() - 100, 0, formatted.text.length)
+        | 0;
+    const endIndex =
+        map(endSlider.pos.x, 100, width() - 100, 0, formatted.text.length) | 0;
+    theTextObj.text = sliceUnparse(formatted, startIndex, endIndex);
+    theTextObj.pos.x = 100 + startIndex * 15.5;
+});
