@@ -3,8 +3,8 @@ kaplay({
         foo: {
             keyboard: "q",
             keyboardCode: "KeyQ",
-        }
-    }
+        },
+    },
 });
 
 onButtonPress("foo", () => {

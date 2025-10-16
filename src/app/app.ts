@@ -722,7 +722,7 @@ export const initApp = (
         state.events.trigger("input");
         processGamepad();
         state.keyState.process(state);
-        state.mouseState.process(state)
+        state.mouseState.process(state);
         state.buttonHandler.process(state);
     }
 
