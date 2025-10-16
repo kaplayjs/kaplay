@@ -20,6 +20,8 @@ best friend, lajbel, can put the correct version name here
 
 ### Added
 
+- Added `skew` to text formatting, so now italics is possible - @dragoncoder047
+
 - Added **lifetime scopes**, a way to define the lifetime of an event handler
   using a specific scope, `scene`, `app` or a game object - @lajbel,
   @dragoncoder047
