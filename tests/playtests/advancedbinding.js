@@ -1,0 +1,69 @@
+kaplay({
+    buttons: {
+        next: {
+            keyboard: "tab",
+            gamepad: ["south", "dpad-left"],
+        },
+        prev: {
+            keyboard: "shift+tab",
+            gamepad: ["rshoulder+south", "dpad-right"],
+        },
+    },
+    font: "happy",
+    background: "black",
+});
+loadHappy();
+const friends = ["bean", "bobo", "btfly", "dino", "ghosty", "mark", "tga"];
+for (var friend of friends) {
+    loadSprite(friend, `/crew/${friend}.png`);
+}
+
+var index = 0;
+const picker = add([
+    pos(center()),
+    sprite(friends[index]),
+    anchor("center"),
+    scale(3),
+    opacity(1),
+]);
+
+add([
+    text("\\[shift + tab] <-            -> \\[tab]", { size: 30 }),
+    pos(center().sub(100, 0)),
+    anchor("center"),
+]);
+
+const SLIDE = vec2(-100, 0);
+const SPEED = 0.1;
+function flip(direction) {
+    index = (index + direction + friends.length) % friends.length;
+    tween(1, 0, SPEED, v => {
+        picker.opacity = v;
+        picker.pos = lerp(center().add(SLIDE.scale(direction)), center(), v);
+    }).then(() => {
+        picker.use(sprite(friends[index]));
+        tween(0, 1, SPEED, v => {
+            picker.opacity = v;
+            picker.pos = lerp(
+                center().add(SLIDE.scale(-direction)),
+                center(),
+                v,
+            );
+        });
+    });
+}
+
+onButtonPress("next", () => {
+    debug.log("going to next friend");
+    flip(1);
+});
+onButtonRelease("next", () => {
+    debug.log("next up");
+});
+onButtonPress("prev", () => {
+    debug.log("going to previous friend");
+    flip(-1);
+});
+onButtonRelease("prev", () => {
+    debug.log("prev up");
+});

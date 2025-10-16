@@ -6,7 +6,6 @@ import type {
     KGamepadButton,
     MouseButton,
 } from "../types";
-import { mapAddOrPush } from "../utils/sets";
 import { type AppState, ButtonState } from "./app";
 
 /**
@@ -43,104 +42,163 @@ export const parseButtonBindings = (appState: AppState) => {
     const btns = appState.buttons;
 
     for (const b in btns) {
-        appState.buttonHandler.addBinding(b, btns[b]);
+        appState.buttonHandler.updateBinding(b, btns[b]);
     }
 };
 
-class ChordedButtonDetector<T = string> {
+function splitButtons<T extends string>(b: T): T[] {
+    // this is only to handle the special case of "+" being used as both the button and a splitter
+    // "+".split("+") --> ["", ""]
+    // in all practicality "+" can only be a real key once so "", "" should only appear once
+    // we process it as many times as it appears to be consistent
+    const out = b.split("+") as T[];
+    for (var i = 0; i < out.length; i++) {
+        if (out[i] === "" && out[i + 1] === "") {
+            out.splice(i, 2, "+" as T);
+            i--;
+        }
+    }
+    return out;
+}
+
+class ChordedButtonDetector<T extends string = string> {
+    // map of mod key --> down state
+    mods = new Map<T, boolean>();
+    // map of commit key --> checkers for this commit key
+    committers = new Map<T, { check: Set<T>; btns: Map<string, T[]> }>();
+    buttonsUsed = new Set<string>();
+    updateBinding(button: string, bindings: T[]) {
+        // clear out old binding
+        const modsToClear = new Set<T>();
+        for (var [_, { check, btns }] of this.committers.entries()) {
+            btns.get(button)?.forEach(b =>
+                check.delete(b) && modsToClear.add(b)
+            );
+            btns.delete(button);
+        }
+        // install new one
+        for (var b of bindings) {
+            const mods = splitButtons(b);
+            const committer = mods.pop()!;
+            // add checking on the old mod keys
+            for (var m of mods) {
+                modsToClear.delete(m);
+                if (!this.mods.has(m)) this.mods.set(m, false);
+            }
+
+            // install new buttons
+            if (!this.committers.has(committer)) {
+                this.committers.set(committer, {
+                    check: new Set(mods),
+                    btns: new Map([[button, mods]]),
+                });
+            }
+            else {
+                const e = this.committers.get(committer)!;
+                mods.forEach(m => e.check.add(m));
+                e.btns.set(button, mods);
+            }
+        }
+        // cleanup
+        modsToClear.forEach(m => this.mods.delete(m));
+    }
+    handleDown(key: T): string | undefined {
+        if (this.mods.has(key)) {
+            this.mods.set(key, true);
+        }
+        const commit = this.committers.get(key);
+        if (commit) {
+            options: for (var [button, mods] of commit.btns.entries()) {
+                for (var mod of commit.check.values()) {
+                    if (this.mods.get(mod) !== mods.includes(mod)) {
+                        continue options;
+                    }
+                }
+                this.buttonsUsed.add(button);
+                return button;
+            }
+        }
+        return undefined;
+    }
+    handleUp(key: T): string[] {
+        if (this.mods.has(key)) {
+            this.mods.set(key, false);
+        }
+        const commit = this.committers.get(key);
+        const canceledButtons: string[] = [];
+        if (commit) {
+            for (var button of commit.btns.keys()) {
+                this.buttonsUsed.delete(button) && canceledButtons.push(button);
+            }
+        }
+        return canceledButtons;
+    }
 }
 
 export class ButtonProcessor {
-    byKey = new Map<Key, string[]>();
-    byKeyCode = new Map<string, string[]>();
-    byMouse = new Map<MouseButton, string[]>();
-    byGamepad = new Map<KGamepadButton, string[]>();
-    state = new ButtonState<string>();
-    addBinding(name: string, b: ButtonBinding) {
+    byKey = new ChordedButtonDetector<ChordedKey>();
+    byKeyCode = new ChordedButtonDetector<string>();
+    byMouse = new ChordedButtonDetector<ChordedMouseButton>();
+    byGamepad = new ChordedButtonDetector<ChordedKGamepadButton>();
+    state = new ButtonState<string>(
+        "buttonPress",
+        null,
+        "buttonDown",
+        "buttonRelease",
+    );
+    updateBinding(name: string, b: ButtonBinding) {
         const keyboardBtns = b.keyboard && [b.keyboard].flat();
         const keyboardCodes = b.keyboardCode
             && [b.keyboardCode].flat();
         const gamepadBtns = b.gamepad && [b.gamepad].flat();
         const mouseBtns = b.mouse && [b.mouse].flat();
-
         if (keyboardBtns) {
-            keyboardBtns.forEach((k) => {
-                mapAddOrPush(this.byKey, k, name);
-            });
+            this.byKey.updateBinding(name, keyboardBtns);
         }
-
         if (keyboardCodes) {
-            keyboardCodes.forEach((k) => {
-                mapAddOrPush(this.byKeyCode, k, name);
-            });
+            this.byKeyCode.updateBinding(name, keyboardCodes);
         }
-
         if (gamepadBtns) {
-            gamepadBtns.forEach((g) => {
-                mapAddOrPush(this.byGamepad, g, name);
-            });
+            this.byGamepad.updateBinding(name, gamepadBtns);
         }
-
         if (mouseBtns) {
-            mouseBtns.forEach((m) => {
-                mapAddOrPush(this.byMouse, m, name);
-            });
+            this.byMouse.updateBinding(name, mouseBtns);
+        }
+    }
+    private _maybePress(button: string | undefined, state: AppState) {
+        if (button) {
+            this.state.press(button, state);
+        }
+    }
+    private _maybeRelease(buttons: string[], state: AppState) {
+        for (var button of buttons) {
+            this.state.release(button, state);
         }
     }
     processKeydown(key: Key, keyCode: string, state: AppState) {
-        this.byKey.get(key)?.forEach((btn) => {
-            this.state.press(btn);
-            state.events.trigger("buttonPress", btn);
-        });
-        this.byKeyCode.get(keyCode)?.forEach((btn) => {
-            this.state.press(btn);
-            state.events.trigger("buttonPress", btn);
-        });
+        this._maybePress(this.byKey.handleDown(key), state);
+        this._maybePress(this.byKeyCode.handleDown(keyCode), state);
     }
     processKeyup(key: Key, keyCode: string, state: AppState) {
-        this.byKey.get(key)?.forEach((btn) => {
-            this.state.release(btn);
-            state.events.trigger("buttonRelease", btn);
-        });
-        this.byKeyCode.get(keyCode)?.forEach((btn) => {
-            this.state.release(btn);
-            state.events.trigger("buttonRelease", btn);
-        });
+        this._maybeRelease(this.byKey.handleUp(key), state);
+        this._maybeRelease(this.byKeyCode.handleUp(keyCode), state);
     }
     processMousedown(mb: MouseButton, state: AppState) {
-        this.byMouse.get(mb)?.forEach((btn) => {
-            this.state.press(btn);
-            state.events.trigger("buttonPress", btn);
-        });
+        this._maybePress(this.byMouse.handleDown(mb), state);
     }
     processMouseup(mb: MouseButton, state: AppState) {
-        this.byMouse.get(mb)?.forEach((btn) => {
-            this.state.release(btn);
-            state.events.trigger("buttonRelease", btn);
-        });
+        this._maybeRelease(this.byMouse.handleUp(mb), state);
     }
     processGamepadButtonDown(gb: KGamepadButton, state: AppState) {
-        this.byGamepad.get(gb)?.forEach(
-            (btn) => {
-                this.state.press(btn);
-                state.events.trigger("buttonPress", btn);
-            },
-        );
+        this._maybePress(this.byGamepad.handleDown(gb), state);
     }
     processGamepadButtonUp(gb: KGamepadButton, state: AppState) {
-        this.byGamepad.get(gb)?.forEach(
-            (btn) => {
-                this.state.release(btn);
-                state.events.trigger("buttonRelease", btn);
-            },
-        );
+        this._maybeRelease(this.byGamepad.handleUp(gb), state);
     }
     update() {
         this.state.update();
     }
     process(state: AppState) {
-        this.state.down.forEach((btn) => {
-            state.events.trigger("buttonDown", btn);
-        });
+        this.state.process(state);
     }
 }
