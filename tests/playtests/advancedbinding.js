@@ -13,7 +13,21 @@ kaplay({
     background: "black",
 });
 loadHappy();
-const friends = ["bean", "beant", "zombean", "burpman", "skuller", "bag", "bobo", "sukomi", "dino", "ghosty", "mark", "kat", "tga"].sort();
+const friends = [
+    "bean",
+    "beant",
+    "zombean",
+    "burpman",
+    "skuller",
+    "bag",
+    "bobo",
+    "sukomi",
+    "dino",
+    "ghosty",
+    "mark",
+    "kat",
+    "tga",
+].sort();
 for (var friend of friends) {
     loadSprite(friend, `/crew/${friend}.png`);
 }
