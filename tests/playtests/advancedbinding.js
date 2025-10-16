@@ -13,7 +13,7 @@ kaplay({
     background: "black",
 });
 loadHappy();
-const friends = ["bean", "bobo", "btfly", "dino", "ghosty", "mark", "tga"];
+const friends = ["bean", "beant", "zombean", "burpman", "skuller", "bag", "bobo", "sukomi", "dino", "ghosty", "mark", "kat", "tga"].sort();
 for (var friend of friends) {
     loadSprite(friend, `/crew/${friend}.png`);
 }
@@ -25,6 +25,12 @@ const picker = add([
     anchor("center"),
     scale(3),
     opacity(1),
+]);
+
+const pickerText = picker.add([
+    pos(0, -50),
+    text(friends[index], { align: "center", size: 10 }),
+    anchor("bot"),
 ]);
 
 add([
@@ -41,7 +47,7 @@ function flip(direction) {
         picker.opacity = v;
         picker.pos = lerp(center().add(SLIDE.scale(direction)), center(), v);
     }).then(() => {
-        picker.use(sprite(friends[index]));
+        picker.use(sprite(pickerText.text = friends[index]));
         tween(0, 1, SPEED, v => {
             picker.opacity = v;
             picker.pos = lerp(
