@@ -17,7 +17,6 @@ import { type KEventController, KEventHandler } from "../events/events";
 import { canvasToViewport } from "../gfx/viewport";
 import { map, vec2 } from "../math/math";
 import { Vec2 } from "../math/Vec2";
-import { _k } from "../shared";
 import { overload2 } from "../utils/overload";
 import { isEqOrIncludes, setHasOrIncludes } from "../utils/sets";
 import {
@@ -28,7 +27,7 @@ import {
     setButton,
 } from "./buttons";
 import {
-    type ButtonBinding,
+    ButtonProcessor,
     type ButtonsDef,
     parseButtonBindings,
 } from "./inputBindings";
@@ -55,70 +54,6 @@ export class ButtonState<T = string> {
         this.down.delete(btn);
         this.pressed.delete(btn);
         this.released.add(btn);
-    }
-}
-
-export class ChordedButtonAPIHandler {
-    byKey = new Map<Key, string[]>();
-    byKeyCode = new Map<string, string[]>();
-    byMouse = new Map<MouseButton, string[]>();
-    byGamepad = new Map<KGamepadButton, string[]>();
-    state = new ButtonState<string>();
-    processKeydown(key: Key, keyCode: string, state: AppState) {
-        this.byKey.get(key)?.forEach((btn) => {
-            this.state.press(btn);
-            state.events.trigger("buttonPress", btn);
-        });
-        this.byKeyCode.get(keyCode)?.forEach((btn) => {
-            this.state.press(btn);
-            state.events.trigger("buttonPress", btn);
-        });
-    }
-    processKeyup(key: Key, keyCode: string, state: AppState) {
-        this.byKey.get(key)?.forEach((btn) => {
-            this.state.release(btn);
-            state.events.trigger("buttonRelease", btn);
-        });
-        this.byKeyCode.get(keyCode)?.forEach((btn) => {
-            this.state.release(btn);
-            state.events.trigger("buttonRelease", btn);
-        });
-    }
-    processMousedown(mb: MouseButton, state: AppState) {
-        this.byMouse.get(mb)?.forEach((btn) => {
-            this.state.press(btn);
-            state.events.trigger("buttonPress", btn);
-        });
-    }
-    processMouseup(mb: MouseButton, state: AppState) {
-        this.byMouse.get(mb)?.forEach((btn) => {
-            this.state.release(btn);
-            state.events.trigger("buttonRelease", btn);
-        });
-    }
-    processGamepadButtonDown(gb: KGamepadButton, state: AppState) {
-        this.byGamepad.get(gb)?.forEach(
-            (btn) => {
-                this.state.press(btn);
-                state.events.trigger("buttonPress", btn);
-            },
-        );
-    }
-    processGamepadButtonUp(gb: KGamepadButton, state: AppState) {
-        this.byGamepad.get(gb)?.forEach(
-            (btn) => {
-                this.state.release(btn);
-                state.events.trigger("buttonRelease", btn);
-            },
-        );
-    }
-    update() {
-        this.state.update();
-    }
-    process(state: AppState) {
-        this.state.down.forEach((btn) => {
-            state.events.trigger("buttonDown", btn);
-        });
     }
 }
 
@@ -175,7 +110,7 @@ export const initAppState = (opt: {
     return {
         canvas: opt.canvas,
         buttons: buttons,
-        buttonHandler: new ChordedButtonAPIHandler(),
+        buttonHandler: new ButtonProcessor(),
         loopID: null as null | number,
         stopped: false,
         dt: 0,

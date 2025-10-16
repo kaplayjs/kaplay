@@ -134,6 +134,8 @@ export type Key =
     )
     | (string & {});
 
+export type ChordedKey = Key | `${Key}+${Key}`;
+
 /**
  * A mouse button.
  *
@@ -141,6 +143,7 @@ export type Key =
  * @subgroup Mouse
  */
 export type MouseButton = "left" | "right" | "middle" | "back" | "forward";
+export type ChordedMouseButton = MouseButton | `${MouseButton}+${MouseButton}`;
 
 /**
  * A gamepad button.
@@ -168,6 +171,10 @@ export type KGamepadButton =
     | "home"
     | "capture"
     | "touchpad";
+export type ChordedKGamepadButton =
+    | KGamepadButton
+    | `${KGamepadButton}+${KGamepadButton}`
+    | `${KGamepadButton}+${KGamepadButton}+${KGamepadButton}`;
 
 /**
  * A gamepad stick.

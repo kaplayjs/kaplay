@@ -1,6 +1,13 @@
-import type { Key, KGamepadButton, MouseButton } from "../types";
+import type {
+    ChordedKey,
+    ChordedKGamepadButton,
+    ChordedMouseButton,
+    Key,
+    KGamepadButton,
+    MouseButton,
+} from "../types";
 import { mapAddOrPush } from "../utils/sets";
-import type { AppState } from "./app";
+import { type AppState, ButtonState } from "./app";
 
 /**
  * A button binding.
@@ -9,10 +16,10 @@ import type { AppState } from "./app";
  * @subgroup Buttons API
  */
 export type ButtonBinding = {
-    keyboard?: Key | Key[];
+    keyboard?: ChordedKey | ChordedKey[];
     keyboardCode?: string | string[];
-    gamepad?: KGamepadButton | KGamepadButton[];
-    mouse?: MouseButton | MouseButton[];
+    gamepad?: ChordedKGamepadButton | ChordedKGamepadButton[];
+    mouse?: ChordedMouseButton | ChordedMouseButton[];
 };
 
 /**
@@ -36,34 +43,104 @@ export const parseButtonBindings = (appState: AppState) => {
     const btns = appState.buttons;
 
     for (const b in btns) {
-        const keyboardBtns = btns[b].keyboard && [btns[b].keyboard].flat();
-        const keyboardCodes = btns[b].keyboardCode
-            && [btns[b].keyboardCode].flat();
-        const gamepadBtns = btns[b].gamepad && [btns[b].gamepad].flat();
-        const mouseBtns = btns[b].mouse && [btns[b].mouse].flat();
+        appState.buttonHandler.addBinding(b, btns[b]);
+    }
+};
+
+class ChordedButtonDetector<T = string> {
+}
+
+export class ButtonProcessor {
+    byKey = new Map<Key, string[]>();
+    byKeyCode = new Map<string, string[]>();
+    byMouse = new Map<MouseButton, string[]>();
+    byGamepad = new Map<KGamepadButton, string[]>();
+    state = new ButtonState<string>();
+    addBinding(name: string, b: ButtonBinding) {
+        const keyboardBtns = b.keyboard && [b.keyboard].flat();
+        const keyboardCodes = b.keyboardCode
+            && [b.keyboardCode].flat();
+        const gamepadBtns = b.gamepad && [b.gamepad].flat();
+        const mouseBtns = b.mouse && [b.mouse].flat();
 
         if (keyboardBtns) {
             keyboardBtns.forEach((k) => {
-                mapAddOrPush(appState.buttonHandler.byKey, k, b);
+                mapAddOrPush(this.byKey, k, name);
             });
         }
 
         if (keyboardCodes) {
             keyboardCodes.forEach((k) => {
-                mapAddOrPush(appState.buttonHandler.byKeyCode, k, b);
+                mapAddOrPush(this.byKeyCode, k, name);
             });
         }
 
         if (gamepadBtns) {
             gamepadBtns.forEach((g) => {
-                mapAddOrPush(appState.buttonHandler.byGamepad, g, b);
+                mapAddOrPush(this.byGamepad, g, name);
             });
         }
 
         if (mouseBtns) {
             mouseBtns.forEach((m) => {
-                mapAddOrPush(appState.buttonHandler.byMouse, m, b);
+                mapAddOrPush(this.byMouse, m, name);
             });
         }
     }
-};
+    processKeydown(key: Key, keyCode: string, state: AppState) {
+        this.byKey.get(key)?.forEach((btn) => {
+            this.state.press(btn);
+            state.events.trigger("buttonPress", btn);
+        });
+        this.byKeyCode.get(keyCode)?.forEach((btn) => {
+            this.state.press(btn);
+            state.events.trigger("buttonPress", btn);
+        });
+    }
+    processKeyup(key: Key, keyCode: string, state: AppState) {
+        this.byKey.get(key)?.forEach((btn) => {
+            this.state.release(btn);
+            state.events.trigger("buttonRelease", btn);
+        });
+        this.byKeyCode.get(keyCode)?.forEach((btn) => {
+            this.state.release(btn);
+            state.events.trigger("buttonRelease", btn);
+        });
+    }
+    processMousedown(mb: MouseButton, state: AppState) {
+        this.byMouse.get(mb)?.forEach((btn) => {
+            this.state.press(btn);
+            state.events.trigger("buttonPress", btn);
+        });
+    }
+    processMouseup(mb: MouseButton, state: AppState) {
+        this.byMouse.get(mb)?.forEach((btn) => {
+            this.state.release(btn);
+            state.events.trigger("buttonRelease", btn);
+        });
+    }
+    processGamepadButtonDown(gb: KGamepadButton, state: AppState) {
+        this.byGamepad.get(gb)?.forEach(
+            (btn) => {
+                this.state.press(btn);
+                state.events.trigger("buttonPress", btn);
+            },
+        );
+    }
+    processGamepadButtonUp(gb: KGamepadButton, state: AppState) {
+        this.byGamepad.get(gb)?.forEach(
+            (btn) => {
+                this.state.release(btn);
+                state.events.trigger("buttonRelease", btn);
+            },
+        );
+    }
+    update() {
+        this.state.update();
+    }
+    process(state: AppState) {
+        this.state.down.forEach((btn) => {
+            state.events.trigger("buttonDown", btn);
+        });
+    }
+}
