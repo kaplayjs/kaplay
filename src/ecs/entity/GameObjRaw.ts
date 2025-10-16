@@ -4,7 +4,9 @@ import type { AppEvents } from "../../app/app";
 import type { KAPLAYCtx } from "../../core/contextType";
 import { throwError } from "../../core/errors";
 import type { GameObjEventNames } from "../../events/eventMap";
+import type { GameEventHandlersForApp } from "../../events/gameEventHandlers";
 import {
+
     type KEvent,
     KEventController,
     type KEventHandler,
@@ -482,10 +484,10 @@ export interface GameObjRaw {
     onButtonDown: KAPLAYCtx["onButtonDown"];
     onButtonPress: KAPLAYCtx["onButtonPress"];
     onButtonRelease: KAPLAYCtx["onButtonRelease"];
-    onTabShow: GameEventHandlers["onTabShow"];
-    onTabHide: GameEventHandlers["onTabHide"];
-    onShow: GameEventHandlers["onShow"];
-    onHide: GameEventHandlers["onHide"];
+    onTabShow: GameEventHandlersForApp["onTabShow"];
+    onTabHide: GameEventHandlersForApp["onTabHide"];
+    onShow: GameEventHandlersForApp["onShow"];
+    onHide: GameEventHandlersForApp["onHide"];
 }
 
 export type InternalGameObjRaw = GameObjRaw & {
@@ -1293,12 +1295,12 @@ export const GameObjRawPrototype: Omit<InternalGameObjRaw, AppEvents> = {
                         this._onCurCompCleanup = null;
                     };
 
-                    gc.push(this.on(key, <any> func).cancel);
+                    gc.push(this.on(key, <any>func).cancel);
                 }
                 else {
-                    const func = comp[<keyof typeof comp> key];
+                    const func = comp[<keyof typeof comp>key];
 
-                    gc.push(this.on(key, <any> func).cancel);
+                    gc.push(this.on(key, <any>func).cancel);
                 }
             }
             else {
@@ -1306,8 +1308,8 @@ export const GameObjRawPrototype: Omit<InternalGameObjRaw, AppEvents> = {
                 if (this[key] === undefined) {
                     // Assign comp fields to game obj
                     Object.defineProperty(this, key, {
-                        get: () => comp[<keyof typeof comp> key],
-                        set: (val) => comp[<keyof typeof comp> key] = val,
+                        get: () => comp[<keyof typeof comp>key],
+                        set: (val) => comp[<keyof typeof comp>key] = val,
                         configurable: true,
                         enumerable: true,
                     });
@@ -1320,9 +1322,9 @@ export const GameObjRawPrototype: Omit<InternalGameObjRaw, AppEvents> = {
                     )?.id;
                     throw new Error(
                         `Duplicate component property: "${key}" while adding component "${comp.id}"`
-                            + (originalCompId
-                                ? ` (originally added by "${originalCompId}")`
-                                : ""),
+                        + (originalCompId
+                            ? ` (originally added by "${originalCompId}")`
+                            : ""),
                     );
                 }
             }
