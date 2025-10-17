@@ -69,7 +69,7 @@ bean.onKeyPress("space", () => {
     ]);
 
     bullet.onCollide(() => {
-        bullet.destroy();
+        wait(0, () => bullet.destroy());
     });
 });
 

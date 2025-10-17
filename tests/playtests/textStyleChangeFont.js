@@ -7,7 +7,7 @@
  */
 
 kaplay({ background: "#000000", crisp: true });
-loadFont("Romantique", "//fonts/Romantique.ttf", { filter: "nearest" });
+loadFont("Romantique", "/fonts/Romantique.ttf", { filter: "nearest" });
 
 const x = add([
     text(
