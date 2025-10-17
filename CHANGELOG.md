@@ -20,6 +20,107 @@ best friend, lajbel, can put the correct version name here
 
 ### Added
 
+- Added `skew` to text formatting, so now italics is possible - @dragoncoder047
+
+- Added **lifetime scopes**, a way to define the lifetime of an event handler
+  using a specific scope, `scene`, `app` or a game object - @lajbel,
+  @dragoncoder047
+
+  ```js
+  app.onUpdate(() => {
+      // runs until it is cancelled
+  });
+
+  scene("game", () => {
+      const obj = add([]);
+
+      obj.onUpdate(() => {
+          // runs until obj is destroyed
+      });
+
+      scene.onUpdate(() => { // or just onUpdate(() => {
+          // runs until scene is changed
+      });
+  });
+  ```
+
+  All the available handlers in the scopes are `GameEventHandlers` ones:
+  - `onKeyDown()`
+  - `onKeyPress()`
+  - `onKeyPressRepeat()`
+  - `onKeyRelease()`
+  - `onCharInput()`
+  - `onMouseDown()`
+  - `onMousePress()`
+  - `onMouseRelease()`
+  - `onMouseMove()`
+  - `onScroll()`
+  - `onTouchStart()`
+  - `onTouchMove()`
+  - `onTouchEnd()`
+  - `onGamepadConnect()`
+  - `onGamepadDisconnect()`
+  - `onGamepadButtonDown()`
+  - `onGamepadButtonPress()`
+  - `onGamepadButtonRelease()`
+  - `onGamepadStick()`
+  - `onButtonDown()`
+  - `onButtonPress()`
+  - `onButtonRelease()`
+  - `onHide()`
+  - `onShow()`
+
+  And this game object handlers may differ when using it with `obj` and
+  `scene`/`app`:
+
+  - `on()`
+  - `onFixedUpdate()`
+  - `onUpdate()`
+  - `onDraw()`
+  - `onAdd()`
+  - `onDestroy()`
+  - `onUse()`
+  - `onUnused()`
+  - `onTag()`
+  - `onUntag()`
+
+- Added `app` scope for app event handlers - @lajbel
+  ```js
+  app.onUpdate(() => {
+      // runs until it is cancelled
+  });
+  ```
+
+- Added `KAPLAYOpt.defaultLifetimeScope` for setting the default lifetime scope
+  used for event handlers - @lajbel
+
+  ```js
+  kaplay({
+      defaultLifetimeScope: "app", // default is "scene"
+  });
+
+  onKeyPress("space", () => {
+      // runs until is cancelled
+  });
+  ```
+
+### Changed
+
+- In addition to being the `scene()` function, now `scene` is also a scope for
+  scene event handlers - @lajbel
+
+  ```js
+  scene("game", () => {
+      scene.onUpdate(() => { // or just onUpdate(() => {
+          // runs until scene is changed
+      });
+  });
+  ```
+
+## [4000.0.0-alpha.22] - 2025-10-9
+
+### Added
+
 - Added `KAPLAYOpt.types`, `kaplayTypes()` and `Opt` to config specific
   TypeScript Advanced Features (TAF) - @lajbel
 
@@ -34,6 +135,7 @@ best friend, lajbel, can put the correct version name here
       >(),
   });
   ```
+
 - Added `TypesOpt.scenes` to type scenes and parameters - @lajbel
 
   ```ts
@@ -41,8 +143,8 @@ best friend, lajbel, can put the correct version name here
       types: kaplayTypes<
           Opt<{
               scenes: {
-                  "game": [gamemode: "normal" | "hard"];
-                  "gameOver": [score: number, highScore: number];
+                  game: [gamemode: "normal" | "hard"];
+                  gameOver: [score: number, highScore: number];
               };
           }>
       >(),
@@ -57,7 +159,9 @@ best friend, lajbel, can put the correct version name here
       k.go("gameOver", "10", 10); //
   });
   ```
+
   The methods that support this are:
+
   - `scene`
   - `go`
   - `onSceneLeave`
@@ -71,8 +175,8 @@ best friend, lajbel, can put the correct version name here
       types: kaplayTypes<
           Opt<{
               scenes: {
-                  "game": [gamemode: "normal" | "hard"];
-                  "gameOver": [score: number, highScore: number];
+                  game: [gamemode: "normal" | "hard"];
+                  gameOver: [score: number, highScore: number];
               };
               strictScenes: true;
           }>
@@ -83,6 +187,7 @@ best friend, lajbel, can put the correct version name here
   // parameter of type '"game" | "gameOver"'.
   k.scene("hi", () => {});
   ```
+
 - Added named animations - @mflerackers
 
   By giving a name to an animation, you can define more than one animation
@@ -94,15 +199,32 @@ best friend, lajbel, can put the correct version name here
 
 - Added `screenshotToBlob()` to get a screenshot as a `Blob` - @dragoncoder047
 - Added `getButtons()` to get the input binding buttons definition - @lajbel
-- Added `RuleSystem` for enemy AI - @mflerackers
-- Added `DecisionTree` for enemy AI - @mflerackers
+- Added `RuleSystem`, `DecisionTree` and `StateMachine` for enemy AI -
+  @mflerackers
 - Added constraint components for distance, translation, rotation, scale and
   transform constraints - @mflerackers
+- Added inverse kinematics constraint components using FABRIK and CCD, the
+  latter one can use bone constraints to constrain the angle - @mflerackers
 - Added skew to Mat23, transformation stack, RenderProps, GameObjRaw as well as
   a component - @mflerackers
+- Added texture uniforms, in order to access more than one texture at a time in
+  shaders - @mflerackers
+
+### Fixed
+
+- Now error screen should be instantly shown - @lajbel
 
 ### Changed
 
+- Now, you can use `color(c)` with a hexadecimal literal number (ex: 0x00ff00) -
+  @lajbel
+  ```js
+  // blue frog
+  add([
+      sprite("bean"),
+      color(0x0000ff),
+  ]);
+  ```
 - **(!)** `KAPLAYCtx` doesn't use generics anymore. Now, `KAPLAYCtxT` uses
   them - @lajbel
 - Now, `kaplay` will return `KAPLAYCtx` or `KAPLAYCtxT` depending if it's using

@@ -114,6 +114,7 @@ import type { Collision } from "../ecs/systems/Collision";
 import type { SystemPhase } from "../ecs/systems/systems";
 import type { GameObjEventNames, GameObjEvents } from "../events/eventMap";
 import type { KEvent, KEventController, KEventHandler } from "../events/events";
+import type { AppScope, SceneScope } from "../events/scopes";
 import type { SceneDef } from "../game/scenes";
 import type { anchorPt } from "../gfx/anchor";
 import type { DrawBezierOpt } from "../gfx/draw/drawBezier";
@@ -140,7 +141,7 @@ import type { FrameBuffer } from "../gfx/FrameBuffer";
 import type { DecisionNode, DecisionTree } from "../math/ai/decisiontree";
 import type { Rule, RuleSystem } from "../math/ai/rulesystem";
 import type { StateMachine } from "../math/ai/statemachine";
-import type { Color, CSSColor } from "../math/color";
+import type { Color, CSSColorKeywords } from "../math/color";
 import type { EaseFunc, EaseFuncs } from "../math/easings";
 import type { GjkCollisionResult } from "../math/gjk";
 import type { LerpValue } from "../math/lerp";
@@ -160,32 +161,34 @@ import type {
 } from "../math/math";
 import type { NavMesh } from "../math/navigationmesh";
 import type { Vec2 } from "../math/Vec2";
-import type {
-    Anchor,
-    BlendMode,
-    Canvas,
-    Comp,
-    CompList,
-    Cursor,
-    EmptyComp,
-    GameObj,
-    GetOpt,
-    KAPLAYPlugin,
-    Key,
-    KGamepad,
-    KGamepadButton,
-    KGamepadStick,
-    LoadFontOpt,
-    Mask,
-    MouseButton,
-    MusicData,
-    QueryOpt,
-    RNGValue,
-    Shape,
-    Tag,
+import {
+    type Anchor,
+    type BlendMode,
+    type Canvas,
+    type Comp,
+    type CompList,
+    type Cursor,
+    type EmptyComp,
+    type GameObj,
+    type GetOpt,
+    type KAPLAYOpt,
+    type KAPLAYPlugin,
+    type Key,
+    type KGamepad,
+    type KGamepadButton,
+    type KGamepadStick,
+    type LoadFontOpt,
+    type Mask,
+    type MouseButton,
+    type MusicData,
+    type QueryOpt,
+    type RNGValue,
+    type Shape,
+    type Tag,
 } from "../types";
 import type { TupleWithoutFirst } from "../utils/types";
 import type { Engine } from "./engine";
+import type { OptionalString } from "./taf";
 
 /**
  * Context handle that contains every KAPLAY function.
@@ -600,9 +603,111 @@ export interface KAPLAYCtx {
      * @subgroup Rendering
      */
     color(r: number, g: number, b: number): ColorComp;
+    /**
+     * Sets the color of a Game Object using a previously created Color Object.
+     *
+     * @param c - The color to clone and set.
+     *
+     * @example
+     * ```js
+     * // blue frog
+     * const blue = rgb(0, 0, 255);
+     *
+     * add([
+     *     sprite("bean"),
+     *     color(blue),
+     * ]);
+     * ```
+     *
+     * @returns The color comp.
+     * @since v2000.0
+     * @group Components
+     * @subgroup Rendering
+     */
     color(c: Color): ColorComp;
+    /**
+     * Sets the color of a Game Object using an array (rgb 0-255).
+     *
+     * @param rgb - The color array to set [r, g, b].
+     *
+     * @example
+     * ```js
+     * // blue frog
+     * add([
+     *     sprite("bean"),
+     *     color([0, 0, 255]),
+     * ]);
+     * ```
+     *
+     * @returns The color comp.
+     * @since v2000.0
+     * @group Components
+     * @subgroup Rendering
+     */
     color(rgb: [number, number, number]): ColorComp;
-    color(c: CSSColor & (string | {})): ColorComp;
+    /**
+     * Sets the color of a Game Object using a CSS color keywords or hexadecimal string.
+     *
+     * @param c - The CSS color keyword or hexadecimal code to set.
+     *
+     * @example
+     * ```js
+     * // blue frog (HEX)
+     * add([
+     *     sprite("bean"),
+     *     color("#0000ff"),
+     * ]);
+     *
+     * // red cheese (CSS)
+     * add([
+     *     sprite("mark"),
+     *     color("red"),
+     * ]);
+     * ```
+     *
+     * @returns The color comp.
+     * @since v2000.0
+     * @group Components
+     * @subgroup Rendering
+     */
+    color(c: OptionalString<CSSColorKeywords>): ColorComp;
+    /**
+     * Sets the color of a Game Object using a hexadecimal literal number.
+     *
+     * @param c - The hexadecimal literal number.
+     *
+     * @example
+     * ```js
+     * // blue frog
+     * add([
+     *     sprite("bean"),
+     *     color(0x0000ff),
+     * ]);
+     * ```
+     *
+     * @returns The color comp.
+     * @since v2000.0
+     * @group Components
+     * @subgroup Rendering
+     */
+    color(c: number): ColorComp;
+    /**
+     * Sets the color of a Game Object to white (no effect).
+     *
+     * @example
+     * ```js
+     * // normal frog
+     * add([
+     *     sprite("bean"),
+     *     color(),
+     * ]);
+     * ```
+     *
+     * @returns The color comp.
+     * @since v2000.0
+     * @group Components
+     * @subgroup Rendering
+     */
     color(): ColorComp;
     /**
      * Sets the blend mode of a Game Object.
@@ -4679,9 +4784,9 @@ export interface KAPLAYCtx {
      */
     rgb(hex: string): Color;
     /**
-     * Create a color from CSS name.
+     * Create a color from CSS keyword.
      *
-     * @param cssColor - The CSS name.
+     * @param cssColor - The CSS keyword.
      *
      * @example
      * ```js
@@ -4692,7 +4797,7 @@ export interface KAPLAYCtx {
      * @since v3001.0.10
      * @experimental This feature is in experimental phase, it will be fully released in v3001.1.0
      */
-    rgb(cssColor: CSSColor): Color;
+    rgb(cssColor: CSSColorKeywords): Color;
     /**
      * Same as rgb(255, 255, 255).
      */
@@ -5457,7 +5562,12 @@ export interface KAPLAYCtx {
      */
     StateMachine: typeof StateMachine;
     /**
-     * Define a scene.
+     * This object serves 2 purposes:
+     *
+     * * When called as a function, it defines a new scene with the
+     *   name and the initializer function.
+     * * It can also be used to register scene-local event handlers
+     *   that will be automatically cancelled when the scene is left.
      *
      * @param name - The scene name.
      * @param def - The scene definition.
@@ -5466,18 +5576,29 @@ export interface KAPLAYCtx {
      * ```js
      * // define a scene
      * scene("game", () => {
-     * // ...
+     *     // ...
      * });
-     *
      * // get options
      * scene("game", (opts) => {
      *     debug.log(opts.level);
      * });
      * ```
+     * @example
+     * ```js
+     * scene("pauseMenu", () => {
+     *     scene.onKeyPress("tab", () => {
+     *         debug.log("go to next menu item");
+     *     });
+     *     scene.onKeyPress("esc", () => {
+     *         // go back to game and cancel menu events
+     *         popScene();
+     *     });
+     * });
+     * ```
      *
      * @group Scenes
      */
-    scene(name: string, def: SceneDef): void;
+    scene: SceneScope;
     /**
      * Go to a scene, passing all rest args to scene callback.
      *
@@ -5499,50 +5620,58 @@ export interface KAPLAYCtx {
     go(name: string, ...args: any): void;
 
     /**
-     * Push the current active scene to a stack and enters in the new scene
+     * Push the current active scene to a stack and then goes to the new scene
      *
      * @param id - The scene name.
-     * @param args - The args passed to the scene defition.
+     * @param args - The args passed to the scene definition.
      *
      * @example
      * ```js
-     *  add([
-     *    text("this is the first scene", {size: 32 }),
-     *    pos(center()),
-     *  ]);
-     * scene("main", () => {
-     *  add([
-     *    sprite("bean"),
-     *    pos(center()),
-     *  ]);
+     * scene("mainScene", () => {
+     *     add([
+     *         text("this is the first scene", { size: 32 }),
+     *         pos(center()),
+     *     ]);
+     * });
+     * scene("otherScene", () => {
+     *     add([
+     *         sprite("bean"),
+     *         pos(center()),
+     *     ]);
      * });
      *
-     * pushScene("main")
+     * pushScene("mainScene")
      * ```
      *
      * @since v3001.1
      * @group Scenes
+     *
+     * @see {@link popScene}
      */
     pushScene(id: string, ...args: unknown[]): void;
 
     /**
      * Pops the scene from the stack and set as current active scene.
      *
+     * Only works if the current scene was entered using {@link pushScene}.
+     *
      * @example
      * ```js
-     *  add([
-     *    text("this is the first scene", {size: 32 }),
-     *    pos(center()),
-     *  ]);
-     * scene("main", () => {
-     *  add([
-     *    sprite("bean"),
-     *    pos(center()),
-     *  ]);
+     * scene("mainScene", () => {
+     *     add([
+     *         text("this is the first scene", { size: 32 }),
+     *         pos(center()),
+     *     ]);
+     * });
+     * scene("otherScene", () => {
+     *     add([
+     *         sprite("bean"),
+     *         pos(center()),
+     *     ]);
      * });
      *
-     * go("mainScene");
-     * popScene();  // when triggered the text should appear on the center screen //
+     * pushScene("mainScene");
+     * popScene(); // return to the current scene
      * ```
      *
      * @since v3001.1
@@ -6180,6 +6309,21 @@ export interface KAPLAYCtx {
      * @group Debug
      */
     debug: Debug;
+    /**
+     * The app scope for creating global events that won't be automatically cancelled
+     * when the scene is changed.
+     *
+     * @example
+     * ```js
+     * app.onKeyPress("f", () => {
+     *     debug.log("i run in every scene from now on");
+     * });
+     *
+     * // will NOT cancel the event
+     * go("someScene");
+     * ```
+     */
+    app: AppScope;
     /**
      * Import a plugin.
      *

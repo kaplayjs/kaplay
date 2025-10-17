@@ -383,6 +383,12 @@ export interface KAPLAYOpt {
      */
     loadTimeout?: number;
     /**
+     * The default lifetime scope used for event handlers.
+     *
+     * @default "scene"
+     */
+    defaultLifetimeScope?: "scene" | "app";
+    /**
      * TypeScript Advanced Features (TAF) are a series of options for TypeScript
      * only features.
      *
