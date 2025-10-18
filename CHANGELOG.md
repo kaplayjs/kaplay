@@ -20,6 +20,107 @@ best friend, lajbel, can put the correct version name here
 
 ### Added
 
+- Added `skew` to text formatting, so now italics is possible - @dragoncoder047
+
+- Added **lifetime scopes**, a way to define the lifetime of an event handler
+  using a specific scope, `scene`, `app` or a game object - @lajbel,
+  @dragoncoder047
+
+  ```js
+  app.onUpdate(() => {
+      // runs until it is cancelled
+  });
+
+  scene("game", () => {
+      const obj = add([]);
+
+      obj.onUpdate(() => {
+          // runs until obj is destroyed
+      });
+
+      scene.onUpdate(() => { // or just onUpdate(() => {
+          // runs until scene is changed
+      });
+  });
+  ```
+
+  All the available handlers in the scopes are `GameEventHandlers` ones:
+  - `onKeyDown()`
+  - `onKeyPress()`
+  - `onKeyPressRepeat()`
+  - `onKeyRelease()`
+  - `onCharInput()`
+  - `onMouseDown()`
+  - `onMousePress()`
+  - `onMouseRelease()`
+  - `onMouseMove()`
+  - `onScroll()`
+  - `onTouchStart()`
+  - `onTouchMove()`
+  - `onTouchEnd()`
+  - `onGamepadConnect()`
+  - `onGamepadDisconnect()`
+  - `onGamepadButtonDown()`
+  - `onGamepadButtonPress()`
+  - `onGamepadButtonRelease()`
+  - `onGamepadStick()`
+  - `onButtonDown()`
+  - `onButtonPress()`
+  - `onButtonRelease()`
+  - `onHide()`
+  - `onShow()`
+
+  And this game object handlers may differ when using it with `obj` and
+  `scene`/`app`:
+
+  - `on()`
+  - `onFixedUpdate()`
+  - `onUpdate()`
+  - `onDraw()`
+  - `onAdd()`
+  - `onDestroy()`
+  - `onUse()`
+  - `onUnused()`
+  - `onTag()`
+  - `onUntag()`
+
+- Added `app` scope for app event handlers - @lajbel
+  ```js
+  app.onUpdate(() => {
+      // runs until it is cancelled
+  });
+  ```
+
+- Added `KAPLAYOpt.defaultLifetimeScope` for setting the default lifetime scope
+  used for event handlers - @lajbel
+
+  ```js
+  kaplay({
+      defaultLifetimeScope: "app", // default is "scene"
+  });
+
+  onKeyPress("space", () => {
+      // runs until is cancelled
+  });
+  ```
+
+### Changed
+
+- In addition to being the `scene()` function, now `scene` is also a scope for
+  scene event handlers - @lajbel
+
+  ```js
+  scene("game", () => {
+      scene.onUpdate(() => { // or just onUpdate(() => {
+          // runs until scene is changed
+      });
+  });
+  ```
+
+## [4000.0.0-alpha.22] - 2025-10-9
+
+### Added
+
 - Added `KAPLAYOpt.types`, `kaplayTypes()` and `Opt` to config specific
   TypeScript Advanced Features (TAF) - @lajbel
 
@@ -109,8 +210,21 @@ best friend, lajbel, can put the correct version name here
 - Added texture uniforms, in order to access more than one texture at a time in
   shaders - @mflerackers
 
+### Fixed
+
+- Now error screen should be instantly shown - @lajbel
+
 ### Changed
 
+- Now, you can use `color(c)` with a hexadecimal literal number (ex: 0x00ff00) -
+  @lajbel
+  ```js
+  // blue frog
+  add([
+      sprite("bean"),
+      color(0x0000ff),
+  ]);
+  ```
 - **(!)** `KAPLAYCtx` doesn't use generics anymore. Now, `KAPLAYCtxT` uses
   them - @lajbel
 - Now, `kaplay` will return `KAPLAYCtx` or `KAPLAYCtxT` depending if it's using

@@ -76,7 +76,9 @@ async function genIndex() {
             }
         }
 
-        exports.push(`export { kaplay as default} from "./kaplay";`);
+        exports.push(
+            `export { kaplay as default, kaplayTypes } from "./kaplay";`,
+        );
 
         await writeFile(outputFile, exports.join("\n") + "\n");
         console.log("-> src/index.ts");

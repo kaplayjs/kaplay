@@ -33,8 +33,9 @@ export function go(name: string, ...args: unknown[]) {
 
     _k.game.events.onOnce("frameEnd", () => {
         _k.game.events.trigger("sceneLeave", name);
-        _k.app.events.clear();
         _k.game.events.clear();
+
+        _k.app.state.sceneEvents.forEach((e) => e.cancel());
 
         [..._k.game.root.children].forEach((obj) => {
             if (
