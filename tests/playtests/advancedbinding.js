@@ -10,11 +10,11 @@ kaplay({
     buttons: {
         next: {
             keyboard: "tab",
-            gamepad: ["south", "dpad-left"],
+            gamepad: ["south", "dpad-right"],
         },
         prev: {
             keyboard: "shift+tab",
-            gamepad: ["rshoulder+south", "dpad-right"],
+            gamepad: ["rshoulder+south", "dpad-left"],
         },
     },
     font: "happy",
