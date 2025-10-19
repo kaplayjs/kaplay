@@ -9,6 +9,8 @@ import {
     KEventController,
     type KEventHandler,
 } from "../../events/events";
+import type { GameEventHandlersForApp } from "../../events/gameEventHandlers";
+import type { GameEventHandlers } from "../../events/gameEventHandlers";
 import {
     onAdd,
     onDestroy,
@@ -481,6 +483,10 @@ export interface GameObjRaw {
     onButtonDown: KAPLAYCtx["onButtonDown"];
     onButtonPress: KAPLAYCtx["onButtonPress"];
     onButtonRelease: KAPLAYCtx["onButtonRelease"];
+    onTabShow: GameEventHandlersForApp["onTabShow"];
+    onTabHide: GameEventHandlersForApp["onTabHide"];
+    onShow: GameEventHandlersForApp["onShow"];
+    onHide: GameEventHandlersForApp["onHide"];
 }
 
 export type InternalGameObjRaw = GameObjRaw & {

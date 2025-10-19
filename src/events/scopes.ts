@@ -1,52 +1,46 @@
-import type { App, AppEvents } from "../app/app";
+import type { App } from "../app/app";
 import {
     GameObjRawPrototype,
     type InternalGameObjRaw,
 } from "../ecs/entity/GameObjRaw";
 import { scene, type SceneDef } from "../game/scenes";
-import { _k } from "../shared";
 import type { KEventController } from "./events";
-import type { GameEventHandlers } from "./gameEventHandlers";
+import {
+    type GameEventHandlers,
+    type GameEventHandlersForApp,
+    type GameEventHandlersForGameObj,
+} from "./gameEventHandlers";
 
-export type SceneScope = GameEventHandlers & {
-    (id: string, def: SceneDef): void;
-};
-
-const appEvs = [
-    "onKeyPress",
-    "onKeyPressRepeat",
-    "onKeyDown",
-    "onKeyRelease",
-    "onMousePress",
-    "onMouseDown",
-    "onMouseRelease",
-    "onMouseMove",
-    "onCharInput",
-    "onMouseMove",
-    "onTouchStart",
-    "onTouchMove",
-    "onTouchEnd",
-    "onScroll",
-    "onGamepadButtonPress",
-    "onGamepadButtonDown",
-    "onGamepadButtonRelease",
-    "onGamepadStick",
-    "onButtonPress",
-    "onButtonDown",
-    "onButtonRelease",
-] satisfies [...AppEvents[]];
+export type SceneScope =
+    & GameEventHandlersForApp
+    & GameEventHandlersForGameObj
+    & {
+        (id: string, def: SceneDef): void;
+    };
 
 export const createSceneScope = (
     app: App,
-    gameHandlers: GameEventHandlers,
+    handlers: GameEventHandlers,
 ): SceneScope => {
     const sceneScope = scene;
 
-    for (const e of Object.keys(gameHandlers)) {
+    for (const e of Object.keys(handlers.canvasApp)) {
         // @ts-expect-error
         sceneScope[e] = function(this: InternalGameObjRaw, ...args: [any]) {
             // @ts-expect-error
-            const ev: KEventController = gameHandlers[e]?.(...args);
+            const ev: KEventController = handlers.canvasApp[e]?.(...args);
+
+            app.state.sceneEvents.push(ev);
+
+            return ev;
+        };
+    }
+
+    for (const e of Object.keys(handlers.globalObj)) {
+        // @ts-expect-error
+        sceneScope[e] = function(this: InternalGameObjRaw, ...args: [any]) {
+            // @ts-expect-error
+            const ev: KEventController = handlers.globalObj[e]?.(...args);
 
             app.state.sceneEvents.push(ev);
 
@@ -57,27 +51,30 @@ export const createSceneScope = (
     return sceneScope as SceneScope;
 };
 
-export type AppScope = {
-    [K in keyof App as K extends `on${any}` ? K : never]: App[K];
-};
+export type AppScope = GameEventHandlersForApp & GameEventHandlersForGameObj;
 
-export const createAppScope = (gameHandlers: GameEventHandlers): AppScope => {
+export const createAppScope = (handlers: GameEventHandlers): AppScope => {
     const appScope = {} as Record<string, any>;
 
-    for (const e of Object.keys(gameHandlers)) {
-        appScope[e] = gameHandlers[e as keyof GameEventHandlers];
+    for (const e of Object.keys(handlers.canvasApp)) {
+        appScope[e] = handlers.canvasApp[e as keyof GameEventHandlersForApp];
+    }
+
+    for (const e of Object.keys(handlers.globalObj)) {
+        appScope[e] =
+            handlers.globalObj[e as keyof GameEventHandlersForGameObj];
     }
 
     return appScope as AppScope;
 };
 
-export function attachAppToGameObjRaw(app: App) {
-    for (const e of appEvs) {
+export function attachAppHandlersToGameObjRaw(handlers: GameEventHandlers) {
+    for (const e of Object.keys(handlers.canvasApp)) {
         const obj = GameObjRawPrototype as Record<string, any>;
 
         obj[e] = function(this: InternalGameObjRaw, ...args: [any]) {
             // @ts-ignore
-            const ev: KEventController = app[e]?.(...args);
+            const ev: KEventController = handlers.canvasApp[e]?.(...args);
             ev.paused = this.paused;
 
             this._inputEvents.push(ev);

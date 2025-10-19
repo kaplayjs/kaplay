@@ -18,6 +18,7 @@ import { canvasToViewport } from "../gfx/viewport";
 import { map, vec2 } from "../math/math";
 import { Vec2 } from "../math/Vec2";
 import { _k } from "../shared";
+import { deprecate, deprecateMsg } from "../utils/log";
 import { overload2 } from "../utils/overload";
 import { isEqOrIncludes, setHasOrIncludes } from "../utils/sets";
 import {
@@ -549,10 +550,20 @@ export const initApp = (
     }
 
     function onHide(action: () => void): KEventController {
-        return state.events.on("hide", action);
+        deprecateMsg("onHide", "onTabHide");
+        return onTabHide(action);
     }
 
     function onShow(action: () => void): KEventController {
+        deprecateMsg("onShow", "onTabShow");
+        return onTabShow(action);
+    }
+
+    function onTabHide(action: () => void): KEventController {
+        return state.events.on("show", action);
+    }
+
+    function onTabShow(action: () => void): KEventController {
         return state.events.on("show", action);
     }
 
@@ -1323,6 +1334,8 @@ export const initApp = (
         onScroll,
         onHide,
         onShow,
+        onTabHide,
+        onTabShow,
         onGamepadButtonDown,
         onGamepadButtonPress,
         onGamepadButtonRelease,
