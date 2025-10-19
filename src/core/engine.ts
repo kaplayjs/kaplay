@@ -24,7 +24,7 @@ import { zFactory } from "../ecs/components/transform/z";
 import { registerPrefabFactory } from "../ecs/entity/prefab";
 import { createGameEventHandlers } from "../events/gameEventHandlers";
 import {
-    attachAppToGameObjRaw,
+    attachAppHandlersToGameObjRaw,
     createAppScope,
     createSceneScope,
 } from "../events/scopes";
@@ -66,10 +66,10 @@ export const createEngine = (gopt: KAPLAYOpt) => {
     const canvas = createCanvas(opt);
     const { fontCacheC2d, fontCacheCanvas } = createFontCache();
     const app = initApp({ canvas, ...gopt });
-    const gameEventHandler = createGameEventHandlers(app);
-    const sceneScope = createSceneScope(app, gameEventHandler);
-    const appScope = createAppScope(gameEventHandler);
-    attachAppToGameObjRaw(app);
+    const gameHandlers = createGameEventHandlers(app);
+    const sceneScope = createSceneScope(app, gameHandlers);
+    const appScope = createAppScope(gameHandlers);
+    attachAppHandlersToGameObjRaw(gameHandlers);
 
     // TODO: Probably we should move this to initGfx
     const canvasContext = app.canvas
