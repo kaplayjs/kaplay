@@ -151,6 +151,7 @@ add([
             return new Ellipse(this.pos, 40, 15, 45);
         },
         draw() {
+            pushTransform();
             pushRotate(45);
             drawEllipse({
                 radiusX: 40,
