@@ -472,6 +472,8 @@ export const createContext = (
         onScroll: defaultScope.onScroll,
         onHide: defaultScope.onHide,
         onShow: defaultScope.onShow,
+        onTabShow: defaultScope.onTabShow,
+        onTabHide: defaultScope.onTabHide,
         onGamepadButtonDown: defaultScope.onGamepadButtonDown,
         onGamepadButtonPress: defaultScope.onGamepadButtonPress,
         onGamepadButtonRelease: defaultScope.onGamepadButtonRelease,
