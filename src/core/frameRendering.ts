@@ -1,3 +1,4 @@
+import type { App } from "../app/app";
 import { BG_GRID_SIZE } from "../constants/general";
 import type { Game } from "../game/game";
 import { drawTexture } from "../gfx/draw/drawTexture";
@@ -24,6 +25,7 @@ export interface FrameRenderer {
  * @ignore
  */
 export const createFrameRenderer = (
+    app: App,
     gfx: AppGfxCtx,
     game: Game,
     pixelDensity: number,
@@ -97,11 +99,13 @@ export const createFrameRenderer = (
     }
 
     function fixedUpdateFrame() {
+        app.state.events.trigger("fixedUpdate");
         // update every obj
         game.root.fixedUpdate();
     }
 
     function updateFrame() {
+        app.state.events.trigger("update");
         game.root.update();
     }
 

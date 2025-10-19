@@ -682,6 +682,18 @@ export const initApp = (
         return state.lastInputDevice;
     };
 
+    const onUpdate = (action: () => void): KEventController => {
+        return state.events.on("update", action);
+    }
+
+    const onFixedUpdate = (action: () => void): KEventController => {
+        return state.events.on("fixedUpdate", action);
+    }
+
+    const onDraw = (action: () => void): KEventController => {
+        return state.events.on("draw", action);
+    }
+
     function processInput() {
         state.events.trigger("input");
         state.keyState.down.forEach((k) => state.events.trigger("keyDown", k));
@@ -1296,6 +1308,9 @@ export const initApp = (
         isTouchscreen,
         mousePos,
         mouseDeltaPos,
+        onUpdate,
+        onFixedUpdate,
+        onDraw,
         isKeyDown,
         isKeyPressed,
         isKeyPressedRepeat,

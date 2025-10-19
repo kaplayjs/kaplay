@@ -1,5 +1,5 @@
 import { _k } from "../shared";
-import type { ButtonBinding } from "./inputBindings";
+import { parseButtonBindings, type ButtonBinding } from "./inputBindings";
 
 // Getting / Setting bindings
 
@@ -16,6 +16,8 @@ export const setButton = (btn: string, binding: ButtonBinding) => {
         ..._k.app.state.buttons[btn],
         ...binding,
     };
+
+    parseButtonBindings(_k.app.state);
 };
 
 // Virtually pressing / releasing

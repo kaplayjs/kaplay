@@ -21,7 +21,7 @@ export type ButtonBinding = {
  * @group Input
  * @subgroup Buttons API
  */
-export type ButtonsDef = Record<string, ButtonBinding>;
+export type ButtonsDef = Record<PropertyKey, ButtonBinding>;
 
 /**
  * A button binding device
@@ -35,7 +35,7 @@ export type ButtonBindingDevice = "keyboard" | "gamepad" | "mouse";
 export const parseButtonBindings = (appState: AppState) => {
     const btns = appState.buttons;
 
-    for (const b in btns) {
+    for (const b of Reflect.ownKeys(btns)) {
         const keyboardBtns = btns[b].keyboard && [btns[b].keyboard].flat();
         const keyboardCodes = btns[b].keyboardCode
             && [btns[b].keyboardCode].flat();

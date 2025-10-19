@@ -253,6 +253,9 @@ export type AppEventMap = {
     show: [];
     resize: [];
     input: [];
+    update: [];
+    fixedUpdate: [];
+    draw: [];
 };
 
 /**

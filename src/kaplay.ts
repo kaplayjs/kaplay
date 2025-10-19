@@ -16,6 +16,7 @@ import boomSpriteSrc from "./data/assets/boom.png";
 import burpSoundSrc from "./data/assets/burp.mp3";
 import happyFontSrc from "./data/assets/happy.png";
 import kaSpriteSrc from "./data/assets/ka.png";
+import { createDebugMode } from "./debug/debugMode";
 import { createCollisionSystem } from "./ecs/systems/createCollisionSystem";
 import { system, SystemPhase } from "./ecs/systems/systems";
 import { _k, updateEngine } from "./shared";
@@ -35,12 +36,12 @@ type HasDefinedKeys<TObj, TCheck> = {
 
 type ChooseKAPLAYCtx<O extends KAPLAYOptTypeOptions> =
     HasDefinedKeys<O, KAPLAYTypeOptWithoutPlugins> extends never ? KAPLAYCtx
-        : KAPLAYCtxT<O>;
+    : KAPLAYCtxT<O>;
 
 type KAPLAYGame<O extends KAPLAYOptTypeOptions | undefined> = O extends
     KAPLAYOptTypeOptions ? O["plugins"] extends PluginList<any> ?
-            & ChooseKAPLAYCtx<O>
-            & MergePlugins<O["plugins"]>
+    & ChooseKAPLAYCtx<O>
+    & MergePlugins<O["plugins"]>
     : ChooseKAPLAYCtx<O>
     : KAPLAYCtx;
 
@@ -147,6 +148,8 @@ export const kaplay = <
     if (gopt.focus !== false) {
         app.canvas.focus();
     }
+
+    createDebugMode();
 
     return ctx as KAPLAYGame<O>;
 };

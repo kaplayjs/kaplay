@@ -1,6 +1,5 @@
 import type { App } from "../app/app";
 import type { Vec2 } from "../math/Vec2";
-import { _k } from "../shared";
 import type {
     GameObj,
     Key,
@@ -17,13 +16,9 @@ import {
     on,
     onAdd,
     onDestroy,
-    onDraw,
-    onFixedUpdate,
     onTag,
     onUntag,
-    onUnuse,
-    onUpdate,
-    onUse,
+    onUnuse, onUse
 } from "./globalEvents";
 
 export interface GameEventHandlersForGameObj {
@@ -925,7 +920,7 @@ export interface GameEventHandlersForApp {
      * @subgroup Buttons API
      */
     onButtonDown(
-        btn: string | string[],
+        btn: | string[],
         action: (btn: string) => void,
     ): KEventController;
     onButtonDown(action: (btn: string) => void): KEventController;
@@ -1102,15 +1097,15 @@ export const createGameEventHandlers = (app: App) => {
             onButtonRelease: app.onButtonRelease,
             onTabShow: app.onTabShow,
             onTabHide: app.onTabHide,
+            onUpdate: app.onUpdate,
+            onFixedUpdate: app.onFixedUpdate,
+            onDraw: app.onDraw,
             // deprecated
             onShow: app.onShow,
             onHide: app.onHide,
         },
         globalObj: {
             on: on,
-            onFixedUpdate: onFixedUpdate,
-            onUpdate: onUpdate,
-            onDraw: onDraw,
             onAdd: onAdd,
             onDestroy: onDestroy,
             onUse: onUse,
