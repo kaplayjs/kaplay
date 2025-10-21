@@ -36,11 +36,11 @@ const friends = [
     "kat",
     "tga",
 ].sort();
-for (var friend of friends) {
+for (let friend of friends) {
     loadSprite(friend, `/crew/${friend}.png`);
 }
 
-var index = 0;
+let index = 0;
 const picker = add([
     pos(center()),
     sprite(friends[index]),

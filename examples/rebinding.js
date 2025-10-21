@@ -43,8 +43,8 @@ add([
 ]);
 
 // True is the user is currently inputting a button combo
-var isInputting = false;
-var combo = [];
+let isInputting = false;
+let combo = [];
 // record the combo
 onKeyPress(key => {
     if (isInputting) combo.push(key);
