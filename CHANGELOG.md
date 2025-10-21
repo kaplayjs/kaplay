@@ -1,6 +1,6 @@
 # Changelog
 
-<!-- markdownlint-disable no-duplicate-heading -->
+<!-- markdownlint-disable no-duplicate-heading blanks-around-fences single-h1 -->
 
 All notable changes to this project will be documented in this file.
 
@@ -19,6 +19,25 @@ best friend, lajbel, can put the correct version name here
 ## [unreleased]
 
 ### Added
+
+- Added chorded button bindings using the Buttons API, so you can bind different
+  actions to `tab` and `shift+tab`, and handle them like normal. Also works with
+  gamepads and mouse! - @dragoncoder047
+
+  ```js
+  kaplay({
+      buttons: {
+          forward: {
+              keyboard: "tab",
+              gamepad: "south",
+          },
+          backward: {
+              keyboard: "shift+tab",
+              gamepad: "rshoulder+south",
+          },
+      },
+  });
+  ```
 
 - Added `skew` to text formatting, so now italics is possible - @dragoncoder047
 

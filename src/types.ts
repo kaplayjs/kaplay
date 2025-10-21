@@ -135,12 +135,21 @@ export type Key =
     | (string & {});
 
 /**
+ * You can use 3 or more keys (like `control+shift+s`),
+ * it just isn't included in the type here because typescript
+ * crashes when it tries to expand all 74^3 = 405224 combinations
+ * for 3 keys.
+ */
+export type ChordedKey = Key | `${Key}+${Key}`;
+
+/**
  * A mouse button.
  *
  * @group Input
  * @subgroup Mouse
  */
 export type MouseButton = "left" | "right" | "middle" | "back" | "forward";
+export type ChordedMouseButton = MouseButton | `${MouseButton}+${MouseButton}`;
 
 /**
  * A gamepad button.
@@ -168,6 +177,10 @@ export type KGamepadButton =
     | "home"
     | "capture"
     | "touchpad";
+export type ChordedKGamepadButton =
+    | KGamepadButton
+    | `${KGamepadButton}+${KGamepadButton}`
+    | `${KGamepadButton}+${KGamepadButton}+${KGamepadButton}`;
 
 /**
  * A gamepad stick.
