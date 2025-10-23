@@ -495,6 +495,7 @@ export const createContext = (
         isGamepadButtonDown: app.isGamepadButtonDown,
         isGamepadButtonReleased: app.isGamepadButtonReleased,
         getGamepadStick: app.getGamepadStick,
+        getGamepadAnalogButton: app.getGamepadAnalogButton,
         isButtonPressed: app.isButtonPressed,
         isButtonDown: app.isButtonDown,
         isButtonReleased: app.isButtonReleased,

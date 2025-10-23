@@ -103,6 +103,7 @@ class GamepadState {
         ["left", new Vec2(0)],
         ["right", new Vec2(0)],
     ]);
+    analogState = new Map<string, number>();
 }
 
 class FPSCounter {
@@ -476,6 +477,12 @@ export const initApp = (
             );
     }
 
+    function getGamepadAnalogButton(
+        btn: KGamepadButton,
+    ): number {
+        return state.mergedGamepadState.analogState.get(btn) ?? 0;
+    }
+
     function isButtonPressed(btn?: string | string[]): boolean {
         return btn === undefined
             ? state.buttonHandler.state.pressed.size > 0
@@ -746,6 +753,9 @@ export const initApp = (
         state.mergedGamepadState.stickState.forEach((v, k) => {
             state.mergedGamepadState.stickState.set(k, new Vec2(0));
         });
+        state.mergedGamepadState.analogState.forEach((v, k) => {
+            state.mergedGamepadState.analogState.set(k, 0);
+        });
 
         state.charInputted = [];
         state.isMouseMoved = false;
@@ -755,6 +765,9 @@ export const initApp = (
             s.buttonState.update();
             s.stickState.forEach((v, k) => {
                 s.stickState.set(k, new Vec2(0));
+            });
+            s.analogState.forEach((v, k) => {
+                s.analogState.set(k, 0);
             });
         });
     }
@@ -780,6 +793,10 @@ export const initApp = (
             getStick: (stick: KGamepadStick) => {
                 return state.gamepadStates.get(browserGamepad.index)?.stickState
                     .get(stick) || vec2();
+            },
+            getAnalog: (button: KGamepadButton) => {
+                return state.gamepadStates.get(browserGamepad.index)
+                    ?.analogState.get(button) ?? 0;
             },
         };
 
@@ -825,6 +842,15 @@ export const initApp = (
             for (let i = 0; i < browserGamepad.buttons.length; i++) {
                 const gamepadBtn = map.buttons[i];
                 const browserGamepadBtn = browserGamepad.buttons[i];
+
+                gamepadState.analogState.set(
+                    gamepadBtn,
+                    browserGamepadBtn.value,
+                );
+                state.mergedGamepadState.analogState.set(
+                    gamepadBtn,
+                    browserGamepadBtn.value,
+                );
 
                 if (browserGamepadBtn.pressed) {
                     if (gamepadState.buttonState.down.has(gamepadBtn)) {
@@ -1260,6 +1286,7 @@ export const initApp = (
         isGamepadButtonReleased,
         isFocused,
         getGamepadStick,
+        getGamepadAnalogButton,
         isButtonPressed,
         isButtonDown,
         isButtonReleased,
