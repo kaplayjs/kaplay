@@ -4081,6 +4081,17 @@ export interface KAPLAYCtx {
      */
     getGamepadStick(stick: KGamepadStick): Vec2;
     /**
+     * Get analog button values from a gamepad.
+     *
+     * @param b - The button to read the analog value from.
+     *
+     * @returns The button analog value.
+     * @since v4000.0
+     * @group Input
+     * @subgroup Gamepad
+     */
+    getGamepadAnalogButton(b: KGamepadButton): number;
+    /**
      * Get the latest input device type that triggered the input event.
      *
      * @returns The last input device type, or null if no input event has been triggered.
