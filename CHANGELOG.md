@@ -20,11 +20,12 @@ best friend, lajbel, can put the correct version name here
 
 ### Added
 
-- Added `getGamepadAnalogButton()` to read the analog value of buttons like the triggers - @dragoncoder047
+- Added `getGamepadAnalogButton()` to read the analog value of buttons like the
+  triggers - @dragoncoder047
 
   ```js
-  isGamepadButtonDown("rtrigger") // -> true/false, 0/1
-  getGamepadAnalogButton("rtrigger") // -> analog value between 0 (not pressed) and 1 (fully pressed)
+  isGamepadButtonDown("rtrigger"); // -> true/false, 0/1
+  getGamepadAnalogButton("rtrigger"); // -> analog value between 0 (not pressed) and 1 (fully pressed)
   ```
 
 - Added chorded button bindings using the Buttons API, so you can bind different
@@ -71,6 +72,7 @@ best friend, lajbel, can put the correct version name here
   ```
 
   All the available handlers in the scopes are `GameEventHandlers` ones:
+
   - `onKeyDown()`
   - `onKeyPress()`
   - `onKeyPressRepeat()`
@@ -93,22 +95,15 @@ best friend, lajbel, can put the correct version name here
   - `onButtonDown()`
   - `onButtonPress()`
   - `onButtonRelease()`
-  - `onHide()`
-  - `onShow()`
+  - `onTabHide()`
+  - `onTabShow()`
 
   And this game object handlers may differ when using it with `obj` and
   `scene`/`app`:
 
-  - `on()`
   - `onFixedUpdate()`
   - `onUpdate()`
   - `onDraw()`
-  - `onAdd()`
-  - `onDestroy()`
-  - `onUse()`
-  - `onUnused()`
-  - `onTag()`
-  - `onUntag()`
 
 - Added `app` scope for app event handlers - @lajbel
   ```js
