@@ -46,7 +46,6 @@ test("Mat23.fromSkew(0, 45) should return skew matrix", () => {
 test("Mat23.fromSkew(45, 0).getSkew() should return 45", () => {
     const m = Mat23.fromSkew(vec2(deg2rad(45), 0));
     const t = m.getSkew();
-    console.log(m);
     expect(t.x).toEqual(45);
     expect(t.y).toEqual(0);
 });
