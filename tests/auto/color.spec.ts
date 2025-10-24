@@ -12,14 +12,14 @@ describe("Color creation using class", () => {
         expect(color).toEqual({ r: 22, g: 43, b: 79 });
     });
 
-    test("Color().fromHex(0x123456) should return Color(18, 52, 86)", () => {
+    test("Color().fromHex(0x123456) should return Color(0x12, 0x34, 0x56)", () => {
         const color = Color.fromHex(0x123456);
-        expect(color).toEqual({ r: 18, g: 52, b: 86 });
+        expect(color).toEqual({ r: 0x12, g: 0x34, b: 0x56 });
     });
 
-    test("Color().fromHex('#234567') should return Color(35, 69, 103)", () => {
+    test("Color().fromHex('#234567') should return Color(0x23, 0x45, 0x67)", () => {
         const color = Color.fromHex("#234567");
-        expect(color).toEqual({ r: 35, g: 69, b: 103 });
+        expect(color).toEqual({ r: 0x23, g: 0x45, b: 0x67 });
     });
 });
 
