@@ -92,6 +92,7 @@ import type {
     SurfaceEffectorCompOpt,
 } from "../ecs/components/physics/effectors";
 import type { AnchorComp } from "../ecs/components/transform/anchor";
+import type { CamScrollComp } from "../ecs/components/transform/camscroll";
 import type { constraint } from "../ecs/components/transform/constraint";
 import type { FixedComp } from "../ecs/components/transform/fixed";
 import type { FollowComp } from "../ecs/components/transform/follow";
@@ -162,6 +163,7 @@ import type {
     Rect,
     RNG,
     StepPosition,
+    Vec2Args,
 } from "../math/math";
 import type { NavMesh } from "../math/navigationmesh";
 import type { Vec2 } from "../math/Vec2";
@@ -1448,6 +1450,13 @@ export interface KAPLAYCtx {
      * @subgroup Rendering
      */
     fixed(fixed?: boolean): FixedComp;
+
+    /**
+     * Make the object scrolls with camera based on a factor
+     * @param args {@link Vec2Args `Vec2Args`}
+     * @returns the camera scroll comp
+     */
+    scrollcam(...args: Vec2Args): CamScrollComp;
     /**
      * Don't get destroyed on scene switch. Only works in objects attached to root.
      *
