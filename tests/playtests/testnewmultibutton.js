@@ -13,12 +13,12 @@ kaplay({
         // b: {
         //     keyboard: ["e", "enter"],
         // }
-    }
+    },
 });
 
 setButton("a", {
     keyboard: "enter",
-    mouse: "left"
+    mouse: "left",
 });
 setButton("b", {
     keyboard: ["e", "enter"],
@@ -26,5 +26,5 @@ setButton("b", {
 });
 
 add().onButtonPress((btn) => {
-    debug.log("hi", btn)
+    debug.log("hi", btn);
 });

@@ -20,11 +20,12 @@ best friend, lajbel, can put the correct version name here
 
 ### Added
 
-- Added `getGamepadAnalogButton()` to read the analog value of buttons like the triggers - @dragoncoder047
+- Added `getGamepadAnalogButton()` to read the analog value of buttons like the
+  triggers - @dragoncoder047
 
   ```js
-  isGamepadButtonDown("rtrigger") // -> true/false, 0/1
-  getGamepadAnalogButton("rtrigger") // -> analog value between 0 (not pressed) and 1 (fully pressed)
+  isGamepadButtonDown("rtrigger"); // -> true/false, 0/1
+  getGamepadAnalogButton("rtrigger"); // -> analog value between 0 (not pressed) and 1 (fully pressed)
   ```
 
 - Added chorded button bindings using the Buttons API, so you can bind different
