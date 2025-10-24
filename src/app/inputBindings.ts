@@ -70,18 +70,18 @@ class ChordedButtonDetector<T extends string = string> {
     updateBinding(button: string, bindings: T[]) {
         // clear out old binding
         const modsToClear = new Set<T>();
-        for (var [_, { check, btns }] of this.committers.entries()) {
+        for (let { check, btns } of this.committers.values()) {
             btns.get(button)?.forEach(b =>
                 check.delete(b) && modsToClear.add(b)
             );
             btns.delete(button);
         }
         // install new one
-        for (var b of bindings) {
+        for (let b of bindings) {
             const mods = splitButtons(b);
             const committer = mods.pop()!;
             // add checking on the old mod keys
-            for (var m of mods) {
+            for (let m of mods) {
                 modsToClear.delete(m);
                 if (!this.mods.has(m)) this.mods.set(m, false);
             }
@@ -102,23 +102,24 @@ class ChordedButtonDetector<T extends string = string> {
         // cleanup
         modsToClear.forEach(m => this.mods.delete(m));
     }
-    handleDown(key: T): string | undefined {
+    handleDown(key: T): string[] {
         if (this.mods.has(key)) {
             this.mods.set(key, true);
         }
         const commit = this.committers.get(key);
+        const pressedButtons: string[] = [];
         if (commit) {
-            options: for (var [button, mods] of commit.btns.entries()) {
-                for (var mod of commit.check.values()) {
+            options: for (let [button, mods] of commit.btns.entries()) {
+                for (let mod of commit.check.values()) {
                     if (this.mods.get(mod) !== mods.includes(mod)) {
                         continue options;
                     }
                 }
                 this.buttonsUsed.add(button);
-                return button;
+                pressedButtons.push(button);
             }
         }
-        return undefined;
+        return pressedButtons;
     }
     handleUp(key: T): string[] {
         if (this.mods.has(key)) {
@@ -165,13 +166,13 @@ export class ButtonProcessor {
             this.byMouse.updateBinding(name, mouseBtns);
         }
     }
-    private _maybePress(button: string | undefined, state: AppState) {
-        if (button) {
+    private _maybePress(buttons: string[], state: AppState) {
+        for (let button of buttons) {
             this.state.press(button, state);
         }
     }
     private _maybeRelease(buttons: string[], state: AppState) {
-        for (var button of buttons) {
+        for (let button of buttons) {
             this.state.release(button, state);
         }
     }
