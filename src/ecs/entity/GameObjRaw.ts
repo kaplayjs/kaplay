@@ -9,7 +9,6 @@ import {
     KEventController,
     type KEventHandler,
 } from "../../events/events";
-import type { GameEventHandlersForApp } from "../../events/gameEventHandlers";
 import type { GameEventHandlers } from "../../events/gameEventHandlers";
 import {
     onAdd,
@@ -483,10 +482,10 @@ export interface GameObjRaw {
     onButtonDown: KAPLAYCtx["onButtonDown"];
     onButtonPress: KAPLAYCtx["onButtonPress"];
     onButtonRelease: KAPLAYCtx["onButtonRelease"];
-    onTabShow: GameEventHandlersForApp["onTabShow"];
-    onTabHide: GameEventHandlersForApp["onTabHide"];
-    onShow: GameEventHandlersForApp["onShow"];
-    onHide: GameEventHandlersForApp["onHide"];
+    onTabShow: GameEventHandlers["onTabShow"];
+    onTabHide: GameEventHandlers["onTabHide"];
+    onShow: GameEventHandlers["onShow"];
+    onHide: GameEventHandlers["onHide"];
 }
 
 export type InternalGameObjRaw = GameObjRaw & {
@@ -566,7 +565,11 @@ const COMP_EVENTS = new Set([
 
 type GarbageCollectorArray = (() => any)[];
 
-export const GameObjRawPrototype: Omit<InternalGameObjRaw, AppEvents> = {
+export const GameObjRawPrototype: Omit<
+    InternalGameObjRaw,
+    // TODO: Maybe too hacky, find better way
+    Exclude<AppEvents, "onFixedUpdate" | "onUpdate" | "onDraw">
+> = {
     // This chain of `as any`, is because we never should use this object
     // directly, it's only a prototype. These properties WILL be defined
     // (by our factory function `make`) when we create a new game object.
