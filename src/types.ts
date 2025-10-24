@@ -218,6 +218,9 @@ export type KGamepad = {
     isReleased(b: KGamepadButton): boolean;
     /** Get the value of a stick. */
     getStick(stick: KGamepadStick): Vec2;
+    /** Get the 0-1 analog value of the button
+     * (useful for `ltrigger` and `rtrigger` buttons) */
+    getAnalog(b: KGamepadButton): number;
 };
 
 /**
