@@ -72,6 +72,7 @@ best friend, lajbel, can put the correct version name here
   ```
 
   All the available handlers in the scopes are `GameEventHandlers` ones:
+
   - `onKeyDown()`
   - `onKeyPress()`
   - `onKeyPressRepeat()`
@@ -94,22 +95,15 @@ best friend, lajbel, can put the correct version name here
   - `onButtonDown()`
   - `onButtonPress()`
   - `onButtonRelease()`
-  - `onHide()`
-  - `onShow()`
+  - `onTabHide()`
+  - `onTabShow()`
 
   And this game object handlers may differ when using it with `obj` and
   `scene`/`app`:
 
-  - `on()`
   - `onFixedUpdate()`
   - `onUpdate()`
   - `onDraw()`
-  - `onAdd()`
-  - `onDestroy()`
-  - `onUse()`
-  - `onUnused()`
-  - `onTag()`
-  - `onUntag()`
 
 - Added `app` scope for app event handlers - @lajbel
   ```js

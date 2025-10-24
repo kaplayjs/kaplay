@@ -94,6 +94,7 @@ export const createEngine = (gopt: KAPLAYOpt) => {
 
     // Frame rendering
     const frameRenderer = createFrameRenderer(
+        app,
         appGfx,
         game,
         opt.pixelDensity ?? 1,
