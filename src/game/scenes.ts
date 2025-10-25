@@ -73,7 +73,7 @@ export function pushScene(id: string, ...args: unknown[]) {
         sceneID: _k.game.currentScene,
         args: _k.game.currentSceneArgs,
     });
-    go(id, args);
+    go(id, ...args);
     return;
 }
 
@@ -88,7 +88,7 @@ export function popScene() {
         throw new Error("The scene ID should not be null");
     }
 
-    go(sceneData.sceneID, sceneData.args);
+    go(sceneData.sceneID, ...sceneData.args);
 }
 
 export function onSceneLeave(
