@@ -149,6 +149,12 @@ best friend, lajbel, can put the correct version name here
   });
   ```
 
+### Fixed
+
+- Now `pushScene()` and `popScene()` give the arguments to the scene in the same
+  way that `go()` does rather than passing them all to the first argument as an
+  array - @dragoncoder047
+
 ## [4000.0.0-alpha.22] - 2025-10-9
 
 ### Added
