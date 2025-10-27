@@ -81,7 +81,12 @@ export function loadSpriteAtlas(
                         info.width / w * quad.w,
                         info.height / h * quad.h,
                     );
-                const spr = new SpriteData(atlas.tex, frames, info.anims, info.slice9);
+                const spr = new SpriteData(
+                    atlas.tex,
+                    frames,
+                    info.anims,
+                    info.slice9,
+                );
                 _k.assets.sprites.addLoaded(name, spr);
                 map[name] = spr;
             }
