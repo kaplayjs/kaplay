@@ -1,5 +1,5 @@
 kaplay({
-    maxFPS: 70
+    maxFPS: 70,
 });
 
 debug.inspect = true;
