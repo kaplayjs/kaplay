@@ -1,4 +1,3 @@
-import { onAdd, onDestroy, onUnuse, onUse } from "../../../events/globalEvents";
 import { lerp } from "../../../math/lerp";
 import { rad2deg, vec2 } from "../../../math/math";
 import {
@@ -8,6 +7,7 @@ import {
     updateTransformRecursive,
 } from "../../../math/various";
 import { Vec2 } from "../../../math/Vec2";
+import { _k } from "../../../shared";
 import type { Comp, GameObj } from "../../../types";
 import { system, SystemPhase } from "../../systems/systems";
 import type { PosComp } from "./pos";
@@ -174,21 +174,22 @@ function installSystem() {
     if (systemInstalled) return;
     systemInstalled = true;
     // TODO: use a live query for this
+    // also need to fix live queries to work with scene/app scopes
     const constraints: Set<GameObj<Constraint>> = new Set();
-    onAdd(obj => {
+    _k.k.app.onAdd(obj => {
         if (obj.has("constraint")) {
             constraints.add(obj as GameObj<Constraint>);
         }
     });
-    onDestroy(obj => {
+    _k.k.app.onDestroy(obj => {
         constraints.delete(obj as GameObj<Constraint>);
     });
-    onUse((obj, id) => {
+    _k.k.app.onUse((obj, id) => {
         if ("constraint" === id) {
             constraints.add(obj as GameObj<Constraint>);
         }
     });
-    onUnuse((obj, id) => {
+    _k.k.app.onUnuse((obj, id) => {
         if ("constraint" === id) {
             constraints.delete(obj as GameObj<Constraint>);
         }
