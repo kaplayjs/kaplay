@@ -1,3 +1,4 @@
+import { onSceneLeave } from "../../../game/scenes";
 import { lerp } from "../../../math/lerp";
 import { rad2deg, vec2 } from "../../../math/math";
 import {
@@ -176,23 +177,26 @@ function installSystem() {
     // TODO: use a live query for this
     // also need to fix live queries to work with scene/app scopes
     const constraints: Set<GameObj<Constraint>> = new Set();
-    _k.k.app.onAdd(obj => {
+    _k.k.scene.onAdd(obj => {
         if (obj.has("constraint")) {
             constraints.add(obj as GameObj<Constraint>);
         }
     });
-    _k.k.app.onDestroy(obj => {
+    _k.k.scene.onDestroy(obj => {
         constraints.delete(obj as GameObj<Constraint>);
     });
-    _k.k.app.onUse((obj, id) => {
+    _k.k.scene.onUse((obj, id) => {
         if ("constraint" === id) {
             constraints.add(obj as GameObj<Constraint>);
         }
     });
-    _k.k.app.onUnuse((obj, id) => {
+    _k.k.scene.onUnuse((obj, id) => {
         if ("constraint" === id) {
             constraints.delete(obj as GameObj<Constraint>);
         }
+    });
+    onSceneLeave(() => {
+        systemInstalled = false;
     });
     system("constraint", () => {
         constraints.forEach(constraint => {
