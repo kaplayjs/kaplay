@@ -125,6 +125,10 @@ import type { Collision } from "../ecs/systems/Collision";
 import type { SystemPhase } from "../ecs/systems/systems";
 import type { GameObjEventNames, GameObjEvents } from "../events/eventMap";
 import type { KEvent, KEventController, KEventHandler } from "../events/events";
+import type {
+    GameEventHandlers,
+    GameEventHandlersForApp,
+} from "../events/gameEventHandlers";
 import type { AppScope, SceneScope } from "../events/scopes";
 import type { SceneDef } from "../game/scenes";
 import type { anchorPt } from "../gfx/anchor";
@@ -2894,54 +2898,10 @@ export interface KAPLAYCtx {
      * @subgroup Mouse
      */
     onScroll(action: (delta: Vec2) => void): KEventController;
-    /**
-     * Register an event that runs when tab is hidden.
-     *
-     * @param action - The function that is run what the tab is hidden.
-     *
-     * @example
-     * ```js
-     * // spooky ghost
-     * let ghosty = add([
-     *     pos(center()),
-     *     sprite("ghosty"),
-     *     anchor("center"),
-     * ]);
-     *
-     * // when switching tabs, this runs
-     * onHide(() => {
-     *     destroy(ghosty);
-     *     add([
-     *         text("There was never aa ghosttttt"),
-     *         pos(center()),
-     *         anchor("center")
-     *     ]);
-     * });
-     * ```
-     *
-     * @returns The event controller.
-     * @since v3001.0
-     * @group Events
-     */
-    onHide(action: () => void): KEventController;
-    /**
-     * Register an event that runs when tab is shown.
-     *
-     * @param action - The function that is run when the tab is shown.
-     *
-     * @example
-     * ```js
-     * // user has returned to this tab
-     * onShow(() => {
-     *     burp();
-     * });
-     * ```
-     *
-     * @returns The event controller.
-     * @since v3001.0
-     * @group Events
-     */
-    onShow(action: () => void): KEventController;
+    onHide: GameEventHandlersForApp["onHide"];
+    onShow: GameEventHandlersForApp["onShow"];
+    onTabShow: GameEventHandlersForApp["onTabShow"];
+    onTabHide: GameEventHandlersForApp["onTabHide"];
     /**
      * Register an event that runs when a gamepad is connected.
      *
@@ -4162,6 +4122,17 @@ export interface KAPLAYCtx {
      * @subgroup Gamepad
      */
     getGamepadStick(stick: KGamepadStick): Vec2;
+    /**
+     * Get analog button values from a gamepad.
+     *
+     * @param b - The button to read the analog value from.
+     *
+     * @returns The button analog value.
+     * @since v4000.0
+     * @group Input
+     * @subgroup Gamepad
+     */
+    getGamepadAnalogButton(b: KGamepadButton): number;
     /**
      * Get the latest input device type that triggered the input event.
      *

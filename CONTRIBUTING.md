@@ -1,5 +1,7 @@
 # Developing KAPLAY
 
+<!-- markdownlint-disable single-h1 heading-increment fenced-code-language -->
+
 We're currently working in two branches:
 
 - `v3001`: the branch for v3001. This is the branch you should use to fix bugs
