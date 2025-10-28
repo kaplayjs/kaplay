@@ -3,7 +3,6 @@ kaplay();
 loadBean();
 
 scene("main", () => {
-
     const obj1 = add([
         pos(100, 100),
         sprite("bean"),
@@ -29,13 +28,16 @@ scene("main", () => {
         sprite("bean"),
         anchor("center"),
         area(),
-        constraint.distance(obj1, { distance: 100, mode: "maximum", strength: 1 }),
+        constraint.distance(obj1, {
+            distance: 100,
+            mode: "maximum",
+            strength: 1,
+        }),
         // constraint.translation(obj1, { strength: 0.75, offset: vec2(50, 0) }),
         "obj",
         "constraint",
         // body()
     ]);
-
 
     let obj;
 
