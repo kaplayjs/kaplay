@@ -20,6 +20,7 @@ export function drawFrame() {
         .rotateSelf(cam.angle)
         .translateSelfV((cam.pos ?? center()).scale(-1).add(shake));
 
+    _k.app.state.events.trigger("draw");
     _k.game.root.draw();
     flush();
 }
