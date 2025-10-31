@@ -378,8 +378,7 @@ export const initApp = (
                         fixedUpdate();
                     }
                     state.restDt = fixedAccumulatedDt;
-                    state.dt = desiredDt;
-                    state.time += dt();
+                    state.time += state.dt = desiredDt > 0 ? desiredDt : realDt;
                     state.fpsCounter.tick(state.dt);
                 }
                 if (desiredDt > 0) {
