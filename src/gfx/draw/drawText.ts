@@ -83,7 +83,11 @@ export type DrawTextOpt = RenderProps & {
  * @group Rendering
  * @subgroup Text
  */
-export type CharTransformFunc = (idx: number, ch: string, param: string) => CharTransform;
+export type CharTransformFunc = (
+    idx: number,
+    ch: string,
+    param: string,
+) => CharTransform;
 
 /**
  * Describes how to transform each character.

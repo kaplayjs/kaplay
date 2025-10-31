@@ -94,14 +94,20 @@ export function compileStyledText(txt: any): StyledTextInfo {
             const [m, endSlash, theTagName, tagParam] = execResult;
             if (endSlash !== undefined) {
                 if (tagParam) {
-                    throw new Error(`Styled text error: cannot use param in close tag [/${theTagName}]`);
+                    throw new Error(
+                        `Styled text error: cannot use param in close tag [/${theTagName}]`,
+                    );
                 }
                 if (styleStack.length === 0) {
-                    throw new Error(`Styled text error: stray end tag [/${theTagName}]`);
+                    throw new Error(
+                        `Styled text error: stray end tag [/${theTagName}]`,
+                    );
                 }
                 const [expectedTagName, arg] = styleStack.pop()!;
                 if (expectedTagName !== theTagName) {
-                    throw new Error(`Styled text error: mismatched tags. Expected [/${expectedTagName}], got [/${theTagName}]`);
+                    throw new Error(
+                        `Styled text error: mismatched tags. Expected [/${expectedTagName}], got [/${theTagName}]`,
+                    );
                 }
             }
             else styleStack.push([theTagName, tagParam]);
@@ -139,14 +145,14 @@ function getFontAtlasForFont(font: FontData | string): FontAtlas {
             outline: Outline | null;
             filter: TexFilter;
         } = font instanceof FontData
-                ? {
-                    outline: font.outline,
-                    filter: font.filter,
-                }
-                : {
-                    outline: null,
-                    filter: DEF_FONT_FILTER,
-                };
+            ? {
+                outline: font.outline,
+                filter: font.filter,
+            }
+            : {
+                outline: null,
+                filter: DEF_FONT_FILTER,
+            };
 
         // TODO: customizable font tex filter
         atlas = {
