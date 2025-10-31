@@ -43,10 +43,11 @@ export function makeInternal<T extends CompList<unknown>>(
     obj._fixedUpdateEvents = new KEvent<[]>();
     obj._drawEvents = new KEvent<[]>();
     obj._inputEvents = [];
+    obj._transform = new Mat23();
+    obj._transformDirty = true;
     obj.paused = false;
     obj.hidden = false;
     obj.id = id;
-    obj.transform = new Mat23();
 
     // Adding components passed from add([]);
     // We register here: The objects, because you can also pass tags to add().
