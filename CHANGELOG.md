@@ -21,7 +21,7 @@ best friend, lajbel, can put the correct version name here
 ### Added
 
 - Added parameterized formatting tags like `"[color=red]Red text![/color]"` for
-  more powerful formatting options - @dragoncoder047
+  more powerful text formatting options - @dragoncoder047
 
 - Added `getGamepadAnalogButton()` to read the analog value of buttons like the
   triggers - @dragoncoder047
