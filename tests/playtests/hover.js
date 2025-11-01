@@ -25,7 +25,6 @@ const bean = card.add([
     anchor("center"),
     scale(2),
     area(),
-    hover(),
     cursor("pointer"),
     z(1),
 ]);

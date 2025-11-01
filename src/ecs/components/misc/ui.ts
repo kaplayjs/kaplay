@@ -5,7 +5,7 @@ import { _k } from "../../../shared";
 import type { Comp, GameObj, Key, MouseButton } from "../../../types";
 import { getTreeRoot } from "../../entity/utils";
 import { system, SystemPhase } from "../../systems/systems";
-import type { AreaComp } from "../physics/area";
+import { area, type AreaComp } from "../physics/area";
 
 interface UICompPrivate extends Comp {
     setHoverAndMouseState(
@@ -240,6 +240,12 @@ export function ui(opt: UICompOpt = {}): UIComp {
         id: "ui",
         require: ["area"],
         canFocus: opt.canFocus ?? false,
+
+        add(this: GameObj) {
+            if (!this.has("area")) {
+                this.use(area());
+            }
+        },
 
         destroy(this: GameObj) {
             if (this === _focus) {

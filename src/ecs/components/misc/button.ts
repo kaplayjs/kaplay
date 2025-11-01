@@ -1,11 +1,13 @@
 import type { Asset } from "../../../assets/asset";
 import type { SpriteData } from "../../../assets/sprite";
+import type { KEventController } from "../../../events/events";
 import { drawFormattedText } from "../../../gfx/draw/drawFormattedText";
 import { drawRect } from "../../../gfx/draw/drawRect";
 import { drawSprite } from "../../../gfx/draw/drawSprite";
 import { formatText } from "../../../gfx/formatText";
 import { Color, rgb } from "../../../math/color";
 import { Rect, vec2 } from "../../../math/math";
+import type { Vec2 } from "../../../math/Vec2";
 import { _k } from "../../../shared";
 import type { Comp, GameObj } from "../../../types";
 import { ui, type UIComp } from "./ui";
@@ -13,7 +15,9 @@ import { ui, type UIComp } from "./ui";
 export type Theme = {
     hoverColor: Color;
     backgroundColor: Color;
+    fontSize: number;
     button: {
+        padding?: Vec2;
         normal: {
             sprite: string | SpriteData | Asset<SpriteData>;
             frame?: number;
@@ -24,6 +28,8 @@ export type Theme = {
         };
     };
     checkbox: {
+        padding?: Vec2;
+        spacing?: Vec2;
         normal: {
             sprite: string | SpriteData | Asset<SpriteData>;
             frame?: number;
@@ -34,6 +40,8 @@ export type Theme = {
         };
     };
     radio: {
+        padding?: Vec2;
+        spacing?: Vec2;
         normal: {
             sprite: string | SpriteData | Asset<SpriteData>;
             frame?: number;
@@ -44,6 +52,8 @@ export type Theme = {
         };
     };
     slider: {
+        padding?: Vec2;
+        spacing?: Vec2;
         gutter: {
             sprite: string | SpriteData | Asset<SpriteData>;
             frame?: number;
@@ -58,7 +68,9 @@ export type Theme = {
 export const DefaultTheme: Theme = {
     hoverColor: rgb(80, 80, 255),
     backgroundColor: rgb(144, 163, 174),
+    fontSize: 20,
     button: {
+        padding: vec2(2),
         normal: {
             sprite: "button",
         },
@@ -67,6 +79,8 @@ export const DefaultTheme: Theme = {
         },
     },
     checkbox: {
+        padding: vec2(2),
+        spacing: vec2(2),
         normal: {
             sprite: "ui",
             frame: 0,
@@ -77,6 +91,8 @@ export const DefaultTheme: Theme = {
         },
     },
     radio: {
+        padding: vec2(2),
+        spacing: vec2(2),
         normal: {
             sprite: "ui",
             frame: 2,
@@ -87,6 +103,8 @@ export const DefaultTheme: Theme = {
         },
     },
     slider: {
+        padding: vec2(2),
+        spacing: vec2(2),
         gutter: {
             sprite: "buttonpressed",
         },
@@ -101,27 +119,39 @@ const backgroundColor = rgb(144, 163, 174);
 
 export let _theme = DefaultTheme;
 
+export type ButtonCompOpt = {
+    width?: number;
+    height?: number;
+    value?: boolean;
+};
+
 export interface ButtonComp extends Comp {
     width: number;
     height: number;
     value: boolean;
+    onValueChanged(cb: (value: boolean) => void): KEventController;
 
     renderArea(): Rect;
 }
 
-export function button(label: string): ButtonComp {
+export function button(label: string, opt?: ButtonCompOpt): ButtonComp {
+    const _padding = _theme.button.padding ?? vec2();
     let _shape: Rect | undefined;
     let formattedText = label
         ? formatText({
-            pos: vec2(2, 2),
+            pos: _padding,
             text: label,
-            size: 20,
+            size: _theme.fontSize,
             color: Color.BLACK,
         })
         : null;
-    let _width = formattedText ? formattedText.width + 4 : 100;
-    let _height = formattedText ? formattedText.height + 4 : 25;
-    let _value = false;
+    const contentWidth = formattedText ? formattedText.width : _theme.fontSize;
+    const contentHeight = formattedText
+        ? formattedText.height
+        : _theme.fontSize;
+    let _width = opt?.width ?? contentWidth + _padding.x * 2;
+    let _height = opt?.height ?? contentHeight + _padding.y * 2;
+    let _value = opt?.value ?? false;
     return {
         id: "button",
         get width() {
@@ -178,6 +208,9 @@ export function button(label: string): ButtonComp {
                 });
             }
         },
+        onValueChanged(this: GameObj, cb: (value: boolean) => void) {
+            return this.on("value", this.value);
+        },
         renderArea() {
             if (!_shape) {
                 _shape = new Rect(vec2(0), _width, _height);
@@ -187,19 +220,24 @@ export function button(label: string): ButtonComp {
     };
 }
 
-export function checkbox(label: string): ButtonComp {
+export function checkbox(label: string, opt?: ButtonComp): ButtonComp {
+    const _padding = _theme.checkbox.padding ?? vec2();
+    const _spacing = _theme.checkbox.spacing ?? vec2();
     let _shape: Rect | undefined;
     let formattedText = label
         ? formatText({
-            pos: vec2(2 + 16, 2),
+            pos: _padding.add(16 + _spacing.x, 0),
             text: label,
             size: 20,
             color: Color.BLACK,
         })
         : null;
-    let _width = formattedText ? formattedText.width + 4 + 16 : 100;
-    let _height = formattedText ? formattedText.height + 4 : 25;
-    let _value = false;
+    const contentWidth = 16
+        + (formattedText ? formattedText.width + _spacing.x : 0);
+    const contentHeight = formattedText ? formattedText.height : 16;
+    let _width = opt?.width ?? contentWidth + _padding.x * 2;
+    let _height = opt?.height ?? contentHeight + _padding.y * 2;
+    let _value = opt?.value ?? false;
     return {
         id: "checkbox",
         get width() {
@@ -259,6 +297,9 @@ export function checkbox(label: string): ButtonComp {
                 });
             }
         },
+        onValueChanged(this: GameObj, cb: (value: boolean) => void) {
+            return this.on("value", this.value);
+        },
         renderArea() {
             if (!_shape) {
                 _shape = new Rect(vec2(0), _width, _height);
@@ -272,19 +313,28 @@ export interface RadioComp extends ButtonComp {
     group: string;
 }
 
-export function radio(label: string, group: string): RadioComp {
+export function radio(
+    label: string,
+    group: string,
+    opt?: ButtonCompOpt,
+): RadioComp {
+    const _padding = _theme.radio.padding ?? vec2();
+    const _spacing = _theme.radio.spacing ?? vec2();
     let _shape: Rect | undefined;
     let formattedText = label
         ? formatText({
-            pos: vec2(2 + 16, 2),
+            pos: _padding.add(16 + _spacing.x, 0),
             text: label,
             size: 20,
             color: Color.BLACK,
         })
         : null;
-    let _width = formattedText ? formattedText.width + 4 + 16 : 100;
-    let _height = formattedText ? formattedText.height + 4 : 25;
-    let _value = false;
+    const contentWidth = 16
+        + (formattedText ? formattedText.width + _spacing.x : 0);
+    const contentHeight = formattedText ? formattedText.height : 16;
+    let _width = opt?.width ?? contentWidth + _padding.x * 2;
+    let _height = opt?.height ?? contentHeight + _padding.y * 2;
+    let _value = opt?.value ?? false;
     return {
         id: "radio",
         group: group,
@@ -352,6 +402,9 @@ export function radio(label: string, group: string): RadioComp {
                     },
                 });
             }
+        },
+        onValueChanged(this: GameObj, cb: (value: boolean) => void) {
+            return this.on("value", this.value);
         },
         renderArea() {
             if (!_shape) {

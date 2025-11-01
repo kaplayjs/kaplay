@@ -8,7 +8,6 @@ const obj1 = add([
     sprite("bean"),
     anchor("center"),
     area(),
-    hover(),
     // skew(-45, 0),
     {
         draw() {
@@ -29,7 +28,6 @@ const obj2 = add([
     sprite("bean"),
     anchor("center"),
     area(),
-    hover(),
     constraint.distance(obj1, { distance: 100, mode: "maximum", strength: 1 }),
     // constraint.translation(obj1, { strength: 0.75, offset: vec2(50, 0) }),
     "obj",
@@ -43,7 +41,6 @@ const obj3 = add([
     sprite("bean"),
     anchor("center"),
     area(),
-    hover(),
     "obj",
 ]);
 
@@ -53,7 +50,6 @@ const obj4 = add([
     sprite("bean"),
     anchor("center"),
     area(),
-    hover(),
     constraint.rotation(obj3, { strength: 1, offset: 90, scale: -1 }),
     "obj",
     "constraint",
@@ -73,7 +69,6 @@ const obj5 = add([
     sprite("bean"),
     anchor("center"),
     area(),
-    hover(),
     "obj",
 ]);
 
@@ -83,7 +78,6 @@ const obj6 = add([
     sprite("bean"),
     anchor("center"),
     area(),
-    hover(),
     constraint.scale(obj5, { strength: 1 }),
     "obj",
     "constraint",
@@ -95,7 +89,6 @@ const obj10 = add([
     sprite("bean"),
     anchor("center"),
     area(),
-    hover(),
     "obj",
     color(RED),
 ]);
@@ -158,7 +151,6 @@ const obj11 = add([
     sprite("bean"),
     anchor("center"),
     area(),
-    hover(),
     "obj",
     color(RED),
 ]);

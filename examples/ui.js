@@ -1,4 +1,5 @@
 kaplay({
+    areaHasUI: false,
     buttons: {
         "focus-next": {
             keyboard: ["tab"],
@@ -18,12 +19,11 @@ loadSprite("buttonpressed", "/sprites/buttonpressed.png", {
 
 const container = add([
     pos(20, 20),
-    layout({ type: "column", padding: 2, spacing: 2 }),
+    layout({ type: "column", padding: 2, spacing: 2, halign: "stretch" }),
 ]);
 
 container.add([
     pos(),
-    area(),
     button("test"),
 ]).onInvoke(() => {
     debug.log("test");
@@ -31,7 +31,6 @@ container.add([
 
 container.add([
     pos(),
-    area(),
     button("test2"),
 ]).onInvoke(() => {
     debug.log("test2");
@@ -39,7 +38,6 @@ container.add([
 
 container.add([
     pos(),
-    area(),
     checkbox("check"),
 ]).onInvoke(() => {
     debug.log("check");
@@ -47,15 +45,13 @@ container.add([
 
 container.add([
     pos(),
-    area(),
-    radio("English", "options"),
+    radio("English", "options", { value: true }),
     "options",
 ]).onInvoke(() => {
     debug.log("check");
 });
 container.add([
     pos(),
-    area(),
     radio("日本語", "options"),
     "options",
 ]).onInvoke(() => {
@@ -64,8 +60,7 @@ container.add([
 
 container.add([
     pos(),
-    area(),
-    slider({ label: "slide", width: 100 }),
+    slider({ label: "vol", width: 100 }),
 ]);
 
 container.doLayout();
@@ -83,12 +78,20 @@ const bean = mask.add([
 
 add([
     pos(200, 400),
-    area(),
-    slider({ scrollObject: bean, height: 100, orientation: "vertical" }),
+    slider({
+        scrollObject: bean,
+        height: 100,
+        orientation: "vertical",
+        padding: vec2(0, 0),
+    }),
 ]);
 
 add([
     pos(100, 500),
-    area(),
-    slider({ scrollObject: bean, width: 100, orientation: "horizontal" }),
+    slider({
+        scrollObject: bean,
+        width: 100,
+        orientation: "horizontal",
+        padding: vec2(0, 0),
+    }),
 ]);

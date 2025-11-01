@@ -31,7 +31,6 @@ const redBean = add([
     pos(130, 180),
     anchor("center"),
     area(),
-    hover(),
 ]);
 
 const blueBean = add([
@@ -40,7 +39,6 @@ const blueBean = add([
     pos(380, 180),
     anchor("center"),
     area(),
-    hover(),
 ]);
 
 // Only runs once when bean is hovered, and when bean is unhovered

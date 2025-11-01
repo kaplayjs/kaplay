@@ -73,7 +73,6 @@ const door = add([
     pos(center()),
     anchor("center"),
     area(),
-    hover(),
     scale(2),
 ]);
 

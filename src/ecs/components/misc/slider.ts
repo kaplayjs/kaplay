@@ -1,3 +1,4 @@
+import type { KEventController } from "../../../events/events";
 import { toWorld } from "../../../game/camera";
 import { drawFormattedText } from "../../../gfx/draw/drawFormattedText";
 import { drawRect } from "../../../gfx/draw/drawRect";
@@ -25,6 +26,7 @@ export type SliderCompOpt = {
     value?: number;
     min?: number;
     max?: number;
+    padding?: Vec2;
 };
 
 export interface SliderComp extends Comp {
@@ -33,34 +35,38 @@ export interface SliderComp extends Comp {
     value: number;
     min: number;
     max: number;
+    onValueChanged(cb: (value: number) => void): KEventController;
 
     renderArea(): Rect;
 }
 
 export function slider(opt: SliderCompOpt): SliderComp {
+    const _padding = opt.padding ?? _theme.slider.padding ?? vec2();
+    const _spacing = _theme.slider.spacing ?? vec2();
     let _shape: Rect | undefined;
     let formattedText = opt.label
         ? formatText({
-            pos: vec2(2, 2),
+            pos: _padding,
             text: opt.label,
             size: 20,
             color: Color.BLACK,
         })
         : null;
+    const labelWidth = formattedText ? formattedText.width + _spacing.x : 0;
+    let _width = opt.width ?? (opt.orientation === "vertical" ? 20 : 100);
     const widthWithoutLabel = opt.orientation === "vertical"
         ? 20
-        : opt.width ?? 100;
-    let _width = widthWithoutLabel
-        + (formattedText ? formattedText.width + 4 : 0);
+        : _width - labelWidth - _padding.x * 2;
+
     let _height = opt.orientation === "vertical"
         ? (opt.height ?? 100)
         : formattedText
-        ? formattedText.height + 4
+        ? formattedText.height
         : 20;
     let _value = opt.value ?? 0;
     let _sliderRect = new Rect(
-        vec2(_width - widthWithoutLabel, 0),
-        _width,
+        vec2(_padding.x + labelWidth, 0),
+        widthWithoutLabel,
         _height,
     );
     const gutterThickness = opt.scrollObject
@@ -70,11 +76,11 @@ export function slider(opt: SliderCompOpt): SliderComp {
         ? new Rect(
             _sliderRect.pos.add(_width / 2 - gutterThickness / 2, 0),
             gutterThickness,
-            _height,
+            _sliderRect.height,
         )
         : new Rect(
             _sliderRect.pos.add(0, _height / 2 - gutterThickness / 2),
-            _width,
+            _sliderRect.width,
             gutterThickness,
         );
     let _thumbRect = opt.orientation === "vertical"
@@ -134,6 +140,8 @@ export function slider(opt: SliderCompOpt): SliderComp {
         set width(value) {
             _width = value;
             if (_shape) _shape.width = value;
+            _sliderRect.width = _gutterRect.width = _width - labelWidth
+                - _padding.x * 2;
         },
         get height() {
             return _height;
@@ -194,6 +202,7 @@ export function slider(opt: SliderCompOpt): SliderComp {
                     _thumbRect.pos.y = clamp(pt.y - _grabPos.y, minY, maxY);
                     _value = (_thumbRect.pos.y - minY) / (maxY - minY);
                     updateVScroll();
+                    this.trigger("value", _value);
                 }
                 else {
                     updateThumbWidth();
@@ -203,6 +212,7 @@ export function slider(opt: SliderCompOpt): SliderComp {
                     _thumbRect.pos.x = clamp(pt.x - _grabPos.x, minX, maxX);
                     _value = (_thumbRect.pos.x - minX) / (maxX - minX);
                     updateHScroll();
+                    this.trigger("value", _value);
                 }
             }
             else if (_grabPos) {
@@ -242,6 +252,9 @@ export function slider(opt: SliderCompOpt): SliderComp {
                     },
                 });
             }
+        },
+        onValueChanged(this: GameObj, cb: (value: number) => void) {
+            return this.on("value", this.value);
         },
         renderArea() {
             if (!_shape) {

@@ -3,20 +3,46 @@ import type { Vec2 } from "../../../math/Vec2";
 import type { Comp, GameObj } from "../../../types";
 
 export type LayoutType = "row" | "column" | "grid" | "flex";
+export type LayoutAlign = "begin" | "end" | "center" | "stretch";
 export type LayoutElementCompOpt = {
     type?: LayoutType;
     padding?: number;
     spacing?: number;
     columns?: number;
     maxWidth?: number;
+    halign?: LayoutAlign;
+    valign?: LayoutAlign;
 };
 export interface LayoutElementComp extends Comp {
+    /**
+     * Lays out children and returns the accumulated size
+     */
     doLayout(): Vec2;
+    /**
+     * The type of layout
+     */
     type: LayoutType;
+    /**
+     * The horizontal and vertical padding between parent and child
+     */
     padding: Vec2;
+    /**
+     * the horizontal and vertical spacing between children
+     */
     spacing: Vec2;
+    /**
+     * For a grid layout, the amount of columns, unused otherwise
+     */
     columns?: number;
+    /**
+     * For a flex layout, The maximum allowed width
+     */
     maxWidth: number;
+    /**
+     * If set, the layout does not just position the controls, but aligns them as well
+     */
+    halign?: LayoutAlign;
+    valign?: LayoutAlign;
 }
 
 export function layout(opt: LayoutElementCompOpt): LayoutElementComp {
@@ -25,6 +51,8 @@ export function layout(opt: LayoutElementCompOpt): LayoutElementComp {
     let _spacing = vec2(opt.spacing ?? 0);
     let _columns = opt.columns;
     let _maxWidth = opt.maxWidth ?? Infinity;
+    let _halign = opt.halign;
+    let _valign = opt.valign;
     return {
         add(this: GameObj) {
             // Initialization
@@ -41,6 +69,20 @@ export function layout(opt: LayoutElementCompOpt): LayoutElementComp {
                         pos = pos.add(child.width + _spacing.x, 0);
                         height = Math.max(height, child.height);
                     });
+                    if (_valign) {
+                        if (_valign == "stretch") {
+                            this.children.forEach((child: GameObj) => {
+                                child.height = height;
+                            });
+                        }
+                        else if (_valign == "center" || _valign == "end") {
+                            const factor = _valign == "center" ? 0.5 : 1;
+                            this.children.forEach((child: GameObj) => {
+                                child.pos.y = _padding.y
+                                    + (height - child.height) * factor;
+                            });
+                        }
+                    }
                     return vec2(
                         pos.x - _spacing.x + _padding.x,
                         height + _padding.y * 2,
@@ -54,6 +96,20 @@ export function layout(opt: LayoutElementCompOpt): LayoutElementComp {
                         pos = pos.add(0, child.height + _spacing.y);
                         width = Math.max(width, child.width);
                     });
+                    if (_halign) {
+                        if (_halign == "stretch") {
+                            this.children.forEach((child: GameObj) => {
+                                child.width = width;
+                            });
+                        }
+                        else if (_halign == "center" || _halign == "end") {
+                            const factor = _halign == "center" ? 0.5 : 1;
+                            this.children.forEach((child: GameObj) => {
+                                child.pos.x = _padding.y
+                                    + (width - child.width) * factor;
+                            });
+                        }
+                    }
                     return vec2(
                         width + _padding.x * 2,
                         pos.y - _spacing.y + _padding.y,

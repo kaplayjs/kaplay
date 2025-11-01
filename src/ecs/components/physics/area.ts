@@ -20,6 +20,7 @@ import type {
 } from "../../../types";
 import { isFixed } from "../../entity/utils";
 import type { Collision } from "../../systems/Collision";
+import { ui } from "../misc/ui";
 import type { AnchorComp } from "../transform/anchor";
 import type { FixedComp } from "../transform/fixed";
 import type { PosComp } from "../transform/pos";
@@ -246,6 +247,12 @@ export function area(opt: AreaCompOpt = {}): AreaComp {
                     collidingThisFrame.add(obj.id);
                 }),
             );
+
+            if (_k.globalOpt.areaHasUI ?? true) {
+                if (!this.has("ui")) {
+                    this.use(ui({ canFocus: false }));
+                }
+            }
         },
 
         destroy() {
@@ -478,11 +485,10 @@ export function area(opt: AreaCompOpt = {}): AreaComp {
                 return `area: ${this.area.scale?.x?.toFixed(1)}x`;
             }
             else {
-                return `area: (${
-                    this.area.scale?.x?.toFixed(
-                        1,
-                    )
-                }x, ${this.area.scale.y?.toFixed(1)}y)`;
+                return `area: (${this.area.scale?.x?.toFixed(
+                    1,
+                )
+                    }x, ${this.area.scale.y?.toFixed(1)}y)`;
             }
         },
 

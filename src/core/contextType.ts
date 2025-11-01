@@ -61,8 +61,7 @@ import type {
 } from "../ecs/components/misc/animate";
 import type {
     ButtonComp,
-    SliderComp,
-    SliderCompOpt,
+    ButtonCompOpt,
 } from "../ecs/components/misc/button";
 import type { CursorComp, CursorCompOpt } from "../ecs/components/misc/cursor";
 import type {
@@ -76,6 +75,7 @@ import type {
 } from "../ecs/components/misc/layout";
 import type { LifespanCompOpt } from "../ecs/components/misc/lifespan";
 import type { NamedComp } from "../ecs/components/misc/named";
+import type { SliderComp, SliderCompOpt } from "../ecs/components/misc/slider";
 import type { StateComp } from "../ecs/components/misc/state";
 import type { StayComp } from "../ecs/components/misc/stay";
 import type { TextInputComp } from "../ecs/components/misc/textInput";
@@ -1547,10 +1547,10 @@ export interface KAPLAYCtx {
     /**
      * Adds click and hover events to an object, making it interactive.
      *
-     * @returns The hover comp.
+     * @returns The ui comp.
      * @since v4000.0
      * @group Components
-     * @subgroup Behaviour
+     * @subgroup UI
      */
     ui(opt: UICompOpt): UIComp;
     /**
@@ -1559,12 +1559,44 @@ export interface KAPLAYCtx {
      * @returns The button comp.
      * @since v4000.0
      * @group Components
-     * @subgroup Behaviour
+     * @subgroup UI
      */
-    button(label: string): ButtonComp;
-    checkbox(label: string): ButtonComp;
-    radio(label: string, group: string): ButtonComp;
+    button(label: string, opt?: ButtonCompOpt): ButtonComp;
+    /**
+     * A checkbox.
+     *
+     * @returns The button comp.
+     * @since v4000.0
+     * @group Components
+     * @subgroup UI
+     */
+    checkbox(label: string, opt?: ButtonCompOpt): ButtonComp;
+    /**
+     * A radio button.
+     *
+     * @returns The button comp.
+     * @since v4000.0
+     * @group Components
+     * @subgroup UI
+     */
+    radio(label: string, group: string, opt?: ButtonCompOpt): ButtonComp;
+    /**
+     * A slider.
+     *
+     * @returns The slider comp.
+     * @since v4000.0
+     * @group Components
+     * @subgroup UI
+     */
     slider(opt: SliderCompOpt): SliderComp;
+    /**
+     * A layout.
+     *
+     * @returns The layout comp.
+     * @since v4000.0
+     * @group Components
+     * @subgroup UI
+     */
     layout(opt: LayoutCompOpt): LayoutComp;
     /**
      * Adds cursor on hover to an object.

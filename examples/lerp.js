@@ -22,7 +22,6 @@ onLoad(() => {
         anchor("center"),
         opacity(),
         area(),
-        hover(),
         scale(),
     ]);
 

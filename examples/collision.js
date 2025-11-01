@@ -34,7 +34,6 @@ const player = add([
     // area({ shape: new Polygon([vec2(0), vec2(100), vec2(-100, 100)]) }),
     // area({ shape: new Rect(vec2(0), 12, 120) }),
     // area({ scale: 0.5 }),
-    hover(),
     // body() component makes an object respond to physics
     body(),
 ]);
