@@ -21,10 +21,10 @@ function tagDiff(l1, l2) {
         min++;
     }
     for (var i = l1.length - 1; i >= min; i--) {
-        out += `[/${l1[i]}]`;
+        out += `[/${l1[i][0]}]`;
     }
     for (var j = min; j < l2.length; j++) {
-        out += `[${l2[j]}]`;
+        out += `[${l2[j][0] + (l2[j][1] ? `=${l2[j][1]}` : "")}]`;
     }
     return out;
 }
