@@ -59,10 +59,7 @@ import type {
     AnimateComp,
     AnimateCompOpt,
 } from "../ecs/components/misc/animate";
-import type {
-    ButtonComp,
-    ButtonCompOpt,
-} from "../ecs/components/misc/button";
+import type { ButtonComp, ButtonCompOpt } from "../ecs/components/misc/button";
 import type { CursorComp, CursorCompOpt } from "../ecs/components/misc/cursor";
 import type {
     FakeMouseComp,
