@@ -20,6 +20,7 @@ import type {
 } from "../../../types";
 import { isFixed } from "../../entity/utils";
 import type { Collision } from "../../systems/Collision";
+import { ui } from "../misc/ui";
 import type { AnchorComp } from "../transform/anchor";
 import type { FixedComp } from "../transform/fixed";
 import type { PosComp } from "../transform/pos";
@@ -54,7 +55,7 @@ export interface AreaComp extends Comp {
         /**
          * Cursor on hover.
          */
-        cursor: Cursor | null;
+        cursor?: Cursor;
     };
     /**
      * If this object should ignore collisions against certain other objects.
@@ -70,14 +71,6 @@ export interface AreaComp extends Comp {
      * Friction of the object.
      */
     friction?: number;
-    /**
-     * If was just clicked on last frame.
-     */
-    isClicked(): boolean;
-    /**
-     * If is being hovered on.
-     */
-    isHovering(): boolean;
     /**
      * Check collision with another game obj.
      *
@@ -98,30 +91,6 @@ export interface AreaComp extends Comp {
      * If is currently overlapping with another game obj (like isColliding, but will return false if the objects are just touching edges).
      */
     isOverlapping(o: GameObj<AreaComp>): boolean;
-    /**
-     * Register an event runs when clicked.
-     *
-     * @since v2000.1
-     */
-    onClick(f: () => void, btn?: MouseButton): KEventController;
-    /**
-     * Register an event runs once when hovered.
-     *
-     * @since v3000.0
-     */
-    onHover(action: () => void): KEventController;
-    /**
-     * Register an event runs every frame when hovered.
-     *
-     * @since v3000.0
-     */
-    onHoverUpdate(action: () => void): KEventController;
-    /**
-     * Register an event runs once when unhovered.
-     *
-     * @since v3000.0
-     */
-    onHoverEnd(action: () => void): KEventController;
     /**
      * Register an event runs once when collide with another game obj with certain tag.
      *
@@ -167,10 +136,6 @@ export interface AreaComp extends Comp {
      */
     onCollideEnd(f: (obj: GameObj) => void): void;
     /**
-     * If has a certain point inside collider.
-     */
-    hasPoint(p: Vec2): boolean;
-    /**
      * Push out from another solid game obj if currently overlapping.
      */
     resolveCollision(obj: GameObj): void;
@@ -188,6 +153,14 @@ export interface AreaComp extends Comp {
      * Get the geometry data for the collider in screen coordinate space.
      */
     screenArea(): Shape;
+    /**
+     * Returns true if the given point in screen coordinates is inside the area.
+     */
+    hasScreenPoint(p: Vec2): boolean;
+    /**
+     * Returns true if the given point in world coordinates is inside the area.
+     */
+    hasWorldPoint(p: Vec2): boolean;
 
     serialize(): any;
 }
@@ -259,11 +232,6 @@ export function area(opt: AreaCompOpt = {}): AreaComp {
 
         add(this: GameObj<AreaComp>) {
             _k.game.areaCount++;
-            if (this.area.cursor) {
-                events.push(
-                    this.onHover(() => _k.app.setCursor(this.area.cursor!)),
-                );
-            }
 
             events.push(
                 this.onCollideUpdate((obj, col) => {
@@ -279,6 +247,12 @@ export function area(opt: AreaCompOpt = {}): AreaComp {
                     collidingThisFrame.add(obj.id);
                 }),
             );
+
+            if (_k.globalOpt.areaHasUI ?? true) {
+                if (!this.has("ui")) {
+                    this.use(ui({ canFocus: false }));
+                }
+            }
         },
 
         destroy() {
@@ -344,30 +318,7 @@ export function area(opt: AreaCompOpt = {}): AreaComp {
             shape: opt.shape ?? null,
             scale: opt.scale ? vec2(opt.scale) : vec2(1),
             offset: opt.offset ?? vec2(0),
-            cursor: opt.cursor ?? null,
-        },
-
-        isClicked(): boolean {
-            if (_k.game.fakeMouse) {
-                return _k.game.fakeMouse.isPressed && this.isHovering();
-            }
-
-            return _k.app.isMousePressed() && this.isHovering();
-        },
-
-        isHovering(this: GameObj<AreaComp>) {
-            if (_k.game.fakeMouse) {
-                const mpos = isFixed(this)
-                    ? _k.game.fakeMouse.pos
-                    : toWorld(_k.game.fakeMouse.pos);
-
-                return this.hasPoint(mpos);
-            }
-
-            const mpos = isFixed(this)
-                ? _k.app.mousePos()
-                : toWorld(_k.app.mousePos());
-            return this.hasPoint(mpos);
+            cursor: opt.cursor,
         },
 
         checkCollision(this: GameObj, other: GameObj<AreaComp>) {
@@ -412,68 +363,6 @@ export function area(opt: AreaCompOpt = {}): AreaComp {
             }
             const col = colliding[other.id];
             return col && col.hasOverlap();
-        },
-
-        onClick(
-            this: GameObj<AreaComp>,
-            action: () => void,
-            btn: MouseButton = "left",
-        ): KEventController {
-            if (_k.game.fakeMouse) {
-                _k.game.fakeMouse.onPress(() => {
-                    if (this.isHovering()) {
-                        action();
-                    }
-                });
-            }
-
-            const e = this.onMousePress(btn, () => {
-                if (this.isHovering()) {
-                    action();
-                }
-            });
-
-            events.push(e);
-
-            return e;
-        },
-
-        onHover(this: GameObj, action: () => void): KEventController {
-            let hovering = false;
-            return this.onUpdate(() => {
-                if (!hovering) {
-                    if (this.isHovering()) {
-                        hovering = true;
-                        action();
-                    }
-                }
-                else {
-                    hovering = this.isHovering();
-                }
-            });
-        },
-
-        onHoverUpdate(this: GameObj, onHover: () => void): KEventController {
-            return this.onUpdate(() => {
-                if (this.isHovering()) {
-                    onHover();
-                }
-            });
-        },
-
-        onHoverEnd(this: GameObj, action: () => void): KEventController {
-            let hovering = false;
-            return this.onUpdate(() => {
-                if (hovering) {
-                    if (!this.isHovering()) {
-                        hovering = false;
-                        action();
-                    }
-                }
-                else {
-                    hovering = this.isHovering();
-                }
-            });
         },
 
         onCollide(
@@ -535,23 +424,6 @@ export function area(opt: AreaCompOpt = {}): AreaComp {
                     "onCollideEnd() requires either a function or a tag",
                 );
             }
-        },
-
-        hasPoint(
-            this: GameObj<AreaComp | PosComp | AnchorComp>,
-            pt: Vec2,
-        ): boolean {
-            const localArea = this.localArea();
-            pt = this.transform.inverse.transform(pt);
-            Vec2.sub(pt, this.area.offset, pt);
-            Vec2.scalec(pt, 1 / this.area.scale.x, 1 / this.area.scale.y, pt);
-            if (localArea instanceof Rect && this.anchor !== "topleft") {
-                const offset = anchorPt(this.anchor || DEF_ANCHOR)
-                    .add(1, 1)
-                    .scale(-0.5 * localArea.width, -0.5 * localArea.height);
-                Vec2.sub(pt, offset, pt);
-            }
-            return this.localArea().contains(pt);
         },
 
         // push an obj out of another if they're overlapped
@@ -619,6 +491,31 @@ export function area(opt: AreaCompOpt = {}): AreaComp {
                     )
                 }x, ${this.area.scale.y?.toFixed(1)}y)`;
             }
+        },
+
+        hasScreenPoint(this: GameObj<AreaComp>, pt: Vec2) {
+            return this.hasWorldPoint(
+                isFixed(this)
+                    ? pt
+                    : toWorld(pt),
+            );
+        },
+
+        hasWorldPoint(
+            this: GameObj<AreaComp | AnchorComp>,
+            pt: Vec2,
+        ): boolean {
+            const localArea = this.localArea();
+            pt = this.transform.inverse.transform(pt);
+            Vec2.sub(pt, this.area.offset, pt);
+            Vec2.scalec(pt, 1 / this.area.scale.x, 1 / this.area.scale.y, pt);
+            if (localArea instanceof Rect && this.anchor !== "topleft") {
+                const offset = anchorPt(this.anchor || DEF_ANCHOR)
+                    .add(1, 1)
+                    .scale(-0.5 * localArea.width, -0.5 * localArea.height);
+                Vec2.sub(pt, offset, pt);
+            }
+            return this.localArea().contains(pt);
         },
 
         serialize() {

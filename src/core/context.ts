@@ -50,14 +50,19 @@ import { patrol } from "../ecs/components/level/patrol";
 import { sentry } from "../ecs/components/level/sentry";
 import { tile } from "../ecs/components/level/tile";
 import { animate, serializeAnimation } from "../ecs/components/misc/animate";
+import { button, checkbox, radio } from "../ecs/components/misc/button";
+import { cursor } from "../ecs/components/misc/cursor";
 import { fakeMouse } from "../ecs/components/misc/fakeMouse";
 import { health } from "../ecs/components/misc/health";
+import { layout } from "../ecs/components/misc/layout";
 import { lifespan } from "../ecs/components/misc/lifespan";
 import { named } from "../ecs/components/misc/named";
+import { slider } from "../ecs/components/misc/slider";
 import { state } from "../ecs/components/misc/state";
 import { stay } from "../ecs/components/misc/stay";
 import { textInput } from "../ecs/components/misc/textInput";
 import { timer } from "../ecs/components/misc/timer";
+import { ui } from "../ecs/components/misc/ui";
 import { area } from "../ecs/components/physics/area";
 import { body } from "../ecs/components/physics/body";
 import { doubleJump } from "../ecs/components/physics/doubleJump";
@@ -415,6 +420,13 @@ export const createContext = (
         fixed,
         stay,
         health,
+        ui,
+        button,
+        checkbox,
+        radio,
+        slider,
+        layout,
+        cursor,
         lifespan,
         named,
         state,

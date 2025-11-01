@@ -371,6 +371,15 @@ export interface KAPLAYOpt {
      */
     tagComponentIds?: boolean;
     /**
+     * Make area have ui automatically.
+     *
+     * This makes sure adding an area adds onClick and other UI centric features.
+     * Not recommended if you use many physics areas which don't need this.
+     *
+     * @default true
+     */
+    areaHasUI?: boolean;
+    /**
      * Padding used when adding sprites to texture atlas.
      *
      * @default 2

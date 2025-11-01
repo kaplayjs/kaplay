@@ -59,13 +59,20 @@ import type {
     AnimateComp,
     AnimateCompOpt,
 } from "../ecs/components/misc/animate";
+import type { ButtonComp, ButtonCompOpt } from "../ecs/components/misc/button";
+import type { CursorComp, CursorCompOpt } from "../ecs/components/misc/cursor";
 import type {
     FakeMouseComp,
     FakeMouseOpt,
 } from "../ecs/components/misc/fakeMouse";
 import type { HealthComp } from "../ecs/components/misc/health";
+import type {
+    LayoutElementComp as LayoutComp,
+    LayoutElementCompOpt as LayoutCompOpt,
+} from "../ecs/components/misc/layout";
 import type { LifespanCompOpt } from "../ecs/components/misc/lifespan";
 import type { NamedComp } from "../ecs/components/misc/named";
+import type { SliderComp, SliderCompOpt } from "../ecs/components/misc/slider";
 import type { StateComp } from "../ecs/components/misc/state";
 import type { StayComp } from "../ecs/components/misc/stay";
 import type { TextInputComp } from "../ecs/components/misc/textInput";
@@ -74,6 +81,7 @@ import type {
     TimerController,
     TweenController,
 } from "../ecs/components/misc/timer";
+import type { UIComp, UICompOpt } from "../ecs/components/misc/ui";
 import type { AreaComp, AreaCompOpt } from "../ecs/components/physics/area";
 import type { BodyComp, BodyCompOpt } from "../ecs/components/physics/body";
 import type { DoubleJumpComp } from "../ecs/components/physics/doubleJump";
@@ -1530,6 +1538,69 @@ export interface KAPLAYCtx {
      * @subgroup Behaviour
      */
     lifespan(time: number, options?: LifespanCompOpt): EmptyComp;
+    /**
+     * Adds click and hover events to an object, making it interactive.
+     *
+     * @returns The ui comp.
+     * @since v4000.0
+     * @group Components
+     * @subgroup UI
+     */
+    ui(opt: UICompOpt): UIComp;
+    /**
+     * A button.
+     *
+     * @returns The button comp.
+     * @since v4000.0
+     * @group Components
+     * @subgroup UI
+     */
+    button(label: string, opt?: ButtonCompOpt): ButtonComp;
+    /**
+     * A checkbox.
+     *
+     * @returns The button comp.
+     * @since v4000.0
+     * @group Components
+     * @subgroup UI
+     */
+    checkbox(label: string, opt?: ButtonCompOpt): ButtonComp;
+    /**
+     * A radio button.
+     *
+     * @returns The button comp.
+     * @since v4000.0
+     * @group Components
+     * @subgroup UI
+     */
+    radio(label: string, group: string, opt?: ButtonCompOpt): ButtonComp;
+    /**
+     * A slider.
+     *
+     * @returns The slider comp.
+     * @since v4000.0
+     * @group Components
+     * @subgroup UI
+     */
+    slider(opt: SliderCompOpt): SliderComp;
+    /**
+     * A layout.
+     *
+     * @returns The layout comp.
+     * @since v4000.0
+     * @group Components
+     * @subgroup UI
+     */
+    layout(opt: LayoutCompOpt): LayoutComp;
+    /**
+     * Adds cursor on hover to an object.
+     *
+     * @returns The cursor comp.
+     * @since v4000.0
+     * @group Components
+     * @subgroup Behaviour
+     */
+    cursor(opt: string | CursorCompOpt): CursorComp;
     /**
      * Names an game obj.
      *
