@@ -736,6 +736,18 @@ export const initApp = (
         );
     });
 
+    const onUpdate = (action: () => void): KEventController => {
+        return state.events.on("update", action);
+    };
+
+    const onFixedUpdate = (action: () => void): KEventController => {
+        return state.events.on("fixedUpdate", action);
+    };
+
+    const onDraw = (action: () => void): KEventController => {
+        return state.events.on("draw", action);
+    };
+
     const getLastInputDeviceType = () => {
         return state.lastInputDevice;
     };
@@ -1327,6 +1339,9 @@ export const initApp = (
         onButtonPress,
         onButtonDown,
         onButtonRelease,
+        onUpdate,
+        onFixedUpdate,
+        onDraw,
         getLastInputDeviceType,
         events: state.events,
     };
