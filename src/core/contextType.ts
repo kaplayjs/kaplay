@@ -125,10 +125,7 @@ import type { Collision } from "../ecs/systems/Collision";
 import type { SystemPhase } from "../ecs/systems/systems";
 import type { GameObjEventNames, GameObjEvents } from "../events/eventMap";
 import type { KEvent, KEventController, KEventHandler } from "../events/events";
-import type {
-    GameEventHandlers,
-    GameEventHandlersForApp,
-} from "../events/gameEventHandlers";
+import type { GameEventHandlers } from "../events/gameEventHandlers";
 import type { AppScope, SceneScope } from "../events/scopes";
 import type { SceneDef } from "../game/scenes";
 import type { anchorPt } from "../gfx/anchor";
@@ -2930,10 +2927,10 @@ export interface KAPLAYCtx {
      * @subgroup Mouse
      */
     onScroll(action: (delta: Vec2) => void): KEventController;
-    onHide: GameEventHandlersForApp["onHide"];
-    onShow: GameEventHandlersForApp["onShow"];
-    onTabShow: GameEventHandlersForApp["onTabShow"];
-    onTabHide: GameEventHandlersForApp["onTabHide"];
+    onHide: GameEventHandlers["onHide"];
+    onShow: GameEventHandlers["onShow"];
+    onTabShow: GameEventHandlers["onTabShow"];
+    onTabHide: GameEventHandlers["onTabHide"];
     /**
      * Register an event that runs when a gamepad is connected.
      *
