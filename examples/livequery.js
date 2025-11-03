@@ -25,7 +25,6 @@ loop(5, () => {
             sprite("ghosty"),
             pos(x, y),
             area(),
-            ui(),
             timer(),
             color(WHITE),
             "touchable",

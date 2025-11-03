@@ -10,14 +10,7 @@ import { rgb } from "../../../math/color";
 import { Circle, Polygon, Rect, shapeFactory, vec2 } from "../../../math/math";
 import { Vec2 } from "../../../math/Vec2";
 import { _k } from "../../../shared";
-import type {
-    Comp,
-    Cursor,
-    GameObj,
-    MouseButton,
-    Shape,
-    Tag,
-} from "../../../types";
+import type { Comp, Cursor, GameObj, Shape, Tag } from "../../../types";
 import { isFixed } from "../../entity/utils";
 import type { Collision } from "../../systems/Collision";
 import { ui } from "../misc/ui";

@@ -25,7 +25,7 @@ export function cursor(opt: string | CursorCompOpt = {}): CursorComp {
 
     return {
         id: "cursor",
-        require: ["area", "hover"],
+        require: ["area", "ui"],
 
         add(this: GameObj<AreaComp | UIComp | CursorComp>) {
             const cursor = typeof opt === "string" ? opt : opt.cursor;
