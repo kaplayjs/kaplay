@@ -248,10 +248,14 @@ export function area(opt: AreaCompOpt = {}): AreaComp {
             }
         },
 
-        destroy() {
+        destroy(this: GameObj<AreaComp>) {
             _k.game.areaCount--;
             for (const event of events) {
                 event.cancel();
+            }
+
+            if (this.has("ui")) {
+                this.unuse("ui");
             }
         },
 
