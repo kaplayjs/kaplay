@@ -115,6 +115,8 @@ import type { Collision } from "../ecs/systems/Collision";
 import type { SystemPhase } from "../ecs/systems/systems";
 import type { GameObjEventNames, GameObjEvents } from "../events/eventMap";
 import type { KEvent, KEventController, KEventHandler } from "../events/events";
+import type { GameEventHandlers } from "../events/gameEventHandlers";
+import type { AppScope, SceneScope } from "../events/scopes";
 import type { SceneDef } from "../game/scenes";
 import type { anchorPt } from "../gfx/anchor";
 import type { DrawBezierOpt } from "../gfx/draw/drawBezier";
@@ -162,29 +164,30 @@ import type {
 } from "../math/math";
 import type { NavMesh } from "../math/navigationmesh";
 import type { Vec2 } from "../math/Vec2";
-import type {
-    Anchor,
-    BlendMode,
-    Canvas,
-    Comp,
-    CompList,
-    Cursor,
-    EmptyComp,
-    GameObj,
-    GetOpt,
-    KAPLAYPlugin,
-    Key,
-    KGamepad,
-    KGamepadButton,
-    KGamepadStick,
-    LoadFontOpt,
-    Mask,
-    MouseButton,
-    MusicData,
-    QueryOpt,
-    RNGValue,
-    Shape,
-    Tag,
+import {
+    type Anchor,
+    type BlendMode,
+    type Canvas,
+    type Comp,
+    type CompList,
+    type Cursor,
+    type EmptyComp,
+    type GameObj,
+    type GetOpt,
+    type KAPLAYOpt,
+    type KAPLAYPlugin,
+    type Key,
+    type KGamepad,
+    type KGamepadButton,
+    type KGamepadStick,
+    type LoadFontOpt,
+    type Mask,
+    type MouseButton,
+    type MusicData,
+    type QueryOpt,
+    type RNGValue,
+    type Shape,
+    type Tag,
 } from "../types";
 import type { TupleWithoutFirst } from "../utils/types";
 import type { Engine } from "./engine";
@@ -2859,54 +2862,10 @@ export interface KAPLAYCtx {
      * @subgroup Mouse
      */
     onScroll(action: (delta: Vec2) => void): KEventController;
-    /**
-     * Register an event that runs when tab is hidden.
-     *
-     * @param action - The function that is run what the tab is hidden.
-     *
-     * @example
-     * ```js
-     * // spooky ghost
-     * let ghosty = add([
-     *     pos(center()),
-     *     sprite("ghosty"),
-     *     anchor("center"),
-     * ]);
-     *
-     * // when switching tabs, this runs
-     * onHide(() => {
-     *     destroy(ghosty);
-     *     add([
-     *         text("There was never aa ghosttttt"),
-     *         pos(center()),
-     *         anchor("center")
-     *     ]);
-     * });
-     * ```
-     *
-     * @returns The event controller.
-     * @since v3001.0
-     * @group Events
-     */
-    onHide(action: () => void): KEventController;
-    /**
-     * Register an event that runs when tab is shown.
-     *
-     * @param action - The function that is run when the tab is shown.
-     *
-     * @example
-     * ```js
-     * // user has returned to this tab
-     * onShow(() => {
-     *     burp();
-     * });
-     * ```
-     *
-     * @returns The event controller.
-     * @since v3001.0
-     * @group Events
-     */
-    onShow(action: () => void): KEventController;
+    onHide: GameEventHandlers["onHide"];
+    onShow: GameEventHandlers["onShow"];
+    onTabShow: GameEventHandlers["onTabShow"];
+    onTabHide: GameEventHandlers["onTabHide"];
     /**
      * Register an event that runs when a gamepad is connected.
      *
@@ -4127,6 +4086,17 @@ export interface KAPLAYCtx {
      * @subgroup Gamepad
      */
     getGamepadStick(stick: KGamepadStick): Vec2;
+    /**
+     * Get analog button values from a gamepad.
+     *
+     * @param b - The button to read the analog value from.
+     *
+     * @returns The button analog value.
+     * @since v4000.0
+     * @group Input
+     * @subgroup Gamepad
+     */
+    getGamepadAnalogButton(b: KGamepadButton): number;
     /**
      * Get the latest input device type that triggered the input event.
      *
@@ -5569,7 +5539,12 @@ export interface KAPLAYCtx {
      */
     StateMachine: typeof StateMachine;
     /**
-     * Define a scene.
+     * This object serves 2 purposes:
+     *
+     * * When called as a function, it defines a new scene with the
+     *   name and the initializer function.
+     * * It can also be used to register scene-local event handlers
+     *   that will be automatically cancelled when the scene is left.
      *
      * @param name - The scene name.
      * @param def - The scene definition.
@@ -5578,18 +5553,29 @@ export interface KAPLAYCtx {
      * ```js
      * // define a scene
      * scene("game", () => {
-     * // ...
+     *     // ...
      * });
-     *
      * // get options
      * scene("game", (opts) => {
      *     debug.log(opts.level);
      * });
      * ```
+     * @example
+     * ```js
+     * scene("pauseMenu", () => {
+     *     scene.onKeyPress("tab", () => {
+     *         debug.log("go to next menu item");
+     *     });
+     *     scene.onKeyPress("esc", () => {
+     *         // go back to game and cancel menu events
+     *         popScene();
+     *     });
+     * });
+     * ```
      *
      * @group Scenes
      */
-    scene(name: string, def: SceneDef): void;
+    scene: SceneScope;
     /**
      * Go to a scene, passing all rest args to scene callback.
      *
@@ -5611,50 +5597,58 @@ export interface KAPLAYCtx {
     go(name: string, ...args: any): void;
 
     /**
-     * Push the current active scene to a stack and enters in the new scene
+     * Push the current active scene to a stack and then goes to the new scene
      *
      * @param id - The scene name.
-     * @param args - The args passed to the scene defition.
+     * @param args - The args passed to the scene definition.
      *
      * @example
      * ```js
-     *  add([
-     *    text("this is the first scene", {size: 32 }),
-     *    pos(center()),
-     *  ]);
-     * scene("main", () => {
-     *  add([
-     *    sprite("bean"),
-     *    pos(center()),
-     *  ]);
+     * scene("mainScene", () => {
+     *     add([
+     *         text("this is the first scene", { size: 32 }),
+     *         pos(center()),
+     *     ]);
+     * });
+     * scene("otherScene", () => {
+     *     add([
+     *         sprite("bean"),
+     *         pos(center()),
+     *     ]);
      * });
      *
-     * pushScene("main")
+     * pushScene("mainScene")
      * ```
      *
      * @since v3001.1
      * @group Scenes
+     *
+     * @see {@link popScene}
      */
     pushScene(id: string, ...args: unknown[]): void;
 
     /**
      * Pops the scene from the stack and set as current active scene.
      *
+     * Only works if the current scene was entered using {@link pushScene}.
+     *
      * @example
      * ```js
-     *  add([
-     *    text("this is the first scene", {size: 32 }),
-     *    pos(center()),
-     *  ]);
-     * scene("main", () => {
-     *  add([
-     *    sprite("bean"),
-     *    pos(center()),
-     *  ]);
+     * scene("mainScene", () => {
+     *     add([
+     *         text("this is the first scene", { size: 32 }),
+     *         pos(center()),
+     *     ]);
+     * });
+     * scene("otherScene", () => {
+     *     add([
+     *         sprite("bean"),
+     *         pos(center()),
+     *     ]);
      * });
      *
-     * go("mainScene");
-     * popScene();  // when triggered the text should appear on the center screen //
+     * pushScene("mainScene");
+     * popScene(); // return to the current scene
      * ```
      *
      * @since v3001.1
@@ -6292,6 +6286,21 @@ export interface KAPLAYCtx {
      * @group Debug
      */
     debug: Debug;
+    /**
+     * The app scope for creating global events that won't be automatically cancelled
+     * when the scene is changed.
+     *
+     * @example
+     * ```js
+     * app.onKeyPress("f", () => {
+     *     debug.log("i run in every scene from now on");
+     * });
+     *
+     * // will NOT cancel the event
+     * go("someScene");
+     * ```
+     */
+    app: AppScope;
     /**
      * Import a plugin.
      *

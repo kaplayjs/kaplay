@@ -1,6 +1,6 @@
 # Changelog
 
-<!-- markdownlint-disable no-duplicate-heading -->
+<!-- markdownlint-disable no-duplicate-heading blanks-around-fences single-h1 -->
 
 All notable changes to this project will be documented in this file.
 
@@ -17,6 +17,139 @@ best friend, lajbel, can put the correct version name here
 -->
 
 ## [unreleased]
+
+### Added
+
+- Added `getGamepadAnalogButton()` to read the analog value of buttons like the
+  triggers - @dragoncoder047
+
+  ```js
+  isGamepadButtonDown("rtrigger"); // -> true/false, 0/1
+  getGamepadAnalogButton("rtrigger"); // -> analog value between 0 (not pressed) and 1 (fully pressed)
+  ```
+
+- Added chorded button bindings using the Buttons API, so you can bind different
+  actions to `tab` and `shift+tab`, and handle them like normal. Also works with
+  gamepads and mouse! - @dragoncoder047
+
+  ```js
+  kaplay({
+      buttons: {
+          forward: {
+              keyboard: "tab",
+              gamepad: "south",
+          },
+          backward: {
+              keyboard: "shift+tab",
+              gamepad: "rshoulder+south",
+          },
+      },
+  });
+  ```
+
+- Added `skew` to text formatting, so now italics is possible - @dragoncoder047
+
+- Added **lifetime scopes**, a way to define the lifetime of an event handler
+  using a specific scope, `scene`, `app` or a game object - @lajbel,
+  @dragoncoder047
+
+  ```js
+  app.onUpdate(() => {
+      // runs until it is cancelled
+  });
+
+  scene("game", () => {
+      const obj = add([]);
+
+      obj.onUpdate(() => {
+          // runs until obj is destroyed
+      });
+
+      scene.onUpdate(() => { // or just onUpdate(() => {
+          // runs until scene is changed
+      });
+  });
+  ```
+
+  All the available handlers in the scopes are `GameEventHandlers` ones:
+
+  - `onKeyDown()`
+  - `onKeyPress()`
+  - `onKeyPressRepeat()`
+  - `onKeyRelease()`
+  - `onCharInput()`
+  - `onMouseDown()`
+  - `onMousePress()`
+  - `onMouseRelease()`
+  - `onMouseMove()`
+  - `onScroll()`
+  - `onTouchStart()`
+  - `onTouchMove()`
+  - `onTouchEnd()`
+  - `onGamepadConnect()`
+  - `onGamepadDisconnect()`
+  - `onGamepadButtonDown()`
+  - `onGamepadButtonPress()`
+  - `onGamepadButtonRelease()`
+  - `onGamepadStick()`
+  - `onButtonDown()`
+  - `onButtonPress()`
+  - `onButtonRelease()`
+  - `onTabHide()`
+  - `onTabShow()`
+
+  And this game object handlers may differ when using it with `obj` and
+  `scene`/`app`:
+
+  - `onFixedUpdate()`
+  - `onUpdate()`
+  - `onDraw()`
+
+- Added `app` scope for app event handlers - @lajbel
+  ```js
+  app.onUpdate(() => {
+      // runs until it is cancelled
+  });
+  ```
+
+- Added `KAPLAYOpt.defaultLifetimeScope` for setting the default lifetime scope
+  used for event handlers - @lajbel
+
+  ```js
+  kaplay({
+      defaultLifetimeScope: "app", // default is "scene"
+  });
+
+  onKeyPress("space", () => {
+      // runs until is cancelled
+  });
+  ```
+
+- Added `skew` to text formatting, so now italics is possible - @dragoncoder047
+
+### Changed
+
+- (**!**) Renamed `onShow()` to `onTabShow()` and `onHide()` to `onTabHide()` -
+  @lajbel
+
+- In addition to being the `scene()` function, now `scene` is also a scope for
+  scene event handlers - @lajbel
+
+  ```js
+  scene("game", () => {
+      scene.onUpdate(() => { // or just onUpdate(() => {
+          // runs until scene is changed
+      });
+  });
+  ```
+
+### Fixed
+
+- Now `pushScene()` and `popScene()` give the arguments to the scene in the same
+  way that `go()` does rather than passing them all to the first argument as an
+  array - @dragoncoder047
+
+## [4000.0.0-alpha.22] - 2025-10-9
 
 ### Added
 

@@ -28,7 +28,7 @@ export interface LayerComp extends Comp {
      */
     set layer(name: string);
 
-    serialize(): any;
+    serialize(): { layer: string | null };
 }
 
 export function layer(layer: string): LayerComp {

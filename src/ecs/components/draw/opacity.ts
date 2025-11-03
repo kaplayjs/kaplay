@@ -35,9 +35,11 @@ export function opacity(a: number): OpacityComp {
         id: "opacity",
         opacity: a ?? 1,
         fadeIn(time = 1, easeFunc = easings.linear): TweenController {
+            const toValue = this.opacity;
+            this.opacity = 0;
             return _k.game.root.tween(
                 0,
-                this.opacity,
+                toValue,
                 time,
                 (a) => this.opacity = a,
                 easeFunc,
