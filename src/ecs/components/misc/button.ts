@@ -15,6 +15,7 @@ import { ui, type UIComp } from "./ui";
 export type Theme = {
     hoverColor: Color;
     backgroundColor: Color;
+    fontColor: Color;
     fontSize: number;
     button: {
         padding?: Vec2;
@@ -68,6 +69,7 @@ export type Theme = {
 export const DefaultTheme: Theme = {
     hoverColor: rgb(80, 80, 255),
     backgroundColor: rgb(144, 163, 174),
+    fontColor: rgb(0, 0, 0),
     fontSize: 20,
     button: {
         padding: vec2(2),
@@ -142,7 +144,7 @@ export function button(label: string, opt?: ButtonCompOpt): ButtonComp {
             pos: _padding,
             text: label,
             size: _theme.fontSize,
-            color: Color.BLACK,
+            color: _theme.fontColor,
         })
         : null;
     const contentWidth = formattedText ? formattedText.width : _theme.fontSize;
@@ -229,7 +231,7 @@ export function checkbox(label: string, opt?: ButtonComp): ButtonComp {
             pos: _padding.add(16 + _spacing.x, 0),
             text: label,
             size: 20,
-            color: Color.BLACK,
+            color: _theme.fontColor,
         })
         : null;
     const contentWidth = 16
@@ -326,7 +328,7 @@ export function radio(
             pos: _padding.add(16 + _spacing.x, 0),
             text: label,
             size: 20,
-            color: Color.BLACK,
+            color: _theme.fontColor,
         })
         : null;
     const contentWidth = 16

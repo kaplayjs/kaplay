@@ -49,7 +49,7 @@ export function slider(opt: SliderCompOpt): SliderComp {
             pos: _padding,
             text: opt.label,
             size: 20,
-            color: Color.BLACK,
+            color: _theme.fontColor,
         })
         : null;
     const labelWidth = formattedText ? formattedText.width + _spacing.x : 0;
