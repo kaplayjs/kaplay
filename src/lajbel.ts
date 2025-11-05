@@ -9,7 +9,7 @@ export const lajbel = () => {
         "F in the chat",
         "i love kaboom",
         "kaboom js is out today",
-        "im trains",
+        "im trains", // Phrase I stole from AmySpark NG
         "why im doing this instead of my pending issues/pr",
         "i wanted to be the clown of the class, but certainly, I was the weirdo",
         "f in the chat again",
