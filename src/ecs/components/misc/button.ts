@@ -59,6 +59,10 @@ export type Theme = {
             sprite: string | SpriteData | Asset<SpriteData>;
             frame?: number;
         };
+        gutterfill?: {
+            sprite: string | SpriteData | Asset<SpriteData>;
+            frame?: number;
+        };
         thumb: {
             sprite: string | SpriteData | Asset<SpriteData>;
             frame?: number;

@@ -61,8 +61,8 @@ export function slider(opt: SliderCompOpt): SliderComp {
     let _height = opt.orientation === "vertical"
         ? (opt.height ?? 100)
         : formattedText
-        ? formattedText.height
-        : 20;
+            ? formattedText.height
+            : 20;
     let _value = opt.value ?? 0;
     let _sliderRect = new Rect(
         vec2(_padding.x + labelWidth, 0),
@@ -104,7 +104,7 @@ export function slider(opt: SliderCompOpt): SliderComp {
             const visibleWidth = _scrollObject.parent!.width;
             _thumbRect.width = Math.round(
                 (_gutterRect.width - 4) * visibleWidth
-                    / totalWidth,
+                / totalWidth,
             );
         }
     }
@@ -114,7 +114,7 @@ export function slider(opt: SliderCompOpt): SliderComp {
             const visibleHeight = _scrollObject.parent!.height;
             _thumbRect.height = Math.round(
                 (_gutterRect.height - 4) * visibleHeight
-                    / totalHeight,
+                / totalHeight,
             );
         }
     }
@@ -225,13 +225,31 @@ export function slider(opt: SliderCompOpt): SliderComp {
                 drawFormattedText(formattedText);
             }
             // Draw slider gutter
-            drawSprite({
-                pos: _gutterRect.pos,
-                sprite: _theme.slider.gutter.sprite,
-                frame: _theme.slider.gutter.frame,
-                width: _gutterRect.width,
-                height: _gutterRect.height,
-            });
+            if (_theme.slider.gutterfill) {
+                drawSprite({
+                    pos: _gutterRect.pos,
+                    sprite: _theme.slider.gutterfill.sprite,
+                    frame: _theme.slider.gutterfill.frame,
+                    width: _gutterRect.width * _value,
+                    height: _gutterRect.height,
+                });
+                drawSprite({
+                    pos: _gutterRect.pos.add(_gutterRect.width * _value, 0),
+                    sprite: _theme.slider.gutter.sprite,
+                    frame: _theme.slider.gutter.frame,
+                    width: _gutterRect.width * (1 - _value),
+                    height: _gutterRect.height,
+                });
+            }
+            else {
+                drawSprite({
+                    pos: _gutterRect.pos,
+                    sprite: _theme.slider.gutter.sprite,
+                    frame: _theme.slider.gutter.frame,
+                    width: _gutterRect.width,
+                    height: _gutterRect.height,
+                });
+            }
             // Draw slider thumb
             drawSprite({
                 pos: _thumbRect.pos,
