@@ -16,6 +16,7 @@ export const lajbel = () => {
         "i forgot",
         "I love you KAPLAY community",
         "I've made a game with Amy, it was about a Bean with legs, an \"Arveja con Patas\" but we never released it lol",
+        "I love you so much KAPLAY Team, Misanthrope and MF",
     ]);
 
     return factOrPhrase;
