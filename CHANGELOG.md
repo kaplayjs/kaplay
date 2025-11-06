@@ -18,12 +18,14 @@ best friend, lajbel, can put the correct version name here
 
 ## [unreleased]
 
-## [4000.0.0-alpha.23] - 2025-11-05
-
 ### Added
 
 - Added parameterized formatting tags like `"[color=red]Red text![/color]"` for
   more powerful text formatting options - @dragoncoder047
+
+## [4000.0.0-alpha.23] - 2025-11-05
+
+### Added
 
 - Added `getGamepadAnalogButton()` to read the analog value of buttons like the
   triggers - @dragoncoder047
