@@ -20,7 +20,7 @@ best friend, lajbel, can put the correct version name here
 
 ### Added
 
-- Added parameterized formatting tags like `"[color=red]Red text![/color]"` for
+- Added parameterized formatting tags like `"[color=red]Red text![/color]"` in `CharTransformFunc` for
   more powerful text formatting options - @dragoncoder047
 
 ## [4000.0.0-alpha.23] - 2025-11-05
