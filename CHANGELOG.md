@@ -24,6 +24,11 @@ best friend, lajbel, can put the correct version name here
   `CharTransformFunc` for more powerful text formatting options -
   @dragoncoder047
 
+## Changes
+
+- Optimized usage of drawing properties, improving the performance of the
+  following functions: `circle()`, `ellipse()`
+
 ## [4000.0.0-alpha.23] - 2025-11-05
 
 ### Added

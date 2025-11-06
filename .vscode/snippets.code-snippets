@@ -6,8 +6,7 @@
 			"/**",
 			" * The serialized {@link ${TM_FILENAME_BASE} `${TM_FILENAME_BASE}()`} component.",
 			" *",
-			" * @group Components
- * @subgroup Component Serialization",
+			" * @group Components \n* @subgroup Component Serialization",
 			" */",
 			"export interface Serialized${TM_FILENAME_BASE/(.)(.*)/${1:/upcase}${2}/}Comp {",
 			"",
@@ -53,5 +52,19 @@
 			"*/"
 		],
 		"description": "Add the documentation template in a doc entry."
+	},
+	"Add render props": {
+		"description": "Add all the DrawProps in order for lazy people",
+		"prefix": "kpd-draw-props",
+		"scope": "typescript",
+		"body": [
+		"color: this.color,",
+		"opacity: this.opacity,",
+		"anchor: this.anchor,",
+		"shader: this.shader,",
+		"uniform: this.uniform!,",
+		"blend: this.blend,",
+		"outline: this.outline,",
+		]
 	}
 }

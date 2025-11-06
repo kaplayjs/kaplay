@@ -1,5 +1,8 @@
-import { getRenderProps } from "../../../game/utils";
-import { drawEllipse } from "../../../gfx/draw/drawEllipse";
+import {
+    drawEllipse,
+    type DrawEllipseOpt,
+} from "../../../gfx/draw/drawEllipse";
+import type { DrawPropsAnd, DrawPropsComps } from "../../../gfx/renderTypes";
 import { Ellipse } from "../../../math/math";
 import { Vec2 } from "../../../math/Vec2";
 import type { Comp, GameObj } from "../../../types";
@@ -75,12 +78,21 @@ export function ellipse(
             _radiusY = value;
             if (_shape) _shape.radiusY = value;
         },
-        draw(this: GameObj<EllipseComp>) {
-            drawEllipse(Object.assign(getRenderProps(this), {
-                radiusX: this.radiusX,
-                radiusY: this.radiusY,
-                fill: opt.fill,
-            }));
+        draw(this: GameObj<EllipseComp | DrawPropsComps>) {
+            drawEllipse(
+                {
+                    color: this.color,
+                    opacity: this.opacity,
+                    anchor: this.anchor,
+                    shader: this.shader,
+                    uniform: this.uniform!,
+                    blend: this.blend,
+                    outline: this.outline,
+                    radiusX: this.radiusX,
+                    radiusY: this.radiusY,
+                    fill: opt.fill,
+                } satisfies DrawPropsAnd<DrawEllipseOpt>,
+            );
         },
         renderArea(this: GameObj<AnchorComp | EllipseComp>) {
             if (!_shape) {

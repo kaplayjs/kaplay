@@ -1,5 +1,5 @@
-import { getRenderProps } from "../../../game/utils";
-import { drawCircle } from "../../../gfx/draw/drawCircle";
+import { drawCircle, type DrawCircleOpt } from "../../../gfx/draw/drawCircle";
+import type { DrawPropsAnd, DrawPropsComps } from "../../../gfx/renderTypes";
 import { Circle, Rect } from "../../../math/math";
 import { Vec2 } from "../../../math/Vec2";
 import type { Comp, GameObj } from "../../../types";
@@ -62,11 +62,20 @@ export function circle(radius: number, opt: CircleCompOpt = {}): CircleComp {
             _radius = value;
             if (_shape) _shape.radius = value;
         },
-        draw(this: GameObj<CircleComp>) {
-            drawCircle(Object.assign(getRenderProps(this), {
-                radius: _radius,
-                fill: opt.fill,
-            }));
+        draw(this: GameObj<CircleComp | DrawPropsComps>) {
+            drawCircle(
+                {
+                    color: this.color,
+                    opacity: this.opacity,
+                    anchor: this.anchor,
+                    shader: this.shader,
+                    uniform: this.uniform!,
+                    blend: this.blend,
+                    outline: this.outline,
+                    radius: _radius,
+                    fill: opt.fill,
+                } satisfies DrawPropsAnd<DrawCircleOpt>,
+            );
         },
         renderArea(this: GameObj<AnchorComp | CircleComp>) {
             if (!_shape) {
