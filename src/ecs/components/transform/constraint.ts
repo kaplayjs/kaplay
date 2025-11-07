@@ -589,7 +589,7 @@ export const constraint = {
                                     transform.getRotation(),
                                 );
                                 // If constraint on angle, apply
-                                if (effector.has("bone")) {
+                                if (effector.minAngle !== undefined) {
                                     newAngle = Math.min(
                                         Math.max(newAngle, effector.minAngle),
                                         effector.maxAngle,
@@ -603,7 +603,7 @@ export const constraint = {
                                     rotation + angleCorrection,
                                 );
                                 // If constraint on angle, apply
-                                if (effector.has("bone")) {
+                                if (effector.minAngle !== undefined) {
                                     newAngle = Math.min(
                                         Math.max(newAngle, effector.minAngle),
                                         effector.maxAngle,
@@ -612,7 +612,7 @@ export const constraint = {
                                 effector.angle = newAngle;
                             }
 
-                            if (effector.has("bone")) {
+                            if (effector.minAngle !== undefined) {
                                 // We changed the local angle, so the current effector's transform needs to be updated
                                 updateTransformRecursive(effector);
                             }
