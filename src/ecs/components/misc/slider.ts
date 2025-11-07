@@ -41,28 +41,32 @@ export interface SliderComp extends Comp {
 }
 
 export function slider(opt: SliderCompOpt): SliderComp {
-    const _padding = opt.padding ?? _theme.slider.padding ?? vec2();
-    const _spacing = _theme.slider.spacing ?? vec2();
+    const _localTheme = opt.scrollObject
+        ? _theme.scrollbar ?? _theme.slider
+        : _theme.slider;
+    const _padding = opt.padding ?? _localTheme.padding ?? vec2();
+    const _spacing = _localTheme.spacing ?? vec2();
     let _shape: Rect | undefined;
     let formattedText = opt.label
         ? formatText({
             pos: _padding,
             text: opt.label,
-            size: 20,
+            size: _theme.fontSize,
             color: _theme.fontColor,
         })
         : null;
     const labelWidth = formattedText ? formattedText.width + _spacing.x : 0;
-    let _width = opt.width ?? (opt.orientation === "vertical" ? 20 : 100);
+    let _width = opt.width
+        ?? (opt.orientation === "vertical" ? _theme.fontSize : 100);
     const widthWithoutLabel = opt.orientation === "vertical"
-        ? 20
+        ? _theme.fontSize
         : _width - labelWidth - _padding.x * 2;
 
     let _height = opt.orientation === "vertical"
         ? (opt.height ?? 100)
         : formattedText
-            ? formattedText.height
-            : 20;
+        ? formattedText.height
+        : _theme.fontSize;
     let _value = opt.value ?? 0;
     let _sliderRect = new Rect(
         vec2(_padding.x + labelWidth, 0),
@@ -104,7 +108,7 @@ export function slider(opt: SliderCompOpt): SliderComp {
             const visibleWidth = _scrollObject.parent!.width;
             _thumbRect.width = Math.round(
                 (_gutterRect.width - 4) * visibleWidth
-                / totalWidth,
+                    / totalWidth,
             );
         }
     }
@@ -114,7 +118,7 @@ export function slider(opt: SliderCompOpt): SliderComp {
             const visibleHeight = _scrollObject.parent!.height;
             _thumbRect.height = Math.round(
                 (_gutterRect.height - 4) * visibleHeight
-                / totalHeight,
+                    / totalHeight,
             );
         }
     }
@@ -225,27 +229,48 @@ export function slider(opt: SliderCompOpt): SliderComp {
                 drawFormattedText(formattedText);
             }
             // Draw slider gutter
-            if (_theme.slider.gutterfill) {
-                drawSprite({
-                    pos: _gutterRect.pos,
-                    sprite: _theme.slider.gutterfill.sprite,
-                    frame: _theme.slider.gutterfill.frame,
-                    width: _gutterRect.width * _value,
-                    height: _gutterRect.height,
-                });
-                drawSprite({
-                    pos: _gutterRect.pos.add(_gutterRect.width * _value, 0),
-                    sprite: _theme.slider.gutter.sprite,
-                    frame: _theme.slider.gutter.frame,
-                    width: _gutterRect.width * (1 - _value),
-                    height: _gutterRect.height,
-                });
+            if (_localTheme.gutterfill) {
+                if (opt.orientation === "vertical") {
+                    drawSprite({
+                        pos: _gutterRect.pos,
+                        sprite: _localTheme.gutter.sprite,
+                        frame: _localTheme.gutter.frame,
+                        width: _gutterRect.width,
+                        height: _gutterRect.height * _value,
+                    });
+                    drawSprite({
+                        pos: _gutterRect.pos.add(
+                            0,
+                            _gutterRect.height * _value,
+                        ),
+                        sprite: _localTheme.gutterfill.sprite,
+                        frame: _localTheme.gutterfill.frame,
+                        width: _gutterRect.width,
+                        height: _gutterRect.height * (1 - _value),
+                    });
+                }
+                else {
+                    drawSprite({
+                        pos: _gutterRect.pos,
+                        sprite: _localTheme.gutterfill.sprite,
+                        frame: _localTheme.gutterfill.frame,
+                        width: _gutterRect.width * _value,
+                        height: _gutterRect.height,
+                    });
+                    drawSprite({
+                        pos: _gutterRect.pos.add(_gutterRect.width * _value, 0),
+                        sprite: _localTheme.gutter.sprite,
+                        frame: _localTheme.gutter.frame,
+                        width: _gutterRect.width * (1 - _value),
+                        height: _gutterRect.height,
+                    });
+                }
             }
             else {
                 drawSprite({
                     pos: _gutterRect.pos,
-                    sprite: _theme.slider.gutter.sprite,
-                    frame: _theme.slider.gutter.frame,
+                    sprite: _localTheme.gutter.sprite,
+                    frame: _localTheme.gutter.frame,
                     width: _gutterRect.width,
                     height: _gutterRect.height,
                 });
@@ -253,8 +278,8 @@ export function slider(opt: SliderCompOpt): SliderComp {
             // Draw slider thumb
             drawSprite({
                 pos: _thumbRect.pos,
-                sprite: _theme.slider.thumb.sprite,
-                frame: _theme.slider.thumb.frame,
+                sprite: _localTheme.thumb.sprite,
+                frame: _localTheme.thumb.frame,
                 width: _thumbRect.width,
                 height: _thumbRect.height,
             });
@@ -281,4 +306,20 @@ export function slider(opt: SliderCompOpt): SliderComp {
             return _shape;
         },
     };
+}
+
+export type ScrollBarCompOpt = {
+    position?: Vec2;
+    width?: number;
+    height?: number;
+    label?: string;
+    orientation?: UIOrientation;
+    value?: number;
+    min?: number;
+    max?: number;
+    padding?: Vec2;
+};
+
+export function scrollbar(scrollObject: GameObj, opt: ScrollBarCompOpt) {
+    return slider({ ...opt, scrollObject });
 }

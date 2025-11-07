@@ -57,7 +57,7 @@ import { health } from "../ecs/components/misc/health";
 import { layout } from "../ecs/components/misc/layout";
 import { lifespan } from "../ecs/components/misc/lifespan";
 import { named } from "../ecs/components/misc/named";
-import { slider } from "../ecs/components/misc/slider";
+import { scrollbar, slider } from "../ecs/components/misc/slider";
 import { state } from "../ecs/components/misc/state";
 import { stay } from "../ecs/components/misc/stay";
 import { textInput } from "../ecs/components/misc/textInput";
@@ -425,6 +425,7 @@ export const createContext = (
         checkbox,
         radio,
         slider,
+        scrollbar,
         layout,
         cursor,
         lifespan,

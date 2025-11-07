@@ -72,7 +72,11 @@ import type {
 } from "../ecs/components/misc/layout";
 import type { LifespanCompOpt } from "../ecs/components/misc/lifespan";
 import type { NamedComp } from "../ecs/components/misc/named";
-import type { SliderComp, SliderCompOpt } from "../ecs/components/misc/slider";
+import type {
+    ScrollBarCompOpt,
+    SliderComp,
+    SliderCompOpt,
+} from "../ecs/components/misc/slider";
 import type { StateComp } from "../ecs/components/misc/state";
 import type { StayComp } from "../ecs/components/misc/stay";
 import type { TextInputComp } from "../ecs/components/misc/textInput";
@@ -1583,6 +1587,15 @@ export interface KAPLAYCtx {
      * @subgroup UI
      */
     slider(opt: SliderCompOpt): SliderComp;
+    /**
+     * A scrollbar.
+     *
+     * @returns The slider comp.
+     * @since v4000.0
+     * @group Components
+     * @subgroup UI
+     */
+    scrollbar(scrollObject: GameObj, opt: ScrollBarCompOpt): SliderComp;
     /**
      * A layout.
      *

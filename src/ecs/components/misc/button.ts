@@ -68,6 +68,22 @@ export type Theme = {
             frame?: number;
         };
     };
+    scrollbar?: {
+        padding?: Vec2;
+        spacing?: Vec2;
+        gutter: {
+            sprite: string | SpriteData | Asset<SpriteData>;
+            frame?: number;
+        };
+        gutterfill?: {
+            sprite: string | SpriteData | Asset<SpriteData>;
+            frame?: number;
+        };
+        thumb: {
+            sprite: string | SpriteData | Asset<SpriteData>;
+            frame?: number;
+        };
+    };
 };
 
 export const DefaultTheme: Theme = {

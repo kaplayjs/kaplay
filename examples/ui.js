@@ -78,8 +78,7 @@ const bean = mask.add([
 
 add([
     pos(200, 400),
-    slider({
-        scrollObject: bean,
+    scrollbar(bean, {
         height: 100,
         orientation: "vertical",
         padding: vec2(0, 0),
@@ -88,8 +87,7 @@ add([
 
 add([
     pos(100, 500),
-    slider({
-        scrollObject: bean,
+    scrollbar(bean, {
         width: 100,
         orientation: "horizontal",
         padding: vec2(0, 0),
