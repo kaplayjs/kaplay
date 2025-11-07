@@ -23,9 +23,9 @@ export type BoneOpt = {
 
 export interface BoneComp extends Comp {
     /* Minimum angle should be between -180 and 180, and smaller than maximum angle */
-    minAngle: number;
+    readonly minAngle: number;
     /* Maximum angle should be between -180 and 180, and greater than minimum angle */
-    maxAngle: number;
+    readonly maxAngle: number;
     setAngles(minAngle: number, maxAngle: number): void;
 }
 
@@ -488,7 +488,7 @@ export const constraint = {
             },
         };
     },
-    bone(minAngle?: number, maxAngle?: number) {
+    bone(minAngle?: number, maxAngle?: number): BoneComp {
         let _minAngle = Math.max(
             -180,
             Math.min(minAngle ?? -180, maxAngle ?? 180),
@@ -589,7 +589,7 @@ export const constraint = {
                                     transform.getRotation(),
                                 );
                                 // If constraint on angle, apply
-                                if (effector.minAngle && effector.maxAngle) {
+                                if (effector.has("bone")) {
                                     newAngle = Math.min(
                                         Math.max(newAngle, effector.minAngle),
                                         effector.maxAngle,
@@ -603,7 +603,7 @@ export const constraint = {
                                     rotation + angleCorrection,
                                 );
                                 // If constraint on angle, apply
-                                if (effector.minAngle && effector.maxAngle) {
+                                if (effector.has("bone")) {
                                     newAngle = Math.min(
                                         Math.max(newAngle, effector.minAngle),
                                         effector.maxAngle,
@@ -612,7 +612,7 @@ export const constraint = {
                                 effector.angle = newAngle;
                             }
 
-                            if (effector.minAngle && effector.maxAngle) {
+                            if (effector.has("bone")) {
                                 // We changed the local angle, so the current effector's transform needs to be updated
                                 updateTransformRecursive(effector);
                             }
