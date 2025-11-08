@@ -16,8 +16,8 @@ loadSprite("tga", "sprites/tga.png");
 onDraw("gm", (gm) => {
     drawCircle({
         radius: 1,
-    })
-})
+    });
+});
 
 var poly;
 onLoad(() => {
@@ -27,18 +27,18 @@ onLoad(() => {
         sprite("apple"),
         area(getSpriteOutline("apple")),
         pos(200, 400),
-        "gm"
+        "gm",
     ]);
 });
 
 onDraw(() => {
     const moved = new Polygon(
-        poly.pts.map(p => p.add(vec2(200, 400)))
+        poly.pts.map(p => p.add(vec2(200, 400))),
     );
 
     drawPolygon(moved, {
-        color: rgb(255, 0, 0),  // red outline
-        filled: false,          // just an outline
-        width: 2,               // line thickness
+        color: rgb(255, 0, 0), // red outline
+        filled: false, // just an outline
+        width: 2, // line thickness
     });
-})
+});

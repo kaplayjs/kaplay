@@ -218,6 +218,7 @@ import {
     evaluateQuadratic,
     evaluateQuadraticFirstDerivative,
     evaluateQuadraticSecondDerivative,
+    getSpriteOutline,
     hermite,
     isConvex,
     kochanekBartels,
@@ -249,7 +250,6 @@ import {
     triangulate,
     vec2,
     wave,
-    getSpriteOutline,
 } from "../math/math";
 import { NavMesh } from "../math/navigationmesh";
 import { insertionSort } from "../math/sort";

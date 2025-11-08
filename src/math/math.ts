@@ -9,8 +9,8 @@ import { _k } from "../shared";
 import type { GameObj, RNGValue, Shape } from "../types";
 import { clamp } from "./clamp";
 import { Color, rgb } from "./color";
-import { lerp, type LerpValue } from "./lerp";
 import { trace_region } from "./getImageOutline";
+import { lerp, type LerpValue } from "./lerp";
 import { Vec2 } from "./Vec2";
 
 /**
@@ -2393,7 +2393,6 @@ export function getSpriteOutline(asset: string, frame = 0): Polygon {
     const trace = trace_region(image_data.width, image_data.height, isInRegion);
     return new Polygon(trace);
 }
-
 
 /**
  * @group Math

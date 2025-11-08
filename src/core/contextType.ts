@@ -150,6 +150,7 @@ import type { Mat4 } from "../math/Mat4";
 import type {
     Circle,
     Ellipse,
+    getSpriteOutline,
     Line,
     Mat23,
     Point,
@@ -159,7 +160,6 @@ import type {
     Rect,
     RNG,
     StepPosition,
-    getSpriteOutline,
 } from "../math/math";
 import type { NavMesh } from "../math/navigationmesh";
 import type { Vec2 } from "../math/Vec2";
@@ -854,12 +854,12 @@ export interface KAPLAYCtx {
     polygon(pts: Vec2[], opt?: PolygonCompOpt): PolygonComp;
     /**
      * Create an outline in the form of a polygon from a sprite object
-     * 
+     *
      * @param asset - The name of the sprite you want to generate an outline for
      * @param frame - The frame of the sprite that the outline should be taken from
      * @param width - The width of the sprite when being drawn
      * @param height - The height of the sprite when being drawn
-     * 
+     *
      * @example
      * ```js
      * // Create a collider from the sprite
@@ -871,11 +871,16 @@ export interface KAPLAYCtx {
      *     ]);
      * });
      * ```
-     * 
+     *
      * @returns A polygon comp.
      * // TODO: add since, group and subgroup
      */
-    getSpriteOutline(asset: string, frame?: number, width?: number, height?: number) : Polygon;
+    getSpriteOutline(
+        asset: string,
+        frame?: number,
+        width?: number,
+        height?: number,
+    ): Polygon;
     /**
      * Attach and render a rectangle to a Game Object.
      *
