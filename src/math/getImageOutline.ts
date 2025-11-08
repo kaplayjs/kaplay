@@ -4,6 +4,8 @@ export function trace_region(
     width: number,
     height: number,
     isInRegion: (x: number, y: number) => boolean,
+    RDP: boolean,
+    epsilon: number,
 ): Vec2[] {
     const points: Vec2[] = [];
 
@@ -68,5 +70,55 @@ export function trace_region(
         }
     }
 
-    return points;
+    return RDP ? simplifyClosed(points, epsilon): points;
+}
+
+function simplifyClosed(points: Vec2[], epsilon: number): Vec2[] {
+    const open = points.slice();
+    if (open.length > 1 && open[0].dist(open[open.length - 1]) < 1e-3) {
+        open.pop();
+    }
+    const simplified = RDP(open, epsilon);
+
+    simplified.push(simplified[0]);
+    return simplified;
+}
+
+
+function getDistance(c: Vec2, a: Vec2, b: Vec2): number {
+    const A = b.y - a.y;
+    const B = a.x - b.x;
+    const C = b.x * a.y - a.x * b.y;
+
+    return Math.abs(A * c.x + B * c.y + C) / Math.sqrt(A * A + B * B);
+}
+
+function RDP(points: Vec2[], epsilon: number): Vec2[]{
+    if (points.length < 3) return points;
+
+    var start_indx = 0;
+    var end_indx = points.length - 1;
+    var max_dist = 0;
+    var max_indx = 0;
+
+    for (var i = start_indx + 1; i < end_indx; i ++){
+        var d = getDistance(points[i], points[start_indx], points[end_indx]);
+        if (d > max_dist){
+            max_dist = d;
+            max_indx = i;
+        }
+    }
+
+    if (points[0].eq(points[points.length - 1])) {
+        points = points.slice(0, -1);
+    }
+
+    if (max_dist > epsilon){
+        var l = RDP(points.slice(start_indx, max_indx + 1), epsilon);
+        var r = RDP(points.slice(max_indx, end_indx + 1), epsilon);
+
+        return [...l.slice(0, -1), ...r];
+    } else {
+        return [points[start_indx], points[end_indx]];
+    }
 }
