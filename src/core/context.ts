@@ -249,6 +249,7 @@ import {
     triangulate,
     vec2,
     wave,
+    getSpriteOutline,
 } from "../math/math";
 import { NavMesh } from "../math/navigationmesh";
 import { insertionSort } from "../math/sort";
@@ -535,6 +536,7 @@ export const createContext = (
         DecisionNode,
         DecisionTree,
         StateMachine,
+        getSpriteOutline,
         insertionSort,
         rand,
         randi,

@@ -2,11 +2,15 @@
 // - move RNG to it's own file
 // - move Vec2 to it's own file
 
+import { resolveSprite } from "../assets/sprite";
+import { drawCircle } from "../gfx/draw/drawCircle";
+import { drawPolygon, type DrawPolygonOpt } from "../gfx/draw/drawPolygon";
 import { _k } from "../shared";
 import type { GameObj, RNGValue, Shape } from "../types";
 import { clamp } from "./clamp";
 import { Color, rgb } from "./color";
 import { lerp, type LerpValue } from "./lerp";
+import { trace_region } from "./getImageOutline";
 import { Vec2 } from "./Vec2";
 
 /**
@@ -2361,6 +2365,35 @@ function segmentLineIntersection(a: Vec2, b: Vec2, c: Vec2, d: Vec2) {
     if (s < 0 || s > 1) return null;
     return a.add(ab.scale(s));
 }
+
+export function getSpriteOutline(asset: string, frame = 0): Polygon {
+    const spr = resolveSprite(asset);
+    if (!spr?.data) throw new Error("Can't load asset: " + asset);
+
+    const frameData = spr.data.frames[frame];
+    const tex = spr.data.tex;
+
+    const px = frameData.x * tex.width;
+    const py = frameData.y * tex.height;
+    const pw = frameData.w * tex.width;
+    const ph = frameData.h * tex.height;
+
+    const canvas = document.createElement("canvas");
+    canvas.width = pw;
+    canvas.height = ph;
+    const ctx = canvas.getContext("2d")!;
+    ctx.drawImage(tex.src as any, px, py, pw, ph, 0, 0, pw, ph);
+
+    const image_data = ctx.getImageData(0, 0, pw, ph);
+    const isInRegion = (x: number, y: number) => {
+        const idx = (y * image_data.width + x) * 4 + 3;
+        return image_data.data[idx] >= 100;
+    };
+
+    const trace = trace_region(image_data.width, image_data.height, isInRegion);
+    return new Polygon(trace);
+}
+
 
 /**
  * @group Math
