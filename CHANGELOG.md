@@ -20,6 +20,14 @@ best friend, lajbel, can put the correct version name here
 
 ### Added
 
+- Added parameterized formatting tags like `"[color=red]Red text![/color]"` in
+  `CharTransformFunc` for more powerful text formatting options -
+  @dragoncoder047
+
+## [4000.0.0-alpha.23] - 2025-11-05
+
+### Added
+
 - Added `getGamepadAnalogButton()` to read the analog value of buttons like the
   triggers - @dragoncoder047
 
@@ -148,6 +156,9 @@ best friend, lajbel, can put the correct version name here
 - Now `pushScene()` and `popScene()` give the arguments to the scene in the same
   way that `go()` does rather than passing them all to the first argument as an
   array - @dragoncoder047
+- Fixed a flicker due to the fadeIn not setting opacity until the next frame -
+  @mflerackers
+- Fixed FPS cap not working correctly - @mflerackers, @dragoncoder047
 
 ## [4000.0.0-alpha.22] - 2025-10-9
 
