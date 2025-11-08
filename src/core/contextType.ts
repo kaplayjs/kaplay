@@ -876,10 +876,11 @@ export interface KAPLAYCtx {
      * // TODO: add since, group and subgroup
      */
     getSpriteOutline(
-        asset: string, 
-        frame?: number, 
-        RDP?: boolean, 
-        epsilon?: number): Polygon;
+        asset: string,
+        frame?: number,
+        RDP?: boolean,
+        epsilon?: number,
+    ): Polygon;
     /**
      * Attach and render a rectangle to a Game Object.
      *

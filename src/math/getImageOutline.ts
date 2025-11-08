@@ -70,7 +70,7 @@ export function trace_region(
         }
     }
 
-    return RDP ? simplifyClosed(points, epsilon): points;
+    return RDP ? simplifyClosed(points, epsilon) : points;
 }
 
 function simplifyClosed(points: Vec2[], epsilon: number): Vec2[] {
@@ -84,7 +84,6 @@ function simplifyClosed(points: Vec2[], epsilon: number): Vec2[] {
     return simplified;
 }
 
-
 function getDistance(c: Vec2, a: Vec2, b: Vec2): number {
     const A = b.y - a.y;
     const B = a.x - b.x;
@@ -93,7 +92,7 @@ function getDistance(c: Vec2, a: Vec2, b: Vec2): number {
     return Math.abs(A * c.x + B * c.y + C) / Math.sqrt(A * A + B * B);
 }
 
-function RDP(points: Vec2[], epsilon: number): Vec2[]{
+function RDP(points: Vec2[], epsilon: number): Vec2[] {
     if (points.length < 3) return points;
 
     var start_indx = 0;
@@ -101,9 +100,9 @@ function RDP(points: Vec2[], epsilon: number): Vec2[]{
     var max_dist = 0;
     var max_indx = 0;
 
-    for (var i = start_indx + 1; i < end_indx; i ++){
+    for (var i = start_indx + 1; i < end_indx; i++) {
         var d = getDistance(points[i], points[start_indx], points[end_indx]);
-        if (d > max_dist){
+        if (d > max_dist) {
             max_dist = d;
             max_indx = i;
         }
@@ -113,12 +112,13 @@ function RDP(points: Vec2[], epsilon: number): Vec2[]{
         points = points.slice(0, -1);
     }
 
-    if (max_dist > epsilon){
+    if (max_dist > epsilon) {
         var l = RDP(points.slice(start_indx, max_indx + 1), epsilon);
         var r = RDP(points.slice(max_indx, end_indx + 1), epsilon);
 
         return [...l.slice(0, -1), ...r];
-    } else {
+    }
+    else {
         return [points[start_indx], points[end_indx]];
     }
 }

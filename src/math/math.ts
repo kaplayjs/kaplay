@@ -2366,7 +2366,12 @@ function segmentLineIntersection(a: Vec2, b: Vec2, c: Vec2, d: Vec2) {
     return a.add(ab.scale(s));
 }
 
-export function getSpriteOutline(asset: string, frame = 0, RDP = true, epsilon = 10): Polygon {
+export function getSpriteOutline(
+    asset: string,
+    frame = 0,
+    RDP = true,
+    epsilon = 10,
+): Polygon {
     const spr = resolveSprite(asset);
     if (!spr?.data) throw new Error("Can't load asset: " + asset);
 
@@ -2390,7 +2395,13 @@ export function getSpriteOutline(asset: string, frame = 0, RDP = true, epsilon =
         return image_data.data[idx] >= 100;
     };
 
-    const trace = trace_region(image_data.width, image_data.height, isInRegion, RDP, epsilon);
+    const trace = trace_region(
+        image_data.width,
+        image_data.height,
+        isInRegion,
+        RDP,
+        epsilon,
+    );
     return new Polygon(trace);
 }
 
