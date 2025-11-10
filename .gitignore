@@ -1,0 +1,13 @@
+.DS_Store
+dist/
+node_modules/
+.idea/
+desktop/
+.env
+src-tauri/target/
+.replit
+replit.nix
+/.obsidian
+.pnpm-store
+tsconfig.vitest-temp.json
+src/index.ts
