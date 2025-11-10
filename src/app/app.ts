@@ -364,8 +364,9 @@ export const initApp = (
 
             state.realTime = loopTime;
             accumulatedDt += realDt;
+            fixedAccumulatedDt += realDt;
 
-            if (accumulatedDt > desiredDt) {
+            if (fixedAccumulatedDt > state.fixedDt) {
                 if (!state.skipTime) {
                     fixedAccumulatedDt += accumulatedDt;
                     state.dt = state.fixedDt;
@@ -381,7 +382,9 @@ export const initApp = (
                     state.time += state.dt = desiredDt > 0 ? desiredDt : realDt;
                     state.fpsCounter.tick(state.dt);
                 }
-                if (desiredDt > 0) {
+            }
+            if (accumulatedDt > desiredDt) {
+                if (!state.skipTime && desiredDt > 0) {
                     accumulatedDt -= desiredDt;
                 }
                 else {
