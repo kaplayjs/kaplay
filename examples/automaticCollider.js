@@ -25,7 +25,7 @@ onLoad(() => {
 
     apple = add([
         sprite("apple"),
-        area(getSpriteOutline("apple")),
+        area({ shape: poly }),
         pos(200, 400),
         "gm",
     ]);

@@ -866,7 +866,7 @@ export interface KAPLAYCtx {
      * onLoad(() => {
      *     add([
      *         sprite("apple"),
-     *         area(getSpriteOutline("apple")),
+     *         area({shape: getSpriteOutline("apple")}),
      *         pos(120, 80), // optional position
      *     ]);
      * });

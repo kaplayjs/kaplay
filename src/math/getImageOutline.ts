@@ -84,6 +84,9 @@ function simplifyClosed(points: Vec2[], epsilon: number): Vec2[] {
     return simplified;
 }
 
+// ****************************************************************************
+// Calculates the perpendicular distance between c and the line formed by a, b
+// ****************************************************************************
 function getDistance(c: Vec2, a: Vec2, b: Vec2): number {
     const A = b.y - a.y;
     const B = a.x - b.x;
@@ -92,6 +95,9 @@ function getDistance(c: Vec2, a: Vec2, b: Vec2): number {
     return Math.abs(A * c.x + B * c.y + C) / Math.sqrt(A * A + B * B);
 }
 
+// *****************************************************
+// Ramer–Douglas–Peucker - Used to simplify the polygons
+// *****************************************************
 function RDP(points: Vec2[], epsilon: number): Vec2[] {
     if (points.length < 3) return points;
 
