@@ -11,4 +11,3 @@ replit.nix
 .pnpm-store
 tsconfig.vitest-temp.json
 src/index.ts
-package-lock.json
