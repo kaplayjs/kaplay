@@ -40,13 +40,18 @@ export function traceRegion(
             const d = directions[(dir + i) % 8];
             const nx = current.x + d.x;
             const ny = current.y + d.y;
-            if (nx >= 0 && nx < width && ny >= 0 && ny < height && isInRegion(nx, ny)) {
+            if (
+                nx >= 0 && nx < width && ny >= 0 && ny < height
+                && isInRegion(nx, ny)
+            ) {
                 current = { x: nx, y: ny };
                 prevDir = (dir + i) % 8;
                 break;
             }
         }
-    } while (current.x !== start.x || current.y !== start.y || outline.length === 1);
+    } while (
+        current.x !== start.x || current.y !== start.y || outline.length === 1
+    );
 
     // Optional Ramer–Douglas–Peucker simplification
     if (RDP) {
