@@ -1,6 +1,6 @@
 import { Vec2 } from "./Vec2";
 
-export function trace_region(
+export function traceRegion(
     width: number,
     height: number,
     isInRegion: (x: number, y: number) => boolean,

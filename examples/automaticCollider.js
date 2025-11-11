@@ -19,7 +19,7 @@ onDraw("gm", (gm) => {
     });
 });
 
-var poly;
+let poly;
 onLoad(() => {
     poly = getSpriteOutline("apple");
 

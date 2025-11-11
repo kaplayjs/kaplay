@@ -9,7 +9,7 @@ import { _k } from "../shared";
 import type { GameObj, RNGValue, Shape } from "../types";
 import { clamp } from "./clamp";
 import { Color, rgb } from "./color";
-import { trace_region } from "./getImageOutline";
+import { traceRegion } from "./getImageOutline";
 import { lerp, type LerpValue } from "./lerp";
 import { Vec2 } from "./Vec2";
 
@@ -2395,7 +2395,7 @@ export function getSpriteOutline(
         return image_data.data[idx] >= 100;
     };
 
-    const trace = trace_region(
+    const trace = traceRegion(
         image_data.width,
         image_data.height,
         isInRegion,
