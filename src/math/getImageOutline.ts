@@ -23,7 +23,10 @@ export function traceRegion(
     let start: Vec2 | null = null;
     for (let y = 0; y < height && !start; y++) {
         for (let x = 0; x < width && !start; x++) {
-            if (isInRegion(x, y)) start = new Vec2(x, y);
+            if (isInRegion(x, y)) {
+                start = new Vec2(x, y);
+                break;
+            };
         }
     }
     if (!start) return [];
