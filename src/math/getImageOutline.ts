@@ -26,7 +26,7 @@ export function traceRegion(
             if (isInRegion(x, y)) {
                 start = new Vec2(x, y);
                 break;
-            };
+            }
         }
     }
     if (!start) return [];
