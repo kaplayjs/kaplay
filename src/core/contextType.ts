@@ -857,8 +857,8 @@ export interface KAPLAYCtx {
      *
      * @param asset - The name of the sprite you want to generate an outline for
      * @param frame - The frame of the sprite that the outline should be taken from
-     * @param width - The width of the sprite when being drawn
-     * @param height - The height of the sprite when being drawn
+     * @param RDP - Should the function return a simplified polygon
+     * @param epsilon - The amount of the polygon that should be reduced
      *
      * @example
      * ```js

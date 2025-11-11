@@ -2392,7 +2392,7 @@ export function getSpriteOutline(
     const image_data = ctx.getImageData(0, 0, pw, ph);
     const isInRegion = (x: number, y: number) => {
         const idx = (y * image_data.width + x) * 4 + 3;
-        return image_data.data[idx] >= 100;
+        return image_data.data[idx] >= 50;
     };
 
     const trace = traceRegion(
@@ -2402,6 +2402,7 @@ export function getSpriteOutline(
         RDP,
         epsilon,
     );
+    console.log(trace);
     return new Polygon(trace);
 }
 

@@ -21,7 +21,7 @@ onDraw("gm", (gm) => {
 
 let poly;
 onLoad(() => {
-    poly = getSpriteOutline("apple");
+    poly = getSpriteOutline("apple", 0, true, 5);
 
     apple = add([
         sprite("apple"),
@@ -33,7 +33,7 @@ onLoad(() => {
 
 onDraw(() => {
     const moved = new Polygon(
-        poly.pts.map(p => p.add(vec2(200, 400))),
+        poly.pts.map(p => p.add(vec2(0, 0))),
     );
 
     drawPolygon(moved, {

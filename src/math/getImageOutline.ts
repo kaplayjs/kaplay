@@ -7,70 +7,53 @@ export function traceRegion(
     RDP: boolean,
     epsilon: number,
 ): Vec2[] {
-    const points: Vec2[] = [];
+    // Directions for clockwise boundary tracing (Moore-neighborhood)
+    const directions = [
+        new Vec2(1, 0),
+        new Vec2(1, 1),
+        new Vec2(0, 1),
+        new Vec2(-1, 1),
+        new Vec2(-1, 0),
+        new Vec2(-1, -1),
+        new Vec2(0, -1),
+        new Vec2(1, -1),
+    ];
 
-    for (let y = 0; y < height - 1; y++) {
-        for (let x = 0; x < width - 1; x++) {
-            // clockwise from top-left (canvas-style)
-            const tl = isInRegion(x, y) ? 1 : 0;
-            const tr = isInRegion(x + 1, y) ? 1 : 0;
-            const br = isInRegion(x + 1, y + 1) ? 1 : 0;
-            const bl = isInRegion(x, y + 1) ? 1 : 0;
-
-            // build case index
-            const idx = (tl << 3) | (tr << 2) | (br << 1) | bl;
-
-            // for each cell, draw edges along inside/outside transitions
-            switch (idx) {
-                case 1:
-                    points.push(new Vec2(x, y + 0.5), new Vec2(x + 0.5, y + 1));
-                    break;
-                case 2:
-                    points.push(
-                        new Vec2(x + 0.5, y + 1),
-                        new Vec2(x + 1, y + 0.5),
-                    );
-                    break;
-                case 3:
-                    points.push(new Vec2(x, y + 0.5), new Vec2(x + 1, y + 0.5));
-                    break;
-                case 4:
-                    points.push(new Vec2(x + 0.5, y), new Vec2(x + 1, y + 0.5));
-                    break;
-                case 6:
-                    points.push(new Vec2(x + 0.5, y), new Vec2(x + 0.5, y + 1));
-                    break;
-                case 7:
-                    points.push(new Vec2(x, y + 0.5), new Vec2(x + 0.5, y));
-                    break;
-                case 8:
-                    points.push(new Vec2(x, y + 0.5), new Vec2(x + 0.5, y));
-                    break;
-                case 9:
-                    points.push(new Vec2(x + 0.5, y), new Vec2(x + 0.5, y + 1));
-                    break;
-                case 11:
-                    points.push(new Vec2(x + 0.5, y), new Vec2(x + 1, y + 0.5));
-                    break;
-                case 12:
-                    points.push(new Vec2(x, y + 0.5), new Vec2(x + 1, y + 0.5));
-                    break;
-                case 13:
-                    points.push(
-                        new Vec2(x + 0.5, y + 1),
-                        new Vec2(x + 1, y + 0.5),
-                    );
-                    break;
-                case 14:
-                    points.push(new Vec2(x, y + 0.5), new Vec2(x + 0.5, y + 1));
-                    break;
-                default:
-                    break;
-            }
+    // Find a starting pixel in the region
+    let start: Vec2 | null = null;
+    for (let y = 0; y < height && !start; y++) {
+        for (let x = 0; x < width && !start; x++) {
+            if (isInRegion(x, y)) start = new Vec2(x, y);
         }
     }
+    if (!start) return [];
 
-    return RDP ? simplifyClosed(points, epsilon) : points;
+    const outline: Vec2[] = [];
+    let current = { ...start };
+    let prevDir = 0;
+
+    do {
+        outline.push(new Vec2(current.x, current.y));
+        // Search neighbors clockwise from previous direction - 2
+        let dir = (prevDir + 6) % 8;
+        for (let i = 0; i < 8; i++) {
+            const d = directions[(dir + i) % 8];
+            const nx = current.x + d.x;
+            const ny = current.y + d.y;
+            if (nx >= 0 && nx < width && ny >= 0 && ny < height && isInRegion(nx, ny)) {
+                current = { x: nx, y: ny };
+                prevDir = (dir + i) % 8;
+                break;
+            }
+        }
+    } while (current.x !== start.x || current.y !== start.y || outline.length === 1);
+
+    // Optional Ramer–Douglas–Peucker simplification
+    if (RDP) {
+        return simplifyClosed(outline, epsilon);
+    }
+
+    return outline;
 }
 
 function simplifyClosed(points: Vec2[], epsilon: number): Vec2[] {
