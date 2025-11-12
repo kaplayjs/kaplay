@@ -5223,6 +5223,17 @@ export interface KAPLAYCtx {
         continuity: number,
         bias: number,
     ): (t: number) => Vec2;
+    createRegularPolygon(
+        radius: number,
+        sides: number,
+        startAngle: number,
+    ): Vec2[];
+    createStarPolygon(
+        radius1: number,
+        radius2: number,
+        sides: number,
+        startAngle: number,
+    ): Vec2[];
     /**
      * Check if a line and a point intersect.
      *
