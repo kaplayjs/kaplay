@@ -252,6 +252,11 @@ import {
     wave,
 } from "../math/math";
 import { NavMesh } from "../math/navigationmesh";
+import {
+    createCogPolygon,
+    createRegularPolygon,
+    createStarPolygon,
+} from "../math/polygongeneration";
 import { insertionSort } from "../math/sort";
 import { Vec2 } from "../math/Vec2";
 import { BlendMode, type KAPLAYPlugin } from "../types";
@@ -575,6 +580,9 @@ export const createContext = (
         catmullRom,
         bezier,
         kochanekBartels,
+        createRegularPolygon,
+        createStarPolygon,
+        createCogPolygon,
         easingSteps,
         easingLinear,
         easingCubicBezier,
