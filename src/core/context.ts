@@ -252,6 +252,7 @@ import {
 } from "../math/math";
 import { NavMesh } from "../math/navigationmesh";
 import {
+    createCogPolygon,
     createRegularPolygon,
     createStarPolygon,
 } from "../math/polygongeneration";
@@ -579,6 +580,7 @@ export const createContext = (
         kochanekBartels,
         createRegularPolygon,
         createStarPolygon,
+        createCogPolygon,
         easingSteps,
         easingLinear,
         easingCubicBezier,

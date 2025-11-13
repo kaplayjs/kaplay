@@ -25,6 +25,7 @@ best friend, lajbel, can put the correct version name here
   @dragoncoder047
 - Added `createRegularPolygon()` and `createStarPolygon()` to create 2D regular
   polytopes - @mflerackers
+- Added `createCogPolygon()` to create 2D regular cogs - @mflerackers
 
 ## [4000.0.0-alpha.23] - 2025-11-05
 
