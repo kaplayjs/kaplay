@@ -19,6 +19,10 @@ best friend, lajbel, can put the correct version name here
 ## [unreleased]
 
 ### Added
+- New example called `automaticCollider.js` that automatically creates colliders for a given sprite
+- Exports function called `getSpriteOutline` that takes a sprite asset and returns a polygon showing the outline.
+
+### Added
 
 - Added parameterized formatting tags like `"[color=red]Red text![/color]"` in
   `CharTransformFunc` for more powerful text formatting options -
