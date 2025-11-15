@@ -589,7 +589,10 @@ export const constraint = {
                                     transform.getRotation(),
                                 );
                                 // If constraint on angle, apply
-                                if (effector.minAngle && effector.maxAngle) {
+                                if (
+                                    effector.minAngle != undefined
+                                    && effector.maxAngle != undefined
+                                ) {
                                     newAngle = Math.min(
                                         Math.max(newAngle, effector.minAngle),
                                         effector.maxAngle,
@@ -603,7 +606,10 @@ export const constraint = {
                                     rotation + angleCorrection,
                                 );
                                 // If constraint on angle, apply
-                                if (effector.minAngle && effector.maxAngle) {
+                                if (
+                                    effector.minAngle != undefined
+                                    && effector.maxAngle != undefined
+                                ) {
                                     newAngle = Math.min(
                                         Math.max(newAngle, effector.minAngle),
                                         effector.maxAngle,
@@ -612,7 +618,10 @@ export const constraint = {
                                 effector.angle = newAngle;
                             }
 
-                            if (effector.minAngle && effector.maxAngle) {
+                            if (
+                                effector.minAngle != undefined
+                                && effector.maxAngle != undefined
+                            ) {
                                 // We changed the local angle, so the current effector's transform needs to be updated
                                 updateTransformRecursive(effector);
                             }
