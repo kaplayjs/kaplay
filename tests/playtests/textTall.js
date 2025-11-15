@@ -1,9 +1,9 @@
 /**
- * @file Style change font
- * @description Test how text handles changing font on styles.
- * @difficulty 3
+ * @file Tall fonts test
+ * @description Test the rendering of tall fonts to ensure they're not cropped.
+ * @difficulty 99
  * @tags basics
- * @minver 3001.0
+ * @minver 4000.0
  */
 
 kaplay({ background: "#000000", crisp: true });
