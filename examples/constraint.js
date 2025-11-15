@@ -99,18 +99,6 @@ const obj7 = add([
     sprite("bean"),
     anchor("center"),
     constraint.bone(-90, 90),
-    {
-        draw() {
-            drawPolygon({
-                pts: [
-                    vec2(0, 0),
-                    vec2(10, -10),
-                    vec2(Math.sqrt(10000), 0),
-                    vec2(10, 10),
-                ],
-            });
-        },
-    },
 ]);
 
 const obj8 = obj7.add([
@@ -119,18 +107,6 @@ const obj8 = obj7.add([
     sprite("bean"),
     anchor("center"),
     constraint.bone(-90, 90),
-    {
-        draw() {
-            drawPolygon({
-                pts: [
-                    vec2(0, 0),
-                    vec2(10, -10),
-                    vec2(Math.sqrt(10000), 0),
-                    vec2(10, 10),
-                ],
-            });
-        },
-    },
 ]);
 
 const obj9 = obj8.add([
@@ -160,19 +136,7 @@ const obj12 = add([
     rotate(),
     sprite("bean"),
     anchor("center"),
-    constraint.bone(-90, 90),
-    {
-        draw() {
-            drawPolygon({
-                pts: [
-                    vec2(0, 0),
-                    vec2(10, -10),
-                    vec2(Math.sqrt(10000), 0),
-                    vec2(10, 10),
-                ],
-            });
-        },
-    },
+    // constraint.bone(-90, 90),
 ]);
 
 const obj13 = obj12.add([
@@ -180,19 +144,7 @@ const obj13 = obj12.add([
     rotate(),
     sprite("bean"),
     anchor("center"),
-    constraint.bone(-90, 90),
-    {
-        draw() {
-            drawPolygon({
-                pts: [
-                    vec2(0, 0),
-                    vec2(10, -10),
-                    vec2(Math.sqrt(10000), 0),
-                    vec2(10, 10),
-                ],
-            });
-        },
-    },
+    // constraint.bone(-90, 90),
 ]);
 
 const obj14 = obj13.add([
@@ -246,3 +198,5 @@ onMouseRelease(() => {
     }
     obj = null;
 });
+
+debug.inspect = true;
