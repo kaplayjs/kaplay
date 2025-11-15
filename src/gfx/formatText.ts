@@ -241,8 +241,6 @@ function updateFontAtlas(font: FontData | string, ch: string) {
             h += atlas.outline.width * 3;
         }
 
-        c2d.fillStyle = "#ffffff";
-
         c2d.fillText(
             ch,
             atlas.outline?.width ?? 0,
