@@ -178,6 +178,14 @@ function getFontAtlasForFont(font: FontData | string): FontAtlas {
     return atlas;
 }
 
+const allChars = () => {
+    const renderableChars: string[] = [];
+    for (let i = 32; i <= 128; i++) { // Common Unicode range
+        renderableChars.push(String.fromCharCode(i));
+    }
+    return renderableChars.join("");
+};
+
 function updateFontAtlas(font: FontData | string, ch: string) {
     const atlas = getFontAtlasForFont(font);
     const fontName = getFontName(font);
@@ -201,11 +209,16 @@ function updateFontAtlas(font: FontData | string, ch: string) {
         c2d.textBaseline = "top";
         c2d.textAlign = "left";
         c2d.fillStyle = "#ffffff";
+
+        // TODO: Memoize?
+        const allCharsMeasured = c2d.measureText(allChars());
+        const maxActualBoundingBoxAscent = allCharsMeasured.actualBoundingBoxAscent;
+
         const m = c2d.measureText(ch);
         let w = Math.ceil(m.width);
         if (!w) return;
-        let h = (Math.ceil(Math.abs(m.actualBoundingBoxAscent))
-            + Math.ceil(Math.abs(m.actualBoundingBoxDescent)))
+        let h = maxActualBoundingBoxAscent + Math.ceil(Math.abs(m.actualBoundingBoxAscent))
+            + Math.ceil(Math.abs(m.actualBoundingBoxDescent))
             || atlas.font.size;
 
         // TODO: Test if this works with the verification of width and color
@@ -222,14 +235,16 @@ function updateFontAtlas(font: FontData | string, ch: string) {
                 atlas.outline.width,
             );
 
-            w += atlas.outline.width * 2;
-            h += atlas.outline.width * 3;
+            w += atlas.outline.width * 0;
+            h += atlas.outline.width * 0;
         }
+
+        c2d.fillStyle = "#ffffff";
 
         c2d.fillText(
             ch,
             atlas.outline?.width ?? 0,
-            atlas.outline?.width ?? 0,
+            (atlas.outline?.width ?? 0) + maxActualBoundingBoxAscent,
         );
 
         const img = c2d.getImageData(
@@ -258,7 +273,7 @@ function updateFontAtlas(font: FontData | string, ch: string) {
             atlas.cursor.x,
             atlas.cursor.y,
             w,
-            h,
+            h + maxActualBoundingBoxAscent,
         );
 
         atlas.cursor.x += w + 1;
