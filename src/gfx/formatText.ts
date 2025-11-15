@@ -212,7 +212,6 @@ function updateFontAtlas(font: FontData | string, ch: string) {
         c2d.textAlign = "left";
         c2d.fillStyle = "#ffffff";
 
-        // TODO: Memoize?
         if (atlas.maxActualBoundingBoxAscent === 0) {
             atlas.maxActualBoundingBoxAscent = c2d.measureText(allChars()).actualBoundingBoxAscent;
         }
