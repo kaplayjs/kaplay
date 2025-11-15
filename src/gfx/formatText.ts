@@ -213,14 +213,16 @@ function updateFontAtlas(font: FontData | string, ch: string) {
         c2d.fillStyle = "#ffffff";
 
         if (atlas.maxActualBoundingBoxAscent === 0) {
-            atlas.maxActualBoundingBoxAscent = c2d.measureText(allChars()).actualBoundingBoxAscent;
+            atlas.maxActualBoundingBoxAscent =
+                c2d.measureText(allChars()).actualBoundingBoxAscent;
         }
         const maxActualBoundingBoxAscent = atlas.maxActualBoundingBoxAscent;
         const m = c2d.measureText(ch);
         let w = Math.ceil(m.width);
         if (!w) return;
-        let h = maxActualBoundingBoxAscent + Math.ceil(Math.abs(m.actualBoundingBoxAscent))
-            + Math.ceil(Math.abs(m.actualBoundingBoxDescent))
+        let h = maxActualBoundingBoxAscent
+                + Math.ceil(Math.abs(m.actualBoundingBoxAscent))
+                + Math.ceil(Math.abs(m.actualBoundingBoxDescent))
             || atlas.font.size;
 
         // TODO: Test if this works with the verification of width and color
