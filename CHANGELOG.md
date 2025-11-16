@@ -27,6 +27,11 @@ best friend, lajbel, can put the correct version name here
   polytopes - @mflerackers
 - Added `createCogPolygon()` to create 2D regular cogs - @mflerackers
 
+### Fixed
+
+- Fixed the `fakeMouse()` component not giving the right position when the
+  camera transform was not the identity matrix - @dragoncoder047
+
 ## [4000.0.0-alpha.23] - 2025-11-05
 
 ### Added
