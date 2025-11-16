@@ -1,4 +1,15 @@
 import { onAdd, onDestroy, onUnuse, onUse } from "../../../events/globalEvents";
+import { drawCircle } from "../../../gfx/draw/drawCircle";
+import { drawLine } from "../../../gfx/draw/drawLine";
+import { drawPolygon } from "../../../gfx/draw/drawPolygon";
+import {
+    loadMatrix,
+    multRotate,
+    popTransform,
+    pushMatrix,
+    pushTransform,
+} from "../../../gfx/stack";
+import { Color } from "../../../math/color";
 import { lerp } from "../../../math/lerp";
 import { rad2deg, vec2 } from "../../../math/math";
 import {
@@ -515,6 +526,16 @@ export const constraint = {
                     Math.max(minAngle ?? -180, maxAngle ?? 180),
                 );
             },
+            drawInspect(this: GameObj<IKConstraintComp | RotateComp>) {
+                pushTransform();
+                multRotate(-this.angle + _minAngle);
+                drawCircle({
+                    radius: 20,
+                    start: _maxAngle - _minAngle,
+                    color: Color.RED,
+                });
+                popTransform();
+            },
         };
     },
     ik(target: GameObj, opt: IKConstraintOpt): IKConstraintComp {
@@ -630,6 +651,29 @@ export const constraint = {
                             }
                         }
                     }
+                },
+                drawInspect(this: GameObj<IKConstraintComp>) {
+                    const endEffector = chain[0] = this;
+                    for (let i = 1; i <= depth; i++) {
+                        chain[i] = chain[i - 1].parent!;
+                    }
+                    let p1 = chain[depth].pos;
+                    pushTransform();
+                    for (let i = depth; i > 0; i--) {
+                        const bone = chain[i];
+                        const childBone = chain[i - 1];
+                        const len = childBone.pos.len();
+                        loadMatrix(bone.transform);
+                        drawPolygon({
+                            pts: [
+                                vec2(0, 0),
+                                vec2(len / 10, -len / 10),
+                                childBone.pos,
+                                vec2(len / 10, len / 10),
+                            ],
+                        });
+                    }
+                    popTransform();
                 },
             };
         }
@@ -753,6 +797,28 @@ export const constraint = {
                             obj.pos.y = obj.transform.f;
                         }
                     }
+                },
+                drawInspect(this: GameObj<IKConstraintComp>) {
+                    const endEffector = chain[0] = this;
+                    for (let i = 1; i <= depth; i++) {
+                        chain[i] = chain[i - 1].parent!;
+                    }
+                    let p1 = chain[depth].pos;
+                    pushTransform();
+                    for (let i = depth; i > 0; i--) {
+                        const bone = chain[i];
+                        const childBone = chain[i - 1];
+                        loadMatrix(bone.transform);
+                        drawPolygon({
+                            pts: [
+                                vec2(0, 0),
+                                vec2(10, -10),
+                                childBone.pos,
+                                vec2(10, 10),
+                            ],
+                        });
+                    }
+                    popTransform();
                 },
             };
         }
