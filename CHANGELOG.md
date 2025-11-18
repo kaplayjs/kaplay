@@ -21,7 +21,7 @@ best friend, lajbel, can put the correct version name here
 ### Added
 
 - Added `getSpriteOutline()` that takes a sprite asset and
-  returns a polygon showing the outline.
+  returns a polygon showing the outline - @milosilo-dev
 - Added parameterized formatting tags like `"[color=red]Red text![/color]"` in
   `CharTransformFunc` for more powerful text formatting options -
   @dragoncoder047
