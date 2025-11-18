@@ -26,8 +26,8 @@ best friend, lajbel, can put the correct version name here
 - Added `createRegularPolygon()` and `createStarPolygon()` to create 2D regular
   polytopes - @mflerackers
 - Added `createCogPolygon()` to create 2D regular cogs - @mflerackers
-- Added `getSpriteOutline()` that takes a sprite asset and
-  returns a polygon showing the outline - @milosilo-dev
+- Added `getSpriteOutline()` that takes a sprite asset and returns a polygon
+  showing the outline - @milosilo-dev
 
 ### Fixed
 
