@@ -20,19 +20,20 @@ best friend, lajbel, can put the correct version name here
 
 ### Added
 
-- Added `getSpriteOutline()` that takes a sprite asset and
-  returns a polygon showing the outline - @milosilo-dev
 - Added parameterized formatting tags like `"[color=red]Red text![/color]"` in
   `CharTransformFunc` for more powerful text formatting options -
   @dragoncoder047
 - Added `createRegularPolygon()` and `createStarPolygon()` to create 2D regular
   polytopes - @mflerackers
 - Added `createCogPolygon()` to create 2D regular cogs - @mflerackers
+- Added `getSpriteOutline()` that takes a sprite asset and
+  returns a polygon showing the outline - @milosilo-dev
 
 ### Fixed
 
 - Fixed the `fakeMouse()` component not giving the right position when the
   camera transform was not the identity matrix - @dragoncoder047
+- Fixed tall fonts being cropped - @anthonygood
 
 ## [4000.0.0-alpha.23] - 2025-11-05
 
