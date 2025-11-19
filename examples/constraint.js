@@ -98,7 +98,7 @@ const obj7 = add([
     rotate(),
     sprite("bean"),
     anchor("center"),
-    constraint.bone(-90, 90),
+    constraint.bone(-90, 90, 100, 200),
 ]);
 
 const obj8 = obj7.add([

@@ -9,9 +9,10 @@ import {
     pushMatrix,
     pushTransform,
 } from "../../../gfx/stack";
+import { clamp } from "../../../math/clamp";
 import { Color } from "../../../math/color";
 import { lerp } from "../../../math/lerp";
-import { rad2deg, vec2 } from "../../../math/math";
+import { deg2rad, rad2deg, vec2 } from "../../../math/math";
 import {
     calcTransform,
     clampAngle,
@@ -499,7 +500,12 @@ export const constraint = {
             },
         };
     },
-    bone(minAngle?: number, maxAngle?: number) {
+    bone(
+        minAngle?: number,
+        maxAngle?: number,
+        minLength?: number,
+        maxLength?: number,
+    ) {
         let _minAngle = Math.max(
             -180,
             Math.min(minAngle ?? -180, maxAngle ?? 180),
@@ -508,6 +514,8 @@ export const constraint = {
             180,
             Math.max(minAngle ?? -180, maxAngle ?? 180),
         );
+        let _minLength = minLength;
+        let _maxLength = maxLength;
         return {
             id: "bone",
             get minAngle() {
@@ -525,6 +533,12 @@ export const constraint = {
                     180,
                     Math.max(minAngle ?? -180, maxAngle ?? 180),
                 );
+            },
+            get minLength() {
+                return _minLength;
+            },
+            get maxLength() {
+                return _maxLength;
             },
             drawInspect(this: GameObj<IKConstraintComp | RotateComp>) {
                 pushTransform();
@@ -640,8 +654,48 @@ export const constraint = {
                             }
 
                             if (
-                                effector.minAngle != undefined
-                                && effector.maxAngle != undefined
+                                effector.parent
+                                && effector.parent.minLength != undefined
+                                && effector.parent.maxLength != undefined
+                            ) {
+                                // Vector from parent to target
+                                const ax = target.transform.e
+                                    - effector.parent.transform.e;
+                                const ay = target.transform.e
+                                    - effector.parent.transform.f;
+                                // Vector from parent to bone
+                                const bx = effectorTransform.e
+                                    - effector.parent.transform.e;
+                                const by = effectorTransform.f
+                                    - effector.parent.transform.f;
+                                // Projection of target onto bone
+                                const s = (ax * bx + ay * by)
+                                    / (bx * bx + by * by);
+                                const px = s * bx;
+                                const py = s * by;
+                                // Desired length
+                                let len = Math.sqrt(px * px + py * py);
+                                // New length = desired length clamped
+                                const nlen = clamp(
+                                    len,
+                                    effector.parent.minLength,
+                                    effector.parent.maxLength,
+                                );
+                                // Old length
+                                const olen = Math.sqrt(
+                                    effector.pos.x * effector.pos.x
+                                        + effector.pos.y * effector.pos.y,
+                                );
+                                // Scale to desired length clamped
+                                effector.pos.x *= nlen / olen;
+                                effector.pos.y *= nlen / olen;
+                            }
+
+                            if (
+                                (effector.minAngle != undefined
+                                    && effector.maxAngle != undefined)
+                                || (effector.minLength != undefined
+                                    && effector.maxLength != undefined)
                             ) {
                                 // We changed the local angle, so the current effector's transform needs to be updated
                                 updateTransformRecursive(effector);
