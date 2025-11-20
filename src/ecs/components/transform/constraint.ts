@@ -661,7 +661,7 @@ export const constraint = {
                                 // Vector from parent to target
                                 const ax = target.transform.e
                                     - effector.parent.transform.e;
-                                const ay = target.transform.e
+                                const ay = target.transform.f
                                     - effector.parent.transform.f;
                                 // Vector from parent to bone
                                 const bx = effectorTransform.e
