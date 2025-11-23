@@ -23,6 +23,17 @@ best friend, lajbel, can put the correct version name here
 - Added parameterized formatting tags like `"[color=red]Red text![/color]"` in
   `CharTransformFunc` for more powerful text formatting options -
   @dragoncoder047
+- Added `createRegularPolygon()` and `createStarPolygon()` to create 2D regular
+  polytopes - @mflerackers
+- Added `createCogPolygon()` to create 2D regular cogs - @mflerackers
+- Added `getSpriteOutline()` that takes a sprite asset and returns a polygon
+  showing the outline - @milosilo-dev
+
+### Fixed
+
+- Fixed the `fakeMouse()` component not giving the right position when the
+  camera transform was not the identity matrix - @dragoncoder047
+- Fixed tall fonts being cropped - @anthonygood
 
 ## [4000.0.0-alpha.23] - 2025-11-05
 
@@ -73,7 +84,8 @@ best friend, lajbel, can put the correct version name here
           // runs until obj is destroyed
       });
 
-      scene.onUpdate(() => { // or just onUpdate(() => {
+      scene.onUpdate(() => {
+          // or just onUpdate(() => {
           // runs until scene is changed
       });
   });
@@ -114,6 +126,7 @@ best friend, lajbel, can put the correct version name here
   - `onDraw()`
 
 - Added `app` scope for app event handlers - @lajbel
+
   ```js
   app.onUpdate(() => {
       // runs until it is cancelled
@@ -145,7 +158,8 @@ best friend, lajbel, can put the correct version name here
 
   ```js
   scene("game", () => {
-      scene.onUpdate(() => { // or just onUpdate(() => {
+      scene.onUpdate(() => {
+          // or just onUpdate(() => {
           // runs until scene is changed
       });
   });
@@ -263,10 +277,7 @@ best friend, lajbel, can put the correct version name here
   @lajbel
   ```js
   // blue frog
-  add([
-      sprite("bean"),
-      color(0x0000ff),
-  ]);
+  add([sprite("bean"), color(0x0000ff)]);
   ```
 - **(!)** `KAPLAYCtx` doesn't use generics anymore. Now, `KAPLAYCtxT` uses
   them - @lajbel
