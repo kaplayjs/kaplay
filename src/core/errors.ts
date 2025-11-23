@@ -30,58 +30,57 @@ export const handleErr = (err: unknown) => {
         error.message = "Unknown error, check console for more info";
     }
 
-    _k.app.run(
-        () => {},
-        () => {
-            _k.app.state.stopped = true;
-            _k.frameRenderer.frameStart();
+    function showErrorScreen() {
+        _k.app.state.stopped = true;
+        _k.frameRenderer.frameStart();
 
-            drawUnscaled(() => {
-                const pad = 32;
-                const gap = 16;
-                const gw = width();
-                const gh = height();
+        drawUnscaled(() => {
+            const pad = 32;
+            const gap = 16;
+            const gw = width();
+            const gh = height();
 
-                const textStyle = {
-                    size: 36,
-                    width: gw - pad * 2,
-                    letterSpacing: 4,
-                    lineSpacing: 4,
-                    font: DBG_FONT,
-                    fixed: true,
-                };
+            const textStyle = {
+                size: 36,
+                width: gw - pad * 2,
+                letterSpacing: 4,
+                lineSpacing: 4,
+                font: DBG_FONT,
+                fixed: true,
+            };
 
-                drawRect({
-                    width: gw,
-                    height: gh,
-                    color: rgb(0, 0, 255),
-                    fixed: true,
-                });
-
-                const title = formatText({
-                    ...textStyle,
-                    text: "Error",
-                    pos: vec2(pad),
-                    color: rgb(255, 128, 0),
-                    fixed: true,
-                });
-
-                drawFormattedText(title);
-
-                drawText({
-                    ...textStyle,
-                    text: esc(error.message),
-                    pos: vec2(pad, pad + title.height + gap),
-                    fixed: true,
-                });
-
-                popTransform();
-                _k.game.events.trigger("error", error);
+            drawRect({
+                width: gw,
+                height: gh,
+                color: rgb(0, 0, 255),
+                fixed: true,
             });
 
-            _k.frameRenderer.frameEnd();
-        },
-    );
+            const title = formatText({
+                ...textStyle,
+                text: "Error",
+                pos: vec2(pad),
+                color: rgb(255, 128, 0),
+                fixed: true,
+            });
+
+            drawFormattedText(title);
+
+            drawText({
+                ...textStyle,
+                text: esc(error.message),
+                pos: vec2(pad, pad + title.height + gap),
+                fixed: true,
+            });
+
+            popTransform();
+            _k.game.events.trigger("error", error);
+        });
+
+        _k.frameRenderer.frameEnd();
+    }
+
+    showErrorScreen();
 
     // TODO: Make this a setting
     if (!error.message.startsWith("[rendering]")) {

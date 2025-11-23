@@ -42,6 +42,7 @@ export interface FormattedChar {
     quad: Quad;
     pos: Vec2;
     scale: Vec2;
+    skew: Vec2;
     angle: number;
     color: Color;
     opacity: number;
@@ -81,6 +82,7 @@ export function drawFormattedText(ftext: FormattedText) {
             scale: ch.scale,
             angle: ch.angle,
             color: ch.color,
+            skew: ch.skew,
             opacity: ch.opacity,
             quad: ch.quad,
             anchor: "center",

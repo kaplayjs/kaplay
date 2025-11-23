@@ -9,6 +9,7 @@ import {
     KEventController,
     type KEventHandler,
 } from "../../events/events";
+import type { GameEventHandlers } from "../../events/gameEventHandlers";
 import {
     onAdd,
     onDestroy,
@@ -26,6 +27,7 @@ import {
     loadMatrix,
     multRotate,
     multScaleV,
+    multSkewV,
     multTranslateV,
     popTransform,
     pushTransform,
@@ -51,6 +53,7 @@ import type { LayerComp } from "../components/transform/layer";
 import type { PosComp } from "../components/transform/pos";
 import type { RotateComp } from "../components/transform/rotate";
 import type { ScaleComp } from "../components/transform/scale";
+import type { SkewComp } from "../components/transform/skew";
 import type { ZComp } from "../components/transform/z";
 import { make } from "./make";
 import { deserializePrefabAsset, type SerializedGameObj } from "./prefab";
@@ -258,7 +261,11 @@ export interface GameObjRaw {
     /**
      * This method is called to transform and collect objects which should be drawn layered
      */
-    collectAndTransform(objects: GameObj<any>[]): void;
+    collect(objects: GameObj<any>[]): void;
+    /**
+     * This method is called to transform objects
+     */
+    transformTree(): void;
     /**
      * Add a component.
      *
@@ -475,6 +482,10 @@ export interface GameObjRaw {
     onButtonDown: KAPLAYCtx["onButtonDown"];
     onButtonPress: KAPLAYCtx["onButtonPress"];
     onButtonRelease: KAPLAYCtx["onButtonRelease"];
+    onTabShow: GameEventHandlers["onTabShow"];
+    onTabHide: GameEventHandlers["onTabHide"];
+    onShow: GameEventHandlers["onShow"];
+    onHide: GameEventHandlers["onHide"];
 }
 
 export type InternalGameObjRaw = GameObjRaw & {
@@ -554,7 +565,11 @@ const COMP_EVENTS = new Set([
 
 type GarbageCollectorArray = (() => any)[];
 
-export const GameObjRawPrototype: Omit<InternalGameObjRaw, AppEvents> = {
+export const GameObjRawPrototype: Omit<
+    InternalGameObjRaw,
+    // TODO: Maybe too hacky, find better way
+    Exclude<AppEvents, "onFixedUpdate" | "onUpdate" | "onDraw">
+> = {
     // This chain of `as any`, is because we never should use this object
     // directly, it's only a prototype. These properties WILL be defined
     // (by our factory function `make`) when we create a new game object.
@@ -1019,21 +1034,11 @@ export const GameObjRawPrototype: Omit<InternalGameObjRaw, AppEvents> = {
             & InternalGameObjRaw
         >();
 
-        pushTransform();
-        if (this.pos) multTranslateV(this.pos);
-        if (this.angle) multRotate(this.angle);
-        if (this.scale) multScaleV(this.scale);
-
-        if (!this.transform) this.transform = new Mat23();
-        storeMatrix(this.transform);
-
         // For each child call collect
         for (let i = 0; i < this.children.length; i++) {
             if (this.children[i].hidden) continue;
-            this.children[i].collectAndTransform(objects);
+            this.children[i].collect(objects);
         }
-
-        popTransform();
 
         // Sort objects on layer, then z
         objects.sort((o1, o2) => {
@@ -1181,20 +1186,39 @@ export const GameObjRawPrototype: Omit<InternalGameObjRaw, AppEvents> = {
         this.trigger("drawInspect");
     },
 
-    collectAndTransform(
+    transformTree(
         this: GameObj<
-            PosComp | ScaleComp | RotateComp | FixedComp | MaskComp
+            PosComp | ScaleComp | RotateComp | SkewComp | FixedComp | MaskComp
         >,
-        objects: GameObj<any>[],
     ) {
         pushTransform();
         if (this.pos) multTranslateV(this.pos);
         if (this.angle) multRotate(this.angle);
         if (this.scale) multScaleV(this.scale);
 
+        if (this.skew) console.log(_k.gfx.transform, this.skew);
+
+        if (this.skew) multSkewV(this.skew);
+
         if (!this.transform) this.transform = new Mat23();
         storeMatrix(this.transform);
 
+        if (this.skew) console.log(this.transform);
+
+        for (let i = 0; i < this.children.length; i++) {
+            if (this.children[i].hidden) continue;
+            this.children[i].transformTree();
+        }
+
+        popTransform();
+    },
+
+    collect(
+        this: GameObj<
+            PosComp | ScaleComp | RotateComp | FixedComp | MaskComp
+        >,
+        objects: GameObj<any>[],
+    ) {
         // Add to objects
         objects.push(this);
 
@@ -1207,11 +1231,9 @@ export const GameObjRawPrototype: Omit<InternalGameObjRaw, AppEvents> = {
                 this.drawTree();
             }
             else if (!this.mask) {
-                this.children[i].collectAndTransform(objects);
+                this.children[i].collect(objects);
             }
         }
-
-        popTransform();
     },
     // #endregion
 
@@ -1550,64 +1572,3 @@ export const GameObjRawPrototype: Omit<InternalGameObjRaw, AppEvents> = {
     },
     // #endregion
 };
-
-// #region App Events in Proto
-export function attachAppToGameObjRaw() {
-    // We add App Events for "attaching" it to game object
-    const appEvs = [
-        "onKeyPress",
-        "onKeyPressRepeat",
-        "onKeyDown",
-        "onKeyRelease",
-        "onMousePress",
-        "onMouseDown",
-        "onMouseRelease",
-        "onMouseMove",
-        "onCharInput",
-        "onMouseMove",
-        "onTouchStart",
-        "onTouchMove",
-        "onTouchEnd",
-        "onScroll",
-        "onGamepadButtonPress",
-        "onGamepadButtonDown",
-        "onGamepadButtonRelease",
-        "onGamepadStick",
-        "onButtonPress",
-        "onButtonDown",
-        "onButtonRelease",
-    ] satisfies [...AppEvents[]];
-
-    for (const e of appEvs) {
-        const obj = GameObjRawPrototype as Record<string, any>;
-
-        obj[e] = function(this: InternalGameObjRaw, ...args: [any]) {
-            // @ts-ignore
-            const ev: KEventController = _k.app[e]?.(...args);
-            ev.paused = this.paused;
-
-            this._inputEvents.push(ev);
-
-            this.onDestroy(() => ev.cancel());
-
-            // This only happens if obj.has("stay");
-            this.on("sceneEnter", () => {
-                // All app events are already canceled by changing the scene
-                // so we don't need to event.cancel();
-                this._inputEvents.splice(this._inputEvents.indexOf(ev), 1);
-
-                // create a new event with the same arguments
-                // @ts-ignore
-                const newEv = _k.app[e]?.(...args);
-
-                // Replace the old event handler with the new one
-                // old KEventController.cancel() => new KEventController.cancel()
-                KEventController.replace(ev, newEv);
-                this._inputEvents.push(ev);
-            });
-
-            return ev;
-        };
-    }
-}
-// #endregion

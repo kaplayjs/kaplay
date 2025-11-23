@@ -1,15 +1,6 @@
-import { initAppEvents } from "../app/appEvents";
 import type { KEventController } from "../events/events";
 import { Mat23, vec2 } from "../math/math";
 import { _k } from "../shared";
-
-/**
- * The name of a scene.
- *
- * @group Scenes
- * @subgroup Types
- */
-export type SceneName = string;
 
 /**
  * The function definition for a scene
@@ -30,19 +21,20 @@ export type SceneState = {
     args: unknown[];
 };
 
-export function scene(id: SceneName, def: SceneDef) {
+export function scene(id: string, def: SceneDef) {
     _k.game.scenes[id] = def;
 }
 
-export function go(name: SceneName, ...args: unknown[]) {
+export function go(name: string, ...args: unknown[]) {
     if (!_k.game.scenes[name]) {
         throw new Error(`Scene not found: ${name}`);
     }
 
     _k.game.events.onOnce("frameEnd", () => {
         _k.game.events.trigger("sceneLeave", name);
-        _k.app.events.clear();
         _k.game.events.clear();
+
+        _k.app.state.sceneEvents.forEach((e) => e.cancel());
 
         [..._k.game.root.children].forEach((obj) => {
             if (
@@ -57,7 +49,6 @@ export function go(name: SceneName, ...args: unknown[]) {
         });
 
         _k.game.root.clearEvents();
-        initAppEvents();
 
         // cam
         _k.game.cam = {
@@ -75,12 +66,12 @@ export function go(name: SceneName, ...args: unknown[]) {
     _k.game.currentScene = name;
 }
 
-export function pushScene(id: SceneName, ...args: unknown[]) {
+export function pushScene(id: string, ...args: unknown[]) {
     _k.game.sceneStack.push({
         sceneID: _k.game.currentScene,
         args: _k.game.currentSceneArgs,
     });
-    go(id, args);
+    go(id, ...args);
     return;
 }
 
@@ -95,7 +86,7 @@ export function popScene() {
         throw new Error("The scene ID should not be null");
     }
 
-    go(sceneData.sceneID, sceneData.args);
+    go(sceneData.sceneID, ...sceneData.args);
 }
 
 export function onSceneLeave(

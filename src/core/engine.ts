@@ -22,6 +22,12 @@ import { rotateFactory } from "../ecs/components/transform/rotate";
 import { scaleFactory } from "../ecs/components/transform/scale";
 import { zFactory } from "../ecs/components/transform/z";
 import { registerPrefabFactory } from "../ecs/entity/prefab";
+import { createGameEventHandlers } from "../events/gameEventHandlers";
+import {
+    attachAppHandlersToGameObjRaw,
+    createAppScope,
+    createSceneScope,
+} from "../events/scopes";
 import { createGame } from "../game/game";
 import { createCanvas } from "../gfx/canvas";
 import { initGfx } from "../gfx/gfx";
@@ -48,13 +54,22 @@ window.kaplayjs_assetsAliases = {};
  */
 export const createEngine = (gopt: KAPLAYOpt) => {
     // Default options
-    const opt = Object.assign({
-        scale: 1,
-    }, gopt);
+    const opt = Object.assign(
+        {
+            scale: 1,
+            spriteAtlasPadding: 2,
+            defaultLifetimeScope: "scene" as "scene" | "app",
+        } satisfies KAPLAYOpt,
+        gopt,
+    );
 
     const canvas = createCanvas(opt);
     const { fontCacheC2d, fontCacheCanvas } = createFontCache();
     const app = initApp({ canvas, ...gopt });
+    const gameHandlers = createGameEventHandlers(app);
+    const sceneScope = createSceneScope(app, gameHandlers);
+    const appScope = createAppScope(gameHandlers);
+    attachAppHandlersToGameObjRaw(gameHandlers);
 
     // TODO: Probably we should move this to initGfx
     const canvasContext = app.canvas
@@ -73,12 +88,13 @@ export const createEngine = (gopt: KAPLAYOpt) => {
     // TODO: Investigate correctly what's the differente between GFX and AppGFX and reduce to 1 method
     const gfx = initGfx(gl, opt);
     const appGfx = initAppGfx(gfx, opt);
-    const assets = initAssets(gfx, opt.spriteAtlasPadding ?? 0);
+    const assets = initAssets(gfx, opt);
     const audio = initAudio();
     const game = createGame();
 
     // Frame rendering
     const frameRenderer = createFrameRenderer(
+        app,
         appGfx,
         game,
         opt.pixelDensity ?? 1,
@@ -134,6 +150,8 @@ export const createEngine = (gopt: KAPLAYOpt) => {
         game,
         debug,
         gc: [] as (() => void)[],
+        sceneScope,
+        appScope,
         // Patch, k it's only avaible after running kaplay()
         k: null as unknown as KAPLAYCtx,
         startLoop() {

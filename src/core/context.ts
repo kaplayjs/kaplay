@@ -70,6 +70,7 @@ import {
     surfaceEffector,
 } from "../ecs/components/physics/effectors";
 import { anchor } from "../ecs/components/transform/anchor";
+import { constraint } from "../ecs/components/transform/constraint";
 import { fixed } from "../ecs/components/transform/fixed";
 import { follow } from "../ecs/components/transform/follow";
 import { layer } from "../ecs/components/transform/layer";
@@ -78,6 +79,7 @@ import { offscreen } from "../ecs/components/transform/offscreen";
 import { pos } from "../ecs/components/transform/pos";
 import { rotate } from "../ecs/components/transform/rotate";
 import { scale } from "../ecs/components/transform/scale";
+import { skew } from "../ecs/components/transform/skew";
 import { z } from "../ecs/components/transform/z";
 import { KeepFlags } from "../ecs/entity/GameObjRaw";
 import { createPrefab, loadPrefab } from "../ecs/entity/prefab";
@@ -183,6 +185,9 @@ import {
     usePostEffect,
     width,
 } from "../gfx/stack";
+import { DecisionNode, DecisionTree } from "../math/ai/decisiontree";
+import { Rule, RuleSystem } from "../math/ai/rulesystem";
+import { StateMachine } from "../math/ai/statemachine";
 import { clamp } from "../math/clamp";
 import { Color, hsl2rgb, rgb } from "../math/color";
 import { easings } from "../math/easings";
@@ -213,6 +218,7 @@ import {
     evaluateQuadratic,
     evaluateQuadraticFirstDerivative,
     evaluateQuadraticSecondDerivative,
+    getSpriteOutline,
     hermite,
     isConvex,
     kochanekBartels,
@@ -246,6 +252,11 @@ import {
     wave,
 } from "../math/math";
 import { NavMesh } from "../math/navigationmesh";
+import {
+    createCogPolygon,
+    createRegularPolygon,
+    createStarPolygon,
+} from "../math/polygongeneration";
 import { insertionSort } from "../math/sort";
 import { makeQuadtree, Quadtree } from "../math/spatial/quadtree";
 import { Vec2 } from "../math/Vec2";
@@ -269,7 +280,7 @@ export const createContext = (
     exportToGlobal?: boolean,
 ): KAPLAYCtx => {
     // aliases for root Game Obj operations
-    const { game, app, audio, debug } = e;
+    const { game, app, audio, debug, globalOpt } = e;
     const add = game.root.add.bind(game.root);
     const addPrefab = game.root.addPrefab.bind(game.root);
     const readd = game.root.readd.bind(game.root);
@@ -279,6 +290,10 @@ export const createContext = (
     const loop = game.root.loop.bind(game.root);
     const query = game.root.query.bind(game.root);
     const tween = game.root.tween.bind(game.root);
+
+    const defaultScope = globalOpt.defaultLifetimeScope == "app"
+        ? e.appScope
+        : e.sceneScope;
 
     const ctx: KAPLAYCtx = {
         _k: e,
@@ -374,8 +389,9 @@ export const createContext = (
         readd,
         // comps
         pos,
-        scale,
         rotate,
+        scale,
+        skew,
         color,
         blend,
         opacity,
@@ -412,6 +428,7 @@ export const createContext = (
         z,
         layer,
         move,
+        constraint,
         offscreen,
         follow,
         fadeIn,
@@ -447,28 +464,30 @@ export const createContext = (
         onHoverUpdate,
         onHoverEnd,
         // input
-        onKeyDown: app.onKeyDown,
-        onKeyPress: app.onKeyPress,
-        onKeyPressRepeat: app.onKeyPressRepeat,
-        onKeyRelease: app.onKeyRelease,
-        onMouseDown: app.onMouseDown,
-        onMousePress: app.onMousePress,
-        onMouseRelease: app.onMouseRelease,
-        onMouseMove: app.onMouseMove,
-        onCharInput: app.onCharInput,
-        onTouchStart: app.onTouchStart,
-        onTouchMove: app.onTouchMove,
-        onTouchEnd: app.onTouchEnd,
-        onScroll: app.onScroll,
-        onHide: app.onHide,
-        onShow: app.onShow,
-        onGamepadButtonDown: app.onGamepadButtonDown,
-        onGamepadButtonPress: app.onGamepadButtonPress,
-        onGamepadButtonRelease: app.onGamepadButtonRelease,
-        onGamepadStick: app.onGamepadStick,
-        onButtonPress: app.onButtonPress,
-        onButtonDown: app.onButtonDown,
-        onButtonRelease: app.onButtonRelease,
+        onKeyDown: defaultScope.onKeyDown,
+        onKeyPress: defaultScope.onKeyPress,
+        onKeyPressRepeat: defaultScope.onKeyPressRepeat,
+        onKeyRelease: defaultScope.onKeyRelease,
+        onMouseDown: defaultScope.onMouseDown,
+        onMousePress: defaultScope.onMousePress,
+        onMouseRelease: defaultScope.onMouseRelease,
+        onMouseMove: defaultScope.onMouseMove,
+        onCharInput: defaultScope.onCharInput,
+        onTouchStart: defaultScope.onTouchStart,
+        onTouchMove: defaultScope.onTouchMove,
+        onTouchEnd: defaultScope.onTouchEnd,
+        onScroll: defaultScope.onScroll,
+        onHide: defaultScope.onHide,
+        onShow: defaultScope.onShow,
+        onTabShow: defaultScope.onTabShow,
+        onTabHide: defaultScope.onTabHide,
+        onGamepadButtonDown: defaultScope.onGamepadButtonDown,
+        onGamepadButtonPress: defaultScope.onGamepadButtonPress,
+        onGamepadButtonRelease: defaultScope.onGamepadButtonRelease,
+        onGamepadStick: defaultScope.onGamepadStick,
+        onButtonPress: defaultScope.onButtonPress,
+        onButtonDown: defaultScope.onButtonDown,
+        onButtonRelease: defaultScope.onButtonRelease,
         mousePos: app.mousePos,
         mouseDeltaPos: app.mouseDeltaPos,
         isKeyDown: app.isKeyDown,
@@ -483,6 +502,7 @@ export const createContext = (
         isGamepadButtonDown: app.isGamepadButtonDown,
         isGamepadButtonReleased: app.isGamepadButtonReleased,
         getGamepadStick: app.getGamepadStick,
+        getGamepadAnalogButton: app.getGamepadAnalogButton,
         isButtonPressed: app.isButtonPressed,
         isButtonDown: app.isButtonDown,
         isButtonReleased: app.isButtonReleased,
@@ -519,6 +539,12 @@ export const createContext = (
         Quadtree,
         makeQuadtree,
         RNG,
+        Rule,
+        RuleSystem,
+        DecisionNode,
+        DecisionTree,
+        StateMachine,
+        getSpriteOutline,
         insertionSort,
         rand,
         randi,
@@ -557,6 +583,9 @@ export const createContext = (
         catmullRom,
         bezier,
         kochanekBartels,
+        createRegularPolygon,
+        createStarPolygon,
+        createCogPolygon,
         easingSteps,
         easingLinear,
         easingCubicBezier,
@@ -609,8 +638,9 @@ export const createContext = (
         Picture,
         // debug
         debug,
+        app: e.appScope,
         // scene
-        scene,
+        scene: e.sceneScope,
         getSceneName,
         go,
         onSceneLeave,

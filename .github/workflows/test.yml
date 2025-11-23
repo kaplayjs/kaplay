@@ -21,11 +21,8 @@ jobs:
           run_install: false
       - name: Install dprint
         run: pnpm i dprint
-      - name: Run Formatter
-        run: pnpm run fmt
-      - name: Check if it's formatted
-        run: |
-          FORMATTED=$(git diff --exit-code)
+      - name: Run dprint checker 
+        run: FORMATTED=$(pnpm dprint check)
       - name: Fail if not formatted
         run: |
           if [ -n "$FORMATTED" ]; then

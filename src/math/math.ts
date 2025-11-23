@@ -2,10 +2,14 @@
 // - move RNG to it's own file
 // - move Vec2 to it's own file
 
+import { resolveSprite } from "../assets/sprite";
+import { drawCircle } from "../gfx/draw/drawCircle";
+import { drawPolygon, type DrawPolygonOpt } from "../gfx/draw/drawPolygon";
 import { _k } from "../shared";
 import type { GameObj, RNGValue, Shape } from "../types";
 import { clamp } from "./clamp";
 import { Color, rgb } from "./color";
+import { traceRegion } from "./getImageOutline";
 import { lerp, type LerpValue } from "./lerp";
 import { Vec2 } from "./Vec2";
 
@@ -219,13 +223,17 @@ export class Mat2 {
 }
 
 export class Mat23 {
-    // 2x3 matrix, since the last column is always (0, 0, 1)
+    // 2x3 matrix, 2 rows and 3 columns, since the last row is always (0, 0, 1)
+    // | a c e |
+    // | b d f |
+    // | 0 0 1 |
+    // Actually would like a Mat2 + Vec2, but that would be 3 objects for 1 matrix
     a: number;
-    b: number; // 0
+    b: number;
     c: number;
-    d: number; // 0
+    d: number;
     e: number;
-    f: number; // 1
+    f: number;
     _inverse: Mat23 | null = null;
     constructor(
         a: number = 1,
@@ -260,6 +268,9 @@ export class Mat23 {
             this.d,
         );
     }
+    // | 1 0 x |
+    // | 0 1 y |
+    // | 0 0 1 |
     static fromTranslation(t: Vec2) {
         return new Mat23(
             1,
@@ -270,6 +281,9 @@ export class Mat23 {
             t.y,
         );
     }
+    // | c -s 0 |
+    // | s  c 0 |
+    // | 0 0 1 |
     static fromRotation(radians: number) {
         const c = Math.cos(radians);
         const s = Math.sin(radians);
@@ -282,12 +296,30 @@ export class Mat23 {
             0,
         );
     }
+    // | x 0 0 |
+    // | 0 y 0 |
+    // | 0 0 1 |
     static fromScale(s: Vec2): Mat23 {
         return new Mat23(
             s.x,
             0,
             0,
             s.y,
+            0,
+            0,
+        );
+    }
+    // | 1 x 0 |
+    // | y 1 0 |
+    // | 0 0 1 |
+    static fromSkew(s: Vec2): Mat23 {
+        const x = Math.tan(s.x);
+        const y = Math.tan(s.y);
+        return new Mat23(
+            1,
+            y,
+            x,
+            1,
             0,
             0,
         );
@@ -312,6 +344,9 @@ export class Mat23 {
         this._inverse = m._inverse;
         return this;
     }
+    // | 1 0 0 |
+    // | 0 1 0 |
+    // | 0 0 1 |
     setIdentity() {
         this.a = 1;
         this.b = 0;
@@ -321,6 +356,17 @@ export class Mat23 {
         this.f = 0;
         this._inverse = null;
         return this;
+    }
+    setTRS(x: number, y: number, angle: number, sx: number, sy: number) {
+        const radians = angle * Math.PI / 180;
+        const c = Math.cos(radians);
+        const s = Math.sin(radians);
+        this.a = c * sx;
+        this.b = s * sx;
+        this.c = -s * sy;
+        this.d = c * sy;
+        this.e = x;
+        this.f = y;
     }
     mul(other: Mat23): Mat23 {
         return new Mat23(
@@ -332,18 +378,27 @@ export class Mat23 {
             other.e * this.b + other.f * this.d + this.f,
         );
     }
+    // | a c e |   | 1 0 x |
+    // | b d f | * | 0 1 y |
+    // | 0 0 1 |   | 0 0 1 |
     translateSelfV(t: Vec2): Mat23 {
         this.e += t.x * this.a + t.y * this.c;
         this.f += t.x * this.b + t.y * this.d;
         this._inverse = null;
         return this;
     }
+    // | a c e |   | 1 0 x |
+    // | b d f | * | 0 1 y |
+    // | 0 0 1 |   | 0 0 1 |
     translateSelf(x: number, y: number): Mat23 {
         this.e += x * this.a + y * this.c;
         this.f += x * this.b + y * this.d;
         this._inverse = null;
         return this;
     }
+    // | a c e |   | c -s 0 |
+    // | b d f | * | s  c 0 |
+    // | 0 0 1 |   | 0  0 1 |
     rotateSelf(degrees: number): Mat23 {
         const radians = deg2rad(degrees);
         const c = Math.cos(radians);
@@ -357,6 +412,9 @@ export class Mat23 {
         this._inverse = null;
         return this;
     }
+    // | a c e |   | x 0 0 |
+    // | b d f | * | 0 y 0 |
+    // | 0 0 1 |   | 0 0 1 |
     scaleSelfV(s: Vec2): Mat23 {
         this.a *= s.x;
         this.b *= s.x;
@@ -365,11 +423,44 @@ export class Mat23 {
         this._inverse = null;
         return this;
     }
+    // | a c e |   | x 0 0 |
+    // | b d f | * | 0 y 0 |
+    // | 0 0 1 |   | 0 0 1 |
     scaleSelf(x: number, y: number): Mat23 {
         this.a *= x;
         this.b *= x;
         this.c *= y;
         this.d *= y;
+        this._inverse = null;
+        return this;
+    }
+    // | a c e |   | 1 x 0 |
+    // | b d f | * | y 1 0 |
+    // | 0 0 1 |   | 0 0 1 |
+    skewSelfV(s: Vec2): Mat23 {
+        const x = Math.tan(deg2rad(s.x));
+        const y = Math.tan(deg2rad(s.y));
+        const oldA = this.a;
+        const oldB = this.b;
+        this.a += this.c * y;
+        this.b += this.d * y;
+        this.c += oldA * x;
+        this.d += oldB * x;
+        this._inverse = null;
+        return this;
+    }
+    // | a c e |   | 1 x 0 |
+    // | b d f | * | y 1 0 |
+    // | 0 0 1 |   | 0 0 1 |
+    skewSelf(x: number, y: number): Mat23 {
+        x = Math.tan(deg2rad(x));
+        y = Math.tan(deg2rad(y));
+        const oldA = this.a;
+        const oldB = this.b;
+        this.a += this.c * y;
+        this.b += this.d * y;
+        this.c += oldA * x;
+        this.d += oldB * x;
         this._inverse = null;
         return this;
     }
@@ -389,30 +480,45 @@ export class Mat23 {
         this._inverse = null;
         return this;
     }
+    // | a c e |   | x |
+    // | b d f | * | y |
+    // | 0 0 1 |   | 1 |
     transform(p: Vec2) {
         return vec2(
             this.a * p.x + this.c * p.y + this.e,
             this.b * p.x + this.d * p.y + this.f,
         );
     }
+    // | a c e |   | x |
+    // | b d f | * | y |
+    // | 0 0 1 |   | 1 |
     transformPointV(p: Vec2, o: Vec2): Vec2 {
         const tmp = p.x;
         o.x = this.a * p.x + this.c * p.y + this.e;
         o.y = this.b * tmp + this.d * p.y + this.f;
         return o;
     }
+    // | a c e |   | x |
+    // | b d f | * | y |
+    // | 0 0 1 |   | 0 |
     transformVectorV(v: Vec2, o: Vec2): Vec2 {
         const tmp = v.x;
         o.x = this.a * v.x + this.c * v.y;
         o.y = this.b * tmp + this.d * v.y;
         return o;
     }
+    // | a c e |   | x |
+    // | b d f | * | y |
+    // | 0 0 1 |   | 1 |
     transformPoint(x: number, y: number, o: Vec2): Vec2 {
         const tmp = x;
         o.x = this.a * x + this.c * y + this.e;
         o.y = this.b * tmp + this.d * y + this.f;
         return o;
     }
+    // | a c e |   | x |
+    // | b d f | * | y |
+    // | 0 0 1 |   | 0 |
     transformVector(x: number, y: number, o: Vec2): Vec2 {
         const tmp = x;
         o.x = this.a * x + this.c * y;
@@ -437,19 +543,58 @@ export class Mat23 {
         );
         return this._inverse;
     }
+    // The translation is directly accessible
     getTranslation() {
         return new Vec2(this.e, this.f);
     }
+    // Using atan2(y, x) = angle
+    // since a = sx * cos(angle)
+    //       b = sx * sin(angle)
+    // and atan2 does y / x, thus sx is eliminated
     getRotation() {
-        return rad2deg(
-            Math.atan2(-this.c, this.a),
-        );
+        if (this.a || this.b) {
+            return rad2deg(
+                Math.atan2(this.b, this.a),
+            );
+        }
+        else {
+            return 90 - rad2deg(
+                Math.atan2(this.d, this.c),
+            );
+        }
     }
+    // Using cos^2 + sin^2 = 1, thus sqrt(a^2 + b^2) contains the scale
+    // since a = sx * cos(angle)
+    //       b = sx * sin(angle)
     getScale() {
         return new Vec2(
-            Math.sqrt(this.a * this.a + this.c * this.c),
-            Math.sqrt(this.b * this.b + this.d * this.d),
+            Math.sqrt(this.a * this.a + this.b * this.b),
+            Math.sqrt(this.c * this.c + this.d * this.d),
         );
+    }
+    getSkew() {
+        if (this.a || this.b) {
+            return new Vec2(
+                rad2deg(
+                    Math.atan2(
+                        this.a * this.c + this.b * this.d,
+                        this.a * this.a + this.b * this.b,
+                    ),
+                ),
+                0,
+            );
+        }
+        else {
+            return new Vec2(
+                0,
+                rad2deg(
+                    Math.atan2(
+                        this.a * this.c + this.b * this.d,
+                        this.c * this.c + this.d * this.d,
+                    ),
+                ),
+            );
+        }
     }
 }
 
@@ -2219,6 +2364,46 @@ function segmentLineIntersection(a: Vec2, b: Vec2, c: Vec2, d: Vec2) {
     s = ac.cross(cd) / s;
     if (s < 0 || s > 1) return null;
     return a.add(ab.scale(s));
+}
+
+export function getSpriteOutline(
+    asset: string,
+    frame = 0,
+    RDP = true,
+    epsilon = 10,
+): Polygon {
+    const spr = resolveSprite(asset);
+    if (!spr?.data) throw new Error("Can't load asset: " + asset);
+
+    const frameData = spr.data.frames[frame];
+    const tex = spr.data.tex;
+
+    const px = frameData.x * tex.width;
+    const py = frameData.y * tex.height;
+    const pw = frameData.w * tex.width;
+    const ph = frameData.h * tex.height;
+
+    const canvas = document.createElement("canvas");
+    canvas.width = pw;
+    canvas.height = ph;
+    const ctx = canvas.getContext("2d")!;
+    ctx.drawImage(tex.src as any, px, py, pw, ph, 0, 0, pw, ph);
+
+    const image_data = ctx.getImageData(0, 0, pw, ph);
+    const isInRegion = (x: number, y: number) => {
+        const idx = (y * image_data.width + x) * 4 + 3;
+        return image_data.data[idx] >= 50;
+    };
+
+    const trace = traceRegion(
+        image_data.width,
+        image_data.height,
+        isInRegion,
+        RDP,
+        epsilon,
+    );
+    console.log(trace);
+    return new Polygon(trace);
 }
 
 /**

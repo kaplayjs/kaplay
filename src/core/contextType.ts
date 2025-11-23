@@ -92,6 +92,7 @@ import type {
     SurfaceEffectorCompOpt,
 } from "../ecs/components/physics/effectors";
 import type { AnchorComp } from "../ecs/components/transform/anchor";
+import type { constraint } from "../ecs/components/transform/constraint";
 import type { FixedComp } from "../ecs/components/transform/fixed";
 import type { FollowComp } from "../ecs/components/transform/follow";
 import type { LayerComp } from "../ecs/components/transform/layer";
@@ -103,6 +104,7 @@ import type {
 import type { PosComp } from "../ecs/components/transform/pos";
 import type { RotateComp } from "../ecs/components/transform/rotate";
 import type { ScaleComp } from "../ecs/components/transform/scale";
+import type { SkewComp } from "../ecs/components/transform/skew";
 import type { ZComp } from "../ecs/components/transform/z";
 import type { KeepFlags } from "../ecs/entity/GameObjRaw";
 import type { SerializedGameObj } from "../ecs/entity/prefab";
@@ -112,7 +114,9 @@ import type { Collision } from "../ecs/systems/Collision";
 import type { SystemPhase } from "../ecs/systems/systems";
 import type { GameObjEventNames, GameObjEvents } from "../events/eventMap";
 import type { KEvent, KEventController, KEventHandler } from "../events/events";
-import type { SceneDef, SceneName } from "../game/scenes";
+import type { GameEventHandlers } from "../events/gameEventHandlers";
+import type { AppScope, SceneScope } from "../events/scopes";
+import type { SceneDef } from "../game/scenes";
 import type { anchorPt } from "../gfx/anchor";
 import type { DrawBezierOpt } from "../gfx/draw/drawBezier";
 import type { DrawCanvasOpt } from "../gfx/draw/drawCanvas";
@@ -135,7 +139,10 @@ import type { DrawTriangleOpt } from "../gfx/draw/drawTriangle";
 import type { DrawUVQuadOpt } from "../gfx/draw/drawUVQuad";
 import type { StyledTextInfo } from "../gfx/formatText";
 import type { FrameBuffer } from "../gfx/FrameBuffer";
-import type { Color, CSSColor } from "../math/color";
+import type { DecisionNode, DecisionTree } from "../math/ai/decisiontree";
+import type { Rule, RuleSystem } from "../math/ai/rulesystem";
+import type { StateMachine } from "../math/ai/statemachine";
+import type { Color, CSSColorKeywords } from "../math/color";
 import type { EaseFunc, EaseFuncs } from "../math/easings";
 import type { GjkCollisionResult } from "../math/gjk";
 import type { LerpValue } from "../math/lerp";
@@ -143,6 +150,7 @@ import type { Mat4 } from "../math/Mat4";
 import type {
     Circle,
     Ellipse,
+    getSpriteOutline,
     Line,
     Mat23,
     Point,
@@ -156,32 +164,34 @@ import type {
 import type { NavMesh } from "../math/navigationmesh";
 import type { Quadtree } from "../math/spatial/quadtree";
 import type { Vec2 } from "../math/Vec2";
-import type {
-    Anchor,
-    BlendMode,
-    Canvas,
-    Comp,
-    CompList,
-    Cursor,
-    EmptyComp,
-    GameObj,
-    GetOpt,
-    KAPLAYPlugin,
-    Key,
-    KGamepad,
-    KGamepadButton,
-    KGamepadStick,
-    LoadFontOpt,
-    Mask,
-    MouseButton,
-    MusicData,
-    QueryOpt,
-    RNGValue,
-    Shape,
-    Tag,
+import {
+    type Anchor,
+    type BlendMode,
+    type Canvas,
+    type Comp,
+    type CompList,
+    type Cursor,
+    type EmptyComp,
+    type GameObj,
+    type GetOpt,
+    type KAPLAYOpt,
+    type KAPLAYPlugin,
+    type Key,
+    type KGamepad,
+    type KGamepadButton,
+    type KGamepadStick,
+    type LoadFontOpt,
+    type Mask,
+    type MouseButton,
+    type MusicData,
+    type QueryOpt,
+    type RNGValue,
+    type Shape,
+    type Tag,
 } from "../types";
 import type { TupleWithoutFirst } from "../utils/types";
 import type { Engine } from "./engine";
+import type { OptionalString } from "./taf";
 
 /**
  * Context handle that contains every KAPLAY function.
@@ -191,10 +201,7 @@ import type { Engine } from "./engine";
  *
  * @group Start
  */
-export interface KAPLAYCtx<
-    TButtonDef extends ButtonsDef = {},
-    TButton extends string = string,
-> {
+export interface KAPLAYCtx {
     /**
      * Internal data that should not be accessed directly.
      *
@@ -275,7 +282,7 @@ export interface KAPLAYCtx<
      *
      * addPrefab("bean", [
      *     pos(40, 40)
-     * ])
+     * ]);
      * ```
      *
      * @returns The added game object that contains all properties and methods each component offers.
@@ -554,6 +561,28 @@ export interface KAPLAYCtx<
      * @subgroup Transform
      */
     rotate(a?: number): RotateComp;
+    /**
+     * Set the skew of a Game Object.
+     *
+     * @param x - The x skew to set.
+     * @param y - The y skew to set.
+     *
+     * @example
+     * ```js
+     * // skew x
+     * add([
+     *     sprite("bean"),
+     * 	   skew(45, 0),
+     * ]);
+     * ```
+     *
+     * @returns The skew comp.
+     * @since v4000.0
+     * @group Components
+     * @subgroup Transform
+     */
+    skew(x: number, y: number): SkewComp;
+    skew(s: Vec2): SkewComp;
     // #endregion
     /**
      * Sets the color of a Game Object (rgb 0-255).
@@ -577,9 +606,111 @@ export interface KAPLAYCtx<
      * @subgroup Rendering
      */
     color(r: number, g: number, b: number): ColorComp;
+    /**
+     * Sets the color of a Game Object using a previously created Color Object.
+     *
+     * @param c - The color to clone and set.
+     *
+     * @example
+     * ```js
+     * // blue frog
+     * const blue = rgb(0, 0, 255);
+     *
+     * add([
+     *     sprite("bean"),
+     *     color(blue),
+     * ]);
+     * ```
+     *
+     * @returns The color comp.
+     * @since v2000.0
+     * @group Components
+     * @subgroup Rendering
+     */
     color(c: Color): ColorComp;
+    /**
+     * Sets the color of a Game Object using an array (rgb 0-255).
+     *
+     * @param rgb - The color array to set [r, g, b].
+     *
+     * @example
+     * ```js
+     * // blue frog
+     * add([
+     *     sprite("bean"),
+     *     color([0, 0, 255]),
+     * ]);
+     * ```
+     *
+     * @returns The color comp.
+     * @since v2000.0
+     * @group Components
+     * @subgroup Rendering
+     */
     color(rgb: [number, number, number]): ColorComp;
-    color(c: CSSColor & (string | {})): ColorComp;
+    /**
+     * Sets the color of a Game Object using a CSS color keywords or hexadecimal string.
+     *
+     * @param c - The CSS color keyword or hexadecimal code to set.
+     *
+     * @example
+     * ```js
+     * // blue frog (HEX)
+     * add([
+     *     sprite("bean"),
+     *     color("#0000ff"),
+     * ]);
+     *
+     * // red cheese (CSS)
+     * add([
+     *     sprite("mark"),
+     *     color("red"),
+     * ]);
+     * ```
+     *
+     * @returns The color comp.
+     * @since v2000.0
+     * @group Components
+     * @subgroup Rendering
+     */
+    color(c: OptionalString<CSSColorKeywords>): ColorComp;
+    /**
+     * Sets the color of a Game Object using a hexadecimal literal number.
+     *
+     * @param c - The hexadecimal literal number.
+     *
+     * @example
+     * ```js
+     * // blue frog
+     * add([
+     *     sprite("bean"),
+     *     color(0x0000ff),
+     * ]);
+     * ```
+     *
+     * @returns The color comp.
+     * @since v2000.0
+     * @group Components
+     * @subgroup Rendering
+     */
+    color(c: number): ColorComp;
+    /**
+     * Sets the color of a Game Object to white (no effect).
+     *
+     * @example
+     * ```js
+     * // normal frog
+     * add([
+     *     sprite("bean"),
+     *     color(),
+     * ]);
+     * ```
+     *
+     * @returns The color comp.
+     * @since v2000.0
+     * @group Components
+     * @subgroup Rendering
+     */
     color(): ColorComp;
     /**
      * Sets the blend mode of a Game Object.
@@ -722,6 +853,35 @@ export interface KAPLAYCtx<
      * @subgroup Rendering
      */
     polygon(pts: Vec2[], opt?: PolygonCompOpt): PolygonComp;
+    /**
+     * Create an outline in the form of a polygon from a sprite object
+     *
+     * @param asset - The name of the sprite you want to generate an outline for
+     * @param frame - The frame of the sprite that the outline should be taken from
+     * @param RDP - Should the function return a simplified polygon
+     * @param epsilon - The amount of the polygon that should be reduced
+     *
+     * @example
+     * ```js
+     * // Create a collider from the sprite
+     * onLoad(() => {
+     *     add([
+     *         sprite("apple"),
+     *         area({shape: getSpriteOutline("apple")}),
+     *         pos(120, 80), // optional position
+     *     ]);
+     * });
+     * ```
+     *
+     * @returns A polygon comp.
+     * // TODO: add since, group and subgroup
+     */
+    getSpriteOutline(
+        asset: string,
+        frame?: number,
+        RDP?: boolean,
+        epsilon?: number,
+    ): Polygon;
     /**
      * Attach and render a rectangle to a Game Object.
      *
@@ -1178,6 +1338,10 @@ export interface KAPLAYCtx<
      * @requires {@link pos `pos()`}
      */
     move(dir: number | Vec2, speed: number): MoveComp;
+    /**
+     * Constraint components
+     */
+    constraint: typeof constraint;
     /**
      * Control the behavior of object when it goes out of view.
      *
@@ -1920,7 +2084,6 @@ export interface KAPLAYCtx<
     /**
      * Register an event that runs when an object is added
      *
-     * @param tag - The tag to match, only called for objects with a matching tag.
      * @param action - The function that runs when an object is added.
      *
      * @example
@@ -2721,54 +2884,10 @@ export interface KAPLAYCtx<
      * @subgroup Mouse
      */
     onScroll(action: (delta: Vec2) => void): KEventController;
-    /**
-     * Register an event that runs when tab is hidden.
-     *
-     * @param action - The function that is run what the tab is hidden.
-     *
-     * @example
-     * ```js
-     * // spooky ghost
-     * let ghosty = add([
-     *     pos(center()),
-     *     sprite("ghosty"),
-     *     anchor("center"),
-     * ]);
-     *
-     * // when switching tabs, this runs
-     * onHide(() => {
-     *     destroy(ghosty);
-     *     add([
-     *         text("There was never aa ghosttttt"),
-     *         pos(center()),
-     *         anchor("center")
-     *     ]);
-     * });
-     * ```
-     *
-     * @returns The event controller.
-     * @since v3001.0
-     * @group Events
-     */
-    onHide(action: () => void): KEventController;
-    /**
-     * Register an event that runs when tab is shown.
-     *
-     * @param action - The function that is run when the tab is shown.
-     *
-     * @example
-     * ```js
-     * // user has returned to this tab
-     * onShow(() => {
-     *     burp();
-     * });
-     * ```
-     *
-     * @returns The event controller.
-     * @since v3001.0
-     * @group Events
-     */
-    onShow(action: () => void): KEventController;
+    onHide: GameEventHandlers["onHide"];
+    onShow: GameEventHandlers["onShow"];
+    onTabShow: GameEventHandlers["onTabShow"];
+    onTabHide: GameEventHandlers["onTabHide"];
     /**
      * Register an event that runs when a gamepad is connected.
      *
@@ -2996,10 +3115,10 @@ export interface KAPLAYCtx<
      * @subgroup Buttons API
      */
     onButtonPress(
-        btn: TButton | TButton[],
-        action: (btn: TButton) => void,
+        btn: string | string[],
+        action: (btn: string) => void,
     ): KEventController;
-    onButtonPress(action: (btn: TButton) => void): KEventController;
+    onButtonPress(action: (btn: string) => void): KEventController;
     /**
      * Register an event that runs when user release a defined button
      * (like "jump") on any input (keyboard, gamepad).
@@ -3013,10 +3132,10 @@ export interface KAPLAYCtx<
      * @subgroup Buttons API
      */
     onButtonRelease(
-        btn: TButton | TButton[],
-        action: (btn: TButton) => void,
+        btn: string | string[],
+        action: (btn: string) => void,
     ): KEventController;
-    onButtonRelease(action: (btn: TButton) => void): KEventController;
+    onButtonRelease(action: (btn: string) => void): KEventController;
     /**
      * Register an event that runs when user press a defined button
      * (like "jump") on any input (keyboard, gamepad).
@@ -3030,10 +3149,10 @@ export interface KAPLAYCtx<
      * @subgroup Buttons API
      */
     onButtonDown(
-        btn: TButton | TButton[],
-        action: (btn: TButton) => void,
+        btn: string | string[],
+        action: (btn: string) => void,
     ): KEventController;
-    onButtonDown(action: (btn: TButton) => void): KEventController;
+    onButtonDown(action: (btn: string) => void): KEventController;
     /**
      * Register an event that runs when current scene ends.
      *
@@ -3874,7 +3993,7 @@ export interface KAPLAYCtx<
      * @group Input
      * @subgroup Buttons API
      */
-    isButtonPressed(btn?: TButton | TButton[]): boolean;
+    isButtonPressed(btn?: string | string[]): boolean;
     /**
      * If any or certain bound button(s) are currently held down on any input (keyboard, gamepad).
      *
@@ -3894,7 +4013,7 @@ export interface KAPLAYCtx<
      * @group Input
      * @subgroup Buttons API
      */
-    isButtonDown(btn?: TButton | TButton[]): boolean;
+    isButtonDown(btn?: string | []): boolean;
     /**
      * If any or certain bound button(s) are just released last frame on any input (keyboard, gamepad).
      *
@@ -3914,7 +4033,7 @@ export interface KAPLAYCtx<
      * @group Input
      * @subgroup Buttons API
      */
-    isButtonReleased(btn?: TButton | TButton[]): boolean;
+    isButtonReleased(btn?: string | string[]): boolean;
     /**
      * Get a input binding from a button name.
      *
@@ -3924,7 +4043,7 @@ export interface KAPLAYCtx<
      * @group Input
      * @subgroup Buttons API
      */
-    getButton(btn: keyof TButtonDef): ButtonBinding;
+    getButton(btn: string): ButtonBinding;
     /**
      * Get all the input bindings.
      *
@@ -3933,7 +4052,7 @@ export interface KAPLAYCtx<
      * @group Input
      * @subgroup Buttons API
      */
-    getButtons(): TButtonDef;
+    getButtons(): ButtonsDef;
     /**
      * Set a input binding for a button name.
      *
@@ -3960,7 +4079,7 @@ export interface KAPLAYCtx<
      * @group Input
      * @subgroup Buttons API
      */
-    pressButton(btn: TButton): void;
+    pressButton(btn: string): void;
     /**
      * Release a button virtually.
      *
@@ -3977,7 +4096,7 @@ export interface KAPLAYCtx<
      * @group Input
      * @subgroup Buttons API
      */
-    releaseButton(btn: TButton): void;
+    releaseButton(btn: string): void;
     /**
      * Get stick axis values from a gamepad.
      *
@@ -3989,6 +4108,17 @@ export interface KAPLAYCtx<
      * @subgroup Gamepad
      */
     getGamepadStick(stick: KGamepadStick): Vec2;
+    /**
+     * Get analog button values from a gamepad.
+     *
+     * @param b - The button to read the analog value from.
+     *
+     * @returns The button analog value.
+     * @since v4000.0
+     * @group Input
+     * @subgroup Gamepad
+     */
+    getGamepadAnalogButton(b: KGamepadButton): number;
     /**
      * Get the latest input device type that triggered the input event.
      *
@@ -4653,9 +4783,9 @@ export interface KAPLAYCtx<
      */
     rgb(hex: string): Color;
     /**
-     * Create a color from CSS name.
+     * Create a color from CSS keyword.
      *
-     * @param cssColor - The CSS name.
+     * @param cssColor - The CSS keyword.
      *
      * @example
      * ```js
@@ -4666,7 +4796,7 @@ export interface KAPLAYCtx<
      * @since v3001.0.10
      * @experimental This feature is in experimental phase, it will be fully released in v3001.1.0
      */
-    rgb(cssColor: CSSColor): Color;
+    rgb(cssColor: CSSColorKeywords): Color;
     /**
      * Same as rgb(255, 255, 255).
      */
@@ -5124,6 +5254,23 @@ export interface KAPLAYCtx<
         continuity: number,
         bias: number,
     ): (t: number) => Vec2;
+    createRegularPolygon(
+        radius: number,
+        sides: number,
+        startAngle: number,
+    ): Vec2[];
+    createStarPolygon(
+        radius1: number,
+        radius2: number,
+        sides: number,
+        startAngle: number,
+    ): Vec2[];
+    createCogPolygon(
+        radius1: number,
+        radius2: number,
+        sides: number,
+        startAngle: number,
+    ): Vec2[];
     /**
      * Check if a line and a point intersect.
      *
@@ -5409,7 +5556,52 @@ export interface KAPLAYCtx<
      */
     RNG: typeof RNG;
     /**
-     * Define a scene.
+     * A rule in a rule system for AI. Note that this is only for advanced scenarios where the default rules are inadequate.
+     *
+     * @since v4000.0
+     * @group Math
+     * @subgroup AI
+     */
+    Rule: typeof Rule;
+    /**
+     * A rule system for AI.
+     *
+     * @since v4000.0
+     * @group Math
+     * @subgroup AI
+     */
+    RuleSystem: typeof RuleSystem;
+    /**
+     * A node in a decision tree for AI.
+     *
+     * @since v4000.0
+     * @group Math
+     * @subgroup AI
+     */
+    DecisionNode: typeof DecisionNode;
+    /**
+     * A decision tree for AI.
+     *
+     * @since v4000.0
+     * @group Math
+     * @subgroup AI
+     */
+    DecisionTree: typeof DecisionTree;
+    /**
+     * A state machine for AI.
+     *
+     * @since v4000.0
+     * @group Math
+     * @subgroup AI
+     */
+    StateMachine: typeof StateMachine;
+    /**
+     * This object serves 2 purposes:
+     *
+     * * When called as a function, it defines a new scene with the
+     *   name and the initializer function.
+     * * It can also be used to register scene-local event handlers
+     *   that will be automatically cancelled when the scene is left.
      *
      * @param name - The scene name.
      * @param def - The scene definition.
@@ -5418,18 +5610,29 @@ export interface KAPLAYCtx<
      * ```js
      * // define a scene
      * scene("game", () => {
-     * // ...
+     *     // ...
      * });
-     *
      * // get options
      * scene("game", (opts) => {
      *     debug.log(opts.level);
      * });
      * ```
+     * @example
+     * ```js
+     * scene("pauseMenu", () => {
+     *     scene.onKeyPress("tab", () => {
+     *         debug.log("go to next menu item");
+     *     });
+     *     scene.onKeyPress("esc", () => {
+     *         // go back to game and cancel menu events
+     *         popScene();
+     *     });
+     * });
+     * ```
      *
      * @group Scenes
      */
-    scene(name: SceneName, def: SceneDef): void;
+    scene: SceneScope;
     /**
      * Go to a scene, passing all rest args to scene callback.
      *
@@ -5448,59 +5651,67 @@ export interface KAPLAYCtx<
      * @since v2000.0
      * @group Scenes
      */
-    go(name: SceneName, ...args: any): void;
+    go(name: string, ...args: any): void;
 
     /**
-     * Push the current active scene to a stack and enters in the new scene
+     * Push the current active scene to a stack and then goes to the new scene
      *
      * @param id - The scene name.
-     * @param args - The args passed to the scene defition.
+     * @param args - The args passed to the scene definition.
      *
      * @example
      * ```js
-     *  add([
-     *    text("this is the first scene", {size: 32 }),
-     *    pos(center()),
-     *  ]);
-     * scene("main", () => {
-     *  add([
-     *    sprite("bean"),
-     *    pos(center()),
-     *  ]);
+     * scene("mainScene", () => {
+     *     add([
+     *         text("this is the first scene", { size: 32 }),
+     *         pos(center()),
+     *     ]);
+     * });
+     * scene("otherScene", () => {
+     *     add([
+     *         sprite("bean"),
+     *         pos(center()),
+     *     ]);
      * });
      *
-     * pushScene("main")
+     * pushScene("mainScene")
      * ```
      *
      * @since v3001.1
      * @group Scenes
+     *
+     * @see {@link popScene}
      */
-    pushScene(id: SceneName, ...args: unknown[]): void;
+    pushScene(id: string, ...args: unknown[]): void;
 
     /**
      * Pops the scene from the stack and set as current active scene.
      *
+     * Only works if the current scene was entered using {@link pushScene}.
+     *
      * @example
      * ```js
-     *  add([
-     *    text("this is the first scene", {size: 32 }),
-     *    pos(center()),
-     *  ]);
-     * scene("main", () => {
-     *  add([
-     *    sprite("bean"),
-     *    pos(center()),
-     *  ]);
+     * scene("mainScene", () => {
+     *     add([
+     *         text("this is the first scene", { size: 32 }),
+     *         pos(center()),
+     *     ]);
+     * });
+     * scene("otherScene", () => {
+     *     add([
+     *         sprite("bean"),
+     *         pos(center()),
+     *     ]);
      * });
      *
-     * go("mainScene");
-     * popScene();  // when triggered the text should appear on the center screen //
+     * pushScene("mainScene");
+     * popScene(); // return to the current scene
      * ```
      *
      * @since v3001.1
      * @group Scenes
      */
-    popScene(id: SceneName, ...args: unknown[]): void;
+    popScene(): void;
     /**
      * Define the layer names. Should be called before any objects are made.
      *
@@ -6132,6 +6343,21 @@ export interface KAPLAYCtx<
      * @group Debug
      */
     debug: Debug;
+    /**
+     * The app scope for creating global events that won't be automatically cancelled
+     * when the scene is changed.
+     *
+     * @example
+     * ```js
+     * app.onKeyPress("f", () => {
+     *     debug.log("i run in every scene from now on");
+     * });
+     *
+     * // will NOT cancel the event
+     * go("someScene");
+     * ```
+     */
+    app: AppScope;
     /**
      * Import a plugin.
      *

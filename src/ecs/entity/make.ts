@@ -4,7 +4,7 @@ import { KEvent, KEventHandler } from "../../events/events";
 import { Mat23 } from "../../math/math";
 import { _k } from "../../shared";
 import type { Comp, CompList, GameObj } from "../../types";
-import { attachAppToGameObjRaw, GameObjRawPrototype } from "./GameObjRaw";
+import { GameObjRawPrototype } from "./GameObjRaw";
 
 /*
 Order of making a game object:
@@ -47,12 +47,6 @@ export function makeInternal<T extends CompList<unknown>>(
     obj.hidden = false;
     obj.id = id;
     obj.transform = new Mat23();
-
-    // We only need to modify the prototype the first time, when we know App
-    // state is available (at the moment of create the root game object)
-    if (id == 0) {
-        attachAppToGameObjRaw();
-    }
 
     // Adding components passed from add([]);
     // We register here: The objects, because you can also pass tags to add().

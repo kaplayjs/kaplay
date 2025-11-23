@@ -8,6 +8,7 @@ import type { Texture } from "../gfx";
 import {
     multRotate,
     multScaleV,
+    multSkewV,
     multTranslate,
     multTranslateV,
     popTransform,
@@ -72,18 +73,11 @@ export function drawUVQuad(opt: DrawUVQuadOpt) {
     const color = opt.color || Color.WHITE;
     const opacity = opt.opacity ?? 1;
 
-    // apply uv padding to avoid artifacts
-    const uvPadX = opt.tex ? UV_PAD / opt.tex.width : 0;
-    const uvPadY = opt.tex ? UV_PAD / opt.tex.height : 0;
-    const qx = q.x + uvPadX;
-    const qy = q.y + uvPadY;
-    const qw = q.w - uvPadX * 2;
-    const qh = q.h - uvPadY * 2;
-
     pushTransform();
     multTranslateV(opt.pos);
     multRotate(opt.angle);
     multScaleV(opt.scale);
+    multSkewV(opt.skew);
     multTranslate(offsetX, offsetY);
 
     drawRaw(
@@ -99,14 +93,14 @@ export function drawUVQuad(opt: DrawUVQuadOpt) {
                 h / 2,
             ],
             uv: [
-                opt.flipX ? qx + qw : qx,
-                opt.flipY ? qy : qy + qh,
-                opt.flipX ? qx + qw : qx,
-                opt.flipY ? qy + qh : qy,
-                opt.flipX ? qx : qx + qw,
-                opt.flipY ? qy + qh : qy,
-                opt.flipX ? qx : qx + qw,
-                opt.flipY ? qy : qy + qh,
+                opt.flipX ? q.x + q.w : q.x,
+                opt.flipY ? q.y : q.y + q.h,
+                opt.flipX ? q.x + q.w : q.x,
+                opt.flipY ? q.y + q.h : q.y,
+                opt.flipX ? q.x : q.x + q.w,
+                opt.flipY ? q.y + q.h : q.y,
+                opt.flipX ? q.x : q.x + q.w,
+                opt.flipY ? q.y : q.y + q.h,
             ],
             color: [
                 color.r,

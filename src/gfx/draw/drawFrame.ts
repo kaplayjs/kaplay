@@ -4,6 +4,10 @@ import { Vec2 } from "../../math/Vec2";
 import { _k } from "../../shared";
 import { center, flush } from "../stack";
 
+export function transformFrame() {
+    _k.game.root.transformTree();
+}
+
 export function drawFrame() {
     // calculate camera matrix
     const cam = _k.game.cam;
@@ -16,6 +20,7 @@ export function drawFrame() {
         .rotateSelf(cam.angle)
         .translateSelfV((cam.pos ?? center()).scale(-1).add(shake));
 
+    _k.app.state.events.trigger("draw");
     _k.game.root.draw();
     flush();
 }

@@ -83,7 +83,11 @@ export type DrawTextOpt = RenderProps & {
  * @group Rendering
  * @subgroup Text
  */
-export type CharTransformFunc = (idx: number, ch: string) => CharTransform;
+export type CharTransformFunc = (
+    idx: number,
+    ch: string,
+    param: string,
+) => CharTransform;
 
 /**
  * Describes how to transform each character.
@@ -104,6 +108,13 @@ export interface CharTransform {
      * Given a 2D vector, it is scaled independently along the X and Y axis.
      */
     scale?: Vec2 | number;
+
+    /**
+     * Skew transformation to skew each of the characters, in degrees of tilt.
+     * When a number, it skews the text to the right as with italic text.
+     * Given a 2D vector, it affects the skew of the horizontal and vertical sides.
+     */
+    skew?: Vec2 | number;
 
     /**
      * Increases the amount of degrees to rotate the text character.

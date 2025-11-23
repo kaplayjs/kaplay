@@ -1,19 +1,9 @@
 {
   "typescript.tsdk": "node_modules/typescript/lib",
   "typescript.preferences.importModuleSpecifierEnding": "minimal",
-  "exportall.config.folderListener": [
-    "/src/app",
-    "/src/assets",
-    "/src/components",
-    "/src/components/draw",
-    "/src/components/level",
-    "/src/components/misc",
-    "/src/components/physics",
-    "/src/components/transform",
-    "/src/ecs/components"
-  ],
   "typescript.preferences.importModuleSpecifier": "shortest",
   "cSpell.words": [
     "KAPLAY"
-  ]
+  ],
+  "dprint.path": "./node_modules/dprint/dprint"
 }

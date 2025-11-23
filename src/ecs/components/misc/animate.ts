@@ -121,6 +121,7 @@ export interface AnimateComp extends Comp {
         paused: boolean;
         /**
          * Move the animation to a specific point in time
+         * @param time - Time to move the animation to in seconds
          */
         seek(time: number): void;
         /**
@@ -128,10 +129,24 @@ export interface AnimateComp extends Comp {
          */
         duration: number;
         /**
-         * Serializes the animation of this object to plain Javascript types
+         * Returns the animation with the specified name
+         * @param name - Name of the animation to retrieve
          */
+        get(name: string): Anim;
+        /**
+         * Play the animation with the specified name
+         * @param name
+         */
+        play(name: string): void;
+        /**
+         * Stop playing the current animation
+         */
+        stop(): void;
     };
-    serializeAnimationChannels(): Record<string, AnimationChannel>;
+    /**
+     * Serializes the animation of this object to plain Javascript types
+     */
+    serializeAnimations(): Record<string, AnimationChannels>;
     /**
      * Serializes the options of this object to plain Javascript types
      */
@@ -498,16 +513,135 @@ type AnimationChannel = {
     keys: AnimationChannelKeys;
 } & AnimationOptions;
 
+type AnimationChannels = Record<string, AnimationChannel>;
+
 type Animation = {
     name: string;
     followMotion?: boolean;
     relative?: boolean;
-    channels?: Record<string, AnimationChannel>;
+    anims?: Record<string, AnimationChannels>;
     children?: Animation[];
 };
 
+class Anim {
+    name: string;
+    opts: AnimateCompOpt;
+    channels: AnimateChannel[] = [];
+    isFinished: boolean = false;
+
+    constructor(name: string, opts: AnimateCompOpt) {
+        this.name = name;
+        this.opts = opts;
+    }
+
+    get duration() {
+        return this.channels.reduce(
+            (acc, channel) => Math.max(channel.duration, acc),
+            0,
+        );
+    }
+
+    // Add channel
+    animate<T extends LerpValue>(
+        name: string,
+        keys: T[],
+        opts: AnimateOpt,
+    ) {
+        this.unanimate(name);
+        if (typeof keys[0] === "number") {
+            this.channels.push(
+                new AnimateChannelNumber(
+                    name,
+                    keys as number[],
+                    opts,
+                    this.opts.relative || false,
+                ),
+            );
+        }
+        else if (keys[0] instanceof Vec2) {
+            this.channels.push(
+                new AnimateChannelVec2(
+                    name,
+                    keys as Vec2[],
+                    opts,
+                    this.opts.relative || false,
+                    name === "pos" && (this.opts.followMotion || false),
+                ),
+            );
+        }
+        else if (keys[0] instanceof Color) {
+            this.channels.push(
+                new AnimateChannelColor(
+                    name,
+                    keys as Color[],
+                    opts,
+                    this.opts.relative || false,
+                ),
+            );
+        }
+    }
+
+    // Remove channel
+    unanimate(name: string) {
+        const index = this.channels.findIndex(c => c.name === name);
+        if (index >= 0) {
+            this.channels.splice(index, 1);
+        }
+    }
+
+    unanimateAll() {
+        this.channels.length = 0;
+    }
+
+    // Play methods
+    play() {
+        this.isFinished = false;
+    }
+
+    stop() {
+        this.isFinished = true;
+    }
+
+    serialize() {
+        return this.channels.reduce(
+            (o: Record<string, AnimationChannel>, c) => {
+                o[c.name] = c.serialize();
+                return o;
+            },
+            {},
+        );
+    }
+
+    // Internal update
+    _update(obj: GameObj<AnimateComp>, t: number) {
+        if (this.isFinished) {
+            return;
+        }
+        let allFinished: boolean = true;
+        let localFinished: boolean;
+        for (const c of this.channels) {
+            localFinished = c.update(obj, t);
+            if (localFinished && !c.isFinished) {
+                c.isFinished = true;
+                obj.trigger(
+                    "animateChannelFinished",
+                    c.name,
+                );
+            }
+            allFinished &&= localFinished;
+        }
+        if (allFinished) {
+            this.isFinished = true;
+            obj.trigger(
+                "animateFinished",
+            );
+        }
+    }
+}
+
 export function animate(gopts: AnimateCompOpt = {}): AnimateComp {
-    const channels: AnimateChannel[] = [];
+    const anims: Anim[] = [];
+    let currentAnim: Anim | null = null;
     let t = 0;
     let isFinished = false;
     return {
@@ -523,18 +657,39 @@ export function animate(gopts: AnimateCompOpt = {}): AnimateComp {
             paused: false,
             seek(time: number) {
                 t = clamp(time, 0, this.duration);
-                channels.forEach(channel => {
-                    channel.isFinished = false;
-                });
-                isFinished = false;
+                if (currentAnim) {
+                    currentAnim.play();
+                }
             },
             get duration() {
-                return channels.reduce(
-                    (acc, channel) => Math.max(channel.duration, acc),
-                    0,
-                );
+                return currentAnim?.duration || 0;
+            },
+            get(name: string): Anim {
+                let anim = anims.find(anim => anim.name === name);
+                if (!anim) {
+                    anim = new Anim(name, gopts);
+                    anims.push(anim);
+                }
+                return anim;
+            },
+            play(name: string = "") {
+                currentAnim = anims.find(anim => anim.name === name) || null;
+                if (!currentAnim) {
+                    throw new Error(
+                        `Trying to play unknown animation called ${name}`,
+                    );
+                }
+                t = 0;
+                currentAnim.play();
+            },
+            stop() {
+                if (currentAnim) {
+                    currentAnim.stop();
+                }
             },
         },
+
+        // Component events
         add(this: GameObj<AnimateComp>) {
             if (gopts.relative) {
                 if (this.has("pos")) {
@@ -544,82 +699,37 @@ export function animate(gopts: AnimateCompOpt = {}): AnimateComp {
                     this.base.angle = (this as any).angle;
                 }
                 if (this.has("scale")) {
-                    this.base.scale = (this as any).scale;
+                    this.base.scale = (this as any).scale.clone();
                 }
                 if (this.has("opacity")) {
                     this.base.opacity = (this as any).opacity;
                 }
             }
         },
-        update() {
-            if (this.animation.paused) return;
-            let allFinished: boolean = true;
-            let localFinished: boolean;
+        update(this: GameObj<AnimateComp>) {
             t += _k.app.dt();
-            for (const c of channels) {
-                localFinished = c.update(this as unknown as GameObj<any>, t);
-                if (localFinished && !c.isFinished) {
-                    c.isFinished = true;
-                    (this as unknown as GameObj<any>).trigger(
-                        "animateChannelFinished",
-                        c.name,
-                    );
-                }
-                allFinished &&= localFinished;
-            }
-            if (allFinished && !isFinished) {
-                isFinished = true;
-                (this as unknown as GameObj<any>).trigger("animateFinished");
+            if (currentAnim || (currentAnim = this.animation.get(""))) {
+                // debug.log(`playing ${currentAnim.name}`)
+                currentAnim._update(this, t);
             }
         },
+
+        // The following methods work on the default animation (named "") for compatibility
         animate<T extends LerpValue>(
             name: string,
             keys: T[],
             opts: AnimateOpt,
         ) {
-            isFinished = false;
-            this.unanimate(name);
-            if (typeof keys[0] === "number") {
-                channels.push(
-                    new AnimateChannelNumber(
-                        name,
-                        keys as number[],
-                        opts,
-                        gopts.relative || false,
-                    ),
-                );
-            }
-            else if (keys[0] instanceof Vec2) {
-                channels.push(
-                    new AnimateChannelVec2(
-                        name,
-                        keys as Vec2[],
-                        opts,
-                        gopts.relative || false,
-                        name === "pos" && (gopts.followMotion || false),
-                    ),
-                );
-            }
-            else if (keys[0] instanceof Color) {
-                channels.push(
-                    new AnimateChannelColor(
-                        name,
-                        keys as Color[],
-                        opts,
-                        gopts.relative || false,
-                    ),
-                );
-            }
+            this.animation.get("").animate(name, keys, opts);
         },
         unanimate(name: string) {
-            const index = channels.findIndex(c => c.name === name);
-            if (index >= 0) {
-                channels.splice(index, 1);
-            }
+            this.animation.get("").unanimate(name);
         },
         unanimateAll() {
-            channels.splice(0, channels.length);
+            this.animation.get("").unanimateAll();
         },
+
+        // Play events
         onAnimateFinished(cb: () => void) {
             return (this as unknown as GameObj<any>).on("animateFinished", cb);
         },
@@ -629,9 +739,11 @@ export function animate(gopts: AnimateCompOpt = {}): AnimateComp {
                 cb,
             );
         },
-        serializeAnimationChannels() {
-            return channels.reduce((o: Record<string, AnimationChannel>, c) => {
-                o[c.name] = c.serialize();
+
+        // Serialization
+        serializeAnimations() {
+            return anims.reduce((o: any, anim) => {
+                o[anim.name] = anim.serialize();
                 return o;
             }, {});
         },
@@ -656,10 +768,11 @@ export function animate(gopts: AnimateCompOpt = {}): AnimateComp {
  * @returns A javascript object serialization of the animation.
  */
 export function serializeAnimation(obj: GameObj<any>, name: string): any {
-    let serialization: Animation = { name: obj.name };
+    let serialization: Animation = { name: obj.name || name };
     if (obj.has("animate")) {
-        serialization.channels = (obj as GameObj<AnimateComp>)
-            .serializeAnimationChannels();
+        serialization.anims = (obj as GameObj<AnimateComp>)
+            .serializeAnimations();
+        console.log(serialization);
         Object.assign(
             serialization,
             (obj as GameObj<NamedComp | AnimateComp>)
@@ -709,14 +822,18 @@ export function applyAnimation(obj: GameObj<any>, animation: Animation) {
         followMotion: animation.followMotion,
         relative: animation.relative,
     }));
-    if (animation.channels) {
-        for (const name in animation.channels) {
-            const channel = animation.channels[name];
-            obj.animate(
-                name,
-                deserializeKeys(channel.keys),
-                deserializeOptions(channel),
-            );
+    if (animation.anims) {
+        for (const name in animation.anims) {
+            const anim = obj.animation.get(name);
+            const propchannels = animation.anims[name];
+            for (const prop in propchannels) {
+                const channel = propchannels[prop];
+                obj.animate(
+                    prop,
+                    deserializeKeys(channel.keys),
+                    deserializeOptions(channel),
+                );
+            }
         }
     }
     if (animation.children) {
