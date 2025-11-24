@@ -2,11 +2,12 @@ import type { AreaComp } from "../../ecs/components/physics/area";
 import type { GameObj } from "../../types";
 import { Rect, vec2 } from "../math";
 import type { Vec2 } from "../Vec2";
+import type { BroadPhaseAlgorithm } from ".";
 
 /**
  * A quadtree structure
  */
-export class Quadtree {
+export class Quadtree implements BroadPhaseAlgorithm {
     bounds: Rect;
     maxObjects: number;
     maxLevels: number;
@@ -353,13 +354,13 @@ export class Quadtree {
      */
     gatherPairs(
         ancestorObjects: Array<GameObj<AreaComp>>,
-        pairs: Array<[GameObj<AreaComp>, GameObj<AreaComp>]>,
+        pairCb: (obj1: GameObj<AreaComp>, obj2: GameObj<AreaComp>) => void,
     ) {
         // The objects in this node potentially collide with each other
         for (let i = 0; i < this.objects.length; i++) {
             // Note that we don't create doubles, since j = i + 1
             for (let j = i + 1; j < this.objects.length; j++) {
-                pairs.push([this.objects[i], this.objects[j]]);
+                pairCb(this.objects[i], this.objects[j]);
             }
         }
 
@@ -367,7 +368,7 @@ export class Quadtree {
         for (let i = 0; i < this.objects.length; i++) {
             // Note that we don't create doubles, since the lists are disjoint
             for (let j = 0; j < ancestorObjects.length; j++) {
-                pairs.push([this.objects[i], ancestorObjects[j]]);
+                pairCb(this.objects[i], ancestorObjects[j]);
             }
         }
 
@@ -376,17 +377,15 @@ export class Quadtree {
             // Add the local objects to the ancestors
             ancestorObjects = ancestorObjects.concat(this.objects);
             for (let i = 0; i < this.nodes.length; i++) {
-                this.nodes[i].gatherPairs(ancestorObjects, pairs);
+                this.nodes[i].gatherPairs(ancestorObjects, pairCb);
             }
         }
     }
 
-    *[Symbol.iterator]() {
-        const pairs: [GameObj<AreaComp>, GameObj<AreaComp>][] = [];
-        this.gatherPairs([], pairs);
-        for (let i = 0; i < pairs.length; i++) {
-            yield pairs[i];
-        }
+    iterPairs(
+        pairCb: (obj1: GameObj<AreaComp>, obj2: GameObj<AreaComp>) => void,
+    ): void {
+        this.gatherPairs([], pairCb);
     }
 }
 
