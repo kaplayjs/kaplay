@@ -375,12 +375,11 @@ export const initApp = (
 
                 if (fixedUpdateAccumulator > state.fixedDt) {
                     state.dt = state.fixedDt;
-                    restAccumulator = state.restDt = 0;
+                    state.restDt = 0;
                     while (fixedUpdateAccumulator > state.fixedDt) {
                         fixedUpdateAccumulator -= state.fixedDt;
                         if (fixedUpdateAccumulator < state.fixedDt) {
-                            restAccumulator += fixedUpdateAccumulator;
-                            state.restDt = fixedUpdateAccumulator;
+                            restAccumulator = state.restDt = fixedUpdateAccumulator;
                         }
                         fixedUpdate();
                     }
@@ -401,7 +400,6 @@ export const initApp = (
                     state.numFrames++;
 
                     update(processInput, resetInput);
-                    restAccumulator = 0;
                 }
             }
             state.loopID = requestAnimationFrame(frame);
