@@ -396,9 +396,10 @@ export function area(opt: AreaCompOpt = {}): AreaComp {
             }
             else {
                 if (!otherOrTag.id) {
-                    throw new Error(
+                    /*throw new Error(
                         "isColliding() requires the object to have an id",
-                    );
+                    );*/
+                    return false;
                 }
                 return Boolean(colliding[otherOrTag.id]);
             }

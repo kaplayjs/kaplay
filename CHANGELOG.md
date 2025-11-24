@@ -28,6 +28,10 @@ best friend, lajbel, can put the correct version name here
 - Added `createCogPolygon()` to create 2D regular cogs - @mflerackers
 - Added `getSpriteOutline()` that takes a sprite asset and returns a polygon
   showing the outline - @milosilo-dev
+- Added Quadtree for collision detection (only for fixed size screen for now,
+  needs expansion) - @mflerackers
+- Added vertical sweep and prune - @mflerackers
+- Added configuration to choose broad phase algorithm - @mflerackers
 
 ### Fixed
 
