@@ -301,7 +301,7 @@ export function body(opt: BodyCompOpt = {}): BodyComp {
 
                     const friction = Math.sqrt(
                         (col.source.friction || 0)
-                            * (col.target.friction || 0),
+                        * (col.target.friction || 0),
                     );
 
                     const projection = this.vel.project(col.normal);
@@ -348,14 +348,15 @@ export function body(opt: BodyCompOpt = {}): BodyComp {
             }
 
             const dt = _k.app.restDt();
-            if (dt) {
+            if (dt && prevPhysicsPos) {
+                const lerpAmount = dt / _k.app.fixedDt();
                 // Check if no external changes were made
                 if (this.pos.x == prevDrawPos.x) {
                     // Interpolate physics steps
                     this.pos.x = lerp(
                         prevPhysicsPos!.x,
                         nextPhysicsPos!.x,
-                        dt / _k.app.fixedDt(),
+                        lerpAmount,
                     );
                     // Copy to check for changes
                     prevDrawPos.x = this.pos.x;
@@ -365,7 +366,7 @@ export function body(opt: BodyCompOpt = {}): BodyComp {
                     this.pos.y = lerp(
                         prevPhysicsPos!.y,
                         nextPhysicsPos!.y,
-                        dt / _k.app.fixedDt(),
+                        lerpAmount,
                     );
                     // Copy to check for changes
                     prevDrawPos.y = this.pos.y;

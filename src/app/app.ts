@@ -348,6 +348,7 @@ export const initApp = (
 
         let fixedUpdateAccumulator = 0;
         let updateAccumulator = 0;
+        let restAccumulator = 0;
 
         const frame = (t: number) => {
             state.loopID = null;
@@ -370,13 +371,15 @@ export const initApp = (
             else {
                 updateAccumulator += observedDt;
                 fixedUpdateAccumulator += observedDt;
+                restAccumulator += observedDt
 
                 if (fixedUpdateAccumulator > state.fixedDt) {
                     state.dt = state.fixedDt;
-                    state.restDt = 0;
+                    restAccumulator = state.restDt = 0;
                     while (fixedUpdateAccumulator > state.fixedDt) {
                         fixedUpdateAccumulator -= state.fixedDt;
                         if (fixedUpdateAccumulator < state.fixedDt) {
+                            restAccumulator += fixedUpdateAccumulator;
                             state.restDt = fixedUpdateAccumulator;
                         }
                         fixedUpdate();
@@ -387,6 +390,7 @@ export const initApp = (
                     state.time += state.dt = desiredDt > 0
                         ? Math.max(desiredDt, observedDt)
                         : observedDt;
+                    state.restDt = restAccumulator;
                     state.fpsCounter.tick(state.dt);
                     if (desiredDt > 0) {
                         updateAccumulator -= desiredDt;
@@ -397,6 +401,7 @@ export const initApp = (
                     state.numFrames++;
 
                     update(processInput, resetInput);
+                    restAccumulator = 0;
                 }
             }
             state.loopID = requestAnimationFrame(frame);
