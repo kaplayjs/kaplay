@@ -371,7 +371,7 @@ export const initApp = (
             else {
                 updateAccumulator += observedDt;
                 fixedUpdateAccumulator += observedDt;
-                restAccumulator += observedDt
+                restAccumulator += observedDt;
 
                 if (fixedUpdateAccumulator > state.fixedDt) {
                     state.dt = state.fixedDt;
