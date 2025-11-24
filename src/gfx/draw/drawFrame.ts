@@ -1,3 +1,4 @@
+import { updateLastTransformVersion } from "../../ecs/entity/GameObjRaw";
 import { lerp } from "../../math/lerp";
 import { rand } from "../../math/math";
 import { Vec2 } from "../../math/Vec2";
@@ -5,7 +6,8 @@ import { _k } from "../../shared";
 import { center, flush } from "../stack";
 
 export function transformFrame() {
-    _k.game.root.transformTree();
+    _k.game.root.transformTree(false);
+    updateLastTransformVersion();
 }
 
 export function drawFrame() {

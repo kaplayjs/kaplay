@@ -436,7 +436,9 @@ export function body(opt: BodyCompOpt = {}): BodyComp {
             this.vel.x *= 1 / (1 + this.damping * _k.app.dt());
             this.vel.y *= 1 / (1 + this.damping * _k.app.dt());
 
-            this.move(this.vel);
+            if (this.vel.x || this.vel.y) {
+                this.move(this.vel);
+            }
 
             // If we need to interpolate physics, prepare interpolation data
             const rDt = _k.app.restDt();
