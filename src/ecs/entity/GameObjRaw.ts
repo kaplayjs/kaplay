@@ -74,12 +74,10 @@ let _lastTransformVersion = 0;
 let _nextTransformVersion = 0;
 
 export function nextTransformVersion() {
-    console.log("nextTransformVersion", _nextTransformVersion);
     return _nextTransformVersion++;
 }
 
 export function updateLastTransformVersion() {
-    console.log("updateLastTransformVersion", _lastTransformVersion);
     return _lastTransformVersion = _nextTransformVersion;
 }
 
