@@ -44,7 +44,7 @@ export class ButtonState<T = string, A = never> {
         private _downEv: keyof AppEventMap | null,
         private _releaseEv: keyof AppEventMap | null,
         private _arg?: A,
-    ) { }
+    ) {}
     update() {
         this.pressed.clear();
         this.released.clear();

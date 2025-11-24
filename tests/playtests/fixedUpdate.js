@@ -17,8 +17,8 @@ if (lag) {
         add([
             sprite("bean"),
             area(),
-            pos(rand(vec2(100)))
-        ])
+            pos(rand(vec2(100))),
+        ]);
     }
 }
 
