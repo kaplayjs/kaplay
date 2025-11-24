@@ -44,7 +44,7 @@ export class ButtonState<T = string, A = never> {
         private _downEv: keyof AppEventMap | null,
         private _releaseEv: keyof AppEventMap | null,
         private _arg?: A,
-    ) {}
+    ) { }
     update() {
         this.pressed.clear();
         this.released.clear();
@@ -346,10 +346,11 @@ export const initApp = (
             cancelAnimationFrame(state.loopID);
         }
 
-        let fixedAccumulatedDt = 0;
-        let accumulatedDt = 0;
+        let fixedUpdateAccumulator = 0;
+        let updateAccumulator = 0;
 
         const frame = (t: number) => {
+            state.loopID = null;
             if (state.stopped) return;
 
             // TODO: allow background actions?
@@ -358,44 +359,46 @@ export const initApp = (
                 return;
             }
 
-            const loopTime = t / 1000;
-            const realDt = Math.min(loopTime - state.realTime, 0.25);
-            const desiredDt = opt.maxFPS ? 1 / opt.maxFPS : 0;
+            const currentTime = t / 1000;
+            const observedDt = Math.min(currentTime - state.realTime, 0.25);
 
-            state.realTime = loopTime;
-            accumulatedDt += realDt;
-            fixedAccumulatedDt += realDt;
+            state.realTime = currentTime;
 
-            if (fixedAccumulatedDt > state.fixedDt) {
-                if (!state.skipTime) {
-                    fixedAccumulatedDt += accumulatedDt;
+            if (state.skipTime) {
+                state.skipTime = false;
+            }
+            else {
+                updateAccumulator += observedDt;
+                fixedUpdateAccumulator += observedDt;
+
+                if (fixedUpdateAccumulator > state.fixedDt) {
                     state.dt = state.fixedDt;
                     state.restDt = 0;
-                    while (fixedAccumulatedDt > state.fixedDt) {
-                        fixedAccumulatedDt -= state.fixedDt;
-                        if (fixedAccumulatedDt < state.fixedDt) {
-                            state.restDt = fixedAccumulatedDt;
+                    while (fixedUpdateAccumulator > state.fixedDt) {
+                        fixedUpdateAccumulator -= state.fixedDt;
+                        if (fixedUpdateAccumulator < state.fixedDt) {
+                            state.restDt = fixedUpdateAccumulator;
                         }
                         fixedUpdate();
                     }
-                    state.restDt = fixedAccumulatedDt;
-                    state.time += state.dt = desiredDt > 0 ? desiredDt : realDt;
+                }
+                const desiredDt = opt.maxFPS ? 1 / opt.maxFPS : 0;
+                if (updateAccumulator > desiredDt) {
+                    state.time += state.dt = desiredDt > 0
+                        ? Math.max(desiredDt, observedDt)
+                        : observedDt;
                     state.fpsCounter.tick(state.dt);
+                    if (desiredDt > 0) {
+                        updateAccumulator -= desiredDt;
+                    }
+                    else {
+                        updateAccumulator = 0;
+                    }
+                    state.numFrames++;
+
+                    update(processInput, resetInput);
                 }
             }
-            if (accumulatedDt > desiredDt) {
-                if (!state.skipTime && desiredDt > 0) {
-                    accumulatedDt -= desiredDt;
-                }
-                else {
-                    accumulatedDt = 0;
-                }
-                state.skipTime = false;
-                state.numFrames++;
-
-                update(processInput, resetInput);
-            }
-
             state.loopID = requestAnimationFrame(frame);
         };
 
