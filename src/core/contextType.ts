@@ -5540,11 +5540,11 @@ export interface KAPLAYCtx {
     /**
      * Make a new quadtree
      *
-     * @param pos The position of the top level node
-     * @param width The width of the top level node
-     * @param height The height of the top level node
-     * @param maxObjects The maximum amount of objects per node before splitting
-     * @param maxLevels The maximum amount of levels
+     * @param pos - The position of the top level node
+     * @param width - The width of the top level node
+     * @param height - The height of the top level node
+     * @param maxObjects - The maximum amount of objects per node before splitting
+     * @param maxLevels - The maximum amount of levels
      */
     makeQuadtree(
         pos: Vec2,
