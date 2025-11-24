@@ -17,10 +17,10 @@ export class Quadtree implements BroadPhaseAlgorithm {
 
     /**
      * Creates a new quadtree
-     * @param bounds The bounds of this node.
-     * @param maxObjects The maximum amount of objects before triggering a split.
-     * @param maxLevels The maximum amount of levels before no more splits are made.
-     * @param level The current level.
+     * @param bounds - The bounds of this node.
+     * @param maxObjects - The maximum amount of objects before triggering a split.
+     * @param maxLevels - The maximum amount of levels before no more splits are made.
+     * @param level - The current level.
      */
     constructor(
         bounds: Rect,
@@ -94,7 +94,8 @@ export class Quadtree implements BroadPhaseAlgorithm {
 
     /**
      * Returns the quadrant this rect fits in or -1 if it doesn't fit any quadrant
-     * @param rect The rect to test with.
+     * @param rect - The rect to test with.
+     *
      * @returns The index of the quadrant fitting the rect completely, or -1 if none.
      */
     getQuadrant(rect: Rect) {
@@ -127,7 +128,8 @@ export class Quadtree implements BroadPhaseAlgorithm {
 
     /**
      * Returns the quadrants this rect intersects
-     * @param rect The rect to test with. Note that this rect is assumed to be within the node.
+     * @param rect - The rect to test with. Note that this rect is assumed to be within the node.
+     *
      * @returns the list of quadrant indices
      */
     getQuadrants(rect: Rect): number[] {
@@ -162,8 +164,8 @@ export class Quadtree implements BroadPhaseAlgorithm {
 
     /**
      * Inserts the object with the given rectangle
-     * @param obj The object to add
-     * @param bbox The bounding box of the object
+     * @param obj - The object to add
+     * @param bbox - The bounding box of the object
      */
     insert(obj: GameObj<AreaComp>, bbox: Rect): void {
         // If we reached max objects, subdivide and redistribute
@@ -210,7 +212,8 @@ export class Quadtree implements BroadPhaseAlgorithm {
 
     /**
      * Retrieves all objects potentially intersecting the rectangle
-     * @param rect The rect to test with
+     * @param rect - The rect to test with
+     *
      * @returns A set of objects potentially intersecting the rectangle
      */
     retrieve(rect: Rect, objects: GameObj<AreaComp>[]): void {
@@ -226,8 +229,8 @@ export class Quadtree implements BroadPhaseAlgorithm {
 
     /**
      * Removes the object
-     * @param obj The object to remove
-     * @param fast No node collapse if true
+     * @param obj - The object to remove
+     * @param fast - No node collapse if true
      */
     remove(obj: GameObj<AreaComp>, fast = false): boolean {
         let index = this.objects.indexOf(obj);
@@ -254,9 +257,9 @@ export class Quadtree implements BroadPhaseAlgorithm {
     /**
      * Updates a single object
      * Note that no testing is done here. Make sure the object needs to be actually updated.
-     * @param root The tree root, since insertion happens from the root
-     * @param obj The object to update
-     * @param bbox The new bounding box
+     * @param root - The tree root, since insertion happens from the root
+     * @param obj - The object to update
+     * @param bbox - The new bounding box
      */
     updateObject(root: Quadtree, obj: GameObj<AreaComp>, bbox: Rect): void {
         this.remove(obj);
@@ -265,7 +268,7 @@ export class Quadtree implements BroadPhaseAlgorithm {
 
     /**
      * True if the rectangle is completely outside this node's bounds
-     * @param bbox The bounding box to test
+     * @param bbox - The bounding box to test
      */
     isOutside(bbox: Rect) {
         return bbox.pos.x + bbox.width < this.bounds.pos.x
@@ -276,7 +279,7 @@ export class Quadtree implements BroadPhaseAlgorithm {
 
     /**
      * True if the rectangle is completely outside this node's bounds
-     * @param bbox The bounding box to test
+     * @param bbox - The bounding box to test
      */
     isInside(bbox: Rect) {
         return bbox.pos.x >= this.bounds.pos.x
@@ -288,7 +291,7 @@ export class Quadtree implements BroadPhaseAlgorithm {
 
     /**
      * Updates all objects in this node and the objects of its children
-     * @param root The tree root, since insertion happens from the root
+     * @param root - The tree root, since insertion happens from the root
      */
     updateNode(orphans: [GameObj<AreaComp>, Rect][]) {
         let i = 0;
@@ -349,8 +352,8 @@ export class Quadtree implements BroadPhaseAlgorithm {
 
     /**
      * Gathers all collision pairs in this node and child nodes
-     * @param ancestorObjects Objects in one of the node's ancestors
-     * @param pairs The pairs being gathered
+     * @param ancestorObjects - Objects in one of the node's ancestors
+     * @param pairs - The pairs being gathered
      */
     gatherPairs(
         ancestorObjects: Array<GameObj<AreaComp>>,
