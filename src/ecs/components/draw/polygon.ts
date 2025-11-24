@@ -8,6 +8,7 @@ import type { Color } from "../../../math/color";
 import { Polygon } from "../../../math/math";
 import { type Vec2 } from "../../../math/Vec2";
 import type { Comp, GameObj } from "../../../types";
+import { nextRenderAreaVersion } from "../physics/area";
 
 /**
  * The {@link polygon `polygon()`} component.
@@ -47,6 +48,7 @@ export interface PolygonComp extends Comp {
      */
     tex?: Texture;
     renderArea(): Polygon;
+    renderAreaVersion: number;
 }
 
 /**
@@ -84,8 +86,11 @@ export function polygon(pts: Vec2[], opt: PolygonCompOpt = {}): PolygonComp {
             }));
         },
         renderArea(this: GameObj<PolygonComp>) {
+            // TODO: caching
+            this.renderAreaVersion = nextRenderAreaVersion();
             return new Polygon(this.pts);
         },
+        renderAreaVersion: 0,
         inspect() {
             return `polygon: ${this.pts.map(p => `[${p.x},${p.y}]`).join(",")}`;
         },

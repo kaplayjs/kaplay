@@ -17,6 +17,7 @@ import { Quad, quad, Rect, vec2 } from "../../../math/math";
 import { type Vec2 } from "../../../math/Vec2";
 import { _k } from "../../../shared";
 import type { Comp, GameObj, SpriteAnimPlayOpt } from "../../../types";
+import { nextRenderAreaVersion } from "../physics/area";
 
 /**
  * The serialized {@link sprite `sprite()`} component.
@@ -135,7 +136,7 @@ export interface SpriteComp extends Comp {
      * @since v3000.0
      */
     renderArea(): Rect;
-
+    renderAreaVersion: number;
     serialize(): SerializedSpriteComp;
 }
 
@@ -300,15 +301,21 @@ export function sprite(
             return _width;
         },
         set width(value) {
-            _width = value;
-            if (_shape) _shape.width = value;
+            if (_width != value) {
+                _width = value;
+                if (_shape) _shape.width = value;
+                this.renderAreaVersion = nextRenderAreaVersion();
+            }
         },
         get height() {
             return _height;
         },
         set height(value) {
-            _height = value;
-            if (_shape) _shape.height = value;
+            if (_height != value) {
+                _height = value;
+                if (_shape) _shape.height = value;
+                this.renderAreaVersion = nextRenderAreaVersion();
+            }
         },
         frame: opt.frame || 0,
         quad: opt.quad || new Quad(0, 0, 1, 1),
@@ -533,7 +540,7 @@ export function sprite(
                     pingpong: false,
                     speed: 0,
                     frameIndex: 0,
-                    onEnd: () => {},
+                    onEnd: () => { },
                 }
                 : {
                     name: name,
@@ -542,7 +549,7 @@ export function sprite(
                     pingpong: opt.pingpong ?? anim.pingpong ?? false,
                     speed: opt.speed ?? anim.speed ?? 10,
                     frameIndex: 0,
-                    onEnd: opt.onEnd ?? (() => {}),
+                    onEnd: opt.onEnd ?? (() => { }),
                 };
 
             curAnimDir = typeof anim === "number" ? null : 1;
@@ -597,9 +604,12 @@ export function sprite(
         renderArea() {
             if (!_shape) {
                 _shape = new Rect(vec2(0), _width, _height);
+                this.renderAreaVersion = nextRenderAreaVersion();
             }
             return _shape;
         },
+
+        renderAreaVersion: 0,
 
         inspect() {
             if (typeof src === "string") {

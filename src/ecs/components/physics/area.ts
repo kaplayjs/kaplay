@@ -28,6 +28,27 @@ export function usesArea() {
     return _k.game.areaCount > 0;
 }
 
+let _nextRenderAreaVersion = 0;
+
+export function nextRenderAreaVersion() {
+    return _nextRenderAreaVersion++;
+}
+
+let _lastAreaVersion = 0;
+let _nextAreaVersion = 0;
+
+export function nextAreaVersion() {
+    return _nextAreaVersion++;
+}
+
+export function updateLastAreaVersion() {
+    return _lastAreaVersion = _nextAreaVersion;
+}
+
+export function areaNeedsUpdate(version: number) {
+    return version >= _lastAreaVersion;
+}
+
 /**
  * The {@link area `area()`} component.
  *
@@ -614,11 +635,10 @@ export function area(opt: AreaCompOpt = {}): AreaComp {
                 return `area: ${this.area.scale?.x?.toFixed(1)}x`;
             }
             else {
-                return `area: (${
-                    this.area.scale?.x?.toFixed(
-                        1,
-                    )
-                }x, ${this.area.scale.y?.toFixed(1)}y)`;
+                return `area: (${this.area.scale?.x?.toFixed(
+                    1,
+                )
+                    }x, ${this.area.scale.y?.toFixed(1)}y)`;
             }
         },
 
