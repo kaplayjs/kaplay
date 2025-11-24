@@ -379,7 +379,9 @@ export const initApp = (
                     while (fixedUpdateAccumulator > state.fixedDt) {
                         fixedUpdateAccumulator -= state.fixedDt;
                         if (fixedUpdateAccumulator < state.fixedDt) {
-                            restAccumulator = state.restDt = fixedUpdateAccumulator;
+                            restAccumulator =
+                                state.restDt =
+                                    fixedUpdateAccumulator;
                         }
                         fixedUpdate();
                     }
