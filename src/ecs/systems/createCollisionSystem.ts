@@ -5,6 +5,7 @@ import { gjkShapeIntersection } from "../../math/gjk";
 import { Rect, vec2 } from "../../math/math";
 import { minkowskiRectShapeIntersection } from "../../math/minkowski";
 import { satShapeIntersection } from "../../math/sat";
+import type { BroadPhaseAlgorithm } from "../../math/spatial";
 import { Quadtree } from "../../math/spatial/quadtree";
 import {
     SweepAndPruneHorizontal,
@@ -24,7 +25,7 @@ export const createCollisionSystem = (
         narrow?: NarrowPhaseType;
     } = {},
 ) => {
-    const broadPhaseIntersection = broad === "sap"
+    const broadPhaseIntersection: BroadPhaseAlgorithm = broad === "sap"
         ? new SweepAndPruneHorizontal()
         : broad === "sapv"
         ? new SweepAndPruneVertical()
@@ -73,10 +74,6 @@ export const createCollisionSystem = (
     let broadInit = false;
 
     function broadPhase() {
-        if (!usesArea()) {
-            return;
-        }
-
         if (!broadInit) {
             broadInit = true;
             onAdd(obj => {
@@ -110,9 +107,7 @@ export const createCollisionSystem = (
         }
 
         broadPhaseIntersection.update();
-        for (const [obj1, obj2] of broadPhaseIntersection) {
-            narrowPhase(obj1, obj2);
-        }
+        broadPhaseIntersection.iterPairs(narrowPhase);
     }
 
     function checkFrame() {

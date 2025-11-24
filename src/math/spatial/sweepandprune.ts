@@ -2,6 +2,7 @@ import type { AreaComp } from "../../ecs/components/physics/area";
 import { isPaused } from "../../ecs/entity/utils";
 import type { GameObj } from "../../types";
 import { calcTransform } from "../various";
+import type { BroadPhaseAlgorithm } from ".";
 
 /**
  * Left or right edge of an object's bbox
@@ -23,7 +24,7 @@ class SapEdgeHorizontal {
  *
  * @ignore
  */
-export class SweepAndPruneHorizontal {
+export class SweepAndPruneHorizontal implements BroadPhaseAlgorithm {
     edges: Array<SapEdgeHorizontal>;
     objects: Map<GameObj<AreaComp>, [SapEdgeHorizontal, SapEdgeHorizontal]>;
 
@@ -99,7 +100,9 @@ export class SweepAndPruneHorizontal {
     /**
      * Iterates all object pairs which potentially collide
      */
-    *[Symbol.iterator]() {
+    iterPairs(
+        pairCb: (obj1: GameObj<AreaComp>, obj2: GameObj<AreaComp>) => void,
+    ) {
         const touching = new Set<GameObj<AreaComp>>();
 
         for (const edge of this.edges) {
@@ -107,7 +110,7 @@ export class SweepAndPruneHorizontal {
                 if (!shouldIgnore(edge.obj)) {
                     for (const obj of touching) {
                         if (!shouldIgnore(obj)) {
-                            yield [obj, edge.obj];
+                            pairCb(obj, edge.obj);
                         }
                     }
                 }
@@ -140,7 +143,7 @@ class SapEdgeVertical {
  *
  * @ignore
  */
-export class SweepAndPruneVertical {
+export class SweepAndPruneVertical implements BroadPhaseAlgorithm {
     edges: Array<SapEdgeVertical>;
     objects: Map<GameObj<AreaComp>, [SapEdgeVertical, SapEdgeVertical]>;
 
@@ -216,7 +219,9 @@ export class SweepAndPruneVertical {
     /**
      * Iterates all object pairs which potentially collide
      */
-    *[Symbol.iterator]() {
+    iterPairs(
+        pairCb: (obj1: GameObj<AreaComp>, obj2: GameObj<AreaComp>) => void,
+    ): void {
         const touching = new Set<GameObj<AreaComp>>();
 
         for (const edge of this.edges) {
@@ -224,7 +229,7 @@ export class SweepAndPruneVertical {
                 if (!shouldIgnore(edge.obj)) {
                     for (const obj of touching) {
                         if (!shouldIgnore(obj)) {
-                            yield [obj, edge.obj];
+                            pairCb(obj, edge.obj);
                         }
                     }
                 }
