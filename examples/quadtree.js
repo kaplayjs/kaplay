@@ -13,7 +13,7 @@ function drawNode(node) {
         outline: {
             color: RED,
             width: 2,
-        }
+        },
     });
     for (const n of node.nodes) {
         drawNode(n);
@@ -21,8 +21,8 @@ function drawNode(node) {
 }
 
 onDraw(() => {
-    drawNode(quadtree)
-})
+    drawNode(quadtree);
+});
 
 onLoad(() => {
     for (let i = 0; i < 64; i++) {
@@ -45,11 +45,11 @@ onLoad(() => {
                         outline: {
                             color: RED,
                             width: 2,
-                        }
+                        },
                     });
                     popTransform();
-                }
-            }
+                },
+            },
         ]);
 
         quadtree.add(obj);
@@ -75,12 +75,12 @@ onMouseDown(() => {
             }
         });
     }
-})
+});
 
 onMouseMove((pos, dpos) => {
     if (selection.length) {
         selection.forEach(obj => {
-            obj.pos = obj.pos.add(dpos)
+            obj.pos = obj.pos.add(dpos);
         });
         quadtree.update();
     }
@@ -96,7 +96,7 @@ onMouseMove((pos, dpos) => {
             bean.color = RED;
         });
     }
-})
+});
 
 onMouseRelease(() => {
     selection.length = 0;

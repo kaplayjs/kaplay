@@ -10,6 +10,7 @@
 kaplay({
     background: [141, 183, 255],
     narrowPhaseCollisionAlgorithm: "sat",
+    broadPhaseCollisionAlgorithm: "sap",
 });
 
 // load assets

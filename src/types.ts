@@ -4,7 +4,10 @@ import type { ShaderData, Uniform } from "./assets/shader";
 import type { KAPLAYCtx } from "./core/contextType";
 import type { TypesOpt } from "./core/taf";
 import type { GameObjRaw } from "./ecs/entity/GameObjRaw";
-import type { BroadPhaseType, NarrowPhaseType } from "./ecs/systems/createCollisionSystem";
+import type {
+    BroadPhaseType,
+    NarrowPhaseType,
+} from "./ecs/systems/createCollisionSystem";
 import type { LineCap, LineJoin } from "./gfx/draw/drawLine";
 import type { Picture } from "./gfx/draw/drawPicture";
 import type { FrameBuffer } from "./gfx/FrameBuffer";
@@ -386,12 +389,12 @@ export interface KAPLAYOpt {
      */
     inspectOnlyActive?: boolean;
     /**
-     * Which strategy to use for narrow phase collision, gjk or sat
-     * @default "gjk"
+     * Which strategy to use for broad phase collision, sap, sapv or quadtree
+     * @default "sap"
      */
     broadPhaseCollisionAlgorithm?: BroadPhaseType;
     /**
-     * Which strategy to use for narrow phase collision, gjk or sat
+     * Which strategy to use for narrow phase collision, gjk, sat or box
      * @default "gjk"
      */
     narrowPhaseCollisionAlgorithm?: NarrowPhaseType;

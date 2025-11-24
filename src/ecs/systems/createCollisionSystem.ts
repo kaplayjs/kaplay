@@ -1,33 +1,43 @@
 import { onAdd, onDestroy, onUnuse, onUse } from "../../events/globalEvents";
 import { onSceneLeave } from "../../game/scenes";
+import { height, width } from "../../gfx/stack";
 import { gjkShapeIntersection } from "../../math/gjk";
+import { Rect, vec2 } from "../../math/math";
 import { minkowskiRectShapeIntersection } from "../../math/minkowski";
 import { satShapeIntersection } from "../../math/sat";
-import { SweepAndPrune } from "../../math/spatial/sweepandprune";
 import { Quadtree } from "../../math/spatial/quadtree";
+import {
+    SweepAndPruneHorizontal,
+    SweepAndPruneVertical,
+} from "../../math/spatial/sweepandprune";
 import { _k } from "../../shared";
 import type { GameObj } from "../../types";
 import { type AreaComp, usesArea } from "../components/physics/area";
 import { Collision } from "./Collision";
-import { Rect, vec2 } from "../../math/math";
-import { height, width } from "../../gfx/stack";
 
-export type BroadPhaseType = "sap" | "quadtree";
+export type BroadPhaseType = "sap" | "sapv" | "quadtree";
 export type NarrowPhaseType = "gjk" | "sat" | "box";
 
-export const createCollisionSystem = ({ broad = "sap", narrow = "gjk" }: { broad?: BroadPhaseType, narrow?: NarrowPhaseType } = {}) => {
+export const createCollisionSystem = (
+    { broad = "sap", narrow = "gjk" }: {
+        broad?: BroadPhaseType;
+        narrow?: NarrowPhaseType;
+    } = {},
+) => {
     const broadPhaseIntersection = broad === "sap"
-        ? new SweepAndPrune()
+        ? new SweepAndPruneHorizontal()
+        : broad === "sapv"
+        ? new SweepAndPruneVertical()
         : broad === "quadtree"
-            ? new Quadtree(new Rect(vec2(0, 0), width(), height()), 256, 8)
-            : new SweepAndPrune()
+        ? new Quadtree(new Rect(vec2(0, 0), width(), height()), 256, 8)
+        : new SweepAndPruneHorizontal();
     const narrowPhaseIntersection = narrow === "gjk"
         ? gjkShapeIntersection
         : narrow === "sat"
-            ? satShapeIntersection
-            : narrow === "box"
-                ? minkowskiRectShapeIntersection
-                : gjkShapeIntersection;
+        ? satShapeIntersection
+        : narrow === "box"
+        ? minkowskiRectShapeIntersection
+        : gjkShapeIntersection;
 
     function narrowPhase(
         obj: GameObj<AreaComp>,
