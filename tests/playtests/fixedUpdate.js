@@ -8,8 +8,7 @@
 // @ts-check
 
 kaplay({
-    fixedUpdateMode: "potato",
-    maxFPS: 100000,
+    fixedUpdateMode: "ludicrous",
 });
 debug.inspect = true;
 
@@ -25,24 +24,23 @@ if (lag) {
     }
 }
 
-class DtCounter {
-    constructor() {
-        this.timing = new Array(10).fill(0);
-        this.i = 0;
-        this.accumulator = 0;
-    }
+class FPSCounter {
+    win = 10;
+    history = new Array(this.win).fill(0);
+    accumulator = 0;
+    i = 0;
+    fps = 0;
+    count = 0;
     tick(dt) {
-        this.accumulator += dt;
-        this.accumulator -= this.timing[this.i];
-        this.timing[this.i] = dt;
-        this.i = (this.i + 1) % this.timing.length;
-    }
-    measureFPS() {
-        return this.timing.length / this.accumulator;
+        this.accumulator += dt - this.history[this.i];
+        this.history[this.i] = dt;
+        this.i = (this.i + 1) % this.win;
+        this.count = Math.min(this.count + 1, this.win);
+        this.fps = this.count / this.accumulator;
     }
 }
 
-const fixCounter = new DtCounter(), normalCounter = new DtCounter();
+const fixCounter = new FPSCounter(), normalCounter = new FPSCounter();
 
 onFixedUpdate(() => {
     fixCounter.tick(dt());
@@ -53,13 +51,15 @@ onUpdate(() => {
     debug.log(
         [
             fixedDt(),
-            fixCounter.measureFPS(),
+            fixCounter.fps,
             dt(),
-            normalCounter.measureFPS(),
+            normalCounter.fps,
         ].map(x => x.toFixed(5)).join(" "),
     );
 });
 
-loop(2, () => {
-    setFixedSpeed(fixedDt() > 0.01 ? "ludicrous" : "friedPotato");
-});
+if (!lag) {
+    loop(2, () => {
+        setFixedSpeed(fixedDt() > 0.01 ? "ludicrous" : "friedPotato");
+    });
+}

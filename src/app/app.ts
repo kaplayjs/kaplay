@@ -106,18 +106,22 @@ class GamepadState {
 }
 
 class FPSCounter {
-    dts: number[] = [];
-    timer: number = 0;
-    fps: number = 0;
+    win = 10;
+    history = new Array(this.win).fill(0);
+    accumulator = 0;
+    i = 0;
+    fps = 0;
+    count = 0;
+    timer = 0;
     tick(dt: number) {
-        this.dts.push(dt);
         this.timer += dt;
+        this.accumulator += dt - this.history[this.i];
+        this.history[this.i] = dt;
+        this.i = (this.i + 1) % this.win;
+        this.count = Math.min(this.count + 1, this.win);
         if (this.timer >= 1) {
+            this.fps = this.count / this.accumulator;
             this.timer = 0;
-            this.fps = Math.round(
-                1 / (this.dts.reduce((a, b) => a + b) / this.dts.length),
-            );
-            this.dts = [];
         }
     }
 }
@@ -172,6 +176,7 @@ export const initAppState = (opt: {
         restDt: 0,
         time: 0,
         realTime: 0,
+        rawFPSCounter: new FPSCounter(),
         fpsCounter: new FPSCounter(),
         timeScale: 1,
         skipTime: false,
@@ -251,6 +256,10 @@ export const initApp = (
 
     function fps() {
         return state.fpsCounter.fps;
+    }
+
+    function rawFPS() {
+        return state.rawFPSCounter.fps;
     }
 
     function numFrames() {
@@ -377,11 +386,10 @@ export const initApp = (
             }
 
             const currentTime = t / 1000;
-            const observedDt = Math.min(
-                currentTime - state.realTime,
-                state.maxStep,
-            );
+            const unclampedDt = currentTime - state.realTime;
+            const observedDt = Math.min(unclampedDt, state.maxStep);
 
+            state.rawFPSCounter.tick(unclampedDt);
             state.realTime = currentTime;
 
             if (state.skipTime) {
@@ -1301,6 +1309,7 @@ export const initApp = (
         run,
         canvas: state.canvas,
         fps,
+        rawFPS,
         setFixedSpeed,
         numFrames,
         quit,
