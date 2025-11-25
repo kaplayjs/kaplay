@@ -640,10 +640,10 @@ export function area(opt: AreaCompOpt = {}): AreaComp {
             const renderAreaVersion = (this as any).renderAreaVersion;
             if (
                 !worldShape
-                || worldTransformVersion != (this as any)._transformVersion
-                || (renderAreaVersion != undefined
-                    && worldRenderShapeVersion != renderAreaVersion) // Shape changed
-                || worldAreaVersion != areaVersion
+                || worldTransformVersion != (this as any)._transformVersion // Transform changed
+                || (renderAreaVersion != undefined // Render area (shape) changed
+                    && worldRenderShapeVersion != renderAreaVersion) // Render area (shape) changed
+                || worldAreaVersion != areaVersion // Area settings changed
             ) { // Area changed
                 const localArea = this.localArea();
 
