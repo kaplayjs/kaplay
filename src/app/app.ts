@@ -2,7 +2,6 @@
 
 import type {
     Cursor,
-    GamepadDef,
     KAPLAYOpt,
     Key,
     KGamepad,
@@ -133,6 +132,18 @@ export type AppEvents = keyof {
     [K in keyof App as K extends `on${any}` ? K : never]: [never];
 };
 
+const fixedSpeeds = {
+    friedPotato: 10,
+    potato: 20,
+    snail: 25,
+    normal: 50,
+    lightspeed: 80,
+    ridiculous: 125,
+    ludicrous: 160,
+};
+
+export type FixedSpeedOption = keyof typeof fixedSpeeds;
+
 /**
  * Create the App state object.
  *
@@ -145,7 +156,8 @@ export type AppEvents = keyof {
 export const initAppState = (opt: {
     canvas: HTMLCanvasElement;
     buttons?: ButtonsDef;
-    fixedFPS?: number;
+    fixedUpdateMode?: FixedSpeedOption;
+    maxTimeStep?: number;
 }) => {
     const buttons = opt.buttons ?? {};
     return {
@@ -155,7 +167,8 @@ export const initAppState = (opt: {
         loopID: null as null | number,
         stopped: false,
         dt: 0,
-        fixedDt: 1 / (opt.fixedFPS ?? 50),
+        fixedDt: 1 / 50,
+        maxStep: opt.maxTimeStep ?? 0.1,
         restDt: 0,
         time: 0,
         realTime: 0,
@@ -214,6 +227,7 @@ export const initApp = (
 
     const state = initAppState(opt);
     parseButtonBindings(state);
+    if (opt.fixedUpdateMode) setFixedSpeed(opt.fixedUpdateMode);
 
     function dt() {
         return state.dt * state.timeScale;
@@ -335,6 +349,12 @@ export const initApp = (
         resizeObserver.disconnect();
     }
 
+    function setFixedSpeed(speed: FixedSpeedOption) {
+        const fps = fixedSpeeds[speed];
+        if (!fps) throw new Error("Unknown fixed speed " + speed);
+        state.fixedDt = 1 / fps;
+    }
+
     function run(
         fixedUpdate: () => void,
         update: (processInput: () => void, resetInput: () => void) => void,
@@ -357,7 +377,10 @@ export const initApp = (
             }
 
             const currentTime = t / 1000;
-            const observedDt = Math.min(currentTime - state.realTime, 0.25);
+            const observedDt = Math.min(
+                currentTime - state.realTime,
+                state.maxStep,
+            );
 
             state.realTime = currentTime;
 
@@ -1278,6 +1301,7 @@ export const initApp = (
         run,
         canvas: state.canvas,
         fps,
+        setFixedSpeed,
         numFrames,
         quit,
         isHidden,

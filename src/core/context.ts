@@ -333,6 +333,7 @@ export const createContext = (
         dt: app.dt,
         fixedDt: app.fixedDt,
         restDt: app.restDt,
+        setFixedSpeed: app.setFixedSpeed,
         time: app.time,
         screenshot: app.screenshot,
         screenshotToBlob: app.screenshotToBlob,

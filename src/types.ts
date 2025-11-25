@@ -1,3 +1,4 @@
+import type { FixedSpeedOption } from "./app/app";
 import type { ButtonsDef } from "./app/inputBindings";
 import type { Asset } from "./assets/asset";
 import type { ShaderData, Uniform } from "./assets/shader";
@@ -352,13 +353,37 @@ export interface KAPLAYOpt {
      * The number of fixedUpdate() events that should happen per second.
      * The fixedUpdate() loop is used for physics.
      * The average user should never need to change this. If you set it too low
-     * then stuff will start behaving very badly. If you set it too high then
+     * then your physics will freak out  due to numerical instability. If you set it too high then
      * the game will lag.
      *
-     * @default 50
+     * The options are:
+     * * friedPotato: 10Hz
+     * * potato: 20Hz
+     * * snail: 25Hz
+     * * normal: 50Hz (default)
+     * * lightspeed: 80Hz
+     * * ridiculous: 125Hz
+     * * ludicrous: 160Hz
+     *
+     * @group Physics
      * @experimental
      */
-    fixedFPS?: number;
+    fixedUpdateMode?: FixedSpeedOption;
+    /**
+     * The maximum amount of time the game will simulate passing in order to
+     * limit lag. If the framerate lags low enough that one frame takes
+     * longer than this time, the game will instead use this as the delta time
+     * value, which means that the game will run slower than 100% speed.
+     * The average user should never need to change this. If you set it too
+     * low, the game will slow down with even the slightest lag, and if you
+     * set it too high then the game could try to do too much on each frame
+     * and amplify the lag problem.
+     *
+     * @default 0.1
+     * @group Physics
+     * @experimental
+     */
+    maxTimeStep?: number;
     /**
      * If focus on the canvas on start (default true).
      *

@@ -7,7 +7,10 @@
  */
 // @ts-check
 
-kaplay();
+kaplay({
+    fixedUpdateMode: "potato",
+    maxFPS: 100000,
+});
 debug.inspect = true;
 
 const lag = false;
@@ -55,4 +58,8 @@ onUpdate(() => {
             normalCounter.measureFPS(),
         ].map(x => x.toFixed(5)).join(" "),
     );
+});
+
+loop(2, () => {
+    setFixedSpeed(fixedDt() > 0.01 ? "ludicrous" : "friedPotato");
 });
