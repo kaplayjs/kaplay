@@ -103,8 +103,9 @@ export function ellipse(
         },
         renderAreaVersion: 0,
         inspect() {
-            return `radiusX: ${Math.ceil(_radiusX)} radiusY: ${Math.ceil(_radiusY)
-                }`;
+            return `radiusX: ${Math.ceil(_radiusX)} radiusY: ${
+                Math.ceil(_radiusY)
+            }`;
         },
         serialize() {
             return {

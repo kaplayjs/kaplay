@@ -18,6 +18,10 @@ import type {
     Shape,
     Tag,
 } from "../../../types";
+import {
+    type InternalGameObjRaw,
+    transformNeedsUpdate,
+} from "../../entity/GameObjRaw";
 import { isFixed } from "../../entity/utils";
 import type { Collision } from "../../systems/Collision";
 import type { AnchorComp } from "../transform/anchor";
@@ -267,10 +271,25 @@ export interface AreaCompOpt {
 }
 
 export function area(opt: AreaCompOpt = {}): AreaComp {
+    // The id => collision map of objects colliding with this object
     const colliding: Record<string, Collision> = {};
+    // The ids of the objects which are colliding with this object during this frame
     const collidingThisFrame = new Set();
+    // Events to cancel in destroy when the component gets removed
     const events: KEventController[] = [];
-    let oldShape: Shape | undefined;
+    // We overwrite the shape rather than allocating a new one
+    let worldShape: Shape | undefined;
+    let screenShape: Shape | undefined;
+
+    let _shape: Shape | null = opt.shape ?? null;
+    let _scale: Vec2 = opt.scale ? vec2(opt.scale) : vec2(1);
+    let _offset: Vec2 = opt.offset ?? vec2(0);
+    let _cursor: Cursor | null = opt.cursor ?? null;
+
+    let areaVersion = 0;
+    let worldTransformVersion = 0;
+    let worldRenderShapeVersion = 0;
+    let worldAreaVersion = 0;
 
     return {
         id: "area",
@@ -362,10 +381,34 @@ export function area(opt: AreaCompOpt = {}): AreaComp {
         },
 
         area: {
-            shape: opt.shape ?? null,
-            scale: opt.scale ? vec2(opt.scale) : vec2(1),
-            offset: opt.offset ?? vec2(0),
-            cursor: opt.cursor ?? null,
+            set shape(value: Shape | null) {
+                _shape = value;
+                areaVersion = nextAreaVersion();
+            },
+            get shape(): Shape | null {
+                return _shape;
+            },
+            set scale(value: Vec2) {
+                _scale = this.scale;
+                areaVersion = nextAreaVersion();
+            },
+            get scale(): Vec2 {
+                return _scale;
+            },
+            set offset(value: Vec2) {
+                _offset = value;
+                areaVersion = nextAreaVersion();
+            },
+            get offset() {
+                return _offset;
+            },
+            set cursor(value: Cursor | null) {
+                _cursor = value;
+                // TODO: attach/detach hover
+            },
+            get cursor(): Cursor | null {
+                return _cursor;
+            },
         },
 
         isClicked(): boolean {
@@ -594,27 +637,43 @@ export function area(opt: AreaCompOpt = {}): AreaComp {
 
         // TODO: cache
         worldArea(this: GameObj<AreaComp | AnchorComp>): Shape {
-            const localArea = this.localArea();
+            const renderAreaVersion = (this as any).renderAreaVersion;
+            if (
+                !worldShape
+                || worldTransformVersion != (this as any)._transformVersion
+                || (renderAreaVersion != undefined
+                    && worldRenderShapeVersion != renderAreaVersion) // Shape changed
+                || worldAreaVersion != areaVersion
+            ) { // Area changed
+                const localArea = this.localArea();
 
-            // World transform
-            const transform = this.transform.clone();
-            // Optional area offset
-            if (this.area.offset.x !== 0 || this.area.offset.y !== 0) {
-                transform.translateSelfV(this.area.offset);
-            }
-            // Optional area scale
-            if (this.area.scale.x !== 1 || this.area.scale.y !== 1) {
-                transform.scaleSelfV(this.area.scale);
-            }
-            // Optional anchor offset (Rect only??)
-            if (localArea instanceof Rect && this.anchor !== "topleft") {
-                const offset = anchorPt(this.anchor || DEF_ANCHOR)
-                    .add(1, 1)
-                    .scale(-0.5 * localArea.width, -0.5 * localArea.height);
-                transform.translateSelfV(offset);
-            }
+                // World transform
+                const transform = this.transform.clone();
+                // Optional area offset
+                if (this.area.offset.x !== 0 || this.area.offset.y !== 0) {
+                    transform.translateSelfV(this.area.offset);
+                }
+                // Optional area scale
+                if (this.area.scale.x !== 1 || this.area.scale.y !== 1) {
+                    transform.scaleSelfV(this.area.scale);
+                }
+                // Optional anchor offset (Rect only??)
+                if (localArea instanceof Rect && this.anchor !== "topleft") {
+                    const offset = anchorPt(this.anchor || DEF_ANCHOR)
+                        .add(1, 1)
+                        .scale(-0.5 * localArea.width, -0.5 * localArea.height);
+                    transform.translateSelfV(offset);
+                }
 
-            return oldShape = localArea.transform(transform, oldShape);
+                worldShape = localArea.transform(transform, worldShape);
+
+                worldTransformVersion = (this as any)._transformVersion;
+                worldRenderShapeVersion = renderAreaVersion ?? 0;
+                worldAreaVersion = areaVersion;
+
+                // console.log(`${this.id} changed ${worldTransformVersion}, ${worldRenderShapeVersion}, ${worldAreaVersion}`);
+            }
+            return worldShape;
         },
 
         screenArea(this: GameObj<AreaComp | FixedComp>): Shape {
@@ -623,9 +682,9 @@ export function area(opt: AreaCompOpt = {}): AreaComp {
                 return area;
             }
             else {
-                return oldShape = area.transform(
+                return screenShape = area.transform(
                     _k.game.cam.transform,
-                    oldShape,
+                    screenShape,
                 );
             }
         },
@@ -635,10 +694,11 @@ export function area(opt: AreaCompOpt = {}): AreaComp {
                 return `area: ${this.area.scale?.x?.toFixed(1)}x`;
             }
             else {
-                return `area: (${this.area.scale?.x?.toFixed(
-                    1,
-                )
-                    }x, ${this.area.scale.y?.toFixed(1)}y)`;
+                return `area: (${
+                    this.area.scale?.x?.toFixed(
+                        1,
+                    )
+                }x, ${this.area.scale.y?.toFixed(1)}y)`;
             }
         },
 
