@@ -144,11 +144,8 @@ export type AppEvents = keyof {
  */
 export const initAppState = (opt: {
     canvas: HTMLCanvasElement;
-    touchToMouse?: boolean;
-    gamepads?: Record<string, GamepadDef>;
-    pixelDensity?: number;
-    maxFPS?: number;
     buttons?: ButtonsDef;
+    fixedFPS?: number;
 }) => {
     const buttons = opt.buttons ?? {};
     return {
@@ -158,7 +155,7 @@ export const initAppState = (opt: {
         loopID: null as null | number,
         stopped: false,
         dt: 0,
-        fixedDt: 1 / 50,
+        fixedDt: 1 / (opt.fixedFPS ?? 50),
         restDt: 0,
         time: 0,
         realTime: 0,
