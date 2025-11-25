@@ -348,7 +348,6 @@ export const initApp = (
 
         let fixedUpdateAccumulator = 0;
         let updateAccumulator = 0;
-        let restAccumulator = 0;
 
         const frame = (t: number) => {
             state.loopID = null;
@@ -371,7 +370,6 @@ export const initApp = (
             else {
                 updateAccumulator += observedDt;
                 fixedUpdateAccumulator += observedDt;
-                restAccumulator += observedDt;
 
                 if (fixedUpdateAccumulator > state.fixedDt) {
                     state.dt = state.fixedDt;
@@ -379,9 +377,7 @@ export const initApp = (
                     while (fixedUpdateAccumulator > state.fixedDt) {
                         fixedUpdateAccumulator -= state.fixedDt;
                         if (fixedUpdateAccumulator < state.fixedDt) {
-                            restAccumulator =
-                                state.restDt =
-                                    fixedUpdateAccumulator;
+                            state.restDt = fixedUpdateAccumulator;
                         }
                         fixedUpdate();
                     }
@@ -391,7 +387,7 @@ export const initApp = (
                     state.time += state.dt = desiredDt > 0
                         ? Math.max(desiredDt, observedDt)
                         : observedDt;
-                    state.restDt = restAccumulator;
+                    state.restDt = fixedUpdateAccumulator;
                     state.fpsCounter.tick(state.dt);
                     if (desiredDt > 0) {
                         updateAccumulator -= desiredDt;
