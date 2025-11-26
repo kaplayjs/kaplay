@@ -266,12 +266,16 @@ export const constraint = {
                         const transform = this.parent?.transform.inverse.mul(
                             this.transform,
                         );
-                        this.pos.x = transform.e;
-                        this.pos.y = transform.f;
+                        const p = this.pos;
+                        p.x = transform.e;
+                        p.y = transform.f;
+                        this.pos = p;
                     }
                     else {
-                        this.pos.x = this.transform.e;
-                        this.pos.y = this.transform.f;
+                        const p = this.pos;
+                        p.x = this.transform.e;
+                        p.y = this.transform.f;
+                        this.pos = p;
                     }
                 }
             },
@@ -315,12 +319,16 @@ export const constraint = {
                     const transform = this.parent?.transform.inverse.mul(
                         this.transform,
                     );
-                    this.pos.x = transform.e;
-                    this.pos.y = transform.f;
+                    const p = this.pos;
+                    p.x = transform.e;
+                    p.y = transform.f;
+                    this.pos = p;
                 }
                 else {
-                    this.pos.x = this.transform.e;
-                    this.pos.y = this.transform.f;
+                    const p = this.pos;
+                    p.x = this.transform.e;
+                    p.y = this.transform.f;
+                    this.pos = p;
                 }
             },
         };
