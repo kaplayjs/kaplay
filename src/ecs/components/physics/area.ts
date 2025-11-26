@@ -210,6 +210,10 @@ export interface AreaComp extends Comp {
      */
     worldArea(): Shape;
     /**
+     * Get the bounding box of the geometry data for the collider in world coordinate space.
+     */
+    worldBbox(): Rect;
+    /**
      * Get the geometry data for the collider in screen coordinate space.
      */
     screenArea(): Shape;
@@ -290,6 +294,7 @@ export function area(opt: AreaCompOpt = {}): AreaComp {
     let worldTransformVersion = 0;
     let worldRenderShapeVersion = 0;
     let worldAreaVersion = 0;
+    let _worldBBox: Rect | null = null;
 
     return {
         id: "area",
@@ -670,10 +675,18 @@ export function area(opt: AreaCompOpt = {}): AreaComp {
                 worldTransformVersion = (this as any)._transformVersion;
                 worldRenderShapeVersion = renderAreaVersion ?? 0;
                 worldAreaVersion = areaVersion;
+                _worldBBox = null;
 
                 // console.log(`${this.id} changed ${worldTransformVersion}, ${worldRenderShapeVersion}, ${worldAreaVersion}`);
             }
             return worldShape;
+        },
+
+        worldBbox(this: GameObj<AreaComp>): Rect {
+            if (!_worldBBox) {
+                _worldBBox = this.worldArea().bbox();
+            }
+            return _worldBBox;
         },
 
         screenArea(this: GameObj<AreaComp | FixedComp>): Shape {

@@ -176,7 +176,7 @@ export class Quadtree implements BroadPhaseAlgorithm {
                 let j = 0;
                 for (let i = 0; i < this.objects.length; i++) {
                     const obj = this.objects[i];
-                    const bbox = obj.screenArea().bbox();
+                    const bbox = obj.worldBbox();
                     const index = this.getQuadrant(bbox);
                     if (index !== -1) {
                         this.nodes[index].insert(obj, bbox);
@@ -207,7 +207,7 @@ export class Quadtree implements BroadPhaseAlgorithm {
      * @param obj - The object to add
      */
     add(obj: GameObj<AreaComp>) {
-        this.insert(obj, obj.screenArea().bbox());
+        this.insert(obj, obj.worldBbox());
     }
 
     /**
@@ -297,7 +297,7 @@ export class Quadtree implements BroadPhaseAlgorithm {
         let i = 0;
         while (i < this.objects.length) {
             const obj = this.objects[i];
-            const bbox = obj.screenArea().bbox();
+            const bbox = obj.worldBbox();
             // If the object is outside the bounds, remove it and add it to the root later
             if (!this.isInside(bbox)) {
                 orphans.push([obj, bbox]);

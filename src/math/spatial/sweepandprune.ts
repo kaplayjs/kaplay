@@ -74,7 +74,7 @@ export class SweepAndPruneHorizontal implements BroadPhaseAlgorithm {
         for (const [obj, edges] of this.objects.entries()) {
             if (shouldIgnore(obj)) continue;
             calcTransform(obj, obj.transform);
-            const bbox = obj.worldArea().bbox();
+            const bbox = obj.worldBbox();
             edges[0].x = bbox.pos.x;
             edges[1].x = bbox.pos.x + bbox.width;
         }
@@ -193,7 +193,7 @@ export class SweepAndPruneVertical implements BroadPhaseAlgorithm {
         for (const [obj, edges] of this.objects.entries()) {
             if (shouldIgnore(obj)) continue;
             calcTransform(obj, obj.transform);
-            const bbox = obj.worldArea().bbox();
+            const bbox = obj.worldBbox();
             edges[0].y = bbox.pos.y;
             edges[1].y = bbox.pos.y + bbox.height;
         }

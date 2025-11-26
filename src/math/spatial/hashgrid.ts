@@ -39,8 +39,7 @@ class HashGrid {
      */
     *[Symbol.iterator]() {
         for (const obj of this.objects) {
-            const area = obj.worldArea();
-            const bbox = area.bbox();
+            const bbox = obj.worldBbox();
 
             // Get spatial hash grid coverage
             const xMin = Math.floor(bbox.pos.x / this.cellSize);
