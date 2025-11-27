@@ -53,6 +53,12 @@ export function areaNeedsUpdate(version: number) {
     return version >= _lastAreaVersion;
 }
 
+let _nextWorldAreaVersion = 0;
+
+export function nextWorldAreaVersion() {
+    return _nextWorldAreaVersion++;
+}
+
 /**
  * The {@link area `area()`} component.
  *
@@ -282,19 +288,21 @@ export function area(opt: AreaCompOpt = {}): AreaComp {
     // Events to cancel in destroy when the component gets removed
     const events: KEventController[] = [];
     // We overwrite the shape rather than allocating a new one
-    let worldShape: Shape | undefined;
-    let screenShape: Shape | undefined;
+    let _worldShape: Shape | undefined;
+    let _screenShape: Shape | undefined;
 
     let _shape: Shape | null = opt.shape ?? null;
     let _scale: Vec2 = opt.scale ? vec2(opt.scale) : vec2(1);
     let _offset: Vec2 = opt.offset ?? vec2(0);
     let _cursor: Cursor | null = opt.cursor ?? null;
 
-    let areaVersion = 0;
-    let worldTransformVersion = 0;
-    let worldRenderShapeVersion = 0;
-    let worldAreaVersion = 0;
-    let _worldBBox: Rect | null = null;
+    let _areaSettingsVersion = 0;
+    let _worldTransformVersion = 0;
+    let _worldRenderShapeVersion = 0;
+    let _worldAreaSettingsVersion = 0;
+    let _worldAreaVersion = 0;
+    let _worldBBox: Rect | undefined;
+    let _worldBBoxVersion = 0;
 
     return {
         id: "area",
@@ -388,21 +396,21 @@ export function area(opt: AreaCompOpt = {}): AreaComp {
         area: {
             set shape(value: Shape | null) {
                 _shape = value;
-                areaVersion = nextAreaVersion();
+                _areaSettingsVersion = nextAreaVersion();
             },
             get shape(): Shape | null {
                 return _shape;
             },
             set scale(value: Vec2) {
                 _scale = this.scale;
-                areaVersion = nextAreaVersion();
+                _areaSettingsVersion = nextAreaVersion();
             },
             get scale(): Vec2 {
                 return _scale;
             },
             set offset(value: Vec2) {
                 _offset = value;
-                areaVersion = nextAreaVersion();
+                _areaSettingsVersion = nextAreaVersion();
             },
             get offset() {
                 return _offset;
@@ -644,11 +652,11 @@ export function area(opt: AreaCompOpt = {}): AreaComp {
         worldArea(this: GameObj<AreaComp | AnchorComp>): Shape {
             const renderAreaVersion = (this as any).renderAreaVersion;
             if (
-                !worldShape
-                || worldTransformVersion != (this as any)._transformVersion // Transform changed
+                !_worldShape
+                || _worldTransformVersion != (this as any)._transformVersion // Transform changed
                 || (renderAreaVersion != undefined // Render area (shape) changed
-                    && worldRenderShapeVersion != renderAreaVersion) // Render area (shape) changed
-                || worldAreaVersion != areaVersion // Area settings changed
+                    && _worldRenderShapeVersion != renderAreaVersion) // Render area (shape) changed
+                || _worldAreaSettingsVersion != _areaSettingsVersion // Area settings changed
             ) { // Area changed
                 const localArea = this.localArea();
 
@@ -670,21 +678,30 @@ export function area(opt: AreaCompOpt = {}): AreaComp {
                     transform.translateSelfV(offset);
                 }
 
-                worldShape = localArea.transform(transform, worldShape);
+                _worldShape = localArea.transform(transform, _worldShape);
 
-                worldTransformVersion = (this as any)._transformVersion;
-                worldRenderShapeVersion = renderAreaVersion ?? 0;
-                worldAreaVersion = areaVersion;
-                _worldBBox = null;
+                _worldTransformVersion = (this as any)._transformVersion;
+                _worldRenderShapeVersion = renderAreaVersion ?? 0;
+                _worldAreaSettingsVersion = _areaSettingsVersion;
+                _worldAreaVersion = nextWorldAreaVersion();
 
                 // console.log(`${this.id} changed ${worldTransformVersion}, ${worldRenderShapeVersion}, ${worldAreaVersion}`);
             }
-            return worldShape;
+            return _worldShape;
         },
 
         worldBbox(this: GameObj<AreaComp>): Rect {
-            if (!_worldBBox) {
-                _worldBBox = this.worldArea().bbox();
+            const renderAreaVersion = (this as any).renderAreaVersion;
+            if (
+                !_worldBBox || _worldAreaVersion != _worldBBoxVersion
+                || !_worldShape
+                || _worldTransformVersion != (this as any)._transformVersion // Transform changed
+                || (renderAreaVersion != undefined // Render area (shape) changed
+                    && _worldRenderShapeVersion != renderAreaVersion) // Render area (shape) changed
+                || _worldAreaSettingsVersion != _areaSettingsVersion // Area settings changed
+            ) {
+                _worldBBox = this.worldArea().bbox(_worldBBox);
+                _worldBBoxVersion = _worldAreaVersion;
             }
             return _worldBBox;
         },
@@ -695,9 +712,9 @@ export function area(opt: AreaCompOpt = {}): AreaComp {
                 return area;
             }
             else {
-                return screenShape = area.transform(
+                return _screenShape = area.transform(
                     _k.game.cam.transform,
-                    screenShape,
+                    _screenShape,
                 );
             }
         },

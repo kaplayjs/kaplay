@@ -1,4 +1,9 @@
 import type { AreaComp } from "../../ecs/components/physics/area";
+import type { PosComp } from "../../ecs/components/transform/pos";
+import {
+    objectTransformNeedsUpdate,
+    transformNeedsUpdate,
+} from "../../ecs/entity/GameObjRaw";
 import { isPaused } from "../../ecs/entity/utils";
 import type { GameObj } from "../../types";
 import { calcTransform } from "../various";
@@ -73,7 +78,10 @@ export class SweepAndPruneHorizontal implements BroadPhaseAlgorithm {
         // Update edge data
         for (const [obj, edges] of this.objects.entries()) {
             if (shouldIgnore(obj)) continue;
-            calcTransform(obj, obj.transform);
+            if (objectTransformNeedsUpdate(obj)) {
+                // Note: not correct if an ancestor also has changed
+                calcTransform(obj, obj.transform);
+            }
             const bbox = obj.worldBbox();
             edges[0].x = bbox.pos.x;
             edges[1].x = bbox.pos.x + bbox.width;

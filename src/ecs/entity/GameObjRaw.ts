@@ -85,6 +85,10 @@ export function transformNeedsUpdate(version: number) {
     return version >= _lastTransformVersion;
 }
 
+export function objectTransformNeedsUpdate(obj: GameObj<any>) {
+    return obj._transformVersion >= _lastTransformVersion;
+}
+
 /**
  * Base interface of all game objects.
  *
