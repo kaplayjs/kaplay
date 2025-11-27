@@ -8,8 +8,8 @@ onUpdate(() => {
         {
             add() {
                 this.use(area());
-            }
-        }
+            },
+        },
     ]).destroy();
     debug.log(debug.fps());
 });
