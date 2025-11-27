@@ -153,6 +153,7 @@ import type {
     Ellipse,
     getSpriteOutline,
     Line,
+    Mat2,
     Mat23,
     Point,
     Polygon,
@@ -5525,6 +5526,12 @@ export interface KAPLAYCtx {
      * @subgroup Advanced
      */
     Mat4: typeof Mat4;
+    /**
+     * @since v3001.0
+     * @group Math
+     * @subgroup Advanced
+     */
+    Mat2: typeof Mat2;
     /**
      * @since v4000.0
      * @group Math
