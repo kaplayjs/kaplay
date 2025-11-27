@@ -27,7 +27,7 @@ export function drawDebug() {
             if (
                 obj.has("area")
                 && (_k.globalOpt.inspectOnlyActive ? !isPaused(obj) : true)
-                && obj.isHovering()
+                && obj.hasScreenPoint(_k.app.mousePos())
             ) {
                 inspecting = obj;
                 break;

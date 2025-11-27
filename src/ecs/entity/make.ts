@@ -52,7 +52,7 @@ export function makeInternal<T extends CompList<unknown>>(
     // We register here: The objects, because you can also pass tags to add().
     if (!compsAndTags) return obj as GameObj<T[number]>;
 
-    let comps = [];
+    let comps: Comp[] = [];
     let tagList = [];
 
     for (const compOrTag of compsAndTags) {
@@ -60,20 +60,22 @@ export function makeInternal<T extends CompList<unknown>>(
             tagList.push(compOrTag);
         }
         else {
-            const compId = (<Comp> compOrTag).id;
+            const compId = (compOrTag as Comp).id;
 
             if (compId) {
                 obj._compsIds.add(compId);
                 if (addCompIdsToTags) tagList.push(compId);
             }
 
-            comps.push(compOrTag);
+            comps.push(compOrTag as Comp);
         }
     }
 
+    const sortedComps = sortComps(comps);
+
     // Using .use and .tag we trigger onUse and onTag events correctly
-    for (const comp of comps) {
-        obj.use(<Comp> comp);
+    for (const comp of sortedComps) {
+        obj.use(comp);
     }
 
     for (const tag of tagList) {
@@ -90,4 +92,41 @@ export function make<T extends CompList<unknown>>(
     const obj = makeInternal(_k.game.gameObjLastId, compsAndTags);
     _k.game.gameObjLastId++;
     return obj;
+}
+
+function sortComps(compList: Comp[]): Comp[] {
+    const visited = new Set();
+    const visiting = new Set();
+    const compsById = compList.reduce((acc, comp) => {
+        acc[comp.id as string] = comp;
+        return acc;
+    }, {} as Record<string, Comp>);
+    const order: Comp[] = [];
+
+    function visit(comp: Comp) {
+        if (visited.has(comp.id)) return;
+        if (visiting.has(comp.id)) {
+            throw new Error("Circular Dependency Found");
+        }
+
+        visiting.add(comp.id);
+
+        if (comp.require) {
+            for (const dep of comp.require) {
+                visit(compsById[dep]);
+            }
+        }
+
+        visiting.delete(comp.id);
+        visited.add(comp.id);
+        order.push(comp);
+    }
+
+    for (const comp of compList) {
+        if (!visited.has(comp.id)) {
+            visit(comp);
+        }
+    }
+
+    return order;
 }

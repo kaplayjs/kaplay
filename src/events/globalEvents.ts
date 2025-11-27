@@ -194,9 +194,9 @@ export const onClick = overload2((action: () => void) => {
     const events: KEventController[] = [];
 
     forAllCurrentAndFuture(tag, (obj) => {
-        if (!obj.area) {
+        if (!obj.has("ui")) {
             throw new Error(
-                "onClick() requires the object to have area() component",
+                "onClick() requires the object to have a ui() component",
             );
         }
         events.push(obj.onClick(() => action(obj)));
