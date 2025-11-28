@@ -5,7 +5,7 @@ let obj;
 
 onClick("obj", (o) => {
     obj = o;
-    debug.log("click")
+    debug.log("click");
 });
 
 onMouseMove((_, delta) => {
@@ -24,7 +24,7 @@ onMouseRelease(() => {
 // floor
 add([
     pos(0, 425),
-    rect(1000, 20)
+    rect(1000, 20),
 ]);
 
 const wheelPoints = createCogPolygon(50, 42, 48);
@@ -33,7 +33,7 @@ const truck = add([
     pos(200, 300),
     rect(300, 75),
     area(),
-    "obj"
+    "obj",
 ]);
 // left wheel
 truck.add([
@@ -45,8 +45,8 @@ truck.add([
         update() {
             const c = Math.PI * 50 * 2;
             this.angle = 360 * (this.transform.e / c);
-        }
-    }
+        },
+    },
 ]);
 // right wheel
 truck.add([
@@ -58,8 +58,8 @@ truck.add([
         update() {
             const c = Math.PI * 50 * 2;
             this.angle = 360 * (this.transform.e / c);
-        }
-    }
+        },
+    },
 ]);
 const bucket = truck.add([
     pos(300, 0),
@@ -67,7 +67,7 @@ const bucket = truck.add([
     color(YELLOW),
     rotate(0),
     anchor("botright"),
-    constraint.bone(0, 90)
+    constraint.bone(0, 90),
 ]);
 // The handle that actually gets dragged
 const handle = truck.add([
@@ -80,11 +80,13 @@ const handle = truck.add([
         snap() {
             const redDot = bucket.children[0];
             const redDotWorldPos = bucket.transform.transform(redDot.pos);
-            const redDotTruckPos = truck.transform.inverse.transform(redDotWorldPos);
+            const redDotTruckPos = truck.transform.inverse.transform(
+                redDotWorldPos,
+            );
             this.pos = redDotTruckPos;
-        }
+        },
     },
-    opacity(0)
+    opacity(0),
 ]);
 // The red dot
 bucket.add([
@@ -97,5 +99,5 @@ bucket.add([
         algorithm: "CCD",
     }),
     constraint.bone(0, 90),
-    color(RED)
+    color(RED),
 ]);
