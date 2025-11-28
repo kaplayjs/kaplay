@@ -55,7 +55,7 @@ import type { RotateComp } from "../components/transform/rotate";
 import type { ScaleComp } from "../components/transform/scale";
 import type { SkewComp } from "../components/transform/skew";
 import type { ZComp } from "../components/transform/z";
-import { make } from "./make";
+import { internalIsMaking, make } from "./make";
 import { deserializePrefabAsset, type SerializedGameObj } from "./prefab";
 import { isFixed } from "./utils";
 
@@ -705,8 +705,12 @@ export const GameObjRawPrototype: Omit<
 
         calcTransform(obj, obj.transform);
 
-        obj.trigger("add", obj);
+        // Run global events first, so things that listen for onAdd()
+        // see the object with *only* components added during make(),
+        // and *then* run the components' add() which may add other components
+        // and trigger onUse()
         _k.game.events.trigger("add", obj);
+        obj.trigger("add", obj);
 
         return obj;
     },
@@ -1285,8 +1289,7 @@ export const GameObjRawPrototype: Omit<
         // If that component got an ID, we need to create the cleanups[compId]
         // data for cleaning later on removing
         if (comp.id) {
-            this._cleanups[comp.id] = [];
-            gc = this._cleanups[comp.id];
+            gc = this._cleanups[comp.id] = [];
             this._compStates.set(comp.id, comp);
         }
         else {
@@ -1383,7 +1386,10 @@ export const GameObjRawPrototype: Omit<
             this._onCurCompCleanup = null;
         }
 
-        if (this.id != 0 && comp.id) {
+        if (
+            this.id != 0 && comp.id
+            && !internalIsMaking(this as unknown as GameObj)
+        ) {
             this.trigger("use", comp.id);
             _k.game.events.trigger(
                 "use",
@@ -1402,8 +1408,10 @@ export const GameObjRawPrototype: Omit<
         this._compStates.delete(id);
         if (addCompIdAsTag) this._tags.delete(id);
 
-        this.trigger("unuse", id);
-        _k.game.events.trigger("unuse", this, id);
+        if (!internalIsMaking(this as unknown as GameObj)) {
+            this.trigger("unuse", id);
+            _k.game.events.trigger("unuse", this, id);
+        }
 
         if (this._cleanups[id]) {
             this._cleanups[id].forEach((e) => e());
@@ -1485,14 +1493,18 @@ export const GameObjRawPrototype: Omit<
         if (Array.isArray(tag)) {
             for (const t of tag) {
                 this._tags.add(t);
-                this.trigger("tag", t);
-                _k.game.events.trigger("tag", this as GameObj, t);
+                if (!internalIsMaking(this as unknown as GameObj)) {
+                    this.trigger("tag", t);
+                    _k.game.events.trigger("tag", this as GameObj, t);
+                }
             }
         }
         else {
             this._tags.add(tag);
-            this.trigger("tag", tag);
-            _k.game.events.trigger("tag", this as GameObj, tag);
+            if (!internalIsMaking(this as unknown as GameObj)) {
+                this.trigger("tag", tag);
+                _k.game.events.trigger("tag", this as GameObj, tag);
+            }
         }
     },
 

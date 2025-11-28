@@ -20,6 +20,9 @@ best friend, lajbel, can put the correct version name here
 
 ### Added
 
+- Added the `maxTimeStep` and `fixedUpdateMode` options, as well as
+  `setFixedSpeed()` for more granular control over fixed update and timing -
+  @dragoncoder047
 - Added parameterized formatting tags like `"[color=red]Red text![/color]"` in
   `CharTransformFunc` for more powerful text formatting options -
   @dragoncoder047
