@@ -595,8 +595,30 @@ export interface SpriteAnimPlayOpt {
     preventRestart?: boolean;
     /**
      * Runs when this animation ends.
+     *
+     * End is triggered by:
+     *
+     * - Animation reaching the last frame.
      */
     onEnd?: () => void;
+    /**
+     * Runs when this animation loops.
+     *
+     * Loop is triggered by:
+     *
+     * - Animation reaching the last frame for looping (last one or first/last in pingpong)
+     */
+    onLoop?: () => void;
+    /**
+     * Runs when this animation stops.
+     *
+     * Stop is triggered by:
+     *
+     * - obj.stop();
+     * - obj.play();
+     * - Animation ending (like onEnd)
+     */
+    onStop?: () => void;
 }
 
 /**
