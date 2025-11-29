@@ -1,2 +1,9 @@
 @import "tailwindcss";
 @plugin "daisyui";
+
+@plugin "daisyui/theme" {
+    name: "dim";
+    default: true;
+    --color-primary: #abdd64;
+    --animation-button: 0;
+}
