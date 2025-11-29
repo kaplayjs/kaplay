@@ -6,6 +6,7 @@ import { Rect, vec2 } from "../../math/math";
 import { minkowskiRectShapeIntersection } from "../../math/minkowski";
 import { satShapeIntersection } from "../../math/sat";
 import type { BroadPhaseAlgorithm } from "../../math/spatial";
+import { HashGrid } from "../../math/spatial/hashgrid";
 import { Quadtree } from "../../math/spatial/quadtree";
 import {
     SweepAndPruneHorizontal,
@@ -16,13 +17,14 @@ import type { GameObj } from "../../types";
 import { type AreaComp, usesArea } from "../components/physics/area";
 import { Collision } from "./Collision";
 
-export type BroadPhaseType = "sap" | "sapv" | "quadtree";
+export type BroadPhaseType = "sap" | "sapv" | "quadtree" | "grid";
 export type NarrowPhaseType = "gjk" | "sat" | "box";
 
 export const createCollisionSystem = (
-    { broad = "sap", narrow = "gjk" }: {
+    { broad = "sap", narrow = "gjk", opt = {} }: {
         broad?: BroadPhaseType;
         narrow?: NarrowPhaseType;
+        opt?: any;
     } = {},
 ) => {
     const broadPhaseIntersection: BroadPhaseAlgorithm = broad === "sap"
@@ -31,6 +33,8 @@ export const createCollisionSystem = (
         ? new SweepAndPruneVertical()
         : broad === "quadtree"
         ? new Quadtree(new Rect(vec2(0, 0), width(), height()), 256, 8)
+        : broad == "grid"
+        ? new HashGrid(opt)
         : new SweepAndPruneHorizontal();
     const narrowPhaseIntersection = narrow === "gjk"
         ? gjkShapeIntersection

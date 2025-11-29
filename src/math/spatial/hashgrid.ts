@@ -3,13 +3,17 @@ import type { AreaComp } from "../../ecs/components/physics/area";
 import type { GameObj } from "../../types";
 import { calcTransform } from "../various";
 
-class HashGrid {
+export type HashGridOpt = {
+    hashGridSize?: number;
+};
+
+export class HashGrid {
     grid: Record<number, Record<number, GameObj<AreaComp>[]>> = {};
     cellSize: number;
     objects: Array<GameObj<AreaComp>> = [];
 
-    constructor(gopt: any) {
-        this.cellSize = gopt.hashGridSize || DEF_HASH_GRID_SIZE;
+    constructor(opt: HashGridOpt) {
+        this.cellSize = opt.hashGridSize || DEF_HASH_GRID_SIZE;
     }
 
     add(obj: GameObj<AreaComp>) {
@@ -37,7 +41,10 @@ class HashGrid {
     /**
      * Iterates all object pairs which potentially collide
      */
-    *[Symbol.iterator]() {
+    iterPairs(
+        pairCb: (obj1: GameObj<AreaComp>, obj2: GameObj<AreaComp>) => void,
+    ) {
+        const checked = new Set();
         for (const obj of this.objects) {
             const bbox = obj.worldBbox();
 
@@ -48,7 +55,7 @@ class HashGrid {
             const yMax = Math.ceil((bbox.pos.y + bbox.height) / this.cellSize);
 
             // Cache objects that are already checked with this object
-            const checked = new Set();
+            checked.clear();
 
             // insert & check against all covered grids
             for (let x = xMin; x <= xMax; x++) {
@@ -62,9 +69,10 @@ class HashGrid {
                     }
                     else {
                         const cell = this.grid[x][y];
-                        for (const other of cell) {
+                        for (let i = 0; i < cell.length; i++) {
+                            const other = cell[i];
                             if (checked.has(other.id)) continue;
-                            yield [obj, other];
+                            pairCb(obj, other);
                             checked.add(other.id);
                         }
                         cell.push(obj);
