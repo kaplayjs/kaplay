@@ -18,12 +18,18 @@ best friend, lajbel, can put the correct version name here
 
 ### Changed
 
-- Transforms are now only recalculated when needed. Thus static objects no longer increase computation in the transform phase. @mflerackers
-- Areas are now only recalculated when the area settings or (optional) renderArea has changed. @mflerackers
-- World (transformed) areas are now only recalculated when the area or transform has changed. @mflerackers
-- World bounding boxes are now only recalculated when the world area has changed. @mflerackers
-- Broad stage collision detection spatial structures are now only updated when an object's world bounding box has changed. @mflerackers
-- You can no longer change the position of an object by doing obj.pos.x += 1. You need to assign a new Vec2 or use moveBy instead. @mflerackers
+- Transforms are now only recalculated when needed. Thus static objects no
+  longer increase computation in the transform phase. @mflerackers
+- Areas are now only recalculated when the area settings or (optional)
+  renderArea has changed. @mflerackers
+- World (transformed) areas are now only recalculated when the area or transform
+  has changed. @mflerackers
+- World bounding boxes are now only recalculated when the world area has
+  changed. @mflerackers
+- Broad stage collision detection spatial structures are now only updated when
+  an object's world bounding box has changed. @mflerackers
+- You can no longer change the position of an object by doing obj.pos.x += 1.
+  You need to assign a new Vec2 or use moveBy instead. @mflerackers
 
 ## [unreleased]
 
@@ -69,16 +75,16 @@ best friend, lajbel, can put the correct version name here
 
   ```js
   kaplay({
-    buttons: {
-      forward: {
-        keyboard: "tab",
-        gamepad: "south",
+      buttons: {
+          forward: {
+              keyboard: "tab",
+              gamepad: "south",
+          },
+          backward: {
+              keyboard: "shift+tab",
+              gamepad: "rshoulder+south",
+          },
       },
-      backward: {
-        keyboard: "shift+tab",
-        gamepad: "rshoulder+south",
-      },
-    },
   });
   ```
 
@@ -90,20 +96,20 @@ best friend, lajbel, can put the correct version name here
 
   ```js
   app.onUpdate(() => {
-    // runs until it is cancelled
+      // runs until it is cancelled
   });
 
   scene("game", () => {
-    const obj = add([]);
+      const obj = add([]);
 
-    obj.onUpdate(() => {
-      // runs until obj is destroyed
-    });
+      obj.onUpdate(() => {
+          // runs until obj is destroyed
+      });
 
-    scene.onUpdate(() => {
-      // or just onUpdate(() => {
-      // runs until scene is changed
-    });
+      scene.onUpdate(() => {
+          // or just onUpdate(() => {
+          // runs until scene is changed
+      });
   });
   ```
 
@@ -145,7 +151,7 @@ best friend, lajbel, can put the correct version name here
 
   ```js
   app.onUpdate(() => {
-    // runs until it is cancelled
+      // runs until it is cancelled
   });
   ```
 
@@ -154,11 +160,11 @@ best friend, lajbel, can put the correct version name here
 
   ```js
   kaplay({
-    defaultLifetimeScope: "app", // default is "scene"
+      defaultLifetimeScope: "app", // default is "scene"
   });
 
   onKeyPress("space", () => {
-    // runs until is cancelled
+      // runs until is cancelled
   });
   ```
 
@@ -174,10 +180,10 @@ best friend, lajbel, can put the correct version name here
 
   ```js
   scene("game", () => {
-    scene.onUpdate(() => {
-      // or just onUpdate(() => {
-      // runs until scene is changed
-    });
+      scene.onUpdate(() => {
+          // or just onUpdate(() => {
+          // runs until scene is changed
+      });
   });
   ```
 
@@ -199,13 +205,13 @@ best friend, lajbel, can put the correct version name here
 
   ```ts
   kaplay({
-    types: kaplayTypes<
-      // Opt<> is optional but recommended to get autocomplete
-      Opt<{
-        scenes: {}; // define scenes and arguments
-        strictScenes: true; // you can only use defined scenes
-      }>
-    >(),
+      types: kaplayTypes<
+          // Opt<> is optional but recommended to get autocomplete
+          Opt<{
+              scenes: {}; // define scenes and arguments
+              strictScenes: true; // you can only use defined scenes
+          }>
+      >(),
   });
   ```
 
@@ -213,23 +219,23 @@ best friend, lajbel, can put the correct version name here
 
   ```ts
   const k = kaplay({
-    types: kaplayTypes<
-      Opt<{
-        scenes: {
-          game: [gamemode: "normal" | "hard"];
-          gameOver: [score: number, highScore: number];
-        };
-      }>
-    >(),
+      types: kaplayTypes<
+          Opt<{
+              scenes: {
+                  game: [gamemode: "normal" | "hard"];
+                  gameOver: [score: number, highScore: number];
+              };
+          }>
+      >(),
   });
 
   // If you trigger autocomplete it shows "game" or "gameOver"
   k.scene("game", (gamemode) => {
-    // gamemode is now type "normal" | "hard"
+      // gamemode is now type "normal" | "hard"
 
-    // @ts-expect-error Argument of type 'string' is not assignable
-    // to parameter of type 'number'.
-    k.go("gameOver", "10", 10); //
+      // @ts-expect-error Argument of type 'string' is not assignable
+      // to parameter of type 'number'.
+      k.go("gameOver", "10", 10); //
   });
   ```
 
@@ -245,15 +251,15 @@ best friend, lajbel, can put the correct version name here
 
   ```ts
   const k = kaplay({
-    types: kaplayTypes<
-      Opt<{
-        scenes: {
-          game: [gamemode: "normal" | "hard"];
-          gameOver: [score: number, highScore: number];
-        };
-        strictScenes: true;
-      }>
-    >(),
+      types: kaplayTypes<
+          Opt<{
+              scenes: {
+                  game: [gamemode: "normal" | "hard"];
+                  gameOver: [score: number, highScore: number];
+              };
+              strictScenes: true;
+          }>
+      >(),
   });
 
   // @ts-expect-error Argument of type '"hi"' is not assignable to
@@ -614,7 +620,7 @@ best friend, lajbel, can put the correct version name here
 
   ```js
   loadSprite("player", "sprites/player.png", {
-    singular: true,
+      singular: true,
   });
   ```
 
@@ -622,20 +628,20 @@ best friend, lajbel, can put the correct version name here
 
   ```js
   loadSpriteAtlas("/examples/sprites/dungeon.png", {
-    wizard: {
-      x: 128,
-      y: 140,
-      width: 144,
-      height: 28,
-      sliceX: 9,
-      anims: {
-        bouncy: {
-          frames: [8, 5, 0, 3, 2, 3, 0, 5],
-          speed: 10,
-          loop: true,
-        },
+      wizard: {
+          x: 128,
+          y: 140,
+          width: 144,
+          height: 28,
+          sliceX: 9,
+          anims: {
+              bouncy: {
+                  frames: [8, 5, 0, 3, 2, 3, 0, 5],
+                  speed: 10,
+                  loop: true,
+              },
+          },
       },
-    },
   });
 
   add([sprite("wizard", { anim: "bouncy" }), pos(100, 100)]);
@@ -680,7 +686,7 @@ best friend, lajbel, can put the correct version name here
 
 ```js
 kaplay({
-  spriteAtlasPadding: 10, // 10 pixels of space between each sprite
+    spriteAtlasPadding: 10, // 10 pixels of space between each sprite
 });
 ```
 
@@ -704,8 +710,8 @@ kaplay({
   trigger("shoot", "target", 140);
 
   on("shoot", "target", (obj, score) => {
-    obj.destroy();
-    debug.log(140); // every bomb was 140 score points!
+      obj.destroy();
+      debug.log(140); // every bomb was 140 score points!
   });
   ```
 
@@ -714,18 +720,18 @@ kaplay({
 
   ```js
   add([
-    pos(100, 150),
-    text("With override: Hello [foo]styled[/foo] text", {
-      transform: {
-        color: BLACK, // Default text color for every character
-      },
-      styles: {
-        foo: {
-          color: RED, // [foo] will be red
-          override: true, // will override the black def color
-        },
-      },
-    }),
+      pos(100, 150),
+      text("With override: Hello [foo]styled[/foo] text", {
+          transform: {
+              color: BLACK, // Default text color for every character
+          },
+          styles: {
+              foo: {
+                  color: RED, // [foo] will be red
+                  override: true, // will override the black def color
+              },
+          },
+      }),
   ]);
   ```
 
@@ -754,9 +760,9 @@ kaplay({
 
   ```js
   onKeyPress("space", () => {
-    // do something
-    // cancel the event
-    return cancel();
+      // do something
+      // cancel the event
+      return cancel();
   });
   ```
 
@@ -804,18 +810,18 @@ kaplay({
 
   ```js
   kaplay({
-    // bind your buttons
-    buttons: {
-      jump: {
-        keyboard: ["space", "up"],
-        keyboardCode: "Space", // you can also use key codes
-        gamepad: ["south"],
+      // bind your buttons
+      buttons: {
+          jump: {
+              keyboard: ["space", "up"],
+              keyboardCode: "Space", // you can also use key codes
+              gamepad: ["south"],
+          },
       },
-    },
   });
 
   onButtonPress("jump", () => {
-    player.jump();
+      player.jump();
   });
   ```
 
@@ -827,8 +833,8 @@ kaplay({
 
   // change the jump button in keyboard to "w"
   setButton("jump", {
-    keyboard: ["w"],
-    // gamepad binding is not changed
+      keyboard: ["w"],
+      // gamepad binding is not changed
   });
   ```
 
@@ -836,8 +842,8 @@ kaplay({
 
   ```js
   onButtonPress(() => {
-    const lastInputDevice = getLastInputDeviceType(); // keyboard, mouse or gamepad
-    // change icons, etc
+      const lastInputDevice = getLastInputDeviceType(); // keyboard, mouse or gamepad
+      // change icons, etc
   });
   ```
 
@@ -865,8 +871,8 @@ kaplay({
   ```js
   // prop to animate, frames, options
   rotatingBean.animate("angle", [0, 360], {
-    duration: 2,
-    direction: "forward",
+      duration: 2,
+      direction: "forward",
   });
   ```
 
@@ -879,13 +885,13 @@ kaplay({
   ```js
   // define the layers
   layers(
-    [
-      "bg",
+      [
+          "bg",
+          "game",
+          "ui",
+          // the default layer
+      ],
       "game",
-      "ui",
-      // the default layer
-    ],
-    "game"
   );
 
   // use the layer component
@@ -905,14 +911,14 @@ kaplay({
 
   ```js
   loadSprite("bean", "bean.png", {
-    sliceX: 4,
-    sliceY: 1,
-    anims: {
-      walk: {
-        from: 0,
-        to: 3,
+      sliceX: 4,
+      sliceY: 1,
+      anims: {
+          walk: {
+              from: 0,
+              to: 3,
+          },
       },
-    },
   });
 
   const obj = add([sprite("bean")]);
@@ -940,9 +946,9 @@ kaplay({
 
   ```js
   add([
-    rect(100, 100, {
-      radius: [10, 20, 30, 40],
-    }),
+      rect(100, 100, {
+          radius: [10, 20, 30, 40],
+      }),
   ]);
   ```
 
@@ -986,7 +992,7 @@ kaplay({
 
   ```js
   kaplay({
-    debugKey: "l",
+      debugKey: "l",
   });
   ```
 
@@ -994,14 +1000,14 @@ kaplay({
 
   ```js
   const obj = add([
-    sprite("bean"),
-    {
-      health: 100, // on debug.inspect
-      damage: 10, // on debug.inspect
-      hp() {
-        this.health -= this.damage;
-      }, // not on debug.inspect
-    },
+      sprite("bean"),
+      {
+          health: 100, // on debug.inspect
+          damage: 10, // on debug.inspect
+          hp() {
+              this.health -= this.damage;
+          }, // not on debug.inspect
+      },
   ]);
 
   // see the custom properties in debug mode
@@ -1039,7 +1045,7 @@ kaplay({
 
   ```js
   onKeyPress(["w", "up"], () => {
-    player.jump();
+      player.jump();
   });
   ```
 
@@ -1047,7 +1053,7 @@ kaplay({
 
   ```js
   onGamepadButtonPress("south", (btn, gp) => {
-    console.log(gp.index); // gamepad number on navigator's gamepad list
+      console.log(gp.index); // gamepad number on navigator's gamepad list
   });
   ```
 
