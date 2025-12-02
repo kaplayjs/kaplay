@@ -1,9 +1,14 @@
+import type { FixedSpeedOption } from "./app/app";
 import type { ButtonsDef } from "./app/inputBindings";
 import type { Asset } from "./assets/asset";
 import type { ShaderData, Uniform } from "./assets/shader";
 import type { KAPLAYCtx } from "./core/contextType";
 import type { TypesOpt } from "./core/taf";
 import type { GameObjRaw } from "./ecs/entity/GameObjRaw";
+import type {
+    BroadPhaseType,
+    NarrowPhaseType,
+} from "./ecs/systems/createCollisionSystem";
 import type { LineCap, LineJoin } from "./gfx/draw/drawLine";
 import type { Picture } from "./gfx/draw/drawPicture";
 import type { FrameBuffer } from "./gfx/FrameBuffer";
@@ -345,6 +350,41 @@ export interface KAPLAYOpt {
      */
     maxFPS?: number;
     /**
+     * The number of fixedUpdate() events that should happen per second.
+     * The fixedUpdate() loop is used for physics.
+     * The average user should never need to change this. If you set it too low
+     * then your physics will freak out  due to numerical instability. If you set it too high then
+     * the game will lag.
+     *
+     * The options are:
+     * * friedPotato: 10Hz
+     * * potato: 20Hz
+     * * snail: 25Hz
+     * * normal: 50Hz (default)
+     * * lightspeed: 80Hz
+     * * ridiculous: 125Hz
+     * * ludicrous: 160Hz
+     *
+     * @group Physics
+     * @experimental
+     */
+    fixedUpdateMode?: FixedSpeedOption;
+    /**
+     * The maximum amount of time the game will simulate passing in order to
+     * limit lag. If the framerate lags low enough that one frame takes
+     * longer than this time, the game will instead use this as the delta time
+     * value, which means that the game will run slower than 100% speed.
+     * The average user should never need to change this. If you set it too
+     * low, the game will slow down with even the slightest lag, and if you
+     * set it too high then the game could try to do too much on each frame
+     * and amplify the lag problem.
+     *
+     * @default 0.1
+     * @group Physics
+     * @experimental
+     */
+    maxTimeStep?: number;
+    /**
      * If focus on the canvas on start (default true).
      *
      * @since v3001.0
@@ -385,10 +425,15 @@ export interface KAPLAYOpt {
      */
     inspectOnlyActive?: boolean;
     /**
-     * Which strategy to use for narrow phase collision, gjk or sat
+     * Which strategy to use for broad phase collision, sap, sapv or quadtree
+     * @default "sap"
+     */
+    broadPhaseCollisionAlgorithm?: BroadPhaseType;
+    /**
+     * Which strategy to use for narrow phase collision, gjk, sat or box
      * @default "gjk"
      */
-    narrowPhaseCollisionAlgorithm?: string;
+    narrowPhaseCollisionAlgorithm?: NarrowPhaseType;
     /**
      * Timeout (in milliseconds) at which other loaders waiting on sprites will give
      * up and throw an error.

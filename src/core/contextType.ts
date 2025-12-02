@@ -1,3 +1,4 @@
+import type { FixedSpeedOption } from "../app/app";
 import type {
     ButtonBinding,
     ButtonBindingDevice,
@@ -153,6 +154,7 @@ import type {
     Ellipse,
     getSpriteOutline,
     Line,
+    Mat2,
     Mat23,
     Point,
     Polygon,
@@ -164,6 +166,7 @@ import type {
     Vec2Args,
 } from "../math/math";
 import type { NavMesh } from "../math/navigationmesh";
+import type { Quadtree } from "../math/spatial/quadtree";
 import type { Vec2 } from "../math/Vec2";
 import {
     type Anchor,
@@ -3482,7 +3485,7 @@ export interface KAPLAYCtx {
      * as its own font.
      *
      * This waits for the sprite to load before doing anything, but if the sprite doesn't load, the game
-     * will transition to the error screen after a timeout (which is set by {@link KAPLAYOpt.loadTimeout}).
+     * will transition to the error screen after a timeout (which is set by {@link KAPLAYOpt["loadTimeout"]|KAPLAYOpt.loadTimeout}).
      *
      * @param sprite - The ID of the sprite to use as a font. Must already have frames defined
      * @param chars - The characters that correspond to each of the frames in the sprite. You can't use
@@ -3733,7 +3736,8 @@ export interface KAPLAYCtx {
      */
     dt(): number;
     /**
-     * Get the fixed delta time since last frame.
+     * Get the delta time for the fixed-update loop. This
+     * only changes when you call {@link setFixedSpeed}.
      *
      * @since v3000.0
      * @group Info
@@ -3746,6 +3750,14 @@ export interface KAPLAYCtx {
      * @group Info
      */
     restDt(): number;
+    /**
+     * Change the speed that the fixed update loop runs at.
+     * The options (and caveats) are described at {@link KAPLAYOpt["fixedUpdateMode"]|KAPLAYOpt.fixedUpdateMode}.
+     *
+     * @group Physics
+     * @experimental
+     */
+    setFixedSpeed(speed: FixedSpeedOption): void;
     /**
      * Get the total time since beginning.
      *
@@ -5524,6 +5536,12 @@ export interface KAPLAYCtx {
      */
     Mat4: typeof Mat4;
     /**
+     * @since v3001.0
+     * @group Math
+     * @subgroup Advanced
+     */
+    Mat2: typeof Mat2;
+    /**
      * @since v4000.0
      * @group Math
      * @subgroup Advanced
@@ -5537,6 +5555,30 @@ export interface KAPLAYCtx {
      * @subgroup Advanced
      */
     Quad: typeof Quad;
+    /**
+     * A quadtree
+     *
+     * @since 4000
+     * @group Math
+     * @subgroup Advanced
+     */
+    Quadtree: typeof Quadtree;
+    /**
+     * Make a new quadtree
+     *
+     * @param pos - The position of the top level node
+     * @param width - The width of the top level node
+     * @param height - The height of the top level node
+     * @param maxObjects - The maximum amount of objects per node before splitting
+     * @param maxLevels - The maximum amount of levels
+     */
+    makeQuadtree(
+        pos: Vec2,
+        width: number,
+        height: number,
+        maxObjects: number,
+        maxLevels: number,
+    ): Quadtree;
     /**
      * The Random Number Generator.
      *

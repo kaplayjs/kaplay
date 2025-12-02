@@ -31,9 +31,15 @@ export interface Debug {
      */
     showLog: boolean;
     /**
-     * Current frames per second.
+     * Current frames per second, that the game is running using
+     * (may be limited by the `maxFPS` or `maxTimeStep` options)
      */
     fps(): number;
+    /**
+     * Raw frames per second from the browser unaffected by
+     * the `maxFPS` or `maxTimeStep` options.
+     */
+    rawFPS(): number;
     /**
      * Total number of frames elapsed.
      *
@@ -94,6 +100,7 @@ export const createDebug = (
         },
         showLog: true,
         fps: () => app.fps(),
+        rawFPS: () => app.rawFPS(),
         numFrames: () => app.numFrames(),
         stepFrame: fr.updateFrame,
         drawCalls: () => appGfx.lastDrawCalls,
