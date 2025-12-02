@@ -12,7 +12,7 @@
 // This example may be large, so use regions for navigating faster. Important
 // content is marked with 👁️
 
-kaplay({ scale: 4, font: "happy", background: "#aee2ff" });
+kaplay({ scale: 4, font: "happy" });
 
 const SPEED = 120;
 const JUMP_FORCE = 240;
@@ -78,7 +78,7 @@ This time we're defining a function for executing animations conditionally.
 const playerPlayRun = () => {
     // obj.play() will reset to the first frame of the animation
     // so we want to make sure it only runs when the current animation is not "run"
-    if (player.isGrounded() && player.getCurAnim()?.name !== "run") {
+    if (player.isGrounded() && player.getCurAnim().name !== "run") {
         player.play("run");
     }
 };
@@ -115,10 +115,6 @@ onKeyPress(["space", "up"], () => {
     }
 });
 
-onKeyPress("x", () => {
-    player.stop();
-});
-
 // Switch to "idle" or "run" animation when player hits ground
 player.onGround(() => {
     if (!isKeyDown("left") && !isKeyDown("right")) {
@@ -131,31 +127,11 @@ player.onGround(() => {
 
 // #endregion
 
-// You can run functions on specific animation moments 👁️
-let loopCount = 0;
-
-player.onAnimStart((anim) => {
-    loopCount = 0;
-});
-
+// You can run functions when a specific animation ends 👁️
 player.onAnimEnd((anim) => {
     if (anim === "idle") {
-        // Will never run as idle is set to loop: true
-        debug.log("idle animation ended");
+        debug.log("hi!");
     }
-    else if (anim === "jump") {
-        debug.log("jump animation ended");
-    }
-});
-
-player.onAnimStop((anim) => {
-    if (anim === "idle") {
-        debug.log("idle animation stopped");
-    }
-});
-
-player.onAnimLoop((anim) => {
-    loopCount++;
 });
 
 // #region UI
@@ -163,8 +139,6 @@ const getInfo = () =>
     `
 Anim: ${player.getCurAnim()?.name}
 Frame: ${player.frame}
-Loops: ${loopCount}
-Press (x) to stop anim
 `.trim();
 
 // Add some text to show the current animation
