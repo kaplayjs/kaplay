@@ -3,15 +3,13 @@
 // - move Vec2 to it's own file
 
 import { resolveSprite } from "../assets/sprite";
-import { drawCircle } from "../gfx/draw/drawCircle";
-import { drawPolygon, type DrawPolygonOpt } from "../gfx/draw/drawPolygon";
 import { _k } from "../shared";
 import type { GameObj, RNGValue, Shape } from "../types";
 import { clamp } from "./clamp";
 import { Color, rgb } from "./color";
 import { traceRegion } from "./getImageOutline";
 import { lerp, type LerpValue } from "./lerp";
-import { Vec2, type SerializedVec2 } from "./Vec2";
+import { type SerializedVec2, Vec2 } from "./Vec2";
 
 /**
  * Possible arguments for a Vec2.
@@ -21,9 +19,9 @@ import { Vec2, type SerializedVec2 } from "./Vec2";
  */
 export type Vec2Args =
     | [number, number] // x = args[0]   y = args[1]
-    | [number]         // x = args[0]   y = x
+    | [number] // x = args[0]   y = x
     | [SerializedVec2] // x = args[0].x y = args[0].y
-    | [];              // x = 0         y = 0
+    | []; // x = 0         y = 0
 
 export function deg2rad(deg: number): number {
     return deg * Math.PI / 180;
