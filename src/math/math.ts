@@ -20,6 +20,7 @@ import { type SerializedVec2, Vec2 } from "./Vec2";
 export type Vec2Args =
     | [number, number] // x = args[0]   y = args[1]
     | [number] // x = args[0]   y = x
+    | [number | SerializedVec2]
     | [SerializedVec2] // x = args[0].x y = args[0].y
     | []; // x = 0         y = 0
 
