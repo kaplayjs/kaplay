@@ -41,6 +41,9 @@ best friend, lajbel, can put the correct version name here
 - Fixed the `fakeMouse()` component not giving the right position when the
   camera transform was not the identity matrix - @dragoncoder047
 - Fixed tall fonts being cropped - @anthonygood
+- Fixed the sprite animation `onEnd()` callback being called before the
+  animation actually stopped, so if the onEnd callback started a new animation,
+  the new animation was instantly stopped - @dragoncoder047
 
 ## [4000.0.0-alpha.23] - 2025-11-05
 
