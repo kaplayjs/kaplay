@@ -44,17 +44,12 @@ export const createCollisionSystem = (
         obj: GameObj<AreaComp>,
         other: GameObj<AreaComp>,
     ): boolean {
-        for (const tag of obj.collisionIgnore) {
-            if (other.is(tag)) {
-                return false;
-            }
-        }
-        for (const tag of other.collisionIgnore) {
-            if (obj.is(tag)) {
-                return false;
-            }
-        }
-        const res = narrowPhaseIntersection(obj.worldArea(), other.worldArea());
+        if (!obj.collisionIgnore.isDisjointFrom(other.tagsAsSet)) return false;
+        if (!other.collisionIgnore.isDisjointFrom(obj.tagsAsSet)) return false;
+        const res = narrowPhaseIntersection(
+            obj.worldArea(),
+            other.worldArea(),
+        );
         if (res) {
             const col1 = new Collision(
                 obj,
