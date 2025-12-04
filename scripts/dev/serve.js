@@ -4,6 +4,7 @@ import { assets } from "@kaplayjs/crew";
 import express from "express";
 import fs from "fs/promises";
 import path from "path";
+import { getDirBasenames } from "./util/getDir.ts";
 
 export function serve(opt = {}) {
     const port = opt.port || process.env.PORT || 4000;
@@ -50,9 +51,23 @@ export function serve(opt = {}) {
         const examples = (await fs.readdir("examples"))
             .filter((p) => !p.startsWith(".") && p.endsWith(".js"))
             .map((d) => path.basename(d, ".js"));
-        const playtests = (await fs.readdir(path.join("tests", "playtests")))
-            .filter((p) => !p.startsWith(".") && p.endsWith(".js"))
-            .map((d) => path.basename(d, ".js"));
+
+        const neoPlaytests = (await getDirBasenames(path.join("tests", "playtests"))).map((d) => {
+            const folder = path.dirname(path.relative("playtests", d));
+            const name = path.basename(d, ".js");
+
+            return {
+                folder: folder == "." ? "Ungrouped" : folder,
+                name: name,
+                url: folder == "." ? name : `${folder}/${name}` 
+            }
+        })
+
+        const groupedPlaytests = Object.groupBy(neoPlaytests, (x) => x.folder);        
+        const playtests = Object.entries(groupedPlaytests).map(([folder, tests]) => ({
+            folder: folder,
+            tests: tests,
+        }))
 
         res.render("examplesList", { examples, playtests: playtests });
     });

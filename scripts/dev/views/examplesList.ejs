@@ -14,15 +14,8 @@
             padding: 16px;
             font-size: 16px;
             font-family: Monospace;
-        }
-
-        .wrapper {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-            gap: 16px;
-            align-items: center;
-            justify-content: center;
-            margin-bottom: 2rem;
+            background: #2a303c;
+            color: white;
         }
 
         li {
@@ -33,69 +26,130 @@
             white-space: nowrap;
         }
 
+        .header {
+            margin-top: 10px;
+            margin-bottom: 40px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 1.2rem;
+        }
+
+        .wrapper {
+            display: flex;
+            gap: 4rem;
+        }
+
         .title {
             font-size: 2rem;
             font-weight: bold;
+            color: white;
+            user-select: none;
+        }
+
+        .main-title {
+            text-align: center;
+            font-weight: bold;
+            font-size: 3rem;
+        }
+
+        .folder {
+            width: 340px;
+        }
+
+        .folder details {
+            margin-left: 20px;
+        }
+
+        .subfolder {
+            font-size: 1.6rem;
+            font-weight: bold;
+            color: white;
+            user-select: none;
+        }
+
+        .test-entry.hidden {
+            display: none;
+        }
+
+        li {
+            color: #abdd64;
+            width: 20ch;
         }
 
         a {
-            color: blue;
+            color: #abdd64;
             text-decoration: none;
         }
 
         a:hover {
-            background: #6ac96b;
+            background: #abdd64;
             color: white;
         }
-
-        @media (prefers-color-scheme: dark) {
-            body {
-                background: #2a303c;
-            }
-
-            .title {
-                color: white;
-            }
-
-            li {
-                color: #abdd64;
-            }
-
-            a {
-                color: #abdd64;
-            }
-
-            a:hover {
-                background: #abdd64;
-                color: white;
-            }
+    
+        #search-bar {
+            margin: 0px auto;
         }
     </style>
 </head>
 
 <body>
-    <h1 class="title" style="margin-bottom: 1rem;">KAPLAY Dev Mode</h1>
-    <div class="wrapper">
-        <li class="title">Playtests</li>
-        <% playtests.forEach((example)=> { %>
-            <li>
-                <a href="/<%= example %>">
-                    <%= example %>
-                </a>
-            </li>
-            <% }); %>
+    <div class="header">
+        <h1 class="main-title">KAPLAY Dev Mode</h1>
+        <input id="search-bar" type="text"></input>
     </div>
     <div class="wrapper">
-        <li class="title">Examples</li>
-        <% examples.forEach((example)=> { %>
-            <li>
-                <a href="/<%= example %>">
-                    <%= example %>
-                </a>
-            </li>
+        <details open class="folder">
+            <summary class="title">Playtests</summary>
+            <% playtests.forEach((group)=> { %>
+                <details open>
+                    <summary class="subfolder">
+                        <%= group.folder %>
+                    </summary>
+                    <% group.tests.forEach((test)=> { %>
+                        <li class="test-entry" data-name="<%= test.name %>">
+                            <a href="/<%= test.url %>">
+                                <%= test.name %>
+                            </a>
+                        </li>
+                    <% }); %>
+                </details>
+        <% }); %>
+        </details>
+        <details class="folder" open>
+            <summary class="title">Examples</summary>
+            <% examples.forEach((test)=> { %>
+                <li class="test-entry" data-name="<%= test %>">
+                    <a href="/<%= test %>">
+                        <%= test %>
+                    </a>
+                </li>
+            <% }); %>
+        </details>
+    </div>
+    <script>
+        const searchBar = document.querySelector("#search-bar");
 
-            <% }); %>
-    </div>
+        const updateElements = (searchTerm) => {
+            const testEntries = document.querySelectorAll(".test-entry");
+
+            for (const testEntry of testEntries) {
+                const name = testEntry.dataset.name;
+
+                if (name.indexOf(searchTerm) != -1) {
+                    testEntry.classList.remove("hidden");
+                }
+                else {
+                    testEntry.classList.add("hidden");
+                }
+            }
+        }
+
+        searchBar.addEventListener("input", (e) => {
+            updateElements(e.target.value);
+        });
+    </script>
 </body>
 
 </html>

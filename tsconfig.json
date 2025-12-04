@@ -15,7 +15,8 @@
     "verbatimModuleSyntax": true,
     "strict": true,
     "types": [
-      "./src/.env.d.ts"
+      "./src/.env.d.ts",
+      "node"
     ]
   },
   "include": [

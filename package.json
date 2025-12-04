@@ -82,6 +82,7 @@
     "@kaplayjs/dprint-config": "^1.2.0",
     "@types/express": "^5.0.1",
     "@types/jest": "^29.5.14",
+    "@types/node": "^24.10.1",
     "@typescript-eslint/eslint-plugin": "^8.32.1",
     "@typescript-eslint/parser": "^8.32.1",
     "dprint": "^0.50.2",
