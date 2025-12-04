@@ -9,7 +9,7 @@ import { clamp } from "./clamp";
 import { Color, rgb } from "./color";
 import { traceRegion } from "./getImageOutline";
 import { lerp, type LerpValue } from "./lerp";
-import { type SerializedVec2, Vec2 } from "./Vec2";
+import { Vec2, type Vec2Like } from "./Vec2";
 
 /**
  * Possible arguments for a Vec2.
@@ -20,8 +20,8 @@ import { type SerializedVec2, Vec2 } from "./Vec2";
 export type Vec2Args =
     | [number, number] // x = args[0]   y = args[1]
     | [number] // x = args[0]   y = x
-    | [number | SerializedVec2]
-    | [SerializedVec2] // x = args[0].x y = args[0].y
+    | [number | Vec2Like]
+    | [Vec2Like] // x = args[0].x y = args[0].y
     | []; // x = 0         y = 0
 
 export function deg2rad(deg: number): number {

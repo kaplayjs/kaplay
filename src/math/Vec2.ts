@@ -9,7 +9,7 @@ import { deg2rad, rad2deg, Rect, vec2, type Vec2Args } from "./math";
  * @group Components
  * @subgroup Component Serialization
  */
-export interface SerializedVec2 {
+export interface Vec2Like {
     x: number;
     y: number;
 }
@@ -19,7 +19,7 @@ export interface SerializedVec2 {
  *
  * @group Math
  */
-export class Vec2 implements SerializedVec2 {
+export class Vec2 implements Vec2Like {
     /** The x coordinate */
     x: number = 0;
     /** The y coordinate */
@@ -75,7 +75,7 @@ export class Vec2 implements SerializedVec2 {
         return new Vec2(this.x, this.y);
     }
 
-    static copy<T extends SerializedVec2>(v: SerializedVec2, out: T): T {
+    static copy<T extends Vec2Like>(v: Vec2Like, out: T): T {
         out.x = v.x;
         out.y = v.y;
         return out;
@@ -87,9 +87,9 @@ export class Vec2 implements SerializedVec2 {
         return new Vec2(this.x + p2.x, this.y + p2.y);
     }
 
-    static addScaled<T extends SerializedVec2>(
-        v: SerializedVec2,
-        other: SerializedVec2,
+    static addScaled<T extends Vec2Like>(
+        v: Vec2Like,
+        other: Vec2Like,
         s: number,
         out: T,
     ): T {
@@ -107,8 +107,8 @@ export class Vec2 implements SerializedVec2 {
      *
      * @returns The sum of the vectors
      */
-    static addc<T extends SerializedVec2>(
-        v: SerializedVec2,
+    static addc<T extends Vec2Like>(
+        v: Vec2Like,
         x: number,
         y: number,
         out: T,
@@ -126,9 +126,9 @@ export class Vec2 implements SerializedVec2 {
      *
      * @returns The sum of the vectors
      */
-    static add<T extends SerializedVec2>(
-        v: SerializedVec2,
-        other: SerializedVec2,
+    static add<T extends Vec2Like>(
+        v: Vec2Like,
+        other: Vec2Like,
         out: T,
     ): T {
         out.x = v.x + other.x;
@@ -151,8 +151,8 @@ export class Vec2 implements SerializedVec2 {
      *
      * @returns The difference of the vectors
      */
-    static subc<T extends SerializedVec2>(
-        v: SerializedVec2,
+    static subc<T extends Vec2Like>(
+        v: Vec2Like,
         x: number,
         y: number,
         out: T,
@@ -170,9 +170,9 @@ export class Vec2 implements SerializedVec2 {
      *
      * @returns The difference of the vectors
      */
-    static sub<T extends SerializedVec2>(
-        v: SerializedVec2,
-        other: SerializedVec2,
+    static sub<T extends Vec2Like>(
+        v: Vec2Like,
+        other: Vec2Like,
         out: T,
     ): T {
         out.x = v.x - other.x;
@@ -195,8 +195,8 @@ export class Vec2 implements SerializedVec2 {
      *
      * @returns The scale of the vector
      */
-    static scale<T extends SerializedVec2>(
-        v: SerializedVec2,
+    static scale<T extends Vec2Like>(
+        v: Vec2Like,
         s: number,
         out: T,
     ): T {
@@ -214,8 +214,8 @@ export class Vec2 implements SerializedVec2 {
      *
      * @returns The scale of the vector
      */
-    static scalec<T extends SerializedVec2>(
-        v: SerializedVec2,
+    static scalec<T extends Vec2Like>(
+        v: Vec2Like,
         x: number,
         y: number,
         out: T,
@@ -233,9 +233,9 @@ export class Vec2 implements SerializedVec2 {
      *
      * @returns The scale of the vector
      */
-    static scalev<T extends SerializedVec2>(
-        v: SerializedVec2,
-        other: SerializedVec2,
+    static scalev<T extends Vec2Like>(
+        v: Vec2Like,
+        other: Vec2Like,
         out: T,
     ): T {
         out.x = v.x * other.x;
@@ -262,7 +262,7 @@ export class Vec2 implements SerializedVec2 {
      *
      * @returns The between the vectors
      */
-    static dist(v: SerializedVec2, other: SerializedVec2): number {
+    static dist(v: Vec2Like, other: Vec2Like): number {
         const x = v.x - other.x;
         const y = v.y - other.y;
         return Math.hypot(x, y);
@@ -281,7 +281,7 @@ export class Vec2 implements SerializedVec2 {
      *
      * @returns The distance between the vectors
      */
-    static sdist(v: SerializedVec2, other: SerializedVec2): number {
+    static sdist(v: Vec2Like, other: Vec2Like): number {
         const x = v.x - other.x;
         const y = v.y - other.y;
         return x * x + y * y;
@@ -302,7 +302,7 @@ export class Vec2 implements SerializedVec2 {
      *
      * @returns The length of the vector
      */
-    static len(v: SerializedVec2) {
+    static len(v: Vec2Like) {
         return Math.hypot(v.x, v.y);
     }
 
@@ -321,7 +321,7 @@ export class Vec2 implements SerializedVec2 {
      *
      * @returns The squared length of the vector
      */
-    static slen(v: SerializedVec2) {
+    static slen(v: Vec2Like) {
         return v.x * v.x + v.y * v.y;
     }
 
@@ -333,7 +333,7 @@ export class Vec2 implements SerializedVec2 {
         return len === 0 ? new Vec2(0) : this.scale(1 / len);
     }
 
-    static unit<T extends SerializedVec2>(v: SerializedVec2, out: T): T {
+    static unit<T extends Vec2Like>(v: Vec2Like, out: T): T {
         const len = Vec2.len(v);
         if (len === 0) {
             out.x = 0;
@@ -352,7 +352,7 @@ export class Vec2 implements SerializedVec2 {
         return new Vec2(this.y, -this.x);
     }
 
-    static normal<T extends SerializedVec2>(v: SerializedVec2, out: T): T {
+    static normal<T extends Vec2Like>(v: Vec2Like, out: T): T {
         out.x = v.y;
         out.y = -v.x;
         return out;
@@ -363,7 +363,7 @@ export class Vec2 implements SerializedVec2 {
      *
      * @since v3000.0
      */
-    reflect(normal: SerializedVec2) {
+    reflect(normal: Vec2Like) {
         const s = 2 * this.dot(normal);
         return this.sub(normal.x * s, normal.y * s);
     }
@@ -373,7 +373,7 @@ export class Vec2 implements SerializedVec2 {
      *
      * @since v3000.0
      */
-    project(on: SerializedVec2) {
+    project(on: Vec2Like) {
         const s = this.dot(on) / Vec2.len(on);
         return new Vec2(on.x * s, on.y * s);
     }
@@ -383,11 +383,11 @@ export class Vec2 implements SerializedVec2 {
      *
      * @since v3000.0
      */
-    reject(on: SerializedVec2) {
+    reject(on: Vec2Like) {
         return this.sub(this.project(on));
     }
 
-    rotate(vecOrAngle: SerializedVec2 | number) {
+    rotate(vecOrAngle: Vec2Like | number) {
         if (typeof vecOrAngle === "object") {
             return new Vec2(
                 this.x * vecOrAngle.x - this.y * vecOrAngle.y,
@@ -413,9 +413,9 @@ export class Vec2 implements SerializedVec2 {
      *
      * @returns The rotated vector
      */
-    static rotate<T extends SerializedVec2>(
-        v: SerializedVec2,
-        dir: SerializedVec2,
+    static rotate<T extends Vec2Like>(
+        v: Vec2Like,
+        dir: Vec2Like,
         out: T,
     ): T {
         const tmp = v.x; // save in case v and out are the same object
@@ -432,8 +432,8 @@ export class Vec2 implements SerializedVec2 {
      *
      * @returns The rotated vector
      */
-    static rotateByAngle<T extends SerializedVec2>(
-        v: SerializedVec2,
+    static rotateByAngle<T extends Vec2Like>(
+        v: Vec2Like,
         angle: number,
         out: T,
     ): T {
@@ -445,7 +445,7 @@ export class Vec2 implements SerializedVec2 {
         return out;
     }
 
-    invRotate(vecOrAngle: SerializedVec2 | number) {
+    invRotate(vecOrAngle: Vec2Like | number) {
         if (typeof vecOrAngle === "object") {
             return this.rotate(new Vec2(vecOrAngle.x, -vecOrAngle.y));
         }
@@ -462,9 +462,9 @@ export class Vec2 implements SerializedVec2 {
      *
      * @returns The rotated vector
      */
-    static inverseRotate<T extends SerializedVec2>(
-        v: SerializedVec2,
-        dir: SerializedVec2,
+    static inverseRotate<T extends Vec2Like>(
+        v: Vec2Like,
+        dir: Vec2Like,
         out: T,
     ): T {
         const tmp = v.x; // save in case v and out are the same object
@@ -476,7 +476,7 @@ export class Vec2 implements SerializedVec2 {
     /**
      * Get the dot product with another vector.
      */
-    dot(p2: SerializedVec2): number {
+    dot(p2: Vec2Like): number {
         return this.x * p2.x + this.y * p2.y;
     }
 
@@ -485,7 +485,7 @@ export class Vec2 implements SerializedVec2 {
      *
      * @since v3000.0
      */
-    static dot(v: SerializedVec2, other: SerializedVec2): number {
+    static dot(v: Vec2Like, other: Vec2Like): number {
         return v.x * other.x + v.y * other.y;
     }
 
@@ -494,7 +494,7 @@ export class Vec2 implements SerializedVec2 {
      *
      * @since v3000.0
      */
-    cross(p2: SerializedVec2): number {
+    cross(p2: Vec2Like): number {
         return this.x * p2.y - this.y * p2.x;
     }
 
@@ -503,7 +503,7 @@ export class Vec2 implements SerializedVec2 {
      *
      * @since v3000.0
      */
-    static cross(v: SerializedVec2, other: SerializedVec2): number {
+    static cross(v: Vec2Like, other: Vec2Like): number {
         return v.x * other.y - v.y * other.x;
     }
 
@@ -521,7 +521,7 @@ export class Vec2 implements SerializedVec2 {
      *
      * @returns Angle represented by the vector in radians
      */
-    static toAngle(v: SerializedVec2) {
+    static toAngle(v: Vec2Like) {
         return Math.atan2(v.y, v.x);
     }
 
@@ -542,14 +542,14 @@ export class Vec2 implements SerializedVec2 {
      *
      * @returns Angle between the vectors in radians
      */
-    static angleBetween(v: SerializedVec2, other: SerializedVec2) {
+    static angleBetween(v: Vec2Like, other: Vec2Like) {
         return Math.atan2(Vec2.cross(v, other), Vec2.dot(v, other));
     }
 
     /**
      * Linear interpolate to a destination vector (for positions).
      */
-    lerp(dest: SerializedVec2, t: number): Vec2 {
+    lerp(dest: Vec2Like, t: number): Vec2 {
         return new Vec2(
             lerpNumber(this.x, dest.x, t),
             lerpNumber(this.y, dest.y, t),
@@ -565,9 +565,9 @@ export class Vec2 implements SerializedVec2 {
      *
      * @returns The linear interpolation between src and dst by t
      */
-    static lerp<T extends SerializedVec2>(
-        src: SerializedVec2,
-        dst: SerializedVec2,
+    static lerp<T extends Vec2Like>(
+        src: Vec2Like,
+        dst: Vec2Like,
         t: number,
         out: T,
     ): T {
@@ -581,7 +581,7 @@ export class Vec2 implements SerializedVec2 {
      *
      * @since v3000.0
      */
-    slerp(dest: SerializedVec2, t: number): Vec2 {
+    slerp(dest: Vec2Like, t: number): Vec2 {
         const cos = this.dot(dest);
         const sin = this.cross(dest);
         const angle = Math.atan2(sin, cos);
@@ -601,9 +601,9 @@ export class Vec2 implements SerializedVec2 {
      *
      * @returns The spherical interpolation between src and dst by t
      */
-    static slerp<T extends SerializedVec2>(
-        src: SerializedVec2,
-        dst: SerializedVec2,
+    static slerp<T extends Vec2Like>(
+        src: Vec2Like,
+        dst: Vec2Like,
         t: number,
         out: T,
     ): T {
@@ -671,11 +671,11 @@ export class Vec2 implements SerializedVec2 {
         return [this.x, this.y];
     }
 
-    serialize(): SerializedVec2 {
+    serialize(): Vec2Like {
         return { x: this.x, y: this.y };
     }
 
-    static deserialize(data: SerializedVec2): Vec2 {
+    static deserialize(data: Vec2Like): Vec2 {
         return vec2(data.x, data.y);
     }
 }
