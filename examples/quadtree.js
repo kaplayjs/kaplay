@@ -12,7 +12,7 @@ function drawNode(node) {
         fill: false,
         outline: {
             color: RED,
-            width: 2,
+            width: 4,
         },
     });
     for (const n of node.nodes) {
