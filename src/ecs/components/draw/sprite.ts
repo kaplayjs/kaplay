@@ -486,8 +486,8 @@ export function sprite(
                     }
                     else {
                         this.frame = frames.at(-1)!;
-                        curAnim.onEnd();
                         this.stop();
+                        curAnim.onEnd();
                         return;
                     }
                 }
@@ -501,8 +501,8 @@ export function sprite(
                     }
                     else {
                         this.frame = frames[0];
-                        curAnim.onEnd();
                         this.stop();
+                        curAnim.onEnd();
                         return;
                     }
                 }
