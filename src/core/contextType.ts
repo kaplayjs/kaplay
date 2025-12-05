@@ -164,7 +164,7 @@ import type {
     StepPosition,
 } from "../math/math";
 import type { NavMesh } from "../math/navigationmesh";
-import type { Quadtree } from "../math/spatial/quadtree";
+import type { Quadtree, ResizingQuadtree } from "../math/spatial/quadtree";
 import type { Vec2 } from "../math/Vec2";
 import {
     type Anchor,
@@ -5569,7 +5569,8 @@ export interface KAPLAYCtx {
         height: number,
         maxObjects: number,
         maxLevels: number,
-    ): Quadtree;
+        resizing: boolean,
+    ): Quadtree | ResizingQuadtree;
     /**
      * The Random Number Generator.
      *

@@ -32,7 +32,7 @@ export class Quadtree implements BroadPhaseAlgorithm {
         this.maxObjects = maxObjects;
         this.maxLevels = maxLevels;
         this.level = level;
-        this.nodes = [];
+        this.nodes = []; // lt, rt, rb, lb
         this.objects = [];
     }
 
@@ -392,12 +392,217 @@ export class Quadtree implements BroadPhaseAlgorithm {
     }
 }
 
+export class ResizingQuadtree implements BroadPhaseAlgorithm {
+    root: Quadtree;
+    constructor(
+        bounds: Rect,
+        maxObjects: number = 8,
+        maxLevels: number = 4,
+    ) {
+        this.root = new Quadtree(bounds, maxObjects, maxLevels, 0);
+    }
+
+    add(obj: GameObj<AreaComp>): void {
+        const increaseLevel = (node: Quadtree) => {
+            node.level++;
+            for (const n of node.nodes) {
+                increaseLevel(n);
+            }
+        };
+        const bbox = obj.worldBbox();
+        const isLeft = bbox.pos.x < this.root.bounds.pos.x;
+        // Note: Even though an object can be so large that it extends to the right as well, we prioritize left
+        const isRight = !isLeft
+            && bbox.pos.x + bbox.width
+                > this.root.bounds.pos.x + this.root.bounds.width;
+        const isCenter = !(isLeft || isRight);
+        const isTop = bbox.pos.y < this.root.bounds.pos.y;
+        // Note: Even though an object can be so large that it extends to the bottom as well, we prioritize top
+        const isBottom = !isTop
+            && bbox.pos.y + bbox.height
+                > this.root.bounds.pos.y + this.root.bounds.height;
+        const isMiddle = !(isTop || isBottom);
+        if (isTop && (isLeft || isCenter)) {
+            /**
+             * X X O => N N
+             * O O O    N O
+             * O O O
+             */
+            // New bounds
+            const bounds = new Rect(
+                this.root.bounds.pos.sub(
+                    this.root.bounds.width,
+                    this.root.bounds.height,
+                ),
+                this.root.bounds.width * 2,
+                this.root.bounds.height * 2,
+            );
+            // Create new root
+            const node = new Quadtree(
+                bounds,
+                this.root.maxObjects,
+                this.root.maxLevels,
+                0,
+            );
+            // Subdivide top level
+            node.subdivide();
+            // Replace bottom right node with old root
+            increaseLevel(this.root);
+            node.nodes[2] = this.root;
+            // Replace root with new node
+            this.root = node;
+
+            // Retry
+            return this.add(obj);
+        }
+        else if (isLeft && (isMiddle || isBottom)) {
+            /**
+             * O O O => N O
+             * X O O    N N
+             * X O O
+             */
+            // New bounds
+            const bounds = new Rect(
+                this.root.bounds.pos.sub(this.root.bounds.width, 0),
+                this.root.bounds.width * 2,
+                this.root.bounds.height * 2,
+            );
+            // Create new root
+            const node = new Quadtree(
+                bounds,
+                this.root.maxObjects,
+                this.root.maxLevels,
+                0,
+            );
+            // Subdivide top level
+            node.subdivide();
+            // Replace top right node with old root
+            increaseLevel(this.root);
+            node.nodes[1] = this.root;
+            // Replace root with new node
+            this.root = node;
+
+            // Retry
+            return this.add(obj);
+        }
+        else if (isRight && (isTop || isMiddle)) {
+            /**
+             * O O X => N N
+             * O O X    O N
+             * O O O
+             */
+            // New bounds
+            const bounds = new Rect(
+                this.root.bounds.pos.sub(0, this.root.bounds.height),
+                this.root.bounds.width * 2,
+                this.root.bounds.height * 2,
+            );
+            // Create new root
+            const node = new Quadtree(
+                bounds,
+                this.root.maxObjects,
+                this.root.maxLevels,
+                0,
+            );
+            // Subdivide top level
+            node.subdivide();
+            // Replace bottom left node with old root
+            increaseLevel(this.root);
+            node.nodes[3] = this.root;
+            // Replace root with new node
+            this.root = node;
+
+            // Retry
+            return this.add(obj);
+        }
+        else if (isBottom && (isCenter || isRight)) {
+            /**
+             * O O O => O N
+             * O O O    N N
+             * O X X
+             */
+            // New bounds
+            const bounds = new Rect(
+                this.root.bounds.pos,
+                this.root.bounds.width * 2,
+                this.root.bounds.height * 2,
+            );
+            // Create new root
+            const node = new Quadtree(
+                bounds,
+                this.root.maxObjects,
+                this.root.maxLevels,
+                0,
+            );
+            // Subdivide top level
+            node.subdivide();
+            // Replace bottom left node with old root
+            increaseLevel(this.root);
+            node.nodes[0] = this.root;
+            // Replace root with new node
+            this.root = node;
+
+            // Retry
+            return this.add(obj);
+        }
+        else {
+            this.root.insert(obj, bbox);
+        }
+    }
+
+    remove(obj: GameObj<AreaComp>): void {
+        this.root.remove(obj);
+        // TODO: If it can shrink, shrink. Not the best idea though, as this can oscillate
+    }
+
+    clear(): void {
+        this.root.clear();
+    }
+
+    update(): void {
+        this.root.update();
+    }
+
+    iterPairs(
+        pairCb: (obj1: GameObj<AreaComp>, obj2: GameObj<AreaComp>) => void,
+    ): void {
+        this.root.iterPairs(pairCb);
+    }
+
+    get bounds() {
+        return this.root.bounds;
+    }
+
+    get nodes() {
+        return this.root.nodes;
+    }
+
+    retrieve(rect: Rect, objects: GameObj<AreaComp>[]) {
+        return this.root.retrieve(rect, objects);
+    }
+}
+
 export function makeQuadtree(
     pos: Vec2,
     width: number,
     height: number,
     maxObjects: number = 8,
     maxLevels: number = 4,
+    resizing: boolean = false,
 ) {
-    return new Quadtree(new Rect(pos, width, height), maxObjects, maxLevels, 0);
+    if (resizing) {
+        return new ResizingQuadtree(
+            new Rect(pos, width, height),
+            maxObjects,
+            maxLevels,
+        );
+    }
+    else {
+        return new Quadtree(
+            new Rect(pos, width, height),
+            maxObjects,
+            maxLevels,
+            0,
+        );
+    }
 }

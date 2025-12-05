@@ -18,10 +18,6 @@ import type {
     Shape,
     Tag,
 } from "../../../types";
-import {
-    type InternalGameObjRaw,
-    transformNeedsUpdate,
-} from "../../entity/GameObjRaw";
 import { isFixed } from "../../entity/utils";
 import type { Collision } from "../../systems/Collision";
 import type { AnchorComp } from "../transform/anchor";
@@ -289,6 +285,7 @@ export function area(opt: AreaCompOpt = {}): AreaComp {
     const events: KEventController[] = [];
     // We overwrite the shape rather than allocating a new one
     let _worldShape: Shape | undefined;
+    let _worldBBox: Rect | undefined;
     let _screenShape: Shape | undefined;
 
     let _shape: Shape | null = opt.shape ?? null;
@@ -296,13 +293,12 @@ export function area(opt: AreaCompOpt = {}): AreaComp {
     let _offset: Vec2 = opt.offset ?? vec2(0);
     let _cursor: Cursor | null = opt.cursor ?? null;
 
-    let _areaSettingsVersion = 0;
-    let _worldTransformVersion = 0;
-    let _worldRenderShapeVersion = 0;
-    let _worldAreaSettingsVersion = 0;
-    let _worldAreaVersion = 0;
-    let _worldBBox: Rect | undefined;
-    let _worldBBoxVersion = 0;
+    let _areaSettingsVersion = -1; // Track local changes in area properties
+    let _worldTransformVersion = -1; // Track object transform changes
+    let _worldRenderShapeVersion = -1; // Track render shape changes
+    let _worldAreaSettingsVersion = -1; // Track area properties changes
+    let _worldAreaVersion = -1; // Track local changes in world area
+    let _worldBBoxVersion = -1; // Track world area changes for bbox
 
     return {
         id: "area",
@@ -653,11 +649,11 @@ export function area(opt: AreaCompOpt = {}): AreaComp {
             const renderAreaVersion = (this as any).renderAreaVersion;
             if (
                 !_worldShape
-                || _worldTransformVersion != (this as any)._transformVersion // Transform changed
-                || (renderAreaVersion != undefined // Render area (shape) changed
-                    && _worldRenderShapeVersion != renderAreaVersion) // Render area (shape) changed
-                || _worldAreaSettingsVersion != _areaSettingsVersion // Area settings changed
-            ) { // Area changed
+                || _worldTransformVersion !== (this as any)._transformVersion // Transform changed
+                || (renderAreaVersion !== undefined // Render area (shape) changed
+                    && _worldRenderShapeVersion !== renderAreaVersion) // Render area (shape) changed
+                || _worldAreaSettingsVersion !== _areaSettingsVersion // Area settings changed
+            ) {
                 const localArea = this.localArea();
 
                 // World transform
@@ -684,8 +680,6 @@ export function area(opt: AreaCompOpt = {}): AreaComp {
                 _worldRenderShapeVersion = renderAreaVersion ?? 0;
                 _worldAreaSettingsVersion = _areaSettingsVersion;
                 _worldAreaVersion = nextWorldAreaVersion();
-
-                // console.log(`${this.id} changed ${worldTransformVersion}, ${worldRenderShapeVersion}, ${worldAreaVersion}`);
             }
             return _worldShape;
         },
