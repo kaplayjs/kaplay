@@ -127,7 +127,8 @@ onKeyPress("c", () => {
                 a.color = MAGENTA;
                 b.color = MAGENTA;
             }
-        });
+        },
+    );
 });
 
 onKeyRelease("c", () => {

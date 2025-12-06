@@ -7,7 +7,7 @@ import { minkowskiRectShapeIntersection } from "../../math/minkowski";
 import { satShapeIntersection } from "../../math/sat";
 import type { BroadPhaseAlgorithm } from "../../math/spatial";
 import { HashGrid } from "../../math/spatial/hashgrid";
-import { Quadtree } from "../../math/spatial/quadtree";
+import { Quadtree, ResizingQuadtree } from "../../math/spatial/quadtree";
 import {
     SweepAndPruneHorizontal,
     SweepAndPruneVertical,
@@ -32,7 +32,7 @@ export const createCollisionSystem = (
         : broad === "sapv"
         ? new SweepAndPruneVertical()
         : broad === "quadtree"
-        ? new Quadtree(new Rect(vec2(0, 0), width(), height()), 256, 8)
+        ? new Quadtree(new Rect(vec2(0, 0), width(), height()), 8, 8)
         : broad == "grid"
         ? new HashGrid(opt)
         : new SweepAndPruneHorizontal();
