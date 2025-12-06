@@ -61,6 +61,7 @@ onLoad(() => {
 });
 
 const selection = [];
+let lastSelected = null;
 
 onMousePress(button => {
     if (button == "left") {
@@ -80,6 +81,7 @@ onMousePress(button => {
                 }
             });
         }
+        lastSelected = selection.length ? selection[0] : null;
     }
     else if (button == "right") {
         const pos = toWorld(mousePos());
@@ -116,4 +118,20 @@ onMouseRelease(() => {
 
 onScroll(delta => {
     setCamScale(getCamScale().scale(delta.y < 0 ? 0.5 : 2.0));
+});
+
+onKeyPress("c", () => {
+    quadtree.iterPairs(
+        (a, b) => {
+            if (lastSelected === a || lastSelected === b) {
+                a.color = MAGENTA;
+                b.color = MAGENTA;
+            }
+        });
+});
+
+onKeyRelease("c", () => {
+    get("*").forEach(bean => {
+        bean.color = WHITE;
+    });
 });
