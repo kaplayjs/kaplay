@@ -211,6 +211,7 @@ export interface AreaComp extends Comp {
      * Get the geometry data for the collider in world coordinate space.
      */
     worldArea(): Shape;
+    worldAreaVersion: number;
     /**
      * Get the bounding box of the geometry data for the collider in world coordinate space.
      */
@@ -682,6 +683,10 @@ export function area(opt: AreaCompOpt = {}): AreaComp {
                 _worldAreaVersion = nextWorldAreaVersion();
             }
             return _worldShape;
+        },
+
+        get worldAreaVersion() {
+            return _worldAreaVersion;
         },
 
         worldBbox(this: GameObj<AreaComp>): Rect {

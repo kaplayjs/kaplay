@@ -1,4 +1,6 @@
 import type { AreaComp } from "../../ecs/components/physics/area";
+import { getTransformVersion } from "../../ecs/entity/GameObjRaw";
+import { drawRect } from "../../gfx/draw/drawRect";
 import type { GameObj } from "../../types";
 import { Rect, vec2 } from "../math";
 import type { Vec2 } from "../Vec2";
@@ -14,6 +16,7 @@ export class Quadtree implements BroadPhaseAlgorithm {
     level: number;
     nodes: Quadtree[];
     objects: GameObj<AreaComp>[];
+    versions: Map<number, number>;
 
     /**
      * Creates a new quadtree
@@ -34,6 +37,7 @@ export class Quadtree implements BroadPhaseAlgorithm {
         this.level = level;
         this.nodes = []; // lt, rt, rb, lb
         this.objects = [];
+        this.versions = new Map<number, number>();
     }
 
     /**
@@ -207,7 +211,9 @@ export class Quadtree implements BroadPhaseAlgorithm {
      * @param obj - The object to add
      */
     add(obj: GameObj<AreaComp>) {
-        this.insert(obj, obj.worldBbox());
+        const bbox = obj.worldBbox();
+        this.insert(obj, bbox);
+        this.versions.set(obj.id, getTransformVersion(obj));
     }
 
     /**
@@ -297,6 +303,11 @@ export class Quadtree implements BroadPhaseAlgorithm {
         let i = 0;
         while (i < this.objects.length) {
             const obj = this.objects[i];
+            if (this.versions.get(obj.id) === getTransformVersion(obj)) {
+                i++;
+                continue;
+            }
+            this.versions.set(obj.id, getTransformVersion(obj));
             const bbox = obj.worldBbox();
             // If the object is outside the bounds, remove it and add it to the root later
             if (!this.isInside(bbox)) {
@@ -342,9 +353,7 @@ export class Quadtree implements BroadPhaseAlgorithm {
 
         // Do we need this? It only makes sense if someone is still holding a reference to a node
         for (var i = 0; i < this.nodes.length; i++) {
-            if (this.nodes.length) {
-                this.nodes[i].clear();
-            }
+            this.nodes[i].clear();
         }
 
         this.nodes = [];
