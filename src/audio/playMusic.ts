@@ -92,11 +92,12 @@ export function playMusic(url: string, opt: AudioPlayOpt = {}): AudioPlay {
         },
 
         set detune(d) {
-            // TODO
+            throw new Error(
+                "Music cannot be detuned (limitation of the browser APIs, womp womp)",
+            );
         },
 
         get detune() {
-            // TODO
             return 0;
         },
 
