@@ -9,6 +9,7 @@ export function playMusic(url: string, opt: AudioPlayOpt = {}): AudioPlay {
     el.crossOrigin = "anonymous";
     el.loop = Boolean(opt.loop);
     el.volume = opt.volume ?? 1;
+    el.playbackRate = opt.speed ?? 1;
 
     const src = _k.audio.ctx.createMediaElementSource(el);
 
