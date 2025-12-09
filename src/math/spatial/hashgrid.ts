@@ -145,6 +145,8 @@ export class HashGrid {
     }
 
     _hashRect(rect: Rect) {
+        rect = rect.clone();
+
         // Clamp rect
         if (rect.pos.x < this.bounds.pos.x) {
             const diff = this.bounds.pos.x - rect.pos.x;
@@ -162,6 +164,7 @@ export class HashGrid {
         if (rect.pos.y + rect.height > this.bounds.pos.y + this.bounds.height) {
             rect.height = this.bounds.pos.y + this.bounds.height - rect.pos.y;
         }
+
         // Calculate hashes
         const w = Math.floor(this.bounds.width / this.cellSize);
         let hash = this._hashPoint(rect.pos);
