@@ -19,10 +19,10 @@ import { Vec2, type Vec2Like } from "./Vec2";
  */
 export type Vec2Args =
     | [number, number] // x = args[0]   y = args[1]
-    | [number] // x = args[0]   y = x
+    | [number] //         x = args[0]   y = x
     | [number | Vec2Like]
-    | [Vec2Like] // x = args[0].x y = args[0].y
-    | []; // x = 0         y = 0
+    | [Vec2Like] //       x = args[0].x y = args[0].y
+    | []; //              x = 0         y = 0
 
 export function deg2rad(deg: number): number {
     return deg * Math.PI / 180;
