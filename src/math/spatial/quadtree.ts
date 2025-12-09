@@ -222,13 +222,15 @@ export class Quadtree implements BroadPhaseAlgorithm {
      *
      * @returns A set of objects potentially intersecting the rectangle
      */
-    retrieve(rect: Rect, objects: GameObj<AreaComp>[]): void {
-        objects.push(...this.objects);
+    retrieve(rect: Rect, retrieveCb: (obj: GameObj<AreaComp>) => void): void {
+        for (let i = 0; i < this.objects.length; i++) {
+            retrieveCb(this.objects[i]);
+        }
 
         if (this.nodes.length) {
             const indices = this.getQuadrants(rect);
             for (let i = 0; i < indices.length; i++) {
-                this.nodes[indices[i]].retrieve(rect, objects);
+                this.nodes[indices[i]].retrieve(rect, retrieveCb);
             }
         }
     }
@@ -591,8 +593,8 @@ export class ResizingQuadtree implements BroadPhaseAlgorithm {
         return this.root.nodes;
     }
 
-    retrieve(rect: Rect, objects: GameObj<AreaComp>[]) {
-        return this.root.retrieve(rect, objects);
+    retrieve(rect: Rect, retrieveCb: (obj: GameObj<AreaComp>) => void) {
+        return this.root.retrieve(rect, retrieveCb);
     }
 }
 

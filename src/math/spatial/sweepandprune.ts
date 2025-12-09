@@ -6,6 +6,7 @@ import {
 } from "../../ecs/entity/GameObjRaw";
 import { isPaused } from "../../ecs/entity/utils";
 import type { GameObj } from "../../types";
+import type { Rect } from "../math";
 import { calcTransform } from "../various";
 import type { BroadPhaseAlgorithm } from ".";
 
@@ -129,6 +130,27 @@ export class SweepAndPruneHorizontal implements BroadPhaseAlgorithm {
             }
         }
     }
+
+    retrieve(rect: Rect, retrieveCb: (obj: GameObj<AreaComp>) => void) {
+        const left = rect.pos.x;
+        const right = left + rect.width;
+        const hits = new Set<GameObj<AreaComp>>();
+        for (const edge of this.edges) {
+            if (edge.isLeft) {
+                if (edge.x < right) {
+                    hits.add(edge.obj);
+                }
+            }
+            else {
+                if (edge.x < left) {
+                    hits.delete(edge.obj);
+                }
+            }
+        }
+        for (const obj of hits) {
+            retrieveCb(obj);
+        }
+    }
 }
 
 /**
@@ -246,6 +268,27 @@ export class SweepAndPruneVertical implements BroadPhaseAlgorithm {
             else {
                 touching.delete(edge.obj);
             }
+        }
+    }
+
+    retrieve(rect: Rect, retrieveCb: (obj: GameObj<AreaComp>) => void) {
+        const top = rect.pos.x;
+        const bottom = top + rect.width;
+        const hits = new Set<GameObj<AreaComp>>();
+        for (const edge of this.edges) {
+            if (edge.isTop) {
+                if (edge.y < bottom) {
+                    hits.add(edge.obj);
+                }
+            }
+            else {
+                if (edge.y < top) {
+                    hits.delete(edge.obj);
+                }
+            }
+        }
+        for (const obj of hits) {
+            retrieveCb(obj);
         }
     }
 }

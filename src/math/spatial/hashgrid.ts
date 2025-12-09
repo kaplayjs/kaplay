@@ -1,44 +1,100 @@
 import { DEF_HASH_GRID_SIZE } from "../../constants/general";
 import type { AreaComp } from "../../ecs/components/physics/area";
 import { objectTransformNeedsUpdate } from "../../ecs/entity/GameObjRaw";
+import { drawRect } from "../../gfx/draw/drawRect";
 import type { GameObj } from "../../types";
+import { type Rect, vec2 } from "../math";
 import { calcTransform } from "../various";
+import type { Vec2 } from "../Vec2";
 
 export type HashGridOpt = {
     hashGridSize?: number;
 };
 
 export class HashGrid {
-    grid: Record<number, Record<number, GameObj<AreaComp>[]>> = {};
+    bounds: Rect;
     cellSize: number;
-    objects: Array<GameObj<AreaComp>> = [];
+    columns: number;
+    grid: Array<Array<GameObj<AreaComp>>> = [];
+    hashesForObject: Map<GameObj<AreaComp>, Array<number>> = new Map<
+        GameObj<AreaComp>,
+        Array<number>
+    >();
 
-    constructor(opt: HashGridOpt) {
+    constructor(bounds: Rect, opt: HashGridOpt) {
+        this.bounds = bounds;
         this.cellSize = opt.hashGridSize || DEF_HASH_GRID_SIZE;
+        this.columns = Math.floor(bounds.width / this.cellSize);
     }
 
     add(obj: GameObj<AreaComp>) {
-        this.objects.push(obj);
+        const bbox = obj.worldBbox();
+        const hashes = this._hashRect(bbox);
+        for (let i = 0; i < hashes.length; i++) {
+            const hash = hashes[i];
+            this._addObjectToGridByHash(obj, hash);
+        }
+        this.hashesForObject.set(obj, hashes);
     }
 
     remove(obj: GameObj<AreaComp>) {
-        const index = this.objects.indexOf(obj);
-        if (index >= 0) {
-            this.objects.splice(index, 1);
+        const hashes = this.hashesForObject.get(obj);
+        if (hashes) {
+            for (let i = 0; i < hashes.length; i++) {
+                const hash = hashes[i];
+                this._removeObjectFromGridByHash(obj, hash);
+            }
         }
+        this.hashesForObject.delete(obj);
     }
 
     clear() {
-        this.objects = [];
+        this.grid = [];
+        this.hashesForObject.clear();
     }
 
     update() {
-        // Update edge data
-        for (const obj of this.objects) {
-            if (objectTransformNeedsUpdate(obj)) {
-                calcTransform(obj, obj.transform);
+        const oldSet = new Set<number>();
+        const newSet = new Set<number>();
+        for (const [obj, oldHashes] of this.hashesForObject) {
+            for (let i = 0; i < oldHashes.length; i++) {
+                const hash = oldHashes[i];
+                oldSet.add(hash);
             }
+            const newHashes = this._hashRect(obj.worldBbox());
+            for (let i = 0; i < newHashes.length; i++) {
+                const hash = newHashes[i];
+                newSet.add(hash);
+            }
+            if (oldSet.symmetricDifference(newSet).size == 0) {
+                oldSet.clear();
+                newSet.clear();
+                continue;
+            }
+            for (const hash of oldSet.difference(newSet)) {
+                this._removeObjectFromGridByHash(obj, hash);
+            }
+            for (const hash of newSet.difference(oldSet)) {
+                this._addObjectToGridByHash(obj, hash);
+            }
+            oldHashes.length = 0;
+            for (let i = 0; i < newHashes.length; i++) {
+                const hash = newHashes[i];
+                oldHashes.push(hash);
+            }
+            oldSet.clear();
+            newSet.clear();
         }
+
+        /*for (const i in this.grid) {
+            if (this.grid[i].length) {
+                drawRect({
+                    pos: vec2(i % this.columns, Math.floor(i / this.columns)).scale(this.cellSize),
+                    width: this.cellSize,
+                    height: this.cellSize
+                });
+            }
+        }*/
     }
 
     /**
@@ -47,41 +103,93 @@ export class HashGrid {
     iterPairs(
         pairCb: (obj1: GameObj<AreaComp>, obj2: GameObj<AreaComp>) => void,
     ) {
-        const checked = new Set();
-        for (const obj of this.objects) {
-            const bbox = obj.worldBbox();
-
-            // Get spatial hash grid coverage
-            const xMin = Math.floor(bbox.pos.x / this.cellSize);
-            const yMin = Math.floor(bbox.pos.y / this.cellSize);
-            const xMax = Math.ceil((bbox.pos.x + bbox.width) / this.cellSize);
-            const yMax = Math.ceil((bbox.pos.y + bbox.height) / this.cellSize);
-
-            // Cache objects that are already checked with this object
-            checked.clear();
-
-            // insert & check against all covered grids
-            for (let x = xMin; x <= xMax; x++) {
-                for (let y = yMin; y <= yMax; y++) {
-                    if (!this.grid[x]) {
-                        this.grid[x] = {};
-                        this.grid[x][y] = [obj];
-                    }
-                    else if (!this.grid[x][y]) {
-                        this.grid[x][y] = [obj];
-                    }
-                    else {
-                        const cell = this.grid[x][y];
-                        for (let i = 0; i < cell.length; i++) {
-                            const other = cell[i];
-                            if (checked.has(other.id)) continue;
-                            pairCb(obj, other);
-                            checked.add(other.id);
-                        }
-                        cell.push(obj);
+        const checked = new Set<GameObj<AreaComp>>();
+        for (const [obj1, hashes] of this.hashesForObject) {
+            checked.add(obj1);
+            const collisions = new Set<GameObj<AreaComp>>();
+            for (let i = 0; i < hashes.length; i++) {
+                const hash = hashes[i];
+                for (const obj2 of this.grid[hash]) {
+                    if (!checked.has(obj2)) {
+                        collisions.add(obj2);
                     }
                 }
             }
+            for (const obj2 of collisions) {
+                pairCb(obj1, obj2);
+            }
+        }
+    }
+
+    /**
+     * Retrieves all object which potentially collide with the rectangle
+     */
+    retrieve(rect: Rect, retrieveCb: (obj: GameObj<AreaComp>) => void) {
+        const hashes = this._hashRect(rect);
+        const objects = new Set<GameObj<AreaComp>>();
+        for (let i = 0; i < hashes.length; i++) {
+            const hash = hashes[i];
+            for (const obj of this.grid[hash]) {
+                objects.add(obj);
+            }
+        }
+        for (const obj of objects) {
+            retrieveCb(obj);
+        }
+    }
+
+    _hashPoint(point: Vec2) {
+        const x = Math.floor((point.x - this.bounds.pos.x) / this.cellSize);
+        const y = Math.floor((point.y - this.bounds.pos.y) / this.cellSize);
+        return x + y * this.columns;
+    }
+
+    _hashRect(rect: Rect) {
+        // Clamp rect
+        if (rect.pos.x < this.bounds.pos.x) {
+            const diff = this.bounds.pos.x - rect.pos.x;
+            rect.pos.x = this.bounds.pos.x;
+            rect.width -= diff;
+        }
+        if (rect.pos.y < this.bounds.pos.y) {
+            const diff = this.bounds.pos.y - rect.pos.y;
+            rect.pos.y = this.bounds.pos.y;
+            rect.height -= diff;
+        }
+        if (rect.pos.x + rect.width > this.bounds.pos.x + this.bounds.width) {
+            rect.width = this.bounds.pos.x + this.bounds.width - rect.pos.x;
+        }
+        if (rect.pos.y + rect.height > this.bounds.pos.y + this.bounds.height) {
+            rect.height = this.bounds.pos.y + this.bounds.height - rect.pos.y;
+        }
+        // Calculate hashes
+        const w = Math.floor(this.bounds.width / this.cellSize);
+        let hash = this._hashPoint(rect.pos);
+        const hashes = [];
+        const rw = Math.ceil(rect.width / this.cellSize);
+        const rh = Math.ceil(rect.height / this.cellSize);
+        for (let y = 0; y <= rh; y++) {
+            for (let x = 0; x <= rw; x++) {
+                hashes.push(hash);
+                hash++;
+            }
+            hash += w - rw - 1;
+        }
+        return hashes;
+    }
+
+    _addObjectToGridByHash(obj: GameObj<AreaComp>, hash: number) {
+        if (!this.grid[hash]) {
+            this.grid[hash] = [];
+        }
+        this.grid[hash].push(obj);
+    }
+
+    _removeObjectFromGridByHash(obj: GameObj<AreaComp>, hash: number) {
+        const objects = this.grid[hash];
+        const index = objects.indexOf(obj);
+        if (index >= 0) {
+            objects.splice(index, 1);
         }
     }
 }

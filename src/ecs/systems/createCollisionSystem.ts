@@ -34,7 +34,7 @@ export const createCollisionSystem = (
         : broad === "quadtree"
         ? new Quadtree(new Rect(vec2(0, 0), width(), height()), 8, 8)
         : broad == "grid"
-        ? new HashGrid(opt)
+        ? new HashGrid(new Rect(vec2(0, 0), width(), height()), opt)
         : new SweepAndPruneHorizontal();
     const narrowPhaseIntersection = narrow === "gjk"
         ? gjkShapeIntersection
