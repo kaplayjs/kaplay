@@ -1,3 +1,4 @@
+import { DEF_HASH_GRID_SIZE } from "../../constants/general";
 import { onAdd, onDestroy, onUnuse, onUse } from "../../events/globalEvents";
 import { onSceneLeave } from "../../game/scenes";
 import { height, width } from "../../gfx/stack";
@@ -34,7 +35,14 @@ export const createCollisionSystem = (
         : broad === "quadtree"
         ? new Quadtree(new Rect(vec2(0, 0), width(), height()), 8, 8)
         : broad == "grid"
-        ? new HashGrid(new Rect(vec2(0, 0), width(), height()), opt)
+        ? new HashGrid(
+            new Rect(
+                vec2(-DEF_HASH_GRID_SIZE, -DEF_HASH_GRID_SIZE),
+                width() + DEF_HASH_GRID_SIZE * 2,
+                height() + DEF_HASH_GRID_SIZE * 2,
+            ),
+            opt,
+        )
         : new SweepAndPruneHorizontal();
     const narrowPhaseIntersection = narrow === "gjk"
         ? gjkShapeIntersection

@@ -22,13 +22,18 @@ export class HashGrid {
     >();
 
     constructor(bounds: Rect, opt: HashGridOpt) {
-        this.bounds = bounds;
+        this.bounds = bounds.clone();
         this.cellSize = opt.hashGridSize || DEF_HASH_GRID_SIZE;
         this.columns = Math.floor(bounds.width / this.cellSize);
+
+        this._clampBoundsToCellSize();
     }
 
     add(obj: GameObj<AreaComp>) {
         const bbox = obj.worldBbox();
+        if (!this._isInside(bbox)) {
+            this._resizeToFit(bbox);
+        }
         const hashes = this._hashRect(bbox);
         for (let i = 0; i < hashes.length; i++) {
             const hash = hashes[i];
@@ -138,16 +143,17 @@ export class HashGrid {
         }
     }
 
-    _hashPoint(point: Vec2) {
+    private _hashPoint(point: Vec2) {
         const x = Math.floor((point.x - this.bounds.pos.x) / this.cellSize);
         const y = Math.floor((point.y - this.bounds.pos.y) / this.cellSize);
         return x + y * this.columns;
     }
 
-    _hashRect(rect: Rect) {
+    private _hashRect(rect: Rect) {
         rect = rect.clone();
 
         // Clamp rect
+        // TODO: remove this once update resizes too
         if (rect.pos.x < this.bounds.pos.x) {
             const diff = this.bounds.pos.x - rect.pos.x;
             rect.pos.x = this.bounds.pos.x;
@@ -181,18 +187,61 @@ export class HashGrid {
         return hashes;
     }
 
-    _addObjectToGridByHash(obj: GameObj<AreaComp>, hash: number) {
+    private _addObjectToGridByHash(obj: GameObj<AreaComp>, hash: number) {
         if (!this.grid[hash]) {
             this.grid[hash] = [];
         }
         this.grid[hash].push(obj);
     }
 
-    _removeObjectFromGridByHash(obj: GameObj<AreaComp>, hash: number) {
+    private _removeObjectFromGridByHash(obj: GameObj<AreaComp>, hash: number) {
         const objects = this.grid[hash];
         const index = objects.indexOf(obj);
         if (index >= 0) {
             objects.splice(index, 1);
         }
+    }
+
+    private _isInside(bbox: Rect) {
+        return bbox.pos.x >= this.bounds.pos.x
+            && bbox.pos.y >= this.bounds.pos.y
+            && bbox.pos.x + bbox.width <= this.bounds.pos.x + this.bounds.width
+            && bbox.pos.y + bbox.height
+                <= this.bounds.pos.y + this.bounds.height;
+    }
+
+    private _resizeToFit(bbox: Rect) {
+        this.bounds.pos.x = Math.min(this.bounds.pos.x, bbox.pos.x);
+        this.bounds.pos.y = Math.min(this.bounds.pos.y, bbox.pos.y);
+        this.bounds.width = Math.max(
+            this.bounds.pos.x + this.bounds.width,
+            bbox.pos.x + bbox.width,
+        ) - this.bounds.pos.x;
+        this.bounds.height = Math.max(
+            this.bounds.pos.y + this.bounds.height,
+            bbox.pos.y + bbox.height,
+        ) - this.bounds.pos.y;
+
+        this._clampBoundsToCellSize();
+
+        // TODO: Recalculate hashes instead of restarting from scratch
+        const objects = [...this.hashesForObject.keys()];
+
+        this.clear();
+
+        for (const obj of objects) {
+            this.add(obj);
+        }
+    }
+
+    private _clampBoundsToCellSize() {
+        this.bounds.pos.x = Math.floor(this.bounds.pos.x / this.cellSize)
+            * this.cellSize;
+        this.bounds.pos.y = Math.floor(this.bounds.pos.y / this.cellSize)
+            * this.cellSize;
+        this.bounds.width = Math.ceil(this.bounds.width / this.cellSize)
+            * this.cellSize;
+        this.bounds.height = Math.ceil(this.bounds.height / this.cellSize)
+            * this.cellSize;
     }
 }
