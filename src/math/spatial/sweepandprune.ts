@@ -272,8 +272,8 @@ export class SweepAndPruneVertical implements BroadPhaseAlgorithm {
     }
 
     retrieve(rect: Rect, retrieveCb: (obj: GameObj<AreaComp>) => void) {
-        const top = rect.pos.x;
-        const bottom = top + rect.width;
+        const top = rect.pos.y;
+        const bottom = top + rect.height;
         const hits = new Set<GameObj<AreaComp>>();
         for (const edge of this.edges) {
             if (edge.isTop) {
