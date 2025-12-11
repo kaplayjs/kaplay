@@ -147,9 +147,7 @@ export class SweepAndPruneHorizontal implements BroadPhaseAlgorithm {
                 }
             }
         }
-        for (const obj of hits) {
-            retrieveCb(obj);
-        }
+        hits.forEach(retrieveCb);
     }
 }
 
@@ -287,9 +285,7 @@ export class SweepAndPruneVertical implements BroadPhaseAlgorithm {
                 }
             }
         }
-        for (const obj of hits) {
-            retrieveCb(obj);
-        }
+        hits.forEach(retrieveCb);
     }
 }
 

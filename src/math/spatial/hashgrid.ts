@@ -131,19 +131,17 @@ export class HashGrid {
      */
     retrieve(rect: Rect, retrieveCb: (obj: GameObj<AreaComp>) => void) {
         const hashes = this._hashRect(rect);
-        const objects = new Set<GameObj<AreaComp>>();
+        const hits = new Set<GameObj<AreaComp>>();
         for (let i = 0; i < hashes.length; i++) {
             const hash = hashes[i];
             const cell = this.grid[hash];
             if (cell) {
                 for (const obj of this.grid[hash]) {
-                    objects.add(obj);
+                    hits.add(obj);
                 }
             }
         }
-        for (const obj of objects) {
-            retrieveCb(obj);
-        }
+        hits.forEach(retrieveCb);
     }
 
     private _hashPoint(point: Vec2) {
