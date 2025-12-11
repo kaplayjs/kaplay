@@ -2,6 +2,7 @@ import { DEF_HASH_GRID_SIZE } from "../../constants/general";
 import type { AreaComp } from "../../ecs/components/physics/area";
 import { objectTransformNeedsUpdate } from "../../ecs/entity/GameObjRaw";
 import { drawRect } from "../../gfx/draw/drawRect";
+import { loadIdentity, pushMatrix } from "../../gfx/stack";
 import type { GameObj } from "../../types";
 import { type Rect, vec2 } from "../math";
 import { calcTransform } from "../various";
@@ -24,9 +25,8 @@ export class HashGrid {
     constructor(bounds: Rect, opt: HashGridOpt) {
         this.bounds = bounds.clone();
         this.cellSize = opt.hashGridSize || DEF_HASH_GRID_SIZE;
-        this.columns = Math.floor(bounds.width / this.cellSize);
-
         this._clampBoundsToCellSize();
+        this.columns = Math.floor(this.bounds.width / this.cellSize);
     }
 
     add(obj: GameObj<AreaComp>) {
@@ -92,11 +92,13 @@ export class HashGrid {
         }
 
         /*for (const i in this.grid) {
+            loadIdentity();
             if (this.grid[i].length) {
                 drawRect({
-                    pos: vec2(i % this.columns, Math.floor(i / this.columns)).scale(this.cellSize),
+                    pos: vec2(i % this.columns, Math.floor(i / this.columns))
+                        .scale(this.cellSize),
                     width: this.cellSize,
-                    height: this.cellSize
+                    height: this.cellSize,
                 });
             }
         }*/
@@ -224,6 +226,7 @@ export class HashGrid {
         ) - this.bounds.pos.y;
 
         this._clampBoundsToCellSize();
+        this.columns = Math.floor(this.bounds.width / this.cellSize);
 
         // TODO: Recalculate hashes instead of restarting from scratch
         const objects = [...this.hashesForObject.keys()];
