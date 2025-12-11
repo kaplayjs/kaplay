@@ -30,6 +30,9 @@ best friend, lajbel, can put the correct version name here
   an object's world bounding box has changed. @mflerackers
 - You can no longer change the position of an object by doing obj.pos.x += 1.
   You need to assign a new Vec2 or use moveBy instead. @mflerackers
+- The grid broadphase has been rewritten for performance. @mflerackers
+- Global `retrieve()` method to get the objects with area within a certain
+  rectangle. @mflerackers
 
 ## [unreleased]
 

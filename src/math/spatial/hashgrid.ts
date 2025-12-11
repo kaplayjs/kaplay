@@ -134,8 +134,11 @@ export class HashGrid {
         const objects = new Set<GameObj<AreaComp>>();
         for (let i = 0; i < hashes.length; i++) {
             const hash = hashes[i];
-            for (const obj of this.grid[hash]) {
-                objects.add(obj);
+            const cell = this.grid[hash];
+            if (cell) {
+                for (const obj of this.grid[hash]) {
+                    objects.add(obj);
+                }
             }
         }
         for (const obj of objects) {

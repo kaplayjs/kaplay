@@ -379,6 +379,13 @@ export interface KAPLAYCtx {
      */
     readd(obj: GameObj): GameObj;
     /**
+     * Retrieves all objects within the given rectangle
+     *
+     * @since v4000
+     * @group Game Obj
+     */
+    retrieve(rect: Rect, retrieveCb: (obj: GameObj<AreaComp>) => void): void;
+    /**
      * Get a list of all game objs with certain tag.
      *
      * @param tag - The tag to search for. Use "*" to get all objects.
