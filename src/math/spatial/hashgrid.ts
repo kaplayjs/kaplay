@@ -136,8 +136,8 @@ export class HashGrid {
             const hash = hashes[i];
             const cell = this.grid[hash];
             if (cell) {
-                for (const obj of this.grid[hash]) {
-                    hits.add(obj);
+                for (let i = 0; i < cell.length; i++) {
+                    hits.add(cell[i]);
                 }
             }
         }
