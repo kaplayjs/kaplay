@@ -53,7 +53,11 @@ export class HashGrid {
             this._addObjectToGridByHash(obj, hash);
         }
         this.hashesForObject.set(obj, hashes);
-        this.versionsForObject.set(obj, [getTransformVersion(obj), 0, 0]);
+        this.versionsForObject.set(obj, [
+            getTransformVersion(obj),
+            getRenderAreaVersion(obj),
+            getLocalAreaVersion(obj),
+        ]);
     }
 
     remove(obj: GameObj<AreaComp>) {

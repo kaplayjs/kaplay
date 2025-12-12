@@ -1,6 +1,11 @@
-import type { AreaComp } from "../../ecs/components/physics/area";
+import {
+    type AreaComp,
+    getLocalAreaVersion,
+    getRenderAreaVersion,
+} from "../../ecs/components/physics/area";
 import type { PosComp } from "../../ecs/components/transform/pos";
 import {
+    getTransformVersion,
     objectTransformNeedsUpdate,
     transformNeedsUpdate,
 } from "../../ecs/entity/GameObjRaw";
@@ -33,6 +38,11 @@ class SapEdgeHorizontal {
 export class SweepAndPruneHorizontal implements BroadPhaseAlgorithm {
     edges: Array<SapEdgeHorizontal>;
     objects: Map<GameObj<AreaComp>, [SapEdgeHorizontal, SapEdgeHorizontal]>;
+    versionsForObject: Map<GameObj<AreaComp>, [number, number, number]> =
+        new Map<
+            GameObj<AreaComp>,
+            [number, number, number]
+        >();
 
     constructor() {
         this.edges = [];
@@ -52,6 +62,11 @@ export class SweepAndPruneHorizontal implements BroadPhaseAlgorithm {
         this.edges.push(left);
         this.edges.push(right);
         this.objects.set(obj, [left, right]);
+        this.versionsForObject.set(obj, [
+            getTransformVersion(obj),
+            getRenderAreaVersion(obj),
+            getLocalAreaVersion(obj),
+        ]);
     }
 
     /**
@@ -64,6 +79,7 @@ export class SweepAndPruneHorizontal implements BroadPhaseAlgorithm {
             this.edges.splice(this.edges.indexOf(pair[0]), 1);
             this.edges.splice(this.edges.indexOf(pair[1]), 1);
             this.objects.delete(obj);
+            this.versionsForObject.delete(obj);
         }
     }
 
@@ -79,10 +95,21 @@ export class SweepAndPruneHorizontal implements BroadPhaseAlgorithm {
         // Update edge data
         for (const [obj, edges] of this.objects.entries()) {
             if (shouldIgnore(obj)) continue;
-            if (objectTransformNeedsUpdate(obj)) {
-                // Note: not correct if an ancestor also has changed
-                calcTransform(obj, obj.transform);
+
+            // Check if this world area changed since last frame
+            const versions = this.versionsForObject.get(obj);
+            if (
+                versions![0] === getTransformVersion(obj)
+                && versions![1] === getRenderAreaVersion(obj)
+                && versions![2] === getLocalAreaVersion(obj)
+            ) {
+                // No change
+                continue;
             }
+            versions![0] = getTransformVersion(obj);
+            versions![1] = getRenderAreaVersion(obj);
+            versions![2] = getLocalAreaVersion(obj);
+
             const bbox = obj.worldBbox();
             edges[0].x = bbox.pos.x;
             edges[1].x = bbox.pos.x + bbox.width;
@@ -174,6 +201,11 @@ class SapEdgeVertical {
 export class SweepAndPruneVertical implements BroadPhaseAlgorithm {
     edges: Array<SapEdgeVertical>;
     objects: Map<GameObj<AreaComp>, [SapEdgeVertical, SapEdgeVertical]>;
+    versionsForObject: Map<GameObj<AreaComp>, [number, number, number]> =
+        new Map<
+            GameObj<AreaComp>,
+            [number, number, number]
+        >();
 
     constructor() {
         this.edges = [];
@@ -193,6 +225,11 @@ export class SweepAndPruneVertical implements BroadPhaseAlgorithm {
         this.edges.push(top);
         this.edges.push(bottom);
         this.objects.set(obj, [top, bottom]);
+        this.versionsForObject.set(obj, [
+            getTransformVersion(obj),
+            getRenderAreaVersion(obj),
+            getLocalAreaVersion(obj),
+        ]);
     }
 
     /**
@@ -205,6 +242,7 @@ export class SweepAndPruneVertical implements BroadPhaseAlgorithm {
             this.edges.splice(this.edges.indexOf(pair[0]), 1);
             this.edges.splice(this.edges.indexOf(pair[1]), 1);
             this.objects.delete(obj);
+            this.versionsForObject.delete(obj);
         }
     }
 
@@ -220,7 +258,21 @@ export class SweepAndPruneVertical implements BroadPhaseAlgorithm {
         // Update edge data
         for (const [obj, edges] of this.objects.entries()) {
             if (shouldIgnore(obj)) continue;
-            calcTransform(obj, obj.transform);
+
+            // Check if this world area changed since last frame
+            const versions = this.versionsForObject.get(obj);
+            if (
+                versions![0] === getTransformVersion(obj)
+                && versions![1] === getRenderAreaVersion(obj)
+                && versions![2] === getLocalAreaVersion(obj)
+            ) {
+                // No change
+                continue;
+            }
+            versions![0] = getTransformVersion(obj);
+            versions![1] = getRenderAreaVersion(obj);
+            versions![2] = getLocalAreaVersion(obj);
+
             const bbox = obj.worldBbox();
             edges[0].y = bbox.pos.y;
             edges[1].y = bbox.pos.y + bbox.height;
