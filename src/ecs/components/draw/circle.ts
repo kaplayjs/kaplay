@@ -34,7 +34,6 @@ export interface CircleComp extends Comp {
      * @since v3000.0
      */
     renderArea(): Circle;
-    renderAreaVersion: number;
     serialize(): SerializedCircleComp;
 }
 
@@ -52,7 +51,10 @@ export interface CircleCompOpt {
     fill?: boolean;
 }
 
-export function circle(radius: number, opt: CircleCompOpt = {}): CircleComp {
+export function circle(
+    radius: number,
+    opt: CircleCompOpt = {},
+): CircleComp & { _renderAreaVersion: number } {
     let _shape: Circle | undefined;
     let _radius = radius;
     return {
@@ -64,7 +66,7 @@ export function circle(radius: number, opt: CircleCompOpt = {}): CircleComp {
             if (_radius != value) {
                 _radius = value;
                 if (_shape) _shape.radius = value;
-                this.renderAreaVersion = nextRenderAreaVersion();
+                this._renderAreaVersion = nextRenderAreaVersion();
             }
         },
         draw(this: GameObj<CircleComp>) {
@@ -73,17 +75,21 @@ export function circle(radius: number, opt: CircleCompOpt = {}): CircleComp {
                 fill: opt.fill,
             }));
         },
-        renderArea(this: GameObj<AnchorComp | CircleComp>) {
+        renderArea(
+            this: GameObj<
+                AnchorComp | CircleComp | { _renderAreaVersion: number }
+            >,
+        ) {
             if (!_shape) {
                 _shape = new Circle(
                     new Vec2(0),
                     _radius,
                 );
-                this.renderAreaVersion = nextRenderAreaVersion();
+                this._renderAreaVersion = nextRenderAreaVersion();
             }
             return _shape;
         },
-        renderAreaVersion: 0,
+        _renderAreaVersion: 0,
         inspect() {
             return `radius: ${Math.ceil(_radius)}`;
         },

@@ -89,7 +89,7 @@ export function objectTransformNeedsUpdate(obj: GameObj<any>) {
     return obj._transformVersion >= _lastTransformVersion;
 }
 
-export function getTransformVersion(obj: GameObj<any>) {
+export function getTransformVersion(obj: GameObj<any>): number {
     return obj._transformVersion;
 }
 

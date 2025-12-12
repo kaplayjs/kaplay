@@ -1,4 +1,8 @@
-import type { AreaComp } from "../../ecs/components/physics/area";
+import {
+    type AreaComp,
+    getLocalAreaVersion,
+    getRenderAreaVersion,
+} from "../../ecs/components/physics/area";
 import { getTransformVersion } from "../../ecs/entity/GameObjRaw";
 import { drawRect } from "../../gfx/draw/drawRect";
 import type { GameObj } from "../../types";
@@ -16,7 +20,8 @@ export class Quadtree implements BroadPhaseAlgorithm {
     level: number;
     nodes: Quadtree[];
     objects: GameObj<AreaComp>[];
-    versions: Map<number, number>;
+    static versionsForObject: Map<GameObj<AreaComp>, [number, number, number]> =
+        new Map<GameObj<AreaComp>, [number, number, number]>();
 
     /**
      * Creates a new quadtree
@@ -37,7 +42,6 @@ export class Quadtree implements BroadPhaseAlgorithm {
         this.level = level;
         this.nodes = []; // lt, rt, rb, lb
         this.objects = [];
-        this.versions = new Map<number, number>();
     }
 
     /**
@@ -187,6 +191,11 @@ export class Quadtree implements BroadPhaseAlgorithm {
                     }
                     else {
                         this.objects[j++] = obj;
+                        Quadtree.versionsForObject.set(obj, [
+                            getTransformVersion(obj),
+                            getRenderAreaVersion(obj),
+                            getLocalAreaVersion(obj),
+                        ]);
                     }
                 }
                 this.objects.length = j;
@@ -204,6 +213,11 @@ export class Quadtree implements BroadPhaseAlgorithm {
         }
 
         this.objects.push(obj);
+        Quadtree.versionsForObject.set(obj, [
+            getTransformVersion(obj),
+            getRenderAreaVersion(obj),
+            getLocalAreaVersion(obj),
+        ]);
     }
 
     /**
@@ -213,7 +227,6 @@ export class Quadtree implements BroadPhaseAlgorithm {
     add(obj: GameObj<AreaComp>) {
         const bbox = obj.worldBbox();
         this.insert(obj, bbox);
-        this.versions.set(obj.id, getTransformVersion(obj));
     }
 
     /**
@@ -244,6 +257,7 @@ export class Quadtree implements BroadPhaseAlgorithm {
         let index = this.objects.indexOf(obj);
         if (index != -1) {
             this.objects.splice(index, 1);
+            Quadtree.versionsForObject.delete(obj);
             if (!fast) {
                 this.merge();
             }
@@ -305,11 +319,20 @@ export class Quadtree implements BroadPhaseAlgorithm {
         let i = 0;
         while (i < this.objects.length) {
             const obj = this.objects[i];
-            if (this.versions.get(obj.id) === getTransformVersion(obj)) {
+            // Check if this world area changed since last frame
+            const versions = Quadtree.versionsForObject.get(obj);
+            if (
+                versions![0] === getTransformVersion(obj)
+                && versions![1] === getRenderAreaVersion(obj)
+                && versions![2] === getLocalAreaVersion(obj)
+            ) {
                 i++;
                 continue;
             }
-            this.versions.set(obj.id, getTransformVersion(obj));
+            versions![0] = getTransformVersion(obj);
+            versions![1] = getRenderAreaVersion(obj);
+            versions![2] = getLocalAreaVersion(obj);
+
             const bbox = obj.worldBbox();
             // If the object is outside the bounds, remove it and add it to the root later
             if (!this.isInside(bbox)) {

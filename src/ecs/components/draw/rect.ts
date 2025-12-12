@@ -40,7 +40,6 @@ export interface RectComp extends Comp {
      * @since v3000.0
      */
     renderArea(): Rect;
-    renderAreaVersion: number;
     serialize(): SerializedRectComp;
 }
 
@@ -61,7 +60,11 @@ export interface RectCompOpt {
     fill?: boolean;
 }
 
-export function rect(w: number, h: number, opt: RectCompOpt = {}): RectComp {
+export function rect(
+    w: number,
+    h: number,
+    opt: RectCompOpt = {},
+): RectComp & { _renderAreaVersion: number } {
     let _shape: Rect | undefined;
     let _width = w;
     let _height = h;
@@ -74,7 +77,7 @@ export function rect(w: number, h: number, opt: RectCompOpt = {}): RectComp {
             if (_width != value) {
                 _width = value;
                 if (_shape) _shape.width = value;
-                this.renderAreaVersion = nextRenderAreaVersion();
+                this._renderAreaVersion = nextRenderAreaVersion();
             }
         },
         get height() {
@@ -84,7 +87,7 @@ export function rect(w: number, h: number, opt: RectCompOpt = {}): RectComp {
             if (_height != value) {
                 _height = value;
                 if (_shape) _shape.height = value;
-                this.renderAreaVersion = nextRenderAreaVersion();
+                this._renderAreaVersion = nextRenderAreaVersion();
             }
         },
         radius: opt.radius || 0,
@@ -99,11 +102,11 @@ export function rect(w: number, h: number, opt: RectCompOpt = {}): RectComp {
         renderArea() {
             if (!_shape) {
                 _shape = new Rect(vec2(0), _width, _height);
-                this.renderAreaVersion = nextRenderAreaVersion();
+                this._renderAreaVersion = nextRenderAreaVersion();
             }
             return _shape;
         },
-        renderAreaVersion: 0,
+        _renderAreaVersion: 0,
         inspect() {
             return `rect: (${Math.ceil(_width)}w, ${Math.ceil(_height)}h)`;
         },

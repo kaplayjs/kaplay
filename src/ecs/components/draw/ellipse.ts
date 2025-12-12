@@ -35,7 +35,6 @@ export interface EllipseComp extends Comp {
      * Render area of the ellipse.
      */
     renderArea(): Ellipse;
-    renderAreaVersion: number;
     serialize(): SerializedEllipseComp;
 }
 
@@ -57,7 +56,7 @@ export function ellipse(
     radiusX: number,
     radiusY: number,
     opt: EllipseCompOpt = {},
-): EllipseComp {
+): EllipseComp & { _renderAreaVersion: number } {
     let _shape: Ellipse | undefined;
     let _radiusX = radiusX;
     let _radiusY = radiusY;
@@ -70,7 +69,7 @@ export function ellipse(
             if (_radiusX != value) {
                 _radiusX = value;
                 if (_shape) _shape.radiusX = value;
-                this.renderAreaVersion = nextRenderAreaVersion();
+                this._renderAreaVersion = nextRenderAreaVersion();
             }
         },
         get radiusY() {
@@ -80,7 +79,7 @@ export function ellipse(
             if (_radiusY != value) {
                 _radiusY = value;
                 if (_shape) _shape.radiusY = value;
-                this.renderAreaVersion = nextRenderAreaVersion();
+                this._renderAreaVersion = nextRenderAreaVersion();
             }
         },
         draw(this: GameObj<EllipseComp>) {
@@ -90,18 +89,22 @@ export function ellipse(
                 fill: opt.fill,
             }));
         },
-        renderArea(this: GameObj<AnchorComp | EllipseComp>) {
+        renderArea(
+            this: GameObj<
+                AnchorComp | EllipseComp | { _renderAreaVersion: number }
+            >,
+        ) {
             if (!_shape) {
                 _shape = new Ellipse(
                     new Vec2(0),
                     _radiusX,
                     _radiusY,
                 );
-                this.renderAreaVersion = nextRenderAreaVersion();
+                this._renderAreaVersion = nextRenderAreaVersion();
             }
             return _shape;
         },
-        renderAreaVersion: 0,
+        _renderAreaVersion: 0,
         inspect() {
             return `radiusX: ${Math.ceil(_radiusX)} radiusY: ${
                 Math.ceil(_radiusY)

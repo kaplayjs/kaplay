@@ -48,7 +48,6 @@ export interface PolygonComp extends Comp {
      */
     tex?: Texture;
     renderArea(): Polygon;
-    renderAreaVersion: number;
 }
 
 /**
@@ -59,7 +58,10 @@ export interface PolygonComp extends Comp {
  */
 export type PolygonCompOpt = Omit<DrawPolygonOpt, "pts">;
 
-export function polygon(pts: Vec2[], opt: PolygonCompOpt = {}): PolygonComp {
+export function polygon(
+    pts: Vec2[],
+    opt: PolygonCompOpt = {},
+): PolygonComp & { _renderAreaVersion: number } {
     if (pts.length < 3) {
         throw new Error(
             `Polygon's need more than two points, ${pts.length} points provided`,
@@ -85,12 +87,14 @@ export function polygon(pts: Vec2[], opt: PolygonCompOpt = {}): PolygonComp {
                 triangulate: opt.triangulate,
             }));
         },
-        renderArea(this: GameObj<PolygonComp>) {
+        renderArea(
+            this: GameObj<PolygonComp & { _renderAreaVersion: number }>,
+        ) {
             // TODO: caching
-            this.renderAreaVersion = nextRenderAreaVersion();
+            this._renderAreaVersion = nextRenderAreaVersion();
             return new Polygon(this.pts);
         },
-        renderAreaVersion: 0,
+        _renderAreaVersion: 0,
         inspect() {
             return `polygon: ${this.pts.map(p => `[${p.x},${p.y}]`).join(",")}`;
         },

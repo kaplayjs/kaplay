@@ -34,25 +34,24 @@ export function nextRenderAreaVersion() {
     return _nextRenderAreaVersion++;
 }
 
-let _lastAreaVersion = 0;
-let _nextAreaVersion = 0;
+let _nextLocalAreaVersion = 0;
 
-export function nextAreaVersion() {
-    return _nextAreaVersion++;
-}
-
-export function updateLastAreaVersion() {
-    return _lastAreaVersion = _nextAreaVersion;
-}
-
-export function areaNeedsUpdate(version: number) {
-    return version >= _lastAreaVersion;
+export function nextLocalAreaVersion() {
+    return _nextLocalAreaVersion++;
 }
 
 let _nextWorldAreaVersion = 0;
 
 export function nextWorldAreaVersion() {
     return _nextWorldAreaVersion++;
+}
+
+export function getRenderAreaVersion(obj: GameObj<any>) {
+    return obj._renderAreaVersion;
+}
+
+export function getLocalAreaVersion(obj: GameObj<any>) {
+    return obj._localAreaVersion;
 }
 
 /**
@@ -211,7 +210,6 @@ export interface AreaComp extends Comp {
      * Get the geometry data for the collider in world coordinate space.
      */
     worldArea(): Shape;
-    worldAreaVersion: number;
     /**
      * Get the bounding box of the geometry data for the collider in world coordinate space.
      */
@@ -277,7 +275,9 @@ export interface AreaCompOpt {
     friction?: number;
 }
 
-export function area(opt: AreaCompOpt = {}): AreaComp {
+export function area(
+    opt: AreaCompOpt = {},
+): AreaComp & { _localAreaVersion: number } {
     // The id => collision map of objects colliding with this object
     const colliding: Record<string, Collision> = {};
     // The ids of the objects which are colliding with this object during this frame
@@ -294,12 +294,12 @@ export function area(opt: AreaCompOpt = {}): AreaComp {
     let _offset: Vec2 = opt.offset ?? vec2(0);
     let _cursor: Cursor | null = opt.cursor ?? null;
 
-    let _areaSettingsVersion = -1; // Track local changes in area properties
-    let _worldTransformVersion = -1; // Track object transform changes
-    let _worldRenderShapeVersion = -1; // Track render shape changes
-    let _worldAreaSettingsVersion = -1; // Track area properties changes
+    let _localAreaVersion = -1; // Track local changes in area properties
     let _worldAreaVersion = -1; // Track local changes in world area
     let _worldBBoxVersion = -1; // Track world area changes for bbox
+    let _cachedTransformVersion = -1; // Currently used transform
+    let _cachedRenderAreaVersion = -1; // Currently used render shape
+    let _cachedLocalAreaVersion = -1; // Currently used local area
 
     return {
         id: "area",
@@ -390,24 +390,28 @@ export function area(opt: AreaCompOpt = {}): AreaComp {
             popTransform();
         },
 
+        get _localAreaVersion() {
+            return _localAreaVersion;
+        },
+
         area: {
             set shape(value: Shape | null) {
                 _shape = value;
-                _areaSettingsVersion = nextAreaVersion();
+                _localAreaVersion = nextLocalAreaVersion();
             },
             get shape(): Shape | null {
                 return _shape;
             },
             set scale(value: Vec2) {
                 _scale = this.scale;
-                _areaSettingsVersion = nextAreaVersion();
+                _localAreaVersion = nextLocalAreaVersion();
             },
             get scale(): Vec2 {
                 return _scale;
             },
             set offset(value: Vec2) {
                 _offset = value;
-                _areaSettingsVersion = nextAreaVersion();
+                _localAreaVersion = nextLocalAreaVersion();
             },
             get offset() {
                 return _offset;
@@ -647,13 +651,13 @@ export function area(opt: AreaCompOpt = {}): AreaComp {
 
         // TODO: cache
         worldArea(this: GameObj<AreaComp | AnchorComp>): Shape {
-            const renderAreaVersion = (this as any).renderAreaVersion;
+            const renderAreaVersion = getRenderAreaVersion(this);
             if (
                 !_worldShape
-                || _worldTransformVersion !== (this as any)._transformVersion // Transform changed
+                || _cachedTransformVersion !== (this as any)._transformVersion // Transform changed
                 || (renderAreaVersion !== undefined // Render area (shape) changed
-                    && _worldRenderShapeVersion !== renderAreaVersion) // Render area (shape) changed
-                || _worldAreaSettingsVersion !== _areaSettingsVersion // Area settings changed
+                    && _cachedRenderAreaVersion !== renderAreaVersion) // Render area (shape) changed
+                || _cachedLocalAreaVersion !== _localAreaVersion // Area settings changed
             ) {
                 const localArea = this.localArea();
 
@@ -677,16 +681,12 @@ export function area(opt: AreaCompOpt = {}): AreaComp {
 
                 _worldShape = localArea.transform(transform, _worldShape);
 
-                _worldTransformVersion = (this as any)._transformVersion;
-                _worldRenderShapeVersion = renderAreaVersion ?? 0;
-                _worldAreaSettingsVersion = _areaSettingsVersion;
+                _cachedTransformVersion = (this as any)._transformVersion;
+                _cachedRenderAreaVersion = renderAreaVersion ?? 0;
+                _cachedLocalAreaVersion = _localAreaVersion;
                 _worldAreaVersion = nextWorldAreaVersion();
             }
             return _worldShape;
-        },
-
-        get worldAreaVersion() {
-            return _worldAreaVersion;
         },
 
         worldBbox(this: GameObj<AreaComp>): Rect {
@@ -694,10 +694,10 @@ export function area(opt: AreaCompOpt = {}): AreaComp {
             if (
                 !_worldBBox || _worldAreaVersion != _worldBBoxVersion
                 || !_worldShape
-                || _worldTransformVersion != (this as any)._transformVersion // Transform changed
+                || _cachedTransformVersion != (this as any)._transformVersion // Transform changed
                 || (renderAreaVersion != undefined // Render area (shape) changed
-                    && _worldRenderShapeVersion != renderAreaVersion) // Render area (shape) changed
-                || _worldAreaSettingsVersion != _areaSettingsVersion // Area settings changed
+                    && _cachedRenderAreaVersion != renderAreaVersion) // Render area (shape) changed
+                || _cachedLocalAreaVersion != _localAreaVersion // Area settings changed
             ) {
                 _worldBBox = this.worldArea().bbox(_worldBBox);
                 _worldBBoxVersion = _worldAreaVersion;

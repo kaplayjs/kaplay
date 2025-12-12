@@ -1,6 +1,13 @@
 import { DEF_HASH_GRID_SIZE } from "../../constants/general";
-import type { AreaComp } from "../../ecs/components/physics/area";
-import { objectTransformNeedsUpdate } from "../../ecs/entity/GameObjRaw";
+import {
+    type AreaComp,
+    getLocalAreaVersion,
+    getRenderAreaVersion,
+} from "../../ecs/components/physics/area";
+import {
+    getTransformVersion,
+    objectTransformNeedsUpdate,
+} from "../../ecs/entity/GameObjRaw";
 import { drawRect } from "../../gfx/draw/drawRect";
 import { loadIdentity, pushMatrix } from "../../gfx/stack";
 import type { GameObj } from "../../types";
@@ -21,6 +28,11 @@ export class HashGrid {
         GameObj<AreaComp>,
         Array<number>
     >();
+    versionsForObject: Map<GameObj<AreaComp>, [number, number, number]> =
+        new Map<
+            GameObj<AreaComp>,
+            [number, number, number]
+        >();
 
     constructor(bounds: Rect, opt: HashGridOpt) {
         this.bounds = bounds.clone();
@@ -34,15 +46,18 @@ export class HashGrid {
         if (!this._isInside(bbox)) {
             this._resizeToFit(bbox);
         }
+        // Add the object to all cells covered by its bbox
         const hashes = this._hashRect(bbox);
         for (let i = 0; i < hashes.length; i++) {
             const hash = hashes[i];
             this._addObjectToGridByHash(obj, hash);
         }
         this.hashesForObject.set(obj, hashes);
+        this.versionsForObject.set(obj, [getTransformVersion(obj), 0, 0]);
     }
 
     remove(obj: GameObj<AreaComp>) {
+        // Remove the object from all cells it is contained in
         const hashes = this.hashesForObject.get(obj);
         if (hashes) {
             for (let i = 0; i < hashes.length; i++) {
@@ -51,37 +66,60 @@ export class HashGrid {
             }
         }
         this.hashesForObject.delete(obj);
+        this.versionsForObject.delete(obj);
     }
 
     clear() {
         this.grid = [];
         this.hashesForObject.clear();
+        this.versionsForObject.clear();
     }
 
     update() {
         const oldSet = new Set<number>();
         const newSet = new Set<number>();
         for (const [obj, oldHashes] of this.hashesForObject) {
+            // Check if this world area changed since last frame
+            const versions = this.versionsForObject.get(obj);
+            if (
+                versions![0] === getTransformVersion(obj)
+                && versions![1] === getRenderAreaVersion(obj)
+                && versions![2] === getLocalAreaVersion(obj)
+            ) {
+                // No change
+                continue;
+            }
+            versions![0] = getTransformVersion(obj);
+            versions![1] = getRenderAreaVersion(obj);
+            versions![2] = getLocalAreaVersion(obj);
+
+            // Retrieve the old hashes
             for (let i = 0; i < oldHashes.length; i++) {
                 const hash = oldHashes[i];
                 oldSet.add(hash);
             }
+            // Get the hashes of the updated world bbox
             const newHashes = this._hashRect(obj.worldBbox());
             for (let i = 0; i < newHashes.length; i++) {
                 const hash = newHashes[i];
                 newSet.add(hash);
             }
+            // Check if there is a difference between old and new hashes
             if (oldSet.symmetricDifference(newSet).size == 0) {
                 oldSet.clear();
                 newSet.clear();
+                // No change
                 continue;
             }
+            // Remove the object from cells it no longer occupies
             for (const hash of oldSet.difference(newSet)) {
                 this._removeObjectFromGridByHash(obj, hash);
             }
+            // Add the object to newly occupied cells
             for (const hash of newSet.difference(oldSet)) {
                 this._addObjectToGridByHash(obj, hash);
             }
+            // Replace the hashes
             oldHashes.length = 0;
             for (let i = 0; i < newHashes.length; i++) {
                 const hash = newHashes[i];
@@ -132,7 +170,9 @@ export class HashGrid {
      * Retrieves all object which potentially collide with the rectangle
      */
     retrieve(rect: Rect, retrieveCb: (obj: GameObj<AreaComp>) => void) {
+        // Get the hashes of the covered cells
         const hashes = this._hashRect(rect);
+        // Collect the objects inside the cells
         const hits = new Set<GameObj<AreaComp>>();
         for (let i = 0; i < hashes.length; i++) {
             const hash = hashes[i];
@@ -214,6 +254,7 @@ export class HashGrid {
     }
 
     private _resizeToFit(bbox: Rect) {
+        // Rectangle union
         this.bounds.pos.x = Math.min(this.bounds.pos.x, bbox.pos.x);
         this.bounds.pos.y = Math.min(this.bounds.pos.y, bbox.pos.y);
         this.bounds.width = Math.max(

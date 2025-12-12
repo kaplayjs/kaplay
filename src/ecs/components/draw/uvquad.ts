@@ -24,10 +24,12 @@ export interface UVQuadComp extends Comp {
      * @since v3000.0
      */
     renderArea(): Rect;
-    renderAreaVersion: number;
 }
 
-export function uvquad(w: number, h: number): UVQuadComp {
+export function uvquad(
+    w: number,
+    h: number,
+): UVQuadComp & { _renderAreaVersion: number } {
     let _shape: Rect | undefined;
     let _width = w;
     let _height = h;
@@ -40,7 +42,7 @@ export function uvquad(w: number, h: number): UVQuadComp {
             if (_width != value) {
                 _width = value;
                 if (_shape) _shape.width = value;
-                this.renderAreaVersion = nextRenderAreaVersion();
+                this._renderAreaVersion = nextRenderAreaVersion();
             }
         },
         get height() {
@@ -50,7 +52,7 @@ export function uvquad(w: number, h: number): UVQuadComp {
             if (_height != value) {
                 _height = value;
                 if (_shape) _shape.height = value;
-                this.renderAreaVersion = nextRenderAreaVersion();
+                this._renderAreaVersion = nextRenderAreaVersion();
             }
         },
         draw(this: GameObj<UVQuadComp>) {
@@ -62,11 +64,11 @@ export function uvquad(w: number, h: number): UVQuadComp {
         renderArea() {
             if (!_shape) {
                 _shape = new Rect(vec2(0), _width, _height);
-                this.renderAreaVersion = nextRenderAreaVersion();
+                this._renderAreaVersion = nextRenderAreaVersion();
             }
             return _shape;
         },
-        renderAreaVersion: 0,
+        _renderAreaVersion: 0,
         inspect() {
             return `uvquad: (${Math.ceil(_width)}w, ${Math.ceil(_height)})h`;
         },

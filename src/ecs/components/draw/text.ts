@@ -95,7 +95,7 @@ export interface TextComp extends Comp {
      * @since v3000.0
      */
     renderArea(): Rect;
-    renderAreaVersion: number;
+    _renderAreaVersion: number;
     /**
      * The text data object after formatting, that contains the
      * renering info as well as the parse data of the formatting tags.
@@ -207,7 +207,7 @@ export function text(t: string, opt: TextCompOpt = {}): TextComp {
             if (_width != value) {
                 _width = value;
                 if (_shape) _shape.width = value;
-                this.renderAreaVersion = nextRenderAreaVersion();
+                this._renderAreaVersion = nextRenderAreaVersion();
             }
         },
         get height() {
@@ -217,7 +217,7 @@ export function text(t: string, opt: TextCompOpt = {}): TextComp {
             if (_height != value) {
                 _height = value;
                 if (_shape) _shape.height = value;
-                this.renderAreaVersion = nextRenderAreaVersion();
+                this._renderAreaVersion = nextRenderAreaVersion();
             }
         },
         align: opt.align!,
@@ -245,12 +245,12 @@ export function text(t: string, opt: TextCompOpt = {}): TextComp {
         renderArea() {
             if (!_shape) {
                 _shape = new Rect(vec2(0), _width, _height);
-                this.renderAreaVersion = nextRenderAreaVersion();
+                this._renderAreaVersion = nextRenderAreaVersion();
             }
             return _shape;
         },
 
-        renderAreaVersion: 0,
+        _renderAreaVersion: 0,
 
         serialize() {
             return {

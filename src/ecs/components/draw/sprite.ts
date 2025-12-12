@@ -136,7 +136,6 @@ export interface SpriteComp extends Comp {
      * @since v3000.0
      */
     renderArea(): Rect;
-    renderAreaVersion: number;
     serialize(): SerializedSpriteComp;
 }
 
@@ -193,7 +192,7 @@ export interface SpriteCompOpt {
 export function sprite(
     src: string | SpriteData | Asset<SpriteData>,
     opt: SpriteCompOpt = {},
-): SpriteComp {
+): SpriteComp & { _renderAreaVersion: number } {
     let spriteData: SpriteData | null = null;
     let curAnim: SpriteCurAnim | null = null;
     // 1  - from small index to large index
@@ -304,7 +303,7 @@ export function sprite(
             if (_width != value) {
                 _width = value;
                 if (_shape) _shape.width = value;
-                this.renderAreaVersion = nextRenderAreaVersion();
+                this._renderAreaVersion = nextRenderAreaVersion();
             }
         },
         get height() {
@@ -314,7 +313,7 @@ export function sprite(
             if (_height != value) {
                 _height = value;
                 if (_shape) _shape.height = value;
-                this.renderAreaVersion = nextRenderAreaVersion();
+                this._renderAreaVersion = nextRenderAreaVersion();
             }
         },
         frame: opt.frame || 0,
@@ -604,12 +603,12 @@ export function sprite(
         renderArea() {
             if (!_shape) {
                 _shape = new Rect(vec2(0), _width, _height);
-                this.renderAreaVersion = nextRenderAreaVersion();
+                this._renderAreaVersion = nextRenderAreaVersion();
             }
             return _shape;
         },
 
-        renderAreaVersion: 0,
+        _renderAreaVersion: 0,
 
         inspect() {
             if (typeof src === "string") {

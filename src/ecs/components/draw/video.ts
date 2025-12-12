@@ -17,7 +17,6 @@ export interface VideoComp extends Comp {
     pause(): void;
     mute: boolean;
     renderArea(): Rect;
-    renderAreaVersion: number;
 }
 
 export type VideoCompOpt = {
@@ -26,7 +25,10 @@ export type VideoCompOpt = {
 };
 
 // region video
-export function video(url: string, opt: VideoCompOpt): VideoComp {
+export function video(
+    url: string,
+    opt: VideoCompOpt,
+): VideoComp & { _renderAreaVersion: number } {
     const _video: HTMLVideoElement = document.createElement("video");
     let _playing = false;
     let _timeupdate = false;
@@ -44,7 +46,7 @@ export function video(url: string, opt: VideoCompOpt): VideoComp {
             if (_width != value) {
                 _width = value;
                 if (_shape) _shape.width = value;
-                this.renderAreaVersion = nextRenderAreaVersion();
+                this._renderAreaVersion = nextRenderAreaVersion();
             }
         },
         get height() {
@@ -54,7 +56,7 @@ export function video(url: string, opt: VideoCompOpt): VideoComp {
             if (_height != value) {
                 _height = value;
                 if (_shape) _shape.height = value;
-                this.renderAreaVersion = nextRenderAreaVersion();
+                this._renderAreaVersion = nextRenderAreaVersion();
             }
         },
         get currentTime() {
@@ -162,10 +164,10 @@ export function video(url: string, opt: VideoCompOpt): VideoComp {
         renderArea() {
             if (!_shape) {
                 _shape = new Rect(vec2(0), _width, _height);
-                this.renderAreaVersion = nextRenderAreaVersion();
+                this._renderAreaVersion = nextRenderAreaVersion();
             }
             return _shape;
         },
-        renderAreaVersion: 0,
+        _renderAreaVersion: 0,
     };
 }
