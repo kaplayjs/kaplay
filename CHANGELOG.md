@@ -18,6 +18,8 @@ best friend, lajbel, can put the correct version name here
 
 ## [unreleased]
 
+## [4000.0.0-alpha.24] - 2025-12-12
+
 ### Added
 
 - Added the `maxTimeStep` and `fixedUpdateMode` options, as well as
