@@ -1,6 +1,10 @@
 import { vec2, type Vec2Args } from "../../../math/math";
 import { type SerializedVec2, Vec2 } from "../../../math/Vec2";
 import type { Comp } from "../../../types";
+import {
+    type InternalGameObjRaw,
+    nextTransformVersion,
+} from "../../entity/GameObjRaw";
 
 /**
  * The serialized {@link scale `scale()`} component.
@@ -60,27 +64,34 @@ export function scale(...args: Vec2Args): ScaleComp {
         return scale(1);
     }
 
-    let _scale = vec2(...args);
+    const _scale = vec2(...args);
+    const _scaleReadOnly = vec2(...args);
 
     return {
         id: "scale",
+
+        get scale(): Vec2 {
+            return _scaleReadOnly;
+        },
         set scale(value: Vec2) {
             if (value instanceof Vec2 === false) {
                 throw Error(
                     "The scale property on scale is a vector. Use scaleTo or scaleBy to set the scale with a number.",
                 );
             }
+            _scale.x = value.x;
+            _scale.y = value.y;
+            _scaleReadOnly.x = value.x;
+            _scaleReadOnly.y = value.y;
+            (this as any as InternalGameObjRaw)._transformVersion =
+                nextTransformVersion();
+        },
 
-            _scale = vec2(value);
-        },
-        get scale() {
-            return _scale;
-        },
         scaleTo(...args: Vec2Args) {
-            _scale = vec2(...args);
+            this.scale = vec2(...args);
         },
         scaleBy(...args: Vec2Args) {
-            _scale = _scale.scale(vec2(...args));
+            this.scale = _scale.scale(vec2(...args));
         },
         inspect() {
             if (_scale.x == _scale.y) {

@@ -55,7 +55,7 @@ function drawStuff() {
         pos: p(0, 0),
         angle: t(40),
         anchor: "center",
-        scale: w(1, 1.5, 4),
+        scale: vec2(w(1, 1.5, 4)),
         color: rgb(w(128, 255, 4), w(128, 255, 8), 255),
     });
 

@@ -2,9 +2,13 @@ import { toScreen, toWorld } from "../../../game/camera";
 import { drawCircle } from "../../../gfx/draw/drawCircle";
 import { rgb } from "../../../math/color";
 import { vec2, type Vec2Args } from "../../../math/math";
-import { type Vec2 } from "../../../math/Vec2";
+import { Vec2 } from "../../../math/Vec2";
 import { _k } from "../../../shared";
 import type { Comp, GameObj } from "../../../types";
+import {
+    type InternalGameObjRaw,
+    nextTransformVersion,
+} from "../../entity/GameObjRaw";
 import { isFixed } from "../../entity/utils";
 import type { FixedComp } from "./fixed";
 
@@ -97,9 +101,23 @@ export interface PosComp extends Comp {
 }
 
 export function pos(...args: Vec2Args): PosComp {
+    const _pos = vec2(...args);
+    const _posReadOnly = vec2(...args);
+
     return {
         id: "pos",
-        pos: vec2(...args),
+
+        get pos(): Vec2 {
+            return _posReadOnly;
+        },
+        set pos(value: Vec2) {
+            _pos.x = value.x;
+            _pos.y = value.y;
+            _posReadOnly.x = value.x;
+            _posReadOnly.y = value.y;
+            (this as any as InternalGameObjRaw)._transformVersion =
+                nextTransformVersion();
+        },
 
         moveBy(...args: Vec2Args) {
             this.pos = this.pos.add(vec2(...args));

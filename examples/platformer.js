@@ -10,8 +10,10 @@
 kaplay({
     background: [141, 183, 255],
     narrowPhaseCollisionAlgorithm: "sat",
-    broadPhaseCollisionAlgorithm: "sap",
+    broadPhaseCollisionAlgorithm: "grid",
 });
+
+// setFixedSpeed("friedPotato");
 
 // load assets
 loadSprite("bean", "/sprites/bean.png");

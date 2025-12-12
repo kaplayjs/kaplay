@@ -1,6 +1,17 @@
-import type { AreaComp } from "../../ecs/components/physics/area";
+import {
+    type AreaComp,
+    getLocalAreaVersion,
+    getRenderAreaVersion,
+} from "../../ecs/components/physics/area";
+import type { PosComp } from "../../ecs/components/transform/pos";
+import {
+    getTransformVersion,
+    objectTransformNeedsUpdate,
+    transformNeedsUpdate,
+} from "../../ecs/entity/GameObjRaw";
 import { isPaused } from "../../ecs/entity/utils";
 import type { GameObj } from "../../types";
+import type { Rect } from "../math";
 import { calcTransform } from "../various";
 import type { BroadPhaseAlgorithm } from ".";
 
@@ -27,6 +38,11 @@ class SapEdgeHorizontal {
 export class SweepAndPruneHorizontal implements BroadPhaseAlgorithm {
     edges: Array<SapEdgeHorizontal>;
     objects: Map<GameObj<AreaComp>, [SapEdgeHorizontal, SapEdgeHorizontal]>;
+    versionsForObject: Map<GameObj<AreaComp>, [number, number, number]> =
+        new Map<
+            GameObj<AreaComp>,
+            [number, number, number]
+        >();
 
     constructor() {
         this.edges = [];
@@ -46,6 +62,11 @@ export class SweepAndPruneHorizontal implements BroadPhaseAlgorithm {
         this.edges.push(left);
         this.edges.push(right);
         this.objects.set(obj, [left, right]);
+        this.versionsForObject.set(obj, [
+            getTransformVersion(obj),
+            getRenderAreaVersion(obj),
+            getLocalAreaVersion(obj),
+        ]);
     }
 
     /**
@@ -58,6 +79,7 @@ export class SweepAndPruneHorizontal implements BroadPhaseAlgorithm {
             this.edges.splice(this.edges.indexOf(pair[0]), 1);
             this.edges.splice(this.edges.indexOf(pair[1]), 1);
             this.objects.delete(obj);
+            this.versionsForObject.delete(obj);
         }
     }
 
@@ -73,8 +95,22 @@ export class SweepAndPruneHorizontal implements BroadPhaseAlgorithm {
         // Update edge data
         for (const [obj, edges] of this.objects.entries()) {
             if (shouldIgnore(obj)) continue;
-            calcTransform(obj, obj.transform);
-            const bbox = obj.worldArea().bbox();
+
+            // Check if this world area changed since last frame
+            const versions = this.versionsForObject.get(obj);
+            if (
+                versions![0] === getTransformVersion(obj)
+                && versions![1] === getRenderAreaVersion(obj)
+                && versions![2] === getLocalAreaVersion(obj)
+            ) {
+                // No change
+                continue;
+            }
+            versions![0] = getTransformVersion(obj);
+            versions![1] = getRenderAreaVersion(obj);
+            versions![2] = getLocalAreaVersion(obj);
+
+            const bbox = obj.worldBbox();
             edges[0].x = bbox.pos.x;
             edges[1].x = bbox.pos.x + bbox.width;
         }
@@ -121,6 +157,25 @@ export class SweepAndPruneHorizontal implements BroadPhaseAlgorithm {
             }
         }
     }
+
+    retrieve(rect: Rect, retrieveCb: (obj: GameObj<AreaComp>) => void) {
+        const left = rect.pos.x;
+        const right = left + rect.width;
+        const hits = new Set<GameObj<AreaComp>>();
+        for (const edge of this.edges) {
+            if (edge.isLeft) {
+                if (edge.x < right) {
+                    hits.add(edge.obj);
+                }
+            }
+            else {
+                if (edge.x < left) {
+                    hits.delete(edge.obj);
+                }
+            }
+        }
+        hits.forEach(retrieveCb);
+    }
 }
 
 /**
@@ -146,6 +201,11 @@ class SapEdgeVertical {
 export class SweepAndPruneVertical implements BroadPhaseAlgorithm {
     edges: Array<SapEdgeVertical>;
     objects: Map<GameObj<AreaComp>, [SapEdgeVertical, SapEdgeVertical]>;
+    versionsForObject: Map<GameObj<AreaComp>, [number, number, number]> =
+        new Map<
+            GameObj<AreaComp>,
+            [number, number, number]
+        >();
 
     constructor() {
         this.edges = [];
@@ -165,6 +225,11 @@ export class SweepAndPruneVertical implements BroadPhaseAlgorithm {
         this.edges.push(top);
         this.edges.push(bottom);
         this.objects.set(obj, [top, bottom]);
+        this.versionsForObject.set(obj, [
+            getTransformVersion(obj),
+            getRenderAreaVersion(obj),
+            getLocalAreaVersion(obj),
+        ]);
     }
 
     /**
@@ -177,6 +242,7 @@ export class SweepAndPruneVertical implements BroadPhaseAlgorithm {
             this.edges.splice(this.edges.indexOf(pair[0]), 1);
             this.edges.splice(this.edges.indexOf(pair[1]), 1);
             this.objects.delete(obj);
+            this.versionsForObject.delete(obj);
         }
     }
 
@@ -192,8 +258,22 @@ export class SweepAndPruneVertical implements BroadPhaseAlgorithm {
         // Update edge data
         for (const [obj, edges] of this.objects.entries()) {
             if (shouldIgnore(obj)) continue;
-            calcTransform(obj, obj.transform);
-            const bbox = obj.worldArea().bbox();
+
+            // Check if this world area changed since last frame
+            const versions = this.versionsForObject.get(obj);
+            if (
+                versions![0] === getTransformVersion(obj)
+                && versions![1] === getRenderAreaVersion(obj)
+                && versions![2] === getLocalAreaVersion(obj)
+            ) {
+                // No change
+                continue;
+            }
+            versions![0] = getTransformVersion(obj);
+            versions![1] = getRenderAreaVersion(obj);
+            versions![2] = getLocalAreaVersion(obj);
+
+            const bbox = obj.worldBbox();
             edges[0].y = bbox.pos.y;
             edges[1].y = bbox.pos.y + bbox.height;
         }
@@ -239,6 +319,25 @@ export class SweepAndPruneVertical implements BroadPhaseAlgorithm {
                 touching.delete(edge.obj);
             }
         }
+    }
+
+    retrieve(rect: Rect, retrieveCb: (obj: GameObj<AreaComp>) => void) {
+        const top = rect.pos.y;
+        const bottom = top + rect.height;
+        const hits = new Set<GameObj<AreaComp>>();
+        for (const edge of this.edges) {
+            if (edge.isTop) {
+                if (edge.y < bottom) {
+                    hits.add(edge.obj);
+                }
+            }
+            else {
+                if (edge.y < top) {
+                    hits.delete(edge.obj);
+                }
+            }
+        }
+        hits.forEach(retrieveCb);
     }
 }
 

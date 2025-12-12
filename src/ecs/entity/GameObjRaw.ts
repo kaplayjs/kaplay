@@ -70,6 +70,29 @@ export type SetParentOpt = {
     keep: KeepFlags;
 };
 
+let _lastTransformVersion = 0;
+let _nextTransformVersion = 0;
+
+export function nextTransformVersion() {
+    return _nextTransformVersion++;
+}
+
+export function updateLastTransformVersion() {
+    return _lastTransformVersion = _nextTransformVersion;
+}
+
+export function transformNeedsUpdate(version: number) {
+    return version >= _lastTransformVersion;
+}
+
+export function objectTransformNeedsUpdate(obj: GameObj<any>) {
+    return obj._transformVersion >= _lastTransformVersion;
+}
+
+export function getTransformVersion(obj: GameObj<any>): number {
+    return obj._transformVersion;
+}
+
 /**
  * Base interface of all game objects.
  *
@@ -265,7 +288,7 @@ export interface GameObjRaw {
     /**
      * This method is called to transform objects
      */
-    transformTree(): void;
+    transformTree(force: boolean): void;
     /**
      * Add a component.
      *
@@ -517,6 +540,8 @@ export type InternalGameObjRaw = GameObjRaw & {
     _paused: boolean;
     /** @readonly */
     _drawLayerIndex: number;
+    /** @readonly */
+    _transformVersion: number;
 
     /**
      * Adds a component or anonymous component.
@@ -591,6 +616,7 @@ export const GameObjRawPrototype: Omit<
     hidden: null as any,
     id: null as any,
     transform: null as any,
+    _transformVersion: null as any,
     target: null as any,
 
     // #region Setters and Getters
@@ -1191,27 +1217,40 @@ export const GameObjRawPrototype: Omit<
     },
 
     transformTree(
-        this: GameObj<
-            PosComp | ScaleComp | RotateComp | SkewComp | FixedComp | MaskComp
-        >,
+        this:
+            & GameObj<
+                | PosComp
+                | ScaleComp
+                | RotateComp
+                | SkewComp
+                | FixedComp
+                | MaskComp
+            >
+            & InternalGameObjRaw,
+        force: boolean,
     ) {
+        const updateNeeded = force
+            || transformNeedsUpdate(this._transformVersion);
+
         pushTransform();
-        if (this.pos) multTranslateV(this.pos);
-        if (this.angle) multRotate(this.angle);
-        if (this.scale) multScaleV(this.scale);
 
-        if (this.skew) console.log(_k.gfx.transform, this.skew);
+        if (updateNeeded) {
+            if (this.pos) multTranslateV(this.pos);
+            if (this.angle) multRotate(this.angle);
+            if (this.scale) multScaleV(this.scale);
 
-        if (this.skew) multSkewV(this.skew);
+            if (this.skew) multSkewV(this.skew);
 
-        if (!this.transform) this.transform = new Mat23();
-        storeMatrix(this.transform);
-
-        if (this.skew) console.log(this.transform);
+            if (!this.transform) this.transform = new Mat23();
+            storeMatrix(this.transform);
+        }
+        else {
+            loadMatrix(this.transform);
+        }
 
         for (let i = 0; i < this.children.length; i++) {
             if (this.children[i].hidden) continue;
-            this.children[i].transformTree();
+            this.children[i].transformTree(updateNeeded);
         }
 
         popTransform();

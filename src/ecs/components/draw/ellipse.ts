@@ -3,6 +3,7 @@ import { drawEllipse } from "../../../gfx/draw/drawEllipse";
 import { Ellipse } from "../../../math/math";
 import { Vec2 } from "../../../math/Vec2";
 import type { Comp, GameObj } from "../../../types";
+import { nextRenderAreaVersion } from "../physics/area";
 import type { AnchorComp } from "../transform/anchor";
 import type { outline } from "./outline";
 
@@ -55,7 +56,7 @@ export function ellipse(
     radiusX: number,
     radiusY: number,
     opt: EllipseCompOpt = {},
-): EllipseComp {
+): EllipseComp & { _renderAreaVersion: number } {
     let _shape: Ellipse | undefined;
     let _radiusX = radiusX;
     let _radiusY = radiusY;
@@ -65,15 +66,21 @@ export function ellipse(
             return _radiusX;
         },
         set radiusX(value: number) {
-            _radiusX = value;
-            if (_shape) _shape.radiusX = value;
+            if (_radiusX != value) {
+                _radiusX = value;
+                if (_shape) _shape.radiusX = value;
+                this._renderAreaVersion = nextRenderAreaVersion();
+            }
         },
         get radiusY() {
             return _radiusY;
         },
         set radiusY(value: number) {
-            _radiusY = value;
-            if (_shape) _shape.radiusY = value;
+            if (_radiusY != value) {
+                _radiusY = value;
+                if (_shape) _shape.radiusY = value;
+                this._renderAreaVersion = nextRenderAreaVersion();
+            }
         },
         draw(this: GameObj<EllipseComp>) {
             drawEllipse(Object.assign(getRenderProps(this), {
@@ -82,16 +89,22 @@ export function ellipse(
                 fill: opt.fill,
             }));
         },
-        renderArea(this: GameObj<AnchorComp | EllipseComp>) {
+        renderArea(
+            this: GameObj<
+                AnchorComp | EllipseComp | { _renderAreaVersion: number }
+            >,
+        ) {
             if (!_shape) {
-                return new Ellipse(
+                _shape = new Ellipse(
                     new Vec2(0),
                     _radiusX,
                     _radiusY,
                 );
+                this._renderAreaVersion = nextRenderAreaVersion();
             }
             return _shape;
         },
+        _renderAreaVersion: 0,
         inspect() {
             return `radiusX: ${Math.ceil(_radiusX)} radiusY: ${
                 Math.ceil(_radiusY)
