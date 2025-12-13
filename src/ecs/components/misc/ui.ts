@@ -143,6 +143,7 @@ function installSystem() {
                 ? _k.game.fakeMouse.isPressed
                 : _k.app.isMouseDown();
             for (const hover of hovers) {
+                if (!hover.exists()) { continue; } // Why do we get dead objects here?
                 const isHovering = hover.hasScreenPoint(m);
                 hover.setHoverAndMouseState(isHovering, isPressed, isDown);
             }
