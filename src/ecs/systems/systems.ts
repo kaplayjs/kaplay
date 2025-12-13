@@ -1,4 +1,5 @@
 import { _k } from "../../shared";
+import type { GameObj } from "../../types";
 
 /**
  * @group Plugins
@@ -18,11 +19,12 @@ export enum SystemPhase {
     AfterDraw,
 }
 
-export const system = (
+export function system<T>(
     name: string,
-    action: () => void,
+    action: ((iter: Iterable<GameObj<T>>) => void) | (() => void),
     when: SystemPhase[],
-) => {
+    tagOrIter?: string | Iterable<GameObj<T>>,
+) {
     const systems = _k.game.systems;
     const replacingSystemIdx = systems.findIndex((s) => s.name === name);
 
@@ -39,9 +41,22 @@ export const system = (
         }
     }
 
+    const iter = tagOrIter
+        ? (typeof tagOrIter == "string"
+            ? _k.k.get(tagOrIter) as GameObj<T>[]
+            : tagOrIter)
+        : undefined;
+    const run = iter
+        ? () => {
+            action(iter);
+        }
+        : () => {
+            (action as () => void)();
+        };
+
     const system: System = {
         name,
-        run: action,
+        run,
         when,
     };
 
@@ -49,5 +64,5 @@ export const system = (
         _k.game.systemsByEvent[loc].push(system);
     }
 
-    systems.push({ name, run: action, when });
-};
+    systems.push({ name, run, when });
+}

@@ -11,6 +11,7 @@ kaplay({
     background: [141, 183, 255],
     narrowPhaseCollisionAlgorithm: "sat",
     broadPhaseCollisionAlgorithm: "sap",
+    areaHasUI: true
 });
 
 // load assets

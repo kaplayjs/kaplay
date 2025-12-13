@@ -7,7 +7,7 @@
  * @category basics
  */
 
-// Differeces between onHover and onHoverUpdate
+// Differences between onHover and onHoverUpdate
 
 kaplay({
     scale: 2,
