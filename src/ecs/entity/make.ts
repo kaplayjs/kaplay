@@ -28,6 +28,7 @@ export function makeInternal<T extends CompList<unknown>>(
 
     // The game object from the prototype
     const obj: GameObj = Object.create(GameObjRawPrototype);
+    currentMaking.push(obj);
 
     // Shadow individual properties
     obj._parent = null as unknown as GameObj;
@@ -48,42 +49,44 @@ export function makeInternal<T extends CompList<unknown>>(
     obj.id = id;
     obj.transform = new Mat23();
 
-    // Adding components passed from add([]);
-    // We register here: The objects, because you can also pass tags to add().
-    if (!compsAndTags) return obj as GameObj<T[number]>;
+    try {
+        // Adding components passed from add([]);
+        // We register here: The objects, because you can also pass tags to add().
+        if (!compsAndTags) return obj as GameObj<T[number]>;
 
-    let comps: Comp[] = [];
-    let tagList = [];
+        let comps = [];
+        let tagList = [];
 
-    for (const compOrTag of compsAndTags) {
-        if (typeof compOrTag == "string") {
-            tagList.push(compOrTag);
-        }
-        else {
-            const compId = (compOrTag as Comp).id;
-
-            if (compId) {
-                obj._compsIds.add(compId);
-                if (addCompIdsToTags) tagList.push(compId);
+        for (const compOrTag of compsAndTags) {
+            if (typeof compOrTag == "string") {
+                tagList.push(compOrTag);
             }
+            else {
+                const compId = (<Comp> compOrTag).id;
 
-            comps.push(compOrTag as Comp);
+                if (compId) {
+                    obj._compsIds.add(compId);
+                    if (addCompIdsToTags) tagList.push(compId);
+                }
+
+                comps.push(compOrTag);
+            }
         }
+
+        // Using .use and .tag we trigger onUse and onTag events correctly
+        for (const comp of comps) {
+            obj.use(<Comp> comp);
+        }
+
+        for (const tag of tagList) {
+            obj.tag(tag);
+        }
+
+        // We cast the type as .use() doesn't add the types
+        return obj as GameObj<T[number]>;
+    } finally {
+        currentMaking.pop();
     }
-
-    const sortedComps = sortComps(comps);
-
-    // Using .use and .tag we trigger onUse and onTag events correctly
-    for (const comp of sortedComps) {
-        obj.use(comp);
-    }
-
-    for (const tag of tagList) {
-        obj.tag(tag);
-    }
-
-    // We cast the type as .use() doesn't add the types
-    return obj as GameObj<T[number]>;
 }
 
 export function make<T extends CompList<unknown>>(
@@ -94,39 +97,7 @@ export function make<T extends CompList<unknown>>(
     return obj;
 }
 
-function sortComps(compList: Comp[]): Comp[] {
-    const visited = new Set();
-    const visiting = new Set();
-    const compsById = compList.reduce((acc, comp) => {
-        acc[comp.id as string] = comp;
-        return acc;
-    }, {} as Record<string, Comp>);
-    const order: Comp[] = [];
-
-    function visit(comp: Comp) {
-        if (visited.has(comp.id)) return;
-        if (visiting.has(comp.id)) {
-            throw new Error("Circular Dependency Found");
-        }
-
-        visiting.add(comp.id);
-
-        if (comp.require) {
-            for (const dep of comp.require) {
-                visit(compsById[dep]);
-            }
-        }
-
-        visiting.delete(comp.id);
-        visited.add(comp.id);
-        order.push(comp);
-    }
-
-    for (const comp of compList) {
-        if (!visited.has(comp.id)) {
-            visit(comp);
-        }
-    }
-
-    return order;
+let currentMaking: GameObj[] = [];
+export function internalIsMaking(obj: GameObj): boolean {
+    return currentMaking.includes(obj);
 }

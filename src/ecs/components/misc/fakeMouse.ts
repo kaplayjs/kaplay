@@ -54,7 +54,7 @@ export const fakeMouse = (opt: FakeMouseOpt = {
     return {
         id: "fakeMouse",
         require: ["pos"],
-        add(this: GameObj<FakeMouse>) {
+        add(this: FakeMouse) {
             if (_k.game.fakeMouse) {
                 throw new Error("Fake mouse already exists");
             }
@@ -71,7 +71,7 @@ export const fakeMouse = (opt: FakeMouseOpt = {
             if (!opt.followMouse) return;
 
             if (_k.app.isMouseMoved()) {
-                this.pos = _k.app.mousePos();
+                this.screenPos(_k.app.mousePos());
             }
         },
         press(this: FakeMouse) {

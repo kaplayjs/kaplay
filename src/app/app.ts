@@ -2,7 +2,6 @@
 
 import type {
     Cursor,
-    GamepadDef,
     KAPLAYOpt,
     Key,
     KGamepad,
@@ -107,18 +106,22 @@ class GamepadState {
 }
 
 class FPSCounter {
-    dts: number[] = [];
-    timer: number = 0;
-    fps: number = 0;
+    win = 10;
+    history = new Array(this.win).fill(0);
+    accumulator = 0;
+    i = 0;
+    fps = 0;
+    count = 0;
+    timer = 0;
     tick(dt: number) {
-        this.dts.push(dt);
         this.timer += dt;
+        this.accumulator += dt - this.history[this.i];
+        this.history[this.i] = dt;
+        this.i = (this.i + 1) % this.win;
+        this.count = Math.min(this.count + 1, this.win);
         if (this.timer >= 1) {
+            this.fps = this.count / this.accumulator;
             this.timer = 0;
-            this.fps = Math.round(
-                1 / (this.dts.reduce((a, b) => a + b) / this.dts.length),
-            );
-            this.dts = [];
         }
     }
 }
@@ -133,6 +136,18 @@ export type AppEvents = keyof {
     [K in keyof App as K extends `on${any}` ? K : never]: [never];
 };
 
+const fixedSpeeds = {
+    friedPotato: 10,
+    potato: 20,
+    snail: 25,
+    normal: 50,
+    lightspeed: 80,
+    ridiculous: 125,
+    ludicrous: 160,
+};
+
+export type FixedSpeedOption = keyof typeof fixedSpeeds;
+
 /**
  * Create the App state object.
  *
@@ -144,11 +159,9 @@ export type AppEvents = keyof {
  */
 export const initAppState = (opt: {
     canvas: HTMLCanvasElement;
-    touchToMouse?: boolean;
-    gamepads?: Record<string, GamepadDef>;
-    pixelDensity?: number;
-    maxFPS?: number;
     buttons?: ButtonsDef;
+    fixedUpdateMode?: FixedSpeedOption;
+    maxTimeStep?: number;
 }) => {
     const buttons = opt.buttons ?? {};
     return {
@@ -159,9 +172,11 @@ export const initAppState = (opt: {
         stopped: false,
         dt: 0,
         fixedDt: 1 / 50,
+        maxStep: opt.maxTimeStep ?? 0.1,
         restDt: 0,
         time: 0,
         realTime: 0,
+        rawFPSCounter: new FPSCounter(),
         fpsCounter: new FPSCounter(),
         timeScale: 1,
         skipTime: false,
@@ -217,6 +232,7 @@ export const initApp = (
 
     const state = initAppState(opt);
     parseButtonBindings(state);
+    if (opt.fixedUpdateMode) setFixedSpeed(opt.fixedUpdateMode);
 
     function dt() {
         return state.dt * state.timeScale;
@@ -240,6 +256,10 @@ export const initApp = (
 
     function fps() {
         return state.fpsCounter.fps;
+    }
+
+    function rawFPS() {
+        return state.rawFPSCounter.fps;
     }
 
     function numFrames() {
@@ -338,6 +358,12 @@ export const initApp = (
         resizeObserver.disconnect();
     }
 
+    function setFixedSpeed(speed: FixedSpeedOption) {
+        const fps = fixedSpeeds[speed];
+        if (!fps) throw new Error("Unknown fixed speed " + speed);
+        state.fixedDt = 1 / fps;
+    }
+
     function run(
         fixedUpdate: () => void,
         update: (processInput: () => void, resetInput: () => void) => void,
@@ -346,10 +372,11 @@ export const initApp = (
             cancelAnimationFrame(state.loopID);
         }
 
-        let fixedAccumulatedDt = 0;
-        let accumulatedDt = 0;
+        let fixedUpdateAccumulator = 0;
+        let updateAccumulator = 0;
 
         const frame = (t: number) => {
+            state.loopID = null;
             if (state.stopped) return;
 
             // TODO: allow background actions?
@@ -358,41 +385,49 @@ export const initApp = (
                 return;
             }
 
-            const loopTime = t / 1000;
-            const realDt = Math.min(loopTime - state.realTime, 0.25);
-            const desiredDt = opt.maxFPS ? 1 / opt.maxFPS : 0;
+            const currentTime = t / 1000;
+            const unclampedDt = currentTime - state.realTime;
+            const observedDt = Math.min(unclampedDt, state.maxStep);
 
-            state.realTime = loopTime;
-            accumulatedDt += realDt;
+            state.rawFPSCounter.tick(unclampedDt);
+            state.realTime = currentTime;
 
-            if (accumulatedDt > desiredDt) {
-                if (!state.skipTime) {
-                    fixedAccumulatedDt += accumulatedDt;
+            if (state.skipTime) {
+                state.skipTime = false;
+            }
+            else {
+                updateAccumulator += observedDt;
+                fixedUpdateAccumulator += observedDt;
+
+                if (fixedUpdateAccumulator > state.fixedDt) {
                     state.dt = state.fixedDt;
                     state.restDt = 0;
-                    while (fixedAccumulatedDt > state.fixedDt) {
-                        fixedAccumulatedDt -= state.fixedDt;
-                        if (fixedAccumulatedDt < state.fixedDt) {
-                            state.restDt = fixedAccumulatedDt;
+                    while (fixedUpdateAccumulator > state.fixedDt) {
+                        fixedUpdateAccumulator -= state.fixedDt;
+                        if (fixedUpdateAccumulator < state.fixedDt) {
+                            state.restDt = fixedUpdateAccumulator;
                         }
                         fixedUpdate();
                     }
-                    state.restDt = fixedAccumulatedDt;
-                    state.time += state.dt = desiredDt > 0 ? desiredDt : realDt;
+                }
+                const desiredDt = opt.maxFPS ? 1 / opt.maxFPS : 0;
+                if (updateAccumulator > desiredDt) {
+                    state.time += state.dt = desiredDt > 0
+                        ? Math.max(desiredDt, observedDt)
+                        : observedDt;
+                    state.restDt = fixedUpdateAccumulator;
                     state.fpsCounter.tick(state.dt);
-                }
-                if (desiredDt > 0) {
-                    accumulatedDt -= desiredDt;
-                }
-                else {
-                    accumulatedDt = 0;
-                }
-                state.skipTime = false;
-                state.numFrames++;
+                    if (desiredDt > 0) {
+                        updateAccumulator -= desiredDt;
+                    }
+                    else {
+                        updateAccumulator = 0;
+                    }
+                    state.numFrames++;
 
-                update(processInput, resetInput);
+                    update(processInput, resetInput);
+                }
             }
-
             state.loopID = requestAnimationFrame(frame);
         };
 
@@ -1274,6 +1309,8 @@ export const initApp = (
         run,
         canvas: state.canvas,
         fps,
+        rawFPS,
+        setFixedSpeed,
         numFrames,
         quit,
         isHidden,

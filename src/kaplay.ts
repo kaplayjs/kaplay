@@ -106,6 +106,7 @@ export const kaplay = <
     } = _k;
 
     const { checkFrame } = createCollisionSystem({
+        broad: gopt.broadPhaseCollisionAlgorithm || "sap",
         narrow: gopt.narrowPhaseCollisionAlgorithm || "gjk",
     });
 

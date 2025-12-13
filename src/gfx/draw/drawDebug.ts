@@ -61,7 +61,11 @@ export function drawDebug() {
             );
         }
 
-        drawInspectText(vec2(8), `FPS: ${_k.debug.fps()}`);
+        drawInspectText(
+            vec2(8),
+            `FPS: ${Math.round(_k.debug.fps())}
+Raw: ${Math.round(_k.debug.rawFPS())}`,
+        );
     }
 
     if (_k.debug.paused) {
