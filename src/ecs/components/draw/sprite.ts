@@ -479,8 +479,9 @@ export function sprite(
                     }
                     else {
                         this.frame = frames.at(-1)!;
+                        const anim = curAnim;
                         this.stop();
-                        curAnim.onEnd();
+                        anim.onEnd();
                         return;
                     }
                 }
@@ -494,8 +495,9 @@ export function sprite(
                     }
                     else {
                         this.frame = frames[0];
+                        const anim = curAnim;
                         this.stop();
-                        curAnim.onEnd();
+                        anim.onEnd();
                         return;
                     }
                 }
