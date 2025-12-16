@@ -301,7 +301,7 @@ export function body(opt: BodyCompOpt = {}): BodyComp {
 
                     const friction = Math.sqrt(
                         (col.source.friction || 0)
-                            * (col.target.friction || 0),
+                        * (col.target.friction || 0),
                     );
 
                     const projection = this.vel.project(col.normal);
@@ -351,38 +351,42 @@ export function body(opt: BodyCompOpt = {}): BodyComp {
             if (dt && prevPhysicsPos) {
                 const lerpAmount = dt / _k.app.fixedDt();
                 // Check if no external changes were made
-                if (this.pos.x == prevDrawPos.x) {
+                const p = this.pos.clone();
+                if (this.pos.x === prevDrawPos.x) {
                     // Interpolate physics steps
-                    this.pos.x = lerp(
+                    p.x = lerp(
                         prevPhysicsPos!.x,
                         nextPhysicsPos!.x,
                         lerpAmount,
                     );
                     // Copy to check for changes
-                    prevDrawPos.x = this.pos.x;
+                    prevDrawPos.x = p.x;
                 }
-                if (this.pos.y == prevDrawPos.y) {
+                if (this.pos.y === prevDrawPos.y) {
                     // Interpolate physics steps
-                    this.pos.y = lerp(
+                    p.y = lerp(
                         prevPhysicsPos!.y,
                         nextPhysicsPos!.y,
                         lerpAmount,
                     );
                     // Copy to check for changes
-                    prevDrawPos.y = this.pos.y;
+                    prevDrawPos.y = p.y;
                 }
+                this.pos = p;
             }
         },
 
         fixedUpdate(this: GameObj<PosComp | BodyComp | AreaComp>) {
             // If we were interpolating, and the position wasn't set manually, reset to last physics position
             if (prevPhysicsPos) {
-                if (this.pos.x == prevDrawPos.x) {
-                    this.pos.x = prevPhysicsPos.x;
+                const p = this.pos.clone();
+                if (this.pos.x === prevDrawPos.x) {
+                    p.x = prevPhysicsPos.x;
                 }
-                if (this.pos.y == prevDrawPos.y) {
-                    this.pos.y = prevPhysicsPos.y;
+                if (this.pos.y === prevDrawPos.y) {
+                    p.y = prevPhysicsPos.y;
                 }
+                this.pos = p;
                 prevPhysicsPos = null;
             }
 

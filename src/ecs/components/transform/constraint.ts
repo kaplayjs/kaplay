@@ -252,13 +252,13 @@ export const constraint = {
                     this.transform.e = lerp(
                         this.transform.e,
                         this.constraint.target.transform.e
-                            + d.x / l * this.constraint.distance,
+                        + d.x / l * this.constraint.distance,
                         this.constraint.strength,
                     );
                     this.transform.f = lerp(
                         this.transform.f,
                         this.constraint.target.transform.f
-                            + d.y / l * this.constraint.distance,
+                        + d.y / l * this.constraint.distance,
                         this.constraint.strength,
                     );
                     // Modify local position
@@ -305,13 +305,13 @@ export const constraint = {
                 this.transform.e = lerp(
                     this.transform.e,
                     this.constraint.target.transform.e
-                        + this.constraint.offset.x,
+                    + this.constraint.offset.x,
                     this.constraint.strength,
                 );
                 this.transform.f = lerp(
                     this.transform.f,
                     this.constraint.target.transform.f
-                        + this.constraint.offset.x,
+                    + this.constraint.offset.x,
                     this.constraint.strength,
                 );
                 // Modify local position
@@ -496,14 +496,12 @@ export const constraint = {
                     const transform = this.parent?.transform.inverse.mul(
                         this.transform,
                     );
-                    this.pos.x = transform.e;
-                    this.pos.y = transform.f;
+                    this.pos = vec2(transform.e, transform.f);
                     this.angle = transform.getRotation();
                     this.scale = transform.getScale();
                 }
                 else {
-                    this.pos.x = newX;
-                    this.pos.y = newY;
+                    this.pos = vec2(newX, newY);
                     this.angle = newAngle;
                     this.scale = newScale;
                 }
@@ -694,7 +692,7 @@ export const constraint = {
                                 // Old length
                                 const olen = Math.sqrt(
                                     effector.pos.x * effector.pos.x
-                                        + effector.pos.y * effector.pos.y,
+                                    + effector.pos.y * effector.pos.y,
                                 );
                                 // Scale to desired length clamped
                                 effector.pos.x *= nlen / olen;
@@ -843,8 +841,7 @@ export const constraint = {
                                 const transform = parentTransform.inverse.mul(
                                     obj.transform,
                                 );
-                                obj.pos.x = transform.e;
-                                obj.pos.y = transform.f;
+                                obj.pos = vec2(transform.e, transform.f);
                             }
                             else {
                                 // If there is no angle, just use position
@@ -852,13 +849,11 @@ export const constraint = {
                                     .mul(
                                         obj.transform,
                                     );
-                                obj.pos.x = transform.e;
-                                obj.pos.y = transform.f;
+                                obj.pos = vec2(transform.e, transform.f);
                             }
                         }
                         else {
-                            obj.pos.x = obj.transform.e;
-                            obj.pos.y = obj.transform.f;
+                            obj.pos = vec2(obj.transform.e, obj.transform.f);
                         }
                     }
                 },
