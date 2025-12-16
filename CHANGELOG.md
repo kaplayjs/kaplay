@@ -16,6 +16,8 @@ Hey, KAPLAY Dev, you must changelog here, in unreleased, so later your
 best friend, lajbel, can put the correct version name here
 -->
 
+## [unreleased]
+
 ### Changed
 
 - Transforms are now only recalculated when needed. Thus static objects no
@@ -33,8 +35,13 @@ best friend, lajbel, can put the correct version name here
 - The grid broadphase has been rewritten for performance. @mflerackers
 - Global `retrieve()` method to get the objects with area within a certain
   rectangle. @mflerackers
+- The rotation constraint's `scale` option has been **renamed** to `ratio` -
+  @dragoncoder047
 
-## [unreleased]
+### Added
+
+- The rotation constraint now has a `trackMultiturn` option that can be set to
+  true to make the rotation not jump at the 0-360 boundary - @dragoncoder047
 
 ## [4000.0.0-alpha.24] - 2025-12-12
 
