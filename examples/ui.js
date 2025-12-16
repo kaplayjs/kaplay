@@ -4,6 +4,9 @@ kaplay({
         "focus-next": {
             keyboard: ["tab"],
         },
+        "enter": {
+            keyboard: ["enter"]
+        }
     },
 });
 

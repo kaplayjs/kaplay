@@ -1,5 +1,5 @@
 import type { KEventController } from "../../../events/events";
-import { onAdd, onDestroy, onUnuse, onUse } from "../../../events/globalEvents";
+import { on, onAdd, onDestroy, onUnuse, onUse } from "../../../events/globalEvents";
 import { onSceneLeave } from "../../../game/scenes";
 import { _k } from "../../../shared";
 import type { Comp, GameObj, Key, MouseButton } from "../../../types";
@@ -129,6 +129,12 @@ function installSystem() {
             hovers.delete(obj as GameObj<UIComp | AreaComp>);
         }
     });
+
+    for (const obj of _k.game.root.get("*", { recursive: true })) {
+        if (obj.has("ui")) {
+            hovers.add(obj as GameObj<UIComp | AreaComp>);
+        }
+    }
 
     system<UIComp | AreaComp>(
         "hover",
