@@ -25,16 +25,17 @@ const bean = card.add([
     anchor("center"),
     scale(2),
     area(),
+    cursor("pointer"),
     z(1),
 ]);
 
 bean.onHover(() => {
-    setCursor("pointer");
+    // setCursor("pointer");
     card.color = Color.fromHex("#5ba675");
 });
 
 bean.onHoverEnd(() => {
-    setCursor("default");
+    // setCursor("default");
     card.color = WHITE;
 });
 
