@@ -12,6 +12,11 @@ import { _k } from "../../../shared";
 import type { Comp, GameObj } from "../../../types";
 import { ui, type UIComp } from "./ui";
 
+export type ThemeSprite = {
+    sprite: string | SpriteData | Asset<SpriteData>;
+    frame?: number;
+};
+
 export type Theme = {
     hoverColor: Color;
     backgroundColor: Color;
@@ -19,70 +24,40 @@ export type Theme = {
     fontSize: number;
     button: {
         padding?: Vec2;
-        normal: {
-            sprite: string | SpriteData | Asset<SpriteData>;
-            frame?: number;
-        };
-        pressed: {
-            sprite: string | SpriteData | Asset<SpriteData>;
-            frame?: number;
-        };
+        normal: ThemeSprite;
+        pressed: ThemeSprite;
+        hover?: ThemeSprite;
+        hoverPressed?: ThemeSprite;
     };
     checkbox: {
         padding?: Vec2;
         spacing?: Vec2;
-        normal: {
-            sprite: string | SpriteData | Asset<SpriteData>;
-            frame?: number;
-        };
-        pressed: {
-            sprite: string | SpriteData | Asset<SpriteData>;
-            frame?: number;
-        };
+        normal: ThemeSprite;
+        pressed: ThemeSprite;
+        hover?: ThemeSprite;
+        hoverPressed?: ThemeSprite;
     };
     radio: {
         padding?: Vec2;
         spacing?: Vec2;
-        normal: {
-            sprite: string | SpriteData | Asset<SpriteData>;
-            frame?: number;
-        };
-        pressed: {
-            sprite: string | SpriteData | Asset<SpriteData>;
-            frame?: number;
-        };
+        normal: ThemeSprite;
+        pressed: ThemeSprite;
+        hover?: ThemeSprite;
+        hoverPressed?: ThemeSprite;
     };
     slider: {
         padding?: Vec2;
         spacing?: Vec2;
-        gutter: {
-            sprite: string | SpriteData | Asset<SpriteData>;
-            frame?: number;
-        };
-        gutterfill?: {
-            sprite: string | SpriteData | Asset<SpriteData>;
-            frame?: number;
-        };
-        thumb: {
-            sprite: string | SpriteData | Asset<SpriteData>;
-            frame?: number;
-        };
+        gutter: ThemeSprite;
+        gutterfill?: ThemeSprite;
+        thumb: ThemeSprite;
     };
     scrollbar?: {
         padding?: Vec2;
         spacing?: Vec2;
-        gutter: {
-            sprite: string | SpriteData | Asset<SpriteData>;
-            frame?: number;
-        };
-        gutterfill?: {
-            sprite: string | SpriteData | Asset<SpriteData>;
-            frame?: number;
-        };
-        thumb: {
-            sprite: string | SpriteData | Asset<SpriteData>;
-            frame?: number;
-        };
+        gutter: ThemeSprite;
+        gutterfill?: ThemeSprite;
+        thumb: ThemeSprite;
     };
 };
 
@@ -208,8 +183,8 @@ export function button(label: string, opt?: ButtonCompOpt): ButtonComp {
             // Draw button bg
             drawSprite({
                 sprite: this.value
-                    ? _theme.button.pressed.sprite
-                    : _theme.button.normal.sprite,
+                    ? (this.isHovering() && _theme.button.hoverPressed ? _theme.button.hoverPressed.sprite : _theme.button.pressed.sprite)
+                    : (this.isHovering() && _theme.button.hover ? _theme.button.hover.sprite : _theme.button.normal.sprite),
                 width: this.width,
                 height: this.height,
             });

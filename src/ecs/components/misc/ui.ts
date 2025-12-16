@@ -1,6 +1,8 @@
 import type { KEventController } from "../../../events/events";
 import { on, onAdd, onDestroy, onUnuse, onUse } from "../../../events/globalEvents";
+import { toWorld } from "../../../game/camera";
 import { onSceneLeave } from "../../../game/scenes";
+import { Rect, vec2 } from "../../../math/math";
 import { _k } from "../../../shared";
 import type { Comp, GameObj, Key, MouseButton } from "../../../types";
 import { getTreeRoot } from "../../entity/utils";
@@ -107,6 +109,11 @@ let systemInstalled = false;
 // TODO: use a live query for this, once it can use a Set
 const hovers: Set<GameObj<UIComp | AreaComp>> = new Set();
 
+// TODO: replace this by the real broadphase filter
+function retrieve(rect: Rect, cb: (obj: GameObj<any>) => void) {
+    hovers.forEach(obj => cb(obj));
+}
+
 function installSystem() {
     if (systemInstalled) return;
     systemInstalled = true;
@@ -139,7 +146,7 @@ function installSystem() {
     system<UIComp | AreaComp>(
         "hover",
         (hovers) => {
-            const m = _k.game.fakeMouse
+            let p = _k.game.fakeMouse
                 ? _k.game.fakeMouse.pos
                 : _k.app.mousePos();
             const isPressed = _k.game.fakeMouse
@@ -148,9 +155,16 @@ function installSystem() {
             const isDown = _k.game.fakeMouse
                 ? _k.game.fakeMouse.isPressed
                 : _k.app.isMouseDown();
+            const hovering = new Set();
+            p = toWorld(p);
+            retrieve(new Rect(vec2(p.x - 1, p.y - 1), 3, 3), obj => {
+                if (obj.hasWorldPoint(p)) {
+                    hovering.add(obj);
+                }
+            });
             for (const hover of hovers) {
                 if (!hover.exists()) { continue; } // Why do we get dead objects here?
-                const isHovering = hover.hasScreenPoint(m);
+                const isHovering = hovering.has(hover);
                 hover.setHoverAndMouseState(isHovering, isPressed, isDown);
             }
         },
@@ -165,22 +179,29 @@ function installSystem() {
 function installMouseHandlers() {
     if (_k.game.fakeMouse) {
         _k.game.fakeMouse.onPress(() => {
-            const p = _k.game.fakeMouse
+            let p = _k.game.fakeMouse
                 ? _k.game.fakeMouse.pos
                 : _k.app.mousePos();
-            hovers.forEach(hover => {
-                if (hover.hasScreenPoint(p)) {
-                    hover.trigger("click");
+            p = toWorld(p);
+            retrieve(new Rect(vec2(p.x - 1, p.y - 1), 3, 3), obj => {
+                if (obj.hasWorldPoint(p)) {
+                    obj.trigger("click");
                 }
             });
         });
     }
 
     _k.app.onMousePress((m: MouseButton) => {
-        const p = _k.game.fakeMouse ? _k.game.fakeMouse.pos : _k.app.mousePos();
+        let p = _k.game.fakeMouse ? _k.game.fakeMouse.pos : _k.app.mousePos();
         hovers.forEach(hover => {
             if (hover.hasScreenPoint(p)) {
                 hover.trigger("click");
+            }
+        });
+        p = toWorld(p);
+        retrieve(new Rect(vec2(p.x - 1, p.y - 1), 3, 3), obj => {
+            if (obj.hasWorldPoint(p)) {
+                obj.trigger("click");
             }
         });
     });
