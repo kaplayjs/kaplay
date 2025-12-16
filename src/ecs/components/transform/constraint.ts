@@ -12,7 +12,7 @@ import {
 import { clamp } from "../../../math/clamp";
 import { Color } from "../../../math/color";
 import { lerp } from "../../../math/lerp";
-import { deg2rad, rad2deg, vec2 } from "../../../math/math";
+import { deg2rad, Mat23, rad2deg, vec2 } from "../../../math/math";
 import {
     calcTransform,
     clampAngle,
@@ -252,13 +252,13 @@ export const constraint = {
                     this.transform.e = lerp(
                         this.transform.e,
                         this.constraint.target.transform.e
-                            + d.x / l * this.constraint.distance,
+                        + d.x / l * this.constraint.distance,
                         this.constraint.strength,
                     );
                     this.transform.f = lerp(
                         this.transform.f,
                         this.constraint.target.transform.f
-                            + d.y / l * this.constraint.distance,
+                        + d.y / l * this.constraint.distance,
                         this.constraint.strength,
                     );
                     // Modify local position
@@ -301,13 +301,13 @@ export const constraint = {
                 this.transform.e = lerp(
                     this.transform.e,
                     this.constraint.target.transform.e
-                        + this.constraint.offset.x,
+                    + this.constraint.offset.x,
                     this.constraint.strength,
                 );
                 this.transform.f = lerp(
                     this.transform.f,
                     this.constraint.target.transform.f
-                        + this.constraint.offset.x,
+                    + this.constraint.offset.x,
                     this.constraint.strength,
                 );
                 // Modify local position
@@ -355,8 +355,11 @@ export const constraint = {
                     this.constraint.strength,
                 );
                 const scale = this.transform.getScale();
+                console.log(this.transform, scale, srcAngle, this.transform.getSkew());
+                console.log((this as any).pos, this.angle, (this as any).scale);
                 // Update world angle
-                this.transform.setTRS(
+                const newTransform = new Mat23();
+                newTransform.setTRS(
                     this.transform.e,
                     this.transform.f,
                     newAngle,
@@ -366,13 +369,14 @@ export const constraint = {
                 // Modify local angle
                 if (this.parent) {
                     const transform = this.parent?.transform.inverse.mul(
-                        this.transform,
+                        newTransform,
                     );
                     this.angle = transform.getRotation();
                 }
                 else {
                     this.angle = newAngle;
                 }
+                updateTransformRecursive(this);
             },
         };
     },
@@ -684,7 +688,7 @@ export const constraint = {
                                 // Old length
                                 const olen = Math.sqrt(
                                     effector.pos.x * effector.pos.x
-                                        + effector.pos.y * effector.pos.y,
+                                    + effector.pos.y * effector.pos.y,
                                 );
                                 // Scale to desired length clamped
                                 effector.pos.x *= nlen / olen;
