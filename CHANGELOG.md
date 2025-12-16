@@ -18,6 +18,11 @@ best friend, lajbel, can put the correct version name here
 
 ## [unreleased]
 
+### Breaking Changes
+
+- The rotation constraint's `scale` option has been **renamed** to `ratio` -
+  @dragoncoder047
+
 ### Changed
 
 - Transforms are now only recalculated when needed. Thus static objects no
@@ -35,8 +40,6 @@ best friend, lajbel, can put the correct version name here
 - The grid broadphase has been rewritten for performance. @mflerackers
 - Global `retrieve()` method to get the objects with area within a certain
   rectangle. @mflerackers
-- The rotation constraint's `scale` option has been **renamed** to `ratio` -
-  @dragoncoder047
 
 ### Added
 
