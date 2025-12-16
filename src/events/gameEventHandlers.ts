@@ -1,11 +1,13 @@
 import type { App } from "../app/app";
 import type { Vec2 } from "../math/Vec2";
 import type {
+    GameObj,
     Key,
     KGamepad,
     KGamepadButton,
     KGamepadStick,
     MouseButton,
+    Tag,
 } from "../types";
 import type { KEventController } from "./events";
 
@@ -784,18 +786,61 @@ export interface GameEventHandlers {
      * @group Events
      */
     onFixedUpdate(action: () => void): KEventController;
+    onFixedUpdate(tag: Tag, action: (obj: GameObj) => void): KEventController;
     /**
-     * Register an event that runs every frame.
+     * Register an event that runs every frame (~60 times per second) for all game objs with certain tag.
+     *
+     * @param tag - The tag to listen for.
+     * @param action - The function to run when the event is triggered.
+     *
+     * @example
+     * ```js
+     * // move every "tree" 120 pixels per second to the left, destroy it when it leaves screen
+     * // there'll be nothing to run if there's no "tree" obj in the scene
+     * onUpdate("tree", (tree) => {
+     *     tree.move(-120, 0)
+     *     if (tree.pos.x < 0) {
+     *         destroy(tree)
+     *     }
+     * })
+     * ```
+     *
+     * @returns The event controller.
+     * @since v2000.1
+     * @group Events
+     */
+    onUpdate(tag: Tag, action: (obj: GameObj) => void): KEventController;
+    /**
+     * Register an event that runs every frame (~60 times per second).
      *
      * @param action - The function to run when the event is triggered.
      *
+     * @example
+     * ```js
+     * // This will run every frame
+     * onUpdate(() => {
+     *     debug.log("ohhi")
+     * })
+     * ```
+     *
      * @returns The event controller.
-     * @since v2000.0
+     * @since v2000.1
      * @group Events
      */
     onUpdate(action: () => void): KEventController;
     /**
-     * Register an event that runs every frame (this is the same as onUpdate but all draw events are run after update events, drawXXX() functions only work in this phase).
+     * Register an event that runs every frame (~60 times per second) for all game objs with certain tag (this is the same as onUpdate but all draw events are run after update events, drawXXX() functions only work in this phase).
+     *
+     * @param tag - The tag to listen for.
+     * @param action - The function to run when the event is triggered.
+     *
+     * @returns The event controller.
+     * @since v2000.1
+     * @group Events
+     */
+    onDraw(tag: Tag, action: (obj: GameObj) => void): KEventController;
+    /**
+     * Register an event that runs every frame (~60 times per second) (this is the same as onUpdate but all draw events are run after update events, drawXXX() functions only work in this phase).
      *
      * @example
      * ```js
@@ -813,6 +858,250 @@ export interface GameEventHandlers {
      * @group Events
      */
     onDraw(action: () => void): KEventController;
+    /**
+     * Register an event that runs when an object with the provided tag is added.
+     *
+     * @param tag - The tag to listen for.
+     * @param action - The function that runs when an object is added.
+     *
+     * @example
+     * ```js
+     * // This will run when the object is added.
+     * onAdd("player", () => {
+     *     debug.log("ohhi");
+     * });
+     *
+     * add([
+     *     pos(),
+     *     "player"
+     * ]);
+     * ```
+     *
+     * @returns The event controller.
+     * @since v2000.0
+     * @group Events
+     */
+    onAdd(tag: Tag, action: (obj: GameObj) => void): KEventController;
+    /**
+     * Register an event that runs when an object is added
+     *
+     * @param action - The function that runs when an object is added.
+     *
+     * @example
+     * ```js
+     * // This will run when the object is added.
+     * onAdd(() => {
+     *     debug.log("ohhi");
+     * });
+     *
+     * add([
+     *     pos(),
+     * ]);
+     * ```
+     *
+     * @returns The event controller.
+     * @since v2000.0
+     * @group Events
+     */
+    onAdd(action: (obj: GameObj) => void): KEventController;
+    /**
+     * Register an event that runs when an object with the provided tag is destroyed.
+     *
+     * @param action - The function that runs when an object is destroyed.
+     *
+     * @example
+     * ```js
+     * // This will run when the tagged object is destroyed.
+     * onDestroy("bean", () => {
+     *     debug.log("ohbye");
+     * });
+     *
+     * let player = add([
+     *     pos(),
+     *     "bean"
+     * ])
+     *
+     * // Destroy the tagged object
+     * destroy(player);
+     * ```
+     *
+     * @returns The event controller.
+     * @since v2000.0
+     * @group Events
+     */
+    onDestroy(tag: Tag, action: (obj: GameObj) => void): KEventController;
+    /**
+     * Register an event that runs when an object is destroyed.
+     *
+     * @param tag - The tag to match, only called for objects with a matching tag.
+     * @param action - The function that runs when an object is destroyed.
+     *
+     * @example
+     * ```js
+     * // This will run when the object is destroyed.
+     * onDestroy(() => {
+     *     debug.log("ohbye");
+     * });
+     *
+     * let ghosty = add([
+     *     pos(),
+     * ]);
+     *
+     * // Destroy the object
+     * destroy(ghosty);
+     * ```
+     *
+     * @returns The event controller.
+     * @group Events
+     */
+    onDestroy(action: (obj: GameObj) => void): KEventController;
+    /**
+     * Register an event that runs when an object starts using a component.
+     *
+     * @param action - The function that runs when the event happens.
+     *
+     * @returns The event controller.
+     * @since v3001.1
+     * @group Events
+     */
+    onUse(action: (obj: GameObj, id: string) => void): KEventController;
+    /**
+     * Register an event that runs when an object with the provided tag starts using a component.
+     *
+     * @param tag - The tag to match, only called for objects with a matching tag.
+     * @param action - The function that runs when the event happens.
+     *
+     * @example
+     * ```js
+     * // This will run when the tagged object uses a new component. 
+     * onUse("taggedObjTag", (obj, compId) => {
+     *     debug.log(obj, component);
+     * });
+     * ```
+     *
+     * @returns The event controller.
+     * @since v2000.0
+     * @group Events
+     */
+    onUse(tag: Tag, action: (obj: GameObj, compId: string) => void): KEventController;
+    /**
+     * Register an event that runs when an object stops using a component.
+     *
+     * @param action - The function that runs when the event happens.
+     *
+     * @returns The event controller.
+     * @since v3001.1
+     * @group Events
+     */
+    onUnuse(action: (obj: GameObj, id: string) => void): KEventController;
+    /**
+     * Register an event that runs when an object with the provided tag stops using a component.
+     *
+     * @param tag - The tag to match, only called for objects with a matching tag.
+     * @param action - The function that runs when the event happens.
+     *
+     * @example
+     * ```js
+     * // This will run when the tagged object removes a component. 
+     * onUnuse("ghost", (obj, compId) => {
+     *     debug.log(obj, component);
+     * });
+     * ```
+     *
+     * @returns The event controller.
+     * @since v2000.0
+     * @group Events
+     */
+    onUnuse(tag: Tag, action: (obj: GameObj, compId: string) => void): KEventController;
+    /**
+     * Register an event that runs when an object gains a tag.
+     *
+     * @param action - The function that runs when the event happens.
+     * 
+     * @example
+     * ```js
+     * onTag((obj, tag) => {
+     *     debug.log(`A new tag ${tag} was added to the object ${obj.id}`)
+     * }); 
+     * ```
+     *
+     * @returns The event controller.
+     * @since v3001.1
+     * @group Events
+     */
+    onTag(action: (obj: GameObj, tag: string) => void): KEventController;
+    /**
+     * Register an event that runs when an object with the provided tag gains a tag.
+     *
+     * @param action - The function that runs when the event happens.
+     * 
+     * @example
+     * ```js
+     * onTag("elephant", (obj, tag) => {
+     *     debug.log(`A new tag ${tag} was added to the object ${obj.id}`)
+     * }); 
+     * ```
+     *
+     * @returns The event controller.
+     * @since v3001.1
+     * @group Events
+     */
+    onTag(tag: Tag, action: (obj: GameObj, tag: string) => void): KEventController;
+    /**
+     * Register an event that runs when an object loses a tag.
+     *
+     * @param action - The function that runs when the event happens.
+     * 
+     * @example
+     * ```js
+     * onUnuse((obj, tag) => {
+     *     debug.log(`A tag ${tag} was removed from the object ${obj.id}`)
+     * }); 
+     * ```
+     *
+     * @returns The event controller.
+     * @since v3001.1
+     * @group Events
+     */
+    onUntag(action: (obj: GameObj, tag: string) => void): KEventController;
+    /**
+     * Register an event that runs when an object with the provided tag loses a tag.
+     *
+     * @param action - The function that runs when the event happens.
+     * 
+     * @example
+     * ```js
+     * onUnuse("vegetable", (obj, tag) => {
+     *     debug.log(`A tag ${tag} was removed from the object ${obj.id}`)
+     * }); 
+     * ```
+     *
+     * @returns The event controller.
+     * @since v3001.1
+     * @group Events
+     */
+    onUntag(action: (obj: GameObj, tag: string) => void): KEventController;
+    /**
+     * Register an event that runs when all assets finished loading.
+     *
+     * @param action - The function to run when the event is triggered.
+     *
+     * @example
+     * ```js
+     * const bean = add([
+     *     sprite("bean"),
+     * ]);
+     *
+     * // certain assets related data are only available when the game finishes loading
+     * onLoad(() => {
+     *     debug.log(bean.width)
+     * });
+     * ```
+     *
+     * @returns The event controller.
+     * @since v2000.1
+     * @group Events
+     */
     // #endregion
 }
 
@@ -845,6 +1134,10 @@ export const createGameEventHandlers = (app: App) => {
         onUpdate: app.onUpdate,
         onFixedUpdate: app.onFixedUpdate,
         onDraw: app.onDraw,
+        onAdd: app.onAdd,
+        onDestroy: app.onDestroy,
+        onUse: app.onUse,
+        onUnuse: app.onUnuse,
         // deprecated
         onShow: app.onShow,
         onHide: app.onHide,

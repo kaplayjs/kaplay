@@ -256,6 +256,10 @@ export type AppEventMap = {
     update: [];
     fixedUpdate: [];
     draw: [];
+    add: [GameObj];
+    destroy: [GameObj];
+    use: [GameObj, string];
+    unuse: [GameObj, string];
 };
 
 /**

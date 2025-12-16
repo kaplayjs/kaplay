@@ -2,12 +2,14 @@
 
 import type {
     Cursor,
+    GameObj,
     KAPLAYOpt,
     Key,
     KGamepad,
     KGamepadButton,
     KGamepadStick,
     MouseButton,
+    Tag,
 } from "../types";
 
 import { GP_MAP } from "../constants/general";
@@ -31,6 +33,7 @@ import {
     type ButtonsDef,
     parseButtonBindings,
 } from "./inputBindings";
+import { on } from "../events/globalEvents";
 
 export class ButtonState<T = string, A = never> {
     pressed = new Set<T>();
@@ -43,7 +46,7 @@ export class ButtonState<T = string, A = never> {
         private _downEv: keyof AppEventMap | null,
         private _releaseEv: keyof AppEventMap | null,
         private _arg?: A,
-    ) {}
+    ) { }
     update() {
         this.pressed.clear();
         this.released.clear();
@@ -783,6 +786,42 @@ export const initApp = (
         return state.events.on("draw", action);
     };
 
+    const onAdd = overload2((action: (obj: GameObj) => void) => {
+        return state.events.on("add", action);
+    }, (tag: Tag, action: (obj: GameObj) => void) => {
+        return on("add", tag, action);
+    });
+
+    const onDestroy = overload2((action: (obj: GameObj) => void) => {
+        return state.events.on("destroy", action);
+    }, (tag: Tag, action: (obj: GameObj) => void) => {
+        return on("destroy", tag, action);
+    });
+
+    const onUse = overload2((action: (obj: GameObj, compId: string) => void) => {
+        return state.events.on("use", action);
+    }, (tag: Tag, action: (obj: GameObj, compId: string) => void) => {
+        return on("use", tag, action);
+    });
+
+    const onUnuse = overload2((action: (obj: GameObj, compId: string) => void) => {
+        return state.events.on("unuse", action);
+    }, (tag: Tag, action: (obj: GameObj, compId: string) => void) => {
+        return on("unuse", tag, action);
+    });
+
+    const onTag = overload2((action: (obj: GameObj, compId: string) => void) => {
+        return state.events.on("tag", action);
+    }, (tag: Tag, action: (obj: GameObj, compId: string) => void) => {
+        return on("tag", tag, action);
+    });
+
+    const onUntag = overload2((action: (obj: GameObj, compId: string) => void) => {
+        return state.events.on("untag", action);
+    }, (tag: Tag, action: (obj: GameObj, compId: string) => void) => {
+        return on("untag", tag, action);
+    });
+
     const getLastInputDeviceType = () => {
         return state.lastInputDevice;
     };
@@ -1379,6 +1418,10 @@ export const initApp = (
         onUpdate,
         onFixedUpdate,
         onDraw,
+        onAdd,
+        onDestroy,
+        onUse,
+        onUnuse,
         getLastInputDeviceType,
         events: state.events,
     };

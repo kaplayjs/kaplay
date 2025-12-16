@@ -2166,8 +2166,7 @@ export interface KAPLAYCtx {
     /**
      * Register an event that runs when an object starts using a component.
      *
-     * @param action - The function that runs when an object starts using component.
-     * @param id - The id of the component that was added.
+     * @param action - The function that runs when the event happens.
      *
      * @returns The event controller.
      * @since v3001.1
@@ -2175,10 +2174,28 @@ export interface KAPLAYCtx {
      */
     onUse(action: (obj: GameObj, id: string) => void): KEventController;
     /**
+     * Register an event that runs when an object with the provided tag starts using a component.
+     *
+     * @param tag - The tag to match, only called for objects with a matching tag.
+     * @param action - The function that runs when the event happens.
+     *
+     * @example
+     * ```js
+     * // This will run when the tagged object uses a new component. 
+     * onUse("taggedObjTag", (obj, compId) => {
+     *     debug.log(obj, component);
+     * });
+     * ```
+     *
+     * @returns The event controller.
+     * @since v2000.0
+     * @group Events
+     */
+    onUse(tag: Tag, action: (obj: GameObj, compId: string) => void): KEventController;
+    /**
      * Register an event that runs when an object stops using a component.
      *
-     * @param action - The function that runs when an object stops using a component.
-     * @param id - The id of the component that was removed.d
+     * @param action - The function that runs when the event happens.
      *
      * @returns The event controller.
      * @since v3001.1
@@ -2186,10 +2203,35 @@ export interface KAPLAYCtx {
      */
     onUnuse(action: (obj: GameObj, id: string) => void): KEventController;
     /**
+     * Register an event that runs when an object with the provided tag stops using a component.
+     *
+     * @param tag - The tag to match, only called for objects with a matching tag.
+     * @param action - The function that runs when the event happens.
+     *
+     * @example
+     * ```js
+     * // This will run when the tagged object removes a component. 
+     * onUnuse("ghost", (obj, compId) => {
+     *     debug.log(obj, component);
+     * });
+     * ```
+     *
+     * @returns The event controller.
+     * @since v2000.0
+     * @group Events
+     */
+    onUnuse(tag: Tag, action: (obj: GameObj, compId: string) => void): KEventController;
+    /**
      * Register an event that runs when an object gains a tag.
      *
-     * @param action - The function that runs when an object gains a tag.
-     * @param tag - The tag which was added.
+     * @param action - The function that runs when the event happens.
+     * 
+     * @example
+     * ```js
+     * onTag((obj, tag) => {
+     *     debug.log(`A new tag ${tag} was added to the object ${obj.id}`)
+     * }); 
+     * ```
      *
      * @returns The event controller.
      * @since v3001.1
@@ -2197,10 +2239,50 @@ export interface KAPLAYCtx {
      */
     onTag(action: (obj: GameObj, tag: string) => void): KEventController;
     /**
+     * Register an event that runs when an object with the provided tag gains a tag.
+     *
+     * @param action - The function that runs when the event happens.
+     * 
+     * @example
+     * ```js
+     * onTag("elephant", (obj, tag) => {
+     *     debug.log(`A new tag ${tag} was added to the object ${obj.id}`)
+     * }); 
+     * ```
+     *
+     * @returns The event controller.
+     * @since v3001.1
+     * @group Events
+     */
+    onTag(tag: Tag, action: (obj: GameObj, tag: string) => void): KEventController;
+    /**
      * Register an event that runs when an object loses a tag.
      *
-     * @param action - The function that runs when an object loses a tag.
-     * @param tag - The tag which was removed.
+     * @param action - The function that runs when the event happens.
+     * 
+     * @example
+     * ```js
+     * onUnuse((obj, tag) => {
+     *     debug.log(`A tag ${tag} was removed from the object ${obj.id}`)
+     * }); 
+     * ```
+     *
+     * @returns The event controller.
+     * @since v3001.1
+     * @group Events
+     */
+    onUntag(action: (obj: GameObj, tag: string) => void): KEventController;
+    /**
+     * Register an event that runs when an object with the provided tag loses a tag.
+     *
+     * @param action - The function that runs when the event happens.
+     * 
+     * @example
+     * ```js
+     * onUnuse("vegetable", (obj, tag) => {
+     *     debug.log(`A tag ${tag} was removed from the object ${obj.id}`)
+     * }); 
+     * ```
      *
      * @returns The event controller.
      * @since v3001.1

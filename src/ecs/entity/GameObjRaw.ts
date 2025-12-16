@@ -590,10 +590,12 @@ const COMP_EVENTS = new Set([
 
 type GarbageCollectorArray = (() => any)[];
 
+type HandlersInAppButAlsoInObj = "onFixedUpdate" | "onUpdate" | "onDraw" | "onAdd" | "onDestroy" | "onUse" | "onUnuse"
+
 export const GameObjRawPrototype: Omit<
     InternalGameObjRaw,
     // TODO: Maybe too hacky, find better way
-    Exclude<AppEvents, "onFixedUpdate" | "onUpdate" | "onDraw">
+    Exclude<AppEvents, HandlersInAppButAlsoInObj>
 > = {
     // This chain of `as any`, is because we never should use this object
     // directly, it's only a prototype. These properties WILL be defined
@@ -713,6 +715,7 @@ export const GameObjRawPrototype: Omit<
         // see the object with *only* components added during make(),
         // and *then* run the components' add() which may add other components
         // and trigger onUse()
+        _k.app.events.trigger("add", obj);
         _k.game.events.trigger("add", obj);
         obj.trigger("add", obj);
 
@@ -802,6 +805,7 @@ export const GameObjRawPrototype: Omit<
 
         const trigger = (o: GameObj) => {
             o.trigger("destroy");
+            _k.app.events.trigger("destroy", o);
             _k.game.events.trigger("destroy", o);
             o.children.forEach((child) => trigger(child));
             o.id = null as any;
@@ -1339,12 +1343,12 @@ export const GameObjRawPrototype: Omit<
                         this._onCurCompCleanup = null;
                     };
 
-                    gc.push(this.on(key, <any> func).cancel);
+                    gc.push(this.on(key, <any>func).cancel);
                 }
                 else {
-                    const func = comp[<keyof typeof comp> key];
+                    const func = comp[<keyof typeof comp>key];
 
-                    gc.push(this.on(key, <any> func).cancel);
+                    gc.push(this.on(key, <any>func).cancel);
                 }
             }
             else {
@@ -1352,8 +1356,8 @@ export const GameObjRawPrototype: Omit<
                 if (this[key] === undefined) {
                     // Assign comp fields to game obj
                     Object.defineProperty(this, key, {
-                        get: () => comp[<keyof typeof comp> key],
-                        set: (val) => comp[<keyof typeof comp> key] = val,
+                        get: () => comp[<keyof typeof comp>key],
+                        set: (val) => comp[<keyof typeof comp>key] = val,
                         configurable: true,
                         enumerable: true,
                     });
@@ -1366,9 +1370,9 @@ export const GameObjRawPrototype: Omit<
                     )?.id;
                     throw new Error(
                         `Duplicate component property: "${key}" while adding component "${comp.id}"`
-                            + (originalCompId
-                                ? ` (originally added by "${originalCompId}")`
-                                : ""),
+                        + (originalCompId
+                            ? ` (originally added by "${originalCompId}")`
+                            : ""),
                     );
                 }
             }
@@ -1395,6 +1399,7 @@ export const GameObjRawPrototype: Omit<
             && !internalIsMaking(this as unknown as GameObj)
         ) {
             this.trigger("use", comp.id);
+            _k.app.events.trigger("use", this as unknown as GameObj, comp.id);
             _k.game.events.trigger(
                 "use",
                 this as unknown as GameObj,
@@ -1414,6 +1419,7 @@ export const GameObjRawPrototype: Omit<
 
         if (!internalIsMaking(this as unknown as GameObj)) {
             this.trigger("unuse", id);
+            _k.app.events.trigger("unuse", this, id);
             _k.game.events.trigger("unuse", this, id);
         }
 
