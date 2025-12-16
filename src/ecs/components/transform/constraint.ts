@@ -103,19 +103,24 @@ export type RotationConstraintOpt = {
     /**
      * The factor applied before applying the constraint. For example 0.5 will only apply half of the rotation of the target
      */
-    scale?: number;
+    ratio?: number;
     /**
      * Between 0 and 1. The percentage of the property being overwritten
      */
     strength?: number;
+    /**
+     * Whether the constraint will track when the source object's rotation passes the 0-360 boundary and update an internal counter to prevent a sharp jump in the target's angle. Default false.
+     */
+    trackMultiturn?: boolean;
 };
 
 export interface RotationConstraintComp extends Constraint {
     constraint: {
         target: GameObj;
         offset: number;
-        scale: number;
+        ratio: number;
         strength: number;
+        trackMultiturn: boolean;
     };
 }
 
@@ -252,13 +257,13 @@ export const constraint = {
                     this.transform.e = lerp(
                         this.transform.e,
                         this.constraint.target.transform.e
-                        + d.x / l * this.constraint.distance,
+                            + d.x / l * this.constraint.distance,
                         this.constraint.strength,
                     );
                     this.transform.f = lerp(
                         this.transform.f,
                         this.constraint.target.transform.f
-                        + d.y / l * this.constraint.distance,
+                            + d.y / l * this.constraint.distance,
                         this.constraint.strength,
                     );
                     // Modify local position
@@ -305,13 +310,13 @@ export const constraint = {
                 this.transform.e = lerp(
                     this.transform.e,
                     this.constraint.target.transform.e
-                    + this.constraint.offset.x,
+                        + this.constraint.offset.x,
                     this.constraint.strength,
                 );
                 this.transform.f = lerp(
                     this.transform.f,
                     this.constraint.target.transform.f
-                    + this.constraint.offset.x,
+                        + this.constraint.offset.x,
                     this.constraint.strength,
                 );
                 // Modify local position
@@ -345,27 +350,37 @@ export const constraint = {
         opt: RotationConstraintOpt,
     ): RotationConstraintComp {
         installSystem();
+        let fullTurnsCount = 0, prevDstAngle = 0, tmpMat = new Mat23();
         return {
             id: "constraint",
             constraint: {
                 target: target,
-                scale: opt.scale ?? 1,
+                ratio: opt.ratio ?? 1,
                 strength: opt.strength ?? 1,
                 offset: opt.offset || 0,
+                trackMultiturn: opt.trackMultiturn ?? false,
             },
             apply(this: GameObj<RotateComp | RotationConstraintComp>) {
                 // We use world rotation
                 const srcAngle = this.transform.getRotation();
                 const dstAngle = this.constraint.target.transform.getRotation();
+                if (
+                    this.constraint.trackMultiturn
+                    && Math.abs(dstAngle - prevDstAngle) > 180
+                ) {
+                    if (dstAngle < prevDstAngle) fullTurnsCount++;
+                    else fullTurnsCount--;
+                }
+                prevDstAngle = dstAngle;
                 const newAngle = lerp(
                     srcAngle,
-                    dstAngle * this.constraint.scale + this.constraint.offset,
+                    (dstAngle + fullTurnsCount * 360) * this.constraint.ratio
+                        + this.constraint.offset,
                     this.constraint.strength,
                 );
                 const scale = this.transform.getScale();
                 // Update world angle
-                const newTransform = new Mat23();
-                newTransform.setTRS(
+                tmpMat.setTRS(
                     this.transform.e,
                     this.transform.f,
                     newAngle,
@@ -375,7 +390,7 @@ export const constraint = {
                 // Modify local angle
                 if (this.parent) {
                     const transform = this.parent?.transform.inverse.mul(
-                        newTransform,
+                        tmpMat,
                     );
                     this.angle = transform.getRotation();
                 }
@@ -692,7 +707,7 @@ export const constraint = {
                                 // Old length
                                 const olen = Math.sqrt(
                                     effector.pos.x * effector.pos.x
-                                    + effector.pos.y * effector.pos.y,
+                                        + effector.pos.y * effector.pos.y,
                                 );
                                 // Scale to desired length clamped
                                 effector.pos.x *= nlen / olen;
