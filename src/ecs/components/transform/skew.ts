@@ -1,6 +1,10 @@
 import { vec2, type Vec2Args } from "../../../math/math";
 import { type SerializedVec2, Vec2 } from "../../../math/Vec2";
 import type { Comp } from "../../../types";
+import {
+    type InternalGameObjRaw,
+    nextTransformVersion,
+} from "../../entity/GameObjRaw";
 
 /**
  * The serialized {@link skew `skew()`} component.
@@ -36,22 +40,29 @@ export function skew(...args: Vec2Args): SkewComp {
         return skew(1);
     }
 
-    let _skew = vec2(...args);
+    const _skew = vec2(...args);
+    const _skewReadOnly = vec2(...args);
 
     return {
         id: "skew",
+
+        get skew(): Vec2 {
+            return _skewReadOnly;
+        },
         set skew(value: Vec2) {
             if (value instanceof Vec2 === false) {
                 throw Error(
-                    "The scale property on skew is a vector.",
+                    "The scale property on scale is a vector. Use scaleTo or scaleBy to set the scale with a number.",
                 );
             }
+            _skew.x = value.x;
+            _skew.y = value.y;
+            _skewReadOnly.x = value.x;
+            _skewReadOnly.y = value.y;
+            (this as any as InternalGameObjRaw)._transformVersion =
+                nextTransformVersion();
+        },
 
-            _skew = vec2(value);
-        },
-        get skew() {
-            return _skew;
-        },
         inspect() {
             if (_skew.x == _skew.y) {
                 return `skew: ${_skew.x.toFixed(1)}x`;

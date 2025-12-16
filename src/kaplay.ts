@@ -105,10 +105,13 @@ export const kaplay = <
         audio,
     } = _k;
 
-    const { checkFrame } = createCollisionSystem({
+    const { checkFrame, retrieve } = createCollisionSystem({
         broad: gopt.broadPhaseCollisionAlgorithm || "sap",
         narrow: gopt.narrowPhaseCollisionAlgorithm || "gjk",
+        opt: gopt,
     });
+
+    game.retrieve = retrieve;
 
     system("collision", checkFrame, [
         SystemPhase.AfterFixedUpdate,

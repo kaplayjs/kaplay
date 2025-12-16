@@ -28,6 +28,32 @@ export function usesArea() {
     return _k.game.areaCount > 0;
 }
 
+let _nextRenderAreaVersion = 0;
+
+export function nextRenderAreaVersion() {
+    return _nextRenderAreaVersion++;
+}
+
+let _nextLocalAreaVersion = 0;
+
+export function nextLocalAreaVersion() {
+    return _nextLocalAreaVersion++;
+}
+
+let _nextWorldAreaVersion = 0;
+
+export function nextWorldAreaVersion() {
+    return _nextWorldAreaVersion++;
+}
+
+export function getRenderAreaVersion(obj: GameObj<any>) {
+    return obj._renderAreaVersion;
+}
+
+export function getLocalAreaVersion(obj: GameObj<any>) {
+    return obj._localAreaVersion;
+}
+
 /**
  * The {@link area `area()`} component.
  *
@@ -185,6 +211,10 @@ export interface AreaComp extends Comp {
      */
     worldArea(): Shape;
     /**
+     * Get the bounding box of the geometry data for the collider in world coordinate space.
+     */
+    worldBbox(): Rect;
+    /**
      * Get the geometry data for the collider in screen coordinate space.
      */
     screenArea(): Shape;
@@ -245,11 +275,31 @@ export interface AreaCompOpt {
     friction?: number;
 }
 
-export function area(opt: AreaCompOpt = {}): AreaComp {
+export function area(
+    opt: AreaCompOpt = {},
+): AreaComp & { _localAreaVersion: number } {
+    // The id => collision map of objects colliding with this object
     const colliding: Record<string, Collision> = {};
+    // The ids of the objects which are colliding with this object during this frame
     const collidingThisFrame = new Set();
+    // Events to cancel in destroy when the component gets removed
     const events: KEventController[] = [];
-    let oldShape: Shape | undefined;
+    // We overwrite the shape rather than allocating a new one
+    let _worldShape: Shape | undefined;
+    let _worldBBox: Rect | undefined;
+    let _screenShape: Shape | undefined;
+
+    let _shape: Shape | null = opt.shape ?? null;
+    let _scale: Vec2 = opt.scale ? vec2(opt.scale) : vec2(1);
+    let _offset: Vec2 = opt.offset ?? vec2(0);
+    let _cursor: Cursor | null = opt.cursor ?? null;
+
+    let _localAreaVersion = -1; // Track local changes in area properties
+    let _worldAreaVersion = -1; // Track local changes in world area
+    let _worldBBoxVersion = -1; // Track world area changes for bbox
+    let _cachedTransformVersion = -1; // Currently used transform
+    let _cachedRenderAreaVersion = -1; // Currently used render shape
+    let _cachedLocalAreaVersion = -1; // Currently used local area
 
     return {
         id: "area",
@@ -340,11 +390,39 @@ export function area(opt: AreaCompOpt = {}): AreaComp {
             popTransform();
         },
 
+        get _localAreaVersion() {
+            return _localAreaVersion;
+        },
+
         area: {
-            shape: opt.shape ?? null,
-            scale: opt.scale ? vec2(opt.scale) : vec2(1),
-            offset: opt.offset ?? vec2(0),
-            cursor: opt.cursor ?? null,
+            set shape(value: Shape | null) {
+                _shape = value;
+                _localAreaVersion = nextLocalAreaVersion();
+            },
+            get shape(): Shape | null {
+                return _shape;
+            },
+            set scale(value: Vec2) {
+                _scale = this.scale;
+                _localAreaVersion = nextLocalAreaVersion();
+            },
+            get scale(): Vec2 {
+                return _scale;
+            },
+            set offset(value: Vec2) {
+                _offset = value;
+                _localAreaVersion = nextLocalAreaVersion();
+            },
+            get offset() {
+                return _offset;
+            },
+            set cursor(value: Cursor | null) {
+                _cursor = value;
+                // TODO: attach/detach hover
+            },
+            get cursor(): Cursor | null {
+                return _cursor;
+            },
         },
 
         isClicked(): boolean {
@@ -573,27 +651,58 @@ export function area(opt: AreaCompOpt = {}): AreaComp {
 
         // TODO: cache
         worldArea(this: GameObj<AreaComp | AnchorComp>): Shape {
-            const localArea = this.localArea();
+            const renderAreaVersion = getRenderAreaVersion(this);
+            if (
+                !_worldShape
+                || _cachedTransformVersion !== (this as any)._transformVersion // Transform changed
+                || (renderAreaVersion !== undefined // Render area (shape) changed
+                    && _cachedRenderAreaVersion !== renderAreaVersion) // Render area (shape) changed
+                || _cachedLocalAreaVersion !== _localAreaVersion // Area settings changed
+            ) {
+                const localArea = this.localArea();
 
-            // World transform
-            const transform = this.transform.clone();
-            // Optional area offset
-            if (this.area.offset.x !== 0 || this.area.offset.y !== 0) {
-                transform.translateSelfV(this.area.offset);
-            }
-            // Optional area scale
-            if (this.area.scale.x !== 1 || this.area.scale.y !== 1) {
-                transform.scaleSelfV(this.area.scale);
-            }
-            // Optional anchor offset (Rect only??)
-            if (localArea instanceof Rect && this.anchor !== "topleft") {
-                const offset = anchorPt(this.anchor || DEF_ANCHOR)
-                    .add(1, 1)
-                    .scale(-0.5 * localArea.width, -0.5 * localArea.height);
-                transform.translateSelfV(offset);
-            }
+                // World transform
+                const transform = this.transform.clone();
+                // Optional area offset
+                if (this.area.offset.x !== 0 || this.area.offset.y !== 0) {
+                    transform.translateSelfV(this.area.offset);
+                }
+                // Optional area scale
+                if (this.area.scale.x !== 1 || this.area.scale.y !== 1) {
+                    transform.scaleSelfV(this.area.scale);
+                }
+                // Optional anchor offset (Rect only??)
+                if (localArea instanceof Rect && this.anchor !== "topleft") {
+                    const offset = anchorPt(this.anchor || DEF_ANCHOR)
+                        .add(1, 1)
+                        .scale(-0.5 * localArea.width, -0.5 * localArea.height);
+                    transform.translateSelfV(offset);
+                }
 
-            return oldShape = localArea.transform(transform, oldShape);
+                _worldShape = localArea.transform(transform, _worldShape);
+
+                _cachedTransformVersion = (this as any)._transformVersion;
+                _cachedRenderAreaVersion = renderAreaVersion ?? 0;
+                _cachedLocalAreaVersion = _localAreaVersion;
+                _worldAreaVersion = nextWorldAreaVersion();
+            }
+            return _worldShape;
+        },
+
+        worldBbox(this: GameObj<AreaComp>): Rect {
+            const renderAreaVersion = (this as any).renderAreaVersion;
+            if (
+                !_worldBBox || _worldAreaVersion != _worldBBoxVersion
+                || !_worldShape
+                || _cachedTransformVersion != (this as any)._transformVersion // Transform changed
+                || (renderAreaVersion != undefined // Render area (shape) changed
+                    && _cachedRenderAreaVersion != renderAreaVersion) // Render area (shape) changed
+                || _cachedLocalAreaVersion != _localAreaVersion // Area settings changed
+            ) {
+                _worldBBox = this.worldArea().bbox(_worldBBox);
+                _worldBBoxVersion = _worldAreaVersion;
+            }
+            return _worldBBox;
         },
 
         screenArea(this: GameObj<AreaComp | FixedComp>): Shape {
@@ -602,9 +711,9 @@ export function area(opt: AreaCompOpt = {}): AreaComp {
                 return area;
             }
             else {
-                return oldShape = area.transform(
+                return _screenShape = area.transform(
                     _k.game.cam.transform,
-                    oldShape,
+                    _screenShape,
                 );
             }
         },

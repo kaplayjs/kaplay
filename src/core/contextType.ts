@@ -164,7 +164,7 @@ import type {
     StepPosition,
 } from "../math/math";
 import type { NavMesh } from "../math/navigationmesh";
-import type { Quadtree } from "../math/spatial/quadtree";
+import type { Quadtree, ResizingQuadtree } from "../math/spatial/quadtree";
 import type { Vec2 } from "../math/Vec2";
 import {
     type Anchor,
@@ -378,6 +378,13 @@ export interface KAPLAYCtx {
      * @group Game Obj
      */
     readd(obj: GameObj): GameObj;
+    /**
+     * Retrieves all objects within the given rectangle
+     *
+     * @since v4000
+     * @group Game Obj
+     */
+    retrieve(rect: Rect, retrieveCb: (obj: GameObj<AreaComp>) => void): void;
     /**
      * Get a list of all game objs with certain tag.
      *
@@ -5569,7 +5576,8 @@ export interface KAPLAYCtx {
         height: number,
         maxObjects: number,
         maxLevels: number,
-    ): Quadtree;
+        resizing: boolean,
+    ): Quadtree | ResizingQuadtree;
     /**
      * The Random Number Generator.
      *
