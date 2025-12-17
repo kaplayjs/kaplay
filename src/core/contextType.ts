@@ -1938,52 +1938,7 @@ export interface KAPLAYCtx {
      * @experimental This feature is in experimental phase, it will be fully released in v3001.1.0
      */
     trigger(event: string, tag: string, ...args: any): void;
-    /**
-     * Register an event on all game objs with certain tag.
-     *
-     * @param tag - The tag to listen for.
-     * @param action - The function to run when the event is triggered.
-     *
-     * @example
-     * ```js
-     * // a custom event defined by body() comp
-     * // every time an obj with tag "bomb" hits the floor, destroy it and addKaboom()
-     * on("ground", "bomb", (bomb) => {
-     *     destroy(bomb)
-     *     addKaboom(bomb.pos)
-     * })
-     *
-     * // a custom event can be defined manually
-     * // by passing an event name, a tag, and a callback function
-     * // if you want any tag, use a tag of "*"
-     * on("talk", "npc", (npc, message) => {
-     *     npc.add([
-     *         text(message),
-     *         pos(0, -50),
-     *         lifespan(2),
-     *         opacity(),
-     *     ])
-     * });
-     *
-     * onKeyPress("space", () => {
-     *     // the trigger method on game objs can be used to trigger a custom event
-     *     npc.trigger("talk", "Hello, KAPLAY!");
-     * });
-     *
-     * ```
-     *
-     * @returns The event controller.
-     * @since v2000.0
-     * @group Events
-     */
-    on<Ev extends GameObjEventNames | (string & {})>(
-        event: Ev,
-        tag: Tag,
-        action: (
-            obj: GameObj,
-            ...args: TupleWithoutFirst<GameObjEvents[Ev]>
-        ) => void,
-    ): KEventController;
+    on: GameEventHandlers["on"];
     onFixedUpdate: GameEventHandlers["onFixedUpdate"];
     onUpdate: GameEventHandlers["onUpdate"];
     onDraw: GameEventHandlers["onDraw"];

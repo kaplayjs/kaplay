@@ -29,26 +29,26 @@ export const createCollisionSystem = (
     const broadPhaseIntersection: BroadPhaseAlgorithm = broad === "sap"
         ? new SweepAndPruneHorizontal()
         : broad === "sapv"
-            ? new SweepAndPruneVertical()
-            : broad === "quadtree"
-                ? new Quadtree(new Rect(vec2(0, 0), width(), height()), 8, 8)
-                : broad == "grid"
-                    ? new HashGrid(
-                        new Rect(
-                            vec2(-DEF_HASH_GRID_SIZE, -DEF_HASH_GRID_SIZE),
-                            width() + DEF_HASH_GRID_SIZE * 2,
-                            height() + DEF_HASH_GRID_SIZE * 2,
-                        ),
-                        opt,
-                    )
-                    : new SweepAndPruneHorizontal();
+        ? new SweepAndPruneVertical()
+        : broad === "quadtree"
+        ? new Quadtree(new Rect(vec2(0, 0), width(), height()), 8, 8)
+        : broad == "grid"
+        ? new HashGrid(
+            new Rect(
+                vec2(-DEF_HASH_GRID_SIZE, -DEF_HASH_GRID_SIZE),
+                width() + DEF_HASH_GRID_SIZE * 2,
+                height() + DEF_HASH_GRID_SIZE * 2,
+            ),
+            opt,
+        )
+        : new SweepAndPruneHorizontal();
     const narrowPhaseIntersection = narrow === "gjk"
         ? gjkShapeIntersection
         : narrow === "sat"
-            ? satShapeIntersection
-            : narrow === "box"
-                ? minkowskiRectShapeIntersection
-                : gjkShapeIntersection;
+        ? satShapeIntersection
+        : narrow === "box"
+        ? minkowskiRectShapeIntersection
+        : gjkShapeIntersection;
 
     function narrowPhase(
         obj: GameObj<AreaComp>,

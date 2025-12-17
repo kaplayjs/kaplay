@@ -975,7 +975,7 @@ export interface GameEventHandlers {
      *
      * @example
      * ```js
-     * // This will run when the tagged object uses a new component. 
+     * // This will run when the tagged object uses a new component.
      * onUse("taggedObjTag", (obj, compId) => {
      *     debug.log(obj, component);
      * });
@@ -985,7 +985,10 @@ export interface GameEventHandlers {
      * @since v2000.0
      * @group Events
      */
-    onUse(tag: Tag, action: (obj: GameObj, compId: string) => void): KEventController;
+    onUse(
+        tag: Tag,
+        action: (obj: GameObj, compId: string) => void,
+    ): KEventController;
     /**
      * Register an event that runs when an object stops using a component.
      *
@@ -1004,7 +1007,7 @@ export interface GameEventHandlers {
      *
      * @example
      * ```js
-     * // This will run when the tagged object removes a component. 
+     * // This will run when the tagged object removes a component.
      * onUnuse("ghost", (obj, compId) => {
      *     debug.log(obj, component);
      * });
@@ -1014,17 +1017,20 @@ export interface GameEventHandlers {
      * @since v2000.0
      * @group Events
      */
-    onUnuse(tag: Tag, action: (obj: GameObj, compId: string) => void): KEventController;
+    onUnuse(
+        tag: Tag,
+        action: (obj: GameObj, compId: string) => void,
+    ): KEventController;
     /**
      * Register an event that runs when an object gains a tag.
      *
      * @param action - The function that runs when the event happens.
-     * 
+     *
      * @example
      * ```js
      * onTag((obj, tag) => {
      *     debug.log(`A new tag ${tag} was added to the object ${obj.id}`)
-     * }); 
+     * });
      * ```
      *
      * @returns The event controller.
@@ -1036,29 +1042,32 @@ export interface GameEventHandlers {
      * Register an event that runs when an object with the provided tag gains a tag.
      *
      * @param action - The function that runs when the event happens.
-     * 
+     *
      * @example
      * ```js
      * onTag("elephant", (obj, tag) => {
      *     debug.log(`A new tag ${tag} was added to the object ${obj.id}`)
-     * }); 
+     * });
      * ```
      *
      * @returns The event controller.
      * @since v3001.1
      * @group Events
      */
-    onTag(tag: Tag, action: (obj: GameObj, tag: string) => void): KEventController;
+    onTag(
+        tag: Tag,
+        action: (obj: GameObj, tag: string) => void,
+    ): KEventController;
     /**
      * Register an event that runs when an object loses a tag.
      *
      * @param action - The function that runs when the event happens.
-     * 
+     *
      * @example
      * ```js
      * onUnuse((obj, tag) => {
      *     debug.log(`A tag ${tag} was removed from the object ${obj.id}`)
-     * }); 
+     * });
      * ```
      *
      * @returns The event controller.
@@ -1070,19 +1079,22 @@ export interface GameEventHandlers {
      * Register an event that runs when an object with the provided tag loses a tag.
      *
      * @param action - The function that runs when the event happens.
-     * 
+     *
      * @example
      * ```js
      * onUnuse("vegetable", (obj, tag) => {
      *     debug.log(`A tag ${tag} was removed from the object ${obj.id}`)
-     * }); 
+     * });
      * ```
      *
      * @returns The event controller.
      * @since v3001.1
      * @group Events
      */
-    onUntag(tag: Tag, action: (obj: GameObj, tag: string) => void): KEventController;
+    onUntag(
+        tag: Tag,
+        action: (obj: GameObj, tag: string) => void,
+    ): KEventController;
     /**
      * Register an event on all Game Objects with certain tag.
      *

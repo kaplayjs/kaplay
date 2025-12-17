@@ -13,14 +13,20 @@ import type {
 } from "../types";
 
 import { GP_MAP } from "../constants/general";
-import type { AppEventMap, GameObjEventNames, GameObjEvents } from "../events/eventMap";
+import type {
+    AppEventMap,
+    GameObjEventNames,
+    GameObjEvents,
+} from "../events/eventMap";
 import { type KEventController, KEventHandler } from "../events/events";
 import { canvasToViewport } from "../gfx/viewport";
 import { map, vec2 } from "../math/math";
 import { Vec2 } from "../math/Vec2";
+import { _k } from "../shared";
 import { deprecateMsg } from "../utils/log";
 import { overload2 } from "../utils/overload";
 import { isEqOrIncludes, setHasOrIncludes } from "../utils/sets";
+import type { TupleWithoutFirst } from "../utils/types";
 import {
     getButton,
     getButtons,
@@ -33,8 +39,6 @@ import {
     type ButtonsDef,
     parseButtonBindings,
 } from "./inputBindings";
-import type { TupleWithoutFirst } from "../utils/types";
-import { _k } from "../shared";
 
 export class ButtonState<T = string, A = never> {
     pressed = new Set<T>();
@@ -47,7 +51,7 @@ export class ButtonState<T = string, A = never> {
         private _downEv: keyof AppEventMap | null,
         private _releaseEv: keyof AppEventMap | null,
         private _arg?: A,
-    ) { }
+    ) {}
     update() {
         this.pressed.clear();
         this.released.clear();
@@ -751,14 +755,17 @@ export const initApp = (
     const on = <Ev extends GameObjEventNames | string & {}>(
         event: Ev,
         tag: Tag,
-        cb: (obj: GameObj, ...args: TupleWithoutFirst<GameObjEvents[Ev]>) => void,
+        cb: (
+            obj: GameObj,
+            ...args: TupleWithoutFirst<GameObjEvents[Ev]>
+        ) => void,
     ): KEventController => {
         let paused = false;
         let obj2Handler = new Map<GameObj, KEventController>();
 
         const handleNew = (obj: GameObj) => {
             const ec = obj.on(event, (...args) => {
-                cb(obj, ...<TupleWithoutFirst<GameObjEvents[Ev]>>args);
+                cb(obj, ...<TupleWithoutFirst<GameObjEvents[Ev]>> args);
             });
             ec.paused = paused;
             if (obj2Handler.has(obj)) obj2Handler.get(obj)!.cancel();
@@ -797,8 +804,7 @@ export const initApp = (
                 ecOnUntag.cancel();
             },
         };
-    }
-
+    };
 
     const onButtonPress = overload2((action: (btn: string) => void) => {
         return state.events.on("buttonPress", (b) => action(b));
@@ -857,29 +863,41 @@ export const initApp = (
         return on("destroy", tag, action);
     });
 
-    const onUse = overload2((action: (obj: GameObj, compId: string) => void) => {
-        return state.events.on("use", action);
-    }, (tag: Tag, action: (obj: GameObj, compId: string) => void) => {
-        return on("use", tag, action);
-    });
+    const onUse = overload2(
+        (action: (obj: GameObj, compId: string) => void) => {
+            return state.events.on("use", action);
+        },
+        (tag: Tag, action: (obj: GameObj, compId: string) => void) => {
+            return on("use", tag, action);
+        },
+    );
 
-    const onUnuse = overload2((action: (obj: GameObj, compId: string) => void) => {
-        return state.events.on("unuse", action);
-    }, (tag: Tag, action: (obj: GameObj, compId: string) => void) => {
-        return on("unuse", tag, action);
-    });
+    const onUnuse = overload2(
+        (action: (obj: GameObj, compId: string) => void) => {
+            return state.events.on("unuse", action);
+        },
+        (tag: Tag, action: (obj: GameObj, compId: string) => void) => {
+            return on("unuse", tag, action);
+        },
+    );
 
-    const onTag = overload2((action: (obj: GameObj, compId: string) => void) => {
-        return state.events.on("tag", action);
-    }, (tag: Tag, action: (obj: GameObj, compId: string) => void) => {
-        return on("tag", tag, action);
-    });
+    const onTag = overload2(
+        (action: (obj: GameObj, compId: string) => void) => {
+            return state.events.on("tag", action);
+        },
+        (tag: Tag, action: (obj: GameObj, compId: string) => void) => {
+            return on("tag", tag, action);
+        },
+    );
 
-    const onUntag = overload2((action: (obj: GameObj, compId: string) => void) => {
-        return state.events.on("untag", action);
-    }, (tag: Tag, action: (obj: GameObj, compId: string) => void) => {
-        return on("untag", tag, action);
-    });
+    const onUntag = overload2(
+        (action: (obj: GameObj, compId: string) => void) => {
+            return state.events.on("untag", action);
+        },
+        (tag: Tag, action: (obj: GameObj, compId: string) => void) => {
+            return on("untag", tag, action);
+        },
+    );
 
     const getLastInputDeviceType = () => {
         return state.lastInputDevice;

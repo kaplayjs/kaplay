@@ -5,7 +5,6 @@ import type { GameObj, Tag } from "../types";
 import { overload2 } from "../utils/overload";
 import { KEventController } from "./events";
 
-
 export const trigger = (event: string, tag: string, ...args: any[]) => {
     for (const obj of _k.game.root.children) {
         if (obj.is(tag)) {
@@ -20,7 +19,11 @@ export function onCollide(
     t2: Tag,
     f: (a: GameObj, b: GameObj, col?: Collision) => void,
 ): KEventController {
-    return _k.sceneScope.on("collide", t1, (a, b, col) => b.is(t2) && f(a, b, col));
+    return _k.sceneScope.on(
+        "collide",
+        t1,
+        (a, b, col) => b.is(t2) && f(a, b, col),
+    );
 }
 
 export function onCollideUpdate(
@@ -28,7 +31,11 @@ export function onCollideUpdate(
     t2: Tag,
     f: (a: GameObj, b: GameObj, col?: Collision) => void,
 ): KEventController {
-    return _k.sceneScope.on("collideUpdate", t1, (a, b, col) => b.is(t2) && f(a, b, col));
+    return _k.sceneScope.on(
+        "collideUpdate",
+        t1,
+        (a, b, col) => b.is(t2) && f(a, b, col),
+    );
 }
 
 export function onCollideEnd(
@@ -36,7 +43,11 @@ export function onCollideEnd(
     t2: Tag,
     f: (a: GameObj, b: GameObj, col?: Collision) => void,
 ): KEventController {
-    return _k.sceneScope.on("collideEnd", t1, (a, b, col) => b.is(t2) && f(a, b, col));
+    return _k.sceneScope.on(
+        "collideEnd",
+        t1,
+        (a, b, col) => b.is(t2) && f(a, b, col),
+    );
 }
 
 export function forAllCurrentAndFuture(t: Tag, action: (obj: GameObj) => void) {

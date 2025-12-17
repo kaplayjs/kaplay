@@ -125,7 +125,9 @@ export function offscreen(opt: OffScreenCompOpt = {}): OffScreenComp {
             return this.on("enterView", action);
         },
         add(this: GameObj<OffScreenComp>) {
-            if (opt.pause && opt.unpause) _k.sceneScope.onUpdate(() => check(this));
+            if (opt.pause && opt.unpause) {
+                _k.sceneScope.onUpdate(() => check(this));
+            }
             else this.onUpdate(() => check(this));
         },
     };
