@@ -9,6 +9,8 @@ import type {
     MouseButton,
     Tag,
 } from "../types";
+import type { TupleWithoutFirst } from "../utils/types";
+import type { GameObjEventNames, GameObjEvents } from "./eventMap";
 import type { KEventController } from "./events";
 
 export interface GameEventHandlers {
@@ -1080,28 +1082,53 @@ export interface GameEventHandlers {
      * @since v3001.1
      * @group Events
      */
-    onUntag(action: (obj: GameObj, tag: string) => void): KEventController;
+    onUntag(tag: Tag, action: (obj: GameObj, tag: string) => void): KEventController;
     /**
-     * Register an event that runs when all assets finished loading.
+     * Register an event on all Game Objects with certain tag.
      *
+     * @param tag - The tag to listen for.
      * @param action - The function to run when the event is triggered.
      *
      * @example
      * ```js
-     * const bean = add([
-     *     sprite("bean"),
-     * ]);
+     * // a custom event defined by body() comp
+     * // every time an obj with tag "bomb" hits the floor, destroy it and addKaboom()
+     * on("ground", "bomb", (bomb) => {
+     *     destroy(bomb)
+     *     addKaboom(bomb.pos)
+     * })
      *
-     * // certain assets related data are only available when the game finishes loading
-     * onLoad(() => {
-     *     debug.log(bean.width)
+     * // a custom event can be defined manually
+     * // by passing an event name, a tag, and a callback function
+     * // if you want any tag, use a tag of "*"
+     * on("talk", "npc", (npc, message) => {
+     *     npc.add([
+     *         text(message),
+     *         pos(0, -50),
+     *         lifespan(2),
+     *         opacity(),
+     *     ])
      * });
+     *
+     * onKeyPress("space", () => {
+     *     // the trigger method on game objs can be used to trigger a custom event
+     *     npc.trigger("talk", "Hello, KAPLAY!");
+     * });
+     *
      * ```
      *
      * @returns The event controller.
-     * @since v2000.1
+     * @since v2000.0
      * @group Events
      */
+    on<Ev extends GameObjEventNames | (string & {})>(
+        event: Ev,
+        tag: Tag,
+        action: (
+            obj: GameObj,
+            ...args: TupleWithoutFirst<GameObjEvents[Ev]>
+        ) => void,
+    ): KEventController;
     // #endregion
 }
 
@@ -1140,6 +1167,7 @@ export const createGameEventHandlers = (app: App) => {
         onUnuse: app.onUnuse,
         onTag: app.onTag,
         onUntag: app.onUntag,
+        on: app.on,
         // deprecated
         onShow: app.onShow,
         onHide: app.onHide,

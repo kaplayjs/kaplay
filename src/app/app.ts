@@ -13,7 +13,7 @@ import type {
 } from "../types";
 
 import { GP_MAP } from "../constants/general";
-import type { AppEventMap } from "../events/eventMap";
+import type { AppEventMap, GameObjEventNames, GameObjEvents } from "../events/eventMap";
 import { type KEventController, KEventHandler } from "../events/events";
 import { canvasToViewport } from "../gfx/viewport";
 import { map, vec2 } from "../math/math";
@@ -33,7 +33,8 @@ import {
     type ButtonsDef,
     parseButtonBindings,
 } from "./inputBindings";
-import { on } from "../events/globalEvents";
+import type { TupleWithoutFirst } from "../utils/types";
+import { _k } from "../shared";
 
 export class ButtonState<T = string, A = never> {
     pressed = new Set<T>();
@@ -747,6 +748,58 @@ export const initApp = (
         return [...state.gamepads];
     }
 
+    const on = <Ev extends GameObjEventNames | string & {}>(
+        event: Ev,
+        tag: Tag,
+        cb: (obj: GameObj, ...args: TupleWithoutFirst<GameObjEvents[Ev]>) => void,
+    ): KEventController => {
+        let paused = false;
+        let obj2Handler = new Map<GameObj, KEventController>();
+
+        const handleNew = (obj: GameObj) => {
+            const ec = obj.on(event, (...args) => {
+                cb(obj, ...<TupleWithoutFirst<GameObjEvents[Ev]>>args);
+            });
+            ec.paused = paused;
+            if (obj2Handler.has(obj)) obj2Handler.get(obj)!.cancel();
+            obj2Handler.set(obj, ec);
+        };
+
+        const ecOnTag = _k.appScope.onTag((obj, newTag) => {
+            if (newTag === tag) handleNew(obj);
+        });
+        const ecOnAdd = _k.appScope.onAdd(obj => {
+            if (obj.is(tag)) handleNew(obj);
+        });
+        const ecOnUntag = _k.appScope.onUntag((obj, oldTag) => {
+            if (oldTag === tag) {
+                const ec = obj2Handler.get(obj)!;
+                ec.cancel();
+                obj2Handler.delete(obj);
+            }
+        });
+
+        _k.game.root.get(tag, { recursive: true }).forEach(handleNew);
+
+        return {
+            get paused() {
+                return paused;
+            },
+            set paused(p) {
+                paused = p;
+                obj2Handler.forEach(ec => ec.paused = p);
+            },
+            cancel() {
+                obj2Handler.forEach(ec => ec.cancel());
+                obj2Handler.clear();
+                ecOnTag.cancel();
+                ecOnAdd.cancel();
+                ecOnUntag.cancel();
+            },
+        };
+    }
+
+
     const onButtonPress = overload2((action: (btn: string) => void) => {
         return state.events.on("buttonPress", (b) => action(b));
     }, (btn: string | string, action: (btn: string) => void) => {
@@ -1430,6 +1483,7 @@ export const initApp = (
         onUnuse,
         onTag,
         onUntag,
+        on,
         getLastInputDeviceType,
         events: state.events,
     };

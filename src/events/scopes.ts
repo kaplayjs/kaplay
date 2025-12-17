@@ -56,6 +56,7 @@ const eventHandlersInAppButNotAddedInGameObjRaw = [
     "onUnuse",
     "onTag",
     "onUntag",
+    "on",
 ] as const;
 
 export type EventHandlersInAppButNotAddedInGameObjRaw = typeof eventHandlersInAppButNotAddedInGameObjRaw[number];

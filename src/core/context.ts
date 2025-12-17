@@ -90,16 +90,11 @@ import { Collision } from "../ecs/systems/Collision";
 import { system, SystemPhase } from "../ecs/systems/systems";
 import { KEvent, KEventController, KEventHandler } from "../events/events";
 import {
-    on,
-    onAdd,
     onClick,
     onCollide,
     onCollideEnd,
     onCollideUpdate,
-    onDestroy,
-    onDraw,
     onError,
-    onFixedUpdate,
     onHover,
     onHoverEnd,
     onHoverUpdate,
@@ -107,11 +102,6 @@ import {
     onLoadError,
     onLoading,
     onResize,
-    onTag,
-    onUntag,
-    onUnuse,
-    onUpdate,
-    onUse,
     trigger,
 } from "../events/globalEvents";
 import {
@@ -449,7 +439,7 @@ export const createContext = (
         fakeMouse,
         // group events
         trigger,
-        on: on as KAPLAYCtx["on"], // our internal on should be strict, user shouldn't
+        on: defaultScope.on,
         onFixedUpdate: defaultScope.onFixedUpdate,
         onUpdate: defaultScope.onUpdate,
         onDraw: defaultScope.onDraw,

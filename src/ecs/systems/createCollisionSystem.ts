@@ -1,5 +1,4 @@
 import { DEF_HASH_GRID_SIZE } from "../../constants/general";
-import { onAdd, onDestroy, onUnuse, onUse } from "../../events/globalEvents";
 import { onSceneLeave } from "../../game/scenes";
 import { height, width } from "../../gfx/stack";
 import { gjkShapeIntersection } from "../../math/gjk";
@@ -17,7 +16,6 @@ import { _k } from "../../shared";
 import type { GameObj } from "../../types";
 import { type AreaComp, usesArea } from "../components/physics/area";
 import { Collision } from "./Collision";
-
 export type BroadPhaseType = "sap" | "sapv" | "quadtree" | "grid";
 export type NarrowPhaseType = "gjk" | "sat" | "box";
 
@@ -31,26 +29,26 @@ export const createCollisionSystem = (
     const broadPhaseIntersection: BroadPhaseAlgorithm = broad === "sap"
         ? new SweepAndPruneHorizontal()
         : broad === "sapv"
-        ? new SweepAndPruneVertical()
-        : broad === "quadtree"
-        ? new Quadtree(new Rect(vec2(0, 0), width(), height()), 8, 8)
-        : broad == "grid"
-        ? new HashGrid(
-            new Rect(
-                vec2(-DEF_HASH_GRID_SIZE, -DEF_HASH_GRID_SIZE),
-                width() + DEF_HASH_GRID_SIZE * 2,
-                height() + DEF_HASH_GRID_SIZE * 2,
-            ),
-            opt,
-        )
-        : new SweepAndPruneHorizontal();
+            ? new SweepAndPruneVertical()
+            : broad === "quadtree"
+                ? new Quadtree(new Rect(vec2(0, 0), width(), height()), 8, 8)
+                : broad == "grid"
+                    ? new HashGrid(
+                        new Rect(
+                            vec2(-DEF_HASH_GRID_SIZE, -DEF_HASH_GRID_SIZE),
+                            width() + DEF_HASH_GRID_SIZE * 2,
+                            height() + DEF_HASH_GRID_SIZE * 2,
+                        ),
+                        opt,
+                    )
+                    : new SweepAndPruneHorizontal();
     const narrowPhaseIntersection = narrow === "gjk"
         ? gjkShapeIntersection
         : narrow === "sat"
-        ? satShapeIntersection
-        : narrow === "box"
-        ? minkowskiRectShapeIntersection
-        : gjkShapeIntersection;
+            ? satShapeIntersection
+            : narrow === "box"
+                ? minkowskiRectShapeIntersection
+                : gjkShapeIntersection;
 
     function narrowPhase(
         obj: GameObj<AreaComp>,
@@ -88,24 +86,25 @@ export const createCollisionSystem = (
     function broadPhase() {
         if (!broadInit) {
             broadInit = true;
-            onAdd(obj => {
+            _k.appScope.onAdd(obj => {
                 if (obj.has("area")) {
                     broadPhaseIntersection.add(obj as GameObj<AreaComp>);
                 }
             });
-            onDestroy(obj => {
+            _k.appScope.onDestroy(obj => {
                 broadPhaseIntersection.remove(obj as GameObj<AreaComp>);
             });
-            onUse((obj, id) => {
+            _k.appScope.onUse((obj, id) => {
                 if (id === "area") {
                     broadPhaseIntersection.add(obj as GameObj<AreaComp>);
                 }
             });
-            onUnuse((obj, id) => {
+            _k.appScope.onUnuse((obj, id) => {
                 if (id === "area") {
                     broadPhaseIntersection.remove(obj as GameObj<AreaComp>);
                 }
             });
+
             onSceneLeave(scene => {
                 broadInit = false;
                 broadPhaseIntersection.clear();

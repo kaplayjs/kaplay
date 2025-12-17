@@ -10,14 +10,6 @@ import {
     type KEventHandler,
 } from "../../events/events";
 import type { GameEventHandlers } from "../../events/gameEventHandlers";
-import {
-    onAdd,
-    onDestroy,
-    onTag,
-    onUntag,
-    onUnuse,
-    onUse,
-} from "../../events/globalEvents";
 import type { EventHandlersInAppButNotAddedInGameObjRaw } from "../../events/scopes";
 import { drawMasked } from "../../gfx/draw/drawMasked";
 import { beginPicture, endPicture, Picture } from "../../gfx/draw/drawPicture";
@@ -882,12 +874,12 @@ export const GameObjRawPrototype: Omit<
             const events: KEventController[] = [];
 
             // TODO: clean up when obj destroyed
-            events.push(onAdd((obj) => {
+            events.push(_k.sceneScope.onAdd((obj) => {
                 if (isChild(obj) && checkTagsOrComps(obj, t)) {
                     list.push(obj);
                 }
             }));
-            events.push(onDestroy((obj) => {
+            events.push(_k.sceneScope.onDestroy((obj) => {
                 if (checkTagsOrComps(obj, t)) {
                     const idx = list.findIndex((o) => o.id === obj.id);
                     if (idx !== -1) {
@@ -898,7 +890,7 @@ export const GameObjRawPrototype: Omit<
             // If tags are components, we need to use these callbacks, whether watching tags or components
             // If tags are not components, we only need to use these callbacks if this query looks at components
             if (compIdAreTags || opts.only !== "tags") {
-                events.push(onUse((obj, id) => {
+                events.push(_k.sceneScope.onUse((obj, id) => {
                     if (isChild(obj) && checkTagsOrComps(obj, t)) {
                         const idx = list.findIndex((o) => o.id === obj.id);
                         if (idx == -1) {
@@ -906,7 +898,7 @@ export const GameObjRawPrototype: Omit<
                         }
                     }
                 }));
-                events.push(onUnuse((obj, id) => {
+                events.push(_k.sceneScope.onUnuse((obj, id) => {
                     if (isChild(obj) && !checkTagsOrComps(obj, t)) {
                         const idx = list.findIndex((o) => o.id === obj.id);
                         if (idx !== -1) {
@@ -918,7 +910,7 @@ export const GameObjRawPrototype: Omit<
             // If tags are components, we don't need to use these callbacks
             // If tags are not components, we only need to use these callbacks if this query looks at tags
             if (!compIdAreTags && opts.only !== "comps") {
-                events.push(onTag((obj, tag) => {
+                events.push(_k.sceneScope.onTag((obj, tag) => {
                     if (isChild(obj) && checkTagsOrComps(obj, t)) {
                         const idx = list.findIndex((o) => o.id === obj.id);
                         if (idx == -1) {
@@ -926,7 +918,7 @@ export const GameObjRawPrototype: Omit<
                         }
                     }
                 }));
-                events.push(onUntag((obj, tag) => {
+                events.push(_k.sceneScope.onUntag((obj, tag) => {
                     if (isChild(obj) && !checkTagsOrComps(obj, t)) {
                         const idx = list.findIndex((o) => o.id === obj.id);
                         if (idx !== -1) {
