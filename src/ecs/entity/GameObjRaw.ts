@@ -18,6 +18,7 @@ import {
     onUnuse,
     onUse,
 } from "../../events/globalEvents";
+import type { EventHandlersInAppButNotAddedInGameObjRaw } from "../../events/scopes";
 import { drawMasked } from "../../gfx/draw/drawMasked";
 import { beginPicture, endPicture, Picture } from "../../gfx/draw/drawPicture";
 import { drawSubtracted } from "../../gfx/draw/drawSubstracted";
@@ -590,7 +591,7 @@ const COMP_EVENTS = new Set([
 
 type GarbageCollectorArray = (() => any)[];
 
-type HandlersInAppButAlsoInObj = "onFixedUpdate" | "onUpdate" | "onDraw" | "onAdd" | "onDestroy" | "onUse" | "onUnuse"
+type HandlersInAppButAlsoInObj = EventHandlersInAppButNotAddedInGameObjRaw;
 
 export const GameObjRawPrototype: Omit<
     InternalGameObjRaw,

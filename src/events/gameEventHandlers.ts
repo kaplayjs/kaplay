@@ -1138,6 +1138,8 @@ export const createGameEventHandlers = (app: App) => {
         onDestroy: app.onDestroy,
         onUse: app.onUse,
         onUnuse: app.onUnuse,
+        onTag: app.onTag,
+        onUntag: app.onUntag,
         // deprecated
         onShow: app.onShow,
         onHide: app.onHide,

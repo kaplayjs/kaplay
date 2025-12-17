@@ -260,6 +260,8 @@ export type AppEventMap = {
     destroy: [GameObj];
     use: [GameObj, string];
     unuse: [GameObj, string];
+    tag: [GameObj, string];
+    untag: [GameObj, string];
 };
 
 /**

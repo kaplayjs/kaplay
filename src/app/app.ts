@@ -774,17 +774,23 @@ export const initApp = (
         );
     });
 
-    const onUpdate = (action: () => void): KEventController => {
-        return state.events.on("update", action);
-    };
-
-    const onFixedUpdate = (action: () => void): KEventController => {
+    const onFixedUpdate = overload2((action: () => void) => {
         return state.events.on("fixedUpdate", action);
-    };
+    }, (tag: Tag, action: (obj: GameObj) => void) => {
+        return on("fixedUpdate", tag, action);
+    });
 
-    const onDraw = (action: () => void): KEventController => {
+    const onUpdate = overload2((action: () => void) => {
+        return state.events.on("update", action);
+    }, (tag: Tag, action: (obj: GameObj) => void) => {
+        return on("update", tag, action);
+    });
+
+    const onDraw = overload2((action: () => void) => {
         return state.events.on("draw", action);
-    };
+    }, (tag: Tag, action: (obj: GameObj) => void) => {
+        return on("draw", tag, action);
+    });
 
     const onAdd = overload2((action: (obj: GameObj) => void) => {
         return state.events.on("add", action);
@@ -1422,6 +1428,8 @@ export const initApp = (
         onDestroy,
         onUse,
         onUnuse,
+        onTag,
+        onUntag,
         getLastInputDeviceType,
         events: state.events,
     };

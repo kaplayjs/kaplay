@@ -46,7 +46,7 @@ export const createAppScope = (handlers: GameEventHandlers): AppScope => {
     return appScope as AppScope;
 };
 
-const ignoreInGameObjRaw = [
+const eventHandlersInAppButNotAddedInGameObjRaw = [
     "onUpdate",
     "onFixedUpdate",
     "onDraw",
@@ -54,11 +54,15 @@ const ignoreInGameObjRaw = [
     "onDestroy",
     "onUse",
     "onUnuse",
-];
+    "onTag",
+    "onUntag",
+] as const;
+
+export type EventHandlersInAppButNotAddedInGameObjRaw = typeof eventHandlersInAppButNotAddedInGameObjRaw[number];
 
 export function attachAppHandlersToGameObjRaw(handlers: GameEventHandlers) {
     for (const e of Object.keys(handlers)) {
-        if (ignoreInGameObjRaw.includes(e)) {
+        if (eventHandlersInAppButNotAddedInGameObjRaw.includes(e as EventHandlersInAppButNotAddedInGameObjRaw)) {
             continue;
         }
 
