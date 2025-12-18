@@ -1,4 +1,5 @@
 import { DEF_ANCHOR } from "../../../constants/general";
+import type { ButtonName } from "../../../core/taf";
 import type { KEventController } from "../../../events/events";
 import { toWorld } from "../../../game/camera";
 import { anchorPt } from "../../../gfx/anchor";
@@ -54,29 +55,31 @@ export function getLocalAreaVersion(obj: GameObj<any>) {
     return obj._localAreaVersion;
 }
 
+function clickHandler(button: MouseButton) {
+    const p = toWorld(_k.app.mousePos());
+    // We use an array, so we can later add support to sort it and take the top-most object only
+    const objects: GameObj<AreaComp>[] = [];
+    _k.game.retrieve(new Rect(p.sub(1, 1), 3, 3), obj => objects.push(obj));
+    for (const obj of objects) {
+        if (obj.worldArea().contains(p)) {
+            obj.trigger("click", button);
+        }
+    }
+}
 let clickHandlerRunning = false;
 function startClickHandler() {
-    if (clickHandlerRunning) { return; }
+    if (clickHandlerRunning) return;
     clickHandlerRunning = true;
-    _k.app.onMousePress(button => {
-        const p = toWorld(_k.app.mousePos());
-        const objects: GameObj<AreaComp>[] = [];
-        _k.game.retrieve(new Rect(p.sub(1, 1), 3, 3), obj => objects.push(obj));
-        for (const obj of objects) {
-            if (obj.worldArea().contains(p)) {
-                obj.trigger("click", button);
-            }
-        }
-    });
+
+    if (_k.game.fakeMouse) {
+        _k.game.fakeMouse.onMouseDown(clickHandler);
+    }
+    _k.app.onMousePress(clickHandler);
 }
 
-let hoverHandlerRunning = false;
-function startHoverHandler() {
-    if (hoverHandlerRunning) { return; }
-    hoverHandlerRunning = true;
+function hoverHandler() {
     let oldObjects: Set<GameObj<AreaComp>> = new Set();
-
-    _k.app.onMouseMove((pos, dpos) => {
+    return (pos: Vec2, dpos: Vec2) => {
         const p = toWorld(pos);
         const newObjects: Set<GameObj<AreaComp>> = new Set();
         _k.game.retrieve(new Rect(p.sub(1, 1), 3, 3), obj => {
@@ -85,10 +88,24 @@ function startHoverHandler() {
             }
         });
         newObjects.difference(oldObjects).forEach(obj => obj.trigger("hover"));
-        oldObjects.difference(newObjects).forEach(obj => obj.trigger("hoverEnd"));
-        newObjects.intersection(oldObjects).forEach(obj => obj.trigger("hoverUpdate"));
+        oldObjects.difference(newObjects).forEach(obj =>
+            obj.trigger("hoverEnd")
+        );
+        newObjects.intersection(oldObjects).forEach(obj =>
+            obj.trigger("hoverUpdate")
+        );
         oldObjects = newObjects;
-    });
+    };
+}
+let hoverHandlerRunning = false;
+function startHoverHandler() {
+    if (hoverHandlerRunning) return;
+    hoverHandlerRunning = true;
+
+    if (_k.game.fakeMouse) {
+        _k.game.fakeMouse.onMouseMove(hoverHandler());
+    }
+    _k.app.onMouseMove(hoverHandler());
 }
 
 /**
@@ -739,10 +756,11 @@ export function area(
                 return `area: ${this.area.scale?.x?.toFixed(1)}x`;
             }
             else {
-                return `area: (${this.area.scale?.x?.toFixed(
-                    1,
-                )
-                    }x, ${this.area.scale.y?.toFixed(1)}y)`;
+                return `area: (${
+                    this.area.scale?.x?.toFixed(
+                        1,
+                    )
+                }x, ${this.area.scale.y?.toFixed(1)}y)`;
             }
         },
 
