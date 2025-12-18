@@ -1229,8 +1229,8 @@ export const GameObjRawPrototype: Omit<
             & InternalGameObjRaw,
         force: boolean,
     ) {
-        const updateNeeded = force
-            || transformNeedsUpdate(this._transformVersion);
+        const localUpdateNeeded = transformNeedsUpdate(this._transformVersion);
+        const updateNeeded = force || localUpdateNeeded;
 
         pushTransform();
 
@@ -1243,6 +1243,12 @@ export const GameObjRawPrototype: Omit<
 
             if (!this.transform) this.transform = new Mat23();
             storeMatrix(this.transform);
+
+            // If force is true, but we didn't have a newer version, 
+            // we need to update the version in order to make sure that areas get updated.
+            if (force && !localUpdateNeeded) {
+                this._transformVersion = nextTransformVersion();
+            }
         }
         else {
             loadMatrix(this.transform);
@@ -1339,12 +1345,12 @@ export const GameObjRawPrototype: Omit<
                         this._onCurCompCleanup = null;
                     };
 
-                    gc.push(this.on(key, <any> func).cancel);
+                    gc.push(this.on(key, <any>func).cancel);
                 }
                 else {
-                    const func = comp[<keyof typeof comp> key];
+                    const func = comp[<keyof typeof comp>key];
 
-                    gc.push(this.on(key, <any> func).cancel);
+                    gc.push(this.on(key, <any>func).cancel);
                 }
             }
             else {
@@ -1352,8 +1358,8 @@ export const GameObjRawPrototype: Omit<
                 if (this[key] === undefined) {
                     // Assign comp fields to game obj
                     Object.defineProperty(this, key, {
-                        get: () => comp[<keyof typeof comp> key],
-                        set: (val) => comp[<keyof typeof comp> key] = val,
+                        get: () => comp[<keyof typeof comp>key],
+                        set: (val) => comp[<keyof typeof comp>key] = val,
                         configurable: true,
                         enumerable: true,
                     });
@@ -1366,9 +1372,9 @@ export const GameObjRawPrototype: Omit<
                     )?.id;
                     throw new Error(
                         `Duplicate component property: "${key}" while adding component "${comp.id}"`
-                            + (originalCompId
-                                ? ` (originally added by "${originalCompId}")`
-                                : ""),
+                        + (originalCompId
+                            ? ` (originally added by "${originalCompId}")`
+                            : ""),
                     );
                 }
             }
