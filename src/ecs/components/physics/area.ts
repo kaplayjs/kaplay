@@ -66,14 +66,16 @@ function clickHandler(button: MouseButton) {
         }
     }
 }
+
 let clickHandlerRunning = false;
 function startClickHandler() {
     if (clickHandlerRunning) return;
     clickHandlerRunning = true;
 
     if (_k.game.fakeMouse) {
-        _k.game.fakeMouse.onMouseDown(clickHandler);
+        _k.game.fakeMouse.on("press", clickHandler);
     }
+
     _k.app.onMousePress(clickHandler);
 }
 
@@ -82,6 +84,7 @@ function hoverHandler() {
     return (pos: Vec2, dpos: Vec2) => {
         const p = toWorld(pos);
         const newObjects: Set<GameObj<AreaComp>> = new Set();
+
         _k.game.retrieve(new Rect(p.sub(1, 1), 3, 3), obj => {
             if (obj.worldArea().contains(p)) {
                 newObjects.add(obj);
@@ -97,13 +100,14 @@ function hoverHandler() {
         oldObjects = newObjects;
     };
 }
+
 let hoverHandlerRunning = false;
 function startHoverHandler() {
     if (hoverHandlerRunning) return;
     hoverHandlerRunning = true;
 
     if (_k.game.fakeMouse) {
-        _k.game.fakeMouse.onMouseMove(hoverHandler());
+        _k.game.fakeMouse.on("fakeMouseMove", hoverHandler());
     }
     _k.app.onMouseMove(hoverHandler());
 }
@@ -552,23 +556,6 @@ export function area(
             action: () => void,
             btn: MouseButton = "left",
         ): KEventController {
-            /*if (_k.game.fakeMouse) {
-                _k.game.fakeMouse.onPress(() => {
-                    if (this.isHovering()) {
-                        action();
-                    }
-                });
-            }
-
-            const e = this.onMousePress(btn, () => {
-                if (this.isHovering()) {
-                    action();
-                }
-            });
-
-            events.push(e);
-
-            return e;*/
             startClickHandler();
             return this.on("click", action);
         },
@@ -756,11 +743,10 @@ export function area(
                 return `area: ${this.area.scale?.x?.toFixed(1)}x`;
             }
             else {
-                return `area: (${
-                    this.area.scale?.x?.toFixed(
-                        1,
-                    )
-                }x, ${this.area.scale.y?.toFixed(1)}y)`;
+                return `area: (${this.area.scale?.x?.toFixed(
+                    1,
+                )
+                    }x, ${this.area.scale.y?.toFixed(1)}y)`;
             }
         },
 
