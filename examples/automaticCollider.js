@@ -1,5 +1,5 @@
 /**
- * @file Create a polygon shape with a sprite 
+ * @file Create a polygon shape with a sprite
  * @description How to make a collider automaticly
  * @difficulty 0
  * @tags basics, colliders

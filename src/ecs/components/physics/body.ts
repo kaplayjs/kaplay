@@ -301,7 +301,7 @@ export function body(opt: BodyCompOpt = {}): BodyComp {
 
                     const friction = Math.sqrt(
                         (col.source.friction || 0)
-                        * (col.target.friction || 0),
+                            * (col.target.friction || 0),
                     );
 
                     const projection = this.vel.project(col.normal);
