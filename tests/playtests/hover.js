@@ -40,10 +40,10 @@ bean.onHoverEnd(() => {
 
 wait(2, () => {
     tween(
-        card.pos.y,
-        center().y,
+        card.pos,
+        center(),
         0.25,
-        y => card.pos.y = y,
+        p => card.pos = p,
         easings.easeOutBack,
     );
 });

@@ -54,6 +54,43 @@ export function getLocalAreaVersion(obj: GameObj<any>) {
     return obj._localAreaVersion;
 }
 
+let clickHandlerRunning = false;
+function startClickHandler() {
+    if (clickHandlerRunning) { return; }
+    clickHandlerRunning = true;
+    _k.app.onMousePress(button => {
+        const p = toWorld(_k.app.mousePos());
+        const objects: GameObj<AreaComp>[] = [];
+        _k.game.retrieve(new Rect(p.sub(1, 1), 3, 3), obj => objects.push(obj));
+        for (const obj of objects) {
+            if (obj.worldArea().contains(p)) {
+                obj.trigger("click", button);
+            }
+        }
+    });
+}
+
+let hoverHandlerRunning = false;
+function startHoverHandler() {
+    if (hoverHandlerRunning) { return; }
+    hoverHandlerRunning = true;
+    let oldObjects: Set<GameObj<AreaComp>> = new Set();
+
+    _k.app.onMouseMove((pos, dpos) => {
+        const p = toWorld(pos);
+        const newObjects: Set<GameObj<AreaComp>> = new Set();
+        _k.game.retrieve(new Rect(p.sub(1, 1), 3, 3), obj => {
+            if (obj.worldArea().contains(p)) {
+                newObjects.add(obj);
+            }
+        });
+        newObjects.difference(oldObjects).forEach(obj => obj.trigger("hover"));
+        oldObjects.difference(newObjects).forEach(obj => obj.trigger("hoverEnd"));
+        newObjects.intersection(oldObjects).forEach(obj => obj.trigger("hoverUpdate"));
+        oldObjects = newObjects;
+    });
+}
+
 /**
  * The {@link area `area()`} component.
  *
@@ -498,7 +535,7 @@ export function area(
             action: () => void,
             btn: MouseButton = "left",
         ): KEventController {
-            if (_k.game.fakeMouse) {
+            /*if (_k.game.fakeMouse) {
                 _k.game.fakeMouse.onPress(() => {
                     if (this.isHovering()) {
                         action();
@@ -514,45 +551,24 @@ export function area(
 
             events.push(e);
 
-            return e;
+            return e;*/
+            startClickHandler();
+            return this.on("click", action);
         },
 
         onHover(this: GameObj, action: () => void): KEventController {
-            let hovering = false;
-            return this.onUpdate(() => {
-                if (!hovering) {
-                    if (this.isHovering()) {
-                        hovering = true;
-                        action();
-                    }
-                }
-                else {
-                    hovering = this.isHovering();
-                }
-            });
+            startHoverHandler();
+            return this.on("hover", action);
         },
 
-        onHoverUpdate(this: GameObj, onHover: () => void): KEventController {
-            return this.onUpdate(() => {
-                if (this.isHovering()) {
-                    onHover();
-                }
-            });
+        onHoverUpdate(this: GameObj, action: () => void): KEventController {
+            startHoverHandler();
+            return this.on("hoverUpdate", action);
         },
 
         onHoverEnd(this: GameObj, action: () => void): KEventController {
-            let hovering = false;
-            return this.onUpdate(() => {
-                if (hovering) {
-                    if (!this.isHovering()) {
-                        hovering = false;
-                        action();
-                    }
-                }
-                else {
-                    hovering = this.isHovering();
-                }
-            });
+            startHoverHandler();
+            return this.on("hoverEnd", action);
         },
 
         onCollide(
@@ -723,11 +739,10 @@ export function area(
                 return `area: ${this.area.scale?.x?.toFixed(1)}x`;
             }
             else {
-                return `area: (${
-                    this.area.scale?.x?.toFixed(
-                        1,
-                    )
-                }x, ${this.area.scale.y?.toFixed(1)}y)`;
+                return `area: (${this.area.scale?.x?.toFixed(
+                    1,
+                )
+                    }x, ${this.area.scale.y?.toFixed(1)}y)`;
             }
         },
 
