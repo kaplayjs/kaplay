@@ -37,8 +37,6 @@ best friend, lajbel, can put the correct version name here
 - Global `retrieve()` method to get the objects with area within a certain
   rectangle - @mflerackers
 
-
-
 ## [4000.0.0-alpha.24] - 2025-12-12
 
 ### Added
