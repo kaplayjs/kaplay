@@ -8,6 +8,7 @@ import {
     getTransformVersion,
     objectTransformNeedsUpdate,
 } from "../../ecs/entity/GameObjRaw";
+import { isPaused } from "../../ecs/entity/utils";
 import { drawRect } from "../../gfx/draw/drawRect";
 import { loadIdentity, pushMatrix } from "../../gfx/stack";
 import type { GameObj } from "../../types";
@@ -297,5 +298,5 @@ export class HashGrid {
 }
 
 function isValidCollisionObject(obj: GameObj) {
-    return obj.exists() && (obj.isSensor || obj.has("body")); // && !isPaused(obj);
+    return obj.exists() && (obj.isSensor || obj.has("body")) && !isPaused(obj);
 }

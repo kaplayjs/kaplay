@@ -336,5 +336,5 @@ export class SweepAndPruneVertical implements BroadPhaseAlgorithm {
 }
 
 function isValidCollisionObject(obj: GameObj) {
-    return obj.exists() && (obj.isSensor || obj.has("body")); // && !isPaused(obj);
+    return obj.exists() && (obj.isSensor || obj.has("body")) && !isPaused(obj);
 }

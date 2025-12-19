@@ -4,6 +4,7 @@ import {
     getRenderAreaVersion,
 } from "../../ecs/components/physics/area";
 import { getTransformVersion } from "../../ecs/entity/GameObjRaw";
+import { isPaused } from "../../ecs/entity/utils";
 import { drawRect } from "../../gfx/draw/drawRect";
 import type { GameObj } from "../../types";
 import { Rect, vec2 } from "../math";
@@ -653,5 +654,5 @@ export function makeQuadtree(
 }
 
 function isValidCollisionObject(obj: GameObj) {
-    return obj.exists() && (obj.isSensor || obj.has("body")); // && !isPaused(obj);
+    return obj.exists() && (obj.isSensor || obj.has("body")) && !isPaused(obj);
 }
