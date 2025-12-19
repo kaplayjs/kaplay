@@ -97,6 +97,10 @@ export interface AreaComp extends Comp {
      */
     friction?: number;
     /**
+     * Whether collision detection should be done even without body.
+     */
+    isSensor: boolean;
+    /**
      * If was just clicked on last frame.
      */
     isClicked(): boolean;
@@ -273,6 +277,12 @@ export interface AreaCompOpt {
      * @since v4000.0
      */
     friction?: number;
+    /**
+     * Whether collision detection should be done even without body.
+     *
+     * @since v4000.0
+     */
+    isSensor?: boolean;
 }
 
 export function area(
@@ -306,6 +316,7 @@ export function area(
         collisionIgnore: opt.collisionIgnore ?? [],
         restitution: opt.restitution,
         friction: opt.friction,
+        isSensor: opt.isSensor ?? false,
 
         add(this: GameObj<AreaComp>) {
             _k.game.areaCount++;
