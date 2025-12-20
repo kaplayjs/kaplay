@@ -107,10 +107,14 @@ import type { RotateComp } from "../ecs/components/transform/rotate";
 import type { ScaleComp } from "../ecs/components/transform/scale";
 import type { SkewComp } from "../ecs/components/transform/skew";
 import type { ZComp } from "../ecs/components/transform/z";
-import type { ButtonCompOpt, ButtonComp } from "../ecs/components/ui/button";
-import type { SliderCompOpt, SliderComp, ScrollBarCompOpt } from "../ecs/components/ui/slider";
-import type { UICompOpt, UIComp } from "../ecs/components/ui/ui";
-import type { LayoutCompOpt, LayoutComp } from "../ecs/components/ui/layout";
+import type { ButtonComp, ButtonCompOpt } from "../ecs/components/ui/button";
+import type { LayoutComp, LayoutCompOpt } from "../ecs/components/ui/layout";
+import type {
+    ScrollBarCompOpt,
+    SliderComp,
+    SliderCompOpt,
+} from "../ecs/components/ui/slider";
+import type { UIComp, UICompOpt } from "../ecs/components/ui/ui";
 import type { KeepFlags } from "../ecs/entity/GameObjRaw";
 import type { SerializedGameObj } from "../ecs/entity/prefab";
 import type { BoomOpt } from "../ecs/entity/premade/addKaboom";

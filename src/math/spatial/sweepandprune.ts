@@ -63,7 +63,7 @@ export class SweepAndPruneHorizontal implements BroadPhaseAlgorithm {
         this.edges.push(right);
         this.objects.set(obj, [left, right]);
         this.versionsForObject.set(obj, [
-            getTransformVersion(obj),
+            !objectTransformNeedsUpdate(obj) ? getTransformVersion(obj) : -1,
             getRenderAreaVersion(obj),
             getLocalAreaVersion(obj),
         ]);
@@ -106,7 +106,9 @@ export class SweepAndPruneHorizontal implements BroadPhaseAlgorithm {
                 // No change
                 continue;
             }
-            versions![0] = getTransformVersion(obj);
+            if (!objectTransformNeedsUpdate(obj)) {
+                versions![0] = getTransformVersion(obj);
+            }
             versions![1] = getRenderAreaVersion(obj);
             versions![2] = getLocalAreaVersion(obj);
 
@@ -226,7 +228,7 @@ export class SweepAndPruneVertical implements BroadPhaseAlgorithm {
         this.edges.push(bottom);
         this.objects.set(obj, [top, bottom]);
         this.versionsForObject.set(obj, [
-            getTransformVersion(obj),
+            !objectTransformNeedsUpdate(obj) ? getTransformVersion(obj) : -1,
             getRenderAreaVersion(obj),
             getLocalAreaVersion(obj),
         ]);
@@ -269,7 +271,9 @@ export class SweepAndPruneVertical implements BroadPhaseAlgorithm {
                 // No change
                 continue;
             }
-            versions![0] = getTransformVersion(obj);
+            if (!objectTransformNeedsUpdate(obj)) {
+                versions![0] = getTransformVersion(obj);
+            }
             versions![1] = getRenderAreaVersion(obj);
             versions![2] = getLocalAreaVersion(obj);
 

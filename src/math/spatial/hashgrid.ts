@@ -54,7 +54,7 @@ export class HashGrid {
         }
         this.hashesForObject.set(obj, hashes);
         this.versionsForObject.set(obj, [
-            getTransformVersion(obj),
+            !objectTransformNeedsUpdate(obj) ? getTransformVersion(obj) : -1,
             getRenderAreaVersion(obj),
             getLocalAreaVersion(obj),
         ]);
@@ -93,7 +93,9 @@ export class HashGrid {
                 // No change
                 continue;
             }
-            versions![0] = getTransformVersion(obj);
+            if (!objectTransformNeedsUpdate(obj)) {
+                versions![0] = getTransformVersion(obj);
+            }
             versions![1] = getRenderAreaVersion(obj);
             versions![2] = getLocalAreaVersion(obj);
 

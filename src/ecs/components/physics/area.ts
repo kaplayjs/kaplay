@@ -19,6 +19,10 @@ import type {
     Shape,
     Tag,
 } from "../../../types";
+import {
+    objectTransformNeedsUpdate,
+    transformNeedsUpdate,
+} from "../../entity/GameObjRaw";
 import { isFixed } from "../../entity/utils";
 import type { Collision } from "../../systems/Collision";
 import type { AnchorComp } from "../transform/anchor";
@@ -62,7 +66,6 @@ function clickHandler(button: MouseButton) {
     _k.game.retrieve(new Rect(p.sub(1, 1), 3, 3), obj => objects.push(obj));
     for (const obj of objects) {
         if (obj.worldArea().contains(p)) {
-            debug.log(obj.id, JSON.stringify(obj.worldArea().serialize()))
             obj.trigger("click", button);
         }
     }
@@ -670,7 +673,6 @@ export function area(
             return this.area.shape ? this.area.shape : this.renderArea();
         },
 
-        // TODO: cache
         worldArea(this: GameObj<AreaComp | AnchorComp>): Shape {
             const renderAreaVersion = getRenderAreaVersion(this);
             if (
@@ -701,8 +703,9 @@ export function area(
                 }
 
                 _worldShape = localArea.transform(transform, _worldShape);
-
-                _cachedTransformVersion = (this as any)._transformVersion;
+                if (!objectTransformNeedsUpdate(this)) {
+                    _cachedTransformVersion = (this as any)._transformVersion;
+                }
                 _cachedRenderAreaVersion = renderAreaVersion ?? 0;
                 _cachedLocalAreaVersion = _localAreaVersion;
                 _worldAreaVersion = nextWorldAreaVersion();
@@ -744,10 +747,11 @@ export function area(
                 return `area: ${this.area.scale?.x?.toFixed(1)}x`;
             }
             else {
-                return `area: (${this.area.scale?.x?.toFixed(
-                    1,
-                )
-                    }x, ${this.area.scale.y?.toFixed(1)}y)`;
+                return `area: (${
+                    this.area.scale?.x?.toFixed(
+                        1,
+                    )
+                }x, ${this.area.scale.y?.toFixed(1)}y)`;
             }
         },
 

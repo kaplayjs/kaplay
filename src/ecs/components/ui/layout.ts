@@ -78,8 +78,11 @@ export function layout(opt: LayoutCompOpt): LayoutComp {
                         else if (_valign == "center" || _valign == "end") {
                             const factor = _valign == "center" ? 0.5 : 1;
                             this.children.forEach((child: GameObj) => {
-                                child.pos = vec2(child.pos.x, _padding.y
-                                    + (height - child.height) * factor);
+                                child.pos = vec2(
+                                    child.pos.x,
+                                    _padding.y
+                                        + (height - child.height) * factor,
+                                );
                             });
                         }
                     }
@@ -105,8 +108,11 @@ export function layout(opt: LayoutCompOpt): LayoutComp {
                         else if (_halign == "center" || _halign == "end") {
                             const factor = _halign == "center" ? 0.5 : 1;
                             this.children.forEach((child: GameObj) => {
-                                child.pos = vec2(_padding.x
-                                    + (width - child.width) * factor, child.pos.y);
+                                child.pos = vec2(
+                                    _padding.x
+                                        + (width - child.width) * factor,
+                                    child.pos.y,
+                                );
                             });
                         }
                     }
@@ -153,9 +159,9 @@ export function layout(opt: LayoutCompOpt): LayoutComp {
                     });
                     return vec2(
                         _padding.x * 2 + _spacing.x * (columnWidth.length - 1)
-                        + columnWidth.reduce((sum, w) => sum + w, 0),
+                            + columnWidth.reduce((sum, w) => sum + w, 0),
                         _padding.y * 2 + _spacing.y * (rowHeight.length - 1)
-                        + rowHeight.reduce((sum, h) => sum + h, 0),
+                            + rowHeight.reduce((sum, h) => sum + h, 0),
                     );
                 }
                 case "flex": {
@@ -174,8 +180,10 @@ export function layout(opt: LayoutCompOpt): LayoutComp {
                                 _padding.x,
                                 pos.y + maxHeight + _spacing.y,
                             );
-                            pos = vec2(_padding.x + child.width + _spacing.x,
-                                pos.y + maxHeight + _spacing.y);
+                            pos = vec2(
+                                _padding.x + child.width + _spacing.x,
+                                pos.y + maxHeight + _spacing.y,
+                            );
                             column = 1;
                             maxHeight = child.height;
                             width = Math.max(width, pos.x);

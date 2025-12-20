@@ -83,7 +83,7 @@ import { skew } from "../ecs/components/transform/skew";
 import { z } from "../ecs/components/transform/z";
 import { button, checkbox, radio } from "../ecs/components/ui/button";
 import { layout } from "../ecs/components/ui/layout";
-import { slider, scrollbar } from "../ecs/components/ui/slider";
+import { scrollbar, slider } from "../ecs/components/ui/slider";
 import { ui } from "../ecs/components/ui/ui";
 import { KeepFlags } from "../ecs/entity/GameObjRaw";
 import { createPrefab, loadPrefab } from "../ecs/entity/prefab";

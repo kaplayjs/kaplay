@@ -3,7 +3,10 @@ import {
     getLocalAreaVersion,
     getRenderAreaVersion,
 } from "../../ecs/components/physics/area";
-import { getTransformVersion } from "../../ecs/entity/GameObjRaw";
+import {
+    getTransformVersion,
+    objectTransformNeedsUpdate,
+} from "../../ecs/entity/GameObjRaw";
 import { drawRect } from "../../gfx/draw/drawRect";
 import type { GameObj } from "../../types";
 import { Rect, vec2 } from "../math";
@@ -192,7 +195,9 @@ export class Quadtree implements BroadPhaseAlgorithm {
                     else {
                         this.objects[j++] = obj;
                         Quadtree.versionsForObject.set(obj, [
-                            getTransformVersion(obj),
+                            !objectTransformNeedsUpdate(obj)
+                                ? getTransformVersion(obj)
+                                : -1,
                             getRenderAreaVersion(obj),
                             getLocalAreaVersion(obj),
                         ]);
@@ -214,7 +219,7 @@ export class Quadtree implements BroadPhaseAlgorithm {
 
         this.objects.push(obj);
         Quadtree.versionsForObject.set(obj, [
-            getTransformVersion(obj),
+            !objectTransformNeedsUpdate(obj) ? getTransformVersion(obj) : -1,
             getRenderAreaVersion(obj),
             getLocalAreaVersion(obj),
         ]);
@@ -329,7 +334,9 @@ export class Quadtree implements BroadPhaseAlgorithm {
                 i++;
                 continue;
             }
-            versions![0] = getTransformVersion(obj);
+            if (!objectTransformNeedsUpdate(obj)) {
+                versions![0] = getTransformVersion(obj);
+            }
             versions![1] = getRenderAreaVersion(obj);
             versions![2] = getLocalAreaVersion(obj);
 

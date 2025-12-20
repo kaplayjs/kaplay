@@ -127,7 +127,9 @@ export function ui(opt: UICompOpt = {}): UIComp {
             if (!this.has("area")) {
                 this.use(area());
             }
-            onClick(() => { _isPressed = true; });
+            this.onClick(() => {
+                _isPressed = true;
+            });
             this.onMouseRelease(() => {
                 if (_isPressed) {
                     if (this.isHovering()) {

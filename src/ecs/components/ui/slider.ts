@@ -66,8 +66,8 @@ export function slider(opt: SliderCompOpt): SliderComp {
     let _height = opt.orientation === "vertical"
         ? (opt.height ?? 100)
         : formattedText
-            ? formattedText.height
-            : _theme.fontSize;
+        ? formattedText.height
+        : _theme.fontSize;
     let _value = opt.value ?? 0;
     let _sliderRect = new Rect(
         vec2(_padding.x + labelWidth, 0),
@@ -109,7 +109,7 @@ export function slider(opt: SliderCompOpt): SliderComp {
             const visibleWidth = _scrollObject.parent!.width;
             _thumbRect.width = Math.round(
                 (_gutterRect.width - 4) * visibleWidth
-                / totalWidth,
+                    / totalWidth,
             );
         }
     }
@@ -119,7 +119,7 @@ export function slider(opt: SliderCompOpt): SliderComp {
             const visibleHeight = _scrollObject.parent!.height;
             _thumbRect.height = Math.round(
                 (_gutterRect.height - 4) * visibleHeight
-                / totalHeight,
+                    / totalHeight,
             );
         }
     }
@@ -127,14 +127,20 @@ export function slider(opt: SliderCompOpt): SliderComp {
         if (_scrollObject) {
             const totalWidth = _scrollObject.width;
             const visibleWidth = _scrollObject.parent!.width;
-            _scrollObject.pos = vec2(-_value * (totalWidth - visibleWidth), _scrollObject.pos.y);
+            _scrollObject.pos = vec2(
+                -_value * (totalWidth - visibleWidth),
+                _scrollObject.pos.y,
+            );
         }
     }
     function updateVScroll() {
         if (_scrollObject) {
             const totalHeight = _scrollObject.height;
             const visibleHeight = _scrollObject.parent!.height;
-            _scrollObject.pos = vec2(_scrollObject.pos.x, -_value * (totalHeight - visibleHeight));
+            _scrollObject.pos = vec2(
+                _scrollObject.pos.x,
+                -_value * (totalHeight - visibleHeight),
+            );
         }
     }
     return {

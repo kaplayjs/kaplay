@@ -11,6 +11,7 @@ kaplay({
             keyboard: ["enter"],
         },
     },
+    broadPhaseCollisionAlgorithm: "grid",
 });
 
 loadBean();
