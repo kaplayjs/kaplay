@@ -107,6 +107,10 @@ import type { RotateComp } from "../ecs/components/transform/rotate";
 import type { ScaleComp } from "../ecs/components/transform/scale";
 import type { SkewComp } from "../ecs/components/transform/skew";
 import type { ZComp } from "../ecs/components/transform/z";
+import type { ButtonCompOpt, ButtonComp } from "../ecs/components/ui/button";
+import type { SliderCompOpt, SliderComp, ScrollBarCompOpt } from "../ecs/components/ui/slider";
+import type { UICompOpt, UIComp } from "../ecs/components/ui/ui";
+import type { LayoutCompOpt, LayoutComp } from "../ecs/components/ui/layout";
 import type { KeepFlags } from "../ecs/entity/GameObjRaw";
 import type { SerializedGameObj } from "../ecs/entity/prefab";
 import type { BoomOpt } from "../ecs/entity/premade/addKaboom";
@@ -1570,6 +1574,69 @@ export interface KAPLAYCtx {
      * @subgroup Behaviour
      */
     lifespan(time: number, options?: LifespanCompOpt): EmptyComp;
+    /**
+     * Adds click and hover events to an object, making it interactive.
+     *
+     * @returns The ui comp.
+     * @since v4000.0
+     * @group Components
+     * @subgroup UI
+     */
+    ui(opt: UICompOpt): UIComp;
+    /**
+     * A button.
+     *
+     * @returns The button comp.
+     * @since v4000.0
+     * @group Components
+     * @subgroup UI
+     */
+    button(label: string, opt?: ButtonCompOpt): ButtonComp;
+    /**
+     * A checkbox.
+     *
+     * @returns The button comp.
+     * @since v4000.0
+     * @group Components
+     * @subgroup UI
+     */
+    checkbox(label: string, opt?: ButtonCompOpt): ButtonComp;
+    /**
+     * A radio button.
+     *
+     * @returns The button comp.
+     * @since v4000.0
+     * @group Components
+     * @subgroup UI
+     */
+    radio(label: string, group: string, opt?: ButtonCompOpt): ButtonComp;
+    /**
+     * A slider.
+     *
+     * @returns The slider comp.
+     * @since v4000.0
+     * @group Components
+     * @subgroup UI
+     */
+    slider(opt: SliderCompOpt): SliderComp;
+    /**
+     * A scrollbar.
+     *
+     * @returns The slider comp.
+     * @since v4000.0
+     * @group Components
+     * @subgroup UI
+     */
+    scrollbar(scrollObject: GameObj, opt: ScrollBarCompOpt): SliderComp;
+    /**
+     * A layout.
+     *
+     * @returns The layout comp.
+     * @since v4000.0
+     * @group Components
+     * @subgroup UI
+     */
+    layout(opt: LayoutCompOpt): LayoutComp;
     /**
      * Names an game obj.
      *

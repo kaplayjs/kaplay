@@ -81,6 +81,10 @@ import { rotate } from "../ecs/components/transform/rotate";
 import { scale } from "../ecs/components/transform/scale";
 import { skew } from "../ecs/components/transform/skew";
 import { z } from "../ecs/components/transform/z";
+import { button, checkbox, radio } from "../ecs/components/ui/button";
+import { layout } from "../ecs/components/ui/layout";
+import { slider, scrollbar } from "../ecs/components/ui/slider";
+import { ui } from "../ecs/components/ui/ui";
 import { KeepFlags } from "../ecs/entity/GameObjRaw";
 import { createPrefab, loadPrefab } from "../ecs/entity/prefab";
 import { addKaboom } from "../ecs/entity/premade/addKaboom";
@@ -426,6 +430,13 @@ export const createContext = (
         stay,
         health,
         lifespan,
+        layout,
+        ui,
+        button,
+        checkbox,
+        radio,
+        slider,
+        scrollbar,
         named,
         state,
         z,
