@@ -18,7 +18,8 @@ best friend, lajbel, can put the correct version name here
 
 ### Changed
 
-- Added the `fakeMouseMove` event in `FakeMouseComp`, it will triggers when you move the object. 
+- Added the `fakeMouseMove` event in `FakeMouseComp`, it will triggers when you
+  move the object.
 - Transforms are now only recalculated when needed. Thus static objects no
   longer increase computation in the transform phase. @mflerackers
 - Areas are now only recalculated when the area settings or (optional)
@@ -34,6 +35,8 @@ best friend, lajbel, can put the correct version name here
 - The grid broadphase has been rewritten for performance. @mflerackers
 - Global `retrieve()` method to get the objects with area within a certain
   rectangle. @mflerackers
+- Added isSensor. Areas without body or isSensor will no longer be eligible for
+  collisions.
 
 ## [unreleased]
 
