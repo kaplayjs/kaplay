@@ -78,8 +78,8 @@ export function layout(opt: LayoutCompOpt): LayoutComp {
                         else if (_valign == "center" || _valign == "end") {
                             const factor = _valign == "center" ? 0.5 : 1;
                             this.children.forEach((child: GameObj) => {
-                                child.pos.y = _padding.y
-                                    + (height - child.height) * factor;
+                                child.pos = vec2(child.pos.x, _padding.y
+                                    + (height - child.height) * factor);
                             });
                         }
                     }
@@ -105,8 +105,8 @@ export function layout(opt: LayoutCompOpt): LayoutComp {
                         else if (_halign == "center" || _halign == "end") {
                             const factor = _halign == "center" ? 0.5 : 1;
                             this.children.forEach((child: GameObj) => {
-                                child.pos.x = _padding.y
-                                    + (width - child.width) * factor;
+                                child.pos = vec2(_padding.x
+                                    + (width - child.width) * factor, child.pos.y);
                             });
                         }
                     }
@@ -143,7 +143,7 @@ export function layout(opt: LayoutCompOpt): LayoutComp {
                     let x = vec2(_padding).x;
                     column = 0;
                     this.children.forEach((child: GameObj) => {
-                        child.pos.x = x;
+                        child.pos = vec2(x, child.pos.y);
                         x += columnWidth[column] + _spacing.x;
                         column++;
                         if (column === _columns) {
@@ -174,8 +174,8 @@ export function layout(opt: LayoutCompOpt): LayoutComp {
                                 _padding.x,
                                 pos.y + maxHeight + _spacing.y,
                             );
-                            pos.x = _padding.x + child.width + _spacing.x;
-                            pos.y += maxHeight + _spacing.y;
+                            pos = vec2(_padding.x + child.width + _spacing.x,
+                                pos.y + maxHeight + _spacing.y);
                             column = 1;
                             maxHeight = child.height;
                             width = Math.max(width, pos.x);

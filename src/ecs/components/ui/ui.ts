@@ -1,7 +1,8 @@
 import type { KEventController } from "../../../events/events";
+import { onClick } from "../../../events/globalEvents";
 import { _k } from "../../../shared";
 import type { Comp, GameObj } from "../../../types";
-import { area } from "../physics/area";
+import { area, type AreaComp } from "../physics/area";
 
 export interface UIComp extends Comp {
     /**
@@ -63,76 +64,6 @@ export type UICompOpt = {
     canFocus?: boolean;
 };
 
-// let systemInstalled = false;
-// TODO: use a live query for this, once it can use a Set
-// const hovers: Set<GameObj<UIComp | AreaComp>> = new Set();
-
-// TODO: replace this by the real broadphase filter
-/*function retrieve(rect: Rect, cb: (obj: GameObj<any>) => void) {
-    hovers.forEach(obj => cb(obj));
-}*/
-
-function installSystem() {
-    /*
-    if (systemInstalled) return;
-    systemInstalled = true;
-
-    onAdd(obj => {
-        if (obj.has("ui")) {
-            hovers.add(obj as GameObj<UIComp | AreaComp>);
-        }
-    });
-    onDestroy(obj => {
-        hovers.delete(obj as GameObj<UIComp | AreaComp>);
-    });
-    onUse((obj, id) => {
-        if ("ui" === id) {
-            hovers.add(obj as GameObj<UIComp | AreaComp>);
-        }
-    });
-    onUnuse((obj, id) => {
-        if ("ui" === id) {
-            hovers.delete(obj as GameObj<UIComp | AreaComp>);
-        }
-    });
-
-    for (const obj of _k.game.root.get("*", { recursive: true })) {
-        if (obj.has("ui")) {
-            hovers.add(obj as GameObj<UIComp | AreaComp>);
-        }
-    }
-
-    system<UIComp | AreaComp>(
-        "hover",
-        (hovers) => {
-            let p = _k.game.fakeMouse
-                ? _k.game.fakeMouse.pos
-                : _k.app.mousePos();
-            const isPressed = _k.game.fakeMouse
-                ? _k.game.fakeMouse.isPressed
-                : _k.app.isMousePressed();
-            const isDown = _k.game.fakeMouse
-                ? _k.game.fakeMouse.isPressed
-                : _k.app.isMouseDown();
-            const hovering = new Set();
-            p = toWorld(p);
-            retrieve(new Rect(vec2(p.x - 1, p.y - 1), 3, 3), obj => {
-                if (obj.hasWorldPoint(p)) {
-                    hovering.add(obj);
-                }
-            });
-            for (const hover of hovers) {
-                if (!hover.exists()) { continue; } // Why do we get dead objects here?
-                const isHovering = hovering.has(hover);
-                hover.setHoverAndMouseState(isHovering, isPressed, isDown);
-            }
-        },
-        [SystemPhase.BeforeUpdate], // Because we use these states in update
-        hovers,
-    );*/
-    installKeyboardHandlers();
-}
-
 function installKeyboardHandlers() {
     _k.app.onButtonPress((button: string) => {
         switch (button) {
@@ -184,21 +115,27 @@ function installKeyboardHandlers() {
 let _focus: GameObj | null = null;
 
 export function ui(opt: UICompOpt = {}): UIComp {
-    let _isHovering: boolean = false; // True if currently hovering
-    let _wasPressed: boolean = false; // True if hovering when the mouse went down
-    let _isDown: boolean = false;
-
-    installSystem();
+    installKeyboardHandlers();
+    let _isPressed: boolean = false;
 
     return {
         id: "ui",
         require: ["area"],
         canFocus: opt.canFocus ?? false,
 
-        add(this: GameObj) {
+        add(this: GameObj<AreaComp>) {
             if (!this.has("area")) {
                 this.use(area());
             }
+            onClick(() => { _isPressed = true; });
+            this.onMouseRelease(() => {
+                if (_isPressed) {
+                    if (this.isHovering()) {
+                        this.trigger("invoke");
+                    }
+                    _isPressed = false;
+                }
+            });
         },
 
         destroy(this: GameObj) {
@@ -208,7 +145,7 @@ export function ui(opt: UICompOpt = {}): UIComp {
         },
 
         get isPressed(): boolean {
-            return _wasPressed && _isHovering;
+            return _isPressed;
         },
 
         onInvoke(this: GameObj, action: () => void) {

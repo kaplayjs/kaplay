@@ -62,6 +62,7 @@ function clickHandler(button: MouseButton) {
     _k.game.retrieve(new Rect(p.sub(1, 1), 3, 3), obj => objects.push(obj));
     for (const obj of objects) {
         if (obj.worldArea().contains(p)) {
+            debug.log(obj.id, JSON.stringify(obj.worldArea().serialize()))
             obj.trigger("click", button);
         }
     }
