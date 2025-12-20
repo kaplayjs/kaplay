@@ -108,7 +108,7 @@ export type ParticlesOpt = {
     /**
      * Scale from start to end for a particle.
      */
-    scales?: number[];
+    scales?: number[] | Vec2[];
     /**
      * Colors from start to end for a particle.
      */
@@ -161,7 +161,7 @@ export function particles(popt: ParticlesOpt, eopt: EmitterOpt): ParticlesComp {
     const colors = popt.colors || [Color.WHITE];
     const opacities = popt.opacities || [1];
     const quads = popt.quads || [new Quad(0, 0, 1, 1)];
-    const scales = popt.scales || [1];
+    const scales = popt.scales ? popt.scales.map(s => vec2(s)) : [vec2(1)];
     const lifetime = popt.lifeTime;
     const spread = eopt.spread || 0;
     const speed = popt.speed || [0, 0];
@@ -362,10 +362,10 @@ export function particles(popt: ParticlesOpt, eopt: EmitterOpt): ParticlesComp {
 
                 let j = i * 4;
                 // Left top
-                attributes.pos[j * 2] = p.pos.x + (-hw) * scale * c
-                    - (-hh) * scale * s;
-                attributes.pos[j * 2 + 1] = p.pos.y + (-hw) * scale * s
-                    + (-hh) * scale * c;
+                attributes.pos[j * 2] = p.pos.x + (-hw) * scale.x * c
+                    - (-hh) * scale.y * s;
+                attributes.pos[j * 2 + 1] = p.pos.y + (-hw) * scale.x * s
+                    + (-hh) * scale.y * c;
                 attributes.uv[j * 2] = quad.x;
                 attributes.uv[j * 2 + 1] = quad.y;
                 attributes.color[j * 3] = color.r;
@@ -374,10 +374,10 @@ export function particles(popt: ParticlesOpt, eopt: EmitterOpt): ParticlesComp {
                 attributes.opacity[j] = opacity;
                 // Right top
                 j++;
-                attributes.pos[j * 2] = p.pos.x + hw * scale * c
-                    - (-hh) * scale * s;
-                attributes.pos[j * 2 + 1] = p.pos.y + hw * scale * s
-                    + (-hh) * scale * c;
+                attributes.pos[j * 2] = p.pos.x + hw * scale.x * c
+                    - (-hh) * scale.y * s;
+                attributes.pos[j * 2 + 1] = p.pos.y + hw * scale.x * s
+                    + (-hh) * scale.y * c;
                 attributes.uv[j * 2] = quad.x + quad.w;
                 attributes.uv[j * 2 + 1] = quad.y;
                 attributes.color[j * 3] = color.r;
@@ -386,10 +386,10 @@ export function particles(popt: ParticlesOpt, eopt: EmitterOpt): ParticlesComp {
                 attributes.opacity[j] = opacity;
                 // Right bottom
                 j++;
-                attributes.pos[j * 2] = p.pos.x + hw * scale * c
-                    - hh * scale * s;
-                attributes.pos[j * 2 + 1] = p.pos.y + hw * scale * s
-                    + hh * scale * c;
+                attributes.pos[j * 2] = p.pos.x + hw * scale.x * c
+                    - hh * scale.y * s;
+                attributes.pos[j * 2 + 1] = p.pos.y + hw * scale.x * s
+                    + hh * scale.y * c;
                 attributes.uv[j * 2] = quad.x + quad.w;
                 attributes.uv[j * 2 + 1] = quad.y + quad.h;
                 attributes.color[j * 3] = color.r;
@@ -398,10 +398,10 @@ export function particles(popt: ParticlesOpt, eopt: EmitterOpt): ParticlesComp {
                 attributes.opacity[j] = opacity;
                 // Left bottom
                 j++;
-                attributes.pos[j * 2] = p.pos.x + (-hw) * scale * c
-                    - hh * scale * s;
-                attributes.pos[j * 2 + 1] = p.pos.y + (-hw) * scale * s
-                    + hh * scale * c;
+                attributes.pos[j * 2] = p.pos.x + (-hw) * scale.x * c
+                    - hh * scale.y * s;
+                attributes.pos[j * 2 + 1] = p.pos.y + (-hw) * scale.x * s
+                    + hh * scale.y * c;
                 attributes.uv[j * 2] = quad.x;
                 attributes.uv[j * 2 + 1] = quad.y + quad.h;
                 attributes.color[j * 3] = color.r;
