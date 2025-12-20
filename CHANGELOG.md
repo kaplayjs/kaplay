@@ -18,6 +18,7 @@ best friend, lajbel, can put the correct version name here
 
 ### Changed
 
+- Added the `fakeMouseMove` event in `FakeMouseComp`, it will triggers when you move the object. 
 - Transforms are now only recalculated when needed. Thus static objects no
   longer increase computation in the transform phase. @mflerackers
 - Areas are now only recalculated when the area settings or (optional)
