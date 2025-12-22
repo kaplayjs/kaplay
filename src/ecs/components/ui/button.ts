@@ -1,121 +1,14 @@
-import type { Asset } from "../../../assets/asset";
-import type { SpriteData } from "../../../assets/sprite";
 import type { KEventController } from "../../../events/events";
 import { drawFormattedText } from "../../../gfx/draw/drawFormattedText";
 import { drawRect } from "../../../gfx/draw/drawRect";
 import { drawSprite } from "../../../gfx/draw/drawSprite";
 import { formatText } from "../../../gfx/formatText";
-import { Color, rgb } from "../../../math/color";
 import { Rect, vec2 } from "../../../math/math";
-import type { Vec2 } from "../../../math/Vec2";
 import { _k } from "../../../shared";
 import type { Comp, GameObj } from "../../../types";
 import type { AreaComp } from "../physics/area";
+import { _theme } from "./theme";
 import { ui, type UIComp } from "./ui";
-
-export type ThemeSprite = {
-    sprite: string | SpriteData | Asset<SpriteData>;
-    frame?: number;
-};
-
-export type Theme = {
-    hoverColor: Color;
-    backgroundColor: Color;
-    fontColor: Color;
-    fontSize: number;
-    button: {
-        padding?: Vec2;
-        normal: ThemeSprite;
-        pressed: ThemeSprite;
-        hover?: ThemeSprite;
-        hoverPressed?: ThemeSprite;
-    };
-    checkbox: {
-        padding?: Vec2;
-        spacing?: Vec2;
-        normal: ThemeSprite;
-        pressed: ThemeSprite;
-        hover?: ThemeSprite;
-        hoverPressed?: ThemeSprite;
-    };
-    radio: {
-        padding?: Vec2;
-        spacing?: Vec2;
-        normal: ThemeSprite;
-        pressed: ThemeSprite;
-        hover?: ThemeSprite;
-        hoverPressed?: ThemeSprite;
-    };
-    slider: {
-        padding?: Vec2;
-        spacing?: Vec2;
-        gutter: ThemeSprite;
-        gutterfill?: ThemeSprite;
-        thumb: ThemeSprite;
-    };
-    scrollbar?: {
-        padding?: Vec2;
-        spacing?: Vec2;
-        gutter: ThemeSprite;
-        gutterfill?: ThemeSprite;
-        thumb: ThemeSprite;
-    };
-};
-
-export const DefaultTheme: Theme = {
-    hoverColor: rgb(80, 80, 255),
-    backgroundColor: rgb(144, 163, 174),
-    fontColor: rgb(0, 0, 0),
-    fontSize: 20,
-    button: {
-        padding: vec2(2),
-        normal: {
-            sprite: "button",
-        },
-        pressed: {
-            sprite: "buttonpressed",
-        },
-    },
-    checkbox: {
-        padding: vec2(2),
-        spacing: vec2(2),
-        normal: {
-            sprite: "ui",
-            frame: 0,
-        },
-        pressed: {
-            sprite: "ui",
-            frame: 1,
-        },
-    },
-    radio: {
-        padding: vec2(2),
-        spacing: vec2(2),
-        normal: {
-            sprite: "ui",
-            frame: 2,
-        },
-        pressed: {
-            sprite: "ui",
-            frame: 3,
-        },
-    },
-    slider: {
-        padding: vec2(2),
-        spacing: vec2(2),
-        gutter: {
-            sprite: "buttonpressed",
-        },
-        thumb: {
-            sprite: "button",
-        },
-    },
-};
-
-const hoverColor = rgb(80, 80, 255);
-const backgroundColor = rgb(144, 163, 174);
-
-export let _theme = DefaultTheme;
 
 export type ButtonCompOpt = {
     width?: number;
@@ -205,7 +98,7 @@ export function button(label: string, opt?: ButtonCompOpt): ButtonComp {
                     fill: false,
                     outline: {
                         width: 1,
-                        color: hoverColor,
+                        color: _theme.hoverColor,
                     },
                 });
             }
@@ -294,7 +187,7 @@ export function checkbox(label: string, opt?: ButtonComp): ButtonComp {
                     fill: false,
                     outline: {
                         width: 1,
-                        color: hoverColor,
+                        color: _theme.hoverColor,
                     },
                 });
             }
@@ -400,7 +293,7 @@ export function radio(
                     fill: false,
                     outline: {
                         width: 1,
-                        color: hoverColor,
+                        color: _theme.hoverColor,
                     },
                 });
             }

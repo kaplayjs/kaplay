@@ -15,14 +15,8 @@ kaplay({
 });
 
 loadBean();
-
-loadAseprite("ui", "/sprites/ui.png", "/sprites/ui.json");
-loadSprite("button", "/sprites/button.png", {
-    slice9: { left: 3, top: 3, right: 3, bottom: 3 },
-});
-loadSprite("buttonpressed", "/sprites/buttonpressed.png", {
-    slice9: { left: 3, top: 3, right: 3, bottom: 3 },
-});
+loadDefaultTheme();
+setTheme("default");
 
 const container = add([
     pos(20, 20),

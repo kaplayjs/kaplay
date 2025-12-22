@@ -114,6 +114,7 @@ import type {
     SliderComp,
     SliderCompOpt,
 } from "../ecs/components/ui/slider";
+import type { ThemeData } from "../ecs/components/ui/theme";
 import type { UIComp, UICompOpt } from "../ecs/components/ui/ui";
 import type { KeepFlags } from "../ecs/entity/GameObjRaw";
 import type { SerializedGameObj } from "../ecs/entity/prefab";
@@ -3652,6 +3653,40 @@ export interface KAPLAYCtx {
      * @experimental
      */
     loadPrefab: (name: string, url: string) => Asset<SerializedGameObj>;
+    /**
+     * Loads a theme and associated assets.
+     *
+     * @param name - The theme name.
+     * @param name - The theme data location.
+     *
+     * @returns The asset data.
+     * @since v4000
+     * @group Assets
+     * @subgroup UI
+     */
+    loadTheme(name: string, src: string): Asset<ThemeData> | null;
+    /**
+     * Loads the default theme and associated assets.
+     *
+     * @param name - The theme name.
+     *
+     * @returns The asset data.
+     * @since v4000
+     * @group Assets
+     * @subgroup UI
+     */
+    loadDefaultTheme(name?: string): void;
+    /**
+     * Sets a theme.
+     *
+     * @param name - The theme name.
+     *
+     * @returns The asset data.
+     * @since v4000
+     * @group Assets
+     * @subgroup UI
+     */
+    setTheme(name: string): void;
     // #endregion
     /**
      * Get the global asset loading progress (0.0 - 1.0).

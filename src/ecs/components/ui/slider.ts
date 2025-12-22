@@ -5,14 +5,13 @@ import { drawRect } from "../../../gfx/draw/drawRect";
 import { drawSprite } from "../../../gfx/draw/drawSprite";
 import { formatText } from "../../../gfx/formatText";
 import { clamp } from "../../../math/clamp";
-import { Color } from "../../../math/color";
 import { Rect, vec2 } from "../../../math/math";
 import type { Vec2 } from "../../../math/Vec2";
 import { _k } from "../../../shared";
 import type { Comp, GameObj } from "../../../types";
 import { isFixed } from "../../entity/utils";
 import type { AreaComp } from "../physics/area";
-import { _theme } from "./button";
+import { _theme } from "./theme";
 import { ui, type UIComp } from "./ui";
 
 export type UIOrientation = "horizontal" | "vertical";

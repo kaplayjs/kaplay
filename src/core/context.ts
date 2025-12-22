@@ -84,6 +84,11 @@ import { z } from "../ecs/components/transform/z";
 import { button, checkbox, radio } from "../ecs/components/ui/button";
 import { layout } from "../ecs/components/ui/layout";
 import { scrollbar, slider } from "../ecs/components/ui/slider";
+import {
+    loadDefaultTheme,
+    loadTheme,
+    setTheme,
+} from "../ecs/components/ui/theme";
 import { ui } from "../ecs/components/ui/ui";
 import { KeepFlags } from "../ecs/entity/GameObjRaw";
 import { createPrefab, loadPrefab } from "../ecs/entity/prefab";
@@ -321,6 +326,9 @@ export const createContext = (
         loadHappy,
         loadJSON,
         loadPrefab,
+        loadTheme,
+        loadDefaultTheme,
+        setTheme,
         load,
         getSound,
         getFont,
