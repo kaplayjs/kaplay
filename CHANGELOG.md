@@ -16,6 +16,13 @@ Hey, KAPLAY Dev, you must changelog here, in unreleased, so later your
 best friend, lajbel, can put the correct version name here
 -->
 
+## [unreleased]
+
+### Breaking Changes
+
+- The rotation constraint's `scale` option has been **renamed** to `ratio` -
+  @dragoncoder047
+
 ### Changed
 
 - Added the `fakeMouseMove` event in `FakeMouseComp`, it will triggers when you move the object. 
@@ -35,7 +42,10 @@ best friend, lajbel, can put the correct version name here
 - Global `retrieve()` method to get the objects with area within a certain
   rectangle. @mflerackers
 
-## [unreleased]
+### Added
+
+- The rotation constraint now has a `trackMultiturn` option that can be set to
+  true to make the rotation not jump at the 0-360 boundary - @dragoncoder047
 
 ## [4000.0.0-alpha.24] - 2025-12-12
 
