@@ -1,3 +1,4 @@
+import type { Vec2 } from "../../../math/Vec2";
 import { _k } from "../../../shared";
 import type { Comp, GameObj } from "../../../types";
 import type { PosComp } from "../transform/pos";
@@ -50,6 +51,7 @@ export const fakeMouse = (opt: FakeMouseOpt = {
     followMouse: true,
 }): FakeMouseComp => {
     let isPressed = false;
+    let lastPos: Vec2;
 
     return {
         id: "fakeMouse",
@@ -58,6 +60,8 @@ export const fakeMouse = (opt: FakeMouseOpt = {
             if (_k.game.fakeMouse) {
                 throw new Error("Fake mouse already exists");
             }
+
+            lastPos = this.pos.clone();
 
             _k.game.fakeMouse = this;
         },
@@ -68,9 +72,11 @@ export const fakeMouse = (opt: FakeMouseOpt = {
             return isPressed;
         },
         update(this: FakeMouse) {
-            if (!opt.followMouse) return;
+            if (this.pos.x !== lastPos.x || this.pos.y !== lastPos.y) {
+                this.trigger("fakeMouseMove", this.pos.clone()); // TODO: Create a deltaPos
+            }
 
-            if (_k.app.isMouseMoved()) {
+            if (opt.followMouse && _k.app.isMouseMoved()) {
                 this.screenPos(_k.app.mousePos());
             }
         },

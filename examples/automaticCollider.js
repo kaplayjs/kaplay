@@ -1,5 +1,5 @@
 /**
- * @file Shows the outline of a custon sprite collider
+ * @file Create a polygon shape with a sprite
  * @description How to make a collider automaticly
  * @difficulty 0
  * @tags basics, colliders
@@ -20,6 +20,7 @@ onDraw("gm", (gm) => {
 });
 
 let poly;
+let apple;
 onLoad(() => {
     poly = getSpriteOutline("apple", 0, true, 5);
 
