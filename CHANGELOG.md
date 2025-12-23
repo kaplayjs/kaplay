@@ -35,8 +35,7 @@ best friend, lajbel, can put the correct version name here
 - The grid broadphase has been rewritten for performance. @mflerackers
 - Global `retrieve()` method to get the objects with area within a certain
   rectangle. @mflerackers
-- Added isSensor. Areas without body or isSensor will no longer be eligible for
-  collisions.
+- Added `AreaCompOpt.isSensor`. Areas without body or is sensor will no longer be eligible for collisions - @mflerackers
 
 ## [unreleased]
 
