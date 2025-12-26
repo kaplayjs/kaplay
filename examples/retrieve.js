@@ -1,6 +1,6 @@
 /**
- * @file Retrieve 
- * @description Using the retrieve function to detect collisions 
+ * @file Retrieve
+ * @description Using the retrieve function to detect collisions
  * @difficulty 0
  * @tags physics
  * @minver 4000.0

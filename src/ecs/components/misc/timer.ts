@@ -1,6 +1,7 @@
 import { KEvent } from "../../../events/events";
 import { easings } from "../../../math/easings";
 import { lerp, type LerpValue } from "../../../math/lerp";
+import { Vec2 } from "../../../math/Vec2";
 import { _k } from "../../../shared";
 import type { Comp, GameObj } from "../../../types";
 
@@ -141,7 +142,7 @@ export function timer(maxLoopsPerFrame: number = 1000): TimerComp {
             time: number,
             action?: () => void,
         ): TimerController {
-            return this.loop(time, action ?? (() => {}), 1, true);
+            return this.loop(time, action ?? (() => { }), 1, true);
         },
         tween<V extends LerpValue>(
             this: GameObj<TimerComp>,
@@ -152,6 +153,9 @@ export function timer(maxLoopsPerFrame: number = 1000): TimerComp {
             easeFunc = easings.linear,
         ) {
             let curTime = 0;
+            if ((from as any)['clone']) from = (from as any).clone() as V;
+            if ((to as any)['clone']) to = (to as any).clone() as V;
+
             const onEndEvents: Array<() => void> = [];
             const ev = this.onUpdate(() => {
                 curTime += _k.app.state.dt;
