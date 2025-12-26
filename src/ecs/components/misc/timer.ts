@@ -142,7 +142,7 @@ export function timer(maxLoopsPerFrame: number = 1000): TimerComp {
             time: number,
             action?: () => void,
         ): TimerController {
-            return this.loop(time, action ?? (() => {}), 1, true);
+            return this.loop(time, action ?? (() => { }), 1, true);
         },
         tween<V extends LerpValue>(
             this: GameObj<TimerComp>,
@@ -153,8 +153,8 @@ export function timer(maxLoopsPerFrame: number = 1000): TimerComp {
             easeFunc = easings.linear,
         ) {
             let curTime = 0;
-            if ((from as any)["clone"]) from = (from as any).clone() as V;
-            if ((to as any)["clone"]) to = (to as any).clone() as V;
+            if (typeof (from as any).clone == "function") from = (from as any).clone() as V;
+            if (typeof (to as any).clone == "function") to = (to as any).clone() as V;
 
             const onEndEvents: Array<() => void> = [];
             const ev = this.onUpdate(() => {
