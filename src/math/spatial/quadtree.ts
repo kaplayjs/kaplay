@@ -3,10 +3,14 @@ import {
     getLocalAreaVersion,
     getRenderAreaVersion,
 } from "../../ecs/components/physics/area";
-import { getTransformVersion } from "../../ecs/entity/GameObjRaw";
+import {
+    getTransformVersion,
+    objectTransformNeedsUpdate,
+} from "../../ecs/entity/GameObjRaw";
 import { drawRect } from "../../gfx/draw/drawRect";
 import type { GameObj } from "../../types";
 import { Rect, vec2 } from "../math";
+import { calcTransform } from "../various";
 import type { Vec2 } from "../Vec2";
 import type { BroadPhaseAlgorithm } from ".";
 
@@ -332,6 +336,10 @@ export class Quadtree implements BroadPhaseAlgorithm {
             versions![0] = getTransformVersion(obj);
             versions![1] = getRenderAreaVersion(obj);
             versions![2] = getLocalAreaVersion(obj);
+
+            if (objectTransformNeedsUpdate(obj)) {
+                calcTransform(obj, obj.transform);
+            }
 
             const bbox = obj.worldBbox();
             // If the object is outside the bounds, remove it and add it to the root later

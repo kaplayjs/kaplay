@@ -97,6 +97,10 @@ export class HashGrid {
             versions![1] = getRenderAreaVersion(obj);
             versions![2] = getLocalAreaVersion(obj);
 
+            if (objectTransformNeedsUpdate(obj)) {
+                calcTransform(obj, obj.transform);
+            }
+
             // Retrieve the old hashes
             for (let i = 0; i < oldHashes.length; i++) {
                 const hash = oldHashes[i];
