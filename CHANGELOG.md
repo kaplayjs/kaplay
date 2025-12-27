@@ -18,6 +18,9 @@ best friend, lajbel, can put the correct version name here
 
 ## [unreleased]
 
+## Fixed
+
+- Fixed `tween()` not cloning the passed vectors/colors - @lajbel
 - Fixed the vibration effect on bodies introduced in alpha.25 thanks to
   @lajbel's debugging skills - @mflerackers
 
