@@ -16,28 +16,42 @@ Hey, KAPLAY Dev, you must changelog here, in unreleased, so later your
 best friend, lajbel, can put the correct version name here
 -->
 
-### Changed
+## [unreleased]
 
-- Added the `fakeMouseMove` event in `FakeMouseComp`, it will triggers when you
-  move the object.
-- Transforms are now only recalculated when needed. Thus static objects no
-  longer increase computation in the transform phase. @mflerackers
-- Areas are now only recalculated when the area settings or (optional)
-  renderArea has changed. @mflerackers
-- World (transformed) areas are now only recalculated when the area or transform
-  has changed. @mflerackers
-- World bounding boxes are now only recalculated when the world area has
-  changed. @mflerackers
-- Broad stage collision detection spatial structures are now only updated when
-  an object's world bounding box has changed. @mflerackers
-- You can no longer change the position of an object by doing obj.pos.x += 1.
-  You need to assign a new Vec2 or use moveBy instead. @mflerackers
-- The grid broadphase has been rewritten for performance. @mflerackers
-- Global `retrieve()` method to get the objects with area within a certain
-  rectangle. @mflerackers
+## Added
+
 - Added `AreaCompOpt.isSensor`. Areas without body or is sensor will no longer be eligible for collisions - @mflerackers
 
-## [unreleased]
+## Fixed
+
+- Fixed `tween()` not cloning the passed vectors/colors - @lajbel
+- Fixed the vibration effect on bodies introduced in alpha.25 thanks to
+  @lajbel's debugging skills - @mflerackers
+
+## [4000.0.0-alpha.25] - 2025-12-23
+
+### Added
+
+- Added the `fakeMouseMove` event in `FakeMouseComp`, it will triggers when you
+  move the object - @lajbel
+- Global `retrieve()` method to get the objects with area within a certain
+  rectangle - @mflerackers
+
+### Changed
+
+- Transforms are now only recalculated when needed. Thus static objects no
+  longer increase computation in the transform phase - @mflerackers
+- Areas are now only recalculated when the area settings or (optional)
+  renderArea has changed - @mflerackers
+- World (transformed) areas are now only recalculated when the area or transform
+  has changed - @mflerackers
+- World bounding boxes are now only recalculated when the world area has
+  changed - @mflerackers
+- Broad stage collision detection spatial structures are now only updated when
+  an object's world bounding box has changed - @mflerackers
+- You can no longer change the position of an object by doing obj.pos.x += 1.
+  You need to assign a new Vec2 or use moveBy instead - @mflerackers
+- The grid broadphase has been rewritten for performance - @mflerackers
 
 ## [4000.0.0-alpha.24] - 2025-12-12
 
