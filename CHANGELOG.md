@@ -20,10 +20,13 @@ best friend, lajbel, can put the correct version name here
 
 ## Added
 
-- Added `AreaCompOpt.isSensor`. Areas without body or is sensor will no longer be eligible for collisions - @mflerackers
+- Added `AreaCompOpt.isSensor`. Areas without body or is sensor will no longer
+  be eligible for collisions - @mflerackers
 
 ## Changed
-- Now, events like `on()` and `onAdd()`, `onDestroy()`, etc. are available in app and scene scopes - @lajbel
+
+- Now, events like `on()` and `onAdd()`, `onDestroy()`, etc. are available in
+  app and scene scopes - @lajbel
 
 ## Fixed
 
