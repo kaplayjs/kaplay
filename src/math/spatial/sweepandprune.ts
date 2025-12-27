@@ -110,6 +110,9 @@ export class SweepAndPruneHorizontal implements BroadPhaseAlgorithm {
             versions![1] = getRenderAreaVersion(obj);
             versions![2] = getLocalAreaVersion(obj);
 
+            if (objectTransformNeedsUpdate(obj)) {
+                calcTransform(obj, obj.transform);
+            }
             const bbox = obj.worldBbox();
             edges[0].x = bbox.pos.x;
             edges[1].x = bbox.pos.x + bbox.width;

@@ -97,6 +97,10 @@ export class HashGrid {
             versions![1] = getRenderAreaVersion(obj);
             versions![2] = getLocalAreaVersion(obj);
 
+            if (objectTransformNeedsUpdate(obj)) {
+                calcTransform(obj, obj.transform);
+            }
+
             // Retrieve the old hashes
             for (let i = 0; i < oldHashes.length; i++) {
                 const hash = oldHashes[i];
@@ -254,7 +258,7 @@ export class HashGrid {
             && bbox.pos.y >= this.bounds.pos.y
             && bbox.pos.x + bbox.width <= this.bounds.pos.x + this.bounds.width
             && bbox.pos.y + bbox.height
-                <= this.bounds.pos.y + this.bounds.height;
+            <= this.bounds.pos.y + this.bounds.height;
     }
 
     private _resizeToFit(bbox: Rect) {
