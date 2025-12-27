@@ -4,11 +4,11 @@ import {
     getRenderAreaVersion,
 } from "../../ecs/components/physics/area";
 
-import { isPaused } from "../../ecs/entity/utils";
 import {
     getTransformVersion,
     objectTransformNeedsUpdate,
 } from "../../ecs/entity/GameObjRaw";
+import { isPaused } from "../../ecs/entity/utils";
 import { drawRect } from "../../gfx/draw/drawRect";
 import type { GameObj } from "../../types";
 import { Rect, vec2 } from "../math";

@@ -20,7 +20,13 @@ best friend, lajbel, can put the correct version name here
 
 ## Added
 
-- Added `AreaCompOpt.isSensor`. Areas without body or is sensor will no longer be eligible for collisions - @mflerackers
+- Added `AreaCompOpt.isSensor`. Areas without body or is sensor will no longer
+  be eligible for collisions - @mflerackers
+
+## Changed
+
+- Now, events like `on()` and `onAdd()`, `onDestroy()`, etc. are available in
+  app and scene scopes - @lajbel
 
 ## Fixed
 
@@ -52,6 +58,8 @@ best friend, lajbel, can put the correct version name here
 - You can no longer change the position of an object by doing obj.pos.x += 1.
   You need to assign a new Vec2 or use moveBy instead - @mflerackers
 - The grid broadphase has been rewritten for performance - @mflerackers
+- Global `retrieve()` method to get the objects with area within a certain
+  rectangle - @mflerackers
 
 ## [4000.0.0-alpha.24] - 2025-12-12
 

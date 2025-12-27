@@ -4,7 +4,6 @@
 // All in /game folder is stuff that uses/modify the game state.
 
 import type { Asset } from "../assets/asset";
-import type { BitmapFontData } from "../assets/bitmapFont";
 import type { SoundData } from "../assets/sound";
 import type { SpriteData } from "../assets/sprite";
 import type { FakeMouseComp } from "../ecs/components/misc/fakeMouse";
