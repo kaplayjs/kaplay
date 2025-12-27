@@ -70,6 +70,7 @@ import {
     surfaceEffector,
 } from "../ecs/components/physics/effectors";
 import { anchor } from "../ecs/components/transform/anchor";
+import { scrollcam } from "../ecs/components/transform/camscroll";
 import { constraint } from "../ecs/components/transform/constraint";
 import { fixed } from "../ecs/components/transform/fixed";
 import { follow } from "../ecs/components/transform/follow";
@@ -433,6 +434,7 @@ export const createContext = (
         move,
         constraint,
         offscreen,
+        scrollcam,
         follow,
         fadeIn,
         mask,
