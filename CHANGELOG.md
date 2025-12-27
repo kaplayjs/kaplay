@@ -18,6 +18,10 @@ best friend, lajbel, can put the correct version name here
 
 ## [unreleased]
 
+## Added
+
+- Added `AreaCompOpt.isSensor`. Areas without body or is sensor will no longer be eligible for collisions - @mflerackers
+
 ## Fixed
 
 - Fixed `tween()` not cloning the passed vectors/colors - @lajbel
