@@ -18,9 +18,30 @@ best friend, lajbel, can put the correct version name here
 
 ## [unreleased]
 
+## Added
+
+- Added `AreaCompOpt.isSensor`. Areas without body or is sensor will no longer be eligible for collisions - @mflerackers
+
+## Changed
+- Now, events like `on()` and `onAdd()`, `onDestroy()`, etc. are available in app and scene scopes - @lajbel
+
+## Fixed
+
+- Fixed `tween()` not cloning the passed vectors/colors - @lajbel
+- Fixed the vibration effect on bodies introduced in alpha.25 thanks to
+  @lajbel's debugging skills - @mflerackers
+
+## [4000.0.0-alpha.25] - 2025-12-23
+
+### Added
+
+- Added the `fakeMouseMove` event in `FakeMouseComp`, it will triggers when you
+  move the object - @lajbel
+- Global `retrieve()` method to get the objects with area within a certain
+  rectangle - @mflerackers
+
 ### Changed
 
-- Now, events like `on()` and `onAdd()`, `onDestroy()`, etc. are available in app and scene scopes - @lajbel
 - Transforms are now only recalculated when needed. Thus static objects no
   longer increase computation in the transform phase - @mflerackers
 - Areas are now only recalculated when the area settings or (optional)

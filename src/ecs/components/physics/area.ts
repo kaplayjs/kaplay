@@ -1,4 +1,5 @@
 import { DEF_ANCHOR } from "../../../constants/general";
+import type { ButtonName } from "../../../core/taf";
 import type { KEventController } from "../../../events/events";
 import { toWorld } from "../../../game/camera";
 import { anchorPt } from "../../../gfx/anchor";
@@ -54,6 +55,63 @@ export function getLocalAreaVersion(obj: GameObj<any>) {
     return obj._localAreaVersion;
 }
 
+function clickHandler(button: MouseButton) {
+    const p = toWorld(_k.app.mousePos());
+    // We use an array, so we can later add support to sort it and take the top-most object only
+    const objects: GameObj<AreaComp>[] = [];
+    _k.game.retrieve(new Rect(p.sub(1, 1), 3, 3), obj => objects.push(obj));
+    for (const obj of objects) {
+        if (obj.worldArea().contains(p)) {
+            obj.trigger("click", button);
+        }
+    }
+}
+
+let clickHandlerRunning = false;
+function startClickHandler() {
+    if (clickHandlerRunning) return;
+    clickHandlerRunning = true;
+
+    if (_k.game.fakeMouse) {
+        _k.game.fakeMouse.on("press", clickHandler);
+    }
+
+    _k.app.onMousePress(clickHandler);
+}
+
+function hoverHandler() {
+    let oldObjects: Set<GameObj<AreaComp>> = new Set();
+    return (pos: Vec2, dpos: Vec2) => {
+        const p = toWorld(pos);
+        const newObjects: Set<GameObj<AreaComp>> = new Set();
+
+        _k.game.retrieve(new Rect(p.sub(1, 1), 3, 3), obj => {
+            if (obj.worldArea().contains(p)) {
+                newObjects.add(obj);
+            }
+        });
+        newObjects.difference(oldObjects).forEach(obj => obj.trigger("hover"));
+        oldObjects.difference(newObjects).forEach(obj =>
+            obj.trigger("hoverEnd")
+        );
+        newObjects.intersection(oldObjects).forEach(obj =>
+            obj.trigger("hoverUpdate")
+        );
+        oldObjects = newObjects;
+    };
+}
+
+let hoverHandlerRunning = false;
+function startHoverHandler() {
+    if (hoverHandlerRunning) return;
+    hoverHandlerRunning = true;
+
+    if (_k.game.fakeMouse) {
+        _k.game.fakeMouse.on("fakeMouseMove", hoverHandler());
+    }
+    _k.app.onMouseMove(hoverHandler());
+}
+
 /**
  * The {@link area `area()`} component.
  *
@@ -96,6 +154,10 @@ export interface AreaComp extends Comp {
      * Friction of the object.
      */
     friction?: number;
+    /**
+     * Whether collision detection should be done even without body.
+     */
+    isSensor: boolean;
     /**
      * If was just clicked on last frame.
      */
@@ -273,6 +335,12 @@ export interface AreaCompOpt {
      * @since v4000.0
      */
     friction?: number;
+    /**
+     * Whether collision detection should be done even without body.
+     *
+     * @since v4000.0
+     */
+    isSensor?: boolean;
 }
 
 export function area(
@@ -306,6 +374,7 @@ export function area(
         collisionIgnore: opt.collisionIgnore ?? [],
         restitution: opt.restitution,
         friction: opt.friction,
+        isSensor: opt.isSensor ?? false,
 
         add(this: GameObj<AreaComp>) {
             _k.game.areaCount++;
@@ -498,61 +567,23 @@ export function area(
             action: () => void,
             btn: MouseButton = "left",
         ): KEventController {
-            if (_k.game.fakeMouse) {
-                _k.game.fakeMouse.onPress(() => {
-                    if (this.isHovering()) {
-                        action();
-                    }
-                });
-            }
-
-            const e = this.onMousePress(btn, () => {
-                if (this.isHovering()) {
-                    action();
-                }
-            });
-
-            events.push(e);
-
-            return e;
+            startClickHandler();
+            return this.on("click", action);
         },
 
         onHover(this: GameObj, action: () => void): KEventController {
-            let hovering = false;
-            return this.onUpdate(() => {
-                if (!hovering) {
-                    if (this.isHovering()) {
-                        hovering = true;
-                        action();
-                    }
-                }
-                else {
-                    hovering = this.isHovering();
-                }
-            });
+            startHoverHandler();
+            return this.on("hover", action);
         },
 
-        onHoverUpdate(this: GameObj, onHover: () => void): KEventController {
-            return this.onUpdate(() => {
-                if (this.isHovering()) {
-                    onHover();
-                }
-            });
+        onHoverUpdate(this: GameObj, action: () => void): KEventController {
+            startHoverHandler();
+            return this.on("hoverUpdate", action);
         },
 
         onHoverEnd(this: GameObj, action: () => void): KEventController {
-            let hovering = false;
-            return this.onUpdate(() => {
-                if (hovering) {
-                    if (!this.isHovering()) {
-                        hovering = false;
-                        action();
-                    }
-                }
-                else {
-                    hovering = this.isHovering();
-                }
-            });
+            startHoverHandler();
+            return this.on("hoverEnd", action);
         },
 
         onCollide(

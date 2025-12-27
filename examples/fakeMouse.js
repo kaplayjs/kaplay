@@ -23,7 +23,7 @@ let knocks = 0;
 let doorOpened = false;
 
 // Set the layers, the cursor will be on top of everything, "ui"
-layers([
+setLayers([
     "game",
     "ui",
 ], "game");

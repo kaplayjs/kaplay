@@ -1226,8 +1226,8 @@ export const GameObjRawPrototype: Omit<
             & InternalGameObjRaw,
         force: boolean,
     ) {
-        const updateNeeded = force
-            || transformNeedsUpdate(this._transformVersion);
+        const localUpdateNeeded = transformNeedsUpdate(this._transformVersion);
+        const updateNeeded = force || localUpdateNeeded;
 
         pushTransform();
 
@@ -1240,6 +1240,12 @@ export const GameObjRawPrototype: Omit<
 
             if (!this.transform) this.transform = new Mat23();
             storeMatrix(this.transform);
+
+            // If force is true, but we didn't have a newer version,
+            // we need to update the version in order to make sure that areas get updated.
+            if (force && !localUpdateNeeded) {
+                this._transformVersion = nextTransformVersion();
+            }
         }
         else {
             loadMatrix(this.transform);
