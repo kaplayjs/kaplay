@@ -3,13 +3,16 @@ import {
     getLocalAreaVersion,
     getRenderAreaVersion,
 } from "../../ecs/components/physics/area";
-import { getTransformVersion, objectTransformNeedsUpdate } from "../../ecs/entity/GameObjRaw";
+import {
+    getTransformVersion,
+    objectTransformNeedsUpdate,
+} from "../../ecs/entity/GameObjRaw";
 import { drawRect } from "../../gfx/draw/drawRect";
 import type { GameObj } from "../../types";
 import { Rect, vec2 } from "../math";
+import { calcTransform } from "../various";
 import type { Vec2 } from "../Vec2";
 import type { BroadPhaseAlgorithm } from ".";
-import { calcTransform } from "../various";
 
 /**
  * A quadtree structure
@@ -309,7 +312,7 @@ export class Quadtree implements BroadPhaseAlgorithm {
             && bbox.pos.y >= this.bounds.pos.y
             && bbox.pos.x + bbox.width <= this.bounds.pos.x + this.bounds.width
             && bbox.pos.y + bbox.height
-            <= this.bounds.pos.y + this.bounds.height;
+                <= this.bounds.pos.y + this.bounds.height;
     }
 
     /**
@@ -453,13 +456,13 @@ export class ResizingQuadtree implements BroadPhaseAlgorithm {
         // Note: Even though an object can be so large that it extends to the right as well, we prioritize left
         const isRight = !isLeft
             && bbox.pos.x + bbox.width
-            > this.root.bounds.pos.x + this.root.bounds.width;
+                > this.root.bounds.pos.x + this.root.bounds.width;
         const isCenter = !(isLeft || isRight);
         const isTop = bbox.pos.y < this.root.bounds.pos.y;
         // Note: Even though an object can be so large that it extends to the bottom as well, we prioritize top
         const isBottom = !isTop
             && bbox.pos.y + bbox.height
-            > this.root.bounds.pos.y + this.root.bounds.height;
+                > this.root.bounds.pos.y + this.root.bounds.height;
         const isMiddle = !(isTop || isBottom);
         if (isTop && (isLeft || isCenter)) {
             /**
