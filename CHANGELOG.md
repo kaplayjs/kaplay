@@ -20,19 +20,24 @@ best friend, lajbel, can put the correct version name here
 
 ## Added
 
-- Added `AreaCompOpt.isSensor`. Areas without body or is sensor will no longer
+- **(!)** Added `AreaCompOpt.isSensor`. Areas without body or is sensor will no longer
   be eligible for collisions - @mflerackers
 
 ## Changed
 
-- Now, events like `on()` and `onAdd()`, `onDestroy()`, etc. are available in
-  app and scene scopes - @lajbel
+- Now, like `on()` and `onAdd()`, `onDestroy()`, all the events that do (on: tag, ev: action), 
+  are available in scopes - @lajbel
 
 ## Fixed
 
 - Fixed `tween()` not cloning the passed vectors/colors - @lajbel
 - Fixed the vibration effect on bodies introduced in alpha.25 thanks to
   @lajbel's debugging skills - @mflerackers
+
+## Removed
+
+- **(!)** `onClick(() => {})` was removed, use `onMousePress()` instead. 
+  `onClick("tag", () => {});` stays the same,
 
 ## [4000.0.0-alpha.25] - 2025-12-23
 
@@ -45,6 +50,8 @@ best friend, lajbel, can put the correct version name here
 
 ### Changed
 
+- **(!)** You can no longer change the position of an object by doing obj.pos.x += 1.
+  You need to assign a new Vec2 or use moveBy instead - @mflerackers
 - Transforms are now only recalculated when needed. Thus static objects no
   longer increase computation in the transform phase - @mflerackers
 - Areas are now only recalculated when the area settings or (optional)
@@ -55,8 +62,6 @@ best friend, lajbel, can put the correct version name here
   changed - @mflerackers
 - Broad stage collision detection spatial structures are now only updated when
   an object's world bounding box has changed - @mflerackers
-- You can no longer change the position of an object by doing obj.pos.x += 1.
-  You need to assign a new Vec2 or use moveBy instead - @mflerackers
 - The grid broadphase has been rewritten for performance - @mflerackers
 - Global `retrieve()` method to get the objects with area within a certain
   rectangle - @mflerackers
