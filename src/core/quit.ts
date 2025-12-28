@@ -9,7 +9,7 @@ export const quit = () => {
         // clear canvas
         gfx.gl.clear(
             gfx.gl.COLOR_BUFFER_BIT | gfx.gl.DEPTH_BUFFER_BIT
-            | gfx.gl.STENCIL_BUFFER_BIT,
+                | gfx.gl.STENCIL_BUFFER_BIT,
         );
 
         // unbind everything

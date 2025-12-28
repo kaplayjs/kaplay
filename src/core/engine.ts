@@ -22,7 +22,7 @@ import { rotateFactory } from "../ecs/components/transform/rotate";
 import { scaleFactory } from "../ecs/components/transform/scale";
 import { zFactory } from "../ecs/components/transform/z";
 import { registerPrefabFactory } from "../ecs/entity/prefab";
-import { createGameEventHandlers } from "../events/gameEventHandlers";
+import { createScopeHandlers } from "../events/scopeHandlers";
 import {
     attachAppHandlersToGameObjRaw,
     createAppScope,
@@ -66,7 +66,7 @@ export const createEngine = (gopt: KAPLAYOpt) => {
     const canvas = createCanvas(opt);
     const { fontCacheC2d, fontCacheCanvas } = createFontCache();
     const app = initApp({ canvas, ...gopt });
-    const gameHandlers = createGameEventHandlers(app);
+    const gameHandlers = createScopeHandlers(app);
     const sceneScope = createSceneScope(app, gameHandlers);
     const appScope = createAppScope(gameHandlers);
     attachAppHandlersToGameObjRaw(gameHandlers);

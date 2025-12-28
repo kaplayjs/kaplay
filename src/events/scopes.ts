@@ -5,23 +5,23 @@ import {
 } from "../ecs/entity/GameObjRaw";
 import { scene, type SceneDef } from "../game/scenes";
 import type { KEventController } from "./events";
-import { type GameEventHandlers } from "./gameEventHandlers";
+import { type ScopeHandlers } from "./scopeHandlers";
 
 export type SceneScope =
-    & GameEventHandlers
+    & ScopeHandlers
     & {
         (id: string, def: SceneDef): void;
     };
 
 export const createSceneScope = (
     app: App,
-    handlers: GameEventHandlers,
+    handlers: ScopeHandlers,
 ): SceneScope => {
     const sceneScope = scene;
 
     for (const e of Object.keys(handlers)) {
         // @ts-expect-error
-        sceneScope[e] = function(this: InternalGameObjRaw, ...args: [any]) {
+        sceneScope[e] = function (this: InternalGameObjRaw, ...args: [any]) {
             // @ts-expect-error
             const ev: KEventController = handlers[e]?.(...args);
 
@@ -34,13 +34,13 @@ export const createSceneScope = (
     return sceneScope as SceneScope;
 };
 
-export type AppScope = GameEventHandlers;
+export type AppScope = ScopeHandlers;
 
-export const createAppScope = (handlers: GameEventHandlers): AppScope => {
+export const createAppScope = (handlers: ScopeHandlers): AppScope => {
     const appScope = {} as Record<string, any>;
 
     for (const e of Object.keys(handlers)) {
-        appScope[e] = handlers[e as keyof GameEventHandlers];
+        appScope[e] = handlers[e as keyof ScopeHandlers];
     }
 
     return appScope as AppScope;
@@ -62,7 +62,7 @@ const eventHandlersInAppButNotAddedInGameObjRaw = [
 export type EventHandlersInAppButNotAddedInGameObjRaw =
     typeof eventHandlersInAppButNotAddedInGameObjRaw[number];
 
-export function attachAppHandlersToGameObjRaw(handlers: GameEventHandlers) {
+export function attachAppHandlersToGameObjRaw(handlers: ScopeHandlers) {
     for (const e of Object.keys(handlers)) {
         if (
             eventHandlersInAppButNotAddedInGameObjRaw.includes(
@@ -74,7 +74,7 @@ export function attachAppHandlersToGameObjRaw(handlers: GameEventHandlers) {
 
         const obj = GameObjRawPrototype as Record<string, any>;
 
-        obj[e] = function(this: InternalGameObjRaw, ...args: [any]) {
+        obj[e] = function (this: InternalGameObjRaw, ...args: [any]) {
             // @ts-ignore
             const ev: KEventController = handlers[e]?.(...args);
             ev.paused = this.paused;

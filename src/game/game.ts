@@ -152,7 +152,7 @@ export const createGame = (): Game => {
     const game: Game = {
         gameObjLastId: 0,
         root: makeInternal(0) as GameObj<TimerComp>,
-        events: new KEventHandler<GameEventMap>,
+        events: new KEventHandler<GameEventMap>(),
         gameObjEvents: new KEventHandler<GameObjEventMap>(),
         cam: {
             pos: null as Vec2 | null,
@@ -201,7 +201,7 @@ export const createGame = (): Game => {
         retrieve: (
             rect: Rect,
             retrieveCb: (obj: GameObj<AreaComp>) => void,
-        ) => { },
+        ) => {},
 
         // Some state
         crashed: false,

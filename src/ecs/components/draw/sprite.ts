@@ -447,7 +447,9 @@ export function sprite(
             }
             else {
                 // The sprite may be loaded later in the script, check again when all resources have been loaded
-                _k.k.onLoad(() => setSpriteData(this, resolveSprite(src)!.data));
+                _k.k.onLoad(() =>
+                    setSpriteData(this, resolveSprite(src)!.data)
+                );
             }
         },
 
@@ -540,7 +542,7 @@ export function sprite(
                     pingpong: false,
                     speed: 0,
                     frameIndex: 0,
-                    onEnd: () => { },
+                    onEnd: () => {},
                 }
                 : {
                     name: name,
@@ -549,7 +551,7 @@ export function sprite(
                     pingpong: opt.pingpong ?? anim.pingpong ?? false,
                     speed: opt.speed ?? anim.speed ?? 10,
                     frameIndex: 0,
-                    onEnd: opt.onEnd ?? (() => { }),
+                    onEnd: opt.onEnd ?? (() => {}),
                 };
 
             curAnimDir = typeof anim === "number" ? null : 1;

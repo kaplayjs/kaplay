@@ -1,14 +1,22 @@
-// Event handlers that uses the game state and game objects events.
+// Global event handlers
 
-import { getFailedAssets, type Asset } from "../../assets/asset";
-import { _k } from "../../shared";
-import type { GameObj, Tag } from "../../types";
-import { overload2 } from "../../utils/overload";
-import type { TupleWithoutFirst } from "../../utils/types";
-import type { GameObjEventNames, GameObjEvents } from "../eventMap";
-import type { KEventController } from "../events";
+import { type Asset, getFailedAssets } from "../assets/asset";
+import type { Collision } from "../ecs/systems/Collision";
+import type { GameObjEventNames, GameObjEvents } from "../events/eventMap";
+import type { KEventController } from "../events/events";
+import { _k } from "../shared";
+import type { GameObj, Tag } from "../types";
+import { overload2 } from "../utils/overload";
+import type { TupleWithoutFirst } from "../utils/types";
 
-// Listen to game object events with a tag.
+export const trigger = (event: string, tag: string, ...args: any[]) => {
+    for (const obj of _k.game.root.children) {
+        if (obj.is(tag)) {
+            obj.trigger(event, args);
+        }
+    }
+};
+
 export const on = <Ev extends GameObjEventNames | string & {}>(
     event: Ev,
     tag: Tag,
@@ -62,6 +70,7 @@ export const on = <Ev extends GameObjEventNames | string & {}>(
         },
     };
 };
+
 export const onAdd = overload2((action: (obj: GameObj) => void) => {
     return _k.game.gameObjEvents.on("add", action);
 }, (tag: Tag, action: (obj: GameObj) => void) => {
@@ -110,6 +119,78 @@ export const onUntag = overload2(
     },
 );
 
+// add an event that runs with objs with t1 collides with objs with t2
+export function onCollide(
+    t1: Tag,
+    t2: Tag,
+    f: (a: GameObj, b: GameObj, col?: Collision) => void,
+): KEventController {
+    return on(
+        "collide",
+        t1,
+        (a, b, col) => b.is(t2) && f(a, b, col),
+    );
+}
+
+export function onCollideUpdate(
+    t1: Tag,
+    t2: Tag,
+    f: (a: GameObj, b: GameObj, col?: Collision) => void,
+): KEventController {
+    return on(
+        "collideUpdate",
+        t1,
+        (a, b, col) => b.is(t2) && f(a, b, col),
+    );
+}
+
+export function onCollideEnd(
+    t1: Tag,
+    t2: Tag,
+    f: (a: GameObj, b: GameObj, col?: Collision) => void,
+): KEventController {
+    return on(
+        "collideEnd",
+        t1,
+        (a, b, col) => b.is(t2) && f(a, b, col),
+    );
+}
+
+export const onFixedUpdate = overload2((action: () => void) => {
+    return _k.app.state.events.on("fixedUpdate", action);
+}, (tag: Tag, action: (obj: GameObj) => void) => {
+    return on("fixedUpdate", tag, action);
+});
+
+export const onUpdate = overload2((action: () => void) => {
+    return _k.app.state.events.on("update", action);
+}, (tag: Tag, action: (obj: GameObj) => void) => {
+    return on("update", tag, action);
+});
+
+export const onDraw = overload2((action: () => void) => {
+    return _k.app.state.events.on("draw", action);
+}, (tag: Tag, action: (obj: GameObj) => void) => {
+    return on("draw", tag, action);
+});
+
+export const onClick = (tag: Tag, action: (obj: GameObj) => void) => {
+    return on("click", tag, action);
+};
+
+export function onHover(tag: Tag, action: (obj: GameObj) => void) {
+    return on("hover", tag, action);
+}
+
+export function onHoverEnd(tag: Tag, action: (obj: GameObj) => void) {
+    return on("hoverEnd", tag, action);
+}
+
+export function onHoverUpdate(tag: Tag, action: (obj: GameObj) => void) {
+    return on("hoverUpdate", tag, action);
+}
+
+// #region just ev handlers
 export function onError(action: (err: Error) => void) {
     return _k.game.events.on("error", action);
 }
@@ -138,3 +219,8 @@ export function onLoadError(
     }
 }
 
+export function onResize(action: () => void) {
+    return _k.app.onResize(action);
+}
+
+// #endregion

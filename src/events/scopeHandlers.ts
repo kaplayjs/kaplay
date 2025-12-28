@@ -1,0 +1,73 @@
+import {
+    on,
+    onAdd,
+    onClick,
+    onCollide,
+    onCollideEnd,
+    onCollideUpdate,
+    onDestroy,
+    onDraw,
+    onFixedUpdate,
+    onHover,
+    onHoverEnd,
+    onHoverUpdate,
+    onTag,
+    onUntag,
+    onUnuse,
+    onUpdate,
+    onUse,
+} from "../api/eventHandlers";
+import type { App } from "../app/app";
+
+export type ScopeHandlers = ReturnType<typeof createScopeHandlers>;
+
+export const createScopeHandlers = (app: App) => {
+    const handlers = {
+        onKeyDown: app.onKeyDown,
+        onKeyPress: app.onKeyPress,
+        onKeyPressRepeat: app.onKeyPressRepeat,
+        onKeyRelease: app.onKeyRelease,
+        onCharInput: app.onCharInput,
+        onMouseDown: app.onMouseDown,
+        onMousePress: app.onMousePress,
+        onMouseRelease: app.onMouseRelease,
+        onMouseMove: app.onMouseMove,
+        onTouchStart: app.onTouchStart,
+        onTouchEnd: app.onTouchEnd,
+        onTouchMove: app.onTouchMove,
+        onScroll: app.onScroll,
+        onGamepadConnect: app.onGamepadConnect,
+        onGamepadDisconnect: app.onGamepadDisconnect,
+        onGamepadButtonDown: app.onGamepadButtonDown,
+        onGamepadButtonPress: app.onGamepadButtonPress,
+        onGamepadButtonRelease: app.onGamepadButtonRelease,
+        onGamepadStick: app.onGamepadStick,
+        onButtonDown: app.onButtonDown,
+        onButtonPress: app.onButtonPress,
+        onButtonRelease: app.onButtonRelease,
+        onTabShow: app.onTabShow,
+        onTabHide: app.onTabHide,
+        onUpdate: onUpdate,
+        onFixedUpdate: onFixedUpdate,
+        onDraw: onDraw,
+        onAdd: onAdd,
+        onDestroy: onDestroy,
+        onUse: onUse,
+        onUnuse: onUnuse,
+        onTag: onTag,
+        onUntag: onUntag,
+        on: on,
+        onClick: onClick,
+        onCollide: onCollide,
+        onCollideEnd: onCollideEnd,
+        onCollideUpdate: onCollideUpdate,
+        onHover: onHover,
+        onHoverEnd: onHoverEnd,
+        onHoverUpdate: onHoverUpdate,
+        // deprecated
+        onShow: app.onShow,
+        onHide: app.onHide,
+    };
+
+    return handlers;
+};

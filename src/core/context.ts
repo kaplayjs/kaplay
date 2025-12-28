@@ -1,3 +1,11 @@
+import {
+    onCollide,
+    onError,
+    onLoad,
+    onLoadError,
+    onLoading,
+    trigger,
+} from "../api/eventHandlers";
 import { getData, setData } from "../app/data";
 import { loadAseprite } from "../assets/aseprite";
 import {
@@ -89,21 +97,6 @@ import { destroy, getTreeRoot } from "../ecs/entity/utils";
 import { Collision } from "../ecs/systems/Collision";
 import { system, SystemPhase } from "../ecs/systems/systems";
 import { KEvent, KEventController, KEventHandler } from "../events/events";
-import {
-    onClick,
-    onCollide,
-    onCollideEnd,
-    onCollideUpdate,
-    onError,
-    onHover,
-    onHoverEnd,
-    onHoverUpdate,
-    onLoad,
-    onLoadError,
-    onLoading,
-    onResize,
-    trigger,
-} from "../events/globalEvents";
 import {
     camFlash,
     camPos,
@@ -340,7 +333,7 @@ export const createContext = (
         onLoad,
         onLoadError,
         onLoading,
-        onResize,
+        onResize: app.onResize,
         onGamepadConnect: app.onGamepadConnect,
         onGamepadDisconnect: app.onGamepadDisconnect,
         onError,
@@ -449,14 +442,13 @@ export const createContext = (
         onUnuse: defaultScope.onUnuse,
         onTag: defaultScope.onTag,
         onUntag: defaultScope.onUntag,
-        onClick,
-        onCollide,
-        onCollideUpdate,
-        onCollideEnd,
-        onHover,
-        onHoverUpdate,
-        onHoverEnd,
-        // input
+        onClick: defaultScope.onClick,
+        onCollide: defaultScope.onCollide,
+        onCollideUpdate: defaultScope.onCollideUpdate,
+        onCollideEnd: defaultScope.onCollideEnd,
+        onHover: defaultScope.onHover,
+        onHoverUpdate: defaultScope.onHoverUpdate,
+        onHoverEnd: defaultScope.onHoverEnd,
         onKeyDown: defaultScope.onKeyDown,
         onKeyPress: defaultScope.onKeyPress,
         onKeyPressRepeat: defaultScope.onKeyPressRepeat,

@@ -9,7 +9,6 @@ import {
     KEventController,
     type KEventHandler,
 } from "../../events/events";
-import type { GameEventHandlers } from "../../events/gameEventHandlers";
 import type { EventHandlersInAppButNotAddedInGameObjRaw } from "../../events/scopes";
 import { drawMasked } from "../../gfx/draw/drawMasked";
 import { beginPicture, endPicture, Picture } from "../../gfx/draw/drawPicture";
@@ -498,10 +497,10 @@ export interface GameObjRaw {
     onButtonDown: KAPLAYCtx["onButtonDown"];
     onButtonPress: KAPLAYCtx["onButtonPress"];
     onButtonRelease: KAPLAYCtx["onButtonRelease"];
-    onTabShow: GameEventHandlers["onTabShow"];
-    onTabHide: GameEventHandlers["onTabHide"];
-    onShow: GameEventHandlers["onShow"];
-    onHide: GameEventHandlers["onHide"];
+    onTabShow: KAPLAYCtx["onTabShow"];
+    onTabHide: KAPLAYCtx["onTabHide"];
+    onShow: KAPLAYCtx["onShow"];
+    onHide: KAPLAYCtx["onHide"];
 }
 
 export type InternalGameObjRaw = GameObjRaw & {
@@ -708,7 +707,6 @@ export const GameObjRawPrototype: Omit<
         // see the object with *only* components added during make(),
         // and *then* run the components' add() which may add other components
         // and trigger onUse()
-        _k.app.events.trigger("add", obj);
         _k.game.gameObjEvents.trigger("add", obj);
         obj.trigger("add", obj);
 
@@ -798,7 +796,6 @@ export const GameObjRawPrototype: Omit<
 
         const trigger = (o: GameObj) => {
             o.trigger("destroy");
-            _k.app.events.trigger("destroy", o);
             _k.game.gameObjEvents.trigger("destroy", o);
             o.children.forEach((child) => trigger(child));
             o.id = null as any;
@@ -1398,7 +1395,6 @@ export const GameObjRawPrototype: Omit<
             && !internalIsMaking(this as unknown as GameObj)
         ) {
             this.trigger("use", comp.id);
-            _k.app.events.trigger("use", this as unknown as GameObj, comp.id);
             _k.game.gameObjEvents.trigger(
                 "use",
                 this as unknown as GameObj,
@@ -1418,7 +1414,6 @@ export const GameObjRawPrototype: Omit<
 
         if (!internalIsMaking(this as unknown as GameObj)) {
             this.trigger("unuse", id);
-            _k.app.events.trigger("unuse", this, id);
             _k.game.gameObjEvents.trigger("unuse", this, id);
         }
 

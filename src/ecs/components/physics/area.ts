@@ -62,6 +62,7 @@ function clickHandler(button: MouseButton) {
     _k.game.retrieve(new Rect(p.sub(1, 1), 3, 3), obj => objects.push(obj));
     for (const obj of objects) {
         if (obj.worldArea().contains(p)) {
+            _k.game.gameObjEvents.trigger("click", obj);
             obj.trigger("click", button);
         }
     }
@@ -90,13 +91,18 @@ function hoverHandler() {
                 newObjects.add(obj);
             }
         });
-        newObjects.difference(oldObjects).forEach(obj => obj.trigger("hover"));
-        oldObjects.difference(newObjects).forEach(obj =>
-            obj.trigger("hoverEnd")
-        );
-        newObjects.intersection(oldObjects).forEach(obj =>
-            obj.trigger("hoverUpdate")
-        );
+        newObjects.difference(oldObjects).forEach(obj => {
+            _k.game.gameObjEvents.trigger("hover", obj);
+            obj.trigger("hover");
+        });
+        oldObjects.difference(newObjects).forEach(obj => {
+            _k.game.gameObjEvents.trigger("hoverEnd", obj);
+            obj.trigger("hoverEnd");
+        });
+        newObjects.intersection(oldObjects).forEach(obj => {
+            _k.game.gameObjEvents.trigger("hoverUpdate", obj);
+            obj.trigger("hoverUpdate");
+        });
         oldObjects = newObjects;
     };
 }
