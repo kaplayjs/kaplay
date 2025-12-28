@@ -255,6 +255,7 @@ export type AppEventMap = {
     input: [];
     update: [];
     fixedUpdate: [];
+    frameEnd: [];
     draw: [];
     add: [GameObj];
     destroy: [GameObj];
@@ -274,9 +275,6 @@ export type GameEventMap = {
     loadError: [string, Asset<any>];
     loading: [number];
     error: [Error];
-    input: [];
-    frameEnd: [];
-    resize: [];
     sceneLeave: [string];
     sceneEnter: [string];
 };

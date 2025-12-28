@@ -30,7 +30,7 @@ export function go(name: string, ...args: unknown[]) {
         throw new Error(`Scene not found: ${name}`);
     }
 
-    _k.game.events.onOnce("frameEnd", () => {
+    _k.app.events.onOnce("frameEnd", () => {
         _k.game.events.trigger("sceneLeave", name);
         _k.game.events.clear();
 

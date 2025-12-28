@@ -1,14 +1,15 @@
 import { _k } from "../shared";
 
 export const quit = () => {
-    const { game, app, gfx, ggl, gc } = _k;
-    game.events.onOnce("frameEnd", () => {
+    const { app, gfx, ggl, gc } = _k;
+
+    app.events.onOnce("frameEnd", () => {
         app.quit();
 
         // clear canvas
         gfx.gl.clear(
             gfx.gl.COLOR_BUFFER_BIT | gfx.gl.DEPTH_BUFFER_BIT
-                | gfx.gl.STENCIL_BUFFER_BIT,
+            | gfx.gl.STENCIL_BUFFER_BIT,
         );
 
         // unbind everything
