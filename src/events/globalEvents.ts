@@ -1,4 +1,3 @@
-import { type Asset, getFailedAssets } from "../assets/asset";
 import type { Collision } from "../ecs/systems/Collision";
 import { _k } from "../shared";
 import type { GameObj, Tag } from "../types";
@@ -130,34 +129,6 @@ export function onHoverEnd(
     return KEventController.join(events);
 }
 
-export function onLoading(action: (progress: number) => void) {
-    return _k.game.events.on("loading", action);
-}
-
 export function onResize(action: () => void) {
     return _k.app.onResize(action);
-}
-
-export function onError(action: (err: Error) => void) {
-    return _k.game.events.on("error", action);
-}
-
-export function onLoad(cb: () => void) {
-    if (_k.assets.loaded) {
-        cb();
-    }
-    else {
-        return _k.game.events.on("load", cb);
-    }
-}
-
-export function onLoadError(
-    cb: (name: string, failedAsset: Asset<any>) => void,
-) {
-    if (_k.assets.loaded) {
-        getFailedAssets().forEach(asset => cb(...asset));
-    }
-    else {
-        return _k.game.events.on("loadError", cb);
-    }
 }

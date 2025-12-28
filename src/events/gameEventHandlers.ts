@@ -12,6 +12,8 @@ import type {
 import type { TupleWithoutFirst } from "../utils/types";
 import type { GameObjEventNames, GameObjEvents } from "./eventMap";
 import type { KEventController } from "./events";
+import { onUpdate, onFixedUpdate, onDraw } from "./handlers/appEventHandlers";
+import { onAdd, onDestroy, onUse, onUnuse, onTag, onUntag, on } from "./handlers/gameEventHandlers";
 
 export interface GameEventHandlers {
     // #region App Events
@@ -1170,16 +1172,16 @@ export const createGameEventHandlers = (app: App) => {
         onButtonRelease: app.onButtonRelease,
         onTabShow: app.onTabShow,
         onTabHide: app.onTabHide,
-        onUpdate: app.onUpdate,
-        onFixedUpdate: app.onFixedUpdate,
-        onDraw: app.onDraw,
-        onAdd: app.onAdd,
-        onDestroy: app.onDestroy,
-        onUse: app.onUse,
-        onUnuse: app.onUnuse,
-        onTag: app.onTag,
-        onUntag: app.onUntag,
-        on: app.on,
+        onUpdate: onUpdate,
+        onFixedUpdate: onFixedUpdate,
+        onDraw: onDraw,
+        onAdd: onAdd,
+        onDestroy: onDestroy,
+        onUse: onUse,
+        onUnuse: onUnuse,
+        onTag: onTag,
+        onUntag: onUntag,
+        on: on,
         // deprecated
         onShow: app.onShow,
         onHide: app.onHide,
