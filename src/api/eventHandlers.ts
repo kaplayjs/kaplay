@@ -219,8 +219,9 @@ export function onLoadError(
     }
 }
 
-export function onResize(action: () => void) {
-    return _k.app.onResize(action);
+export function onSceneLeave(
+    action: (newScene?: string) => void,
+): KEventController {
+    return _k.game.events.on("sceneLeave", action);
 }
-
 // #endregion

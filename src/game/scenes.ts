@@ -32,10 +32,8 @@ export function go(name: string, ...args: unknown[]) {
 
     _k.app.events.onOnce("frameEnd", () => {
         _k.game.events.trigger("sceneLeave", name);
-        _k.game.events.clear();
-        _k.game.gameObjEvents.clear();
 
-        _k.app.state.sceneEvents.forEach((e) => e.cancel());
+        _k.game.sceneEvents.forEach((e) => e.cancel());
 
         [..._k.game.root.children].forEach((obj) => {
             if (
@@ -88,12 +86,6 @@ export function popScene() {
     }
 
     go(sceneData.sceneID, ...sceneData.args);
-}
-
-export function onSceneLeave(
-    action: (newScene?: string) => void,
-): KEventController {
-    return _k.game.events.on("sceneLeave", action);
 }
 
 export function getSceneName() {

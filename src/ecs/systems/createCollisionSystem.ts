@@ -1,5 +1,4 @@
 import { DEF_HASH_GRID_SIZE } from "../../constants/general";
-import { onSceneLeave } from "../../game/scenes";
 import { height, width } from "../../gfx/stack";
 import { gjkShapeIntersection } from "../../math/gjk";
 import { Rect, vec2 } from "../../math/math";
@@ -7,7 +6,7 @@ import { minkowskiRectShapeIntersection } from "../../math/minkowski";
 import { satShapeIntersection } from "../../math/sat";
 import type { BroadPhaseAlgorithm } from "../../math/spatial";
 import { HashGrid } from "../../math/spatial/hashgrid";
-import { Quadtree, ResizingQuadtree } from "../../math/spatial/quadtree";
+import { Quadtree } from "../../math/spatial/quadtree";
 import {
     SweepAndPruneHorizontal,
     SweepAndPruneVertical,
@@ -105,7 +104,7 @@ export const createCollisionSystem = (
                 }
             });
 
-            onSceneLeave(scene => {
+            _k.appScope.onSceneLeave(scene => {
                 broadInit = false;
                 broadPhaseIntersection.clear();
             });

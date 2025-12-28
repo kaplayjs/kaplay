@@ -4,6 +4,7 @@ import {
     type InternalGameObjRaw,
 } from "../ecs/entity/GameObjRaw";
 import { scene, type SceneDef } from "../game/scenes";
+import { _k } from "../shared";
 import type { KEventController } from "./events";
 import { type ScopeHandlers } from "./scopeHandlers";
 
@@ -25,7 +26,7 @@ export const createSceneScope = (
             // @ts-expect-error
             const ev: KEventController = handlers[e]?.(...args);
 
-            app.state.sceneEvents.push(ev);
+            _k.game.sceneEvents.push(ev);
 
             return ev;
         };
@@ -46,7 +47,7 @@ export const createAppScope = (handlers: ScopeHandlers): AppScope => {
     return appScope as AppScope;
 };
 
-const eventHandlersInAppButNotAddedInGameObjRaw = [
+const ingnoredHandlersForObject = [
     "onUpdate",
     "onFixedUpdate",
     "onDraw",
@@ -56,16 +57,23 @@ const eventHandlersInAppButNotAddedInGameObjRaw = [
     "onUnuse",
     "onTag",
     "onUntag",
+    "onCollide",
+    "onCollideEnd",
+    "onCollideUpdate",
+    "onClick",
+    "onHover",
+    "onHoverEnd",
+    "onHoverUpdate",
     "on",
 ] as const;
 
 export type EventHandlersInAppButNotAddedInGameObjRaw =
-    typeof eventHandlersInAppButNotAddedInGameObjRaw[number];
+    typeof ingnoredHandlersForObject[number];
 
-export function attachAppHandlersToGameObjRaw(handlers: ScopeHandlers) {
+export function attachScopeHandlersToGameObjRaw(handlers: ScopeHandlers) {
     for (const e of Object.keys(handlers)) {
         if (
-            eventHandlersInAppButNotAddedInGameObjRaw.includes(
+            ingnoredHandlersForObject.includes(
                 e as EventHandlersInAppButNotAddedInGameObjRaw,
             )
         ) {

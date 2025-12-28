@@ -215,7 +215,6 @@ export const initAppState = (opt: {
         lastWidth: opt.canvas.offsetWidth,
         lastHeight: opt.canvas.offsetHeight,
         events: new KEventHandler<AppEventMap>(),
-        sceneEvents: [] as KEventController[],
     };
 };
 

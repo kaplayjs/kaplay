@@ -122,14 +122,7 @@ import {
     setGravityDirection,
 } from "../game/gravity";
 import { getDefaultLayer, getLayers, layers, setLayers } from "../game/layers";
-import {
-    getSceneName,
-    go,
-    onSceneLeave,
-    popScene,
-    pushScene,
-    scene,
-} from "../game/scenes";
+import { getSceneName, go, popScene, pushScene } from "../game/scenes";
 import { anchorPt } from "../gfx/anchor";
 import { getBackground, setBackground } from "../gfx/bg";
 import { makeCanvas } from "../gfx/canvasBuffer";
@@ -330,14 +323,14 @@ export const createContext = (
         setFullscreen: app.setFullscreen,
         isFullscreen: app.isFullscreen,
         isTouchscreen: app.isTouchscreen,
-        onLoad,
-        onLoadError,
-        onLoading,
-        onResize: app.onResize,
-        onGamepadConnect: app.onGamepadConnect,
-        onGamepadDisconnect: app.onGamepadDisconnect,
-        onError,
-        onCleanup,
+        onLoad: defaultScope.onLoad,
+        onLoadError: defaultScope.onLoadError,
+        onLoading: defaultScope.onLoading,
+        onResize: defaultScope.onResize,
+        onGamepadConnect: defaultScope.onGamepadConnect,
+        onGamepadDisconnect: defaultScope.onGamepadDisconnect,
+        onError: defaultScope.onError,
+        onCleanup: defaultScope.onCleanup,
         // misc
         flash: flash,
         setCamPos: setCamPos,
@@ -629,7 +622,7 @@ export const createContext = (
         scene: e.sceneScope,
         getSceneName,
         go,
-        onSceneLeave,
+        onSceneLeave: defaultScope.onSceneLeave,
         pushScene,
         popScene,
         // layers

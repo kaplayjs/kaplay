@@ -7,10 +7,15 @@ import {
     onCollideUpdate,
     onDestroy,
     onDraw,
+    onError,
     onFixedUpdate,
     onHover,
     onHoverEnd,
     onHoverUpdate,
+    onLoad,
+    onLoadError,
+    onLoading,
+    onSceneLeave,
     onTag,
     onUntag,
     onUnuse,
@@ -18,6 +23,7 @@ import {
     onUse,
 } from "../api/eventHandlers";
 import type { App } from "../app/app";
+import { onCleanup } from "../core/quit";
 
 export type ScopeHandlers = ReturnType<typeof createScopeHandlers>;
 
@@ -64,6 +70,13 @@ export const createScopeHandlers = (app: App) => {
         onHover: onHover,
         onHoverEnd: onHoverEnd,
         onHoverUpdate: onHoverUpdate,
+        onResize: app.onResize,
+        onSceneLeave: onSceneLeave,
+        onLoad: onLoad,
+        onLoading: onLoading,
+        onError: onError,
+        onLoadError: onLoadError,
+        onCleanup: onCleanup,
         // deprecated
         onShow: app.onShow,
         onHide: app.onHide,

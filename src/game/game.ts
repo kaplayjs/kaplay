@@ -13,7 +13,7 @@ import type { PosComp } from "../ecs/components/transform/pos";
 import { makeInternal } from "../ecs/entity/make";
 import type { System } from "../ecs/systems/systems";
 import type { GameEventMap, GameObjEventMap } from "../events/eventMap";
-import { KEventHandler } from "../events/events";
+import { type KEventController, KEventHandler } from "../events/events";
 import { Mat23, Rect, RNG } from "../math/math";
 import { Vec2 } from "../math/Vec2";
 import type { GameObj } from "../types";
@@ -35,6 +35,10 @@ export type Game = {
      * Where game object global events are stored.
      */
     gameObjEvents: KEventHandler<GameObjEventMap>;
+    /**
+     * Event Handlers that are cancelled on scene change.
+     */
+    sceneEvents: KEventController[];
     /**
      * The root game object, parent of all game objects.
      */
@@ -154,6 +158,7 @@ export const createGame = (): Game => {
         root: makeInternal(0) as GameObj<TimerComp>,
         events: new KEventHandler<GameEventMap>(),
         gameObjEvents: new KEventHandler<GameObjEventMap>(),
+        sceneEvents: [],
         cam: {
             pos: null as Vec2 | null,
             scale: new Vec2(1),
@@ -161,7 +166,6 @@ export const createGame = (): Game => {
             shake: 0,
             transform: new Mat23(),
         },
-
         currentSceneArgs: [], // stores the current scene arguments //
         sceneStack: [], // stores the scene names //
 

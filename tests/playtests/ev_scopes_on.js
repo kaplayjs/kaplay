@@ -30,10 +30,6 @@ scene("a", () => {
 scene("b", () => {
     debug.log("scene changed!");
 
-    add([
-        "customTag",
-    ]);
-
     addAndTriggerDummy();
 });
 
