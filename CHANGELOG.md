@@ -20,13 +20,13 @@ best friend, lajbel, can put the correct version name here
 
 ## Added
 
-- **(!)** Added `AreaCompOpt.isSensor`. Areas without body or is sensor will no longer
-  be eligible for collisions - @mflerackers
+- **(!)** Added `AreaCompOpt.isSensor`. Areas without body or is sensor will no
+  longer be eligible for collisions - @mflerackers
 
 ## Changed
 
-- Now, like `on()` and `onAdd()`, `onDestroy()`, all the events that do (on: tag, ev: action), 
-  are available in scopes - @lajbel
+- Now, like `on()` and `onAdd()`, `onDestroy()`, all the events that do (on:
+  tag, ev: action), are available in scopes - @lajbel
 
 ## Fixed
 
@@ -36,7 +36,7 @@ best friend, lajbel, can put the correct version name here
 
 ## Removed
 
-- **(!)** `onClick(() => {})` was removed, use `onMousePress()` instead. 
+- **(!)** `onClick(() => {})` was removed, use `onMousePress()` instead.
   `onClick("tag", () => {});` stays the same,
 
 ## [4000.0.0-alpha.25] - 2025-12-23
@@ -50,8 +50,8 @@ best friend, lajbel, can put the correct version name here
 
 ### Changed
 
-- **(!)** You can no longer change the position of an object by doing obj.pos.x += 1.
-  You need to assign a new Vec2 or use moveBy instead - @mflerackers
+- **(!)** You can no longer change the position of an object by doing obj.pos.x
+  += 1. You need to assign a new Vec2 or use moveBy instead - @mflerackers
 - Transforms are now only recalculated when needed. Thus static objects no
   longer increase computation in the transform phase - @mflerackers
 - Areas are now only recalculated when the area settings or (optional)

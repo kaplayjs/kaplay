@@ -30,7 +30,7 @@ export const on = <Ev extends GameObjEventNames | string & {}>(
 
     const handleNew = (obj: GameObj) => {
         const ec = obj.on(event, (...args) => {
-            cb(obj, ...<TupleWithoutFirst<GameObjEvents[Ev]>>args);
+            cb(obj, ...<TupleWithoutFirst<GameObjEvents[Ev]>> args);
         });
         ec.paused = paused;
         if (obj2Handler.has(obj)) obj2Handler.get(obj)!.cancel();

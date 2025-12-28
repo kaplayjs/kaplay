@@ -21,7 +21,7 @@ export const createSceneScope = (
 
     for (const e of Object.keys(handlers)) {
         // @ts-expect-error
-        sceneScope[e] = function (this: InternalGameObjRaw, ...args: [any]) {
+        sceneScope[e] = function(this: InternalGameObjRaw, ...args: [any]) {
             // @ts-expect-error
             const ev: KEventController = handlers[e]?.(...args);
 
@@ -74,7 +74,7 @@ export function attachAppHandlersToGameObjRaw(handlers: ScopeHandlers) {
 
         const obj = GameObjRawPrototype as Record<string, any>;
 
-        obj[e] = function (this: InternalGameObjRaw, ...args: [any]) {
+        obj[e] = function(this: InternalGameObjRaw, ...args: [any]) {
             // @ts-ignore
             const ev: KEventController = handlers[e]?.(...args);
             ev.paused = this.paused;

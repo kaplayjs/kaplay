@@ -150,7 +150,6 @@ import type { Mat4 } from "../math/Mat4";
 import type {
     Circle,
     Ellipse,
-    getSpriteOutline,
     Line,
     Mat2,
     Mat23,

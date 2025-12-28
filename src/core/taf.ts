@@ -8,17 +8,17 @@ export type InfKAPLAYOpt<T extends KAPLAYOpt = KAPLAYOpt> = {
     buttons: T extends { buttons: infer B } ? B : undefined;
     plugins: T extends { plugins: infer P } ? P : undefined;
     scenes: T extends { types: infer P }
-    ? P extends { scenes: infer S } ? S : undefined
-    : undefined;
+        ? P extends { scenes: infer S } ? S : undefined
+        : undefined;
     tags: T extends { types: infer P }
-    ? P extends { tags: infer T } ? T : undefined
-    : undefined;
+        ? P extends { tags: infer T } ? T : undefined
+        : undefined;
     strictScenes: T extends { types: infer P }
-    ? P extends { strictScenes: infer S } ? S : undefined
-    : undefined;
+        ? P extends { strictScenes: infer S } ? S : undefined
+        : undefined;
     strictTag: T extends { types: infer P }
-    ? P extends { strictTags: infer T } ? T : undefined
-    : undefined;
+        ? P extends { strictTags: infer T } ? T : undefined
+        : undefined;
 };
 
 export type OptionalString<T extends string> = T | {} & string;
@@ -68,9 +68,9 @@ export type KAPLAYTypeOptWithoutPlugins = Omit<KAPLAYOptTypeOptions, "plugins">;
 
 type SceneName<O extends KAPLAYOptTypeOptions> =
     InfKAPLAYOpt<O>["scenes"] extends undefined ? string
-    : InfKAPLAYOpt<O>["strictScenes"] extends true
-    ? keyof InfKAPLAYOpt<O>["scenes"]
-    : OptionalString<Extract<keyof InfKAPLAYOpt<O>["scenes"], string>>;
+        : InfKAPLAYOpt<O>["strictScenes"] extends true
+            ? keyof InfKAPLAYOpt<O>["scenes"]
+        : OptionalString<Extract<keyof InfKAPLAYOpt<O>["scenes"], string>>;
 
 type SceneArgs<TScene, TSceneMap> = TScene extends keyof TSceneMap
     ? TSceneMap[TScene] extends Array<any> ? TSceneMap[TScene] : any[]
@@ -84,9 +84,9 @@ type SceneArgs<TScene, TSceneMap> = TScene extends keyof TSceneMap
 
 export type ButtonName<TOpt extends KAPLAYOptTypeOptions> =
     keyof TOpt["buttons"] extends undefined ? string
-    : TOpt["buttons"] extends Record<string, ButtonBinding>
-    ? Extract<keyof TOpt["buttons"], string>
-    : OptionalString<Extract<keyof TOpt["buttons"], string>>;
+        : TOpt["buttons"] extends Record<string, ButtonBinding>
+            ? Extract<keyof TOpt["buttons"], string>
+        : OptionalString<Extract<keyof TOpt["buttons"], string>>;
 
 // export type CompFromTag<O extends KAPLAYTypeOpt, TTag> = TTag extends
 //     keyof O["tags"] ? O["tags"][TTag]
