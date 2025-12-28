@@ -3,11 +3,12 @@ import {
     getLocalAreaVersion,
     getRenderAreaVersion,
 } from "../../ecs/components/physics/area";
-import { getTransformVersion } from "../../ecs/entity/GameObjRaw";
+import { getTransformVersion, objectTransformNeedsUpdate } from "../../ecs/entity/GameObjRaw";
 import { isPaused } from "../../ecs/entity/utils";
 import type { GameObj } from "../../types";
 import type { Rect } from "../math";
 import type { BroadPhaseAlgorithm } from ".";
+import { calcTransform } from "../various";
 
 /**
  * Left or right edge of an object's bbox
