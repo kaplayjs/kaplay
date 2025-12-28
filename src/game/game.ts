@@ -28,9 +28,13 @@ export type Game = {
      */
     gameObjLastId: number;
     /**
+     * Game global events.
+     */
+    events: KEventHandler<GameEventMap>;
+    /**
      * Where game object global events are stored.
      */
-    events: KEventHandler<GameEventMap & GameObjEventMap>;
+    gameObjEvents: KEventHandler<GameObjEventMap>;
     /**
      * The root game object, parent of all game objects.
      */
@@ -148,7 +152,8 @@ export const createGame = (): Game => {
     const game: Game = {
         gameObjLastId: 0,
         root: makeInternal(0) as GameObj<TimerComp>,
-        events: new KEventHandler<GameEventMap & GameObjEventMap>(),
+        events: new KEventHandler<GameEventMap>,
+        gameObjEvents: new KEventHandler<GameObjEventMap>(),
         cam: {
             pos: null as Vec2 | null,
             scale: new Vec2(1),
@@ -196,7 +201,7 @@ export const createGame = (): Game => {
         retrieve: (
             rect: Rect,
             retrieveCb: (obj: GameObj<AreaComp>) => void,
-        ) => {},
+        ) => { },
 
         // Some state
         crashed: false,

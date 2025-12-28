@@ -709,7 +709,7 @@ export const GameObjRawPrototype: Omit<
         // and *then* run the components' add() which may add other components
         // and trigger onUse()
         _k.app.events.trigger("add", obj);
-        _k.game.events.trigger("add", obj);
+        _k.game.gameObjEvents.trigger("add", obj);
         obj.trigger("add", obj);
 
         return obj;
@@ -799,7 +799,7 @@ export const GameObjRawPrototype: Omit<
         const trigger = (o: GameObj) => {
             o.trigger("destroy");
             _k.app.events.trigger("destroy", o);
-            _k.game.events.trigger("destroy", o);
+            _k.game.gameObjEvents.trigger("destroy", o);
             o.children.forEach((child) => trigger(child));
             o.id = null as any;
         };
@@ -1342,12 +1342,12 @@ export const GameObjRawPrototype: Omit<
                         this._onCurCompCleanup = null;
                     };
 
-                    gc.push(this.on(key, <any> func).cancel);
+                    gc.push(this.on(key, <any>func).cancel);
                 }
                 else {
-                    const func = comp[<keyof typeof comp> key];
+                    const func = comp[<keyof typeof comp>key];
 
-                    gc.push(this.on(key, <any> func).cancel);
+                    gc.push(this.on(key, <any>func).cancel);
                 }
             }
             else {
@@ -1355,8 +1355,8 @@ export const GameObjRawPrototype: Omit<
                 if (this[key] === undefined) {
                     // Assign comp fields to game obj
                     Object.defineProperty(this, key, {
-                        get: () => comp[<keyof typeof comp> key],
-                        set: (val) => comp[<keyof typeof comp> key] = val,
+                        get: () => comp[<keyof typeof comp>key],
+                        set: (val) => comp[<keyof typeof comp>key] = val,
                         configurable: true,
                         enumerable: true,
                     });
@@ -1369,9 +1369,9 @@ export const GameObjRawPrototype: Omit<
                     )?.id;
                     throw new Error(
                         `Duplicate component property: "${key}" while adding component "${comp.id}"`
-                            + (originalCompId
-                                ? ` (originally added by "${originalCompId}")`
-                                : ""),
+                        + (originalCompId
+                            ? ` (originally added by "${originalCompId}")`
+                            : ""),
                     );
                 }
             }
@@ -1399,7 +1399,7 @@ export const GameObjRawPrototype: Omit<
         ) {
             this.trigger("use", comp.id);
             _k.app.events.trigger("use", this as unknown as GameObj, comp.id);
-            _k.game.events.trigger(
+            _k.game.gameObjEvents.trigger(
                 "use",
                 this as unknown as GameObj,
                 comp.id,
@@ -1419,7 +1419,7 @@ export const GameObjRawPrototype: Omit<
         if (!internalIsMaking(this as unknown as GameObj)) {
             this.trigger("unuse", id);
             _k.app.events.trigger("unuse", this, id);
-            _k.game.events.trigger("unuse", this, id);
+            _k.game.gameObjEvents.trigger("unuse", this, id);
         }
 
         if (this._cleanups[id]) {
@@ -1504,7 +1504,7 @@ export const GameObjRawPrototype: Omit<
                 this._tags.add(t);
                 if (!internalIsMaking(this as unknown as GameObj)) {
                     this.trigger("tag", t);
-                    _k.game.events.trigger("tag", this as GameObj, t);
+                    _k.game.gameObjEvents.trigger("tag", this as GameObj, t);
                 }
             }
         }
@@ -1512,7 +1512,7 @@ export const GameObjRawPrototype: Omit<
             this._tags.add(tag);
             if (!internalIsMaking(this as unknown as GameObj)) {
                 this.trigger("tag", tag);
-                _k.game.events.trigger("tag", this as GameObj, tag);
+                _k.game.gameObjEvents.trigger("tag", this as GameObj, tag);
             }
         }
     },
@@ -1522,13 +1522,13 @@ export const GameObjRawPrototype: Omit<
             for (const t of tag) {
                 this._tags.delete(t);
                 this.trigger("untag", t);
-                _k.game.events.trigger("untag", this, t);
+                _k.game.gameObjEvents.trigger("untag", this, t);
             }
         }
         else {
             this._tags.delete(tag);
             this.trigger("untag", tag);
-            _k.game.events.trigger("untag", this, tag);
+            _k.game.gameObjEvents.trigger("untag", this, tag);
         }
     },
 
