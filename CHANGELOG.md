@@ -25,8 +25,8 @@ best friend, lajbel, can put the correct version name here
 
 ## Changed
 
-- Now, like `on()` and `onAdd()`, `onDestroy()`, all the events that do (on:
-  tag, ev: action), are available in scopes - @lajbel
+- Now, all global events handlers are avaible in scopes, `app.onXXXX` and
+  `scene.onXXXX()` - @lajbel
 
 ## Fixed
 
