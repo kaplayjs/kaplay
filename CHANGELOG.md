@@ -28,6 +28,8 @@ best friend, lajbel, can put the correct version name here
 - Fixed `tween()` not cloning the passed vectors/colors - @lajbel
 - Fixed the vibration effect on bodies introduced in alpha.25 thanks to
   @lajbel's debugging skills - @mflerackers
+- Fixed `SpriteComp.hasAnim()` returning false erroneously when the animation
+  named was just constant frame 0 - @dragoncoder047
 
 ## [4000.0.0-alpha.25] - 2025-12-23
 
