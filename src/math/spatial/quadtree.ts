@@ -335,13 +335,15 @@ export class Quadtree implements BroadPhaseAlgorithm {
                 i++;
                 continue;
             }
-            versions![0] = getTransformVersion(obj);
-            versions![1] = getRenderAreaVersion(obj);
-            versions![2] = getLocalAreaVersion(obj);
 
             if (objectTransformNeedsUpdate(obj)) {
                 calcTransform(obj, obj.transform);
             }
+            else {
+                versions![0] = getTransformVersion(obj);
+            }
+            versions![1] = getRenderAreaVersion(obj);
+            versions![2] = getLocalAreaVersion(obj);
 
             const bbox = obj.worldBbox();
             // If the object is outside the bounds, remove it and add it to the root later

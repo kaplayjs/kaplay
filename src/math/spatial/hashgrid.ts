@@ -94,13 +94,15 @@ export class HashGrid {
                 // No change
                 continue;
             }
-            versions![0] = getTransformVersion(obj);
-            versions![1] = getRenderAreaVersion(obj);
-            versions![2] = getLocalAreaVersion(obj);
 
             if (objectTransformNeedsUpdate(obj)) {
                 calcTransform(obj, obj.transform);
             }
+            else {
+                versions![0] = getTransformVersion(obj);
+            }
+            versions![1] = getRenderAreaVersion(obj);
+            versions![2] = getLocalAreaVersion(obj);
 
             // Retrieve the old hashes
             for (let i = 0; i < oldHashes.length; i++) {
