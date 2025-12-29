@@ -209,3 +209,5 @@ and with the support of many
   [kitchen sink font](https://polyducks.itch.io/kitchen-sink-textmode-font) font
 - Thanks to [0x72](https://0x72.itch.io/) for the amazing
   [Dungeon Tileset](https://0x72.itch.io/dungeontileset-ii)
+- Thanks to @Minamotion for the `tiny` character sprite used in some of the
+  tests
