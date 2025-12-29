@@ -61,9 +61,9 @@ export class SweepAndPruneHorizontal implements BroadPhaseAlgorithm {
         this.edges.push(right);
         this.objects.set(obj, [left, right]);
         this.versionsForObject.set(obj, [
-            getTransformVersion(obj),
-            getRenderAreaVersion(obj),
-            getLocalAreaVersion(obj),
+            -1,
+            -1,
+            -1,
         ]);
     }
 
@@ -92,7 +92,7 @@ export class SweepAndPruneHorizontal implements BroadPhaseAlgorithm {
     update() {
         // Update edge data
         for (const [obj, edges] of this.objects.entries()) {
-            if (!isValidCollisionObject(obj)) continue;
+            if (!obj.exists()) continue;
 
             // Check if this world area changed since last frame
             const versions = this.versionsForObject.get(obj);
@@ -226,11 +226,7 @@ export class SweepAndPruneVertical implements BroadPhaseAlgorithm {
         this.edges.push(top);
         this.edges.push(bottom);
         this.objects.set(obj, [top, bottom]);
-        this.versionsForObject.set(obj, [
-            getTransformVersion(obj),
-            getRenderAreaVersion(obj),
-            getLocalAreaVersion(obj),
-        ]);
+        this.versionsForObject.set(obj, [-1, -1, -1]);
     }
 
     /**
@@ -258,7 +254,7 @@ export class SweepAndPruneVertical implements BroadPhaseAlgorithm {
     update() {
         // Update edge data
         for (const [obj, edges] of this.objects.entries()) {
-            if (!isValidCollisionObject(obj)) continue;
+            if (!obj.exists()) continue;
 
             // Check if this world area changed since last frame
             const versions = this.versionsForObject.get(obj);
