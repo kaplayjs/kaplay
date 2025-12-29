@@ -1,23 +1,31 @@
+/**
+ * @file Issue #984 Test
+ * @description Test for using checking if an anim exists using hasAnim() when the anim is just constant frame 0
+ * @difficulty 1
+ * @author @Minamotion
+ * @minver 30001.0.19
+ */
+
 kaplay();
 
 // Load tiny
-loadSprite("tiny", "https://file.garden/aAAniAgY3QmuIh36/tiny.png", {
-    "sliceX": 6,
-    "sliceY": 1,
-    "anims": {
-        "idle": 0,
-        "ouch": 1,
-        "run": {
-            "from": 2,
-            "to": 3,
-            "loop": true,
-            "speed": 15,
+loadSprite("tiny", "/sprites/minatiny.png", {
+    sliceX: 6,
+    sliceY: 1,
+    anims: {
+        idle: 0, // <-- this is the key line
+        ouch: 1, //     the rest are irrelevant
+        run: {
+            from: 2,
+            to: 3,
+            loop: true,
+            speed: 15,
         },
-        "walk": {
-            "from": 4,
-            "to": 5,
-            "loop": true,
-            "speed": 6,
+        walk: {
+            from: 4,
+            to: 5,
+            loop: true,
+            speed: 6,
         },
     },
 });
@@ -64,7 +72,6 @@ scene("game", async () => {
         tiny.move(650, 0);
     });
     tiny.play("run");
-    await wait(1.5);
 });
 
 go("game");
