@@ -20,7 +20,8 @@ best friend, lajbel, can put the correct version name here
 
 ## Added
 
-- Added `AreaCompOpt.isSensor`. Areas without body or is sensor will no longer be eligible for collisions - @mflerackers
+- Added `AreaCompOpt.isSensor`. Areas without body or is sensor will no longer
+  be eligible for collisions - @mflerackers
 
 ## Fixed
 

@@ -3,12 +3,15 @@ import {
     getLocalAreaVersion,
     getRenderAreaVersion,
 } from "../../ecs/components/physics/area";
-import { getTransformVersion, objectTransformNeedsUpdate } from "../../ecs/entity/GameObjRaw";
+import {
+    getTransformVersion,
+    objectTransformNeedsUpdate,
+} from "../../ecs/entity/GameObjRaw";
 import { isPaused } from "../../ecs/entity/utils";
 import type { GameObj } from "../../types";
 import type { Rect } from "../math";
-import type { BroadPhaseAlgorithm } from ".";
 import { calcTransform } from "../various";
+import type { BroadPhaseAlgorithm } from ".";
 
 /**
  * Left or right edge of an object's bbox
@@ -58,9 +61,9 @@ export class SweepAndPruneHorizontal implements BroadPhaseAlgorithm {
         this.edges.push(right);
         this.objects.set(obj, [left, right]);
         this.versionsForObject.set(obj, [
-            getTransformVersion(obj),
-            getRenderAreaVersion(obj),
-            getLocalAreaVersion(obj),
+            -1,
+            -1,
+            -1,
         ]);
     }
 
@@ -89,7 +92,7 @@ export class SweepAndPruneHorizontal implements BroadPhaseAlgorithm {
     update() {
         // Update edge data
         for (const [obj, edges] of this.objects.entries()) {
-            if (!isValidCollisionObject(obj)) continue;
+            if (!obj.exists()) continue;
 
             // Check if this world area changed since last frame
             const versions = this.versionsForObject.get(obj);
@@ -223,11 +226,7 @@ export class SweepAndPruneVertical implements BroadPhaseAlgorithm {
         this.edges.push(top);
         this.edges.push(bottom);
         this.objects.set(obj, [top, bottom]);
-        this.versionsForObject.set(obj, [
-            getTransformVersion(obj),
-            getRenderAreaVersion(obj),
-            getLocalAreaVersion(obj),
-        ]);
+        this.versionsForObject.set(obj, [-1, -1, -1]);
     }
 
     /**
@@ -255,7 +254,7 @@ export class SweepAndPruneVertical implements BroadPhaseAlgorithm {
     update() {
         // Update edge data
         for (const [obj, edges] of this.objects.entries()) {
-            if (!isValidCollisionObject(obj)) continue;
+            if (!obj.exists()) continue;
 
             // Check if this world area changed since last frame
             const versions = this.versionsForObject.get(obj);

@@ -10,9 +10,9 @@
 
 kaplay({
     // broadPhaseCollisionAlgorithm: "quadtree",
-    //broadPhaseCollisionAlgorithm: "grid",
-    broadPhaseCollisionAlgorithm: "sap"
-    // broadPhaseCollisionAlgorithm: "sapv",
+    // broadPhaseCollisionAlgorithm: "grid",
+    // broadPhaseCollisionAlgorithm: "sap"
+    broadPhaseCollisionAlgorithm: "sapv",
 });
 
 loadBean();
@@ -24,7 +24,7 @@ onLoad(() => {
             sprite("bean"),
             anchor("center"),
             color(WHITE),
-            area({ isSensor: true }),
+            area(),
         ]);
     }
 });
