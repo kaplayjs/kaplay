@@ -104,13 +104,16 @@ export class SweepAndPruneHorizontal implements BroadPhaseAlgorithm {
                 // No change
                 continue;
             }
-            versions![0] = getTransformVersion(obj);
-            versions![1] = getRenderAreaVersion(obj);
-            versions![2] = getLocalAreaVersion(obj);
 
             if (objectTransformNeedsUpdate(obj)) {
                 calcTransform(obj, obj.transform);
             }
+            else {
+                versions![0] = getTransformVersion(obj);
+            }
+            versions![1] = getRenderAreaVersion(obj);
+            versions![2] = getLocalAreaVersion(obj);
+
             const bbox = obj.worldBbox();
             edges[0].x = bbox.pos.x;
             edges[1].x = bbox.pos.x + bbox.width;
@@ -266,13 +269,16 @@ export class SweepAndPruneVertical implements BroadPhaseAlgorithm {
                 // No change
                 continue;
             }
-            versions![0] = getTransformVersion(obj);
-            versions![1] = getRenderAreaVersion(obj);
-            versions![2] = getLocalAreaVersion(obj);
 
             if (objectTransformNeedsUpdate(obj)) {
                 calcTransform(obj, obj.transform);
             }
+            else {
+                versions![0] = getTransformVersion(obj);
+            }
+            versions![1] = getRenderAreaVersion(obj);
+            versions![2] = getLocalAreaVersion(obj);
+
             const bbox = obj.worldBbox();
             edges[0].y = bbox.pos.y;
             edges[1].y = bbox.pos.y + bbox.height;
