@@ -1,5 +1,6 @@
 kaplay({
     background: "#f2ae99",
+    broadPhaseCollisionAlgorithm: "sap"
 });
 
 loadBean();
@@ -24,7 +25,7 @@ const bean = card.add([
     sprite("bean"),
     anchor("center"),
     scale(2),
-    area(),
+    area({ isSensor: true }),
     z(1),
 ]);
 
