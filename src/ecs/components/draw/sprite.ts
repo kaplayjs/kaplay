@@ -585,7 +585,7 @@ export function sprite(
         },
 
         hasAnim(name) {
-            return Boolean(this.getAnim(name));
+            return this.getAnim(name) !== null;
         },
 
         onAnimEnd(
