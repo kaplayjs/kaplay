@@ -60,7 +60,7 @@ export function multSkew(x: number, y: number) {
     _k.gfx.transform.skewSelf(x, y);
 }
 
-export function loadIdentity(m: Mat23) {
+export function loadIdentity() {
     _k.gfx.transform.setIdentity();
 }
 

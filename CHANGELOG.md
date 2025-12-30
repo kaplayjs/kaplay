@@ -18,6 +18,75 @@ best friend, lajbel, can put the correct version name here
 
 ## [unreleased]
 
+## Added
+
+- Added `AreaCompOpt.isSensor`. Areas without body or is sensor will no longer
+  be eligible for collisions - @mflerackers
+
+## Fixed
+
+- Fixed `tween()` not cloning the passed vectors/colors - @lajbel
+- Fixed the vibration effect on bodies introduced in alpha.25 thanks to
+  @lajbel's debugging skills - @mflerackers
+- Fixed `SpriteComp.hasAnim()` returning false erroneously when the animation
+  named was just constant frame 0 - @dragoncoder047
+
+## [4000.0.0-alpha.25] - 2025-12-23
+
+### Added
+
+- Added the `fakeMouseMove` event in `FakeMouseComp`, it will triggers when you
+  move the object - @lajbel
+- Global `retrieve()` method to get the objects with area within a certain
+  rectangle - @mflerackers
+
+### Changed
+
+- Transforms are now only recalculated when needed. Thus static objects no
+  longer increase computation in the transform phase - @mflerackers
+- Areas are now only recalculated when the area settings or (optional)
+  renderArea has changed - @mflerackers
+- World (transformed) areas are now only recalculated when the area or transform
+  has changed - @mflerackers
+- World bounding boxes are now only recalculated when the world area has
+  changed - @mflerackers
+- Broad stage collision detection spatial structures are now only updated when
+  an object's world bounding box has changed - @mflerackers
+- You can no longer change the position of an object by doing obj.pos.x += 1.
+  You need to assign a new Vec2 or use moveBy instead - @mflerackers
+- The grid broadphase has been rewritten for performance - @mflerackers
+
+## [4000.0.0-alpha.24] - 2025-12-12
+
+### Added
+
+- Added the `maxTimeStep` and `fixedUpdateMode` options, as well as
+  `setFixedSpeed()` for more granular control over fixed update and timing -
+  @dragoncoder047
+- Added parameterized formatting tags like `"[color=red]Red text![/color]"` in
+  `CharTransformFunc` for more powerful text formatting options -
+  @dragoncoder047
+- Added `createRegularPolygon()` and `createStarPolygon()` to create 2D regular
+  polytopes - @mflerackers
+- Added `createCogPolygon()` to create 2D regular cogs - @mflerackers
+- Added `getSpriteOutline()` that takes a sprite asset and returns a polygon
+  showing the outline - @milosilo-dev
+- Added Quadtree for collision detection (only for fixed size screen for now,
+  needs expansion) - @mflerackers
+- Added vertical sweep and prune - @mflerackers
+- Added configuration to choose broad phase algorithm - @mflerackers
+
+### Fixed
+
+- Fixed the `fakeMouse()` component not giving the right position when the
+  camera transform was not the identity matrix - @dragoncoder047
+- Fixed tall fonts being cropped - @anthonygood
+- Fixed the sprite animation `onEnd()` callback being called before the
+  animation actually stopped, so if the onEnd callback started a new animation,
+  the new animation was instantly stopped - @dragoncoder047
+- Now `playMusic()` actually uses the requested volume and playback rate given
+  in the options - @dragoncoder047
+
 ## [4000.0.0-alpha.23] - 2025-11-05
 
 ### Added
@@ -67,7 +136,8 @@ best friend, lajbel, can put the correct version name here
           // runs until obj is destroyed
       });
 
-      scene.onUpdate(() => { // or just onUpdate(() => {
+      scene.onUpdate(() => {
+          // or just onUpdate(() => {
           // runs until scene is changed
       });
   });
@@ -108,6 +178,7 @@ best friend, lajbel, can put the correct version name here
   - `onDraw()`
 
 - Added `app` scope for app event handlers - @lajbel
+
   ```js
   app.onUpdate(() => {
       // runs until it is cancelled
@@ -139,7 +210,8 @@ best friend, lajbel, can put the correct version name here
 
   ```js
   scene("game", () => {
-      scene.onUpdate(() => { // or just onUpdate(() => {
+      scene.onUpdate(() => {
+          // or just onUpdate(() => {
           // runs until scene is changed
       });
   });
@@ -257,10 +329,7 @@ best friend, lajbel, can put the correct version name here
   @lajbel
   ```js
   // blue frog
-  add([
-      sprite("bean"),
-      color(0x0000ff),
-  ]);
+  add([sprite("bean"), color(0x0000ff)]);
   ```
 - **(!)** `KAPLAYCtx` doesn't use generics anymore. Now, `KAPLAYCtxT` uses
   them - @lajbel

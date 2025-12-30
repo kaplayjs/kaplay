@@ -1,4 +1,5 @@
 import { DEF_ANCHOR } from "../../../constants/general";
+import type { ButtonName } from "../../../core/taf";
 import type { KEventController } from "../../../events/events";
 import { toWorld } from "../../../game/camera";
 import { anchorPt } from "../../../gfx/anchor";
@@ -20,12 +21,117 @@ import type {
 } from "../../../types";
 import { isFixed } from "../../entity/utils";
 import type { Collision } from "../../systems/Collision";
+import { system, SystemPhase } from "../../systems/systems";
+import { fakeMouse } from "../misc/fakeMouse";
 import type { AnchorComp } from "../transform/anchor";
 import type { FixedComp } from "../transform/fixed";
 import type { PosComp } from "../transform/pos";
 
 export function usesArea() {
     return _k.game.areaCount > 0;
+}
+
+let _nextRenderAreaVersion = 0;
+
+export function nextRenderAreaVersion() {
+    return _nextRenderAreaVersion++;
+}
+
+let _nextLocalAreaVersion = 0;
+
+export function nextLocalAreaVersion() {
+    return _nextLocalAreaVersion++;
+}
+
+let _nextWorldAreaVersion = 0;
+
+export function nextWorldAreaVersion() {
+    return _nextWorldAreaVersion++;
+}
+
+export function getRenderAreaVersion(obj: GameObj<any>) {
+    return obj._renderAreaVersion;
+}
+
+export function getLocalAreaVersion(obj: GameObj<any>) {
+    return obj._localAreaVersion;
+}
+
+function clickHandler(button: MouseButton) {
+    const p = toWorld(_k.app.mousePos());
+    // We use an array, so we can later add support to sort it and take the top-most object only
+    const objects: GameObj<AreaComp>[] = [];
+    _k.game.retrieve(new Rect(p.sub(1, 1), 3, 3), obj => objects.push(obj));
+    for (const obj of objects) {
+        if (obj.worldArea().contains(p)) {
+            obj.trigger("click", button);
+        }
+    }
+}
+
+let clickHandlerRunning = false;
+function startClickHandler() {
+    if (clickHandlerRunning) return;
+    clickHandlerRunning = true;
+
+    if (_k.game.fakeMouse) {
+        _k.game.fakeMouse.on("press", clickHandler);
+    }
+
+    _k.app.onMousePress(clickHandler);
+}
+
+function hoverHandler() {
+    let oldObjects: Set<GameObj<AreaComp>> = new Set();
+    // p Should be world coordinates
+    return (p: Vec2) => {
+        const newObjects: Set<GameObj<AreaComp>> = new Set();
+
+        _k.game.retrieve(new Rect(p.sub(1, 1), 3, 3), obj => {
+            if (obj.worldArea().contains(p)) {
+                newObjects.add(obj);
+            }
+        });
+        newObjects.difference(oldObjects).forEach(obj => obj.trigger("hover"));
+        oldObjects.difference(newObjects).forEach(obj =>
+            obj.trigger("hoverEnd")
+        );
+        newObjects.intersection(oldObjects).forEach(obj =>
+            obj.trigger("hoverUpdate")
+        );
+        oldObjects = newObjects;
+    };
+}
+
+/*let hoverHandlerRunning = false;
+function startHoverHandler() {
+    if (hoverHandlerRunning) return;
+    hoverHandlerRunning = true;
+
+    if (_k.game.fakeMouse) {
+        _k.game.fakeMouse.on("fakeMouseMove", hoverHandler());
+    }
+    _k.app.onMouseMove(hoverHandler());
+}*/
+
+let systemInstalled = false;
+function startHoverSystem() {
+    if (systemInstalled) return;
+    systemInstalled = true;
+
+    const mouseHover = hoverHandler();
+    const fakeMouseHover = hoverHandler();
+
+    system("hover", () => {
+        if (_k.game.fakeMouse) {
+            fakeMouseHover(_k.game.fakeMouse.worldPos()!);
+            return;
+        }
+
+        mouseHover(toWorld(_k.app.mousePos()));
+    }, [
+        SystemPhase.BeforeUpdate, // Because we need the transform to be up to date
+    ]);
 }
 
 /**
@@ -70,6 +176,10 @@ export interface AreaComp extends Comp {
      * Friction of the object.
      */
     friction?: number;
+    /**
+     * Whether collision detection should be done even without body.
+     */
+    isSensor: boolean;
     /**
      * If was just clicked on last frame.
      */
@@ -185,6 +295,10 @@ export interface AreaComp extends Comp {
      */
     worldArea(): Shape;
     /**
+     * Get the bounding box of the geometry data for the collider in world coordinate space.
+     */
+    worldBbox(): Rect;
+    /**
      * Get the geometry data for the collider in screen coordinate space.
      */
     screenArea(): Shape;
@@ -243,19 +357,46 @@ export interface AreaCompOpt {
      * @since v4000.0
      */
     friction?: number;
+    /**
+     * Whether collision detection should be done even without body.
+     *
+     * @since v4000.0
+     */
+    isSensor?: boolean;
 }
 
-export function area(opt: AreaCompOpt = {}): AreaComp {
+export function area(
+    opt: AreaCompOpt = {},
+): AreaComp & { _localAreaVersion: number } {
+    // The id => collision map of objects colliding with this object
     const colliding: Record<string, Collision> = {};
+    // The ids of the objects which are colliding with this object during this frame
     const collidingThisFrame = new Set();
+    // Events to cancel in destroy when the component gets removed
     const events: KEventController[] = [];
-    let oldShape: Shape | undefined;
+    // We overwrite the shape rather than allocating a new one
+    let _worldShape: Shape | undefined;
+    let _worldBBox: Rect | undefined;
+    let _screenShape: Shape | undefined;
+
+    let _shape: Shape | null = opt.shape ?? null;
+    let _scale: Vec2 = opt.scale ? vec2(opt.scale) : vec2(1);
+    let _offset: Vec2 = opt.offset ?? vec2(0);
+    let _cursor: Cursor | null = opt.cursor ?? null;
+
+    let _localAreaVersion = -1; // Track local changes in area properties
+    let _worldAreaVersion = -1; // Track local changes in world area
+    let _worldBBoxVersion = -1; // Track world area changes for bbox
+    let _cachedTransformVersion = -1; // Currently used transform
+    let _cachedRenderAreaVersion = -1; // Currently used render shape
+    let _cachedLocalAreaVersion = -1; // Currently used local area
 
     return {
         id: "area",
         collisionIgnore: opt.collisionIgnore ?? [],
         restitution: opt.restitution,
         friction: opt.friction,
+        isSensor: opt.isSensor ?? false,
 
         add(this: GameObj<AreaComp>) {
             _k.game.areaCount++;
@@ -340,11 +481,39 @@ export function area(opt: AreaCompOpt = {}): AreaComp {
             popTransform();
         },
 
+        get _localAreaVersion() {
+            return _localAreaVersion;
+        },
+
         area: {
-            shape: opt.shape ?? null,
-            scale: opt.scale ? vec2(opt.scale) : vec2(1),
-            offset: opt.offset ?? vec2(0),
-            cursor: opt.cursor ?? null,
+            set shape(value: Shape | null) {
+                _shape = value;
+                _localAreaVersion = nextLocalAreaVersion();
+            },
+            get shape(): Shape | null {
+                return _shape;
+            },
+            set scale(value: Vec2) {
+                _scale = this.scale;
+                _localAreaVersion = nextLocalAreaVersion();
+            },
+            get scale(): Vec2 {
+                return _scale;
+            },
+            set offset(value: Vec2) {
+                _offset = value;
+                _localAreaVersion = nextLocalAreaVersion();
+            },
+            get offset() {
+                return _offset;
+            },
+            set cursor(value: Cursor | null) {
+                _cursor = value;
+                // TODO: attach/detach hover
+            },
+            get cursor(): Cursor | null {
+                return _cursor;
+            },
         },
 
         isClicked(): boolean {
@@ -396,9 +565,10 @@ export function area(opt: AreaCompOpt = {}): AreaComp {
             }
             else {
                 if (!otherOrTag.id) {
-                    throw new Error(
+                    /*throw new Error(
                         "isColliding() requires the object to have an id",
-                    );
+                    );*/
+                    return false;
                 }
                 return Boolean(colliding[otherOrTag.id]);
             }
@@ -419,61 +589,23 @@ export function area(opt: AreaCompOpt = {}): AreaComp {
             action: () => void,
             btn: MouseButton = "left",
         ): KEventController {
-            if (_k.game.fakeMouse) {
-                _k.game.fakeMouse.onPress(() => {
-                    if (this.isHovering()) {
-                        action();
-                    }
-                });
-            }
-
-            const e = this.onMousePress(btn, () => {
-                if (this.isHovering()) {
-                    action();
-                }
-            });
-
-            events.push(e);
-
-            return e;
+            startClickHandler();
+            return this.on("click", action);
         },
 
         onHover(this: GameObj, action: () => void): KEventController {
-            let hovering = false;
-            return this.onUpdate(() => {
-                if (!hovering) {
-                    if (this.isHovering()) {
-                        hovering = true;
-                        action();
-                    }
-                }
-                else {
-                    hovering = this.isHovering();
-                }
-            });
+            startHoverSystem();
+            return this.on("hover", action);
         },
 
-        onHoverUpdate(this: GameObj, onHover: () => void): KEventController {
-            return this.onUpdate(() => {
-                if (this.isHovering()) {
-                    onHover();
-                }
-            });
+        onHoverUpdate(this: GameObj, action: () => void): KEventController {
+            startHoverSystem();
+            return this.on("hoverUpdate", action);
         },
 
         onHoverEnd(this: GameObj, action: () => void): KEventController {
-            let hovering = false;
-            return this.onUpdate(() => {
-                if (hovering) {
-                    if (!this.isHovering()) {
-                        hovering = false;
-                        action();
-                    }
-                }
-                else {
-                    hovering = this.isHovering();
-                }
-            });
+            startHoverSystem();
+            return this.on("hoverEnd", action);
         },
 
         onCollide(
@@ -572,27 +704,58 @@ export function area(opt: AreaCompOpt = {}): AreaComp {
 
         // TODO: cache
         worldArea(this: GameObj<AreaComp | AnchorComp>): Shape {
-            const localArea = this.localArea();
+            const renderAreaVersion = getRenderAreaVersion(this);
+            if (
+                !_worldShape
+                || _cachedTransformVersion !== (this as any)._transformVersion // Transform changed
+                || (renderAreaVersion !== undefined // Render area (shape) changed
+                    && _cachedRenderAreaVersion !== renderAreaVersion) // Render area (shape) changed
+                || _cachedLocalAreaVersion !== _localAreaVersion // Area settings changed
+            ) {
+                const localArea = this.localArea();
 
-            // World transform
-            const transform = this.transform.clone();
-            // Optional area offset
-            if (this.area.offset.x !== 0 || this.area.offset.y !== 0) {
-                transform.translateSelfV(this.area.offset);
-            }
-            // Optional area scale
-            if (this.area.scale.x !== 1 || this.area.scale.y !== 1) {
-                transform.scaleSelfV(this.area.scale);
-            }
-            // Optional anchor offset (Rect only??)
-            if (localArea instanceof Rect && this.anchor !== "topleft") {
-                const offset = anchorPt(this.anchor || DEF_ANCHOR)
-                    .add(1, 1)
-                    .scale(-0.5 * localArea.width, -0.5 * localArea.height);
-                transform.translateSelfV(offset);
-            }
+                // World transform
+                const transform = this.transform.clone();
+                // Optional area offset
+                if (this.area.offset.x !== 0 || this.area.offset.y !== 0) {
+                    transform.translateSelfV(this.area.offset);
+                }
+                // Optional area scale
+                if (this.area.scale.x !== 1 || this.area.scale.y !== 1) {
+                    transform.scaleSelfV(this.area.scale);
+                }
+                // Optional anchor offset (Rect only??)
+                if (localArea instanceof Rect && this.anchor !== "topleft") {
+                    const offset = anchorPt(this.anchor || DEF_ANCHOR)
+                        .add(1, 1)
+                        .scale(-0.5 * localArea.width, -0.5 * localArea.height);
+                    transform.translateSelfV(offset);
+                }
 
-            return oldShape = localArea.transform(transform, oldShape);
+                _worldShape = localArea.transform(transform, _worldShape);
+
+                _cachedTransformVersion = (this as any)._transformVersion;
+                _cachedRenderAreaVersion = renderAreaVersion ?? 0;
+                _cachedLocalAreaVersion = _localAreaVersion;
+                _worldAreaVersion = nextWorldAreaVersion();
+            }
+            return _worldShape;
+        },
+
+        worldBbox(this: GameObj<AreaComp>): Rect {
+            const renderAreaVersion = (this as any).renderAreaVersion;
+            if (
+                !_worldBBox || _worldAreaVersion != _worldBBoxVersion
+                || !_worldShape
+                || _cachedTransformVersion != (this as any)._transformVersion // Transform changed
+                || (renderAreaVersion != undefined // Render area (shape) changed
+                    && _cachedRenderAreaVersion != renderAreaVersion) // Render area (shape) changed
+                || _cachedLocalAreaVersion != _localAreaVersion // Area settings changed
+            ) {
+                _worldBBox = this.worldArea().bbox(_worldBBox);
+                _worldBBoxVersion = _worldAreaVersion;
+            }
+            return _worldBBox;
         },
 
         screenArea(this: GameObj<AreaComp | FixedComp>): Shape {
@@ -601,9 +764,9 @@ export function area(opt: AreaCompOpt = {}): AreaComp {
                 return area;
             }
             else {
-                return oldShape = area.transform(
+                return _screenShape = area.transform(
                     _k.game.cam.transform,
-                    oldShape,
+                    _screenShape,
                 );
             }
         },

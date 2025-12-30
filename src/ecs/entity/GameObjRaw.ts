@@ -55,7 +55,7 @@ import type { RotateComp } from "../components/transform/rotate";
 import type { ScaleComp } from "../components/transform/scale";
 import type { SkewComp } from "../components/transform/skew";
 import type { ZComp } from "../components/transform/z";
-import { make } from "./make";
+import { internalIsMaking, make } from "./make";
 import { deserializePrefabAsset, type SerializedGameObj } from "./prefab";
 import { isFixed } from "./utils";
 
@@ -69,6 +69,29 @@ export enum KeepFlags {
 export type SetParentOpt = {
     keep: KeepFlags;
 };
+
+let _lastTransformVersion = 0;
+let _nextTransformVersion = 0;
+
+export function nextTransformVersion() {
+    return _nextTransformVersion++;
+}
+
+export function updateLastTransformVersion() {
+    return _lastTransformVersion = _nextTransformVersion;
+}
+
+export function transformNeedsUpdate(version: number) {
+    return version >= _lastTransformVersion;
+}
+
+export function objectTransformNeedsUpdate(obj: GameObj<any>) {
+    return obj._transformVersion >= _lastTransformVersion;
+}
+
+export function getTransformVersion(obj: GameObj<any>): number {
+    return obj._transformVersion;
+}
 
 /**
  * Base interface of all game objects.
@@ -265,7 +288,7 @@ export interface GameObjRaw {
     /**
      * This method is called to transform objects
      */
-    transformTree(): void;
+    transformTree(force: boolean): void;
     /**
      * Add a component.
      *
@@ -517,6 +540,8 @@ export type InternalGameObjRaw = GameObjRaw & {
     _paused: boolean;
     /** @readonly */
     _drawLayerIndex: number;
+    /** @readonly */
+    _transformVersion: number;
 
     /**
      * Adds a component or anonymous component.
@@ -591,6 +616,7 @@ export const GameObjRawPrototype: Omit<
     hidden: null as any,
     id: null as any,
     transform: null as any,
+    _transformVersion: null as any,
     target: null as any,
 
     // #region Setters and Getters
@@ -683,8 +709,12 @@ export const GameObjRawPrototype: Omit<
 
         calcTransform(obj, obj.transform);
 
-        obj.trigger("add", obj);
+        // Run global events first, so things that listen for onAdd()
+        // see the object with *only* components added during make(),
+        // and *then* run the components' add() which may add other components
+        // and trigger onUse()
         _k.game.events.trigger("add", obj);
+        obj.trigger("add", obj);
 
         return obj;
     },
@@ -1187,27 +1217,46 @@ export const GameObjRawPrototype: Omit<
     },
 
     transformTree(
-        this: GameObj<
-            PosComp | ScaleComp | RotateComp | SkewComp | FixedComp | MaskComp
-        >,
+        this:
+            & GameObj<
+                | PosComp
+                | ScaleComp
+                | RotateComp
+                | SkewComp
+                | FixedComp
+                | MaskComp
+            >
+            & InternalGameObjRaw,
+        force: boolean,
     ) {
+        const localUpdateNeeded = transformNeedsUpdate(this._transformVersion);
+        const updateNeeded = force || localUpdateNeeded;
+
         pushTransform();
-        if (this.pos) multTranslateV(this.pos);
-        if (this.angle) multRotate(this.angle);
-        if (this.scale) multScaleV(this.scale);
 
-        if (this.skew) console.log(_k.gfx.transform, this.skew);
+        if (updateNeeded) {
+            if (this.pos) multTranslateV(this.pos);
+            if (this.angle) multRotate(this.angle);
+            if (this.scale) multScaleV(this.scale);
 
-        if (this.skew) multSkewV(this.skew);
+            if (this.skew) multSkewV(this.skew);
 
-        if (!this.transform) this.transform = new Mat23();
-        storeMatrix(this.transform);
+            if (!this.transform) this.transform = new Mat23();
+            storeMatrix(this.transform);
 
-        if (this.skew) console.log(this.transform);
+            // If force is true, but we didn't have a newer version,
+            // we need to update the version in order to make sure that areas get updated.
+            if (force && !localUpdateNeeded) {
+                this._transformVersion = nextTransformVersion();
+            }
+        }
+        else {
+            loadMatrix(this.transform);
+        }
 
         for (let i = 0; i < this.children.length; i++) {
             if (this.children[i].hidden) continue;
-            this.children[i].transformTree();
+            this.children[i].transformTree(updateNeeded);
         }
 
         popTransform();
@@ -1250,8 +1299,7 @@ export const GameObjRawPrototype: Omit<
         // If that component got an ID, we need to create the cleanups[compId]
         // data for cleaning later on removing
         if (comp.id) {
-            this._cleanups[comp.id] = [];
-            gc = this._cleanups[comp.id];
+            gc = this._cleanups[comp.id] = [];
             this._compStates.set(comp.id, comp);
         }
         else {
@@ -1348,7 +1396,10 @@ export const GameObjRawPrototype: Omit<
             this._onCurCompCleanup = null;
         }
 
-        if (this.id != 0 && comp.id) {
+        if (
+            this.id != 0 && comp.id
+            && !internalIsMaking(this as unknown as GameObj)
+        ) {
             this.trigger("use", comp.id);
             _k.game.events.trigger(
                 "use",
@@ -1367,8 +1418,10 @@ export const GameObjRawPrototype: Omit<
         this._compStates.delete(id);
         if (addCompIdAsTag) this._tags.delete(id);
 
-        this.trigger("unuse", id);
-        _k.game.events.trigger("unuse", this, id);
+        if (!internalIsMaking(this as unknown as GameObj)) {
+            this.trigger("unuse", id);
+            _k.game.events.trigger("unuse", this, id);
+        }
 
         if (this._cleanups[id]) {
             this._cleanups[id].forEach((e) => e());
@@ -1450,14 +1503,18 @@ export const GameObjRawPrototype: Omit<
         if (Array.isArray(tag)) {
             for (const t of tag) {
                 this._tags.add(t);
-                this.trigger("tag", t);
-                _k.game.events.trigger("tag", this as GameObj, t);
+                if (!internalIsMaking(this as unknown as GameObj)) {
+                    this.trigger("tag", t);
+                    _k.game.events.trigger("tag", this as GameObj, t);
+                }
             }
         }
         else {
             this._tags.add(tag);
-            this.trigger("tag", tag);
-            _k.game.events.trigger("tag", this as GameObj, tag);
+            if (!internalIsMaking(this as unknown as GameObj)) {
+                this.trigger("tag", tag);
+                _k.game.events.trigger("tag", this as GameObj, tag);
+            }
         }
     },
 

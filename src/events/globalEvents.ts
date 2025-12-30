@@ -29,6 +29,9 @@ export function on<Ev extends GameObjEventNames | string & {}>(
     const ecOnTag = _k.game.events.on("tag", (obj, newTag) => {
         if (newTag === tag) handleNew(obj);
     });
+    const ecOnAdd = _k.game.events.on("add", obj => {
+        if (obj.is(tag)) handleNew(obj);
+    });
     const ecOnUntag = _k.game.events.on("untag", (obj, oldTag) => {
         if (oldTag === tag) {
             const ec = obj2Handler.get(obj)!;
@@ -50,6 +53,7 @@ export function on<Ev extends GameObjEventNames | string & {}>(
             obj2Handler.forEach(ec => ec.cancel());
             obj2Handler.clear();
             ecOnTag.cancel();
+            ecOnAdd.cancel();
             ecOnUntag.cancel();
         },
     };

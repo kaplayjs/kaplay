@@ -219,12 +219,14 @@ import {
     evaluateQuadratic,
     evaluateQuadraticFirstDerivative,
     evaluateQuadraticSecondDerivative,
+    getSpriteOutline,
     hermite,
     isConvex,
     kochanekBartels,
     Line,
     map,
     mapc,
+    Mat2,
     Mat23,
     normalizedCurve,
     Point,
@@ -252,7 +254,13 @@ import {
     wave,
 } from "../math/math";
 import { NavMesh } from "../math/navigationmesh";
+import {
+    createCogPolygon,
+    createRegularPolygon,
+    createStarPolygon,
+} from "../math/polygongeneration";
 import { insertionSort } from "../math/sort";
+import { makeQuadtree, Quadtree } from "../math/spatial/quadtree";
 import { Vec2 } from "../math/Vec2";
 import { BlendMode, type KAPLAYPlugin } from "../types";
 import {
@@ -328,6 +336,7 @@ export const createContext = (
         dt: app.dt,
         fixedDt: app.fixedDt,
         restDt: app.restDt,
+        setFixedSpeed: app.setFixedSpeed,
         time: app.time,
         screenshot: app.screenshot,
         screenshotToBlob: app.screenshotToBlob,
@@ -382,6 +391,7 @@ export const createContext = (
         get,
         query,
         readd,
+        retrieve: (...args) => game.retrieve(...args),
         // comps
         pos,
         rotate,
@@ -528,15 +538,19 @@ export const createContext = (
         Collision,
         Vec2,
         Color,
+        Mat2,
         Mat4,
         Mat23,
         Quad,
+        Quadtree,
+        makeQuadtree,
         RNG,
         Rule,
         RuleSystem,
         DecisionNode,
         DecisionTree,
         StateMachine,
+        getSpriteOutline,
         insertionSort,
         rand,
         randi,
@@ -575,6 +589,9 @@ export const createContext = (
         catmullRom,
         bezier,
         kochanekBartels,
+        createRegularPolygon,
+        createStarPolygon,
+        createCogPolygon,
         easingSteps,
         easingLinear,
         easingCubicBezier,

@@ -348,40 +348,45 @@ export function body(opt: BodyCompOpt = {}): BodyComp {
             }
 
             const dt = _k.app.restDt();
-            if (dt) {
+            if (dt && prevPhysicsPos) {
+                const lerpAmount = dt / _k.app.fixedDt();
                 // Check if no external changes were made
-                if (this.pos.x == prevDrawPos.x) {
+                const p = this.pos.clone();
+                if (this.pos.x === prevDrawPos.x) {
                     // Interpolate physics steps
-                    this.pos.x = lerp(
+                    p.x = lerp(
                         prevPhysicsPos!.x,
                         nextPhysicsPos!.x,
-                        dt / _k.app.fixedDt(),
+                        lerpAmount,
                     );
                     // Copy to check for changes
-                    prevDrawPos.x = this.pos.x;
+                    prevDrawPos.x = p.x;
                 }
-                if (this.pos.y == prevDrawPos.y) {
+                if (this.pos.y === prevDrawPos.y) {
                     // Interpolate physics steps
-                    this.pos.y = lerp(
+                    p.y = lerp(
                         prevPhysicsPos!.y,
                         nextPhysicsPos!.y,
-                        dt / _k.app.fixedDt(),
+                        lerpAmount,
                     );
                     // Copy to check for changes
-                    prevDrawPos.y = this.pos.y;
+                    prevDrawPos.y = p.y;
                 }
+                this.pos = p;
             }
         },
 
         fixedUpdate(this: GameObj<PosComp | BodyComp | AreaComp>) {
             // If we were interpolating, and the position wasn't set manually, reset to last physics position
             if (prevPhysicsPos) {
-                if (this.pos.x == prevDrawPos.x) {
-                    this.pos.x = prevPhysicsPos.x;
+                const p = this.pos.clone();
+                if (this.pos.x === prevDrawPos.x) {
+                    p.x = prevPhysicsPos.x;
                 }
-                if (this.pos.y == prevDrawPos.y) {
-                    this.pos.y = prevPhysicsPos.y;
+                if (this.pos.y === prevDrawPos.y) {
+                    p.y = prevPhysicsPos.y;
                 }
+                this.pos = p;
                 prevPhysicsPos = null;
             }
 
@@ -436,7 +441,9 @@ export function body(opt: BodyCompOpt = {}): BodyComp {
             this.vel.x *= 1 / (1 + this.damping * _k.app.dt());
             this.vel.y *= 1 / (1 + this.damping * _k.app.dt());
 
-            this.move(this.vel);
+            if (this.vel.x || this.vel.y) {
+                this.move(this.vel);
+            }
 
             // If we need to interpolate physics, prepare interpolation data
             const rDt = _k.app.restDt();

@@ -26,6 +26,7 @@ export type FontAtlas = {
     font: BitmapFontData;
     cursor: Vec2;
     maxHeight: number;
+    maxActualBoundingBoxAscent: number;
     outline: Outline | null;
 };
 
@@ -34,7 +35,7 @@ export type FontAtlas = {
  * @subgroup Text
  */
 export type StyledTextInfo = {
-    charStyleMap: Record<number, string[]>;
+    charStyleMap: Record<number, [string, string][]>;
     text: string;
 };
 
@@ -62,9 +63,9 @@ function applyCharTransform(fchar: FormattedChar, tr: CharTransform) {
 }
 
 export function compileStyledText(txt: any): StyledTextInfo {
-    const charStyleMap = {} as Record<number, string[]>;
+    const charStyleMap = {} as Record<number, [string, string][]>;
     let renderText = "";
-    let styleStack: string[] = [];
+    let styleStack: [string, string][] = [];
     let text = String(txt);
 
     const emit = (ch: string) => {
@@ -84,30 +85,33 @@ export function compileStyledText(txt: any): StyledTextInfo {
             continue;
         }
         if (text[0] === "[") {
-            const execResult = /^\[(\/)?(\w+?)\]/.exec(text);
+            const execResult = /^\[(\/)?(\w+?)(?:=(.+?))?\]/.exec(text);
             if (!execResult) {
                 // xxx: should throw an error here?
                 emit(text[0]);
                 text = text.slice(1);
                 continue;
             }
-            const [m, e, gn] = execResult;
-            if (e !== undefined) {
-                const x = styleStack.pop();
-                if (x !== gn) {
-                    if (x !== undefined) {
-                        throw new Error(
-                            `Styled text error: mismatched tags. Expected [/${x}], got [/${gn}]`,
-                        );
-                    }
-                    else {
-                        throw new Error(
-                            `Styled text error: stray end tag [/${gn}]`,
-                        );
-                    }
+            const [m, endSlash, theTagName, tagParam] = execResult;
+            if (endSlash !== undefined) {
+                if (tagParam) {
+                    throw new Error(
+                        `Styled text error: cannot use param in close tag [/${theTagName}]`,
+                    );
+                }
+                if (styleStack.length === 0) {
+                    throw new Error(
+                        `Styled text error: stray end tag [/${theTagName}]`,
+                    );
+                }
+                const [expectedTagName, arg] = styleStack.pop()!;
+                if (expectedTagName !== theTagName) {
+                    throw new Error(
+                        `Styled text error: mismatched tags. Expected [/${expectedTagName}], got [/${theTagName}]`,
+                    );
                 }
             }
-            else styleStack.push(gn);
+            else styleStack.push([theTagName, tagParam]);
             text = text.slice(m.length);
             continue;
         }
@@ -167,6 +171,7 @@ function getFontAtlasForFont(font: FontData | string): FontAtlas {
             },
             cursor: new Vec2(0),
             maxHeight: 0,
+            maxActualBoundingBoxAscent: 0,
             outline: opts.outline,
         };
 
@@ -174,6 +179,14 @@ function getFontAtlasForFont(font: FontData | string): FontAtlas {
     }
     return atlas;
 }
+
+const allChars = () => {
+    const renderableChars: string[] = [];
+    for (let i = 32; i <= 128; i++) { // Common Unicode range
+        renderableChars.push(String.fromCharCode(i));
+    }
+    return renderableChars.join("");
+};
 
 function updateFontAtlas(font: FontData | string, ch: string) {
     const atlas = getFontAtlasForFont(font);
@@ -198,11 +211,18 @@ function updateFontAtlas(font: FontData | string, ch: string) {
         c2d.textBaseline = "top";
         c2d.textAlign = "left";
         c2d.fillStyle = "#ffffff";
+
+        if (atlas.maxActualBoundingBoxAscent === 0) {
+            atlas.maxActualBoundingBoxAscent =
+                c2d.measureText(allChars()).actualBoundingBoxAscent;
+        }
+        const maxActualBoundingBoxAscent = atlas.maxActualBoundingBoxAscent;
         const m = c2d.measureText(ch);
         let w = Math.ceil(m.width);
         if (!w) return;
-        let h = (Math.ceil(Math.abs(m.actualBoundingBoxAscent))
-            + Math.ceil(Math.abs(m.actualBoundingBoxDescent)))
+        let h = maxActualBoundingBoxAscent
+                + Math.ceil(Math.abs(m.actualBoundingBoxAscent))
+                + Math.ceil(Math.abs(m.actualBoundingBoxDescent))
             || atlas.font.size;
 
         // TODO: Test if this works with the verification of width and color
@@ -226,7 +246,7 @@ function updateFontAtlas(font: FontData | string, ch: string) {
         c2d.fillText(
             ch,
             atlas.outline?.width ?? 0,
-            atlas.outline?.width ?? 0,
+            (atlas.outline?.width ?? 0) + maxActualBoundingBoxAscent,
         );
 
         const img = c2d.getImageData(
@@ -255,7 +275,7 @@ function updateFontAtlas(font: FontData | string, ch: string) {
             atlas.cursor.x,
             atlas.cursor.y,
             w,
-            h,
+            h + maxActualBoundingBoxAscent,
         );
 
         atlas.cursor.x += w + 1;
@@ -347,7 +367,7 @@ export function formatText(opt: DrawTextOpt): FormattedText {
 
             if (opt.transform) {
                 const tr = typeof opt.transform === "function"
-                    ? opt.transform(cursor, ch)
+                    ? opt.transform(cursor, ch, "")
                     : opt.transform;
                 if (tr) {
                     applyCharTransform(theFChar as any, tr);
@@ -356,10 +376,10 @@ export function formatText(opt: DrawTextOpt): FormattedText {
 
             if (charStyleMap[cursor]) {
                 const styles = charStyleMap[cursor];
-                for (const name of styles) {
+                for (const [name, param] of styles) {
                     const style = opt.styles?.[name];
                     const tr = typeof style === "function"
-                        ? style(cursor, ch)
+                        ? style(cursor, ch, param)
                         : style;
 
                     if (tr) {
