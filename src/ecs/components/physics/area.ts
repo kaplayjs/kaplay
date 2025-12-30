@@ -124,14 +124,13 @@ function startHoverSystem() {
 
     system("hover", () => {
         if (_k.game.fakeMouse) {
-            mouseHover(toWorld(_k.game.fakeMouse.pos));
+            fakeMouseHover(toWorld(_k.game.fakeMouse.pos));
         }
 
         mouseHover(toWorld(_k.app.mousePos()));
     }, [
         SystemPhase.BeforeUpdate, // Because we need the transform to be up to date
     ]);
-
 }
 
 /**
@@ -776,10 +775,11 @@ export function area(
                 return `area: ${this.area.scale?.x?.toFixed(1)}x`;
             }
             else {
-                return `area: (${this.area.scale?.x?.toFixed(
-                    1,
-                )
-                    }x, ${this.area.scale.y?.toFixed(1)}y)`;
+                return `area: (${
+                    this.area.scale?.x?.toFixed(
+                        1,
+                    )
+                }x, ${this.area.scale.y?.toFixed(1)}y)`;
             }
         },
 
