@@ -8,7 +8,7 @@ export const lajbel = () => {
         "kewl",
         "i see",
         "really cool",
-        "okay"
+        "okay",
     ]);
 
     return positiveLajbelResponse;
