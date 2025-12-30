@@ -35,6 +35,14 @@ export interface HealthComp extends Comp {
      */
     readonly dead: boolean;
     /**
+     * Decrease HP by n (defaults to 1).
+     */
+    hurt(n?: number): void;
+    /**
+     * Increase HP by n (defaults to 1).
+     */
+    heal(n?: number): void;
+    /**
      * Register an event that runs when the hp is lowered.
      *
      * @since v2000.1
@@ -90,6 +98,12 @@ export function health(
         },
         get dead() {
             return this.hp <= 0;
+        },
+        hurt(this: GameObj, n: number = 1) {
+            this.hp -= n;
+        },
+        heal(this: GameObj, n: number = 1) {
+            this.hp += n;
         },
         onHurt(
             this: GameObj,

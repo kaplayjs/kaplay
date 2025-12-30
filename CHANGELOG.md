@@ -22,6 +22,8 @@ best friend, lajbel, can put the correct version name here
 
 - Added `AreaCompOpt.isSensor`. Areas without body or is sensor will no longer
   be eligible for collisions - @mflerackers
+- Re-Added `HealthComp.heal` and `HealthComp.hurt`, sugar for `HealthComp.hp`, for
+  adding and removing health - @lajbels
 
 ## Fixed
 
