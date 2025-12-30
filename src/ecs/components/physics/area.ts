@@ -83,8 +83,8 @@ function startClickHandler() {
 
 function hoverHandler() {
     let oldObjects: Set<GameObj<AreaComp>> = new Set();
-    return (pos: Vec2) => {
-        const p = toWorld(pos);
+    // p Should be world coordinates
+    return (p: Vec2) => {
         const newObjects: Set<GameObj<AreaComp>> = new Set();
 
         _k.game.retrieve(new Rect(p.sub(1, 1), 3, 3), obj => {
@@ -124,7 +124,7 @@ function startHoverSystem() {
 
     system("hover", () => {
         if (_k.game.fakeMouse) {
-            fakeMouseHover(_k.game.fakeMouse.pos);
+            fakeMouseHover(_k.game.fakeMouse.worldPos()!);
             return;
         }
 
