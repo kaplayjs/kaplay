@@ -42,7 +42,7 @@ export class KEventController {
     /** If the event is paused */
     paused: boolean = false;
     /** The game obj that attached this event */
-    controller: GameObj | null = null;
+    controller?: GameObj | null = null;
     /** Cancel the event */
     cancel: () => void;
 
