@@ -124,7 +124,8 @@ function startHoverSystem() {
 
     system("hover", () => {
         if (_k.game.fakeMouse) {
-            fakeMouseHover(toWorld(_k.game.fakeMouse.pos));
+            fakeMouseHover(_k.game.fakeMouse.pos);
+            return;
         }
 
         mouseHover(toWorld(_k.app.mousePos()));
