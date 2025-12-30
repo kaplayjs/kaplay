@@ -20,6 +20,8 @@ best friend, lajbel, can put the correct version name here
 
 ## Added
 
+- Added `turnCost` option to pathfinding logic, allowing you to specify a
+  penalty for direction changes when calculating paths
 - Added `AreaCompOpt.isSensor`. Areas without body or is sensor will no longer
   be eligible for collisions - @mflerackers
 
