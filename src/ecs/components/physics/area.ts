@@ -21,6 +21,8 @@ import type {
 } from "../../../types";
 import { isFixed } from "../../entity/utils";
 import type { Collision } from "../../systems/Collision";
+import { system, SystemPhase } from "../../systems/systems";
+import { fakeMouse } from "../misc/fakeMouse";
 import type { AnchorComp } from "../transform/anchor";
 import type { FixedComp } from "../transform/fixed";
 import type { PosComp } from "../transform/pos";
@@ -82,8 +84,8 @@ function startClickHandler() {
 
 function hoverHandler() {
     let oldObjects: Set<GameObj<AreaComp>> = new Set();
-    return (pos: Vec2, dpos: Vec2) => {
-        const p = toWorld(pos);
+    // p Should be world coordinates
+    return (p: Vec2) => {
         const newObjects: Set<GameObj<AreaComp>> = new Set();
 
         _k.game.retrieve(new Rect(p.sub(1, 1), 3, 3), obj => {
@@ -107,7 +109,7 @@ function hoverHandler() {
     };
 }
 
-let hoverHandlerRunning = false;
+/*let hoverHandlerRunning = false;
 function startHoverHandler() {
     if (hoverHandlerRunning) return;
     hoverHandlerRunning = true;
@@ -116,6 +118,26 @@ function startHoverHandler() {
         _k.game.fakeMouse.on("fakeMouseMove", hoverHandler());
     }
     _k.app.onMouseMove(hoverHandler());
+}*/
+
+let systemInstalled = false;
+function startHoverSystem() {
+    if (systemInstalled) return;
+    systemInstalled = true;
+
+    const mouseHover = hoverHandler();
+    const fakeMouseHover = hoverHandler();
+
+    system("hover", () => {
+        if (_k.game.fakeMouse) {
+            fakeMouseHover(_k.game.fakeMouse.worldPos()!);
+            return;
+        }
+
+        mouseHover(toWorld(_k.app.mousePos()));
+    }, [
+        SystemPhase.BeforeUpdate, // Because we need the transform to be up to date
+    ]);
 }
 
 /**
@@ -578,17 +600,17 @@ export function area(
         },
 
         onHover(this: GameObj, action: () => void): KEventController {
-            startHoverHandler();
+            startHoverSystem();
             return this.on("hover", action);
         },
 
         onHoverUpdate(this: GameObj, action: () => void): KEventController {
-            startHoverHandler();
+            startHoverSystem();
             return this.on("hoverUpdate", action);
         },
 
         onHoverEnd(this: GameObj, action: () => void): KEventController {
-            startHoverHandler();
+            startHoverSystem();
             return this.on("hoverEnd", action);
         },
 
