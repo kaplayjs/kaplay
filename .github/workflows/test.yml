@@ -60,9 +60,6 @@ jobs:
         run: pnpm run test -c
       - name: Run Vitest
         run: pnpm run test:vite
-      - name: Upload Package
-        if: ${{ github.event_name == 'pull_request' }}
-        run: pnpx pkg-pr-new publish
 
   deploy:
     name: Upload KAPLAY to CDN
