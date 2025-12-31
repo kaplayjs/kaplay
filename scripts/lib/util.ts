@@ -5,7 +5,7 @@ import fs from "fs/promises";
 
 /**
  * Write a file to disk
-*/
+ */
 export async function writeFile(path: string, content: string) {
     await fs.writeFile(path, content);
     console.log(`-> ${path}`);
@@ -13,14 +13,14 @@ export async function writeFile(path: string, content: string) {
 
 /**
  * Check if the current platform is windows
-*/
+ */
 export const isWindows = /^win/.test(process.platform);
 
 export const c = (n: string, msg: string) => `\x1b[${n}m${msg}\x1b[0m`;
 
 /**
  * Wait for a certain amount of time
-*/
+ */
 export function wait(time: number) {
     return new Promise((resolve) => setTimeout(() => resolve(0), time));
 }

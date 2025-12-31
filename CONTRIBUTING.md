@@ -45,7 +45,7 @@ Normally the definitions of components, types, interfaces (i.e: `SpriteComp`,
 Your best option is use **ctrl + click** on the type to go to the definition and
 see the JSDoc comments. Other option is to use the search feature of your IDE.
 
-## Commiting your changes 
+## Commiting your changes
 
 1. Follow our [conventional commits](#conventional-commits-guide) format. You
    can see how seeing the commit history.
@@ -68,4 +68,3 @@ A commit starts with a type, a scope, and a subject:
   future.
 - The subject must be a short description of the change. Use the imperative,
   present tense: "change" not "changed" nor "changes".
-
