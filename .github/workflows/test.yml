@@ -2,7 +2,7 @@ name: Test KAPLAY
 
 on:
   push:
-  pull_request:
+    branches: ["master"]
 
 jobs:
   check-format:
@@ -53,7 +53,7 @@ jobs:
       - name: Install Chrome for Puppeteer
         run: npx puppeteer browsers install chrome
       - name: Fast build
-        run: pnpm run build:fast
+        run: pnpm run build --fast
       - name: Run checker
         run: pnpm run check
       - name: Run tests
