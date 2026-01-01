@@ -62,7 +62,7 @@
   "scripts": {
     "start": "node scripts/start.ts",
     "dev": "node scripts/start.ts",
-    "build": "pnpm generate:index && pnpm generate:index && node scripts/build.ts",
+    "build": "pnpm generate:index && pnpm generate:dts && node scripts/build.ts",
     "check": "tsc",
     "lint": "eslint .",
     "fmt": "dprint fmt",
