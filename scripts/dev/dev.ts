@@ -2,8 +2,8 @@
 // @ts-check
 
 import esbuild from "esbuild";
-import { config, fmts } from "../lib/build.js";
-import { serve } from "./serve.js";
+import { config, fmts } from "../lib/build.ts";
+import { serve } from "./serve.ts";
 
 export async function dev() {
     serve();

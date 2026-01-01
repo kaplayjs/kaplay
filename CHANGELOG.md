@@ -42,7 +42,7 @@ best friend, lajbel, can put the correct version name here
 - Global `retrieve()` method to get the objects with area within a certain
   rectangle - @mflerackers
 
-### Changed
+## Changed
 
 - Transforms are now only recalculated when needed. Thus static objects no
   longer increase computation in the transform phase - @mflerackers
