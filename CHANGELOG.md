@@ -30,6 +30,7 @@ best friend, lajbel, can put the correct version name here
   @lajbel's debugging skills - @mflerackers
 - Fixed `SpriteComp.hasAnim()` returning false erroneously when the animation
   named was just constant frame 0 - @dragoncoder047
+- Fixed `levelComp.serialize()` use _for...of_ in the place of the _for...in_ when looping through the tile object keys. - @benhuangbmj 
 
 ## [4000.0.0-alpha.25] - 2025-12-23
 
