@@ -10,7 +10,7 @@ import type { PosComp } from "./pos";
  * @group Components
  * @subgroup Component Types
  */
-export interface CamScrollComp extends Comp {
+export interface ParallaxComp extends Comp {
     /**
      * The current factor for object scroll
      *
@@ -21,14 +21,14 @@ export interface CamScrollComp extends Comp {
     basePos: Vec2;
 }
 
-export function scrollcam(...args: Vec2Args): CamScrollComp {
+export function parallax(...args: Vec2Args): ParallaxComp {
     return {
         id: "scroll",
         require: ["pos"],
         factor: vec2(...args),
         basePos: vec2(),
 
-        update(this: GameObj<PosComp | CamScrollComp>) {
+        update(this: GameObj<PosComp | ParallaxComp>) {
             const cam = getCamPos();
 
             if (!this.basePos) {

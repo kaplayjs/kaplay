@@ -93,7 +93,7 @@ import type {
     SurfaceEffectorCompOpt,
 } from "../ecs/components/physics/effectors";
 import type { AnchorComp } from "../ecs/components/transform/anchor";
-import type { CamScrollComp } from "../ecs/components/transform/camscroll";
+import type { ParallaxComp } from "../ecs/components/transform/camscroll";
 import type { constraint } from "../ecs/components/transform/constraint";
 import type { FixedComp } from "../ecs/components/transform/fixed";
 import type { FollowComp } from "../ecs/components/transform/follow";
@@ -1490,10 +1490,11 @@ export interface KAPLAYCtx {
 
     /**
      * Make the object scrolls with camera based on a factor
+     * is useful if you want to create simple parallax effects
      * @param args {@link Vec2Args `Vec2Args`}
      * @returns the camera scroll comp
      */
-    scrollcam(...args: Vec2Args): CamScrollComp;
+    parallax(...args: Vec2Args): ParallaxComp;
     /**
      * Don't get destroyed on scene switch. Only works in objects attached to root.
      *

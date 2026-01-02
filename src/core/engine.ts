@@ -15,7 +15,7 @@ import { rectFactory } from "../ecs/components/draw/rect";
 import { spriteFactory } from "../ecs/components/draw/sprite";
 import { textFactory } from "../ecs/components/draw/text";
 import { anchorFactory } from "../ecs/components/transform/anchor";
-import { scrollcam } from "../ecs/components/transform/camscroll";
+import { parallax } from "../ecs/components/transform/camscroll";
 import { fixedFactory } from "../ecs/components/transform/fixed";
 import { moveFactory } from "../ecs/components/transform/move";
 import { posFactory } from "../ecs/components/transform/pos";

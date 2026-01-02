@@ -9,7 +9,7 @@ for (i = 0; i < 20; i++) {
         z(20),
         rect(64, 64),
         color(RED),
-        scrollcam(randFactor, randFactor),
+        parallax(randFactor, randFactor),
     ]);
 }
 
@@ -22,7 +22,7 @@ for (i = 0; i < 20; i++) {
         z(-90),
         rect(32, 32),
         color(BLUE),
-        scrollcam(randFactor, randFactor),
+        parallax(randFactor, randFactor),
     ]);
 }
 
