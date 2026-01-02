@@ -411,7 +411,7 @@ export function sprite(
                         continue;
                     }
                     const isCenter = i === 4;
-                    const isEdge = i === 1 || i === 3 || i === 5 || i === 7;
+                    const isEdge = !!(i & 1);
                     const shouldTile = isCenter
                         ? tileMode === "center" || tileMode === "all"
                         : isEdge
