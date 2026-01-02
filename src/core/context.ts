@@ -390,6 +390,7 @@ export const createContext = (
         get,
         query,
         readd,
+        retrieve: (...args) => game.retrieve(...args),
         // comps
         pos,
         rotate,

@@ -2,7 +2,7 @@ name: Test KAPLAY
 
 on:
   push:
-  pull_request:
+    branches: ["master"]
 
 jobs:
   check-format:
@@ -43,7 +43,7 @@ jobs:
       - name: Install Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 24
       - uses: pnpm/action-setup@v4
         name: Install pnpm
         with:
@@ -53,16 +53,13 @@ jobs:
       - name: Install Chrome for Puppeteer
         run: npx puppeteer browsers install chrome
       - name: Fast build
-        run: pnpm run build:fast
+        run: pnpm run build --fast
       - name: Run checker
         run: pnpm run check
       - name: Run tests
         run: pnpm run test -c
       - name: Run Vitest
         run: pnpm run test:vite
-      - name: Upload Package
-        if: ${{ github.event_name == 'pull_request' }}
-        run: pnpx pkg-pr-new publish
 
   deploy:
     name: Upload KAPLAY to CDN
@@ -78,7 +75,7 @@ jobs:
       - name: Install Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 24
       - uses: pnpm/action-setup@v4
         name: Install pnpm
         with:

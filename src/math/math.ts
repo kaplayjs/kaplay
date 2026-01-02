@@ -567,34 +567,35 @@ export class Mat23 {
     // since a = sx * cos(angle)
     //       b = sx * sin(angle)
     getScale() {
-        return new Vec2(
-            Math.sqrt(this.a * this.a + this.b * this.b),
-            Math.sqrt(this.c * this.c + this.d * this.d),
-        );
+        const d = this.det;
+        if (d != 0) {
+            if (this.a || this.b) {
+                const r = Math.sqrt(this.a * this.a + this.b * this.b);
+                return vec2(r, d / r);
+            }
+            else if (this.c || this.d) {
+                const s = Math.sqrt(this.c * this.c + this.d * this.d);
+                return vec2(d / s, s);
+            }
+        }
+        return vec2(0);
     }
     getSkew() {
         if (this.a || this.b) {
-            return new Vec2(
-                rad2deg(
-                    Math.atan2(
-                        this.a * this.c + this.b * this.d,
-                        this.a * this.a + this.b * this.b,
-                    ),
-                ),
+            const r = Math.sqrt(this.a * this.a + this.b * this.b);
+            return vec2(
+                rad2deg(Math.atan2(this.a * this.c + this.b * this.d, r * r)),
                 0,
             );
         }
-        else {
-            return new Vec2(
+        else if (this.c || this.d) {
+            const s = Math.sqrt(this.c * this.c + this.d * this.d);
+            return vec2(
                 0,
-                rad2deg(
-                    Math.atan2(
-                        this.a * this.c + this.b * this.d,
-                        this.c * this.c + this.d * this.d,
-                    ),
-                ),
+                rad2deg(Math.atan2(this.a * this.c + this.b * this.d, s * s)),
             );
         }
+        return vec2(0);
     }
 }
 
@@ -1926,8 +1927,17 @@ export class Point {
         }
         return new Point(m.transformPointV(this.pt, vec2()));
     }
-    bbox(): Rect {
-        return new Rect(this.pt, 0, 0);
+    bbox(r?: Rect): Rect {
+        if (r) {
+            r.pos.x = this.pt.x;
+            r.pos.y = this.pt.y;
+            r.width = 0;
+            r.height = 0;
+            return r;
+        }
+        else {
+            return new Rect(this.pt, 0, 0);
+        }
     }
     area(): number {
         return 0;
@@ -1976,8 +1986,17 @@ export class Line {
             m.transformPointV(this.p2, vec2()),
         );
     }
-    bbox(): Rect {
-        return Rect.fromPoints(this.p1, this.p2);
+    bbox(r?: Rect): Rect {
+        if (r) {
+            r.pos.x = this.p1.x;
+            r.pos.y = this.p1.y;
+            r.width = this.p2.x - this.p1.x;
+            r.height = this.p2.y - this.p1.y;
+            return r;
+        }
+        else {
+            return Rect.fromPoints(this.p1, this.p2);
+        }
     }
     area(): number {
         return this.p1.dist(this.p2);
@@ -2066,8 +2085,17 @@ export class Rect {
         );
         return p;
     }
-    bbox(): Rect {
-        return this.clone();
+    bbox(r?: Rect): Rect {
+        if (r) {
+            r.pos.x = this.pos.x;
+            r.pos.y = this.pos.y;
+            r.width = this.width;
+            r.height = this.height;
+            return r;
+        }
+        else {
+            return this.clone();
+        }
     }
     area(): number {
         return this.width * this.height;
@@ -2142,11 +2170,20 @@ export class Circle {
     transform(tr: Mat23, s?: Shape): Ellipse {
         return new Ellipse(this.center, this.radius, this.radius).transform(tr);
     }
-    bbox(): Rect {
-        return Rect.fromPoints(
-            this.center.sub(vec2(this.radius)),
-            this.center.add(vec2(this.radius)),
-        );
+    bbox(r?: Rect): Rect {
+        if (r) {
+            r.pos.x = this.center.x - this.radius;
+            r.pos.y = this.center.y - this.radius;
+            r.width = this.radius * 2;
+            r.height = this.radius * 2;
+            return r;
+        }
+        else {
+            return Rect.fromPoints(
+                this.center.sub(vec2(this.radius)),
+                this.center.add(vec2(this.radius)),
+            );
+        }
     }
     area(): number {
         return this.radius * this.radius * Math.PI;
@@ -2262,13 +2299,22 @@ export class Ellipse {
             return ellipse;
         }
     }
-    bbox(): Rect {
+    bbox(r?: Rect): Rect {
         if (this.angle == 0) {
             // No rotation, so the semi-major and semi-minor axis give the extends
-            return Rect.fromPoints(
-                this.center.sub(vec2(this.radiusX, this.radiusY)),
-                this.center.add(vec2(this.radiusX, this.radiusY)),
-            );
+            if (r) {
+                r.pos.x = this.center.x - this.radiusX;
+                r.pos.y = this.center.y - this.radiusY;
+                r.width = this.radiusX * 2;
+                r.height = this.radiusY * 2;
+                return r;
+            }
+            else {
+                return Rect.fromPoints(
+                    this.center.sub(vec2(this.radiusX, this.radiusY)),
+                    this.center.add(vec2(this.radiusX, this.radiusY)),
+                );
+            }
         }
         else {
             // Rotation. We need to find the maximum x and y distance from the
@@ -2284,10 +2330,19 @@ export class Ellipse {
             const halfwidth = Math.sqrt(ux * ux + vx * vx);
             const halfheight = Math.sqrt(uy * uy + vy * vy);
 
-            return Rect.fromPoints(
-                this.center.sub(vec2(halfwidth, halfheight)),
-                this.center.add(vec2(halfwidth, halfheight)),
-            );
+            if (r) {
+                r.pos.x = this.center.x - halfwidth;
+                r.pos.y = this.center.y - halfheight;
+                r.width = halfwidth * 2;
+                r.height = halfheight * 2;
+                return r;
+            }
+            else {
+                return Rect.fromPoints(
+                    this.center.sub(vec2(halfwidth, halfheight)),
+                    this.center.add(vec2(halfwidth, halfheight)),
+                );
+            }
         }
     }
     area(): number {
@@ -2434,7 +2489,7 @@ export class Polygon {
         }
         return new Polygon(this.pts.map((pt) => m.transformPointV(pt, vec2())));
     }
-    bbox(): Rect {
+    bbox(r?: Rect): Rect {
         const p1 = vec2(Number.MAX_VALUE);
         const p2 = vec2(-Number.MAX_VALUE);
         for (const pt of this.pts) {
@@ -2443,7 +2498,16 @@ export class Polygon {
             p1.y = Math.min(p1.y, pt.y);
             p2.y = Math.max(p2.y, pt.y);
         }
-        return Rect.fromPoints(p1, p2);
+        if (r) {
+            r.pos.x = p1.x;
+            r.pos.y = p1.y;
+            r.width = p2.x - p1.x;
+            r.height = p2.y - p1.y;
+            return r;
+        }
+        else {
+            return Rect.fromPoints(p1, p2);
+        }
     }
     area(): number {
         let total = 0;

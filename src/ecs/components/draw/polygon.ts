@@ -8,6 +8,7 @@ import type { Color } from "../../../math/color";
 import { Polygon } from "../../../math/math";
 import { type Vec2 } from "../../../math/Vec2";
 import type { Comp, GameObj } from "../../../types";
+import { nextRenderAreaVersion } from "../physics/area";
 
 /**
  * The {@link polygon `polygon()`} component.
@@ -57,7 +58,10 @@ export interface PolygonComp extends Comp {
  */
 export type PolygonCompOpt = Omit<DrawPolygonOpt, "pts">;
 
-export function polygon(pts: Vec2[], opt: PolygonCompOpt = {}): PolygonComp {
+export function polygon(
+    pts: Vec2[],
+    opt: PolygonCompOpt = {},
+): PolygonComp & { _renderAreaVersion: number } {
     if (pts.length < 3) {
         throw new Error(
             `Polygon's need more than two points, ${pts.length} points provided`,
@@ -83,9 +87,14 @@ export function polygon(pts: Vec2[], opt: PolygonCompOpt = {}): PolygonComp {
                 triangulate: opt.triangulate,
             }));
         },
-        renderArea(this: GameObj<PolygonComp>) {
+        renderArea(
+            this: GameObj<PolygonComp & { _renderAreaVersion: number }>,
+        ) {
+            // TODO: caching
+            this._renderAreaVersion = nextRenderAreaVersion();
             return new Polygon(this.pts);
         },
+        _renderAreaVersion: 0,
         inspect() {
             return `polygon: ${this.pts.map(p => `[${p.x},${p.y}]`).join(",")}`;
         },
