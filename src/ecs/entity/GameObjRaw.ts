@@ -1255,7 +1255,7 @@ export const GameObjRawPrototype: Omit<
         }
 
         for (let i = 0; i < this.children.length; i++) {
-            if (this.children[i].hidden) continue;
+            // if (this.children[i].hidden) continue;
             this.children[i].transformTree(updateNeeded);
         }
 
