@@ -14,6 +14,7 @@ add([
     text("Foobar"),
     area(),
     fixed(),
+    color(WHITE),
 ]);
 
 setCamPos(0, 0);
@@ -21,4 +22,12 @@ setCamScale(2);
 
 onClick("score", () => {
     debug.log("foobar");
+});
+
+onHover("score", obj => {
+    obj.color = RED;
+});
+
+onHoverEnd("score", obj => {
+    obj.color = WHITE;
 });
