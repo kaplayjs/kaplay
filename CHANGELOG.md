@@ -31,6 +31,7 @@ best friend, lajbel, can put the correct version name here
 - Fixed `SpriteComp.hasAnim()` returning false erroneously when the animation
   named was just constant frame 0 - @dragoncoder047
 - Hidden objects are processed again in transform - @mflerackers
+- Fixed click and hover for `fixed()` objects - @mflerackers
 
 ## [4000.0.0-alpha.25] - 2025-12-23
 
