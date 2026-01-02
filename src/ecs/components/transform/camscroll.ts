@@ -5,7 +5,7 @@ import type { Comp, GameObj } from "../../../types";
 import type { PosComp } from "./pos";
 
 /**
- * The {@link camscroll `camscroll()`} component.
+ * The {@link parallax `parallax()`} component.
  *
  * @group Components
  * @subgroup Component Types
@@ -18,7 +18,7 @@ export interface ParallaxComp extends Comp {
      */
     factor: Vec2;
 
-    basePos: Vec2;
+    basePos?: Vec2;
 }
 
 export function parallax(...args: Vec2Args): ParallaxComp {
