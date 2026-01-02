@@ -59,34 +59,36 @@ export function getLocalAreaVersion(obj: GameObj<any>) {
 
 function clickHandler(button: MouseButton) {
     const screenPos = _k.app.mousePos();
-    const worldPos = toWorld(m);
+    const worldPos = toWorld(screenPos);
     const objects: Set<GameObj<AreaComp>> = new Set();
     // non-fixed objects
     _k.game.retrieve(
-        new Rect(screenPos.sub(1, 1), 3, 3),
+        new Rect(worldPos.sub(1, 1), 3, 3),
         obj => objects.add(obj),
     );
-    for (const obj of objects) {
-        if (
-            !(obj as unknown as GameObj<FixedComp>).fixed
-            && obj.worldArea().contains(screenPos)
-        ) {
-            obj.trigger("click", button);
-        }
-    }
-    // fixed objects
-    _k.game.retrieve(new Rect(worldPos.sub(1, 1), 3, 3), obj => {
-        if (objects.has(obj)) objects.delete(obj);
-        else objects.add(obj);
-    });
-    for (const obj of objects) {
+    objects.forEach(obj => {
         if (
             !(obj as unknown as GameObj<FixedComp>).fixed
             && obj.worldArea().contains(worldPos)
         ) {
             obj.trigger("click", button);
         }
-    }
+    });
+    debug.log("got", objects.size, "objects")
+    // fixed objects
+    _k.game.retrieve(new Rect(screenPos.sub(1, 1), 3, 3), obj => {
+        if (objects.has(obj)) objects.delete(obj);
+        else objects.add(obj);
+    });
+    objects.forEach(obj => {
+        if (
+            (obj as unknown as GameObj<FixedComp>).fixed
+            && obj.worldArea().contains(worldPos)
+        ) {
+            obj.trigger("click", button);
+        }
+    });
+    debug.log("got", objects.size, " fixed objects")
 }
 
 let clickHandlerRunning = false;
@@ -796,11 +798,10 @@ export function area(
                 return `area: ${this.area.scale?.x?.toFixed(1)}x`;
             }
             else {
-                return `area: (${
-                    this.area.scale?.x?.toFixed(
-                        1,
-                    )
-                }x, ${this.area.scale.y?.toFixed(1)}y)`;
+                return `area: (${this.area.scale?.x?.toFixed(
+                    1,
+                )
+                    }x, ${this.area.scale.y?.toFixed(1)}y)`;
             }
         },
 
