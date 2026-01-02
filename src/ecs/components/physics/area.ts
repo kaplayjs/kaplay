@@ -74,7 +74,6 @@ function clickHandler(button: MouseButton) {
             obj.trigger("click", button);
         }
     });
-    debug.log("got", objects.size, "objects")
     // fixed objects
     _k.game.retrieve(new Rect(screenPos.sub(1, 1), 3, 3), obj => {
         if (objects.has(obj)) objects.delete(obj);
@@ -83,12 +82,11 @@ function clickHandler(button: MouseButton) {
     objects.forEach(obj => {
         if (
             (obj as unknown as GameObj<FixedComp>).fixed
-            && obj.worldArea().contains(worldPos)
+            && obj.worldArea().contains(screenPos)
         ) {
             obj.trigger("click", button);
         }
     });
-    debug.log("got", objects.size, " fixed objects")
 }
 
 let clickHandlerRunning = false;

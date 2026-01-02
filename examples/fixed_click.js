@@ -17,7 +17,7 @@ add([
 ]);
 
 setCamPos(0, 0);
-//setCamScale(2);
+setCamScale(2);
 
 onClick("score", () => {
     debug.log("foobar");
