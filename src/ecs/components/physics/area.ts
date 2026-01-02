@@ -58,12 +58,32 @@ export function getLocalAreaVersion(obj: GameObj<any>) {
 }
 
 function clickHandler(button: MouseButton) {
-    const p = toWorld(_k.app.mousePos());
-    // We use an array, so we can later add support to sort it and take the top-most object only
-    const objects: GameObj<AreaComp>[] = [];
-    _k.game.retrieve(new Rect(p.sub(1, 1), 3, 3), obj => objects.push(obj));
+    const screenPos = _k.app.mousePos();
+    const worldPos = toWorld(m);
+    const objects: Set<GameObj<AreaComp>> = new Set();
+    // non-fixed objects
+    _k.game.retrieve(
+        new Rect(screenPos.sub(1, 1), 3, 3),
+        obj => objects.add(obj),
+    );
     for (const obj of objects) {
-        if (obj.worldArea().contains(p)) {
+        if (
+            !(obj as unknown as GameObj<FixedComp>).fixed
+            && obj.worldArea().contains(screenPos)
+        ) {
+            obj.trigger("click", button);
+        }
+    }
+    // fixed objects
+    _k.game.retrieve(new Rect(worldPos.sub(1, 1), 3, 3), obj => {
+        if (objects.has(obj)) objects.delete(obj);
+        else objects.add(obj);
+    });
+    for (const obj of objects) {
+        if (
+            !(obj as unknown as GameObj<FixedComp>).fixed
+            && obj.worldArea().contains(worldPos)
+        ) {
             obj.trigger("click", button);
         }
     }
