@@ -103,7 +103,7 @@ function startClickHandler() {
 
 function hoverHandler() {
     let oldObjects: Set<GameObj<AreaComp>> = new Set();
-    // p Should be world coordinates
+
     return (screenPos: Vec2) => {
         const worldPos = toWorld(screenPos);
         const newObjects: Set<GameObj<AreaComp>> = new Set();
@@ -811,11 +811,10 @@ export function area(
                 return `area: ${this.area.scale?.x?.toFixed(1)}x`;
             }
             else {
-                return `area: (${
-                    this.area.scale?.x?.toFixed(
-                        1,
-                    )
-                }x, ${this.area.scale.y?.toFixed(1)}y)`;
+                return `area: (${this.area.scale?.x?.toFixed(
+                    1,
+                )
+                    }x, ${this.area.scale.y?.toFixed(1)}y)`;
             }
         },
 
