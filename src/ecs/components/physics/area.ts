@@ -244,6 +244,11 @@ export interface AreaComp extends Comp {
      */
     isOverlapping(o: GameObj<AreaComp>): boolean;
     /**
+     * Returns true if the objects collide in screen space
+     * @param other 
+     */
+    isVisuallyColliding(other: GameObj<AreaComp>): boolean;
+    /**
      * Register an event runs when clicked.
      *
      * @since v2000.1
@@ -619,6 +624,10 @@ export function area(
             return col && col.hasOverlap();
         },
 
+        isVisuallyColliding(other) {
+            return this.screenArea().collides(other.screenArea());
+        },
+
         onClick(
             this: GameObj<AreaComp>,
             action: () => void,
@@ -811,11 +820,10 @@ export function area(
                 return `area: ${this.area.scale?.x?.toFixed(1)}x`;
             }
             else {
-                return `area: (${
-                    this.area.scale?.x?.toFixed(
-                        1,
-                    )
-                }x, ${this.area.scale.y?.toFixed(1)}y)`;
+                return `area: (${this.area.scale?.x?.toFixed(
+                    1,
+                )
+                    }x, ${this.area.scale.y?.toFixed(1)}y)`;
             }
         },
 
