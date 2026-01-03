@@ -252,6 +252,7 @@ import {
     vec2,
     wave,
 } from "../math/math";
+import { floodFill } from "../math/navigation";
 import { NavMesh } from "../math/navigationmesh";
 import {
     createCogPolygon,
@@ -590,6 +591,7 @@ export const createContext = (
         createRegularPolygon,
         createStarPolygon,
         createCogPolygon,
+        floodFill,
         easingSteps,
         easingLinear,
         easingCubicBezier,
