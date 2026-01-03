@@ -159,7 +159,7 @@ function startHoverSystem() {
 
     system("hover", () => {
         if (_k.game.fakeMouse) {
-            fakeMouseHover(_k.game.fakeMouse.screenPos()!);
+            fakeMouseHover(_k.game.fakeMouse.screenPos);
             return;
         }
 

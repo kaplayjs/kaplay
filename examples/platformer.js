@@ -162,7 +162,7 @@ const levelConf = {
         ],
         "$": () => [
             sprite("coin"),
-            area(),
+            area({ isSensor: true }),
             pos(0, -9),
             anchor("bot"),
             offscreen({ hide: true }),
@@ -186,7 +186,7 @@ const levelConf = {
         ],
         "#": () => [
             sprite("apple"),
-            area(),
+            area({ isSensor: true }),
             anchor("bot"),
             body(),
             offscreen({ hide: true }),
@@ -203,7 +203,7 @@ const levelConf = {
         ],
         "@": () => [
             sprite("portal"),
-            area({ scale: 0.5 }),
+            area({ scale: 0.5, isSensor: true }),
             anchor("bot"),
             pos(0, -12),
             offscreen({ hide: true }),
