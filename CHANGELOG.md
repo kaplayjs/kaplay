@@ -28,7 +28,6 @@ best friend, lajbel, can put the correct version name here
   Note that this involves additional processing as it tests outside the
   collision system, which works in world space - @mflerackers
 
-
 ## Changed
 
 - Both worldPos and screenPos are properties now - @mflerackers
