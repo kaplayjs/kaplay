@@ -40,6 +40,8 @@ best friend, lajbel, can put the correct version name here
   @lajbel's debugging skills - @mflerackers
 - Fixed `SpriteComp.hasAnim()` returning false erroneously when the animation
   named was just constant frame 0 - @dragoncoder047
+- Fixed input events attached to a game object having the event's paused value
+  reset when the object is paused or unpaused - @dragoncoder047
 - Hidden objects are processed again in transform - @mflerackers
 - Fixed click and hover for `fixed()` objects - @mflerackers
 - Object toWorld/fromWorld/toScreen/fromScreen work more logical now -
