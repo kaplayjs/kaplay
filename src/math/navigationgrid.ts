@@ -42,7 +42,7 @@ export class Grid implements Graph {
             while (frontier.length > 0) {
                 const tile = frontier.pop();
                 // TODO: Remove non-null assertion
-                that.getNeighbours(tile!).forEach(t => {
+                that.getNeighbors(tile!).forEach(t => {
                     if (that._connMap[t] < 0) {
                         that._connMap[t] = index;
                         frontier.push(t);
@@ -75,7 +75,7 @@ export class Grid implements Graph {
         return Math.floor(tile / this._columns);
     }
 
-    getNeighbours(tile: number): number[] {
+    getNeighbors(tile: number): number[] {
         const neighbours = [];
         // x > 0
         if (tile > 0) {
