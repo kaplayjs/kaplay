@@ -22,6 +22,16 @@ best friend, lajbel, can put the correct version name here
 
 - Added `AreaCompOpt.isSensor`. Areas without body or is sensor will no longer
   be eligible for collisions - @mflerackers
+- Added `floodFill()` for puzzle games - @mflerackers
+- Added `AreaComp.isVisuallyColliding` to test collisions in screen space. This
+  can be used for fixed objects which do not necessarily collide in world space.
+  Note that this involves additional processing as it tests outside the
+  collision system, which works in world space - @mflerackers
+
+
+## Changed
+
+- Both worldPos and screenPos are properties now - @mflerackers
 
 ## Fixed
 
@@ -32,6 +42,10 @@ best friend, lajbel, can put the correct version name here
   named was just constant frame 0 - @dragoncoder047
 - Fixed input events attached to a game object having the event's paused value
   reset when the object is paused or unpaused - @dragoncoder047
+- Hidden objects are processed again in transform - @mflerackers
+- Fixed click and hover for `fixed()` objects - @mflerackers
+- Object toWorld/fromWorld/toScreen/fromScreen work more logical now -
+  @mflerackers
 
 ## [4000.0.0-alpha.25] - 2025-12-23
 

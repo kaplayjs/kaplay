@@ -163,6 +163,7 @@ import type {
     RNG,
     StepPosition,
 } from "../math/math";
+import type { Graph } from "../math/navigation";
 import type { NavMesh } from "../math/navigationmesh";
 import type { Quadtree, ResizingQuadtree } from "../math/spatial/quadtree";
 import type { Vec2 } from "../math/Vec2";
@@ -5289,6 +5290,11 @@ export interface KAPLAYCtx {
         sides: number,
         startAngle: number,
     ): Vec2[];
+    floodFill(
+        graph: Graph,
+        start: number | number[],
+        predicate: (node: number) => boolean,
+    ): number[];
     /**
      * Check if a line and a point intersect.
      *
