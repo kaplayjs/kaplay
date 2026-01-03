@@ -150,20 +150,27 @@ export function aStarSearch(
     return buildPath(start, goal, cameFrom)!;
 }
 
-export function floodFill(graph: Graph, start: number | number[], predicate: (node: number) => boolean) {
+export function floodFill(
+    graph: Graph,
+    start: number | number[],
+    predicate: (node: number) => boolean,
+) {
     const stack = Array.isArray(start) ? start : [start];
-    const fill = new Set();
+    const fill: Set<number> = new Set();
     while (stack.length) {
         const node = stack.pop()!;
+        if (!predicate(node)) {
+            continue;
+        }
+        // Fill
+        fill.add(node);
         for (const neighbor of graph.getNeighbors(node)) {
             // If not filled and fillable
             if (!fill.has(neighbor) && predicate(neighbor)) {
-                // Fill
-                fill.add(neighbor);
                 // We need to look around nn later
                 stack.push(neighbor);
             }
         }
     }
-    return fill;
+    return [...fill];
 }

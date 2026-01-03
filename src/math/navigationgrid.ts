@@ -76,43 +76,43 @@ export class Grid implements Graph {
     }
 
     getNeighbors(tile: number): number[] {
-        const neighbours = [];
+        const neighbors = [];
         // x > 0
         if (tile > 0) {
-            neighbours.push(tile - 1);
+            neighbors.push(tile - 1);
             if (this._diagonals) {
                 if (tile >= this._columns) {
-                    neighbours.push(tile - this._columns - 1);
+                    neighbors.push(tile - this._columns - 1);
                 }
                 if (tile < (this._rows - 1) * this._columns) {
-                    neighbours.push(tile + this._columns - 1);
+                    neighbors.push(tile + this._columns - 1);
                 }
             }
         }
         // y > 0
         if (tile >= this._columns) {
-            neighbours.push(tile - this._columns);
+            neighbors.push(tile - this._columns);
         }
         // y < height
         if (tile < (this._rows - 1) * this._columns) {
-            neighbours.push(tile + this._columns);
+            neighbors.push(tile + this._columns);
         }
         // x < width
         if (tile % this._columns < this._columns - 1) {
-            neighbours.push(tile + 1);
+            neighbors.push(tile + 1);
             if (this._diagonals) {
                 if (tile >= this._columns) {
-                    neighbours.push(tile - this._columns + 1);
+                    neighbors.push(tile - this._columns + 1);
                 }
                 if (tile < (this._rows - 1) * this._columns) {
-                    neighbours.push(tile + this._columns + 1);
+                    neighbors.push(tile + this._columns + 1);
                 }
             }
         }
 
         // TODO: Remove @ts-ignore
-        // @ts-ignore neighbours look like as a number[]?
-        return neighbours.filter(({ x, y }) => this._data[y][x] != "x");
+        // @ts-ignore neighbors look like as a number[]?
+        return neighbors.filter(({ x, y }) => this._data[y][x] != "x");
     }
 
     getCost(a: number, b: number) {
