@@ -159,7 +159,7 @@ function startHoverSystem() {
 
     system("hover", () => {
         if (_k.game.fakeMouse) {
-            fakeMouseHover(_k.game.fakeMouse.screenPos()!);
+            fakeMouseHover(_k.game.fakeMouse.screenPos);
             return;
         }
 
@@ -243,6 +243,11 @@ export interface AreaComp extends Comp {
      * If is currently overlapping with another game obj (like isColliding, but will return false if the objects are just touching edges).
      */
     isOverlapping(o: GameObj<AreaComp>): boolean;
+    /**
+     * Returns true if the objects collide in screen space
+     * @param other
+     */
+    isVisuallyColliding(other: GameObj<AreaComp>): boolean;
     /**
      * Register an event runs when clicked.
      *
@@ -617,6 +622,10 @@ export function area(
             }
             const col = colliding[other.id];
             return col && col.hasOverlap();
+        },
+
+        isVisuallyColliding(other) {
+            return this.screenArea().collides(other.screenArea());
         },
 
         onClick(
