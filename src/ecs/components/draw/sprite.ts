@@ -17,6 +17,7 @@ import { Quad, quad, Rect, vec2 } from "../../../math/math";
 import { type Vec2 } from "../../../math/Vec2";
 import { _k } from "../../../shared";
 import type { Comp, GameObj, SpriteAnimPlayOpt } from "../../../types";
+import { nextRenderAreaVersion } from "../physics/area";
 
 /**
  * The serialized {@link sprite `sprite()`} component.
@@ -135,7 +136,6 @@ export interface SpriteComp extends Comp {
      * @since v3000.0
      */
     renderArea(): Rect;
-
     serialize(): SerializedSpriteComp;
 }
 
@@ -192,7 +192,7 @@ export interface SpriteCompOpt {
 export function sprite(
     src: string | SpriteData | Asset<SpriteData>,
     opt: SpriteCompOpt = {},
-): SpriteComp {
+): SpriteComp & { _renderAreaVersion: number } {
     let spriteData: SpriteData | null = null;
     let curAnim: SpriteCurAnim | null = null;
     // 1  - from small index to large index
@@ -300,15 +300,21 @@ export function sprite(
             return _width;
         },
         set width(value) {
-            _width = value;
-            if (_shape) _shape.width = value;
+            if (_width != value) {
+                _width = value;
+                if (_shape) _shape.width = value;
+                this._renderAreaVersion = nextRenderAreaVersion();
+            }
         },
         get height() {
             return _height;
         },
         set height(value) {
-            _height = value;
-            if (_shape) _shape.height = value;
+            if (_height != value) {
+                _height = value;
+                if (_shape) _shape.height = value;
+                this._renderAreaVersion = nextRenderAreaVersion();
+            }
         },
         frame: opt.frame || 0,
         quad: opt.quad || new Quad(0, 0, 1, 1),
@@ -479,8 +485,9 @@ export function sprite(
                     }
                     else {
                         this.frame = frames.at(-1)!;
+                        const anim = curAnim;
                         this.stop();
-                        curAnim.onEnd();
+                        anim.onEnd();
                         return;
                     }
                 }
@@ -494,8 +501,9 @@ export function sprite(
                     }
                     else {
                         this.frame = frames[0];
+                        const anim = curAnim;
                         this.stop();
-                        curAnim.onEnd();
+                        anim.onEnd();
                         return;
                     }
                 }
@@ -577,7 +585,7 @@ export function sprite(
         },
 
         hasAnim(name) {
-            return Boolean(this.getAnim(name));
+            return this.getAnim(name) !== null;
         },
 
         onAnimEnd(
@@ -597,9 +605,12 @@ export function sprite(
         renderArea() {
             if (!_shape) {
                 _shape = new Rect(vec2(0), _width, _height);
+                this._renderAreaVersion = nextRenderAreaVersion();
             }
             return _shape;
         },
+
+        _renderAreaVersion: 0,
 
         inspect() {
             if (typeof src === "string") {

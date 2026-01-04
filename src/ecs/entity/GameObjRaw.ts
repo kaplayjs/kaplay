@@ -70,6 +70,29 @@ export type SetParentOpt = {
     keep: KeepFlags;
 };
 
+let _lastTransformVersion = 0;
+let _nextTransformVersion = 0;
+
+export function nextTransformVersion() {
+    return _nextTransformVersion++;
+}
+
+export function updateLastTransformVersion() {
+    return _lastTransformVersion = _nextTransformVersion;
+}
+
+export function transformNeedsUpdate(version: number) {
+    return version >= _lastTransformVersion;
+}
+
+export function objectTransformNeedsUpdate(obj: GameObj<any>) {
+    return obj._transformVersion >= _lastTransformVersion;
+}
+
+export function getTransformVersion(obj: GameObj<any>): number {
+    return obj._transformVersion;
+}
+
 /**
  * Base interface of all game objects.
  *
@@ -265,7 +288,7 @@ export interface GameObjRaw {
     /**
      * This method is called to transform objects
      */
-    transformTree(): void;
+    transformTree(force: boolean): void;
     /**
      * Add a component.
      *
@@ -514,9 +537,9 @@ export type InternalGameObjRaw = GameObjRaw & {
     /** @readonly */
     _tags: Set<Tag>;
     /** @readonly */
-    _paused: boolean;
-    /** @readonly */
     _drawLayerIndex: number;
+    /** @readonly */
+    _transformVersion: number;
 
     /**
      * Adds a component or anonymous component.
@@ -573,7 +596,6 @@ export const GameObjRawPrototype: Omit<
     // This chain of `as any`, is because we never should use this object
     // directly, it's only a prototype. These properties WILL be defined
     // (by our factory function `make`) when we create a new game object.
-    _paused: null as any,
     _anonymousCompStates: null as any,
     _cleanups: null as any,
     _compsIds: null as any,
@@ -591,6 +613,7 @@ export const GameObjRawPrototype: Omit<
     hidden: null as any,
     id: null as any,
     transform: null as any,
+    _transformVersion: null as any,
     target: null as any,
 
     // #region Setters and Getters
@@ -615,18 +638,7 @@ export const GameObjRawPrototype: Omit<
         }
     },
 
-    set paused(paused: boolean) {
-        if (this._paused === paused) return;
-        this._paused = paused;
-
-        for (const e of this._inputEvents) {
-            e.paused = paused;
-        }
-    },
-
-    get paused() {
-        return this._paused;
-    },
+    paused: false,
 
     get parent() {
         return this._parent;
@@ -1191,27 +1203,46 @@ export const GameObjRawPrototype: Omit<
     },
 
     transformTree(
-        this: GameObj<
-            PosComp | ScaleComp | RotateComp | SkewComp | FixedComp | MaskComp
-        >,
+        this:
+            & GameObj<
+                | PosComp
+                | ScaleComp
+                | RotateComp
+                | SkewComp
+                | FixedComp
+                | MaskComp
+            >
+            & InternalGameObjRaw,
+        force: boolean,
     ) {
+        const localUpdateNeeded = transformNeedsUpdate(this._transformVersion);
+        const updateNeeded = force || localUpdateNeeded;
+
         pushTransform();
-        if (this.pos) multTranslateV(this.pos);
-        if (this.angle) multRotate(this.angle);
-        if (this.scale) multScaleV(this.scale);
 
-        if (this.skew) console.log(_k.gfx.transform, this.skew);
+        if (updateNeeded) {
+            if (this.pos) multTranslateV(this.pos);
+            if (this.angle) multRotate(this.angle);
+            if (this.scale) multScaleV(this.scale);
 
-        if (this.skew) multSkewV(this.skew);
+            if (this.skew) multSkewV(this.skew);
 
-        if (!this.transform) this.transform = new Mat23();
-        storeMatrix(this.transform);
+            if (!this.transform) this.transform = new Mat23();
+            storeMatrix(this.transform);
 
-        if (this.skew) console.log(this.transform);
+            // If force is true, but we didn't have a newer version,
+            // we need to update the version in order to make sure that areas get updated.
+            if (force && !localUpdateNeeded) {
+                this._transformVersion = nextTransformVersion();
+            }
+        }
+        else {
+            loadMatrix(this.transform);
+        }
 
         for (let i = 0; i < this.children.length; i++) {
-            if (this.children[i].hidden) continue;
-            this.children[i].transformTree();
+            // if (this.children[i].hidden) continue;
+            this.children[i].transformTree(updateNeeded);
         }
 
         popTransform();

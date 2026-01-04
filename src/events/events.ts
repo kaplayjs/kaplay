@@ -1,4 +1,5 @@
 import { EVENT_CANCEL_SYMBOL } from "../constants/general";
+import type { GameObj } from "../types";
 
 /**
  * @group Events
@@ -40,6 +41,8 @@ export class Registry<T> extends Map<number, T> {
 export class KEventController {
     /** If the event is paused */
     paused: boolean = false;
+    /** The game obj that attached this event */
+    controller?: GameObj | null = null;
     /** Cancel the event */
     cancel: () => void;
 
@@ -54,7 +57,11 @@ export class KEventController {
             get: () => events[0].paused,
             set: (p: boolean) => events.forEach((e) => e.paused = p),
         });
-        ev.paused = false;
+        Object.defineProperty(ev, "controller", {
+            get: () => events[0].controller,
+            set: (p: GameObj | null) => events.forEach((e) => e.controller = p),
+        });
+        ev.paused = !!events[0]?.paused;
         return ev;
     }
     static replace(oldEv: KEventController, newEv: KEventController) {
@@ -64,7 +71,10 @@ export class KEventController {
             get: () => newEv.paused,
             set: (p: boolean) => newEv.paused = p,
         });
-
+        Object.defineProperty(oldEv, "controller", {
+            get: () => newEv.controller,
+            set: (p: GameObj | null) => newEv.controller = p,
+        });
         return oldEv;
     }
 }
@@ -76,7 +86,7 @@ export class KEvent<Args extends any[] = any[]> {
 
     add(action: (...args: Args) => unknown): KEventController {
         function handler(...args: Args) {
-            if (ev.paused) return;
+            if (ev.paused || ev.controller?.paused) return;
             return action(...args);
         }
 
@@ -123,13 +133,6 @@ export class KEventHandler<EventMap extends Record<string, any[]>> {
     private handlers: Partial<
         {
             [Name in keyof EventMap]: KEvent<EventMap[Name]>;
-        }
-    > = {};
-    registers: Partial<
-        {
-            [Name in keyof EventMap]: Registry<
-                (...args: EventMap[Name]) => void
-            >;
         }
     > = {};
     on<Name extends keyof EventMap>(

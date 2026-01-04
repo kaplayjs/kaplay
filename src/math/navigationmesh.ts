@@ -174,7 +174,7 @@ export class NavMesh implements Graph {
         return null;
     }
 
-    getNeighbours(index: number): number[] {
+    getNeighbors(index: number): number[] {
         const neighbours = [];
         for (let edge of this._polygons[index].edges) {
             // Lookup polygons with reverse edge

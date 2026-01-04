@@ -18,6 +18,61 @@ best friend, lajbel, can put the correct version name here
 
 ## [unreleased]
 
+## Added
+
+- Added `AreaCompOpt.isSensor`. Areas without body or is sensor will no longer
+  be eligible for collisions - @mflerackers
+- Added `floodFill()` for puzzle games - @mflerackers
+- Added `AreaComp.isVisuallyColliding` to test collisions in screen space. This
+  can be used for fixed objects which do not necessarily collide in world space.
+  Note that this involves additional processing as it tests outside the
+  collision system, which works in world space - @mflerackers
+
+## Changed
+
+- Both worldPos and screenPos are properties now - @mflerackers
+
+## Fixed
+
+- Fixed `tween()` not cloning the passed vectors/colors - @lajbel
+- Fixed the vibration effect on bodies introduced in alpha.25 thanks to
+  @lajbel's debugging skills - @mflerackers
+- Fixed `SpriteComp.hasAnim()` returning false erroneously when the animation
+  named was just constant frame 0 - @dragoncoder047
+- Fixed input events attached to a game object having the event's paused value
+  reset when the object is paused or unpaused - @dragoncoder047
+- Hidden objects are processed again in transform - @mflerackers
+- Fixed click and hover for `fixed()` objects - @mflerackers
+- Object toWorld/fromWorld/toScreen/fromScreen work more logical now -
+  @mflerackers
+
+## [4000.0.0-alpha.25] - 2025-12-23
+
+### Added
+
+- Added the `fakeMouseMove` event in `FakeMouseComp`, it will triggers when you
+  move the object - @lajbel
+- Global `retrieve()` method to get the objects with area within a certain
+  rectangle - @mflerackers
+
+## Changed
+
+- Transforms are now only recalculated when needed. Thus static objects no
+  longer increase computation in the transform phase - @mflerackers
+- Areas are now only recalculated when the area settings or (optional)
+  renderArea has changed - @mflerackers
+- World (transformed) areas are now only recalculated when the area or transform
+  has changed - @mflerackers
+- World bounding boxes are now only recalculated when the world area has
+  changed - @mflerackers
+- Broad stage collision detection spatial structures are now only updated when
+  an object's world bounding box has changed - @mflerackers
+- You can no longer change the position of an object by doing obj.pos.x += 1.
+  You need to assign a new Vec2 or use moveBy instead - @mflerackers
+- The grid broadphase has been rewritten for performance - @mflerackers
+
+## [4000.0.0-alpha.24] - 2025-12-12
+
 ### Added
 
 - Added the `maxTimeStep` and `fixedUpdateMode` options, as well as
@@ -46,8 +101,8 @@ best friend, lajbel, can put the correct version name here
 - Fixed the sprite animation `onEnd()` callback being called before the
   animation actually stopped, so if the onEnd callback started a new animation,
   the new animation was instantly stopped - @dragoncoder047
-- Now `playMusic()` actually uses the requested volume given in the options -
-  @dragoncoder047
+- Now `playMusic()` actually uses the requested volume and playback rate given
+  in the options - @dragoncoder047
 
 ## [4000.0.0-alpha.23] - 2025-11-05
 

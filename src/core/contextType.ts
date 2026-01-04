@@ -163,8 +163,9 @@ import type {
     RNG,
     StepPosition,
 } from "../math/math";
+import type { Graph } from "../math/navigation";
 import type { NavMesh } from "../math/navigationmesh";
-import type { Quadtree } from "../math/spatial/quadtree";
+import type { Quadtree, ResizingQuadtree } from "../math/spatial/quadtree";
 import type { Vec2 } from "../math/Vec2";
 import {
     type Anchor,
@@ -378,6 +379,13 @@ export interface KAPLAYCtx {
      * @group Game Obj
      */
     readd(obj: GameObj): GameObj;
+    /**
+     * Retrieves all objects within the given rectangle
+     *
+     * @since v4000
+     * @group Game Obj
+     */
+    retrieve(rect: Rect, retrieveCb: (obj: GameObj<AreaComp>) => void): void;
     /**
      * Get a list of all game objs with certain tag.
      *
@@ -5282,6 +5290,11 @@ export interface KAPLAYCtx {
         sides: number,
         startAngle: number,
     ): Vec2[];
+    floodFill(
+        graph: Graph,
+        start: number | number[],
+        predicate: (node: number) => boolean,
+    ): number[];
     /**
      * Check if a line and a point intersect.
      *
@@ -5569,7 +5582,8 @@ export interface KAPLAYCtx {
         height: number,
         maxObjects: number,
         maxLevels: number,
-    ): Quadtree;
+        resizing: boolean,
+    ): Quadtree | ResizingQuadtree;
     /**
      * The Random Number Generator.
      *
