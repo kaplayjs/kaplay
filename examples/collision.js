@@ -12,7 +12,7 @@
 // Start kaplay
 kaplay({
     scale: 2,
-    narrowPhaseCollisionAlgorithm: "sat"
+    narrowPhaseCollisionAlgorithm: "sat",
 });
 
 // Load assets
