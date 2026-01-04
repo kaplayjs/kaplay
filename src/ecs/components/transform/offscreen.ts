@@ -99,7 +99,7 @@ export function offscreen(opt: OffScreenCompOpt = {}): OffScreenComp {
         isOffScreen(
             this: GameObj<PosComp | OffScreenComp | RectComp>,
         ): boolean {
-            const pos = this.screenPos();
+            const pos = this.screenPos;
 
             // This is not possible, screenPos() without arguments returns the pos
             if (!pos) return false;

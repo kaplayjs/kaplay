@@ -529,8 +529,6 @@ export type InternalGameObjRaw = GameObjRaw & {
     /** @readonly */
     _tags: Set<Tag>;
     /** @readonly */
-    _paused: boolean;
-    /** @readonly */
     _drawLayerIndex: number;
     /** @readonly */
     _transformVersion: number;
@@ -592,7 +590,6 @@ export const GameObjRawPrototype: Omit<
     // This chain of `as any`, is because we never should use this object
     // directly, it's only a prototype. These properties WILL be defined
     // (by our factory function `make`) when we create a new game object.
-    _paused: null as any,
     _anonymousCompStates: null as any,
     _cleanups: null as any,
     _compsIds: null as any,
@@ -635,18 +632,7 @@ export const GameObjRawPrototype: Omit<
         }
     },
 
-    set paused(paused: boolean) {
-        if (this._paused === paused) return;
-        this._paused = paused;
-
-        for (const e of this._inputEvents) {
-            e.paused = paused;
-        }
-    },
-
-    get paused() {
-        return this._paused;
-    },
+    paused: false,
 
     get parent() {
         return this._parent;
@@ -1249,7 +1235,7 @@ export const GameObjRawPrototype: Omit<
         }
 
         for (let i = 0; i < this.children.length; i++) {
-            if (this.children[i].hidden) continue;
+            // if (this.children[i].hidden) continue;
             this.children[i].transformTree(updateNeeded);
         }
 

@@ -22,11 +22,19 @@ best friend, lajbel, can put the correct version name here
 
 - **(!)** Added `AreaCompOpt.isSensor`. Areas without body or is sensor will no
   longer be eligible for collisions - @mflerackers
+- Now, all global events handlers are avaible in scopes, `app.onXXXX` and
+  `scene.onXXXX()` - @lajbel
+- Added `AreaCompOpt.isSensor`. Areas without body or is sensor will no longer
+  be eligible for collisions - @mflerackers
+- Added `floodFill()` for puzzle games - @mflerackers
+- Added `AreaComp.isVisuallyColliding` to test collisions in screen space. This
+  can be used for fixed objects which do not necessarily collide in world space.
+  Note that this involves additional processing as it tests outside the
+  collision system, which works in world space - @mflerackers
 
 ## Changed
 
-- Now, all global events handlers are avaible in scopes, `app.onXXXX` and
-  `scene.onXXXX()` - @lajbel
+- Both worldPos and screenPos are properties now - @mflerackers
 
 ## Fixed
 
@@ -35,6 +43,12 @@ best friend, lajbel, can put the correct version name here
   @lajbel's debugging skills - @mflerackers
 - Fixed `SpriteComp.hasAnim()` returning false erroneously when the animation
   named was just constant frame 0 - @dragoncoder047
+- Fixed input events attached to a game object having the event's paused value
+  reset when the object is paused or unpaused - @dragoncoder047
+- Hidden objects are processed again in transform - @mflerackers
+- Fixed click and hover for `fixed()` objects - @mflerackers
+- Object toWorld/fromWorld/toScreen/fromScreen work more logical now -
+  @mflerackers
 
 ## Removed
 
@@ -50,7 +64,7 @@ best friend, lajbel, can put the correct version name here
 - Global `retrieve()` method to get the objects with area within a certain
   rectangle - @mflerackers
 
-### Changed
+## Changed
 
 - **(!)** You can no longer change the position of an object by doing obj.pos.x
   += 1. You need to assign a new Vec2 or use moveBy instead - @mflerackers

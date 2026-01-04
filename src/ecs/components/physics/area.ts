@@ -58,16 +58,35 @@ export function getLocalAreaVersion(obj: GameObj<any>) {
 }
 
 function clickHandler(button: MouseButton) {
-    const p = toWorld(_k.app.mousePos());
-    // We use an array, so we can later add support to sort it and take the top-most object only
-    const objects: GameObj<AreaComp>[] = [];
-    _k.game.retrieve(new Rect(p.sub(1, 1), 3, 3), obj => objects.push(obj));
-    for (const obj of objects) {
-        if (obj.worldArea().contains(p)) {
-            _k.game.gameObjEvents.trigger("click", obj);
+    const screenPos = _k.app.mousePos();
+    const worldPos = toWorld(screenPos);
+    const objects: Set<GameObj<AreaComp>> = new Set();
+    // non-fixed objects
+    _k.game.retrieve(
+        new Rect(worldPos.sub(1, 1), 3, 3),
+        obj => objects.add(obj),
+    );
+    objects.forEach(obj => {
+        if (
+            !(obj as unknown as GameObj<FixedComp>).fixed
+            && obj.worldArea().contains(worldPos)
+        ) {
             obj.trigger("click", button);
         }
-    }
+    });
+    // fixed objects
+    _k.game.retrieve(new Rect(screenPos.sub(1, 1), 3, 3), obj => {
+        if (objects.has(obj)) objects.delete(obj);
+        else objects.add(obj);
+    });
+    objects.forEach(obj => {
+        if (
+            (obj as unknown as GameObj<FixedComp>).fixed
+            && obj.worldArea().contains(screenPos)
+        ) {
+            obj.trigger("click", button);
+        }
+    });
 }
 
 let clickHandlerRunning = false;
@@ -84,15 +103,30 @@ function startClickHandler() {
 
 function hoverHandler() {
     let oldObjects: Set<GameObj<AreaComp>> = new Set();
-    // p Should be world coordinates
-    return (p: Vec2) => {
+
+    return (screenPos: Vec2) => {
+        const worldPos = toWorld(screenPos);
         const newObjects: Set<GameObj<AreaComp>> = new Set();
 
-        _k.game.retrieve(new Rect(p.sub(1, 1), 3, 3), obj => {
-            if (obj.worldArea().contains(p)) {
+        // non-fixed objects
+        _k.game.retrieve(new Rect(worldPos.sub(1, 1), 3, 3), obj => {
+            if (
+                !(obj as unknown as GameObj<FixedComp>).fixed
+                && obj.worldArea().contains(worldPos)
+            ) {
                 newObjects.add(obj);
             }
         });
+        // fixed objects
+        _k.game.retrieve(new Rect(screenPos.sub(1, 1), 3, 3), obj => {
+            if (
+                (obj as unknown as GameObj<FixedComp>).fixed
+                && obj.worldArea().contains(screenPos)
+            ) {
+                newObjects.add(obj);
+            }
+        });
+
         newObjects.difference(oldObjects).forEach(obj => {
             _k.game.gameObjEvents.trigger("hover", obj);
             obj.trigger("hover");
@@ -130,11 +164,11 @@ function startHoverSystem() {
 
     system("hover", () => {
         if (_k.game.fakeMouse) {
-            fakeMouseHover(_k.game.fakeMouse.worldPos()!);
+            fakeMouseHover(_k.game.fakeMouse.screenPos);
             return;
         }
 
-        mouseHover(toWorld(_k.app.mousePos()));
+        mouseHover(_k.app.mousePos());
     }, [
         SystemPhase.BeforeUpdate, // Because we need the transform to be up to date
     ]);
@@ -214,6 +248,11 @@ export interface AreaComp extends Comp {
      * If is currently overlapping with another game obj (like isColliding, but will return false if the objects are just touching edges).
      */
     isOverlapping(o: GameObj<AreaComp>): boolean;
+    /**
+     * Returns true if the objects collide in screen space
+     * @param other
+     */
+    isVisuallyColliding(other: GameObj<AreaComp>): boolean;
     /**
      * Register an event runs when clicked.
      *
@@ -590,6 +629,10 @@ export function area(
             return col && col.hasOverlap();
         },
 
+        isVisuallyColliding(other) {
+            return this.screenArea().collides(other.screenArea());
+        },
+
         onClick(
             this: GameObj<AreaComp>,
             action: () => void,
@@ -782,11 +825,10 @@ export function area(
                 return `area: ${this.area.scale?.x?.toFixed(1)}x`;
             }
             else {
-                return `area: (${
-                    this.area.scale?.x?.toFixed(
-                        1,
-                    )
-                }x, ${this.area.scale.y?.toFixed(1)}y)`;
+                return `area: (${this.area.scale?.x?.toFixed(
+                    1,
+                )
+                    }x, ${this.area.scale.y?.toFixed(1)}y)`;
             }
         },
 
