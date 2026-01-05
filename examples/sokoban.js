@@ -24,7 +24,7 @@ loadSprite("steel", "/sprites/steel.png");
 
 let lvlIdx = 0;
 let canMove = true;
-let lastState = null;
+let undoStack = []; // { dir, box }
 
 const levels = [[
     ".......",
@@ -74,30 +74,40 @@ const moveObj = (obj, dir) => {
 };
 
 const move = (dir) => {
-    const moveTo = player.tilePos.add(dir);
+    const playerNewPos = player.tilePos.add(dir);
+
     // the object that exists at the position the player is going to move to
-    const occupant = level.getAt(moveTo).filter((obj) => !obj.is("sensor"));
+    const occupant = level.getAt(playerNewPos).filter((obj) =>
+        !obj.is("sensor")
+    );
 
     if (hasTag(occupant, "wall")) return;
 
+    let box = null;
+
     if (hasTag(occupant, "box")) {
-        const boxMoveTo = occupant[0].tilePos.add(dir);
+        box = occupant[0];
+        const checkAtPos = occupant[0].tilePos.add(dir);
+
         // if there's an object at the position the box will get moved to
-        const boxOccupant = level.getAt(boxMoveTo).filter((obj) =>
+        const boxOccupant = level.getAt(checkAtPos).filter((obj) =>
             !obj.is("sensor")
         );
 
         if (boxOccupant.length == 0) {
-            moveObj(occupant[0], dir);
+            moveObj(box, dir);
         }
         else return;
     }
 
     moveObj(player, dir);
 
-    // time to serialize for the undo
-    level.children.forEach((child, idx) => {
+    undoStack.push({
+        dir: dir,
+        box: occupant[0],
     });
+
+    console.log(undoStack);
 
     // if every sensor has a box in the same tile pos trigger win
     const allSensors = level.children.filter((c) => c.is("sensor"));
@@ -115,6 +125,7 @@ const win = () => {
 
     level.destroy();
     level = null;
+    undoStack = [];
 
     if (lvlIdx == levels.length - 1) {
         add([
@@ -136,8 +147,20 @@ const win = () => {
 onButtonPress((button) => {
     if (!canMove) return;
 
-    if (button == "right") move(vec2(1, 0));
-    else if (button == "left") move(vec2(-1, 0));
+    if (button == "left") move(vec2(-1, 0));
+    else if (button == "right") move(vec2(1, 0));
     else if (button == "up") move(vec2(0, -1));
     else if (button == "down") move(vec2(0, 1));
+});
+
+onButtonPress("undo", () => {
+    if (undoStack.length === 0) return;
+
+    const move = undoStack.pop();
+
+    // move player back
+    moveObj(player, move.dir.scale(-1));
+
+    // move box back if there was one
+    if (move.box) moveObj(move.box, move.dir.scale(-1));
 });
