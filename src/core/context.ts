@@ -252,7 +252,8 @@ import {
     vec2,
     wave,
 } from "../math/math";
-import { floodFill } from "../math/navigation";
+import { buildConnectivityMap, floodFill } from "../math/navigation";
+import { NavGrid } from "../math/navigationgrid";
 import { NavMesh } from "../math/navigationmesh";
 import {
     createCogPolygon,
@@ -592,6 +593,7 @@ export const createContext = (
         createStarPolygon,
         createCogPolygon,
         floodFill,
+        buildConnectivityMap,
         easingSteps,
         easingLinear,
         easingCubicBezier,
@@ -610,6 +612,7 @@ export const createContext = (
         isConvex,
         triangulate,
         NavMesh,
+        NavGrid,
         // raw draw
         drawSprite,
         drawText,

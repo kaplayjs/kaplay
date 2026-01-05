@@ -164,6 +164,7 @@ import type {
     StepPosition,
 } from "../math/math";
 import type { Graph } from "../math/navigation";
+import type { NavGrid } from "../math/navigationgrid";
 import type { NavMesh } from "../math/navigationmesh";
 import type { Quadtree, ResizingQuadtree } from "../math/spatial/quadtree";
 import type { Vec2 } from "../math/Vec2";
@@ -5295,6 +5296,7 @@ export interface KAPLAYCtx {
         start: number | number[],
         predicate: (node: number) => boolean,
     ): number[];
+    buildConnectivityMap(graph: Graph): Map<number, number>;
     /**
      * Check if a line and a point intersect.
      *
@@ -5469,6 +5471,14 @@ export interface KAPLAYCtx {
      * @subgroup Advanced
      */
     NavMesh: typeof NavMesh;
+    /**
+     * A Navigation Grid.
+     *
+     * @since v4000.0
+     * @group Math
+     * @subgroup Advanced
+     */
+    NavGrid: typeof NavGrid;
     /**
      * A point.
      *
