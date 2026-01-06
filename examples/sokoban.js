@@ -23,6 +23,13 @@ loadSprite("box", "/sprites/box.png");
 loadSprite("sturdybox", "/sprites/sturdybox.png");
 loadSprite("steel", "/sprites/steel.png");
 
+/*
+Sokoban is a puzzle game where
+We have to place all the boxes in a sensor to continue the level
+We'll code it according to this logic
+*/
+
+// We store the levels in an array
 const levels = [[
     ".......",
     ".ps sd.",
@@ -46,6 +53,7 @@ const levels = [[
     " ....   ",
 ]];
 
+// We store the definition of each tile
 const tiles = {
     "p": () => [sprite("bean"), z(1), scale(), anchor("center"), "player"],
     "b": () => [sprite("box"), z(1), scale(), anchor("center"), "box"],
@@ -53,6 +61,7 @@ const tiles = {
     "s": () => [rect(64, 64), color(), scale(), anchor("center"), "sensor"],
 };
 
+// We define some variables
 let moves = 0;
 let undos = 0;
 
@@ -64,10 +73,13 @@ let undoStack = []; // { dir, box }
 let level;
 let player;
 
+// Whether any object in an array has a certain tag
 const hasTag = (objs, tag) => objs.findIndex(obj => obj.is(tag)) !== -1;
 
+// Wheter a box is in a sensor by checking if the objects at the same position include a sensor
 const isBoxInSensor = (box) => hasTag(level.getAt(box.tilePos), "sensor");
 
+// Move an object in a certain direction
 const moveObj = (obj, dir) => {
     if (dir.x == 1) obj.moveRight();
     if (dir.x == -1) obj.moveLeft();
@@ -75,56 +87,58 @@ const moveObj = (obj, dir) => {
     if (dir.y == -1) obj.moveUp();
 };
 
+// The "update" function in our game that runs everytime we make a move
 const move = (dir) => {
+    // The new position the player will be in
     const playerNewPos = player.tilePos.add(dir);
 
-    // the object that exists at the position the player is going to move to
-    const occupant = level.getAt(playerNewPos).filter((obj) =>
+    // The objects that exists at the position the player is going to move to
+    const occupants = level.getAt(playerNewPos).filter((obj) =>
         !obj.is("sensor")
     );
 
-    if (hasTag(occupant, "wall")) {
+    // If occupants is a wall we simply return and don't do anything else
+    if (hasTag(occupants, "wall")) {
         tween(
             vec2(1.2),
             vec2(1),
             0.12,
-            (p) => occupant[0].scale = p,
+            (p) => occupants[0].scale = p,
             easings.easeOutQuad,
         );
 
         return;
     }
 
+    // If the occupants include a box
     let box = null;
+    if (hasTag(occupants, "box")) {
+        box = occupants[0];
 
-    if (hasTag(occupant, "box")) {
-        box = occupant[0];
-
-        // check if box is sturdy (already on sensor)
-        if (
-            level.get("sensor").some((sensor) =>
-                level.getAt(sensor.tilePos).includes(box)
-            )
-        ) {
+        // Check if box is sturdy (already on sensor)
+        if (isBoxInSensor(box)) {
+            // Do a small tween to signal you pushed but don't do anything else
             tween(
                 vec2(1.2),
                 vec2(1),
                 0.12,
-                (p) => occupant[0].scale = p,
+                (p) => occupants[0].scale = p,
                 easings.easeOutQuad,
             );
             return;
         }
 
-        const checkAtPos = occupant[0].tilePos.add(dir);
+        // The occupants at the position the box would get moved to
+        // (The same direction you moved to)
+        const boxOccupants = level.getAt(occupants[0].tilePos.add(dir));
 
-        // if there's an object at the position the box will get moved to
-        const boxOccupants = level.getAt(checkAtPos);
-
+        // If there's no occupants or it's a sensor and there isn't a box at this place
+        // You should be able to actually push the box
         if (
             !boxOccupants[0]
             || boxOccupants[0].is("sensor") && !hasTag(boxOccupants, "box")
         ) {
+            // Push the box in the same direction and do a little tween
             moveObj(box, dir);
             tween(
                 vec2(1.2),
@@ -133,18 +147,8 @@ const move = (dir) => {
                 (p) => box.scale = p,
                 easings.easeOutQuad,
             );
-
-            if (boxOccupants[0]?.is("sensor")) {
-                boxesInSensors++;
-                tween(
-                    vec2(1.2),
-                    vec2(1),
-                    0.12,
-                    (p) => box.scale = p,
-                    easings.easeOutQuad,
-                );
-            }
         }
+        // If you shouldn't be able to push the box, tween them to signal the push
         else {
             tween(
                 vec2(1.2),
@@ -164,10 +168,21 @@ const move = (dir) => {
             return;
         }
 
+        // If the box is in a sensor, make it sturdy to show that you can't move it anymore
+        // (Unless you undo)
         if (isBoxInSensor(box)) box.sprite = "sturdybox";
         else box.sprite = "box";
+
+        // Now let's re-calculate the amount of boxes in sensors
+        // By checking how many sensors have a box at their position
+        boxesInSensors = level.get("sensor").map((sensor) =>
+            hasTag(level.getAt(sensor.tilePos), "box")
+        ).filter((el) =>
+            el == true
+        ).length;
     }
 
+    // Move the player and tween it for little juice
     moves++;
     moveObj(player, dir);
     tween(
@@ -178,17 +193,15 @@ const move = (dir) => {
         easings.easeOutQuad,
     );
 
+    // Push the movement into an undoStack array so we can pop them afterwards
+    // If there's a box it will be stored too, if it's null we won't do anything with it later
     undoStack.push({
         dir: dir,
-        box: occupant[0],
+        box: occupants[0],
     });
 
-    boxesInSensors =
-        level.get("sensor").map((sensor) =>
-            hasTag(level.getAt(sensor.tilePos), "box")
-        ).filter((el) => el == true).length;
-
-    // if every sensor has a box in the same tile pos trigger win
+    // If every sensor has a box in the same tile pos, we won the level! Do a small ending animation
+    // And let's re-start the scene with the next level, by increasing the index of the level used in the levels array
     if (boxesInSensors == level.get("sensor").length) {
         currentIdx++;
         canMove = false;
@@ -211,23 +224,28 @@ const move = (dir) => {
 };
 
 scene("game", (lvlIdx) => {
+    // We restart everything
     moves = 0;
     undos = 0;
     undoStack = [];
 
+    // We re-assign the level object using the lvlIdx passed on the scene
     level = addLevel(levels[lvlIdx], {
         tileWidth: 64,
         tileHeight: 64,
         tiles: tiles,
     });
 
+    player = level.get("player")[0];
+
+    // We center the level on the screen
     const levelSize = vec2(
         level.tileWidth() * level.numRows(),
         level.tileHeight() * level.numColumns(),
     );
     level.pos = center().sub(levelSize.scale(0.5));
-    player = level.get("player")[0];
 
+    // We go through every tile in the level and do a little animation to scale them in
     level.children.forEach((child, idx) => {
         child.scale = vec2(0);
         tween(
@@ -241,6 +259,7 @@ scene("game", (lvlIdx) => {
         });
     });
 
+    // The input for the game
     onButtonPress((button) => {
         if (!canMove) return;
 
@@ -250,13 +269,15 @@ scene("game", (lvlIdx) => {
         else if (button == "down") move(vec2(0, 1));
     });
 
+    // The undo action
     onButtonPress("undo", () => {
+        // If there's no more movements to undo return
         if (undoStack.length === 0) return;
 
         undos++;
         const move = undoStack.pop();
 
-        // move player back
+        // We push the direction we moved in to the undoStack, here we move the player but in the opposite direction
         moveObj(player, move.dir.scale(-1));
         tween(
             vec2(0.8),
@@ -266,7 +287,7 @@ scene("game", (lvlIdx) => {
             easings.easeOutQuad,
         );
 
-        // move box back if there was one
+        // If the move stored a box, we have to move it in the opposite direction too
         if (move.box) {
             moveObj(move.box, move.dir.scale(-1));
             tween(
@@ -276,6 +297,7 @@ scene("game", (lvlIdx) => {
                 (p) => move.box.scale = p,
                 easings.easeOutQuad,
             );
+            // We re-check if it was sturdy, if it's not sturdy anymore we change the sprite back
             if (isBoxInSensor(move.box)) move.box.sprite = "sturdybox";
             else move.box.sprite = "box";
         }
@@ -308,4 +330,3 @@ scene("win", () => {
 });
 
 go("game", currentIdx);
-go("win");
