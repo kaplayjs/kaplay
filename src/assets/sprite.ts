@@ -12,36 +12,34 @@ import { fixURL } from "./utils";
  * @group Assets
  * @subgroup Types
  */
-export type SpriteAnim =
-    | number
-    | {
-        /**
-         * The starting frame.
-         */
-        from?: number;
-        /**
-         * The end frame.
-         */
-        to?: number;
-        /**
-         * If this anim should be played in loop.
-         */
-        loop?: boolean;
-        /**
-         * When looping should it move back instead of go to start frame again.
-         */
-        pingpong?: boolean;
-        /**
-         * This anim's speed in frames per second.
-         */
-        speed?: number;
-        /**
-         * List of frames for the animation.
-         *
-         * If this property exists, **from, to, and pingpong will be ignored**.
-         */
-        frames?: number[];
-    };
+export type SpriteAnim = number | {
+    /**
+     * The starting frame.
+     */
+    from?: number;
+    /**
+     * The end frame.
+     */
+    to?: number;
+    /**
+     * If this anim should be played in loop.
+     */
+    loop?: boolean;
+    /**
+     * When looping should it move back instead of go to start frame again.
+     */
+    pingpong?: boolean;
+    /**
+     * This anim's speed in frames per second.
+     */
+    speed?: number;
+    /**
+     * List of frames for the animation.
+     *
+     * If this property exists, **from, to, and pingpong will be ignored**.
+     */
+    frames?: number[];
+};
 
 /**
  * A dict of name <-> animation.

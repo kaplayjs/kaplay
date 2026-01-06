@@ -324,7 +324,7 @@ export function sprite(
             const spr = resolveSprite(src);
 
             if (spr) {
-                spr.onLoad((spr) =>
+                spr.onLoad(spr =>
                     setSpriteData(this as unknown as GameObj<SpriteComp>, spr)
                 );
             }
@@ -452,7 +452,7 @@ export function sprite(
 
             if (spr) {
                 // The sprite exists
-                spr.onLoad((spr) => setSpriteData(this, spr));
+                spr.onLoad(spr => setSpriteData(this, spr));
             }
             else {
                 // The sprite may be loaded later in the script, check again when all resources have been loaded
@@ -478,7 +478,7 @@ export function sprite(
 
             curAnim.timer += _k.app.dt() * this.animSpeed;
 
-            if (curAnim.timer >= 1 / curAnim.speed) {
+            if (curAnim.timer >= (1 / curAnim.speed)) {
                 curAnim.timer = 0;
                 curAnim.frameIndex += curAnimDir;
 
