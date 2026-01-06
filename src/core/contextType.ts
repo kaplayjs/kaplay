@@ -5424,6 +5424,7 @@ export interface KAPLAYCtx {
         shapeB: Shape,
     ): GjkCollisionResult | null;
     /**
+     * Builds the convex hull of a polygon. Note that even if the polygon is already convex, colinear points will be erased.
      * @returns true if the given polygon is convex
      * @since v3001.0
      * @group Math
@@ -5450,6 +5451,13 @@ export interface KAPLAYCtx {
      * @subgroup Advanced
      */
     triangulate(pts: Vec2[]): Vec2[][];
+    /**
+     * @returns the convex hull of the given polygon.
+     * @since v4000.0
+     * @group Math
+     * @subgroup Advanced
+     */
+    buildConvexHull(pts: Vec2[]): Vec2[];
     /**
      * Sorts the array in-place using {@link https://en.wikipedia.org/wiki/Insertion_sort insertion sort}.
      * This is useful when you have a persistent (not per-frame) array of objects and they change
