@@ -107,6 +107,11 @@ export function pos(...args: Vec2Args): PosComp {
     return {
         id: "pos",
 
+        add() {
+            (this as any as InternalGameObjRaw)._transformVersion =
+                nextTransformVersion();
+        },
+
         get pos(): Vec2 {
             return _posReadOnly;
         },

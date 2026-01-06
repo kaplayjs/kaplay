@@ -77,7 +77,7 @@ scene("main", (levelIdx) => {
             ],
             "$": () => [
                 sprite("key"),
-                area(),
+                area({ isSensor: true }),
                 anchor("center"),
                 "key",
             ],
