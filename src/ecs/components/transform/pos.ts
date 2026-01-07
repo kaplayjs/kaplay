@@ -161,7 +161,7 @@ export function pos(...args: Vec2Args): PosComp {
         set worldPos(pos: Vec2) {
             const obj = this as unknown as GameObj<PosComp>;
             this.pos = obj.parent
-                ? obj.parent.transform.transformPointV(pos, vec2())
+                ? obj.parent.transform.inverse.transformPointV(pos, vec2())
                 : pos;
         },
 
