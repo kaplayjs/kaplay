@@ -20,6 +20,7 @@ kaplay({
 
 loadSprite("bean", "/sprites/bean.png");
 loadSprite("box", "/sprites/box.png");
+loadSprite("sok", "/sprites/sok.png");
 loadSprite("sturdybox", "/sprites/sturdybox.png");
 loadSprite("steel", "/sprites/steel.png");
 
@@ -30,28 +31,41 @@ We'll code it according to this logic
 */
 
 // We store the levels in an array
-const levels = [[
-    ".......",
-    ".ps sd.",
-    ". b b .",
-    ".     .",
-    ".......",
-], [
-    "........",
-    ". p.   .",
-    ".  b   .",
-    ".  .  ..",
-    ".s .  .",
-    ".......",
-], [
-    " ......",
-    "..s   ..",
-    ".  .b  .",
-    ".  bs  .",
-    ". p   ..",
-    "..  ... ",
-    " ....   ",
-]];
+const levels = [
+    [
+        ".......",
+        ".ps sd.",
+        ". b b .",
+        ".     .",
+        ".......",
+    ],
+    [
+        "........",
+        ". p.   .",
+        ".  b   .",
+        ".  .  ..",
+        ".s .  .",
+        ".......",
+    ],
+    [
+        "  ...   ",
+        "  .s....",
+        "...b bs.",
+        ".s bp...",
+        "....b.  ",
+        "   .s.  ",
+        "   ...  ",
+    ],
+    [
+        " ......",
+        "..s   ..",
+        ".  .b  .",
+        ".  bs  .",
+        ". p   ..",
+        "..  ... ",
+        " ....   ",
+    ],
+];
 
 // We store the definition of each tile
 const tiles = {
@@ -65,10 +79,12 @@ const tiles = {
 let moves = 0;
 let undos = 0;
 
-let currentIdx = 0;
+let currentIdx = 2;
 let boxesInSensors = 0;
 let canMove = true;
-let undoStack = []; // { dir, box }
+
+// Will store the direction of our movements and if we pushed a box
+let undoStack = [];
 
 let level;
 let player;
@@ -103,7 +119,7 @@ const move = (dir) => {
             vec2(1.2),
             vec2(1),
             0.12,
-            (p) => occupants[0].scale = p,
+            (p) => player.scale = p,
             easings.easeOutQuad,
         );
 
@@ -114,19 +130,6 @@ const move = (dir) => {
     let box = null;
     if (hasTag(occupants, "box")) {
         box = occupants[0];
-
-        // Check if box is sturdy (already on sensor)
-        if (isBoxInSensor(box)) {
-            // Do a small tween to signal you pushed but don't do anything else
-            tween(
-                vec2(1.2),
-                vec2(1),
-                0.12,
-                (p) => occupants[0].scale = p,
-                easings.easeOutQuad,
-            );
-            return;
-        }
 
         // The occupants at the position the box would get moved to
         // (The same direction you moved to)
@@ -175,10 +178,8 @@ const move = (dir) => {
 
         // Now let's re-calculate the amount of boxes in sensors
         // By checking how many sensors have a box at their position
-        boxesInSensors = level.get("sensor").map((sensor) =>
+        boxesInSensors = level.get("sensor").filter((sensor) =>
             hasTag(level.getAt(sensor.tilePos), "box")
-        ).filter((el) =>
-            el == true
         ).length;
     }
 
@@ -193,7 +194,7 @@ const move = (dir) => {
         easings.easeOutQuad,
     );
 
-    // Push the movement into an undoStack array so we can pop them afterwards
+    // Push the movement to the movement stack, so we can pop them afterwards
     // If there's a box it will be stored too, if it's null we won't do anything with it later
     undoStack.push({
         dir: dir,
@@ -277,7 +278,7 @@ scene("game", (lvlIdx) => {
         undos++;
         const move = undoStack.pop();
 
-        // We push the direction we moved in to the undoStack, here we move the player but in the opposite direction
+        // We move the player to the opposite direction we moved before
         moveObj(player, move.dir.scale(-1));
         tween(
             vec2(0.8),
@@ -307,8 +308,8 @@ scene("game", (lvlIdx) => {
 scene("win", () => {
     add([
         anchor("center"),
-        pos(center().sub(0, 150)),
-        text("Bravo!\n[small]You succesfully restocked soks[/small]", {
+        pos(center().sub(0, 200)),
+        text("Bravo!", {
             size: 50,
             align: "center",
             styles: {
@@ -320,13 +321,52 @@ scene("win", () => {
     ]);
 
     add([
+        anchor("center"),
+        pos(center().sub(0, 150)),
+        text("You succesfully re-stocked the soks!", {
+            size: 40,
+            align: "center",
+        }),
+    ]);
+
+    add([
+        anchor("center"),
+        pos(center().sub(0, 75)),
+        text("Press any key to play again", {
+            size: 40,
+            align: "center",
+        }),
+    ]);
+
+    const sok = add([
+        sprite("sok"),
+        scale(0),
+        pos(center().add(0, 150)),
+        anchor("center"),
+    ]);
+
+    add([
         sprite("box"),
         scale(3),
         pos(center().add(0, 150)),
         anchor("center"),
     ]);
 
-    // add particle of soks coming out of the box
+    tween(
+        sok.scale,
+        vec2(2),
+        1,
+        (p) => sok.scale = p,
+        easings.easeOutExpo,
+    );
+
+    tween(
+        sok.pos,
+        center(),
+        1,
+        (p) => sok.pos = p,
+        easings.easeOutExpo,
+    );
 });
 
 go("game", currentIdx);
