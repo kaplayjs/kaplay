@@ -8,6 +8,7 @@
  */
 
 kaplay({
+    font: "happy",
     background: [45, 33, 51],
     buttons: {
         "left": { keyboard: ["left", "a"] },
@@ -18,17 +19,34 @@ kaplay({
     },
 });
 
+loadHappy();
 loadSprite("bean", "/sprites/bean.png");
 loadSprite("box", "/sprites/box.png");
-loadSprite("sok", "/sprites/sok.png");
 loadSprite("sturdybox", "/sprites/sturdybox.png");
+loadSprite("target", "/sprites/box_target.png");
+loadSprite("sok", "/sprites/sok.png");
 loadSprite("steel", "/sprites/steel.png");
+
+loadShader(
+    "checker",
+    null,
+    `
+    uniform float tileSize;
+    vec4 frag(vec2 pos, vec2 uv, vec4 color, sampler2D tex) {
+        return mod(floor(pos.x / tileSize) + floor(pos.y / tileSize), 2.0) == 0.0
+            ? vec4(0) 
+            : vec4(0, 0, 0, 0.15);
+    }
+`,
+);
 
 /*
 Sokoban is a puzzle game where
 We have to place all the boxes in a sensor to continue the level
 We'll code it according to this logic
 */
+
+const tileSize = 64;
 
 // We store the levels in an array
 const levels = [
@@ -72,14 +90,14 @@ const tiles = {
     "p": () => [sprite("bean"), z(1), scale(), anchor("center"), "player"],
     "b": () => [sprite("box"), z(1), scale(), anchor("center"), "box"],
     ".": () => [sprite("steel"), scale(), anchor("center"), "wall"],
-    "s": () => [rect(64, 64), color(), scale(), anchor("center"), "sensor"],
+    "s": () => [sprite("target"), color(), scale(), anchor("center"), "sensor"],
 };
 
 // We define some variables
 let moves = 0;
 let undos = 0;
 
-let currentIdx = 2;
+let currentIdx = 0;
 let boxesInSensors = 0;
 let canMove = true;
 
@@ -88,6 +106,7 @@ let undoStack = [];
 
 let level;
 let player;
+let moveCounter;
 
 // Whether any object in an array has a certain tag
 const hasTag = (objs, tag) => objs.findIndex(obj => obj.is(tag)) !== -1;
@@ -175,16 +194,20 @@ const move = (dir) => {
         // (Unless you undo)
         if (isBoxInSensor(box)) box.sprite = "sturdybox";
         else box.sprite = "box";
-
-        // Now let's re-calculate the amount of boxes in sensors
-        // By checking how many sensors have a box at their position
-        boxesInSensors = level.get("sensor").filter((sensor) =>
-            hasTag(level.getAt(sensor.tilePos), "box")
-        ).length;
     }
 
-    // Move the player and tween it for little juice
+    // Update and animate the counter
     moves++;
+    moveCounter.text = "Moves: " + moves;
+    tween(
+        vec2(1.05),
+        vec2(1),
+        0.12,
+        (p) => moveCounter.scale = p,
+        easings.easeOutQuad,
+    );
+
+    // Move the player and tween it for little juice
     moveObj(player, dir);
     tween(
         vec2(1.2),
@@ -201,11 +224,30 @@ const move = (dir) => {
         box: occupants[0],
     });
 
+    // Now let's re-calculate the amount of boxes in sensors
+    // By checking how many sensors have a box at their position
+    boxesInSensors =
+        level.get("sensor").filter((sensor) =>
+            hasTag(level.getAt(sensor.tilePos), "box")
+        ).length;
+
     // If every sensor has a box in the same tile pos, we won the level! Do a small ending animation
     // And let's re-start the scene with the next level, by increasing the index of the level used in the levels array
     if (boxesInSensors == level.get("sensor").length) {
         currentIdx++;
         canMove = false;
+
+        // We say bye to the move counter
+        tween(1, 0, 1, (p) => moveCounter.opacity = p, easings.easeOutExpo);
+        tween(
+            vec2(1),
+            vec2(0),
+            1,
+            (p) => moveCounter.scale = p,
+            easings.easeOutExpo,
+        );
+
+        // We animate the children too
         level.children.forEach((child, idx) => {
             tween(
                 child.scale,
@@ -225,6 +267,12 @@ const move = (dir) => {
 };
 
 scene("game", (lvlIdx) => {
+    // Checkered background
+    add([
+        rect(width(), height()),
+        shader("checker", { tileSize }),
+    ]);
+
     // We restart everything
     moves = 0;
     undos = 0;
@@ -232,19 +280,27 @@ scene("game", (lvlIdx) => {
 
     // We re-assign the level object using the lvlIdx passed on the scene
     level = addLevel(levels[lvlIdx], {
-        tileWidth: 64,
-        tileHeight: 64,
+        tileWidth: tileSize,
+        tileHeight: tileSize,
         tiles: tiles,
     });
 
     player = level.get("player")[0];
 
     // We center the level on the screen
-    const levelSize = vec2(
-        level.tileWidth() * level.numRows(),
-        level.tileHeight() * level.numColumns(),
-    );
-    level.pos = center().sub(levelSize.scale(0.5));
+    level.pos = vec2(
+        Math.round(((width() - level.levelWidth()) / 2) / tileSize),
+        Math.round(((height() - level.levelHeight()) / 2) / tileSize),
+    ).scale(tileSize).add(tileSize / 2);
+
+    // Simple move counter
+    moveCounter = add([
+        text("Moves: 0"),
+        pos(level.pos.sub(tileSize / 2, tileSize - 18)),
+        scale(1, 1),
+        anchor("botleft"),
+        opacity(),
+    ]);
 
     // We go through every tile in the level and do a little animation to scale them in
     level.children.forEach((child, idx) => {
@@ -259,6 +315,16 @@ scene("game", (lvlIdx) => {
             canMove = true;
         });
     });
+
+    // We also animate the move counter
+    tween(0, 1, 0.5, (p) => moveCounter.opacity = p, easings.easeOutExpo);
+    tween(
+        vec2(0),
+        vec2(1),
+        0.5,
+        (p) => moveCounter.scale = p,
+        easings.easeOutExpo,
+    );
 
     // The input for the game
     onButtonPress((button) => {
@@ -306,6 +372,11 @@ scene("game", (lvlIdx) => {
 });
 
 scene("win", () => {
+    add([
+        rect(width(), height()),
+        shader("checker", { tileSize }),
+    ]);
+
     add([
         anchor("center"),
         pos(center().sub(0, 200)),
@@ -367,6 +438,11 @@ scene("win", () => {
         (p) => sok.pos = p,
         easings.easeOutExpo,
     );
+
+    onKeyPress(() => {
+        currentIdx = 0;
+        go("game", currentIdx);
+    });
 });
 
 go("game", currentIdx);
