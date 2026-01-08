@@ -202,7 +202,7 @@ export interface AreaComp extends Comp {
      *
      * @since v3000.0
      */
-    collisionIgnore: Tag[];
+    collisionIgnore: Set<Tag>;
     /**
      * Restitution ("bounciness") of the object.
      */
@@ -433,7 +433,7 @@ export function area(
 
     return {
         id: "area",
-        collisionIgnore: opt.collisionIgnore ?? [],
+        collisionIgnore: new Set(opt.collisionIgnore ?? []),
         restitution: opt.restitution,
         friction: opt.friction,
         isSensor: opt.isSensor ?? false,
@@ -820,11 +820,9 @@ export function area(
                 return `area: ${this.area.scale?.x?.toFixed(1)}x`;
             }
             else {
-                return `area: (${
-                    this.area.scale?.x?.toFixed(
-                        1,
-                    )
-                }x, ${this.area.scale.y?.toFixed(1)}y)`;
+                return `area: (${this.area.scale?.x?.toFixed(1)}x, ${
+                    this.area.scale.y?.toFixed(1)
+                }y)`;
             }
         },
 
@@ -840,7 +838,7 @@ export function area(
             if (opt.cursor) data.cursor = opt.cursor;
             // Make a copy, since it might be changed later
             if (this.collisionIgnore) {
-                data.collisionIgnore = this.collisionIgnore.slice();
+                data.collisionIgnore = [...this.collisionIgnore];
             }
             if (this.restitution) data.restitution = this.restitution;
             if (this.friction) data.friction = this.friction;
