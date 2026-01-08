@@ -126,6 +126,7 @@ export interface LevelCompOpt {
  */
 export type PathFindOpt = {
     allowDiagonals?: boolean;
+    turnCost?: number;
 };
 
 export function level(map: string[], opt: LevelCompOpt): LevelComp {
@@ -278,9 +279,25 @@ export function level(map: string[], opt: LevelCompOpt): LevelComp {
         }
     };
 
-    const getCost = (node: number, neighbour: number) => {
-        // Cost of destination tile
-        return costMap![neighbour];
+    const getCost = (
+        current: number,
+        next: number,
+        previous: number | undefined,
+        turnCostOpt: number,
+    ) => {
+        // Base cost of destination tile
+        let cost = costMap![next];
+
+        // Add turn cost if direction changed
+        if (previous !== undefined && previous !== current && turnCostOpt > 0) {
+            const currentDirection = current - previous;
+            const nextDirection = next - current;
+            if (currentDirection !== nextDirection) {
+                cost += turnCostOpt;
+            }
+        }
+
+        return cost;
     };
 
     const getHeuristic = (node: number, goal: number) => {
@@ -622,6 +639,7 @@ export function level(map: string[], opt: LevelCompOpt): LevelComp {
             cameFrom.set(start, start);
             const costSoFar = new Map<number, number>();
             costSoFar.set(start, 0);
+            const turnCostOpt = opts.turnCost ?? 0;
 
             while (frontier.length !== 0) {
                 // TODO: Remove non-null assertion
@@ -632,9 +650,11 @@ export function level(map: string[], opt: LevelCompOpt): LevelComp {
                 }
 
                 const neighbours = getNeighbours(current, opts.allowDiagonals);
+                const previous = cameFrom.get(current);
+
                 for (const next of neighbours) {
                     const newCost = (costSoFar.get(current) || 0)
-                        + getCost(current, next)
+                        + getCost(current, next, previous, turnCostOpt)
                         + getHeuristic(next, goal);
                     if (
                         !costSoFar.has(next)
