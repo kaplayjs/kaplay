@@ -28,10 +28,6 @@ export const on = <Ev extends GameObjEventNames | string & {}>(
     let paused = false;
     let obj2Handler = new Map<GameObj, KEventController>();
 
-    window.setInterval(() => {
-        console.log(obj2Handler)
-    }, 2000)
-
     const handleNew = (obj: GameObj) => {
         const ec = obj.on(event, (...args) => {
             cb(obj, ...<TupleWithoutFirst<GameObjEvents[Ev]>>args);
