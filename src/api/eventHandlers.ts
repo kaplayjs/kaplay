@@ -28,26 +28,45 @@ export const on = <Ev extends GameObjEventNames | string & {}>(
     let paused = false;
     let obj2Handler = new Map<GameObj, KEventController>();
 
+    window.setInterval(() => {
+        console.log(obj2Handler)
+    }, 2000)
+
     const handleNew = (obj: GameObj) => {
         const ec = obj.on(event, (...args) => {
-            cb(obj, ...<TupleWithoutFirst<GameObjEvents[Ev]>> args);
+            cb(obj, ...<TupleWithoutFirst<GameObjEvents[Ev]>>args);
         });
         ec.paused = paused;
-        if (obj2Handler.has(obj)) obj2Handler.get(obj)!.cancel();
+
+        let h;
+        if (h = obj2Handler.get(obj)) h.cancel();
+
         obj2Handler.set(obj, ec);
     };
 
     const ecOnTag = _k.appScope.onTag((obj, newTag) => {
         if (newTag === tag) handleNew(obj);
     });
+
     const ecOnAdd = _k.appScope.onAdd(obj => {
         if (obj.is(tag)) handleNew(obj);
     });
+
     const ecOnUntag = _k.appScope.onUntag((obj, oldTag) => {
         if (oldTag === tag) {
             const ec = obj2Handler.get(obj)!;
             ec.cancel();
             obj2Handler.delete(obj);
+        }
+    });
+
+    const ecOnDestroy = _k.appScope.onDestroy((obj) => {
+        if (obj.is(tag)) {
+            let h;
+            if (h = obj2Handler.get(obj)) {
+                h.cancel();
+                obj2Handler.delete(obj);
+            }
         }
     });
 
@@ -67,6 +86,7 @@ export const on = <Ev extends GameObjEventNames | string & {}>(
             ecOnTag.cancel();
             ecOnAdd.cancel();
             ecOnUntag.cancel();
+            ecOnDestroy.cancel();
         },
     };
 };
