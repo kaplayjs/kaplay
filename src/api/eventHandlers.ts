@@ -58,12 +58,8 @@ export const on = <Ev extends GameObjEventNames | string & {}>(
 
     const ecOnDestroy = _k.appScope.onDestroy((obj) => {
         if (obj.is(tag)) {
-            let h;
-            if (h = obj2Handler.get(obj)) {
-                console.log(h.paused)
-                h.cancel();
-                obj2Handler.delete(obj);
-            }
+            // event is automatically cancelled by GameObjRaw.remove
+            obj2Handler.delete(obj);
         }
     });
 
