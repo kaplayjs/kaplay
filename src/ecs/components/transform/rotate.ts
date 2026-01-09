@@ -1,4 +1,8 @@
 import type { Comp } from "../../../types";
+import {
+    type InternalGameObjRaw,
+    nextTransformVersion,
+} from "../../entity/GameObjRaw";
 
 /**
  * The serialized {@link rotate `rotate()`} component.
@@ -36,9 +40,20 @@ export interface RotateComp extends Comp {
 }
 
 export function rotate(a?: number): RotateComp {
+    let _angle = a ?? 0;
+
     return {
         id: "rotate",
-        angle: a ?? 0,
+
+        get angle(): number {
+            return _angle;
+        },
+        set angle(value: number) {
+            _angle = value;
+            (this as any as InternalGameObjRaw)._transformVersion =
+                nextTransformVersion();
+        },
+
         rotateBy(angle: number) {
             this.angle += angle;
         },

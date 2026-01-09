@@ -12,7 +12,7 @@ import {
 import { clamp } from "../../../math/clamp";
 import { Color } from "../../../math/color";
 import { lerp } from "../../../math/lerp";
-import { deg2rad, rad2deg, vec2 } from "../../../math/math";
+import { deg2rad, Mat23, rad2deg, vec2 } from "../../../math/math";
 import {
     calcTransform,
     clampAngle,
@@ -266,12 +266,16 @@ export const constraint = {
                         const transform = this.parent?.transform.inverse.mul(
                             this.transform,
                         );
-                        this.pos.x = transform.e;
-                        this.pos.y = transform.f;
+                        const p = this.pos;
+                        p.x = transform.e;
+                        p.y = transform.f;
+                        this.pos = p;
                     }
                     else {
-                        this.pos.x = this.transform.e;
-                        this.pos.y = this.transform.f;
+                        const p = this.pos;
+                        p.x = this.transform.e;
+                        p.y = this.transform.f;
+                        this.pos = p;
                     }
                 }
             },
@@ -315,12 +319,16 @@ export const constraint = {
                     const transform = this.parent?.transform.inverse.mul(
                         this.transform,
                     );
-                    this.pos.x = transform.e;
-                    this.pos.y = transform.f;
+                    const p = this.pos;
+                    p.x = transform.e;
+                    p.y = transform.f;
+                    this.pos = p;
                 }
                 else {
-                    this.pos.x = this.transform.e;
-                    this.pos.y = this.transform.f;
+                    const p = this.pos;
+                    p.x = this.transform.e;
+                    p.y = this.transform.f;
+                    this.pos = p;
                 }
             },
         };
@@ -356,7 +364,8 @@ export const constraint = {
                 );
                 const scale = this.transform.getScale();
                 // Update world angle
-                this.transform.setTRS(
+                const newTransform = new Mat23();
+                newTransform.setTRS(
                     this.transform.e,
                     this.transform.f,
                     newAngle,
@@ -366,13 +375,14 @@ export const constraint = {
                 // Modify local angle
                 if (this.parent) {
                     const transform = this.parent?.transform.inverse.mul(
-                        this.transform,
+                        newTransform,
                     );
                     this.angle = transform.getRotation();
                 }
                 else {
                     this.angle = newAngle;
                 }
+                updateTransformRecursive(this);
             },
         };
     },
@@ -486,14 +496,12 @@ export const constraint = {
                     const transform = this.parent?.transform.inverse.mul(
                         this.transform,
                     );
-                    this.pos.x = transform.e;
-                    this.pos.y = transform.f;
+                    this.pos = vec2(transform.e, transform.f);
                     this.angle = transform.getRotation();
                     this.scale = transform.getScale();
                 }
                 else {
-                    this.pos.x = newX;
-                    this.pos.y = newY;
+                    this.pos = vec2(newX, newY);
                     this.angle = newAngle;
                     this.scale = newScale;
                 }
@@ -833,8 +841,7 @@ export const constraint = {
                                 const transform = parentTransform.inverse.mul(
                                     obj.transform,
                                 );
-                                obj.pos.x = transform.e;
-                                obj.pos.y = transform.f;
+                                obj.pos = vec2(transform.e, transform.f);
                             }
                             else {
                                 // If there is no angle, just use position
@@ -842,13 +849,11 @@ export const constraint = {
                                     .mul(
                                         obj.transform,
                                     );
-                                obj.pos.x = transform.e;
-                                obj.pos.y = transform.f;
+                                obj.pos = vec2(transform.e, transform.f);
                             }
                         }
                         else {
-                            obj.pos.x = obj.transform.e;
-                            obj.pos.y = obj.transform.f;
+                            obj.pos = vec2(obj.transform.e, obj.transform.f);
                         }
                     }
                 },

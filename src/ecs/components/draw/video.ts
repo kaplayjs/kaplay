@@ -5,6 +5,7 @@ import { Texture } from "../../../gfx/gfx";
 import { Rect, vec2 } from "../../../math/math";
 import { _k } from "../../../shared";
 import type { Comp, GameObj } from "../../../types";
+import { nextRenderAreaVersion } from "../physics/area";
 import type { PosComp } from "../transform/pos";
 
 export interface VideoComp extends Comp {
@@ -24,7 +25,10 @@ export type VideoCompOpt = {
 };
 
 // region video
-export function video(url: string, opt: VideoCompOpt): VideoComp {
+export function video(
+    url: string,
+    opt: VideoCompOpt,
+): VideoComp & { _renderAreaVersion: number } {
     const _video: HTMLVideoElement = document.createElement("video");
     let _playing = false;
     let _timeupdate = false;
@@ -39,15 +43,21 @@ export function video(url: string, opt: VideoCompOpt): VideoComp {
             return _width;
         },
         set width(value) {
-            _width = value;
-            if (_shape) _shape.width = value;
+            if (_width != value) {
+                _width = value;
+                if (_shape) _shape.width = value;
+                this._renderAreaVersion = nextRenderAreaVersion();
+            }
         },
         get height() {
             return _height;
         },
         set height(value) {
-            _height = value;
-            if (_shape) _shape.height = value;
+            if (_height != value) {
+                _height = value;
+                if (_shape) _shape.height = value;
+                this._renderAreaVersion = nextRenderAreaVersion();
+            }
         },
         get currentTime() {
             return _video.currentTime;
@@ -154,8 +164,10 @@ export function video(url: string, opt: VideoCompOpt): VideoComp {
         renderArea() {
             if (!_shape) {
                 _shape = new Rect(vec2(0), _width, _height);
+                this._renderAreaVersion = nextRenderAreaVersion();
             }
             return _shape;
         },
+        _renderAreaVersion: 0,
     };
 }

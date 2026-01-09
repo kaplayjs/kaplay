@@ -190,6 +190,7 @@ import { Rule, RuleSystem } from "../math/ai/rulesystem";
 import { StateMachine } from "../math/ai/statemachine";
 import { clamp } from "../math/clamp";
 import { Color, hsl2rgb, rgb } from "../math/color";
+import { buildConvexHull } from "../math/convexhull";
 import { easings } from "../math/easings";
 import { gjkShapeIntersection, gjkShapeIntersects } from "../math/gjk";
 import { lerp } from "../math/lerp";
@@ -225,6 +226,7 @@ import {
     Line,
     map,
     mapc,
+    Mat2,
     Mat23,
     normalizedCurve,
     Point,
@@ -251,6 +253,8 @@ import {
     vec2,
     wave,
 } from "../math/math";
+import { buildConnectivityMap, floodFill } from "../math/navigation";
+import { NavGrid } from "../math/navigationgrid";
 import { NavMesh } from "../math/navigationmesh";
 import {
     createCogPolygon,
@@ -333,6 +337,7 @@ export const createContext = (
         dt: app.dt,
         fixedDt: app.fixedDt,
         restDt: app.restDt,
+        setFixedSpeed: app.setFixedSpeed,
         time: app.time,
         screenshot: app.screenshot,
         screenshotToBlob: app.screenshotToBlob,
@@ -387,6 +392,7 @@ export const createContext = (
         get,
         query,
         readd,
+        retrieve: (...args) => game.retrieve(...args),
         // comps
         pos,
         rotate,
@@ -533,6 +539,7 @@ export const createContext = (
         Collision,
         Vec2,
         Color,
+        Mat2,
         Mat4,
         Mat23,
         Quad,
@@ -586,6 +593,8 @@ export const createContext = (
         createRegularPolygon,
         createStarPolygon,
         createCogPolygon,
+        floodFill,
+        buildConnectivityMap,
         easingSteps,
         easingLinear,
         easingCubicBezier,
@@ -603,7 +612,9 @@ export const createContext = (
         gjkShapeIntersection,
         isConvex,
         triangulate,
+        buildConvexHull,
         NavMesh,
+        NavGrid,
         // raw draw
         drawSprite,
         drawText,

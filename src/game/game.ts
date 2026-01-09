@@ -9,12 +9,13 @@ import type { SoundData } from "../assets/sound";
 import type { SpriteData } from "../assets/sprite";
 import type { FakeMouseComp } from "../ecs/components/misc/fakeMouse";
 import { timer, type TimerComp } from "../ecs/components/misc/timer";
+import type { AreaComp } from "../ecs/components/physics/area";
 import type { PosComp } from "../ecs/components/transform/pos";
 import { makeInternal } from "../ecs/entity/make";
 import type { System } from "../ecs/systems/systems";
 import type { GameEventMap, GameObjEventMap } from "../events/eventMap";
 import { KEventHandler } from "../events/events";
-import { Mat23, RNG } from "../math/math";
+import { Mat23, Rect, RNG } from "../math/math";
 import { Vec2 } from "../math/Vec2";
 import type { GameObj } from "../types";
 import type { SceneDef, SceneState } from "./scenes";
@@ -104,6 +105,8 @@ export type Game = {
      * Fake Mouse game obj.
      */
     fakeMouse: GameObj<FakeMouseComp | PosComp> | null;
+    /** */
+    retrieve(rect: Rect, retrieveCb: (obj: GameObj<AreaComp>) => void): void;
     /**
      * All text inputs in the game.
      */
@@ -189,6 +192,12 @@ export const createGame = (): Game => {
 
         // Fake mouse API
         fakeMouse: null,
+
+        // Retrieve
+        retrieve: (
+            rect: Rect,
+            retrieveCb: (obj: GameObj<AreaComp>) => void,
+        ) => {},
 
         // Some state
         crashed: false,

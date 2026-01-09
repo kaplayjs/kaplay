@@ -2,9 +2,13 @@ import { toScreen, toWorld } from "../../../game/camera";
 import { drawCircle } from "../../../gfx/draw/drawCircle";
 import { rgb } from "../../../math/color";
 import { vec2, type Vec2Args } from "../../../math/math";
-import { type Vec2 } from "../../../math/Vec2";
+import { Vec2 } from "../../../math/Vec2";
 import { _k } from "../../../shared";
 import type { Comp, GameObj } from "../../../types";
+import {
+    type InternalGameObjRaw,
+    nextTransformVersion,
+} from "../../entity/GameObjRaw";
 import { isFixed } from "../../entity/utils";
 import type { FixedComp } from "./fixed";
 
@@ -49,13 +53,13 @@ export interface PosComp extends Comp {
      *
      * @since v2000.0
      */
-    screenPos(newPos?: Vec2): Vec2 | null;
+    screenPos: Vec2;
     /**
      * Get / Set the position of the object relative to the root.
      *
      * @since v2000.0
      */
-    worldPos(newPos?: Vec2): Vec2 | null;
+    worldPos: Vec2;
     /**
      * Transform a local point (relative to this) to a screen point (relative to the camera)
      */
@@ -97,9 +101,28 @@ export interface PosComp extends Comp {
 }
 
 export function pos(...args: Vec2Args): PosComp {
+    const _pos = vec2(...args);
+    const _posReadOnly = vec2(...args);
+
     return {
         id: "pos",
-        pos: vec2(...args),
+
+        add() {
+            (this as any as InternalGameObjRaw)._transformVersion =
+                nextTransformVersion();
+        },
+
+        get pos(): Vec2 {
+            return _posReadOnly;
+        },
+        set pos(value: Vec2) {
+            _pos.x = value.x;
+            _pos.y = value.y;
+            _posReadOnly.x = value.x;
+            _posReadOnly.y = value.y;
+            (this as any as InternalGameObjRaw)._transformVersion =
+                nextTransformVersion();
+        },
 
         moveBy(...args: Vec2Args) {
             this.pos = this.pos.add(vec2(...args));
@@ -111,7 +134,7 @@ export function pos(...args: Vec2Args): PosComp {
         },
 
         // move to a destination, with optional speed
-        // Adress all ts ignores
+        // Address all ts ignores
         moveTo(...args) {
             if (
                 typeof args[0] === "number" && typeof args[1] === "number"
@@ -134,76 +157,60 @@ export function pos(...args: Vec2Args): PosComp {
             this.move(diff.unit().scale(speed));
         },
 
-        // Get the position of the object relative to the root
-        worldPos(this: GameObj<PosComp>, pos: Vec2 | null = null) {
-            if (pos) {
-                this.pos = this.pos.add(this.fromWorld(pos));
-                return null;
-            }
-            else {
-                return this.parent
-                    ? this.parent.transform.transformPointV(this.pos, vec2())
-                    : this.pos;
-            }
+        // Set the position of the object relative to the root
+        set worldPos(pos: Vec2) {
+            const obj = this as unknown as GameObj<PosComp>;
+            this.pos = obj.parent
+                ? obj.parent.transform.inverse.transformPointV(pos, vec2())
+                : pos;
+        },
+
+        get worldPos(): Vec2 {
+            const obj = this as unknown as GameObj<PosComp>;
+            return obj.parent
+                ? obj.parent.transform.transformPointV(obj.pos, vec2())
+                : obj.pos;
         },
 
         // Transform a local point to a world point
         toWorld(this: GameObj<PosComp>, p: Vec2): Vec2 {
-            return this.parent
-                ? this.parent.transform.transformPointV(this.pos.add(p), vec2())
-                : this.pos.add(p);
+            return this.transform.transformPointV(p, vec2());
         },
 
         // Transform a world point (relative to the root) to a local point (relative to this)
         fromWorld(this: GameObj<PosComp>, p: Vec2): Vec2 {
-            return this.parent
-                ? this.parent.transform.inverse.transformPointV(p, vec2()).sub(
-                    this.pos,
-                )
-                : p.sub(this.pos);
+            return this.transform.inverse.transformPointV(p, vec2());
         },
 
         // Transform a screen point (relative to the camera) to a local point (relative to this)
-        screenPos(
-            this: GameObj<PosComp | FixedComp>,
-            pos: Vec2 | null = null,
-        ) {
-            if (pos) {
-                this.pos = this.pos.add(this.fromScreen(pos));
-                return null;
-            }
-            else {
-                const pos = this.worldPos();
+        set screenPos(pos: Vec2) {
+            const obj = this as unknown as GameObj<PosComp>;
+            this.worldPos = isFixed(obj)
+                ? pos
+                : toWorld(pos);
+        },
 
-                // This is not really possible, because worldPos() will always return a value
-                // if it doesn't have arguments
-
-                // I left this like that for compatibility, maybe if it returns a value
-                // will break something?
-
-                if (!pos) {
-                    return null;
-                }
-
-                return isFixed(this)
-                    ? pos
-                    : toScreen(pos);
-            }
+        get screenPos() {
+            const obj = this as unknown as GameObj<PosComp>;
+            const pos = obj.worldPos;
+            return isFixed(obj)
+                ? pos
+                : toScreen(pos);
         },
 
         // Transform a local point (relative to this) to a screen point (relative to the camera)
-        toScreen(this: GameObj<PosComp | FixedComp>, p: Vec2): Vec2 {
-            const pos = this.toWorld(p);
+        toScreen(this: GameObj<PosComp | FixedComp>, pos: Vec2): Vec2 {
+            pos = this.toWorld(pos);
             return isFixed(this)
                 ? pos
                 : toScreen(pos);
         },
 
         // Transform a screen point (relative to the camera) to a local point (relative to this)
-        fromScreen(this: GameObj<PosComp>, p: Vec2): Vec2 {
+        fromScreen(this: GameObj<PosComp>, pos: Vec2): Vec2 {
             return isFixed(this)
-                ? this.fromWorld(p)
-                : this.fromWorld(toWorld(p));
+                ? this.fromWorld(pos)
+                : this.fromWorld(toWorld(pos));
         },
 
         // Transform a point relative to this to a point relative to other

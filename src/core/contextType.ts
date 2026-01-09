@@ -1,3 +1,4 @@
+import type { FixedSpeedOption } from "../app/app";
 import type {
     ButtonBinding,
     ButtonBindingDevice,
@@ -152,6 +153,7 @@ import type {
     Ellipse,
     getSpriteOutline,
     Line,
+    Mat2,
     Mat23,
     Point,
     Polygon,
@@ -161,8 +163,10 @@ import type {
     RNG,
     StepPosition,
 } from "../math/math";
+import type { Graph } from "../math/navigation";
+import type { NavGrid } from "../math/navigationgrid";
 import type { NavMesh } from "../math/navigationmesh";
-import type { Quadtree } from "../math/spatial/quadtree";
+import type { Quadtree, ResizingQuadtree } from "../math/spatial/quadtree";
 import type { Vec2 } from "../math/Vec2";
 import {
     type Anchor,
@@ -376,6 +380,13 @@ export interface KAPLAYCtx {
      * @group Game Obj
      */
     readd(obj: GameObj): GameObj;
+    /**
+     * Retrieves all objects within the given rectangle
+     *
+     * @since v4000
+     * @group Game Obj
+     */
+    retrieve(rect: Rect, retrieveCb: (obj: GameObj<AreaComp>) => void): void;
     /**
      * Get a list of all game objs with certain tag.
      *
@@ -3474,7 +3485,7 @@ export interface KAPLAYCtx {
      * as its own font.
      *
      * This waits for the sprite to load before doing anything, but if the sprite doesn't load, the game
-     * will transition to the error screen after a timeout (which is set by {@link KAPLAYOpt.loadTimeout}).
+     * will transition to the error screen after a timeout (which is set by {@link KAPLAYOpt["loadTimeout"]|KAPLAYOpt.loadTimeout}).
      *
      * @param sprite - The ID of the sprite to use as a font. Must already have frames defined
      * @param chars - The characters that correspond to each of the frames in the sprite. You can't use
@@ -3725,7 +3736,8 @@ export interface KAPLAYCtx {
      */
     dt(): number;
     /**
-     * Get the fixed delta time since last frame.
+     * Get the delta time for the fixed-update loop. This
+     * only changes when you call {@link setFixedSpeed}.
      *
      * @since v3000.0
      * @group Info
@@ -3738,6 +3750,14 @@ export interface KAPLAYCtx {
      * @group Info
      */
     restDt(): number;
+    /**
+     * Change the speed that the fixed update loop runs at.
+     * The options (and caveats) are described at {@link KAPLAYOpt["fixedUpdateMode"]|KAPLAYOpt.fixedUpdateMode}.
+     *
+     * @group Physics
+     * @experimental
+     */
+    setFixedSpeed(speed: FixedSpeedOption): void;
     /**
      * Get the total time since beginning.
      *
@@ -5271,6 +5291,12 @@ export interface KAPLAYCtx {
         sides: number,
         startAngle: number,
     ): Vec2[];
+    floodFill(
+        graph: Graph,
+        start: number | number[],
+        predicate: (node: number) => boolean,
+    ): number[];
+    buildConnectivityMap(graph: Graph): Map<number, number>;
     /**
      * Check if a line and a point intersect.
      *
@@ -5398,6 +5424,7 @@ export interface KAPLAYCtx {
         shapeB: Shape,
     ): GjkCollisionResult | null;
     /**
+     * Builds the convex hull of a polygon. Note that even if the polygon is already convex, colinear points will be erased.
      * @returns true if the given polygon is convex
      * @since v3001.0
      * @group Math
@@ -5425,6 +5452,13 @@ export interface KAPLAYCtx {
      */
     triangulate(pts: Vec2[]): Vec2[][];
     /**
+     * @returns the convex hull of the given polygon.
+     * @since v4000.0
+     * @group Math
+     * @subgroup Advanced
+     */
+    buildConvexHull(pts: Vec2[]): Vec2[];
+    /**
      * Sorts the array in-place using {@link https://en.wikipedia.org/wiki/Insertion_sort insertion sort}.
      * This is useful when you have a persistent (not per-frame) array of objects and they change
      * on each frame but not by much, but the list must remain sorted. (For example, the list could
@@ -5445,6 +5479,14 @@ export interface KAPLAYCtx {
      * @subgroup Advanced
      */
     NavMesh: typeof NavMesh;
+    /**
+     * A Navigation Grid.
+     *
+     * @since v4000.0
+     * @group Math
+     * @subgroup Advanced
+     */
+    NavGrid: typeof NavGrid;
     /**
      * A point.
      *
@@ -5516,6 +5558,12 @@ export interface KAPLAYCtx {
      */
     Mat4: typeof Mat4;
     /**
+     * @since v3001.0
+     * @group Math
+     * @subgroup Advanced
+     */
+    Mat2: typeof Mat2;
+    /**
      * @since v4000.0
      * @group Math
      * @subgroup Advanced
@@ -5552,7 +5600,8 @@ export interface KAPLAYCtx {
         height: number,
         maxObjects: number,
         maxLevels: number,
-    ): Quadtree;
+        resizing: boolean,
+    ): Quadtree | ResizingQuadtree;
     /**
      * The Random Number Generator.
      *
