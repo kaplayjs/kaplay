@@ -72,7 +72,7 @@ function clickHandler(button: MouseButton) {
             !(obj as unknown as GameObj<FixedComp>).fixed
             && obj.worldArea().contains(worldPos)
         ) {
-            _k.game.gameObjEvents.trigger("click", obj)
+            _k.game.gameObjEvents.trigger("click", obj);
             obj.trigger("click", button);
         }
     });
@@ -87,7 +87,7 @@ function clickHandler(button: MouseButton) {
             (obj as unknown as GameObj<FixedComp>).fixed
             && obj.worldArea().contains(screenPos)
         ) {
-            _k.game.gameObjEvents.trigger("click", obj)
+            _k.game.gameObjEvents.trigger("click", obj);
             obj.trigger("click", button);
         }
     });
@@ -829,10 +829,11 @@ export function area(
                 return `area: ${this.area.scale?.x?.toFixed(1)}x`;
             }
             else {
-                return `area: (${this.area.scale?.x?.toFixed(
-                    1,
-                )
-                    }x, ${this.area.scale.y?.toFixed(1)}y)`;
+                return `area: (${
+                    this.area.scale?.x?.toFixed(
+                        1,
+                    )
+                }x, ${this.area.scale.y?.toFixed(1)}y)`;
             }
         },
 
