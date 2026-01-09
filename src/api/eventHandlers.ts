@@ -60,6 +60,7 @@ export const on = <Ev extends GameObjEventNames | string & {}>(
         if (obj.is(tag)) {
             let h;
             if (h = obj2Handler.get(obj)) {
+                console.log(h.paused)
                 h.cancel();
                 obj2Handler.delete(obj);
             }
