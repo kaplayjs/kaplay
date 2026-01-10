@@ -4253,6 +4253,7 @@ export interface KAPLAYCtx {
      * Camera shake.
      *
      * @param intensity - The intensity of the shake. Default to 12.
+     * @param duration - The duration of the shake. If not passed, the intensity will determine the duration.
      *
      * @example
      * ```js
@@ -4266,7 +4267,7 @@ export interface KAPLAYCtx {
      * @group Rendering
      * @subgroup Camera
      */
-    shake(intensity?: number): void;
+    shake(intensity?: number | Vec2, duration?: number): void;
     /**
      * Camera flash.
      *

@@ -53,8 +53,14 @@ export function flash(
     return fade;
 }
 
-export function shake(intensity: number = 12) {
-    _k.game.cam.shake += intensity;
+export function shake(intensity: number | Vec2 = 12, duration?: number) {
+    _k.game.cam.shake += typeof intensity == "number"
+        ? intensity
+        : intensity.len();
+    _k.game.cam.shakeDuration = duration;
+    _k.game.cam.shakeAxis = typeof intensity == "number"
+        ? undefined
+        : intensity.unit();
 }
 
 export function toScreen(p: Vec2): Vec2 {
