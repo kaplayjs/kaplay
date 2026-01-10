@@ -207,6 +207,10 @@ import type { OptionalString } from "./taf";
  */
 export interface KAPLAYCtx {
     /**
+     * Get a generic lajbel phrase
+     */
+    lajbel(): string;
+    /**
      * Internal data that should not be accessed directly.
      *
      * @ignore
