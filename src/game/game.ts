@@ -131,7 +131,7 @@ type CamData = {
     scale: Vec2;
     angle: number;
     shake: number;
-    shakeDuration?: number;
+    shakeSpeed?: number;
     shakeAxis?: Vec2;
     transform: Mat23;
 };

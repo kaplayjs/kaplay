@@ -17,8 +17,9 @@ export function drawFrame() {
     if (cam.shakeAxis) {
         shake = shake.project(cam.shakeAxis);
     }
-    // TODO: shakeAlpha probably needs to be divided by shake, multiplied by the time it takes for 1 to end and divided by desired time
-    const shakeAlpha = cam.shakeDuration ? 5 * _k.app.dt() : 5 * _k.app.dt();
+    const shakeAlpha = cam.shakeSpeed
+        ? 5 * _k.app.dt() * cam.shakeSpeed
+        : 5 * _k.app.dt();
 
     cam.shake = lerp(cam.shake, 0, shakeAlpha);
     cam.transform.setIdentity()

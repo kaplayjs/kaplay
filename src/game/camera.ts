@@ -57,7 +57,10 @@ export function shake(intensity: number | Vec2 = 12, duration?: number) {
     _k.game.cam.shake += typeof intensity == "number"
         ? intensity
         : intensity.len();
-    _k.game.cam.shakeDuration = duration;
+    _k.game.cam.shakeSpeed = duration === undefined
+        ? 1
+        : (Math.log(_k.game.cam.shake / 0.001) / Math.log(2) / 7.3391)
+            / duration;
     _k.game.cam.shakeAxis = typeof intensity == "number"
         ? undefined
         : intensity.unit();
