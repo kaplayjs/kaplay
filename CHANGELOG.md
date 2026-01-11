@@ -44,6 +44,7 @@ best friend, lajbel, can put the correct version name here
 - Fixed input events attached to a game object having the event's paused value
   reset when the object is paused or unpaused - @dragoncoder047
 - Hidden objects are processed again in transform - @mflerackers
+- When the parent is changed, the transform is invalidated - @mflerackers
 - Fixed click and hover for `fixed()` objects - @mflerackers
 - Object toWorld/fromWorld/toScreen/fromScreen work more logical now -
   @mflerackers
