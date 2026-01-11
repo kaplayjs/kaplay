@@ -63,7 +63,7 @@ export function attachAppHandlersToGameObjRaw(handlers: GameEventHandlers) {
         obj[e] = function(this: InternalGameObjRaw, ...args: [any]) {
             // @ts-ignore
             const ev: KEventController = handlers[e]?.(...args);
-            ev.paused = this.paused;
+            ev.controller = this;
 
             this._inputEvents.push(ev);
 

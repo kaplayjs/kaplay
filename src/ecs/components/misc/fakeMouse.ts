@@ -77,7 +77,7 @@ export const fakeMouse = (opt: FakeMouseOpt = {
             }
 
             if (opt.followMouse && _k.app.isMouseMoved()) {
-                this.screenPos(_k.app.mousePos());
+                this.screenPos = _k.app.mousePos();
             }
         },
         press(this: FakeMouse) {

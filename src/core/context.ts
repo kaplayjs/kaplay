@@ -190,6 +190,7 @@ import { Rule, RuleSystem } from "../math/ai/rulesystem";
 import { StateMachine } from "../math/ai/statemachine";
 import { clamp } from "../math/clamp";
 import { Color, hsl2rgb, rgb } from "../math/color";
+import { buildConvexHull } from "../math/convexhull";
 import { easings } from "../math/easings";
 import { gjkShapeIntersection, gjkShapeIntersects } from "../math/gjk";
 import { lerp } from "../math/lerp";
@@ -252,6 +253,8 @@ import {
     vec2,
     wave,
 } from "../math/math";
+import { buildConnectivityMap, floodFill } from "../math/navigation";
+import { NavGrid } from "../math/navigationgrid";
 import { NavMesh } from "../math/navigationmesh";
 import {
     createCogPolygon,
@@ -590,6 +593,8 @@ export const createContext = (
         createRegularPolygon,
         createStarPolygon,
         createCogPolygon,
+        floodFill,
+        buildConnectivityMap,
         easingSteps,
         easingLinear,
         easingCubicBezier,
@@ -607,7 +612,9 @@ export const createContext = (
         gjkShapeIntersection,
         isConvex,
         triangulate,
+        buildConvexHull,
         NavMesh,
+        NavGrid,
         // raw draw
         drawSprite,
         drawText,

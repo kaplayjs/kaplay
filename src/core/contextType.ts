@@ -163,6 +163,8 @@ import type {
     RNG,
     StepPosition,
 } from "../math/math";
+import type { Graph } from "../math/navigation";
+import type { NavGrid } from "../math/navigationgrid";
 import type { NavMesh } from "../math/navigationmesh";
 import type { Quadtree, ResizingQuadtree } from "../math/spatial/quadtree";
 import type { Vec2 } from "../math/Vec2";
@@ -5289,6 +5291,12 @@ export interface KAPLAYCtx {
         sides: number,
         startAngle: number,
     ): Vec2[];
+    floodFill(
+        graph: Graph,
+        start: number | number[],
+        predicate: (node: number) => boolean,
+    ): number[];
+    buildConnectivityMap(graph: Graph): Map<number, number>;
     /**
      * Check if a line and a point intersect.
      *
@@ -5416,6 +5424,7 @@ export interface KAPLAYCtx {
         shapeB: Shape,
     ): GjkCollisionResult | null;
     /**
+     * Builds the convex hull of a polygon. Note that even if the polygon is already convex, colinear points will be erased.
      * @returns true if the given polygon is convex
      * @since v3001.0
      * @group Math
@@ -5443,6 +5452,13 @@ export interface KAPLAYCtx {
      */
     triangulate(pts: Vec2[]): Vec2[][];
     /**
+     * @returns the convex hull of the given polygon.
+     * @since v4000.0
+     * @group Math
+     * @subgroup Advanced
+     */
+    buildConvexHull(pts: Vec2[]): Vec2[];
+    /**
      * Sorts the array in-place using {@link https://en.wikipedia.org/wiki/Insertion_sort insertion sort}.
      * This is useful when you have a persistent (not per-frame) array of objects and they change
      * on each frame but not by much, but the list must remain sorted. (For example, the list could
@@ -5463,6 +5479,14 @@ export interface KAPLAYCtx {
      * @subgroup Advanced
      */
     NavMesh: typeof NavMesh;
+    /**
+     * A Navigation Grid.
+     *
+     * @since v4000.0
+     * @group Math
+     * @subgroup Advanced
+     */
+    NavGrid: typeof NavGrid;
     /**
      * A point.
      *
