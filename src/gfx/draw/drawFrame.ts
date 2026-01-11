@@ -17,9 +17,7 @@ export function drawFrame() {
     if (cam.shakeAxis) {
         shake = shake.project(cam.shakeAxis);
     }
-    const shakeAlpha = cam.shakeSpeed
-        ? 5 * _k.app.dt() * cam.shakeSpeed
-        : 5 * _k.app.dt();
+    const shakeAlpha = 5 * _k.app.dt() * (cam.shakeSpeed ?? 1);
 
     cam.shake = lerp(cam.shake, 0, shakeAlpha);
     cam.transform.setIdentity()
