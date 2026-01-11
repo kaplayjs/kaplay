@@ -53,14 +53,15 @@ export function flash(
     return fade;
 }
 
-export function shake(intensity: number | Vec2 = 12, duration?: number) {
+export function shake(intensity: number | Vec2 = 12, duration?: number = 1) {
     _k.game.cam.shake += typeof intensity == "number"
         ? intensity
         : intensity.len();
-    _k.game.cam.shakeSpeed = duration === undefined
-        ? 1
-        : (Math.log(_k.game.cam.shake / 0.001) / Math.log(2) / 7.3391)
-            / duration;
+    // shake visually "ends" when the intensity reaches 0.001 so we calculate the required alpha to get there in the requested duration
+    _k.game.cam.shakeSpeed = (Math.log2(_k.game.cam.shake / 0.001) / 7.3391) / duration;
+    // 7.3391 is 1/half-life if the duration is 1 since the alpha used is 5*dt*speed (see gfx/draw/drawFrame.ts)
+        
+        
     _k.game.cam.shakeAxis = typeof intensity == "number"
         ? undefined
         : intensity.unit();
