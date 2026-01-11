@@ -4,7 +4,6 @@
 // All in /game folder is stuff that uses/modify the game state.
 
 import type { Asset } from "../assets/asset";
-import type { BitmapFontData } from "../assets/bitmapFont";
 import type { SoundData } from "../assets/sound";
 import type { SpriteData } from "../assets/sprite";
 import type { FakeMouseComp } from "../ecs/components/misc/fakeMouse";
@@ -14,7 +13,7 @@ import type { PosComp } from "../ecs/components/transform/pos";
 import { makeInternal } from "../ecs/entity/make";
 import type { System } from "../ecs/systems/systems";
 import type { GameEventMap, GameObjEventMap } from "../events/eventMap";
-import { KEventHandler } from "../events/events";
+import { type KEventController, KEventHandler } from "../events/events";
 import { Mat23, Rect, RNG } from "../math/math";
 import { Vec2 } from "../math/Vec2";
 import type { GameObj } from "../types";
@@ -29,9 +28,17 @@ export type Game = {
      */
     gameObjLastId: number;
     /**
+     * Game global events.
+     */
+    events: KEventHandler<GameEventMap>;
+    /**
      * Where game object global events are stored.
      */
-    events: KEventHandler<GameEventMap & GameObjEventMap>;
+    gameObjEvents: KEventHandler<GameObjEventMap>;
+    /**
+     * Event Handlers that are cancelled on scene change.
+     */
+    sceneEvents: KEventController[];
     /**
      * The root game object, parent of all game objects.
      */
@@ -149,7 +156,9 @@ export const createGame = (): Game => {
     const game: Game = {
         gameObjLastId: 0,
         root: makeInternal(0) as GameObj<TimerComp>,
-        events: new KEventHandler<GameEventMap & GameObjEventMap>(),
+        events: new KEventHandler<GameEventMap>(),
+        gameObjEvents: new KEventHandler<GameObjEventMap>(),
+        sceneEvents: [],
         cam: {
             pos: null as Vec2 | null,
             scale: new Vec2(1),
@@ -157,7 +166,6 @@ export const createGame = (): Game => {
             shake: 0,
             transform: new Mat23(),
         },
-
         currentSceneArgs: [], // stores the current scene arguments //
         sceneStack: [], // stores the scene names //
 

@@ -115,7 +115,6 @@ import type { Collision } from "../ecs/systems/Collision";
 import type { SystemPhase } from "../ecs/systems/systems";
 import type { GameObjEventNames, GameObjEvents } from "../events/eventMap";
 import type { KEvent, KEventController, KEventHandler } from "../events/events";
-import type { GameEventHandlers } from "../events/gameEventHandlers";
 import type { AppScope, SceneScope } from "../events/scopes";
 import type { SceneDef } from "../game/scenes";
 import type { anchorPt } from "../gfx/anchor";
@@ -151,7 +150,6 @@ import type { Mat4 } from "../math/Mat4";
 import type {
     Circle,
     Ellipse,
-    getSpriteOutline,
     Line,
     Mat2,
     Mat23,
@@ -1941,51 +1939,930 @@ export interface KAPLAYCtx {
      */
     trigger(event: string, tag: string, ...args: any): void;
     /**
-     * Register an event on all game objs with certain tag.
+     * Register an event that runs when all assets finished loading.
      *
-     * @param tag - The tag to listen for.
      * @param action - The function to run when the event is triggered.
      *
      * @example
      * ```js
-     * // a custom event defined by body() comp
-     * // every time an obj with tag "bomb" hits the floor, destroy it and addKaboom()
-     * on("ground", "bomb", (bomb) => {
-     *     destroy(bomb)
-     *     addKaboom(bomb.pos)
-     * })
+     * const bean = add([
+     *     sprite("bean"),
+     * ]);
      *
-     * // a custom event can be defined manually
-     * // by passing an event name, a tag, and a callback function
-     * // if you want any tag, use a tag of "*"
-     * on("talk", "npc", (npc, message) => {
-     *     npc.add([
-     *         text(message),
-     *         pos(0, -50),
-     *         lifespan(2),
-     *         opacity(),
-     *     ])
+     * // certain assets related data are only available when the game finishes loading
+     * onLoad(() => {
+     *     debug.log(bean.width)
      * });
-     *
-     * onKeyPress("space", () => {
-     *     // the trigger method on game objs can be used to trigger a custom event
-     *     npc.trigger("talk", "Hello, KAPLAY!");
-     * });
-     *
      * ```
      *
      * @returns The event controller.
-     * @since v2000.0
+     * @since v2000.1
      * @group Events
      */
-    on<Ev extends GameObjEventNames | (string & {})>(
-        event: Ev,
-        tag: Tag,
-        action: (
-            obj: GameObj,
-            ...args: TupleWithoutFirst<GameObjEvents[Ev]>
-        ) => void,
+    onLoad(action: () => void): KEventController | undefined;
+    /**
+     * Register an event that runs once for each asset that failed to load,
+     * after all others have completed.
+     *
+     * @param action - The function to run when the event is triggered.
+     *
+     * @example
+     * ```js
+     * // this will not load
+     * loadSprite("bobo", "notavalidURL");
+     *
+     * // process the error
+     * // you decide whether to ignore it, or throw an error and halt the game
+     * onLoadError((name, asset) => {
+     *     debug.error(`${name} failed to load: ${asset.error}`);
+     * });
+     * ```
+     *
+     * @returns The event controller.
+     * @since v3001.0
+     * @group Events
+     */
+    onLoadError(
+        action: (name: string, failedAsset: Asset<any>) => void,
+    ): KEventController | undefined;
+    /**
+     * Register an event that runs every frame when assets are initially loading. Can be used to draw a custom loading screen.
+     *
+     * @param action - The function that runs when assets are loading.
+     *
+     * @example
+     * ```
+     * // progress bar
+     * onLoading((progress) => {
+     *     // Background of the bar
+     *     drawRect({
+     *         width: 240,
+     *         height: 40,
+     *         pos: center().add(-120,0),
+     *         color: BLACK,
+     *         anchor: `left,
+     *     });
+     *     // Progress of the bar
+     *     drawRect({
+     *         width: map(progress, 0, 1, 0, 220),
+     *         height: 32,
+     *         pos: center().add(-116, 0),
+     *         color: BLUE,
+     *         anchor: `left
+     *     });
+     * });
+     * ```
+     *
+     * @returns The event controller.
+     * @since v3000.0
+     * @group Events
+     */
+    onLoading(action: (progress: number) => void): KEventController;
+    /**
+     * Register a custom error handler. Can be used to draw a custom error screen.
+     *
+     * @param action - The function that runs when the program errors.
+     *
+     * @example
+     * ```js
+     * // Create custom error handler
+     * onError((err) => {
+     *     drawRect({
+     *         width: width(),
+     *         height: height(),
+     *         pos: center(),
+     *         color: RED,
+     *         anchor: `center,
+     *     });
+     *
+     *     drawText({
+     *         text: err.message,
+     *         size: 48,
+     *         width: width()/2,
+     *         anchor: `center`,
+     *         align: `center`,
+     *         pos: center(),
+     *         color: BLACK
+     *     });
+     * });
+     *
+     * // cause common error
+     * let pos = add([
+     *     pos()
+     * ]);
+     * ```
+     *
+     * @returns The event controller.
+     * @since v3000.0
+     * @group Events
+     */
+    onError(action: (err: Error) => void): KEventController;
+    /**
+     * Register an event that runs when the canvas resizes.
+     *
+     * @param action - The function that runs when the canvas resizes.
+     *
+     * @example
+     * ```js
+     * // create a rectangle with screen size
+     * let rectangle = add([
+     *     rect(width(), height()),
+     *     color(GREEN),
+     * ]);
+     *
+     * // resize the rectangle to screen size
+     * onResize(() => {
+     *     debug.log(`Old Size: ${rectangle.width}x${rectangle.height}`);
+     *     rectangle.width = width();
+     *     rectangle.height = height();
+     *     debug.log(`New Size: ${rectangle.width}x${rectangle.height}`);
+     * });
+     * ```
+     *
+     * @returns The event controller.
+     * @since v3000.0
+     * @group Events
+     */
+    onResize(action: () => void): KEventController;
+    /**
+     * Cleanup function to run when quit() is called.
+     *
+     * @param action - The function that runs when quit() is called.
+     *
+     * @example
+     * ```js
+     * // useful externally from KAPLAY
+     * onCleanup(() => {
+     *     console.log(`ohbye :(`);
+     * });
+     *
+     * quit();
+     * ```
+     *
+     * @returns The event controller.
+     * @since v3000.0
+     * @group Events
+     */
+    onCleanup(action: () => void): void;
+    /**
+     * Register an event that runs every frame when a key is held down.
+     *
+     * @param key - The key(s) to listen for.
+     * @param action - The function to run when the event is triggered.
+     *
+     * @example
+     * ```js
+     * // move left by SPEED pixels per frame every frame when left arrow key is being held down
+     * onKeyDown("left", () => {
+     *     bean.move(-SPEED, 0)
+     * });
+     * ```
+     *
+     * @returns The event controller.
+     * @since v2000.1
+     * @group Input
+     * @subgroup Keyboard
+     */
+    onKeyDown(key: Key | Key[], action: (key: Key) => void): KEventController;
+    /**
+     * Register an event that runs every frame when any key is held down.
+     *
+     * @param action - The function to run when the event is triggered.
+     *
+     * @returns The event controller.
+     * @since v2000.1
+     * @group Input
+     * @subgroup Keyboard
+     */
+    onKeyDown(action: (key: Key) => void): KEventController;
+    /**
+     * Register an event that runs when user presses certain keys.
+     *
+     * @param k - The key(s) to listen for.
+     * @param action - The function to run when the event is triggered.
+     *
+     * @example
+     * ```js
+     * // .jump() once when "space" is just being pressed
+     * onKeyPress("space", () => {
+     *     bean.jump();
+     * });
+     *
+     * onKeyPress(["up", "space"], () => {
+     *     bean.jump();
+     * });
+     * ```
+     *
+     * @returns The event controller.
+     * @since v2000.1
+     * @group Input
+     * @subgroup Keyboard
+     */
+    onKeyPress(key: Key | Key[], action: (key: Key) => void): KEventController;
+    /**
+     * Register an event that runs when user presses any key.
+     *
+     * @param action - The function to run when the event is triggered.
+     *
+     * @example
+     * ```js
+     * // Call restart() when player presses any key
+     * onKeyPress((key) => {
+     *     debug.log(`key pressed ${key}`);
+     *     restart();
+     * });
+     * ```
+     *
+     * @returns The event controller.
+     * @since v3001.0
+     * @group Input
+     * @subgroup Keyboard
+     */
+    onKeyPress(action: (key: Key) => void): KEventController;
+    /**
+     * Register an event that runs when user presses certain keys (also fires repeatedly when the keys are being held down).
+     *
+     * @param k - The key(s) to listen for.
+     * @param action - The function to run when the event is triggered.
+     *
+     * @example
+     * ```js
+     * // delete last character when "backspace" is being pressed and held
+     * onKeyPressRepeat("backspace", () => {
+     *     input.text = input.text.substring(0, input.text.length - 1);
+     * });
+     * ```
+     *
+     * @returns The event controller.
+     * @since v3000.1
+     * @group Input
+     * @subgroup Keyboard
+     */
+    onKeyPressRepeat(
+        k: Key | Key[],
+        action: (k: Key) => void,
     ): KEventController;
+    /**
+     * Register an event that runs when user presses any key and fires repeatedly when the keys are being held down.
+     *
+     * @param action - The function to run when the event is triggered.
+     *
+     * @example
+     * ```js
+     * // delete last character when "backspace" is being pressed and held
+     * onKeyPressRepeat((key) => {
+     *     debug.log(`key ${key} is being repeatedly pressed`)
+     * });
+     * ```
+     *
+     * @returns The event controller.
+     * @since v3000.1
+     * @group Input
+     * @subgroup Keyboard
+     */
+    onKeyPressRepeat(action: (k: Key) => void): KEventController;
+    /**
+     * Register an event that runs when user release certain keys.
+     *
+     * @param k - = The key(s) to listen for. See {@link Key `Key`}.
+     * @param action - The function that runs when a user releases certain keys
+     *
+     * @example
+     * ```js
+     * // release `a` or `b` keys
+     * onKeyRelease([`a`, `b`], (k) => {
+     *     debug.log(`Released the ${k} key...`);
+     * });
+     * ```
+     *
+     * @returns The event controller.
+     * @since v2000.1
+     * @group Input
+     * @subgroup Keyboard
+     */
+    onKeyRelease(k: Key | Key[], action: (k: Key) => void): KEventController;
+    /**
+     * Register an event that runs when user releases a key.
+     *
+     * @param action - The function that runs when a user releases a {@link Key `Key`}.
+     *
+     * @example
+     * ```js
+     * // release a key
+     * onKeyRelease((k) => {
+     *     debug.log(`Released the ${k} key...`);
+     * });
+     * ```
+     *
+     * @returns The event controller.
+     * @since v2000.1
+     * @group Input
+     */
+    onKeyRelease(action: (k: Key) => void): KEventController;
+    /**
+     * Register an event that runs when user inputs text.
+     *
+     * @param action - The function to run when the event is triggered.
+     *
+     * @example
+     * ```js
+     * // type into input
+     * onCharInput((ch) => {
+     *     input.text += ch
+     * })
+     * ```
+     *
+     * @returns The event controller.
+     * @since v2000.1
+     * @group Input
+     * @subgroup Keyboard
+     */
+    onCharInput(action: (ch: string) => void): KEventController;
+    /**
+     * Register an event that runs every frame when certain mouse buttons are being held down.
+     *
+     * @param btn - The mouse button(s) to listen for. See {@link MouseButton `MouseButton`}.
+     * @param action - The function that is run when certain mouse buttons are being held down.
+     *
+     * @example
+     * ```js
+     * // count time with left mouse button down
+     * let mouseTime = 0;
+     * onMouseDown("left", () => {
+     *     mouseTime += dt();
+     *     debug.log(`Time with mouse down: ${mouseTime});
+     * });
+     * ```
+     *
+     * @returns The event controller.
+     * @since v3001.0
+     * @group Input
+     * @subgroup Mouse
+     */
+    onMouseDown(
+        btn: MouseButton | MouseButton[],
+        action: (m: MouseButton) => void,
+    ): KEventController;
+    /**
+     * Register an event that runs every frame when any mouse button is being held down.
+     *
+     * @param action - The function that is run when any mouse button is being held down.
+     *
+     * @example
+     * ```js
+     * // count time with any mouse button down
+     * let mouseTime = 0;
+     * onMouseDown((m) => {
+     *     mouseTime += dt();
+     * });
+     * ```
+     *
+     * @returns The event controller.
+     * @since v3001.0
+     * @group Input
+     * @subgroup Mouse
+     */
+    onMouseDown(action: (m: MouseButton) => void): KEventController;
+    /**
+     * Register an event that runs when user clicks mouse.
+     *
+     * @param action - The function that is run when user clicks a mouse button.
+     *
+     * @example
+     * ```js
+     * // gives cookies on left press, remove on right press
+     * let cookies = 0;
+     * onMousePress(["left", "right"], (m) => {
+     *     if (m == "left") {
+     *         cookies++;
+     *     } else {
+     *         cookies--;
+     *     }
+     * });
+     * ```
+     *
+     * @returns The event controller.
+     * @since v3001.0
+     * @group Input
+     * @subgroup Mouse
+     */
+    onMousePress(action: (m: MouseButton) => void): KEventController;
+    /**
+     * Register an event that runs when user clicks mouse.
+     *
+     * @param btn - The mouse button(s) to listen for. See {@link MouseButton `MouseButton`}.
+     * @param action - The function that is run what the user clicks cetain mouse buttons.
+     *
+     * @example
+     * ```js
+     * // gives cookies on any mouse press
+     * let cookies = 0;
+     * onMousePress((m) => {
+     *     cookies++;
+     *     debug.log(`Cookies: ${cookies}`);
+     * });
+     * ```
+     *
+     * @returns The event controller.
+     * @since v3001.0
+     * @group Input
+     * @subgroup Mouse
+     */
+    onMousePress(
+        btn: MouseButton | MouseButton[],
+        action: (m: MouseButton) => void,
+    ): KEventController;
+    /**
+     * Register an event that runs when user releases mouse.
+     *
+     * @param action - The function that is run what the user clicks a provided mouse button.
+     *
+     * @example
+     * ```js
+     * // spawn bean where right mouse is released
+     * onMouseRelease("right", (m) => {
+     *     debug.log(`${m} released, spawning bean...`);
+     *     add([
+     *         pos(mousePos()),
+     *         sprite("bean"),
+     *         anchor("center"),
+     *     ]);
+     * });
+     * ```
+     *
+     * @returns The event controller.
+     * @since v3001.0
+     * @group Input
+     * @subgroup Mouse
+     */
+    onMouseRelease(action: (m: MouseButton) => void): KEventController;
+    /**
+     * Register an event that runs when user releases mouse.
+     *
+     * @param btn - The button(s) to listen for. See {@link MouseButton `MouseButton`}.
+     * @param action - The function that is run what the user clicks a provided mouse button.
+     *
+     * @example
+     * ```js
+     * // spawn bean where right mouse is released
+     * onMouseRelease((m) => {
+     *     if (m == "right") {
+     *         debug.log(`${m} released, spawning bean...`);
+     *         add([
+     *             pos(mousePos()),
+     *             sprite("bean"),
+     *             anchor("center"),
+     *         ]);
+     *     });
+     * });
+     * ```
+     *
+     * @returns The event controller.
+     * @since v3001.0
+     * @group Input
+     * @subgroup Mouse
+     */
+    onMouseRelease(
+        btn: MouseButton | MouseButton[],
+        action: (m: MouseButton) => void,
+    ): KEventController;
+    /**
+     * Register an event that runs whenever user moves the mouse.
+     *
+     * @param action - The function that is run what the user moves the mouse.
+     *
+     * @example
+     * ```js
+     * // runs when the mouse has moved
+     * onMouseMove((p, d) => {
+     *     bean.pos = p; // set bean position to mouse position
+     * });
+     * ```
+     *
+     * @returns The event controller.
+     * @since v2000.1
+     * @group Input
+     * @subgroup Mouse
+     */
+    onMouseMove(action: (pos: Vec2, delta: Vec2) => void): KEventController;
+    /**
+     * Register an event that runs when a touch starts.
+     *
+     * @param action - The function to run when the event is triggered.
+     *
+     * @returns The event controller.
+     * @since v2000.1
+     * @group Input
+     * @subgroup Touch
+     */
+    onTouchStart(action: (pos: Vec2, t: Touch) => void): KEventController;
+    /**
+     * Register an event that runs when a touch ends.
+     *
+     * @param action - The function to run when the event is triggered.
+     *
+     * @returns The event controller.
+     * @since v2000.1
+     * @group Input
+     * @subgroup Touch
+     */
+    onTouchEnd(action: (pos: Vec2, t: Touch) => void): KEventController;
+    /**
+     * Register an event that runs whenever touch moves.
+     *
+     * @param action - The function to run when the event is triggered.
+     *
+     * @returns The event controller.
+     * @since v2000.1
+     * @group Input
+     * @subgroup Touch
+     */
+    onTouchMove(action: (pos: Vec2, t: Touch) => void): KEventController;
+    /**
+     * Register an event that runs when mouse wheel scrolled.
+     *
+     * @param action - The function to run when the event is triggered.
+     *
+     * @example
+     * ```js
+     * // Zoom camera on scroll
+     * onScroll((delta) => {
+     *     const zoom = delta.y / 500;
+     *     camScale(camScale().add(zoom));
+     * });
+     * ```
+     *
+     * @returns The event controller.
+     * @since v3000.0
+     * @group Input
+     * @subgroup Mouse
+     */
+    onScroll(action: (delta: Vec2) => void): KEventController;
+    /**
+     * Register an event that runs when a gamepad is connected.
+     *
+     * @param action - The function that runs when quit() is called.
+     *
+     * @example
+     * ```js
+     * // watch for a controller connecting
+     * onGamepadConnect((gp) => {
+     *     debug.log(`ohhi player ${gp.index + 1}`);
+     * });
+     * ```
+     *
+     * @returns The event controller.
+     * @since v3000.0
+     * @group Input
+     * @subgroup Gamepad
+     */
+    onGamepadConnect(action: (gamepad: KGamepad) => void): KEventController;
+    /**
+     * Register an event that runs when a gamepad is disconnected.
+     *
+     * @param action - The function that runs when quit() is called.
+     *
+     * @example
+     * ```js
+     * // watch for a controller disconnecting
+     * onGamepadDisconnect((gp) => {
+     *     debug.log(`ohbye player ${gp.index + 1}`);
+     * });
+     * ```
+     *
+     * @returns The event controller.
+     * @since v3000.0
+     * @group Input
+     * @subgroup Gamepad
+     */
+    onGamepadDisconnect(action: (gamepad: KGamepad) => void): KEventController;
+    /**
+     * Register an event that runs every frame when certain gamepad buttons are held down.
+     *
+     * @param btn - The button(s) to listen for. See {@link KGamepadButton `KGamepadButton`}.
+     * @param action - The function that is run while certain gamepad buttons are held down.
+     *
+     * @example
+     * ```js
+     * // when button is being held down
+     * onGamepadButtonDown("rtrigger", (gp) => {
+     *     car.addForce(Vec2.fromAngle(car.angle).scale(10));
+     * });
+     * ```
+     *
+     * @returns The event controller.
+     * @since v3001.0
+     * @group Input
+     * @subgroup Gamepad
+     */
+    onGamepadButtonDown(
+        btn: KGamepadButton | KGamepadButton[],
+        action: (btn: KGamepadButton, gamepad: KGamepad) => void,
+    ): KEventController;
+    /**
+     * Register an event that runs every frame when any gamepad buttons are held down.
+     *
+     * @param action - The function that is run while any gamepad buttons are held down.
+     *
+     * @example
+     * ```js
+     * // when button is being held down
+     * onGamepadButtonDown((btn, gp) => {
+     *     if (btn == "rtrigger") {
+     *         car.addForce(Vec2.fromAngle(car.angle).scale(10));
+     *     } else if (btn == "ltrigger") {
+     *         car.addForce(Vec2.fromAngle(car.angle).scale(-5));
+     *     }
+     * });
+     * ```
+     *
+     * @returns The event controller.
+     * @since v3001.0
+     * @group Input
+     * @subgroup Gamepad
+     */
+    onGamepadButtonDown(
+        action: (btn: KGamepadButton, gamepad: KGamepad) => void,
+    ): KEventController;
+    /**
+     * Register an event that runs when user presses certain gamepad button.
+     *
+     * @param btn - The button(s) to listen for. See {@link KGamepadButton `KGamepadButton`}.
+     * @param action - The function that is run when certain gamepad buttons are pressed.
+     *
+     * @example
+     * ```js
+     * // when user presses button
+     * onGamepadButtonPress("south", (btn, gp) => {
+     *     player.jump(200);
+     * });
+     * ```
+     *
+     * @returns The event controller.
+     * @since v3001.0
+     * @group Input
+     * @subgroup Gamepad
+     */
+    onGamepadButtonPress(
+        btn: KGamepadButton | KGamepadButton[],
+        action: (btn: KGamepadButton, gamepad: KGamepad) => void,
+    ): KEventController;
+    /**
+     * Register an event that runs when user presses any gamepad button.
+     *
+     * @param action - The function that is run when any gamepad buttons is pressed.
+     *
+     * @example
+     * ```js
+     * // when user presses button
+     * onGamepadButtonPress((btn, gp) => {
+     *     if (btn == "south") {
+     *         player.jump(200);     // jump
+     *     }
+     * });
+     * ```
+     *
+     * @returns The event controller.
+     * @since v3001.0
+     * @group Input
+     * @subgroup Gamepad
+     */
+    onGamepadButtonPress(
+        action: (btn: KGamepadButton, gamepad: KGamepad) => void,
+    ): KEventController;
+    /**
+     * Register an event that runs when user releases certain gamepad button
+     *
+     * @param btn - The button(s) to listen for. See {@link KGamepadButton `KGamepadButton`}.
+     * @param action - The function that is run when certain gamepad buttons are released.
+     *
+     * @example
+     * ```js
+     * // charged attack
+     * let chargeTime = 0
+     * onGamepadButtonPress("west", (btn, gp) => {
+     *     chargeTime = time();
+     * });
+     *
+     * // when a gamepad button is released, this is run
+     * onGamepadButtonRelease("west", (btn, gp) => {
+     *     let chargedt = time() - chargeTime;
+     *     debug.log(`Used ${chargedt * 1000} power!`);
+     * });
+     * ```
+     *
+     * @returns The event controller.
+     * @since v3001.0
+     * @group Input
+     * @subgroup Gamepad
+     */
+    onGamepadButtonRelease(
+        btn: KGamepadButton | KGamepadButton[],
+        action: (btn: KGamepadButton, gamepad: KGamepad) => void,
+    ): KEventController;
+    /**
+     * Register an event that runs when user releases any gamepad button.
+     *
+     * @param action - The function that is run when any gamepad buttons are released.
+     *
+     * @example
+     * ```js
+     * // when a gamepad button is released, this is run
+     * onGamepadButtonRelease((btn, gp) => {
+     *     if (btn == "north") {
+     *         player.jump(500);
+     *     }
+     * });
+     * ```
+     *
+     * @returns The event controller.
+     * @since v3000.0
+     * @group Input
+     * @subgroup Gamepad
+     */
+    onGamepadButtonRelease(
+        action: (btn: KGamepadButton, gamepad: KGamepad) => void,
+    ): KEventController;
+    /**
+     * Register an event that runs when the gamepad axis exists.
+     *
+     * @param button - The stick to listen for. See {@link KGamepadStick `GamepadStick`}.
+     * @param action - The function that is run when a specific gamepad stick is moved.
+     *
+     * @example
+     * ```js
+     * // player move
+     * let player = add([
+     *     pos(center()),
+     *     sprite(`bean`),
+     * ]);
+     *
+     * // when left stick is moved
+     * onGamepadStick("left", (stickVector, gp) => {
+     *     player.move(stickVector.x, 0);
+     * });
+     * ```
+     *
+     * @returns The event controller.
+     * @since v3000.0
+     * @group Input
+     * @subgroup Gamepad
+     */
+    onGamepadStick(
+        stick: KGamepadStick,
+        action: (value: Vec2, gameepad: KGamepad) => void,
+    ): KEventController;
+    /**
+     * Register an event that runs when user press a defined button
+     * (like "jump") on any input (keyboard, gamepad).
+     *
+     * @param btn - The button(s) to listen for.
+     * @param action - The function to run when the event is triggered.
+     *
+     * @returns The event controller.
+     * @since v3001.0
+     * @group Input
+     * @subgroup Buttons API
+     */
+    onButtonDown(
+        btn: string | string[],
+        action: (btn: string) => void,
+    ): KEventController;
+    onButtonDown(action: (btn: string) => void): KEventController;
+    /**
+     * Register an event that runs when user press a defined button
+     * (like "jump") on any input (keyboard, gamepad).
+     *
+     * @param btn - The button(s) to listen for.
+     * @param action - The function to run when the event is triggered.
+     *
+     * @returns The event controller.
+     * @since v3001.0
+     * @group Input
+     * @subgroup Buttons API
+     */
+    onButtonPress(
+        btn: string | string[],
+        action: (btn: string) => void,
+    ): KEventController;
+    onButtonPress(action: (btn: string) => void): KEventController;
+    /**
+     * Register an event that runs when user release a defined button
+     * (like "jump") on any input (keyboard, gamepad).
+     *
+     * @param btn - The button(s) to listen for.
+     * @param action - The function to run when the event is triggered.
+     *
+     * @returns The event controller.
+     * @since v3001.0
+     * @group Input
+     * @subgroup Buttons API
+     */
+    onButtonRelease(
+        btn: string | string[],
+        action: (btn: string) => void,
+    ): KEventController;
+    onButtonRelease(action: (btn: string) => void): KEventController;
+    /**
+     * Register an event that runs when tab is shown.
+     *
+     * @param action - The function that is run when the tab is shown.
+     *
+     * @example
+     * ```js
+     * // User has returned to this tab
+     * onTabShow(() => {
+     *     burp();
+     * });
+     * ```
+     *
+     * @returns The event controller.
+     * @since v3001.0
+     * @group Events
+     */
+    onTabShow(action: () => void): KEventController;
+    /**
+     * Register an event that runs when tab is hidden.
+     *
+     * @param action - The function that is run what the tab is hidden.
+     *
+     * @example
+     * ```js
+     * // spooky ghost
+     * let ghosty = add([
+     *     pos(center()),
+     *     sprite("ghosty"),
+     *     anchor("center"),
+     * ]);
+     *
+     * // when switching tabs, this runs
+     * onTabHide(() => {
+     *     destroy(ghosty);
+     *     add([
+     *         text("There was never aa ghosttttt"),
+     *         pos(center()),
+     *         anchor("center")
+     *     ]);
+     * });
+     * ```
+     *
+     * @returns The event controller.
+     * @since v3001.0
+     * @group Events
+     */
+    onTabHide(action: () => void): KEventController;
+    /**
+     * @deprecated use `onTabHide` instead
+     *
+     * Register an event that runs when tab is hidden.
+     *
+     * @param action - The function that is run what the tab is hidden.
+     *
+     * @example
+     * ```js
+     * // spooky ghost
+     * let ghosty = add([
+     *     pos(center()),
+     *     sprite("ghosty"),
+     *     anchor("center"),
+     * ]);
+     *
+     * // when switching tabs, this runs
+     * onHide(() => {
+     *     destroy(ghosty);
+     *     add([
+     *         text("There was never aa ghosttttt"),
+     *         pos(center()),
+     *         anchor("center")
+     *     ]);
+     * });
+     * ```
+     *
+     * @returns The event controller.
+     * @since v3001.0
+     * @group Events
+     */
+    onHide(action: () => void): KEventController;
+    /**
+     * @deprecated use `onTabShow` instead
+     *
+     * Register an event that runs when tab is shown.
+     *
+     * @param action - The function that is run when the tab is shown.
+     *
+     * @example
+     * ```js
+     * // user has returned to this tab
+     * onShow(() => {
+     *     burp();
+     * });
+     * ```
+     *
+     * @returns The event controller.
+     * @since v3001.0
+     * @group Events
+     */
+    onShow(action: () => void): KEventController;
     /**
      * Register an event that runs at a fixed framerate.
      *
@@ -2168,8 +3045,7 @@ export interface KAPLAYCtx {
     /**
      * Register an event that runs when an object starts using a component.
      *
-     * @param action - The function that runs when an object starts using component.
-     * @param id - The id of the component that was added.
+     * @param action - The function that runs when the event happens.
      *
      * @returns The event controller.
      * @since v3001.1
@@ -2177,10 +3053,31 @@ export interface KAPLAYCtx {
      */
     onUse(action: (obj: GameObj, id: string) => void): KEventController;
     /**
+     * Register an event that runs when an object with the provided tag starts using a component.
+     *
+     * @param tag - The tag to match, only called for objects with a matching tag.
+     * @param action - The function that runs when the event happens.
+     *
+     * @example
+     * ```js
+     * // This will run when the tagged object uses a new component.
+     * onUse("taggedObjTag", (obj, compId) => {
+     *     debug.log(obj, component);
+     * });
+     * ```
+     *
+     * @returns The event controller.
+     * @since v2000.0
+     * @group Events
+     */
+    onUse(
+        tag: Tag,
+        action: (obj: GameObj, compId: string) => void,
+    ): KEventController;
+    /**
      * Register an event that runs when an object stops using a component.
      *
-     * @param action - The function that runs when an object stops using a component.
-     * @param id - The id of the component that was removed.d
+     * @param action - The function that runs when the event happens.
      *
      * @returns The event controller.
      * @since v3001.1
@@ -2188,10 +3085,38 @@ export interface KAPLAYCtx {
      */
     onUnuse(action: (obj: GameObj, id: string) => void): KEventController;
     /**
+     * Register an event that runs when an object with the provided tag stops using a component.
+     *
+     * @param tag - The tag to match, only called for objects with a matching tag.
+     * @param action - The function that runs when the event happens.
+     *
+     * @example
+     * ```js
+     * // This will run when the tagged object removes a component.
+     * onUnuse("ghost", (obj, compId) => {
+     *     debug.log(obj, component);
+     * });
+     * ```
+     *
+     * @returns The event controller.
+     * @since v2000.0
+     * @group Events
+     */
+    onUnuse(
+        tag: Tag,
+        action: (obj: GameObj, compId: string) => void,
+    ): KEventController;
+    /**
      * Register an event that runs when an object gains a tag.
      *
-     * @param action - The function that runs when an object gains a tag.
-     * @param tag - The tag which was added.
+     * @param action - The function that runs when the event happens.
+     *
+     * @example
+     * ```js
+     * onTag((obj, tag) => {
+     *     debug.log(`A new tag ${tag} was added to the object ${obj.id}`)
+     * });
+     * ```
      *
      * @returns The event controller.
      * @since v3001.1
@@ -2199,10 +3124,36 @@ export interface KAPLAYCtx {
      */
     onTag(action: (obj: GameObj, tag: string) => void): KEventController;
     /**
+     * Register an event that runs when an object with the provided tag gains a tag.
+     *
+     * @param action - The function that runs when the event happens.
+     *
+     * @example
+     * ```js
+     * onTag("elephant", (obj, tag) => {
+     *     debug.log(`A new tag ${tag} was added to the object ${obj.id}`)
+     * });
+     * ```
+     *
+     * @returns The event controller.
+     * @since v3001.1
+     * @group Events
+     */
+    onTag(
+        tag: Tag,
+        action: (obj: GameObj, tag: string) => void,
+    ): KEventController;
+    /**
      * Register an event that runs when an object loses a tag.
      *
-     * @param action - The function that runs when an object loses a tag.
-     * @param tag - The tag which was removed.
+     * @param action - The function that runs when the event happens.
+     *
+     * @example
+     * ```js
+     * onUnuse((obj, tag) => {
+     *     debug.log(`A tag ${tag} was removed from the object ${obj.id}`)
+     * });
+     * ```
      *
      * @returns The event controller.
      * @since v3001.1
@@ -2210,171 +3161,71 @@ export interface KAPLAYCtx {
      */
     onUntag(action: (obj: GameObj, tag: string) => void): KEventController;
     /**
-     * Register an event that runs when all assets finished loading.
+     * Register an event that runs when an object with the provided tag loses a tag.
      *
+     * @param action - The function that runs when the event happens.
+     *
+     * @example
+     * ```js
+     * onUnuse("vegetable", (obj, tag) => {
+     *     debug.log(`A tag ${tag} was removed from the object ${obj.id}`)
+     * });
+     * ```
+     *
+     * @returns The event controller.
+     * @since v3001.1
+     * @group Events
+     */
+    onUntag(
+        tag: Tag,
+        action: (obj: GameObj, tag: string) => void,
+    ): KEventController;
+    /**
+     * Register an event on all Game Objects with certain tag.
+     *
+     * @param tag - The tag to listen for.
      * @param action - The function to run when the event is triggered.
      *
      * @example
      * ```js
-     * const bean = add([
-     *     sprite("bean"),
-     * ]);
+     * // a custom event defined by body() comp
+     * // every time an obj with tag "bomb" hits the floor, destroy it and addKaboom()
+     * on("ground", "bomb", (bomb) => {
+     *     destroy(bomb)
+     *     addKaboom(bomb.pos)
+     * })
      *
-     * // certain assets related data are only available when the game finishes loading
-     * onLoad(() => {
-     *     debug.log(bean.width)
+     * // a custom event can be defined manually
+     * // by passing an event name, a tag, and a callback function
+     * // if you want any tag, use a tag of "*"
+     * on("talk", "npc", (npc, message) => {
+     *     npc.add([
+     *         text(message),
+     *         pos(0, -50),
+     *         lifespan(2),
+     *         opacity(),
+     *     ])
      * });
+     *
+     * onKeyPress("space", () => {
+     *     // the trigger method on game objs can be used to trigger a custom event
+     *     npc.trigger("talk", "Hello, KAPLAY!");
+     * });
+     *
      * ```
      *
      * @returns The event controller.
-     * @since v2000.1
+     * @since v2000.0
      * @group Events
      */
-    onLoad(action: () => void): KEventController | undefined;
-    /**
-     * Register an event that runs once for each asset that failed to load,
-     * after all others have completed.
-     *
-     * @param action - The function to run when the event is triggered.
-     *
-     * @example
-     * ```js
-     * // this will not load
-     * loadSprite("bobo", "notavalidURL");
-     *
-     * // process the error
-     * // you decide whether to ignore it, or throw an error and halt the game
-     * onLoadError((name, asset) => {
-     *     debug.error(`${name} failed to load: ${asset.error}`);
-     * });
-     * ```
-     *
-     * @returns The event controller.
-     * @since v3001.0
-     * @group Events
-     */
-    onLoadError(
-        action: (name: string, failedAsset: Asset<any>) => void,
-    ): KEventController | undefined;
-    /**
-     * Register an event that runs every frame when assets are initially loading. Can be used to draw a custom loading screen.
-     *
-     * @param action - The function that runs when assets are loading.
-     *
-     * @example
-     * ```
-     * // progress bar
-     * onLoading((progress) => {
-     *     // Background of the bar
-     *     drawRect({
-     *         width: 240,
-     *         height: 40,
-     *         pos: center().add(-120,0),
-     *         color: BLACK,
-     *         anchor: `left,
-     *     });
-     *     // Progress of the bar
-     *     drawRect({
-     *         width: map(progress, 0, 1, 0, 220),
-     *         height: 32,
-     *         pos: center().add(-116, 0),
-     *         color: BLUE,
-     *         anchor: `left
-     *     });
-     * });
-     * ```
-     *
-     * @returns The event controller.
-     * @since v3000.0
-     * @group Events
-     */
-    onLoading(action: (progress: number) => void): KEventController;
-    /**
-     * Register a custom error handler. Can be used to draw a custom error screen.
-     *
-     * @param action - The function that runs when the program errors.
-     *
-     * @example
-     * ```js
-     * // Create custom error handler
-     * onError((err) => {
-     *     drawRect({
-     *         width: width(),
-     *         height: height(),
-     *         pos: center(),
-     *         color: RED,
-     *         anchor: `center,
-     *     });
-     *
-     *     drawText({
-     *         text: err.message,
-     *         size: 48,
-     *         width: width()/2,
-     *         anchor: `center`,
-     *         align: `center`,
-     *         pos: center(),
-     *         color: BLACK
-     *     });
-     * });
-     *
-     * // cause common error
-     * let pos = add([
-     *     pos()
-     * ]);
-     * ```
-     *
-     * @returns The event controller.
-     * @since v3000.0
-     * @group Events
-     */
-    onError(action: (err: Error) => void): KEventController;
-    /**
-     * Register an event that runs when the canvas resizes.
-     *
-     * @param action - The function that runs when the canvas resizes.
-     *
-     * @example
-     * ```js
-     * // create a rectangle with screen size
-     * let rectangle = add([
-     *     rect(width(), height()),
-     *     color(GREEN),
-     * ]);
-     *
-     * // resize the rectangle to screen size
-     * onResize(() => {
-     *     debug.log(`Old Size: ${rectangle.width}x${rectangle.height}`);
-     *     rectangle.width = width();
-     *     rectangle.height = height();
-     *     debug.log(`New Size: ${rectangle.width}x${rectangle.height}`);
-     * });
-     * ```
-     *
-     * @returns The event controller.
-     * @since v3000.0
-     * @group Events
-     */
-    onResize(action: () => void): KEventController;
-    /**
-     * Cleanup function to run when quit() is called.
-     *
-     * @param action - The function that runs when quit() is called.
-     *
-     * @example
-     * ```js
-     * // useful externally from KAPLAY
-     * onCleanup(() => {
-     *     console.log(`ohbye :(`);
-     * });
-     *
-     * quit();
-     * ```
-     *
-     * @returns The event controller.
-     * @since v3000.0
-     * @group Events
-     */
-    onCleanup(action: () => void): void;
+    on<Ev extends GameObjEventNames | (string & {})>(
+        event: Ev,
+        tag: Tag,
+        action: (
+            obj: GameObj,
+            ...args: TupleWithoutFirst<GameObjEvents[Ev]>
+        ) => void,
+    ): KEventController;
     /**
      * Register an event that runs once when 2 game objs with certain tags collides (required to have area() component).
      *
@@ -2462,22 +3313,6 @@ export interface KAPLAYCtx {
      * @subgroup Mouse
      */
     onClick(tag: Tag, action: (a: GameObj) => void): KEventController;
-    /**
-     * Register an event that runs when users clicks.
-     *
-     * @param action - The function to run when the event is triggered.
-     *
-     * @example
-     * ```js
-     * // click on anywhere to go to "game" scene
-     * onClick(() => go("game"));
-     * ```
-     *
-     * @returns The event controller.
-     * @since v2000.1
-     * @group Events
-     */
-    onClick(action: () => void): KEventController;
     /**
      * Register an event that runs once when game objs with certain tags are hovered (required to have area() component).
      *
@@ -2895,10 +3730,6 @@ export interface KAPLAYCtx {
      * @subgroup Mouse
      */
     onScroll(action: (delta: Vec2) => void): KEventController;
-    onHide: GameEventHandlers["onHide"];
-    onShow: GameEventHandlers["onShow"];
-    onTabShow: GameEventHandlers["onTabShow"];
-    onTabHide: GameEventHandlers["onTabHide"];
     /**
      * Register an event that runs when a gamepad is connected.
      *

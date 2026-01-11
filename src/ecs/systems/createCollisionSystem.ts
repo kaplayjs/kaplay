@@ -1,6 +1,4 @@
 import { DEF_HASH_GRID_SIZE } from "../../constants/general";
-import { onAdd, onDestroy, onUnuse, onUse } from "../../events/globalEvents";
-import { onSceneLeave } from "../../game/scenes";
 import { height, width } from "../../gfx/stack";
 import { gjkShapeIntersection } from "../../math/gjk";
 import { Rect, vec2 } from "../../math/math";
@@ -8,7 +6,7 @@ import { minkowskiRectShapeIntersection } from "../../math/minkowski";
 import { satShapeIntersection } from "../../math/sat";
 import type { BroadPhaseAlgorithm } from "../../math/spatial";
 import { HashGrid } from "../../math/spatial/hashgrid";
-import { Quadtree, ResizingQuadtree } from "../../math/spatial/quadtree";
+import { Quadtree } from "../../math/spatial/quadtree";
 import {
     SweepAndPruneHorizontal,
     SweepAndPruneVertical,
@@ -17,7 +15,6 @@ import { _k } from "../../shared";
 import type { GameObj } from "../../types";
 import { type AreaComp, usesArea } from "../components/physics/area";
 import { Collision } from "./Collision";
-
 export type BroadPhaseType = "sap" | "sapv" | "quadtree" | "grid";
 export type NarrowPhaseType = "gjk" | "sat" | "box";
 
@@ -88,25 +85,26 @@ export const createCollisionSystem = (
     function broadPhase() {
         if (!broadInit) {
             broadInit = true;
-            onAdd(obj => {
+            _k.appScope.onAdd(obj => {
                 if (obj.has("area")) {
                     broadPhaseIntersection.add(obj as GameObj<AreaComp>);
                 }
             });
-            onDestroy(obj => {
+            _k.appScope.onDestroy(obj => {
                 broadPhaseIntersection.remove(obj as GameObj<AreaComp>);
             });
-            onUse((obj, id) => {
+            _k.appScope.onUse((obj, id) => {
                 if (id === "area") {
                     broadPhaseIntersection.add(obj as GameObj<AreaComp>);
                 }
             });
-            onUnuse((obj, id) => {
+            _k.appScope.onUnuse((obj, id) => {
                 if (id === "area") {
                     broadPhaseIntersection.remove(obj as GameObj<AreaComp>);
                 }
             });
-            onSceneLeave(scene => {
+
+            _k.appScope.onSceneLeave(scene => {
                 broadInit = false;
                 broadPhaseIntersection.clear();
             });

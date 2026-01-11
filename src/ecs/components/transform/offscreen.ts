@@ -1,8 +1,8 @@
 import { DEF_OFFSCREEN_DIS } from "../../../constants/general";
 import type { KEventController } from "../../../events/events";
-import { onUpdate } from "../../../events/globalEvents";
 import { height, width } from "../../../gfx/stack";
 import { Rect, testRectPoint, vec2 } from "../../../math/math";
+import { _k } from "../../../shared";
 import type { Comp, GameObj } from "../../../types";
 import type { RectComp } from "../draw/rect";
 import type { PosComp } from "./pos";
@@ -66,6 +66,7 @@ export interface OffScreenCompOpt {
     distance?: number;
 }
 
+// TODO: Probably a bug with offscreen about the component not persisting its functionality on scene change even when object uses stay (Be sure of creating an issue/card before merging)
 export function offscreen(opt: OffScreenCompOpt = {}): OffScreenComp {
     let isOut = false;
     const screenRect = new Rect(vec2(0), width(), height());
@@ -124,7 +125,9 @@ export function offscreen(opt: OffScreenCompOpt = {}): OffScreenComp {
             return this.on("enterView", action);
         },
         add(this: GameObj<OffScreenComp>) {
-            if (opt.pause && opt.unpause) onUpdate(() => check(this));
+            if (opt.pause && opt.unpause) {
+                _k.sceneScope.onUpdate(() => check(this));
+            }
             else this.onUpdate(() => check(this));
         },
     };

@@ -1,4 +1,3 @@
-import { onAdd, onDestroy, onUnuse, onUse } from "../../../events/globalEvents";
 import { drawCircle } from "../../../gfx/draw/drawCircle";
 import { drawLine } from "../../../gfx/draw/drawLine";
 import { drawPolygon } from "../../../gfx/draw/drawPolygon";
@@ -20,6 +19,7 @@ import {
     updateTransformRecursive,
 } from "../../../math/various";
 import { Vec2 } from "../../../math/Vec2";
+import { _k } from "../../../shared";
 import type { Comp, GameObj } from "../../../types";
 import { system, SystemPhase } from "../../systems/systems";
 import type { PosComp } from "./pos";
@@ -187,24 +187,25 @@ function installSystem() {
     systemInstalled = true;
     // TODO: use a live query for this
     const constraints: Set<GameObj<Constraint>> = new Set();
-    onAdd(obj => {
+    _k.appScope.onAdd(obj => {
         if (obj.has("constraint")) {
             constraints.add(obj as GameObj<Constraint>);
         }
     });
-    onDestroy(obj => {
+    _k.appScope.onDestroy(obj => {
         constraints.delete(obj as GameObj<Constraint>);
     });
-    onUse((obj, id) => {
+    _k.appScope.onUse((obj, id) => {
         if ("constraint" === id) {
             constraints.add(obj as GameObj<Constraint>);
         }
     });
-    onUnuse((obj, id) => {
+    _k.appScope.onUnuse((obj, id) => {
         if ("constraint" === id) {
             constraints.delete(obj as GameObj<Constraint>);
         }
     });
+
     system("constraint", () => {
         constraints.forEach(constraint => {
             constraint.apply();
