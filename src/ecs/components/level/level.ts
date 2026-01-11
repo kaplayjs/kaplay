@@ -705,7 +705,7 @@ export function level(map: string[], opt: LevelCompOpt): LevelComp {
             data.tiles = {}; // { symbol: prefab };
             // tiles maps symbols to functions returning a list of components
             // To serialize this, we get the list of components for each symbol, and serialize them
-            for (const key in Object.keys(opt.tiles)) {
+            for (const key of Object.keys(opt.tiles)) {
                 const compsAndTags = opt.tiles[key](vec2());
                 const comps: any = {};
                 const tags = [];
