@@ -108,6 +108,16 @@ export type NineSlice = {
      * The height of the 9-slice's bottom row.
      */
     bottom: number;
+    /**
+     * How regions should tile when the sprite is scaled.
+     * - `"none"`: All regions stretch (default)
+     * - `"edges"`: Edge regions (top, bottom, left, right) tile, center stretches
+     * - `"center"`: Center region tiles, edges stretch
+     * - `"all"`: Both edges and center tile
+     *
+     * Corners never tile.
+     */
+    tileMode?: "none" | "edges" | "center" | "all";
 };
 
 /**
@@ -159,21 +169,19 @@ export class SpriteData {
             : Promise.resolve(SpriteData.fromImage(src, opt));
     }
 
-    static fromImage(
-        data: ImageSource,
-        opt: LoadSpriteOpt = {},
-    ): SpriteData {
+    static fromImage(data: ImageSource, opt: LoadSpriteOpt = {}): SpriteData {
         const [tex, quad, packerId] = opt.singular
             ? _k.assets.packer.addSingle(data)
             : _k.assets.packer.add(data);
         const frames = opt.frames
-            ? opt.frames.map((f) =>
-                new Quad(
-                    quad.x + f.x * quad.w,
-                    quad.y + f.y * quad.h,
-                    f.w * quad.w,
-                    f.h * quad.h,
-                )
+            ? opt.frames.map(
+                (f) =>
+                    new Quad(
+                        quad.x + f.x * quad.w,
+                        quad.y + f.y * quad.h,
+                        f.w * quad.w,
+                        f.h * quad.h,
+                    ),
             )
             : slice(
                 opt.sliceX || 1,
@@ -187,10 +195,7 @@ export class SpriteData {
         return new SpriteData(tex, frames, opt.anims, opt.slice9, packerId);
     }
 
-    static fromURL(
-        url: string,
-        opt: LoadSpriteOpt = {},
-    ): Promise<SpriteData> {
+    static fromURL(url: string, opt: LoadSpriteOpt = {}): Promise<SpriteData> {
         return loadImg(url).then((img) => SpriteData.fromImage(img, opt));
     }
 }
@@ -244,11 +249,13 @@ export function loadSprite(
         if (src.some((s) => typeof s === "string")) {
             return _k.assets.sprites.add(
                 name,
-                Promise.all(src.map((s) => {
-                    return typeof s === "string"
-                        ? loadImg(s)
-                        : Promise.resolve(s);
-                })).then((images) => createSpriteSheet(images, opt)),
+                Promise.all(
+                    src.map((s) => {
+                        return typeof s === "string"
+                            ? loadImg(s)
+                            : Promise.resolve(s);
+                    }),
+                ).then((images) => createSpriteSheet(images, opt)),
             );
         }
         else {
@@ -277,14 +284,7 @@ export function slice(x = 1, y = 1, dx = 0, dy = 0, w = 1, h = 1): Quad[] {
     const qh = h / y;
     for (let j = 0; j < y; j++) {
         for (let i = 0; i < x; i++) {
-            frames.push(
-                new Quad(
-                    dx + i * qw,
-                    dy + j * qh,
-                    qw,
-                    qh,
-                ),
-            );
+            frames.push(new Quad(dx + i * qw, dy + j * qh, qw, qh));
         }
     }
     return frames;
