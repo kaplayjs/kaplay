@@ -110,7 +110,7 @@ let player;
 let moveCounter;
 
 // Whether any object in an array has a certain tag
-const hasTag = (objs, tag) => objs.findIndex(obj => obj.is(tag)) !== -1;
+const hasTag = (objs, tag) => objs.some(obj => obj.is(tag));
 
 // Wheter a box is in a sensor by checking if the objects at the same position include a sensor
 const isBoxInSensor = (box) => hasTag(level.getAt(box.tilePos), "sensor");
@@ -313,9 +313,12 @@ scene("game", (lvlIdx) => {
             0.07 * idx,
             (p) => child.scale = p,
             easings.easeOutBack,
-        ).onEnd(() => {
-            canMove = true;
-        });
+        );
+    });
+
+    // Waits until all the tweens are over to allow movement again
+    wait(0.07 * level.children.length, () => {
+        canMove = true;
     });
 
     // We also animate the move counter
