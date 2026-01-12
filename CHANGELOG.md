@@ -41,7 +41,8 @@ best friend, lajbel, can put the correct version name here
   @lajbel's debugging skills - @mflerackers
 - Fixed `SpriteComp.hasAnim()` returning false erroneously when the animation
   named was just constant frame 0 - @dragoncoder047
-- Fixed `levelComp.serialize()` use _for...of_ in the place of the _for...in_ when looping through the tile object keys. - @benhuangbmj 
+- Fixed `levelComp.serialize()` use _for...of_ in the place of the _for...in_
+  when looping through the tile object keys. - @benhuangbmj
 - Fixed input events attached to a game object having the event's paused value
   reset when the object is paused or unpaused - @dragoncoder047
 - Hidden objects are processed again in transform - @mflerackers
