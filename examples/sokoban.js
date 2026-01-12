@@ -26,6 +26,7 @@ loadSprite("sturdybox", "/sprites/sturdybox.png");
 loadSprite("target", "/sprites/box_target.png");
 loadSprite("sok", "/sprites/sok.png");
 loadSprite("steel", "/sprites/steel.png");
+loadSound("chirp", "/sounds/bean_voice.wav");
 
 loadShader(
     "checker",
@@ -208,6 +209,7 @@ const move = (dir) => {
     );
 
     // Move the player and tween it for little juice
+    play("chirp", { detune: -500 });
     moveObj(player, dir);
     tween(
         vec2(1.2),
@@ -372,54 +374,67 @@ scene("game", (lvlIdx) => {
 });
 
 scene("win", () => {
+    // Checkered background
     add([
         rect(width(), height()),
         shader("checker", { tileSize }),
     ]);
 
+    // Soksplossion
+    add([
+        pos(center()),
+        particles({
+            max: 15,
+            speed: [350, 550],
+            angle: [0, 360],
+            damping: [1, 1],
+            lifeTime: [1000, 1000],
+            opacities: [1, 1, 0],
+            scales: [2],
+            texture: getSprite("sok").data.tex,
+            quads: [getSprite("sok").data.frames[0]],
+        }, {
+            lifetime: 1000,
+            rate: 1,
+            spread: 1000,
+        }),
+    ]).emit(15);
+
     add([
         anchor("center"),
-        pos(center().sub(0, 200)),
+        pos(center().sub(0, 250)),
         text("Bravo!", {
             size: 50,
             align: "center",
+        }),
+    ]);
+
+    add([
+        anchor("center"),
+        pos(center().sub(0, 160)),
+        text("You successfully re-stocked\n the [o]soks[/o]!", {
+            size: 36,
+            lineSpacing: 8,
+            align: "center",
             styles: {
-                "small": {
-                    scale: vec2(0.8),
+                o: {
+                    color: Color.fromHex("#ea6262"),
                 },
             },
-        }),
-    ]);
-
-    add([
-        anchor("center"),
-        pos(center().sub(0, 150)),
-        text("You succesfully re-stocked the soks!", {
-            size: 40,
-            align: "center",
-        }),
-    ]);
-
-    add([
-        anchor("center"),
-        pos(center().sub(0, 75)),
-        text("Press any key to play again", {
-            size: 40,
-            align: "center",
         }),
     ]);
 
     const sok = add([
         sprite("sok"),
         scale(0),
-        pos(center().add(0, 150)),
+        pos(center().add(0, 100)),
         anchor("center"),
     ]);
 
     add([
         sprite("box"),
         scale(3),
-        pos(center().add(0, 150)),
+        pos(center().add(0, 100)),
         anchor("center"),
     ]);
 
@@ -433,11 +448,23 @@ scene("win", () => {
 
     tween(
         sok.pos,
-        center(),
+        center().sub(0, 50),
         1,
         (p) => sok.pos = p,
         easings.easeOutExpo,
     );
+
+    addKaboom(center().add(0, 50), { scale: 1.5 });
+    shake(5);
+
+    add([
+        anchor("center"),
+        pos(center().add(0, 250)),
+        text("Press any key to play again", {
+            size: 22,
+            align: "center",
+        }),
+    ]);
 
     onKeyPress(() => {
         currentIdx = 0;
