@@ -20,6 +20,8 @@ best friend, lajbel, can put the correct version name here
 
 ## Added
 
+- Added the `charsPerTile` option to the `level()` component, so that you can
+  make clearer maps without having to resort to Unicode - @dragoncoder047
 - Added `AreaCompOpt.isSensor`. Areas without body or is sensor will no longer
   be eligible for collisions - @mflerackers
 - Added `floodFill()` for puzzle games - @mflerackers
