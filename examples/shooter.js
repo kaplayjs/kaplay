@@ -147,7 +147,7 @@ scene("battle", () => {
 
     const player = add([
         sprite("bean"),
-        area(),
+        area({ isSensor: true }),
         pos(width() / 2, height() - 64),
         anchor("center"),
     ]);
@@ -210,7 +210,7 @@ scene("battle", () => {
     function spawnBullet(p) {
         add([
             rect(12, 48),
-            area(),
+            area({ isSensor: true }),
             pos(p),
             anchor("center"),
             color(127, 127, 255),
@@ -241,7 +241,7 @@ scene("battle", () => {
         const name = choose(objs.filter(n => n != bossName));
         add([
             sprite(name),
-            area(),
+            area({ isSensor: true }),
             pos(rand(0, width()), 0),
             health(OBJ_HEALTH),
             anchor("bot"),
@@ -254,7 +254,7 @@ scene("battle", () => {
 
     const boss = add([
         sprite(bossName),
-        area(),
+        area({ isSensor: true }),
         pos(width() / 2, 40),
         health(BOSS_HEALTH),
         scale(3),

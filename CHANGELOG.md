@@ -18,7 +18,9 @@ best friend, lajbel, can put the correct version name here
 
 ## [unreleased]
 
-## Added
+## [4000.0.0-alpha.26] - 2026-01-12
+
+### Added
 
 - Added `AreaCompOpt.isSensor`. Areas without body or is sensor will no longer
   be eligible for collisions - @mflerackers
@@ -30,20 +32,25 @@ best friend, lajbel, can put the correct version name here
 - Added `buildConnectivityMap()` - @mflerackers
 - Added `buildConvexHull()` - @mflerackers
 
-## Changed
+### Changed
 
 - Both worldPos and screenPos are properties now - @mflerackers
 
-## Fixed
+### Fixed
 
 - Fixed `tween()` not cloning the passed vectors/colors - @lajbel
+- Fixed `timer()` related events (tween/loop/wait) not taking `debug.timeScale`
+  into account - @Stanko
 - Fixed the vibration effect on bodies introduced in alpha.25 thanks to
   @lajbel's debugging skills - @mflerackers
 - Fixed `SpriteComp.hasAnim()` returning false erroneously when the animation
   named was just constant frame 0 - @dragoncoder047
+- Fixed `levelComp.serialize()` use _for...of_ in the place of the _for...in_
+  when looping through the tile object keys - @benhuangbmj
 - Fixed input events attached to a game object having the event's paused value
   reset when the object is paused or unpaused - @dragoncoder047
 - Hidden objects are processed again in transform - @mflerackers
+- When the parent is changed, the transform is invalidated - @mflerackers
 - Fixed click and hover for `fixed()` objects - @mflerackers
 - Object toWorld/fromWorld/toScreen/fromScreen work more logical now -
   @mflerackers

@@ -635,6 +635,7 @@ export const GameObjRawPrototype: Omit<
         this._parent = p;
         if (p) {
             p.children.push(this as unknown as GameObj);
+            this._transformVersion = nextTransformVersion();
         }
     },
 
