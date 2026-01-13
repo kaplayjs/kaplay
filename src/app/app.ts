@@ -108,7 +108,7 @@ class GamepadState {
 class FPSCounter {
     /** Window size */
     maxSamples = 10;
-    history = new Float16Array(this.maxSamples);
+    history = new Float64Array(this.maxSamples);
     accumulator = 0;
     i = 0;
     fps = 0;
@@ -133,7 +133,7 @@ class FPSCounter {
         return this.history.at(this.i - ago);
     }
     resize(samples: number) {
-        this.history = new Float16Array(this.maxSamples = samples);
+        this.history = new Float64Array(this.maxSamples = samples);
         this.i = this.curNSamples = 0;
     }
 }
