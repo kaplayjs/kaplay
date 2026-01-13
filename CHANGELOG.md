@@ -16,7 +16,9 @@ Hey, KAPLAY Dev, you must changelog here, in unreleased, so later your
 best friend, lajbel, can put the correct version name here
 -->
 
-## [unreleased]
+## [unreleased] 
+
+## [4000.0.0-alpha.26] - 2026-01-12
 
 ## Added
 
