@@ -16,7 +16,7 @@ Hey, KAPLAY Dev, you must changelog here, in unreleased, so later your
 best friend, lajbel, can put the correct version name here
 -->
 
-## [unreleased] 
+## [unreleased]
 
 ## [4000.0.0-alpha.26] - 2026-01-12
 
@@ -39,7 +39,8 @@ best friend, lajbel, can put the correct version name here
 ## Fixed
 
 - Fixed `tween()` not cloning the passed vectors/colors - @lajbel
-- Fixed `timer()` related events (tween/loop/wait) not taking `debug.timeScale` into account - @Stanko
+- Fixed `timer()` related events (tween/loop/wait) not taking `debug.timeScale`
+  into account - @Stanko
 - Fixed the vibration effect on bodies introduced in alpha.25 thanks to
   @lajbel's debugging skills - @mflerackers
 - Fixed `SpriteComp.hasAnim()` returning false erroneously when the animation
