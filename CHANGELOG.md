@@ -39,12 +39,13 @@ best friend, lajbel, can put the correct version name here
 ## Fixed
 
 - Fixed `tween()` not cloning the passed vectors/colors - @lajbel
+- Fixed `timer()` related events (tween/loop/wait) not taking `debug.timeScale` into account - @Stanko
 - Fixed the vibration effect on bodies introduced in alpha.25 thanks to
   @lajbel's debugging skills - @mflerackers
 - Fixed `SpriteComp.hasAnim()` returning false erroneously when the animation
   named was just constant frame 0 - @dragoncoder047
 - Fixed `levelComp.serialize()` use _for...of_ in the place of the _for...in_
-  when looping through the tile object keys. - @benhuangbmj
+  when looping through the tile object keys - @benhuangbmj
 - Fixed input events attached to a game object having the event's paused value
   reset when the object is paused or unpaused - @dragoncoder047
 - Hidden objects are processed again in transform - @mflerackers
