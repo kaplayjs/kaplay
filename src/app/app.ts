@@ -107,26 +107,34 @@ class GamepadState {
 
 class FPSCounter {
     /** Window size */
-    win = 10;
-    history = new Array(this.win).fill(0);
+    maxSamples = 10;
+    history = new Float16Array(this.maxSamples);
     accumulator = 0;
     i = 0;
     fps = 0;
-    count = 0;
+    curNSamples = 0;
     timer = 0;
+    autoRecalculateInterval = 1;
     tick(dt: number) {
         this.timer += dt;
         this.accumulator += dt - this.history[this.i];
         this.history[this.i] = dt;
-        this.i = (this.i + 1) % this.win;
-        this.count = Math.min(this.count + 1, this.win);
-        if (this.timer >= 1) {
+        this.i = (this.i + 1) % this.maxSamples;
+        this.curNSamples = Math.min(this.curNSamples + 1, this.maxSamples);
+        if (this.timer >= this.autoRecalculateInterval) {
             this.calculate();
             this.timer = 0;
         }
     }
     calculate() {
-        return this.fps = this.count / this.accumulator;
+        return this.fps = this.curNSamples / this.accumulator;
+    }
+    ago(ago: number) {
+        return this.history.at(this.i - ago);
+    }
+    resize(samples: number) {
+        this.history = new Float16Array(this.maxSamples = samples);
+        this.i = this.curNSamples = 0;
     }
 }
 
