@@ -106,6 +106,7 @@ class GamepadState {
 }
 
 class FPSCounter {
+    /** Window size */
     win = 10;
     history = new Array(this.win).fill(0);
     accumulator = 0;
@@ -120,9 +121,12 @@ class FPSCounter {
         this.i = (this.i + 1) % this.win;
         this.count = Math.min(this.count + 1, this.win);
         if (this.timer >= 1) {
-            this.fps = this.count / this.accumulator;
+            this.calculate();
             this.timer = 0;
         }
+    }
+    calculate() {
+        return this.fps = this.count / this.accumulator;
     }
 }
 
