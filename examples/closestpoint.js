@@ -70,7 +70,7 @@ onDraw(() => {
         */
 
     const p = toWorld(mousePos());
-    c = nine.worldArea().closestPt(p);
+    let c = nine.worldArea().closestPt(p);
 
     drawCircle({
         pos: c,
