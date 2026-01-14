@@ -90,8 +90,8 @@ export class TexPacker {
             this._ctx.clearRect(
                 x = y = 0,
                 0,
-                this._el.width,
-                this._el.height,
+                maxX,
+                maxY,
             );
             this._textures.push(
                 curTex = Texture.fromImage(this._gfx, this._el),
@@ -110,12 +110,7 @@ export class TexPacker {
 
         return [
             curTex,
-            new Quad(
-                x / this._el.width,
-                y / this._el.height,
-                img.width / this._el.width,
-                img.height / this._el.height,
-            ),
+            new Quad(x / maxX, y / maxY, img.width / maxX, img.height / maxY),
             this._last++,
         ];
     }
