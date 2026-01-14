@@ -20,7 +20,7 @@ best friend, lajbel, can put the correct version name here
 
 ## [4000.0.0-alpha.26] - 2026-01-12
 
-## Added
+### Added
 
 - Added the `charsPerTile` option to the `level()` component, so that you can
   make clearer maps without having to resort to Unicode - @dragoncoder047
@@ -34,11 +34,11 @@ best friend, lajbel, can put the correct version name here
 - Added `buildConnectivityMap()` - @mflerackers
 - Added `buildConvexHull()` - @mflerackers
 
-## Changed
+### Changed
 
 - Both worldPos and screenPos are properties now - @mflerackers
 
-## Fixed
+### Fixed
 
 - Fixed `tween()` not cloning the passed vectors/colors - @lajbel
 - Fixed `timer()` related events (tween/loop/wait) not taking `debug.timeScale`
