@@ -18,6 +18,12 @@ best friend, lajbel, can put the correct version name here
 
 ## [unreleased]
 
+### Improved
+
+- Updated the texture packer to use a new packing algorithm which may get more
+  sprites onto the same texture, improving graphics batching performance -
+  @dragoncoder047
+
 ## [4000.0.0-alpha.26] - 2026-01-12
 
 ### Added
