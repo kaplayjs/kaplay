@@ -16,7 +16,9 @@ function polygonArea(poly) {
 }
 
 function soft() {
-    let po, pl, pa;
+    let po /* Previous position Vec2[] */,
+        pl /* Segment length number[] */,
+        pa /* Accumulated changes [x,y,count,..] */;
     let circ, area;
 
     return {
@@ -68,7 +70,7 @@ function soft() {
                     const dx = p2.x - p1.x;
                     const dy = p2.y - p1.y;
                     const l = Math.sqrt(dx * dx + dy * dy);
-                    if (l > 0 && l != pl[i]) {
+                    if (l != pl[i]) {
                         const s = (l - pl[i]) / l;
                         pa[i1 * 3] += dx * s / 2;
                         pa[i1 * 3 + 1] += dy * s / 2;
@@ -106,6 +108,13 @@ function soft() {
                         pa[i * 3 + 1] = 0;
                         pa[i * 3 + 2] = 0;
                     }
+                    retrieve(new Rect(poly[i], 1, 1), obj => {
+                        if (obj.bbox().contains(poly[i])) {
+                            if (obj.worldArea().contains(poly[i])) {
+
+                            }
+                        }
+                    });
                     if (poly[i].y > 300) {
                         poly[i].y = 300;
                     }
