@@ -1,134 +1,139 @@
-import { Quad } from "../math/math";
+import { Quad, Rect } from "../math/math";
 import { Vec2 } from "../math/Vec2";
 import type { ImageSource } from "../types";
 import { type GfxCtx, Texture } from "./gfx";
 
 export class TexPacker {
-    private lastTextureId: number = 0;
-    private textures: Texture[] = [];
-    private bigTextures: Texture[] = [];
-    private texturesPosition: Map<number, {
-        position: Vec2;
-        size: Vec2;
-        texture: Texture;
+    private _last: number = 0;
+    private _textures: Texture[] = [];
+    private _big: Texture[] = [];
+    private _used: Map<number, {
+        rect: Rect;
+        tex: Texture;
     }> = new Map();
-    private canvas: HTMLCanvasElement;
-    private c2d: CanvasRenderingContext2D;
-    private x: number = 0;
-    private y: number = 0;
-    private curHeight: number = 0;
-    private gfx: GfxCtx;
-    private padding: number;
+    private _el: HTMLCanvasElement;
+    private _ctx: CanvasRenderingContext2D;
 
-    constructor(gfx: GfxCtx, w: number, h: number, padding: number) {
-        this.gfx = gfx;
-        this.canvas = document.createElement("canvas");
-        this.canvas.width = w;
-        this.canvas.height = h;
-        this.textures = [Texture.fromImage(gfx, this.canvas)];
-        this.bigTextures = [];
-        this.padding = padding;
+    constructor(
+        private _gfx: GfxCtx,
+        w: number,
+        h: number,
+        private _pad: number,
+    ) {
+        this._el = document.createElement("canvas");
+        this._el.width = w;
+        this._el.height = h;
+        this._textures = [Texture.fromImage(_gfx, this._el)];
+        this._big = [];
 
-        const context2D = this.canvas.getContext("2d");
+        const context2D = this._el.getContext("2d");
         if (!context2D) throw new Error("Failed to get 2d context");
 
-        this.c2d = context2D;
+        this._ctx = context2D;
     }
 
     // create a image with a single texture
     addSingle(img: ImageSource): [Texture, Quad, number] {
-        const tex = Texture.fromImage(this.gfx, img);
-        this.bigTextures.push(tex);
+        const tex = Texture.fromImage(this._gfx, img);
+        this._big.push(tex);
         return [tex, new Quad(0, 0, 1, 1), 0];
     }
 
     add(img: ImageSource): [Texture, Quad, number] {
-        const paddedWidth = img.width + this.padding * 2;
-        const paddedHeight = img.height + this.padding * 2;
+        const pad = this._pad * 2;
+        const paddedWidth = img.width + pad;
+        const paddedHeight = img.height + pad;
+        const maxX = this._el.width, maxY = this._el.height;
+        const rectToAdd = new Rect(new Vec2(), paddedWidth, paddedHeight);
+        const p = rectToAdd.pos;
 
-        if (
-            paddedWidth > this.canvas.width || paddedHeight > this.canvas.height
-        ) {
+        if (paddedWidth > maxX || paddedHeight > maxY) {
+            // No chance of ever fitting.
             return this.addSingle(img);
         }
+        let curTex = this._textures.at(-1)!;
 
-        // next row
-        if (this.x + paddedWidth > this.canvas.width) {
-            this.x = 0;
-            this.y += this.curHeight;
-            this.curHeight = 0;
+        // find position
+        let x = 0, y = 0, found = false;
+        const doesitfit = () => {
+            // goes offscreen?
+            if (x + paddedWidth > maxX || y + paddedHeight > maxY) return false;
+            // try it
+            p.x = x;
+            p.y = y;
+            for (var [_, { rect, tex }] of this._used) {
+                if (curTex !== tex) continue;
+                if (rect.collides(rectToAdd)) return false;
+            }
+            return found = true;
+        };
+
+        // initial check for (0, 0)
+        if (!doesitfit()) {
+            for (
+                var [_, { rect: { pos, width, height }, tex }] of this._used
+            ) {
+                if (curTex !== tex) continue;
+                // try to the right
+                x = pos.x + width;
+                y = pos.y;
+                if (doesitfit()) break;
+                // try below
+                x = pos.x;
+                y = pos.y + height;
+                if (doesitfit()) break;
+            }
         }
 
-        // next texture
-        if (this.y + paddedHeight > this.canvas.height) {
-            this.c2d.clearRect(0, 0, this.canvas.width, this.canvas.height);
-            this.textures.push(Texture.fromImage(this.gfx, this.canvas));
-            this.x = 0;
-            this.y = 0;
-            this.curHeight = 0;
+        // not found --> go to next texture and put at (0, 0)
+        if (!found) {
+            this._ctx.clearRect(
+                x = y = 0,
+                0,
+                this._el.width,
+                this._el.height,
+            );
+            this._textures.push(
+                curTex = Texture.fromImage(this._gfx, this._el),
+            );
         }
 
-        const curTex = this.textures[this.textures.length - 1];
-        const pos = new Vec2(this.x + this.padding, this.y + this.padding);
+        if (img instanceof ImageData) this._ctx.putImageData(img, x, y);
+        else this._ctx.drawImage(img, x, y);
 
-        this.x += paddedWidth;
+        curTex.update(this._el);
 
-        if (paddedHeight > this.curHeight) {
-            this.curHeight = paddedHeight;
-        }
-
-        if (img instanceof ImageData) {
-            this.c2d.putImageData(img, pos.x, pos.y);
-        }
-        else {
-            this.c2d.drawImage(img, pos.x, pos.y);
-        }
-
-        curTex.update(this.canvas);
-
-        this.texturesPosition.set(this.lastTextureId, {
-            position: pos,
-            size: new Vec2(img.width, img.height),
-            texture: curTex,
+        this._used.set(this._last, {
+            rect: rectToAdd,
+            tex: curTex,
         });
-
-        this.lastTextureId++;
 
         return [
             curTex,
             new Quad(
-                pos.x / this.canvas.width,
-                pos.y / this.canvas.height,
-                img.width / this.canvas.width,
-                img.height / this.canvas.height,
+                x / this._el.width,
+                y / this._el.height,
+                img.width / this._el.width,
+                img.height / this._el.height,
             ),
-            this.lastTextureId - 1,
+            this._last++,
         ];
     }
     free() {
-        for (const tex of this.textures) {
-            tex.free();
-        }
-        for (const tex of this.bigTextures) {
-            tex.free();
-        }
+        this._textures.forEach(tex => tex.free());
+        this._big.forEach(tex => tex.free());
     }
     remove(packerId: number) {
-        const tex = this.texturesPosition.get(packerId);
+        const tex = this._used.get(packerId);
 
         if (!tex) {
             throw new Error("Texture with packer id not found");
         }
 
-        this.c2d.clearRect(
-            tex.position.x,
-            tex.position.y,
-            tex.size.x,
-            tex.size.y,
-        );
+        const { pos: { x, y }, width, height } = tex.rect;
+        this._ctx.clearRect(x, y, width, height);
 
-        tex.texture.update(this.canvas);
-        this.texturesPosition.delete(packerId);
-        this.x -= tex.size.x;
+        tex.tex.update(this._el);
+        this._used.delete(packerId);
     }
 }
