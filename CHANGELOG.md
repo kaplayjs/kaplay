@@ -18,6 +18,11 @@ best friend, lajbel, can put the correct version name here
 
 ## [unreleased]
 
+### Fixed
+
+- Text component no longer hangs if the requested width is too narrow for a
+  single character - @dragoncoder047
+
 ## [4000.0.0-alpha.26] - 2026-01-12
 
 ### Added
