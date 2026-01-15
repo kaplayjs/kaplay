@@ -31,6 +31,8 @@ best friend, lajbel, can put the correct version name here
 
 ### Fixed
 
+- Fixed tiled mode drawing of sprites ignoring opacity when it was 0 -
+  @dragoncoder047
 - Fixed input events attached to paused ancestors not being paused (#1009) -
   @amyspark-ng, @dragoncoder047
 - Fixed type `UniformValue` union not including `Texture`, a valid option
