@@ -18,8 +18,15 @@ best friend, lajbel, can put the correct version name here
 
 ## [unreleased]
 
+### Breaking Changes
+
+- The rotation constraint's `scale` option has been **renamed** to `ratio` -
+  @dragoncoder047
+
 ### Added
 
+- The rotation constraint now has a `trackMultiturn` option that can be set to
+  true to make the rotation not jump at the 0-360 boundary - @dragoncoder047
 - Added `tileMode` option to 9-slice sprites with four tiling strategies:
   `'none'` (stretch all), `'edges'` (tile edges only), `'center'` (tile center
   only), and `'all'` (tile both edges and center) (#996) - @JustKira
