@@ -66,14 +66,17 @@ function clickHandler(button: MouseButton) {
         new Rect(worldPos.sub(1, 1), 3, 3),
         obj => objects.add(obj),
     );
+
     objects.forEach(obj => {
         if (
             !(obj as unknown as GameObj<FixedComp>).fixed
             && obj.worldArea().contains(worldPos)
         ) {
+            _k.game.gameObjEvents.trigger("click", obj);
             obj.trigger("click", button);
         }
     });
+
     // fixed objects
     _k.game.retrieve(new Rect(screenPos.sub(1, 1), 3, 3), obj => {
         if (objects.has(obj)) objects.delete(obj);
@@ -84,6 +87,7 @@ function clickHandler(button: MouseButton) {
             (obj as unknown as GameObj<FixedComp>).fixed
             && obj.worldArea().contains(screenPos)
         ) {
+            _k.game.gameObjEvents.trigger("click", obj);
             obj.trigger("click", button);
         }
     });
@@ -127,13 +131,18 @@ function hoverHandler() {
             }
         });
 
-        newObjects.difference(oldObjects).forEach(obj => obj.trigger("hover"));
-        oldObjects.difference(newObjects).forEach(obj =>
-            obj.trigger("hoverEnd")
-        );
-        newObjects.intersection(oldObjects).forEach(obj =>
-            obj.trigger("hoverUpdate")
-        );
+        newObjects.difference(oldObjects).forEach(obj => {
+            _k.game.gameObjEvents.trigger("hover", obj);
+            obj.trigger("hover");
+        });
+        oldObjects.difference(newObjects).forEach(obj => {
+            _k.game.gameObjEvents.trigger("hoverEnd", obj);
+            obj.trigger("hoverEnd");
+        });
+        newObjects.intersection(oldObjects).forEach(obj => {
+            _k.game.gameObjEvents.trigger("hoverUpdate", obj);
+            obj.trigger("hoverUpdate");
+        });
         oldObjects = newObjects;
     };
 }
