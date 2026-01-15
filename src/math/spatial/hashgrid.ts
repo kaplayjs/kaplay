@@ -8,6 +8,7 @@ import {
     getTransformVersion,
     objectTransformNeedsUpdate,
 } from "../../ecs/entity/GameObjRaw";
+import { isPaused } from "../../ecs/entity/utils";
 import { drawRect } from "../../gfx/draw/drawRect";
 import { loadIdentity, pushMatrix } from "../../gfx/stack";
 import type { GameObj } from "../../types";
@@ -93,7 +94,13 @@ export class HashGrid {
                 // No change
                 continue;
             }
-            versions![0] = getTransformVersion(obj);
+
+            if (objectTransformNeedsUpdate(obj)) {
+                calcTransform(obj, obj.transform);
+            }
+            else {
+                versions![0] = getTransformVersion(obj);
+            }
             versions![1] = getRenderAreaVersion(obj);
             versions![2] = getLocalAreaVersion(obj);
 
@@ -154,12 +161,13 @@ export class HashGrid {
     ) {
         const checked = new Set<GameObj<AreaComp>>();
         for (const [obj1, hashes] of this.hashesForObject) {
+            if (!isValidCollisionObject(obj1)) continue;
             checked.add(obj1);
             const collisions = new Set<GameObj<AreaComp>>();
             for (let i = 0; i < hashes.length; i++) {
                 const hash = hashes[i];
                 for (const obj2 of this.grid[hash]) {
-                    if (!checked.has(obj2)) {
+                    if (isValidCollisionObject(obj2) && !checked.has(obj2)) {
                         collisions.add(obj2);
                     }
                 }
@@ -293,4 +301,8 @@ export class HashGrid {
         this.bounds.height = Math.ceil(this.bounds.height / this.cellSize)
             * this.cellSize;
     }
+}
+
+function isValidCollisionObject(obj: GameObj) {
+    return obj.exists() && (obj.isSensor || obj.has("body")) && !isPaused(obj);
 }

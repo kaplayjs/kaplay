@@ -1,5 +1,6 @@
 kaplay({
     background: "#f2ae99",
+    broadPhaseCollisionAlgorithm: "sap",
 });
 
 loadBean();

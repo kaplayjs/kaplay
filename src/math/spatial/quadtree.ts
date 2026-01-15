@@ -3,10 +3,16 @@ import {
     getLocalAreaVersion,
     getRenderAreaVersion,
 } from "../../ecs/components/physics/area";
-import { getTransformVersion } from "../../ecs/entity/GameObjRaw";
+
+import {
+    getTransformVersion,
+    objectTransformNeedsUpdate,
+} from "../../ecs/entity/GameObjRaw";
+import { isPaused } from "../../ecs/entity/utils";
 import { drawRect } from "../../gfx/draw/drawRect";
 import type { GameObj } from "../../types";
 import { Rect, vec2 } from "../math";
+import { calcTransform } from "../various";
 import type { Vec2 } from "../Vec2";
 import type { BroadPhaseAlgorithm } from ".";
 
@@ -329,7 +335,13 @@ export class Quadtree implements BroadPhaseAlgorithm {
                 i++;
                 continue;
             }
-            versions![0] = getTransformVersion(obj);
+
+            if (objectTransformNeedsUpdate(obj)) {
+                calcTransform(obj, obj.transform);
+            }
+            else {
+                versions![0] = getTransformVersion(obj);
+            }
             versions![1] = getRenderAreaVersion(obj);
             versions![2] = getLocalAreaVersion(obj);
 
@@ -395,17 +407,23 @@ export class Quadtree implements BroadPhaseAlgorithm {
     ) {
         // The objects in this node potentially collide with each other
         for (let i = 0; i < this.objects.length; i++) {
+            if (!isValidCollisionObject(this.objects[i])) continue;
             // Note that we don't create doubles, since j = i + 1
             for (let j = i + 1; j < this.objects.length; j++) {
-                pairCb(this.objects[i], this.objects[j]);
+                if (isValidCollisionObject(this.objects[j])) {
+                    pairCb(this.objects[i], this.objects[j]);
+                }
             }
         }
 
         // The objects in this node potentially collide with ancestor objects
         for (let i = 0; i < this.objects.length; i++) {
+            if (!isValidCollisionObject(this.objects[i])) continue;
             // Note that we don't create doubles, since the lists are disjoint
             for (let j = 0; j < ancestorObjects.length; j++) {
-                pairCb(this.objects[i], ancestorObjects[j]);
+                if (isValidCollisionObject(ancestorObjects[j])) {
+                    pairCb(this.objects[i], ancestorObjects[j]);
+                }
             }
         }
 
@@ -644,4 +662,8 @@ export function makeQuadtree(
             0,
         );
     }
+}
+
+function isValidCollisionObject(obj: GameObj) {
+    return obj.exists() && (obj.isSensor || obj.has("body")) && !isPaused(obj);
 }

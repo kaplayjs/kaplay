@@ -1966,6 +1966,11 @@ export class Point {
     get gjkCenter(): Vec2 {
         return this.pt;
     }
+    /* Returns the point
+     **/
+    closestPt(p: Vec2): Vec2 | undefined {
+        return this.pt;
+    }
 }
 
 export class Line {
@@ -2029,6 +2034,25 @@ export class Line {
             (this.p1.x + this.p2.x) / 2,
             (this.p1.y + this.p2.y) / 2,
         );
+    }
+    /* Calculates the point on the line segment (not just vertex)
+     * closest to the given point.
+     **/
+    closestPt(p: Vec2): Vec2 | undefined {
+        const v1 = new Vec2();
+        const v2 = new Vec2();
+        Vec2.sub(p, this.p1, v1);
+        Vec2.sub(this.p2, this.p1, v2);
+        // Calculate scalar projection
+        const t = v1.dot(v2) / v2.dot(v2);
+        // If on edge segment
+        if (t >= 0 && t <= 1) {
+            // Calculate projected point on edge
+            return this.p1.add(v2.scale(t));
+        }
+        else {
+            return this.p1.sdist(p) < this.p2.sdist(p) ? this.p1 : this.p2;
+        }
     }
 }
 
@@ -2155,6 +2179,13 @@ export class Rect {
     get gjkCenter(): Vec2 {
         return this.pos;
     }
+    /* Calculates the point on the rectangle (not just vertex)
+     * closest to the given point provided that the projected point lies within the rectangle
+     **/
+    closestPt(p: Vec2): Vec2 | undefined {
+        // TODO
+        return undefined;
+    }
 }
 
 /**
@@ -2220,6 +2251,12 @@ export class Circle {
     }
     get gjkCenter(): Vec2 {
         return this.center;
+    }
+    /* Calculates the point on the circle
+     * closest to the given point provided that the projected point lies within the circle
+     **/
+    closestPt(p: Vec2): Vec2 | undefined {
+        return this.support(p.sub(this.center));
     }
 }
 
@@ -2407,6 +2444,12 @@ export class Ellipse {
     }
     get gjkCenter(): Vec2 {
         return this.center;
+    }
+    /* Calculates the point on the ellipse
+     * closest to the given point provided that the projected point lies within the circle
+     **/
+    closestPt(p: Vec2): Vec2 | undefined {
+        return this.support(p.sub(this.center));
     }
 }
 
@@ -2607,6 +2650,50 @@ export class Polygon {
     }
     get gjkCenter(): Vec2 {
         return this.pts[0];
+    }
+    /* Calculates the point on the polygon (not just vertex)
+     * closest to the given point.
+     **/
+    closestPt(p: Vec2): Vec2 | undefined {
+        // Edge points
+        let p1 = this.pts.at(-1)!, p2;
+        // Vector from point to edge and edge vector
+        let v1 = new Vec2(), v2 = new Vec2();
+        // Projected point
+        let pp;
+        // Closest point and closest (squared) distance if any
+        let c, cd;
+        // For all edges
+        for (let i = 0; i < this.pts.length; i++) {
+            p2 = this.pts[i];
+            // Calculate aforementioned vectors
+            Vec2.sub(p, p1, v1);
+            Vec2.sub(p2, p1, v2);
+            // Calculate scalar projection
+            const t = v1.dot(v2) / v2.dot(v2);
+            // If on edge segment
+            if (t >= 0 && t <= 1) {
+                // Calculate projected point on edge
+                pp = p1.add(v2.scale(t));
+                // Calculate squared distance
+                const d = Vec2.sdist(p, pp);
+                if (c === undefined || d < cd!) {
+                    // Update closest point
+                    c = pp;
+                    cd = d;
+                }
+            }
+            // If not, check the vertex itself
+            else {
+                const d = Vec2.sdist(p, p2);
+                if (c === undefined || d < cd!) {
+                    c = p2;
+                    cd = d;
+                }
+            }
+            p1 = p2;
+        }
+        return c;
     }
 }
 

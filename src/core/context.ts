@@ -1,3 +1,11 @@
+import {
+    onCollide,
+    onError,
+    onLoad,
+    onLoadError,
+    onLoading,
+    trigger,
+} from "../api/eventHandlers";
 import { getData, setData } from "../app/data";
 import { loadAseprite } from "../assets/aseprite";
 import {
@@ -90,31 +98,6 @@ import { Collision } from "../ecs/systems/Collision";
 import { system, SystemPhase } from "../ecs/systems/systems";
 import { KEvent, KEventController, KEventHandler } from "../events/events";
 import {
-    on,
-    onAdd,
-    onClick,
-    onCollide,
-    onCollideEnd,
-    onCollideUpdate,
-    onDestroy,
-    onDraw,
-    onError,
-    onFixedUpdate,
-    onHover,
-    onHoverEnd,
-    onHoverUpdate,
-    onLoad,
-    onLoadError,
-    onLoading,
-    onResize,
-    onTag,
-    onUntag,
-    onUnuse,
-    onUpdate,
-    onUse,
-    trigger,
-} from "../events/globalEvents";
-import {
     camFlash,
     camPos,
     camRot,
@@ -139,14 +122,7 @@ import {
     setGravityDirection,
 } from "../game/gravity";
 import { getDefaultLayer, getLayers, layers, setLayers } from "../game/layers";
-import {
-    getSceneName,
-    go,
-    onSceneLeave,
-    popScene,
-    pushScene,
-    scene,
-} from "../game/scenes";
+import { getSceneName, go, popScene, pushScene } from "../game/scenes";
 import { anchorPt } from "../gfx/anchor";
 import { getBackground, setBackground } from "../gfx/bg";
 import { makeCanvas } from "../gfx/canvasBuffer";
@@ -190,6 +166,7 @@ import { Rule, RuleSystem } from "../math/ai/rulesystem";
 import { StateMachine } from "../math/ai/statemachine";
 import { clamp } from "../math/clamp";
 import { Color, hsl2rgb, rgb } from "../math/color";
+import { buildConvexHull } from "../math/convexhull";
 import { easings } from "../math/easings";
 import { gjkShapeIntersection, gjkShapeIntersects } from "../math/gjk";
 import { lerp } from "../math/lerp";
@@ -252,6 +229,8 @@ import {
     vec2,
     wave,
 } from "../math/math";
+import { buildConnectivityMap, floodFill } from "../math/navigation";
+import { NavGrid } from "../math/navigationgrid";
 import { NavMesh } from "../math/navigationmesh";
 import {
     createCogPolygon,
@@ -347,14 +326,14 @@ export const createContext = (
         setFullscreen: app.setFullscreen,
         isFullscreen: app.isFullscreen,
         isTouchscreen: app.isTouchscreen,
-        onLoad,
-        onLoadError,
-        onLoading,
-        onResize,
-        onGamepadConnect: app.onGamepadConnect,
-        onGamepadDisconnect: app.onGamepadDisconnect,
-        onError,
-        onCleanup,
+        onLoad: defaultScope.onLoad,
+        onLoadError: defaultScope.onLoadError,
+        onLoading: defaultScope.onLoading,
+        onResize: defaultScope.onResize,
+        onGamepadConnect: defaultScope.onGamepadConnect,
+        onGamepadDisconnect: defaultScope.onGamepadDisconnect,
+        onError: defaultScope.onError,
+        onCleanup: defaultScope.onCleanup,
         // misc
         flash: flash,
         setCamPos: setCamPos,
@@ -449,24 +428,23 @@ export const createContext = (
         fakeMouse,
         // group events
         trigger,
-        on: on as KAPLAYCtx["on"], // our internal on should be strict, user shouldn't
-        onFixedUpdate,
-        onUpdate,
-        onDraw,
-        onAdd,
-        onDestroy,
-        onUse,
-        onUnuse,
-        onTag,
-        onUntag,
-        onClick,
-        onCollide,
-        onCollideUpdate,
-        onCollideEnd,
-        onHover,
-        onHoverUpdate,
-        onHoverEnd,
-        // input
+        on: defaultScope.on,
+        onFixedUpdate: defaultScope.onFixedUpdate,
+        onUpdate: defaultScope.onUpdate,
+        onDraw: defaultScope.onDraw,
+        onAdd: defaultScope.onAdd,
+        onDestroy: defaultScope.onDestroy,
+        onUse: defaultScope.onUse,
+        onUnuse: defaultScope.onUnuse,
+        onTag: defaultScope.onTag,
+        onUntag: defaultScope.onUntag,
+        onClick: defaultScope.onClick,
+        onCollide: defaultScope.onCollide,
+        onCollideUpdate: defaultScope.onCollideUpdate,
+        onCollideEnd: defaultScope.onCollideEnd,
+        onHover: defaultScope.onHover,
+        onHoverUpdate: defaultScope.onHoverUpdate,
+        onHoverEnd: defaultScope.onHoverEnd,
         onKeyDown: defaultScope.onKeyDown,
         onKeyPress: defaultScope.onKeyPress,
         onKeyPressRepeat: defaultScope.onKeyPressRepeat,
@@ -590,6 +568,8 @@ export const createContext = (
         createRegularPolygon,
         createStarPolygon,
         createCogPolygon,
+        floodFill,
+        buildConnectivityMap,
         easingSteps,
         easingLinear,
         easingCubicBezier,
@@ -607,7 +587,9 @@ export const createContext = (
         gjkShapeIntersection,
         isConvex,
         triangulate,
+        buildConvexHull,
         NavMesh,
+        NavGrid,
         // raw draw
         drawSprite,
         drawText,
@@ -647,7 +629,7 @@ export const createContext = (
         scene: e.sceneScope,
         getSceneName,
         go,
-        onSceneLeave,
+        onSceneLeave: defaultScope.onSceneLeave,
         pushScene,
         popScene,
         // layers

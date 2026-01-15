@@ -21,6 +21,8 @@ import type {
 } from "../../../types";
 import { isFixed } from "../../entity/utils";
 import type { Collision } from "../../systems/Collision";
+import { system, SystemPhase } from "../../systems/systems";
+import { fakeMouse } from "../misc/fakeMouse";
 import type { AnchorComp } from "../transform/anchor";
 import type { FixedComp } from "../transform/fixed";
 import type { PosComp } from "../transform/pos";
@@ -56,15 +58,39 @@ export function getLocalAreaVersion(obj: GameObj<any>) {
 }
 
 function clickHandler(button: MouseButton) {
-    const p = toWorld(_k.app.mousePos());
-    // We use an array, so we can later add support to sort it and take the top-most object only
-    const objects: GameObj<AreaComp>[] = [];
-    _k.game.retrieve(new Rect(p.sub(1, 1), 3, 3), obj => objects.push(obj));
-    for (const obj of objects) {
-        if (obj.worldArea().contains(p)) {
+    const screenPos = _k.app.mousePos();
+    const worldPos = toWorld(screenPos);
+    const objects: Set<GameObj<AreaComp>> = new Set();
+    // non-fixed objects
+    _k.game.retrieve(
+        new Rect(worldPos.sub(1, 1), 3, 3),
+        obj => objects.add(obj),
+    );
+
+    objects.forEach(obj => {
+        if (
+            !(obj as unknown as GameObj<FixedComp>).fixed
+            && obj.worldArea().contains(worldPos)
+        ) {
+            _k.game.gameObjEvents.trigger("click", obj);
             obj.trigger("click", button);
         }
-    }
+    });
+
+    // fixed objects
+    _k.game.retrieve(new Rect(screenPos.sub(1, 1), 3, 3), obj => {
+        if (objects.has(obj)) objects.delete(obj);
+        else objects.add(obj);
+    });
+    objects.forEach(obj => {
+        if (
+            (obj as unknown as GameObj<FixedComp>).fixed
+            && obj.worldArea().contains(screenPos)
+        ) {
+            _k.game.gameObjEvents.trigger("click", obj);
+            obj.trigger("click", button);
+        }
+    });
 }
 
 let clickHandlerRunning = false;
@@ -81,27 +107,47 @@ function startClickHandler() {
 
 function hoverHandler() {
     let oldObjects: Set<GameObj<AreaComp>> = new Set();
-    return (pos: Vec2, dpos: Vec2) => {
-        const p = toWorld(pos);
+
+    return (screenPos: Vec2) => {
+        const worldPos = toWorld(screenPos);
         const newObjects: Set<GameObj<AreaComp>> = new Set();
 
-        _k.game.retrieve(new Rect(p.sub(1, 1), 3, 3), obj => {
-            if (obj.worldArea().contains(p)) {
+        // non-fixed objects
+        _k.game.retrieve(new Rect(worldPos.sub(1, 1), 3, 3), obj => {
+            if (
+                !(obj as unknown as GameObj<FixedComp>).fixed
+                && obj.worldArea().contains(worldPos)
+            ) {
                 newObjects.add(obj);
             }
         });
-        newObjects.difference(oldObjects).forEach(obj => obj.trigger("hover"));
-        oldObjects.difference(newObjects).forEach(obj =>
-            obj.trigger("hoverEnd")
-        );
-        newObjects.intersection(oldObjects).forEach(obj =>
-            obj.trigger("hoverUpdate")
-        );
+        // fixed objects
+        _k.game.retrieve(new Rect(screenPos.sub(1, 1), 3, 3), obj => {
+            if (
+                (obj as unknown as GameObj<FixedComp>).fixed
+                && obj.worldArea().contains(screenPos)
+            ) {
+                newObjects.add(obj);
+            }
+        });
+
+        newObjects.difference(oldObjects).forEach(obj => {
+            _k.game.gameObjEvents.trigger("hover", obj);
+            obj.trigger("hover");
+        });
+        oldObjects.difference(newObjects).forEach(obj => {
+            _k.game.gameObjEvents.trigger("hoverEnd", obj);
+            obj.trigger("hoverEnd");
+        });
+        newObjects.intersection(oldObjects).forEach(obj => {
+            _k.game.gameObjEvents.trigger("hoverUpdate", obj);
+            obj.trigger("hoverUpdate");
+        });
         oldObjects = newObjects;
     };
 }
 
-let hoverHandlerRunning = false;
+/*let hoverHandlerRunning = false;
 function startHoverHandler() {
     if (hoverHandlerRunning) return;
     hoverHandlerRunning = true;
@@ -110,6 +156,26 @@ function startHoverHandler() {
         _k.game.fakeMouse.on("fakeMouseMove", hoverHandler());
     }
     _k.app.onMouseMove(hoverHandler());
+}*/
+
+let systemInstalled = false;
+function startHoverSystem() {
+    if (systemInstalled) return;
+    systemInstalled = true;
+
+    const mouseHover = hoverHandler();
+    const fakeMouseHover = hoverHandler();
+
+    system("hover", () => {
+        if (_k.game.fakeMouse) {
+            fakeMouseHover(_k.game.fakeMouse.screenPos);
+            return;
+        }
+
+        mouseHover(_k.app.mousePos());
+    }, [
+        SystemPhase.BeforeUpdate, // Because we need the transform to be up to date
+    ]);
 }
 
 /**
@@ -155,6 +221,10 @@ export interface AreaComp extends Comp {
      */
     friction?: number;
     /**
+     * Whether collision detection should be done even without body.
+     */
+    isSensor: boolean;
+    /**
      * If was just clicked on last frame.
      */
     isClicked(): boolean;
@@ -182,6 +252,11 @@ export interface AreaComp extends Comp {
      * If is currently overlapping with another game obj (like isColliding, but will return false if the objects are just touching edges).
      */
     isOverlapping(o: GameObj<AreaComp>): boolean;
+    /**
+     * Returns true if the objects collide in screen space
+     * @param other
+     */
+    isVisuallyColliding(other: GameObj<AreaComp>): boolean;
     /**
      * Register an event runs when clicked.
      *
@@ -331,6 +406,12 @@ export interface AreaCompOpt {
      * @since v4000.0
      */
     friction?: number;
+    /**
+     * Whether collision detection should be done even without body.
+     *
+     * @since v4000.0
+     */
+    isSensor?: boolean;
 }
 
 export function area(
@@ -364,6 +445,7 @@ export function area(
         collisionIgnore: opt.collisionIgnore ?? [],
         restitution: opt.restitution,
         friction: opt.friction,
+        isSensor: opt.isSensor ?? false,
 
         add(this: GameObj<AreaComp>) {
             _k.game.areaCount++;
@@ -551,6 +633,10 @@ export function area(
             return col && col.hasOverlap();
         },
 
+        isVisuallyColliding(other) {
+            return this.screenArea().collides(other.screenArea());
+        },
+
         onClick(
             this: GameObj<AreaComp>,
             action: () => void,
@@ -561,17 +647,17 @@ export function area(
         },
 
         onHover(this: GameObj, action: () => void): KEventController {
-            startHoverHandler();
+            startHoverSystem();
             return this.on("hover", action);
         },
 
         onHoverUpdate(this: GameObj, action: () => void): KEventController {
-            startHoverHandler();
+            startHoverSystem();
             return this.on("hoverUpdate", action);
         },
 
         onHoverEnd(this: GameObj, action: () => void): KEventController {
-            startHoverHandler();
+            startHoverSystem();
             return this.on("hoverEnd", action);
         },
 
@@ -743,10 +829,11 @@ export function area(
                 return `area: ${this.area.scale?.x?.toFixed(1)}x`;
             }
             else {
-                return `area: (${this.area.scale?.x?.toFixed(
-                    1,
-                )
-                    }x, ${this.area.scale.y?.toFixed(1)}y)`;
+                return `area: (${
+                    this.area.scale?.x?.toFixed(
+                        1,
+                    )
+                }x, ${this.area.scale.y?.toFixed(1)}y)`;
             }
         },
 

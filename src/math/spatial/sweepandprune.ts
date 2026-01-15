@@ -3,11 +3,9 @@ import {
     getLocalAreaVersion,
     getRenderAreaVersion,
 } from "../../ecs/components/physics/area";
-import type { PosComp } from "../../ecs/components/transform/pos";
 import {
     getTransformVersion,
     objectTransformNeedsUpdate,
-    transformNeedsUpdate,
 } from "../../ecs/entity/GameObjRaw";
 import { isPaused } from "../../ecs/entity/utils";
 import type { GameObj } from "../../types";
@@ -63,9 +61,9 @@ export class SweepAndPruneHorizontal implements BroadPhaseAlgorithm {
         this.edges.push(right);
         this.objects.set(obj, [left, right]);
         this.versionsForObject.set(obj, [
-            getTransformVersion(obj),
-            getRenderAreaVersion(obj),
-            getLocalAreaVersion(obj),
+            -1,
+            -1,
+            -1,
         ]);
     }
 
@@ -94,7 +92,7 @@ export class SweepAndPruneHorizontal implements BroadPhaseAlgorithm {
     update() {
         // Update edge data
         for (const [obj, edges] of this.objects.entries()) {
-            if (shouldIgnore(obj)) continue;
+            if (!obj.exists()) continue;
 
             // Check if this world area changed since last frame
             const versions = this.versionsForObject.get(obj);
@@ -106,7 +104,13 @@ export class SweepAndPruneHorizontal implements BroadPhaseAlgorithm {
                 // No change
                 continue;
             }
-            versions![0] = getTransformVersion(obj);
+
+            if (objectTransformNeedsUpdate(obj)) {
+                calcTransform(obj, obj.transform);
+            }
+            else {
+                versions![0] = getTransformVersion(obj);
+            }
             versions![1] = getRenderAreaVersion(obj);
             versions![2] = getLocalAreaVersion(obj);
 
@@ -143,9 +147,9 @@ export class SweepAndPruneHorizontal implements BroadPhaseAlgorithm {
 
         for (const edge of this.edges) {
             if (edge.isLeft) {
-                if (!shouldIgnore(edge.obj)) {
+                if (isValidCollisionObject(edge.obj)) {
                     for (const obj of touching) {
-                        if (!shouldIgnore(obj)) {
+                        if (isValidCollisionObject(obj)) {
                             pairCb(obj, edge.obj);
                         }
                     }
@@ -225,11 +229,7 @@ export class SweepAndPruneVertical implements BroadPhaseAlgorithm {
         this.edges.push(top);
         this.edges.push(bottom);
         this.objects.set(obj, [top, bottom]);
-        this.versionsForObject.set(obj, [
-            getTransformVersion(obj),
-            getRenderAreaVersion(obj),
-            getLocalAreaVersion(obj),
-        ]);
+        this.versionsForObject.set(obj, [-1, -1, -1]);
     }
 
     /**
@@ -257,7 +257,7 @@ export class SweepAndPruneVertical implements BroadPhaseAlgorithm {
     update() {
         // Update edge data
         for (const [obj, edges] of this.objects.entries()) {
-            if (shouldIgnore(obj)) continue;
+            if (!obj.exists()) continue;
 
             // Check if this world area changed since last frame
             const versions = this.versionsForObject.get(obj);
@@ -269,7 +269,13 @@ export class SweepAndPruneVertical implements BroadPhaseAlgorithm {
                 // No change
                 continue;
             }
-            versions![0] = getTransformVersion(obj);
+
+            if (objectTransformNeedsUpdate(obj)) {
+                calcTransform(obj, obj.transform);
+            }
+            else {
+                versions![0] = getTransformVersion(obj);
+            }
             versions![1] = getRenderAreaVersion(obj);
             versions![2] = getLocalAreaVersion(obj);
 
@@ -306,9 +312,9 @@ export class SweepAndPruneVertical implements BroadPhaseAlgorithm {
 
         for (const edge of this.edges) {
             if (edge.isTop) {
-                if (!shouldIgnore(edge.obj)) {
+                if (isValidCollisionObject(edge.obj)) {
                     for (const obj of touching) {
-                        if (!shouldIgnore(obj)) {
+                        if (isValidCollisionObject(obj)) {
                             pairCb(obj, edge.obj);
                         }
                     }
@@ -341,6 +347,6 @@ export class SweepAndPruneVertical implements BroadPhaseAlgorithm {
     }
 }
 
-function shouldIgnore(obj: GameObj) {
-    return !obj.exists() || isPaused(obj);
+function isValidCollisionObject(obj: GameObj) {
+    return obj.exists() && (obj.isSensor || obj.has("body")) && !isPaused(obj);
 }
