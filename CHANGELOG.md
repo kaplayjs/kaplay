@@ -21,8 +21,8 @@ best friend, lajbel, can put the correct version name here
 ### Changed
 
 - Updated the texture packer to use a new packing algorithm which may get more
-  sprites onto the same texture, improving graphics batching performance -
-  @dragoncoder047
+  sprites onto the same texture, improving graphics batching performance
+  (#1011) - @dragoncoder047
 
 ### Fixed
 
