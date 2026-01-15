@@ -1,4 +1,6 @@
-kaplay();
+kaplay({
+    broadPhaseCollisionAlgorithm: "grid",
+});
 loadBean();
 
 function polygonArea(poly) {
@@ -16,8 +18,8 @@ function polygonArea(poly) {
 }
 
 function soft() {
-    let po /* Previous position Vec2[] */,
-        pl /* Segment length number[] */,
+    let po, /* Previous position Vec2[] */
+        pl, /* Segment length number[] */
         pa /* Accumulated changes [x,y,count,..] */;
     let circ, area;
 
@@ -101,6 +103,7 @@ function soft() {
                     }
                 }
                 for (let i = 0; i < poly.length; i++) {
+                    // Apply accumulated changes
                     if (pa[i * 3 + 2] > 0) {
                         poly[i].x += pa[i * 3] / pa[i * 3 + 2];
                         poly[i].y += pa[i * 3 + 1] / pa[i * 3 + 2];
@@ -108,38 +111,71 @@ function soft() {
                         pa[i * 3 + 1] = 0;
                         pa[i * 3 + 2] = 0;
                     }
-                    retrieve(new Rect(poly[i], 1, 1), obj => {
-                        if (obj.bbox().contains(poly[i])) {
-                            if (obj.worldArea().contains(poly[i])) {
-
+                    // Apply collision response
+                    const wp = this.toWorld(poly[i]);
+                    retrieve(new Rect(wp, 1, 1), obj => {
+                        if (obj.worldArea().bbox().contains(wp)) {
+                            if (obj.worldArea().contains(wp)) {
+                                poly[i] = this.fromWorld(
+                                    obj.worldArea().closestPt(wp),
+                                );
                             }
                         }
                     });
-                    if (poly[i].y > 300) {
-                        poly[i].y = 300;
-                    }
                 }
             }
-        }
-    }
+        },
+    };
 }
 
 onLoad(() => {
     const poly = createRegularPolygon(50, 16, 0);
-    const min = vec2(Math.min(...poly.map(v => v.x)), Math.min(...poly.map(v => v.y)));
-    const max = vec2(Math.max(...poly.map(v => v.x)), Math.max(...poly.map(v => v.y)));
+    const min = vec2(
+        Math.min(...poly.map(v => v.x)),
+        Math.min(...poly.map(v => v.y)),
+    );
+    const max = vec2(
+        Math.max(...poly.map(v => v.x)),
+        Math.max(...poly.map(v => v.y)),
+    );
 
-    console.log(min, max)
+    console.log(min, max);
 
-    const data = getSprite("bean").data
+    const data = getSprite("bean").data;
     const frame = data.frames[0];
+
+    add([
+        pos(0, 300),
+        rect(500, 50),
+        area(),
+    ]);
+    add([
+        pos(100, 300),
+        circle(20),
+        area(),
+    ]);
+    add([
+        pos(0, 300),
+        circle(20),
+        area(),
+    ]);
+    add([
+        pos(200, 300),
+        circle(20),
+        area(),
+    ]);
 
     const obj = add([
         pos(100, 100),
         polygon(poly, {
-            uv: poly.map(v => vec2(map(v.x, min.x, max.x, frame.x, frame.x + frame.w), map(v.y, min.y, max.y, frame.y, frame.y + frame.h))),
-            tex: data.tex
+            uv: poly.map(v =>
+                vec2(
+                    map(v.x, min.x, max.x, frame.x, frame.x + frame.w),
+                    map(v.y, min.y, max.y, frame.y, frame.y + frame.h),
+                )
+            ),
+            tex: data.tex,
         }),
-        soft()
-    ])
+        soft(),
+    ]);
 });
