@@ -85,10 +85,14 @@ export class TexPacker {
             }
         }
 
-        // not found --> go to next texture and put at (0, 0)
+        // no room --> go to next texture and put at (0, 0)
         if (!found) {
             this._ctx.clearRect(
-                x = y = 0,
+                x =
+                    y =
+                    p.x =
+                    p.y =
+                        0,
                 0,
                 maxX,
                 maxY,
