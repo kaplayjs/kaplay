@@ -20,7 +20,6 @@ best friend, lajbel, can put the correct version name here
 
 ### Added
 
-
 - Added `tileMode` option to 9-slice sprites with four tiling strategies:
   `'none'` (stretch all), `'edges'` (tile edges only), `'center'` (tile center
   only), and `'all'` (tile both edges and center) (#996) - @JustKira
@@ -34,7 +33,6 @@ best friend, lajbel, can put the correct version name here
   (#1011) - @dragoncoder047
 
 ### Fixed
-
 
 - Now, all global events handlers are avaible in scopes, `app.onXXXX` and
   `scene.onXXXX()` (#977) - @lajbel
