@@ -2,23 +2,31 @@
 
 import type {
     Cursor,
+    GameObj,
     KAPLAYOpt,
     Key,
     KGamepad,
     KGamepadButton,
     KGamepadStick,
     MouseButton,
+    Tag,
 } from "../types";
 
 import { GP_MAP } from "../constants/general";
-import type { AppEventMap } from "../events/eventMap";
+import type {
+    AppEventMap,
+    GameObjEventNames,
+    GameObjEvents,
+} from "../events/eventMap";
 import { type KEventController, KEventHandler } from "../events/events";
 import { canvasToViewport } from "../gfx/viewport";
 import { map, vec2 } from "../math/math";
 import { Vec2 } from "../math/Vec2";
+import { _k } from "../shared";
 import { deprecateMsg } from "../utils/log";
 import { overload2 } from "../utils/overload";
 import { isEqOrIncludes, setHasOrIncludes } from "../utils/sets";
+import type { TupleWithoutFirst } from "../utils/types";
 import {
     getButton,
     getButtons,
@@ -219,7 +227,6 @@ export const initAppState = (opt: {
         lastWidth: opt.canvas.offsetWidth,
         lastHeight: opt.canvas.offsetHeight,
         events: new KEventHandler<AppEventMap>(),
-        sceneEvents: [] as KEventController[],
     };
 };
 
@@ -782,18 +789,6 @@ export const initApp = (
             (b) => isEqOrIncludes(btn, b) && action(b),
         );
     });
-
-    const onUpdate = (action: () => void): KEventController => {
-        return state.events.on("update", action);
-    };
-
-    const onFixedUpdate = (action: () => void): KEventController => {
-        return state.events.on("fixedUpdate", action);
-    };
-
-    const onDraw = (action: () => void): KEventController => {
-        return state.events.on("draw", action);
-    };
 
     const getLastInputDeviceType = () => {
         return state.lastInputDevice;
@@ -1388,9 +1383,6 @@ export const initApp = (
         onButtonPress,
         onButtonDown,
         onButtonRelease,
-        onUpdate,
-        onFixedUpdate,
-        onDraw,
         getLastInputDeviceType,
         events: state.events,
     };
