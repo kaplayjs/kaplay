@@ -18,6 +18,8 @@ best friend, lajbel, can put the correct version name here
 
 ## [unreleased]
 
+- Fixed input events attached to paused ancestors not being paused (#1009) - @amyspark-ng, @dragoncoder047 
+
 ## [4000.0.0-alpha.26] - 2026-01-12
 
 ### Added
