@@ -18,10 +18,17 @@ best friend, lajbel, can put the correct version name here
 
 ## [unreleased]
 
+### Changed
+
+- Updated the texture packer to use a new packing algorithm which may get more
+  sprites onto the same texture, improving graphics batching performance -
+  @dragoncoder047
+
 ### Fixed
 
 - Fixed input events attached to paused ancestors not being paused (#1009) - @amyspark-ng, @dragoncoder047 
 - Fixed type `UniformValue` union not including `Texture`, a valid option (#1018) - @dragoncoder047 
+
 
 ## [4000.0.0-alpha.26] - 2026-01-12
 
