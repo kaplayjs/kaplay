@@ -130,7 +130,7 @@ class FPSCounter {
         return this.fps = this.curNSamples / this.accumulator;
     }
     ago(ago: number) {
-        return this.history.at(this.i - ago);
+        return this.history.at(this.i - ago - 1);
     }
     resize(samples: number) {
         this.history = new Float64Array(this.maxSamples = samples);
