@@ -18,15 +18,26 @@ best friend, lajbel, can put the correct version name here
 
 ## [unreleased]
 
+### Changed
+
+- Updated the texture packer to use a new packing algorithm which may get more
+  sprites onto the same texture, improving graphics batching performance -
+  @dragoncoder047
+
 ### Fixed
 
 - Text component no longer hangs if the requested width is too narrow for a
   single character - @dragoncoder047
+- Fixed input events attached to paused ancestors not being paused (#1009) - @amyspark-ng, @dragoncoder047 
+- Fixed type `UniformValue` union not including `Texture`, a valid option (#1018) - @dragoncoder047 
 
 ## [4000.0.0-alpha.26] - 2026-01-12
 
 ### Added
 
+- Added `tileMode` option to 9-slice sprites with four tiling strategies: `'none'`
+  (stretch all), `'edges'` (tile edges only), `'center'` (tile center only), and
+  `'all'` (tile both edges and center) - @JustKira
 - Added `AreaCompOpt.isSensor`. Areas without body or is sensor will no longer
   be eligible for collisions - @mflerackers
 - Added `floodFill()` for puzzle games - @mflerackers
