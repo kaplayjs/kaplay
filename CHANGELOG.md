@@ -27,6 +27,9 @@ best friend, lajbel, can put the correct version name here
 
 ### Added
 
+- Added `tileMode` option to 9-slice sprites with four tiling strategies: `'none'`
+  (stretch all), `'edges'` (tile edges only), `'center'` (tile center only), and
+  `'all'` (tile both edges and center) - @JustKira
 - Added `AreaCompOpt.isSensor`. Areas without body or is sensor will no longer
   be eligible for collisions - @mflerackers
 - Added `floodFill()` for puzzle games - @mflerackers
