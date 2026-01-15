@@ -8,12 +8,14 @@ import {
     map,
     Quad,
     rand,
+    Rect,
     type ShapeType,
     vec2,
 } from "../../../math/math";
 import { Vec2 } from "../../../math/Vec2";
 import { _k } from "../../../shared";
-import type { Comp } from "../../../types";
+import type { Comp, GameObj } from "../../../types";
+import type { PosComp } from "../transform/pos";
 
 /**
  * A particle. Used on the {@link particles `particles()`} component.
@@ -261,7 +263,7 @@ export function particles(popt: ParticlesOpt, eopt: EmitterOpt): ParticlesComp {
             }
             count += n;
         },
-        update() {
+        update(this: GameObj<PosComp | ParticlesComp>) {
             if (emitterLifetime !== undefined && emitterLifetime <= 0) {
                 return;
             }
@@ -282,6 +284,27 @@ export function particles(popt: ParticlesOpt, eopt: EmitterOpt): ParticlesComp {
                 p.vel = p.vel.add(p.acc.scale(DT)).scale(1 - p.damping * DT);
                 p.pos = p.pos.add(p.vel.scale(DT));
                 p.angle += p.angularVelocity * DT;
+            }
+            if (true) {
+                for (let i = 0; i < particles.length; i++) {
+                    const p = particles[i];
+                    if (p.gc) {
+                        continue;
+                    }
+                    const wp = this.toWorld(p.pos);
+                    _k.game.retrieve(new Rect(wp, 1, 1), obj => {
+                        if (obj.worldArea().bbox().contains(wp)) {
+                            if (obj.worldArea().contains(wp)) {
+                                const np = obj.worldArea().closestPt(wp);
+                                const v = np.sub(wp);
+                                particles[i].pos = this.fromWorld(np);
+                                particles[i].vel = particles[i].vel.reflect(
+                                    v.unit(),
+                                );
+                            }
+                        }
+                    });
+                }
             }
             // Check if the emitter has a limited lifetime
             if (emitterLifetime !== undefined) {

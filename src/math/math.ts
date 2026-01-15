@@ -1968,7 +1968,7 @@ export class Point {
     }
     /* Returns the point
      **/
-    closestPt(p: Vec2): Vec2 | undefined {
+    closestPt(p: Vec2): Vec2 {
         return this.pt;
     }
 }
@@ -2038,7 +2038,7 @@ export class Line {
     /* Calculates the point on the line segment (not just vertex)
      * closest to the given point.
      **/
-    closestPt(p: Vec2): Vec2 | undefined {
+    closestPt(p: Vec2): Vec2 {
         const v1 = new Vec2();
         const v2 = new Vec2();
         Vec2.sub(p, this.p1, v1);
@@ -2182,9 +2182,9 @@ export class Rect {
     /* Calculates the point on the rectangle (not just vertex)
      * closest to the given point provided that the projected point lies within the rectangle
      **/
-    closestPt(p: Vec2): Vec2 | undefined {
+    closestPt(p: Vec2): Vec2 {
         // TODO
-        return undefined;
+        return vec2();
     }
 }
 
@@ -2255,7 +2255,7 @@ export class Circle {
     /* Calculates the point on the circle
      * closest to the given point provided that the projected point lies within the circle
      **/
-    closestPt(p: Vec2): Vec2 | undefined {
+    closestPt(p: Vec2): Vec2 {
         return this.support(p.sub(this.center));
     }
 }
@@ -2448,7 +2448,7 @@ export class Ellipse {
     /* Calculates the point on the ellipse
      * closest to the given point provided that the projected point lies within the circle
      **/
-    closestPt(p: Vec2): Vec2 | undefined {
+    closestPt(p: Vec2): Vec2 {
         return this.support(p.sub(this.center));
     }
 }
@@ -2654,7 +2654,7 @@ export class Polygon {
     /* Calculates the point on the polygon (not just vertex)
      * closest to the given point.
      **/
-    closestPt(p: Vec2): Vec2 | undefined {
+    closestPt(p: Vec2): Vec2 {
         // Edge points
         let p1 = this.pts.at(-1)!, p2;
         // Vector from point to edge and edge vector
@@ -2693,7 +2693,7 @@ export class Polygon {
             }
             p1 = p2;
         }
-        return c;
+        return c!;
     }
 }
 
