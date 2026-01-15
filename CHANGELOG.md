@@ -21,13 +21,13 @@ best friend, lajbel, can put the correct version name here
 ### Changed
 
 - Updated the texture packer to use a new packing algorithm which may get more
-  sprites onto the same texture, improving graphics batching performance -
+  sprites onto the same texture, improving graphics batching performance (#1011) -
   @dragoncoder047
 
 ### Fixed
 
 - Text component no longer hangs if the requested width is too narrow for a
-  single character - @dragoncoder047
+  single character (#1016) - @dragoncoder047
 - Fixed input events attached to paused ancestors not being paused (#1009) - @amyspark-ng, @dragoncoder047 
 - Fixed type `UniformValue` union not including `Texture`, a valid option (#1018) - @dragoncoder047 
 
