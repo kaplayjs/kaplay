@@ -48,8 +48,8 @@ best friend, lajbel, can put the correct version name here
 - Updated all sprite and font loading to pack everything in the same texture to
   allow it to all batch together, for speed and efficiency (#1021) -
   @dragoncoder047
-- Added spritesheet repacking, so spritesheets that contain lots of blank space
-  don't waste more texture memory (#1021) - @dragoncoder047
+- Added spritesheet repacking, so spritesheet images that contain lots of blank
+  space don't waste texture memory (#1021) - @dragoncoder047
 
 ### Fixed
 
