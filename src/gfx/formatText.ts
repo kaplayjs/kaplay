@@ -225,11 +225,7 @@ function updateFontAtlas(font: FontData | string, ch: string) {
 
         const img = c2d.getImageData(0, 0, w, h);
 
-        // TODO: this is messed up for fonts that have a weird maxActualBoundingBoxAscent
-        atlas.font.map[ch] = _k.assets.packer.add(
-            img,
-            // new Quad(0, 0, 1, (h + maxActualBoundingBoxAscent) / h),
-        );
+        atlas.font.map[ch] = _k.assets.packer.add(img);
 
         atlas.maxHeight = Math.max(atlas.maxHeight, h);
     }
