@@ -153,16 +153,14 @@ scene("battle", () => {
     ]);
 
     onKeyDown("left", () => {
-        player.move(-PLAYER_SPEED, 0);
-        if (player.pos.x < 0) {
-            player.pos.x = width();
+        if (player.pos.x > 0) {
+            player.move(-PLAYER_SPEED, 0);
         }
     });
 
     onKeyDown("right", () => {
-        player.move(PLAYER_SPEED, 0);
-        if (player.pos.x > width()) {
-            player.pos.x = 0;
+        if (player.pos.x < width()) {
+            player.move(PLAYER_SPEED, 0);
         }
     });
 
