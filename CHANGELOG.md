@@ -20,6 +20,9 @@ best friend, lajbel, can put the correct version name here
 
 ### Breaking Changes
 
+- The `LoadFontOpt.filter` option has been **removed** since fonts are now
+  packed into the same texture as sprites, so only the global filter setting can
+  change this (#TBD) - @dragoncoder047
 - The sprite data format has been changed to allow individual frames to be on
   different GPU textures. Now `SpriteData.tex` doesn't exist, and
   `SpriteData.frames` is a list of `Frame`s instead of a list of `Quad`s. A

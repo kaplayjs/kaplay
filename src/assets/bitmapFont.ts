@@ -1,9 +1,6 @@
 import { ASCII_CHARS } from "../constants/general";
-import { Texture } from "../gfx/gfx";
 import type { Frame } from "../gfx/TexPacker";
-import { Quad } from "../math/math";
 import { _k } from "../shared";
-import type { TexFilter } from "../types";
 import { type Asset, loadImg } from "./asset";
 import { makeFont } from "./font";
 import { fixURL } from "./utils";
@@ -38,7 +35,6 @@ export interface LoadBitmapFontOpt {
      * @default " !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~";
      */
     chars?: string;
-    filter?: TexFilter;
 }
 
 // TODO: support LoadSpriteSrc
