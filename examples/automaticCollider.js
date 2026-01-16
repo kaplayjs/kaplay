@@ -39,8 +39,8 @@ onLoad(() => {
             fill: false,
             outline: {
                 color: BLUE,
-                width: 2
-            }
+                width: 2,
+            },
         });
     });
 });
