@@ -56,7 +56,7 @@ scene("game", () => {
     });
 
     // mobile
-    onClick(() => {
+    onMousePress(() => {
         bean.jump(JUMP_FORCE);
         play("wooosh");
     });
@@ -71,7 +71,7 @@ scene("game", () => {
             rect(64, h1),
             color(0, 127, 255),
             outline(4),
-            area(),
+            area({ isSensor: true }),
             move(LEFT, SPEED),
             offscreen({ destroy: true }),
             // give it tags to easier define behaviors see below
@@ -83,7 +83,7 @@ scene("game", () => {
             rect(64, h2),
             color(0, 127, 255),
             outline(4),
-            area(),
+            area({ isSensor: true }),
             move(LEFT, SPEED),
             offscreen({ destroy: true }),
             // give it tags to easier define behaviors see below
@@ -150,7 +150,7 @@ scene("lose", (score) => {
 
     // go back to game with space is pressed
     onKeyPress("space", () => go("game"));
-    onClick(() => go("game"));
+    onMousePress(() => go("game"));
 });
 
 go("game");

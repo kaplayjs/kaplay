@@ -51,13 +51,13 @@ scene("game", () => {
 
     // jump when user press space
     onKeyPress("space", jump);
-    onClick(jump);
+    onMousePress(jump);
 
     function spawnTree() {
         // add tree obj
         add([
             rect(48, rand(32, 96)),
-            area(),
+            area({ isSensor: true }),
             outline(4),
             pos(width(), height() - FLOOR_HEIGHT),
             anchor("botleft"),
@@ -115,7 +115,7 @@ scene("lose", (score) => {
 
     // go back to game with space is pressed
     onKeyPress("space", () => go("game"));
-    onClick(() => go("game"));
+    onMousePress(() => go("game"));
 });
 
 go("game");

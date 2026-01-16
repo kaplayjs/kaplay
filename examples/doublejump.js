@@ -113,7 +113,7 @@ scene("game", () => {
         add([
             pos(i * 64, height()),
             sprite("spike"),
-            area(),
+            area({ isSensor: true }),
             anchor("bot"),
             scale(),
             "danger",

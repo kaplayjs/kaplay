@@ -138,7 +138,7 @@ const bean = level.spawn(
     1,
 );
 
-onClick(() => {
+onMousePress(() => {
     const pos = mousePos();
     bean.setTarget(vec2(
         Math.floor(pos.x / TILE_WIDTH) * TILE_WIDTH + TILE_WIDTH / 2,

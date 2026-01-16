@@ -28,7 +28,7 @@ scene("game", () => {
         anchor("center"),
         sprite("beant"),
         body(),
-        area(),
+        area({ isSensor: true }),
         scale(),
     ]);
 
@@ -36,7 +36,7 @@ scene("game", () => {
         pos(center()),
         anchor("center"),
         sprite("cake"),
-        area(),
+        area({ isSensor: true }),
         scale(),
         "cake",
     ]);
@@ -45,7 +45,7 @@ scene("game", () => {
         pos(center().add(120, 0)),
         anchor("center"),
         sprite("door"),
-        area(),
+        area({ isSensor: true }),
         scale(),
         "exit",
     ]);
@@ -95,8 +95,6 @@ function showMessage(message, duration, onEnd) {
         timer(),
         {
             elapsed: 0,
-        },
-        {
             async add() {
                 this.add([
                     anchor("center"),
