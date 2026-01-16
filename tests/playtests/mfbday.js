@@ -53,7 +53,7 @@ scene("game", () => {
     game.children.forEach((obj, i) => {
         if (!obj?.scale) return;
 
-        const to = obj.scale;
+        const to = obj.scale.clone();
         obj.scale = vec2(0);
         wait(
             i * 0.25,
@@ -111,7 +111,7 @@ function showMessage(message, duration, onEnd) {
                     this.pos.y,
                     height() - 30,
                     0.25,
-                    y => this.pos.y = y,
+                    y => this.pos = vec2(this.pos.x, y),
                     easings.easeOutBack,
                 );
                 await wait(duration);
@@ -119,7 +119,7 @@ function showMessage(message, duration, onEnd) {
                     this.pos.y,
                     height() + 200,
                     0.25,
-                    y => this.pos.y = y,
+                    y => this.pos = vec2(this.pos.x, y),
                     easings.easeInBack,
                 ).then(() => this.destroy());
                 onEnd && onEnd();
