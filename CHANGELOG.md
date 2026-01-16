@@ -34,7 +34,7 @@ best friend, lajbel, can put the correct version name here
 
 ### Fixed
 
-- Fixed tiled mode drawing of sprites ignoring opacity when it was 0 -
+- Fixed tiled mode drawing of sprites ignoring opacity when it was 0 (#1020) -
   @dragoncoder047
 - Now, all global events handlers are avaible in scopes, `app.onXXXX` and
   `scene.onXXXX()` (#977) - @lajbel
