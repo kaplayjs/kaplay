@@ -11,8 +11,6 @@ import {
     pushTransform,
 } from "../stack";
 import type { Frame } from "../TexPacker";
-import { drawCircle } from "./drawCircle";
-import { drawRect } from "./drawRect";
 import type { DrawTextOpt } from "./drawText";
 import { drawUVQuad } from "./drawUVQuad";
 
@@ -90,22 +88,6 @@ export function drawFormattedText(ftext: FormattedText) {
             uniform: ch.uniform ?? ftext.opt.uniform,
             shader: ch.shader ?? ftext.opt.shader,
             fixed: ftext.opt.fixed,
-        });
-        drawCircle({
-            pos: ch.pos,
-            radius: 3,
-            color: new Color(0, 0, 255),
-        });
-        drawRect({
-            anchor: "center",
-            width: ch.width,
-            height: ch.height,
-            pos: ch.pos,
-            fill: false,
-            outline: {
-                color: new Color(0, 0, 255),
-                width: 2,
-            },
         });
     });
 
