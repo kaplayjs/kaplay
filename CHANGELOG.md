@@ -22,7 +22,7 @@ best friend, lajbel, can put the correct version name here
 
 - The `LoadFontOpt.filter` option has been **removed** since fonts are now
   packed into the same texture as sprites, so only the global filter setting can
-  change this (#TBD) - @dragoncoder047
+  change this (#1021) - @dragoncoder047
 - The sprite data format has been changed to allow individual frames to be on
   different GPU textures. Now `SpriteData.tex` doesn't exist, and
   `SpriteData.frames` is a list of `Frame`s instead of a list of `Quad`s. A
@@ -42,10 +42,10 @@ best friend, lajbel, can put the correct version name here
   sprites onto the same texture, improving graphics batching performance
   (#1011) - @dragoncoder047
 - Updated all sprite and font loading to pack everything in the same texture to
-  allow it to all batch together, for speed and efficiency (#TBD) -
+  allow it to all batch together, for speed and efficiency (#1021) -
   @dragoncoder047
 - Added spritesheet repacking, so spritesheets that contain lots of blank space
-  don't waste more texture memory (#TBD) - @dragoncoder047
+  don't waste more texture memory (#1021) - @dragoncoder047
 
 ### Fixed
 
