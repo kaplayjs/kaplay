@@ -161,7 +161,6 @@ function updateFontAtlas(font: FontData | string, ch: string) {
     const atlas = getFontAtlasForFont(font);
     const fontName = getFontName(font);
     if (!atlas.font.map[ch]) {
-        // TODO: use assets.packer to pack font texture
         const c2d = _k.fontCacheC2d;
         if (!c2d) {
             throw new Error(
