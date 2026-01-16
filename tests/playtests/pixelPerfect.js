@@ -79,10 +79,10 @@ onScroll((d) => {
     zoomVector.set(zoom, zoom);
 });
 
-onKeyPress("left", () => {
+onKeyDown("left", () => {
     rotation -= dt() * 10;
 });
 
-onKeyPress("right", () => {
+onKeyDown("right", () => {
     rotation += dt() * 10;
 });
