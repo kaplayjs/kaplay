@@ -96,7 +96,7 @@ export function getFont(name: string): Asset<FontData> | null {
 // TODO: pass in null src to store opt for default fonts like "monospace"
 export function loadFont(
     name: string,
-    src: string | ArrayBuffer | ArrayBufferView<ArrayBuffer>,
+    src: string | ArrayBuffer | ArrayBufferView,
     opt: LoadFontOpt = {},
 ): Asset<FontData> {
     const font = new FontFace(
