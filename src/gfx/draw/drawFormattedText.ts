@@ -1,7 +1,6 @@
 import type { FontData } from "../../assets/font";
 import type { Uniform } from "../../assets/shader";
-import type { Color } from "../../math/color";
-import type { Quad } from "../../math/math";
+import { Color } from "../../math/color";
 import type { Vec2 } from "../../math/Vec2";
 import { anchorPt } from "../anchor";
 import type { Texture } from "../gfx";
@@ -11,6 +10,9 @@ import {
     popTransform,
     pushTransform,
 } from "../stack";
+import type { Frame } from "../TexPacker";
+import { drawCircle } from "./drawCircle";
+import { drawRect } from "./drawRect";
 import type { DrawTextOpt } from "./drawText";
 import { drawUVQuad } from "./drawUVQuad";
 
@@ -36,10 +38,9 @@ export type FormattedText = {
  */
 export interface FormattedChar {
     ch: string;
-    tex: Texture;
+    frame: Frame;
     width: number;
     height: number;
-    quad: Quad;
     pos: Vec2;
     scale: Vec2;
     skew: Vec2;
@@ -66,16 +67,17 @@ export function drawFormattedText(ftext: FormattedText) {
     const charsByTexture = new Map<Texture, FormattedChar[]>();
 
     ftext.chars.forEach((ch) => {
-        if (!charsByTexture.has(ch.tex)) charsByTexture.set(ch.tex, []);
-        const chars = charsByTexture.get(ch.tex) ?? [];
+        const chars = charsByTexture.get(ch.frame.tex) ?? [];
         chars.push(ch);
+        charsByTexture.set(ch.frame.tex, chars);
     });
 
     const sortedChars = Array.from(charsByTexture.values()).flat();
 
     sortedChars.forEach((ch) => {
         drawUVQuad({
-            tex: ch.tex,
+            tex: ch.frame.tex,
+            quad: ch.frame.q,
             width: ch.width,
             height: ch.height,
             pos: ch.pos,
@@ -84,11 +86,26 @@ export function drawFormattedText(ftext: FormattedText) {
             color: ch.color,
             skew: ch.skew,
             opacity: ch.opacity,
-            quad: ch.quad,
             anchor: "center",
             uniform: ch.uniform ?? ftext.opt.uniform,
             shader: ch.shader ?? ftext.opt.shader,
             fixed: ftext.opt.fixed,
+        });
+        drawCircle({
+            pos: ch.pos,
+            radius: 3,
+            color: new Color(0, 0, 255),
+        });
+        drawRect({
+            anchor: "center",
+            width: ch.width,
+            height: ch.height,
+            pos: ch.pos,
+            fill: false,
+            outline: {
+                color: new Color(0, 0, 255),
+                width: 2,
+            },
         });
     });
 

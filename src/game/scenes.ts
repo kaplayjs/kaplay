@@ -33,7 +33,8 @@ export function go(name: string, ...args: unknown[]) {
     _k.app.events.onOnce("frameEnd", () => {
         _k.game.events.trigger("sceneLeave", name);
 
-        _k.game.sceneEvents.forEach((e) => e.cancel());
+        // we use ?. here because some scene handlers (in particular onLoad) may return undefined
+        _k.game.sceneEvents.forEach((e) => e?.cancel());
 
         [..._k.game.root.children].forEach((obj) => {
             if (

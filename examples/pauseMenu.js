@@ -77,7 +77,7 @@ scene("game", () => {
             rect(64, h1),
             color(0, 127, 255),
             outline(4),
-            area(),
+            area({ isSensor: true }),
             move(LEFT, SPEED),
             offscreen({ destroy: true }),
             // give it tags to easier define behaviors see below

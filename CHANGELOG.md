@@ -18,6 +18,13 @@ best friend, lajbel, can put the correct version name here
 
 ## [unreleased]
 
+### Breaking Changes
+
+- The sprite data format has been changed to allow individual frames to be on
+  different GPU textures. Now `SpriteData.tex` doesn't exist, and
+  `SpriteData.frames` is a list of `Frame`s instead of a list of `Quad`s. A
+  `Frame` contains `tex` and `q` (quad) properties that contain that data.
+
 ### Added
 
 - Added `tileMode` option to 9-slice sprites with four tiling strategies:
@@ -31,6 +38,11 @@ best friend, lajbel, can put the correct version name here
 - Updated the texture packer to use a new packing algorithm which may get more
   sprites onto the same texture, improving graphics batching performance
   (#1011) - @dragoncoder047
+- Updated all sprite and font loading to pack everything in the same texture to
+  allow it to all batch together, for speed and efficiency (#TBD) -
+  @dragoncoder047
+- Added spritesheet repacking, so spritesheets that contain lots of blank space
+  don't waste more texture memory (#TBD) - @dragoncoder047
 
 ### Fixed
 

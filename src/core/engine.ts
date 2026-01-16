@@ -67,7 +67,7 @@ export const createEngine = (gopt: KAPLAYOpt) => {
     const { fontCacheC2d, fontCacheCanvas } = createFontCache();
     const app = initApp({ canvas, ...gopt });
     const gameHandlers = createScopeHandlers(app);
-    const sceneScope = createSceneScope(app, gameHandlers);
+    const sceneScope = createSceneScope(gameHandlers);
     const appScope = createAppScope(gameHandlers);
     attachScopeHandlersToGameObjRaw(gameHandlers);
 

@@ -26,7 +26,7 @@ onLoad(() => {
         },
     ]);
 
-    const data = getSprite("bean").data;
+    const beanQuad = getSprite("bean").data.frames[0].q;
 
     onDraw(() => {
         drawSprite({
@@ -47,13 +47,13 @@ onLoad(() => {
             scale: zoomVector,
             tex: data.tex,
             uv: [
-                vec2(data.frames[0].x, data.frames[0].y),
-                vec2(data.frames[0].x + data.frames[0].w, data.frames[0].y),
+                vec2(beanQuad.x, beanQuad.y),
+                vec2(beanQuad.x + beanQuad.w, beanQuad.y),
                 vec2(
-                    data.frames[0].x + data.frames[0].w,
-                    data.frames[0].y + data.frames[0].h,
+                    beanQuad.x + beanQuad.w,
+                    beanQuad.y + beanQuad.h,
                 ),
-                vec2(data.frames[0].x, data.frames[0].y + data.frames[0].h),
+                vec2(beanQuad.x, beanQuad.y + beanQuad.h),
             ],
         });
 

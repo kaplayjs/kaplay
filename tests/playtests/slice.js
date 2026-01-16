@@ -120,8 +120,8 @@ onMouseRelease(() => {
             const shape = fruit.screenArea();
             // If the line crosses the screen rectangle
             if (line.collides(shape)) {
-                const spriteData = getSprite(fruit.sprite)?.data;
-                const q = spriteData.frames[0];
+                const fruitFrame0 = getSprite(fruit.sprite)?.data.frames[0];
+                const q = fruitFrame0.q;
                 const srcUv = [
                     vec2(q.x, q.y),
                     vec2(q.x + q.w, q.y),

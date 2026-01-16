@@ -232,16 +232,17 @@ export function sprite(
     ) => {
         if (!spr) return;
 
-        let q = spr.frames[0].clone();
+        let frame = spr.frames[0];
+        let q = frame.q.clone();
 
         if (opt.quad) {
             q = q.scale(opt.quad);
         }
 
-        const scale = calcTexScale(spr.tex, q, opt.width, opt.height);
+        const scale = calcTexScale(frame.tex, q, opt.width, opt.height);
 
-        obj.width = spr.tex.width * q.w * scale.x;
-        obj.height = spr.tex.height * q.h * scale.y;
+        obj.width = frame.tex.width * q.w * scale.x;
+        obj.height = frame.tex.height * q.h * scale.y;
 
         if (spr.anims) {
             for (let animName in spr.anims) {
@@ -350,9 +351,9 @@ export function sprite(
         draw(this: GameObj<SpriteComp>) {
             if (!spriteData) return;
 
-            const q = spriteData.frames[this.frame ?? 0];
+            const frame = spriteData.frames[this.frame ?? 0];
 
-            if (!q) {
+            if (!frame) {
                 throw new Error(`Frame not found: ${this.frame ?? 0}`);
             }
 
@@ -367,8 +368,8 @@ export function sprite(
                     );
                 }
 
-                const tw = spriteData.tex.width * q.w;
-                const th = spriteData.tex.height * q.h;
+                const tw = frame.tex.width * frame.q.w;
+                const th = frame.tex.height * frame.q.h;
                 const iw = this.width - left - right;
                 const ih = this.height - top - bottom;
                 const w1 = left / tw;
@@ -420,8 +421,8 @@ export function sprite(
                         Object.assign(props, {
                             pos: transform.pos().add(offsetX, offsetY),
                             anchor: "topleft",
-                            tex: spriteData.tex,
-                            quad: q.scale(uv),
+                            tex: frame.tex,
+                            quad: frame.q.scale(uv),
                             flipX: this.flipX,
                             flipY: this.flipY,
                             tiled: shouldTile,
@@ -434,8 +435,8 @@ export function sprite(
             else {
                 drawTexture(
                     Object.assign(getRenderProps(this), {
-                        tex: spriteData.tex,
-                        quad: q.scale(this.quad ?? new Quad(0, 0, 1, 1)),
+                        tex: frame.tex,
+                        quad: frame.q.scale(this.quad ?? new Quad(0, 0, 1, 1)),
                         flipX: this.flipX,
                         flipY: this.flipY,
                         tiled: opt.tiled,

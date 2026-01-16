@@ -1,22 +1,15 @@
 import { Asset } from "../assets/asset";
 import type { BitmapFontData, GfxFont } from "../assets/bitmapFont";
 import { FontData, resolveFont } from "../assets/font";
-import {
-    DEF_FONT_FILTER,
-    DEF_TEXT_CACHE_SIZE,
-    FONT_ATLAS_HEIGHT,
-    FONT_ATLAS_WIDTH,
-} from "../constants/general";
+import { DEF_TEXT_CACHE_SIZE } from "../constants/general";
 import { Color } from "../math/color";
 import { Quad, vec2 } from "../math/math";
-import { Vec2 } from "../math/Vec2";
 import { _k } from "../shared";
-import type { Outline, TexFilter } from "../types";
+import type { Outline } from "../types";
 import { runes } from "../utils/runes";
 import { alignPt } from "./anchor";
 import type { FormattedChar, FormattedText } from "./draw/drawFormattedText";
 import type { CharTransform, DrawTextOpt } from "./draw/drawText";
-import { Texture } from "./gfx";
 
 /**
  * @group Rendering
@@ -24,7 +17,6 @@ import { Texture } from "./gfx";
  */
 export type FontAtlas = {
     font: BitmapFontData;
-    cursor: Vec2;
     maxHeight: number;
     maxActualBoundingBoxAscent: number;
     outline: Outline | null;
@@ -142,37 +134,14 @@ function getFontAtlasForFont(font: FontData | string): FontAtlas {
     let atlas = _k.gfx.fontAtlases[fontName];
     if (!atlas) {
         // create a new atlas
-        const opts: {
-            outline: Outline | null;
-            filter: TexFilter;
-        } = font instanceof FontData
-            ? {
-                outline: font.outline,
-                filter: font.filter,
-            }
-            : {
-                outline: null,
-                filter: DEF_FONT_FILTER,
-            };
-
-        // TODO: customizable font tex filter
         atlas = {
             font: {
-                tex: new Texture(
-                    _k.gfx.ggl,
-                    FONT_ATLAS_WIDTH,
-                    FONT_ATLAS_HEIGHT,
-                    {
-                        filter: opts.filter,
-                    },
-                ),
                 map: {},
                 size: DEF_TEXT_CACHE_SIZE,
             },
-            cursor: new Vec2(0),
             maxHeight: 0,
             maxActualBoundingBoxAscent: 0,
-            outline: opts.outline,
+            outline: font instanceof FontData ? font.outline : null,
         };
 
         _k.gfx.fontAtlases[fontName] = atlas;
@@ -194,10 +163,16 @@ function updateFontAtlas(font: FontData | string, ch: string) {
     if (!atlas.font.map[ch]) {
         // TODO: use assets.packer to pack font texture
         const c2d = _k.fontCacheC2d;
-        if (!c2d) throw new Error("fontCacheC2d is not defined.");
+        if (!c2d) {
+            throw new Error(
+                "error generating font texture: _k.fontCacheC2d is null",
+            );
+        }
 
         if (!_k.fontCacheCanvas) {
-            throw new Error("fontCacheCanvas is not defined.");
+            throw new Error(
+                "error generating font texture: _k.fontCacheCanvas is missing",
+            );
         }
 
         c2d.clearRect(
@@ -236,7 +211,7 @@ function updateFontAtlas(font: FontData | string, ch: string) {
             c2d.strokeText(
                 ch,
                 atlas.outline.width,
-                atlas.outline.width,
+                atlas.outline.width + maxActualBoundingBoxAscent,
             );
 
             w += atlas.outline.width * 2;
@@ -249,36 +224,14 @@ function updateFontAtlas(font: FontData | string, ch: string) {
             (atlas.outline?.width ?? 0) + maxActualBoundingBoxAscent,
         );
 
-        const img = c2d.getImageData(
-            0,
-            0,
-            w,
-            h,
+        const img = c2d.getImageData(0, 0, w, h);
+
+        // TODO: this is messed up for fonts that have a weird maxActualBoundingBoxAscent
+        atlas.font.map[ch] = _k.assets.packer.add(
+            img,
+            // new Quad(0, 0, 1, (h + maxActualBoundingBoxAscent) / h),
         );
 
-        // if we are about to exceed the X axis of the texture, go to another line
-        if (atlas.cursor.x + w > FONT_ATLAS_WIDTH) {
-            atlas.cursor.x = 0;
-            atlas.cursor.y += atlas.maxHeight;
-            atlas.maxHeight = 0;
-            if (atlas.cursor.y > FONT_ATLAS_HEIGHT) {
-                // TODO: create another atlas
-                throw new Error(
-                    "Font atlas exceeds character limit",
-                );
-            }
-        }
-
-        atlas.font.tex.update(img, atlas.cursor.x, atlas.cursor.y);
-
-        atlas.font.map[ch] = new Quad(
-            atlas.cursor.x,
-            atlas.cursor.y,
-            w,
-            h + maxActualBoundingBoxAscent,
-        );
-
-        atlas.cursor.x += w + 1;
         atlas.maxHeight = Math.max(atlas.maxHeight, h);
     }
 }
@@ -351,9 +304,8 @@ export function formatText(opt: DrawTextOpt): FormattedText {
                 & Partial<Pick<T, K>>;
             const theFChar: PartialBy<
                 FormattedChar,
-                "width" | "height" | "quad"
+                "width" | "height" | "frame"
             > = {
-                tex: defGfxFont.tex,
                 ch: ch,
                 pos: vec2(curX, 0),
                 opacity: opt.opacity ?? 1,
@@ -409,7 +361,6 @@ export function formatText(opt: DrawTextOpt): FormattedText {
                     requestedFontData = getFontAtlasForFont(requestedFont).font;
                 }
                 else requestedFontData = resolvedFont;
-                theFChar.tex = requestedFontData.tex;
             }
             if (
                 requestedFont
@@ -417,16 +368,16 @@ export function formatText(opt: DrawTextOpt): FormattedText {
                     || typeof resolvedFont === "string")
             ) updateFontAtlas(requestedFont, ch);
 
-            let q = requestedFontData.map[ch];
+            let f = theFChar.frame = requestedFontData.map[ch];
 
             // TODO: leave space if character not found?
-            if (q) {
-                let gw = q.w
+            if (f) {
+                let charWidth = f.q.w * f.tex.width
                     * (theFChar.stretchInPlace
                         ? scale
                         : theFChar.scale).x;
 
-                if (opt.width && curX + gw > opt.width && curX > 0) {
+                if (opt.width && curX + charWidth > opt.width && curX > 0) {
                     // new line on last word if width exceeds
                     if (lastSpace != null) {
                         cursor -= curLine.length - lastSpace;
@@ -447,21 +398,15 @@ export function formatText(opt: DrawTextOpt): FormattedText {
                     continue;
                 }
 
-                theFChar.width = q.w;
-                theFChar.height = q.h;
-                theFChar.quad = new Quad(
-                    q.x / requestedFontData.tex.width,
-                    q.y / requestedFontData.tex.height,
-                    q.w / requestedFontData.tex.width,
-                    q.h / requestedFontData.tex.height,
-                );
+                theFChar.width = f.q.w * f.tex.width;
+                theFChar.height = f.q.h * f.tex.height;
 
                 theFChar.pos = theFChar.pos.add(
-                    gw * 0.5,
-                    q.h * theFChar.scale.y * 0.5,
+                    charWidth * 0.5,
+                    theFChar.height * theFChar.scale.y * 0.5,
                 );
 
-                // push char
+                // queue char to be drawn
                 curLine.push({
                     ch: theFChar as FormattedChar,
                     font: requestedFontData,
@@ -479,7 +424,7 @@ export function formatText(opt: DrawTextOpt): FormattedText {
                     paraIndentX = curX;
                 }
 
-                curX += gw;
+                curX += charWidth;
                 tw = Math.max(tw, curX);
                 curX += letterSpacing;
             }

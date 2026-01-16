@@ -4,12 +4,12 @@ import { KEvent, KEventHandler } from "../events/events";
 import type { GfxCtx } from "../gfx/gfx";
 import { TexPacker } from "../gfx/TexPacker";
 import { _k } from "../shared";
-import type { MustKAPLAYOpt } from "../types";
+import type { ImageSource, MustKAPLAYOpt } from "../types";
 import type { BitmapFontData } from "./bitmapFont";
 import type { FontData } from "./font";
 import type { ShaderData } from "./shader";
 import type { SoundData } from "./sound";
-import type { SpriteData } from "./sprite";
+import type { LoadSpriteSrc, SpriteData } from "./sprite";
 import { fixURL } from "./utils";
 
 /**
@@ -218,6 +218,10 @@ export function loadImg(src: string): Promise<HTMLImageElement> {
         img.onerror = () =>
             reject(new Error(`Failed to load image from "${src}"`));
     });
+}
+
+export function spriteSrcToImage(src: LoadSpriteSrc): Promise<ImageSource> {
+    return typeof src === "string" ? loadImg(src) : Promise.resolve(src);
 }
 
 export function loadProgress(): number {
