@@ -97,9 +97,14 @@ go("sprites");
 function addFps() {
     add([
         pos(center()),
-        text(debug.fps()),
+        anchor("center"),
+        text(debug.fps(), {
+            size: 64,
+            outline: {
+                width: 10,
+            },
+        }),
         color("#ff7fff"),
-        outline(10),
         {
             update() {
                 this.pos = center();
