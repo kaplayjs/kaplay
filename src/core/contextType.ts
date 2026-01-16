@@ -92,6 +92,7 @@ import type {
     SurfaceEffectorComp,
     SurfaceEffectorCompOpt,
 } from "../ecs/components/physics/effectors";
+import type { SoftComp, SoftCompOpt } from "../ecs/components/physics/soft";
 import type { AnchorComp } from "../ecs/components/transform/anchor";
 import type { constraint } from "../ecs/components/transform/constraint";
 import type { FixedComp } from "../ecs/components/transform/fixed";
@@ -864,6 +865,23 @@ export interface KAPLAYCtx {
      * @subgroup Rendering
      */
     polygon(pts: Vec2[], opt?: PolygonCompOpt): PolygonComp;
+    /**
+     * Make a rigid body into a soft body. Only works for polygon right now.
+     * @returns The soft comp.
+     * @since v5000
+     * @group Components
+     * @subgroup Physics
+     */
+    soft(opt?: SoftCompOpt): SoftComp;
+    /**
+     * Maps an UV quad onto a polygon
+     * @param quad The UV quad in the texture
+     * @param poly The polygon to project on
+     * @returns The uv coordinates
+     * @since v5000
+     * @group Math
+     */
+    projectUV(quad: Quad, poly: Vec2[]): Vec2[];
     /**
      * Create an outline in the form of a polygon from a sprite object
      *

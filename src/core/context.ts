@@ -69,6 +69,7 @@ import {
     pointEffector,
     surfaceEffector,
 } from "../ecs/components/physics/effectors";
+import { soft } from "../ecs/components/physics/soft";
 import { anchor } from "../ecs/components/transform/anchor";
 import { constraint } from "../ecs/components/transform/constraint";
 import { fixed } from "../ecs/components/transform/fixed";
@@ -263,6 +264,7 @@ import {
 } from "../math/polygongeneration";
 import { insertionSort } from "../math/sort";
 import { makeQuadtree, Quadtree } from "../math/spatial/quadtree";
+import { projectUV } from "../math/uvmapping";
 import { Vec2 } from "../math/Vec2";
 import { BlendMode, type KAPLAYPlugin } from "../types";
 import {
@@ -406,6 +408,8 @@ export const createContext = (
         sprite,
         text,
         polygon,
+        soft,
+        projectUV,
         rect,
         circle,
         ellipse,

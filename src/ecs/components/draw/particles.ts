@@ -127,6 +127,10 @@ export type ParticlesOpt = {
      * Texture used for the particle.
      */
     texture: Texture;
+    /**
+     * Whether the particle collides.
+     */
+    collides: boolean;
 };
 
 /**
@@ -171,6 +175,7 @@ export function particles(popt: ParticlesOpt, eopt: EmitterOpt): ParticlesComp {
     const angularVelocityRange = popt.angularVelocity || [0, 0];
     const accelerationRange = popt.acceleration || [vec2(0), vec2(0)];
     const dampingRange = popt.damping || [0, 0];
+    const collides = popt.collides;
 
     const indices: number[] = new Array<number>(popt.max * 6);
     const attributes = {
@@ -285,7 +290,7 @@ export function particles(popt: ParticlesOpt, eopt: EmitterOpt): ParticlesComp {
                 p.pos = p.pos.add(p.vel.scale(DT));
                 p.angle += p.angularVelocity * DT;
             }
-            if (true) {
+            if (collides) {
                 for (let i = 0; i < particles.length; i++) {
                     const p = particles[i];
                     if (p.gc) {
@@ -293,6 +298,7 @@ export function particles(popt: ParticlesOpt, eopt: EmitterOpt): ParticlesComp {
                     }
                     const wp = this.toWorld(p.pos);
                     _k.game.retrieve(new Rect(wp, 1, 1), obj => {
+                        // Should we do a collisionIgnore check here and sink framerate?
                         if (obj.worldArea().bbox().contains(wp)) {
                             if (obj.worldArea().contains(wp)) {
                                 const np = obj.worldArea().closestPt(wp);
