@@ -78,9 +78,9 @@ function clickHandler(button: MouseButton) {
     });
 
     // fixed objects
+    objects.clear();
     _k.game.retrieve(new Rect(screenPos.sub(1, 1), 3, 3), obj => {
-        if (objects.has(obj)) objects.delete(obj);
-        else objects.add(obj);
+        objects.add(obj);
     });
     objects.forEach(obj => {
         if (
