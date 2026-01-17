@@ -31,7 +31,7 @@ scene("game", () => {
         // give it a position
         pos(width() / 4, 0),
         // give it a collider
-        area(),
+        area({ isSensor: true }),
         // body component enables it to fall and jump in a gravity world
         body(),
     ]);
