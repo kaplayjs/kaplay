@@ -17,7 +17,7 @@ add([
     rect(20, 80),
     outline(4),
     anchor("center"),
-    area(),
+    area({ isSensor: true }),
     "paddle",
 ]);
 
@@ -26,7 +26,7 @@ add([
     rect(20, 80),
     outline(4),
     anchor("center"),
-    area(),
+    area({ isSensor: true }),
     "paddle",
 ]);
 
@@ -57,7 +57,7 @@ const ball = add([
     pos(center()),
     circle(16),
     outline(4),
-    area({ shape: new Rect(vec2(-16), 32, 32) }),
+    area({ isSensor: true, shape: new Rect(vec2(-16), 32, 32) }),
     { vel: Vec2.fromAngle(rand(-20, 20)) },
 ]);
 
