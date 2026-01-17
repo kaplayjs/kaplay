@@ -6,6 +6,11 @@ import { type GfxCtx, Texture } from "./gfx";
 
 export type Frame = { tex: Texture; q: Quad; id: number };
 
+enum UsedCorner {
+    TOPRIGHT = 1,
+    BOTTOMLEFT = 2,
+}
+
 export class TexPacker {
     private _last: number = 0;
     private _textures: Texture[];
@@ -13,6 +18,7 @@ export class TexPacker {
     private _used: Map<number, {
         rect: Rect;
         tex: Texture;
+        used: number;
     }> = new Map();
     private _el: HTMLCanvasElement;
     private _ctx: CanvasRenderingContext2D;
@@ -81,18 +87,27 @@ export class TexPacker {
 
         // initial check for (0, 0)
         if (!doesitfit()) {
-            for (
-                var [_, { rect: { pos, width, height }, tex }] of this._used
-            ) {
+            for (let [_, entry] of this._used) {
+                const { tex, rect: { pos, width, height }, used } = entry;
                 if (curTex !== tex) continue;
                 // try to the right
-                x = pos.x + width;
-                y = pos.y;
-                if (doesitfit()) break;
-                // try below
-                x = pos.x;
-                y = pos.y + height;
-                if (doesitfit()) break;
+                if ((used & UsedCorner.TOPRIGHT) === 0) {
+                    x = pos.x + width;
+                    y = pos.y;
+                    if (doesitfit()) {
+                        entry.used |= UsedCorner.TOPRIGHT;
+                        break;
+                    }
+                }
+                if ((used & UsedCorner.BOTTOMLEFT) === 0) {
+                    // try below
+                    x = pos.x;
+                    y = pos.y + height;
+                    if (doesitfit()) {
+                        entry.used |= UsedCorner.BOTTOMLEFT;
+                        break;
+                    }
+                }
             }
         }
 
@@ -129,6 +144,7 @@ export class TexPacker {
         this._used.set(this._last, {
             rect: rectToAdd,
             tex: curTex,
+            used: 0,
         });
 
         return {
