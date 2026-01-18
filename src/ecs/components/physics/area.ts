@@ -18,12 +18,14 @@ import type {
     Shape,
     Tag,
 } from "../../../types";
+import type { InternalGameObjRaw } from "../../entity/GameObjRaw";
 import { isFixed } from "../../entity/utils";
 import type { Collision } from "../../systems/Collision";
 import { system, SystemPhase } from "../../systems/systems";
 import type { AnchorComp } from "../transform/anchor";
 import type { FixedComp } from "../transform/fixed";
 import type { PosComp } from "../transform/pos";
+import type { ZComp } from "../transform/z";
 
 export function usesArea() {
     return _k.game.areaCount > 0;
@@ -58,37 +60,47 @@ export function getLocalAreaVersion(obj: GameObj<any>) {
 function clickHandler(button: MouseButton) {
     const screenPos = _k.app.mousePos();
     const worldPos = toWorld(screenPos);
-    const objects: Set<GameObj<AreaComp>> = new Set();
+    const objects: Array<GameObj<AreaComp | ZComp>> = new Array();
     // non-fixed objects
     _k.game.retrieve(
         new Rect(worldPos.sub(1, 1), 3, 3),
-        obj => objects.add(obj),
+        obj => {
+            if (
+                !(obj as unknown as GameObj<FixedComp>).fixed
+                && obj.worldArea().contains(worldPos)
+            ) objects.push(obj as GameObj<AreaComp | ZComp>);
+        },
     );
 
-    objects.forEach(obj => {
-        if (
-            !(obj as unknown as GameObj<FixedComp>).fixed
-            && obj.worldArea().contains(worldPos)
-        ) {
-            _k.game.gameObjEvents.trigger("click", obj);
-            obj.trigger("click", button);
-        }
-    });
-
     // fixed objects
-    objects.clear();
     _k.game.retrieve(new Rect(screenPos.sub(1, 1), 3, 3), obj => {
-        objects.add(obj);
-    });
-    objects.forEach(obj => {
         if (
             (obj as unknown as GameObj<FixedComp>).fixed
             && obj.worldArea().contains(screenPos)
-        ) {
+        ) objects.push(obj as GameObj<AreaComp | ZComp>);
+    });
+
+    const topMostOnlyActivate = false;
+    if (objects.length) {
+        if (topMostOnlyActivate) {
+            objects.sort((o1, o2) => {
+                const l1 =
+                    (o1 as unknown as InternalGameObjRaw)._drawLayerIndex;
+                const l2 =
+                    (o2 as unknown as InternalGameObjRaw)._drawLayerIndex;
+                return (l1 - l2) || (o1.z ?? 0) - (o2.z ?? 0);
+            });
+            const obj = objects.at(-1)!;
             _k.game.gameObjEvents.trigger("click", obj);
             obj.trigger("click", button);
         }
-    });
+        else {
+            objects.forEach(obj => {
+                _k.game.gameObjEvents.trigger("click", obj);
+                obj.trigger("click", button);
+            });
+        }
+    }
 }
 
 let clickHandlerRunning = false;
