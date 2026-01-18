@@ -1,15 +1,24 @@
+import { drawImageSourceAt } from "../assets/utils";
 import { Quad, Rect } from "../math/math";
 import { Vec2 } from "../math/Vec2";
 import type { ImageSource } from "../types";
 import { type GfxCtx, Texture } from "./gfx";
 
+export type Frame = { tex: Texture; q: Quad; id: number };
+
+enum UsedCorner {
+    TOPRIGHT = 1,
+    BOTTOMLEFT = 2,
+}
+
 export class TexPacker {
     private _last: number = 0;
-    private _textures: Texture[] = [];
-    private _big: Texture[] = [];
+    private _textures: Texture[];
+    private _big: Frame[];
     private _used: Map<number, {
         rect: Rect;
         tex: Texture;
+        used: number;
     }> = new Map();
     private _el: HTMLCanvasElement;
     private _ctx: CanvasRenderingContext2D;
@@ -33,16 +42,24 @@ export class TexPacker {
     }
 
     // create a image with a single texture
-    addSingle(img: ImageSource): [Texture, Quad, number] {
-        const tex = Texture.fromImage(this._gfx, img);
-        this._big.push(tex);
-        return [tex, new Quad(0, 0, 1, 1), 0];
+    addSingle(img: ImageSource): Frame {
+        const f = {
+            tex: Texture.fromImage(this._gfx, img),
+            q: new Quad(0, 0, 1, 1),
+            id: this._last++,
+        };
+        this._big.push(f);
+        return f;
     }
 
-    add(img: ImageSource): [Texture, Quad, number] {
+    add(img: ImageSource, chopQuad?: Quad): Frame {
+        const imgWidth = img.width * (chopQuad?.w || 1);
+        const imgHeight = img.height * (chopQuad?.h || 1);
+        const chopX = img.width * (chopQuad?.x || 0);
+        const chopY = img.height * (chopQuad?.y || 0);
         const pad = this._pad * 2;
-        const paddedWidth = img.width + pad;
-        const paddedHeight = img.height + pad;
+        const paddedWidth = imgWidth + pad;
+        const paddedHeight = imgHeight + pad;
         const maxX = this._el.width, maxY = this._el.height;
         const rectToAdd = new Rect(new Vec2(), paddedWidth, paddedHeight);
         const p = rectToAdd.pos;
@@ -70,18 +87,27 @@ export class TexPacker {
 
         // initial check for (0, 0)
         if (!doesitfit()) {
-            for (
-                var [_, { rect: { pos, width, height }, tex }] of this._used
-            ) {
+            for (let [_, entry] of this._used) {
+                const { tex, rect: { pos, width, height }, used } = entry;
                 if (curTex !== tex) continue;
                 // try to the right
-                x = pos.x + width;
-                y = pos.y;
-                if (doesitfit()) break;
-                // try below
-                x = pos.x;
-                y = pos.y + height;
-                if (doesitfit()) break;
+                if ((used & UsedCorner.TOPRIGHT) === 0) {
+                    x = pos.x + width;
+                    y = pos.y;
+                    if (doesitfit()) {
+                        entry.used |= UsedCorner.TOPRIGHT;
+                        break;
+                    }
+                }
+                if ((used & UsedCorner.BOTTOMLEFT) === 0) {
+                    // try below
+                    x = pos.x;
+                    y = pos.y + height;
+                    if (doesitfit()) {
+                        entry.used |= UsedCorner.BOTTOMLEFT;
+                        break;
+                    }
+                }
             }
         }
 
@@ -102,31 +128,47 @@ export class TexPacker {
             );
         }
 
-        if (img instanceof ImageData) this._ctx.putImageData(img, x, y);
-        else this._ctx.drawImage(img, x, y);
+        drawImageSourceAt(
+            this._ctx,
+            img,
+            x,
+            y,
+            chopX,
+            chopY,
+            imgWidth,
+            imgHeight,
+        );
 
         curTex.update(this._el);
 
         this._used.set(this._last, {
             rect: rectToAdd,
             tex: curTex,
+            used: 0,
         });
 
-        return [
-            curTex,
-            new Quad(x / maxX, y / maxY, img.width / maxX, img.height / maxY),
-            this._last++,
-        ];
+        return {
+            tex: curTex,
+            q: new Quad(x / maxX, y / maxY, imgWidth / maxX, imgHeight / maxY),
+            id: this._last++,
+        };
     }
     free() {
         this._textures.forEach(tex => tex.free());
-        this._big.forEach(tex => tex.free());
+        this._big.forEach(f => f.tex.free());
+        this._used.clear();
+        this._big = [];
     }
     remove(packerId: number) {
         const tex = this._used.get(packerId);
 
         if (!tex) {
-            throw new Error("Texture with packer id not found");
+            const big = this._big.findIndex(f => f.id === packerId);
+            if (big < 0) {
+                throw new Error("Texture with packer id not found");
+            }
+            this._big.splice(big, 1)[0]!.tex.free();
+            return;
         }
 
         const { pos: { x, y }, width, height } = tex.rect;

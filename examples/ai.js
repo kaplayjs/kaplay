@@ -26,7 +26,7 @@ const BULLET_SPEED = 800;
 const player = add([
     sprite("bean"),
     pos(80, 80),
-    area(),
+    area({ isSensor: true }),
     anchor("center"),
 ]);
 
@@ -55,7 +55,7 @@ enemy.onStateEnter("attack", async () => {
             pos(enemy.pos),
             move(dir, BULLET_SPEED),
             rect(12, 12),
-            area(),
+            area({ isSensor: true }),
             offscreen({ destroy: true }),
             anchor("center"),
             color(BLUE),

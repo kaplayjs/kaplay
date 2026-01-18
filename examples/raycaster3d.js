@@ -24,7 +24,7 @@ onLoad(() => {
     bean = getSprite("bean").data;
     for (let i = 0; i < bean.width; i++) {
         objSlices.push(
-            bean.frames[0].scale(
+            bean.frames[0].q.scale(
                 new Quad(i / bean.width, 0, 1 / bean.width, 1),
             ),
         );
@@ -33,7 +33,7 @@ onLoad(() => {
     wall = getSprite("wall").data;
     for (let i = 0; i < wall.width; i++) {
         slices.push(
-            wall.frames[0].scale(
+            wall.frames[0].q.scale(
                 new Quad(i / wall.width, 0, 1 / wall.width, 1),
             ),
         );
@@ -249,7 +249,7 @@ const camera = add([
                         width: 2,
                         height: h,
                         pos: vec2(x * 2, 120 - h / 2),
-                        tex: wall.tex,
+                        tex: wall.frames[0].tex,
                         quad: slices[Math.round(u * (wall.width - 1))],
                         color: BLACK.lerp(WHITE, d),
                     });
@@ -267,7 +267,7 @@ const camera = add([
                                 width: 2,
                                 height: oh,
                                 pos: vec2(x * 2, 120 + wh / 2 - oh),
-                                tex: bean.tex,
+                                tex: bean.frames[0].tex,
                                 quad:
                                     objSlices[Math.round(u * (bean.width - 1))],
                                 color: BLACK.lerp(WHITE, u),

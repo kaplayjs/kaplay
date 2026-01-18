@@ -31,8 +31,8 @@ function woah() {
             colors: [rgb(128, 128, 255), WHITE],
             opacities: [0.1, 1.0, 0.0],
             scales: [1, 2, 1],
-            texture: getSprite("star").data.tex,
-            quads: [getSprite("star").data.frames[0]],
+            texture: getSprite("star").data.frames[0].tex,
+            quads: [getSprite("star").data.frames[0].q],
         }, {
             lifetime: 1.5,
             rate: 0,

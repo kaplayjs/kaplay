@@ -1,5 +1,4 @@
 import { DEF_ANCHOR } from "../../../constants/general";
-import type { ButtonName } from "../../../core/taf";
 import type { KEventController } from "../../../events/events";
 import { toWorld } from "../../../game/camera";
 import { anchorPt } from "../../../gfx/anchor";
@@ -23,7 +22,6 @@ import type { InternalGameObjRaw } from "../../entity/GameObjRaw";
 import { isFixed } from "../../entity/utils";
 import type { Collision } from "../../systems/Collision";
 import { system, SystemPhase } from "../../systems/systems";
-import { fakeMouse } from "../misc/fakeMouse";
 import type { AnchorComp } from "../transform/anchor";
 import type { FixedComp } from "../transform/fixed";
 import type { PosComp } from "../transform/pos";
@@ -106,7 +104,7 @@ function clickHandler(button: MouseButton) {
 }
 
 let clickHandlerRunning = false;
-function startClickHandler() {
+export function startClickHandler() {
     if (clickHandlerRunning) return;
     clickHandlerRunning = true;
 
@@ -171,7 +169,7 @@ function startHoverHandler() {
 }*/
 
 let systemInstalled = false;
-function startHoverSystem() {
+export function startHoverSystem() {
     if (systemInstalled) return;
     systemInstalled = true;
 

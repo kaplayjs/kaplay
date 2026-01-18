@@ -5106,7 +5106,7 @@ export interface KAPLAYCtx {
      *
      * @example
      * ```js
-     * onClick(() => {
+     * onMousePress(() => {
      *     // flashed
      *     flash(WHITE, 0.5);
      * });
@@ -5189,7 +5189,7 @@ export interface KAPLAYCtx {
      *
      * @example
      * ```js
-     * onClick(() => {
+     * onMousePress(() => {
      *     // flashed
      *     camFlash(WHITE, 0.5)
      * })

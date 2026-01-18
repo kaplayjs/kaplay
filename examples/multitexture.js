@@ -107,9 +107,9 @@ player.onCollide("coin", (coin) => {
 
 // Set the post effect
 onLoad(() => {
-    const swipe = getSprite("swipe")?.data;
+    const swipeFrame = getSprite("swipe").data.frames[0];
     usePostEffect("swipe", () => ({
         cutoff: time() / 2 % 1,
-        mask: swipe.tex,
+        mask: swipeFrame.tex,
     }));
 });

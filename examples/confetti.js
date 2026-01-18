@@ -70,13 +70,12 @@ function addConfetti(opt = {}) {
 
         p.onUpdate(() => {
             velY += gravity * dt();
-            p.pos.x += velX * dt();
-            p.pos.y += velY * dt();
+            p.move(velX, velY);
             p.angle += velA * dt();
             p.opacity -= fade * dt();
             velX *= airDrag;
             velY *= airDrag;
-            p.scale.x = wave(-1, 1, time() * spin);
+            p.scaleTo(wave(-1, 1, time() * spin), p.scale.y);
         });
     }
 }

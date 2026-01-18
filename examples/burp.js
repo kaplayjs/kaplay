@@ -29,4 +29,4 @@ add([
 ]);
 
 // burp() on click / tap for our friends on mobile
-onClick(() => burp());
+onMousePress(() => burp());

@@ -91,16 +91,22 @@ const endSlider = add([
 ]);
 onMouseRelease(() => draggin = null);
 onMouseMove(pos => {
-    if (draggin) draggin.pos.x = pos.x;
+    if (draggin) draggin.moveTo(pos.x, draggin.pos.y);
 });
 onUpdate(() => {
-    startSlider.pos.x = clamp(startSlider.pos.x, 100, endSlider.pos.x);
-    endSlider.pos.x = clamp(endSlider.pos.x, startSlider.pos.x, width() - 100);
+    startSlider.pos = vec2(
+        clamp(startSlider.pos.x, 100, endSlider.pos.x),
+        startSlider.pos.y,
+    );
+    endSlider.pos = vec2(
+        clamp(endSlider.pos.x, startSlider.pos.x, width() - 100),
+        endSlider.pos.y,
+    );
     const startIndex =
         map(startSlider.pos.x, 100, width() - 100, 0, formatted.text.length)
         | 0;
     const endIndex =
         map(endSlider.pos.x, 100, width() - 100, 0, formatted.text.length) | 0;
     theTextObj.text = sliceUnparse(formatted, startIndex, endIndex);
-    theTextObj.pos.x = 100 + startIndex * 15.5;
+    theTextObj.pos = vec2(100 + startIndex * 15.5, theTextObj.pos.y);
 });

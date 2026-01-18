@@ -1,15 +1,14 @@
 import {
     DEF_FONT,
-    DEF_FONT_FILTER,
     DEF_TEXT_CACHE_SIZE,
     MAX_TEXT_CACHE_SIZE,
 } from "../constants/general";
 import type { DrawTextOpt } from "../gfx/draw/drawText";
-import type { Texture } from "../gfx/gfx";
+import type { Frame } from "../gfx/TexPacker";
 import { rgb } from "../math/color";
 import { Quad } from "../math/math";
 import { _k } from "../shared";
-import type { LoadFontOpt, Outline, TexFilter } from "../types";
+import type { ImageSource, LoadFontOpt, Outline } from "../types";
 import { Asset, loadProgress } from "./asset";
 import { type BitmapFontData, getBitmapFont, type GfxFont } from "./bitmapFont";
 
@@ -18,13 +17,12 @@ import { type BitmapFontData, getBitmapFont, type GfxFont } from "./bitmapFont";
  * @subgroup Data
  */
 export class FontData {
-    fontface: FontFace;
-    filter: TexFilter = DEF_FONT_FILTER;
     outline: Outline | null = null;
     size: number = DEF_TEXT_CACHE_SIZE;
-    constructor(face: FontFace, opt: LoadFontOpt = {}) {
-        this.fontface = face;
-        this.filter = opt.filter ?? DEF_FONT_FILTER;
+    constructor(
+        public fontface: FontFace,
+        opt: LoadFontOpt = {},
+    ) {
         this.size = opt.size ?? DEF_TEXT_CACHE_SIZE;
         if (this.size > MAX_TEXT_CACHE_SIZE) {
             throw new Error(`Max font size: ${MAX_TEXT_CACHE_SIZE}`);
@@ -116,27 +114,31 @@ export function loadFont(
 }
 
 export function makeFont(
-    tex: Texture,
+    tex: ImageSource,
     gw: number,
     gh: number,
     chars: string,
 ): GfxFont {
-    const cols = tex.width / gw;
-    const map: Record<string, Quad> = {};
+    const w = tex.width;
+    const h = tex.height;
+    const cols = w / gw;
+    const map: Record<string, Frame> = {};
     const charMap = chars.split("").entries();
 
     for (const [i, ch] of charMap) {
-        map[ch] = new Quad(
-            (i % cols) * gw,
-            Math.floor(i / cols) * gh,
-            gw,
-            gh,
+        map[ch] = _k.assets.packer.add(
+            tex,
+            new Quad(
+                (i % cols) * gw / w,
+                Math.floor(i / cols) * gh / h,
+                gw / w,
+                gh / h,
+            ),
         );
     }
 
     return {
-        tex: tex,
-        map: map,
+        map,
         size: gh,
     };
 }

@@ -33,7 +33,7 @@ onDraw(() => {
     });
 });
 
-onClick(() => {
+onMousePress(() => {
     const startTime = time();
     let results = [];
     const bean = add([
@@ -104,7 +104,7 @@ onUpdate(() => {
         `${((100 * (heightResult - heightGoal) / heightGoal).toFixed(2))}%`;
 });
 
-onClick(() => {
+onMousePress(() => {
     y = highestPoint(vec2(50, 300), vec2(0, -200));
     const bean = add([
         sprite("bag"),
