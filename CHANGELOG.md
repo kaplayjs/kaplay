@@ -34,6 +34,8 @@ best friend, lajbel, can put the correct version name here
 
 ### Fixed
 
+- Fixed tiled mode drawing of sprites ignoring opacity when it was 0 (#1020) -
+  @dragoncoder047
 - Now, all global events handlers are avaible in scopes, `app.onXXXX` and
   `scene.onXXXX()` (#977) - @lajbel
 - Fixed input events attached to paused ancestors not being paused (#1009) -
@@ -46,6 +48,9 @@ best friend, lajbel, can put the correct version name here
   @amyspark-ng, @dragoncoder047
 - Fixed type `UniformValue` union not including `Texture`, a valid option
   (#1018) - @dragoncoder047
+- Fixed event crash when using `onLoad` or other events that doesn't return an
+  EventController, and then using `go()` (#1024) - @lajbel, credits to
+  @dragoncoder047
 
 ## [4000.0.0-alpha.26] - 2026-01-12
 

@@ -56,7 +56,7 @@ scene("game", () => {
     const player = add([
         sprite("bean"),
         pos(40, 20),
-        area({ scale: 0.5 }),
+        area({ scale: 0.5, isSensor: true }),
         anchor("center"),
     ]);
 
@@ -122,7 +122,7 @@ scene("game", () => {
         add([
             sprite(spriteName),
             pos(x, y),
-            area({ scale: 0.5 }),
+            area({ scale: 0.5, isSensor: true }),
             anchor("center"),
             "food",
             isHeart ? "heart" : "fruit",
