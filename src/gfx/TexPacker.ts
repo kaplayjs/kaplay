@@ -22,6 +22,7 @@ export class TexPacker {
     }> = new Map();
     private _el: HTMLCanvasElement;
     private _ctx: CanvasRenderingContext2D;
+    private _curTex: Texture;
 
     constructor(
         private _gfx: GfxCtx,
@@ -32,7 +33,7 @@ export class TexPacker {
         this._el = document.createElement("canvas");
         this._el.width = w;
         this._el.height = h;
-        this._textures = [Texture.fromImage(_gfx, this._el)];
+        this._textures = [this._curTex = Texture.fromImage(_gfx, this._el)];
         this._big = [];
 
         const context2D = this._el.getContext("2d");
@@ -68,7 +69,7 @@ export class TexPacker {
             // No chance of ever fitting.
             return this.addSingle(img);
         }
-        let curTex = this._textures.at(-1)!;
+        let curTex = this._curTex;
 
         // find position
         let x = 0, y = 0, found = false;
@@ -124,7 +125,7 @@ export class TexPacker {
                 maxY,
             );
             this._textures.push(
-                curTex = Texture.fromImage(this._gfx, this._el),
+                curTex = this._curTex = Texture.fromImage(this._gfx, this._el),
             );
         }
 
@@ -170,9 +171,10 @@ export class TexPacker {
             this._big.splice(big, 1)[0]!.tex.free();
             return;
         }
-
+        if (tex.tex !== this._curTex) {
+            throw new Error("Cannot remove from inactive texture");
+        }
         const { pos: { x, y }, width, height } = tex.rect;
-        // TODO: this is incorrect if the texture is not the current texture
         this._ctx.clearRect(x, y, width, height);
 
         tex.tex.update(this._el);
