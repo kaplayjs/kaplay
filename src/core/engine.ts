@@ -85,7 +85,7 @@ export const createEngine = (gopt: KAPLAYOpt) => {
 
     const gl = canvasContext;
 
-    // TODO: Investigate correctly what's the differente between GFX and AppGFX and reduce to 1 method
+    // TODO: Investigate correctly what's the different between GFX and AppGFX and reduce to 1 method
     const gfx = initGfx(gl, opt);
     const appGfx = initAppGfx(gfx, opt);
     const assets = initAssets(gfx, opt);

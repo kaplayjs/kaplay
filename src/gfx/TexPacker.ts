@@ -172,6 +172,7 @@ export class TexPacker {
         }
 
         const { pos: { x, y }, width, height } = tex.rect;
+        // TODO: this is incorrect if the texture is not the current texture
         this._ctx.clearRect(x, y, width, height);
 
         tex.tex.update(this._el);
