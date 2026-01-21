@@ -20,6 +20,10 @@ best friend, lajbel, can put the correct version name here
 
 ### Breaking Changes
 
+- The texture uv coordinates for primitives (solid- or gradient-filled circles,
+  rectangles, lines, and polygons) have now been changed to (1, 1) instead of
+  (0, 0), so shaders written for primitives will need to be updated. (#1021) -
+  @dragoncoder047
 - The global `onDraw()` handler's no-tag form now always draws before all game
   objects are drawn, **regardless of whether it was attached after game objects
   were added** (#977) - @lajbel
