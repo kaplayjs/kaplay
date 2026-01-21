@@ -12,8 +12,14 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - [Jump to v3001 changelog](#changelog-for-v3001).
 
 <!--
+
 Hey, KAPLAY Dev, you must changelog here, in unreleased, so later your
 best friend, lajbel, can put the correct version name here
+
+Make sure to format each entry like this:
+
+- short description (#PR Number) - @your username
+
 -->
 
 ## [unreleased]
