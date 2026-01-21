@@ -14,7 +14,7 @@ enum UsedCorner {
 export class TexPacker {
     private _last: number = 0;
     private _textures: Texture[];
-    private _big: Frame[];
+    private _big: Frame[] = [];
     private _used: Map<number, {
         rect: Rect;
         tex: Texture;
@@ -34,7 +34,6 @@ export class TexPacker {
         this._el.width = w;
         this._el.height = h;
         this._textures = [this._curTex = Texture.fromImage(_gfx, this._el)];
-        this._big = [];
 
         const context2D = this._el.getContext("2d");
         if (!context2D) throw new Error("Failed to get 2d context");
@@ -53,11 +52,52 @@ export class TexPacker {
         return f;
     }
 
+    /**
+     * create the default 1x1 white pixel used for primitives at uv = (1, 1).
+     *
+     * must be called prior to initializing anything else, as it doesn't check for
+     * collisions with anything!
+     */
+    _createWhitePixel(): Frame {
+        const whitePixel = new ImageData(
+            new Uint8ClampedArray([255, 255, 255, 255]),
+            1,
+            1,
+        );
+        const { width, height } = this._el;
+        drawImageSourceAt(
+            this._ctx,
+            whitePixel,
+            width - 1,
+            height - 1,
+            0,
+            0,
+            1,
+            1,
+        );
+        this._curTex.update(this._el);
+        this._used.set(-1, {
+            rect: new Rect(new Vec2(width - 1, height - 1), 1, 1),
+            tex: this._curTex,
+            used: 0,
+        });
+        return {
+            tex: this._curTex,
+            q: new Quad(
+                (width - 1) / width,
+                (height - 1) / height,
+                1 / width,
+                1 / height,
+            ),
+            id: -1,
+        };
+    }
+
     add(img: ImageSource, chopQuad?: Quad): Frame {
-        const imgWidth = img.width * (chopQuad?.w || 1);
-        const imgHeight = img.height * (chopQuad?.h || 1);
-        const chopX = img.width * (chopQuad?.x || 0);
-        const chopY = img.height * (chopQuad?.y || 0);
+        const imgWidth = img.width * (chopQuad?.w ?? 1);
+        const imgHeight = img.height * (chopQuad?.h ?? 1);
+        const chopX = img.width * (chopQuad?.x ?? 0);
+        const chopY = img.height * (chopQuad?.y ?? 0);
         const pad = this._pad * 2;
         const paddedWidth = imgWidth + pad;
         const paddedHeight = imgHeight + pad;

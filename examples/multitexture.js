@@ -20,7 +20,7 @@ loadShader(
     `
 	uniform float cutoff;
     uniform sampler2D mask;
-	
+
 	vec4 frag(vec2 pos, vec2 uv, vec4 color, sampler2D tex) {
 		vec4 p = texture2D(mask, uv);
         if (p.r < cutoff) {

@@ -88,7 +88,7 @@ export const createEngine = (gopt: KAPLAYOpt) => {
     // TODO: Investigate correctly what's the different between GFX and AppGFX and reduce to 1 method
     const gfx = initGfx(gl, opt);
     const appGfx = initAppGfx(gfx, opt);
-    const assets = initAssets(gfx, opt);
+    const assets = initAssets(gfx, opt, appGfx);
     const audio = initAudio();
     const game = createGame();
 

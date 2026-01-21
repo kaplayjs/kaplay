@@ -115,7 +115,7 @@ export function drawPolygon(opt: DrawPolygonOpt) {
             }
         }
         else {
-            attributes.uv.fill(0);
+            attributes.uv.fill(1);
         }
 
         if (opt.colors) {
@@ -146,7 +146,7 @@ export function drawPolygon(opt: DrawPolygonOpt) {
             pos: new Vec2(pt.x, pt.y),
             uv: opt.uv
                 ? opt.uv[i]
-                : new Vec2(0, 0),
+                : new Vec2(1, 1),
             color: opt.colors
                 ? (opt.colors[i] ? opt.colors[i].mult(color) : color)
                 : color,
@@ -171,7 +171,7 @@ export function drawPolygon(opt: DrawPolygonOpt) {
             attributes,
             opt.indices ?? indices,
             opt.fixed,
-            opt.uv ? opt.tex : _k.gfx.defTex,
+            opt.uv ? opt.tex : _k.gfx.whitePixel.tex,
             opt.shader,
             opt.uniform ?? undefined,
             opt.blend ?? BlendMode.Normal,

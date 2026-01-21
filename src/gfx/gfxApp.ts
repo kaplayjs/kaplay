@@ -13,6 +13,7 @@ import type { MustKAPLAYOpt } from "../types";
 import type { FontAtlas } from "./formatText";
 import { FrameBuffer } from "./FrameBuffer";
 import { BatchRenderer, type GfxCtx, Texture } from "./gfx";
+import type { Frame } from "./TexPacker";
 
 export type AppGfxCtx = {
     /** How many draw calls we're doing last frame */
@@ -23,8 +24,7 @@ export type AppGfxCtx = {
     ggl: GfxCtx;
     /** Default shader */
     defShader: Shader;
-    /** Default texture */
-    defTex: Texture;
+    whitePixel: Frame;
     /** FrameBuffer */
     frameBuffer: FrameBuffer;
     /** Post Shader, used in postEffect() */
@@ -72,13 +72,6 @@ export const initAppGfx = (gfx: GfxCtx, gopt: MustKAPLAYOpt): AppGfxCtx => {
     const defShader = makeShader(gfx, DEF_VERT, DEF_FRAG);
     const pixelDensity = gopt.pixelDensity ?? 1;
     const { gl } = gfx;
-
-    // a 1x1 white texture to draw raw shapes like rectangles and polygons
-    // we use a texture for those so we can use only 1 pipeline for drawing sprites + shapes
-    const emptyTex = Texture.fromImage(
-        gfx,
-        new ImageData(new Uint8ClampedArray([255, 255, 255, 255]), 1, 1),
-    );
 
     const frameBuffer = (gopt.width && gopt.height)
         ? new FrameBuffer(
@@ -169,7 +162,7 @@ export const initAppGfx = (gfx: GfxCtx, gopt: MustKAPLAYOpt): AppGfxCtx => {
 
         // gfx states
         defShader: defShader,
-        defTex: emptyTex,
+        whitePixel: null as any,
         frameBuffer: frameBuffer,
         postShader: null as string | null,
         postShaderUniform: null as Uniform | (() => Uniform) | null,

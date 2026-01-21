@@ -2,6 +2,7 @@ import { SPRITE_ATLAS_HEIGHT, SPRITE_ATLAS_WIDTH } from "../constants/general";
 import type { SerializedGameObj } from "../ecs/entity/prefab";
 import { KEvent, KEventHandler } from "../events/events";
 import type { GfxCtx } from "../gfx/gfx";
+import type { AppGfxCtx } from "../gfx/gfxApp";
 import { TexPacker } from "../gfx/TexPacker";
 import { _k } from "../shared";
 import type { ImageSource, MustKAPLAYOpt } from "../types";
@@ -265,7 +266,11 @@ export function load<T>(prom: Promise<T>): Asset<T> {
 export type InternalAssetsCtx = ReturnType<typeof initAssets>;
 
 /** @ignore */
-export const initAssets = (ggl: GfxCtx, opt: MustKAPLAYOpt) => {
+export const initAssets = (
+    ggl: GfxCtx,
+    opt: MustKAPLAYOpt,
+    appGfx: AppGfxCtx,
+) => {
     const assets = {
         urlPrefix: "",
         // asset holders
@@ -286,6 +291,9 @@ export const initAssets = (ggl: GfxCtx, opt: MustKAPLAYOpt) => {
         // if we finished initially loading all assets
         loaded: false,
     };
+
+    // Set up the white pixel to start everything
+    appGfx.whitePixel = assets.packer._createWhitePixel();
 
     return assets;
 };

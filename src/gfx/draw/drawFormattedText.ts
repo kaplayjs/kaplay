@@ -51,6 +51,7 @@ export interface FormattedChar {
     uniform?: Uniform;
 }
 
+// cSpell: ignore ftext
 export function drawFormattedText(ftext: FormattedText) {
     pushTransform();
     multTranslateV(ftext.opt.pos!);
