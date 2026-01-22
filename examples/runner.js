@@ -57,7 +57,7 @@ scene("game", () => {
         // add tree obj
         add([
             rect(48, rand(32, 96)),
-            area(),
+            area({ isSensor: true }),
             outline(4),
             pos(width(), height() - FLOOR_HEIGHT),
             anchor("botleft"),

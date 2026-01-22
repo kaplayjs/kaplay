@@ -210,7 +210,7 @@ function updateFontAtlas(font: FontData | string, ch: string) {
         c2d.font = `${atlas.font.size}px ${fontName}`;
         c2d.textBaseline = "top";
         c2d.textAlign = "left";
-        c2d.fillStyle = "#ffffff";
+        c2d.fillStyle = "#fff";
 
         if (atlas.maxActualBoundingBoxAscent === 0) {
             atlas.maxActualBoundingBoxAscent =
@@ -426,7 +426,7 @@ export function formatText(opt: DrawTextOpt): FormattedText {
                         ? scale
                         : theFChar.scale).x;
 
-                if (opt.width && curX + gw > opt.width) {
+                if (opt.width && curX + gw > opt.width && curX > 0) {
                     // new line on last word if width exceeds
                     if (lastSpace != null) {
                         cursor -= curLine.length - lastSpace;

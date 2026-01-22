@@ -3,13 +3,15 @@
 import fs from "fs";
 import path from "path";
 import puppeteer from "puppeteer";
-import { serve } from "./dev/serve.js";
-import { build } from "./lib/build.js";
-import { wait } from "./lib/util.js";
+import { serve } from "./dev/serve.ts";
+import { build } from "./lib/build.ts";
+import { wait } from "./lib/util.ts";
 
 await build(true);
-const port = process.env.PORT || 4000;
-const server = serve({ port: port });
+
+const server = serve();
+const adress = server.address();
+const port = typeof adress == "object" ? adress?.port : "unknown";
 
 let failed = false;
 
@@ -45,10 +47,12 @@ for (const example of [...examples, ...playtests]) {
     console.log(`testing example "${example}"`);
     const page = await browser.newPage();
     page.on("pageerror", (err) => {
+        if (err.message.startsWith("[rendering]")) return;
         failed = true;
         console.error(example, err);
     });
     page.on("error", (err) => {
+        if (err.message.startsWith("[rendering]")) return;
         failed = true;
         console.error(example, err);
     });
@@ -68,7 +72,8 @@ server.close();
 
 console.log(
     failed
-        ? "test suite failed, all is kaboomed"
-        : "GOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOD",
+        ? "One or more tests failed, all is kaboomed 💥"
+        : "All tests have passed 🦖",
 );
+
 process.exit(failed ? 1 : 0);

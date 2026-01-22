@@ -3,8 +3,8 @@
 
 import fs from "fs/promises";
 import ts from "typescript";
-import { DIST_DIR, SRC_DIR } from "../constants.js";
-import { writeFile } from "./util.js";
+import { DIST_DIR } from "../constants.ts";
+import { writeFile } from "./util.ts";
 
 export async function genGlobalDTS() {
     // ensure declaration dir exists
@@ -21,7 +21,7 @@ export async function genGlobalDTS() {
         true,
     );
 
-    function transform(o, f) {
+    function transform(o: any, f: (k: string, v: any) => any): any[] {
         for (const k in o) {
             if (o[k] == null) {
                 continue;
@@ -61,7 +61,7 @@ export async function genGlobalDTS() {
             case "questionToken":
                 return true;
             case "members": {
-                const members = {};
+                const members: Record<string, any> = {};
                 for (const mem of v) {
                     const name = mem.name?.escapedText;
                     if (!name || name === "toString") {
@@ -77,7 +77,7 @@ export async function genGlobalDTS() {
             case "jsDoc": {
                 const doc = v[0];
                 const taglist = doc.tags ?? [];
-                const tags = {};
+                const tags: Record<string, string[]> = {};
                 for (const tag of taglist) {
                     const name = tag.tagName.escapedText;
                     if (!tags[name]) {

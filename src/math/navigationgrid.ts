@@ -1,20 +1,18 @@
 import { vec2 } from "./math";
-import { aStarSearch, type Graph } from "./navigation";
+import { aStarSearch, buildConnectivityMap, type Graph } from "./navigation";
 import { Vec2 } from "./Vec2";
 
 /**
- * A grid is a graph consisting of connected grid cells
+ * A navigation grid is a graph consisting of connected grid cells
  */
-export class Grid implements Graph {
+export class NavGrid implements Graph {
     private _columns: number;
     private _rows: number;
     private _tileWidth: number;
     private _tileHeight: number;
-    // Initializer here?
-    // TODO: Remove non-null assertion
-    private _data!: string[];
     private _diagonals: boolean;
     private _connMap: number[];
+    private _isConnected: (a: number, b: number) => boolean;
 
     /**
      * @param data - Grid data
@@ -23,6 +21,7 @@ export class Grid implements Graph {
     constructor(
         width: number,
         height: number,
+        isConnected: (a: number, b: number) => boolean,
         { diagonals = false, tileWidth = 1, tileHeight = 1 } = {},
     ) {
         this._columns = width;
@@ -31,34 +30,14 @@ export class Grid implements Graph {
         this._tileHeight = tileHeight;
         this._diagonals = diagonals;
         this._connMap = new Array(this._columns * this._rows).fill(-1);
+        this._isConnected = isConnected;
 
         this._buildConnectivityMap();
     }
 
     private _buildConnectivityMap() {
-        function traverse(that: Grid, tile: number, index: number) {
-            let frontier: number[] = [];
-            frontier.push(tile);
-            while (frontier.length > 0) {
-                const tile = frontier.pop();
-                // TODO: Remove non-null assertion
-                that.getNeighbours(tile!).forEach(t => {
-                    if (that._connMap[t] < 0) {
-                        that._connMap[t] = index;
-                        frontier.push(t);
-                    }
-                });
-            }
-        }
-        let index = 0;
-        for (let i = 0; i < this._rows; i++) {
-            if (this._connMap[i] >= 0) {
-                index++;
-                continue;
-            }
-            traverse(this, i, index);
-            index++;
-        }
+        const map = buildConnectivityMap(this);
+        map.forEach((index, node) => this._connMap[node] = index);
     }
 
     private _getTile(x: number, y: number): number {
@@ -75,68 +54,75 @@ export class Grid implements Graph {
         return Math.floor(tile / this._columns);
     }
 
-    getNeighbours(tile: number): number[] {
-        const neighbours = [];
+    get nodes(): number[] {
+        return [...new Array(this._columns * this._rows).keys()];
+    }
+
+    getNeighbors(tile: number): number[] {
+        const neighbors = [];
+        const x = tile % this._columns;
         // x > 0
-        if (tile > 0) {
-            neighbours.push(tile - 1);
+        if (x > 0) {
+            neighbors.push(tile - 1);
             if (this._diagonals) {
                 if (tile >= this._columns) {
-                    neighbours.push(tile - this._columns - 1);
+                    neighbors.push(tile - this._columns - 1);
                 }
                 if (tile < (this._rows - 1) * this._columns) {
-                    neighbours.push(tile + this._columns - 1);
+                    neighbors.push(tile + this._columns - 1);
                 }
             }
         }
         // y > 0
         if (tile >= this._columns) {
-            neighbours.push(tile - this._columns);
+            neighbors.push(tile - this._columns);
         }
         // y < height
         if (tile < (this._rows - 1) * this._columns) {
-            neighbours.push(tile + this._columns);
+            neighbors.push(tile + this._columns);
         }
         // x < width
-        if (tile % this._columns < this._columns - 1) {
-            neighbours.push(tile + 1);
+        if (x < this._columns - 1) {
+            neighbors.push(tile + 1);
             if (this._diagonals) {
                 if (tile >= this._columns) {
-                    neighbours.push(tile - this._columns + 1);
+                    neighbors.push(tile - this._columns + 1);
                 }
                 if (tile < (this._rows - 1) * this._columns) {
-                    neighbours.push(tile + this._columns + 1);
+                    neighbors.push(tile + this._columns + 1);
                 }
             }
         }
 
-        // TODO: Remove @ts-ignore
-        // @ts-ignore neighbours look like as a number[]?
-        return neighbours.filter(({ x, y }) => this._data[y][x] != "x");
+        return neighbors.filter(other => this._isConnected(tile, other));
     }
 
     getCost(a: number, b: number) {
-        const x = (a % this._tileWidth) - (b % this._tileWidth);
-        const y = Math.floor(a / this._tileWidth)
-            - Math.floor(b / this._tileWidth);
+        // Manhattan distance
+        const x = Math.abs(this._getTileX(a) - this._getTileX(b));
+        const y = Math.abs(this._getTileY(a) - this._getTileY(b));
         return Math.max(x, y);
     }
 
     getHeuristic(a: number, b: number) {
-        const x = (a % this._tileWidth) - (b % this._tileWidth);
-        const y = Math.floor(a / this._tileWidth)
-            - Math.floor(b / this._tileWidth);
+        // Euclidean distance
+        const x = this._getTileX(a) - this._getTileX(b);
+        const y = this._getTileY(a) - this._getTileY(b);
         return Math.sqrt(x * x + y * y);
     }
 
     getPath(start: number, goal: number): number[] {
         // Tiles are not within the grid
-        if (start == null || goal == null) {
+        const maxNode = this._columns * this._rows;
+        if (
+            start === null || goal === null || start < 0 || start >= maxNode
+            || goal < 0 || goal >= maxNode
+        ) {
             return [];
         }
 
         // Tiles are not within the same section
-        if (this._connMap[start] != this._connMap[goal]) {
+        if (this._connMap[start] !== this._connMap[goal]) {
             return [];
         }
 

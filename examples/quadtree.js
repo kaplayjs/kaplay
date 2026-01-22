@@ -69,7 +69,9 @@ onMousePress(button => {
         const rect = new Rect(pos.sub(4, 4), 8, 8);
         const objects = [];
         selection.length = 0;
-        quadtree.retrieve(rect, objects);
+        quadtree.retrieve(rect, obj => {
+            objects.push(obj);
+        });
         if (objects.length > 0) {
             get("*").forEach(bean => {
                 bean.color = WHITE;
@@ -102,7 +104,9 @@ onMouseMove((pos, dpos) => {
         const pos = toWorld(mousePos());
         const rect = new Rect(pos.sub(4, 4), 8, 8);
         const objects = [];
-        quadtree.retrieve(rect, objects);
+        quadtree.retrieve(rect, obj => {
+            objects.push(obj);
+        });
         get("*").forEach(bean => {
             bean.color = WHITE;
         });

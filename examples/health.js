@@ -33,7 +33,7 @@ const bean = add([
     // This will make it so bean has an initial HP of 100, since maxHP is not specified
     // It will be the same as the initial HP
     health(100),
-    area(),
+    area({ isSensor: true }),
     anchor("center"),
     color(),
     "bean",
@@ -63,7 +63,7 @@ bean.onKeyPress("space", () => {
         outline(5, BLACK),
         move(1, 600),
         pos(bean.pos.add(100, -5)),
-        area(),
+        area({ isSensor: true }),
         offscreen({ destroy: true }), // Destroy them on offscreen to avoid lag
         "bullet",
     ]);
@@ -111,7 +111,7 @@ const zombean = add([
     scale(2),
     health(100, 100),
     anchor("center"),
-    area(),
+    area({ isSensor: true }),
     color(),
     rotate(),
     offscreen({ destroy: true }),

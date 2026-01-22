@@ -20,7 +20,7 @@ function handleout() {
         id: "handleout",
         require: ["pos"],
         update() {
-            const spos = this.screenPos();
+            const spos = this.screenPos;
             if (
                 spos.x < 0
                 || spos.x > width()

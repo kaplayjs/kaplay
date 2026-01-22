@@ -1,10 +1,9 @@
 // Build KAPLAY
-// @ts-check
 
 import * as esbuild from "esbuild";
 import fs from "fs";
 import path from "path";
-import { DIST_DIR, SRC_PATH } from "../constants.js";
+import { DIST_DIR, SRC_PATH } from "../constants.ts";
 
 // KAPLAY Package.json
 
@@ -12,13 +11,7 @@ const pkgFile = path.join(import.meta.dirname, "../../package.json");
 const pkg = JSON.parse(fs.readFileSync(pkgFile, "utf-8"));
 const pkgVersion = pkg.version;
 
-/**
- * Different formats for the build
- *
- * @param {string} name
- * @returns {esbuild.BuildOptions[]}
- */
-export const fmts = (name) => [
+export const fmts = (name: string): esbuild.BuildOptions[] => [
     {
         format: "iife",
         globalName: "kaplay",
@@ -34,8 +27,7 @@ export const fmts = (name) => [
 const kaplayBuilds = fmts("kaplay");
 const kaboomBuild = fmts("kaboom")[0];
 
-/** @type {esbuild.BuildOptions} */
-export const config = {
+export const config: esbuild.BuildOptions = {
     bundle: true,
     minify: true,
     keepNames: false,

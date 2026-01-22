@@ -48,6 +48,30 @@ export type GameObjEventMap = {
     /** Triggered when tag is removed */
     untag: [GameObj, string];
     /**
+     * Triggered when an object is clicked.
+     *
+     * From `area()` component.
+     */
+    click: [GameObj];
+    /**
+     * Triggered when an object is hovered.
+     *
+     * From `area()` component.
+     */
+    hover: [GameObj];
+    /**
+     * Triggered when an object stops being hovered.
+     *
+     * From `area()` component.
+     */
+    hoverEnd: [GameObj];
+    /**
+     * Triggered when an object is being hovered.
+     *
+     * From `area()` component.
+     */
+    hoverUpdate: [GameObj];
+    /**
      * Triggered when object collides with another object
      *
      * From {@link area `area()`} component
@@ -255,6 +279,7 @@ export type AppEventMap = {
     input: [];
     update: [];
     fixedUpdate: [];
+    frameEnd: [];
     draw: [];
 };
 
@@ -268,9 +293,6 @@ export type GameEventMap = {
     loadError: [string, Asset<any>];
     loading: [number];
     error: [Error];
-    input: [];
-    frameEnd: [];
-    resize: [];
     sceneLeave: [string];
     sceneEnter: [string];
 };

@@ -1,8 +1,18 @@
+/**
+ * @file Retrieve
+ * @description Using the retrieve function to detect collisions
+ * @difficulty 0
+ * @tags physics
+ * @minver 4000.0
+ * @category concepts
+ * @test
+ */
+
 kaplay({
     // broadPhaseCollisionAlgorithm: "quadtree",
-    broadPhaseCollisionAlgorithm: "grid",
+    // broadPhaseCollisionAlgorithm: "grid",
     // broadPhaseCollisionAlgorithm: "sap"
-    // broadPhaseCollisionAlgorithm: "sapv",
+    broadPhaseCollisionAlgorithm: "sapv",
 });
 
 loadBean();
@@ -23,7 +33,7 @@ onMouseMove(pos => {
     debug.log(pos);
     let beans = get("*");
     debug.log("There are", beans.length, "beans");
-    for (bean of beans) {
+    for (const bean of beans) {
         bean.color = WHITE;
     }
     beans = retrieve(new Rect(pos.sub(2, 2), 4, 4), bean => {
