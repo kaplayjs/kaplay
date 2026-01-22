@@ -11,34 +11,45 @@ enum UsedCorner {
     BOTTOMLEFT = 2,
 }
 
+interface TexMap {
+    tex: Texture;
+    el: HTMLCanvasElement;
+    ctx: CanvasRenderingContext2D;
+}
+
 export class TexPacker {
     private _last: number = 0;
-    private _textures: Texture[];
+    private _textures: Texture[] = [];
     private _big: Frame[] = [];
     private _used: Map<number, {
         rect: Rect;
         tex: Texture;
         used: number;
     }> = new Map();
-    private _el: HTMLCanvasElement;
-    private _ctx: CanvasRenderingContext2D;
-    private _curTex: Texture;
+    private _curMap: TexMap = null as any;
+    private _texToEntry: Map<Texture, TexMap> = new Map();
 
     constructor(
         private _gfx: GfxCtx,
-        w: number,
-        h: number,
+        private _w: number,
+        private _h: number,
         private _pad: number,
     ) {
-        this._el = document.createElement("canvas");
-        this._el.width = w;
-        this._el.height = h;
-        this._textures = [this._curTex = Texture.fromImage(_gfx, this._el)];
+        this._newTexture();
+    }
 
-        const context2D = this._el.getContext("2d");
-        if (!context2D) throw new Error("Failed to get 2d context");
+    private _newTexture(): TexMap {
+        const el = document.createElement("canvas");
+        el.width = this._w;
+        el.height = this._h;
+        const tex = Texture.fromImage(this._gfx, el);
+        this._textures = [tex];
 
-        this._ctx = context2D;
+        const ctx = el.getContext("2d");
+        if (!ctx) throw new Error("Failed to get 2d context");
+
+        this._texToEntry.set(tex, this._curMap = { tex, el, ctx });
+        return this._curMap;
     }
 
     // create a image with a single texture
@@ -59,14 +70,15 @@ export class TexPacker {
      * collisions with anything!
      */
     _createWhitePixel(): Frame {
+        const { el, ctx, tex } = this._curMap;
         const whitePixel = new ImageData(
             new Uint8ClampedArray([255, 255, 255, 255]),
             1,
             1,
         );
-        const { width, height } = this._el;
+        const { width, height } = el;
         drawImageSourceAt(
-            this._ctx,
+            ctx,
             whitePixel,
             width - 1,
             height - 1,
@@ -75,14 +87,14 @@ export class TexPacker {
             1,
             1,
         );
-        this._curTex.update(this._el);
+        tex.update(el);
         this._used.set(-1, {
             rect: new Rect(new Vec2(width - 1, height - 1), 1, 1),
-            tex: this._curTex,
+            tex: tex,
             used: 0,
         });
         return {
-            tex: this._curTex,
+            tex,
             q: new Quad(
                 (width - 1) / width,
                 (height - 1) / height,
@@ -101,7 +113,9 @@ export class TexPacker {
         const pad = this._pad * 2;
         const paddedWidth = imgWidth + pad;
         const paddedHeight = imgHeight + pad;
-        const maxX = this._el.width, maxY = this._el.height;
+        let { el: curEl, ctx: curCtx, tex: curTex } = this._curMap;
+
+        const maxX = curEl.width, maxY = curEl.height;
         const rectToAdd = new Rect(new Vec2(), paddedWidth, paddedHeight);
         const p = rectToAdd.pos;
 
@@ -109,7 +123,6 @@ export class TexPacker {
             // No chance of ever fitting.
             return this.addSingle(img);
         }
-        let curTex = this._curTex;
 
         // find position
         let x = 0, y = 0, found = false;
@@ -154,23 +167,16 @@ export class TexPacker {
 
         // no room --> go to next texture and put at (0, 0)
         if (!found) {
-            this._ctx.clearRect(
-                x =
-                    y =
-                    p.x =
-                    p.y =
-                        0,
-                0,
-                maxX,
-                maxY,
-            );
-            this._textures.push(
-                curTex = this._curTex = Texture.fromImage(this._gfx, this._el),
-            );
+            x =
+                y =
+                p.x =
+                p.y =
+                    0;
+            ({ tex: curTex, ctx: curCtx, el: curEl } = this._newTexture());
         }
 
         drawImageSourceAt(
-            this._ctx,
+            curCtx,
             img,
             x,
             y,
@@ -180,7 +186,7 @@ export class TexPacker {
             imgHeight,
         );
 
-        curTex.update(this._el);
+        curTex.update(curEl);
 
         this._used.set(this._last, {
             rect: rectToAdd,
@@ -201,9 +207,9 @@ export class TexPacker {
         this._big = [];
     }
     remove(packerId: number) {
-        const tex = this._used.get(packerId);
+        const entry = this._used.get(packerId);
 
-        if (!tex) {
+        if (!entry) {
             const big = this._big.findIndex(f => f.id === packerId);
             if (big < 0) {
                 throw new Error("Texture with packer id not found");
@@ -211,13 +217,11 @@ export class TexPacker {
             this._big.splice(big, 1)[0]!.tex.free();
             return;
         }
-        if (tex.tex !== this._curTex) {
-            throw new Error("Cannot remove from inactive texture");
-        }
-        const { pos: { x, y }, width, height } = tex.rect;
-        this._ctx.clearRect(x, y, width, height);
+        const { rect: { pos: { x, y }, width, height }, tex } = entry;
+        const { ctx, el } = this._texToEntry.get(tex)!;
+        ctx.clearRect(x, y, width, height);
 
-        tex.tex.update(this._el);
+        tex.update(el);
         this._used.delete(packerId);
     }
 }
