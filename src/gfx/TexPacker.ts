@@ -43,7 +43,7 @@ export class TexPacker {
         el.width = this._w;
         el.height = this._h;
         const tex = Texture.fromImage(this._gfx, el);
-        this._textures = [tex];
+        this._textures.push(tex);
 
         const ctx = el.getContext("2d");
         if (!ctx) throw new Error("Failed to get 2d context");
