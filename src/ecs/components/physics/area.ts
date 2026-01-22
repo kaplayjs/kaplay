@@ -808,14 +808,14 @@ export function area(
         },
 
         worldBbox(this: GameObj<AreaComp>): Rect {
-            const renderAreaVersion = (this as any).renderAreaVersion;
+            const renderAreaVersion = getRenderAreaVersion(this);
             if (
-                !_worldBBox || _worldAreaVersion != _worldBBoxVersion
+                !_worldBBox || _worldAreaVersion !== _worldBBoxVersion
                 || !_worldShape
-                || _cachedTransformVersion != (this as any)._transformVersion // Transform changed
+                || _cachedTransformVersion !== (this as any)._transformVersion // Transform changed
                 || (renderAreaVersion != undefined // Render area (shape) changed
-                    && _cachedRenderAreaVersion != renderAreaVersion) // Render area (shape) changed
-                || _cachedLocalAreaVersion != _localAreaVersion // Area settings changed
+                    && _cachedRenderAreaVersion !== renderAreaVersion) // Render area (shape) changed
+                || _cachedLocalAreaVersion !== _localAreaVersion // Area settings changed
             ) {
                 _worldBBox = this.worldArea().bbox(_worldBBox);
                 _worldBBoxVersion = _worldAreaVersion;
