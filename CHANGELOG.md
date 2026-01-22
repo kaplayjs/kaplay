@@ -18,12 +18,46 @@ best friend, lajbel, can put the correct version name here
 
 ## [unreleased]
 
-## [4000.0.0-alpha.26] - 2026-01-12
-
 ### Added
 
 - Added the `charsPerTile` option to the `level()` component, so that you can
   make clearer maps without having to resort to Unicode - @dragoncoder047
+- Added `tileMode` option to 9-slice sprites with four tiling strategies:
+  `'none'` (stretch all), `'edges'` (tile edges only), `'center'` (tile center
+  only), and `'all'` (tile both edges and center) (#996) - @JustKira
+- Added a `calculate()` method to the internal FPS counters, so advanced users
+  can access them to create their own FPS monitor (#1010) - @dragoncoder047
+
+### Changed
+
+- Updated the texture packer to use a new packing algorithm which may get more
+  sprites onto the same texture, improving graphics batching performance
+  (#1011) - @dragoncoder047
+
+### Fixed
+
+- Fixed tiled mode drawing of sprites ignoring opacity when it was 0 (#1020) -
+  @dragoncoder047
+- Now, all global events handlers are avaible in scopes, `app.onXXXX` and
+  `scene.onXXXX()` (#977) - @lajbel
+- Fixed input events attached to paused ancestors not being paused (#1009) -
+  @amyspark-ng, @dragoncoder047
+- Fixed type `UniformValue` union not including `Texture`, a valid option
+  (#1018) - @dragoncoder047
+- Text component no longer hangs if the requested width is too narrow for a
+  single character - @dragoncoder047
+- Fixed input events attached to paused ancestors not being paused (#1009) -
+  @amyspark-ng, @dragoncoder047
+- Fixed type `UniformValue` union not including `Texture`, a valid option
+  (#1018) - @dragoncoder047
+- Fixed event crash when using `onLoad` or other events that doesn't return an
+  EventController, and then using `go()` (#1024) - @lajbel, credits to
+  @dragoncoder047
+
+## [4000.0.0-alpha.26] - 2026-01-12
+
+### Added
+
 - Added `AreaCompOpt.isSensor`. Areas without body or is sensor will no longer
   be eligible for collisions - @mflerackers
 - Added `floodFill()` for puzzle games - @mflerackers
@@ -36,6 +70,8 @@ best friend, lajbel, can put the correct version name here
 
 ### Changed
 
+- **(!)** Added `AreaCompOpt.isSensor`. Areas without body or is sensor will no
+  longer be eligible for collisions - @mflerackers
 - Both worldPos and screenPos are properties now - @mflerackers
 
 ### Fixed
@@ -58,6 +94,11 @@ best friend, lajbel, can put the correct version name here
   @mflerackers
 - Sticky platforms work again - @mflerackers
 
+## Removed
+
+- **(!)** `onClick(() => {})` was removed, use `onMousePress()` instead.
+  `onClick("tag", () => {});` stays the same,
+
 ## [4000.0.0-alpha.25] - 2025-12-23
 
 ### Added
@@ -69,6 +110,8 @@ best friend, lajbel, can put the correct version name here
 
 ## Changed
 
+- **(!)** You can no longer change the position of an object by doing obj.pos.x
+  += 1. You need to assign a new Vec2 or use moveBy instead - @mflerackers
 - Transforms are now only recalculated when needed. Thus static objects no
   longer increase computation in the transform phase - @mflerackers
 - Areas are now only recalculated when the area settings or (optional)
@@ -79,9 +122,9 @@ best friend, lajbel, can put the correct version name here
   changed - @mflerackers
 - Broad stage collision detection spatial structures are now only updated when
   an object's world bounding box has changed - @mflerackers
-- You can no longer change the position of an object by doing obj.pos.x += 1.
-  You need to assign a new Vec2 or use moveBy instead - @mflerackers
 - The grid broadphase has been rewritten for performance - @mflerackers
+- Global `retrieve()` method to get the objects with area within a certain
+  rectangle - @mflerackers
 
 ## [4000.0.0-alpha.24] - 2025-12-12
 

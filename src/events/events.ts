@@ -1,4 +1,5 @@
 import { EVENT_CANCEL_SYMBOL } from "../constants/general";
+import { isPaused } from "../ecs/entity/utils";
 import type { GameObj } from "../types";
 
 /**
@@ -86,7 +87,7 @@ export class KEvent<Args extends any[] = any[]> {
 
     add(action: (...args: Args) => unknown): KEventController {
         function handler(...args: Args) {
-            if (ev.paused || ev.controller?.paused) return;
+            if (ev.paused || ev.controller && isPaused(ev.controller)) return;
             return action(...args);
         }
 

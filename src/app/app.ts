@@ -2,23 +2,31 @@
 
 import type {
     Cursor,
+    GameObj,
     KAPLAYOpt,
     Key,
     KGamepad,
     KGamepadButton,
     KGamepadStick,
     MouseButton,
+    Tag,
 } from "../types";
 
 import { GP_MAP } from "../constants/general";
-import type { AppEventMap } from "../events/eventMap";
+import type {
+    AppEventMap,
+    GameObjEventNames,
+    GameObjEvents,
+} from "../events/eventMap";
 import { type KEventController, KEventHandler } from "../events/events";
 import { canvasToViewport } from "../gfx/viewport";
 import { map, vec2 } from "../math/math";
 import { Vec2 } from "../math/Vec2";
+import { _k } from "../shared";
 import { deprecateMsg } from "../utils/log";
 import { overload2 } from "../utils/overload";
 import { isEqOrIncludes, setHasOrIncludes } from "../utils/sets";
+import type { TupleWithoutFirst } from "../utils/types";
 import {
     getButton,
     getButtons,
@@ -106,23 +114,35 @@ class GamepadState {
 }
 
 class FPSCounter {
-    win = 10;
-    history = new Array(this.win).fill(0);
+    /** Window size */
+    maxSamples = 10;
+    history = new Float64Array(this.maxSamples);
     accumulator = 0;
     i = 0;
     fps = 0;
-    count = 0;
+    curNSamples = 0;
     timer = 0;
+    autoRecalculateInterval = 1;
     tick(dt: number) {
         this.timer += dt;
         this.accumulator += dt - this.history[this.i];
         this.history[this.i] = dt;
-        this.i = (this.i + 1) % this.win;
-        this.count = Math.min(this.count + 1, this.win);
-        if (this.timer >= 1) {
-            this.fps = this.count / this.accumulator;
+        this.i = (this.i + 1) % this.maxSamples;
+        this.curNSamples = Math.min(this.curNSamples + 1, this.maxSamples);
+        if (this.timer >= this.autoRecalculateInterval) {
+            this.calculate();
             this.timer = 0;
         }
+    }
+    calculate() {
+        return this.fps = this.curNSamples / this.accumulator;
+    }
+    ago(ago: number) {
+        return this.history.at(this.i - ago - 1);
+    }
+    resize(samples: number) {
+        this.history = new Float64Array(this.maxSamples = samples);
+        this.i = this.curNSamples = 0;
     }
 }
 
@@ -207,7 +227,6 @@ export const initAppState = (opt: {
         lastWidth: opt.canvas.offsetWidth,
         lastHeight: opt.canvas.offsetHeight,
         events: new KEventHandler<AppEventMap>(),
-        sceneEvents: [] as KEventController[],
     };
 };
 
@@ -770,18 +789,6 @@ export const initApp = (
             (b) => isEqOrIncludes(btn, b) && action(b),
         );
     });
-
-    const onUpdate = (action: () => void): KEventController => {
-        return state.events.on("update", action);
-    };
-
-    const onFixedUpdate = (action: () => void): KEventController => {
-        return state.events.on("fixedUpdate", action);
-    };
-
-    const onDraw = (action: () => void): KEventController => {
-        return state.events.on("draw", action);
-    };
 
     const getLastInputDeviceType = () => {
         return state.lastInputDevice;
@@ -1376,9 +1383,6 @@ export const initApp = (
         onButtonPress,
         onButtonDown,
         onButtonRelease,
-        onUpdate,
-        onFixedUpdate,
-        onDraw,
         getLastInputDeviceType,
         events: state.events,
     };
