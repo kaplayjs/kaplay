@@ -200,28 +200,23 @@ function updateFontAtlas(font: FontData | string, ch: string) {
             || atlas.font.size;
 
         // TODO: Test if this works with the verification of width and color
+        let p = 0;
         if (
             atlas.outline && atlas.outline.width
             && atlas.outline.color
         ) {
+            const { width, color } = atlas.outline;
+            p = width;
             c2d.lineJoin = "round";
-            c2d.lineWidth = atlas.outline.width * 2;
-            c2d.strokeStyle = atlas.outline.color.toHex();
-            c2d.strokeText(
-                ch,
-                atlas.outline.width,
-                atlas.outline.width + maxActualBoundingBoxAscent,
-            );
+            c2d.lineWidth = width * 2;
+            c2d.strokeStyle = color.toHex();
+            c2d.strokeText(ch, width, width);
 
-            w += atlas.outline.width * 2;
-            h += atlas.outline.width * 3;
+            w += width * 2;
+            h += width * 3;
         }
 
-        c2d.fillText(
-            ch,
-            atlas.outline?.width ?? 0,
-            (atlas.outline?.width ?? 0) + maxActualBoundingBoxAscent,
-        );
+        c2d.fillText(ch, p, p + maxActualBoundingBoxAscent);
 
         const img = c2d.getImageData(0, 0, w, h);
 
