@@ -26,7 +26,9 @@ loadSprite("sturdybox", "/sprites/sturdybox.png");
 loadSprite("target", "/sprites/box_target.png");
 loadSprite("sok", "/sprites/sok.png");
 loadSprite("steel", "/sprites/steel.png");
-loadSound("chirp", "/sounds/bean_voice.wav");
+loadSound("chirp", "/sounds/bean_move.wav");
+loadSound("movebox", "/sounds/movebox.wav");
+loadSound("explode", "/sounds/explode.mp3");
 
 loadShader(
     "checker",
@@ -162,6 +164,7 @@ const move = (dir) => {
             || boxOccupants[0].is("sensor") && !hasTag(boxOccupants, "box")
         ) {
             // Push the box in the same direction and do a little tween
+            play("movebox", { detune: -rand(-100, 0) });
             moveObj(box, dir);
             tween(
                 vec2(1.2),
@@ -209,7 +212,7 @@ const move = (dir) => {
     );
 
     // Move the player and tween it for little juice
-    play("chirp", { detune: -500 });
+    play("chirp", { detune: rand(-500, -400) });
     moveObj(player, dir);
     tween(
         vec2(1.2),
@@ -316,8 +319,8 @@ scene("game", (lvlIdx) => {
         );
     });
 
-    // Waits until all the tweens are over to allow movement again
-    wait(0.07 * level.children.length, () => {
+    // Waits until most of the tweens are over to allow movement again
+    wait(0.07 * level.children.length / 4, () => {
         canMove = true;
     });
 
@@ -350,6 +353,7 @@ scene("game", (lvlIdx) => {
         const move = undoStack.pop();
 
         // We move the player to the opposite direction we moved before
+        play("chirp", { detune: rand(-500, -400) });
         moveObj(player, move.dir.scale(-1));
         tween(
             vec2(0.8),
@@ -362,6 +366,8 @@ scene("game", (lvlIdx) => {
         // If the move stored a box, we have to move it in the opposite direction too
         if (move.box) {
             moveObj(move.box, move.dir.scale(-1));
+            play("movebox", { detune: -rand(-100, 0) });
+
             tween(
                 vec2(0.8),
                 vec2(1),
@@ -378,6 +384,8 @@ scene("game", (lvlIdx) => {
 
 scene("win", () => {
     // Checkered background
+    play("explode");
+
     add([
         rect(width(), height()),
         shader("checker", { tileSize }),
