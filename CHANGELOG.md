@@ -50,7 +50,7 @@ Make sure to format each entry like this:
 - Added a `calculate()` method to the internal FPS counters, so advanced users
   can access them to create their own FPS monitor (#1010) - @dragoncoder047
 - Added Intl.Segmenter-based grapheme splitting for proper Indic language
-  support, via the `locale` option in `DrawTextOpt (#1013) - @shajidhasan
+  support, via the `locale` option in `DrawTextOpt` (#1013) - @shajidhasan
 
 ### Changed
 
