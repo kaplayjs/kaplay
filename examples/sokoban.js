@@ -7,6 +7,12 @@
  * @category games
  */
 
+/*
+Sokoban is a puzzle game where
+We have to place all the boxes in a sensor to continue the level
+We'll code it according to this logic
+*/
+
 kaplay({
     font: "happy",
     background: [45, 33, 51],
@@ -42,12 +48,6 @@ loadShader(
     }
 `,
 );
-
-/*
-Sokoban is a puzzle game where
-We have to place all the boxes in a sensor to continue the level
-We'll code it according to this logic
-*/
 
 const tileSize = 64;
 
@@ -125,17 +125,17 @@ const moveObj = (obj, dir) => {
     if (dir.y == -1) obj.moveUp();
 };
 
-// The "update" function in our game that runs everytime we make a move
+// The "update" function in our game that runs every time we make a move
 const move = (dir) => {
     // The new position the player will be in
     const playerNewPos = player.tilePos.add(dir);
 
-    // The objects that exists at the position the player is going to move to
+    // The objects that exist at the position the player is going to move to
     const occupants = level.getAt(playerNewPos).filter((obj) =>
         !obj.is("sensor")
     );
 
-    // If occupants is a wall we simply return and don't do anything else
+    // If occupants includes a wall we simply return and don't do anything else
     if (hasTag(occupants, "wall")) {
         tween(
             vec2(1.2),
@@ -157,14 +157,13 @@ const move = (dir) => {
         // (The same direction you moved to)
         const boxOccupants = level.getAt(occupants[0].tilePos.add(dir));
 
-        // If there's no occupants or it's a sensor and there isn't a box at this place
-        // You should be able to actually push the box
+        // If there're no occupants, or if there's a sensor and no box at this place
         if (
             !boxOccupants[0]
             || boxOccupants[0].is("sensor") && !hasTag(boxOccupants, "box")
         ) {
             // Push the box in the same direction and do a little tween
-            play("movebox", { detune: -rand(-100, 0) });
+            play("movebox", { detune: rand(0, 100) });
             moveObj(box, dir);
             tween(
                 vec2(1.2),
@@ -174,7 +173,8 @@ const move = (dir) => {
                 easings.easeOutQuad,
             );
         }
-        // If you shouldn't be able to push the box, tween them to signal the push
+
+        // If you shouldn't be able to push the box, but can keep the visual feedback
         else {
             tween(
                 vec2(1.2),
@@ -194,10 +194,8 @@ const move = (dir) => {
             return;
         }
 
-        // If the box is in a sensor, make it sturdy to show that you can't move it anymore
-        // (Unless you undo)
-        if (isBoxInSensor(box)) box.sprite = "sturdybox";
-        else box.sprite = "box";
+        // If the box is in a sensor, change its sprite to indicate it's in place
+        box.sprite = isBoxInSensor(box) ? "sturdybox" : "box";
     }
 
     // Update and animate the counter
@@ -366,7 +364,7 @@ scene("game", (lvlIdx) => {
         // If the move stored a box, we have to move it in the opposite direction too
         if (move.box) {
             moveObj(move.box, move.dir.scale(-1));
-            play("movebox", { detune: -rand(-100, 0) });
+            play("movebox", { detune: rand(0, 100) });
 
             tween(
                 vec2(0.8),
@@ -375,17 +373,16 @@ scene("game", (lvlIdx) => {
                 (p) => move.box.scale = p,
                 easings.easeOutQuad,
             );
-            // We re-check if it was sturdy, if it's not sturdy anymore we change the sprite back
-            if (isBoxInSensor(move.box)) move.box.sprite = "sturdybox";
-            else move.box.sprite = "box";
-        }
+
+            // We re-check if it was in a sensor and set the sprite accordingly
+            move.box.sprite = isBoxInSensor(move.box) ? "sturdybox" : "box";        }
     });
 });
 
 scene("win", () => {
-    // Checkered background
-    play("explode");
+    play("explode", { volume: 0.25 });
 
+    // Checkered background
     add([
         rect(width(), height()),
         shader("checker", { tileSize }),
@@ -483,4 +480,6 @@ scene("win", () => {
     });
 });
 
-go("game", currentIdx);
+onLoad(() => {
+    go("win", currentIdx);
+})
