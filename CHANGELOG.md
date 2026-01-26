@@ -51,6 +51,8 @@ best friend, lajbel, can put the correct version name here
 - Fixed event crash when using `onLoad` or other events that doesn't return an
   EventController, and then using `go()` (#1024) - @lajbel, credits to
   @dragoncoder047
+- Fixed the unexpected behavior of not preserving the aspect ratio in
+  `drawSprite` (#1026) - @benhuangbmj
 
 ## [4000.0.0-alpha.26] - 2026-01-12
 
@@ -210,7 +212,6 @@ best friend, lajbel, can put the correct version name here
   ```
 
   All the available handlers in the scopes are `GameEventHandlers` ones:
-
   - `onKeyDown()`
   - `onKeyPress()`
   - `onKeyPressRepeat()`
@@ -238,7 +239,6 @@ best friend, lajbel, can put the correct version name here
 
   And this game object handlers may differ when using it with `obj` and
   `scene`/`app`:
-
   - `onFixedUpdate()`
   - `onUpdate()`
   - `onDraw()`
@@ -336,7 +336,6 @@ best friend, lajbel, can put the correct version name here
   ```
 
   The methods that support this are:
-
   - `scene`
   - `go`
   - `onSceneLeave`
