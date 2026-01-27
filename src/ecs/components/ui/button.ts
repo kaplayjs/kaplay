@@ -7,7 +7,7 @@ import { Rect, vec2 } from "../../../math/math";
 import { _k } from "../../../shared";
 import type { Comp, GameObj } from "../../../types";
 import type { AreaComp } from "../physics/area";
-import { _theme } from "./theme";
+import { _theme, THEME_FOCUS, THEME_HOVER, THEME_PRESSED } from "./theme";
 import { ui, type UIComp } from "./ui";
 
 export type ButtonCompOpt = {
@@ -42,7 +42,15 @@ export function button(label: string, opt?: ButtonCompOpt): ButtonComp {
         : _theme.fontSize;
     let _width = opt?.width ?? contentWidth + _padding.x * 2;
     let _height = opt?.height ?? contentHeight + _padding.y * 2;
+    onResized();
     let _value = opt?.value ?? false;
+
+    function onResized() {
+        if (formattedText) {
+            formattedText.opt.pos = vec2(_width - contentWidth - _padding.x * 2, _height - contentHeight - _padding.y * 2).scale(_theme.button.alignContent || vec2()).add(_padding);
+        }
+    }
+
     return {
         id: "button",
         get width() {
@@ -51,6 +59,7 @@ export function button(label: string, opt?: ButtonCompOpt): ButtonComp {
         set width(value) {
             _width = value;
             if (_shape) _shape.width = value;
+            onResized();
         },
         get height() {
             return _height;
@@ -58,6 +67,7 @@ export function button(label: string, opt?: ButtonCompOpt): ButtonComp {
         set height(value) {
             _height = value;
             if (_shape) _shape.height = value;
+            onResized();
         },
         get value() {
             return _value || (this as unknown as UIComp).isPressed;
@@ -75,32 +85,20 @@ export function button(label: string, opt?: ButtonCompOpt): ButtonComp {
                 return;
             }
             // Draw button bg
+            let spriteDefIndex = 0;
+            if (this.value) spriteDefIndex |= THEME_PRESSED;
+            if (this.isHovering()) spriteDefIndex |= THEME_HOVER;
+            if (this.isFocus) spriteDefIndex |= THEME_FOCUS;
+            const spriteDef = _theme.button.sprites[spriteDefIndex];
             drawSprite({
-                sprite: this.value
-                    ? (this.isHovering() && _theme.button.hoverPressed
-                        ? _theme.button.hoverPressed.sprite
-                        : _theme.button.pressed.sprite)
-                    : (this.isHovering() && _theme.button.hover
-                        ? _theme.button.hover.sprite
-                        : _theme.button.normal.sprite),
+                sprite: spriteDef.sprite,
+                frame: spriteDef.frame ?? 0,
                 width: this.width,
                 height: this.height,
             });
             // If label, draw label
             if (formattedText) {
                 drawFormattedText(formattedText);
-            }
-            if (this.isFocus) {
-                drawRect({
-                    pos: vec2(0, -1),
-                    width: this.width + 1,
-                    height: this.height + 1,
-                    fill: false,
-                    outline: {
-                        width: 1,
-                        color: _theme.hoverColor,
-                    },
-                });
             }
         },
         onValueChanged(this: GameObj, cb: (value: boolean) => void) {
@@ -161,35 +159,24 @@ export function checkbox(label: string, opt?: ButtonComp): ButtonComp {
             }
             this.onInvoke(() => _value = !_value);
         },
-        draw(this: GameObj<ButtonComp | UIComp>) {
+        draw(this: GameObj<ButtonComp | AreaComp | UIComp>) {
             if (this.has("ui-visual")) {
                 return;
             }
             // Draw button bg
+            let spriteDefIndex = 0;
+            if (this.value) spriteDefIndex |= THEME_PRESSED;
+            if (this.isHovering()) spriteDefIndex |= THEME_HOVER;
+            if (this.isFocus) spriteDefIndex |= THEME_FOCUS;
+            const spriteDef = _theme.checkbox.sprites[spriteDefIndex];
             drawSprite({
                 pos: vec2(2, this.height / 2 - 8),
-                sprite: this.value
-                    ? _theme.checkbox.pressed.sprite
-                    : _theme.checkbox.normal.sprite,
-                frame: this.value
-                    ? _theme.checkbox.pressed.frame
-                    : _theme.checkbox.normal.frame,
+                sprite: spriteDef.sprite,
+                frame: spriteDef.frame
             });
             // If label, draw label
             if (formattedText) {
                 drawFormattedText(formattedText);
-            }
-            if (this.isFocus) {
-                drawRect({
-                    pos: vec2(0, -1),
-                    width: this.width + 1,
-                    height: this.height + 1,
-                    fill: false,
-                    outline: {
-                        width: 1,
-                        color: _theme.hoverColor,
-                    },
-                });
             }
         },
         onValueChanged(this: GameObj, cb: (value: boolean) => void) {
@@ -267,19 +254,20 @@ export function radio(
             }
             this.onInvoke(() => this.value = true);
         },
-        draw(this: GameObj<ButtonComp | UIComp>) {
+        draw(this: GameObj<ButtonComp | AreaComp | UIComp>) {
             if (this.has("ui-visual")) {
                 return;
             }
             // Draw button bg
+            let spriteDefIndex = 0;
+            if (this.value) spriteDefIndex |= THEME_PRESSED;
+            if (this.isHovering()) spriteDefIndex |= THEME_HOVER;
+            if (this.isFocus) spriteDefIndex |= THEME_FOCUS;
+            const spriteDef = _theme.radio.sprites[spriteDefIndex];
             drawSprite({
                 pos: vec2(2, this.height / 2 - 8),
-                sprite: this.value
-                    ? _theme.radio.pressed.sprite
-                    : _theme.radio.normal.sprite,
-                frame: this.value
-                    ? _theme.radio.pressed.frame
-                    : _theme.radio.normal.frame,
+                sprite: spriteDef.sprite,
+                frame: spriteDef.frame,
             });
             // If label, draw label
             if (formattedText) {

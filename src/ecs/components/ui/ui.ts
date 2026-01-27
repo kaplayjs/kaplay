@@ -1,5 +1,4 @@
 import type { KEventController } from "../../../events/events";
-import { onClick } from "../../../events/globalEvents";
 import { _k } from "../../../shared";
 import type { Comp, GameObj } from "../../../types";
 import { area, type AreaComp } from "../physics/area";

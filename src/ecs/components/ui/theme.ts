@@ -14,6 +14,15 @@ export type ThemeSprite = {
     frame?: number;
 };
 
+export const THEME_NORMAL = 0;
+export const THEME_PRESSED = 1;
+export const THEME_HOVER = 2;
+export const THEME_HOVER_PRESSED = 3;
+export const THEME_FOCUS = 4;
+export const THEME_FOCUS_PRESSED = 5;
+export const THEME_HOVER_FOCUS = 6;
+export const THEME_FOCUS_HOVER_PRESSED = 7;
+
 export type ThemeData = {
     files: Record<string, [string, string] | [string, LoadSpriteOpt]>;
     hoverColor: Color;
@@ -22,26 +31,18 @@ export type ThemeData = {
     fontSize: number;
     button: {
         padding?: Vec2;
-        normal: ThemeSprite;
-        pressed: ThemeSprite;
-        hover?: ThemeSprite;
-        hoverPressed?: ThemeSprite;
+        alignContent?: Vec2;
+        sprites: ThemeSprite[]; // normal, pressed, etc
     };
     checkbox: {
         padding?: Vec2;
         spacing?: Vec2;
-        normal: ThemeSprite;
-        pressed: ThemeSprite;
-        hover?: ThemeSprite;
-        hoverPressed?: ThemeSprite;
+        sprites: ThemeSprite[]; // normal, pressed, etc
     };
     radio: {
         padding?: Vec2;
         spacing?: Vec2;
-        normal: ThemeSprite;
-        pressed: ThemeSprite;
-        hover?: ThemeSprite;
-        hoverPressed?: ThemeSprite;
+        sprites: ThemeSprite[]; // normal, pressed, etc
     };
     slider: {
         padding?: Vec2;
@@ -75,36 +76,41 @@ export const DefaultTheme: ThemeData = {
     fontSize: 20,
     button: {
         padding: vec2(2),
-        normal: {
-            sprite: "button",
-        },
-        pressed: {
-            sprite: "buttonpressed",
-        },
+        sprites: [
+            { sprite: "button" },
+            { sprite: "buttonpressed" },
+            { sprite: "button" },
+            { sprite: "buttonpressed" },
+            { sprite: "button" },
+            { sprite: "buttonpressed" },
+            { sprite: "button" },
+            { sprite: "buttonpressed" },]
     },
     checkbox: {
         padding: vec2(2),
         spacing: vec2(2),
-        normal: {
-            sprite: "ui",
-            frame: 0,
-        },
-        pressed: {
-            sprite: "ui",
-            frame: 1,
-        },
+        sprites: [
+            { sprite: "ui", frame: 0 },
+            { sprite: "ui", frame: 1 },
+            { sprite: "ui", frame: 0 },
+            { sprite: "ui", frame: 1 },
+            { sprite: "ui", frame: 0 },
+            { sprite: "ui", frame: 1 },
+            { sprite: "ui", frame: 0 },
+            { sprite: "ui", frame: 1 },]
     },
     radio: {
         padding: vec2(2),
         spacing: vec2(2),
-        normal: {
-            sprite: "ui",
-            frame: 2,
-        },
-        pressed: {
-            sprite: "ui",
-            frame: 3,
-        },
+        sprites: [
+            { sprite: "ui", frame: 2 },
+            { sprite: "ui", frame: 3 },
+            { sprite: "ui", frame: 2 },
+            { sprite: "ui", frame: 3 },
+            { sprite: "ui", frame: 2 },
+            { sprite: "ui", frame: 3 },
+            { sprite: "ui", frame: 2 },
+            { sprite: "ui", frame: 3 },]
     },
     slider: {
         padding: vec2(2),
