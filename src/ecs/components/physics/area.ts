@@ -18,7 +18,10 @@ import type {
     Shape,
     Tag,
 } from "../../../types";
-import type { InternalGameObjRaw } from "../../entity/GameObjRaw";
+import {
+    type InternalGameObjRaw,
+    objectTransformNeedsUpdate,
+} from "../../entity/GameObjRaw";
 import { isFixed } from "../../entity/utils";
 import type { Collision } from "../../systems/Collision";
 import { system, SystemPhase } from "../../systems/systems";
