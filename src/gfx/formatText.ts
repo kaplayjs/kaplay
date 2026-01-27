@@ -302,7 +302,7 @@ export function formatText(opt: DrawTextOpt): FormattedText {
     }
 
     const { charStyleMap, text } = compileStyledText(opt.text + "");
-    const chars = runes(text);
+    const chars = runes(text, opt.locale);
 
     let defGfxFont = (font instanceof FontData || typeof font === "string")
         ? getFontAtlasForFont(font).font

@@ -19,7 +19,10 @@ import type {
     Shape,
     Tag,
 } from "../../../types";
-import type { InternalGameObjRaw } from "../../entity/GameObjRaw";
+import {
+    type InternalGameObjRaw,
+    objectTransformNeedsUpdate,
+} from "../../entity/GameObjRaw";
 import { isFixed } from "../../entity/utils";
 import type { Collision } from "../../systems/Collision";
 import { system, SystemPhase } from "../../systems/systems";
@@ -106,7 +109,7 @@ function clickHandler(button: MouseButton) {
 }
 
 let clickHandlerRunning = false;
-function startClickHandler() {
+export function startClickHandler() {
     if (clickHandlerRunning) return;
     clickHandlerRunning = true;
 
@@ -171,7 +174,7 @@ function startHoverHandler() {
 }*/
 
 let systemInstalled = false;
-function startHoverSystem() {
+export function startHoverSystem() {
     if (systemInstalled) return;
     systemInstalled = true;
 

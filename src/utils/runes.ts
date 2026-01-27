@@ -45,10 +45,58 @@ enum EnumCodeUnits {
     unit_4 = 4,
 }
 
-export function runes(string: string): string[] {
+// Cache for Intl.Segmenter instances by locale
+const segmenterCache = new Map<string, Intl.Segmenter>();
+
+/**
+ * Get or create a cached Intl.Segmenter instance for the given locale.
+ */
+function getSegmenter(locale?: string): Intl.Segmenter {
+    const key = locale || "default";
+    let segmenter = segmenterCache.get(key);
+
+    if (!segmenter) {
+        segmenter = new Intl.Segmenter(locale, { granularity: "grapheme" });
+        segmenterCache.set(key, segmenter);
+    }
+
+    return segmenter;
+}
+
+/**
+ * Split a string into an array of grapheme clusters (visual characters).
+ * Uses Intl.Segmenter for proper Unicode segmentation when available,
+ * with fallback to legacy implementation for older browsers.
+ *
+ * @param string - The string to split into grapheme clusters
+ * @param locale - Optional locale for locale-aware segmentation (e.g., 'bn' for Bengali, 'hi' for Hindi)
+ * @returns Array of grapheme clusters
+ */
+export function runes(string: string, locale?: string): string[] {
     if (typeof string !== "string") {
         throw new TypeError("string cannot be undefined or null");
     }
+
+    // Use Intl.Segmenter if available (Chrome 87+, Safari 14.1+, Firefox 125+)
+    if (typeof Intl !== "undefined" && Intl.Segmenter) {
+        // Normalize to NFC for consistent representation of combining characters
+        const normalized = string.normalize("NFC");
+        const segmenter = getSegmenter(locale);
+        return Array.from(
+            segmenter.segment(normalized),
+            segment => segment.segment,
+        );
+    }
+
+    // Fallback to legacy implementation for older browsers
+    return runesLegacy(string);
+}
+
+/**
+ * Legacy grapheme cluster splitting implementation.
+ * Used as fallback for browsers without Intl.Segmenter support.
+ */
+function runesLegacy(string: string): string[] {
     const result: string[] = [];
     let i = 0;
     let increment = 0;
