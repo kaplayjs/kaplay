@@ -173,7 +173,6 @@ const move = (dir) => {
                 easings.easeOutQuad,
             );
         }
-
         // If you shouldn't be able to push the box, but can keep the visual feedback
         else {
             tween(
@@ -375,7 +374,8 @@ scene("game", (lvlIdx) => {
             );
 
             // We re-check if it was in a sensor and set the sprite accordingly
-            move.box.sprite = isBoxInSensor(move.box) ? "sturdybox" : "box";        }
+            move.box.sprite = isBoxInSensor(move.box) ? "sturdybox" : "box";
+        }
     });
 });
 
@@ -420,16 +420,19 @@ scene("win", () => {
     add([
         anchor("center"),
         pos(center().sub(0, 160)),
-        text("You successfully re-stocked\n the [o]soks[/o]!", {
-            size: 36,
-            lineSpacing: 8,
-            align: "center",
-            styles: {
-                o: {
-                    color: Color.fromHex("#ea6262"),
+        text(
+            `You successfully re-stocked\n the [o]soks[/o] in [o]${moves}[/o] moves!`,
+            {
+                size: 36,
+                lineSpacing: 8,
+                align: "center",
+                styles: {
+                    o: {
+                        color: Color.fromHex("#ea6262"),
+                    },
                 },
             },
-        }),
+        ),
     ]);
 
     const sok = add([
@@ -481,5 +484,5 @@ scene("win", () => {
 });
 
 onLoad(() => {
-    go("win", currentIdx);
-})
+    go("game", currentIdx);
+});
