@@ -201,7 +201,7 @@ export const createGame = (): Game => {
         retrieve: (
             rect: Rect,
             retrieveCb: (obj: GameObj<AreaComp>) => void,
-        ) => { },
+        ) => {},
 
         // Some state
         crashed: false,

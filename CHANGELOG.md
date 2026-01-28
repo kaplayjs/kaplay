@@ -20,7 +20,9 @@ best friend, lajbel, can put the correct version name here
 
 ### Added
 
-- Added `debug.warn()` to log warning messages - @lajbel 
+- Added `debug.warn()` to log warning messages (#1028) - @lajbel
+- Added `debug.logMessage()` to log a messages array with a wrapping style
+  (warn, error, info) (#1028) - @lajbel
 - Added `tileMode` option to 9-slice sprites with four tiling strategies:
   `'none'` (stretch all), `'edges'` (tile edges only), `'center'` (tile center
   only), and `'all'` (tile both edges and center) (#996) - @JustKira

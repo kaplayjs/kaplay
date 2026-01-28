@@ -199,7 +199,7 @@ Batches: ${_k.gfx.renderer.numDraws}`,
             _k.game.logs = _k.game.logs
                 .filter((log) =>
                     _k.app.time() - log.time
-                    < (_k.globalOpt.logTime || LOG_TIME)
+                        < (_k.globalOpt.logTime || LOG_TIME)
                 );
 
             const ftext = formatText({
@@ -265,15 +265,16 @@ function prettyDebug(
         outStr += [
             "{",
             (tmp = Object.getOwnPropertyNames(object)
-                .map(p =>
-                    `${/^\w+$/.test(p) ? p : JSON.stringify(p)}: ${prettyDebug(
-                        object[p],
-                        true,
-                        seen.union(new Set([object])),
+                    .map(p =>
+                        `${/^\w+$/.test(p) ? p : JSON.stringify(p)}: ${
+                            prettyDebug(
+                                object[p],
+                                true,
+                                seen.union(new Set([object])),
+                            )
+                        }`
                     )
-                    }`
-                )
-                .join(", "))
+                    .join(", "))
                 ? ` ${tmp} `
                 : "",
             "}",

@@ -10,14 +10,14 @@ import type { Recording } from "./record";
 
 /**
  * Available debugging message styles.
- * 
+ *
  * @group Debug
  */
 type DebugLogStyle = "info" | "warn" | "error";
 
 /**
  * Acceptable values for debugging message.
- * 
+ *
  * @group Debug
  */
 type DebugMessage = string | { toString(): string } | Error;
@@ -25,7 +25,7 @@ type DebugMessage = string | { toString(): string } | Error;
 /**
  * @group Debug
  */
-export type DebugLog = { msg: string, time: number, style: DebugLogStyle };
+export type DebugLog = { msg: string; time: number; style: DebugLogStyle };
 
 /**
  * An interface for debugging the game.
@@ -80,23 +80,23 @@ export interface Debug {
     /**
      * Log a message in the debugging screen, with optionally
      * style wrapping.
-     * 
+     *
      * @param message - The messages to log
-     * @param wrapStyle - Style to wrap all messages 
-     * 
+     * @param wrapStyle - Style to wrap all messages
+     *
      * @example
      * ```
      * debug.logMessage(["oh", "hi"], "warn");
      * ```
-     * 
+     *
      * @since v4000.0
      */
     logMessage(message: DebugMessage[], wrapStyle?: DebugLogStyle): void;
     /**
-     * Log a message with the info style (white) in the debugging screen. 
-     * 
+     * Log a message with the info style (white) in the debugging screen.
+     *
      * @param message - THe message to log
-     * 
+     *
      * @example
      * ```
      * debug.log("oh", "hi")
@@ -105,22 +105,22 @@ export interface Debug {
     log(...message: DebugMessage[]): void;
     /**
      * Log a message with the warn style (yellow) in the debugging screen.
-     * 
+     *
      * @param message - THe message to log
-     * 
+     *
      * @example
      * ```
      * debug.warn("oh", "humm")
      * ```
-     * 
+     *
      * @since v4000.0
      */
     warn(...message: DebugMessage[]): void;
     /**
      * Log a message with the error style (pink since kaboom) in the debugging screen.
-     * 
+     *
      * @param message - THe message to log
-     * 
+     *
      * @example
      * ```
      * debug.error("oh", "no")
@@ -173,7 +173,7 @@ export const createDebug = (
             game.logs.unshift({
                 msg: msg,
                 time: app.time(),
-                style: wrapStyle
+                style: wrapStyle,
             });
 
             if (game.logs.length > max) {
