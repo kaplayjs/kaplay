@@ -96,13 +96,15 @@ export function drawSprite(opt: DrawSpriteOpt) {
     q = q.scale(opt.quad ?? new Quad(0, 0, 1, 1));
 
     const scale = calcTexScale(spr.data.tex, q, opt.width, opt.height);
-    opt.width = opt.width ?? spr.data.tex.width * q.w * scale.x;
-    opt.height = opt.height ?? spr.data.tex.height * q.h * scale.y;
+    const width = opt.width ?? spr.data.tex.width * q.w * scale.x;
+    const height = opt.height ?? spr.data.tex.height * q.h * scale.y;
 
     drawTexture(
         Object.assign({}, opt, {
             tex: spr.data.tex,
             quad: q,
+            width,
+            height,
         }),
     );
 }
