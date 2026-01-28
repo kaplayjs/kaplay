@@ -55,6 +55,8 @@ best friend, lajbel, can put the correct version name here
   @dragoncoder047
 - Fixed the unexpected behavior of not preserving the aspect ratio in
   `drawSprite` (#1026) - @benhuangbmj
+- Fixed `onClick()` and `onCollide()` tag variants no longer working -
+  @mflerackers
 
 ## [4000.0.0-alpha.26] - 2026-01-12
 
