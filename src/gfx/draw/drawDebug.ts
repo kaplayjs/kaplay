@@ -190,17 +190,16 @@ Batches: ${_k.gfx.renderer.numDraws}`,
 
             for (const log of _k.game.logs) {
                 let str = "";
-                const style = log.msg instanceof Error ? "error" : "info";
                 str += `[time]${log.time.toFixed(2)}[/time]`;
                 str += " ";
-                str += `[${style}]${prettyDebug(log.msg)}[/${style}]`;
+                str += `[${log.style}]${prettyDebug(log.msg)}[/${log.style}]`;
                 logs.push(str);
             }
 
             _k.game.logs = _k.game.logs
                 .filter((log) =>
                     _k.app.time() - log.time
-                        < (_k.globalOpt.logTime || LOG_TIME)
+                    < (_k.globalOpt.logTime || LOG_TIME)
                 );
 
             const ftext = formatText({
@@ -215,6 +214,7 @@ Batches: ${_k.gfx.renderer.numDraws}`,
                 styles: {
                     "time": { color: rgb(127, 127, 127) },
                     "info": { color: rgb(255, 255, 255) },
+                    "warn": { color: rgb(255, 230, 8) },
                     "error": { color: rgb(255, 0, 127) },
                 },
             });
@@ -265,16 +265,15 @@ function prettyDebug(
         outStr += [
             "{",
             (tmp = Object.getOwnPropertyNames(object)
-                    .map(p =>
-                        `${/^\w+$/.test(p) ? p : JSON.stringify(p)}: ${
-                            prettyDebug(
-                                object[p],
-                                true,
-                                seen.union(new Set([object])),
-                            )
-                        }`
+                .map(p =>
+                    `${/^\w+$/.test(p) ? p : JSON.stringify(p)}: ${prettyDebug(
+                        object[p],
+                        true,
+                        seen.union(new Set([object])),
                     )
-                    .join(", "))
+                    }`
+                )
+                .join(", "))
                 ? ` ${tmp} `
                 : "",
             "}",
