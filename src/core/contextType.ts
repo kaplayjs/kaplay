@@ -67,6 +67,7 @@ import type {
 import type { HealthComp } from "../ecs/components/misc/health";
 import type { LifespanCompOpt } from "../ecs/components/misc/lifespan";
 import type { NamedComp } from "../ecs/components/misc/named";
+import type { SoundComp, SoundCompOpt } from "../ecs/components/misc/sound";
 import type { StateComp } from "../ecs/components/misc/state";
 import type { StayComp } from "../ecs/components/misc/stay";
 import type { TextInputComp } from "../ecs/components/misc/textInput";
@@ -1463,6 +1464,43 @@ export interface KAPLAYCtx {
      * @subgroup Behaviour
      */
     timer(maxLoopsPerFrame?: number): TimerComp;
+    /**
+     * Attach a sound to a game object with optional spatial audio.
+     *
+     * @param src - The sound source name (loaded via `loadSound`).
+     * @param opt - Sound component options.
+     *
+     * @example
+     * ```js
+     * // Basic usage - auto-playing looping sound
+     * const enemy = add([
+     *     sprite("enemy"),
+     *     pos(100, 100),
+     *     sound("enemy_hum", { loop: true, autoPlay: true }),
+     * ]);
+     *
+     * // Spatial audio - pans left/right, quieter when far from center
+     * const bee = add([
+     *     sprite("bee"),
+     *     pos(200, 300),
+     *     sound("buzz", { loop: true, spatial: true, autoPlay: true }),
+     * ]);
+     *
+     * // Manual control
+     * const sfx = add([
+     *     pos(mousePos()),
+     *     sound("explosion", { spatial: true }),
+     * ]);
+     * sfx.playSound();
+     * sfx.onSoundEnd(() => sfx.destroy());
+     * ```
+     *
+     * @returns The sound comp.
+     * @since v4000.0
+     * @group Components
+     * @subgroup Behaviour
+     */
+    sound(src: string, opt?: SoundCompOpt): SoundComp;
     /**
      * Make a game obj unaffected by camera or parent object transforms, and render at last.
      * Useful for UI elements.
