@@ -27,6 +27,9 @@ best friend, lajbel, can put the correct version name here
   can access them to create their own FPS monitor (#1010) - @dragoncoder047
 - Added Intl.Segmenter-based grapheme splitting for proper Indic language
   support, via the `locale` option in `DrawTextOpt (#1013) - @shajidhasan
+- Added topMostOnlyActivate kaplay option. When true, only the topmost object
+  will receive clicks. This avoids problems in a UI where elements overlap -
+  @mflerackers
 
 ### Changed
 

@@ -62,6 +62,11 @@ export function getLocalAreaVersion(obj: GameObj<any>) {
     return obj._localAreaVersion;
 }
 
+let _topMostOnlyActivate = false;
+export function _setTopMostOnlyActivate(value: boolean) {
+    _topMostOnlyActivate = value;
+}
+
 function clickHandler(button: MouseButton) {
     const screenPos = _k.app.mousePos();
     const worldPos = toWorld(screenPos);
@@ -85,15 +90,16 @@ function clickHandler(button: MouseButton) {
         ) objects.push(obj as GameObj<AreaComp | ZComp>);
     });
 
-    const topMostOnlyActivate = false;
     if (objects.length) {
-        if (topMostOnlyActivate) {
+        if (_topMostOnlyActivate) {
             objects.sort((o1, o2) => {
                 const l1 =
                     (o1 as unknown as InternalGameObjRaw)._drawLayerIndex;
                 const l2 =
                     (o2 as unknown as InternalGameObjRaw)._drawLayerIndex;
-                return (l1 - l2) || (o1.z ?? 0) - (o2.z ?? 0);
+                const to1 = (o1 as unknown as InternalGameObjRaw)._treeIndex;
+                const to2 = (o2 as unknown as InternalGameObjRaw)._treeIndex;
+                return (l1 - l2) || (o1.z ?? 0) - (o2.z ?? 0) || (to1 - to2);
             });
             const obj = objects.at(-1)!;
             _k.game.gameObjEvents.trigger("click", obj);
