@@ -4436,6 +4436,15 @@ export interface KAPLAYCtx {
      */
     getSprite(name: string): Asset<SpriteData> | null;
     /**
+     * Remove a sprite from the asset cache, allowing it to be reloaded with a new URL.
+     *
+     * @param name - The asset name.
+     *
+     * @since v4000.0
+     * @group Assets
+     */
+    unloadSprite(name: string): void;
+    /**
      * Get SoundData from name.
      *
      * @param name - The asset name.

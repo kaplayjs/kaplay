@@ -12,34 +12,36 @@ import { fixURL } from "./utils";
  * @group Assets
  * @subgroup Types
  */
-export type SpriteAnim = number | {
-    /**
-     * The starting frame.
-     */
-    from?: number;
-    /**
-     * The end frame.
-     */
-    to?: number;
-    /**
-     * If this anim should be played in loop.
-     */
-    loop?: boolean;
-    /**
-     * When looping should it move back instead of go to start frame again.
-     */
-    pingpong?: boolean;
-    /**
-     * This anim's speed in frames per second.
-     */
-    speed?: number;
-    /**
-     * List of frames for the animation.
-     *
-     * If this property exists, **from, to, and pingpong will be ignored**.
-     */
-    frames?: number[];
-};
+export type SpriteAnim =
+    | number
+    | {
+        /**
+         * The starting frame.
+         */
+        from?: number;
+        /**
+         * The end frame.
+         */
+        to?: number;
+        /**
+         * If this anim should be played in loop.
+         */
+        loop?: boolean;
+        /**
+         * When looping should it move back instead of go to start frame again.
+         */
+        pingpong?: boolean;
+        /**
+         * This anim's speed in frames per second.
+         */
+        speed?: number;
+        /**
+         * List of frames for the animation.
+         *
+         * If this property exists, **from, to, and pingpong will be ignored**.
+         */
+        frames?: number[];
+    };
 
 /**
  * A dict of name <-> animation.
@@ -231,6 +233,11 @@ export function resolveSprite(
 
 export function getSprite(name: string): Asset<SpriteData> | null {
     return _k.assets.sprites.get(name) ?? null;
+}
+
+// remove a sprite from the asset cache, allowing it to be reloaded with a new URL
+export function unloadSprite(name: string): void {
+    _k.assets.sprites.remove(name);
 }
 
 // load a sprite to asset manager

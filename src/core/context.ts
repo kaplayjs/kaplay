@@ -25,7 +25,13 @@ import {
 import { getFont, loadFont } from "../assets/font";
 import { getShader, loadShader, loadShaderURL } from "../assets/shader";
 import { getSound, loadMusic, loadSound, SoundData } from "../assets/sound";
-import { getSprite, loadBean, loadSprite, SpriteData } from "../assets/sprite";
+import {
+    getSprite,
+    loadBean,
+    loadSprite,
+    SpriteData,
+    unloadSprite,
+} from "../assets/sprite";
 import { loadSpriteAtlas } from "../assets/spriteAtlas";
 import { burp } from "../audio/burp";
 import { play } from "../audio/play";
@@ -303,6 +309,7 @@ export const createContext = (
         getSprite,
         getShader,
         getAsset,
+        unloadSprite,
         Asset,
         SpriteData,
         SoundData,
@@ -690,7 +697,7 @@ export const createContext = (
 
     if (exportToGlobal) {
         for (const key in ctx) {
-            ((window as any)[key]) = ctx[key as keyof KAPLAYCtx];
+            (window as any)[key] = ctx[key as keyof KAPLAYCtx];
         }
     }
 
