@@ -62,6 +62,11 @@ export type SetParentOpt = {
     keep: KeepFlags;
 };
 
+let _nextTreeIndex = 0;
+export function resetTreeIndex() {
+    _nextTreeIndex = 0;
+}
+
 let _lastTransformVersion = 0;
 let _nextTransformVersion = 0;
 
@@ -531,6 +536,8 @@ export type InternalGameObjRaw = GameObjRaw & {
     /** @readonly */
     _drawLayerIndex: number;
     /** @readonly */
+    _treeIndex: number;
+    /** @readonly */
     _transformVersion: number;
 
     /**
@@ -603,6 +610,7 @@ export const GameObjRawPrototype: Omit<
     _updateEvents: null as any,
     _drawEvents: null as any,
     _drawLayerIndex: null as any,
+    _treeIndex: null as any,
     children: null as any,
     hidden: null as any,
     id: null as any,
@@ -1235,6 +1243,8 @@ export const GameObjRawPrototype: Omit<
         else {
             loadMatrix(this.transform);
         }
+
+        this._treeIndex = _nextTreeIndex++;
 
         for (let i = 0; i < this.children.length; i++) {
             // if (this.children[i].hidden) continue;

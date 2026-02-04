@@ -435,6 +435,11 @@ export interface KAPLAYOpt {
      */
     narrowPhaseCollisionAlgorithm?: NarrowPhaseType;
     /**
+     * If true, only the topmost object receives clicks
+     * @default false
+     */
+    topMostOnlyActivate?: boolean;
+    /**
      * Timeout (in milliseconds) at which other loaders waiting on sprites will give
      * up and throw an error.
      *
