@@ -7139,7 +7139,7 @@ export interface KAPLAYCtx {
      * @group Rendering
      * @subgroup Stack
      */
-    pushMatrix(mat?: Mat23): void;
+    pushMatrix(mat: Mat23): void;
     /**
      * Apply a post process effect from a shader name.
      *
