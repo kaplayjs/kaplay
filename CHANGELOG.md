@@ -33,6 +33,8 @@ best friend, lajbel, can put the correct version name here
 
 ### Changed
 
+- Updated `drawSprite()` to allow slice9'ed sprites, and so now the `sprite()`
+  component just calls `drawSprite()` (#1036) - @dragoncoder047
 - Updated the texture packer to use a new packing algorithm which may get more
   sprites onto the same texture, improving graphics batching performance
   (#1011) - @dragoncoder047
