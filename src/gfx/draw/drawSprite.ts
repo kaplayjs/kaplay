@@ -131,8 +131,8 @@ export function drawSprite(opt: DrawSpriteOpt) {
             quad(left + iw, top + ih, right, bottom),
         ];
         const offset = anchorPt(opt.anchor || DEF_ANCHOR);
-        const offsetX = -(offset.x + 1) * 0.5 * width;
-        const offsetY = -(offset.y + 1) * 0.5 * height;
+        const offsetX = -(offset.x + 1) * 0.5 * width + (opt.pos?.x ?? 0);
+        const offsetY = -(offset.y + 1) * 0.5 * height + (opt.pos?.y ?? 0);
         for (let i = 0; i < 9; i++) {
             const uv = quads[i];
             const transform = quads[i + 9];
