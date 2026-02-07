@@ -64,7 +64,7 @@ export function drawSprite(opt: DrawSpriteOpt) {
     }
 
     // TODO: slow
-    var spriteData: SpriteData;
+    let spriteData: SpriteData;
 
     if (!(opt.sprite instanceof SpriteData)) {
         const spr = resolveSprite(opt.sprite);
