@@ -26,23 +26,26 @@ export class Asset<D> {
     private onFinishEvents: KEvent<[]> = new KEvent();
 
     constructor(loader: Promise<D>) {
-        loader.then((data) => {
-            this.loaded = true;
-            this.data = data;
-            this.onLoadEvents.trigger(data);
-        }).catch((err) => {
-            this.error = err;
+        loader
+            .then((data) => {
+                this.loaded = true;
+                this.data = data;
+                this.onLoadEvents.trigger(data);
+            })
+            .catch((err) => {
+                this.error = err;
 
-            if (this.onErrorEvents.numListeners() > 0) {
-                this.onErrorEvents.trigger(err);
-            }
-            else {
-                throw err;
-            }
-        }).finally(() => {
-            this.onFinishEvents.trigger();
-            this.loaded = true;
-        });
+                if (this.onErrorEvents.numListeners() > 0) {
+                    this.onErrorEvents.trigger(err);
+                }
+                else {
+                    throw err;
+                }
+            })
+            .finally(() => {
+                this.onFinishEvents.trigger();
+                this.loaded = true;
+            });
     }
     static loaded<D>(data: D): Asset<D> {
         const asset = new Asset(Promise.resolve(data)) as Asset<D>;
@@ -100,20 +103,27 @@ export class AssetBucket<D> {
 
     add(name: string | null, loader: Promise<D>): Asset<D> {
         // if user don't provide a name we use a generated one
-        const id = name ?? (this.lastUID++ + "");
+        const id = name ?? this.lastUID++ + "";
+
+        // If asset already exists and is loaded, return the cached version
+        const existing = this.assets.get(id);
+        if (existing && existing.loaded && existing.data) {
+            return existing;
+        }
+
         const asset = new Asset(loader);
         this.assets.set(id, asset);
-        asset.onLoad(d => {
+        asset.onLoad((d) => {
             this.waiters.trigger(id, d);
         });
-        asset.onError(d => {
+        asset.onError((d) => {
             this.errorWaiters.trigger(id, d);
         });
 
         return asset;
     }
     addLoaded(name: string | null, data: D): Asset<D> {
-        const id = name ?? (this.lastUID++ + "");
+        const id = name ?? this.lastUID++ + "";
         const asset = Asset.loaded(data);
         this.assets.set(id, asset);
         this.waiters.trigger(id, data);
@@ -124,6 +134,10 @@ export class AssetBucket<D> {
     // if not found return undefined
     get(handle: string): Asset<D> | undefined {
         return this.assets.get(handle);
+    }
+    // remove an asset from the cache, allowing it to be reloaded with a new URL
+    remove(handle: string): void {
+        this.assets.delete(handle);
     }
     progress(): number {
         if (this.assets.size === 0) {
@@ -141,9 +155,9 @@ export class AssetBucket<D> {
     }
 
     getFailedAssets(): [string, Asset<D>][] {
-        return Array.from(this.assets.keys()).filter(a =>
-            this.assets.get(a)!.error !== null
-        ).map(a => [a, this.assets.get(a)!]);
+        return Array.from(this.assets.keys())
+            .filter((a) => this.assets.get(a)!.error !== null)
+            .map((a) => [a, this.assets.get(a)!]);
     }
 
     waitFor(name: string, timeout: number): PromiseLike<D> {
@@ -229,8 +243,9 @@ export function loadProgress(): number {
         _k.assets.bitmapFonts,
         _k.assets.custom,
     ];
-    return buckets.reduce((n, bucket) => n + bucket.progress(), 0)
-        / buckets.length;
+    return (
+        buckets.reduce((n, bucket) => n + bucket.progress(), 0) / buckets.length
+    );
 }
 
 export function getFailedAssets(): [string, Asset<any>][] {
