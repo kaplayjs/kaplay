@@ -46,6 +46,7 @@ function createBall(p, c) {
         pos(p),
         circle(25),
         color(c),
+        scale(),
         area({ isSensor: true }),
         offscreen({ destroy: true }), // For balls who fell down
         opacity(1), // In order to fade
@@ -95,9 +96,18 @@ function consolidateBalls(refBall) {
     );
     // If there are more balls than the reference ball itself, clear them
     if (fill.length == 1) return;
-    for (const ball of fill) {
-        ball.fadeOut(1).onEnd(() => destroy(ball));
-        ball.children[0].fadeOut(1);
+    for (i = 0; i < fill.length; i++) {
+        const ball = fill[i];
+
+        wait(0.15 * i, () => {
+            tween(
+                vec2(1),
+                vec2(1.5),
+                0.05,
+                (p) => ball.scale = p,
+                easings.easeOutQuad,
+            ).onEnd(() => destroy(ball));
+        });
     }
     // Balls not connected to the ceiling need to fall
     wait(1, () => {
@@ -147,6 +157,13 @@ function createShootingBall() {
                     this.vel = undefined;
                     // Create a clone which will represent the new ball
                     const clone = createBall(this.pos, this.color);
+                    tween(
+                        vec2(0.5),
+                        vec2(1),
+                        0.15,
+                        (p) => clone.scale = p,
+                        easings.easeOutQuad,
+                    );
                     // If neighboring a similar color, remove all balls in same color
                     consolidateBalls(clone);
                     // Create a new ball to shoot with
@@ -232,3 +249,13 @@ onMouseRelease(b => {
         ball.vel = ballPos.sub(mousePos()).unit().scale(500);
     }
 });
+
+// draw ending line
+// onDraw(() => {
+//     drawLine({
+//         p1: vec2(0, 25 + 6 * 50),
+//         p2: vec2(width(), 25 + 6 * 50),
+//         width: 5,
+//         color: WHITE,
+//     });
+// });
