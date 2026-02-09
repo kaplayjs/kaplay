@@ -156,18 +156,14 @@ export function floodFill(
     start: number | number[],
     predicate: (node: number) => boolean,
 ) {
-    const stack = Array.isArray(start) ? start : [start];
-    const fill: Set<number> = new Set();
+    const stack = (Array.isArray(start) ? start : [start]).filter(predicate);
+    const fill: Set<number> = new Set(stack);
     while (stack.length) {
         const node = stack.pop()!;
-        if (!predicate(node)) {
-            continue;
-        }
-        // Fill
-        fill.add(node);
         for (const neighbor of graph.getNeighbors(node)) {
             // If not filled and fillable
             if (!fill.has(neighbor) && predicate(neighbor)) {
+                fill.add(neighbor);
                 // We need to look around nn later
                 stack.push(neighbor);
             }
