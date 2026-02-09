@@ -8,7 +8,7 @@ loadSprite("mark", "sprites/mark.png");
 const w = 10;
 const h = 10;
 const map = new Array(w * h).fill(0);
-const bombs = chooseMultiple(map.map((v, i) => i), 10);
+const bombs = chooseMultiple(map.map((v, i) => i), 20);
 
 bombs.forEach(i => map[i] = 9);
 
@@ -139,7 +139,7 @@ onClick("number", obj => {
 onClick("empty", obj => {
     if (handleFlag(obj)) return;
     if (obj.children.length) return;
-    const indices = mineGraph.floodFill(obj, obj => obj.is("empty"));
+    const indices = mineGraph.floodFill(obj, obj => !obj.is("bomb"));
     indices.forEach(o => o.fadeOut());
 });
 
