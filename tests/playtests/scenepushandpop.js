@@ -10,75 +10,66 @@ kaplay();
 
 loadBean();
 
-add([
+// shared //
+const global = add([
+    pos(0, height - 64),
     text(
-        "(BLUE) Back from last scene\n(YELLOW) push to second scene\n(RED) Force error to a unexistent scene",
-        {
-            size: 18,
-        },
+        "Oh Hi!\nUse (UP) key to push a new scene\n(DOWN) to pop to old scene",
     ),
-    pos(5, height() - 100),
+    fixed(),
     stay(),
 ]);
 
-// create two scenes as first test //
+global.onKeyPress("up", () => {
+    // if (getSceneName() === "first")
+    //    pushScene("second");
+    const scenes = ["first", "second", "third", "fourth"];
+
+    // if (getSceneName())
+    //    go(scenes[getSceneName()]);
+
+    switch (getSceneName()) {
+        case "first":
+            go("second");
+        case "second":
+            go("third");
+        case "third":
+            go("fourth");
+        case "fourth":
+            go("inexistent");
+    }
+});
 
 scene("first", () => {
     add([
-        text("Oh Hi! from first scene, click on the bean", {
-            size: 40,
-        }),
+        text("Hello from the first scene"),
         pos(center()),
+        anchor("center"),
     ]);
 
-    const b = add([
+    const movObject = add([
+        pos(center()),
         rect(32, 32),
-        pos(64, 64),
-        color(BLUE),
-        area(),
-        stay(),
-    ]);
-
-    const bimpostor = add([
-        rect(32, 32),
-        pos(100, 64),
-        color(YELLOW),
-        area(),
-        stay(),
-    ]);
-
-    const berror = add([
-        rect(32, 32),
-        pos(200, 64),
         color(RED),
-        area(),
-        stay(),
     ]);
 
-    b.onClick(() => {
-        debug.log("adding page");
-        pushScene("second");
+    movObject.onUpdate(() => {
+        // movObject.pos.y = wave(center().y - 64, center().y, time() * 20);
+        // movObject.pos = movObject.pos.add(0, wave(center().y - 64, center().y, time() * 20));
+        movObject.moveTo(
+            movObject.pos.x,
+            wave(center().y - 128, center().y + 128, time() * 2),
+        );
     });
-
-    bimpostor.onClick(() => {
-        debug.log("back page");
-        popScene();
-    });
-
-    berror.onClick(() => {
-        pushScene("unexistent");
-    });
-
-    // onKeyDown("1", () => debug.log("aaaa"))
 });
 
 scene("second", () => {
-    add([
-        pos(center()),
-        text("Oh Hi! from second scene", {
-            size: 40,
-        }),
-    ]);
+});
+
+scene("third", () => {
+});
+
+scene("fourth", () => {
 });
 
 go("first");

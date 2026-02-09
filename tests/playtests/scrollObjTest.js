@@ -1,3 +1,11 @@
+/**
+ * @file scrollObjTest
+ * @description Testing for parallax component
+ * @difficulty 1
+ * @tags basics
+ * @minver 3001.1
+ */
+
 kaplay();
 
 for (i = 0; i < 20; i++) {
