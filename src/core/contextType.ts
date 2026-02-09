@@ -6125,7 +6125,7 @@ export interface KAPLAYCtx {
     floodFill(
         graph: Graph,
         start: number | number[],
-        predicate: (node: number) => boolean,
+        predicate: (node: number, from: number) => boolean,
     ): number[];
     buildConnectivityMap(graph: Graph): Map<number, number>;
     /**

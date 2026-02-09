@@ -116,7 +116,11 @@ class MineGraph extends GridGraph {
     }
 
     floodFill(obj, predicate) {
-        return floodFill(this, obj.index, index => predicate(this.objAt(index)))
+        return floodFill(
+            this,
+            obj.index,
+            (index, from) => predicate(this.objAt(index), this.objAt(from)),
+        )
             .map(index => this.objAt(index));
     }
 }
@@ -139,7 +143,10 @@ onClick("number", obj => {
 onClick("empty", obj => {
     if (handleFlag(obj)) return;
     if (obj.children.length) return;
-    const indices = mineGraph.floodFill(obj, obj => !obj.is("bomb"));
+    const indices = mineGraph.floodFill(
+        obj,
+        (obj, fromObj) => !obj.is("bomb") && fromObj.is("empty"),
+    );
     indices.forEach(o => o.fadeOut());
 });
 

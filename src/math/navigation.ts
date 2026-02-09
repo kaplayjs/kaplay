@@ -154,15 +154,17 @@ export function aStarSearch(
 export function floodFill(
     graph: Graph,
     start: number | number[],
-    predicate: (node: number) => boolean,
+    predicate: (node: number, from: number) => boolean,
 ) {
-    const stack = (Array.isArray(start) ? start : [start]).filter(predicate);
+    const stack = (Array.isArray(start) ? start : [start]).filter(node =>
+        predicate(node, node)
+    );
     const fill: Set<number> = new Set(stack);
     while (stack.length) {
         const node = stack.pop()!;
         for (const neighbor of graph.getNeighbors(node)) {
             // If not filled and fillable
-            if (!fill.has(neighbor) && predicate(neighbor)) {
+            if (!fill.has(neighbor) && predicate(neighbor, node)) {
                 fill.add(neighbor);
                 // We need to look around nn later
                 stack.push(neighbor);
