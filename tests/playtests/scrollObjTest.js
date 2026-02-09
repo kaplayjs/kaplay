@@ -4,25 +4,39 @@ for (i = 0; i < 20; i++) {
     let randPosX = randi(64, width() - 64);
     let randPosY = randi(64, width() - 64);
     let randFactor = rand(0.1, 0.75);
-    add([
+    const o = add([
         pos(randPosX, randPosY),
         z(20),
         rect(64, 64),
         color(RED),
         parallax(randFactor, randFactor),
     ]);
+    o.add([
+        pos(5, 5),
+        z(0),
+        rect(64, 64),
+        color(BLACK),
+        opacity(0.5),
+    ]);
 }
 
 for (i = 0; i < 20; i++) {
     let randPosX = randi(32, width() - 32);
     let randPosY = randi(32, width() - 32);
-    let randFactor = rand(0.1, 0.75);
-    add([
+    let randFactor = rand(1.1, 2.75);
+    const ob = add([
         pos(randPosX, randPosY),
         z(-90),
         rect(32, 32),
         color(BLUE),
         parallax(randFactor, randFactor),
+    ]);
+    ob.add([
+        pos(5, 5),
+        z(-200),
+        rect(32, 32),
+        color(BLACK),
+        opacity(0.5),
     ]);
 }
 
@@ -42,7 +56,9 @@ onUpdate(() => {
 });
 
 add([
-    pos(10, height - 64),
+    pos(0, 0),
+    z(9999),
+    fixed(),
     text("Oh Hi! Use the arrows to move the camera"),
 ]);
 

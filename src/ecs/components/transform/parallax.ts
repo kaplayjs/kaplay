@@ -1,6 +1,7 @@
 import { getCamPos } from "../../../game/camera";
 import { vec2, type Vec2Args } from "../../../math/math";
 import { Vec2 } from "../../../math/Vec2";
+import { _k } from "../../../shared";
 import type { Comp, GameObj } from "../../../types";
 import type { PosComp } from "./pos";
 
@@ -18,25 +19,31 @@ export interface ParallaxComp extends Comp {
      */
     factor: Vec2;
 
-    basePos?: Vec2;
+    lastCam?: Vec2 | null;
 }
 
 export function parallax(...args: Vec2Args): ParallaxComp {
     return {
-        id: "scroll",
+        id: "parallax",
         require: ["pos"],
         factor: vec2(...args),
-        basePos: vec2(),
+        lastCam: null as Vec2 | null,
 
         update(this: GameObj<PosComp | ParallaxComp>) {
-            const cam = getCamPos();
+            const cam: Vec2 = getCamPos();
 
-            if (!this.basePos) {
-                this.basePos = this.pos.clone();
+            if (!this.lastCam) {
+                this.lastCam = cam.clone();
+                return;
             }
 
-            this.pos.x = this.basePos.x - cam.x * this.factor.x;
-            this.pos.y = this.basePos.y - cam.y * this.factor.y;
+            const delta: Vec2 = cam.sub(this.lastCam);
+            this.moveBy(
+                delta.x * (1 - this.factor.x),
+                delta.y * (1 - this.factor.y),
+            );
+
+            this.lastCam = cam.clone();
         },
 
         inspect() {

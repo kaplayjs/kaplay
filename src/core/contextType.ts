@@ -93,7 +93,6 @@ import type {
     SurfaceEffectorCompOpt,
 } from "../ecs/components/physics/effectors";
 import type { AnchorComp } from "../ecs/components/transform/anchor";
-import type { ParallaxComp } from "../ecs/components/transform/camscroll";
 import type { constraint } from "../ecs/components/transform/constraint";
 import type { FixedComp } from "../ecs/components/transform/fixed";
 import type { FollowComp } from "../ecs/components/transform/follow";
@@ -103,6 +102,7 @@ import type {
     OffScreenComp,
     OffScreenCompOpt,
 } from "../ecs/components/transform/offscreen";
+import type { ParallaxComp } from "../ecs/components/transform/parallax";
 import type { PosComp } from "../ecs/components/transform/pos";
 import type { RotateComp } from "../ecs/components/transform/rotate";
 import type { ScaleComp } from "../ecs/components/transform/scale";
