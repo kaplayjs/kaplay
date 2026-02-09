@@ -38,7 +38,7 @@ export function parallax(...args: Vec2Args): ParallaxComp {
             }
 
             const delta: Vec2 = cam.sub(this.lastCam);
-            this.moveBy(
+            this.pos = this.pos.add(
                 delta.x * (1 - this.factor.x),
                 delta.y * (1 - this.factor.y),
             );

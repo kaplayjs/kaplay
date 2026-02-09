@@ -3,7 +3,7 @@ kaplay();
 for (i = 0; i < 20; i++) {
     let randPosX = randi(64, width() - 64);
     let randPosY = randi(64, width() - 64);
-    let randFactor = rand(0.1, 0.75);
+    let randFactor = rand(1.1, 1.75);
     const o = add([
         pos(randPosX, randPosY),
         z(20),
@@ -23,7 +23,7 @@ for (i = 0; i < 20; i++) {
 for (i = 0; i < 20; i++) {
     let randPosX = randi(32, width() - 32);
     let randPosY = randi(32, width() - 32);
-    let randFactor = rand(1.1, 2.75);
+    let randFactor = rand(0.1, 0.75);
     const ob = add([
         pos(randPosX, randPosY),
         z(-90),
