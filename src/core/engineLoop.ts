@@ -119,7 +119,7 @@ export function startEngineLoop(
                 isFirstFrame = false;
             }
 
-            game.events.trigger("frameEnd");
+            app.events.trigger("frameEnd");
 
             resetInput();
         } catch (e) {

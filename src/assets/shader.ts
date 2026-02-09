@@ -72,7 +72,8 @@ export type UniformValue =
     | Mat23
     | number[]
     | Vec2[]
-    | Color[];
+    | Color[]
+    | Texture;
 
 /**
  * Possible uniform value, basically any but "u_tex".

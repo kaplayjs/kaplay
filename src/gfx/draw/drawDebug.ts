@@ -64,7 +64,8 @@ export function drawDebug() {
         drawInspectText(
             vec2(8),
             `FPS: ${Math.round(_k.debug.fps())}
-Raw: ${Math.round(_k.debug.rawFPS())}`,
+Raw: ${Math.round(_k.debug.rawFPS())}
+Batches: ${_k.gfx.renderer.numDraws}`,
         );
     }
 
