@@ -6609,6 +6609,30 @@ export interface KAPLAYCtx {
      */
     popScene(): void;
     /**
+     * Get the current scene index on the scene stack
+     * 
+     * @example
+     * ```js
+     * scene("mainScene", () => {
+     *     add([
+     *         text("this is the first scene", { size: 32 }),
+     *         pos(center()),
+     *     ]);
+     * });
+     * scene("otherScene", () => {
+     *     add([
+     *         sprite("bean"),
+     *         pos(center()),
+     *     ]);
+     * });
+     * 
+     * go("mainScene");
+     * pushScene("otherScene");
+     * debug.log(getSceneIndex()) // <-- Will appear 1 here because is the index of the current scene pushed.
+     * ```
+     */
+    getSceneIndex(): number;
+    /**
      * Define the layer names. Should be called before any objects are made.
      *
      * @param layers - The layer names.
