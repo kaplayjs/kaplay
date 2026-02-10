@@ -21,24 +21,28 @@ const global = add([
 ]);
 
 global.onKeyPress("up", () => {
-    const scenes = ["first", "second", "third", "fourth", "inexistent"];
+    const scenes = ["first", "second", "third", "fourth", "I said you will crash :("];
 
     if (getSceneName() === scenes[getSceneIndex()])
         pushScene(scenes[getSceneIndex() + 1]);
 });
 
-function createMovingObject(color, xPos, yPos)
+global.onKeyPress("down", () => {
+    popScene();
+});
+
+function createMovingObject(col, xPos, yPos)
 {
     const obj = add([
         pos(0, 0),
         rect(32, 32),
-        color(GREEN),
+        color(col),
     ]);
 
     obj.onUpdate(() => {
         obj.moveTo(
-            wave(xPos.vec.from, xPos.vec.to, time() * xPos.time),
-            wave(yPos.vec.from, yPos.vec.to, time() * yPos.time),
+            wave(xPos.from, xPos.to, time() * xPos.time || 2),
+            wave(yPos.from, yPos.to, time() * yPos.time || 2),
         );
     });
 }
@@ -52,11 +56,11 @@ scene("first", () => {
 
     createMovingObject(RED, {
         from: center().x,
-        to: center().x,
-        time: 0,
+        to: center().x
     }, {
         from: center().y - 128,
-        to: center().y
+        to: center().y + 128,
+        time: 2
     });
 });
 
@@ -67,115 +71,108 @@ scene("second", () => {
         anchor("center"),
     ]);
 
-    const ob1 = add([
-        pos(center()),
-        rect(32, 32),
-        color(RED),
-    ]);
+    createMovingObject(RED, {
+        from: center().x,
+        to: center().x
+    }, {
+        from: center().y - 128,
+        to: center().y + 128,
+        time: 2
+    });
 
-    const ob2 = add([
-        pos(center()),
-        rect(32, 32),
-        color(BLUE),
-    ]);
-
-    onUpdate(() => {
-        ob1.moveTo(
-            ob1.pos.x,
-            wave(center().y - 128, center().y + 128, time() * 2),
-        );
-        ob2.moveTo(
-            wave(center().x - 128, center().x + 128, time() * 2),
-            ob2.pos.y
-        );
+    createMovingObject(BLUE, {
+        from: center().x - 128,
+        to: center().x + 128,
+        time: 2
+    }, {
+        from: center().y,
+        to: center().y
     });
 });
 
 scene("third", () => {
     add([
-        text("Hello from the third scene, we're close to the last one, keep pushing!!"),
+        text("Hello from the third scene, we're close to the last one, keep pushing!!", {
+            size: 34
+        }),
         pos(center()),
         anchor("center"),
     ]);
 
-    const ob1 = add([
-        pos(center()),
-        rect(32, 32),
-        color(RED),
-    ]);
+    createMovingObject(RED, {
+        from: center().x,
+        to: center().x
+    }, {
+        from: center().y - 128,
+        to: center().y + 128,
+        time: 2
+    });
 
-    const ob2 = add([
-        pos(center()),
-        rect(32, 32),
-        color(BLUE),
-    ]);
+    createMovingObject(BLUE, {
+        from: center().x - 128,
+        to: center().x + 128,
+        time: 2
+    }, {
+        from: center().y,
+        to: center().y
+    });
 
-    const ob3 = add([
-        pos(0, 0),
-        rect(32, 32),
-        color(GREEN),
-    ]);
-
-    onUpdate(() => {
-        ob1.moveTo(
-            ob1.pos.x,
-            wave(center().y - 128, center().y + 128, time() * 2),
-        );
-        ob2.moveTo(
-            wave(center().x - 128, center().x + 128, time() * 2),
-            ob2.pos.y
-        );
-        ob3.moveTo(
-            wave(center().x - 300, center().x + 300, time() * 0.6),
-            wave(center().y - 128, center().y + 128, time() * 2)
-        );
+    createMovingObject(GREEN, {
+        from: center().x - 300,
+        to: center().x + 300,
+        time: 0.75
+    }, {
+        from: center().y - 128,
+        to: center().y + 128,
+        time: 2
     });
 });
 
 scene("fourth", () => {
     add([
-        text("Hello from the third scene, we're close to the last one, keep pushing!!"),
+        text("Hello from the fourth scene, we're now at end, if you push you will crash!!", {
+            size: 30
+        }),
         pos(center()),
         anchor("center"),
     ]);
 
-    const ob1 = add([
-        pos(center()),
-        rect(32, 32),
-        color(RED),
-    ]);
+    createMovingObject(RED, {
+        from: center().x,
+        to: center().x
+    }, {
+        from: center().y - 128,
+        to: center().y + 128,
+        time: 2
+    });
 
-    const ob2 = add([
-        pos(center()),
-        rect(32, 32),
-        color(BLUE),
-    ]);
+    createMovingObject(BLUE, {
+        from: center().x - 128,
+        to: center().x + 128,
+        time: 2
+    }, {
+        from: center().y,
+        to: center().y
+    });
 
-    const ob3 = add([
-        pos(0, 0),
-        rect(32, 32),
-        color(GREEN),
-    ]);
+    createMovingObject(GREEN, {
+        from: center().x - 300,
+        to: center().x + 300,
+        time: 0.75
+    }, {
+        from: center().y - 128,
+        to: center().y + 128,
+        time: 2
+    });
 
-    const ob4 = add([
-        pos(0, 0),
-        rect(32, 32),
-        color(GREEN),
-    ]);
-
-    onUpdate(() => {
-        ob1.moveTo(
-            ob1.pos.x,
-            wave(center().y - 128, center().y + 128, time() * 2),
-        );
-        ob2.moveTo(
-            wave(center().x - 128, center().x + 128, time() * 2),
-            ob2.pos.y
-        );
-        ob3.moveTo(
-            wave(center().x - 300, center().x + 300, time() * 0.6),
-            wave(center().y - 128, center().y + 128, time() * 2)
-        );
+    createMovingObject(YELLOW, {
+        from: center().x + 300,
+        to: center().x - 300,
+        time: 0.75
+    }, {
+        from: center().y - 128,
+        to: center().y + 128,
+        time: 2
     });
 });
 
