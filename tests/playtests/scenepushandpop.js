@@ -21,18 +21,24 @@ const global = add([
 ]);
 
 global.onKeyPress("up", () => {
-    const scenes = ["first", "second", "third", "fourth", "I said you will crash :("];
+    const scenes = [
+        "first",
+        "second",
+        "third",
+        "fourth",
+        "I said you will crash :(",
+    ];
 
-    if (getSceneName() === scenes[getSceneIndex()])
+    if (getSceneName() === scenes[getSceneIndex()]) {
         pushScene(scenes[getSceneIndex() + 1]);
+    }
 });
 
 global.onKeyPress("down", () => {
     popScene();
 });
 
-function createMovingObject(col, xPos, yPos)
-{
+function createMovingObject(col, xPos, yPos) {
     const obj = add([
         pos(0, 0),
         rect(32, 32),
@@ -56,11 +62,11 @@ scene("first", () => {
 
     createMovingObject(RED, {
         from: center().x,
-        to: center().x
+        to: center().x,
     }, {
         from: center().y - 128,
         to: center().y + 128,
-        time: 2
+        time: 2,
     });
 });
 
@@ -73,106 +79,112 @@ scene("second", () => {
 
     createMovingObject(RED, {
         from: center().x,
-        to: center().x
+        to: center().x,
     }, {
         from: center().y - 128,
         to: center().y + 128,
-        time: 2
+        time: 2,
     });
 
     createMovingObject(BLUE, {
         from: center().x - 128,
         to: center().x + 128,
-        time: 2
+        time: 2,
     }, {
         from: center().y,
-        to: center().y
+        to: center().y,
     });
 });
 
 scene("third", () => {
     add([
-        text("Hello from the third scene, we're close to the last one, keep pushing!!", {
-            size: 34
-        }),
+        text(
+            "Hello from the third scene, we're close to the last one, keep pushing!!",
+            {
+                size: 34,
+            },
+        ),
         pos(center()),
         anchor("center"),
     ]);
 
     createMovingObject(RED, {
         from: center().x,
-        to: center().x
+        to: center().x,
     }, {
         from: center().y - 128,
         to: center().y + 128,
-        time: 2
+        time: 2,
     });
 
     createMovingObject(BLUE, {
         from: center().x - 128,
         to: center().x + 128,
-        time: 2
+        time: 2,
     }, {
         from: center().y,
-        to: center().y
+        to: center().y,
     });
 
     createMovingObject(GREEN, {
         from: center().x - 300,
         to: center().x + 300,
-        time: 0.75
+        time: 0.75,
     }, {
         from: center().y - 128,
         to: center().y + 128,
-        time: 2
+        time: 2,
     });
 });
 
 scene("fourth", () => {
     add([
-        text("Hello from the fourth scene, we're now at end, if you push you will crash!!", {
-            size: 30
-        }),
+        text(
+            "Hello from the fourth scene, we're now at end, if you push you will crash!!",
+            {
+                size: 30,
+            },
+        ),
         pos(center()),
         anchor("center"),
     ]);
 
     createMovingObject(RED, {
         from: center().x,
-        to: center().x
+        to: center().x,
     }, {
         from: center().y - 128,
         to: center().y + 128,
-        time: 2
+        time: 2,
     });
 
     createMovingObject(BLUE, {
         from: center().x - 128,
         to: center().x + 128,
-        time: 2
+        time: 2,
     }, {
         from: center().y,
-        to: center().y
+        to: center().y,
     });
 
     createMovingObject(GREEN, {
         from: center().x - 300,
         to: center().x + 300,
-        time: 0.75
+        time: 0.75,
     }, {
         from: center().y - 128,
         to: center().y + 128,
-        time: 2
+        time: 2,
     });
 
     createMovingObject(YELLOW, {
         from: center().x + 300,
         to: center().x - 300,
-        time: 0.75
+        time: 0.75,
     }, {
         from: center().y - 128,
         to: center().y + 128,
-        time: 2
+        time: 2,
     });
 });
 

@@ -123,7 +123,13 @@ import {
     setGravityDirection,
 } from "../game/gravity";
 import { getDefaultLayer, getLayers, layers, setLayers } from "../game/layers";
-import { getSceneName, go, popScene, pushScene, getSceneIndex } from "../game/scenes";
+import {
+    getSceneIndex,
+    getSceneName,
+    go,
+    popScene,
+    pushScene,
+} from "../game/scenes";
 import { anchorPt } from "../gfx/anchor";
 import { getBackground, setBackground } from "../gfx/bg";
 import { makeCanvas } from "../gfx/canvasBuffer";

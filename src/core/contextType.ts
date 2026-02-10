@@ -6610,7 +6610,7 @@ export interface KAPLAYCtx {
     popScene(): void;
     /**
      * Get the current scene index on the scene stack
-     * 
+     *
      * @example
      * ```js
      * scene("mainScene", () => {
@@ -6625,7 +6625,7 @@ export interface KAPLAYCtx {
      *         pos(center()),
      *     ]);
      * });
-     * 
+     *
      * go("mainScene");
      * pushScene("otherScene");
      * debug.log(getSceneIndex()) // <-- Will appear 1 here because is the index of the current scene pushed.
