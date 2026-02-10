@@ -87,11 +87,11 @@ export function drawPolygon(opt: DrawPolygonOpt) {
     }
 
     pushTransform();
-    multTranslateV(opt.pos!);
+    multTranslateV(opt.pos);
     multRotate(opt.angle);
     multScaleV(opt.scale);
     multSkewV(opt.skew);
-    multTranslateV(opt.offset!);
+    multTranslateV(opt.offset);
 
     if (opt.fill !== false) {
         const color = opt.color ?? Color.WHITE;
