@@ -161,6 +161,7 @@ import {
     usePostEffect,
     width,
 } from "../gfx/stack";
+import { lajbel } from "../lajbel";
 import { DecisionNode, DecisionTree } from "../math/ai/decisiontree";
 import { Rule, RuleSystem } from "../math/ai/rulesystem";
 import { StateMachine } from "../math/ai/statemachine";
@@ -276,6 +277,7 @@ export const createContext = (
         : e.sceneScope;
 
     const ctx: KAPLAYCtx = {
+        lajbel,
         _k: e,
         // @ts-ignore
         VERSION: KAPLAY_VERSION,
