@@ -154,6 +154,8 @@ export interface ParticlesComp extends Comp {
     onEnd(cb: () => void): void;
 }
 
+// cSpell: ignore popt eopt
+
 export function particles(popt: ParticlesOpt, eopt: EmitterOpt): ParticlesComp {
     let emitterLifetime = eopt.lifetime;
 
@@ -189,7 +191,7 @@ export function particles(popt: ParticlesOpt, eopt: EmitterOpt): ParticlesComp {
         indices[i * 6 + 5] = i * 4 + 3;
 
         attributes.pos.fill(0);
-        attributes.uv.fill(0);
+        attributes.uv.fill(1);
         attributes.color.fill(255);
         attributes.opacity.fill(1);
 
@@ -198,12 +200,9 @@ export function particles(popt: ParticlesOpt, eopt: EmitterOpt): ParticlesComp {
 
     const onEndEvents = new KEvent();
 
-    function nextFree(index: number = 0): number | null {
-        while (index < popt.max) {
-            if (particles[index].gc) {
-                return index;
-            }
-            index++;
+    function nextFree(index = 0): number | null {
+        for (; index < popt.max; index++) {
+            if (particles[index].gc) return index;
         }
         return null;
     }

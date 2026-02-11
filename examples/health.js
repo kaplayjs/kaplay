@@ -75,7 +75,7 @@ bean.onKeyPress("space", () => {
 
 // When bean collides with a zombie, the zombie will bump off bean and bean will take damage
 bean.onCollide("zombie", (zombie) => {
-    zombie.pos.x += 50;
+    zombie.moveBy(50, 0);
     bean.hp -= 10;
 });
 
@@ -133,7 +133,7 @@ zombean.onUpdate(() => {
 // When zombean collides with a bullet, zombean will lose 10 HP
 zombean.onCollide("bullet", () => {
     zombean.hp -= 10;
-    zombean.pos.x += 40;
+    zombean.moveBy(40, 0);
 });
 
 // When zombean loses HP, onHurt() gets triggered
@@ -152,7 +152,7 @@ zombean.onDeath(() => {
         zombean.pos.y,
         height() + 50,
         1,
-        (p) => zombean.pos.y = p,
+        (p) => zombean.moveTo(zombean.pos.x, p),
         easings.easeOutCirc,
     ).onEnd(() => {
         zombean.destroy();

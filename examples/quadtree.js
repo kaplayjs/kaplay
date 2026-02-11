@@ -69,9 +69,7 @@ onMousePress(button => {
         const rect = new Rect(pos.sub(4, 4), 8, 8);
         const objects = [];
         selection.length = 0;
-        quadtree.retrieve(rect, obj => {
-            objects.push(obj);
-        });
+        quadtree.retrieve(rect, obj => objects.push(obj));
         if (objects.length > 0) {
             get("*").forEach(bean => {
                 bean.color = WHITE;
@@ -94,25 +92,16 @@ onMousePress(button => {
 
 onMouseMove((pos, dpos) => {
     if (selection.length) {
-        getCamTransform().inverse.transformVectorV(dpos, dpos);
-        selection.forEach(obj => {
-            obj.pos = obj.pos.add(dpos);
-        });
+        selection.forEach(obj => obj.screenPos = obj.screenPos.add(dpos));
         quadtree.update();
     }
     else {
         const pos = toWorld(mousePos());
         const rect = new Rect(pos.sub(4, 4), 8, 8);
-        const objects = [];
-        quadtree.retrieve(rect, obj => {
-            objects.push(obj);
-        });
         get("*").forEach(bean => {
             bean.color = WHITE;
         });
-        objects.forEach(bean => {
-            bean.color = RED;
-        });
+        quadtree.retrieve(rect, bean => bean.color = RED);
     }
 });
 
@@ -121,7 +110,7 @@ onMouseRelease(() => {
 });
 
 onScroll(delta => {
-    setCamScale(getCamScale().scale(delta.y < 0 ? 0.5 : 2.0));
+    setCamScale(getCamScale().scale(Math.exp(-delta.y / 1000)));
 });
 
 onKeyPress("c", () => {

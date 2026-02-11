@@ -32,7 +32,7 @@ add([
 
 // move paddles with mouse
 onUpdate("paddle", (p) => {
-    p.pos.y = mousePos().y;
+    p.moveTo(p.pos.x, mousePos().y);
 });
 
 // score counter

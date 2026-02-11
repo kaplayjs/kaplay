@@ -21,4 +21,4 @@ add([
     sprite("bean"),
 ]);
 
-onClick(() => addKaboom(mousePos()));
+onMousePress(() => addKaboom(mousePos()));

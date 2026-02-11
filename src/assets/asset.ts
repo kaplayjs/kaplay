@@ -2,14 +2,15 @@ import { SPRITE_ATLAS_HEIGHT, SPRITE_ATLAS_WIDTH } from "../constants/general";
 import type { SerializedGameObj } from "../ecs/entity/prefab";
 import { KEvent, KEventHandler } from "../events/events";
 import type { GfxCtx } from "../gfx/gfx";
+import type { AppGfxCtx } from "../gfx/gfxApp";
 import { TexPacker } from "../gfx/TexPacker";
 import { _k } from "../shared";
-import type { MustKAPLAYOpt } from "../types";
+import type { ImageSource, MustKAPLAYOpt } from "../types";
 import type { BitmapFontData } from "./bitmapFont";
 import type { FontData } from "./font";
 import type { ShaderData } from "./shader";
 import type { SoundData } from "./sound";
-import type { SpriteData } from "./sprite";
+import type { LoadSpriteSrc, SpriteData } from "./sprite";
 import { fixURL } from "./utils";
 
 /**
@@ -220,6 +221,10 @@ export function loadImg(src: string): Promise<HTMLImageElement> {
     });
 }
 
+export function spriteSrcToImage(src: LoadSpriteSrc): Promise<ImageSource> {
+    return typeof src === "string" ? loadImg(src) : Promise.resolve(src);
+}
+
 export function loadProgress(): number {
     const buckets = [
         _k.assets.sprites,
@@ -261,7 +266,11 @@ export function load<T>(prom: Promise<T>): Asset<T> {
 export type InternalAssetsCtx = ReturnType<typeof initAssets>;
 
 /** @ignore */
-export const initAssets = (ggl: GfxCtx, opt: MustKAPLAYOpt) => {
+export const initAssets = (
+    ggl: GfxCtx,
+    opt: MustKAPLAYOpt,
+    appGfx: AppGfxCtx,
+) => {
     const assets = {
         urlPrefix: "",
         // asset holders
@@ -282,6 +291,9 @@ export const initAssets = (ggl: GfxCtx, opt: MustKAPLAYOpt) => {
         // if we finished initially loading all assets
         loaded: false,
     };
+
+    // Set up the white pixel to start everything
+    appGfx.whitePixel = assets.packer._createWhitePixel();
 
     return assets;
 };
