@@ -196,7 +196,7 @@ function createShootingBall() {
             clampPos() {
                 const y = Math.ceil((this.pos.y - 25) / 50);
                 let x;
-                if (y & 1) {
+                if ((y + nextRow) & 1) {
                     x = Math.round((this.pos.x - 50) / 50) * 50 + 25;
                 }
                 else {
@@ -208,13 +208,14 @@ function createShootingBall() {
     ]);
 }
 
-let nextRow = 1;
+let nextRow = 0;
 loop(
     5,
     () => {
         ballGraph.balls.forEach(ball => {
             ball.moveBy(0, 50);
         });
+        nextRow++;
         for (let x = 0; x < 6; x++) {
             createBall(
                 vec2(25 + x * 50 + (nextRow & 1 ? 25 : 0), 25),
@@ -224,7 +225,6 @@ loop(
         if (ballGraph.balls.some(ball => ball.pos.y > (25 + 6 * 50))) {
             debug.log("You lost");
         }
-        nextRow++;
     },
     undefined,
     true,
