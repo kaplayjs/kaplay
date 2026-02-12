@@ -125,6 +125,7 @@ scene("game", firstClick => {
                     anchor("center"),
                     area(),
                     opacity(1),
+                    timer(),
                     "bomb",
                     { index: i },
                 ]);
@@ -144,6 +145,7 @@ scene("game", firstClick => {
                     anchor("center"),
                     area(),
                     opacity(1),
+                    timer(),
                     "number",
                     { index: i },
                 ]);
@@ -156,6 +158,7 @@ scene("game", firstClick => {
                     anchor("center"),
                     area(),
                     opacity(1),
+                    timer(),
                     "empty",
                     { index: i },
                 ]);
@@ -256,6 +259,58 @@ scene("game", firstClick => {
     }
 
     mineGraph.objAt(firstIndex).trigger("click");
+
+    // Hints
+    onKeyPress("h", () => {
+        for (let i = 0; i < w * h; i++) {
+            const obj = mineGraph.objAt(i);
+            // If uncovered number
+            if (obj.opacity == 0 && obj.is("number")) {
+                const neighbors = mineGraph.getNeighbors(obj.index);
+                const unknowns = neighbors.reduce(
+                    (s, i) => s + (mineGraph.objAt(i).opacity == 1 ? 1 : 0),
+                    0,
+                );
+                const marked = neighbors.reduce(
+                    (s, i) =>
+                        s + (mineGraph.objAt(i).children.length > 0 ? 1 : 0),
+                    0,
+                );
+                // If there are an equal amount of bombs as unknowns, it is safe to mark all remaining unknowns as bomb
+                if (map[i] >= unknowns && marked < unknowns) {
+                    const x = i % w;
+                    const y = Math.floor(i / w);
+                    debug.log(
+                        `All remaining covered spaces around ${x}, ${y} are bombs.`,
+                    );
+                    neighbors.map(i => mineGraph.objAt(i)).filter(o =>
+                        o.opacity == 1 && o.children.length == 0
+                    ).forEach(
+                        o => o.tween(RED, WHITE, 0.25, v => o.color = v),
+                    );
+                    return;
+                }
+                // If enough bombs are marked, the remaining unknowns are safe
+                /* TODO: we might need to check if the marks make sense, by getting the neighbors and check if at least
+                         one neighbor reports enough information for it to be marked as being a bomb */
+                else if (map[i] <= marked && marked < unknowns) {
+                    const x = i % w;
+                    const y = Math.floor(i / w);
+                    debug.log(
+                        `All remaining covered spaces around ${x}, ${y} are safe.`,
+                    );
+                    neighbors.map(i => mineGraph.objAt(i)).filter(o =>
+                        o.opacity == 1 && o.children.length == 0
+                    ).forEach(
+                        o => o.tween(GREEN, WHITE, 0.25, v => o.color = v),
+                    );
+                    return;
+                }
+            }
+        }
+        // TODO: Add deductive and inductive reasoning
+        debug.log(`Not enough information.`);
+    });
 });
 
 go("first-click");
