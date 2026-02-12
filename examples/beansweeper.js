@@ -1,9 +1,22 @@
 kaplay({
     broadPhaseCollisionAlgorithm: "grid",
+    font: "happy",
 });
 
 loadBean("bean");
+loadHappy();
 loadSprite("mark", "sprites/mark.png");
+
+const colors = [
+    Color.fromHex("#6d80fa"),
+    Color.fromHex("#cc425e"),
+    Color.fromHex("#5ba675"),
+    Color.fromHex("#8465ec"),
+    Color.fromHex("#a32858"),
+    Color.fromHex("#8db7ff"),
+    Color.fromHex("#4a3052"),
+    Color.fromHex("#7b5480"),
+];
 
 const w = 10;
 const h = 10;
@@ -117,7 +130,13 @@ scene("game", firstClick => {
                 ]);
             }
             else if (v > 0) {
-                add([pos(x * 60 + 30, y * 60 + 30), text(v), anchor("center")]);
+                add([
+                    pos(x * 60 + 30, y * 60 + 30),
+                    text(v),
+                    anchor("center"),
+                    color(colors[v - 1]),
+                ]);
+
                 objMap[i] = add([
                     pos(x * 60 + 30, y * 60 + 30),
                     rect(55, 55),
@@ -172,14 +191,29 @@ scene("game", firstClick => {
     onClick("bomb", obj => {
         if (handleFlag(obj)) return;
         if (obj.children.length) return;
-        get("bomb").forEach(o => o.fadeOut());
-        debug.log("You lost");
+
+        shake(10);
+
+        // Shuffles it so the explosions are random rather than in order
+        // Makes the clicked bomb the first
+        const bombs = shuffle(get("bomb"));
+        const index = bombs.indexOf(obj);
+        const [clickedBomb] = bombs.splice(index, 1);
+        bombs.unshift(clickedBomb);
+
+        bombs.forEach((o, i) => {
+            wait(0.1 * i, () => {
+                shake(0.5);
+                o.fadeOut();
+                addKaboom(o.pos, { scale: 0.5 });
+            });
+        });
     });
 
     onClick("number", obj => {
         if (handleFlag(obj)) return;
         if (obj.children.length) return;
-        obj.fadeOut();
+        obj.fadeOut(0.1);
     });
 
     onClick("empty", obj => {
@@ -189,7 +223,9 @@ scene("game", firstClick => {
             obj,
             (obj, fromObj) => !obj.is("bomb") && fromObj.is("empty"),
         );
-        indices.forEach(o => o.fadeOut());
+        indices.forEach((o, i) => {
+            o.fadeOut(0.025 * i);
+        });
     });
 
     function handleFlag(obj) {
@@ -198,7 +234,21 @@ scene("game", firstClick => {
                 destroy(obj.children[0]);
             }
             else {
-                obj.add([sprite("mark"), anchor("center")]);
+                const flag = obj.add([
+                    sprite("mark"),
+                    anchor("bot"),
+                    scale(),
+                    opacity(),
+                    pos(0, 27),
+                ]);
+
+                tween(
+                    vec2(1, 1.25),
+                    vec2(1, 1),
+                    0.35,
+                    (p) => flag.scale = p,
+                    easings.easeOutElastic,
+                );
             }
             return true;
         }
