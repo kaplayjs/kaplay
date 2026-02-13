@@ -113,7 +113,7 @@ scene("game", firstClick => {
         for (let x = 0; x < w; x++) {
             const v = map[i];
             if (v == 9) {
-                add([
+                const bomb = add([
                     pos(x * 60 + 30, y * 60 + 30),
                     sprite("bean"),
                     anchor("center"),
@@ -127,17 +127,16 @@ scene("game", firstClick => {
                     opacity(1),
                     timer(),
                     "bomb",
-                    { index: i },
+                    { index: i, bomb },
                 ]);
             }
             else if (v > 0) {
-                add([
+                const number = add([
                     pos(x * 60 + 30, y * 60 + 30),
                     text(v),
                     anchor("center"),
                     color(colors[v - 1]),
                 ]);
-
                 objMap[i] = add([
                     pos(x * 60 + 30, y * 60 + 30),
                     rect(55, 55),
@@ -147,7 +146,7 @@ scene("game", firstClick => {
                     opacity(1),
                     timer(),
                     "number",
-                    { index: i },
+                    { index: i, number },
                 ]);
             }
             else {
