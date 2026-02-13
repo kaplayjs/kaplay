@@ -134,6 +134,7 @@ scene("game", firstClick => {
                 const number = add([
                     pos(x * 60 + 30, y * 60 + 30),
                     text(v),
+                    scale(),
                     anchor("center"),
                     color(colors[v - 1]),
                 ]);
@@ -215,7 +216,14 @@ scene("game", firstClick => {
     onClick("number", obj => {
         if (handleFlag(obj)) return;
         if (obj.children.length) return;
-        obj.fadeOut(0.1);
+        obj.destroy();
+        tween(
+            vec2(1.25),
+            vec2(1),
+            0.15,
+            (p) => obj.number.scale = p,
+            easings.easeOutQuad,
+        );
     });
 
     onClick("empty", obj => {
@@ -226,7 +234,20 @@ scene("game", firstClick => {
             (obj, fromObj) => !obj.is("bomb") && fromObj.is("empty"),
         );
         indices.forEach((o, i) => {
-            o.fadeOut(0.025 * i);
+            wait(0.0125 * i, () => {
+                o.destroy();
+            });
+            if (o.number) {
+                wait(0.0125 * i, () => {
+                    tween(
+                        rand(vec2(1.5), vec2(1.8)),
+                        vec2(1),
+                        0.15,
+                        (p) => o.number.scale = p,
+                        easings.easeOutQuad,
+                    );
+                });
+            }
         });
     });
 
