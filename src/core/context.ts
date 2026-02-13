@@ -63,6 +63,7 @@ import { fakeMouse } from "../ecs/components/misc/fakeMouse";
 import { health } from "../ecs/components/misc/health";
 import { lifespan } from "../ecs/components/misc/lifespan";
 import { named } from "../ecs/components/misc/named";
+import { sound } from "../ecs/components/misc/sound";
 import { state } from "../ecs/components/misc/state";
 import { stay } from "../ecs/components/misc/stay";
 import { textInput } from "../ecs/components/misc/textInput";
@@ -403,6 +404,7 @@ export const createContext = (
         shader,
         textInput,
         timer,
+        sound,
         fixed,
         stay,
         health,
