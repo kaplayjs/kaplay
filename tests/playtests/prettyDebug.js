@@ -22,4 +22,6 @@ pretty.recursive = pretty;
 
 debug.log("Text in [brackets] doesn't cause issues");
 debug.log(pretty); // recursive doesn't cause issues
-debug.error("This is an error message"); // errors in red
+
+debug.error("Woops! This is an error message", ":("); // errors in red
+debug.warn("Hey! This is a warning message!", "(!)");
