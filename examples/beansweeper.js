@@ -127,7 +127,12 @@ scene("game", firstClick => {
                     opacity(1),
                     timer(),
                     "bomb",
-                    { index: i, bomb },
+                    {
+                        index: i,
+                        bomb,
+                        get isMarked() { return this.children.length > 0; },
+                        get isCovered() { return this.exists(); }
+                    },
                 ]);
             }
             else if (v > 0) {
@@ -147,7 +152,12 @@ scene("game", firstClick => {
                     opacity(1),
                     timer(),
                     "number",
-                    { index: i, number },
+                    {
+                        index: i,
+                        number,
+                        get isMarked() { return this.children.length > 0; },
+                        get isCovered() { return this.exists(); }
+                    },
                 ]);
             }
             else {
@@ -160,7 +170,11 @@ scene("game", firstClick => {
                     opacity(1),
                     timer(),
                     "empty",
-                    { index: i },
+                    {
+                        index: i,
+                        get isMarked() { return this.children.length > 0; },
+                        get isCovered() { return this.exists(); }
+                    },
                 ]);
             }
             i++;
@@ -253,7 +267,7 @@ scene("game", firstClick => {
 
     function handleFlag(obj) {
         if (isMouseDown("right") && obj.opacity == 1) {
-            if (obj.children.length) {
+            if (obj.isMarked) {
                 destroy(obj.children[0]);
             }
             else {
@@ -285,15 +299,15 @@ scene("game", firstClick => {
         for (let i = 0; i < w * h; i++) {
             const obj = mineGraph.objAt(i);
             // If uncovered number
-            if (obj.opacity == 0 && obj.is("number")) {
+            if (!obj.isCovered && obj.is("number")) {
                 const neighbors = mineGraph.getNeighbors(obj.index);
                 const unknowns = neighbors.reduce(
-                    (s, i) => s + (mineGraph.objAt(i).opacity == 1 ? 1 : 0),
+                    (s, i) => s + (mineGraph.objAt(i).isCovered ? 1 : 0),
                     0,
                 );
                 const marked = neighbors.reduce(
                     (s, i) =>
-                        s + (mineGraph.objAt(i).children.length > 0 ? 1 : 0),
+                        s + (mineGraph.objAt(i).isMarked ? 1 : 0),
                     0,
                 );
                 // If there are an equal amount of bombs as unknowns, it is safe to mark all remaining unknowns as bomb
@@ -304,7 +318,7 @@ scene("game", firstClick => {
                         `All remaining covered spaces around ${x}, ${y} are bombs.`,
                     );
                     neighbors.map(i => mineGraph.objAt(i)).filter(o =>
-                        o.opacity == 1 && o.children.length == 0
+                        o.isCovered && !o.isMarked
                     ).forEach(
                         o => o.tween(RED, WHITE, 0.25, v => o.color = v),
                     );
@@ -320,7 +334,7 @@ scene("game", firstClick => {
                         `All remaining covered spaces around ${x}, ${y} are safe.`,
                     );
                     neighbors.map(i => mineGraph.objAt(i)).filter(o =>
-                        o.opacity == 1 && o.children.length == 0
+                        o.isCovered && !o.isMarked
                     ).forEach(
                         o => o.tween(GREEN, WHITE, 0.25, v => o.color = v),
                     );
