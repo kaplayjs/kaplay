@@ -245,6 +245,7 @@ scene("battle", () => {
             pos(rand(0, width()), 0),
             health(OBJ_HEALTH),
             anchor("bot"),
+            offscreen({ destroy: true }),
             "trash",
             "enemy",
             { speed: rand(TRASH_SPEED * 0.5, TRASH_SPEED * 1.5) },
