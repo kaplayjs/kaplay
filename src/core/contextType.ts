@@ -1813,7 +1813,7 @@ export interface KAPLAYCtx {
         onSwipe(fingers: number, cb: (delta: Vec2) => void): void;
         onPinch(cb: (center: Vec2, scale: Vec2) => void): void;
         onRotate(cb: (center: Vec2, angle: number) => void): void;
-    }
+    };
     /**
      * Serializes the animation to plain objects
      *
