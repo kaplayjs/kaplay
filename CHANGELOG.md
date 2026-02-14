@@ -20,6 +20,8 @@ best friend, lajbel, can put the correct version name here
 
 ### Added
 
+- Added the `charsPerTile` option to the `level()` component, so that you can
+  make clearer maps without having to resort to Unicode - @dragoncoder047
 - Added `tileMode` option to 9-slice sprites with four tiling strategies:
   `'none'` (stretch all), `'edges'` (tile edges only), `'center'` (tile center
   only), and `'all'` (tile both edges and center) (#996) - @JustKira
@@ -64,6 +66,8 @@ best friend, lajbel, can put the correct version name here
 
 ### Added
 
+- Added `AreaCompOpt.isSensor`. Areas without body or is sensor will no longer
+  be eligible for collisions - @mflerackers
 - Added `floodFill()` for puzzle games - @mflerackers
 - Added `AreaComp.isVisuallyColliding` to test collisions in screen space. This
   can be used for fixed objects which do not necessarily collide in world space.
