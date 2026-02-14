@@ -18,8 +18,10 @@ const colors = [
     Color.fromHex("#7b5480"),
 ];
 
-const w = 10;
-const h = 10;
+let canClick = true;
+let w = 10;
+let h = 10;
+let bombAmount = 20;
 
 scene("first-click", () => {
     onDraw(() => {
@@ -63,7 +65,7 @@ scene("game", firstClick => {
         if (r) forbidden.add(firstIndex + w + 1);
     }
     const indices = map.map((v, i) => i).filter(v => !forbidden.has(v));
-    const bombs = chooseMultiple(indices, 20);
+    const bombs = chooseMultiple(indices, bombAmount);
 
     bombs.forEach(i => map[i] = 9);
 
@@ -130,8 +132,12 @@ scene("game", firstClick => {
                     {
                         index: i,
                         bomb,
-                        get isMarked() { return this.children.length > 0; },
-                        get isCovered() { return this.exists(); }
+                        get isMarked() {
+                            return this.children.length > 0;
+                        },
+                        get isCovered() {
+                            return this.exists();
+                        },
                     },
                 ]);
             }
@@ -155,8 +161,12 @@ scene("game", firstClick => {
                     {
                         index: i,
                         number,
-                        get isMarked() { return this.children.length > 0; },
-                        get isCovered() { return this.exists(); }
+                        get isMarked() {
+                            return this.children.length > 0;
+                        },
+                        get isCovered() {
+                            return this.exists();
+                        },
                     },
                 ]);
             }
@@ -172,8 +182,12 @@ scene("game", firstClick => {
                     "empty",
                     {
                         index: i,
-                        get isMarked() { return this.children.length > 0; },
-                        get isCovered() { return this.exists(); }
+                        get isMarked() {
+                            return this.children.length > 0;
+                        },
+                        get isCovered() {
+                            return this.exists();
+                        },
                     },
                 ]);
             }
@@ -206,6 +220,7 @@ scene("game", firstClick => {
     const mineGraph = new MineGraph(objMap);
 
     onClick("bomb", obj => {
+        if (!canClick) return;
         if (handleFlag(obj)) return;
         if (obj.children.length) return;
 
@@ -213,21 +228,38 @@ scene("game", firstClick => {
 
         // Shuffles it so the explosions are random rather than in order
         // Makes the clicked bomb the first
-        const bombs = shuffle(get("bomb"));
-        const index = bombs.indexOf(obj);
-        const [clickedBomb] = bombs.splice(index, 1);
-        bombs.unshift(clickedBomb);
+        // Gets all the bombs that weren't flagged
+        const bombsToExplode = shuffle(
+            get("bomb").filter((bomb) => !bomb.isMarked),
+        );
+        const index = bombsToExplode.indexOf(obj);
+        const [clickedBomb] = bombsToExplode.splice(index, 1);
+        bombsToExplode.unshift(clickedBomb);
 
-        bombs.forEach((o, i) => {
+        // uncover the first one and when the next one is uncovered explode the previous one
+        bombsToExplode.forEach((o, i) => {
             wait(0.1 * i, () => {
-                shake(0.5);
-                o.fadeOut();
-                addKaboom(o.pos, { scale: 0.5 });
+                o.destroy();
+                wait(0.1 * i, () => {
+                    o.bomb.destroy();
+                    const boom = addKaboom(o.pos, { scale: 0.5 });
+                    wait(0.3, () => boom.paused = true);
+                    shake(0.5);
+                });
             });
+        });
+
+        // wrong spaces where you marked but there was no bomb
+        const wrongMarks = objMap.filter((obj) =>
+            obj.isMarked && !obj.is("bomb")
+        );
+        wrongMarks.forEach((wrong, i) => {
+            wrong.children[0].color = RED;
         });
     });
 
     onClick("number", obj => {
+        if (!canClick) return;
         if (handleFlag(obj)) return;
         if (obj.children.length) return;
         obj.destroy();
@@ -241,6 +273,7 @@ scene("game", firstClick => {
     });
 
     onClick("empty", obj => {
+        if (!canClick) return;
         if (handleFlag(obj)) return;
         if (obj.children.length) return;
         const indices = mineGraph.floodFill(
@@ -286,8 +319,14 @@ scene("game", firstClick => {
                     (p) => flag.scale = p,
                     easings.easeOutElastic,
                 );
+
+                // if all bombs now flagged
+                if (get("bomb").every((bomb) => bomb.isMarked)) {
+                    debug.log("YOU WON!!");
+                    canClick = false;
+                }
+                return true;
             }
-            return true;
         }
         return false;
     }
@@ -306,8 +345,7 @@ scene("game", firstClick => {
                     0,
                 );
                 const marked = neighbors.reduce(
-                    (s, i) =>
-                        s + (mineGraph.objAt(i).isMarked ? 1 : 0),
+                    (s, i) => s + (mineGraph.objAt(i).isMarked ? 1 : 0),
                     0,
                 );
                 // If there are an equal amount of bombs as unknowns, it is safe to mark all remaining unknowns as bomb
