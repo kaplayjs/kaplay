@@ -1,4 +1,4 @@
-// @ts-check
+// Serving files in Express.js for KAPLAY development
 
 import { assets } from "@kaplayjs/crew";
 import express from "express";
@@ -6,8 +6,8 @@ import fs from "fs/promises";
 import os from "os";
 import path from "path";
 
-export function serve(opt = {}) {
-    const port = opt.port || process.env.PORT || 4000;
+export function serve() {
+    const port = process.env.PORT || 4000;
     const app = express();
 
     app.set("view engine", "ejs");
@@ -15,6 +15,8 @@ export function serve(opt = {}) {
     app.use("/dist", express.static("dist"));
     app.use(express.static("examples"));
     app.use("/tests/playtests", express.static("tests/playtests"));
+
+    // Expose crew urls
     for (const [name, asset] of Object.entries(assets)) {
         const outlined = asset.outlined;
 

@@ -7,20 +7,42 @@
  */
 // @ts-check
 
-kaplay();
+kaplay({
+    fixedUpdateMode: "ludicrous",
+});
+debug.inspect = true;
 
-let fixedCount = 0;
-let count = 0;
+const lag = false;
+if (lag) {
+    loadBean();
+    for (let i = 0; i < 150; i++) {
+        add([
+            sprite("bean"),
+            area(),
+            pos(rand(vec2(100))),
+        ]);
+    }
+}
+
+const fixCounter = new (_k.app.state.fpsCounter.constructor)();
 
 onFixedUpdate(() => {
-    fixedCount++;
+    fixCounter.tick(dt());
 });
 
 onUpdate(() => {
-    count++;
     debug.log(
-        `${fixedDt()} ${Math.floor(fixedCount / time())} ${dt()} ${
-            Math.floor(count / time())
-        }`,
+        [
+            fixedDt(),
+            fixCounter.calculate(),
+            dt(),
+            _k.app.state.fpsCounter.calculate(),
+        ].map(x => x.toFixed(5)).join(" "),
     );
 });
+
+if (!lag) {
+    loop(2, () => {
+        setFixedSpeed(fixedDt() > 0.01 ? "ludicrous" : "friedPotato");
+    });
+}

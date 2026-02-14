@@ -1,6 +1,5 @@
 import type { BitmapFontData } from "../../../assets/bitmapFont";
 import { DEF_TEXT_SIZE } from "../../../constants/general";
-import { onLoad } from "../../../events/globalEvents";
 import { getRenderProps } from "../../../game/utils";
 import {
     drawFormattedText,
@@ -13,7 +12,9 @@ import type {
 } from "../../../gfx/draw/drawText";
 import { formatText } from "../../../gfx/formatText";
 import { Rect, vec2 } from "../../../math/math";
+import { _k } from "../../../shared";
 import type { Comp, GameObj } from "../../../types";
+import { nextRenderAreaVersion } from "../physics/area";
 
 /**
  * The serialized {@link text `text()`} component.
@@ -94,6 +95,7 @@ export interface TextComp extends Comp {
      * @since v3000.0
      */
     renderArea(): Rect;
+    _renderAreaVersion: number;
     /**
      * The text data object after formatting, that contains the
      * renering info as well as the parse data of the formatting tags.
@@ -186,7 +188,7 @@ export function text(t: string, opt: TextCompOpt = {}): TextComp {
     let _width = opt.width ?? 0;
     let _height = 0;
 
-    const obj = {
+    const obj: TextComp = {
         id: "text",
         set text(nt) {
             t = nt;
@@ -197,33 +199,39 @@ export function text(t: string, opt: TextCompOpt = {}): TextComp {
             return t;
         },
         textSize: opt.size ?? DEF_TEXT_SIZE,
-        font: opt.font,
+        font: opt.font!,
         get width() {
             return _width;
         },
         set width(value) {
-            _width = value;
-            if (_shape) _shape.width = value;
+            if (_width != value) {
+                _width = value;
+                if (_shape) _shape.width = value;
+                this._renderAreaVersion = nextRenderAreaVersion();
+            }
         },
         get height() {
             return _height;
         },
         set height(value) {
-            _height = value;
-            if (_shape) _shape.height = value;
+            if (_height != value) {
+                _height = value;
+                if (_shape) _shape.height = value;
+                this._renderAreaVersion = nextRenderAreaVersion();
+            }
         },
-        align: opt.align,
-        lineSpacing: opt.lineSpacing,
-        letterSpacing: opt.letterSpacing,
-        textTransform: opt.transform,
-        textStyles: opt.styles,
+        align: opt.align!,
+        lineSpacing: opt.lineSpacing!,
+        letterSpacing: opt.letterSpacing!,
+        textTransform: opt.transform!,
+        textStyles: opt.styles!,
 
         formattedText(this: GameObj<TextComp>) {
             return theFormattedText;
         },
 
         add(this: GameObj<TextComp>) {
-            onLoad(() => update(this));
+            _k.k.onLoad(() => update(this));
         },
 
         draw(this: GameObj<TextComp>) {
@@ -237,8 +245,24 @@ export function text(t: string, opt: TextCompOpt = {}): TextComp {
         renderArea() {
             if (!_shape) {
                 _shape = new Rect(vec2(0), _width, _height);
+                this._renderAreaVersion = nextRenderAreaVersion();
             }
             return _shape;
+        },
+
+        _renderAreaVersion: 0,
+
+        serialize() {
+            return {
+                text: this.text,
+                size: this.textSize,
+                font: typeof this.font === "string" ? this.font : undefined,
+                width: this.width,
+                align: this.align,
+                lineSpacing: this.lineSpacing,
+                letterSpacing: this.letterSpacing,
+                indentAll: opt.indentAll,
+            };
         },
     };
 

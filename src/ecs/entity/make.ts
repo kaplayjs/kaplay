@@ -4,7 +4,7 @@ import { KEvent, KEventHandler } from "../../events/events";
 import { Mat23 } from "../../math/math";
 import { _k } from "../../shared";
 import type { Comp, CompList, GameObj } from "../../types";
-import { attachAppToGameObjRaw, GameObjRawPrototype } from "./GameObjRaw";
+import { GameObjRawPrototype } from "./GameObjRaw";
 
 /*
 Order of making a game object:
@@ -28,6 +28,7 @@ export function makeInternal<T extends CompList<unknown>>(
 
     // The game object from the prototype
     const obj: GameObj = Object.create(GameObjRawPrototype);
+    currentMaking.push(obj);
 
     // Shadow individual properties
     obj._parent = null as unknown as GameObj;
@@ -48,46 +49,44 @@ export function makeInternal<T extends CompList<unknown>>(
     obj.id = id;
     obj.transform = new Mat23();
 
-    // We only need to modify the prototype the first time, when we know App
-    // state is available (at the moment of create the root game object)
-    if (id == 0) {
-        attachAppToGameObjRaw();
-    }
+    try {
+        // Adding components passed from add([]);
+        // We register here: The objects, because you can also pass tags to add().
+        if (!compsAndTags) return obj as GameObj<T[number]>;
 
-    // Adding components passed from add([]);
-    // We register here: The objects, because you can also pass tags to add().
-    if (!compsAndTags) return obj as GameObj<T[number]>;
+        let comps = [];
+        let tagList = [];
 
-    let comps = [];
-    let tagList = [];
-
-    for (const compOrTag of compsAndTags) {
-        if (typeof compOrTag == "string") {
-            tagList.push(compOrTag);
-        }
-        else {
-            const compId = (<Comp> compOrTag).id;
-
-            if (compId) {
-                obj._compsIds.add(compId);
-                if (addCompIdsToTags) tagList.push(compId);
+        for (const compOrTag of compsAndTags) {
+            if (typeof compOrTag == "string") {
+                tagList.push(compOrTag);
             }
+            else {
+                const compId = (<Comp> compOrTag).id;
 
-            comps.push(compOrTag);
+                if (compId) {
+                    obj._compsIds.add(compId);
+                    if (addCompIdsToTags) tagList.push(compId);
+                }
+
+                comps.push(compOrTag);
+            }
         }
-    }
 
-    // Using .use and .tag we trigger onUse and onTag events correctly
-    for (const comp of comps) {
-        obj.use(<Comp> comp);
-    }
+        // Using .use and .tag we trigger onUse and onTag events correctly
+        for (const comp of comps) {
+            obj.use(<Comp> comp);
+        }
 
-    for (const tag of tagList) {
-        obj.tag(tag);
-    }
+        for (const tag of tagList) {
+            obj.tag(tag);
+        }
 
-    // We cast the type as .use() doesn't add the types
-    return obj as GameObj<T[number]>;
+        // We cast the type as .use() doesn't add the types
+        return obj as GameObj<T[number]>;
+    } finally {
+        currentMaking.pop();
+    }
 }
 
 export function make<T extends CompList<unknown>>(
@@ -96,4 +95,9 @@ export function make<T extends CompList<unknown>>(
     const obj = makeInternal(_k.game.gameObjLastId, compsAndTags);
     _k.game.gameObjLastId++;
     return obj;
+}
+
+let currentMaking: GameObj[] = [];
+export function internalIsMaking(obj: GameObj): boolean {
+    return currentMaking.includes(obj);
 }

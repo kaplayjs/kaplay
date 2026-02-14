@@ -3,7 +3,9 @@ import { drawCircle } from "../../../gfx/draw/drawCircle";
 import { Circle, Rect } from "../../../math/math";
 import { Vec2 } from "../../../math/Vec2";
 import type { Comp, GameObj } from "../../../types";
+import { nextRenderAreaVersion } from "../physics/area";
 import type { AnchorComp } from "../transform/anchor";
+import type { FillComp } from "./fill";
 import type { outline } from "./outline";
 
 /**
@@ -50,7 +52,10 @@ export interface CircleCompOpt {
     fill?: boolean;
 }
 
-export function circle(radius: number, opt: CircleCompOpt = {}): CircleComp {
+export function circle(
+    radius: number,
+    opt: CircleCompOpt = {},
+): CircleComp & { _renderAreaVersion: number } {
     let _shape: Circle | undefined;
     let _radius = radius;
     return {
@@ -59,30 +64,39 @@ export function circle(radius: number, opt: CircleCompOpt = {}): CircleComp {
             return _radius;
         },
         set radius(value: number) {
-            _radius = value;
-            if (_shape) _shape.radius = value;
+            if (_radius != value) {
+                _radius = value;
+                if (_shape) _shape.radius = value;
+                this._renderAreaVersion = nextRenderAreaVersion();
+            }
         },
-        draw(this: GameObj<CircleComp>) {
+        draw(this: GameObj<CircleComp & FillComp>) {
             drawCircle(Object.assign(getRenderProps(this), {
                 radius: _radius,
-                fill: opt.fill,
+                fill: this.fill ?? opt.fill,
             }));
         },
-        renderArea(this: GameObj<AnchorComp | CircleComp>) {
+        renderArea(
+            this: GameObj<
+                AnchorComp | CircleComp | { _renderAreaVersion: number }
+            >,
+        ) {
             if (!_shape) {
                 _shape = new Circle(
                     new Vec2(0),
                     _radius,
                 );
+                this._renderAreaVersion = nextRenderAreaVersion();
             }
             return _shape;
         },
+        _renderAreaVersion: 0,
         inspect() {
             return `radius: ${Math.ceil(_radius)}`;
         },
-        serialize() {
+        serialize(this: GameObj<CircleComp & FillComp>) {
             const data: SerializedCircleComp = { radius: _radius };
-            if (opt.fill) data.fill = true;
+            if (this.fill ?? opt.fill) data.fill = true;
             return data;
         },
     };

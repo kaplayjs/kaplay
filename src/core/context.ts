@@ -1,3 +1,11 @@
+import {
+    onCollide,
+    onError,
+    onLoad,
+    onLoadError,
+    onLoading,
+    trigger,
+} from "../api/eventHandlers";
 import { getData, setData } from "../app/data";
 import { gestures } from "../app/gestures";
 import { loadAseprite } from "../assets/aseprite";
@@ -31,6 +39,7 @@ import { color } from "../ecs/components/draw/color";
 import { drawon } from "../ecs/components/draw/drawon";
 import { ellipse } from "../ecs/components/draw/ellipse";
 import { fadeIn } from "../ecs/components/draw/fadeIn";
+import { fill } from "../ecs/components/draw/fill";
 import { mask } from "../ecs/components/draw/mask";
 import { opacity } from "../ecs/components/draw/opacity";
 import { outline } from "../ecs/components/draw/outline";
@@ -91,31 +100,6 @@ import { Collision } from "../ecs/systems/Collision";
 import { system, SystemPhase } from "../ecs/systems/systems";
 import { KEvent, KEventController, KEventHandler } from "../events/events";
 import {
-    on,
-    onAdd,
-    onClick,
-    onCollide,
-    onCollideEnd,
-    onCollideUpdate,
-    onDestroy,
-    onDraw,
-    onError,
-    onFixedUpdate,
-    onHover,
-    onHoverEnd,
-    onHoverUpdate,
-    onLoad,
-    onLoadError,
-    onLoading,
-    onResize,
-    onTag,
-    onUntag,
-    onUnuse,
-    onUpdate,
-    onUse,
-    trigger,
-} from "../events/globalEvents";
-import {
     camFlash,
     camPos,
     camRot,
@@ -140,14 +124,7 @@ import {
     setGravityDirection,
 } from "../game/gravity";
 import { getDefaultLayer, getLayers, layers, setLayers } from "../game/layers";
-import {
-    getSceneName,
-    go,
-    onSceneLeave,
-    popScene,
-    pushScene,
-    scene,
-} from "../game/scenes";
+import { getSceneName, go, popScene, pushScene } from "../game/scenes";
 import { anchorPt } from "../gfx/anchor";
 import { getBackground, setBackground } from "../gfx/bg";
 import { makeCanvas } from "../gfx/canvasBuffer";
@@ -191,6 +168,7 @@ import { Rule, RuleSystem } from "../math/ai/rulesystem";
 import { StateMachine } from "../math/ai/statemachine";
 import { clamp } from "../math/clamp";
 import { Color, hsl2rgb, rgb } from "../math/color";
+import { buildConvexHull } from "../math/convexhull";
 import { easings } from "../math/easings";
 import { gjkShapeIntersection, gjkShapeIntersects } from "../math/gjk";
 import { lerp } from "../math/lerp";
@@ -219,12 +197,14 @@ import {
     evaluateQuadratic,
     evaluateQuadraticFirstDerivative,
     evaluateQuadraticSecondDerivative,
+    getSpriteOutline,
     hermite,
     isConvex,
     kochanekBartels,
     Line,
     map,
     mapc,
+    Mat2,
     Mat23,
     normalizedCurve,
     Point,
@@ -251,8 +231,16 @@ import {
     vec2,
     wave,
 } from "../math/math";
+import { buildConnectivityMap, floodFill } from "../math/navigation";
+import { NavGrid } from "../math/navigationgrid";
 import { NavMesh } from "../math/navigationmesh";
+import {
+    createCogPolygon,
+    createRegularPolygon,
+    createStarPolygon,
+} from "../math/polygongeneration";
 import { insertionSort } from "../math/sort";
+import { makeQuadtree, Quadtree } from "../math/spatial/quadtree";
 import { Vec2 } from "../math/Vec2";
 import { BlendMode, type KAPLAYPlugin } from "../types";
 import {
@@ -274,7 +262,7 @@ export const createContext = (
     exportToGlobal?: boolean,
 ): KAPLAYCtx => {
     // aliases for root Game Obj operations
-    const { game, app, audio, debug } = e;
+    const { game, app, audio, debug, globalOpt } = e;
     const add = game.root.add.bind(game.root);
     const addPrefab = game.root.addPrefab.bind(game.root);
     const readd = game.root.readd.bind(game.root);
@@ -284,6 +272,10 @@ export const createContext = (
     const loop = game.root.loop.bind(game.root);
     const query = game.root.query.bind(game.root);
     const tween = game.root.tween.bind(game.root);
+
+    const defaultScope = globalOpt.defaultLifetimeScope == "app"
+        ? e.appScope
+        : e.sceneScope;
 
     const ctx: KAPLAYCtx = {
         _k: e,
@@ -323,6 +315,7 @@ export const createContext = (
         dt: app.dt,
         fixedDt: app.fixedDt,
         restDt: app.restDt,
+        setFixedSpeed: app.setFixedSpeed,
         time: app.time,
         screenshot: app.screenshot,
         screenshotToBlob: app.screenshotToBlob,
@@ -335,14 +328,14 @@ export const createContext = (
         setFullscreen: app.setFullscreen,
         isFullscreen: app.isFullscreen,
         isTouchscreen: app.isTouchscreen,
-        onLoad,
-        onLoadError,
-        onLoading,
-        onResize,
-        onGamepadConnect: app.onGamepadConnect,
-        onGamepadDisconnect: app.onGamepadDisconnect,
-        onError,
-        onCleanup,
+        onLoad: defaultScope.onLoad,
+        onLoadError: defaultScope.onLoadError,
+        onLoading: defaultScope.onLoading,
+        onResize: defaultScope.onResize,
+        onGamepadConnect: defaultScope.onGamepadConnect,
+        onGamepadDisconnect: defaultScope.onGamepadDisconnect,
+        onError: defaultScope.onError,
+        onCleanup: defaultScope.onCleanup,
         // misc
         flash: flash,
         setCamPos: setCamPos,
@@ -377,6 +370,7 @@ export const createContext = (
         get,
         query,
         readd,
+        retrieve: (...args) => game.retrieve(...args),
         // comps
         pos,
         rotate,
@@ -385,6 +379,7 @@ export const createContext = (
         color,
         blend,
         opacity,
+        fill,
         anchor,
         area,
         sprite,
@@ -437,46 +432,47 @@ export const createContext = (
         gestures,
         // group events
         trigger,
-        on: on as KAPLAYCtx["on"], // our internal on should be strict, user shouldn't
-        onFixedUpdate,
-        onUpdate,
-        onDraw,
-        onAdd,
-        onDestroy,
-        onUse,
-        onUnuse,
-        onTag,
-        onUntag,
-        onClick,
-        onCollide,
-        onCollideUpdate,
-        onCollideEnd,
-        onHover,
-        onHoverUpdate,
-        onHoverEnd,
-        // input
-        onKeyDown: app.onKeyDown,
-        onKeyPress: app.onKeyPress,
-        onKeyPressRepeat: app.onKeyPressRepeat,
-        onKeyRelease: app.onKeyRelease,
-        onMouseDown: app.onMouseDown,
-        onMousePress: app.onMousePress,
-        onMouseRelease: app.onMouseRelease,
-        onMouseMove: app.onMouseMove,
-        onCharInput: app.onCharInput,
-        onTouchStart: app.onTouchStart,
-        onTouchMove: app.onTouchMove,
-        onTouchEnd: app.onTouchEnd,
-        onScroll: app.onScroll,
-        onHide: app.onHide,
-        onShow: app.onShow,
-        onGamepadButtonDown: app.onGamepadButtonDown,
-        onGamepadButtonPress: app.onGamepadButtonPress,
-        onGamepadButtonRelease: app.onGamepadButtonRelease,
-        onGamepadStick: app.onGamepadStick,
-        onButtonPress: app.onButtonPress,
-        onButtonDown: app.onButtonDown,
-        onButtonRelease: app.onButtonRelease,
+        on: defaultScope.on,
+        onFixedUpdate: defaultScope.onFixedUpdate,
+        onUpdate: defaultScope.onUpdate,
+        onDraw: defaultScope.onDraw,
+        onAdd: defaultScope.onAdd,
+        onDestroy: defaultScope.onDestroy,
+        onUse: defaultScope.onUse,
+        onUnuse: defaultScope.onUnuse,
+        onTag: defaultScope.onTag,
+        onUntag: defaultScope.onUntag,
+        onClick: defaultScope.onClick,
+        onCollide: defaultScope.onCollide,
+        onCollideUpdate: defaultScope.onCollideUpdate,
+        onCollideEnd: defaultScope.onCollideEnd,
+        onHover: defaultScope.onHover,
+        onHoverUpdate: defaultScope.onHoverUpdate,
+        onHoverEnd: defaultScope.onHoverEnd,
+        onKeyDown: defaultScope.onKeyDown,
+        onKeyPress: defaultScope.onKeyPress,
+        onKeyPressRepeat: defaultScope.onKeyPressRepeat,
+        onKeyRelease: defaultScope.onKeyRelease,
+        onMouseDown: defaultScope.onMouseDown,
+        onMousePress: defaultScope.onMousePress,
+        onMouseRelease: defaultScope.onMouseRelease,
+        onMouseMove: defaultScope.onMouseMove,
+        onCharInput: defaultScope.onCharInput,
+        onTouchStart: defaultScope.onTouchStart,
+        onTouchMove: defaultScope.onTouchMove,
+        onTouchEnd: defaultScope.onTouchEnd,
+        onScroll: defaultScope.onScroll,
+        onHide: defaultScope.onHide,
+        onShow: defaultScope.onShow,
+        onTabShow: defaultScope.onTabShow,
+        onTabHide: defaultScope.onTabHide,
+        onGamepadButtonDown: defaultScope.onGamepadButtonDown,
+        onGamepadButtonPress: defaultScope.onGamepadButtonPress,
+        onGamepadButtonRelease: defaultScope.onGamepadButtonRelease,
+        onGamepadStick: defaultScope.onGamepadStick,
+        onButtonPress: defaultScope.onButtonPress,
+        onButtonDown: defaultScope.onButtonDown,
+        onButtonRelease: defaultScope.onButtonRelease,
         mousePos: app.mousePos,
         mouseDeltaPos: app.mouseDeltaPos,
         isKeyDown: app.isKeyDown,
@@ -491,6 +487,7 @@ export const createContext = (
         isGamepadButtonDown: app.isGamepadButtonDown,
         isGamepadButtonReleased: app.isGamepadButtonReleased,
         getGamepadStick: app.getGamepadStick,
+        getGamepadAnalogButton: app.getGamepadAnalogButton,
         isButtonPressed: app.isButtonPressed,
         isButtonDown: app.isButtonDown,
         isButtonReleased: app.isButtonReleased,
@@ -521,15 +518,19 @@ export const createContext = (
         Collision,
         Vec2,
         Color,
+        Mat2,
         Mat4,
         Mat23,
         Quad,
+        Quadtree,
+        makeQuadtree,
         RNG,
         Rule,
         RuleSystem,
         DecisionNode,
         DecisionTree,
         StateMachine,
+        getSpriteOutline,
         insertionSort,
         rand,
         randi,
@@ -568,6 +569,11 @@ export const createContext = (
         catmullRom,
         bezier,
         kochanekBartels,
+        createRegularPolygon,
+        createStarPolygon,
+        createCogPolygon,
+        floodFill,
+        buildConnectivityMap,
         easingSteps,
         easingLinear,
         easingCubicBezier,
@@ -585,7 +591,9 @@ export const createContext = (
         gjkShapeIntersection,
         isConvex,
         triangulate,
+        buildConvexHull,
         NavMesh,
+        NavGrid,
         // raw draw
         drawSprite,
         drawText,
@@ -620,11 +628,12 @@ export const createContext = (
         Picture,
         // debug
         debug,
+        app: e.appScope,
         // scene
-        scene,
+        scene: e.sceneScope,
         getSceneName,
         go,
-        onSceneLeave,
+        onSceneLeave: defaultScope.onSceneLeave,
         pushScene,
         popScene,
         // layers

@@ -1,6 +1,17 @@
-import { onAdd, onDestroy, onUnuse, onUse } from "../../../events/globalEvents";
+import { drawCircle } from "../../../gfx/draw/drawCircle";
+import { drawLine } from "../../../gfx/draw/drawLine";
+import { drawPolygon } from "../../../gfx/draw/drawPolygon";
+import {
+    loadMatrix,
+    multRotate,
+    popTransform,
+    pushMatrix,
+    pushTransform,
+} from "../../../gfx/stack";
+import { clamp } from "../../../math/clamp";
+import { Color } from "../../../math/color";
 import { lerp } from "../../../math/lerp";
-import { rad2deg, vec2 } from "../../../math/math";
+import { deg2rad, Mat23, rad2deg, vec2 } from "../../../math/math";
 import {
     calcTransform,
     clampAngle,
@@ -8,6 +19,7 @@ import {
     updateTransformRecursive,
 } from "../../../math/various";
 import { Vec2 } from "../../../math/Vec2";
+import { _k } from "../../../shared";
 import type { Comp, GameObj } from "../../../types";
 import { system, SystemPhase } from "../../systems/systems";
 import type { PosComp } from "./pos";
@@ -175,24 +187,25 @@ function installSystem() {
     systemInstalled = true;
     // TODO: use a live query for this
     const constraints: Set<GameObj<Constraint>> = new Set();
-    onAdd(obj => {
+    _k.appScope.onAdd(obj => {
         if (obj.has("constraint")) {
             constraints.add(obj as GameObj<Constraint>);
         }
     });
-    onDestroy(obj => {
+    _k.appScope.onDestroy(obj => {
         constraints.delete(obj as GameObj<Constraint>);
     });
-    onUse((obj, id) => {
+    _k.appScope.onUse((obj, id) => {
         if ("constraint" === id) {
             constraints.add(obj as GameObj<Constraint>);
         }
     });
-    onUnuse((obj, id) => {
+    _k.appScope.onUnuse((obj, id) => {
         if ("constraint" === id) {
             constraints.delete(obj as GameObj<Constraint>);
         }
     });
+
     system("constraint", () => {
         constraints.forEach(constraint => {
             constraint.apply();
@@ -205,8 +218,9 @@ function installSystem() {
 export const constraint = {
     /**
      * A distance constraint
-     * @param target The object to keep within distance off
-     * @param opt Options
+     * @param target - The object to keep within distance off
+     * @param opt - Options
+     *
      * @returns DistanceConstraintComp
      */
     distance(
@@ -253,12 +267,16 @@ export const constraint = {
                         const transform = this.parent?.transform.inverse.mul(
                             this.transform,
                         );
-                        this.pos.x = transform.e;
-                        this.pos.y = transform.f;
+                        const p = this.pos;
+                        p.x = transform.e;
+                        p.y = transform.f;
+                        this.pos = p;
                     }
                     else {
-                        this.pos.x = this.transform.e;
-                        this.pos.y = this.transform.f;
+                        const p = this.pos;
+                        p.x = this.transform.e;
+                        p.y = this.transform.f;
+                        this.pos = p;
                     }
                 }
             },
@@ -266,8 +284,9 @@ export const constraint = {
     },
     /**
      * A translation constraint
-     * @param target The object to copy the translation from
-     * @param opt Options
+     * @param target - The object to copy the translation from
+     * @param opt - Options
+     *
      * @returns TranslationConstraintComp
      */
     translation(
@@ -301,20 +320,25 @@ export const constraint = {
                     const transform = this.parent?.transform.inverse.mul(
                         this.transform,
                     );
-                    this.pos.x = transform.e;
-                    this.pos.y = transform.f;
+                    const p = this.pos;
+                    p.x = transform.e;
+                    p.y = transform.f;
+                    this.pos = p;
                 }
                 else {
-                    this.pos.x = this.transform.e;
-                    this.pos.y = this.transform.f;
+                    const p = this.pos;
+                    p.x = this.transform.e;
+                    p.y = this.transform.f;
+                    this.pos = p;
                 }
             },
         };
     },
     /**
      * A rotation constraint
-     * @param target The object to copy the rotation from
-     * @param opt Options
+     * @param target - The object to copy the rotation from
+     * @param opt - Options
+     *
      * @returns RotationConstraintComp
      */
     rotation(
@@ -341,7 +365,8 @@ export const constraint = {
                 );
                 const scale = this.transform.getScale();
                 // Update world angle
-                this.transform.setTRS(
+                const newTransform = new Mat23();
+                newTransform.setTRS(
                     this.transform.e,
                     this.transform.f,
                     newAngle,
@@ -351,20 +376,22 @@ export const constraint = {
                 // Modify local angle
                 if (this.parent) {
                     const transform = this.parent?.transform.inverse.mul(
-                        this.transform,
+                        newTransform,
                     );
                     this.angle = transform.getRotation();
                 }
                 else {
                     this.angle = newAngle;
                 }
+                updateTransformRecursive(this);
             },
         };
     },
     /**
      * A scale constraint
-     * @param target The object to copy the scale from
-     * @param opt Options
+     * @param target - The object to copy the scale from
+     * @param opt - Options
+     *
      * @returns ScaleConstraintComp
      */
     scale(
@@ -411,8 +438,9 @@ export const constraint = {
     },
     /**
      * A transform constraint
-     * @param target The object to copy the transform from
-     * @param opt Options
+     * @param target - The object to copy the transform from
+     * @param opt - Options
+     *
      * @returns TransformConstraintComp
      */
     transform(
@@ -469,21 +497,24 @@ export const constraint = {
                     const transform = this.parent?.transform.inverse.mul(
                         this.transform,
                     );
-                    this.pos.x = transform.e;
-                    this.pos.y = transform.f;
+                    this.pos = vec2(transform.e, transform.f);
                     this.angle = transform.getRotation();
                     this.scale = transform.getScale();
                 }
                 else {
-                    this.pos.x = newX;
-                    this.pos.y = newY;
+                    this.pos = vec2(newX, newY);
                     this.angle = newAngle;
                     this.scale = newScale;
                 }
             },
         };
     },
-    bone(minAngle?: number, maxAngle?: number) {
+    bone(
+        minAngle?: number,
+        maxAngle?: number,
+        minLength?: number,
+        maxLength?: number,
+    ) {
         let _minAngle = Math.max(
             -180,
             Math.min(minAngle ?? -180, maxAngle ?? 180),
@@ -492,6 +523,8 @@ export const constraint = {
             180,
             Math.max(minAngle ?? -180, maxAngle ?? 180),
         );
+        let _minLength = minLength;
+        let _maxLength = maxLength;
         return {
             id: "bone",
             get minAngle() {
@@ -510,9 +543,26 @@ export const constraint = {
                     Math.max(minAngle ?? -180, maxAngle ?? 180),
                 );
             },
+            get minLength() {
+                return _minLength;
+            },
+            get maxLength() {
+                return _maxLength;
+            },
+            drawInspect(this: GameObj<IKConstraintComp | RotateComp>) {
+                pushTransform();
+                multRotate(-this.angle + _minAngle);
+                drawCircle({
+                    radius: 20,
+                    start: _maxAngle - _minAngle,
+                    color: Color.RED,
+                });
+                popTransform();
+            },
         };
     },
     ik(target: GameObj, opt: IKConstraintOpt): IKConstraintComp {
+        installSystem();
         const algorithm = opt.algorithm || "FABRIK";
         const depth = opt.depth ?? 1;
         const iterations = opt.iterations ?? 10;
@@ -583,7 +633,10 @@ export const constraint = {
                                     transform.getRotation(),
                                 );
                                 // If constraint on angle, apply
-                                if (effector.minAngle && effector.maxAngle) {
+                                if (
+                                    effector.minAngle != undefined
+                                    && effector.maxAngle != undefined
+                                ) {
                                     newAngle = Math.min(
                                         Math.max(newAngle, effector.minAngle),
                                         effector.maxAngle,
@@ -597,7 +650,10 @@ export const constraint = {
                                     rotation + angleCorrection,
                                 );
                                 // If constraint on angle, apply
-                                if (effector.minAngle && effector.maxAngle) {
+                                if (
+                                    effector.minAngle != undefined
+                                    && effector.maxAngle != undefined
+                                ) {
                                     newAngle = Math.min(
                                         Math.max(newAngle, effector.minAngle),
                                         effector.maxAngle,
@@ -606,7 +662,50 @@ export const constraint = {
                                 effector.angle = newAngle;
                             }
 
-                            if (effector.minAngle && effector.maxAngle) {
+                            if (
+                                effector.parent
+                                && effector.parent.minLength != undefined
+                                && effector.parent.maxLength != undefined
+                            ) {
+                                // Vector from parent to target
+                                const ax = target.transform.e
+                                    - effector.parent.transform.e;
+                                const ay = target.transform.f
+                                    - effector.parent.transform.f;
+                                // Vector from parent to bone
+                                const bx = effectorTransform.e
+                                    - effector.parent.transform.e;
+                                const by = effectorTransform.f
+                                    - effector.parent.transform.f;
+                                // Projection of target onto bone
+                                const s = (ax * bx + ay * by)
+                                    / (bx * bx + by * by);
+                                const px = s * bx;
+                                const py = s * by;
+                                // Desired length
+                                let len = Math.sqrt(px * px + py * py);
+                                // New length = desired length clamped
+                                const nlen = clamp(
+                                    len,
+                                    effector.parent.minLength,
+                                    effector.parent.maxLength,
+                                );
+                                // Old length
+                                const olen = Math.sqrt(
+                                    effector.pos.x * effector.pos.x
+                                        + effector.pos.y * effector.pos.y,
+                                );
+                                // Scale to desired length clamped
+                                effector.pos.x *= nlen / olen;
+                                effector.pos.y *= nlen / olen;
+                            }
+
+                            if (
+                                (effector.minAngle != undefined
+                                    && effector.maxAngle != undefined)
+                                || (effector.minLength != undefined
+                                    && effector.maxLength != undefined)
+                            ) {
                                 // We changed the local angle, so the current effector's transform needs to be updated
                                 updateTransformRecursive(effector);
                             }
@@ -615,6 +714,29 @@ export const constraint = {
                             }
                         }
                     }
+                },
+                drawInspect(this: GameObj<IKConstraintComp>) {
+                    const endEffector = chain[0] = this;
+                    for (let i = 1; i <= depth; i++) {
+                        chain[i] = chain[i - 1].parent!;
+                    }
+                    let p1 = chain[depth].pos;
+                    pushTransform();
+                    for (let i = depth; i > 0; i--) {
+                        const bone = chain[i];
+                        const childBone = chain[i - 1];
+                        const len = childBone.pos.len();
+                        loadMatrix(bone.transform);
+                        drawPolygon({
+                            pts: [
+                                vec2(0, 0),
+                                vec2(len / 10, -len / 10),
+                                childBone.pos,
+                                vec2(len / 10, len / 10),
+                            ],
+                        });
+                    }
+                    popTransform();
                 },
             };
         }
@@ -720,8 +842,7 @@ export const constraint = {
                                 const transform = parentTransform.inverse.mul(
                                     obj.transform,
                                 );
-                                obj.pos.x = transform.e;
-                                obj.pos.y = transform.f;
+                                obj.pos = vec2(transform.e, transform.f);
                             }
                             else {
                                 // If there is no angle, just use position
@@ -729,15 +850,35 @@ export const constraint = {
                                     .mul(
                                         obj.transform,
                                     );
-                                obj.pos.x = transform.e;
-                                obj.pos.y = transform.f;
+                                obj.pos = vec2(transform.e, transform.f);
                             }
                         }
                         else {
-                            obj.pos.x = obj.transform.e;
-                            obj.pos.y = obj.transform.f;
+                            obj.pos = vec2(obj.transform.e, obj.transform.f);
                         }
                     }
+                },
+                drawInspect(this: GameObj<IKConstraintComp>) {
+                    const endEffector = chain[0] = this;
+                    for (let i = 1; i <= depth; i++) {
+                        chain[i] = chain[i - 1].parent!;
+                    }
+                    let p1 = chain[depth].pos;
+                    pushTransform();
+                    for (let i = depth; i > 0; i--) {
+                        const bone = chain[i];
+                        const childBone = chain[i - 1];
+                        loadMatrix(bone.transform);
+                        drawPolygon({
+                            pts: [
+                                vec2(0, 0),
+                                vec2(10, -10),
+                                childBone.pos,
+                                vec2(10, 10),
+                            ],
+                        });
+                    }
+                    popTransform();
                 },
             };
         }

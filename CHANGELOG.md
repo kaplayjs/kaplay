@@ -1,6 +1,6 @@
 # Changelog
 
-<!-- markdownlint-disable no-duplicate-heading -->
+<!-- markdownlint-disable no-duplicate-heading blanks-around-fences single-h1 -->
 
 All notable changes to this project will be documented in this file.
 
@@ -17,6 +17,288 @@ best friend, lajbel, can put the correct version name here
 -->
 
 ## [unreleased]
+
+### Added
+
+- Added `tileMode` option to 9-slice sprites with four tiling strategies:
+  `'none'` (stretch all), `'edges'` (tile edges only), `'center'` (tile center
+  only), and `'all'` (tile both edges and center) (#996) - @JustKira
+- Added a `calculate()` method to the internal FPS counters, so advanced users
+  can access them to create their own FPS monitor (#1010) - @dragoncoder047
+- Added Intl.Segmenter-based grapheme splitting for proper Indic language
+  support, via the `locale` option in `DrawTextOpt (#1013) - @shajidhasan
+- Added topMostOnlyActivate kaplay option. When true, only the topmost object
+  will receive clicks. This avoids problems in a UI where elements overlap -
+  @mflerackers
+- Added a `fill()` component - @mflerackers
+
+### Changed
+
+- Updated the texture packer to use a new packing algorithm which may get more
+  sprites onto the same texture, improving graphics batching performance
+  (#1011) - @dragoncoder047
+
+### Fixed
+
+- Fixed tiled mode drawing of sprites ignoring opacity when it was 0 (#1020) -
+  @dragoncoder047
+- Now, all global events handlers are avaible in scopes, `app.onXXXX` and
+  `scene.onXXXX()` (#977) - @lajbel
+- Fixed input events attached to paused ancestors not being paused (#1009) -
+  @amyspark-ng, @dragoncoder047
+- Fixed type `UniformValue` union not including `Texture`, a valid option
+  (#1018) - @dragoncoder047
+- Text component no longer hangs if the requested width is too narrow for a
+  single character - @dragoncoder047
+- Fixed input events attached to paused ancestors not being paused (#1009) -
+  @amyspark-ng, @dragoncoder047
+- Fixed type `UniformValue` union not including `Texture`, a valid option
+  (#1018) - @dragoncoder047
+- Fixed event crash when using `onLoad` or other events that doesn't return an
+  EventController, and then using `go()` (#1024) - @lajbel, credits to
+  @dragoncoder047
+- Fixed `onClick()` and `onCollide()` tag variants no longer working -
+  @mflerackers
+
+## [4000.0.0-alpha.26] - 2026-01-12
+
+### Added
+
+- Added `floodFill()` for puzzle games - @mflerackers
+- Added `AreaComp.isVisuallyColliding` to test collisions in screen space. This
+  can be used for fixed objects which do not necessarily collide in world space.
+  Note that this involves additional processing as it tests outside the
+  collision system, which works in world space - @mflerackers
+- Added `buildConnectivityMap()` - @mflerackers
+- Added `buildConvexHull()` - @mflerackers
+
+### Changed
+
+- **(!)** Added `AreaCompOpt.isSensor`. Areas without body or is sensor will no
+  longer be eligible for collisions - @mflerackers
+- Both worldPos and screenPos are properties now - @mflerackers
+
+### Fixed
+
+- Fixed `tween()` not cloning the passed vectors/colors - @lajbel
+- Fixed `timer()` related events (tween/loop/wait) not taking `debug.timeScale`
+  into account - @Stanko
+- Fixed the vibration effect on bodies introduced in alpha.25 thanks to
+  @lajbel's debugging skills - @mflerackers
+- Fixed `SpriteComp.hasAnim()` returning false erroneously when the animation
+  named was just constant frame 0 - @dragoncoder047
+- Fixed `levelComp.serialize()` use _for...of_ in the place of the _for...in_
+  when looping through the tile object keys - @benhuangbmj
+- Fixed input events attached to a game object having the event's paused value
+  reset when the object is paused or unpaused - @dragoncoder047
+- Hidden objects are processed again in transform - @mflerackers
+- When the parent is changed, the transform is invalidated - @mflerackers
+- Fixed click and hover for `fixed()` objects - @mflerackers
+- Object toWorld/fromWorld/toScreen/fromScreen work more logical now -
+  @mflerackers
+- Sticky platforms work again - @mflerackers
+
+## Removed
+
+- **(!)** `onClick(() => {})` was removed, use `onMousePress()` instead.
+  `onClick("tag", () => {});` stays the same,
+
+## [4000.0.0-alpha.25] - 2025-12-23
+
+### Added
+
+- Added the `fakeMouseMove` event in `FakeMouseComp`, it will triggers when you
+  move the object - @lajbel
+- Global `retrieve()` method to get the objects with area within a certain
+  rectangle - @mflerackers
+
+## Changed
+
+- **(!)** You can no longer change the position of an object by doing obj.pos.x
+  += 1. You need to assign a new Vec2 or use moveBy instead - @mflerackers
+- Transforms are now only recalculated when needed. Thus static objects no
+  longer increase computation in the transform phase - @mflerackers
+- Areas are now only recalculated when the area settings or (optional)
+  renderArea has changed - @mflerackers
+- World (transformed) areas are now only recalculated when the area or transform
+  has changed - @mflerackers
+- World bounding boxes are now only recalculated when the world area has
+  changed - @mflerackers
+- Broad stage collision detection spatial structures are now only updated when
+  an object's world bounding box has changed - @mflerackers
+- The grid broadphase has been rewritten for performance - @mflerackers
+- Global `retrieve()` method to get the objects with area within a certain
+  rectangle - @mflerackers
+
+## [4000.0.0-alpha.24] - 2025-12-12
+
+### Added
+
+- Added the `maxTimeStep` and `fixedUpdateMode` options, as well as
+  `setFixedSpeed()` for more granular control over fixed update and timing -
+  @dragoncoder047
+- Added parameterized formatting tags like `"[color=red]Red text![/color]"` in
+  `CharTransformFunc` for more powerful text formatting options -
+  @dragoncoder047
+- Added `createRegularPolygon()` and `createStarPolygon()` to create 2D regular
+  polytopes - @mflerackers
+- Added `createCogPolygon()` to create 2D regular cogs - @mflerackers
+- Added `getSpriteOutline()` that takes a sprite asset and returns a polygon
+  showing the outline - @milosilo-dev
+- Added Quadtree for collision detection (only for fixed size screen for now,
+  needs expansion) - @mflerackers
+- Added vertical sweep and prune - @mflerackers
+- Added configuration to choose broad phase algorithm - @mflerackers
+
+### Fixed
+
+- Fixed the `fakeMouse()` component not giving the right position when the
+  camera transform was not the identity matrix - @dragoncoder047
+- Fixed tall fonts being cropped - @anthonygood
+- Fixed the sprite animation `onEnd()` callback being called before the
+  animation actually stopped, so if the onEnd callback started a new animation,
+  the new animation was instantly stopped - @dragoncoder047
+- Now `playMusic()` actually uses the requested volume and playback rate given
+  in the options - @dragoncoder047
+
+## [4000.0.0-alpha.23] - 2025-11-05
+
+### Added
+
+- Added `getGamepadAnalogButton()` to read the analog value of buttons like the
+  triggers - @dragoncoder047
+
+  ```js
+  isGamepadButtonDown("rtrigger"); // -> true/false, 0/1
+  getGamepadAnalogButton("rtrigger"); // -> analog value between 0 (not pressed) and 1 (fully pressed)
+  ```
+
+- Added chorded button bindings using the Buttons API, so you can bind different
+  actions to `tab` and `shift+tab`, and handle them like normal. Also works with
+  gamepads and mouse! - @dragoncoder047
+
+  ```js
+  kaplay({
+      buttons: {
+          forward: {
+              keyboard: "tab",
+              gamepad: "south",
+          },
+          backward: {
+              keyboard: "shift+tab",
+              gamepad: "rshoulder+south",
+          },
+      },
+  });
+  ```
+
+- Added `skew` to text formatting, so now italics is possible - @dragoncoder047
+
+- Added **lifetime scopes**, a way to define the lifetime of an event handler
+  using a specific scope, `scene`, `app` or a game object - @lajbel,
+  @dragoncoder047
+
+  ```js
+  app.onUpdate(() => {
+      // runs until it is cancelled
+  });
+
+  scene("game", () => {
+      const obj = add([]);
+
+      obj.onUpdate(() => {
+          // runs until obj is destroyed
+      });
+
+      scene.onUpdate(() => {
+          // or just onUpdate(() => {
+          // runs until scene is changed
+      });
+  });
+  ```
+
+  All the available handlers in the scopes are `GameEventHandlers` ones:
+  - `onKeyDown()`
+  - `onKeyPress()`
+  - `onKeyPressRepeat()`
+  - `onKeyRelease()`
+  - `onCharInput()`
+  - `onMouseDown()`
+  - `onMousePress()`
+  - `onMouseRelease()`
+  - `onMouseMove()`
+  - `onScroll()`
+  - `onTouchStart()`
+  - `onTouchMove()`
+  - `onTouchEnd()`
+  - `onGamepadConnect()`
+  - `onGamepadDisconnect()`
+  - `onGamepadButtonDown()`
+  - `onGamepadButtonPress()`
+  - `onGamepadButtonRelease()`
+  - `onGamepadStick()`
+  - `onButtonDown()`
+  - `onButtonPress()`
+  - `onButtonRelease()`
+  - `onTabHide()`
+  - `onTabShow()`
+
+  And this game object handlers may differ when using it with `obj` and
+  `scene`/`app`:
+  - `onFixedUpdate()`
+  - `onUpdate()`
+  - `onDraw()`
+
+- Added `app` scope for app event handlers - @lajbel
+
+  ```js
+  app.onUpdate(() => {
+      // runs until it is cancelled
+  });
+  ```
+
+- Added `KAPLAYOpt.defaultLifetimeScope` for setting the default lifetime scope
+  used for event handlers - @lajbel
+
+  ```js
+  kaplay({
+      defaultLifetimeScope: "app", // default is "scene"
+  });
+
+  onKeyPress("space", () => {
+      // runs until is cancelled
+  });
+  ```
+
+- Added `skew` to text formatting, so now italics is possible - @dragoncoder047
+
+### Changed
+
+- (**!**) Renamed `onShow()` to `onTabShow()` and `onHide()` to `onTabHide()` -
+  @lajbel
+
+- In addition to being the `scene()` function, now `scene` is also a scope for
+  scene event handlers - @lajbel
+
+  ```js
+  scene("game", () => {
+      scene.onUpdate(() => {
+          // or just onUpdate(() => {
+          // runs until scene is changed
+      });
+  });
+  ```
+
+### Fixed
+
+- Now `pushScene()` and `popScene()` give the arguments to the scene in the same
+  way that `go()` does rather than passing them all to the first argument as an
+  array - @dragoncoder047
+- Fixed a flicker due to the fadeIn not setting opacity until the next frame -
+  @mflerackers
+- Fixed FPS cap not working correctly - @mflerackers, @dragoncoder047
+
+## [4000.0.0-alpha.22] - 2025-10-9
 
 ### Added
 
@@ -60,7 +342,6 @@ best friend, lajbel, can put the correct version name here
   ```
 
   The methods that support this are:
-
   - `scene`
   - `go`
   - `onSceneLeave`
@@ -109,16 +390,17 @@ best friend, lajbel, can put the correct version name here
 - Added texture uniforms, in order to access more than one texture at a time in
   shaders - @mflerackers
 
+### Fixed
+
+- Now error screen should be instantly shown - @lajbel
+
 ### Changed
 
 - Now, you can use `color(c)` with a hexadecimal literal number (ex: 0x00ff00) -
   @lajbel
   ```js
   // blue frog
-  add([
-      sprite("bean"),
-      color(0x0000ff),
-  ]);
+  add([sprite("bean"), color(0x0000ff)]);
   ```
 - **(!)** `KAPLAYCtx` doesn't use generics anymore. Now, `KAPLAYCtxT` uses
   them - @lajbel

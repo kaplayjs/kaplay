@@ -1,9 +1,14 @@
+import type { FixedSpeedOption } from "./app/app";
 import type { ButtonsDef } from "./app/inputBindings";
 import type { Asset } from "./assets/asset";
 import type { ShaderData, Uniform } from "./assets/shader";
 import type { KAPLAYCtx } from "./core/contextType";
 import type { TypesOpt } from "./core/taf";
 import type { GameObjRaw } from "./ecs/entity/GameObjRaw";
+import type {
+    BroadPhaseType,
+    NarrowPhaseType,
+} from "./ecs/systems/createCollisionSystem";
 import type { LineCap, LineJoin } from "./gfx/draw/drawLine";
 import type { Picture } from "./gfx/draw/drawPicture";
 import type { FrameBuffer } from "./gfx/FrameBuffer";
@@ -135,12 +140,21 @@ export type Key =
     | (string & {});
 
 /**
+ * You can use 3 or more keys (like `control+shift+s`),
+ * it just isn't included in the type here because typescript
+ * crashes when it tries to expand all 74^3 = 405224 combinations
+ * for 3 keys.
+ */
+export type ChordedKey = Key | `${Key}+${Key}`;
+
+/**
  * A mouse button.
  *
  * @group Input
  * @subgroup Mouse
  */
 export type MouseButton = "left" | "right" | "middle" | "back" | "forward";
+export type ChordedMouseButton = MouseButton | `${MouseButton}+${MouseButton}`;
 
 /**
  * A gamepad button.
@@ -168,6 +182,10 @@ export type KGamepadButton =
     | "home"
     | "capture"
     | "touchpad";
+export type ChordedKGamepadButton =
+    | KGamepadButton
+    | `${KGamepadButton}+${KGamepadButton}`
+    | `${KGamepadButton}+${KGamepadButton}+${KGamepadButton}`;
 
 /**
  * A gamepad stick.
@@ -205,6 +223,9 @@ export type KGamepad = {
     isReleased(b: KGamepadButton): boolean;
     /** Get the value of a stick. */
     getStick(stick: KGamepadStick): Vec2;
+    /** Get the 0-1 analog value of the button
+     * (useful for `ltrigger` and `rtrigger` buttons) */
+    getAnalog(b: KGamepadButton): number;
 };
 
 /**
@@ -329,6 +350,41 @@ export interface KAPLAYOpt {
      */
     maxFPS?: number;
     /**
+     * The number of fixedUpdate() events that should happen per second.
+     * The fixedUpdate() loop is used for physics.
+     * The average user should never need to change this. If you set it too low
+     * then your physics will freak out  due to numerical instability. If you set it too high then
+     * the game will lag.
+     *
+     * The options are:
+     * * friedPotato: 10Hz
+     * * potato: 20Hz
+     * * snail: 25Hz
+     * * normal: 50Hz (default)
+     * * lightspeed: 80Hz
+     * * ridiculous: 125Hz
+     * * ludicrous: 160Hz
+     *
+     * @group Physics
+     * @experimental
+     */
+    fixedUpdateMode?: FixedSpeedOption;
+    /**
+     * The maximum amount of time the game will simulate passing in order to
+     * limit lag. If the framerate lags low enough that one frame takes
+     * longer than this time, the game will instead use this as the delta time
+     * value, which means that the game will run slower than 100% speed.
+     * The average user should never need to change this. If you set it too
+     * low, the game will slow down with even the slightest lag, and if you
+     * set it too high then the game could try to do too much on each frame
+     * and amplify the lag problem.
+     *
+     * @default 0.1
+     * @group Physics
+     * @experimental
+     */
+    maxTimeStep?: number;
+    /**
      * If focus on the canvas on start (default true).
      *
      * @since v3001.0
@@ -369,10 +425,20 @@ export interface KAPLAYOpt {
      */
     inspectOnlyActive?: boolean;
     /**
-     * Which strategy to use for narrow phase collision, gjk or sat
+     * Which strategy to use for broad phase collision, sap, sapv or quadtree
+     * @default "sap"
+     */
+    broadPhaseCollisionAlgorithm?: BroadPhaseType;
+    /**
+     * Which strategy to use for narrow phase collision, gjk, sat or box
      * @default "gjk"
      */
-    narrowPhaseCollisionAlgorithm?: string;
+    narrowPhaseCollisionAlgorithm?: NarrowPhaseType;
+    /**
+     * If true, only the topmost object receives clicks
+     * @default false
+     */
+    topMostOnlyActivate?: boolean;
     /**
      * Timeout (in milliseconds) at which other loaders waiting on sprites will give
      * up and throw an error.
@@ -382,6 +448,12 @@ export interface KAPLAYOpt {
      * @default 3000
      */
     loadTimeout?: number;
+    /**
+     * The default lifetime scope used for event handlers.
+     *
+     * @default "scene"
+     */
+    defaultLifetimeScope?: "scene" | "app";
     /**
      * TypeScript Advanced Features (TAF) are a series of options for TypeScript
      * only features.

@@ -1,5 +1,6 @@
 import type { ButtonBinding } from "../app/inputBindings";
 import type { KEventController } from "../events/events";
+import type { ScopeHandlers } from "../events/scopeHandlers";
 import type { KAPLAYOpt } from "../types";
 import type { KAPLAYCtx } from "./contextType";
 
@@ -91,17 +92,26 @@ export type ButtonName<TOpt extends KAPLAYOptTypeOptions> =
 //     keyof O["tags"] ? O["tags"][TTag]
 //     : any;
 
-// Typed Context
-
-export interface KAPLAYCtxTMethods<
+// #region Scopes
+export type SceneScopeT<
     O extends KAPLAYOptTypeOptions = any,
-> {
-    scene<T extends SceneName<O>>(
+> = ScopeHandlers & {
+    <T extends SceneName<O>>(
         name: T,
         def: (
             ...args: SceneArgs<T, InfKAPLAYOpt<O>["scenes"]>
         ) => void,
     ): void;
+};
+
+// #endregion
+
+// Typed Context
+
+export interface KAPLAYCtxTMethods<
+    O extends KAPLAYOptTypeOptions = any,
+> {
+    scene: SceneScopeT<O>;
 
     go<T extends SceneName<O>>(
         name: T,
