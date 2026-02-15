@@ -97,6 +97,7 @@ const tiles = {
 };
 
 // We define some variables
+let movesTotal = 0;
 let moves = 0;
 let undos = 0;
 
@@ -199,6 +200,7 @@ const move = (dir) => {
 
     // Update and animate the counter
     moves++;
+    movesTotal++;
     moveCounter.text = "Moves: " + moves;
     tween(
         vec2(1.05),
@@ -421,7 +423,7 @@ scene("win", () => {
         anchor("center"),
         pos(center().sub(0, 160)),
         text(
-            `You successfully re-stocked\n the [o]soks[/o] in [o]${moves}[/o] moves!`,
+            `You successfully re-stocked\n the [o]soks[/o] in [o]${movesTotal}[/o] moves!`,
             {
                 size: 36,
                 lineSpacing: 8,
@@ -479,6 +481,7 @@ scene("win", () => {
 
     onKeyPress(() => {
         currentIdx = 0;
+        movesTotal = 0;
         go("game", currentIdx);
     });
 });
