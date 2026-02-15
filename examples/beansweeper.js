@@ -7,7 +7,7 @@ loadBean("bean");
 loadHappy();
 loadSprite("mark", "sprites/mark.png");
 
-const colors = [
+const COLORS = [
     Color.fromHex("#6d80fa"),
     Color.fromHex("#cc425e"),
     Color.fromHex("#5ba675"),
@@ -18,10 +18,14 @@ const colors = [
     Color.fromHex("#7b5480"),
 ];
 
+const INITIAL_X = 50;
+const INITIAL_Y = 0;
+
 let canClick = true;
 let w = 10;
 let h = 10;
 let bombAmount = 20;
+let flagsLeft = bombAmount;
 
 scene("first-click", () => {
     onDraw(() => {
@@ -147,7 +151,7 @@ scene("game", firstClick => {
                     text(v),
                     scale(),
                     anchor("center"),
-                    color(colors[v - 1]),
+                    color(COLORS[v - 1]),
                 ]);
                 objMap[i] = add([
                     pos(x * 60 + 30, y * 60 + 30),
@@ -302,8 +306,15 @@ scene("game", firstClick => {
         if (isMouseDown("right") && obj.opacity == 1) {
             if (obj.isMarked) {
                 destroy(obj.children[0]);
+                flagsLeft++;
             }
             else {
+                if (flagsLeft == 0) {
+                    debug.log("NO flags left");
+                    return true;
+                }
+                flagsLeft--;
+
                 const flag = obj.add([
                     sprite("mark"),
                     anchor("bot"),
