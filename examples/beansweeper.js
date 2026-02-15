@@ -325,8 +325,8 @@ scene("game", firstClick => {
                     debug.log("YOU WON!!");
                     canClick = false;
                 }
-                return true;
             }
+            return true;
         }
         return false;
     }
