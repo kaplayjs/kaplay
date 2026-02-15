@@ -8,6 +8,16 @@
 
 kaplay();
 
+const mouseObject = add([
+    pos(mousePos()),
+    rect(8, 8),
+    anchor("center"),
+]);
+
+mouseObject.onUpdate(() => {
+    mouseObject.pos = toWorld(mousePos());
+});
+
 for (i = 0; i < 20; i++) {
     let randPosX = randi(64, width() - 64);
     let randPosY = randi(64, width() - 64);
@@ -67,7 +77,9 @@ add([
     pos(0, 0),
     z(9999),
     fixed(),
-    text("Oh Hi! Use the arrows to move the camera"),
+    text(
+        "Oh Hi! Use the arrows to move the camera\npress space to change to object parallax",
+    ),
 ]);
 
 setCamScale(0.9);

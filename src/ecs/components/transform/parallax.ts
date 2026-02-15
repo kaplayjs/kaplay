@@ -20,6 +20,8 @@ export interface ParallaxComp extends Comp {
     factor: Vec2;
 
     lastCam?: Vec2 | null;
+
+    follow?: Vec2 | null;
 }
 
 export function parallax(...args: Vec2Args): ParallaxComp {
@@ -28,16 +30,23 @@ export function parallax(...args: Vec2Args): ParallaxComp {
         require: ["pos"],
         factor: vec2(...args),
         lastCam: null as Vec2 | null,
+        follow: null as Vec2 | null,
 
         update(this: GameObj<PosComp | ParallaxComp>) {
             const cam: Vec2 = getCamPos();
 
             if (!this.lastCam) {
-                this.lastCam = cam.clone();
+                // kinda strange ngl idk why this works but works.. //
+                this.lastCam = this.follow?.serialize() === undefined
+                    ? cam?.clone()
+                    : this.follow?.clone();
+                // console.log(typeof(this.follow)?.serialize());
                 return;
             }
 
             const delta: Vec2 = cam.sub(this.lastCam);
+            // console.log(delta.serialize())
+
             this.moveBy(
                 delta.x * (1 - this.factor.x),
                 delta.y * (1 - this.factor.y),
