@@ -211,7 +211,7 @@ export const createGame = (): Game => {
         crashed: false,
         areaCount: 0,
         allTextInputs: new Set<GameObj>(),
-        defRNG: new RNG(Date.now()),
+        defRNG: new RNG(),
         warned: new Set<string>(),
     };
 
