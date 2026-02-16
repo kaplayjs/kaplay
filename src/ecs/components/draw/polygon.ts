@@ -9,6 +9,7 @@ import { Polygon } from "../../../math/math";
 import { type Vec2 } from "../../../math/Vec2";
 import type { Comp, GameObj } from "../../../types";
 import { nextRenderAreaVersion } from "../physics/area";
+import type { FillComp } from "./fill";
 
 /**
  * The {@link polygon `polygon()`} component.
@@ -75,7 +76,7 @@ export function polygon(
         uv: opt.uv,
         tex: opt.tex,
         radius: opt.radius,
-        draw(this: GameObj<PolygonComp>) {
+        draw(this: GameObj<PolygonComp & FillComp>) {
             drawPolygon(Object.assign(getRenderProps(this), {
                 pts: this.pts,
                 colors: this.colors,
@@ -83,7 +84,7 @@ export function polygon(
                 uv: this.uv,
                 tex: this.tex,
                 radius: this.radius,
-                fill: opt.fill,
+                fill: this.fill ?? opt.fill,
                 triangulate: opt.triangulate,
             }));
         },

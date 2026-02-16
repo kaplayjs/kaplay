@@ -54,6 +54,7 @@ Make sure to format each entry like this:
 - Added topMostOnlyActivate kaplay option. When true, only the topmost object
   will receive clicks. This avoids problems in a UI where elements overlap -
   @mflerackers
+- Added a `fill()` component - @mflerackers
 
 ### Changed
 

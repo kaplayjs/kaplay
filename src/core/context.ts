@@ -31,6 +31,7 @@ import { color } from "../ecs/components/draw/color";
 import { drawon } from "../ecs/components/draw/drawon";
 import { ellipse } from "../ecs/components/draw/ellipse";
 import { fadeIn } from "../ecs/components/draw/fadeIn";
+import { fill } from "../ecs/components/draw/fill";
 import { mask } from "../ecs/components/draw/mask";
 import { opacity } from "../ecs/components/draw/opacity";
 import { outline } from "../ecs/components/draw/outline";
@@ -370,6 +371,7 @@ export const createContext = (
         color,
         blend,
         opacity,
+        fill,
         anchor,
         area,
         sprite,
