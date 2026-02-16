@@ -3283,7 +3283,7 @@ export function triangulate(pts: Vec2[]): Vec2[][] {
         const lm = pts[idx];
         const pt = pts[i];
         if (pt.x < lm.x || (pt.x == lm.x && pt.y < lm.y)) {
-            idx = idx;
+            idx = i;
         }
         nextIdx[i] = i + 1;
         prevIdx[i] = i - 1;

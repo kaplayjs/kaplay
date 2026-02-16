@@ -19,6 +19,10 @@ import type {
     Shape,
     Tag,
 } from "../../../types";
+import {
+    type InternalGameObjRaw,
+    objectTransformNeedsUpdate,
+} from "../../entity/GameObjRaw";
 import { isFixed } from "../../entity/utils";
 import type { Collision } from "../../systems/Collision";
 import { system, SystemPhase } from "../../systems/systems";
@@ -26,6 +30,7 @@ import { fakeMouse } from "../misc/fakeMouse";
 import type { AnchorComp } from "../transform/anchor";
 import type { FixedComp } from "../transform/fixed";
 import type { PosComp } from "../transform/pos";
+import type { ZComp } from "../transform/z";
 
 export function usesArea() {
     return _k.game.areaCount > 0;
@@ -57,44 +62,60 @@ export function getLocalAreaVersion(obj: GameObj<any>) {
     return obj._localAreaVersion;
 }
 
+let _topMostOnlyActivate = false;
+export function _setTopMostOnlyActivate(value: boolean) {
+    _topMostOnlyActivate = value;
+}
+
 function clickHandler(button: MouseButton) {
     const screenPos = _k.app.mousePos();
     const worldPos = toWorld(screenPos);
-    const objects: Set<GameObj<AreaComp>> = new Set();
+    const objects: Array<GameObj<AreaComp | ZComp>> = new Array();
     // non-fixed objects
     _k.game.retrieve(
         new Rect(worldPos.sub(1, 1), 3, 3),
-        obj => objects.add(obj),
+        obj => {
+            if (
+                !(obj as unknown as GameObj<FixedComp>).fixed
+                && obj.worldArea().contains(worldPos)
+            ) objects.push(obj as GameObj<AreaComp | ZComp>);
+        },
     );
-
-    objects.forEach(obj => {
-        if (
-            !(obj as unknown as GameObj<FixedComp>).fixed
-            && obj.worldArea().contains(worldPos)
-        ) {
-            _k.game.gameObjEvents.trigger("click", obj);
-            obj.trigger("click", button);
-        }
-    });
 
     // fixed objects
     _k.game.retrieve(new Rect(screenPos.sub(1, 1), 3, 3), obj => {
-        if (objects.has(obj)) objects.delete(obj);
-        else objects.add(obj);
-    });
-    objects.forEach(obj => {
         if (
             (obj as unknown as GameObj<FixedComp>).fixed
             && obj.worldArea().contains(screenPos)
-        ) {
+        ) objects.push(obj as GameObj<AreaComp | ZComp>);
+    });
+
+    if (objects.length) {
+        if (_topMostOnlyActivate) {
+            objects.sort((o1, o2) => {
+                const l1 =
+                    (o1 as unknown as InternalGameObjRaw)._drawLayerIndex;
+                const l2 =
+                    (o2 as unknown as InternalGameObjRaw)._drawLayerIndex;
+                const to1 = (o1 as unknown as InternalGameObjRaw)._treeIndex;
+                const to2 = (o2 as unknown as InternalGameObjRaw)._treeIndex;
+                return (l1 - l2) || (o1.z ?? 0) - (o2.z ?? 0) || (to1 - to2);
+            });
+            const obj = objects.at(-1)!;
             _k.game.gameObjEvents.trigger("click", obj);
             obj.trigger("click", button);
         }
-    });
+        else {
+            objects.forEach(obj => {
+                _k.game.gameObjEvents.trigger("click", obj);
+                obj.trigger("click", button);
+            });
+        }
+    }
 }
 
 let clickHandlerRunning = false;
-function startClickHandler() {
+export function startClickHandler() {
     if (clickHandlerRunning) return;
     clickHandlerRunning = true;
 
@@ -159,7 +180,7 @@ function startHoverHandler() {
 }*/
 
 let systemInstalled = false;
-function startHoverSystem() {
+export function startHoverSystem() {
     if (systemInstalled) return;
     systemInstalled = true;
 
@@ -796,14 +817,14 @@ export function area(
         },
 
         worldBbox(this: GameObj<AreaComp>): Rect {
-            const renderAreaVersion = (this as any).renderAreaVersion;
+            const renderAreaVersion = getRenderAreaVersion(this);
             if (
-                !_worldBBox || _worldAreaVersion != _worldBBoxVersion
+                !_worldBBox || _worldAreaVersion !== _worldBBoxVersion
                 || !_worldShape
-                || _cachedTransformVersion != (this as any)._transformVersion // Transform changed
+                || _cachedTransformVersion !== (this as any)._transformVersion // Transform changed
                 || (renderAreaVersion != undefined // Render area (shape) changed
-                    && _cachedRenderAreaVersion != renderAreaVersion) // Render area (shape) changed
-                || _cachedLocalAreaVersion != _localAreaVersion // Area settings changed
+                    && _cachedRenderAreaVersion !== renderAreaVersion) // Render area (shape) changed
+                || _cachedLocalAreaVersion !== _localAreaVersion // Area settings changed
             ) {
                 _worldBBox = this.worldArea().bbox(_worldBBox);
                 _worldBBoxVersion = _worldAreaVersion;

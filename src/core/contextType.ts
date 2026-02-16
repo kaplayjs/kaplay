@@ -24,6 +24,7 @@ import type { CircleComp, CircleCompOpt } from "../ecs/components/draw/circle";
 import type { ColorComp } from "../ecs/components/draw/color";
 import type { DrawonComp, DrawonCompOpt } from "../ecs/components/draw/drawon";
 import type { EllipseComp } from "../ecs/components/draw/ellipse";
+import type { FillComp } from "../ecs/components/draw/fill";
 import type { MaskComp } from "../ecs/components/draw/mask";
 import type { OpacityComp } from "../ecs/components/draw/opacity";
 import type { OutlineComp } from "../ecs/components/draw/outline";
@@ -764,6 +765,17 @@ export interface KAPLAYCtx {
      * @subgroup Rendering
      */
     opacity(o?: number): OpacityComp;
+    /**
+     * Sets the fill of a Game Object.
+     *
+     * @param fill - The fill value to set.
+     *
+     * @returns The fill comp.
+     * @since v4000.0
+     * @group Components
+     * @subgroup Rendering
+     */
+    fill(fill: boolean): FillComp;
     /**
      * Attach and render a sprite to a Game Object.
      *
@@ -7139,7 +7151,7 @@ export interface KAPLAYCtx {
      * @group Rendering
      * @subgroup Stack
      */
-    pushMatrix(mat?: Mat23): void;
+    pushMatrix(mat: Mat23): void;
     /**
      * Apply a post process effect from a shader name.
      *

@@ -1,6 +1,10 @@
 // Global event handlers
 
 import { type Asset, getFailedAssets } from "../assets/asset";
+import {
+    startClickHandler,
+    startHoverSystem,
+} from "../ecs/components/physics/area";
 import type { Collision } from "../ecs/systems/Collision";
 import type { GameObjEventNames, GameObjEvents } from "../events/eventMap";
 import type { KEventController } from "../events/events";
@@ -188,18 +192,22 @@ export const onDraw = overload2((action: () => void) => {
 });
 
 export const onClick = (tag: Tag, action: (obj: GameObj) => void) => {
+    startClickHandler();
     return on("click", tag, action);
 };
 
 export function onHover(tag: Tag, action: (obj: GameObj) => void) {
+    startHoverSystem();
     return on("hover", tag, action);
 }
 
 export function onHoverEnd(tag: Tag, action: (obj: GameObj) => void) {
+    startHoverSystem();
     return on("hoverEnd", tag, action);
 }
 
 export function onHoverUpdate(tag: Tag, action: (obj: GameObj) => void) {
+    startHoverSystem();
     return on("hoverUpdate", tag, action);
 }
 

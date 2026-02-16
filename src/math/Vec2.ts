@@ -516,8 +516,8 @@ export class Vec2 {
      * @returns The linear interpolation between src and dst by t
      */
     static lerp(src: Vec2, dst: Vec2, t: number, out: Vec2): Vec2 {
-        out.x = src.x * (dst.x - src.x) * t;
-        out.y = src.y * (dst.y - src.y) * t;
+        out.x = src.x + (dst.x - src.x) * t;
+        out.y = src.y + (dst.y - src.y) * t;
         return out;
     }
 
