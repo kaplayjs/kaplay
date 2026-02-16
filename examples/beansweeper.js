@@ -18,7 +18,7 @@ const COLORS = [
     Color.fromHex("#7b5480"),
 ];
 
-const INITIAL_X = 50;
+const INITIAL_X = 0;
 const INITIAL_Y = 0;
 
 let canClick = true;
@@ -26,6 +26,12 @@ let w = 10;
 let h = 10;
 let bombAmount = 20;
 let flagsLeft = bombAmount;
+
+const getCursorPos = () =>
+    vec2(
+        60 * Math.floor(mousePos().x / 60),
+        60 * Math.floor(mousePos().y / 60),
+    );
 
 scene("first-click", () => {
     onDraw(() => {
@@ -40,6 +46,14 @@ scene("first-click", () => {
                 });
             }
         }
+
+        drawRect({
+            width: 60,
+            height: 60,
+            pos: getCursorPos(),
+            color: WHITE,
+            opacity: wave(0.05, 0.1, time() * 2),
+        });
     });
     onUpdate(() => {
         if (isMouseDown()) {
@@ -266,6 +280,7 @@ scene("game", firstClick => {
         if (!canClick) return;
         if (handleFlag(obj)) return;
         if (obj.children.length) return;
+
         obj.destroy();
         tween(
             vec2(1.25),
@@ -321,6 +336,7 @@ scene("game", firstClick => {
                     scale(),
                     opacity(),
                     pos(0, 27),
+                    z(2),
                 ]);
 
                 tween(
@@ -393,6 +409,18 @@ scene("game", firstClick => {
         }
         // TODO: Add deductive and inductive reasoning
         debug.log(`Not enough information.`);
+    });
+
+    // todo: make it so it only appears on hovereable spaces (may need initial pos)
+    add([z(1)]).onDraw(() => {
+        // if empty hovering and covered draw
+        drawRect({
+            width: 60,
+            height: 60,
+            pos: getCursorPos(),
+            color: WHITE,
+            opacity: wave(0.05, 0.1, time() * 2),
+        });
     });
 });
 
