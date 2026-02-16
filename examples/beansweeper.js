@@ -27,13 +27,16 @@ let h = 10;
 let bombAmount = 20;
 let flagsLeft = bombAmount;
 
-const getCursorPos = () =>
-    vec2(
-        60 * Math.floor(mousePos().x / 60),
-        60 * Math.floor(mousePos().y / 60),
+const getCursorPos = () => {
+    const p = toWorld(mousePos());
+    return vec2(
+        60 * Math.floor(p.x / 60),
+        60 * Math.floor(p.y / 60),
     );
+};
 
 scene("first-click", () => {
+    setCamPos(w * 60 / 2, h * 60 / 2);
     onDraw(() => {
         drawRect({ width: w * 60, height: h * 60, color: BLACK });
         for (let y = 0; y < h; y++) {
@@ -57,12 +60,13 @@ scene("first-click", () => {
     });
     onUpdate(() => {
         if (isMouseDown()) {
-            go("game", mousePos());
+            go("game", toWorld(mousePos()));
         }
     });
 });
 
 scene("game", firstClick => {
+    setCamPos(w * 60 / 2, h * 60 / 2);
     const x = Math.floor(firstClick.x / 60);
     const firstIndex = x + Math.floor(firstClick.y / 60) * w;
 
@@ -396,7 +400,7 @@ scene("game", firstClick => {
                     const x = i % w;
                     const y = Math.floor(i / w);
                     debug.log(
-                        `All remaining covered spaces around ${x}, ${y} are safe.`,
+                        `All remaining covered spaces around ${x}, ${y} are safe, provided the flags are correct.`,
                     );
                     neighbors.map(i => mineGraph.objAt(i)).filter(o =>
                         o.isCovered && !o.isMarked
@@ -404,6 +408,61 @@ scene("game", firstClick => {
                         o => o.tween(GREEN, WHITE, 0.25, v => o.color = v),
                     );
                     return;
+                }
+                else {
+                    const unknownIndices = neighbors.filter(i =>
+                        mineGraph.objAt(i).isCovered
+                    );
+                    // For all numbered uncovered neighbors
+                    for (n of neighbors) {
+                        o = mineGraph.objAt(n);
+                        if (o.is("number") && !o.isCovered) {
+                            const neighborUnknownIndices = mineGraph
+                                .getNeighbors(n).filter(i =>
+                                    mineGraph.objAt(i).isCovered
+                                );
+                            const diff = new Set(unknownIndices).difference(
+                                new Set(neighborUnknownIndices),
+                            );
+                            const c = diff.size;
+                            // If there are more bombs than places
+                            if (c > 0 && c < map[i]) {
+                                // If there can't be more bombs outside the intersection
+                                if ((map[i] - c) == map[n]) {
+                                    const bombs = [...diff].map(i =>
+                                        mineGraph.objAt(i)
+                                    ).filter(o => o.isCovered && !o.isMarked);
+                                    if (bombs.length > 0) {
+                                        const x = i % w;
+                                        const y = Math.floor(i / w);
+                                        const xx = n % w;
+                                        const yy = Math.floor(n / w);
+                                        debug.log(
+                                            `All remaining covered spaces around ${x}, ${y} are bombs due to ${xx}, ${yy} having at most ${
+                                                map[n]
+                                            } bombs.`,
+                                        );
+                                        debug.log(
+                                            unknownIndices,
+                                            neighborUnknownIndices,
+                                            c,
+                                            [...diff],
+                                        );
+                                        // All remaining in c are bombs
+                                        bombs.forEach(
+                                            o => o.tween(
+                                                RED,
+                                                WHITE,
+                                                0.25,
+                                                v => o.color = v,
+                                            ),
+                                        );
+                                        return;
+                                    }
+                                }
+                            }
+                        }
+                    }
                 }
             }
         }
