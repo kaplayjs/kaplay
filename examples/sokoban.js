@@ -437,6 +437,27 @@ scene("win", () => {
         ),
     ]);
 
+    // The least amount of moves you can beat the whole game in
+    if (movesTotal == 45) {
+        add([
+            pos(center().add(0, -50)),
+            anchor("center"),
+            text(
+                "Perfect    score!!",
+                {
+                    size: 38,
+                    width: width(),
+                    align: "center",
+                    transform: i => ({
+                        pos: vec2(0, wave(-4, 4, time() * 4 + i * 0.5)),
+                        scale: wave(1, 1.2, time() * 3 + i),
+                        color: hsl2rgb((time() * 0.2 + i * 0.1) % 1, 0.7, 0.8),
+                    }),
+                },
+            ),
+        ]);
+    }
+
     const sok = add([
         sprite("sok"),
         scale(0),
