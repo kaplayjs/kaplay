@@ -6,6 +6,7 @@ kaplay({
 loadBean("bean");
 loadHappy();
 loadSprite("mark", "sprites/mark.png");
+loadSprite("bag", "sprites/bag.png");
 
 const COLORS = [
     Color.fromHex("#6d80fa"),
@@ -21,6 +22,7 @@ const COLORS = [
 const INITIAL_X = 0;
 const INITIAL_Y = 0;
 
+let timePlayed = 0;
 let canClick = true;
 let w = 10;
 let h = 10;
@@ -36,6 +38,32 @@ const getCursorPos = () => {
 };
 
 scene("first-click", () => {
+    const timeIcon = add([
+        sprite("bag"),
+        pos(-159, 47),
+        anchor("center"),
+    ]);
+
+    const timeCounter = timeIcon.add([
+        text("000"),
+        pos(40, 0),
+        color(BLACK),
+        anchor("left"),
+    ]);
+
+    const flagIcon = add([
+        sprite("mark"),
+        pos(-159, 120),
+        anchor("center"),
+    ]);
+
+    const flagsLeftCounter = flagIcon.add([
+        text("20"),
+        pos(40, 0),
+        color(BLACK),
+        anchor("left"),
+    ]);
+
     setCamPos(w * 60 / 2, h * 60 / 2);
     onDraw(() => {
         drawRect({ width: w * 60, height: h * 60, color: BLACK });
@@ -241,6 +269,33 @@ scene("game", firstClick => {
 
     const mineGraph = new MineGraph(objMap);
 
+    // counters
+    const timeIcon = add([
+        sprite("bag"),
+        pos(-159, 47),
+        anchor("center"),
+    ]);
+
+    const timeCounter = timeIcon.add([
+        text("000"),
+        pos(40, 0),
+        color(BLACK),
+        anchor("left"),
+    ]);
+
+    const flagIcon = add([
+        sprite("mark"),
+        pos(-159, 120),
+        anchor("center"),
+    ]);
+
+    const flagsLeftCounter = flagIcon.add([
+        text("20"),
+        pos(40, 0),
+        color(BLACK),
+        anchor("left"),
+    ]);
+
     onClick("bomb", obj => {
         if (!canClick) return;
         if (handleFlag(obj)) return;
@@ -326,6 +381,7 @@ scene("game", firstClick => {
             if (obj.isMarked) {
                 destroy(obj.children[0]);
                 flagsLeft++;
+                flagsLeftCounter.text = flagsLeft.toString();
             }
             else {
                 if (flagsLeft == 0) {
@@ -333,6 +389,7 @@ scene("game", firstClick => {
                     return true;
                 }
                 flagsLeft--;
+                flagsLeftCounter.text = flagsLeft.toString();
 
                 const flag = obj.add([
                     sprite("mark"),
@@ -355,6 +412,10 @@ scene("game", firstClick => {
                 if (get("bomb").every((bomb) => bomb.isMarked)) {
                     debug.log("YOU WON!!");
                     canClick = false;
+                    // todo: when winning if there's still covered spaces they should be opened
+                    // query(["number", "empty"]).forEach((obj) =>
+                    //     obj.trigger("click")
+                    // );
                 }
             }
             return true;
@@ -470,16 +531,31 @@ scene("game", firstClick => {
         debug.log(`Not enough information.`);
     });
 
-    // todo: make it so it only appears on hovereable spaces (may need initial pos)
     add([z(1)]).onDraw(() => {
-        // if empty hovering and covered draw
-        drawRect({
-            width: 60,
-            height: 60,
-            pos: getCursorPos(),
-            color: WHITE,
-            opacity: wave(0.05, 0.1, time() * 2),
-        });
+        // only draw if it's inside grid
+        if (
+            getCursorPos().x >= 0 && getCursorPos().x <= 60 * w
+            && getCursorPos().y >= 0 && getCursorPos().y <= 60 * h
+        ) {
+            drawRect({
+                width: 60,
+                height: 60,
+                pos: getCursorPos(),
+                color: WHITE,
+                opacity: wave(0.05, 0.1, time() * 2),
+            });
+        }
+    });
+
+    onUpdate(() => {
+        timePlayed += dt();
+        if (timePlayed < 999) {
+            timeCounter.text = Math.round(timePlayed).toString().padStart(
+                3,
+                "00",
+            );
+        }
+        else timeCounter.text = Math.round(timePlayed).toString();
     });
 });
 
