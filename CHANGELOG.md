@@ -25,6 +25,12 @@ best friend, lajbel, can put the correct version name here
   only), and `'all'` (tile both edges and center) (#996) - @JustKira
 - Added a `calculate()` method to the internal FPS counters, so advanced users
   can access them to create their own FPS monitor (#1010) - @dragoncoder047
+- Added Intl.Segmenter-based grapheme splitting for proper Indic language
+  support, via the `locale` option in `DrawTextOpt (#1013) - @shajidhasan
+- Added topMostOnlyActivate kaplay option. When true, only the topmost object
+  will receive clicks. This avoids problems in a UI where elements overlap -
+  @mflerackers
+- Added a `fill()` component - @mflerackers
 
 ### Changed
 
@@ -51,6 +57,8 @@ best friend, lajbel, can put the correct version name here
 - Fixed event crash when using `onLoad` or other events that doesn't return an
   EventController, and then using `go()` (#1024) - @lajbel, credits to
   @dragoncoder047
+- Fixed `onClick()` and `onCollide()` tag variants no longer working -
+  @mflerackers
 
 ## [4000.0.0-alpha.26] - 2026-01-12
 
@@ -212,7 +220,6 @@ best friend, lajbel, can put the correct version name here
   ```
 
   All the available handlers in the scopes are `GameEventHandlers` ones:
-
   - `onKeyDown()`
   - `onKeyPress()`
   - `onKeyPressRepeat()`
@@ -240,7 +247,6 @@ best friend, lajbel, can put the correct version name here
 
   And this game object handlers may differ when using it with `obj` and
   `scene`/`app`:
-
   - `onFixedUpdate()`
   - `onUpdate()`
   - `onDraw()`
@@ -338,7 +344,6 @@ best friend, lajbel, can put the correct version name here
   ```
 
   The methods that support this are:
-
   - `scene`
   - `go`
   - `onSceneLeave`

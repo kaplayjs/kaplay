@@ -19,7 +19,10 @@ import type {
     Shape,
     Tag,
 } from "../../../types";
-import type { InternalGameObjRaw } from "../../entity/GameObjRaw";
+import {
+    type InternalGameObjRaw,
+    objectTransformNeedsUpdate,
+} from "../../entity/GameObjRaw";
 import { isFixed } from "../../entity/utils";
 import type { Collision } from "../../systems/Collision";
 import { system, SystemPhase } from "../../systems/systems";
@@ -59,6 +62,11 @@ export function getLocalAreaVersion(obj: GameObj<any>) {
     return obj._localAreaVersion;
 }
 
+let _topMostOnlyActivate = false;
+export function _setTopMostOnlyActivate(value: boolean) {
+    _topMostOnlyActivate = value;
+}
+
 function clickHandler(button: MouseButton) {
     const screenPos = _k.app.mousePos();
     const worldPos = toWorld(screenPos);
@@ -82,15 +90,16 @@ function clickHandler(button: MouseButton) {
         ) objects.push(obj as GameObj<AreaComp | ZComp>);
     });
 
-    const topMostOnlyActivate = false;
     if (objects.length) {
-        if (topMostOnlyActivate) {
+        if (_topMostOnlyActivate) {
             objects.sort((o1, o2) => {
                 const l1 =
                     (o1 as unknown as InternalGameObjRaw)._drawLayerIndex;
                 const l2 =
                     (o2 as unknown as InternalGameObjRaw)._drawLayerIndex;
-                return (l1 - l2) || (o1.z ?? 0) - (o2.z ?? 0);
+                const to1 = (o1 as unknown as InternalGameObjRaw)._treeIndex;
+                const to2 = (o2 as unknown as InternalGameObjRaw)._treeIndex;
+                return (l1 - l2) || (o1.z ?? 0) - (o2.z ?? 0) || (to1 - to2);
             });
             const obj = objects.at(-1)!;
             _k.game.gameObjEvents.trigger("click", obj);
@@ -106,7 +115,7 @@ function clickHandler(button: MouseButton) {
 }
 
 let clickHandlerRunning = false;
-function startClickHandler() {
+export function startClickHandler() {
     if (clickHandlerRunning) return;
     clickHandlerRunning = true;
 
@@ -171,7 +180,7 @@ function startHoverHandler() {
 }*/
 
 let systemInstalled = false;
-function startHoverSystem() {
+export function startHoverSystem() {
     if (systemInstalled) return;
     systemInstalled = true;
 
@@ -808,14 +817,14 @@ export function area(
         },
 
         worldBbox(this: GameObj<AreaComp>): Rect {
-            const renderAreaVersion = (this as any).renderAreaVersion;
+            const renderAreaVersion = getRenderAreaVersion(this);
             if (
-                !_worldBBox || _worldAreaVersion != _worldBBoxVersion
+                !_worldBBox || _worldAreaVersion !== _worldBBoxVersion
                 || !_worldShape
-                || _cachedTransformVersion != (this as any)._transformVersion // Transform changed
+                || _cachedTransformVersion !== (this as any)._transformVersion // Transform changed
                 || (renderAreaVersion != undefined // Render area (shape) changed
-                    && _cachedRenderAreaVersion != renderAreaVersion) // Render area (shape) changed
-                || _cachedLocalAreaVersion != _localAreaVersion // Area settings changed
+                    && _cachedRenderAreaVersion !== renderAreaVersion) // Render area (shape) changed
+                || _cachedLocalAreaVersion !== _localAreaVersion // Area settings changed
             ) {
                 _worldBBox = this.worldArea().bbox(_worldBBox);
                 _worldBBoxVersion = _worldAreaVersion;
