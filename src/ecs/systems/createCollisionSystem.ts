@@ -14,6 +14,7 @@ import {
 import { _k } from "../../shared";
 import type { GameObj } from "../../types";
 import { type AreaComp, usesArea } from "../components/physics/area";
+import { isPaused } from "../entity/utils";
 import { Collision } from "./Collision";
 export type BroadPhaseType = "sap" | "sapv" | "quadtree" | "grid";
 export type NarrowPhaseType = "gjk" | "sat" | "box";
@@ -120,7 +121,7 @@ export const createCollisionSystem = (
             });
 
             for (const obj of _k.game.root.get("*", { recursive: true })) {
-                if (obj.has("area")) {
+                if (obj.has("area") && !isPaused(obj)) {
                     broadPhaseIntersection.add(obj as GameObj<AreaComp>);
                 }
             }
