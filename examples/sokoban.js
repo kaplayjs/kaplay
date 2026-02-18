@@ -439,9 +439,8 @@ scene("win", () => {
     ]);
 
     // The fewest moves possible to beat the whole game
-    if (movesTotal <= 45) {
-        c;
-        if (movesTotal < 45) {
+    if (movesTotal <= 43) {
+        if (movesTotal < 43) {
             add([
                 anchor("topright"),
                 pos(width() - 16, 16),
