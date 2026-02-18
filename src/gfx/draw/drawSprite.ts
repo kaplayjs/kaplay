@@ -1,12 +1,12 @@
 import type { Asset } from "../../assets/asset";
 import { resolveSprite, SpriteData } from "../../assets/sprite";
 import { DEF_ANCHOR } from "../../constants/general";
-import { getRenderProps } from "../../game/utils";
 import { Quad, quad } from "../../math/math";
-import { type Vec2 } from "../../math/Vec2";
+import { Vec2 } from "../../math/Vec2";
 import type { Anchor, RenderProps } from "../../types";
 import { warn } from "../../utils/log";
 import { anchorPt } from "../anchor";
+import type { Texture } from "../gfx";
 import { drawTexture } from "./drawTexture";
 
 /**
@@ -160,9 +160,39 @@ export function drawSprite(opt: DrawSpriteOpt) {
         }
     }
     else {
-        drawTexture(Object.assign({}, opt, {
-            tex: frame.tex,
-            quad: frame.q.scale(opt.quad ?? new Quad(0, 0, 1, 1)),
-        }));
+        const scale = calcTexScale(frame.tex, frame.q, opt.width, opt.height);
+        const width = opt.width ?? frame.tex.width * frame.q.w * scale.x;
+        const height = opt.height ?? frame.tex.height * frame.q.h * scale.y;
+
+        drawTexture(
+            Object.assign({}, opt, {
+                tex: frame.tex,
+                quad: frame.q.scale(opt.quad ?? new Quad(0, 0, 1, 1)),
+                width,
+                height,
+            }),
+        );
     }
 }
+
+export const calcTexScale = (
+    tex: Texture,
+    q: Quad,
+    w?: number,
+    h?: number,
+): Vec2 => {
+    const scale = new Vec2(1, 1);
+    if (w && h) {
+        scale.x = w / (tex.width * q.w);
+        scale.y = h / (tex.height * q.h);
+    }
+    else if (w) {
+        scale.x = w / (tex.width * q.w);
+        scale.y = scale.x;
+    }
+    else if (h) {
+        scale.y = h / (tex.height * q.h);
+        scale.x = scale.y;
+    }
+    return scale;
+};

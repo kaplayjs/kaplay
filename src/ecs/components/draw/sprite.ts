@@ -8,10 +8,8 @@ import {
 } from "../../../assets/sprite";
 import { KEvent, type KEventController } from "../../../events/events";
 import { getRenderProps } from "../../../game/utils";
-import { drawSprite } from "../../../gfx/draw/drawSprite";
-import type { Texture } from "../../../gfx/gfx";
+import { calcTexScale, drawSprite } from "../../../gfx/draw/drawSprite";
 import { Quad, quad, Rect, vec2 } from "../../../math/math";
-import { type Vec2 } from "../../../math/Vec2";
 import { _k } from "../../../shared";
 import type { Comp, GameObj, SpriteAnimPlayOpt } from "../../../types";
 import { nextRenderAreaVersion } from "../physics/area";
@@ -200,28 +198,6 @@ export function sprite(
     if (!src) {
         throw new Error("Please pass the resource name or data to sprite()");
     }
-
-    const calcTexScale = (
-        tex: Texture,
-        q: Quad,
-        w?: number,
-        h?: number,
-    ): Vec2 => {
-        const scale = vec2(1, 1);
-        if (w && h) {
-            scale.x = w / (tex.width * q.w);
-            scale.y = h / (tex.height * q.h);
-        }
-        else if (w) {
-            scale.x = w / (tex.width * q.w);
-            scale.y = scale.x;
-        }
-        else if (h) {
-            scale.y = h / (tex.height * q.h);
-            scale.x = scale.y;
-        }
-        return scale;
-    };
 
     const setSpriteData = (
         obj: GameObj<SpriteComp>,
