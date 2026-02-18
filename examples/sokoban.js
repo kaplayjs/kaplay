@@ -402,8 +402,8 @@ scene("win", () => {
             lifeTime: [1000, 1000],
             opacities: [1, 1, 0],
             scales: [2],
-            texture: getSprite("sok").data.tex,
-            quads: [getSprite("sok").data.frames[0]],
+            texture: getSprite("sok").data.frames[0].tex,
+            quads: [getSprite("sok").data.frames[0].q],
         }, {
             lifetime: 1000,
             rate: 1,
