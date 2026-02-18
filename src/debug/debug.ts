@@ -95,7 +95,7 @@ export interface Debug {
     /**
      * Log a message with the info style (white) to the on-screen debug log.
      *
-     * @param message - THe message to log
+     * @param message - The message to log
      *
      * @example
      * ```
