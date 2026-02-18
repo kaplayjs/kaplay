@@ -104,7 +104,7 @@ export interface Debug {
      */
     log(...message: DebugMessage[]): void;
     /**
-     * Log a message with the warn style (yellow) in the debugging screen.
+     * Log a message with the warn style (yellow) to the on-screen debug log.
      *
      * @param message - THe message to log
      *
