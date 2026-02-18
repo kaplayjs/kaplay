@@ -211,6 +211,30 @@ export function onHoverUpdate(tag: Tag, action: (obj: GameObj) => void) {
     return on("hoverUpdate", tag, action);
 }
 
+export const onHide = overload2((cb: (x: GameObj) => void) => {
+    return _k.game.events.on("hide", cb);
+}, (tag: Tag, cb: (x: GameObj) => void) => {
+    return on("hide", tag, cb);
+});
+
+export const onShow = overload2((cb: (x: GameObj) => void) => {
+    return _k.game.events.on("show", cb);
+}, (tag: Tag, cb: (x: GameObj) => void) => {
+    return on("show", tag, cb);
+});
+
+export const onPause = overload2((cb: (obj: GameObj) => void) => {
+    return _k.game.events.on("pause", cb);
+}, (tag: Tag, cb: (obj: GameObj) => void) => {
+    return on("pause", tag, cb);
+});
+
+export const onUnpause = overload2((cb: (obj: GameObj) => void) => {
+    return _k.game.events.on("unpause", cb);
+}, (tag: Tag, cb: (obj: GameObj) => void) => {
+    return on("unpause", tag, cb);
+});
+
 // #region just ev handlers
 export function onError(action: (err: Error) => void) {
     return _k.game.events.on("error", action);

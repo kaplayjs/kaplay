@@ -26,6 +26,10 @@ Make sure to format each entry like this:
 
 ### Breaking Changes
 
+- The `onHide` and `onShow` global handlers (which have been deprecated for a
+  while) are now actually removed, you must use `onTabHide` and `onTabShow`.
+  `onHide` and `onShow` still exist but now handle reacting to changes in the
+  `.hidden` property of game objects (#846) - @dragoncoder047
 - The texture uv coordinates for primitives (solid- or gradient-filled circles,
   rectangles, lines, and polygons) have now been changed to (1, 1) instead of
   (0, 0), so shaders written for primitives will need to be updated. (#1021) -
@@ -44,6 +48,9 @@ Make sure to format each entry like this:
 
 ### Added
 
+- Added `onPause()`, `onUnpause()`, `onHide()`, and `onShow()` events for
+  listening to the state of the `paused` and `hidden` properties on game objects
+  (#846) - @dragoncoder047
 - Added `tileMode` option to 9-slice sprites with four tiling strategies:
   `'none'` (stretch all), `'edges'` (tile edges only), `'center'` (tile center
   only), and `'all'` (tile both edges and center) (#996) - @JustKira

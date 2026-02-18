@@ -2083,7 +2083,7 @@ export interface KAPLAYCtx {
      * ]);
      *
      * // resize the rectangle to screen size
-     * onResize(() => {
+     * onTabResize(() => {
      *     debug.log(`Old Size: ${rectangle.width}x${rectangle.height}`);
      *     rectangle.width = width();
      *     rectangle.height = height();
@@ -2095,7 +2095,7 @@ export interface KAPLAYCtx {
      * @since v3000.0
      * @group Events
      */
-    onResize(action: () => void): KEventController;
+    onTabResize(action: () => void): KEventController;
     /**
      * Cleanup function to run when quit() is called.
      *
@@ -2794,6 +2794,58 @@ export interface KAPLAYCtx {
      */
     onTabShow(action: () => void): KEventController;
     /**
+     * Register an event that runs when an object with the provided tag becomes visible, either directly or when a parent is un-hidden.
+     *
+     * (Note that "visible" just means "the draw handlers will run", it doesn't tell you anything about whether pixels will be drawn visibly on screen.)
+     *
+     * @param tag - The tag to listen for.
+     * @param action - The function that runs when an object is un-hidden.
+     *
+     * @example
+     * ```js
+     * onShow("player", () => {
+     *     debug.log("hi player");
+     * });
+     *
+     * const player = add([
+     *     pos(),
+     *     "player"
+     * ]);
+     * player.hidden = false;
+     * player.hidden = true; // Logs "hi player"
+     * ```
+     *
+     * @returns The event controller.
+     * @since v2000.0
+     * @group Events
+     */
+    onShow(tag: Tag, action: (obj: GameObj) => void): KEventController;
+    /**
+     * Register an event that runs when an object becomes visible, either directly or when a parent is un-hidden.
+     *
+     * (Note that "visible" just means "the draw handlers will run", it doesn't tell you anything about whether pixels will be drawn visibly on screen.)
+     *
+     * @param action - The function that runs when an object is un-hidden.
+     *
+     * @example
+     * ```js
+     * onShow(() => {
+     *     debug.log("ohhi");
+     * });
+     *
+     * const obj = add([
+     *     pos(),
+     * ]);
+     * obj.hidden = false;
+     * obj.hidden = true; // Logs "ohhi"
+     * ```
+     *
+     * @returns The event controller.
+     * @since v2000.0
+     * @group Events
+     */
+    onShow(action: (obj: GameObj) => void): KEventController;
+    /**
      * Register an event that runs when tab is hidden.
      *
      * @param action - The function that is run what the tab is hidden.
@@ -2824,57 +2876,159 @@ export interface KAPLAYCtx {
      */
     onTabHide(action: () => void): KEventController;
     /**
-     * @deprecated use `onTabHide` instead
+     * Register an event that runs when an object with the provided tag becomes invisible, either directly or when a parent is hidden.
      *
-     * Register an event that runs when tab is hidden.
+     * (Note that "invisible" just means "the draw handlers will not run", it doesn't tell you anything about whether pixels were being drawn visibly on screen.)
      *
-     * @param action - The function that is run what the tab is hidden.
+     * @param tag - The tag to listen for.
+     * @param action - The function that runs when an object is hidden.
      *
      * @example
      * ```js
-     * // spooky ghost
-     * let ghosty = add([
-     *     pos(center()),
-     *     sprite("ghosty"),
-     *     anchor("center"),
+     * onHide("player", () => {
+     *     debug.log("bye player");
+     * });
+     *
+     * const player = add([
+     *     pos(),
+     *     "player"
      * ]);
-     *
-     * // when switching tabs, this runs
-     * onHide(() => {
-     *     destroy(ghosty);
-     *     add([
-     *         text("There was never aa ghosttttt"),
-     *         pos(center()),
-     *         anchor("center")
-     *     ]);
-     * });
+     * player.hidden = true; // Logs "bye player"
      * ```
      *
      * @returns The event controller.
-     * @since v3001.0
+     * @since v2000.0
      * @group Events
      */
-    onHide(action: () => void): KEventController;
+    onHide(tag: Tag, action: (obj: GameObj) => void): KEventController;
     /**
-     * @deprecated use `onTabShow` instead
+     * Register an event that runs when an object becomes invisible, either directly or when a parent is hidden.
      *
-     * Register an event that runs when tab is shown.
+     * (Note that "invisible" just means "the draw handlers will not run", it doesn't tell you anything about whether pixels were being drawn visibly on screen.)
      *
-     * @param action - The function that is run when the tab is shown.
+     * @param action - The function that runs when an object is hidden.
      *
      * @example
      * ```js
-     * // user has returned to this tab
-     * onShow(() => {
-     *     burp();
+     * onHide(() => {
+     *     debug.log("bye");
      * });
+     *
+     * const obj = add([
+     *     pos(),
+     * ]);
+     * obj.hidden = true; // Logs "bye"
      * ```
      *
      * @returns The event controller.
-     * @since v3001.0
+     * @since v2000.0
      * @group Events
      */
-    onShow(action: () => void): KEventController;
+    onHide(action: (obj: GameObj) => void): KEventController;
+    /**
+     * Register an event that runs when an object with the provided tag becomes paused, either directly or when a parent is paused.
+     *
+     * ("Paused" simply means "the update and fixedUpdate handlers will not run.")
+     *
+     * @param tag - The tag to listen for.
+     * @param action - The function that runs when an object is paused.
+     *
+     * @example
+     * ```js
+     * onPause("player", () => {
+     *     debug.log("player is frozen");
+     * });
+     *
+     * const player = add([
+     *     pos(),
+     *     "player"
+     * ]);
+     * player.paused = true; // Logs "player is frozen"
+     * ```
+     *
+     * @returns The event controller.
+     * @since v2000.0
+     * @group Events
+     */
+    onPause(tag: Tag, action: (obj: GameObj) => void): KEventController;
+    /**
+     * Register an event that runs when an object becomes paused, either directly or when a parent is paused.
+     *
+     * ("Paused" simply means "the update and fixedUpdate handlers will not run.")
+     *
+     * @param action - The function that runs when an object is paused.
+     *
+     * @example
+     * ```js
+     * onPause(() => {
+     *     debug.log("frozen");
+     * });
+     *
+     * const obj = add([
+     *     pos(),
+     * ]);
+     * obj.paused = true; // Logs "frozen"
+     * ```
+     *
+     * @returns The event controller.
+     * @since v2000.0
+     * @group Events
+     */
+    onPause(action: (obj: GameObj) => void): KEventController;
+    /**
+     * Register an event that runs when an object with the provided tag becomes unpaused, either directly or when a parent is unpaused.
+     *
+     * ("Unpaused" simply means "the update and fixedUpdate handlers will run.")
+     *
+     * @param tag - The tag to listen for.
+     * @param action - The function that runs when an object is unpaused.
+     *
+     * @example
+     * ```js
+     * onUnpause("player", () => {
+     *     debug.log("player is melted");
+     * });
+     *
+     * const player = add([
+     *     pos(),
+     *     "player"
+     * ]);
+     * player.paused = false; // Logs nothing, player is already unpaused
+     * player.paused = true;
+     * player.paused = false; // Logs "player is melted"
+     * ```
+     *
+     * @returns The event controller.
+     * @since v2000.0
+     * @group Events
+     */
+    onUnpause(tag: Tag, action: (obj: GameObj) => void): KEventController;
+    /**
+     * Register an event that runs when an object becomes unpaused, either directly or when a parent is unpaused.
+     *
+     * ("Unpaused" simply means "the update and fixedUpdate handlers will run.")
+     *
+     * @param action - The function that runs when an object is unpaused.
+     *
+     * @example
+     * ```js
+     * onUnpause(() => {
+     *     debug.log("unfrozen");
+     * });
+     *
+     * const obj = add([
+     *     pos(),
+     * ]);
+     * obj.paused = false; // Logs nothing, obj is already unpaused
+     * obj.paused = true;
+     * obj.paused = false; // Logs "frozen"
+     * ```
+     *
+     * @returns The event controller.
+     * @since v2000.0
+     * @group Events
+     */
+    onUnpause(action: (obj: GameObj) => void): KEventController;
     /**
      * Register an event that runs at a fixed framerate.
      *

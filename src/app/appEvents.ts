@@ -18,7 +18,7 @@ export function initAppEvents() {
         }
     });
 
-    _k.app.onResize(() => {
+    _k.app.onTabResize(() => {
         if (_k.app.isFullscreen()) return;
         const fixedSize = _k.globalOpt.width && _k.globalOpt.height;
         if (fixedSize && !_k.globalOpt.letterbox) {
