@@ -48,7 +48,7 @@ scene("main", () => {
         add([
             pos(rand(vec2(width() - 60, height() - 60))),
             sprite("ghosty"),
-            area(),
+            area({ isSensor: true }),
             color(WHITE),
             "ghosty",
         ]);
@@ -65,7 +65,7 @@ scene("main", () => {
                 rotate(gun.angle),
                 move(dir, 1000 * analogValue),
                 pos(player.pos.add(dir.scale(60))),
-                area(),
+                area({ isSensor: true }),
                 offscreen({ destroy: true }), // Destroy them on offscreen to avoid lag
                 "bullet",
                 {

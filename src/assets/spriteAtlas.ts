@@ -1,13 +1,14 @@
-import { SPRITE_ATLAS_HEIGHT, SPRITE_ATLAS_WIDTH } from "../constants/general";
 import { Quad } from "../math/math";
 import { _k } from "../shared";
-import { type Asset, fetchJSON, load } from "./asset";
 import {
-    type LoadSpriteOpt,
-    type LoadSpriteSrc,
-    slice,
-    SpriteData,
-} from "./sprite";
+    type Asset,
+    fetchJSON,
+    load,
+    loadImg,
+    spriteSrcToImage,
+} from "./asset";
+import { type LoadSpriteOpt, type LoadSpriteSrc, SpriteData } from "./sprite";
+import { slice } from "./utils";
 import { fixURL } from "./utils";
 
 /**
@@ -56,36 +57,35 @@ export function loadSpriteAtlas(
         );
     }
     return load(
-        SpriteData.from(src).then((atlas) => {
+        spriteSrcToImage(src).then(img => {
             const map: Record<string, SpriteData> = {};
 
             for (const name in data) {
-                const info = data[name];
-                const quad = atlas.frames[0];
-                const w = SPRITE_ATLAS_WIDTH * quad.w;
-                const h = SPRITE_ATLAS_HEIGHT * quad.h;
-                const frames = info.frames
-                    ? info.frames.map((f) =>
-                        new Quad(
-                            quad.x + (info.x + f.x) / w * quad.w,
-                            quad.y + (info.y + f.y) / h * quad.h,
-                            f.w / w * quad.w,
-                            f.h / h * quad.h,
-                        )
-                    )
-                    : slice(
-                        info.sliceX || 1,
-                        info.sliceY || 1,
-                        quad.x + info.x / w * quad.w,
-                        quad.y + info.y / h * quad.h,
-                        info.width / w * quad.w,
-                        info.height / h * quad.h,
-                    );
-                const spr = new SpriteData(
-                    atlas.tex,
+                let {
+                    x,
+                    y,
+                    width,
+                    height,
                     frames,
-                    info.anims,
-                    info.slice9,
+                    sliceX,
+                    sliceY,
+                    anims,
+                    slice9,
+                } = data[name];
+                const w = img.width, h = img.height;
+                const mainQuad = new Quad(
+                    x / w,
+                    y / h,
+                    width / w,
+                    height / h,
+                );
+                frames ??= slice(sliceX || 1, sliceY || 1);
+                const spr = new SpriteData(
+                    frames.map(q =>
+                        _k.assets.packer.add(img, mainQuad.scale(q))
+                    ),
+                    anims,
+                    slice9,
                 );
                 _k.assets.sprites.addLoaded(name, spr);
                 map[name] = spr;

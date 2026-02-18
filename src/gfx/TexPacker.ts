@@ -1,49 +1,121 @@
+import { drawImageSourceAt } from "../assets/utils";
 import { Quad, Rect } from "../math/math";
 import { Vec2 } from "../math/Vec2";
 import type { ImageSource } from "../types";
 import { type GfxCtx, Texture } from "./gfx";
 
+export type Frame = { tex: Texture; q: Quad; id: number };
+
+enum UsedCorner {
+    TOPRIGHT = 1,
+    BOTTOMLEFT = 2,
+}
+
+interface TexMap {
+    tex: Texture;
+    el: HTMLCanvasElement;
+    ctx: CanvasRenderingContext2D;
+}
+
 export class TexPacker {
     private _last: number = 0;
     private _textures: Texture[] = [];
-    private _big: Texture[] = [];
+    private _big: Frame[] = [];
     private _used: Map<number, {
         rect: Rect;
         tex: Texture;
+        used: number;
     }> = new Map();
-    private _el: HTMLCanvasElement;
-    private _ctx: CanvasRenderingContext2D;
+    private _curMap: TexMap = null as any;
+    private _texToEntry: Map<Texture, TexMap> = new Map();
 
     constructor(
         private _gfx: GfxCtx,
-        w: number,
-        h: number,
+        private _w: number,
+        private _h: number,
         private _pad: number,
     ) {
-        this._el = document.createElement("canvas");
-        this._el.width = w;
-        this._el.height = h;
-        this._textures = [Texture.fromImage(_gfx, this._el)];
-        this._big = [];
+        this._newTexture();
+    }
 
-        const context2D = this._el.getContext("2d");
-        if (!context2D) throw new Error("Failed to get 2d context");
+    private _newTexture(): TexMap {
+        const el = document.createElement("canvas");
+        el.width = this._w;
+        el.height = this._h;
+        const tex = Texture.fromImage(this._gfx, el);
+        this._textures.push(tex);
 
-        this._ctx = context2D;
+        const ctx = el.getContext("2d");
+        if (!ctx) throw new Error("Failed to get 2d context");
+
+        this._texToEntry.set(tex, this._curMap = { tex, el, ctx });
+        return this._curMap;
     }
 
     // create a image with a single texture
-    addSingle(img: ImageSource): [Texture, Quad, number] {
-        const tex = Texture.fromImage(this._gfx, img);
-        this._big.push(tex);
-        return [tex, new Quad(0, 0, 1, 1), 0];
+    addSingle(img: ImageSource): Frame {
+        const f = {
+            tex: Texture.fromImage(this._gfx, img),
+            q: new Quad(0, 0, 1, 1),
+            id: this._last++,
+        };
+        this._big.push(f);
+        return f;
     }
 
-    add(img: ImageSource): [Texture, Quad, number] {
+    /**
+     * create the default 1x1 white pixel used for primitives at uv = (1, 1).
+     *
+     * must be called prior to initializing anything else, as it doesn't check for
+     * collisions with anything!
+     */
+    _createWhitePixel(): Frame {
+        const { el, ctx, tex } = this._curMap;
+        const whitePixel = new ImageData(
+            new Uint8ClampedArray([255, 255, 255, 255]),
+            1,
+            1,
+        );
+        const { width, height } = el;
+        drawImageSourceAt(
+            ctx,
+            whitePixel,
+            width - 1,
+            height - 1,
+            0,
+            0,
+            1,
+            1,
+        );
+        tex.update(el);
+        this._used.set(-1, {
+            rect: new Rect(new Vec2(width - 1, height - 1), 1, 1),
+            tex: tex,
+            used: 0,
+        });
+        return {
+            tex,
+            q: new Quad(
+                (width - 1) / width,
+                (height - 1) / height,
+                1 / width,
+                1 / height,
+            ),
+            id: -1,
+        };
+    }
+
+    add(img: ImageSource, chopQuad?: Quad): Frame {
+        const imgWidth = img.width * (chopQuad?.w ?? 1);
+        const imgHeight = img.height * (chopQuad?.h ?? 1);
+        const chopX = img.width * (chopQuad?.x ?? 0);
+        const chopY = img.height * (chopQuad?.y ?? 0);
         const pad = this._pad * 2;
-        const paddedWidth = img.width + pad;
-        const paddedHeight = img.height + pad;
-        const maxX = this._el.width, maxY = this._el.height;
+        const paddedWidth = imgWidth + pad;
+        const paddedHeight = imgHeight + pad;
+        let { el: curEl, ctx: curCtx, tex: curTex } = this._curMap;
+
+        const maxX = curEl.width, maxY = curEl.height;
         const rectToAdd = new Rect(new Vec2(), paddedWidth, paddedHeight);
         const p = rectToAdd.pos;
 
@@ -51,7 +123,6 @@ export class TexPacker {
             // No chance of ever fitting.
             return this.addSingle(img);
         }
-        let curTex = this._textures.at(-1)!;
 
         // find position
         let x = 0, y = 0, found = false;
@@ -70,69 +141,87 @@ export class TexPacker {
 
         // initial check for (0, 0)
         if (!doesitfit()) {
-            for (
-                var [_, { rect: { pos, width, height }, tex }] of this._used
-            ) {
+            for (let [_, entry] of this._used) {
+                const { tex, rect: { pos, width, height }, used } = entry;
                 if (curTex !== tex) continue;
                 // try to the right
-                x = pos.x + width;
-                y = pos.y;
-                if (doesitfit()) break;
-                // try below
-                x = pos.x;
-                y = pos.y + height;
-                if (doesitfit()) break;
+                if ((used & UsedCorner.TOPRIGHT) === 0) {
+                    x = pos.x + width;
+                    y = pos.y;
+                    if (doesitfit()) {
+                        entry.used |= UsedCorner.TOPRIGHT;
+                        break;
+                    }
+                }
+                if ((used & UsedCorner.BOTTOMLEFT) === 0) {
+                    // try below
+                    x = pos.x;
+                    y = pos.y + height;
+                    if (doesitfit()) {
+                        entry.used |= UsedCorner.BOTTOMLEFT;
+                        break;
+                    }
+                }
             }
         }
 
         // no room --> go to next texture and put at (0, 0)
         if (!found) {
-            this._ctx.clearRect(
-                x =
-                    y =
-                    p.x =
-                    p.y =
-                        0,
-                0,
-                maxX,
-                maxY,
-            );
-            this._textures.push(
-                curTex = Texture.fromImage(this._gfx, this._el),
-            );
+            x =
+                y =
+                p.x =
+                p.y =
+                    0;
+            ({ tex: curTex, ctx: curCtx, el: curEl } = this._newTexture());
         }
 
-        if (img instanceof ImageData) this._ctx.putImageData(img, x, y);
-        else this._ctx.drawImage(img, x, y);
+        drawImageSourceAt(
+            curCtx,
+            img,
+            x,
+            y,
+            chopX,
+            chopY,
+            imgWidth,
+            imgHeight,
+        );
 
-        curTex.update(this._el);
+        curTex.update(curEl);
 
         this._used.set(this._last, {
             rect: rectToAdd,
             tex: curTex,
+            used: 0,
         });
 
-        return [
-            curTex,
-            new Quad(x / maxX, y / maxY, img.width / maxX, img.height / maxY),
-            this._last++,
-        ];
+        return {
+            tex: curTex,
+            q: new Quad(x / maxX, y / maxY, imgWidth / maxX, imgHeight / maxY),
+            id: this._last++,
+        };
     }
     free() {
         this._textures.forEach(tex => tex.free());
-        this._big.forEach(tex => tex.free());
+        this._big.forEach(f => f.tex.free());
+        this._used.clear();
+        this._big = [];
     }
     remove(packerId: number) {
-        const tex = this._used.get(packerId);
+        const entry = this._used.get(packerId);
 
-        if (!tex) {
-            throw new Error("Texture with packer id not found");
+        if (!entry) {
+            const big = this._big.findIndex(f => f.id === packerId);
+            if (big < 0) {
+                throw new Error("Texture with packer id not found");
+            }
+            this._big.splice(big, 1)[0]!.tex.free();
+            return;
         }
+        const { rect: { pos: { x, y }, width, height }, tex } = entry;
+        const { ctx, el } = this._texToEntry.get(tex)!;
+        ctx.clearRect(x, y, width, height);
 
-        const { pos: { x, y }, width, height } = tex.rect;
-        this._ctx.clearRect(x, y, width, height);
-
-        tex.tex.update(this._el);
+        tex.update(el);
         this._used.delete(packerId);
     }
 }
