@@ -229,16 +229,17 @@ export function sprite(
     ) => {
         if (!spr) return;
 
-        let q = spr.frames[0].clone();
+        let frame = spr.frames[0];
+        let q = frame.q.clone();
 
         if (opt.quad) {
             q = q.scale(opt.quad);
         }
 
-        const scale = calcTexScale(spr.tex, q, opt.width, opt.height);
+        const scale = calcTexScale(frame.tex, q, opt.width, opt.height);
 
-        obj.width = spr.tex.width * q.w * scale.x;
-        obj.height = spr.tex.height * q.h * scale.y;
+        obj.width = frame.tex.width * q.w * scale.x;
+        obj.height = frame.tex.height * q.h * scale.y;
 
         if (spr.anims) {
             for (let animName in spr.anims) {

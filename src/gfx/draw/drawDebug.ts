@@ -34,6 +34,9 @@ export function drawDebug() {
             }
         }
 
+        // Get it before any debug drawing, to get the number of non-debug draws
+        const batches = _k.gfx.renderer.numDraws;
+
         pushTransform();
         _k.game.root.drawInspect();
         popTransform();
@@ -65,7 +68,7 @@ export function drawDebug() {
             vec2(8),
             `FPS: ${Math.round(_k.debug.fps())}
 Raw: ${Math.round(_k.debug.rawFPS())}
-Batches: ${_k.gfx.renderer.numDraws}`,
+Batches: ${batches}`,
         );
     }
 

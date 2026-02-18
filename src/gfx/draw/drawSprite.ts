@@ -79,9 +79,9 @@ export function drawSprite(opt: DrawSpriteOpt) {
         spriteData = opt.sprite;
     }
 
-    const q = spriteData.frames[opt.frame ?? 0];
+    const frame = spriteData.frames[opt.frame ?? 0];
 
-    if (!q) {
+    if (!frame) {
         throw new Error(`Frame not found: ${opt.frame ?? 0}`);
     }
 
@@ -98,8 +98,8 @@ export function drawSprite(opt: DrawSpriteOpt) {
             );
         }
 
-        const tw = spriteData.tex.width * q.w;
-        const th = spriteData.tex.height * q.h;
+        const tw = frame.tex.width * frame.q.w;
+        const th = frame.tex.height * frame.q.h;
         const iw = width - left - right;
         const ih = height - top - bottom;
         const w1 = left / tw;
@@ -150,8 +150,8 @@ export function drawSprite(opt: DrawSpriteOpt) {
                 Object.assign({}, opt, {
                     pos: transform.pos().add(offsetX, offsetY),
                     anchor: "topleft",
-                    tex: spriteData.tex,
-                    quad: q.scale(uv),
+                    tex: frame.tex,
+                    quad: frame.q.scale(uv),
                     tiled: shouldTile,
                     width: transform.w,
                     height: transform.h,
@@ -161,8 +161,8 @@ export function drawSprite(opt: DrawSpriteOpt) {
     }
     else {
         drawTexture(Object.assign({}, opt, {
-            tex: spriteData.tex,
-            quad: q.scale(opt.quad ?? new Quad(0, 0, 1, 1)),
+            tex: frame.tex,
+            quad: frame.q.scale(opt.quad ?? new Quad(0, 0, 1, 1)),
         }));
     }
 }

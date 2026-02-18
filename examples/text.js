@@ -17,7 +17,6 @@ loadFont("FlowerSketches", "/fonts/FlowerSketches.ttf");
 // Load a custom font with options
 loadFont("apl386", "/fonts/apl386.ttf", {
     outline: 4,
-    filter: "linear",
 });
 
 // Load custom bitmap font, specifying the width and height of each character in the image
