@@ -50,7 +50,7 @@ onClick("stepsmove", (square) => {
         400,
         2,
         (value) => {
-            square.pos.x = value;
+            square.moveTo(value, square.pos.y);
         },
         easingSteps(5, "jump-none"),
     );
@@ -90,7 +90,7 @@ onClick("linearmove", (square) => {
         400,
         2,
         (value) => {
-            square.pos.x = value;
+            square.moveTo(value, square.pos.y);
         },
         easingLinear([vec2(0, 0), vec2(0.5, 0.25), vec2(1, 1)]),
     );
@@ -130,7 +130,7 @@ onClick("beziermove", (square) => {
         400,
         2,
         (value) => {
-            square.pos.x = value;
+            square.moveTo(value, square.pos.y);
         },
         easingCubicBezier(vec2(.17, .67), vec2(.77, .71)),
     );

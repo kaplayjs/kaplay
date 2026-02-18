@@ -14,7 +14,7 @@ export function drawRaw(
     uniform?: Uniform,
     blend?: BlendMode,
 ) {
-    const parsedTex = tex ?? _k.gfx.defTex;
+    const parsedTex = tex ?? _k.gfx.whitePixel.tex;
     const parsedShader = shaderSrc ?? _k.gfx.defShader;
     const shader = resolveShader(parsedShader);
 

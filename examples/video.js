@@ -24,7 +24,7 @@ const vid = add([
     anchor("center"),
 ]);
 
-onClick(() => {
+onMousePress(() => {
     vid.play();
 });
 

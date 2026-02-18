@@ -1,11 +1,4 @@
-import {
-    onCollide,
-    onError,
-    onLoad,
-    onLoadError,
-    onLoading,
-    trigger,
-} from "../api/eventHandlers";
+import { trigger } from "../api/eventHandlers";
 import { getData, setData } from "../app/data";
 import { loadAseprite } from "../assets/aseprite";
 import {
@@ -145,7 +138,7 @@ import {
 import { drawPolygon } from "../gfx/draw/drawPolygon";
 import { drawRect } from "../gfx/draw/drawRect";
 import { drawSprite } from "../gfx/draw/drawSprite";
-import { drawSubtracted } from "../gfx/draw/drawSubstracted";
+import { drawSubtracted } from "../gfx/draw/drawSubtracted";
 import { drawText } from "../gfx/draw/drawText";
 import { drawTriangle } from "../gfx/draw/drawTriangle";
 import { drawUVQuad } from "../gfx/draw/drawUVQuad";
@@ -252,7 +245,7 @@ import type { KAPLAYCtx } from "./contextType";
 import type { Engine } from "./engine";
 import { throwError } from "./errors";
 import { plug } from "./plug";
-import { onCleanup, quit } from "./quit";
+import { quit } from "./quit";
 
 // The context is the way the user interact with a KAPLAY game.
 export const createContext = (

@@ -66,14 +66,14 @@ export function drawSprite(opt: DrawSpriteOpt) {
         return;
     }
 
-    const q = spr.data.frames[opt.frame ?? 0];
+    const frame = spr.data.frames[opt.frame ?? 0];
 
-    if (!q) {
+    if (!frame) {
         throw new Error(`Frame not found: ${opt.frame ?? 0}`);
     }
 
     drawTexture(Object.assign({}, opt, {
-        tex: spr.data.tex,
-        quad: q.scale(opt.quad ?? new Quad(0, 0, 1, 1)),
+        tex: frame.tex,
+        quad: frame.q.scale(opt.quad ?? new Quad(0, 0, 1, 1)),
     }));
 }
