@@ -78,7 +78,7 @@ export interface Debug {
      */
     clearLog(): void;
     /**
-     * Log a message in the debugging screen, with optionally
+     * Log a message to the on-screen debug log, with optional
      * style wrapping.
      *
      * @param message - The messages to log
