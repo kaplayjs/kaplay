@@ -324,6 +324,7 @@ export const createContext = (
         onLoadError: defaultScope.onLoadError,
         onLoading: defaultScope.onLoading,
         onTabResize: defaultScope.onTabResize,
+        onResize: defaultScope.onResize,
         onGamepadConnect: defaultScope.onGamepadConnect,
         onGamepadDisconnect: defaultScope.onGamepadDisconnect,
         onError: defaultScope.onError,

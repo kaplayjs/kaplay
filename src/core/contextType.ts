@@ -2097,6 +2097,10 @@ export interface KAPLAYCtx {
      */
     onTabResize(action: () => void): KEventController;
     /**
+     * @deprecated Use {@link onTabResize} instead.
+     */
+    onResize(action: () => void): KEventController;
+    /**
      * Cleanup function to run when quit() is called.
      *
      * @param action - The function that runs when quit() is called.

@@ -75,6 +75,7 @@ export const createScopeHandlers = (app: App) => {
         onHoverEnd: onHoverEnd,
         onHoverUpdate: onHoverUpdate,
         onTabResize: app.onTabResize,
+        onResize: app.onResize,
         onSceneLeave: onSceneLeave,
         onLoad: onLoad,
         onLoading: onLoading,

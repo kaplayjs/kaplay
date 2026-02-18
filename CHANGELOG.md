@@ -30,6 +30,8 @@ Make sure to format each entry like this:
   while) are now actually removed, you must use `onTabHide` and `onTabShow`.
   `onHide` and `onShow` still exist but now handle reacting to changes in the
   `.hidden` property of game objects (#846) - @dragoncoder047
+- The `onResize` handler has been renamed to `onTabResize` for consistency (the
+  old one is still present, but deprecated) (#846) - @dragoncoder047
 - The texture uv coordinates for primitives (solid- or gradient-filled circles,
   rectangles, lines, and polygons) have now been changed to (1, 1) instead of
   (0, 0), so shaders written for primitives will need to be updated. (#1021) -

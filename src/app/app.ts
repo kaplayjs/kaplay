@@ -563,6 +563,11 @@ export const initApp = (
         return state.events.on("resize", action);
     }
 
+    function onResize(action: () => void): KEventController {
+        deprecateMsg("onResize", "onTabResize");
+        return onTabResize(action);
+    }
+
     // input callbacks
     const onKeyDown = overload2((action: (key: Key) => void) => {
         return state.events.on("keyDown", action);
@@ -1357,6 +1362,7 @@ export const initApp = (
         releaseButton,
         charInputted,
         onTabResize,
+        onResize,
         onKeyDown,
         onKeyPress,
         onKeyPressRepeat,
