@@ -9,15 +9,7 @@ import {
     KEventController,
     type KEventHandler,
 } from "../../events/events";
-import type { GameEventHandlers } from "../../events/gameEventHandlers";
-import {
-    onAdd,
-    onDestroy,
-    onTag,
-    onUntag,
-    onUnuse,
-    onUse,
-} from "../../events/globalEvents";
+import type { EventHandlersInAppButNotAddedInGameObjRaw } from "../../events/scopes";
 import { drawMasked } from "../../gfx/draw/drawMasked";
 import { beginPicture, endPicture, Picture } from "../../gfx/draw/drawPicture";
 import { drawSubtracted } from "../../gfx/draw/drawSubstracted";
@@ -69,6 +61,11 @@ export enum KeepFlags {
 export type SetParentOpt = {
     keep: KeepFlags;
 };
+
+let _nextTreeIndex = 0;
+export function resetTreeIndex() {
+    _nextTreeIndex = 0;
+}
 
 let _lastTransformVersion = 0;
 let _nextTransformVersion = 0;
@@ -505,10 +502,10 @@ export interface GameObjRaw {
     onButtonDown: KAPLAYCtx["onButtonDown"];
     onButtonPress: KAPLAYCtx["onButtonPress"];
     onButtonRelease: KAPLAYCtx["onButtonRelease"];
-    onTabShow: GameEventHandlers["onTabShow"];
-    onTabHide: GameEventHandlers["onTabHide"];
-    onShow: GameEventHandlers["onShow"];
-    onHide: GameEventHandlers["onHide"];
+    onTabShow: KAPLAYCtx["onTabShow"];
+    onTabHide: KAPLAYCtx["onTabHide"];
+    onShow: KAPLAYCtx["onShow"];
+    onHide: KAPLAYCtx["onHide"];
 }
 
 export type InternalGameObjRaw = GameObjRaw & {
@@ -538,6 +535,8 @@ export type InternalGameObjRaw = GameObjRaw & {
     _tags: Set<Tag>;
     /** @readonly */
     _drawLayerIndex: number;
+    /** @readonly */
+    _treeIndex: number;
     /** @readonly */
     _transformVersion: number;
 
@@ -588,10 +587,12 @@ const COMP_EVENTS = new Set([
 
 type GarbageCollectorArray = (() => any)[];
 
+type HandlersInAppButAlsoInObj = EventHandlersInAppButNotAddedInGameObjRaw;
+
 export const GameObjRawPrototype: Omit<
     InternalGameObjRaw,
     // TODO: Maybe too hacky, find better way
-    Exclude<AppEvents, "onFixedUpdate" | "onUpdate" | "onDraw">
+    Exclude<AppEvents, HandlersInAppButAlsoInObj>
 > = {
     // This chain of `as any`, is because we never should use this object
     // directly, it's only a prototype. These properties WILL be defined
@@ -609,6 +610,7 @@ export const GameObjRawPrototype: Omit<
     _updateEvents: null as any,
     _drawEvents: null as any,
     _drawLayerIndex: null as any,
+    _treeIndex: null as any,
     children: null as any,
     hidden: null as any,
     id: null as any,
@@ -635,6 +637,7 @@ export const GameObjRawPrototype: Omit<
         this._parent = p;
         if (p) {
             p.children.push(this as unknown as GameObj);
+            this._transformVersion = nextTransformVersion();
         }
     },
 
@@ -699,7 +702,7 @@ export const GameObjRawPrototype: Omit<
         // see the object with *only* components added during make(),
         // and *then* run the components' add() which may add other components
         // and trigger onUse()
-        _k.game.events.trigger("add", obj);
+        _k.game.gameObjEvents.trigger("add", obj);
         obj.trigger("add", obj);
 
         return obj;
@@ -788,7 +791,8 @@ export const GameObjRawPrototype: Omit<
 
         const trigger = (o: GameObj) => {
             o.trigger("destroy");
-            _k.game.events.trigger("destroy", o);
+            o.clearEvents();
+            _k.game.gameObjEvents.trigger("destroy", o);
             o.children.forEach((child) => trigger(child));
             o.id = null as any;
         };
@@ -863,12 +867,12 @@ export const GameObjRawPrototype: Omit<
             const events: KEventController[] = [];
 
             // TODO: clean up when obj destroyed
-            events.push(onAdd((obj) => {
+            events.push(_k.sceneScope.onAdd((obj) => {
                 if (isChild(obj) && checkTagsOrComps(obj, t)) {
                     list.push(obj);
                 }
             }));
-            events.push(onDestroy((obj) => {
+            events.push(_k.sceneScope.onDestroy((obj) => {
                 if (checkTagsOrComps(obj, t)) {
                     const idx = list.findIndex((o) => o.id === obj.id);
                     if (idx !== -1) {
@@ -879,7 +883,7 @@ export const GameObjRawPrototype: Omit<
             // If tags are components, we need to use these callbacks, whether watching tags or components
             // If tags are not components, we only need to use these callbacks if this query looks at components
             if (compIdAreTags || opts.only !== "tags") {
-                events.push(onUse((obj, id) => {
+                events.push(_k.sceneScope.onUse((obj, id) => {
                     if (isChild(obj) && checkTagsOrComps(obj, t)) {
                         const idx = list.findIndex((o) => o.id === obj.id);
                         if (idx == -1) {
@@ -887,7 +891,7 @@ export const GameObjRawPrototype: Omit<
                         }
                     }
                 }));
-                events.push(onUnuse((obj, id) => {
+                events.push(_k.sceneScope.onUnuse((obj, id) => {
                     if (isChild(obj) && !checkTagsOrComps(obj, t)) {
                         const idx = list.findIndex((o) => o.id === obj.id);
                         if (idx !== -1) {
@@ -899,7 +903,7 @@ export const GameObjRawPrototype: Omit<
             // If tags are components, we don't need to use these callbacks
             // If tags are not components, we only need to use these callbacks if this query looks at tags
             if (!compIdAreTags && opts.only !== "comps") {
-                events.push(onTag((obj, tag) => {
+                events.push(_k.sceneScope.onTag((obj, tag) => {
                     if (isChild(obj) && checkTagsOrComps(obj, t)) {
                         const idx = list.findIndex((o) => o.id === obj.id);
                         if (idx == -1) {
@@ -907,7 +911,7 @@ export const GameObjRawPrototype: Omit<
                         }
                     }
                 }));
-                events.push(onUntag((obj, tag) => {
+                events.push(_k.sceneScope.onUntag((obj, tag) => {
                     if (isChild(obj) && !checkTagsOrComps(obj, t)) {
                         const idx = list.findIndex((o) => o.id === obj.id);
                         if (idx !== -1) {
@@ -1240,6 +1244,8 @@ export const GameObjRawPrototype: Omit<
             loadMatrix(this.transform);
         }
 
+        this._treeIndex = _nextTreeIndex++;
+
         for (let i = 0; i < this.children.length; i++) {
             // if (this.children[i].hidden) continue;
             this.children[i].transformTree(updateNeeded);
@@ -1387,7 +1393,7 @@ export const GameObjRawPrototype: Omit<
             && !internalIsMaking(this as unknown as GameObj)
         ) {
             this.trigger("use", comp.id);
-            _k.game.events.trigger(
+            _k.game.gameObjEvents.trigger(
                 "use",
                 this as unknown as GameObj,
                 comp.id,
@@ -1406,7 +1412,7 @@ export const GameObjRawPrototype: Omit<
 
         if (!internalIsMaking(this as unknown as GameObj)) {
             this.trigger("unuse", id);
-            _k.game.events.trigger("unuse", this, id);
+            _k.game.gameObjEvents.trigger("unuse", this, id);
         }
 
         if (this._cleanups[id]) {
@@ -1491,7 +1497,7 @@ export const GameObjRawPrototype: Omit<
                 this._tags.add(t);
                 if (!internalIsMaking(this as unknown as GameObj)) {
                     this.trigger("tag", t);
-                    _k.game.events.trigger("tag", this as GameObj, t);
+                    _k.game.gameObjEvents.trigger("tag", this as GameObj, t);
                 }
             }
         }
@@ -1499,7 +1505,7 @@ export const GameObjRawPrototype: Omit<
             this._tags.add(tag);
             if (!internalIsMaking(this as unknown as GameObj)) {
                 this.trigger("tag", tag);
-                _k.game.events.trigger("tag", this as GameObj, tag);
+                _k.game.gameObjEvents.trigger("tag", this as GameObj, tag);
             }
         }
     },
@@ -1509,13 +1515,13 @@ export const GameObjRawPrototype: Omit<
             for (const t of tag) {
                 this._tags.delete(t);
                 this.trigger("untag", t);
-                _k.game.events.trigger("untag", this, t);
+                _k.game.gameObjEvents.trigger("untag", this, t);
             }
         }
         else {
             this._tags.delete(tag);
             this.trigger("untag", tag);
-            _k.game.events.trigger("untag", this, tag);
+            _k.game.gameObjEvents.trigger("untag", this, tag);
         }
     },
 

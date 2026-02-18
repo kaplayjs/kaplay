@@ -5,6 +5,7 @@ import { Vec2 } from "../../../math/Vec2";
 import type { Comp, GameObj } from "../../../types";
 import { nextRenderAreaVersion } from "../physics/area";
 import type { AnchorComp } from "../transform/anchor";
+import type { FillComp } from "./fill";
 import type { outline } from "./outline";
 
 /**
@@ -69,10 +70,10 @@ export function circle(
                 this._renderAreaVersion = nextRenderAreaVersion();
             }
         },
-        draw(this: GameObj<CircleComp>) {
+        draw(this: GameObj<CircleComp & FillComp>) {
             drawCircle(Object.assign(getRenderProps(this), {
                 radius: _radius,
-                fill: opt.fill,
+                fill: this.fill ?? opt.fill,
             }));
         },
         renderArea(
@@ -93,9 +94,9 @@ export function circle(
         inspect() {
             return `radius: ${Math.ceil(_radius)}`;
         },
-        serialize() {
+        serialize(this: GameObj<CircleComp & FillComp>) {
             const data: SerializedCircleComp = { radius: _radius };
-            if (opt.fill) data.fill = true;
+            if (this.fill ?? opt.fill) data.fill = true;
             return data;
         },
     };

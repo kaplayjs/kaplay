@@ -1,6 +1,5 @@
 import type { BitmapFontData } from "../../../assets/bitmapFont";
 import { DEF_TEXT_SIZE } from "../../../constants/general";
-import { onLoad } from "../../../events/globalEvents";
 import { getRenderProps } from "../../../game/utils";
 import {
     drawFormattedText,
@@ -13,6 +12,7 @@ import type {
 } from "../../../gfx/draw/drawText";
 import { formatText } from "../../../gfx/formatText";
 import { Rect, vec2 } from "../../../math/math";
+import { _k } from "../../../shared";
 import type { Comp, GameObj } from "../../../types";
 import { nextRenderAreaVersion } from "../physics/area";
 
@@ -231,7 +231,7 @@ export function text(t: string, opt: TextCompOpt = {}): TextComp {
         },
 
         add(this: GameObj<TextComp>) {
-            onLoad(() => update(this));
+            _k.k.onLoad(() => update(this));
         },
 
         draw(this: GameObj<TextComp>) {

@@ -4,18 +4,19 @@ import {
     type InternalGameObjRaw,
 } from "../ecs/entity/GameObjRaw";
 import { scene, type SceneDef } from "../game/scenes";
+import { _k } from "../shared";
 import type { KEventController } from "./events";
-import { type GameEventHandlers } from "./gameEventHandlers";
+import { type ScopeHandlers } from "./scopeHandlers";
 
 export type SceneScope =
-    & GameEventHandlers
+    & ScopeHandlers
     & {
         (id: string, def: SceneDef): void;
     };
 
 export const createSceneScope = (
     app: App,
-    handlers: GameEventHandlers,
+    handlers: ScopeHandlers,
 ): SceneScope => {
     const sceneScope = scene;
 
@@ -25,7 +26,7 @@ export const createSceneScope = (
             // @ts-expect-error
             const ev: KEventController = handlers[e]?.(...args);
 
-            app.state.sceneEvents.push(ev);
+            _k.game.sceneEvents.push(ev);
 
             return ev;
         };
@@ -34,27 +35,48 @@ export const createSceneScope = (
     return sceneScope as SceneScope;
 };
 
-export type AppScope = GameEventHandlers;
+export type AppScope = ScopeHandlers;
 
-export const createAppScope = (handlers: GameEventHandlers): AppScope => {
+export const createAppScope = (handlers: ScopeHandlers): AppScope => {
     const appScope = {} as Record<string, any>;
 
     for (const e of Object.keys(handlers)) {
-        appScope[e] = handlers[e as keyof GameEventHandlers];
+        appScope[e] = handlers[e as keyof ScopeHandlers];
     }
 
     return appScope as AppScope;
 };
 
-const ignoreInGameObjRaw = [
+const ingnoredHandlersForObject = [
     "onUpdate",
     "onFixedUpdate",
     "onDraw",
-];
+    "onAdd",
+    "onDestroy",
+    "onUse",
+    "onUnuse",
+    "onTag",
+    "onUntag",
+    "onCollide",
+    "onCollideEnd",
+    "onCollideUpdate",
+    "onClick",
+    "onHover",
+    "onHoverEnd",
+    "onHoverUpdate",
+    "on",
+] as const;
 
-export function attachAppHandlersToGameObjRaw(handlers: GameEventHandlers) {
+export type EventHandlersInAppButNotAddedInGameObjRaw =
+    typeof ingnoredHandlersForObject[number];
+
+export function attachScopeHandlersToGameObjRaw(handlers: ScopeHandlers) {
     for (const e of Object.keys(handlers)) {
-        if (ignoreInGameObjRaw.includes(e)) {
+        if (
+            ingnoredHandlersForObject.includes(
+                e as EventHandlersInAppButNotAddedInGameObjRaw,
+            )
+        ) {
             continue;
         }
 

@@ -343,7 +343,7 @@ export function body(opt: BodyCompOpt = {}): BodyComp {
                             curPlatform.pos.sub(lastPlatformPos),
                         );
                     }
-                    lastPlatformPos = curPlatform.pos;
+                    lastPlatformPos = curPlatform.pos.clone();
                 }
             }
 

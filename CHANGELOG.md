@@ -18,33 +18,90 @@ best friend, lajbel, can put the correct version name here
 
 ## [unreleased]
 
-## Added
+### Added
 
-- Added `AreaCompOpt.isSensor`. Areas without body or is sensor will no longer
-  be eligible for collisions - @mflerackers
+- Added `tileMode` option to 9-slice sprites with four tiling strategies:
+  `'none'` (stretch all), `'edges'` (tile edges only), `'center'` (tile center
+  only), and `'all'` (tile both edges and center) (#996) - @JustKira
+- Added a `calculate()` method to the internal FPS counters, so advanced users
+  can access them to create their own FPS monitor (#1010) - @dragoncoder047
+- Added Intl.Segmenter-based grapheme splitting for proper Indic language
+  support, via the `locale` option in `DrawTextOpt (#1013) - @shajidhasan
+- Added topMostOnlyActivate kaplay option. When true, only the topmost object
+  will receive clicks. This avoids problems in a UI where elements overlap -
+  @mflerackers
+- Added a `fill()` component - @mflerackers
+
+### Changed
+
+- Updated the texture packer to use a new packing algorithm which may get more
+  sprites onto the same texture, improving graphics batching performance
+  (#1011) - @dragoncoder047
+
+### Fixed
+
+- Fixed tiled mode drawing of sprites ignoring opacity when it was 0 (#1020) -
+  @dragoncoder047
+- Now, all global events handlers are avaible in scopes, `app.onXXXX` and
+  `scene.onXXXX()` (#977) - @lajbel
+- Fixed input events attached to paused ancestors not being paused (#1009) -
+  @amyspark-ng, @dragoncoder047
+- Fixed type `UniformValue` union not including `Texture`, a valid option
+  (#1018) - @dragoncoder047
+- Text component no longer hangs if the requested width is too narrow for a
+  single character - @dragoncoder047
+- Fixed input events attached to paused ancestors not being paused (#1009) -
+  @amyspark-ng, @dragoncoder047
+- Fixed type `UniformValue` union not including `Texture`, a valid option
+  (#1018) - @dragoncoder047
+- Fixed event crash when using `onLoad` or other events that doesn't return an
+  EventController, and then using `go()` (#1024) - @lajbel, credits to
+  @dragoncoder047
+- Fixed `onClick()` and `onCollide()` tag variants no longer working -
+  @mflerackers
+
+## [4000.0.0-alpha.26] - 2026-01-12
+
+### Added
+
 - Added `floodFill()` for puzzle games - @mflerackers
 - Added `AreaComp.isVisuallyColliding` to test collisions in screen space. This
   can be used for fixed objects which do not necessarily collide in world space.
   Note that this involves additional processing as it tests outside the
   collision system, which works in world space - @mflerackers
+- Added `buildConnectivityMap()` - @mflerackers
+- Added `buildConvexHull()` - @mflerackers
 
-## Changed
+### Changed
 
+- **(!)** Added `AreaCompOpt.isSensor`. Areas without body or is sensor will no
+  longer be eligible for collisions - @mflerackers
 - Both worldPos and screenPos are properties now - @mflerackers
 
-## Fixed
+### Fixed
 
 - Fixed `tween()` not cloning the passed vectors/colors - @lajbel
+- Fixed `timer()` related events (tween/loop/wait) not taking `debug.timeScale`
+  into account - @Stanko
 - Fixed the vibration effect on bodies introduced in alpha.25 thanks to
   @lajbel's debugging skills - @mflerackers
 - Fixed `SpriteComp.hasAnim()` returning false erroneously when the animation
   named was just constant frame 0 - @dragoncoder047
+- Fixed `levelComp.serialize()` use _for...of_ in the place of the _for...in_
+  when looping through the tile object keys - @benhuangbmj
 - Fixed input events attached to a game object having the event's paused value
   reset when the object is paused or unpaused - @dragoncoder047
 - Hidden objects are processed again in transform - @mflerackers
+- When the parent is changed, the transform is invalidated - @mflerackers
 - Fixed click and hover for `fixed()` objects - @mflerackers
 - Object toWorld/fromWorld/toScreen/fromScreen work more logical now -
   @mflerackers
+- Sticky platforms work again - @mflerackers
+
+## Removed
+
+- **(!)** `onClick(() => {})` was removed, use `onMousePress()` instead.
+  `onClick("tag", () => {});` stays the same,
 
 ## [4000.0.0-alpha.25] - 2025-12-23
 
@@ -57,6 +114,8 @@ best friend, lajbel, can put the correct version name here
 
 ## Changed
 
+- **(!)** You can no longer change the position of an object by doing obj.pos.x
+  += 1. You need to assign a new Vec2 or use moveBy instead - @mflerackers
 - Transforms are now only recalculated when needed. Thus static objects no
   longer increase computation in the transform phase - @mflerackers
 - Areas are now only recalculated when the area settings or (optional)
@@ -67,9 +126,9 @@ best friend, lajbel, can put the correct version name here
   changed - @mflerackers
 - Broad stage collision detection spatial structures are now only updated when
   an object's world bounding box has changed - @mflerackers
-- You can no longer change the position of an object by doing obj.pos.x += 1.
-  You need to assign a new Vec2 or use moveBy instead - @mflerackers
 - The grid broadphase has been rewritten for performance - @mflerackers
+- Global `retrieve()` method to get the objects with area within a certain
+  rectangle - @mflerackers
 
 ## [4000.0.0-alpha.24] - 2025-12-12
 
@@ -159,7 +218,6 @@ best friend, lajbel, can put the correct version name here
   ```
 
   All the available handlers in the scopes are `GameEventHandlers` ones:
-
   - `onKeyDown()`
   - `onKeyPress()`
   - `onKeyPressRepeat()`
@@ -187,7 +245,6 @@ best friend, lajbel, can put the correct version name here
 
   And this game object handlers may differ when using it with `obj` and
   `scene`/`app`:
-
   - `onFixedUpdate()`
   - `onUpdate()`
   - `onDraw()`
@@ -285,7 +342,6 @@ best friend, lajbel, can put the correct version name here
   ```
 
   The methods that support this are:
-
   - `scene`
   - `go`
   - `onSceneLeave`

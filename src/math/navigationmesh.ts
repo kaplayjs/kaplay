@@ -143,6 +143,9 @@ export class NavMesh implements Graph {
         }
         return null;
     }
+    get nodes(): number[] {
+        return [...this._polygons.keys()];
+    }
 
     addPolygon(vertices: Vec2[]) {
         const polygon = new NavPolygon(this._polygons.length);

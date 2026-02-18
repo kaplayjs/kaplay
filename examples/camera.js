@@ -49,7 +49,7 @@ const level = addLevel([
         ],
         "$": () => [
             sprite("coin"),
-            area(),
+            area({ isSensor: true }),
             anchor("bot"),
             "coin",
         ],

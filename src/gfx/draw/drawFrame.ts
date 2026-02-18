@@ -1,4 +1,7 @@
-import { updateLastTransformVersion } from "../../ecs/entity/GameObjRaw";
+import {
+    resetTreeIndex,
+    updateLastTransformVersion,
+} from "../../ecs/entity/GameObjRaw";
 import { lerp } from "../../math/lerp";
 import { rand } from "../../math/math";
 import { Vec2 } from "../../math/Vec2";
@@ -6,6 +9,7 @@ import { _k } from "../../shared";
 import { center, flush } from "../stack";
 
 export function transformFrame() {
+    resetTreeIndex();
     _k.game.root.transformTree(false);
     updateLastTransformVersion();
 }

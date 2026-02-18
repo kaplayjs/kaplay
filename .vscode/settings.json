@@ -2,8 +2,5 @@
   "typescript.tsdk": "node_modules/typescript/lib",
   "typescript.preferences.importModuleSpecifierEnding": "minimal",
   "typescript.preferences.importModuleSpecifier": "shortest",
-  "cSpell.words": [
-    "KAPLAY"
-  ],
   "dprint.path": "./node_modules/dprint/dprint"
 }

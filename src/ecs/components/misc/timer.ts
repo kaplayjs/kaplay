@@ -102,7 +102,7 @@ export function timer(maxLoopsPerFrame: number = 1000): TimerComp {
             let t: number = waitFirst ? 0 : time;
             let onEndEvents = new KEvent();
             const ev = this.onUpdate(() => {
-                t += _k.app.state.dt;
+                t += _k.app.dt();
                 for (let i = 0; t >= time && i < this.maxLoopsPerFrame; i++) {
                     count--;
                     action();
@@ -162,7 +162,7 @@ export function timer(maxLoopsPerFrame: number = 1000): TimerComp {
 
             const onEndEvents: Array<() => void> = [];
             const ev = this.onUpdate(() => {
-                curTime += _k.app.state.dt;
+                curTime += _k.app.dt();
                 const t = Math.min(curTime / duration, 1);
                 setValue(lerp(from, to, easeFunc(t)));
                 if (t === 1) {

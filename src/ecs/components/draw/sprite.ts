@@ -8,7 +8,6 @@ import {
 } from "../../../assets/sprite";
 import { DEF_ANCHOR } from "../../../constants/general";
 import { KEvent, type KEventController } from "../../../events/events";
-import { onLoad } from "../../../events/globalEvents";
 import { getRenderProps } from "../../../game/utils";
 import { anchorPt } from "../../../gfx/anchor";
 import { drawTexture } from "../../../gfx/draw/drawTexture";
@@ -17,6 +16,7 @@ import { Quad, quad, Rect, vec2 } from "../../../math/math";
 import { type Vec2 } from "../../../math/Vec2";
 import { _k } from "../../../shared";
 import type { Comp, GameObj, SpriteAnimPlayOpt } from "../../../types";
+import { warn } from "../../../utils/log";
 import { nextRenderAreaVersion } from "../physics/area";
 
 /**
@@ -201,9 +201,7 @@ export function sprite(
     const spriteLoadedEvent = new KEvent<[SpriteData]>();
 
     if (!src) {
-        throw new Error(
-            "Please pass the resource name or data to sprite()",
-        );
+        throw new Error("Please pass the resource name or data to sprite()");
     }
 
     const calcTexScale = (
@@ -240,12 +238,7 @@ export function sprite(
             q = q.scale(opt.quad);
         }
 
-        const scale = calcTexScale(
-            spr.tex,
-            q,
-            opt.width,
-            opt.height,
-        );
+        const scale = calcTexScale(spr.tex, q, opt.width, opt.height);
 
         obj.width = spr.tex.width * q.w * scale.x;
         obj.height = spr.tex.height * q.h * scale.y;
@@ -364,9 +357,16 @@ export function sprite(
             }
 
             if (spriteData.slice9) {
-                // TODO: tile
                 // TODO: use scale or width / height, or both?
-                const { left, right, top, bottom } = spriteData.slice9;
+                const { left, right, top, bottom, tileMode } =
+                    spriteData.slice9;
+
+                if (opt.tiled) {
+                    warn(
+                        "sprite(): 'tiled' option is ignored for 9-slice sprites. Use 'tileMode' in slice9 config instead.",
+                    );
+                }
+
                 const tw = spriteData.tex.width * q.w;
                 const th = spriteData.tex.height * q.h;
                 const iw = this.width - left - right;
@@ -409,6 +409,13 @@ export function sprite(
                     if (transform.w == 0 || transform.h == 0) {
                         continue;
                     }
+                    const isCenter = i === 4;
+                    const isEdge = !!(i & 1);
+                    const shouldTile = isCenter
+                        ? tileMode === "center" || tileMode === "all"
+                        : isEdge
+                        ? tileMode === "edges" || tileMode === "all"
+                        : false;
                     drawTexture(
                         Object.assign(props, {
                             pos: transform.pos().add(offsetX, offsetY),
@@ -417,7 +424,7 @@ export function sprite(
                             quad: q.scale(uv),
                             flipX: this.flipX,
                             flipY: this.flipY,
-                            tiled: opt.tiled,
+                            tiled: shouldTile,
                             width: transform.w,
                             height: transform.h,
                         }),
@@ -448,7 +455,9 @@ export function sprite(
             }
             else {
                 // The sprite may be loaded later in the script, check again when all resources have been loaded
-                onLoad(() => setSpriteData(this, resolveSprite(src)!.data));
+                _k.k.onLoad(() =>
+                    setSpriteData(this, resolveSprite(src)!.data)
+                );
             }
         },
 
@@ -655,8 +664,5 @@ export function spriteFactory(data: SerializedSpriteComp) {
     if (data.quad) {
         opt.quad = quad(data.quad.x, data.quad.y, data.quad.w, data.quad.h);
     }
-    return sprite(
-        data.sprite,
-        opt,
-    );
+    return sprite(data.sprite, opt);
 }

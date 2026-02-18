@@ -16,6 +16,7 @@ export interface Graph {
         to: Vec2,
         opt: any,
     ): Vec2[];
+    nodes: number[];
 }
 
 function buildPath(start: number, goal: number, cameFrom: Map<number, number>) {
@@ -173,4 +174,21 @@ export function floodFill(
         }
     }
     return [...fill];
+}
+
+export function buildConnectivityMap(graph: Graph) {
+    const map: Map<number, number> = new Map();
+    let index = 0;
+    for (const node of graph.nodes) {
+        if (map.get(node) !== undefined) {
+            // This node has been processed
+            continue;
+        }
+        // Fill all connected nodes
+        for (const fill of floodFill(graph, node, () => true)) {
+            map.set(fill, index);
+        }
+        index++;
+    }
+    return map;
 }

@@ -63,19 +63,19 @@ scene("game", ({ levelIdx, score }) => {
             ],
             "$": () => [
                 sprite("coin"),
-                area(),
+                area({ isSensor: true }),
                 anchor("bot"),
                 "coin",
             ],
             "^": () => [
                 sprite("spike"),
-                area(),
+                area({ isSensor: true }),
                 anchor("bot"),
                 "danger",
             ],
             ">": () => [
                 sprite("portal"),
-                area(),
+                area({ isSensor: true }),
                 anchor("bot"),
                 "portal",
             ],
