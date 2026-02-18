@@ -86,6 +86,8 @@ Make sure to format each entry like this:
 - Fixed event crash when using `onLoad` or other events that doesn't return an
   EventController, and then using `go()` (#1024) - @lajbel, credits to
   @dragoncoder047
+- Fixed the unexpected behavior of not preserving the aspect ratio in
+  `drawSprite` (#1026) - @benhuangbmj
 - Fixed `onClick()` and `onCollide()` tag variants no longer working -
   @mflerackers
 
