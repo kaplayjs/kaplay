@@ -129,7 +129,7 @@ export function drawPicture(
 
     // Execute all commands, basically drawing ranges using a given material
     for (const command of picture.commands) {
-        const texture = command.material.tex ?? _k.gfx.defTex;
+        const texture = command.material.tex ?? _k.gfx.whitePixel.tex;
         const shader = command.material.shader ?? _k.gfx.defShader;
 
         if (command.material.blend) {

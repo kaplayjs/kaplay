@@ -2474,18 +2474,17 @@ export function getSpriteOutline(
     if (!spr?.data) throw new Error("Can't load asset: " + asset);
 
     const frameData = spr.data.frames[frame];
-    const tex = spr.data.tex;
 
-    const px = frameData.x * tex.width;
-    const py = frameData.y * tex.height;
-    const pw = frameData.w * tex.width;
-    const ph = frameData.h * tex.height;
+    const px = frameData.q.x * frameData.tex.width;
+    const py = frameData.q.y * frameData.tex.height;
+    const pw = frameData.q.w * frameData.tex.width;
+    const ph = frameData.q.h * frameData.tex.height;
 
     const canvas = document.createElement("canvas");
     canvas.width = pw;
     canvas.height = ph;
     const ctx = canvas.getContext("2d")!;
-    ctx.drawImage(tex.src as any, px, py, pw, ph, 0, 0, pw, ph);
+    ctx.drawImage(frameData.tex.src as any, px, py, pw, ph, 0, 0, pw, ph);
 
     const image_data = ctx.getImageData(0, 0, pw, ph);
     const isInRegion = (x: number, y: number) => {
