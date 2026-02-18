@@ -1,10 +1,10 @@
 import type { DrawSpriteOpt } from "../gfx/draw/drawSprite";
-import type { Texture } from "../gfx/gfx";
+import type { Frame } from "../gfx/TexPacker";
 import { Quad } from "../math/math";
 import { _k } from "../shared";
 import { type ImageSource } from "../types";
-import { Asset, loadImg, loadProgress } from "./asset";
-import { fixURL } from "./utils";
+import { Asset, loadImg, loadProgress, spriteSrcToImage } from "./asset";
+import { fixURL, slice } from "./utils";
 
 /**
  * Frame-based animation configuration.
@@ -129,74 +129,65 @@ export type NineSlice = {
 export type LoadSpriteSrc = string | ImageSource;
 
 export class SpriteData {
-    tex: Texture;
-    frames: Quad[] = [new Quad(0, 0, 1, 1)];
-    anims: SpriteAnims = {};
-    slice9: NineSlice | null = null;
-    packerId: number | null;
-
     constructor(
-        tex: Texture,
-        frames?: Quad[],
-        anims: SpriteAnims = {},
-        slice9: NineSlice | null = null,
-        packerId: number | null = null,
-    ) {
-        this.tex = tex;
-        if (frames) this.frames = frames;
-        this.anims = anims;
-        this.slice9 = slice9;
-        this.packerId = packerId;
-    }
+        public frames: Frame[],
+        public anims: SpriteAnims = {},
+        public slice9: NineSlice | null = null,
+    ) {}
 
     /**
      * @since v3001.0
      */
     get width() {
-        return this.tex.width * this.frames[0].w;
+        return this.frames[0].tex.width * this.frames[0].q.w;
     }
 
     get height() {
-        return this.tex.height * this.frames[0].h;
+        return this.frames[0].tex.height * this.frames[0].q.h;
     }
 
-    static from(
+    static fromSpriteSrc(
         src: LoadSpriteSrc,
         opt: LoadSpriteOpt = {},
     ): Promise<SpriteData> {
-        return typeof src === "string"
-            ? SpriteData.fromURL(src, opt)
-            : Promise.resolve(SpriteData.fromImage(src, opt));
+        return spriteSrcToImage(src).then(img =>
+            SpriteData.fromSingle(img, opt)
+        );
     }
 
-    static fromImage(data: ImageSource, opt: LoadSpriteOpt = {}): SpriteData {
-        const [tex, quad, packerId] = opt.singular
-            ? _k.assets.packer.addSingle(data)
-            : _k.assets.packer.add(data);
-        const frames = opt.frames
-            ? opt.frames.map(
-                (f) =>
-                    new Quad(
-                        quad.x + f.x * quad.w,
-                        quad.y + f.y * quad.h,
-                        f.w * quad.w,
-                        f.h * quad.h,
-                    ),
-            )
-            : slice(
-                opt.sliceX || 1,
-                opt.sliceY || 1,
-                quad.x,
-                quad.y,
-                quad.w,
-                quad.h,
+    static fromMultiple(
+        data: ImageSource[],
+        opt: LoadSpriteOpt = {},
+    ): SpriteData {
+        const frames = data.map(
+            opt.singular
+                ? (src => _k.assets.packer.addSingle(src))
+                : (src => _k.assets.packer.add(src)),
+        );
+        return new SpriteData(frames, opt.anims, opt.slice9);
+    }
+
+    static fromSingle(data: ImageSource, opt: LoadSpriteOpt = {}): SpriteData {
+        const frames: Quad[] = opt.frames
+            ? opt.frames
+            : slice(opt.sliceX || 1, opt.sliceY || 1);
+        if (opt.singular) {
+            const { tex, q: quad, id } = _k.assets.packer.addSingle(data);
+            return new SpriteData(
+                frames.map(f => ({
+                    tex,
+                    q: quad.scale(f),
+                    id,
+                })),
+                opt.anims,
+                opt.slice9,
             );
-
-        return new SpriteData(tex, frames, opt.anims, opt.slice9, packerId);
-    }
-
-    static fromURL(url: string, opt: LoadSpriteOpt = {}): Promise<SpriteData> {
-        return loadImg(url).then((img) => SpriteData.fromImage(img, opt));
+        }
+        return new SpriteData(
+            frames.map(frame => _k.assets.packer.add(data, frame)),
+            opt.anims,
+            opt.slice9,
+        );
     }
 }
 
@@ -255,71 +246,30 @@ export function loadSprite(
                             ? loadImg(s)
                             : Promise.resolve(s);
                     }),
-                ).then((images) => createSpriteSheet(images, opt)),
+                ).then(images => SpriteData.fromMultiple(images, opt)),
             );
         }
         else {
             return _k.assets.sprites.addLoaded(
                 name,
-                createSpriteSheet(src as ImageSource[], opt),
+                SpriteData.fromMultiple(src as ImageSource[], opt),
             );
         }
     }
     else {
         if (typeof src === "string") {
-            return _k.assets.sprites.add(name, SpriteData.from(src, opt));
+            return _k.assets.sprites.add(
+                name,
+                SpriteData.fromSpriteSrc(src, opt),
+            );
         }
         else {
             return _k.assets.sprites.addLoaded(
                 name,
-                SpriteData.fromImage(src, opt),
+                SpriteData.fromSingle(src, opt),
             );
         }
     }
-}
-
-export function slice(x = 1, y = 1, dx = 0, dy = 0, w = 1, h = 1): Quad[] {
-    const frames: Quad[] = [];
-    const qw = w / x;
-    const qh = h / y;
-    for (let j = 0; j < y; j++) {
-        for (let i = 0; i < x; i++) {
-            frames.push(new Quad(dx + i * qw, dy + j * qh, qw, qh));
-        }
-    }
-    return frames;
-}
-
-// TODO: load synchronously if passed ImageSource
-export function createSpriteSheet(
-    images: ImageSource[],
-    opt: LoadSpriteOpt = {},
-): SpriteData {
-    const canvas = document.createElement("canvas");
-    const width = images[0].width;
-    const height = images[0].height;
-    canvas.width = width * images.length;
-    canvas.height = height;
-
-    const c2d = canvas.getContext("2d");
-    if (!c2d) throw new Error("Failed to create canvas context");
-
-    images.forEach((img, i) => {
-        if (img instanceof ImageData) {
-            c2d.putImageData(img, i * width, 0);
-        }
-        else {
-            c2d.drawImage(img, i * width, 0);
-        }
-    });
-
-    const merged = c2d.getImageData(0, 0, images.length * width, height);
-
-    return SpriteData.fromImage(merged, {
-        ...opt,
-        sliceX: images.length,
-        sliceY: 1,
-    });
 }
 
 export function loadBean(name: string = "bean"): Asset<SpriteData> {

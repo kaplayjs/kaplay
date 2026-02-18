@@ -615,7 +615,6 @@ export type MusicData = string;
  * @subgroup Types
  */
 export interface LoadFontOpt {
-    filter?: TexFilter;
     outline?: number | Outline;
     /**
      * The size to load the font in (default 64).

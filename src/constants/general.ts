@@ -19,14 +19,9 @@ export const DBG_FONT = "monospace";
 export const DEF_TEXT_SIZE = 36;
 export const DEF_TEXT_CACHE_SIZE = 64;
 export const MAX_TEXT_CACHE_SIZE = 256;
-export const FONT_ATLAS_WIDTH = 2048;
-export const FONT_ATLAS_HEIGHT = 2048;
 export const SPRITE_ATLAS_WIDTH = 2048;
 export const SPRITE_ATLAS_HEIGHT = 2048;
-// 0.1 pixel padding to texture coordinates to prevent artifact
-export const UV_PAD = 0.1;
 export const DEF_HASH_GRID_SIZE = 64;
-export const DEF_FONT_FILTER = "linear";
 export const LOG_MAX = 8;
 export const LOG_TIME = 4;
 export const VERTEX_FORMAT = [
