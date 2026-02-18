@@ -27,6 +27,7 @@ kaplay({
 
 loadHappy();
 loadSprite("bean", "/sprites/bean.png");
+loadSprite("discord", "/sprites/discord.png");
 loadSprite("box", "/sprites/box.png");
 loadSprite("sturdybox", "/sprites/sturdybox.png");
 loadSprite("target", "/sprites/box_target.png");
@@ -437,8 +438,76 @@ scene("win", () => {
         ),
     ]);
 
-    // The least amount of moves you can beat the whole game in
-    if (movesTotal == 45) {
+    // The fewest moves possible to beat the whole game
+    if (movesTotal <= 45) {
+        c;
+        if (movesTotal < 45) {
+            add([
+                anchor("topright"),
+                pos(width() - 16, 16),
+                rect(340, 50, { radius: 12 }),
+                color("#18121d"),
+                opacity(0.8),
+                scale(),
+                area(),
+                {
+                    add() {
+                        this.add([
+                            anchor(this.anchor),
+                            pos(-6, 2),
+                            sprite("discord"),
+                            scale(0.75),
+                        ]);
+
+                        this.add([
+                            anchor(this.anchor),
+                            pos(-50, 10),
+                            text(
+                                "You've beaten the record!\nContact us on [d]Discord[/d].",
+                                {
+                                    size: 14,
+                                    lineSpacing: 2,
+                                    width: this.width - 60,
+                                    styles: {
+                                        d: {
+                                            color: Color.fromHex("#9d80ff"),
+                                        },
+                                    },
+                                },
+                            ),
+                        ]);
+
+                        this.onHover(() => {
+                            tween(
+                                this.scale,
+                                vec2(1.05),
+                                0.25,
+                                v => this.scale = v,
+                                easings.easeOutBack,
+                            );
+                            setCursor("pointer");
+                        });
+                        this.onHoverEnd(() => {
+                            tween(
+                                this.scale,
+                                vec2(1),
+                                0.25,
+                                v => this.scale = v,
+                                easings.easeOutBack,
+                            );
+                            setCursor("default");
+                        });
+                        this.onClick(() => {
+                            window.open(
+                                "https://discord.com/invite/aQ6RuQm3TF",
+                                "_blank",
+                            );
+                        });
+                    },
+                },
+            ]);
+        }
+
         add([
             pos(center().add(0, -50)),
             anchor("center"),
