@@ -93,7 +93,7 @@ export interface Debug {
      */
     logMessage(message: DebugMessage[], wrapStyle?: DebugLogStyle): void;
     /**
-     * Log a message with the info style (white) in the debugging screen.
+     * Log a message with the info style (white) to the on-screen debug log.
      *
      * @param message - THe message to log
      *
