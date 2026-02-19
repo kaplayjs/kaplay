@@ -559,13 +559,8 @@ export const initApp = (
             : setHasOrIncludes(state.buttonHandler.state.released, btn);
     }
 
-    function onTabResize(action: () => void): KEventController {
-        return state.events.on("resize", action);
-    }
-
     function onResize(action: () => void): KEventController {
-        deprecateMsg("onResize", "onTabResize");
-        return onTabResize(action);
+        return state.events.on("resize", action);
     }
 
     // input callbacks
@@ -1361,7 +1356,6 @@ export const initApp = (
         pressButton,
         releaseButton,
         charInputted,
-        onTabResize,
         onResize,
         onKeyDown,
         onKeyPress,

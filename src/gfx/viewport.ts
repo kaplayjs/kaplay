@@ -16,7 +16,7 @@ aspect ratio
 - Viewport size: The final rendered size
 
 We update the canvas before run this, you should check initEvents.ts
-in onTabResize method.
+in onResize method.
 */
 
 export function updateViewport() {

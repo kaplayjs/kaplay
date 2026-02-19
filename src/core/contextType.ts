@@ -2083,7 +2083,7 @@ export interface KAPLAYCtx {
      * ]);
      *
      * // resize the rectangle to screen size
-     * onTabResize(() => {
+     * onResize(() => {
      *     debug.log(`Old Size: ${rectangle.width}x${rectangle.height}`);
      *     rectangle.width = width();
      *     rectangle.height = height();
@@ -2094,10 +2094,6 @@ export interface KAPLAYCtx {
      * @returns The event controller.
      * @since v3000.0
      * @group Events
-     */
-    onTabResize(action: () => void): KEventController;
-    /**
-     * @deprecated Use {@link onTabResize} instead.
      */
     onResize(action: () => void): KEventController;
     /**
