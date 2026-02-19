@@ -15,11 +15,11 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 --------------------------------------------------------------------------------
 Hey, KAPLAY Dev! Add your new changes in [unreleased], in one of the categories
 
-- Added 
+- Added
 - Removed
 - Changed
-- Fixed 
- 
+- Fixed
+
 (if one of these 3rd level headings are missing, add it)
 
 Make sure to format each entry like this:
@@ -46,21 +46,21 @@ Make sure to format each entry like this:
 
 ### Removed
 
-- **(!)** The texture uv coordinates for primitives (solid- or gradient-filled circles,
-  rectangles, lines, and polygons) have now been changed to (1, 1) instead of
-  (0, 0), so shaders written for primitives will need to be updated. (#1021) -
-  @dragoncoder047
-- **(!)** The `LoadFontOpt.filter` option has been **removed** since fonts are now
-  packed into the same texture as sprites, so only the global filter setting can
-  change this (#1021) - @dragoncoder047
+- **(!)** The texture uv coordinates for primitives (solid- or gradient-filled
+  circles, rectangles, lines, and polygons) have now been changed to (1, 1)
+  instead of (0, 0), so shaders written for primitives will need to be updated.
+  (#1021) - @dragoncoder047
+- **(!)** The `LoadFontOpt.filter` option has been **removed** since fonts are
+  now packed into the same texture as sprites, so only the global filter setting
+  can change this (#1021) - @dragoncoder047
 
 ### Changed
 
-- **(!)** The global `onDraw()` handler's no-tag form now always draws before all game
-  objects are drawn, **regardless of whether it was attached after game objects
-  were added** (#977) - @lajbel
-- **(!)** The sprite data format has been changed to allow individual frames to be on
-  different GPU textures. Now `SpriteData.tex` doesn't exist, and
+- **(!)** The global `onDraw()` handler's no-tag form now always draws before
+  all game objects are drawn, **regardless of whether it was attached after game
+  objects were added** (#977) - @lajbel
+- **(!)** The sprite data format has been changed to allow individual frames to
+  be on different GPU textures. Now `SpriteData.tex` doesn't exist, and
   `SpriteData.frames` is a list of `Frame`s instead of a list of `Quad`s. A
   `Frame` contains `tex` and `q` (quad) properties that contain that data.
   (#1021) - @dragoncoder047
