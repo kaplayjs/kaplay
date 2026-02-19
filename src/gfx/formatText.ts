@@ -3,7 +3,7 @@ import type { BitmapFontData, GfxFont } from "../assets/bitmapFont";
 import { FontData, resolveFont } from "../assets/font";
 import { DEF_TEXT_CACHE_SIZE } from "../constants/general";
 import { Color } from "../math/color";
-import { Quad, vec2 } from "../math/math";
+import { vec2 } from "../math/math";
 import { _k } from "../shared";
 import type { Outline } from "../types";
 import { runes } from "../utils/runes";
@@ -450,6 +450,8 @@ export function formatText(opt: DrawTextOpt): FormattedText {
         }
         th += thisLineHeight;
     }
+
+    _k.assets.packer.refreshIfPending();
 
     return {
         width: tw,
