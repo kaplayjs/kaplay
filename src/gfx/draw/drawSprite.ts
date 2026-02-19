@@ -1,8 +1,9 @@
 import type { Asset } from "../../assets/asset";
 import { resolveSprite, type SpriteData } from "../../assets/sprite";
-import { Quad } from "../../math/math";
+import { Quad, vec2 } from "../../math/math";
 import { type Vec2 } from "../../math/Vec2";
 import type { Anchor, RenderProps } from "../../types";
+import type { Texture } from "../gfx";
 import { drawTexture } from "./drawTexture";
 
 /**
@@ -66,14 +67,44 @@ export function drawSprite(opt: DrawSpriteOpt) {
         return;
     }
 
-    const frame = spr.data.frames[opt.frame ?? 0];
+    const calcTexScale = (
+        tex: Texture,
+        q: Quad,
+        w?: number,
+        h?: number,
+    ): Vec2 => {
+        const scale = vec2(1, 1);
+        if (w && h) {
+            scale.x = w / (tex.width * q.w);
+            scale.y = h / (tex.height * q.h);
+        }
+        else if (w) {
+            scale.x = w / (tex.width * q.w);
+            scale.y = scale.x;
+        }
+        else if (h) {
+            scale.y = h / (tex.height * q.h);
+            scale.x = scale.y;
+        }
+        return scale;
+    };
 
+    const frame = spr.data.frames[opt.frame ?? 0];
     if (!frame) {
         throw new Error(`Frame not found: ${opt.frame ?? 0}`);
     }
+    const q = frame.q.scale(opt.quad ?? new Quad(0, 0, 1, 1));
 
-    drawTexture(Object.assign({}, opt, {
-        tex: frame.tex,
-        quad: frame.q.scale(opt.quad ?? new Quad(0, 0, 1, 1)),
-    }));
+    const scale = calcTexScale(frame.tex, q, opt.width, opt.height);
+    const width = opt.width ?? frame.tex.width * q.w * scale.x;
+    const height = opt.height ?? frame.tex.height * q.h * scale.y;
+
+    drawTexture(
+        Object.assign({}, opt, {
+            tex: frame.tex,
+            quad: q,
+            width,
+            height,
+        }),
+    );
 }
