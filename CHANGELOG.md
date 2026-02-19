@@ -13,7 +13,8 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 <!-- [CHANGELOG GUIDELINES PLEASE FOLLOW]
 --------------------------------------------------------------------------------
-Hey, KAPLAY Dev! Add your new changes in [unreleased], in one of the categories
+Hey, KAPLAY Dev! Add your new changes in [unreleased] heading, below one of
+these heading:
 
 - Added
 - Removed
@@ -24,7 +25,15 @@ Hey, KAPLAY Dev! Add your new changes in [unreleased], in one of the categories
 
 Make sure to format each entry like this:
 
-- short description of the change (#PR Number) - @your username
+- short description of the change (#PR Number) - @yourusername, @otherdevusername
+
+So your change should look like
+
+## [unreleased]
+
+### Added
+
+- added a new ghost (#6767) - @lajbel
 --------------------------------------------------------------------------------
 [DO IT IF YOU DON'T WANT A LAJBEL VISIT AT NIGHT] -->
 
