@@ -11,10 +11,31 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - Breaking changes are marked with: **(!)**.
 - [Jump to v3001 changelog](#changelog-for-v3001).
 
-<!--
-Hey, KAPLAY Dev, you must changelog here, in unreleased, so later your
-best friend, lajbel, can put the correct version name here
--->
+<!-- [CHANGELOG GUIDELINES PLEASE FOLLOW]
+--------------------------------------------------------------------------------
+Hey, KAPLAY Dev! Add your new changes in [unreleased] heading, below one of
+these heading:
+
+- Added
+- Removed
+- Changed
+- Fixed
+
+(if one of these 3rd level headings are missing, add it)
+
+Make sure to format each entry like this:
+
+- short description of the change (#PR Number) - @yourusername, @otherdevusername
+
+So your change should look like
+
+## [unreleased]
+
+### Added
+
+- added a new ghost (#6767) - @lajbel
+--------------------------------------------------------------------------------
+[DO IT IF YOU DON'T WANT A LAJBEL VISIT AT NIGHT] -->
 
 ## [unreleased]
 
@@ -26,25 +47,48 @@ best friend, lajbel, can put the correct version name here
 - Added a `calculate()` method to the internal FPS counters, so advanced users
   can access them to create their own FPS monitor (#1010) - @dragoncoder047
 - Added Intl.Segmenter-based grapheme splitting for proper Indic language
-  support, via the `locale` option in `DrawTextOpt (#1013) - @shajidhasan
+  support, via the `locale` option in `DrawTextOpt` (#1013) - @shajidhasan
 - Added topMostOnlyActivate kaplay option. When true, only the topmost object
   will receive clicks. This avoids problems in a UI where elements overlap -
   @mflerackers
 - Added a `fill()` component - @mflerackers
 
+### Removed
+
+- **(!)** The texture uv coordinates for primitives (solid- or gradient-filled
+  circles, rectangles, lines, and polygons) have now been changed to (1, 1)
+  instead of (0, 0), so shaders written for primitives will need to be updated.
+  (#1021) - @dragoncoder047
+- **(!)** The `LoadFontOpt.filter` option has been **removed** since fonts are
+  now packed into the same texture as sprites, so only the global filter setting
+  can change this (#1021) - @dragoncoder047
+
 ### Changed
 
+- **(!)** The global `onDraw()` handler's no-tag form now always draws before
+  all game objects are drawn, **regardless of whether it was attached after game
+  objects were added** (#977) - @lajbel
+- **(!)** The sprite data format has been changed to allow individual frames to
+  be on different GPU textures. Now `SpriteData.tex` doesn't exist, and
+  `SpriteData.frames` is a list of `Frame`s instead of a list of `Quad`s. A
+  `Frame` contains `tex` and `q` (quad) properties that contain that data.
+  (#1021) - @dragoncoder047
 - Updated the texture packer to use a new packing algorithm which may get more
   sprites onto the same texture, improving graphics batching performance
   (#1011) - @dragoncoder047
 - Replaced the RNG implementation for the one using Alea algorithm by Johannes
   Baagøe (#1038) - @stanko
+- Updated all sprite and font loading to pack everything in the same texture to
+  allow it to all batch together, for speed and efficiency (#1021) -
+  @dragoncoder047
+- Added spritesheet repacking, so spritesheet images that contain lots of blank
+  space don't waste texture memory (#1021) - @dragoncoder047
 
 ### Fixed
 
 - Fixed tiled mode drawing of sprites ignoring opacity when it was 0 (#1020) -
   @dragoncoder047
-- Now, all global events handlers are avaible in scopes, `app.onXXXX` and
+- Now, all global events handlers are available in scopes, `app.onXXXX` and
   `scene.onXXXX()` (#977) - @lajbel
 - Fixed input events attached to paused ancestors not being paused (#1009) -
   @amyspark-ng, @dragoncoder047
@@ -61,6 +105,8 @@ best friend, lajbel, can put the correct version name here
 - Fixed event crash when using `onLoad` or other events that doesn't return an
   EventController, and then using `go()` (#1024) - @lajbel, credits to
   @dragoncoder047
+- Fixed the unexpected behavior of not preserving the aspect ratio in
+  `drawSprite` (#1026) - @benhuangbmj
 - Fixed `onClick()` and `onCollide()` tag variants no longer working -
   @mflerackers
 

@@ -21,6 +21,7 @@ export function drawInspectText(pos: Vec2, txt: string) {
         pushTransform();
         multTranslateV(pos);
 
+        // cSpell: ignore ftxt
         const ftxt = formatText({
             text: txt,
             font: DBG_FONT,

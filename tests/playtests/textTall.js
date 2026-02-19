@@ -10,11 +10,8 @@ kaplay({ background: "#000000", crisp: true });
 const nabla = loadFont(
     "Nabla",
     "/fonts/Nabla-Regular-VariableFont_EDPT,EHLT.ttf",
-    { filter: "nearest" },
 );
-const anton = loadFont("Anton", "/fonts/Anton-Regular.ttf", {
-    filter: "nearest",
-});
+const anton = loadFont("Anton", "/fonts/Anton-Regular.ttf");
 
 const obj = add([
     pos(10, 10),
