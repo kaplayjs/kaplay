@@ -89,19 +89,19 @@ export function drawSprite(opt: DrawSpriteOpt) {
         return scale;
     };
 
-    const frame = spr.data.frames[opt.frame ?? 0];
-    if (!frame) {
+    let q = spr.data.frames[opt.frame ?? 0].clone();
+    if (!q) {
         throw new Error(`Frame not found: ${opt.frame ?? 0}`);
     }
-    const q = frame.q.scale(opt.quad ?? new Quad(0, 0, 1, 1));
+    q = q.scale(opt.quad ?? new Quad(0, 0, 1, 1));
 
-    const scale = calcTexScale(frame.tex, q, opt.width, opt.height);
-    const width = opt.width ?? frame.tex.width * q.w * scale.x;
-    const height = opt.height ?? frame.tex.height * q.h * scale.y;
+    const scale = calcTexScale(spr.data.tex, q, opt.width, opt.height);
+    const width = opt.width ?? spr.data.tex.width * q.w * scale.x;
+    const height = opt.height ?? spr.data.tex.height * q.h * scale.y;
 
     drawTexture(
         Object.assign({}, opt, {
-            tex: frame.tex,
+            tex: spr.data.tex,
             quad: q,
             width,
             height,
