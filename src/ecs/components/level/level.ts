@@ -476,6 +476,7 @@ export function level(map: string[], opt: LevelCompOpt): LevelComp {
             if (!spatialMap) {
                 createSpatialMap(this);
             }
+            if (tilePos.x >= numColumns) return [];
             const hash = tile2Hash(tilePos);
             return spatialMap![hash] || [];
         },
