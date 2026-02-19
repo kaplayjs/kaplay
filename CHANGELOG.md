@@ -11,20 +11,35 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - Breaking changes are marked with: **(!)**.
 - [Jump to v3001 changelog](#changelog-for-v3001).
 
-<!--
+<!-- [CHANGELOG GUIDELINES PLEASE FOLLOW]
+--------------------------------------------------------------------------------
+Hey, KAPLAY Dev! Add your new changes in [unreleased] heading, below one of
+these heading:
 
-Hey, KAPLAY Dev, you must changelog here, in unreleased, so later your
-best friend, lajbel, can put the correct version name here
+- Added
+- Removed
+- Changed
+- Fixed
+
+(if one of these 3rd level headings are missing, add it)
 
 Make sure to format each entry like this:
 
-- short description (#PR Number) - @your username
+- short description of the change (#PR Number) - @yourusername, @otherdevusername
 
--->
+So your change should look like
 
 ## [unreleased]
 
-### Breaking Changes
+### Added
+
+- added a new ghost (#6767) - @lajbel
+--------------------------------------------------------------------------------
+[DO IT IF YOU DON'T WANT A LAJBEL VISIT AT NIGHT] -->
+
+## [unreleased]
+
+### Added
 
 - The rotation constraint's `scale` option has been **renamed** to `ratio` -
   @dragoncoder047
@@ -43,9 +58,6 @@ Make sure to format each entry like this:
   `SpriteData.frames` is a list of `Frame`s instead of a list of `Quad`s. A
   `Frame` contains `tex` and `q` (quad) properties that contain that data.
   (#1021) - @dragoncoder047
-
-### Added
-
 - The rotation constraint now has a `trackMultiturn` option that can be set to
   true to make the rotation not jump at the 0-360 boundary - @dragoncoder047
 - Added `tileMode` option to 9-slice sprites with four tiling strategies:
@@ -60,8 +72,26 @@ Make sure to format each entry like this:
   @mflerackers
 - Added a `fill()` component - @mflerackers
 
+### Removed
+
+- **(!)** The texture uv coordinates for primitives (solid- or gradient-filled
+  circles, rectangles, lines, and polygons) have now been changed to (1, 1)
+  instead of (0, 0), so shaders written for primitives will need to be updated.
+  (#1021) - @dragoncoder047
+- **(!)** The `LoadFontOpt.filter` option has been **removed** since fonts are
+  now packed into the same texture as sprites, so only the global filter setting
+  can change this (#1021) - @dragoncoder047
+
 ### Changed
 
+- **(!)** The global `onDraw()` handler's no-tag form now always draws before
+  all game objects are drawn, **regardless of whether it was attached after game
+  objects were added** (#977) - @lajbel
+- **(!)** The sprite data format has been changed to allow individual frames to
+  be on different GPU textures. Now `SpriteData.tex` doesn't exist, and
+  `SpriteData.frames` is a list of `Frame`s instead of a list of `Quad`s. A
+  `Frame` contains `tex` and `q` (quad) properties that contain that data.
+  (#1021) - @dragoncoder047
 - Updated the texture packer to use a new packing algorithm which may get more
   sprites onto the same texture, improving graphics batching performance
   (#1011) - @dragoncoder047
