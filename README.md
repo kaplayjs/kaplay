@@ -32,7 +32,7 @@ add([
 Game objects are composed from simple, powerful components:
 
 ```js
-// Add a Game Obj to the scene from a list of component
+// Add a Game Obj to the scene from a list of components
 const player = add([
     rect(40, 40), // it renders as a rectangle
     pos(100, 200), // it has a position (coordinates)
