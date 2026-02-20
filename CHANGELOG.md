@@ -41,6 +41,25 @@ So your change should look like
 
 ### Added
 
+- The rotation constraint's `scale` option has been **renamed** to `ratio` -
+  @dragoncoder047
+- The texture uv coordinates for primitives (solid- or gradient-filled circles,
+  rectangles, lines, and polygons) have now been changed to (1, 1) instead of
+  (0, 0), so shaders written for primitives will need to be updated. (#1021) -
+  @dragoncoder047
+- The global `onDraw()` handler's no-tag form now always draws before all game
+  objects are drawn, **regardless of whether it was attached after game objects
+  were added** (#977) - @lajbel
+- The `LoadFontOpt.filter` option has been **removed** since fonts are now
+  packed into the same texture as sprites, so only the global filter setting can
+  change this (#1021) - @dragoncoder047
+- The sprite data format has been changed to allow individual frames to be on
+  different GPU textures. Now `SpriteData.tex` doesn't exist, and
+  `SpriteData.frames` is a list of `Frame`s instead of a list of `Quad`s. A
+  `Frame` contains `tex` and `q` (quad) properties that contain that data.
+  (#1021) - @dragoncoder047
+- The rotation constraint now has a `trackMultiturn` option that can be set to
+  true to make the rotation not jump at the 0-360 boundary - @dragoncoder047
 - Added `tileMode` option to 9-slice sprites with four tiling strategies:
   `'none'` (stretch all), `'edges'` (tile edges only), `'center'` (tile center
   only), and `'all'` (tile both edges and center) (#996) - @JustKira
@@ -96,8 +115,6 @@ So your change should look like
   single character - @dragoncoder047
 - Fixed input events attached to paused ancestors not being paused (#1009) -
   @amyspark-ng, @dragoncoder047
-- Fixed type `UniformValue` union not including `Texture`, a valid option
-  (#1018) - @dragoncoder047
 - Fixed event crash when using `onLoad` or other events that doesn't return an
   EventController, and then using `go()` (#1024) - @lajbel, credits to
   @dragoncoder047
