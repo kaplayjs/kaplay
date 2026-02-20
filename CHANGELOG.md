@@ -65,6 +65,8 @@ So your change should look like
 
 ### Changed
 
+- Updated `drawSprite()` to allow slice9'ed sprites, and so now the `sprite()`
+  component just calls `drawSprite()` (#1036) - @dragoncoder047
 - **(!)** The global `onDraw()` handler's no-tag form now always draws before
   all game objects are drawn, **regardless of whether it was attached after game
   objects were added** (#977) - @lajbel
