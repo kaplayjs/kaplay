@@ -9,7 +9,7 @@ import { deg2rad, rad2deg, Rect, vec2, type Vec2Args } from "./math";
  * @group Components
  * @subgroup Component Serialization
  */
-export interface SerializedVec2 {
+export interface Vec2Like {
     x: number;
     y: number;
 }
@@ -19,7 +19,7 @@ export interface SerializedVec2 {
  *
  * @group Math
  */
-export class Vec2 {
+export class Vec2 implements Vec2Like {
     /** The x coordinate */
     x: number = 0;
     /** The y coordinate */
@@ -75,7 +75,7 @@ export class Vec2 {
         return new Vec2(this.x, this.y);
     }
 
-    static copy(v: Vec2, out: Vec2): Vec2 {
+    static copy<T extends Vec2Like>(v: Vec2Like, out: T): T {
         out.x = v.x;
         out.y = v.y;
         return out;
@@ -87,7 +87,12 @@ export class Vec2 {
         return new Vec2(this.x + p2.x, this.y + p2.y);
     }
 
-    static addScaled(v: Vec2, other: Vec2, s: number, out: Vec2): Vec2 {
+    static addScaled<T extends Vec2Like>(
+        v: Vec2Like,
+        other: Vec2Like,
+        s: number,
+        out: T,
+    ): T {
         out.x = v.x + other.x * s;
         out.y = v.y + other.y * s;
         return out;
@@ -102,7 +107,12 @@ export class Vec2 {
      *
      * @returns The sum of the vectors
      */
-    static addc(v: Vec2, x: number, y: number, out: Vec2): Vec2 {
+    static addc<T extends Vec2Like>(
+        v: Vec2Like,
+        x: number,
+        y: number,
+        out: T,
+    ): T {
         out.x = v.x + x;
         out.y = v.y + y;
         return out;
@@ -116,7 +126,11 @@ export class Vec2 {
      *
      * @returns The sum of the vectors
      */
-    static add(v: Vec2, other: Vec2, out: Vec2): Vec2 {
+    static add<T extends Vec2Like>(
+        v: Vec2Like,
+        other: Vec2Like,
+        out: T,
+    ): T {
         out.x = v.x + other.x;
         out.y = v.y + other.y;
         return out;
@@ -137,7 +151,12 @@ export class Vec2 {
      *
      * @returns The difference of the vectors
      */
-    static subc(v: Vec2, x: number, y: number, out: Vec2): Vec2 {
+    static subc<T extends Vec2Like>(
+        v: Vec2Like,
+        x: number,
+        y: number,
+        out: T,
+    ): T {
         out.x = v.x - x;
         out.y = v.y - y;
         return out;
@@ -151,7 +170,11 @@ export class Vec2 {
      *
      * @returns The difference of the vectors
      */
-    static sub(v: Vec2, other: Vec2, out: Vec2): Vec2 {
+    static sub<T extends Vec2Like>(
+        v: Vec2Like,
+        other: Vec2Like,
+        out: T,
+    ): T {
         out.x = v.x - other.x;
         out.y = v.y - other.y;
         return out;
@@ -172,7 +195,11 @@ export class Vec2 {
      *
      * @returns The scale of the vector
      */
-    static scale(v: Vec2, s: number, out: Vec2): Vec2 {
+    static scale<T extends Vec2Like>(
+        v: Vec2Like,
+        s: number,
+        out: T,
+    ): T {
         out.x = v.x * s;
         out.y = v.y * s;
         return out;
@@ -187,7 +214,12 @@ export class Vec2 {
      *
      * @returns The scale of the vector
      */
-    static scalec(v: Vec2, x: number, y: number, out: Vec2): Vec2 {
+    static scalec<T extends Vec2Like>(
+        v: Vec2Like,
+        x: number,
+        y: number,
+        out: T,
+    ): T {
         out.x = v.x * x;
         out.y = v.y * y;
         return out;
@@ -201,7 +233,11 @@ export class Vec2 {
      *
      * @returns The scale of the vector
      */
-    static scalev(v: Vec2, other: Vec2, out: Vec2): Vec2 {
+    static scalev<T extends Vec2Like>(
+        v: Vec2Like,
+        other: Vec2Like,
+        out: T,
+    ): T {
         out.x = v.x * other.x;
         out.y = v.y * other.y;
         return out;
@@ -226,10 +262,10 @@ export class Vec2 {
      *
      * @returns The between the vectors
      */
-    static dist(v: Vec2, other: Vec2): number {
+    static dist(v: Vec2Like, other: Vec2Like): number {
         const x = v.x - other.x;
         const y = v.y - other.y;
-        return Math.sqrt(x * x + y * y);
+        return Math.hypot(x, y);
     }
 
     /** Get squared distance between another vector */
@@ -245,7 +281,7 @@ export class Vec2 {
      *
      * @returns The distance between the vectors
      */
-    static sdist(v: Vec2, other: Vec2): number {
+    static sdist(v: Vec2Like, other: Vec2Like): number {
         const x = v.x - other.x;
         const y = v.y - other.y;
         return x * x + y * y;
@@ -266,8 +302,8 @@ export class Vec2 {
      *
      * @returns The length of the vector
      */
-    static len(v: Vec2) {
-        return Math.sqrt(v.x * v.x + v.y * v.y);
+    static len(v: Vec2Like) {
+        return Math.hypot(v.x, v.y);
     }
 
     /**
@@ -285,7 +321,7 @@ export class Vec2 {
      *
      * @returns The squared length of the vector
      */
-    static slen(v: Vec2) {
+    static slen(v: Vec2Like) {
         return v.x * v.x + v.y * v.y;
     }
 
@@ -297,7 +333,7 @@ export class Vec2 {
         return len === 0 ? new Vec2(0) : this.scale(1 / len);
     }
 
-    static unit(v: Vec2, out: Vec2): Vec2 {
+    static unit<T extends Vec2Like>(v: Vec2Like, out: T): T {
         const len = Vec2.len(v);
         if (len === 0) {
             out.x = 0;
@@ -316,7 +352,7 @@ export class Vec2 {
         return new Vec2(this.y, -this.x);
     }
 
-    static normal(v: Vec2, out: Vec2): Vec2 {
+    static normal<T extends Vec2Like>(v: Vec2Like, out: T): T {
         out.x = v.y;
         out.y = -v.x;
         return out;
@@ -327,8 +363,9 @@ export class Vec2 {
      *
      * @since v3000.0
      */
-    reflect(normal: Vec2) {
-        return this.sub(normal.scale(2 * this.dot(normal)));
+    reflect(normal: Vec2Like) {
+        const s = 2 * this.dot(normal);
+        return this.sub(normal.x * s, normal.y * s);
     }
 
     /**
@@ -336,8 +373,9 @@ export class Vec2 {
      *
      * @since v3000.0
      */
-    project(on: Vec2) {
-        return on.scale(on.dot(this) / on.len());
+    project(on: Vec2Like) {
+        const s = this.dot(on) / Vec2.len(on);
+        return new Vec2(on.x * s, on.y * s);
     }
 
     /**
@@ -345,12 +383,12 @@ export class Vec2 {
      *
      * @since v3000.0
      */
-    reject(on: Vec2) {
+    reject(on: Vec2Like) {
         return this.sub(this.project(on));
     }
 
-    rotate(vecOrAngle: Vec2 | number) {
-        if (vecOrAngle instanceof Vec2) {
+    rotate(vecOrAngle: Vec2Like | number) {
+        if (typeof vecOrAngle === "object") {
             return new Vec2(
                 this.x * vecOrAngle.x - this.y * vecOrAngle.y,
                 this.x * vecOrAngle.y + this.y * vecOrAngle.x,
@@ -375,8 +413,12 @@ export class Vec2 {
      *
      * @returns The rotated vector
      */
-    static rotate(v: Vec2, dir: Vec2, out: Vec2): Vec2 {
-        const tmp = v.x;
+    static rotate<T extends Vec2Like>(
+        v: Vec2Like,
+        dir: Vec2Like,
+        out: T,
+    ): T {
+        const tmp = v.x; // save in case v and out are the same object
         out.x = v.x * dir.x - v.y * dir.y;
         out.y = tmp * dir.y + v.y * dir.x;
         return out;
@@ -390,17 +432,21 @@ export class Vec2 {
      *
      * @returns The rotated vector
      */
-    static rotateByAngle(v: Vec2, angle: number, out: Vec2): Vec2 {
+    static rotateByAngle<T extends Vec2Like>(
+        v: Vec2Like,
+        angle: number,
+        out: T,
+    ): T {
         const c = Math.cos(angle);
         const s = Math.sin(angle);
-        const tmp = v.x;
+        const tmp = v.x; // save in case v and out are the same object
         out.x = v.x * c - v.y * s;
         out.y = tmp * s + v.y * c;
         return out;
     }
 
-    invRotate(vecOrAngle: Vec2 | number) {
-        if (vecOrAngle instanceof Vec2) {
+    invRotate(vecOrAngle: Vec2Like | number) {
+        if (typeof vecOrAngle === "object") {
             return this.rotate(new Vec2(vecOrAngle.x, -vecOrAngle.y));
         }
         else {
@@ -416,8 +462,12 @@ export class Vec2 {
      *
      * @returns The rotated vector
      */
-    static inverseRotate(v: Vec2, dir: Vec2, out: Vec2): Vec2 {
-        const tmp = v.x;
+    static inverseRotate<T extends Vec2Like>(
+        v: Vec2Like,
+        dir: Vec2Like,
+        out: T,
+    ): T {
+        const tmp = v.x; // save in case v and out are the same object
         out.x = v.x * dir.x + v.y * dir.y;
         out.y = -tmp * dir.y + v.y * dir.x;
         return out;
@@ -426,7 +476,7 @@ export class Vec2 {
     /**
      * Get the dot product with another vector.
      */
-    dot(p2: Vec2): number {
+    dot(p2: Vec2Like): number {
         return this.x * p2.x + this.y * p2.y;
     }
 
@@ -435,7 +485,7 @@ export class Vec2 {
      *
      * @since v3000.0
      */
-    static dot(v: Vec2, other: Vec2): number {
+    static dot(v: Vec2Like, other: Vec2Like): number {
         return v.x * other.x + v.y * other.y;
     }
 
@@ -444,7 +494,7 @@ export class Vec2 {
      *
      * @since v3000.0
      */
-    cross(p2: Vec2): number {
+    cross(p2: Vec2Like): number {
         return this.x * p2.y - this.y * p2.x;
     }
 
@@ -453,7 +503,7 @@ export class Vec2 {
      *
      * @since v3000.0
      */
-    static cross(v: Vec2, other: Vec2): number {
+    static cross(v: Vec2Like, other: Vec2Like): number {
         return v.x * other.y - v.y * other.x;
     }
 
@@ -471,7 +521,7 @@ export class Vec2 {
      *
      * @returns Angle represented by the vector in radians
      */
-    static toAngle(v: Vec2) {
+    static toAngle(v: Vec2Like) {
         return Math.atan2(v.y, v.x);
     }
 
@@ -492,14 +542,14 @@ export class Vec2 {
      *
      * @returns Angle between the vectors in radians
      */
-    static angleBetween(v: Vec2, other: Vec2) {
+    static angleBetween(v: Vec2Like, other: Vec2Like) {
         return Math.atan2(Vec2.cross(v, other), Vec2.dot(v, other));
     }
 
     /**
      * Linear interpolate to a destination vector (for positions).
      */
-    lerp(dest: Vec2, t: number): Vec2 {
+    lerp(dest: Vec2Like, t: number): Vec2 {
         return new Vec2(
             lerpNumber(this.x, dest.x, t),
             lerpNumber(this.y, dest.y, t),
@@ -515,9 +565,14 @@ export class Vec2 {
      *
      * @returns The linear interpolation between src and dst by t
      */
-    static lerp(src: Vec2, dst: Vec2, t: number, out: Vec2): Vec2 {
-        out.x = src.x + (dst.x - src.x) * t;
-        out.y = src.y + (dst.y - src.y) * t;
+    static lerp<T extends Vec2Like>(
+        src: Vec2Like,
+        dst: Vec2Like,
+        t: number,
+        out: T,
+    ): T {
+        out.x = src.x * (dst.x - src.x) * t;
+        out.y = src.y * (dst.y - src.y) * t;
         return out;
     }
 
@@ -526,13 +581,14 @@ export class Vec2 {
      *
      * @since v3000.0
      */
-    slerp(dest: Vec2, t: number): Vec2 {
+    slerp(dest: Vec2Like, t: number): Vec2 {
         const cos = this.dot(dest);
         const sin = this.cross(dest);
         const angle = Math.atan2(sin, cos);
+        const destScale = Math.sin(t * angle);
         return this
             .scale(Math.sin((1 - t) * angle))
-            .add(dest.scale(Math.sin(t * angle)))
+            .add(dest.x * destScale, dest.y * destScale)
             .scale(1 / sin);
     }
 
@@ -545,7 +601,12 @@ export class Vec2 {
      *
      * @returns The spherical interpolation between src and dst by t
      */
-    static slerp(src: Vec2, dst: Vec2, t: number, out: Vec2): Vec2 {
+    static slerp<T extends Vec2Like>(
+        src: Vec2Like,
+        dst: Vec2Like,
+        t: number,
+        out: T,
+    ): T {
         const cos = Vec2.dot(src, dst);
         const sin = Vec2.cross(src, dst);
         const angle = Math.atan2(sin, cos);
@@ -610,11 +671,11 @@ export class Vec2 {
         return [this.x, this.y];
     }
 
-    serialize(): SerializedVec2 {
+    serialize(): Vec2Like {
         return { x: this.x, y: this.y };
     }
 
-    static deserialize(data: SerializedVec2): Vec2 {
+    static deserialize(data: Vec2Like): Vec2 {
         return vec2(data.x, data.y);
     }
 }

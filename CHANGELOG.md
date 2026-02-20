@@ -195,6 +195,8 @@ So your change should look like
   needs expansion) - @mflerackers
 - Added vertical sweep and prune - @mflerackers
 - Added configuration to choose broad phase algorithm - @mflerackers
+- Vec2's can now operate on any object with x and y properties and don't need to
+  have the arguments deserialized - @dragoncoder047
 
 ### Fixed
 
