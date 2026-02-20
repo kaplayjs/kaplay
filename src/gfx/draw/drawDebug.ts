@@ -193,10 +193,9 @@ Batches: ${batches}`,
 
             for (const log of _k.game.logs) {
                 let str = "";
-                const style = log.msg instanceof Error ? "error" : "info";
                 str += `[time]${log.time.toFixed(2)}[/time]`;
                 str += " ";
-                str += `[${style}]${prettyDebug(log.msg)}[/${style}]`;
+                str += `[${log.style}]${prettyDebug(log.msg)}[/${log.style}]`;
                 logs.push(str);
             }
 
@@ -218,6 +217,7 @@ Batches: ${batches}`,
                 styles: {
                     "time": { color: rgb(127, 127, 127) },
                     "info": { color: rgb(255, 255, 255) },
+                    "warn": { color: rgb(255, 230, 8) },
                     "error": { color: rgb(255, 0, 127) },
                 },
             });

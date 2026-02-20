@@ -9,6 +9,25 @@ import type { KAPLAYOpt } from "../types";
 import type { Recording } from "./record";
 
 /**
+ * Available debugging message styles.
+ *
+ * @group Debug
+ */
+type DebugLogStyle = "info" | "warn" | "error";
+
+/**
+ * Acceptable values for debugging message.
+ *
+ * @group Debug
+ */
+type DebugMessage = string | { toString(): string } | Error;
+
+/**
+ * @group Debug
+ */
+export type DebugLog = { msg: string; time: number; style: DebugLogStyle };
+
+/**
  * An interface for debugging the game.
  *
  * @group Debug
@@ -59,13 +78,55 @@ export interface Debug {
      */
     clearLog(): void;
     /**
-     * Log some text to on screen debug log.
+     * Log a message to the on-screen debug log, with optional
+     * style wrapping.
+     *
+     * @param message - The messages to log
+     * @param wrapStyle - Style to wrap all messages
+     *
+     * @example
+     * ```
+     * debug.logMessage(["oh", "hi"], "warn");
+     * ```
+     *
+     * @since v4000.0
      */
-    log(...msg: any): void;
+    logMessage(message: DebugMessage[], wrapStyle?: DebugLogStyle): void;
     /**
-     * Log an error message to on screen debug log.
+     * Log a message with the info style (white) to the on-screen debug log.
+     *
+     * @param message - The message to log
+     *
+     * @example
+     * ```
+     * debug.log("oh", "hi")
+     * ```
      */
-    error(msg: any): void;
+    log(...message: DebugMessage[]): void;
+    /**
+     * Log a message with the warn style (yellow) to the on-screen debug log.
+     *
+     * @param message - THe message to log
+     *
+     * @example
+     * ```
+     * debug.warn("oh", "humm")
+     * ```
+     *
+     * @since v4000.0
+     */
+    warn(...message: DebugMessage[]): void;
+    /**
+     * Log a message with the error style (pink since kaboom) in the debugging screen.
+     *
+     * @param message - THe message to log
+     *
+     * @example
+     * ```
+     * debug.error("oh", "no")
+     * ```
+     */
+    error(...message: DebugMessage[]): void;
     /**
      * The recording handle if currently in recording mode.
      *
@@ -105,20 +166,30 @@ export const createDebug = (
         stepFrame: fr.updateFrame,
         drawCalls: () => appGfx.lastDrawCalls,
         clearLog: () => game.logs = [],
-        log: (...msgs) => {
+        logMessage: (message, wrapStyle = "info") => {
             const max = gopt.logMax ?? LOG_MAX;
-            const msg = msgs.length > 1 ? msgs.concat(" ").join(" ") : msgs[0];
+            const msg = message.join(" ");
 
             game.logs.unshift({
                 msg: msg,
                 time: app.time(),
+                style: wrapStyle,
             });
+
             if (game.logs.length > max) {
                 game.logs = game.logs.slice(0, max);
             }
         },
-        error: (msg) =>
-            debug.log(new Error(msg.toString ? msg.toString() : msg as string)),
+        log: (...message) => {
+            debug.logMessage(message, "info");
+        },
+        warn: (...message) => {
+            debug.logMessage(message, "warn");
+        },
+        error: (...message) => {
+            const msg = message.concat().map((m) => m.toString());
+            debug.logMessage(msg, "error");
+        },
         curRecording: null,
         numObjects: () => game.root.get("*", { recursive: true }).length,
         get paused() {
