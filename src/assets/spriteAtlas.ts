@@ -90,6 +90,7 @@ export function loadSpriteAtlas(
                 _k.assets.sprites.addLoaded(name, spr);
                 map[name] = spr;
             }
+            _k.assets.packer.refreshIfPending();
             return map;
         }),
     );
