@@ -105,6 +105,8 @@ So your change should look like
   `drawSprite` (#1026) - @benhuangbmj
 - Fixed `onClick()` and `onCollide()` tag variants no longer working -
   @mflerackers
+- Fixed `levelComp.getAt` to account for `tilePos.x` getting outside of the
+  level boundary - @benhuangbmj
 
 ## [4000.0.0-alpha.26] - 2026-01-12
 
