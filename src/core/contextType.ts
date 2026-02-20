@@ -103,6 +103,7 @@ import type {
     OffScreenComp,
     OffScreenCompOpt,
 } from "../ecs/components/transform/offscreen";
+import type { ParallaxComp } from "../ecs/components/transform/parallax";
 import type { PosComp } from "../ecs/components/transform/pos";
 import type { RotateComp } from "../ecs/components/transform/rotate";
 import type { ScaleComp } from "../ecs/components/transform/scale";
@@ -161,6 +162,7 @@ import type {
     Rect,
     RNG,
     StepPosition,
+    Vec2Args,
 } from "../math/math";
 import type { Graph } from "../math/navigation";
 import type { NavGrid } from "../math/navigationgrid";
@@ -1497,6 +1499,14 @@ export interface KAPLAYCtx {
      * @subgroup Rendering
      */
     fixed(fixed?: boolean): FixedComp;
+
+    /**
+     * Make the object scrolls with camera based on a factor
+     * is useful if you want to create simple parallax effects
+     * @param args {@link Vec2Args `Vec2Args`}
+     * @returns the camera scroll comp
+     */
+    parallax(...args: Vec2Args): ParallaxComp;
     /**
      * Don't get destroyed on scene switch. Only works in objects attached to root.
      *
@@ -6610,6 +6620,30 @@ export interface KAPLAYCtx {
      * @group Scenes
      */
     popScene(): void;
+    /**
+     * Get the current scene index on the scene stack
+     *
+     * @example
+     * ```js
+     * scene("mainScene", () => {
+     *     add([
+     *         text("this is the first scene", { size: 32 }),
+     *         pos(center()),
+     *     ]);
+     * });
+     * scene("otherScene", () => {
+     *     add([
+     *         sprite("bean"),
+     *         pos(center()),
+     *     ]);
+     * });
+     *
+     * go("mainScene");
+     * pushScene("otherScene");
+     * debug.log(getSceneIndex()) // <-- Will appear 1 here because is the index of the current scene pushed.
+     * ```
+     */
+    getSceneIndex(): number;
     /**
      * Define the layer names. Should be called before any objects are made.
      *

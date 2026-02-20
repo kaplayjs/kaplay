@@ -78,6 +78,7 @@ import { follow } from "../ecs/components/transform/follow";
 import { layer } from "../ecs/components/transform/layer";
 import { move } from "../ecs/components/transform/move";
 import { offscreen } from "../ecs/components/transform/offscreen";
+import { parallax } from "../ecs/components/transform/parallax";
 import { pos } from "../ecs/components/transform/pos";
 import { rotate } from "../ecs/components/transform/rotate";
 import { scale } from "../ecs/components/transform/scale";
@@ -116,7 +117,13 @@ import {
     setGravityDirection,
 } from "../game/gravity";
 import { getDefaultLayer, getLayers, layers, setLayers } from "../game/layers";
-import { getSceneName, go, popScene, pushScene } from "../game/scenes";
+import {
+    getSceneIndex,
+    getSceneName,
+    go,
+    popScene,
+    pushScene,
+} from "../game/scenes";
 import { anchorPt } from "../gfx/anchor";
 import { getBackground, setBackground } from "../gfx/bg";
 import { makeCanvas } from "../gfx/canvasBuffer";
@@ -407,6 +414,7 @@ export const createContext = (
         move,
         constraint,
         offscreen,
+        parallax,
         follow,
         fadeIn,
         mask,
@@ -623,6 +631,7 @@ export const createContext = (
         // scene
         scene: e.sceneScope,
         getSceneName,
+        getSceneIndex,
         go,
         onSceneLeave: defaultScope.onSceneLeave,
         pushScene,

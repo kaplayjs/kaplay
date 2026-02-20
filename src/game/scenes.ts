@@ -92,6 +92,10 @@ export function getSceneName() {
     return _k.game.currentScene;
 }
 
+export function getSceneIndex() {
+    return _k.game.sceneStack.length;
+}
+
 export function getSceneArgs() {
     return _k.game.currentSceneArgs;
 }
