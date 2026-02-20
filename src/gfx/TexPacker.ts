@@ -38,7 +38,9 @@ export class TexPacker {
         this._newTexture();
     }
 
+    private _hasPendingRefresh = false;
     private _newTexture(): TexMap {
+        this.refreshIfPending();
         const el = document.createElement("canvas");
         el.width = this._w;
         el.height = this._h;
@@ -50,6 +52,12 @@ export class TexPacker {
 
         this._texToEntry.set(tex, this._curMap = { tex, el, ctx });
         return this._curMap;
+    }
+    refreshIfPending() {
+        if (this._hasPendingRefresh) {
+            this._curMap.tex.update(this._curMap.el);
+            this._hasPendingRefresh = false;
+        }
     }
 
     // create a image with a single texture
@@ -186,7 +194,7 @@ export class TexPacker {
             imgHeight,
         );
 
-        curTex.update(curEl);
+        this._hasPendingRefresh = true;
 
         this._used.set(this._last, {
             rect: rectToAdd,
