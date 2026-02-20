@@ -41,8 +41,9 @@ So your change should look like
 
 ### Added
 
-- Added the `charsPerTile` option to the `level()` component, so that you can
-  make clearer maps without having to resort to Unicode - @dragoncoder047
+- Added the `LevelCompOpt.charsPerTile` option for the `level()` component and
+  `addLevel` which lets you use more than one character per tile, that way you
+  can make clearer maps without having to resort to Unicode - @dragoncoder047
 - Added `tileMode` option to 9-slice sprites with four tiling strategies:
   `'none'` (stretch all), `'edges'` (tile edges only), `'center'` (tile center
   only), and `'all'` (tile both edges and center) (#996) - @JustKira
