@@ -25,7 +25,11 @@ type DebugMessage = string | { toString(): string } | Error;
 /**
  * @group Debug
  */
-export type DebugLog = { msg: DebugMessage; time: number; style: DebugLogStyle };
+export type DebugLog = {
+    msg: DebugMessage;
+    time: number;
+    style: DebugLogStyle;
+};
 
 /**
  * An interface for debugging the game.
@@ -168,7 +172,9 @@ export const createDebug = (
         clearLog: () => game.logs = [],
         logMessage: (message, wrapStyle = "info") => {
             const max = gopt.logMax ?? LOG_MAX;
-            const msg = message.length > 1 ? message.concat(" ").join(" ") : message[0];
+            const msg = message.length > 1
+                ? message.concat(" ").join(" ")
+                : message[0];
 
             game.logs.unshift({
                 msg: msg,
