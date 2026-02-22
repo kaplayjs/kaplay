@@ -25,7 +25,7 @@ type DebugMessage = string | { toString(): string } | Error;
 /**
  * @group Debug
  */
-export type DebugLog = { msg: string; time: number; style: DebugLogStyle };
+export type DebugLog = { msg: DebugMessage; time: number; style: DebugLogStyle };
 
 /**
  * An interface for debugging the game.
@@ -106,7 +106,7 @@ export interface Debug {
     /**
      * Log a message with the warn style (yellow) to the on-screen debug log.
      *
-     * @param message - THe message to log
+     * @param message - The message to log
      *
      * @example
      * ```
@@ -117,9 +117,9 @@ export interface Debug {
      */
     warn(...message: DebugMessage[]): void;
     /**
-     * Log a message with the error style (pink since kaboom) in the debugging screen.
+     * Log a message with the error style (pink since kaboom) to the on-screen debug log.
      *
-     * @param message - THe message to log
+     * @param message - The message to log
      *
      * @example
      * ```
@@ -168,7 +168,7 @@ export const createDebug = (
         clearLog: () => game.logs = [],
         logMessage: (message, wrapStyle = "info") => {
             const max = gopt.logMax ?? LOG_MAX;
-            const msg = message.join(" ");
+            const msg = message.length > 1 ? message.concat(" ").join(" ") : message[0];
 
             game.logs.unshift({
                 msg: msg,
@@ -187,8 +187,7 @@ export const createDebug = (
             debug.logMessage(message, "warn");
         },
         error: (...message) => {
-            const msg = message.concat().map((m) => m.toString());
-            debug.logMessage(msg, "error");
+            debug.logMessage(message, "error");
         },
         curRecording: null,
         numObjects: () => game.root.get("*", { recursive: true }).length,

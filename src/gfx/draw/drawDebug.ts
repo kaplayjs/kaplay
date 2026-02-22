@@ -192,17 +192,18 @@ Batches: ${batches}`,
             const logs = [];
 
             for (const log of _k.game.logs) {
+                const style = log.msg instanceof Error ? "error" : log.style;
                 let str = "";
                 str += `[time]${log.time.toFixed(2)}[/time]`;
                 str += " ";
-                str += `[${log.style}]${prettyDebug(log.msg)}[/${log.style}]`;
+                str += `[${style}]${prettyDebug(log.msg)}[/${style}]`;
                 logs.push(str);
             }
 
             _k.game.logs = _k.game.logs
                 .filter((log) =>
                     _k.app.time() - log.time
-                        < (_k.globalOpt.logTime || LOG_TIME)
+                    < (_k.globalOpt.logTime || LOG_TIME)
                 );
 
             const ftext = formatText({
@@ -268,16 +269,15 @@ function prettyDebug(
         outStr += [
             "{",
             (tmp = Object.getOwnPropertyNames(object)
-                    .map(p =>
-                        `${/^\w+$/.test(p) ? p : JSON.stringify(p)}: ${
-                            prettyDebug(
-                                object[p],
-                                true,
-                                seen.union(new Set([object])),
-                            )
-                        }`
+                .map(p =>
+                    `${/^\w+$/.test(p) ? p : JSON.stringify(p)}: ${prettyDebug(
+                        object[p],
+                        true,
+                        seen.union(new Set([object])),
                     )
-                    .join(", "))
+                    }`
+                )
+                .join(", "))
                 ? ` ${tmp} `
                 : "",
             "}",
