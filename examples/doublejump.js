@@ -113,7 +113,7 @@ scene("game", () => {
         add([
             pos(i * 64, height()),
             sprite("spike"),
-            area(),
+            area({ isSensor: true }),
             anchor("bot"),
             scale(),
             "danger",
@@ -152,12 +152,7 @@ scene("game", () => {
     // Will move the bean left and right
     function move(x) {
         bean.move(x, 0);
-        if (bean.pos.x < 0) {
-            bean.pos.x = width();
-        }
-        else if (bean.pos.x > width()) {
-            bean.pos.x = 0;
-        }
+        bean.moveTo(clamp(bean.pos.x, 0, width()), bean.pos.y);
     }
 
     // both keys will trigger

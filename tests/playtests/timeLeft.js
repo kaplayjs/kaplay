@@ -12,7 +12,7 @@ const tweening = tween(
 );
 
 // Also has a setter
-onClick(() => {
+onMousePress(() => {
     tweening.timeLeft = 5;
 });
 

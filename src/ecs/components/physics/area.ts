@@ -1,5 +1,4 @@
 import { DEF_ANCHOR } from "../../../constants/general";
-import type { ButtonName } from "../../../core/taf";
 import type { KEventController } from "../../../events/events";
 import { toWorld } from "../../../game/camera";
 import { anchorPt } from "../../../gfx/anchor";
@@ -26,7 +25,6 @@ import {
 import { isFixed } from "../../entity/utils";
 import type { Collision } from "../../systems/Collision";
 import { system, SystemPhase } from "../../systems/systems";
-import { fakeMouse } from "../misc/fakeMouse";
 import type { AnchorComp } from "../transform/anchor";
 import type { FixedComp } from "../transform/fixed";
 import type { PosComp } from "../transform/pos";
@@ -62,6 +60,11 @@ export function getLocalAreaVersion(obj: GameObj<any>) {
     return obj._localAreaVersion;
 }
 
+let _topMostOnlyActivate = false;
+export function _setTopMostOnlyActivate(value: boolean) {
+    _topMostOnlyActivate = value;
+}
+
 function clickHandler(button: MouseButton) {
     const screenPos = _k.app.mousePos();
     const worldPos = toWorld(screenPos);
@@ -85,15 +88,16 @@ function clickHandler(button: MouseButton) {
         ) objects.push(obj as GameObj<AreaComp | ZComp>);
     });
 
-    const topMostOnlyActivate = false;
     if (objects.length) {
-        if (topMostOnlyActivate) {
+        if (_topMostOnlyActivate) {
             objects.sort((o1, o2) => {
                 const l1 =
                     (o1 as unknown as InternalGameObjRaw)._drawLayerIndex;
                 const l2 =
                     (o2 as unknown as InternalGameObjRaw)._drawLayerIndex;
-                return (l1 - l2) || (o1.z ?? 0) - (o2.z ?? 0);
+                const to1 = (o1 as unknown as InternalGameObjRaw)._treeIndex;
+                const to2 = (o2 as unknown as InternalGameObjRaw)._treeIndex;
+                return (l1 - l2) || (o1.z ?? 0) - (o2.z ?? 0) || (to1 - to2);
             });
             const obj = objects.at(-1)!;
             _k.game.gameObjEvents.trigger("click", obj);

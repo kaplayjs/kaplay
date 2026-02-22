@@ -15,14 +15,13 @@ export type SceneScope =
     };
 
 export const createSceneScope = (
-    app: App,
     handlers: ScopeHandlers,
 ): SceneScope => {
     const sceneScope = scene;
 
     for (const e of Object.keys(handlers)) {
         // @ts-expect-error
-        sceneScope[e] = function(this: InternalGameObjRaw, ...args: [any]) {
+        sceneScope[e] = function(...args: [any]) {
             // @ts-expect-error
             const ev: KEventController = handlers[e]?.(...args);
 

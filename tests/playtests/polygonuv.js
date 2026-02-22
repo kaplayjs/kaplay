@@ -33,9 +33,9 @@ player.onUpdate(() => {
 // Make sure all sprites have been loaded
 onLoad(() => {
     // Get the texture and uv for ghosty
-    const data = getSprite("ghosty").data;
-    const tex = data.tex;
-    const quad = data.frames[0];
+    const frame = getSprite("ghosty").data.frames[0];
+    const tex = frame.tex;
+    const quad = frame.q;
     // Add multiple game objects
     for (let i = 0; i < 3; i++) {
         // generate a random point on screen

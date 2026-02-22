@@ -1,8 +1,6 @@
 import { ASCII_CHARS } from "../constants/general";
-import { Texture } from "../gfx/gfx";
-import { Quad } from "../math/math";
+import type { Frame } from "../gfx/TexPacker";
 import { _k } from "../shared";
-import type { TexFilter } from "../types";
 import { type Asset, loadImg } from "./asset";
 import { makeFont } from "./font";
 import { fixURL } from "./utils";
@@ -12,8 +10,7 @@ import { fixURL } from "./utils";
  * @subgroup Types
  */
 export interface GfxFont {
-    tex: Texture;
-    map: Record<string, Quad>;
+    map: Record<string, Frame>;
     size: number;
 }
 
@@ -38,7 +35,6 @@ export interface LoadBitmapFontOpt {
      * @default " !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~";
      */
     chars?: string;
-    filter?: TexFilter;
 }
 
 // TODO: support LoadSpriteSrc
@@ -56,7 +52,7 @@ export function loadBitmapFont(
         loadImg(fontSrc)
             .then((img) => {
                 return makeFont(
-                    Texture.fromImage(_k.gfx.ggl, img, opt),
+                    img,
                     gw,
                     gh,
                     opt.chars ?? ASCII_CHARS,
@@ -93,21 +89,10 @@ export function loadBitmapFontFromSprite(
                     `Tried to define ${splittedChars.length} characters for sprite font "${spriteID}", but there are only ${frames.length} frames defined`,
                 );
             }
-            const tex = spr.tex;
-            const h = Math.max(...frames.map(q => q.h)) * tex.height;
+            const h = Math.max(...frames.map(({ tex, q }) => tex.height * q.h));
             return {
-                tex,
                 map: Object.fromEntries(
-                    splittedChars.map((c, i) => {
-                        const q = frames[i];
-                        const q2 = new Quad(
-                            q.x * tex.width,
-                            q.y * tex.height,
-                            q.w * tex.width,
-                            q.h * tex.height,
-                        );
-                        return [c, q2];
-                    }),
+                    splittedChars.map((c, i) => [c, frames[i]]),
                 ),
                 size: h,
             };

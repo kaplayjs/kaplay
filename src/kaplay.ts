@@ -16,6 +16,7 @@ import boomSpriteSrc from "./data/assets/boom.png";
 import burpSoundSrc from "./data/assets/burp.mp3";
 import happyFontSrc from "./data/assets/happy.png";
 import kaSpriteSrc from "./data/assets/ka.png";
+import { _setTopMostOnlyActivate } from "./ecs/components/physics/area";
 import { createCollisionSystem } from "./ecs/systems/createCollisionSystem";
 import { system, SystemPhase } from "./ecs/systems/systems";
 import { _k, updateEngine } from "./shared";
@@ -112,6 +113,8 @@ export const kaplay = <
     });
 
     game.retrieve = retrieve;
+
+    _setTopMostOnlyActivate(gopt.topMostOnlyActivate ?? false);
 
     system("collision", checkFrame, [
         SystemPhase.AfterFixedUpdate,
