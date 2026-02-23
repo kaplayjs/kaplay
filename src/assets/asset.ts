@@ -106,9 +106,21 @@ export class AssetBucket<D> {
         // if user don't provide a name we use a generated one
         const id = name ?? this.lastUID++ + "";
 
-        // If asset already exists and is loaded, return the cached version
         const existing = this.assets.get(id);
+
+        // If an asset with this ID already exists and is loaded,
+        // keep it accessible while the new one loads, then swap.
         if (existing && existing.loaded && existing.data) {
+            const newAsset = new Asset(loader);
+            newAsset.onLoad((data) => {
+                // Replace the old asset only once new one is ready
+                this.assets.set(id, Asset.loaded(data));
+                this.waiters.trigger(id, data);
+            });
+            newAsset.onError((err) => {
+                this.errorWaiters.trigger(id, err);
+            });
+            // Return the existing (loaded) asset so callers never see null data
             return existing;
         }
 
