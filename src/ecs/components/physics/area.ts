@@ -1,5 +1,4 @@
 import { DEF_ANCHOR } from "../../../constants/general";
-import type { ButtonName } from "../../../core/taf";
 import type { KEventController } from "../../../events/events";
 import { toWorld } from "../../../game/camera";
 import { anchorPt } from "../../../gfx/anchor";
@@ -26,7 +25,6 @@ import {
 import { isFixed } from "../../entity/utils";
 import type { Collision } from "../../systems/Collision";
 import { system, SystemPhase } from "../../systems/systems";
-import { fakeMouse } from "../misc/fakeMouse";
 import type { AnchorComp } from "../transform/anchor";
 import type { FixedComp } from "../transform/fixed";
 import type { PosComp } from "../transform/pos";

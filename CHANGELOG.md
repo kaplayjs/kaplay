@@ -11,10 +11,31 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - Breaking changes are marked with: **(!)**.
 - [Jump to v3001 changelog](#changelog-for-v3001).
 
-<!--
-Hey, KAPLAY Dev, you must changelog here, in unreleased, so later your
-best friend, lajbel, can put the correct version name here
--->
+<!-- [CHANGELOG GUIDELINES PLEASE FOLLOW]
+--------------------------------------------------------------------------------
+Hey, KAPLAY Dev! Add your new changes in [unreleased] heading, below one of
+these heading:
+
+- Added
+- Removed
+- Changed
+- Fixed
+
+(if one of these 3rd level headings are missing, add it)
+
+Make sure to format each entry like this:
+
+- short description of the change (#PR Number) - @yourusername, @otherdevusername
+
+So your change should look like
+
+## [unreleased]
+
+### Added
+
+- added a new ghost (#6767) - @lajbel
+--------------------------------------------------------------------------------
+[DO IT IF YOU DON'T WANT A LAJBEL VISIT AT NIGHT] -->
 
 ## [unreleased]
 
@@ -26,25 +47,46 @@ best friend, lajbel, can put the correct version name here
 - Added a `calculate()` method to the internal FPS counters, so advanced users
   can access them to create their own FPS monitor (#1010) - @dragoncoder047
 - Added Intl.Segmenter-based grapheme splitting for proper Indic language
-  support, via the `locale` option in `DrawTextOpt (#1013) - @shajidhasan
+  support, via the `locale` option in `DrawTextOpt` (#1013) - @shajidhasan
 - Added topMostOnlyActivate kaplay option. When true, only the topmost object
   will receive clicks. This avoids problems in a UI where elements overlap -
   @mflerackers
-- Added `unloadSprite()` to remove a sprite from the asset cache, allowing it to
-  be reloaded with a different URL
-  ([#1033](https://github.com/kaplayjs/kaplay/pull/1033)) - @nojaf
+- Added a `fill()` component - @mflerackers
+
+### Removed
+
+- **(!)** The texture uv coordinates for primitives (solid- or gradient-filled
+  circles, rectangles, lines, and polygons) have now been changed to (1, 1)
+  instead of (0, 0), so shaders written for primitives will need to be updated.
+  (#1021) - @dragoncoder047
+- **(!)** The `LoadFontOpt.filter` option has been **removed** since fonts are
+  now packed into the same texture as sprites, so only the global filter setting
+  can change this (#1021) - @dragoncoder047
 
 ### Changed
 
+- **(!)** The global `onDraw()` handler's no-tag form now always draws before
+  all game objects are drawn, **regardless of whether it was attached after game
+  objects were added** (#977) - @lajbel
+- **(!)** The sprite data format has been changed to allow individual frames to
+  be on different GPU textures. Now `SpriteData.tex` doesn't exist, and
+  `SpriteData.frames` is a list of `Frame`s instead of a list of `Quad`s. A
+  `Frame` contains `tex` and `q` (quad) properties that contain that data.
+  (#1021) - @dragoncoder047
 - Updated the texture packer to use a new packing algorithm which may get more
   sprites onto the same texture, improving graphics batching performance
   (#1011) - @dragoncoder047
+- Updated all sprite and font loading to pack everything in the same texture to
+  allow it to all batch together, for speed and efficiency (#1021) -
+  @dragoncoder047
+- Added spritesheet repacking, so spritesheet images that contain lots of blank
+  space don't waste texture memory (#1021) - @dragoncoder047
 
 ### Fixed
 
 - Fixed tiled mode drawing of sprites ignoring opacity when it was 0 (#1020) -
   @dragoncoder047
-- Now, all global events handlers are avaible in scopes, `app.onXXXX` and
+- Now, all global events handlers are available in scopes, `app.onXXXX` and
   `scene.onXXXX()` (#977) - @lajbel
 - Fixed input events attached to paused ancestors not being paused (#1009) -
   @amyspark-ng, @dragoncoder047
@@ -59,11 +101,10 @@ best friend, lajbel, can put the correct version name here
 - Fixed event crash when using `onLoad` or other events that doesn't return an
   EventController, and then using `go()` (#1024) - @lajbel, credits to
   @dragoncoder047
+- Fixed the unexpected behavior of not preserving the aspect ratio in
+  `drawSprite` (#1026) - @benhuangbmj
 - Fixed `onClick()` and `onCollide()` tag variants no longer working -
   @mflerackers
-- Fixed asset reloading replacing cached assets with pending ones, causing
-  `getSprite().data` to return null on scene restart
-  ([#1033](https://github.com/kaplayjs/kaplay/pull/1033)) - @nojaf
 
 ## [4000.0.0-alpha.26] - 2026-01-12
 
@@ -184,16 +225,16 @@ best friend, lajbel, can put the correct version name here
 
   ```js
   kaplay({
-    buttons: {
-      forward: {
-        keyboard: "tab",
-        gamepad: "south",
+      buttons: {
+          forward: {
+              keyboard: "tab",
+              gamepad: "south",
+          },
+          backward: {
+              keyboard: "shift+tab",
+              gamepad: "rshoulder+south",
+          },
       },
-      backward: {
-        keyboard: "shift+tab",
-        gamepad: "rshoulder+south",
-      },
-    },
   });
   ```
 
@@ -205,20 +246,20 @@ best friend, lajbel, can put the correct version name here
 
   ```js
   app.onUpdate(() => {
-    // runs until it is cancelled
+      // runs until it is cancelled
   });
 
   scene("game", () => {
-    const obj = add([]);
+      const obj = add([]);
 
-    obj.onUpdate(() => {
-      // runs until obj is destroyed
-    });
+      obj.onUpdate(() => {
+          // runs until obj is destroyed
+      });
 
-    scene.onUpdate(() => {
-      // or just onUpdate(() => {
-      // runs until scene is changed
-    });
+      scene.onUpdate(() => {
+          // or just onUpdate(() => {
+          // runs until scene is changed
+      });
   });
   ```
 
@@ -258,7 +299,7 @@ best friend, lajbel, can put the correct version name here
 
   ```js
   app.onUpdate(() => {
-    // runs until it is cancelled
+      // runs until it is cancelled
   });
   ```
 
@@ -267,11 +308,11 @@ best friend, lajbel, can put the correct version name here
 
   ```js
   kaplay({
-    defaultLifetimeScope: "app", // default is "scene"
+      defaultLifetimeScope: "app", // default is "scene"
   });
 
   onKeyPress("space", () => {
-    // runs until is cancelled
+      // runs until is cancelled
   });
   ```
 
@@ -287,10 +328,10 @@ best friend, lajbel, can put the correct version name here
 
   ```js
   scene("game", () => {
-    scene.onUpdate(() => {
-      // or just onUpdate(() => {
-      // runs until scene is changed
-    });
+      scene.onUpdate(() => {
+          // or just onUpdate(() => {
+          // runs until scene is changed
+      });
   });
   ```
 
@@ -312,13 +353,13 @@ best friend, lajbel, can put the correct version name here
 
   ```ts
   kaplay({
-    types: kaplayTypes<
-      // Opt<> is optional but recommended to get autocomplete
-      Opt<{
-        scenes: {}; // define scenes and arguments
-        strictScenes: true; // you can only use defined scenes
-      }>
-    >(),
+      types: kaplayTypes<
+          // Opt<> is optional but recommended to get autocomplete
+          Opt<{
+              scenes: {}; // define scenes and arguments
+              strictScenes: true; // you can only use defined scenes
+          }>
+      >(),
   });
   ```
 
@@ -326,23 +367,23 @@ best friend, lajbel, can put the correct version name here
 
   ```ts
   const k = kaplay({
-    types: kaplayTypes<
-      Opt<{
-        scenes: {
-          game: [gamemode: "normal" | "hard"];
-          gameOver: [score: number, highScore: number];
-        };
-      }>
-    >(),
+      types: kaplayTypes<
+          Opt<{
+              scenes: {
+                  game: [gamemode: "normal" | "hard"];
+                  gameOver: [score: number, highScore: number];
+              };
+          }>
+      >(),
   });
 
   // If you trigger autocomplete it shows "game" or "gameOver"
   k.scene("game", (gamemode) => {
-    // gamemode is now type "normal" | "hard"
+      // gamemode is now type "normal" | "hard"
 
-    // @ts-expect-error Argument of type 'string' is not assignable
-    // to parameter of type 'number'.
-    k.go("gameOver", "10", 10); //
+      // @ts-expect-error Argument of type 'string' is not assignable
+      // to parameter of type 'number'.
+      k.go("gameOver", "10", 10); //
   });
   ```
 
@@ -357,15 +398,15 @@ best friend, lajbel, can put the correct version name here
 
   ```ts
   const k = kaplay({
-    types: kaplayTypes<
-      Opt<{
-        scenes: {
-          game: [gamemode: "normal" | "hard"];
-          gameOver: [score: number, highScore: number];
-        };
-        strictScenes: true;
-      }>
-    >(),
+      types: kaplayTypes<
+          Opt<{
+              scenes: {
+                  game: [gamemode: "normal" | "hard"];
+                  gameOver: [score: number, highScore: number];
+              };
+              strictScenes: true;
+          }>
+      >(),
   });
 
   // @ts-expect-error Argument of type '"hi"' is not assignable to
@@ -726,7 +767,7 @@ best friend, lajbel, can put the correct version name here
 
   ```js
   loadSprite("player", "sprites/player.png", {
-    singular: true,
+      singular: true,
   });
   ```
 
@@ -734,20 +775,20 @@ best friend, lajbel, can put the correct version name here
 
   ```js
   loadSpriteAtlas("/examples/sprites/dungeon.png", {
-    wizard: {
-      x: 128,
-      y: 140,
-      width: 144,
-      height: 28,
-      sliceX: 9,
-      anims: {
-        bouncy: {
-          frames: [8, 5, 0, 3, 2, 3, 0, 5],
-          speed: 10,
-          loop: true,
-        },
+      wizard: {
+          x: 128,
+          y: 140,
+          width: 144,
+          height: 28,
+          sliceX: 9,
+          anims: {
+              bouncy: {
+                  frames: [8, 5, 0, 3, 2, 3, 0, 5],
+                  speed: 10,
+                  loop: true,
+              },
+          },
       },
-    },
   });
 
   add([sprite("wizard", { anim: "bouncy" }), pos(100, 100)]);
@@ -792,7 +833,7 @@ best friend, lajbel, can put the correct version name here
 
 ```js
 kaplay({
-  spriteAtlasPadding: 10, // 10 pixels of space between each sprite
+    spriteAtlasPadding: 10, // 10 pixels of space between each sprite
 });
 ```
 
@@ -816,8 +857,8 @@ kaplay({
   trigger("shoot", "target", 140);
 
   on("shoot", "target", (obj, score) => {
-    obj.destroy();
-    debug.log(140); // every bomb was 140 score points!
+      obj.destroy();
+      debug.log(140); // every bomb was 140 score points!
   });
   ```
 
@@ -826,18 +867,18 @@ kaplay({
 
   ```js
   add([
-    pos(100, 150),
-    text("With override: Hello [foo]styled[/foo] text", {
-      transform: {
-        color: BLACK, // Default text color for every character
-      },
-      styles: {
-        foo: {
-          color: RED, // [foo] will be red
-          override: true, // will override the black def color
-        },
-      },
-    }),
+      pos(100, 150),
+      text("With override: Hello [foo]styled[/foo] text", {
+          transform: {
+              color: BLACK, // Default text color for every character
+          },
+          styles: {
+              foo: {
+                  color: RED, // [foo] will be red
+                  override: true, // will override the black def color
+              },
+          },
+      }),
   ]);
   ```
 
@@ -866,9 +907,9 @@ kaplay({
 
   ```js
   onKeyPress("space", () => {
-    // do something
-    // cancel the event
-    return cancel();
+      // do something
+      // cancel the event
+      return cancel();
   });
   ```
 
@@ -916,18 +957,18 @@ kaplay({
 
   ```js
   kaplay({
-    // bind your buttons
-    buttons: {
-      jump: {
-        keyboard: ["space", "up"],
-        keyboardCode: "Space", // you can also use key codes
-        gamepad: ["south"],
+      // bind your buttons
+      buttons: {
+          jump: {
+              keyboard: ["space", "up"],
+              keyboardCode: "Space", // you can also use key codes
+              gamepad: ["south"],
+          },
       },
-    },
   });
 
   onButtonPress("jump", () => {
-    player.jump();
+      player.jump();
   });
   ```
 
@@ -939,8 +980,8 @@ kaplay({
 
   // change the jump button in keyboard to "w"
   setButton("jump", {
-    keyboard: ["w"],
-    // gamepad binding is not changed
+      keyboard: ["w"],
+      // gamepad binding is not changed
   });
   ```
 
@@ -948,8 +989,8 @@ kaplay({
 
   ```js
   onButtonPress(() => {
-    const lastInputDevice = getLastInputDeviceType(); // keyboard, mouse or gamepad
-    // change icons, etc
+      const lastInputDevice = getLastInputDeviceType(); // keyboard, mouse or gamepad
+      // change icons, etc
   });
   ```
 
@@ -977,8 +1018,8 @@ kaplay({
   ```js
   // prop to animate, frames, options
   rotatingBean.animate("angle", [0, 360], {
-    duration: 2,
-    direction: "forward",
+      duration: 2,
+      direction: "forward",
   });
   ```
 
@@ -991,13 +1032,13 @@ kaplay({
   ```js
   // define the layers
   layers(
-    [
-      "bg",
+      [
+          "bg",
+          "game",
+          "ui",
+          // the default layer
+      ],
       "game",
-      "ui",
-      // the default layer
-    ],
-    "game",
   );
 
   // use the layer component
@@ -1017,14 +1058,14 @@ kaplay({
 
   ```js
   loadSprite("bean", "bean.png", {
-    sliceX: 4,
-    sliceY: 1,
-    anims: {
-      walk: {
-        from: 0,
-        to: 3,
+      sliceX: 4,
+      sliceY: 1,
+      anims: {
+          walk: {
+              from: 0,
+              to: 3,
+          },
       },
-    },
   });
 
   const obj = add([sprite("bean")]);
@@ -1052,9 +1093,9 @@ kaplay({
 
   ```js
   add([
-    rect(100, 100, {
-      radius: [10, 20, 30, 40],
-    }),
+      rect(100, 100, {
+          radius: [10, 20, 30, 40],
+      }),
   ]);
   ```
 
@@ -1098,7 +1139,7 @@ kaplay({
 
   ```js
   kaplay({
-    debugKey: "l",
+      debugKey: "l",
   });
   ```
 
@@ -1106,14 +1147,14 @@ kaplay({
 
   ```js
   const obj = add([
-    sprite("bean"),
-    {
-      health: 100, // on debug.inspect
-      damage: 10, // on debug.inspect
-      hp() {
-        this.health -= this.damage;
-      }, // not on debug.inspect
-    },
+      sprite("bean"),
+      {
+          health: 100, // on debug.inspect
+          damage: 10, // on debug.inspect
+          hp() {
+              this.health -= this.damage;
+          }, // not on debug.inspect
+      },
   ]);
 
   // see the custom properties in debug mode
@@ -1151,7 +1192,7 @@ kaplay({
 
   ```js
   onKeyPress(["w", "up"], () => {
-    player.jump();
+      player.jump();
   });
   ```
 
@@ -1159,7 +1200,7 @@ kaplay({
 
   ```js
   onGamepadButtonPress("south", (btn, gp) => {
-    console.log(gp.index); // gamepad number on navigator's gamepad list
+      console.log(gp.index); // gamepad number on navigator's gamepad list
   });
   ```
 

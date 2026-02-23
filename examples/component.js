@@ -83,9 +83,10 @@ const bean = add([
     area(),
     // Use our component here
     funky(),
-    // Tags are empty components, it's equivalent to a { id: "friend" }
+    // A string here turns into a tag
     "friend",
-    // Plain objects here are components too and work the same way, except unnamed
+    // Plain objects here are components too and work the same way,
+    // except unnamed (which means they can't be removed with unuse())
     {
         coolness: 100,
         friends: [],

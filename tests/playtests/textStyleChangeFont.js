@@ -7,7 +7,7 @@
  */
 
 kaplay({ background: "#000000", crisp: true });
-loadFont("Romantique", "/fonts/Romantique.ttf", { filter: "nearest" });
+loadFont("Romantique", "/fonts/Romantique.ttf");
 
 const x = add([
     text(
@@ -19,7 +19,7 @@ const x = add([
                 stretchInPlace: false,
             },
             styles: {
-                e: (i, ch) => {
+                e: (i) => {
                     const w = wave(0.5, 2, time() * 3 + i);
                     return {
                         font: "Romantique",

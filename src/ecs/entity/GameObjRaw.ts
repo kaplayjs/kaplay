@@ -12,7 +12,7 @@ import {
 import type { EventHandlersInAppButNotAddedInGameObjRaw } from "../../events/scopes";
 import { drawMasked } from "../../gfx/draw/drawMasked";
 import { beginPicture, endPicture, Picture } from "../../gfx/draw/drawPicture";
-import { drawSubtracted } from "../../gfx/draw/drawSubstracted";
+import { drawSubtracted } from "../../gfx/draw/drawSubtracted";
 import { FrameBuffer } from "../../gfx/FrameBuffer";
 import {
     flush,

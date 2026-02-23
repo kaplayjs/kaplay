@@ -5,6 +5,7 @@ import { Vec2 } from "../../../math/Vec2";
 import type { Comp, GameObj } from "../../../types";
 import { nextRenderAreaVersion } from "../physics/area";
 import type { AnchorComp } from "../transform/anchor";
+import type { FillComp } from "./fill";
 import type { outline } from "./outline";
 
 /**
@@ -82,11 +83,11 @@ export function ellipse(
                 this._renderAreaVersion = nextRenderAreaVersion();
             }
         },
-        draw(this: GameObj<EllipseComp>) {
+        draw(this: GameObj<EllipseComp | FillComp>) {
             drawEllipse(Object.assign(getRenderProps(this), {
                 radiusX: this.radiusX,
                 radiusY: this.radiusY,
-                fill: opt.fill,
+                fill: this.fill ?? opt.fill,
             }));
         },
         renderArea(
@@ -110,11 +111,11 @@ export function ellipse(
                 Math.ceil(_radiusY)
             }`;
         },
-        serialize() {
+        serialize(this: GameObj<EllipseComp | FillComp>) {
             return {
                 radiusX: this.radiusX,
                 radiusY: this.radiusY,
-                fill: opt.fill,
+                fill: this.fill ?? opt.fill,
             };
         },
     };

@@ -17,7 +17,7 @@ r.add([
 
 const beanPrefab = bean.serialize();
 
-onClick(() => {
+onMousePress(() => {
     const bean2 = addPrefab(beanPrefab, [
         pos(20, rand(40, height() - 40)),
     ]);

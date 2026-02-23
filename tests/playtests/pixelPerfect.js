@@ -26,7 +26,8 @@ onLoad(() => {
         },
     ]);
 
-    const data = getSprite("bean").data;
+    const beanData = getSprite("bean").data;
+    const beanFrame = beanData.frames[0];
 
     onDraw(() => {
         drawSprite({
@@ -39,21 +40,21 @@ onLoad(() => {
             angle: rotation,
             pts: [
                 vec2(0, 0),
-                vec2(data.width, 0),
-                vec2(data.width, data.height),
-                vec2(0, data.height),
+                vec2(beanData.width, 0),
+                vec2(beanData.width, beanData.height),
+                vec2(0, beanData.height),
             ],
             pos: vec2(500, 50),
             scale: zoomVector,
-            tex: data.tex,
+            tex: beanFrame.tex,
             uv: [
-                vec2(data.frames[0].x, data.frames[0].y),
-                vec2(data.frames[0].x + data.frames[0].w, data.frames[0].y),
+                vec2(beanFrame.q.x, beanFrame.q.y),
+                vec2(beanFrame.q.x + beanFrame.q.w, beanFrame.q.y),
                 vec2(
-                    data.frames[0].x + data.frames[0].w,
-                    data.frames[0].y + data.frames[0].h,
+                    beanFrame.q.x + beanFrame.q.w,
+                    beanFrame.q.y + beanFrame.q.h,
                 ),
-                vec2(data.frames[0].x, data.frames[0].y + data.frames[0].h),
+                vec2(beanFrame.q.x, beanFrame.q.y + beanFrame.q.h),
             ],
         });
 
@@ -65,7 +66,7 @@ onLoad(() => {
         });
 
         drawUVQuad({
-            tex: data.tex,
+            tex: beanFrame.tex,
             height: 2048,
             width: 2048,
             pos: vec2(0, center().y),
@@ -78,10 +79,10 @@ onScroll((d) => {
     zoomVector.set(zoom, zoom);
 });
 
-onKeyPress("left", () => {
+onKeyDown("left", () => {
     rotation -= dt() * 10;
 });
 
-onKeyPress("right", () => {
+onKeyDown("right", () => {
     rotation += dt() * 10;
 });
