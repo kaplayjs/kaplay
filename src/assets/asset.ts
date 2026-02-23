@@ -4,6 +4,7 @@ import { KEvent, KEventHandler } from "../events/events";
 import type { GfxCtx } from "../gfx/gfx";
 import type { AppGfxCtx } from "../gfx/gfxApp";
 import { TexPacker } from "../gfx/TexPacker";
+import type { Frame } from "../gfx/TexPacker";
 import { _k } from "../shared";
 import type { ImageSource, MustKAPLAYOpt } from "../types";
 import type { BitmapFontData } from "./bitmapFont";
@@ -113,7 +114,8 @@ export class AssetBucket<D> {
         if (existing && existing.loaded && existing.data) {
             const newAsset = new Asset(loader);
             newAsset.onLoad((data) => {
-                // Replace the old asset only once new one is ready
+                // Free the old asset's resources before replacing
+                this.remove(id);
                 this.assets.set(id, Asset.loaded(data));
                 this.waiters.trigger(id, data);
             });
@@ -137,6 +139,10 @@ export class AssetBucket<D> {
     }
     addLoaded(name: string | null, data: D): Asset<D> {
         const id = name ?? this.lastUID++ + "";
+        // Free the old asset's resources before replacing
+        if (this.assets.has(id)) {
+            this.remove(id);
+        }
         const asset = Asset.loaded(data);
         this.assets.set(id, asset);
         this.waiters.trigger(id, data);
@@ -148,10 +154,18 @@ export class AssetBucket<D> {
     get(handle: string): Asset<D> | undefined {
         return this.assets.get(handle);
     }
-    // remove an asset from the cache, allowing it to be reloaded with a new URL
+    // Remove an asset from the cache. Subclasses can override onRemove
+    // to clean up resources (e.g. TexPacker frames).
     remove(handle: string): void {
+        const asset = this.assets.get(handle);
+        if (asset && asset.data) {
+            this.onRemove(asset.data);
+        }
         this.assets.delete(handle);
     }
+    // Override in subclasses to clean up resources when an asset is removed.
+    onRemove(_data: D): void {}
+
     progress(): number {
         if (this.assets.size === 0) {
             return 1;
@@ -288,6 +302,26 @@ export function load<T>(prom: Promise<T>): Asset<T> {
     return _k.assets.custom.add(null, prom);
 }
 
+// Sprite-specific asset bucket that frees TexPacker frames on removal.
+class SpriteAssetBucket extends AssetBucket<SpriteData> {
+    packer: TexPacker;
+    constructor(packer: TexPacker) {
+        super();
+        this.packer = packer;
+    }
+    onRemove(data: SpriteData): void {
+        const freedIds = new Set<number>();
+        for (const frame of data.frames) {
+            // Singular sprites share the same id across frames,
+            // so deduplicate to avoid double-freeing.
+            if (!freedIds.has(frame.id)) {
+                freedIds.add(frame.id);
+                this.packer.remove(frame.id);
+            }
+        }
+    }
+}
+
 // create assets
 /** @ignore */
 export type InternalAssetsCtx = ReturnType<typeof initAssets>;
@@ -298,10 +332,16 @@ export const initAssets = (
     opt: MustKAPLAYOpt,
     appGfx: AppGfxCtx,
 ) => {
+    const packer = new TexPacker(
+        ggl,
+        SPRITE_ATLAS_WIDTH,
+        SPRITE_ATLAS_HEIGHT,
+        opt.spriteAtlasPadding,
+    );
     const assets = {
         urlPrefix: "",
         // asset holders
-        sprites: new AssetBucket<SpriteData>(),
+        sprites: new SpriteAssetBucket(packer),
         fonts: new AssetBucket<FontData>(),
         bitmapFonts: new AssetBucket<BitmapFontData>(),
         sounds: new AssetBucket<SoundData>(),
@@ -309,12 +349,7 @@ export const initAssets = (
         custom: new AssetBucket<any>(),
         prefabAssets: new AssetBucket<SerializedGameObj>(),
         music: {} as Record<string, string>,
-        packer: new TexPacker(
-            ggl,
-            SPRITE_ATLAS_WIDTH,
-            SPRITE_ATLAS_HEIGHT,
-            opt.spriteAtlasPadding,
-        ),
+        packer,
         // if we finished initially loading all assets
         loaded: false,
     };
