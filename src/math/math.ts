@@ -1714,7 +1714,7 @@ function raycastRect(origin: Vec2, direction: Vec2, rect: Rect) {
     let tmin = Number.NEGATIVE_INFINITY, tmax = Number.POSITIVE_INFINITY;
     let normal;
 
-    if (origin.x != 0.0) {
+    if (direction.x != 0.0) {
         const tx1 = (rect.pos.x - origin.x) / direction.x;
         const tx2 = (rect.pos.x + rect.width - origin.x) / direction.x;
 
@@ -1724,7 +1724,7 @@ function raycastRect(origin: Vec2, direction: Vec2, rect: Rect) {
         tmax = Math.min(tmax, Math.max(tx1, tx2));
     }
 
-    if (origin.y != 0.0) {
+    if (direction.y != 0.0) {
         const ty1 = (rect.pos.y - origin.y) / direction.y;
         const ty2 = (rect.pos.y + rect.height - origin.y) / direction.y;
 
