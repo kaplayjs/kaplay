@@ -45,21 +45,6 @@ So your change should look like
   while) are now actually removed, you must use `onTabHide` and `onTabShow`.
   `onHide` and `onShow` still exist but now handle reacting to changes in the
   `.hidden` property of game objects (#1041) - @dragoncoder047
-- The texture uv coordinates for primitives (solid- or gradient-filled circles,
-  rectangles, lines, and polygons) have now been changed to (1, 1) instead of
-  (0, 0), so shaders written for primitives will need to be updated. (#1021) -
-  @dragoncoder047
-- The global `onDraw()` handler's no-tag form now always draws before all game
-  objects are drawn, **regardless of whether it was attached after game objects
-  were added** (#977) - @lajbel
-- The `LoadFontOpt.filter` option has been **removed** since fonts are now
-  packed into the same texture as sprites, so only the global filter setting can
-  change this (#1021) - @dragoncoder047
-- The sprite data format has been changed to allow individual frames to be on
-  different GPU textures. Now `SpriteData.tex` doesn't exist, and
-  `SpriteData.frames` is a list of `Frame`s instead of a list of `Quad`s. A
-  `Frame` contains `tex` and `q` (quad) properties that contain that data.
-  (#1021) - @dragoncoder047
 - Added `onPause()`, `onUnpause()`, `onHide()`, and `onShow()` events for
   listening to the state of the `paused` and `hidden` properties on game objects
   (#1041) - @dragoncoder047
