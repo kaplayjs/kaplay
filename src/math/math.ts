@@ -1,10 +1,7 @@
 // TODO: A lot
 // - move RNG to it's own file
-// - move Vec2 to it's own file
 
 import { resolveSprite } from "../assets/sprite";
-import { drawCircle } from "../gfx/draw/drawCircle";
-import { drawPolygon, type DrawPolygonOpt } from "../gfx/draw/drawPolygon";
 import { _k } from "../shared";
 import type { GameObj, RNGValue, Shape } from "../types";
 import { clamp } from "./clamp";
@@ -1265,7 +1262,7 @@ export function testPolygonPoint(poly: Polygon, pt: Vec2): boolean {
             ((p[i].y > pt.y) != (p[j].y > pt.y))
             && (pt.x
                 < (p[j].x - p[i].x) * (pt.y - p[i].y) / (p[j].y - p[i].y)
-                    + p[i].x)
+                + p[i].x)
         ) {
             c = !c;
         }
@@ -1283,7 +1280,7 @@ export function testEllipsePoint(ellipse: Ellipse, pt: Vec2): boolean {
     const vx = pt.x * c + pt.y * s;
     const vy = -pt.x * s + pt.y * c;
     return vx * vx / (ellipse.radiusX * ellipse.radiusX)
-            + vy * vy / (ellipse.radiusY * ellipse.radiusY) < 1;
+        + vy * vy / (ellipse.radiusY * ellipse.radiusY) < 1;
 }
 
 export function testEllipseCircle(ellipse: Ellipse, circle: Circle): boolean {
@@ -2404,7 +2401,7 @@ export class Ellipse {
         const vx = point.x * c + point.y * s;
         const vy = -point.x * s + point.y * c;
         return vx * vx / (this.radiusX * this.radiusX)
-                + vy * vy / (this.radiusY * this.radiusY) < 1;
+            + vy * vy / (this.radiusY * this.radiusY) < 1;
     }
     raycast(origin: Vec2, direction: Vec2): RaycastResult {
         return raycastEllipse(origin, direction, this);
@@ -3019,21 +3016,21 @@ export function kochanekBartels(
     const hx = h(
         pt2.x,
         0.5 * (1 - tension) * (1 + bias) * (1 + continuity) * (pt2.x - pt1.x)
-            + 0.5 * (1 - tension) * (1 - bias) * (1 - continuity)
-                * (pt3.x - pt2.x),
+        + 0.5 * (1 - tension) * (1 - bias) * (1 - continuity)
+        * (pt3.x - pt2.x),
         0.5 * (1 - tension) * (1 + bias) * (1 - continuity) * (pt3.x - pt2.x)
-            + 0.5 * (1 - tension) * (1 - bias) * (1 + continuity)
-                * (pt4.x - pt3.x),
+        + 0.5 * (1 - tension) * (1 - bias) * (1 + continuity)
+        * (pt4.x - pt3.x),
         pt3.x,
     );
     const hy = h(
         pt2.y,
         0.5 * (1 - tension) * (1 + bias) * (1 + continuity) * (pt2.y - pt1.y)
-            + 0.5 * (1 - tension) * (1 - bias) * (1 - continuity)
-                * (pt3.y - pt2.y),
+        + 0.5 * (1 - tension) * (1 - bias) * (1 - continuity)
+        * (pt3.y - pt2.y),
         0.5 * (1 - tension) * (1 + bias) * (1 - continuity) * (pt3.y - pt2.y)
-            + 0.5 * (1 - tension) * (1 - bias) * (1 + continuity)
-                * (pt4.y - pt3.y),
+        + 0.5 * (1 - tension) * (1 - bias) * (1 + continuity)
+        * (pt4.y - pt3.y),
         pt3.y,
     );
     return (t: number) => {

@@ -66,8 +66,8 @@ export class Vec2 {
         return Math.abs(this.x) > Math.abs(this.y)
             ? this.x < 0 ? Vec2.LEFT : Vec2.RIGHT
             : this.y < 0
-            ? Vec2.UP
-            : Vec2.DOWN;
+                ? Vec2.UP
+                : Vec2.DOWN;
     }
 
     /** Clone the vector */
@@ -529,6 +529,9 @@ export class Vec2 {
     slerp(dest: Vec2, t: number): Vec2 {
         const cos = this.dot(dest);
         const sin = this.cross(dest);
+        if (Math.abs(sin) < 1e-6) {
+            return this.lerp(dest, t);
+        }
         const angle = Math.atan2(sin, cos);
         return this
             .scale(Math.sin((1 - t) * angle))
@@ -548,6 +551,9 @@ export class Vec2 {
     static slerp(src: Vec2, dst: Vec2, t: number, out: Vec2): Vec2 {
         const cos = Vec2.dot(src, dst);
         const sin = Vec2.cross(src, dst);
+        if (Math.abs(sin) < 1e-6) {
+            return out = src.lerp(dst, t);
+        }
         const angle = Math.atan2(sin, cos);
         const t1 = Math.sin((1 - t) * angle);
         const t2 = Math.sin(t * angle);
