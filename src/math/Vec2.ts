@@ -66,8 +66,8 @@ export class Vec2 {
         return Math.abs(this.x) > Math.abs(this.y)
             ? this.x < 0 ? Vec2.LEFT : Vec2.RIGHT
             : this.y < 0
-                ? Vec2.UP
-                : Vec2.DOWN;
+            ? Vec2.UP
+            : Vec2.DOWN;
     }
 
     /** Clone the vector */
