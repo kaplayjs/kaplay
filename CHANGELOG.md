@@ -128,6 +128,7 @@ So your change should look like
 
 ### Fixed
 
+- Fix raycastRect to check direction instead of origin (#1046) - @ProxyLoader
 - Fixed `tween()` not cloning the passed vectors/colors - @lajbel
 - Fixed `timer()` related events (tween/loop/wait) not taking `debug.timeScale`
   into account - @Stanko
