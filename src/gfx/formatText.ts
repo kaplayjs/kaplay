@@ -134,28 +134,28 @@ function getFontAtlasForFont(font: FontData | string): FontAtlas {
     let atlas = _k.gfx.fontAtlases[fontName];
     if (!atlas) {
         // create a new atlas
-        atlas = {
+        const f = font instanceof FontData ? font : null;
+        _k.gfx.fontAtlases[fontName] = atlas = {
             font: {
                 map: {},
-                size: DEF_TEXT_CACHE_SIZE,
+                size: f?.size ?? DEF_TEXT_CACHE_SIZE,
+                filter: f?.filter ?? _k.globalOpt.fontFilter ?? "linear",
             },
             maxHeight: 0,
             maxActualBoundingBoxAscent: 0,
-            outline: font instanceof FontData ? font.outline : null,
+            outline: f?.outline ?? null,
         };
-
-        _k.gfx.fontAtlases[fontName] = atlas;
     }
     return atlas;
 }
 
-const allChars = () => {
+const allChars = (() => {
     const renderableChars: string[] = [];
-    for (let i = 32; i <= 128; i++) { // Common Unicode range
+    for (let i = 33; i <= 128; i++) { // ASCII printables, excluding space which is often ridiculously tall
         renderableChars.push(String.fromCharCode(i));
     }
     return renderableChars.join("");
-};
+})();
 
 function updateFontAtlas(font: FontData | string, ch: string) {
     const atlas = getFontAtlasForFont(font);
@@ -188,7 +188,7 @@ function updateFontAtlas(font: FontData | string, ch: string) {
 
         if (atlas.maxActualBoundingBoxAscent === 0) {
             atlas.maxActualBoundingBoxAscent =
-                c2d.measureText(allChars()).actualBoundingBoxAscent;
+                c2d.measureText(allChars).actualBoundingBoxAscent;
         }
         const maxActualBoundingBoxAscent = atlas.maxActualBoundingBoxAscent;
         const m = c2d.measureText(ch);
@@ -220,7 +220,7 @@ function updateFontAtlas(font: FontData | string, ch: string) {
 
         const img = c2d.getImageData(0, 0, w, h);
 
-        atlas.font.map[ch] = _k.assets.packer.add(img);
+        atlas.font.map[ch] = _k.assets.packer.add(img, atlas.font.filter);
 
         atlas.maxHeight = Math.max(atlas.maxHeight, h);
     }

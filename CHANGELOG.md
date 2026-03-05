@@ -41,6 +41,10 @@ So your change should look like
 
 ### Added
 
+- Added per-sprite and per-font `filter` options, which override the global
+  `texFilter` and `fontFilter` options (#1050) - @dragoncoder047
+- Added global `fontFilter` option to control default font rasterization filter
+  (#1050) - @dragoncoder047
 - Added `tileMode` option to 9-slice sprites with four tiling strategies:
   `'none'` (stretch all), `'edges'` (tile edges only), `'center'` (tile center
   only), and `'all'` (tile both edges and center) (#996) - @JustKira
@@ -59,9 +63,6 @@ So your change should look like
   circles, rectangles, lines, and polygons) have now been changed to (1, 1)
   instead of (0, 0), so shaders written for primitives will need to be updated.
   (#1021) - @dragoncoder047
-- **(!)** The `LoadFontOpt.filter` option has been **removed** since fonts are
-  now packed into the same texture as sprites, so only the global filter setting
-  can change this (#1021) - @dragoncoder047
 
 ### Changed
 

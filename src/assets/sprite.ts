@@ -2,7 +2,7 @@ import type { DrawSpriteOpt } from "../gfx/draw/drawSprite";
 import type { Frame } from "../gfx/TexPacker";
 import { Quad } from "../math/math";
 import { _k } from "../shared";
-import { type ImageSource } from "../types";
+import { type ImageSource, type TexFilter } from "../types";
 import { Asset, loadImg, loadProgress, spriteSrcToImage } from "./asset";
 import { fixURL, slice } from "./utils";
 
@@ -85,6 +85,10 @@ export interface LoadSpriteOpt {
      * If the sprite is a single image.
      */
     singular?: boolean;
+    /**
+     * The tex filter to use, if different than the global sprite filter
+     */
+    filter?: TexFilter;
 }
 
 /**
@@ -159,10 +163,11 @@ export class SpriteData {
         data: ImageSource[],
         opt: LoadSpriteOpt = {},
     ): SpriteData {
+        const filter = opt.filter ?? _k.globalOpt.texFilter ?? "nearest";
         const frames = data.map(
             opt.singular
-                ? (src => _k.assets.packer.addSingle(src))
-                : (src => _k.assets.packer.add(src)),
+                ? (src => _k.assets.packer.addSingle(src, filter))
+                : (src => _k.assets.packer.add(src, filter)),
         );
         _k.assets.packer.refreshIfPending();
         return new SpriteData(frames, opt.anims, opt.slice9);
@@ -172,8 +177,12 @@ export class SpriteData {
         const frames: Quad[] = opt.frames
             ? opt.frames
             : slice(opt.sliceX || 1, opt.sliceY || 1);
+        const filter = opt.filter ?? _k.globalOpt.texFilter ?? "nearest";
         if (opt.singular) {
-            const { tex, q: quad, id } = _k.assets.packer.addSingle(data);
+            const { tex, q: quad, id } = _k.assets.packer.addSingle(
+                data,
+                filter,
+            );
             return new SpriteData(
                 frames.map(f => ({
                     tex,
@@ -185,7 +194,7 @@ export class SpriteData {
             );
         }
         const sd = new SpriteData(
-            frames.map(frame => _k.assets.packer.add(data, frame)),
+            frames.map(frame => _k.assets.packer.add(data, filter, frame)),
             opt.anims,
             opt.slice9,
         );
