@@ -9,14 +9,18 @@ import {
     onDraw,
     onError,
     onFixedUpdate,
+    onHide,
     onHover,
     onHoverEnd,
     onHoverUpdate,
     onLoad,
     onLoadError,
     onLoading,
+    onPause,
     onSceneLeave,
+    onShow,
     onTag,
+    onUnpause,
     onUntag,
     onUnuse,
     onUpdate,
@@ -77,9 +81,10 @@ export const createScopeHandlers = (app: App) => {
         onError: onError,
         onLoadError: onLoadError,
         onCleanup: onCleanup,
-        // deprecated
-        onShow: app.onShow,
-        onHide: app.onHide,
+        onShow: onShow,
+        onHide: onHide,
+        onPause: onPause,
+        onUnpause: onUnpause,
     };
 
     return handlers;

@@ -41,6 +41,13 @@ So your change should look like
 
 ### Added
 
+- The `onHide` and `onShow` global handlers (which have been deprecated for a
+  while) are now actually removed, you must use `onTabHide` and `onTabShow`.
+  `onHide` and `onShow` still exist but now handle reacting to changes in the
+  `.hidden` property of game objects (#1041) - @dragoncoder047
+- Added `onPause()`, `onUnpause()`, `onHide()`, and `onShow()` events for
+  listening to the state of the `paused` and `hidden` properties on game objects
+  (#1041) - @dragoncoder047
 - Added `tileMode` option to 9-slice sprites with four tiling strategies:
   `'none'` (stretch all), `'edges'` (tile edges only), `'center'` (tile center
   only), and `'all'` (tile both edges and center) (#996) - @JustKira
