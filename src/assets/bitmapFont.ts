@@ -1,6 +1,7 @@
 import { ASCII_CHARS } from "../constants/general";
 import type { Frame } from "../gfx/TexPacker";
 import { _k } from "../shared";
+import type { TexFilter } from "../types";
 import { type Asset, loadImg } from "./asset";
 import { makeFont } from "./font";
 import { fixURL } from "./utils";
@@ -12,6 +13,7 @@ import { fixURL } from "./utils";
 export interface GfxFont {
     map: Record<string, Frame>;
     size: number;
+    filter: TexFilter;
 }
 
 /**
@@ -35,6 +37,10 @@ export interface LoadBitmapFontOpt {
      * @default " !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~";
      */
     chars?: string;
+    /**
+     * Rasterization filter to use, if different than the global font filter.
+     */
+    filter?: TexFilter;
 }
 
 // TODO: support LoadSpriteSrc
@@ -56,6 +62,7 @@ export function loadBitmapFont(
                     gw,
                     gh,
                     opt.chars ?? ASCII_CHARS,
+                    opt.filter ?? _k.globalOpt.fontFilter ?? "linear",
                 );
             }),
     );
@@ -95,6 +102,7 @@ export function loadBitmapFontFromSprite(
                     splittedChars.map((c, i) => [c, frames[i]]),
                 ),
                 size: h,
+                filter: null as any,
             };
         })(),
     );
