@@ -62,7 +62,7 @@ export function loadBitmapFont(
                     gw,
                     gh,
                     opt.chars ?? ASCII_CHARS,
-                    opt.filter ?? _k.globalOpt.fontFilter ?? "linear",
+                    opt.filter ?? _k.globalOpt.fontFilter ?? "nearest",
                 );
             }),
     );
@@ -117,5 +117,8 @@ export function loadHappy(
         throw new Error("You can't use loadHappy with kaplay/mini");
     }
 
-    return loadBitmapFont(fontName, _k.game.defaultAssets.happy, 28, 36, opt);
+    return loadBitmapFont(fontName, _k.game.defaultAssets.happy, 28, 36, {
+        filter: "nearest",
+        ...opt,
+    });
 }
