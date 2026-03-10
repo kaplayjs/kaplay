@@ -44,7 +44,7 @@ So your change should look like
 - Added per-sprite and per-font `filter` options, which override the global
   `texFilter` and `fontFilter` options (#1050) - @dragoncoder047
 - Added global `fontFilter` option to control default font rasterization filter
-  (#1050) - @dragoncoder047
+  (#1050, #1052) - @dragoncoder047
 - Added `tileMode` option to 9-slice sprites with four tiling strategies:
   `'none'` (stretch all), `'edges'` (tile edges only), `'center'` (tile center
   only), and `'all'` (tile both edges and center) (#996) - @JustKira

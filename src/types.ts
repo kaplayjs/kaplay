@@ -302,7 +302,9 @@ export interface KAPLAYOpt {
     texFilter?: TexFilter;
     /**
      * Default text rasterization filter.
-     * @default "linear"
+     * @default
+     * "linear" for vector fonts (.woff2, .ttf, .otf, etc)
+     * "nearest" for bitmap fonts (loaded from an image)
      */
     fontFilter?: TexFilter;
     /**
