@@ -4,6 +4,7 @@ import { KEvent, KEventHandler } from "../events/events";
 import type { GfxCtx } from "../gfx/gfx";
 import type { AppGfxCtx } from "../gfx/gfxApp";
 import { TexPacker } from "../gfx/TexPacker";
+import type { Frame } from "../gfx/TexPacker";
 import { _k } from "../shared";
 import type { ImageSource, MustKAPLAYOpt } from "../types";
 import type { BitmapFontData } from "./bitmapFont";
@@ -27,23 +28,26 @@ export class Asset<D> {
     private onFinishEvents: KEvent<[]> = new KEvent();
 
     constructor(loader: Promise<D>) {
-        loader.then((data) => {
-            this.loaded = true;
-            this.data = data;
-            this.onLoadEvents.trigger(data);
-        }).catch((err) => {
-            this.error = err;
+        loader
+            .then((data) => {
+                this.loaded = true;
+                this.data = data;
+                this.onLoadEvents.trigger(data);
+            })
+            .catch((err) => {
+                this.error = err;
 
-            if (this.onErrorEvents.numListeners() > 0) {
-                this.onErrorEvents.trigger(err);
-            }
-            else {
-                throw err;
-            }
-        }).finally(() => {
-            this.onFinishEvents.trigger();
-            this.loaded = true;
-        });
+                if (this.onErrorEvents.numListeners() > 0) {
+                    this.onErrorEvents.trigger(err);
+                }
+                else {
+                    throw err;
+                }
+            })
+            .finally(() => {
+                this.onFinishEvents.trigger();
+                this.loaded = true;
+            });
     }
     static loaded<D>(data: D): Asset<D> {
         const asset = new Asset(Promise.resolve(data)) as Asset<D>;
@@ -101,20 +105,44 @@ export class AssetBucket<D> {
 
     add(name: string | null, loader: Promise<D>): Asset<D> {
         // if user don't provide a name we use a generated one
-        const id = name ?? (this.lastUID++ + "");
+        const id = name ?? this.lastUID++ + "";
+
+        const existing = this.assets.get(id);
+
+        // If an asset with this ID already exists and is loaded,
+        // keep it accessible while the new one loads, then swap.
+        if (existing && existing.loaded && existing.data) {
+            const newAsset = new Asset(loader);
+            newAsset.onLoad((data) => {
+                // Free the old asset's resources before replacing
+                this.remove(id);
+                this.assets.set(id, Asset.loaded(data));
+                this.waiters.trigger(id, data);
+            });
+            newAsset.onError((err) => {
+                this.errorWaiters.trigger(id, err);
+            });
+            // Return the existing (loaded) asset so callers never see null data
+            return existing;
+        }
+
         const asset = new Asset(loader);
         this.assets.set(id, asset);
-        asset.onLoad(d => {
+        asset.onLoad((d) => {
             this.waiters.trigger(id, d);
         });
-        asset.onError(d => {
+        asset.onError((d) => {
             this.errorWaiters.trigger(id, d);
         });
 
         return asset;
     }
     addLoaded(name: string | null, data: D): Asset<D> {
-        const id = name ?? (this.lastUID++ + "");
+        const id = name ?? this.lastUID++ + "";
+        // Free the old asset's resources before replacing
+        if (this.assets.has(id)) {
+            this.remove(id);
+        }
         const asset = Asset.loaded(data);
         this.assets.set(id, asset);
         this.waiters.trigger(id, data);
@@ -126,6 +154,18 @@ export class AssetBucket<D> {
     get(handle: string): Asset<D> | undefined {
         return this.assets.get(handle);
     }
+    // Remove an asset from the cache. Subclasses can override onRemove
+    // to clean up resources (e.g. TexPacker frames).
+    remove(handle: string): void {
+        const asset = this.assets.get(handle);
+        if (asset && asset.data) {
+            this.onRemove(asset.data);
+        }
+        this.assets.delete(handle);
+    }
+    // Override in subclasses to clean up resources when an asset is removed.
+    onRemove(_data: D): void {}
+
     progress(): number {
         if (this.assets.size === 0) {
             return 1;
@@ -142,9 +182,9 @@ export class AssetBucket<D> {
     }
 
     getFailedAssets(): [string, Asset<D>][] {
-        return Array.from(this.assets.keys()).filter(a =>
-            this.assets.get(a)!.error !== null
-        ).map(a => [a, this.assets.get(a)!]);
+        return Array.from(this.assets.keys())
+            .filter((a) => this.assets.get(a)!.error !== null)
+            .map((a) => [a, this.assets.get(a)!]);
     }
 
     waitFor(name: string, timeout: number): PromiseLike<D> {
@@ -234,8 +274,9 @@ export function loadProgress(): number {
         _k.assets.bitmapFonts,
         _k.assets.custom,
     ];
-    return buckets.reduce((n, bucket) => n + bucket.progress(), 0)
-        / buckets.length;
+    return (
+        buckets.reduce((n, bucket) => n + bucket.progress(), 0) / buckets.length
+    );
 }
 
 export function getFailedAssets(): [string, Asset<any>][] {
@@ -261,6 +302,26 @@ export function load<T>(prom: Promise<T>): Asset<T> {
     return _k.assets.custom.add(null, prom);
 }
 
+// Sprite-specific asset bucket that frees TexPacker frames on removal.
+class SpriteAssetBucket extends AssetBucket<SpriteData> {
+    packer: TexPacker;
+    constructor(packer: TexPacker) {
+        super();
+        this.packer = packer;
+    }
+    onRemove(data: SpriteData): void {
+        const freedIds = new Set<number>();
+        for (const frame of data.frames) {
+            // Singular sprites share the same id across frames,
+            // so deduplicate to avoid double-freeing.
+            if (!freedIds.has(frame.id)) {
+                freedIds.add(frame.id);
+                this.packer.remove(frame.id);
+            }
+        }
+    }
+}
+
 // create assets
 /** @ignore */
 export type InternalAssetsCtx = ReturnType<typeof initAssets>;
@@ -271,10 +332,16 @@ export const initAssets = (
     opt: MustKAPLAYOpt,
     appGfx: AppGfxCtx,
 ) => {
+    const packer = new TexPacker(
+        ggl,
+        SPRITE_ATLAS_WIDTH,
+        SPRITE_ATLAS_HEIGHT,
+        opt.spriteAtlasPadding,
+    );
     const assets = {
         urlPrefix: "",
         // asset holders
-        sprites: new AssetBucket<SpriteData>(),
+        sprites: new SpriteAssetBucket(packer),
         fonts: new AssetBucket<FontData>(),
         bitmapFonts: new AssetBucket<BitmapFontData>(),
         sounds: new AssetBucket<SoundData>(),
@@ -282,12 +349,7 @@ export const initAssets = (
         custom: new AssetBucket<any>(),
         prefabAssets: new AssetBucket<SerializedGameObj>(),
         music: {} as Record<string, string>,
-        packer: new TexPacker(
-            ggl,
-            SPRITE_ATLAS_WIDTH,
-            SPRITE_ATLAS_HEIGHT,
-            opt.spriteAtlasPadding,
-        ),
+        packer,
         // if we finished initially loading all assets
         loaded: false,
     };

@@ -106,6 +106,9 @@ So your change should look like
   `drawSprite` (#1026) - @benhuangbmj
 - Fixed `onClick()` and `onCollide()` tag variants no longer working -
   @mflerackers
+- Fixed reloading an asset with the same ID keeping the old data accessible
+  while the new one loads, instead of replacing it with a pending asset that has
+  null data (#1033) - @nojaf
 
 ## [4000.0.0-alpha.26] - 2026-01-12
 
