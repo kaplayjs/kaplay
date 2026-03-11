@@ -88,5 +88,5 @@ add([
         },
     },
     pos(42, 450),
-    text("Accents: ḴÅPľąý (KAPlay)", { font: "outfit", size: 32  }),
+    text("Accents: ḴÅPľąý (KAPlay)", { font: "outfit", size: 32 }),
 ]);
