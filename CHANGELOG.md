@@ -11,8 +11,8 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - Breaking changes are marked with: **(!)**.
 - [Jump to v3001 changelog](#changelog-for-v3001).
 
-<!-- [CHANGELOG GUIDELINES PLEASE FOLLOW]
---------------------------------------------------------------------------------
+## <!-- [CHANGELOG GUIDELINES PLEASE FOLLOW]
+
 Hey, KAPLAY Dev! Add your new changes in [unreleased] heading, below one of
 these heading:
 
@@ -25,7 +25,8 @@ these heading:
 
 Make sure to format each entry like this:
 
-- short description of the change (#PR Number) - @yourusername, @otherdevusername
+- short description of the change (#PR Number) - @yourusername,
+  @otherdevusername
 
 So your change should look like
 
@@ -34,7 +35,9 @@ So your change should look like
 ### Added
 
 - added a new ghost (#6767) - @lajbel
---------------------------------------------------------------------------------
+
+---
+
 [DO IT IF YOU DON'T WANT A LAJBEL VISIT AT NIGHT] -->
 
 ## [unreleased]
@@ -105,6 +108,9 @@ So your change should look like
 - Fixed the unexpected behavior of not preserving the aspect ratio in
   `drawSprite` (#1026) - @benhuangbmj
 - Fixed `onClick()` and `onCollide()` tag variants no longer working -
+  @mflerackers
+- Fixed `destroy()` messing up enumeration during `update()` and
+  `fixedUpdate()`, thanks to @imaginarny for helping to find the cause -
   @mflerackers
 
 ## [4000.0.0-alpha.26] - 2026-01-12
