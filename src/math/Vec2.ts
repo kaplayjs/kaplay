@@ -337,7 +337,9 @@ export class Vec2 {
      * @since v3000.0
      */
     project(on: Vec2) {
-        return on.scale(on.dot(this) / on.len());
+        const slen = on.slen();
+        if (slen === 0) return new Vec2(0, 0);
+        return on.scale(on.dot(this) / slen);
     }
 
     /**
