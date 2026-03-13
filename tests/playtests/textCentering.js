@@ -1,4 +1,4 @@
-kaplay();
+kaplay({ pixelDensity: Math.min(2, devicePixelRatio) });
 debug.inspect = true;
 
 const pauseMenu = add([

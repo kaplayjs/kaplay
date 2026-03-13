@@ -86,6 +86,8 @@ So your change should look like:
 
 ### Fixed
 
+- Fixed vertical alignment of text within a now-consistent bounding box across
+  browsers (#1053) - @imaginarny
 - Fixed tiled mode drawing of sprites ignoring opacity when it was 0 (#1020) -
   @dragoncoder047
 - Now, all global events handlers are available in scopes, `app.onXXXX` and
