@@ -296,9 +296,17 @@ export interface KAPLAYOpt {
      */
     background?: RGBValue | RGBAValue | string;
     /**
-     * Default texture filter.
+     * Default sprite texture filter.
+     * @default "nearest"
      */
     texFilter?: TexFilter;
+    /**
+     * Default text rasterization filter.
+     * @default
+     * "linear" for vector fonts (.woff2, .ttf, .otf, etc)
+     * "nearest" for bitmap fonts (loaded from an image)
+     */
+    fontFilter?: TexFilter;
     /**
      * How many log messages can there be on one screen (default 8).
      */
@@ -622,6 +630,10 @@ export interface LoadFontOpt {
      * @since v3001.0
      */
     size?: number;
+    /**
+     * The font filter to use, if different from the global font filter.
+     */
+    filter?: TexFilter;
 }
 
 /**

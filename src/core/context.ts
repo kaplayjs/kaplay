@@ -164,6 +164,7 @@ import { buildConvexHull } from "../math/convexhull";
 import { easings } from "../math/easings";
 import { gjkShapeIntersection, gjkShapeIntersects } from "../math/gjk";
 import { lerp } from "../math/lerp";
+import { lerpAngle } from "../math/lerpAngle";
 import { Mat4 } from "../math/Mat4";
 import {
     bezier,
@@ -535,6 +536,7 @@ export const createContext = (
         shuffle,
         chance,
         lerp,
+        lerpAngle,
         step,
         smoothstep,
         tween,
