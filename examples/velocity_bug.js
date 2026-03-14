@@ -25,7 +25,7 @@ const levelConf = {
     tiles: {
         "=": () => [
             sprite("dirt"),
-            area(),
+            area({ restitution: 0.2 }),
             scale(2),
             body({ isStatic: true }),
             anchor("bot"),
@@ -49,7 +49,7 @@ scene("game", () => {
         circle(5),
         scale(3),
         color("#2596be"),
-        area(),
+        area({ restitution: 0.5 }),
         body(),
         pos(0, 0),
     ]);
