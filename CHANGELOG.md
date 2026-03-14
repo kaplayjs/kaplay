@@ -57,6 +57,9 @@ So your change should look like:
   will receive clicks. This avoids problems in a UI where elements overlap -
   @mflerackers
 - Added a `fill()` component - @mflerackers
+- Added `lerpAngle()` helper function to interpolate between clamped angles,
+  preventing 360° spins during transitions from 180 to -180 (#1054) -
+  @imaginarny
 
 ### Removed
 
