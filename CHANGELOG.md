@@ -42,6 +42,9 @@ So your change should look like:
 
 ### Added
 
+- Added `debug.warn()` to log warning messages (#1028) - @lajbel
+- Added `debug.logMessage()` to log a messages array with a wrapping style
+  (warn, error, info) (#1028) - @lajbel
 - Added per-sprite and per-font `filter` options, which override the global
   `texFilter` and `fontFilter` options (#1050) - @dragoncoder047
 - Added global `fontFilter` option to control default font rasterization filter
