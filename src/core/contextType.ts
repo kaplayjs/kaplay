@@ -5764,6 +5764,13 @@ export interface KAPLAYCtx {
      */
     lerp<V extends LerpValue>(from: V, to: V, t: number): V;
     /**
+     * Linear interpolation for angles. Can take a number or vector.
+     *
+     * @group Math
+     * @subgroup Tween
+     */
+    lerpAngle<V extends number | Vec2>(from: V, to: V, t: number): V;
+    /**
      * Tweeeeeeeening!
      *
      * @example
