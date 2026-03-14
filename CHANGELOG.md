@@ -40,6 +40,8 @@ So your change should look like:
 
 ## [unreleased]
 
+## [4000.0.0-alpha.27] - 2026-03-14
+
 ### Added
 
 - Added `debug.warn()` to log warning messages (#1028) - @lajbel
