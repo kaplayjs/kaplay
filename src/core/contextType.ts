@@ -5799,7 +5799,7 @@ export interface KAPLAYCtx {
      */
     easings: Record<EaseFuncs, EaseFunc>;
     /**
-     * Steps easing. Eases in discontinious steps.
+     * Steps easing. Eases in discontinuous steps.
      *
      * @since v3001.0
      * @group Math
@@ -6123,6 +6123,12 @@ export interface KAPLAYCtx {
         tension: number,
         continuity: number,
         bias: number,
+    ): (t: number) => Vec2;
+    piecewiseBezier(
+        pts: Vec2[],
+    ): (t: number) => Vec2;
+    piecewiseCatmullRom(
+        pts: Vec2[],
     ): (t: number) => Vec2;
     createRegularPolygon(
         radius: number,
