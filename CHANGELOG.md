@@ -65,6 +65,8 @@ So your change should look like:
 - Added `lerpAngle()` helper function to interpolate between clamped angles,
   preventing 360° spins during transitions from 180 to -180 (#1054) -
   @imaginarny
+- Added `piecewiseBezier()` and `piecewiseCatmullRom()` to evaluate curves with
+  multiple points - @mflerackers
 
 ### Removed
 
