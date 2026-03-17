@@ -1,7 +1,6 @@
 // TODO: A lot
 // - move RNG to it's own file
 
-import type { BlobOptions } from "buffer";
 import { resolveSprite } from "../assets/sprite";
 import { _k } from "../shared";
 import type { GameObj, RNGValue, Shape } from "../types";
