@@ -5357,14 +5357,12 @@ export interface KAPLAYCtx {
      */
     isCursorLocked(): boolean;
     /**
-     * Enter / exit fullscreen mode. (note: mouse position is not working in fullscreen mode at the moment)
+     * Enter / exit fullscreen mode.
      *
      * @example
      * ```js
-     * // toggle fullscreen mode on "f"
-     * onKeyPress("f", (c) => {
-     *     setFullscreen(!isFullscreen());
-     * });
+     * // toggle fullscreen mode with "f" key
+     * onKeyPress("f", () => setFullscreen(!isFullscreen()));
      * ```
      *
      * @since v2000.0

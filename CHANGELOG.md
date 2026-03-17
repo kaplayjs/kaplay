@@ -40,7 +40,7 @@ So your change should look like:
 
 ## [unreleased]
 
-## [4000.0.0-alpha.27] - 2026-03-14
+## [4000.0.0-alpha.27] - 2026-03-17
 
 ### Added
 
@@ -120,6 +120,8 @@ So your change should look like:
 - Fixed `destroy()` messing up enumeration during `update()` and
   `fixedUpdate()`, thanks to @imaginarny for helping to find the cause -
   @mflerackers
+- Fixed canvas not resizing to fullscreen on `setFullscreen()` (#1055) -
+  @imaginarny
 
 ## [4000.0.0-alpha.26] - 2026-01-12
 
