@@ -15,7 +15,7 @@ import { makeInternal } from "../ecs/entity/make";
 import type { System } from "../ecs/systems/systems";
 import type { GameEventMap, GameObjEventMap } from "../events/eventMap";
 import { type KEventController, KEventHandler } from "../events/events";
-import { Mat23, Rect, RNG } from "../math/math";
+import { LinearCongruentialEngine, Mat23, Rect, RNG } from "../math/math";
 import { Vec2 } from "../math/Vec2";
 import type { GameObj } from "../types";
 import type { SceneDef, SceneState } from "./scenes";
@@ -207,7 +207,7 @@ export const createGame = (): Game => {
         crashed: false,
         areaCount: 0,
         allTextInputs: new Set<GameObj>(),
-        defRNG: new RNG(Date.now()),
+        defRNG: new RNG(new LinearCongruentialEngine(Date.now())),
         warned: new Set<string>(),
     };
 

@@ -69,6 +69,8 @@ So your change should look like:
   @imaginarny
 - Added `piecewiseBezier()` and `piecewiseCatmullRom()` to evaluate curves with
   multiple points - @mflerackers
+- Made random generator algorithm configurable using `setRNG()` - @mflerackers
+- Added xorshift32 as random generator - @mflerackers
 
 ### Removed
 
@@ -95,6 +97,8 @@ So your change should look like:
   @dragoncoder047
 - Added spritesheet repacking, so spritesheet images that contain lots of blank
   space don't waste texture memory (#1021) - @dragoncoder047
+- Added an optional parameter `rng` to all random related functions to pass the
+  rng to use - @mflerackers
 
 ### Fixed
 

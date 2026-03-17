@@ -5516,6 +5516,16 @@ export interface KAPLAYCtx {
      */
     audioCtx: AudioContext;
     /**
+     * Set the random generator to use
+     *
+     * @param rng A random generator
+     *
+     * @since v4000.0
+     * @group Math
+     * @subgroup Random
+     */
+    setRNG(rng: RNG): void;
+    /**
      * Get a random value between the given bound.
      *
      * @param a - The lower bound. If not upper bound, this is the upper bound and the lower bound is 0.
@@ -5754,6 +5764,45 @@ export interface KAPLAYCtx {
      * @subgroup Random
      */
     chance(p: number): boolean;
+    /**
+     * Returns the index of the item obtained given the probabilities
+     *
+     * @example
+     * ```js
+     * // There is a 10% chance for index 0, 30% for index 1 and 60% for index 2 to be returned
+     * roulette([0.1, 0.3, 0.6]);
+     * roulette([10, 30, 60]);
+     * // There is a 1/6 chance for index 0, 2/6 for index 1 and 4/6 for index 2 to be returned
+     * roulette([1, 2, 4]);
+     *
+     * @param probabilities - The probabilities.
+     *
+     * @returns The index of the item obtained given the probabilities
+     *
+     * @group Math
+     * @subgroup Random
+     */
+    roulette(probabilities: number[]): number;
+    /**
+     * Returns the item obtained given the probabilities
+     *
+     * @example
+     * ```js
+     * // There is a 10% chance for "bean", 30% for "been" and 60% for "beant" be returned
+     * gacha(["bean", "been", "beant"], [0.1, 0.3, 0.6]);
+     * gacha([10, 30, 60]);
+     * // There is a 1/6 chance for "bean", 2/6 for "been" and 4/6 for "beant" to be returned
+     * gacha(["bean", "been", "beant"], [1, 2, 4]);
+     *
+     * @param items - The items.
+     * @param probabilities - The probabilities.
+     *
+     * @returns The item obtained given the probabilities
+     *
+     * @group Math
+     * @subgroup Random
+     */
+    gacha<T>(items: T[], probabilities: number[]): T;
     /**
      * Linear interpolation. Can take a number, vector, or color.
      *
