@@ -11,8 +11,8 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - Breaking changes are marked with: **(!)**.
 - [Jump to v3001 changelog](#changelog-for-v3001).
 
-<!-- [CHANGELOG GUIDELINES PLEASE FOLLOW]
--------------------------------------------------------------------------------
+## <!-- [CHANGELOG GUIDELINES PLEASE FOLLOW]
+
 Hey, KAPLAY Dev! Add your new changes in [unreleased] heading, below one of
 these heading:
 
@@ -35,7 +35,9 @@ So your change should look like:
 ### Added
 
 - added a new ghost (#6767) - @lajbel
--------------------------------------------------------------------------------
+
+---
+
 [DO IT IF YOU DON'T WANT A LAJBEL VISIT AT NIGHT] -->
 
 ## [unreleased]
@@ -65,6 +67,8 @@ So your change should look like:
 - Added `lerpAngle()` helper function to interpolate between clamped angles,
   preventing 360° spins during transitions from 180 to -180 (#1054) -
   @imaginarny
+- Added `piecewiseBezier()` and `piecewiseCatmullRom()` to evaluate curves with
+  multiple points - @mflerackers
 
 ### Removed
 
