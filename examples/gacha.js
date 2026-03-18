@@ -23,13 +23,13 @@ const button = add([
 
 button.onClick(() => {
     const result = gacha([
-        "bean",
-        "ghosty",
-        "ghostiny",
-        "bobo",
-        "zombean",
-        "mark",
-    ], [20, 10, 2, 5, 15, 1]);
+        ["bean", 20],
+        ["ghosty", 10],
+        ["ghostiny", 2],
+        ["bobo", 5],
+        ["zombean", 15],
+        ["mark", 1],
+    ]);
     obj.sprite = result;
     obj.hidden = false;
     debug.log(`You got ${result}`);
