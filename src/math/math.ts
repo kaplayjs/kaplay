@@ -1073,8 +1073,26 @@ export function roulette(probabilities: number[], rng?: RNG): number {
     return index;
 }
 
-export function gacha<T>(items: T[], probabilities: number[], rng?: RNG): T {
-    return items[roulette(probabilities, rng)];
+export function gacha<T>(
+    items: [T, number][] | Map<T, number> | Record<string, number>,
+    rng?: RNG,
+): T {
+    rng ??= _k.game.defRNG;
+    const getList = (itemCollection: typeof items) => {
+        if (Array.isArray(itemCollection)) {
+            return itemCollection;
+        }
+        else if (items instanceof Map) {
+            return [...items.entries()];
+        }
+        else {
+            return Object.entries(items) as [T, number][];
+        }
+    };
+
+    const list = getList(items);
+    const probabilities = list.map(([item, probability]) => probability);
+    return list[roulette(probabilities, rng)][0];
 }
 
 // TODO: better name

@@ -5802,7 +5802,10 @@ export interface KAPLAYCtx {
      * @group Math
      * @subgroup Random
      */
-    gacha<T>(items: T[], probabilities: number[]): T;
+    gacha<T>(
+        items: [T, number][] | Map<T, number> | Record<string, number>,
+        rng?: RNG,
+    ): T;
     /**
      * Linear interpolation. Can take a number, vector, or color.
      *
