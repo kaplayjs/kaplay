@@ -1061,7 +1061,7 @@ export function roulette(probabilities: number[], rng?: RNG): number {
     rng ??= _k.game.defRNG;
     // Get the sum of all probabilities, to know the percentages
     const sum = probabilities.reduce((sum, value) => sum + value, 0);
-    // ake a random number
+    // Make a random number
     const value = rng.genInteger(sum);
     // Search for the first index for which the cumulative probability is greater
     let index = 0;
