@@ -142,7 +142,6 @@ export function makeFont(
             ),
         );
     }
-    _k.assets.packer.refreshIfPending();
 
     return {
         map,
