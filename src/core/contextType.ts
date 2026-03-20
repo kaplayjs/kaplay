@@ -5788,11 +5788,11 @@ export interface KAPLAYCtx {
      *
      * @example
      * ```js
-     * // There is a 10% chance for "bean", 30% for "been" and 60% for "beant" be returned
-     * gacha(["bean", "been", "beant"], [0.1, 0.3, 0.6]);
-     * gacha([10, 30, 60]);
+     * // There is a 10% chance for "bean", 30% for "been" and 60% for "beant" to be returned
+     * gacha([["bean", 0.1], ["been", 0.3], ["beant", 0.6]]);
+     * gacha(new Map([["bean", 10], ["been", 30], ["beant", 60]]));
      * // There is a 1/6 chance for "bean", 2/6 for "been" and 4/6 for "beant" to be returned
-     * gacha(["bean", "been", "beant"], [1, 2, 4]);
+     * gacha({"bean": 1, "been": 2, "beant": 4});
      *
      * @param items - The items.
      * @param probabilities - The probabilities.
