@@ -1,10 +1,7 @@
 // TODO: A lot
 // - move RNG to it's own file
-// - move Vec2 to it's own file
 
 import { resolveSprite } from "../assets/sprite";
-import { drawCircle } from "../gfx/draw/drawCircle";
-import { drawPolygon, type DrawPolygonOpt } from "../gfx/draw/drawPolygon";
 import { _k } from "../shared";
 import type { GameObj, RNGValue, Shape } from "../types";
 import { clamp } from "./clamp";
@@ -1714,7 +1711,7 @@ function raycastRect(origin: Vec2, direction: Vec2, rect: Rect) {
     let tmin = Number.NEGATIVE_INFINITY, tmax = Number.POSITIVE_INFINITY;
     let normal;
 
-    if (origin.x != 0.0) {
+    if (direction.x != 0.0) {
         const tx1 = (rect.pos.x - origin.x) / direction.x;
         const tx2 = (rect.pos.x + rect.width - origin.x) / direction.x;
 
@@ -1724,7 +1721,7 @@ function raycastRect(origin: Vec2, direction: Vec2, rect: Rect) {
         tmax = Math.min(tmax, Math.max(tx1, tx2));
     }
 
-    if (origin.y != 0.0) {
+    if (direction.y != 0.0) {
         const ty1 = (rect.pos.y - origin.y) / direction.y;
         const ty2 = (rect.pos.y + rect.height - origin.y) / direction.y;
 
@@ -3063,6 +3060,133 @@ export function hermiteFirstDerivative(
     return (t: number) => {
         const t2 = t * t;
         return 3 * A * t2 + 2 * B * t + C;
+    };
+}
+
+/**
+ * A second order function returning an evaluator for a piecewise cubic Bézier
+ * @param pts - A series of points with 2 control points between each pair of points
+ *
+ * @returns A function which evaluates a piecewise cubic Bézier
+ */
+export function piecewiseBezier(pts: Vec2[]) {
+    // tuples with [from s, to s, from px, to px, bezier, curve length]
+    const beziers: [
+        number,
+        number,
+        number,
+        number,
+        (t: number) => Vec2,
+        (t: number, b: boolean) => number,
+    ][] = [];
+    let totalLength = 0;
+    for (let i = 0; i < pts.length - 3; i += 3) {
+        const bezierCurve = bezier(pts[i], pts[i + 1], pts[i + 2], pts[i + 3]);
+        const curveLength = curveLengthApproximation(bezierCurve);
+        const length = curveLength(1);
+        const fromLength = totalLength;
+        const toLength = totalLength += length;
+        beziers.push([
+            fromLength,
+            toLength,
+            fromLength,
+            toLength,
+            bezierCurve,
+            curveLength,
+        ]);
+    }
+
+    for (let i = 0; i < beziers.length; i++) {
+        beziers[i][0] /= totalLength;
+        beziers[i][1] /= totalLength;
+    }
+
+    return (s: number) => {
+        for (let i = 0; i < beziers.length; i++) {
+            const b = beziers[i];
+            if (s < b[1]) {
+                s = map(s, b[0], b[1], 0, 1);
+                const l = s * (b[3] - b[2]);
+                const t = b[5](l, true);
+                return b[4](t);
+            }
+        }
+        return beziers[beziers.length - 1][4](1);
+    };
+}
+
+/**
+ * Reflects a point around another point
+ * @param a - Point to reflect
+ * @param b - Point to reflect around
+ *
+ * @returns Reflected point
+ */
+function reflect(a: Vec2, b: Vec2) {
+    return b.add(b.sub(a));
+}
+
+/**
+ * A second order function returning an evaluator for a piecewise Catmull-Rom curve
+ * @param pts - A series of points the curve should go through
+ *
+ * @returns A function which evaluates a piecewise Catmull-Rom curve
+ */
+export function piecewiseCatmullRom(pts: Vec2[]) {
+    // tuples with [from s, to s, from px, to px, bezier, curve length]
+    const curves: [
+        number,
+        number,
+        number,
+        number,
+        (t: number) => Vec2,
+        (t: number, b: boolean) => number,
+    ][] = [];
+    let totalLength = 0;
+    const addCurve = (pt1: Vec2, pt2: Vec2, pt3: Vec2, pt4: Vec2) => {
+        const curve = catmullRom(pt1, pt2, pt3, pt4);
+        const curveLength = curveLengthApproximation(curve);
+        const length = curveLength(1);
+        const fromLength = totalLength;
+        const toLength = totalLength += length;
+        curves.push([
+            fromLength,
+            toLength,
+            fromLength,
+            toLength,
+            curve,
+            curveLength,
+        ]);
+    };
+    const firstPt = reflect(pts[1], pts[0]);
+    addCurve(firstPt, pts[0], pts[1], pts[2]);
+    for (let i = 0; i < pts.length - 3; i++) {
+        addCurve(pts[i], pts[i + 1], pts[i + 2], pts[i + 3]);
+    }
+    const lastPt = reflect(pts[pts.length - 2], pts[pts.length - 1]);
+    addCurve(
+        pts[pts.length - 3],
+        pts[pts.length - 2],
+        pts[pts.length - 1],
+        lastPt,
+    );
+
+    for (let i = 0; i < curves.length; i++) {
+        curves[i][0] /= totalLength;
+        curves[i][1] /= totalLength;
+    }
+
+    return (s: number) => {
+        for (let i = 0; i < curves.length; i++) {
+            const b = curves[i];
+            if (s < b[1]) {
+                s = map(s, b[0], b[1], 0, 1);
+                const l = s * (b[3] - b[2]);
+                const t = b[5](l, true);
+                return b[4](t);
+            }
+        }
+        return curves[curves.length - 1][4](1);
     };
 }
 

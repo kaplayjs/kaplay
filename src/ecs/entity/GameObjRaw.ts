@@ -1029,16 +1029,18 @@ export const GameObjRawPrototype: Omit<
             ?? (this.parent
                 ? this.parent._drawLayerIndex
                 : _k.game.defaultLayerIndex);
-        for (let i = 0; i < this.children.length; i++) {
-            this.children[i].update();
+        const children = this.children.slice();
+        for (let i = 0; i < children.length; i++) {
+            children[i].update();
         }
     },
 
     fixedUpdate(this: InternalGameObjRaw) {
         if (this.paused) return;
         this._fixedUpdateEvents.trigger();
-        for (let i = 0; i < this.children.length; i++) {
-            this.children[i].fixedUpdate();
+        const children = this.children.slice();
+        for (let i = 0; i < children.length; i++) {
+            children[i].fixedUpdate();
         }
     },
 

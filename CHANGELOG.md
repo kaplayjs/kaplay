@@ -12,7 +12,7 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - [Jump to v3001 changelog](#changelog-for-v3001).
 
 <!-- [CHANGELOG GUIDELINES PLEASE FOLLOW]
---------------------------------------------------------------------------------
+-------------------------------------------------------------------------------
 Hey, KAPLAY Dev! Add your new changes in [unreleased] heading, below one of
 these heading:
 
@@ -25,22 +25,32 @@ these heading:
 
 Make sure to format each entry like this:
 
-- short description of the change (#PR Number) - @yourusername, @otherdevusername
+- short description of the change (#PR Number) - @yourusername,
+  @otherdevusername
 
-So your change should look like
+So your change should look like:
 
 ## [unreleased]
 
 ### Added
 
 - added a new ghost (#6767) - @lajbel
---------------------------------------------------------------------------------
+-------------------------------------------------------------------------------
 [DO IT IF YOU DON'T WANT A LAJBEL VISIT AT NIGHT] -->
 
 ## [unreleased]
 
+## [4000.0.0-alpha.27] - 2026-03-19
+
 ### Added
 
+- Added `debug.warn()` to log warning messages (#1028) - @lajbel
+- Added `debug.logMessage()` to log a messages array with a wrapping style
+  (warn, error, info) (#1028) - @lajbel
+- Added per-sprite and per-font `filter` options, which override the global
+  `texFilter` and `fontFilter` options (#1050) - @dragoncoder047
+- Added global `fontFilter` option to control default font rasterization filter
+  (#1050, #1052) - @dragoncoder047
 - Added `tileMode` option to 9-slice sprites with four tiling strategies:
   `'none'` (stretch all), `'edges'` (tile edges only), `'center'` (tile center
   only), and `'all'` (tile both edges and center) (#996) - @JustKira
@@ -52,6 +62,11 @@ So your change should look like
   will receive clicks. This avoids problems in a UI where elements overlap -
   @mflerackers
 - Added a `fill()` component - @mflerackers
+- Added `lerpAngle()` helper function to interpolate between clamped angles,
+  preventing 360° spins during transitions from 180 to -180 (#1054) -
+  @imaginarny
+- Added `piecewiseBezier()` and `piecewiseCatmullRom()` to evaluate curves with
+  multiple points - @mflerackers
 
 ### Removed
 
@@ -59,9 +74,6 @@ So your change should look like
   circles, rectangles, lines, and polygons) have now been changed to (1, 1)
   instead of (0, 0), so shaders written for primitives will need to be updated.
   (#1021) - @dragoncoder047
-- **(!)** The `LoadFontOpt.filter` option has been **removed** since fonts are
-  now packed into the same texture as sprites, so only the global filter setting
-  can change this (#1021) - @dragoncoder047
 
 ### Changed
 
@@ -86,6 +98,8 @@ So your change should look like
 
 ### Fixed
 
+- Fixed vertical alignment of text within a now-consistent bounding box across
+  browsers (#1053) - @imaginarny
 - Fixed tiled mode drawing of sprites ignoring opacity when it was 0 (#1020) -
   @dragoncoder047
 - Now, all global events handlers are available in scopes, `app.onXXXX` and
@@ -107,6 +121,11 @@ So your change should look like
   `drawSprite` (#1026) - @benhuangbmj
 - Fixed `onClick()` and `onCollide()` tag variants no longer working -
   @mflerackers
+- Fixed `destroy()` messing up enumeration during `update()` and
+  `fixedUpdate()`, thanks to @imaginarny for helping to find the cause -
+  @mflerackers
+- Fixed canvas not resizing to fullscreen on `setFullscreen()` (#1055) -
+  @imaginarny
 
 ## [4000.0.0-alpha.26] - 2026-01-12
 
@@ -128,6 +147,7 @@ So your change should look like
 
 ### Fixed
 
+- Fix raycastRect to check direction instead of origin (#1046) - @ProxyLoader
 - Fixed `tween()` not cloning the passed vectors/colors - @lajbel
 - Fixed `timer()` related events (tween/loop/wait) not taking `debug.timeScale`
   into account - @Stanko

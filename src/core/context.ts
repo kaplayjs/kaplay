@@ -164,6 +164,7 @@ import { buildConvexHull } from "../math/convexhull";
 import { easings } from "../math/easings";
 import { gjkShapeIntersection, gjkShapeIntersects } from "../math/gjk";
 import { lerp } from "../math/lerp";
+import { lerpAngle } from "../math/lerpAngle";
 import { Mat4 } from "../math/Mat4";
 import {
     bezier,
@@ -199,6 +200,8 @@ import {
     Mat2,
     Mat23,
     normalizedCurve,
+    piecewiseBezier,
+    piecewiseCatmullRom,
     Point,
     Polygon,
     Quad,
@@ -535,6 +538,7 @@ export const createContext = (
         shuffle,
         chance,
         lerp,
+        lerpAngle,
         step,
         smoothstep,
         tween,
@@ -560,6 +564,8 @@ export const createContext = (
         catmullRom,
         bezier,
         kochanekBartels,
+        piecewiseBezier,
+        piecewiseCatmullRom,
         createRegularPolygon,
         createStarPolygon,
         createCogPolygon,

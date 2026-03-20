@@ -71,7 +71,9 @@ export function loadSpriteAtlas(
                     sliceY,
                     anims,
                     slice9,
+                    filter,
                 } = data[name];
+                filter ??= _k.globalOpt.texFilter ?? "nearest";
                 const w = img.width, h = img.height;
                 const mainQuad = new Quad(
                     x / w,
@@ -82,7 +84,7 @@ export function loadSpriteAtlas(
                 frames ??= slice(sliceX || 1, sliceY || 1);
                 const spr = new SpriteData(
                     frames.map(q =>
-                        _k.assets.packer.add(img, mainQuad.scale(q))
+                        _k.assets.packer.add(img, filter, mainQuad.scale(q))
                     ),
                     anims,
                     slice9,
