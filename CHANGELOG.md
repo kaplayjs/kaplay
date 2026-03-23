@@ -40,6 +40,15 @@ So your change should look like:
 
 ## [unreleased]
 
+### Added
+
+- Made random generator algorithm configurable using `setRNG()` - @mflerackers
+- Added xorshift32 as random generator (#1057) - @mflerackers
+
+### Changed
+
+- Added an optional parameter `rng` to all random related functions to pass the
+  rng to use (#1057) - @mflerackers
 - Updated texture packer refreshing to only refresh when a sprite is actually
   requested to be drawn, to reduce the number of times the texture is synced to
   the GPU, which is slow (#1058) - @dragoncoder047
