@@ -470,7 +470,7 @@ export function formatText(opt: DrawTextOpt): FormattedText {
         th += thisLineHeight;
     }
 
-    _k.assets.packer.refreshIfPending();
+    _k.assets.packer.syncIfPending();
 
     return {
         width: tw,
