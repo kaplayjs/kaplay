@@ -41,7 +41,7 @@ class FilterTexPacker {
 
     private _hasPendingRefresh = false;
     private _newTexture(): TexMap {
-        this._refresh();
+        this._sync();
         const el = document.createElement("canvas");
         el.width = this._w;
         el.height = this._h;
@@ -54,7 +54,7 @@ class FilterTexPacker {
         this._tex2Map.set(tex, this._curMap = { tex, el, ctx });
         return this._curMap;
     }
-    _refresh() {
+    _sync() {
         if (this._hasPendingRefresh) {
             this._curMap.tex.update(this._curMap.el);
             this._hasPendingRefresh = false;
@@ -271,8 +271,8 @@ export class TexPacker {
     addSingle(img: ImageSource, filter: TexFilter): Frame {
         return this._getPacker(filter)._single(img);
     }
-    refreshIfPending() {
-        Object.values(this._packers).forEach(p => p._refresh());
+    syncIfPending() {
+        Object.values(this._packers).forEach(p => p._sync());
     }
     remove(id: number) {
         this._idsToPackers[id]?._remove(id);

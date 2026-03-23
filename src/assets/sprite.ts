@@ -169,7 +169,6 @@ export class SpriteData {
                 ? (src => _k.assets.packer.addSingle(src, filter))
                 : (src => _k.assets.packer.add(src, filter)),
         );
-        _k.assets.packer.refreshIfPending();
         return new SpriteData(frames, opt.anims, opt.slice9);
     }
 
@@ -198,7 +197,6 @@ export class SpriteData {
             opt.anims,
             opt.slice9,
         );
-        _k.assets.packer.refreshIfPending();
         return sd;
     }
 }

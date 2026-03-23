@@ -22,6 +22,7 @@ export class Asset<D> {
     loaded: boolean = false;
     data: D | null = null;
     error: Error | null = null;
+    _bucketOnLoad: (() => void) | undefined;
     private onLoadEvents: KEvent<[D]> = new KEvent();
     private onErrorEvents: KEvent<[Error]> = new KEvent();
     private onFinishEvents: KEvent<[]> = new KEvent();
@@ -29,6 +30,7 @@ export class Asset<D> {
     constructor(loader: Promise<D>) {
         loader.then((data) => {
             this.loaded = true;
+            this._bucketOnLoad?.();
             this.data = data;
             this.onLoadEvents.trigger(data);
         }).catch((err) => {
@@ -98,6 +100,7 @@ export class AssetBucket<D> {
     waiters: KEventHandler<any> = new KEventHandler();
     errorWaiters: KEventHandler<any> = new KEventHandler();
     lastUID: number = 0;
+    constructor(public onGet?: () => void) {}
 
     add(name: string | null, loader: Promise<D>): Asset<D> {
         // if user don't provide a name we use a generated one
@@ -124,7 +127,12 @@ export class AssetBucket<D> {
     }
     // if not found return undefined
     get(handle: string): Asset<D> | undefined {
-        return this.assets.get(handle);
+        const asset = this.assets.get(handle);
+        if (asset) {
+            if (asset.loaded) this.onGet?.();
+            else asset._bucketOnLoad = this.onGet;
+        }
+        return asset;
     }
     progress(): number {
         if (this.assets.size === 0) {
@@ -271,23 +279,26 @@ export const initAssets = (
     opt: MustKAPLAYOpt,
     appGfx: AppGfxCtx,
 ) => {
+    const packer = new TexPacker(
+        ggl,
+        SPRITE_ATLAS_WIDTH,
+        SPRITE_ATLAS_HEIGHT,
+        opt.spriteAtlasPadding,
+    );
     const assets = {
         urlPrefix: "",
         // asset holders
-        sprites: new AssetBucket<SpriteData>(),
+        sprites: new AssetBucket<SpriteData>(() => packer.syncIfPending()),
         fonts: new AssetBucket<FontData>(),
-        bitmapFonts: new AssetBucket<BitmapFontData>(),
+        bitmapFonts: new AssetBucket<BitmapFontData>(() =>
+            packer.syncIfPending()
+        ),
         sounds: new AssetBucket<SoundData>(),
         shaders: new AssetBucket<ShaderData>(),
         custom: new AssetBucket<any>(),
         prefabAssets: new AssetBucket<SerializedGameObj>(),
         music: {} as Record<string, string>,
-        packer: new TexPacker(
-            ggl,
-            SPRITE_ATLAS_WIDTH,
-            SPRITE_ATLAS_HEIGHT,
-            opt.spriteAtlasPadding,
-        ),
+        packer,
         // if we finished initially loading all assets
         loaded: false,
     };
