@@ -40,6 +40,9 @@ So your change should look like:
 
 ## [unreleased]
 
+- Updated "explicit frames" method of loading a sprite with animations (via
+  either `loadSprite()` or `loadSpriteAtlas()`) to use pixel values for the
+  coordinate space, which is more intuitive (#1061) - @dragoncoder047
 - Updated texture packer refreshing to only refresh when a sprite is actually
   requested to be drawn, to reduce the number of times the texture is synced to
   the GPU, which is slow (#1058) - @dragoncoder047
