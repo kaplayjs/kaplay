@@ -179,6 +179,16 @@ class FilterTexPacker {
 
         return f;
     }
+    _addPrepacked(img: ImageSource, frames: Quad[]): Frame[] {
+        const main = this._add(img, undefined);
+        return frames.map(frame =>
+            this._p._saveFrame(
+                this,
+                main.tex,
+                main.q.scale(frame),
+            )
+        );
+    }
     _free() {
         this._textures.forEach(tex => tex.free());
         this._big.forEach(f => f.tex.free());
@@ -191,7 +201,9 @@ class FilterTexPacker {
         if (!entry) {
             const big = this._big.findIndex(f => f.id === packerId);
             if (big < 0) {
-                throw new Error("Texture with packer id not found");
+                throw new Error(
+                    "Image not found in packer (was this loaded via a prepacked spritesheet?)",
+                );
             }
             this._big.splice(big, 1)[0]!.tex.free();
             return;
@@ -267,6 +279,9 @@ export class TexPacker {
     }
     add(img: ImageSource, filter: TexFilter, chopQuad?: Quad): Frame {
         return this._getPacker(filter)._add(img, chopQuad);
+    }
+    addPrepacked(img: ImageSource, filter: TexFilter, frames: Quad[]): Frame[] {
+        return this._getPacker(filter)._addPrepacked(img, frames);
     }
     // create a image with a single texture
     addSingle(img: ImageSource, filter: TexFilter): Frame {

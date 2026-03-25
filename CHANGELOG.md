@@ -53,6 +53,12 @@ So your change should look like:
   requested to be drawn, to reduce the number of times the texture is synced to
   the GPU, which is slow (#1058) - @dragoncoder047
 
+### Added
+
+- Added a `repack: false` option to `loadSpite()` and a repack parameter to
+  `loadSpriteAtlas()`, for faster loading if you're packing stuff at build-time
+  (#TBD) - @dragoncoder047
+
 ## [4000.0.0-alpha.27] - 2026-03-19
 
 ### Added
