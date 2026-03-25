@@ -20,13 +20,13 @@ interface TexMap {
 class FilterTexPacker {
     _textures: Texture[] = [];
     _big: Frame[] = [];
-    _used: Map<number, {
+    _used = new Map<number, {
         rect: Rect;
         tex: Texture;
         used: number;
-    }> = new Map();
+    }>();
     _curMap: TexMap = null as any;
-    _tex2Map: Map<Texture, TexMap> = new Map();
+    _tex2Map = new Map<Texture, TexMap>();
 
     constructor(
         private _p: TexPacker,
@@ -71,7 +71,7 @@ class FilterTexPacker {
         return f;
     }
 
-    _addAt(
+    _blit(
         img: ImageSource,
         x: number,
         y: number,
@@ -119,8 +119,7 @@ class FilterTexPacker {
             // goes offscreen?
             if (x + paddedWidth > maxX || y + paddedHeight > maxY) return false;
             // try it
-            p.x = x;
-            p.y = y;
+            p.set(x, y);
             for (let { rect, tex } of this._used.values()) {
                 if (curTex !== tex) continue;
                 if (testRectRect(rect, rectToAdd)) return false;
@@ -164,7 +163,7 @@ class FilterTexPacker {
             ({ tex: curTex, ctx: curCtx, el: curEl } = this._newTexture());
         }
 
-        this._addAt(img, x, y, chopX, chopY, imgWidth, imgHeight);
+        this._blit(img, x, y, chopX, chopY, imgWidth, imgHeight);
 
         const f = this._p._saveFrame(
             this,
@@ -248,7 +247,7 @@ export class TexPacker {
             1,
             1,
         );
-        packer._addAt(whitePixel, width - 1, height - 1, 0, 0, 1, 1);
+        packer._blit(whitePixel, width - 1, height - 1, 0, 0, 1, 1);
         packer._sync();
         packer._used.set(-1, {
             rect: new Rect(new Vec2(width - 1, height - 1), 1, 1),
@@ -276,11 +275,11 @@ export class TexPacker {
     syncIfPending() {
         Object.values(this._packers).forEach(p => p!._sync());
     }
-    remove(id: number) {
+    _remove(id: number) {
         this._idsToPackers[id]?._remove(id);
         delete this._idsToPackers[id];
     }
-    free() {
+    _free() {
         Object.values(this._packers).forEach(p => p!._free());
         this._packers = {};
     }

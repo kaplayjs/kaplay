@@ -33,3 +33,4 @@ onLoad(() => {
         ]);
     }
 });
+onMouseMove(() => addKaboom(mousePos()));
