@@ -1,6 +1,7 @@
 import type { Shader, Uniform } from "../assets/shader";
 import { IDENTITY_MATRIX } from "../constants/math";
 import { getCamTransform } from "../game/camera";
+import { _k } from "../shared";
 import {
     BlendMode,
     type ImageSource,
@@ -397,7 +398,7 @@ export class BatchRenderer {
  * @group Rendering
  * @subgroup Shaders
  */
-export class Mesh {
+export class MeshBuffer {
     ctx: GfxCtx;
     glVBuf: WebGLBuffer;
     glIBuf: WebGLBuffer;
@@ -442,16 +443,16 @@ export class Mesh {
     draw(primitive?: GLenum, index?: GLuint, count?: GLuint): void {
         const gl = this.ctx.gl;
         this.ctx.pushArrayBuffer(this.glVBuf);
+        this.ctx.setVertexFormat(this.vertexFormat, false);
         this.ctx.pushElementArrayBuffer(this.glIBuf);
-        this.ctx.setVertexFormat(this.vertexFormat);
         gl.drawElements(
-            primitive ?? gl.TRIANGLES,
-            index ?? this.count,
-            gl.UNSIGNED_SHORT,
-            count ?? 0,
+            primitive ?? gl.TRIANGLES, // The primitive to draw
+            count ?? this.count, // The amount of indices to use
+            gl.UNSIGNED_SHORT, // The type of the indices
+            index === undefined ? 0 : index * 2, // The offset in bytes to the first index
         );
-        this.ctx.popArrayBuffer();
         this.ctx.popElementArrayBuffer();
+        this.ctx.popArrayBuffer();
     }
 
     free() {
@@ -489,23 +490,24 @@ export function initGfx(gl: WebGLRenderingContext, opts: KAPLAYOpt = {}) {
         if (extension) extension.loseContext();
     }
 
-    let curVertexFormat: object | null = null;
+    let curVertexFormat: VertexFormat | null = null;
 
-    function setVertexFormat(fmt: VertexFormat) {
-        if (deepEq(fmt, curVertexFormat)) return;
+    function setVertexFormat(fmt: VertexFormat, canSkip = true) {
+        if (canSkip && deepEq(fmt, curVertexFormat)) return;
         curVertexFormat = fmt;
         const stride = fmt.reduce((sum, f) => sum + f.size, 0);
         fmt.reduce((offset, f, i) => {
+            // const loc = gl.getAttribLocation(program, f.name);
             gl.enableVertexAttribArray(i);
             gl.vertexAttribPointer(
-                i,
-                f.size,
-                gl.FLOAT,
-                false,
-                stride * 4,
-                offset,
+                i, // Location
+                f.size, // Dimensions
+                gl.FLOAT, // Type
+                false, // Normalize
+                stride * 4, // Next vertex in bytes
+                offset, // First vertex in bytes
             );
-            return offset + f.size * 4;
+            return offset + f.size * 4; // Total size of vertex
         }, 0);
     }
 

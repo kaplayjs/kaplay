@@ -26,6 +26,7 @@ import type { DrawonComp, DrawonCompOpt } from "../ecs/components/draw/drawon";
 import type { EllipseComp } from "../ecs/components/draw/ellipse";
 import type { FillComp } from "../ecs/components/draw/fill";
 import type { MaskComp } from "../ecs/components/draw/mask";
+import type { MeshComp, MeshCompOpt } from "../ecs/components/draw/mesh";
 import type { OpacityComp } from "../ecs/components/draw/opacity";
 import type { OutlineComp } from "../ecs/components/draw/outline";
 import type {
@@ -131,6 +132,7 @@ import type {
     LineCap,
     LineJoin,
 } from "../gfx/draw/drawLine";
+import type { DrawMeshOpt } from "../gfx/draw/drawMesh";
 import type { DrawPictureOpt, Picture } from "../gfx/draw/drawPicture";
 import type { DrawPolygonOpt } from "../gfx/draw/drawPolygon";
 import type { DrawRectOpt } from "../gfx/draw/drawRect";
@@ -140,6 +142,7 @@ import type { DrawTriangleOpt } from "../gfx/draw/drawTriangle";
 import type { DrawUVQuadOpt } from "../gfx/draw/drawUVQuad";
 import type { StyledTextInfo } from "../gfx/formatText";
 import type { FrameBuffer } from "../gfx/FrameBuffer";
+import type { VertexFormat } from "../gfx/gfx";
 import type { DecisionNode, DecisionTree } from "../math/ai/decisiontree";
 import type { Rule, RuleSystem } from "../math/ai/rulesystem";
 import type { StateMachine } from "../math/ai/statemachine";
@@ -167,6 +170,7 @@ import type { NavGrid } from "../math/navigationgrid";
 import type { NavMesh } from "../math/navigationmesh";
 import type { Quadtree, ResizingQuadtree } from "../math/spatial/quadtree";
 import type { Vec2 } from "../math/Vec2";
+import type { Vec3 } from "../math/vec3";
 import {
     type Anchor,
     type BlendMode,
@@ -185,6 +189,7 @@ import {
     type KGamepadStick,
     type LoadFontOpt,
     type Mask,
+    type Mesh,
     type MouseButton,
     type MusicData,
     type QueryOpt,
@@ -1016,6 +1021,7 @@ export interface KAPLAYCtx {
      * @subgroup Rendering
      */
     picture(picture: Picture): PictureComp;
+    mesh(opt?: MeshCompOpt): MeshComp;
     /**
      * Attaches a collider area from a shape and enables collision detection on a Game Object.
      *
@@ -5629,6 +5635,20 @@ export interface KAPLAYCtx {
     vec2(xy: number): Vec2;
     vec2(): Vec2;
     /**
+     * Create a 3D vector.
+     *
+     * @example
+     * ```js
+     * // { x: 100, y: 80, z: 20 }
+     * vec3(100, 80, 20)
+     * ```
+     *
+     * @returns The vector.
+     * @since v4000.0
+     * @group Math
+     */
+    vec3(x: number, y: number, z: number): Vec3;
+    /**
      * Create a color from RGB values (0 - 255).
      *
      * @param r - The red value.
@@ -6457,6 +6477,14 @@ export interface KAPLAYCtx {
      * @subgroup Vectors
      */
     Vec2: typeof Vec2;
+    /**
+     * A 3D vector.
+     *
+     * @since v4000.0
+     * @group Math
+     * @subgroup Vectors
+     */
+    Vec3: typeof Vec3;
     /**
      * A color.
      *
@@ -7294,6 +7322,28 @@ export interface KAPLAYCtx {
      * @group Draw
      */
     drawCanvas(opt: DrawCanvasOpt): void;
+    /**
+     * Create a mesh to draw custom stuff.
+     *
+     * @returns The mesh object.
+     * @since v4000.0
+     * @group Rendering
+     * @subgroup Mesh
+     */
+    makeMesh(
+        format: VertexFormat,
+        vertices: number[],
+        indices: number[],
+    ): Mesh;
+    /**
+     * Draw a mesh.
+     *
+     * @param opt - The mesh object.
+     *
+     * @since v4000.0
+     * @group Draw
+     */
+    drawMesh(opt: DrawMeshOpt): void;
     /**
      * The Debug interface for debugging stuff.
      *

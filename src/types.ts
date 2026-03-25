@@ -12,9 +12,11 @@ import type {
 import type { LineCap, LineJoin } from "./gfx/draw/drawLine";
 import type { Picture } from "./gfx/draw/drawPicture";
 import type { FrameBuffer } from "./gfx/FrameBuffer";
+import type { MeshBuffer, VertexFormat } from "./gfx/gfx";
 import type { Color, RGBAValue, RGBValue } from "./math/color";
 import type { Circle, Ellipse, Line, Point, Polygon, Rect } from "./math/math";
 import type { Vec2 } from "./math/Vec2";
+import type { Vec3 } from "./math/vec3";
 import type { Defined, MergeObj } from "./utils/types";
 
 export type Tag = string;
@@ -664,6 +666,36 @@ export type Canvas = {
     draw(action: () => void): void;
     free(): void;
     readonly fb: FrameBuffer;
+};
+
+export type SerializedMesh = {
+    format: VertexFormat;
+    vertices: number[];
+    indices: number[];
+};
+
+export type Mesh = {
+    draw(primitive?: GLenum, index?: GLuint, count?: GLuint): void;
+    free(): void;
+    setVertex(index: GLuint, ...attributes: number[]): void;
+    setVertexAttribute(
+        vertexIndex: GLuint,
+        attributeIndex: GLuint,
+        ...values: number[]
+    ): void;
+    setVertexVec2(vertexIndex: GLuint, attributeIndex: GLuint, v: Vec2): void;
+    setVertexVec3(vertexIndex: GLuint, attributeIndex: GLuint, v: Vec3): void;
+    setVertexColor(
+        vertexIndex: GLuint,
+        attributeIndex: GLuint,
+        color: Color,
+        opacity: number,
+    ): void;
+    get vertices(): number[];
+    get indices(): number[];
+    get mesh(): MeshBuffer;
+    get vertexSize(): number;
+    serialize(): SerializedMesh;
 };
 
 /**

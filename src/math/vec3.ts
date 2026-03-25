@@ -24,6 +24,14 @@ export class Vec3 {
         this.z = z;
     }
 
+    add(other: Vec3) {
+        return new Vec3(this.x + other.x, this.y + other.y, this.z + other.z);
+    }
+
+    sub(other: Vec3) {
+        return new Vec3(this.x - other.x, this.y - other.y, this.z - other.z);
+    }
+
     dot(other: Vec3) {
         return this.x * other.x + this.y * other.y + this.z * other.z;
     }
@@ -34,6 +42,26 @@ export class Vec3 {
             this.z * other.x - this.x * other.z,
             this.x * other.y - this.y * other.x,
         );
+    }
+
+    smul(scalar: number) {
+        return new Vec3(this.x * scalar, this.y * scalar, this.z * scalar);
+    }
+
+    sdiv(scalar: number) {
+        return new Vec3(this.x / scalar, this.y / scalar, this.z / scalar);
+    }
+
+    slen() {
+        return this.x * this.x + this.y * this.y + this.z * this.z;
+    }
+
+    len() {
+        return Math.sqrt(this.slen());
+    }
+
+    unit() {
+        return this.sdiv(this.len());
     }
 
     toAxis(): Vec3 {
@@ -51,4 +79,8 @@ export class Vec3 {
             return this.z < 0 ? Vec3.BACK : Vec3.FORWARD;
         }
     }
+}
+
+export function vec3(x: number, y: number, z: number) {
+    return new Vec3(x, y, z);
 }

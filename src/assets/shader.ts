@@ -230,9 +230,14 @@ export function makeShader(
     ggl: GfxCtx,
     vertSrc: string | null = DEF_VERT,
     fragSrc: string | null = DEF_FRAG,
+    raw?: boolean,
 ): Shader {
-    const vcode = VERT_TEMPLATE.replace("{{user}}", vertSrc ?? DEF_VERT);
-    const fcode = FRAG_TEMPLATE.replace("{{user}}", fragSrc ?? DEF_FRAG);
+    const vcode = raw && vertSrc
+        ? vertSrc
+        : VERT_TEMPLATE.replace("{{user}}", vertSrc ?? DEF_VERT);
+    const fcode = raw && fragSrc
+        ? fragSrc
+        : FRAG_TEMPLATE.replace("{{user}}", fragSrc ?? DEF_FRAG);
 
     try {
         return new Shader(
@@ -287,10 +292,11 @@ export function loadShader(
     name: string | null,
     vert?: string,
     frag?: string,
+    raw?: boolean,
 ) {
     return _k.assets.shaders.addLoaded(
         name,
-        makeShader(_k.gfx.ggl, vert, frag),
+        makeShader(_k.gfx.ggl, vert, frag, raw),
     );
 }
 
@@ -298,6 +304,7 @@ export function loadShaderURL(
     name: string | null,
     vert?: string,
     frag?: string,
+    raw?: boolean,
 ): Asset<ShaderData> {
     vert = fixURL(vert);
     frag = fixURL(frag);
@@ -307,7 +314,7 @@ export function loadShaderURL(
             : Promise.resolve(null);
     const load = Promise.all([resolveUrl(vert), resolveUrl(frag)])
         .then(([vcode, fcode]: [string | null, string | null]) => {
-            return makeShader(_k.gfx.ggl, vcode, fcode);
+            return makeShader(_k.gfx.ggl, vcode, fcode, raw);
         });
     return _k.assets.shaders.add(name, load);
 }

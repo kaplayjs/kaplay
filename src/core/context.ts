@@ -33,6 +33,7 @@ import { ellipse } from "../ecs/components/draw/ellipse";
 import { fadeIn } from "../ecs/components/draw/fadeIn";
 import { fill } from "../ecs/components/draw/fill";
 import { mask } from "../ecs/components/draw/mask";
+import { mesh } from "../ecs/components/draw/mesh";
 import { opacity } from "../ecs/components/draw/opacity";
 import { outline } from "../ecs/components/draw/outline";
 import { particles } from "../ecs/components/draw/particles";
@@ -119,7 +120,7 @@ import { getDefaultLayer, getLayers, layers, setLayers } from "../game/layers";
 import { getSceneName, go, popScene, pushScene } from "../game/scenes";
 import { anchorPt } from "../gfx/anchor";
 import { getBackground, setBackground } from "../gfx/bg";
-import { makeCanvas } from "../gfx/canvasBuffer";
+import { makeCanvas, makeMesh } from "../gfx/canvasBuffer";
 import { drawBezier } from "../gfx/draw/drawBezier";
 import { drawCanvas } from "../gfx/draw/drawCanvas";
 import { drawCircle } from "../gfx/draw/drawCircle";
@@ -128,6 +129,7 @@ import { drawEllipse } from "../gfx/draw/drawEllipse";
 import { drawFormattedText } from "../gfx/draw/drawFormattedText";
 import { drawLine, drawLines } from "../gfx/draw/drawLine";
 import { drawMasked } from "../gfx/draw/drawMasked";
+import { drawMesh } from "../gfx/draw/drawMesh";
 import {
     appendToPicture,
     beginPicture,
@@ -240,6 +242,7 @@ import {
 import { insertionSort } from "../math/sort";
 import { makeQuadtree, Quadtree } from "../math/spatial/quadtree";
 import { Vec2 } from "../math/Vec2";
+import { Vec3, vec3 } from "../math/vec3";
 import { BlendMode, type KAPLAYPlugin } from "../types";
 import {
     download,
@@ -390,6 +393,7 @@ export const createContext = (
         uvquad,
         video,
         picture,
+        mesh,
         outline,
         particles,
         body,
@@ -515,6 +519,7 @@ export const createContext = (
         Polygon,
         Collision,
         Vec2,
+        Vec3,
         Color,
         Mat2,
         Mat4,
@@ -535,6 +540,7 @@ export const createContext = (
         randi,
         randSeed,
         vec2,
+        vec3,
         rgb,
         hsl2rgb,
         quad,
@@ -629,6 +635,8 @@ export const createContext = (
         usePostEffect,
         makeCanvas,
         drawCanvas,
+        makeMesh,
+        drawMesh,
         Picture,
         // debug
         debug,

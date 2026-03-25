@@ -1,5 +1,6 @@
 import { deg2rad, rad2deg } from "./math";
 import { Vec2 } from "./Vec2";
+import type { Vec3 } from "./vec3";
 
 /**
  * @group Math
@@ -51,6 +52,27 @@ export class Mat4 {
         ]);
     }
 
+    static translate3(p: Vec3): Mat4 {
+        return new Mat4([
+            1,
+            0,
+            0,
+            0,
+            0,
+            1,
+            0,
+            0,
+            0,
+            0,
+            1,
+            0,
+            p.x,
+            p.y,
+            p.z,
+            1,
+        ]);
+    }
+
     static scale(s: Vec2): Mat4 {
         return new Mat4([
             s.x,
@@ -64,6 +86,27 @@ export class Mat4 {
             0,
             0,
             1,
+            0,
+            0,
+            0,
+            0,
+            1,
+        ]);
+    }
+
+    static scale3(s: Vec3): Mat4 {
+        return new Mat4([
+            s.x,
+            0,
+            0,
+            0,
+            0,
+            s.y,
+            0,
+            0,
+            0,
+            0,
+            s.z,
             0,
             0,
             0,
@@ -141,6 +184,41 @@ export class Mat4 {
             0,
             0,
             1,
+        ]);
+    }
+
+    static perspective(
+        left: number,
+        right: number,
+        top: number,
+        bottom: number,
+        near: number,
+        far: number,
+        focus: number,
+    ) {
+        const sx = 2 * focus / (right - left);
+        const sy = 2 * focus / (top - bottom);
+        const sz = -(far + near) / (far - near);
+        const tz = -2 * far * near / (far - near);
+        const tx = (left + right) / (right - left);
+        const ty = (bottom + top) / (top - bottom);
+        return new Mat4([
+            sx,
+            0,
+            0,
+            0,
+            0,
+            sy,
+            0,
+            0,
+            0,
+            0,
+            sz,
+            -1,
+            tx,
+            ty,
+            tz,
+            0,
         ]);
     }
 

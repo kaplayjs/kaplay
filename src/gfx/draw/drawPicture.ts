@@ -3,7 +3,7 @@ import { IDENTITY_MATRIX } from "../../constants/math";
 import { getCamTransform } from "../../game/camera";
 import { _k } from "../../shared";
 import type { BlendMode, RenderProps } from "../../types";
-import { Mesh, type Texture } from "../gfx";
+import { MeshBuffer, type Texture } from "../gfx";
 import { height, width } from "../stack";
 
 /**
@@ -37,7 +37,7 @@ export class Picture {
     vertices: number[];
     indices: number[];
     commands: PictureCommand[];
-    mesh?: Mesh;
+    mesh?: MeshBuffer;
 
     /**
      * Creates an empty picture if no data is given, otherwise deserializes the data
@@ -115,12 +115,7 @@ export function drawPicture(
     // This binds the vertex buffer
     ctx.pushArrayBuffer(picture.mesh!.glVBuf);
     // Once bound, we set the pointers, which are offsets relative to the pointer of the array buffer we just bound
-    const a_pos = gl.getAttribLocation(_k.gfx.defShader.glProgram, "a_pos");
-    gl.vertexAttribPointer(a_pos, 2, gl.FLOAT, false, 32, 0);
-    const a_uv = gl.getAttribLocation(_k.gfx.defShader.glProgram, "a_uv");
-    gl.vertexAttribPointer(a_uv, 2, gl.FLOAT, false, 32, 8);
-    const a_color = gl.getAttribLocation(_k.gfx.defShader.glProgram, "a_color");
-    gl.vertexAttribPointer(a_color, 4, gl.FLOAT, false, 32, 16);
+    ctx.setVertexFormat(_k.gfx.renderer.vertexFormat, false);
     // Bind the index buffer as well
     ctx.pushElementArrayBuffer(picture.mesh!.glIBuf);
 
@@ -175,13 +170,9 @@ export function drawPicture(
     ctx.popArrayBuffer();
     ctx.popElementArrayBuffer();
 
-    // So, you would think that once you pop the vertex buffer, the vertex buffer of the renderer is bound again
-    // But that seems not to be happening, so we do it explicitly here
     ctx.pushArrayBuffer(_k.gfx.renderer.glVBuf);
-    // We set the pointers to this vertex buffer again
-    gl.vertexAttribPointer(a_pos, 2, gl.FLOAT, false, 32, 0);
-    gl.vertexAttribPointer(a_uv, 2, gl.FLOAT, false, 32, 8);
-    gl.vertexAttribPointer(a_color, 4, gl.FLOAT, false, 32, 16);
+    // We restore the pointers to this vertex buffer again
+    ctx.setVertexFormat(_k.gfx.renderer.vertexFormat, false);
     // And pop the buffer to balance
     ctx.popArrayBuffer();
 }
@@ -222,7 +213,7 @@ export function endPicture(): Picture {
     _k.gfx.renderer.picture = null;
 
     picture.free();
-    picture.mesh = new Mesh(
+    picture.mesh = new MeshBuffer(
         ctx,
         _k.gfx.renderer.vertexFormat,
         picture.vertices,
