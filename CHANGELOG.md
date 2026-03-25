@@ -57,7 +57,7 @@ So your change should look like:
 
 - Added a `repack: false` option to `loadSpite()` and a repack parameter to
   `loadSpriteAtlas()`, for faster loading if you're packing stuff at build-time
-  (#TBD) - @dragoncoder047
+  (#1063) - @dragoncoder047
 
 ## [4000.0.0-alpha.27] - 2026-03-19
 
