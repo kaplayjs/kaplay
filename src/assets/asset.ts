@@ -12,6 +12,7 @@ import type { ShaderData } from "./shader";
 import type { SoundData } from "./sound";
 import type { LoadSpriteSrc, SpriteData } from "./sprite";
 import { fixURL } from "./utils";
+import type { WavefrontData } from "./wavefront";
 
 /**
  * An asset is a resource that is loaded asynchronously.
@@ -297,6 +298,7 @@ export const initAssets = (
         shaders: new AssetBucket<ShaderData>(),
         custom: new AssetBucket<any>(),
         prefabAssets: new AssetBucket<SerializedGameObj>(),
+        meshes: new AssetBucket<WavefrontData>(),
         music: {} as Record<string, string>,
         packer,
         // if we finished initially loading all assets
