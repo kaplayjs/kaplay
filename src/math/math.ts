@@ -2159,7 +2159,7 @@ export class Rect {
     }
     support(direction: Vec2): Vec2 {
         const pts = this.points();
-        let maxPoint = this.points()[0];
+        let maxPoint = pts[0];
         let maxDistance = Number.NEGATIVE_INFINITY;
         let vertex;
         for (let i = 1; i < pts.length; i++) {

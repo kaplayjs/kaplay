@@ -53,6 +53,12 @@ So your change should look like:
   requested to be drawn, to reduce the number of times the texture is synced to
   the GPU, which is slow (#1058) - @dragoncoder047
 
+### Added
+
+- Added the ability to check which character a point is hovering over in the
+  `text()` component, to make text-based menus easier to build by simply styling
+  text (#1064) - @dragoncoder047
+
 ## [4000.0.0-alpha.27] - 2026-03-19
 
 ### Added
