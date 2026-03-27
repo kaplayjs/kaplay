@@ -276,7 +276,8 @@ export function text(t: string, opt: TextCompOpt = {}): TextComp {
             const offset = anchorPoint();
             if (!testRectPoint(this.renderArea(), point.sub(offset))) return -1;
             const chars = theFormattedText.chars;
-            const minimums: [index: number, distance: number][] = [];
+            let minDist = Infinity;
+            let minIndex = -1;
             for (let i = 0; i < chars.length; i++) {
                 const fc = chars[i];
                 const w = fc.width * fc.scale.x;
@@ -296,10 +297,14 @@ export function text(t: string, opt: TextCompOpt = {}): TextComp {
                 tempRectForPointTest.width = w;
                 tempRectForPointTest.height = h;
                 if (testRectPoint(tempRectForPointTest, point)) {
-                    minimums.push([i, Vec2.dist(fc.pos, point)]);
+                    const dist = Vec2.dist(point, fc.pos);
+                    if (dist < minDist) {
+                        minDist = dist;
+                        minIndex = i;
+                    }
                 }
             }
-            return minimums.sort((m1, m2) => m1[1] - m2[1])[0]?.[0] ?? -1;
+            return minIndex;
         },
 
         update(this: GameObj<TextComp>) {
