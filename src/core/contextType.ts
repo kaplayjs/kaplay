@@ -4161,7 +4161,9 @@ export interface KAPLAYCtx {
         url: string,
     ): Asset<Record<string, SpriteData>>;
     /**
-     * Load a sprite with aseprite spritesheet json (should use "array" in the export options and have tags enabled, that way kaplay can load tagged frames as animations).
+     * Load a sprite with Aseprite spritesheet JSON. You should use "array" in the export options and have tags enabled, that way KAPLAY can load tagged frames as animations.
+     *
+     * These are loaded with repacking turned off, since we assume Aseprite is smart enough to pack the frames nicely.
      *
      * @param name - The asset name.
      * @param imgSrc - The image resource url.
