@@ -11,8 +11,8 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - Breaking changes are marked with: **(!)**.
 - [Jump to v3001 changelog](#changelog-for-v3001).
 
-<!-- [CHANGELOG GUIDELINES PLEASE FOLLOW]
--------------------------------------------------------------------------------
+## <!-- [CHANGELOG GUIDELINES PLEASE FOLLOW]
+
 Hey, KAPLAY Dev! Add your new changes in [unreleased] heading, below one of
 these heading:
 
@@ -35,7 +35,9 @@ So your change should look like:
 ### Added
 
 - added a new ghost (#6767) - @lajbel
--------------------------------------------------------------------------------
+
+---
+
 [DO IT IF YOU DON'T WANT A LAJBEL VISIT AT NIGHT] -->
 
 ## [unreleased]
@@ -52,6 +54,9 @@ So your change should look like:
 - Updated texture packer refreshing to only refresh when a sprite is actually
   requested to be drawn, to reduce the number of times the texture is synced to
   the GPU, which is slow (#1058) - @dragoncoder047
+- Added `exists()` which also checks whether the object is not undefined. This
+  should temporarily fix the problem with undefined objects during collision due
+  to iterators being invalidated by destroy.
 
 ### Added
 

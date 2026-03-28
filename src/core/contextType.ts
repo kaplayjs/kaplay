@@ -452,6 +452,14 @@ export interface KAPLAYCtx {
      */
     query(opt: QueryOpt): GameObj[];
     /**
+     * Checks whether the game obj is a valid object.
+     *
+     * @param obj - The game object to check.
+     *
+     * @group Game Obj
+     */
+    exists(obj: GameObj): boolean;
+    /**
      * Remove the game obj.
      *
      * @param obj - The game object to remove.
