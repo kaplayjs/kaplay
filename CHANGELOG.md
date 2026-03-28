@@ -58,6 +58,12 @@ So your change should look like:
   should temporarily fix the problem with undefined objects during collision due
   to iterators being invalidated by destroy.
 
+### Added
+
+- Added the ability to check which character a point is hovering over in the
+  `text()` component, to make text-based menus easier to build by simply styling
+  text (#1064) - @dragoncoder047
+
 ## [4000.0.0-alpha.27] - 2026-03-19
 
 ### Added
