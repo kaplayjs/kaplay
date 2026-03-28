@@ -2,7 +2,7 @@ import { vec2 } from "../math/math";
 import type { Vec2 } from "../math/Vec2";
 import { Vec3, vec3 } from "../math/vec3";
 import { _k } from "../shared";
-import { fetchText, type Asset } from "./asset";
+import { type Asset, fetchText } from "./asset";
 
 /**
  * @group Assets
@@ -35,7 +35,6 @@ export function loadWavefront(
     objSrc: string,
     mtlSrc: string,
 ): Asset<WavefrontData> {
-
     const resolveObj = typeof objSrc === "string"
         ? fetchText(objSrc)
         : Promise.resolve(objSrc);
@@ -44,9 +43,9 @@ export function loadWavefront(
         name,
         resolveObj.then((text: string) => {
             const data: WavefrontData = {
-                meshes: []
+                meshes: [],
             };
-            let mesh: WavefrontMesh | undefined
+            let mesh: WavefrontMesh | undefined;
             let posList: Vec3[] = [];
             let uvList: Vec2[] = [];
             let vertexMap = new Map<string, number[]>();
@@ -59,20 +58,32 @@ export function loadWavefront(
                     vert = [pos.x, pos.y, pos.z, uv.x, uv.y];
                 }
                 return vert;
-            }
+            };
             const lines = text.split("\n");
             for (let i = 0; i < lines.length; i++) {
                 const parts = lines[i].split(" ");
                 switch (parts[0]) {
                     case "o":
-                        mesh = { material: { texture: "" }, vertices: [], indices: [] };
+                        mesh = {
+                            material: { texture: "" },
+                            vertices: [],
+                            indices: [],
+                        };
                         data.meshes.push(mesh);
                         break;
                     case "v":
-                        posList.push(vec3(parseFloat(parts[1]), parseFloat(parts[2]), parseFloat(parts[3])));
+                        posList.push(
+                            vec3(
+                                parseFloat(parts[1]),
+                                parseFloat(parts[2]),
+                                parseFloat(parts[3]),
+                            ),
+                        );
                         break;
                     case "vt":
-                        uvList.push(vec2(parseFloat(parts[1]), parseFloat(parts[2])));
+                        uvList.push(
+                            vec2(parseFloat(parts[1]), parseFloat(parts[2])),
+                        );
                         break;
                     case "usemtl":
                         mesh!.material.texture = parts[1];
@@ -111,7 +122,9 @@ export function loadWavefront(
                             case "map_kd":
                                 const texture = parts[1];
                                 for (const mesh of data.meshes) {
-                                    if (mesh.material.texture == currentMaterial) {
+                                    if (
+                                        mesh.material.texture == currentMaterial
+                                    ) {
                                         mesh.material.texture = texture;
                                     }
                                 }
@@ -125,6 +138,6 @@ export function loadWavefront(
             else {
                 return data;
             }
-        })
+        }),
     );
 }

@@ -49,6 +49,16 @@ loadSprite("grass", "/sprites/grass.png");
 loadSprite("steel", "/sprites/steel.png");
 loadSprite("prize", "/sprites/jumpy.png");
 loadSprite("ghosty", "/sprites/ghosty.png");
+loadSprite("spike", "/sprites/spike.png");
+loadSprite("apple", "/sprites/apple.png");
+loadSprite("portal", "/sprites/portal.png");
+loadSprite("coin", "/sprites/coin.png");
+loadSound("coin", "sounds/score.mp3");
+loadSound("powerup", "sounds/powerup.mp3");
+loadSound("blip", "sounds/blip.mp3");
+loadSound("hit", "sounds/hit.mp3");
+loadSound("portal", "sounds/portal.mp3");
+
 loadShader(
     "3D",
     `
@@ -74,7 +84,13 @@ loadShader(
     uniform sampler2D u_tex;
 
     void main(void) {
-        gl_FragColor = texture2D(u_tex, v_uv);
+        highp vec4 color = texture2D(u_tex, v_uv);
+        if (color.a > 0.0) {
+            gl_FragColor = color;
+        }
+        else {
+            discard;
+        }
     }
     `,
     true,
@@ -101,17 +117,55 @@ function customPatrol(speed = 60, dir = 1) {
     };
 }
 
+// custom component that makes stuff grow big
+function big() {
+    let timer = 0;
+    let isBig = false;
+    let destScale = 1;
+    return {
+        // component id / name
+        id: "big",
+        // it requires the scale component
+        require: ["scale"],
+        // this runs every frame
+        update() {
+            if (isBig) {
+                timer -= dt();
+                if (timer <= 0) {
+                    this.smallify();
+                }
+            }
+            this.scale = this.scale.lerp(vec2(destScale), dt() * 6);
+        },
+        // custom methods
+        isBig() {
+            return isBig;
+        },
+        smallify() {
+            destScale = 1;
+            timer = 0;
+            isBig = false;
+        },
+        biggify(time) {
+            destScale = 2;
+            timer = time;
+            isBig = true;
+        },
+    };
+}
+
 onLoad(() => {
     const grassUv = getSprite("grass").data.frames[0].q;
     const steelUv = getSprite("steel").data.frames[0].q;
     const prizeUv = getSprite("prize").data.frames[0].q;
+    const spikeUv = getSprite("spike").data.frames[0].q;
 
     const format = [
         { name: "a_pos", size: 3 },
         { name: "a_uv", size: 2 },
     ];
 
-    const vertices = (uv) => [
+    const vertices = (uv, h = 64) => [
         // Front
         0,
         64,
@@ -119,12 +173,12 @@ onLoad(() => {
         uv.x,
         uv.y + uv.h - 0.001, /*1, 1, 1, 1,*/
         0,
-        0,
+        64 - h,
         -height() / 2,
         uv.x,
         uv.y + 0.001, /*1, 1, 1, 1,*/
         64,
-        0,
+        64 - h,
         -height() / 2,
         uv.x + uv.w,
         uv.y + 0.001, /*1, 1, 1, 1,*/
@@ -140,12 +194,12 @@ onLoad(() => {
         uv.x + uv.w,
         uv.y + uv.h - 0.001, /*1, 1, 1, 1,*/
         0,
-        0,
+        64 - h,
         -height() / 2 - 64,
         uv.x + uv.w,
         uv.y + 0.001, /*1, 1, 1, 1,*/
         64,
-        0,
+        64 - h,
         -height() / 2 - 64,
         uv.x,
         uv.y + 0.001, /*1, 1, 1, 1,*/
@@ -172,17 +226,33 @@ onLoad(() => {
         5,
         4,
         // Left
-        4, 5, 0,
-        5, 1, 0,
+        4,
+        5,
+        0,
+        5,
+        1,
+        0,
         // Right
-        3, 2, 7,
-        2, 6, 7,
+        3,
+        2,
+        7,
+        2,
+        6,
+        7,
         // Top
-        1, 5, 2,
-        5, 6, 2,
+        1,
+        5,
+        2,
+        5,
+        6,
+        2,
         // Bottom
-        4, 0, 7,
-        0, 3, 7
+        4,
+        0,
+        7,
+        0,
+        3,
+        7,
     ];
 
     const projection = Mat4.perspective(
@@ -215,7 +285,9 @@ onLoad(() => {
                 area(),
                 body({ isStatic: true }),
                 shader("3D", () => ({
-                    uModelViewMatrix: Mat4.translate3(vec3(- camPos().x, - camPos().y, 0)),
+                    uModelViewMatrix: Mat4.translate3(
+                        vec3(-camPos().x, -camPos().y, 0),
+                    ),
                     uProjectionMatrix: projection,
                 })),
             ],
@@ -229,7 +301,9 @@ onLoad(() => {
                 area(),
                 body({ isStatic: true }),
                 shader("3D", () => ({
-                    uModelViewMatrix: Mat4.translate3(vec3(- camPos().x, - camPos().y, 0)),
+                    uModelViewMatrix: Mat4.translate3(
+                        vec3(-camPos().x, -camPos().y, 0),
+                    ),
                     uProjectionMatrix: projection,
                 })),
             ],
@@ -239,7 +313,7 @@ onLoad(() => {
                 body({ isStatic: true }),
                 offscreen({ hide: true }),
                 anchor("bot"),
-            ],
+            ],*/
             "$": () => [
                 sprite("coin"),
                 area({ isSensor: true }),
@@ -247,7 +321,7 @@ onLoad(() => {
                 anchor("bot"),
                 offscreen({ hide: true }),
                 "coin",
-            ],*/
+            ],
             "%": () => [
                 /*sprite("prize"),
                 area(),
@@ -259,17 +333,30 @@ onLoad(() => {
                 area(),
                 body({ isStatic: true }),
                 shader("3D", () => ({
-                    uModelViewMatrix: Mat4.translate3(vec3(- camPos().x, - camPos().y, 0)),
+                    uModelViewMatrix: Mat4.translate3(
+                        vec3(-camPos().x, -camPos().y, 0),
+                    ),
                     uProjectionMatrix: projection,
                 })),
             ],
-            /*"^": () => [
-                sprite("spike"),
+            "^": () => [
+                /*sprite("spike"),
                 area(),
                 body({ isStatic: true }),
                 anchor("bot"),
-                offscreen({ hide: true }),
+                offscreen({ hide: true }),*/
                 "danger",
+                mesh({
+                    mesh: makeMesh(format, vertices(spikeUv, 21), indices),
+                }),
+                area(),
+                body({ isStatic: true }),
+                shader("3D", () => ({
+                    uModelViewMatrix: Mat4.translate3(
+                        vec3(-camPos().x, -camPos().y, 0),
+                    ),
+                    uProjectionMatrix: projection,
+                })),
             ],
             "#": () => [
                 sprite("apple"),
@@ -278,7 +365,7 @@ onLoad(() => {
                 body(),
                 offscreen({ hide: true }),
                 "apple",
-            ],*/
+            ],
             ">": () => [
                 sprite("ghosty"),
                 area(),
@@ -288,105 +375,235 @@ onLoad(() => {
                 offscreen({ hide: true }),
                 "enemy",
             ],
-            /*"@": () => [
+            "@": () => [
                 sprite("portal"),
                 area({ scale: 0.5, isSensor: true }),
                 anchor("bot"),
                 pos(0, -12),
                 offscreen({ hide: true }),
                 "portal",
-            ],*/
+            ],
         },
     };
 
     setGravity(3200);
 
-    // Clear and enable z-buffer
-    add([
-        {
-            draw() {
-                gl.clearDepth(1.0);
-                gl.enable(gl.DEPTH_TEST);
-                gl.depthFunc(gl.LEQUAL);
-                gl.clear(gl.DEPTH_BUFFER_BIT);
+    scene("game", ({ levelId, coins } = { levelId: 0, coins: 0 }) => {
+        // Clear and enable z-buffer
+        add([
+            {
+                draw() {
+                    gl.clearDepth(1.0);
+                    gl.enable(gl.DEPTH_TEST);
+                    gl.depthFunc(gl.LEQUAL);
+                    gl.clear(gl.DEPTH_BUFFER_BIT);
+                },
+            },
+        ]);
+
+        const level = addLevel(LEVELS[levelId ?? 0], levelConf);
+
+        /*add([
+            pos(vec2(width() / 2 - 128, height() / 2 + 64)),
+            mesh({ mesh: makeMesh(format, vertices, indices) }),
+            area(),
+            body({ isStatic: true }),
+            shader("3D", () => ({
+                //uModelViewMatrix: new Mat4(),
+                uModelViewMatrix: Mat4.translate3(vec3(- camPos().x, - camPos().y, 0)),
+                uProjectionMatrix: projection,
+            })),
+        ]);
+        add([
+            pos(vec2(width() / 2 - 128 + 64, height() / 2 + 64)),
+            mesh({ mesh: makeMesh(format, vertices, indices) }),
+            area(),
+            body({ isStatic: true }),
+            shader("3D", () => ({
+                uModelViewMatrix: Mat4.translate3(vec3(- camPos().x, - camPos().y, 0)),
+                uProjectionMatrix: projection,
+            })),
+        ]);
+        add([
+            pos(vec2(width() / 2, height() / 2 + 64)),
+            mesh({ mesh: makeMesh(format, vertices, indices) }),
+            area(),
+            body({ isStatic: true }),
+            shader("3D", () => ({
+                uModelViewMatrix: Mat4.translate3(vec3(- camPos().x, - camPos().y, 0)),
+                uProjectionMatrix: projection,
+            })),
+        ]);*/
+
+        // disable z-buffer
+        add([
+            {
+                draw() {
+                    gl.disable(gl.DEPTH_TEST);
+                },
+            },
+        ]);
+
+        const player = add([
+            pos(0, 0),
+            sprite("bean"),
+            area(),
+            body(),
+            big(),
+            scale(),
+        ]);
+
+        player.onUpdate(() => {
+            // center camera to player
+            setCamPos(player.pos);
+            // check fall death
+            if (player.pos.y >= FALL_DEATH) {
+                go("lose");
             }
-        }
-    ]);
+        });
 
-    const level = addLevel(LEVELS[levelId ?? 0], levelConf);
+        /**
+         * Interactions
+         */
 
-    /*add([
-        pos(vec2(width() / 2 - 128, height() / 2 + 64)),
-        mesh({ mesh: makeMesh(format, vertices, indices) }),
-        area(),
-        body({ isStatic: true }),
-        shader("3D", () => ({
-            //uModelViewMatrix: new Mat4(),
-            uModelViewMatrix: Mat4.translate3(vec3(- camPos().x, - camPos().y, 0)),
-            uProjectionMatrix: projection,
-        })),
-    ]);
-    add([
-        pos(vec2(width() / 2 - 128 + 64, height() / 2 + 64)),
-        mesh({ mesh: makeMesh(format, vertices, indices) }),
-        area(),
-        body({ isStatic: true }),
-        shader("3D", () => ({
-            uModelViewMatrix: Mat4.translate3(vec3(- camPos().x, - camPos().y, 0)),
-            uProjectionMatrix: projection,
-        })),
-    ]);
-    add([
-        pos(vec2(width() / 2, height() / 2 + 64)),
-        mesh({ mesh: makeMesh(format, vertices, indices) }),
-        area(),
-        body({ isStatic: true }),
-        shader("3D", () => ({
-            uModelViewMatrix: Mat4.translate3(vec3(- camPos().x, - camPos().y, 0)),
-            uProjectionMatrix: projection,
-        })),
-    ]);*/
-
-    // disable z-buffer
-    add([
-        {
-            draw() {
-                gl.disable(gl.DEPTH_TEST);
-            }
-        }
-    ]);
-
-    const player = add([
-        pos(0, 0),
-        sprite("bean"),
-        area(),
-        body(),
-    ]);
-
-    player.onUpdate(() => {
-        // center camera to player
-        setCamPos(player.pos);
-        // check fall death
-        if (player.pos.y >= FALL_DEATH) {
+        /**
+         * When the player touches something dangerous, kill the player
+         */
+        player.onCollide("danger", () => {
             go("lose");
+            play("hit");
+        });
+
+        let hasApple = false;
+
+        /**
+         * When bumping the player's head into the prize, grow an apple
+         */
+        player.onHeadbutt((obj) => {
+            if (obj.is("prize") && !hasApple) {
+                const apple = level.spawn("#", obj.tilePos.sub(0, 1));
+                apple.jump();
+                hasApple = true;
+                play("blip");
+            }
+        });
+
+        /**
+         * When touching an apple, make the player big
+         */
+        player.onCollide("apple", (a) => {
+            destroy(a);
+            // as we defined in the big() component
+            player.biggify(3);
+            hasApple = false;
+            play("powerup");
+        });
+
+        /**
+         * When touching a portal, teleport the player
+         */
+        player.onCollide("portal", () => {
+            play("portal");
+            if (levelId + 1 < LEVELS.length) {
+                go("game", {
+                    levelId: levelId + 1,
+                    coins: coins,
+                });
+            }
+            else {
+                go("win");
+            }
+        });
+
+        /**
+         * When landing on the enemy, make the player jump and kill the enemy
+         */
+        player.onGround((l) => {
+            if (l.is("enemy")) {
+                player.jump(JUMP_FORCE * 1.5);
+                destroy(l);
+                addKaboom(player.pos);
+                play("powerup");
+            }
+        });
+
+        /**
+         * When touching the enemy from any other direction, kill the player
+         */
+        player.onCollide("enemy", (e, col) => {
+            // if it's not from the top, die
+            if (!col?.isBottom()) {
+                go("lose");
+                play("hit");
+            }
+        });
+
+        let coinPitch = 0;
+
+        onUpdate(() => {
+            if (coinPitch > 0) {
+                coinPitch = Math.max(0, coinPitch - dt() * 100);
+            }
+        });
+
+        player.onCollide("coin", (c) => {
+            destroy(c);
+            play("coin", {
+                detune: coinPitch,
+            });
+            coinPitch += 100;
+            coins += 1;
+            coinsLabel.text = coins;
+        });
+
+        const coinsLabel = add([
+            text(coins),
+            pos(24, 24),
+            fixed(),
+        ]);
+
+        /**
+         * Controls
+         */
+        function jump() {
+            if (player.isGrounded()) {
+                player.jump(JUMP_FORCE);
+            }
         }
+
+        onKeyPress("space", jump);
+
+        onKeyDown("left", () => {
+            player.move(-MOVE_SPEED, 0);
+        });
+
+        onKeyDown("right", () => {
+            player.move(MOVE_SPEED, 0);
+        });
+
+        onKeyPress("f", () => {
+            setFullscreen(!isFullscreen());
+        });
     });
 
-    function jump() {
-        if (player.isGrounded()) {
-            player.jump(JUMP_FORCE);
-        }
-    }
-
-    onKeyPress("space", jump);
-
-    onKeyDown("left", () => {
-        player.move(-MOVE_SPEED, 0);
+    /**
+     * Scenes
+     */
+    scene("lose", () => {
+        add([
+            text("You Lose"),
+        ]);
+        onKeyPress(() => go("game"));
     });
 
-    onKeyDown("right", () => {
-        player.move(MOVE_SPEED, 0);
+    scene("win", () => {
+        add([
+            text("You Win"),
+        ]);
+        onKeyPress(() => go("game"));
     });
+
+    go("game");
 });
 
-//debug.inspect = true;
+// debug.inspect = true;

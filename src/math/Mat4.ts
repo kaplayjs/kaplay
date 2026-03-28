@@ -325,7 +325,7 @@ export class Mat4 {
             const r = Math.sqrt(this.m[0] * this.m[0] + this.m[1] * this.m[1]);
             return new Vec2(
                 Math.atan(this.m[0] * this.m[4] + this.m[1] * this.m[5])
-                / (r * r),
+                    / (r * r),
                 0,
             );
         }
@@ -334,7 +334,7 @@ export class Mat4 {
             return new Vec2(
                 0,
                 Math.atan(this.m[0] * this.m[4] + this.m[1] * this.m[5])
-                / (s * s),
+                    / (s * s),
             );
         }
         else {
