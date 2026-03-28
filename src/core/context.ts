@@ -87,7 +87,7 @@ import { KeepFlags } from "../ecs/entity/GameObjRaw";
 import { createPrefab, loadPrefab } from "../ecs/entity/prefab";
 import { addKaboom } from "../ecs/entity/premade/addKaboom";
 import { addLevel } from "../ecs/entity/premade/addLevel";
-import { destroy, getTreeRoot } from "../ecs/entity/utils";
+import { destroy, exists, getTreeRoot } from "../ecs/entity/utils";
 import { Collision } from "../ecs/systems/Collision";
 import { system, SystemPhase } from "../ecs/systems/systems";
 import { KEvent, KEventController, KEventHandler } from "../events/events";
@@ -360,6 +360,7 @@ export const createContext = (
         add,
         addPrefab,
         createPrefab,
+        exists,
         destroy,
         destroyAll,
         get,
