@@ -6,6 +6,7 @@
 import type { Asset } from "../assets/asset";
 import type { SoundData } from "../assets/sound";
 import type { SpriteData } from "../assets/sprite";
+import type { DebugLog } from "../debug/debug";
 import type { FakeMouseComp } from "../ecs/components/misc/fakeMouse";
 import { timer, type TimerComp } from "../ecs/components/misc/timer";
 import type { AreaComp } from "../ecs/components/physics/area";
@@ -93,7 +94,7 @@ export type Game = {
         happy?: string;
         bean?: string;
     };
-    logs: Log[];
+    logs: DebugLog[];
     cam: CamData;
     /**
      * The default RNG used by rng functions.
@@ -123,11 +124,6 @@ export type Game = {
      */
     warned: Set<string>;
 };
-
-/**
- * @group Debug
- */
-type Log = { msg: string | { toString(): string }; time: number };
 
 /**
  * @group Rendering
@@ -196,7 +192,7 @@ export const createGame = (): Game => {
         defaultAssets: {},
 
         // Logs
-        logs: [] as { msg: string | { toString(): string }; time: number }[],
+        logs: [] as DebugLog[],
 
         // Fake mouse API
         fakeMouse: null,

@@ -1,7 +1,7 @@
 import { drawImageSourceAt } from "../assets/utils";
 import { Quad, Rect } from "../math/math";
 import { Vec2 } from "../math/Vec2";
-import type { ImageSource } from "../types";
+import type { ImageSource, TexFilter } from "../types";
 import { type GfxCtx, Texture } from "./gfx";
 
 export type Frame = { tex: Texture; q: Quad; id: number };
@@ -17,19 +17,20 @@ interface TexMap {
     ctx: CanvasRenderingContext2D;
 }
 
-export class TexPacker {
-    private _last: number = 0;
-    private _textures: Texture[] = [];
-    private _big: Frame[] = [];
-    private _used: Map<number, {
+class FilterTexPacker {
+    _textures: Texture[] = [];
+    _big: Frame[] = [];
+    _used: Map<number, {
         rect: Rect;
         tex: Texture;
         used: number;
     }> = new Map();
-    private _curMap: TexMap = null as any;
-    private _texToEntry: Map<Texture, TexMap> = new Map();
+    _curMap: TexMap = null as any;
+    _tex2Map: Map<Texture, TexMap> = new Map();
 
     constructor(
+        private _p: TexPacker,
+        private _f: TexFilter,
         private _gfx: GfxCtx,
         private _w: number,
         private _h: number,
@@ -40,80 +41,37 @@ export class TexPacker {
 
     private _hasPendingRefresh = false;
     private _newTexture(): TexMap {
-        this.refreshIfPending();
+        this._sync();
         const el = document.createElement("canvas");
         el.width = this._w;
         el.height = this._h;
-        const tex = Texture.fromImage(this._gfx, el);
+        const tex = Texture.fromImage(this._gfx, el, { filter: this._f });
         this._textures.push(tex);
 
         const ctx = el.getContext("2d");
         if (!ctx) throw new Error("Failed to get 2d context");
 
-        this._texToEntry.set(tex, this._curMap = { tex, el, ctx });
+        this._tex2Map.set(tex, this._curMap = { tex, el, ctx });
         return this._curMap;
     }
-    refreshIfPending() {
+    _sync() {
         if (this._hasPendingRefresh) {
             this._curMap.tex.update(this._curMap.el);
             this._hasPendingRefresh = false;
         }
     }
 
-    // create a image with a single texture
-    addSingle(img: ImageSource): Frame {
-        const f = {
-            tex: Texture.fromImage(this._gfx, img),
-            q: new Quad(0, 0, 1, 1),
-            id: this._last++,
-        };
+    _single(img: ImageSource): Frame {
+        const f = this._p._saveFrame(
+            this,
+            Texture.fromImage(this._gfx, img),
+            new Quad(0, 0, 1, 1),
+        );
         this._big.push(f);
         return f;
     }
 
-    /**
-     * create the default 1x1 white pixel used for primitives at uv = (1, 1).
-     *
-     * must be called prior to initializing anything else, as it doesn't check for
-     * collisions with anything!
-     */
-    _createWhitePixel(): Frame {
-        const { el, ctx, tex } = this._curMap;
-        const whitePixel = new ImageData(
-            new Uint8ClampedArray([255, 255, 255, 255]),
-            1,
-            1,
-        );
-        const { width, height } = el;
-        drawImageSourceAt(
-            ctx,
-            whitePixel,
-            width - 1,
-            height - 1,
-            0,
-            0,
-            1,
-            1,
-        );
-        tex.update(el);
-        this._used.set(-1, {
-            rect: new Rect(new Vec2(width - 1, height - 1), 1, 1),
-            tex: tex,
-            used: 0,
-        });
-        return {
-            tex,
-            q: new Quad(
-                (width - 1) / width,
-                (height - 1) / height,
-                1 / width,
-                1 / height,
-            ),
-            id: -1,
-        };
-    }
-
-    add(img: ImageSource, chopQuad?: Quad): Frame {
+    _add(img: ImageSource, chopQuad: Quad | undefined): Frame {
         const imgWidth = img.width * (chopQuad?.w ?? 1);
         const imgHeight = img.height * (chopQuad?.h ?? 1);
         const chopX = img.width * (chopQuad?.x ?? 0);
@@ -129,7 +87,7 @@ export class TexPacker {
 
         if (paddedWidth > maxX || paddedHeight > maxY) {
             // No chance of ever fitting.
-            return this.addSingle(img);
+            return this._single(img);
         }
 
         // find position
@@ -196,25 +154,27 @@ export class TexPacker {
 
         this._hasPendingRefresh = true;
 
-        this._used.set(this._last, {
+        const f = this._p._saveFrame(
+            this,
+            curTex,
+            new Quad(x / maxX, y / maxY, imgWidth / maxX, imgHeight / maxY),
+        );
+
+        this._used.set(f.id, {
             rect: rectToAdd,
             tex: curTex,
             used: 0,
         });
 
-        return {
-            tex: curTex,
-            q: new Quad(x / maxX, y / maxY, imgWidth / maxX, imgHeight / maxY),
-            id: this._last++,
-        };
+        return f;
     }
-    free() {
+    _free() {
         this._textures.forEach(tex => tex.free());
         this._big.forEach(f => f.tex.free());
         this._used.clear();
         this._big = [];
     }
-    remove(packerId: number) {
+    _remove(packerId: number) {
         const entry = this._used.get(packerId);
 
         if (!entry) {
@@ -226,10 +186,100 @@ export class TexPacker {
             return;
         }
         const { rect: { pos: { x, y }, width, height }, tex } = entry;
-        const { ctx, el } = this._texToEntry.get(tex)!;
-        ctx.clearRect(x, y, width, height);
+        this._tex2Map.get(tex)!.ctx.clearRect(x, y, width, height);
 
-        tex.update(el);
         this._used.delete(packerId);
+        this._hasPendingRefresh = true;
+    }
+}
+
+export class TexPacker {
+    _packers: Partial<Record<TexFilter, FilterTexPacker>> = {};
+    _last = 0;
+    _idsToPackers: Record<number, FilterTexPacker> = {};
+    constructor(
+        private _gfx: GfxCtx,
+        private _w: number,
+        private _h: number,
+        private _pad: number,
+    ) {}
+    private _getPacker(filter: TexFilter): FilterTexPacker {
+        return (this._packers[filter] ??= new FilterTexPacker(
+            this,
+            filter,
+            this._gfx,
+            this._w,
+            this._h,
+            this._pad,
+        ));
+    }
+    _saveFrame(packer: FilterTexPacker, tex: Texture, quad: Quad): Frame {
+        const id = this._last++;
+        this._idsToPackers[id] = packer;
+        return {
+            id,
+            tex,
+            q: quad,
+        };
+    }
+    /**
+     * create the default 1x1 white pixel used for primitives at uv = (1, 1) on the nearest filter texture
+     *
+     * must be called prior to initializing anything else, as it doesn't check for
+     * collisions with anything!
+     */
+    _createWhitePixel(): Frame {
+        const packer = this._getPacker("nearest");
+        const { el, ctx, tex } = packer._curMap;
+        const whitePixel = new ImageData(
+            new Uint8ClampedArray([255, 255, 255, 255]),
+            1,
+            1,
+        );
+        const { width, height } = el;
+        drawImageSourceAt(
+            ctx,
+            whitePixel,
+            width - 1,
+            height - 1,
+            0,
+            0,
+            1,
+            1,
+        );
+        tex.update(el);
+        packer._used.set(-1, {
+            rect: new Rect(new Vec2(width - 1, height - 1), 1, 1),
+            tex: tex,
+            used: 0,
+        });
+        return {
+            tex,
+            q: new Quad(
+                (width - 1) / width,
+                (height - 1) / height,
+                1 / width,
+                1 / height,
+            ),
+            id: -1,
+        };
+    }
+    add(img: ImageSource, filter: TexFilter, chopQuad?: Quad): Frame {
+        return this._getPacker(filter)._add(img, chopQuad);
+    }
+    // create a image with a single texture
+    addSingle(img: ImageSource, filter: TexFilter): Frame {
+        return this._getPacker(filter)._single(img);
+    }
+    syncIfPending() {
+        Object.values(this._packers).forEach(p => p._sync());
+    }
+    remove(id: number) {
+        this._idsToPackers[id]?._remove(id);
+        delete this._idsToPackers[id];
+    }
+    free() {
+        Object.values(this._packers).forEach(p => p._free());
+        this._packers = {};
     }
 }

@@ -7,6 +7,7 @@ import { calcTransform } from "../../../math/various";
 import { type Vec2 } from "../../../math/Vec2";
 import { _k } from "../../../shared";
 import type { Comp, GameObj } from "../../../types";
+import { exists } from "../../entity/utils";
 import type { Collision } from "../../systems/Collision";
 import type { PosComp } from "../transform/pos";
 import type { AreaComp } from "./area";
@@ -329,7 +330,7 @@ export function body(opt: BodyCompOpt = {}): BodyComp {
                 if (
                     // We are still colliding with the platform and the platform exists
                     this.isColliding(curPlatform)
-                    && curPlatform.exists()
+                    && exists(curPlatform)
                     && curPlatform.has("body")
                 ) {
                     // This needs to happen in onUpdate. Otherwise the player position will jitter.
@@ -404,7 +405,7 @@ export function body(opt: BodyCompOpt = {}): BodyComp {
                     if (
                         // If we are no longer on the platform, or the platform was deleted
                         !this.isColliding(curPlatform)
-                        || !curPlatform.exists()
+                        || !exists(curPlatform)
                         || !curPlatform.has("body")
                     ) {
                         willFall = true;

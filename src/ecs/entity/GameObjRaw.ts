@@ -1029,16 +1029,18 @@ export const GameObjRawPrototype: Omit<
             ?? (this.parent
                 ? this.parent._drawLayerIndex
                 : _k.game.defaultLayerIndex);
-        for (let i = 0; i < this.children.length; i++) {
-            this.children[i].update();
+        const children = this.children.slice();
+        for (let i = 0; i < children.length; i++) {
+            children[i].update();
         }
     },
 
     fixedUpdate(this: InternalGameObjRaw) {
         if (this.paused) return;
         this._fixedUpdateEvents.trigger();
-        for (let i = 0; i < this.children.length; i++) {
-            this.children[i].fixedUpdate();
+        const children = this.children.slice();
+        for (let i = 0; i < children.length; i++) {
+            children[i].fixedUpdate();
         }
     },
 
@@ -1382,7 +1384,7 @@ export const GameObjRawPrototype: Omit<
         }
 
         // If the object already exists and add hook is present, run it
-        if (this.id != 0 && this.exists() && comp.add) {
+        if (this.exists() && comp.add) {
             this._onCurCompCleanup = (c: any) => gc.push(c);
             comp.add.call(this);
             this._onCurCompCleanup = null;

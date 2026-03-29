@@ -1,15 +1,13 @@
 import { Quad } from "../math/math";
 import { _k } from "../shared";
+import { type Asset, fetchJSON, load, spriteSrcToImage } from "./asset";
 import {
-    type Asset,
-    fetchJSON,
-    load,
-    loadImg,
-    spriteSrcToImage,
-} from "./asset";
-import { type LoadSpriteOpt, type LoadSpriteSrc, SpriteData } from "./sprite";
-import { slice } from "./utils";
-import { fixURL } from "./utils";
+    fixFramesPixelsToFractionOfImage,
+    type LoadSpriteOpt,
+    type LoadSpriteSrc,
+    SpriteData,
+} from "./sprite";
+import { fixURL, slice } from "./utils";
 
 /**
  * @group Assets
@@ -59,30 +57,41 @@ export function loadSpriteAtlas(
     return load(
         spriteSrcToImage(src).then(img => {
             const map: Record<string, SpriteData> = {};
+            const wholeImageWidth = img.width, wholeImageHeight = img.height;
 
             for (const name in data) {
                 let {
-                    x,
-                    y,
-                    width,
-                    height,
+                    x: spriteSectionX,
+                    y: spriteSectionY,
+                    width: spriteSectionWidth,
+                    height: spriteSectionHeight,
                     frames,
                     sliceX,
                     sliceY,
                     anims,
                     slice9,
+                    filter,
                 } = data[name];
-                const w = img.width, h = img.height;
+                filter ??= _k.globalOpt.texFilter ?? "nearest";
                 const mainQuad = new Quad(
-                    x / w,
-                    y / h,
-                    width / w,
-                    height / h,
+                    spriteSectionX / wholeImageWidth,
+                    spriteSectionY / wholeImageHeight,
+                    spriteSectionWidth / wholeImageWidth,
+                    spriteSectionHeight / wholeImageHeight,
                 );
-                frames ??= slice(sliceX || 1, sliceY || 1);
+                if (frames) {
+                    frames = fixFramesPixelsToFractionOfImage(
+                        frames,
+                        spriteSectionWidth,
+                        spriteSectionHeight,
+                    );
+                }
+                else {
+                    frames = slice(sliceX || 1, sliceY || 1);
+                }
                 const spr = new SpriteData(
                     frames.map(q =>
-                        _k.assets.packer.add(img, mainQuad.scale(q))
+                        _k.assets.packer.add(img, filter, mainQuad.scale(q))
                     ),
                     anims,
                     slice9,
@@ -90,7 +99,6 @@ export function loadSpriteAtlas(
                 _k.assets.sprites.addLoaded(name, spr);
                 map[name] = spr;
             }
-            _k.assets.packer.refreshIfPending();
             return map;
         }),
     );
