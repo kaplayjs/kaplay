@@ -17,6 +17,7 @@ import { textFactory } from "../ecs/components/draw/text";
 import { anchorFactory } from "../ecs/components/transform/anchor";
 import { fixedFactory } from "../ecs/components/transform/fixed";
 import { moveFactory } from "../ecs/components/transform/move";
+import { parallax } from "../ecs/components/transform/parallax";
 import { posFactory } from "../ecs/components/transform/pos";
 import { rotateFactory } from "../ecs/components/transform/rotate";
 import { scaleFactory } from "../ecs/components/transform/scale";
