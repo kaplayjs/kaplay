@@ -44,9 +44,9 @@ So your change should look like:
 
 ### Breaking Changes
 
-- Updated "explicit `LoadSpriteOpt.frames`" method of loading a sprite with
-  animations (via either `loadSprite()` or `loadSpriteAtlas()`) to use pixel
-  values for the coordinate space, which is more intuitive (#1061) -
+- **(!)** Updated "explicit `LoadSpriteOpt.frames`" method of loading a sprite
+  with animations (via either `loadSprite()` or `loadSpriteAtlas()`) to use
+  pixel values for the coordinate space, which is more intuitive (#1061) -
   @dragoncoder047
 
 ### Fixed
