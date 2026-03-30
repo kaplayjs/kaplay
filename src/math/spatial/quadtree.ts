@@ -8,7 +8,7 @@ import {
     getTransformVersion,
     objectTransformNeedsUpdate,
 } from "../../ecs/entity/GameObjRaw";
-import { isPaused } from "../../ecs/entity/utils";
+import { exists, isPaused } from "../../ecs/entity/utils";
 import type { GameObj } from "../../types";
 import { Rect, vec2 } from "../math";
 import { calcTransform } from "../various";
@@ -664,7 +664,7 @@ export function makeQuadtree(
 }
 
 function isValidCollisionObject(obj: GameObj) {
-    return obj.exists() && (obj.isSensor || obj.has("body")) && !isPaused(obj);
+    return exists(obj) && (obj.isSensor || obj.has("body")) && !isPaused(obj);
 }
 
 export class BaseQuadtree<T> {
