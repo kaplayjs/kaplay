@@ -4098,6 +4098,7 @@ export interface KAPLAYCtx {
      *
      * @param src - The image resource url.
      * @param data - The sprite atlas data.
+     * @param [repack=true] - set to false if you've already packed your spritesheet. See {@link LoadSpriteOpt.repack} for more.
      *
      * @example
      * ```js
@@ -4132,12 +4133,14 @@ export interface KAPLAYCtx {
     loadSpriteAtlas(
         src: LoadSpriteSrc,
         data: SpriteAtlasData,
+        repack?: boolean,
     ): Asset<Record<string, SpriteData>>;
     /**
      * Load sprites from a sprite atlas with URL.
      *
      * @param src - The image resource url.
      * @param url - The json resource url.
+     * @param [repack=true] - set to false if you've already packed your spritesheet. See {@link LoadSpriteOpt.repack} for more.
      *
      * @example
      * ```js
@@ -4159,6 +4162,7 @@ export interface KAPLAYCtx {
     loadSpriteAtlas(
         src: LoadSpriteSrc,
         url: string,
+        repack?: boolean,
     ): Asset<Record<string, SpriteData>>;
     /**
      * Load a sprite with Aseprite spritesheet JSON. You should use "array" in the export options and have tags enabled, that way KAPLAY can load tagged frames as animations.
