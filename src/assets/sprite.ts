@@ -94,11 +94,13 @@ export interface LoadSpriteOpt {
      */
     filter?: TexFilter;
     /**
-     * If you've already packed your spritesheet, you can set this to true to tell KAPLAY not to repack it
+     * If you've already packed your spritesheet, you can set this to false to tell KAPLAY not to repack it
      * when loading it into the main texture. However, this may negatively impact rendering performance if
      * it causes future sprites to not fit and be moved to a different GPU texture.
      *
      * This doesn't apply if you use singular: true, because the entire image will be its own texture then.
+     *
+     * @default true
      */
     repack?: boolean;
 }
