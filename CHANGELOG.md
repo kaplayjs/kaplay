@@ -12,7 +12,7 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - [Jump to v3001 changelog](#changelog-for-v3001).
 
 <!-- [CHANGELOG GUIDELINES PLEASE FOLLOW]
--------------------------------------------------------------------------------
+===============================================================================
 Hey, KAPLAY Dev! Add your new changes in [unreleased] heading, below one of
 these heading:
 
@@ -35,10 +35,26 @@ So your change should look like:
 ### Added
 
 - added a new ghost (#6767) - @lajbel
--------------------------------------------------------------------------------
+===============================================================================
 [DO IT IF YOU DON'T WANT A LAJBEL VISIT AT NIGHT] -->
 
 ## [unreleased]
+
+### Changed
+
+- **(!)** Updated "explicit `LoadSpriteOpt.frames`" method of loading a sprite
+  with animations (via either `loadSprite()` or `loadSpriteAtlas()`) to use
+  pixel values for the coordinate space, which is more intuitive (#1061) -
+  @dragoncoder047
+
+### Fixed
+
+- Updated texture packer refreshing to only refresh when a sprite is actually
+  requested to be drawn, to reduce the number of times the texture is synced to
+  the GPU, which is slow (#1058) - @dragoncoder047
+- Added `exists()` which also checks whether the object is not undefined. This
+  should temporarily fix the problem with undefined objects during collision due
+  to iterators being invalidated by destroy. - @mflerackers
 
 ## [4000.0.0-alpha.27] - 2026-03-19
 
@@ -110,8 +126,6 @@ So your change should look like:
   (#1018) - @dragoncoder047
 - Text component no longer hangs if the requested width is too narrow for a
   single character - @dragoncoder047
-- Fixed input events attached to paused ancestors not being paused (#1009) -
-  @amyspark-ng, @dragoncoder047
 - Fixed type `UniformValue` union not including `Texture`, a valid option
   (#1018) - @dragoncoder047
 - Fixed event crash when using `onLoad` or other events that doesn't return an

@@ -59,9 +59,14 @@ export function startEngineLoop(
             if (!assets.loaded) {
                 if (loadProgress() === 1 && !isFirstFrame) {
                     assets.loaded = true;
-                    getFailedAssets().forEach(details =>
-                        game.events.trigger("loadError", ...details)
-                    );
+                    getFailedAssets().forEach(details => {
+                        if (game.events.numListeners("loadError") > 0) {
+                            game.events.trigger("loadError", ...details);
+                        }
+                        else {
+                            throw details[1].error;
+                        }
+                    });
                     game.events.trigger("load");
                 }
             }
