@@ -187,7 +187,8 @@ scene("game", () => {
         if (gamePaused) {
             pauseMenu.hidden = false;
             pauseMenu.paused = false;
-        } else {
+        }
+        else {
             curTween.onEnd(() => {
                 pauseMenu.hidden = true;
                 pauseMenu.paused = true;
@@ -220,41 +221,49 @@ scene("game", () => {
     pauseMenu.buttons = [
         ["Resume", togglePause],
         ["Restart", () => go("game"), rgb(244, 66, 94)],
-    ].map(([txt, fn, bg], i) => pauseMenu.add([
-        anchor("center"),
-        // placed under each other "automatically"
-        pos(0, 60 * i - 20),
-        // another behavior and calculations can be "inlined"
-        {
-            add() {
-                // define dimensions
-                this.btnWidth = pauseMenu.width - 64;
-                this.btnHeight = this.height + 24; // based on the resulting text height
+    ].map(([txt, fn, bg], i) =>
+        pauseMenu.add([
+            anchor("center"),
+            // placed under each other "automatically"
+            pos(0, 60 * i - 20),
+            // another behavior and calculations can be "inlined"
+            {
+                add() {
+                    // define dimensions
+                    this.btnWidth = pauseMenu.width - 64;
+                    this.btnHeight = this.height + 24; // based on the resulting text height
 
-                // register mouse events
-                this.use(area({
-                    shape: new Rect(vec2(0), this.btnWidth, this.btnHeight),
-                }));
-                fn && this.onClick(fn);
-                this.onHover(() => tween(vec2(1), vec2(1.06), 0.15, s => this.scale = s, easings.easeOutBack));
-                this.onHoverEnd(() => tween(this.scale, vec2(1), 0.15, s => this.scale = s, easings.easeOutBack));
+                    // register mouse events
+                    this.use(area({
+                        shape: new Rect(vec2(0), this.btnWidth, this.btnHeight),
+                    }));
+                    fn && this.onClick(fn);
+                    this.onHover(() =>
+                        tween(vec2(1), vec2(1.06), 0.15, s =>
+                            this.scale = s, easings.easeOutBack)
+                    );
+                    this.onHoverEnd(() =>
+                        tween(this.scale, vec2(1), 0.15, s =>
+                            this.scale = s, easings.easeOutBack)
+                    );
+                },
+                // draw the button rect first
+                draw() {
+                    drawRect({
+                        width: this.btnWidth,
+                        height: this.btnHeight,
+                        color: bg ?? rgb(0, 127, 255),
+                        radius: 8,
+                        outline: { width: 4, color: BLACK },
+                        anchor: this.anchor,
+                    });
+                },
             },
-            // draw the button rect first
-            draw() {
-                drawRect({
-                    width: this.btnWidth,
-                    height: this.btnHeight,
-                    color: bg ?? rgb(0, 127, 255),
-                    radius: 8,
-                    outline: { width: 4, color: BLACK },
-                    anchor: this.anchor,
-                });
-            },
-        },
-        // the button text on top, text comp gives obj its dimensions
-        text(txt, { size: 22 }),
-        scale(1),
-    ]));
+            // the button text on top, text comp gives obj its dimensions
+            text(txt, { size: 22 }),
+            scale(1),
+        ])
+    );
 });
 
 scene("lose", (score) => {
