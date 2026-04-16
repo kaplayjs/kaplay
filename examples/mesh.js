@@ -46,6 +46,8 @@ const LEVELS = [
 
 loadBean();
 loadSprite("grass", "/sprites/grass.png");
+loadSprite("grasstop", "/sprites/grass_top.png");
+loadSprite("grassbot", "/sprites/grass_bottom.png");
 loadSprite("steel", "/sprites/steel.png");
 loadSprite("prize", "/sprites/jumpy.png");
 loadSprite("ghosty", "/sprites/ghosty.png");
@@ -156,6 +158,7 @@ function big() {
 
 onLoad(() => {
     const grassUv = getSprite("grass").data.frames[0].q;
+    const grassTopUv = getSprite("grasstop").data.frames[0].q;
     const steelUv = getSprite("steel").data.frames[0].q;
     const prizeUv = getSprite("prize").data.frames[0].q;
     const spikeUv = getSprite("spike").data.frames[0].q;
@@ -168,46 +171,67 @@ onLoad(() => {
     const vertices = (uv, h = 64) => [
         // Front
         0,
-        64,
+        h,
         -height() / 2,
         uv.x,
         uv.y + uv.h - 0.001, /*1, 1, 1, 1,*/
         0,
-        64 - h,
+        0,
         -height() / 2,
         uv.x,
         uv.y + 0.001, /*1, 1, 1, 1,*/
         64,
-        64 - h,
+        0,
         -height() / 2,
         uv.x + uv.w,
         uv.y + 0.001, /*1, 1, 1, 1,*/
         64,
-        64,
+        h,
         -height() / 2,
         uv.x + uv.w,
         uv.y + uv.h - 0.001, /*1, 1, 1, 1,*/
         // Back
         0,
-        64,
+        h,
         -height() / 2 - 64,
         uv.x + uv.w,
         uv.y + uv.h - 0.001, /*1, 1, 1, 1,*/
         0,
-        64 - h,
+        0,
         -height() / 2 - 64,
         uv.x + uv.w,
         uv.y + 0.001, /*1, 1, 1, 1,*/
         64,
-        64 - h,
+        0,
         -height() / 2 - 64,
         uv.x,
         uv.y + 0.001, /*1, 1, 1, 1,*/
         64,
-        64,
+        h,
         -height() / 2 - 64,
         uv.x,
         uv.y + uv.h - 0.001, /*1, 1, 1, 1,*/
+        // Top
+        0,
+        0,
+        -height() / 2,
+        grassTopUv.x,
+        grassTopUv.y + grassTopUv.h - 0.001, /*1, 1, 1, 1,*/
+        0,
+        0,
+        -height() / 2 - 64,
+        grassTopUv.x,
+        grassTopUv.y + 0.001, /*1, 1, 1, 1,*/
+        64,
+        0,
+        -height() / 2 - 64,
+        grassTopUv.x + grassTopUv.w,
+        grassTopUv.y + 0.001, /*1, 1, 1, 1,*/
+        64,
+        0,
+        -height() / 2,
+        grassTopUv.x + grassTopUv.w,
+        grassTopUv.y + grassTopUv.h - 0.001, /*1, 1, 1, 1,*/
     ];
 
     const indices = [
@@ -240,12 +264,12 @@ onLoad(() => {
         6,
         7,
         // Top
-        1,
-        5,
-        2,
-        5,
-        6,
-        2,
+        8,
+        9,
+        10,
+        8,
+        10,
+        11,
         // Bottom
         4,
         0,
@@ -290,6 +314,7 @@ onLoad(() => {
                     ),
                     uProjectionMatrix: projection,
                 })),
+                anchor("bot"),
             ],
             "-": () => [
                 /*sprite("steel"),
@@ -306,6 +331,7 @@ onLoad(() => {
                     ),
                     uProjectionMatrix: projection,
                 })),
+                anchor("bot"),
             ],
             /*"0": () => [
                 sprite("bag"),
@@ -338,6 +364,7 @@ onLoad(() => {
                     ),
                     uProjectionMatrix: projection,
                 })),
+                anchor("bot"),
             ],
             "^": () => [
                 /*sprite("spike"),
@@ -357,6 +384,7 @@ onLoad(() => {
                     ),
                     uProjectionMatrix: projection,
                 })),
+                anchor("bot"),
             ],
             "#": () => [
                 sprite("apple"),
@@ -403,38 +431,6 @@ onLoad(() => {
 
         const level = addLevel(LEVELS[levelId ?? 0], levelConf);
 
-        /*add([
-            pos(vec2(width() / 2 - 128, height() / 2 + 64)),
-            mesh({ mesh: makeMesh(format, vertices, indices) }),
-            area(),
-            body({ isStatic: true }),
-            shader("3D", () => ({
-                //uModelViewMatrix: new Mat4(),
-                uModelViewMatrix: Mat4.translate3(vec3(- camPos().x, - camPos().y, 0)),
-                uProjectionMatrix: projection,
-            })),
-        ]);
-        add([
-            pos(vec2(width() / 2 - 128 + 64, height() / 2 + 64)),
-            mesh({ mesh: makeMesh(format, vertices, indices) }),
-            area(),
-            body({ isStatic: true }),
-            shader("3D", () => ({
-                uModelViewMatrix: Mat4.translate3(vec3(- camPos().x, - camPos().y, 0)),
-                uProjectionMatrix: projection,
-            })),
-        ]);
-        add([
-            pos(vec2(width() / 2, height() / 2 + 64)),
-            mesh({ mesh: makeMesh(format, vertices, indices) }),
-            area(),
-            body({ isStatic: true }),
-            shader("3D", () => ({
-                uModelViewMatrix: Mat4.translate3(vec3(- camPos().x, - camPos().y, 0)),
-                uProjectionMatrix: projection,
-            })),
-        ]);*/
-
         // disable z-buffer
         add([
             {
@@ -451,6 +447,7 @@ onLoad(() => {
             body(),
             big(),
             scale(),
+            anchor("bot"),
         ]);
 
         player.onUpdate(() => {
@@ -606,4 +603,4 @@ onLoad(() => {
     go("game");
 });
 
-// debug.inspect = true;
+//debug.inspect = true;

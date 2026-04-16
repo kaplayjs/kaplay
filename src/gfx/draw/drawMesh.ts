@@ -2,6 +2,7 @@ import { Asset } from "../../assets/asset";
 import { resolveShader } from "../../assets/shader";
 import { IDENTITY_MATRIX } from "../../constants/math";
 import { getCamTransform } from "../../game/camera";
+import { Vec2 } from "../../math/Vec2";
 import { _k } from "../../shared";
 import type { Mesh, RenderProps } from "../../types";
 import type { Texture } from "../gfx";
@@ -19,6 +20,7 @@ export type DrawMeshOpt =
         index?: number;
         count?: number;
         texture?: Texture;
+        offset?: Vec2;
     };
 
 export function drawMesh(opt: DrawMeshOpt) {
@@ -37,6 +39,7 @@ export function drawMesh(opt: DrawMeshOpt) {
     if (opt.angle) transform.rotateSelf(opt.angle);
     if (opt.scale) transform.scaleSelfV(opt.scale);
     if (opt.skew) transform.skewSelfV(opt.skew);
+    if (opt.offset) transform.translateSelfV(opt.offset);
 
     const w = width();
     const h = height();

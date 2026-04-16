@@ -145,7 +145,8 @@ export class SweepAndPruneHorizontal implements BroadPhaseAlgorithm {
     ) {
         const touching = new Set<GameObj<AreaComp>>();
 
-        for (const edge of this.edges) {
+        for (let i = 0; i < this.edges.length; i++) {
+            const edge = this.edges[i];
             if (edge.isLeft) {
                 if (isValidCollisionObject(edge.obj)) {
                     for (const obj of touching) {
@@ -166,7 +167,8 @@ export class SweepAndPruneHorizontal implements BroadPhaseAlgorithm {
         const left = rect.pos.x;
         const right = left + rect.width;
         const hits = new Set<GameObj<AreaComp>>();
-        for (const edge of this.edges) {
+        for (let i = 0; i < this.edges.length; i++) {
+            const edge = this.edges[i];
             if (edge.isLeft) {
                 if (edge.x < right) {
                     hits.add(edge.obj);

@@ -1,9 +1,13 @@
+import { DEF_ANCHOR } from "../../../constants/general";
 import { getRenderProps } from "../../../game/utils";
+import { anchorPt } from "../../../gfx/anchor";
 import { makeMesh } from "../../../gfx/canvasBuffer";
 import { drawMesh } from "../../../gfx/draw/drawMesh";
 import { Rect, vec2 } from "../../../math/math";
 import type { Comp, GameObj, Mesh, SerializedMesh } from "../../../types";
 import { nextRenderAreaVersion } from "../physics/area";
+import type { AnchorComp } from "../transform/anchor";
+import type { PosComp } from "../transform/pos";
 
 /**
  * The serialized {@link mesh `mesh()`} component.
@@ -47,8 +51,19 @@ export function mesh(
         get mesh() {
             return opt.mesh;
         },
-        draw(this: GameObj<MeshComp>) {
-            drawMesh(Object.assign(getRenderProps(this), { mesh: opt.mesh }));
+        draw(this: GameObj<MeshComp | PosComp | AnchorComp>) {
+            if (this.has("anchor")) {
+                const rect = this.renderArea();
+                const anchorOffset = anchorPt(this.anchor);
+                const offset = vec2(
+                    - (anchorOffset.x + 1) * 0.5 * (rect.width),
+                    - (anchorOffset.y + 1) * 0.5 * (rect.height)
+                );
+                drawMesh(Object.assign(getRenderProps(this), { mesh: opt.mesh, offset }));
+            }
+            else {
+                drawMesh(Object.assign(getRenderProps(this), { mesh: opt.mesh }));
+            }
         },
         renderArea() {
             if (!_shape) {

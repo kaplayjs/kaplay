@@ -11,8 +11,8 @@
 kaplay({
     // broadPhaseCollisionAlgorithm: "quadtree",
     // broadPhaseCollisionAlgorithm: "grid",
-    // broadPhaseCollisionAlgorithm: "sap"
-    broadPhaseCollisionAlgorithm: "sapv",
+    broadPhaseCollisionAlgorithm: "sap"
+    //broadPhaseCollisionAlgorithm: "sapv",
 });
 
 loadBean();

@@ -61,6 +61,7 @@ export function loadWavefront(
             };
             const lines = text.split("\n");
             for (let i = 0; i < lines.length; i++) {
+                if (lines[0].startsWith("#")) continue;
                 const parts = lines[i].split(" ");
                 switch (parts[0]) {
                     case "o":
