@@ -50,6 +50,7 @@ loadSprite("grasstop", "/sprites/grass_top.png");
 loadSprite("grassbot", "/sprites/grass_bottom.png");
 loadSprite("steel", "/sprites/steel.png");
 loadSprite("prize", "/sprites/jumpy.png");
+loadSprite("prizetop", "/sprites/jumpy_top.png");
 loadSprite("ghosty", "/sprites/ghosty.png");
 loadSprite("spike", "/sprites/spike.png");
 loadSprite("apple", "/sprites/apple.png");
@@ -159,8 +160,10 @@ function big() {
 onLoad(() => {
     const grassUv = getSprite("grass").data.frames[0].q;
     const grassTopUv = getSprite("grasstop").data.frames[0].q;
+    const grassBottomUv = getSprite("grassbot").data.frames[0].q;
     const steelUv = getSprite("steel").data.frames[0].q;
     const prizeUv = getSprite("prize").data.frames[0].q;
+    const prizeTopUv = getSprite("prizetop").data.frames[0].q;
     const spikeUv = getSprite("spike").data.frames[0].q;
 
     const format = [
@@ -168,7 +171,7 @@ onLoad(() => {
         { name: "a_uv", size: 2 },
     ];
 
-    const vertices = (uv, h = 64) => [
+    const vertices = (uv, topuv, bottomuv, h = 64) => [
         // Front
         0,
         h,
@@ -215,23 +218,44 @@ onLoad(() => {
         0,
         0,
         -height() / 2,
-        grassTopUv.x,
-        grassTopUv.y + grassTopUv.h - 0.001, /*1, 1, 1, 1,*/
+        topuv.x,
+        topuv.y + topuv.h - 0.001, /*1, 1, 1, 1,*/
         0,
         0,
         -height() / 2 - 64,
-        grassTopUv.x,
-        grassTopUv.y + 0.001, /*1, 1, 1, 1,*/
+        topuv.x,
+        topuv.y + 0.001, /*1, 1, 1, 1,*/
         64,
         0,
         -height() / 2 - 64,
-        grassTopUv.x + grassTopUv.w,
-        grassTopUv.y + 0.001, /*1, 1, 1, 1,*/
+        topuv.x + topuv.w,
+        topuv.y + 0.001, /*1, 1, 1, 1,*/
         64,
         0,
         -height() / 2,
-        grassTopUv.x + grassTopUv.w,
-        grassTopUv.y + grassTopUv.h - 0.001, /*1, 1, 1, 1,*/
+        topuv.x + topuv.w,
+        topuv.y + topuv.h - 0.001, /*1, 1, 1, 1,*/
+        // Bottom
+        0,
+        h,
+        -height() / 2,
+        bottomuv.x,
+        bottomuv.y + bottomuv.h - 0.001, /*1, 1, 1, 1,*/
+        0,
+        h,
+        -height() / 2 - 64,
+        bottomuv.x,
+        bottomuv.y + 0.001, /*1, 1, 1, 1,*/
+        64,
+        h,
+        -height() / 2 - 64,
+        bottomuv.x + bottomuv.w,
+        bottomuv.y + 0.001, /*1, 1, 1, 1,*/
+        64,
+        h,
+        -height() / 2,
+        bottomuv.x + bottomuv.w,
+        bottomuv.y + bottomuv.h - 0.001, /*1, 1, 1, 1,*/
     ];
 
     const indices = [
@@ -271,12 +295,12 @@ onLoad(() => {
         10,
         11,
         // Bottom
-        4,
-        0,
-        7,
-        0,
-        3,
-        7,
+        12,
+        13,
+        14,
+        12,
+        14,
+        15,
     ];
 
     const projection = Mat4.perspective(
@@ -305,7 +329,7 @@ onLoad(() => {
                 anchor("bot"),
                 offscreen({ hide: true }),*/
                 "platform",
-                mesh({ mesh: makeMesh(format, vertices(grassUv), indices) }),
+                mesh({ mesh: makeMesh(format, vertices(grassUv, grassTopUv, grassBottomUv), indices) }),
                 area(),
                 body({ isStatic: true }),
                 shader("3D", () => ({
@@ -322,7 +346,7 @@ onLoad(() => {
                 body({ isStatic: true }),
                 offscreen({ hide: true }),
                 anchor("bot"),*/
-                mesh({ mesh: makeMesh(format, vertices(steelUv), indices) }),
+                mesh({ mesh: makeMesh(format, vertices(steelUv, steelUv, steelUv), indices) }),
                 area(),
                 body({ isStatic: true }),
                 shader("3D", () => ({
@@ -355,7 +379,7 @@ onLoad(() => {
                 anchor("bot"),
                 offscreen({ hide: true }),*/
                 "prize",
-                mesh({ mesh: makeMesh(format, vertices(prizeUv), indices) }),
+                mesh({ mesh: makeMesh(format, vertices(prizeUv, prizeTopUv, prizeTopUv), indices) }),
                 area(),
                 body({ isStatic: true }),
                 shader("3D", () => ({
@@ -374,7 +398,7 @@ onLoad(() => {
                 offscreen({ hide: true }),*/
                 "danger",
                 mesh({
-                    mesh: makeMesh(format, vertices(spikeUv, 21), indices),
+                    mesh: makeMesh(format, vertices(spikeUv, spikeUv, spikeUv, 21), indices),
                 }),
                 area(),
                 body({ isStatic: true }),
