@@ -56,8 +56,8 @@ So your change should look like:
   should temporarily fix the problem with undefined objects during collision due
   to iterators being invalidated by destroy. - @mflerackers
 - Fixed broadphase event duplication on scene switch, causing repeated
-  broadphase object registrations, which resulted in a performance drop -
-  @imaginarny, @mflerackers
+  broadphase object registrations, which resulted in a performance drop (#1074)
+  - @imaginarny, @mflerackers
 
 ## [4000.0.0-alpha.27] - 2026-03-19
 
