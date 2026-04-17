@@ -105,7 +105,6 @@ export const createCollisionSystem = (
             });
 
             _k.appScope.onSceneLeave(scene => {
-                broadInit = false;
                 broadPhaseIntersection.clear();
             });
 
