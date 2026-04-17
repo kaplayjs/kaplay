@@ -96,8 +96,8 @@ class FilterTexPacker {
         const doesitfit = () => {
             // goes offscreen?
             if (
-                x + paddedWidth > (maxX - pad)
-                || y + paddedHeight > (maxY - pad)
+                x + paddedWidth > (maxX + pad)
+                || y + paddedHeight > (maxY + pad)
             ) return false;
             // try it
             p.x = x;
