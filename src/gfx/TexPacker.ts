@@ -76,9 +76,10 @@ class FilterTexPacker {
         const imgHeight = img.height * (chopQuad?.h ?? 1);
         const chopX = img.width * (chopQuad?.x ?? 0);
         const chopY = img.height * (chopQuad?.y ?? 0);
-        const pad = this._pad * 2;
-        const paddedWidth = imgWidth + pad;
-        const paddedHeight = imgHeight + pad;
+        const pad = this._pad;
+        const pad2 = pad * 2;
+        const paddedWidth = imgWidth + pad2;
+        const paddedHeight = imgHeight + pad2;
         let { el: curEl, ctx: curCtx, tex: curTex } = this._curMap;
 
         const maxX = curEl.width, maxY = curEl.height;
@@ -91,10 +92,13 @@ class FilterTexPacker {
         }
 
         // find position
-        let x = 0, y = 0, found = false;
+        let x = pad, y = pad, found = false;
         const doesitfit = () => {
             // goes offscreen?
-            if (x + paddedWidth > maxX || y + paddedHeight > maxY) return false;
+            if (
+                x + paddedWidth > (maxX - pad)
+                || y + paddedHeight > (maxY - pad)
+            ) return false;
             // try it
             p.x = x;
             p.y = y;
