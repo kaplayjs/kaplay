@@ -84,6 +84,7 @@ export class SweepAndPruneHorizontal implements BroadPhaseAlgorithm {
     clear() {
         this.edges = [];
         this.objects.clear();
+        this.versionsForObject.clear();
     }
 
     /**
@@ -251,6 +252,7 @@ export class SweepAndPruneVertical implements BroadPhaseAlgorithm {
     clear() {
         this.edges = [];
         this.objects.clear();
+        this.versionsForObject.clear();
     }
 
     /**
