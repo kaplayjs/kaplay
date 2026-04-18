@@ -58,6 +58,8 @@ So your change should look like:
 - Fixed broadphase event duplication on scene switch, causing repeated
   broadphase object registrations, which resulted in a performance drop (#1074)
   - @imaginarny, @mflerackers
+- Fixed broadphase objects cleared on scene switch including those with `stay()`
+  (#1077) - @imaginarny, @mflerackers
 
 ## [4000.0.0-alpha.27] - 2026-03-19
 
