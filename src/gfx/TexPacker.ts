@@ -77,9 +77,8 @@ class FilterTexPacker {
         const chopX = img.width * (chopQuad?.x ?? 0);
         const chopY = img.height * (chopQuad?.y ?? 0);
         const pad = this._pad;
-        const pad2 = pad * 2;
-        const paddedWidth = imgWidth + pad2;
-        const paddedHeight = imgHeight + pad2;
+        const paddedWidth = imgWidth + pad;
+        const paddedHeight = imgHeight + pad;
         let { el: curEl, ctx: curCtx, tex: curTex } = this._curMap;
 
         const maxX = curEl.width, maxY = curEl.height;
@@ -95,10 +94,7 @@ class FilterTexPacker {
         let x = pad, y = pad, found = false;
         const doesitfit = () => {
             // goes offscreen?
-            if (
-                x + paddedWidth > (maxX + pad)
-                || y + paddedHeight > (maxY + pad)
-            ) return false;
+            if (x + paddedWidth > maxX || y + paddedHeight > maxY) return false;
             // try it
             p.x = x;
             p.y = y;
@@ -123,8 +119,8 @@ class FilterTexPacker {
                         break;
                     }
                 }
+                // try below
                 if ((used & UsedCorner.BOTTOMLEFT) === 0) {
-                    // try below
                     x = pos.x;
                     y = pos.y + height;
                     if (doesitfit()) {
@@ -135,13 +131,13 @@ class FilterTexPacker {
             }
         }
 
-        // no room --> go to next texture and put at (0, 0)
+        // no room --> go to next texture and put at (pad, pad)
         if (!found) {
             x =
                 y =
                 p.x =
                 p.y =
-                    0;
+                    pad;
             ({ tex: curTex, ctx: curCtx, el: curEl } = this._newTexture());
         }
 
