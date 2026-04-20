@@ -112,6 +112,14 @@ export interface LevelCompOpt {
         [sym: string]: (pos: Vec2) => CompList<Comp>;
     };
     /**
+     * Enable spatial map after adding level tiles
+     */
+    spatialMap?: boolean;
+    /**
+     * Enable cost, connectivity, and edge maps after adding level tiles
+     */
+    tilePathMaps?: boolean;
+    /**
      * Called when encountered a symbol not defined in "tiles".
      */
     wildcardTile?: (
@@ -149,7 +157,16 @@ export function level(map: string[], opt: LevelCompOpt): LevelComp {
         }
     };
 
+    const ensureSpatialMapExists = () => {
+        if (!spatialMap) {
+            throw new Error(
+                "Spatial map is not initialized. Call level.getSpatialMap() before using spatial map functions, or enable the 'spatialMap' option in level().",
+            );
+        }
+    };
+
     const insertIntoSpatialMap = (obj: GameObj) => {
+        ensureSpatialMapExists();
         const i = tile2Hash(obj.tilePos);
         if (spatialMap![i]) {
             spatialMap![i].push(obj);
@@ -160,6 +177,7 @@ export function level(map: string[], opt: LevelCompOpt): LevelComp {
     };
 
     const removeFromSpatialMap = (obj: GameObj) => {
+        ensureSpatialMapExists();
         const i = tile2Hash(obj.tilePos);
         if (spatialMap![i]) {
             const index = spatialMap![i].indexOf(obj);
@@ -351,6 +369,16 @@ export function level(map: string[], opt: LevelCompOpt): LevelComp {
                     this.spawn(key, vec2(j, i));
                 });
             });
+
+            if (opt.spatialMap) {
+                createSpatialMap(this);
+            }
+
+            if (opt.tilePathMaps) {
+                createCostMap(this);
+                createEdgeMap(this);
+                createConnectivityMap(this);
+            }
         },
 
         tileWidth() {
@@ -737,9 +765,9 @@ export function levelFactory(data: any) {
         const d = data.tiles[key];
         const tags = d.tags;
         opt.tiles[key] = (pos: Vec2) => {
-            const comps: Comp[] = Object.keys(d).filter(k => k != "tags").map(
-                id => deserializeComp(id, d[id]),
-            );
+            const comps: Comp[] = Object.keys(d)
+                .filter((k) => k != "tags")
+                .map((id) => deserializeComp(id, d[id]));
             return [...comps, ...tags];
         };
     }
