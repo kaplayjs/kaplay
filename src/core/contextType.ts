@@ -16,6 +16,7 @@ import type {
     SpriteData,
 } from "../assets/sprite";
 import type { SpriteAtlasData } from "../assets/spriteAtlas";
+import type { WavefrontData } from "../assets/wavefront";
 import type { AudioPlay, AudioPlayOpt } from "../audio/play";
 import type { Debug } from "../debug/debug";
 import type { Recording } from "../debug/record";
@@ -4412,6 +4413,18 @@ export interface KAPLAYCtx {
         vert?: string | null,
         frag?: string | null,
     ): Asset<ShaderData>;
+    /**
+     * Load a mesh.
+     *
+     * @param name - The name of the asset.
+     * @param objSrc - The mesh object file.
+     * @param mtlSrc - The material file.
+     */
+    loadWavefront(
+        name: string,
+        objSrc: string,
+        mtlSrc: string,
+    ): Asset<WavefrontData>
     /**
      * Add a new loader to wait for before starting the game.
      *

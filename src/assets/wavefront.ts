@@ -48,20 +48,25 @@ export function loadWavefront(
             let mesh: WavefrontMesh | undefined;
             let posList: Vec3[] = [];
             let uvList: Vec2[] = [];
-            let vertexMap = new Map<string, number[]>();
+            let vertexMap = new Map<string, [number, number[]]>();
             const getVertex = (def: string) => {
-                let vert = vertexMap.get(def);
-                if (vert === undefined) {
-                    const parts = def.split("/");
-                    const pos = posList[parseInt(parts[0]) - 1];
-                    const uv = uvList[parseInt(parts[1]) - 1];
-                    vert = [pos.x, pos.y, pos.z, uv.x, uv.y];
+                const pair = vertexMap.get(def)
+                if (pair) {
+                    let [index, vert] = pair;
+                    return index;
                 }
-                return vert;
+                const parts = def.split("/");
+                const pos = posList[parseInt(parts[0]) - 1];
+                const uv = uvList[parseInt(parts[1]) - 1];
+                const index = vertexMap.size;
+                const vert = [pos.x, pos.y, pos.z, uv.x, uv.y];
+                mesh?.vertices.push(...vert);
+                vertexMap.set(def, [index, vert]);
+                return index;
             };
             const lines = text.split("\n");
             for (let i = 0; i < lines.length; i++) {
-                if (lines[0].startsWith("#")) continue;
+                if (lines[i].startsWith("#")) continue;
                 const parts = lines[i].split(" ");
                 switch (parts[0]) {
                     case "o":
@@ -86,23 +91,30 @@ export function loadWavefront(
                             vec2(parseFloat(parts[1]), parseFloat(parts[2])),
                         );
                         break;
+                    case "mtllib":
+                        console.log("loading", parts[1])
+                        break;
                     case "usemtl":
                         mesh!.material.texture = parts[1];
                         break;
                     case "f":
+                        console.log("face", parts.length)
                         if (parts.length == 4) { // Triangle
-                            mesh?.vertices.push(...getVertex(parts[1]));
-                            mesh?.vertices.push(...getVertex(parts[2]));
-                            mesh?.vertices.push(...getVertex(parts[3]));
+                            mesh?.indices.push(getVertex(parts[1]));
+                            mesh?.indices.push(getVertex(parts[2]));
+                            mesh?.indices.push(getVertex(parts[3]));
                         }
                         if (parts.length == 5) { // Quad
-                            mesh?.vertices.push(...getVertex(parts[1]));
-                            mesh?.vertices.push(...getVertex(parts[2]));
-                            mesh?.vertices.push(...getVertex(parts[3]));
-                            mesh?.vertices.push(...getVertex(parts[1]));
-                            mesh?.vertices.push(...getVertex(parts[3]));
-                            mesh?.vertices.push(...getVertex(parts[4]));
+                            mesh?.indices.push(getVertex(parts[1]));
+                            mesh?.indices.push(getVertex(parts[2]));
+                            mesh?.indices.push(getVertex(parts[3]));
+                            mesh?.indices.push(getVertex(parts[1]));
+                            mesh?.indices.push(getVertex(parts[3]));
+                            mesh?.indices.push(getVertex(parts[4]));
                         }
+                        break;
+                    default:
+                        console.log(`Unknown tag <${parts[0]}>`);
                 }
             }
 

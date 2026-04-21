@@ -61,6 +61,7 @@ loadSound("powerup", "sounds/powerup.mp3");
 loadSound("blip", "sounds/blip.mp3");
 loadSound("hit", "sounds/hit.mp3");
 loadSound("portal", "sounds/portal.mp3");
+loadWavefront("cube", "meshes/cube.obj", "meshes/cube.mtl").then(data => console.log(data))
 
 loadShader(
     "3D",

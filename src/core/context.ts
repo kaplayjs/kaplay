@@ -20,6 +20,7 @@ import { getShader, loadShader, loadShaderURL } from "../assets/shader";
 import { getSound, loadMusic, loadSound, SoundData } from "../assets/sound";
 import { getSprite, loadBean, loadSprite, SpriteData } from "../assets/sprite";
 import { loadSpriteAtlas } from "../assets/spriteAtlas";
+import { loadWavefront } from "../assets/wavefront";
 import { burp } from "../audio/burp";
 import { play } from "../audio/play";
 import { getVolume, setVolume, volume } from "../audio/volume";
@@ -299,6 +300,7 @@ export const createContext = (
         loadHappy,
         loadJSON,
         loadPrefab,
+        loadWavefront,
         load,
         getSound,
         getFont,
