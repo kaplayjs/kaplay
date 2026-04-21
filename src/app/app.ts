@@ -1239,11 +1239,10 @@ export const initApp = (
     // TODO: option to not prevent default?
     canvasEvents.wheel = (e) => {
         e.preventDefault();
-        const scrollDelta = new Vec2(e.deltaX, e.deltaY);
+        state.scrollDelta.set(e.deltaX, e.deltaY);
 
         state.events.onOnce("input", () => {
-            state.events.trigger("scroll", scrollDelta);
-            state.scrollDelta = scrollDelta;
+            state.events.trigger("scroll", state.scrollDelta);
         });
     };
 
