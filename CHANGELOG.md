@@ -61,6 +61,12 @@ So your change should look like:
 - Fixed broadphase objects cleared on scene switch including those with `stay()`
   (#1077) - @imaginarny, @mflerackers
 
+### Added
+
+- Added a `repack: false` option to `loadSpite()` and a repack parameter to
+  `loadSpriteAtlas()`, for faster loading if you're packing stuff at build-time
+  (#1063) - @dragoncoder047
+
 ## [4000.0.0-alpha.27] - 2026-03-19
 
 ### Added

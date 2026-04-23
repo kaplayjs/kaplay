@@ -1,5 +1,5 @@
 import { drawImageSourceAt } from "../assets/utils";
-import { Quad, Rect } from "../math/math";
+import { Quad, Rect, testRectRect } from "../math/math";
 import { Vec2 } from "../math/Vec2";
 import type { ImageSource, TexFilter } from "../types";
 import { type GfxCtx, Texture } from "./gfx";
@@ -20,13 +20,13 @@ interface TexMap {
 class FilterTexPacker {
     _textures: Texture[] = [];
     _big: Frame[] = [];
-    _used: Map<number, {
+    _used = new Map<number, {
         rect: Rect;
         tex: Texture;
         used: number;
-    }> = new Map();
+    }>();
     _curMap: TexMap = null as any;
-    _tex2Map: Map<Texture, TexMap> = new Map();
+    _tex2Map = new Map<Texture, TexMap>();
 
     constructor(
         private _p: TexPacker,
@@ -64,11 +64,34 @@ class FilterTexPacker {
     _single(img: ImageSource): Frame {
         const f = this._p._saveFrame(
             this,
-            Texture.fromImage(this._gfx, img),
+            Texture.fromImage(this._gfx, img, { filter: this._f }),
             new Quad(0, 0, 1, 1),
         );
         this._big.push(f);
         return f;
+    }
+
+    _blit(
+        img: ImageSource,
+        x: number,
+        y: number,
+        chopX: number,
+        chopY: number,
+        imgWidth: number,
+        imgHeight: number,
+    ) {
+        const curCtx = this._curMap.ctx;
+        drawImageSourceAt(
+            curCtx,
+            img,
+            x,
+            y,
+            chopX,
+            chopY,
+            imgWidth,
+            imgHeight,
+        );
+        this._hasPendingRefresh = true;
     }
 
     _add(img: ImageSource, chopQuad: Quad | undefined): Frame {
@@ -96,18 +119,17 @@ class FilterTexPacker {
             // goes offscreen?
             if (x + paddedWidth > maxX || y + paddedHeight > maxY) return false;
             // try it
-            p.x = x;
-            p.y = y;
-            for (var [_, { rect, tex }] of this._used) {
+            p.set(x, y);
+            for (let { rect, tex } of this._used.values()) {
                 if (curTex !== tex) continue;
-                if (rect.collides(rectToAdd)) return false;
+                if (testRectRect(rect, rectToAdd)) return false;
             }
             return found = true;
         };
 
         // initial check for (0, 0)
         if (!doesitfit()) {
-            for (let [_, entry] of this._used) {
+            for (let entry of this._used.values()) {
                 const { tex, rect: { pos, width, height }, used } = entry;
                 if (curTex !== tex) continue;
                 // try to the right
@@ -141,18 +163,7 @@ class FilterTexPacker {
             ({ tex: curTex, ctx: curCtx, el: curEl } = this._newTexture());
         }
 
-        drawImageSourceAt(
-            curCtx,
-            img,
-            x,
-            y,
-            chopX,
-            chopY,
-            imgWidth,
-            imgHeight,
-        );
-
-        this._hasPendingRefresh = true;
+        this._blit(img, x, y, chopX, chopY, imgWidth, imgHeight);
 
         const f = this._p._saveFrame(
             this,
@@ -168,6 +179,16 @@ class FilterTexPacker {
 
         return f;
     }
+    _addPrepacked(img: ImageSource, frames: Quad[]): Frame[] {
+        const main = this._add(img, undefined);
+        return frames.map(frame =>
+            this._p._saveFrame(
+                this,
+                main.tex,
+                main.q.scale(frame),
+            )
+        );
+    }
     _free() {
         this._textures.forEach(tex => tex.free());
         this._big.forEach(f => f.tex.free());
@@ -180,7 +201,9 @@ class FilterTexPacker {
         if (!entry) {
             const big = this._big.findIndex(f => f.id === packerId);
             if (big < 0) {
-                throw new Error("Texture with packer id not found");
+                throw new Error(
+                    "Image not found in packer (was this loaded via a prepacked spritesheet?)",
+                );
             }
             this._big.splice(big, 1)[0]!.tex.free();
             return;
@@ -194,7 +217,7 @@ class FilterTexPacker {
 }
 
 export class TexPacker {
-    _packers: Partial<Record<TexFilter, FilterTexPacker>> = {};
+    _packers: Partial<Record<string, FilterTexPacker>> = {};
     _last = 0;
     _idsToPackers: Record<number, FilterTexPacker> = {};
     constructor(
@@ -203,8 +226,8 @@ export class TexPacker {
         private _h: number,
         private _pad: number,
     ) {}
-    private _getPacker(filter: TexFilter): FilterTexPacker {
-        return (this._packers[filter] ??= new FilterTexPacker(
+    _getPacker(filter: TexFilter, name: string = filter): FilterTexPacker {
+        return (this._packers[name] ??= new FilterTexPacker(
             this,
             filter,
             this._gfx,
@@ -230,24 +253,14 @@ export class TexPacker {
      */
     _createWhitePixel(): Frame {
         const packer = this._getPacker("nearest");
-        const { el, ctx, tex } = packer._curMap;
+        const { el: { width, height }, tex } = packer._curMap;
         const whitePixel = new ImageData(
             new Uint8ClampedArray([255, 255, 255, 255]),
             1,
             1,
         );
-        const { width, height } = el;
-        drawImageSourceAt(
-            ctx,
-            whitePixel,
-            width - 1,
-            height - 1,
-            0,
-            0,
-            1,
-            1,
-        );
-        tex.update(el);
+        packer._blit(whitePixel, width - 1, height - 1, 0, 0, 1, 1);
+        packer._sync();
         packer._used.set(-1, {
             rect: new Rect(new Vec2(width - 1, height - 1), 1, 1),
             tex: tex,
@@ -267,19 +280,22 @@ export class TexPacker {
     add(img: ImageSource, filter: TexFilter, chopQuad?: Quad): Frame {
         return this._getPacker(filter)._add(img, chopQuad);
     }
+    addPrepacked(img: ImageSource, filter: TexFilter, frames: Quad[]): Frame[] {
+        return this._getPacker(filter)._addPrepacked(img, frames);
+    }
     // create a image with a single texture
     addSingle(img: ImageSource, filter: TexFilter): Frame {
         return this._getPacker(filter)._single(img);
     }
     syncIfPending() {
-        Object.values(this._packers).forEach(p => p._sync());
+        Object.values(this._packers).forEach(p => p!._sync());
     }
-    remove(id: number) {
+    _remove(id: number) {
         this._idsToPackers[id]?._remove(id);
         delete this._idsToPackers[id];
     }
-    free() {
-        Object.values(this._packers).forEach(p => p._free());
+    _free() {
+        Object.values(this._packers).forEach(p => p!._free());
         this._packers = {};
     }
 }
