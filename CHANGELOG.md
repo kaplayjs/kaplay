@@ -144,6 +144,8 @@ So your change should look like:
   `drawSprite` (#1026) - @benhuangbmj
 - Fixed `onClick()` and `onCollide()` tag variants no longer working -
   @mflerackers
+- Fixed `levelComp.getAt` to account for `tilePos.x` getting outside of the
+  level boundary - @benhuangbmj
 - Fixed `destroy()` messing up enumeration during `update()` and
   `fixedUpdate()`, thanks to @imaginarny for helping to find the cause -
   @mflerackers
