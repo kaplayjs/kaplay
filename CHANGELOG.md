@@ -52,6 +52,8 @@ So your change should look like:
 - Updated texture packer refreshing to only refresh when a sprite is actually
   requested to be drawn, to reduce the number of times the texture is synced to
   the GPU, which is slow (#1058) - @dragoncoder047
+- Fixed `loadBitmapFontFromSprite()` so that the font drawn using it is drawn
+  with the correct scale, as one would expect (#1063) - @dragoncoder047
 - Added `exists()` which also checks whether the object is not undefined. This
   should temporarily fix the problem with undefined objects during collision due
   to iterators being invalidated by destroy. - @mflerackers
