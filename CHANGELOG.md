@@ -46,6 +46,8 @@ So your change should look like:
   with animations (via either `loadSprite()` or `loadSpriteAtlas()`) to use
   pixel values for the coordinate space, which is more intuitive (#1061) -
   @dragoncoder047
+- Added padding around edges of spritesheet to prevent stretch if uv ends up out
+  of bounds (#1076) - @dragoncoder047
 
 ### Fixed
 
@@ -58,8 +60,8 @@ So your change should look like:
   should temporarily fix the problem with undefined objects during collision due
   to iterators being invalidated by destroy. - @mflerackers
 - Fixed broadphase event duplication on scene switch, causing repeated
-  broadphase object registrations, which resulted in a performance drop (#1074)
-  - @imaginarny, @mflerackers
+  broadphase object registrations, which resulted in a performance drop
+  (#1074) - @imaginarny, @mflerackers
 - Fixed broadphase objects cleared on scene switch including those with `stay()`
   (#1077) - @imaginarny, @mflerackers
 
