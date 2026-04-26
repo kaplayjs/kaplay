@@ -4658,6 +4658,15 @@ export interface KAPLAYCtx {
      */
     mouseDeltaPos(): Vec2;
     /**
+     * How much the mouse wheel scrolled since last frame.
+     *
+     * @returns The delta scroll.
+     * @since v4000.0
+     * @group Input
+     * @subgroup Mouse
+     */
+    scrollDelta(): Vec2;
+    /**
      * If any or certain key(s) are currently down.
      *
      * @param k - The key(s) to check.
