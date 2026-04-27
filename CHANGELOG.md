@@ -119,6 +119,8 @@ So your change should look like:
 - Updated the texture packer to use a new packing algorithm which may get more
   sprites onto the same texture, improving graphics batching performance
   (#1011) - @dragoncoder047
+- Replaced the RNG implementation for the one using Alea algorithm by Johannes
+  Baagøe (#1038) - @stanko
 - Updated all sprite and font loading to pack everything in the same texture to
   allow it to all batch together, for speed and efficiency (#1021) -
   @dragoncoder047
@@ -137,6 +139,8 @@ So your change should look like:
   @amyspark-ng, @dragoncoder047
 - Fixed type `UniformValue` union not including `Texture`, a valid option
   (#1018) - @dragoncoder047
+- Fixed `onDeath` event triggering even when object was already dead (#1014) -
+  @Stanko
 - Text component no longer hangs if the requested width is too narrow for a
   single character - @dragoncoder047
 - Fixed type `UniformValue` union not including `Texture`, a valid option
