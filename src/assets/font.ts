@@ -8,7 +8,7 @@ import type { Frame } from "../gfx/TexPacker";
 import { rgb } from "../math/color";
 import { Quad } from "../math/math";
 import { _k } from "../shared";
-import type { ImageSource, LoadFontOpt, Outline } from "../types";
+import type { ImageSource, LoadFontOpt, Outline, TexFilter } from "../types";
 import { Asset, loadProgress } from "./asset";
 import { type BitmapFontData, getBitmapFont, type GfxFont } from "./bitmapFont";
 
@@ -19,13 +19,17 @@ import { type BitmapFontData, getBitmapFont, type GfxFont } from "./bitmapFont";
 export class FontData {
     outline: Outline | null = null;
     size: number = DEF_TEXT_CACHE_SIZE;
+    filter: TexFilter;
     constructor(
         public fontface: FontFace,
         opt: LoadFontOpt = {},
     ) {
+        this.filter = opt.filter ?? _k.globalOpt.fontFilter ?? "linear";
         this.size = opt.size ?? DEF_TEXT_CACHE_SIZE;
         if (this.size > MAX_TEXT_CACHE_SIZE) {
-            throw new Error(`Max font size: ${MAX_TEXT_CACHE_SIZE}`);
+            throw new Error(
+                `Font size too big! Max font size: ${MAX_TEXT_CACHE_SIZE}`,
+            );
         }
         if (opt.outline) {
             this.outline = {
@@ -118,6 +122,7 @@ export function makeFont(
     gw: number,
     gh: number,
     chars: string,
+    filter: TexFilter,
 ): GfxFont {
     const w = tex.width;
     const h = tex.height;
@@ -128,6 +133,7 @@ export function makeFont(
     for (const [i, ch] of charMap) {
         map[ch] = _k.assets.packer.add(
             tex,
+            filter,
             new Quad(
                 (i % cols) * gw / w,
                 Math.floor(i / cols) * gh / h,
@@ -136,10 +142,10 @@ export function makeFont(
             ),
         );
     }
-    _k.assets.packer.refreshIfPending();
 
     return {
         map,
         size: gh,
+        filter,
     };
 }

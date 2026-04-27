@@ -1,7 +1,7 @@
 {
   "name": "kaplay",
   "description": "KAPLAY is a JavaScript & TypeScript game library that helps you make games fast and fun!",
-  "version": "4000.0.0-alpha.26",
+  "version": "4000.0.0-alpha.27",
   "license": "MIT",
   "homepage": "https://v4000.kaplayjs.com/",
   "bugs": {
@@ -74,48 +74,31 @@
     "prepare": "npm run build"
   },
   "devDependencies": {
-    "@eslint/js": "^9.27.0",
+    "@eslint/js": "^9.39.4",
     "@kaplayjs/crew": "2.0.0-beta.6",
     "@kaplayjs/dprint-config": "^1.2.0",
-    "@types/express": "^5.0.1",
+    "@types/express": "^5.0.6",
     "@types/jest": "^29.5.14",
-    "@typescript-eslint/eslint-plugin": "^8.32.1",
-    "@typescript-eslint/parser": "^8.32.1",
+    "@typescript-eslint/eslint-plugin": "^8.58.2",
+    "@typescript-eslint/parser": "^8.58.2",
     "dprint": "^0.50.2",
     "dts-bundle-generator": "^9.5.1",
     "ejs": "^3.1.10",
-    "esbuild": "^0.25.2",
-    "eslint": "^9.27.0",
-    "eslint-plugin-jsdoc": "^50.6.17",
-    "express": "^5.1.0",
+    "esbuild": "^0.25.12",
+    "eslint": "^9.39.4",
+    "eslint-plugin-jsdoc": "^50.8.0",
+    "express": "^5.2.1",
     "puppeteer": "^22.15.0",
-    "tar-fs": "3.0.8",
+    "tar-fs": "^3.1.2",
     "typescript": "5.6.3",
-    "typescript-eslint": "^8.32.1",
-    "vite": "7.1.12",
-    "vitest": "^4.0.2",
+    "typescript-eslint": "^8.58.2",
+    "vite": "7.3.2",
+    "vitest": "^4.1.4",
     "vitest-environment-puppeteer": "^11.0.3",
     "vitest-puppeteer": "^11.0.3"
   },
   "engines": {
     "node": ">=24.0.0"
   },
-  "packageManager": "pnpm@9.9.0+sha512.60c18acd138bff695d339be6ad13f7e936eea6745660d4cc4a776d5247c540d0edee1a563695c183a66eb917ef88f2b4feb1fc25f32a7adcadc7aaf3438e99c1",
-  "pnpm": {
-    "overrides": {
-      "esbuild@<=0.24.2": ">=0.25.0",
-      "vite@>=5.0.0 <5.4.18": ">=5.4.18",
-      "vite@>=5.0.0 <=5.4.18": ">=5.4.19",
-      "vite@>=5.0.0 <5.4.17": ">=5.4.17",
-      "brace-expansion@>=1.0.0 <=1.1.11": ">=1.1.12",
-      "brace-expansion@>=2.0.0 <=2.0.1": ">=2.0.2",
-      "form-data@>=4.0.0 <4.0.4": ">=4.0.4",
-      "@eslint/plugin-kit@<0.3.4": ">=0.3.4",
-      "tmp@<=0.2.3": ">=0.2.4",
-      "tar-fs@>=3.0.0 <3.0.9": ">=3.0.9",
-      "vite@<=5.4.19": ">=5.4.20",
-      "axios@>=1.0.0 <1.12.0": ">=1.12.0",
-      "tar-fs@>=3.0.0 <3.1.1": ">=3.1.1"
-    }
-  }
+  "packageManager": "pnpm@10.33.0+sha512.10568bb4a6afb58c9eb3630da90cc9516417abebd3fabbe6739f0ae795728da1491e9db5a544c76ad8eb7570f5c4bb3d6c637b2cb41bfdcdb47fa823c8649319"
 }

@@ -584,6 +584,9 @@ export class Vec2 implements Vec2Like {
     slerp(dest: Vec2Like, t: number): Vec2 {
         const cos = this.dot(dest);
         const sin = this.cross(dest);
+        if (Math.abs(sin) < 1e-6) {
+            return this.lerp(dest, t);
+        }
         const angle = Math.atan2(sin, cos);
         const destScale = Math.sin(t * angle);
         return this
@@ -609,6 +612,9 @@ export class Vec2 implements Vec2Like {
     ): T {
         const cos = Vec2.dot(src, dst);
         const sin = Vec2.cross(src, dst);
+        if (Math.abs(sin) < 1e-6) {
+            return out = src.lerp(dst, t);
+        }
         const angle = Math.atan2(sin, cos);
         const t1 = Math.sin((1 - t) * angle);
         const t2 = Math.sin(t * angle);

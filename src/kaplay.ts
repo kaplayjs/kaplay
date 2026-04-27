@@ -27,8 +27,8 @@ import {
     type PluginList,
 } from "./types";
 
-// If KAPLAY was runned before
-let runned = false;
+// If kaplay() was already called
+let ran = false;
 
 type HasDefinedKeys<TObj, TCheck> = {
     [K in keyof TCheck & keyof TObj]: TObj[K] extends undefined ? never : K;
@@ -84,9 +84,9 @@ export const kaplay = <
 >(
     opt?: O,
 ): KAPLAYGame<O> => {
-    if (runned) {
+    if (ran) {
         console.warn(
-            "KAPLAY was runned before, cleaning state",
+            "kaplay() was called a second time, cleaning up previous state...",
         );
 
         // cleanup
@@ -96,7 +96,7 @@ export const kaplay = <
 
     const gopt = opt ?? {} as KAPLAYOpt;
 
-    runned = true;
+    ran = true;
 
     updateEngine(createEngine(gopt));
 

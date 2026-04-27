@@ -87,7 +87,7 @@ import { KeepFlags } from "../ecs/entity/GameObjRaw";
 import { createPrefab, loadPrefab } from "../ecs/entity/prefab";
 import { addKaboom } from "../ecs/entity/premade/addKaboom";
 import { addLevel } from "../ecs/entity/premade/addLevel";
-import { destroy, getTreeRoot } from "../ecs/entity/utils";
+import { destroy, exists, getTreeRoot } from "../ecs/entity/utils";
 import { Collision } from "../ecs/systems/Collision";
 import { system, SystemPhase } from "../ecs/systems/systems";
 import { KEvent, KEventController, KEventHandler } from "../events/events";
@@ -164,6 +164,7 @@ import { buildConvexHull } from "../math/convexhull";
 import { easings } from "../math/easings";
 import { gjkShapeIntersection, gjkShapeIntersects } from "../math/gjk";
 import { lerp } from "../math/lerp";
+import { lerpAngle } from "../math/lerpAngle";
 import { Mat4 } from "../math/Mat4";
 import {
     bezier,
@@ -199,6 +200,8 @@ import {
     Mat2,
     Mat23,
     normalizedCurve,
+    piecewiseBezier,
+    piecewiseCatmullRom,
     Point,
     Polygon,
     Quad,
@@ -357,6 +360,7 @@ export const createContext = (
         add,
         addPrefab,
         createPrefab,
+        exists,
         destroy,
         destroyAll,
         get,
@@ -535,6 +539,7 @@ export const createContext = (
         shuffle,
         chance,
         lerp,
+        lerpAngle,
         step,
         smoothstep,
         tween,
@@ -560,6 +565,8 @@ export const createContext = (
         catmullRom,
         bezier,
         kochanekBartels,
+        piecewiseBezier,
+        piecewiseCatmullRom,
         createRegularPolygon,
         createStarPolygon,
         createCogPolygon,
