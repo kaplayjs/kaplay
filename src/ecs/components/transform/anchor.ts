@@ -1,6 +1,5 @@
 import { anchorPt } from "../../../gfx/anchor";
-import { vec2 } from "../../../math/math";
-import { type SerializedVec2, Vec2 } from "../../../math/Vec2";
+import { Vec2, type Vec2Like } from "../../../math/Vec2";
 import type { Anchor, Comp } from "../../../types";
 
 /**
@@ -10,7 +9,7 @@ import type { Anchor, Comp } from "../../../types";
  * @subgroup Component Serialization
  */
 export interface SerializedAnchorComp {
-    anchor: SerializedVec2;
+    anchor: Vec2Like;
 }
 
 /**
