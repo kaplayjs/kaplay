@@ -71,6 +71,12 @@ So your change should look like:
   `loadSpriteAtlas()`, for faster loading if you're packing stuff at build-time
   (#1063) - @dragoncoder047
 
+### Added
+
+- Added the ability to check which character a point is hovering over in the
+  `text()` component, to make text-based menus easier to build by simply styling
+  text (#1064) - @dragoncoder047
+
 ## [4000.0.0-alpha.27] - 2026-03-19
 
 ### Added

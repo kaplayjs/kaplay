@@ -1,17 +1,21 @@
 import type { BitmapFontData } from "../../../assets/bitmapFont";
 import { DEF_TEXT_SIZE } from "../../../constants/general";
 import { getRenderProps } from "../../../game/utils";
+import { anchorPt } from "../../../gfx/anchor";
 import {
     drawFormattedText,
     type FormattedText,
 } from "../../../gfx/draw/drawFormattedText";
+import { drawRect } from "../../../gfx/draw/drawRect";
 import type {
     CharTransform,
     CharTransformFunc,
     TextAlign,
 } from "../../../gfx/draw/drawText";
 import { formatText } from "../../../gfx/formatText";
-import { Rect, vec2 } from "../../../math/math";
+import { rgb } from "../../../math/color";
+import { Rect, testRectPoint, vec2 } from "../../../math/math";
+import { Vec2 } from "../../../math/Vec2";
 import { _k } from "../../../shared";
 import type { Comp, GameObj } from "../../../types";
 import { nextRenderAreaVersion } from "../physics/area";
@@ -86,7 +90,7 @@ export interface TextComp extends Comp {
      */
     textTransform: CharTransform | CharTransformFunc;
     /**
-     * Stylesheet for styled chunks, in the syntax of "this is a [style]text[/style] word".
+     * Stylesheet for styled chunks, using BBCode syntax "this is some [style]different formatting[/style] text".
      *
      * @since v2000.2
      */
@@ -98,11 +102,18 @@ export interface TextComp extends Comp {
     _renderAreaVersion: number;
     /**
      * The text data object after formatting, that contains the
-     * renering info as well as the parse data of the formatting tags.
+     * rendering info as well as the parse data of the formatting tags.
      */
     formattedText(): FormattedText;
 
     serialize(): SerializedTextComp;
+
+    /**
+     * Given a point (in local coordinates), returns the index of the
+     * rendered character that the point is over, or -1 if none are touched.
+     * You can then access the style information using `obj.formattedText().chars[index].styles`.
+     */
+    pointToCharacter(point: Vec2): number;
 }
 
 /**
@@ -184,9 +195,15 @@ export function text(t: string, opt: TextCompOpt = {}): TextComp {
         obj.height = theFormattedText.height / (obj.scale?.y || 1);
     }
 
+    function anchorPoint() {
+        return anchorPt(theFormattedText.opt.anchor ?? "topleft").add(1, 1)
+            .scale(theFormattedText.width, theFormattedText.height).scale(-0.5);
+    }
+
     let _shape: Rect | undefined;
     let _width = opt.width ?? 0;
     let _height = 0;
+    const tempRectForPointTest = new Rect(vec2(), 0, 0);
 
     const obj: TextComp = {
         id: "text",
@@ -236,6 +253,58 @@ export function text(t: string, opt: TextCompOpt = {}): TextComp {
 
         draw(this: GameObj<TextComp>) {
             drawFormattedText(theFormattedText);
+        },
+
+        drawInspect(this: GameObj<TextComp>) {
+            const p = anchorPoint();
+            for (let fc of theFormattedText.chars) {
+                drawRect({
+                    pos: fc.pos.add(p),
+                    width: fc.width * fc.scale.x,
+                    height: fc.height * fc.scale.y,
+                    fill: false,
+                    anchor: "center",
+                    outline: {
+                        color: rgb(255, 255, 0),
+                        width: 2,
+                    },
+                });
+            }
+        },
+
+        pointToCharacter(this: GameObj<TextComp>, point) {
+            const offset = anchorPoint();
+            if (!testRectPoint(this.renderArea(), point.sub(offset))) return -1;
+            const chars = theFormattedText.chars;
+            let minDist = Infinity;
+            let minIndex = -1;
+            for (let i = 0; i < chars.length; i++) {
+                const fc = chars[i];
+                const w = fc.width * fc.scale.x;
+                const h = fc.height * fc.scale.y;
+                Vec2.copy(fc.pos, tempRectForPointTest.pos);
+                Vec2.add(
+                    tempRectForPointTest.pos,
+                    offset,
+                    tempRectForPointTest.pos,
+                );
+                Vec2.addc(
+                    tempRectForPointTest.pos,
+                    -w / 2,
+                    -h / 2,
+                    tempRectForPointTest.pos,
+                );
+                tempRectForPointTest.width = w;
+                tempRectForPointTest.height = h;
+                if (testRectPoint(tempRectForPointTest, point)) {
+                    const dist = Vec2.dist(point, fc.pos);
+                    if (dist < minDist) {
+                        minDist = dist;
+                        minIndex = i;
+                    }
+                }
+            }
+            return minIndex;
         },
 
         update(this: GameObj<TextComp>) {

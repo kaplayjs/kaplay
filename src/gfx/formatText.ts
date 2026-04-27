@@ -276,11 +276,11 @@ export function formatText(opt: DrawTextOpt): FormattedText {
 
     let curX: number = 0;
     let tw = 0;
-    const lines: Array<{
+    const lines: {
+        chars: FormattedChar[];
         width: number;
-        chars: { ch: FormattedChar; font: GfxFont }[];
-    }> = [];
-    let curLine: typeof lines[number]["chars"] = [];
+    }[] = [];
+    let curLine: FormattedChar[] = [];
     let cursor = 0;
     let lastSpace: number | null = null;
     let lastSpaceWidth: number = 0;
@@ -324,6 +324,7 @@ export function formatText(opt: DrawTextOpt): FormattedText {
                 angle: 0,
                 font: defaultFontValue,
                 stretchInPlace: true,
+                styles: [],
             };
 
             if (opt.transform) {
@@ -336,7 +337,7 @@ export function formatText(opt: DrawTextOpt): FormattedText {
             }
 
             if (charStyleMap[cursor]) {
-                const styles = charStyleMap[cursor];
+                const styles = theFChar.styles = charStyleMap[cursor];
                 for (const [name, param] of styles) {
                     const style = opt.styles?.[name];
                     const tr = typeof style === "function"
@@ -418,10 +419,7 @@ export function formatText(opt: DrawTextOpt): FormattedText {
                 );
 
                 // queue char to be drawn
-                curLine.push({
-                    ch: theFChar as FormattedChar,
-                    font: requestedFontData,
-                });
+                curLine.push(theFChar as FormattedChar);
 
                 if (ch === " ") {
                     lastSpace = curLine.length;
@@ -461,7 +459,7 @@ export function formatText(opt: DrawTextOpt): FormattedText {
         if (i > 0) th += lineSpacing;
         const ox = (tw - lines[i].width) * alignPt(opt.align ?? "left");
         let thisLineHeight = size;
-        for (const { ch } of lines[i].chars) {
+        for (const ch of lines[i].chars) {
             ch.pos = ch.pos.add(ox, th - baselineCenterOffset);
             formattedChars.push(ch);
             thisLineHeight = Math.max(
@@ -469,6 +467,7 @@ export function formatText(opt: DrawTextOpt): FormattedText {
                 size * (ch.stretchInPlace ? scale : ch.scale).y / scale.y,
             );
         }
+        if (!thisLineHeight) thisLineHeight = size;
         th += thisLineHeight;
     }
 
