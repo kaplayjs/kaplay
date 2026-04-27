@@ -1,8 +1,8 @@
 import type { DrawSpriteOpt } from "../gfx/draw/drawSprite";
 import type { Frame } from "../gfx/TexPacker";
-import { Quad } from "../math/math";
+import { Quad, quad } from "../math/math";
 import { _k } from "../shared";
-import { type ImageSource } from "../types";
+import { type ImageSource, type TexFilter } from "../types";
 import { Asset, loadImg, loadProgress, spriteSrcToImage } from "./asset";
 import { fixURL, slice } from "./utils";
 
@@ -58,11 +58,11 @@ export type SpriteAnims = Record<string, SpriteAnim>;
  */
 export interface LoadSpriteOpt {
     /**
-     * If the defined area contains multiple sprites, how many frames are in the area horizontally.
+     * If the single image area contains multiple sprites in a grid, how many frames are in the area horizontally.
      */
     sliceX?: number;
     /**
-     * If the defined area contains multiple sprites, how many frames are in the area vertically.
+     * If the single image area contains multiple sprites arranged in a grid, how many frames are in the area vertically.
      */
     sliceY?: number;
     /**
@@ -72,7 +72,11 @@ export interface LoadSpriteOpt {
      */
     slice9?: NineSlice;
     /**
-     * Individual frames.
+     * Individual frames' bounding boxes, if the frames are not in a grid and so sliceX/sliceY won't do.
+     * If present, overrides sliceX and sliceY. If the given sprite source is a list of images, each image is
+     * its own frame, and this is not used.
+     *
+     * Format: x, y, w, and h are in **pixels**
      *
      * @since v3000.0
      */
@@ -85,6 +89,20 @@ export interface LoadSpriteOpt {
      * If the sprite is a single image.
      */
     singular?: boolean;
+    /**
+     * The tex filter to use, if different than the global sprite filter
+     */
+    filter?: TexFilter;
+    /**
+     * If you've already packed your spritesheet, you can set this to false to tell KAPLAY not to repack it
+     * when loading it into the main texture. However, this may negatively impact rendering performance if
+     * it causes future sprites to not fit and be moved to a different GPU texture.
+     *
+     * This doesn't apply if you use singular: true, because the entire image will be its own texture then.
+     *
+     * @default true
+     */
+    repack?: boolean;
 }
 
 /**
@@ -159,21 +177,29 @@ export class SpriteData {
         data: ImageSource[],
         opt: LoadSpriteOpt = {},
     ): SpriteData {
+        const filter = opt.filter ?? _k.globalOpt.texFilter ?? "nearest";
         const frames = data.map(
             opt.singular
-                ? (src => _k.assets.packer.addSingle(src))
-                : (src => _k.assets.packer.add(src)),
+                ? (src => _k.assets.packer.addSingle(src, filter))
+                : (src => _k.assets.packer.add(src, filter)),
         );
-        _k.assets.packer.refreshIfPending();
         return new SpriteData(frames, opt.anims, opt.slice9);
     }
 
     static fromSingle(data: ImageSource, opt: LoadSpriteOpt = {}): SpriteData {
         const frames: Quad[] = opt.frames
-            ? opt.frames
+            ? fixFramesPixelsToFractionOfImage(
+                opt.frames,
+                data.width,
+                data.height,
+            )
             : slice(opt.sliceX || 1, opt.sliceY || 1);
+        const filter = opt.filter ?? _k.globalOpt.texFilter ?? "nearest";
         if (opt.singular) {
-            const { tex, q: quad, id } = _k.assets.packer.addSingle(data);
+            const { tex, q: quad, id } = _k.assets.packer.addSingle(
+                data,
+                filter,
+            );
             return new SpriteData(
                 frames.map(f => ({
                     tex,
@@ -185,11 +211,12 @@ export class SpriteData {
             );
         }
         const sd = new SpriteData(
-            frames.map(frame => _k.assets.packer.add(data, frame)),
+            (opt.repack ?? true)
+                ? frames.map(frame => _k.assets.packer.add(data, filter, frame))
+                : _k.assets.packer.addPrepacked(data, filter, frames),
             opt.anims,
             opt.slice9,
         );
-        _k.assets.packer.refreshIfPending();
         return sd;
     }
 }
@@ -281,4 +308,21 @@ export function loadBean(name: string = "bean"): Asset<SpriteData> {
     }
 
     return loadSprite(name, _k.game.defaultAssets.bean);
+}
+
+export function fixFramesPixelsToFractionOfImage(
+    frames: Quad[],
+    width: number,
+    height: number,
+): Quad[] {
+    // Given frames are dx, dy, width, and height in pixels, but internal
+    // format is fraction of image size, so convert it
+    return frames.map(q =>
+        quad(
+            q.x / width,
+            q.y / height,
+            q.w / width,
+            q.h / height,
+        )
+    );
 }
