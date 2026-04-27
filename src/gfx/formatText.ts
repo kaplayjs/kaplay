@@ -363,6 +363,7 @@ export function formatText(opt: DrawTextOpt): FormattedText {
                 };
             }
             let requestedFontData = defGfxFont;
+            let requestedFontScale = 1;
             if (requestedFont && requestedFont !== defaultFontValue) {
                 if (
                     resolvedFont instanceof FontData
@@ -371,6 +372,7 @@ export function formatText(opt: DrawTextOpt): FormattedText {
                     requestedFontData = getFontAtlasForFont(requestedFont).font;
                 }
                 else requestedFontData = resolvedFont;
+                requestedFontScale = defGfxFont.size / requestedFontData.size;
             }
             if (
                 requestedFont
@@ -382,7 +384,7 @@ export function formatText(opt: DrawTextOpt): FormattedText {
 
             // TODO: leave space if character not found?
             if (f) {
-                let charWidth = f.q.w * f.tex.width
+                let charWidth = f.q.w * f.tex.width * requestedFontScale
                     * (theFChar.stretchInPlace
                         ? scale
                         : theFChar.scale).x;
@@ -408,8 +410,8 @@ export function formatText(opt: DrawTextOpt): FormattedText {
                     continue;
                 }
 
-                theFChar.width = f.q.w * f.tex.width;
-                theFChar.height = f.q.h * f.tex.height;
+                theFChar.width = f.q.w * f.tex.width * requestedFontScale;
+                theFChar.height = f.q.h * f.tex.height * requestedFontScale;
 
                 theFChar.pos = theFChar.pos.add(
                     charWidth * 0.5,
@@ -456,7 +458,7 @@ export function formatText(opt: DrawTextOpt): FormattedText {
     for (let i = 0; i < lines.length; i++) {
         if (i > 0) th += lineSpacing;
         const ox = (tw - lines[i].width) * alignPt(opt.align ?? "left");
-        let thisLineHeight = 0;
+        let thisLineHeight = size;
         for (const ch of lines[i].chars) {
             ch.pos = ch.pos.add(ox, th - baselineCenterOffset);
             formattedChars.push(ch);

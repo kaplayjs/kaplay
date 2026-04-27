@@ -11,8 +11,8 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - Breaking changes are marked with: **(!)**.
 - [Jump to v3001 changelog](#changelog-for-v3001).
 
-## <!-- [CHANGELOG GUIDELINES PLEASE FOLLOW]
-
+<!-- [CHANGELOG GUIDELINES PLEASE FOLLOW]
+===============================================================================
 Hey, KAPLAY Dev! Add your new changes in [unreleased] heading, below one of
 these heading:
 
@@ -35,28 +35,41 @@ So your change should look like:
 ### Added
 
 - added a new ghost (#6767) - @lajbel
-
----
-
+===============================================================================
 [DO IT IF YOU DON'T WANT A LAJBEL VISIT AT NIGHT] -->
 
 ## [unreleased]
 
-### Breaking Changes
+### Changed
 
-- Updated "explicit `LoadSpriteOpt.frames`" method of loading a sprite with
-  animations (via either `loadSprite()` or `loadSpriteAtlas()`) to use pixel
-  values for the coordinate space, which is more intuitive (#1061) -
+- **(!)** Updated "explicit `LoadSpriteOpt.frames`" method of loading a sprite
+  with animations (via either `loadSprite()` or `loadSpriteAtlas()`) to use
+  pixel values for the coordinate space, which is more intuitive (#1061) -
   @dragoncoder047
+- Added padding around edges of spritesheet to prevent stretch if uv ends up out
+  of bounds (#1076) - @dragoncoder047
 
 ### Fixed
 
 - Updated texture packer refreshing to only refresh when a sprite is actually
   requested to be drawn, to reduce the number of times the texture is synced to
   the GPU, which is slow (#1058) - @dragoncoder047
+- Fixed `loadBitmapFontFromSprite()` so that the font drawn using it is drawn
+  with the correct scale, as one would expect (#1063) - @dragoncoder047
 - Added `exists()` which also checks whether the object is not undefined. This
   should temporarily fix the problem with undefined objects during collision due
-  to iterators being invalidated by destroy.
+  to iterators being invalidated by destroy. - @mflerackers
+- Fixed broadphase event duplication on scene switch, causing repeated
+  broadphase object registrations, which resulted in a performance drop
+  (#1074) - @imaginarny, @mflerackers
+- Fixed broadphase objects cleared on scene switch including those with `stay()`
+  (#1077) - @imaginarny, @mflerackers
+
+### Added
+
+- Added a `repack: false` option to `loadSpite()` and a repack parameter to
+  `loadSpriteAtlas()`, for faster loading if you're packing stuff at build-time
+  (#1063) - @dragoncoder047
 
 ### Added
 
@@ -132,8 +145,6 @@ So your change should look like:
   (#1018) - @dragoncoder047
 - Text component no longer hangs if the requested width is too narrow for a
   single character - @dragoncoder047
-- Fixed input events attached to paused ancestors not being paused (#1009) -
-  @amyspark-ng, @dragoncoder047
 - Fixed type `UniformValue` union not including `Texture`, a valid option
   (#1018) - @dragoncoder047
 - Fixed event crash when using `onLoad` or other events that doesn't return an
