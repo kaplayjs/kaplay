@@ -96,7 +96,7 @@ export function loadBitmapFontFromSprite(
                     `Tried to define ${splittedChars.length} characters for sprite font "${spriteID}", but there are only ${frames.length} frames defined`,
                 );
             }
-            const h = Math.max(...frames.map(({ tex, q }) => tex.height * q.h));
+            const h = spr.height;
             return {
                 map: Object.fromEntries(
                     splittedChars.map((c, i) => [c, frames[i]]),
