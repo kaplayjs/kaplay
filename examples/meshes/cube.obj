@@ -1,5 +1,5 @@
 # cube model
-mtllib cube.mtl
+mtllib meshes/cube.mtl
 o cube
 v 0 0 0
 v 64 0 0
