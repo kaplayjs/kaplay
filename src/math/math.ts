@@ -3297,7 +3297,7 @@ export function piecewiseBezier(pts: Vec2[]) {
             }
         }
         return beziers[beziers.length - 1][4](1);
-    }
+    };
 }
 
 /**
@@ -3372,7 +3372,7 @@ export function piecewiseCatmullRom(pts: Vec2[]) {
             }
         }
         return curves[curves.length - 1][4](1);
-    }
+    };
 }
 
 // True if t is between 0 and 1

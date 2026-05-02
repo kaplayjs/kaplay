@@ -26,14 +26,15 @@ export type WavefrontData = {
 class MaterialLibrary {
     materials = new Map<string, WavefrontMaterial>();
     constructor() {
-
     }
     add(name: string, material: WavefrontMaterial) {
         this.materials.set(name, material);
     }
 }
 
-function loadWavefrontMaterialLibrary(mtlSrc: string): Promise<MaterialLibrary> {
+function loadWavefrontMaterialLibrary(
+    mtlSrc: string,
+): Promise<MaterialLibrary> {
     const resolveMtl = typeof mtlSrc === "string"
         ? fetchText(mtlSrc)
         : Promise.resolve(mtlSrc);
@@ -53,7 +54,7 @@ function loadWavefrontMaterialLibrary(mtlSrc: string): Promise<MaterialLibrary> 
                         console.log("loading", parts[1]);
                         const texture = await loadSprite(parts[1], parts[1]);
                         lib.add(currentMaterial, { texture });
-                        console.log("loaded", parts[1])
+                        console.log("loaded", parts[1]);
                     }
                     break;
             }
@@ -80,20 +81,20 @@ export function loadWavefront(
     return _k.assets.meshes.add(
         name,
         resolveObj.then(async (text: string) => {
-            const data: WavefrontData = { meshes: new Map<string, Mesh> };
-            const libs = new Map<string, MaterialLibrary>;
+            const data: WavefrontData = { meshes: new Map<string, Mesh>() };
+            const libs = new Map<string, MaterialLibrary>();
             let meshName;
             let meshData: {
-                vertices: number[],
-                indices: number[],
-                ranges: [SpriteData, number, number][]
+                vertices: number[];
+                indices: number[];
+                ranges: [SpriteData, number, number][];
             } | undefined = undefined;
             let posList: Vec3[] = [];
             let uvList: Vec2[] = [];
             let vertexMap = new Map<string, [number, number[]]>();
             let currentMaterial;
             const getVertex = (def: string, material: WavefrontMaterial) => {
-                const pair = vertexMap.get(def)
+                const pair = vertexMap.get(def);
                 if (pair) {
                     let [index, vert] = pair;
                     return index;
@@ -119,13 +120,20 @@ export function loadWavefront(
                 switch (parts[0]) {
                     case "o":
                         if (meshName) {
-                            data.meshes.set(meshName, makeMesh(WavefrontVertexFormat, meshData!.vertices, meshData!.indices));
+                            data.meshes.set(
+                                meshName,
+                                makeMesh(
+                                    WavefrontVertexFormat,
+                                    meshData!.vertices,
+                                    meshData!.indices,
+                                ),
+                            );
                         }
                         meshName = parts[1];
                         meshData = {
                             vertices: [],
                             indices: [],
-                            ranges: []
+                            ranges: [],
                         };
 
                         break;
@@ -144,41 +152,68 @@ export function loadWavefront(
                         );
                         break;
                     case "mtllib":
-                        console.log("loading", parts[1])
-                        const lib = await loadWavefrontMaterialLibrary(parts[1]);
+                        console.log("loading", parts[1]);
+                        const lib = await loadWavefrontMaterialLibrary(
+                            parts[1],
+                        );
                         libs.set(parts[1], lib);
-                        console.log("loaded", parts[1])
+                        console.log("loaded", parts[1]);
                         break;
                     case "usemtl":
                         let material;
                         for (const lib of libs.values()) {
                             if (lib.materials.has(parts[1])) {
-                                material = lib.materials.get(parts[1])!
+                                material = lib.materials.get(parts[1])!;
                                 break;
                             }
                         }
                         if (meshData!.ranges.length) {
-                            meshData!.ranges[meshData!.ranges.length - 1][2] = meshData!.indices.length - meshData!.ranges[meshData!.ranges.length - 1][1]
+                            meshData!.ranges[meshData!.ranges.length - 1][2] =
+                                meshData!.indices.length
+                                - meshData!
+                                    .ranges[meshData!.ranges.length - 1][1];
                         }
                         if (material?.texture) {
-                            meshData!.ranges.push([material?.texture, meshData!.indices.length, meshData!.indices.length]);
+                            meshData!.ranges.push([
+                                material?.texture,
+                                meshData!.indices.length,
+                                meshData!.indices.length,
+                            ]);
                         }
                         currentMaterial = material;
                         break;
                     case "f":
-                        console.log("face", parts.length)
+                        console.log("face", parts.length);
                         if (parts.length == 4) { // Triangle
-                            meshData?.indices.push(getVertex(parts[1], currentMaterial!));
-                            meshData?.indices.push(getVertex(parts[2], currentMaterial!));
-                            meshData?.indices.push(getVertex(parts[3], currentMaterial!));
+                            meshData?.indices.push(
+                                getVertex(parts[1], currentMaterial!),
+                            );
+                            meshData?.indices.push(
+                                getVertex(parts[2], currentMaterial!),
+                            );
+                            meshData?.indices.push(
+                                getVertex(parts[3], currentMaterial!),
+                            );
                         }
                         if (parts.length == 5) { // Quad
-                            meshData?.indices.push(getVertex(parts[1], currentMaterial!));
-                            meshData?.indices.push(getVertex(parts[2], currentMaterial!));
-                            meshData?.indices.push(getVertex(parts[3], currentMaterial!));
-                            meshData?.indices.push(getVertex(parts[1], currentMaterial!));
-                            meshData?.indices.push(getVertex(parts[3], currentMaterial!));
-                            meshData?.indices.push(getVertex(parts[4], currentMaterial!));
+                            meshData?.indices.push(
+                                getVertex(parts[1], currentMaterial!),
+                            );
+                            meshData?.indices.push(
+                                getVertex(parts[2], currentMaterial!),
+                            );
+                            meshData?.indices.push(
+                                getVertex(parts[3], currentMaterial!),
+                            );
+                            meshData?.indices.push(
+                                getVertex(parts[1], currentMaterial!),
+                            );
+                            meshData?.indices.push(
+                                getVertex(parts[3], currentMaterial!),
+                            );
+                            meshData?.indices.push(
+                                getVertex(parts[4], currentMaterial!),
+                            );
                         }
                         break;
                     default:
@@ -187,10 +222,19 @@ export function loadWavefront(
             }
 
             if (meshData!.ranges.length) {
-                meshData!.ranges[meshData!.ranges.length - 1][2] = meshData!.indices.length - meshData!.ranges[meshData!.ranges.length - 1][1]
+                meshData!.ranges[meshData!.ranges.length - 1][2] =
+                    meshData!.indices.length
+                    - meshData!.ranges[meshData!.ranges.length - 1][1];
             }
             if (meshName) {
-                data.meshes.set(meshName, makeMesh(WavefrontVertexFormat, meshData!.vertices, meshData!.indices));
+                data.meshes.set(
+                    meshName,
+                    makeMesh(
+                        WavefrontVertexFormat,
+                        meshData!.vertices,
+                        meshData!.indices,
+                    ),
+                );
             }
 
             return data;

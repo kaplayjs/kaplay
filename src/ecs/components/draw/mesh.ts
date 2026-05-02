@@ -56,13 +56,20 @@ export function mesh(
                 const rect = this.renderArea();
                 const anchorOffset = anchorPt(this.anchor);
                 const offset = vec2(
-                    - (anchorOffset.x + 1) * 0.5 * (rect.width),
-                    - (anchorOffset.y + 1) * 0.5 * (rect.height)
+                    -(anchorOffset.x + 1) * 0.5 * (rect.width),
+                    -(anchorOffset.y + 1) * 0.5 * (rect.height),
                 );
-                drawMesh(Object.assign(getRenderProps(this), { mesh: opt.mesh, offset }));
+                drawMesh(
+                    Object.assign(getRenderProps(this), {
+                        mesh: opt.mesh,
+                        offset,
+                    }),
+                );
             }
             else {
-                drawMesh(Object.assign(getRenderProps(this), { mesh: opt.mesh }));
+                drawMesh(
+                    Object.assign(getRenderProps(this), { mesh: opt.mesh }),
+                );
             }
         },
         renderArea() {

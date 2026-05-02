@@ -4424,7 +4424,7 @@ export interface KAPLAYCtx {
         name: string,
         objSrc: string,
         mtlSrc: string,
-    ): Asset<WavefrontData>
+    ): Asset<WavefrontData>;
     /**
      * Add a new loader to wait for before starting the game.
      *

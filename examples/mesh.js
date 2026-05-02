@@ -61,7 +61,7 @@ loadSound("powerup", "sounds/powerup.mp3");
 loadSound("blip", "sounds/blip.mp3");
 loadSound("hit", "sounds/hit.mp3");
 loadSound("portal", "sounds/portal.mp3");
-loadWavefront("cube", "meshes/cube.obj").then(data => console.log(data))
+loadWavefront("cube", "meshes/cube.obj").then(data => console.log(data));
 
 loadShader(
     "3D",
@@ -330,7 +330,13 @@ onLoad(() => {
                 anchor("bot"),
                 offscreen({ hide: true }),*/
                 "platform",
-                mesh({ mesh: makeMesh(format, vertices(grassUv, grassTopUv, grassBottomUv), indices) }),
+                mesh({
+                    mesh: makeMesh(
+                        format,
+                        vertices(grassUv, grassTopUv, grassBottomUv),
+                        indices,
+                    ),
+                }),
                 area(),
                 body({ isStatic: true }),
                 shader("3D", () => ({
@@ -347,7 +353,13 @@ onLoad(() => {
                 body({ isStatic: true }),
                 offscreen({ hide: true }),
                 anchor("bot"),*/
-                mesh({ mesh: makeMesh(format, vertices(steelUv, steelUv, steelUv), indices) }),
+                mesh({
+                    mesh: makeMesh(
+                        format,
+                        vertices(steelUv, steelUv, steelUv),
+                        indices,
+                    ),
+                }),
                 area(),
                 body({ isStatic: true }),
                 shader("3D", () => ({
@@ -380,7 +392,13 @@ onLoad(() => {
                 anchor("bot"),
                 offscreen({ hide: true }),*/
                 "prize",
-                mesh({ mesh: makeMesh(format, vertices(prizeUv, prizeTopUv, prizeTopUv), indices) }),
+                mesh({
+                    mesh: makeMesh(
+                        format,
+                        vertices(prizeUv, prizeTopUv, prizeTopUv),
+                        indices,
+                    ),
+                }),
                 area(),
                 body({ isStatic: true }),
                 shader("3D", () => ({
@@ -399,7 +417,11 @@ onLoad(() => {
                 offscreen({ hide: true }),*/
                 "danger",
                 mesh({
-                    mesh: makeMesh(format, vertices(spikeUv, spikeUv, spikeUv, 21), indices),
+                    mesh: makeMesh(
+                        format,
+                        vertices(spikeUv, spikeUv, spikeUv, 21),
+                        indices,
+                    ),
                 }),
                 area(),
                 body({ isStatic: true }),
@@ -628,4 +650,4 @@ onLoad(() => {
     go("game");
 });
 
-//debug.inspect = true;
+// debug.inspect = true;
