@@ -1,3 +1,7 @@
+allowBuilds:
+  dprint: true
+  esbuild: true
+  puppeteer: true
 overrides:
   axios@>=1.0.0 <1.15.0: '>=1.15.0'
   basic-ftp@<=5.2.1: '>=5.2.2'
