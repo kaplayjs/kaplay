@@ -67,6 +67,9 @@ So your change should look like:
 
 ### Added
 
+- Added the `LevelCompOpt.charsPerTile` option for the `level()` component and
+  `addLevel` which lets you use more than one character per tile, that way you
+  can make clearer maps without having to resort to Unicode - @dragoncoder047
 - Added a `repack: false` option to `loadSpite()` and a repack parameter to
   `loadSpriteAtlas()`, for faster loading if you're packing stuff at build-time
   (#1063) - @dragoncoder047
