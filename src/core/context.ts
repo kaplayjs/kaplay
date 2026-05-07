@@ -470,6 +470,7 @@ export const createContext = (
         onButtonRelease: defaultScope.onButtonRelease,
         mousePos: app.mousePos,
         mouseDeltaPos: app.mouseDeltaPos,
+        scrollDelta: app.scrollDelta,
         isKeyDown: app.isKeyDown,
         isKeyPressed: app.isKeyPressed,
         isKeyPressedRepeat: app.isKeyPressedRepeat,
