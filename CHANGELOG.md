@@ -38,7 +38,13 @@ So your change should look like:
 ===============================================================================
 [DO IT IF YOU DON'T WANT A LAJBEL VISIT AT NIGHT] -->
 
-## [unreleased]
+## [4000.0.0-alpha.27.1] - 2026-05-12
+
+### Added
+
+- Added a `repack: false` option to `loadSpite()` and a repack parameter to
+  `loadSpriteAtlas()`, for faster loading if you're packing stuff at build-time
+  (#1063) - @dragoncoder047
 
 ### Changed
 
@@ -64,12 +70,6 @@ So your change should look like:
   (#1074) - @imaginarny, @mflerackers
 - Fixed broadphase objects cleared on scene switch including those with `stay()`
   (#1077) - @imaginarny, @mflerackers
-
-### Added
-
-- Added a `repack: false` option to `loadSpite()` and a repack parameter to
-  `loadSpriteAtlas()`, for faster loading if you're packing stuff at build-time
-  (#1063) - @dragoncoder047
 
 ## [4000.0.0-alpha.27] - 2026-03-19
 
