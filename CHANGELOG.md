@@ -139,8 +139,6 @@ So your change should look like:
   (#1018) - @dragoncoder047
 - Text component no longer hangs if the requested width is too narrow for a
   single character - @dragoncoder047
-- Fixed type `UniformValue` union not including `Texture`, a valid option
-  (#1018) - @dragoncoder047
 - Fixed event crash when using `onLoad` or other events that doesn't return an
   EventController, and then using `go()` (#1024) - @lajbel, credits to
   @dragoncoder047
