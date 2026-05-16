@@ -5589,7 +5589,7 @@ export interface KAPLAYCtx {
      *
      * @example
      * ```js
-     * randSeed(Date.now())
+     * randSeed("few", "string", "seeds")
      * ```
      *
      * @returns The new seed.
@@ -5597,7 +5597,7 @@ export interface KAPLAYCtx {
      * @group Math
      * @subgroup Random
      */
-    randSeed(seed?: number): number;
+    randSeed(...seed: string[]): string[];
     /**
      * Create a 2D vector.
      *

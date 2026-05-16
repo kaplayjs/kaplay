@@ -4,6 +4,7 @@
 import { resolveSprite } from "../assets/sprite";
 import { _k } from "../shared";
 import type { GameObj, RNGValue, Shape } from "../types";
+import Alea, { getRandomSeeds } from "./alea-rng";
 import { clamp } from "./clamp";
 import { Color, rgb } from "./color";
 import { traceRegion } from "./getImageOutline";
@@ -740,7 +741,7 @@ export const C = 12345;
 export const M = 2147483648;
 
 /**
- * A random number generator using the linear congruential generator algorithm.
+ * A random number generator using the Alea rng algorithm.
  *
  * @group Math
  * @subgroup Random
@@ -748,10 +749,19 @@ export const M = 2147483648;
 export class RNG {
     /**
      * The current seed value used by the random number generator.
+     * It is an array of strings that are used to initialize the RNG.
+     * To create a high-entropy seed, it is easiest to pass three different strings.
+     * If not passed, the class will generate a random seed for you.
      */
-    seed: number;
-    constructor(seed: number) {
-        this.seed = seed;
+    seed: string[];
+    /**
+     * The RNG instance used for generating random numbers.
+     */
+    rng: ReturnType<typeof Alea>;
+
+    constructor(...seed: string[]) {
+        this.seed = seed.length > 0 ? seed : getRandomSeeds();
+        this.rng = Alea(...this.seed);
     }
 
     /**
@@ -759,15 +769,14 @@ export class RNG {
      *
      * @example
      * ```js
-     * const rng = new RNG(Date.now())
+     * const rng = new RNG("few", "string", "seeds")
      * const value = rng.gen() // Returns number between 0-1
      * ```
      *
      * @returns A number between 0 and 1.
      */
     gen(): number {
-        this.seed = (A * this.seed + C) % M;
-        return this.seed / M;
+        return this.rng();
     }
 
     /**
@@ -778,7 +787,7 @@ export class RNG {
      *
      * @example
      * ```js
-     * const rng = new RNG(Date.now())
+     * const rng = new RNG("few", "string", "seeds")
      * const value = rng.genNumber(10, 20) // Returns number between 10-20
      * ```
      *
@@ -795,7 +804,7 @@ export class RNG {
      *
      * @example
      * ```js
-     * const rng = new RNG(Date.now())
+     * const rng = new RNG("few", "string", "seeds")
      * const vec = rng.genVec2(vec2(0,0), vec2(100,100))
      * ```
      *
@@ -813,7 +822,7 @@ export class RNG {
      *
      * @example
      * ```js
-     * const rng = new RNG(Date.now())
+     * const rng = new RNG("few", "string", "seeds")
      * const color = rng.genColor(rgb(0,0,0), rgb(255,255,255))
      * ```
      *
@@ -834,7 +843,7 @@ export class RNG {
      *
      * @example
      * ```js
-     * const rng = new RNG(Date.now())
+     * const rng = new RNG("few", "string", "seeds")
      * const val = rng.genAny(0, 100) // Number between 0-100
      * const vec = rng.genAny(vec2(0,0), vec2(100,100)) // Vec2
      * const col = rng.genAny(rgb(0,0,0), rgb(255,255,255)) // Color
@@ -873,9 +882,10 @@ export class RNG {
     }
 }
 
-export function randSeed(seed?: number): number {
-    if (seed != null) {
+export function randSeed(...seed: string[]): string[] {
+    if (seed.length > 0) {
         _k.game.defRNG.seed = seed;
+        _k.game.defRNG.rng = Alea(..._k.game.defRNG.seed);
     }
     return _k.game.defRNG.seed;
 }
