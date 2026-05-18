@@ -11,8 +11,8 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - Breaking changes are marked with: **(!)**.
 - [Jump to v3001 changelog](#changelog-for-v3001).
 
-<!-- [CHANGELOG GUIDELINES PLEASE FOLLOW]
-===============================================================================
+# <!-- [CHANGELOG GUIDELINES PLEASE FOLLOW]
+
 Hey, KAPLAY Dev! Add your new changes in [unreleased] heading, below one of
 these heading:
 
@@ -34,9 +34,8 @@ So your change should look like:
 
 ### Added
 
-- added a new ghost (#6767) - @lajbel
-===============================================================================
-[DO IT IF YOU DON'T WANT A LAJBEL VISIT AT NIGHT] -->
+- # added a new ghost (#6767) - @lajbel
+  [DO IT IF YOU DON'T WANT A LAJBEL VISIT AT NIGHT] -->
 
 ## [4000.0.0-alpha.27.1] - 2026-05-12
 
@@ -70,6 +69,8 @@ So your change should look like:
   (#1074) - @imaginarny, @mflerackers
 - Fixed broadphase objects cleared on scene switch including those with `stay()`
   (#1077) - @imaginarny, @mflerackers
+- Fixed `TimerController.timeLeft` returning elapsed time instead of remaining
+  time (#1082) - @nojaf
 
 ## [4000.0.0-alpha.27] - 2026-03-19
 
