@@ -1,8 +1,11 @@
 import type { Asset } from "../../assets/asset";
-import { resolveSprite, type SpriteData } from "../../assets/sprite";
-import { Quad, vec2 } from "../../math/math";
-import { type Vec2 } from "../../math/Vec2";
+import { resolveSprite, SpriteData } from "../../assets/sprite";
+import { DEF_ANCHOR } from "../../constants/general";
+import { Quad, quad } from "../../math/math";
+import { Vec2 } from "../../math/Vec2";
 import type { Anchor, RenderProps } from "../../types";
+import { warn } from "../../utils/log";
+import { anchorPt } from "../anchor";
 import type { Texture } from "../gfx";
 import { drawTexture } from "./drawTexture";
 
@@ -61,50 +64,135 @@ export function drawSprite(opt: DrawSpriteOpt) {
     }
 
     // TODO: slow
-    const spr = resolveSprite(opt.sprite);
+    let spriteData: SpriteData;
 
-    if (!spr || !spr.data) {
-        return;
+    if (!(opt.sprite instanceof SpriteData)) {
+        const spr = resolveSprite(opt.sprite);
+
+        if (!spr || !spr.data) {
+            return;
+        }
+
+        spriteData = spr.data;
+    }
+    else {
+        spriteData = opt.sprite;
     }
 
-    const calcTexScale = (
-        tex: Texture,
-        q: Quad,
-        w?: number,
-        h?: number,
-    ): Vec2 => {
-        const scale = vec2(1, 1);
-        if (w && h) {
-            scale.x = w / (tex.width * q.w);
-            scale.y = h / (tex.height * q.h);
-        }
-        else if (w) {
-            scale.x = w / (tex.width * q.w);
-            scale.y = scale.x;
-        }
-        else if (h) {
-            scale.y = h / (tex.height * q.h);
-            scale.x = scale.y;
-        }
-        return scale;
-    };
+    const frame = spriteData.frames[opt.frame ?? 0];
 
-    const frame = spr.data.frames[opt.frame ?? 0];
     if (!frame) {
         throw new Error(`Frame not found: ${opt.frame ?? 0}`);
     }
-    const q = frame.q.scale(opt.quad ?? new Quad(0, 0, 1, 1));
 
-    const scale = calcTexScale(frame.tex, q, opt.width, opt.height);
-    const width = opt.width ?? frame.tex.width * q.w * scale.x;
-    const height = opt.height ?? frame.tex.height * q.h * scale.y;
+    if (spriteData.slice9) {
+        // TODO: use scale or width / height, or both?
+        const { left, right, top, bottom, tileMode } = spriteData.slice9;
 
-    drawTexture(
-        Object.assign({}, opt, {
-            tex: frame.tex,
-            quad: q,
-            width,
-            height,
-        }),
-    );
+        const width = opt.width ?? spriteData.width;
+        const height = opt.height ?? spriteData.height;
+
+        if (opt.tiled) {
+            warn(
+                "drawSprite(): 'tiled' option is ignored for 9-slice sprites. Use 'tileMode' in slice9 config instead.",
+            );
+        }
+
+        const tw = frame.tex.width * frame.q.w;
+        const th = frame.tex.height * frame.q.h;
+        const iw = width - left - right;
+        const ih = height - top - bottom;
+        const w1 = left / tw;
+        const w3 = right / tw;
+        const w2 = 1 - w1 - w3;
+        const h1 = top / th;
+        const h3 = bottom / th;
+        const h2 = 1 - h1 - h3;
+        const quads = [
+            // uv
+            quad(0, 0, w1, h1),
+            quad(w1, 0, w2, h1),
+            quad(w1 + w2, 0, w3, h1),
+            quad(0, h1, w1, h2),
+            quad(w1, h1, w2, h2),
+            quad(w1 + w2, h1, w3, h2),
+            quad(0, h1 + h2, w1, h3),
+            quad(w1, h1 + h2, w2, h3),
+            quad(w1 + w2, h1 + h2, w3, h3),
+            // transform
+            quad(0, 0, left, top),
+            quad(left, 0, iw, top),
+            quad(left + iw, 0, right, top),
+            quad(0, top, left, ih),
+            quad(left, top, iw, ih),
+            quad(left + iw, top, right, ih),
+            quad(0, top + ih, left, bottom),
+            quad(left, top + ih, iw, bottom),
+            quad(left + iw, top + ih, right, bottom),
+        ];
+        const offset = anchorPt(opt.anchor || DEF_ANCHOR);
+        const offsetX = -(offset.x + 1) * 0.5 * width + (opt.pos?.x ?? 0);
+        const offsetY = -(offset.y + 1) * 0.5 * height + (opt.pos?.y ?? 0);
+        for (let i = 0; i < 9; i++) {
+            const uv = quads[i];
+            const transform = quads[i + 9];
+            if (transform.w == 0 || transform.h == 0) {
+                continue;
+            }
+            const isCenter = i === 4;
+            const isEdge = !!(i & 1);
+            const shouldTile = isCenter
+                ? tileMode === "center" || tileMode === "all"
+                : isEdge
+                ? tileMode === "edges" || tileMode === "all"
+                : false;
+            drawTexture(
+                Object.assign({}, opt, {
+                    pos: transform.pos().add(offsetX, offsetY),
+                    anchor: "topleft",
+                    tex: frame.tex,
+                    quad: frame.q.scale(uv),
+                    tiled: shouldTile,
+                    width: transform.w,
+                    height: transform.h,
+                }),
+            );
+        }
+    }
+    else {
+        const scale = calcTexScale(frame.tex, frame.q, opt.width, opt.height);
+        const width = opt.width ?? frame.tex.width * frame.q.w * scale.x;
+        const height = opt.height ?? frame.tex.height * frame.q.h * scale.y;
+
+        drawTexture(
+            Object.assign({}, opt, {
+                tex: frame.tex,
+                quad: frame.q.scale(opt.quad ?? new Quad(0, 0, 1, 1)),
+                width,
+                height,
+            }),
+        );
+    }
 }
+
+export const calcTexScale = (
+    tex: Texture,
+    q: Quad,
+    w?: number,
+    h?: number,
+): Vec2 => {
+    const scale = new Vec2(1, 1);
+    if (w && h) {
+        scale.x = w / (tex.width * q.w);
+        scale.y = h / (tex.height * q.h);
+    }
+    else if (w) {
+        scale.x = w / (tex.width * q.w);
+        scale.y = scale.x;
+    }
+    else if (h) {
+        scale.y = h / (tex.height * q.h);
+        scale.x = scale.y;
+    }
+    return scale;
+};
