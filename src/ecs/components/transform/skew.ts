@@ -1,5 +1,5 @@
 import { vec2, type Vec2Args } from "../../../math/math";
-import { type SerializedVec2, Vec2 } from "../../../math/Vec2";
+import { Vec2, type Vec2Like } from "../../../math/Vec2";
 import type { Comp } from "../../../types";
 import {
     type InternalGameObjRaw,
@@ -13,7 +13,7 @@ import {
  * @subgroup Component Serialization
  */
 export interface SerializedSkewComp {
-    skew: SerializedVec2;
+    skew: Vec2Like;
 }
 
 /**
