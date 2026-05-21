@@ -979,7 +979,7 @@ export const initApp = (
         const mousePos = canvasToViewport(new Vec2(e.offsetX, e.offsetY));
         const mouseDeltaPos = new Vec2(e.movementX, e.movementY);
 
-        if (isFullscreen()) {
+        if (!opt.letterbox && isFullscreen()) {
             const cw = state.canvas.width / pd;
             const ch = state.canvas.height / pd;
             const ww = window.innerWidth;

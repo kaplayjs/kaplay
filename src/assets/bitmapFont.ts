@@ -1,6 +1,7 @@
 import { ASCII_CHARS } from "../constants/general";
 import type { Frame } from "../gfx/TexPacker";
 import { _k } from "../shared";
+import type { TexFilter } from "../types";
 import { type Asset, loadImg } from "./asset";
 import { makeFont } from "./font";
 import { fixURL } from "./utils";
@@ -12,6 +13,7 @@ import { fixURL } from "./utils";
 export interface GfxFont {
     map: Record<string, Frame>;
     size: number;
+    filter: TexFilter;
 }
 
 /**
@@ -35,6 +37,10 @@ export interface LoadBitmapFontOpt {
      * @default " !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~";
      */
     chars?: string;
+    /**
+     * Rasterization filter to use, if different than the global font filter.
+     */
+    filter?: TexFilter;
 }
 
 // TODO: support LoadSpriteSrc
@@ -56,6 +62,7 @@ export function loadBitmapFont(
                     gw,
                     gh,
                     opt.chars ?? ASCII_CHARS,
+                    opt.filter ?? _k.globalOpt.fontFilter ?? "nearest",
                 );
             }),
     );
@@ -89,12 +96,13 @@ export function loadBitmapFontFromSprite(
                     `Tried to define ${splittedChars.length} characters for sprite font "${spriteID}", but there are only ${frames.length} frames defined`,
                 );
             }
-            const h = Math.max(...frames.map(({ tex, q }) => tex.height * q.h));
+            const h = spr.height;
             return {
                 map: Object.fromEntries(
                     splittedChars.map((c, i) => [c, frames[i]]),
                 ),
                 size: h,
+                filter: null as any,
             };
         })(),
     );
@@ -109,5 +117,8 @@ export function loadHappy(
         throw new Error("You can't use loadHappy with kaplay/mini");
     }
 
-    return loadBitmapFont(fontName, _k.game.defaultAssets.happy, 28, 36, opt);
+    return loadBitmapFont(fontName, _k.game.defaultAssets.happy, 28, 36, {
+        filter: "nearest",
+        ...opt,
+    });
 }

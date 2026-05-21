@@ -76,6 +76,7 @@ export function loadAseprite(
             return SpriteData.fromSpriteSrc(imgSrc, {
                 frames: frames,
                 anims: anims,
+                repack: false,
             });
         }),
     );

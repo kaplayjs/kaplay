@@ -6,6 +6,7 @@
 import type { Asset } from "../assets/asset";
 import type { SoundData } from "../assets/sound";
 import type { SpriteData } from "../assets/sprite";
+import type { DebugLog } from "../debug/debug";
 import type { FakeMouseComp } from "../ecs/components/misc/fakeMouse";
 import { timer, type TimerComp } from "../ecs/components/misc/timer";
 import type { AreaComp } from "../ecs/components/physics/area";
@@ -14,7 +15,7 @@ import { makeInternal } from "../ecs/entity/make";
 import type { System } from "../ecs/systems/systems";
 import type { GameEventMap, GameObjEventMap } from "../events/eventMap";
 import { type KEventController, KEventHandler } from "../events/events";
-import { Mat23, Rect, RNG } from "../math/math";
+import { LinearCongruentialEngine, Mat23, Rect, RNG } from "../math/math";
 import { Vec2 } from "../math/Vec2";
 import type { GameObj } from "../types";
 import type { SceneDef, SceneState } from "./scenes";
@@ -93,7 +94,7 @@ export type Game = {
         happy?: string;
         bean?: string;
     };
-    logs: Log[];
+    logs: DebugLog[];
     cam: CamData;
     /**
      * The default RNG used by rng functions.
@@ -123,11 +124,6 @@ export type Game = {
      */
     warned: Set<string>;
 };
-
-/**
- * @group Debug
- */
-type Log = { msg: string | { toString(): string }; time: number };
 
 /**
  * @group Rendering
@@ -196,7 +192,7 @@ export const createGame = (): Game => {
         defaultAssets: {},
 
         // Logs
-        logs: [] as { msg: string | { toString(): string }; time: number }[],
+        logs: [] as DebugLog[],
 
         // Fake mouse API
         fakeMouse: null,
@@ -211,7 +207,7 @@ export const createGame = (): Game => {
         crashed: false,
         areaCount: 0,
         allTextInputs: new Set<GameObj>(),
-        defRNG: new RNG(Date.now()),
+        defRNG: new RNG(new LinearCongruentialEngine(Date.now())),
         warned: new Set<string>(),
     };
 

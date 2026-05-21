@@ -7,12 +7,18 @@
  * @category games
  */
 
-kaplay();
+// There is also a version with pause menu implemented at:
+// https://play.kaplayjs.com/?example=pauseMenu
+
+kaplay({ background: [141, 183, 255], font: "happy" });
 
 loadSprite("bean", "/sprites/bean.png");
+loadBitmapFont("happy", "/fonts/happy_28x36.png", 28, 36);
+loadBitmapFont("happy-o", "/fonts/happy-o_36x45.png", 36, 45);
 loadSound("score", "/sounds/score.mp3");
 loadSound("wooosh", "/sounds/wooosh.mp3");
 loadSound("hit", "/sounds/hit.mp3");
+loadSound("off", "/sounds/off.mp3");
 
 // define gravity
 setGravity(3200);
@@ -32,75 +38,83 @@ scene("game", () => {
         pos(width() / 4, 0),
         // give it a collider
         area({ isSensor: true }),
-        // body component enables it to fall and jump in a gravity world
+        // body component enables it to fall and jump in a gravity enabled world
         body(),
     ]);
 
     // check for fall death
     bean.onUpdate(() => {
         if (bean.pos.y >= height() || bean.pos.y <= CEILING) {
+            play("off");
             // switch to "lose" scene
             go("lose", score);
         }
     });
 
-    // jump
+    // jump buttons
     onKeyPress("space", () => {
         bean.jump(JUMP_FORCE);
         play("wooosh");
     });
-
     onGamepadButtonPress("south", () => {
         bean.jump(JUMP_FORCE);
         play("wooosh");
     });
 
-    // mobile
-    onMousePress(() => {
+    // jump mouse and touch
+    onMousePress("left", () => {
         bean.jump(JUMP_FORCE);
         play("wooosh");
     });
 
+    // we start pipe opening spawning around the center
+    let prevPipeH1 = center().y - PIPE_OPEN / 2;
+
     function spawnPipe() {
         // calculate pipe positions
-        const h1 = rand(PIPE_MIN, height() - PIPE_MIN - PIPE_OPEN);
+        // we limit random pipe height within the prev pipe opening range
+        // to keep it close enough to be jumpable
+        const h1 = prevPipeH1 = (() => {
+            const PIPE_MAX = height() - PIPE_MIN - PIPE_OPEN;
+            const low = Math.max(PIPE_MIN, prevPipeH1 - PIPE_OPEN * 1.2);
+            const high = Math.min(PIPE_MAX, prevPipeH1 + PIPE_OPEN * 1.2);
+            return rand(low, high);
+        })();
         const h2 = height() - h1 - PIPE_OPEN;
 
-        add([
-            pos(width(), 0),
-            rect(64, h1),
+        // we can create a pipe factory with common comps and customizable params
+        const makePipe = (posY, h) => [
+            pos(width(), posY),
+            rect(64, h),
             color(0, 127, 255),
             outline(4),
             area({ isSensor: true }),
             move(LEFT, SPEED),
             offscreen({ destroy: true }),
-            // give it tags to easier define behaviors see below
+            // give it a tag for easier behavior assignment later on
             "pipe",
-        ]);
+        ];
 
+        // add a top pipe
+        add(makePipe(0, h1));
+
+        // add a bottom pipe
         add([
-            pos(width(), h1 + PIPE_OPEN),
-            rect(64, h2),
-            color(0, 127, 255),
-            outline(4),
-            area({ isSensor: true }),
-            move(LEFT, SPEED),
-            offscreen({ destroy: true }),
-            // give it tags to easier define behaviors see below
-            "pipe",
+            // we can spread comps to a new array to also add custom comps
+            ...makePipe(h1 + PIPE_OPEN, h2),
             // raw obj just assigns every field to the game obj
             { passed: false },
         ]);
     }
 
-    // callback when bean onCollide with objects with tag "pipe"
+    // callback when bean onCollide with objects with a tag "pipe"
     bean.onCollide("pipe", () => {
         go("lose", score);
         play("hit");
         addKaboom(bean.pos);
     });
 
-    // per frame event for all objects with tag 'pipe'
+    // per frame event for all objects with a tag "pipe"
     onUpdate("pipe", (p) => {
         // check if bean passed the pipe
         if (p.pos.x + p.width <= bean.pos.x && p.passed === false) {
@@ -110,19 +124,17 @@ scene("game", () => {
     });
 
     // spawn a pipe every 1 sec
-    loop(1, () => {
-        spawnPipe();
-    });
+    loop(1, spawnPipe);
 
     let score = 0;
 
     // display score
     const scoreLabel = add([
-        text(score.toString()),
+        text(score.toString(), { font: "happy-o", size: 45 }),
         anchor("center"),
         pos(width() / 2, 80),
         fixed(),
-        z(100),
+        z(1000),
     ]);
 
     function addScore() {
@@ -142,15 +154,18 @@ scene("lose", (score) => {
 
     // display score
     add([
-        text(score),
+        text(score, { font: "happy-o" }),
         pos(width() / 2, height() / 2 + 108),
         scale(3),
         anchor("center"),
     ]);
 
-    // go back to game with space is pressed
-    onKeyPress("space", () => go("game"));
-    onMousePress(() => go("game"));
+    // go back to game by pressing space or click/tap
+    // wait so you won't trigger it right away accidentally after losing
+    wait(0.2, () => {
+        onKeyPress("space", () => go("game"));
+        onMousePress(() => go("game"));
+    });
 });
 
-go("game");
+onLoad(() => go("game"));

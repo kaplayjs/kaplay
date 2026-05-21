@@ -222,9 +222,9 @@ export interface KAPLAYCtx {
      */
     quit(): void;
     /**
-     * Throws a new error and show up the Blue Screen.
+     * Throws a new error and shows the Blue Screen.
      *
-     * @param msg - The message for showing in the Blue Screen.
+     * @param msg - The message to be shown on the Blue Screen.
      *
      * @since v4000.0
      * @group Start
@@ -281,7 +281,7 @@ export interface KAPLAYCtx {
      *
      * @example
      * ```js
-     * loadPrefab("bean", "/prefabs/bean.kaprefab")
+     * loadPrefab("bean", "/prefabs/bean.kaprefab");
      *
      * addPrefab("bean", [
      *     pos(40, 40)
@@ -452,6 +452,14 @@ export interface KAPLAYCtx {
      */
     query(opt: QueryOpt): GameObj[];
     /**
+     * Checks whether the game obj is a valid object.
+     *
+     * @param obj - The game object to check.
+     *
+     * @group Game Obj
+     */
+    exists(obj: GameObj): boolean;
+    /**
      * Remove the game obj.
      *
      * @param obj - The game object to remove.
@@ -493,7 +501,7 @@ export interface KAPLAYCtx {
      * @example
      * ```js
      * // This game object will draw a "bean" sprite at (100, 200)
-     * let bean =add([
+     * let bean = add([
      *     pos(100, 200),
      *     sprite("bean"),
      * ]);
@@ -503,7 +511,7 @@ export interface KAPLAYCtx {
      * let rect = bean.add([
      *     pos(5, 5),
      *     rect(100, 100),
-     * ])
+     * ]);
      * ```
      *
      * @returns The position comp.
@@ -535,7 +543,7 @@ export interface KAPLAYCtx {
      * 	   scale(3, 1),
      * ]);
      *
-     *  // scale with vec2(x,y).
+     * // scale with vec2(x,y)
      * bean.scale = vec2(2,4);
      *
      * ```
@@ -749,7 +757,7 @@ export interface KAPLAYCtx {
      * ```js
      * const bean = add([
      *     sprite("bean"),
-     *     opacity(0.5) // Make bean 50% transparent
+     *     opacity(0.5), // Make bean 50% transparent
      * ])
      *
      * // Make bean invisible
@@ -894,8 +902,8 @@ export interface KAPLAYCtx {
      * });
      * ```
      *
-     * @returns A polygon comp.
-     * // TODO: add since, group and subgroup
+     * @returns A polygon shape.
+     * @since v4000.0
      */
     getSpriteOutline(
         asset: string,
@@ -1009,7 +1017,7 @@ export interface KAPLAYCtx {
      */
     picture(picture: Picture): PictureComp;
     /**
-     * Attach a collider area from shape and enables collision detection in a Game Object.
+     * Attaches a collider area from a shape and enables collision detection on a Game Object.
      *
      * @param opt - Options for the area component. See {@link AreaCompOpt `AreaCompOpt`}.
      *
@@ -1249,7 +1257,7 @@ export interface KAPLAYCtx {
      *     body({ isStatic: true }),
      *     surfaceEffector({
      *         speed: 50,
-     *     })
+     *     }),
      * ])
      * ```
      *
@@ -1392,22 +1400,22 @@ export interface KAPLAYCtx {
      *
      * @example
      * ```js
-     * const bean = add(...)
+     * const bean = add(...);
      *
      * add([
      *     sprite("bag"),
      *     pos(),
-     *     follow(bean) // Follow bean's position
+     *     follow(bean), // Follow bean's position
      * ]);
      *
      * // Using offset
-     * const target = add(...)
+     * const target = add(...);
      *
      * const mark = add([
-     *   sprite("mark"),
-     *   pos(),
-     *   follow(target, vec2(32, 32)) // Follow target's position with an offset
-     * ])
+     *     sprite("mark"),
+     *     pos(),
+     *     follow(target, vec2(32, 32)), // Follow target's position with an offset
+     * ]);
      *
      * mark.follow.offset = vec2(64, 64) // Change the offset
      * ```
@@ -1531,26 +1539,26 @@ export interface KAPLAYCtx {
      * ```js
      * const player = add([
      *     health(3),
-     * ])
+     * ]);
      *
      * player.onCollide("bad", (bad) => {
      *     player.hp--;
      *     bad.hp--;
-     * })
+     * });
      *
      * player.onCollide("apple", () => {
      *     player.hp++;
-     * })
+     * });
      *
      * player.onHurt(() => {
-     *     play("ouch")
-     * })
+     *     play("ouch");
+     * });
      *
      * // triggers when hp reaches 0
      * player.onDeath(() => {
-     *     destroy(player)
-     *     go("lose")
-     * })
+     *     destroy(player);
+     *     go("lose");
+     * });
      * ```
      *
      * @returns The health comp.
@@ -1733,7 +1741,7 @@ export interface KAPLAYCtx {
      */
     tile(opt?: TileCompOpt): TileComp;
     /**
-     * An agent which can finds it way on a tilemap.
+     * An agent which can find its way on a tilemap.
      *
      * @param opt - Options for the agent component. See {@link AgentCompOpt `AgentCompOpt`}.
      *
@@ -2012,7 +2020,7 @@ export interface KAPLAYCtx {
      *         height: 40,
      *         pos: center().add(-120,0),
      *         color: BLACK,
-     *         anchor: `left,
+     *         anchor: "left",
      *     });
      *     // Progress of the bar
      *     drawRect({
@@ -2020,7 +2028,7 @@ export interface KAPLAYCtx {
      *         height: 32,
      *         pos: center().add(-116, 0),
      *         color: BLUE,
-     *         anchor: `left
+     *         anchor: "left",
      *     });
      * });
      * ```
@@ -2044,23 +2052,23 @@ export interface KAPLAYCtx {
      *         height: height(),
      *         pos: center(),
      *         color: RED,
-     *         anchor: `center,
+     *         anchor: "center",
      *     });
      *
      *     drawText({
      *         text: err.message,
      *         size: 48,
      *         width: width()/2,
-     *         anchor: `center`,
-     *         align: `center`,
+     *         anchor: "center",
+     *         align: "center",
      *         pos: center(),
-     *         color: BLACK
+     *         color: BLACK,
      *     });
      * });
      *
      * // cause common error
      * let pos = add([
-     *     pos()
+     *     pos(),
      * ]);
      * ```
      *
@@ -2126,7 +2134,7 @@ export interface KAPLAYCtx {
      * ```js
      * // move left by SPEED pixels per frame every frame when left arrow key is being held down
      * onKeyDown("left", () => {
-     *     bean.move(-SPEED, 0)
+     *     bean.move(-SPEED, 0);
      * });
      * ```
      *
@@ -2223,7 +2231,7 @@ export interface KAPLAYCtx {
      * ```js
      * // delete last character when "backspace" is being pressed and held
      * onKeyPressRepeat((key) => {
-     *     debug.log(`key ${key} is being repeatedly pressed`)
+     *     debug.log(`key ${key} is being repeatedly pressed`);
      * });
      * ```
      *
@@ -2703,10 +2711,10 @@ export interface KAPLAYCtx {
      *
      * @example
      * ```js
-     * // player move
+     * // player to be moved
      * let player = add([
      *     pos(center()),
-     *     sprite(`bean`),
+     *     sprite("bean"),
      * ]);
      *
      * // when left stick is moved
@@ -2865,7 +2873,7 @@ export interface KAPLAYCtx {
      *     add([
      *         text("There was never aa ghosttttt"),
      *         pos(center()),
-     *         anchor("center")
+     *         anchor("center"),
      *     ]);
      * });
      * ```
@@ -3280,7 +3288,7 @@ export interface KAPLAYCtx {
      * @example
      * ```js
      * onTag((obj, tag) => {
-     *     debug.log(`A new tag ${tag} was added to the object ${obj.id}`)
+     *     debug.log(`A new tag ${tag} was added to the object ${obj.id}`);
      * });
      * ```
      *
@@ -3297,7 +3305,7 @@ export interface KAPLAYCtx {
      * @example
      * ```js
      * onTag("elephant", (obj, tag) => {
-     *     debug.log(`A new tag ${tag} was added to the object ${obj.id}`)
+     *     debug.log(`A new tag ${tag} was added to the object ${obj.id}`);
      * });
      * ```
      *
@@ -3317,7 +3325,7 @@ export interface KAPLAYCtx {
      * @example
      * ```js
      * onUnuse((obj, tag) => {
-     *     debug.log(`A tag ${tag} was removed from the object ${obj.id}`)
+     *     debug.log(`A tag ${tag} was removed from the object ${obj.id}`);
      * });
      * ```
      *
@@ -3334,7 +3342,7 @@ export interface KAPLAYCtx {
      * @example
      * ```js
      * onUnuse("vegetable", (obj, tag) => {
-     *     debug.log(`A tag ${tag} was removed from the object ${obj.id}`)
+     *     debug.log(`A tag ${tag} was removed from the object ${obj.id}`);
      * });
      * ```
      *
@@ -3357,9 +3365,9 @@ export interface KAPLAYCtx {
      * // a custom event defined by body() comp
      * // every time an obj with tag "bomb" hits the floor, destroy it and addKaboom()
      * on("ground", "bomb", (bomb) => {
-     *     destroy(bomb)
-     *     addKaboom(bomb.pos)
-     * })
+     *     destroy(bomb);
+     *     addKaboom(bomb.pos);
+     * });
      *
      * // a custom event can be defined manually
      * // by passing an event name, a tag, and a callback function
@@ -3370,7 +3378,7 @@ export interface KAPLAYCtx {
      *         pos(0, -50),
      *         lifespan(2),
      *         opacity(),
-     *     ])
+     *     ]);
      * });
      *
      * onKeyPress("space", () => {
@@ -3426,7 +3434,7 @@ export interface KAPLAYCtx {
      * ```js
      * onCollideUpdate("sun", "earth", () => {
      *     debug.log("okay this is so hot");
-     * })l
+     * });
      * ```
      *
      * @returns The event controller.
@@ -3448,7 +3456,7 @@ export interface KAPLAYCtx {
      * @example
      * ```js
      * onCollideEnd("bean", "earth", () => {
-     *     debug.log("destroying world in 3... 2... 1...")
+     *     debug.log("destroying world in 3... 2... 1...");
      * });
      * ```
      *
@@ -3500,7 +3508,7 @@ export interface KAPLAYCtx {
      * ```js
      * // Rotate bean 90 degrees per second when hovered
      * onHoverUpdate("bean", (bean) => {
-     *   bean.angle += dt() * 90
+     *   bean.angle += dt() * 90;
      * });
      * ```
      *
@@ -3530,7 +3538,7 @@ export interface KAPLAYCtx {
      * ```js
      * // move left by SPEED pixels per frame every frame when left arrow key is being held down
      * onKeyDown("left", () => {
-     *     bean.move(-SPEED, 0)
+     *     bean.move(-SPEED, 0);
      * });
      * ```
      *
@@ -4015,7 +4023,7 @@ export interface KAPLAYCtx {
      * // when user presses button
      * onGamepadButtonPress((btn, gp) => {
      *     if (btn == "south") {
-     *         player.jump(200);     // jump
+     *         player.jump(200);
      *     }
      * });
      * ```
@@ -4244,6 +4252,7 @@ export interface KAPLAYCtx {
      *
      * @param src - The image resource url.
      * @param data - The sprite atlas data.
+     * @param [repack=true] - set to false if you've already packed your spritesheet. See {@link LoadSpriteOpt.repack} for more.
      *
      * @example
      * ```js
@@ -4278,12 +4287,14 @@ export interface KAPLAYCtx {
     loadSpriteAtlas(
         src: LoadSpriteSrc,
         data: SpriteAtlasData,
+        repack?: boolean,
     ): Asset<Record<string, SpriteData>>;
     /**
      * Load sprites from a sprite atlas with URL.
      *
      * @param src - The image resource url.
      * @param url - The json resource url.
+     * @param [repack=true] - set to false if you've already packed your spritesheet. See {@link LoadSpriteOpt.repack} for more.
      *
      * @example
      * ```js
@@ -4305,9 +4316,12 @@ export interface KAPLAYCtx {
     loadSpriteAtlas(
         src: LoadSpriteSrc,
         url: string,
+        repack?: boolean,
     ): Asset<Record<string, SpriteData>>;
     /**
-     * Load a sprite with aseprite spritesheet json (should use "array" in the export options and have tags enabled, that way kaplay can load tagged frames as animations).
+     * Load a sprite with Aseprite spritesheet JSON. You should use "array" in the export options and have tags enabled, that way KAPLAY can load tagged frames as animations.
+     *
+     * These are loaded with repacking turned off, since we assume Aseprite is smart enough to pack the frames nicely.
      *
      * @param name - The asset name.
      * @param imgSrc - The image resource url.
@@ -4574,7 +4588,7 @@ export interface KAPLAYCtx {
     /**
      * Load a prefab.
      *
-     * @since v4000.0.0
+     * @since v4000.0
      * @group Assets
      * @subgroup Util
      * @experimental
@@ -5249,7 +5263,7 @@ export interface KAPLAYCtx {
     /**
      * Camera shake.
      *
-     * @param intensity - The intensity of the shake. Default to 12.
+     * @param intensity - The intensity of the shake. Defaults to 12.
      *
      * @example
      * ```js
@@ -5476,8 +5490,8 @@ export interface KAPLAYCtx {
      *
      * button.onHover((c) => {
      *    // change cursor to pointer when hovering over button
-     *     setCursor("pointer")
-     * })
+     *     setCursor("pointer");
+     * });
      *
      * // Hide the only cursor at start (useful for fakeMouse)
      * setCursor("none");
@@ -5511,14 +5525,12 @@ export interface KAPLAYCtx {
      */
     isCursorLocked(): boolean;
     /**
-     * Enter / exit fullscreen mode. (note: mouse position is not working in fullscreen mode at the moment)
+     * Enter / exit fullscreen mode.
      *
      * @example
      * ```js
-     * // toggle fullscreen mode on "f"
-     * onKeyPress("f", (c) => {
-     *     setFullscreen(!isFullscreen());
-     * });
+     * // toggle fullscreen mode with "f" key
+     * onKeyPress("f", () => setFullscreen(!isFullscreen()));
      * ```
      *
      * @since v2000.0
@@ -5672,6 +5684,16 @@ export interface KAPLAYCtx {
      */
     audioCtx: AudioContext;
     /**
+     * Set the random generator to use
+     *
+     * @param rng A random generator
+     *
+     * @since v4000.0
+     * @group Math
+     * @subgroup Random
+     */
+    setRNG(rng: RNG): void;
+    /**
      * Get a random value between the given bound.
      *
      * @param a - The lower bound. If not upper bound, this is the upper bound and the lower bound is 0.
@@ -5680,13 +5702,13 @@ export interface KAPLAYCtx {
      * @example
      * ```js
      * // a random number between 0 - 8
-     * rand(8)
+     * rand(8);
      *
      * // a random point on screen
-     * rand(vec2(width(), height()))
+     * rand(vec2(width(), height()));
      *
      * // a random color
-     * rand(rgb(255, 255, 255))
+     * rand(rgb(255, 255, 255));
      *
      * // a random number between 50 - 100
      * rand(50, 100);
@@ -5898,7 +5920,7 @@ export interface KAPLAYCtx {
      *
      * @example
      * ```js
-     * // every frame all objs with tag "unlucky" have 50% chance die
+     * // every frame all objs with tag "unlucky" have 50% chance to die
      * onUpdate("unlucky", (o) => {
      *     if (chance(0.5)) {
      *         destroy(o)
@@ -5911,12 +5933,61 @@ export interface KAPLAYCtx {
      */
     chance(p: number): boolean;
     /**
+     * Returns the index of the item obtained given the probabilities
+     *
+     * @example
+     * ```js
+     * // There is a 10% chance for index 0, 30% for index 1 and 60% for index 2 to be returned
+     * roulette([0.1, 0.3, 0.6]);
+     * roulette([10, 30, 60]);
+     * // There is a 1/6 chance for index 0, 2/6 for index 1 and 4/6 for index 2 to be returned
+     * roulette([1, 2, 4]);
+     *
+     * @param probabilities - The probabilities.
+     *
+     * @returns The index of the item obtained given the probabilities
+     *
+     * @group Math
+     * @subgroup Random
+     */
+    roulette(probabilities: number[]): number;
+    /**
+     * Returns the item obtained given the probabilities
+     *
+     * @example
+     * ```js
+     * // There is a 10% chance for "bean", 30% for "been" and 60% for "beant" to be returned
+     * gacha([["bean", 0.1], ["been", 0.3], ["beant", 0.6]]);
+     * gacha(new Map([["bean", 10], ["been", 30], ["beant", 60]]));
+     * // There is a 1/6 chance for "bean", 2/6 for "been" and 4/6 for "beant" to be returned
+     * gacha({"bean": 1, "been": 2, "beant": 4});
+     *
+     * @param items - The items.
+     * @param probabilities - The probabilities.
+     *
+     * @returns The item obtained given the probabilities
+     *
+     * @group Math
+     * @subgroup Random
+     */
+    gacha<T>(
+        items: [T, number][] | Map<T, number> | Record<string, number>,
+        rng?: RNG,
+    ): T;
+    /**
      * Linear interpolation. Can take a number, vector, or color.
      *
      * @group Math
      * @subgroup Tween
      */
     lerp<V extends LerpValue>(from: V, to: V, t: number): V;
+    /**
+     * Linear interpolation for angles. Can take a number or vector.
+     *
+     * @group Math
+     * @subgroup Tween
+     */
+    lerpAngle<V extends number | Vec2>(from: V, to: V, t: number): V;
     /**
      * Tweeeeeeeening!
      *
@@ -5946,7 +6017,7 @@ export interface KAPLAYCtx {
      */
     easings: Record<EaseFuncs, EaseFunc>;
     /**
-     * Steps easing. Eases in discontinious steps.
+     * Steps easing. Eases in discontinuous steps.
      *
      * @since v3001.0
      * @group Math
@@ -5978,8 +6049,8 @@ export interface KAPLAYCtx {
      *
      * @param v - The value the function will depend on.
      * @param l1 - The minimum value of the source range.
-     * @param h1 - The minimum result value.
-     * @param l2 - The maximum value of the source range.
+     * @param h1 - The maximum value of the source range.
+     * @param l2 - The minimum result value.
      * @param h2 - The maximum result value.
      *
      * @example
@@ -6001,8 +6072,8 @@ export interface KAPLAYCtx {
      *
      * @param v - The value the function will depend on.
      * @param l1 - The minimum value of the source range.
-     * @param h1 - The minimum result value.
-     * @param l2 - The maximum value of the source range.
+     * @param h1 - The maximum value of the source range.
+     * @param l2 - The minimum result value.
      * @param h2 - The maximum result value.
      *
      * @example
@@ -6271,6 +6342,12 @@ export interface KAPLAYCtx {
         continuity: number,
         bias: number,
     ): (t: number) => Vec2;
+    piecewiseBezier(
+        pts: Vec2[],
+    ): (t: number) => Vec2;
+    piecewiseCatmullRom(
+        pts: Vec2[],
+    ): (t: number) => Vec2;
     createRegularPolygon(
         radius: number,
         sides: number,
@@ -6300,14 +6377,14 @@ export interface KAPLAYCtx {
      * @param l - The line.
      * @param pt - The point.
      *
-     * @returns true if the line and point intersects.
+     * @returns true if the line and point intersect.
      * @since v2000.0
      * @group Math
      * @subgroup Advanced
      */
     testLinePoint(l: Line, pt: Vec2): boolean;
     /**
-     * Check if 2 lines intersects, if yes returns the intersection point.
+     * Check if 2 lines intersect, if yes returns the intersection point.
      *
      * @param l1 - The first line.
      * @param l2 - The second line.
@@ -6324,14 +6401,14 @@ export interface KAPLAYCtx {
      * @param l - The line.
      * @param c - The circle.
      *
-     * @returns true if the line and circle intersects.
+     * @returns true if the line and circle intersect.
      * @since v2000.0
      * @group Math
      * @subgroup Advanced
      */
     testLineCircle(l: Line, c: Circle): boolean;
     /**
-     * Check if 2 rectangle overlaps.
+     * Check if 2 rectangle overlap.
      *
      * @param r1 - The first rectangle.
      * @param r2 - The second rectangle.
@@ -6343,12 +6420,12 @@ export interface KAPLAYCtx {
      */
     testRectRect(r1: Rect, r2: Rect): boolean;
     /**
-     * Check if a line and a rectangle overlaps.
+     * Check if a line and a rectangle overlap.
      *
      * @param l - The line.
      * @param r - The rectangle.
      *
-     * @returns true if the line and rectangle overlaps.
+     * @returns true if the line and rectangle overlap.
      * @since v2000.0
      * @group Math
      * @subgroup Advanced
@@ -6517,7 +6594,7 @@ export interface KAPLAYCtx {
      */
     Circle: typeof Circle;
     /**
-     * A ellipse shape.
+     * An ellipse shape.
      *
      * @since v3001.0
      * @group Math
@@ -6726,7 +6803,7 @@ export interface KAPLAYCtx {
      *     ]);
      * });
      *
-     * pushScene("mainScene")
+     * pushScene("mainScene");
      * ```
      *
      * @since v3001.1
@@ -6772,7 +6849,7 @@ export interface KAPLAYCtx {
      *
      * @example
      * ```js
-     * layers(["bg", "obj", "ui"], "obj")
+     * layers(["bg", "obj", "ui"], "obj");
      *
      * // no layer specified, will be added to "obj"
      * add([
@@ -7016,8 +7093,7 @@ export interface KAPLAYCtx {
      *
      * @example
      * ```js
-     * drawCurve(t => evaluateBezier(a, b, c, d, t)
-     * {
+     * drawCurve(t => evaluateBezier(a, b, c, d, t), {
      *     width: 2,
      *     color: rgb(0, 0, 255),
      * });
@@ -7040,7 +7116,7 @@ export interface KAPLAYCtx {
      *     pt3: vec2(200, 200),
      *     pt4: vec2(100, 200),
      *     width: 2,
-     *     color: GREEN
+     *     color: GREEN,
      * });
      * ```
      *

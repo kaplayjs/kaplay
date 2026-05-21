@@ -48,7 +48,7 @@ enemy.onStateEnter("idle", async () => {
 // When we enter "attack" state, we fire a bullet, and enter "move" state after 1 sec
 enemy.onStateEnter("attack", async () => {
     // Don't do anything if player doesn't exist anymore
-    if (player.exists()) {
+    if (exists(player)) {
         const dir = player.pos.sub(enemy.pos).unit();
 
         add([
@@ -78,7 +78,7 @@ enemy.onStateEnter("move", async () => {
 // Only when the current state is "move"
 enemy.onStateUpdate("move", () => {
     // We move the enemy in the direction of the player
-    if (!player.exists()) return;
+    if (!exists(player)) return;
     const dir = player.pos.sub(enemy.pos).unit();
     enemy.move(dir.scale(ENEMY_SPEED));
 });

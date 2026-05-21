@@ -4,7 +4,7 @@ import { flush } from "../stack";
 export function drawStenciled(
     content: () => void,
     mask: () => void,
-    test: number,
+    test: GLenum,
 ) {
     const gl = _k.gfx.ggl.gl;
 

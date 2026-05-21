@@ -115,11 +115,6 @@ export const createCollisionSystem = (
                 }
             });
 
-            _k.appScope.onSceneLeave(scene => {
-                broadInit = false;
-                broadPhaseIntersection.clear();
-            });
-
             for (const obj of _k.game.root.get("*", { recursive: true })) {
                 if (obj.has("area") && !isPaused(obj)) {
                     broadPhaseIntersection.add(obj as GameObj<AreaComp>);

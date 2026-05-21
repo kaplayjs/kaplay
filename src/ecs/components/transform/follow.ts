@@ -1,6 +1,7 @@
 import { vec2 } from "../../../math/math";
 import { Vec2 } from "../../../math/Vec2";
 import type { Comp, GameObj } from "../../../types";
+import { exists } from "../../entity/utils";
 import type { PosComp } from "./pos";
 
 /**
@@ -31,12 +32,12 @@ export function follow(obj: GameObj, offset?: Vec2): FollowComp {
             offset: offset ?? vec2(0),
         },
         add(this: GameObj<FollowComp | PosComp>) {
-            if (obj.exists()) {
+            if (exists(obj)) {
                 this.pos = this.follow.obj.pos.add(this.follow.offset);
             }
         },
         update(this: GameObj<FollowComp | PosComp>) {
-            if (obj.exists()) {
+            if (exists(obj)) {
                 this.pos = this.follow.obj.pos.add(this.follow.offset);
             }
         },
