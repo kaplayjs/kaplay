@@ -38,6 +38,18 @@ So your change should look like:
 
 ## [unreleased]
 
+### Added
+
+- Made random generator algorithm configurable using `setRNG()` (#1057) -
+  @mflerackers
+- Added xorshift32 as random generator (#1057) - @mflerackers
+- **(examples)** Added a new `gacha` example! (#1057) - @imaginarny
+
+### Changed
+
+- Added an optional parameter `rng` to all random related functions to pass the
+  rng to use (#1057) - @mflerackers
+
 ### Fixed
 
 - Fixed `TimerController.timeLeft` returning elapsed time instead of remaining
