@@ -1,5 +1,7 @@
 # Changelog
 
+<!-- markdownlint-disable no-duplicate-heading blanks-around-fences single-h1 -->
+
 All notable changes to this project will be documented in this file.
 
 The format is (mostly) based on
