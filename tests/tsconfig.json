@@ -15,7 +15,8 @@
     "verbatimModuleSyntax": true,
     "strict": true,
     "types": [
-      "../node_modules/vitest-puppeteer/dist/index.d.ts"
+      "../node_modules/vitest-puppeteer/dist/index.d.ts",
+      "./.env.d.ts"
     ]
   },
   "include": [
