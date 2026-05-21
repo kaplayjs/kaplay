@@ -734,40 +734,73 @@ export function wave<V extends LerpValue>(
     return lerp(lo, hi, (f(t) + 1) / 2);
 }
 
-// basic ANSI C LCG
-export const A = 1103515245;
-export const C = 12345;
-export const M = 2147483648;
-
-/**
- * A random number generator using the linear congruential generator algorithm.
- *
- * @group Math
- * @subgroup Random
- */
-export class RNG {
+export interface RandomGenerator {
     /**
-     * The current seed value used by the random number generator.
+     * Generate a random number in [0-1).
+     *
+     * @returns A number between 0 and 1.
      */
-    seed: number;
-    constructor(seed: number) {
-        this.seed = seed;
+    gen(): number;
+
+    /**
+     * Save the state (seed) to a string.
+     *
+     * @returns The state of the generator as string.
+     */
+    save(): string;
+    /**
+     * Load the state of the generator from a string.
+     */
+    load(data: string): boolean;
+}
+
+export type RandomGeneratorType =
+    | "lce"
+    | "xorshift32";
+
+export class RNG {
+    rng: RandomGenerator;
+
+    constructor(rng: RandomGeneratorType | RandomGenerator) {
+        if (typeof rng === "string") {
+            switch (rng) {
+                case "xorshift32":
+                    this.rng = new XorShift32();
+                default:
+                    this.rng = new LinearCongruentialEngine();
+            }
+        }
+        else {
+            this.rng = rng;
+        }
     }
 
     /**
-     * Generate a random number between 0 and 1.
+     * Generate a random number in [0-1).
      *
      * @example
      * ```js
      * const rng = new RNG(Date.now())
-     * const value = rng.gen() // Returns number between 0-1
+     * const value = rng.gen() // Returns a number in [0-1)
      * ```
      *
-     * @returns A number between 0 and 1.
+     * @returns A number in [0-1).
      */
     gen(): number {
-        this.seed = (A * this.seed + C) % M;
-        return this.seed / M;
+        return this.rng.gen();
+    }
+
+    /**
+     * Save the state (seed) to a string.
+     */
+    save(): string {
+        return this.rng.save();
+    }
+    /**
+     * Load the state (seed) from a string.
+     */
+    load(data: string): boolean {
+        return this.rng.load(data);
     }
 
     /**
@@ -779,7 +812,7 @@ export class RNG {
      * @example
      * ```js
      * const rng = new RNG(Date.now())
-     * const value = rng.genNumber(10, 20) // Returns number between 10-20
+     * const value = rng.genNumber(10, 20) // Returns a number in [10,20)
      * ```
      *
      * @returns A number between a and b.
@@ -787,6 +820,18 @@ export class RNG {
     genNumber(a: number, b: number): number {
         return a + this.gen() * (b - a);
     }
+
+    /**
+     * Generate a random integer in [0, max).
+     *
+     * @param max - The maximum value.
+     *
+     * @returns A number in [0, max).
+     */
+    genInteger(max: number) {
+        return Math.floor(this.gen() * max);
+    }
+
     /**
      * Generate a random 2D vector between two vectors.
      *
@@ -873,11 +918,108 @@ export class RNG {
     }
 }
 
-export function randSeed(seed?: number): number {
-    if (seed != null) {
-        _k.game.defRNG.seed = seed;
+// basic ANSI C LCE
+export const A = 1103515245;
+export const C = 12345;
+export const M = 2147483648;
+
+/**
+ * A random number generator using the linear congruential engine algorithm.
+ *
+ * @group Math
+ * @subgroup Random
+ */
+export class LinearCongruentialEngine implements RandomGenerator {
+    /**
+     * The current seed value used by the random number generator.
+     */
+    seed: number;
+
+    constructor(seed?: number) {
+        this.seed = seed ?? Math.random();
     }
-    return _k.game.defRNG.seed;
+
+    save() {
+        return JSON.stringify({ seed: this.seed });
+    }
+
+    load(data: string) {
+        const seedData = JSON.parse(data);
+        if (seedData?.seed) {
+            return this.seed = seedData.seed;
+        }
+        else {
+            return false;
+        }
+    }
+
+    gen(): number {
+        this.seed = (A * this.seed + C) % M;
+        return this.seed / M;
+    }
+}
+
+/**
+ * A random number generator using the xorshift32 algorithm.
+ *
+ * @group Math
+ * @subgroup Random
+ */
+export class XorShift32 implements RandomGenerator {
+    /**
+     * The current seed value used by the random number generator.
+     */
+    seed: number;
+
+    constructor(seed?: number) {
+        this.seed = seed || Math.random(); // Note: 0 is forbidden
+    }
+
+    save() {
+        return JSON.stringify({ seed: this.seed });
+    }
+
+    load(data: string) {
+        const seedData = JSON.parse(data);
+        if (seedData?.seed) {
+            return this.seed = seedData.seed;
+        }
+        else {
+            return false;
+        }
+    }
+
+    gen(): number {
+        let x = this.seed;
+        x ^= x << 13;
+        x ^= x >> 17;
+        x ^= x << 5;
+
+        this.seed = x >>> 0;
+        return this.seed / 0xffffffff;
+    }
+}
+
+/**
+ * @deprecated
+ */
+export function randSeed(seed?: number): number {
+    if (
+        seed != null && _k.game.defRNG.rng instanceof LinearCongruentialEngine
+    ) {
+        (_k.game.defRNG.rng as LinearCongruentialEngine).seed = seed;
+    }
+    return _k.game.defRNG.rng instanceof LinearCongruentialEngine
+        ? (_k.game.defRNG.rng as LinearCongruentialEngine).seed
+        : 0;
+}
+
+export function setRNG(rng: RNG) {
+    _k.game.defRNG = rng;
+}
+
+export function getRNG() {
+    return _k.game.defRNG;
 }
 
 export function rand<T = number>(...args: [] | [T] | [T, T]) {
@@ -892,22 +1034,65 @@ export function chance(p: number): boolean {
     return rand() <= p;
 }
 
-export function shuffle<T>(list: T[]): T[] {
+export function shuffle<T>(list: T[], rng?: RNG): T[] {
+    // Do random swaps
+    rng ??= _k.game.defRNG;
     for (let i = list.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
+        const j = Math.floor(rng.genInteger(i + 1));
         [list[i], list[j]] = [list[j], list[i]];
     }
     return list;
 }
 
-export function chooseMultiple<T>(list: T[], count: number): T[] {
+export function chooseMultiple<T>(list: T[], count: number, rng?: RNG): T[] {
+    // Shuffle the list and take the first count entries
     return list.length <= count
         ? list.slice()
-        : shuffle(list.slice()).slice(0, count);
+        : shuffle(list.slice(), rng).slice(0, count);
 }
 
-export function choose<T>(list: T[]): T {
-    return list[randi(list.length)];
+export function choose<T>(list: T[], rng?: RNG): T {
+    rng ??= _k.game.defRNG;
+    // Choose a random index from [0, list.length)
+    return list[rng.genInteger(list.length)];
+}
+
+export function roulette(probabilities: number[], rng?: RNG): number {
+    rng ??= _k.game.defRNG;
+    // Get the sum of all probabilities, to know the percentages
+    const sum = probabilities.reduce((sum, value) => sum + value, 0);
+    // Make a random number
+    const value = rng.genInteger(sum);
+    // Search for the first index for which the cumulative probability is greater
+    let index = 0;
+    let probabilitySum = probabilities[0];
+    while (value > probabilitySum) {
+        index++;
+        probabilitySum += probabilities[index];
+    }
+    return index;
+}
+
+export function gacha<T>(
+    items: [T, number][] | Map<T, number> | Record<string, number>,
+    rng?: RNG,
+): T {
+    rng ??= _k.game.defRNG;
+    const getList = (itemCollection: typeof items) => {
+        if (Array.isArray(itemCollection)) {
+            return itemCollection;
+        }
+        else if (items instanceof Map) {
+            return [...items.entries()];
+        }
+        else {
+            return Object.entries(items) as [T, number][];
+        }
+    };
+
+    const list = getList(items);
+    const probabilities = list.map(([item, probability]) => probability);
+    return list[roulette(probabilities, rng)][0];
 }
 
 // TODO: better name
