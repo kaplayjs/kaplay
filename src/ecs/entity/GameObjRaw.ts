@@ -1384,7 +1384,7 @@ export const GameObjRawPrototype: Omit<
         }
 
         // If the object already exists and add hook is present, run it
-        if (this.id != 0 && this.exists() && comp.add) {
+        if (this.exists() && comp.add) {
             this._onCurCompCleanup = (c: any) => gc.push(c);
             comp.add.call(this);
             this._onCurCompCleanup = null;

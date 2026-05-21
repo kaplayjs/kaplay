@@ -22,7 +22,7 @@ import {
     type InternalGameObjRaw,
     objectTransformNeedsUpdate,
 } from "../../entity/GameObjRaw";
-import { isFixed } from "../../entity/utils";
+import { exists, isFixed } from "../../entity/utils";
 import type { Collision } from "../../systems/Collision";
 import { system, SystemPhase } from "../../systems/systems";
 import type { AnchorComp } from "../transform/anchor";
@@ -476,7 +476,7 @@ export function area(
 
             events.push(
                 this.onCollideUpdate((obj, col) => {
-                    if (!obj.exists()) return;
+                    if (!exists(obj)) return;
                     if (!colliding[obj.id]) {
                         this.trigger("collide", obj, col);
                     }

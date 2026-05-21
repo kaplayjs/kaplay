@@ -116,10 +116,10 @@ export function timer(maxLoopsPerFrame: number = 1000): TimerComp {
             });
             return {
                 get timeLeft() {
-                    return t;
+                    return time - t;
                 },
                 set timeLeft(val: number) {
-                    t = val;
+                    t = time - val;
                 },
                 get paused() {
                     return ev.paused;
