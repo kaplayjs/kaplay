@@ -230,6 +230,7 @@ function updateFontAtlas(font: FontData | string, ch: string) {
         const img = c2d.getImageData(0, 0, w, h);
 
         atlas.font.map[ch] = _k.assets.packer.add(img, atlas.font.filter);
+        _k.assets.packer.syncIfPending();
 
         atlas.maxHeight = Math.max(atlas.maxHeight, h);
     }
@@ -471,8 +472,6 @@ export function formatText(opt: DrawTextOpt): FormattedText {
         }
         th += thisLineHeight;
     }
-
-    _k.assets.packer.syncIfPending();
 
     return {
         width: tw,

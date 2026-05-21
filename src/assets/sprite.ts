@@ -243,6 +243,9 @@ export function resolveSprite(
     //     return Asset.loaded(src);
     // }
     else if (src instanceof Asset) {
+        // might be sometimes unnecessary here but if we're getting the sprite data directly
+        // then obviously we might be wanting to draw it.
+        _k.k.onLoad(() => _k.assets.packer.syncIfPending());
         return src;
     }
     else {

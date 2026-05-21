@@ -1,7 +1,7 @@
 {
   "name": "kaplay",
   "description": "KAPLAY is a JavaScript & TypeScript game library that helps you make games fast and fun!",
-  "version": "4000.0.0-alpha.27",
+  "version": "4000.0.0-alpha.27.1",
   "license": "MIT",
   "homepage": "https://v4000.kaplayjs.com/",
   "bugs": {
@@ -79,8 +79,8 @@
     "@kaplayjs/dprint-config": "^1.2.0",
     "@types/express": "^5.0.6",
     "@types/jest": "^29.5.14",
-    "@typescript-eslint/eslint-plugin": "^8.58.2",
-    "@typescript-eslint/parser": "^8.58.2",
+    "@typescript-eslint/eslint-plugin": "^8.59.3",
+    "@typescript-eslint/parser": "^8.59.3",
     "dprint": "^0.50.2",
     "dts-bundle-generator": "^9.5.1",
     "ejs": "^3.1.10",
@@ -91,14 +91,14 @@
     "puppeteer": "^22.15.0",
     "tar-fs": "^3.1.2",
     "typescript": "5.6.3",
-    "typescript-eslint": "^8.58.2",
+    "typescript-eslint": "^8.59.3",
     "vite": "7.3.2",
-    "vitest": "^4.1.4",
+    "vitest": "^4.1.6",
     "vitest-environment-puppeteer": "^11.0.3",
     "vitest-puppeteer": "^11.0.3"
   },
   "engines": {
     "node": ">=24.0.0"
   },
-  "packageManager": "pnpm@10.33.0+sha512.10568bb4a6afb58c9eb3630da90cc9516417abebd3fabbe6739f0ae795728da1491e9db5a544c76ad8eb7570f5c4bb3d6c637b2cb41bfdcdb47fa823c8649319"
+  "packageManager": "pnpm@11.1.1+sha512.d1fdf5f73c617b64fa1a56a81c3c8dfe0e966e33a6010aa256b517ae77be21d93e05affc0de1a83b0e4f29d569f68b446ae8f068cd7247c0bb3df0fb4d7bdf9a"
 }
