@@ -1,7 +1,5 @@
 # Changelog
 
-<!-- markdownlint-disable no-duplicate-heading blanks-around-fences single-h1 -->
-
 All notable changes to this project will be documented in this file.
 
 The format is (mostly) based on
@@ -12,7 +10,7 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - [Jump to v3001 changelog](#changelog-for-v3001).
 
 <!-- [CHANGELOG GUIDELINES PLEASE FOLLOW]
-===============================================================================
+
 Hey, KAPLAY Dev! Add your new changes in [unreleased] heading, below one of
 these heading:
 
@@ -35,10 +33,35 @@ So your change should look like:
 ### Added
 
 - added a new ghost (#6767) - @lajbel
-===============================================================================
+
 [DO IT IF YOU DON'T WANT A LAJBEL VISIT AT NIGHT] -->
 
 ## [unreleased]
+
+### Added
+
+- Made random generator algorithm configurable using `setRNG()` (#1057) -
+  @mflerackers
+- Added xorshift32 as random generator (#1057) - @mflerackers
+- **(examples)** Added a new `gacha` example! (#1057) - @imaginarny
+
+### Changed
+
+- Added an optional parameter `rng` to all random related functions to pass the
+  rng to use (#1057) - @mflerackers
+
+### Fixed
+
+- Fixed `TimerController.timeLeft` returning elapsed time instead of remaining
+  time (#1082) - @nojaf
+
+## [4000.0.0-alpha.27.1] - 2026-05-12
+
+### Added
+
+- Added a `repack: false` option to `loadSpite()` and a repack parameter to
+  `loadSpriteAtlas()`, for faster loading if you're packing stuff at build-time
+  (#1063) - @dragoncoder047
 
 ### Changed
 
@@ -64,12 +87,6 @@ So your change should look like:
   (#1074) - @imaginarny, @mflerackers
 - Fixed broadphase objects cleared on scene switch including those with `stay()`
   (#1077) - @imaginarny, @mflerackers
-
-### Added
-
-- Added a `repack: false` option to `loadSpite()` and a repack parameter to
-  `loadSpriteAtlas()`, for faster loading if you're packing stuff at build-time
-  (#1063) - @dragoncoder047
 
 ## [4000.0.0-alpha.27] - 2026-03-19
 
