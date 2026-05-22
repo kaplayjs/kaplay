@@ -159,12 +159,12 @@ import type {
     Quad,
     RaycastResult,
     Rect,
-    RNG,
     StepPosition,
 } from "../math/math";
 import type { Graph } from "../math/navigation";
 import type { NavGrid } from "../math/navigationgrid";
 import type { NavMesh } from "../math/navigationmesh";
+import type { RandomGenerator, RNG, RNGConfig, RNGSeed } from "../math/random";
 import type { Quadtree, ResizingQuadtree } from "../math/spatial/quadtree";
 import type { Vec2 } from "../math/Vec2";
 import {
@@ -5532,13 +5532,19 @@ export interface KAPLAYCtx {
     /**
      * Set the random generator to use
      *
-     * @param rng A random generator
+     * @param config - configuration for the rng
+     *
+     * @example
+     * ```js
+     * setRNG({ type: "lce" });
+     * setRNG({ type: "alea", seed: ["kaplay", "rocks", "hard"] });
+     * ```
      *
      * @since v4000.0
      * @group Math
      * @subgroup Random
      */
-    setRNG(rng: RNG): void;
+    setRNG(config: RNGConfig): void;
     /**
      * Get a random value between the given bound.
      *
@@ -5595,11 +5601,15 @@ export interface KAPLAYCtx {
     /**
      * Get / set the random number generator seed.
      *
-     * @param seed - The seed to set.
+     * @param seed - The seed to set. Its type needs to match the currently active RNG seed type.
      *
-     * @example
+     * @example Set the numerical seed
      * ```js
      * randSeed(Date.now())
+     * ```
+     * @example Set Alea string seeds
+     * ```js
+     * randSeed(["kaplay", "rocks", "hard"])
      * ```
      *
      * @returns The new seed.
@@ -5607,7 +5617,7 @@ export interface KAPLAYCtx {
      * @group Math
      * @subgroup Random
      */
-    randSeed(seed?: number): number;
+    randSeed(seed?: RNGSeed): RNGSeed;
     /**
      * Create a 2D vector.
      *

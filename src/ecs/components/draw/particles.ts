@@ -3,14 +3,8 @@ import { drawRaw } from "../../../gfx/draw/drawRaw";
 import type { Texture } from "../../../gfx/gfx";
 import { Color } from "../../../math/color";
 import { lerp } from "../../../math/lerp";
-import {
-    deg2rad,
-    map,
-    Quad,
-    rand,
-    type ShapeType,
-    vec2,
-} from "../../../math/math";
+import { deg2rad, map, Quad, type ShapeType, vec2 } from "../../../math/math";
+import { rand } from "../../../math/random";
 import { Vec2 } from "../../../math/Vec2";
 import { _k } from "../../../shared";
 import type { Comp } from "../../../types";

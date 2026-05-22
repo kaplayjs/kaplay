@@ -49,6 +49,13 @@ So your change should look like:
 
 - Added an optional parameter `rng` to all random related functions to pass the
   rng to use (#1057) - @mflerackers
+- RNG updates (#1097) - @Stanko
+    - RNG can now be set and seeded on init and in runtime
+    - Extracted random helpers and RNG engines from `math.ts`
+    - Added Alea RNG
+    - Added tests for random related stuff
+    - **API CHANGE:** `new RNG()` and `setRNG()` now use config objects instead of the string/custom rng parameter.
+    
 
 ### Fixed
 
