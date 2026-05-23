@@ -17,11 +17,13 @@ describe("wait() should wait 5 seconds", () => {
                     k.sprite("bean"),
                 ]);
 
-                return Promise.resolve(new Promise((res, rej) => {
-                    k.wait(1, () => {
-                        res(true);
-                    })
-                }))
+                return Promise.resolve(
+                    new Promise((res, rej) => {
+                        k.wait(1, () => {
+                            res(true);
+                        });
+                    }),
+                );
             });
 
             expect(result).toBeTruthy();
@@ -29,4 +31,3 @@ describe("wait() should wait 5 seconds", () => {
         20000,
     );
 });
-
