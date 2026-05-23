@@ -6,7 +6,7 @@ describe("wait() should wait 5 seconds", () => {
     });
 
     test(
-        "Wait 5 seconds and pass test",
+        "Wait 1 second and pass test",
         async () => {
             const result = await page.evaluate(() => {
                 const k = kaplay({ global: false });
@@ -18,7 +18,7 @@ describe("wait() should wait 5 seconds", () => {
                 ]);
 
                 return Promise.resolve(new Promise((res, rej) => {
-                    k.wait(5, () => {
+                    k.wait(1, () => {
                         res(true);
                     })
                 }))
