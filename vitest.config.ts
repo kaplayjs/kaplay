@@ -11,4 +11,7 @@ export default defineConfig({
             tsconfig: "./tests/tsconfig.json",
         },
     },
+    server: {
+        hmr: false,
+    }
 });
