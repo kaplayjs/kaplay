@@ -28,13 +28,15 @@ describe("Prefabs", () => {
 
                 const beanPrefab = bean.serialize();
 
-                return Promise.resolve(new Promise((res) => {
-                    k.onLoad(() => {
-                        const bean2 = k.addPrefab(beanPrefab);
+                return Promise.resolve(
+                    new Promise((res) => {
+                        k.onLoad(() => {
+                            const bean2 = k.addPrefab(beanPrefab);
 
-                        res(bean2.exists())
-                    })
-                }))
+                            res(bean2.exists());
+                        });
+                    }),
+                );
             });
 
             expect(result).toBeTruthy();
@@ -65,15 +67,17 @@ describe("Prefabs", () => {
 
                 const beanPrefab = bean.serialize();
 
-                return Promise.resolve(new Promise((res) => {
-                    k.onLoad(() => {
-                        const bean2 = k.addPrefab(beanPrefab, [
-                            k.pos(10, 12)
-                        ]);
+                return Promise.resolve(
+                    new Promise((res) => {
+                        k.onLoad(() => {
+                            const bean2 = k.addPrefab(beanPrefab, [
+                                k.pos(10, 12),
+                            ]);
 
-                        res(bean2.pos.x == 10 && bean2.pos.y == 12)
-                    })
-                }))
+                            res(bean2.pos.x == 10 && bean2.pos.y == 12);
+                        });
+                    }),
+                );
             });
 
             expect(result).toBeTruthy();
@@ -81,4 +85,3 @@ describe("Prefabs", () => {
         20000,
     );
 });
-
