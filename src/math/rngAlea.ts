@@ -98,7 +98,8 @@ export class Alea implements RandomGenerator {
      */
     constructor(seed?: string | string[]) {
         const seeds = seed !== undefined ? [seed].flat() : [];
-        this._seeds = seeds.length > 0 ? seeds : getRandomSeeds();
+        // Convert all seeds to strings in case they slip when people are not using typescript
+        this._seeds = seeds.length > 0 ? seeds.map((seed) => seed.toString()) : getRandomSeeds();
         this.state = createState(this._seeds);
         this.gen = () => genFromState(this.state);
     }
@@ -112,7 +113,8 @@ export class Alea implements RandomGenerator {
 
     set seed(value: string | string[]) {
         const seeds = [value].flat();
-        this._seeds = seeds;
+        // Convert all seeds to strings in case they slip when people are not using typescript
+        this._seeds = seeds.map((seed) => seed.toString());
         this.state = createState(this._seeds);
         this.gen = () => genFromState(this.state);
     }
