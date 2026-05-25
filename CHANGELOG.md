@@ -54,6 +54,7 @@ So your change should look like:
 
 - Fixed `TimerController.timeLeft` returning elapsed time instead of remaining
   time (#1082) - @nojaf
+- Fixed mouse coordinates not being calculated properly when canvas is resized by CSS and wasn't rendered at its natural size (#1096) - @Stanko
 
 ## [4000.0.0-alpha.27.1] - 2026-05-12
 
