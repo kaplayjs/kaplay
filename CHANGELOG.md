@@ -44,7 +44,7 @@ So your change should look like:
   @mflerackers
 - Added xorshift32 as random generator (#1057) - @mflerackers
 - **(examples)** Added a new `gacha` example! (#1057) - @imaginarny
-- Updated README with updated X account and added other social networks - @beemdvp
+- Updated README with updated X account and added other social networks (#1098) - @beemdvp
 
 ### Changed
 
@@ -55,6 +55,7 @@ So your change should look like:
 
 - Fixed `TimerController.timeLeft` returning elapsed time instead of remaining
   time (#1082) - @nojaf
+- Fixed mouse coordinates not being calculated properly when canvas is resized by CSS and wasn't rendered at its natural size (#1096) - @Stanko
 
 ## [4000.0.0-alpha.27.1] - 2026-05-12
 
