@@ -44,6 +44,7 @@ So your change should look like:
   @mflerackers
 - Added xorshift32 as random generator (#1057) - @mflerackers
 - **(examples)** Added a new `gacha` example! (#1057) - @imaginarny
+- Updated README with updated X account and added other social networks - @beemdvp
 
 ### Changed
 
