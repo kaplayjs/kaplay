@@ -55,27 +55,26 @@ export type RandomGeneratorType =
  * @param type - The type of the generator to create.
  * @param seed - The seed to use for the generator. It is named to avoid confusion with the RandomGenerator's `seed` property.
  */
-export type RNGConfig =
+export type InternalRNGConfig =
     | { type: "lce"; seed?: number }
     | { type: "xorshift32"; seed?: number }
-    | { type: "alea"; seed?: string | string[] }
-    | { type: "custom"; rng: RandomGenerator };
+    | { type: "alea"; seed?: string | string[] };
+
+export type RNGConfig = InternalRNGConfig | { type: "custom"; rng: RandomGenerator };
 
 export type RNGSeed = number | string | string[];
 
-function createRNG(type: "lce", seed?: number): RandomGenerator;
-function createRNG(type: "xorshift32", seed?: number): RandomGenerator;
-function createRNG(type: "alea", seed?: string | string[]): RandomGenerator;
-function createRNG(type: RandomGeneratorType, seed?: RNGSeed): RandomGenerator;
-function createRNG(type: RandomGeneratorType, seed?: RNGSeed): RandomGenerator {
-    switch (type) {
+function createRNG(
+    config: InternalRNGConfig,
+): RandomGenerator {
+    switch (config.type) {
         case "xorshift32":
-            return new XorShift32(seed as number);
+            return new XorShift32(config.seed);
         case "alea":
-            return new Alea(seed as string | string[]);
+            return new Alea(config.seed);
         case "lce":
         default:
-            return new LinearCongruentialEngine(seed as number);
+            return new LinearCongruentialEngine(config.seed);
     }
 }
 
@@ -92,7 +91,7 @@ export class RNG {
             this.rng = config.rng;
         }
         else {
-            this.rng = createRNG(config.type, config.seed);
+            this.rng = createRNG(config);
         }
     }
 
