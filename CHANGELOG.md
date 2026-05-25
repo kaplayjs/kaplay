@@ -50,15 +50,17 @@ So your change should look like:
 
 - Added an optional parameter `rng` to all random related functions to pass the
   rng to use (#1057) - @mflerackers
-- RNG can now be set and seeded on init (as `KAPLAYOpt.rng`) and in runtime (#1097) - @Stanko
-- **(!)** `new RNG()` and `setRNG()` now use config objects instead of the string/custom rng parameter (#1097) - @Stanko
-    
+- RNG can now be set and seeded on init (as `KAPLAYOpt.rng`) and in runtime
+  (#1097) - @Stanko
+- **(!)** `new RNG()` and `setRNG()` now use config objects instead of the
+  string/custom rng parameter (#1097) - @Stanko
 
 ### Fixed
 
 - Fixed `TimerController.timeLeft` returning elapsed time instead of remaining
   time (#1082) - @nojaf
-- Fixed mouse coordinates not being calculated properly when canvas is resized by CSS and wasn't rendered at its natural size (#1096) - @Stanko
+- Fixed mouse coordinates not being calculated properly when canvas is resized
+  by CSS and wasn't rendered at its natural size (#1096) - @Stanko
 
 ## [4000.0.0-alpha.27.1] - 2026-05-12
 

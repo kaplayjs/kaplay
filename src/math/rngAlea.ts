@@ -99,7 +99,9 @@ export class Alea implements RandomGenerator {
     constructor(seed?: string | string[]) {
         const seeds = seed !== undefined ? [seed].flat() : [];
         // Convert all seeds to strings in case they slip when people are not using typescript
-        this._seeds = seeds.length > 0 ? seeds.map((seed) => seed.toString()) : getRandomSeeds();
+        this._seeds = seeds.length > 0
+            ? seeds.map((seed) => seed.toString())
+            : getRandomSeeds();
         this.state = createState(this._seeds);
         this.gen = () => genFromState(this.state);
     }

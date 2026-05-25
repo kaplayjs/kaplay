@@ -60,7 +60,10 @@ export type InternalRNGConfig =
     | { type: "xorshift32"; seed?: number }
     | { type: "alea"; seed?: string | string[] };
 
-export type RNGConfig = InternalRNGConfig | { type: "custom"; rng: RandomGenerator };
+export type RNGConfig = InternalRNGConfig | {
+    type: "custom";
+    rng: RandomGenerator;
+};
 
 export type RNGSeed = number | string | string[];
 
