@@ -56,9 +56,7 @@ jobs:
       - name: Run checker
         run: pnpm run check
       - name: Run tests
-        run: pnpm run test -c
-      - name: Run Vitest
-        run: pnpm run test:vite
+        run: pnpm run test
 
   deploy:
     name: Upload KAPLAY to CDN
