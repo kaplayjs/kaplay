@@ -90,7 +90,7 @@ export const createEngine = (gopt: KAPLAYOpt) => {
     const appGfx = initAppGfx(gfx, opt);
     const assets = initAssets(gfx, opt, appGfx);
     const audio = initAudio();
-    const game = createGame();
+    const game = createGame(opt.rng);
 
     // Frame rendering
     const frameRenderer = createFrameRenderer(
