@@ -1,5 +1,6 @@
 const isBrowser = process.env.IS_BROWSER;
 
+console.log(isBrowser);
 /**
  * @type {import("puppeteer").Configuration}
  */

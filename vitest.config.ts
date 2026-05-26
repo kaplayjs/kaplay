@@ -1,6 +1,8 @@
 import { defineConfig } from "vitest/config";
 
 const isBrowser = process.env.IS_BROWSER;
+
+console.log(isBrowser)
 const exclude = [
     "**\/node_modules/**",
     "**\/dist/**",
