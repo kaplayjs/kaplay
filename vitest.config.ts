@@ -26,7 +26,4 @@ export default defineConfig({
             ? [...exclude, "**\/*.browser.{test,spec}.?(c|m)[jt]s?(x)"]
             : exclude,
     },
-    server: {
-        hmr: false,
-    },
 });
