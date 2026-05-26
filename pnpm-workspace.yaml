@@ -1,0 +1,4 @@
+allowBuilds:
+  dprint: true
+  esbuild: true
+  puppeteer: true
