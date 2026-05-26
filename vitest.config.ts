@@ -19,7 +19,7 @@ export default defineConfig({
             ignoreSourceErrors: true,
             tsconfig: "./tests/tsconfig.json",
         },
-        include: ["**\/tests/*.{test,spec}.?(c|m)[jt]s?(x)"],
+        include: ["**\/*.{test,spec}.?(c|m)[jt]s?(x)"],
         exclude: !isBrowser
             ? [...exclude, "**\/*.browser.{test,spec}.?(c|m)[jt]s?(x)"]
             : exclude,
