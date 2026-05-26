@@ -77,6 +77,15 @@ export function updateViewport() {
 
 export function viewportToCanvas(pt: Vec2) {
     return new Vec2(
+        (pt.x * _k.gfx.viewport.width / _k.gfx.width + _k.gfx.viewport.x)
+            / _k.app.state.canvasScaleX,
+        (pt.y * _k.gfx.viewport.height / _k.gfx.height + _k.gfx.viewport.y)
+            / _k.app.state.canvasScaleY,
+    );
+}
+
+export function viewportToCanvasLocal(pt: Vec2) {
+    return new Vec2(
         pt.x * _k.gfx.viewport.width / _k.gfx.width,
         pt.y * _k.gfx.viewport.height / _k.gfx.height,
     );
@@ -84,7 +93,9 @@ export function viewportToCanvas(pt: Vec2) {
 
 export function canvasToViewport(pt: Vec2) {
     return new Vec2(
-        (pt.x - _k.gfx.viewport.x) * _k.gfx.width / _k.gfx.viewport.width,
-        (pt.y - _k.gfx.viewport.y) * _k.gfx.height / _k.gfx.viewport.height,
+        (pt.x * _k.app.state.canvasScaleX - _k.gfx.viewport.x)
+            * _k.gfx.width / _k.gfx.viewport.width,
+        (pt.y * _k.app.state.canvasScaleY - _k.gfx.viewport.y)
+            * _k.gfx.height / _k.gfx.viewport.height,
     );
 }

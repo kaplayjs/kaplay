@@ -176,7 +176,9 @@ interface MyTextCompOpt extends KA.TextCompOpt {
 
 - [Discord Server](https://discord.gg/aQ6RuQm3TF)
 - [GitHub Discussions](https://github.com/kaplayjs/kaplay/discussions)
-- [Twitter](https://twitter.com/Kaboomjs)
+- [Twitter/X](https://twitter.com/kaplayjs)
+- [BlueSky](https://bsky.app/profile/kaplayjs.com)
+- [Mastodon](https://mastodon.gamedev.place/@kaplay)
 
 ## 🎮 Games
 

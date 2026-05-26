@@ -26,6 +26,7 @@ export function initAppEvents() {
 
         _k.canvas.width = _k.canvas.offsetWidth * _k.gfx.pixelDensity;
         _k.canvas.height = _k.canvas.offsetHeight * _k.gfx.pixelDensity;
+        _k.app.updateCanvasScale();
 
         updateViewport();
 
