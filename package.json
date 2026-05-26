@@ -69,7 +69,7 @@
     "fmt:commit": "dprint fmt && git diff --quiet --cached && echo \"No changes\" || (git add . && git commit -m \"style: fmt\")",
     "generate:index": "node scripts/generateIndex.js",
     "generate:dts": "dts-bundle-generator -o dist/doc.d.ts src/index.ts",
-    "test": "vitest",
+    "test": "vitest --typecheck",
     "test:browser": "cross-env IS_BROWSER=true vitest",
     "prepare": "npm run build"
   },
