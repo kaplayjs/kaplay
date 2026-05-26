@@ -69,10 +69,9 @@
     "fmt:commit": "dprint fmt && git diff --quiet --cached && echo \"No changes\" || (git add . && git commit -m \"style: fmt\")",
     "generate:index": "node scripts/generateIndex.js",
     "generate:dts": "dts-bundle-generator -o dist/doc.d.ts src/index.ts",
-    "test": "node scripts/test.ts",
-    "test:vite": "vitest --typecheck",
-    "prepare": "npm run build",
-    "test:browser": "vitest"
+    "test": "vitest",
+    "test:browser": "cross-env IS_BROWSER=true vitest",
+    "prepare": "npm run build"
   },
   "devDependencies": {
     "@eslint/js": "^9.39.4",
@@ -83,6 +82,7 @@
     "@typescript-eslint/eslint-plugin": "^8.59.3",
     "@typescript-eslint/parser": "^8.59.3",
     "@vitest/browser-playwright": "^4.1.6",
+    "cross-env": "^10.1.0",
     "dprint": "^0.50.2",
     "dts-bundle-generator": "^9.5.1",
     "ejs": "^3.1.10",
