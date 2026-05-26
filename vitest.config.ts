@@ -1,7 +1,13 @@
 import { defineConfig } from "vitest/config";
 
 const isBrowser = process.env.IS_BROWSER;
-const exclude = ['**\/node_modules/**', '**\/dist/**', '**\/cypress/**', '**\/.{idea,git,cache,output,temp}/**', '**\/{karma,rollup,webpack,vite,vitest,jest,ava,babel,nyc,cypress,tsup,build,eslint,prettier}.config.*']
+const exclude = [
+    "**\/node_modules/**",
+    "**\/dist/**",
+    "**\/cypress/**",
+    "**\/.{idea,git,cache,output,temp}/**",
+    "**\/{karma,rollup,webpack,vite,vitest,jest,ava,babel,nyc,cypress,tsup,build,eslint,prettier}.config.*",
+];
 
 export default defineConfig({
     test: {
@@ -13,8 +19,10 @@ export default defineConfig({
             ignoreSourceErrors: true,
             tsconfig: "./tests/tsconfig.json",
         },
-        include: ['**\/*.{test,spec}.?(c|m)[jt]s?(x)'],
-        exclude: !isBrowser ? [...exclude, '**\/*.browser.{test,spec}.?(c|m)[jt]s?(x)'] : exclude,
+        include: ["**\/*.{test,spec}.?(c|m)[jt]s?(x)"],
+        exclude: !isBrowser
+            ? [...exclude, "**\/*.browser.{test,spec}.?(c|m)[jt]s?(x)"]
+            : exclude,
     },
     server: {
         hmr: false,
