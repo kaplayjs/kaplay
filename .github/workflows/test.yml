@@ -50,7 +50,7 @@ jobs:
       - name: Install dependencies
         run: pnpm install --ignore-scripts
       - name: Install Chrome for Puppeteer
-        run: npx puppeteer browsers install chrome
+        run: pnpm exec puppeteer browsers install chrome
       - name: Fast build
         run: pnpm run build --fast
       - name: Run checker
