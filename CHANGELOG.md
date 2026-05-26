@@ -56,6 +56,10 @@ So your change should look like:
   (#1097) - @Stanko
 - **(!)** `new RNG()` and `setRNG()` now use config objects instead of the
   string/custom rng parameter (#1097) - @Stanko
+- RNG can now be set and seeded on init (as `KAPLAYOpt.rng`) and in runtime
+  (#1097) - @Stanko
+- **(!)** `new RNG()` and `setRNG()` now use config objects instead of the
+  string/custom rng parameter (#1097) - @Stanko
 
 ### Fixed
 
