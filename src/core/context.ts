@@ -170,7 +170,6 @@ import {
     bezier,
     cardinal,
     catmullRom,
-    chance,
     choose,
     chooseMultiple,
     Circle,
@@ -208,13 +207,8 @@ import {
     Quad,
     quad,
     rad2deg,
-    rand,
-    randi,
-    randSeed,
     Rect,
-    RNG,
     roulette,
-    setRNG,
     shuffle,
     smoothstep,
     step,
@@ -237,6 +231,7 @@ import {
     createRegularPolygon,
     createStarPolygon,
 } from "../math/polygongeneration";
+import { chance, rand, randi, randSeed, RNG, setRNG } from "../math/random";
 import { insertionSort } from "../math/sort";
 import { makeQuadtree, Quadtree } from "../math/spatial/quadtree";
 import { Vec2 } from "../math/Vec2";

@@ -1,4 +1,4 @@
-import { rand } from "../math";
+import { rand } from "../random";
 
 type Predicate = (value: any) => boolean;
 

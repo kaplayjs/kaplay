@@ -226,6 +226,8 @@ export const initAppState = (opt: {
         isMouseMoved: false,
         lastWidth: opt.canvas.offsetWidth,
         lastHeight: opt.canvas.offsetHeight,
+        canvasScaleX: 1,
+        canvasScaleY: 1,
         events: new KEventHandler<AppEventMap>(),
     };
 };
@@ -252,6 +254,15 @@ export const initApp = (
     const state = initAppState(opt);
     parseButtonBindings(state);
     if (opt.fixedUpdateMode) setFixedSpeed(opt.fixedUpdateMode);
+    updateCanvasScale();
+
+    function updateCanvasScale() {
+        const pd = opt.pixelDensity || 1;
+        state.canvasScaleX = state.canvas.width / pd
+            / state.canvas.offsetWidth;
+        state.canvasScaleY = state.canvas.height / pd
+            / state.canvas.offsetHeight;
+    }
 
     function dt() {
         return state.dt * state.timeScale;
@@ -1299,6 +1310,7 @@ export const initApp = (
             ) return;
             state.lastWidth = state.canvas.offsetWidth;
             state.lastHeight = state.canvas.offsetHeight;
+            updateCanvasScale();
             state.events.onOnce("input", () => {
                 state.events.trigger("resize");
             });
@@ -1315,6 +1327,7 @@ export const initApp = (
         time,
         run,
         canvas: state.canvas,
+        updateCanvasScale,
         fps,
         rawFPS,
         setFixedSpeed,
