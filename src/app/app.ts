@@ -89,6 +89,11 @@ export class ButtonState<T = string, A = never> {
             state.events.trigger(this._releaseEv as any, btn, this._arg);
         }
     }
+    releaseAll(state: AppState) {
+        for (const btn of this.down) {
+            this.release(btn, state);
+        }
+    }
 }
 
 class GamepadState {
@@ -978,7 +983,38 @@ export const initApp = (
     const docEvents: EventList<DocumentEventMap> = {};
     const winEvents: EventList<WindowEventMap> = {};
 
+    let releaseHeldInputsQueued = false;
+
+    function releaseHeldInputs() {
+        state.buttonHandler.releaseKeyboardMouse(state);
+        state.keyState.releaseAll(state);
+        state.mouseState.releaseAll(state);
+    }
+
+    function queueReleaseHeldInputs() {
+        if (releaseHeldInputsQueued) {
+            return;
+        }
+        releaseHeldInputsQueued = true;
+        state.events.onOnce("input", () => {
+            releaseHeldInputsQueued = false;
+            releaseHeldInputs();
+        });
+    }
+
+    function releaseHeldInputsOnFocusLoss() {
+        // Release all inputs immediately when blur/hide happens, 
+        // and then queue it to to catch any queued events on the next input tick,
+        // that wouldn't be processed otherwise
+        releaseHeldInputs();
+        queueReleaseHeldInputs();
+    }
+
     const pd = opt.pixelDensity || 1;
+
+    canvasEvents.blur = () => {
+        releaseHeldInputsOnFocusLoss();
+    };
 
     canvasEvents.mousemove = (e) => {
         // 🍝 Here we depend of GFX Context even if initGfx needs initApp for being used
@@ -1259,9 +1295,14 @@ export const initApp = (
             state.events.trigger("show");
         }
         else {
+            releaseHeldInputsOnFocusLoss();
             state.isHidden = true;
             state.events.trigger("hide");
         }
+    };
+
+    winEvents.blur = () => {
+        releaseHeldInputsOnFocusLoss();
     };
 
     winEvents.gamepadconnected = (e) => {

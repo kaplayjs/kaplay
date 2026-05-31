@@ -63,6 +63,7 @@ So your change should look like:
   by CSS and wasn't rendered at its natural size (#1096) - @Stanko
 - Modified `pos`, `skew` and `scale` components to make operations like
   `obj.pos.x += 1` work again (#1109) - @ErikGXDev
+- Fixed `isKeyDown` and `isButtonDown` getting stuck on game loosing focus (#1101) - @Stanko
 
 ## [4000.0.0-alpha.27.1] - 2026-05-12
 
