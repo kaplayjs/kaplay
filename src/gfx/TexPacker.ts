@@ -112,7 +112,7 @@ class PackerHashGrid {
         for (let x = minCellX; x <= maxCellX && fits; x++) {
             for (let y = minCellY; y <= maxCellY && fits; y++) {
                 this.g[`${x},${y}`]?.forEach(node => {
-                    if (testRectRect(rect, node.rect)) fits = false;
+                    if (fits && testRectRect(rect, node.rect)) fits = false;
                 });
             }
         }
