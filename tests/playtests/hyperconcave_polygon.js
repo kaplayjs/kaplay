@@ -1,12 +1,3 @@
-/**
- * @file Polygon
- * @description How to create polygon-shaped objects.
- * @difficulty 0
- * @tags basics, math
- * @minver 3001.0
- * @category concepts
- */
-
 kaplay({
     background: [0, 0, 0],
 });
@@ -21,12 +12,10 @@ const poly = add([
     polygon([
         vec2(0, 0),
         vec2(100, 0),
+        vec2(200, 100),
         vec2(100, 200),
-        vec2(200, 200),
-        vec2(200, 300),
-        vec2(100, 300),
-        vec2(100, 200),
-        vec2(0, 200),
+        vec2(0, 100),
+        vec2(80, 100),
     ], {
         colors: [
             rgb(128, 255, 128),
@@ -34,8 +23,6 @@ const poly = add([
             rgb(128, 128, 255),
             rgb(255, 128, 128),
             rgb(128, 128, 128),
-            rgb(128, 255, 128),
-            rgb(255, 128, 128),
             rgb(128, 255, 128),
         ],
         triangulate: true,
@@ -104,4 +91,13 @@ poly.onHover(() => {
 
 poly.onHoverEnd(() => {
     poly.color = rgb(255, 255, 255);
+});
+
+poly.onDraw(() => {
+    drawPolygon({
+        ...poly,
+        pos: vec2(),
+        fill: false,
+        outline: { color: RED, width: 5 },
+    });
 });
