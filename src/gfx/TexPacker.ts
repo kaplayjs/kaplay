@@ -138,7 +138,7 @@ class FilterTexPacker {
         this.#newTexture();
     }
 
-    #hasPendingRefresh = false;
+    _hasPendingRefresh = false;
     #newTexture(): TexMap {
         this._sync();
         const el = document.createElement("canvas");
@@ -154,9 +154,9 @@ class FilterTexPacker {
         return this._curMap;
     }
     _sync() {
-        if (this.#hasPendingRefresh) {
+        if (this._hasPendingRefresh) {
             this._curMap.tex.update(this._curMap.el);
-            this.#hasPendingRefresh = false;
+            this._hasPendingRefresh = false;
         }
     }
 
@@ -190,7 +190,7 @@ class FilterTexPacker {
             imgWidth,
             imgHeight,
         );
-        this.#hasPendingRefresh = true;
+        this._hasPendingRefresh = true;
     }
 
     _add(img: ImageSource, chopQuad: Quad | undefined): Frame {
@@ -344,7 +344,7 @@ class FilterTexPacker {
         }
 
         this.#used.delete(packerId);
-        this.#hasPendingRefresh = true;
+        this._hasPendingRefresh = true;
     }
 }
 
@@ -397,6 +397,8 @@ export class TexPacker {
             tex: tex,
             id: -1,
         });
+        packer._hasPendingRefresh = true;
+        packer._sync();
         return {
             tex,
             q: new Quad(
