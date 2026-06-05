@@ -772,7 +772,6 @@ export function serializeAnimation(obj: GameObj<any>, name: string): any {
     if (obj.has("animate")) {
         serialization.anims = (obj as GameObj<AnimateComp>)
             .serializeAnimations();
-        console.log(serialization);
         Object.assign(
             serialization,
             (obj as GameObj<NamedComp | AnimateComp>)

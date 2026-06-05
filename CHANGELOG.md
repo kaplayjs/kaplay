@@ -217,7 +217,7 @@ So your change should look like:
   @mflerackers
 - Sticky platforms work again - @mflerackers
 
-## Removed
+### Removed
 
 - **(!)** `onClick(() => {})` was removed, use `onMousePress()` instead.
   `onClick("tag", () => {});` stays the same,
@@ -231,7 +231,7 @@ So your change should look like:
 - Global `retrieve()` method to get the objects with area within a certain
   rectangle - @mflerackers
 
-## Changed
+### Changed
 
 - **(!)** You can no longer change the position of an object by doing obj.pos.x
   += 1. You need to assign a new Vec2 or use moveBy instead - @mflerackers
