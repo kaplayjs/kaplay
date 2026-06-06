@@ -6380,7 +6380,7 @@ export interface KAPLAYCtx {
      * @group Math
      * @subgroup Advanced
      */
-    triangulate(pts: Vec2[]): Vec2[][];
+    triangulate(pts: Vec2[]): number[];
     /**
      * @returns the convex hull of the given polygon.
      * @since v4000.0

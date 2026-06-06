@@ -3273,41 +3273,24 @@ function isEar(a: Vec2, b: Vec2, c: Vec2, vertices: Vec2[]) {
     return isOrientedCcw(a, b, c) && !someInTriangle(vertices, a, b, c);
 }
 
-export function triangulate(pts: Vec2[]): Vec2[][] {
-    if (pts.length < 3) {
-        return [];
-    }
-    if (pts.length == 3) {
-        return [pts];
+export function triangulate(pts: Vec2[]): number[] {
+    const len = pts.length;
+
+    if (len < 3) return [];
+    if (len === 3) {
+        return [0, 1, 2];
     }
 
     /* Create a list of indexes to the previous and next points of a given point
     prev_idx[i] gives the index to the previous point of the point at i */
-    let nextIdx = [];
-    let prevIdx = [];
-    let idx = 0;
-    for (let i = 0; i < pts.length; i++) {
-        const lm = pts[idx];
-        const pt = pts[i];
-        if (pt.x < lm.x || (pt.x == lm.x && pt.y < lm.y)) {
-            idx = i;
-        }
-        nextIdx[i] = i + 1;
-        prevIdx[i] = i - 1;
-    }
-    nextIdx[nextIdx.length - 1] = 0;
-    prevIdx[0] = prevIdx.length - 1;
+    let prevIdx = pts.map((_, i) => (i + len - 1) % len);
+    let nextIdx = pts.map((_, i) => (i + 1) % len);
 
     // If the polygon is not counter clockwise, swap the lists, thus reversing the winding
     if (!isOrientedCcwPolygon(pts)) {
-        [nextIdx, prevIdx] = [prevIdx, nextIdx];
-    }
-
-    const concaveVertices = [];
-    for (let i = 0; i < pts.length; ++i) {
-        if (!isOrientedCcw(pts[prevIdx[i]], pts[i], pts[nextIdx[i]])) {
-            concaveVertices.push(pts[i]);
-        }
+        var temp = prevIdx;
+        prevIdx = nextIdx;
+        nextIdx = temp;
     }
 
     const triangles = [];
@@ -3322,11 +3305,10 @@ export function triangulate(pts: Vec2[]): Vec2[][] {
         const a = pts[prev];
         const b = pts[current];
         const c = pts[next];
-        if (isEar(a, b, c, concaveVertices)) {
-            triangles.push([a, b, c]);
+        if (isEar(a, b, c, pts)) {
+            triangles.push(prev, current, next);
             nextIdx[prev] = next;
             prevIdx[next] = prev;
-            concaveVertices.splice(concaveVertices.indexOf(b), 1);
             --nVertices;
             skipped = 0;
         }
@@ -3337,7 +3319,7 @@ export function triangulate(pts: Vec2[]): Vec2[][] {
     }
     next = nextIdx[current];
     prev = prevIdx[current];
-    triangles.push([pts[prev], pts[current], pts[next]]);
+    triangles.push(prev, current, next);
 
     return triangles;
 }

@@ -48,6 +48,8 @@ So your change should look like:
 
 ### Changed
 
+- `triangulate()` now returns a flat list of the new indices, instead of a list
+  of 3-tuples of points (#1103) - @dragoncoder047
 - Added an optional parameter `rng` to all random related functions to pass the
   rng to use (#1057) - @mflerackers
 - RNG can now be set and seeded on init (as `KAPLAYOpt.rng`) and in runtime
@@ -57,6 +59,8 @@ So your change should look like:
 
 ### Fixed
 
+- Fixed `triangulate()` returning invalid triangles in some cases (#1093) -
+  @dragoncoder047
 - Fixed `TimerController.timeLeft` returning elapsed time instead of remaining
   time (#1082) - @nojaf
 - Fixed mouse coordinates not being calculated properly when canvas is resized
@@ -517,10 +521,12 @@ So your change should look like:
 
 - Now, you can use `color(c)` with a hexadecimal literal number (ex: 0x00ff00) -
   @lajbel
+
   ```js
   // blue frog
   add([sprite("bean"), color(0x0000ff)]);
   ```
+
 - **(!)** `KAPLAYCtx` doesn't use generics anymore. Now, `KAPLAYCtxT` uses
   them - @lajbel
 - Now, `kaplay` will return `KAPLAYCtx` or `KAPLAYCtxT` depending if it's using

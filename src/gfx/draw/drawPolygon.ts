@@ -156,10 +156,7 @@ export function drawPolygon(opt: DrawPolygonOpt) {
         let indices;
 
         if (opt.triangulate /* && !isConvex(opt.pts)*/) {
-            const triangles = triangulate(opt.pts);
-            // TODO rewrite triangulate to just return new indices
-            indices = triangles.map(t => t.map(p => opt.pts.indexOf(p)))
-                .flat();
+            indices = triangulate(opt.pts);
         }
         else {
             indices = [...Array(npts - 2).keys()]
