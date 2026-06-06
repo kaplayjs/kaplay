@@ -48,13 +48,12 @@ export function loadAseprite(
     return _k.assets.sprites.add(
         name,
         resolveJSON.then((data: AsepriteData) => {
-            const size = data.meta.size;
             const frames = data.frames.map((f: any) => {
                 return new Quad(
-                    f.frame.x / size.w,
-                    f.frame.y / size.h,
-                    f.frame.w / size.w,
-                    f.frame.h / size.h,
+                    f.frame.x,
+                    f.frame.y,
+                    f.frame.w,
+                    f.frame.h,
                 );
             });
             const anims: Record<string, number | SpriteAnim> = {};
