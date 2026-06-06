@@ -57,6 +57,9 @@ So your change should look like:
 
 ### Fixed
 
+- Fixed the Aseprite loader using the wrong frames sizes (#1102) -
+  @dragoncoder047
+- Made the texture packer 3x faster (#1102) - @dragoncoder047
 - Fixed `TimerController.timeLeft` returning elapsed time instead of remaining
   time (#1082) - @nojaf
 - Fixed mouse coordinates not being calculated properly when canvas is resized
