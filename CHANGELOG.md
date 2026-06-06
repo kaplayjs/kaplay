@@ -1,5 +1,7 @@
 # Changelog
 
+<!-- markdownlint-disable no-duplicate-heading blanks-around-fences single-h1 -->
+
 All notable changes to this project will be documented in this file.
 
 The format is (mostly) based on
@@ -44,6 +46,9 @@ So your change should look like:
   @mflerackers
 - Added xorshift32 as random generator (#1057) - @mflerackers
 - **(examples)** Added a new `gacha` example! (#1057) - @imaginarny
+- Added the `LevelCompOpt.charsPerTile` option for the `level()` component and
+  `addLevel` which lets you use more than one character per tile, that way you
+  can make clearer maps without having to resort to Unicode - @dragoncoder047
 - Added Alea as random generator (#1097) - @Stanko
 
 ### Changed
@@ -94,6 +99,12 @@ So your change should look like:
   (#1074) - @imaginarny, @mflerackers
 - Fixed broadphase objects cleared on scene switch including those with `stay()`
   (#1077) - @imaginarny, @mflerackers
+
+### Added
+
+- Added a `repack: false` option to `loadSpite()` and a repack parameter to
+  `loadSpriteAtlas()`, for faster loading if you're packing stuff at build-time
+  (#1063) - @dragoncoder047
 
 ## [4000.0.0-alpha.27] - 2026-03-19
 
