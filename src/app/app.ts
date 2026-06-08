@@ -978,8 +978,6 @@ export const initApp = (
     const docEvents: EventList<DocumentEventMap> = {};
     const winEvents: EventList<WindowEventMap> = {};
 
-    const pd = opt.pixelDensity || 1;
-
     canvasEvents.mousemove = (e) => {
         // 🍝 Here we depend of GFX Context even if initGfx needs initApp for being used
         // Letterbox creates some black bars so we need to remove that for calculating
@@ -989,27 +987,6 @@ export const initApp = (
         // related to what we call the "offset" in this code
         const mousePos = canvasToViewport(new Vec2(e.offsetX, e.offsetY));
         const mouseDeltaPos = new Vec2(e.movementX, e.movementY);
-
-        if (!opt.letterbox && isFullscreen()) {
-            const cw = state.canvas.width / pd;
-            const ch = state.canvas.height / pd;
-            const ww = window.innerWidth;
-            const wh = window.innerHeight;
-            const rw = ww / wh;
-            const rc = cw / ch;
-            if (rw > rc) {
-                const ratio = wh / ch;
-                const offset = (ww - (cw * ratio)) / 2;
-                mousePos.x = map(e.offsetX - offset, 0, cw * ratio, 0, cw);
-                mousePos.y = map(e.offsetY, 0, ch * ratio, 0, ch);
-            }
-            else {
-                const ratio = ww / cw;
-                const offset = (wh - (ch * ratio)) / 2;
-                mousePos.x = map(e.offsetX, 0, cw * ratio, 0, cw);
-                mousePos.y = map(e.offsetY - offset, 0, ch * ratio, 0, ch);
-            }
-        }
 
         state.lastInputDevice = "mouse";
         state.events.onOnce("input", () => {

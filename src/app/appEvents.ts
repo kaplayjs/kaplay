@@ -19,18 +19,13 @@ export function initAppEvents() {
     });
 
     _k.app.onResize(() => {
-        const fixedSize = _k.globalOpt.width && _k.globalOpt.height;
-        if (fixedSize && !_k.globalOpt.letterbox) {
-            return;
-        }
-
         _k.canvas.width = _k.canvas.offsetWidth * _k.gfx.pixelDensity;
         _k.canvas.height = _k.canvas.offsetHeight * _k.gfx.pixelDensity;
         _k.app.updateCanvasScale();
 
         updateViewport();
 
-        if (!fixedSize) {
+        if (!_k.globalOpt.width || !_k.globalOpt.height) {
             _k.gfx.frameBuffer.free();
             _k.gfx.frameBuffer = new FrameBuffer(
                 _k.gfx.ggl,
