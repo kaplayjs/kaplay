@@ -1294,12 +1294,6 @@ export const initApp = (
 
     resizeObserver.observe(state.canvas);
 
-    if (state.lastWidth !== opt.width || state.lastHeight !== opt.height) {
-        state.events.onOnce("input", () => {
-            state.events.trigger("resize");
-        });
-    }
-
     return {
         state,
         dt,
