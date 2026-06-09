@@ -254,15 +254,6 @@ export const initApp = (
     const state = initAppState(opt);
     parseButtonBindings(state);
     if (opt.fixedUpdateMode) setFixedSpeed(opt.fixedUpdateMode);
-    updateCanvasScale();
-
-    function updateCanvasScale() {
-        const pd = opt.pixelDensity || 1;
-        state.canvasScaleX = state.canvas.width / pd
-            / state.canvas.offsetWidth;
-        state.canvasScaleY = state.canvas.height / pd
-            / state.canvas.offsetHeight;
-    }
 
     function dt() {
         return state.dt * state.timeScale;
@@ -1278,6 +1269,14 @@ export const initApp = (
         );
     }
 
+    const updateCanvasScale = () => {
+        const pd = opt.pixelDensity || 1;
+        state.canvasScaleX = state.canvas.width / pd
+            / state.canvas.offsetWidth;
+        state.canvasScaleY = state.canvas.height / pd
+            / state.canvas.offsetHeight;
+    };
+
     const resizeObserver = new ResizeObserver((entries) => {
         for (const entry of entries) {
             if (entry.target !== state.canvas) continue;
@@ -1287,7 +1286,6 @@ export const initApp = (
             ) return;
             state.lastWidth = state.canvas.offsetWidth;
             state.lastHeight = state.canvas.offsetHeight;
-            updateCanvasScale();
             state.events.onOnce("input", () => {
                 state.events.trigger("resize");
             });
@@ -1295,6 +1293,12 @@ export const initApp = (
     });
 
     resizeObserver.observe(state.canvas);
+
+    if (state.lastWidth !== opt.width || state.lastHeight !== opt.height) {
+        state.events.onOnce("input", () => {
+            state.events.trigger("resize");
+        });
+    }
 
     return {
         state,

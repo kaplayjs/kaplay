@@ -23,15 +23,14 @@ export function initAppEvents() {
         _k.canvas.height = _k.canvas.offsetHeight * _k.gfx.pixelDensity;
         _k.app.updateCanvasScale();
 
-        updateViewport();
+        _k.gfx.frameBuffer.free();
+        _k.gfx.frameBuffer = new FrameBuffer(
+            _k.gfx.ggl,
+            _k.gfx.ggl.gl.drawingBufferWidth,
+            _k.gfx.ggl.gl.drawingBufferHeight,
+        );
 
         if (!_k.globalOpt.width || !_k.globalOpt.height) {
-            _k.gfx.frameBuffer.free();
-            _k.gfx.frameBuffer = new FrameBuffer(
-                _k.gfx.ggl,
-                _k.gfx.ggl.gl.drawingBufferWidth,
-                _k.gfx.ggl.gl.drawingBufferHeight,
-            );
             _k.gfx.width = _k.gfx.ggl.gl.drawingBufferWidth
                 / _k.gfx.pixelDensity
                 / _k.globalOpt.scale;
@@ -39,6 +38,8 @@ export function initAppEvents() {
                 / _k.gfx.pixelDensity
                 / _k.globalOpt.scale;
         }
+
+        updateViewport();
     });
 
     if (_k.globalOpt.debug !== false) {
