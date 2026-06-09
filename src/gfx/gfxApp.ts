@@ -73,17 +73,11 @@ export const initAppGfx = (gfx: GfxCtx, gopt: MustKAPLAYOpt): AppGfxCtx => {
     const pixelDensity = gopt.pixelDensity ?? 1;
     const { gl } = gfx;
 
-    const frameBuffer = (gopt.width && gopt.height)
-        ? new FrameBuffer(
-            gfx,
-            gopt.width * pixelDensity * gopt.scale,
-            gopt.height * pixelDensity * gopt.scale,
-        )
-        : new FrameBuffer(
-            gfx,
-            gl.drawingBufferWidth,
-            gl.drawingBufferHeight,
-        );
+    const frameBuffer = new FrameBuffer(
+        gfx,
+        gl.drawingBufferWidth,
+        gl.drawingBufferHeight,
+    );
 
     let bgColor: null | Color = null;
     let bgAlpha = 1;
