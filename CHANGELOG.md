@@ -63,6 +63,8 @@ So your change should look like:
   by CSS and wasn't rendered at its natural size (#1096) - @Stanko
 - Fixed touch coordinates in aspect-fit fullscreen with fixed canvas size and
   letterbox disabled (#1106) - @imaginarny
+- Fixed incorrect resolution and scale of the debug inspect mode (#1106) -
+  @imaginarny
 
 ## [4000.0.0-alpha.27.1] - 2026-05-12
 
