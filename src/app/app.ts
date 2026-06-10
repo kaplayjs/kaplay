@@ -1,7 +1,6 @@
 // App is everything related to canvas, game loop and input
 
 import type {
-    ChordedKey,
     Cursor,
     GameObj,
     KAPLAYOpt,
@@ -1115,17 +1114,6 @@ export const initApp = (
         " ": "space",
     };
 
-    const shouldPreventButtons = (check: Set<ChordedKey> | undefined) => {
-        if (!check) return false;
-        if (check.size === 0) return true;
-
-        for (const key of check) {
-            if (state.keyState.down.has(key)) return true;
-        }
-
-        return false;
-    };
-
     canvasEvents.keydown = (e) => {
         state.capsOn = e.getModifierState("CapsLock");
 
@@ -1134,12 +1122,8 @@ export const initApp = (
 
         if (
             PREVENT_DEFAULT_KEYS.has(k)
-            || shouldPreventButtons(
-                state.buttonHandler.byKey.committers.get(k)?.check,
-            )
-            || shouldPreventButtons(
-                state.buttonHandler.byKeyCode.committers.get(e.code)?.check,
-            )
+            || state.buttonHandler.byKey.committers.get(k)?.btns?.size
+            || state.buttonHandler.byKeyCode.committers.get(e.code)?.btns?.size
         ) {
             e.preventDefault();
         }
