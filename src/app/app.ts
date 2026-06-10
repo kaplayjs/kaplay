@@ -1092,6 +1092,17 @@ export const initApp = (
         "ArrowUp",
         "ArrowDown",
         "Tab",
+        "/",
+        ...(opt.debug !== false
+            ? [
+                opt.debugKey || "F1",
+                "F2",
+                "F7",
+                "F8",
+                "F9",
+                "F10",
+            ]
+            : []),
     ]);
 
     // translate these key names to a simpler version
@@ -1106,12 +1117,14 @@ export const initApp = (
     canvasEvents.keydown = (e) => {
         state.capsOn = e.getModifierState("CapsLock");
 
-        if (PREVENT_DEFAULT_KEYS.has(e.key)) {
+        const k: Key = KEY_ALIAS[e.key as keyof typeof KEY_ALIAS] as Key
+            || e.key.toLowerCase();
+
+        if (PREVENT_DEFAULT_KEYS.has(k)) {
             e.preventDefault();
         }
+
         state.events.onOnce("input", () => {
-            const k: Key = KEY_ALIAS[e.key as keyof typeof KEY_ALIAS] as Key
-                || e.key.toLowerCase();
             const code = e.code;
 
             if (k === undefined) throw new Error(`Unknown key: ${e.key}`);
