@@ -1,5 +1,7 @@
 # Changelog
 
+<!-- markdownlint-disable no-duplicate-heading blanks-around-fences single-h1 -->
+
 All notable changes to this project will be documented in this file.
 
 The format is (mostly) based on
@@ -40,6 +42,13 @@ So your change should look like:
 
 ### Added
 
+- The `onHide` and `onShow` global handlers (which have been deprecated for a
+  while) are now actually removed, you must use `onTabHide` and `onTabShow`.
+  `onHide` and `onShow` still exist but now handle reacting to changes in the
+  `.hidden` property of game objects (#1041) - @dragoncoder047
+- Added `onPause()`, `onUnpause()`, `onHide()`, and `onShow()` events for
+  listening to the state of the `paused` and `hidden` properties on game objects
+  (#1041) - @dragoncoder047
 - Made random generator algorithm configurable using `setRNG()` (#1057) -
   @mflerackers
 - Added xorshift32 as random generator (#1057) - @mflerackers

@@ -683,11 +683,11 @@ export const initApp = (
     }
 
     function onTabHide(action: () => void): KEventController {
-        return state.events.on("show", action);
+        return state.events.on("tabHide", action);
     }
 
     function onTabShow(action: () => void): KEventController {
-        return state.events.on("show", action);
+        return state.events.on("tabShow", action);
     }
 
     const onGamepadButtonPress = overload2(
@@ -1256,11 +1256,11 @@ export const initApp = (
             // prevent a surge of dt when switch back after the tab being hidden for a while
             state.skipTime = true;
             state.isHidden = false;
-            state.events.trigger("show");
+            state.events.trigger("tabShow");
         }
         else {
             state.isHidden = true;
-            state.events.trigger("hide");
+            state.events.trigger("tabHide");
         }
     };
 

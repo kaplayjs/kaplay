@@ -273,8 +273,8 @@ export type AppEventMap = {
     buttonPress: [string];
     buttonRelease: [string];
     scroll: [Vec2];
-    hide: [];
-    show: [];
+    tabHide: [];
+    tabShow: [];
     resize: [];
     input: [];
     update: [];
@@ -295,4 +295,8 @@ export type GameEventMap = {
     error: [Error];
     sceneLeave: [string];
     sceneEnter: [string];
+    pause: [GameObj];
+    unpause: [GameObj];
+    hide: [GameObj];
+    show: [GameObj];
 };

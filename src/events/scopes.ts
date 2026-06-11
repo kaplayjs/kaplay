@@ -63,6 +63,10 @@ const ingnoredHandlersForObject = [
     "onHover",
     "onHoverEnd",
     "onHoverUpdate",
+    "onPause",
+    "onUnpause",
+    "onHide",
+    "onShow",
     "on",
 ] as const;
 
