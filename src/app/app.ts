@@ -1086,34 +1086,34 @@ export const initApp = (
         });
     };
 
-    const PREVENT_DEFAULT_KEYS = new Set([
-        " ",
-        "ArrowLeft",
-        "ArrowRight",
-        "ArrowUp",
-        "ArrowDown",
-        "Tab",
-        "/",
-        ...(opt.debug !== false
-            ? [
-                opt.debugKey || "F1",
-                "F2",
-                "F7",
-                "F8",
-                "F9",
-                "F10",
-            ]
-            : []),
-    ]);
-
-    // translate these key names to a simpler version
-    const KEY_ALIAS = {
+    // translate key names to kaplay keys
+    const KEY_ALIAS: Record<KeyboardEvent["key"], Key> = {
         "ArrowLeft": "left",
         "ArrowRight": "right",
         "ArrowUp": "up",
         "ArrowDown": "down",
         " ": "space",
     };
+
+    const PREVENT_DEFAULT_KEYS = new Set<Key>([
+        "left",
+        "right",
+        "up",
+        "down",
+        "space",
+        "tab",
+        "/",
+        ...(opt.debug !== false
+            ? [
+                opt.debugKey || "f1",
+                "f2",
+                "f7",
+                "f8",
+                "f9",
+                "f10",
+            ]
+            : []),
+    ]);
 
     const shouldPreventButtons = (
         committer:
