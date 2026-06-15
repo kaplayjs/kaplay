@@ -117,8 +117,7 @@ export function pos(...args: Vec2Args): PosComp {
                 const self = this;
                 posProxy = new Proxy(_pos, {
                     set(target, prop, value) {
-                        _pos[prop as keyof Vec2] = value;
-                        target[prop as keyof Vec2] = value;
+                        Reflect.set(target, prop, value);
                         (self as any as InternalGameObjRaw)._transformVersion =
                             nextTransformVersion();
                         return true;
