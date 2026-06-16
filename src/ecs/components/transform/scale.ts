@@ -67,21 +67,20 @@ export function scale(...args: Vec2Args): ScaleComp {
     const _scale = vec2(...args);
     let scaleProxy: Vec2 | null = null;
 
-
     return {
         id: "scale",
 
         get scale(): Vec2 {
             if (!scaleProxy) {
-              const self = this;
-              scaleProxy = new Proxy(_scale, {
-                set(target, prop, value) {
-                  Reflect.set(target, prop, value);
-                  (self as any as InternalGameObjRaw)._transformVersion =
-                    nextTransformVersion();
-                  return true;
-                },
-              });
+                const self = this;
+                scaleProxy = new Proxy(_scale, {
+                    set(target, prop, value) {
+                        Reflect.set(target, prop, value);
+                        (self as any as InternalGameObjRaw)._transformVersion =
+                            nextTransformVersion();
+                        return true;
+                    },
+                });
             }
             return scaleProxy;
         },

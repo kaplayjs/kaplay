@@ -48,15 +48,15 @@ export function skew(...args: Vec2Args): SkewComp {
 
         get skew(): Vec2 {
             if (!skewProxy) {
-              const self = this;
-              skewProxy = new Proxy(_skew, {
-                set(target, prop, value) {
-                  Reflect.set(target, prop, value);
-                  (self as any as InternalGameObjRaw)._transformVersion =
-                    nextTransformVersion();
-                  return true;
-                },
-              });
+                const self = this;
+                skewProxy = new Proxy(_skew, {
+                    set(target, prop, value) {
+                        Reflect.set(target, prop, value);
+                        (self as any as InternalGameObjRaw)._transformVersion =
+                            nextTransformVersion();
+                        return true;
+                    },
+                });
             }
             return skewProxy;
         },
