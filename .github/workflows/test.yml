@@ -49,8 +49,9 @@ jobs:
           run_install: false
       - name: Install dependencies
         run: pnpm ci 
-      - name: Fast build
-        run: pnpm run build --fast
+      # Build is not needed since it is builded by install (ci)
+      # - name: Fast build
+      #   run: pnpm run build --fast
       - name: Run checker
         run: pnpm run check
       - name: Run tests
