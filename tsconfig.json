@@ -2,8 +2,8 @@
   "compilerOptions": {
     "esModuleInterop": true,
     "target": "ESNext",
-    "module": "ESNext",
-    "moduleResolution": "Node",
+    "module": "preserve",
+    "moduleResolution": "bundler",
     "noImplicitThis": true,
     "skipLibCheck": true,
     "resolveJsonModule": true,
@@ -16,7 +16,7 @@
     "verbatimModuleSyntax": true,
     "strict": true,
     "types": [
-      "./src/.env.d.ts"
+      "./src/.env.d.ts",
     ]
   },
   "include": [

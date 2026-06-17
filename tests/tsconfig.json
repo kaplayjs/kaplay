@@ -1,21 +1,19 @@
+// Used just for Type Check of tests... Not used for generate anything
+
 {
   "compilerOptions": {
     "esModuleInterop": true,
     "target": "ESNext",
-    "module": "ESNext",
-    "moduleResolution": "Node",
+    "module": "esnext",
+    "moduleResolution": "bundler",
     "noImplicitThis": true,
     "skipLibCheck": true,
     "resolveJsonModule": true,
-    "emitDeclarationOnly": true,
-    "declaration": true,
-    "declarationMap": true,
-    "declarationDir": "dist/declaration",
-    // always use import type for type only imports
+    "declaration": false,
+    // Always use import type for type only imports
     "verbatimModuleSyntax": true,
     "strict": true,
     "types": [
-      "../node_modules/vitest-puppeteer/dist/index.d.ts",
       "./.env.d.ts"
     ]
   },
