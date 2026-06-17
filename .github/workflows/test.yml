@@ -49,6 +49,9 @@ jobs:
           run_install: false
       - name: Install dependencies
         run: pnpm ci 
+      # There may be a way to generate reports for CI in Github Actions, research if needed using default template
+      - name: Install playwright dependencies
+        run: pnpm exec playwright install
       # Build is not needed since it is builded by install (ci)
       # - name: Fast build
       #   run: pnpm run build --fast
