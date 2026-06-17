@@ -1,3 +1,4 @@
 {
-  "extends": "node_modules/@kaplayjs/dprint-config/dprint.json"
+  "extends": "node_modules/@kaplayjs/dprint-config/dprint.json",
+  "newLineKind": "crlf"
 }

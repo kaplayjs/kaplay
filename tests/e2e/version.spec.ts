@@ -1,27 +1,27 @@
-import { test, expect } from '@playwright/test';
+import { expect, test } from "@playwright/test";
 
-test('VERSION constant should be defined in global scope when running kaplay()', async ({ page }) => {
-  await page.addScriptTag({ path: "dist/kaplay.js" });
+test("VERSION constant should be defined in global scope when running kaplay()", async ({ page }) => {
+    await page.addScriptTag({ path: "dist/kaplay.js" });
 
-  const result = await page.evaluate(async () => {
-    kaplay();
+    const result = await page.evaluate(async () => {
+        kaplay();
 
-    return window['VERSION' as 'ArrayBuffer'];
-  });
+        return window["VERSION" as "ArrayBuffer"];
+    });
 
-  // Expect a title "to contain" a substring.
-  expect(result).toBeDefined();
+    // Expect a title "to contain" a substring.
+    expect(result).toBeDefined();
 });
 
-test('VERSION constant should not be defined in global scope when running kaplay({ global: false })', async ({ page }) => {
-  await page.addScriptTag({ path: "dist/kaplay.js" });
+test("VERSION constant should not be defined in global scope when running kaplay({ global: false })", async ({ page }) => {
+    await page.addScriptTag({ path: "dist/kaplay.js" });
 
-  const result = await page.evaluate(async () => {
-    kaplay({ global: false });
+    const result = await page.evaluate(async () => {
+        kaplay({ global: false });
 
-    return window['VERSION' as 'ArrayBuffer'];
-  });
+        return window["VERSION" as "ArrayBuffer"];
+    });
 
-  // Expect a title "to contain" a substring.
-  expect(result).toBeUndefined();
+    // Expect a title "to contain" a substring.
+    expect(result).toBeUndefined();
 });

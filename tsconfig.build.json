@@ -10,7 +10,7 @@
     "declaration": true,
     "declarationMap": true,
     "declarationDir": "dist/declaration",
-    "strict": true,
+    "strict": true
   },
   "include": [
     "src/index.ts",
