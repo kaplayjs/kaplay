@@ -61,7 +61,7 @@ So your change should look like:
   time (#1082) - @nojaf
 - Fixed mouse coordinates not being calculated properly when canvas is resized
   by CSS and wasn't rendered at its natural size (#1096) - @Stanko
-- Modified `pos`, `skew` and `scale` components to make operations like `+=` or `-=` work again - @ErikGXDev
+- Modified `pos`, `skew` and `scale` components to make operations like `obj.pos.x += 1` work again (#1109) - @ErikGXDev
 
 ## [4000.0.0-alpha.27.1] - 2026-05-12
 
