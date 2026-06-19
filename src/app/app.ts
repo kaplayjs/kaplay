@@ -1142,6 +1142,7 @@ export const initApp = (
 
         if (
             PREVENT_DEFAULT_KEYS.has(k)
+            || _k.game.inputCapturedBy.size > 0
             || shouldPreventButtons(
                 state.buttonHandler.byKey.committers.get(k),
             )
