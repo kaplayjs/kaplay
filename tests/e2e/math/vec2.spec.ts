@@ -1,4 +1,4 @@
-import { expect, test } from "vitest";
+import { expect, test } from "@playwright/test";
 import { vec2 } from "../../../src/math/math";
 import { Vec2 } from "../../../src/math/Vec2";
 

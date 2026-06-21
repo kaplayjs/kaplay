@@ -1,5 +1,5 @@
-import { expect, test } from "vitest";
-import { deg2rad, Mat23, vec2 } from "../../src/math/math";
+import { expect, test } from "@playwright/test";
+import { deg2rad, Mat23, vec2 } from "../../../src/math/math";
 
 test("Mat23.fromTranslation(45).getTranslation() should return 2, 3", () => {
     const m = Mat23.fromTranslation(vec2(2, 3));
