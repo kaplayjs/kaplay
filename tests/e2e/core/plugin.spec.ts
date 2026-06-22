@@ -5,7 +5,9 @@ test.beforeEach(async ({ page }) => {
     await page.addScriptTag({ path: "dist/kaplay.js" });
 });
 
-test("testPlugin methods should exist in context", async ({ page }) => {
+test("plugin methods should exist in context", async ({ page }) => {
+    page.on('console', msg => console.log(`Browser log: ${msg.text()}`));
+
     const method = await page.evaluate(() => {
         const testPlugin = (k: KAPLAYCtx) => ({
             myMethod() {
@@ -15,13 +17,14 @@ test("testPlugin methods should exist in context", async ({ page }) => {
 
         const k = kaplay({ plugins: [testPlugin] });
 
-        return k.myMethod;
+        // Tests only admits serializable valuies
+        return k.myMethod !== undefined && k.myMethod !== null;
     });
 
-    expect(method).toBeDefined();
+    expect(method).toBeTruthy();
 });
 
-test("testPlugin methods should work in context", async ({ page }) => {
+test("plugin methods should work in context", async ({ page }) => {
     const [version, methodResult] = await page.evaluate(() => {
         const testPlugin = (k: KAPLAYCtx) => ({
             myMethod() {
