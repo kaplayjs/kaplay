@@ -41,13 +41,24 @@ export function skew(...args: Vec2Args): SkewComp {
     }
 
     const _skew = vec2(...args);
-    const _skewReadOnly = vec2(...args);
+    let skewProxy: Vec2 | null = null;
 
     return {
         id: "skew",
 
         get skew(): Vec2 {
-            return _skewReadOnly;
+            if (!skewProxy) {
+                const self = this;
+                skewProxy = new Proxy(_skew, {
+                    set(target, prop, value) {
+                        Reflect.set(target, prop, value);
+                        (self as any as InternalGameObjRaw)._transformVersion =
+                            nextTransformVersion();
+                        return true;
+                    },
+                });
+            }
+            return skewProxy;
         },
         set skew(value: Vec2) {
             if (value instanceof Vec2 === false) {
@@ -57,8 +68,6 @@ export function skew(...args: Vec2Args): SkewComp {
             }
             _skew.x = value.x;
             _skew.y = value.y;
-            _skewReadOnly.x = value.x;
-            _skewReadOnly.y = value.y;
             (this as any as InternalGameObjRaw)._transformVersion =
                 nextTransformVersion();
         },

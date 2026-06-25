@@ -2380,7 +2380,7 @@ export function getSpriteOutline(
         RDP,
         epsilon,
     );
-    console.log(trace);
+
     return new Polygon(trace);
 }
 
