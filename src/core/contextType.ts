@@ -6379,6 +6379,7 @@ export interface KAPLAYCtx {
      * @since v3001.0
      * @group Math
      * @subgroup Advanced
+     * @returns flattened list of indices of each of the decomposed triangles, list will always have a multiple of 3 length
      */
     triangulate(pts: Vec2[]): number[];
     /**
