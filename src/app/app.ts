@@ -1003,7 +1003,7 @@ export const initApp = (
     }
 
     function releaseHeldInputsOnFocusLoss() {
-        // Release all inputs immediately when blur/hide happens, 
+        // Release all inputs immediately when blur/hide happens,
         // and then queue it to to catch any queued events on the next input tick,
         // that wouldn't be processed otherwise
         releaseHeldInputs();
