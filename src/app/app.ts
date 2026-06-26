@@ -1115,20 +1115,20 @@ export const initApp = (
             : []),
     ]);
 
-    const shouldPreventButtons = (
-        committer:
-            | { check: Set<ChordedKey>; btns: Map<string, ChordedKey[]> }
-            | undefined,
-    ) => {
-        if (!committer?.btns?.size) {
-            return false;
-        }
-        else if (committer.check.size === 0) {
-            return true;
-        }
+    const shouldPreventButtons = (key: Key, by: "byKey" | "byKeyCode") => {
+        const committer = state.buttonHandler[by].committers.get(key);
+        if (!committer) return false;
 
-        for (const k of state.keyState.down) {
-            if (committer.check.has(k)) return true;
+        btns: for (const mods of committer.btns.values()) {
+            for (const mod of committer.check) {
+                if (
+                    (state.keyState.down.has(mod) || mod === key)
+                        !== mods.includes(mod)
+                ) {
+                    continue btns;
+                }
+            }
+            return true;
         }
 
         return false;
@@ -1143,12 +1143,8 @@ export const initApp = (
         if (
             PREVENT_DEFAULT_KEYS.has(k)
             || _k.game.inputCapturedBy.size > 0
-            || shouldPreventButtons(
-                state.buttonHandler.byKey.committers.get(k),
-            )
-            || shouldPreventButtons(
-                state.buttonHandler.byKeyCode.committers.get(e.code),
-            )
+            || shouldPreventButtons(k, "byKey")
+            || shouldPreventButtons(e.code, "byKeyCode")
         ) {
             e.preventDefault();
         }
