@@ -54,6 +54,8 @@ So your change should look like:
   (#1097) - @Stanko
 - **(!)** `new RNG()` and `setRNG()` now use config objects instead of the
   string/custom rng parameter (#1097) - @Stanko
+- Debug keys, keys defined with the Buttons API, and keyboard input captured by
+  e.g. focused `textInput` now use `preventDefault()` (#1114) - @imaginarny
 
 ### Fixed
 
