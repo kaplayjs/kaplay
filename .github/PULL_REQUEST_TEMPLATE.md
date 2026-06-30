@@ -4,12 +4,14 @@ Replace this text describing an overfiew of the changes included in this PR.
 
 ### List of changes
 
-- Replace this list, if applicable, notating the issue(s) that should be closed, like this:
+- Replace this list, if applicable, notating the issue(s) that should be closed,
+  like this:
 - close #3001
 
 ## Contributor Checks
 
-- [ ] I'm aware of the [contributing guidelines](https://github.com/kaplayjs/kaplay/blob/master/CONTRIBUTING.md).
+- [ ] I'm aware of the
+      [contributing guidelines](https://github.com/kaplayjs/kaplay/blob/master/CONTRIBUTING.md).
 
 ## Reviewer Checks
 

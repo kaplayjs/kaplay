@@ -26,4 +26,3 @@ test(
         expect(result).toBeTruthy();
     },
 );
-
