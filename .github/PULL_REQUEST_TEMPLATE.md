@@ -1,17 +1,19 @@
 ## PR Overview
 
-Replace this text describing changes included in this PR.
+Replace this text describing an overfiew of the changes included in this PR.
+
+### List of changes
 
 - Replace this list, if applicable, notating the issue(s) that should be closed, like this:
 - close #3001
 
-## Implementer Check
+## Contributor Checks
 
 - [ ] I'm aware of the [contributing guidelines](https://github.com/kaplayjs/kaplay/blob/master/CONTRIBUTING.md).
 
-## Reviewer Check
+## Reviewer Checks
 
-> For reviewer use only. Mark not applicable checkboxes.
+> For reviewer use only. Delete not applicable checkboxes.
 
 - [ ] Changes includes changelog
 - [ ] Breaking changes are noted in changelog
