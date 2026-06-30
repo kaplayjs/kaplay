@@ -3257,7 +3257,8 @@ function pointInTriangle(p: Vec2, a: Vec2, b: Vec2, c: Vec2) {
 
 // true if any vertex in the list `vertices' is in the triangle abc.
 function someInTriangle(vertices: Vec2[], a: Vec2, b: Vec2, c: Vec2) {
-    for (const p of vertices) {
+    for (let i = 0; i < vertices.length; i++) {
+        const p = vertices[i]!;
         if (
             (p !== a) && (p !== b) && (p !== c) && pointInTriangle(p, a, b, c)
         ) {
