@@ -38,6 +38,11 @@ So your change should look like:
 
 ## [unreleased]
 
+### Breaking Changes
+
+- `triangulate()` now returns a flat list of the new indices, instead of a list
+  of 3-tuples of points (#1103) - @dragoncoder047
+
 ### Added
 
 - Made random generator algorithm configurable using `setRNG()` (#1057) -
@@ -48,8 +53,6 @@ So your change should look like:
 
 ### Changed
 
-- `triangulate()` now returns a flat list of the new indices, instead of a list
-  of 3-tuples of points (#1103) - @dragoncoder047
 - Added an optional parameter `rng` to all random related functions to pass the
   rng to use (#1057) - @mflerackers
 - RNG can now be set and seeded on init (as `KAPLAYOpt.rng`) and in runtime
