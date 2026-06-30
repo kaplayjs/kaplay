@@ -45,6 +45,8 @@ So your change should look like:
 - Added xorshift32 as random generator (#1057) - @mflerackers
 - **(examples)** Added a new `gacha` example! (#1057) - @imaginarny
 - Added Alea as random generator (#1097) - @Stanko
+- Added `nextFrame()` helper function to defer/run a function on the next frame
+  (#1112) - @imaginarny
 
 ### Changed
 
@@ -61,6 +63,10 @@ So your change should look like:
   time (#1082) - @nojaf
 - Fixed mouse coordinates not being calculated properly when canvas is resized
   by CSS and wasn't rendered at its natural size (#1096) - @Stanko
+- Modified `pos`, `skew` and `scale` components to make operations like
+  `obj.pos.x += 1` work again (#1109) - @ErikGXDev
+- Fixed `isKeyDown` and `isButtonDown` getting stuck on game loosing focus
+  (#1101) - @Stanko
 - Fixed touch coordinates in aspect-fit fullscreen with fixed canvas size and
   letterbox disabled (#1106) - @imaginarny
 - Fixed incorrect resolution and scale of the debug inspect mode (#1106) -

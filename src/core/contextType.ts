@@ -5414,6 +5414,59 @@ export interface KAPLAYCtx {
      */
     wait(n: number, action?: () => void): TimerController;
     /**
+     * Defer/run the function on the next frame.
+     *
+     * @param action - The function to run.
+     *
+     * @example Passing a callback
+     * ```js
+     * nextFrame(() => {})
+     * ```
+     * @example It returns a PromiseLike that can be used with await
+     * ```js
+     * await nextFrame()
+     * ```
+     * @example Use cases
+     * ```js
+     * // Typical use case is to unpause a game after all listeners in the current frame
+     * // have run, otherwise you would unpause and register input events too early
+     * nextFrame(() => {
+     *     gameObj.paused = false
+     * })
+     *
+     * // Or registering an event listener inside of the same event listener
+     * onKeyPress("space", () => {
+     *     // outside, the object would be added in the same frame when the space key is
+     *     // processed, so you would see "ohhi" message on the first space key press
+     *     nextFrame(() => {
+     *         const obj = add([])
+     *         obj.onKeyPress("space", () => debug.log("ohhi"))
+     *     })
+     *     return cancel()
+     * })
+     *
+     * // Or accessing info that is not available in the current event loop
+     * // like getting the next tiles array in the addLevel tiles config
+     * "=": () => [
+     *     sprite("grass"),
+     *     {
+     *         add() {
+     *             // outside it would be empty, since it runs when the tile is added
+     *             nextFrame(() => {
+     *                 // here it will work since the whole level is processed now
+     *                 console.log(this.getLevel().getAt(this.tilePos.add(1, 0)))
+     *             })
+     *         },
+     *     },
+     * ],
+     * ```
+     *
+     * @returns A timer controller.
+     * @since v4000.0
+     * @group Timer
+     */
+    nextFrame(action?: () => void): TimerController;
+    /**
      * Run the function every n seconds.
      *
      * @param n - The time to wait in seconds.
