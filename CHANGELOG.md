@@ -45,6 +45,8 @@ So your change should look like:
 - Added xorshift32 as random generator (#1057) - @mflerackers
 - **(examples)** Added a new `gacha` example! (#1057) - @imaginarny
 - Added Alea as random generator (#1097) - @Stanko
+- Added `nextFrame()` helper function to defer/run a function on the next frame
+  (#1112) - @imaginarny
 
 ### Changed
 
