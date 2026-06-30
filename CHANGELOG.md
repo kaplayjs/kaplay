@@ -67,6 +67,9 @@ So your change should look like:
   `obj.pos.x += 1` work again (#1109) - @ErikGXDev
 - Fixed `isKeyDown` and `isButtonDown` getting stuck on game loosing focus
   (#1101) - @Stanko
+- Fixed `finish()` being able to complete an already finished tween, and
+  prevented `timeLeft` from going negative and `currentTime` from exceeding the
+  duration (#1117) - @imaginarny
 
 ## [4000.0.0-alpha.27.1] - 2026-05-12
 
