@@ -50,7 +50,7 @@ let hovering = null;
 
 poly.onDraw(() => {
     const triangleIndices = triangulate(poly.pts);
-    for (var i = 0; i < triangleIndices.length; i += 3) {
+    for (let i = 0; i < triangleIndices.length; i += 3) {
         drawTriangle({
             p1: poly.pts[triangleIndices[i]],
             p2: poly.pts[triangleIndices[i + 1]],
