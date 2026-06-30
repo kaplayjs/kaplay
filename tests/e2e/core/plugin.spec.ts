@@ -6,7 +6,7 @@ test.beforeEach(async ({ page }) => {
 });
 
 test("plugin methods should exist in context", async ({ page }) => {
-    page.on('console', msg => console.log(`Browser log: ${msg.text()}`));
+    page.on("console", msg => console.log(`Browser log: ${msg.text()}`));
 
     const method = await page.evaluate(() => {
         const testPlugin = (k: KAPLAYCtx) => ({

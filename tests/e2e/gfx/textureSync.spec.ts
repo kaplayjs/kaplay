@@ -13,7 +13,7 @@ test(
                 return new Promise(resolve => {
                     // hacky since we can't use spyOn mocking
                     var called = false;
-                    k._k.assets.packer.syncIfPending = function () {
+                    k._k.assets.packer.syncIfPending = function() {
                         called = true;
                     };
 
