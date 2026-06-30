@@ -152,6 +152,7 @@ export function timer(maxLoopsPerFrame: number = 1000): TimerComp {
             this: GameObj<TimerComp>,
             action?: () => void,
         ): TimerController {
+            // will run only once
             return this.loop(0, action ?? (() => {}), 1, true);
         },
         tween<V extends LerpValue>(
