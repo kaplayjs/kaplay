@@ -3288,7 +3288,7 @@ export function triangulate(pts: Vec2[]): number[] {
 
     // If the polygon is not counter clockwise, swap the lists, thus reversing the winding
     if (!isOrientedCcwPolygon(pts)) {
-        var temp = prevIdx;
+        let temp = prevIdx;
         prevIdx = nextIdx;
         nextIdx = temp;
     }
