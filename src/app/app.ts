@@ -3,6 +3,7 @@
 import type {
     Cursor,
     GameObj,
+    GamepadDef,
     KAPLAYOpt,
     Key,
     KGamepad,
@@ -34,6 +35,7 @@ import {
     releaseButton,
     setButton,
 } from "./buttons";
+import { resolveGamepadMap } from "./gamepadId";
 import {
     ButtonProcessor,
     type ButtonsDef,
@@ -59,7 +61,7 @@ export class ButtonState<T = string, A = never> {
     }
     process(state: AppState) {
         if (this._downEv !== null) {
-            this.down.forEach(b => {
+            this.down.forEach((b) => {
                 state.events.trigger(this._downEv as any, b, this._arg);
             });
         }
@@ -140,7 +142,7 @@ class FPSCounter {
         }
     }
     calculate() {
-        return this.fps = this.curNSamples / this.accumulator;
+        return (this.fps = this.curNSamples / this.accumulator);
     }
     ago(ago: number) {
         return this.history.at(this.i - ago - 1);
@@ -224,6 +226,9 @@ export const initAppState = (opt: {
         ),
         mergedGamepadState: new GamepadState(null),
         gamepadStates: new Map<number, GamepadState>(),
+        // resolved button map per gamepad index, computed once on connect
+        // rather than re-resolved from the raw id string every frame
+        gamepadMaps: new Map<number, GamepadDef>(),
         lastInputDevice: null as "mouse" | "keyboard" | "gamepad" | null,
         // unified input state
         gamepads: [] as KGamepad[],
@@ -263,8 +268,7 @@ export const initApp = (
 
     function updateCanvasScale() {
         const pd = opt.pixelDensity || 1;
-        state.canvasScaleX = state.canvas.width / pd
-            / state.canvas.offsetWidth;
+        state.canvasScaleX = state.canvas.width / pd / state.canvas.offsetWidth;
         state.canvasScaleY = state.canvas.height / pd
             / state.canvas.offsetHeight;
     }
@@ -307,7 +311,7 @@ export const initApp = (
 
     function screenshotToBlob(): Promise<Blob> {
         return new Promise<Blob>((resolve, reject) => {
-            state.canvas.toBlob(b => {
+            state.canvas.toBlob((b) => {
                 if (b !== null) resolve(b);
                 else reject(new Error("failed to make blob"));
             });
@@ -366,9 +370,11 @@ export const initApp = (
     }
 
     function isFullscreen(): boolean {
-        return document.fullscreenElement === state.canvas
+        return (
+            document.fullscreenElement === state.canvas
             // @ts-ignore
-            || document.webkitFullscreenElement === state.canvas;
+            || document.webkitFullscreenElement === state.canvas
+        );
     }
 
     const isFocused = () => {
@@ -470,7 +476,7 @@ export const initApp = (
     }
 
     function isTouchscreen() {
-        return ("ontouchstart" in window) || navigator.maxTouchPoints > 0;
+        return "ontouchstart" in window || navigator.maxTouchPoints > 0;
     }
 
     function mousePos(): Vec2 {
@@ -551,9 +557,7 @@ export const initApp = (
             );
     }
 
-    function getGamepadAnalogButton(
-        btn: KGamepadButton,
-    ): number {
+    function getGamepadAnalogButton(btn: KGamepadButton): number {
         return state.mergedGamepadState.analogState.get(btn) ?? 0;
     }
 
@@ -580,75 +584,99 @@ export const initApp = (
     }
 
     // input callbacks
-    const onKeyDown = overload2((action: (key: Key) => void) => {
-        return state.events.on("keyDown", action);
-    }, (key: Key | Key[], action: (key: Key) => void) => {
-        return state.events.on(
-            "keyDown",
-            (k) => isEqOrIncludes(key, k) && action(k),
-        );
-    });
+    const onKeyDown = overload2(
+        (action: (key: Key) => void) => {
+            return state.events.on("keyDown", action);
+        },
+        (key: Key | Key[], action: (key: Key) => void) => {
+            return state.events.on(
+                "keyDown",
+                (k) => isEqOrIncludes(key, k) && action(k),
+            );
+        },
+    );
 
     // key pressed is equal to the key by the user
-    const onKeyPress = overload2((action: (key: Key) => void) => {
-        return state.events.on("keyPress", (k) => action(k));
-    }, (key: Key | Key[], action: (key: Key) => void) => {
-        return state.events.on(
-            "keyPress",
-            (k) => isEqOrIncludes(key, k) && action(k),
-        );
-    });
+    const onKeyPress = overload2(
+        (action: (key: Key) => void) => {
+            return state.events.on("keyPress", (k) => action(k));
+        },
+        (key: Key | Key[], action: (key: Key) => void) => {
+            return state.events.on(
+                "keyPress",
+                (k) => isEqOrIncludes(key, k) && action(k),
+            );
+        },
+    );
 
-    const onKeyPressRepeat = overload2((action: (key: Key) => void) => {
-        return state.events.on("keyPressRepeat", action);
-    }, (key: Key | Key[], action: (key: Key) => void) => {
-        return state.events.on(
-            "keyPressRepeat",
-            (k) => isEqOrIncludes(key, k) && action(k),
-        );
-    });
+    const onKeyPressRepeat = overload2(
+        (action: (key: Key) => void) => {
+            return state.events.on("keyPressRepeat", action);
+        },
+        (key: Key | Key[], action: (key: Key) => void) => {
+            return state.events.on(
+                "keyPressRepeat",
+                (k) => isEqOrIncludes(key, k) && action(k),
+            );
+        },
+    );
 
-    const onKeyRelease = overload2((action: (key: Key) => void) => {
-        return state.events.on("keyRelease", action);
-    }, (key: Key | Key[], action: (key: Key) => void) => {
-        return state.events.on(
-            "keyRelease",
-            (k) => isEqOrIncludes(key, k) && action(k),
-        );
-    });
+    const onKeyRelease = overload2(
+        (action: (key: Key) => void) => {
+            return state.events.on("keyRelease", action);
+        },
+        (key: Key | Key[], action: (key: Key) => void) => {
+            return state.events.on(
+                "keyRelease",
+                (k) => isEqOrIncludes(key, k) && action(k),
+            );
+        },
+    );
 
-    const onMouseDown = overload2((action: (m: MouseButton) => void) => {
-        return state.events.on("mouseDown", (m) => action(m));
-    }, (
-        mouse: MouseButton | MouseButton[],
-        action: (m: MouseButton) => void,
-    ) => {
-        return state.events.on(
-            "mouseDown",
-            (m) => isEqOrIncludes(mouse, m) && action(m),
-        );
-    });
+    const onMouseDown = overload2(
+        (action: (m: MouseButton) => void) => {
+            return state.events.on("mouseDown", (m) => action(m));
+        },
+        (
+            mouse: MouseButton | MouseButton[],
+            action: (m: MouseButton) => void,
+        ) => {
+            return state.events.on(
+                "mouseDown",
+                (m) => isEqOrIncludes(mouse, m) && action(m),
+            );
+        },
+    );
 
-    const onMousePress = overload2((action: (m: MouseButton) => void) => {
-        return state.events.on("mousePress", (m) => action(m));
-    }, (
-        mouse: MouseButton | MouseButton[],
-        action: (m: MouseButton) => void,
-    ) => {
-        return state.events.on(
-            "mousePress",
-            (m) => isEqOrIncludes(mouse, m) && action(m),
-        );
-    });
+    const onMousePress = overload2(
+        (action: (m: MouseButton) => void) => {
+            return state.events.on("mousePress", (m) => action(m));
+        },
+        (
+            mouse: MouseButton | MouseButton[],
+            action: (m: MouseButton) => void,
+        ) => {
+            return state.events.on(
+                "mousePress",
+                (m) => isEqOrIncludes(mouse, m) && action(m),
+            );
+        },
+    );
 
-    const onMouseRelease = overload2((action: (m: MouseButton) => void) => {
-        return state.events.on("mouseRelease", (m) => action(m));
-    }, (
-        mouse: MouseButton | MouseButton[],
-        action: (m: MouseButton) => void,
-    ) => {
-        return state.events.on("mouseRelease", (m) => m === mouse && action(m));
-    });
+    const onMouseRelease = overload2(
+        (action: (m: MouseButton) => void) => {
+            return state.events.on("mouseRelease", (m) => action(m));
+        },
+        (
+            mouse: MouseButton | MouseButton[],
+            action: (m: MouseButton) => void,
+        ) => {
+            return state.events.on(
+                "mouseRelease",
+                (m) => m === mouse && action(m),
+            );
+        },
+    );
 
     function onMouseMove(f: (pos: Vec2, dpos: Vec2) => void): KEventController {
         return state.events.on(
@@ -779,32 +807,41 @@ export const initApp = (
         return [...state.gamepads];
     }
 
-    const onButtonPress = overload2((action: (btn: string) => void) => {
-        return state.events.on("buttonPress", (b) => action(b));
-    }, (btn: string | string, action: (btn: string) => void) => {
-        return state.events.on(
-            "buttonPress",
-            (b) => isEqOrIncludes(btn, b) && action(b),
-        );
-    });
+    const onButtonPress = overload2(
+        (action: (btn: string) => void) => {
+            return state.events.on("buttonPress", (b) => action(b));
+        },
+        (btn: string | string, action: (btn: string) => void) => {
+            return state.events.on(
+                "buttonPress",
+                (b) => isEqOrIncludes(btn, b) && action(b),
+            );
+        },
+    );
 
-    const onButtonDown = overload2((action: (btn: string) => void) => {
-        return state.events.on("buttonDown", (b) => action(b));
-    }, (btn: string | string, action: (btn: string) => void) => {
-        return state.events.on(
-            "buttonDown",
-            (b) => isEqOrIncludes(btn, b) && action(b),
-        );
-    });
+    const onButtonDown = overload2(
+        (action: (btn: string) => void) => {
+            return state.events.on("buttonDown", (b) => action(b));
+        },
+        (btn: string | string, action: (btn: string) => void) => {
+            return state.events.on(
+                "buttonDown",
+                (b) => isEqOrIncludes(btn, b) && action(b),
+            );
+        },
+    );
 
-    const onButtonRelease = overload2((action: (btn: string) => void) => {
-        return state.events.on("buttonRelease", (b) => action(b));
-    }, (btn: string | string, action: (btn: string) => void) => {
-        return state.events.on(
-            "buttonRelease",
-            (b) => isEqOrIncludes(btn, b) && action(b),
-        );
-    });
+    const onButtonRelease = overload2(
+        (action: (btn: string) => void) => {
+            return state.events.on("buttonRelease", (b) => action(b));
+        },
+        (btn: string | string, action: (btn: string) => void) => {
+            return state.events.on(
+                "buttonRelease",
+                (b) => isEqOrIncludes(btn, b) && action(b),
+            );
+        },
+    );
 
     const getLastInputDeviceType = () => {
         return state.lastInputDevice;
@@ -847,30 +884,51 @@ export const initApp = (
     }
 
     function registerGamepad(browserGamepad: Gamepad) {
+        // Custom maps (opt.gamepads) stay keyed by literal id for backwards
+        // compatibility; see gamepadId.ts for the vendor:product resolution.
+        const { map: gamepadMap, controllerName } = resolveGamepadMap(
+            browserGamepad.id,
+            GP_MAP,
+            opt.gamepads,
+        );
+
         const gamepad: KGamepad = {
             index: browserGamepad.index,
+            controllerName,
             isPressed: (btn: KGamepadButton) => {
-                return state.gamepadStates.get(browserGamepad.index)
-                    ?.buttonState
-                    .pressed.has(btn) || false;
+                return (
+                    state.gamepadStates
+                        .get(browserGamepad.index)
+                        ?.buttonState.pressed.has(btn) || false
+                );
             },
             isDown: (btn: KGamepadButton) => {
-                return state.gamepadStates.get(browserGamepad.index)
-                    ?.buttonState
-                    .down.has(btn) || false;
+                return (
+                    state.gamepadStates
+                        .get(browserGamepad.index)
+                        ?.buttonState.down.has(btn) || false
+                );
             },
             isReleased: (btn: KGamepadButton) => {
-                return state.gamepadStates.get(browserGamepad.index)
-                    ?.buttonState
-                    .released.has(btn) || false;
+                return (
+                    state.gamepadStates
+                        .get(browserGamepad.index)
+                        ?.buttonState.released.has(btn) || false
+                );
             },
             getStick: (stick: KGamepadStick) => {
-                return state.gamepadStates.get(browserGamepad.index)?.stickState
-                    .get(stick) || vec2();
+                return (
+                    state.gamepadStates
+                        .get(browserGamepad.index)
+                        ?.stickState.get(stick) || vec2()
+                );
             },
             getAnalog: (button: KGamepadButton) => {
-                return state.gamepadStates.get(browserGamepad.index)
-                    ?.analogState.get(button) ?? 0;
+                return (
+                    state.gamepadStates
+                        .get(browserGamepad.index)
+                        ?.analogState.get(button) ?? 0
+                );
             },
         };
 
@@ -880,6 +938,7 @@ export const initApp = (
             browserGamepad.index,
             new GamepadState(gamepad),
         );
+        state.gamepadMaps.set(browserGamepad.index, gamepadMap);
 
         return gamepad;
     }
@@ -889,15 +948,14 @@ export const initApp = (
             g.index !== gamepad.index
         );
         state.gamepadStates.delete(gamepad.index);
+        state.gamepadMaps.delete(gamepad.index);
     }
 
     // TODO: Clean up this function
     function processGamepad() {
         for (const browserGamepad of navigator.getGamepads()) {
             if (
-                browserGamepad && !state.gamepadStates.has(
-                    browserGamepad.index,
-                )
+                browserGamepad && !state.gamepadStates.has(browserGamepad.index)
             ) {
                 registerGamepad(browserGamepad);
             }
@@ -907,9 +965,8 @@ export const initApp = (
             const browserGamepad = navigator.getGamepads()[gamepad.index];
             if (!browserGamepad) continue;
 
-            const customMap = opt.gamepads ?? {};
-            const map = customMap[browserGamepad.id]
-                || GP_MAP[browserGamepad.id] || GP_MAP["default"];
+            const map = state.gamepadMaps.get(gamepad.index)
+                ?? GP_MAP["default"];
             const gamepadState = state.gamepadStates.get(gamepad.index);
             if (!gamepadState) continue;
 
@@ -1035,13 +1092,13 @@ export const initApp = (
             const rc = cw / ch;
             if (rw > rc) {
                 const ratio = wh / ch;
-                const offset = (ww - (cw * ratio)) / 2;
+                const offset = (ww - cw * ratio) / 2;
                 mousePos.x = map(e.offsetX - offset, 0, cw * ratio, 0, cw);
                 mousePos.y = map(e.offsetY, 0, ch * ratio, 0, ch);
             }
             else {
                 const ratio = ww / cw;
-                const offset = (wh - (ch * ratio)) / 2;
+                const offset = (wh - ch * ratio) / 2;
                 mousePos.x = map(e.offsetX, 0, cw * ratio, 0, cw);
                 mousePos.y = map(e.offsetY - offset, 0, ch * ratio, 0, ch);
             }
@@ -1096,10 +1153,10 @@ export const initApp = (
 
     // translate these key names to a simpler version
     const KEY_ALIAS = {
-        "ArrowLeft": "left",
-        "ArrowRight": "right",
-        "ArrowUp": "up",
-        "ArrowDown": "down",
+        ArrowLeft: "left",
+        ArrowRight: "right",
+        ArrowUp: "up",
+        ArrowDown: "down",
         " ": "space",
     };
 
@@ -1110,7 +1167,7 @@ export const initApp = (
             e.preventDefault();
         }
         state.events.onOnce("input", () => {
-            const k: Key = KEY_ALIAS[e.key as keyof typeof KEY_ALIAS] as Key
+            const k: Key = (KEY_ALIAS[e.key as keyof typeof KEY_ALIAS] as Key)
                 || e.key.toLowerCase();
             const code = e.code;
 
@@ -1136,7 +1193,7 @@ export const initApp = (
 
     canvasEvents.keyup = (e) => {
         state.events.onOnce("input", () => {
-            const k: Key = KEY_ALIAS[e.key as keyof typeof KEY_ALIAS] as Key
+            const k: Key = (KEY_ALIAS[e.key as keyof typeof KEY_ALIAS] as Key)
                 || e.key.toLowerCase();
             const code = e.code;
 
@@ -1170,10 +1227,7 @@ export const initApp = (
                 state.events.trigger(
                     "touchStart",
                     canvasToViewport(
-                        new Vec2(
-                            t.clientX - box.x,
-                            t.clientY - box.y,
-                        ),
+                        new Vec2(t.clientX - box.x, t.clientY - box.y),
                     ),
                     t,
                 );
@@ -1204,10 +1258,7 @@ export const initApp = (
                 state.events.trigger(
                     "touchMove",
                     canvasToViewport(
-                        new Vec2(
-                            t.clientX - box.x,
-                            t.clientY - box.y,
-                        ),
+                        new Vec2(t.clientX - box.x, t.clientY - box.y),
                     ),
                     t,
                 );
@@ -1236,10 +1287,7 @@ export const initApp = (
                 state.events.trigger(
                     "touchEnd",
                     canvasToViewport(
-                        new Vec2(
-                            t.clientX - box.x,
-                            t.clientY - box.y,
-                        ),
+                        new Vec2(t.clientX - box.x, t.clientY - box.y),
                     ),
                     t,
                 );
@@ -1266,10 +1314,7 @@ export const initApp = (
                 state.events.trigger(
                     "touchEnd",
                     canvasToViewport(
-                        new Vec2(
-                            t.clientX - box.x,
-                            t.clientY - box.y,
-                        ),
+                        new Vec2(t.clientX - box.x, t.clientY - box.y),
                     ),
                     t,
                 );
@@ -1313,8 +1358,9 @@ export const initApp = (
     };
 
     winEvents.gamepaddisconnected = (e) => {
-        const kbGamepad =
-            getGamepads().filter((g) => g.index === e.gamepad.index)[0];
+        const kbGamepad = getGamepads().filter(
+            (g) => g.index === e.gamepad.index,
+        )[0];
         removeGamepad(e.gamepad);
         state.events.onOnce("input", () => {
             state.events.trigger("gamepadDisconnect", kbGamepad);
@@ -1348,7 +1394,9 @@ export const initApp = (
             if (
                 state.lastWidth === state.canvas.offsetWidth
                 && state.lastHeight === state.canvas.offsetHeight
-            ) return;
+            ) {
+                return;
+            }
             state.lastWidth = state.canvas.offsetWidth;
             state.lastHeight = state.canvas.offsetHeight;
             updateCanvasScale();

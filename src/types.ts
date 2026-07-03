@@ -203,6 +203,14 @@ export type KGamepadStick = "left" | "right";
  * @subgroup Gamepad
  */
 export type GamepadDef = {
+    /** A human-readable label for this controller model, e.g. "DualSense". */
+    name?: string;
+    /**
+     * Lowercase name substrings used as a last-resort fallback match when
+     * vendor/product can't be parsed from `Gamepad.id`. Only set this for
+     * names distinctive enough to not misidentify unrelated hardware.
+     */
+    matchNames?: string[];
     buttons: Record<string, KGamepadButton>;
     sticks: Partial<Record<KGamepadStick, { x: number; y: number }>>;
 };
@@ -216,6 +224,11 @@ export type GamepadDef = {
 export type KGamepad = {
     /** The order of the gamepad in the gamepad list. */
     index: number;
+    /**
+     * A human-readable label for the recognized controller, e.g. "DualSense",
+     * or "Standard Gamepad" if unrecognized. For display/debugging only.
+     */
+    controllerName: string;
     /** If certain button is pressed. */
     isPressed(b: KGamepadButton): boolean;
     /** If certain button is held down. */
