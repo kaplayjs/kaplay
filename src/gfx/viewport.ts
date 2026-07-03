@@ -8,15 +8,14 @@ rendering the viewport
 - Canvas size: The CSS size of the canvas element
 
 - Buffer size: The quantity of pixels that are rendered by WebGL. It varies
-depending of the
+depending on the canvas size and pixel density
 
-- Desired Size: The desired size is the size the user defines for keeping an
-aspect ratio
+- Desired size: The size the user defines to keep an aspect ratio
 
-- Viewport size: The final rendered size
+- Viewport size: The final rendered size, sub-rect of the canvas size
 
-We update the canvas before run this, you should check initEvents.ts
-in onResize method.
+We update the canvas before we run this, you should check appEvents.ts
+onResize method.
 */
 
 export function updateViewport() {
@@ -44,23 +43,19 @@ export function updateViewport() {
             );
         }
     }
-    else if (_k.globalOpt.letterbox || _k.app.isFullscreen()) {
+    else {
         const canvasAspectRatio = canvasWidth / canvasHeight;
-        const disairedAspectRatio = desiredWidth / desiredHeight;
+        const desiredAspectRatio = desiredWidth / desiredHeight;
 
-        // In letterbox, we scale one width/height for keep aspect ratio,
-        // depending of what side is larger
-        if (canvasAspectRatio > disairedAspectRatio) {
-            const scaledWidth = canvasHeight * disairedAspectRatio;
-
-            x = (canvasWidth - scaledWidth) / 2;
-            viewportWidth = scaledWidth;
+        // We scale either width or height to keep aspect ratio, depending
+        // on what side is larger, creating a letterbox
+        if (canvasAspectRatio > desiredAspectRatio) {
+            viewportWidth = canvasHeight * desiredAspectRatio;
+            x = (canvasWidth - viewportWidth) / 2;
         }
         else {
-            const scaledHeight = canvasWidth / disairedAspectRatio;
-
-            viewportHeight = scaledHeight;
-            y = (canvasHeight - scaledHeight) / 2;
+            viewportHeight = canvasWidth / desiredAspectRatio;
+            y = (canvasHeight - viewportHeight) / 2;
         }
     }
 
@@ -69,7 +64,7 @@ export function updateViewport() {
         y: y,
         width: viewportWidth,
         height: viewportHeight,
-        scale: (_k.gfx.viewport.width + _k.gfx.viewport.height)
+        scale: (viewportWidth + viewportHeight)
             / (_k.gfx.width + _k.gfx.height),
     };
 
