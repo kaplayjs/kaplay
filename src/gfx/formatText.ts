@@ -6,7 +6,7 @@ import { Color, rgb } from "../math/color";
 import { vec2 } from "../math/math";
 import { _k } from "../shared";
 import type { Outline } from "../types";
-import { runes } from "../utils/runes";
+import { firstRune, runes } from "../utils/runes";
 import { alignPt } from "./anchor";
 import type { FormattedChar, FormattedText } from "./draw/drawFormattedText";
 import type { CharTransform, DrawTextOpt } from "./draw/drawText";
@@ -80,7 +80,7 @@ export function compileStyledText(txt: any): StyledTextInfo {
             if (text.length === 1) {
                 throw new Error("Styled text error: \\ at end of string");
             }
-            const [escaped] = runes(text.slice(1));
+            const escaped = firstRune(text.slice(1));
             emit(escaped);
             text = text.slice(1 + escaped.length);
             continue;
@@ -116,7 +116,7 @@ export function compileStyledText(txt: any): StyledTextInfo {
             text = text.slice(m.length);
             continue;
         }
-        const [grapheme] = runes(text);
+        const grapheme = firstRune(text);
         emit(grapheme);
         text = text.slice(grapheme.length);
     }
