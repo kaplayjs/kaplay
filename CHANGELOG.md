@@ -47,6 +47,8 @@ So your change should look like:
 - Added Alea as random generator (#1097) - @Stanko
 - Added `nextFrame()` helper function to defer/run a function on the next frame
   (#1112) - @imaginarny
+- Added a mapping for DualShock 4 gamepads, and a `controllerName` field on
+  `KGamepad` for identifying the recognized controller model (#1119) - @CEREBR4L
 
 ### Changed
 
@@ -67,6 +69,9 @@ So your change should look like:
   `obj.pos.x += 1` work again (#1109) - @ErikGXDev
 - Fixed `isKeyDown` and `isButtonDown` getting stuck on game loosing focus
   (#1101) - @Stanko
+- Fixed gamepad button mappings (e.g. DualSense touchpad) breaking when the
+  browser's reported `Gamepad.id` format changes, by matching on vendor/product
+  id and controller name instead of the raw id string (#1119) - @CEREBR4L
 
 ## [4000.0.0-alpha.27.1] - 2026-05-12
 
