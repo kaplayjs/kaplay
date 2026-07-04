@@ -198,11 +198,14 @@ export type KGamepadStick = "left" | "right";
 
 /**
  * A machine-readable controller family, for picking button-glyph assets.
+ * Not a closed set - custom `GamepadDef`s (via `KAPLAYOpt.gamepads`) can use
+ * any string here, e.g. `"steam"` for a Steam Controller mapping KAPLAY
+ * doesn't ship a built-in for.
  *
  * @group Input
  * @subgroup Gamepad
  */
-export type GamepadType = "playstation" | "xbox" | "switch";
+export type GamepadType = "playstation" | "xbox" | "switch" | (string & {});
 
 /**
  * A gamepad definition. Used in {@link KAPLAYOpt `KAPLAYOpt`}
