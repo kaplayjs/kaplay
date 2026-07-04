@@ -35,7 +35,7 @@ import {
     releaseButton,
     setButton,
 } from "./buttons";
-import { resolveGamepadMap } from "./gamepadId";
+import { detectGamepadType, resolveGamepadMap } from "./gamepadId";
 import {
     ButtonProcessor,
     type ButtonsDef,
@@ -854,15 +854,18 @@ export const initApp = (
     function registerGamepad(browserGamepad: Gamepad) {
         // Custom maps (opt.gamepads) stay keyed by literal id for backwards
         // compatibility; see gamepadId.ts for the vendor:product resolution.
-        const { map: gamepadMap, controllerName } = resolveGamepadMap(
+        const gamepadResolution = resolveGamepadMap(
             browserGamepad.id,
             GP_MAP,
             opt.gamepads,
         );
+        const { map: gamepadMap, controllerName } = gamepadResolution;
+        const type = detectGamepadType(gamepadResolution);
 
         const gamepad: KGamepad = {
             index: browserGamepad.index,
             controllerName,
+            type,
             isPressed: (btn: KGamepadButton) => {
                 return state.gamepadStates.get(browserGamepad.index)
                     ?.buttonState

@@ -1,4 +1,4 @@
-import type { GamepadDef } from "../types";
+import type { GamepadDef, GamepadType } from "../types";
 
 // Gamepad.id isn't standardized by spec, and its format has changed across
 // browser versions (PRs #867 & #1110), so we match on vendor:product hex
@@ -59,4 +59,25 @@ export function resolveGamepadMap(
         ?? matchByName(id, builtins)
         ?? builtins["default"];
     return { map, vidPid, controllerName: map.name ?? "Standard Gamepad" };
+}
+
+// Vendor-only fallback for controllers with no `type` in the table (e.g.
+// Xbox, which already works under "default" and isn't in GP_MAP).
+const VENDOR_ONLY_TYPE: Record<string, GamepadType> = {
+    "054c": "playstation", // Sony
+    "045e": "xbox", // Microsoft
+    "057e": "switch", // Nintendo
+};
+
+// Resolves a controller family from an already-resolved gamepad map, so it
+// gets the same name-fallback recovery as `controllerName`. Priority:
+// resolved map's `type` > vendor-only fallback > undefined.
+export function detectGamepadType(
+    { map, vidPid }: Pick<GamepadMapResolution, "map" | "vidPid">,
+): GamepadType | undefined {
+    if (map.type) return map.type;
+    if (!vidPid) return undefined;
+
+    const [vendor] = vidPid.split(":");
+    return VENDOR_ONLY_TYPE[vendor];
 }

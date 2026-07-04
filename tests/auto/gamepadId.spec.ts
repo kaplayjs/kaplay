@@ -1,5 +1,9 @@
 import { describe, expect, test } from "vitest";
-import { parseGamepadVidPid, resolveGamepadMap } from "../../src/app/gamepadId";
+import {
+    detectGamepadType,
+    parseGamepadVidPid,
+    resolveGamepadMap,
+} from "../../src/app/gamepadId";
 import { GP_MAP } from "../../src/constants/general";
 
 describe("parseGamepadVidPid", () => {
@@ -204,5 +208,51 @@ describe("resolveGamepadMap (custom opt.gamepads override)", () => {
             customMap,
         );
         expect(controllerName).toBe("DualSense");
+    });
+});
+
+describe("detectGamepadType", () => {
+    function typeOf(id: string) {
+        return detectGamepadType(resolveGamepadMap(id, GP_MAP));
+    }
+
+    test("DualSense resolves via the built-in table's type field", () => {
+        expect(
+            typeOf(
+                "DualSense Wireless Controller (STANDARD GAMEPAD Vendor: 054c Product: 0ce6)",
+            ),
+        ).toBe("playstation");
+    });
+
+    test("Switch Pro Controller resolves via the built-in table's type field", () => {
+        expect(
+            typeOf(
+                "Pro Controller (STANDARD GAMEPAD Vendor: 057e Product: 2009)",
+            ),
+        ).toBe("switch");
+    });
+
+    test("Xbox pad isn't in the built-in table, but still resolves via vendor-only fallback", () => {
+        expect(
+            typeOf(
+                "Xbox Wireless Controller (STANDARD GAMEPAD Vendor: 045e Product: 0b12)",
+            ),
+        ).toBe("xbox");
+    });
+
+    test("DualSense with vendor/product stripped still resolves, via the same name fallback that recovers controllerName", () => {
+        expect(
+            typeOf("DualSense Wireless Controller (STANDARD GAMEPAD)"),
+        ).toBe("playstation");
+    });
+
+    test("unknown vendor returns undefined, doesn't guess", () => {
+        expect(
+            typeOf("Generic   USB Joystick (Vendor: 0079 Product: 0006)"),
+        ).toBeUndefined();
+    });
+
+    test("no vendor/product and no distinctive name (DualShock 4 over Android) returns undefined", () => {
+        expect(typeOf("Wireless Controller")).toBeUndefined();
     });
 });

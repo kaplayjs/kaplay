@@ -197,6 +197,14 @@ export type ChordedKGamepadButton =
 export type KGamepadStick = "left" | "right";
 
 /**
+ * A machine-readable controller family, for picking button-glyph assets.
+ *
+ * @group Input
+ * @subgroup Gamepad
+ */
+export type GamepadType = "playstation" | "xbox" | "switch";
+
+/**
  * A gamepad definition. Used in {@link KAPLAYOpt `KAPLAYOpt`}
  *
  * @group Input
@@ -211,6 +219,8 @@ export type GamepadDef = {
      * names distinctive enough to not misidentify unrelated hardware.
      */
     matchNames?: string[];
+    /** The controller family this definition belongs to, if known. */
+    type?: GamepadType;
     buttons: Record<string, KGamepadButton>;
     sticks: Partial<Record<KGamepadStick, { x: number; y: number }>>;
 };
@@ -229,6 +239,8 @@ export type KGamepad = {
      * or "Standard Gamepad" if unrecognized. For display/debugging only.
      */
     controllerName: string;
+    /** The recognized controller family, for picking button-glyph assets. */
+    type: GamepadType | undefined;
     /** If certain button is pressed. */
     isPressed(b: KGamepadButton): boolean;
     /** If certain button is held down. */

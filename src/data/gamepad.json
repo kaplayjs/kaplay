@@ -1,6 +1,7 @@
 {
   "057e:200e": {
     "name": "Joy-Con L+R",
+    "type": "switch",
     "matchNames": ["joy-con l+r"],
     "buttons": {
       "0": "south",
@@ -29,6 +30,7 @@
   },
   "057e:2006": {
     "name": "Joy-Con (L)",
+    "type": "switch",
     "matchNames": ["joy-con (l)"],
     "buttons": {
       "0": "south",
@@ -47,6 +49,7 @@
   },
   "057e:2007": {
     "name": "Joy-Con (R)",
+    "type": "switch",
     "matchNames": ["joy-con (r)"],
     "buttons": {
       "0": "south",
@@ -65,6 +68,7 @@
   },
   "057e:2009": {
     "name": "Switch Pro Controller",
+    "type": "switch",
     "matchNames": ["pro controller"],
     "buttons": {
       "0": "south",
@@ -93,6 +97,7 @@
   },
   "054c:0ce6": {
     "name": "DualSense",
+    "type": "playstation",
     "matchNames": ["dualsense"],
     "buttons": {
       "0": "south",
@@ -121,6 +126,7 @@
   },
   "054c:05c4": {
     "name": "DualShock 4",
+    "type": "playstation",
     "buttons": {
       "0": "south",
       "1": "east",
@@ -148,6 +154,7 @@
   },
   "054c:09cc": {
     "name": "DualShock 4",
+    "type": "playstation",
     "buttons": {
       "0": "south",
       "1": "east",
