@@ -49,9 +49,9 @@ So your change should look like:
   (#1112) - @imaginarny
 - Added a mapping for DualShock 4 gamepads, and a `controllerName` field on
   `KGamepad` for identifying the recognized controller model (#1119) - @CEREBR4L
-- Added a `type` field to `KGamepad` (`"playstation"`, `"xbox"`, `"switch"`, or
-  `undefined`) for picking button-glyph assets based on controller family
-  (#1119) - @CEREBR4L
+- Added a `type` field to `KGamepad` (`"ps4"`, `"ps5"`, `"playstation"`,
+  `"xbox"`, `"switch"`, a custom string, or `undefined`) for picking
+  button-glyph assets based on controller family (#1119) - @CEREBR4L
 
 ### Changed
 
