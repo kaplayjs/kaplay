@@ -205,7 +205,13 @@ export type KGamepadStick = "left" | "right";
  * @group Input
  * @subgroup Gamepad
  */
-export type GamepadType = "playstation" | "xbox" | "switch" | (string & {});
+export type GamepadType =
+    | "ps4"
+    | "ps5"
+    | "playstation"
+    | "xbox"
+    | "switch"
+    | (string & {});
 
 /**
  * A gamepad definition. Used in {@link KAPLAYOpt `KAPLAYOpt`}

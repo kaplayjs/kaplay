@@ -62,7 +62,9 @@ export function resolveGamepadMap(
 }
 
 // Vendor-only fallback for controllers with no `type` in the table (e.g.
-// Xbox, which already works under "default" and isn't in GP_MAP).
+// Xbox, which already works under "default" and isn't in GP_MAP). Sony maps
+// to the generic "playstation" here rather than ps4/ps5 - 054c alone doesn't
+// say which generation, and a usable "it's a PlayStation pad" beats undefined.
 const VENDOR_ONLY_TYPE: Record<string, GamepadType> = {
     "054c": "playstation", // Sony
     "045e": "xbox", // Microsoft
@@ -71,7 +73,8 @@ const VENDOR_ONLY_TYPE: Record<string, GamepadType> = {
 
 // Resolves a controller family from an already-resolved gamepad map, so it
 // gets the same name-fallback recovery as `controllerName`. Priority:
-// resolved map's `type` > vendor-only fallback > undefined.
+// resolved map's exact `type` (ps4/ps5) > vendor-only fallback (playstation)
+// > undefined.
 export function detectGamepadType(
     { map, vidPid }: Pick<GamepadMapResolution, "map" | "vidPid">,
 ): GamepadType | undefined {

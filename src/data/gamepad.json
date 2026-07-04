@@ -97,7 +97,7 @@
   },
   "054c:0ce6": {
     "name": "DualSense",
-    "type": "playstation",
+    "type": "ps5",
     "matchNames": ["dualsense"],
     "buttons": {
       "0": "south",
@@ -126,7 +126,7 @@
   },
   "054c:05c4": {
     "name": "DualShock 4",
-    "type": "playstation",
+    "type": "ps4",
     "buttons": {
       "0": "south",
       "1": "east",
@@ -154,7 +154,7 @@
   },
   "054c:09cc": {
     "name": "DualShock 4",
-    "type": "playstation",
+    "type": "ps4",
     "buttons": {
       "0": "south",
       "1": "east",

@@ -216,12 +216,20 @@ describe("detectGamepadType", () => {
         return detectGamepadType(resolveGamepadMap(id, GP_MAP));
     }
 
-    test("DualSense resolves via the built-in table's type field", () => {
+    test("DualSense resolves to ps5 via the built-in table's type field", () => {
         expect(
             typeOf(
                 "DualSense Wireless Controller (STANDARD GAMEPAD Vendor: 054c Product: 0ce6)",
             ),
-        ).toBe("playstation");
+        ).toBe("ps5");
+    });
+
+    test("DualShock 4 resolves to ps4 via the built-in table's type field", () => {
+        expect(
+            typeOf(
+                "Wireless Controller (STANDARD GAMEPAD Vendor: 054c Product: 05c4)",
+            ),
+        ).toBe("ps4");
     });
 
     test("Switch Pro Controller resolves via the built-in table's type field", () => {
@@ -243,6 +251,14 @@ describe("detectGamepadType", () => {
     test("DualSense with vendor/product stripped still resolves, via the same name fallback that recovers controllerName", () => {
         expect(
             typeOf("DualSense Wireless Controller (STANDARD GAMEPAD)"),
+        ).toBe("ps5");
+    });
+
+    test("Sony vendor id with an unrecognized product falls back to generic playstation instead of guessing ps4 vs ps5", () => {
+        expect(
+            typeOf(
+                "Some Future Sony Pad (STANDARD GAMEPAD Vendor: 054c Product: ffff)",
+            ),
         ).toBe("playstation");
     });
 
