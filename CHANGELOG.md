@@ -59,6 +59,7 @@ So your change should look like:
 
 ### Fixed
 
+- Fixed `AreaComp.area.scale` not setting properly (#1120) - @amyspark-ng
 - Fixed `TimerController.timeLeft` returning elapsed time instead of remaining
   time (#1082) - @nojaf
 - Fixed mouse coordinates not being calculated properly when canvas is resized
