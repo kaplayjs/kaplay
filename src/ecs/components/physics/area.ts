@@ -562,7 +562,7 @@ export function area(
                 return _shape;
             },
             set scale(value: Vec2) {
-                _scale = this.scale;
+                _scale = value;
                 _localAreaVersion = nextLocalAreaVersion();
             },
             get scale(): Vec2 {
