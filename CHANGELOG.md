@@ -59,13 +59,15 @@ So your change should look like:
 
 ### Fixed
 
-- Fixed `AreaComp.area.scale` not setting properly (#1120) - @amyspark-ng
 - Fixed `TimerController.timeLeft` returning elapsed time instead of remaining
   time (#1082) - @nojaf
 - Fixed mouse coordinates not being calculated properly when canvas is resized
   by CSS and wasn't rendered at its natural size (#1096) - @Stanko
 - Modified `pos`, `skew` and `scale` components to make operations like
   `obj.pos.x += 1` work again (#1109) - @ErikGXDev
+- Fixed `AreaComp.area.scale` not being set properly and restored support for
+  `Vec2` property mutations on `scale` and `offset` (#1121) - @amyspark-ng,
+  @imaginarny
 - Fixed `isKeyDown` and `isButtonDown` getting stuck on game loosing focus
   (#1101) - @Stanko
 
