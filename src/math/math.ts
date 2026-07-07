@@ -794,44 +794,6 @@ export function gacha<T>(
     return list[roulette(probabilities, rng)][0];
 }
 
-export function roulette(probabilities: number[], rng?: RNG): number {
-    rng ??= _k.game.defRNG;
-    // Get the sum of all probabilities, to know the percentages
-    const sum = probabilities.reduce((sum, value) => sum + value, 0);
-    // Make a random number
-    const value = rng.genInteger(sum);
-    // Search for the first index for which the cumulative probability is greater
-    let index = 0;
-    let probabilitySum = probabilities[0];
-    while (value > probabilitySum) {
-        index++;
-        probabilitySum += probabilities[index];
-    }
-    return index;
-}
-
-export function gacha<T>(
-    items: [T, number][] | Map<T, number> | Record<string, number>,
-    rng?: RNG,
-): T {
-    rng ??= _k.game.defRNG;
-    const getList = (itemCollection: typeof items) => {
-        if (Array.isArray(itemCollection)) {
-            return itemCollection;
-        }
-        else if (items instanceof Map) {
-            return [...items.entries()];
-        }
-        else {
-            return Object.entries(items) as [T, number][];
-        }
-    };
-
-    const list = getList(items);
-    const probabilities = list.map(([item, probability]) => probability);
-    return list[roulette(probabilities, rng)][0];
-}
-
 // TODO: better name
 export function testRectRect2(r1: Rect, r2: Rect): boolean {
     return r1.pos.x + r1.width >= r2.pos.x
@@ -1184,7 +1146,7 @@ export function testPolygonPoint(poly: Polygon, pt: Vec2): boolean {
             ((p[i].y > pt.y) != (p[j].y > pt.y))
             && (pt.x
                 < (p[j].x - p[i].x) * (pt.y - p[i].y) / (p[j].y - p[i].y)
-                    + p[i].x)
+                + p[i].x)
         ) {
             c = !c;
         }
@@ -1202,7 +1164,7 @@ export function testEllipsePoint(ellipse: Ellipse, pt: Vec2): boolean {
     const vx = pt.x * c + pt.y * s;
     const vy = -pt.x * s + pt.y * c;
     return vx * vx / (ellipse.radiusX * ellipse.radiusX)
-            + vy * vy / (ellipse.radiusY * ellipse.radiusY) < 1;
+        + vy * vy / (ellipse.radiusY * ellipse.radiusY) < 1;
 }
 
 export function testEllipseCircle(ellipse: Ellipse, circle: Circle): boolean {
@@ -2323,7 +2285,7 @@ export class Ellipse {
         const vx = point.x * c + point.y * s;
         const vy = -point.x * s + point.y * c;
         return vx * vx / (this.radiusX * this.radiusX)
-                + vy * vy / (this.radiusY * this.radiusY) < 1;
+            + vy * vy / (this.radiusY * this.radiusY) < 1;
     }
     raycast(origin: Vec2, direction: Vec2): RaycastResult {
         return raycastEllipse(origin, direction, this);
@@ -2938,21 +2900,21 @@ export function kochanekBartels(
     const hx = h(
         pt2.x,
         0.5 * (1 - tension) * (1 + bias) * (1 + continuity) * (pt2.x - pt1.x)
-            + 0.5 * (1 - tension) * (1 - bias) * (1 - continuity)
-                * (pt3.x - pt2.x),
+        + 0.5 * (1 - tension) * (1 - bias) * (1 - continuity)
+        * (pt3.x - pt2.x),
         0.5 * (1 - tension) * (1 + bias) * (1 - continuity) * (pt3.x - pt2.x)
-            + 0.5 * (1 - tension) * (1 - bias) * (1 + continuity)
-                * (pt4.x - pt3.x),
+        + 0.5 * (1 - tension) * (1 - bias) * (1 + continuity)
+        * (pt4.x - pt3.x),
         pt3.x,
     );
     const hy = h(
         pt2.y,
         0.5 * (1 - tension) * (1 + bias) * (1 + continuity) * (pt2.y - pt1.y)
-            + 0.5 * (1 - tension) * (1 - bias) * (1 - continuity)
-                * (pt3.y - pt2.y),
+        + 0.5 * (1 - tension) * (1 - bias) * (1 - continuity)
+        * (pt3.y - pt2.y),
         0.5 * (1 - tension) * (1 + bias) * (1 - continuity) * (pt3.y - pt2.y)
-            + 0.5 * (1 - tension) * (1 - bias) * (1 + continuity)
-                * (pt4.y - pt3.y),
+        + 0.5 * (1 - tension) * (1 - bias) * (1 + continuity)
+        * (pt4.y - pt3.y),
         pt3.y,
     );
     return (t: number) => {
