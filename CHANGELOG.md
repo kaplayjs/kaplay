@@ -1,7 +1,5 @@
 # Changelog
 
-<!-- markdownlint-disable no-duplicate-heading blanks-around-fences single-h1 -->
-
 All notable changes to this project will be documented in this file.
 
 The format is (mostly) based on
@@ -12,7 +10,7 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - [Jump to v3001 changelog](#changelog-for-v3001).
 
 <!-- [CHANGELOG GUIDELINES PLEASE FOLLOW]
-===============================================================================
+
 Hey, KAPLAY Dev! Add your new changes in [unreleased] heading, below one of
 these heading:
 
@@ -35,10 +33,48 @@ So your change should look like:
 ### Added
 
 - added a new ghost (#6767) - @lajbel
-===============================================================================
+
 [DO IT IF YOU DON'T WANT A LAJBEL VISIT AT NIGHT] -->
 
 ## [unreleased]
+
+### Added
+
+- Made random generator algorithm configurable using `setRNG()` (#1057) -
+  @mflerackers
+- Added xorshift32 as random generator (#1057) - @mflerackers
+- **(examples)** Added a new `gacha` example! (#1057) - @imaginarny
+- Added Alea as random generator (#1097) - @Stanko
+- Added `nextFrame()` helper function to defer/run a function on the next frame
+  (#1112) - @imaginarny
+
+### Changed
+
+- Added an optional parameter `rng` to all random related functions to pass the
+  rng to use (#1057) - @mflerackers
+- RNG can now be set and seeded on init (as `KAPLAYOpt.rng`) and in runtime
+  (#1097) - @Stanko
+- **(!)** `new RNG()` and `setRNG()` now use config objects instead of the
+  string/custom rng parameter (#1097) - @Stanko
+
+### Fixed
+
+- Fixed `TimerController.timeLeft` returning elapsed time instead of remaining
+  time (#1082) - @nojaf
+- Fixed mouse coordinates not being calculated properly when canvas is resized
+  by CSS and wasn't rendered at its natural size (#1096) - @Stanko
+- Modified `pos`, `skew` and `scale` components to make operations like
+  `obj.pos.x += 1` work again (#1109) - @ErikGXDev
+- Fixed `isKeyDown` and `isButtonDown` getting stuck on game loosing focus
+  (#1101) - @Stanko
+
+## [4000.0.0-alpha.27.1] - 2026-05-12
+
+### Added
+
+- Added a `repack: false` option to `loadSpite()` and a repack parameter to
+  `loadSpriteAtlas()`, for faster loading if you're packing stuff at build-time
+  (#1063) - @dragoncoder047
 
 ### Changed
 
@@ -46,18 +82,22 @@ So your change should look like:
   with animations (via either `loadSprite()` or `loadSpriteAtlas()`) to use
   pixel values for the coordinate space, which is more intuitive (#1061) -
   @dragoncoder047
+- Added padding around edges of spritesheet to prevent stretch if uv ends up out
+  of bounds (#1076) - @dragoncoder047
 
 ### Fixed
 
 - Updated texture packer refreshing to only refresh when a sprite is actually
   requested to be drawn, to reduce the number of times the texture is synced to
   the GPU, which is slow (#1058) - @dragoncoder047
+- Fixed `loadBitmapFontFromSprite()` so that the font drawn using it is drawn
+  with the correct scale, as one would expect (#1063) - @dragoncoder047
 - Added `exists()` which also checks whether the object is not undefined. This
   should temporarily fix the problem with undefined objects during collision due
   to iterators being invalidated by destroy. - @mflerackers
 - Fixed broadphase event duplication on scene switch, causing repeated
-  broadphase object registrations, which resulted in a performance drop (#1074)
-  - @imaginarny, @mflerackers
+  broadphase object registrations, which resulted in a performance drop
+  (#1074) - @imaginarny, @mflerackers
 - Fixed broadphase objects cleared on scene switch including those with `stay()`
   (#1077) - @imaginarny, @mflerackers
 
@@ -183,7 +223,7 @@ So your change should look like:
   @mflerackers
 - Sticky platforms work again - @mflerackers
 
-## Removed
+### Removed
 
 - **(!)** `onClick(() => {})` was removed, use `onMousePress()` instead.
   `onClick("tag", () => {});` stays the same,
@@ -197,7 +237,7 @@ So your change should look like:
 - Global `retrieve()` method to get the objects with area within a certain
   rectangle - @mflerackers
 
-## Changed
+### Changed
 
 - **(!)** You can no longer change the position of an object by doing obj.pos.x
   += 1. You need to assign a new Vec2 or use moveBy instead - @mflerackers

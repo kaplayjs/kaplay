@@ -163,12 +163,12 @@ import type {
     Quad,
     RaycastResult,
     Rect,
-    RNG,
     StepPosition,
 } from "../math/math";
 import type { Graph } from "../math/navigation";
 import type { NavGrid } from "../math/navigationgrid";
 import type { NavMesh } from "../math/navigationmesh";
+import type { RandomGenerator, RNG, RNGConfig, RNGSeed } from "../math/random";
 import type { Quadtree, ResizingQuadtree } from "../math/spatial/quadtree";
 import type { Vec2 } from "../math/Vec2";
 import type { Vec3 } from "../math/vec3";
@@ -4105,6 +4105,7 @@ export interface KAPLAYCtx {
      *
      * @param src - The image resource url.
      * @param data - The sprite atlas data.
+     * @param [repack=true] - set to false if you've already packed your spritesheet. See {@link LoadSpriteOpt.repack} for more.
      *
      * @example
      * ```js
@@ -4139,12 +4140,14 @@ export interface KAPLAYCtx {
     loadSpriteAtlas(
         src: LoadSpriteSrc,
         data: SpriteAtlasData,
+        repack?: boolean,
     ): Asset<Record<string, SpriteData>>;
     /**
      * Load sprites from a sprite atlas with URL.
      *
      * @param src - The image resource url.
      * @param url - The json resource url.
+     * @param [repack=true] - set to false if you've already packed your spritesheet. See {@link LoadSpriteOpt.repack} for more.
      *
      * @example
      * ```js
@@ -4166,9 +4169,12 @@ export interface KAPLAYCtx {
     loadSpriteAtlas(
         src: LoadSpriteSrc,
         url: string,
+        repack?: boolean,
     ): Asset<Record<string, SpriteData>>;
     /**
-     * Load a sprite with aseprite spritesheet json (should use "array" in the export options and have tags enabled, that way kaplay can load tagged frames as animations).
+     * Load a sprite with Aseprite spritesheet JSON. You should use "array" in the export options and have tags enabled, that way KAPLAY can load tagged frames as animations.
+     *
+     * These are loaded with repacking turned off, since we assume Aseprite is smart enough to pack the frames nicely.
      *
      * @param name - The asset name.
      * @param imgSrc - The image resource url.
@@ -5427,6 +5433,59 @@ export interface KAPLAYCtx {
      */
     wait(n: number, action?: () => void): TimerController;
     /**
+     * Defer/run the function on the next frame.
+     *
+     * @param action - The function to run.
+     *
+     * @example Passing a callback
+     * ```js
+     * nextFrame(() => {})
+     * ```
+     * @example It returns a PromiseLike that can be used with await
+     * ```js
+     * await nextFrame()
+     * ```
+     * @example Use cases
+     * ```js
+     * // Typical use case is to unpause a game after all listeners in the current frame
+     * // have run, otherwise you would unpause and register input events too early
+     * nextFrame(() => {
+     *     gameObj.paused = false
+     * })
+     *
+     * // Or registering an event listener inside of the same event listener
+     * onKeyPress("space", () => {
+     *     // outside, the object would be added in the same frame when the space key is
+     *     // processed, so you would see "ohhi" message on the first space key press
+     *     nextFrame(() => {
+     *         const obj = add([])
+     *         obj.onKeyPress("space", () => debug.log("ohhi"))
+     *     })
+     *     return cancel()
+     * })
+     *
+     * // Or accessing info that is not available in the current event loop
+     * // like getting the next tiles array in the addLevel tiles config
+     * "=": () => [
+     *     sprite("grass"),
+     *     {
+     *         add() {
+     *             // outside it would be empty, since it runs when the tile is added
+     *             nextFrame(() => {
+     *                 // here it will work since the whole level is processed now
+     *                 console.log(this.getLevel().getAt(this.tilePos.add(1, 0)))
+     *             })
+     *         },
+     *     },
+     * ],
+     * ```
+     *
+     * @returns A timer controller.
+     * @since v4000.0
+     * @group Timer
+     */
+    nextFrame(action?: () => void): TimerController;
+    /**
      * Run the function every n seconds.
      *
      * @param n - The time to wait in seconds.
@@ -5545,13 +5604,19 @@ export interface KAPLAYCtx {
     /**
      * Set the random generator to use
      *
-     * @param rng A random generator
+     * @param config - configuration for the rng
+     *
+     * @example
+     * ```js
+     * setRNG({ type: "lce" });
+     * setRNG({ type: "alea", seed: ["kaplay", "rocks", "hard"] });
+     * ```
      *
      * @since v4000.0
      * @group Math
      * @subgroup Random
      */
-    setRNG(rng: RNG): void;
+    setRNG(config: RNGConfig): void;
     /**
      * Get a random value between the given bound.
      *
@@ -5608,11 +5673,15 @@ export interface KAPLAYCtx {
     /**
      * Get / set the random number generator seed.
      *
-     * @param seed - The seed to set.
+     * @param seed - The seed to set. Its type needs to match the currently active RNG seed type.
      *
-     * @example
+     * @example Set the numerical seed
      * ```js
      * randSeed(Date.now())
+     * ```
+     * @example Set Alea string seeds
+     * ```js
+     * randSeed(["kaplay", "rocks", "hard"])
      * ```
      *
      * @returns The new seed.
@@ -5620,7 +5689,7 @@ export interface KAPLAYCtx {
      * @group Math
      * @subgroup Random
      */
-    randSeed(seed?: number): number;
+    randSeed(seed?: RNGSeed): RNGSeed;
     /**
      * Create a 2D vector.
      *

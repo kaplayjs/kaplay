@@ -93,6 +93,16 @@ export interface LoadSpriteOpt {
      * The tex filter to use, if different than the global sprite filter
      */
     filter?: TexFilter;
+    /**
+     * If you've already packed your spritesheet, you can set this to false to tell KAPLAY not to repack it
+     * when loading it into the main texture. However, this may negatively impact rendering performance if
+     * it causes future sprites to not fit and be moved to a different GPU texture.
+     *
+     * This doesn't apply if you use singular: true, because the entire image will be its own texture then.
+     *
+     * @default true
+     */
+    repack?: boolean;
 }
 
 /**
@@ -201,7 +211,9 @@ export class SpriteData {
             );
         }
         const sd = new SpriteData(
-            frames.map(frame => _k.assets.packer.add(data, filter, frame)),
+            (opt.repack ?? true)
+                ? frames.map(frame => _k.assets.packer.add(data, filter, frame))
+                : _k.assets.packer.addPrepacked(data, filter, frames),
             opt.anims,
             opt.slice9,
         );
@@ -231,6 +243,9 @@ export function resolveSprite(
     //     return Asset.loaded(src);
     // }
     else if (src instanceof Asset) {
+        // might be sometimes unnecessary here but if we're getting the sprite data directly
+        // then obviously we might be wanting to draw it.
+        _k.k.onLoad(() => _k.assets.packer.syncIfPending());
         return src;
     }
     else {

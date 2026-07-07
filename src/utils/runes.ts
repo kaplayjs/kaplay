@@ -70,6 +70,7 @@ function getSegmenter(locale?: string): Intl.Segmenter {
  *
  * @param string - The string to split into grapheme clusters
  * @param locale - Optional locale for locale-aware segmentation (e.g., 'bn' for Bengali, 'hi' for Hindi)
+ *
  * @returns Array of grapheme clusters
  */
 export function runes(string: string, locale?: string): string[] {

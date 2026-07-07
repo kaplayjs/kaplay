@@ -15,6 +15,7 @@ import type { FrameBuffer } from "./gfx/FrameBuffer";
 import type { MeshBuffer, VertexFormat } from "./gfx/gfx";
 import type { Color, RGBAValue, RGBValue } from "./math/color";
 import type { Circle, Ellipse, Line, Point, Polygon, Rect } from "./math/math";
+import type { RNGConfig } from "./math/random";
 import type { Vec2 } from "./math/Vec2";
 import type { Vec3 } from "./math/vec3";
 import type { Defined, MergeObj } from "./utils/types";
@@ -481,6 +482,31 @@ export interface KAPLAYOpt {
      * @since v4000.0
      */
     types?: TypesOpt;
+    /**
+     * Random generator to be used by the game.
+     * You can select one of the three built-in random generators: "lce", "xorshift32", or "alea".
+     *
+     * The default is the linear congruential engine, "lce".
+     *
+     * @example
+     * To pass a custom seed, use an RNGConfig object:
+     *
+     * ```ts
+     * kaplay({
+     *    rng: {
+     *       type: "alea",
+     *       seed: ["kaplay", "rocks", "hard"],
+     *    },
+     * });
+     * ```
+     *
+     * When using the Alea algorithm, provide three string seeds to ensure good entropy.
+     *
+     * You can also use a custom generator that satisfies the `RandomGenerator` interface.
+     *
+     * @since v4000.0
+     */
+    rng?: RNGConfig;
 }
 
 /**

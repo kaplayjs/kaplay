@@ -15,7 +15,8 @@ import { makeInternal } from "../ecs/entity/make";
 import type { System } from "../ecs/systems/systems";
 import type { GameEventMap, GameObjEventMap } from "../events/eventMap";
 import { type KEventController, KEventHandler } from "../events/events";
-import { LinearCongruentialEngine, Mat23, Rect, RNG } from "../math/math";
+import { Mat23, Rect } from "../math/math";
+import { RNG, type RNGConfig } from "../math/random";
 import { Vec2 } from "../math/Vec2";
 import type { GameObj } from "../types";
 import type { SceneDef, SceneState } from "./scenes";
@@ -99,7 +100,6 @@ export type Game = {
     /**
      * The default RNG used by rng functions.
      */
-    // TODO: let user pass seed
     defRNG: RNG;
     /**
      * If game just crashed.
@@ -148,7 +148,9 @@ type CamData = {
  *
  * @returns A Game
  */
-export const createGame = (): Game => {
+export const createGame = (
+    rngConfig?: RNGConfig,
+): Game => {
     const game: Game = {
         gameObjLastId: 0,
         root: makeInternal(0) as GameObj<TimerComp>,
@@ -207,7 +209,7 @@ export const createGame = (): Game => {
         crashed: false,
         areaCount: 0,
         allTextInputs: new Set<GameObj>(),
-        defRNG: new RNG(new LinearCongruentialEngine(Date.now())),
+        defRNG: new RNG(rngConfig),
         warned: new Set<string>(),
     };
 
