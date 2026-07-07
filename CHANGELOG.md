@@ -67,6 +67,9 @@ So your change should look like:
   `obj.pos.x += 1` work again (#1109) - @ErikGXDev
 - Fixed `isKeyDown` and `isButtonDown` getting stuck on game loosing focus
   (#1101) - @Stanko
+- Fixed various `raycastRect` issues and standardized raycasting across all
+  shapes so rays originating inside a shape are now consistently trapped
+  (#1122) - @mflerackers
 
 ## [4000.0.0-alpha.27.1] - 2026-05-12
 
