@@ -125,6 +125,70 @@ export function compileStyledText(txt: any): StyledTextInfo {
     };
 }
 
+function applyTransform(
+    transform: DrawTextOpt["transform"],
+    fchar: FormattedChar,
+    cursor: number,
+) {
+    if (!transform) return;
+
+    const tr = typeof transform === "function"
+        ? transform(cursor, fchar.ch, "")
+        : transform;
+    if (tr) applyCharTransform(fchar, tr);
+}
+
+function applyStyles(
+    charStyles: StyledTextInfo["charStyleMap"][number],
+    stylesOpt: DrawTextOpt["styles"],
+    fchar: FormattedChar,
+    cursor: number,
+) {
+    if (!charStyles) return;
+
+    for (const [name, param] of charStyles) {
+        const style = stylesOpt?.[name];
+        const tr = typeof style === "function"
+            ? style(cursor, fchar.ch, param)
+            : style;
+
+        if (tr) applyCharTransform(fchar, tr);
+    }
+}
+
+export function transformFormattedText(
+    formattedText: FormattedText,
+    opt: DrawTextOpt,
+): FormattedText {
+    const chars: FormattedChar[] = [];
+
+    for (let i = 0; i < formattedText.chars.length; i++) {
+        let fchar = formattedText.chars[i];
+        fchar = {
+            ...fchar,
+            pos: vec2(fchar.initPos),
+            opacity: opt.opacity ?? 1,
+            color: opt.color ?? Color.WHITE,
+            scale: fchar.initScale,
+            skew: vec2(0),
+            angle: 0,
+        };
+
+        applyTransform(opt.transform, fchar, i);
+        applyStyles(formattedText.charStyleMap[i], opt.styles, fchar, i);
+
+        if (!fchar.stretchInPlace) {
+            formattedText = formatText(opt);
+            return formattedText;
+        }
+
+        chars.push(fchar);
+    }
+
+    formattedText.chars = chars;
+    return formattedText;
+}
+
 function getFontName(font: FontData | string): string {
     return font instanceof FontData
         ? font.fontface.family
@@ -251,6 +315,7 @@ export function formatText(opt: DrawTextOpt): FormattedText {
             chars: [],
             opt: opt,
             renderedText: "",
+            charStyleMap: {},
         };
     }
 
@@ -317,9 +382,11 @@ export function formatText(opt: DrawTextOpt): FormattedText {
                 "width" | "height" | "frame"
             > = {
                 ch: ch,
+                initPos: vec2(curX, 0),
                 pos: vec2(curX, 0),
                 opacity: opt.opacity ?? 1,
                 color: opt.color ?? Color.WHITE,
+                initScale: vec2(scale),
                 scale: vec2(scale),
                 skew: vec2(0),
                 angle: 0,
@@ -327,28 +394,13 @@ export function formatText(opt: DrawTextOpt): FormattedText {
                 stretchInPlace: true,
             };
 
-            if (opt.transform) {
-                const tr = typeof opt.transform === "function"
-                    ? opt.transform(cursor, ch, "")
-                    : opt.transform;
-                if (tr) {
-                    applyCharTransform(theFChar as any, tr);
-                }
-            }
-
-            if (charStyleMap[cursor]) {
-                const styles = charStyleMap[cursor];
-                for (const [name, param] of styles) {
-                    const style = opt.styles?.[name];
-                    const tr = typeof style === "function"
-                        ? style(cursor, ch, param)
-                        : style;
-
-                    if (tr) {
-                        applyCharTransform(theFChar as any, tr);
-                    }
-                }
-            }
+            applyTransform(opt.transform, theFChar as any, cursor);
+            applyStyles(
+                charStyleMap[cursor],
+                opt.styles,
+                theFChar as any,
+                cursor,
+            );
 
             const requestedFont = theFChar.font;
             const resolvedFont = resolveFont(requestedFont);
@@ -360,6 +412,7 @@ export function formatText(opt: DrawTextOpt): FormattedText {
                     chars: [],
                     opt: opt,
                     renderedText: "",
+                    charStyleMap: {},
                 };
             }
             let requestedFontData = defGfxFont;
@@ -464,6 +517,7 @@ export function formatText(opt: DrawTextOpt): FormattedText {
         let thisLineHeight = size;
         for (const { ch } of lines[i].chars) {
             ch.pos = ch.pos.add(ox, th - baselineCenterOffset);
+            ch.initPos = ch.pos;
             formattedChars.push(ch);
             thisLineHeight = Math.max(
                 thisLineHeight,
@@ -479,5 +533,6 @@ export function formatText(opt: DrawTextOpt): FormattedText {
         chars: formattedChars,
         opt,
         renderedText: text,
+        charStyleMap,
     };
 }

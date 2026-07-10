@@ -1,6 +1,7 @@
 import type { BitmapFontData } from "../../../assets/bitmapFont";
 import { DEF_TEXT_SIZE } from "../../../constants/general";
-import { getRenderProps } from "../../../game/utils";
+import type { KEventController } from "../../../events/events";
+import { defineReactiveProps, getRenderProps } from "../../../game/utils";
 import {
     drawFormattedText,
     type FormattedText,
@@ -10,7 +11,7 @@ import type {
     CharTransformFunc,
     TextAlign,
 } from "../../../gfx/draw/drawText";
-import { formatText } from "../../../gfx/formatText";
+import { formatText, transformFormattedText } from "../../../gfx/formatText";
 import { Rect, vec2 } from "../../../math/math";
 import { _k } from "../../../shared";
 import type { Comp, GameObj } from "../../../types";
@@ -162,9 +163,31 @@ export interface TextCompOpt {
 }
 
 export function text(t: string, opt: TextCompOpt = {}): TextComp {
+    let objRef: GameObj<TextComp> | null = null;
     let theFormattedText: FormattedText;
-    function update(obj: GameObj<TextComp | any>) {
-        theFormattedText = formatText(Object.assign(getRenderProps(obj), {
+
+    let _updateController: KEventController | null = null;
+    let _shape: Rect | undefined;
+    let _width = opt.width ?? 0;
+    let _height = 0;
+
+    // props that call formatText update once on set
+    const _props = {
+        textSize: opt.size ?? DEF_TEXT_SIZE,
+        font: opt.font!,
+        align: opt.align!,
+        lineSpacing: opt.lineSpacing!,
+        letterSpacing: opt.letterSpacing!,
+    };
+
+    // dynamic props that are checked for continuous onUpdate
+    const _proxiedProps = {
+        textStyles: proxify(opt.styles!),
+        textTransform: proxify(opt.transform!),
+    };
+
+    function update(obj: GameObj<TextComp | any>, reformat?: boolean) {
+        const fOpt = Object.assign(getRenderProps(obj), {
             text: obj.text + "",
             size: obj.textSize,
             font: obj.font,
@@ -175,71 +198,95 @@ export function text(t: string, opt: TextCompOpt = {}): TextComp {
             transform: obj.textTransform,
             styles: obj.textStyles,
             indentAll: opt.indentAll,
-        }));
+        });
 
-        if (!opt.width) {
-            obj.width = theFormattedText.width / (obj.scale?.x || 1);
-        }
+        theFormattedText = (reformat || !theFormattedText?.renderedText)
+            ? formatText(fOpt)
+            : transformFormattedText(theFormattedText, fOpt);
 
-        obj.height = theFormattedText.height / (obj.scale?.y || 1);
+        if (!opt.width) obj.width = theFormattedText.width;
+        obj.height = theFormattedText.height;
     }
 
-    let _shape: Rect | undefined;
-    let _width = opt.width ?? 0;
-    let _height = 0;
+    function isDynamic(value?: Function | Object) {
+        return (
+            typeof value === "function"
+            || (
+                value
+                && typeof value === "object"
+                && Object.values(value).some(v => typeof v === "function")
+            )
+        );
+    }
 
-    const obj: TextComp = {
+    function onUpdate(obj: GameObj<TextComp | any>) {
+        if (Object.values(_proxiedProps).some(isDynamic)) {
+            _updateController ??= obj.onUpdate(() => update(obj));
+        }
+        else {
+            _updateController?.cancel();
+            if (_updateController) update(obj);
+            _updateController = null;
+        }
+    }
+
+    function proxify(value: Object | Function) {
+        return value && typeof value === "object"
+            ? new Proxy(value, {
+                set(target, key, val) {
+                    Reflect.set(target, key, val);
+                    objRef && onUpdate(objRef);
+                    return true;
+                },
+            })
+            : value;
+    }
+
+    const obj = {
         id: "text",
         set text(nt) {
+            if (t === nt) return;
             t = nt;
-            // @ts-expect-error
-            update(this);
+            update(this as any as GameObj<TextComp>, true);
         },
         get text() {
             return t;
         },
-        textSize: opt.size ?? DEF_TEXT_SIZE,
-        font: opt.font!,
         get width() {
             return _width;
         },
         set width(value) {
-            if (_width != value) {
-                _width = value;
-                if (_shape) _shape.width = value;
-                this._renderAreaVersion = nextRenderAreaVersion();
-            }
+            if (_width === value) return;
+            _width = value;
+            if (_shape) _shape.width = value;
+            this._renderAreaVersion = nextRenderAreaVersion();
+            update(this as any as GameObj<TextComp>, true);
         },
         get height() {
             return _height;
         },
         set height(value) {
-            if (_height != value) {
-                _height = value;
-                if (_shape) _shape.height = value;
-                this._renderAreaVersion = nextRenderAreaVersion();
-            }
+            if (_height === value) return;
+            _height = value;
+            if (_shape) _shape.height = value;
+            this._renderAreaVersion = nextRenderAreaVersion();
+            update(this as any as GameObj<TextComp>, true);
         },
-        align: opt.align!,
-        lineSpacing: opt.lineSpacing!,
-        letterSpacing: opt.letterSpacing!,
-        textTransform: opt.transform!,
-        textStyles: opt.styles!,
 
         formattedText(this: GameObj<TextComp>) {
             return theFormattedText;
         },
 
         add(this: GameObj<TextComp>) {
-            _k.k.onLoad(() => update(this));
+            _k.k.onLoad(() => update(this, true));
+            this.onUse(() => update(this, true));
+            objRef = this;
+            update(this, true);
+            onUpdate(this);
         },
 
         draw(this: GameObj<TextComp>) {
             drawFormattedText(theFormattedText);
-        },
-
-        update(this: GameObj<TextComp>) {
-            update(this);
         },
 
         renderArea() {
@@ -264,10 +311,23 @@ export function text(t: string, opt: TextCompOpt = {}): TextComp {
                 indentAll: opt.indentAll,
             };
         },
-    };
+    } as TextComp;
 
-    // @ts-expect-error
-    update(obj);
+    // define _props as obj props that call update once with reformat
+    defineReactiveProps(obj, _props, {
+        set(prop, value) {
+            _props[prop] = value;
+            update(this as any as GameObj<TextComp>, true);
+        },
+    });
+
+    // define _proxiedProps as obj props that register onUpdate with transform only
+    defineReactiveProps(obj, _proxiedProps, {
+        set(prop, value) {
+            _proxiedProps[prop] = proxify(value);
+            onUpdate(this as any as GameObj<TextComp>);
+        },
+    });
 
     // @ts-ignore Deep check in text related methods
     return obj;

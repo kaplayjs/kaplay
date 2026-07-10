@@ -3,6 +3,7 @@ import type { Uniform } from "../../assets/shader";
 import { Color } from "../../math/color";
 import type { Vec2 } from "../../math/Vec2";
 import { anchorPt } from "../anchor";
+import type { StyledTextInfo } from "../formatText";
 import type { Texture } from "../gfx";
 import {
     multRotate,
@@ -26,6 +27,7 @@ export type FormattedText = {
     chars: FormattedChar[];
     opt: DrawTextOpt;
     renderedText: string;
+    charStyleMap: StyledTextInfo["charStyleMap"];
 };
 
 /**
@@ -39,7 +41,9 @@ export interface FormattedChar {
     frame: Frame;
     width: number;
     height: number;
+    initPos: Vec2;
     pos: Vec2;
+    initScale: Vec2;
     scale: Vec2;
     skew: Vec2;
     angle: number;
