@@ -9,12 +9,13 @@ import {
 import type {
     CharTransform,
     CharTransformFunc,
+    DrawTextOpt,
     TextAlign,
 } from "../../../gfx/draw/drawText";
 import { formatText, transformFormattedText } from "../../../gfx/formatText";
 import { Rect, vec2 } from "../../../math/math";
 import { _k } from "../../../shared";
-import type { Comp, GameObj } from "../../../types";
+import type { Comp, GameObj, RenderProps } from "../../../types";
 import { nextRenderAreaVersion } from "../physics/area";
 
 /**
@@ -163,7 +164,7 @@ export interface TextCompOpt {
 }
 
 export function text(t: string, opt: TextCompOpt = {}): TextComp {
-    let objRef: GameObj<TextComp> | null = null;
+    let objRef: GameObj<TextComp | any> | null = null;
     let theFormattedText: FormattedText;
 
     let _updateController: KEventController | null = null;
@@ -171,7 +172,12 @@ export function text(t: string, opt: TextCompOpt = {}): TextComp {
     let _width = opt.width ?? 0;
     let _height = 0;
 
-    // props that call formatText update once on set
+    // obj props that are checked on update and trigger reformat
+    let _renderProps:
+        | RenderProps & Record<"anchor", DrawTextOpt["anchor"]>
+        | null = null;
+
+    // props that call update with reformat once on set
     const _props = {
         textSize: opt.size ?? DEF_TEXT_SIZE,
         font: opt.font!,
@@ -180,14 +186,15 @@ export function text(t: string, opt: TextCompOpt = {}): TextComp {
         letterSpacing: opt.letterSpacing!,
     };
 
-    // dynamic props that are checked for continuous onUpdate
+    // dynamic props that optimize onUpdate with transform instead, reformat only if _renderProps changed
     const _proxiedProps = {
-        textStyles: proxify(opt.styles!),
-        textTransform: proxify(opt.transform!),
+        textStyles: proxifyProp(opt.styles!),
+        textTransform: proxifyProp(opt.transform!),
     };
 
     function update(obj: GameObj<TextComp | any>, reformat?: boolean) {
-        const fOpt = Object.assign(getRenderProps(obj), {
+        const fOpt = {
+            ..._renderProps,
             text: obj.text + "",
             size: obj.textSize,
             font: obj.font,
@@ -198,9 +205,9 @@ export function text(t: string, opt: TextCompOpt = {}): TextComp {
             transform: obj.textTransform,
             styles: obj.textStyles,
             indentAll: opt.indentAll,
-        });
+        };
 
-        theFormattedText = (reformat || !theFormattedText?.renderedText)
+        theFormattedText = reformat
             ? formatText(fOpt)
             : transformFormattedText(theFormattedText, fOpt);
 
@@ -219,18 +226,41 @@ export function text(t: string, opt: TextCompOpt = {}): TextComp {
         );
     }
 
+    function renderPropsChanged(obj: GameObj<TextComp | any>) {
+        return !_renderProps
+            || obj.color !== _renderProps.color
+            || obj.opacity !== _renderProps.opacity
+            || obj.anchor !== _renderProps.anchor
+            || obj.shader !== _renderProps.shader
+            || obj.uniform !== _renderProps.uniform;
+    }
+
+    function refreshRenderProps(obj: GameObj<TextComp | any>) {
+        if (!renderPropsChanged(obj)) return false;
+
+        _renderProps = getRenderProps(obj);
+        return true;
+    }
+
     function onUpdate(obj: GameObj<TextComp | any>) {
+        _updateController?.cancel();
+
         if (Object.values(_proxiedProps).some(isDynamic)) {
-            _updateController ??= obj.onUpdate(() => update(obj));
+            _updateController = obj.onUpdate(() => {
+                update(obj, refreshRenderProps(obj));
+            });
         }
         else {
-            _updateController?.cancel();
-            if (_updateController) update(obj);
-            _updateController = null;
+            if (_updateController) update(obj, true);
+            _updateController = obj.onUpdate(() => {
+                if (refreshRenderProps(obj)) {
+                    update(obj, true);
+                }
+            });
         }
     }
 
-    function proxify(value: Object | Function) {
+    function proxifyProp(value: Object | Function) {
         return value && typeof value === "object"
             ? new Proxy(value, {
                 set(target, key, val) {
@@ -277,11 +307,9 @@ export function text(t: string, opt: TextCompOpt = {}): TextComp {
             return theFormattedText;
         },
 
-        add(this: GameObj<TextComp>) {
+        add(this: GameObj<TextComp | any>) {
             _k.k.onLoad(() => update(this, true));
-            this.onUse(() => update(this, true));
             objRef = this;
-            update(this, true);
             onUpdate(this);
         },
 
@@ -324,7 +352,7 @@ export function text(t: string, opt: TextCompOpt = {}): TextComp {
     // define _proxiedProps as obj props that register onUpdate with transform only
     defineReactiveProps(obj, _proxiedProps, {
         set(prop, value) {
-            _proxiedProps[prop] = proxify(value);
+            _proxiedProps[prop] = proxifyProp(value);
             onUpdate(this as any as GameObj<TextComp>);
         },
     });
