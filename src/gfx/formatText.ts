@@ -174,8 +174,13 @@ export function transformFormattedText(
             angle: 0,
         };
 
-        applyTransform(opt.transform, fchar, i);
-        applyStyles(formattedText.charStyleMap[i], opt.styles, fchar, i);
+        applyTransform(opt.transform, fchar, fchar.textCursor);
+        applyStyles(
+            formattedText.charStyleMap[fchar.textCursor],
+            opt.styles,
+            fchar,
+            fchar.textCursor,
+        );
 
         if (!fchar.stretchInPlace) {
             formattedText = formatText(opt);
@@ -392,6 +397,7 @@ export function formatText(opt: DrawTextOpt): FormattedText {
                 angle: 0,
                 font: defaultFontValue,
                 stretchInPlace: true,
+                textCursor: cursor,
             };
 
             applyTransform(opt.transform, theFChar as any, cursor);

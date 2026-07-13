@@ -53,6 +53,7 @@ export interface FormattedChar {
     stretchInPlace: boolean;
     shader?: string;
     uniform?: Uniform;
+    textCursor: number;
 }
 
 // cSpell: ignore ftext
