@@ -172,7 +172,7 @@ export function text(t: string, opt: TextCompOpt = {}): TextComp {
     let _width = opt.width ?? 0;
     let _height = 0;
 
-    // obj props that are checked on update and trigger reformat
+    // obj props that are checked on update and trigger transform or reformat
     let _renderProps:
         | RenderProps & Record<"anchor", DrawTextOpt["anchor"]>
         | null = null;
@@ -226,20 +226,24 @@ export function text(t: string, opt: TextCompOpt = {}): TextComp {
         );
     }
 
-    function renderPropsChanged(obj: GameObj<TextComp | any>) {
-        return !_renderProps
-            || obj.color !== _renderProps.color
+    function refreshRenderProps(obj: GameObj<TextComp | any>): 0 | 1 | 2 {
+        if (!_renderProps) {
+            _renderProps = getRenderProps(obj);
+            return 2;
+        }
+
+        const reformat = obj.anchor !== _renderProps.anchor;
+
+        const transform = obj.color !== _renderProps.color
             || obj.opacity !== _renderProps.opacity
-            || obj.anchor !== _renderProps.anchor
             || obj.shader !== _renderProps.shader
             || obj.uniform !== _renderProps.uniform;
-    }
 
-    function refreshRenderProps(obj: GameObj<TextComp | any>) {
-        if (!renderPropsChanged(obj)) return false;
+        if (!reformat && !transform) return 0;
 
         _renderProps = getRenderProps(obj);
-        return true;
+
+        return reformat ? 2 : 1;
     }
 
     function onUpdate(obj: GameObj<TextComp | any>) {
@@ -247,15 +251,14 @@ export function text(t: string, opt: TextCompOpt = {}): TextComp {
 
         if (Object.values(_proxiedProps).some(isDynamic)) {
             _updateController = obj.onUpdate(() => {
-                update(obj, refreshRenderProps(obj));
+                update(obj, refreshRenderProps(obj) === 2);
             });
         }
         else {
             if (_updateController) update(obj, true);
             _updateController = obj.onUpdate(() => {
-                if (refreshRenderProps(obj)) {
-                    update(obj, true);
-                }
+                const updateType = refreshRenderProps(obj);
+                if (updateType) update(obj, updateType === 2);
             });
         }
     }
