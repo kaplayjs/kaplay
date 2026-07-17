@@ -192,7 +192,11 @@ export function text(t: string, opt: TextCompOpt = {}): TextComp {
         textTransform: proxifyProp(opt.transform!),
     };
 
-    function update(obj: GameObj<TextComp | any>, reformat?: boolean) {
+    function update(
+        obj: GameObj<TextComp | any>,
+        reformat?: boolean,
+        isDynamic = false,
+    ) {
         const fOpt = {
             ..._renderProps,
             text: obj.text + "",
@@ -209,21 +213,21 @@ export function text(t: string, opt: TextCompOpt = {}): TextComp {
 
         theFormattedText = reformat
             ? formatText(fOpt)
-            : transformFormattedText(theFormattedText, fOpt);
+            : transformFormattedText(theFormattedText, fOpt, isDynamic);
 
         if (!opt.width) obj.width = theFormattedText.width;
         obj.height = theFormattedText.height;
     }
 
-    function isDynamic(value?: Function | Object) {
-        return (
+    function isDynamic() {
+        return Object.values(_proxiedProps).some(value => (
             typeof value === "function"
             || (
                 value
                 && typeof value === "object"
                 && Object.values(value).some(v => typeof v === "function")
             )
-        );
+        ));
     }
 
     function refreshRenderProps(obj: GameObj<TextComp | any>): 0 | 1 | 2 {
@@ -249,9 +253,9 @@ export function text(t: string, opt: TextCompOpt = {}): TextComp {
     function onUpdate(obj: GameObj<TextComp | any>) {
         _updateController?.cancel();
 
-        if (Object.values(_proxiedProps).some(isDynamic)) {
+        if (isDynamic()) {
             _updateController = obj.onUpdate(() => {
-                update(obj, refreshRenderProps(obj) === 2);
+                update(obj, refreshRenderProps(obj) === 2, true);
             });
         }
         else {

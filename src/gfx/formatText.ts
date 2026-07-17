@@ -159,6 +159,7 @@ function applyStyles(
 export function transformFormattedText(
     formattedText: FormattedText,
     opt: DrawTextOpt,
+    reformatOnStretch: Boolean = false,
 ): FormattedText {
     const chars: FormattedChar[] = [];
 
@@ -182,7 +183,7 @@ export function transformFormattedText(
             fchar.textCursor,
         );
 
-        if (!fchar.stretchInPlace) {
+        if (reformatOnStretch && !fchar.stretchInPlace) {
             formattedText = formatText(opt);
             return formattedText;
         }
