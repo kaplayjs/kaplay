@@ -65,6 +65,8 @@ So your change should look like:
   by CSS and wasn't rendered at its natural size (#1096) - @Stanko
 - Modified `pos`, `skew` and `scale` components to make operations like
   `obj.pos.x += 1` work again (#1109) - @ErikGXDev
+- Fixed `scale`, `skew`, and `rotate` component transforms not being applied on
+  the initial `GameObjRaw.use()` call (e.g. `obj.use(scale(2))`) - @mflerackers
 - Fixed `isKeyDown` and `isButtonDown` getting stuck on game loosing focus
   (#1101) - @Stanko
 
