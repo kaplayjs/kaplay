@@ -27,7 +27,6 @@ export type FormattedText = {
     chars: FormattedChar[];
     opt: DrawTextOpt;
     renderedText: string;
-    charStyleMap: StyledTextInfo["charStyleMap"];
 };
 
 /**
@@ -54,6 +53,7 @@ export interface FormattedChar {
     shader?: string;
     uniform?: Uniform;
     textCursor: number;
+    styles: StyledTextInfo["charStyleMap"][number];
 }
 
 // cSpell: ignore ftext

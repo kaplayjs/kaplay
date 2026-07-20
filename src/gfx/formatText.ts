@@ -128,28 +128,24 @@ export function compileStyledText(txt: any): StyledTextInfo {
 function applyTransform(
     transform: DrawTextOpt["transform"],
     fchar: FormattedChar,
-    cursor: number,
 ) {
     if (!transform) return;
 
     const tr = typeof transform === "function"
-        ? transform(cursor, fchar.ch, "")
+        ? transform(fchar.textCursor, fchar.ch, "")
         : transform;
     if (tr) applyCharTransform(fchar, tr);
 }
 
 function applyStyles(
-    charStyles: StyledTextInfo["charStyleMap"][number],
     stylesOpt: DrawTextOpt["styles"],
     fchar: FormattedChar,
-    cursor: number,
 ) {
-    if (!charStyles) return;
-
-    for (const [name, param] of charStyles) {
+    for (const [name, param] of fchar.styles) {
         const style = stylesOpt?.[name];
+
         const tr = typeof style === "function"
-            ? style(cursor, fchar.ch, param)
+            ? style(fchar.textCursor, fchar.ch, param)
             : style;
 
         if (tr) applyCharTransform(fchar, tr);
@@ -175,12 +171,10 @@ export function transformFormattedText(
             angle: 0,
         };
 
-        applyTransform(opt.transform, fchar, fchar.textCursor);
+        applyTransform(opt.transform, fchar);
         applyStyles(
-            formattedText.charStyleMap[fchar.textCursor],
             opt.styles,
             fchar,
-            fchar.textCursor,
         );
 
         if (reformatOnStretch && !fchar.stretchInPlace) {
@@ -321,7 +315,6 @@ export function formatText(opt: DrawTextOpt): FormattedText {
             chars: [],
             opt: opt,
             renderedText: "",
-            charStyleMap: {},
         };
     }
 
@@ -399,14 +392,13 @@ export function formatText(opt: DrawTextOpt): FormattedText {
                 font: defaultFontValue,
                 stretchInPlace: true,
                 textCursor: cursor,
+                styles: charStyleMap[cursor] ?? [],
             };
 
-            applyTransform(opt.transform, theFChar as any, cursor);
+            applyTransform(opt.transform, theFChar as any);
             applyStyles(
-                charStyleMap[cursor],
                 opt.styles,
                 theFChar as any,
-                cursor,
             );
 
             const requestedFont = theFChar.font;
@@ -419,7 +411,6 @@ export function formatText(opt: DrawTextOpt): FormattedText {
                     chars: [],
                     opt: opt,
                     renderedText: "",
-                    charStyleMap: {},
                 };
             }
             let requestedFontData = defGfxFont;
@@ -540,6 +531,5 @@ export function formatText(opt: DrawTextOpt): FormattedText {
         chars: formattedChars,
         opt,
         renderedText: text,
-        charStyleMap,
     };
 }
