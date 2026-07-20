@@ -1,6 +1,5 @@
 import type { BitmapFontData } from "../../../assets/bitmapFont";
 import { DEF_TEXT_SIZE } from "../../../constants/general";
-import type { KEventController } from "../../../events/events";
 import { defineReactiveProps, getRenderProps } from "../../../game/utils";
 import {
     drawFormattedText,
@@ -167,10 +166,10 @@ export function text(t: string, opt: TextCompOpt = {}): TextComp {
     let objRef: GameObj<TextComp | any> | null = null;
     let theFormattedText: FormattedText;
 
-    let _updateController: KEventController | null = null;
     let _shape: Rect | undefined;
     let _width = opt.width ?? 0;
     let _height = 0;
+    let _isDynamic = false;
 
     // obj props that are checked on update and trigger transform or reformat
     let _renderProps:
@@ -186,17 +185,19 @@ export function text(t: string, opt: TextCompOpt = {}): TextComp {
         letterSpacing: opt.letterSpacing!,
     };
 
-    // dynamic props that optimize onUpdate with transform instead, reformat only if _renderProps changed
+    // dynamic props that update with transform instead, reformat only if _renderProps changed
     const _proxiedProps = {
         textStyles: proxifyProp(opt.styles!),
         textTransform: proxifyProp(opt.transform!),
     };
 
-    function update(
-        obj: GameObj<TextComp | any>,
-        reformat?: boolean,
-        isDynamic = false,
-    ) {
+    function update(obj: GameObj<TextComp | any>, reformat?: boolean) {
+        const updateType = refreshRenderProps(obj);
+        if (!reformat) {
+            if (!_isDynamic && !updateType) return;
+            reformat = updateType === 2;
+        }
+
         const fOpt = {
             ..._renderProps,
             text: obj.text + "",
@@ -213,21 +214,10 @@ export function text(t: string, opt: TextCompOpt = {}): TextComp {
 
         theFormattedText = reformat
             ? formatText(fOpt)
-            : transformFormattedText(theFormattedText, fOpt, isDynamic);
+            : transformFormattedText(theFormattedText, fOpt, _isDynamic);
 
         if (!opt.width) obj.width = theFormattedText.width;
         obj.height = theFormattedText.height;
-    }
-
-    function isDynamic() {
-        return Object.values(_proxiedProps).some(value => (
-            typeof value === "function"
-            || (
-                value
-                && typeof value === "object"
-                && Object.values(value).some(v => typeof v === "function")
-            )
-        ));
     }
 
     function refreshRenderProps(obj: GameObj<TextComp | any>): 0 | 1 | 2 {
@@ -250,21 +240,18 @@ export function text(t: string, opt: TextCompOpt = {}): TextComp {
         return reformat ? 2 : 1;
     }
 
-    function onUpdate(obj: GameObj<TextComp | any>) {
-        _updateController?.cancel();
+    function updateDynamic() {
+        const prev = _isDynamic;
+        _isDynamic = Object.values(_proxiedProps).some(value => (
+            typeof value === "function"
+            || (
+                value
+                && typeof value === "object"
+                && Object.values(value).some(v => typeof v === "function")
+            )
+        ));
 
-        if (isDynamic()) {
-            _updateController = obj.onUpdate(() => {
-                update(obj, refreshRenderProps(obj) === 2, true);
-            });
-        }
-        else {
-            if (_updateController) update(obj, true);
-            _updateController = obj.onUpdate(() => {
-                const updateType = refreshRenderProps(obj);
-                if (updateType) update(obj, updateType === 2);
-            });
-        }
+        if (prev && !_isDynamic && objRef) update(objRef, true);
     }
 
     function proxifyProp(value: Object | Function) {
@@ -272,7 +259,7 @@ export function text(t: string, opt: TextCompOpt = {}): TextComp {
             ? new Proxy(value, {
                 set(target, key, val) {
                     Reflect.set(target, key, val);
-                    objRef && onUpdate(objRef);
+                    updateDynamic();
                     return true;
                 },
             })
@@ -315,9 +302,13 @@ export function text(t: string, opt: TextCompOpt = {}): TextComp {
         },
 
         add(this: GameObj<TextComp | any>) {
-            _k.k.onLoad(() => update(this, true));
             objRef = this;
-            onUpdate(this);
+            updateDynamic();
+            _k.k.onLoad(() => update(this, true));
+        },
+
+        update(this: GameObj<TextComp>) {
+            update(this);
         },
 
         draw(this: GameObj<TextComp>) {
@@ -356,11 +347,11 @@ export function text(t: string, opt: TextCompOpt = {}): TextComp {
         },
     });
 
-    // define _proxiedProps as obj props that register onUpdate with transform only
+    // define _proxiedProps as obj props that update with transform only if dynamic
     defineReactiveProps(obj, _proxiedProps, {
         set(prop, value) {
             _proxiedProps[prop] = proxifyProp(value);
-            onUpdate(this as any as GameObj<TextComp>);
+            updateDynamic();
         },
     });
 
