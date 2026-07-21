@@ -304,7 +304,10 @@ export function text(t: string, opt: TextCompOpt = {}): TextComp {
         add(this: GameObj<TextComp | any>) {
             objRef = this;
             updateDynamic();
-            _k.k.onLoad(() => update(this, true));
+            _k.k.onLoad(() => {
+                update(this, true);
+                return _k.k.cancel();
+            });
         },
 
         update(this: GameObj<TextComp>) {
