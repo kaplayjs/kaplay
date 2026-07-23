@@ -56,6 +56,9 @@ So your change should look like:
   (#1097) - @Stanko
 - **(!)** `new RNG()` and `setRNG()` now use config objects instead of the
   string/custom rng parameter (#1097) - @Stanko
+- Improved `text` component performance by separating text transform and
+  formatting, reducing update calls for both dynamic and (especially) static
+  text (#1125) - @imaginarny
 
 ### Fixed
 
@@ -69,6 +72,8 @@ So your change should look like:
   the initial `GameObjRaw.use()` call (e.g. `obj.use(scale(2))`) - @mflerackers
 - Fixed `isKeyDown` and `isButtonDown` getting stuck on game loosing focus
   (#1101) - @Stanko
+- Fixed objects with a `text` component reporting wrong dimensions when scaled
+  using the `scale` component (#1125) - @imaginarny
 
 ## [4000.0.0-alpha.27.1] - 2026-05-12
 
