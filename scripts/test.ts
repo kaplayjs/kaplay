@@ -43,16 +43,20 @@ const playtests = playtestsDir.filter((p) => {
     return isTest;
 }).map((d) => path.basename(d, ".js"));
 
+const isRenderingError = (err: unknown): boolean => {
+    return err instanceof Error && err.message.startsWith("[rendering]");
+};
+
 for (const example of [...examples, ...playtests]) {
     console.log(`testing example "${example}"`);
     const page = await browser.newPage();
     page.on("pageerror", (err) => {
-        if (err.message.startsWith("[rendering]")) return;
+        if (isRenderingError(err)) return;
         failed = true;
         console.error(example, err);
     });
     page.on("error", (err) => {
-        if (err.message.startsWith("[rendering]")) return;
+        if (isRenderingError(err)) return;
         failed = true;
         console.error(example, err);
     });
