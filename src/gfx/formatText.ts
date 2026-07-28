@@ -155,37 +155,27 @@ function applyStyles(
 export function transformFormattedText(
     formattedText: FormattedText,
     opt: DrawTextOpt,
-    reformatOnStretch: Boolean = false,
+    reformatOnStretch = false,
 ): FormattedText {
-    const chars: FormattedChar[] = [];
+    const opacity = opt.opacity ?? 1;
+    const color = opt.color ?? Color.WHITE;
 
-    for (let i = 0; i < formattedText.chars.length; i++) {
-        let fchar = formattedText.chars[i];
-        fchar = {
-            ...fchar,
-            pos: vec2(fchar.initPos),
-            opacity: opt.opacity ?? 1,
-            color: opt.color ?? Color.WHITE,
-            scale: fchar.initScale,
-            skew: vec2(0),
-            angle: 0,
-        };
+    for (const fchar of formattedText.chars) {
+        fchar.pos.set(fchar.initPos.x, fchar.initPos.y);
+        fchar.opacity = opacity;
+        fchar.color = color;
+        fchar.scale.set(fchar.initScale.x, fchar.initScale.y);
+        fchar.skew.set(0, 0);
+        fchar.angle = 0;
 
         applyTransform(opt.transform, fchar);
-        applyStyles(
-            opt.styles,
-            fchar,
-        );
+        applyStyles(opt.styles, fchar);
 
         if (reformatOnStretch && !fchar.stretchInPlace) {
-            formattedText = formatText(opt);
-            return formattedText;
+            return formatText(opt);
         }
-
-        chars.push(fchar);
     }
 
-    formattedText.chars = chars;
     return formattedText;
 }
 
