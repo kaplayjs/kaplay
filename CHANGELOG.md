@@ -56,6 +56,9 @@ So your change should look like:
   (#1097) - @Stanko
 - **(!)** `new RNG()` and `setRNG()` now use config objects instead of the
   string/custom rng parameter (#1097) - @Stanko
+- Improved `text` component performance by separating text transform and
+  formatting, reducing update calls for both dynamic and (especially) static
+  text (#1125) - @imaginarny
 
 ### Fixed
 
@@ -63,16 +66,18 @@ So your change should look like:
   time (#1082) - @nojaf
 - Fixed mouse coordinates not being calculated properly when canvas is resized
   by CSS and wasn't rendered at its natural size (#1096) - @Stanko
+- Fixed touch coordinates in aspect-fit fullscreen with fixed canvas size and
+  letterbox disabled (#1106) - @imaginarny
+- Fixed incorrect resolution and scale of the debug inspect mode (#1106) -
+  @imaginarny
 - Modified `pos`, `skew` and `scale` components to make operations like
   `obj.pos.x += 1` work again (#1109) - @ErikGXDev
 - Fixed `scale`, `skew`, and `rotate` component transforms not being applied on
   the initial `GameObjRaw.use()` call (e.g. `obj.use(scale(2))`) - @mflerackers
 - Fixed `isKeyDown` and `isButtonDown` getting stuck on game loosing focus
   (#1101) - @Stanko
-- Fixed touch coordinates in aspect-fit fullscreen with fixed canvas size and
-  letterbox disabled (#1106) - @imaginarny
-- Fixed incorrect resolution and scale of the debug inspect mode (#1106) -
-  @imaginarny
+- Fixed objects with a `text` component reporting wrong dimensions when scaled
+  using the `scale` component (#1125) - @imaginarny
 
 ## [4000.0.0-alpha.27.1] - 2026-05-12
 
