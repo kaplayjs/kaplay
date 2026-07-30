@@ -231,8 +231,6 @@ export const initAppState = (opt: {
         isMouseMoved: false,
         lastWidth: opt.canvas.offsetWidth,
         lastHeight: opt.canvas.offsetHeight,
-        canvasScaleX: 1,
-        canvasScaleY: 1,
         events: new KEventHandler<AppEventMap>(),
     };
 };
@@ -1310,14 +1308,6 @@ export const initApp = (
         );
     }
 
-    const updateCanvasScale = () => {
-        const pd = opt.pixelDensity || 1;
-        state.canvasScaleX = state.canvas.width / pd
-            / state.canvas.offsetWidth;
-        state.canvasScaleY = state.canvas.height / pd
-            / state.canvas.offsetHeight;
-    };
-
     const resizeObserver = new ResizeObserver((entries) => {
         for (const entry of entries) {
             if (entry.target !== state.canvas) continue;
@@ -1343,7 +1333,6 @@ export const initApp = (
         time,
         run,
         canvas: state.canvas,
-        updateCanvasScale,
         fps,
         rawFPS,
         setFixedSpeed,
