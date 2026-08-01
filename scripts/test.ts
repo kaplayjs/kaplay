@@ -1,6 +1,7 @@
 // @ts-check
 
 import fs from "fs";
+import { once } from "node:events";
 import path from "path";
 import puppeteer from "puppeteer";
 import { serve } from "./dev/serve.ts";
@@ -10,8 +11,9 @@ import { wait } from "./lib/util.ts";
 await build(true);
 
 const server = serve();
-const adress = server.address();
-const port = typeof adress == "object" ? adress?.port : "unknown";
+await once(server, "listening");
+const address = server.address();
+const port = typeof address == "object" ? address?.port : "unknown";
 
 let failed = false;
 
