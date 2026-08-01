@@ -1,12 +1,13 @@
 # PR Overview
 
-Replace this text describing an overfiew of the changes included in this PR.
+Replace this text with an overview describing the changes included in this PR.
 
 ### List of changes
 
-- Replace this list, if applicable, notating the issue(s) that should be closed,
-  like this:
-- close #3001
+- Replace this with a list of issue(s) that should be closed (if applicable) and
+  a short summary of the changes (similar to a changelog), for example:
+- Closes #3001
+- Added an XY option to YX for...
 
 ## Contributor Checks
 
@@ -17,7 +18,7 @@ Replace this text describing an overfiew of the changes included in this PR.
 
 > For reviewer use only. Delete not applicable checkboxes.
 
-- [ ] Changes includes changelog
-- [ ] Breaking changes are noted in changelog
-- [ ] Changes includes e2e tests
-- [ ] Changes includes unit tests
+- [ ] Changes include a changelog
+- [ ] Breaking changes are marked in the changelog
+- [ ] Changes include e2e tests
+- [ ] Changes include unit tests
