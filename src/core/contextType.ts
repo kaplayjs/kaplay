@@ -997,14 +997,14 @@ export interface KAPLAYCtx {
      * Draws a video.
      *
      * @param url - The video to play. Needs to be on the same webserver due to CORS.
-     * @param opt - The video component options
+     * @param opt - The video component options. You need to provide at least video `width` and `height`.
      *
      * @returns The video comp.
      * @since v4000.0
      * @group Components
      * @subgroup Rendering
      */
-    video(url: string, opt?: VideoCompOpt): VideoComp;
+    video(url: string, opt: VideoCompOpt): VideoComp;
     /**
      * Draws a picture, using the Picture API.
      *
