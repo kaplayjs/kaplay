@@ -61,6 +61,10 @@ export interface TimerComp extends Comp {
      */
     wait(time: number, action?: () => void): TimerController;
     /**
+     * Run the callback on the next frame.
+     */
+    nextFrame(action?: () => void): TimerController;
+    /**
      * Run the callback every n seconds.
      *
      * If waitFirst is false (the default), the function will
@@ -143,6 +147,13 @@ export function timer(maxLoopsPerFrame: number = 1000): TimerComp {
             action?: () => void,
         ): TimerController {
             return this.loop(time, action ?? (() => {}), 1, true);
+        },
+        nextFrame(
+            this: GameObj<TimerComp>,
+            action?: () => void,
+        ): TimerController {
+            // will run only once
+            return this.loop(0, action ?? (() => {}), 1, true);
         },
         tween<V extends LerpValue>(
             this: GameObj<TimerComp>,
