@@ -41,7 +41,9 @@ So your change should look like:
 ### Breaking Changes
 
 - `triangulate()` now returns a flat list of the new indices, instead of a list
-  of 3-tuples of points (#1103) - @dragoncoder047
+  of 3-tuples of points (#1103) - @dragoncoder047 `new RNG()` and `setRNG()` now
+  use config objects instead of the string/custom rng parameter (#1097) -
+  @Stanko
 
 ### Added
 
@@ -59,8 +61,6 @@ So your change should look like:
   rng to use (#1057) - @mflerackers
 - RNG can now be set and seeded on init (as `KAPLAYOpt.rng`) and in runtime
   (#1097) - @Stanko
-- **(!)** `new RNG()` and `setRNG()` now use config objects instead of the
-  string/custom rng parameter (#1097) - @Stanko
 - Improved `text` component performance by separating text transform and
   formatting, reducing update calls for both dynamic and (especially) static
   text (#1125) - @imaginarny
