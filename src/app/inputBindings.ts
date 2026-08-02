@@ -134,6 +134,15 @@ class ChordedButtonDetector<T extends string = string> {
         }
         return canceledButtons;
     }
+    releaseAll(): string[] {
+        const buttons = [...this.buttonsUsed];
+        this.buttonsUsed.clear();
+        this.mods.forEach((_, mod) => this.mods.set(mod, false));
+        return buttons;
+    }
+    isButtonUsed(button: string): boolean {
+        return this.buttonsUsed.has(button);
+    }
 }
 
 export class ButtonProcessor {
@@ -176,6 +185,16 @@ export class ButtonProcessor {
             this.state.release(button, state);
         }
     }
+    private _releaseKeyboardMouse(buttons: string[], state: AppState) {
+        for (let button of buttons) {
+            if (
+                this.state.down.has(button)
+                && !this.byGamepad.isButtonUsed(button)
+            ) {
+                this.state.release(button, state);
+            }
+        }
+    }
     processKeydown(key: Key, keyCode: string, state: AppState) {
         this._maybePress(this.byKey.handleDown(key), state);
         this._maybePress(this.byKeyCode.handleDown(keyCode), state);
@@ -195,6 +214,16 @@ export class ButtonProcessor {
     }
     processGamepadButtonUp(gb: KGamepadButton, state: AppState) {
         this._maybeRelease(this.byGamepad.handleUp(gb), state);
+    }
+    releaseKeyboardMouse(state: AppState) {
+        this._releaseKeyboardMouse(
+            [
+                ...this.byKey.releaseAll(),
+                ...this.byKeyCode.releaseAll(),
+                ...this.byMouse.releaseAll(),
+            ],
+            state,
+        );
     }
     update() {
         this.state.update();

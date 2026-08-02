@@ -89,6 +89,11 @@ export class ButtonState<T = string, A = never> {
             state.events.trigger(this._releaseEv as any, btn, this._arg);
         }
     }
+    releaseAll(state: AppState) {
+        for (const btn of this.down) {
+            this.release(btn, state);
+        }
+    }
 }
 
 class GamepadState {
@@ -226,6 +231,8 @@ export const initAppState = (opt: {
         isMouseMoved: false,
         lastWidth: opt.canvas.offsetWidth,
         lastHeight: opt.canvas.offsetHeight,
+        canvasScaleX: 1,
+        canvasScaleY: 1,
         events: new KEventHandler<AppEventMap>(),
     };
 };
@@ -252,6 +259,15 @@ export const initApp = (
     const state = initAppState(opt);
     parseButtonBindings(state);
     if (opt.fixedUpdateMode) setFixedSpeed(opt.fixedUpdateMode);
+    updateCanvasScale();
+
+    function updateCanvasScale() {
+        const pd = opt.pixelDensity || 1;
+        state.canvasScaleX = state.canvas.width / pd
+            / state.canvas.offsetWidth;
+        state.canvasScaleY = state.canvas.height / pd
+            / state.canvas.offsetHeight;
+    }
 
     function dt() {
         return state.dt * state.timeScale;
@@ -967,7 +983,38 @@ export const initApp = (
     const docEvents: EventList<DocumentEventMap> = {};
     const winEvents: EventList<WindowEventMap> = {};
 
+    let releaseHeldInputsQueued = false;
+
+    function releaseHeldInputs() {
+        state.buttonHandler.releaseKeyboardMouse(state);
+        state.keyState.releaseAll(state);
+        state.mouseState.releaseAll(state);
+    }
+
+    function queueReleaseHeldInputs() {
+        if (releaseHeldInputsQueued) {
+            return;
+        }
+        releaseHeldInputsQueued = true;
+        state.events.onOnce("input", () => {
+            releaseHeldInputsQueued = false;
+            releaseHeldInputs();
+        });
+    }
+
+    function releaseHeldInputsOnFocusLoss() {
+        // Release all inputs immediately when blur/hide happens,
+        // and then queue it to to catch any queued events on the next input tick,
+        // that wouldn't be processed otherwise
+        releaseHeldInputs();
+        queueReleaseHeldInputs();
+    }
+
     const pd = opt.pixelDensity || 1;
+
+    canvasEvents.blur = () => {
+        releaseHeldInputsOnFocusLoss();
+    };
 
     canvasEvents.mousemove = (e) => {
         // 🍝 Here we depend of GFX Context even if initGfx needs initApp for being used
@@ -1248,9 +1295,14 @@ export const initApp = (
             state.events.trigger("tabShow");
         }
         else {
+            releaseHeldInputsOnFocusLoss();
             state.isHidden = true;
             state.events.trigger("tabHide");
         }
+    };
+
+    winEvents.blur = () => {
+        releaseHeldInputsOnFocusLoss();
     };
 
     winEvents.gamepadconnected = (e) => {
@@ -1299,6 +1351,7 @@ export const initApp = (
             ) return;
             state.lastWidth = state.canvas.offsetWidth;
             state.lastHeight = state.canvas.offsetHeight;
+            updateCanvasScale();
             state.events.onOnce("input", () => {
                 state.events.trigger("resize");
             });
@@ -1315,6 +1368,7 @@ export const initApp = (
         time,
         run,
         canvas: state.canvas,
+        updateCanvasScale,
         fps,
         rawFPS,
         setFixedSpeed,

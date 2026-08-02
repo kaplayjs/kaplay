@@ -170,7 +170,6 @@ import {
     bezier,
     cardinal,
     catmullRom,
-    chance,
     choose,
     chooseMultiple,
     Circle,
@@ -208,13 +207,8 @@ import {
     Quad,
     quad,
     rad2deg,
-    rand,
-    randi,
-    randSeed,
     Rect,
-    RNG,
     roulette,
-    setRNG,
     shuffle,
     smoothstep,
     step,
@@ -237,6 +231,7 @@ import {
     createRegularPolygon,
     createStarPolygon,
 } from "../math/polygongeneration";
+import { chance, rand, randi, randSeed, RNG, setRNG } from "../math/random";
 import { insertionSort } from "../math/sort";
 import { makeQuadtree, Quadtree } from "../math/spatial/quadtree";
 import { Vec2 } from "../math/Vec2";
@@ -267,6 +262,7 @@ export const createContext = (
     const destroyAll = game.root.removeAll.bind(game.root);
     const get = game.root.get.bind(game.root);
     const wait = game.root.wait.bind(game.root);
+    const nextFrame = game.root.nextFrame.bind(game.root);
     const loop = game.root.loop.bind(game.root);
     const query = game.root.query.bind(game.root);
     const tween = game.root.tween.bind(game.root);
@@ -501,6 +497,7 @@ export const createContext = (
         // timer
         loop,
         wait,
+        nextFrame,
         // audio
         play,
         setVolume: setVolume,
