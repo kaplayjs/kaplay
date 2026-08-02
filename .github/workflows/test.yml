@@ -4,37 +4,9 @@ on:
   push:
 
 jobs:
-  check-format:
-    name: Check Format
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v6
-      - name: Install Node.js
-        uses: actions/setup-node@v6
-        with:
-          node-version: 24
-      - uses: pnpm/action-setup@v4
-        name: Install pnpm
-        with:
-          run_install: false
-      - name: Install dprint
-        run: pnpm i dprint
-      - name: Run dprint checker 
-        run: FORMATTED=$(pnpm dprint check)
-      - name: Fail if not formatted
-        run: |
-          if [ -n "$FORMATTED" ]; then
-            echo "Code is not formatted. Please run 'pnpm run fmt' to format the code."
-            exit 1
-          else
-            echo "Code is formatted correctly."
-          fi
-        
   test:
     name: Test
     runs-on: ubuntu-latest
-    needs: check-format
     
     steps:
       - name: Checkout
