@@ -40,12 +40,17 @@ So your change should look like:
 
 ## [unreleased]
 
-### Added
+### Breaking Changes
 
 - The `onHide` and `onShow` global handlers (which have been deprecated for a
   while) are now actually removed, you must use `onTabHide` and `onTabShow`.
   `onHide` and `onShow` still exist but now handle reacting to changes in the
   `.hidden` property of game objects (#1041) - @dragoncoder047
+- `new RNG()` and `setRNG()` now use config objects instead of the string/custom
+  rng parameter (#1097) - @Stanko
+
+### Added
+
 - Added `onPause()`, `onUnpause()`, `onHide()`, and `onShow()` events for
   listening to the state of the `paused` and `hidden` properties on game objects
   (#1041) - @dragoncoder047
@@ -63,8 +68,6 @@ So your change should look like:
   rng to use (#1057) - @mflerackers
 - RNG can now be set and seeded on init (as `KAPLAYOpt.rng`) and in runtime
   (#1097) - @Stanko
-- **(!)** `new RNG()` and `setRNG()` now use config objects instead of the
-  string/custom rng parameter (#1097) - @Stanko
 - Improved `text` component performance by separating text transform and
   formatting, reducing update calls for both dynamic and (especially) static
   text (#1125) - @imaginarny
