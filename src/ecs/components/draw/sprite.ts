@@ -415,8 +415,8 @@ export function sprite(
                     const shouldTile = isCenter
                         ? tileMode === "center" || tileMode === "all"
                         : isEdge
-                        ? tileMode === "edges" || tileMode === "all"
-                        : false;
+                            ? tileMode === "edges" || tileMode === "all"
+                            : false;
                     drawTexture(
                         Object.assign(props, {
                             pos: transform.pos().add(offsetX, offsetY),

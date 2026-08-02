@@ -19,7 +19,6 @@ export default tseslint.config(
             semi: ["error", "always"],
             quotes: ["error", "double"],
 
-
             // JSDoc Linting
             "jsdoc/require-hyphen-before-param-description": "error",
             "jsdoc/check-alignment": "warn",

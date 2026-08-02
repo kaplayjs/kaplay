@@ -44,10 +44,10 @@ export function buildConvexHull(points: Vec2[]) {
         while (
             stack.length > 1
             && orient(
-                    stack[stack.length - 2],
-                    stack[stack.length - 1],
-                    sorted[i],
-                ) >= 0
+                stack[stack.length - 2],
+                stack[stack.length - 1],
+                sorted[i],
+            ) >= 0
         ) {
             stack.pop();
         }

@@ -30,10 +30,10 @@ export function blend(blend: BlendMode): BlendComp {
                 this.blend == BlendMode.Normal
                     ? "normal"
                     : this.blend == BlendMode.Add
-                    ? "add"
-                    : this.blend == BlendMode.Multiply
-                    ? "multiply"
-                    : "screen"
+                        ? "add"
+                        : this.blend == BlendMode.Multiply
+                            ? "multiply"
+                            : "screen"
             }`;
         },
         serialize() {

@@ -35,13 +35,13 @@ export const MAX_BATCHED_VERTS = MAX_BATCHED_QUAD * 4 * STRIDE;
 export const MAX_BATCHED_INDICES = MAX_BATCHED_QUAD * 6;
 // vertex shader template, replace {{user}} with user vertex shader code
 export const VERT_TEMPLATE =
-    `attribute vec2 a_pos;attribute vec2 a_uv;attribute vec4 a_color;varying vec2 v_pos;varying vec2 v_uv;varying vec4 v_color;uniform float width;uniform float height;uniform mat4 camera;uniform mat4 transform;vec4 def_vert(){vec4 pos=camera*transform*vec4(a_pos,0.0,1.0);return vec4(pos.x/width*2.0-1.0,pos.y/-height*2.0+1.0,pos.z,pos.w);}{{user}}void main(){vec4 pos=vert(a_pos,a_uv,a_color);v_pos=a_pos;v_uv=a_uv;v_color=a_color;gl_Position=pos;}`;
+    "attribute vec2 a_pos;attribute vec2 a_uv;attribute vec4 a_color;varying vec2 v_pos;varying vec2 v_uv;varying vec4 v_color;uniform float width;uniform float height;uniform mat4 camera;uniform mat4 transform;vec4 def_vert(){vec4 pos=camera*transform*vec4(a_pos,0.0,1.0);return vec4(pos.x/width*2.0-1.0,pos.y/-height*2.0+1.0,pos.z,pos.w);}{{user}}void main(){vec4 pos=vert(a_pos,a_uv,a_color);v_pos=a_pos;v_uv=a_uv;v_color=a_color;gl_Position=pos;}";
 export const FRAG_TEMPLATE =
-    `precision mediump float;varying vec2 v_pos;varying vec2 v_uv;varying vec4 v_color;uniform sampler2D u_tex;vec4 def_frag(){vec4 texColor=texture2D(u_tex,v_uv);return vec4((v_color.rgb*texColor.rgb),texColor.a)*v_color.a;}{{user}}void main(){gl_FragColor=frag(v_pos,v_uv,v_color,u_tex);if(gl_FragColor.a==0.0){discard;}}`;
+    "precision mediump float;varying vec2 v_pos;varying vec2 v_uv;varying vec4 v_color;uniform sampler2D u_tex;vec4 def_frag(){vec4 texColor=texture2D(u_tex,v_uv);return vec4((v_color.rgb*texColor.rgb),texColor.a)*v_color.a;}{{user}}void main(){gl_FragColor=frag(v_pos,v_uv,v_color,u_tex);if(gl_FragColor.a==0.0){discard;}}";
 export const DEF_VERT =
-    `vec4 vert(vec2 pos,vec2 uv,vec4 color){return def_vert();}`;
+    "vec4 vert(vec2 pos,vec2 uv,vec4 color){return def_vert();}";
 export const DEF_FRAG =
-    `vec4 frag(vec2 pos,vec2 uv,vec4 color,sampler2D tex){return def_frag();}`;
+    "vec4 frag(vec2 pos,vec2 uv,vec4 color,sampler2D tex){return def_frag();}";
 
 export const DEF_OFFSCREEN_DIS = 200;
 // maximum y velocity with body()
