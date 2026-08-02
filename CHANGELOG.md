@@ -81,6 +81,8 @@ So your change should look like:
   (#1101) - @Stanko
 - Fixed objects with a `text` component reporting wrong dimensions when scaled
   using the `scale` component (#1125) - @imaginarny
+- Fixed the `layer` component property returning `null` when the layer index was
+  `0` (#1127) - @imaginarny
 
 ## [4000.0.0-alpha.27.1] - 2026-05-12
 
