@@ -3284,8 +3284,14 @@ export function triangulate(pts: Vec2[]): number[] {
 
     /* Create a list of indexes to the previous and next points of a given point
     prev_idx[i] gives the index to the previous point of the point at i */
-    let prevIdx = pts.map((_, i) => (i + len - 1) % len);
-    let nextIdx = pts.map((_, i) => (i + 1) % len);
+    let nextIdx = [];
+    let prevIdx = [];
+    for (let i = 0; i < pts.length; i++) {
+        nextIdx[i] = i + 1;
+        prevIdx[i] = i - 1;
+    }
+    nextIdx[nextIdx.length - 1] = 0;
+    prevIdx[0] = prevIdx.length - 1;
 
     // If the polygon is not counter clockwise, swap the lists, thus reversing the winding
     if (!isOrientedCcwPolygon(pts)) {
