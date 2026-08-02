@@ -102,7 +102,7 @@ export interface PosComp extends Comp {
 
 export function pos(...args: Vec2Args): PosComp {
     const _pos = vec2(...args);
-    const _posReadOnly = vec2(...args);
+    let posProxy: Vec2 | null = null;
 
     return {
         id: "pos",
@@ -113,13 +113,22 @@ export function pos(...args: Vec2Args): PosComp {
         },
 
         get pos(): Vec2 {
-            return _posReadOnly;
+            if (!posProxy) {
+                const self = this;
+                posProxy = new Proxy(_pos, {
+                    set(target, prop, value) {
+                        Reflect.set(target, prop, value);
+                        (self as any as InternalGameObjRaw)._transformVersion =
+                            nextTransformVersion();
+                        return true;
+                    },
+                });
+            }
+            return posProxy;
         },
         set pos(value: Vec2) {
             _pos.x = value.x;
             _pos.y = value.y;
-            _posReadOnly.x = value.x;
-            _posReadOnly.y = value.y;
             (this as any as InternalGameObjRaw)._transformVersion =
                 nextTransformVersion();
         },
@@ -136,9 +145,7 @@ export function pos(...args: Vec2Args): PosComp {
         // move to a destination, with optional speed
         // Address all ts ignores
         moveTo(...args) {
-            if (
-                typeof args[0] === "number" && typeof args[1] === "number"
-            ) {
+            if (typeof args[0] === "number" && typeof args[1] === "number") {
                 // @ts-ignore Use overload functions here?
                 return this.moveTo(vec2(args[0], args[1]), args[2]);
             }
@@ -185,25 +192,19 @@ export function pos(...args: Vec2Args): PosComp {
         // Transform a screen point (relative to the camera) to a local point (relative to this)
         set screenPos(pos: Vec2) {
             const obj = this as unknown as GameObj<PosComp>;
-            this.worldPos = isFixed(obj)
-                ? pos
-                : toWorld(pos);
+            this.worldPos = isFixed(obj) ? pos : toWorld(pos);
         },
 
         get screenPos() {
             const obj = this as unknown as GameObj<PosComp>;
             const pos = obj.worldPos;
-            return isFixed(obj)
-                ? pos
-                : toScreen(pos);
+            return isFixed(obj) ? pos : toScreen(pos);
         },
 
         // Transform a local point (relative to this) to a screen point (relative to the camera)
         toScreen(this: GameObj<PosComp | FixedComp>, pos: Vec2): Vec2 {
             pos = this.toWorld(pos);
-            return isFixed(this)
-                ? pos
-                : toScreen(pos);
+            return isFixed(this) ? pos : toScreen(pos);
         },
 
         // Transform a screen point (relative to the camera) to a local point (relative to this)

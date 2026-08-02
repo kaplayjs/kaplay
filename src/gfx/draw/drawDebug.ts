@@ -11,7 +11,7 @@ import {
     pushTransform,
     width,
 } from "../stack";
-import { viewportToCanvas } from "../viewport";
+import { viewportToCanvasLocal } from "../viewport";
 import { drawCircle } from "./drawCircle";
 import { drawFormattedText } from "./drawFormattedText";
 import { drawInspectText } from "./drawInspectText";
@@ -59,7 +59,7 @@ export function drawDebug() {
             lines.push(...inspecting.tags.map(t => `tag: ${t}`));
 
             drawInspectText(
-                viewportToCanvas(_k.app.mousePos()),
+                viewportToCanvasLocal(_k.app.mousePos()),
                 lines.join("\n"),
             );
         }
