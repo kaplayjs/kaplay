@@ -104,16 +104,6 @@ export const createCollisionSystem = (
                     broadPhaseIntersection.remove(obj as GameObj<AreaComp>);
                 }
             });
-            _k.appScope.onPause(obj => {
-                if (obj.has("area")) {
-                    broadPhaseIntersection.remove(obj as GameObj<AreaComp>);
-                }
-            });
-            _k.appScope.onUnpause(obj => {
-                if (obj.has("area")) {
-                    broadPhaseIntersection.add(obj as GameObj<AreaComp>);
-                }
-            });
 
             for (const obj of _k.game.root.get("*", { recursive: true })) {
                 if (obj.has("area") && !isPaused(obj)) {
