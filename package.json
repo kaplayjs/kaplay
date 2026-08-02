@@ -69,7 +69,8 @@
     "generate:dts": "dts-bundle-generator -o dist/doc.d.ts src/index.ts",
     "test": "node scripts/test.ts",
     "test:vite": "vitest --typecheck",
-    "prepare": "npm run build"
+    "prepare": "npm run build",
+    "fmt": "eslint . --fix"
   },
   "devDependencies": {
     "@eslint/js": "^9.39.4",
