@@ -1,6 +1,7 @@
 // @ts-check
 
 import fs from "fs";
+import { once } from "node:events";
 import path from "path";
 import puppeteer from "puppeteer";
 import { serve } from "./dev/serve.ts";
@@ -10,8 +11,9 @@ import { wait } from "./lib/util.ts";
 await build(true);
 
 const server = serve();
-const adress = server.address();
-const port = typeof adress == "object" ? adress?.port : "unknown";
+await once(server, "listening");
+const address = server.address();
+const port = typeof address == "object" ? address?.port : "unknown";
 
 let failed = false;
 
@@ -43,16 +45,20 @@ const playtests = playtestsDir.filter((p) => {
     return isTest;
 }).map((d) => path.basename(d, ".js"));
 
+const isRenderingError = (err: unknown): boolean => {
+    return err instanceof Error && err.message.startsWith("[rendering]");
+};
+
 for (const example of [...examples, ...playtests]) {
     console.log(`testing example "${example}"`);
     const page = await browser.newPage();
     page.on("pageerror", (err) => {
-        if (err.message.startsWith("[rendering]")) return;
+        if (isRenderingError(err)) return;
         failed = true;
         console.error(example, err);
     });
     page.on("error", (err) => {
-        if (err.message.startsWith("[rendering]")) return;
+        if (isRenderingError(err)) return;
         failed = true;
         console.error(example, err);
     });

@@ -56,6 +56,9 @@ So your change should look like:
   (#1097) - @Stanko
 - **(!)** `new RNG()` and `setRNG()` now use config objects instead of the
   string/custom rng parameter (#1097) - @Stanko
+- Improved `text` component performance by separating text transform and
+  formatting, reducing update calls for both dynamic and (especially) static
+  text (#1125) - @imaginarny
 
 ### Fixed
 
@@ -72,6 +75,8 @@ So your change should look like:
   the initial `GameObjRaw.use()` call (e.g. `obj.use(scale(2))`) - @mflerackers
 - Fixed `isKeyDown` and `isButtonDown` getting stuck on game loosing focus
   (#1101) - @Stanko
+- Fixed objects with a `text` component reporting wrong dimensions when scaled
+  using the `scale` component (#1125) - @imaginarny
 
 ## [4000.0.0-alpha.27.1] - 2026-05-12
 
@@ -80,6 +85,7 @@ So your change should look like:
 - Added a `repack: false` option to `loadSpite()` and a repack parameter to
   `loadSpriteAtlas()`, for faster loading if you're packing stuff at build-time
   (#1063) - @dragoncoder047
+- Added `loop` parameter and `onEnd` event to the video component (#1129) - @Stanko
 
 ### Changed
 
@@ -89,6 +95,7 @@ So your change should look like:
   @dragoncoder047
 - Added padding around edges of spritesheet to prevent stretch if uv ends up out
   of bounds (#1076) - @dragoncoder047
+- **(!)** Renamed video `mute` parameter to `muted` to match the native API (#1129) - @Stanko
 
 ### Fixed
 
