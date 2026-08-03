@@ -86,7 +86,8 @@ So your change should look like:
 - Added a `repack: false` option to `loadSpite()` and a repack parameter to
   `loadSpriteAtlas()`, for faster loading if you're packing stuff at build-time
   (#1063) - @dragoncoder047
-- Added `loop` parameter and `onEnd` event to the video component (#1129) - @Stanko
+- Added `loop` parameter and `onEnd` event to the video component (#1129) -
+  @Stanko
 
 ### Changed
 
@@ -96,7 +97,8 @@ So your change should look like:
   @dragoncoder047
 - Added padding around edges of spritesheet to prevent stretch if uv ends up out
   of bounds (#1076) - @dragoncoder047
-- **(!)** Renamed video `mute` parameter to `muted` to match the native API (#1129) - @Stanko
+- **(!)** Renamed video `mute` parameter to `muted` to match the native API
+  (#1129) - @Stanko
 
 ### Fixed
 
