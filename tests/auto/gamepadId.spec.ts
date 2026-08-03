@@ -59,7 +59,7 @@ describe("parseGamepadVidPid", () => {
 type Fixture = {
     description: string;
     id: string;
-    expectedControllerName: string;
+    expectedName: string;
     expectButton?: [index: string, button: string | undefined];
 };
 
@@ -67,102 +67,102 @@ const FIXTURES: Fixture[] = [
     {
         description: "DualSense, Chrome, old id format (w/ Vendor/Product)",
         id: "DualSense Wireless Controller (STANDARD GAMEPAD Vendor: 054c Product: 0ce6)",
-        expectedControllerName: "DualSense",
+        expectedName: "DualSense",
         expectButton: ["17", "touchpad"],
     },
     {
         description:
             "DualSense, Chrome, current id (#867 - Vendor/Product dropped, recovered via name fallback)",
         id: "DualSense Wireless Controller (STANDARD GAMEPAD)",
-        expectedControllerName: "DualSense",
+        expectedName: "DualSense",
         expectButton: ["17", "touchpad"],
     },
     {
         description: "DualSense, Firefox/Safari dash id format",
         id: "054c-0ce6-DualSense Wireless Controller",
-        expectedControllerName: "DualSense",
+        expectedName: "DualSense",
         expectButton: ["17", "touchpad"],
     },
     {
         description:
             "DualShock 4, Vendor/Product stripped (Android Chrome) - NOT recovered, name is too generic to guess safely",
         id: "Wireless Controller",
-        expectedControllerName: "Standard Gamepad",
+        expectedName: "Standard Gamepad",
         expectButton: ["17", undefined],
     },
     {
         description: "DualShock 4, Chrome, PID 05c4",
         id: "Wireless Controller (STANDARD GAMEPAD Vendor: 054c Product: 05c4)",
-        expectedControllerName: "DualShock 4",
+        expectedName: "DualShock 4",
         expectButton: ["17", "touchpad"],
     },
     {
         description: "DualShock 4, Chrome, PID 09cc (later hardware revision)",
         id: "Wireless Controller (STANDARD GAMEPAD Vendor: 054c Product: 09cc)",
-        expectedControllerName: "DualShock 4",
+        expectedName: "DualShock 4",
         expectButton: ["17", "touchpad"],
     },
     {
         description: "Switch Pro Controller, Chrome, with STANDARD GAMEPAD tag",
         id: "Pro Controller (STANDARD GAMEPAD Vendor: 057e Product: 2009)",
-        expectedControllerName: "Switch Pro Controller",
+        expectedName: "Switch Pro Controller",
         expectButton: ["17", "capture"],
     },
     {
         description:
             "Switch Pro Controller, Chrome, without STANDARD GAMEPAD tag",
         id: "Pro Controller (Vendor: 057e Product: 2009)",
-        expectedControllerName: "Switch Pro Controller",
+        expectedName: "Switch Pro Controller",
         expectButton: ["17", "capture"],
     },
     {
         description: "Joy-Con (L)",
         id: "Joy-Con (L) (STANDARD GAMEPAD Vendor: 057e Product: 2006)",
-        expectedControllerName: "Joy-Con (L)",
+        expectedName: "Joy-Con (L)",
     },
     {
         description: "Joy-Con (R)",
         id: "Joy-Con (R) (STANDARD GAMEPAD Vendor: 057e Product: 2007)",
-        expectedControllerName: "Joy-Con (R)",
+        expectedName: "Joy-Con (R)",
     },
     {
         description: "Joy-Con L+R combined",
         id: "Joy-Con L+R (STANDARD GAMEPAD Vendor: 057e Product: 200e)",
-        expectedControllerName: "Joy-Con L+R",
+        expectedName: "Joy-Con L+R",
         expectButton: ["17", "capture"],
     },
     {
         description:
             "Xbox Series X|S (USB) - not in our table, default covers it fully",
         id: "Xbox Wireless Controller (STANDARD GAMEPAD Vendor: 045e Product: 0b12)",
-        expectedControllerName: "Standard Gamepad",
+        expectedName: "Standard Gamepad",
     },
     {
         description: "Xbox Wireless Controller over Bluetooth",
         id: "Xbox Wireless Controller (STANDARD GAMEPAD Vendor: 045e Product: 02fd)",
-        expectedControllerName: "Standard Gamepad",
+        expectedName: "Standard Gamepad",
     },
     {
         description:
             "Xbox 360 via XInput - Chrome exposes no vendor/product for these",
         id: "Xbox 360 Controller (XInput STANDARD GAMEPAD)",
-        expectedControllerName: "Standard Gamepad",
+        expectedName: "Standard Gamepad",
     },
     {
         description: "Generic/\"knockoff\" USB gamepad (DragonRise chipset)",
         id: "Generic   USB Joystick (Vendor: 0079 Product: 0006)",
-        expectedControllerName: "Standard Gamepad",
+        expectedName: "Standard Gamepad",
     },
 ];
 
 describe("resolveGamepadMap (built-in table)", () => {
     for (const fixture of FIXTURES) {
         test(fixture.description, () => {
-            const { map, controllerName } = resolveGamepadMap(
+            const { map, name } = resolveGamepadMap(
                 fixture.id,
                 GP_MAP,
             );
-            expect(controllerName).toBe(fixture.expectedControllerName);
+            expect(name).toBe(fixture.expectedName);
             if (fixture.expectButton) {
                 const [index, expected] = fixture.expectButton;
                 expect(map.buttons[index]).toBe(expected);
@@ -183,12 +183,12 @@ describe("resolveGamepadMap (custom opt.gamepads override)", () => {
             },
         };
 
-        const { map, controllerName } = resolveGamepadMap(
+        const { map, name } = resolveGamepadMap(
             id,
             GP_MAP,
             customMap,
         );
-        expect(controllerName).toBe("My Custom DualSense Remap");
+        expect(name).toBe("My Custom DualSense Remap");
         expect(map.buttons["0"]).toBe("north");
     });
 
@@ -202,12 +202,12 @@ describe("resolveGamepadMap (custom opt.gamepads override)", () => {
             },
         };
 
-        const { controllerName } = resolveGamepadMap(
+        const { name } = resolveGamepadMap(
             "DualSense Wireless Controller (STANDARD GAMEPAD Vendor: 054c Product: 0ce6)",
             GP_MAP,
             customMap,
         );
-        expect(controllerName).toBe("DualSense");
+        expect(name).toBe("DualSense");
     });
 });
 
@@ -248,7 +248,7 @@ describe("detectGamepadType", () => {
         ).toBe("xbox");
     });
 
-    test("DualSense with vendor/product stripped still resolves, via the same name fallback that recovers controllerName", () => {
+    test("DualSense with vendor/product stripped still resolves, via the same name-fallback that resolveGamepadMap uses", () => {
         expect(
             typeOf("DualSense Wireless Controller (STANDARD GAMEPAD)"),
         ).toBe("ps5");

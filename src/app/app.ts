@@ -859,12 +859,12 @@ export const initApp = (
             GP_MAP,
             opt.gamepads,
         );
-        const { map: gamepadMap, controllerName } = gamepadResolution;
+        const { map: gamepadMap, name } = gamepadResolution;
         const type = detectGamepadType(gamepadResolution);
 
         const gamepad: KGamepad = {
             index: browserGamepad.index,
-            controllerName,
+            name,
             type,
             isPressed: (btn: KGamepadButton) => {
                 return state.gamepadStates.get(browserGamepad.index)

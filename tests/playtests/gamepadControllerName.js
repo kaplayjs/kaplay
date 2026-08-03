@@ -45,7 +45,7 @@ let currentGamepad = null;
 let lastButtonPress = "";
 
 function showConnected(gp) {
-    banner.text = `${gp.controllerName} connected! (type: ${
+    banner.text = `${gp.name} connected! (type: ${
         gp.type ?? "unknown"
     })`;
     currentGamepad = gp;
@@ -88,7 +88,7 @@ if (existing) showConnected(existing);
 
 onGamepadConnect((gp) => {
     showConnected(gp);
-    showToast(`${gp.controllerName} connected`, rgb(0, 255, 0));
+    showToast(`${gp.name} connected`, rgb(0, 255, 0));
 });
 
 onGamepadDisconnect((gp) => {
@@ -97,11 +97,11 @@ onGamepadDisconnect((gp) => {
     currentGamepad = null;
     lastButtonPress = "";
     panel.text = "";
-    showToast(`${gp.controllerName} disconnected`, rgb(255, 0, 0));
+    showToast(`${gp.name} disconnected`, rgb(255, 0, 0));
 });
 
 onGamepadButtonPress((btn, gp) => {
-    lastButtonPress = `${gp.controllerName}: ${btn}`;
+    lastButtonPress = `${gp.name}: ${btn}`;
 });
 
 onButtonPress("test", () => {

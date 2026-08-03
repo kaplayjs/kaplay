@@ -42,7 +42,7 @@ function matchByName(
 export type GamepadMapResolution = {
     map: GamepadDef;
     vidPid: string | null;
-    controllerName: string;
+    name: string;
 };
 
 // Resolves the GamepadDef for a raw Gamepad.id. Pure function (no DOM
@@ -58,7 +58,7 @@ export function resolveGamepadMap(
         ?? (vidPid ? builtins[vidPid] : undefined)
         ?? matchByName(id, builtins)
         ?? builtins["default"];
-    return { map, vidPid, controllerName: map.name ?? "Standard Gamepad" };
+    return { map, vidPid, name: map.name ?? "Standard Gamepad" };
 }
 
 // Vendor-only fallback for controllers with no `type` in the table (e.g.
@@ -72,7 +72,7 @@ const VENDOR_ONLY_TYPE: Record<string, GamepadType> = {
 };
 
 // Resolves a controller family from an already-resolved gamepad map, so it
-// gets the same name-fallback recovery as `controllerName`. Priority:
+// gets the same name-fallback recovery as `name`. Priority:
 // resolved map's exact `type` (ps4/ps5) > vendor-only fallback (playstation)
 // > undefined.
 export function detectGamepadType(

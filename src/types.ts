@@ -247,7 +247,7 @@ export type KGamepad = {
      * A human-readable label for the recognized controller, e.g. "DualSense",
      * or "Standard Gamepad" if unrecognized. For display/debugging only.
      */
-    controllerName: string;
+    name: string;
     /** The recognized controller family, for picking button-glyph assets. */
     type: GamepadType | undefined;
     /** If certain button is pressed. */
