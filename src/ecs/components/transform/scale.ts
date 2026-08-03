@@ -70,6 +70,11 @@ export function scale(...args: Vec2Args): ScaleComp {
     return {
         id: "scale",
 
+        add() {
+            (this as any as InternalGameObjRaw)._transformVersion =
+                nextTransformVersion();
+        },
+
         get scale(): Vec2 {
             if (!scaleProxy) {
                 const self = this;

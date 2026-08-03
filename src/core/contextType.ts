@@ -997,14 +997,14 @@ export interface KAPLAYCtx {
      * Draws a video.
      *
      * @param url - The video to play. Needs to be on the same webserver due to CORS.
-     * @param opt - The video component options
+     * @param opt - The video component options. You need to provide at least video `width` and `height`.
      *
      * @returns The video comp.
      * @since v4000.0
      * @group Components
      * @subgroup Rendering
      */
-    video(url: string, opt?: VideoCompOpt): VideoComp;
+    video(url: string, opt: VideoCompOpt): VideoComp;
     /**
      * Draws a picture, using the Picture API.
      *
@@ -2242,10 +2242,10 @@ export interface KAPLAYCtx {
      */
     onKeyPressRepeat(action: (k: Key) => void): KEventController;
     /**
-     * Register an event that runs when user release certain keys.
+     * Register an event that runs when user releases certain keys.
      *
-     * @param k - = The key(s) to listen for. See {@link Key `Key`}.
-     * @param action - The function that runs when a user releases certain keys
+     * @param k - The key(s) to listen for. See {@link Key `Key`}.
+     * @param action - The function that runs when user releases certain keys
      *
      * @example
      * ```js
@@ -2264,7 +2264,7 @@ export interface KAPLAYCtx {
     /**
      * Register an event that runs when user releases a key.
      *
-     * @param action - The function that runs when a user releases a {@link Key `Key`}.
+     * @param action - The function that runs when user releases a {@link Key `Key`}.
      *
      * @example
      * ```js
@@ -2637,7 +2637,7 @@ export interface KAPLAYCtx {
      * // when user presses button
      * onGamepadButtonPress((btn, gp) => {
      *     if (btn == "south") {
-     *         player.jump(200);     // jump
+     *         player.jump(200);
      *     }
      * });
      * ```
@@ -2733,7 +2733,7 @@ export interface KAPLAYCtx {
         action: (value: Vec2, gameepad: KGamepad) => void,
     ): KEventController;
     /**
-     * Register an event that runs when user press a defined button
+     * Register an event that runs when user presses a defined button
      * (like "jump") on any input (keyboard, gamepad).
      *
      * @param btn - The button(s) to listen for.
@@ -2750,7 +2750,7 @@ export interface KAPLAYCtx {
     ): KEventController;
     onButtonDown(action: (btn: string) => void): KEventController;
     /**
-     * Register an event that runs when user press a defined button
+     * Register an event that runs when user presses a defined button
      * (like "jump") on any input (keyboard, gamepad).
      *
      * @param btn - The button(s) to listen for.
@@ -2767,7 +2767,7 @@ export interface KAPLAYCtx {
     ): KEventController;
     onButtonPress(action: (btn: string) => void): KEventController;
     /**
-     * Register an event that runs when user release a defined button
+     * Register an event that runs when user releases a defined button
      * (like "jump") on any input (keyboard, gamepad).
      *
      * @param btn - The button(s) to listen for.
@@ -3374,647 +3374,6 @@ export interface KAPLAYCtx {
      * @group Events
      */
     onHoverEnd(tag: Tag, action: (a: GameObj) => void): KEventController;
-    /**
-     * Register an event that runs every frame when a key is held down.
-     *
-     * @param key - The key(s) to listen for.
-     * @param action - The function to run when the event is triggered.
-     *
-     * @example
-     * ```js
-     * // move left by SPEED pixels per frame every frame when left arrow key is being held down
-     * onKeyDown("left", () => {
-     *     bean.move(-SPEED, 0);
-     * });
-     * ```
-     *
-     * @returns The event controller.
-     * @since v2000.1
-     * @group Input
-     * @subgroup Keyboard
-     */
-    onKeyDown(key: Key | Key[], action: (key: Key) => void): KEventController;
-    /**
-     * Register an event that runs every frame when any key is held down.
-     *
-     * @param action - The function to run when the event is triggered.
-     *
-     * @returns The event controller.
-     * @since v2000.1
-     * @group Input
-     * @subgroup Keyboard
-     */
-    onKeyDown(action: (key: Key) => void): KEventController;
-    /**
-     * Register an event that runs when user presses certain keys.
-     *
-     * @param k - The key(s) to listen for.
-     * @param action - The function to run when the event is triggered.
-     *
-     * @example
-     * ```js
-     * // .jump() once when "space" is just being pressed
-     * onKeyPress("space", () => {
-     *     bean.jump();
-     * });
-     *
-     * onKeyPress(["up", "space"], () => {
-     *     bean.jump();
-     * });
-     * ```
-     *
-     * @returns The event controller.
-     * @since v2000.1
-     * @group Input
-     * @subgroup Keyboard
-     */
-    onKeyPress(key: Key | Key[], action: (key: Key) => void): KEventController;
-    /**
-     * Register an event that runs when user presses any key.
-     *
-     * @param action - The function to run when the event is triggered.
-     *
-     * @example
-     * ```js
-     * // Call restart() when player presses any key
-     * onKeyPress((key) => {
-     *     debug.log(`key pressed ${key}`);
-     *     restart();
-     * });
-     * ```
-     *
-     * @returns The event controller.
-     * @since v3001.0
-     * @group Input
-     * @subgroup Keyboard
-     */
-    onKeyPress(action: (key: Key) => void): KEventController;
-    /**
-     * Register an event that runs when user presses certain keys (also fires repeatedly when the keys are being held down).
-     *
-     * @param k - The key(s) to listen for.
-     * @param action - The function to run when the event is triggered.
-     *
-     * @example
-     * ```js
-     * // delete last character when "backspace" is being pressed and held
-     * onKeyPressRepeat("backspace", () => {
-     *     input.text = input.text.substring(0, input.text.length - 1);
-     * });
-     * ```
-     *
-     * @returns The event controller.
-     * @since v3000.1
-     * @group Input
-     * @subgroup Keyboard
-     */
-    onKeyPressRepeat(
-        k: Key | Key[],
-        action: (k: Key) => void,
-    ): KEventController;
-    onKeyPressRepeat(action: (k: Key) => void): KEventController;
-    /**
-     * Register an event that runs when user release certain keys.
-     *
-     * @param k - = The key(s) to listen for. See {@link Key `Key`}.
-     * @param action - The function that runs when a user releases certain keys
-     *
-     * @example
-     * ```js
-     * // release `a` or `b` keys
-     * onKeyRelease([`a`, `b`], (k) => {
-     *     debug.log(`Released the ${k} key...`);
-     * });
-     * ```
-     *
-     * @returns The event controller.
-     * @since v2000.1
-     * @group Input
-     * @subgroup Keyboard
-     */
-    onKeyRelease(k: Key | Key[], action: (k: Key) => void): KEventController;
-    /**
-     * Register an event that runs when user releases a key.
-     *
-     * @param action - The function that runs when a user releases a {@link Key `Key`}.
-     *
-     * @example
-     * ```js
-     * // release a key
-     * onKeyRelease((k) => {
-     *     debug.log(`Released the ${k} key...`);
-     * });
-     * ```
-     *
-     * @returns The event controller.
-     * @since v2000.1
-     * @group Input
-     */
-    onKeyRelease(action: (k: Key) => void): KEventController;
-    /**
-     * Register an event that runs when user inputs text.
-     *
-     * @param action - The function to run when the event is triggered.
-     *
-     * @example
-     * ```js
-     * // type into input
-     * onCharInput((ch) => {
-     *     input.text += ch
-     * })
-     * ```
-     *
-     * @returns The event controller.
-     * @since v2000.1
-     * @group Input
-     * @subgroup Keyboard
-     */
-    onCharInput(action: (ch: string) => void): KEventController;
-    /**
-     * Register an event that runs every frame when certain mouse buttons are being held down.
-     *
-     * @param btn - The mouse button(s) to listen for. See {@link MouseButton `MouseButton`}.
-     * @param action - The function that is run when certain mouse buttons are being held down.
-     *
-     * @example
-     * ```js
-     * // count time with left mouse button down
-     * let mouseTime = 0;
-     * onMouseDown("left", () => {
-     *     mouseTime += dt();
-     *     debug.log(`Time with mouse down: ${mouseTime});
-     * });
-     * ```
-     *
-     * @returns The event controller.
-     * @since v3001.0
-     * @group Input
-     * @subgroup Mouse
-     */
-    onMouseDown(
-        btn: MouseButton | MouseButton[],
-        action: (m: MouseButton) => void,
-    ): KEventController;
-    /**
-     * Register an event that runs every frame when any mouse button is being held down.
-     *
-     * @param action - The function that is run when any mouse button is being held down.
-     *
-     * @example
-     * ```js
-     * // count time with any mouse button down
-     * let mouseTime = 0;
-     * onMouseDown((m) => {
-     *     mouseTime += dt();
-     * });
-     * ```
-     *
-     * @returns The event controller.
-     * @since v3001.0
-     * @group Input
-     * @subgroup Mouse
-     */
-    onMouseDown(action: (m: MouseButton) => void): KEventController;
-    /**
-     * Register an event that runs when user clicks mouse.
-     *
-     * @param action - The function that is run when user clicks a mouse button.
-     *
-     * @example
-     * ```js
-     * // gives cookies on left press, remove on right press
-     * let cookies = 0;
-     * onMousePress(["left", "right"], (m) => {
-     *     if (m == "left") {
-     *         cookies++;
-     *     } else {
-     *         cookies--;
-     *     }
-     * });
-     * ```
-     *
-     * @returns The event controller.
-     * @since v3001.0
-     * @group Input
-     * @subgroup Mouse
-     */
-    onMousePress(action: (m: MouseButton) => void): KEventController;
-    /**
-     * Register an event that runs when user clicks mouse.
-     *
-     * @param btn - The mouse button(s) to listen for. See {@link MouseButton `MouseButton`}.
-     * @param action - The function that is run what the user clicks cetain mouse buttons.
-     *
-     * @example
-     * ```js
-     * // gives cookies on any mouse press
-     * let cookies = 0;
-     * onMousePress((m) => {
-     *     cookies++;
-     *     debug.log(`Cookies: ${cookies}`);
-     * });
-     * ```
-     *
-     * @returns The event controller.
-     * @since v3001.0
-     * @group Input
-     * @subgroup Mouse
-     */
-    onMousePress(
-        btn: MouseButton | MouseButton[],
-        action: (m: MouseButton) => void,
-    ): KEventController;
-    /**
-     * Register an event that runs when user releases mouse.
-     *
-     * @param action - The function that is run what the user clicks a provided mouse button.
-     *
-     * @example
-     * ```js
-     * // spawn bean where right mouse is released
-     * onMouseRelease("right", (m) => {
-     *     debug.log(`${m} released, spawning bean...`);
-     *     add([
-     *         pos(mousePos()),
-     *         sprite("bean"),
-     *         anchor("center"),
-     *     ]);
-     * });
-     * ```
-     *
-     * @returns The event controller.
-     * @since v3001.0
-     * @group Input
-     * @subgroup Mouse
-     */
-    onMouseRelease(action: (m: MouseButton) => void): KEventController;
-    /**
-     * Register an event that runs when user releases mouse.
-     *
-     * @param btn - The button(s) to listen for. See {@link MouseButton `MouseButton`}.
-     * @param action - The function that is run what the user clicks a provided mouse button.
-     *
-     * @example
-     * ```js
-     * // spawn bean where right mouse is released
-     * onMouseRelease((m) => {
-     *     if (m == "right") {
-     *         debug.log(`${m} released, spawning bean...`);
-     *         add([
-     *             pos(mousePos()),
-     *             sprite("bean"),
-     *             anchor("center"),
-     *         ]);
-     *     });
-     * });
-     * ```
-     *
-     * @returns The event controller.
-     * @since v3001.0
-     * @group Input
-     * @subgroup Mouse
-     */
-    onMouseRelease(
-        btn: MouseButton | MouseButton[],
-        action: (m: MouseButton) => void,
-    ): KEventController;
-    /**
-     * Register an event that runs whenever user moves the mouse.
-     *
-     * @param action - The function that is run what the user moves the mouse.
-     *
-     * @example
-     * ```js
-     * // runs when the mouse has moved
-     * onMouseMove((p, d) => {
-     *     bean.pos = p; // set bean position to mouse position
-     * });
-     * ```
-     *
-     * @returns The event controller.
-     * @since v2000.1
-     * @group Input
-     * @subgroup Mouse
-     */
-    onMouseMove(action: (pos: Vec2, delta: Vec2) => void): KEventController;
-    /**
-     * Register an event that runs when a touch starts.
-     *
-     * @param action - The function to run when the event is triggered.
-     *
-     * @returns The event controller.
-     * @since v2000.1
-     * @group Input
-     * @subgroup Touch
-     */
-    onTouchStart(action: (pos: Vec2, t: Touch) => void): KEventController;
-    /**
-     * Register an event that runs whenever touch moves.
-     *
-     * @param action - The function to run when the event is triggered.
-     *
-     * @returns The event controller.
-     * @since v2000.1
-     * @group Input
-     * @subgroup Touch
-     */
-    onTouchMove(action: (pos: Vec2, t: Touch) => void): KEventController;
-    /**
-     * Register an event that runs when a touch ends.
-     *
-     * @param action - The function to run when the event is triggered.
-     *
-     * @returns The event controller.
-     * @since v2000.1
-     * @group Input
-     * @subgroup Touch
-     */
-    onTouchEnd(action: (pos: Vec2, t: Touch) => void): KEventController;
-    /**
-     * Register an event that runs when mouse wheel scrolled.
-     *
-     * @param action - The function to run when the event is triggered.
-     *
-     * @example
-     * ```js
-     * // Zoom camera on scroll
-     * onScroll((delta) => {
-     *     const zoom = delta.y / 500;
-     *     camScale(camScale().add(zoom));
-     * });
-     * ```
-     *
-     * @returns The event controller.
-     * @since v3000.0
-     * @group Input
-     * @subgroup Mouse
-     */
-    onScroll(action: (delta: Vec2) => void): KEventController;
-    /**
-     * Register an event that runs when a gamepad is connected.
-     *
-     * @param action - The function that runs when quit() is called.
-     *
-     * @example
-     * ```js
-     * // watch for a controller connecting
-     * onGamepadConnect((gp) => {
-     *     debug.log(`ohhi player ${gp.index + 1}`);
-     * });
-     * ```
-     *
-     * @returns The event controller.
-     * @since v3000.0
-     * @group Input
-     * @subgroup Gamepad
-     */
-    onGamepadConnect(action: (gamepad: KGamepad) => void): KEventController;
-    /**
-     * Register an event that runs when a gamepad is disconnected.
-     *
-     * @param action - The function that runs when quit() is called.
-     *
-     * @example
-     * ```js
-     * // watch for a controller disconnecting
-     * onGamepadDisconnect((gp) => {
-     *     debug.log(`ohbye player ${gp.index + 1}`);
-     * });
-     * ```
-     *
-     * @returns The event controller.
-     * @since v3000.0
-     * @group Input
-     * @subgroup Gamepad
-     */
-    onGamepadDisconnect(action: (gamepad: KGamepad) => void): KEventController;
-    /**
-     * Register an event that runs every frame when certain gamepad buttons are held down.
-     *
-     * @param btn - The button(s) to listen for. See {@link KGamepadButton `KGamepadButton`}.
-     * @param action - The function that is run while certain gamepad buttons are held down.
-     *
-     * @example
-     * ```js
-     * // when button is being held down
-     * onGamepadButtonDown("rtrigger", (gp) => {
-     *     car.addForce(Vec2.fromAngle(car.angle).scale(10));
-     * });
-     * ```
-     *
-     * @returns The event controller.
-     * @since v3001.0
-     * @group Input
-     * @subgroup Gamepad
-     */
-    onGamepadButtonDown(
-        btn: KGamepadButton | KGamepadButton[],
-        action: (btn: KGamepadButton, gamepad: KGamepad) => void,
-    ): KEventController;
-    /**
-     * Register an event that runs every frame when any gamepad buttons are held down.
-     *
-     * @param action - The function that is run while any gamepad buttons are held down.
-     *
-     * @example
-     * ```js
-     * // when button is being held down
-     * onGamepadButtonDown((btn, gp) => {
-     *     if (btn == "rtrigger") {
-     *         car.addForce(Vec2.fromAngle(car.angle).scale(10));
-     *     } else if (btn == "ltrigger") {
-     *         car.addForce(Vec2.fromAngle(car.angle).scale(-5));
-     *     }
-     * });
-     * ```
-     *
-     * @returns The event controller.
-     * @since v3001.0
-     * @group Input
-     * @subgroup Gamepad
-     */
-    onGamepadButtonDown(
-        action: (btn: KGamepadButton, gamepad: KGamepad) => void,
-    ): KEventController;
-    /**
-     * Register an event that runs when user presses certain gamepad button.
-     *
-     * @param btn - The button(s) to listen for. See {@link KGamepadButton `KGamepadButton`}.
-     * @param action - The function that is run when certain gamepad buttons are pressed.
-     *
-     * @example
-     * ```js
-     * // when user presses button
-     * onGamepadButtonPress("south", (btn, gp) => {
-     *     player.jump(200);
-     * });
-     * ```
-     *
-     * @returns The event controller.
-     * @since v3001.0
-     * @group Input
-     * @subgroup Gamepad
-     */
-    onGamepadButtonPress(
-        btn: KGamepadButton | KGamepadButton[],
-        action: (btn: KGamepadButton, gamepad: KGamepad) => void,
-    ): KEventController;
-    /**
-     * Register an event that runs when user presses any gamepad button.
-     *
-     * @param action - The function that is run when any gamepad buttons is pressed.
-     *
-     * @example
-     * ```js
-     * // when user presses button
-     * onGamepadButtonPress((btn, gp) => {
-     *     if (btn == "south") {
-     *         player.jump(200);
-     *     }
-     * });
-     * ```
-     *
-     * @returns The event controller.
-     * @since v3001.0
-     * @group Input
-     * @subgroup Gamepad
-     */
-    onGamepadButtonPress(
-        action: (btn: KGamepadButton, gamepad: KGamepad) => void,
-    ): KEventController;
-    /**
-     * Register an event that runs when user releases certain gamepad button
-     *
-     * @param btn - The button(s) to listen for. See {@link KGamepadButton `KGamepadButton`}.
-     * @param action - The function that is run when certain gamepad buttons are released.
-     *
-     * @example
-     * ```js
-     * // charged attack
-     * let chargeTime = 0
-     * onGamepadButtonPress("west", (btn, gp) => {
-     *     chargeTime = time();
-     * });
-     *
-     * // when a gamepad button is released, this is run
-     * onGamepadButtonRelease("west", (btn, gp) => {
-     *     let chargedt = time() - chargeTime;
-     *     debug.log(`Used ${chargedt * 1000} power!`);
-     * });
-     * ```
-     *
-     * @returns The event controller.
-     * @since v3001.0
-     * @group Input
-     * @subgroup Gamepad
-     */
-    onGamepadButtonRelease(
-        btn: KGamepadButton | KGamepadButton[],
-        action: (btn: KGamepadButton, gamepad: KGamepad) => void,
-    ): KEventController;
-    /**
-     * Register an event that runs when user releases any gamepad button.
-     *
-     * @param action - The function that is run when any gamepad buttons are released.
-     *
-     * @example
-     * ```js
-     * // when a gamepad button is released, this is run
-     * onGamepadButtonRelease((btn, gp) => {
-     *     if (btn == "north") {
-     *         player.jump(500);
-     *     }
-     * });
-     * ```
-     *
-     * @returns The event controller.
-     * @since v3000.0
-     * @group Input
-     * @subgroup Gamepad
-     */
-    onGamepadButtonRelease(
-        action: (btn: KGamepadButton, gamepad: KGamepad) => void,
-    ): KEventController;
-    /**
-     * Register an event that runs when the gamepad axis exists.
-     *
-     * @param button - The stick to listen for. See {@link KGamepadStick `GamepadStick`}.
-     * @param action - The function that is run when a specific gamepad stick is moved.
-     *
-     * @example
-     * ```js
-     * // player move
-     * let player = add([
-     *     pos(center()),
-     *     sprite(`bean`),
-     * ]);
-     *
-     * // when left stick is moved
-     * onGamepadStick("left", (stickVector, gp) => {
-     *     player.move(stickVector.x, 0);
-     * });
-     * ```
-     *
-     * @returns The event controller.
-     * @since v3000.0
-     * @group Input
-     * @subgroup Gamepad
-     */
-    onGamepadStick(
-        stick: KGamepadStick,
-        action: (value: Vec2, gameepad: KGamepad) => void,
-    ): KEventController;
-    /**
-     * Register an event that runs when user press a defined button
-     * (like "jump") on any input (keyboard, gamepad).
-     *
-     * @param btn - The button(s) to listen for.
-     * @param action - The function to run when the event is triggered.
-     *
-     * @returns The event controller.
-     * @since v3001.0
-     * @group Input
-     * @subgroup Buttons API
-     */
-    onButtonPress(
-        btn: string | string[],
-        action: (btn: string) => void,
-    ): KEventController;
-    onButtonPress(action: (btn: string) => void): KEventController;
-    /**
-     * Register an event that runs when user release a defined button
-     * (like "jump") on any input (keyboard, gamepad).
-     *
-     * @param btn - The button(s) to listen for.
-     * @param action - The function to run when the event is triggered.
-     *
-     * @returns The event controller.
-     * @since v3001.0
-     * @group Input
-     * @subgroup Buttons API
-     */
-    onButtonRelease(
-        btn: string | string[],
-        action: (btn: string) => void,
-    ): KEventController;
-    onButtonRelease(action: (btn: string) => void): KEventController;
-    /**
-     * Register an event that runs when user press a defined button
-     * (like "jump") on any input (keyboard, gamepad).
-     *
-     * @param btn - The button(s) to listen for.
-     * @param action - The function to run when the event is triggered.
-     *
-     * @returns The event controller.
-     * @since v3001.0
-     * @group Input
-     * @subgroup Buttons API
-     */
-    onButtonDown(
-        btn: string | string[],
-        action: (btn: string) => void,
-    ): KEventController;
-    onButtonDown(action: (btn: string) => void): KEventController;
     /**
      * Register an event that runs when current scene ends.
      *
@@ -5413,6 +4772,59 @@ export interface KAPLAYCtx {
      * @group Timer
      */
     wait(n: number, action?: () => void): TimerController;
+    /**
+     * Defer/run the function on the next frame.
+     *
+     * @param action - The function to run.
+     *
+     * @example Passing a callback
+     * ```js
+     * nextFrame(() => {})
+     * ```
+     * @example It returns a PromiseLike that can be used with await
+     * ```js
+     * await nextFrame()
+     * ```
+     * @example Use cases
+     * ```js
+     * // Typical use case is to unpause a game after all listeners in the current frame
+     * // have run, otherwise you would unpause and register input events too early
+     * nextFrame(() => {
+     *     gameObj.paused = false
+     * })
+     *
+     * // Or registering an event listener inside of the same event listener
+     * onKeyPress("space", () => {
+     *     // outside, the object would be added in the same frame when the space key is
+     *     // processed, so you would see "ohhi" message on the first space key press
+     *     nextFrame(() => {
+     *         const obj = add([])
+     *         obj.onKeyPress("space", () => debug.log("ohhi"))
+     *     })
+     *     return cancel()
+     * })
+     *
+     * // Or accessing info that is not available in the current event loop
+     * // like getting the next tiles array in the addLevel tiles config
+     * "=": () => [
+     *     sprite("grass"),
+     *     {
+     *         add() {
+     *             // outside it would be empty, since it runs when the tile is added
+     *             nextFrame(() => {
+     *                 // here it will work since the whole level is processed now
+     *                 console.log(this.getLevel().getAt(this.tilePos.add(1, 0)))
+     *             })
+     *         },
+     *     },
+     * ],
+     * ```
+     *
+     * @returns A timer controller.
+     * @since v4000.0
+     * @group Timer
+     */
+    nextFrame(action?: () => void): TimerController;
     /**
      * Run the function every n seconds.
      *
