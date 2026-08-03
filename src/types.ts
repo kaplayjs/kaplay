@@ -197,10 +197,8 @@ export type ChordedKGamepadButton =
 export type KGamepadStick = "left" | "right";
 
 /**
- * A machine-readable controller family, for picking button-glyph assets.
- * Not a closed set - custom `GamepadDef`s (via `KAPLAYOpt.gamepads`) can use
- * any string here, e.g. `"steam"` for a Steam Controller mapping KAPLAY
- * doesn't ship a built-in for.
+ * Controller type, useful for accurate button-glyph assets.
+ * Can be extended with custom gamepad definitions.
  *
  * @group Input
  * @subgroup Gamepad
