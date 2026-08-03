@@ -20,7 +20,7 @@ import type {
 } from "../events/eventMap";
 import { type KEventController, KEventHandler } from "../events/events";
 import { canvasToViewport } from "../gfx/viewport";
-import { map, vec2 } from "../math/math";
+import { vec2 } from "../math/math";
 import { Vec2 } from "../math/Vec2";
 import { _k } from "../shared";
 import { deprecateMsg } from "../utils/log";
@@ -999,6 +999,44 @@ export const initApp = (
         queueReleaseHeldInputs();
     }
 
+    const pixelDensity = opt.pixelDensity || 1;
+
+    function clientToViewport(clientX: number, clientY: number): Vec2 {
+        const box = state.canvas.getBoundingClientRect();
+        const canvasWidth = state.canvas.width / pixelDensity;
+        const canvasHeight = state.canvas.height / pixelDensity;
+        let x = box.x;
+        let y = box.y;
+        let width = box.width;
+        let height = box.height;
+
+        // Account for bars created by object-fit: contain
+        // It is used by the most user-agent stylesheets when element is put in fullscreen
+        // Or it can be set by the user
+        if (getComputedStyle(state.canvas).objectFit === "contain") {
+            const canvasAspectRatio = canvasWidth / canvasHeight;
+            const boxAspectRatio = width / height;
+
+            if (boxAspectRatio > canvasAspectRatio) {
+                const fittedWidth = height * canvasAspectRatio;
+                x += (width - fittedWidth) / 2;
+                width = fittedWidth;
+            }
+            else {
+                const fittedHeight = width / canvasAspectRatio;
+                y += (height - fittedHeight) / 2;
+                height = fittedHeight;
+            }
+        }
+
+        return canvasToViewport(
+            new Vec2(
+                (clientX - x) * canvasWidth / width,
+                (clientY - y) * canvasHeight / height,
+            ),
+        );
+    }
+
     canvasEvents.blur = () => {
         releaseHeldInputsOnFocusLoss();
     };
@@ -1008,9 +1046,7 @@ export const initApp = (
         // Letterbox creates some black bars so we need to remove that for calculating
         // mouse position
 
-        // Ironically, e.offsetX and e.offsetY are the mouse position. Is not
-        // related to what we call the "offset" in this code
-        const mousePos = canvasToViewport(new Vec2(e.offsetX, e.offsetY));
+        const mousePos = clientToViewport(e.clientX, e.clientY);
         const mouseDeltaPos = new Vec2(e.movementX, e.movementY);
 
         state.lastInputDevice = "mouse";
@@ -1118,14 +1154,11 @@ export const initApp = (
 
         state.events.onOnce("input", () => {
             const touches = [...e.changedTouches];
-            const box = state.canvas.getBoundingClientRect();
 
             if (opt.touchToMouse !== false) {
-                state.mousePos = canvasToViewport(
-                    new Vec2(
-                        touches[0].clientX - box.x,
-                        touches[0].clientY - box.y,
-                    ),
+                state.mousePos = clientToViewport(
+                    touches[0].clientX,
+                    touches[0].clientY,
                 );
                 state.lastInputDevice = "mouse";
                 state.buttonHandler.processMousedown("left", state);
@@ -1135,12 +1168,7 @@ export const initApp = (
             touches.forEach((t) => {
                 state.events.trigger(
                     "touchStart",
-                    canvasToViewport(
-                        new Vec2(
-                            t.clientX - box.x,
-                            t.clientY - box.y,
-                        ),
-                    ),
+                    clientToViewport(t.clientX, t.clientY),
                     t,
                 );
             });
@@ -1152,15 +1180,12 @@ export const initApp = (
         e.preventDefault();
         state.events.onOnce("input", () => {
             const touches = [...e.changedTouches];
-            const box = state.canvas.getBoundingClientRect();
 
             if (opt.touchToMouse !== false) {
                 const lastMousePos = state.mousePos;
-                state.mousePos = canvasToViewport(
-                    new Vec2(
-                        touches[0].clientX - box.x,
-                        touches[0].clientY - box.y,
-                    ),
+                state.mousePos = clientToViewport(
+                    touches[0].clientX,
+                    touches[0].clientY,
                 );
                 state.mouseDeltaPos = state.mousePos.sub(lastMousePos);
                 state.events.trigger("mouseMove");
@@ -1169,12 +1194,7 @@ export const initApp = (
             touches.forEach((t) => {
                 state.events.trigger(
                     "touchMove",
-                    canvasToViewport(
-                        new Vec2(
-                            t.clientX - box.x,
-                            t.clientY - box.y,
-                        ),
-                    ),
+                    clientToViewport(t.clientX, t.clientY),
                     t,
                 );
             });
@@ -1184,14 +1204,11 @@ export const initApp = (
     canvasEvents.touchend = (e) => {
         state.events.onOnce("input", () => {
             const touches = [...e.changedTouches];
-            const box = state.canvas.getBoundingClientRect();
 
             if (opt.touchToMouse != false) {
-                state.mousePos = canvasToViewport(
-                    new Vec2(
-                        touches[0].clientX - box.x,
-                        touches[0].clientY - box.y,
-                    ),
+                state.mousePos = clientToViewport(
+                    touches[0].clientX,
+                    touches[0].clientY,
                 );
                 state.mouseDeltaPos = new Vec2(0, 0);
                 state.buttonHandler.processMouseup("left", state);
@@ -1201,12 +1218,7 @@ export const initApp = (
             touches.forEach((t) => {
                 state.events.trigger(
                     "touchEnd",
-                    canvasToViewport(
-                        new Vec2(
-                            t.clientX - box.x,
-                            t.clientY - box.y,
-                        ),
-                    ),
+                    clientToViewport(t.clientX, t.clientY),
                     t,
                 );
             });
@@ -1216,14 +1228,11 @@ export const initApp = (
     canvasEvents.touchcancel = (e) => {
         state.events.onOnce("input", () => {
             const touches = [...e.changedTouches];
-            const box = state.canvas.getBoundingClientRect();
 
             if (opt.touchToMouse !== false) {
-                state.mousePos = canvasToViewport(
-                    new Vec2(
-                        touches[0].clientX - box.x,
-                        touches[0].clientY - box.y,
-                    ),
+                state.mousePos = clientToViewport(
+                    touches[0].clientX,
+                    touches[0].clientY,
                 );
                 state.mouseState.release("left", state);
             }
@@ -1231,12 +1240,7 @@ export const initApp = (
             touches.forEach((t) => {
                 state.events.trigger(
                     "touchEnd",
-                    canvasToViewport(
-                        new Vec2(
-                            t.clientX - box.x,
-                            t.clientY - box.y,
-                        ),
-                    ),
+                    clientToViewport(t.clientX, t.clientY),
                     t,
                 );
             });
