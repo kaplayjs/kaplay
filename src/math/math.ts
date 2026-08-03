@@ -8,6 +8,7 @@ import { traceRegion } from "./getImageOutline";
 import { lerp, type LerpValue } from "./lerp";
 import { rand, RNG } from "./random";
 import { Vec2 } from "./Vec2";
+import { Vec3 } from "./vec3";
 
 /**
  * Possible arguments for a Vec2.
@@ -20,6 +21,19 @@ export type Vec2Args =
     | [number]
     | [Vec2]
     | [number | Vec2]
+    | [];
+
+/**
+ * Possible arguments for a Vec2.
+ *
+ * @group Math
+ * @subgroup Vectors
+ */
+export type Vec3Args =
+    | [number, number, number]
+    | [number]
+    | [Vec3]
+    | [number | Vec3]
     | [];
 
 export function deg2rad(deg: number): number {
@@ -70,6 +84,20 @@ export function vec2(...args: Vec2Args): Vec2 {
     }
     // @ts-ignore
     return new Vec2(...args);
+}
+
+export function vec3(...args: Vec3Args): Vec3 {
+    if (args.length === 1) {
+        if (args[0] instanceof Vec3) {
+            return new Vec3(args[0].x, args[0].y, args[0].z);
+        }
+        else if (Array.isArray(args[0]) && args[0].length === 3) {
+            return new Vec3(...args[0]);
+        }
+    }
+
+    // @ts-ignore
+    return new Vec3(...args);
 }
 
 /**

@@ -167,6 +167,7 @@ import type { NavMesh } from "../math/navigationmesh";
 import type { RandomGenerator, RNG, RNGConfig, RNGSeed } from "../math/random";
 import type { Quadtree, ResizingQuadtree } from "../math/spatial/quadtree";
 import type { Vec2 } from "../math/Vec2";
+import type { Vec3 } from "../math/vec3";
 import {
     type Anchor,
     type BlendMode,
@@ -5057,6 +5058,32 @@ export interface KAPLAYCtx {
     vec2(xy: number): Vec2;
     vec2(): Vec2;
     /**
+     * Create a 3D vector.
+     *
+     * @example
+     * ```js
+     * // { x: 0, y: 0, z: 0 }
+     * vec3()
+     *
+     * // { x: 10, y: 10, z: 10 }
+     * vec3(10)
+     *
+     * // { x: 80, y: 100, z: 120 }
+     * vec3(80, 100, 120)
+     *
+     * // move to 150 degrees direction with by length 10
+     * player.pos = pos.add(Vec2.fromAngle(150).scale(10))
+     * ```
+     *
+     * @returns The vector.
+     * @since v2000.0
+     * @group Math
+     */
+    vec3(x: number, y: number, z: number): Vec3;
+    vec3(p: Vec3): Vec3;
+    vec3(xyz: number): Vec3;
+    vec3(): Vec3;
+    /**
      * Create a color from RGB values (0 - 255).
      *
      * @param r - The red value.
@@ -5885,6 +5912,14 @@ export interface KAPLAYCtx {
      * @subgroup Vectors
      */
     Vec2: typeof Vec2;
+    /**
+     * A 3D vector.
+     *
+     * @since v2000.0
+     * @group Math
+     * @subgroup Vectors
+     */
+    Vec3: typeof Vec3;
     /**
      * A color.
      *
