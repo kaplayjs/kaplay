@@ -36,14 +36,13 @@ export function updateViewport() {
     let viewportWidth = canvasWidth;
     let viewportHeight = canvasHeight;
 
-    if (!desiredWidth || !desiredHeight) {
-        if (_k.globalOpt.letterbox) {
+    if (_k.globalOpt.letterbox) {
+        if (!desiredWidth || !desiredHeight) {
             throw new Error(
                 "Letterboxing requires width and height defined.",
             );
         }
-    }
-    else {
+
         const canvasAspectRatio = canvasWidth / canvasHeight;
         const desiredAspectRatio = desiredWidth / desiredHeight;
 
