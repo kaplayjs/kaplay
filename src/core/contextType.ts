@@ -5070,9 +5070,6 @@ export interface KAPLAYCtx {
      *
      * // { x: 80, y: 100, z: 120 }
      * vec3(80, 100, 120)
-     *
-     * // move to 150 degrees direction with by length 10
-     * player.pos = pos.add(Vec2.fromAngle(150).scale(10))
      * ```
      *
      * @returns The vector.

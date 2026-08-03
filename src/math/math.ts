@@ -24,7 +24,7 @@ export type Vec2Args =
     | [];
 
 /**
- * Possible arguments for a Vec2.
+ * Possible arguments for a Vec3.
  *
  * @group Math
  * @subgroup Vectors
