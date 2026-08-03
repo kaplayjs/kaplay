@@ -74,6 +74,8 @@ So your change should look like:
   the initial `GameObjRaw.use()` call (e.g. `obj.use(scale(2))`) - @mflerackers
 - Fixed `isKeyDown` and `isButtonDown` getting stuck on game loosing focus
   (#1101) - @Stanko
+- Fixed `onMouseRelease` not being registered outside the canvas (#1113) -
+  @imaginarny
 - Fixed objects with a `text` component reporting wrong dimensions when scaled
   using the `scale` component (#1125) - @imaginarny
 - Fixed the `layer` component property returning `null` when the layer index was

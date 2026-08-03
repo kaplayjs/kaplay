@@ -1086,6 +1086,14 @@ export const initApp = (
         });
     };
 
+    canvasEvents.pointerdown = (e) => {
+        state.canvas.setPointerCapture(e.pointerId);
+    };
+
+    canvasEvents.pointerup = (e) => {
+        state.canvas.releasePointerCapture(e.pointerId);
+    };
+
     // translate key names to kaplay keys
     const KEY_ALIAS: Record<KeyboardEvent["key"], Key> = {
         "ArrowLeft": "left",
