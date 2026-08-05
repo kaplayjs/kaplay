@@ -2,23 +2,31 @@
 
 import type {
     Cursor,
+    GameObj,
     KAPLAYOpt,
     Key,
     KGamepad,
     KGamepadButton,
     KGamepadStick,
     MouseButton,
+    Tag,
 } from "../types";
 
 import { GP_MAP } from "../constants/general";
-import type { AppEventMap } from "../events/eventMap";
+import type {
+    AppEventMap,
+    GameObjEventNames,
+    GameObjEvents,
+} from "../events/eventMap";
 import { type KEventController, KEventHandler } from "../events/events";
 import { canvasToViewport } from "../gfx/viewport";
 import { map, vec2 } from "../math/math";
 import { Vec2 } from "../math/Vec2";
+import { _k } from "../shared";
 import { deprecateMsg } from "../utils/log";
 import { overload2 } from "../utils/overload";
 import { isEqOrIncludes, setHasOrIncludes } from "../utils/sets";
+import type { TupleWithoutFirst } from "../utils/types";
 import {
     getButton,
     getButtons,
@@ -81,6 +89,11 @@ export class ButtonState<T = string, A = never> {
             state.events.trigger(this._releaseEv as any, btn, this._arg);
         }
     }
+    releaseAll(state: AppState) {
+        for (const btn of this.down) {
+            this.release(btn, state);
+        }
+    }
 }
 
 class GamepadState {
@@ -106,23 +119,35 @@ class GamepadState {
 }
 
 class FPSCounter {
-    win = 10;
-    history = new Array(this.win).fill(0);
+    /** Window size */
+    maxSamples = 10;
+    history = new Float64Array(this.maxSamples);
     accumulator = 0;
     i = 0;
     fps = 0;
-    count = 0;
+    curNSamples = 0;
     timer = 0;
+    autoRecalculateInterval = 1;
     tick(dt: number) {
         this.timer += dt;
         this.accumulator += dt - this.history[this.i];
         this.history[this.i] = dt;
-        this.i = (this.i + 1) % this.win;
-        this.count = Math.min(this.count + 1, this.win);
-        if (this.timer >= 1) {
-            this.fps = this.count / this.accumulator;
+        this.i = (this.i + 1) % this.maxSamples;
+        this.curNSamples = Math.min(this.curNSamples + 1, this.maxSamples);
+        if (this.timer >= this.autoRecalculateInterval) {
+            this.calculate();
             this.timer = 0;
         }
+    }
+    calculate() {
+        return this.fps = this.curNSamples / this.accumulator;
+    }
+    ago(ago: number) {
+        return this.history.at(this.i - ago - 1);
+    }
+    resize(samples: number) {
+        this.history = new Float64Array(this.maxSamples = samples);
+        this.i = this.curNSamples = 0;
     }
 }
 
@@ -206,8 +231,9 @@ export const initAppState = (opt: {
         isMouseMoved: false,
         lastWidth: opt.canvas.offsetWidth,
         lastHeight: opt.canvas.offsetHeight,
+        canvasScaleX: 1,
+        canvasScaleY: 1,
         events: new KEventHandler<AppEventMap>(),
-        sceneEvents: [] as KEventController[],
     };
 };
 
@@ -233,6 +259,15 @@ export const initApp = (
     const state = initAppState(opt);
     parseButtonBindings(state);
     if (opt.fixedUpdateMode) setFixedSpeed(opt.fixedUpdateMode);
+    updateCanvasScale();
+
+    function updateCanvasScale() {
+        const pd = opt.pixelDensity || 1;
+        state.canvasScaleX = state.canvas.width / pd
+            / state.canvas.offsetWidth;
+        state.canvasScaleY = state.canvas.height / pd
+            / state.canvas.offsetHeight;
+    }
 
     function dt() {
         return state.dt * state.timeScale;
@@ -771,18 +806,6 @@ export const initApp = (
         );
     });
 
-    const onUpdate = (action: () => void): KEventController => {
-        return state.events.on("update", action);
-    };
-
-    const onFixedUpdate = (action: () => void): KEventController => {
-        return state.events.on("fixedUpdate", action);
-    };
-
-    const onDraw = (action: () => void): KEventController => {
-        return state.events.on("draw", action);
-    };
-
     const getLastInputDeviceType = () => {
         return state.lastInputDevice;
     };
@@ -960,7 +983,38 @@ export const initApp = (
     const docEvents: EventList<DocumentEventMap> = {};
     const winEvents: EventList<WindowEventMap> = {};
 
+    let releaseHeldInputsQueued = false;
+
+    function releaseHeldInputs() {
+        state.buttonHandler.releaseKeyboardMouse(state);
+        state.keyState.releaseAll(state);
+        state.mouseState.releaseAll(state);
+    }
+
+    function queueReleaseHeldInputs() {
+        if (releaseHeldInputsQueued) {
+            return;
+        }
+        releaseHeldInputsQueued = true;
+        state.events.onOnce("input", () => {
+            releaseHeldInputsQueued = false;
+            releaseHeldInputs();
+        });
+    }
+
+    function releaseHeldInputsOnFocusLoss() {
+        // Release all inputs immediately when blur/hide happens,
+        // and then queue it to to catch any queued events on the next input tick,
+        // that wouldn't be processed otherwise
+        releaseHeldInputs();
+        queueReleaseHeldInputs();
+    }
+
     const pd = opt.pixelDensity || 1;
+
+    canvasEvents.blur = () => {
+        releaseHeldInputsOnFocusLoss();
+    };
 
     canvasEvents.mousemove = (e) => {
         // 🍝 Here we depend of GFX Context even if initGfx needs initApp for being used
@@ -972,7 +1026,7 @@ export const initApp = (
         const mousePos = canvasToViewport(new Vec2(e.offsetX, e.offsetY));
         const mouseDeltaPos = new Vec2(e.movementX, e.movementY);
 
-        if (isFullscreen()) {
+        if (!opt.letterbox && isFullscreen()) {
             const cw = state.canvas.width / pd;
             const ch = state.canvas.height / pd;
             const ww = window.innerWidth;
@@ -1029,6 +1083,14 @@ export const initApp = (
             state.buttonHandler.processMouseup(m, state);
             state.mouseState.release(m, state);
         });
+    };
+
+    canvasEvents.pointerdown = (e) => {
+        state.canvas.setPointerCapture(e.pointerId);
+    };
+
+    canvasEvents.pointerup = (e) => {
+        state.canvas.releasePointerCapture(e.pointerId);
     };
 
     const PREVENT_DEFAULT_KEYS = new Set([
@@ -1241,9 +1303,14 @@ export const initApp = (
             state.events.trigger("show");
         }
         else {
+            releaseHeldInputsOnFocusLoss();
             state.isHidden = true;
             state.events.trigger("hide");
         }
+    };
+
+    winEvents.blur = () => {
+        releaseHeldInputsOnFocusLoss();
     };
 
     winEvents.gamepadconnected = (e) => {
@@ -1292,6 +1359,7 @@ export const initApp = (
             ) return;
             state.lastWidth = state.canvas.offsetWidth;
             state.lastHeight = state.canvas.offsetHeight;
+            updateCanvasScale();
             state.events.onOnce("input", () => {
                 state.events.trigger("resize");
             });
@@ -1308,6 +1376,7 @@ export const initApp = (
         time,
         run,
         canvas: state.canvas,
+        updateCanvasScale,
         fps,
         rawFPS,
         setFixedSpeed,
@@ -1376,9 +1445,6 @@ export const initApp = (
         onButtonPress,
         onButtonDown,
         onButtonRelease,
-        onUpdate,
-        onFixedUpdate,
-        onDraw,
         getLastInputDeviceType,
         events: state.events,
     };

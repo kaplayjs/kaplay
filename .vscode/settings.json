@@ -2,8 +2,16 @@
   "typescript.tsdk": "node_modules/typescript/lib",
   "typescript.preferences.importModuleSpecifierEnding": "minimal",
   "typescript.preferences.importModuleSpecifier": "shortest",
+  "dprint.path": "./node_modules/dprint/dprint",
   "cSpell.words": [
-    "KAPLAY"
-  ],
-  "dprint.path": "./node_modules/dprint/dprint"
+    "anims",
+    "Bbox",
+    "gopt",
+    "kaplay",
+    "lajbel",
+    "lerp",
+    "minver",
+    "mult",
+    "verts"
+  ]
 }

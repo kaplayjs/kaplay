@@ -1,6 +1,10 @@
 import { _k } from "../../shared";
 import type { GameObj } from "../../types";
 
+export function exists(obj: GameObj): boolean {
+    return obj && obj.exists();
+}
+
 export function destroy(obj: GameObj) {
     obj.destroy();
 }

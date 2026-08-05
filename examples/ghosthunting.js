@@ -220,8 +220,8 @@ function addEnemy(p) {
                             lifeTime: [1.0, 1.5],
                             colors: [rgb(128, 128, 255), WHITE],
                             opacities: [0.1, 1.0, 0.0],
-                            texture: getSprite("star").data.tex,
-                            quads: [getSprite("star").data.frames[0]],
+                            texture: getSprite("star").data.frames[0].tex,
+                            quads: [getSprite("star").data.frames[0].q],
                         }, {
                             lifetime: 1.5,
                             shape: rect,
@@ -356,8 +356,8 @@ onMousePress(() => {
                 colors: [WHITE],
                 opacities: [1.0, 0.0],
                 angle: [0, 360],
-                texture: getSprite("hexagon").data.tex,
-                quads: [getSprite("hexagon").data.frames[0]],
+                texture: getSprite("hexagon").data.frames[0].tex,
+                quads: [getSprite("hexagon").data.frames[0].q],
             }, {
                 lifetime: 0.75,
                 rate: 0,

@@ -84,6 +84,7 @@ export const handleErr = (err: unknown) => {
 
     // TODO: Make this a setting
     if (!error.message.startsWith("[rendering]")) {
+        console.error(error);
         throw error;
     }
     else {

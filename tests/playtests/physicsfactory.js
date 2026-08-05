@@ -117,6 +117,6 @@ add([
     rect(200, 100),
     color(BLUE),
     opacity(0.5),
-    area(),
+    area({ isSensor: true }),
     buoyancyEffector({ surfaceLevel: 200, density: 6 }),
 ]);

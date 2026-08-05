@@ -1,16 +1,12 @@
 // TODO: A lot
-// - move RNG to it's own file
-// - move Vec2 to it's own file
 
 import { resolveSprite } from "../assets/sprite";
-import { drawCircle } from "../gfx/draw/drawCircle";
-import { drawPolygon, type DrawPolygonOpt } from "../gfx/draw/drawPolygon";
 import { _k } from "../shared";
-import type { GameObj, RNGValue, Shape } from "../types";
+import type { GameObj, Shape } from "../types";
 import { clamp } from "./clamp";
-import { Color, rgb } from "./color";
 import { traceRegion } from "./getImageOutline";
 import { lerp, type LerpValue } from "./lerp";
+import { rand, RNG } from "./random";
 import { Vec2 } from "./Vec2";
 
 /**
@@ -737,180 +733,65 @@ export function wave<V extends LerpValue>(
     return lerp(lo, hi, (f(t) + 1) / 2);
 }
 
-// basic ANSI C LCG
-export const A = 1103515245;
-export const C = 12345;
-export const M = 2147483648;
-
-/**
- * A random number generator using the linear congruential generator algorithm.
- *
- * @group Math
- * @subgroup Random
- */
-export class RNG {
-    /**
-     * The current seed value used by the random number generator.
-     */
-    seed: number;
-    constructor(seed: number) {
-        this.seed = seed;
-    }
-
-    /**
-     * Generate a random number between 0 and 1.
-     *
-     * @example
-     * ```js
-     * const rng = new RNG(Date.now())
-     * const value = rng.gen() // Returns number between 0-1
-     * ```
-     *
-     * @returns A number between 0 and 1.
-     */
-    gen(): number {
-        this.seed = (A * this.seed + C) % M;
-        return this.seed / M;
-    }
-
-    /**
-     * Generate a random number between two values.
-     *
-     * @param a - The minimum value.
-     * @param b - The maximum value.
-     *
-     * @example
-     * ```js
-     * const rng = new RNG(Date.now())
-     * const value = rng.genNumber(10, 20) // Returns number between 10-20
-     * ```
-     *
-     * @returns A number between a and b.
-     */
-    genNumber(a: number, b: number): number {
-        return a + this.gen() * (b - a);
-    }
-    /**
-     * Generate a random 2D vector between two vectors.
-     *
-     * @param a - The minimum vector.
-     * @param b - The maximum vector.
-     *
-     * @example
-     * ```js
-     * const rng = new RNG(Date.now())
-     * const vec = rng.genVec2(vec2(0,0), vec2(100,100))
-     * ```
-     *
-     * @returns A vector between vectors a and b.
-     */
-    genVec2(a: Vec2, b: Vec2): Vec2 {
-        return new Vec2(this.genNumber(a.x, b.x), this.genNumber(a.y, b.y));
-    }
-
-    /**
-     * Generate a random color between two colors.
-     *
-     * @param a - The first color.
-     * @param b - The second color.
-     *
-     * @example
-     * ```js
-     * const rng = new RNG(Date.now())
-     * const color = rng.genColor(rgb(0,0,0), rgb(255,255,255))
-     * ```
-     *
-     * @returns A color between colors a and b.
-     */
-    genColor(a: Color, b: Color): Color {
-        return new Color(
-            this.genNumber(a.r, b.r),
-            this.genNumber(a.g, b.g),
-            this.genNumber(a.b, b.b),
-        );
-    }
-
-    /**
-     * Generate a random value of a specific type.
-     *
-     * @param args - No args for [0-1], one arg for [0-arg], or two args for [arg1-arg2].
-     *
-     * @example
-     * ```js
-     * const rng = new RNG(Date.now())
-     * const val = rng.genAny(0, 100) // Number between 0-100
-     * const vec = rng.genAny(vec2(0,0), vec2(100,100)) // Vec2
-     * const col = rng.genAny(rgb(0,0,0), rgb(255,255,255)) // Color
-     * ```
-     *
-     * @returns A random value.
-     */
-    genAny<T = RNGValue>(...args: [] | [T] | [T, T]): T {
-        if (args.length === 0) {
-            return this.gen() as T;
-        }
-        else if (args.length === 1) {
-            if (typeof args[0] === "number") {
-                return this.genNumber(0, args[0]) as T;
-            }
-            else if (args[0] instanceof Vec2) {
-                return this.genVec2(vec2(0, 0), args[0]) as T;
-            }
-            else if (args[0] instanceof Color) {
-                return this.genColor(rgb(0, 0, 0), args[0]) as T;
-            }
-        }
-        else if (args.length === 2) {
-            if (typeof args[0] === "number" && typeof args[1] === "number") {
-                return this.genNumber(args[0], args[1]) as T;
-            }
-            else if (args[0] instanceof Vec2 && args[1] instanceof Vec2) {
-                return this.genVec2(args[0], args[1]) as T;
-            }
-            else if (args[0] instanceof Color && args[1] instanceof Color) {
-                return this.genColor(args[0], args[1]) as T;
-            }
-        }
-
-        throw new Error("More than 2 arguments not supported");
-    }
-}
-
-export function randSeed(seed?: number): number {
-    if (seed != null) {
-        _k.game.defRNG.seed = seed;
-    }
-    return _k.game.defRNG.seed;
-}
-
-export function rand<T = number>(...args: [] | [T] | [T, T]) {
-    return _k.game.defRNG.genAny(...args);
-}
-
-export function randi(...args: [] | [number] | [number, number]) {
-    return Math.floor(rand(...(args.length > 0 ? args : [2])));
-}
-
-export function chance(p: number): boolean {
-    return rand() <= p;
-}
-
-export function shuffle<T>(list: T[]): T[] {
+export function shuffle<T>(list: T[], rng?: RNG): T[] {
+    // Do random swaps
+    rng ??= _k.game.defRNG;
     for (let i = list.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
+        const j = Math.floor(rng.genInteger(i + 1));
         [list[i], list[j]] = [list[j], list[i]];
     }
     return list;
 }
 
-export function chooseMultiple<T>(list: T[], count: number): T[] {
+export function chooseMultiple<T>(list: T[], count: number, rng?: RNG): T[] {
+    // Shuffle the list and take the first count entries
     return list.length <= count
         ? list.slice()
-        : shuffle(list.slice()).slice(0, count);
+        : shuffle(list.slice(), rng).slice(0, count);
 }
 
-export function choose<T>(list: T[]): T {
-    return list[randi(list.length)];
+export function choose<T>(list: T[], rng?: RNG): T {
+    rng ??= _k.game.defRNG;
+    // Choose a random index from [0, list.length)
+    return list[rng.genInteger(list.length)];
+}
+
+export function roulette(probabilities: number[], rng?: RNG): number {
+    rng ??= _k.game.defRNG;
+    // Get the sum of all probabilities, to know the percentages
+    const sum = probabilities.reduce((sum, value) => sum + value, 0);
+    // Make a random number
+    const value = rng.genInteger(sum);
+    // Search for the first index for which the cumulative probability is greater
+    let index = 0;
+    let probabilitySum = probabilities[0];
+    while (value > probabilitySum) {
+        index++;
+        probabilitySum += probabilities[index];
+    }
+    return index;
+}
+
+export function gacha<T>(
+    items: [T, number][] | Map<T, number> | Record<string, number>,
+    rng?: RNG,
+): T {
+    rng ??= _k.game.defRNG;
+    const getList = (itemCollection: typeof items) => {
+        if (Array.isArray(itemCollection)) {
+            return itemCollection;
+        }
+        else if (items instanceof Map) {
+            return [...items.entries()];
+        }
+        else {
+            return Object.entries(items) as [T, number][];
+        }
+    };
+
+    const list = getList(items);
+    const probabilities = list.map(([item, probability]) => probability);
+    return list[roulette(probabilities, rng)][0];
 }
 
 // TODO: better name
@@ -1712,38 +1593,67 @@ function raycastLine(origin: Vec2, direction: Vec2, line: Line): RaycastResult {
 
 function raycastRect(origin: Vec2, direction: Vec2, rect: Rect) {
     let tmin = Number.NEGATIVE_INFINITY, tmax = Number.POSITIVE_INFINITY;
-    let normal;
 
-    if (origin.x != 0.0) {
+    let entryNormal;
+    let exitNormal;
+
+    if (direction.x === 0) {
+        if (origin.x < rect.pos.x || origin.x > rect.pos.x + rect.width) {
+            return null;
+        }
+    }
+    else {
         const tx1 = (rect.pos.x - origin.x) / direction.x;
         const tx2 = (rect.pos.x + rect.width - origin.x) / direction.x;
 
-        normal = vec2(-Math.sign(direction.x), 0);
+        const nearX = Math.min(tx1, tx2);
+        const farX = Math.max(tx1, tx2);
 
-        tmin = Math.max(tmin, Math.min(tx1, tx2));
-        tmax = Math.min(tmax, Math.max(tx1, tx2));
+        if (nearX > tmin) {
+            tmin = nearX;
+            entryNormal = vec2(-Math.sign(direction.x), 0);
+        }
+
+        if (farX < tmax) {
+            tmax = farX;
+            exitNormal = vec2(-Math.sign(direction.x), 0);
+        }
     }
 
-    if (origin.y != 0.0) {
+    if (direction.y === 0) {
+        if (origin.y < rect.pos.y || origin.y > rect.pos.y + rect.height) {
+            return null;
+        }
+    }
+    else {
         const ty1 = (rect.pos.y - origin.y) / direction.y;
         const ty2 = (rect.pos.y + rect.height - origin.y) / direction.y;
 
-        if (Math.min(ty1, ty2) > tmin) {
-            normal = vec2(0, -Math.sign(direction.y));
+        const nearY = Math.min(ty1, ty2);
+        const farY = Math.max(ty1, ty2);
+
+        if (nearY > tmin) {
+            tmin = nearY;
+            entryNormal = vec2(0, -Math.sign(direction.y));
         }
 
-        tmin = Math.max(tmin, Math.min(ty1, ty2));
-        tmax = Math.min(tmax, Math.max(ty1, ty2));
+        if (farY < tmax) {
+            tmax = farY;
+            exitNormal = vec2(0, -Math.sign(direction.y));
+        }
     }
 
-    if (tmax >= tmin && tmin >= 0 && tmin <= 1) {
-        const point = origin.add(direction.scale(tmin));
+    if (tmax >= tmin && tmax >= 0 && tmin <= 1) {
+        const t = tmin < 0 ? tmax : tmin;
+        const point = origin.add(direction.scale(t));
 
-        return {
-            point: point,
-            normal: normal,
-            fraction: tmin,
-        };
+        if (t <= 1) {
+            return {
+                point: point,
+                normal: tmin < 0 ? exitNormal : entryNormal,
+                fraction: t,
+            };
+        }
     }
     else {
         return null;
@@ -1769,37 +1679,41 @@ function raycastCircle(
     if ((A <= Number.EPSILON) || (disc < 0)) {
         return null;
     }
+
+    let t: number | null = null;
+
     // One possible root
-    else if (disc == 0) {
-        const t = -B / (2 * A);
-        if (t >= 0 && t <= 1) {
-            const point = a.add(ab.scale(t));
-            return {
-                point: point,
-                normal: point.sub(c),
-                fraction: t,
-            };
+    if (disc == 0) {
+        const t0 = -B / (2 * A);
+        if (t0 >= 0 && t0 <= 1) {
+            t = t0;
         }
     }
     // Two possible roots
     else {
         const t1 = (-B + Math.sqrt(disc)) / (2 * A);
         const t2 = (-B - Math.sqrt(disc)) / (2 * A);
-        let t = null;
         if (t1 >= 0 && t1 <= 1) {
             t = t1;
         }
         if (t2 >= 0 && t2 <= 1) {
             t = Math.min(t2, t ?? t2);
         }
-        if (t != null) {
-            const point = a.add(ab.scale(t));
-            return {
-                point: point,
-                normal: point.sub(c).unit(),
-                fraction: t,
-            };
+    }
+
+    if (t != null) {
+        const point = a.add(ab.scale(t));
+        let normal = point.sub(c).unit();
+
+        if (C < 0) {
+            normal = normal.scale(-1);
         }
+
+        return {
+            point: point,
+            normal: normal,
+            fraction: t,
+        };
     }
 
     return null;
@@ -1848,12 +1762,20 @@ function raycastEllipse(
         // transform the result point to the coordinate system of the rotated ellipse
         const point = T.transform(result.point).add(ellipse.center);
         const fraction = point.dist(origin) / direction.len();
+        const normal = R.transform(
+            vec2(ellipse.radiusY ** 2 * p.x, ellipse.radiusX ** 2 * p.y),
+        ).unit();
+
+        const isInside = Torigin.dot(Torigin) < 1.0;
+        if (isInside) {
+            normal.x *= -1;
+            normal.y *= -1;
+        }
+
         return {
             point: point,
             // Calculate the normal at the unrotated ellipse, then rotate the normal to the rotated ellipse
-            normal: R.transform(
-                vec2(ellipse.radiusY ** 2 * p.x, ellipse.radiusX ** 2 * p.y),
-            ).unit(),
+            normal: normal,
             fraction,
         };
     }
@@ -1966,6 +1888,11 @@ export class Point {
     get gjkCenter(): Vec2 {
         return this.pt;
     }
+    /* Returns the point
+     **/
+    closestPt(p: Vec2): Vec2 | undefined {
+        return this.pt;
+    }
 }
 
 export class Line {
@@ -2029,6 +1956,25 @@ export class Line {
             (this.p1.x + this.p2.x) / 2,
             (this.p1.y + this.p2.y) / 2,
         );
+    }
+    /* Calculates the point on the line segment (not just vertex)
+     * closest to the given point.
+     **/
+    closestPt(p: Vec2): Vec2 | undefined {
+        const v1 = new Vec2();
+        const v2 = new Vec2();
+        Vec2.sub(p, this.p1, v1);
+        Vec2.sub(this.p2, this.p1, v2);
+        // Calculate scalar projection
+        const t = v1.dot(v2) / v2.dot(v2);
+        // If on edge segment
+        if (t >= 0 && t <= 1) {
+            // Calculate projected point on edge
+            return this.p1.add(v2.scale(t));
+        }
+        else {
+            return this.p1.sdist(p) < this.p2.sdist(p) ? this.p1 : this.p2;
+        }
     }
 }
 
@@ -2155,6 +2101,13 @@ export class Rect {
     get gjkCenter(): Vec2 {
         return this.pos;
     }
+    /* Calculates the point on the rectangle (not just vertex)
+     * closest to the given point provided that the projected point lies within the rectangle
+     **/
+    closestPt(p: Vec2): Vec2 | undefined {
+        // TODO
+        return undefined;
+    }
 }
 
 /**
@@ -2220,6 +2173,12 @@ export class Circle {
     }
     get gjkCenter(): Vec2 {
         return this.center;
+    }
+    /* Calculates the point on the circle
+     * closest to the given point provided that the projected point lies within the circle
+     **/
+    closestPt(p: Vec2): Vec2 | undefined {
+        return this.support(p.sub(this.center));
     }
 }
 
@@ -2408,6 +2367,12 @@ export class Ellipse {
     get gjkCenter(): Vec2 {
         return this.center;
     }
+    /* Calculates the point on the ellipse
+     * closest to the given point provided that the projected point lies within the circle
+     **/
+    closestPt(p: Vec2): Vec2 | undefined {
+        return this.support(p.sub(this.center));
+    }
 }
 
 function segmentLineIntersection(a: Vec2, b: Vec2, c: Vec2, d: Vec2) {
@@ -2431,18 +2396,17 @@ export function getSpriteOutline(
     if (!spr?.data) throw new Error("Can't load asset: " + asset);
 
     const frameData = spr.data.frames[frame];
-    const tex = spr.data.tex;
 
-    const px = frameData.x * tex.width;
-    const py = frameData.y * tex.height;
-    const pw = frameData.w * tex.width;
-    const ph = frameData.h * tex.height;
+    const px = frameData.q.x * frameData.tex.width;
+    const py = frameData.q.y * frameData.tex.height;
+    const pw = frameData.q.w * frameData.tex.width;
+    const ph = frameData.q.h * frameData.tex.height;
 
     const canvas = document.createElement("canvas");
     canvas.width = pw;
     canvas.height = ph;
     const ctx = canvas.getContext("2d")!;
-    ctx.drawImage(tex.src as any, px, py, pw, ph, 0, 0, pw, ph);
+    ctx.drawImage(frameData.tex.src as any, px, py, pw, ph, 0, 0, pw, ph);
 
     const image_data = ctx.getImageData(0, 0, pw, ph);
     const isInRegion = (x: number, y: number) => {
@@ -2457,7 +2421,7 @@ export function getSpriteOutline(
         RDP,
         epsilon,
     );
-    console.log(trace);
+
     return new Polygon(trace);
 }
 
@@ -2607,6 +2571,50 @@ export class Polygon {
     }
     get gjkCenter(): Vec2 {
         return this.pts[0];
+    }
+    /* Calculates the point on the polygon (not just vertex)
+     * closest to the given point.
+     **/
+    closestPt(p: Vec2): Vec2 | undefined {
+        // Edge points
+        let p1 = this.pts.at(-1)!, p2;
+        // Vector from point to edge and edge vector
+        let v1 = new Vec2(), v2 = new Vec2();
+        // Projected point
+        let pp;
+        // Closest point and closest (squared) distance if any
+        let c, cd;
+        // For all edges
+        for (let i = 0; i < this.pts.length; i++) {
+            p2 = this.pts[i];
+            // Calculate aforementioned vectors
+            Vec2.sub(p, p1, v1);
+            Vec2.sub(p2, p1, v2);
+            // Calculate scalar projection
+            const t = v1.dot(v2) / v2.dot(v2);
+            // If on edge segment
+            if (t >= 0 && t <= 1) {
+                // Calculate projected point on edge
+                pp = p1.add(v2.scale(t));
+                // Calculate squared distance
+                const d = Vec2.sdist(p, pp);
+                if (c === undefined || d < cd!) {
+                    // Update closest point
+                    c = pp;
+                    cd = d;
+                }
+            }
+            // If not, check the vertex itself
+            else {
+                const d = Vec2.sdist(p, p2);
+                if (c === undefined || d < cd!) {
+                    c = p2;
+                    cd = d;
+                }
+            }
+            p1 = p2;
+        }
+        return c;
     }
 }
 
@@ -2980,6 +2988,133 @@ export function hermiteFirstDerivative(
     };
 }
 
+/**
+ * A second order function returning an evaluator for a piecewise cubic Bézier
+ * @param pts - A series of points with 2 control points between each pair of points
+ *
+ * @returns A function which evaluates a piecewise cubic Bézier
+ */
+export function piecewiseBezier(pts: Vec2[]) {
+    // tuples with [from s, to s, from px, to px, bezier, curve length]
+    const beziers: [
+        number,
+        number,
+        number,
+        number,
+        (t: number) => Vec2,
+        (t: number, b: boolean) => number,
+    ][] = [];
+    let totalLength = 0;
+    for (let i = 0; i < pts.length - 3; i += 3) {
+        const bezierCurve = bezier(pts[i], pts[i + 1], pts[i + 2], pts[i + 3]);
+        const curveLength = curveLengthApproximation(bezierCurve);
+        const length = curveLength(1);
+        const fromLength = totalLength;
+        const toLength = totalLength += length;
+        beziers.push([
+            fromLength,
+            toLength,
+            fromLength,
+            toLength,
+            bezierCurve,
+            curveLength,
+        ]);
+    }
+
+    for (let i = 0; i < beziers.length; i++) {
+        beziers[i][0] /= totalLength;
+        beziers[i][1] /= totalLength;
+    }
+
+    return (s: number) => {
+        for (let i = 0; i < beziers.length; i++) {
+            const b = beziers[i];
+            if (s < b[1]) {
+                s = map(s, b[0], b[1], 0, 1);
+                const l = s * (b[3] - b[2]);
+                const t = b[5](l, true);
+                return b[4](t);
+            }
+        }
+        return beziers[beziers.length - 1][4](1);
+    };
+}
+
+/**
+ * Reflects a point around another point
+ * @param a - Point to reflect
+ * @param b - Point to reflect around
+ *
+ * @returns Reflected point
+ */
+function reflect(a: Vec2, b: Vec2) {
+    return b.add(b.sub(a));
+}
+
+/**
+ * A second order function returning an evaluator for a piecewise Catmull-Rom curve
+ * @param pts - A series of points the curve should go through
+ *
+ * @returns A function which evaluates a piecewise Catmull-Rom curve
+ */
+export function piecewiseCatmullRom(pts: Vec2[]) {
+    // tuples with [from s, to s, from px, to px, bezier, curve length]
+    const curves: [
+        number,
+        number,
+        number,
+        number,
+        (t: number) => Vec2,
+        (t: number, b: boolean) => number,
+    ][] = [];
+    let totalLength = 0;
+    const addCurve = (pt1: Vec2, pt2: Vec2, pt3: Vec2, pt4: Vec2) => {
+        const curve = catmullRom(pt1, pt2, pt3, pt4);
+        const curveLength = curveLengthApproximation(curve);
+        const length = curveLength(1);
+        const fromLength = totalLength;
+        const toLength = totalLength += length;
+        curves.push([
+            fromLength,
+            toLength,
+            fromLength,
+            toLength,
+            curve,
+            curveLength,
+        ]);
+    };
+    const firstPt = reflect(pts[1], pts[0]);
+    addCurve(firstPt, pts[0], pts[1], pts[2]);
+    for (let i = 0; i < pts.length - 3; i++) {
+        addCurve(pts[i], pts[i + 1], pts[i + 2], pts[i + 3]);
+    }
+    const lastPt = reflect(pts[pts.length - 2], pts[pts.length - 1]);
+    addCurve(
+        pts[pts.length - 3],
+        pts[pts.length - 2],
+        pts[pts.length - 1],
+        lastPt,
+    );
+
+    for (let i = 0; i < curves.length; i++) {
+        curves[i][0] /= totalLength;
+        curves[i][1] /= totalLength;
+    }
+
+    return (s: number) => {
+        for (let i = 0; i < curves.length; i++) {
+            const b = curves[i];
+            if (s < b[1]) {
+                s = map(s, b[0], b[1], 0, 1);
+                const l = s * (b[3] - b[2]);
+                const t = b[5](l, true);
+                return b[4](t);
+            }
+        }
+        return curves[curves.length - 1][4](1);
+    };
+}
+
 // True if t is between 0 and 1
 function inZeroOneDomain(t: number) {
     return 0 <= t && t <= 1;
@@ -3196,7 +3331,7 @@ export function triangulate(pts: Vec2[]): Vec2[][] {
         const lm = pts[idx];
         const pt = pts[i];
         if (pt.x < lm.x || (pt.x == lm.x && pt.y < lm.y)) {
-            idx = idx;
+            idx = i;
         }
         nextIdx[i] = i + 1;
         prevIdx[i] = i - 1;

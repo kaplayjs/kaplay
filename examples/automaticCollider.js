@@ -30,16 +30,17 @@ onLoad(() => {
         pos(200, 400),
         "gm",
     ]);
-});
 
-onDraw(() => {
-    const moved = new Polygon(
-        poly.pts.map(p => p.add(vec2(0, 0))),
-    );
+    onDraw(() => {
+        const moved = poly.pts.map(p => p.add(apple.pos));
 
-    drawPolygon(moved, {
-        color: rgb(255, 0, 0), // red outline
-        filled: false, // just an outline
-        width: 2, // line thickness
+        drawPolygon({
+            pts: moved,
+            fill: false,
+            outline: {
+                color: BLUE,
+                width: 2,
+            },
+        });
     });
 });

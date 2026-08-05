@@ -1,6 +1,6 @@
 import type { ButtonBinding } from "../app/inputBindings";
 import type { KEventController } from "../events/events";
-import type { GameEventHandlers } from "../events/gameEventHandlers";
+import type { ScopeHandlers } from "../events/scopeHandlers";
 import type { KAPLAYOpt } from "../types";
 import type { KAPLAYCtx } from "./contextType";
 
@@ -95,7 +95,7 @@ export type ButtonName<TOpt extends KAPLAYOptTypeOptions> =
 // #region Scopes
 export type SceneScopeT<
     O extends KAPLAYOptTypeOptions = any,
-> = GameEventHandlers & {
+> = ScopeHandlers & {
     <T extends SceneName<O>>(
         name: T,
         def: (

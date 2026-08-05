@@ -1,3 +1,4 @@
+import { trigger } from "../api/eventHandlers";
 import { getData, setData } from "../app/data";
 import { loadAseprite } from "../assets/aseprite";
 import {
@@ -30,6 +31,7 @@ import { color } from "../ecs/components/draw/color";
 import { drawon } from "../ecs/components/draw/drawon";
 import { ellipse } from "../ecs/components/draw/ellipse";
 import { fadeIn } from "../ecs/components/draw/fadeIn";
+import { fill } from "../ecs/components/draw/fill";
 import { mask } from "../ecs/components/draw/mask";
 import { opacity } from "../ecs/components/draw/opacity";
 import { outline } from "../ecs/components/draw/outline";
@@ -85,35 +87,10 @@ import { KeepFlags } from "../ecs/entity/GameObjRaw";
 import { createPrefab, loadPrefab } from "../ecs/entity/prefab";
 import { addKaboom } from "../ecs/entity/premade/addKaboom";
 import { addLevel } from "../ecs/entity/premade/addLevel";
-import { destroy, getTreeRoot } from "../ecs/entity/utils";
+import { destroy, exists, getTreeRoot } from "../ecs/entity/utils";
 import { Collision } from "../ecs/systems/Collision";
 import { system, SystemPhase } from "../ecs/systems/systems";
 import { KEvent, KEventController, KEventHandler } from "../events/events";
-import {
-    on,
-    onAdd,
-    onClick,
-    onCollide,
-    onCollideEnd,
-    onCollideUpdate,
-    onDestroy,
-    onDraw,
-    onError,
-    onFixedUpdate,
-    onHover,
-    onHoverEnd,
-    onHoverUpdate,
-    onLoad,
-    onLoadError,
-    onLoading,
-    onResize,
-    onTag,
-    onUntag,
-    onUnuse,
-    onUpdate,
-    onUse,
-    trigger,
-} from "../events/globalEvents";
 import {
     camFlash,
     camPos,
@@ -139,14 +116,7 @@ import {
     setGravityDirection,
 } from "../game/gravity";
 import { getDefaultLayer, getLayers, layers, setLayers } from "../game/layers";
-import {
-    getSceneName,
-    go,
-    onSceneLeave,
-    popScene,
-    pushScene,
-    scene,
-} from "../game/scenes";
+import { getSceneName, go, popScene, pushScene } from "../game/scenes";
 import { anchorPt } from "../gfx/anchor";
 import { getBackground, setBackground } from "../gfx/bg";
 import { makeCanvas } from "../gfx/canvasBuffer";
@@ -168,7 +138,7 @@ import {
 import { drawPolygon } from "../gfx/draw/drawPolygon";
 import { drawRect } from "../gfx/draw/drawRect";
 import { drawSprite } from "../gfx/draw/drawSprite";
-import { drawSubtracted } from "../gfx/draw/drawSubstracted";
+import { drawSubtracted } from "../gfx/draw/drawSubtracted";
 import { drawText } from "../gfx/draw/drawText";
 import { drawTriangle } from "../gfx/draw/drawTriangle";
 import { drawUVQuad } from "../gfx/draw/drawUVQuad";
@@ -194,12 +164,12 @@ import { buildConvexHull } from "../math/convexhull";
 import { easings } from "../math/easings";
 import { gjkShapeIntersection, gjkShapeIntersects } from "../math/gjk";
 import { lerp } from "../math/lerp";
+import { lerpAngle } from "../math/lerpAngle";
 import { Mat4 } from "../math/Mat4";
 import {
     bezier,
     cardinal,
     catmullRom,
-    chance,
     choose,
     chooseMultiple,
     Circle,
@@ -219,6 +189,7 @@ import {
     evaluateQuadratic,
     evaluateQuadraticFirstDerivative,
     evaluateQuadraticSecondDerivative,
+    gacha,
     getSpriteOutline,
     hermite,
     isConvex,
@@ -229,16 +200,15 @@ import {
     Mat2,
     Mat23,
     normalizedCurve,
+    piecewiseBezier,
+    piecewiseCatmullRom,
     Point,
     Polygon,
     Quad,
     quad,
     rad2deg,
-    rand,
-    randi,
-    randSeed,
     Rect,
-    RNG,
+    roulette,
     shuffle,
     smoothstep,
     step,
@@ -261,6 +231,7 @@ import {
     createRegularPolygon,
     createStarPolygon,
 } from "../math/polygongeneration";
+import { chance, rand, randi, randSeed, RNG, setRNG } from "../math/random";
 import { insertionSort } from "../math/sort";
 import { makeQuadtree, Quadtree } from "../math/spatial/quadtree";
 import { Vec2 } from "../math/Vec2";
@@ -275,7 +246,7 @@ import type { KAPLAYCtx } from "./contextType";
 import type { Engine } from "./engine";
 import { throwError } from "./errors";
 import { plug } from "./plug";
-import { onCleanup, quit } from "./quit";
+import { quit } from "./quit";
 
 // The context is the way the user interact with a KAPLAY game.
 export const createContext = (
@@ -291,6 +262,7 @@ export const createContext = (
     const destroyAll = game.root.removeAll.bind(game.root);
     const get = game.root.get.bind(game.root);
     const wait = game.root.wait.bind(game.root);
+    const nextFrame = game.root.nextFrame.bind(game.root);
     const loop = game.root.loop.bind(game.root);
     const query = game.root.query.bind(game.root);
     const tween = game.root.tween.bind(game.root);
@@ -350,14 +322,14 @@ export const createContext = (
         setFullscreen: app.setFullscreen,
         isFullscreen: app.isFullscreen,
         isTouchscreen: app.isTouchscreen,
-        onLoad,
-        onLoadError,
-        onLoading,
-        onResize,
-        onGamepadConnect: app.onGamepadConnect,
-        onGamepadDisconnect: app.onGamepadDisconnect,
-        onError,
-        onCleanup,
+        onLoad: defaultScope.onLoad,
+        onLoadError: defaultScope.onLoadError,
+        onLoading: defaultScope.onLoading,
+        onResize: defaultScope.onResize,
+        onGamepadConnect: defaultScope.onGamepadConnect,
+        onGamepadDisconnect: defaultScope.onGamepadDisconnect,
+        onError: defaultScope.onError,
+        onCleanup: defaultScope.onCleanup,
         // misc
         flash: flash,
         setCamPos: setCamPos,
@@ -387,6 +359,7 @@ export const createContext = (
         add,
         addPrefab,
         createPrefab,
+        exists,
         destroy,
         destroyAll,
         get,
@@ -401,6 +374,7 @@ export const createContext = (
         color,
         blend,
         opacity,
+        fill,
         anchor,
         area,
         sprite,
@@ -452,24 +426,23 @@ export const createContext = (
         fakeMouse,
         // group events
         trigger,
-        on: on as KAPLAYCtx["on"], // our internal on should be strict, user shouldn't
-        onFixedUpdate,
-        onUpdate,
-        onDraw,
-        onAdd,
-        onDestroy,
-        onUse,
-        onUnuse,
-        onTag,
-        onUntag,
-        onClick,
-        onCollide,
-        onCollideUpdate,
-        onCollideEnd,
-        onHover,
-        onHoverUpdate,
-        onHoverEnd,
-        // input
+        on: defaultScope.on,
+        onFixedUpdate: defaultScope.onFixedUpdate,
+        onUpdate: defaultScope.onUpdate,
+        onDraw: defaultScope.onDraw,
+        onAdd: defaultScope.onAdd,
+        onDestroy: defaultScope.onDestroy,
+        onUse: defaultScope.onUse,
+        onUnuse: defaultScope.onUnuse,
+        onTag: defaultScope.onTag,
+        onUntag: defaultScope.onUntag,
+        onClick: defaultScope.onClick,
+        onCollide: defaultScope.onCollide,
+        onCollideUpdate: defaultScope.onCollideUpdate,
+        onCollideEnd: defaultScope.onCollideEnd,
+        onHover: defaultScope.onHover,
+        onHoverUpdate: defaultScope.onHoverUpdate,
+        onHoverEnd: defaultScope.onHoverEnd,
         onKeyDown: defaultScope.onKeyDown,
         onKeyPress: defaultScope.onKeyPress,
         onKeyPressRepeat: defaultScope.onKeyPressRepeat,
@@ -522,6 +495,7 @@ export const createContext = (
         // timer
         loop,
         wait,
+        nextFrame,
         // audio
         play,
         setVolume: setVolume,
@@ -553,6 +527,7 @@ export const createContext = (
         StateMachine,
         getSpriteOutline,
         insertionSort,
+        setRNG,
         rand,
         randi,
         randSeed,
@@ -563,8 +538,11 @@ export const createContext = (
         choose,
         chooseMultiple,
         shuffle,
+        roulette,
+        gacha,
         chance,
         lerp,
+        lerpAngle,
         step,
         smoothstep,
         tween,
@@ -590,6 +568,8 @@ export const createContext = (
         catmullRom,
         bezier,
         kochanekBartels,
+        piecewiseBezier,
+        piecewiseCatmullRom,
         createRegularPolygon,
         createStarPolygon,
         createCogPolygon,
@@ -654,7 +634,7 @@ export const createContext = (
         scene: e.sceneScope,
         getSceneName,
         go,
-        onSceneLeave,
+        onSceneLeave: defaultScope.onSceneLeave,
         pushScene,
         popScene,
         // layers

@@ -25,13 +25,12 @@ const SPEED = 480;
 setGravity(2400);
 
 const myLevel = add([
+    pos(100, 200),
     level(
         [
             // Design the level layout with symbols
-            "         ",
-            "         ",
-            "  @  ^ $$",
-            "  =======",
+            "@  ^ $$",
+            "=======",
         ],
         {
             // The size of each grid
@@ -52,8 +51,18 @@ const myLevel = add([
                     body({ isStatic: true }),
                     anchor("bot"),
                 ],
-                $: () => [sprite("coin"), area(), anchor("bot"), "coin"],
-                "^": () => [sprite("spike"), area(), anchor("bot"), "danger"],
+                $: () => [
+                    sprite("coin"),
+                    area({ isSensor: true }),
+                    anchor("bot"),
+                    "coin",
+                ],
+                "^": () => [
+                    sprite("spike"),
+                    area({ isSensor: true }),
+                    anchor("bot"),
+                    "danger",
+                ],
             },
         },
     ),

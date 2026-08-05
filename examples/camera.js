@@ -49,7 +49,7 @@ const level = addLevel([
         ],
         "$": () => [
             sprite("coin"),
-            area(),
+            area({ isSensor: true }),
             anchor("bot"),
             "coin",
         ],
@@ -107,7 +107,7 @@ scoreCounter.onUpdate(() => {
     scoreCounter.text = score.toString();
 });
 
-onClick(() => {
+onMousePress(() => {
     // Use toWorld() to transform a screen-space coordinate (like mousePos()) to
     // the world-space coordinate, which has the camera transform applied
     addKaboom(toWorld(mousePos()));

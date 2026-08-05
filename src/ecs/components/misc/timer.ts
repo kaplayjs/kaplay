@@ -61,6 +61,10 @@ export interface TimerComp extends Comp {
      */
     wait(time: number, action?: () => void): TimerController;
     /**
+     * Run the callback on the next frame.
+     */
+    nextFrame(action?: () => void): TimerController;
+    /**
      * Run the callback every n seconds.
      *
      * If waitFirst is false (the default), the function will
@@ -102,7 +106,7 @@ export function timer(maxLoopsPerFrame: number = 1000): TimerComp {
             let t: number = waitFirst ? 0 : time;
             let onEndEvents = new KEvent();
             const ev = this.onUpdate(() => {
-                t += _k.app.state.dt;
+                t += _k.app.dt();
                 for (let i = 0; t >= time && i < this.maxLoopsPerFrame; i++) {
                     count--;
                     action();
@@ -116,10 +120,10 @@ export function timer(maxLoopsPerFrame: number = 1000): TimerComp {
             });
             return {
                 get timeLeft() {
-                    return t;
+                    return time - t;
                 },
                 set timeLeft(val: number) {
-                    t = val;
+                    t = time - val;
                 },
                 get paused() {
                     return ev.paused;
@@ -144,6 +148,13 @@ export function timer(maxLoopsPerFrame: number = 1000): TimerComp {
         ): TimerController {
             return this.loop(time, action ?? (() => {}), 1, true);
         },
+        nextFrame(
+            this: GameObj<TimerComp>,
+            action?: () => void,
+        ): TimerController {
+            // will run only once
+            return this.loop(0, action ?? (() => {}), 1, true);
+        },
         tween<V extends LerpValue>(
             this: GameObj<TimerComp>,
             from: V,
@@ -162,7 +173,7 @@ export function timer(maxLoopsPerFrame: number = 1000): TimerComp {
 
             const onEndEvents: Array<() => void> = [];
             const ev = this.onUpdate(() => {
-                curTime += _k.app.state.dt;
+                curTime += _k.app.dt();
                 const t = Math.min(curTime / duration, 1);
                 setValue(lerp(from, to, easeFunc(t)));
                 if (t === 1) {

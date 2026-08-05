@@ -50,7 +50,7 @@ function shoot() {
 }
 
 onKeyPress("space", shoot);
-onClick(shoot);
+onMousePress(shoot);
 
 onUpdate("bean", (m) => {
     m.move(m.dir.scale(SPEED));

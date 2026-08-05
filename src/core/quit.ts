@@ -1,8 +1,9 @@
 import { _k } from "../shared";
 
 export const quit = () => {
-    const { game, app, gfx, ggl, gc } = _k;
-    game.events.onOnce("frameEnd", () => {
+    const { app, gfx, ggl, gc } = _k;
+
+    app.events.onOnce("frameEnd", () => {
         app.quit();
 
         // clear canvas

@@ -22,9 +22,9 @@ import { rotateFactory } from "../ecs/components/transform/rotate";
 import { scaleFactory } from "../ecs/components/transform/scale";
 import { zFactory } from "../ecs/components/transform/z";
 import { registerPrefabFactory } from "../ecs/entity/prefab";
-import { createGameEventHandlers } from "../events/gameEventHandlers";
+import { createScopeHandlers } from "../events/scopeHandlers";
 import {
-    attachAppHandlersToGameObjRaw,
+    attachScopeHandlersToGameObjRaw,
     createAppScope,
     createSceneScope,
 } from "../events/scopes";
@@ -66,10 +66,10 @@ export const createEngine = (gopt: KAPLAYOpt) => {
     const canvas = createCanvas(opt);
     const { fontCacheC2d, fontCacheCanvas } = createFontCache();
     const app = initApp({ canvas, ...gopt });
-    const gameHandlers = createGameEventHandlers(app);
-    const sceneScope = createSceneScope(app, gameHandlers);
+    const gameHandlers = createScopeHandlers(app);
+    const sceneScope = createSceneScope(gameHandlers);
     const appScope = createAppScope(gameHandlers);
-    attachAppHandlersToGameObjRaw(gameHandlers);
+    attachScopeHandlersToGameObjRaw(gameHandlers);
 
     // TODO: Probably we should move this to initGfx
     const canvasContext = app.canvas
@@ -85,12 +85,12 @@ export const createEngine = (gopt: KAPLAYOpt) => {
 
     const gl = canvasContext;
 
-    // TODO: Investigate correctly what's the differente between GFX and AppGFX and reduce to 1 method
+    // TODO: Investigate correctly what's the different between GFX and AppGFX and reduce to 1 method
     const gfx = initGfx(gl, opt);
     const appGfx = initAppGfx(gfx, opt);
-    const assets = initAssets(gfx, opt);
+    const assets = initAssets(gfx, opt, appGfx);
     const audio = initAudio();
-    const game = createGame();
+    const game = createGame(opt.rng);
 
     // Frame rendering
     const frameRenderer = createFrameRenderer(

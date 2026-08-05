@@ -43,7 +43,7 @@ onKeyDown("down", () => {
 });
 
 // onClick() registers an event that runs once when left mouse is clicked
-onClick(() => {
+onMousePress(() => {
     // .moveTo() is provided by pos() component, changes the position
     player.moveTo(mousePos());
 });

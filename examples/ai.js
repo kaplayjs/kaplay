@@ -26,7 +26,7 @@ const BULLET_SPEED = 800;
 const player = add([
     sprite("bean"),
     pos(80, 80),
-    area(),
+    area({ isSensor: true }),
     anchor("center"),
 ]);
 
@@ -48,14 +48,14 @@ enemy.onStateEnter("idle", async () => {
 // When we enter "attack" state, we fire a bullet, and enter "move" state after 1 sec
 enemy.onStateEnter("attack", async () => {
     // Don't do anything if player doesn't exist anymore
-    if (player.exists()) {
+    if (exists(player)) {
         const dir = player.pos.sub(enemy.pos).unit();
 
         add([
             pos(enemy.pos),
             move(dir, BULLET_SPEED),
             rect(12, 12),
-            area(),
+            area({ isSensor: true }),
             offscreen({ destroy: true }),
             anchor("center"),
             color(BLUE),
@@ -78,7 +78,7 @@ enemy.onStateEnter("move", async () => {
 // Only when the current state is "move"
 enemy.onStateUpdate("move", () => {
     // We move the enemy in the direction of the player
-    if (!player.exists()) return;
+    if (!exists(player)) return;
     const dir = player.pos.sub(enemy.pos).unit();
     enemy.move(dir.scale(ENEMY_SPEED));
 });

@@ -14,6 +14,7 @@ import type { Picture } from "./gfx/draw/drawPicture";
 import type { FrameBuffer } from "./gfx/FrameBuffer";
 import type { Color, RGBAValue, RGBValue } from "./math/color";
 import type { Circle, Ellipse, Line, Point, Polygon, Rect } from "./math/math";
+import type { RNGConfig } from "./math/random";
 import type { Vec2 } from "./math/Vec2";
 import type { Defined, MergeObj } from "./utils/types";
 
@@ -296,9 +297,17 @@ export interface KAPLAYOpt {
      */
     background?: RGBValue | RGBAValue | string;
     /**
-     * Default texture filter.
+     * Default sprite texture filter.
+     * @default "nearest"
      */
     texFilter?: TexFilter;
+    /**
+     * Default text rasterization filter.
+     * @default
+     * "linear" for vector fonts (.woff2, .ttf, .otf, etc)
+     * "nearest" for bitmap fonts (loaded from an image)
+     */
+    fontFilter?: TexFilter;
     /**
      * How many log messages can there be on one screen (default 8).
      */
@@ -435,6 +444,11 @@ export interface KAPLAYOpt {
      */
     narrowPhaseCollisionAlgorithm?: NarrowPhaseType;
     /**
+     * If true, only the topmost object receives clicks
+     * @default false
+     */
+    topMostOnlyActivate?: boolean;
+    /**
      * Timeout (in milliseconds) at which other loaders waiting on sprites will give
      * up and throw an error.
      *
@@ -466,6 +480,31 @@ export interface KAPLAYOpt {
      * @since v4000.0
      */
     types?: TypesOpt;
+    /**
+     * Random generator to be used by the game.
+     * You can select one of the three built-in random generators: "lce", "xorshift32", or "alea".
+     *
+     * The default is the linear congruential engine, "lce".
+     *
+     * @example
+     * To pass a custom seed, use an RNGConfig object:
+     *
+     * ```ts
+     * kaplay({
+     *    rng: {
+     *       type: "alea",
+     *       seed: ["kaplay", "rocks", "hard"],
+     *    },
+     * });
+     * ```
+     *
+     * When using the Alea algorithm, provide three string seeds to ensure good entropy.
+     *
+     * You can also use a custom generator that satisfies the `RandomGenerator` interface.
+     *
+     * @since v4000.0
+     */
+    rng?: RNGConfig;
 }
 
 /**
@@ -610,7 +649,6 @@ export type MusicData = string;
  * @subgroup Types
  */
 export interface LoadFontOpt {
-    filter?: TexFilter;
     outline?: number | Outline;
     /**
      * The size to load the font in (default 64).
@@ -618,6 +656,10 @@ export interface LoadFontOpt {
      * @since v3001.0
      */
     size?: number;
+    /**
+     * The font filter to use, if different from the global font filter.
+     */
+    filter?: TexFilter;
 }
 
 /**

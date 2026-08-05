@@ -80,7 +80,9 @@ export function health(
             else if (hp > origHP) {
                 (this as unknown as GameObj).trigger("heal", origHP - hp);
             }
-            if (hp <= 0) (this as unknown as GameObj).trigger("death");
+            if (hp <= 0 && origHP > 0) {
+                (this as unknown as GameObj).trigger("death");
+            }
         },
         get maxHP() {
             return maxHP as number;
