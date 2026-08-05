@@ -81,6 +81,9 @@ So your change should look like:
 - Fixed various `raycastRect` issues and standardized raycasting across all
   shapes so rays originating inside a shape are now consistently trapped
   (#1122) - @mflerackers
+- Fixed `finish()` being able to complete an already finished tween, and
+  prevented `timeLeft` from going negative and `currentTime` from exceeding the
+  duration (#1117) - @imaginarny
 
 ## [4000.0.0-alpha.27.1] - 2026-05-12
 
