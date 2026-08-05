@@ -231,8 +231,6 @@ export const initAppState = (opt: {
         isMouseMoved: false,
         lastWidth: opt.canvas.offsetWidth,
         lastHeight: opt.canvas.offsetHeight,
-        canvasScaleX: 1,
-        canvasScaleY: 1,
         events: new KEventHandler<AppEventMap>(),
     };
 };
@@ -259,15 +257,6 @@ export const initApp = (
     const state = initAppState(opt);
     parseButtonBindings(state);
     if (opt.fixedUpdateMode) setFixedSpeed(opt.fixedUpdateMode);
-    updateCanvasScale();
-
-    function updateCanvasScale() {
-        const pd = opt.pixelDensity || 1;
-        state.canvasScaleX = state.canvas.width / pd
-            / state.canvas.offsetWidth;
-        state.canvasScaleY = state.canvas.height / pd
-            / state.canvas.offsetHeight;
-    }
 
     function dt() {
         return state.dt * state.timeScale;
@@ -1010,8 +999,6 @@ export const initApp = (
         queueReleaseHeldInputs();
     }
 
-    const pd = opt.pixelDensity || 1;
-
     canvasEvents.blur = () => {
         releaseHeldInputsOnFocusLoss();
     };
@@ -1025,27 +1012,6 @@ export const initApp = (
         // related to what we call the "offset" in this code
         const mousePos = canvasToViewport(new Vec2(e.offsetX, e.offsetY));
         const mouseDeltaPos = new Vec2(e.movementX, e.movementY);
-
-        if (!opt.letterbox && isFullscreen()) {
-            const cw = state.canvas.width / pd;
-            const ch = state.canvas.height / pd;
-            const ww = window.innerWidth;
-            const wh = window.innerHeight;
-            const rw = ww / wh;
-            const rc = cw / ch;
-            if (rw > rc) {
-                const ratio = wh / ch;
-                const offset = (ww - (cw * ratio)) / 2;
-                mousePos.x = map(e.offsetX - offset, 0, cw * ratio, 0, cw);
-                mousePos.y = map(e.offsetY, 0, ch * ratio, 0, ch);
-            }
-            else {
-                const ratio = ww / cw;
-                const offset = (wh - (ch * ratio)) / 2;
-                mousePos.x = map(e.offsetX, 0, cw * ratio, 0, cw);
-                mousePos.y = map(e.offsetY - offset, 0, ch * ratio, 0, ch);
-            }
-        }
 
         state.lastInputDevice = "mouse";
         state.events.onOnce("input", () => {
@@ -1359,7 +1325,6 @@ export const initApp = (
             ) return;
             state.lastWidth = state.canvas.offsetWidth;
             state.lastHeight = state.canvas.offsetHeight;
-            updateCanvasScale();
             state.events.onOnce("input", () => {
                 state.events.trigger("resize");
             });
@@ -1376,7 +1341,6 @@ export const initApp = (
         time,
         run,
         canvas: state.canvas,
-        updateCanvasScale,
         fps,
         rawFPS,
         setFixedSpeed,
