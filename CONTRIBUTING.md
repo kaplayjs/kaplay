@@ -45,12 +45,19 @@ Normally the definitions of components, types, interfaces (i.e: `SpriteComp`,
 Your best option is use **ctrl + click** on the type to go to the definition and
 see the JSDoc comments. Other option is to use the search feature of your IDE.
 
+## Testing
+
+See [TESTING.md](TESTING.md) for what we test, where each kind of test goes, and
+when it's fine to skip one. Tests aren't required for every PR, if you skip one,
+a short reason in the PR is enough.
+
 ## Commiting your changes
 
 1. Follow our [conventional commits](#conventional-commits-guide) format. You
    can see how seeing the commit history.
 2. `pnpm run check` to check TypeScript.
 3. `pnpm run fmt` to format.
+4. `pnpm run test` and `pnpm run test:vite` to run the test suites.
 
 ## Conventional Commits Guide
 
