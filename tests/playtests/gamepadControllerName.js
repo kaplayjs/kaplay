@@ -45,9 +45,7 @@ let currentGamepad = null;
 let lastButtonPress = "";
 
 function showConnected(gp) {
-    banner.text = `${gp.name} connected! (type: ${
-        gp.type ?? "unknown"
-    })`;
+    banner.text = `${gp.name} connected! (type: ${gp.type ?? "unknown"})`;
     currentGamepad = gp;
 }
 

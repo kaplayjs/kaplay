@@ -1,3 +1,4 @@
+import { KEvent, type KEventController } from "../../../events/events";
 import { getRenderProps } from "../../../game/utils";
 import { drawRect } from "../../../gfx/draw/drawRect";
 import { drawUVQuad } from "../../../gfx/draw/drawUVQuad";
@@ -15,13 +16,17 @@ export interface VideoComp extends Comp {
     duration: number;
     play(): void;
     pause(): void;
-    mute: boolean;
+    muted: boolean;
+    loop: boolean;
+    onEnd(action: () => void): KEventController;
     renderArea(): Rect;
 }
 
 export type VideoCompOpt = {
     width: number;
     height: number;
+    muted?: boolean;
+    loop?: boolean;
 };
 
 // region video
@@ -29,6 +34,7 @@ export function video(
     url: string,
     opt: VideoCompOpt,
 ): VideoComp & { _renderAreaVersion: number } {
+    const onEndEvents = new KEvent();
     const _video: HTMLVideoElement = document.createElement("video");
     let _playing = false;
     let _timeupdate = false;
@@ -74,16 +80,25 @@ export function video(
         pause() {
             _video.pause();
         },
-        get mute() {
+        get muted() {
             return _video.muted;
         },
-        set mute(value) {
+        set muted(value) {
             _video.muted = value;
+        },
+        get loop() {
+            return _video.loop;
+        },
+        set loop(value) {
+            _video.loop = value;
+        },
+        onEnd(action: () => void) {
+            return onEndEvents.add(action);
         },
         add() {
             _video.playsInline = true;
-            // _video.muted = true; Don't use this, sound will not work
-            _video.loop = true;
+            _video.muted = opt.muted ?? true;
+            _video.loop = opt.loop ?? true;
             _video.autoplay = false;
             _video.crossOrigin = "anonymous";
 
@@ -100,6 +115,18 @@ export function video(
                 "timeupdate",
                 () => {
                     _timeupdate = true;
+                    updateCopyFlag();
+                },
+                true,
+            );
+
+            _video.addEventListener(
+                "ended",
+                () => {
+                    onEndEvents.trigger();
+
+                    _playing = false;
+                    _timeupdate = false;
                     updateCopyFlag();
                 },
                 true,

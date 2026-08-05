@@ -46,6 +46,11 @@ export function skew(...args: Vec2Args): SkewComp {
     return {
         id: "skew",
 
+        add() {
+            (this as any as InternalGameObjRaw)._transformVersion =
+                nextTransformVersion();
+        },
+
         get skew(): Vec2 {
             if (!skewProxy) {
                 const self = this;
@@ -63,7 +68,7 @@ export function skew(...args: Vec2Args): SkewComp {
         set skew(value: Vec2) {
             if (value instanceof Vec2 === false) {
                 throw Error(
-                    "The scale property on scale is a vector. Use scaleTo or scaleBy to set the scale with a number.",
+                    `The skew property is a vector. Pass a vec2, not ${typeof value}.`,
                 );
             }
             _skew.x = value.x;
