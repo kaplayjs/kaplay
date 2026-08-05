@@ -4,37 +4,33 @@ on:
   push:
 
 jobs:
-  check-format:
-    name: Check Format
+  lint:
+    name: Check ESLint
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout
         uses: actions/checkout@v6
-      - name: Install Node.js
+
+      - name: Setup Node.js
         uses: actions/setup-node@v6
         with:
           node-version: 24
-      - uses: pnpm/action-setup@v4
-        name: Install pnpm
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
         with:
           run_install: false
-      - name: Install dprint
-        run: pnpm i dprint
-      - name: Run dprint checker 
-        run: FORMATTED=$(pnpm dprint check)
-      - name: Fail if not formatted
-        run: |
-          if [ -n "$FORMATTED" ]; then
-            echo "Code is not formatted. Please run 'pnpm run fmt' to format the code."
-            exit 1
-          else
-            echo "Code is formatted correctly."
-          fi
-        
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Run ESLint
+        run: pnpm run lint .
   test:
     name: Test
     runs-on: ubuntu-latest
-    needs: check-format
+    needs: lint 
     
     steps:
       - name: Checkout
@@ -59,7 +55,6 @@ jobs:
         run: pnpm run test -c
       - name: Run Vitest
         run: pnpm run test:vite
-
   deploy:
     name: Upload KAPLAY to CDN
     runs-on: ubuntu-latest
@@ -109,4 +104,3 @@ jobs:
         run: |
           echo "Uploading versions.json to CDN"
           curl https://cdn.kaplayjs.com/versions.json -X PUT --header "X-Auth-Key: $CDN_KEY" --upload-file ./versions.json
-          

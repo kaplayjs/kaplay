@@ -10,6 +10,16 @@ export default tseslint.config(
             jsdoc,
         },
         rules: {
+            // Formatting
+            indent: ["error", 4,
+                {
+                    SwitchCase: 1,
+                }
+            ],
+            semi: ["error", "always"],
+            quotes: ["error", "double"],
+
+            // JSDoc Linting
             "jsdoc/require-hyphen-before-param-description": "error",
             "jsdoc/check-alignment": "warn",
             "jsdoc/check-tag-names": ["error", {

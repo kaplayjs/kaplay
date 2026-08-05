@@ -65,13 +65,12 @@
     "build": "pnpm generate:index && pnpm generate:dts && node scripts/build.ts",
     "check": "tsc",
     "lint": "eslint .",
-    "fmt": "dprint fmt",
-    "fmt:commit": "dprint fmt && git diff --quiet --cached && echo \"No changes\" || (git add . && git commit -m \"style: fmt\")",
     "generate:index": "node scripts/generateIndex.js",
     "generate:dts": "dts-bundle-generator -o dist/doc.d.ts src/index.ts",
     "test": "node scripts/test.ts",
     "test:vite": "vitest --typecheck",
-    "prepare": "npm run build"
+    "prepare": "npm run build",
+    "fmt": "eslint . --fix"
   },
   "devDependencies": {
     "@eslint/js": "^9.39.4",
@@ -81,7 +80,6 @@
     "@types/jest": "^29.5.14",
     "@typescript-eslint/eslint-plugin": "^8.59.3",
     "@typescript-eslint/parser": "^8.59.3",
-    "dprint": "^0.50.2",
     "dts-bundle-generator": "^9.5.1",
     "ejs": "^3.1.10",
     "esbuild": "^0.28.1",

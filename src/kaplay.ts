@@ -82,8 +82,8 @@ type KAPLAYGame<O extends KAPLAYOptTypeOptions | undefined> = O extends
 export const kaplay = <
     O extends KAPLAYOpt,
 >(
-    opt?: O,
-): KAPLAYGame<O> => {
+        opt?: O,
+    ): KAPLAYGame<O> => {
     if (ran) {
         console.warn(
             "kaplay() was called a second time, cleaning up previous state...",

@@ -269,16 +269,16 @@ function prettyDebug(
         outStr += [
             "{",
             (tmp = Object.getOwnPropertyNames(object)
-                    .map(p =>
-                        `${/^\w+$/.test(p) ? p : JSON.stringify(p)}: ${
-                            prettyDebug(
-                                object[p],
-                                true,
-                                seen.union(new Set([object])),
-                            )
-                        }`
-                    )
-                    .join(", "))
+                .map(p =>
+                    `${/^\w+$/.test(p) ? p : JSON.stringify(p)}: ${
+                        prettyDebug(
+                            object[p],
+                            true,
+                            seen.union(new Set([object])),
+                        )
+                    }`
+                )
+                .join(", "))
                 ? ` ${tmp} `
                 : "",
             "}",

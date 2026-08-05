@@ -50,7 +50,6 @@ see the JSDoc comments. Other option is to use the search feature of your IDE.
 1. Follow our [conventional commits](#conventional-commits-guide) format. You
    can see how seeing the commit history.
 2. `pnpm run check` to check TypeScript.
-3. `pnpm run fmt` to format.
 
 ## Conventional Commits Guide
 
