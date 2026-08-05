@@ -78,6 +78,9 @@ So your change should look like:
   using the `scale` component (#1125) - @imaginarny
 - Fixed the `layer` component property returning `null` when the layer index was
   `0` (#1127) - @imaginarny
+- Fixed various `raycastRect` issues and standardized raycasting across all
+  shapes so rays originating inside a shape are now consistently trapped
+  (#1122) - @mflerackers
 - Fixed `finish()` being able to complete an already finished tween, and
   prevented `timeLeft` from going negative and `currentTime` from exceeding the
   duration (#1117) - @imaginarny
