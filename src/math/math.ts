@@ -1593,38 +1593,67 @@ function raycastLine(origin: Vec2, direction: Vec2, line: Line): RaycastResult {
 
 function raycastRect(origin: Vec2, direction: Vec2, rect: Rect) {
     let tmin = Number.NEGATIVE_INFINITY, tmax = Number.POSITIVE_INFINITY;
-    let normal;
 
-    if (direction.x != 0.0) {
+    let entryNormal;
+    let exitNormal;
+
+    if (direction.x === 0) {
+        if (origin.x < rect.pos.x || origin.x > rect.pos.x + rect.width) {
+            return null;
+        }
+    }
+    else {
         const tx1 = (rect.pos.x - origin.x) / direction.x;
         const tx2 = (rect.pos.x + rect.width - origin.x) / direction.x;
 
-        normal = vec2(-Math.sign(direction.x), 0);
+        const nearX = Math.min(tx1, tx2);
+        const farX = Math.max(tx1, tx2);
 
-        tmin = Math.max(tmin, Math.min(tx1, tx2));
-        tmax = Math.min(tmax, Math.max(tx1, tx2));
+        if (nearX > tmin) {
+            tmin = nearX;
+            entryNormal = vec2(-Math.sign(direction.x), 0);
+        }
+
+        if (farX < tmax) {
+            tmax = farX;
+            exitNormal = vec2(-Math.sign(direction.x), 0);
+        }
     }
 
-    if (direction.y != 0.0) {
+    if (direction.y === 0) {
+        if (origin.y < rect.pos.y || origin.y > rect.pos.y + rect.height) {
+            return null;
+        }
+    }
+    else {
         const ty1 = (rect.pos.y - origin.y) / direction.y;
         const ty2 = (rect.pos.y + rect.height - origin.y) / direction.y;
 
-        if (Math.min(ty1, ty2) > tmin) {
-            normal = vec2(0, -Math.sign(direction.y));
+        const nearY = Math.min(ty1, ty2);
+        const farY = Math.max(ty1, ty2);
+
+        if (nearY > tmin) {
+            tmin = nearY;
+            entryNormal = vec2(0, -Math.sign(direction.y));
         }
 
-        tmin = Math.max(tmin, Math.min(ty1, ty2));
-        tmax = Math.min(tmax, Math.max(ty1, ty2));
+        if (farY < tmax) {
+            tmax = farY;
+            exitNormal = vec2(0, -Math.sign(direction.y));
+        }
     }
 
-    if (tmax >= tmin && tmin >= 0 && tmin <= 1) {
-        const point = origin.add(direction.scale(tmin));
+    if (tmax >= tmin && tmax >= 0 && tmin <= 1) {
+        const t = tmin < 0 ? tmax : tmin;
+        const point = origin.add(direction.scale(t));
 
-        return {
-            point: point,
-            normal: normal,
-            fraction: tmin,
-        };
+        if (t <= 1) {
+            return {
+                point: point,
+                normal: tmin < 0 ? exitNormal : entryNormal,
+                fraction: t,
+            };
+        }
     }
     else {
         return null;
@@ -1650,37 +1679,41 @@ function raycastCircle(
     if ((A <= Number.EPSILON) || (disc < 0)) {
         return null;
     }
+
+    let t: number | null = null;
+
     // One possible root
-    else if (disc == 0) {
-        const t = -B / (2 * A);
-        if (t >= 0 && t <= 1) {
-            const point = a.add(ab.scale(t));
-            return {
-                point: point,
-                normal: point.sub(c),
-                fraction: t,
-            };
+    if (disc == 0) {
+        const t0 = -B / (2 * A);
+        if (t0 >= 0 && t0 <= 1) {
+            t = t0;
         }
     }
     // Two possible roots
     else {
         const t1 = (-B + Math.sqrt(disc)) / (2 * A);
         const t2 = (-B - Math.sqrt(disc)) / (2 * A);
-        let t = null;
         if (t1 >= 0 && t1 <= 1) {
             t = t1;
         }
         if (t2 >= 0 && t2 <= 1) {
             t = Math.min(t2, t ?? t2);
         }
-        if (t != null) {
-            const point = a.add(ab.scale(t));
-            return {
-                point: point,
-                normal: point.sub(c).unit(),
-                fraction: t,
-            };
+    }
+
+    if (t != null) {
+        const point = a.add(ab.scale(t));
+        let normal = point.sub(c).unit();
+
+        if (C < 0) {
+            normal = normal.scale(-1);
         }
+
+        return {
+            point: point,
+            normal: normal,
+            fraction: t,
+        };
     }
 
     return null;
@@ -1729,12 +1762,20 @@ function raycastEllipse(
         // transform the result point to the coordinate system of the rotated ellipse
         const point = T.transform(result.point).add(ellipse.center);
         const fraction = point.dist(origin) / direction.len();
+        const normal = R.transform(
+            vec2(ellipse.radiusY ** 2 * p.x, ellipse.radiusX ** 2 * p.y),
+        ).unit();
+
+        const isInside = Torigin.dot(Torigin) < 1.0;
+        if (isInside) {
+            normal.x *= -1;
+            normal.y *= -1;
+        }
+
         return {
             point: point,
             // Calculate the normal at the unrotated ellipse, then rotate the normal to the rotated ellipse
-            normal: R.transform(
-                vec2(ellipse.radiusY ** 2 * p.x, ellipse.radiusX ** 2 * p.y),
-            ).unit(),
+            normal: normal,
             fraction,
         };
     }

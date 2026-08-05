@@ -1085,6 +1085,14 @@ export const initApp = (
         });
     };
 
+    canvasEvents.pointerdown = (e) => {
+        state.canvas.setPointerCapture(e.pointerId);
+    };
+
+    canvasEvents.pointerup = (e) => {
+        state.canvas.releasePointerCapture(e.pointerId);
+    };
+
     const PREVENT_DEFAULT_KEYS = new Set([
         " ",
         "ArrowLeft",
