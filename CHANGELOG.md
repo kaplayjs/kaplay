@@ -47,8 +47,8 @@ So your change should look like:
 - Added Alea as random generator (#1097) - @Stanko
 - Added `nextFrame()` helper function to defer/run a function on the next frame
   (#1112) - @imaginarny
-- Added a mapping for DualShock 4 gamepads, and a `controllerName` field on
-  `KGamepad` for identifying the recognized controller model (#1119) - @CEREBR4L
+- Added a mapping for DualShock 4 gamepads, and a `name` field on `KGamepad` for
+  identifying the recognized controller model (#1119) - @CEREBR4L
 - Added a `type` field to `KGamepad` (`"ps4"`, `"ps5"`, `"playstation"`,
   `"xbox"`, `"switch"`, a custom string, or `undefined`) for picking
   button-glyph assets based on controller family (#1119) - @CEREBR4L
