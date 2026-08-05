@@ -53,7 +53,7 @@ export function flash(
     return fade;
 }
 
-export function shake(intensity: number | Vec2 = 12, duration?: number = 1) {
+export function shake(intensity: number | Vec2 = 12, duration: number = 1) {
     _k.game.cam.shake += typeof intensity == "number"
         ? intensity
         : intensity.len();
