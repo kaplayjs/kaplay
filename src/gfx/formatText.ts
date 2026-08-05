@@ -6,7 +6,7 @@ import { Color, rgb } from "../math/color";
 import { vec2 } from "../math/math";
 import { _k } from "../shared";
 import type { Outline } from "../types";
-import { runes } from "../utils/runes";
+import { firstRune, runes } from "../utils/runes";
 import { alignPt } from "./anchor";
 import type { FormattedChar, FormattedText } from "./draw/drawFormattedText";
 import type { CharTransform, DrawTextOpt } from "./draw/drawText";
@@ -60,13 +60,19 @@ export function compileStyledText(txt: any): StyledTextInfo {
     const charStyleMap = {} as Record<number, [string, string][]>;
     let renderText = "";
     let styleStack: [string, string][] = [];
-    let text = String(txt);
+    // Normalize to NFC and walk grapheme clusters instead of UTF-16 code units,
+    // so style positions stay aligned with formatText(), which iterates the
+    // rendered text via runes(). Keying by renderText.length would desync every
+    // style after an emoji, ZWJ sequence or astral char (e.g. CJK Extension B).
+    let text = String(txt).normalize("NFC");
+    let charIndex = 0;
 
     const emit = (ch: string) => {
         if (styleStack.length > 0) {
-            charStyleMap[renderText.length] = styleStack.slice();
+            charStyleMap[charIndex] = styleStack.slice();
         }
         renderText += ch;
+        charIndex++;
     };
 
     while (text !== "") {
@@ -74,8 +80,9 @@ export function compileStyledText(txt: any): StyledTextInfo {
             if (text.length === 1) {
                 throw new Error("Styled text error: \\ at end of string");
             }
-            emit(text[1]);
-            text = text.slice(2);
+            const escaped = firstRune(text.slice(1));
+            emit(escaped);
+            text = text.slice(1 + escaped.length);
             continue;
         }
         if (text[0] === "[") {
@@ -109,8 +116,9 @@ export function compileStyledText(txt: any): StyledTextInfo {
             text = text.slice(m.length);
             continue;
         }
-        emit(text[0]);
-        text = text.slice(1);
+        const grapheme = firstRune(text);
+        emit(grapheme);
+        text = text.slice(grapheme.length);
     }
 
     if (styleStack.length > 0) {
