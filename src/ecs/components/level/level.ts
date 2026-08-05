@@ -145,11 +145,18 @@ export function level(map: string[], opt: LevelCompOpt): LevelComp {
     const createSpatialMap = (level: GameObj<LevelComp>) => {
         spatialMap = [];
         for (const child of level.children) {
-            insertIntoSpatialMap(child);
+            insertIntoSpatialMap(level, child);
         }
     };
 
-    const insertIntoSpatialMap = (obj: GameObj) => {
+    const ensureSpatialMapExists = (level: GameObj<LevelComp>) => {
+        if (!spatialMap) {
+            createSpatialMap(level);
+        }
+    };
+
+    const insertIntoSpatialMap = (level: GameObj<LevelComp>, obj: GameObj) => {
+        ensureSpatialMapExists(level);
         const i = tile2Hash(obj.tilePos);
         if (spatialMap![i]) {
             spatialMap![i].push(obj);
@@ -159,13 +166,12 @@ export function level(map: string[], opt: LevelCompOpt): LevelComp {
         }
     };
 
-    const removeFromSpatialMap = (obj: GameObj) => {
+    const removeFromSpatialMap = (level: GameObj<LevelComp>, obj: GameObj) => {
+        ensureSpatialMapExists(level);
         const i = tile2Hash(obj.tilePos);
         if (spatialMap![i]) {
             const index = spatialMap![i].indexOf(obj);
-            if (index >= 0) {
-                spatialMap![i].splice(index, 1);
-            }
+            if (index >= 0) spatialMap![i].splice(index, 1);
         }
     };
 
@@ -175,10 +181,10 @@ export function level(map: string[], opt: LevelCompOpt): LevelComp {
             const tilePos = level.pos2Tile(child.pos);
             if (child.tilePos.x != tilePos.x || child.tilePos.y != tilePos.y) {
                 spatialMapChanged = true;
-                removeFromSpatialMap(child);
+                removeFromSpatialMap(level, child);
                 child.tilePos.x = tilePos.x;
                 child.tilePos.y = tilePos.y;
-                insertIntoSpatialMap(child);
+                insertIntoSpatialMap(level, child);
             }
         }
         if (spatialMapChanged) {
@@ -417,7 +423,7 @@ export function level(map: string[], opt: LevelCompOpt): LevelComp {
             calcTransform(obj, obj.transform);
 
             if (spatialMap) {
-                insertIntoSpatialMap(obj);
+                insertIntoSpatialMap(this, obj);
                 this.trigger("spatialMapChanged");
                 this.trigger("navigationMapInvalid");
             }
@@ -460,9 +466,13 @@ export function level(map: string[], opt: LevelCompOpt): LevelComp {
             return spatialMap!;
         },
 
-        removeFromSpatialMap,
+        removeFromSpatialMap(this: GameObj<LevelComp>, obj: GameObj) {
+            removeFromSpatialMap(this, obj);
+        },
 
-        insertIntoSpatialMap,
+        insertIntoSpatialMap(this: GameObj<LevelComp>, obj: GameObj) {
+            insertIntoSpatialMap(this, obj);
+        },
 
         onSpatialMapChanged(this: GameObj<LevelComp>, cb: () => void) {
             return this.on("spatialMapChanged", cb);
@@ -737,9 +747,9 @@ export function levelFactory(data: any) {
         const d = data.tiles[key];
         const tags = d.tags;
         opt.tiles[key] = (pos: Vec2) => {
-            const comps: Comp[] = Object.keys(d).filter(k => k != "tags").map(
-                id => deserializeComp(id, d[id]),
-            );
+            const comps: Comp[] = Object.keys(d)
+                .filter((k) => k != "tags")
+                .map((id) => deserializeComp(id, d[id]));
             return [...comps, ...tags];
         };
     }
