@@ -3,6 +3,7 @@
 import type {
     Cursor,
     GameObj,
+    GamepadDef,
     KAPLAYOpt,
     Key,
     KGamepad,
@@ -34,6 +35,7 @@ import {
     releaseButton,
     setButton,
 } from "./buttons";
+import { detectGamepadType, resolveGamepadMap } from "./gamepadId";
 import {
     ButtonProcessor,
     type ButtonsDef,
@@ -224,6 +226,9 @@ export const initAppState = (opt: {
         ),
         mergedGamepadState: new GamepadState(null),
         gamepadStates: new Map<number, GamepadState>(),
+        // resolved button map per gamepad index, computed once on connect
+        // rather than re-resolved from the raw id string every frame
+        gamepadMaps: new Map<number, GamepadDef>(),
         lastInputDevice: null as "mouse" | "keyboard" | "gamepad" | null,
         // unified input state
         gamepads: [] as KGamepad[],
@@ -847,8 +852,20 @@ export const initApp = (
     }
 
     function registerGamepad(browserGamepad: Gamepad) {
+        // Custom maps (opt.gamepads) stay keyed by literal id for backwards
+        // compatibility; see gamepadId.ts for the vendor:product resolution.
+        const gamepadResolution = resolveGamepadMap(
+            browserGamepad.id,
+            GP_MAP,
+            opt.gamepads,
+        );
+        const { map: gamepadMap, name } = gamepadResolution;
+        const type = detectGamepadType(gamepadResolution);
+
         const gamepad: KGamepad = {
             index: browserGamepad.index,
+            name,
+            type,
             isPressed: (btn: KGamepadButton) => {
                 return state.gamepadStates.get(browserGamepad.index)
                     ?.buttonState
@@ -880,6 +897,7 @@ export const initApp = (
             browserGamepad.index,
             new GamepadState(gamepad),
         );
+        state.gamepadMaps.set(browserGamepad.index, gamepadMap);
 
         return gamepad;
     }
@@ -889,6 +907,7 @@ export const initApp = (
             g.index !== gamepad.index
         );
         state.gamepadStates.delete(gamepad.index);
+        state.gamepadMaps.delete(gamepad.index);
     }
 
     // TODO: Clean up this function
@@ -907,9 +926,8 @@ export const initApp = (
             const browserGamepad = navigator.getGamepads()[gamepad.index];
             if (!browserGamepad) continue;
 
-            const customMap = opt.gamepads ?? {};
-            const map = customMap[browserGamepad.id]
-                || GP_MAP[browserGamepad.id] || GP_MAP["default"];
+            const map = state.gamepadMaps.get(gamepad.index)
+                ?? GP_MAP["default"];
             const gamepadState = state.gamepadStates.get(gamepad.index);
             if (!gamepadState) continue;
 
