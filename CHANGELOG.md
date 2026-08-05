@@ -59,6 +59,8 @@ So your change should look like:
 - Improved `text` component performance by separating text transform and
   formatting, reducing update calls for both dynamic and (especially) static
   text (#1125) - @imaginarny
+- Debug keys, keys defined with the Buttons API, and keyboard input captured by
+  e.g. focused `textInput` now use `preventDefault()` (#1114) - @imaginarny
 
 ### Fixed
 

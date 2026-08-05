@@ -131,7 +131,6 @@ export type Key =
         | "alt"
         | "meta"
         | "space"
-        | " "
         | "left"
         | "right"
         | "up"
