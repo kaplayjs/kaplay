@@ -447,18 +447,20 @@ export const initApp = (
                 }
                 const desiredDt = opt.maxFPS ? 1 / opt.maxFPS : 0;
                 if (updateAccumulator > desiredDt) {
-                    state.time += state.dt = desiredDt > 0
-                        ? Math.max(desiredDt, observedDt)
-                        : observedDt;
-                    state.restDt = fixedUpdateAccumulator;
-                    state.fpsCounter.tick(state.dt);
-                    if (desiredDt > 0) {
-                        updateAccumulator -= desiredDt;
+                    if (!_k.debug.paused) {
+                        state.time += state.dt = desiredDt > 0
+                            ? Math.max(desiredDt, observedDt)
+                            : observedDt;
+                        state.restDt = fixedUpdateAccumulator;
+                        state.fpsCounter.tick(state.dt);
+                        if (desiredDt > 0) {
+                            updateAccumulator -= desiredDt;
+                        }
+                        else {
+                            updateAccumulator = 0;
+                        }
+                        state.numFrames++;
                     }
-                    else {
-                        updateAccumulator = 0;
-                    }
-                    state.numFrames++;
 
                     update(processInput, resetInput);
                 }
