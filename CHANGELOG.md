@@ -47,6 +47,8 @@ So your change should look like:
 - Added Alea as random generator (#1097) - @Stanko
 - Added `nextFrame()` helper function to defer/run a function on the next frame
   (#1112) - @imaginarny
+- Added `KAPLAYOpt.debugKeys` to add and modify on runtime the buttons used for
+  debug actions - @amyspark-ng
 
 ### Changed
 
