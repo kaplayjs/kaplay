@@ -185,13 +185,22 @@ export type FixedSpeedOption = keyof typeof fixedSpeeds;
 export const initAppState = (opt: {
     canvas: HTMLCanvasElement;
     buttons?: ButtonsDef;
+    debugButtons?: ButtonsDef;
     fixedUpdateMode?: FixedSpeedOption;
     maxTimeStep?: number;
 }) => {
     const buttons = opt.buttons ?? {};
+    const debugButtons = opt.debugButtons ?? {
+        "inspect": { keyboard: "f1" },
+        "clearlogs": { keyboard: "f2" },
+        "pause": { keyboard: "f8" },
+        "slowdown": { keyboard: "f7" },
+        "speedup": { keyboard: "f9" },
+        "stepframe": { keyboard: "f10" },
+    };
     return {
         canvas: opt.canvas,
-        buttons: buttons,
+        buttons: { ...buttons, ...debugButtons },
         buttonHandler: new ButtonProcessor(),
         loopID: null as null | number,
         stopped: false,

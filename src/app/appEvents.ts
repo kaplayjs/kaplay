@@ -47,25 +47,31 @@ export function initAppEvents() {
     });
 
     if (_k.globalOpt.debug !== false) {
-        _k.appScope.onKeyPress(
-            _k.globalOpt.debugKey ?? "f1",
+        _k.appScope.onButtonPress("stepframe", () => _k.debug.stepFrame());
+        _k.appScope.onButtonPress("clearlogs", () => _k.debug.clearLog());
+
+        _k.appScope.onButtonPress(
+            "inspect",
             () => _k.debug.inspect = !_k.debug.inspect,
         );
-        _k.appScope.onKeyPress("f2", () => _k.debug.clearLog());
-        _k.appScope.onKeyPress("f8", () => _k.debug.paused = !_k.debug.paused);
-        _k.appScope.onKeyPress("f7", () => {
+
+        _k.appScope.onButtonPress(
+            "pause",
+            () => _k.debug.paused = !_k.debug.paused,
+        );
+
+        _k.appScope.onButtonPress("slowdown", () => {
             _k.debug.timeScale = toFixed(
                 clamp(_k.debug.timeScale - 0.2, 0, 2),
                 1,
             );
         });
-        _k.appScope.onKeyPress("f9", () => {
+        _k.appScope.onButtonPress("speedup", () => {
             _k.debug.timeScale = toFixed(
                 clamp(_k.debug.timeScale + 0.2, 0, 2),
                 1,
             );
         });
-        _k.appScope.onKeyPress("f10", () => _k.debug.stepFrame());
     }
 
     // burp mode initialization
