@@ -1,5 +1,9 @@
 import type { FixedSpeedOption } from "./app/app";
-import type { ButtonsDef } from "./app/inputBindings";
+import type {
+    ButtonBinding,
+    ButtonBindingDevice,
+    ButtonsDef,
+} from "./app/inputBindings";
 import type { Asset } from "./assets/asset";
 import type { ShaderData, Uniform } from "./assets/shader";
 import type { KAPLAYCtx } from "./core/contextType";
@@ -266,9 +270,33 @@ export interface KAPLAYOpt {
      */
     debug?: boolean;
     /**
-     * Key that toggles debug mode
+     * Defined buttons for the debug actions
+     *
+     * ! These will be added to the current kaplay buttons, beware to not use these button names for other game actions
+     *
+     * @example
+     * ```js
+     * // These are the default keys
+     * kaplay({
+     *  debugButtons: {
+     *      "inspect": { keyboard: "f1" },
+     *      "clearlogs": { keyboard: "f2" },
+     *      "pause": { keyboard: "f8" },
+     *      "slowdown": { keyboard: "f7" },
+     *      "speedup": { keyboard: "f9" },
+     *      "stepframe": { keyboard: "f10" },
+     *  }
+     * })
+     * ```
+     *
+     * If you want to disable them you can assign the object to an empty one
+     * ```js
+     * kaplay({
+     *  debugButtons: {}
+     * })
+     * ```
      */
-    debugKey?: Key;
+    debugButtons?: ButtonsDef;
     /**
      * Default font (defaults to "monospace").
      */

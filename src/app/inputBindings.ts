@@ -1,3 +1,4 @@
+import { _k } from "../shared";
 import type {
     ChordedKey,
     ChordedKGamepadButton,
@@ -39,9 +40,9 @@ export type ButtonBindingDevice = "keyboard" | "gamepad" | "mouse";
 
 // pass the user `buttons` definition to different keymaps
 export const parseButtonBindings = (appState: AppState) => {
-    const btns = appState.buttons;
+    const btns = { ...appState.buttons };
 
-    for (const b in btns) {
+    for (let b in btns) {
         appState.buttonHandler.updateBinding(b, btns[b]);
     }
 };
