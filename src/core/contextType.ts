@@ -3417,7 +3417,7 @@ export interface KAPLAYCtx {
      *
      * @param url - The url to add the root at the start of.
      */
-    fixURL<D>(url: D): D;
+    fixURL<D extends string>(url: D): D;
     /**
      * Load a sprite into asset manager, with name and resource url and optional config.
      *
