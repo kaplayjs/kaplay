@@ -23,11 +23,11 @@ export type Vec2Args =
     | [];
 
 export function deg2rad(deg: number): number {
-    return deg * Math.PI / 180;
+    return (deg * Math.PI) / 180;
 }
 
 export function rad2deg(rad: number): number {
-    return rad * 180 / Math.PI;
+    return (rad * 180) / Math.PI;
 }
 
 export function map(
@@ -37,7 +37,7 @@ export function map(
     l2: number,
     h2: number,
 ): number {
-    return l2 + (v - l1) / (h1 - l1) * (h2 - l2);
+    return l2 + ((v - l1) / (h1 - l1)) * (h2 - l2);
 }
 
 export function mapc(
@@ -102,10 +102,12 @@ export class Quad {
         return new Quad(this.x, this.y, this.w, this.h);
     }
     eq(other: Quad): boolean {
-        return this.x === other.x
+        return (
+            this.x === other.x
             && this.y === other.y
             && this.w === other.w
-            && this.h === other.h;
+            && this.h === other.h
+        );
     }
     toString(): string {
         return `quad(${this.x}, ${this.y}, ${this.w}, ${this.h})`;
@@ -161,12 +163,7 @@ export class Mat2 {
     }
 
     get transpose() {
-        return new Mat2(
-            this.a,
-            this.c,
-            this.b,
-            this.d,
-        );
+        return new Mat2(this.a, this.c, this.b, this.d);
     }
 
     get eigenvalues() {
@@ -179,17 +176,29 @@ export class Mat2 {
 
     eigenvectors(e1: number, e2: number) {
         if (this.c != 0) {
-            return [[e1 - this.d, this.c], [e2 - this.d, this.c]];
+            return [
+                [e1 - this.d, this.c],
+                [e2 - this.d, this.c],
+            ];
         }
         else if (this.b != 0) {
-            return [[this.b, e1 - this.a], [this.b, e2 - this.a]];
+            return [
+                [this.b, e1 - this.a],
+                [this.b, e2 - this.a],
+            ];
         }
         else {
             if (Math.abs(this.transform(vec2(1, 0)).x - e1) < Number.EPSILON) {
-                return [[1, 0], [0, 1]];
+                return [
+                    [1, 0],
+                    [0, 1],
+                ];
             }
             else {
-                return [[0, 1], [1, 0]];
+                return [
+                    [0, 1],
+                    [1, 0],
+                ];
             }
         }
     }
@@ -205,12 +214,7 @@ export class Mat2 {
     static rotation(radians: number) {
         const c = Math.cos(radians);
         const s = Math.sin(radians);
-        return new Mat2(
-            c,
-            s,
-            -s,
-            c,
-        );
+        return new Mat2(c, s, -s, c);
     }
 
     static scale(x: number, y: number) {
@@ -247,35 +251,16 @@ export class Mat23 {
         this.f = f;
     }
     static fromMat2(m: Mat2) {
-        return new Mat23(
-            m.a,
-            m.b,
-            m.c,
-            m.d,
-            0,
-            0,
-        );
+        return new Mat23(m.a, m.b, m.c, m.d, 0, 0);
     }
     toMat2() {
-        return new Mat2(
-            this.a,
-            this.b,
-            this.c,
-            this.d,
-        );
+        return new Mat2(this.a, this.b, this.c, this.d);
     }
     // | 1 0 x |
     // | 0 1 y |
     // | 0 0 1 |
     static fromTranslation(t: Vec2) {
-        return new Mat23(
-            1,
-            0,
-            0,
-            1,
-            t.x,
-            t.y,
-        );
+        return new Mat23(1, 0, 0, 1, t.x, t.y);
     }
     // | c -s 0 |
     // | s  c 0 |
@@ -283,27 +268,13 @@ export class Mat23 {
     static fromRotation(radians: number) {
         const c = Math.cos(radians);
         const s = Math.sin(radians);
-        return new Mat23(
-            c,
-            s,
-            -s,
-            c,
-            0,
-            0,
-        );
+        return new Mat23(c, s, -s, c, 0, 0);
     }
     // | x 0 0 |
     // | 0 y 0 |
     // | 0 0 1 |
     static fromScale(s: Vec2): Mat23 {
-        return new Mat23(
-            s.x,
-            0,
-            0,
-            s.y,
-            0,
-            0,
-        );
+        return new Mat23(s.x, 0, 0, s.y, 0, 0);
     }
     // | 1 x 0 |
     // | y 1 0 |
@@ -311,24 +282,10 @@ export class Mat23 {
     static fromSkew(s: Vec2): Mat23 {
         const x = Math.tan(s.x);
         const y = Math.tan(s.y);
-        return new Mat23(
-            1,
-            y,
-            x,
-            1,
-            0,
-            0,
-        );
+        return new Mat23(1, y, x, 1, 0, 0);
     }
     clone() {
-        return new Mat23(
-            this.a,
-            this.b,
-            this.c,
-            this.d,
-            this.e,
-            this.f,
-        );
+        return new Mat23(this.a, this.b, this.c, this.d, this.e, this.f);
     }
     setMat23(m: Mat23) {
         this.a = m.a;
@@ -354,7 +311,7 @@ export class Mat23 {
         return this;
     }
     setTRS(x: number, y: number, angle: number, sx: number, sy: number) {
-        const radians = angle * Math.PI / 180;
+        const radians = (angle * Math.PI) / 180;
         const c = Math.cos(radians);
         const s = Math.sin(radians);
         this.a = c * sx;
@@ -549,14 +506,10 @@ export class Mat23 {
     // and atan2 does y / x, thus sx is eliminated
     getRotation() {
         if (this.a || this.b) {
-            return rad2deg(
-                Math.atan2(this.b, this.a),
-            );
+            return rad2deg(Math.atan2(this.b, this.a));
         }
         else {
-            return 90 - rad2deg(
-                Math.atan2(this.d, this.c),
-            );
+            return 90 - rad2deg(Math.atan2(this.d, this.c));
         }
     }
     // Using cos^2 + sin^2 = 1, thus sqrt(a^2 + b^2) contains the scale
@@ -632,26 +585,11 @@ class Mat3 {
     }
 
     static fromMat2(m: Mat2) {
-        return new Mat3(
-            m.a,
-            m.b,
-            0,
-            m.c,
-            m.d,
-            0,
-            0,
-            0,
-            1,
-        );
+        return new Mat3(m.a, m.b, 0, m.c, m.d, 0, 0, 0, 1);
     }
 
     toMat2() {
-        return new Mat2(
-            this.m11,
-            this.m12,
-            this.m21,
-            this.m22,
-        );
+        return new Mat2(this.m11, this.m12, this.m21, this.m22);
     }
 
     mul(other: Mat3): Mat3 {
@@ -669,9 +607,14 @@ class Mat3 {
     }
 
     get det(): number {
-        return this.m11 * this.m22 * this.m33 + this.m12 * this.m23 * this.m31
-            + this.m13 * this.m21 * this.m32 - this.m13 * this.m22 * this.m31
-            - this.m12 * this.m21 * this.m33 - this.m11 * this.m23 * this.m32;
+        return (
+            this.m11 * this.m22 * this.m33
+            + this.m12 * this.m23 * this.m31
+            + this.m13 * this.m21 * this.m32
+            - this.m13 * this.m22 * this.m31
+            - this.m12 * this.m21 * this.m33
+            - this.m11 * this.m23 * this.m32
+        );
     }
 
     rotate(radians: number) {
@@ -796,17 +739,21 @@ export function gacha<T>(
 
 // TODO: better name
 export function testRectRect2(r1: Rect, r2: Rect): boolean {
-    return r1.pos.x + r1.width >= r2.pos.x
+    return (
+        r1.pos.x + r1.width >= r2.pos.x
         && r1.pos.x <= r2.pos.x + r2.width
         && r1.pos.y + r1.height >= r2.pos.y
-        && r1.pos.y <= r2.pos.y + r2.height;
+        && r1.pos.y <= r2.pos.y + r2.height
+    );
 }
 
 export function testRectRect(r1: Rect, r2: Rect): boolean {
-    return r1.pos.x + r1.width > r2.pos.x
+    return (
+        r1.pos.x + r1.width > r2.pos.x
         && r1.pos.x < r2.pos.x + r2.width
         && r1.pos.y + r1.height > r2.pos.y
-        && r1.pos.y < r2.pos.y + r2.height;
+        && r1.pos.y < r2.pos.y + r2.height
+    );
 }
 
 // TODO: better name
@@ -827,9 +774,11 @@ export function testLineLineT(l1: Line, l2: Line): number | null {
     }
 
     const ua = ((l2.p2.x - l2.p1.x) * (l1.p1.y - l2.p1.y)
-        - (l2.p2.y - l2.p1.y) * (l1.p1.x - l2.p1.x)) / denom;
+        - (l2.p2.y - l2.p1.y) * (l1.p1.x - l2.p1.x))
+        / denom;
     const ub = ((l1.p2.x - l1.p1.x) * (l1.p1.y - l2.p1.y)
-        - (l1.p2.y - l1.p1.y) * (l1.p1.x - l2.p1.x)) / denom;
+        - (l1.p2.y - l1.p1.y) * (l1.p1.x - l2.p1.x))
+        / denom;
 
     // is the intersection on the segments
     if (ua < 0 || ua > 1 || ub < 0 || ub > 1) {
@@ -850,7 +799,8 @@ export function testLineLine(l1: Line, l2: Line): Vec2 | null {
 
 export function clipLineToRect(r: Rect, l: Line, result: Line): boolean {
     const dir = l.p2.sub(l.p1);
-    let tmin = Number.NEGATIVE_INFINITY, tmax = Number.POSITIVE_INFINITY;
+    let tmin = Number.NEGATIVE_INFINITY,
+        tmax = Number.POSITIVE_INFINITY;
 
     if (dir.x != 0.0) {
         const tx1 = (r.pos.x - l.p1.x) / dir.x;
@@ -890,7 +840,8 @@ export function clipLineToRect(r: Rect, l: Line, result: Line): boolean {
 
 export function testRectLine(r: Rect, l: Line): boolean {
     const dir = l.p2.sub(l.p1);
-    let tmin = Number.NEGATIVE_INFINITY, tmax = Number.POSITIVE_INFINITY;
+    let tmin = Number.NEGATIVE_INFINITY,
+        tmax = Number.POSITIVE_INFINITY;
 
     if (dir.x != 0.0) {
         const tx1 = (r.pos.x - l.p1.x) / dir.x;
@@ -922,17 +873,21 @@ export function testRectLine(r: Rect, l: Line): boolean {
 }
 
 export function testRectPoint2(r: Rect, pt: Vec2): boolean {
-    return pt.x >= r.pos.x
+    return (
+        pt.x >= r.pos.x
         && pt.x <= r.pos.x + r.width
         && pt.y >= r.pos.y
-        && pt.y <= r.pos.y + r.height;
+        && pt.y <= r.pos.y + r.height
+    );
 }
 
 export function testRectPoint(r: Rect, pt: Vec2): boolean {
-    return pt.x > r.pos.x
+    return (
+        pt.x > r.pos.x
         && pt.x < r.pos.x + r.width
         && pt.y > r.pos.y
-        && pt.y < r.pos.y + r.height;
+        && pt.y < r.pos.y + r.height
+    );
 }
 
 export function testRectCircle(r: Rect, c: Circle): boolean {
@@ -978,7 +933,7 @@ export function clipLineToCircle(
     const dis = b * b - 4 * a * c;
 
     // No root
-    if ((a <= Number.EPSILON) || (dis < 0)) {
+    if (a <= Number.EPSILON || dis < 0) {
         return false;
     }
     // One possible root
@@ -1044,7 +999,7 @@ export function testLineCircle(l: Line, circle: Circle): boolean {
     const dis = b * b - 4 * a * c;
 
     // No root
-    if ((a <= Number.EPSILON) || (dis < 0)) {
+    if (a <= Number.EPSILON || dis < 0) {
         return false;
     }
     // One possible root
@@ -1091,8 +1046,10 @@ export function testCirclePoint(c: Circle, p: Vec2): boolean {
 }
 
 export function testCircleCircle(c1: Circle, c2: Circle): boolean {
-    return c1.center.sdist(c2.center)
-        < (c1.radius + c2.radius) * (c1.radius + c2.radius);
+    return (
+        c1.center.sdist(c2.center)
+            < (c1.radius + c2.radius) * (c1.radius + c2.radius)
+    );
 }
 
 export function testCirclePolygon(c: Circle, p: Polygon): boolean {
@@ -1128,8 +1085,8 @@ export function testPolygonPolygon(p1: Polygon, p2: Polygon): boolean {
     }
     // Check if any of the points of the polygon lie in the other polygon
     if (
-        p1.pts.some(p => testPolygonPoint(p2, p))
-        || p2.pts.some(p => testPolygonPoint(p1, p))
+        p1.pts.some((p) => testPolygonPoint(p2, p))
+        || p2.pts.some((p) => testPolygonPoint(p1, p))
     ) {
         return true;
     }
@@ -1143,10 +1100,10 @@ export function testPolygonPoint(poly: Polygon, pt: Vec2): boolean {
 
     for (let i = 0, j = p.length - 1; i < p.length; j = i++) {
         if (
-            ((p[i].y > pt.y) != (p[j].y > pt.y))
-            && (pt.x
-                < (p[j].x - p[i].x) * (pt.y - p[i].y) / (p[j].y - p[i].y)
-                    + p[i].x)
+            p[i].y > pt.y != p[j].y > pt.y
+            && pt.x
+                < ((p[j].x - p[i].x) * (pt.y - p[i].y)) / (p[j].y - p[i].y)
+                    + p[i].x
         ) {
             c = !c;
         }
@@ -1163,8 +1120,11 @@ export function testEllipsePoint(ellipse: Ellipse, pt: Vec2): boolean {
     const s = Math.sin(angle);
     const vx = pt.x * c + pt.y * s;
     const vy = -pt.x * s + pt.y * c;
-    return vx * vx / (ellipse.radiusX * ellipse.radiusX)
-            + vy * vy / (ellipse.radiusY * ellipse.radiusY) < 1;
+    return (
+        (vx * vx) / (ellipse.radiusX * ellipse.radiusX)
+                + (vy * vy) / (ellipse.radiusY * ellipse.radiusY)
+            < 1
+    );
 }
 
 export function testEllipseCircle(ellipse: Ellipse, circle: Circle): boolean {
@@ -1297,31 +1257,66 @@ export function testEllipseEllipse(
     const b32 = B.m32;
     const b33 = B.m33;
 
-    const factor = a11 * a22 * a33 - a11 * a23 * a32 - a12 * a21 * a33
-        + a12 * a23 * a31 + a13 * a21 * a32 - a13 * a22 * a31;
-    const a =
-        (a11 * a22 * b33 - a11 * a23 * b32 - a11 * a32 * b23 + a11 * a33 * b22
-            - a12 * a21 * b33 + a12 * a23 * b31 + a12 * a31 * b23
-            - a12 * a33 * b21 + a13 * a21 * b32 - a13 * a22 * b31
-            - a13 * a31 * b22 + a13 * a32 * b21 + a21 * a32 * b13
-            - a21 * a33 * b12 - a22 * a31 * b13 + a22 * a33 * b11
-            + a23 * a31 * b12 - a23 * a32 * b11) / factor;
-    const b =
-        (a11 * b22 * b33 - a11 * b23 * b32 - a12 * b21 * b33 + a12 * b23 * b31
-            + a13 * b21 * b32 - a13 * b22 * b31 - a21 * b12 * b33
-            + a21 * b13 * b32 + a22 * b11 * b33 - a22 * b13 * b31
-            - a23 * b11 * b32 + a23 * b12 * b31 + a31 * b12 * b23
-            - a31 * b13 * b22 - a32 * b11 * b23 + a32 * b13 * b21
-            + a33 * b11 * b22 - a33 * b12 * b21) / factor;
-    const c =
-        (b11 * b22 * b33 - b11 * b23 * b32 - b12 * b21 * b33 + b12 * b23 * b31
-            + b13 * b21 * b32 - b13 * b22 * b31) / factor;
+    const factor = a11 * a22 * a33
+        - a11 * a23 * a32
+        - a12 * a21 * a33
+        + a12 * a23 * a31
+        + a13 * a21 * a32
+        - a13 * a22 * a31;
+    const a = (a11 * a22 * b33
+        - a11 * a23 * b32
+        - a11 * a32 * b23
+        + a11 * a33 * b22
+        - a12 * a21 * b33
+        + a12 * a23 * b31
+        + a12 * a31 * b23
+        - a12 * a33 * b21
+        + a13 * a21 * b32
+        - a13 * a22 * b31
+        - a13 * a31 * b22
+        + a13 * a32 * b21
+        + a21 * a32 * b13
+        - a21 * a33 * b12
+        - a22 * a31 * b13
+        + a22 * a33 * b11
+        + a23 * a31 * b12
+        - a23 * a32 * b11)
+        / factor;
+    const b = (a11 * b22 * b33
+        - a11 * b23 * b32
+        - a12 * b21 * b33
+        + a12 * b23 * b31
+        + a13 * b21 * b32
+        - a13 * b22 * b31
+        - a21 * b12 * b33
+        + a21 * b13 * b32
+        + a22 * b11 * b33
+        - a22 * b13 * b31
+        - a23 * b11 * b32
+        + a23 * b12 * b31
+        + a31 * b12 * b23
+        - a31 * b13 * b22
+        - a32 * b11 * b23
+        + a32 * b13 * b21
+        + a33 * b11 * b22
+        - a33 * b12 * b21)
+        / factor;
+    const c = (b11 * b22 * b33
+        - b11 * b23 * b32
+        - b12 * b21 * b33
+        + b12 * b23 * b31
+        + b13 * b21 * b32
+        - b13 * b22 * b31)
+        / factor;
 
     if (a >= 0) {
         const condition1 = -3 * b + a ** 2;
         const condition2 = 3 * a * c + b * a ** 2 - 4 * b ** 2;
-        const condition3 = -27 * c ** 2 + 18 * c * a * b + a ** 2 * b ** 2
-            - 4 * a ** 3 * c - 4 * b ** 3;
+        const condition3 = -27 * c ** 2
+            + 18 * c * a * b
+            + a ** 2 * b ** 2
+            - 4 * a ** 3 * c
+            - 4 * b ** 3;
         if (condition1 > 0 && condition2 < 0 && condition3 > 0) {
             return false;
         }
@@ -1331,8 +1326,11 @@ export function testEllipseEllipse(
     }
     else {
         const condition1 = -3 * b + a ** 2;
-        const condition2 = -27 * c ** 2 + 18 * c * a * b + a ** 2 * b ** 2
-            - 4 * a ** 3 * c - 4 * b ** 3;
+        const condition2 = -27 * c ** 2
+            + 18 * c * a * b
+            + a ** 2 * b ** 2
+            - 4 * a ** 3 * c
+            - 4 * b ** 3;
         if (condition1 > 0 && condition2 > 0) {
             return false;
         }
@@ -1349,7 +1347,7 @@ export function testEllipseRect(ellipse: Ellipse, rect: Rect): boolean {
 export function testEllipsePolygon(ellipse: Ellipse, poly: Polygon): boolean {
     // Transform the polygon to the coordinate system where the ellipse is a unit circle
     const T = ellipse.toMat2().inverse;
-    poly = new Polygon(poly.pts.map(p => T.transform(p.sub(ellipse.center))));
+    poly = new Polygon(poly.pts.map((p) => T.transform(p.sub(ellipse.center))));
     return testCirclePolygon(new Circle(vec2(), 1), poly);
 }
 
@@ -1676,7 +1674,7 @@ function raycastCircle(
     // Calculate the discriminant of ax^2 + bx + c
     const disc = B * B - 4 * A * C;
     // No root
-    if ((A <= Number.EPSILON) || (disc < 0)) {
+    if (A <= Number.EPSILON || disc < 0) {
         return null;
     }
 
@@ -1796,12 +1794,12 @@ export function raycastGrid(
     const step = vec2(dir.x > 0 ? 1 : -1, dir.y > 0 ? 1 : -1);
     const tDelta = vec2(Math.abs(1 / dir.x), Math.abs(1 / dir.y));
     const dist = vec2(
-        (step.x > 0) ? (gridPos.x + 1 - origin.x) : (origin.x - gridPos.x),
-        (step.y > 0) ? (gridPos.y + 1 - origin.y) : (origin.y - gridPos.y),
+        step.x > 0 ? gridPos.x + 1 - origin.x : origin.x - gridPos.x,
+        step.y > 0 ? gridPos.y + 1 - origin.y : origin.y - gridPos.y,
     );
     const tMax = vec2(
-        (tDelta.x < Infinity) ? tDelta.x * dist.x : Infinity,
-        (tDelta.y < Infinity) ? tDelta.y * dist.y : Infinity,
+        tDelta.x < Infinity ? tDelta.x * dist.x : Infinity,
+        tDelta.y < Infinity ? tDelta.y * dist.y : Infinity,
     );
     let steppedIndex = -1;
     while (t <= maxDistance) {
@@ -1880,7 +1878,7 @@ export class Point {
         return this.pt.clone();
     }
     serialize(): any {
-        return { "Point": { pt: this.pt.serialize() } };
+        return { Point: { pt: this.pt.serialize() } };
     }
     support(direction: Vec2): Vec2 {
         return this.pt;
@@ -1889,7 +1887,7 @@ export class Point {
         return this.pt;
     }
     /* Returns the point
-     **/
+   **/
     closestPt(p: Vec2): Vec2 | undefined {
         return this.pt;
     }
@@ -1958,8 +1956,8 @@ export class Line {
         );
     }
     /* Calculates the point on the line segment (not just vertex)
-     * closest to the given point.
-     **/
+   * closest to the given point.
+   **/
     closestPt(p: Vec2): Vec2 | undefined {
         const v1 = new Vec2();
         const v2 = new Vec2();
@@ -2010,7 +2008,7 @@ export class Rect {
     }
     transform(m: Mat23, s?: Shape): Polygon {
         // TODO: resize existing pts array?
-        const p = (s && s instanceof Polygon && s.pts.length == 4)
+        const p = s && s instanceof Polygon && s.pts.length == 4
             ? s
             : new Polygon([new Vec2(), new Vec2(), new Vec2(), new Vec2()]);
         p.pts[0] = m.transformPointV(this.pos, p.pts[0]);
@@ -2102,8 +2100,8 @@ export class Rect {
         return this.pos;
     }
     /* Calculates the point on the rectangle (not just vertex)
-     * closest to the given point provided that the projected point lies within the rectangle
-     **/
+   * closest to the given point provided that the projected point lies within the rectangle
+   **/
     closestPt(p: Vec2): Vec2 | undefined {
         // TODO
         return undefined;
@@ -2175,8 +2173,8 @@ export class Circle {
         return this.center;
     }
     /* Calculates the point on the circle
-     * closest to the given point provided that the projected point lies within the circle
-     **/
+   * closest to the given point provided that the projected point lies within the circle
+   **/
     closestPt(p: Vec2): Vec2 | undefined {
         return this.support(p.sub(this.center));
     }
@@ -2325,8 +2323,11 @@ export class Ellipse {
         const s = Math.sin(angle);
         const vx = point.x * c + point.y * s;
         const vy = -point.x * s + point.y * c;
-        return vx * vx / (this.radiusX * this.radiusX)
-                + vy * vy / (this.radiusY * this.radiusY) < 1;
+        return (
+            (vx * vx) / (this.radiusX * this.radiusX)
+                    + (vy * vy) / (this.radiusY * this.radiusY)
+                < 1
+        );
     }
     raycast(origin: Vec2, direction: Vec2): RaycastResult {
         return raycastEllipse(origin, direction, this);
@@ -2368,8 +2369,8 @@ export class Ellipse {
         return this.center;
     }
     /* Calculates the point on the ellipse
-     * closest to the given point provided that the projected point lies within the circle
-     **/
+   * closest to the given point provided that the projected point lies within the circle
+   **/
     closestPt(p: Vec2): Vec2 | undefined {
         return this.support(p.sub(this.center));
     }
@@ -2551,7 +2552,7 @@ export class Polygon {
         ];
     }
     serialize(): any {
-        return { Polygon: { pts: this.pts.map(p => p.serialize()) } };
+        return { Polygon: { pts: this.pts.map((p) => p.serialize()) } };
     }
     support(direction: Vec2): Vec2 {
         let maxPoint = this.pts[0];
@@ -2573,13 +2574,15 @@ export class Polygon {
         return this.pts[0];
     }
     /* Calculates the point on the polygon (not just vertex)
-     * closest to the given point.
-     **/
+   * closest to the given point.
+   **/
     closestPt(p: Vec2): Vec2 | undefined {
         // Edge points
-        let p1 = this.pts.at(-1)!, p2;
+        let p1 = this.pts.at(-1)!,
+            p2;
         // Vector from point to edge and edge vector
-        let v1 = new Vec2(), v2 = new Vec2();
+        let v1 = new Vec2(),
+            v2 = new Vec2();
         // Projected point
         let pp;
         // Closest point and closest (squared) distance if any
@@ -2643,18 +2646,14 @@ export function shapeFactory(data: any): Shape {
     throw new Error(`Unknown shape type ${type} in serialized data`);
 }
 
-export function evaluateQuadratic(
-    pt1: Vec2,
-    pt2: Vec2,
-    pt3: Vec2,
-    t: number,
-) {
+export function evaluateQuadratic(pt1: Vec2, pt2: Vec2, pt3: Vec2, t: number) {
     const t2 = t * t;
     const mt = 1 - t;
     const mt2 = mt * mt;
-    return pt1.scale(mt2).add(pt2.scale(2 * mt * t)).add(
-        pt3.scale(t2),
-    );
+    return pt1
+        .scale(mt2)
+        .add(pt2.scale(2 * mt * t))
+        .add(pt3.scale(t2));
 }
 
 export function evaluateQuadraticFirstDerivative(
@@ -2664,7 +2663,10 @@ export function evaluateQuadraticFirstDerivative(
     t: number,
 ) {
     const mt = 1 - t;
-    return pt2.sub(pt1).scale(2 * mt).add(pt3.sub(pt2).scale(2 * t));
+    return pt2
+        .sub(pt1)
+        .scale(2 * mt)
+        .add(pt3.sub(pt2).scale(2 * t));
 }
 
 export function evaluateQuadraticSecondDerivative(
@@ -2688,9 +2690,11 @@ export function evaluateBezier(
     const mt = 1 - t;
     const mt2 = mt * mt;
     const mt3 = mt2 * mt;
-    return pt1.scale(mt3).add(pt2.scale(3 * mt2 * t)).add(
-        pt3.scale(3 * mt * t2),
-    ).add(pt4.scale(t3));
+    return pt1
+        .scale(mt3)
+        .add(pt2.scale(3 * mt2 * t))
+        .add(pt3.scale(3 * mt * t2))
+        .add(pt4.scale(t3));
 }
 
 export function evaluateBezierFirstDerivative(
@@ -2703,9 +2707,11 @@ export function evaluateBezierFirstDerivative(
     const t2 = t * t;
     const mt = 1 - t;
     const mt2 = mt * mt;
-    return pt2.sub(pt1).scale(3 * mt2).add(pt3.sub(pt2).scale(6 * mt * t)).add(
-        pt4.sub(pt3).scale(3 * t2),
-    );
+    return pt2
+        .sub(pt1)
+        .scale(3 * mt2)
+        .add(pt3.sub(pt2).scale(6 * mt * t))
+        .add(pt4.sub(pt3).scale(3 * t2));
 }
 
 export function evaluateBezierSecondDerivative(
@@ -2716,9 +2722,16 @@ export function evaluateBezierSecondDerivative(
     t: number,
 ) {
     const mt = 1 - t;
-    return pt3.sub(pt2.scale(2)).add(pt1).scale(6 * mt).add(
-        pt4.sub(pt3.scale(2)).add(pt2).scale(6 * t),
-    );
+    return pt3
+        .sub(pt2.scale(2))
+        .add(pt1)
+        .scale(6 * mt)
+        .add(
+            pt4
+                .sub(pt3.scale(2))
+                .add(pt2)
+                .scale(6 * t),
+        );
 }
 
 export function evaluateCatmullRom(
@@ -2729,9 +2742,9 @@ export function evaluateCatmullRom(
     t: number,
 ) {
     const A = 0.5 * (((-t + 2) * t - 1) * t);
-    const B = 0.5 * (((3 * t - 5) * t) * t + 2);
+    const B = 0.5 * ((3 * t - 5) * t * t + 2);
     const C = 0.5 * (((-3 * t + 4) * t + 1) * t);
-    const D = 0.5 * (((t - 1) * t) * t);
+    const D = 0.5 * ((t - 1) * t * t);
     return pt1.scale(A).add(pt2.scale(B)).add(pt3.scale(C)).add(pt4.scale(D));
 }
 
@@ -3010,7 +3023,7 @@ export function piecewiseBezier(pts: Vec2[]) {
         const curveLength = curveLengthApproximation(bezierCurve);
         const length = curveLength(1);
         const fromLength = totalLength;
-        const toLength = totalLength += length;
+        const toLength = (totalLength += length);
         beziers.push([
             fromLength,
             toLength,
@@ -3073,7 +3086,7 @@ export function piecewiseCatmullRom(pts: Vec2[]) {
         const curveLength = curveLengthApproximation(curve);
         const length = curveLength(1);
         const fromLength = totalLength;
-        const toLength = totalLength += length;
+        const toLength = (totalLength += length);
         curves.push([
             fromLength,
             toLength,
@@ -3206,9 +3219,7 @@ function cubicBezierYforX(a: Vec2, b: Vec2, c: Vec2, d: Vec2, x: number) {
 
 export function easingLinear(keys: Vec2[]) {
     if (!keys || keys.length == 0) {
-        throw new Error(
-            "Need at least one point for easingLinear.",
-        );
+        throw new Error("Need at least one point for easingLinear.");
     }
     const len = keys.length;
     return (x: number) => {
@@ -3267,7 +3278,7 @@ export function easingSteps(
 // true if the angle is oriented counter clockwise
 function isOrientedCcw(a: Vec2, b: Vec2, c: Vec2) {
     // return det(b-a, c-a) >= 0
-    return ((b.x - a.x) * (c.y - a.y) - (b.y - a.y) * (c.x - a.x)) >= 0;
+    return (b.x - a.x) * (c.y - a.y) - (b.y - a.y) * (c.x - a.x) >= 0;
 }
 
 // true if the polygon is oriented counter clockwise
@@ -3283,7 +3294,8 @@ function isOrientedCcwPolygon(polygon: Vec2[]) {
 
 // true if a and b are on the same side of the line c->d
 function onSameSide(a: Vec2, b: Vec2, c: Vec2, d: Vec2) {
-    const px = d.x - c.x, py = d.y - c.y;
+    const px = d.x - c.x,
+        py = d.y - c.y;
     // return det(p, a-c) * det(p, b-c) >= 0
     const l = px * (a.y - c.y) - py * (a.x - c.x);
     const m = px * (b.y - c.y) - py * (b.x - c.x);
@@ -3292,16 +3304,23 @@ function onSameSide(a: Vec2, b: Vec2, c: Vec2, d: Vec2) {
 
 // true if p is contained in the triangle abc
 function pointInTriangle(p: Vec2, a: Vec2, b: Vec2, c: Vec2) {
-    return onSameSide(p, a, b, c) && onSameSide(p, b, a, c)
-        && onSameSide(p, c, a, b);
+    return (
+        onSameSide(p, a, b, c) && onSameSide(p, b, c, a)
+        && onSameSide(p, c, a, b)
+    );
 }
 
 // true if any vertex in the list `vertices' is in the triangle abc.
-function someInTriangle(vertices: Vec2[], a: Vec2, b: Vec2, c: Vec2) {
-    for (const p of vertices) {
-        if (
-            (p !== a) && (p !== b) && (p !== c) && pointInTriangle(p, a, b, c)
-        ) {
+function someInTriangle(
+    vertices: Vec2[],
+    concaveIndices: Set<number>,
+    a: Vec2,
+    b: Vec2,
+    c: Vec2,
+) {
+    for (const i of concaveIndices) {
+        const p = vertices[i];
+        if (!p.eq(a) && !p.eq(b) && !p.eq(c) && pointInTriangle(p, a, b, c)) {
             return true;
         }
     }
@@ -3310,8 +3329,17 @@ function someInTriangle(vertices: Vec2[], a: Vec2, b: Vec2, c: Vec2) {
 }
 
 // true if the triangle is an ear, which is whether it can be cut off from the polygon without leaving a hole behind
-function isEar(a: Vec2, b: Vec2, c: Vec2, vertices: Vec2[]) {
-    return isOrientedCcw(a, b, c) && !someInTriangle(vertices, a, b, c);
+function isEar(
+    a: Vec2,
+    b: Vec2,
+    c: Vec2,
+    vertices: Vec2[],
+    concaveIndices: Set<number>,
+) {
+    return (
+        isOrientedCcw(a, b, c)
+        && !someInTriangle(vertices, concaveIndices, a, b, c)
+    );
 }
 
 export function triangulate(pts: Vec2[]): Vec2[][] {
@@ -3323,7 +3351,7 @@ export function triangulate(pts: Vec2[]): Vec2[][] {
     }
 
     /* Create a list of indexes to the previous and next points of a given point
-    prev_idx[i] gives the index to the previous point of the point at i */
+  prev_idx[i] gives the index to the previous point of the point at i */
     let nextIdx = [];
     let prevIdx = [];
     let idx = 0;
@@ -3344,30 +3372,48 @@ export function triangulate(pts: Vec2[]): Vec2[][] {
         [nextIdx, prevIdx] = [prevIdx, nextIdx];
     }
 
-    const concaveVertices = [];
-    for (let i = 0; i < pts.length; ++i) {
-        if (!isOrientedCcw(pts[prevIdx[i]], pts[i], pts[nextIdx[i]])) {
-            concaveVertices.push(pts[i]);
+    const concaveIndices = new Set<number>();
+
+    const updateVertexConvexity = (idx: number) => {
+        const prev = prevIdx[idx];
+        const next = nextIdx[idx];
+
+        if (!isOrientedCcw(pts[prev], pts[idx], pts[next])) {
+            concaveIndices.add(idx);
         }
+        else {
+            concaveIndices.delete(idx);
+        }
+    };
+
+    for (let i = 0; i < pts.length; ++i) {
+        updateVertexConvexity(i);
     }
 
-    const triangles = [];
+    const triangles: Vec2[][] = [];
     let nVertices = pts.length;
-    let current = 1;
+    let current = 0;
     let skipped = 0;
     let next;
     let prev;
+
     while (nVertices > 3) {
         next = nextIdx[current];
         prev = prevIdx[current];
         const a = pts[prev];
         const b = pts[current];
         const c = pts[next];
-        if (isEar(a, b, c, concaveVertices)) {
+
+        if (isEar(a, b, c, pts, concaveIndices)) {
             triangles.push([a, b, c]);
+
             nextIdx[prev] = next;
             prevIdx[next] = prev;
-            concaveVertices.splice(concaveVertices.indexOf(b), 1);
+
+            concaveIndices.delete(current);
+            updateVertexConvexity(prev);
+            updateVertexConvexity(next);
+
             --nVertices;
             skipped = 0;
         }
@@ -3376,6 +3422,7 @@ export function triangulate(pts: Vec2[]): Vec2[][] {
         }
         current = next;
     }
+
     next = nextIdx[current];
     prev = prevIdx[current];
     triangles.push([pts[prev], pts[current], pts[next]]);
