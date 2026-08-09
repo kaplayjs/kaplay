@@ -22,3 +22,15 @@ Replace this text with an overview describing the changes included in this PR.
 - [ ] Breaking changes are marked in the changelog
 - [ ] Changes include e2e tests
 - [ ] Changes include unit tests
+
+## Changelog
+
+Write the changelog according to our [changelog guide](https://github.com/kaplayjs/kaplay/wiki/Changelogging).
+
+### Added
+
+### Fixed
+
+### Changed
+
+### Removed
