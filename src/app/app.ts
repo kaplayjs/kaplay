@@ -12,12 +12,8 @@ import type {
     Tag,
 } from "../types";
 
-import { GP_MAP } from "../constants/general";
-import type {
-    AppEventMap,
-    GameObjEventNames,
-    GameObjEvents,
-} from "../events/eventMap";
+import { DEBUG_SYMBOLS, GP_MAP } from "../constants/general";
+import type { AppEventMap } from "../events/eventMap";
 import { type KEventController, KEventHandler } from "../events/events";
 import { canvasToViewport } from "../gfx/viewport";
 import { map, vec2 } from "../math/math";
@@ -26,15 +22,17 @@ import { _k } from "../shared";
 import { deprecateMsg } from "../utils/log";
 import { overload2 } from "../utils/overload";
 import { isEqOrIncludes, setHasOrIncludes } from "../utils/sets";
-import type { TupleWithoutFirst } from "../utils/types";
 import {
     getButton,
     getButtons,
+    getDebugButton,
     pressButton,
     releaseButton,
     setButton,
+    setDebugButton,
 } from "./buttons";
 import {
+    type ButtonBinding,
     ButtonProcessor,
     type ButtonsDef,
     parseButtonBindings,
@@ -190,17 +188,32 @@ export const initAppState = (opt: {
     maxTimeStep?: number;
 }) => {
     const buttons = opt.buttons ?? {};
-    const debugButtons = opt.debugButtons ?? {
+
+    const debugDefault = {
         "inspect": { keyboard: "f1" },
         "clearlogs": { keyboard: "f2" },
         "pause": { keyboard: "f8" },
         "slowdown": { keyboard: "f7" },
         "speedup": { keyboard: "f9" },
         "stepframe": { keyboard: "f10" },
-    };
+    } as ButtonsDef;
+
+    // ButtonsDef can't be Record<symbol | string, ButtonBinding> itself because it's used at KAPLAYOpt where USER defines buttons
+    const debugButtons = Object.fromEntries(
+        Object.entries(
+            opt.debugButtons ?? debugDefault,
+        ).map((
+            [name, binding],
+        ) => [DEBUG_SYMBOLS[name as keyof typeof DEBUG_SYMBOLS], binding]),
+    );
+
     return {
         canvas: opt.canvas,
-        buttons: { ...buttons, ...debugButtons },
+        buttons: { ...buttons, ...debugButtons } as Record<
+            symbol | string,
+            ButtonBinding
+        >,
+        debugButtons: debugButtons,
         buttonHandler: new ButtonProcessor(),
         loopID: null as null | number,
         stopped: false,
@@ -1422,8 +1435,10 @@ export const initApp = (
         isButtonDown,
         isButtonReleased,
         getButton,
+        getDebugButton,
         getButtons,
         setButton,
+        setDebugButton,
         pressButton,
         releaseButton,
         charInputted,

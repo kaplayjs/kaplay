@@ -17,6 +17,7 @@ import type {
 } from "../assets/sprite";
 import type { SpriteAtlasData } from "../assets/spriteAtlas";
 import type { AudioPlay, AudioPlayOpt } from "../audio/play";
+import type { DEBUG_SYMBOLS } from "../constants/general";
 import type { Debug } from "../debug/debug";
 import type { Recording } from "../debug/record";
 import type { BlendComp } from "../ecs/components/draw/blend";
@@ -4281,6 +4282,16 @@ export interface KAPLAYCtx {
      */
     getButton(btn: string): ButtonBinding;
     /**
+     * Get the input binding from a action debug button name.
+     *
+     * @param btn - The button to get binding for.
+     *
+     * @since v4001.0
+     * @group Input
+     * @subgroup Buttons API, Debug
+     */
+    getDebugButton(btn: keyof typeof DEBUG_SYMBOLS): ButtonBinding;
+    /**
      * Get all the input bindings.
      *
      * @returns The button definition.
@@ -4299,6 +4310,16 @@ export interface KAPLAYCtx {
      * @subgroup Buttons API
      */
     setButton(btn: string, def: ButtonBinding): void;
+    /**
+     * Set a input binding for one of the debug actions.
+     *
+     * @param btn - The button to set binding for.
+     *
+     * @since v4000.0
+     * @group Input
+     * @subgroup Buttons API, Debug
+     */
+    setDebugButton(btn: keyof typeof DEBUG_SYMBOLS, def: ButtonBinding): void;
     /**
      * Press a button virtually.
      *

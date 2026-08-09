@@ -28,7 +28,7 @@ export type ButtonBinding = {
  * @group Input
  * @subgroup Buttons API
  */
-export type ButtonsDef = Record<string, ButtonBinding>;
+export type ButtonsDef<T extends string = string> = Record<T, ButtonBinding>;
 
 /**
  * A button binding device

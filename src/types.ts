@@ -6,6 +6,7 @@ import type {
 } from "./app/inputBindings";
 import type { Asset } from "./assets/asset";
 import type { ShaderData, Uniform } from "./assets/shader";
+import type { DEBUG_SYMBOLS } from "./constants/general";
 import type { KAPLAYCtx } from "./core/contextType";
 import type { TypesOpt } from "./core/taf";
 import type { GameObjRaw } from "./ecs/entity/GameObjRaw";
@@ -295,8 +296,13 @@ export interface KAPLAYOpt {
      *  debugButtons: {}
      * })
      * ```
+     *
+     * You can also set them at runtime using {@link KaplayOpt.setDebugButton setDebugButton()}
+     * ```js
+     * setDebugButton("inspect", { keyboard: "p" })
+     * ```
      */
-    debugButtons?: ButtonsDef;
+    debugButtons?: Partial<Record<keyof typeof DEBUG_SYMBOLS, ButtonBinding>>;
     /**
      * Default font (defaults to "monospace").
      */
