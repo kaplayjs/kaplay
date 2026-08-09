@@ -20,7 +20,7 @@ kaplay({
 loadSound("burp", "/sounds/burp.mp3");
 loadSound("bell", "/sounds/bell.mp3");
 // Load the music, it makes it being streamed, so loading is faster
-loadMusic("OtherworldlyFoe", "/sounds/OtherworldlyFoe.mp3");
+loadSound("OtherworldlyFoe", "/sounds/OtherworldlyFoe.mp3");
 loadSprite("bag", "/sprites/bag.png");
 
 // Adjust global volume
@@ -129,6 +129,6 @@ Speed: ${music.speed.toFixed(2)}
 [up/down] volume
 [left/right] speed
 [a...k] piano
-[b...]burp in reverse
+\\[b] burp in reverse
 	`.trim();
 }
