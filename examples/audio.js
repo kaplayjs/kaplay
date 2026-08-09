@@ -17,6 +17,7 @@ kaplay({
 });
 
 // Loads the bell sound
+loadSound("burp", "/sounds/burp.mp3");
 loadSound("bell", "/sounds/bell.mp3");
 // Load the music, it makes it being streamed, so loading is faster
 loadMusic("OtherworldlyFoe", "/sounds/OtherworldlyFoe.mp3");
@@ -33,6 +34,13 @@ onKeyPress("enter", () => {
     });
 });
 
+// We play a reversed burp
+onKeyPress("b", () => {
+    play("burp", {
+        reverse: true,
+    });
+});
+
 // For our mobile friends
 onTouchStart(() => {
     play("bell", {
@@ -45,6 +53,7 @@ onTouchStart(() => {
 const music = play("OtherworldlyFoe", {
     loop: true,
     paused: true,
+    reverse: true,
 });
 
 const label = add([
@@ -120,5 +129,6 @@ Speed: ${music.speed.toFixed(2)}
 [up/down] volume
 [left/right] speed
 [a...k] piano
+[b...]burp in reverse
 	`.trim();
 }
