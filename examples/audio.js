@@ -20,7 +20,7 @@ kaplay({
 loadSound("burp", "/sounds/burp.mp3");
 loadSound("bell", "/sounds/bell.mp3");
 // Load the music, it makes it being streamed, so loading is faster
-loadSound("OtherworldlyFoe", "/sounds/OtherworldlyFoe.mp3");
+loadMusic("OtherworldlyFoe", "/sounds/OtherworldlyFoe.mp3");
 loadSprite("bag", "/sprites/bag.png");
 
 // Adjust global volume
@@ -53,7 +53,6 @@ onTouchStart(() => {
 const music = play("OtherworldlyFoe", {
     loop: true,
     paused: true,
-    reverse: true,
 });
 
 const label = add([
