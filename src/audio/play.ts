@@ -203,7 +203,7 @@ export function play(
                 const reversedData = reversedBuffer.getChannelData(i);
 
                 // Copy and reverse
-                reversedData.set(originalData.slice().reverse());
+                reversedData.set(originalData.toReversed());
             }
 
             srcNode.buffer = reversedBuffer;
