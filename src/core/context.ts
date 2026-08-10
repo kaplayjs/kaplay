@@ -488,8 +488,6 @@ export const createContext = (
         getButton: app.getButton,
         getButtons: app.getButtons,
         setButton: app.setButton,
-        setDebugButton: app.setDebugButton,
-        getDebugButton: app.getDebugButton,
         pressButton: app.pressButton,
         releaseButton: app.releaseButton,
         getLastInputDeviceType: app.getLastInputDeviceType,
