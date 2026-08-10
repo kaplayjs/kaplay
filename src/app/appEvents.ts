@@ -1,4 +1,5 @@
 import { burp } from "../audio/burp";
+import { DEBUG_SYMBOLS } from "../constants/general";
 import { FrameBuffer } from "../gfx/FrameBuffer";
 import { updateViewport } from "../gfx/viewport";
 import { clamp } from "../math/clamp";
@@ -47,26 +48,32 @@ export function initAppEvents() {
     });
 
     if (_k.globalOpt.debug !== false) {
-        _k.appScope.onButtonPress("stepframe", () => _k.debug.stepFrame());
-        _k.appScope.onButtonPress("clearlogs", () => _k.debug.clearLog());
+        _k.appScope.onButtonPress(
+            DEBUG_SYMBOLS.stepframe,
+            () => _k.debug.stepFrame(),
+        );
+        _k.appScope.onButtonPress(
+            DEBUG_SYMBOLS.clearlogs,
+            () => _k.debug.clearLog(),
+        );
 
         _k.appScope.onButtonPress(
-            "inspect",
+            DEBUG_SYMBOLS.inspect,
             () => _k.debug.inspect = !_k.debug.inspect,
         );
 
         _k.appScope.onButtonPress(
-            "pause",
+            DEBUG_SYMBOLS.pause,
             () => _k.debug.paused = !_k.debug.paused,
         );
 
-        _k.appScope.onButtonPress("slowdown", () => {
+        _k.appScope.onButtonPress(DEBUG_SYMBOLS.slowdown, () => {
             _k.debug.timeScale = toFixed(
                 clamp(_k.debug.timeScale - 0.2, 0, 2),
                 1,
             );
         });
-        _k.appScope.onButtonPress("speedup", () => {
+        _k.appScope.onButtonPress(DEBUG_SYMBOLS.speedup, () => {
             _k.debug.timeScale = toFixed(
                 clamp(_k.debug.timeScale + 0.2, 0, 2),
                 1,

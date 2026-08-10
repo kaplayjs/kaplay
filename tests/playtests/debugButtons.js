@@ -1,12 +1,15 @@
 const k = kaplay({
     debug: true,
     background: "1f102a",
+    buttons: {
+        pause: { keyboard: "p" },
+    },
     debugButtons: {
         inspect: { keyboard: "g" },
         slowdown: { keyboard: "h" },
         pause: { keyboard: "j" },
         speedup: { keyboard: "k" },
-        clearlogs: { keyboard: "l" },
+        // didn't add clearLogs, if it's not added, it will fall back to the default one
     },
 });
 
@@ -104,4 +107,10 @@ bean.onClick(() => {
 
 bean.onUpdate(() => {
     bean.pos.x = wave(100, 800, time());
+});
+
+// Regular buttons still work the same way, no changes
+// Also no conflicts between debug and regular buttons
+onButtonPress("pause", () => {
+    debug.log("GAME PAUSED (joke)");
 });

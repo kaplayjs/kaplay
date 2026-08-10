@@ -38,7 +38,7 @@ import {
     parseButtonBindings,
 } from "./inputBindings";
 
-export class ButtonState<T = string, A = never> {
+export class ButtonState<T = PropertyKey, A = never> {
     pressed = new Set<T>();
     pressedRepeat = new Set<T>();
     released = new Set<T>();
@@ -200,11 +200,18 @@ export const initAppState = (opt: {
 
     // ButtonsDef can't be Record<symbol | string, ButtonBinding> itself because it's used at KAPLAYOpt where USER defines buttons
     const debugButtons = Object.fromEntries(
-        Object.entries(
-            opt.debugButtons ?? debugDefault,
-        ).map((
-            [name, binding],
-        ) => [DEBUG_SYMBOLS[name as keyof typeof DEBUG_SYMBOLS], binding]),
+        Object.entries(debugDefault).map(([name, defaultBinding]) => {
+            const binding = opt.debugButtons
+                ?.[name as keyof typeof DEBUG_SYMBOLS];
+
+            return [
+                DEBUG_SYMBOLS[name as keyof typeof DEBUG_SYMBOLS],
+                {
+                    ...defaultBinding,
+                    ...binding,
+                },
+            ];
+        }),
     );
 
     return {
@@ -213,7 +220,6 @@ export const initAppState = (opt: {
             symbol | string,
             ButtonBinding
         >,
-        debugButtons: debugButtons,
         buttonHandler: new ButtonProcessor(),
         loopID: null as null | number,
         stopped: false,
@@ -801,9 +807,9 @@ export const initApp = (
         return [...state.gamepads];
     }
 
-    const onButtonPress = overload2((action: (btn: string) => void) => {
+    const onButtonPress = overload2((action: (btn: PropertyKey) => void) => {
         return state.events.on("buttonPress", (b) => action(b));
-    }, (btn: string | string, action: (btn: string) => void) => {
+    }, (btn: PropertyKey, action: (btn: PropertyKey) => void) => {
         return state.events.on(
             "buttonPress",
             (b) => isEqOrIncludes(btn, b) && action(b),
