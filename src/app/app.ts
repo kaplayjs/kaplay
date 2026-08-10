@@ -816,18 +816,18 @@ export const initApp = (
         );
     });
 
-    const onButtonDown = overload2((action: (btn: string) => void) => {
+    const onButtonDown = overload2((action: (btn: PropertyKey) => void) => {
         return state.events.on("buttonDown", (b) => action(b));
-    }, (btn: string | string, action: (btn: string) => void) => {
+    }, (btn: PropertyKey | PropertyKey, action: (btn: PropertyKey) => void) => {
         return state.events.on(
             "buttonDown",
             (b) => isEqOrIncludes(btn, b) && action(b),
         );
     });
 
-    const onButtonRelease = overload2((action: (btn: string) => void) => {
+    const onButtonRelease = overload2((action: (btn: PropertyKey) => void) => {
         return state.events.on("buttonRelease", (b) => action(b));
-    }, (btn: string | string, action: (btn: string) => void) => {
+    }, (btn: PropertyKey | PropertyKey, action: (btn: PropertyKey) => void) => {
         return state.events.on(
             "buttonRelease",
             (b) => isEqOrIncludes(btn, b) && action(b),
