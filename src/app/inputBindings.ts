@@ -1,3 +1,4 @@
+import { _k } from "../shared";
 import type {
     ChordedKey,
     ChordedKGamepadButton,
@@ -27,7 +28,7 @@ export type ButtonBinding = {
  * @group Input
  * @subgroup Buttons API
  */
-export type ButtonsDef = Record<string, ButtonBinding>;
+export type ButtonsDef<T extends string = string> = Record<T, ButtonBinding>;
 
 /**
  * A button binding device
@@ -39,9 +40,11 @@ export type ButtonBindingDevice = "keyboard" | "gamepad" | "mouse";
 
 // pass the user `buttons` definition to different keymaps
 export const parseButtonBindings = (appState: AppState) => {
-    const btns = appState.buttons;
+    const btns = { ...appState.buttons };
 
-    for (const b in btns) {
+    // Done this way so it returns all of the keys including the symbols and non-symbols
+    for (let i = 0; i < Reflect.ownKeys(btns).length; i++) {
+        const b = Reflect.ownKeys(btns)[i];
         appState.buttonHandler.updateBinding(b, btns[b]);
     }
 };
@@ -65,9 +68,10 @@ class ChordedButtonDetector<T extends string = string> {
     // map of mod key --> down state
     mods = new Map<T, boolean>();
     // map of commit key --> checkers for this commit key
-    committers = new Map<T, { check: Set<T>; btns: Map<string, T[]> }>();
-    buttonsUsed = new Set<string>();
-    updateBinding(button: string, bindings: T[]) {
+
+    committers = new Map<T, { check: Set<T>; btns: Map<PropertyKey, T[]> }>();
+    buttonsUsed = new Set<PropertyKey>();
+    updateBinding(button: PropertyKey, bindings: T[]) {
         // clear out old binding
         const modsToClear = new Set<T>();
         for (let { check, btns } of this.committers.values()) {
@@ -102,12 +106,12 @@ class ChordedButtonDetector<T extends string = string> {
         // cleanup
         modsToClear.forEach(m => this.mods.delete(m));
     }
-    handleDown(key: T): string[] {
+    handleDown(key: T): PropertyKey[] {
         if (this.mods.has(key)) {
             this.mods.set(key, true);
         }
         const commit = this.committers.get(key);
-        const pressedButtons: string[] = [];
+        const pressedButtons: PropertyKey[] = [];
         if (commit) {
             options: for (let [button, mods] of commit.btns.entries()) {
                 for (let mod of commit.check.values()) {
@@ -121,12 +125,12 @@ class ChordedButtonDetector<T extends string = string> {
         }
         return pressedButtons;
     }
-    handleUp(key: T): string[] {
+    handleUp(key: T): PropertyKey[] {
         if (this.mods.has(key)) {
             this.mods.set(key, false);
         }
         const commit = this.committers.get(key);
-        const canceledButtons: string[] = [];
+        const canceledButtons: PropertyKey[] = [];
         if (commit) {
             for (var button of commit.btns.keys()) {
                 this.buttonsUsed.delete(button) && canceledButtons.push(button);
@@ -134,13 +138,13 @@ class ChordedButtonDetector<T extends string = string> {
         }
         return canceledButtons;
     }
-    releaseAll(): string[] {
+    releaseAll(): PropertyKey[] {
         const buttons = [...this.buttonsUsed];
         this.buttonsUsed.clear();
         this.mods.forEach((_, mod) => this.mods.set(mod, false));
         return buttons;
     }
-    isButtonUsed(button: string): boolean {
+    isButtonUsed(button: PropertyKey): boolean {
         return this.buttonsUsed.has(button);
     }
 }
@@ -150,13 +154,13 @@ export class ButtonProcessor {
     byKeyCode = new ChordedButtonDetector<string>();
     byMouse = new ChordedButtonDetector<ChordedMouseButton>();
     byGamepad = new ChordedButtonDetector<ChordedKGamepadButton>();
-    state = new ButtonState<string>(
+    state = new ButtonState<PropertyKey>(
         "buttonPress",
         null,
         "buttonDown",
         "buttonRelease",
     );
-    updateBinding(name: string, b: ButtonBinding) {
+    updateBinding(name: PropertyKey, b: ButtonBinding) {
         const keyboardBtns = b.keyboard && [b.keyboard].flat();
         const keyboardCodes = b.keyboardCode
             && [b.keyboardCode].flat();
@@ -175,17 +179,17 @@ export class ButtonProcessor {
             this.byMouse.updateBinding(name, mouseBtns);
         }
     }
-    private _maybePress(buttons: string[], state: AppState) {
+    private _maybePress(buttons: PropertyKey[], state: AppState) {
         for (let button of buttons) {
             this.state.press(button, state);
         }
     }
-    private _maybeRelease(buttons: string[], state: AppState) {
+    private _maybeRelease(buttons: PropertyKey[], state: AppState) {
         for (let button of buttons) {
             this.state.release(button, state);
         }
     }
-    private _releaseKeyboardMouse(buttons: string[], state: AppState) {
+    private _releaseKeyboardMouse(buttons: PropertyKey[], state: AppState) {
         for (let button of buttons) {
             if (
                 this.state.down.has(button)

@@ -1,4 +1,5 @@
 import { burp } from "../audio/burp";
+import { DEBUG_SYMBOLS } from "../constants/general";
 import { FrameBuffer } from "../gfx/FrameBuffer";
 import { updateViewport } from "../gfx/viewport";
 import { clamp } from "../math/clamp";
@@ -47,25 +48,37 @@ export function initAppEvents() {
     });
 
     if (_k.globalOpt.debug !== false) {
-        _k.appScope.onKeyPress(
-            _k.globalOpt.debugKey ?? "f1",
+        _k.appScope.onButtonPress(
+            DEBUG_SYMBOLS.stepframe,
+            () => _k.debug.stepFrame(),
+        );
+        _k.appScope.onButtonPress(
+            DEBUG_SYMBOLS.clearlogs,
+            () => _k.debug.clearLog(),
+        );
+
+        _k.appScope.onButtonPress(
+            DEBUG_SYMBOLS.inspect,
             () => _k.debug.inspect = !_k.debug.inspect,
         );
-        _k.appScope.onKeyPress("f2", () => _k.debug.clearLog());
-        _k.appScope.onKeyPress("f8", () => _k.debug.paused = !_k.debug.paused);
-        _k.appScope.onKeyPress("f7", () => {
+
+        _k.appScope.onButtonPress(
+            DEBUG_SYMBOLS.pause,
+            () => _k.debug.paused = !_k.debug.paused,
+        );
+
+        _k.appScope.onButtonPress(DEBUG_SYMBOLS.slowdown, () => {
             _k.debug.timeScale = toFixed(
                 clamp(_k.debug.timeScale - 0.2, 0, 2),
                 1,
             );
         });
-        _k.appScope.onKeyPress("f9", () => {
+        _k.appScope.onButtonPress(DEBUG_SYMBOLS.speedup, () => {
             _k.debug.timeScale = toFixed(
                 clamp(_k.debug.timeScale + 0.2, 0, 2),
                 1,
             );
         });
-        _k.appScope.onKeyPress("f10", () => _k.debug.stepFrame());
     }
 
     // burp mode initialization

@@ -52,3 +52,13 @@ export const EVENT_CANCEL_SYMBOL = Symbol.for("kaplay.cancel");
 export const GP_MAP = GAMEPAD_MAP as unknown as Record<string, string>;
 
 export const MAX_TRIES = 20;
+
+// Using symbols so if this is mixed with the app.state.buttons, you can't do setButton("inspect") and modify it
+export const DEBUG_SYMBOLS = {
+    "inspect": Symbol("inspect"),
+    "clearlogs": Symbol("clearlogs"),
+    "pause": Symbol("pause"),
+    "slowdown": Symbol("slowdown"),
+    "speedup": Symbol("speedup"),
+    "stepframe": Symbol("stepframe"),
+};

@@ -1,7 +1,12 @@
 import type { FixedSpeedOption } from "./app/app";
-import type { ButtonsDef } from "./app/inputBindings";
+import type {
+    ButtonBinding,
+    ButtonBindingDevice,
+    ButtonsDef,
+} from "./app/inputBindings";
 import type { Asset } from "./assets/asset";
 import type { ShaderData, Uniform } from "./assets/shader";
+import type { DEBUG_SYMBOLS } from "./constants/general";
 import type { KAPLAYCtx } from "./core/contextType";
 import type { TypesOpt } from "./core/taf";
 import type { GameObjRaw } from "./ecs/entity/GameObjRaw";
@@ -266,9 +271,36 @@ export interface KAPLAYOpt {
      */
     debug?: boolean;
     /**
-     * Key that toggles debug mode
+     * Define a specific key for different debug actions using KAPLAY's button system
+     *
+     * If KAPLAY.debug is true and no debugButtons is passed, the ones below will be used as the defaults
+     *
+     * If one of these is missing, the default one will be used
+     * @example
+     * ```js
+     * // These are the default keys
+     * kaplay({
+     *  debugButtons: {
+     *      "inspect": { keyboard: "f1" },
+     *      "clearlogs": { keyboard: "f2" },
+     *      "pause": { keyboard: "f8" },
+     *      "slowdown": { keyboard: "f7" },
+     *      "speedup": { keyboard: "f9" },
+     *      "stepframe": { keyboard: "f10" },
+     *  }
+     * })
+     * ```
+     *
+     * You can also set them at runtime using KAPLAYCtx.debug.setButton
+     *
+     * ```js
+     * debug.setButton("inspect", { keyboard: "p" })
+     * ```
+     * @since v4000.0
+     * @group Input, Debug
+     * @subgroup Buttons API
      */
-    debugKey?: Key;
+    debugButtons?: Partial<Record<keyof typeof DEBUG_SYMBOLS, ButtonBinding>>;
     /**
      * Default font (defaults to "monospace").
      */
