@@ -12,29 +12,12 @@ export const getButton = (btn: string): ButtonBinding => {
     return _k.app.state.buttons?.[btn];
 };
 
-export const getDebugButton = (
-    btn: keyof typeof DEBUG_SYMBOLS,
-): ButtonBinding => {
-    return _k.app.state.buttons
-        ?.[DEBUG_SYMBOLS[btn]];
-};
-
 export const setButton = (btn: string, binding: ButtonBinding) => {
     _k.app.state.buttons[btn] = {
         ..._k.app.state.buttons[btn],
         ...binding,
     };
     _k.app.state.buttonHandler.updateBinding(btn, binding);
-};
-
-export const setDebugButton = (
-    btn: keyof typeof DEBUG_SYMBOLS,
-    binding: ButtonBinding,
-) => {
-    _k.app.state.buttons[DEBUG_SYMBOLS[btn]] = {
-        ..._k.app.state.buttons[DEBUG_SYMBOLS[btn]],
-        ...binding,
-    };
 };
 
 // Virtually pressing / releasing

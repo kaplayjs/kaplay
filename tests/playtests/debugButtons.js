@@ -75,14 +75,14 @@ function addBindable(action, xPos = center().x) {
     ]);
 
     const button = addButton(
-        getDebugButton(action).keyboard,
+        debug.getButton(action).keyboard,
         name.pos.add(0, 60),
         () => {
             button.text = "_";
             const keyEv = onKeyPress((key) => {
                 keyEv.cancel();
                 button.text = key;
-                setDebugButton(action, { keyboard: key });
+                debug.setButton(action, { keyboard: key });
             });
         },
     );

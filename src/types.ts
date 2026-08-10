@@ -271,10 +271,11 @@ export interface KAPLAYOpt {
      */
     debug?: boolean;
     /**
-     * Defined buttons for the debug actions
+     * Define a specific key for different debug actions using KAPLAY's button system
      *
-     * ! These will be added to the current kaplay buttons, beware to not use these button names for other game actions
+     * If KAPLAY.debug is true and no debugButtons is passed, the ones below will be used as the defaults
      *
+     * If one of these is missing, the default one will be used
      * @example
      * ```js
      * // These are the default keys
@@ -290,17 +291,14 @@ export interface KAPLAYOpt {
      * })
      * ```
      *
-     * If you want to disable them you can assign the object to an empty one
-     * ```js
-     * kaplay({
-     *  debugButtons: {}
-     * })
-     * ```
+     * You can also set them at runtime using KAPLAYCtx.debug.setButton
      *
-     * You can also set them at runtime using {@link KaplayOpt.setDebugButton setDebugButton()}
      * ```js
-     * setDebugButton("inspect", { keyboard: "p" })
+     * debug.setButton("inspect", { keyboard: "p" })
      * ```
+     * @since v4000.0
+     * @group Input, Debug
+     * @subgroup Buttons API
      */
     debugButtons?: Partial<Record<keyof typeof DEBUG_SYMBOLS, ButtonBinding>>;
     /**

@@ -25,11 +25,9 @@ import { isEqOrIncludes, setHasOrIncludes } from "../utils/sets";
 import {
     getButton,
     getButtons,
-    getDebugButton,
     pressButton,
     releaseButton,
     setButton,
-    setDebugButton,
 } from "./buttons";
 import {
     type ButtonBinding,
@@ -217,7 +215,7 @@ export const initAppState = (opt: {
     return {
         canvas: opt.canvas,
         buttons: { ...buttons, ...debugButtons } as Record<
-            symbol | string,
+            PropertyKey,
             ButtonBinding
         >,
         buttonHandler: new ButtonProcessor(),
@@ -1441,10 +1439,8 @@ export const initApp = (
         isButtonDown,
         isButtonReleased,
         getButton,
-        getDebugButton,
         getButtons,
         setButton,
-        setDebugButton,
         pressButton,
         releaseButton,
         charInputted,
