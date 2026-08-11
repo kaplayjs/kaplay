@@ -107,6 +107,8 @@ So your change should look like:
   e.g. focused `textInput` now use `preventDefault()` (#1114) - @imaginarny
 - Updated `drawSprite()` to allow slice9'ed sprites, and so now the `sprite()`
   component just calls `drawSprite()` (#1036) - @dragoncoder047
+- Video component - Render black rectangle (instead of white one) before the
+  video has been played (#1145) - @Stanko
 
 ### Fixed
 
