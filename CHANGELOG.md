@@ -66,6 +66,8 @@ So your change should look like:
   text (#1125) - @imaginarny
 - Debug keys, keys defined with the Buttons API, and keyboard input captured by
   e.g. focused `textInput` now use `preventDefault()` (#1114) - @imaginarny
+- Video component - Render black rectangle (instead of white one) before the
+  video has been played (#1145) - @Stanko
 
 ### Fixed
 
