@@ -35,7 +35,7 @@ export function drawDebug() {
         }
 
         // Get it before any debug drawing, to get the number of non-debug draws
-        const batches = _k.gfx.renderer.numDraws;
+        const batches = _k.gfx.lastDrawCalls;
 
         pushTransform();
         _k.game.root.drawInspect();

@@ -18,7 +18,7 @@ import { _k } from "../shared";
  */
 export interface FrameRenderer {
     frameStart: () => void;
-    frameEnd: () => void;
+    frameEnd: (debugOverlay?: boolean) => void;
     fixedUpdateFrame: () => void;
     updateFrame: () => void;
 }
@@ -64,7 +64,7 @@ export const createFrameRenderer = (
         gfx.transform.setIdentity();
     }
 
-    function frameEnd() {
+    function frameEnd(debugOverlay = true) {
         flush();
         gfx.lastDrawCalls = gfx.renderer.numDraws;
         gfx.frameBuffer.unbind();
@@ -97,7 +97,7 @@ export const createFrameRenderer = (
         gfx.width = ow;
         gfx.height = oh;
 
-        if (_k.globalOpt.debug !== false) {
+        if (debugOverlay && _k.globalOpt.debug !== false) {
             gfx.gl.viewport(
                 gfx.viewport.x * pixelDensity,
                 gfx.viewport.y * pixelDensity,
