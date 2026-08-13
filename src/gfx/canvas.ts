@@ -30,17 +30,11 @@ export const createCanvas = (gopt: MustKAPLAYOpt) => {
         // check if isFixed
         gopt.width && gopt.height && !gopt.letterbox
     ) {
-        // check if already styled, 300x150 is the default intrinsic size
-        if (canvas.offsetWidth !== 300 || canvas.offsetHeight !== 150) {
-            canvas.width = canvas.offsetWidth;
-            canvas.height = canvas.offsetHeight;
-        }
-        else {
-            canvas.width = gopt.width * gopt.scale;
-            canvas.height = gopt.height * gopt.scale;
-        }
+        canvas.width = gopt.width * gopt.scale;
+        canvas.height = gopt.height * gopt.scale;
         styles.push(`width: ${canvas.width}px`);
         styles.push(`height: ${canvas.height}px`);
+        styles.push("object-fit: contain");
     }
     else {
         canvas.width = canvas.parentElement!.offsetWidth;

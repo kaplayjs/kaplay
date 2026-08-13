@@ -515,7 +515,7 @@ export function area(
 
             const opts = {
                 outline: {
-                    width: 4 / _k.gfx.viewport.scale,
+                    width: 4 / _k.gfx.screenViewport.scale,
                     color: rgb(0, 0, 255),
                 },
                 anchor: this.anchor,
