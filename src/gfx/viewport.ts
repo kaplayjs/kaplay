@@ -16,8 +16,8 @@ depending on the canvas size and pixel density
 - Viewport (buffer): The final rendered size, sub-rect of the Canvas buffer
 size/density
 
-Screen viewport and buffer viewport match if letterbox enabled or no desired
-(fixed) size set.
+Screen viewport and buffer viewport match if letterbox enabled with no resolution
+lock or no desired (fixed) size set.
 
 We update the canvas before we run this, you should check appEvents.ts
 onResize method.
@@ -30,6 +30,7 @@ export function updateViewport() {
     const canvasWidth = _k.canvas.offsetWidth;
     const canvasHeight = _k.canvas.offsetHeight;
     const letterbox = _k.globalOpt.letterbox;
+    const lockResolution = _k.globalOpt.lockResolution;
     const fixedSize = desiredWidth && desiredHeight;
 
     // console.log("[vwp] buffer size", _k.gfx.gl.drawingBufferWidth, _k.gfx.gl.drawingBufferHeight);
@@ -42,9 +43,13 @@ export function updateViewport() {
     let height = canvasHeight;
 
     if (!fixedSize) {
-        if (letterbox) {
+        if (letterbox || lockResolution) {
             throw new Error(
-                "Letterboxing requires width and height defined.",
+                `${
+                    letterbox
+                        ? "Letterboxing"
+                        : "Resolution locking"
+                } requires width and height defined.`,
             );
         }
     }
@@ -75,7 +80,7 @@ export function updateViewport() {
     };
 
     // Buffer viewport
-    if (!fixedSize || letterbox) {
+    if (!fixedSize || (letterbox && !lockResolution)) {
         _k.gfx.viewport = _k.gfx.screenViewport;
     }
     else {

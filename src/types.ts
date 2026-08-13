@@ -258,9 +258,14 @@ export interface KAPLAYOpt {
      */
     scale?: number;
     /**
-     * Keep aspect ratio and leave black bars on remaining spaces.
+     * Keep aspect ratio, fill available space, and leave black bars on remaining spaces.
      */
     letterbox?: boolean;
+    /**
+     * Lock canvas buffer resolution on resize to the defined size and scale when `letterbox` is enabled.
+     * Good for retro pixel art games with `crisp` option enabled as well.
+     */
+    lockResolution?: boolean;
     /**
      * If register debug buttons (default true)
      */
