@@ -94,27 +94,27 @@ export function updateViewport() {
     // console.log("[vwp] screen viewport is", _k.gfx.screenViewport);
 }
 
-export function viewportToCanvas(pt: Vec2) {
+export function viewportToCanvas(x: number, y: number) {
     return new Vec2(
-        pt.x * _k.gfx.screenViewport.width / _k.gfx.width
+        x * _k.gfx.screenViewport.width / _k.gfx.width
             + _k.gfx.screenViewport.x,
-        pt.y * _k.gfx.screenViewport.height / _k.gfx.height
+        y * _k.gfx.screenViewport.height / _k.gfx.height
             + _k.gfx.screenViewport.y,
     );
 }
 
-export function viewportToCanvasLocal(pt: Vec2) {
+export function viewportToCanvasLocal(x: number, y: number) {
     return new Vec2(
-        pt.x * _k.gfx.viewport.width / _k.gfx.width,
-        pt.y * _k.gfx.viewport.height / _k.gfx.height,
+        x * _k.gfx.viewport.width / _k.gfx.width,
+        y * _k.gfx.viewport.height / _k.gfx.height,
     );
 }
 
-export function canvasToViewport(pt: Vec2) {
+export function canvasToViewport(x: number, y: number) {
     return new Vec2(
-        (pt.x - _k.gfx.screenViewport.x) * _k.gfx.width
+        (x - _k.gfx.screenViewport.x) * _k.gfx.width
             / _k.gfx.screenViewport.width,
-        (pt.y - _k.gfx.screenViewport.y) * _k.gfx.height
+        (y - _k.gfx.screenViewport.y) * _k.gfx.height
             / _k.gfx.screenViewport.height,
     );
 }

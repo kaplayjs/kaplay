@@ -59,7 +59,10 @@ export function drawDebug() {
             lines.push(...inspecting.tags.map(t => `tag: ${t}`));
 
             drawInspectText(
-                viewportToCanvasLocal(_k.app.mousePos()),
+                viewportToCanvasLocal(
+                    _k.app.state.mousePos.x,
+                    _k.app.state.mousePos.y,
+                ),
                 lines.join("\n"),
             );
         }

@@ -1004,20 +1004,11 @@ export const initApp = (
     };
 
     canvasEvents.mousemove = (e) => {
-        // 🍝 Here we depend of GFX Context even if initGfx needs initApp for being used
-        // Letterbox creates some black bars so we need to remove that for calculating
-        // mouse position
-
-        // Ironically, e.offsetX and e.offsetY are the mouse position. Is not
-        // related to what we call the "offset" in this code
-        const mousePos = canvasToViewport(new Vec2(e.offsetX, e.offsetY));
-        const mouseDeltaPos = new Vec2(e.movementX, e.movementY);
-
         state.lastInputDevice = "mouse";
         state.events.onOnce("input", () => {
             state.isMouseMoved = true;
-            state.mousePos = mousePos;
-            state.mouseDeltaPos = mouseDeltaPos;
+            state.mousePos = canvasToViewport(e.offsetX, e.offsetY);
+            state.mouseDeltaPos.set(e.movementX, e.movementY);
             state.events.trigger("mouseMove");
         });
     };
@@ -1130,10 +1121,8 @@ export const initApp = (
 
             if (opt.touchToMouse !== false) {
                 state.mousePos = canvasToViewport(
-                    new Vec2(
-                        touches[0].clientX - box.x,
-                        touches[0].clientY - box.y,
-                    ),
+                    touches[0].clientX - box.x,
+                    touches[0].clientY - box.y,
                 );
                 state.lastInputDevice = "mouse";
                 state.buttonHandler.processMousedown("left", state);
@@ -1144,10 +1133,8 @@ export const initApp = (
                 state.events.trigger(
                     "touchStart",
                     canvasToViewport(
-                        new Vec2(
-                            t.clientX - box.x,
-                            t.clientY - box.y,
-                        ),
+                        t.clientX - box.x,
+                        t.clientY - box.y,
                     ),
                     t,
                 );
@@ -1165,10 +1152,8 @@ export const initApp = (
             if (opt.touchToMouse !== false) {
                 const lastMousePos = state.mousePos;
                 state.mousePos = canvasToViewport(
-                    new Vec2(
-                        touches[0].clientX - box.x,
-                        touches[0].clientY - box.y,
-                    ),
+                    touches[0].clientX - box.x,
+                    touches[0].clientY - box.y,
                 );
                 state.mouseDeltaPos = state.mousePos.sub(lastMousePos);
                 state.events.trigger("mouseMove");
@@ -1178,10 +1163,8 @@ export const initApp = (
                 state.events.trigger(
                     "touchMove",
                     canvasToViewport(
-                        new Vec2(
-                            t.clientX - box.x,
-                            t.clientY - box.y,
-                        ),
+                        t.clientX - box.x,
+                        t.clientY - box.y,
                     ),
                     t,
                 );
@@ -1196,10 +1179,8 @@ export const initApp = (
 
             if (opt.touchToMouse != false) {
                 state.mousePos = canvasToViewport(
-                    new Vec2(
-                        touches[0].clientX - box.x,
-                        touches[0].clientY - box.y,
-                    ),
+                    touches[0].clientX - box.x,
+                    touches[0].clientY - box.y,
                 );
                 state.mouseDeltaPos = new Vec2(0, 0);
                 state.buttonHandler.processMouseup("left", state);
@@ -1210,10 +1191,8 @@ export const initApp = (
                 state.events.trigger(
                     "touchEnd",
                     canvasToViewport(
-                        new Vec2(
-                            t.clientX - box.x,
-                            t.clientY - box.y,
-                        ),
+                        t.clientX - box.x,
+                        t.clientY - box.y,
                     ),
                     t,
                 );
@@ -1228,10 +1207,8 @@ export const initApp = (
 
             if (opt.touchToMouse !== false) {
                 state.mousePos = canvasToViewport(
-                    new Vec2(
-                        touches[0].clientX - box.x,
-                        touches[0].clientY - box.y,
-                    ),
+                    touches[0].clientX - box.x,
+                    touches[0].clientY - box.y,
                 );
                 state.mouseState.release("left", state);
             }
@@ -1240,10 +1217,8 @@ export const initApp = (
                 state.events.trigger(
                     "touchEnd",
                     canvasToViewport(
-                        new Vec2(
-                            t.clientX - box.x,
-                            t.clientY - box.y,
-                        ),
+                        t.clientX - box.x,
+                        t.clientY - box.y,
                     ),
                     t,
                 );
