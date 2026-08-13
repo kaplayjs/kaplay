@@ -25,7 +25,8 @@ Replace this text with an overview describing the changes included in this PR.
 
 ## Changelog
 
-Write the changelog according to our [changelog guide](https://github.com/kaplayjs/kaplay/wiki/Changelogging).
+Write the changelog according to our
+[changelog guide](https://github.com/kaplayjs/kaplay/wiki/Changelogging).
 
 ### Added
 
