@@ -196,12 +196,37 @@ export type ChordedKGamepadButton =
 export type KGamepadStick = "left" | "right";
 
 /**
+ * Controller type, useful for accurate button-glyph assets.
+ * Can be extended with custom gamepad definitions.
+ *
+ * @group Input
+ * @subgroup Gamepad
+ */
+export type GamepadType =
+    | "ps4"
+    | "ps5"
+    | "playstation"
+    | "xbox"
+    | "switch"
+    | (string & {});
+
+/**
  * A gamepad definition. Used in {@link KAPLAYOpt `KAPLAYOpt`}
  *
  * @group Input
  * @subgroup Gamepad
  */
 export type GamepadDef = {
+    /** A human-readable label for this controller model, e.g. "DualSense". */
+    name?: string;
+    /**
+     * Lowercase name substrings used as a last-resort fallback match when
+     * vendor/product can't be parsed from `Gamepad.id`. Only set this for
+     * names distinctive enough to not misidentify unrelated hardware.
+     */
+    matchNames?: string[];
+    /** The controller family this definition belongs to, if known. */
+    type?: GamepadType;
     buttons: Record<string, KGamepadButton>;
     sticks: Partial<Record<KGamepadStick, { x: number; y: number }>>;
 };
@@ -215,6 +240,13 @@ export type GamepadDef = {
 export type KGamepad = {
     /** The order of the gamepad in the gamepad list. */
     index: number;
+    /**
+     * A human-readable label for the recognized controller, e.g. "DualSense",
+     * or "Standard Gamepad" if unrecognized. For display/debugging only.
+     */
+    name: string;
+    /** The recognized controller family, for picking button-glyph assets. */
+    type: GamepadType | undefined;
     /** If certain button is pressed. */
     isPressed(b: KGamepadButton): boolean;
     /** If certain button is held down. */
