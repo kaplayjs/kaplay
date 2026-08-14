@@ -1,6 +1,7 @@
 // App is everything related to canvas, game loop and input
 
 import type {
+    ChordedKey,
     Cursor,
     GameObj,
     KAPLAYOpt,
@@ -1093,17 +1094,8 @@ export const initApp = (
         state.canvas.releasePointerCapture(e.pointerId);
     };
 
-    const PREVENT_DEFAULT_KEYS = new Set([
-        " ",
-        "ArrowLeft",
-        "ArrowRight",
-        "ArrowUp",
-        "ArrowDown",
-        "Tab",
-    ]);
-
-    // translate these key names to a simpler version
-    const KEY_ALIAS = {
+    // translate key names to kaplay keys
+    const KEY_ALIAS: Record<KeyboardEvent["key"], Key> = {
         "ArrowLeft": "left",
         "ArrowRight": "right",
         "ArrowUp": "up",
@@ -1111,15 +1103,61 @@ export const initApp = (
         " ": "space",
     };
 
+    const PREVENT_DEFAULT_KEYS = new Set<Key>([
+        "left",
+        "right",
+        "up",
+        "down",
+        "space",
+        "tab",
+        "/",
+        ...(opt.debug !== false
+            ? [
+                opt.debugKey || "f1",
+                "f2",
+                "f7",
+                "f8",
+                "f9",
+                "f10",
+            ]
+            : []),
+    ]);
+
+    const shouldPreventButtons = (key: Key, by: "byKey" | "byKeyCode") => {
+        const committer = state.buttonHandler[by].committers.get(key);
+        if (!committer) return false;
+
+        btns: for (const mods of committer.btns.values()) {
+            for (const mod of committer.check) {
+                if (
+                    (state.keyState.down.has(mod) || mod === key)
+                        !== mods.includes(mod)
+                ) {
+                    continue btns;
+                }
+            }
+            return true;
+        }
+
+        return false;
+    };
+
     canvasEvents.keydown = (e) => {
         state.capsOn = e.getModifierState("CapsLock");
 
-        if (PREVENT_DEFAULT_KEYS.has(e.key)) {
+        const k: Key = KEY_ALIAS[e.key as keyof typeof KEY_ALIAS] as Key
+            || e.key.toLowerCase();
+
+        if (
+            PREVENT_DEFAULT_KEYS.has(k)
+            || _k.game.inputCapturedBy.size > 0
+            || shouldPreventButtons(k, "byKey")
+            || shouldPreventButtons(e.code, "byKeyCode")
+        ) {
             e.preventDefault();
         }
+
         state.events.onOnce("input", () => {
-            const k: Key = KEY_ALIAS[e.key as keyof typeof KEY_ALIAS] as Key
-                || e.key.toLowerCase();
             const code = e.code;
 
             if (k === undefined) throw new Error(`Unknown key: ${e.key}`);
