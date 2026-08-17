@@ -241,6 +241,7 @@ export function loadProgress(): number {
         _k.assets.shaders,
         _k.assets.fonts,
         _k.assets.bitmapFonts,
+        _k.assets.meshes,
         _k.assets.custom,
     ];
     return buckets.reduce((n, bucket) => n + bucket.progress(), 0)
@@ -254,6 +255,7 @@ export function getFailedAssets(): [string, Asset<any>][] {
         _k.assets.shaders,
         _k.assets.fonts,
         _k.assets.bitmapFonts,
+        _k.assets.meshes,
         _k.assets.custom,
     ];
     return buckets.reduce(

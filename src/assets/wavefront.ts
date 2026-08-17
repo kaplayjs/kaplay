@@ -51,10 +51,12 @@ function loadWavefrontMaterialLibrary(
                     break;
                 case "map_kd":
                     if (currentMaterial) {
-                        console.log("loading", parts[1]);
-                        const texture = await loadSprite(parts[1], parts[1]);
+                        const spritePath = parts[1];
+                        const texture = await loadSprite(
+                            spritePath,
+                            spritePath,
+                        );
                         lib.add(currentMaterial, { texture });
-                        console.log("loaded", parts[1]);
                     }
                     break;
             }
@@ -93,15 +95,21 @@ export function loadWavefront(
             let uvList: Vec2[] = [];
             let vertexMap = new Map<string, [number, number[]]>();
             let currentMaterial;
-            const getVertex = (def: string, material: WavefrontMaterial) => {
-                const pair = vertexMap.get(def);
+            let currentMaterialName;
+            const getVertex = (
+                def: string,
+                materialName: string,
+                material: WavefrontMaterial,
+            ) => {
+                const key = materialName + def;
+                const pair = vertexMap.get(key);
                 if (pair) {
                     let [index, vert] = pair;
                     return index;
                 }
                 const parts = def.split("/");
                 const pos = posList[parseInt(parts[0]) - 1];
-                const uv = uvList[parseInt(parts[1]) - 1];
+                const uv = uvList[parseInt(parts[1]) - 1].clone();
                 // uv is from 0,0 to 1,1, but the sprite is in a sprite sheet, so transform it
                 const q = material.texture!.frames[0].q;
                 uv.x = uv.x * q.w + q.x;
@@ -110,7 +118,7 @@ export function loadWavefront(
                 const index = vertexMap.size;
                 const vert = [pos.x, pos.y, pos.z, uv.x, uv.y];
                 meshData?.vertices.push(...vert);
-                vertexMap.set(def, [index, vert]);
+                vertexMap.set(key, [index, vert]);
                 return index;
             };
             const lines = text.split("\n");
@@ -152,20 +160,25 @@ export function loadWavefront(
                         );
                         break;
                     case "mtllib":
-                        console.log("loading", parts[1]);
+                        const libraryPath = parts[1];
                         const lib = await loadWavefrontMaterialLibrary(
-                            parts[1],
+                            libraryPath,
                         );
-                        libs.set(parts[1], lib);
-                        console.log("loaded", parts[1]);
+                        libs.set(libraryPath, lib);
                         break;
                     case "usemtl":
+                        const materialName = parts[1];
                         let material;
                         for (const lib of libs.values()) {
-                            if (lib.materials.has(parts[1])) {
-                                material = lib.materials.get(parts[1])!;
+                            material = lib.materials.get(materialName);
+                            if (material) {
                                 break;
                             }
+                        }
+                        if (!material) {
+                            console.error(
+                                `Material ${materialName} not found.`,
+                            );
                         }
                         if (meshData!.ranges.length) {
                             meshData!.ranges[meshData!.ranges.length - 1][2] =
@@ -181,38 +194,74 @@ export function loadWavefront(
                             ]);
                         }
                         currentMaterial = material;
+                        currentMaterialName = parts[1];
                         break;
                     case "f":
-                        console.log("face", parts.length);
                         if (parts.length == 4) { // Triangle
                             meshData?.indices.push(
-                                getVertex(parts[1], currentMaterial!),
+                                getVertex(
+                                    parts[1],
+                                    currentMaterialName!,
+                                    currentMaterial!,
+                                ),
                             );
                             meshData?.indices.push(
-                                getVertex(parts[2], currentMaterial!),
+                                getVertex(
+                                    parts[2],
+                                    currentMaterialName!,
+                                    currentMaterial!,
+                                ),
                             );
                             meshData?.indices.push(
-                                getVertex(parts[3], currentMaterial!),
+                                getVertex(
+                                    parts[3],
+                                    currentMaterialName!,
+                                    currentMaterial!,
+                                ),
                             );
                         }
                         if (parts.length == 5) { // Quad
                             meshData?.indices.push(
-                                getVertex(parts[1], currentMaterial!),
+                                getVertex(
+                                    parts[1],
+                                    currentMaterialName!,
+                                    currentMaterial!,
+                                ),
                             );
                             meshData?.indices.push(
-                                getVertex(parts[2], currentMaterial!),
+                                getVertex(
+                                    parts[2],
+                                    currentMaterialName!,
+                                    currentMaterial!,
+                                ),
                             );
                             meshData?.indices.push(
-                                getVertex(parts[3], currentMaterial!),
+                                getVertex(
+                                    parts[3],
+                                    currentMaterialName!,
+                                    currentMaterial!,
+                                ),
                             );
                             meshData?.indices.push(
-                                getVertex(parts[1], currentMaterial!),
+                                getVertex(
+                                    parts[1],
+                                    currentMaterialName!,
+                                    currentMaterial!,
+                                ),
                             );
                             meshData?.indices.push(
-                                getVertex(parts[3], currentMaterial!),
+                                getVertex(
+                                    parts[3],
+                                    currentMaterialName!,
+                                    currentMaterial!,
+                                ),
                             );
                             meshData?.indices.push(
-                                getVertex(parts[4], currentMaterial!),
+                                getVertex(
+                                    parts[4],
+                                    currentMaterialName!,
+                                    currentMaterial!,
+                                ),
                             );
                         }
                         break;
@@ -240,4 +289,8 @@ export function loadWavefront(
             return data;
         }),
     );
+}
+
+export function getWavefront(name: string): Asset<WavefrontData> | null {
+    return _k.assets.meshes.get(name) ?? null;
 }

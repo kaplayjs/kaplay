@@ -1,0 +1,25 @@
+# grass material
+newmtl grass_mtl
+ka 1.000000 1.000000 1.000000
+kd 1.000000 1.000000 1.000000
+ks 0.000000 0.000000 0.000000
+tr 1.000000
+illum 1
+ns 0.000000
+map_kd ../sprites/grass.png
+newmtl grass_top_mtl
+ka 1.000000 1.000000 1.000000
+kd 1.000000 1.000000 1.000000
+ks 0.000000 0.000000 0.000000
+tr 1.000000
+illum 1
+ns 0.000000
+map_kd ../sprites/grass_top.png
+newmtl grass_bottom_mtl
+ka 1.000000 1.000000 1.000000
+kd 1.000000 1.000000 1.000000
+ks 0.000000 0.000000 0.000000
+tr 1.000000
+illum 1
+ns 0.000000
+map_kd ../sprites/grass_bottom.png

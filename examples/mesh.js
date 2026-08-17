@@ -56,12 +56,16 @@ loadSprite("spike", "/sprites/spike.png");
 loadSprite("apple", "/sprites/apple.png");
 loadSprite("portal", "/sprites/portal.png");
 loadSprite("coin", "/sprites/coin.png");
+loadSprite("bag", "/sprites/bag.png");
 loadSound("coin", "sounds/score.mp3");
 loadSound("powerup", "sounds/powerup.mp3");
 loadSound("blip", "sounds/blip.mp3");
 loadSound("hit", "sounds/hit.mp3");
 loadSound("portal", "sounds/portal.mp3");
-loadWavefront("cube", "meshes/cube.obj").then(data => console.log(data));
+loadWavefront("grass", "meshes/grass.obj").then(data => console.log(data));
+loadWavefront("steel", "meshes/steel.obj");
+loadWavefront("prize", "meshes/prize.obj");
+loadWavefront("spike", "meshes/spike.obj");
 
 loadShader(
     "3D",
@@ -78,7 +82,12 @@ loadShader(
     varying highp vec2 v_uv;
 
     void main(void) {
-        gl_Position = uProjectionMatrix * transform * uModelViewMatrix * vec4(a_pos, 1);
+        if (a_pos.z == 0.0) {
+           gl_Position = uProjectionMatrix * transform * uModelViewMatrix * vec4(a_pos.xy, -height / 2.0, 1);
+        }
+        else {
+            gl_Position = uProjectionMatrix * transform * uModelViewMatrix * vec4(a_pos, 1);
+        }
         v_uv = a_uv;
     }
     `,
@@ -159,149 +168,11 @@ function big() {
 }
 
 onLoad(() => {
-    const grassUv = getSprite("grass").data.frames[0].q;
-    const grassTopUv = getSprite("grasstop").data.frames[0].q;
-    const grassBottomUv = getSprite("grassbot").data.frames[0].q;
-    const steelUv = getSprite("steel").data.frames[0].q;
-    const prizeUv = getSprite("prize").data.frames[0].q;
-    const prizeTopUv = getSprite("prizetop").data.frames[0].q;
     const spikeUv = getSprite("spike").data.frames[0].q;
 
     const format = [
         { name: "a_pos", size: 3 },
         { name: "a_uv", size: 2 },
-    ];
-
-    const vertices = (uv, topuv, bottomuv, h = 64) => [
-        // Front
-        0,
-        h,
-        -height() / 2,
-        uv.x,
-        uv.y + uv.h - 0.001, /*1, 1, 1, 1,*/
-        0,
-        0,
-        -height() / 2,
-        uv.x,
-        uv.y + 0.001, /*1, 1, 1, 1,*/
-        64,
-        0,
-        -height() / 2,
-        uv.x + uv.w,
-        uv.y + 0.001, /*1, 1, 1, 1,*/
-        64,
-        h,
-        -height() / 2,
-        uv.x + uv.w,
-        uv.y + uv.h - 0.001, /*1, 1, 1, 1,*/
-        // Back
-        0,
-        h,
-        -height() / 2 - 64,
-        uv.x + uv.w,
-        uv.y + uv.h - 0.001, /*1, 1, 1, 1,*/
-        0,
-        0,
-        -height() / 2 - 64,
-        uv.x + uv.w,
-        uv.y + 0.001, /*1, 1, 1, 1,*/
-        64,
-        0,
-        -height() / 2 - 64,
-        uv.x,
-        uv.y + 0.001, /*1, 1, 1, 1,*/
-        64,
-        h,
-        -height() / 2 - 64,
-        uv.x,
-        uv.y + uv.h - 0.001, /*1, 1, 1, 1,*/
-        // Top
-        0,
-        0,
-        -height() / 2,
-        topuv.x,
-        topuv.y + topuv.h - 0.001, /*1, 1, 1, 1,*/
-        0,
-        0,
-        -height() / 2 - 64,
-        topuv.x,
-        topuv.y + 0.001, /*1, 1, 1, 1,*/
-        64,
-        0,
-        -height() / 2 - 64,
-        topuv.x + topuv.w,
-        topuv.y + 0.001, /*1, 1, 1, 1,*/
-        64,
-        0,
-        -height() / 2,
-        topuv.x + topuv.w,
-        topuv.y + topuv.h - 0.001, /*1, 1, 1, 1,*/
-        // Bottom
-        0,
-        h,
-        -height() / 2,
-        bottomuv.x,
-        bottomuv.y + bottomuv.h - 0.001, /*1, 1, 1, 1,*/
-        0,
-        h,
-        -height() / 2 - 64,
-        bottomuv.x,
-        bottomuv.y + 0.001, /*1, 1, 1, 1,*/
-        64,
-        h,
-        -height() / 2 - 64,
-        bottomuv.x + bottomuv.w,
-        bottomuv.y + 0.001, /*1, 1, 1, 1,*/
-        64,
-        h,
-        -height() / 2,
-        bottomuv.x + bottomuv.w,
-        bottomuv.y + bottomuv.h - 0.001, /*1, 1, 1, 1,*/
-    ];
-
-    const indices = [
-        // Front
-        0,
-        1,
-        3,
-        1,
-        2,
-        3,
-        // Back
-        7,
-        6,
-        4,
-        6,
-        5,
-        4,
-        // Left
-        4,
-        5,
-        0,
-        5,
-        1,
-        0,
-        // Right
-        3,
-        2,
-        7,
-        2,
-        6,
-        7,
-        // Top
-        8,
-        9,
-        10,
-        8,
-        10,
-        11,
-        // Bottom
-        12,
-        13,
-        14,
-        12,
-        14,
-        15,
     ];
 
     const projection = Mat4.perspective(
@@ -318,24 +189,43 @@ onLoad(() => {
 
     let levelId = 0;
 
+    const grassMeshData = getWavefront("grass").data.meshes.get("grass");
+    const grassMesh = makeMesh(
+        format,
+        grassMeshData.vertices.map((v, i) => i % 5 == 2 ? v - height() / 2 : v),
+        grassMeshData.indices,
+    );
+
+    const steelMeshData = getWavefront("steel").data.meshes.get("steel");
+    const steelMesh = makeMesh(
+        format,
+        steelMeshData.vertices.map((v, i) => i % 5 == 2 ? v - height() / 2 : v),
+        steelMeshData.indices,
+    );
+
+    const prizeMeshData = getWavefront("prize").data.meshes.get("prize");
+    const prizeMesh = makeMesh(
+        format,
+        prizeMeshData.vertices.map((v, i) => i % 5 == 2 ? v - height() / 2 : v),
+        prizeMeshData.indices,
+    );
+
+    const spikeMeshData = getWavefront("spike").data.meshes.get("spike");
+    const spikeMesh = makeMesh(
+        format,
+        spikeMeshData.vertices.map((v, i) => i % 5 == 2 ? v - height() / 2 : v),
+        spikeMeshData.indices,
+    );
+
     // define what each symbol means in the level graph
     const levelConf = {
         tileWidth: 64,
         tileHeight: 64,
         tiles: {
             "=": () => [
-                /*sprite("grass"),
-                area(),
-                body({ isStatic: true }),
-                anchor("bot"),
-                offscreen({ hide: true }),*/
                 "platform",
                 mesh({
-                    mesh: makeMesh(
-                        format,
-                        vertices(grassUv, grassTopUv, grassBottomUv),
-                        indices,
-                    ),
+                    mesh: grassMesh,
                 }),
                 area(),
                 body({ isStatic: true }),
@@ -348,17 +238,8 @@ onLoad(() => {
                 anchor("bot"),
             ],
             "-": () => [
-                /*sprite("steel"),
-                area(),
-                body({ isStatic: true }),
-                offscreen({ hide: true }),
-                anchor("bot"),*/
                 mesh({
-                    mesh: makeMesh(
-                        format,
-                        vertices(steelUv, steelUv, steelUv),
-                        indices,
-                    ),
+                    mesh: steelMesh,
                 }),
                 area(),
                 body({ isStatic: true }),
@@ -370,13 +251,19 @@ onLoad(() => {
                 })),
                 anchor("bot"),
             ],
-            /*"0": () => [
+            "0": () => [
                 sprite("bag"),
                 area(),
                 body({ isStatic: true }),
                 offscreen({ hide: true }),
                 anchor("bot"),
-            ],*/
+                shader("3D", () => ({
+                    uModelViewMatrix: Mat4.translate3(
+                        vec3(-camPos().x, -camPos().y, 0),
+                    ),
+                    uProjectionMatrix: projection,
+                })),
+            ],
             "$": () => [
                 sprite("coin"),
                 area({ isSensor: true }),
@@ -386,18 +273,9 @@ onLoad(() => {
                 "coin",
             ],
             "%": () => [
-                /*sprite("prize"),
-                area(),
-                body({ isStatic: true }),
-                anchor("bot"),
-                offscreen({ hide: true }),*/
                 "prize",
                 mesh({
-                    mesh: makeMesh(
-                        format,
-                        vertices(prizeUv, prizeTopUv, prizeTopUv),
-                        indices,
-                    ),
+                    mesh: prizeMesh,
                 }),
                 area(),
                 body({ isStatic: true }),
@@ -410,18 +288,9 @@ onLoad(() => {
                 anchor("bot"),
             ],
             "^": () => [
-                /*sprite("spike"),
-                area(),
-                body({ isStatic: true }),
-                anchor("bot"),
-                offscreen({ hide: true }),*/
                 "danger",
                 mesh({
-                    mesh: makeMesh(
-                        format,
-                        vertices(spikeUv, spikeUv, spikeUv, 21),
-                        indices,
-                    ),
+                    mesh: spikeMesh,
                 }),
                 area(),
                 body({ isStatic: true }),

@@ -55,6 +55,9 @@ function evolveSimplex(
             // towards the center of of colliderB
             direction.x = colliderB.gjkCenter.x - colliderA.gjkCenter.x;
             direction.y = colliderB.gjkCenter.y - colliderA.gjkCenter.y;
+            if (direction.x == 0 && direction.y == 0) {
+                direction.x = 1;
+            }
             break;
         }
         case 1: {

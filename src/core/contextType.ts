@@ -4432,6 +4432,12 @@ export interface KAPLAYCtx {
         mtlSrc: string,
     ): Asset<WavefrontData>;
     /**
+     * Retrieve a mesh.
+     *
+     * @param name - The name of the asset.
+     */
+    getWavefront(name: string): Asset<WavefrontData> | null;
+    /**
      * Add a new loader to wait for before starting the game.
      *
      * @param l - The loader to wait for.

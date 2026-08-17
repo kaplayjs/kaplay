@@ -1,0 +1,30 @@
+# spike model
+mtllib meshes/spike.mtl
+o spike
+v 0 0 32
+v 64 0 32
+v 64 21 32
+v 0 21 32
+v 0 0 -32
+v 64 0 -32
+v 64 21 -32
+v 0 21 -32
+vt 0 0
+vt 1 0
+vt 1 1
+vt 0 1
+
+usemtl spike_mtl
+s off
+# front
+f 1/1/ 2/2/ 4/4/
+f 2/2/ 3/3/ 4/4/
+# left
+f 5/1/ 1/2/ 8/4/
+f 1/2/ 4/3/ 8/4/
+# right
+f 2/1/ 6/2/ 3/4/
+f 6/2/ 7/3/ 3/4/
+# back
+f 6/1/ 5/2/ 7/4/
+f 5/2/ 8/3/ 7/4/

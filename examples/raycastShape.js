@@ -301,7 +301,7 @@ function laser() {
 
 const ray = add([
     pos(150, 270),
-    rotate(-45),
+    rotate(270),
     anchor("center"),
     rect(64, 64),
     area(),
