@@ -21,7 +21,7 @@ jobs:
       - name: Fail if not formatted
         run: |
           if [ -n "$FORMATTED" ]; then
-            echo "Code is not formatted. Please run 'pnpm run fmt' to format the code."
+            echo "Code is not formatted. Please run 'npm run fmt' to format the code."
             exit 1
           else
             echo "Code is formatted correctly."
