@@ -1,6 +1,6 @@
 import type { BitmapFontData } from "../../../assets/bitmapFont";
 import { DEF_TEXT_SIZE } from "../../../constants/general";
-import { getRenderProps } from "../../../game/utils";
+import { defineReactiveProps, getRenderProps } from "../../../game/utils";
 import { anchorPt } from "../../../gfx/anchor";
 import {
     drawFormattedText,
@@ -10,14 +10,15 @@ import { drawRect } from "../../../gfx/draw/drawRect";
 import type {
     CharTransform,
     CharTransformFunc,
+    DrawTextOpt,
     TextAlign,
 } from "../../../gfx/draw/drawText";
-import { formatText } from "../../../gfx/formatText";
+import { formatText, transformFormattedText } from "../../../gfx/formatText";
 import { rgb } from "../../../math/color";
 import { Rect, testRectPoint, vec2 } from "../../../math/math";
 import { Vec2 } from "../../../math/Vec2";
 import { _k } from "../../../shared";
-import type { Comp, GameObj } from "../../../types";
+import type { Comp, GameObj, RenderProps } from "../../../types";
 import { nextRenderAreaVersion } from "../physics/area";
 
 /**
@@ -173,9 +174,43 @@ export interface TextCompOpt {
 }
 
 export function text(t: string, opt: TextCompOpt = {}): TextComp {
+    let objRef: GameObj<TextComp | any> | null = null;
     let theFormattedText: FormattedText;
-    function update(obj: GameObj<TextComp | any>) {
-        theFormattedText = formatText(Object.assign(getRenderProps(obj), {
+
+    let _shape: Rect | undefined;
+    let _width = opt.width ?? 0;
+    let _height = 0;
+    let _isDynamic = false;
+
+    // obj props that are checked on update and trigger transform or reformat
+    let _renderProps:
+        | RenderProps & Record<"anchor", DrawTextOpt["anchor"]>
+        | null = null;
+
+    // props that call update with reformat once on set
+    const _props = {
+        textSize: opt.size ?? DEF_TEXT_SIZE,
+        font: opt.font!,
+        align: opt.align!,
+        lineSpacing: opt.lineSpacing!,
+        letterSpacing: opt.letterSpacing!,
+    };
+
+    // dynamic props that update with transform instead, reformat only if _renderProps changed
+    const _proxiedProps = {
+        textStyles: proxifyProp(opt.styles!),
+        textTransform: proxifyProp(opt.transform!),
+    };
+
+    function update(obj: GameObj<TextComp | any>, reformat?: boolean) {
+        const updateType = refreshRenderProps(obj);
+        if (!reformat) {
+            if (!_isDynamic && !updateType) return;
+            reformat = updateType === 2;
+        }
+
+        const fOpt = {
+            ..._renderProps,
             text: obj.text + "",
             size: obj.textSize,
             font: obj.font,
@@ -186,13 +221,60 @@ export function text(t: string, opt: TextCompOpt = {}): TextComp {
             transform: obj.textTransform,
             styles: obj.textStyles,
             indentAll: opt.indentAll,
-        }));
+        };
 
-        if (!opt.width) {
-            obj.width = theFormattedText.width / (obj.scale?.x || 1);
+        theFormattedText = reformat
+            ? formatText(fOpt)
+            : transformFormattedText(theFormattedText, fOpt, _isDynamic);
+
+        if (!opt.width) obj.width = theFormattedText.width;
+        obj.height = theFormattedText.height;
+    }
+
+    function refreshRenderProps(obj: GameObj<TextComp | any>): 0 | 1 | 2 {
+        if (!_renderProps) {
+            _renderProps = getRenderProps(obj);
+            return 2;
         }
 
-        obj.height = theFormattedText.height / (obj.scale?.y || 1);
+        const reformat = obj.anchor !== _renderProps.anchor;
+
+        const transform = obj.color !== _renderProps.color
+            || obj.opacity !== _renderProps.opacity
+            || obj.shader !== _renderProps.shader
+            || obj.uniform !== _renderProps.uniform;
+
+        if (!reformat && !transform) return 0;
+
+        _renderProps = getRenderProps(obj);
+
+        return reformat ? 2 : 1;
+    }
+
+    function updateDynamic() {
+        const prev = _isDynamic;
+        _isDynamic = Object.values(_proxiedProps).some(value => (
+            typeof value === "function"
+            || (
+                value
+                && typeof value === "object"
+                && Object.values(value).some(v => typeof v === "function")
+            )
+        ));
+
+        if (prev && !_isDynamic && objRef) update(objRef, true);
+    }
+
+    function proxifyProp(value: Object | Function) {
+        return value && typeof value === "object"
+            ? new Proxy(value, {
+                set(target, key, val) {
+                    Reflect.set(target, key, val);
+                    updateDynamic();
+                    return true;
+                },
+            })
+            : value;
     }
 
     function anchorPoint() {
@@ -200,55 +282,50 @@ export function text(t: string, opt: TextCompOpt = {}): TextComp {
             .scale(theFormattedText.width, theFormattedText.height).scale(-0.5);
     }
 
-    let _shape: Rect | undefined;
-    let _width = opt.width ?? 0;
-    let _height = 0;
     const tempRectForPointTest = new Rect(vec2(), 0, 0);
 
-    const obj: TextComp = {
+    const obj = {
         id: "text",
         set text(nt) {
+            if (t === nt) return;
             t = nt;
-            // @ts-expect-error
-            update(this);
+            update(this as any as GameObj<TextComp>, true);
         },
         get text() {
             return t;
         },
-        textSize: opt.size ?? DEF_TEXT_SIZE,
-        font: opt.font!,
         get width() {
             return _width;
         },
         set width(value) {
-            if (_width != value) {
-                _width = value;
-                if (_shape) _shape.width = value;
-                this._renderAreaVersion = nextRenderAreaVersion();
-            }
+            if (_width === value) return;
+            _width = value;
+            if (_shape) _shape.width = value;
+            this._renderAreaVersion = nextRenderAreaVersion();
+            update(this as any as GameObj<TextComp>, true);
         },
         get height() {
             return _height;
         },
         set height(value) {
-            if (_height != value) {
-                _height = value;
-                if (_shape) _shape.height = value;
-                this._renderAreaVersion = nextRenderAreaVersion();
-            }
+            if (_height === value) return;
+            _height = value;
+            if (_shape) _shape.height = value;
+            this._renderAreaVersion = nextRenderAreaVersion();
+            update(this as any as GameObj<TextComp>, true);
         },
-        align: opt.align!,
-        lineSpacing: opt.lineSpacing!,
-        letterSpacing: opt.letterSpacing!,
-        textTransform: opt.transform!,
-        textStyles: opt.styles!,
 
         formattedText(this: GameObj<TextComp>) {
             return theFormattedText;
         },
 
-        add(this: GameObj<TextComp>) {
-            _k.k.onLoad(() => update(this));
+        add(this: GameObj<TextComp | any>) {
+            objRef = this;
+            updateDynamic();
+        },
+
+        update(this: GameObj<TextComp>) {
+            update(this);
         },
 
         draw(this: GameObj<TextComp>) {
@@ -307,10 +384,6 @@ export function text(t: string, opt: TextCompOpt = {}): TextComp {
             return minIndex;
         },
 
-        update(this: GameObj<TextComp>) {
-            update(this);
-        },
-
         renderArea() {
             if (!_shape) {
                 _shape = new Rect(vec2(0), _width, _height);
@@ -333,10 +406,29 @@ export function text(t: string, opt: TextCompOpt = {}): TextComp {
                 indentAll: opt.indentAll,
             };
         },
-    };
+    } as TextComp;
 
-    // @ts-expect-error
-    update(obj);
+    // define _props as obj props that call update once with reformat
+    defineReactiveProps(obj, _props, {
+        set(prop, value) {
+            _props[prop] = value;
+            update(this as any as GameObj<TextComp>, true);
+        },
+    });
+
+    // define _proxiedProps as obj props that update with transform only if dynamic
+    defineReactiveProps(obj, _proxiedProps, {
+        set(prop, value) {
+            _proxiedProps[prop] = proxifyProp(value);
+            updateDynamic();
+        },
+    });
+
+    _k.k.onLoad(() => {
+        // @ts-expect-error
+        update(obj, true);
+        return _k.k.cancel();
+    });
 
     // @ts-ignore Deep check in text related methods
     return obj;

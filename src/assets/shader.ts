@@ -188,7 +188,6 @@ export class Shader {
                         1,
                     ]),
                 );
-                // console.log(val)
             }
             else if (val instanceof Color) {
                 gl.uniform3f(loc, val.r, val.g, val.b);
