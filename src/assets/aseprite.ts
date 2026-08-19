@@ -19,7 +19,6 @@ export type AsepriteData = {
         };
     }>;
     meta: {
-        size: { w: number; h: number };
         frameTags: Array<{
             name: string;
             from: number;
@@ -47,34 +46,27 @@ export function loadAseprite(
 
     return _k.assets.sprites.add(
         name,
-        resolveJSON.then((data: AsepriteData) => {
-            const size = data.meta.size;
-            const frames = data.frames.map((f: any) => {
-                return new Quad(
-                    f.frame.x / size.w,
-                    f.frame.y / size.h,
-                    f.frame.w / size.w,
-                    f.frame.h / size.h,
-                );
-            });
-            const anims: Record<string, number | SpriteAnim> = {};
+        resolveJSON.then(({ meta: { frameTags }, frames }: AsepriteData) => {
+            const anims: Record<string, SpriteAnim> = {};
 
-            for (const anim of data.meta.frameTags) {
-                if (anim.from === anim.to) {
-                    anims[anim.name] = anim.from;
+            for (const { name, from, to, direction } of frameTags) {
+                if (from === to) {
+                    anims[name] = from;
                 }
                 else {
-                    anims[anim.name] = {
-                        from: anim.from,
-                        to: anim.to,
+                    anims[name] = {
+                        from,
+                        to,
                         speed: 10,
                         loop: true,
-                        pingpong: anim.direction === "pingpong",
+                        pingpong: direction === "pingpong",
                     };
                 }
             }
             return SpriteData.fromSpriteSrc(imgSrc, {
-                frames: frames,
+                frames: frames.map(({ frame: { x, y, w, h } }) =>
+                    new Quad(x, y, w, h)
+                ),
                 anims: anims,
                 repack: false,
             });
