@@ -21,6 +21,7 @@ function registerSceneNumber(number, happy) {
                 {
                     align: "center",
                     size: 70,
+                    width: width() - 40,
                     styles: {
                         small: {
                             scale: 0.6,
@@ -52,11 +53,8 @@ scene("menu", () => {
         text(`click text below\nto go to the scene\n\n${menuText}`, {
             align: "center",
             size: 50,
+            width: width() - 40,
             styles: {
-                large: {
-                    scale: 3,
-                    stretchInPlace: false,
-                },
                 go(_, __, goScene) {
                     if (willGo === goScene) {
                         return {
@@ -77,18 +75,16 @@ scene("menu", () => {
         anchor("center"),
         area(),
     ]);
-    onMouseMove(() => {
-        t.onHoverUpdate(() => {
-            willGo = t.pointToChar(t.fromScreen(mousePos()))
-                ?.styles.find(pair => pair[0] === "go")?.[1];
-        });
-        t.onHoverEnd(() => {
-            willGo = undefined;
-        });
-        t.onClick(() => {
-            if (willGo !== undefined) pushScene(willGo);
-        });
-        return cancel();
+
+    const updateWillGo = () => {
+        return willGo = t.pointToChar(t.fromScreen(mousePos()))
+            ?.styles.find(pair => pair[0] === "go")?.[1];
+    };
+
+    t.onHoverUpdate(updateWillGo);
+    t.onHoverEnd(() => willGo = undefined);
+    t.onClick(() => {
+        if (updateWillGo() !== undefined) pushScene(willGo);
     });
 });
 go("menu");
