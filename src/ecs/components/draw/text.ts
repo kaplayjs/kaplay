@@ -6,6 +6,12 @@ import {
     drawFormattedText,
     type FormattedText,
 } from "../../../gfx/draw/drawFormattedText";
+import {
+    beginPicture,
+    drawPicture,
+    endPicture,
+    Picture,
+} from "../../../gfx/draw/drawPicture";
 import { drawRect } from "../../../gfx/draw/drawRect";
 import type {
     CharTransform,
@@ -14,7 +20,7 @@ import type {
     TextAlign,
 } from "../../../gfx/draw/drawText";
 import { formatText, transformFormattedText } from "../../../gfx/formatText";
-import { rgb } from "../../../math/color";
+import { Color } from "../../../math/color";
 import { Rect, testRectPoint, vec2 } from "../../../math/math";
 import { Vec2 } from "../../../math/Vec2";
 import { _k } from "../../../shared";
@@ -181,6 +187,8 @@ export function text(t: string, opt: TextCompOpt = {}): TextComp {
     let _width = opt.width ?? 0;
     let _height = 0;
     let _isDynamic = false;
+    let _inspectChars = true;
+    let _inspectCharRects: Picture | null;
 
     // obj props that are checked on update and trigger transform or reformat
     let _renderProps:
@@ -229,6 +237,8 @@ export function text(t: string, opt: TextCompOpt = {}): TextComp {
 
         if (!opt.width) obj.width = theFormattedText.width;
         obj.height = theFormattedText.height;
+
+        if (_k.debug.inspect && _inspectChars) updateCharInspect();
     }
 
     function refreshRenderProps(obj: GameObj<TextComp | any>): 0 | 1 | 2 {
@@ -282,6 +292,29 @@ export function text(t: string, opt: TextCompOpt = {}): TextComp {
             .scale(theFormattedText.width, theFormattedText.height).scale(-0.5);
     }
 
+    function updateCharInspect() {
+        beginPicture(_inspectCharRects ?? new Picture());
+        const p = anchorPoint();
+        const gray = new Color(142, 142, 142);
+        for (const fc of theFormattedText.chars) {
+            const hsl = fc.color.lerp(gray, 0.25).toHSL();
+            drawRect({
+                pos: fc.pos.add(p),
+                width: fc.width * fc.scale.x,
+                height: fc.height * fc.scale.y,
+                fill: false,
+                anchor: "center",
+                outline: {
+                    color: Color.fromHSL(hsl[0], hsl[1], 0.75),
+                    opacity: 0.5,
+                    width: 2,
+                    join: "miter",
+                },
+            });
+        }
+        _inspectCharRects = endPicture();
+    }
+
     const tempRectForPointTest = new Rect(vec2(), 0, 0);
 
     const obj = {
@@ -333,19 +366,12 @@ export function text(t: string, opt: TextCompOpt = {}): TextComp {
         },
 
         drawInspect(this: GameObj<TextComp>) {
-            const p = anchorPoint();
-            for (let fc of theFormattedText.chars) {
-                drawRect({
-                    pos: fc.pos.add(p),
-                    width: fc.width * fc.scale.x,
-                    height: fc.height * fc.scale.y,
-                    fill: false,
-                    anchor: "center",
-                    outline: {
-                        color: rgb(255, 255, 0),
-                        width: 2,
-                    },
-                });
+            if (!_inspectChars) return;
+            if (_inspectCharRects) {
+                drawPicture(_inspectCharRects, {});
+            }
+            else {
+                _k.game.root.nextFrame(updateCharInspect);
             }
         },
 
@@ -427,6 +453,9 @@ export function text(t: string, opt: TextCompOpt = {}): TextComp {
     _k.k.onLoad(() => {
         // @ts-expect-error
         update(obj, true);
+        _inspectChars = opt.transform !== undefined
+            || opt.styles !== undefined
+            || theFormattedText.chars.some(fc => fc.styles.length);
         return _k.k.cancel();
     });
 
