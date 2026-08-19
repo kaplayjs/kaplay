@@ -4,6 +4,7 @@ import { defineReactiveProps, getRenderProps } from "../../../game/utils";
 import { anchorPt } from "../../../gfx/anchor";
 import {
     drawFormattedText,
+    type FormattedChar,
     type FormattedText,
 } from "../../../gfx/draw/drawFormattedText";
 import {
@@ -116,11 +117,19 @@ export interface TextComp extends Comp {
     serialize(): SerializedTextComp;
 
     /**
-     * Given a point (in local coordinates), returns the index of the
-     * rendered character that the point is over, or -1 if none are touched.
-     * You can then access the style information using `obj.formattedText().chars[index].styles`.
+     * Given a point (in local coordinates), returns the formatted character
+     * data of the rendered character that the point is over, or null if none
+     * are touched.
+     * You can access the character (string) itself using `obj.pointToChar(...)?.ch`.
      */
-    pointToCharacter(point: Vec2): number;
+    pointToChar(point: Vec2): FormattedChar | null;
+
+    /**
+     * Given a point (in local coordinates), returns the index of the rendered
+     * character that the point is over, or -1 if none are touched.
+     * You can also access the character data manually, e.g. `obj.formattedText().chars[index]?.styles`.
+     */
+    pointToCharIndex(point: Vec2): number;
 }
 
 /**
@@ -375,7 +384,7 @@ export function text(t: string, opt: TextCompOpt = {}): TextComp {
             }
         },
 
-        pointToCharacter(this: GameObj<TextComp>, point) {
+        pointToCharIndex(this: GameObj<TextComp>, point) {
             const offset = anchorPoint();
             if (!testRectPoint(this.renderArea(), point.sub(offset))) return -1;
             const chars = theFormattedText.chars;
@@ -408,6 +417,10 @@ export function text(t: string, opt: TextCompOpt = {}): TextComp {
                 }
             }
             return minIndex;
+        },
+
+        pointToChar(this: GameObj<TextComp>, point) {
+            return theFormattedText.chars[this.pointToCharIndex(point)] ?? null;
         },
 
         renderArea() {

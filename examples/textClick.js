@@ -79,10 +79,8 @@ scene("menu", () => {
     ]);
     onMouseMove(() => {
         t.onHoverUpdate(() => {
-            const index = t.pointToCharacter(t.fromScreen(mousePos()));
-            willGo = t.formattedText().chars[index]?.styles.find(pair =>
-                pair[0] === "go"
-            )?.[1];
+            willGo = t.pointToChar(t.fromScreen(mousePos()))
+                ?.styles.find(pair => pair[0] === "go")?.[1];
         });
         t.onHoverEnd(() => {
             willGo = undefined;
