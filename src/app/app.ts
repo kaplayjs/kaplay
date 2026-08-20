@@ -499,7 +499,7 @@ export const initApp = (
         return state.mouseState.released.has(m);
     }
 
-    function isMouseDoublePressed(m: MouseButton = "left") : boolean {
+    function isMouseDoublePressed(m: MouseButton = "left"): boolean {
         return mouseDoublePressed && isEqOrIncludes(state.mouseState.press, m);
     }
 
@@ -669,7 +669,7 @@ export const initApp = (
 
     const onMouseDoublePress = overload2((action: (m: MouseButton) => void) => {
         return state.events.on("mousePress", (m) => {
-            if (timeSinceLastClick < 0.5 && waitingForDoubleClick) action(m)
+            if (timeSinceLastClick < 0.5 && waitingForDoubleClick) action(m);
         });
     }, (
         mouse: MouseButton | MouseButton[],
@@ -678,7 +678,9 @@ export const initApp = (
         return state.events.on(
             "mousePress",
             (m) => {
-                isEqOrIncludes(mouse, m) && (timeSinceLastClick < 0.5 && waitingForDoubleClick) && action(m)
+                isEqOrIncludes(mouse, m)
+                    && (timeSinceLastClick < 0.5 && waitingForDoubleClick)
+                    && action(m);
             },
         );
     });
@@ -1121,7 +1123,8 @@ export const initApp = (
             if (timeSinceLastClick < 0.5 && waitingForDoubleClick) {
                 mouseDoublePressed = true;
                 waitingForDoubleClick = false;
-            } else {
+            }
+            else {
                 mouseDoublePressed = false;
                 waitingForDoubleClick = true;
             }

@@ -1,7 +1,7 @@
-kaplay()
+kaplay();
 
-loadBean()
-setBackground(BLUE.lighten(150))
+loadBean();
+setBackground(BLUE.lighten(150));
 
 const bean = add([
     sprite("bean"),
@@ -17,18 +17,18 @@ const bean = add([
                 anchor: "center",
                 pos: vec2(0, 35),
                 size: 15,
-            })
-        }
-    }
-])
+            });
+        },
+    },
+]);
 
-let windowOpen = false
+let windowOpen = false;
 
 bean.onMouseDoublePress(() => {
     if (!bean.isHovering()) return;
     if (windowOpen) return;
 
-    windowOpen = true
+    windowOpen = true;
 
     // open window
     const window = add([
@@ -36,8 +36,8 @@ bean.onMouseDoublePress(() => {
         rect(650, 450),
         pos(center()),
         anchor("center"),
-        area()
-    ])
+        area(),
+    ]);
 
     window.add([
         rect(650, 50),
@@ -48,11 +48,11 @@ bean.onMouseDoublePress(() => {
                 this.add([
                     text("bean.png"),
                     color(WHITE),
-                    pos(10)
-                ])
-            }
-        }
-    ])
+                    pos(10),
+                ]);
+            },
+        },
+    ]);
 
     window.add([
         sprite("bean"),
@@ -60,10 +60,10 @@ bean.onMouseDoublePress(() => {
         pos(),
         area(),
         anchor("center"),
-    ])
+    ]);
 
     window.onKeyPress("escape", () => {
-        window.destroy()
-        windowOpen = false
-    })
-})
+        window.destroy();
+        windowOpen = false;
+    });
+});
