@@ -499,6 +499,10 @@ export const initApp = (
         return state.mouseState.released.has(m);
     }
 
+    function isMouseDoublePressed(m: MouseButton = "left") : boolean {
+        return mouseDoublePressed && isEqOrIncludes(state.mouseState.press, m);
+    }
+
     function isMouseMoved(): boolean {
         return state.isMouseMoved;
     }
@@ -663,6 +667,22 @@ export const initApp = (
         );
     }
 
+    const onMouseDoublePress = overload2((action: (m: MouseButton) => void) => {
+        return state.events.on("mousePress", (m) => {
+            if (timeSinceLastClick < 0.5 && waitingForDoubleClick) action(m)
+        });
+    }, (
+        mouse: MouseButton | MouseButton[],
+        action: (m: MouseButton) => void,
+    ) => {
+        return state.events.on(
+            "mousePress",
+            (m) => {
+                isEqOrIncludes(mouse, m) && (timeSinceLastClick < 0.5 && waitingForDoubleClick) && action(m)
+            },
+        );
+    });
+
     function onCharInput(action: (ch: string) => void): KEventController {
         return state.events.on("charInput", action);
     }
@@ -822,6 +842,8 @@ export const initApp = (
         state.keyState.process(state);
         state.mouseState.process(state);
         state.buttonHandler.process(state);
+        mouseDoublePressed = false;
+        timeSinceLastClick += state.dt;
     }
 
     function resetInput() {
@@ -1075,6 +1097,9 @@ export const initApp = (
         });
     };
 
+    let timeSinceLastClick = 0;
+    let mouseDoublePressed = false;
+    let waitingForDoubleClick = false;
     const MOUSE_BUTTONS: MouseButton[] = [
         "left",
         "middle",
@@ -1091,6 +1116,17 @@ export const initApp = (
             state.lastInputDevice = "mouse";
             state.buttonHandler.processMousedown(m, state);
             state.mouseState.press(m, state);
+
+            // double mouse press code
+            if (timeSinceLastClick < 0.5 && waitingForDoubleClick) {
+                mouseDoublePressed = true;
+                waitingForDoubleClick = false;
+            } else {
+                mouseDoublePressed = false;
+                waitingForDoubleClick = true;
+            }
+
+            timeSinceLastClick = 0;
         });
     };
 
@@ -1457,6 +1493,7 @@ export const initApp = (
         isKeyReleased,
         isMouseDown,
         isMousePressed,
+        isMouseDoublePressed,
         isMouseReleased,
         isMouseMoved,
         isGamepadButtonPressed,
@@ -1481,6 +1518,7 @@ export const initApp = (
         onKeyRelease,
         onMouseDown,
         onMousePress,
+        onMouseDoublePress,
         onMouseRelease,
         onMouseMove,
         onCharInput,

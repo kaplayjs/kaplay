@@ -2368,6 +2368,25 @@ export interface KAPLAYCtx {
      */
     onMousePress(action: (m: MouseButton) => void): KEventController;
     /**
+     * Register an event that runs when user double-clicks the mouse.
+     *
+     * @param action - The function that is run when user clicks double clicks the mouse.
+     *
+     * @example
+     * ```js
+     * // open game window when bean.png is double pressed
+     * onMousePress(() => {
+     *     openWindow(bean)
+     * });
+     * ```
+     *
+     * @returns The event controller.
+     * @since v4000.0
+     * @group Input
+     * @subgroup Mouse
+     */
+    onMouseDoublePress(action: (m: MouseButton) => void): KEventController;
+    /**
      * Register an event that runs when user clicks mouse.
      *
      * @param btn - The mouse button(s) to listen for. See {@link MouseButton `MouseButton`}.
@@ -4162,6 +4181,16 @@ export interface KAPLAYCtx {
      * @subgroup Mouse
      */
     isMousePressed(btn?: MouseButton | MouseButton[]): boolean;
+    /**
+     * If mouse buttons was just double pressed
+     *
+     * @param btn - The button(s) to check.
+     *
+     * @since v4000.0
+     * @group Input
+     * @subgroup Mouse
+     */
+    isMouseDoublePressed(btn?: MouseButton | MouseButton[]): boolean;
     /**
      * If mouse buttons are just released last frame.
      *
