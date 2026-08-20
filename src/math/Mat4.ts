@@ -321,6 +321,41 @@ export class Mat4 {
         return new Mat4(out);
     }
 
+    static perspective(
+        fov: number,
+        aspect: number,
+        near: number = 0.1,
+        far: number = 1000,
+    ): Mat4 {
+        if (aspect === 0) return new Mat4();
+        if (near <= 0 || far <= near) return new Mat4();
+
+        const f = 1.0 / Math.tan(deg2rad(fov) / 2);
+        const rangeInv = 1.0 / (near - far);
+
+        return new Mat4([
+            f / aspect,
+            0,
+            0,
+            0,
+
+            0,
+            f,
+            0,
+            0,
+
+            0,
+            0,
+            (far + near) * rangeInv,
+            -1,
+
+            0,
+            0,
+            2 * far * near * rangeInv,
+            0,
+        ]);
+    }
+
     clone(): Mat4 {
         return new Mat4([...this.m]);
     }
