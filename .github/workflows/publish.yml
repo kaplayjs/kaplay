@@ -22,12 +22,9 @@ jobs:
         with:
           registry-url: "https://registry.npmjs.org"
           node-version: 20
-      - uses: pnpm/action-setup@v4
-        name: Install pnpm
-        with:
-          run_install: false
+      - uses: actions/setup-node@v4
       - name: Install dependencies
-        run: pnpm install
+        run: npm ci
       - name: Publish to NPM
         run: npm publish
         env:

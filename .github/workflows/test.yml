@@ -15,15 +15,11 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 20
-      - uses: pnpm/action-setup@v4
-        name: Install pnpm
-        with:
-          run_install: false
       - name: Install dependencies
-        run: pnpm install
+        run: npm ci
       - name: Run Checker
-        run: pnpm run check
+        run: npm run check
       - name: Run tests
-        run: pnpm run test -c
+        run: npm run test -c
       - name: Run vitests
-        run: pnpm run test:vite
+        run: npm run test:vite

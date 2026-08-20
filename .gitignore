@@ -8,7 +8,6 @@ src-tauri/target/
 .replit
 replit.nix
 /.obsidian
-.pnpm-store
 tsconfig.vitest-temp.json
 src/index.ts
 tsconfig.test.vitest-temp.json
