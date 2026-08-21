@@ -1,10 +1,19 @@
 import type { BitmapFontData } from "../../../assets/bitmapFont";
 import { DEF_TEXT_SIZE } from "../../../constants/general";
 import { defineReactiveProps, getRenderProps } from "../../../game/utils";
+import { anchorPt } from "../../../gfx/anchor";
 import {
     drawFormattedText,
+    type FormattedChar,
     type FormattedText,
 } from "../../../gfx/draw/drawFormattedText";
+import {
+    beginPicture,
+    drawPicture,
+    endPicture,
+    Picture,
+} from "../../../gfx/draw/drawPicture";
+import { drawRect } from "../../../gfx/draw/drawRect";
 import type {
     CharTransform,
     CharTransformFunc,
@@ -12,7 +21,9 @@ import type {
     TextAlign,
 } from "../../../gfx/draw/drawText";
 import { formatText, transformFormattedText } from "../../../gfx/formatText";
-import { Rect, vec2 } from "../../../math/math";
+import { Color } from "../../../math/color";
+import { Rect, testRectPoint, vec2 } from "../../../math/math";
+import { Vec2 } from "../../../math/Vec2";
 import { _k } from "../../../shared";
 import type { Comp, GameObj, RenderProps } from "../../../types";
 import { nextRenderAreaVersion } from "../physics/area";
@@ -87,7 +98,7 @@ export interface TextComp extends Comp {
      */
     textTransform: CharTransform | CharTransformFunc;
     /**
-     * Stylesheet for styled chunks, in the syntax of "this is a [style]text[/style] word".
+     * Stylesheet for styled chunks, using BBCode syntax "this is some [style]different formatting[/style] text".
      *
      * @since v2000.2
      */
@@ -99,11 +110,26 @@ export interface TextComp extends Comp {
     _renderAreaVersion: number;
     /**
      * The text data object after formatting, that contains the
-     * renering info as well as the parse data of the formatting tags.
+     * rendering info as well as the parse data of the formatting tags.
      */
     formattedText(): FormattedText;
 
     serialize(): SerializedTextComp;
+
+    /**
+     * Given a point (in local coordinates), returns the formatted character
+     * data of the rendered character that the point is over, or null if none
+     * are touched.
+     * You can access the character (string) itself using `obj.pointToChar(...)?.ch`.
+     */
+    pointToChar(point: Vec2): FormattedChar | null;
+
+    /**
+     * Given a point (in local coordinates), returns the index of the rendered
+     * character that the point is over, or -1 if none are touched.
+     * You can also access the character data manually, e.g. `obj.formattedText().chars[index]?.styles`.
+     */
+    pointToCharIndex(point: Vec2): number;
 }
 
 /**
@@ -170,6 +196,8 @@ export function text(t: string, opt: TextCompOpt = {}): TextComp {
     let _width = opt.width ?? 0;
     let _height = 0;
     let _isDynamic = false;
+    let _inspectChars = true;
+    let _inspectCharRects: Picture | null;
 
     // obj props that are checked on update and trigger transform or reformat
     let _renderProps:
@@ -218,6 +246,8 @@ export function text(t: string, opt: TextCompOpt = {}): TextComp {
 
         if (!opt.width) obj.width = theFormattedText.width;
         obj.height = theFormattedText.height;
+
+        if (_k.debug.inspect && _inspectChars) updateCharInspect();
     }
 
     function refreshRenderProps(obj: GameObj<TextComp | any>): 0 | 1 | 2 {
@@ -265,6 +295,36 @@ export function text(t: string, opt: TextCompOpt = {}): TextComp {
             })
             : value;
     }
+
+    function anchorPoint() {
+        return anchorPt(theFormattedText.opt.anchor ?? "topleft").add(1, 1)
+            .scale(theFormattedText.width, theFormattedText.height).scale(-0.5);
+    }
+
+    function updateCharInspect() {
+        beginPicture(_inspectCharRects ?? new Picture());
+        const p = anchorPoint();
+        const gray = new Color(142, 142, 142);
+        for (const fc of theFormattedText.chars) {
+            const hsl = fc.color.lerp(gray, 0.25).toHSL();
+            drawRect({
+                pos: fc.pos.add(p),
+                width: fc.width * fc.scale.x,
+                height: fc.height * fc.scale.y,
+                fill: false,
+                anchor: "center",
+                outline: {
+                    color: Color.fromHSL(hsl[0], hsl[1], 0.75),
+                    opacity: 0.5,
+                    width: 2,
+                    join: "miter",
+                },
+            });
+        }
+        _inspectCharRects = endPicture();
+    }
+
+    const tempRectForPointTest = new Rect(vec2(), 0, 0);
 
     const obj = {
         id: "text",
@@ -314,6 +374,55 @@ export function text(t: string, opt: TextCompOpt = {}): TextComp {
             drawFormattedText(theFormattedText);
         },
 
+        drawInspect(this: GameObj<TextComp>) {
+            if (!_inspectChars) return;
+            if (_inspectCharRects) {
+                drawPicture(_inspectCharRects, {});
+            }
+            else {
+                _k.game.root.nextFrame(updateCharInspect);
+            }
+        },
+
+        pointToCharIndex(this: GameObj<TextComp>, point) {
+            const offset = anchorPoint();
+            if (!testRectPoint(this.renderArea(), point.sub(offset))) return -1;
+            const chars = theFormattedText.chars;
+            let minDist = Infinity;
+            let minIndex = -1;
+            for (let i = 0; i < chars.length; i++) {
+                const fc = chars[i];
+                const w = fc.width * fc.scale.x;
+                const h = fc.height * fc.scale.y;
+                Vec2.copy(fc.pos, tempRectForPointTest.pos);
+                Vec2.add(
+                    tempRectForPointTest.pos,
+                    offset,
+                    tempRectForPointTest.pos,
+                );
+                Vec2.addc(
+                    tempRectForPointTest.pos,
+                    -w / 2,
+                    -h / 2,
+                    tempRectForPointTest.pos,
+                );
+                tempRectForPointTest.width = w;
+                tempRectForPointTest.height = h;
+                if (testRectPoint(tempRectForPointTest, point)) {
+                    const dist = Vec2.dist(point, fc.pos);
+                    if (dist < minDist) {
+                        minDist = dist;
+                        minIndex = i;
+                    }
+                }
+            }
+            return minIndex;
+        },
+
+        pointToChar(this: GameObj<TextComp>, point) {
+            return theFormattedText.chars[this.pointToCharIndex(point)] ?? null;
+        },
+
         renderArea() {
             if (!_shape) {
                 _shape = new Rect(vec2(0), _width, _height);
@@ -357,6 +466,9 @@ export function text(t: string, opt: TextCompOpt = {}): TextComp {
     _k.k.onLoad(() => {
         // @ts-expect-error
         update(obj, true);
+        _inspectChars = opt.transform !== undefined
+            || opt.styles !== undefined
+            || theFormattedText.chars.some(fc => fc.styles.length);
         return _k.k.cancel();
     });
 
