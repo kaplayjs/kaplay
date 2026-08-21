@@ -28,3 +28,9 @@ export const pressButton = (btn: string) => {
 export const releaseButton = (btn: string) => {
     _k.app.state.buttonHandler.state.release(btn, _k.app.state);
 };
+
+// Change double click interval
+
+export const setDoubleClickDelay = (val: number) => {
+    _k.globalOpt.doubleClickDelay = val;
+}

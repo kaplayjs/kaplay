@@ -1,5 +1,6 @@
 import { trigger } from "../api/eventHandlers";
 import { getData, setData } from "../app/data";
+import { setDoubleClickDelay } from "./../app/buttons";
 import { loadAseprite } from "../assets/aseprite";
 import {
     Asset,
@@ -424,6 +425,7 @@ export const createContext = (
         pathfinder,
         level,
         fakeMouse,
+        setDoubleClickDelay,
         // group events
         trigger,
         on: defaultScope.on,
