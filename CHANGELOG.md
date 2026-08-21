@@ -47,8 +47,6 @@ So your change should look like:
 - Added Alea as random generator (#1097) - @Stanko
 - Added `nextFrame()` helper function to defer/run a function on the next frame
   (#1112) - @imaginarny
-- Added `AudioPlayOpt.reverse` to make a sound play in reverse (#1140) -
-  @amyspark-ng
 
 ### Changed
 
