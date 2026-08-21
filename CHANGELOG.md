@@ -47,7 +47,6 @@ So your change should look like:
 - Added Alea as random generator (#1097) - @Stanko
 - Added `nextFrame()` helper function to defer/run a function on the next frame
   (#1112) - @imaginarny
-- Exposed fixURL() from the utils file (#1135) - @amyspark-ng
 
 ### Changed
 
