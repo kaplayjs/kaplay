@@ -10,7 +10,7 @@ We're currently workign in two main branches:
 
 1. `git clone https://github.com/kaplayjs/kaplay.git` to clone the repo.
 2. `cd kaplay` to enter the project directory.
-3. `pnpm install` to install dependencies.
+3. `npm install` to install dependencies.
 
 ## Editing examples
 
@@ -19,7 +19,7 @@ We're currently workign in two main branches:
 1. The source entry point is `src/kaplay.ts`, editing any files referenced will
    automatically trigger rebuild. **Make sure not to break any existing
    examples**.
-1. Run `pnpm dev` to start the dev server and try examples.
+1. Run `npm run dev` to start the dev server and try examples.
 
 ## Documentation
 
@@ -84,8 +84,8 @@ Example:
 
 1. follow conventional [conventional commits](#conventional-commits-guide)
    format. You can see how seeing the commit history.
-2. `pnpm run check` to check typescript.
-3. `pnpm run fmt` to format.
+2. `npm run check` to check typescript.
+3. `npm run fmt` to format.
 
 # Conventional Commits Guide
 
