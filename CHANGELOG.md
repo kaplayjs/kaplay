@@ -52,8 +52,6 @@ So your change should look like:
 - Added a `type` field to `KGamepad` (`"ps4"`, `"ps5"`, `"playstation"`,
   `"xbox"`, `"switch"`, a custom string, or `undefined`) for picking
   button-glyph assets based on controller family (#1119) - @CEREBR4L
-- Now `time()` won't keep increasing while `debug.paused` is true (#1137) -
-  @amyspark-ng
 
 ### Changed
 
