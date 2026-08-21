@@ -363,7 +363,7 @@ export interface KAPLAYCtx {
      *
      * // Example 2: using onClick() or other functions with readd().
      * // If you comment out the first example, and use this readd() with a function like onClick(), you
-     * can keep switching which sprite is above the other ( click on edge of face ).
+     * // can keep switching which sprite is above the other ( click on edge of face ).
      *
      * purpleBean.onClick(() => {
      *     readd(greenBean);
@@ -997,14 +997,14 @@ export interface KAPLAYCtx {
      * Draws a video.
      *
      * @param url - The video to play. Needs to be on the same webserver due to CORS.
-     * @param opt - The video component options
+     * @param opt - The video component options. You need to provide at least video `width` and `height`.
      *
      * @returns The video comp.
      * @since v4000.0
      * @group Components
      * @subgroup Rendering
      */
-    video(url: string, opt?: VideoCompOpt): VideoComp;
+    video(url: string, opt: VideoCompOpt): VideoComp;
     /**
      * Draws a picture, using the Picture API.
      *

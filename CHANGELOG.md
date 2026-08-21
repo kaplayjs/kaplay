@@ -47,6 +47,11 @@ So your change should look like:
 - Added Alea as random generator (#1097) - @Stanko
 - Added `nextFrame()` helper function to defer/run a function on the next frame
   (#1112) - @imaginarny
+- Added a mapping for DualShock 4 gamepads, and a `name` field on `KGamepad` for
+  identifying the recognized controller model (#1119) - @CEREBR4L
+- Added a `type` field to `KGamepad` (`"ps4"`, `"ps5"`, `"playstation"`,
+  `"xbox"`, `"switch"`, a custom string, or `undefined`) for picking
+  button-glyph assets based on controller family (#1119) - @CEREBR4L
 
 ### Changed
 
@@ -56,6 +61,11 @@ So your change should look like:
   (#1097) - @Stanko
 - **(!)** `new RNG()` and `setRNG()` now use config objects instead of the
   string/custom rng parameter (#1097) - @Stanko
+- Improved `text` component performance by separating text transform and
+  formatting, reducing update calls for both dynamic and (especially) static
+  text (#1125) - @imaginarny
+- Debug keys, keys defined with the Buttons API, and keyboard input captured by
+  e.g. focused `textInput` now use `preventDefault()` (#1114) - @imaginarny
 
 ### Fixed
 
@@ -69,6 +79,23 @@ So your change should look like:
   the initial `GameObjRaw.use()` call (e.g. `obj.use(scale(2))`) - @mflerackers
 - Fixed `isKeyDown` and `isButtonDown` getting stuck on game loosing focus
   (#1101) - @Stanko
+- Fixed gamepad button mappings (e.g. DualSense touchpad) breaking when the
+  browser's reported `Gamepad.id` format changes, by matching on vendor/product
+  id and controller name instead of the raw id string (#1119) - @CEREBR4L
+- Fixed `onMouseRelease` not being registered outside the canvas (#1113) -
+  @imaginarny
+- Fixed objects with a `text` component reporting wrong dimensions when scaled
+  using the `scale` component (#1125) - @imaginarny
+- Fixed the `layer` component property returning `null` when the layer index was
+  `0` (#1127) - @imaginarny
+- Fixed various `raycastRect` issues and standardized raycasting across all
+  shapes so rays originating inside a shape are now consistently trapped
+  (#1122) - @mflerackers
+- Fixed `finish()` being able to complete an already finished tween, and
+  prevented `timeLeft` from going negative and `currentTime` from exceeding the
+  duration (#1117) - @imaginarny
+- Fixed triangulate by updating the convexity of nearby vertices after removing
+  a concave vertex during ear cutting (#1134) - @mflerackers
 
 ## [4000.0.0-alpha.27.1] - 2026-05-12
 
@@ -77,6 +104,8 @@ So your change should look like:
 - Added a `repack: false` option to `loadSpite()` and a repack parameter to
   `loadSpriteAtlas()`, for faster loading if you're packing stuff at build-time
   (#1063) - @dragoncoder047
+- Added `loop` parameter and `onEnd` event to the video component (#1129) -
+  @Stanko
 
 ### Changed
 
@@ -86,6 +115,8 @@ So your change should look like:
   @dragoncoder047
 - Added padding around edges of spritesheet to prevent stretch if uv ends up out
   of bounds (#1076) - @dragoncoder047
+- **(!)** Renamed video `mute` parameter to `muted` to match the native API
+  (#1129) - @Stanko
 
 ### Fixed
 
