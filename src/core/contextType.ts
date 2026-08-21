@@ -3413,6 +3413,12 @@ export interface KAPLAYCtx {
      */
     loadRoot(path?: string): string;
     /**
+     * Adds the current asset root and urlPrefix to a passed url.
+     *
+     * @param url - The url to add the root at the start of.
+     */
+    fixURL<D extends string>(url: D): D;
+    /**
      * Load a sprite into asset manager, with name and resource url and optional config.
      *
      * @param name - The asset name.
