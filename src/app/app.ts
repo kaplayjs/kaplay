@@ -669,7 +669,10 @@ export const initApp = (
 
     const onMouseDoublePress = overload2((action: (m: MouseButton) => void) => {
         return state.events.on("mousePress", (m) => {
-            if (timeSinceLastClick < (_k.globalOpt.doubleClickDelay ?? 0.5) && waitingForDoubleClick) action(m);
+            if (
+                timeSinceLastClick < (_k.globalOpt.doubleClickDelay ?? 0.5)
+                && waitingForDoubleClick
+            ) action(m);
         });
     }, (
         mouse: MouseButton | MouseButton[],
@@ -679,7 +682,9 @@ export const initApp = (
             "mousePress",
             (m) => {
                 isEqOrIncludes(mouse, m)
-                    && (timeSinceLastClick < (_k.globalOpt.doubleClickDelay ?? 0.5) && waitingForDoubleClick)
+                    && (timeSinceLastClick
+                            < (_k.globalOpt.doubleClickDelay ?? 0.5)
+                        && waitingForDoubleClick)
                     && action(m);
             },
         );
@@ -1120,7 +1125,10 @@ export const initApp = (
             state.mouseState.press(m, state);
 
             // double mouse press code
-            if (timeSinceLastClick < (_k.globalOpt.doubleClickDelay ?? 0.5) && waitingForDoubleClick) {
+            if (
+                timeSinceLastClick < (_k.globalOpt.doubleClickDelay ?? 0.5)
+                && waitingForDoubleClick
+            ) {
                 mouseDoublePressed = true;
                 waitingForDoubleClick = false;
             }

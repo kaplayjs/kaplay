@@ -1,6 +1,6 @@
 import { trigger } from "../api/eventHandlers";
-import { getData, setData } from "../app/data";
 import { setDoubleClickDelay } from "./../app/buttons";
+import { getData, setData } from "../app/data";
 import { loadAseprite } from "../assets/aseprite";
 import {
     Asset,

@@ -33,4 +33,4 @@ export const releaseButton = (btn: string) => {
 
 export const setDoubleClickDelay = (val: number) => {
     _k.globalOpt.doubleClickDelay = val;
-}
+};

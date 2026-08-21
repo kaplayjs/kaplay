@@ -4037,14 +4037,14 @@ export interface KAPLAYCtx {
     mouseDeltaPos(): Vec2;
     /**
      * Changes the time between double clicks in seconds.
-     * 
+     *
      * @example
      * ```js
      * // Now double clicks will be valid with even as far as 1 second of interval.
      * setDoubleClickDelay(1);
      * ```
      */
-    setDoubleClickDelay(val: number): void,
+    setDoubleClickDelay(val: number): void;
     /**
      * If any or certain key(s) are currently down.
      *

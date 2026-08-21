@@ -1,6 +1,6 @@
 kaplay({
     doubleClickDelay: 0.25,
-})
+});
 
 loadBean();
 setBackground(BLUE.lighten(150));
@@ -30,8 +30,8 @@ let windowOpen = false;
 
 bean.onMousePress(() => {
     if (!bean.isHovering()) return;
-    tween(2.2, 2, 0.15, (p) => bean.scale = vec2(p), easings.easeOutQuad)
-})
+    tween(2.2, 2, 0.15, (p) => bean.scale = vec2(p), easings.easeOutQuad);
+});
 
 bean.onMouseDoublePress(() => {
     if (!bean.isHovering()) return;
@@ -48,7 +48,7 @@ bean.onMouseDoublePress(() => {
         area(),
     ]);
 
-    burp()
+    burp();
 
     window.add([
         rect(650, 50),
@@ -81,10 +81,10 @@ bean.onMouseDoublePress(() => {
         {
             add() {
                 this.onClick(() => {
-                    windowOpen = false
-                    window.destroy()
-                })
+                    windowOpen = false;
+                    window.destroy();
+                });
             },
         },
-    ])
+    ]);
 });

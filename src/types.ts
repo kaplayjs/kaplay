@@ -385,14 +385,14 @@ export interface KAPLAYOpt {
     buttons?: ButtonsDef;
     /**
      * Time between double clicks in seconds (default 0.5).
-     * 
+     *
      * You can change it at runtime by calling `setDoubleClickDelay()`.
-     * 
+     *
      * @since v4000
      * @group Input
      * @default 0.5
      */
-    doubleClickDelay: number;
+    doubleClickDelay?: number;
     /**
      * Limit framerate to an amount per second.
      *
