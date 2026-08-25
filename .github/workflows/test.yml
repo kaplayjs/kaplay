@@ -27,7 +27,7 @@ jobs:
             echo "Code is formatted correctly."
           fi
       - name: Run checker
-        run: pnpm run check
+        run: npm run check
       - name: Run tests
         run: node --run test 
         
