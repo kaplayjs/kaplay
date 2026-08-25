@@ -47,7 +47,7 @@ export function loadAseprite(
     return _k.assets.sprites.add(
         name,
         resolveJSON.then(({ meta: { frameTags }, frames }: AsepriteData) => {
-            const anims: Record<string, SpriteAnim> = {};
+            const anims: Record<string, number | SpriteAnim> = {};
 
             for (const { name, from, to, direction } of frameTags) {
                 if (from === to) {
