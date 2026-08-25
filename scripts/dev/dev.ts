@@ -1,4 +1,4 @@
-// Used in npm dev script
+// Used in npm run dev script
 // @ts-check
 
 import esbuild from "esbuild";
