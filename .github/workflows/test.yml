@@ -26,6 +26,10 @@ jobs:
           else
             echo "Code is formatted correctly."
           fi
+      - name: Run checker
+        run: pnpm run check
+      - name: Run tests
+        run: node --run test 
         
   test:
     name: Test
@@ -40,17 +44,11 @@ jobs:
         with:
           node-version: 24
       - name: Install dependencies
-        run: npm install --ignore-scripts
-      - name: Install Chrome for Puppeteer
-        run: npx puppeteer browsers install chrome
-      - name: Fast build
-        run: npm run build --fast
-      - name: Run checker
-        run: npm run check
-      - name: Run tests
-        run: npm run test -c
-      - name: Run Vitest
-        run: npm run test:vite
+        run: npm ci 
+      - name: Install playwright dependencies
+        run: npm exec playwright install
+      
+
 
   deploy:
     name: Upload KAPLAY to CDN
