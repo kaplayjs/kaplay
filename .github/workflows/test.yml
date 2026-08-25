@@ -46,9 +46,7 @@ jobs:
       - name: Install dependencies
         run: npm ci 
       - name: Install playwright dependencies
-        run: npm exec playwright install
-      
-
+        run: npm exec playwright install --with-deps chromium
 
   deploy:
     name: Upload KAPLAY to CDN
