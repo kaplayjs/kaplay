@@ -304,10 +304,6 @@ export function text(t: string, opt: TextCompOpt = {}): TextComp {
         add(this: GameObj<TextComp | any>) {
             objRef = this;
             updateDynamic();
-            _k.k.onLoad(() => {
-                update(this, true);
-                return _k.k.cancel();
-            });
         },
 
         update(this: GameObj<TextComp>) {
@@ -356,6 +352,12 @@ export function text(t: string, opt: TextCompOpt = {}): TextComp {
             _proxiedProps[prop] = proxifyProp(value);
             updateDynamic();
         },
+    });
+
+    _k.k.onLoad(() => {
+        // @ts-expect-error
+        update(obj, true);
+        return _k.k.cancel();
     });
 
     // @ts-ignore Deep check in text related methods
