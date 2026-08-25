@@ -484,7 +484,7 @@ export interface GameObjRaw {
     onUntag(action: (tag: string) => void): KEventController;
     /**
      * Register an event that runs when the object becomes paused (either directly
-     * or by a parent being set to paused).
+     * or when any parent's `paused` is set to `true`).
      *
      * @returns The event controller.
      * @since v4000.0
@@ -492,7 +492,7 @@ export interface GameObjRaw {
     onPause(action: () => void): KEventController;
     /**
      * Register an event that runs when the object becomes unpaused (either directly
-     * or by a parent being set to unpaused).
+     * or when any parent's `paused` is set to `false`).
      *
      * @returns The event controller.
      * @since v4000.0
@@ -500,7 +500,7 @@ export interface GameObjRaw {
     onUnpause(action: () => void): KEventController;
     /**
      * Register an event that runs when the object becomes hidden (either directly
-     * or by a parent being set to hidden).
+     * or when any parent's `hidden` is set to `true`).
      *
      * @returns The event controller.
      * @since v4000.0
@@ -508,7 +508,7 @@ export interface GameObjRaw {
     onHide(action: () => void): KEventController;
     /**
      * Register an event that runs when the object becomes visible (either directly
-     * or by a parent being set to visible).
+     * or when any parent's `hidden` is set to `false`).
      *
      * @returns The event controller.
      * @since v4000.0
