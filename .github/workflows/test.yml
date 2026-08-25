@@ -26,10 +26,6 @@ jobs:
           else
             echo "Code is formatted correctly."
           fi
-      - name: Run checker
-        run: npm run check
-      - name: Run tests
-        run: node --run test 
         
   test:
     name: Test
@@ -47,6 +43,10 @@ jobs:
         run: npm ci 
       - name: Install playwright dependencies
         run: npm exec playwright install --with-deps chromium
+      - name: Run checker
+        run: npm run check
+      - name: Run tests
+        run: npm run test 
 
   deploy:
     name: Upload KAPLAY to CDN
