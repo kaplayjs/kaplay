@@ -100,6 +100,12 @@
   "engines": {
     "node": ">=24.0.0"
   },
+  "allowScripts": {
+    "dprint@0.55.2": true,
+    "dprint@0.49.1": true,
+    "esbuild@0.28.2": true,
+    "puppeteer@25.7.0": true
+  },
   "overrides": {
     "axios@>=1.0.0 <1.15.0": ">=1.15.0",
     "basic-ftp@<=5.2.1": ">=5.2.2",
