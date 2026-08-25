@@ -2819,12 +2819,12 @@ export interface KAPLAYCtx {
      *     pos(),
      *     "player"
      * ]);
-     * player.hidden = false;
-     * player.hidden = true; // Logs "hi player"
+     * player.hidden = true;
+     * player.hidden = false; // Logs "hi player"
      * ```
      *
      * @returns The event controller.
-     * @since v2000.0
+     * @since v4000.0
      * @group Events
      */
     onShow(tag: Tag, action: (obj: GameObj) => void): KEventController;
@@ -2844,12 +2844,12 @@ export interface KAPLAYCtx {
      * const obj = add([
      *     pos(),
      * ]);
-     * obj.hidden = false;
-     * obj.hidden = true; // Logs "ohhi"
+     * obj.hidden = true;
+     * obj.hidden = false; // Logs "ohhi"
      * ```
      *
      * @returns The event controller.
-     * @since v2000.0
+     * @since v4000.0
      * @group Events
      */
     onShow(action: (obj: GameObj) => void): KEventController;
@@ -2905,7 +2905,7 @@ export interface KAPLAYCtx {
      * ```
      *
      * @returns The event controller.
-     * @since v2000.0
+     * @since v4000.0
      * @group Events
      */
     onHide(tag: Tag, action: (obj: GameObj) => void): KEventController;
@@ -2929,7 +2929,7 @@ export interface KAPLAYCtx {
      * ```
      *
      * @returns The event controller.
-     * @since v2000.0
+     * @since v4000.0
      * @group Events
      */
     onHide(action: (obj: GameObj) => void): KEventController;
@@ -2955,7 +2955,7 @@ export interface KAPLAYCtx {
      * ```
      *
      * @returns The event controller.
-     * @since v2000.0
+     * @since v4000.0
      * @group Events
      */
     onPause(tag: Tag, action: (obj: GameObj) => void): KEventController;
@@ -2979,7 +2979,7 @@ export interface KAPLAYCtx {
      * ```
      *
      * @returns The event controller.
-     * @since v2000.0
+     * @since v4000.0
      * @group Events
      */
     onPause(action: (obj: GameObj) => void): KEventController;
@@ -3007,7 +3007,7 @@ export interface KAPLAYCtx {
      * ```
      *
      * @returns The event controller.
-     * @since v2000.0
+     * @since v4000.0
      * @group Events
      */
     onUnpause(tag: Tag, action: (obj: GameObj) => void): KEventController;
@@ -3033,7 +3033,7 @@ export interface KAPLAYCtx {
      * ```
      *
      * @returns The event controller.
-     * @since v2000.0
+     * @since v4000.0
      * @group Events
      */
     onUnpause(action: (obj: GameObj) => void): KEventController;
