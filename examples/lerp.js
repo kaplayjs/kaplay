@@ -2,9 +2,11 @@
  * @file Lerp
  * @description How to use lerp to make simple tweenings
  * @difficulty 0
- * @tags basics, animation
+ * @tags basics, animation, tween
  * @minver 3001.0
  * @category concepts
+ * @group lerp
+ * @groupOrder 0
  */
 
 kaplay({

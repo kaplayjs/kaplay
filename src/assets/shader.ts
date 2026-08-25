@@ -156,7 +156,7 @@ export class Shader {
 
     send(uniform: Uniform) {
         const gl = this.ctx.gl;
-        for (const name in uniform) {
+        for (const name of Object.keys(uniform)) {
             const val = uniform[name];
             const loc = gl.getUniformLocation(this.glProgram, name);
             if (typeof val === "number") {
@@ -188,7 +188,6 @@ export class Shader {
                         1,
                     ]),
                 );
-                // console.log(val)
             }
             else if (val instanceof Color) {
                 gl.uniform3f(loc, val.r, val.g, val.b);
@@ -211,6 +210,11 @@ export class Shader {
                 }
             }
             else {
+                console.error(
+                    "unknown data passed to Shader.send:",
+                    val,
+                    "(key: " + name + ")",
+                );
                 throw new Error("Unsupported uniform data type");
             }
         }

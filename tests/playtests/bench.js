@@ -68,15 +68,14 @@ scene("uvquads", () => {
     const quads = [];
     const bean = getSprite("bean");
     const bag = getSprite("bag");
-    // We only need the bean texture since the bag texture is on the same atlas
-    const tex = bean.data.tex;
-    const beanQuad = bean.data.frames[0];
-    const bagsQuad = bag.data.frames[0];
+    const beanFrame = bean.data.frames[0];
+    const bagFrame = bag.data.frames[0];
 
     for (let i = 0; i < 5000; i++) {
+        const frame = i % 2 === 0 ? beanFrame : bagFrame;
         quads.push({
-            tex: tex,
-            quad: i % 2 === 0 ? beanQuad : bagsQuad,
+            tex: frame.tex,
+            quad: frame.q,
             pos: vec2(rand(0, width()), rand(0, height())),
             width: i % 2 === 0 ? bean.data.width : bag.data.width,
             height: i % 2 === 0 ? bean.data.height : bag.data.height,
@@ -96,18 +95,23 @@ scene("uvquads", () => {
 go("sprites");
 
 function addFps() {
-    onDraw(() => {
-        drawText({
-            // You can get the current fps with debug.fps()
-            text: debug.fps(),
-            pos: vec2(width() / 2, height() / 2),
-            anchor: "center",
-            color: rgb(255, 127, 255),
+    add([
+        pos(center()),
+        anchor("center"),
+        text(debug.fps(), {
+            size: 64,
             outline: {
                 width: 10,
             },
-        });
-    });
+        }),
+        color("#ff7fff"),
+        {
+            update() {
+                this.pos = center();
+                this.text = debug.fps();
+            },
+        },
+    ]);
 }
 
 function addSceneNavigation() {

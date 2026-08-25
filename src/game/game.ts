@@ -6,6 +6,7 @@
 import type { Asset } from "../assets/asset";
 import type { SoundData } from "../assets/sound";
 import type { SpriteData } from "../assets/sprite";
+import type { DebugLog } from "../debug/debug";
 import type { FakeMouseComp } from "../ecs/components/misc/fakeMouse";
 import { timer, type TimerComp } from "../ecs/components/misc/timer";
 import type { AreaComp } from "../ecs/components/physics/area";
@@ -14,9 +15,10 @@ import { makeInternal } from "../ecs/entity/make";
 import type { System } from "../ecs/systems/systems";
 import type { GameEventMap, GameObjEventMap } from "../events/eventMap";
 import { type KEventController, KEventHandler } from "../events/events";
-import { Mat23, Rect, RNG } from "../math/math";
+import { Mat23, Rect } from "../math/math";
+import { RNG, type RNGConfig } from "../math/random";
 import { Vec2 } from "../math/Vec2";
-import type { GameObj } from "../types";
+import type { GameObj, GameObjID } from "../types";
 import type { SceneDef, SceneState } from "./scenes";
 
 /**
@@ -93,12 +95,11 @@ export type Game = {
         happy?: string;
         bean?: string;
     };
-    logs: Log[];
+    logs: DebugLog[];
     cam: CamData;
     /**
      * The default RNG used by rng functions.
      */
-    // TODO: let user pass seed
     defRNG: RNG;
     /**
      * If game just crashed.
@@ -119,15 +120,14 @@ export type Game = {
      */
     allTextInputs: Set<GameObj>;
     /**
+     * Objects or identifiers currently capturing input, e.g. a textInput obj.
+     */
+    inputCapturedBy: Set<GameObj | GameObjID | string>;
+    /**
      * Deprecated functions we already warned about.
      */
     warned: Set<string>;
 };
-
-/**
- * @group Debug
- */
-type Log = { msg: string | { toString(): string }; time: number };
 
 /**
  * @group Rendering
@@ -152,7 +152,9 @@ type CamData = {
  *
  * @returns A Game
  */
-export const createGame = (): Game => {
+export const createGame = (
+    rngConfig?: RNGConfig,
+): Game => {
     const game: Game = {
         gameObjLastId: 0,
         root: makeInternal(0) as GameObj<TimerComp>,
@@ -196,7 +198,7 @@ export const createGame = (): Game => {
         defaultAssets: {},
 
         // Logs
-        logs: [] as { msg: string | { toString(): string }; time: number }[],
+        logs: [] as DebugLog[],
 
         // Fake mouse API
         fakeMouse: null,
@@ -211,7 +213,8 @@ export const createGame = (): Game => {
         crashed: false,
         areaCount: 0,
         allTextInputs: new Set<GameObj>(),
-        defRNG: new RNG(Date.now()),
+        inputCapturedBy: new Set(),
+        defRNG: new RNG(rngConfig),
         warned: new Set<string>(),
     };
 

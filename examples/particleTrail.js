@@ -23,8 +23,8 @@ onLoad(() => {
             colors: [WHITE],
             opacities: [1.0, 0.0],
             angle: [0, 360],
-            texture: getSprite("hexagon").data.tex,
-            quads: [getSprite("hexagon").data.frames[0]],
+            texture: getSprite("hexagon").data.frames[0].tex,
+            quads: [getSprite("hexagon").data.frames[0].q],
         }, {
             rate: 5,
             direction: -90,

@@ -73,9 +73,10 @@ export function loadAseprite(
                     };
                 }
             }
-            return SpriteData.from(imgSrc, {
+            return SpriteData.fromSpriteSrc(imgSrc, {
                 frames: frames,
                 anims: anims,
+                repack: false,
             });
         }),
     );

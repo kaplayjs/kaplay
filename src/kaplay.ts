@@ -16,6 +16,7 @@ import boomSpriteSrc from "./data/assets/boom.png";
 import burpSoundSrc from "./data/assets/burp.mp3";
 import happyFontSrc from "./data/assets/happy.png";
 import kaSpriteSrc from "./data/assets/ka.png";
+import { _setTopMostOnlyActivate } from "./ecs/components/physics/area";
 import { createCollisionSystem } from "./ecs/systems/createCollisionSystem";
 import { system, SystemPhase } from "./ecs/systems/systems";
 import { _k, updateEngine } from "./shared";
@@ -26,8 +27,8 @@ import {
     type PluginList,
 } from "./types";
 
-// If KAPLAY was runned before
-let runned = false;
+// If kaplay() was already called
+let ran = false;
 
 type HasDefinedKeys<TObj, TCheck> = {
     [K in keyof TCheck & keyof TObj]: TObj[K] extends undefined ? never : K;
@@ -83,9 +84,9 @@ export const kaplay = <
 >(
     opt?: O,
 ): KAPLAYGame<O> => {
-    if (runned) {
+    if (ran) {
         console.warn(
-            "KAPLAY was runned before, cleaning state",
+            "kaplay() was called a second time, cleaning up previous state...",
         );
 
         // cleanup
@@ -95,7 +96,7 @@ export const kaplay = <
 
     const gopt = opt ?? {} as KAPLAYOpt;
 
-    runned = true;
+    ran = true;
 
     updateEngine(createEngine(gopt));
 
@@ -112,6 +113,8 @@ export const kaplay = <
     });
 
     game.retrieve = retrieve;
+
+    _setTopMostOnlyActivate(gopt.topMostOnlyActivate ?? false);
 
     system("collision", checkFrame, [
         SystemPhase.AfterFixedUpdate,

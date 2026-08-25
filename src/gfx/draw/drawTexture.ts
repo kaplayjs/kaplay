@@ -41,6 +41,7 @@ export function drawTexture(opt: DrawTextureOpt) {
         const offsetY = (opt.pos?.y ?? 0)
             - (offset.y + 1) * 0.5 * (opt.height ?? h);
 
+        // cSpell: ignore fcols frows
         const fcols = (opt.width ?? w) / w;
         const frows = (opt.height ?? h) / h;
         const cols = Math.floor(fcols);

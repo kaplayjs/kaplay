@@ -9,23 +9,19 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
       - name: Install Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v6
         with:
-          node-version: 20
-      - uses: pnpm/action-setup@v4
-        name: Install pnpm
-        with:
-          run_install: false
+          node-version: 24
       - name: Install dprint
-        run: pnpm i dprint
+        run: npm i dprint
       - name: Run dprint checker 
-        run: FORMATTED=$(pnpm dprint check)
+        run: FORMATTED=$(npx dprint check)
       - name: Fail if not formatted
         run: |
           if [ -n "$FORMATTED" ]; then
-            echo "Code is not formatted. Please run 'pnpm run fmt' to format the code."
+            echo "Code is not formatted. Please run 'npm run fmt' to format the code."
             exit 1
           else
             echo "Code is formatted correctly."
@@ -43,22 +39,18 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 24
-      - uses: pnpm/action-setup@v4
-        name: Install pnpm
-        with:
-          run_install: false
       - name: Install dependencies
-        run: pnpm install --ignore-scripts
+        run: npm install --ignore-scripts
       - name: Install Chrome for Puppeteer
         run: npx puppeteer browsers install chrome
       - name: Fast build
-        run: pnpm run build --fast
+        run: npm run build --fast
       - name: Run checker
-        run: pnpm run check
+        run: npm run check
       - name: Run tests
-        run: pnpm run test -c
+        run: npm run test -c
       - name: Run Vitest
-        run: pnpm run test:vite
+        run: npm run test:vite
 
   deploy:
     name: Upload KAPLAY to CDN
@@ -75,14 +67,10 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 24
-      - uses: pnpm/action-setup@v4
-        name: Install pnpm
-        with:
-          run_install: false
       - name: Install dependencies
-        run: pnpm install --ignore-scripts
+        run: npm install --ignore-scripts
       - name: Build
-        run: pnpm run build
+        run: npm run build
       - name: Upload kaplay.js to cdn
         if: ${{ github.event_name == 'push' }}
         env:
@@ -109,4 +97,3 @@ jobs:
         run: |
           echo "Uploading versions.json to CDN"
           curl https://cdn.kaplayjs.com/versions.json -X PUT --header "X-Auth-Key: $CDN_KEY" --upload-file ./versions.json
-          

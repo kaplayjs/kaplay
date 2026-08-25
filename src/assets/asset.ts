@@ -2,14 +2,15 @@ import { SPRITE_ATLAS_HEIGHT, SPRITE_ATLAS_WIDTH } from "../constants/general";
 import type { SerializedGameObj } from "../ecs/entity/prefab";
 import { KEvent, KEventHandler } from "../events/events";
 import type { GfxCtx } from "../gfx/gfx";
+import type { AppGfxCtx } from "../gfx/gfxApp";
 import { TexPacker } from "../gfx/TexPacker";
 import { _k } from "../shared";
-import type { MustKAPLAYOpt } from "../types";
+import type { ImageSource, MustKAPLAYOpt } from "../types";
 import type { BitmapFontData } from "./bitmapFont";
 import type { FontData } from "./font";
 import type { ShaderData } from "./shader";
 import type { SoundData } from "./sound";
-import type { SpriteData } from "./sprite";
+import type { LoadSpriteSrc, SpriteData } from "./sprite";
 import { fixURL } from "./utils";
 
 /**
@@ -21,6 +22,7 @@ export class Asset<D> {
     loaded: boolean = false;
     data: D | null = null;
     error: Error | null = null;
+    _bucketOnLoad: (() => void) | undefined;
     private onLoadEvents: KEvent<[D]> = new KEvent();
     private onErrorEvents: KEvent<[Error]> = new KEvent();
     private onFinishEvents: KEvent<[]> = new KEvent();
@@ -28,6 +30,7 @@ export class Asset<D> {
     constructor(loader: Promise<D>) {
         loader.then((data) => {
             this.loaded = true;
+            this._bucketOnLoad?.();
             this.data = data;
             this.onLoadEvents.trigger(data);
         }).catch((err) => {
@@ -97,6 +100,7 @@ export class AssetBucket<D> {
     waiters: KEventHandler<any> = new KEventHandler();
     errorWaiters: KEventHandler<any> = new KEventHandler();
     lastUID: number = 0;
+    constructor(public onGet?: () => void) {}
 
     add(name: string | null, loader: Promise<D>): Asset<D> {
         // if user don't provide a name we use a generated one
@@ -123,7 +127,12 @@ export class AssetBucket<D> {
     }
     // if not found return undefined
     get(handle: string): Asset<D> | undefined {
-        return this.assets.get(handle);
+        const asset = this.assets.get(handle);
+        if (asset) {
+            if (asset.loaded) this.onGet?.();
+            else asset._bucketOnLoad = this.onGet;
+        }
+        return asset;
     }
     progress(): number {
         if (this.assets.size === 0) {
@@ -220,6 +229,10 @@ export function loadImg(src: string): Promise<HTMLImageElement> {
     });
 }
 
+export function spriteSrcToImage(src: LoadSpriteSrc): Promise<ImageSource> {
+    return typeof src === "string" ? loadImg(src) : Promise.resolve(src);
+}
+
 export function loadProgress(): number {
     const buckets = [
         _k.assets.sprites,
@@ -261,27 +274,37 @@ export function load<T>(prom: Promise<T>): Asset<T> {
 export type InternalAssetsCtx = ReturnType<typeof initAssets>;
 
 /** @ignore */
-export const initAssets = (ggl: GfxCtx, opt: MustKAPLAYOpt) => {
+export const initAssets = (
+    ggl: GfxCtx,
+    opt: MustKAPLAYOpt,
+    appGfx: AppGfxCtx,
+) => {
+    const packer = new TexPacker(
+        ggl,
+        SPRITE_ATLAS_WIDTH,
+        SPRITE_ATLAS_HEIGHT,
+        opt.spriteAtlasPadding,
+    );
     const assets = {
         urlPrefix: "",
         // asset holders
-        sprites: new AssetBucket<SpriteData>(),
+        sprites: new AssetBucket<SpriteData>(() => packer.syncIfPending()),
         fonts: new AssetBucket<FontData>(),
-        bitmapFonts: new AssetBucket<BitmapFontData>(),
+        bitmapFonts: new AssetBucket<BitmapFontData>(() =>
+            packer.syncIfPending()
+        ),
         sounds: new AssetBucket<SoundData>(),
         shaders: new AssetBucket<ShaderData>(),
         custom: new AssetBucket<any>(),
         prefabAssets: new AssetBucket<SerializedGameObj>(),
         music: {} as Record<string, string>,
-        packer: new TexPacker(
-            ggl,
-            SPRITE_ATLAS_WIDTH,
-            SPRITE_ATLAS_HEIGHT,
-            opt.spriteAtlasPadding,
-        ),
+        packer,
         // if we finished initially loading all assets
         loaded: false,
     };
+
+    // Set up the white pixel to start everything
+    appGfx.whitePixel = assets.packer._createWhitePixel();
 
     return assets;
 };

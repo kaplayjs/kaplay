@@ -1,11 +1,4 @@
-import {
-    onCollide,
-    onError,
-    onLoad,
-    onLoadError,
-    onLoading,
-    trigger,
-} from "../api/eventHandlers";
+import { trigger } from "../api/eventHandlers";
 import { getData, setData } from "../app/data";
 import { loadAseprite } from "../assets/aseprite";
 import {
@@ -38,6 +31,7 @@ import { color } from "../ecs/components/draw/color";
 import { drawon } from "../ecs/components/draw/drawon";
 import { ellipse } from "../ecs/components/draw/ellipse";
 import { fadeIn } from "../ecs/components/draw/fadeIn";
+import { fill } from "../ecs/components/draw/fill";
 import { mask } from "../ecs/components/draw/mask";
 import { opacity } from "../ecs/components/draw/opacity";
 import { outline } from "../ecs/components/draw/outline";
@@ -102,7 +96,7 @@ import { KeepFlags } from "../ecs/entity/GameObjRaw";
 import { createPrefab, loadPrefab } from "../ecs/entity/prefab";
 import { addKaboom } from "../ecs/entity/premade/addKaboom";
 import { addLevel } from "../ecs/entity/premade/addLevel";
-import { destroy, getTreeRoot } from "../ecs/entity/utils";
+import { destroy, exists, getTreeRoot } from "../ecs/entity/utils";
 import { Collision } from "../ecs/systems/Collision";
 import { system, SystemPhase } from "../ecs/systems/systems";
 import { KEvent, KEventController, KEventHandler } from "../events/events";
@@ -153,7 +147,7 @@ import {
 import { drawPolygon } from "../gfx/draw/drawPolygon";
 import { drawRect } from "../gfx/draw/drawRect";
 import { drawSprite } from "../gfx/draw/drawSprite";
-import { drawSubtracted } from "../gfx/draw/drawSubstracted";
+import { drawSubtracted } from "../gfx/draw/drawSubtracted";
 import { drawText } from "../gfx/draw/drawText";
 import { drawTriangle } from "../gfx/draw/drawTriangle";
 import { drawUVQuad } from "../gfx/draw/drawUVQuad";
@@ -179,12 +173,12 @@ import { buildConvexHull } from "../math/convexhull";
 import { easings } from "../math/easings";
 import { gjkShapeIntersection, gjkShapeIntersects } from "../math/gjk";
 import { lerp } from "../math/lerp";
+import { lerpAngle } from "../math/lerpAngle";
 import { Mat4 } from "../math/Mat4";
 import {
     bezier,
     cardinal,
     catmullRom,
-    chance,
     choose,
     chooseMultiple,
     Circle,
@@ -204,6 +198,7 @@ import {
     evaluateQuadratic,
     evaluateQuadraticFirstDerivative,
     evaluateQuadraticSecondDerivative,
+    gacha,
     getSpriteOutline,
     hermite,
     isConvex,
@@ -214,16 +209,15 @@ import {
     Mat2,
     Mat23,
     normalizedCurve,
+    piecewiseBezier,
+    piecewiseCatmullRom,
     Point,
     Polygon,
     Quad,
     quad,
     rad2deg,
-    rand,
-    randi,
-    randSeed,
     Rect,
-    RNG,
+    roulette,
     shuffle,
     smoothstep,
     step,
@@ -246,6 +240,7 @@ import {
     createRegularPolygon,
     createStarPolygon,
 } from "../math/polygongeneration";
+import { chance, rand, randi, randSeed, RNG, setRNG } from "../math/random";
 import { insertionSort } from "../math/sort";
 import { makeQuadtree, Quadtree } from "../math/spatial/quadtree";
 import { Vec2 } from "../math/Vec2";
@@ -260,7 +255,7 @@ import type { KAPLAYCtx } from "./contextType";
 import type { Engine } from "./engine";
 import { throwError } from "./errors";
 import { plug } from "./plug";
-import { onCleanup, quit } from "./quit";
+import { quit } from "./quit";
 
 // The context is the way the user interact with a KAPLAY game.
 export const createContext = (
@@ -276,6 +271,7 @@ export const createContext = (
     const destroyAll = game.root.removeAll.bind(game.root);
     const get = game.root.get.bind(game.root);
     const wait = game.root.wait.bind(game.root);
+    const nextFrame = game.root.nextFrame.bind(game.root);
     const loop = game.root.loop.bind(game.root);
     const query = game.root.query.bind(game.root);
     const tween = game.root.tween.bind(game.root);
@@ -375,6 +371,7 @@ export const createContext = (
         add,
         addPrefab,
         createPrefab,
+        exists,
         destroy,
         destroyAll,
         get,
@@ -389,6 +386,7 @@ export const createContext = (
         color,
         blend,
         opacity,
+        fill,
         anchor,
         area,
         sprite,
@@ -516,6 +514,7 @@ export const createContext = (
         // timer
         loop,
         wait,
+        nextFrame,
         // audio
         play,
         setVolume: setVolume,
@@ -547,6 +546,7 @@ export const createContext = (
         StateMachine,
         getSpriteOutline,
         insertionSort,
+        setRNG,
         rand,
         randi,
         randSeed,
@@ -557,8 +557,11 @@ export const createContext = (
         choose,
         chooseMultiple,
         shuffle,
+        roulette,
+        gacha,
         chance,
         lerp,
+        lerpAngle,
         step,
         smoothstep,
         tween,
@@ -584,6 +587,8 @@ export const createContext = (
         catmullRom,
         bezier,
         kochanekBartels,
+        piecewiseBezier,
+        piecewiseCatmullRom,
         createRegularPolygon,
         createStarPolygon,
         createCogPolygon,

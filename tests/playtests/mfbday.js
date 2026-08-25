@@ -95,8 +95,6 @@ function showMessage(message, duration, onEnd) {
         timer(),
         {
             elapsed: 0,
-        },
-        {
             async add() {
                 this.add([
                     anchor("center"),

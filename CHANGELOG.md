@@ -1,7 +1,5 @@
 # Changelog
 
-<!-- markdownlint-disable no-duplicate-heading blanks-around-fences single-h1 -->
-
 All notable changes to this project will be documented in this file.
 
 The format is (mostly) based on
@@ -11,34 +9,192 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - Breaking changes are marked with: **(!)**.
 - [Jump to v3001 changelog](#changelog-for-v3001).
 
-<!--
-Hey, KAPLAY Dev, you must changelog here, in unreleased, so later your
-best friend, lajbel, can put the correct version name here
--->
+<!-- [CHANGELOG GUIDELINES PLEASE FOLLOW]
+
+Hey, KAPLAY Dev! Add your new changes in [unreleased] heading, below one of
+these heading:
+
+- Added
+- Removed
+- Changed
+- Fixed
+
+(if one of these 3rd level headings are missing, add it)
+
+Make sure to format each entry like this:
+
+- short description of the change (#PR Number) - @yourusername,
+  @otherdevusername
+
+So your change should look like:
 
 ## [unreleased]
 
 ### Added
 
+- added a new ghost (#6767) - @lajbel
+
+[DO IT IF YOU DON'T WANT A LAJBEL VISIT AT NIGHT] -->
+
+## [unreleased]
+
+### Added
+
+- Made random generator algorithm configurable using `setRNG()` (#1057) -
+  @mflerackers
+- Added xorshift32 as random generator (#1057) - @mflerackers
+- **(examples)** Added a new `gacha` example! (#1057) - @imaginarny
+- Added Alea as random generator (#1097) - @Stanko
+- Added `nextFrame()` helper function to defer/run a function on the next frame
+  (#1112) - @imaginarny
+- Added a mapping for DualShock 4 gamepads, and a `name` field on `KGamepad` for
+  identifying the recognized controller model (#1119) - @CEREBR4L
+- Added a `type` field to `KGamepad` (`"ps4"`, `"ps5"`, `"playstation"`,
+  `"xbox"`, `"switch"`, a custom string, or `undefined`) for picking
+  button-glyph assets based on controller family (#1119) - @CEREBR4L
+
+### Changed
+
+- Added an optional parameter `rng` to all random related functions to pass the
+  rng to use (#1057) - @mflerackers
+- RNG can now be set and seeded on init (as `KAPLAYOpt.rng`) and in runtime
+  (#1097) - @Stanko
+- **(!)** `new RNG()` and `setRNG()` now use config objects instead of the
+  string/custom rng parameter (#1097) - @Stanko
+- Improved `text` component performance by separating text transform and
+  formatting, reducing update calls for both dynamic and (especially) static
+  text (#1125) - @imaginarny
+- Debug keys, keys defined with the Buttons API, and keyboard input captured by
+  e.g. focused `textInput` now use `preventDefault()` (#1114) - @imaginarny
+
+### Fixed
+
+- Fixed `TimerController.timeLeft` returning elapsed time instead of remaining
+  time (#1082) - @nojaf
+- Fixed mouse coordinates not being calculated properly when canvas is resized
+  by CSS and wasn't rendered at its natural size (#1096) - @Stanko
+- Modified `pos`, `skew` and `scale` components to make operations like
+  `obj.pos.x += 1` work again (#1109) - @ErikGXDev
+- Fixed `scale`, `skew`, and `rotate` component transforms not being applied on
+  the initial `GameObjRaw.use()` call (e.g. `obj.use(scale(2))`) - @mflerackers
+- Fixed `isKeyDown` and `isButtonDown` getting stuck on game loosing focus
+  (#1101) - @Stanko
+- Fixed gamepad button mappings (e.g. DualSense touchpad) breaking when the
+  browser's reported `Gamepad.id` format changes, by matching on vendor/product
+  id and controller name instead of the raw id string (#1119) - @CEREBR4L
+- Fixed `onMouseRelease` not being registered outside the canvas (#1113) -
+  @imaginarny
+- Fixed objects with a `text` component reporting wrong dimensions when scaled
+  using the `scale` component (#1125) - @imaginarny
+- Fixed the `layer` component property returning `null` when the layer index was
+  `0` (#1127) - @imaginarny
+- Fixed various `raycastRect` issues and standardized raycasting across all
+  shapes so rays originating inside a shape are now consistently trapped
+  (#1122) - @mflerackers
+- Fixed `finish()` being able to complete an already finished tween, and
+  prevented `timeLeft` from going negative and `currentTime` from exceeding the
+  duration (#1117) - @imaginarny
+- Fixed triangulate by updating the convexity of nearby vertices after removing
+  a concave vertex during ear cutting (#1134) - @mflerackers
+
+## [4000.0.0-alpha.27.1] - 2026-05-12
+
+### Added
+
+- Added a `repack: false` option to `loadSpite()` and a repack parameter to
+  `loadSpriteAtlas()`, for faster loading if you're packing stuff at build-time
+  (#1063) - @dragoncoder047
+- Added `loop` parameter and `onEnd` event to the video component (#1129) -
+  @Stanko
+
+### Changed
+
+- **(!)** Updated "explicit `LoadSpriteOpt.frames`" method of loading a sprite
+  with animations (via either `loadSprite()` or `loadSpriteAtlas()`) to use
+  pixel values for the coordinate space, which is more intuitive (#1061) -
+  @dragoncoder047
+- Added padding around edges of spritesheet to prevent stretch if uv ends up out
+  of bounds (#1076) - @dragoncoder047
+- **(!)** Renamed video `mute` parameter to `muted` to match the native API
+  (#1129) - @Stanko
+
+### Fixed
+
+- Updated texture packer refreshing to only refresh when a sprite is actually
+  requested to be drawn, to reduce the number of times the texture is synced to
+  the GPU, which is slow (#1058) - @dragoncoder047
+- Fixed `loadBitmapFontFromSprite()` so that the font drawn using it is drawn
+  with the correct scale, as one would expect (#1063) - @dragoncoder047
+- Added `exists()` which also checks whether the object is not undefined. This
+  should temporarily fix the problem with undefined objects during collision due
+  to iterators being invalidated by destroy. - @mflerackers
+- Fixed broadphase event duplication on scene switch, causing repeated
+  broadphase object registrations, which resulted in a performance drop
+  (#1074) - @imaginarny, @mflerackers
+- Fixed broadphase objects cleared on scene switch including those with `stay()`
+  (#1077) - @imaginarny, @mflerackers
+
+## [4000.0.0-alpha.27] - 2026-03-19
+
+### Added
+
+- Added `debug.warn()` to log warning messages (#1028) - @lajbel
+- Added `debug.logMessage()` to log a messages array with a wrapping style
+  (warn, error, info) (#1028) - @lajbel
+- Added per-sprite and per-font `filter` options, which override the global
+  `texFilter` and `fontFilter` options (#1050) - @dragoncoder047
+- Added global `fontFilter` option to control default font rasterization filter
+  (#1050, #1052) - @dragoncoder047
 - Added `tileMode` option to 9-slice sprites with four tiling strategies:
   `'none'` (stretch all), `'edges'` (tile edges only), `'center'` (tile center
   only), and `'all'` (tile both edges and center) (#996) - @JustKira
 - Added a `calculate()` method to the internal FPS counters, so advanced users
   can access them to create their own FPS monitor (#1010) - @dragoncoder047
 - Added Intl.Segmenter-based grapheme splitting for proper Indic language
-  support, via the `locale` option in `DrawTextOpt (#1013) - @shajidhasan
+  support, via the `locale` option in `DrawTextOpt` (#1013) - @shajidhasan
+- Added topMostOnlyActivate kaplay option. When true, only the topmost object
+  will receive clicks. This avoids problems in a UI where elements overlap -
+  @mflerackers
+- Added a `fill()` component - @mflerackers
+- Added `lerpAngle()` helper function to interpolate between clamped angles,
+  preventing 360° spins during transitions from 180 to -180 (#1054) -
+  @imaginarny
+- Added `piecewiseBezier()` and `piecewiseCatmullRom()` to evaluate curves with
+  multiple points - @mflerackers
+
+### Removed
+
+- **(!)** The texture uv coordinates for primitives (solid- or gradient-filled
+  circles, rectangles, lines, and polygons) have now been changed to (1, 1)
+  instead of (0, 0), so shaders written for primitives will need to be updated.
+  (#1021) - @dragoncoder047
 
 ### Changed
 
+- **(!)** The global `onDraw()` handler's no-tag form now always draws before
+  all game objects are drawn, **regardless of whether it was attached after game
+  objects were added** (#977) - @lajbel
+- **(!)** The sprite data format has been changed to allow individual frames to
+  be on different GPU textures. Now `SpriteData.tex` doesn't exist, and
+  `SpriteData.frames` is a list of `Frame`s instead of a list of `Quad`s. A
+  `Frame` contains `tex` and `q` (quad) properties that contain that data.
+  (#1021) - @dragoncoder047
 - Updated the texture packer to use a new packing algorithm which may get more
   sprites onto the same texture, improving graphics batching performance
   (#1011) - @dragoncoder047
+- Updated all sprite and font loading to pack everything in the same texture to
+  allow it to all batch together, for speed and efficiency (#1021) -
+  @dragoncoder047
+- Added spritesheet repacking, so spritesheet images that contain lots of blank
+  space don't waste texture memory (#1021) - @dragoncoder047
 
 ### Fixed
 
+- Fixed vertical alignment of text within a now-consistent bounding box across
+  browsers (#1053) - @imaginarny
 - Fixed tiled mode drawing of sprites ignoring opacity when it was 0 (#1020) -
   @dragoncoder047
-- Now, all global events handlers are avaible in scopes, `app.onXXXX` and
+- Now, all global events handlers are available in scopes, `app.onXXXX` and
   `scene.onXXXX()` (#977) - @lajbel
 - Fixed input events attached to paused ancestors not being paused (#1009) -
   @amyspark-ng, @dragoncoder047
@@ -46,15 +202,20 @@ best friend, lajbel, can put the correct version name here
   (#1018) - @dragoncoder047
 - Text component no longer hangs if the requested width is too narrow for a
   single character - @dragoncoder047
-- Fixed input events attached to paused ancestors not being paused (#1009) -
-  @amyspark-ng, @dragoncoder047
 - Fixed type `UniformValue` union not including `Texture`, a valid option
   (#1018) - @dragoncoder047
 - Fixed event crash when using `onLoad` or other events that doesn't return an
   EventController, and then using `go()` (#1024) - @lajbel, credits to
   @dragoncoder047
+- Fixed the unexpected behavior of not preserving the aspect ratio in
+  `drawSprite` (#1026) - @benhuangbmj
 - Fixed `onClick()` and `onCollide()` tag variants no longer working -
   @mflerackers
+- Fixed `destroy()` messing up enumeration during `update()` and
+  `fixedUpdate()`, thanks to @imaginarny for helping to find the cause -
+  @mflerackers
+- Fixed canvas not resizing to fullscreen on `setFullscreen()` (#1055) -
+  @imaginarny
 
 ## [4000.0.0-alpha.26] - 2026-01-12
 
@@ -76,6 +237,7 @@ best friend, lajbel, can put the correct version name here
 
 ### Fixed
 
+- Fix raycastRect to check direction instead of origin (#1046) - @ProxyLoader
 - Fixed `tween()` not cloning the passed vectors/colors - @lajbel
 - Fixed `timer()` related events (tween/loop/wait) not taking `debug.timeScale`
   into account - @Stanko
@@ -94,7 +256,7 @@ best friend, lajbel, can put the correct version name here
   @mflerackers
 - Sticky platforms work again - @mflerackers
 
-## Removed
+### Removed
 
 - **(!)** `onClick(() => {})` was removed, use `onMousePress()` instead.
   `onClick("tag", () => {});` stays the same,
@@ -108,7 +270,7 @@ best friend, lajbel, can put the correct version name here
 - Global `retrieve()` method to get the objects with area within a certain
   rectangle - @mflerackers
 
-## Changed
+### Changed
 
 - **(!)** You can no longer change the position of an object by doing obj.pos.x
   += 1. You need to assign a new Vec2 or use moveBy instead - @mflerackers

@@ -8,6 +8,7 @@ Constants should be SNAKE_CASE
 */
 
 import GAMEPAD_MAP from "../data/gamepad.json" assert { type: "json" };
+import type { GamepadDef } from "../types";
 
 // some default charsets for loading bitmap fonts
 export const ASCII_CHARS =
@@ -19,14 +20,9 @@ export const DBG_FONT = "monospace";
 export const DEF_TEXT_SIZE = 36;
 export const DEF_TEXT_CACHE_SIZE = 64;
 export const MAX_TEXT_CACHE_SIZE = 256;
-export const FONT_ATLAS_WIDTH = 2048;
-export const FONT_ATLAS_HEIGHT = 2048;
 export const SPRITE_ATLAS_WIDTH = 2048;
 export const SPRITE_ATLAS_HEIGHT = 2048;
-// 0.1 pixel padding to texture coordinates to prevent artifact
-export const UV_PAD = 0.1;
 export const DEF_HASH_GRID_SIZE = 64;
-export const DEF_FONT_FILTER = "linear";
 export const LOG_MAX = 8;
 export const LOG_TIME = 4;
 export const VERTEX_FORMAT = [
@@ -54,6 +50,6 @@ export const DEF_JUMP_FORCE = 640;
 export const MAX_VEL = 65536;
 export const EVENT_CANCEL_SYMBOL = Symbol.for("kaplay.cancel");
 
-export const GP_MAP = GAMEPAD_MAP as unknown as Record<string, string>;
+export const GP_MAP = GAMEPAD_MAP as unknown as Record<string, GamepadDef>;
 
 export const MAX_TRIES = 20;

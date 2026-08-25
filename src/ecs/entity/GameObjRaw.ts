@@ -12,7 +12,7 @@ import {
 import type { EventHandlersInAppButNotAddedInGameObjRaw } from "../../events/scopes";
 import { drawMasked } from "../../gfx/draw/drawMasked";
 import { beginPicture, endPicture, Picture } from "../../gfx/draw/drawPicture";
-import { drawSubtracted } from "../../gfx/draw/drawSubstracted";
+import { drawSubtracted } from "../../gfx/draw/drawSubtracted";
 import { FrameBuffer } from "../../gfx/FrameBuffer";
 import {
     flush,
@@ -61,6 +61,11 @@ export enum KeepFlags {
 export type SetParentOpt = {
     keep: KeepFlags;
 };
+
+let _nextTreeIndex = 0;
+export function resetTreeIndex() {
+    _nextTreeIndex = 0;
+}
 
 let _lastTransformVersion = 0;
 let _nextTransformVersion = 0;
@@ -531,6 +536,8 @@ export type InternalGameObjRaw = GameObjRaw & {
     /** @readonly */
     _drawLayerIndex: number;
     /** @readonly */
+    _treeIndex: number;
+    /** @readonly */
     _transformVersion: number;
 
     /**
@@ -603,6 +610,7 @@ export const GameObjRawPrototype: Omit<
     _updateEvents: null as any,
     _drawEvents: null as any,
     _drawLayerIndex: null as any,
+    _treeIndex: null as any,
     children: null as any,
     hidden: null as any,
     id: null as any,
@@ -1021,16 +1029,18 @@ export const GameObjRawPrototype: Omit<
             ?? (this.parent
                 ? this.parent._drawLayerIndex
                 : _k.game.defaultLayerIndex);
-        for (let i = 0; i < this.children.length; i++) {
-            this.children[i].update();
+        const children = this.children.slice();
+        for (let i = 0; i < children.length; i++) {
+            children[i].update();
         }
     },
 
     fixedUpdate(this: InternalGameObjRaw) {
         if (this.paused) return;
         this._fixedUpdateEvents.trigger();
-        for (let i = 0; i < this.children.length; i++) {
-            this.children[i].fixedUpdate();
+        const children = this.children.slice();
+        for (let i = 0; i < children.length; i++) {
+            children[i].fixedUpdate();
         }
     },
 
@@ -1236,6 +1246,8 @@ export const GameObjRawPrototype: Omit<
             loadMatrix(this.transform);
         }
 
+        this._treeIndex = _nextTreeIndex++;
+
         for (let i = 0; i < this.children.length; i++) {
             // if (this.children[i].hidden) continue;
             this.children[i].transformTree(updateNeeded);
@@ -1372,7 +1384,7 @@ export const GameObjRawPrototype: Omit<
         }
 
         // If the object already exists and add hook is present, run it
-        if (this.id != 0 && this.exists() && comp.add) {
+        if (this.exists() && comp.add) {
             this._onCurCompCleanup = (c: any) => gc.push(c);
             comp.add.call(this);
             this._onCurCompCleanup = null;

@@ -6,7 +6,7 @@
  * @minver 3001.0
  */
 
-kaplay({ background: "#000000" });
+kaplay({ background: "#000000", pixelDensity: Math.min(2, devicePixelRatio) });
 
 loadShaderURL("blink", null, "../..//shaders/blink.frag");
 
@@ -14,7 +14,7 @@ add([
     pos(100, 100),
     text(
         "text [blink]i blink[/blink] text\n\n\n"
-            + "why are the spaces so tall".replaceAll(" ", "[blink] [/blink]"),
+            + "spaces are the same height".replaceAll(" ", "[blink] [/blink]"),
         {
             styles: {
                 blink: (i) => ({

@@ -49,7 +49,7 @@ export function drawLine(opt: DrawLineOpt) {
         p2.sub(dis),
     ].map((p) => ({
         pos: new Vec2(p.x, p.y),
-        uv: new Vec2(0),
+        uv: new Vec2(1),
         color: opt.color ?? Color.WHITE,
         opacity: opt.opacity ?? 1,
     }));*/
@@ -69,14 +69,14 @@ export function drawLine(opt: DrawLineOpt) {
             p2.y - dis.y,
         ],
         uv: [
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
         ],
         color: [
             color.r,
@@ -104,7 +104,7 @@ export function drawLine(opt: DrawLineOpt) {
         attributes,
         [0, 1, 3, 1, 2, 3],
         opt.fixed,
-        _k.gfx.defTex,
+        _k.gfx.whitePixel.tex,
         opt.shader,
         opt.uniform ?? undefined,
     );
@@ -326,14 +326,14 @@ export function _drawLinesBevel(opt: DrawLinesOpt) {
 
     /*const verts = vertices.map(v => ({
         pos: offset.add(v),
-        uv: vec2(),
+        uv: vec2(1),
         color: opt.color || Color.WHITE,
         opacity: opt.opacity ?? 1,
     }));*/
 
     const attributes = {
         pos: new Array<number>(vertices.length * 2),
-        uv: new Array<number>(vertices.length * 2).fill(0),
+        uv: new Array<number>(vertices.length * 2).fill(1),
         color: new Array<number>(vertices.length * 3).fill(255),
         opacity: new Array<number>(vertices.length).fill(opt.opacity ?? 1),
     };
@@ -352,7 +352,7 @@ export function _drawLinesBevel(opt: DrawLinesOpt) {
         attributes,
         indices,
         opt.fixed,
-        _k.gfx.defTex,
+        _k.gfx.whitePixel.tex,
         opt.shader,
         opt.uniform ?? undefined,
     );
@@ -455,7 +455,7 @@ export function _drawLinesRound(opt: DrawLinesOpt) {
             const fixedPoint = pt1.add(d);
             const cs = Math.cos(angle);
             const sn = Math.sin(angle);
-            for (let j = 0; j < n; j++) {
+            for (let j = 0; j <= n; j++) {
                 vertices.push(fixedPoint);
                 vertices.push(fixedPoint.add(vector));
                 vector = vec2(
@@ -479,7 +479,7 @@ export function _drawLinesRound(opt: DrawLinesOpt) {
             const fixedPoint = pt1.add(d);
             const cs = Math.cos(angle);
             const sn = Math.sin(angle);
-            for (let j = 0; j < n; j++) {
+            for (let j = 0; j <= n; j++) {
                 vertices.push(fixedPoint.sub(vector));
                 vertices.push(fixedPoint);
                 vector = vec2(
@@ -551,7 +551,7 @@ export function _drawLinesRound(opt: DrawLinesOpt) {
 
     const attributes = {
         pos: new Array<number>(vertices.length * 2),
-        uv: new Array<number>(vertices.length * 2).fill(0),
+        uv: new Array<number>(vertices.length * 2).fill(1),
         color: new Array<number>(vertices.length * 3).fill(255),
         opacity: new Array<number>(vertices.length).fill(opt.opacity ?? 1),
     };
@@ -570,7 +570,7 @@ export function _drawLinesRound(opt: DrawLinesOpt) {
         attributes,
         indices,
         opt.fixed,
-        _k.gfx.defTex,
+        _k.gfx.whitePixel.tex,
         opt.shader,
         opt.uniform ?? undefined,
     );
@@ -711,13 +711,6 @@ export function _drawLinesMiter(opt: DrawLinesOpt) {
 
     if (vertices.length < 4) return;
 
-    const verts = vertices.map(v => ({
-        pos: offset.add(v),
-        uv: vec2(),
-        color: opt.color || Color.WHITE,
-        opacity: opt.opacity ?? 1,
-    }));
-
     const indices = [];
     let index = 0;
     for (let i = 0; i < vertices.length - 2; i += 2) {
@@ -740,7 +733,7 @@ export function _drawLinesMiter(opt: DrawLinesOpt) {
 
     const attributes = {
         pos: new Array<number>(vertices.length * 2),
-        uv: new Array<number>(vertices.length * 2).fill(0),
+        uv: new Array<number>(vertices.length * 2).fill(1),
         color: new Array<number>(vertices.length * 3).fill(255),
         opacity: new Array<number>(vertices.length).fill(opt.opacity ?? 1),
     };
@@ -759,7 +752,7 @@ export function _drawLinesMiter(opt: DrawLinesOpt) {
         attributes,
         indices,
         opt.fixed,
-        _k.gfx.defTex,
+        _k.gfx.whitePixel.tex,
         opt.shader,
         opt.uniform ?? undefined,
     );
