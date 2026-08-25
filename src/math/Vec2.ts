@@ -613,7 +613,7 @@ export class Vec2 implements Vec2Like {
         const cos = Vec2.dot(src, dst);
         const sin = Vec2.cross(src, dst);
         if (Math.abs(sin) < 1e-6) {
-            return out = src.lerp(dst, t);
+            return this.lerp(src, dst, t, out);
         }
         const angle = Math.atan2(sin, cos);
         const t1 = Math.sin((1 - t) * angle);
