@@ -264,7 +264,7 @@ export class TexPacker {
         packer._used.set(-1, {
             rect: new Rect(new Vec2(width - 1, height - 1), 1, 1),
             tex: tex,
-            used: 0,
+            used: UsedCorner.BOTTOMLEFT | UsedCorner.TOPRIGHT, // it's bottom right so nothing can go right or below it
         });
         return {
             tex,

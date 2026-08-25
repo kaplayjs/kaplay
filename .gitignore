@@ -2,12 +2,12 @@
 dist/
 node_modules/
 .idea/
+.zed/
 desktop/
 .env
 src-tauri/target/
 .replit
 replit.nix
 /.obsidian
-.pnpm-store
 tsconfig.vitest-temp.json
 src/index.ts

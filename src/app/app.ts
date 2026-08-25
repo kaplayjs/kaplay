@@ -1,8 +1,10 @@
 // App is everything related to canvas, game loop and input
 
 import type {
+    ChordedKey,
     Cursor,
     GameObj,
+    GamepadDef,
     KAPLAYOpt,
     Key,
     KGamepad,
@@ -34,6 +36,7 @@ import {
     releaseButton,
     setButton,
 } from "./buttons";
+import { detectGamepadType, resolveGamepadMap } from "./gamepadId";
 import {
     ButtonProcessor,
     type ButtonsDef,
@@ -87,6 +90,11 @@ export class ButtonState<T = string, A = never> {
         this.released.add(btn);
         if (!had && this._releaseEv !== null) {
             state.events.trigger(this._releaseEv as any, btn, this._arg);
+        }
+    }
+    releaseAll(state: AppState) {
+        for (const btn of this.down) {
+            this.release(btn, state);
         }
     }
 }
@@ -219,6 +227,9 @@ export const initAppState = (opt: {
         ),
         mergedGamepadState: new GamepadState(null),
         gamepadStates: new Map<number, GamepadState>(),
+        // resolved button map per gamepad index, computed once on connect
+        // rather than re-resolved from the raw id string every frame
+        gamepadMaps: new Map<number, GamepadDef>(),
         lastInputDevice: null as "mouse" | "keyboard" | "gamepad" | null,
         // unified input state
         gamepads: [] as KGamepad[],
@@ -226,6 +237,8 @@ export const initAppState = (opt: {
         isMouseMoved: false,
         lastWidth: opt.canvas.offsetWidth,
         lastHeight: opt.canvas.offsetHeight,
+        canvasScaleX: 1,
+        canvasScaleY: 1,
         events: new KEventHandler<AppEventMap>(),
     };
 };
@@ -252,6 +265,15 @@ export const initApp = (
     const state = initAppState(opt);
     parseButtonBindings(state);
     if (opt.fixedUpdateMode) setFixedSpeed(opt.fixedUpdateMode);
+    updateCanvasScale();
+
+    function updateCanvasScale() {
+        const pd = opt.pixelDensity || 1;
+        state.canvasScaleX = state.canvas.width / pd
+            / state.canvas.offsetWidth;
+        state.canvasScaleY = state.canvas.height / pd
+            / state.canvas.offsetHeight;
+    }
 
     function dt() {
         return state.dt * state.timeScale;
@@ -831,8 +853,20 @@ export const initApp = (
     }
 
     function registerGamepad(browserGamepad: Gamepad) {
+        // Custom maps (opt.gamepads) stay keyed by literal id for backwards
+        // compatibility; see gamepadId.ts for the vendor:product resolution.
+        const gamepadResolution = resolveGamepadMap(
+            browserGamepad.id,
+            GP_MAP,
+            opt.gamepads,
+        );
+        const { map: gamepadMap, name } = gamepadResolution;
+        const type = detectGamepadType(gamepadResolution);
+
         const gamepad: KGamepad = {
             index: browserGamepad.index,
+            name,
+            type,
             isPressed: (btn: KGamepadButton) => {
                 return state.gamepadStates.get(browserGamepad.index)
                     ?.buttonState
@@ -864,6 +898,7 @@ export const initApp = (
             browserGamepad.index,
             new GamepadState(gamepad),
         );
+        state.gamepadMaps.set(browserGamepad.index, gamepadMap);
 
         return gamepad;
     }
@@ -873,6 +908,7 @@ export const initApp = (
             g.index !== gamepad.index
         );
         state.gamepadStates.delete(gamepad.index);
+        state.gamepadMaps.delete(gamepad.index);
     }
 
     // TODO: Clean up this function
@@ -891,9 +927,8 @@ export const initApp = (
             const browserGamepad = navigator.getGamepads()[gamepad.index];
             if (!browserGamepad) continue;
 
-            const customMap = opt.gamepads ?? {};
-            const map = customMap[browserGamepad.id]
-                || GP_MAP[browserGamepad.id] || GP_MAP["default"];
+            const map = state.gamepadMaps.get(gamepad.index)
+                ?? GP_MAP["default"];
             const gamepadState = state.gamepadStates.get(gamepad.index);
             if (!gamepadState) continue;
 
@@ -967,7 +1002,38 @@ export const initApp = (
     const docEvents: EventList<DocumentEventMap> = {};
     const winEvents: EventList<WindowEventMap> = {};
 
+    let releaseHeldInputsQueued = false;
+
+    function releaseHeldInputs() {
+        state.buttonHandler.releaseKeyboardMouse(state);
+        state.keyState.releaseAll(state);
+        state.mouseState.releaseAll(state);
+    }
+
+    function queueReleaseHeldInputs() {
+        if (releaseHeldInputsQueued) {
+            return;
+        }
+        releaseHeldInputsQueued = true;
+        state.events.onOnce("input", () => {
+            releaseHeldInputsQueued = false;
+            releaseHeldInputs();
+        });
+    }
+
+    function releaseHeldInputsOnFocusLoss() {
+        // Release all inputs immediately when blur/hide happens,
+        // and then queue it to to catch any queued events on the next input tick,
+        // that wouldn't be processed otherwise
+        releaseHeldInputs();
+        queueReleaseHeldInputs();
+    }
+
     const pd = opt.pixelDensity || 1;
+
+    canvasEvents.blur = () => {
+        releaseHeldInputsOnFocusLoss();
+    };
 
     canvasEvents.mousemove = (e) => {
         // 🍝 Here we depend of GFX Context even if initGfx needs initApp for being used
@@ -1038,17 +1104,16 @@ export const initApp = (
         });
     };
 
-    const PREVENT_DEFAULT_KEYS = new Set([
-        " ",
-        "ArrowLeft",
-        "ArrowRight",
-        "ArrowUp",
-        "ArrowDown",
-        "Tab",
-    ]);
+    canvasEvents.pointerdown = (e) => {
+        state.canvas.setPointerCapture(e.pointerId);
+    };
 
-    // translate these key names to a simpler version
-    const KEY_ALIAS = {
+    canvasEvents.pointerup = (e) => {
+        state.canvas.releasePointerCapture(e.pointerId);
+    };
+
+    // translate key names to kaplay keys
+    const KEY_ALIAS: Record<KeyboardEvent["key"], Key> = {
         "ArrowLeft": "left",
         "ArrowRight": "right",
         "ArrowUp": "up",
@@ -1056,15 +1121,61 @@ export const initApp = (
         " ": "space",
     };
 
+    const PREVENT_DEFAULT_KEYS = new Set<Key>([
+        "left",
+        "right",
+        "up",
+        "down",
+        "space",
+        "tab",
+        "/",
+        ...(opt.debug !== false
+            ? [
+                opt.debugKey || "f1",
+                "f2",
+                "f7",
+                "f8",
+                "f9",
+                "f10",
+            ]
+            : []),
+    ]);
+
+    const shouldPreventButtons = (key: Key, by: "byKey" | "byKeyCode") => {
+        const committer = state.buttonHandler[by].committers.get(key);
+        if (!committer) return false;
+
+        btns: for (const mods of committer.btns.values()) {
+            for (const mod of committer.check) {
+                if (
+                    (state.keyState.down.has(mod) || mod === key)
+                        !== mods.includes(mod)
+                ) {
+                    continue btns;
+                }
+            }
+            return true;
+        }
+
+        return false;
+    };
+
     canvasEvents.keydown = (e) => {
         state.capsOn = e.getModifierState("CapsLock");
 
-        if (PREVENT_DEFAULT_KEYS.has(e.key)) {
+        const k: Key = KEY_ALIAS[e.key as keyof typeof KEY_ALIAS] as Key
+            || e.key.toLowerCase();
+
+        if (
+            PREVENT_DEFAULT_KEYS.has(k)
+            || _k.game.inputCapturedBy.size > 0
+            || shouldPreventButtons(k, "byKey")
+            || shouldPreventButtons(e.code, "byKeyCode")
+        ) {
             e.preventDefault();
         }
+
         state.events.onOnce("input", () => {
-            const k: Key = KEY_ALIAS[e.key as keyof typeof KEY_ALIAS] as Key
-                || e.key.toLowerCase();
             const code = e.code;
 
             if (k === undefined) throw new Error(`Unknown key: ${e.key}`);
@@ -1248,9 +1359,14 @@ export const initApp = (
             state.events.trigger("show");
         }
         else {
+            releaseHeldInputsOnFocusLoss();
             state.isHidden = true;
             state.events.trigger("hide");
         }
+    };
+
+    winEvents.blur = () => {
+        releaseHeldInputsOnFocusLoss();
     };
 
     winEvents.gamepadconnected = (e) => {
@@ -1299,6 +1415,7 @@ export const initApp = (
             ) return;
             state.lastWidth = state.canvas.offsetWidth;
             state.lastHeight = state.canvas.offsetHeight;
+            updateCanvasScale();
             state.events.onOnce("input", () => {
                 state.events.trigger("resize");
             });
@@ -1315,6 +1432,7 @@ export const initApp = (
         time,
         run,
         canvas: state.canvas,
+        updateCanvasScale,
         fps,
         rawFPS,
         setFixedSpeed,
