@@ -629,7 +629,9 @@ export type QueryOpt = {
      */
     include?: string | string[];
     /**
-     * Selects the operator to use. Defaults to and.
+     * Selects the operator to use.
+     *
+     * @default and
      */
     includeOp?: "and" | "or";
     /**
@@ -637,7 +639,9 @@ export type QueryOpt = {
      */
     exclude?: string | string[];
     /**
-     * Selects the operator to use. Defaults to and.
+     * Selects the operator to use..
+     *
+     * @default and
      */
     excludeOp?: "and" | "or";
     /**
@@ -645,7 +649,9 @@ export type QueryOpt = {
      */
     distance?: number;
     /**
-     * Selects the operator to use. Defaults to near.
+     * Selects the operator to use.
+     *
+     * @default near
      */
     distanceOp?: "near" | "far";
     /**
@@ -653,7 +659,9 @@ export type QueryOpt = {
      */
     visible?: boolean;
     /**
-     * All objects in the given group. Defaults to children.
+     * All objects in the given group.
+     *
+     * @default children.
      */
     hierarchy?: "children" | "siblings" | "ancestors" | "descendants";
     /**
@@ -706,8 +714,9 @@ export type MusicData = string;
 export interface LoadFontOpt {
     outline?: number | Outline;
     /**
-     * The size to load the font in (default 64).
+     * The size to load the font in.
      *
+     * @default 64
      * @since v3001.0
      */
     size?: number;
