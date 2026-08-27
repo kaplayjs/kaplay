@@ -560,7 +560,7 @@ export interface KAPLAYCtx {
     /**
      * Rotates a Game Object (in degrees).
      *
-     * @param a - The angle to rotate by.
+     * @param a - The angle to rotate by. Defaults to 0.
      *
      * @example
      * ```js
@@ -572,7 +572,6 @@ export interface KAPLAYCtx {
      * // bean will be upside down!
      * bean.angle = 180
      * ```
-     * @default 0
      * @returns The rotate comp.
      * @since v2000.0
      * @group Components
@@ -1330,9 +1329,8 @@ export interface KAPLAYCtx {
     /**
      * Enables double jump.
      *
-     * @param numJumps - The number of jumps allowed.
+     * @param numJumps - The number of jumps allowed. Defaults to 1.
      *
-     * @default 1
      * @returns The double jump comp.
      * @since v3000.0
      * @group Components
@@ -4467,7 +4465,7 @@ export interface KAPLAYCtx {
     /**
      * Camera shake.
      *
-     * @param intensity - The intensity of the shake.
+     * @param intensity - The intensity of the shake. Defaults to 12.
      *
      * @example
      * ```js
@@ -4476,7 +4474,6 @@ export interface KAPLAYCtx {
      *     shake(120)
      * })
      * ```
-     * @default 12
      * @since v3000.0
      * @group Rendering
      * @subgroup Camera

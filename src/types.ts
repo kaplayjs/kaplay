@@ -311,9 +311,8 @@ export interface KAPLAYOpt {
      */
     font?: string;
     /**
-     * Device pixel scale (high pixel density will hurt performance).
+     * Device pixel scale (high pixel density will hurt performance). Defaults to 1.
      *
-     * @default 1
      * @since v3000.0
      */
     pixelDensity?: number;
