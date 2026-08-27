@@ -67,6 +67,15 @@ cursor.onKeyDown("down", () => {
     cursor.move(0, MOUSE_VEL);
 });
 
+// You can scroll with the keyboard
+cursor.onKeyDown("w", () => {
+    cursor.scrollBy(vec2(0, 10));
+});
+
+cursor.onKeyDown("s", () => {
+    cursor.scrollBy(vec2(0, -10));
+});
+
 // Example with hovering and click
 const door = add([
     sprite("door"),
@@ -96,6 +105,12 @@ door.onHoverEnd(() => {
     cursor.sprite = "cursor";
 });
 
+// Triggered thanks to cursor.scrollBy()
+// Only gets called once per call
+door.onScroll((delta) => {
+    door.pos.y += delta.y;
+});
+
 // Open the door, a friend appears
 function openDoor() {
     if (doorOpened) return;
@@ -106,7 +121,7 @@ function openDoor() {
     add([
         sprite("bean"),
         scale(2),
-        pos(center()),
+        pos(door.pos),
         anchor("center"),
     ]);
 
