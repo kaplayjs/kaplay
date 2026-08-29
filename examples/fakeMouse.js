@@ -43,7 +43,7 @@ setCursor("none"); // Hide the real mouse
 // Mouse press and release with keyboard, this will trigger mouse proper
 // events like .onClick, .onHover, etc
 cursor.onKeyPress("space", () => {
-    cursor.press();
+    cursor.press("left");
 });
 
 cursor.onKeyRelease("space", () => {
@@ -88,6 +88,7 @@ const door = add([
 // Trigered thanks to cursor.press(), you can trigger it with a real mouse or
 // with the keyboard
 door.onClick(() => {
+    if (!door.isHovering()) return;
     if (knocks > MAX_KNOCKS) {
         openDoor();
     }

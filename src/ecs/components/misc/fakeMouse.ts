@@ -1,7 +1,7 @@
 import type { KEventController } from "../../../events/events";
 import type { Vec2 } from "../../../math/Vec2";
 import { _k } from "../../../shared";
-import type { Comp, GameObj } from "../../../types";
+import type { Comp, GameObj, MouseButton } from "../../../types";
 import type { PosComp } from "../transform/pos";
 
 /**
@@ -16,13 +16,14 @@ export interface FakeMouseComp extends Comp {
      */
     get isPressed(): boolean;
     /**
-     * How much the fakeMouse has moved in the last frame
+     * How much the fakeMouse has moved in the last frame.
      */
     get deltaPos(): Vec2;
     /**
      * Trigger press (onClick).
+     * @param btn The mouse button to press (Defaults to "left").
      */
-    press(): void;
+    press(btn?: MouseButton): void;
     /**
      * Trigger release.
      */
@@ -34,9 +35,9 @@ export interface FakeMouseComp extends Comp {
     scrollBy(deltaPos: Vec2): void;
     /**
      * Register an event that runs when the fake mouse performs a click.
-     * @param action The function to run.
+     * @param action The function to run. Has a parameter to access the btn.
      */
-    onPress(action: () => void): KEventController;
+    onPress(action: (btn: MouseButton) => void): KEventController;
     /**
      * Register an event that runs when the fake mouse releases.
      * @param action The function to run.
@@ -70,6 +71,7 @@ export const fakeMouse = (opt: FakeMouseOpt = {
 }): FakeMouseComp => {
     let isPressed = false;
     let lastPos: Vec2;
+    let deltaPos: Vec2;
 
     return {
         id: "fakeMouse",
@@ -90,22 +92,24 @@ export const fakeMouse = (opt: FakeMouseOpt = {
             return isPressed;
         },
         get deltaPos() {
-            // @ts-ignore
-            const posClone = this.pos.clone();
-            return _k.k.vec2(posClone.x - lastPos.x, posClone.y - lastPos.y);
+            return deltaPos;
         },
         update(this: FakeMouse) {
-            if (this.pos.x !== lastPos.x || this.pos.y !== lastPos.y) {
-                this.trigger("fakeMouseMove", this.pos.clone()); // TODO: Create a deltaPos
+            deltaPos = this.pos.sub(lastPos);
+            lastPos = this.pos.clone();
+
+            if (this.deltaPos.len() > 0) {
+                // TODO: does this even do anything?
+                this.trigger("fakeMouseMove", this.deltaPos);
             }
 
             if (opt.followMouse && _k.app.isMouseMoved()) {
                 this.screenPos = _k.app.mousePos();
             }
         },
-        press(this: FakeMouse) {
+        press(this: FakeMouse, btn = "left") {
             isPressed = true;
-            this.trigger("press");
+            this.trigger("press", btn);
         },
         release(this: FakeMouse) {
             isPressed = false;
