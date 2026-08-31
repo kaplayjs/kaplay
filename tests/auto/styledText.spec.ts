@@ -3,18 +3,17 @@ import { compileStyledText } from "../../src/gfx/formatText";
 import { runes } from "../../src/utils/runes";
 
 // compileStyledText() should key charStyleMap by grapheme index, the same way
-// formatText() walks the rendered text via runes(). Keying by UTF-16 code unit
-// desyncs every style after an emoji, ZWJ sequence or astral character.
+// formatText() walks the rendered text. Keying by UTF-16 code unit desyncs
+// every style after an emoji, ZWJ sequence or astral character.
 
-// the styled graphemes of `input`, resolved through the same runes() indexing
-// that formatText() uses to apply styles
+// the styled graphemes of `input`, resolved through the same rune array
+// that formatText() consumes to apply styles
 function styledGraphemes(input: string): (string | undefined)[] {
-    const { charStyleMap, text } = compileStyledText(input);
-    const graphemes = runes(text);
+    const { charStyleMap, runes } = compileStyledText(input);
     return Object.keys(charStyleMap)
         .map(Number)
         .sort((a, b) => a - b)
-        .map(i => graphemes[i]);
+        .map(i => runes[i]);
 }
 
 test("compileStyledText keeps ASCII style indices unchanged", () => {
@@ -38,10 +37,27 @@ test("compileStyledText aligns styles after a ZWJ emoji sequence", () => {
 });
 
 test("compileStyledText maps every style key to a real grapheme", () => {
-    const { charStyleMap, text } = compileStyledText("[c]\u{1F600}b[/c]");
-    const graphemes = runes(text);
+    const { charStyleMap, runes: segmented } = compileStyledText(
+        "[c]\u{1F600}b[/c]",
+    );
     for (const key of Object.keys(charStyleMap).map(Number)) {
-        expect(graphemes[key]).toBeDefined();
+        expect(segmented[key]).toBeDefined();
     }
     expect(styledGraphemes("[c]\u{1F600}b[/c]")).toEqual(["\u{1F600}", "b"]);
+});
+
+test("compileStyledText returns the rune array formatText consumes", () => {
+    const family = "\u{1F468}\u{200D}\u{1F469}\u{200D}\u{1F467}";
+    const input = `a[c]\u{1F600}[/c]\\[x] ${family}b`;
+    const { text, runes: segmented } = compileStyledText(input);
+    // the array must match what a second runes() pass over the rendered text
+    // would produce, so formatText can consume it without segmenting again
+    expect(segmented).toEqual(runes(text));
+    expect(segmented.join("")).toBe(text);
+});
+
+test("compileStyledText keeps escaped characters as single runes", () => {
+    const { text, runes: segmented } = compileStyledText("\\[c]\\\\x");
+    expect(text).toBe("[c]\\x");
+    expect(segmented).toEqual(["[", "c", "]", "\\", "x"]);
 });

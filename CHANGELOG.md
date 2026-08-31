@@ -68,6 +68,10 @@ So your change should look like:
   e.g. focused `textInput` now use `preventDefault()` (#1114) - @imaginarny
 - Updated `drawSprite()` to allow slice9'ed sprites, and so now the `sprite()`
   component just calls `drawSprite()` (#1036) - @dragoncoder047
+- `StyledTextInfo` now carries the rendered text's grapheme clusters as a
+  `runes` array, and `compileStyledText()` takes an optional `locale`
+  parameter, so `formatText()` no longer segments the same string twice
+  (#1115) - @mahirhir
 
 ### Fixed
 
@@ -98,6 +102,8 @@ So your change should look like:
   duration (#1117) - @imaginarny
 - Fixed triangulate by updating the convexity of nearby vertices after removing
   a concave vertex during ear cutting (#1134) - @mflerackers
+- Fixed styled text (`[tag]...[/tag]`) style positions desyncing after an
+  emoji, ZWJ sequence or astral character (#1115) - @mahirhir
 
 ## [4000.0.0-alpha.27.1] - 2026-05-12
 

@@ -6,7 +6,7 @@ import { Color, rgb } from "../math/color";
 import { vec2 } from "../math/math";
 import { _k } from "../shared";
 import type { Outline } from "../types";
-import { firstRune, runes } from "../utils/runes";
+import { firstRune } from "../utils/runes";
 import { alignPt } from "./anchor";
 import type { FormattedChar, FormattedText } from "./draw/drawFormattedText";
 import type { CharTransform, DrawTextOpt } from "./draw/drawText";
@@ -31,6 +31,13 @@ export type FontAtlas = {
 export type StyledTextInfo = {
     charStyleMap: Record<number, [string, string][]>;
     text: string;
+    /**
+     * The rendered text split into grapheme clusters, in render order.
+     * charStyleMap keys index into this array. Carrying it here lets
+     * formatText() reuse the segmentation compileStyledText() already did
+     * instead of running runes() over the same string a second time.
+     */
+    runes: string[];
 };
 
 function applyCharTransform(fchar: FormattedChar, tr: CharTransform) {
@@ -56,23 +63,23 @@ function applyCharTransform(fchar: FormattedChar, tr: CharTransform) {
     if (tr.opacity != null) fchar.opacity *= tr.opacity;
 }
 
-export function compileStyledText(txt: any): StyledTextInfo {
+export function compileStyledText(txt: any, locale?: string): StyledTextInfo {
     const charStyleMap = {} as Record<number, [string, string][]>;
+    const renderRunes: string[] = [];
     let renderText = "";
     let styleStack: [string, string][] = [];
     // Normalize to NFC and walk grapheme clusters instead of UTF-16 code units,
-    // so style positions stay aligned with formatText(), which iterates the
-    // rendered text via runes(). Keying by renderText.length would desync every
-    // style after an emoji, ZWJ sequence or astral char (e.g. CJK Extension B).
+    // so style positions stay aligned with formatText(), which walks the same
+    // grapheme array. Keying by renderText.length would desync every style
+    // after an emoji, ZWJ sequence or astral char (e.g. CJK Extension B).
     let text = String(txt).normalize("NFC");
-    let charIndex = 0;
 
     const emit = (ch: string) => {
         if (styleStack.length > 0) {
-            charStyleMap[charIndex] = styleStack.slice();
+            charStyleMap[renderRunes.length] = styleStack.slice();
         }
         renderText += ch;
-        charIndex++;
+        renderRunes.push(ch);
     };
 
     while (text !== "") {
@@ -80,7 +87,7 @@ export function compileStyledText(txt: any): StyledTextInfo {
             if (text.length === 1) {
                 throw new Error("Styled text error: \\ at end of string");
             }
-            const escaped = firstRune(text.slice(1));
+            const escaped = firstRune(text.slice(1), locale);
             emit(escaped);
             text = text.slice(1 + escaped.length);
             continue;
@@ -116,7 +123,7 @@ export function compileStyledText(txt: any): StyledTextInfo {
             text = text.slice(m.length);
             continue;
         }
-        const grapheme = firstRune(text);
+        const grapheme = firstRune(text, locale);
         emit(grapheme);
         text = text.slice(grapheme.length);
     }
@@ -130,6 +137,7 @@ export function compileStyledText(txt: any): StyledTextInfo {
     return {
         charStyleMap,
         text: renderText,
+        runes: renderRunes,
     };
 }
 
@@ -316,8 +324,10 @@ export function formatText(opt: DrawTextOpt): FormattedText {
         };
     }
 
-    const { charStyleMap, text } = compileStyledText(opt.text + "");
-    const chars = runes(text, opt.locale);
+    const { charStyleMap, text, runes: chars } = compileStyledText(
+        opt.text + "",
+        opt.locale,
+    );
 
     const fontAtlas = font instanceof FontData || typeof font === "string"
         ? (() => {
