@@ -52,6 +52,14 @@ So your change should look like:
 - Added a `type` field to `KGamepad` (`"ps4"`, `"ps5"`, `"playstation"`,
   `"xbox"`, `"switch"`, a custom string, or `undefined`) for picking
   button-glyph assets based on controller family (#1119) - @CEREBR4L
+- Added the ability to check which character a point is hovering over in the
+  `text()` component using `TextComp.pointToChar()` or
+  `TextComp.pointToCharIndex()`, to make text-based menus easier to build by
+  simply styling text (#1064) - @dragoncoder047, @imaginarny
+- When debug inspect enabled, `text()` char bounding boxes will now be drawn if
+  the text includes tags or uses transform or styles (#1064) - @dragoncoder047,
+  @imaginarny
+- **(examples)** Added a new `textClick` example! (#1064) - @dragoncoder047
 
 ### Changed
 
