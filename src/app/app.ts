@@ -213,6 +213,7 @@ export const initAppState = (opt: {
         capsOn: false,
         mousePos: new Vec2(0),
         mouseDeltaPos: new Vec2(0),
+        scrollDelta: new Vec2(0),
         keyState: new ButtonState<Key>(
             "keyPress",
             "keyPressRepeat",
@@ -485,6 +486,10 @@ export const initApp = (
 
     function mouseDeltaPos(): Vec2 {
         return state.mouseDeltaPos.clone();
+    }
+
+    function scrollDelta(): Vec2 {
+        return state.scrollDelta.clone();
     }
 
     function isMousePressed(m: MouseButton = "left"): boolean {
@@ -840,6 +845,7 @@ export const initApp = (
         state.charInputted = [];
         state.isMouseMoved = false;
         state.mouseDeltaPos = new Vec2(0);
+        state.scrollDelta = new Vec2(0);
 
         state.gamepadStates.forEach((s) => {
             s.buttonState.update();
@@ -1344,8 +1350,10 @@ export const initApp = (
     // TODO: option to not prevent default?
     canvasEvents.wheel = (e) => {
         e.preventDefault();
+        state.scrollDelta.set(e.deltaX, e.deltaY);
+
         state.events.onOnce("input", () => {
-            state.events.trigger("scroll", new Vec2(e.deltaX, e.deltaY));
+            state.events.trigger("scroll", state.scrollDelta);
         });
     };
 
@@ -1451,6 +1459,7 @@ export const initApp = (
         isTouchscreen,
         mousePos,
         mouseDeltaPos,
+        scrollDelta,
         isKeyDown,
         isKeyPressed,
         isKeyPressedRepeat,
