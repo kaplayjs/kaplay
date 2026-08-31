@@ -33,5 +33,4 @@ test.describe("Color creation using rgb function", () => {
         const color = rgb(11, 25, 6);
         expect(color).toEqual({ r: 11, g: 25, b: 6 });
     });
-})
-
+});
