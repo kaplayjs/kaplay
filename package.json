@@ -70,6 +70,7 @@
     "generate:index": "node scripts/generateIndex.js",
     "generate:dts": "dts-bundle-generator -o dist/doc.d.ts src/index.ts",
     "test": "npm exec playwright test",
+    "test:setup": "npm exec playwright install",
     "prepare": "npm run build"
   },
   "devDependencies": {
