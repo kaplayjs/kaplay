@@ -7,7 +7,7 @@ import { clamp } from "./clamp";
 import { traceRegion } from "./getImageOutline";
 import { lerp, type LerpValue } from "./lerp";
 import { rand, RNG } from "./random";
-import { Vec2 } from "./Vec2";
+import { Vec2, type Vec2Like } from "./Vec2";
 
 /**
  * Possible arguments for a Vec2.
@@ -16,11 +16,11 @@ import { Vec2 } from "./Vec2";
  * @subgroup Vectors
  */
 export type Vec2Args =
-    | [number, number]
-    | [number]
-    | [Vec2]
-    | [number | Vec2]
-    | [];
+    | [number, number] // x = args[0]   y = args[1]
+    | [number] //         x = args[0]   y = x
+    | [number | Vec2Like]
+    | [Vec2Like] //       x = args[0].x y = args[0].y
+    | []; //              x = 0         y = 0
 
 export function deg2rad(deg: number): number {
     return (deg * Math.PI) / 180;
@@ -61,7 +61,7 @@ export function smoothstep(edge0: number, edge1: number, x: number) {
 
 export function vec2(...args: Vec2Args): Vec2 {
     if (args.length === 1) {
-        if (args[0] instanceof Vec2) {
+        if (typeof args[0] === "object") {
             return new Vec2(args[0].x, args[0].y);
         }
         else if (Array.isArray(args[0]) && args[0].length === 2) {
