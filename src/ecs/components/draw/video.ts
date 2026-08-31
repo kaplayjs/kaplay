@@ -3,6 +3,7 @@ import { getRenderProps } from "../../../game/utils";
 import { drawRect } from "../../../gfx/draw/drawRect";
 import { drawUVQuad } from "../../../gfx/draw/drawUVQuad";
 import { Texture } from "../../../gfx/gfx";
+import { Color } from "../../../math/color";
 import { Rect, vec2 } from "../../../math/math";
 import { _k } from "../../../shared";
 import type { Comp, GameObj } from "../../../types";
@@ -185,6 +186,7 @@ export function video(
                 drawRect(Object.assign(getRenderProps(this), {
                     width: this.width,
                     height: this.height,
+                    color: Color.BLACK,
                 }));
             }
         },
