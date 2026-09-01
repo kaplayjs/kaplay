@@ -2375,7 +2375,7 @@ export interface KAPLAYCtx {
      * @example
      * ```js
      * // open game window when bean.png is double pressed
-     * onMousePress(() => {
+     * onMouseDoublePress(() => {
      *     openWindow(bean)
      * });
      * ```
@@ -4040,7 +4040,7 @@ export interface KAPLAYCtx {
      *
      * @example
      * ```js
-     * // Now double clicks will be valid with even as far as 1 second of interval.
+     * //  Now double clicks will be recognized with even as much as 1 second between clicks.
      * setDoubleClickDelay(1);
      * ```
      */
