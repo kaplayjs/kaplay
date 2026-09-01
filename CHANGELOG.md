@@ -66,6 +66,8 @@ So your change should look like:
   text (#1125) - @imaginarny
 - Debug keys, keys defined with the Buttons API, and keyboard input captured by
   e.g. focused `textInput` now use `preventDefault()` (#1114) - @imaginarny
+- Updated `drawSprite()` to allow slice9'ed sprites, and so now the `sprite()`
+  component just calls `drawSprite()` (#1036) - @dragoncoder047
 
 ### Fixed
 
