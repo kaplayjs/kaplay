@@ -1,21 +1,18 @@
 {
   "compilerOptions": {
     "esModuleInterop": true,
-    "target": "ESNext",
-    "module": "ESNext",
-    "moduleResolution": "Node",
+    "target": "esnext",
+    "module": "esnext",
+    "moduleResolution": "bundler",
     "noImplicitThis": true,
     "skipLibCheck": true,
     "resolveJsonModule": true,
-    "emitDeclarationOnly": true,
-    "declaration": true,
-    "declarationMap": true,
-    "declarationDir": "dist/declaration",
+    "noEmit": true,
     // always use import type for type only imports
     "verbatimModuleSyntax": true,
     "strict": true,
     "types": [
-      "../node_modules/vitest-puppeteer/dist/index.d.ts"
+      "./.env.d.ts"
     ]
   },
   "include": [
