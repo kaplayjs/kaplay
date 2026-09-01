@@ -239,9 +239,9 @@ export function resolveSprite(
             throw new Error(`Sprite not found: ${src}`);
         }
     }
-    // else if (src instanceof SpriteData) {
-    //     return Asset.loaded(src);
-    // }
+    else if (src instanceof SpriteData) {
+        return Asset.loaded(src);
+    }
     else if (src instanceof Asset) {
         // might be sometimes unnecessary here but if we're getting the sprite data directly
         // then obviously we might be wanting to draw it.
