@@ -34,12 +34,12 @@ export interface FakeMouseComp extends Comp {
      */
     scrollBy(deltaPos: Vec2): void;
     /**
-     * Register an event that runs when the fake mouse performs a click.
+     * Register an event that runs when the fake mouse performs a click (with press()).
      * @param action The function to run, has the btn parameter.
      */
     onPress(action: (btn: MouseButton) => void): KEventController;
     /**
-     * Register an event that runs when the fake mouse scrolls.
+     * Register an event that runs when the fake mouse releases (with release()).
      * @param action The function to run, has the deltaPos parameter.
      */
     onRelease(action: (deltaPos: Vec2) => void): KEventController;
