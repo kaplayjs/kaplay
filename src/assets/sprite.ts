@@ -240,6 +240,7 @@ export function resolveSprite(
         }
     }
     else if (src instanceof SpriteData) {
+        _k.k.onLoad(() => _k.assets.packer.syncIfPending());
         return Asset.loaded(src);
     }
     else if (src instanceof Asset) {
