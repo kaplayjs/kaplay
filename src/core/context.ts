@@ -1,4 +1,5 @@
 import { trigger } from "../api/eventHandlers";
+import { setDoubleClickDelay } from "./../app/buttons";
 import { getData, setData } from "../app/data";
 import { loadAseprite } from "../assets/aseprite";
 import {
@@ -424,6 +425,7 @@ export const createContext = (
         pathfinder,
         level,
         fakeMouse,
+        setDoubleClickDelay,
         // group events
         trigger,
         on: defaultScope.on,
@@ -449,6 +451,7 @@ export const createContext = (
         onKeyRelease: defaultScope.onKeyRelease,
         onMouseDown: defaultScope.onMouseDown,
         onMousePress: defaultScope.onMousePress,
+        onMouseDoublePress: defaultScope.onMouseDoublePress,
         onMouseRelease: defaultScope.onMouseRelease,
         onMouseMove: defaultScope.onMouseMove,
         onCharInput: defaultScope.onCharInput,
@@ -475,6 +478,7 @@ export const createContext = (
         isKeyReleased: app.isKeyReleased,
         isMouseDown: app.isMouseDown,
         isMousePressed: app.isMousePressed,
+        isMouseDoublePressed: app.isMouseDoublePressed,
         isMouseReleased: app.isMouseReleased,
         isMouseMoved: app.isMouseMoved,
         isGamepadButtonPressed: app.isGamepadButtonPressed,
