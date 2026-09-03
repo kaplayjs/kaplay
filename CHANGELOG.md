@@ -108,6 +108,7 @@ So your change should look like:
   duration (#1117) - @imaginarny
 - Fixed triangulate by updating the convexity of nearby vertices after removing
   a concave vertex during ear cutting (#1134) - @mflerackers
+- Fixed `AreaComp.area.scale` not being set properly and restored support for Vec2 property mutations on scale and offset (#1121) - @amyspark-ng, @imaginarny
 
 ## [4000.0.0-alpha.27.1] - 2026-05-12
 
