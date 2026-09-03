@@ -1,3 +1,4 @@
+import { rgb } from "../math/color";
 import type { KAPLAYOpt, MustKAPLAYOpt } from "../types";
 
 export const createCanvas = (gopt: MustKAPLAYOpt) => {
@@ -26,14 +27,19 @@ export const createCanvas = (gopt: MustKAPLAYOpt) => {
     ];
 
     // Adjust canvas size according to user viewport settings
-    if (
-        // check if isFixed
-        gopt.width && gopt.height && !gopt.letterbox
-    ) {
+    if (gopt.width && gopt.height && (!gopt.letterbox || gopt.lockResolution)) {
         canvas.width = gopt.width * gopt.scale;
         canvas.height = gopt.height * gopt.scale;
-        styles.push(`width: ${canvas.width}px`);
-        styles.push(`height: ${canvas.height}px`);
+        styles.push("object-fit: contain");
+
+        if (!gopt.letterbox) {
+            styles.push(`width: ${canvas.width}px`);
+            styles.push(`height: ${canvas.height}px`);
+        }
+        else {
+            styles.push("width: 100%");
+            styles.push("height: 100%");
+        }
     }
     else {
         canvas.width = canvas.parentElement!.offsetWidth;
@@ -42,7 +48,7 @@ export const createCanvas = (gopt: MustKAPLAYOpt) => {
         styles.push("height: 100%");
     }
 
-    // Cripsing
+    // Crisping
     if (gopt.crisp) {
         // chrome only supports pixelated and firefox only supports crisp-edges
         styles.push("image-rendering: pixelated");
