@@ -43,6 +43,12 @@ export interface AudioPlayOpt {
      */
     detune?: number;
     /**
+     * Wheter to reverse the sound, so it plays from finish to start, this doesn't affect time().
+     *
+     * @since v4000.0
+     */
+    reverse?: boolean;
+    /**
      * The start time, in seconds.
      */
     seek?: number;
@@ -183,7 +189,27 @@ export function play(
     gainNode.gain.value = opt.volume ?? 1;
 
     const start = (data: SoundData) => {
-        srcNode.buffer = data.buf;
+        if (opt.reverse) {
+            // Create a new empty buffer
+            const reversedBuffer = ctx.createBuffer(
+                data.buf.numberOfChannels,
+                data.buf.length,
+                data.buf.sampleRate,
+            );
+
+            // Loop through each channel and reverse the data
+            for (let i = 0; i < data.buf.numberOfChannels; i++) {
+                const originalData = data.buf.getChannelData(i);
+                const reversedData = reversedBuffer.getChannelData(i);
+
+                // Copy and reverse
+                reversedData.set(originalData.toReversed());
+            }
+
+            srcNode.buffer = reversedBuffer;
+        }
+        else srcNode.buffer = data.buf;
+
         if (!paused) {
             startTime = ctx.currentTime;
             srcNode.start(0, pos);
