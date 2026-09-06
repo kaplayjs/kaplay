@@ -1,6 +1,7 @@
+import type { KEventController } from "../../../events/events";
 import type { Vec2 } from "../../../math/Vec2";
 import { _k } from "../../../shared";
-import type { Comp, GameObj } from "../../../types";
+import type { Comp, GameObj, MouseButton } from "../../../types";
 import type { PosComp } from "../transform/pos";
 
 /**
@@ -15,21 +16,33 @@ export interface FakeMouseComp extends Comp {
      */
     get isPressed(): boolean;
     /**
-     * Trigger press (onClick).
+     * How much the fakeMouse has moved in the last frame.
      */
-    press(): void;
+    get deltaPos(): Vec2;
+    /**
+     * Trigger press (onClick).
+     * @param btn The mouse button to press (Defaults to "left").
+     */
+    press(btn?: MouseButton): void;
     /**
      * Trigger release.
      */
     release(): void;
     /**
-     * Register an event that runs when the fake mouse performs a click.
+     * Trigger scroll event by this much (onScroll).
+     * @param deltaPos How much scroll to trigger the event.
      */
-    onPress(action: () => void): void;
+    scrollBy(deltaPos: Vec2): void;
     /**
-     * Register an event that runs when the fake mouse releases.
+     * Register an event that runs when the fake mouse performs a click (with press()).
+     * @param action The function to run, has the btn parameter.
      */
-    onRelease(action: () => void): void;
+    onPress(action: (btn: MouseButton) => void): KEventController;
+    /**
+     * Register an event that runs when the fake mouse releases (with release()).
+     * @param action The function to run, has the deltaPos parameter.
+     */
+    onRelease(action: (deltaPos: Vec2) => void): KEventController;
 }
 
 /**
@@ -40,7 +53,8 @@ export interface FakeMouseComp extends Comp {
  */
 export type FakeMouseOpt = {
     /**
-     * Whether the fake mouse should follow the real mouse. Defaults to `true`.
+     * Whether the fake mouse should follow the real mouse.
+     * @default true
      */
     followMouse?: boolean;
 };
@@ -52,6 +66,7 @@ export const fakeMouse = (opt: FakeMouseOpt = {
 }): FakeMouseComp => {
     let isPressed = false;
     let lastPos: Vec2;
+    let deltaPos: Vec2;
 
     return {
         id: "fakeMouse",
@@ -71,28 +86,38 @@ export const fakeMouse = (opt: FakeMouseOpt = {
         get isPressed() {
             return isPressed;
         },
+        get deltaPos() {
+            return deltaPos;
+        },
         update(this: FakeMouse) {
-            if (this.pos.x !== lastPos.x || this.pos.y !== lastPos.y) {
-                this.trigger("fakeMouseMove", this.pos.clone()); // TODO: Create a deltaPos
+            deltaPos = this.pos.sub(lastPos);
+            lastPos = this.pos.clone();
+
+            if (this.deltaPos.len() > 0) {
+                // TODO: does this even do anything?
+                this.trigger("fakeMouseMove", this.deltaPos);
             }
 
             if (opt.followMouse && _k.app.isMouseMoved()) {
                 this.screenPos = _k.app.mousePos();
             }
         },
-        press(this: FakeMouse) {
+        press(this: FakeMouse, btn = "left") {
             isPressed = true;
-            this.trigger("press");
+            this.trigger("press", btn);
         },
         release(this: FakeMouse) {
             isPressed = false;
-            this.trigger("release");
+            this.trigger("release", this.deltaPos);
+        },
+        scrollBy(deltaPos) {
+            _k.app.state.events.trigger("scroll", deltaPos);
         },
         onPress(this: FakeMouse, action) {
-            this.on("press", action);
+            return this.on("press", action);
         },
         onRelease(this: FakeMouse, action) {
-            this.on("release", action);
+            return this.on("release", action);
         },
     };
 };
