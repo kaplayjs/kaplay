@@ -6696,14 +6696,15 @@ export interface KAPLAYCtx {
     formatText(options: DrawTextOpt): FormattedText;
     /**
      * Parses the text that has formatting tags, and returns the unstyled text
-     * (the actual characters that will be displayed) as well as which styles are
-     * active on each character.
+     * (the actual characters that will be displayed, both as a string and as
+     * an array of grapheme clusters) as well as which styles are active on
+     * each character.
      *
      * @since v4000
      * @group Rendering
      * @subgroup Text
      */
-    compileStyledText(text: any): StyledTextInfo;
+    compileStyledText(text: any, locale?: string): StyledTextInfo;
     /**
      * Create a canvas to draw stuff offscreen.
      *
