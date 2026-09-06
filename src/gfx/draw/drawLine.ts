@@ -454,7 +454,7 @@ export function _drawLinesRound(opt: DrawLinesOpt) {
             const fixedPoint = pt1.add(d);
             const cs = Math.cos(angle);
             const sn = Math.sin(angle);
-            for (let j = 0; j < n; j++) {
+            for (let j = 0; j <= n; j++) {
                 vertices.push(fixedPoint);
                 vertices.push(fixedPoint.add(vector));
                 vector = vec2(
@@ -478,7 +478,7 @@ export function _drawLinesRound(opt: DrawLinesOpt) {
             const fixedPoint = pt1.add(d);
             const cs = Math.cos(angle);
             const sn = Math.sin(angle);
-            for (let j = 0; j < n; j++) {
+            for (let j = 0; j <= n; j++) {
                 vertices.push(fixedPoint.sub(vector));
                 vertices.push(fixedPoint);
                 vector = vec2(

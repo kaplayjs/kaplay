@@ -18,7 +18,7 @@ import { type KEventController, KEventHandler } from "../events/events";
 import { Mat23, Rect } from "../math/math";
 import { RNG, type RNGConfig } from "../math/random";
 import { Vec2 } from "../math/Vec2";
-import type { GameObj } from "../types";
+import type { GameObj, GameObjID } from "../types";
 import type { SceneDef, SceneState } from "./scenes";
 
 /**
@@ -120,6 +120,10 @@ export type Game = {
      */
     allTextInputs: Set<GameObj>;
     /**
+     * Objects or identifiers currently capturing input, e.g. a textInput obj.
+     */
+    inputCapturedBy: Set<GameObj | GameObjID | string>;
+    /**
      * Deprecated functions we already warned about.
      */
     warned: Set<string>;
@@ -209,6 +213,7 @@ export const createGame = (
         crashed: false,
         areaCount: 0,
         allTextInputs: new Set<GameObj>(),
+        inputCapturedBy: new Set(),
         defRNG: new RNG(rngConfig),
         warned: new Set<string>(),
     };

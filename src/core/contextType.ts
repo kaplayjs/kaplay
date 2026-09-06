@@ -363,7 +363,7 @@ export interface KAPLAYCtx {
      *
      * // Example 2: using onClick() or other functions with readd().
      * // If you comment out the first example, and use this readd() with a function like onClick(), you
-     * can keep switching which sprite is above the other ( click on edge of face ).
+     * // can keep switching which sprite is above the other ( click on edge of face ).
      *
      * purpleBean.onClick(() => {
      *     readd(greenBean);

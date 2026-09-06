@@ -1,7 +1,7 @@
 import { KEvent } from "../../../events/events";
+import { clamp } from "../../../math/clamp";
 import { easings } from "../../../math/easings";
 import { lerp, type LerpValue } from "../../../math/lerp";
-import { Vec2 } from "../../../math/Vec2";
 import { _k } from "../../../shared";
 import type { Comp, GameObj } from "../../../types";
 
@@ -163,6 +163,7 @@ export function timer(maxLoopsPerFrame: number = 1000): TimerComp {
             setValue: (value: V) => void,
             easeFunc = easings.linear,
         ) {
+            let finished = false;
             let curTime = 0;
             if (typeof (from as any).clone == "function") {
                 from = (from as any).clone() as V;
@@ -176,24 +177,28 @@ export function timer(maxLoopsPerFrame: number = 1000): TimerComp {
                 curTime += _k.app.dt();
                 const t = Math.min(curTime / duration, 1);
                 setValue(lerp(from, to, easeFunc(t)));
-                if (t === 1) {
-                    ev.cancel();
-                    setValue(to);
-                    onEndEvents.forEach((action) => action());
-                }
+                if (t === 1) finish();
             });
+            const finish = () => {
+                if (finished) return;
+                finished = true;
+                ev.cancel();
+                setValue(to);
+                curTime = duration;
+                onEndEvents.forEach((action) => action());
+            };
             return {
                 get currentTime() {
                     return curTime;
                 },
                 set currentTime(val) {
-                    curTime = val;
+                    curTime = clamp(val, 0, duration);
                 },
                 get timeLeft() {
                     return duration - curTime;
                 },
                 set timeLeft(val: number) {
-                    curTime = duration - val;
+                    curTime = clamp(duration - val, 0, duration);
                 },
                 get paused() {
                     return ev.paused;
@@ -211,11 +216,7 @@ export function timer(maxLoopsPerFrame: number = 1000): TimerComp {
                 cancel() {
                     ev.cancel();
                 },
-                finish() {
-                    ev.cancel();
-                    setValue(to);
-                    onEndEvents.forEach((action) => action());
-                },
+                finish,
             };
         },
     };

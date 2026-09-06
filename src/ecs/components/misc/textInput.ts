@@ -66,7 +66,12 @@ export function textInput(
         set hasFocus(newValue) {
             if (hasFocus === newValue) return;
             hasFocus = newValue;
+
+            _k.game.inputCapturedBy[hasFocus ? "add" : "delete"](
+                this as any as GameObj,
+            );
             (this as any as GameObj).trigger(hasFocus ? "focus" : "blur");
+
             if (hasFocus) {
                 origText = this.typedText;
                 _k.game.allTextInputs.forEach(i => {
@@ -88,6 +93,8 @@ export function textInput(
                 this.text = this.typedText.replace(/([\[\\])/g, "\\$1");
                 this.trigger("input");
             };
+
+            if (this.hasFocus) _k.game.inputCapturedBy.add(this);
 
             charEv = _k.app.onCharInput((character) => {
                 if (
@@ -115,7 +122,9 @@ export function textInput(
         destroy(this: GameObj<TextInputComp>) {
             charEv.cancel();
             backEv.cancel();
+
             _k.game.allTextInputs.delete(this);
+            _k.game.inputCapturedBy.delete(this);
         },
         focus() {
             this.hasFocus = true;
