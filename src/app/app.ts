@@ -1114,12 +1114,12 @@ export const initApp = (
         "/",
         ...(opt.debug !== false
             ? [
-                opt.debugKey || "f1",
-                "f2",
-                "f7",
-                "f8",
-                "f9",
-                "f10",
+                opt.debugButtons?.inspect || DEBUG_SYMBOLS["inspect"],
+                opt.debugButtons?.clearlogs || DEBUG_SYMBOLS["clearlogs"],
+                opt.debugButtons?.slowdown || DEBUG_SYMBOLS["slowdown"],
+                opt.debugButtons?.pause || DEBUG_SYMBOLS["pause"],
+                opt.debugButtons?.speedup || DEBUG_SYMBOLS["speedup"],
+                opt.debugButtons?.stepframe || DEBUG_SYMBOLS["stepframe"],
             ]
             : []),
     ]);
