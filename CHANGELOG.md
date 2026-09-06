@@ -6,7 +6,7 @@ The format is (mostly) based on
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project
 adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-- Breaking changes are marked with: **(!)**.
+- Breaking changes are listed under the `Breaking Changes` heading.
 - [Jump to v3001 changelog](#changelog-for-v3001).
 
 <!-- [CHANGELOG GUIDELINES PLEASE FOLLOW]
@@ -15,6 +15,7 @@ Hey, KAPLAY Dev! Add your new changes in [unreleased] heading, below one of
 these heading:
 
 - Added
+- Breaking Changes
 - Removed
 - Changed
 - Fixed
@@ -33,6 +34,12 @@ So your change should look like:
 ### Added
 
 - added a new ghost (#6767) - @lajbel
+
+### Breaking Changes
+
+- `new RNG()` and `setRNG()` now use config objects instead of the
+  string/custom rng parameter (#1097) - @Stanko
+
 
 [DO IT IF YOU DON'T WANT A LAJBEL VISIT AT NIGHT] -->
 
@@ -56,14 +63,17 @@ So your change should look like:
   defined size and scale when resized by the `letterbox` option (#1106) -
   @imaginarny
 
+### Breaking Changes
+
+- `new RNG()` and `setRNG()` now use config objects instead of the
+  string/custom rng parameter (#1097) - @Stanko
+
 ### Changed
 
 - Added an optional parameter `rng` to all random related functions to pass the
   rng to use (#1057) - @mflerackers
 - RNG can now be set and seeded on init (as `KAPLAYOpt.rng`) and in runtime
   (#1097) - @Stanko
-- **(!)** `new RNG()` and `setRNG()` now use config objects instead of the
-  string/custom rng parameter (#1097) - @Stanko
 - Improved `text` component performance by separating text transform and
   formatting, reducing update calls for both dynamic and (especially) static
   text (#1125) - @imaginarny
@@ -119,16 +129,19 @@ So your change should look like:
 - Added `loop` parameter and `onEnd` event to the video component (#1129) -
   @Stanko
 
+### Breaking Changes
+
+- Updated "explicit `LoadSpriteOpt.frames`" method of loading a sprite with
+  animations (via either `loadSprite()` or `loadSpriteAtlas()`) to use pixel
+  values for the coordinate space, which is more intuitive (#1061) -
+  @dragoncoder047
+- Renamed video `mute` parameter to `muted` to match the native API (#1129) -
+  @Stanko
+
 ### Changed
 
-- **(!)** Updated "explicit `LoadSpriteOpt.frames`" method of loading a sprite
-  with animations (via either `loadSprite()` or `loadSpriteAtlas()`) to use
-  pixel values for the coordinate space, which is more intuitive (#1061) -
-  @dragoncoder047
 - Added padding around edges of spritesheet to prevent stretch if uv ends up out
   of bounds (#1076) - @dragoncoder047
-- **(!)** Renamed video `mute` parameter to `muted` to match the native API
-  (#1129) - @Stanko
 
 ### Fixed
 
@@ -174,23 +187,23 @@ So your change should look like:
 - Added `piecewiseBezier()` and `piecewiseCatmullRom()` to evaluate curves with
   multiple points - @mflerackers
 
-### Removed
+### Breaking Changes
 
-- **(!)** The texture uv coordinates for primitives (solid- or gradient-filled
+- The texture uv coordinates for primitives (solid- or gradient-filled
   circles, rectangles, lines, and polygons) have now been changed to (1, 1)
   instead of (0, 0), so shaders written for primitives will need to be updated.
+  (#1021) - @dragoncoder047
+- The global `onDraw()` handler's no-tag form now always draws before all game
+  objects are drawn, **regardless of whether it was attached after game
+  objects were added** (#977) - @lajbel
+- The sprite data format has been changed to allow individual frames to be on
+  different GPU textures. Now `SpriteData.tex` doesn't exist, and
+  `SpriteData.frames` is a list of `Frame`s instead of a list of `Quad`s. A
+  `Frame` contains `tex` and `q` (quad) properties that contain that data.
   (#1021) - @dragoncoder047
 
 ### Changed
 
-- **(!)** The global `onDraw()` handler's no-tag form now always draws before
-  all game objects are drawn, **regardless of whether it was attached after game
-  objects were added** (#977) - @lajbel
-- **(!)** The sprite data format has been changed to allow individual frames to
-  be on different GPU textures. Now `SpriteData.tex` doesn't exist, and
-  `SpriteData.frames` is a list of `Frame`s instead of a list of `Quad`s. A
-  `Frame` contains `tex` and `q` (quad) properties that contain that data.
-  (#1021) - @dragoncoder047
 - Updated the texture packer to use a new packing algorithm which may get more
   sprites onto the same texture, improving graphics batching performance
   (#1011) - @dragoncoder047
@@ -241,10 +254,15 @@ So your change should look like:
 - Added `buildConnectivityMap()` - @mflerackers
 - Added `buildConvexHull()` - @mflerackers
 
+### Breaking Changes
+
+- Added `AreaCompOpt.isSensor`. Areas without body or is sensor will no longer
+  be eligible for collisions - @mflerackers
+- `onClick(() => {})` was removed, use `onMousePress()` instead.
+  `onClick("tag", () => {});` stays the same - @lajbel
+
 ### Changed
 
-- **(!)** Added `AreaCompOpt.isSensor`. Areas without body or is sensor will no
-  longer be eligible for collisions - @mflerackers
 - Both worldPos and screenPos are properties now - @mflerackers
 
 ### Fixed
@@ -270,8 +288,7 @@ So your change should look like:
 
 ### Removed
 
-- **(!)** `onClick(() => {})` was removed, use `onMousePress()` instead.
-  `onClick("tag", () => {});` stays the same,
+
 
 ## [4000.0.0-alpha.25] - 2025-12-23
 
@@ -282,10 +299,13 @@ So your change should look like:
 - Global `retrieve()` method to get the objects with area within a certain
   rectangle - @mflerackers
 
+### Breaking Changes
+
+- You can no longer change the position of an object by doing obj.pos.x += 1.
+  You need to assign a new Vec2 or use moveBy instead - @mflerackers
+
 ### Changed
 
-- **(!)** You can no longer change the position of an object by doing obj.pos.x
-  += 1. You need to assign a new Vec2 or use moveBy instead - @mflerackers
 - Transforms are now only recalculated when needed. Thus static objects no
   longer increase computation in the transform phase - @mflerackers
 - Areas are now only recalculated when the area settings or (optional)
@@ -361,9 +381,6 @@ So your change should look like:
       },
   });
   ```
-
-- Added `skew` to text formatting, so now italics is possible - @dragoncoder047
-
 - Added **lifetime scopes**, a way to define the lifetime of an event handler
   using a specific scope, `scene`, `app` or a game object - @lajbel,
   @dragoncoder047
@@ -442,10 +459,12 @@ So your change should look like:
 
 - Added `skew` to text formatting, so now italics is possible - @dragoncoder047
 
-### Changed
+### Breaking Changes
 
-- (**!**) Renamed `onShow()` to `onTabShow()` and `onHide()` to `onTabHide()` -
+- Renamed `onShow()` to `onTabShow()` and `onHide()` to `onTabHide()` -
   @lajbel
+
+### Changed
 
 - In addition to being the `scene()` function, now `scene` is also a scope for
   scene event handlers - @lajbel
@@ -560,6 +579,11 @@ So your change should look like:
 - Added texture uniforms, in order to access more than one texture at a time in
   shaders - @mflerackers
 
+### Breaking Changes
+
+- `KAPLAYCtx` doesn't use generics anymore. Now, `KAPLAYCtxT` uses them -
+  @lajbel
+
 ### Fixed
 
 - Now error screen should be instantly shown - @lajbel
@@ -572,8 +596,6 @@ So your change should look like:
   // blue frog
   add([sprite("bean"), color(0x0000ff)]);
   ```
-- **(!)** `KAPLAYCtx` doesn't use generics anymore. Now, `KAPLAYCtxT` uses
-  them - @lajbel
 - Now, `kaplay` will return `KAPLAYCtx` or `KAPLAYCtxT` depending if it's using
   Advanced TypeScript Features or not - @lajbel
 - `loadShader()` now also checks for link errors as well as compile errors and
@@ -631,13 +653,15 @@ So your change should look like:
 - Added a mapping for PS5 (DualSense) gamepads, so now you can bind actions to
   the touchpad press (only works in Chrome for some reason) - @dragoncoder047
 
+### Breaking Changes
+
+- Renamed `KAPLAYOpt.tagsAsComponents` to `KAPLAYOpt.tagComponentIds` -
+  @lajbel
+
 ### Changed
 
 - Now `GameObjRaw.exists()` work for nested objects
 - Now moving mouse changes the value of `getLastInputDevice()` - @amyspark-ng
-- (**!**) Renamed `KAPLAYOpt.tagsAsComponents` to `KAPLAYOpt.tagComponentIds` -
-  @lajbel
-
 ### Fixed
 
 - Fixed shader error messages - @dragoncoder047
@@ -650,6 +674,10 @@ So your change should look like:
 
 - Added `loadSpriteFromFont()` for loading a bitmap font from a loaded sprite. -
   @dragoncoder047
+
+### Breaking Changes
+
+- `loadPedit()` was removed - @lajbel
 
 ### Changed
 
@@ -664,10 +692,6 @@ So your change should look like:
   @mflerackers
 - Fixed "add" event running twice in `addLevel()` tiles - @lajbel
 - Fixed blend component having a wrong ID - @lajbel
-
-### Removed
-
-- **(!)** `loadPedit()` was removed - @lajbel
 
 ## [4000.0.0-alpha.19] - 2025-05-16
 
@@ -746,12 +770,15 @@ So your change should look like:
   called from an `onUpdate()` and not reset the animation to frame 0 -
   @dragoncoder047
 
+### Breaking Changes
+
+- Now `z()` is global instead of relative - @mflerackers
+- Layers now work globally, no longer only between siblings - @mflerackers
+- Changed default behavior to `kaplay({ tagsAsComponents: false })`
+- `make()` was sent to doom - @lajbel
+
 ### Changed
 
-- **(!)** - Now `z()` is global instead of relative - @mflerackers
-- **(!)** Layers now work globally, no longer only between siblings -
-  @mflerackers
-- **(!)**: Changed default behavior to `kaplay({ tagsAsComponents: false })`
 - The physics engine creates less garbage - @mflerackers
 - Tag-based events are slightly faster - @dragoncoder047
 - Moved camera to the shader - @mflerackers
@@ -784,10 +811,6 @@ So your change should look like:
 - Fixed `PatrolComp` not going to last waypoint - @nojaf
 - Fixed various TypeScript types - @amyspark-ng, @lajbel, @KeSuave
 
-### Removed
-
-- **(!)** `make()` was sent to doom - @lajbel
-
 ---
 
 # Changelog for v3001
@@ -800,6 +823,8 @@ So your change should look like:
   TextMetrics props - @imaginarny
 
 ## [3001.0.19] - 2025-06-15
+
+### Fixed
 
 - Fixed `AreaComp#onClick()` attaching events to app, instead of object, so
   event wasn't being paused with `obj.paused` - @lajbel
@@ -1309,6 +1334,12 @@ kaplay({
 - Added evaluation of the first and second derivatives for all splines
 - Added higher order easing functions linear, steps and cubic-bezier
 
+### Breaking Changes
+
+- Removed compatibility to use two KAPLAY frames in the same page
+- Many TypeScript definitions were fixed, if you use TypeScript now maybe you
+  see new errors that make your code strict
+
 ### Changed
 
 - Now collision checks are only done if there's area objects
@@ -1363,9 +1394,6 @@ kaplay({
 
 ### Removed
 
-- **(!)** Removed compatibility to use two KAPLAY frames in the same page
-- **(!)** Many TypeScript definitions were fixed, if you use TypeScript now
-  maybe you see new errors that make your code strict
 - Fix error screen not showing with not Error object
 - Fix error where debug screen was scaling bad the blue rectangles
 - Fix error where error screen was not showing when the error was thrown in a
