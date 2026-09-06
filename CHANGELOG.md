@@ -106,6 +106,16 @@ So your change should look like:
 
 ## [4000.0.0-alpha.27.1] - 2026-05-12
 
+### Breaking Changes
+
+
+- Updated "explicit `LoadSpriteOpt.frames`" method of loading a sprite
+  with animations (via either `loadSprite()` or `loadSpriteAtlas()`) to use
+  pixel values for the coordinate space, which is more intuitive (#1061) -
+  @dragoncoder047
+- Renamed video `mute` parameter to `muted` to match the native API
+  (#1129) - @Stanko
+
 ### Added
 
 - Added a `repack: false` option to `loadSpite()` and a repack parameter to
@@ -116,14 +126,8 @@ So your change should look like:
 
 ### Changed
 
-- **(!)** Updated "explicit `LoadSpriteOpt.frames`" method of loading a sprite
-  with animations (via either `loadSprite()` or `loadSpriteAtlas()`) to use
-  pixel values for the coordinate space, which is more intuitive (#1061) -
-  @dragoncoder047
 - Added padding around edges of spritesheet to prevent stretch if uv ends up out
   of bounds (#1076) - @dragoncoder047
-- **(!)** Renamed video `mute` parameter to `muted` to match the native API
-  (#1129) - @Stanko
 
 ### Fixed
 
@@ -142,6 +146,21 @@ So your change should look like:
   (#1077) - @imaginarny, @mflerackers
 
 ## [4000.0.0-alpha.27] - 2026-03-19
+
+### Breaking Changes
+
+- The texture uv coordinates for primitives (solid- or gradient-filled
+  circles, rectangles, lines, and polygons) have now been changed to (1, 1)
+  instead of (0, 0), so shaders written for primitives will need to be updated.
+  (#1021) - @dragoncoder047
+- The global `onDraw()` handler's no-tag form now always draws before
+  all game objects are drawn, **regardless of whether it was attached after game
+  objects were added** (#977) - @lajbel
+- The sprite data format has been changed to allow individual frames to
+  be on different GPU textures. Now `SpriteData.tex` doesn't exist, and
+  `SpriteData.frames` is a list of `Frame`s instead of a list of `Quad`s. A
+  `Frame` contains `tex` and `q` (quad) properties that contain that data.
+  (#1021) - @dragoncoder047
 
 ### Added
 
@@ -169,23 +188,8 @@ So your change should look like:
 - Added `piecewiseBezier()` and `piecewiseCatmullRom()` to evaluate curves with
   multiple points - @mflerackers
 
-### Removed
-
-- **(!)** The texture uv coordinates for primitives (solid- or gradient-filled
-  circles, rectangles, lines, and polygons) have now been changed to (1, 1)
-  instead of (0, 0), so shaders written for primitives will need to be updated.
-  (#1021) - @dragoncoder047
-
 ### Changed
 
-- **(!)** The global `onDraw()` handler's no-tag form now always draws before
-  all game objects are drawn, **regardless of whether it was attached after game
-  objects were added** (#977) - @lajbel
-- **(!)** The sprite data format has been changed to allow individual frames to
-  be on different GPU textures. Now `SpriteData.tex` doesn't exist, and
-  `SpriteData.frames` is a list of `Frame`s instead of a list of `Quad`s. A
-  `Frame` contains `tex` and `q` (quad) properties that contain that data.
-  (#1021) - @dragoncoder047
 - Updated the texture packer to use a new packing algorithm which may get more
   sprites onto the same texture, improving graphics batching performance
   (#1011) - @dragoncoder047
@@ -224,6 +228,11 @@ So your change should look like:
 
 ## [4000.0.0-alpha.26] - 2026-01-12
 
+### Breaking Changes
+
+- Added `AreaCompOpt.isSensor`. Areas without body or isSensor will no
+  longer get any collision events - @mflerackers
+
 ### Added
 
 - Added `floodFill()` for puzzle games - @mflerackers
@@ -236,8 +245,6 @@ So your change should look like:
 
 ### Changed
 
-- **(!)** Added `AreaCompOpt.isSensor`. Areas without body or is sensor will no
-  longer be eligible for collisions - @mflerackers
 - Both worldPos and screenPos are properties now - @mflerackers
 
 ### Fixed
@@ -263,10 +270,16 @@ So your change should look like:
 
 ### Removed
 
-- **(!)** `onClick(() => {})` was removed, use `onMousePress()` instead.
-  `onClick("tag", () => {});` stays the same,
+- `onClick(() => {})` was removed, use `onMousePress()` instead.
+  `onClick("tag", () => {});` stays the same
 
 ## [4000.0.0-alpha.25] - 2025-12-23
+
+### Breaking Changes
+
+- You can no longer change the position of an object by doing
+  `obj.pos.x += NNN`. You need to assign a new Vec2 or use moveBy
+  instead - @mflerackers
 
 ### Added
 
@@ -277,8 +290,6 @@ So your change should look like:
 
 ### Changed
 
-- **(!)** You can no longer change the position of an object by doing obj.pos.x
-  += 1. You need to assign a new Vec2 or use moveBy instead - @mflerackers
 - Transforms are now only recalculated when needed. Thus static objects no
   longer increase computation in the transform phase - @mflerackers
 - Areas are now only recalculated when the area settings or (optional)
@@ -325,6 +336,11 @@ So your change should look like:
   in the options - @dragoncoder047
 
 ## [4000.0.0-alpha.23] - 2025-11-05
+
+### Breaking Changes
+
+- Renamed `onShow()` to `onTabShow()` and `onHide()` to `onTabHide()` -
+  @lajbel
 
 ### Added
 
@@ -436,9 +452,6 @@ So your change should look like:
 - Added `skew` to text formatting, so now italics is possible - @dragoncoder047
 
 ### Changed
-
-- (**!**) Renamed `onShow()` to `onTabShow()` and `onHide()` to `onTabHide()` -
-  @lajbel
 
 - In addition to being the `scene()` function, now `scene` is also a scope for
   scene event handlers - @lajbel
@@ -667,6 +680,13 @@ So your change should look like:
 > This version changelog covers versions 4000.0.0-alpha.0 through
 > 4000.0.0-alpha.19, as we didn't have a concise changelog strategy before.
 
+### Breaking Changes
+
+- Now `z()` is global instead of relative - @mflerackers
+- Layers now work globally, no longer only between siblings -
+  @mflerackers
+- Changed default behavior to `kaplay({ tagsAsComponents: false })`
+
 ### Added
 
 - Added `fakeMouse()` to create a fake mouse cursor - @lajbel
@@ -741,10 +761,6 @@ So your change should look like:
 
 ### Changed
 
-- **(!)** - Now `z()` is global instead of relative - @mflerackers
-- **(!)** Layers now work globally, no longer only between siblings -
-  @mflerackers
-- **(!)**: Changed default behavior to `kaplay({ tagsAsComponents: false })`
 - The physics engine creates less garbage - @mflerackers
 - Tag-based events are slightly faster - @dragoncoder047
 - Moved camera to the shader - @mflerackers
@@ -779,7 +795,8 @@ So your change should look like:
 
 ### Removed
 
-- **(!)** `make()` was sent to doom - @lajbel
+- **(!)** `make()` creating detached objects just caused more problems that it
+  solved, so it was removed - @lajbel
 
 ---
 
