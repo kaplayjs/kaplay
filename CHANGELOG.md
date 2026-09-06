@@ -55,6 +55,9 @@ So your change should look like:
 - Added `KAPLAYOpt.lockResolution` to lock the canvas buffer resolution to the
   defined size and scale when resized by the `letterbox` option (#1106) -
   @imaginarny
+- **(!)** Added `KAPLAYOpt.debugKeys` to add and modify on runtime the buttons
+  used for debug actions, this makes it so onButtonPress now accepts
+  `PropertyKey` instead of only `string` - @amyspark-ng
 
 ### Changed
 
