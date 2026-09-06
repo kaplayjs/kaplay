@@ -1,5 +1,7 @@
 # Changelog
 
+<!-- markdownlint-disable no-duplicate-heading blanks-around-fences single-h1 -->
+
 All notable changes to this project will be documented in this file.
 
 The format is (mostly) based on
@@ -44,6 +46,9 @@ So your change should look like:
   @mflerackers
 - Added xorshift32 as random generator (#1057) - @mflerackers
 - **(examples)** Added a new `gacha` example! (#1057) - @imaginarny
+- Added the `LevelCompOpt.charsPerTile` option for the `level()` component and
+  `addLevel` which lets you use more than one character per tile, that way you
+  can make clearer maps without having to resort to Unicode - @dragoncoder047
 - Added Alea as random generator (#1097) - @Stanko
 - Added `nextFrame()` helper function to defer/run a function on the next frame
   (#1112) - @imaginarny
