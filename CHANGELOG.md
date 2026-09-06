@@ -14,8 +14,8 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 Hey, KAPLAY Dev! Add your new changes in [unreleased] heading, below one of
 these heading:
 
-- Added
 - Breaking Changes
+- Added
 - Removed
 - Changed
 - Fixed
@@ -31,19 +31,23 @@ So your change should look like:
 
 ## [unreleased]
 
-### Added
-
-- added a new ghost (#6767) - @lajbel
-
 ### Breaking Changes
 
 - `new RNG()` and `setRNG()` now use config objects instead of the
   string/custom rng parameter (#1097) - @Stanko
 
+### Added
+
+- added a new ghost (#6767) - @lajbel
 
 [DO IT IF YOU DON'T WANT A LAJBEL VISIT AT NIGHT] -->
 
 ## [unreleased]
+
+### Breaking Changes
+
+- `new RNG()` and `setRNG()` now use config objects instead of the
+  string/custom rng parameter (#1097) - @Stanko
 
 ### Added
 
@@ -62,11 +66,6 @@ So your change should look like:
 - Added `KAPLAYOpt.lockResolution` to lock the canvas buffer resolution to the
   defined size and scale when resized by the `letterbox` option (#1106) -
   @imaginarny
-
-### Breaking Changes
-
-- `new RNG()` and `setRNG()` now use config objects instead of the
-  string/custom rng parameter (#1097) - @Stanko
 
 ### Changed
 
@@ -121,14 +120,6 @@ So your change should look like:
 
 ## [4000.0.0-alpha.27.1] - 2026-05-12
 
-### Added
-
-- Added a `repack: false` option to `loadSpite()` and a repack parameter to
-  `loadSpriteAtlas()`, for faster loading if you're packing stuff at build-time
-  (#1063) - @dragoncoder047
-- Added `loop` parameter and `onEnd` event to the video component (#1129) -
-  @Stanko
-
 ### Breaking Changes
 
 - Updated "explicit `LoadSpriteOpt.frames`" method of loading a sprite with
@@ -136,6 +127,14 @@ So your change should look like:
   values for the coordinate space, which is more intuitive (#1061) -
   @dragoncoder047
 - Renamed video `mute` parameter to `muted` to match the native API (#1129) -
+  @Stanko
+
+### Added
+
+- Added a `repack: false` option to `loadSpite()` and a repack parameter to
+  `loadSpriteAtlas()`, for faster loading if you're packing stuff at build-time
+  (#1063) - @dragoncoder047
+- Added `loop` parameter and `onEnd` event to the video component (#1129) -
   @Stanko
 
 ### Changed
@@ -160,6 +159,21 @@ So your change should look like:
   (#1077) - @imaginarny, @mflerackers
 
 ## [4000.0.0-alpha.27] - 2026-03-19
+
+### Breaking Changes
+
+- The texture uv coordinates for primitives (solid- or gradient-filled
+  circles, rectangles, lines, and polygons) have now been changed to (1, 1)
+  instead of (0, 0), so shaders written for primitives will need to be updated.
+  (#1021) - @dragoncoder047
+- The global `onDraw()` handler's no-tag form now always draws before all game
+  objects are drawn, **regardless of whether it was attached after game
+  objects were added** (#977) - @lajbel
+- The sprite data format has been changed to allow individual frames to be on
+  different GPU textures. Now `SpriteData.tex` doesn't exist, and
+  `SpriteData.frames` is a list of `Frame`s instead of a list of `Quad`s. A
+  `Frame` contains `tex` and `q` (quad) properties that contain that data.
+  (#1021) - @dragoncoder047
 
 ### Added
 
@@ -187,22 +201,7 @@ So your change should look like:
 - Added `piecewiseBezier()` and `piecewiseCatmullRom()` to evaluate curves with
   multiple points - @mflerackers
 
-### Breaking Changes
-
-- The texture uv coordinates for primitives (solid- or gradient-filled
-  circles, rectangles, lines, and polygons) have now been changed to (1, 1)
-  instead of (0, 0), so shaders written for primitives will need to be updated.
-  (#1021) - @dragoncoder047
-- The global `onDraw()` handler's no-tag form now always draws before all game
-  objects are drawn, **regardless of whether it was attached after game
-  objects were added** (#977) - @lajbel
-- The sprite data format has been changed to allow individual frames to be on
-  different GPU textures. Now `SpriteData.tex` doesn't exist, and
-  `SpriteData.frames` is a list of `Frame`s instead of a list of `Quad`s. A
-  `Frame` contains `tex` and `q` (quad) properties that contain that data.
-  (#1021) - @dragoncoder047
-
-### Changed
+## Changed
 
 - Updated the texture packer to use a new packing algorithm which may get more
   sprites onto the same texture, improving graphics batching performance
@@ -244,6 +243,13 @@ So your change should look like:
 
 ## [4000.0.0-alpha.26] - 2026-01-12
 
+### Breaking Changes
+
+- Added `AreaCompOpt.isSensor`. Areas without body or is sensor will no longer
+  be eligible for collisions - @mflerackers
+- `onClick(() => {})` was removed, use `onMousePress()` instead.
+  `onClick("tag", () => {});` stays the same - @lajbel
+
 ### Added
 
 - Added `floodFill()` for puzzle games - @mflerackers
@@ -253,13 +259,6 @@ So your change should look like:
   collision system, which works in world space - @mflerackers
 - Added `buildConnectivityMap()` - @mflerackers
 - Added `buildConvexHull()` - @mflerackers
-
-### Breaking Changes
-
-- Added `AreaCompOpt.isSensor`. Areas without body or is sensor will no longer
-  be eligible for collisions - @mflerackers
-- `onClick(() => {})` was removed, use `onMousePress()` instead.
-  `onClick("tag", () => {});` stays the same - @lajbel
 
 ### Changed
 
@@ -286,11 +285,12 @@ So your change should look like:
   @mflerackers
 - Sticky platforms work again - @mflerackers
 
-### Removed
-
-
-
 ## [4000.0.0-alpha.25] - 2025-12-23
+
+### Breaking Changes
+
+- You can no longer change the position of an object by doing obj.pos.x += 1.
+  You need to assign a new Vec2 or use moveBy instead - @mflerackers
 
 ### Added
 
@@ -298,11 +298,6 @@ So your change should look like:
   move the object - @lajbel
 - Global `retrieve()` method to get the objects with area within a certain
   rectangle - @mflerackers
-
-### Breaking Changes
-
-- You can no longer change the position of an object by doing obj.pos.x += 1.
-  You need to assign a new Vec2 or use moveBy instead - @mflerackers
 
 ### Changed
 
@@ -352,6 +347,11 @@ So your change should look like:
   in the options - @dragoncoder047
 
 ## [4000.0.0-alpha.23] - 2025-11-05
+
+### Breaking Changes
+
+- Renamed `onShow()` to `onTabShow()` and `onHide()` to `onTabHide()` -
+  @lajbel
 
 ### Added
 
@@ -459,11 +459,6 @@ So your change should look like:
 
 - Added `skew` to text formatting, so now italics is possible - @dragoncoder047
 
-### Breaking Changes
-
-- Renamed `onShow()` to `onTabShow()` and `onHide()` to `onTabHide()` -
-  @lajbel
-
 ### Changed
 
 - In addition to being the `scene()` function, now `scene` is also a scope for
@@ -488,6 +483,11 @@ So your change should look like:
 - Fixed FPS cap not working correctly - @mflerackers, @dragoncoder047
 
 ## [4000.0.0-alpha.22] - 2025-10-9
+
+### Breaking Changes
+
+- `KAPLAYCtx` doesn't use generics anymore. Now, `KAPLAYCtxT` uses them -
+  @lajbel
 
 ### Added
 
@@ -579,11 +579,6 @@ So your change should look like:
 - Added texture uniforms, in order to access more than one texture at a time in
   shaders - @mflerackers
 
-### Breaking Changes
-
-- `KAPLAYCtx` doesn't use generics anymore. Now, `KAPLAYCtxT` uses them -
-  @lajbel
-
 ### Fixed
 
 - Now error screen should be instantly shown - @lajbel
@@ -608,6 +603,11 @@ So your change should look like:
   before drawing - @mflerackers
 
 ## [4000.0.0-alpha.21] - 2025-08-07
+
+### Breaking Changes
+
+- Renamed `KAPLAYOpt.tagsAsComponents` to `KAPLAYOpt.tagComponentIds` -
+  @lajbel
 
 ### Added
 
@@ -653,11 +653,6 @@ So your change should look like:
 - Added a mapping for PS5 (DualSense) gamepads, so now you can bind actions to
   the touchpad press (only works in Chrome for some reason) - @dragoncoder047
 
-### Breaking Changes
-
-- Renamed `KAPLAYOpt.tagsAsComponents` to `KAPLAYOpt.tagComponentIds` -
-  @lajbel
-
 ### Changed
 
 - Now `GameObjRaw.exists()` work for nested objects
@@ -670,14 +665,14 @@ So your change should look like:
 
 ## [4000.0.0-alpha.20] - 2025-06-15
 
+### Breaking Changes
+
+- `loadPedit()` was removed - @lajbel
+
 ### Added
 
 - Added `loadSpriteFromFont()` for loading a bitmap font from a loaded sprite. -
   @dragoncoder047
-
-### Breaking Changes
-
-- `loadPedit()` was removed - @lajbel
 
 ### Changed
 
@@ -697,6 +692,15 @@ So your change should look like:
 
 > This version changelog covers versions 4000.0.0-alpha.0 through
 > 4000.0.0-alpha.19, as we didn't have a concise changelog strategy before.
+
+### Breaking Changes
+
+- Now `z()` is global instead of relative - @mflerackers
+- Layers now work globally, no longer only between siblings - @mflerackers
+- Changed default behavior to `kaplay({ tagsAsComponents: false })`
+- `make()` was sent to doom - @lajbel
+
+
 
 ### Added
 
@@ -769,13 +773,6 @@ So your change should look like:
 - Added `SpriteAnimPlayOpt.preventRestart` to allow `SpriteComp.play()` to be
   called from an `onUpdate()` and not reset the animation to frame 0 -
   @dragoncoder047
-
-### Breaking Changes
-
-- Now `z()` is global instead of relative - @mflerackers
-- Layers now work globally, no longer only between siblings - @mflerackers
-- Changed default behavior to `kaplay({ tagsAsComponents: false })`
-- `make()` was sent to doom - @lajbel
 
 ### Changed
 
@@ -1088,6 +1085,12 @@ kaplay({
 
 ## [3001.0.0] - 2024-10-31
 
+### Breaking Changes
+
+- Removed compatibility to use two KAPLAY frames in the same page
+- Many TypeScript definitions were fixed, if you use TypeScript now maybe you
+  see new errors that make your code strict
+
 ### Added
 
 - Added `getTreeRoot()` to get the game's root object, which is the parent of
@@ -1333,12 +1336,6 @@ kaplay({
 - Added quadratic bezier and Catmull-Rom evaluation
 - Added evaluation of the first and second derivatives for all splines
 - Added higher order easing functions linear, steps and cubic-bezier
-
-### Breaking Changes
-
-- Removed compatibility to use two KAPLAY frames in the same page
-- Many TypeScript definitions were fixed, if you use TypeScript now maybe you
-  see new errors that make your code strict
 
 ### Changed
 
