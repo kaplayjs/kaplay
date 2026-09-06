@@ -15,18 +15,6 @@ Replace this text with an overview describing the changes included in this PR.
 - [ ] I'm aware of the
       [contributing guidelines](https://github.com/kaplayjs/kaplay/blob/master/CONTRIBUTING.md).
 
-## Changelog
-
-- [ ] My entry doesn't need to be added to the changelog by [Changelog Policy](https://github.com/kaplayjs/kaplay/wiki/Changelogging#changelog-matrix).
-
-### Added
-
-### Fixed
-
-### Changed
-
-### Removed
-
 ## Reviewer Checks
 
 **Don't modify this section.** It is for reviewers to check when reviewing the PR.
