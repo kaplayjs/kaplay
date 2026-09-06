@@ -1114,12 +1114,15 @@ export const initApp = (
         "/",
         ...(opt.debug !== false
             ? [
-                opt.debugButtons?.inspect || DEBUG_SYMBOLS["inspect"],
-                opt.debugButtons?.clearlogs || DEBUG_SYMBOLS["clearlogs"],
-                opt.debugButtons?.slowdown || DEBUG_SYMBOLS["slowdown"],
-                opt.debugButtons?.pause || DEBUG_SYMBOLS["pause"],
-                opt.debugButtons?.speedup || DEBUG_SYMBOLS["speedup"],
-                opt.debugButtons?.stepframe || DEBUG_SYMBOLS["stepframe"],
+                opt.debugButtons?.inspect?.keyboard as Key || "f1",
+                opt.debugButtons?.clearlogs?.keyboard as Key
+                || "f2",
+                opt.debugButtons?.slowdown?.keyboard as Key
+                || "f7",
+                opt.debugButtons?.pause?.keyboard as Key || "f8",
+                opt.debugButtons?.speedup?.keyboard as Key || "f9",
+                opt.debugButtons?.stepframe?.keyboard as Key
+                || "f10",
             ]
             : []),
     ]);
