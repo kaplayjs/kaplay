@@ -2745,10 +2745,10 @@ export interface KAPLAYCtx {
      * @subgroup Buttons API
      */
     onButtonDown(
-        btn: string | string[],
-        action: (btn: string) => void,
+        btn: PropertyKey | PropertyKey[],
+        action: (btn: PropertyKey) => void,
     ): KEventController;
-    onButtonDown(action: (btn: string) => void): KEventController;
+    onButtonDown(action: (btn: PropertyKey) => void): KEventController;
     /**
      * Register an event that runs when user presses a defined button
      * (like "jump") on any input (keyboard, gamepad).
@@ -2762,10 +2762,10 @@ export interface KAPLAYCtx {
      * @subgroup Buttons API
      */
     onButtonPress(
-        btn: string | string[],
-        action: (btn: string) => void,
+        btn: PropertyKey | PropertyKey[],
+        action: (btn: PropertyKey) => void,
     ): KEventController;
-    onButtonPress(action: (btn: string) => void): KEventController;
+    onButtonPress(action: (btn: PropertyKey) => void): KEventController;
     /**
      * Register an event that runs when user releases a defined button
      * (like "jump") on any input (keyboard, gamepad).
@@ -2779,10 +2779,10 @@ export interface KAPLAYCtx {
      * @subgroup Buttons API
      */
     onButtonRelease(
-        btn: string | string[],
-        action: (btn: string) => void,
+        btn: PropertyKey | PropertyKey[],
+        action: (btn: PropertyKey) => void,
     ): KEventController;
-    onButtonRelease(action: (btn: string) => void): KEventController;
+    onButtonRelease(action: (btn: PropertyKey) => void): KEventController;
     /**
      * Register an event that runs when tab is shown.
      *

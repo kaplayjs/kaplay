@@ -1,6 +1,7 @@
 import type { App } from "../app/app";
+import type { ButtonBinding } from "../app/inputBindings";
 import type { InternalAudioCtx } from "../audio/audio";
-import { LOG_MAX } from "../constants/general";
+import { DEBUG_SYMBOLS, LOG_MAX } from "../constants/general";
 import type { FrameRenderer } from "../core/frameRendering";
 import type { Game } from "../game/game";
 import type { AppGfxCtx } from "../gfx/gfxApp";
@@ -143,6 +144,26 @@ export interface Debug {
      * @since v3001.0
      */
     numObjects(): number;
+    /**
+     * Get the input binding from a action debug button name.
+     *
+     * @param btn - The button to get binding for.
+     *
+     * @since v4000.0
+     * @group Input
+     * @subgroup Buttons API, Debug
+     */
+    getButton(btn: keyof typeof DEBUG_SYMBOLS): ButtonBinding;
+    /**
+     * Set a input binding for one of the debug actions.
+     *
+     * @param btn - The button to set binding for.
+     *
+     * @since v4000.0
+     * @group Input
+     * @subgroup Buttons API, Debug
+     */
+    setButton(btn: keyof typeof DEBUG_SYMBOLS, binding: ButtonBinding): void;
 }
 
 export const createDebug = (
@@ -208,6 +229,19 @@ export const createDebug = (
             else {
                 audio.ctx.resume();
             }
+        },
+        getButton(btn): ButtonBinding {
+            return _k.app.state.buttons[DEBUG_SYMBOLS[btn]];
+        },
+        setButton(btn, binding) {
+            _k.app.state.buttons[DEBUG_SYMBOLS[btn]] = {
+                ..._k.app.state.buttons[DEBUG_SYMBOLS[btn]],
+                ...binding,
+            };
+            _k.app.state.buttonHandler.updateBinding(
+                DEBUG_SYMBOLS[btn],
+                binding,
+            );
         },
     } satisfies Debug;
 
