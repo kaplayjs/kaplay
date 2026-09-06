@@ -6,7 +6,6 @@ to KAPLAY.
 ## Prerequisites
 
 - [Node.js](https://nodejs.org/en), >24.X.X
-- [npm package manager](https://npmjs.com/), >9.1
 
 ## Cloning the repository
 
@@ -19,6 +18,12 @@ cd kaplay
 npm install 
 # Run dev command
 npm dev
+```
+
+Additionally, for running tests you will need to run the following command:
+
+```sh
+npm run test:setup # This will install setup and install browsers for playwright.
 ```
 
 ## Editing examples
