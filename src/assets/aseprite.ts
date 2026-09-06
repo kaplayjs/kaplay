@@ -51,10 +51,10 @@ export function loadAseprite(
             const size = data.meta.size;
             const frames = data.frames.map((f: any) => {
                 return new Quad(
-                    f.frame.x,// / size.w,
-                    f.frame.y,// / size.h,
-                    f.frame.w,// / size.w,
-                    f.frame.h,// / size.h,
+                    f.frame.x, // / size.w,
+                    f.frame.y, // / size.h,
+                    f.frame.w, // / size.w,
+                    f.frame.h, // / size.h,
                 );
             });
             const anims: Record<string, number | SpriteAnim> = {};
