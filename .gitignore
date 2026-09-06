@@ -11,3 +11,10 @@ replit.nix
 /.obsidian
 tsconfig.vitest-temp.json
 src/index.ts
+
+# Playwright
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/
+/playwright/.auth/

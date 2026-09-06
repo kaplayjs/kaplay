@@ -1,8 +1,10 @@
+// To test touch, enable touch simulation in dev tools responsive design mode
+// then press and hold mouse down and move around
+// ensure that red dot follows correctly in fullscreen (F)
+
 kaplay({
-    scale: 7,
-    width: 400,
-    height: 200,
-    letterbox: true,
+    width: 800,
+    height: 600,
     logMax: 1,
     logTime: Infinity,
 });
