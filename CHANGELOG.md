@@ -6,7 +6,6 @@ The format is (mostly) based on
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project
 adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-- Breaking changes are marked with: **(!)**.
 - [Jump to v3001 changelog](#changelog-for-v3001).
 
 <!-- [CHANGELOG GUIDELINES PLEASE FOLLOW]
@@ -38,6 +37,13 @@ So your change should look like:
 
 ## [unreleased]
 
+### Breaking Changes
+
+- `new RNG()` and `setRNG()` now use config objects instead of the
+  string/custom rng parameter (#1097) - @Stanko
+- The rotation/angle constraint's `scale` option has been renamed
+  to `ratio` (#976) - @dragoncoder047
+
 ### Added
 
 - Made random generator algorithm configurable using `setRNG()` (#1057) -
@@ -55,12 +61,13 @@ So your change should look like:
 
 ### Changed
 
+- Updated the rotation/angle constraint to track multiple turns of the
+  source object, so that non-integer ratios don't result in jumping at
+  the boundary (#976) - @dragoncoder047
 - Added an optional parameter `rng` to all random related functions to pass the
   rng to use (#1057) - @mflerackers
 - RNG can now be set and seeded on init (as `KAPLAYOpt.rng`) and in runtime
   (#1097) - @Stanko
-- **(!)** `new RNG()` and `setRNG()` now use config objects instead of the
-  string/custom rng parameter (#1097) - @Stanko
 - Improved `text` component performance by separating text transform and
   formatting, reducing update calls for both dynamic and (especially) static
   text (#1125) - @imaginarny
