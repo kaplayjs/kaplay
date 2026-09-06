@@ -52,6 +52,8 @@ So your change should look like:
 - Added a `type` field to `KGamepad` (`"ps4"`, `"ps5"`, `"playstation"`,
   `"xbox"`, `"switch"`, a custom string, or `undefined`) for picking
   button-glyph assets based on controller family (#1119) - @CEREBR4L
+- Added `KAPLAYOpt.doubleClickDelay` to set the global delay between what is considered a double click, and `setDoubleClickDelay()` to change it at runtime (#1152) - @amyspark-ng 
+- Added the `onMouseDoublePress()` and `isMouseDoublePressed()` functions (#1152) - @amyspark-ng 
 
 ### Changed
 
