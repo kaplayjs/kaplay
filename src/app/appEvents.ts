@@ -21,15 +21,13 @@ export function initAppEvents() {
 
     _k.app.onResize(() => {
         const fixedSize = _k.globalOpt.width && _k.globalOpt.height;
-        if (fixedSize && !_k.globalOpt.letterbox) {
-            return;
+        if (
+            !fixedSize
+            || (_k.globalOpt.letterbox && !_k.globalOpt.lockResolution)
+        ) {
+            _k.canvas.width = _k.canvas.offsetWidth * _k.gfx.pixelDensity;
+            _k.canvas.height = _k.canvas.offsetHeight * _k.gfx.pixelDensity;
         }
-
-        _k.canvas.width = _k.canvas.offsetWidth * _k.gfx.pixelDensity;
-        _k.canvas.height = _k.canvas.offsetHeight * _k.gfx.pixelDensity;
-        _k.app.updateCanvasScale();
-
-        updateViewport();
 
         if (!fixedSize) {
             _k.gfx.frameBuffer.free();
@@ -38,6 +36,7 @@ export function initAppEvents() {
                 _k.gfx.ggl.gl.drawingBufferWidth,
                 _k.gfx.ggl.gl.drawingBufferHeight,
             );
+
             _k.gfx.width = _k.gfx.ggl.gl.drawingBufferWidth
                 / _k.gfx.pixelDensity
                 / _k.globalOpt.scale;
@@ -45,6 +44,8 @@ export function initAppEvents() {
                 / _k.gfx.pixelDensity
                 / _k.globalOpt.scale;
         }
+
+        updateViewport();
     });
 
     if (_k.globalOpt.debug !== false) {
