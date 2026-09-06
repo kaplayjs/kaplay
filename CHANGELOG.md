@@ -108,6 +108,8 @@ So your change should look like:
   duration (#1117) - @imaginarny
 - Fixed triangulate by updating the convexity of nearby vertices after removing
   a concave vertex during ear cutting (#1134) - @mflerackers
+- Fixed `time()` that kept increasing while `debug.paused` was true (#1137) -
+  @amyspark-ng
 
 ## [4000.0.0-alpha.27.1] - 2026-05-12
 
