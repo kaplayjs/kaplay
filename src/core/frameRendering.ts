@@ -80,14 +80,29 @@ export const createFrameRenderer = (
         gfx.width = gfx.gl.drawingBufferWidth / pixelDensity;
         gfx.height = gfx.gl.drawingBufferHeight / pixelDensity;
 
+        // When `crisp: "smooth"` is set and the user didn't apply their own
+        // post effect, upscale the game through the box-filter shader.
+        const upscaleShader = !gfx.postShader && gfx.smoothShader;
+
         drawTexture({
             flipY: true,
             tex: gfx.frameBuffer.tex,
             pos: new Vec2(gfx.viewport.x, gfx.viewport.y),
             width: gfx.viewport.width,
             height: gfx.viewport.height,
-            shader: gfx.postShader,
-            uniform: typeof gfx.postShaderUniform === "function"
+            shader: upscaleShader ? gfx.smoothShader : gfx.postShader,
+            uniform: upscaleShader
+                ? {
+                    u_texSize: new Vec2(
+                        gfx.frameBuffer.tex.width,
+                        gfx.frameBuffer.tex.height,
+                    ),
+                    u_resolution: new Vec2(
+                        gfx.viewport.width * pixelDensity,
+                        gfx.viewport.height * pixelDensity,
+                    ),
+                }
+                : typeof gfx.postShaderUniform === "function"
                 ? gfx.postShaderUniform()
                 : gfx.postShaderUniform,
             fixed: true,
