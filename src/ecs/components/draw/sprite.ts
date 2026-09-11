@@ -259,6 +259,11 @@ export function sprite(
     let _shape: Rect | undefined;
     let _width = 0;
     let _height = 0;
+    // Track sprite loads when user sets a new sprite
+    // Using the request id instead of sprite name to make it future proof for unloading sprites
+    // If unloading is implemented it would be possible to load a different sprite under the same name
+    let spriteRequestId = 0;
+    const getSpriteRequestId = () => ++spriteRequestId;
 
     return {
         id: "sprite",
@@ -293,13 +298,21 @@ export function sprite(
             return src.toString();
         },
 
-        set sprite(src) {
-            const spr = resolveSprite(src);
+        set sprite(newSpriteSrc) {
+            const spr = resolveSprite(newSpriteSrc);
 
             if (spr) {
-                spr.onLoad(spr =>
-                    setSpriteData(this as unknown as GameObj<SpriteComp>, spr)
-                );
+                const requestId = getSpriteRequestId();
+                src = newSpriteSrc;
+
+                spr.onLoad(spr => {
+                    if (requestId === spriteRequestId) {
+                        setSpriteData(
+                            this as unknown as GameObj<SpriteComp>,
+                            spr,
+                        );
+                    }
+                });
             }
         },
 
@@ -338,17 +351,25 @@ export function sprite(
         },
 
         add(this: GameObj<SpriteComp>) {
-            const spr = resolveSprite(src);
+            const initialSrc = src;
+            const requestId = getSpriteRequestId();
+            const spr = resolveSprite(initialSrc);
 
             if (spr) {
                 // The sprite exists
-                spr.onLoad(spr => setSpriteData(this, spr));
+                spr.onLoad(spr => {
+                    if (requestId === spriteRequestId) {
+                        setSpriteData(this, spr);
+                    }
+                });
             }
             else {
                 // The sprite may be loaded later in the script, check again when all resources have been loaded
-                _k.k.onLoad(() =>
-                    setSpriteData(this, resolveSprite(src)!.data)
-                );
+                _k.k.onLoad(() => {
+                    if (requestId === spriteRequestId) {
+                        setSpriteData(this, resolveSprite(initialSrc)!.data);
+                    }
+                });
             }
         },
 
