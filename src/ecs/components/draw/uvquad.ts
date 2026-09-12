@@ -5,6 +5,17 @@ import type { Comp, GameObj } from "../../../types";
 import { nextRenderAreaVersion } from "../physics/area";
 
 /**
+ * The serialized {@link uvquad `uvquad()`} component.
+ *
+ * @group Components
+ * @subgroup Component Serialization
+ */
+export interface SerializedUvquadComp {
+    w: number;
+    h: number;
+}
+
+/**
  * The {@link uvquad `uvquad()`} component.
  *
  * @group Components
@@ -24,6 +35,7 @@ export interface UVQuadComp extends Comp {
      * @since v3000.0
      */
     renderArea(): Rect;
+    serialize(): SerializedUvquadComp;
 }
 
 export function uvquad(
@@ -72,5 +84,15 @@ export function uvquad(
         inspect() {
             return `uvquad: (${Math.ceil(_width)}w, ${Math.ceil(_height)})h`;
         },
+        serialize() {
+            return {
+                w: this.width,
+                h: this.height,
+            };
+        },
     };
+}
+
+export function uvquadFactory(data: SerializedUvquadComp) {
+    return uvquad(data.w, data.h);
 }

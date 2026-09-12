@@ -37,7 +37,7 @@ export interface LevelComp extends Comp {
     /**
      * Spawn a tile from a component list.
      *
-     * @returns The spawned game object, or null if the obj hasn't components.
+     * @returns The spawned game object, or null if the obj has no components.
      */
     spawn<T>(obj: CompList<T>, p: Vec2): GameObj<T> | null;
     spawn<T>(sym: CompList<T>, x: number, y: number): GameObj<T> | null;
@@ -87,6 +87,9 @@ export interface LevelComp extends Comp {
     invalidateNavigationMap(): void;
     onNavigationMapChanged(cb: () => void): KEventController;
 
+    /**
+     * Note: For `wildcardTile`, only symbols already present in the level map and their results will be serialized.
+     */
     serialize(): any;
 }
 
@@ -705,10 +708,12 @@ export function level(map: string[], opt: LevelCompOpt): LevelComp {
             data.tiles = {}; // { symbol: prefab };
             // tiles maps symbols to functions returning a list of components
             // To serialize this, we get the list of components for each symbol, and serialize them
-            for (const key of Object.keys(opt.tiles)) {
-                const compsAndTags = opt.tiles[key](vec2());
+            const serializeComps = (
+                compsAndTags: CompList<Comp> | null | undefined,
+            ) => {
+                if (!compsAndTags) return [];
                 const comps: any = {};
-                const tags = [];
+                const tags: string[] = [];
                 for (const compOrTag of compsAndTags) {
                     if (typeof compOrTag === "string") {
                         tags.push(compOrTag);
@@ -721,10 +726,27 @@ export function level(map: string[], opt: LevelCompOpt): LevelComp {
                     }
                 }
                 if (tags.length) comps.tags = tags;
-                data.tiles[key] = comps;
+                return comps;
+            };
+            for (const key of Object.keys(opt.tiles)) {
+                data.tiles[key] = serializeComps(opt.tiles[key](vec2()));
             }
-            // No idea how to handle this yet
-            data.wildcardTile = {}; // prefab
+            // Since wildcardTile is a function, only symbols already present
+            // in the level map and their results can be safely serialized
+            if (opt.wildcardTile) {
+                const symbols = Object.keys(data.tiles);
+                data.wildcardTile = {};
+                map.forEach((row, i) => {
+                    const keys = row.split("");
+                    numColumns = Math.max(keys.length, numColumns);
+                    keys.forEach((key, j) => {
+                        if (symbols.includes(key)) return;
+                        data.wildcardTile[key] = serializeComps(
+                            opt.wildcardTile!(key, vec2(j, i)),
+                        );
+                    });
+                });
+            }
             return data;
         },
     };
@@ -733,15 +755,29 @@ export function level(map: string[], opt: LevelCompOpt): LevelComp {
 export function levelFactory(data: any) {
     const opt: any = { tileWidth: data.tileWidth, tileHeight: data.tileHeight };
     opt.tiles = {};
-    for (const key in Object.keys(data.tiles)) {
+    for (const key in data.tiles) {
         const d = data.tiles[key];
-        const tags = d.tags;
+        const tags = d?.tags ?? [];
         opt.tiles[key] = (pos: Vec2) => {
-            const comps: Comp[] = Object.keys(d).filter(k => k != "tags").map(
+            const comps: Comp[] = Object.keys(d).filter(k => k !== "tags").map(
                 id => deserializeComp(id, d[id]),
             );
             return [...comps, ...tags];
         };
+    }
+    if (data.wildcardTile) {
+        const tiles: Record<string, CompList<Comp>> = {};
+        for (const key in data.wildcardTile) {
+            const d = data.wildcardTile[key];
+            const tags = d?.tags ?? [];
+            tiles[key] = [
+                ...(Object.keys(d).filter(k => k !== "tags").map(id =>
+                    deserializeComp(id, d[id])
+                )),
+                ...tags,
+            ];
+        }
+        opt.wildcardTile = (sym: string, pos: Vec2) => tiles[sym];
     }
     return level([], opt);
 }

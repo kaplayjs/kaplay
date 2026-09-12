@@ -1,12 +1,12 @@
 import type { Comp } from "../../../types";
 
 /**
- * The serialized {@link color `color()`} component.
+ * The serialized {@link named `named()`} component.
  *
  * @group Components
  * @subgroup Component Serialization
  */
-export interface SerializeNameComp {
+export interface SerializedNamedComp {
     name: string;
 }
 
@@ -19,7 +19,7 @@ export interface SerializeNameComp {
 export interface NamedComp extends Comp {
     /** The name assigned to this object. */
     name: string;
-    serialize(): SerializeNameComp;
+    serialize(): SerializedNamedComp;
 }
 
 export function named(name: string): NamedComp {
@@ -34,6 +34,6 @@ export function named(name: string): NamedComp {
     };
 }
 
-export function nameFactory(data: any) {
+export function namedFactory(data: any) {
     return named(data.name);
 }

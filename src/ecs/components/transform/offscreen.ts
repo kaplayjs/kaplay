@@ -33,6 +33,7 @@ export interface OffScreenComp extends Comp {
      * Register an event that runs when object enters view.
      */
     onEnterScreen(action: () => void): KEventController;
+    serialize(): OffScreenCompOpt;
 }
 
 /**
@@ -130,5 +131,18 @@ export function offscreen(opt: OffScreenCompOpt = {}): OffScreenComp {
             }
             else this.onUpdate(() => check(this));
         },
+        serialize() {
+            const data: OffScreenCompOpt = {};
+            if (opt.hide) data.hide = opt.hide;
+            if (opt.pause) data.pause = opt.pause;
+            if (opt.unpause) data.unpause = opt.unpause;
+            if (opt.destroy) data.destroy = opt.destroy;
+            if (opt.distance) data.distance = opt.distance;
+            return data;
+        },
     };
+}
+
+export function offscreenFactory(data: OffScreenCompOpt) {
+    return offscreen(data);
 }

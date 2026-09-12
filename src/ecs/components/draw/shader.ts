@@ -7,7 +7,7 @@ import type { Comp } from "../../../types";
  * @group Components
  * @subgroup Component Serialization
  */
-export interface SerializeShaderComp {
+export interface SerializedShaderComp {
     shader: string;
 }
 
@@ -26,7 +26,10 @@ export interface ShaderComp extends Comp {
      * The shader ID.
      */
     shader: string;
-    serialize(): SerializeShaderComp;
+    /**
+     * Note: Only simple shaders with no `uniform` passed are supported.
+     */
+    serialize(): SerializedShaderComp;
 }
 
 export function shader(
@@ -55,6 +58,6 @@ export function shader(
     };
 }
 
-export function shaderFactory(data: any) {
+export function shaderFactory(data: SerializedShaderComp) {
     return shader(data.shader);
 }

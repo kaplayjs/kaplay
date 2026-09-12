@@ -537,6 +537,7 @@ export function body(opt: BodyCompOpt = {}): BodyComp {
 
         serialize(): any {
             const data: any = {};
+            if (opt.damping) data.damping = opt.damping;
             if (opt.jumpForce) data.jumpForce = opt.jumpForce;
             if (opt.maxVelocity) data.maxVelocity = opt.maxVelocity;
             if (opt.gravityScale) data.gravityScale = opt.gravityScale;
@@ -550,10 +551,11 @@ export function body(opt: BodyCompOpt = {}): BodyComp {
 
 export function bodyFactory(data: any) {
     const opt: any = {};
+    if (data.damping) opt.damping = data.damping;
     if (data.jumpForce) opt.jumpForce = data.jumpForce;
     if (data.maxVelocity) opt.maxVelocity = data.maxVelocity;
     if (data.gravityScale) opt.gravityScale = data.gravityScale;
-    if (data.isStatic) opt.isStatic = opt.isStatic;
+    if (data.isStatic) opt.isStatic = data.isStatic;
     if (data.stickToPlatform) opt.stickToPlatform = data.stickToPlatform;
     if (data.mass) opt.mass = data.mass;
     return body(opt);

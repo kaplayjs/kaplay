@@ -8,18 +8,33 @@ import { blendFactory } from "../ecs/components/draw/blend";
 import { circleFactory } from "../ecs/components/draw/circle";
 import { colorFactory } from "../ecs/components/draw/color";
 import { ellipseFactory } from "../ecs/components/draw/ellipse";
+import { fillFactory } from "../ecs/components/draw/fill";
 import { maskFactory } from "../ecs/components/draw/mask";
 import { opacityFactory } from "../ecs/components/draw/opacity";
 import { outlineFactory } from "../ecs/components/draw/outline";
 import { rectFactory } from "../ecs/components/draw/rect";
+import { shaderFactory } from "../ecs/components/draw/shader";
 import { spriteFactory } from "../ecs/components/draw/sprite";
 import { textFactory } from "../ecs/components/draw/text";
+import { uvquadFactory } from "../ecs/components/draw/uvquad";
+import { videoFactory } from "../ecs/components/draw/video";
+import { levelFactory } from "../ecs/components/level/level";
+import { healthFactory } from "../ecs/components/misc/health";
+import { namedFactory } from "../ecs/components/misc/named";
+import { stateFactory } from "../ecs/components/misc/state";
+import { stayFactory } from "../ecs/components/misc/stay";
+import { areaFactory } from "../ecs/components/physics/area";
+import { bodyFactory } from "../ecs/components/physics/body";
 import { anchorFactory } from "../ecs/components/transform/anchor";
 import { fixedFactory } from "../ecs/components/transform/fixed";
+import { followFactory } from "../ecs/components/transform/follow";
+import { layerFactory } from "../ecs/components/transform/layer";
 import { moveFactory } from "../ecs/components/transform/move";
+import { offscreenFactory } from "../ecs/components/transform/offscreen";
 import { posFactory } from "../ecs/components/transform/pos";
 import { rotateFactory } from "../ecs/components/transform/rotate";
 import { scaleFactory } from "../ecs/components/transform/scale";
+import { skewFactory } from "../ecs/components/transform/skew";
 import { zFactory } from "../ecs/components/transform/z";
 import { registerPrefabFactory } from "../ecs/entity/prefab";
 import { createScopeHandlers } from "../events/scopeHandlers";
@@ -108,13 +123,15 @@ export const createEngine = (gopt: KAPLAYOpt) => {
     // Transform Serialization
     registerPrefabFactory("anchor", anchorFactory);
     registerPrefabFactory("fixed", fixedFactory);
-    // `follow()` missing, we should figure a way to serialize an object reference (probably use named())
-    // `layer()` missing, needs investigation
+    registerPrefabFactory("follow", followFactory);
+    registerPrefabFactory("health", healthFactory);
+    registerPrefabFactory("layer", layerFactory);
     registerPrefabFactory("move", moveFactory);
-    // `offscreen()` missing
+    registerPrefabFactory("offscreen", offscreenFactory);
     registerPrefabFactory("pos", posFactory);
     registerPrefabFactory("rotate", rotateFactory);
     registerPrefabFactory("scale", scaleFactory);
+    registerPrefabFactory("skew", skewFactory);
     registerPrefabFactory("z", zFactory);
 
     // Draw Serialization
@@ -123,7 +140,8 @@ export const createEngine = (gopt: KAPLAYOpt) => {
     registerPrefabFactory("color", colorFactory);
     // `drawon()` missing
     registerPrefabFactory("ellipse", ellipseFactory);
-    // `fadeIn()` missing
+    registerPrefabFactory("fill", fillFactory);
+    // `fadeIn()` missing, but wasn't it deprecated?
     registerPrefabFactory("mask", maskFactory);
     registerPrefabFactory("opacity", opacityFactory);
     registerPrefabFactory("outline", outlineFactory);
@@ -132,9 +150,21 @@ export const createEngine = (gopt: KAPLAYOpt) => {
     // `raycast()` missing, anyway, is not a component
     registerPrefabFactory("rect", rectFactory);
     registerPrefabFactory("sprite", spriteFactory);
+    registerPrefabFactory("shader", shaderFactory); // partial support (no uniform)
     registerPrefabFactory("text", textFactory);
-    // `uvquad()` missing
-    // `video()` missing
+    registerPrefabFactory("uvquad", uvquadFactory);
+    registerPrefabFactory("video", videoFactory);
+
+    // Physics Serialization
+    registerPrefabFactory("area", areaFactory);
+    registerPrefabFactory("body", bodyFactory);
+
+    // Other & Misc Serialization
+    registerPrefabFactory("animate", levelFactory);
+    registerPrefabFactory("level", levelFactory);
+    registerPrefabFactory("named", namedFactory);
+    registerPrefabFactory("state", stateFactory);
+    registerPrefabFactory("stay", stayFactory);
 
     return {
         globalOpt: opt,
@@ -152,7 +182,7 @@ export const createEngine = (gopt: KAPLAYOpt) => {
         gc: [] as (() => void)[],
         sceneScope,
         appScope,
-        // Patch, k it's only avaible after running kaplay()
+        // Patch, k it's only available after running kaplay()
         k: null as unknown as KAPLAYCtx,
         startLoop() {
             startEngineLoop(

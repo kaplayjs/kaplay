@@ -888,6 +888,7 @@ export function area(
             }
             if (this.restitution) data.restitution = this.restitution;
             if (this.friction) data.friction = this.friction;
+            if (this.isSensor) data.isSensor = this.isSensor;
             return data;
         },
     };
@@ -909,5 +910,6 @@ export function areaFactory(data: any) {
     }
     if (data.restitution) opt.restitution = data.restitution;
     if (data.friction) opt.friction = data.friction;
+    if (data.isSensor) opt.isSensor = data.isSensor;
     return area(opt);
 }
