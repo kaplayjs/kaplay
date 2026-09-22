@@ -49,7 +49,8 @@ export const createCanvas = (gopt: MustKAPLAYOpt) => {
     }
 
     // Crisping
-    if (gopt.crisp) {
+    // "smooth" upscaling is done by the shader, not the browser. See frameRendering.ts
+    if (gopt.crisp === true) {
         // chrome only supports pixelated and firefox only supports crisp-edges
         styles.push("image-rendering: pixelated");
         styles.push("image-rendering: crisp-edges");

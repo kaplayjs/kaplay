@@ -316,10 +316,18 @@ export interface KAPLAYOpt {
      */
     pixelDensity?: number;
     /**
-     * Disable antialias and enable sharp pixel display. If you see rendering artifacts, set `pixelDensity`
+     * Disable antialias and enable sharp pixel display.
+     *
+     * - `true`/`false`: toggles the sharpening of the whole canvas with the CSS property `image-rendering`,
+     *   letting the browser upscale it as-is.
+     * - `"smooth"`: upscales the game with a box-filter shader, keeping pixels
+     *   crisp while anti-aliasing their edges. Good compromise when the canvas
+     *   scale isn't an integer (e.g. with `letterbox`).
+     *
+     * If you see rendering artifacts, set `pixelDensity`
      * param to `Math.min(devicePixelRatio, 2)` and `scale` to FHD resolution (e.g. 960x540 would need scale 2). Will result in up to 4K.
      */
-    crisp?: boolean;
+    crisp?: boolean | "smooth";
     /**
      * The canvas DOM element to use. If empty will create one.
      */

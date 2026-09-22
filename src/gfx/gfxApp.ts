@@ -9,10 +9,11 @@ import {
 import { type Color, rgb } from "../math/color";
 import { Mat23 } from "../math/math";
 import { Vec2 } from "../math/Vec2";
-import type { MustKAPLAYOpt } from "../types";
+import type { MustKAPLAYOpt, TextureOpt } from "../types";
 import type { FontAtlas } from "./formatText";
 import { FrameBuffer } from "./FrameBuffer";
 import { BatchRenderer, type GfxCtx, Texture } from "./gfx";
+import { SMOOTH_SCALE_FRAG } from "./shaders/smoothScale";
 import type { Frame } from "./TexPacker";
 
 export type AppGfxCtx = {
@@ -30,6 +31,8 @@ export type AppGfxCtx = {
     /** Post Shader, used in postEffect() */
     postShader: string | null;
     postShaderUniform: Uniform | (() => Uniform) | null;
+    /** Box-filter upscaling shader, used when `crisp: "smooth"` */
+    smoothShader: Shader | null;
     renderer: BatchRenderer;
     pixelDensity: number;
     transform: Mat23;
@@ -81,16 +84,24 @@ export const initAppGfx = (
     const pixelDensity = gopt.pixelDensity ?? 1;
     const { gl } = gfx;
 
+    // The smooth upscaler samples the frame texture directly when scaling
+    // down, so the texture needs linear filtering to resolve it
+    const frameBufferOpt: TextureOpt | undefined = gopt.crisp === "smooth"
+        ? { filter: "linear" }
+        : undefined;
+
     const frameBuffer = (gopt.width && gopt.height)
         ? new FrameBuffer(
             gfx,
             gopt.width * pixelDensity * gopt.scale,
             gopt.height * pixelDensity * gopt.scale,
+            frameBufferOpt,
         )
         : new FrameBuffer(
             gfx,
             gl.drawingBufferWidth,
             gl.drawingBufferHeight,
+            frameBufferOpt,
         );
 
     let bgColor: null | Color = null;
@@ -174,6 +185,9 @@ export const initAppGfx = (
         frameBuffer: frameBuffer,
         postShader: null as string | null,
         postShaderUniform: null as Uniform | (() => Uniform) | null,
+        smoothShader: gopt.crisp === "smooth"
+            ? makeShader(gfx, DEF_VERT, SMOOTH_SCALE_FRAG)
+            : null,
         renderer: renderer,
         pixelDensity: pixelDensity,
 

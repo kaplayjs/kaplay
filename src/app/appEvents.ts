@@ -34,6 +34,9 @@ export function initAppEvents() {
                 _k.gfx.ggl,
                 _k.gfx.ggl.gl.drawingBufferWidth,
                 _k.gfx.ggl.gl.drawingBufferHeight,
+                _k.globalOpt.crisp === "smooth"
+                    ? { filter: "linear" }
+                    : undefined,
             );
 
             _k.gfx.width = _k.gfx.ggl.gl.drawingBufferWidth
