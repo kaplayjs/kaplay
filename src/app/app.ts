@@ -489,7 +489,7 @@ export const initApp = (
     }
 
     function isMouseDoublePressed(m: MouseButton = "left"): boolean {
-        return mouseDoublePressed && isEqOrIncludes(state.mouseState.press, m);
+        return clickCount == 2 && state.mouseState.pressed.has(m);
     }
 
     function isMouseMoved(): boolean {
@@ -628,17 +628,20 @@ export const initApp = (
         );
     });
 
-    const onMousePress = overload2((action: (m: MouseButton) => void) => {
-        return state.events.on("mousePress", (m) => action(m));
-    }, (
-        mouse: MouseButton | MouseButton[],
-        action: (m: MouseButton) => void,
-    ) => {
-        return state.events.on(
-            "mousePress",
-            (m) => isEqOrIncludes(mouse, m) && action(m),
-        );
-    });
+    const onMousePress = overload2(
+        (action: (m: MouseButton, clickCount: number) => void) => {
+            return state.events.on("mousePress", (m) => action(m, clickCount));
+        },
+        (
+            mouse: MouseButton | MouseButton[],
+            action: (m: MouseButton, clickCount: number) => void,
+        ) => {
+            return state.events.on(
+                "mousePress",
+                (m) => isEqOrIncludes(mouse, m) && action(m, clickCount),
+            );
+        },
+    );
 
     const onMouseRelease = overload2((action: (m: MouseButton) => void) => {
         return state.events.on("mouseRelease", (m) => action(m));
@@ -658,10 +661,7 @@ export const initApp = (
 
     const onMouseDoublePress = overload2((action: (m: MouseButton) => void) => {
         return state.events.on("mousePress", (m) => {
-            if (
-                timeSinceLastClick < (_k.globalOpt.doubleClickDelay ?? 0.5)
-                && waitingForDoubleClick
-            ) action(m);
+            if (clickCount == 2) action(m);
         });
     }, (
         mouse: MouseButton | MouseButton[],
@@ -670,11 +670,7 @@ export const initApp = (
         return state.events.on(
             "mousePress",
             (m) => {
-                isEqOrIncludes(mouse, m)
-                    && (timeSinceLastClick
-                            < (_k.globalOpt.doubleClickDelay ?? 0.5)
-                        && waitingForDoubleClick)
-                    && action(m);
+                if (isEqOrIncludes(mouse, m) && clickCount == 2) action(m);
             },
         );
     });
@@ -838,8 +834,6 @@ export const initApp = (
         state.keyState.process(state);
         state.mouseState.process(state);
         state.buttonHandler.process(state);
-        mouseDoublePressed = false;
-        timeSinceLastClick += state.dt;
     }
 
     function resetInput() {
@@ -1061,9 +1055,8 @@ export const initApp = (
         });
     };
 
-    let timeSinceLastClick = 0;
-    let mouseDoublePressed = false;
-    let waitingForDoubleClick = false;
+    let lastClickTime = 0;
+    let clickCount = 0;
     const MOUSE_BUTTONS: MouseButton[] = [
         "left",
         "middle",
@@ -1077,24 +1070,23 @@ export const initApp = (
             const m = MOUSE_BUTTONS[e.button];
             if (!m) return;
 
+            // double mouse press code
+            const now = performance.now() / 1000;
+            const timeSinceLastClick = now - lastClickTime;
+
+            if (timeSinceLastClick <= (_k.globalOpt.doubleClickDelay ?? 0.5)) {
+                clickCount++;
+            }
+            else {
+                clickCount = 1;
+            }
+
+            lastClickTime = now;
+
+            // is calculated before so onMouseDoublePress has the most updated clickCount
             state.lastInputDevice = "mouse";
             state.buttonHandler.processMousedown(m, state);
             state.mouseState.press(m, state);
-
-            // double mouse press code
-            if (
-                timeSinceLastClick < (_k.globalOpt.doubleClickDelay ?? 0.5)
-                && waitingForDoubleClick
-            ) {
-                mouseDoublePressed = true;
-                waitingForDoubleClick = false;
-            }
-            else {
-                mouseDoublePressed = false;
-                waitingForDoubleClick = true;
-            }
-
-            timeSinceLastClick = 0;
         });
     };
 

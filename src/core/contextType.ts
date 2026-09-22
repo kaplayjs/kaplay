@@ -2366,7 +2366,9 @@ export interface KAPLAYCtx {
      * @group Input
      * @subgroup Mouse
      */
-    onMousePress(action: (m: MouseButton) => void): KEventController;
+    onMousePress(
+        action: (m: MouseButton, clickCount: number) => void,
+    ): KEventController;
     /**
      * Register an event that runs when user double-clicks the mouse.
      *
