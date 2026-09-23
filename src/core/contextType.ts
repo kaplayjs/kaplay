@@ -290,6 +290,7 @@ export interface KAPLAYCtx {
      *
      * @returns The added game object that contains all properties and methods each component offers.
      * @group Game Obj
+     * @subgroup Prefabs
      */
     addPrefab<T extends CompList<unknown>>(
         nameOrObject: SerializedGameObj | string,
@@ -312,6 +313,7 @@ export interface KAPLAYCtx {
      * @returns The serialized game object.
      * @since v4000.0
      * @group Game Obj
+     * @subgroup Prefabs
      */
     createPrefab(name: string, obj: GameObj): SerializedGameObj;
     /**
@@ -333,6 +335,34 @@ export interface KAPLAYCtx {
      * @subgroup Prefabs
      */
     createPrefab(obj: GameObj): SerializedGameObj;
+    /**
+     * Registers a function that deserializes a custom component.
+     *
+     * @param id - The component id.
+     * @param method - The function that deserializes the component using its serialized data.
+     *
+     * @example
+     * ```js
+     * // custom component
+     * const ohhi = (name = "mark") => ({
+     *     id: "ohhi",
+     *     add() { debug.log(`ohhi ${name}!`) },
+     *     // this is where "data" comes from, called by createPrefab()
+     *     serialize() { return { name } };
+     * });
+     *
+     * // factory method will be used to deserialize the component
+     * // when later used with addPrefab()
+     * registerPrefabFactory("ohhi", data => {
+     *     return ohhi(data.name);
+     * });
+     * ```
+     *
+     * @since v4000.0
+     * @group Game Obj
+     * @subgroup Prefabs
+     */
+    registerPrefabFactory(id: string, method: (data: any) => Comp): void;
     /**
      * Remove and re-add the game obj, without triggering add / destroy events.
      *
