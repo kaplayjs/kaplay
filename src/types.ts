@@ -18,6 +18,9 @@ import type { RNGConfig } from "./math/random";
 import type { Vec2 } from "./math/Vec2";
 import type { Defined, MergeObj } from "./utils/types";
 
+/**
+ * Tip: Tag can be made a singleton by including it in the {@link KAPLAYOpt.singletonTags} array, e.g. ["player", "focused"].
+ */
 export type Tag = string;
 
 /**
@@ -456,6 +459,13 @@ export interface KAPLAYOpt {
      */
     tagComponentIds?: boolean;
     /**
+     * Makes the listed tags unique.
+     *
+     * Only one object can have a given tag at a time, e.g. ["player", "focused"]
+     * means there will be only one "player" or object that can be "focused".
+     */
+    singletonTags?: Tag[];
+    /**
      * Padding used when adding sprites to texture atlas.
      *
      * @default 2
@@ -598,6 +608,11 @@ export type GetOpt = {
      * Get only by tags or components.
      */
     only?: "tags" | "comps";
+    /**
+     * The operator to use when searching for multiple tags / comps.
+     * @default "and"
+     */
+    op?: "and" | "or";
 };
 
 /**
