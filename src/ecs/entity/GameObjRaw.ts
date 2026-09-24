@@ -488,9 +488,10 @@ export interface GameObjRaw {
     onKeyRelease: KAPLAYCtx["onKeyRelease"];
     onCharInput: KAPLAYCtx["onCharInput"];
     onMouseDown: KAPLAYCtx["onMouseDown"];
-    onMouseDoublePress: KAPLAYCtx["onMouseDoublePress"];
     onMousePress: KAPLAYCtx["onMousePress"];
     onMouseRelease: KAPLAYCtx["onMouseRelease"];
+    onMouseMultiPress: KAPLAYCtx["onMouseMultiPress"];
+    onMouseDoublePress: KAPLAYCtx["onMouseDoublePress"];
     onMouseMove: KAPLAYCtx["onMouseMove"];
     onTouchStart: KAPLAYCtx["onTouchStart"];
     onTouchMove: KAPLAYCtx["onTouchMove"];

@@ -60,7 +60,8 @@ bean.onMouseDoublePress(() => {
         scale(),
         outline(8, Color.fromHex("#1f102a")),
         rect(650, 450, { radius: 10 }),
-        pos(center()),
+        // Prevent weird outline fringes on odd screen sizes
+        pos(center().add(center().x % 2, center().y % 2)),
         anchor("center"),
         area(),
     ]);
@@ -144,7 +145,7 @@ const apple = add([
 
 // Using an old regular onMousePress, we'll be able to check and count how many clicks have been given in a row
 let clicksInARow = 0;
-apple.onMousePress((button, clickCount) => {
+apple.onMouseMultiPress(1, (button, clickCount) => {
     if (!apple.isHovering()) return;
     tween(2.2, 2, 0.15, (p) => apple.scale = vec2(p), easings.easeOutQuad);
     clicksInARow = clickCount;
