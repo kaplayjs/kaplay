@@ -425,6 +425,9 @@ export const initApp = (
             if (state.skipTime) {
                 state.skipTime = false;
             }
+            else if (_k.debug.paused) {
+                update(processInput, resetInput);
+            }
             else {
                 updateAccumulator += observedDt;
                 fixedUpdateAccumulator += observedDt;
