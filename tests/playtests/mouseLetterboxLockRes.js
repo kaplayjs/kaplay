@@ -1,8 +1,10 @@
 kaplay({
-    scale: 7,
     width: 400,
-    height: 200,
+    height: 300,
+    scale: 2,
     letterbox: true,
+    lockResolution: true,
+    crisp: true,
     logMax: 1,
     logTime: Infinity,
 });
