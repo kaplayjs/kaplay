@@ -165,7 +165,7 @@ apple.onMultiClick(1, (button, clickCount) => {
         },
     ]);
     n.fadeOut(0.25).onEnd(() => n.destroy());
-}, "right");
+});
 
 let multipleClickText = add([
     text("<- Click fast to count!"),

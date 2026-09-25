@@ -6,7 +6,7 @@ export function multiClick(
     n: number,
     cb: (btn: MouseButton, count: number) => void,
     delay?: number,
-    button: MouseButton = "left",
+    button?: MouseButton | MouseButton[],
 ) {
     // stores the state of the mouse button (how many clicks total, clicks in a row, n goal and the timer)
     // nth means clicks toward current target
@@ -23,8 +23,12 @@ export function multiClick(
 
     // returns a function that runs when you call onMouseMultiPress
     // btn defaults to "left" in case this is called without one
-    return (btn = button ?? "left" as MouseButton) => {
-        if (button !== btn) return;
+    return (btn = "left" as MouseButton) => {
+        if (
+            button && !(typeof button === "string"
+                ? button === btn
+                : button.includes(btn))
+        ) return;
 
         // gets the state of that mouse button
         const s = getState(btn);

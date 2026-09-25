@@ -706,16 +706,16 @@ export function area(
         onClick(
             this: GameObj<AreaComp>,
             action: (btn: MouseButton) => void,
-            btn: MouseButton = "left",
+            btn: MouseButton,
         ): KEventController {
             startClickHandler();
-            return this.on("click", (b) => b === btn && action(b));
+            return this.on("click", (b) => (!btn || b === btn) && action(b));
         },
 
         onDoubleClick(
             this: GameObj<AreaComp>,
             action: (btn: MouseButton) => void,
-            btn: MouseButton = "left",
+            btn: MouseButton,
             delay?: number,
         ): KEventController {
             startClickHandler();
@@ -726,7 +726,7 @@ export function area(
             this: GameObj<AreaComp>,
             n: number,
             action: (btn: MouseButton) => void,
-            btn: MouseButton = "left",
+            btn: MouseButton,
             delay?: number,
         ): KEventController {
             startClickHandler();
