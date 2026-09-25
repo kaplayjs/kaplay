@@ -79,6 +79,13 @@ export const fakeMouse = (opt: FakeMouseOpt = {
             lastPos = this.pos.clone();
 
             _k.game.fakeMouse = this;
+
+            // runs every frame the fakeMouse moves at all
+            this.on("fakeMouseMove", (keyboard: boolean) => {
+                // if it's being moved by keyboard update the kaplay's mouse position
+                // to the screen pos of the fakeMouse
+                if (keyboard) _k.app.state.mousePos = this.screenPos;
+            });
         },
         destroy() {
             _k.game.fakeMouse = null;
@@ -93,13 +100,16 @@ export const fakeMouse = (opt: FakeMouseOpt = {
             deltaPos = this.pos.sub(lastPos);
             lastPos = this.pos.clone();
 
-            if (this.deltaPos.len() > 0) {
-                // TODO: does this even do anything?
-                this.trigger("fakeMouseMove", this.deltaPos);
-            }
-
+            // if the fakeMouse it's being moved by the mouse no problem
             if (opt.followMouse && _k.app.isMouseMoved()) {
                 this.screenPos = _k.app.mousePos();
+                this.trigger("fakeMouseMove", false);
+            }
+
+            // if the fakeMouse has been moved by the mouse hasn't, that means it's been moved by the keyboard
+            // so we have to update the actual mousePos stored in app.state to match the cursor
+            if (deltaPos.len() > 0 && !_k.app.isMouseMoved()) {
+                this.trigger("fakeMouseMove", true);
             }
         },
         press(this: FakeMouse, btn = "left") {
