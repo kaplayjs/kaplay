@@ -68,9 +68,9 @@ So your change should look like:
 - Added `KAPLAYOpt.lockResolution` to lock the canvas buffer resolution to the
   defined size and scale when resized by the `letterbox` option (#1106) -
   @imaginarny
-- Added `FakeMouseComp.scrollBy()` to trigger `onScroll()` (https://github.com/kaplayjs/kaplay/pull/1159) - @amyspark-ng
-- Added `FakeMouseComp.deltaPos` to see how much the position of the FakeMouse has changed in the last frame (not comparable to `mouseDeltaPos()`) since they move differently (https://github.com/kaplayjs/kaplay/pull/1159) - @amyspark-ng
-- Added `btn: MouseButton` parameter to `fakeMouse.press()` that defaults to left (https://github.com/kaplayjs/kaplay/pull/1159) - @amyspark-ng
+- Added `FakeMouseComp.scrollBy()` to trigger `onScroll()` (#1159) - @amyspark-ng
+- Added `FakeMouseComp.deltaPos` to see how much the position of the FakeMouse has changed in the last frame (not comparable to `mouseDeltaPos()`) since they move differently (https#1159) - @amyspark-ng
+- Added `btn: MouseButton` parameter to `fakeMouse.press()` that defaults to left (#1159) - @amyspark-ng
 
 ### Changed
 
@@ -122,6 +122,7 @@ So your change should look like:
   duration (#1117) - @imaginarny
 - Fixed triangulate by updating the convexity of nearby vertices after removing
   a concave vertex during ear cutting (#1134) - @mflerackers
+- Fixed KAPLAY's mouse position not being updated when moving the FakeMouse by keyboard, causing it to not retrieve hovered objects by it (#1159) - @amyspark-ng
 
 ## [4000.0.0-alpha.27.1] - 2026-05-12
 
