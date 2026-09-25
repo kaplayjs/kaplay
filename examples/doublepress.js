@@ -1,4 +1,5 @@
 kaplay({
+    // We can set custom double click delay, default is 0.5
     doubleClickDelay: 0.25,
     font: "happy",
 });
@@ -39,9 +40,7 @@ const bean = add([
 
 let windowOpen = false;
 
-bean.onMousePress(() => {
-    // This line exists so the code below only runs when bean.isHovering() is true
-    if (!bean.isHovering()) return;
+bean.onClick(() => {
     tween(2.2, 2, 0.15, (p) => bean.scale = vec2(p), easings.easeOutQuad);
 });
 
@@ -143,28 +142,30 @@ const apple = add([
     },
 ]);
 
-// Using an old regular onMousePress, we'll be able to check and count how many clicks have been given in a row
-let clicksInARow = 0;
-apple.onMouseMultiPress(1, (button, clickCount) => {
-    if (!apple.isHovering()) return;
+// There is also onMouseMultiClick() where you can check for custom click count, even 1
+// We can also use area() version of the function instead where we don't have to check for hover first
+apple.onMultiClick(1, (button, clickCount) => {
     tween(2.2, 2, 0.15, (p) => apple.scale = vec2(p), easings.easeOutQuad);
-    clicksInARow = clickCount;
 
     // Add a number that shows how many clicks in a row
     const n = add([
-        text(`(${clicksInARow})`),
+        text(`(${clickCount})`),
         color("#1f102a"),
         opacity(),
         pos(apple.pos.sub(-50, 50)),
         {
             update() {
-                // If the clicks in a row have been 3, we'll output a "triple!" text there
-                if (clicksInARow == 3) this.text = `(${clicksInARow}) Triple!`;
+                // If the clicks in a row equals 3, we'll output a "Triple!" text there
+                if (clickCount == 3) this.text = `(${clickCount}) Triple!`;
+                // Or each consecutive 3rd click counts as a combo!
+                else if (clickCount > 3 && clickCount % 3 == 0) {
+                    this.text = `(${clickCount}) Triple x${clickCount / 3}!`;
+                }
             },
         },
     ]);
     n.fadeOut(0.25).onEnd(() => n.destroy());
-});
+}, "right");
 
 let multipleClickText = add([
     text("<- Click fast to count!"),
