@@ -1,4 +1,4 @@
-type Func = (...args: any[]) => any;
+type Func<R = any> = (...args: any[]) => R;
 
 export function overload2<A extends Func, B extends Func>(
     fn1: A,
@@ -8,6 +8,16 @@ export function overload2<A extends Func, B extends Func>(
         const al = args.length;
         if (al === fn1.length) return fn1(...args);
         if (al === fn2.length) return fn2(...args);
+    }) as A & B;
+}
+
+export function overload2if<A extends Func, B extends Func>(
+    fn1: A,
+    fn2: B,
+    isFn1: Func<boolean>,
+): A & B {
+    return ((...args) => {
+        return isFn1(...args) ? fn1(...args) : fn2(...args);
     }) as A & B;
 }
 

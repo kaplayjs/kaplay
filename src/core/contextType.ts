@@ -2366,7 +2366,9 @@ export interface KAPLAYCtx {
      * @group Input
      * @subgroup Mouse
      */
-    onMousePress(action: (m: MouseButton) => void): KEventController;
+    onMousePress(
+        action: (m: MouseButton) => void,
+    ): KEventController;
     /**
      * Register an event that runs when user clicks mouse.
      *
@@ -2445,6 +2447,127 @@ export interface KAPLAYCtx {
     onMouseRelease(
         btn: MouseButton | MouseButton[],
         action: (m: MouseButton) => void,
+    ): KEventController;
+    /**
+     * Register an event that runs when user clicks the mouse n times.
+     *
+     * @param n - The amount of times the user has to click the mouse for the function to run.
+     * @param action - The function that runs when user clicks the mouse n times.
+     * @param delay - Custom time between clicks for the function to run (defaults to {@link KAPLAYOpt.doubleClickDelay} or 0.5).
+     *
+     * @example
+     * ```js
+     * // Make ultra attack on triple click
+     * onMouseMultiPress(3, () => {
+     *     ultraAttack()
+     * });
+     * ```
+     *
+     * You can also check for the amount of clicks in a row like this:
+     * @example
+     * ```js
+     * onMouseMultiPress(1, (button, clickCount) => {
+     *      // This code will run once per click, but you can check how many clicks have been done in a row
+     *
+     *      if (clickCount == 4) { //... }
+     * })
+     * ```
+     *
+     * @returns The event controller.
+     * @since v4000.0
+     * @group Input
+     * @subgroup Mouse
+     */
+    onMouseMultiPress(
+        n: number,
+        action: (m: MouseButton, clickCount: number) => void,
+        delay?: number,
+    ): KEventController;
+    /**
+     * Register an event that runs when user clicks the mouse n times.
+     *
+     * @param n - The amount of times the user has to click the mouse for the function to run.
+     * @param button - The mouse button to check the clicks for.
+     * @param action - The function that is run when user clicks the mouse n times.
+     * @param delay - Custom time between clicks for the function to run. (defaults to KAPLAYOpt.doubleClickDelay if not to 0.5)
+     *
+     * @example
+     * ```js
+     * // Make ultra attack on triple click
+     * onMouseMultiPress(3, () => {
+     *     ultraAttack()
+     * });
+     * ```
+     *
+     * You can also check for the amount of clicks in a row like this:
+     *
+     * @example
+     * ```js
+     * onMouseMultiPress(1, (button, clickCount) => {
+     *      // This code will run once per click, but you can check how many clicks have been done in a row
+     *
+     *      if (clickCount == 4) { //... }
+     * })
+     * ```
+     *
+     * @returns The event controller.
+     * @since v4000.0
+     * @group Input
+     * @subgroup Mouse
+     */
+    onMouseMultiPress(
+        n: number,
+        button: MouseButton,
+        action: (m: MouseButton, clickCount: number) => void,
+        delay?: number,
+    ): KEventController;
+    /**
+     * Register an event that runs when user double-clicks the mouse.
+     *
+     * @param action - The function that is run when user clicks double clicks the mouse.
+     * @param delay - Custom time between clicks for the function to run. (defaults to KAPLAYOpt.doubleClickDelay if not to 0.5)
+     *
+     * @example
+     * ```js
+     * // open game window when bean.png is double pressed
+     * onMouseDoublePress(() => {
+     *     openWindow(bean)
+     * });
+     * ```
+     *
+     * @returns The event controller.
+     * @since v4000.0
+     * @group Input
+     * @subgroup Mouse
+     */
+    onMouseDoublePress(
+        action: (m: MouseButton) => void,
+        delay?: number,
+    ): KEventController;
+    /**
+     * Register an event that runs when user double-clicks the mouse.
+     *
+     * @param button - The mouse button to check the clicks for.
+     * @param action - The function that is run when user clicks double clicks the mouse.
+     * @param delay - Custom time between clicks for the function to run. (defaults to KAPLAYOpt.doubleClickDelay if not to 0.5)
+     *
+     * @example
+     * ```js
+     * // open game window when bean.png is double pressed
+     * onMouseDoublePress(() => {
+     *     openWindow(bean)
+     * });
+     * ```
+     *
+     * @returns The event controller.
+     * @since v4000.0
+     * @group Input
+     * @subgroup Mouse
+     */
+    onMouseDoublePress(
+        button: MouseButton,
+        action: (m: MouseButton) => void,
+        delay?: number,
     ): KEventController;
     /**
      * Register an event that runs whenever user moves the mouse.
@@ -4017,6 +4140,16 @@ export interface KAPLAYCtx {
      */
     mouseDeltaPos(): Vec2;
     /**
+     * Changes the time between double clicks in seconds.
+     *
+     * @example
+     * ```js
+     * //  Now double clicks will be recognized with even as much as 1 second between clicks.
+     * setDoubleClickDelay(1);
+     * ```
+     */
+    setDoubleClickDelay(val: number): void;
+    /**
      * If any or certain key(s) are currently down.
      *
      * @param k - The key(s) to check.
@@ -4162,6 +4295,31 @@ export interface KAPLAYCtx {
      * @subgroup Mouse
      */
     isMousePressed(btn?: MouseButton | MouseButton[]): boolean;
+    /**
+     * If mouse buttons was just double pressed
+     *
+     * @param btn - The button(s) to check.
+     *
+     * @since v4000.0
+     * @group Input
+     * @subgroup Mouse
+     */
+    isMouseMultiPressed(
+        clickCount: number,
+        btn?: MouseButton | MouseButton[],
+    ): boolean;
+    /**
+     * If mouse buttons was just double pressed
+     *
+     * @param btn - The button(s) to check.
+     *
+     * @since v4000.0
+     * @group Input
+     * @subgroup Mouse
+     */
+    isMouseDoublePressed(
+        btn?: MouseButton | MouseButton[],
+    ): boolean;
     /**
      * If mouse buttons are just released last frame.
      *

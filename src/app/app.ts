@@ -25,8 +25,9 @@ import { canvasToViewport } from "../gfx/viewport";
 import { map, vec2 } from "../math/math";
 import { Vec2 } from "../math/Vec2";
 import { _k } from "../shared";
+import { multiClick } from "../utils/input";
 import { deprecateMsg } from "../utils/log";
-import { overload2 } from "../utils/overload";
+import { overload2, overload2if } from "../utils/overload";
 import { isEqOrIncludes, setHasOrIncludes } from "../utils/sets";
 import type { TupleWithoutFirst } from "../utils/types";
 import {
@@ -225,6 +226,8 @@ export const initAppState = (opt: {
             "mouseDown",
             "mouseRelease",
         ),
+        // set of n:button strings, (2:left / 3:right etc) (2 clicks on left, 3 on right)
+        multiClick: new Set(),
         mergedGamepadState: new GamepadState(null),
         gamepadStates: new Map<number, GamepadState>(),
         // resolved button map per gamepad index, computed once on connect
@@ -488,6 +491,27 @@ export const initApp = (
         return state.mouseState.released.has(m);
     }
 
+    function isMouseMultiPressed(
+        n: number,
+        button: MouseButton = "left",
+    ): boolean {
+        if (button) return state.multiClick.has(`${n}:${button}`);
+        for (const key of state.multiClick) {
+            if ((key as string).startsWith(`${n}:`)) return true;
+        }
+        return false;
+    }
+
+    function isMouseDoublePressed(
+        button: MouseButton = "left",
+    ): boolean {
+        if (button) return state.multiClick.has(`${2}:${button}`);
+        for (const key of state.multiClick) {
+            if ((key as string).startsWith(`${2}:`)) return true;
+        }
+        return false;
+    }
+
     function isMouseMoved(): boolean {
         return state.isMouseMoved;
     }
@@ -624,17 +648,20 @@ export const initApp = (
         );
     });
 
-    const onMousePress = overload2((action: (m: MouseButton) => void) => {
-        return state.events.on("mousePress", (m) => action(m));
-    }, (
-        mouse: MouseButton | MouseButton[],
-        action: (m: MouseButton) => void,
-    ) => {
-        return state.events.on(
-            "mousePress",
-            (m) => isEqOrIncludes(mouse, m) && action(m),
-        );
-    });
+    const onMousePress = overload2(
+        (action: (m: MouseButton) => void) => {
+            return state.events.on("mousePress", (m) => action(m));
+        },
+        (
+            mouse: MouseButton | MouseButton[],
+            action: (m: MouseButton) => void,
+        ) => {
+            return state.events.on(
+                "mousePress",
+                (m) => isEqOrIncludes(mouse, m) && action(m),
+            );
+        },
+    );
 
     const onMouseRelease = overload2((action: (m: MouseButton) => void) => {
         return state.events.on("mouseRelease", (m) => action(m));
@@ -650,6 +677,30 @@ export const initApp = (
             "mouseMove",
             () => f(mousePos(), mouseDeltaPos()),
         );
+    }
+
+    const onMouseMultiPress = overload2if(
+        (
+            n: number,
+            action: (button: MouseButton, clickCount: number) => void,
+            delay?: number,
+        ) => onMousePress(multiClick(n, action, delay)),
+        (
+            n: number,
+            button: MouseButton,
+            action: (button: MouseButton, clickCount: number) => void,
+            delay?: number,
+        ) => onMousePress(button, multiClick(n, action, delay, button)),
+        (
+            _,
+            actionOrButton:
+                | ((button: MouseButton, clickCount: number) => void)
+                | MouseButton,
+        ) => typeof actionOrButton === "function",
+    );
+
+    function onMouseDoublePress(...args: any[]): KEventController {
+        return (onMouseMultiPress as any)(2, ...args);
     }
 
     function onCharInput(action: (ch: string) => void): KEventController {
@@ -817,6 +868,7 @@ export const initApp = (
         state.keyState.update();
         state.mouseState.update();
         state.buttonHandler.update();
+        state.multiClick.clear();
 
         state.mergedGamepadState.buttonState.update();
         state.mergedGamepadState.stickState.forEach((v, k) => {
@@ -1396,6 +1448,8 @@ export const initApp = (
         isKeyReleased,
         isMouseDown,
         isMousePressed,
+        isMouseDoublePressed,
+        isMouseMultiPressed,
         isMouseReleased,
         isMouseMoved,
         isGamepadButtonPressed,
@@ -1420,6 +1474,8 @@ export const initApp = (
         onKeyRelease,
         onMouseDown,
         onMousePress,
+        onMouseMultiPress,
+        onMouseDoublePress,
         onMouseRelease,
         onMouseMove,
         onCharInput,
