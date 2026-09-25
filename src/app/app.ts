@@ -25,8 +25,9 @@ import { canvasToViewport } from "../gfx/viewport";
 import { map, vec2 } from "../math/math";
 import { Vec2 } from "../math/Vec2";
 import { _k } from "../shared";
+import { multiClick } from "../utils/input";
 import { deprecateMsg } from "../utils/log";
-import { overload2 } from "../utils/overload";
+import { overload2, overload2if } from "../utils/overload";
 import { isEqOrIncludes, setHasOrIncludes } from "../utils/sets";
 import type { TupleWithoutFirst } from "../utils/types";
 import {
@@ -225,6 +226,8 @@ export const initAppState = (opt: {
             "mouseDown",
             "mouseRelease",
         ),
+        // set of n:button strings, (2:left / 3:right etc) (2 clicks on left, 3 on right)
+        multiClick: new Set(),
         mergedGamepadState: new GamepadState(null),
         gamepadStates: new Map<number, GamepadState>(),
         // resolved button map per gamepad index, computed once on connect
@@ -492,8 +495,8 @@ export const initApp = (
         n: number,
         button: MouseButton = "left",
     ): boolean {
-        if (button) return isMultiClicked.has(`${n}:${button}`);
-        for (const key of isMultiClicked) {
+        if (button) return state.multiClick.has(`${n}:${button}`);
+        for (const key of state.multiClick) {
             if ((key as string).startsWith(`${n}:`)) return true;
         }
         return false;
@@ -502,8 +505,8 @@ export const initApp = (
     function isMouseDoublePressed(
         button: MouseButton = "left",
     ): boolean {
-        if (button) return isMultiClicked.has(`${2}:${button}`);
-        for (const key of isMultiClicked) {
+        if (button) return state.multiClick.has(`${2}:${button}`);
+        for (const key of state.multiClick) {
             if ((key as string).startsWith(`${2}:`)) return true;
         }
         return false;
@@ -676,73 +679,28 @@ export const initApp = (
         );
     }
 
-    // had to write the function in this weird format due to the nature of overload2
-    // overload2 doesn't allow for optional params by the way it's set up right now
-    // so the overload had to be written manually
-    function onMouseMultiPress(
-        n: number,
-        action: (button: MouseButton, clickCount: number) => void,
-        delay?: number,
-    ): KEventController;
-    function onMouseMultiPress(
-        n: number,
-        button: MouseButton,
-        action: (button: MouseButton, clickCount: number) => void,
-        delay?: number,
-    ): KEventController;
-    function onMouseMultiPress(
-        n: number,
-        actionOrButton:
-            | ((button: MouseButton, clickCount: number) => void)
-            | MouseButton,
-        actionOrDelay?:
-            | ((button: MouseButton, clickCount: number) => void)
-            | number,
-        maybeDelay?: number,
-    ): KEventController {
-        const fallback = _k.globalOpt.doubleClickDelay ?? 0.5;
+    const onMouseMultiPress = overload2if(
+        (
+            n: number,
+            action: (button: MouseButton, clickCount: number) => void,
+            delay?: number,
+        ) => onMousePress(multiClick(n, action, delay)),
+        (
+            n: number,
+            button: MouseButton,
+            action: (button: MouseButton, clickCount: number) => void,
+            delay?: number,
+        ) => onMousePress(button, multiClick(n, action, delay, button)),
+        (
+            _,
+            actionOrButton:
+                | ((button: MouseButton, clickCount: number) => void)
+                | MouseButton,
+        ) => typeof actionOrButton === "function",
+    );
 
-        if (typeof actionOrButton === "string") {
-            // (n, button, action, delay?)
-            const button = actionOrButton;
-            const action = actionOrDelay as (button: MouseButton) => void;
-            const delay = maybeDelay ?? fallback;
-            return onMousePress(_multiClick(n, action, delay, button));
-        }
-        else {
-            // (n, action, delay?)
-            const action = actionOrButton;
-            const delay = (actionOrDelay as number) ?? fallback;
-            return onMousePress(_multiClick(n, action, delay));
-        }
-    }
-
-    function onMouseDoublePress(
-        action: (button: MouseButton) => void,
-        delay?: number,
-    ): KEventController;
-    function onMouseDoublePress(
-        button: MouseButton,
-        action: (button: MouseButton) => void,
-        delay?: number,
-    ): KEventController;
-    function onMouseDoublePress(
-        actionOrButton: ((button: MouseButton) => void) | MouseButton,
-        actionOrDelay?: ((button: MouseButton) => void) | number,
-        maybeDelay?: number,
-    ): KEventController {
-        if (typeof actionOrButton === "string") {
-            // (button, action, delay?)
-            const button = actionOrButton;
-            const action = actionOrDelay as (button: MouseButton) => void;
-            return onMouseMultiPress(2, button, action, maybeDelay);
-        }
-        else {
-            // (action, delay?)
-            const action = actionOrButton;
-            const delay = actionOrDelay as number | undefined;
-            return onMouseMultiPress(2, action, delay);
-        }
+    function onMouseDoublePress(...args: any[]): KEventController {
+        return (onMouseMultiPress as any)(2, ...args);
     }
 
     function onCharInput(action: (ch: string) => void): KEventController {
@@ -910,6 +868,7 @@ export const initApp = (
         state.keyState.update();
         state.mouseState.update();
         state.buttonHandler.update();
+        state.multiClick.clear();
 
         state.mergedGamepadState.buttonState.update();
         state.mergedGamepadState.stickState.forEach((v, k) => {
@@ -1132,60 +1091,6 @@ export const initApp = (
         "back",
         "forward",
     ];
-
-    // code for working double and multiple clicks functions
-    // set of n:button strings, (2:left / 3:right etc) (2 clicks on left, 3 on right)
-    const isMultiClicked = new Set();
-    function _multiClick(
-        n: number,
-        cb: (btn: MouseButton, total: number) => void,
-        delay: number,
-        button?: MouseButton,
-    ) {
-        // stores the state of the mouse button (how many clicks total, clicks in a row, n goal and the timer)
-        // nth means clicks toward current target
-        const state = new Map(); // button -> { total, count, nth, timer }
-
-        function getState(btn: MouseButton) {
-            let s = state.get(btn);
-            if (!s) {
-                s = { total: 0, count: 0, nth: 0, timer: undefined };
-                state.set(btn, s);
-            }
-            return s;
-        }
-
-        // returns a function that runs when you call onMouseMultiPress
-        // btn defaults to "left" in case this is called without one
-        return (btn = button ?? "left" as MouseButton) => {
-            // gets the state of that mouse button
-            const s = getState(btn);
-            // increases the stats
-            s.total++;
-            s.count++;
-            s.nth++;
-
-            // resets the timer
-            if (s.timer) s.timer.cancel();
-            // creates a new timer to wait for the amount of delay
-            // if no new clicks then stops litening for them
-            s.timer = _k.game.root.wait(
-                delay,
-                () => {
-                    s.nth = 0;
-                    s.count = 0;
-                    s.timer = undefined;
-                },
-            );
-
-            // if the amount of clicks reaches the goal, the clicks reset and the function runs
-            if (s.nth === n) {
-                s.nth = 0;
-                isMultiClicked.add(`${n}:${btn}`);
-                cb(btn, s.count);
-            }
-        };
-    }
 
     canvasEvents.mousedown = (e) => {
         state.events.onOnce("input", () => {

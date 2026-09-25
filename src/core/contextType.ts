@@ -2452,8 +2452,8 @@ export interface KAPLAYCtx {
      * Register an event that runs when user clicks the mouse n times.
      *
      * @param n - The amount of times the user has to click the mouse for the function to run.
-     * @param action - The function that is run when user clicks the mouse n times.
-     * @param delay - Custom time between clicks for the function to run. (defaults to KAPLAYOpt.doubleClickDelay if not to 0.5)
+     * @param action - The function that runs when user clicks the mouse n times.
+     * @param delay - Custom time between clicks for the function to run (defaults to {@link KAPLAYOpt.doubleClickDelay} or 0.5).
      *
      * @example
      * ```js
@@ -2464,7 +2464,6 @@ export interface KAPLAYCtx {
      * ```
      *
      * You can also check for the amount of clicks in a row like this:
-     *
      * @example
      * ```js
      * onMouseMultiPress(1, (button, clickCount) => {

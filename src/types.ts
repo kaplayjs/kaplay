@@ -393,9 +393,9 @@ export interface KAPLAYOpt {
      *
      * You can change it at runtime by calling `setDoubleClickDelay()`.
      *
-     * @since v4000
-     * @group Input
      * @default 0.5
+     * @since v4000.0
+     * @group Input
      */
     doubleClickDelay?: number;
     /**
