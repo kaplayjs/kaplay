@@ -18,6 +18,7 @@ import type {
     Shape,
     Tag,
 } from "../../../types";
+import { multiClick } from "../../../utils/input";
 import {
     type InternalGameObjRaw,
     objectTransformNeedsUpdate,
@@ -281,7 +282,37 @@ export interface AreaComp extends Comp {
      *
      * @since v2000.1
      */
-    onClick(f: () => void, btn?: MouseButton): KEventController;
+    onClick(f: (btn: MouseButton) => void, btn?: MouseButton): KEventController;
+    /**
+     * Register an event that runs when double-clicked.
+     *
+     * @param f - The function that runs when user clicks the mouse n times.
+     * @param btn - The mouse button to check the clicks for.
+     * @param delay - Custom time between clicks for the function to run (defaults to {@link KAPLAYOpt.doubleClickDelay} or 0.5).
+     *
+     * @since v4000.0
+     */
+    onDoubleClick(
+        f: (btn: MouseButton) => void,
+        btn?: MouseButton,
+        delay?: number,
+    ): KEventController;
+    /**
+     * Register an event that runs when clicked n times.
+     *
+     * @param n - The amount of times the user has to click the mouse for the function to run.
+     * @param f - The function that runs when user clicks the mouse n times.
+     * @param btn - The mouse button to check the clicks for.
+     * @param delay - Custom time between clicks for the function to run (defaults to {@link KAPLAYOpt.doubleClickDelay} or 0.5).
+     *
+     * @since v4000.0
+     */
+    onMultiClick(
+        n: number,
+        f: (btn: MouseButton) => void,
+        btn?: MouseButton,
+        delay?: number,
+    ): KEventController;
     /**
      * Register an event runs once when hovered.
      *
@@ -674,11 +705,32 @@ export function area(
 
         onClick(
             this: GameObj<AreaComp>,
-            action: () => void,
+            action: (btn: MouseButton) => void,
             btn: MouseButton = "left",
         ): KEventController {
             startClickHandler();
-            return this.on("click", action);
+            return this.on("click", (b) => b === btn && action(b));
+        },
+
+        onDoubleClick(
+            this: GameObj<AreaComp>,
+            action: (btn: MouseButton) => void,
+            btn: MouseButton = "left",
+            delay?: number,
+        ): KEventController {
+            startClickHandler();
+            return this.on("click", multiClick(2, action, delay, btn));
+        },
+
+        onMultiClick(
+            this: GameObj<AreaComp>,
+            n: number,
+            action: (btn: MouseButton) => void,
+            btn: MouseButton = "left",
+            delay?: number,
+        ): KEventController {
+            startClickHandler();
+            return this.on("click", multiClick(n, action, delay, btn));
         },
 
         onHover(this: GameObj, action: () => void): KEventController {
