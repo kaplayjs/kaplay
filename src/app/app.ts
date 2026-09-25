@@ -425,6 +425,9 @@ export const initApp = (
             if (state.skipTime) {
                 state.skipTime = false;
             }
+            else if (_k.debug.paused) {
+                update(processInput, resetInput);
+            }
             else {
                 updateAccumulator += observedDt;
                 fixedUpdateAccumulator += observedDt;
@@ -442,20 +445,18 @@ export const initApp = (
                 }
                 const desiredDt = opt.maxFPS ? 1 / opt.maxFPS : 0;
                 if (updateAccumulator > desiredDt) {
-                    if (!_k.debug.paused) {
-                        state.time += state.dt = desiredDt > 0
-                            ? Math.max(desiredDt, observedDt)
-                            : observedDt;
-                        state.restDt = fixedUpdateAccumulator;
-                        state.fpsCounter.tick(state.dt);
-                        if (desiredDt > 0) {
-                            updateAccumulator -= desiredDt;
-                        }
-                        else {
-                            updateAccumulator = 0;
-                        }
-                        state.numFrames++;
+                    state.time += state.dt = desiredDt > 0
+                        ? Math.max(desiredDt, observedDt)
+                        : observedDt;
+                    state.restDt = fixedUpdateAccumulator;
+                    state.fpsCounter.tick(state.dt);
+                    if (desiredDt > 0) {
+                        updateAccumulator -= desiredDt;
                     }
+                    else {
+                        updateAccumulator = 0;
+                    }
+                    state.numFrames++;
 
                     update(processInput, resetInput);
                 }
