@@ -2,6 +2,7 @@ name: Test KAPLAY
 
 on:
   push:
+    branches: [master]
 
 jobs:
   check-format:
