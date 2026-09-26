@@ -82,6 +82,7 @@ So your change should look like:
   e.g. focused `textInput` now use `preventDefault()` (#1114) - @imaginarny
 - Updated `drawSprite()` to allow slice9'ed sprites, and so now the `sprite()`
   component just calls `drawSprite()` (#1036) - @dragoncoder047
+- Updated `getLastInputDeviceType()` so updates to gamepad when you move a joystick (#1168) - @amyspark-ng
 
 ### Fixed
 
