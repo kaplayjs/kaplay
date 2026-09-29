@@ -505,11 +505,7 @@ export const initApp = (
     function isMouseDoublePressed(
         button: MouseButton = "left",
     ): boolean {
-        if (button) return state.multiClick.has(`${2}:${button}`);
-        for (const key of state.multiClick) {
-            if ((key as string).startsWith(`${2}:`)) return true;
-        }
-        return false;
+        return isMouseMultiPressed(2, button);
     }
 
     function isMouseMoved(): boolean {
@@ -1092,10 +1088,35 @@ export const initApp = (
         "forward",
     ];
 
+    // multiClicker is cleared every frame, this one tracks the last click
+    // what button, the streak and the time of the last click
+    const clickTracker = new Map<
+        MouseButton,
+        { count: number; last: number }
+    >();
+
     canvasEvents.mousedown = (e) => {
         state.events.onOnce("input", () => {
             const m = MOUSE_BUTTONS[e.button];
             if (!m) return;
+
+            const now = Date.now();
+            const delayMs = (_k.globalOpt.doubleClickDelay ?? 0.5) * 1000;
+
+            // gets the content of the click
+            let t = clickTracker.get(m);
+            if (!t) {
+                t = { count: 0, last: 0 };
+                clickTracker.set(m, t); // stores info for the button
+            }
+
+            // mutates the object and stores the count and the last time
+            t.count = (now - t.last <= delayMs) ? t.count + 1 : 1;
+            t.last = now;
+
+            // adds to multiClick so it can then be used on isMouseMultiPressed
+            // runs before processMousedown so boolean functions on onClick have the information at hand
+            state.multiClick.add(`${t.count}:${m}`);
 
             state.lastInputDevice = "mouse";
             state.buttonHandler.processMousedown(m, state);
