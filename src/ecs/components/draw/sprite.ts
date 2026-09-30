@@ -306,6 +306,8 @@ export function sprite(
                 src = newSpriteSrc;
 
                 spr.onLoad(spr => {
+                    // Only apply the result from the latest sprite request,
+                    // preventing stale responses from overwriting newer sprite data
                     if (requestId === spriteRequestId) {
                         setSpriteData(
                             this as unknown as GameObj<SpriteComp>,
@@ -358,6 +360,8 @@ export function sprite(
             if (spr) {
                 // The sprite exists
                 spr.onLoad(spr => {
+                    // Only apply the result from the latest sprite request,
+                    // preventing stale responses from overwriting newer sprite data
                     if (requestId === spriteRequestId) {
                         setSpriteData(this, spr);
                     }
