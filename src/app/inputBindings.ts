@@ -69,9 +69,12 @@ class ChordedButtonDetector<T extends string = string> {
     mods = new Map<T, boolean>();
     // map of commit key --> checkers for this commit key
 
-    committers = new Map<T, { check: Set<T>; btns: Map<PropertyKey, T[]> }>();
-    buttonsUsed = new Set<PropertyKey>();
-    updateBinding(button: PropertyKey, bindings: T[]) {
+    committers = new Map<
+        T,
+        { check: Set<T>; btns: Map<string | symbol, T[]> }
+    >();
+    buttonsUsed = new Set<string | symbol>();
+    updateBinding(button: string | symbol, bindings: T[]) {
         // clear out old binding
         const modsToClear = new Set<T>();
         for (let { check, btns } of this.committers.values()) {
@@ -106,12 +109,12 @@ class ChordedButtonDetector<T extends string = string> {
         // cleanup
         modsToClear.forEach(m => this.mods.delete(m));
     }
-    handleDown(key: T): PropertyKey[] {
+    handleDown(key: T): (string | symbol)[] {
         if (this.mods.has(key)) {
             this.mods.set(key, true);
         }
         const commit = this.committers.get(key);
-        const pressedButtons: PropertyKey[] = [];
+        const pressedButtons: (string | symbol)[] = [];
         if (commit) {
             options: for (let [button, mods] of commit.btns.entries()) {
                 for (let mod of commit.check.values()) {
@@ -125,12 +128,12 @@ class ChordedButtonDetector<T extends string = string> {
         }
         return pressedButtons;
     }
-    handleUp(key: T): PropertyKey[] {
+    handleUp(key: T): (string | symbol)[] {
         if (this.mods.has(key)) {
             this.mods.set(key, false);
         }
         const commit = this.committers.get(key);
-        const canceledButtons: PropertyKey[] = [];
+        const canceledButtons: (string | symbol)[] = [];
         if (commit) {
             for (var button of commit.btns.keys()) {
                 this.buttonsUsed.delete(button) && canceledButtons.push(button);
@@ -138,13 +141,13 @@ class ChordedButtonDetector<T extends string = string> {
         }
         return canceledButtons;
     }
-    releaseAll(): PropertyKey[] {
+    releaseAll(): (string | symbol)[] {
         const buttons = [...this.buttonsUsed];
         this.buttonsUsed.clear();
         this.mods.forEach((_, mod) => this.mods.set(mod, false));
         return buttons;
     }
-    isButtonUsed(button: PropertyKey): boolean {
+    isButtonUsed(button: string | symbol): boolean {
         return this.buttonsUsed.has(button);
     }
 }
@@ -154,13 +157,13 @@ export class ButtonProcessor {
     byKeyCode = new ChordedButtonDetector<string>();
     byMouse = new ChordedButtonDetector<ChordedMouseButton>();
     byGamepad = new ChordedButtonDetector<ChordedKGamepadButton>();
-    state = new ButtonState<PropertyKey>(
+    state = new ButtonState<string | symbol>(
         "buttonPress",
         null,
         "buttonDown",
         "buttonRelease",
     );
-    updateBinding(name: PropertyKey, b: ButtonBinding) {
+    updateBinding(name: string | symbol, b: ButtonBinding) {
         const keyboardBtns = b.keyboard && [b.keyboard].flat();
         const keyboardCodes = b.keyboardCode
             && [b.keyboardCode].flat();
@@ -179,17 +182,20 @@ export class ButtonProcessor {
             this.byMouse.updateBinding(name, mouseBtns);
         }
     }
-    private _maybePress(buttons: PropertyKey[], state: AppState) {
+    private _maybePress(buttons: (string | symbol)[], state: AppState) {
         for (let button of buttons) {
             this.state.press(button, state);
         }
     }
-    private _maybeRelease(buttons: PropertyKey[], state: AppState) {
+    private _maybeRelease(buttons: (string | symbol)[], state: AppState) {
         for (let button of buttons) {
             this.state.release(button, state);
         }
     }
-    private _releaseKeyboardMouse(buttons: PropertyKey[], state: AppState) {
+    private _releaseKeyboardMouse(
+        buttons: (string | symbol)[],
+        state: AppState,
+    ) {
         for (let button of buttons) {
             if (
                 this.state.down.has(button)

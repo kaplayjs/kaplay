@@ -39,7 +39,7 @@ import {
     parseButtonBindings,
 } from "./inputBindings";
 
-export class ButtonState<T = PropertyKey, A = never> {
+export class ButtonState<T = String | Symbol, A = never> {
     pressed = new Set<T>();
     pressedRepeat = new Set<T>();
     released = new Set<T>();
@@ -218,7 +218,7 @@ export const initAppState = (opt: {
     return {
         canvas: opt.canvas,
         buttons: { ...buttons, ...debugButtons } as Record<
-            PropertyKey,
+            string | symbol,
             ButtonBinding
         >,
         buttonHandler: new ButtonProcessor(),
@@ -800,32 +800,47 @@ export const initApp = (
         return [...state.gamepads];
     }
 
-    const onButtonPress = overload2((action: (btn: PropertyKey) => void) => {
-        return state.events.on("buttonPress", (b) => action(b));
-    }, (btn: PropertyKey, action: (btn: PropertyKey) => void) => {
-        return state.events.on(
-            "buttonPress",
-            (b) => isEqOrIncludes(btn, b) && action(b),
-        );
-    });
+    const onButtonPress = overload2(
+        (action: (btn: String | Symbol) => void) => {
+            return state.events.on("buttonPress", (b) => action(b));
+        },
+        (btn: String | Symbol, action: (btn: String | Symbol) => void) => {
+            return state.events.on(
+                "buttonPress",
+                (b) => isEqOrIncludes(btn, b) && action(b),
+            );
+        },
+    );
 
-    const onButtonDown = overload2((action: (btn: PropertyKey) => void) => {
-        return state.events.on("buttonDown", (b) => action(b));
-    }, (btn: PropertyKey | PropertyKey, action: (btn: PropertyKey) => void) => {
-        return state.events.on(
-            "buttonDown",
-            (b) => isEqOrIncludes(btn, b) && action(b),
-        );
-    });
+    const onButtonDown = overload2(
+        (action: (btn: String | Symbol) => void) => {
+            return state.events.on("buttonDown", (b) => action(b));
+        },
+        (
+            btn: String | Symbol | String | Symbol,
+            action: (btn: String | Symbol) => void,
+        ) => {
+            return state.events.on(
+                "buttonDown",
+                (b) => isEqOrIncludes(btn, b) && action(b),
+            );
+        },
+    );
 
-    const onButtonRelease = overload2((action: (btn: PropertyKey) => void) => {
-        return state.events.on("buttonRelease", (b) => action(b));
-    }, (btn: PropertyKey | PropertyKey, action: (btn: PropertyKey) => void) => {
-        return state.events.on(
-            "buttonRelease",
-            (b) => isEqOrIncludes(btn, b) && action(b),
-        );
-    });
+    const onButtonRelease = overload2(
+        (action: (btn: String | Symbol) => void) => {
+            return state.events.on("buttonRelease", (b) => action(b));
+        },
+        (
+            btn: String | Symbol | String | Symbol,
+            action: (btn: String | Symbol) => void,
+        ) => {
+            return state.events.on(
+                "buttonRelease",
+                (b) => isEqOrIncludes(btn, b) && action(b),
+            );
+        },
+    );
 
     const getLastInputDeviceType = () => {
         return state.lastInputDevice;
