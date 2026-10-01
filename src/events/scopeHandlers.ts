@@ -36,6 +36,8 @@ export const createScopeHandlers = (app: App) => {
         onCharInput: app.onCharInput,
         onMouseDown: app.onMouseDown,
         onMousePress: app.onMousePress,
+        onMouseMultiPress: app.onMouseMultiPress,
+        onMouseDoublePress: app.onMouseDoublePress,
         onMouseRelease: app.onMouseRelease,
         onMouseMove: app.onMouseMove,
         onTouchStart: app.onTouchStart,
