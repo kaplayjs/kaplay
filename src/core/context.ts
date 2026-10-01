@@ -21,6 +21,7 @@ import { getSound, loadMusic, loadSound, SoundData } from "../assets/sound";
 import { getSprite, loadBean, loadSprite, SpriteData } from "../assets/sprite";
 import { loadSpriteAtlas } from "../assets/spriteAtlas";
 import { burp } from "../audio/burp";
+import { createChannel } from "../audio/channel";
 import { play } from "../audio/play";
 import { getVolume, setVolume, volume } from "../audio/volume";
 import { ASCII_CHARS, EVENT_CANCEL_SYMBOL } from "../constants/general";
@@ -503,6 +504,7 @@ export const createContext = (
         volume,
         burp,
         audioCtx: audio.ctx,
+        createChannel,
         // math
         Line,
         Rect,
