@@ -170,6 +170,15 @@ const fixedSpeeds = {
     ludicrous: 160,
 };
 
+const debugDefault = {
+    "inspect": { keyboard: "f1" },
+    "clearlogs": { keyboard: "f2" },
+    "pause": { keyboard: "f8" },
+    "slowdown": { keyboard: "f7" },
+    "speedup": { keyboard: "f9" },
+    "stepframe": { keyboard: "f10" },
+} as ButtonsDef;
+
 export type FixedSpeedOption = keyof typeof fixedSpeeds;
 
 /**
@@ -189,15 +198,6 @@ export const initAppState = (opt: {
     maxTimeStep?: number;
 }) => {
     const buttons = opt.buttons ?? {};
-
-    const debugDefault = {
-        "inspect": { keyboard: "f1" },
-        "clearlogs": { keyboard: "f2" },
-        "pause": { keyboard: "f8" },
-        "slowdown": { keyboard: "f7" },
-        "speedup": { keyboard: "f9" },
-        "stepframe": { keyboard: "f10" },
-    } as ButtonsDef;
 
     // ButtonsDef can't be Record<symbol | string, ButtonBinding> itself because it's used at KAPLAYOpt where USER defines buttons
     const debugButtons = Object.fromEntries(
@@ -1129,15 +1129,18 @@ export const initApp = (
         "/",
         ...(opt.debug !== false
             ? [
-                opt.debugButtons?.inspect?.keyboard as Key || "f1",
+                opt.debugButtons?.inspect?.keyboard as Key
+                || debugDefault.inspect.keyboard as Key,
                 opt.debugButtons?.clearlogs?.keyboard as Key
-                || "f2",
+                || debugDefault.clearlogs.keyboard as Key,
                 opt.debugButtons?.slowdown?.keyboard as Key
-                || "f7",
-                opt.debugButtons?.pause?.keyboard as Key || "f8",
-                opt.debugButtons?.speedup?.keyboard as Key || "f9",
+                || debugDefault.slowdown.keyboard as Key,
+                opt.debugButtons?.pause?.keyboard as Key
+                || debugDefault.pause.keyboard as Key,
+                opt.debugButtons?.speedup?.keyboard as Key
+                || debugDefault.speedup.keyboard as Key,
                 opt.debugButtons?.stepframe?.keyboard as Key
-                || "f10",
+                || debugDefault.stepframe.keyboard as Key,
             ]
             : []),
     ]);
