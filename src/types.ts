@@ -2,6 +2,7 @@ import type { FixedSpeedOption } from "./app/app";
 import type { ButtonsDef } from "./app/inputBindings";
 import type { Asset } from "./assets/asset";
 import type { ShaderData, Uniform } from "./assets/shader";
+import type { MOUSE_BUTTONS } from "./constants/general";
 import type { KAPLAYCtx } from "./core/contextType";
 import type { TypesOpt } from "./core/taf";
 import type { GameObjRaw } from "./ecs/entity/GameObjRaw";
@@ -153,8 +154,11 @@ export type ChordedKey = Key | `${Key}+${Key}`;
  * @group Input
  * @subgroup Mouse
  */
-export type MouseButton = "left" | "right" | "middle" | "back" | "forward";
-export type ChordedMouseButton = MouseButton | `${MouseButton}+${MouseButton}`;
+export type MouseButton = typeof MOUSE_BUTTONS[number];
+export type ChordedMouseButton =
+    | MouseButton
+    | `${MouseButton}+${MouseButton}`
+    | `${Key}+${MouseButton}`; // keyboard modifier + mouse button
 
 /**
  * A gamepad button.

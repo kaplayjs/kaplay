@@ -53,3 +53,11 @@ export const EVENT_CANCEL_SYMBOL = Symbol.for("kaplay.cancel");
 export const GP_MAP = GAMEPAD_MAP as unknown as Record<string, GamepadDef>;
 
 export const MAX_TRIES = 20;
+
+export const MOUSE_BUTTONS = [
+    "left",
+    "middle",
+    "right",
+    "back",
+    "forward",
+] as const;

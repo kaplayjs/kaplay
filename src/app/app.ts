@@ -14,7 +14,7 @@ import type {
     Tag,
 } from "../types";
 
-import { GP_MAP } from "../constants/general";
+import { GP_MAP, MOUSE_BUTTONS } from "../constants/general";
 import type {
     AppEventMap,
     GameObjEventNames,
@@ -1031,14 +1031,6 @@ export const initApp = (
             state.events.trigger("mouseMove");
         });
     };
-
-    const MOUSE_BUTTONS: MouseButton[] = [
-        "left",
-        "middle",
-        "right",
-        "back",
-        "forward",
-    ];
 
     canvasEvents.mousedown = (e) => {
         state.events.onOnce("input", () => {
