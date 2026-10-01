@@ -16,6 +16,7 @@ import type {
     SpriteData,
 } from "../assets/sprite";
 import type { SpriteAtlasData } from "../assets/spriteAtlas";
+import type { AudioChannel, AudioChannelOpt } from "../audio/channel";
 import type { AudioPlay, AudioPlayOpt } from "../audio/play";
 import type { Debug } from "../debug/debug";
 import type { Recording } from "../debug/record";
@@ -4941,6 +4942,25 @@ export interface KAPLAYCtx {
      * @group Audio
      */
     audioCtx: AudioContext;
+    /**
+     * Create a new top-level audio channel routed through the master bus.
+     * Sounds played through play(src, { connectTo: channel.node }) will
+     * inherit this channel's volume/mute state.
+     *
+     * @example
+     * ```js
+     * const sfx = createChannel("sfx", { volume: 0.8 });
+     * sfx.play("explosion");
+     * sfx.play("walking");
+     *
+     * // this will affect both sounds because they're added to the SFX channel
+     * sfx.volume = 0.5;
+     * sfx.mute = true;
+     * ```
+     *
+     * @group Audio
+     */
+    createChannel(name: string, opt: AudioChannelOpt): AudioChannel;
     /**
      * Set the random generator to use
      *
