@@ -1,3 +1,4 @@
+import { MOUSE_BUTTONS } from "../constants/general";
 import type {
     ChordedKey,
     ChordedKGamepadButton,
@@ -37,6 +38,8 @@ export type ButtonsDef = Record<string, ButtonBinding>;
  */
 export type ButtonBindingDevice = "keyboard" | "gamepad" | "mouse";
 
+const KB = "kb:"; // prefix for keyboard modifiers to recognize keyboard keys inside non keyboard detectors
+
 // pass the user `buttons` definition to different keymaps
 export const parseButtonBindings = (appState: AppState) => {
     const btns = appState.buttons;
@@ -61,9 +64,26 @@ function splitButtons<T extends string>(b: T): T[] {
     return out;
 }
 
+// turns "shift+left" into "kb:shift+left"
+const toMouseChord = (raw: string): string => {
+    const keysInButton = splitButtons(raw); // splits "shift+left" into ["shift", "left"]
+
+    // every key before the last is a modifier, the last one is the actual mouse button
+    const mouseButton = keysInButton.pop(); // gets the second in the array
+
+    // goes through all the keys in button and checks and only returns the keyboard keys
+    // and adds the KB prefix
+    const modifiers = keysInButton.map((t) =>
+        MOUSE_BUTTONS.includes(t as any) ? t : KB + t
+    );
+
+    // returns the joined thing, looks like ["kb:shift+left"]
+    return [...modifiers, mouseButton].join("+");
+};
+
 class ChordedButtonDetector<T extends string = string> {
     // map of mod key --> down state
-    mods = new Map<T, boolean>();
+    mods = new Map<string, boolean>();
     // map of commit key --> checkers for this commit key
     committers = new Map<T, { check: Set<T>; btns: Map<string, T[]> }>();
     buttonsUsed = new Set<string>();
@@ -143,6 +163,9 @@ class ChordedButtonDetector<T extends string = string> {
     isButtonUsed(button: string): boolean {
         return this.buttonsUsed.has(button);
     }
+    setMod(key: string, down: boolean) {
+        if (this.mods.has(key)) this.mods.set(key, down);
+    }
 }
 
 export class ButtonProcessor {
@@ -172,7 +195,10 @@ export class ButtonProcessor {
             this.byGamepad.updateBinding(name, gamepadBtns);
         }
         if (mouseBtns) {
-            this.byMouse.updateBinding(name, mouseBtns);
+            this.byMouse.updateBinding(
+                name,
+                mouseBtns.map(toMouseChord) as ChordedMouseButton[],
+            );
         }
     }
     private _maybePress(buttons: string[], state: AppState) {
@@ -196,10 +222,12 @@ export class ButtonProcessor {
         }
     }
     processKeydown(key: Key, keyCode: string, state: AppState) {
+        this.byMouse.setMod(KB + key, true);
         this._maybePress(this.byKey.handleDown(key), state);
         this._maybePress(this.byKeyCode.handleDown(keyCode), state);
     }
     processKeyup(key: Key, keyCode: string, state: AppState) {
+        this.byMouse.setMod(KB + key, false);
         this._maybeRelease(this.byKey.handleUp(key), state);
         this._maybeRelease(this.byKeyCode.handleUp(keyCode), state);
     }

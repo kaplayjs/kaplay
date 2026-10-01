@@ -68,6 +68,7 @@ So your change should look like:
 - Added `KAPLAYOpt.lockResolution` to lock the canvas buffer resolution to the
   defined size and scale when resized by the `letterbox` option (#1106) -
   @imaginarny
+- Added the ability to mix keyboard keys and mouse buttons in the `ButtonsDef` mouse property (#1173) - @amyspark-ng
 
 ### Changed
 
