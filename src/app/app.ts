@@ -14,12 +14,8 @@ import type {
     Tag,
 } from "../types";
 
-import { GP_MAP } from "../constants/general";
-import type {
-    AppEventMap,
-    GameObjEventNames,
-    GameObjEvents,
-} from "../events/eventMap";
+import { DEBUG_SYMBOLS, GP_MAP } from "../constants/general";
+import type { AppEventMap } from "../events/eventMap";
 import { type KEventController, KEventHandler } from "../events/events";
 import { canvasToViewport } from "../gfx/viewport";
 import { map, vec2 } from "../math/math";
@@ -28,7 +24,6 @@ import { _k } from "../shared";
 import { deprecateMsg } from "../utils/log";
 import { overload2 } from "../utils/overload";
 import { isEqOrIncludes, setHasOrIncludes } from "../utils/sets";
-import type { TupleWithoutFirst } from "../utils/types";
 import {
     getButton,
     getButtons,
@@ -38,12 +33,13 @@ import {
 } from "./buttons";
 import { detectGamepadType, resolveGamepadMap } from "./gamepadId";
 import {
+    type ButtonBinding,
     ButtonProcessor,
     type ButtonsDef,
     parseButtonBindings,
 } from "./inputBindings";
 
-export class ButtonState<T = string, A = never> {
+export class ButtonState<T = String | Symbol, A = never> {
     pressed = new Set<T>();
     pressedRepeat = new Set<T>();
     released = new Set<T>();
@@ -174,6 +170,15 @@ const fixedSpeeds = {
     ludicrous: 160,
 };
 
+const debugDefault = {
+    "inspect": { keyboard: "f1" },
+    "clearlogs": { keyboard: "f2" },
+    "pause": { keyboard: "f8" },
+    "slowdown": { keyboard: "f7" },
+    "speedup": { keyboard: "f9" },
+    "stepframe": { keyboard: "f10" },
+} as ButtonsDef;
+
 export type FixedSpeedOption = keyof typeof fixedSpeeds;
 
 /**
@@ -188,13 +193,34 @@ export type FixedSpeedOption = keyof typeof fixedSpeeds;
 export const initAppState = (opt: {
     canvas: HTMLCanvasElement;
     buttons?: ButtonsDef;
+    debugButtons?: ButtonsDef;
     fixedUpdateMode?: FixedSpeedOption;
     maxTimeStep?: number;
 }) => {
     const buttons = opt.buttons ?? {};
+
+    // ButtonsDef can't be Record<symbol | string, ButtonBinding> itself because it's used at KAPLAYOpt where USER defines buttons
+    const debugButtons = Object.fromEntries(
+        Object.entries(debugDefault).map(([name, defaultBinding]) => {
+            const binding = opt.debugButtons
+                ?.[name as keyof typeof DEBUG_SYMBOLS];
+
+            return [
+                DEBUG_SYMBOLS[name as keyof typeof DEBUG_SYMBOLS],
+                {
+                    ...defaultBinding,
+                    ...binding,
+                },
+            ];
+        }),
+    );
+
     return {
         canvas: opt.canvas,
-        buttons: buttons,
+        buttons: { ...buttons, ...debugButtons } as Record<
+            string | symbol,
+            ButtonBinding
+        >,
         buttonHandler: new ButtonProcessor(),
         loopID: null as null | number,
         stopped: false,
@@ -774,32 +800,47 @@ export const initApp = (
         return [...state.gamepads];
     }
 
-    const onButtonPress = overload2((action: (btn: string) => void) => {
-        return state.events.on("buttonPress", (b) => action(b));
-    }, (btn: string | string, action: (btn: string) => void) => {
-        return state.events.on(
-            "buttonPress",
-            (b) => isEqOrIncludes(btn, b) && action(b),
-        );
-    });
+    const onButtonPress = overload2(
+        (action: (btn: String | Symbol) => void) => {
+            return state.events.on("buttonPress", (b) => action(b));
+        },
+        (btn: String | Symbol, action: (btn: String | Symbol) => void) => {
+            return state.events.on(
+                "buttonPress",
+                (b) => isEqOrIncludes(btn, b) && action(b),
+            );
+        },
+    );
 
-    const onButtonDown = overload2((action: (btn: string) => void) => {
-        return state.events.on("buttonDown", (b) => action(b));
-    }, (btn: string | string, action: (btn: string) => void) => {
-        return state.events.on(
-            "buttonDown",
-            (b) => isEqOrIncludes(btn, b) && action(b),
-        );
-    });
+    const onButtonDown = overload2(
+        (action: (btn: String | Symbol) => void) => {
+            return state.events.on("buttonDown", (b) => action(b));
+        },
+        (
+            btn: String | Symbol | String | Symbol,
+            action: (btn: String | Symbol) => void,
+        ) => {
+            return state.events.on(
+                "buttonDown",
+                (b) => isEqOrIncludes(btn, b) && action(b),
+            );
+        },
+    );
 
-    const onButtonRelease = overload2((action: (btn: string) => void) => {
-        return state.events.on("buttonRelease", (b) => action(b));
-    }, (btn: string | string, action: (btn: string) => void) => {
-        return state.events.on(
-            "buttonRelease",
-            (b) => isEqOrIncludes(btn, b) && action(b),
-        );
-    });
+    const onButtonRelease = overload2(
+        (action: (btn: String | Symbol) => void) => {
+            return state.events.on("buttonRelease", (b) => action(b));
+        },
+        (
+            btn: String | Symbol | String | Symbol,
+            action: (btn: String | Symbol) => void,
+        ) => {
+            return state.events.on(
+                "buttonRelease",
+                (b) => isEqOrIncludes(btn, b) && action(b),
+            );
+        },
+    );
 
     const getLastInputDeviceType = () => {
         return state.lastInputDevice;
@@ -1088,12 +1129,18 @@ export const initApp = (
         "/",
         ...(opt.debug !== false
             ? [
-                opt.debugKey || "f1",
-                "f2",
-                "f7",
-                "f8",
-                "f9",
-                "f10",
+                opt.debugButtons?.inspect?.keyboard as Key
+                || debugDefault.inspect.keyboard as Key,
+                opt.debugButtons?.clearlogs?.keyboard as Key
+                || debugDefault.clearlogs.keyboard as Key,
+                opt.debugButtons?.slowdown?.keyboard as Key
+                || debugDefault.slowdown.keyboard as Key,
+                opt.debugButtons?.pause?.keyboard as Key
+                || debugDefault.pause.keyboard as Key,
+                opt.debugButtons?.speedup?.keyboard as Key
+                || debugDefault.speedup.keyboard as Key,
+                opt.debugButtons?.stepframe?.keyboard as Key
+                || debugDefault.stepframe.keyboard as Key,
             ]
             : []),
     ]);
