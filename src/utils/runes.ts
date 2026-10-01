@@ -94,6 +94,37 @@ export function runes(string: string, locale?: string): string[] {
 }
 
 /**
+ * Get the first grapheme cluster of a string without splitting the rest of it.
+ * Equivalent to runes(string, locale)[0], but stops after the first cluster so
+ * callers that consume one grapheme per iteration stay O(n) overall instead of
+ * O(n^2).
+ *
+ * @param string - The string to read the first grapheme cluster from
+ * @param locale - Optional locale for locale-aware segmentation
+ *
+ * @returns The first grapheme cluster, or "" for an empty string
+ */
+export function firstRune(string: string, locale?: string): string {
+    if (typeof string !== "string") {
+        throw new TypeError("string cannot be undefined or null");
+    }
+
+    // Use Intl.Segmenter if available (Chrome 87+, Safari 14.1+, Firefox 125+)
+    if (typeof Intl !== "undefined" && Intl.Segmenter) {
+        // Normalize to NFC for consistent representation of combining characters
+        const normalized = string.normalize("NFC");
+        const segmenter = getSegmenter(locale);
+        for (const { segment } of segmenter.segment(normalized)) {
+            return segment;
+        }
+        return "";
+    }
+
+    // Fallback to legacy implementation for older browsers
+    return runesLegacy(string)[0] ?? "";
+}
+
+/**
  * Legacy grapheme cluster splitting implementation.
  * Used as fallback for browsers without Intl.Segmenter support.
  */
