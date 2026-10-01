@@ -68,6 +68,7 @@ So your change should look like:
 - Added `KAPLAYOpt.lockResolution` to lock the canvas buffer resolution to the
   defined size and scale when resized by the `letterbox` option (#1106) -
   @imaginarny
+- Added `SoundChannel` and `createChannel()` (#1170) - @amyspark-ng
 
 ### Changed
 
