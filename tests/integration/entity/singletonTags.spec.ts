@@ -57,7 +57,7 @@ test.describe("KAPLAYOpt.singletonTags API", () => {
     );
 
     test(
-        "After singletonTagRemove(), multiple objs can be tagged with the same tag",
+        "After removeSingletonTag(), multiple objs can be tagged with the same tag",
         async ({ page }) => {
             const result = await page.evaluate(() => {
                 const k = kaplay({ singletonTags: ["oh", "hi"] });
@@ -82,7 +82,7 @@ test.describe("KAPLAYOpt.singletonTags API", () => {
     );
 
     test(
-        "singletonTagRemove() should accept array of tags",
+        "removeSingletonTag() should accept array of tags",
         async ({ page }) => {
             const result = await page.evaluate(() => {
                 const k = kaplay({ singletonTags: ["oh", "hi", "mark"] });
