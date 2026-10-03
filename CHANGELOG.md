@@ -68,6 +68,13 @@ So your change should look like:
 - Added `KAPLAYOpt.lockResolution` to lock the canvas buffer resolution to the
   defined size and scale when resized by the `letterbox` option (#1106) -
   @imaginarny
+- Added `KAPLAYOpt.singletonTags` with a few helpers to make listed tags
+  unique, meaning only one object can have a given tag at a time, e.g.
+  `["player", "focused"]` (#1172) - @imaginarny
+- **(examples)** Added a new `singletonTags` example! (#1172) - @imaginarny
+- Added `GetOpt.op` operator option to allow `"or"` besides the default `"and"`
+  in `GameObjRaw.get()`, e.g. `get(["fruit", "vegetable"], { op: "or" })`
+  (#1172) - @imaginarny
 
 ### Changed
 
@@ -119,6 +126,8 @@ So your change should look like:
   duration (#1117) - @imaginarny
 - Fixed triangulate by updating the convexity of nearby vertices after removing
   a concave vertex during ear cutting (#1134) - @mflerackers
+- Fixed `onTag()` and `onUntag()` getting triggered when trying to do so with
+  the existing/same tag (#1172) - @imaginarny
 
 ## [4000.0.0-alpha.27.1] - 2026-05-12
 
