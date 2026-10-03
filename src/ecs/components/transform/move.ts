@@ -1,5 +1,5 @@
-import { type SerializedVec2, Vec2 } from "../../../math/Vec2";
-import type { Comp, EmptyComp, GameObj } from "../../../types";
+import { Vec2, type Vec2Like } from "../../../math/Vec2";
+import type { Comp, GameObj } from "../../../types";
 import type { PosComp } from "./pos";
 
 /**
@@ -9,7 +9,7 @@ import type { PosComp } from "./pos";
  * @subgroup Component Serialization
  */
 interface SerializedMoveComp {
-    dir: SerializedVec2 | number;
+    dir: Vec2Like | number;
     speed: number;
 }
 
