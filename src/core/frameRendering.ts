@@ -1,6 +1,7 @@
 import type { App } from "../app/app";
 import { BG_GRID_SIZE } from "../constants/general";
 import type { Game } from "../game/game";
+import { drawDebug } from "../gfx/draw/drawDebug";
 import { drawTexture } from "../gfx/draw/drawTexture";
 import { drawUnscaled } from "../gfx/draw/drawUnscaled";
 import { drawUVQuad } from "../gfx/draw/drawUVQuad";
@@ -8,6 +9,7 @@ import type { AppGfxCtx } from "../gfx/gfxApp";
 import { flush, height, width } from "../gfx/stack";
 import { Quad } from "../math/math";
 import { Vec2 } from "../math/Vec2";
+import { _k } from "../shared";
 
 /**
  * A frame renderer.
@@ -16,7 +18,7 @@ import { Vec2 } from "../math/Vec2";
  */
 export interface FrameRenderer {
     frameStart: () => void;
-    frameEnd: () => void;
+    frameEnd: (debugOverlay?: boolean) => void;
     fixedUpdateFrame: () => void;
     updateFrame: () => void;
 }
@@ -62,9 +64,7 @@ export const createFrameRenderer = (
         gfx.transform.setIdentity();
     }
 
-    function frameEnd() {
-        // TODO: don't render debug UI with framebuffer
-        // TODO: polish framebuffer rendering / sizing issues
+    function frameEnd(debugOverlay = true) {
         flush();
         gfx.lastDrawCalls = gfx.renderer.numDraws;
         gfx.frameBuffer.unbind();
@@ -96,6 +96,18 @@ export const createFrameRenderer = (
         flush();
         gfx.width = ow;
         gfx.height = oh;
+
+        if (debugOverlay && _k.globalOpt.debug !== false) {
+            gfx.gl.viewport(
+                gfx.viewport.x * pixelDensity,
+                gfx.viewport.y * pixelDensity,
+                gfx.viewport.width * pixelDensity,
+                gfx.viewport.height * pixelDensity,
+            );
+
+            drawDebug();
+            flush();
+        }
     }
 
     function fixedUpdateFrame() {
