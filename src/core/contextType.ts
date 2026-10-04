@@ -622,6 +622,7 @@ export interface KAPLAYCtx {
      * // bean will be upside down!
      * bean.angle = 180
      * ```
+     * 
      * @returns The rotate comp.
      * @since v2000.0
      * @group Components
@@ -4526,6 +4527,7 @@ export interface KAPLAYCtx {
      *     shake(120)
      * })
      * ```
+     * 
      * @since v3000.0
      * @group Rendering
      * @subgroup Camera
