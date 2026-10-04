@@ -118,6 +118,31 @@ export interface LevelCompOpt {
         sym: string,
         pos: Vec2,
     ) => CompList<Comp> | null | undefined;
+    /**
+     * The number of characters that specify one tile.
+     *
+     * If the line length isn't a multiple of this, the last tile will be padded
+     * with spaces to be the same length before things get looked up.
+     *
+     * @example
+     * ```js
+     * addLevel([
+     *     "BABA IS YOU",
+     * ], {
+     *     tileWidth: 24,
+     *     tileHeight: 24,
+     *     charsPerTile: 4,
+     *     tiles: {
+     *         "BABA": () => [sprite("text_baba")],
+     *         " IS ": () => [sprite("text_is")],
+     *         "YOU ": () => [sprite("text_you")],
+     *     }
+     * });
+     * ```
+     *
+     * @default 1
+     */
+    charsPerTile?: number;
 }
 
 /**
@@ -242,7 +267,7 @@ export function level(map: string[], opt: LevelCompOpt): LevelComp {
     };
 
     // The connectivity map is used to see whether two locations are connected
-    // -1: inaccesible n: connectivity group
+    // -1: inaccessible n: connectivity group
     const createConnectivityMap = (level: GameObj<LevelComp>) => {
         const size = level.numRows() * level.numColumns();
         const traverse = (i: number, index: number) => {
@@ -344,13 +369,15 @@ export function level(map: string[], opt: LevelCompOpt): LevelComp {
         id: "level",
 
         add(this: GameObj<LevelComp>) {
-            map.forEach((row, i) => {
-                const keys = row.split("");
-                numColumns = Math.max(keys.length, numColumns);
-                keys.forEach((key, j) => {
-                    this.spawn(key, vec2(j, i));
-                });
-            });
+            const charsPerTile = opt.charsPerTile ?? 1;
+            for (let y = 0; y < map.length; y++) {
+                const row = map[y]!;
+                for (let j = 0, x = 0; j < row.length; j += charsPerTile) {
+                    this.spawn(row.slice(j, j + charsPerTile), vec2(x, y));
+                    x++;
+                    if (numColumns < x) numColumns = x;
+                }
+            }
         },
 
         tileWidth() {
@@ -370,6 +397,7 @@ export function level(map: string[], opt: LevelCompOpt): LevelComp {
 
             const comps = (() => {
                 if (typeof key === "string") {
+                    key = key.padEnd(opt.charsPerTile ?? 1);
                     if (opt.tiles[key]) {
                         if (typeof opt.tiles[key] !== "function") {
                             throw new Error(
