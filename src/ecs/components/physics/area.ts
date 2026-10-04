@@ -449,7 +449,9 @@ export function area(
 
     let _shape: Shape | null = opt.shape ?? null;
     let _scale: Vec2 = opt.scale ? vec2(opt.scale) : vec2(1);
+    let _scaleProxy: Vec2 | null = null;
     let _offset: Vec2 = opt.offset ?? vec2(0);
+    let _offsetProxy: Vec2 | null = null;
     let _cursor: Cursor | null = opt.cursor ?? null;
 
     let _localAreaVersion = -1; // Track local changes in area properties
@@ -515,7 +517,7 @@ export function area(
 
             const opts = {
                 outline: {
-                    width: 4 / _k.gfx.viewport.scale,
+                    width: 4 / _k.gfx.screenViewport.scale,
                     color: rgb(0, 0, 255),
                 },
                 anchor: this.anchor,
@@ -562,18 +564,32 @@ export function area(
                 return _shape;
             },
             set scale(value: Vec2) {
-                _scale = this.scale;
+                _scale.x = value.x;
+                _scale.y = value.y;
                 _localAreaVersion = nextLocalAreaVersion();
             },
             get scale(): Vec2 {
-                return _scale;
+                return (_scaleProxy ??= new Proxy(_scale, {
+                    set(target, prop, value) {
+                        Reflect.set(target, prop, value);
+                        _localAreaVersion = nextLocalAreaVersion();
+                        return true;
+                    },
+                }));
             },
             set offset(value: Vec2) {
-                _offset = value;
+                _offset.x = value.x;
+                _offset.y = value.y;
                 _localAreaVersion = nextLocalAreaVersion();
             },
             get offset() {
-                return _offset;
+                return (_offsetProxy ??= new Proxy(_offset, {
+                    set(target, prop, value) {
+                        Reflect.set(target, prop, value);
+                        _localAreaVersion = nextLocalAreaVersion();
+                        return true;
+                    },
+                }));
             },
             set cursor(value: Cursor | null) {
                 _cursor = value;
