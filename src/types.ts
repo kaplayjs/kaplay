@@ -660,7 +660,7 @@ export type QueryOpt = {
     /**
      * All objects in the given group.
      *
-     * @default children.
+     * @default children
      */
     hierarchy?: "children" | "siblings" | "ancestors" | "descendants";
     /**
