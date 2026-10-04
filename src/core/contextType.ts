@@ -213,7 +213,7 @@ export interface KAPLAYCtx {
      * @readonly
      * @group Misc
      */
-    _k: Engine & { k: KAPLAYCtx };
+    _k: Engine & { k: KAPLAYCtx; };
     /**
      * End everything.
      *
@@ -1112,7 +1112,7 @@ export interface KAPLAYCtx {
      *     anchor("center"),
      * ])
      * ```
-     * 
+     *
      * @returns The anchor comp.
      * @since v2000.0
      * @group Components
@@ -1537,7 +1537,7 @@ export interface KAPLAYCtx {
      * Useful for UI elements.
      *
      * @param fixed - Default fixed value.
-     * 
+     *
      * @example
      * ```js
      * // this will be be fixed on top left and not affected by camera
