@@ -18,7 +18,7 @@ loadSprite("ghosty", "/sprites/ghosty.png");
 
 /* 💡 Create levels with multicharacters 💡
 You can defined the exact character size for each tile in the ASCII TileMap, using
-AddLevelOpt.charsPerTile option. 
+AddLevelOpt.charsPerTile option.
 */
 
 addLevel([
