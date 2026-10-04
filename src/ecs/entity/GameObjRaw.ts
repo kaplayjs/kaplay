@@ -562,6 +562,16 @@ export type InternalGameObjRaw = GameObjRaw & {
      * @param compId - Component ID for searching.
      */
     _checkDependents(compId: string): void;
+    /**
+     * Before setting a tag, check already existing if defined as a `KAPLAYOpt.singletonTag`.
+     *
+     * @param tag - Tag to be checked.
+     * @param cb - Optional callback if true, defaults to the tag removal from the objects.
+     */
+    _ensureSingletonTag<T>(
+        tag: Tag | Tag[],
+        cb?: (tag: Tag | Tag[]) => T | void,
+    ): T | void;
 };
 
 type GameObjTransform =
@@ -834,16 +844,17 @@ export const GameObjRawPrototype: Omit<
         opts: GetOpt = {},
     ): GameObj<T>[] {
         const compIdAreTags = _k.globalOpt.tagComponentIds;
+        const op = opts.op ?? "and";
 
         const checkTagsOrComps = (child: GameObj, t: Tag | Tag[]) => {
             if (opts.only === "comps") {
-                return child.has(t);
+                return child.has(t, op);
             }
             else if (opts.only === "tags") {
-                return child.is(t);
+                return child.is(t, op);
             }
             else {
-                return child.is(t) || child.has(t);
+                return child.is(t, op) || child.has(t, op);
             }
         };
 
@@ -864,11 +875,20 @@ export const GameObjRawPrototype: Omit<
                     : obj.parent === this;
             };
 
+            const ensureSingletonTag = (tag = t) =>
+                this._ensureSingletonTag(tag, st =>
+                    list.splice(
+                        0,
+                        list.length,
+                        ...list.filter(o => !o.is(st, "or")),
+                    ));
+
             const events: KEventController[] = [];
 
             // TODO: clean up when obj destroyed
             events.push(_k.sceneScope.onAdd((obj) => {
                 if (isChild(obj) && checkTagsOrComps(obj, t)) {
+                    ensureSingletonTag(obj.tags);
                     list.push(obj);
                 }
             }));
@@ -887,6 +907,7 @@ export const GameObjRawPrototype: Omit<
                     if (isChild(obj) && checkTagsOrComps(obj, t)) {
                         const idx = list.findIndex((o) => o.id === obj.id);
                         if (idx == -1) {
+                            ensureSingletonTag(obj.tags);
                             list.push(obj);
                         }
                     }
@@ -900,13 +921,13 @@ export const GameObjRawPrototype: Omit<
                     }
                 }));
             }
-            // If tags are components, we don't need to use these callbacks
             // If tags are not components, we only need to use these callbacks if this query looks at tags
-            if (!compIdAreTags && opts.only !== "comps") {
+            if (opts.only !== "comps") {
                 events.push(_k.sceneScope.onTag((obj, tag) => {
                     if (isChild(obj) && checkTagsOrComps(obj, t)) {
                         const idx = list.findIndex((o) => o.id === obj.id);
                         if (idx == -1) {
+                            ensureSingletonTag(tag);
                             list.push(obj);
                         }
                     }
@@ -1493,9 +1514,26 @@ export const GameObjRawPrototype: Omit<
     // #endregion
 
     // #region Tags
+    _ensureSingletonTag(tag, cb) {
+        const singletonTags = _k.globalOpt.singletonTags;
+        if (!singletonTags?.length) return;
+
+        cb ??= t =>
+            _k.game.root.get(t, { recursive: true, op: "or" })
+                .forEach(o => o.untag(t));
+
+        if (Array.isArray(tag)) {
+            const st = tag.filter(t => singletonTags.includes(t));
+            if (st.length) return cb?.(st);
+        }
+        else if (singletonTags.includes(tag)) return cb?.(tag);
+    },
+
     tag(this: InternalGameObjRaw, tag: Tag | Tag[]): void {
         if (Array.isArray(tag)) {
             for (const t of tag) {
+                if (this._tags.has(t)) continue;
+                this._ensureSingletonTag(t);
                 this._tags.add(t);
                 if (!internalIsMaking(this as unknown as GameObj)) {
                     this.trigger("tag", t);
@@ -1504,6 +1542,8 @@ export const GameObjRawPrototype: Omit<
             }
         }
         else {
+            if (this._tags.has(tag)) return;
+            this._ensureSingletonTag(tag);
             this._tags.add(tag);
             if (!internalIsMaking(this as unknown as GameObj)) {
                 this.trigger("tag", tag);
@@ -1515,13 +1555,13 @@ export const GameObjRawPrototype: Omit<
     untag(this: InternalGameObjRaw, tag: Tag | Tag[]): void {
         if (Array.isArray(tag)) {
             for (const t of tag) {
-                this._tags.delete(t);
+                if (!this._tags.delete(t)) continue;
                 this.trigger("untag", t);
                 _k.game.gameObjEvents.trigger("untag", this, t);
             }
         }
         else {
-            this._tags.delete(tag);
+            if (!this._tags.delete(tag)) return;
             this.trigger("untag", tag);
             _k.game.gameObjEvents.trigger("untag", this, tag);
         }
