@@ -1,9 +1,9 @@
 {
   "compilerOptions": {
     "esModuleInterop": true,
-    "target": "ESNext",
-    "module": "ESNext",
-    "moduleResolution": "Node",
+    "target": "esnext",
+    "module": "preserve",
+    "moduleResolution": "bundler",
     "noImplicitThis": true,
     "skipLibCheck": true,
     "resolveJsonModule": true,

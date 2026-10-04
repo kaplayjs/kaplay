@@ -1,6 +1,6 @@
-import { expect, test } from "vitest";
-import { compileStyledText } from "../../src/gfx/formatText";
-import { runes } from "../../src/utils/runes";
+import { expect, test } from "@playwright/test";
+import { compileStyledText } from "../../../src/gfx/formatText";
+import { runes } from "../../../src/utils/runes";
 
 // compileStyledText() should key charStyleMap by grapheme index, the same way
 // formatText() walks the rendered text. Keying by UTF-16 code unit desyncs

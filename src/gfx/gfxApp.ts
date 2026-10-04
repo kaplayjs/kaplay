@@ -45,9 +45,13 @@ export type AppGfxCtx = {
     width: number;
     height: number;
     /**
-     * Where the game is rendered.
+     * Where the game is rendered on canvas buffer.
      */
     viewport: Viewport;
+    /**
+     * Where the game is displayed on canvas (css size).
+     */
+    screenViewport: Viewport;
     fixed: boolean;
     gl: WebGLRenderingContext;
     /**
@@ -68,7 +72,11 @@ export type Viewport = {
     scale: number;
 };
 
-export const initAppGfx = (gfx: GfxCtx, gopt: MustKAPLAYOpt): AppGfxCtx => {
+export const initAppGfx = (
+    gfx: GfxCtx,
+    gopt: MustKAPLAYOpt,
+    canvas: HTMLCanvasElement,
+): AppGfxCtx => {
     const defShader = makeShader(gfx, DEF_VERT, DEF_FRAG);
     const pixelDensity = gopt.pixelDensity ?? 1;
     const { gl } = gfx;
@@ -187,6 +195,13 @@ export const initAppGfx = (gfx: GfxCtx, gopt: MustKAPLAYOpt): AppGfxCtx => {
             y: 0,
             width: gl.drawingBufferWidth,
             height: gl.drawingBufferHeight,
+            scale: 1,
+        },
+        screenViewport: {
+            x: 0,
+            y: 0,
+            width: canvas.offsetWidth,
+            height: canvas.offsetHeight,
             scale: 1,
         },
 

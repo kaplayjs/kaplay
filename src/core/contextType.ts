@@ -491,6 +491,56 @@ export interface KAPLAYCtx {
      * @group Game Obj
      */
     destroyAll(tag: Tag): void;
+    /**
+     * Get the list of all tags defined as {@link KAPLAYOpt.singletonTags}.
+     * To get an object with a singleton tag, use regular {@link get `get("singleton-tag")?.[0]`}.
+     *
+     * @returns Array of tags or undefined.
+     * @since v4000.0
+     * @group Game Obj
+     */
+    getSingletonTags(): Tag[] | undefined;
+    /**
+     * Set singleton tags, replacing the existing ones.
+     * All existing objects with a tag will be untagged except the last occurrence in the object tree.
+     * To specify which object should be excluded, use {@link addSingletonTag `addSingletonTag()`} instead.
+     *
+     * @param tags - The array of tags.
+     *
+     * @since v4000.0
+     * @group Game Obj
+     */
+    setSingletonTags(tags: Tag[]): void;
+    /**
+     * Make tag a {@link KAPLAYOpt.singletonTags `singleton tag`}.
+     * All existing objects with a tag will be untagged except the passed `obj` or the last occurrence in the object tree.
+     *
+     * @param tag - The tag.
+     * @param obj - Optional object to keep the tag instead of the last occurrence.
+     *
+     * @since v4000.0
+     * @group Game Obj
+     */
+    addSingletonTag(tag: Tag, obj?: GameObj): void;
+    /**
+     * Make tag(s) no longer {@link KAPLAYOpt.singletonTags `singleton tag(s)`}.
+     *
+     * @param tag - The tag(s) to remove.
+     *
+     * @since v4000.0
+     * @group Game Obj
+     */
+    removeSingletonTag(tag: Tag | Tag[]): void;
+    /**
+     * Check if a tag is a {@link KAPLAYOpt.singletonTags `singleton tag`}.
+     *
+     * @param tag - The tag to check.
+     *
+     * @returns true if a singleton tag.
+     * @since v4000.0
+     * @group Game Obj
+     */
+    isSingletonTag(tag: Tag | Tag[]): boolean;
     // #region Transform Comps
     /**
      * Set the position of a Game Object, relative to its parent.
