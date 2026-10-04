@@ -1112,6 +1112,7 @@ export interface KAPLAYCtx {
      *     anchor("center"),
      * ])
      * ```
+     * 
      * @returns The anchor comp.
      * @since v2000.0
      * @group Components
