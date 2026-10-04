@@ -1537,6 +1537,7 @@ export interface KAPLAYCtx {
      * Useful for UI elements.
      *
      * @param fixed - Default fixed value.
+     * 
      * @example
      * ```js
      * // this will be be fixed on top left and not affected by camera
