@@ -20,12 +20,12 @@ import type {
     GameObjEventNames,
     GameObjEvents,
 } from "../events/eventMap";
-import { type KEventController, KEventHandler } from "../events/events";
+import { KEventController, KEventHandler } from "../events/events";
 import { canvasToViewport } from "../gfx/viewport";
 import { map, vec2 } from "../math/math";
 import { Vec2 } from "../math/Vec2";
 import { _k } from "../shared";
-import { multiClick } from "../utils/input";
+import { multiPress, MultiPressState, onMultiPress } from "../utils/input";
 import { deprecateMsg } from "../utils/log";
 import { overload2, overload2if } from "../utils/overload";
 import { isEqOrIncludes, setHasOrIncludes } from "../utils/sets";
@@ -226,8 +226,7 @@ export const initAppState = (opt: {
             "mouseDown",
             "mouseRelease",
         ),
-        // set of n:button strings, (2:left / 3:right etc) (2 clicks on left, 3 on right)
-        multiClick: new Set(),
+        multiClick: new MultiPressState(),
         mergedGamepadState: new GamepadState(null),
         gamepadStates: new Map<number, GamepadState>(),
         // resolved button map per gamepad index, computed once on connect
@@ -494,18 +493,35 @@ export const initApp = (
     function isMouseMultiPressed(
         n: number,
         button: MouseButton = "left",
+        delay?: number,
     ): boolean {
-        if (button) return state.multiClick.has(`${n}:${button}`);
-        for (const key of state.multiClick) {
-            if ((key as string).startsWith(`${n}:`)) return true;
+        const isActive = state.multiClick.isActive(n, button, delay);
+        if (isActive) return true;
+
+        // if no mutliPress handler was registered, register a new self-cancelling one
+        if (!state.multiClick.has(n, button, delay)) {
+            const { cb, cancel } = multiPress(
+                n,
+                () => {
+                    cancel();
+                    c.cancel();
+                },
+                delay,
+                button,
+                undefined,
+                1,
+            );
+            const c = onMousePress(cb);
         }
+
         return false;
     }
 
     function isMouseDoublePressed(
         button: MouseButton = "left",
+        delay?: number,
     ): boolean {
-        return isMouseMultiPressed(2, button);
+        return isMouseMultiPressed(2, button, delay);
     }
 
     function isMouseMoved(): boolean {
@@ -680,13 +696,19 @@ export const initApp = (
             n: number,
             action: (button: MouseButton, clickCount: number) => void,
             delay?: number,
-        ) => onMousePress(multiClick(n, action, delay)),
+        ) => onMultiPress(onMousePress, n, action, delay),
         (
             n: number,
             button: MouseButton,
             action: (button: MouseButton, clickCount: number) => void,
             delay?: number,
-        ) => onMousePress(button, multiClick(n, action, delay, button)),
+        ) => onMultiPress(
+            cb => onMousePress(button, cb),
+            n,
+            action,
+            delay,
+            button,
+        ),
         (
             _,
             actionOrButton:
@@ -863,8 +885,8 @@ export const initApp = (
     function resetInput() {
         state.keyState.update();
         state.mouseState.update();
+        state.multiClick.update();
         state.buttonHandler.update();
-        state.multiClick.clear();
 
         state.mergedGamepadState.buttonState.update();
         state.mergedGamepadState.stickState.forEach((v, k) => {
@@ -1088,38 +1110,14 @@ export const initApp = (
         "forward",
     ];
 
-    // multiClicker is cleared every frame, this one tracks the last click
-    // what button, the streak and the time of the last click
-    const clickTracker = new Map<
-        MouseButton,
-        { count: number; last: number }
-    >();
-
     canvasEvents.mousedown = (e) => {
         state.events.onOnce("input", () => {
             const m = MOUSE_BUTTONS[e.button];
             if (!m) return;
 
-            const now = Date.now();
-            const delayMs = (_k.globalOpt.doubleClickDelay ?? 0.5) * 1000;
-
-            // gets the content of the click
-            let t = clickTracker.get(m);
-            if (!t) {
-                t = { count: 0, last: 0 };
-                clickTracker.set(m, t); // stores info for the button
-            }
-
-            // mutates the object and stores the count and the last time
-            t.count = (now - t.last <= delayMs) ? t.count + 1 : 1;
-            t.last = now;
-
-            // adds to multiClick so it can then be used on isMouseMultiPressed
-            // runs before processMousedown so boolean functions on onClick have the information at hand
-            state.multiClick.add(`${t.count}:${m}`);
-
             state.lastInputDevice = "mouse";
             state.buttonHandler.processMousedown(m, state);
+            state.multiClick.process(m);
             state.mouseState.press(m, state);
         });
     };

@@ -2500,7 +2500,6 @@ export interface KAPLAYCtx {
      * ```
      *
      * You can also check for the amount of clicks in a row like this:
-     *
      * @example
      * ```js
      * onMouseMultiPress(1, (button, clickCount) => {
@@ -2541,7 +2540,7 @@ export interface KAPLAYCtx {
      * @subgroup Mouse
      */
     onMouseDoublePress(
-        action: (m: MouseButton) => void,
+        action: (m: MouseButton, clickCount: number) => void,
         delay?: number,
     ): KEventController;
     /**
@@ -2566,7 +2565,7 @@ export interface KAPLAYCtx {
      */
     onMouseDoublePress(
         button: MouseButton,
-        action: (m: MouseButton) => void,
+        action: (m: MouseButton, clickCount: number) => void,
         delay?: number,
     ): KEventController;
     /**
