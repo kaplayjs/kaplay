@@ -979,6 +979,7 @@ export const initApp = (
                     value,
                 );
                 state.events.trigger("gamepadStick", stickName, value, gamepad);
+                if (value.slen() > 0.01) state.lastInputDevice = "gamepad";
             }
         }
     }
