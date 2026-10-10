@@ -144,6 +144,7 @@ So your change should look like:
   duration (#1117) - @imaginarny
 - Fixed triangulate by updating the convexity of nearby vertices after removing
   a concave vertex during ear cutting (#1134) - @mflerackers
+- Fixed sprite component returning stale value after changing the sprite value dynamically (#1164) - @Stanko
 - Fixed `time()` that kept increasing while `debug.paused` was true (#1137) -
   @amyspark-ng
 - Fixed `onTag()` and `onUntag()` getting triggered when trying to do so with
