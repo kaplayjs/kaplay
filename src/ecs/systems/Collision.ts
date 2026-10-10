@@ -42,12 +42,14 @@ export class Collision {
         normal: Vec2,
         distance: number,
         resolved = false,
+        impulse: Vec2 | null = null,
     ) {
         this.source = source;
         this.target = target;
         this.normal = normal;
         this.distance = distance;
         this.resolved = resolved;
+        this.impulse = impulse;
     }
     /**
      * The displacement source game object have to make to avoid the collision.
@@ -59,15 +61,14 @@ export class Collision {
      * Get a new collision with reversed source and target relationship.
      */
     reverse() {
-        const reversed = new Collision(
+        return new Collision(
             this.target,
             this.source,
             this.normal.scale(-1),
             this.distance,
             this.resolved,
+            this.impulse?.scale(-1),
         );
-        reversed.impulse = this.impulse ? this.impulse.scale(-1) : null;
-        return reversed;
     }
     /**
      * If the 2 objects have any overlap, or they're just touching edges.
