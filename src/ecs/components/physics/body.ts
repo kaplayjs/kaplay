@@ -188,12 +188,6 @@ export interface BodyCompOpt {
     mass?: number;
 }
 
-/**
- * The velocity change of each of two non-static bodies that exchange momentum
- * in a collision. It is applied when the collision is resolved.
- */
-const momentumExchange = new WeakMap<Collision, Vec2>();
-
 export function body(opt: BodyCompOpt = {}): BodyComp {
     let curPlatform: GameObj<PosComp | AreaComp | BodyComp> | null = null;
     let lastPlatformPos: null | Vec2 = null;
@@ -240,9 +234,6 @@ export function body(opt: BodyCompOpt = {}): BodyComp {
                             return;
                         }
 
-                        let velChange: Vec2 | null = null;
-                        let otherVelChange: Vec2 | null = null;
-
                         if (this.isStatic && other.isStatic) {
                             return;
                         }
@@ -276,14 +267,10 @@ export function body(opt: BodyCompOpt = {}): BodyComp {
                                     col.source.restitution || 0,
                                     col.target.restitution || 0,
                                 );
-                                const impulse = -(1 + restitution)
-                                    * approachVel
-                                    / (1 / this.mass + 1 / other.mass);
-                                velChange = col.normal.scale(
-                                    impulse / this.mass,
-                                );
-                                otherVelChange = col.normal.scale(
-                                    -impulse / other.mass,
+                                col.impulse = col.normal.scale(
+                                    -(1 + restitution)
+                                        * approachVel
+                                        / (1 / this.mass + 1 / other.mass),
                                 );
                             }
                         }
@@ -299,13 +286,8 @@ export function body(opt: BodyCompOpt = {}): BodyComp {
                         }
 
                         col.resolved = true;
-                        const resolvedRcol = col.reverse();
-                        if (velChange && otherVelChange) {
-                            momentumExchange.set(col, velChange);
-                            momentumExchange.set(resolvedRcol, otherVelChange);
-                        }
                         this.trigger("physicsResolve", col);
-                        other.trigger("physicsResolve", resolvedRcol);
+                        other.trigger("physicsResolve", col.reverse());
                     },
                 );
 
@@ -351,10 +333,11 @@ export function body(opt: BodyCompOpt = {}): BodyComp {
                     const projection = this.vel.project(col.normal);
                     const rejection = this.vel.sub(projection);
 
-                    const velChange = momentumExchange.get(col);
-                    if (velChange) {
+                    if (col.impulse) {
                         // We've hit a body that can move, both get their share of the momentum
-                        this.vel = this.vel.add(velChange);
+                        this.vel = this.vel.add(
+                            col.impulse.scale(1 / this.mass),
+                        );
                     }
                     // Clear the velocity in the direction of the normal, as we've hit something
                     else if (this.vel.dot(col.normal) < 0) {

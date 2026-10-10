@@ -8,6 +8,26 @@ type BodySetup = {
 };
 
 /**
+ * Total momentum of two bodies moving on a line.
+ */
+function momentum(
+    [a, b]: [BodySetup, BodySetup],
+    [velA, velB]: [number, number],
+): number {
+    return (a.mass ?? 1) * velA + (b.mass ?? 1) * velB;
+}
+
+/**
+ * Total kinetic energy of two bodies moving on a line.
+ */
+function kineticEnergy(
+    [a, b]: [BodySetup, BodySetup],
+    [velA, velB]: [number, number],
+): number {
+    return ((a.mass ?? 1) * velA ** 2 + (b.mass ?? 1) * velB ** 2) / 2;
+}
+
+/**
  * Put two boxes on a horizontal line without gravity, let them collide and
  * return their horizontal velocities after the collision.
  */
@@ -40,6 +60,63 @@ async function collide(
 }
 
 test.describe("Collision between two non-static bodies", () => {
+    const cases: [string, BodySetup, BodySetup][] = [
+        [
+            "a resting body of the same mass",
+            { x: 100, vel: 200 },
+            { x: 200, vel: 0 },
+        ],
+        [
+            "a heavier resting body",
+            { x: 100, vel: 300, mass: 1 },
+            { x: 200, vel: 0, mass: 2 },
+        ],
+        [
+            "a lighter resting body",
+            { x: 100, vel: 300, mass: 5 },
+            { x: 200, vel: 0, mass: 1 },
+        ],
+        [
+            "a body coming the other way",
+            { x: 100, vel: 150 },
+            { x: 300, vel: -50, mass: 3 },
+        ],
+        [
+            "a slower body moving the same way",
+            { x: 100, vel: 300, mass: 2 },
+            { x: 200, vel: 100 },
+        ],
+    ];
+
+    for (const [name, a, b] of cases) {
+        const before: [number, number] = [a.vel, b.vel];
+
+        test(`elastic collision with ${name} conserves momentum and energy`, async ({ page }) => {
+            const after = await collide(page, 1, a, b);
+
+            expect(after).not.toEqual(before);
+            expect(momentum([a, b], after)).toBeCloseTo(
+                momentum([a, b], before),
+            );
+            expect(kineticEnergy([a, b], after)).toBeCloseTo(
+                kineticEnergy([a, b], before),
+            );
+        });
+
+        test(`inelastic collision with ${name} conserves momentum and loses energy`, async ({ page }) => {
+            const after = await collide(page, 0, a, b);
+
+            // Without restitution both bodies move on together
+            expect(after[0]).toBeCloseTo(after[1]);
+            expect(momentum([a, b], after)).toBeCloseTo(
+                momentum([a, b], before),
+            );
+            expect(kineticEnergy([a, b], after)).toBeLessThan(
+                kineticEnergy([a, b], before),
+            );
+        });
+    }
+
     test("elastic collision passes the velocity on to a resting body of the same mass", async ({ page }) => {
         const [velA, velB] = await collide(
             page,
@@ -50,42 +127,6 @@ test.describe("Collision between two non-static bodies", () => {
 
         expect(velA).toBeCloseTo(0);
         expect(velB).toBeCloseTo(200);
-    });
-
-    test("elastic collision conserves momentum and energy with different masses", async ({ page }) => {
-        const [velA, velB] = await collide(
-            page,
-            1,
-            { x: 100, vel: 300, mass: 1 },
-            { x: 200, vel: 0, mass: 2 },
-        );
-
-        expect(velA).toBeCloseTo(-100);
-        expect(velB).toBeCloseTo(200);
-    });
-
-    test("inelastic collision makes both bodies move at the same velocity", async ({ page }) => {
-        const [velA, velB] = await collide(
-            page,
-            0,
-            { x: 100, vel: 300, mass: 1 },
-            { x: 200, vel: 0, mass: 2 },
-        );
-
-        expect(velA).toBeCloseTo(100);
-        expect(velB).toBeCloseTo(100);
-    });
-
-    test("head-on elastic collision swaps the velocities of bodies of the same mass", async ({ page }) => {
-        const [velA, velB] = await collide(
-            page,
-            1,
-            { x: 100, vel: 150 },
-            { x: 300, vel: -50 },
-        );
-
-        expect(velA).toBeCloseTo(-50);
-        expect(velB).toBeCloseTo(150);
     });
 });
 

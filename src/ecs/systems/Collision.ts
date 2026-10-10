@@ -30,6 +30,12 @@ export class Collision {
      * If the collision is resolved.
      */
     resolved: boolean = false;
+    /**
+     * The impulse (change of momentum) the source game object gets from the
+     * target, if both are non-static bodies. `null` if they don't exchange
+     * momentum.
+     */
+    impulse: Vec2 | null = null;
     constructor(
         source: GameObj,
         target: GameObj,
@@ -53,13 +59,15 @@ export class Collision {
      * Get a new collision with reversed source and target relationship.
      */
     reverse() {
-        return new Collision(
+        const reversed = new Collision(
             this.target,
             this.source,
             this.normal.scale(-1),
             this.distance,
             this.resolved,
         );
+        reversed.impulse = this.impulse ? this.impulse.scale(-1) : null;
+        return reversed;
     }
     /**
      * If the 2 objects have any overlap, or they're just touching edges.
