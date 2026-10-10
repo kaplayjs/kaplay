@@ -39,7 +39,7 @@ import {
     parseButtonBindings,
 } from "./inputBindings";
 
-export class ButtonState<T = String | Symbol, A = never> {
+export class ButtonState<T = string | symbol, A = never> {
     pressed = new Set<T>();
     pressedRepeat = new Set<T>();
     released = new Set<T>();
@@ -50,7 +50,7 @@ export class ButtonState<T = String | Symbol, A = never> {
         private _downEv: keyof AppEventMap | null,
         private _releaseEv: keyof AppEventMap | null,
         private _arg?: A,
-    ) {}
+    ) { }
     update() {
         this.pressed.clear();
         this.released.clear();
@@ -200,6 +200,7 @@ export const initAppState = (opt: {
     const buttons = opt.buttons ?? {};
 
     // ButtonsDef can't be Record<symbol | string, ButtonBinding> itself because it's used at KAPLAYOpt where USER defines buttons
+    // This results in a map of Symbols with their corresponding button bindings
     const debugButtons = Object.fromEntries(
         Object.entries(debugDefault).map(([name, defaultBinding]) => {
             const binding = opt.debugButtons
@@ -217,6 +218,7 @@ export const initAppState = (opt: {
 
     return {
         canvas: opt.canvas,
+        // Not a problem for the merge since debugButtons uses unique symbols
         buttons: { ...buttons, ...debugButtons } as Record<
             string | symbol,
             ButtonBinding
@@ -801,10 +803,10 @@ export const initApp = (
     }
 
     const onButtonPress = overload2(
-        (action: (btn: String | Symbol) => void) => {
+        (action: (btn: string | symbol) => void) => {
             return state.events.on("buttonPress", (b) => action(b));
         },
-        (btn: String | Symbol, action: (btn: String | Symbol) => void) => {
+        (btn: string | symbol, action: (btn: string | symbol) => void) => {
             return state.events.on(
                 "buttonPress",
                 (b) => isEqOrIncludes(btn, b) && action(b),
@@ -813,12 +815,12 @@ export const initApp = (
     );
 
     const onButtonDown = overload2(
-        (action: (btn: String | Symbol) => void) => {
+        (action: (btn: string | symbol) => void) => {
             return state.events.on("buttonDown", (b) => action(b));
         },
         (
-            btn: String | Symbol | String | Symbol,
-            action: (btn: String | Symbol) => void,
+            btn: string | symbol,
+            action: (btn: string | symbol) => void,
         ) => {
             return state.events.on(
                 "buttonDown",
@@ -828,12 +830,12 @@ export const initApp = (
     );
 
     const onButtonRelease = overload2(
-        (action: (btn: String | Symbol) => void) => {
+        (action: (btn: string | symbol) => void) => {
             return state.events.on("buttonRelease", (b) => action(b));
         },
         (
-            btn: String | Symbol | String | Symbol,
-            action: (btn: String | Symbol) => void,
+            btn: string | symbol,
+            action: (btn: string | symbol) => void,
         ) => {
             return state.events.on(
                 "buttonRelease",
@@ -1153,7 +1155,7 @@ export const initApp = (
             for (const mod of committer.check) {
                 if (
                     (state.keyState.down.has(mod) || mod === key)
-                        !== mods.includes(mod)
+                    !== mods.includes(mod)
                 ) {
                     continue btns;
                 }
