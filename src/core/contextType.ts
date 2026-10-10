@@ -213,7 +213,7 @@ export interface KAPLAYCtx {
      * @readonly
      * @group Misc
      */
-    _k: Engine & { k: KAPLAYCtx; };
+    _k: Engine & { k: KAPLAYCtx };
     /**
      * End everything.
      *

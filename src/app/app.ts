@@ -50,7 +50,7 @@ export class ButtonState<T = string | symbol, A = never> {
         private _downEv: keyof AppEventMap | null,
         private _releaseEv: keyof AppEventMap | null,
         private _arg?: A,
-    ) { }
+    ) {}
     update() {
         this.pressed.clear();
         this.released.clear();
@@ -1155,7 +1155,7 @@ export const initApp = (
             for (const mod of committer.check) {
                 if (
                     (state.keyState.down.has(mod) || mod === key)
-                    !== mods.includes(mod)
+                        !== mods.includes(mod)
                 ) {
                     continue btns;
                 }
