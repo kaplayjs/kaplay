@@ -1977,8 +1977,6 @@ export interface KAPLAYCtx {
      * @subgroup Level
      */
     level(map: string[], opt?: LevelCompOpt): LevelComp;
-
-    // #endregion
     /**
      * Create a raycast.
      *
@@ -2795,10 +2793,10 @@ export interface KAPLAYCtx {
      * @subgroup Buttons API
      */
     onButtonDown(
-        btn: string | string[],
-        action: (btn: string) => void,
+        btn: string | symbol | (string | symbol)[],
+        action: (btn: String | Symbol) => void,
     ): KEventController;
-    onButtonDown(action: (btn: string) => void): KEventController;
+    onButtonDown(action: (btn: String | Symbol) => void): KEventController;
     /**
      * Register an event that runs when user presses a defined button
      * (like "jump") on any input (keyboard, gamepad).
@@ -2812,10 +2810,10 @@ export interface KAPLAYCtx {
      * @subgroup Buttons API
      */
     onButtonPress(
-        btn: string | string[],
-        action: (btn: string) => void,
+        btn: string | symbol | (string | symbol)[],
+        action: (btn: string | symbol) => void,
     ): KEventController;
-    onButtonPress(action: (btn: string) => void): KEventController;
+    onButtonPress(action: (btn: string | symbol) => void): KEventController;
     /**
      * Register an event that runs when user releases a defined button
      * (like "jump") on any input (keyboard, gamepad).
@@ -2829,10 +2827,10 @@ export interface KAPLAYCtx {
      * @subgroup Buttons API
      */
     onButtonRelease(
-        btn: string | string[],
-        action: (btn: string) => void,
+        btn: string | symbol | (string | symbol)[],
+        action: (btn: string | symbol) => void,
     ): KEventController;
-    onButtonRelease(action: (btn: string) => void): KEventController;
+    onButtonRelease(action: (btn: string | symbol) => void): KEventController;
     /**
      * Register an event that runs when tab is shown.
      *
@@ -3441,7 +3439,6 @@ export interface KAPLAYCtx {
      * @group Scenes
      */
     getSceneName(): string | null;
-    // #region Loaders
     /**
      * Sets the root for all subsequent resource urls.
      *
@@ -3849,7 +3846,6 @@ export interface KAPLAYCtx {
      * @experimental
      */
     loadPrefab: (name: string, url: string) => Asset<SerializedGameObj>;
-    // #endregion
     /**
      * Get the global asset loading progress (0.0 - 1.0).
      *
@@ -4553,7 +4549,6 @@ export interface KAPLAYCtx {
      * @subgroup Camera
      */
     flash(flashColor: Color, fadeOutTime: number): TimerController;
-    // #region DEPRECATED CAMERA METHODS ---------------------------------------
     /**
      * @deprecated Use {@link setCamPos} and {@link getCamPos} instead.
      *
@@ -4645,7 +4640,6 @@ export interface KAPLAYCtx {
      * @subgroup Camera
      */
     camTransform(): Mat23;
-    // #endregion DEPRECATED CAMERA METHODS ------------------------------------
     /**
      * Transform a point from world position (relative to the root) to screen position (relative to the screen).
      *
