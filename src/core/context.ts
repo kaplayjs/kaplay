@@ -1,4 +1,11 @@
 import { trigger } from "../api/eventHandlers";
+import {
+    addSingletonTag,
+    getSingletonTags,
+    isSingletonTag,
+    removeSingletonTag,
+    setSingletonTags,
+} from "../api/singletonTags";
 import { getData, setData } from "../app/data";
 import { loadAseprite } from "../assets/aseprite";
 import {
@@ -366,6 +373,11 @@ export const createContext = (
         query,
         readd,
         retrieve: (...args) => game.retrieve(...args),
+        getSingletonTags,
+        setSingletonTags,
+        addSingletonTag,
+        removeSingletonTag,
+        isSingletonTag,
         // comps
         pos,
         rotate,
