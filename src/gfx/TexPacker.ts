@@ -6,27 +6,126 @@ import { type GfxCtx, Texture } from "./gfx";
 
 export type Frame = { tex: Texture; q: Quad; id: number };
 
-enum UsedCorner {
-    TOPRIGHT = 1,
-    BOTTOMLEFT = 2,
+class TexMap {
+    constructor(
+        public tex: Texture,
+        public el: HTMLCanvasElement,
+        public ctx: CanvasRenderingContext2D,
+    ) {}
+    hg = new PackerHashGrid();
+    fch: RectNode | undefined = undefined;
+    fct: RectNode | undefined = undefined;
+    _addRect(node: RectNode) {
+        if (this.fch === undefined) {
+            this.fch = this.fct = node;
+            node.prev = undefined;
+            node.next = undefined;
+        }
+        else {
+            node.prev = undefined;
+            node.next = this.fch;
+            this.fch!.prev = node;
+            this.fch = node;
+        }
+    }
+    _removeRect(node: RectNode) {
+        if (node.prev) {
+            node.prev.next = node.next;
+        }
+        else {
+            this.fch = node.next;
+        }
+
+        if (node.next) {
+            node.next.prev = node.prev;
+        }
+        else {
+            this.fct = node.prev;
+        }
+        node.next = node.prev = undefined;
+    }
+    _isInFreeList(node: RectNode) {
+        return node.prev !== undefined || node.next !== undefined
+            || this.fch === node;
+    }
 }
 
-interface TexMap {
+interface RectNode {
+    id: number;
+    rect: Rect;
     tex: Texture;
-    el: HTMLCanvasElement;
-    ctx: CanvasRenderingContext2D;
+    parent?: RectNode;
+    childTR?: RectNode;
+    childBL?: RectNode;
+    prev?: RectNode;
+    next?: RectNode;
+}
+
+const floor = Math.floor;
+class PackerHashGrid {
+    private g: Partial<Record<string, Set<RectNode>>> = {};
+
+    constructor(private c = 64) {}
+
+    _insert(node: RectNode) {
+        const { rect: { pos: { x, y }, width, height } } = node;
+        const cs = this.c;
+        // Get all cells the rectangle overlaps
+        const minCellX = floor(x / cs);
+        const minCellY = floor(y / cs);
+        const maxCellX = floor((x + width) / cs);
+        const maxCellY = floor((y + height) / cs);
+
+        for (let x = minCellX; x <= maxCellX; x++) {
+            for (let y = minCellY; y <= maxCellY; y++) {
+                (this.g[`${x},${y}`] ??= new Set()).add(node);
+            }
+        }
+    }
+
+    _remove(node: RectNode) {
+        const { rect: { pos: { x, y }, width, height } } = node;
+        const cs = this.c;
+        // Get all cells the rectangle overlaps
+        const minCellX = floor(x / cs);
+        const minCellY = floor(y / cs);
+        const maxCellX = floor((x + width) / cs);
+        const maxCellY = floor((y + height) / cs);
+
+        for (let x = minCellX; x <= maxCellX; x++) {
+            for (let y = minCellY; y <= maxCellY; y++) {
+                this.g[`${x},${y}`]?.delete(node);
+            }
+        }
+    }
+
+    _fitCheck(rect: Rect): boolean {
+        const { pos: { x, y }, width, height } = rect;
+        const cs = this.c;
+        // Get all cells the rectangle overlaps
+        const minCellX = floor(x / cs);
+        const minCellY = floor(y / cs);
+        const maxCellX = floor((x + width) / cs);
+        const maxCellY = floor((y + height) / cs);
+
+        let fits = true;
+        for (let x = minCellX; x <= maxCellX && fits; x++) {
+            for (let y = minCellY; y <= maxCellY && fits; y++) {
+                this.g[`${x},${y}`]?.forEach(node => {
+                    if (fits && testRectRect(rect, node.rect)) fits = false;
+                });
+            }
+        }
+        return fits;
+    }
 }
 
 class FilterTexPacker {
     _textures: Texture[] = [];
-    _big: Frame[] = [];
-    _used = new Map<number, {
-        rect: Rect;
-        tex: Texture;
-        used: number;
-    }>();
-    _curMap: TexMap = null as any;
-    _tex2Map = new Map<Texture, TexMap>();
+    #big: Frame[] = [];
+    #used = new Map<number, RectNode>();
+    _curMap!: TexMap;
+    #tex2Map = new Map<Texture, TexMap>();
 
     constructor(
         private _p: TexPacker,
@@ -36,11 +135,11 @@ class FilterTexPacker {
         private _h: number,
         private _pad: number,
     ) {
-        this._newTexture();
+        this.#newTexture();
     }
 
-    private _hasPendingRefresh = false;
-    private _newTexture(): TexMap {
+    _hasPendingRefresh = false;
+    #newTexture(): TexMap {
         this._sync();
         const el = document.createElement("canvas");
         el.width = this._w;
@@ -51,7 +150,7 @@ class FilterTexPacker {
         const ctx = el.getContext("2d");
         if (!ctx) throw new Error("Failed to get 2d context");
 
-        this._tex2Map.set(tex, this._curMap = { tex, el, ctx });
+        this.#tex2Map.set(tex, this._curMap = new TexMap(tex, el, ctx));
         return this._curMap;
     }
     _sync() {
@@ -67,7 +166,7 @@ class FilterTexPacker {
             Texture.fromImage(this._gfx, img, { filter: this._f }),
             new Quad(0, 0, 1, 1),
         );
-        this._big.push(f);
+        this.#big.push(f);
         return f;
     }
 
@@ -80,9 +179,9 @@ class FilterTexPacker {
         imgWidth: number,
         imgHeight: number,
     ) {
-        const curCtx = this._curMap.ctx;
+        const m = this._curMap;
         drawImageSourceAt(
-            curCtx,
+            m.ctx,
             img,
             x,
             y,
@@ -102,7 +201,8 @@ class FilterTexPacker {
         const pad = this._pad;
         const paddedWidth = imgWidth + pad;
         const paddedHeight = imgHeight + pad;
-        let { el: curEl, ctx: curCtx, tex: curTex } = this._curMap;
+        let m = this._curMap;
+        let { el: curEl, tex: curTex } = m;
 
         const maxX = curEl.width, maxY = curEl.height;
         const rectToAdd = new Rect(new Vec2(), paddedWidth, paddedHeight);
@@ -114,39 +214,44 @@ class FilterTexPacker {
         }
 
         // find position
-        let x = pad, y = pad, found = false;
+        let x = pad, y = pad;
         const doesitfit = () => {
             // goes offscreen?
             if (x + paddedWidth > maxX || y + paddedHeight > maxY) return false;
             // try it
             p.set(x, y);
-            for (let { rect, tex } of this._used.values()) {
-                if (curTex !== tex) continue;
-                if (testRectRect(rect, rectToAdd)) return false;
-            }
-            return found = true;
+            return m.hg._fitCheck(rectToAdd);
         };
 
         // initial check for (0, 0)
-        if (!doesitfit()) {
-            for (let entry of this._used.values()) {
-                const { tex, rect: { pos, width, height }, used } = entry;
-                if (curTex !== tex) continue;
-                // try to the right
-                if ((used & UsedCorner.TOPRIGHT) === 0) {
+        let found = false,
+            foundParentNode: RectNode | undefined,
+            foundCornerIsTopRight: boolean;
+        if (doesitfit()) {
+            found = true;
+        }
+        else {
+            for (let node = m.fch; node !== undefined; node = node.next) {
+                const { rect: { pos, width, height }, childBL, childTR } = node;
+                if (!childTR) {
                     x = pos.x + width;
                     y = pos.y;
                     if (doesitfit()) {
-                        entry.used |= UsedCorner.TOPRIGHT;
+                        foundParentNode = node;
+                        found = foundCornerIsTopRight = true;
+                        if (childBL) m._removeRect(node);
                         break;
                     }
                 }
                 // try below
-                if ((used & UsedCorner.BOTTOMLEFT) === 0) {
+                if (!childBL) {
                     x = pos.x;
                     y = pos.y + height;
                     if (doesitfit()) {
-                        entry.used |= UsedCorner.BOTTOMLEFT;
+                        foundParentNode = node;
+                        found = true;
+                        foundCornerIsTopRight = false;
+                        if (childTR) m._removeRect(node);
                         break;
                     }
                 }
@@ -160,7 +265,7 @@ class FilterTexPacker {
                 p.x =
                 p.y =
                     pad;
-            ({ tex: curTex, ctx: curCtx, el: curEl } = this._newTexture());
+            ({ tex: curTex, el: curEl } = m = this.#newTexture());
         }
 
         this._blit(img, x, y, chopX, chopY, imgWidth, imgHeight);
@@ -171,11 +276,21 @@ class FilterTexPacker {
             new Quad(x / maxX, y / maxY, imgWidth / maxX, imgHeight / maxY),
         );
 
-        this._used.set(f.id, {
+        const newNode: RectNode = {
+            id: f.id,
             rect: rectToAdd,
             tex: curTex,
-            used: 0,
-        });
+            parent: foundParentNode,
+        };
+
+        if (foundParentNode) {
+            foundParentNode[foundCornerIsTopRight! ? "childTR" : "childBL"] =
+                newNode;
+        }
+
+        this.#used.set(f.id, newNode);
+        m.hg._insert(newNode);
+        m._addRect(newNode);
 
         return f;
     }
@@ -191,27 +306,44 @@ class FilterTexPacker {
     }
     _free() {
         this._textures.forEach(tex => tex.free());
-        this._big.forEach(f => f.tex.free());
-        this._used.clear();
-        this._big = [];
+        this.#big.forEach(f => f.tex.free());
+        this.#used.clear();
+        this.#big = [];
     }
     _remove(packerId: number) {
-        const entry = this._used.get(packerId);
+        const node = this.#used.get(packerId);
 
-        if (!entry) {
-            const big = this._big.findIndex(f => f.id === packerId);
+        if (!node) {
+            const big = this.#big.findIndex(f => f.id === packerId);
             if (big < 0) {
                 throw new Error(
                     "Image not found in packer (was this loaded via a prepacked spritesheet?)",
                 );
             }
-            this._big.splice(big, 1)[0]!.tex.free();
+            this.#big.splice(big, 1)[0]!.tex.free();
             return;
         }
-        const { rect: { pos: { x, y }, width, height }, tex } = entry;
-        this._tex2Map.get(tex)!.ctx.clearRect(x, y, width, height);
 
-        this._used.delete(packerId);
+        const { rect: { pos: { x, y }, width, height }, tex } = node;
+        const m = this.#tex2Map.get(tex)!;
+        m.ctx.clearRect(x, y, width, height);
+
+        m.hg._remove(node);
+        if (m._isInFreeList(node)) m._removeRect(node);
+
+        // free parent corner
+        const parent = node.parent;
+        if (parent) {
+            if (parent.childTR === node) {
+                parent.childTR = undefined;
+            }
+            if (parent.childBL === node) {
+                parent.childBL = undefined;
+            }
+            if (!m._isInFreeList(parent)) m._addRect(parent);
+        }
+
+        this.#used.delete(packerId);
         this._hasPendingRefresh = true;
     }
 }
@@ -260,12 +392,13 @@ export class TexPacker {
             1,
         );
         packer._blit(whitePixel, width - 1, height - 1, 0, 0, 1, 1);
-        packer._sync();
-        packer._used.set(-1, {
+        packer._curMap.hg._insert({
             rect: new Rect(new Vec2(width - 1, height - 1), 1, 1),
             tex: tex,
-            used: UsedCorner.BOTTOMLEFT | UsedCorner.TOPRIGHT, // it's bottom right so nothing can go right or below it
+            id: -1,
         });
+        packer._hasPendingRefresh = true;
+        packer._sync();
         return {
             tex,
             q: new Quad(
