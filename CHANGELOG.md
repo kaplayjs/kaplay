@@ -46,6 +46,10 @@ So your change should look like:
 
 ### Breaking Changes
 
+- The `onHide` and `onShow` global handlers (which have been deprecated for a
+  while) are now actually removed, you must use `onTabHide` and `onTabShow`.
+  `onHide` and `onShow` still exist but now handle reacting to changes in the
+  `.hidden` property of game objects (#1041) - @dragoncoder047
 - `new RNG()` and `setRNG()` now use config objects instead of the
   string/custom rng parameter (#1097) - @Stanko
 - The rotation/angle constraint's `scale` option has been renamed
@@ -61,6 +65,9 @@ So your change should look like:
   the text includes tags or uses transform or styles (#1064) - @dragoncoder047,
   @imaginarny
 - **(examples)** Added a new `textClick` example! (#1064) - @dragoncoder047
+- Added `onPause()`, `onUnpause()`, `onHide()`, and `onShow()` events for
+  listening to the state of the `paused` and `hidden` properties on game objects
+  (#1041) - @dragoncoder047
 - Made random generator algorithm configurable using `setRNG()` (#1057) -
   @mflerackers
 - Added xorshift32 as random generator (#1057) - @mflerackers
@@ -81,6 +88,9 @@ So your change should look like:
 - Added `KAPLAYOpt.lockResolution` to lock the canvas buffer resolution to the
   defined size and scale when resized by the `letterbox` option (#1106) -
   @imaginarny
+- **(!)** Added `KAPLAYOpt.debugKeys` to add and modify on runtime the buttons
+  used for debug actions, this makes it so onButtonPress now accepts
+  `String` and `Symbol` instead of only string due to internal changes - @amyspark-ng
 - Added `KAPLAYOpt.singletonTags` with a few helpers to make listed tags
   unique, meaning only one object can have a given tag at a time, e.g.
   `["player", "focused"]` (#1172) - @imaginarny
@@ -142,6 +152,9 @@ So your change should look like:
   duration (#1117) - @imaginarny
 - Fixed triangulate by updating the convexity of nearby vertices after removing
   a concave vertex during ear cutting (#1134) - @mflerackers
+- Fixed sprite component returning stale value after changing the sprite value dynamically (#1164) - @Stanko
+- Fixed `time()` that kept increasing while `debug.paused` was true (#1137) -
+  @amyspark-ng
 - Fixed `onTag()` and `onUntag()` getting triggered when trying to do so with
   the existing/same tag (#1172) - @imaginarny
 
