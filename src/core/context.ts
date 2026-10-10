@@ -1,4 +1,11 @@
 import { trigger } from "../api/eventHandlers";
+import {
+    addSingletonTag,
+    getSingletonTags,
+    isSingletonTag,
+    removeSingletonTag,
+    setSingletonTags,
+} from "../api/singletonTags";
 import { getData, setData } from "../app/data";
 import { loadAseprite } from "../assets/aseprite";
 import {
@@ -366,6 +373,11 @@ export const createContext = (
         query,
         readd,
         retrieve: (...args) => game.retrieve(...args),
+        getSingletonTags,
+        setSingletonTags,
+        addSingletonTag,
+        removeSingletonTag,
+        isSingletonTag,
         // comps
         pos,
         rotate,
@@ -456,8 +468,6 @@ export const createContext = (
         onTouchMove: defaultScope.onTouchMove,
         onTouchEnd: defaultScope.onTouchEnd,
         onScroll: defaultScope.onScroll,
-        onHide: defaultScope.onHide,
-        onShow: defaultScope.onShow,
         onTabShow: defaultScope.onTabShow,
         onTabHide: defaultScope.onTabHide,
         onGamepadButtonDown: defaultScope.onGamepadButtonDown,
@@ -492,6 +502,10 @@ export const createContext = (
         releaseButton: app.releaseButton,
         getLastInputDeviceType: app.getLastInputDeviceType,
         charInputted: app.charInputted,
+        onHide: defaultScope.onHide,
+        onShow: defaultScope.onShow,
+        onPause: defaultScope.onPause,
+        onUnpause: defaultScope.onUnpause,
         // timer
         loop,
         wait,
