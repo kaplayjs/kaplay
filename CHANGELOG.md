@@ -131,6 +131,9 @@ So your change should look like:
   a concave vertex during ear cutting (#1134) - @mflerackers
 - Fixed `onTag()` and `onUntag()` getting triggered when trying to do so with
   the existing/same tag (#1172) - @imaginarny
+- Fixed collisions between two non-static bodies not conserving momentum, the
+  velocity and mass of the other body are now taken into account (#1174) -
+  @WynandVStaden
 
 ## [4000.0.0-alpha.27.1] - 2026-05-12
 
