@@ -48,9 +48,19 @@ So your change should look like:
 
 - `new RNG()` and `setRNG()` now use config objects instead of the
   string/custom rng parameter (#1097) - @Stanko
+- The rotation/angle constraint's `scale` option has been renamed
+  to `ratio` (#976) - @dragoncoder047
 
 ### Added
 
+- Added the ability to check which character a point is hovering over in the
+  `text()` component using `TextComp.pointToChar()` or
+  `TextComp.pointToCharIndex()`, to make text-based menus easier to build by
+  simply styling text (#1064) - @dragoncoder047, @imaginarny
+- When debug inspect enabled, `text()` char bounding boxes will now be drawn if
+  the text includes tags or uses transform or styles (#1064) - @dragoncoder047,
+  @imaginarny
+- **(examples)** Added a new `textClick` example! (#1064) - @dragoncoder047
 - Made random generator algorithm configurable using `setRNG()` (#1057) -
   @mflerackers
 - Added xorshift32 as random generator (#1057) - @mflerackers
@@ -68,14 +78,6 @@ So your change should look like:
 - Added a `type` field to `KGamepad` (`"ps4"`, `"ps5"`, `"playstation"`,
   `"xbox"`, `"switch"`, a custom string, or `undefined`) for picking
   button-glyph assets based on controller family (#1119) - @CEREBR4L
-- Added the ability to check which character a point is hovering over in the
-  `text()` component using `TextComp.pointToChar()` or
-  `TextComp.pointToCharIndex()`, to make text-based menus easier to build by
-  simply styling text (#1064) - @dragoncoder047, @imaginarny
-- When debug inspect enabled, `text()` char bounding boxes will now be drawn if
-  the text includes tags or uses transform or styles (#1064) - @dragoncoder047,
-  @imaginarny
-- **(examples)** Added a new `textClick` example! (#1064) - @dragoncoder047
 - Added `KAPLAYOpt.lockResolution` to lock the canvas buffer resolution to the
   defined size and scale when resized by the `letterbox` option (#1106) -
   @imaginarny
@@ -89,6 +91,9 @@ So your change should look like:
 
 ### Changed
 
+- Updated the rotation/angle constraint to track multiple turns of the
+  source object, so that non-integer ratios don't result in jumping at
+  the boundary (#976) - @dragoncoder047
 - Added an optional parameter `rng` to all random related functions to pass the
   rng to use (#1057) - @mflerackers
 - RNG can now be set and seeded on init (as `KAPLAYOpt.rng`) and in runtime
