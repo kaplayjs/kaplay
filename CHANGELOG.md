@@ -46,15 +46,27 @@ So your change should look like:
 
 ### Breaking Changes
 
+- The `onHide` and `onShow` global handlers (which have been deprecated for a
+  while) are now actually removed, you must use `onTabHide` and `onTabShow`.
+  `onHide` and `onShow` still exist but now handle reacting to changes in the
+  `.hidden` property of game objects (#1041) - @dragoncoder047
 - `new RNG()` and `setRNG()` now use config objects instead of the
   string/custom rng parameter (#1097) - @Stanko
+- The rotation/angle constraint's `scale` option has been renamed
+  to `ratio` (#976) - @dragoncoder047
 
 ### Added
 
+- Added `onPause()`, `onUnpause()`, `onHide()`, and `onShow()` events for
+  listening to the state of the `paused` and `hidden` properties on game objects
+  (#1041) - @dragoncoder047
 - Made random generator algorithm configurable using `setRNG()` (#1057) -
   @mflerackers
 - Added xorshift32 as random generator (#1057) - @mflerackers
 - **(examples)** Added a new `gacha` example! (#1057) - @imaginarny
+- Added the `LevelCompOpt.charsPerTile` option for the `level()` component and
+  `addLevel` which lets you use more than one character per tile, that way you
+  can make clearer maps without having to resort to Unicode (#1006) - @dragoncoder047
 - Added Alea as random generator (#1097) - @Stanko
 - Added `nextFrame()` helper function to defer/run a function on the next frame
   (#1112) - @imaginarny
@@ -68,9 +80,22 @@ So your change should look like:
 - Added `KAPLAYOpt.lockResolution` to lock the canvas buffer resolution to the
   defined size and scale when resized by the `letterbox` option (#1106) -
   @imaginarny
+- **(!)** Added `KAPLAYOpt.debugKeys` to add and modify on runtime the buttons
+  used for debug actions, this makes it so onButtonPress now accepts
+  `String` and `Symbol` instead of only string due to internal changes - @amyspark-ng
+- Added `KAPLAYOpt.singletonTags` with a few helpers to make listed tags
+  unique, meaning only one object can have a given tag at a time, e.g.
+  `["player", "focused"]` (#1172) - @imaginarny
+- **(examples)** Added a new `singletonTags` example! (#1172) - @imaginarny
+- Added `GetOpt.op` operator option to allow `"or"` besides the default `"and"`
+  in `GameObjRaw.get()`, e.g. `get(["fruit", "vegetable"], { op: "or" })`
+  (#1172) - @imaginarny
 
 ### Changed
 
+- Updated the rotation/angle constraint to track multiple turns of the
+  source object, so that non-integer ratios don't result in jumping at
+  the boundary (#976) - @dragoncoder047
 - Added an optional parameter `rng` to all random related functions to pass the
   rng to use (#1057) - @mflerackers
 - RNG can now be set and seeded on init (as `KAPLAYOpt.rng`) and in runtime
@@ -121,6 +146,8 @@ So your change should look like:
   a concave vertex during ear cutting (#1134) - @mflerackers
 - Fixed `time()` that kept increasing while `debug.paused` was true (#1137) -
   @amyspark-ng
+- Fixed `onTag()` and `onUntag()` getting triggered when trying to do so with
+  the existing/same tag (#1172) - @imaginarny
 
 ## [4000.0.0-alpha.27.1] - 2026-05-12
 

@@ -491,6 +491,56 @@ export interface KAPLAYCtx {
      * @group Game Obj
      */
     destroyAll(tag: Tag): void;
+    /**
+     * Get the list of all tags defined as {@link KAPLAYOpt.singletonTags}.
+     * To get an object with a singleton tag, use regular {@link get `get("singleton-tag")?.[0]`}.
+     *
+     * @returns Array of tags or undefined.
+     * @since v4000.0
+     * @group Game Obj
+     */
+    getSingletonTags(): Tag[] | undefined;
+    /**
+     * Set singleton tags, replacing the existing ones.
+     * All existing objects with a tag will be untagged except the last occurrence in the object tree.
+     * To specify which object should be excluded, use {@link addSingletonTag `addSingletonTag()`} instead.
+     *
+     * @param tags - The array of tags.
+     *
+     * @since v4000.0
+     * @group Game Obj
+     */
+    setSingletonTags(tags: Tag[]): void;
+    /**
+     * Make tag a {@link KAPLAYOpt.singletonTags `singleton tag`}.
+     * All existing objects with a tag will be untagged except the passed `obj` or the last occurrence in the object tree.
+     *
+     * @param tag - The tag.
+     * @param obj - Optional object to keep the tag instead of the last occurrence.
+     *
+     * @since v4000.0
+     * @group Game Obj
+     */
+    addSingletonTag(tag: Tag, obj?: GameObj): void;
+    /**
+     * Make tag(s) no longer {@link KAPLAYOpt.singletonTags `singleton tag(s)`}.
+     *
+     * @param tag - The tag(s) to remove.
+     *
+     * @since v4000.0
+     * @group Game Obj
+     */
+    removeSingletonTag(tag: Tag | Tag[]): void;
+    /**
+     * Check if a tag is a {@link KAPLAYOpt.singletonTags `singleton tag`}.
+     *
+     * @param tag - The tag to check.
+     *
+     * @returns true if a singleton tag.
+     * @since v4000.0
+     * @group Game Obj
+     */
+    isSingletonTag(tag: Tag | Tag[]): boolean;
     // #region Transform Comps
     /**
      * Set the position of a Game Object, relative to its parent.
@@ -1927,8 +1977,6 @@ export interface KAPLAYCtx {
      * @subgroup Level
      */
     level(map: string[], opt?: LevelCompOpt): LevelComp;
-
-    // #endregion
     /**
      * Create a raycast.
      *
@@ -2745,10 +2793,10 @@ export interface KAPLAYCtx {
      * @subgroup Buttons API
      */
     onButtonDown(
-        btn: string | string[],
-        action: (btn: string) => void,
+        btn: string | symbol | (string | symbol)[],
+        action: (btn: String | Symbol) => void,
     ): KEventController;
-    onButtonDown(action: (btn: string) => void): KEventController;
+    onButtonDown(action: (btn: String | Symbol) => void): KEventController;
     /**
      * Register an event that runs when user presses a defined button
      * (like "jump") on any input (keyboard, gamepad).
@@ -2762,10 +2810,10 @@ export interface KAPLAYCtx {
      * @subgroup Buttons API
      */
     onButtonPress(
-        btn: string | string[],
-        action: (btn: string) => void,
+        btn: string | symbol | (string | symbol)[],
+        action: (btn: string | symbol) => void,
     ): KEventController;
-    onButtonPress(action: (btn: string) => void): KEventController;
+    onButtonPress(action: (btn: string | symbol) => void): KEventController;
     /**
      * Register an event that runs when user releases a defined button
      * (like "jump") on any input (keyboard, gamepad).
@@ -2779,10 +2827,10 @@ export interface KAPLAYCtx {
      * @subgroup Buttons API
      */
     onButtonRelease(
-        btn: string | string[],
-        action: (btn: string) => void,
+        btn: string | symbol | (string | symbol)[],
+        action: (btn: string | symbol) => void,
     ): KEventController;
-    onButtonRelease(action: (btn: string) => void): KEventController;
+    onButtonRelease(action: (btn: string | symbol) => void): KEventController;
     /**
      * Register an event that runs when tab is shown.
      *
@@ -2801,6 +2849,58 @@ export interface KAPLAYCtx {
      * @group Events
      */
     onTabShow(action: () => void): KEventController;
+    /**
+     * Register an event that runs when an object with the provided tag becomes visible, either directly or when a parent is un-hidden.
+     *
+     * (Note that "visible" just means "the draw handlers will run", it doesn't tell you anything about whether pixels will be drawn visibly on screen.)
+     *
+     * @param tag - The tag to listen for.
+     * @param action - The function that runs when an object is un-hidden.
+     *
+     * @example
+     * ```js
+     * onShow("player", () => {
+     *     debug.log("hi player");
+     * });
+     *
+     * const player = add([
+     *     pos(),
+     *     "player"
+     * ]);
+     * player.hidden = true;
+     * player.hidden = false; // Logs "hi player"
+     * ```
+     *
+     * @returns The event controller.
+     * @since v4000.0
+     * @group Events
+     */
+    onShow(tag: Tag, action: (obj: GameObj) => void): KEventController;
+    /**
+     * Register an event that runs when an object becomes visible, either directly or when a parent is un-hidden.
+     *
+     * (Note that "visible" just means "the draw handlers will run", it doesn't tell you anything about whether pixels will be drawn visibly on screen.)
+     *
+     * @param action - The function that runs when an object is un-hidden.
+     *
+     * @example
+     * ```js
+     * onShow(() => {
+     *     debug.log("ohhi");
+     * });
+     *
+     * const obj = add([
+     *     pos(),
+     * ]);
+     * obj.hidden = true;
+     * obj.hidden = false; // Logs "ohhi"
+     * ```
+     *
+     * @returns The event controller.
+     * @since v4000.0
+     * @group Events
+     */
+    onShow(action: (obj: GameObj) => void): KEventController;
     /**
      * Register an event that runs when tab is hidden.
      *
@@ -2832,57 +2932,159 @@ export interface KAPLAYCtx {
      */
     onTabHide(action: () => void): KEventController;
     /**
-     * @deprecated use `onTabHide` instead
+     * Register an event that runs when an object with the provided tag becomes invisible, either directly or when a parent is hidden.
      *
-     * Register an event that runs when tab is hidden.
+     * (Note that "invisible" just means "the draw handlers will not run", it doesn't tell you anything about whether pixels were being drawn visibly on screen.)
      *
-     * @param action - The function that is run what the tab is hidden.
+     * @param tag - The tag to listen for.
+     * @param action - The function that runs when an object is hidden.
      *
      * @example
      * ```js
-     * // spooky ghost
-     * let ghosty = add([
-     *     pos(center()),
-     *     sprite("ghosty"),
-     *     anchor("center"),
+     * onHide("player", () => {
+     *     debug.log("bye player");
+     * });
+     *
+     * const player = add([
+     *     pos(),
+     *     "player"
      * ]);
-     *
-     * // when switching tabs, this runs
-     * onHide(() => {
-     *     destroy(ghosty);
-     *     add([
-     *         text("There was never aa ghosttttt"),
-     *         pos(center()),
-     *         anchor("center"),
-     *     ]);
-     * });
+     * player.hidden = true; // Logs "bye player"
      * ```
      *
      * @returns The event controller.
-     * @since v3001.0
+     * @since v4000.0
      * @group Events
      */
-    onHide(action: () => void): KEventController;
+    onHide(tag: Tag, action: (obj: GameObj) => void): KEventController;
     /**
-     * @deprecated use `onTabShow` instead
+     * Register an event that runs when an object becomes invisible, either directly or when a parent is hidden.
      *
-     * Register an event that runs when tab is shown.
+     * (Note that "invisible" just means "the draw handlers will not run", it doesn't tell you anything about whether pixels were being drawn visibly on screen.)
      *
-     * @param action - The function that is run when the tab is shown.
+     * @param action - The function that runs when an object is hidden.
      *
      * @example
      * ```js
-     * // user has returned to this tab
-     * onShow(() => {
-     *     burp();
+     * onHide(() => {
+     *     debug.log("bye");
      * });
+     *
+     * const obj = add([
+     *     pos(),
+     * ]);
+     * obj.hidden = true; // Logs "bye"
      * ```
      *
      * @returns The event controller.
-     * @since v3001.0
+     * @since v4000.0
      * @group Events
      */
-    onShow(action: () => void): KEventController;
+    onHide(action: (obj: GameObj) => void): KEventController;
+    /**
+     * Register an event that runs when an object with the provided tag becomes paused, either directly or when a parent is paused.
+     *
+     * ("Paused" simply means "the update and fixedUpdate handlers will not run.")
+     *
+     * @param tag - The tag to listen for.
+     * @param action - The function that runs when an object is paused.
+     *
+     * @example
+     * ```js
+     * onPause("player", () => {
+     *     debug.log("player is frozen");
+     * });
+     *
+     * const player = add([
+     *     pos(),
+     *     "player"
+     * ]);
+     * player.paused = true; // Logs "player is frozen"
+     * ```
+     *
+     * @returns The event controller.
+     * @since v4000.0
+     * @group Events
+     */
+    onPause(tag: Tag, action: (obj: GameObj) => void): KEventController;
+    /**
+     * Register an event that runs when an object becomes paused, either directly or when a parent is paused.
+     *
+     * ("Paused" simply means "the update and fixedUpdate handlers will not run.")
+     *
+     * @param action - The function that runs when an object is paused.
+     *
+     * @example
+     * ```js
+     * onPause(() => {
+     *     debug.log("frozen");
+     * });
+     *
+     * const obj = add([
+     *     pos(),
+     * ]);
+     * obj.paused = true; // Logs "frozen"
+     * ```
+     *
+     * @returns The event controller.
+     * @since v4000.0
+     * @group Events
+     */
+    onPause(action: (obj: GameObj) => void): KEventController;
+    /**
+     * Register an event that runs when an object with the provided tag becomes unpaused, either directly or when a parent is unpaused.
+     *
+     * ("Unpaused" simply means "the update and fixedUpdate handlers will run.")
+     *
+     * @param tag - The tag to listen for.
+     * @param action - The function that runs when an object is unpaused.
+     *
+     * @example
+     * ```js
+     * onUnpause("player", () => {
+     *     debug.log("player is melted");
+     * });
+     *
+     * const player = add([
+     *     pos(),
+     *     "player"
+     * ]);
+     * player.paused = false; // Logs nothing, player is already unpaused
+     * player.paused = true;
+     * player.paused = false; // Logs "player is melted"
+     * ```
+     *
+     * @returns The event controller.
+     * @since v4000.0
+     * @group Events
+     */
+    onUnpause(tag: Tag, action: (obj: GameObj) => void): KEventController;
+    /**
+     * Register an event that runs when an object becomes unpaused, either directly or when a parent is unpaused.
+     *
+     * ("Unpaused" simply means "the update and fixedUpdate handlers will run.")
+     *
+     * @param action - The function that runs when an object is unpaused.
+     *
+     * @example
+     * ```js
+     * onUnpause(() => {
+     *     debug.log("unfrozen");
+     * });
+     *
+     * const obj = add([
+     *     pos(),
+     * ]);
+     * obj.paused = false; // Logs nothing, obj is already unpaused
+     * obj.paused = true;
+     * obj.paused = false; // Logs "frozen"
+     * ```
+     *
+     * @returns The event controller.
+     * @since v4000.0
+     * @group Events
+     */
+    onUnpause(action: (obj: GameObj) => void): KEventController;
     /**
      * Register an event that runs at a fixed framerate.
      *
@@ -3391,7 +3593,6 @@ export interface KAPLAYCtx {
      * @group Scenes
      */
     getSceneName(): string | null;
-    // #region Loaders
     /**
      * Sets the root for all subsequent resource urls.
      *
@@ -3799,7 +4000,6 @@ export interface KAPLAYCtx {
      * @experimental
      */
     loadPrefab: (name: string, url: string) => Asset<SerializedGameObj>;
-    // #endregion
     /**
      * Get the global asset loading progress (0.0 - 1.0).
      *
@@ -4503,7 +4703,6 @@ export interface KAPLAYCtx {
      * @subgroup Camera
      */
     flash(flashColor: Color, fadeOutTime: number): TimerController;
-    // #region DEPRECATED CAMERA METHODS ---------------------------------------
     /**
      * @deprecated Use {@link setCamPos} and {@link getCamPos} instead.
      *
@@ -4595,7 +4794,6 @@ export interface KAPLAYCtx {
      * @subgroup Camera
      */
     camTransform(): Mat23;
-    // #endregion DEPRECATED CAMERA METHODS ------------------------------------
     /**
      * Transform a point from world position (relative to the root) to screen position (relative to the screen).
      *
