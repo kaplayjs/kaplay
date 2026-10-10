@@ -1100,9 +1100,9 @@ export interface KAPLAYCtx {
      */
     area(opt?: AreaCompOpt): AreaComp;
     /**
-     * Anchor point for render (default "topleft").
+     * Anchor point for render.
      *
-     * @param o - The anchor point to set.
+     * @param o - The anchor point to set. Defaults to "topleft".
      *
      * @example
      * ```js

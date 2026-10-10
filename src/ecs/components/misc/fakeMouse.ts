@@ -40,7 +40,9 @@ export interface FakeMouseComp extends Comp {
  */
 export type FakeMouseOpt = {
     /**
-     * Whether the fake mouse should follow the real mouse. Defaults to `true`.
+     * Whether the fake mouse should follow the real mouse.
+     *
+     * @default true
      */
     followMouse?: boolean;
 };
