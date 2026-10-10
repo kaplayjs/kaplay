@@ -48,6 +48,8 @@ So your change should look like:
 
 - `new RNG()` and `setRNG()` now use config objects instead of the
   string/custom rng parameter (#1097) - @Stanko
+- The rotation/angle constraint's `scale` option has been renamed
+  to `ratio` (#976) - @dragoncoder047
 
 ### Added
 
@@ -81,6 +83,9 @@ So your change should look like:
 
 ### Changed
 
+- Updated the rotation/angle constraint to track multiple turns of the
+  source object, so that non-integer ratios don't result in jumping at
+  the boundary (#976) - @dragoncoder047
 - Added an optional parameter `rng` to all random related functions to pass the
   rng to use (#1057) - @mflerackers
 - RNG can now be set and seeded on init (as `KAPLAYOpt.rng`) and in runtime
