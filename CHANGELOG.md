@@ -55,6 +55,9 @@ So your change should look like:
   @mflerackers
 - Added xorshift32 as random generator (#1057) - @mflerackers
 - **(examples)** Added a new `gacha` example! (#1057) - @imaginarny
+- Added the `LevelCompOpt.charsPerTile` option for the `level()` component and
+  `addLevel` which lets you use more than one character per tile, that way you
+  can make clearer maps without having to resort to Unicode (#1006) - @dragoncoder047
 - Added Alea as random generator (#1097) - @Stanko
 - Added `nextFrame()` helper function to defer/run a function on the next frame
   (#1112) - @imaginarny
@@ -71,6 +74,13 @@ So your change should look like:
 - **(!)** Added `KAPLAYOpt.debugKeys` to add and modify on runtime the buttons
   used for debug actions, this makes it so onButtonPress now accepts
   `String` and `Symbol` instead of only string due to internal changes - @amyspark-ng
+- Added `KAPLAYOpt.singletonTags` with a few helpers to make listed tags
+  unique, meaning only one object can have a given tag at a time, e.g.
+  `["player", "focused"]` (#1172) - @imaginarny
+- **(examples)** Added a new `singletonTags` example! (#1172) - @imaginarny
+- Added `GetOpt.op` operator option to allow `"or"` besides the default `"and"`
+  in `GameObjRaw.get()`, e.g. `get(["fruit", "vegetable"], { op: "or" })`
+  (#1172) - @imaginarny
 
 ### Changed
 
@@ -122,6 +132,8 @@ So your change should look like:
   duration (#1117) - @imaginarny
 - Fixed triangulate by updating the convexity of nearby vertices after removing
   a concave vertex during ear cutting (#1134) - @mflerackers
+- Fixed `onTag()` and `onUntag()` getting triggered when trying to do so with
+  the existing/same tag (#1172) - @imaginarny
 
 ## [4000.0.0-alpha.27.1] - 2026-05-12
 
