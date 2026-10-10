@@ -57,6 +57,14 @@ So your change should look like:
 
 ### Added
 
+- Added the ability to check which character a point is hovering over in the
+  `text()` component using `TextComp.pointToChar()` or
+  `TextComp.pointToCharIndex()`, to make text-based menus easier to build by
+  simply styling text (#1064) - @dragoncoder047, @imaginarny
+- When debug inspect enabled, `text()` char bounding boxes will now be drawn if
+  the text includes tags or uses transform or styles (#1064) - @dragoncoder047,
+  @imaginarny
+- **(examples)** Added a new `textClick` example! (#1064) - @dragoncoder047
 - Added `onPause()`, `onUnpause()`, `onHide()`, and `onShow()` events for
   listening to the state of the `paused` and `hidden` properties on game objects
   (#1041) - @dragoncoder047
