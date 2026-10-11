@@ -46,11 +46,20 @@ So your change should look like:
 
 ### Breaking Changes
 
+- The `onHide` and `onShow` global handlers (which have been deprecated for a
+  while) are now actually removed, you must use `onTabHide` and `onTabShow`.
+  `onHide` and `onShow` still exist but now handle reacting to changes in the
+  `.hidden` property of game objects (#1041) - @dragoncoder047
 - `new RNG()` and `setRNG()` now use config objects instead of the
   string/custom rng parameter (#1097) - @Stanko
+- The rotation/angle constraint's `scale` option has been renamed
+  to `ratio` (#976) - @dragoncoder047
 
 ### Added
 
+- Added `onPause()`, `onUnpause()`, `onHide()`, and `onShow()` events for
+  listening to the state of the `paused` and `hidden` properties on game objects
+  (#1041) - @dragoncoder047
 - Made random generator algorithm configurable using `setRNG()` (#1057) -
   @mflerackers
 - Added xorshift32 as random generator (#1057) - @mflerackers
@@ -71,6 +80,12 @@ So your change should look like:
 - Added `KAPLAYOpt.lockResolution` to lock the canvas buffer resolution to the
   defined size and scale when resized by the `letterbox` option (#1106) -
   @imaginarny
+- Added `FakeMouseComp.scrollBy()` to trigger `onScroll()` (#1159) - @amyspark-ng
+- Added `FakeMouseComp.deltaPos` to see how much the position of the FakeMouse has changed in the last frame (not comparable to `mouseDeltaPos()`) since they move differently (https#1159) - @amyspark-ng
+- Added `btn: MouseButton` parameter to `fakeMouse.press()` that defaults to left (#1159) - @amyspark-ng
+- **(!)** Added `KAPLAYOpt.debugKeys` to add and modify on runtime the buttons
+  used for debug actions, this makes it so onButtonPress now accepts
+  `String` and `Symbol` instead of only string due to internal changes - @amyspark-ng
 - Added `KAPLAYOpt.singletonTags` with a few helpers to make listed tags
   unique, meaning only one object can have a given tag at a time, e.g.
   `["player", "focused"]` (#1172) - @imaginarny
@@ -81,6 +96,9 @@ So your change should look like:
 
 ### Changed
 
+- Updated the rotation/angle constraint to track multiple turns of the
+  source object, so that non-integer ratios don't result in jumping at
+  the boundary (#976) - @dragoncoder047
 - Added an optional parameter `rng` to all random related functions to pass the
   rng to use (#1057) - @mflerackers
 - RNG can now be set and seeded on init (as `KAPLAYOpt.rng`) and in runtime
@@ -92,6 +110,9 @@ So your change should look like:
   e.g. focused `textInput` now use `preventDefault()` (#1114) - @imaginarny
 - Updated `drawSprite()` to allow slice9'ed sprites, and so now the `sprite()`
   component just calls `drawSprite()` (#1036) - @dragoncoder047
+- Updated `getLastInputDeviceType()` so updates to gamepad when you move a joystick (#1168) - @amyspark-ng
+- Video component - Render black rectangle (instead of white one) before the
+  video has been played (#1145) - @Stanko
 
 ### Fixed
 
@@ -129,6 +150,10 @@ So your change should look like:
   duration (#1117) - @imaginarny
 - Fixed triangulate by updating the convexity of nearby vertices after removing
   a concave vertex during ear cutting (#1134) - @mflerackers
+- Fixed KAPLAY's mouse position not being updated when moving the FakeMouse by keyboard, causing it to not retrieve hovered objects by it (#1159) - @amyspark-ng
+- Fixed sprite component returning stale value after changing the sprite value dynamically (#1164) - @Stanko
+- Fixed `time()` that kept increasing while `debug.paused` was true (#1137) -
+  @amyspark-ng
 - Fixed `onTag()` and `onUntag()` getting triggered when trying to do so with
   the existing/same tag (#1172) - @imaginarny
 
