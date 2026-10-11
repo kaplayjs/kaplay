@@ -43,7 +43,7 @@ setCursor("none"); // Hide the real mouse
 // Mouse press and release with keyboard, this will trigger mouse proper
 // events like .onClick, .onHover, etc
 cursor.onKeyPress("space", () => {
-    cursor.press();
+    cursor.press("left");
 });
 
 cursor.onKeyRelease("space", () => {
@@ -67,6 +67,15 @@ cursor.onKeyDown("down", () => {
     cursor.move(0, MOUSE_VEL);
 });
 
+// You can scroll with the keyboard
+cursor.onKeyDown("w", () => {
+    cursor.scrollBy(vec2(0, 10));
+});
+
+cursor.onKeyDown("s", () => {
+    cursor.scrollBy(vec2(0, -10));
+});
+
 // Example with hovering and click
 const door = add([
     sprite("door"),
@@ -79,6 +88,7 @@ const door = add([
 // Trigered thanks to cursor.press(), you can trigger it with a real mouse or
 // with the keyboard
 door.onClick(() => {
+    if (!door.isHovering()) return;
     if (knocks > MAX_KNOCKS) {
         openDoor();
     }
@@ -96,6 +106,12 @@ door.onHoverEnd(() => {
     cursor.sprite = "cursor";
 });
 
+// Triggered thanks to cursor.scrollBy()
+// Only gets called once per call
+door.onScroll((delta) => {
+    door.pos.y += delta.y;
+});
+
 // Open the door, a friend appears
 function openDoor() {
     if (doorOpened) return;
@@ -106,7 +122,7 @@ function openDoor() {
     add([
         sprite("bean"),
         scale(2),
-        pos(center()),
+        pos(door.pos),
         anchor("center"),
     ]);
 
