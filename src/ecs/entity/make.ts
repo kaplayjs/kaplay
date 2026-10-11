@@ -44,8 +44,8 @@ export function makeInternal<T extends CompList<unknown>>(
     obj._fixedUpdateEvents = new KEvent<[]>();
     obj._drawEvents = new KEvent<[]>();
     obj._inputEvents = [];
-    obj.paused = false;
-    obj.hidden = false;
+    obj._paused = false;
+    obj._hidden = false;
     obj.id = id;
     obj.transform = new Mat23();
 
