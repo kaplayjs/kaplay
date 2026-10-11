@@ -66,6 +66,7 @@ export interface AudioPlayOpt {
     connectTo?: AudioNode;
 }
 
+// TODO: add mute and rate to change speed without changing detune
 /**
  * @group Audio
  */

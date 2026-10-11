@@ -80,6 +80,7 @@ So your change should look like:
 - Added `KAPLAYOpt.lockResolution` to lock the canvas buffer resolution to the
   defined size and scale when resized by the `letterbox` option (#1106) -
   @imaginarny
+- Added `SoundChannel` and `createChannel()` (#1170) - @amyspark-ng
 - Added `FakeMouseComp.scrollBy()` to trigger `onScroll()` (#1159) - @amyspark-ng
 - Added `FakeMouseComp.deltaPos` to see how much the position of the FakeMouse has changed in the last frame (not comparable to `mouseDeltaPos()`) since they move differently (https#1159) - @amyspark-ng
 - Added `btn: MouseButton` parameter to `fakeMouse.press()` that defaults to left (#1159) - @amyspark-ng
