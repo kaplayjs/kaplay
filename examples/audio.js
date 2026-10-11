@@ -17,6 +17,7 @@ kaplay({
 });
 
 // Loads the bell sound
+loadSound("burp", "/sounds/burp.mp3");
 loadSound("bell", "/sounds/bell.mp3");
 // Load the music, it makes it being streamed, so loading is faster
 loadMusic("OtherworldlyFoe", "/sounds/OtherworldlyFoe.mp3");
@@ -30,6 +31,13 @@ onKeyPress("enter", () => {
     play("bell", {
         volume: 1,
         speed: 1,
+    });
+});
+
+// We play a reversed burp
+onKeyPress("b", () => {
+    play("burp", {
+        reverse: true,
     });
 });
 
@@ -120,5 +128,6 @@ Speed: ${music.speed.toFixed(2)}
 [up/down] volume
 [left/right] speed
 [a...k] piano
+\\[b] burp in reverse
 	`.trim();
 }
