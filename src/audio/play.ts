@@ -6,6 +6,7 @@ import type { MusicData } from "../types";
 import { playMusic } from "./playMusic";
 
 // TODO: enable setting on load, make part of SoundData
+
 /**
  * Audio play configurations.
  *
