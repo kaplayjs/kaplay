@@ -13,7 +13,6 @@ jobs:
   changes:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v6
       - uses: nrutman/lines-changed-gha@v3
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
