@@ -22,6 +22,10 @@ jobs:
                 - "**/tests/**"
                 - "**/examples/**"
               count: false
+            - label: "📜 Changelog"
+              patterns:
+                - "**/CHANGELOG.md"
+              count: false
             - label: "📦 Lock Files"
               patterns:
                 - "*-lock.*"
