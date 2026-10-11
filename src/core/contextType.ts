@@ -214,7 +214,7 @@ export interface KAPLAYCtx {
      * @readonly
      * @group Misc
      */
-    _k: Engine & { k: KAPLAYCtx };
+    _k: Engine & { k: KAPLAYCtx; };
     /**
      * End everything.
      *
@@ -3619,7 +3619,7 @@ export interface KAPLAYCtx {
      *
      * @param url - The url to add the root at the start of.
      */
-    fixURL<D extends string>(url: D): D;
+    fixURL(url: string): string;
     /**
      * Load a sprite into asset manager, with name and resource url and optional config.
      *
