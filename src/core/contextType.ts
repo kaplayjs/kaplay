@@ -1412,7 +1412,7 @@ export interface KAPLAYCtx {
     /**
      * Enables double jump.
      *
-     * @param numJumps - The number of jumps allowed. Defaults to 1.
+     * @param numJumps - The number of jumps allowed. Defaults to 2.
      *
      * @returns The double jump comp.
      * @since v3000.0

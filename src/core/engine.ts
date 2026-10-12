@@ -25,6 +25,7 @@ import { stateFactory } from "../ecs/components/misc/state";
 import { stayFactory } from "../ecs/components/misc/stay";
 import { areaFactory } from "../ecs/components/physics/area";
 import { bodyFactory } from "../ecs/components/physics/body";
+import { doubleJumpFactory } from "../ecs/components/physics/doubleJump";
 import { anchorFactory } from "../ecs/components/transform/anchor";
 import { fixedFactory } from "../ecs/components/transform/fixed";
 import { followFactory } from "../ecs/components/transform/follow";
@@ -166,7 +167,7 @@ export const createEngine = (gopt: KAPLAYOpt) => {
     // Physics Serialization
     registerPrefabFactory("area", areaFactory);
     registerPrefabFactory("body", bodyFactory);
-    // `doubleJump()` missing
+    registerPrefabFactory("doubleJump", doubleJumpFactory);
     // Effectors
     // `surfaceEffector()` missing
     // `areaEffector()` missing

@@ -82,6 +82,7 @@ So your change should look like:
 - Updated `video()` to render black rectangle (instead of white one) before the video has been played (#1145) - @Stanko
 - Updated `getLastInputDeviceType()` so updates to gamepad when you move a joystick (#1168) - @amyspark-ng
 - Component `follow()` now also accepts a tag or name (of `named()` comp) besides a raw object - @imaginarny
+- Exposed `obj.jumpsLeft` of `doublJump()` component - @imaginarny
 
 ### Examples
 - Added a new `gacha` example! (#1057) - @imaginarny

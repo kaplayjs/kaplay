@@ -100,7 +100,7 @@ scene("game", () => {
             pos(),
             anchor("center"),
             sprite("coin"),
-            area(),
+            area({ isSensor: true }),
             follow(plat, vec2(0, -60)),
             "coin",
             { idx: idx },
