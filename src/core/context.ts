@@ -228,6 +228,7 @@ import {
     testRectRect,
     triangulate,
     vec2,
+    vec3,
     wave,
 } from "../math/math";
 import { buildConnectivityMap, floodFill } from "../math/navigation";
@@ -242,6 +243,7 @@ import { chance, rand, randi, randSeed, RNG, setRNG } from "../math/random";
 import { insertionSort } from "../math/sort";
 import { makeQuadtree, Quadtree } from "../math/spatial/quadtree";
 import { Vec2 } from "../math/Vec2";
+import { Vec3 } from "../math/vec3";
 import { BlendMode, type KAPLAYPlugin } from "../types";
 import {
     download,
@@ -468,8 +470,6 @@ export const createContext = (
         onTouchMove: defaultScope.onTouchMove,
         onTouchEnd: defaultScope.onTouchEnd,
         onScroll: defaultScope.onScroll,
-        onHide: defaultScope.onHide,
-        onShow: defaultScope.onShow,
         onTabShow: defaultScope.onTabShow,
         onTabHide: defaultScope.onTabHide,
         onGamepadButtonDown: defaultScope.onGamepadButtonDown,
@@ -504,6 +504,10 @@ export const createContext = (
         releaseButton: app.releaseButton,
         getLastInputDeviceType: app.getLastInputDeviceType,
         charInputted: app.charInputted,
+        onHide: defaultScope.onHide,
+        onShow: defaultScope.onShow,
+        onPause: defaultScope.onPause,
+        onUnpause: defaultScope.onUnpause,
         // timer
         loop,
         wait,
@@ -524,6 +528,7 @@ export const createContext = (
         Polygon,
         Collision,
         Vec2,
+        Vec3,
         Color,
         Mat2,
         Mat4,
@@ -544,6 +549,7 @@ export const createContext = (
         randi,
         randSeed,
         vec2,
+        vec3,
         rgb,
         hsl2rgb,
         quad,
