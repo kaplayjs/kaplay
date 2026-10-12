@@ -11,7 +11,7 @@ import type { FontData } from "./font";
 import type { ShaderData } from "./shader";
 import type { SoundData } from "./sound";
 import type { LoadSpriteSrc, SpriteData } from "./sprite";
-import { fixURL } from "./utils";
+import { rootURL } from "./utils";
 
 /**
  * An asset is a resource that is loaded asynchronously.
@@ -213,7 +213,7 @@ export function loadRoot(path?: string): string {
 }
 
 export function loadJSON(name: string, url: string) {
-    return _k.assets.custom.add(name, fetchJSON(fixURL(url)));
+    return _k.assets.custom.add(name, fetchJSON(rootURL(url)));
 }
 
 // wrapper around image loader to get a Promise
