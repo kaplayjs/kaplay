@@ -20,6 +20,7 @@ import { uvquadFactory } from "../ecs/components/draw/uvquad";
 import { videoFactory } from "../ecs/components/draw/video";
 import { agentFactory } from "../ecs/components/level/agent";
 import { levelFactory } from "../ecs/components/level/level";
+import { patrolFactory } from "../ecs/components/level/patrol";
 import { healthFactory } from "../ecs/components/misc/health";
 import { namedFactory } from "../ecs/components/misc/named";
 import { stateFactory } from "../ecs/components/misc/state";
@@ -161,7 +162,7 @@ export const createEngine = (gopt: KAPLAYOpt) => {
     registerPrefabFactory("agent", agentFactory);
     registerPrefabFactory("level", levelFactory);
     // `pathFinder()` & `pathfinderMap()?` missing (needs Graph)
-    // `patrol()` missing
+    registerPrefabFactory("patrol", patrolFactory);
     // `sentry()` missing
     // `tile()` missing
 
