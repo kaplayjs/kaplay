@@ -20,7 +20,7 @@ function handleout() {
         id: "handleout",
         require: ["pos"],
         update() {
-            const spos = this.screenPos();
+            const spos = this.screenPos;
             if (
                 spos.x < 0
                 || spos.x > width()
@@ -50,7 +50,7 @@ function shoot() {
 }
 
 onKeyPress("space", shoot);
-onClick(shoot);
+onMousePress(shoot);
 
 onUpdate("bean", (m) => {
     m.move(m.dir.scale(SPEED));

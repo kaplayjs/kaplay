@@ -7,7 +7,7 @@ import {
     getTransformVersion,
     objectTransformNeedsUpdate,
 } from "../../ecs/entity/GameObjRaw";
-import { isPaused } from "../../ecs/entity/utils";
+import { exists, isPaused } from "../../ecs/entity/utils";
 import type { GameObj } from "../../types";
 import type { Rect } from "../math";
 import { calcTransform } from "../various";
@@ -92,7 +92,7 @@ export class SweepAndPruneHorizontal implements BroadPhaseAlgorithm {
     update() {
         // Update edge data
         for (const [obj, edges] of this.objects.entries()) {
-            if (!obj.exists()) continue;
+            if (!exists(obj)) continue;
 
             // Check if this world area changed since last frame
             const versions = this.versionsForObject.get(obj);
@@ -257,7 +257,7 @@ export class SweepAndPruneVertical implements BroadPhaseAlgorithm {
     update() {
         // Update edge data
         for (const [obj, edges] of this.objects.entries()) {
-            if (!obj.exists()) continue;
+            if (!exists(obj)) continue;
 
             // Check if this world area changed since last frame
             const versions = this.versionsForObject.get(obj);

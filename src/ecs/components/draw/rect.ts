@@ -3,6 +3,7 @@ import { drawRect } from "../../../gfx/draw/drawRect";
 import { Rect, vec2 } from "../../../math/math";
 import type { Comp, GameObj } from "../../../types";
 import { nextRenderAreaVersion } from "../physics/area";
+import type { FillComp } from "./fill";
 /**
  * The serialized {@link rect `rect()`} component.
  *
@@ -91,12 +92,12 @@ export function rect(
             }
         },
         radius: opt.radius || 0,
-        draw(this: GameObj<RectComp>) {
+        draw(this: GameObj<RectComp & FillComp>) {
             drawRect(Object.assign(getRenderProps(this), {
                 width: _width,
                 height: _height,
                 radius: this.radius,
-                fill: opt.fill,
+                fill: this.fill ?? opt.fill,
             }));
         },
         renderArea() {
@@ -110,10 +111,10 @@ export function rect(
         inspect() {
             return `rect: (${Math.ceil(_width)}w, ${Math.ceil(_height)}h)`;
         },
-        serialize() {
+        serialize(this: GameObj<RectComp & FillComp>) {
             const data: SerializedRectComp = { width: _width, height: _height };
             if (this.radius) data.radius = this.radius;
-            if (opt.fill) data.fill = opt.fill;
+            if (this.fill ?? opt.fill) data.fill = opt.fill;
             return data;
         },
     };

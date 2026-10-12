@@ -2,8 +2,8 @@ import { BinaryHeap } from "../utils/binaryheap";
 import { Vec2 } from "./Vec2";
 
 export interface Graph {
-    /* Returns the reachable neighbours of this location */
-    getNeighbours(node: number): number[];
+    /* Returns the reachable neighbors of this location */
+    getNeighbors(node: number): number[];
     /* Returns the cost to go from the node to its neighbor */
     getCost(node: number, neighbor: number): number;
     /* Returns the cost to go from the node to the goal */
@@ -16,6 +16,7 @@ export interface Graph {
         to: Vec2,
         opt: any,
     ): Vec2[];
+    nodes: number[];
 }
 
 function buildPath(start: number, goal: number, cameFrom: Map<number, number>) {
@@ -50,7 +51,7 @@ export function breadthFirstSearch(
         }
 
         // TODO: Remove non-null assertion
-        const neighbours = graph.getNeighbours(current!);
+        const neighbours = graph.getNeighbors(current!);
         for (let next of neighbours) {
             if (!cameFrom.get(next)) {
                 frontier.push(next);
@@ -87,8 +88,8 @@ export function dijkstraSearch(
         }
 
         // TODO: Remove non-null assertion
-        const neighbours = graph.getNeighbours(current!);
-        for (let next of neighbours) {
+        const neighbors = graph.getNeighbors(current!);
+        for (let next of neighbors) {
             const newCost = (costSoFar.get(current!) || 0)
                 + graph.getCost(current!, next);
             if (
@@ -130,8 +131,8 @@ export function aStarSearch(
         }
 
         // TODO: Remove non-null assertion
-        const neighbours = graph.getNeighbours(current!);
-        for (let next of neighbours) {
+        const neighbors = graph.getNeighbors(current!);
+        for (let next of neighbors) {
             const newCost = (costSoFar.get(current!) || 0)
                 + graph.getCost(current!, next)
                 + graph.getHeuristic(next, goal);
@@ -148,4 +149,46 @@ export function aStarSearch(
 
     // TODO: Remove non-null assertion
     return buildPath(start, goal, cameFrom)!;
+}
+
+export function floodFill(
+    graph: Graph,
+    start: number | number[],
+    predicate: (node: number) => boolean,
+) {
+    const stack = Array.isArray(start) ? start : [start];
+    const fill: Set<number> = new Set();
+    while (stack.length) {
+        const node = stack.pop()!;
+        if (!predicate(node)) {
+            continue;
+        }
+        // Fill
+        fill.add(node);
+        for (const neighbor of graph.getNeighbors(node)) {
+            // If not filled and fillable
+            if (!fill.has(neighbor) && predicate(neighbor)) {
+                // We need to look around nn later
+                stack.push(neighbor);
+            }
+        }
+    }
+    return [...fill];
+}
+
+export function buildConnectivityMap(graph: Graph) {
+    const map: Map<number, number> = new Map();
+    let index = 0;
+    for (const node of graph.nodes) {
+        if (map.get(node) !== undefined) {
+            // This node has been processed
+            continue;
+        }
+        // Fill all connected nodes
+        for (const fill of floodFill(graph, node, () => true)) {
+            map.set(fill, index);
+        }
+        index++;
+    }
+    return map;
 }

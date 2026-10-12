@@ -1,7 +1,12 @@
 import type { FixedSpeedOption } from "./app/app";
-import type { ButtonsDef } from "./app/inputBindings";
+import type {
+    ButtonBinding,
+    ButtonBindingDevice,
+    ButtonsDef,
+} from "./app/inputBindings";
 import type { Asset } from "./assets/asset";
 import type { ShaderData, Uniform } from "./assets/shader";
+import type { DEBUG_SYMBOLS } from "./constants/general";
 import type { KAPLAYCtx } from "./core/contextType";
 import type { TypesOpt } from "./core/taf";
 import type { GameObjRaw } from "./ecs/entity/GameObjRaw";
@@ -14,9 +19,13 @@ import type { Picture } from "./gfx/draw/drawPicture";
 import type { FrameBuffer } from "./gfx/FrameBuffer";
 import type { Color, RGBAValue, RGBValue } from "./math/color";
 import type { Circle, Ellipse, Line, Point, Polygon, Rect } from "./math/math";
+import type { RNGConfig } from "./math/random";
 import type { Vec2 } from "./math/Vec2";
 import type { Defined, MergeObj } from "./utils/types";
 
+/**
+ * Tip: Tag can be made a singleton by including it in the {@link KAPLAYOpt.singletonTags} array, e.g. ["player", "focused"].
+ */
 export type Tag = string;
 
 /**
@@ -130,7 +139,6 @@ export type Key =
         | "alt"
         | "meta"
         | "space"
-        | " "
         | "left"
         | "right"
         | "up"
@@ -196,12 +204,37 @@ export type ChordedKGamepadButton =
 export type KGamepadStick = "left" | "right";
 
 /**
+ * Controller type, useful for accurate button-glyph assets.
+ * Can be extended with custom gamepad definitions.
+ *
+ * @group Input
+ * @subgroup Gamepad
+ */
+export type GamepadType =
+    | "ps4"
+    | "ps5"
+    | "playstation"
+    | "xbox"
+    | "switch"
+    | (string & {});
+
+/**
  * A gamepad definition. Used in {@link KAPLAYOpt `KAPLAYOpt`}
  *
  * @group Input
  * @subgroup Gamepad
  */
 export type GamepadDef = {
+    /** A human-readable label for this controller model, e.g. "DualSense". */
+    name?: string;
+    /**
+     * Lowercase name substrings used as a last-resort fallback match when
+     * vendor/product can't be parsed from `Gamepad.id`. Only set this for
+     * names distinctive enough to not misidentify unrelated hardware.
+     */
+    matchNames?: string[];
+    /** The controller family this definition belongs to, if known. */
+    type?: GamepadType;
     buttons: Record<string, KGamepadButton>;
     sticks: Partial<Record<KGamepadStick, { x: number; y: number }>>;
 };
@@ -215,6 +248,13 @@ export type GamepadDef = {
 export type KGamepad = {
     /** The order of the gamepad in the gamepad list. */
     index: number;
+    /**
+     * A human-readable label for the recognized controller, e.g. "DualSense",
+     * or "Standard Gamepad" if unrecognized. For display/debugging only.
+     */
+    name: string;
+    /** The recognized controller family, for picking button-glyph assets. */
+    type: GamepadType | undefined;
     /** If certain button is pressed. */
     isPressed(b: KGamepadButton): boolean;
     /** If certain button is held down. */
@@ -257,23 +297,57 @@ export interface KAPLAYOpt {
      */
     scale?: number;
     /**
-     * Keep aspect ratio and leave black bars on remaining spaces.
+     * Keep aspect ratio, fill available space, and leave black bars on remaining spaces.
      */
     letterbox?: boolean;
     /**
-     * If register debug buttons (default true)
+     * Lock canvas buffer resolution on resize to the defined size and scale when `letterbox` is enabled.
+     * Good for retro pixel art games with `crisp` option enabled as well.
+     */
+    lockResolution?: boolean;
+    /**
+     * If the game should register debug buttons.
      */
     debug?: boolean;
     /**
-     * Key that toggles debug mode
+     * Define a specific key for different debug actions using KAPLAY's button system
+     *
+     * If KAPLAY.debug is true and no debugButtons is passed, the ones below will be used as the defaults
+     *
+     * If one of these is missing, the default one will be used
+     * @example
+     * ```js
+     * // These are the default keys
+     * kaplay({
+     *  debugButtons: {
+     *      "inspect": { keyboard: "f1" },
+     *      "clearlogs": { keyboard: "f2" },
+     *      "pause": { keyboard: "f8" },
+     *      "slowdown": { keyboard: "f7" },
+     *      "speedup": { keyboard: "f9" },
+     *      "stepframe": { keyboard: "f10" },
+     *  }
+     * })
+     * ```
+     *
+     * You can also set them at runtime using KAPLAYCtx.debug.setButton
+     *
+     * ```js
+     * debug.setButton("inspect", { keyboard: "p" })
+     * ```
+     * @since v4000.0
+     * @group Input, Debug
+     * @subgroup Buttons API
      */
-    debugKey?: Key;
+    debugButtons?: Partial<Record<keyof typeof DEBUG_SYMBOLS, ButtonBinding>>;
     /**
-     * Default font (defaults to "monospace").
+     * Default font.
+     *
+     * @default "monospace"
      */
     font?: string;
     /**
-     * Device pixel scale (defaults to 1, high pixel density will hurt performance).
+     * Device pixel scale (high pixel density will hurt performance). Defaults to 1.
      *
      * @since v3000.0
      */
@@ -288,7 +362,9 @@ export interface KAPLAYOpt {
      */
     canvas?: HTMLCanvasElement;
     /**
-     * The container DOM element to insert the canvas if created. Defaults to document.body.
+     * The container DOM element to insert the canvas if created.
+     *
+     * @default document.body
      */
     root?: HTMLElement;
     /**
@@ -296,38 +372,55 @@ export interface KAPLAYOpt {
      */
     background?: RGBValue | RGBAValue | string;
     /**
-     * Default texture filter.
+     * Default sprite texture filter.
+     *
+     * @default "nearest"
      */
     texFilter?: TexFilter;
     /**
-     * How many log messages can there be on one screen (default 8).
+     * Default text rasterization filter.
+     * @default
+     * "linear" for vector fonts (.woff2, .ttf, .otf, etc)
+     * "nearest" for bitmap fonts (loaded from an image)
+     */
+    fontFilter?: TexFilter;
+    /**
+     * How many log messages can there be on one screen.
+     *
+     * @default 8
      */
     logMax?: number;
     /**
-     * How many seconds log messages stay on screen (default 4).
+     * How many seconds log messages stay on screen.
      *
+     * @default 4
      * @since v3000.1
      */
     logTime?: number;
     /**
-     * Size of the spatial hash grid for collision detection (default 64).
+     * Size of the spatial hash grid for collision detection.
      *
+     * @default 64
      * @since v3000.0
      */
     hashGridSize?: number;
     /**
-     * If translate touch events as mouse clicks (default true).
+     * If translate touch events as mouse clicks.
+     *
+     * @default true
      */
     touchToMouse?: boolean;
     /**
-     * If KAPLAY should render a default loading screen when assets are not fully ready (default true).
+     * If KAPLAY should render a default loading screen when assets are not fully ready.
      *
+     * @default true
      * @since v3000.0
      */
     loadingScreen?: boolean;
     /**
-     * If pause audio when tab is not active (default false).
+     * If pause audio when tab is not active.
      *
+     * @default false
      * @since v3000.0
      */
     backgroundAudio?: boolean;
@@ -385,13 +478,16 @@ export interface KAPLAYOpt {
      */
     maxTimeStep?: number;
     /**
-     * If focus on the canvas on start (default true).
+     * If focus on the canvas on start.
      *
+     * @default true
      * @since v3001.0
      */
     focus?: boolean;
     /**
-     * If import all KAPLAY functions to global (default true).
+     * If import all KAPLAY functions to global.
+     *
+     * @default true
      */
     global?: boolean;
     /**
@@ -411,6 +507,13 @@ export interface KAPLAYOpt {
      */
     tagComponentIds?: boolean;
     /**
+     * Makes the listed tags unique.
+     *
+     * Only one object can have a given tag at a time, e.g. ["player", "focused"]
+     * means there will be only one "player" or object that can be "focused".
+     */
+    singletonTags?: Tag[];
+    /**
      * Padding used when adding sprites to texture atlas.
      *
      * @default 2
@@ -425,15 +528,23 @@ export interface KAPLAYOpt {
      */
     inspectOnlyActive?: boolean;
     /**
-     * Which strategy to use for broad phase collision, sap, sapv or quadtree
+     * Which strategy to use for broad phase collision, sap, sapv or quadtree.
+     *
      * @default "sap"
      */
     broadPhaseCollisionAlgorithm?: BroadPhaseType;
     /**
-     * Which strategy to use for narrow phase collision, gjk, sat or box
+     * Which strategy to use for narrow phase collision, gjk, sat or box.
+     *
      * @default "gjk"
      */
     narrowPhaseCollisionAlgorithm?: NarrowPhaseType;
+    /**
+     * If true, only the topmost object receives clicks.
+     *
+     * @default false
+     */
+    topMostOnlyActivate?: boolean;
     /**
      * Timeout (in milliseconds) at which other loaders waiting on sprites will give
      * up and throw an error.
@@ -466,6 +577,31 @@ export interface KAPLAYOpt {
      * @since v4000.0
      */
     types?: TypesOpt;
+    /**
+     * Random generator to be used by the game.
+     * You can select one of the three built-in random generators: "lce", "xorshift32", or "alea".
+     *
+     * @example
+     * To pass a custom seed, use an RNGConfig object:
+     *
+     * ```ts
+     * kaplay({
+     *    rng: {
+     *       type: "alea",
+     *       seed: ["kaplay", "rocks", "hard"],
+     *    },
+     * });
+     * ```
+     *
+     * When using the Alea algorithm, provide three string seeds to ensure good entropy.
+     *
+     * You can also use a custom generator that satisfies the `RandomGenerator` interface.
+     *
+     * @default
+     * The default is the linear congruential engine, "lce".
+     * @since v4000.0
+     */
+    rng?: RNGConfig;
 }
 
 /**
@@ -523,6 +659,11 @@ export type GetOpt = {
      * Get only by tags or components.
      */
     only?: "tags" | "comps";
+    /**
+     * The operator to use when searching for multiple tags / comps.
+     * @default "and"
+     */
+    op?: "and" | "or";
 };
 
 /**
@@ -535,7 +676,9 @@ export type QueryOpt = {
      */
     include?: string | string[];
     /**
-     * Selects the operator to use. Defaults to and.
+     * Selects the operator to use.
+     *
+     * @default and
      */
     includeOp?: "and" | "or";
     /**
@@ -543,7 +686,9 @@ export type QueryOpt = {
      */
     exclude?: string | string[];
     /**
-     * Selects the operator to use. Defaults to and.
+     * Selects the operator to use..
+     *
+     * @default and
      */
     excludeOp?: "and" | "or";
     /**
@@ -551,7 +696,9 @@ export type QueryOpt = {
      */
     distance?: number;
     /**
-     * Selects the operator to use. Defaults to near.
+     * Selects the operator to use.
+     *
+     * @default near
      */
     distanceOp?: "near" | "far";
     /**
@@ -559,7 +706,9 @@ export type QueryOpt = {
      */
     visible?: boolean;
     /**
-     * All objects in the given group. Defaults to children.
+     * All objects in the given group.
+     *
+     * @default children
      */
     hierarchy?: "children" | "siblings" | "ancestors" | "descendants";
     /**
@@ -610,14 +759,18 @@ export type MusicData = string;
  * @subgroup Types
  */
 export interface LoadFontOpt {
-    filter?: TexFilter;
     outline?: number | Outline;
     /**
-     * The size to load the font in (default 64).
+     * The size to load the font in.
      *
+     * @default 64
      * @since v3001.0
      */
     size?: number;
+    /**
+     * The font filter to use, if different from the global font filter.
+     */
+    filter?: TexFilter;
 }
 
 /**

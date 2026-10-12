@@ -24,6 +24,7 @@ import type { CircleComp, CircleCompOpt } from "../ecs/components/draw/circle";
 import type { ColorComp } from "../ecs/components/draw/color";
 import type { DrawonComp, DrawonCompOpt } from "../ecs/components/draw/drawon";
 import type { EllipseComp } from "../ecs/components/draw/ellipse";
+import type { FillComp } from "../ecs/components/draw/fill";
 import type { MaskComp } from "../ecs/components/draw/mask";
 import type { OpacityComp } from "../ecs/components/draw/opacity";
 import type { OutlineComp } from "../ecs/components/draw/outline";
@@ -115,7 +116,6 @@ import type { Collision } from "../ecs/systems/Collision";
 import type { SystemPhase } from "../ecs/systems/systems";
 import type { GameObjEventNames, GameObjEvents } from "../events/eventMap";
 import type { KEvent, KEventController, KEventHandler } from "../events/events";
-import type { GameEventHandlers } from "../events/gameEventHandlers";
 import type { AppScope, SceneScope } from "../events/scopes";
 import type { SceneDef } from "../game/scenes";
 import type { anchorPt } from "../gfx/anchor";
@@ -151,7 +151,6 @@ import type { Mat4 } from "../math/Mat4";
 import type {
     Circle,
     Ellipse,
-    getSpriteOutline,
     Line,
     Mat2,
     Mat23,
@@ -160,12 +159,15 @@ import type {
     Quad,
     RaycastResult,
     Rect,
-    RNG,
     StepPosition,
 } from "../math/math";
+import type { Graph } from "../math/navigation";
+import type { NavGrid } from "../math/navigationgrid";
 import type { NavMesh } from "../math/navigationmesh";
+import type { RandomGenerator, RNG, RNGConfig, RNGSeed } from "../math/random";
 import type { Quadtree, ResizingQuadtree } from "../math/spatial/quadtree";
 import type { Vec2 } from "../math/Vec2";
+import type { Vec3 } from "../math/vec3";
 import {
     type Anchor,
     type BlendMode,
@@ -221,9 +223,9 @@ export interface KAPLAYCtx {
      */
     quit(): void;
     /**
-     * Throws a new error and show up the Blue Screen.
+     * Throws a new error and shows the Blue Screen.
      *
-     * @param msg - The message for showing in the Blue Screen.
+     * @param msg - The message to be shown on the Blue Screen.
      *
      * @since v4000.0
      * @group Start
@@ -280,7 +282,7 @@ export interface KAPLAYCtx {
      *
      * @example
      * ```js
-     * loadPrefab("bean", "/prefabs/bean.kaprefab")
+     * loadPrefab("bean", "/prefabs/bean.kaprefab");
      *
      * addPrefab("bean", [
      *     pos(40, 40)
@@ -362,7 +364,7 @@ export interface KAPLAYCtx {
      *
      * // Example 2: using onClick() or other functions with readd().
      * // If you comment out the first example, and use this readd() with a function like onClick(), you
-     * can keep switching which sprite is above the other ( click on edge of face ).
+     * // can keep switching which sprite is above the other ( click on edge of face ).
      *
      * purpleBean.onClick(() => {
      *     readd(greenBean);
@@ -451,6 +453,14 @@ export interface KAPLAYCtx {
      */
     query(opt: QueryOpt): GameObj[];
     /**
+     * Checks whether the game obj is a valid object.
+     *
+     * @param obj - The game object to check.
+     *
+     * @group Game Obj
+     */
+    exists(obj: GameObj): boolean;
+    /**
      * Remove the game obj.
      *
      * @param obj - The game object to remove.
@@ -482,6 +492,56 @@ export interface KAPLAYCtx {
      * @group Game Obj
      */
     destroyAll(tag: Tag): void;
+    /**
+     * Get the list of all tags defined as {@link KAPLAYOpt.singletonTags}.
+     * To get an object with a singleton tag, use regular {@link get `get("singleton-tag")?.[0]`}.
+     *
+     * @returns Array of tags or undefined.
+     * @since v4000.0
+     * @group Game Obj
+     */
+    getSingletonTags(): Tag[] | undefined;
+    /**
+     * Set singleton tags, replacing the existing ones.
+     * All existing objects with a tag will be untagged except the last occurrence in the object tree.
+     * To specify which object should be excluded, use {@link addSingletonTag `addSingletonTag()`} instead.
+     *
+     * @param tags - The array of tags.
+     *
+     * @since v4000.0
+     * @group Game Obj
+     */
+    setSingletonTags(tags: Tag[]): void;
+    /**
+     * Make tag a {@link KAPLAYOpt.singletonTags `singleton tag`}.
+     * All existing objects with a tag will be untagged except the passed `obj` or the last occurrence in the object tree.
+     *
+     * @param tag - The tag.
+     * @param obj - Optional object to keep the tag instead of the last occurrence.
+     *
+     * @since v4000.0
+     * @group Game Obj
+     */
+    addSingletonTag(tag: Tag, obj?: GameObj): void;
+    /**
+     * Make tag(s) no longer {@link KAPLAYOpt.singletonTags `singleton tag(s)`}.
+     *
+     * @param tag - The tag(s) to remove.
+     *
+     * @since v4000.0
+     * @group Game Obj
+     */
+    removeSingletonTag(tag: Tag | Tag[]): void;
+    /**
+     * Check if a tag is a {@link KAPLAYOpt.singletonTags `singleton tag`}.
+     *
+     * @param tag - The tag to check.
+     *
+     * @returns true if a singleton tag.
+     * @since v4000.0
+     * @group Game Obj
+     */
+    isSingletonTag(tag: Tag | Tag[]): boolean;
     // #region Transform Comps
     /**
      * Set the position of a Game Object, relative to its parent.
@@ -492,7 +552,7 @@ export interface KAPLAYCtx {
      * @example
      * ```js
      * // This game object will draw a "bean" sprite at (100, 200)
-     * let bean =add([
+     * let bean = add([
      *     pos(100, 200),
      *     sprite("bean"),
      * ]);
@@ -502,7 +562,7 @@ export interface KAPLAYCtx {
      * let rect = bean.add([
      *     pos(5, 5),
      *     rect(100, 100),
-     * ])
+     * ]);
      * ```
      *
      * @returns The position comp.
@@ -534,7 +594,7 @@ export interface KAPLAYCtx {
      * 	   scale(3, 1),
      * ]);
      *
-     *  // scale with vec2(x,y).
+     * // scale with vec2(x,y)
      * bean.scale = vec2(2,4);
      *
      * ```
@@ -748,7 +808,7 @@ export interface KAPLAYCtx {
      * ```js
      * const bean = add([
      *     sprite("bean"),
-     *     opacity(0.5) // Make bean 50% transparent
+     *     opacity(0.5), // Make bean 50% transparent
      * ])
      *
      * // Make bean invisible
@@ -764,6 +824,17 @@ export interface KAPLAYCtx {
      * @subgroup Rendering
      */
     opacity(o?: number): OpacityComp;
+    /**
+     * Sets the fill of a Game Object.
+     *
+     * @param fill - The fill value to set.
+     *
+     * @returns The fill comp.
+     * @since v4000.0
+     * @group Components
+     * @subgroup Rendering
+     */
+    fill(fill: boolean): FillComp;
     /**
      * Attach and render a sprite to a Game Object.
      *
@@ -882,8 +953,8 @@ export interface KAPLAYCtx {
      * });
      * ```
      *
-     * @returns A polygon comp.
-     * // TODO: add since, group and subgroup
+     * @returns A polygon shape.
+     * @since v4000.0
      */
     getSpriteOutline(
         asset: string,
@@ -977,14 +1048,14 @@ export interface KAPLAYCtx {
      * Draws a video.
      *
      * @param url - The video to play. Needs to be on the same webserver due to CORS.
-     * @param opt - The video component options
+     * @param opt - The video component options. You need to provide at least video `width` and `height`.
      *
      * @returns The video comp.
      * @since v4000.0
      * @group Components
      * @subgroup Rendering
      */
-    video(url: string, opt?: VideoCompOpt): VideoComp;
+    video(url: string, opt: VideoCompOpt): VideoComp;
     /**
      * Draws a picture, using the Picture API.
      *
@@ -997,7 +1068,7 @@ export interface KAPLAYCtx {
      */
     picture(picture: Picture): PictureComp;
     /**
-     * Attach a collider area from shape and enables collision detection in a Game Object.
+     * Attaches a collider area from a shape and enables collision detection on a Game Object.
      *
      * @param opt - Options for the area component. See {@link AreaCompOpt `AreaCompOpt`}.
      *
@@ -1030,9 +1101,9 @@ export interface KAPLAYCtx {
      */
     area(opt?: AreaCompOpt): AreaComp;
     /**
-     * Anchor point for render (default "topleft").
+     * Anchor point for render.
      *
-     * @param o - The anchor point to set.
+     * @param o - The anchor point to set. Defaults to "topleft".
      *
      * @example
      * ```js
@@ -1237,7 +1308,7 @@ export interface KAPLAYCtx {
      *     body({ isStatic: true }),
      *     surfaceEffector({
      *         speed: 50,
-     *     })
+     *     }),
      * ])
      * ```
      *
@@ -1380,22 +1451,22 @@ export interface KAPLAYCtx {
      *
      * @example
      * ```js
-     * const bean = add(...)
+     * const bean = add(...);
      *
      * add([
      *     sprite("bag"),
      *     pos(),
-     *     follow(bean) // Follow bean's position
+     *     follow(bean), // Follow bean's position
      * ]);
      *
      * // Using offset
-     * const target = add(...)
+     * const target = add(...);
      *
      * const mark = add([
-     *   sprite("mark"),
-     *   pos(),
-     *   follow(target, vec2(32, 32)) // Follow target's position with an offset
-     * ])
+     *     sprite("mark"),
+     *     pos(),
+     *     follow(target, vec2(32, 32)), // Follow target's position with an offset
+     * ]);
      *
      * mark.follow.offset = vec2(64, 64) // Change the offset
      * ```
@@ -1519,26 +1590,26 @@ export interface KAPLAYCtx {
      * ```js
      * const player = add([
      *     health(3),
-     * ])
+     * ]);
      *
      * player.onCollide("bad", (bad) => {
      *     player.hp--;
      *     bad.hp--;
-     * })
+     * });
      *
      * player.onCollide("apple", () => {
      *     player.hp++;
-     * })
+     * });
      *
      * player.onHurt(() => {
-     *     play("ouch")
-     * })
+     *     play("ouch");
+     * });
      *
      * // triggers when hp reaches 0
      * player.onDeath(() => {
-     *     destroy(player)
-     *     go("lose")
-     * })
+     *     destroy(player);
+     *     go("lose");
+     * });
      * ```
      *
      * @returns The health comp.
@@ -1721,7 +1792,7 @@ export interface KAPLAYCtx {
      */
     tile(opt?: TileCompOpt): TileComp;
     /**
-     * An agent which can finds it way on a tilemap.
+     * An agent which can find its way on a tilemap.
      *
      * @param opt - Options for the agent component. See {@link AgentCompOpt `AgentCompOpt`}.
      *
@@ -1907,8 +1978,6 @@ export interface KAPLAYCtx {
      * @subgroup Level
      */
     level(map: string[], opt?: LevelCompOpt): LevelComp;
-
-    // #endregion
     /**
      * Create a raycast.
      *
@@ -1938,275 +2007,6 @@ export interface KAPLAYCtx {
      * @experimental This feature is in experimental phase, it will be fully released in v3001.1.0
      */
     trigger(event: string, tag: string, ...args: any): void;
-    /**
-     * Register an event on all game objs with certain tag.
-     *
-     * @param tag - The tag to listen for.
-     * @param action - The function to run when the event is triggered.
-     *
-     * @example
-     * ```js
-     * // a custom event defined by body() comp
-     * // every time an obj with tag "bomb" hits the floor, destroy it and addKaboom()
-     * on("ground", "bomb", (bomb) => {
-     *     destroy(bomb)
-     *     addKaboom(bomb.pos)
-     * })
-     *
-     * // a custom event can be defined manually
-     * // by passing an event name, a tag, and a callback function
-     * // if you want any tag, use a tag of "*"
-     * on("talk", "npc", (npc, message) => {
-     *     npc.add([
-     *         text(message),
-     *         pos(0, -50),
-     *         lifespan(2),
-     *         opacity(),
-     *     ])
-     * });
-     *
-     * onKeyPress("space", () => {
-     *     // the trigger method on game objs can be used to trigger a custom event
-     *     npc.trigger("talk", "Hello, KAPLAY!");
-     * });
-     *
-     * ```
-     *
-     * @returns The event controller.
-     * @since v2000.0
-     * @group Events
-     */
-    on<Ev extends GameObjEventNames | (string & {})>(
-        event: Ev,
-        tag: Tag,
-        action: (
-            obj: GameObj,
-            ...args: TupleWithoutFirst<GameObjEvents[Ev]>
-        ) => void,
-    ): KEventController;
-    /**
-     * Register an event that runs at a fixed framerate.
-     *
-     * @param action - The function to run when the event is triggered.
-     *
-     * @returns The event controller.
-     * @since v3001.0
-     * @group Events
-     */
-    onFixedUpdate(action: () => void): KEventController;
-    onFixedUpdate(tag: Tag, action: (obj: GameObj) => void): KEventController;
-    /**
-     * Register an event that runs every frame (~60 times per second) for all game objs with certain tag.
-     *
-     * @param tag - The tag to listen for.
-     * @param action - The function to run when the event is triggered.
-     *
-     * @example
-     * ```js
-     * // move every "tree" 120 pixels per second to the left, destroy it when it leaves screen
-     * // there'll be nothing to run if there's no "tree" obj in the scene
-     * onUpdate("tree", (tree) => {
-     *     tree.move(-120, 0)
-     *     if (tree.pos.x < 0) {
-     *         destroy(tree)
-     *     }
-     * })
-     * ```
-     *
-     * @returns The event controller.
-     * @since v2000.1
-     * @group Events
-     */
-    onUpdate(tag: Tag, action: (obj: GameObj) => void): KEventController;
-    /**
-     * Register an event that runs every frame (~60 times per second).
-     *
-     * @param action - The function to run when the event is triggered.
-     *
-     * @example
-     * ```js
-     * // This will run every frame
-     * onUpdate(() => {
-     *     debug.log("ohhi")
-     * })
-     * ```
-     *
-     * @returns The event controller.
-     * @since v2000.1
-     * @group Events
-     */
-    onUpdate(action: () => void): KEventController;
-    /**
-     * Register an event that runs every frame (~60 times per second) for all game objs with certain tag (this is the same as onUpdate but all draw events are run after update events, drawXXX() functions only work in this phase).
-     *
-     * @param tag - The tag to listen for.
-     * @param action - The function to run when the event is triggered.
-     *
-     * @returns The event controller.
-     * @since v2000.1
-     * @group Events
-     */
-    onDraw(tag: Tag, action: (obj: GameObj) => void): KEventController;
-    /**
-     * Register an event that runs every frame (~60 times per second) (this is the same as onUpdate but all draw events are run after update events, drawXXX() functions only work in this phase).
-     *
-     * @example
-     * ```js
-     * onDraw(() => {
-     *     drawLine({
-     *         p1: vec2(0),
-     *         p2: mousePos(),
-     *         color: rgb(0, 0, 255),
-     *     })
-     * })
-     * ```
-     *
-     * @returns The event controller.
-     * @since v2000.1
-     * @group Events
-     */
-    onDraw(action: () => void): KEventController;
-    /**
-     * Register an event that runs when an object with the provided tag is added.
-     *
-     * @param tag - The tag to listen for.
-     * @param action - The function that runs when an object is added.
-     *
-     * @example
-     * ```js
-     * // This will run when the object is added.
-     * onAdd("player", () => {
-     *     debug.log("ohhi");
-     * });
-     *
-     * add([
-     *     pos(),
-     *     "player"
-     * ]);
-     * ```
-     *
-     * @returns The event controller.
-     * @since v2000.0
-     * @group Events
-     */
-    onAdd(tag: Tag, action: (obj: GameObj) => void): KEventController;
-    /**
-     * Register an event that runs when an object is added
-     *
-     * @param action - The function that runs when an object is added.
-     *
-     * @example
-     * ```js
-     * // This will run when the object is added.
-     * onAdd(() => {
-     *     debug.log("ohhi");
-     * });
-     *
-     * add([
-     *     pos(),
-     * ]);
-     * ```
-     *
-     * @returns The event controller.
-     * @since v2000.0
-     * @group Events
-     */
-    onAdd(action: (obj: GameObj) => void): KEventController;
-    /**
-     * Register an event that runs when an object with the provided tag is destroyed.
-     *
-     * @param action - The function that runs when an object is destroyed.
-     *
-     * @example
-     * ```js
-     * // This will run when the tagged object is destroyed.
-     * onDestroy("bean", () => {
-     *     debug.log("ohbye");
-     * });
-     *
-     * let player = add([
-     *     pos(),
-     *     "bean"
-     * ])
-     *
-     * // Destroy the tagged object
-     * destroy(player);
-     * ```
-     *
-     * @returns The event controller.
-     * @since v2000.0
-     * @group Events
-     */
-    onDestroy(tag: Tag, action: (obj: GameObj) => void): KEventController;
-    /**
-     * Register an event that runs when an object is destroyed.
-     *
-     * @param tag - The tag to match, only called for objects with a matching tag.
-     * @param action - The function that runs when an object is destroyed.
-     *
-     * @example
-     * ```js
-     * // This will run when the object is destroyed.
-     * onDestroy(() => {
-     *     debug.log("ohbye");
-     * });
-     *
-     * let ghosty = add([
-     *     pos(),
-     * ]);
-     *
-     * // Destroy the object
-     * destroy(ghosty);
-     * ```
-     *
-     * @returns The event controller.
-     * @group Events
-     */
-    onDestroy(action: (obj: GameObj) => void): KEventController;
-    /**
-     * Register an event that runs when an object starts using a component.
-     *
-     * @param action - The function that runs when an object starts using component.
-     * @param id - The id of the component that was added.
-     *
-     * @returns The event controller.
-     * @since v3001.1
-     * @group Events
-     */
-    onUse(action: (obj: GameObj, id: string) => void): KEventController;
-    /**
-     * Register an event that runs when an object stops using a component.
-     *
-     * @param action - The function that runs when an object stops using a component.
-     * @param id - The id of the component that was removed.d
-     *
-     * @returns The event controller.
-     * @since v3001.1
-     * @group Events
-     */
-    onUnuse(action: (obj: GameObj, id: string) => void): KEventController;
-    /**
-     * Register an event that runs when an object gains a tag.
-     *
-     * @param action - The function that runs when an object gains a tag.
-     * @param tag - The tag which was added.
-     *
-     * @returns The event controller.
-     * @since v3001.1
-     * @group Events
-     */
-    onTag(action: (obj: GameObj, tag: string) => void): KEventController;
-    /**
-     * Register an event that runs when an object loses a tag.
-     *
-     * @param action - The function that runs when an object loses a tag.
-     * @param tag - The tag which was removed.
-     *
-     * @returns The event controller.
-     * @since v3001.1
-     * @group Events
-     */
-    onUntag(action: (obj: GameObj, tag: string) => void): KEventController;
     /**
      * Register an event that runs when all assets finished loading.
      *
@@ -2269,7 +2069,7 @@ export interface KAPLAYCtx {
      *         height: 40,
      *         pos: center().add(-120,0),
      *         color: BLACK,
-     *         anchor: `left,
+     *         anchor: "left",
      *     });
      *     // Progress of the bar
      *     drawRect({
@@ -2277,7 +2077,7 @@ export interface KAPLAYCtx {
      *         height: 32,
      *         pos: center().add(-116, 0),
      *         color: BLUE,
-     *         anchor: `left
+     *         anchor: "left",
      *     });
      * });
      * ```
@@ -2301,23 +2101,23 @@ export interface KAPLAYCtx {
      *         height: height(),
      *         pos: center(),
      *         color: RED,
-     *         anchor: `center,
+     *         anchor: "center",
      *     });
      *
      *     drawText({
      *         text: err.message,
      *         size: 48,
      *         width: width()/2,
-     *         anchor: `center`,
-     *         align: `center`,
+     *         anchor: "center",
+     *         align: "center",
      *         pos: center(),
-     *         color: BLACK
+     *         color: BLACK,
      *     });
      * });
      *
      * // cause common error
      * let pos = add([
-     *     pos()
+     *     pos(),
      * ]);
      * ```
      *
@@ -2374,150 +2174,6 @@ export interface KAPLAYCtx {
      */
     onCleanup(action: () => void): void;
     /**
-     * Register an event that runs once when 2 game objs with certain tags collides (required to have area() component).
-     *
-     * @param t1 - The tag of the first game obj.
-     * @param t2 - The tag of the second game obj.
-     * @param action - The function to run when the event is triggered.
-     *
-     * @example
-     * ```js
-     * onCollide("sun", "earth", () => {
-     *     addExplosion()
-     * })
-     * ```
-     *
-     * @returns The event controller.
-     * @since v2000.1
-     * @group Events
-     */
-    onCollide(
-        t1: Tag,
-        t2: Tag,
-        action: (a: GameObj, b: GameObj, col?: Collision) => void,
-    ): KEventController;
-    /**
-     * Register an event that runs every frame when 2 game objs with certain tags collides (required to have area() component).
-     *
-     * @param t1 - The tag of the first game obj.
-     * @param t2 - The tag of the second game obj.
-     * @param action - The function to run when the event is triggered.
-     *
-     * @example
-     * ```js
-     * onCollideUpdate("sun", "earth", () => {
-     *     debug.log("okay this is so hot");
-     * })l
-     * ```
-     *
-     * @returns The event controller.
-     * @since v3000.0
-     * @group Events
-     */
-    onCollideUpdate(
-        t1: Tag,
-        t2: Tag,
-        action: (a: GameObj, b: GameObj, col?: Collision) => void,
-    ): KEventController;
-    /**
-     * Register an event that runs once frame when 2 game objs with certain tags stops colliding (required to have area() component).
-     *
-     * @param t1 - The tag of the first game obj.
-     * @param t2 - The tag of the second game obj.
-     * @param action - The function to run when the event is triggered.
-     *
-     * @example
-     * ```js
-     * onCollideEnd("bean", "earth", () => {
-     *     debug.log("destroying world in 3... 2... 1...")
-     * });
-     * ```
-     *
-     * @returns The event controller.
-     * @since v3000.0
-     * @group Events
-     */
-    onCollideEnd(
-        t1: Tag,
-        t2: Tag,
-        action: (a: GameObj, b: GameObj, col?: Collision) => void,
-    ): KEventController;
-    /**
-     * Register an event that runs when game objs with certain tags are clicked (required to have the area() component).
-     *
-     * @param tag - The tag to listen for.
-     * @param action - The function to run when the event is triggered.
-     *
-     * @example
-     * ```js
-     * // click on any "chest" to open
-     * onClick("chest", (chest) => chest.open())
-     * ```
-     *
-     * @returns The event controller.
-     * @since v2000.1
-     * @group Input
-     * @subgroup Mouse
-     */
-    onClick(tag: Tag, action: (a: GameObj) => void): KEventController;
-    /**
-     * Register an event that runs when users clicks.
-     *
-     * @param action - The function to run when the event is triggered.
-     *
-     * @example
-     * ```js
-     * // click on anywhere to go to "game" scene
-     * onClick(() => go("game"));
-     * ```
-     *
-     * @returns The event controller.
-     * @since v2000.1
-     * @group Events
-     */
-    onClick(action: () => void): KEventController;
-    /**
-     * Register an event that runs once when game objs with certain tags are hovered (required to have area() component).
-     *
-     * @param tag - The tag to listen for.
-     * @param action - The function to run when the event is triggered.
-     *
-     * @returns The event controller.
-     * @since v3000.0
-     * @group Events
-     */
-    onHover(tag: Tag, action: (a: GameObj) => void): KEventController;
-    /**
-     * Register an event that runs every frame when game objs with certain tags are hovered (required to have area() component).
-     *
-     * @param tag - The tag to listen for.
-     * @param action - The function to run when the event is triggered.
-     *
-     * @example
-     * ```js
-     * // Rotate bean 90 degrees per second when hovered
-     * onHoverUpdate("bean", (bean) => {
-     *   bean.angle += dt() * 90
-     * });
-     * ```
-     *
-     * @returns The event controller.
-     * @since v3000.0
-     * @group Events
-     */
-    onHoverUpdate(tag: Tag, action: (a: GameObj) => void): KEventController;
-    /**
-     * Register an event that runs once when game objs with certain tags are unhovered (required to have area() component).
-     *
-     * @param tag - The tag to listen for.
-     * @param action - The function to run when the event is triggered.
-     *
-     * @returns The event controller.
-     * @since v3000.0
-     * @group Events
-     */
-    onHoverEnd(tag: Tag, action: (a: GameObj) => void): KEventController;
-    /**
      * Register an event that runs every frame when a key is held down.
      *
      * @param key - The key(s) to listen for.
@@ -2527,7 +2183,7 @@ export interface KAPLAYCtx {
      * ```js
      * // move left by SPEED pixels per frame every frame when left arrow key is being held down
      * onKeyDown("left", () => {
-     *     bean.move(-SPEED, 0)
+     *     bean.move(-SPEED, 0);
      * });
      * ```
      *
@@ -2615,12 +2271,30 @@ export interface KAPLAYCtx {
         k: Key | Key[],
         action: (k: Key) => void,
     ): KEventController;
+    /**
+     * Register an event that runs when user presses any key and fires repeatedly when the keys are being held down.
+     *
+     * @param action - The function to run when the event is triggered.
+     *
+     * @example
+     * ```js
+     * // delete last character when "backspace" is being pressed and held
+     * onKeyPressRepeat((key) => {
+     *     debug.log(`key ${key} is being repeatedly pressed`);
+     * });
+     * ```
+     *
+     * @returns The event controller.
+     * @since v3000.1
+     * @group Input
+     * @subgroup Keyboard
+     */
     onKeyPressRepeat(action: (k: Key) => void): KEventController;
     /**
-     * Register an event that runs when user release certain keys.
+     * Register an event that runs when user releases certain keys.
      *
-     * @param k - = The key(s) to listen for. See {@link Key `Key`}.
-     * @param action - The function that runs when a user releases certain keys
+     * @param k - The key(s) to listen for. See {@link Key `Key`}.
+     * @param action - The function that runs when user releases certain keys
      *
      * @example
      * ```js
@@ -2639,7 +2313,7 @@ export interface KAPLAYCtx {
     /**
      * Register an event that runs when user releases a key.
      *
-     * @param action - The function that runs when a user releases a {@link Key `Key`}.
+     * @param action - The function that runs when user releases a {@link Key `Key`}.
      *
      * @example
      * ```js
@@ -2852,17 +2526,6 @@ export interface KAPLAYCtx {
      */
     onTouchStart(action: (pos: Vec2, t: Touch) => void): KEventController;
     /**
-     * Register an event that runs whenever touch moves.
-     *
-     * @param action - The function to run when the event is triggered.
-     *
-     * @returns The event controller.
-     * @since v2000.1
-     * @group Input
-     * @subgroup Touch
-     */
-    onTouchMove(action: (pos: Vec2, t: Touch) => void): KEventController;
-    /**
      * Register an event that runs when a touch ends.
      *
      * @param action - The function to run when the event is triggered.
@@ -2873,6 +2536,17 @@ export interface KAPLAYCtx {
      * @subgroup Touch
      */
     onTouchEnd(action: (pos: Vec2, t: Touch) => void): KEventController;
+    /**
+     * Register an event that runs whenever touch moves.
+     *
+     * @param action - The function to run when the event is triggered.
+     *
+     * @returns The event controller.
+     * @since v2000.1
+     * @group Input
+     * @subgroup Touch
+     */
+    onTouchMove(action: (pos: Vec2, t: Touch) => void): KEventController;
     /**
      * Register an event that runs when mouse wheel scrolled.
      *
@@ -2893,10 +2567,6 @@ export interface KAPLAYCtx {
      * @subgroup Mouse
      */
     onScroll(action: (delta: Vec2) => void): KEventController;
-    onHide: GameEventHandlers["onHide"];
-    onShow: GameEventHandlers["onShow"];
-    onTabShow: GameEventHandlers["onTabShow"];
-    onTabHide: GameEventHandlers["onTabHide"];
     /**
      * Register an event that runs when a gamepad is connected.
      *
@@ -3016,7 +2686,7 @@ export interface KAPLAYCtx {
      * // when user presses button
      * onGamepadButtonPress((btn, gp) => {
      *     if (btn == "south") {
-     *         player.jump(200);     // jump
+     *         player.jump(200);
      *     }
      * });
      * ```
@@ -3090,10 +2760,10 @@ export interface KAPLAYCtx {
      *
      * @example
      * ```js
-     * // player move
+     * // player to be moved
      * let player = add([
      *     pos(center()),
-     *     sprite(`bean`),
+     *     sprite("bean"),
      * ]);
      *
      * // when left stick is moved
@@ -3112,41 +2782,7 @@ export interface KAPLAYCtx {
         action: (value: Vec2, gameepad: KGamepad) => void,
     ): KEventController;
     /**
-     * Register an event that runs when user press a defined button
-     * (like "jump") on any input (keyboard, gamepad).
-     *
-     * @param btn - The button(s) to listen for.
-     * @param action - The function to run when the event is triggered.
-     *
-     * @returns The event controller.
-     * @since v3001.0
-     * @group Input
-     * @subgroup Buttons API
-     */
-    onButtonPress(
-        btn: string | string[],
-        action: (btn: string) => void,
-    ): KEventController;
-    onButtonPress(action: (btn: string) => void): KEventController;
-    /**
-     * Register an event that runs when user release a defined button
-     * (like "jump") on any input (keyboard, gamepad).
-     *
-     * @param btn - The button(s) to listen for.
-     * @param action - The function to run when the event is triggered.
-     *
-     * @returns The event controller.
-     * @since v3001.0
-     * @group Input
-     * @subgroup Buttons API
-     */
-    onButtonRelease(
-        btn: string | string[],
-        action: (btn: string) => void,
-    ): KEventController;
-    onButtonRelease(action: (btn: string) => void): KEventController;
-    /**
-     * Register an event that runs when user press a defined button
+     * Register an event that runs when user presses a defined button
      * (like "jump") on any input (keyboard, gamepad).
      *
      * @param btn - The button(s) to listen for.
@@ -3158,10 +2794,789 @@ export interface KAPLAYCtx {
      * @subgroup Buttons API
      */
     onButtonDown(
-        btn: string | string[],
-        action: (btn: string) => void,
+        btn: string | symbol | (string | symbol)[],
+        action: (btn: String | Symbol) => void,
     ): KEventController;
-    onButtonDown(action: (btn: string) => void): KEventController;
+    onButtonDown(action: (btn: String | Symbol) => void): KEventController;
+    /**
+     * Register an event that runs when user presses a defined button
+     * (like "jump") on any input (keyboard, gamepad).
+     *
+     * @param btn - The button(s) to listen for.
+     * @param action - The function to run when the event is triggered.
+     *
+     * @returns The event controller.
+     * @since v3001.0
+     * @group Input
+     * @subgroup Buttons API
+     */
+    onButtonPress(
+        btn: string | symbol | (string | symbol)[],
+        action: (btn: string | symbol) => void,
+    ): KEventController;
+    onButtonPress(action: (btn: string | symbol) => void): KEventController;
+    /**
+     * Register an event that runs when user releases a defined button
+     * (like "jump") on any input (keyboard, gamepad).
+     *
+     * @param btn - The button(s) to listen for.
+     * @param action - The function to run when the event is triggered.
+     *
+     * @returns The event controller.
+     * @since v3001.0
+     * @group Input
+     * @subgroup Buttons API
+     */
+    onButtonRelease(
+        btn: string | symbol | (string | symbol)[],
+        action: (btn: string | symbol) => void,
+    ): KEventController;
+    onButtonRelease(action: (btn: string | symbol) => void): KEventController;
+    /**
+     * Register an event that runs when tab is shown.
+     *
+     * @param action - The function that is run when the tab is shown.
+     *
+     * @example
+     * ```js
+     * // User has returned to this tab
+     * onTabShow(() => {
+     *     burp();
+     * });
+     * ```
+     *
+     * @returns The event controller.
+     * @since v3001.0
+     * @group Events
+     */
+    onTabShow(action: () => void): KEventController;
+    /**
+     * Register an event that runs when an object with the provided tag becomes visible, either directly or when a parent is un-hidden.
+     *
+     * (Note that "visible" just means "the draw handlers will run", it doesn't tell you anything about whether pixels will be drawn visibly on screen.)
+     *
+     * @param tag - The tag to listen for.
+     * @param action - The function that runs when an object is un-hidden.
+     *
+     * @example
+     * ```js
+     * onShow("player", () => {
+     *     debug.log("hi player");
+     * });
+     *
+     * const player = add([
+     *     pos(),
+     *     "player"
+     * ]);
+     * player.hidden = true;
+     * player.hidden = false; // Logs "hi player"
+     * ```
+     *
+     * @returns The event controller.
+     * @since v4000.0
+     * @group Events
+     */
+    onShow(tag: Tag, action: (obj: GameObj) => void): KEventController;
+    /**
+     * Register an event that runs when an object becomes visible, either directly or when a parent is un-hidden.
+     *
+     * (Note that "visible" just means "the draw handlers will run", it doesn't tell you anything about whether pixels will be drawn visibly on screen.)
+     *
+     * @param action - The function that runs when an object is un-hidden.
+     *
+     * @example
+     * ```js
+     * onShow(() => {
+     *     debug.log("ohhi");
+     * });
+     *
+     * const obj = add([
+     *     pos(),
+     * ]);
+     * obj.hidden = true;
+     * obj.hidden = false; // Logs "ohhi"
+     * ```
+     *
+     * @returns The event controller.
+     * @since v4000.0
+     * @group Events
+     */
+    onShow(action: (obj: GameObj) => void): KEventController;
+    /**
+     * Register an event that runs when tab is hidden.
+     *
+     * @param action - The function that is run what the tab is hidden.
+     *
+     * @example
+     * ```js
+     * // spooky ghost
+     * let ghosty = add([
+     *     pos(center()),
+     *     sprite("ghosty"),
+     *     anchor("center"),
+     * ]);
+     *
+     * // when switching tabs, this runs
+     * onTabHide(() => {
+     *     destroy(ghosty);
+     *     add([
+     *         text("There was never aa ghosttttt"),
+     *         pos(center()),
+     *         anchor("center"),
+     *     ]);
+     * });
+     * ```
+     *
+     * @returns The event controller.
+     * @since v3001.0
+     * @group Events
+     */
+    onTabHide(action: () => void): KEventController;
+    /**
+     * Register an event that runs when an object with the provided tag becomes invisible, either directly or when a parent is hidden.
+     *
+     * (Note that "invisible" just means "the draw handlers will not run", it doesn't tell you anything about whether pixels were being drawn visibly on screen.)
+     *
+     * @param tag - The tag to listen for.
+     * @param action - The function that runs when an object is hidden.
+     *
+     * @example
+     * ```js
+     * onHide("player", () => {
+     *     debug.log("bye player");
+     * });
+     *
+     * const player = add([
+     *     pos(),
+     *     "player"
+     * ]);
+     * player.hidden = true; // Logs "bye player"
+     * ```
+     *
+     * @returns The event controller.
+     * @since v4000.0
+     * @group Events
+     */
+    onHide(tag: Tag, action: (obj: GameObj) => void): KEventController;
+    /**
+     * Register an event that runs when an object becomes invisible, either directly or when a parent is hidden.
+     *
+     * (Note that "invisible" just means "the draw handlers will not run", it doesn't tell you anything about whether pixels were being drawn visibly on screen.)
+     *
+     * @param action - The function that runs when an object is hidden.
+     *
+     * @example
+     * ```js
+     * onHide(() => {
+     *     debug.log("bye");
+     * });
+     *
+     * const obj = add([
+     *     pos(),
+     * ]);
+     * obj.hidden = true; // Logs "bye"
+     * ```
+     *
+     * @returns The event controller.
+     * @since v4000.0
+     * @group Events
+     */
+    onHide(action: (obj: GameObj) => void): KEventController;
+    /**
+     * Register an event that runs when an object with the provided tag becomes paused, either directly or when a parent is paused.
+     *
+     * ("Paused" simply means "the update and fixedUpdate handlers will not run.")
+     *
+     * @param tag - The tag to listen for.
+     * @param action - The function that runs when an object is paused.
+     *
+     * @example
+     * ```js
+     * onPause("player", () => {
+     *     debug.log("player is frozen");
+     * });
+     *
+     * const player = add([
+     *     pos(),
+     *     "player"
+     * ]);
+     * player.paused = true; // Logs "player is frozen"
+     * ```
+     *
+     * @returns The event controller.
+     * @since v4000.0
+     * @group Events
+     */
+    onPause(tag: Tag, action: (obj: GameObj) => void): KEventController;
+    /**
+     * Register an event that runs when an object becomes paused, either directly or when a parent is paused.
+     *
+     * ("Paused" simply means "the update and fixedUpdate handlers will not run.")
+     *
+     * @param action - The function that runs when an object is paused.
+     *
+     * @example
+     * ```js
+     * onPause(() => {
+     *     debug.log("frozen");
+     * });
+     *
+     * const obj = add([
+     *     pos(),
+     * ]);
+     * obj.paused = true; // Logs "frozen"
+     * ```
+     *
+     * @returns The event controller.
+     * @since v4000.0
+     * @group Events
+     */
+    onPause(action: (obj: GameObj) => void): KEventController;
+    /**
+     * Register an event that runs when an object with the provided tag becomes unpaused, either directly or when a parent is unpaused.
+     *
+     * ("Unpaused" simply means "the update and fixedUpdate handlers will run.")
+     *
+     * @param tag - The tag to listen for.
+     * @param action - The function that runs when an object is unpaused.
+     *
+     * @example
+     * ```js
+     * onUnpause("player", () => {
+     *     debug.log("player is melted");
+     * });
+     *
+     * const player = add([
+     *     pos(),
+     *     "player"
+     * ]);
+     * player.paused = false; // Logs nothing, player is already unpaused
+     * player.paused = true;
+     * player.paused = false; // Logs "player is melted"
+     * ```
+     *
+     * @returns The event controller.
+     * @since v4000.0
+     * @group Events
+     */
+    onUnpause(tag: Tag, action: (obj: GameObj) => void): KEventController;
+    /**
+     * Register an event that runs when an object becomes unpaused, either directly or when a parent is unpaused.
+     *
+     * ("Unpaused" simply means "the update and fixedUpdate handlers will run.")
+     *
+     * @param action - The function that runs when an object is unpaused.
+     *
+     * @example
+     * ```js
+     * onUnpause(() => {
+     *     debug.log("unfrozen");
+     * });
+     *
+     * const obj = add([
+     *     pos(),
+     * ]);
+     * obj.paused = false; // Logs nothing, obj is already unpaused
+     * obj.paused = true;
+     * obj.paused = false; // Logs "frozen"
+     * ```
+     *
+     * @returns The event controller.
+     * @since v4000.0
+     * @group Events
+     */
+    onUnpause(action: (obj: GameObj) => void): KEventController;
+    /**
+     * Register an event that runs at a fixed framerate.
+     *
+     * @param action - The function to run when the event is triggered.
+     *
+     * @returns The event controller.
+     * @since v3001.0
+     * @group Events
+     */
+    onFixedUpdate(action: () => void): KEventController;
+    onFixedUpdate(tag: Tag, action: (obj: GameObj) => void): KEventController;
+    /**
+     * Register an event that runs every frame (~60 times per second) for all game objs with certain tag.
+     *
+     * @param tag - The tag to listen for.
+     * @param action - The function to run when the event is triggered.
+     *
+     * @example
+     * ```js
+     * // move every "tree" 120 pixels per second to the left, destroy it when it leaves screen
+     * // there'll be nothing to run if there's no "tree" obj in the scene
+     * onUpdate("tree", (tree) => {
+     *     tree.move(-120, 0)
+     *     if (tree.pos.x < 0) {
+     *         destroy(tree)
+     *     }
+     * })
+     * ```
+     *
+     * @returns The event controller.
+     * @since v2000.1
+     * @group Events
+     */
+    onUpdate(tag: Tag, action: (obj: GameObj) => void): KEventController;
+    /**
+     * Register an event that runs every frame (~60 times per second).
+     *
+     * @param action - The function to run when the event is triggered.
+     *
+     * @example
+     * ```js
+     * // This will run every frame
+     * onUpdate(() => {
+     *     debug.log("ohhi")
+     * })
+     * ```
+     *
+     * @returns The event controller.
+     * @since v2000.1
+     * @group Events
+     */
+    onUpdate(action: () => void): KEventController;
+    /**
+     * Register an event that runs every frame (~60 times per second) for all game objs with certain tag (this is the same as onUpdate but all draw events are run after update events, drawXXX() functions only work in this phase).
+     *
+     * @param tag - The tag to listen for.
+     * @param action - The function to run when the event is triggered.
+     *
+     * @returns The event controller.
+     * @since v2000.1
+     * @group Events
+     */
+    onDraw(tag: Tag, action: (obj: GameObj) => void): KEventController;
+    /**
+     * Register an event that runs every frame (~60 times per second) (this is the same as onUpdate but all draw events are run after update events, drawXXX() functions only work in this phase).
+     *
+     * @example
+     * ```js
+     * onDraw(() => {
+     *     drawLine({
+     *         p1: vec2(0),
+     *         p2: mousePos(),
+     *         color: rgb(0, 0, 255),
+     *     })
+     * })
+     * ```
+     *
+     * @returns The event controller.
+     * @since v2000.1
+     * @group Events
+     */
+    onDraw(action: () => void): KEventController;
+    /**
+     * Register an event that runs when an object with the provided tag is added.
+     *
+     * @param tag - The tag to listen for.
+     * @param action - The function that runs when an object is added.
+     *
+     * @example
+     * ```js
+     * // This will run when the object is added.
+     * onAdd("player", () => {
+     *     debug.log("ohhi");
+     * });
+     *
+     * add([
+     *     pos(),
+     *     "player"
+     * ]);
+     * ```
+     *
+     * @returns The event controller.
+     * @since v2000.0
+     * @group Events
+     */
+    onAdd(tag: Tag, action: (obj: GameObj) => void): KEventController;
+    /**
+     * Register an event that runs when an object is added
+     *
+     * @param action - The function that runs when an object is added.
+     *
+     * @example
+     * ```js
+     * // This will run when the object is added.
+     * onAdd(() => {
+     *     debug.log("ohhi");
+     * });
+     *
+     * add([
+     *     pos(),
+     * ]);
+     * ```
+     *
+     * @returns The event controller.
+     * @since v2000.0
+     * @group Events
+     */
+    onAdd(action: (obj: GameObj) => void): KEventController;
+    /**
+     * Register an event that runs when an object with the provided tag is destroyed.
+     *
+     * @param action - The function that runs when an object is destroyed.
+     *
+     * @example
+     * ```js
+     * // This will run when the tagged object is destroyed.
+     * onDestroy("bean", () => {
+     *     debug.log("ohbye");
+     * });
+     *
+     * let player = add([
+     *     pos(),
+     *     "bean"
+     * ])
+     *
+     * // Destroy the tagged object
+     * destroy(player);
+     * ```
+     *
+     * @returns The event controller.
+     * @since v2000.0
+     * @group Events
+     */
+    onDestroy(tag: Tag, action: (obj: GameObj) => void): KEventController;
+    /**
+     * Register an event that runs when an object is destroyed.
+     *
+     * @param tag - The tag to match, only called for objects with a matching tag.
+     * @param action - The function that runs when an object is destroyed.
+     *
+     * @example
+     * ```js
+     * // This will run when the object is destroyed.
+     * onDestroy(() => {
+     *     debug.log("ohbye");
+     * });
+     *
+     * let ghosty = add([
+     *     pos(),
+     * ]);
+     *
+     * // Destroy the object
+     * destroy(ghosty);
+     * ```
+     *
+     * @returns The event controller.
+     * @group Events
+     */
+    onDestroy(action: (obj: GameObj) => void): KEventController;
+    /**
+     * Register an event that runs when an object starts using a component.
+     *
+     * @param action - The function that runs when the event happens.
+     *
+     * @returns The event controller.
+     * @since v3001.1
+     * @group Events
+     */
+    onUse(action: (obj: GameObj, id: string) => void): KEventController;
+    /**
+     * Register an event that runs when an object with the provided tag starts using a component.
+     *
+     * @param tag - The tag to match, only called for objects with a matching tag.
+     * @param action - The function that runs when the event happens.
+     *
+     * @example
+     * ```js
+     * // This will run when the tagged object uses a new component.
+     * onUse("taggedObjTag", (obj, compId) => {
+     *     debug.log(obj, component);
+     * });
+     * ```
+     *
+     * @returns The event controller.
+     * @since v2000.0
+     * @group Events
+     */
+    onUse(
+        tag: Tag,
+        action: (obj: GameObj, compId: string) => void,
+    ): KEventController;
+    /**
+     * Register an event that runs when an object stops using a component.
+     *
+     * @param action - The function that runs when the event happens.
+     *
+     * @returns The event controller.
+     * @since v3001.1
+     * @group Events
+     */
+    onUnuse(action: (obj: GameObj, id: string) => void): KEventController;
+    /**
+     * Register an event that runs when an object with the provided tag stops using a component.
+     *
+     * @param tag - The tag to match, only called for objects with a matching tag.
+     * @param action - The function that runs when the event happens.
+     *
+     * @example
+     * ```js
+     * // This will run when the tagged object removes a component.
+     * onUnuse("ghost", (obj, compId) => {
+     *     debug.log(obj, component);
+     * });
+     * ```
+     *
+     * @returns The event controller.
+     * @since v2000.0
+     * @group Events
+     */
+    onUnuse(
+        tag: Tag,
+        action: (obj: GameObj, compId: string) => void,
+    ): KEventController;
+    /**
+     * Register an event that runs when an object gains a tag.
+     *
+     * @param action - The function that runs when the event happens.
+     *
+     * @example
+     * ```js
+     * onTag((obj, tag) => {
+     *     debug.log(`A new tag ${tag} was added to the object ${obj.id}`);
+     * });
+     * ```
+     *
+     * @returns The event controller.
+     * @since v3001.1
+     * @group Events
+     */
+    onTag(action: (obj: GameObj, tag: string) => void): KEventController;
+    /**
+     * Register an event that runs when an object with the provided tag gains a tag.
+     *
+     * @param action - The function that runs when the event happens.
+     *
+     * @example
+     * ```js
+     * onTag("elephant", (obj, tag) => {
+     *     debug.log(`A new tag ${tag} was added to the object ${obj.id}`);
+     * });
+     * ```
+     *
+     * @returns The event controller.
+     * @since v3001.1
+     * @group Events
+     */
+    onTag(
+        tag: Tag,
+        action: (obj: GameObj, tag: string) => void,
+    ): KEventController;
+    /**
+     * Register an event that runs when an object loses a tag.
+     *
+     * @param action - The function that runs when the event happens.
+     *
+     * @example
+     * ```js
+     * onUnuse((obj, tag) => {
+     *     debug.log(`A tag ${tag} was removed from the object ${obj.id}`);
+     * });
+     * ```
+     *
+     * @returns The event controller.
+     * @since v3001.1
+     * @group Events
+     */
+    onUntag(action: (obj: GameObj, tag: string) => void): KEventController;
+    /**
+     * Register an event that runs when an object with the provided tag loses a tag.
+     *
+     * @param action - The function that runs when the event happens.
+     *
+     * @example
+     * ```js
+     * onUnuse("vegetable", (obj, tag) => {
+     *     debug.log(`A tag ${tag} was removed from the object ${obj.id}`);
+     * });
+     * ```
+     *
+     * @returns The event controller.
+     * @since v3001.1
+     * @group Events
+     */
+    onUntag(
+        tag: Tag,
+        action: (obj: GameObj, tag: string) => void,
+    ): KEventController;
+    /**
+     * Register an event on all Game Objects with certain tag.
+     *
+     * @param tag - The tag to listen for.
+     * @param action - The function to run when the event is triggered.
+     *
+     * @example
+     * ```js
+     * // a custom event defined by body() comp
+     * // every time an obj with tag "bomb" hits the floor, destroy it and addKaboom()
+     * on("ground", "bomb", (bomb) => {
+     *     destroy(bomb);
+     *     addKaboom(bomb.pos);
+     * });
+     *
+     * // a custom event can be defined manually
+     * // by passing an event name, a tag, and a callback function
+     * // if you want any tag, use a tag of "*"
+     * on("talk", "npc", (npc, message) => {
+     *     npc.add([
+     *         text(message),
+     *         pos(0, -50),
+     *         lifespan(2),
+     *         opacity(),
+     *     ]);
+     * });
+     *
+     * onKeyPress("space", () => {
+     *     // the trigger method on game objs can be used to trigger a custom event
+     *     npc.trigger("talk", "Hello, KAPLAY!");
+     * });
+     *
+     * ```
+     *
+     * @returns The event controller.
+     * @since v2000.0
+     * @group Events
+     */
+    on<Ev extends GameObjEventNames | (string & {})>(
+        event: Ev,
+        tag: Tag,
+        action: (
+            obj: GameObj,
+            ...args: TupleWithoutFirst<GameObjEvents[Ev]>
+        ) => void,
+    ): KEventController;
+    /**
+     * Register an event that runs once when 2 game objs with certain tags collides (required to have area() component).
+     *
+     * @param t1 - The tag of the first game obj.
+     * @param t2 - The tag of the second game obj.
+     * @param action - The function to run when the event is triggered.
+     *
+     * @example
+     * ```js
+     * onCollide("sun", "earth", () => {
+     *     addExplosion()
+     * })
+     * ```
+     *
+     * @returns The event controller.
+     * @since v2000.1
+     * @group Events
+     */
+    onCollide(
+        t1: Tag,
+        t2: Tag,
+        action: (a: GameObj, b: GameObj, col?: Collision) => void,
+    ): KEventController;
+    /**
+     * Register an event that runs every frame when 2 game objs with certain tags collides (required to have area() component).
+     *
+     * @param t1 - The tag of the first game obj.
+     * @param t2 - The tag of the second game obj.
+     * @param action - The function to run when the event is triggered.
+     *
+     * @example
+     * ```js
+     * onCollideUpdate("sun", "earth", () => {
+     *     debug.log("okay this is so hot");
+     * });
+     * ```
+     *
+     * @returns The event controller.
+     * @since v3000.0
+     * @group Events
+     */
+    onCollideUpdate(
+        t1: Tag,
+        t2: Tag,
+        action: (a: GameObj, b: GameObj, col?: Collision) => void,
+    ): KEventController;
+    /**
+     * Register an event that runs once frame when 2 game objs with certain tags stops colliding (required to have area() component).
+     *
+     * @param t1 - The tag of the first game obj.
+     * @param t2 - The tag of the second game obj.
+     * @param action - The function to run when the event is triggered.
+     *
+     * @example
+     * ```js
+     * onCollideEnd("bean", "earth", () => {
+     *     debug.log("destroying world in 3... 2... 1...");
+     * });
+     * ```
+     *
+     * @returns The event controller.
+     * @since v3000.0
+     * @group Events
+     */
+    onCollideEnd(
+        t1: Tag,
+        t2: Tag,
+        action: (a: GameObj, b: GameObj, col?: Collision) => void,
+    ): KEventController;
+    /**
+     * Register an event that runs when game objs with certain tags are clicked (required to have the area() component).
+     *
+     * @param tag - The tag to listen for.
+     * @param action - The function to run when the event is triggered.
+     *
+     * @example
+     * ```js
+     * // click on any "chest" to open
+     * onClick("chest", (chest) => chest.open())
+     * ```
+     *
+     * @returns The event controller.
+     * @since v2000.1
+     * @group Input
+     * @subgroup Mouse
+     */
+    onClick(tag: Tag, action: (a: GameObj) => void): KEventController;
+    /**
+     * Register an event that runs once when game objs with certain tags are hovered (required to have area() component).
+     *
+     * @param tag - The tag to listen for.
+     * @param action - The function to run when the event is triggered.
+     *
+     * @returns The event controller.
+     * @since v3000.0
+     * @group Events
+     */
+    onHover(tag: Tag, action: (a: GameObj) => void): KEventController;
+    /**
+     * Register an event that runs every frame when game objs with certain tags are hovered (required to have area() component).
+     *
+     * @param tag - The tag to listen for.
+     * @param action - The function to run when the event is triggered.
+     *
+     * @example
+     * ```js
+     * // Rotate bean 90 degrees per second when hovered
+     * onHoverUpdate("bean", (bean) => {
+     *   bean.angle += dt() * 90;
+     * });
+     * ```
+     *
+     * @returns The event controller.
+     * @since v3000.0
+     * @group Events
+     */
+    onHoverUpdate(tag: Tag, action: (a: GameObj) => void): KEventController;
+    /**
+     * Register an event that runs once when game objs with certain tags are unhovered (required to have area() component).
+     *
+     * @param tag - The tag to listen for.
+     * @param action - The function to run when the event is triggered.
+     *
+     * @returns The event controller.
+     * @since v3000.0
+     * @group Events
+     */
+    onHoverEnd(tag: Tag, action: (a: GameObj) => void): KEventController;
     /**
      * Register an event that runs when current scene ends.
      *
@@ -3179,7 +3594,6 @@ export interface KAPLAYCtx {
      * @group Scenes
      */
     getSceneName(): string | null;
-    // #region Loaders
     /**
      * Sets the root for all subsequent resource urls.
      *
@@ -3245,6 +3659,7 @@ export interface KAPLAYCtx {
      *
      * @param src - The image resource url.
      * @param data - The sprite atlas data.
+     * @param [repack=true] - set to false if you've already packed your spritesheet. See {@link LoadSpriteOpt.repack} for more.
      *
      * @example
      * ```js
@@ -3279,12 +3694,14 @@ export interface KAPLAYCtx {
     loadSpriteAtlas(
         src: LoadSpriteSrc,
         data: SpriteAtlasData,
+        repack?: boolean,
     ): Asset<Record<string, SpriteData>>;
     /**
      * Load sprites from a sprite atlas with URL.
      *
      * @param src - The image resource url.
      * @param url - The json resource url.
+     * @param [repack=true] - set to false if you've already packed your spritesheet. See {@link LoadSpriteOpt.repack} for more.
      *
      * @example
      * ```js
@@ -3306,9 +3723,12 @@ export interface KAPLAYCtx {
     loadSpriteAtlas(
         src: LoadSpriteSrc,
         url: string,
+        repack?: boolean,
     ): Asset<Record<string, SpriteData>>;
     /**
-     * Load a sprite with aseprite spritesheet json (should use "array" in the export options and have tags enabled, that way kaplay can load tagged frames as animations).
+     * Load a sprite with Aseprite spritesheet JSON. You should use "array" in the export options and have tags enabled, that way KAPLAY can load tagged frames as animations.
+     *
+     * These are loaded with repacking turned off, since we assume Aseprite is smart enough to pack the frames nicely.
      *
      * @param name - The asset name.
      * @param imgSrc - The image resource url.
@@ -3575,13 +3995,12 @@ export interface KAPLAYCtx {
     /**
      * Load a prefab.
      *
-     * @since v4000.0.0
+     * @since v4000.0
      * @group Assets
      * @subgroup Util
      * @experimental
      */
     loadPrefab: (name: string, url: string) => Asset<SerializedGameObj>;
-    // #endregion
     /**
      * Get the global asset loading progress (0.0 - 1.0).
      *
@@ -4250,7 +4669,7 @@ export interface KAPLAYCtx {
     /**
      * Camera shake.
      *
-     * @param intensity - The intensity of the shake. Default to 12.
+     * @param intensity - The intensity of the shake. Defaults to 12.
      *
      * @example
      * ```js
@@ -4273,7 +4692,7 @@ export interface KAPLAYCtx {
      *
      * @example
      * ```js
-     * onClick(() => {
+     * onMousePress(() => {
      *     // flashed
      *     flash(WHITE, 0.5);
      * });
@@ -4285,7 +4704,6 @@ export interface KAPLAYCtx {
      * @subgroup Camera
      */
     flash(flashColor: Color, fadeOutTime: number): TimerController;
-    // #region DEPRECATED CAMERA METHODS ---------------------------------------
     /**
      * @deprecated Use {@link setCamPos} and {@link getCamPos} instead.
      *
@@ -4356,7 +4774,7 @@ export interface KAPLAYCtx {
      *
      * @example
      * ```js
-     * onClick(() => {
+     * onMousePress(() => {
      *     // flashed
      *     camFlash(WHITE, 0.5)
      * })
@@ -4377,7 +4795,6 @@ export interface KAPLAYCtx {
      * @subgroup Camera
      */
     camTransform(): Mat23;
-    // #endregion DEPRECATED CAMERA METHODS ------------------------------------
     /**
      * Transform a point from world position (relative to the root) to screen position (relative to the screen).
      *
@@ -4477,8 +4894,8 @@ export interface KAPLAYCtx {
      *
      * button.onHover((c) => {
      *    // change cursor to pointer when hovering over button
-     *     setCursor("pointer")
-     * })
+     *     setCursor("pointer");
+     * });
      *
      * // Hide the only cursor at start (useful for fakeMouse)
      * setCursor("none");
@@ -4512,14 +4929,12 @@ export interface KAPLAYCtx {
      */
     isCursorLocked(): boolean;
     /**
-     * Enter / exit fullscreen mode. (note: mouse position is not working in fullscreen mode at the moment)
+     * Enter / exit fullscreen mode.
      *
      * @example
      * ```js
-     * // toggle fullscreen mode on "f"
-     * onKeyPress("f", (c) => {
-     *     setFullscreen(!isFullscreen());
-     * });
+     * // toggle fullscreen mode with "f" key
+     * onKeyPress("f", () => setFullscreen(!isFullscreen()));
      * ```
      *
      * @since v2000.0
@@ -4556,6 +4971,59 @@ export interface KAPLAYCtx {
      * @group Timer
      */
     wait(n: number, action?: () => void): TimerController;
+    /**
+     * Defer/run the function on the next frame.
+     *
+     * @param action - The function to run.
+     *
+     * @example Passing a callback
+     * ```js
+     * nextFrame(() => {})
+     * ```
+     * @example It returns a PromiseLike that can be used with await
+     * ```js
+     * await nextFrame()
+     * ```
+     * @example Use cases
+     * ```js
+     * // Typical use case is to unpause a game after all listeners in the current frame
+     * // have run, otherwise you would unpause and register input events too early
+     * nextFrame(() => {
+     *     gameObj.paused = false
+     * })
+     *
+     * // Or registering an event listener inside of the same event listener
+     * onKeyPress("space", () => {
+     *     // outside, the object would be added in the same frame when the space key is
+     *     // processed, so you would see "ohhi" message on the first space key press
+     *     nextFrame(() => {
+     *         const obj = add([])
+     *         obj.onKeyPress("space", () => debug.log("ohhi"))
+     *     })
+     *     return cancel()
+     * })
+     *
+     * // Or accessing info that is not available in the current event loop
+     * // like getting the next tiles array in the addLevel tiles config
+     * "=": () => [
+     *     sprite("grass"),
+     *     {
+     *         add() {
+     *             // outside it would be empty, since it runs when the tile is added
+     *             nextFrame(() => {
+     *                 // here it will work since the whole level is processed now
+     *                 console.log(this.getLevel().getAt(this.tilePos.add(1, 0)))
+     *             })
+     *         },
+     *     },
+     * ],
+     * ```
+     *
+     * @returns A timer controller.
+     * @since v4000.0
+     * @group Timer
+     */
+    nextFrame(action?: () => void): TimerController;
     /**
      * Run the function every n seconds.
      *
@@ -4673,6 +5141,22 @@ export interface KAPLAYCtx {
      */
     audioCtx: AudioContext;
     /**
+     * Set the random generator to use
+     *
+     * @param config - configuration for the rng
+     *
+     * @example
+     * ```js
+     * setRNG({ type: "lce" });
+     * setRNG({ type: "alea", seed: ["kaplay", "rocks", "hard"] });
+     * ```
+     *
+     * @since v4000.0
+     * @group Math
+     * @subgroup Random
+     */
+    setRNG(config: RNGConfig): void;
+    /**
      * Get a random value between the given bound.
      *
      * @param a - The lower bound. If not upper bound, this is the upper bound and the lower bound is 0.
@@ -4681,13 +5165,13 @@ export interface KAPLAYCtx {
      * @example
      * ```js
      * // a random number between 0 - 8
-     * rand(8)
+     * rand(8);
      *
      * // a random point on screen
-     * rand(vec2(width(), height()))
+     * rand(vec2(width(), height()));
      *
      * // a random color
-     * rand(rgb(255, 255, 255))
+     * rand(rgb(255, 255, 255));
      *
      * // a random number between 50 - 100
      * rand(50, 100);
@@ -4728,11 +5212,15 @@ export interface KAPLAYCtx {
     /**
      * Get / set the random number generator seed.
      *
-     * @param seed - The seed to set.
+     * @param seed - The seed to set. Its type needs to match the currently active RNG seed type.
      *
-     * @example
+     * @example Set the numerical seed
      * ```js
      * randSeed(Date.now())
+     * ```
+     * @example Set Alea string seeds
+     * ```js
+     * randSeed(["kaplay", "rocks", "hard"])
      * ```
      *
      * @returns The new seed.
@@ -4740,7 +5228,7 @@ export interface KAPLAYCtx {
      * @group Math
      * @subgroup Random
      */
-    randSeed(seed?: number): number;
+    randSeed(seed?: RNGSeed): RNGSeed;
     /**
      * Create a 2D vector.
      *
@@ -4767,6 +5255,29 @@ export interface KAPLAYCtx {
     vec2(p: Vec2): Vec2;
     vec2(xy: number): Vec2;
     vec2(): Vec2;
+    /**
+     * Create a 3D vector.
+     *
+     * @example
+     * ```js
+     * // { x: 0, y: 0, z: 0 }
+     * vec3()
+     *
+     * // { x: 10, y: 10, z: 10 }
+     * vec3(10)
+     *
+     * // { x: 80, y: 100, z: 120 }
+     * vec3(80, 100, 120)
+     * ```
+     *
+     * @returns The vector.
+     * @since v2000.0
+     * @group Math
+     */
+    vec3(x: number, y: number, z: number): Vec3;
+    vec3(p: Vec3): Vec3;
+    vec3(xyz: number): Vec3;
+    vec3(): Vec3;
     /**
      * Create a color from RGB values (0 - 255).
      *
@@ -4899,7 +5410,7 @@ export interface KAPLAYCtx {
      *
      * @example
      * ```js
-     * // every frame all objs with tag "unlucky" have 50% chance die
+     * // every frame all objs with tag "unlucky" have 50% chance to die
      * onUpdate("unlucky", (o) => {
      *     if (chance(0.5)) {
      *         destroy(o)
@@ -4912,12 +5423,61 @@ export interface KAPLAYCtx {
      */
     chance(p: number): boolean;
     /**
+     * Returns the index of the item obtained given the probabilities
+     *
+     * @example
+     * ```js
+     * // There is a 10% chance for index 0, 30% for index 1 and 60% for index 2 to be returned
+     * roulette([0.1, 0.3, 0.6]);
+     * roulette([10, 30, 60]);
+     * // There is a 1/6 chance for index 0, 2/6 for index 1 and 4/6 for index 2 to be returned
+     * roulette([1, 2, 4]);
+     *
+     * @param probabilities - The probabilities.
+     *
+     * @returns The index of the item obtained given the probabilities
+     *
+     * @group Math
+     * @subgroup Random
+     */
+    roulette(probabilities: number[]): number;
+    /**
+     * Returns the item obtained given the probabilities
+     *
+     * @example
+     * ```js
+     * // There is a 10% chance for "bean", 30% for "been" and 60% for "beant" to be returned
+     * gacha([["bean", 0.1], ["been", 0.3], ["beant", 0.6]]);
+     * gacha(new Map([["bean", 10], ["been", 30], ["beant", 60]]));
+     * // There is a 1/6 chance for "bean", 2/6 for "been" and 4/6 for "beant" to be returned
+     * gacha({"bean": 1, "been": 2, "beant": 4});
+     *
+     * @param items - The items.
+     * @param probabilities - The probabilities.
+     *
+     * @returns The item obtained given the probabilities
+     *
+     * @group Math
+     * @subgroup Random
+     */
+    gacha<T>(
+        items: [T, number][] | Map<T, number> | Record<string, number>,
+        rng?: RNG,
+    ): T;
+    /**
      * Linear interpolation. Can take a number, vector, or color.
      *
      * @group Math
      * @subgroup Tween
      */
     lerp<V extends LerpValue>(from: V, to: V, t: number): V;
+    /**
+     * Linear interpolation for angles. Can take a number or vector.
+     *
+     * @group Math
+     * @subgroup Tween
+     */
+    lerpAngle<V extends number | Vec2>(from: V, to: V, t: number): V;
     /**
      * Tweeeeeeeening!
      *
@@ -4947,7 +5507,7 @@ export interface KAPLAYCtx {
      */
     easings: Record<EaseFuncs, EaseFunc>;
     /**
-     * Steps easing. Eases in discontinious steps.
+     * Steps easing. Eases in discontinuous steps.
      *
      * @since v3001.0
      * @group Math
@@ -4979,8 +5539,8 @@ export interface KAPLAYCtx {
      *
      * @param v - The value the function will depend on.
      * @param l1 - The minimum value of the source range.
-     * @param h1 - The minimum result value.
-     * @param l2 - The maximum value of the source range.
+     * @param h1 - The maximum value of the source range.
+     * @param l2 - The minimum result value.
      * @param h2 - The maximum result value.
      *
      * @example
@@ -5002,8 +5562,8 @@ export interface KAPLAYCtx {
      *
      * @param v - The value the function will depend on.
      * @param l1 - The minimum value of the source range.
-     * @param h1 - The minimum result value.
-     * @param l2 - The maximum value of the source range.
+     * @param h1 - The maximum value of the source range.
+     * @param l2 - The minimum result value.
      * @param h2 - The maximum result value.
      *
      * @example
@@ -5272,6 +5832,12 @@ export interface KAPLAYCtx {
         continuity: number,
         bias: number,
     ): (t: number) => Vec2;
+    piecewiseBezier(
+        pts: Vec2[],
+    ): (t: number) => Vec2;
+    piecewiseCatmullRom(
+        pts: Vec2[],
+    ): (t: number) => Vec2;
     createRegularPolygon(
         radius: number,
         sides: number,
@@ -5289,20 +5855,26 @@ export interface KAPLAYCtx {
         sides: number,
         startAngle: number,
     ): Vec2[];
+    floodFill(
+        graph: Graph,
+        start: number | number[],
+        predicate: (node: number) => boolean,
+    ): number[];
+    buildConnectivityMap(graph: Graph): Map<number, number>;
     /**
      * Check if a line and a point intersect.
      *
      * @param l - The line.
      * @param pt - The point.
      *
-     * @returns true if the line and point intersects.
+     * @returns true if the line and point intersect.
      * @since v2000.0
      * @group Math
      * @subgroup Advanced
      */
     testLinePoint(l: Line, pt: Vec2): boolean;
     /**
-     * Check if 2 lines intersects, if yes returns the intersection point.
+     * Check if 2 lines intersect, if yes returns the intersection point.
      *
      * @param l1 - The first line.
      * @param l2 - The second line.
@@ -5319,14 +5891,14 @@ export interface KAPLAYCtx {
      * @param l - The line.
      * @param c - The circle.
      *
-     * @returns true if the line and circle intersects.
+     * @returns true if the line and circle intersect.
      * @since v2000.0
      * @group Math
      * @subgroup Advanced
      */
     testLineCircle(l: Line, c: Circle): boolean;
     /**
-     * Check if 2 rectangle overlaps.
+     * Check if 2 rectangle overlap.
      *
      * @param r1 - The first rectangle.
      * @param r2 - The second rectangle.
@@ -5338,12 +5910,12 @@ export interface KAPLAYCtx {
      */
     testRectRect(r1: Rect, r2: Rect): boolean;
     /**
-     * Check if a line and a rectangle overlaps.
+     * Check if a line and a rectangle overlap.
      *
      * @param l - The line.
      * @param r - The rectangle.
      *
-     * @returns true if the line and rectangle overlaps.
+     * @returns true if the line and rectangle overlap.
      * @since v2000.0
      * @group Math
      * @subgroup Advanced
@@ -5416,6 +5988,7 @@ export interface KAPLAYCtx {
         shapeB: Shape,
     ): GjkCollisionResult | null;
     /**
+     * Builds the convex hull of a polygon. Note that even if the polygon is already convex, colinear points will be erased.
      * @returns true if the given polygon is convex
      * @since v3001.0
      * @group Math
@@ -5443,6 +6016,13 @@ export interface KAPLAYCtx {
      */
     triangulate(pts: Vec2[]): Vec2[][];
     /**
+     * @returns the convex hull of the given polygon.
+     * @since v4000.0
+     * @group Math
+     * @subgroup Advanced
+     */
+    buildConvexHull(pts: Vec2[]): Vec2[];
+    /**
      * Sorts the array in-place using {@link https://en.wikipedia.org/wiki/Insertion_sort insertion sort}.
      * This is useful when you have a persistent (not per-frame) array of objects and they change
      * on each frame but not by much, but the list must remain sorted. (For example, the list could
@@ -5463,6 +6043,14 @@ export interface KAPLAYCtx {
      * @subgroup Advanced
      */
     NavMesh: typeof NavMesh;
+    /**
+     * A Navigation Grid.
+     *
+     * @since v4000.0
+     * @group Math
+     * @subgroup Advanced
+     */
+    NavGrid: typeof NavGrid;
     /**
      * A point.
      *
@@ -5496,7 +6084,7 @@ export interface KAPLAYCtx {
      */
     Circle: typeof Circle;
     /**
-     * A ellipse shape.
+     * An ellipse shape.
      *
      * @since v3001.0
      * @group Math
@@ -5519,6 +6107,14 @@ export interface KAPLAYCtx {
      * @subgroup Vectors
      */
     Vec2: typeof Vec2;
+    /**
+     * A 3D vector.
+     *
+     * @since v2000.0
+     * @group Math
+     * @subgroup Vectors
+     */
+    Vec3: typeof Vec3;
     /**
      * A color.
      *
@@ -5705,7 +6301,7 @@ export interface KAPLAYCtx {
      *     ]);
      * });
      *
-     * pushScene("mainScene")
+     * pushScene("mainScene");
      * ```
      *
      * @since v3001.1
@@ -5751,7 +6347,7 @@ export interface KAPLAYCtx {
      *
      * @example
      * ```js
-     * layers(["bg", "obj", "ui"], "obj")
+     * layers(["bg", "obj", "ui"], "obj");
      *
      * // no layer specified, will be added to "obj"
      * add([
@@ -5995,8 +6591,7 @@ export interface KAPLAYCtx {
      *
      * @example
      * ```js
-     * drawCurve(t => evaluateBezier(a, b, c, d, t)
-     * {
+     * drawCurve(t => evaluateBezier(a, b, c, d, t), {
      *     width: 2,
      *     color: rgb(0, 0, 255),
      * });
@@ -6019,7 +6614,7 @@ export interface KAPLAYCtx {
      *     pt3: vec2(200, 200),
      *     pt4: vec2(100, 200),
      *     width: 2,
-     *     color: GREEN
+     *     color: GREEN,
      * });
      * ```
      *
@@ -6284,7 +6879,7 @@ export interface KAPLAYCtx {
      * @group Rendering
      * @subgroup Stack
      */
-    pushMatrix(mat?: Mat23): void;
+    pushMatrix(mat: Mat23): void;
     /**
      * Apply a post process effect from a shader name.
      *

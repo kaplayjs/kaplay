@@ -8,6 +8,7 @@ export const CSS_COLOR_MAP = {
     red: "#ff0000",
     purple: "#800080",
     fuchsia: "#ff00ff",
+    magenta: "#ff00ff",
     green: "#008000",
     lime: "#00ff00",
     olive: "#808000",

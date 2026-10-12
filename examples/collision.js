@@ -12,6 +12,7 @@
 // Start kaplay
 kaplay({
     scale: 2,
+    narrowPhaseCollisionAlgorithm: "sat",
 });
 
 // Load assets
@@ -72,6 +73,7 @@ for (let i = 0; i < 3; i++) {
         sprite("ghosty"),
         pos(x, y),
         // Both objects must have area() component to enable collision detection between
+        // The isSensor option tells area() to enable collision detection even without body()
         area({ isSensor: true }),
         "enemy",
     ]);

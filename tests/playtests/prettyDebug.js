@@ -1,12 +1,12 @@
 /**
  * @file Pretty Debug
  * @description Will see how pretty is our debug log
- * @difficulty 3
+ * @difficulty 1
  * @tags debug
- * @minver 3001.0
+ * @minver 4000.0
  */
 
-kaplay();
+kaplay({ logMax: 50, logTime: 10 });
 
 const pretty = {
     i: "am pretty",
@@ -22,4 +22,14 @@ pretty.recursive = pretty;
 
 debug.log("Text in [brackets] doesn't cause issues");
 debug.log(pretty); // recursive doesn't cause issues
-debug.error("This is an error message"); // errors in red
+
+debug.warn("Hey! This is a warning message!", "(!)");
+
+// Errors log in all modes
+debug.error("Woops! This is an error message", ":("); // errors in red
+debug.log(new Error("Another error"));
+debug.log(
+    new Error(
+        "Okay, so many errors today, but making mistakes is fine, you're valid and good :)",
+    ),
+);

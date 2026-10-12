@@ -6,7 +6,6 @@ to KAPLAY.
 ## Prerequisites
 
 - [Node.js](https://nodejs.org/en), >24.X.X
-- [pnpm package manager](https://pnpm.io/), >9.1
 
 ## Cloning the repository
 
@@ -16,9 +15,15 @@ git clone https://github.com/kaplayjs/kaplay.git # to clone the repo.
 # Enter to project dictory
 cd kaplay 
 # Install dependencies
-pnpm install 
+npm install 
 # Run dev command
-pnpm dev
+npm dev
+```
+
+Additionally, for running tests you will need to run the following command:
+
+```sh
+npm run test:setup # This will install setup and install browsers for playwright.
 ```
 
 ## Editing examples
@@ -28,7 +33,7 @@ pnpm dev
 1. The source entry point is `src/kaplay.ts`, editing any files referenced will
    automatically trigger rebuild. **Make sure not to break any existing
    examples**.
-1. Run `pnpm dev` to start the dev server and try examples.
+1. Run `npm run dev` to start the dev server and try examples.
 
 ## Documentation
 
@@ -49,8 +54,8 @@ see the JSDoc comments. Other option is to use the search feature of your IDE.
 
 1. Follow our [conventional commits](#conventional-commits-guide) format. You
    can see how seeing the commit history.
-2. `pnpm run check` to check TypeScript.
-3. `pnpm run fmt` to format.
+2. `npm run check` to check TypeScript.
+3. `npm run fmt` to format.
 
 ## Conventional Commits Guide
 

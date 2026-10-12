@@ -6,15 +6,10 @@ import {
     type SpriteAnim,
     type SpriteData,
 } from "../../../assets/sprite";
-import { DEF_ANCHOR } from "../../../constants/general";
 import { KEvent, type KEventController } from "../../../events/events";
-import { onLoad } from "../../../events/globalEvents";
 import { getRenderProps } from "../../../game/utils";
-import { anchorPt } from "../../../gfx/anchor";
-import { drawTexture } from "../../../gfx/draw/drawTexture";
-import type { Texture } from "../../../gfx/gfx";
+import { calcTexScale, drawSprite } from "../../../gfx/draw/drawSprite";
 import { Quad, quad, Rect, vec2 } from "../../../math/math";
-import { type Vec2 } from "../../../math/Vec2";
 import { _k } from "../../../shared";
 import type { Comp, GameObj, SpriteAnimPlayOpt } from "../../../types";
 import { nextRenderAreaVersion } from "../physics/area";
@@ -201,32 +196,8 @@ export function sprite(
     const spriteLoadedEvent = new KEvent<[SpriteData]>();
 
     if (!src) {
-        throw new Error(
-            "Please pass the resource name or data to sprite()",
-        );
+        throw new Error("Please pass the resource name or data to sprite()");
     }
-
-    const calcTexScale = (
-        tex: Texture,
-        q: Quad,
-        w?: number,
-        h?: number,
-    ): Vec2 => {
-        const scale = vec2(1, 1);
-        if (w && h) {
-            scale.x = w / (tex.width * q.w);
-            scale.y = h / (tex.height * q.h);
-        }
-        else if (w) {
-            scale.x = w / (tex.width * q.w);
-            scale.y = scale.x;
-        }
-        else if (h) {
-            scale.y = h / (tex.height * q.h);
-            scale.x = scale.y;
-        }
-        return scale;
-    };
 
     const setSpriteData = (
         obj: GameObj<SpriteComp>,
@@ -234,21 +205,17 @@ export function sprite(
     ) => {
         if (!spr) return;
 
-        let q = spr.frames[0].clone();
+        let frame = spr.frames[0];
+        let q = frame.q.clone();
 
         if (opt.quad) {
             q = q.scale(opt.quad);
         }
 
-        const scale = calcTexScale(
-            spr.tex,
-            q,
-            opt.width,
-            opt.height,
-        );
+        const scale = calcTexScale(frame.tex, q, opt.width, opt.height);
 
-        obj.width = spr.tex.width * q.w * scale.x;
-        obj.height = spr.tex.height * q.h * scale.y;
+        obj.width = frame.tex.width * q.w * scale.x;
+        obj.height = frame.tex.height * q.h * scale.y;
 
         if (spr.anims) {
             for (let animName in spr.anims) {
@@ -292,6 +259,11 @@ export function sprite(
     let _shape: Rect | undefined;
     let _width = 0;
     let _height = 0;
+    // Track sprite loads when user sets a new sprite
+    // Using the request id instead of sprite name to make it future proof for unloading sprites
+    // If unloading is implemented it would be possible to load a different sprite under the same name
+    let spriteRequestId = 0;
+    const getSpriteRequestId = () => ++spriteRequestId;
 
     return {
         id: "sprite",
@@ -326,13 +298,23 @@ export function sprite(
             return src.toString();
         },
 
-        set sprite(src) {
-            const spr = resolveSprite(src);
+        set sprite(newSpriteSrc) {
+            const spr = resolveSprite(newSpriteSrc);
 
             if (spr) {
-                spr.onLoad(spr =>
-                    setSpriteData(this as unknown as GameObj<SpriteComp>, spr)
-                );
+                const requestId = getSpriteRequestId();
+                src = newSpriteSrc;
+
+                spr.onLoad(spr => {
+                    // Only apply the result from the latest sprite request,
+                    // preventing stale responses from overwriting newer sprite data
+                    if (requestId === spriteRequestId) {
+                        setSpriteData(
+                            this as unknown as GameObj<SpriteComp>,
+                            spr,
+                        );
+                    }
+                });
             }
         },
 
@@ -356,99 +338,42 @@ export function sprite(
 
         draw(this: GameObj<SpriteComp>) {
             if (!spriteData) return;
-
-            const q = spriteData.frames[this.frame ?? 0];
-
-            if (!q) {
-                throw new Error(`Frame not found: ${this.frame ?? 0}`);
-            }
-
-            if (spriteData.slice9) {
-                // TODO: tile
-                // TODO: use scale or width / height, or both?
-                const { left, right, top, bottom } = spriteData.slice9;
-                const tw = spriteData.tex.width * q.w;
-                const th = spriteData.tex.height * q.h;
-                const iw = this.width - left - right;
-                const ih = this.height - top - bottom;
-                const w1 = left / tw;
-                const w3 = right / tw;
-                const w2 = 1 - w1 - w3;
-                const h1 = top / th;
-                const h3 = bottom / th;
-                const h2 = 1 - h1 - h3;
-                const quads = [
-                    // uv
-                    quad(0, 0, w1, h1),
-                    quad(w1, 0, w2, h1),
-                    quad(w1 + w2, 0, w3, h1),
-                    quad(0, h1, w1, h2),
-                    quad(w1, h1, w2, h2),
-                    quad(w1 + w2, h1, w3, h2),
-                    quad(0, h1 + h2, w1, h3),
-                    quad(w1, h1 + h2, w2, h3),
-                    quad(w1 + w2, h1 + h2, w3, h3),
-                    // transform
-                    quad(0, 0, left, top),
-                    quad(left, 0, iw, top),
-                    quad(left + iw, 0, right, top),
-                    quad(0, top, left, ih),
-                    quad(left, top, iw, ih),
-                    quad(left + iw, top, right, ih),
-                    quad(0, top + ih, left, bottom),
-                    quad(left, top + ih, iw, bottom),
-                    quad(left + iw, top + ih, right, bottom),
-                ];
-                const props = getRenderProps(this);
-                const offset = anchorPt(props.anchor || DEF_ANCHOR);
-                const offsetX = -(offset.x + 1) * 0.5 * this.width;
-                const offsetY = -(offset.y + 1) * 0.5 * this.height;
-                for (let i = 0; i < 9; i++) {
-                    const uv = quads[i];
-                    const transform = quads[i + 9];
-                    if (transform.w == 0 || transform.h == 0) {
-                        continue;
-                    }
-                    drawTexture(
-                        Object.assign(props, {
-                            pos: transform.pos().add(offsetX, offsetY),
-                            anchor: "topleft",
-                            tex: spriteData.tex,
-                            quad: q.scale(uv),
-                            flipX: this.flipX,
-                            flipY: this.flipY,
-                            tiled: opt.tiled,
-                            width: transform.w,
-                            height: transform.h,
-                        }),
-                    );
-                }
-            }
-            else {
-                drawTexture(
-                    Object.assign(getRenderProps(this), {
-                        tex: spriteData.tex,
-                        quad: q.scale(this.quad ?? new Quad(0, 0, 1, 1)),
-                        flipX: this.flipX,
-                        flipY: this.flipY,
-                        tiled: opt.tiled,
-                        width: this.width,
-                        height: this.height,
-                    }),
-                );
-            }
+            drawSprite(
+                Object.assign(getRenderProps(this), {
+                    frame: this.frame,
+                    sprite: spriteData,
+                    quad: this.quad,
+                    flipX: this.flipX,
+                    flipY: this.flipY,
+                    tiled: opt.tiled,
+                    width: this.width,
+                    height: this.height,
+                }),
+            );
         },
 
         add(this: GameObj<SpriteComp>) {
-            const spr = resolveSprite(src);
+            const initialSrc = src;
+            const requestId = getSpriteRequestId();
+            const spr = resolveSprite(initialSrc);
 
             if (spr) {
                 // The sprite exists
-                spr.onLoad(spr => setSpriteData(this, spr));
+                spr.onLoad(spr => {
+                    // Only apply the result from the latest sprite request,
+                    // preventing stale responses from overwriting newer sprite data
+                    if (requestId === spriteRequestId) {
+                        setSpriteData(this, spr);
+                    }
+                });
             }
             else {
                 // The sprite may be loaded later in the script, check again when all resources have been loaded
-                onLoad(() => setSpriteData(this, resolveSprite(src)!.data));
+                _k.k.onLoad(() => {
+                    if (requestId === spriteRequestId) {
+                        setSpriteData(this, resolveSprite(initialSrc)!.data);
+                    }
+                });
             }
         },
 
@@ -655,8 +580,5 @@ export function spriteFactory(data: SerializedSpriteComp) {
     if (data.quad) {
         opt.quad = quad(data.quad.x, data.quad.y, data.quad.w, data.quad.h);
     }
-    return sprite(
-        data.sprite,
-        opt,
-    );
+    return sprite(data.sprite, opt);
 }

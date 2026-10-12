@@ -64,7 +64,7 @@ const player = level.get("player")[0];
 
 // Always look at player
 onUpdate(() => {
-    setCamPos(player.worldPos());
+    setCamPos(player.worldPos);
 });
 
 // Movements

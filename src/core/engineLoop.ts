@@ -8,7 +8,6 @@ import {
 import type { Debug } from "../debug/debug";
 import { SystemPhase } from "../ecs/systems/systems";
 import type { Game } from "../game/game";
-import { drawDebug } from "../gfx/draw/drawDebug";
 import { drawFrame, transformFrame } from "../gfx/draw/drawFrame";
 import { drawLoadScreen } from "../gfx/draw/drawLoadingScreen";
 import { updateViewport } from "../gfx/viewport";
@@ -59,9 +58,14 @@ export function startEngineLoop(
             if (!assets.loaded) {
                 if (loadProgress() === 1 && !isFirstFrame) {
                     assets.loaded = true;
-                    getFailedAssets().forEach(details =>
-                        game.events.trigger("loadError", ...details)
-                    );
+                    getFailedAssets().forEach(details => {
+                        if (game.events.numListeners("loadError") > 0) {
+                            game.events.trigger("loadError", ...details);
+                        }
+                        else {
+                            throw details[1].error;
+                        }
+                    });
                     game.events.trigger("load");
                 }
             }
@@ -73,7 +77,7 @@ export function startEngineLoop(
                 frameRenderer.frameStart();
                 // TODO: Currently if assets are not initially loaded no updates or timers will be run, however they will run if loadingScreen is set to false. What's the desired behavior or should we make them consistent?
                 drawLoadScreen();
-                frameRenderer.frameEnd();
+                frameRenderer.frameEnd(false);
             }
             else {
                 if (!debug.paused) {
@@ -106,7 +110,6 @@ export function startEngineLoop(
                 }
 
                 drawFrame();
-                if (gopt.debug !== false) drawDebug();
 
                 for (const sys of game.systemsByEvent[SystemPhase.AfterDraw]) {
                     sys.run();
@@ -119,7 +122,7 @@ export function startEngineLoop(
                 isFirstFrame = false;
             }
 
-            game.events.trigger("frameEnd");
+            app.events.trigger("frameEnd");
 
             resetInput();
         } catch (e) {

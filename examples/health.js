@@ -33,7 +33,7 @@ const bean = add([
     // This will make it so bean has an initial HP of 100, since maxHP is not specified
     // It will be the same as the initial HP
     health(100),
-    area(),
+    area({ isSensor: true }),
     anchor("center"),
     color(),
     "bean",
@@ -63,7 +63,7 @@ bean.onKeyPress("space", () => {
         outline(5, BLACK),
         move(1, 600),
         pos(bean.pos.add(100, -5)),
-        area(),
+        area({ isSensor: true }),
         offscreen({ destroy: true }), // Destroy them on offscreen to avoid lag
         "bullet",
     ]);
@@ -75,7 +75,7 @@ bean.onKeyPress("space", () => {
 
 // When bean collides with a zombie, the zombie will bump off bean and bean will take damage
 bean.onCollide("zombie", (zombie) => {
-    zombie.pos.x += 50;
+    zombie.moveBy(50, 0);
     bean.hp -= 10;
 });
 
@@ -111,7 +111,7 @@ const zombean = add([
     scale(2),
     health(100, 100),
     anchor("center"),
-    area(),
+    area({ isSensor: true }),
     color(),
     rotate(),
     offscreen({ destroy: true }),
@@ -133,7 +133,7 @@ zombean.onUpdate(() => {
 // When zombean collides with a bullet, zombean will lose 10 HP
 zombean.onCollide("bullet", () => {
     zombean.hp -= 10;
-    zombean.pos.x += 40;
+    zombean.moveBy(40, 0);
 });
 
 // When zombean loses HP, onHurt() gets triggered
@@ -152,7 +152,7 @@ zombean.onDeath(() => {
         zombean.pos.y,
         height() + 50,
         1,
-        (p) => zombean.pos.y = p,
+        (p) => zombean.moveTo(zombean.pos.x, p),
         easings.easeOutCirc,
     ).onEnd(() => {
         zombean.destroy();

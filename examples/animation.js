@@ -30,7 +30,7 @@ rotatingBean.animate("angle", [0, 360], {
     loops: 1,
 });
 
-onClick(() => {
+onMousePress(() => {
     rotatingBean.animation.play();
 });
 
@@ -56,7 +56,7 @@ movingBean.animate("pos", [vec2(50, 150), vec2(150, 150)], {
     direction: "ping-pong",
 });
 
-onClick(() => {
+onMousePress(() => {
     movingBean.animation.paused = !movingBean.animation.paused;
 });
 

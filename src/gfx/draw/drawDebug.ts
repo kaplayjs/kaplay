@@ -11,7 +11,7 @@ import {
     pushTransform,
     width,
 } from "../stack";
-import { viewportToCanvas } from "../viewport";
+import { viewportToCanvasLocal } from "../viewport";
 import { drawCircle } from "./drawCircle";
 import { drawFormattedText } from "./drawFormattedText";
 import { drawInspectText } from "./drawInspectText";
@@ -33,6 +33,9 @@ export function drawDebug() {
                 break;
             }
         }
+
+        // Get it before any debug drawing, to get the number of non-debug draws
+        const batches = _k.gfx.lastDrawCalls;
 
         pushTransform();
         _k.game.root.drawInspect();
@@ -56,7 +59,10 @@ export function drawDebug() {
             lines.push(...inspecting.tags.map(t => `tag: ${t}`));
 
             drawInspectText(
-                viewportToCanvas(_k.app.mousePos()),
+                viewportToCanvasLocal(
+                    _k.app.state.mousePos.x,
+                    _k.app.state.mousePos.y,
+                ),
                 lines.join("\n"),
             );
         }
@@ -64,7 +70,8 @@ export function drawDebug() {
         drawInspectText(
             vec2(8),
             `FPS: ${Math.round(_k.debug.fps())}
-Raw: ${Math.round(_k.debug.rawFPS())}`,
+Raw: ${Math.round(_k.debug.rawFPS())}
+Batches: ${batches}`,
         );
     }
 
@@ -188,8 +195,8 @@ Raw: ${Math.round(_k.debug.rawFPS())}`,
             const logs = [];
 
             for (const log of _k.game.logs) {
+                const style = log.msg instanceof Error ? "error" : log.style;
                 let str = "";
-                const style = log.msg instanceof Error ? "error" : "info";
                 str += `[time]${log.time.toFixed(2)}[/time]`;
                 str += " ";
                 str += `[${style}]${prettyDebug(log.msg)}[/${style}]`;
@@ -214,6 +221,7 @@ Raw: ${Math.round(_k.debug.rawFPS())}`,
                 styles: {
                     "time": { color: rgb(127, 127, 127) },
                     "info": { color: rgb(255, 255, 255) },
+                    "warn": { color: rgb(255, 230, 8) },
                     "error": { color: rgb(255, 0, 127) },
                 },
             });

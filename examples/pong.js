@@ -17,7 +17,7 @@ add([
     rect(20, 80),
     outline(4),
     anchor("center"),
-    area(),
+    area({ isSensor: true }),
     "paddle",
 ]);
 
@@ -26,13 +26,13 @@ add([
     rect(20, 80),
     outline(4),
     anchor("center"),
-    area(),
+    area({ isSensor: true }),
     "paddle",
 ]);
 
 // move paddles with mouse
 onUpdate("paddle", (p) => {
-    p.pos.y = mousePos().y;
+    p.moveTo(p.pos.x, mousePos().y);
 });
 
 // score counter
@@ -57,7 +57,7 @@ const ball = add([
     pos(center()),
     circle(16),
     outline(4),
-    area({ shape: new Rect(vec2(-16), 32, 32) }),
+    area({ isSensor: true, shape: new Rect(vec2(-16), 32, 32) }),
     { vel: Vec2.fromAngle(rand(-20, 20)) },
 ]);
 

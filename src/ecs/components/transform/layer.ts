@@ -33,7 +33,7 @@ export interface LayerComp extends Comp {
 
 export function layer(layer: string): LayerComp {
     let _layerIndex = _k.game.layers?.indexOf(layer);
-    if (_layerIndex == -1) {
+    if (_layerIndex == null || _layerIndex === -1) {
         throw new Error(`Layer "${layer}" does not exist`);
     }
 
@@ -43,14 +43,13 @@ export function layer(layer: string): LayerComp {
             return _layerIndex ?? null;
         },
         get layer(): string | null {
-            if (!_layerIndex) return null;
-
+            if (_layerIndex == null || _layerIndex === -1) return null;
             return _k.game.layers?.[_layerIndex] ?? null;
         },
         set layer(value: string) {
             _layerIndex = _k.game.layers?.indexOf(value);
 
-            if (_layerIndex == -1) {
+            if (_layerIndex == null || _layerIndex === -1) {
                 throw new Error(`Layer "${value}" does not exist`);
             }
         },

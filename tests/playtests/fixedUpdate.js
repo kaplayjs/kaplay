@@ -24,36 +24,19 @@ if (lag) {
     }
 }
 
-class FPSCounter {
-    win = 10;
-    history = new Array(this.win).fill(0);
-    accumulator = 0;
-    i = 0;
-    fps = 0;
-    count = 0;
-    tick(dt) {
-        this.accumulator += dt - this.history[this.i];
-        this.history[this.i] = dt;
-        this.i = (this.i + 1) % this.win;
-        this.count = Math.min(this.count + 1, this.win);
-        this.fps = this.count / this.accumulator;
-    }
-}
-
-const fixCounter = new FPSCounter(), normalCounter = new FPSCounter();
+const fixCounter = new (_k.app.state.fpsCounter.constructor)();
 
 onFixedUpdate(() => {
     fixCounter.tick(dt());
 });
 
 onUpdate(() => {
-    normalCounter.tick(dt());
     debug.log(
         [
             fixedDt(),
-            fixCounter.fps,
+            fixCounter.calculate(),
             dt(),
-            normalCounter.fps,
+            _k.app.state.fpsCounter.calculate(),
         ].map(x => x.toFixed(5)).join(" "),
     );
 });

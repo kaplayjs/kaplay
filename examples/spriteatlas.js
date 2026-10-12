@@ -140,7 +140,7 @@ loadSpriteAtlas("/sprites/dungeon.png", {
         "width": 16,
         "height": 16,
     },
-});
+}, false);
 
 // Can also load from external JSON url
 // loadSpriteAtlas("/sprites/dungeon.png", "/sprites/dungeon.json")

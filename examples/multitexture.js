@@ -20,7 +20,7 @@ loadShader(
     `
 	uniform float cutoff;
     uniform sampler2D mask;
-	
+
 	vec4 frag(vec2 pos, vec2 uv, vec4 color, sampler2D tex) {
 		vec4 p = texture2D(mask, uv);
         if (p.r < cutoff) {
@@ -63,13 +63,13 @@ const level = addLevel([
         ],
         "$": () => [
             sprite("coin"),
-            area(),
+            area({ isSensor: true }),
             anchor("bot"),
             "coin",
         ],
         "^": () => [
             sprite("spike"),
-            area(),
+            area({ isSensor: true }),
             anchor("bot"),
             "danger",
         ],
@@ -107,9 +107,9 @@ player.onCollide("coin", (coin) => {
 
 // Set the post effect
 onLoad(() => {
-    const swipe = getSprite("swipe")?.data;
+    const swipeFrame = getSprite("swipe").data.frames[0];
     usePostEffect("swipe", () => ({
         cutoff: time() / 2 % 1,
-        mask: swipe.tex,
+        mask: swipeFrame.tex,
     }));
 });

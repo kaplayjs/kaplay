@@ -1,4 +1,4 @@
-import { DEF_ANCHOR, UV_PAD } from "../../constants/general";
+import { DEF_ANCHOR } from "../../constants/general";
 import { Color } from "../../math/color";
 import { Quad } from "../../math/math";
 import { Vec2 } from "../../math/Vec2";

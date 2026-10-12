@@ -45,6 +45,11 @@ export function rotate(a?: number): RotateComp {
     return {
         id: "rotate",
 
+        add() {
+            (this as any as InternalGameObjRaw)._transformVersion =
+                nextTransformVersion();
+        },
+
         get angle(): number {
             return _angle;
         },

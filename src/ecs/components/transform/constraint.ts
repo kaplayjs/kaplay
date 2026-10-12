@@ -1,4 +1,3 @@
-import { onAdd, onDestroy, onUnuse, onUse } from "../../../events/globalEvents";
 import { drawCircle } from "../../../gfx/draw/drawCircle";
 import { drawLine } from "../../../gfx/draw/drawLine";
 import { drawPolygon } from "../../../gfx/draw/drawPolygon";
@@ -20,6 +19,7 @@ import {
     updateTransformRecursive,
 } from "../../../math/various";
 import { Vec2 } from "../../../math/Vec2";
+import { _k } from "../../../shared";
 import type { Comp, GameObj } from "../../../types";
 import { system, SystemPhase } from "../../systems/systems";
 import type { PosComp } from "./pos";
@@ -103,19 +103,24 @@ export type RotationConstraintOpt = {
     /**
      * The factor applied before applying the constraint. For example 0.5 will only apply half of the rotation of the target
      */
-    scale?: number;
+    ratio?: number;
     /**
      * Between 0 and 1. The percentage of the property being overwritten
      */
     strength?: number;
+    /**
+     * Whether the constraint will track when the source object's rotation passes the 0-360 boundary and update an internal counter to prevent a sharp jump in the target's angle. Default false.
+     */
+    trackMultiturn?: boolean;
 };
 
 export interface RotationConstraintComp extends Constraint {
     constraint: {
         target: GameObj;
         offset: number;
-        scale: number;
+        ratio: number;
         strength: number;
+        trackMultiturn: boolean;
     };
 }
 
@@ -187,24 +192,25 @@ function installSystem() {
     systemInstalled = true;
     // TODO: use a live query for this
     const constraints: Set<GameObj<Constraint>> = new Set();
-    onAdd(obj => {
+    _k.appScope.onAdd(obj => {
         if (obj.has("constraint")) {
             constraints.add(obj as GameObj<Constraint>);
         }
     });
-    onDestroy(obj => {
+    _k.appScope.onDestroy(obj => {
         constraints.delete(obj as GameObj<Constraint>);
     });
-    onUse((obj, id) => {
+    _k.appScope.onUse((obj, id) => {
         if ("constraint" === id) {
             constraints.add(obj as GameObj<Constraint>);
         }
     });
-    onUnuse((obj, id) => {
+    _k.appScope.onUnuse((obj, id) => {
         if ("constraint" === id) {
             constraints.delete(obj as GameObj<Constraint>);
         }
     });
+
     system("constraint", () => {
         constraints.forEach(constraint => {
             constraint.apply();
@@ -345,27 +351,37 @@ export const constraint = {
         opt: RotationConstraintOpt,
     ): RotationConstraintComp {
         installSystem();
+        let fullTurnsCount = 0, prevDstAngle = 0, tmpMat = new Mat23();
         return {
             id: "constraint",
             constraint: {
                 target: target,
-                scale: opt.scale ?? 1,
+                ratio: opt.ratio ?? 1,
                 strength: opt.strength ?? 1,
                 offset: opt.offset || 0,
+                trackMultiturn: opt.trackMultiturn ?? false,
             },
             apply(this: GameObj<RotateComp | RotationConstraintComp>) {
                 // We use world rotation
                 const srcAngle = this.transform.getRotation();
                 const dstAngle = this.constraint.target.transform.getRotation();
+                if (
+                    this.constraint.trackMultiturn
+                    && Math.abs(dstAngle - prevDstAngle) > 180
+                ) {
+                    if (dstAngle < prevDstAngle) fullTurnsCount++;
+                    else fullTurnsCount--;
+                }
+                prevDstAngle = dstAngle;
                 const newAngle = lerp(
                     srcAngle,
-                    dstAngle * this.constraint.scale + this.constraint.offset,
+                    (dstAngle + fullTurnsCount * 360) * this.constraint.ratio
+                        + this.constraint.offset,
                     this.constraint.strength,
                 );
                 const scale = this.transform.getScale();
                 // Update world angle
-                const newTransform = new Mat23();
-                newTransform.setTRS(
+                tmpMat.setTRS(
                     this.transform.e,
                     this.transform.f,
                     newAngle,
@@ -375,7 +391,7 @@ export const constraint = {
                 // Modify local angle
                 if (this.parent) {
                     const transform = this.parent?.transform.inverse.mul(
-                        newTransform,
+                        tmpMat,
                     );
                     this.angle = transform.getRotation();
                 }

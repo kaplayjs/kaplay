@@ -49,7 +49,7 @@ const level = addLevel([
         ],
         "$": () => [
             sprite("coin"),
-            area(),
+            area({ isSensor: true }),
             anchor("bot"),
             "coin",
         ],
@@ -62,12 +62,12 @@ const player = level.get("player")[0];
 // Will run every frame
 player.onUpdate(() => {
     // Set the viewport center to player.pos
-    setCamPos(player.worldPos());
+    setCamPos(player.worldPos);
 });
 
 // Set the viewport center to player.pos whenever their physics are resolved
 player.onPhysicsResolve(() => {
-    setCamPos(player.worldPos());
+    setCamPos(player.worldPos);
 });
 
 // When the player collides with a coin object
@@ -107,7 +107,7 @@ scoreCounter.onUpdate(() => {
     scoreCounter.text = score.toString();
 });
 
-onClick(() => {
+onMousePress(() => {
     // Use toWorld() to transform a screen-space coordinate (like mousePos()) to
     // the world-space coordinate, which has the camera transform applied
     addKaboom(toWorld(mousePos()));

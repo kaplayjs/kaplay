@@ -9,18 +9,10 @@ import {
     KEventController,
     type KEventHandler,
 } from "../../events/events";
-import type { GameEventHandlers } from "../../events/gameEventHandlers";
-import {
-    onAdd,
-    onDestroy,
-    onTag,
-    onUntag,
-    onUnuse,
-    onUse,
-} from "../../events/globalEvents";
+import type { EventHandlersInAppButNotAddedInGameObjRaw } from "../../events/scopes";
 import { drawMasked } from "../../gfx/draw/drawMasked";
 import { beginPicture, endPicture, Picture } from "../../gfx/draw/drawPicture";
-import { drawSubtracted } from "../../gfx/draw/drawSubstracted";
+import { drawSubtracted } from "../../gfx/draw/drawSubtracted";
 import { FrameBuffer } from "../../gfx/FrameBuffer";
 import {
     flush,
@@ -57,7 +49,7 @@ import type { SkewComp } from "../components/transform/skew";
 import type { ZComp } from "../components/transform/z";
 import { internalIsMaking, make } from "./make";
 import { deserializePrefabAsset, type SerializedGameObj } from "./prefab";
-import { isFixed } from "./utils";
+import { isFixed, isHidden, isPaused } from "./utils";
 
 export enum KeepFlags {
     Pos = 1,
@@ -69,6 +61,11 @@ export enum KeepFlags {
 export type SetParentOpt = {
     keep: KeepFlags;
 };
+
+let _nextTreeIndex = 0;
+export function resetTreeIndex() {
+    _nextTreeIndex = 0;
+}
 
 let _lastTransformVersion = 0;
 let _nextTransformVersion = 0;
@@ -485,6 +482,38 @@ export interface GameObjRaw {
      * @since v4000.0
      */
     onUntag(action: (tag: string) => void): KEventController;
+    /**
+     * Register an event that runs when the object becomes paused (either directly
+     * or when any parent's `paused` is set to `true`).
+     *
+     * @returns The event controller.
+     * @since v4000.0
+     */
+    onPause(action: () => void): KEventController;
+    /**
+     * Register an event that runs when the object becomes unpaused (either directly
+     * or when any parent's `paused` is set to `false`).
+     *
+     * @returns The event controller.
+     * @since v4000.0
+     */
+    onUnpause(action: () => void): KEventController;
+    /**
+     * Register an event that runs when the object becomes hidden (either directly
+     * or when any parent's `hidden` is set to `true`).
+     *
+     * @returns The event controller.
+     * @since v4000.0
+     */
+    onHide(action: () => void): KEventController;
+    /**
+     * Register an event that runs when the object becomes visible (either directly
+     * or when any parent's `hidden` is set to `false`).
+     *
+     * @returns The event controller.
+     * @since v4000.0
+     */
+    onShow(action: () => void): KEventController;
     onKeyDown: KAPLAYCtx["onKeyDown"];
     onKeyPress: KAPLAYCtx["onKeyPress"];
     onKeyPressRepeat: KAPLAYCtx["onKeyPressRepeat"];
@@ -505,10 +534,8 @@ export interface GameObjRaw {
     onButtonDown: KAPLAYCtx["onButtonDown"];
     onButtonPress: KAPLAYCtx["onButtonPress"];
     onButtonRelease: KAPLAYCtx["onButtonRelease"];
-    onTabShow: GameEventHandlers["onTabShow"];
-    onTabHide: GameEventHandlers["onTabHide"];
-    onShow: GameEventHandlers["onShow"];
-    onHide: GameEventHandlers["onHide"];
+    onTabShow: KAPLAYCtx["onTabShow"];
+    onTabHide: KAPLAYCtx["onTabHide"];
 }
 
 export type InternalGameObjRaw = GameObjRaw & {
@@ -537,11 +564,15 @@ export type InternalGameObjRaw = GameObjRaw & {
     /** @readonly */
     _tags: Set<Tag>;
     /** @readonly */
-    _paused: boolean;
-    /** @readonly */
     _drawLayerIndex: number;
     /** @readonly */
+    _treeIndex: number;
+    /** @readonly */
     _transformVersion: number;
+    /** @readonly */
+    _paused: boolean;
+    /** @readonly */
+    _hidden: boolean;
 
     /**
      * Adds a component or anonymous component.
@@ -565,6 +596,32 @@ export type InternalGameObjRaw = GameObjRaw & {
      * @param compId - Component ID for searching.
      */
     _checkDependents(compId: string): void;
+    /**
+     * Check if the game obj changed the effective paused state
+     * and trigger the onPause / onUnpause events recursively if needed
+     *
+     * @param oldPaused - previous effective paused state
+     * @param newPaused - current effective paused state
+     */
+    _updatePausedState(oldPaused: boolean, newPaused: boolean): void;
+    /**
+     * Check if the game obj changed the effective hidden state
+     * and trigger the onHide / onShow events recursively if needed
+     *
+     * @param oldHidden - previous effective hidden state
+     * @param newHidden - current effective hidden state
+     */
+    _updateHiddenState(oldHidden: boolean, newHidden: boolean): void;
+    /**
+     * Before setting a tag, check already existing if defined as a `KAPLAYOpt.singletonTag`.
+     *
+     * @param tag - Tag to be checked.
+     * @param cb - Optional callback if true, defaults to the tag removal from the objects.
+     */
+    _ensureSingletonTag<T>(
+        tag: Tag | Tag[],
+        cb?: (tag: Tag | Tag[]) => T | void,
+    ): T | void;
 };
 
 type GameObjTransform =
@@ -590,15 +647,16 @@ const COMP_EVENTS = new Set([
 
 type GarbageCollectorArray = (() => any)[];
 
+type HandlersInAppButAlsoInObj = EventHandlersInAppButNotAddedInGameObjRaw;
+
 export const GameObjRawPrototype: Omit<
     InternalGameObjRaw,
     // TODO: Maybe too hacky, find better way
-    Exclude<AppEvents, "onFixedUpdate" | "onUpdate" | "onDraw">
+    Exclude<AppEvents, HandlersInAppButAlsoInObj>
 > = {
     // This chain of `as any`, is because we never should use this object
     // directly, it's only a prototype. These properties WILL be defined
     // (by our factory function `make`) when we create a new game object.
-    _paused: null as any,
     _anonymousCompStates: null as any,
     _cleanups: null as any,
     _compsIds: null as any,
@@ -612,8 +670,10 @@ export const GameObjRawPrototype: Omit<
     _updateEvents: null as any,
     _drawEvents: null as any,
     _drawLayerIndex: null as any,
+    _treeIndex: null as any,
+    _hidden: null as any,
+    _paused: null as any,
     children: null as any,
-    hidden: null as any,
     id: null as any,
     transform: null as any,
     _transformVersion: null as any,
@@ -629,6 +689,11 @@ export const GameObjRawPrototype: Omit<
         }
 
         if (this._parent === p) return;
+
+        // save the old paused and hidden states
+        const oldPaused = isPaused(this as any);
+        const oldHidden = isHidden(this as any);
+
         const index = this._parent
             ? this._parent.children.indexOf(this as unknown as GameObj)
             : -1;
@@ -638,20 +703,65 @@ export const GameObjRawPrototype: Omit<
         this._parent = p;
         if (p) {
             p.children.push(this as unknown as GameObj);
+            this._transformVersion = nextTransformVersion();
         }
+
+        const newPaused = isPaused(this as any);
+        const newHidden = isHidden(this as any);
+
+        this._updatePausedState(oldPaused, newPaused);
+        this._updateHiddenState(oldHidden, newHidden);
     },
 
     set paused(paused: boolean) {
         if (this._paused === paused) return;
+        const oldPaused = isPaused(this as any);
         this._paused = paused;
-
-        for (const e of this._inputEvents) {
-            e.paused = paused;
-        }
+        const newPaused = isPaused(this as any);
+        this._updatePausedState(oldPaused, newPaused);
     },
 
     get paused() {
         return this._paused;
+    },
+
+    _updatePausedState(oldPaused, newPaused) {
+        if (oldPaused === newPaused) return;
+        const eventName = newPaused ? "pause" : "unpause";
+        const recurse = (obj: GameObj, first: boolean) => {
+            obj.trigger(eventName);
+            _k.game.events.trigger(eventName, obj);
+            for (const e of obj._inputEvents) {
+                e.paused = newPaused;
+            }
+            if (obj.paused && !first) return;
+            obj.children.forEach(c => recurse(c, false));
+        };
+        recurse(this as any, true);
+    },
+
+    set hidden(hidden: boolean) {
+        if (this._hidden === hidden) return;
+        const oldHidden = isHidden(this as any);
+        this._hidden = hidden;
+        const newHidden = isHidden(this as any);
+        this._updateHiddenState(oldHidden, newHidden);
+    },
+
+    get hidden() {
+        return this._hidden;
+    },
+
+    _updateHiddenState(oldHidden, newHidden) {
+        if (oldHidden === newHidden) return;
+        const eventName = newHidden ? "hide" : "show";
+        const recurse = (obj: GameObj, first: boolean) => {
+            obj.trigger(eventName);
+            _k.game.events.trigger(eventName, obj);
+            if (obj.hidden && !first) return;
+            obj.children.forEach(c => recurse(c, false));
+        };
+        recurse(this as any, true);
     },
 
     get parent() {
@@ -713,7 +823,7 @@ export const GameObjRawPrototype: Omit<
         // see the object with *only* components added during make(),
         // and *then* run the components' add() which may add other components
         // and trigger onUse()
-        _k.game.events.trigger("add", obj);
+        _k.game.gameObjEvents.trigger("add", obj);
         obj.trigger("add", obj);
 
         return obj;
@@ -802,7 +912,8 @@ export const GameObjRawPrototype: Omit<
 
         const trigger = (o: GameObj) => {
             o.trigger("destroy");
-            _k.game.events.trigger("destroy", o);
+            o.clearEvents();
+            _k.game.gameObjEvents.trigger("destroy", o);
             o.children.forEach((child) => trigger(child));
             o.id = null as any;
         };
@@ -844,16 +955,17 @@ export const GameObjRawPrototype: Omit<
         opts: GetOpt = {},
     ): GameObj<T>[] {
         const compIdAreTags = _k.globalOpt.tagComponentIds;
+        const op = opts.op ?? "and";
 
         const checkTagsOrComps = (child: GameObj, t: Tag | Tag[]) => {
             if (opts.only === "comps") {
-                return child.has(t);
+                return child.has(t, op);
             }
             else if (opts.only === "tags") {
-                return child.is(t);
+                return child.is(t, op);
             }
             else {
-                return child.is(t) || child.has(t);
+                return child.is(t, op) || child.has(t, op);
             }
         };
 
@@ -874,15 +986,24 @@ export const GameObjRawPrototype: Omit<
                     : obj.parent === this;
             };
 
+            const ensureSingletonTag = (tag = t) =>
+                this._ensureSingletonTag(tag, st =>
+                    list.splice(
+                        0,
+                        list.length,
+                        ...list.filter(o => !o.is(st, "or")),
+                    ));
+
             const events: KEventController[] = [];
 
             // TODO: clean up when obj destroyed
-            events.push(onAdd((obj) => {
+            events.push(_k.sceneScope.onAdd((obj) => {
                 if (isChild(obj) && checkTagsOrComps(obj, t)) {
+                    ensureSingletonTag(obj.tags);
                     list.push(obj);
                 }
             }));
-            events.push(onDestroy((obj) => {
+            events.push(_k.sceneScope.onDestroy((obj) => {
                 if (checkTagsOrComps(obj, t)) {
                     const idx = list.findIndex((o) => o.id === obj.id);
                     if (idx !== -1) {
@@ -893,15 +1014,16 @@ export const GameObjRawPrototype: Omit<
             // If tags are components, we need to use these callbacks, whether watching tags or components
             // If tags are not components, we only need to use these callbacks if this query looks at components
             if (compIdAreTags || opts.only !== "tags") {
-                events.push(onUse((obj, id) => {
+                events.push(_k.sceneScope.onUse((obj, id) => {
                     if (isChild(obj) && checkTagsOrComps(obj, t)) {
                         const idx = list.findIndex((o) => o.id === obj.id);
                         if (idx == -1) {
+                            ensureSingletonTag(obj.tags);
                             list.push(obj);
                         }
                     }
                 }));
-                events.push(onUnuse((obj, id) => {
+                events.push(_k.sceneScope.onUnuse((obj, id) => {
                     if (isChild(obj) && !checkTagsOrComps(obj, t)) {
                         const idx = list.findIndex((o) => o.id === obj.id);
                         if (idx !== -1) {
@@ -910,18 +1032,18 @@ export const GameObjRawPrototype: Omit<
                     }
                 }));
             }
-            // If tags are components, we don't need to use these callbacks
             // If tags are not components, we only need to use these callbacks if this query looks at tags
-            if (!compIdAreTags && opts.only !== "comps") {
-                events.push(onTag((obj, tag) => {
+            if (opts.only !== "comps") {
+                events.push(_k.sceneScope.onTag((obj, tag) => {
                     if (isChild(obj) && checkTagsOrComps(obj, t)) {
                         const idx = list.findIndex((o) => o.id === obj.id);
                         if (idx == -1) {
+                            ensureSingletonTag(tag);
                             list.push(obj);
                         }
                     }
                 }));
-                events.push(onUntag((obj, tag) => {
+                events.push(_k.sceneScope.onUntag((obj, tag) => {
                     if (isChild(obj) && !checkTagsOrComps(obj, t)) {
                         const idx = list.findIndex((o) => o.id === obj.id);
                         if (idx !== -1) {
@@ -1039,16 +1161,18 @@ export const GameObjRawPrototype: Omit<
             ?? (this.parent
                 ? this.parent._drawLayerIndex
                 : _k.game.defaultLayerIndex);
-        for (let i = 0; i < this.children.length; i++) {
-            this.children[i].update();
+        const children = this.children.slice();
+        for (let i = 0; i < children.length; i++) {
+            children[i].update();
         }
     },
 
     fixedUpdate(this: InternalGameObjRaw) {
         if (this.paused) return;
         this._fixedUpdateEvents.trigger();
-        for (let i = 0; i < this.children.length; i++) {
-            this.children[i].fixedUpdate();
+        const children = this.children.slice();
+        for (let i = 0; i < children.length; i++) {
+            children[i].fixedUpdate();
         }
     },
 
@@ -1254,8 +1378,10 @@ export const GameObjRawPrototype: Omit<
             loadMatrix(this.transform);
         }
 
+        this._treeIndex = _nextTreeIndex++;
+
         for (let i = 0; i < this.children.length; i++) {
-            if (this.children[i].hidden) continue;
+            // if (this.children[i].hidden) continue;
             this.children[i].transformTree(updateNeeded);
         }
 
@@ -1390,7 +1516,7 @@ export const GameObjRawPrototype: Omit<
         }
 
         // If the object already exists and add hook is present, run it
-        if (this.id != 0 && this.exists() && comp.add) {
+        if (this.exists() && comp.add) {
             this._onCurCompCleanup = (c: any) => gc.push(c);
             comp.add.call(this);
             this._onCurCompCleanup = null;
@@ -1401,7 +1527,7 @@ export const GameObjRawPrototype: Omit<
             && !internalIsMaking(this as unknown as GameObj)
         ) {
             this.trigger("use", comp.id);
-            _k.game.events.trigger(
+            _k.game.gameObjEvents.trigger(
                 "use",
                 this as unknown as GameObj,
                 comp.id,
@@ -1420,7 +1546,7 @@ export const GameObjRawPrototype: Omit<
 
         if (!internalIsMaking(this as unknown as GameObj)) {
             this.trigger("unuse", id);
-            _k.game.events.trigger("unuse", this, id);
+            _k.game.gameObjEvents.trigger("unuse", this, id);
         }
 
         if (this._cleanups[id]) {
@@ -1499,21 +1625,40 @@ export const GameObjRawPrototype: Omit<
     // #endregion
 
     // #region Tags
+    _ensureSingletonTag(tag, cb) {
+        const singletonTags = _k.globalOpt.singletonTags;
+        if (!singletonTags?.length) return;
+
+        cb ??= t =>
+            _k.game.root.get(t, { recursive: true, op: "or" })
+                .forEach(o => o.untag(t));
+
+        if (Array.isArray(tag)) {
+            const st = tag.filter(t => singletonTags.includes(t));
+            if (st.length) return cb?.(st);
+        }
+        else if (singletonTags.includes(tag)) return cb?.(tag);
+    },
+
     tag(this: InternalGameObjRaw, tag: Tag | Tag[]): void {
         if (Array.isArray(tag)) {
             for (const t of tag) {
+                if (this._tags.has(t)) continue;
+                this._ensureSingletonTag(t);
                 this._tags.add(t);
                 if (!internalIsMaking(this as unknown as GameObj)) {
                     this.trigger("tag", t);
-                    _k.game.events.trigger("tag", this as GameObj, t);
+                    _k.game.gameObjEvents.trigger("tag", this as GameObj, t);
                 }
             }
         }
         else {
+            if (this._tags.has(tag)) return;
+            this._ensureSingletonTag(tag);
             this._tags.add(tag);
             if (!internalIsMaking(this as unknown as GameObj)) {
                 this.trigger("tag", tag);
-                _k.game.events.trigger("tag", this as GameObj, tag);
+                _k.game.gameObjEvents.trigger("tag", this as GameObj, tag);
             }
         }
     },
@@ -1521,15 +1666,15 @@ export const GameObjRawPrototype: Omit<
     untag(this: InternalGameObjRaw, tag: Tag | Tag[]): void {
         if (Array.isArray(tag)) {
             for (const t of tag) {
-                this._tags.delete(t);
+                if (!this._tags.delete(t)) continue;
                 this.trigger("untag", t);
-                _k.game.events.trigger("untag", this, t);
+                _k.game.gameObjEvents.trigger("untag", this, t);
             }
         }
         else {
-            this._tags.delete(tag);
+            if (!this._tags.delete(tag)) return;
             this.trigger("untag", tag);
-            _k.game.events.trigger("untag", this, tag);
+            _k.game.gameObjEvents.trigger("untag", this, tag);
         }
     },
 
@@ -1626,6 +1771,22 @@ export const GameObjRawPrototype: Omit<
 
     onUnuse(action: (id: string) => void): KEventController {
         return this.on("unuse", action);
+    },
+
+    onPause(action: () => void): KEventController {
+        return this.on("pause", action);
+    },
+
+    onUnpause(action: () => void): KEventController {
+        return this.on("unpause", action);
+    },
+
+    onShow(action: () => void): KEventController {
+        return this.on("show", action);
+    },
+
+    onHide(action: () => void): KEventController {
+        return this.on("hide", action);
     },
     // #endregion
 };

@@ -14,19 +14,18 @@ loadBitmapFontFromSprite("hero", "abc");
 
 add([
     pos(100, 100),
-    text("hello, I am [herofont]abcabc[/herofont]", {
-        styles: {
-            herofont: {
-                font: "hero",
-                scale: vec2(2),
+    text(
+        "hello, I am [herofont]abc[/herofont] foo [herofont]a[/herofont]a[herofont]b[/herofont]b[herofont]c[/herofont]c",
+        {
+            styles: {
+                herofont: {
+                    font: "hero",
+                },
             },
+            width: 600,
+            size: 72,
         },
-        width: 300,
-        transform: {
-            scale: vec2(2),
-            stretchInPlace: false,
-        },
-    }),
+    ),
     area(),
 ]);
 
