@@ -1,9 +1,22 @@
 import type { KEventController } from "../../../events/events";
-import { Vec2 } from "../../../math/Vec2";
+import { type SerializedVec2, Vec2 } from "../../../math/Vec2";
 import { _k } from "../../../shared";
 import type { Comp, GameObj, QueryOpt } from "../../../types";
 import { raycast } from "../draw/raycast";
 import type { PosComp } from "../transform/pos";
+
+/**
+ * The serialized {@link sentry `sentry()`} component.
+ *
+ * Note: Only `QueryOpt` is supported as candidates.
+ *
+ * @group Components
+ * @subgroup Component Serialization
+ */
+export type SerializedSentryComp = Omit<SentryCompOpt, "direction"> & {
+    candidates: QueryOpt;
+    direction?: SerializedVec2;
+};
 
 /**
  * The {@link sentry `sentry()`} component.
@@ -49,6 +62,10 @@ export interface SentryComp extends Comp {
      * @param obj - The object to test.
      */
     hasLineOfSight(obj: GameObj<PosComp>): boolean;
+    /**
+     * Note: Only `QueryOpt` as `candidates` is supported, all objects will become candidates if function is passed instead.
+     */
+    serialize(): SerializedSentryComp;
 }
 
 /**
@@ -175,5 +192,33 @@ export function sentry(
                 cb,
             );
         },
+        serialize() {
+            const data: SerializedSentryComp = {
+                // Only QueryOpt supported
+                candidates: typeof candidates === "object" ? candidates : {},
+            };
+            if (this.direction !== undefined) {
+                data.direction = this.direction.serialize();
+            }
+            if (this.fieldOfView !== undefined) {
+                data.fieldOfView = this.fieldOfView;
+            }
+            if (opts.lineOfSight !== undefined) {
+                data.lineOfSight = opts.lineOfSight;
+            }
+            if (opts.raycastExclude?.length) {
+                data.raycastExclude = opts.raycastExclude;
+            }
+            if (opts.checkFrequency !== undefined) {
+                data.checkFrequency = opts.checkFrequency;
+            }
+            return data;
+        },
     };
+}
+
+export function sentryFactory(data: SerializedSentryComp) {
+    const { candidates, ...opts } = data;
+    opts.direction &&= Vec2.deserialize(opts.direction);
+    return sentry(candidates, opts as SentryCompOpt);
 }
