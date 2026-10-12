@@ -22,6 +22,7 @@ import { agentFactory } from "../ecs/components/level/agent";
 import { levelFactory } from "../ecs/components/level/level";
 import { patrolFactory } from "../ecs/components/level/patrol";
 import { sentryFactory } from "../ecs/components/level/sentry";
+import { tileFactory } from "../ecs/components/level/tile";
 import { healthFactory } from "../ecs/components/misc/health";
 import { namedFactory } from "../ecs/components/misc/named";
 import { stateFactory } from "../ecs/components/misc/state";
@@ -165,7 +166,7 @@ export const createEngine = (gopt: KAPLAYOpt) => {
     // `pathFinder()` & `pathfinderMap()?` missing (needs Graph)
     registerPrefabFactory("patrol", patrolFactory);
     registerPrefabFactory("sentry", sentryFactory); // partial support (no () => GameObj[] as candidates)
-    // `tile()` missing
+    registerPrefabFactory("tile", tileFactory);
 
     // Physics Serialization
     registerPrefabFactory("area", areaFactory);
