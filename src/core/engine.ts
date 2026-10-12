@@ -122,9 +122,9 @@ export const createEngine = (gopt: KAPLAYOpt) => {
 
     // Transform Serialization
     registerPrefabFactory("anchor", anchorFactory);
+    // constraint() missing (has obj ref)
     registerPrefabFactory("fixed", fixedFactory);
     registerPrefabFactory("follow", followFactory);
-    registerPrefabFactory("health", healthFactory);
     registerPrefabFactory("layer", layerFactory);
     registerPrefabFactory("move", moveFactory);
     registerPrefabFactory("offscreen", offscreenFactory);
@@ -138,33 +138,53 @@ export const createEngine = (gopt: KAPLAYOpt) => {
     registerPrefabFactory("blend", blendFactory);
     registerPrefabFactory("circle", circleFactory);
     registerPrefabFactory("color", colorFactory);
-    // `drawon()` missing
+    // `drawon()` missing (has FrameBuffer, Picture refs)
     registerPrefabFactory("ellipse", ellipseFactory);
     registerPrefabFactory("fill", fillFactory);
     // `fadeIn()` missing, but wasn't it deprecated?
     registerPrefabFactory("mask", maskFactory);
     registerPrefabFactory("opacity", opacityFactory);
     registerPrefabFactory("outline", outlineFactory);
-    // `particles()` missing
-    // `picture()` missing
-    // `raycast()` missing, anyway, is not a component
+    // `particles()` missing (has Texture ref)
+    // `picture()` missing (has Picture ref)
+    // `polygon()` missing (has Texture ref)
     registerPrefabFactory("rect", rectFactory);
-    registerPrefabFactory("sprite", spriteFactory);
     registerPrefabFactory("shader", shaderFactory); // partial support (no uniform)
+    registerPrefabFactory("sprite", spriteFactory);
     registerPrefabFactory("text", textFactory);
     registerPrefabFactory("uvquad", uvquadFactory);
     registerPrefabFactory("video", videoFactory);
 
+    // Level Serialization
+    // `agent()` missing
+    registerPrefabFactory("level", levelFactory);
+    // `pathFinder()` & `pathfinderMap()?` missing (needs Graph)
+    // `patrol()` missing
+    // `sentry()` missing
+    // `tile()` missing
+
     // Physics Serialization
     registerPrefabFactory("area", areaFactory);
     registerPrefabFactory("body", bodyFactory);
+    // `doubleJump()` missing
+    // Effectors
+    // `surfaceEffector()` missing
+    // `areaEffector()` missing
+    // `pointEffector()` missing
+    // `constantForce()` missing
+    // `platformEffector()` missing (has shouldCollide() fn opt)
 
     // Other & Misc Serialization
-    registerPrefabFactory("animate", levelFactory);
-    registerPrefabFactory("level", levelFactory);
+    // `animate()` missing (complicated)
+    // `boom()` used only internally in `addKaboom()`
+    // `fakeMouse()` missing
+    registerPrefabFactory("health", healthFactory);
+    // `lifeSpan()` missing
     registerPrefabFactory("named", namedFactory);
     registerPrefabFactory("state", stateFactory);
     registerPrefabFactory("stay", stayFactory);
+    // `textInput()` missing
+    // `timer()` missing
 
     return {
         globalOpt: opt,
