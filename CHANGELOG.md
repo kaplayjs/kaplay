@@ -69,6 +69,7 @@ So your change should look like:
 - Added `btn` parameter to `FakeMouseComp.press(btn)` to control which mouse button it will emulate. Defaults sto left (#1159) - @amyspark-ng
 - Added `KAPLAYOpt.singletonTags` with a few helpers to make listed tags unique, meaning only one object can have a given tag at a time, e.g. `["player", "focused"]` (#1172) - @imaginarny
 - Added `GetOpt.op` operator option to allow `"or"` besides the default `"and"` in `GameObjRaw.get()`, e.g. `get(["fruit", "vegetable"], { op: "or" })` (#1172) - @imaginarny
+- Added `rootURL(url)` to prefix the passed URL using `loadRoot()` value (#1135) - @amyspark-ng
 
 ### Changed
 
@@ -109,6 +110,7 @@ So your change should look like:
 - Fixed KAPLAY's mouse position not being updated when moving the FakeMouse by keyboard, causing it to not retrieve hovered objects by it (#1159) - @amyspark-ng
 - Fixed sprite component returning stale value after changing the sprite value dynamically (#1164) - @Stanko
 - Fixed `onTag()` and `onUntag()` getting triggered when trying to do so with the existing/same tag (#1172) - @imaginarny
+- Fixed collisions between two non-static bodies not conserving momentum, the velocity and mass of the other body are now taken into account (#1174) - @WynandVStaden
 - Fixed `text()` component always getting serialized with fixed width - @imaginarny
 
 ## [4000.0.0-alpha.27.1] - 2026-05-12
