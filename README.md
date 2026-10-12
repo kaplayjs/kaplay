@@ -120,6 +120,21 @@ Include via CDN:
 <script src="https://unpkg.com/kaplay@3001.0.12/dist/kaplay.js"></script>
 ```
 
+### 🖥️ Native Desktop Builds
+
+Package your game as a native Windows, Linux, or macOS application with Steam
+overlay support using the experimental
+[`kaplay-native`](https://github.com/kaplayjs/kaplay-native) runtime:
+
+```sh
+pnpm add -D kaplay-native
+pnpm kaplay-native dev
+pnpm kaplay-native build --target win-x64
+```
+
+Game code and the browser build stay the same. See
+[docs/NATIVE.md](./docs/NATIVE.md) for details.
+
 ### 📜 TypeScript Global Types
 
 If you're using **TypeScript**, you used `create-kaplay` or installed with a

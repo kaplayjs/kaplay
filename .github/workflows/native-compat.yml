@@ -1,0 +1,76 @@
+name: Native compatibility
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 6 * * *"
+  push:
+    branches:
+      - master
+
+env:
+  KAPLAY_NATIVE_VERSION: "0.1.0-alpha.0"
+
+jobs:
+  compat:
+    name: Native compatibility suite
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+
+      - uses: pnpm/action-setup@v4
+        name: Install pnpm
+        with:
+          run_install: false
+
+      - name: Check runtime availability
+        id: runtime
+        run: |
+          if npm view "kaplay-native@$KAPLAY_NATIVE_VERSION" version > /dev/null 2>&1; then
+            echo "available=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "available=false" >> "$GITHUB_OUTPUT"
+            echo "kaplay-native@$KAPLAY_NATIVE_VERSION is not published yet; skipping."
+          fi
+
+      - name: Install dependencies
+        if: steps.runtime.outputs.available == 'true'
+        run: pnpm install --ignore-scripts
+
+      - name: Install system packages
+        if: steps.runtime.outputs.available == 'true'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y xvfb libgl1-mesa-dri libglx-mesa0 libegl-mesa0
+
+      - name: Install kaplay-native
+        if: steps.runtime.outputs.available == 'true'
+        run: pnpm add -D "kaplay-native@$KAPLAY_NATIVE_VERSION"
+
+      - name: Build KAPLAY
+        if: steps.runtime.outputs.available == 'true'
+        run: pnpm run build --fast
+
+      - name: Run examples natively
+        if: steps.runtime.outputs.available == 'true'
+        run: |
+          xvfb-run -a env LIBGL_ALWAYS_SOFTWARE=1 \
+            pnpm exec kaplay-native test examples \
+              --preload dist/kaplay.js \
+              --frames 120 \
+              --screenshot-dir native-screenshots
+
+      - name: Upload screenshots
+        if: always() && steps.runtime.outputs.available == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: native-screenshots
+          path: native-screenshots
+          if-no-files-found: ignore
