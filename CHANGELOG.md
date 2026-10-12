@@ -69,6 +69,7 @@ So your change should look like:
 - Added `btn` parameter to `FakeMouseComp.press(btn)` to control which mouse button it will emulate. Defaults sto left (#1159) - @amyspark-ng
 - Added `KAPLAYOpt.singletonTags` with a few helpers to make listed tags unique, meaning only one object can have a given tag at a time, e.g. `["player", "focused"]` (#1172) - @imaginarny
 - Added `GetOpt.op` operator option to allow `"or"` besides the default `"and"` in `GameObjRaw.get()`, e.g. `get(["fruit", "vegetable"], { op: "or" })` (#1172) - @imaginarny
+- Added `fixURL()`, exposing it from the utils file (#1135) - @amyspark-ng
 
 ### Changed
 
