@@ -107,6 +107,7 @@ So your change should look like:
 - Fixed KAPLAY's mouse position not being updated when moving the FakeMouse by keyboard, causing it to not retrieve hovered objects by it (#1159) - @amyspark-ng
 - Fixed sprite component returning stale value after changing the sprite value dynamically (#1164) - @Stanko
 - Fixed `onTag()` and `onUntag()` getting triggered when trying to do so with the existing/same tag (#1172) - @imaginarny
+- Fixed `text()` component always getting serialized with fixed width - @imaginarny
 
 ## [4000.0.0-alpha.27.1] - 2026-05-12
 
