@@ -1508,6 +1508,41 @@ export interface KAPLAYCtx {
      */
     follow(obj: GameObj | null, offset?: Vec2): FollowComp;
     /**
+     * Follow another game obj's position.
+     *
+     * @param obj - The tag ({@link KAPLAYOpt.singletonTags `singleton`} preferably if you plan to use serialize/prefabs), or unique name (of existing {@link named} obj) to follow.
+     * @param offset - The offset to follow at.
+     *
+     * @example
+     * ```js
+     * // Using singletonTag (uniqueness guaranteed)
+     * kaplay({ singletonTags: ["player"] }); // Define tag as a singleton first
+     *
+     * const target = add(..., "player");
+     *
+     * add([
+     *     sprite("bag"),
+     *     pos(),
+     *     follow("player"), // Follow player's position
+     * ]);
+     *
+     * // Using named (uniqueness is not enforced so it's up to you)
+     * const target = add(..., named("player"));
+     *
+     * add([
+     *     sprite("bag"),
+     *     pos(),
+     *     follow("player"), // Follow player's position
+     * ]);
+     * ```
+     *
+     * @returns The follow comp.
+     * @since v4000.0
+     * @group Components
+     * @subgroup Behaviour
+     */
+    follow(obj: string | null, offset?: Vec2): FollowComp;
+    /**
      * Custom shader to manipulate sprite.
      *
      * @param id - The shader id.

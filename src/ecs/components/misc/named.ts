@@ -26,9 +26,12 @@ export function named(name: string): NamedComp {
     return {
         id: "named",
         name,
+        inspect() {
+            return `name: ${this.name}`;
+        },
         serialize() {
             return {
-                name: name,
+                name: this.name,
             };
         },
     };
