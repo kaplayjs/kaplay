@@ -329,7 +329,7 @@ export function text(t: string, opt: TextCompOpt = {}): TextComp {
                 text: this.text,
                 size: this.textSize,
                 font: typeof this.font === "string" ? this.font : undefined,
-                width: this.width,
+                width: opt.width !== undefined ? this.width : undefined,
                 align: this.align,
                 lineSpacing: this.lineSpacing,
                 letterSpacing: this.letterSpacing,

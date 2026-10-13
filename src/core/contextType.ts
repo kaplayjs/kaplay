@@ -291,6 +291,7 @@ export interface KAPLAYCtx {
      *
      * @returns The added game object that contains all properties and methods each component offers.
      * @group Game Obj
+     * @subgroup Prefabs
      */
     addPrefab<T extends CompList<unknown>>(
         nameOrObject: SerializedGameObj | string,
@@ -313,6 +314,7 @@ export interface KAPLAYCtx {
      * @returns The serialized game object.
      * @since v4000.0
      * @group Game Obj
+     * @subgroup Prefabs
      */
     createPrefab(name: string, obj: GameObj): SerializedGameObj;
     /**
@@ -334,6 +336,34 @@ export interface KAPLAYCtx {
      * @subgroup Prefabs
      */
     createPrefab(obj: GameObj): SerializedGameObj;
+    /**
+     * Registers a function that deserializes a custom component.
+     *
+     * @param id - The component id.
+     * @param method - The function that deserializes the component using its serialized data.
+     *
+     * @example
+     * ```js
+     * // custom component
+     * const ohhi = (name = "mark") => ({
+     *     id: "ohhi",
+     *     add() { debug.log(`ohhi ${name}!`) },
+     *     // this is where "data" comes from, called by createPrefab()
+     *     serialize() { return { name } };
+     * });
+     *
+     * // factory method will be used to deserialize the component
+     * // when later used with addPrefab()
+     * registerPrefabFactory("ohhi", data => {
+     *     return ohhi(data.name);
+     * });
+     * ```
+     *
+     * @since v4000.0
+     * @group Game Obj
+     * @subgroup Prefabs
+     */
+    registerPrefabFactory(id: string, method: (data: any) => Comp): void;
     /**
      * Remove and re-add the game obj, without triggering add / destroy events.
      *
@@ -1382,7 +1412,7 @@ export interface KAPLAYCtx {
     /**
      * Enables double jump.
      *
-     * @param numJumps - The number of jumps allowed. Defaults to 1.
+     * @param numJumps - The number of jumps allowed. Defaults to 2.
      *
      * @returns The double jump comp.
      * @since v3000.0
@@ -1477,6 +1507,41 @@ export interface KAPLAYCtx {
      * @subgroup Behaviour
      */
     follow(obj: GameObj | null, offset?: Vec2): FollowComp;
+    /**
+     * Follow another game obj's position.
+     *
+     * @param obj - The tag ({@link KAPLAYOpt.singletonTags `singleton`} preferably if you plan to use serialize/prefabs), or unique name (of existing {@link named} obj) to follow.
+     * @param offset - The offset to follow at.
+     *
+     * @example
+     * ```js
+     * // Using singletonTag (uniqueness guaranteed)
+     * kaplay({ singletonTags: ["player"] }); // Define tag as a singleton first
+     *
+     * const target = add(..., "player");
+     *
+     * add([
+     *     sprite("bag"),
+     *     pos(),
+     *     follow("player"), // Follow player's position
+     * ]);
+     *
+     * // Using named (uniqueness is not enforced so it's up to you)
+     * const target = add(..., named("player"));
+     *
+     * add([
+     *     sprite("bag"),
+     *     pos(),
+     *     follow("player"), // Follow player's position
+     * ]);
+     * ```
+     *
+     * @returns The follow comp.
+     * @since v4000.0
+     * @group Components
+     * @subgroup Behaviour
+     */
+    follow(obj: string | null, offset?: Vec2): FollowComp;
     /**
      * Custom shader to manipulate sprite.
      *

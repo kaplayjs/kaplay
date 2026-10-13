@@ -70,6 +70,21 @@ So your change should look like:
 - Added `KAPLAYOpt.singletonTags` with a few helpers to make listed tags unique, meaning only one object can have a given tag at a time, e.g. `["player", "focused"]` (#1172) - @imaginarny
 - Added `GetOpt.op` operator option to allow `"or"` besides the default `"and"` in `GameObjRaw.get()`, e.g. `get(["fruit", "vegetable"], { op: "or" })` (#1172) - @imaginarny
 - Added `rootURL(url)` to prefix the passed URL using `loadRoot()` value (#1135) - @amyspark-ng
+- Added prefab support for most components (except those with ref or function arguments for now) (#1179) - @imaginarny
+- Exposed `registerPrefabFactory()` to be able to register custom components for deserialization (#1179) - @imaginarny
+
+  ```js
+  const myComp = (p = vec2(0)) => ({
+      id: "myComp",
+      serialize() {
+          return { p: p.serialize() }
+      },
+  });
+
+  registerPrefabFactory("myComp", data => {
+      return myComp(Vec2.deserialize(data.p))
+  });
+  ```
 
 ### Changed
 
@@ -82,6 +97,8 @@ So your change should look like:
 - Updated `KAPLAYOpt.onButtonPress`'s family to now accept `string` and `symbol` instead of only strings (#1136) - @amyspark-ng
 - Updated `video()` to render black rectangle (instead of white one) before the video has been played (#1145) - @Stanko
 - Updated `getLastInputDeviceType()` so updates to gamepad when you move a joystick (#1168) - @amyspark-ng
+- Component `follow()` now also accepts a tag or name (of `named()` comp) besides a raw object (#1179) - @imaginarny
+- Exposed `obj.jumpsLeft` of `doubleJump()` component (#1179) - @imaginarny
 
 ### Examples
 - Added a new `gacha` example! (#1057) - @imaginarny
@@ -109,6 +126,7 @@ So your change should look like:
 - Fixed sprite component returning stale value after changing the sprite value dynamically (#1164) - @Stanko
 - Fixed `onTag()` and `onUntag()` getting triggered when trying to do so with the existing/same tag (#1172) - @imaginarny
 - Fixed collisions between two non-static bodies not conserving momentum, the velocity and mass of the other body are now taken into account (#1174) - @WynandVStaden
+- Fixed `text()` component always getting serialized with fixed width (#1179) - @imaginarny
 
 ## [4000.0.0-alpha.27.1] - 2026-05-12
 
