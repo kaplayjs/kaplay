@@ -30,6 +30,7 @@ import { namedFactory } from "../ecs/components/misc/named";
 import { stateFactory } from "../ecs/components/misc/state";
 import { stayFactory } from "../ecs/components/misc/stay";
 import { textInputFactory } from "../ecs/components/misc/textInput";
+import { timerFactory } from "../ecs/components/misc/timer";
 import { areaFactory } from "../ecs/components/physics/area";
 import { bodyFactory } from "../ecs/components/physics/body";
 import { doubleJumpFactory } from "../ecs/components/physics/doubleJump";
@@ -192,7 +193,7 @@ export const createEngine = (gopt: KAPLAYOpt) => {
     registerPrefabFactory("state", stateFactory);
     registerPrefabFactory("stay", stayFactory);
     registerPrefabFactory("textInput", textInputFactory);
-    // `timer()` missing
+    registerPrefabFactory("timer", timerFactory);
 
     return {
         globalOpt: opt,
