@@ -4,6 +4,17 @@ import type { Comp, GameObj } from "../../../types";
 import type { TextComp } from "../draw/text";
 
 /**
+ * The serialized {@link textInput `textInput()`} component.
+ *
+ * @group Components
+ * @subgroup Component Serialization
+ */
+export interface SerializedTextInputComp {
+    hasFocus: boolean;
+    maxInputLength?: number;
+}
+
+/**
  * The {@link textInput `textInput()`} component.
  *
  * @group Components
@@ -49,6 +60,7 @@ export interface TextInputComp extends Comp {
      * input has been focused.
      */
     onChange(cb: () => void): KEventController;
+    serialize(): SerializedTextInputComp;
 }
 
 export function textInput(
@@ -141,5 +153,18 @@ export function textInput(
         onChange(this: GameObj, cb) {
             return this.on("change", cb);
         },
+        serialize() {
+            const data: SerializedTextInputComp = {
+                hasFocus: hasFocus,
+            };
+            if (maxInputLength !== undefined) {
+                data.maxInputLength = maxInputLength;
+            }
+            return data;
+        },
     };
+}
+
+export function textInputFactory(data: SerializedTextInputComp) {
+    return textInput(data.hasFocus, data.maxInputLength);
 }
