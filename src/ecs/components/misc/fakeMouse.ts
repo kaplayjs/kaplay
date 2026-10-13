@@ -5,6 +5,14 @@ import type { Comp, GameObj, MouseButton } from "../../../types";
 import type { PosComp } from "../transform/pos";
 
 /**
+ * The serialized {@link fakeMouse `fakeMouse()`} component.
+ *
+ * @group Components
+ * @subgroup Component Serialization
+ */
+export type SerializedFakeMouseComp = FakeMouseOpt;
+
+/**
  * The {@link fakeMouse `fakeMouse()`} component.
  *
  * @group Components
@@ -21,7 +29,7 @@ export interface FakeMouseComp extends Comp {
     get deltaPos(): Vec2;
     /**
      * Trigger press (onClick).
-     * @param btn The mouse button to press (Defaults to "left").
+     * @param btn - The mouse button to press (Defaults to "left").
      */
     press(btn?: MouseButton): void;
     /**
@@ -30,19 +38,20 @@ export interface FakeMouseComp extends Comp {
     release(): void;
     /**
      * Trigger scroll event by this much (onScroll).
-     * @param deltaPos How much scroll to trigger the event.
+     * @param deltaPos - How much scroll to trigger the event.
      */
     scrollBy(deltaPos: Vec2): void;
     /**
      * Register an event that runs when the fake mouse performs a click (with press()).
-     * @param action The function to run, has the btn parameter.
+     * @param action - The function to run, has the btn parameter.
      */
     onPress(action: (btn: MouseButton) => void): KEventController;
     /**
      * Register an event that runs when the fake mouse releases (with release()).
-     * @param action The function to run, has the deltaPos parameter.
+     * @param action - The function to run, has the deltaPos parameter.
      */
     onRelease(action: (deltaPos: Vec2) => void): KEventController;
+    serialize(): SerializedFakeMouseComp;
 }
 
 /**
@@ -62,9 +71,11 @@ export type FakeMouseOpt = {
 
 type FakeMouse = GameObj<FakeMouseComp | PosComp>;
 
-export const fakeMouse = (opt: FakeMouseOpt = {
-    followMouse: true,
-}): FakeMouseComp => {
+export const fakeMouse = (opt: FakeMouseOpt = {}): FakeMouseComp => {
+    opt = Object.assign({
+        followMouse: true,
+    }, opt);
+
     let isPressed = false;
     let lastPos: Vec2;
     let deltaPos: Vec2;
@@ -130,5 +141,14 @@ export const fakeMouse = (opt: FakeMouseOpt = {
         onRelease(this: FakeMouse, action) {
             return this.on("release", action);
         },
+        serialize() {
+            return {
+                followMouse: opt.followMouse,
+            };
+        },
     };
 };
+
+export function fakeMouseFactory(data: SerializedFakeMouseComp) {
+    return fakeMouse(data);
+}

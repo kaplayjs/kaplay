@@ -23,6 +23,7 @@ import { levelFactory } from "../ecs/components/level/level";
 import { patrolFactory } from "../ecs/components/level/patrol";
 import { sentryFactory } from "../ecs/components/level/sentry";
 import { tileFactory } from "../ecs/components/level/tile";
+import { fakeMouseFactory } from "../ecs/components/misc/fakeMouse";
 import { healthFactory } from "../ecs/components/misc/health";
 import { namedFactory } from "../ecs/components/misc/named";
 import { stateFactory } from "../ecs/components/misc/state";
@@ -182,7 +183,7 @@ export const createEngine = (gopt: KAPLAYOpt) => {
     // Other & Misc Serialization
     // `animate()` missing (complicated)
     // `boom()` used only internally in `addKaboom()`
-    // `fakeMouse()` missing
+    registerPrefabFactory("fakeMouse", fakeMouseFactory);
     registerPrefabFactory("health", healthFactory);
     // `lifeSpan()` missing
     registerPrefabFactory("named", namedFactory);
