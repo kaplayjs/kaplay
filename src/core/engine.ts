@@ -25,6 +25,7 @@ import { sentryFactory } from "../ecs/components/level/sentry";
 import { tileFactory } from "../ecs/components/level/tile";
 import { fakeMouseFactory } from "../ecs/components/misc/fakeMouse";
 import { healthFactory } from "../ecs/components/misc/health";
+import { lifespanFactory } from "../ecs/components/misc/lifespan";
 import { namedFactory } from "../ecs/components/misc/named";
 import { stateFactory } from "../ecs/components/misc/state";
 import { stayFactory } from "../ecs/components/misc/stay";
@@ -185,7 +186,7 @@ export const createEngine = (gopt: KAPLAYOpt) => {
     // `boom()` used only internally in `addKaboom()`
     registerPrefabFactory("fakeMouse", fakeMouseFactory);
     registerPrefabFactory("health", healthFactory);
-    // `lifeSpan()` missing
+    registerPrefabFactory("lifespan", lifespanFactory);
     registerPrefabFactory("named", namedFactory);
     registerPrefabFactory("state", stateFactory);
     registerPrefabFactory("stay", stayFactory);
