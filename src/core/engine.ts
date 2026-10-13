@@ -34,6 +34,14 @@ import { timerFactory } from "../ecs/components/misc/timer";
 import { areaFactory } from "../ecs/components/physics/area";
 import { bodyFactory } from "../ecs/components/physics/body";
 import { doubleJumpFactory } from "../ecs/components/physics/doubleJump";
+import {
+    areaEffectorFactory,
+    buoyancyEffectorFactory,
+    constantForceFactory,
+    platformEffectorFactory,
+    pointEffectorFactory,
+    surfaceEffectorFactory,
+} from "../ecs/components/physics/effectors";
 import { anchorFactory } from "../ecs/components/transform/anchor";
 import { fixedFactory } from "../ecs/components/transform/fixed";
 import { followFactory } from "../ecs/components/transform/follow";
@@ -167,7 +175,7 @@ export const createEngine = (gopt: KAPLAYOpt) => {
     // Level Serialization
     registerPrefabFactory("agent", agentFactory);
     registerPrefabFactory("level", levelFactory);
-    // `pathFinder()` & `pathfinderMap()?` missing (needs Graph)
+    // `pathfinder()` & `pathfinderMap()?` missing (needs Graph)
     registerPrefabFactory("patrol", patrolFactory);
     registerPrefabFactory("sentry", sentryFactory); // partial support (no () => GameObj[] as candidates)
     registerPrefabFactory("tile", tileFactory);
@@ -177,11 +185,12 @@ export const createEngine = (gopt: KAPLAYOpt) => {
     registerPrefabFactory("body", bodyFactory);
     registerPrefabFactory("doubleJump", doubleJumpFactory);
     // Effectors
-    // `surfaceEffector()` missing
-    // `areaEffector()` missing
-    // `pointEffector()` missing
-    // `constantForce()` missing
-    // `platformEffector()` missing (has shouldCollide() fn opt)
+    registerPrefabFactory("surfaceEffector", surfaceEffectorFactory);
+    registerPrefabFactory("areaEffector", areaEffectorFactory);
+    registerPrefabFactory("pointEffector", pointEffectorFactory);
+    registerPrefabFactory("constantForce", constantForceFactory);
+    registerPrefabFactory("platformEffector", platformEffectorFactory); // partial support (no shouldCollide() opt)
+    registerPrefabFactory("buoyancyEffector", buoyancyEffectorFactory);
 
     // Other & Misc Serialization
     // `animate()` missing (complicated)
