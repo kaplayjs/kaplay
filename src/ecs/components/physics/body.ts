@@ -139,7 +139,7 @@ export interface BodyComp extends Comp {
      */
     onHeadbutted(action: (obj: GameObj) => void): KEventController;
 
-    serialize(): any;
+    serialize(): BodyCompOpt;
 }
 
 /**
@@ -566,28 +566,26 @@ export function body(opt: BodyCompOpt = {}): BodyComp {
             return `gravityScale: ${this.gravityScale}x`;
         },
 
-        serialize(): any {
-            const data: any = {};
-            if (opt.damping) data.damping = opt.damping;
-            if (opt.jumpForce) data.jumpForce = opt.jumpForce;
-            if (opt.maxVelocity) data.maxVelocity = opt.maxVelocity;
-            if (opt.gravityScale) data.gravityScale = opt.gravityScale;
-            if (opt.isStatic) data.isStatic = opt.isStatic;
-            if (opt.stickToPlatform) data.stickToPlatform = opt.stickToPlatform;
-            if (opt.mass) data.mass = opt.mass;
+        serialize(): BodyCompOpt {
+            const data: BodyCompOpt = {};
+            if (this.damping !== undefined) data.damping = this.damping;
+            if (this.jumpForce !== undefined) data.jumpForce = this.jumpForce;
+            if (opt.maxVelocity !== undefined) {
+                data.maxVelocity = opt.maxVelocity;
+            }
+            if (this.gravityScale !== undefined) {
+                data.gravityScale = this.gravityScale;
+            }
+            if (this.isStatic !== undefined) data.isStatic = this.isStatic;
+            if (this.stickToPlatform !== undefined) {
+                data.stickToPlatform = this.stickToPlatform;
+            }
+            if (this.mass !== undefined) data.mass = this.mass;
             return data;
         },
     };
 }
 
-export function bodyFactory(data: any) {
-    const opt: any = {};
-    if (data.damping) opt.damping = data.damping;
-    if (data.jumpForce) opt.jumpForce = data.jumpForce;
-    if (data.maxVelocity) opt.maxVelocity = data.maxVelocity;
-    if (data.gravityScale) opt.gravityScale = data.gravityScale;
-    if (data.isStatic) opt.isStatic = data.isStatic;
-    if (data.stickToPlatform) opt.stickToPlatform = data.stickToPlatform;
-    if (data.mass) opt.mass = data.mass;
-    return body(opt);
+export function bodyFactory(data: BodyCompOpt) {
+    return body(data);
 }

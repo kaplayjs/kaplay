@@ -133,11 +133,11 @@ export function offscreen(opt: OffScreenCompOpt = {}): OffScreenComp {
         },
         serialize() {
             const data: OffScreenCompOpt = {};
-            if (opt.hide) data.hide = opt.hide;
-            if (opt.pause) data.pause = opt.pause;
-            if (opt.unpause) data.unpause = opt.unpause;
-            if (opt.destroy) data.destroy = opt.destroy;
-            if (opt.distance) data.distance = opt.distance;
+            if (opt.hide !== undefined) data.hide = opt.hide;
+            if (opt.pause !== undefined) data.pause = opt.pause;
+            if (opt.unpause !== undefined) data.unpause = opt.unpause;
+            if (opt.destroy !== undefined) data.destroy = opt.destroy;
+            if (opt.distance !== undefined) data.distance = opt.distance;
             return data;
         },
     };

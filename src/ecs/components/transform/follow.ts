@@ -181,8 +181,8 @@ export function followFactory(data: SerializedFollowComp) {
         obj = data.obj.tag;
     }
     // If prefab is used during runtime and references a raw object outside of prefab
-    // and no other obj ref is deductible (basically skipped if within prefab/not in runtime)
-    // The only safe way of retrieving raw obj ref with no false positives
+    // and no other obj ref is deductible (basically skipped if within prefab/not in runtime).
+    // The only safe way of retrieving raw obj ref with no false positives.
     else if (data.obj.uid && _followedUids.has(data.obj.uid)) {
         const id = parseInt(data.obj.uid.split("-")[1]);
         obj = _k.game.root.get("*", { recursive: true }).find(o => o.id === id);
