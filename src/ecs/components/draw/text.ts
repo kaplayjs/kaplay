@@ -196,8 +196,6 @@ export function text(t: string, opt: TextCompOpt = {}): TextComp {
     let _width = opt.width ?? 0;
     let _height = 0;
     let _isDynamic = false;
-    let _inspectChars = true;
-    let _inspectCharRects: Picture | null;
 
     // obj props that are checked on update and trigger transform or reformat
     let _renderProps:
@@ -218,6 +216,13 @@ export function text(t: string, opt: TextCompOpt = {}): TextComp {
         textStyles: proxifyProp(opt.styles!),
         textTransform: proxifyProp(opt.transform!),
     };
+
+    let _isStyled = opt.transform !== undefined || opt.styles !== undefined;
+    let _inspectCharRects: Picture | null;
+    const _inspectChars = () => (
+        _k.globalOpt.inspectTextChars === true
+        || (_isStyled && _k.globalOpt.inspectTextChars === "styled")
+    );
 
     function update(obj: GameObj<TextComp | any>, reformat?: boolean) {
         const updateType = refreshRenderProps(obj);
@@ -247,7 +252,7 @@ export function text(t: string, opt: TextCompOpt = {}): TextComp {
         if (!opt.width) obj.width = theFormattedText.width;
         obj.height = theFormattedText.height;
 
-        if (_k.debug.inspect && _inspectChars) updateCharInspect();
+        if (_k.debug.inspect && _inspectChars()) updateCharInspect();
     }
 
     function refreshRenderProps(obj: GameObj<TextComp | any>): 0 | 1 | 2 {
@@ -375,7 +380,7 @@ export function text(t: string, opt: TextCompOpt = {}): TextComp {
         },
 
         drawInspect(this: GameObj<TextComp>) {
-            if (!_inspectChars) return;
+            if (!_inspectChars()) return;
             if (_inspectCharRects) {
                 drawPicture(_inspectCharRects, {});
             }
@@ -466,9 +471,7 @@ export function text(t: string, opt: TextCompOpt = {}): TextComp {
     _k.k.onLoad(() => {
         // @ts-expect-error
         update(obj, true);
-        _inspectChars = opt.transform !== undefined
-            || opt.styles !== undefined
-            || theFormattedText.chars.some(fc => fc.styles.length);
+        _isStyled ||= theFormattedText.chars.some(fc => fc.styles.length);
         return _k.k.cancel();
     });
 

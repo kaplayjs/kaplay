@@ -7,7 +7,13 @@
  * @category input
  */
 
-kaplay({ background: "black", font: "happy" });
+kaplay({
+    background: "black",
+    font: "happy",
+    // Inspect `text()` letters in debug (F1)
+    inspectTextChars: true, // or "styled" | false
+});
+
 loadHappy();
 
 let menuText = "";
@@ -76,6 +82,8 @@ scene("menu", () => {
         area(),
     ]);
 
+    // We check if hovered/clicked char has `[go=sceneX]` style and get its value
+    // `styles` is array of pairs, e.g. `[["go", "scene1"]]`
     const updateWillGo = () => {
         return willGo = t.pointToChar(t.fromScreen(mousePos()))
             ?.styles.find(pair => pair[0] === "go")?.[1];
