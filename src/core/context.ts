@@ -27,6 +27,7 @@ import { getShader, loadShader, loadShaderURL } from "../assets/shader";
 import { getSound, loadMusic, loadSound, SoundData } from "../assets/sound";
 import { getSprite, loadBean, loadSprite, SpriteData } from "../assets/sprite";
 import { loadSpriteAtlas } from "../assets/spriteAtlas";
+import { rootURL } from "../assets/utils";
 import { burp } from "../audio/burp";
 import { play } from "../audio/play";
 import { getVolume, setVolume, volume } from "../audio/volume";
@@ -228,6 +229,7 @@ import {
     testRectRect,
     triangulate,
     vec2,
+    vec3,
     wave,
 } from "../math/math";
 import { buildConnectivityMap, floodFill } from "../math/navigation";
@@ -242,6 +244,7 @@ import { chance, rand, randi, randSeed, RNG, setRNG } from "../math/random";
 import { insertionSort } from "../math/sort";
 import { makeQuadtree, Quadtree } from "../math/spatial/quadtree";
 import { Vec2 } from "../math/Vec2";
+import { Vec3 } from "../math/vec3";
 import { BlendMode, type KAPLAYPlugin } from "../types";
 import {
     download,
@@ -283,6 +286,7 @@ export const createContext = (
         // @ts-ignore
         VERSION: KAPLAY_VERSION,
         // asset load
+        rootURL,
         loadRoot,
         loadProgress,
         loadSprite,
@@ -526,6 +530,7 @@ export const createContext = (
         Polygon,
         Collision,
         Vec2,
+        Vec3,
         Color,
         Mat2,
         Mat4,
@@ -546,6 +551,7 @@ export const createContext = (
         randi,
         randSeed,
         vec2,
+        vec3,
         rgb,
         hsl2rgb,
         quad,
