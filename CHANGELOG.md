@@ -82,7 +82,8 @@ So your change should look like:
 - Updated `KAPLAYOpt.onButtonPress`'s family to now accept `string` and `symbol` instead of only strings (#1136) - @amyspark-ng
 - Updated `video()` to render black rectangle (instead of white one) before the video has been played (#1145) - @Stanko
 - Updated `getLastInputDeviceType()` so updates to gamepad when you move a joystick (#1168) - @amyspark-ng
-- Updated `StyledTextInfo` to include the rendered text's grapheme clusters as a `runes` array, and `compileStyledText()` now accepts an optional `locale` parameter (#1115) - @mahirhir
+- Updated `StyledTextInfo` to include the rendered text's grapheme clusters as a `runes` array - @mahirhir
+- Updated `text()` component and `compileStyledText()` to accept an optional `locale` option and parameter, respectively (#1115) - @mahirhir, @imaginarny
 
 ### Examples
 - Added a new `gacha` example! (#1057) - @imaginarny

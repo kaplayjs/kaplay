@@ -160,6 +160,14 @@ export interface TextCompOpt {
      * will be copied to all of the lines for those parts that text-wrap.
      */
     indentAll?: boolean;
+    /**
+     * Locale for text segmentation (e.g., 'hi' for Hindi, 'ar' for Arabic, 'bn' for Bengali).
+     * Helps with proper grapheme cluster detection for complex scripts.
+     * Only used when Intl.Segmenter is available in the browser.
+     *
+     * @since v4000.0
+     */
+    locale?: string;
 }
 
 export function text(t: string, opt: TextCompOpt = {}): TextComp {
@@ -210,6 +218,7 @@ export function text(t: string, opt: TextCompOpt = {}): TextComp {
             transform: obj.textTransform,
             styles: obj.textStyles,
             indentAll: opt.indentAll,
+            locale: opt.locale,
         };
 
         theFormattedText = reformat
