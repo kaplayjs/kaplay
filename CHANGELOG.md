@@ -112,6 +112,7 @@ So your change should look like:
 - Fixed `onTag()` and `onUntag()` getting triggered when trying to do so with the existing/same tag (#1172) - @imaginarny
 - Fixed collisions between two non-static bodies not conserving momentum, the velocity and mass of the other body are now taken into account (#1174) - @WynandVStaden
 - Fixed styled text (`[tag]...[/tag]`) style positions desyncing after an emoji, ZWJ sequence or astral character (#1115) - @mahirhir, @imaginarny
+- Fixed text color defined in `styles`/`transform` not being applied to grapheme clusters (#1115) - @imaginarny
 
 ## [4000.0.0-alpha.27.1] - 2026-05-12
 

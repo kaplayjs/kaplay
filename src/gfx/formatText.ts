@@ -56,9 +56,7 @@ function applyCharTransform(fchar: FormattedChar, tr: CharTransform) {
     if (tr.scale) fchar.scale = fchar.scale.scale(vec2(tr.scale));
     if (tr.skew) fchar.skew = fchar.skew.add(vec2(tr.skew));
     if (tr.angle) fchar.angle += tr.angle;
-    if (tr.color && fchar.ch.length === 1) {
-        fchar.color = fchar.color.mult(tr.color);
-    }
+    if (tr.color) fchar.color = fchar.color.mult(tr.color);
     // attention to type coercion, 0 is a valid value, only null & undefined are not
     if (tr.opacity != null) fchar.opacity *= tr.opacity;
 }
