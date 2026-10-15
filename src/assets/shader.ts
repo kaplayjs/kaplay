@@ -16,7 +16,7 @@ import { arrayIsColor, arrayIsNumber, arrayIsVec2 } from "../utils/asserts";
 import { getErrorMessage } from "../utils/log";
 import { fetchText, loadProgress } from "./asset";
 import { Asset } from "./asset";
-import { fixURL } from "./utils";
+import { rootURL } from "./utils";
 
 class TextureUnitManager {
     private static textureMap = new Map<Texture, number>();
@@ -298,8 +298,8 @@ export function loadShaderURL(
     vert?: string,
     frag?: string,
 ): Asset<ShaderData> {
-    vert = fixURL(vert);
-    frag = fixURL(frag);
+    vert = rootURL(vert);
+    frag = rootURL(frag);
     const resolveUrl = (url?: string) =>
         url
             ? fetchText(url)

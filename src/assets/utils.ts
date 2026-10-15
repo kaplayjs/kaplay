@@ -3,7 +3,7 @@ import { _k } from "../shared";
 import type { ImageSource } from "../types";
 import { isDataURL } from "../utils/dataURL";
 
-export function fixURL<D>(url: D): D {
+export function rootURL<D>(url: D): D {
     if (typeof url == "string" && window.kaplayjs_assetsAliases[url]) {
         url = (window.kaplayjs_assetsAliases[url] as unknown) as D;
     }

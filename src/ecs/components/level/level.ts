@@ -118,6 +118,31 @@ export interface LevelCompOpt {
         sym: string,
         pos: Vec2,
     ) => CompList<Comp> | null | undefined;
+    /**
+     * The number of characters that specify one tile.
+     *
+     * If the line length isn't a multiple of this, the last tile will be padded
+     * with spaces to be the same length before things get looked up.
+     *
+     * @example
+     * ```js
+     * addLevel([
+     *     "BABA IS YOU",
+     * ], {
+     *     tileWidth: 24,
+     *     tileHeight: 24,
+     *     charsPerTile: 4,
+     *     tiles: {
+     *         "BABA": () => [sprite("text_baba")],
+     *         " IS ": () => [sprite("text_is")],
+     *         "YOU ": () => [sprite("text_you")],
+     *     }
+     * });
+     * ```
+     *
+     * @default 1
+     */
+    charsPerTile?: number;
 }
 
 /**
@@ -145,11 +170,18 @@ export function level(map: string[], opt: LevelCompOpt): LevelComp {
     const createSpatialMap = (level: GameObj<LevelComp>) => {
         spatialMap = [];
         for (const child of level.children) {
-            insertIntoSpatialMap(child);
+            insertIntoSpatialMap(level, child);
         }
     };
 
-    const insertIntoSpatialMap = (obj: GameObj) => {
+    const ensureSpatialMapExists = (level: GameObj<LevelComp>) => {
+        if (!spatialMap) {
+            createSpatialMap(level);
+        }
+    };
+
+    const insertIntoSpatialMap = (level: GameObj<LevelComp>, obj: GameObj) => {
+        ensureSpatialMapExists(level);
         const i = tile2Hash(obj.tilePos);
         if (spatialMap![i]) {
             spatialMap![i].push(obj);
@@ -159,13 +191,12 @@ export function level(map: string[], opt: LevelCompOpt): LevelComp {
         }
     };
 
-    const removeFromSpatialMap = (obj: GameObj) => {
+    const removeFromSpatialMap = (level: GameObj<LevelComp>, obj: GameObj) => {
+        ensureSpatialMapExists(level);
         const i = tile2Hash(obj.tilePos);
         if (spatialMap![i]) {
             const index = spatialMap![i].indexOf(obj);
-            if (index >= 0) {
-                spatialMap![i].splice(index, 1);
-            }
+            if (index >= 0) spatialMap![i].splice(index, 1);
         }
     };
 
@@ -175,10 +206,10 @@ export function level(map: string[], opt: LevelCompOpt): LevelComp {
             const tilePos = level.pos2Tile(child.pos);
             if (child.tilePos.x != tilePos.x || child.tilePos.y != tilePos.y) {
                 spatialMapChanged = true;
-                removeFromSpatialMap(child);
+                removeFromSpatialMap(level, child);
                 child.tilePos.x = tilePos.x;
                 child.tilePos.y = tilePos.y;
-                insertIntoSpatialMap(child);
+                insertIntoSpatialMap(level, child);
             }
         }
         if (spatialMapChanged) {
@@ -242,7 +273,7 @@ export function level(map: string[], opt: LevelCompOpt): LevelComp {
     };
 
     // The connectivity map is used to see whether two locations are connected
-    // -1: inaccesible n: connectivity group
+    // -1: inaccessible n: connectivity group
     const createConnectivityMap = (level: GameObj<LevelComp>) => {
         const size = level.numRows() * level.numColumns();
         const traverse = (i: number, index: number) => {
@@ -344,13 +375,15 @@ export function level(map: string[], opt: LevelCompOpt): LevelComp {
         id: "level",
 
         add(this: GameObj<LevelComp>) {
-            map.forEach((row, i) => {
-                const keys = row.split("");
-                numColumns = Math.max(keys.length, numColumns);
-                keys.forEach((key, j) => {
-                    this.spawn(key, vec2(j, i));
-                });
-            });
+            const charsPerTile = opt.charsPerTile ?? 1;
+            for (let y = 0; y < map.length; y++) {
+                const row = map[y]!;
+                for (let j = 0, x = 0; j < row.length; j += charsPerTile) {
+                    this.spawn(row.slice(j, j + charsPerTile), vec2(x, y));
+                    x++;
+                    if (numColumns < x) numColumns = x;
+                }
+            }
         },
 
         tileWidth() {
@@ -370,6 +403,7 @@ export function level(map: string[], opt: LevelCompOpt): LevelComp {
 
             const comps = (() => {
                 if (typeof key === "string") {
+                    key = key.padEnd(opt.charsPerTile ?? 1);
                     if (opt.tiles[key]) {
                         if (typeof opt.tiles[key] !== "function") {
                             throw new Error(
@@ -417,7 +451,7 @@ export function level(map: string[], opt: LevelCompOpt): LevelComp {
             calcTransform(obj, obj.transform);
 
             if (spatialMap) {
-                insertIntoSpatialMap(obj);
+                insertIntoSpatialMap(this, obj);
                 this.trigger("spatialMapChanged");
                 this.trigger("navigationMapInvalid");
             }
@@ -460,9 +494,13 @@ export function level(map: string[], opt: LevelCompOpt): LevelComp {
             return spatialMap!;
         },
 
-        removeFromSpatialMap,
+        removeFromSpatialMap(this: GameObj<LevelComp>, obj: GameObj) {
+            removeFromSpatialMap(this, obj);
+        },
 
-        insertIntoSpatialMap,
+        insertIntoSpatialMap(this: GameObj<LevelComp>, obj: GameObj) {
+            insertIntoSpatialMap(this, obj);
+        },
 
         onSpatialMapChanged(this: GameObj<LevelComp>, cb: () => void) {
             return this.on("spatialMapChanged", cb);
@@ -737,9 +775,9 @@ export function levelFactory(data: any) {
         const d = data.tiles[key];
         const tags = d.tags;
         opt.tiles[key] = (pos: Vec2) => {
-            const comps: Comp[] = Object.keys(d).filter(k => k != "tags").map(
-                id => deserializeComp(id, d[id]),
-            );
+            const comps: Comp[] = Object.keys(d)
+                .filter((k) => k != "tags")
+                .map((id) => deserializeComp(id, d[id]));
             return [...comps, ...tags];
         };
     }
