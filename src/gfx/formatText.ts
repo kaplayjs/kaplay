@@ -6,7 +6,7 @@ import { Color, rgb } from "../math/color";
 import { vec2 } from "../math/math";
 import { _k } from "../shared";
 import type { Outline } from "../types";
-import { firstRune } from "../utils/runes";
+import { firstRune, runes } from "../utils/runes";
 import { alignPt } from "./anchor";
 import type { FormattedChar, FormattedText } from "./draw/drawFormattedText";
 import type { CharTransform, DrawTextOpt } from "./draw/drawText";
@@ -64,15 +64,11 @@ function applyCharTransform(fchar: FormattedChar, tr: CharTransform) {
 }
 
 export function compileStyledText(txt: any, locale?: string): StyledTextInfo {
+    const text = String(txt).normalize("NFC");
     const charStyleMap = {} as Record<number, [string, string][]>;
     const renderRunes: string[] = [];
     let renderText = "";
     let styleStack: [string, string][] = [];
-    // Normalize to NFC and walk grapheme clusters instead of UTF-16 code units,
-    // so style positions stay aligned with formatText(), which walks the same
-    // grapheme array. Keying by renderText.length would desync every style
-    // after an emoji, ZWJ sequence or astral char (e.g. CJK Extension B).
-    let text = String(txt).normalize("NFC");
 
     const emit = (ch: string) => {
         if (styleStack.length > 0) {
@@ -82,22 +78,27 @@ export function compileStyledText(txt: any, locale?: string): StyledTextInfo {
         renderRunes.push(ch);
     };
 
-    while (text !== "") {
-        if (text[0] === "\\") {
-            if (text.length === 1) {
+    const fmtRegex = /[\\[]/g;
+    const tagRegex = /\[(\/)?(\w+?)(?:=(.+?))?\]/y;
+
+    let i = 0;
+    while (i < text.length) {
+        if (text[i] === "\\") {
+            if (text.length === i + 1) {
                 throw new Error("Styled text error: \\ at end of string");
             }
-            const escaped = firstRune(text.slice(1), locale);
+            const escaped = firstRune(text.slice(i + 1), locale, true);
             emit(escaped);
-            text = text.slice(1 + escaped.length);
+            i += 1 + escaped.length;
             continue;
         }
-        if (text[0] === "[") {
-            const execResult = /^\[(\/)?(\w+?)(?:=(.+?))?\]/.exec(text);
+        if (text[i] === "[") {
+            tagRegex.lastIndex = i;
+            const execResult = tagRegex.exec(text);
             if (!execResult) {
                 // xxx: should throw an error here?
-                emit(text[0]);
-                text = text.slice(1);
+                emit(text[i]);
+                i++;
                 continue;
             }
             const [m, endSlash, theTagName, tagParam] = execResult;
@@ -120,12 +121,17 @@ export function compileStyledText(txt: any, locale?: string): StyledTextInfo {
                 }
             }
             else styleStack.push([theTagName, tagParam]);
-            text = text.slice(m.length);
+            i += m.length;
             continue;
         }
-        const grapheme = firstRune(text, locale);
-        emit(grapheme);
-        text = text.slice(grapheme.length);
+
+        // Segment the rest of the text at once until the next formatting char found
+        fmtRegex.lastIndex = i;
+        const match = fmtRegex.exec(text);
+        const end = match ? match.index : text.length;
+        const rest = text.slice(i, end);
+        runes(rest, locale, true).forEach(s => emit(s));
+        i = end;
     }
 
     if (styleStack.length > 0) {
