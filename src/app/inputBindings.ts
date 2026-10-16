@@ -73,7 +73,7 @@ class ChordedButtonDetector<T extends string = string> {
         T,
         { check: Set<T>; btns: Map<string | symbol, T[]> }
     >();
-    buttonsUsed = new Set<string | symbol>();
+    buttonsUsed = new Map<string | symbol, Set<T>>();
     updateBinding(button: string | symbol, bindings: T[]) {
         // clear out old binding
         const modsToClear = new Set<T>();
@@ -122,7 +122,10 @@ class ChordedButtonDetector<T extends string = string> {
                         continue options;
                     }
                 }
-                this.buttonsUsed.add(button);
+                if (!this.buttonsUsed.has(button)) {
+                    this.buttonsUsed.set(button, new Set());
+                }
+                this.buttonsUsed.get(button)!.add(key);
                 pressedButtons.push(button);
             }
         }
@@ -132,17 +135,18 @@ class ChordedButtonDetector<T extends string = string> {
         if (this.mods.has(key)) {
             this.mods.set(key, false);
         }
-        const commit = this.committers.get(key);
         const canceledButtons: (string | symbol)[] = [];
-        if (commit) {
-            for (var button of commit.btns.keys()) {
-                this.buttonsUsed.delete(button) && canceledButtons.push(button);
+        // Use the keys that activated each button, even if it was rebound while held.
+        for (const [button, keys] of this.buttonsUsed) {
+            if (keys.delete(key) && keys.size === 0) {
+                this.buttonsUsed.delete(button);
+                canceledButtons.push(button);
             }
         }
         return canceledButtons;
     }
     releaseAll(): (string | symbol)[] {
-        const buttons = [...this.buttonsUsed];
+        const buttons = [...this.buttonsUsed.keys()];
         this.buttonsUsed.clear();
         this.mods.forEach((_, mod) => this.mods.set(mod, false));
         return buttons;
@@ -210,8 +214,18 @@ export class ButtonProcessor {
         this._maybePress(this.byKeyCode.handleDown(keyCode), state);
     }
     processKeyup(key: Key, keyCode: string, state: AppState) {
-        this._maybeRelease(this.byKey.handleUp(key), state);
-        this._maybeRelease(this.byKeyCode.handleUp(keyCode), state);
+        const released = new Set([
+            ...this.byKey.handleUp(key),
+            ...this.byKeyCode.handleUp(keyCode),
+        ]);
+        for (const button of released) {
+            if (
+                !this.byKey.isButtonUsed(button)
+                && !this.byKeyCode.isButtonUsed(button)
+            ) {
+                this.state.release(button, state);
+            }
+        }
     }
     processMousedown(mb: MouseButton, state: AppState) {
         this._maybePress(this.byMouse.handleDown(mb), state);
