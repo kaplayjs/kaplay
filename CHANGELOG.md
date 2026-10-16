@@ -53,6 +53,8 @@ So your change should look like:
 
 ### Added
 
+- Added the ability to check which character a point is hovering over in the `text()` component using `TextComp.pointToChar()` or `TextComp.pointToCharIndex()`, to make text-based menus easier to build by simply styling text (#1064) - @dragoncoder047, @imaginarny
+- Added the `KAPLAYOpt.inspectTextChars` to draw bounding boxes of each character in the `text()` component when debug inspect enabled (#1064) - @dragoncoder047, @imaginarny
 - Added zero-width space word-break opportunities for wrapped text (#902) - @snowyukitty
 - Added the `LevelCompOpt.charsPerTile` option for the `level()` component and `addLevel()` which lets you use more than one character per tile, that way you can make clearer maps without having to resort to Unicode (#1006) - @dragoncoder047
 - Added `onPause()`, `onUnpause()`, `onHide()`, and `onShow()` events for listening to the state of the `paused` and `hidden` properties on game objects (#1041) - @dragoncoder047
@@ -87,8 +89,10 @@ So your change should look like:
 - Updated `text()` component and `compileStyledText()` to accept an optional `locale` option and parameter, respectively (#1115) - @mahirhir, @imaginarny
 
 ### Examples
+
 - Added a new `gacha` example! (#1057) - @imaginarny
 - Added a new `singletonTags` example! (#1172) - @imaginarny
+- Added a new `textClick` example! (#1064) - @dragoncoder047
 
 ### Fixed
 

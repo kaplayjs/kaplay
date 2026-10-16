@@ -528,6 +528,13 @@ export interface KAPLAYOpt {
      */
     inspectOnlyActive?: boolean;
     /**
+     * If the debug inspect view should draw bounding boxes of each character in the `text()` component.
+     * If `"styled"`, draw only if `TextCompOpt` `transform`, `styles`, or style tags were used.
+     *
+     * @default false
+     */
+    inspectTextChars?: boolean | "styled";
+    /**
      * Which strategy to use for broad phase collision, sap, sapv or quadtree.
      *
      * @default "sap"

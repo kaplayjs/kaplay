@@ -356,11 +356,11 @@ export function formatText(opt: DrawTextOpt): FormattedText {
 
     let curX: number = 0;
     let tw = 0;
-    const lines: Array<{
+    const lines: {
+        chars: FormattedChar[];
         width: number;
-        chars: { ch: FormattedChar; font: GfxFont }[];
-    }> = [];
-    let curLine: typeof lines[number]["chars"] = [];
+    }[] = [];
+    let curLine: FormattedChar[] = [];
     let cursor = 0;
     let lastBreak: { cursor: number; length: number; width: number } | null =
         null;
@@ -372,7 +372,7 @@ export function formatText(opt: DrawTextOpt): FormattedText {
 
         if (ch === "\u200B") {
             if (
-                curLine.length > 0 && curLine[curLine.length - 1].ch.ch !== " "
+                curLine.length > 0 && curLine[curLine.length - 1].ch !== " "
             ) {
                 lastBreak = {
                     cursor: cursor + 1,
@@ -493,10 +493,7 @@ export function formatText(opt: DrawTextOpt): FormattedText {
                 );
 
                 // queue char to be drawn
-                curLine.push({
-                    ch: theFChar as FormattedChar,
-                    font: requestedFontData,
-                });
+                curLine.push(theFChar as FormattedChar);
 
                 if (ch === " ") {
                     lastBreak = {
@@ -539,7 +536,7 @@ export function formatText(opt: DrawTextOpt): FormattedText {
         if (i > 0) th += lineSpacing;
         const ox = (tw - lines[i].width) * alignPt(opt.align ?? "left");
         let thisLineHeight = size;
-        for (const { ch } of lines[i].chars) {
+        for (const ch of lines[i].chars) {
             ch.pos = ch.pos.add(ox, th - baselineCenterOffset);
             ch.initPos = ch.pos;
             formattedChars.push(ch);
@@ -548,6 +545,7 @@ export function formatText(opt: DrawTextOpt): FormattedText {
                 size * (ch.stretchInPlace ? scale : ch.scale).y / scale.y,
             );
         }
+        if (!thisLineHeight) thisLineHeight = size;
         th += thisLineHeight;
     }
 
