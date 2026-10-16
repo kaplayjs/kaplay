@@ -336,7 +336,10 @@ export function formatText(opt: DrawTextOpt): FormattedText {
     const fontAtlas = font instanceof FontData || typeof font === "string"
         ? (() => {
             const atlas = getFontAtlasForFont(font);
-            if (atlas.maxHeight == 0) updateFontAtlas(font, chars[0]);
+            if (atlas.maxHeight == 0) {
+                const firstChar = chars.find(ch => ch !== "\u200B");
+                if (firstChar !== undefined) updateFontAtlas(font, firstChar);
+            }
             return atlas;
         })()
         : null;
@@ -359,23 +362,33 @@ export function formatText(opt: DrawTextOpt): FormattedText {
     }> = [];
     let curLine: typeof lines[number]["chars"] = [];
     let cursor = 0;
-    let lastSpace: number | null = null;
-    let lastSpaceWidth: number = 0;
+    let lastBreak: { cursor: number; length: number; width: number } | null =
+        null;
     let paraIndentX: number | undefined = undefined;
 
     // TODO: word break
     while (cursor < chars.length) {
         let ch = chars[cursor];
 
+        if (ch === "\u200B") {
+            if (
+                curLine.length > 0 && curLine[curLine.length - 1].ch.ch !== " "
+            ) {
+                lastBreak = {
+                    cursor: cursor + 1,
+                    length: curLine.length,
+                    width: curX,
+                };
+            }
+        }
         // always new line on '\n'
-        if (ch === "\n") {
+        else if (ch === "\n") {
             lines.push({
                 width: curX - letterSpacing,
                 chars: curLine,
             });
 
-            lastSpace = null;
-            lastSpaceWidth = 0;
+            lastBreak = null;
             curX = 0;
             curLine = [];
             paraIndentX = undefined;
@@ -454,14 +467,12 @@ export function formatText(opt: DrawTextOpt): FormattedText {
 
                 if (opt.width && curX + charWidth > opt.width && curX > 0) {
                     // new line on last word if width exceeds
-                    if (lastSpace != null) {
-                        cursor -= curLine.length - lastSpace;
-                        // omit trailing space
-                        curLine = curLine.slice(0, lastSpace - 1);
-                        curX = lastSpaceWidth;
+                    if (lastBreak != null) {
+                        cursor = lastBreak.cursor;
+                        curLine = curLine.slice(0, lastBreak.length);
+                        curX = lastBreak.width;
                     }
-                    lastSpace = null;
-                    lastSpaceWidth = 0;
+                    lastBreak = null;
 
                     lines.push({
                         width: curX - letterSpacing,
@@ -488,8 +499,11 @@ export function formatText(opt: DrawTextOpt): FormattedText {
                 });
 
                 if (ch === " ") {
-                    lastSpace = curLine.length;
-                    lastSpaceWidth = curX;
+                    lastBreak = {
+                        cursor: cursor + 1,
+                        length: curLine.length - 1,
+                        width: curX,
+                    };
                 }
                 if (
                     opt.indentAll

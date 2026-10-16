@@ -53,6 +53,7 @@ So your change should look like:
 
 ### Added
 
+- Added zero-width space word-break opportunities for wrapped text (#902) - @snowyukitty
 - Added the `LevelCompOpt.charsPerTile` option for the `level()` component and `addLevel()` which lets you use more than one character per tile, that way you can make clearer maps without having to resort to Unicode (#1006) - @dragoncoder047
 - Added `onPause()`, `onUnpause()`, `onHide()`, and `onShow()` events for listening to the state of the `paused` and `hidden` properties on game objects (#1041) - @dragoncoder047
 - Added `setRNG()` to change the random generator algorithm (#1057) - @mflerackers

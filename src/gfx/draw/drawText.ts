@@ -17,6 +17,7 @@ import { drawFormattedText } from "./drawFormattedText";
 export type DrawTextOpt = RenderProps & {
     /**
      * The text to render.
+     * Zero-width spaces (U+200B) allow wrapping without adding visible spaces.
      */
     text: string;
     /**
