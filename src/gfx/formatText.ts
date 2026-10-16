@@ -372,7 +372,7 @@ export function formatText(opt: DrawTextOpt): FormattedText {
 
         if (ch === "\u200B") {
             if (
-                curLine.length > 0 && curLine[curLine.length - 1].ch.ch !== " "
+                curLine.length > 0 && curLine[curLine.length - 1].ch !== " "
             ) {
                 lastBreak = {
                     cursor: cursor + 1,
