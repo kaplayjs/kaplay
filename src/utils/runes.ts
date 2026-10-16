@@ -70,10 +70,15 @@ function getSegmenter(locale?: string): Intl.Segmenter {
  *
  * @param string - The string to split into grapheme clusters
  * @param locale - Optional locale for locale-aware segmentation (e.g., 'bn' for Bengali, 'hi' for Hindi)
+ * @param isNormalized - If string was already normalized. Defaults to false.
  *
  * @returns Array of grapheme clusters
  */
-export function runes(string: string, locale?: string): string[] {
+export function runes(
+    string: string,
+    locale?: string,
+    isNormalized = false,
+): string[] {
     if (typeof string !== "string") {
         throw new TypeError("string cannot be undefined or null");
     }
@@ -81,7 +86,7 @@ export function runes(string: string, locale?: string): string[] {
     // Use Intl.Segmenter if available (Chrome 87+, Safari 14.1+, Firefox 125+)
     if (typeof Intl !== "undefined" && Intl.Segmenter) {
         // Normalize to NFC for consistent representation of combining characters
-        const normalized = string.normalize("NFC");
+        const normalized = isNormalized ? string : string.normalize("NFC");
         const segmenter = getSegmenter(locale);
         return Array.from(
             segmenter.segment(normalized),
@@ -91,6 +96,36 @@ export function runes(string: string, locale?: string): string[] {
 
     // Fallback to legacy implementation for older browsers
     return runesLegacy(string);
+}
+
+/**
+ * Get the first grapheme cluster of a string without splitting the rest of it.
+ * Equivalent to runes(string, locale)[0], but stops after the first cluster.
+ *
+ * @param string - The string to read the first grapheme cluster from
+ * @param locale - Optional locale for locale-aware segmentation
+ * @param isNormalized - If string was already normalized. Defaults to false.
+ *
+ * @returns The first grapheme cluster, or "" for an empty string
+ */
+export function firstRune(
+    string: string,
+    locale?: string,
+    isNormalized = false,
+): string {
+    // Use Intl.Segmenter if available (Chrome 87+, Safari 14.1+, Firefox 125+)
+    if (typeof Intl !== "undefined" && Intl.Segmenter) {
+        // Normalize to NFC for consistent representation of combining characters
+        const normalized = isNormalized ? string : string.normalize("NFC");
+        const segmenter = getSegmenter(locale);
+        for (const { segment } of segmenter.segment(normalized)) {
+            return segment;
+        }
+        return "";
+    }
+
+    // Fallback to legacy implementation for older browsers
+    return runesLegacy(string)[0] ?? "";
 }
 
 /**
