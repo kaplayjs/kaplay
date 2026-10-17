@@ -37,11 +37,12 @@ onUpdate(() => {
         );
         setCamPos(cameraPosition);
     }
+
+    const scroll = scrollDelta();
+    if (scroll.y !== 0) {
+        cameraScale *= 1 - 0.1 * Math.sign(scroll.y);
+        setCamScale(cameraScale);
+    }
 });
 
 let cameraScale = 1;
-
-onScroll((delta) => {
-    cameraScale = cameraScale * (1 - 0.1 * Math.sign(delta.y));
-    setCamScale(cameraScale);
-});
