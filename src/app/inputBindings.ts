@@ -122,10 +122,12 @@ class ChordedButtonDetector<T extends string = string> {
                         continue options;
                     }
                 }
-                if (!this.buttonsUsed.has(button)) {
-                    this.buttonsUsed.set(button, new Set());
+                let keys = this.buttonsUsed.get(button);
+                if (!keys) {
+                    keys = new Set<T>();
+                    this.buttonsUsed.set(button, keys);
                 }
-                this.buttonsUsed.get(button)!.add(key);
+                keys.add(key);
                 pressedButtons.push(button);
             }
         }
