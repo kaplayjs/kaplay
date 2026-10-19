@@ -6,7 +6,7 @@ The format is (mostly) based on
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project
 adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-- Breaking changes are marked with: **(!)**.
+- Breaking changes are listed under the `Breaking Changes` heading.
 - [Jump to v3001 changelog](#changelog-for-v3001).
 
 <!-- [CHANGELOG GUIDELINES PLEASE FOLLOW]
@@ -14,6 +14,7 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 Hey, KAPLAY Dev! Add your new changes in [unreleased] heading, below one of
 these heading:
 
+- Breaking Changes
 - Added
 - Removed
 - Changed
@@ -30,6 +31,11 @@ So your change should look like:
 
 ## [unreleased]
 
+### Breaking Changes
+
+- `new RNG()` and `setRNG()` now use config objects instead of the
+  string/custom rng parameter (#1097) - @Stanko
+
 ### Added
 
 - added a new ghost (#6767) - @lajbel
@@ -38,51 +44,91 @@ So your change should look like:
 
 ## [unreleased]
 
+### Breaking Changes
+
+- Renamed `RotationConstraintComp.scale` option to `ratio` (#976) - @dragoncoder047
+- Changed `onHide()` and `onShow()` now handle changes in the `GameObjRaw.hidden` property, previous behaviour was moved to `onTabHide()` and `onTabShow()` (#1041) - @dragoncoder047
+- Changed `new RNG()` and `setRNG()` now use config object `RNGConfig` instead of the string/custom rng parameter (#1097) - @Stanko
+- Removed `KAPLAYOpt.debugKey`, now use `KAPLAYOpt.debugKeys`
+
 ### Added
 
-- Made random generator algorithm configurable using `setRNG()` (#1057) -
-  @mflerackers
+- Added the ability to check which character a point is hovering over in the `text()` component using `TextComp.pointToChar()` or `TextComp.pointToCharIndex()`, to make text-based menus easier to build by simply styling text (#1064) - @dragoncoder047, @imaginarny
+- Added the `KAPLAYOpt.inspectTextChars` to draw bounding boxes of each character in the `text()` component when debug inspect enabled (#1064) - @dragoncoder047, @imaginarny
+- Added zero-width space word-break opportunities for wrapped text (#902) - @snowyukitty
+- Added the `LevelCompOpt.charsPerTile` option for the `level()` component and `addLevel()` which lets you use more than one character per tile, that way you can make clearer maps without having to resort to Unicode (#1006) - @dragoncoder047
+- Added `onPause()`, `onUnpause()`, `onHide()`, and `onShow()` events for listening to the state of the `paused` and `hidden` properties on game objects (#1041) - @dragoncoder047
+- Added `setRNG()` to change the random generator algorithm (#1057) - @mflerackers
 - Added xorshift32 as random generator (#1057) - @mflerackers
-- **(examples)** Added a new `gacha` example! (#1057) - @imaginarny
 - Added Alea as random generator (#1097) - @Stanko
-- Added `nextFrame()` helper function to defer/run a function on the next frame
-  (#1112) - @imaginarny
+- Added `KAPLAYOpt.lockResolution` to lock the canvas buffer resolution to the defined size and scale when resized by the `letterbox` option (#1106) - @imaginarny
+- Added `nextFrame()` helper function to defer/run a function on the next frame (#1112) - @imaginarny
+- Added `KGamepad.name` for identifying the recognized controller model (#1119) - @CEREBR4L
+- Added `KGamepad.type` field (`"ps4"`, `"ps5"`, `"playstation"`, `"xbox"`, `"switch"`, a custom string, or `undefined`) for picking button-glyph assets based on controller family (#1119) - @CEREBR4L
+- Added `KAPLAYOpt.debugKeys` to add and modify on runtime the buttons used for debug actions (#1136) - @amyspark-ng
+- Added `AudioPlayOpt.reverse` to make a sound play in reverse (#1140) - @amyspark-ng
+- Added `FakeMouseComp.scrollBy()` to trigger `onScroll()` (#1159) - @amyspark-ng
+- Added `FakeMouseComp.deltaPos` to see how much the position of the FakeMouse has changed in the last frame (not comparable to `mouseDeltaPos()`) since they move differently (#1159) - @amyspark-ng
+- Added `btn` parameter to `FakeMouseComp.press(btn)` to control which mouse button it will emulate. Defaults sto left (#1159) - @amyspark-ng
+- Added `KAPLAYOpt.singletonTags` with a few helpers to make listed tags unique, meaning only one object can have a given tag at a time, e.g. `["player", "focused"]` (#1172) - @imaginarny
+- Added `GetOpt.op` operator option to allow `"or"` besides the default `"and"` in `GameObjRaw.get()`, e.g. `get(["fruit", "vegetable"], { op: "or" })` (#1172) - @imaginarny
+- Added `rootURL(url)` to prefix the passed URL using `loadRoot()` value (#1135) - @amyspark-ng
 
 ### Changed
 
-- Added an optional parameter `rng` to all random related functions to pass the
-  rng to use (#1057) - @mflerackers
-- RNG can now be set and seeded on init (as `KAPLAYOpt.rng`) and in runtime
-  (#1097) - @Stanko
-- **(!)** `new RNG()` and `setRNG()` now use config objects instead of the
-  string/custom rng parameter (#1097) - @Stanko
-- Improved `text` component performance by separating text transform and
-  formatting, reducing update calls for both dynamic and (especially) static
-  text (#1125) - @imaginarny
+- Updated the rotation/angle constraint to track multiple turns of the source object, so that non-integer ratios don't result in jumping at the boundary (#976) - @dragoncoder047
+- Updated `drawSprite()` to allow slice9'ed sprites, and so now the `sprite()` component just calls `drawSprite()` (#1036) - @dragoncoder047
+- Added an optional parameter `rng` to all random related functions to pass the rng to use (#1057) - @mflerackers
+- RNG can now be set and seeded on init (as `KAPLAYOpt.rng`) and in runtime (#1097) - @Stanko
+- Debug keys, keys defined with the Buttons API, and keyboard input captured by e.g. focused `textInput` now use `preventDefault()` (#1114) - @imaginarny
+- Improved `text` component performance by separating text transform and formatting, reducing update calls for both dynamic and (especially) static text (#1125) - @imaginarny
+- Updated `KAPLAYOpt.onButtonPress`'s family to now accept `string` and `symbol` instead of only strings (#1136) - @amyspark-ng
+- Updated `video()` to render black rectangle (instead of white one) before the video has been played (#1145) - @Stanko
+- Updated `getLastInputDeviceType()` so updates to gamepad when you move a joystick (#1168) - @amyspark-ng
+- Updated `StyledTextInfo` to include the rendered text's grapheme clusters as a `runes` array - @mahirhir
+- Updated `text()` component and `compileStyledText()` to accept an optional `locale` option and parameter, respectively (#1115) - @mahirhir, @imaginarny
+
+### Examples
+
+- Added a new `gacha` example! (#1057) - @imaginarny
+- Added a new `singletonTags` example! (#1172) - @imaginarny
+- Added a new `textClick` example! (#1064) - @dragoncoder047
 
 ### Fixed
 
-- Fixed `TimerController.timeLeft` returning elapsed time instead of remaining
-  time (#1082) - @nojaf
-- Fixed mouse coordinates not being calculated properly when canvas is resized
-  by CSS and wasn't rendered at its natural size (#1096) - @Stanko
-- Modified `pos`, `skew` and `scale` components to make operations like
-  `obj.pos.x += 1` work again (#1109) - @ErikGXDev
-- Fixed `scale`, `skew`, and `rotate` component transforms not being applied on
-  the initial `GameObjRaw.use()` call (e.g. `obj.use(scale(2))`) - @mflerackers
-- Fixed `isKeyDown` and `isButtonDown` getting stuck on game loosing focus
-  (#1101) - @Stanko
-- Fixed `onMouseRelease` not being registered outside the canvas (#1113) -
-  @imaginarny
-- Fixed objects with a `text` component reporting wrong dimensions when scaled
-  using the `scale` component (#1125) - @imaginarny
-- Fixed the `layer` component property returning `null` when the layer index was
-  `0` (#1127) - @imaginarny
-- Fixed various `raycastRect` issues and standardized raycasting across all
-  shapes so rays originating inside a shape are now consistently trapped
-  (#1122) - @mflerackers
+- Fixed `scale`, `skew`, and `rotate` component transforms not being applied on the initial `GameObjRaw.use()` call (e.g. `obj.use(scale(2))`) - @mflerackers
+- Fixed `TimerController.timeLeft` returning elapsed time instead of remaining time (#1082) - @nojaf
+- Fixed mouse coordinates not being calculated properly when canvas is resized by CSS and wasn't rendered at its natural size (#1096) - @Stanko
+- Fixed `isKeyDown` and `isButtonDown` getting stuck on game loosing focus (#1101) - @Stanko
+- Fixed touch coordinates in aspect-fit fullscreen with fixed canvas size and letterbox disabled (#1106) - @imaginarny
+- Fixed incorrect resolution and scale of the debug inspect mode (#1106) - @imaginarny
+- Modified `pos`, `skew` and `scale` components to make operations like `obj.pos.x += 1` work again (#1109) - @ErikGXDev
+- Fixed `onMouseRelease` not being registered outside the canvas (#1113) - @imaginarny
+- Fixed `finish()` being able to complete an already finished tween, and prevented `timeLeft` from going negative and `currentTime` from exceeding the duration (#1117) - @imaginarny
+- Fixed gamepad button mappings (e.g. DualSense touchpad) breaking when the browser's reported `Gamepad.id` format changes, by matching on vendor/product id and controller name instead of the raw id string (#1119) - @CEREBR4L
+- Fixed `AreaComp.area.scale` not being set properly and restored support for `Vec2` property mutations on `scale` and `offset` (#1121) - @amyspark-ng, @imaginarny
+- Fixed various `raycastRect` issues and standardized raycasting across all shapes so rays originating inside a shape are now consistently trapped (#1122) - @mflerackers
+- Fixed objects with a `text` component reporting wrong dimensions when scaled using the `scale` component (#1125) - @imaginarny
+- Fixed the `layer` component property returning `null` when the layer index was `0` (#1127) - @imaginarny
+- Fixed triangulate by updating the convexity of nearby vertices after removing a concave vertex during ear cutting (#1134) - @mflerackers
+- Fixed `time()` that kept increasing while `debug.paused` was true (#1137) - @amyspark-ng
+- Fixed KAPLAY's mouse position not being updated when moving the FakeMouse by keyboard, causing it to not retrieve hovered objects by it (#1159) - @amyspark-ng
+- Fixed sprite component returning stale value after changing the sprite value dynamically (#1164) - @Stanko
+- Fixed `onTag()` and `onUntag()` getting triggered when trying to do so with the existing/same tag (#1172) - @imaginarny
+- Fixed collisions between two non-static bodies not conserving momentum, the velocity and mass of the other body are now taken into account (#1174) - @WynandVStaden
+- Fixed styled text (`[tag]...[/tag]`) style positions desyncing after an emoji, ZWJ sequence or astral character (#1115) - @mahirhir, @imaginarny
+- Fixed text color defined in `styles`/`transform` not being applied to grapheme clusters (#1115) - @imaginarny
 
 ## [4000.0.0-alpha.27.1] - 2026-05-12
+
+### Breaking Changes
+
+- Updated "explicit `LoadSpriteOpt.frames`" method of loading a sprite with
+  animations (via either `loadSprite()` or `loadSpriteAtlas()`) to use pixel
+  values for the coordinate space, which is more intuitive (#1061) -
+  @dragoncoder047
+- Renamed video `mute` parameter to `muted` to match the native API (#1129) -
+  @Stanko
 
 ### Added
 
@@ -94,14 +140,8 @@ So your change should look like:
 
 ### Changed
 
-- **(!)** Updated "explicit `LoadSpriteOpt.frames`" method of loading a sprite
-  with animations (via either `loadSprite()` or `loadSpriteAtlas()`) to use
-  pixel values for the coordinate space, which is more intuitive (#1061) -
-  @dragoncoder047
 - Added padding around edges of spritesheet to prevent stretch if uv ends up out
   of bounds (#1076) - @dragoncoder047
-- **(!)** Renamed video `mute` parameter to `muted` to match the native API
-  (#1129) - @Stanko
 
 ### Fixed
 
@@ -120,6 +160,21 @@ So your change should look like:
   (#1077) - @imaginarny, @mflerackers
 
 ## [4000.0.0-alpha.27] - 2026-03-19
+
+### Breaking Changes
+
+- The texture uv coordinates for primitives (solid- or gradient-filled
+  circles, rectangles, lines, and polygons) have now been changed to (1, 1)
+  instead of (0, 0), so shaders written for primitives will need to be updated.
+  (#1021) - @dragoncoder047
+- The global `onDraw()` handler's no-tag form now always draws before all game
+  objects are drawn, **regardless of whether it was attached after game
+  objects were added** (#977) - @lajbel
+- The sprite data format has been changed to allow individual frames to be on
+  different GPU textures. Now `SpriteData.tex` doesn't exist, and
+  `SpriteData.frames` is a list of `Frame`s instead of a list of `Quad`s. A
+  `Frame` contains `tex` and `q` (quad) properties that contain that data.
+  (#1021) - @dragoncoder047
 
 ### Added
 
@@ -147,23 +202,8 @@ So your change should look like:
 - Added `piecewiseBezier()` and `piecewiseCatmullRom()` to evaluate curves with
   multiple points - @mflerackers
 
-### Removed
+## Changed
 
-- **(!)** The texture uv coordinates for primitives (solid- or gradient-filled
-  circles, rectangles, lines, and polygons) have now been changed to (1, 1)
-  instead of (0, 0), so shaders written for primitives will need to be updated.
-  (#1021) - @dragoncoder047
-
-### Changed
-
-- **(!)** The global `onDraw()` handler's no-tag form now always draws before
-  all game objects are drawn, **regardless of whether it was attached after game
-  objects were added** (#977) - @lajbel
-- **(!)** The sprite data format has been changed to allow individual frames to
-  be on different GPU textures. Now `SpriteData.tex` doesn't exist, and
-  `SpriteData.frames` is a list of `Frame`s instead of a list of `Quad`s. A
-  `Frame` contains `tex` and `q` (quad) properties that contain that data.
-  (#1021) - @dragoncoder047
 - Updated the texture packer to use a new packing algorithm which may get more
   sprites onto the same texture, improving graphics batching performance
   (#1011) - @dragoncoder047
@@ -204,6 +244,13 @@ So your change should look like:
 
 ## [4000.0.0-alpha.26] - 2026-01-12
 
+### Breaking Changes
+
+- Added `AreaCompOpt.isSensor`. Areas without body or is sensor will no longer
+  be eligible for collisions - @mflerackers
+- `onClick(() => {})` was removed, use `onMousePress()` instead.
+  `onClick("tag", () => {});` stays the same - @lajbel
+
 ### Added
 
 - Added `floodFill()` for puzzle games - @mflerackers
@@ -216,8 +263,6 @@ So your change should look like:
 
 ### Changed
 
-- **(!)** Added `AreaCompOpt.isSensor`. Areas without body or is sensor will no
-  longer be eligible for collisions - @mflerackers
 - Both worldPos and screenPos are properties now - @mflerackers
 
 ### Fixed
@@ -241,12 +286,12 @@ So your change should look like:
   @mflerackers
 - Sticky platforms work again - @mflerackers
 
-### Removed
-
-- **(!)** `onClick(() => {})` was removed, use `onMousePress()` instead.
-  `onClick("tag", () => {});` stays the same,
-
 ## [4000.0.0-alpha.25] - 2025-12-23
+
+### Breaking Changes
+
+- You can no longer change the position of an object by doing obj.pos.x += 1.
+  You need to assign a new Vec2 or use moveBy instead - @mflerackers
 
 ### Added
 
@@ -257,8 +302,6 @@ So your change should look like:
 
 ### Changed
 
-- **(!)** You can no longer change the position of an object by doing obj.pos.x
-  += 1. You need to assign a new Vec2 or use moveBy instead - @mflerackers
 - Transforms are now only recalculated when needed. Thus static objects no
   longer increase computation in the transform phase - @mflerackers
 - Areas are now only recalculated when the area settings or (optional)
@@ -306,6 +349,11 @@ So your change should look like:
 
 ## [4000.0.0-alpha.23] - 2025-11-05
 
+### Breaking Changes
+
+- Renamed `onShow()` to `onTabShow()` and `onHide()` to `onTabHide()` -
+  @lajbel
+
 ### Added
 
 - Added `getGamepadAnalogButton()` to read the analog value of buttons like the
@@ -334,9 +382,6 @@ So your change should look like:
       },
   });
   ```
-
-- Added `skew` to text formatting, so now italics is possible - @dragoncoder047
-
 - Added **lifetime scopes**, a way to define the lifetime of an event handler
   using a specific scope, `scene`, `app` or a game object - @lajbel,
   @dragoncoder047
@@ -417,9 +462,6 @@ So your change should look like:
 
 ### Changed
 
-- (**!**) Renamed `onShow()` to `onTabShow()` and `onHide()` to `onTabHide()` -
-  @lajbel
-
 - In addition to being the `scene()` function, now `scene` is also a scope for
   scene event handlers - @lajbel
 
@@ -442,6 +484,11 @@ So your change should look like:
 - Fixed FPS cap not working correctly - @mflerackers, @dragoncoder047
 
 ## [4000.0.0-alpha.22] - 2025-10-9
+
+### Breaking Changes
+
+- `KAPLAYCtx` doesn't use generics anymore. Now, `KAPLAYCtxT` uses them -
+  @lajbel
 
 ### Added
 
@@ -545,8 +592,6 @@ So your change should look like:
   // blue frog
   add([sprite("bean"), color(0x0000ff)]);
   ```
-- **(!)** `KAPLAYCtx` doesn't use generics anymore. Now, `KAPLAYCtxT` uses
-  them - @lajbel
 - Now, `kaplay` will return `KAPLAYCtx` or `KAPLAYCtxT` depending if it's using
   Advanced TypeScript Features or not - @lajbel
 - `loadShader()` now also checks for link errors as well as compile errors and
@@ -559,6 +604,11 @@ So your change should look like:
   before drawing - @mflerackers
 
 ## [4000.0.0-alpha.21] - 2025-08-07
+
+### Breaking Changes
+
+- Renamed `KAPLAYOpt.tagsAsComponents` to `KAPLAYOpt.tagComponentIds` -
+  @lajbel
 
 ### Added
 
@@ -608,9 +658,6 @@ So your change should look like:
 
 - Now `GameObjRaw.exists()` work for nested objects
 - Now moving mouse changes the value of `getLastInputDevice()` - @amyspark-ng
-- (**!**) Renamed `KAPLAYOpt.tagsAsComponents` to `KAPLAYOpt.tagComponentIds` -
-  @lajbel
-
 ### Fixed
 
 - Fixed shader error messages - @dragoncoder047
@@ -618,6 +665,10 @@ So your change should look like:
   TextMetrics props - @imaginarny
 
 ## [4000.0.0-alpha.20] - 2025-06-15
+
+### Breaking Changes
+
+- `loadPedit()` was removed - @lajbel
 
 ### Added
 
@@ -638,14 +689,19 @@ So your change should look like:
 - Fixed "add" event running twice in `addLevel()` tiles - @lajbel
 - Fixed blend component having a wrong ID - @lajbel
 
-### Removed
-
-- **(!)** `loadPedit()` was removed - @lajbel
-
 ## [4000.0.0-alpha.19] - 2025-05-16
 
 > This version changelog covers versions 4000.0.0-alpha.0 through
 > 4000.0.0-alpha.19, as we didn't have a concise changelog strategy before.
+
+### Breaking Changes
+
+- Now `z()` is global instead of relative - @mflerackers
+- Layers now work globally, no longer only between siblings - @mflerackers
+- Changed default behavior to `kaplay({ tagsAsComponents: false })`
+- `make()` was sent to doom - @lajbel
+
+
 
 ### Added
 
@@ -721,10 +777,6 @@ So your change should look like:
 
 ### Changed
 
-- **(!)** - Now `z()` is global instead of relative - @mflerackers
-- **(!)** Layers now work globally, no longer only between siblings -
-  @mflerackers
-- **(!)**: Changed default behavior to `kaplay({ tagsAsComponents: false })`
 - The physics engine creates less garbage - @mflerackers
 - Tag-based events are slightly faster - @dragoncoder047
 - Moved camera to the shader - @mflerackers
@@ -757,10 +809,6 @@ So your change should look like:
 - Fixed `PatrolComp` not going to last waypoint - @nojaf
 - Fixed various TypeScript types - @amyspark-ng, @lajbel, @KeSuave
 
-### Removed
-
-- **(!)** `make()` was sent to doom - @lajbel
-
 ---
 
 # Changelog for v3001
@@ -773,6 +821,8 @@ So your change should look like:
   TextMetrics props - @imaginarny
 
 ## [3001.0.19] - 2025-06-15
+
+### Fixed
 
 - Fixed `AreaComp#onClick()` attaching events to app, instead of object, so
   event wasn't being paused with `obj.paused` - @lajbel
@@ -1035,6 +1085,12 @@ kaplay({
 - Fixed `.use()` and `.unuse()` with area components
 
 ## [3001.0.0] - 2024-10-31
+
+### Breaking Changes
+
+- Removed compatibility to use two KAPLAY frames in the same page
+- Many TypeScript definitions were fixed, if you use TypeScript now maybe you
+  see new errors that make your code strict
 
 ### Added
 
@@ -1336,9 +1392,6 @@ kaplay({
 
 ### Removed
 
-- **(!)** Removed compatibility to use two KAPLAY frames in the same page
-- **(!)** Many TypeScript definitions were fixed, if you use TypeScript now
-  maybe you see new errors that make your code strict
 - Fix error screen not showing with not Error object
 - Fix error where debug screen was scaling bad the blue rectangles
 - Fix error where error screen was not showing when the error was thrown in a

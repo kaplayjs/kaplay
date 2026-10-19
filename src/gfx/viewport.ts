@@ -8,94 +8,113 @@ rendering the viewport
 - Canvas size: The CSS size of the canvas element
 
 - Buffer size: The quantity of pixels that are rendered by WebGL. It varies
-depending of the
+depending on the canvas size and pixel density
 
-- Desired Size: The desired size is the size the user defines for keeping an
-aspect ratio
+- Desired size: The size the user defines to keep an aspect ratio
 
-- Viewport size: The final rendered size
+- Viewport (screen): The final displayed size, sub-rect of the Canvas CSS size
+- Viewport (buffer): The final rendered size, sub-rect of the Canvas buffer
+size/density
 
-We update the canvas before run this, you should check initEvents.ts
-in onResize method.
+Screen viewport and buffer viewport match if letterbox enabled with no resolution
+lock or no desired (fixed) size set.
+
+We update the canvas before we run this, you should check appEvents.ts
+onResize method.
 */
 
 export function updateViewport() {
     const pixelDensity = _k.gfx.pixelDensity;
     const desiredWidth = _k.globalOpt.width;
     const desiredHeight = _k.globalOpt.height;
-    const drawingBufferWidth = _k.gfx.gl.drawingBufferWidth;
-    const drawingBufferHeight = _k.gfx.gl.drawingBufferHeight;
-    const canvasWidth = drawingBufferWidth / pixelDensity;
-    const canvasHeight = drawingBufferHeight / pixelDensity;
+    const canvasWidth = _k.canvas.offsetWidth;
+    const canvasHeight = _k.canvas.offsetHeight;
+    const letterbox = _k.globalOpt.letterbox;
+    const lockResolution = _k.globalOpt.lockResolution;
+    const fixedSize = desiredWidth && desiredHeight;
 
-    // console.log("[vwp] buffer size", drawingBufferWidth, drawingBufferHeight);
+    // console.log("[vwp] buffer size", _k.gfx.gl.drawingBufferWidth, _k.gfx.gl.drawingBufferHeight);
     // console.log("[vwp] desired size", desiredWidth, desiredHeight);
     // console.log("[vwp] canvas size", canvasWidth, canvasHeight);
 
     let x = 0;
     let y = 0;
-    let viewportWidth = canvasWidth;
-    let viewportHeight = canvasHeight;
+    let width = canvasWidth;
+    let height = canvasHeight;
 
-    if (_k.globalOpt.letterbox) {
-        if (!desiredWidth || !desiredHeight) {
+    if (!fixedSize) {
+        if (letterbox || lockResolution) {
             throw new Error(
-                "Letterboxing requires width and height defined.",
+                `${
+                    letterbox
+                        ? "Letterboxing"
+                        : "Resolution locking"
+                } requires width and height defined.`,
             );
         }
-
+    }
+    else {
         const canvasAspectRatio = canvasWidth / canvasHeight;
-        const disairedAspectRatio = desiredWidth / desiredHeight;
+        const desiredAspectRatio = desiredWidth / desiredHeight;
 
-        // In letterbox, we scale one width/height for keep aspect ratio,
-        // depending of what side is larger
-        if (canvasAspectRatio > disairedAspectRatio) {
-            const scaledWidth = canvasHeight * disairedAspectRatio;
-
-            x = (canvasWidth - scaledWidth) / 2;
-            viewportWidth = scaledWidth;
+        // We scale either width or height to keep aspect ratio, depending
+        // on what side is larger, creating a letterbox
+        if (canvasAspectRatio > desiredAspectRatio) {
+            width = canvasHeight * desiredAspectRatio;
+            x = (canvasWidth - width) / 2;
         }
         else {
-            const scaledHeight = canvasWidth / disairedAspectRatio;
-
-            viewportHeight = scaledHeight;
-            y = (canvasHeight - scaledHeight) / 2;
+            height = canvasWidth / desiredAspectRatio;
+            y = (canvasHeight - height) / 2;
         }
     }
 
-    _k.gfx.viewport = {
-        x: x,
-        y: y,
-        width: viewportWidth,
-        height: viewportHeight,
-        scale: (_k.gfx.viewport.width + _k.gfx.viewport.height)
+    // Screen viewport
+    _k.gfx.screenViewport = {
+        x,
+        y,
+        width,
+        height,
+        scale: (width + height)
             / (_k.gfx.width + _k.gfx.height),
     };
 
-    // console.log("[vwp] viewport is", _k.gfx.viewport);
+    // Buffer viewport
+    if (!fixedSize || (letterbox && !lockResolution)) {
+        _k.gfx.viewport = _k.gfx.screenViewport;
+    }
+    else {
+        _k.gfx.viewport.width = _k.gfx.gl.drawingBufferWidth / pixelDensity;
+        _k.gfx.viewport.height = _k.gfx.gl.drawingBufferHeight / pixelDensity;
+        _k.gfx.viewport.scale = (_k.gfx.viewport.width + _k.gfx.viewport.height)
+            / (_k.gfx.width + _k.gfx.height);
+    }
+
+    // console.log("[vwp] buffer viewport is", _k.gfx.viewport);
+    // console.log("[vwp] screen viewport is", _k.gfx.screenViewport);
 }
 
-export function viewportToCanvas(pt: Vec2) {
+export function viewportToCanvas(x: number, y: number) {
     return new Vec2(
-        (pt.x * _k.gfx.viewport.width / _k.gfx.width + _k.gfx.viewport.x)
-            / _k.app.state.canvasScaleX,
-        (pt.y * _k.gfx.viewport.height / _k.gfx.height + _k.gfx.viewport.y)
-            / _k.app.state.canvasScaleY,
+        x * _k.gfx.screenViewport.width / _k.gfx.width
+            + _k.gfx.screenViewport.x,
+        y * _k.gfx.screenViewport.height / _k.gfx.height
+            + _k.gfx.screenViewport.y,
     );
 }
 
-export function viewportToCanvasLocal(pt: Vec2) {
+export function viewportToCanvasLocal(x: number, y: number) {
     return new Vec2(
-        pt.x * _k.gfx.viewport.width / _k.gfx.width,
-        pt.y * _k.gfx.viewport.height / _k.gfx.height,
+        x * _k.gfx.viewport.width / _k.gfx.width,
+        y * _k.gfx.viewport.height / _k.gfx.height,
     );
 }
 
-export function canvasToViewport(pt: Vec2) {
+export function canvasToViewport(x: number, y: number) {
     return new Vec2(
-        (pt.x * _k.app.state.canvasScaleX - _k.gfx.viewport.x)
-            * _k.gfx.width / _k.gfx.viewport.width,
-        (pt.y * _k.app.state.canvasScaleY - _k.gfx.viewport.y)
-            * _k.gfx.height / _k.gfx.viewport.height,
+        (x - _k.gfx.screenViewport.x) * _k.gfx.width
+            / _k.gfx.screenViewport.width,
+        (y - _k.gfx.screenViewport.y) * _k.gfx.height
+            / _k.gfx.screenViewport.height,
     );
 }

@@ -3,7 +3,7 @@ import { _k } from "../shared";
 import { getFileName } from "../utils/dataURL";
 import { type Asset, fetchJSON } from "./asset";
 import { type LoadSpriteSrc, type SpriteAnim, SpriteData } from "./sprite";
-import { fixURL } from "./utils";
+import { rootURL } from "./utils";
 
 /**
  * @group Assets
@@ -34,8 +34,8 @@ export function loadAseprite(
     imgSrc: LoadSpriteSrc,
     jsonSrc: string | AsepriteData,
 ): Asset<SpriteData> {
-    imgSrc = fixURL(imgSrc);
-    jsonSrc = fixURL(jsonSrc);
+    imgSrc = rootURL(imgSrc);
+    jsonSrc = rootURL(jsonSrc);
 
     if (typeof imgSrc === "string" && !jsonSrc) {
         jsonSrc = getFileName(imgSrc) + ".json";
@@ -51,10 +51,10 @@ export function loadAseprite(
             const size = data.meta.size;
             const frames = data.frames.map((f: any) => {
                 return new Quad(
-                    f.frame.x / size.w,
-                    f.frame.y / size.h,
-                    f.frame.w / size.w,
-                    f.frame.h / size.h,
+                    f.frame.x, // / size.w,
+                    f.frame.y, // / size.h,
+                    f.frame.w, // / size.w,
+                    f.frame.h, // / size.h,
                 );
             });
             const anims: Record<string, number | SpriteAnim> = {};

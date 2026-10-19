@@ -35,7 +35,7 @@ export function drawDebug() {
         }
 
         // Get it before any debug drawing, to get the number of non-debug draws
-        const batches = _k.gfx.renderer.numDraws;
+        const batches = _k.gfx.lastDrawCalls;
 
         pushTransform();
         _k.game.root.drawInspect();
@@ -59,7 +59,10 @@ export function drawDebug() {
             lines.push(...inspecting.tags.map(t => `tag: ${t}`));
 
             drawInspectText(
-                viewportToCanvasLocal(_k.app.mousePos()),
+                viewportToCanvasLocal(
+                    _k.app.state.mousePos.x,
+                    _k.app.state.mousePos.y,
+                ),
                 lines.join("\n"),
             );
         }

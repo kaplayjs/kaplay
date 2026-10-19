@@ -9,6 +9,12 @@ src-tauri/target/
 .replit
 replit.nix
 /.obsidian
-.pnpm-store
 tsconfig.vitest-temp.json
 src/index.ts
+
+# Playwright
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/
+/playwright/.auth/

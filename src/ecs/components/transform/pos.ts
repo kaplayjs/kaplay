@@ -233,7 +233,7 @@ export function pos(...args: Vec2Args): PosComp {
         drawInspect() {
             drawCircle({
                 color: rgb(255, 0, 0),
-                radius: 4 / _k.gfx.viewport.scale,
+                radius: 4 / _k.gfx.screenViewport.scale,
             });
         },
 

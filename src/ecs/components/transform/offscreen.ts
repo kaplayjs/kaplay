@@ -1,7 +1,7 @@
 import { DEF_OFFSCREEN_DIS } from "../../../constants/general";
 import type { KEventController } from "../../../events/events";
 import { height, width } from "../../../gfx/stack";
-import { Rect, testRectPoint, vec2 } from "../../../math/math";
+import { Rect, testRectPoint, testRectRect, vec2 } from "../../../math/math";
 import { _k } from "../../../shared";
 import type { Comp, GameObj } from "../../../types";
 import type { RectComp } from "../draw/rect";
@@ -110,7 +110,7 @@ export function offscreen(opt: OffScreenCompOpt = {}): OffScreenComp {
                 selfRect.width = this.width;
                 selfRect.height = this.height;
                 selfRect.pos = this.pos;
-                return selfRect.collides(screenRect);
+                return testRectRect(selfRect, screenRect);
             }
             const dist = this.offscreenDistance
                 ? this.offscreenDistance
