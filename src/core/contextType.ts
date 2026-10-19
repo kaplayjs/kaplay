@@ -4675,8 +4675,8 @@ export interface KAPLAYCtx {
     /**
      * Camera shake.
      *
-     * @param intensity - The intensity of the shake. Default to 12.
-     * @param duration - The duration of the shake. If not passed, the intensity will determine the duration.
+     * @param intensity - The intensity of the shake. Can be a number or a `vec2` to constrain the shake direction. Defaults to 12.
+     * @param duration - The duration of the shake in seconds. If not passed, the intensity will determine the duration.
      *
      * @example
      * ```js
@@ -4684,6 +4684,9 @@ export interface KAPLAYCtx {
      * bean.onCollide("bomb", () => {
      *     shake(120)
      * })
+     *
+     * // shake horizontally only for half a second like an "error"
+     * shake(vec2(60, 0), 0.5)
      * ```
      *
      * @since v3000.0
