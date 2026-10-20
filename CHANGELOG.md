@@ -76,6 +76,7 @@ So your change should look like:
 
 ### Changed
 
+- Updated the camera `shake()` intensity parameter to also accept a `Vec2` to constrain the shake direction and added an optional `duration` parameter (default is determined by intensity, as before) (#1003) - @mflerackers
 - Updated the rotation/angle constraint to track multiple turns of the source object, so that non-integer ratios don't result in jumping at the boundary (#976) - @dragoncoder047
 - Updated `drawSprite()` to allow slice9'ed sprites, and so now the `sprite()` component just calls `drawSprite()` (#1036) - @dragoncoder047
 - Added an optional parameter `rng` to all random related functions to pass the rng to use (#1057) - @mflerackers
