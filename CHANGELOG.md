@@ -247,6 +247,8 @@ So your change should look like:
 
 ### Breaking Changes
 
+- Added `turnCost` option to pathfinding logic, allowing you to specify a
+  penalty for direction changes when calculating paths
 - Added `AreaCompOpt.isSensor`. Areas without body or is sensor will no longer
   be eligible for collisions - @mflerackers
 - `onClick(() => {})` was removed, use `onMousePress()` instead.
