@@ -10,6 +10,20 @@ import type { Comp, GameObj } from "../../../types";
 import { nextRenderAreaVersion } from "../physics/area";
 import type { PosComp } from "../transform/pos";
 
+/**
+ * The serialized {@link video `video()`} component.
+ *
+ * @group Components
+ * @subgroup Component Serialization
+ */
+export interface SerializedVideoComp {
+    url: string;
+    width: number;
+    height: number;
+    muted: boolean;
+    loop: boolean;
+}
+
 export interface VideoComp extends Comp {
     width: number;
     height: number;
@@ -21,6 +35,7 @@ export interface VideoComp extends Comp {
     loop: boolean;
     onEnd(action: () => void): KEventController;
     renderArea(): Rect;
+    serialize(): SerializedVideoComp;
 }
 
 export type VideoCompOpt = {
@@ -198,5 +213,19 @@ export function video(
             return _shape;
         },
         _renderAreaVersion: 0,
+        serialize() {
+            return {
+                url: url,
+                width: this.width,
+                height: this.height,
+                muted: this.muted,
+                loop: this.loop,
+            };
+        },
     };
+}
+
+export function videoFactory(data: SerializedVideoComp) {
+    const { url, ...opt } = data;
+    return video(url, opt);
 }

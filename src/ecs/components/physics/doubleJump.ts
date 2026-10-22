@@ -1,6 +1,17 @@
 import type { KEventController } from "../../../events/events";
+import { clamp } from "../../../math/clamp";
 import type { Comp, GameObj } from "../../../types";
 import type { BodyComp } from "./body";
+
+/**
+ * The serialized {@link doubleJump `doubleJump()`} component.
+ *
+ * @group Components
+ * @subgroup Component Serialization
+ */
+export interface SerializedDoubleJumpComp {
+    numJumps: number;
+}
 
 /**
  * The {@link doubleJump `doubleJump()`} component.
@@ -13,6 +24,10 @@ export interface DoubleJumpComp extends Comp {
      * Number of jumps allowed.
      */
     numJumps: number;
+    /**
+     * Number of jumps left.
+     */
+    jumpsLeft: number;
     /**
      * Performs double jump (the initial jump only happens if player is grounded).
      */
@@ -29,6 +44,12 @@ export function doubleJump(numJumps: number = 2): DoubleJumpComp {
         id: "doubleJump",
         require: ["body"],
         numJumps: numJumps,
+        get jumpsLeft() {
+            return jumpsLeft;
+        },
+        set jumpsLeft(n: number) {
+            jumpsLeft = clamp(n, 0, this.numJumps);
+        },
         add(this: GameObj<BodyComp | DoubleJumpComp>) {
             this.onGround(() => {
                 jumpsLeft = this.numJumps;
@@ -53,5 +74,14 @@ export function doubleJump(numJumps: number = 2): DoubleJumpComp {
         inspect(this: GameObj<BodyComp | DoubleJumpComp>) {
             return `jumpsLeft: ${jumpsLeft}`;
         },
+        serialize() {
+            return {
+                numJumps: this.numJumps,
+            };
+        },
     };
+}
+
+export function doubleJumpFactory(data: SerializedDoubleJumpComp) {
+    return doubleJump(data.numJumps);
 }
