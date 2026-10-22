@@ -43,6 +43,7 @@ export interface SerializedTextComp {
     lineSpacing?: number;
     letterSpacing?: number;
     indentAll?: boolean;
+    locale?: string;
 }
 
 /**
@@ -114,6 +115,9 @@ export interface TextComp extends Comp {
      */
     formattedText(): FormattedText;
 
+    /**
+     * Note: Options `transform` and `styles` are currently not supported.
+     */
     serialize(): SerializedTextComp;
 
     /**
@@ -457,6 +461,7 @@ export function text(t: string, opt: TextCompOpt = {}): TextComp {
                 lineSpacing: this.lineSpacing,
                 letterSpacing: this.letterSpacing,
                 indentAll: opt.indentAll,
+                locale: opt.locale,
             };
         },
     } as TextComp;
@@ -497,5 +502,6 @@ export function textFactory(data: SerializedTextComp) {
         indentAll: data.indentAll,
         letterSpacing: data.letterSpacing,
         lineSpacing: data.letterSpacing,
+        locale: data.locale,
     });
 }

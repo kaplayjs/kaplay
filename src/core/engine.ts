@@ -168,7 +168,7 @@ export const createEngine = (gopt: KAPLAYOpt) => {
     registerPrefabFactory("rect", rectFactory);
     registerPrefabFactory("shader", shaderFactory); // partial support (no uniform)
     registerPrefabFactory("sprite", spriteFactory);
-    registerPrefabFactory("text", textFactory);
+    registerPrefabFactory("text", textFactory); // partial support (no transform & styles)
     registerPrefabFactory("uvquad", uvquadFactory);
     registerPrefabFactory("video", videoFactory);
 
