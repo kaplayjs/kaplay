@@ -1510,7 +1510,7 @@ export interface KAPLAYCtx {
     /**
      * Follow another game obj's position.
      *
-     * @param obj - The tag ({@link KAPLAYOpt.singletonTags `singleton`} preferably if you plan to use serialize/prefabs), or unique name (of existing {@link named} obj) to follow.
+     * @param obj - The tag ({@link KAPLAYOpt.singletonTags singleton} preferably if you plan to use serialize/prefabs), or unique name (of existing {@link named} obj) to follow.
      * @param offset - The offset to follow at.
      *
      * @example
@@ -1707,7 +1707,7 @@ export interface KAPLAYCtx {
      */
     lifespan(time: number, options?: LifespanCompOpt): EmptyComp;
     /**
-     * Names an game obj.
+     * Names a game obj.
      *
      * @param name - The name to set.
      *
