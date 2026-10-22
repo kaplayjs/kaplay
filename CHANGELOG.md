@@ -47,9 +47,9 @@ So your change should look like:
 ### Breaking Changes
 
 - Renamed `RotationConstraintComp.scale` option to `ratio` (#976) - @dragoncoder047
-- Changed `onHide()` and `onShow()` now handle changes in the `GameObjRaw.hidden` property, previous behaviour was moved to `onTabHide()` and `onTabShow()` (#1041) - @dragoncoder047
-- Changed `new RNG()` and `setRNG()` now use config object `RNGConfig` instead of the string/custom rng parameter (#1097) - @Stanko
-- Removed `KAPLAYOpt.debugKey`, now use `KAPLAYOpt.debugKeys`
+- Changed `onHide()` and `onShow()` to handle changes in the `GameObjRaw.hidden` property, previous behaviour was moved to `onTabHide()` and `onTabShow()` (#1041) - @dragoncoder047
+- Changed `new RNG()` and `setRNG()` to use config object `RNGConfig` instead of the string/custom rng parameter (#1097) - @Stanko
+- Removed `KAPLAYOpt.debugKey`, use `KAPLAYOpt.debugButtons` now instead (#1136) - @amyspark-ng
 
 ### Added
 
@@ -65,11 +65,11 @@ So your change should look like:
 - Added `nextFrame()` helper function to defer/run a function on the next frame (#1112) - @imaginarny
 - Added `KGamepad.name` for identifying the recognized controller model (#1119) - @CEREBR4L
 - Added `KGamepad.type` field (`"ps4"`, `"ps5"`, `"playstation"`, `"xbox"`, `"switch"`, a custom string, or `undefined`) for picking button-glyph assets based on controller family (#1119) - @CEREBR4L
-- Added `KAPLAYOpt.debugKeys` to add and modify on runtime the buttons used for debug actions (#1136) - @amyspark-ng
+- Added `KAPLAYOpt.debugButtons` to rebind the buttons used for debug actions, with `Debug.setButton()` to modify them at runtime as well (#1136) - @amyspark-ng
 - Added `AudioPlayOpt.reverse` to make a sound play in reverse (#1140) - @amyspark-ng
 - Added `FakeMouseComp.scrollBy()` to trigger `onScroll()` (#1159) - @amyspark-ng
 - Added `FakeMouseComp.deltaPos` to see how much the position of the FakeMouse has changed in the last frame (not comparable to `mouseDeltaPos()`) since they move differently (#1159) - @amyspark-ng
-- Added `btn` parameter to `FakeMouseComp.press(btn)` to control which mouse button it will emulate. Defaults sto left (#1159) - @amyspark-ng
+- Added `btn` parameter to `FakeMouseComp.press(btn)` to control which mouse button it will emulate (defaults to left) (#1159) - @amyspark-ng
 - Added `KAPLAYOpt.singletonTags` with a few helpers to make listed tags unique, meaning only one object can have a given tag at a time, e.g. `["player", "focused"]` (#1172) - @imaginarny
 - Added `GetOpt.op` operator option to allow `"or"` besides the default `"and"` in `GameObjRaw.get()`, e.g. `get(["fruit", "vegetable"], { op: "or" })` (#1172) - @imaginarny
 - Added `rootURL(url)` to prefix the passed URL using `loadRoot()` value (#1135) - @amyspark-ng
@@ -119,6 +119,7 @@ So your change should look like:
 - Fixed collisions between two non-static bodies not conserving momentum, the velocity and mass of the other body are now taken into account (#1174) - @WynandVStaden
 - Fixed styled text (`[tag]...[/tag]`) style positions desyncing after an emoji, ZWJ sequence or astral character (#1115) - @mahirhir, @imaginarny
 - Fixed text color defined in `styles`/`transform` not being applied to grapheme clusters (#1115) - @imaginarny
+- Fixed `level` errors caused by movement functions like `TileComp.tileMove()`, eliminating the need to manually trigger spatial map creation beforehand (#1078) - @SobennaStory
 
 ## [4000.0.0-alpha.27.1] - 2026-05-12
 

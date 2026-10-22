@@ -513,7 +513,7 @@ export interface KAPLAYCtx {
      */
     setSingletonTags(tags: Tag[]): void;
     /**
-     * Make tag a {@link KAPLAYOpt.singletonTags `singleton tag`}.
+     * Make tag a {@link KAPLAYOpt.singletonTags singleton tag}.
      * All existing objects with a tag will be untagged except the passed `obj` or the last occurrence in the object tree.
      *
      * @param tag - The tag.
@@ -524,7 +524,7 @@ export interface KAPLAYCtx {
      */
     addSingletonTag(tag: Tag, obj?: GameObj): void;
     /**
-     * Make tag(s) no longer {@link KAPLAYOpt.singletonTags `singleton tag(s)`}.
+     * Make tag(s) no longer {@link KAPLAYOpt.singletonTags singleton tag(s)}.
      *
      * @param tag - The tag(s) to remove.
      *
@@ -533,7 +533,7 @@ export interface KAPLAYCtx {
      */
     removeSingletonTag(tag: Tag | Tag[]): void;
     /**
-     * Check if a tag is a {@link KAPLAYOpt.singletonTags `singleton tag`}.
+     * Check if a tag is a {@link KAPLAYOpt.singletonTags singleton tag}.
      *
      * @param tag - The tag to check.
      *

@@ -13,11 +13,11 @@ to KAPLAY.
 # Clone repository
 git clone https://github.com/kaplayjs/kaplay.git # to clone the repo.
 # Enter to project dictory
-cd kaplay 
+cd kaplay
 # Install dependencies
-npm install 
+npm install
 # Run dev command
-npm dev
+npm run dev
 ```
 
 Additionally, for running tests you will need to run the following command:
