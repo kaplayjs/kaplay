@@ -47,12 +47,15 @@ So your change should look like:
 ### Breaking Changes
 
 - Renamed `RotationConstraintComp.scale` option to `ratio` (#976) - @dragoncoder047
-- Changed `onHide()` and `onShow()` now handle changes in the `GameObjRaw.hidden` property, previous behaviour was moved to `onTabHide()` and `onTabShow()` (#1041) - @dragoncoder047
-- Changed `new RNG()` and `setRNG()` now use config object `RNGConfig` instead of the string/custom rng parameter (#1097) - @Stanko
-- Removed `KAPLAYOpt.debugKey`, now use `KAPLAYOpt.debugKeys`
+- Changed `onHide()` and `onShow()` to handle changes in the `GameObjRaw.hidden` property, previous behaviour was moved to `onTabHide()` and `onTabShow()` (#1041) - @dragoncoder047
+- Changed `new RNG()` and `setRNG()` to use config object `RNGConfig` instead of the string/custom rng parameter (#1097) - @Stanko
+- Removed `KAPLAYOpt.debugKey`, use `KAPLAYOpt.debugButtons` now instead (#1136) - @amyspark-ng
 
 ### Added
 
+- Added the ability to check which character a point is hovering over in the `text()` component using `TextComp.pointToChar()` or `TextComp.pointToCharIndex()`, to make text-based menus easier to build by simply styling text (#1064) - @dragoncoder047, @imaginarny
+- Added the `KAPLAYOpt.inspectTextChars` to draw bounding boxes of each character in the `text()` component when debug inspect enabled (#1064) - @dragoncoder047, @imaginarny
+- Added zero-width space word-break opportunities for wrapped text (#902) - @snowyukitty
 - Added the `LevelCompOpt.charsPerTile` option for the `level()` component and `addLevel()` which lets you use more than one character per tile, that way you can make clearer maps without having to resort to Unicode (#1006) - @dragoncoder047
 - Added `onPause()`, `onUnpause()`, `onHide()`, and `onShow()` events for listening to the state of the `paused` and `hidden` properties on game objects (#1041) - @dragoncoder047
 - Added `setRNG()` to change the random generator algorithm (#1057) - @mflerackers
@@ -62,11 +65,11 @@ So your change should look like:
 - Added `nextFrame()` helper function to defer/run a function on the next frame (#1112) - @imaginarny
 - Added `KGamepad.name` for identifying the recognized controller model (#1119) - @CEREBR4L
 - Added `KGamepad.type` field (`"ps4"`, `"ps5"`, `"playstation"`, `"xbox"`, `"switch"`, a custom string, or `undefined`) for picking button-glyph assets based on controller family (#1119) - @CEREBR4L
-- Added `KAPLAYOpt.debugKeys` to add and modify on runtime the buttons used for debug actions (#1136) - @amyspark-ng
+- Added `KAPLAYOpt.debugButtons` to rebind the buttons used for debug actions, with `Debug.setButton()` to modify them at runtime as well (#1136) - @amyspark-ng
 - Added `AudioPlayOpt.reverse` to make a sound play in reverse (#1140) - @amyspark-ng
 - Added `FakeMouseComp.scrollBy()` to trigger `onScroll()` (#1159) - @amyspark-ng
 - Added `FakeMouseComp.deltaPos` to see how much the position of the FakeMouse has changed in the last frame (not comparable to `mouseDeltaPos()`) since they move differently (#1159) - @amyspark-ng
-- Added `btn` parameter to `FakeMouseComp.press(btn)` to control which mouse button it will emulate. Defaults sto left (#1159) - @amyspark-ng
+- Added `btn` parameter to `FakeMouseComp.press(btn)` to control which mouse button it will emulate (defaults to left) (#1159) - @amyspark-ng
 - Added `KAPLAYOpt.singletonTags` with a few helpers to make listed tags unique, meaning only one object can have a given tag at a time, e.g. `["player", "focused"]` (#1172) - @imaginarny
 - Added `GetOpt.op` operator option to allow `"or"` besides the default `"and"` in `GameObjRaw.get()`, e.g. `get(["fruit", "vegetable"], { op: "or" })` (#1172) - @imaginarny
 - Added `rootURL(url)` to prefix the passed URL using `loadRoot()` value (#1135) - @amyspark-ng
@@ -88,6 +91,7 @@ So your change should look like:
 
 ### Changed
 
+- Updated the camera `shake()` intensity parameter to also accept a `Vec2` to constrain the shake direction and added an optional `duration` parameter (default is determined by intensity, as before) (#1003) - @mflerackers
 - Updated the rotation/angle constraint to track multiple turns of the source object, so that non-integer ratios don't result in jumping at the boundary (#976) - @dragoncoder047
 - Updated `drawSprite()` to allow slice9'ed sprites, and so now the `sprite()` component just calls `drawSprite()` (#1036) - @dragoncoder047
 - Added an optional parameter `rng` to all random related functions to pass the rng to use (#1057) - @mflerackers
@@ -97,12 +101,16 @@ So your change should look like:
 - Updated `KAPLAYOpt.onButtonPress`'s family to now accept `string` and `symbol` instead of only strings (#1136) - @amyspark-ng
 - Updated `video()` to render black rectangle (instead of white one) before the video has been played (#1145) - @Stanko
 - Updated `getLastInputDeviceType()` so updates to gamepad when you move a joystick (#1168) - @amyspark-ng
+- Updated `StyledTextInfo` to include the rendered text's grapheme clusters as a `runes` array - @mahirhir
+- Updated `text()` component and `compileStyledText()` to accept an optional `locale` option and parameter, respectively (#1115) - @mahirhir, @imaginarny
 - Component `follow()` now also accepts a tag or name (of `named()` comp) besides a raw object (#1179) - @imaginarny
 - Exposed `obj.jumpsLeft` of `doubleJump()` component (#1179) - @imaginarny
 
 ### Examples
+
 - Added a new `gacha` example! (#1057) - @imaginarny
 - Added a new `singletonTags` example! (#1172) - @imaginarny
+- Added a new `textClick` example! (#1064) - @dragoncoder047
 
 ### Fixed
 
@@ -126,6 +134,9 @@ So your change should look like:
 - Fixed sprite component returning stale value after changing the sprite value dynamically (#1164) - @Stanko
 - Fixed `onTag()` and `onUntag()` getting triggered when trying to do so with the existing/same tag (#1172) - @imaginarny
 - Fixed collisions between two non-static bodies not conserving momentum, the velocity and mass of the other body are now taken into account (#1174) - @WynandVStaden
+- Fixed styled text (`[tag]...[/tag]`) style positions desyncing after an emoji, ZWJ sequence or astral character (#1115) - @mahirhir, @imaginarny
+- Fixed text color defined in `styles`/`transform` not being applied to grapheme clusters (#1115) - @imaginarny
+- Fixed `level` errors caused by movement functions like `TileComp.tileMove()`, eliminating the need to manually trigger spatial map creation beforehand (#1078) - @SobennaStory
 - Fixed `text()` component always getting serialized with fixed width (#1179) - @imaginarny
 
 ## [4000.0.0-alpha.27.1] - 2026-05-12
