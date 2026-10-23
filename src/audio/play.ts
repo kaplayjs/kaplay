@@ -127,7 +127,7 @@ export interface AudioPlay {
      */
     loop: boolean;
     /**
-     * The current playing time (not accurate if speed is changed).
+     * The current playing time.
      */
     time(): number;
     /**
@@ -168,9 +168,10 @@ export function play(
     const onEndEvents = new KEvent();
     const gainNode = ctx.createGain();
     const panNode = ctx.createStereoPanner();
-    const pos = opt.seek ?? 0;
-    let startTime = 0;
-    let stopTime = 0;
+    // Buffer position (in seconds) at the moment `anchorTime` was taken.
+    // While playing, the position advances by the playback rate.
+    let anchorPos = opt.seek ?? 0;
+    let anchorTime = 0;
     let started = false;
 
     srcNode.loop = Boolean(opt.loop);
@@ -213,8 +214,8 @@ export function play(
         else srcNode.buffer = data.buf;
 
         if (!paused) {
-            startTime = ctx.currentTime;
-            srcNode.start(0, pos);
+            anchorTime = ctx.currentTime;
+            srcNode.start(0, anchorPos);
             started = true;
         }
     };
@@ -228,13 +229,29 @@ export function play(
         snd.onLoad(start);
     }
 
+    const rate = () =>
+        srcNode.playbackRate.value * Math.pow(2, srcNode.detune.value / 1200);
+
+    const position = () =>
+        started
+            ? anchorPos + (ctx.currentTime - anchorTime) * rate()
+            : anchorPos;
+
+    const wrap = (t: number) => {
+        const d = srcNode.buffer?.duration ?? 0;
+        if (!d) return 0;
+        return srcNode.loop ? t % d : Math.min(t, d);
+    };
+
+    const reanchor = () => {
+        if (!started) return;
+        anchorPos = wrap(position());
+        anchorTime = ctx.currentTime;
+    };
+
     const getTime = () => {
         if (!srcNode.buffer) return 0;
-        const t = paused
-            ? stopTime - startTime
-            : ctx.currentTime - startTime;
-        const d = srcNode.buffer.duration;
-        return srcNode.loop ? t % d : Math.min(t, d);
+        return wrap(position());
     };
 
     const cloneNode = (oldNode: AudioBufferSourceNode) => {
@@ -259,18 +276,16 @@ export function play(
             paused = p;
             if (p) {
                 if (started) {
+                    reanchor();
                     srcNode.stop();
                     started = false;
                 }
-                stopTime = ctx.currentTime;
             }
             else {
                 srcNode = cloneNode(srcNode);
-                const pos = stopTime - startTime;
-                srcNode.start(0, pos);
+                srcNode.start(0, anchorPos);
                 started = true;
-                startTime = ctx.currentTime - pos;
-                stopTime = 0;
+                anchorTime = ctx.currentTime;
             }
         },
 
@@ -286,22 +301,21 @@ export function play(
         seek(time: number) {
             if (!srcNode.buffer?.duration) return;
             if (time > srcNode.buffer.duration) return;
+            anchorPos = time;
+            anchorTime = ctx.currentTime;
             if (paused) {
                 srcNode = cloneNode(srcNode);
-                startTime = stopTime - time;
             }
             else {
                 srcNode.stop();
                 srcNode = cloneNode(srcNode);
-                startTime = ctx.currentTime - time;
                 srcNode.start(0, time);
                 started = true;
-                stopTime = 0;
             }
         },
 
-        // TODO: affect time()
         set speed(val: number) {
+            reanchor();
             srcNode.playbackRate.value = val;
         },
 
@@ -310,6 +324,7 @@ export function play(
         },
 
         set detune(val: number) {
+            reanchor();
             srcNode.detune.value = val;
         },
 
