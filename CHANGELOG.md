@@ -73,7 +73,7 @@ So your change should look like:
 - Added `KAPLAYOpt.singletonTags` with a few helpers to make listed tags unique, meaning only one object can have a given tag at a time, e.g. `["player", "focused"]` (#1172) - @imaginarny
 - Added `GetOpt.op` operator option to allow `"or"` besides the default `"and"` in `GameObjRaw.get()`, e.g. `get(["fruit", "vegetable"], { op: "or" })` (#1172) - @imaginarny
 - Added `rootURL(url)` to prefix the passed URL using `loadRoot()` value (#1135) - @amyspark-ng
-
+- `CharTransformFunc` now receives the character's active formatting tags (`allTags`) and the index of the tag being applied (`tagIndex`), so style functions can react to the tags they are nested in (#1181) - @Yuren0312
 ### Changed
 
 - Updated the camera `shake()` intensity parameter to also accept a `Vec2` to constrain the shake direction and added an optional `duration` parameter (default is determined by intensity, as before) (#1003) - @mflerackers
