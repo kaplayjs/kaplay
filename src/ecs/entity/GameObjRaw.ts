@@ -48,7 +48,12 @@ import type { ScaleComp } from "../components/transform/scale";
 import type { SkewComp } from "../components/transform/skew";
 import type { ZComp } from "../components/transform/z";
 import { internalIsMaking, make } from "./make";
-import { deserializePrefabAsset, type SerializedGameObj } from "./prefab";
+import {
+    deserializePrefabAsset,
+    instantiatePrefab,
+    type SerializedGameObj,
+    serializePrefab,
+} from "./prefab";
 import { isFixed, isHidden, isPaused } from "./utils";
 
 export enum KeepFlags {
@@ -853,47 +858,15 @@ export const GameObjRawPrototype: Omit<
             data = name;
         }
 
-        const deserializedCompList = deserializePrefabAsset(data);
-        if (comps) deserializedCompList.push(...comps as Comp[]);
-
-        const obj = this.add(deserializedCompList) as GameObj<T[number]>;
-
-        if (data.children) {
-            for (const child of data.children) {
-                obj.addPrefab(child);
-            }
-        }
-
-        return obj;
+        return instantiatePrefab(
+            this as unknown as GameObj,
+            data,
+            comps,
+        ) as GameObj<T[number]>;
     },
 
     serialize(this: InternalGameObjRaw) {
-        if (this.id === null) {
-            throw new Error("Can't serialize destroyed object");
-        }
-
-        const data: SerializedGameObj = {
-            components: {},
-            tags: [],
-        };
-
-        for (const [id, c] of this._compStates) {
-            if ("serialize" in c) {
-                data.components[id] = (c.serialize as () => any)();
-            }
-        }
-
-        if (this.children.length > 0) {
-            data.children = [];
-
-            for (const children of this.children) {
-                data.children.push(children.serialize());
-            }
-        }
-
-        data.tags = [...this.tags];
-
-        return data;
+        return serializePrefab(this);
     },
 
     readd<T>(this: InternalGameObjRaw, obj: GameObj<T>): GameObj<T> {

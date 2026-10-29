@@ -28,7 +28,6 @@ export function makeInternal<T extends CompList<unknown>>(
 
     // The game object from the prototype
     const obj: GameObj = Object.create(GameObjRawPrototype);
-    currentMaking.push(obj);
 
     // Shadow individual properties
     obj._parent = null as unknown as GameObj;
@@ -49,11 +48,17 @@ export function makeInternal<T extends CompList<unknown>>(
     obj.id = id;
     obj.transform = new Mat23();
 
-    try {
-        // Adding components passed from add([]);
-        // We register here: The objects, because you can also pass tags to add().
-        if (!compsAndTags) return obj as GameObj<T[number]>;
+    if (compsAndTags) applyComponents(obj, compsAndTags, addCompIdsToTags);
+    return obj as GameObj<T[number]>;
+}
 
+export function applyComponents(
+    obj: GameObj,
+    compsAndTags: CompList<unknown>,
+    addCompIdsToTags = _k.globalOpt.tagComponentIds,
+) {
+    currentMaking.push(obj);
+    try {
         let comps = [];
         let tagList = [];
 
@@ -81,9 +86,6 @@ export function makeInternal<T extends CompList<unknown>>(
         for (const tag of tagList) {
             obj.tag(tag);
         }
-
-        // We cast the type as .use() doesn't add the types
-        return obj as GameObj<T[number]>;
     } finally {
         currentMaking.pop();
     }

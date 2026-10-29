@@ -335,6 +335,14 @@ export interface KAPLAYCtx {
      */
     createPrefab(obj: GameObj): SerializedGameObj;
     /**
+     * Register a component factory for prefab reconstruction. The factory receives
+     * decoded data, including references to objects in the new prefab instance.
+     *
+     * @group Game Obj
+     * @subgroup Prefabs
+     */
+    registerPrefabFactory(id: string, factory: (data: any) => Comp): void;
+    /**
      * Remove and re-add the game obj, without triggering add / destroy events.
      *
      * @param obj - The game object to re-add.

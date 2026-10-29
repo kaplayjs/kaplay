@@ -16,6 +16,7 @@ import { spriteFactory } from "../ecs/components/draw/sprite";
 import { textFactory } from "../ecs/components/draw/text";
 import { anchorFactory } from "../ecs/components/transform/anchor";
 import { fixedFactory } from "../ecs/components/transform/fixed";
+import { followFactory } from "../ecs/components/transform/follow";
 import { moveFactory } from "../ecs/components/transform/move";
 import { posFactory } from "../ecs/components/transform/pos";
 import { rotateFactory } from "../ecs/components/transform/rotate";
@@ -108,7 +109,7 @@ export const createEngine = (gopt: KAPLAYOpt) => {
     // Transform Serialization
     registerPrefabFactory("anchor", anchorFactory);
     registerPrefabFactory("fixed", fixedFactory);
-    // `follow()` missing, we should figure a way to serialize an object reference (probably use named())
+    registerPrefabFactory("follow", followFactory);
     // `layer()` missing, needs investigation
     registerPrefabFactory("move", moveFactory);
     // `offscreen()` missing
