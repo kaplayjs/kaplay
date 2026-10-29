@@ -45,6 +45,10 @@ import type { TextComp, TextCompOpt } from "../ecs/components/draw/text";
 import type { UVQuadComp } from "../ecs/components/draw/uvquad";
 import type { VideoComp, VideoCompOpt } from "../ecs/components/draw/video";
 import type { AgentComp, AgentCompOpt } from "../ecs/components/level/agent";
+import type {
+    BakedLevelComp,
+    BakedLevelOpt,
+} from "../ecs/components/level/bakedLevel";
 import type { LevelComp, LevelCompOpt } from "../ecs/components/level/level";
 import type {
     PathfinderComp,
@@ -1978,6 +1982,9 @@ export interface KAPLAYCtx {
      * @subgroup Level
      */
     level(map: string[], opt?: LevelCompOpt): LevelComp;
+    bakedLevel(map: readonly string[], opt: BakedLevelOpt): BakedLevelComp;
+
+    // #endregion
     /**
      * Create a raycast.
      *

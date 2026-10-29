@@ -54,6 +54,7 @@ import { text } from "../ecs/components/draw/text";
 import { uvquad } from "../ecs/components/draw/uvquad";
 import { video } from "../ecs/components/draw/video";
 import { agent } from "../ecs/components/level/agent";
+import { bakedLevel } from "../ecs/components/level/bakedLevel";
 import { level } from "../ecs/components/level/level";
 import { pathfinder } from "../ecs/components/level/pathfinder";
 import { patrol } from "../ecs/components/level/patrol";
@@ -439,6 +440,7 @@ export const createContext = (
         patrol,
         pathfinder,
         level,
+        bakedLevel,
         fakeMouse,
         // group events
         trigger,

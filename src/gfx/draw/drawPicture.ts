@@ -2,7 +2,7 @@ import type { Shader, Uniform } from "../../assets/shader";
 import { IDENTITY_MATRIX } from "../../constants/math";
 import { getCamTransform } from "../../game/camera";
 import { _k } from "../../shared";
-import type { BlendMode, RenderProps } from "../../types";
+import { BlendMode, type RenderProps } from "../../types";
 import { Mesh, type Texture } from "../gfx";
 import { height, width } from "../stack";
 
@@ -132,9 +132,7 @@ export function drawPicture(
         const texture = command.material.tex ?? _k.gfx.whitePixel.tex;
         const shader = command.material.shader ?? _k.gfx.defShader;
 
-        if (command.material.blend) {
-            _k.gfx.renderer.setBlend(command.material.blend);
-        }
+        _k.gfx.renderer.setBlend(command.material.blend ?? BlendMode.Normal);
 
         if (shader != lastShader) {
             lastShader?.unbind();
