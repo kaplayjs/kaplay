@@ -59,6 +59,7 @@ import { pathfinder } from "../ecs/components/level/pathfinder";
 import { patrol } from "../ecs/components/level/patrol";
 import { sentry } from "../ecs/components/level/sentry";
 import { tile } from "../ecs/components/level/tile";
+import { tileReservations } from "../ecs/components/level/tileReservations";
 import { animate, serializeAnimation } from "../ecs/components/misc/animate";
 import { fakeMouse } from "../ecs/components/misc/fakeMouse";
 import { health } from "../ecs/components/misc/health";
@@ -435,6 +436,7 @@ export const createContext = (
         animate,
         serializeAnimation,
         agent,
+        tileReservations,
         sentry,
         patrol,
         pathfinder,
