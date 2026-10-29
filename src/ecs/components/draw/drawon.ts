@@ -1,6 +1,6 @@
 import type { Picture } from "../../../gfx/draw/drawPicture";
 import type { FrameBuffer } from "../../../gfx/FrameBuffer";
-import type { Comp, GameObj } from "../../../types";
+import type { Canvas, Comp, GameObj } from "../../../types";
 
 /**
  * Options for the {@link drawon `drawon()`} component.
@@ -23,7 +23,7 @@ export interface DrawonComp extends Comp {
     refresh(): void;
 }
 
-export function drawon(c: FrameBuffer | Picture, opt?: DrawonCompOpt) {
+export function drawon(c: FrameBuffer | Picture | Canvas, opt?: DrawonCompOpt) {
     return {
         add(this: GameObj) {
             this.target = {

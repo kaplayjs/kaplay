@@ -11,11 +11,9 @@ import {
 } from "../../events/events";
 import type { EventHandlersInAppButNotAddedInGameObjRaw } from "../../events/scopes";
 import { drawMasked } from "../../gfx/draw/drawMasked";
-import { beginPicture, endPicture, Picture } from "../../gfx/draw/drawPicture";
 import { drawSubtracted } from "../../gfx/draw/drawSubtracted";
-import { FrameBuffer } from "../../gfx/FrameBuffer";
+import { drawRenderTarget } from "../../gfx/renderTarget";
 import {
-    flush,
     loadMatrix,
     multRotate,
     multScaleV,
@@ -1201,106 +1199,57 @@ export const GameObjRawPrototype: Omit<
             return (l1 - l2) || (o1.z ?? 0) - (o2.z ?? 0);
         });
 
-        // If this subtree is masking, the root is drawn into the mask, then the children are drawn
-        if (this.mask) {
-            const maskFunc = {
-                intersect: drawMasked,
-                subtract: drawSubtracted,
-            }[this.mask];
-            if (!maskFunc) {
-                throw new Error(`Invalid mask func: "${this.mask}"`);
-            }
-            maskFunc(() => {
-                // Draw children masked
-                const f = _k.gfx.fixed;
-                // We push once, then update the current transform only
-                pushTransform();
-                for (let i = 0; i < objects.length; i++) {
-                    _k.gfx.fixed = isFixed(objects[i]);
-                    loadMatrix(objects[i].transform);
-                    objects[i]._drawEvents.trigger();
-                }
-                popTransform();
-                _k.gfx.fixed = f;
-            }, () => {
-                pushTransform();
+        const drawSelf = () => {
+            const fixed = _k.gfx.fixed;
+            pushTransform();
+            try {
+                _k.gfx.fixed = isFixed(this);
                 loadMatrix(this.transform);
-                // Draw mask
                 this._drawEvents.trigger();
+            } finally {
                 popTransform();
-            });
-        }
-        else {
-            // If this subtree is rendered to a target, enable target
-            if (this.target) {
-                if (!this.target?.refreshOnly || !this.target?.isFresh) {
-                    flush();
-                    if (this.target.destination instanceof FrameBuffer) {
-                        this.target.destination.bind();
-                    }
-                    else if (this.target.destination instanceof Picture) {
-                        beginPicture(this.target.destination);
-                    }
-                }
+                _k.gfx.fixed = fixed;
             }
-
-            if (!this.target?.refreshOnly || !this.target?.isFresh) {
-                const f = _k.gfx.fixed;
-                pushTransform();
-                // Parent is drawn before children if !childrenOnly
-                if (!this.target?.childrenOnly) {
-                    _k.gfx.fixed = isFixed(this);
-                    loadMatrix(this.transform);
-                    this._drawEvents.trigger();
-                }
-                // Draw children
-                for (let i = 0; i < objects.length; i++) {
-                    // An object with a mask is drawn at draw time, but the transform still needs to be calculated,
-                    // so we push the parent's transform and pretend we are
-                    _k.gfx.fixed = isFixed(objects[i]);
-                    if (objects[i].mask) {
-                        loadMatrix(objects[i].parent!.transform);
-                        objects[i].drawTree();
+        };
+        const drawChildren = (masked = false) => {
+            const fixed = _k.gfx.fixed;
+            pushTransform();
+            try {
+                for (const object of objects) {
+                    _k.gfx.fixed = isFixed(object);
+                    if (object.target || (!masked && object.mask)) {
+                        loadMatrix(object.parent!.transform);
+                        object.drawTree();
                     }
                     else {
-                        loadMatrix(objects[i].transform);
-                        objects[i]._drawEvents.trigger();
+                        loadMatrix(object.transform);
+                        object._drawEvents.trigger();
                     }
                 }
+            } finally {
                 popTransform();
-                _k.gfx.fixed = f;
+                _k.gfx.fixed = fixed;
             }
+        };
 
-            // If this subtree is rendered to a target, disable target
-            if (this.target) {
-                if (!this.target?.refreshOnly || !this.target?.isFresh) {
-                    flush();
-                    if (this.target.destination instanceof FrameBuffer) {
-                        this.target.destination.unbind();
-                    }
-                    else if (this.target.destination instanceof Picture) {
-                        endPicture();
-                    }
+        drawRenderTarget(this.target, () => {
+            if (this.mask) {
+                const maskFunc = {
+                    intersect: drawMasked,
+                    subtract: drawSubtracted,
+                }[this.mask];
+                if (!maskFunc) {
+                    throw new Error(`Invalid mask func: "${this.mask}"`);
                 }
+                maskFunc(() => drawChildren(true), drawSelf);
             }
-
-            // If this object needs the refresh flag in order to draw children, set it to fresh
-            if (this.target?.refreshOnly && !this.target?.isFresh) {
-                this.target.isFresh = true;
+            else {
+                if (!this.target?.childrenOnly) drawSelf();
+                drawChildren();
             }
-
-            // If children only flag is on
-            if (this.target?.childrenOnly) {
-                // Parent is drawn on screen, children are drawn in target
-                const f = _k.gfx.fixed;
-                _k.gfx.fixed = isFixed(this);
-                pushTransform();
-                loadMatrix(this.transform);
-                this._drawEvents.trigger();
-                popTransform();
-                _k.gfx.fixed = f;
-            }
-        }
+        });
+        // A children-only target leaves the parent's visible drawing outside it.
+        if (this.target?.childrenOnly) drawSelf();
     },
 
     inspect(this: InternalGameObjRaw): GameObjInspect {
@@ -1397,17 +1346,15 @@ export const GameObjRawPrototype: Omit<
         // Add to objects
         objects.push(this);
 
+        // Masks and render targets draw their own subtree during traversal.
+        if (this.target || this.mask) return;
+
         // Recurse on children
         for (let i = 0; i < this.children.length; i++) {
             // While we could do this test in collect, it would mean an extra function call
             // so it is better to do this preemptively
             if (this.children[i].hidden) continue;
-            if (this.target) {
-                this.drawTree();
-            }
-            else if (!this.mask) {
-                this.children[i].collect(objects);
-            }
+            this.children[i].collect(objects);
         }
     },
     // #endregion

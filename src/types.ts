@@ -647,7 +647,7 @@ export type KAPLAYPlugin<T> = (
  * @subgroup Canvas
  */
 export type RenderTarget = {
-    destination: FrameBuffer | Picture | null;
+    destination: FrameBuffer | Picture | Canvas | null;
     childrenOnly?: boolean;
     refreshOnly?: boolean;
     isFresh?: boolean;
@@ -803,9 +803,20 @@ export type ImageSource = Exclude<TexImageSource, VideoFrame>;
  * @group Rendering
  * @subgroup Canvas
  */
+export type CanvasSizeSource = "screen" | { width: number; height: number };
+
+/**
+ * An offscreen drawing surface with fixed or live dimensions.
+ * @group Rendering
+ * @subgroup Canvas
+ */
 export type Canvas = {
     width: number;
     height: number;
+    /** Resize in pixels and stop following a live size source. */
+    resize(width: number, height: number): void;
+    /** Sample a live size source. Rendering operations synchronize automatically. */
+    syncSize(): void;
     toImageData(): ImageData;
     toDataURL(): string;
     clear(): void;
