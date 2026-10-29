@@ -1,5 +1,6 @@
 import { vec2 } from "./math";
 import { aStarSearch, type Graph } from "./navigation";
+import { mapPathQuery, NodePathQuery, type PathQuery } from "./pathquery";
 import { Vec2 } from "./Vec2";
 
 class NavEdge {
@@ -197,25 +198,44 @@ export class NavMesh implements Graph {
     }
 
     getHeuristic(indexA: number, indexB: number) {
-        const a = this._polygons[indexA];
-        const b = this._polygons[indexB];
-        const x = a.centroid.x - b.centroid.x;
-        const y = a.centroid.y - b.centroid.y;
-        return Math.sqrt(x * x + y * y);
+        // Polygon transitions have unit cost regardless of polygon size.
+        return 0;
+    }
+
+    createPathQuery(start: number, goal: number): PathQuery<number> {
+        const limit = this._polygons.length;
+        const valid = Number.isInteger(start) && Number.isInteger(goal)
+            && start >= 0 && goal >= 0 && start < limit && goal < limit;
+        return new NodePathQuery(this, start, goal, valid);
     }
 
     getPath(start: number, goal: number): number[] {
         // Points are not within the navigation mesh
-        if (start === undefined || goal === undefined) {
+        if (
+            !Number.isInteger(start) || !Number.isInteger(goal)
+            || start < 0 || goal < 0
+            || start >= this._polygons.length || goal >= this._polygons.length
+        ) {
             return [];
         }
 
         // Same polygon
         if (start === goal) {
-            return [start, goal];
+            return [start];
         }
 
         return aStarSearch(this, start, goal);
+    }
+
+    createWaypointQuery(start: Vec2, goal: Vec2, opt?: any): PathQuery<Vec2> {
+        const from = start.clone(), to = goal.clone();
+        const type = opt?.type || "centroids";
+        const source = this._getLocation(from), target = this._getLocation(to);
+        const query = this.createPathQuery(source?.id ?? -1, target?.id ?? -1);
+        return mapPathQuery(
+            query,
+            path => this._waypoints(path, from, to, type),
+        );
     }
 
     getWaypointPath(start: Vec2, goal: Vec2, opt: any): Vec2[] {
@@ -225,18 +245,26 @@ export class NavMesh implements Graph {
         const goalPolygon = this._getLocation(goal);
 
         // Points are not within the navigation mesh
-        if (startPolygon === undefined || goalPolygon === undefined) {
+        if (!startPolygon || !goalPolygon) {
             return [];
         }
 
-        // TODO: Remove non-null assertion
-        const path = this.getPath(startPolygon!.id, goalPolygon!.id);
+        const path = this.getPath(startPolygon.id, goalPolygon.id);
 
         // No path was found
-        if (!path) {
+        if (path.length === 0) {
             return [];
         }
 
+        return this._waypoints(path, start, goal, type);
+    }
+
+    private _waypoints(
+        path: number[],
+        start: Vec2,
+        goal: Vec2,
+        type: string,
+    ): Vec2[] {
         if (type === "edges") {
             const edges = [];
             for (let i = 1; i < path.length; i++) {
@@ -250,15 +278,15 @@ export class NavMesh implements Graph {
                     ),
                 );
             }
-            return [start, ...edges, goal];
+            return [start.clone(), ...edges, goal.clone()];
         }
         else { // type === "centroids"
             return [
-                start,
+                start.clone(),
                 ...path.slice(1, -1).map(index =>
-                    this._polygons[index].centroid
+                    this._polygons[index].centroid.clone()
                 ),
-                goal,
+                goal.clone(),
             ];
         }
     }

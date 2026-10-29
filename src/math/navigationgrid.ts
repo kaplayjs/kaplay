@@ -1,5 +1,6 @@
 import { vec2 } from "./math";
-import { aStarSearch, buildConnectivityMap, type Graph } from "./navigation";
+import { aStarSearch, type Graph } from "./navigation";
+import { mapPathQuery, NodePathQuery, type PathQuery } from "./pathquery";
 import { Vec2 } from "./Vec2";
 
 /**
@@ -11,7 +12,6 @@ export class NavGrid implements Graph {
     private _tileWidth: number;
     private _tileHeight: number;
     private _diagonals: boolean;
-    private _connMap: number[];
     private _isConnected: (a: number, b: number) => boolean;
 
     /**
@@ -29,18 +29,16 @@ export class NavGrid implements Graph {
         this._tileWidth = tileWidth;
         this._tileHeight = tileHeight;
         this._diagonals = diagonals;
-        this._connMap = new Array(this._columns * this._rows).fill(-1);
         this._isConnected = isConnected;
-
-        this._buildConnectivityMap();
-    }
-
-    private _buildConnectivityMap() {
-        const map = buildConnectivityMap(this);
-        map.forEach((index, node) => this._connMap[node] = index);
     }
 
     private _getTile(x: number, y: number): number {
+        if (
+            x < 0 || y < 0 || x >= this._columns * this._tileWidth
+            || y >= this._rows * this._tileHeight
+        ) {
+            return -1;
+        }
         const column = Math.floor(x / this._tileWidth);
         const row = Math.floor(y / this._tileHeight);
         return row * this._columns + column;
@@ -105,33 +103,48 @@ export class NavGrid implements Graph {
     }
 
     getHeuristic(a: number, b: number) {
-        // Euclidean distance
-        const x = this._getTileX(a) - this._getTileX(b);
-        const y = this._getTileY(a) - this._getTileY(b);
-        return Math.sqrt(x * x + y * y);
+        const x = Math.abs(this._getTileX(a) - this._getTileX(b));
+        const y = Math.abs(this._getTileY(a) - this._getTileY(b));
+        return this._diagonals ? Math.max(x, y) : x + y;
+    }
+
+    createPathQuery(start: number, goal: number): PathQuery<number> {
+        const limit = this._columns * this._rows;
+        const valid = Number.isInteger(start) && Number.isInteger(goal)
+            && start >= 0 && goal >= 0 && start < limit && goal < limit;
+        return new NodePathQuery(this, start, goal, valid);
     }
 
     getPath(start: number, goal: number): number[] {
         // Tiles are not within the grid
         const maxNode = this._columns * this._rows;
         if (
-            start === null || goal === null || start < 0 || start >= maxNode
+            !Number.isInteger(start) || !Number.isInteger(goal)
+            || start < 0 || start >= maxNode
             || goal < 0 || goal >= maxNode
         ) {
             return [];
         }
 
-        // Tiles are not within the same section
-        if (this._connMap[start] !== this._connMap[goal]) {
-            return [];
-        }
-
         // Same grid square
         if (start === goal) {
-            return [start, goal];
+            return [start];
         }
 
-        return [start, ...aStarSearch(this, start, goal), goal];
+        return aStarSearch(this, start, goal);
+    }
+
+    createWaypointQuery(
+        start: Vec2,
+        goal: Vec2,
+        _options?: any,
+    ): PathQuery<Vec2> {
+        const from = start.clone(), to = goal.clone();
+        const query = this.createPathQuery(
+            this._getTile(from.x, from.y),
+            this._getTile(to.x, to.y),
+        );
+        return mapPathQuery(query, path => this._waypoints(path, from, to));
     }
 
     getWaypointPath(
@@ -143,20 +156,24 @@ export class NavGrid implements Graph {
             this._getTile(goal.x, goal.y),
         );
 
-        if (!path) {
+        if (path.length === 0) {
             return [];
         }
 
+        return this._waypoints(path, start, goal);
+    }
+
+    private _waypoints(path: number[], start: Vec2, goal: Vec2): Vec2[] {
         // Center of tile
         const dx = Math.floor(this._tileWidth / 2);
         const dy = Math.floor(this._tileHeight / 2);
         return [
-            start,
+            start.clone(),
             ...path.slice(1, -1).map(tile => (vec2(
                 this._getTileX(tile) * this._tileWidth + dx,
                 this._getTileY(tile) * this._tileWidth + dy,
             ))),
-            goal,
+            goal.clone(),
         ];
     }
 }
