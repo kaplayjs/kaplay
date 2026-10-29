@@ -61,6 +61,7 @@ import type {
     AnimateComp,
     AnimateCompOpt,
 } from "../ecs/components/misc/animate";
+import type { behaviorTree } from "../ecs/components/misc/behaviorTree";
 import type {
     FakeMouseComp,
     FakeMouseOpt,
@@ -1802,6 +1803,12 @@ export interface KAPLAYCtx {
      * @subgroup Level
      */
     agent(opt?: AgentCompOpt): AgentComp;
+
+    /**
+     * Run a reusable, interruptible behavior on a game object.
+     * @group Components
+     */
+    behaviorTree: typeof behaviorTree;
     /**
      * A component to animate properties.
      * This component has an internal clock which starts the moment it is added to an object.

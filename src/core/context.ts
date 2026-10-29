@@ -60,6 +60,7 @@ import { patrol } from "../ecs/components/level/patrol";
 import { sentry } from "../ecs/components/level/sentry";
 import { tile } from "../ecs/components/level/tile";
 import { animate, serializeAnimation } from "../ecs/components/misc/animate";
+import { behaviorTree } from "../ecs/components/misc/behaviorTree";
 import { fakeMouse } from "../ecs/components/misc/fakeMouse";
 import { health } from "../ecs/components/misc/health";
 import { lifespan } from "../ecs/components/misc/lifespan";
@@ -421,6 +422,7 @@ export const createContext = (
         lifespan,
         named,
         state,
+        behaviorTree,
         z,
         layer,
         move,
