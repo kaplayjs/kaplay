@@ -53,7 +53,7 @@ So your change should look like:
 
 ### Added
 
-- Added the `SpriteAnimPlayOpt.reverse` option to play sprite animations backwards, and a negative `SpriteComp.animSpeed` now plays animations backwards too (#PR) - @helavika
+- Added the `SpriteAnimPlayOpt.reverse` option to play sprite animations backwards, and a negative `SpriteComp.animSpeed` now plays animations backwards too (#1192) - @helavika
 - Added the ability to check which character a point is hovering over in the `text()` component using `TextComp.pointToChar()` or `TextComp.pointToCharIndex()`, to make text-based menus easier to build by simply styling text (#1064) - @dragoncoder047, @imaginarny
 - Added the `KAPLAYOpt.inspectTextChars` to draw bounding boxes of each character in the `text()` component when debug inspect enabled (#1064) - @dragoncoder047, @imaginarny
 - Added zero-width space word-break opportunities for wrapped text (#902) - @snowyukitty
