@@ -109,6 +109,7 @@ export interface SpriteComp extends Comp {
     getAnim(name: string): SpriteAnim | null;
     /**
      * Speed multiplier for all animations (for the actual fps for an anim use .play("anim", { speed: 10 })).
+     * A negative value plays animations backwards.
      */
     animSpeed: number;
     /**
@@ -163,6 +164,7 @@ export interface SpriteCompOpt {
     anim?: string;
     /**
      * Speed multiplier for all animations (for the actual fps for an anim use .play("anim", { speed: 10 })).
+     * A negative value plays animations backwards.
      */
     animSpeed?: number;
     /**
@@ -393,16 +395,17 @@ export function sprite(
                 throw new Error("Sprite anim speed cannot be 0");
             }
 
-            curAnim.timer += _k.app.dt() * this.animSpeed;
+            // A negative animSpeed plays the animation backwards
+            curAnim.timer += _k.app.dt() * Math.abs(this.animSpeed);
 
             if (curAnim.timer >= (1 / curAnim.speed)) {
                 curAnim.timer = 0;
-                curAnim.frameIndex += curAnimDir;
+                curAnim.frameIndex += curAnimDir * Math.sign(this.animSpeed);
 
                 const frames = anim.frames!;
                 if (curAnim.frameIndex >= frames.length) {
                     if (curAnim.pingpong && !anim.pingpong) {
-                        curAnimDir = -1;
+                        curAnimDir = -curAnimDir as -1 | 1;
                         curAnim.frameIndex = frames.length - 2;
                     }
                     else if (curAnim.loop) {
@@ -418,7 +421,7 @@ export function sprite(
                 }
                 else if (curAnim.frameIndex < 0) {
                     if (curAnim.pingpong && curAnim.loop) {
-                        curAnimDir = 1;
+                        curAnimDir = -curAnimDir as -1 | 1;
                         curAnim.frameIndex = 1;
                     }
                     else if (curAnim.loop) {
@@ -474,12 +477,18 @@ export function sprite(
                     loop: opt.loop ?? anim.loop ?? false,
                     pingpong: opt.pingpong ?? anim.pingpong ?? false,
                     speed: opt.speed ?? anim.speed ?? 10,
-                    frameIndex: 0,
+                    frameIndex: opt.reverse ? anim.frames!.length - 1 : 0,
                     onEnd: opt.onEnd ?? (() => {}),
                 };
 
-            curAnimDir = typeof anim === "number" ? null : 1;
-            this.frame = typeof anim === "number" ? anim : anim.frames![0];
+            curAnimDir = typeof anim === "number"
+                ? null
+                : opt.reverse
+                ? -1
+                : 1;
+            this.frame = typeof anim === "number"
+                ? anim
+                : anim.frames![curAnim.frameIndex];
 
             this.trigger("animStart", name);
         },
