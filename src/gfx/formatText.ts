@@ -152,7 +152,7 @@ function applyTransform(
     if (!transform) return;
 
     const tr = typeof transform === "function"
-        ? transform(fchar.textCursor, fchar.ch, "")
+        ? transform(fchar.textCursor, fchar.ch, "", fchar.styles, -1)
         : transform;
     if (tr) applyCharTransform(fchar, tr);
 }
@@ -161,11 +161,12 @@ function applyStyles(
     stylesOpt: DrawTextOpt["styles"],
     fchar: FormattedChar,
 ) {
-    for (const [name, param] of fchar.styles) {
+    for (let i = 0; i < fchar.styles.length; i++) {
+        const [name, param] = fchar.styles[i];
         const style = stylesOpt?.[name];
 
         const tr = typeof style === "function"
-            ? style(fchar.textCursor, fchar.ch, param)
+            ? style(fchar.textCursor, fchar.ch, param, fchar.styles, i)
             : style;
 
         if (tr) applyCharTransform(fchar, tr);
