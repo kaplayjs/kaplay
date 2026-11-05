@@ -97,6 +97,7 @@ So your change should look like:
 
 ### Fixed
 
+- Fixed `AudioPlay.time()` ignoring `speed`, `detune` and the `seek` option (#729) - @vtxe02023274
 - Fixed `scale`, `skew`, and `rotate` component transforms not being applied on the initial `GameObjRaw.use()` call (e.g. `obj.use(scale(2))`) - @mflerackers
 - Fixed `TimerController.timeLeft` returning elapsed time instead of remaining time (#1082) - @nojaf
 - Fixed mouse coordinates not being calculated properly when canvas is resized by CSS and wasn't rendered at its natural size (#1096) - @Stanko
