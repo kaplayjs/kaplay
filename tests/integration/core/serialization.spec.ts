@@ -1,8 +1,9 @@
 import { expect, test } from "@playwright/test";
 import {
+    type AreaComp,
     type AreaEffectorComp,
     type BuoyancyEffectorComp,
-    CompList,
+    type CompList,
     type ConstantForceComp,
     type FakeMouseComp,
     type GameObj,
@@ -27,6 +28,46 @@ test.beforeEach(async ({ page }) => {
 // src/core/engine.ts
 // there may be exceptions tho...
 
+// Physics Serialization
+test("Test serialization of area() component", async ({ page }) => {
+    page.on("console", msg => console.log(`Browser log: ${msg.text()}`));
+
+    const method = await page.evaluate(() => {
+        const k = kaplay();
+        k.loadBean();
+
+        const o = k.add([
+            k.sprite("bean"),
+            k.area({
+                collisionIgnore: ["enemy"],
+                cursor: "none",
+                friction: 10,
+                isSensor: true,
+                offset: k.vec2(10),
+                restitution: 10,
+                scale: 10,
+                shape: new k.Rect(k.vec2(0), 10, 10),
+            }),
+        ]);
+
+        const prefab = o.serialize();
+        o.destroy();
+
+        console.log(prefab.components);
+
+        const pf = k.addPrefab<CompList<AreaComp>>(prefab);
+
+        // area doesn't serialize area.cursor
+        return pf.collisionIgnore.length == 1
+            && pf.collisionIgnore[0] == "enemy"
+            && pf.friction == 10 && pf.isSensor == true
+            && pf.area.offset.eq(k.vec2(10)) && pf.restitution == 10
+            && pf.area.scale.eq(k.vec2(10));
+    });
+
+    expect(method).toBeTruthy();
+});
+
 // Effectors
 test("Test serialization of surfaceEffector() component", async ({ page }) => {
     page.on("console", msg => console.log(`Browser log: ${msg.text()}`));
@@ -36,6 +77,8 @@ test("Test serialization of surfaceEffector() component", async ({ page }) => {
         k.loadBean();
 
         const o = k.add([
+            k.sprite("bean"),
+            k.area(),
             k.surfaceEffector({
                 speed: 10,
                 forceScale: 10,
@@ -64,6 +107,8 @@ test("Test serialization of areaEffector() component", async ({ page }) => {
         k.loadBean();
 
         const o = k.add([
+            k.sprite("bean"),
+            k.area(),
             k.areaEffector({
                 force: k.vec2(10, 10),
                 linearDrag: 10,
@@ -93,6 +138,9 @@ test("Test serialization of pointEffector() component", async ({ page }) => {
         k.loadBean();
 
         const o = k.add([
+            k.sprite("bean"),
+            k.area(),
+            k.pos(),
             k.pointEffector({
                 forceMagnitude: 10,
                 distanceScale: 10,
@@ -123,6 +171,10 @@ test("Test serialization of constantForce() component", async ({ page }) => {
         k.loadBean();
 
         const o = k.add([
+            k.sprite("bean"),
+            k.area(),
+            k.pos(),
+            k.body(),
             k.constantForce({
                 force: k.vec2(10, 10),
                 useGlobalAngle: true,
@@ -177,6 +229,8 @@ test("Test serialization of buoyancyEffector() component", async ({ page }) => {
         k.loadBean();
 
         const o = k.add([
+            k.sprite("bean"),
+            k.area(),
             k.buoyancyEffector({
                 surfaceLevel: 10,
                 angularDrag: 10,
@@ -236,7 +290,6 @@ test("Test serialization of health() component", async ({ page }) => {
 
     const method = await page.evaluate(() => {
         const k = kaplay();
-        k.loadBean();
 
         const o = k.add([
             k.health(10),
@@ -362,6 +415,7 @@ test("Test serialization of textInput() component", async ({ page }) => {
         const k = kaplay();
 
         const o = k.add([
+            k.text(),
             k.textInput(true, 10),
         ]);
 
