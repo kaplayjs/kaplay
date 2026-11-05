@@ -1,5 +1,5 @@
 import { expect, test } from "@playwright/test";
-import type { GameObj, KAPLAYCtx } from "../../../src";
+import { CompList, type GameObj, type HealthComp, type KAPLAYCtx } from "../../../src";
 
 test.beforeEach(async ({ page }) => {
     await page.addScriptTag({ path: "dist/kaplay.js" });
@@ -23,9 +23,11 @@ test("Test serialization of health() component", async ({ page }) => {
         const prefab = o.serialize();
         o.destroy();
 
-        const pf: GameObj<any> = k.addPrefab(prefab);
+        console.log(prefab.components);
 
-        return pf.health == 10;
+        const pf = k.addPrefab<CompList<HealthComp>>(prefab);
+
+        return pf.hp == 10;
     });
 
     expect(method).toBeTruthy();
