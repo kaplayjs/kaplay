@@ -1,4 +1,4 @@
-name: Ccheck repository formatting
+name: Check repository formatting
 
 on:
   push:
