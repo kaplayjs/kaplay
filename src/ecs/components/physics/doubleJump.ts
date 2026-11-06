@@ -36,6 +36,7 @@ export interface DoubleJumpComp extends Comp {
      * Register an event that runs when the object performs the second jump when double jumping.
      */
     onDoubleJump(action: () => void): KEventController;
+    serialize(): SerializedDoubleJumpComp;
 }
 
 export function doubleJump(numJumps: number = 2): DoubleJumpComp {
