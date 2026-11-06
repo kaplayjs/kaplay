@@ -5,6 +5,14 @@ import type { PosComp } from "../transform/pos";
 import type { TileComp } from "./tile";
 
 /**
+ * The serialized {@link agent `agent()`} component.
+ *
+ * @group Components
+ * @subgroup Component Serialization
+ */
+export type SerializedAgentComp = AgentCompOpt;
+
+/**
  * The {@link agent `agent()`} component.
  *
  * @group Components
@@ -25,6 +33,7 @@ export interface AgentComp extends Comp {
     onNavigationNext(cb: () => void): KEventController;
     onNavigationEnded(cb: () => void): KEventController;
     onTargetReached(cb: () => void): KEventController;
+    serialize(): SerializedAgentComp;
 }
 
 /**
@@ -146,5 +155,15 @@ export function agent(opts: AgentCompOpt = {}): AgentComp {
                 path: JSON.stringify(path),
             });
         },
+        serialize() {
+            return {
+                speed: this.agentSpeed,
+                allowDiagonals: this.allowDiagonals,
+            };
+        },
     };
+}
+
+export function agentFactory(data: SerializedAgentComp) {
+    return agent(data);
 }

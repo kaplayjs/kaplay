@@ -6,6 +6,16 @@ import { _k } from "../../../shared";
 import type { Comp, GameObj } from "../../../types";
 
 /**
+ * The serialized {@link timer `timer()`} component.
+ *
+ * @group Components
+ * @subgroup Component Serialization
+ */
+export interface SerializedTimerComp {
+    maxLoopsPerFrame: number;
+}
+
+/**
  * @group Timer
  */
 export interface TimerController {
@@ -90,6 +100,7 @@ export interface TimerComp extends Comp {
         setValue: (value: V) => void,
         easeFunc?: (t: number) => number,
     ): TweenController;
+    serialize(): SerializedTimerComp;
 }
 
 export function timer(maxLoopsPerFrame: number = 1000): TimerComp {
@@ -219,5 +230,14 @@ export function timer(maxLoopsPerFrame: number = 1000): TimerComp {
                 finish,
             };
         },
+        serialize() {
+            return {
+                maxLoopsPerFrame: this.maxLoopsPerFrame,
+            };
+        },
     };
+}
+
+export function timerFactory(data: SerializedTimerComp) {
+    return timer(data.maxLoopsPerFrame);
 }

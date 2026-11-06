@@ -8,18 +8,50 @@ import { blendFactory } from "../ecs/components/draw/blend";
 import { circleFactory } from "../ecs/components/draw/circle";
 import { colorFactory } from "../ecs/components/draw/color";
 import { ellipseFactory } from "../ecs/components/draw/ellipse";
+import { fillFactory } from "../ecs/components/draw/fill";
 import { maskFactory } from "../ecs/components/draw/mask";
 import { opacityFactory } from "../ecs/components/draw/opacity";
 import { outlineFactory } from "../ecs/components/draw/outline";
 import { rectFactory } from "../ecs/components/draw/rect";
+import { shaderFactory } from "../ecs/components/draw/shader";
 import { spriteFactory } from "../ecs/components/draw/sprite";
 import { textFactory } from "../ecs/components/draw/text";
+import { uvquadFactory } from "../ecs/components/draw/uvquad";
+import { videoFactory } from "../ecs/components/draw/video";
+import { agentFactory } from "../ecs/components/level/agent";
+import { levelFactory } from "../ecs/components/level/level";
+import { patrolFactory } from "../ecs/components/level/patrol";
+import { sentryFactory } from "../ecs/components/level/sentry";
+import { tileFactory } from "../ecs/components/level/tile";
+import { fakeMouseFactory } from "../ecs/components/misc/fakeMouse";
+import { healthFactory } from "../ecs/components/misc/health";
+import { lifespanFactory } from "../ecs/components/misc/lifespan";
+import { namedFactory } from "../ecs/components/misc/named";
+import { stateFactory } from "../ecs/components/misc/state";
+import { stayFactory } from "../ecs/components/misc/stay";
+import { textInputFactory } from "../ecs/components/misc/textInput";
+import { timerFactory } from "../ecs/components/misc/timer";
+import { areaFactory } from "../ecs/components/physics/area";
+import { bodyFactory } from "../ecs/components/physics/body";
+import { doubleJumpFactory } from "../ecs/components/physics/doubleJump";
+import {
+    areaEffectorFactory,
+    buoyancyEffectorFactory,
+    constantForceFactory,
+    platformEffectorFactory,
+    pointEffectorFactory,
+    surfaceEffectorFactory,
+} from "../ecs/components/physics/effectors";
 import { anchorFactory } from "../ecs/components/transform/anchor";
 import { fixedFactory } from "../ecs/components/transform/fixed";
+import { followFactory } from "../ecs/components/transform/follow";
+import { layerFactory } from "../ecs/components/transform/layer";
 import { moveFactory } from "../ecs/components/transform/move";
+import { offscreenFactory } from "../ecs/components/transform/offscreen";
 import { posFactory } from "../ecs/components/transform/pos";
 import { rotateFactory } from "../ecs/components/transform/rotate";
 import { scaleFactory } from "../ecs/components/transform/scale";
+import { skewFactory } from "../ecs/components/transform/skew";
 import { zFactory } from "../ecs/components/transform/z";
 import { registerPrefabFactory } from "../ecs/entity/prefab";
 import { createScopeHandlers } from "../events/scopeHandlers";
@@ -107,34 +139,70 @@ export const createEngine = (gopt: KAPLAYOpt) => {
 
     // Transform Serialization
     registerPrefabFactory("anchor", anchorFactory);
+    // constraint() missing (has obj ref)
     registerPrefabFactory("fixed", fixedFactory);
-    // `follow()` missing, we should figure a way to serialize an object reference (probably use named())
-    // `layer()` missing, needs investigation
+    registerPrefabFactory("follow", followFactory);
+    registerPrefabFactory("layer", layerFactory);
     registerPrefabFactory("move", moveFactory);
-    // `offscreen()` missing
+    registerPrefabFactory("offscreen", offscreenFactory);
     registerPrefabFactory("pos", posFactory);
     registerPrefabFactory("rotate", rotateFactory);
     registerPrefabFactory("scale", scaleFactory);
+    registerPrefabFactory("skew", skewFactory);
     registerPrefabFactory("z", zFactory);
 
     // Draw Serialization
     registerPrefabFactory("blend", blendFactory);
     registerPrefabFactory("circle", circleFactory);
     registerPrefabFactory("color", colorFactory);
-    // `drawon()` missing
+    // `drawon()` missing (has FrameBuffer, Picture refs)
     registerPrefabFactory("ellipse", ellipseFactory);
-    // `fadeIn()` missing
+    registerPrefabFactory("fill", fillFactory);
+    // `fadeIn()` missing, but wasn't it deprecated?
     registerPrefabFactory("mask", maskFactory);
     registerPrefabFactory("opacity", opacityFactory);
     registerPrefabFactory("outline", outlineFactory);
-    // `particles()` missing
-    // `picture()` missing
-    // `raycast()` missing, anyway, is not a component
+    // `particles()` missing (has Texture ref)
+    // `picture()` missing (has Picture ref)
+    // `polygon()` missing (has Texture ref)
     registerPrefabFactory("rect", rectFactory);
+    registerPrefabFactory("shader", shaderFactory); // partial support (no uniform)
     registerPrefabFactory("sprite", spriteFactory);
-    registerPrefabFactory("text", textFactory);
-    // `uvquad()` missing
-    // `video()` missing
+    registerPrefabFactory("text", textFactory); // partial support (no transform & styles)
+    registerPrefabFactory("uvquad", uvquadFactory);
+    registerPrefabFactory("video", videoFactory);
+
+    // Level Serialization
+    registerPrefabFactory("agent", agentFactory);
+    registerPrefabFactory("level", levelFactory);
+    // `pathfinder()` & `pathfinderMap()?` missing (needs Graph)
+    registerPrefabFactory("patrol", patrolFactory);
+    registerPrefabFactory("sentry", sentryFactory); // partial support (no () => GameObj[] as candidates)
+    registerPrefabFactory("tile", tileFactory);
+
+    // Physics Serialization
+    registerPrefabFactory("area", areaFactory);
+    registerPrefabFactory("body", bodyFactory);
+    registerPrefabFactory("doubleJump", doubleJumpFactory);
+    // Effectors
+    registerPrefabFactory("surfaceEffector", surfaceEffectorFactory);
+    registerPrefabFactory("areaEffector", areaEffectorFactory);
+    registerPrefabFactory("pointEffector", pointEffectorFactory);
+    registerPrefabFactory("constantForce", constantForceFactory);
+    registerPrefabFactory("platformEffector", platformEffectorFactory); // partial support (no shouldCollide() opt)
+    registerPrefabFactory("buoyancyEffector", buoyancyEffectorFactory);
+
+    // Other & Misc Serialization
+    // `animate()` missing (complicated)
+    // `boom()` used only internally in `addKaboom()`
+    registerPrefabFactory("fakeMouse", fakeMouseFactory);
+    registerPrefabFactory("health", healthFactory);
+    registerPrefabFactory("lifespan", lifespanFactory);
+    registerPrefabFactory("named", namedFactory);
+    registerPrefabFactory("state", stateFactory);
+    registerPrefabFactory("stay", stayFactory);
+    registerPrefabFactory("textInput", textInputFactory);
+    registerPrefabFactory("timer", timerFactory);
 
     return {
         globalOpt: opt,
@@ -152,7 +220,7 @@ export const createEngine = (gopt: KAPLAYOpt) => {
         gc: [] as (() => void)[],
         sceneScope,
         appScope,
-        // Patch, k it's only avaible after running kaplay()
+        // Patch, k it's only available after running kaplay()
         k: null as unknown as KAPLAYCtx,
         startLoop() {
             startEngineLoop(

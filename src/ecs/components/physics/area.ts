@@ -8,7 +8,7 @@ import { drawRect } from "../../../gfx/draw/drawRect";
 import { multTranslate, popTransform, pushTransform } from "../../../gfx/stack";
 import { rgb } from "../../../math/color";
 import { Circle, Polygon, Rect, shapeFactory, vec2 } from "../../../math/math";
-import { Vec2 } from "../../../math/Vec2";
+import { type SerializedVec2, Vec2 } from "../../../math/Vec2";
 import { _k } from "../../../shared";
 import type {
     Comp,
@@ -198,6 +198,20 @@ export function startHoverSystem() {
 }
 
 /**
+ * The serialized {@link area `area()`} component.
+ *
+ * @group Components
+ * @subgroup Component Serialization
+ */
+export type SerializedAreaComp =
+    & Omit<AreaCompOpt, "shape" | "scale" | "offset">
+    & {
+        shape?: any;
+        scale?: SerializedVec2 | number;
+        offset?: SerializedVec2;
+    };
+
+/**
  * The {@link area `area()`} component.
  *
  * @group Components
@@ -371,7 +385,7 @@ export interface AreaComp extends Comp {
      */
     screenArea(): Shape;
 
-    serialize(): any;
+    serialize(): SerializedAreaComp;
 }
 
 /**
@@ -873,7 +887,7 @@ export function area(
         },
 
         serialize() {
-            const data: any = {};
+            const data: SerializedAreaComp = {};
             if (this.area.shape) data.shape = this.area.shape.serialize();
             if (this.area.scale) {
                 data.scale = this.area.scale instanceof Vec2
@@ -886,15 +900,18 @@ export function area(
             if (this.collisionIgnore) {
                 data.collisionIgnore = this.collisionIgnore.slice();
             }
-            if (this.restitution) data.restitution = this.restitution;
-            if (this.friction) data.friction = this.friction;
+            if (this.restitution !== undefined) {
+                data.restitution = this.restitution;
+            }
+            if (this.friction !== undefined) data.friction = this.friction;
+            if (this.isSensor !== undefined) data.isSensor = this.isSensor;
             return data;
         },
     };
 }
 
-export function areaFactory(data: any) {
-    const opt: any = {};
+export function areaFactory(data: SerializedAreaComp) {
+    const opt: AreaCompOpt = {};
     if (data.shape) opt.shape = shapeFactory(data.shape);
     if (data.scale) {
         opt.scale = typeof data.scale === "number"
@@ -907,7 +924,8 @@ export function areaFactory(data: any) {
     if (data.collisionIgnore) {
         opt.collisionIgnore = data.collisionIgnore.slice();
     }
-    if (data.restitution) opt.restitution = data.restitution;
-    if (data.friction) opt.friction = data.friction;
+    if (data.restitution !== undefined) opt.restitution = data.restitution;
+    if (data.friction !== undefined) opt.friction = data.friction;
+    if (data.isSensor !== undefined) opt.isSensor = data.isSensor;
     return area(opt);
 }

@@ -1,6 +1,17 @@
 import type { KEventController } from "../../../events/events";
+import { clamp } from "../../../math/clamp";
 import type { Comp, GameObj } from "../../../types";
 import type { BodyComp } from "./body";
+
+/**
+ * The serialized {@link doubleJump `doubleJump()`} component.
+ *
+ * @group Components
+ * @subgroup Component Serialization
+ */
+export interface SerializedDoubleJumpComp {
+    numJumps: number;
+}
 
 /**
  * The {@link doubleJump `doubleJump()`} component.
@@ -14,6 +25,10 @@ export interface DoubleJumpComp extends Comp {
      */
     numJumps: number;
     /**
+     * Number of jumps left.
+     */
+    jumpsLeft: number;
+    /**
      * Performs double jump (the initial jump only happens if player is grounded).
      */
     doubleJump(force?: number): void;
@@ -21,6 +36,7 @@ export interface DoubleJumpComp extends Comp {
      * Register an event that runs when the object performs the second jump when double jumping.
      */
     onDoubleJump(action: () => void): KEventController;
+    serialize(): SerializedDoubleJumpComp;
 }
 
 export function doubleJump(numJumps: number = 2): DoubleJumpComp {
@@ -29,6 +45,12 @@ export function doubleJump(numJumps: number = 2): DoubleJumpComp {
         id: "doubleJump",
         require: ["body"],
         numJumps: numJumps,
+        get jumpsLeft() {
+            return jumpsLeft;
+        },
+        set jumpsLeft(n: number) {
+            jumpsLeft = clamp(n, 0, this.numJumps);
+        },
         add(this: GameObj<BodyComp | DoubleJumpComp>) {
             this.onGround(() => {
                 jumpsLeft = this.numJumps;
@@ -53,5 +75,14 @@ export function doubleJump(numJumps: number = 2): DoubleJumpComp {
         inspect(this: GameObj<BodyComp | DoubleJumpComp>) {
             return `jumpsLeft: ${jumpsLeft}`;
         },
+        serialize() {
+            return {
+                numJumps: this.numJumps,
+            };
+        },
     };
+}
+
+export function doubleJumpFactory(data: SerializedDoubleJumpComp) {
+    return doubleJump(data.numJumps);
 }
