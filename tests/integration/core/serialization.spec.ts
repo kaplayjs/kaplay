@@ -17,19 +17,26 @@ import {
     type FakeMouseComp,
     type FillComp,
     type FixedComp,
+    type FollowComp,
     type GameObj,
     type HealthComp,
     type KAPLAYCtx,
+    type LayerComp,
     type LevelComp,
     type MaskComp,
+    type MoveComp,
     type NamedComp,
     type OpacityComp,
     type OutlineComp,
     type PatrolComp,
     type PlatformEffectorComp,
     type PointEffectorComp,
+    type PosComp,
     type RectComp,
+    type RotateComp,
+    type ScaleComp,
     type ShaderComp,
+    type SkewComp,
     type SpriteComp,
     type StateComp,
     type StayComp,
@@ -40,8 +47,12 @@ import {
     type TimerComp,
     type UVQuadComp,
     type VideoComp,
+    type ZComp,
 } from "../../../src";
 import type { LifespanComp } from "../../../src/ecs/components/misc/lifespan";
+import {
+    type OffScreenComp,
+} from "../../../src/ecs/components/transform/offscreen";
 import { BlendMode } from "../../../src/types";
 
 test.beforeEach(async ({ page }) => {
@@ -52,13 +63,295 @@ test.beforeEach(async ({ page }) => {
 // src/core/engine.ts
 // there may be exceptions tho...
 
+// Transform Serialization
+// constraint() missing (has obj ref)
+test("Test serialization of anchor() component", async ({ page }) => {
+    page.on("console", msg => console.log(`Browser log: ${msg.text()}`));
+
+    const method = await page.evaluate(() => {
+        const k = kaplay();
+
+        const o = k.add([
+            k.anchor("topleft"),
+        ]);
+
+        const prefab = o.serialize();
+        o.destroy();
+
+        console.log(prefab.components);
+
+        const pf = k.addPrefab<CompList<AnchorComp>>(prefab);
+
+        return typeof pf.anchor == "object" && pf.anchor.x == -1
+            && pf.anchor.y == -1;
+    });
+
+    expect(method).toBeTruthy();
+});
+
+test("Test serialization of fixed() component", async ({ page }) => {
+    page.on("console", msg => console.log(`Browser log: ${msg.text()}`));
+
+    const method = await page.evaluate(() => {
+        const k = kaplay();
+
+        const o = k.add([
+            k.fixed(true),
+        ]);
+
+        const prefab = o.serialize();
+        o.destroy();
+
+        console.log(prefab.components);
+
+        const pf = k.addPrefab<CompList<FixedComp>>(prefab);
+
+        return pf.fixed == true;
+    });
+
+    expect(method).toBeTruthy();
+});
+
+test("Test serialization of follow() component", async ({ page }) => {
+    page.on("console", msg => console.log(`Browser log: ${msg.text()}`));
+
+    const method = await page.evaluate(() => {
+        const k = kaplay({
+            singletonTags: ["bean"],
+        });
+        k.loadBean();
+
+        const obj = k.add([k.pos(), "bean"]);
+
+        // !!! add test to check if the object has pos comp
+        const o = k.add([
+            k.follow(obj, k.vec2(10, 10)),
+            k.pos(),
+        ]);
+
+        const prefab = o.serialize();
+        o.destroy();
+
+        console.log(prefab.components);
+
+        const pf = k.addPrefab<CompList<FollowComp>>(prefab);
+
+        return pf.follow.obj?.tags.includes("bean");
+    });
+
+    expect(method).toBeTruthy();
+});
+
+test("Test serialization of layer() component", async ({ page }) => {
+    page.on("console", msg => console.log(`Browser log: ${msg.text()}`));
+
+    const method = await page.evaluate(() => {
+        const k = kaplay();
+        k.setLayers([
+            "bg",
+            "obj",
+            "ui",
+        ], "obj");
+
+        const o = k.add([
+            k.layer("obj"),
+            k.pos(),
+        ]);
+
+        const prefab = o.serialize();
+        o.destroy();
+
+        console.log(prefab.components);
+
+        const pf = k.addPrefab<CompList<LayerComp>>(prefab);
+
+        return pf.layer == "obj";
+    });
+
+    expect(method).toBeTruthy();
+});
+
+// test("Test serialization of move() component", async ({ page }) => {
+//     page.on("console", msg => console.log(`Browser log: ${msg.text()}`));
+
+//     const method = await page.evaluate(() => {
+//         const k = kaplay();
+
+//         const o = k.add([
+//             k.pos(),
+//             k.move(k.vec2(10, 10), 10),
+//         ]);
+
+//         const prefab = o.serialize();
+//         o.destroy();
+
+//         console.log(prefab.components);
+
+//         // !!! dir and speed not stored in comp so there's no way to check
+//         // const pf = k.addPrefab<CompList<MoveComp>>(prefab);
+//         // return
+//     });
+
+//     expect(method).toBeTruthy();
+// });
+
+test("Test serialization of offscreen() component", async ({ page }) => {
+    page.on("console", msg => console.log(`Browser log: ${msg.text()}`));
+
+    const method = await page.evaluate(() => {
+        const k = kaplay();
+
+        const o = k.add([
+            k.pos(),
+            k.offscreen({
+                destroy: true,
+                distance: 10,
+                hide: true,
+                pause: true,
+                unpause: true,
+            }),
+        ]);
+
+        const prefab = o.serialize();
+        o.destroy();
+
+        console.log(prefab.components);
+
+        const pf = k.addPrefab<CompList<OffScreenComp>>(prefab);
+
+        return pf.offscreenDistance == 10;
+    });
+
+    expect(method).toBeTruthy();
+});
+
+test("Test serialization of pos() component", async ({ page }) => {
+    page.on("console", msg => console.log(`Browser log: ${msg.text()}`));
+
+    const method = await page.evaluate(() => {
+        const k = kaplay();
+
+        const o = k.add([
+            k.pos(10, 10),
+        ]);
+
+        const prefab = o.serialize();
+        o.destroy();
+
+        console.log(prefab.components);
+
+        const pf = k.addPrefab<CompList<PosComp>>(prefab);
+
+        return pf.pos.x == 10 && pf.pos.y == 10;
+    });
+
+    expect(method).toBeTruthy();
+});
+
+test("Test serialization of rotate() component", async ({ page }) => {
+    page.on("console", msg => console.log(`Browser log: ${msg.text()}`));
+
+    const method = await page.evaluate(() => {
+        const k = kaplay();
+
+        const o = k.add([
+            k.rotate(10),
+        ]);
+
+        const prefab = o.serialize();
+        o.destroy();
+
+        console.log(prefab.components);
+
+        const pf = k.addPrefab<CompList<RotateComp>>(prefab);
+
+        return pf.angle == 10;
+    });
+
+    expect(method).toBeTruthy();
+});
+
+test("Test serialization of scale() component", async ({ page }) => {
+    page.on("console", msg => console.log(`Browser log: ${msg.text()}`));
+
+    const method = await page.evaluate(() => {
+        const k = kaplay();
+
+        const o = k.add([
+            k.scale(10, 10),
+        ]);
+
+        const prefab = o.serialize();
+        o.destroy();
+
+        console.log(prefab.components);
+
+        const pf = k.addPrefab<CompList<ScaleComp>>(prefab);
+
+        return pf.scale.x == 10 && pf.scale.y == 10;
+    });
+
+    expect(method).toBeTruthy();
+});
+
+test("Test serialization of skew() component", async ({ page }) => {
+    page.on("console", msg => console.log(`Browser log: ${msg.text()}`));
+
+    const method = await page.evaluate(() => {
+        const k = kaplay();
+
+        const o = k.add([
+            k.skew(10, 10),
+        ]);
+
+        const prefab = o.serialize();
+        o.destroy();
+
+        console.log(prefab.components);
+
+        const pf = k.addPrefab<CompList<SkewComp>>(prefab);
+
+        return pf.skew.x == 10 && pf.skew.y == 10;
+    });
+
+    expect(method).toBeTruthy();
+});
+
+test("Test serialization of z() component", async ({ page }) => {
+    page.on("console", msg => console.log(`Browser log: ${msg.text()}`));
+
+    const method = await page.evaluate(() => {
+        const k = kaplay();
+
+        const o = k.add([
+            k.z(10),
+        ]);
+
+        const prefab = o.serialize();
+        o.destroy();
+
+        console.log(prefab.components);
+
+        const pf = k.addPrefab<CompList<ZComp>>(prefab);
+
+        return pf.z == 10;
+    });
+
+    expect(method).toBeTruthy();
+});
+
 // Draw Serialization
+// `drawon()` missing (has FrameBuffer, Picture refs)
+// `fadeIn()` missing, but wasn't it deprecated?
+// `particles()` missing (has Texture ref)
+// `picture()` missing (has Picture ref)
+// `polygon()` missing (has Texture ref)
+
 test("Test serialization of blend() component", async ({ page }) => {
     page.on("console", msg => console.log(`Browser log: ${msg.text()}`));
 
     const method = await page.evaluate(() => {
         const k = kaplay();
-        k.loadBean();
 
         const o = k.add([
             k.blend(BlendMode.Add),
@@ -82,7 +375,6 @@ test("Test serialization of circle() component", async ({ page }) => {
 
     const method = await page.evaluate(() => {
         const k = kaplay();
-        k.loadBean();
 
         const o = k.add([
             k.circle(10, { fill: true }),
@@ -118,7 +410,7 @@ test("Test serialization of circle() component", async ({ page }) => {
 
 //         const pf = k.addPrefab<CompList<ColorComp>>(prefab);
 
-//         // prefab.components.color.color.r is 10, i think color is being deserialized incorrectly
+//         // !!! prefab.components.color.color.r is 10, i think color is being deserialized incorrectly
 //         return pf.color.r == 10 && pf.color.g == 10 && pf.color.b == 10;
 //     });
 
@@ -130,7 +422,6 @@ test("Test serialization of ellipse() component", async ({ page }) => {
 
     const method = await page.evaluate(() => {
         const k = kaplay();
-        k.loadBean();
 
         const o = k.add([
             k.ellipse(10, 20),
@@ -154,7 +445,6 @@ test("Test serialization of fill() component", async ({ page }) => {
 
     const method = await page.evaluate(() => {
         const k = kaplay();
-        k.loadBean();
 
         const o = k.add([
             k.fill(true),
@@ -178,7 +468,6 @@ test("Test serialization of mask() component", async ({ page }) => {
 
     const method = await page.evaluate(() => {
         const k = kaplay();
-        k.loadBean();
 
         const o = k.add([
             k.mask("intersect"),
@@ -202,7 +491,6 @@ test("Test serialization of opacity() component", async ({ page }) => {
 
     const method = await page.evaluate(() => {
         const k = kaplay();
-        k.loadBean();
 
         const o = k.add([
             k.opacity(10),
@@ -226,7 +514,6 @@ test("Test serialization of outline() component", async ({ page }) => {
 
     const method = await page.evaluate(() => {
         const k = kaplay();
-        k.loadBean();
 
         const o = k.add([
             k.outline(10, k.rgb(10, 10, 10), 10, "bevel", 10, "butt"),
@@ -252,7 +539,6 @@ test("Test serialization of rect() component", async ({ page }) => {
 
     const method = await page.evaluate(() => {
         const k = kaplay();
-        k.loadBean();
 
         const o = k.add([
             k.rect(10, 10, { fill: true, radius: 10 }),
@@ -265,7 +551,7 @@ test("Test serialization of rect() component", async ({ page }) => {
 
         const pf = k.addPrefab<CompList<RectComp>>(prefab);
 
-        // no option to check for fill
+        // !!! no option to check for fill
         return pf.width == 10 && pf.height == 10 && pf.radius == 10;
     });
 
@@ -290,7 +576,7 @@ test("Test serialization of shader() component", async ({ page }) => {
 
         const pf = k.addPrefab<CompList<ShaderComp>>(prefab);
 
-        // no option for uniform
+        // !!! no option to check for uniform
         return pf.shader == "name";
     });
 
@@ -302,7 +588,7 @@ test("Test serialization of shader() component", async ({ page }) => {
 
 //     const method = await page.evaluate(() => {
 //         const k = kaplay();
-
+//         !!! couldn't get to load from this
 //         k.loadSprite(
 //             "dino",
 //             `data:image/png;base64,${
@@ -360,9 +646,9 @@ test("Test serialization of shader() component", async ({ page }) => {
 
 //         const pf = k.addPrefab<CompList<SpriteComp>>(prefab);
 
-//         // no option for fill
-//         // no option for quad
-//         // no option for tiled
+//         // !!! no option for fill
+//         // !!! no option for quad
+//         // !!! no option for tiled
 //         return pf.sprite == "bean" && pf.getCurAnim()?.name == "idle"
 //             && pf.animSpeed == 10 && pf.flipX == true && pf.flipY == true
 //             && pf.frame == 0 && pf.height == 10
@@ -372,66 +658,41 @@ test("Test serialization of shader() component", async ({ page }) => {
 //     expect(method).toBeTruthy();
 // });
 
-// test("Test serialization of text() component", async ({ page }) => {
-//     page.on("console", msg => console.log(`Browser log: ${msg.text()}`));
+test("Test serialization of text() component", async ({ page }) => {
+    page.on("console", msg => console.log(`Browser log: ${msg.text()}`));
 
-//     const method = await page.evaluate(() => {
-//         const k = kaplay();
+    const method = await page.evaluate(() => {
+        const k = kaplay();
 
-//         const CharTransform = {
-//             angle: 10,
-//             color: k.RED,
-//             font: "happy",
-//             opacity: 10,
-//             override: true,
-//             pos: k.vec2(10),
-//             scale: k.vec2(10),
-//             shader: "shader",
-//             skew: 10,
-//             stretchInPlace: true,
-//         };
+        const o = k.add([
+            k.text("hello", {
+                align: "center",
+                font: "happy",
+                indentAll: true,
+                letterSpacing: 10,
+                lineSpacing: 10,
+                locale: "es",
+                size: 10,
+                width: 10,
+            }),
+        ]);
 
-//         const o = k.add([
-//             k.text("hello", {
-//                 align: "center",
-//                 font: "happy",
-//                 indentAll: true,
-//                 letterSpacing: 10,
-//                 lineSpacing: 10,
-//                 locale: "es",
-//                 size: 10,
-//                 width: 10,
-//                 styles: {
-//                     "a": CharTransform,
-//                 },
-//                 transform: CharTransform,
-//             }),
-//         ]);
+        const prefab = o.serialize();
+        o.destroy();
 
-//         const prefab = o.serialize();
-//         o.destroy();
+        console.log(prefab.components);
 
-//         console.log(prefab.components);
+        const pf = k.addPrefab<CompList<TextComp>>(prefab);
 
-//         const pf = k.addPrefab<CompList<TextComp>>(prefab);
-//         console.log(
-//             JSON.stringify(pf.textStyles["a"]),
-//         );
-//         console.log(JSON.stringify(CharTransform));
-//         console.log(
-//             JSON.stringify(pf.textStyles["a"])
-//                 === JSON.stringify(CharTransform),
-//         );
+        // !!! can't check for indentAll
+        // !!! can't check for locale
+        return pf.text == "hello" && pf.align == "center" && pf.font == "happy"
+            && pf.letterSpacing == 10 && pf.lineSpacing == 10
+            && pf.textSize == 10 && pf.width == 10;
+    });
 
-//         // no option for indentAll
-//         // no option for locale
-//         return pf.text == "hello" && pf.align == "center" && pf.font == "happy"
-//             && pf.letterSpacing == 10 && pf.lineSpacing == 10
-//             && pf.textSize == 10 && pf.width == 10;
-//     });
-
-//     expect(method).toBeTruthy();
-// });
+    expect(method).toBeTruthy();
+});
 
 test("Test serialization of uvquad() component", async ({ page }) => {
     page.on("console", msg => console.log(`Browser log: ${msg.text()}`));
@@ -461,7 +722,7 @@ test("Test serialization of uvquad() component", async ({ page }) => {
 
 //     const method = await page.evaluate(() => {
 //         const k = kaplay();
-// !!! not checking yet properly because url weirdness similar to sprite
+//         !!! not checking yet properly because url weirdness similar to sprite
 //         const o = k.add([
 //             k.video("url", { width: 10, height: 10, loop: true, muted: true }),
 //         ]);
@@ -480,6 +741,8 @@ test("Test serialization of uvquad() component", async ({ page }) => {
 // });
 
 // Level Serialization
+// `pathfinder()` & `pathfinderMap()?` missing (needs Graph)
+
 test("Test serialization of agent() component", async ({ page }) => {
     page.on("console", msg => console.log(`Browser log: ${msg.text()}`));
 
@@ -509,38 +772,55 @@ test("Test serialization of agent() component", async ({ page }) => {
     expect(method).toBeTruthy();
 });
 
-// !!! can't be done/weird
-// test("Test serialization of level() component", async ({ page }) => {
-//     page.on("console", msg => console.log(`Browser log: ${msg.text()}`));
+test("Test serialization of level() component", async ({ page }) => {
+    page.on("console", msg => console.log(`Browser log: ${msg.text()}`));
 
-//     const method = await page.evaluate(() => {
-//         const k = kaplay();
-//         k.loadBean();
+    const method = await page.evaluate(() => {
+        const k = kaplay();
 
-//         const level = [
-//             "                          $",
-//             "                          $",
-//             "           $$         =   $",
-//             "  %      ====         =   $",
-//             "                      =    ",
-//             "       ^^      = >    =   &",
-//             "===========================",
-//         ];
+        const o = k.add([
+            k.level(
+                [
+                    // Design the level layout with symbols
+                    "@  ^ $$",
+                    "=======",
+                ],
+                {
+                    // The size of each grid
+                    tileWidth: 64,
+                    tileHeight: 64,
+                    // Define what each symbol means (in components)
+                    tiles: {
+                        "@": () => [
+                            "player",
+                        ],
+                        "=": () => [
+                            "grass",
+                        ],
+                        "$": () => [
+                            "coin",
+                        ],
+                        "^": () => [
+                            "danger",
+                        ],
+                    },
+                },
+            ),
+        ]);
 
-//         const o = k.add([
-//             k.level(level),
-//         ]);
+        const prefab = o.serialize();
+        o.destroy();
 
-//         const prefab = o.serialize();
-//         o.destroy();
+        console.log(prefab.components);
 
-//         console.log(prefab.components);
+        const pf = k.addPrefab<CompList<LevelComp>>(prefab);
 
-//         const pf = k.addPrefab<CompList<LevelComp>>(prefab);
-//     });
+        // can't check for tiles !!!
+        return pf.tileWidth() == 64 && pf.tileHeight() == 64;
+    });
 
-//     expect(method).toBeTruthy();
-// });
+    expect(method).toBeTruthy();
+});
 
 test("Test serialization of patrol() component", async ({ page }) => {
     page.on("console", msg => console.log(`Browser log: ${msg.text()}`));
@@ -565,14 +845,14 @@ test("Test serialization of patrol() component", async ({ page }) => {
 
         const pf = k.addPrefab<CompList<PatrolComp>>(prefab);
 
-        // no check for endBehaviour
+        // !!! no check for endBehaviour
         return pf.waypoints?.[0].eq(k.vec2(10)) && pf.patrolSpeed == 10;
     });
 
     expect(method).toBeTruthy();
 });
 
-// no gameobj as candidates
+// !!! no gameobj as candidates
 // test("Test serialization of sentry() component", async ({ page }) => {
 //     page.on("console", msg => console.log(`Browser log: ${msg.text()}`));
 
@@ -659,7 +939,7 @@ test("Test serialization of area() component", async ({ page }) => {
 
         const pf = k.addPrefab<CompList<AreaComp>>(prefab);
 
-        // area doesn't serialize area.cursor
+        // !!! area doesn't serialize area.cursor
         return pf.collisionIgnore.length == 1
             && pf.collisionIgnore[0] == "enemy"
             && pf.friction == 10 && pf.isSensor == true
@@ -691,7 +971,7 @@ test("Test serialization of body() component", async ({ page }) => {
             }),
         ]);
 
-        // stickToPlatform is undefined for some weird reason
+        // !!! stickToPlatform is undefined for some weird reason
         const prefab = o.serialize();
         o.destroy();
 
@@ -726,7 +1006,6 @@ test("Test serialization of doubleJump() component", async ({ page }) => {
 
         const pf = k.addPrefab<CompList<DoubleJumpComp>>(prefab);
 
-        // area doesn't serialize area.cursor
         return pf.numJumps == 2;
     });
 
@@ -859,7 +1138,7 @@ test("Test serialization of constantForce() component", async ({ page }) => {
     expect(method).toBeTruthy();
 });
 
-// didn't find how to test this one
+// !!!  didn't find how to test this one
 // test("Test serialization of platformEffector() component", async ({ page }) => {
 //     page.on("console", msg => console.log(`Browser log: ${msg.text()}`));
 
@@ -926,7 +1205,7 @@ test("Test serialization of buoyancyEffector() component", async ({ page }) => {
 // `animate()` missing (complicated)
 // `boom()` used only internally in `addKaboom()`
 
-// would have to add followMouse as opt in FakeMouse
+// !!! would have to add followMouse as opt in FakeMouse
 // test("Test serialization of fakeMouse() component", async ({ page }) => {
 //     page.on("console", msg => console.log(`Browser log: ${msg.text()}`));
 
@@ -973,7 +1252,7 @@ test("Test serialization of health() component", async ({ page }) => {
     expect(method).toBeTruthy();
 });
 
-// would have to add one of the params to the comp
+// !!! would have to add one of the params to the comp
 // test("Test serialization of lifespan() component", async ({ page }) => {
 //     page.on("console", msg => console.log(`Browser log: ${msg.text()}`));
 
@@ -1093,7 +1372,7 @@ test("Test serialization of textInput() component", async ({ page }) => {
             prefab,
         );
 
-        // can't check maxInputLength because it's not stored on comp
+        // !!! can't check maxInputLength because it's not stored on comp
         return pf.hasFocus == true;
     });
 
