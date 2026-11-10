@@ -37,6 +37,6 @@ export function color(...args: ColorArgs): ColorComp {
     };
 }
 
-export function colorFactory(data: any) {
-    return color(Color.deserialize(data));
+export function colorFactory(data: SerializedColorComp) {
+    return color(Color.deserialize(data.color));
 }
