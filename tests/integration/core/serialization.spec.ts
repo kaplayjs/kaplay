@@ -1,5 +1,5 @@
 import { expect, test } from "@playwright/test";
-import fs from "fs";
+import { readFile } from "node:fs/promises";
 import {
     type AgentComp,
     type AnchorComp,
@@ -123,7 +123,6 @@ test("Test serialization of follow() component", async ({ page }) => {
 
         const obj = k.add([k.pos(), "bean"]);
 
-        // !!! add test to check if the object has pos comp
         const o = k.add([
             k.follow(obj, k.vec2(10, 10)),
             k.pos(),
@@ -394,6 +393,7 @@ test("Test serialization of circle() component", async ({ page }) => {
     expect(method).toBeTruthy();
 });
 
+// !!! waiting on #1196
 // test("Test serialization of color() component", async ({ page }) => {
 //     page.on("console", msg => console.log(`Browser log: ${msg.text()}`));
 
@@ -410,7 +410,6 @@ test("Test serialization of circle() component", async ({ page }) => {
 
 //         const pf = k.addPrefab<CompList<ColorComp>>(prefab);
 
-//         // !!! prefab.components.color.color.r is 10, i think color is being deserialized incorrectly
 //         return pf.color.r == 10 && pf.color.g == 10 && pf.color.b == 10;
 //     });
 
@@ -583,80 +582,79 @@ test("Test serialization of shader() component", async ({ page }) => {
     expect(method).toBeTruthy();
 });
 
-// test("Test serialization of sprite() component", async ({ page }) => {
-//     page.on("console", msg => console.log(`Browser log: ${msg.text()}`));
+test("Test serialization of sprite() component", async ({ page }) => {
+    page.on("console", msg => console.log(`Browser log: ${msg.text()}`));
 
-//     const method = await page.evaluate(() => {
-//         const k = kaplay();
-//         !!! couldn't get to load from this
-//         k.loadSprite(
-//             "dino",
-//             `data:image/png;base64,${
-//                 fs.readFileSync(
-//                     new URL(
-//                         "../../../examples/sprites/dungeon-dino.png",
-//                         import.meta.url,
-//                     ),
-//                     "base64",
-//                 )
-//             }`,
-//             {
-//                 // The image contains 9 frames layered out horizontally, slice it into individual frames
-//                 sliceX: 9,
-//                 // Define animations
-//                 anims: {
-//                     "idle": {
-//                         // Starts from frame 0, ends at frame 3
-//                         from: 0,
-//                         to: 3,
-//                         // Frame per second
-//                         speed: 5,
-//                         loop: true,
-//                     },
-//                     "run": {
-//                         from: 4,
-//                         to: 7,
-//                         speed: 10,
-//                         loop: true,
-//                     },
-//                     // This animation only has 1 frame
-//                     "jump": 8,
-//                 },
-//             },
-//         );
+    const dinosrc = `data:image/png;base64,${await readFile(
+        new URL(`../../fixtures/sprites/dungeon-dino.png`, import.meta.url),
+        "base64",
+    )}`;
 
-//         const o = k.add([
-//             k.sprite("dino", {
-//                 anim: "idle",
-//                 animSpeed: 10,
-//                 fill: true,
-//                 flipX: true,
-//                 flipY: true,
-//                 frame: 0,
-//                 height: 10,
-//                 tiled: true,
-//                 width: 10,
-//             }),
-//         ]);
+    const method = await page.evaluate(async (dinosrc) => {
+        const k = kaplay();
 
-//         const prefab = o.serialize();
-//         o.destroy();
+        await k.loadSprite(
+            "dino",
+            dinosrc,
+            {
+                // The image contains 9 frames layered out horizontally, slice it into individual frames
+                sliceX: 9,
+                // Define animations
+                anims: {
+                    "idle": {
+                        // Starts from frame 0, ends at frame 3
+                        from: 0,
+                        to: 3,
+                        // Frame per second
+                        speed: 5,
+                        loop: true,
+                    },
+                    "run": {
+                        from: 4,
+                        to: 7,
+                        speed: 10,
+                        loop: true,
+                    },
+                    // This animation only has 1 frame
+                    "jump": 8,
+                },
+            },
+        );
 
-//         console.log(prefab.components);
+        const o = k.add([
+            k.sprite("dino", {
+                anim: "idle",
+                animSpeed: 10,
+                fill: true,
+                flipX: true,
+                flipY: true,
+                frame: 0,
+                height: 10,
+                tiled: true,
+                width: 10,
+            }),
+        ]);
 
-//         const pf = k.addPrefab<CompList<SpriteComp>>(prefab);
+        const prefab = o.serialize();
+        o.destroy();
 
-//         // !!! no option for fill
-//         // !!! no option for quad
-//         // !!! no option for tiled
-//         return pf.sprite == "bean" && pf.getCurAnim()?.name == "idle"
-//             && pf.animSpeed == 10 && pf.flipX == true && pf.flipY == true
-//             && pf.frame == 0 && pf.height == 10
-//             && pf.width == 10;
-//     });
+        console.log(prefab.components);
 
-//     expect(method).toBeTruthy();
-// });
+        const pf = k.addPrefab<CompList<SpriteComp>>(prefab);
+        pf.play("idle");
+
+        // !!! no option for fill
+        // !!! no option for quad
+        // !!! no option for tiled
+
+        return pf.sprite == "dino" && pf.getCurAnim()?.name == "idle"
+            && pf.animSpeed == 10 && pf.flipX == true && pf.flipY == true
+            && pf.frame == 0 && pf.height == 10
+            && pf.width == 10;
+    }, dinosrc);
+
+    expect(method).toBeTruthy();
+});
 
 test("Test serialization of text() component", async ({ page }) => {
     page.on("console", msg => console.log(`Browser log: ${msg.text()}`));
@@ -717,28 +715,39 @@ test("Test serialization of uvquad() component", async ({ page }) => {
     expect(method).toBeTruthy();
 });
 
-// test("Test serialization of video() component", async ({ page }) => {
-//     page.on("console", msg => console.log(`Browser log: ${msg.text()}`));
+test("Test serialization of video() component", async ({ page }) => {
+    page.on("console", msg => console.log(`Browser log: ${msg.text()}`));
 
-//     const method = await page.evaluate(() => {
-//         const k = kaplay();
-//         !!! not checking yet properly because url weirdness similar to sprite
-//         const o = k.add([
-//             k.video("url", { width: 10, height: 10, loop: true, muted: true }),
-//         ]);
+    const videourl = `data:video/mp4;base64,${await readFile(
+        new URL("../../fixtures/videos/dance.mp4", import.meta.url),
+        "base64",
+    )}`;
 
-//         const prefab = o.serialize();
-//         o.destroy();
+    const method = await page.evaluate(async (url) => {
+        const k = kaplay();
 
-//         console.log(prefab.components);
+        const o = k.add([
+            k.video(url, {
+                width: 10,
+                height: 10,
+                loop: true,
+                muted: true,
+            }),
+        ]);
 
-//         const pf = k.addPrefab<CompList<VideoComp>>(prefab);
+        const prefab = o.serialize();
+        o.destroy();
 
-//         return pf.width == 10 && pf.height == 10;
-//     });
+        console.log(prefab.components);
 
-//     expect(method).toBeTruthy();
-// });
+        const pf = k.addPrefab<CompList<VideoComp>>(prefab);
+
+        return pf.width == 10 && pf.height == 10 && pf.loop == true
+            && pf.muted == true;
+    }, videourl);
+
+    expect(method).toBeTruthy();
+});
 
 // Level Serialization
 // `pathfinder()` & `pathfinderMap()?` missing (needs Graph)
