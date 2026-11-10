@@ -1,0 +1,31 @@
+name: Check repository formatting
+
+on:
+  push:
+  pull_request:
+    branches: ["master"]
+
+jobs:
+  check-format:
+    name: Check Format
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+      - name: Install Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: 24
+      - name: Install dprint
+        run: npm i dprint
+      - name: Run dprint checker 
+        run: FORMATTED=$(npx dprint check)
+      - name: Fail if not formatted
+        run: |
+          if [ -n "$FORMATTED" ]; then
+            echo "Code is not formatted. Please run 'npm run fmt' to format the code."
+            exit 1
+          else
+            echo "Code is formatted correctly."
+          fi
+        
