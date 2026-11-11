@@ -192,7 +192,7 @@ test("Test serialization of move() component", async ({ page }) => {
         // just checking it was serialized properly
         return prefab.components["move"]["dir"]["x"] == 10
             && prefab.components["move"]["dir"]["y"] == 10
-            && prefab.components["move"]["speed"];
+            && prefab.components["move"]["speed"] == 10;
     });
 
     expect(method).toBeTruthy();
