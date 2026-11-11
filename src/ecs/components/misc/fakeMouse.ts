@@ -20,6 +20,12 @@ export type SerializedFakeMouseComp = FakeMouseOpt;
  */
 export interface FakeMouseComp extends Comp {
     /**
+     * Whether the fake mouse should follow the real mouse.
+     *
+     * @default true
+     */
+    followMouse: boolean;
+    /**
      * Whether the fake mouse is pressed.
      */
     get isPressed(): boolean;
@@ -83,6 +89,7 @@ export const fakeMouse = (opt: FakeMouseOpt = {}): FakeMouseComp => {
     return {
         id: "fakeMouse",
         require: ["pos"],
+        followMouse: opt.followMouse ?? true,
         add(this: FakeMouse) {
             if (_k.game.fakeMouse) {
                 throw new Error("Fake mouse already exists");
@@ -113,7 +120,7 @@ export const fakeMouse = (opt: FakeMouseOpt = {}): FakeMouseComp => {
             lastPos = this.pos.clone();
 
             // if the fakeMouse it's being moved by the mouse no problem
-            if (opt.followMouse && _k.app.isMouseMoved()) {
+            if (this.followMouse && _k.app.isMouseMoved()) {
                 this.screenPos = _k.app.mousePos();
                 this.trigger("fakeMouseMove", false);
             }
@@ -143,7 +150,7 @@ export const fakeMouse = (opt: FakeMouseOpt = {}): FakeMouseComp => {
         },
         serialize() {
             return {
-                followMouse: opt.followMouse,
+                followMouse: this.followMouse,
             };
         },
     };

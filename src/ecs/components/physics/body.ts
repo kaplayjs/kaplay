@@ -207,6 +207,7 @@ export function body(opt: BodyCompOpt = {}): BodyComp {
         isStatic: opt.isStatic ?? false,
         // TODO: prefer density * area
         mass: opt.mass ?? 1,
+        stickToPlatform: opt.stickToPlatform ?? false,
         add(this: GameObj<PosComp | BodyComp | AreaComp>) {
             prevPhysicsPos = this.pos.clone();
             nextPhysicsPos = this.pos.clone();
@@ -368,7 +369,7 @@ export function body(opt: BodyCompOpt = {}): BodyComp {
                     if (
                         lastPlatformPos
                         && !curPlatform.pos.eq(lastPlatformPos)
-                        && opt.stickToPlatform !== false
+                        && this.stickToPlatform !== false
                     ) {
                         // Stick to the platform
                         this.moveBy(

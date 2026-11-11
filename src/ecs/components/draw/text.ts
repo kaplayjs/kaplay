@@ -93,6 +93,19 @@ export interface TextComp extends Comp {
      */
     letterSpacing: number;
     /**
+     * If true, any (whitespace) indent on the first line of the paragraph
+     * will be copied to all of the lines for those parts that text-wrap.
+     */
+    indentAll: boolean;
+    /**
+     * Locale for text segmentation (e.g., 'hi' for Hindi, 'ar' for Arabic, 'bn' for Bengali).
+     * Helps with proper grapheme cluster detection for complex scripts.
+     * Only used when Intl.Segmenter is available in the browser.
+     *
+     * @since v4000.0
+     */
+    locale: string;
+    /**
      * Transform the pos, scale, rotation or color for each character based on the index or char.
      *
      * @since v2000.1
@@ -221,6 +234,8 @@ export function text(t: string, opt: TextCompOpt = {}): TextComp {
         align: opt.align!,
         lineSpacing: opt.lineSpacing!,
         letterSpacing: opt.letterSpacing!,
+        indentAll: opt.indentAll!,
+        locale: opt.locale!,
     };
 
     // dynamic props that update with transform instead, reformat only if _renderProps changed
@@ -254,8 +269,8 @@ export function text(t: string, opt: TextCompOpt = {}): TextComp {
             lineSpacing: obj.lineSpacing,
             transform: obj.textTransform,
             styles: obj.textStyles,
-            indentAll: opt.indentAll,
-            locale: opt.locale,
+            indentAll: obj.indentAll,
+            locale: obj.locale,
         };
 
         theFormattedText = reformat
@@ -372,6 +387,22 @@ export function text(t: string, opt: TextCompOpt = {}): TextComp {
             _height = value;
             if (_shape) _shape.height = value;
             this._renderAreaVersion = nextRenderAreaVersion();
+            update(this as any as GameObj<TextComp>, true);
+        },
+        get indentAll() {
+            return _props.indentAll;
+        },
+        set indentAll(value) {
+            if (_props.indentAll == value) return;
+            _props.indentAll = value;
+            update(this as any as GameObj<TextComp>, true);
+        },
+        get locale() {
+            return _props.locale;
+        },
+        set locale(value) {
+            if (_props.locale == value) return;
+            _props.locale = value;
             update(this as any as GameObj<TextComp>, true);
         },
 

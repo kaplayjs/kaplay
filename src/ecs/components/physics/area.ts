@@ -919,7 +919,7 @@ export function areaFactory(data: SerializedAreaComp) {
             : Vec2.deserialize(data.scale);
     }
     if (data.offset) opt.offset = Vec2.deserialize(data.offset);
-    if (data.cursor) opt.cursor = opt.cursor;
+    if (data.cursor) opt.cursor = data.cursor;
     // Make a copy, since it might be changed later
     if (data.collisionIgnore) {
         opt.collisionIgnore = data.collisionIgnore.slice();

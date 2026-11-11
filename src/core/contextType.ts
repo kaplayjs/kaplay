@@ -66,7 +66,10 @@ import type {
     FakeMouseOpt,
 } from "../ecs/components/misc/fakeMouse";
 import type { HealthComp } from "../ecs/components/misc/health";
-import type { LifespanCompOpt } from "../ecs/components/misc/lifespan";
+import type {
+    LifespanComp,
+    LifespanCompOpt,
+} from "../ecs/components/misc/lifespan";
 import type { NamedComp } from "../ecs/components/misc/named";
 import type { StateComp } from "../ecs/components/misc/state";
 import type { StayComp } from "../ecs/components/misc/stay";
@@ -175,7 +178,6 @@ import {
     type Comp,
     type CompList,
     type Cursor,
-    type EmptyComp,
     type GameObj,
     type GetOpt,
     type KAPLAYOpt,
@@ -1705,7 +1707,7 @@ export interface KAPLAYCtx {
      * @group Components
      * @subgroup Behaviour
      */
-    lifespan(time: number, options?: LifespanCompOpt): EmptyComp;
+    lifespan(time: number, options?: LifespanCompOpt): LifespanComp;
     /**
      * Names a game obj.
      *
