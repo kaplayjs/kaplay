@@ -390,8 +390,7 @@ test("Test serialization of circle() component", async ({ page }) => {
 
         const pf = k.addPrefab<CompList<CircleComp>>(prefab);
 
-        // no way to check for fill
-        return pf.radius == 10;
+        return pf.radius == 10 && pf.fill == true;
     });
 
     expect(method).toBeTruthy();
