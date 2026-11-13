@@ -34,3 +34,23 @@ test.describe("Color creation using rgb function", () => {
         expect(color).toEqual({ r: 11, g: 25, b: 6 });
     });
 });
+
+test.describe("Color to hex", () => {
+    test("rgb(18, 52, 86).toHex() should return #123456", () => {
+        expect(rgb(18, 52, 86).toHex()).toBe("#123456");
+    });
+
+    test("rgb(0, 0, 0).toHex() should return #000000", () => {
+        expect(rgb(0, 0, 0).toHex()).toBe("#000000");
+    });
+
+    test("toHex() should round fractional channels", () => {
+        expect(new Color(254.6, 127.5, 0.4).toHex()).toBe("#ff8000");
+    });
+
+    test("toHex() of a lerped color should be a valid hex color", () => {
+        const color = rgb(255, 128, 0).lerp(rgb(255, 128, 1), 0.5);
+        expect(color.toHex()).toMatch(/^#[0-9a-f]{6}$/);
+        expect(Color.fromHex(color.toHex())).toEqual(rgb(255, 128, 1));
+    });
+});
