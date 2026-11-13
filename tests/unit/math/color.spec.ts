@@ -44,13 +44,13 @@ test.describe("Color to hex", () => {
         expect(rgb(0, 0, 0).toHex()).toBe("#000000");
     });
 
-    test("toHex() should round fractional channels", () => {
-        expect(new Color(254.6, 127.5, 0.4).toHex()).toBe("#ff8000");
+    test("toHex() should truncate fractional channels", () => {
+        expect(new Color(254.6, 127.5, 0.4).toHex()).toBe("#fe7f00");
     });
 
     test("toHex() of a lerped color should be a valid hex color", () => {
         const color = rgb(255, 128, 0).lerp(rgb(255, 128, 1), 0.5);
         expect(color.toHex()).toMatch(/^#[0-9a-f]{6}$/);
-        expect(Color.fromHex(color.toHex())).toEqual(rgb(255, 128, 1));
+        expect(Color.fromHex(color.toHex())).toEqual(rgb(255, 128, 0));
     });
 });

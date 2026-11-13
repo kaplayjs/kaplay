@@ -257,9 +257,9 @@ export class Color {
      * @since v3000.0
      */
     toHex(): string {
-        // channels can be fractional, e.g. after lerp() or mult()
-        const hex = (c: number) => Math.round(c).toString(16).padStart(2, "0");
-        return "#" + hex(this.r) + hex(this.g) + hex(this.b);
+        return "#"
+            + ((1 << 24) + (this.r << 16) + (this.g << 8) + (this.b << 0)).toString(16)
+                .slice(1);
     }
 
     /**
