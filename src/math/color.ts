@@ -258,7 +258,8 @@ export class Color {
      */
     toHex(): string {
         return "#"
-            + ((1 << 24) + (this.r << 16) + (this.g << 8) + (this.b << 0)).toString(16)
+            + ((1 << 24) + (this.r << 16) + (this.g << 8) + (this.b << 0))
+                .toString(16)
                 .slice(1);
     }
 
