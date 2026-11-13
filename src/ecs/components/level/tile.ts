@@ -85,9 +85,27 @@ export function tile(opts: TileCompOpt = {}): TileComp {
 
     let edgeMask = getEdgeMask();
 
+    // Kept so destroy() can still reach the level: the parent of a
+    // destroyed object is already null when its destroy hooks run.
+    let level: GameObj<LevelComp> | null = null;
+
     return {
         id: "tile",
         tilePosOffset: opts.offset ?? vec2(0),
+
+        add(this: GameObj) {
+            const parent = this.parent as GameObj<LevelComp> | null;
+            level = parent?.has("level") ? parent : null;
+        },
+
+        destroy(this: GameObj) {
+            if (!level) return;
+            level.removeFromSpatialMap(this);
+            level.invalidateNavigationMap();
+            level.trigger("spatialMapChanged");
+            level.trigger("navigationMapInvalid");
+            level = null;
+        },
 
         set tilePos(p: Vec2) {
             const level = this.getLevel();

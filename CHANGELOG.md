@@ -120,6 +120,7 @@ So your change should look like:
 - Fixed styled text (`[tag]...[/tag]`) style positions desyncing after an emoji, ZWJ sequence or astral character (#1115) - @mahirhir, @imaginarny
 - Fixed text color defined in `styles`/`transform` not being applied to grapheme clusters (#1115) - @imaginarny
 - Fixed `level` errors caused by movement functions like `TileComp.tileMove()`, eliminating the need to manually trigger spatial map creation beforehand (#1078) - @SobennaStory
+- Fixed destroyed `level` tiles staying in the spatial map, so `getAt()` no longer returns them and pathfinding sees removed obstacles (#1199) - @bardrop
 
 ## [4000.0.0-alpha.27.1] - 2026-05-12
 
