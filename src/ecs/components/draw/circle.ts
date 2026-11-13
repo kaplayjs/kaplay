@@ -25,7 +25,7 @@ export interface SerializedCircleComp {
  * @group Components
  * @subgroup Component Types
  */
-export interface CircleComp extends Comp {
+export interface CircleComp extends Comp, FillComp {
     draw: Comp["draw"];
     /** Radius of circle. */
     radius: number;
@@ -60,6 +60,7 @@ export function circle(
     let _radius = radius;
     return {
         id: "circle",
+        fill: opt.fill ?? true,
         get radius() {
             return _radius;
         },
@@ -73,7 +74,7 @@ export function circle(
         draw(this: GameObj<CircleComp & FillComp>) {
             drawCircle(Object.assign(getRenderProps(this), {
                 radius: _radius,
-                fill: this.fill ?? opt.fill,
+                fill: this.fill,
             }));
         },
         renderArea(
@@ -96,7 +97,7 @@ export function circle(
         },
         serialize(this: GameObj<CircleComp & FillComp>) {
             const data: SerializedCircleComp = { radius: _radius };
-            if (this.fill ?? opt.fill) data.fill = true;
+            if (this.fill) data.fill = true;
             return data;
         },
     };

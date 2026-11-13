@@ -73,6 +73,21 @@ So your change should look like:
 - Added `KAPLAYOpt.singletonTags` with a few helpers to make listed tags unique, meaning only one object can have a given tag at a time, e.g. `["player", "focused"]` (#1172) - @imaginarny
 - Added `GetOpt.op` operator option to allow `"or"` besides the default `"and"` in `GameObjRaw.get()`, e.g. `get(["fruit", "vegetable"], { op: "or" })` (#1172) - @imaginarny
 - Added `rootURL(url)` to prefix the passed URL using `loadRoot()` value (#1135) - @amyspark-ng
+- Added prefab support for most components (except those with ref or function arguments for now) (#1179) - @imaginarny
+- Exposed `registerPrefabFactory()` to be able to register custom components for deserialization (#1179) - @imaginarny
+
+  ```js
+  const myComp = (p = vec2(0)) => ({
+      id: "myComp",
+      serialize() {
+          return { p: p.serialize() }
+      },
+  });
+
+  registerPrefabFactory("myComp", data => {
+      return myComp(Vec2.deserialize(data.p))
+  });
+  ```
 
 ### Changed
 
@@ -88,6 +103,8 @@ So your change should look like:
 - Updated `getLastInputDeviceType()` so updates to gamepad when you move a joystick (#1168) - @amyspark-ng
 - Updated `StyledTextInfo` to include the rendered text's grapheme clusters as a `runes` array - @mahirhir
 - Updated `text()` component and `compileStyledText()` to accept an optional `locale` option and parameter, respectively (#1115) - @mahirhir, @imaginarny
+- Component `follow()` now also accepts a tag or name (of `named()` comp) besides a raw object (#1179) - @imaginarny
+- Exposed `obj.jumpsLeft` of `doubleJump()` component (#1179) - @imaginarny
 
 ### Examples
 
@@ -120,6 +137,7 @@ So your change should look like:
 - Fixed styled text (`[tag]...[/tag]`) style positions desyncing after an emoji, ZWJ sequence or astral character (#1115) - @mahirhir, @imaginarny
 - Fixed text color defined in `styles`/`transform` not being applied to grapheme clusters (#1115) - @imaginarny
 - Fixed `level` errors caused by movement functions like `TileComp.tileMove()`, eliminating the need to manually trigger spatial map creation beforehand (#1078) - @SobennaStory
+- Fixed `text()` component always getting serialized with fixed width (#1179) - @imaginarny
 
 ## [4000.0.0-alpha.27.1] - 2026-05-12
 
