@@ -120,6 +120,7 @@ So your change should look like:
 - Fixed styled text (`[tag]...[/tag]`) style positions desyncing after an emoji, ZWJ sequence or astral character (#1115) - @mahirhir, @imaginarny
 - Fixed text color defined in `styles`/`transform` not being applied to grapheme clusters (#1115) - @imaginarny
 - Fixed `level` errors caused by movement functions like `TileComp.tileMove()`, eliminating the need to manually trigger spatial map creation beforehand (#1078) - @SobennaStory
+- Fixed `sat()` resolving a collision along the wrong axis when one shape's projection contains the other's, e.g. a small body sinking into a wide platform was pushed out sideways instead of up (#1198) - @bardrop
 
 ## [4000.0.0-alpha.27.1] - 2026-05-12
 

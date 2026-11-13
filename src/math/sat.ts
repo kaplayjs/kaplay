@@ -43,10 +43,14 @@ export function sat(p1: Polygon, p2: Polygon): SatResult | null {
             if (o < 0) { // This should be <= 0 !!!!
                 return null;
             }
-            if (o < Math.abs(overlap)) {
-                const o1 = max2 - min1;
-                const o2 = min2 - max1;
-                overlap = Math.abs(o1) < Math.abs(o2) ? o1 : o2;
+            // Compare the distance needed to separate the shapes on this
+            // axis, not the length of the overlap: when one projection
+            // contains the other the two differ.
+            const o1 = max2 - min1;
+            const o2 = min2 - max1;
+            const axisOverlap = Math.abs(o1) < Math.abs(o2) ? o1 : o2;
+            if (Math.abs(axisOverlap) < Math.abs(overlap)) {
+                overlap = axisOverlap;
                 if (!result) {
                     result = {
                         normal: overlap !== 0
