@@ -73,6 +73,7 @@ So your change should look like:
 - Added `KAPLAYOpt.singletonTags` with a few helpers to make listed tags unique, meaning only one object can have a given tag at a time, e.g. `["player", "focused"]` (#1172) - @imaginarny
 - Added `GetOpt.op` operator option to allow `"or"` besides the default `"and"` in `GameObjRaw.get()`, e.g. `get(["fruit", "vegetable"], { op: "or" })` (#1172) - @imaginarny
 - Added `rootURL(url)` to prefix the passed URL using `loadRoot()` value (#1135) - @amyspark-ng
+- Added `IKConstraintOpt.offset` to make `constraint.ik()` reach a point in the target's local space instead of its origin, so a foot can follow a spot on a moving platform without a dummy child object (#1087) - @officialasishkumar
 
 ### Changed
 

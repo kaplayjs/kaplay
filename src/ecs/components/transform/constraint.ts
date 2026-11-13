@@ -175,6 +175,12 @@ export type IKConstraintOpt = {
      * Between 0 and 1. The percentage of the property being overwritten. Default is 1.
      */
     strength?: number;
+    /**
+     * The point to reach, in the local space of the target. For example `vec2(0, -10)`
+     * reaches the point 10 units above the target, following its position, rotation
+     * and scale. Default is the origin of the target.
+     */
+    offset?: Vec2;
 };
 
 export interface IKConstraintComp extends Constraint {
@@ -182,6 +188,7 @@ export interface IKConstraintComp extends Constraint {
         target: GameObj;
         iterations: number;
         strength: number;
+        offset: Vec2;
     };
 }
 
@@ -583,6 +590,8 @@ export const constraint = {
         const iterations = opt.iterations ?? 10;
         const chain: GameObj[] = [];
         const length: number[] = [];
+        // Scratch vector holding the point to reach, in world space
+        const goal = new Vec2();
         if (algorithm === "CCD") {
             return {
                 id: "constraint",
@@ -590,8 +599,14 @@ export const constraint = {
                     target: target,
                     iterations: iterations,
                     strength: opt.strength || 1,
+                    offset: opt.offset ?? new Vec2(),
                 },
                 apply(this: GameObj<PosComp | IKConstraintComp>) {
+                    // The point to reach, in world space
+                    this.constraint.target.transform.transformPointV(
+                        this.constraint.offset,
+                        goal,
+                    );
                     // Get IK chain from end effector to root
                     const endEffector = chain[0] = this;
                     for (let i = 1; i <= depth; i++) {
@@ -609,9 +624,9 @@ export const constraint = {
                             }
 
                             // Angle of effector to target
-                            dx = target.transform.e
+                            dx = goal.x
                                 - effectorTransform.e;
-                            dy = target.transform.f
+                            dy = goal.y
                                 - effectorTransform.f;
                             const angleToTarget = rad2deg(Math.atan2(dy, dx));
 
@@ -683,9 +698,9 @@ export const constraint = {
                                 && effector.parent.maxLength != undefined
                             ) {
                                 // Vector from parent to target
-                                const ax = target.transform.e
+                                const ax = goal.x
                                     - effector.parent.transform.e;
-                                const ay = target.transform.f
+                                const ay = goal.y
                                     - effector.parent.transform.f;
                                 // Vector from parent to bone
                                 const bx = effectorTransform.e
@@ -762,8 +777,14 @@ export const constraint = {
                     target: target,
                     iterations: iterations,
                     strength: opt.strength || 1,
+                    offset: opt.offset ?? new Vec2(),
                 },
                 apply(this: GameObj<PosComp | IKConstraintComp>) {
+                    // The point to reach, in world space
+                    this.constraint.target.transform.transformPointV(
+                        this.constraint.offset,
+                        goal,
+                    );
                     // Get IK chain from end effector to root
                     const endEffector = chain[0] = this;
                     // The end effector does not have a length
@@ -785,8 +806,8 @@ export const constraint = {
                     for (let it = 0; it < iterations; it++) {
                         let l;
                         // Forward step, pull end effector towards target
-                        endEffector.transform.e = target.transform.e;
-                        endEffector.transform.f = target.transform.f;
+                        endEffector.transform.e = goal.x;
+                        endEffector.transform.f = goal.y;
                         // Pull effectors in sequence to restore length
                         for (let i = 1; i <= depth; i++) {
                             // Vector towards previous effector
