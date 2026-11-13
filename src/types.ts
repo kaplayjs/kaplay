@@ -748,6 +748,13 @@ export interface SpriteAnimPlayOpt {
      */
     speed?: number;
     /**
+     * If this anim should be played backwards, starting from its last frame.
+     *
+     * @default false
+     * @since v4000.0
+     */
+    reverse?: boolean;
+    /**
      * If the animation should not restart from frame 1 and t=0 if it is already playing.
      *
      * @default false
