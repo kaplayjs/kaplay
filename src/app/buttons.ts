@@ -1,3 +1,4 @@
+import { DEBUG_SYMBOLS } from "../constants/general";
 import { _k } from "../shared";
 import type { ButtonBinding } from "./inputBindings";
 

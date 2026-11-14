@@ -55,7 +55,8 @@ export interface AudioPlayOpt {
     /**
      * The stereo pan of the sound.
      * -1.0 means fully from the left channel, 0.0 means centered, 1.0 means fully right.
-     * Defaults to 0.0.
+     *
+     * @default 0.0
      */
     pan?: number;
     /**
@@ -117,7 +118,8 @@ export interface AudioPlay {
     /**
      * The stereo pan of the sound.
      * -1.0 means fully from the left channel, 0.0 means centered, 1.0 means fully right.
-     * Defaults to 0.0.
+     *
+     * @default 0.0
      */
     pan?: number;
     /**

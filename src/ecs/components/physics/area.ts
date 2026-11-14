@@ -118,7 +118,7 @@ export function startClickHandler() {
     clickHandlerRunning = true;
 
     if (_k.game.fakeMouse) {
-        _k.game.fakeMouse.on("press", clickHandler);
+        _k.game.fakeMouse.onPress((btn) => clickHandler(btn));
     }
 
     _k.app.onMousePress(clickHandler);

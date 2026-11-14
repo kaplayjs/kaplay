@@ -6,7 +6,7 @@ import { Color, rgb } from "../math/color";
 import { vec2 } from "../math/math";
 import { _k } from "../shared";
 import type { Outline } from "../types";
-import { runes } from "../utils/runes";
+import { firstRune, runes } from "../utils/runes";
 import { alignPt } from "./anchor";
 import type { FormattedChar, FormattedText } from "./draw/drawFormattedText";
 import type { CharTransform, DrawTextOpt } from "./draw/drawText";
@@ -31,6 +31,13 @@ export type FontAtlas = {
 export type StyledTextInfo = {
     charStyleMap: Record<number, [string, string][]>;
     text: string;
+    /**
+     * The rendered text split into grapheme clusters, in render order.
+     * charStyleMap keys index into this array. Carrying it here lets
+     * formatText() reuse the segmentation compileStyledText() already did
+     * instead of running runes() over the same string a second time.
+     */
+    runes: string[];
 };
 
 function applyCharTransform(fchar: FormattedChar, tr: CharTransform) {
@@ -49,41 +56,47 @@ function applyCharTransform(fchar: FormattedChar, tr: CharTransform) {
     if (tr.scale) fchar.scale = fchar.scale.scale(vec2(tr.scale));
     if (tr.skew) fchar.skew = fchar.skew.add(vec2(tr.skew));
     if (tr.angle) fchar.angle += tr.angle;
-    if (tr.color && fchar.ch.length === 1) {
-        fchar.color = fchar.color.mult(tr.color);
-    }
+    if (tr.color) fchar.color = fchar.color.mult(tr.color);
     // attention to type coercion, 0 is a valid value, only null & undefined are not
     if (tr.opacity != null) fchar.opacity *= tr.opacity;
 }
 
-export function compileStyledText(txt: any): StyledTextInfo {
+export function compileStyledText(txt: any, locale?: string): StyledTextInfo {
+    const text = String(txt).normalize("NFC");
     const charStyleMap = {} as Record<number, [string, string][]>;
+    const renderRunes: string[] = [];
     let renderText = "";
     let styleStack: [string, string][] = [];
-    let text = String(txt);
 
     const emit = (ch: string) => {
         if (styleStack.length > 0) {
-            charStyleMap[renderText.length] = styleStack.slice();
+            charStyleMap[renderRunes.length] = styleStack.slice();
         }
         renderText += ch;
+        renderRunes.push(ch);
     };
 
-    while (text !== "") {
-        if (text[0] === "\\") {
-            if (text.length === 1) {
+    const fmtRegex = /[\\[]/g;
+    const tagRegex = /\[(\/)?(\w+?)(?:=(.+?))?\]/y;
+
+    let i = 0;
+    while (i < text.length) {
+        if (text[i] === "\\") {
+            if (text.length === i + 1) {
                 throw new Error("Styled text error: \\ at end of string");
             }
-            emit(text[1]);
-            text = text.slice(2);
+            const escaped = firstRune(text.slice(i + 1), locale, true);
+            emit(escaped);
+            i += 1 + escaped.length;
             continue;
         }
-        if (text[0] === "[") {
-            const execResult = /^\[(\/)?(\w+?)(?:=(.+?))?\]/.exec(text);
+        if (text[i] === "[") {
+            tagRegex.lastIndex = i;
+            const execResult = tagRegex.exec(text);
             if (!execResult) {
                 // xxx: should throw an error here?
-                emit(text[0]);
-                text = text.slice(1);
+                emit(text[i]);
+                i++;
                 continue;
             }
             const [m, endSlash, theTagName, tagParam] = execResult;
@@ -106,11 +119,17 @@ export function compileStyledText(txt: any): StyledTextInfo {
                 }
             }
             else styleStack.push([theTagName, tagParam]);
-            text = text.slice(m.length);
+            i += m.length;
             continue;
         }
-        emit(text[0]);
-        text = text.slice(1);
+
+        // Segment the rest of the text at once until the next formatting char found
+        fmtRegex.lastIndex = i;
+        const match = fmtRegex.exec(text);
+        const end = match ? match.index : text.length;
+        const rest = text.slice(i, end);
+        runes(rest, locale, true).forEach(s => emit(s));
+        i = end;
     }
 
     if (styleStack.length > 0) {
@@ -122,6 +141,7 @@ export function compileStyledText(txt: any): StyledTextInfo {
     return {
         charStyleMap,
         text: renderText,
+        runes: renderRunes,
     };
 }
 
@@ -308,13 +328,18 @@ export function formatText(opt: DrawTextOpt): FormattedText {
         };
     }
 
-    const { charStyleMap, text } = compileStyledText(opt.text + "");
-    const chars = runes(text, opt.locale);
+    const { charStyleMap, text, runes: chars } = compileStyledText(
+        opt.text + "",
+        opt.locale,
+    );
 
     const fontAtlas = font instanceof FontData || typeof font === "string"
         ? (() => {
             const atlas = getFontAtlasForFont(font);
-            if (atlas.maxHeight == 0) updateFontAtlas(font, chars[0]);
+            if (atlas.maxHeight == 0) {
+                const firstChar = chars.find(ch => ch !== "\u200B");
+                if (firstChar !== undefined) updateFontAtlas(font, firstChar);
+            }
             return atlas;
         })()
         : null;
@@ -331,29 +356,39 @@ export function formatText(opt: DrawTextOpt): FormattedText {
 
     let curX: number = 0;
     let tw = 0;
-    const lines: Array<{
+    const lines: {
+        chars: FormattedChar[];
         width: number;
-        chars: { ch: FormattedChar; font: GfxFont }[];
-    }> = [];
-    let curLine: typeof lines[number]["chars"] = [];
+    }[] = [];
+    let curLine: FormattedChar[] = [];
     let cursor = 0;
-    let lastSpace: number | null = null;
-    let lastSpaceWidth: number = 0;
+    let lastBreak: { cursor: number; length: number; width: number } | null =
+        null;
     let paraIndentX: number | undefined = undefined;
 
     // TODO: word break
     while (cursor < chars.length) {
         let ch = chars[cursor];
 
+        if (ch === "\u200B") {
+            if (
+                curLine.length > 0 && curLine[curLine.length - 1].ch !== " "
+            ) {
+                lastBreak = {
+                    cursor: cursor + 1,
+                    length: curLine.length,
+                    width: curX,
+                };
+            }
+        }
         // always new line on '\n'
-        if (ch === "\n") {
+        else if (ch === "\n") {
             lines.push({
                 width: curX - letterSpacing,
                 chars: curLine,
             });
 
-            lastSpace = null;
-            lastSpaceWidth = 0;
+            lastBreak = null;
             curX = 0;
             curLine = [];
             paraIndentX = undefined;
@@ -432,14 +467,12 @@ export function formatText(opt: DrawTextOpt): FormattedText {
 
                 if (opt.width && curX + charWidth > opt.width && curX > 0) {
                     // new line on last word if width exceeds
-                    if (lastSpace != null) {
-                        cursor -= curLine.length - lastSpace;
-                        // omit trailing space
-                        curLine = curLine.slice(0, lastSpace - 1);
-                        curX = lastSpaceWidth;
+                    if (lastBreak != null) {
+                        cursor = lastBreak.cursor;
+                        curLine = curLine.slice(0, lastBreak.length);
+                        curX = lastBreak.width;
                     }
-                    lastSpace = null;
-                    lastSpaceWidth = 0;
+                    lastBreak = null;
 
                     lines.push({
                         width: curX - letterSpacing,
@@ -460,14 +493,14 @@ export function formatText(opt: DrawTextOpt): FormattedText {
                 );
 
                 // queue char to be drawn
-                curLine.push({
-                    ch: theFChar as FormattedChar,
-                    font: requestedFontData,
-                });
+                curLine.push(theFChar as FormattedChar);
 
                 if (ch === " ") {
-                    lastSpace = curLine.length;
-                    lastSpaceWidth = curX;
+                    lastBreak = {
+                        cursor: cursor + 1,
+                        length: curLine.length - 1,
+                        width: curX,
+                    };
                 }
                 if (
                     opt.indentAll
@@ -503,7 +536,7 @@ export function formatText(opt: DrawTextOpt): FormattedText {
         if (i > 0) th += lineSpacing;
         const ox = (tw - lines[i].width) * alignPt(opt.align ?? "left");
         let thisLineHeight = size;
-        for (const { ch } of lines[i].chars) {
+        for (const ch of lines[i].chars) {
             ch.pos = ch.pos.add(ox, th - baselineCenterOffset);
             ch.initPos = ch.pos;
             formattedChars.push(ch);
@@ -512,6 +545,7 @@ export function formatText(opt: DrawTextOpt): FormattedText {
                 size * (ch.stretchInPlace ? scale : ch.scale).y / scale.y,
             );
         }
+        if (!thisLineHeight) thisLineHeight = size;
         th += thisLineHeight;
     }
 

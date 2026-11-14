@@ -1,5 +1,5 @@
 import { Asset, fetchJSON } from "../../assets/asset";
-import { fixURL } from "../../assets/utils";
+import { rootURL } from "../../assets/utils";
 import { _k } from "../../shared";
 import type { Comp, CompList, GameObj } from "../../types";
 import type { GameObjRaw, InternalGameObjRaw } from "./GameObjRaw";
@@ -53,7 +53,7 @@ export function deserializeComp(id: string, data: any) {
 
 // #region Loading
 export function loadPrefab(name: string, url: string) {
-    return _k.assets.prefabAssets.add(name, fetchJSON(fixURL(url)));
+    return _k.assets.prefabAssets.add(name, fetchJSON(rootURL(url)));
 }
 // #endregion
 

@@ -30,18 +30,26 @@ export class Collision {
      * If the collision is resolved.
      */
     resolved: boolean = false;
+    /**
+     * The impulse (change of momentum) the source game object gets from the
+     * target, if both are non-static bodies. `null` if they don't exchange
+     * momentum.
+     */
+    impulse: Vec2 | null = null;
     constructor(
         source: GameObj,
         target: GameObj,
         normal: Vec2,
         distance: number,
         resolved = false,
+        impulse: Vec2 | null = null,
     ) {
         this.source = source;
         this.target = target;
         this.normal = normal;
         this.distance = distance;
         this.resolved = resolved;
+        this.impulse = impulse;
     }
     /**
      * The displacement source game object have to make to avoid the collision.
@@ -59,6 +67,7 @@ export class Collision {
             this.normal.scale(-1),
             this.distance,
             this.resolved,
+            this.impulse?.scale(-1),
         );
     }
     /**

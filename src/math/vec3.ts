@@ -18,7 +18,7 @@ export class Vec3 {
     static ZERO = new Vec3(0, 0, 0);
     static ONE = new Vec3(1, 1, 1);
 
-    constructor(x: number, y: number, z: number) {
+    constructor(x: number = 0, y: number = x, z: number = x) {
         this.x = x;
         this.y = y;
         this.z = z;

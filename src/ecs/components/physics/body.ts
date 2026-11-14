@@ -248,6 +248,31 @@ export function body(opt: BodyCompOpt = {}): BodyComp {
                             );
                             calcTransform(this, this.transform);
                             calcTransform(other, other.transform);
+
+                            // A body resting on the ground can't be pushed into it,
+                            // so the body on top of it treats it as a static body
+                            const supported = (col.isBottom()
+                                && other.isGrounded() && !other.isJumping())
+                                || (col.isTop()
+                                    && this.isGrounded() && !this.isJumping());
+
+                            if (!supported) {
+                                // Exchange momentum along the normal, so the total
+                                // momentum of both bodies stays the same
+                                const approachVel = Math.min(
+                                    this.vel.sub(other.vel).dot(col.normal),
+                                    0,
+                                );
+                                const restitution = Math.max(
+                                    col.source.restitution || 0,
+                                    col.target.restitution || 0,
+                                );
+                                col.impulse = col.normal.scale(
+                                    -(1 + restitution)
+                                        * approachVel
+                                        / (1 / this.mass + 1 / other.mass),
+                                );
+                            }
                         }
                         else {
                             // if one is static and on is not, resolve the non static one
@@ -308,8 +333,14 @@ export function body(opt: BodyCompOpt = {}): BodyComp {
                     const projection = this.vel.project(col.normal);
                     const rejection = this.vel.sub(projection);
 
+                    if (col.impulse) {
+                        // We've hit a body that can move, both get their share of the momentum
+                        this.vel = this.vel.add(
+                            col.impulse.scale(1 / this.mass),
+                        );
+                    }
                     // Clear the velocity in the direction of the normal, as we've hit something
-                    if (this.vel.dot(col.normal) < 0) {
+                    else if (this.vel.dot(col.normal) < 0) {
                         // Modulate the velocity tangential to the normal
                         this.vel = rejection.sub(projection.scale(restitution));
                     }

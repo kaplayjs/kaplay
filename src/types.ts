@@ -1,7 +1,12 @@
 import type { FixedSpeedOption } from "./app/app";
-import type { ButtonsDef } from "./app/inputBindings";
+import type {
+    ButtonBinding,
+    ButtonBindingDevice,
+    ButtonsDef,
+} from "./app/inputBindings";
 import type { Asset } from "./assets/asset";
 import type { ShaderData, Uniform } from "./assets/shader";
+import type { DEBUG_SYMBOLS } from "./constants/general";
 import type { KAPLAYCtx } from "./core/contextType";
 import type { TypesOpt } from "./core/taf";
 import type { GameObjRaw } from "./ecs/entity/GameObjRaw";
@@ -301,19 +306,48 @@ export interface KAPLAYOpt {
      */
     lockResolution?: boolean;
     /**
-     * If register debug buttons (default true)
+     * If the game should register debug buttons.
      */
     debug?: boolean;
     /**
-     * Key that toggles debug mode
+     * Define a specific key for different debug actions using KAPLAY's button system.
+     *
+     * If `debug` option is true and no `debugButtons` is passed, the ones below will be used as the defaults.
+     *
+     * @example If one of these is missing, the default one will be used
+     * ```js
+     * // These are the default keys
+     * kaplay({
+     *     debugButtons: {
+     *         "inspect":   { keyboard: "f1" },
+     *         "clearlogs": { keyboard: "f2" },
+     *         "pause":     { keyboard: "f8" },
+     *         "slowdown":  { keyboard: "f7" },
+     *         "speedup":   { keyboard: "f9" },
+     *         "stepframe": { keyboard: "f10" },
+     *     },
+     * });
+     * ```
+     * @example You can also set them at runtime using `KAPLAYCtx.debug.setButton()`
+     * ```js
+     * debug.setButton("inspect", { keyboard: "p" });
+     * ```
+     *
+     * @since v4000.0
+     * @group Input, Debug
+     * @subgroup Buttons API
+     *
+     * @see {@link Debug.setButton}
      */
-    debugKey?: Key;
+    debugButtons?: Partial<Record<keyof typeof DEBUG_SYMBOLS, ButtonBinding>>;
     /**
-     * Default font (defaults to "monospace").
+     * Default font.
+     *
+     * @default "monospace"
      */
     font?: string;
     /**
-     * Device pixel scale (defaults to 1, high pixel density will hurt performance).
+     * Device pixel scale (high pixel density will hurt performance). Defaults to 1.
      *
      * @since v3000.0
      */
@@ -328,7 +362,9 @@ export interface KAPLAYOpt {
      */
     canvas?: HTMLCanvasElement;
     /**
-     * The container DOM element to insert the canvas if created. Defaults to document.body.
+     * The container DOM element to insert the canvas if created.
+     *
+     * @default document.body
      */
     root?: HTMLElement;
     /**
@@ -337,6 +373,7 @@ export interface KAPLAYOpt {
     background?: RGBValue | RGBAValue | string;
     /**
      * Default sprite texture filter.
+     *
      * @default "nearest"
      */
     texFilter?: TexFilter;
@@ -348,34 +385,42 @@ export interface KAPLAYOpt {
      */
     fontFilter?: TexFilter;
     /**
-     * How many log messages can there be on one screen (default 8).
+     * How many log messages can there be on one screen.
+     *
+     * @default 8
      */
     logMax?: number;
     /**
-     * How many seconds log messages stay on screen (default 4).
+     * How many seconds log messages stay on screen.
      *
+     * @default 4
      * @since v3000.1
      */
     logTime?: number;
     /**
-     * Size of the spatial hash grid for collision detection (default 64).
+     * Size of the spatial hash grid for collision detection.
      *
+     * @default 64
      * @since v3000.0
      */
     hashGridSize?: number;
     /**
-     * If translate touch events as mouse clicks (default true).
+     * If translate touch events as mouse clicks.
+     *
+     * @default true
      */
     touchToMouse?: boolean;
     /**
-     * If KAPLAY should render a default loading screen when assets are not fully ready (default true).
+     * If KAPLAY should render a default loading screen when assets are not fully ready.
      *
+     * @default true
      * @since v3000.0
      */
     loadingScreen?: boolean;
     /**
-     * If pause audio when tab is not active (default false).
+     * If pause audio when tab is not active.
      *
+     * @default false
      * @since v3000.0
      */
     backgroundAudio?: boolean;
@@ -433,13 +478,16 @@ export interface KAPLAYOpt {
      */
     maxTimeStep?: number;
     /**
-     * If focus on the canvas on start (default true).
+     * If focus on the canvas on start.
      *
+     * @default true
      * @since v3001.0
      */
     focus?: boolean;
     /**
-     * If import all KAPLAY functions to global (default true).
+     * If import all KAPLAY functions to global.
+     *
+     * @default true
      */
     global?: boolean;
     /**
@@ -463,6 +511,10 @@ export interface KAPLAYOpt {
      *
      * Only one object can have a given tag at a time, e.g. ["player", "focused"]
      * means there will be only one "player" or object that can be "focused".
+     *
+     * @since v4000.0
+     *
+     * @see {@link KAPLAYCtx.getSingletonTags get}, {@link KAPLAYCtx.setSingletonTags set}, {@link KAPLAYCtx.addSingletonTag add}, {@link KAPLAYCtx.removeSingletonTag remove}, {@link KAPLAYCtx.isSingletonTag is} helper functions
      */
     singletonTags?: Tag[];
     /**
@@ -480,17 +532,27 @@ export interface KAPLAYOpt {
      */
     inspectOnlyActive?: boolean;
     /**
-     * Which strategy to use for broad phase collision, sap, sapv or quadtree
+     * If the debug inspect view should draw bounding boxes of each character in the {@link KAPLAYCtx.text `text()`} component.
+     * If `"styled"`, draw only if {@link TextCompOpt} `transform`, `styles`, or style tags were used.
+     *
+     * @default false
+     */
+    inspectTextChars?: boolean | "styled";
+    /**
+     * Which strategy to use for broad phase collision, sap, sapv or quadtree.
+     *
      * @default "sap"
      */
     broadPhaseCollisionAlgorithm?: BroadPhaseType;
     /**
-     * Which strategy to use for narrow phase collision, gjk, sat or box
+     * Which strategy to use for narrow phase collision, gjk, sat or box.
+     *
      * @default "gjk"
      */
     narrowPhaseCollisionAlgorithm?: NarrowPhaseType;
     /**
-     * If true, only the topmost object receives clicks
+     * If true, only the topmost object receives clicks.
+     *
      * @default false
      */
     topMostOnlyActivate?: boolean;
@@ -530,8 +592,6 @@ export interface KAPLAYOpt {
      * Random generator to be used by the game.
      * You can select one of the three built-in random generators: "lce", "xorshift32", or "alea".
      *
-     * The default is the linear congruential engine, "lce".
-     *
      * @example
      * To pass a custom seed, use an RNGConfig object:
      *
@@ -548,6 +608,8 @@ export interface KAPLAYOpt {
      *
      * You can also use a custom generator that satisfies the `RandomGenerator` interface.
      *
+     * @default
+     * The default is the linear congruential engine, "lce".
      * @since v4000.0
      */
     rng?: RNGConfig;
@@ -625,7 +687,9 @@ export type QueryOpt = {
      */
     include?: string | string[];
     /**
-     * Selects the operator to use. Defaults to and.
+     * Selects the operator to use.
+     *
+     * @default and
      */
     includeOp?: "and" | "or";
     /**
@@ -633,7 +697,9 @@ export type QueryOpt = {
      */
     exclude?: string | string[];
     /**
-     * Selects the operator to use. Defaults to and.
+     * Selects the operator to use..
+     *
+     * @default and
      */
     excludeOp?: "and" | "or";
     /**
@@ -641,7 +707,9 @@ export type QueryOpt = {
      */
     distance?: number;
     /**
-     * Selects the operator to use. Defaults to near.
+     * Selects the operator to use.
+     *
+     * @default near
      */
     distanceOp?: "near" | "far";
     /**
@@ -649,7 +717,9 @@ export type QueryOpt = {
      */
     visible?: boolean;
     /**
-     * All objects in the given group. Defaults to children.
+     * All objects in the given group.
+     *
+     * @default children
      */
     hierarchy?: "children" | "siblings" | "ancestors" | "descendants";
     /**
@@ -702,8 +772,9 @@ export type MusicData = string;
 export interface LoadFontOpt {
     outline?: number | Outline;
     /**
-     * The size to load the font in (default 64).
+     * The size to load the font in.
      *
+     * @default 64
      * @since v3001.0
      */
     size?: number;

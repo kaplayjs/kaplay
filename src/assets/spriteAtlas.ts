@@ -9,7 +9,7 @@ import {
     type LoadSpriteSrc,
     SpriteData,
 } from "./sprite";
-import { fixURL, slice } from "./utils";
+import { rootURL, slice } from "./utils";
 
 /**
  * @group Assets
@@ -47,7 +47,7 @@ export function loadSpriteAtlas(
     data: SpriteAtlasData | string,
     repack = true,
 ): Asset<Record<string, SpriteData>> {
-    src = fixURL(src);
+    src = rootURL(src);
     if (typeof data === "string") {
         return load(
             new Promise((res, rej) => {
