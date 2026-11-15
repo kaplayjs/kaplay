@@ -424,7 +424,7 @@ test("Test serialization of ellipse() component", async ({ page }) => {
         const k = kaplay();
 
         const o = k.add([
-            k.ellipse(10, 20),
+            k.ellipse(10, 20, { fill: true }),
         ]);
 
         const prefab = o.serialize();
@@ -434,7 +434,9 @@ test("Test serialization of ellipse() component", async ({ page }) => {
 
         const pf = k.addPrefab<CompList<EllipseComp>>(prefab);
 
-        return pf.radiusX == 10 && pf.radiusY == 20;
+        // checking that fill is serialized properly
+        return pf.radiusX == 10 && pf.radiusY == 20
+            && prefab.components["ellipse"]["fill"] == true;
     });
 
     expect(method).toBeTruthy();

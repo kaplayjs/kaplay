@@ -23,7 +23,10 @@ import type { BlendComp } from "../ecs/components/draw/blend";
 import type { CircleComp, CircleCompOpt } from "../ecs/components/draw/circle";
 import type { ColorComp } from "../ecs/components/draw/color";
 import type { DrawonComp, DrawonCompOpt } from "../ecs/components/draw/drawon";
-import type { EllipseComp } from "../ecs/components/draw/ellipse";
+import type {
+    EllipseComp,
+    EllipseCompOpt,
+} from "../ecs/components/draw/ellipse";
 import type { FillComp } from "../ecs/components/draw/fill";
 import type { MaskComp } from "../ecs/components/draw/mask";
 import type { OpacityComp } from "../ecs/components/draw/opacity";
@@ -1041,6 +1044,7 @@ export interface KAPLAYCtx {
      *
      * @param radiusX - The radius of the ellipse on the x-axis.
      * @param radiusY - The radius of the ellipse on the y-axis.
+     * @param opt - Options for the ellipse component. See {@link EllipseCompOpt `EllipseCompOpt`}.
      *
      * @example
      * ```js
@@ -1055,7 +1059,7 @@ export interface KAPLAYCtx {
      * @group Components
      * @subgroup Rendering
      */
-    ellipse(radiusX: number, radiusY: number): EllipseComp;
+    ellipse(radiusX: number, radiusY: number, opt: EllipseCompOpt): EllipseComp;
     /**
      * Attach and render a UV quad to a Game Object.
      *
