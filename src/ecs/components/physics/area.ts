@@ -475,7 +475,9 @@ export function area(
     let _cachedRenderAreaVersion = -1; // Currently used render shape
     let _cachedLocalAreaVersion = -1; // Currently used local area
 
-    const areaComp = {
+    let _hoverEventsRegistered = false;
+
+    const obj: ReturnType<typeof area> = {
         id: "area",
         collisionIgnore: opt.collisionIgnore ?? [],
         restitution: opt.restitution,
@@ -485,6 +487,7 @@ export function area(
         add(this: GameObj<AreaComp>) {
             _k.game.areaCount++;
             if (this.area.cursor) {
+                _hoverEventsRegistered = true;
                 events.push(
                     this.onHover(() => _k.app.setCursor(this.area.cursor!)),
                     this.onHoverEnd(() => _k.app.setCursor("default")),
@@ -608,10 +611,17 @@ export function area(
             },
             set cursor(value: Cursor | null) {
                 _cursor = value;
-                // no need to detach then re-attach, would retrigger hover
-                // check if it's hovering and if it is change the app cursor
-                if ((areaComp as AreaComp).isHovering()) {
-                    _k.app.setCursor(areaComp.area.cursor!);
+
+                if (obj.isHovering()) {
+                    _k.app.setCursor(obj.area.cursor!);
+                }
+
+                if (!_hoverEventsRegistered) {
+                    _hoverEventsRegistered = true;
+                    events.push(
+                        obj.onHover(() => _k.app.setCursor(obj.area.cursor!)),
+                        obj.onHoverEnd(() => _k.app.setCursor("default")),
+                    );
                 }
             },
             get cursor(): Cursor | null {
@@ -914,7 +924,7 @@ export function area(
         },
     };
 
-    return areaComp as AreaComp & { _localAreaVersion: number };
+    return obj;
 }
 
 export function areaFactory(data: SerializedAreaComp) {
