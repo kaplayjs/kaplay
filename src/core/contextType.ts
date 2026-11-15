@@ -57,6 +57,7 @@ import type {
     SentryCompOpt,
 } from "../ecs/components/level/sentry";
 import type { TileComp, TileCompOpt } from "../ecs/components/level/tile";
+import type { tileReservations } from "../ecs/components/level/tileReservations";
 import type {
     AnimateComp,
     AnimateCompOpt,
@@ -1802,6 +1803,12 @@ export interface KAPLAYCtx {
      * @subgroup Level
      */
     agent(opt?: AgentCompOpt): AgentComp;
+
+    /**
+     * Book authored routes on a level simulation clock.
+     * @group Components
+     */
+    tileReservations: typeof tileReservations;
     /**
      * A component to animate properties.
      * This component has an internal clock which starts the moment it is added to an object.
