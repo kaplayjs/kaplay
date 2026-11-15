@@ -189,9 +189,7 @@ test("Test serialization of move() component", async ({ page }) => {
 
         const pf = k.addPrefab<CompList<MoveComp>>(prefab);
 
-        return pf.dir.x == 10
-            && pf.dir.y == 10
-            && pf.speed == 10;
+        return pf.speed == 10 && pf.dir.eq(o.dir);
     });
 
     expect(method).toBeTruthy();

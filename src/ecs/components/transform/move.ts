@@ -46,7 +46,8 @@ export function move(
         },
         serialize() {
             return {
-                dir: dir instanceof Vec2 ? dir.serialize() : dir,
+                // if it's unit it turns it into unit again, nothing happens
+                dir: this.dir instanceof Vec2 ? this.dir.serialize() : this.dir,
                 speed: speed,
             };
         },
