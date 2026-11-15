@@ -11,6 +11,12 @@ import { _k } from "../shared";
 import type { ImageSource, LoadFontOpt, Outline, TexFilter } from "../types";
 import { Asset, loadProgress } from "./asset";
 import { type BitmapFontData, getBitmapFont, type GfxFont } from "./bitmapFont";
+import {
+    type FontGlyphs,
+    multiGraphemeGlyphs,
+    readFontGlyphs,
+    readLigatures,
+} from "./fontGlyphs";
 
 /**
  * @group Assets
@@ -18,12 +24,14 @@ import { type BitmapFontData, getBitmapFont, type GfxFont } from "./bitmapFont";
  */
 export class FontData {
     outline: Outline | null = null;
+    readonly ligatures: readonly string[];
     size: number = DEF_TEXT_CACHE_SIZE;
     filter: TexFilter;
     constructor(
         public fontface: FontFace,
         opt: LoadFontOpt = {},
     ) {
+        this.ligatures = readLigatures(opt.ligatures);
         this.filter = opt.filter ?? _k.globalOpt.fontFilter ?? "linear";
         this.size = opt.size ?? DEF_TEXT_CACHE_SIZE;
         if (this.size > MAX_TEXT_CACHE_SIZE) {
@@ -103,6 +111,7 @@ export function loadFont(
     src: string | ArrayBuffer | ArrayBufferView,
     opt: LoadFontOpt = {},
 ): Asset<FontData> {
+    const options = { ...opt, ligatures: readLigatures(opt.ligatures) };
     const font = new FontFace(
         name,
         typeof src === "string" ? `url(${src})` : src,
@@ -113,7 +122,7 @@ export function loadFont(
         name,
         font.load().catch((err) => {
             throw new Error(`Failed to load font from "${src}": ${err}`);
-        }).then((face) => new FontData(face, opt)),
+        }).then((face) => new FontData(face, options)),
     );
 }
 
@@ -121,14 +130,18 @@ export function makeFont(
     tex: ImageSource,
     gw: number,
     gh: number,
-    chars: string,
+    chars: FontGlyphs,
     filter: TexFilter,
 ): GfxFont {
     const w = tex.width;
     const h = tex.height;
-    const cols = w / gw;
-    const map: Record<string, Frame> = {};
-    const charMap = chars.split("").entries();
+    const cols = Math.floor(w / gw);
+    const glyphs = readFontGlyphs(chars, true);
+    if (glyphs.length > cols * Math.floor(h / gh)) {
+        throw new Error("More font glyphs than bitmap cells");
+    }
+    const map: Record<string, Frame> = Object.create(null);
+    const charMap = glyphs.entries();
 
     for (const [i, ch] of charMap) {
         map[ch] = _k.assets.packer.add(
@@ -146,6 +159,7 @@ export function makeFont(
     return {
         map,
         size: gh,
+        ligatures: multiGraphemeGlyphs(glyphs),
         filter,
     };
 }

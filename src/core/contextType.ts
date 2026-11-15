@@ -3715,7 +3715,7 @@ export interface KAPLAYCtx {
      */
     loadBitmapFontFromSprite(
         sprite: string,
-        chars: string,
+        chars: string | readonly string[],
     ): Asset<BitmapFontData>;
     /**
      * Load a shader with vertex and fragment code.

@@ -685,6 +685,8 @@ export type MusicData = string;
  * @subgroup Types
  */
 export interface LoadFontOpt {
+    /** Explicit sequences to rasterize and lay out as indivisible glyphs. */
+    ligatures?: readonly string[];
     outline?: number | Outline;
     /**
      * The size to load the font in (default 64).

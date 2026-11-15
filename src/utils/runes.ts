@@ -93,6 +93,25 @@ export function runes(string: string, locale?: string): string[] {
     return runesLegacy(string);
 }
 
+/** Graphemes with offsets into the original, potentially decomposed string. */
+export function runeSegments(
+    string: string,
+    locale?: string,
+): { text: string; index: number }[] {
+    if (typeof Intl !== "undefined" && Intl.Segmenter) {
+        return Array.from(getSegmenter(locale).segment(string), segment => ({
+            text: segment.segment.normalize("NFC"),
+            index: segment.index,
+        }));
+    }
+    let index = 0;
+    return runesLegacy(string).map(text => {
+        const segment = { text, index };
+        index += text.length;
+        return segment;
+    });
+}
+
 /**
  * Legacy grapheme cluster splitting implementation.
  * Used as fallback for browsers without Intl.Segmenter support.

@@ -10,6 +10,7 @@ import { runes } from "../utils/runes";
 import { alignPt } from "./anchor";
 import type { FormattedChar, FormattedText } from "./draw/drawFormattedText";
 import type { CharTransform, DrawTextOpt } from "./draw/drawText";
+import { textGlyphs } from "./textGlyphs";
 
 /**
  * @group Rendering
@@ -49,7 +50,7 @@ function applyCharTransform(fchar: FormattedChar, tr: CharTransform) {
     if (tr.scale) fchar.scale = fchar.scale.scale(vec2(tr.scale));
     if (tr.skew) fchar.skew = fchar.skew.add(vec2(tr.skew));
     if (tr.angle) fchar.angle += tr.angle;
-    if (tr.color && fchar.ch.length === 1) {
+    if (tr.color && (fchar.ch.length === 1 || runes(fchar.ch).length > 1)) {
         fchar.color = fchar.color.mult(tr.color);
     }
     // attention to type coercion, 0 is a valid value, only null & undefined are not
@@ -193,7 +194,7 @@ function getFontAtlasForFont(font: FontData | string): FontAtlas {
         const f = font instanceof FontData ? font : null;
         _k.gfx.fontAtlases[fontName] = atlas = {
             font: {
-                map: {},
+                map: Object.create(null),
                 size: f?.size ?? DEF_TEXT_CACHE_SIZE,
                 filter: f?.filter ?? _k.globalOpt.fontFilter ?? "linear",
             },
@@ -239,10 +240,13 @@ function updateFontAtlas(font: FontData | string, ch: string) {
             _k.fontCacheCanvas.height,
         );
 
-        c2d.font = `${atlas.font.size}px ${fontName}, sans-serif`; // generic-family fallback stabilizes ascent of missing glyphs
-        c2d.textBaseline = "alphabetic"; // more accurate across browsers and easier to calculate baseline
-        c2d.textAlign = "left";
-        c2d.fillStyle = "#fff";
+        const configureContext = () => {
+            c2d.font = `${atlas.font.size}px ${fontName}, sans-serif`;
+            c2d.textBaseline = "alphabetic";
+            c2d.textAlign = "left";
+            c2d.fillStyle = "#fff";
+        };
+        configureContext();
 
         if (!atlas.lineHeight) {
             const m = c2d.measureText(allChars);
@@ -271,6 +275,13 @@ function updateFontAtlas(font: FontData | string, ch: string) {
 
         w += p * 2;
         h += p * 2;
+
+        const canvas = _k.fontCacheCanvas;
+        if (canvas.width < w || canvas.height < h) {
+            canvas.width = Math.max(canvas.width, w);
+            canvas.height = Math.max(canvas.height, h);
+            configureContext();
+        }
 
         if (atlas.outline?.width) {
             c2d.lineJoin = "round";
@@ -309,12 +320,17 @@ export function formatText(opt: DrawTextOpt): FormattedText {
     }
 
     const { charStyleMap, text } = compileStyledText(opt.text + "");
-    const chars = runes(text, opt.locale);
+    const glyphs = textGlyphs(text, charStyleMap, opt, font);
+    if (!glyphs) {
+        return { width: 0, height: 0, chars: [], opt, renderedText: "" };
+    }
 
     const fontAtlas = font instanceof FontData || typeof font === "string"
         ? (() => {
             const atlas = getFontAtlasForFont(font);
-            if (atlas.maxHeight == 0) updateFontAtlas(font, chars[0]);
+            if (atlas.maxHeight == 0) {
+                updateFontAtlas(font, glyphs[0]?.text ?? " ");
+            }
             return atlas;
         })()
         : null;
@@ -339,11 +355,13 @@ export function formatText(opt: DrawTextOpt): FormattedText {
     let cursor = 0;
     let lastSpace: number | null = null;
     let lastSpaceWidth: number = 0;
+    let afterSpace = 0;
     let paraIndentX: number | undefined = undefined;
 
     // TODO: word break
-    while (cursor < chars.length) {
-        let ch = chars[cursor];
+    while (cursor < glyphs.length) {
+        const glyph = glyphs[cursor];
+        const ch = glyph.text;
 
         // always new line on '\n'
         if (ch === "\n") {
@@ -381,8 +399,8 @@ export function formatText(opt: DrawTextOpt): FormattedText {
                 angle: 0,
                 font: defaultFontValue,
                 stretchInPlace: true,
-                textCursor: cursor,
-                styles: charStyleMap[cursor] ?? [],
+                textCursor: glyph.index,
+                styles: glyph.styles,
             };
 
             applyTransform(opt.transform, theFChar as any);
@@ -410,7 +428,7 @@ export function formatText(opt: DrawTextOpt): FormattedText {
                     resolvedFont instanceof FontData
                     || typeof resolvedFont === "string"
                 ) {
-                    requestedFontData = getFontAtlasForFont(requestedFont).font;
+                    requestedFontData = getFontAtlasForFont(resolvedFont).font;
                 }
                 else requestedFontData = resolvedFont;
                 requestedFontScale = defGfxFont.size / requestedFontData.size;
@@ -419,7 +437,7 @@ export function formatText(opt: DrawTextOpt): FormattedText {
                 requestedFont
                 && (resolvedFont instanceof FontData
                     || typeof resolvedFont === "string")
-            ) updateFontAtlas(requestedFont, ch);
+            ) updateFontAtlas(resolvedFont, ch);
 
             let f = theFChar.frame = requestedFontData.map[ch];
 
@@ -430,10 +448,13 @@ export function formatText(opt: DrawTextOpt): FormattedText {
                         ? scale
                         : theFChar.scale).x;
 
-                if (opt.width && curX + charWidth > opt.width && curX > 0) {
+                if (
+                    opt.width && curX + charWidth > opt.width && curX > 0
+                    && curLine.length > 0
+                ) {
                     // new line on last word if width exceeds
                     if (lastSpace != null) {
-                        cursor -= curLine.length - lastSpace;
+                        cursor = afterSpace;
                         // omit trailing space
                         curLine = curLine.slice(0, lastSpace - 1);
                         curX = lastSpaceWidth;
@@ -467,6 +488,7 @@ export function formatText(opt: DrawTextOpt): FormattedText {
 
                 if (ch === " ") {
                     lastSpace = curLine.length;
+                    afterSpace = cursor + 1;
                     lastSpaceWidth = curX;
                 }
                 if (

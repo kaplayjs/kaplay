@@ -170,6 +170,8 @@ export function text(t: string, opt: TextCompOpt = {}): TextComp {
     let _width = opt.width ?? 0;
     let _height = 0;
     let _isDynamic = false;
+    const styleProxies = new WeakMap<object, object>();
+    let styleState: unknown[] = [];
 
     // obj props that are checked on update and trigger transform or reformat
     let _renderProps:
@@ -186,13 +188,17 @@ export function text(t: string, opt: TextCompOpt = {}): TextComp {
     };
 
     // dynamic props that update with transform instead, reformat only if _renderProps changed
-    const _proxiedProps = {
+    const _proxiedProps: {
+        textStyles: TextCompOpt["styles"];
+        textTransform: TextCompOpt["transform"];
+    } = {
         textStyles: proxifyProp(opt.styles!),
         textTransform: proxifyProp(opt.transform!),
     };
 
     function update(obj: GameObj<TextComp | any>, reformat?: boolean) {
         const updateType = refreshRenderProps(obj);
+        if (refreshStyles()) reformat = true;
         if (!reformat) {
             if (!_isDynamic && !updateType) return;
             reformat = updateType === 2;
@@ -240,8 +246,25 @@ export function text(t: string, opt: TextCompOpt = {}): TextComp {
         return reformat ? 2 : 1;
     }
 
+    function refreshStyles(): boolean {
+        const fields = (value: CharTransform | CharTransformFunc | undefined) =>
+            value && typeof value === "object"
+                ? [value, ...Object.entries(value).flat()]
+                : [value];
+        const next = [
+            ...fields(_proxiedProps.textTransform),
+            ...Object.entries(_proxiedProps.textStyles ?? {}).flatMap(
+                ([name, style]) => [name, ...fields(style)],
+            ),
+        ];
+        const changed = next.length !== styleState.length
+            || next.some((value, index) => value !== styleState[index]);
+        styleState = next;
+        if (changed) updateDynamic();
+        return changed;
+    }
+
     function updateDynamic() {
-        const prev = _isDynamic;
         _isDynamic = Object.values(_proxiedProps).some(value => (
             typeof value === "function"
             || (
@@ -250,20 +273,50 @@ export function text(t: string, opt: TextCompOpt = {}): TextComp {
                 && Object.values(value).some(v => typeof v === "function")
             )
         ));
-
-        if (prev && !_isDynamic && objRef) update(objRef, true);
     }
 
-    function proxifyProp(value: Object | Function) {
-        return value && typeof value === "object"
-            ? new Proxy(value, {
-                set(target, key, val) {
-                    Reflect.set(target, key, val);
-                    updateDynamic();
-                    return true;
-                },
-            })
-            : value;
+    function styleChanged() {
+        updateDynamic();
+        if (objRef) update(objRef, true);
+    }
+
+    function proxifyProp(value: Object | Function | undefined): any {
+        if (!value || typeof value !== "object") return value;
+        const prototype = Object.getPrototypeOf(value);
+        if (prototype !== Object.prototype && prototype !== null) return value;
+        const cached = styleProxies.get(value);
+        if (cached) return cached;
+        const proxy = new Proxy(value, {
+            get(target, key, receiver) {
+                const value = Reflect.get(target, key, receiver);
+                const descriptor = Reflect.getOwnPropertyDescriptor(
+                    target,
+                    key,
+                );
+                if (
+                    descriptor?.configurable === false
+                    && descriptor.writable === false
+                ) {
+                    return value;
+                }
+                return proxifyProp(value);
+            },
+            set(target, key, val) {
+                if (Reflect.get(target, key) === val) return true;
+                const changed = Reflect.set(target, key, val);
+                if (changed) styleChanged();
+                return changed;
+            },
+            deleteProperty(target, key) {
+                const existed = Reflect.has(target, key);
+                const changed = Reflect.deleteProperty(target, key);
+                if (changed && existed) styleChanged();
+                return changed;
+            },
+        });
+        styleProxies.set(value, proxy);
+        styleProxies.set(proxy, proxy);
+        return proxy;
     }
 
     const obj = {
@@ -350,7 +403,7 @@ export function text(t: string, opt: TextCompOpt = {}): TextComp {
     defineReactiveProps(obj, _proxiedProps, {
         set(prop, value) {
             _proxiedProps[prop] = proxifyProp(value);
-            updateDynamic();
+            styleChanged();
         },
     });
 

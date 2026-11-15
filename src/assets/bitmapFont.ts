@@ -4,6 +4,11 @@ import { _k } from "../shared";
 import type { TexFilter } from "../types";
 import { type Asset, loadImg } from "./asset";
 import { makeFont } from "./font";
+import {
+    type FontGlyphs,
+    multiGraphemeGlyphs,
+    readFontGlyphs,
+} from "./fontGlyphs";
 import { fixURL } from "./utils";
 
 /**
@@ -12,6 +17,8 @@ import { fixURL } from "./utils";
  */
 export interface GfxFont {
     map: Record<string, Frame>;
+    /** Explicit multi-grapheme entries rendered as one glyph. */
+    ligatures?: readonly string[];
     size: number;
     filter: TexFilter;
 }
@@ -36,7 +43,7 @@ export interface LoadBitmapFontOpt {
      *
      * @default " !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~";
      */
-    chars?: string;
+    chars?: FontGlyphs;
     /**
      * Rasterization filter to use, if different than the global font filter.
      */
@@ -51,6 +58,7 @@ export function loadBitmapFont(
     gh: number,
     opt: LoadBitmapFontOpt = {},
 ): Asset<BitmapFontData> {
+    const chars = readFontGlyphs(opt.chars ?? ASCII_CHARS, true);
     const fontSrc = fixURL(src);
 
     return _k.assets.bitmapFonts.add(
@@ -61,7 +69,7 @@ export function loadBitmapFont(
                     img,
                     gw,
                     gh,
-                    opt.chars ?? ASCII_CHARS,
+                    chars,
                     opt.filter ?? _k.globalOpt.fontFilter ?? "nearest",
                 );
             }),
@@ -70,38 +78,29 @@ export function loadBitmapFont(
 
 export function loadBitmapFontFromSprite(
     spriteID: string,
-    chars: string,
+    chars: FontGlyphs,
 ): Asset<BitmapFontData> {
+    const glyphs = readFontGlyphs(chars, false);
     return _k.assets.bitmapFonts.add(
         spriteID,
         (async () => {
-            if (/[\n ]/.test(chars)) {
-                throw new Error(
-                    `While defining sprite font "${spriteID}": spaces are not allowed in chars`,
-                );
-            }
-            const splittedChars = chars.split("");
-            if (new Set(splittedChars).size !== splittedChars.length) {
-                throw new Error(
-                    `Duplicate characters given when defining sprite font "${spriteID}": ${chars}`,
-                );
-            }
             const spr = await _k.assets.sprites.waitFor(
                 spriteID,
                 _k.globalOpt.loadTimeout ?? 3000,
             );
             const frames = spr.frames;
-            if (frames.length < splittedChars.length) {
+            if (frames.length < glyphs.length) {
                 throw new Error(
-                    `Tried to define ${splittedChars.length} characters for sprite font "${spriteID}", but there are only ${frames.length} frames defined`,
+                    `Tried to define ${glyphs.length} characters for sprite font "${spriteID}", but there are only ${frames.length} frames defined`,
                 );
             }
             const h = spr.height;
             return {
                 map: Object.fromEntries(
-                    splittedChars.map((c, i) => [c, frames[i]]),
+                    glyphs.map((c, i) => [c, frames[i]]),
                 ),
                 size: h,
+                ligatures: multiGraphemeGlyphs(glyphs),
                 filter: null as any,
             };
         })(),
