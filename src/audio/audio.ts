@@ -1,7 +1,11 @@
+import type { AudioBus, AudioRoute } from "./audioBus";
+
 /** @ignore */
 export interface InternalAudioCtx {
     ctx: AudioContext;
     masterNode: GainNode;
+    buses: Set<AudioBus>;
+    activeRoutes: Set<AudioRoute>;
 }
 
 /** @ignore */
@@ -22,6 +26,8 @@ export const initAudio = (): InternalAudioCtx => {
         return {
             ctx,
             masterNode,
+            buses: new Set<AudioBus>(),
+            activeRoutes: new Set<AudioRoute>(),
         };
     })();
 

@@ -16,6 +16,7 @@ import type {
     SpriteData,
 } from "../assets/sprite";
 import type { SpriteAtlasData } from "../assets/spriteAtlas";
+import type { AudioBus, AudioBusOpt } from "../audio/audioBus";
 import type { AudioPlay, AudioPlayOpt } from "../audio/play";
 import type { Debug } from "../debug/debug";
 import type { Recording } from "../debug/record";
@@ -4941,6 +4942,9 @@ export interface KAPLAYCtx {
      * @group Audio
      */
     audioCtx: AudioContext;
+
+    /** Create a persistent audio bus with independent gain and mute controls. */
+    createAudioBus(options?: AudioBusOpt): AudioBus;
     /**
      * Set the random generator to use
      *

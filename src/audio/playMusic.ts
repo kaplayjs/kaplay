@@ -1,9 +1,16 @@
 import { KEvent } from "../events/events";
 import { clamp } from "../math/clamp";
 import { _k } from "../shared";
+import {
+    type AudioBus,
+    createAudioRoute,
+    initialAudioDestination,
+} from "./audioBus";
 import type { AudioPlay, AudioPlayOpt } from "./play";
 
 export function playMusic(url: string, opt: AudioPlayOpt = {}): AudioPlay {
+    const audio = _k.audio;
+    const initial = initialAudioDestination(audio, opt);
     const onEndEvents = new KEvent();
     const el = new Audio(url);
     el.crossOrigin = "anonymous";
@@ -13,7 +20,7 @@ export function playMusic(url: string, opt: AudioPlayOpt = {}): AudioPlay {
 
     const src = _k.audio.ctx.createMediaElementSource(el);
 
-    src.connect(opt.connectTo ?? _k.audio.masterNode);
+    const route = createAudioRoute(audio, src, initial);
 
     function resumeAudioCtx() {
         if (_k.debug.paused) return;
@@ -21,16 +28,32 @@ export function playMusic(url: string, opt: AudioPlayOpt = {}): AudioPlay {
         _k.audio.ctx.resume();
     }
 
+    let playbackAttempt = 0;
+
+    function releaseRoute() {
+        playbackAttempt++;
+        route.deactivate();
+    }
+
     function play() {
         resumeAudioCtx();
-        el.play();
+        const attempt = ++playbackAttempt;
+        const pending = el.play();
+        route.activate();
+        pending.catch(() => {
+            if (attempt === playbackAttempt) route.deactivate();
+        });
     }
 
     if (!opt.paused) {
         play();
     }
 
-    el.onended = () => onEndEvents.trigger();
+    el.onerror = releaseRoute;
+    el.onended = () => {
+        releaseRoute();
+        onEndEvents.trigger();
+    };
 
     return {
         play() {
@@ -43,6 +66,7 @@ export function playMusic(url: string, opt: AudioPlayOpt = {}): AudioPlay {
 
         stop() {
             el.pause();
+            releaseRoute();
             this.seek(0);
         },
 
@@ -57,6 +81,7 @@ export function playMusic(url: string, opt: AudioPlayOpt = {}): AudioPlay {
         set paused(p: boolean) {
             if (p) {
                 el.pause();
+                releaseRoute();
             }
             else {
                 play();
@@ -109,9 +134,12 @@ export function playMusic(url: string, opt: AudioPlayOpt = {}): AudioPlay {
             return this.onEnd(action);
         },
 
-        connect(node?: AudioNode) {
-            src.disconnect();
-            src.connect(node ?? _k.audio.masterNode);
+        connect(node?: AudioNode | AudioBus) {
+            route.connect(node);
+        },
+
+        get bus() {
+            return route.bus;
         },
     };
 }

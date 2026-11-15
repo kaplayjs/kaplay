@@ -1,10 +1,12 @@
+import { disposeAudioBuses } from "../audio/audioBus";
 import { _k } from "../shared";
 
 export const quit = () => {
-    const { app, gfx, ggl, gc } = _k;
+    const { app, gfx, ggl, gc, audio } = _k;
 
     app.events.onOnce("frameEnd", () => {
         app.quit();
+        disposeAudioBuses(audio);
 
         // clear canvas
         gfx.gl.clear(

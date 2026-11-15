@@ -20,6 +20,7 @@ import { getShader, loadShader, loadShaderURL } from "../assets/shader";
 import { getSound, loadMusic, loadSound, SoundData } from "../assets/sound";
 import { getSprite, loadBean, loadSprite, SpriteData } from "../assets/sprite";
 import { loadSpriteAtlas } from "../assets/spriteAtlas";
+import { createAudioBus } from "../audio/audioBus";
 import { burp } from "../audio/burp";
 import { play } from "../audio/play";
 import { getVolume, setVolume, volume } from "../audio/volume";
@@ -503,6 +504,7 @@ export const createContext = (
         volume,
         burp,
         audioCtx: audio.ctx,
+        createAudioBus,
         // math
         Line,
         Rect,

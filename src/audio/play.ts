@@ -3,6 +3,11 @@ import { resolveSound, type SoundData } from "../assets/sound";
 import { KEvent, type KEventController } from "../events/events";
 import { _k } from "../shared";
 import type { MusicData } from "../types";
+import {
+    type AudioBus,
+    createAudioRoute,
+    initialAudioDestination,
+} from "./audioBus";
 import { playMusic } from "./playMusic";
 
 // TODO: enable setting on load, make part of SoundData
@@ -63,6 +68,8 @@ export interface AudioPlayOpt {
      * KAPLAY's default volume node. Defaults to undefined, i.e. use KAPLAY's volume node.
      */
     connectTo?: AudioNode;
+    /** Route through a shared audio bus. Mutually exclusive with connectTo. */
+    bus?: AudioBus;
 }
 
 /**
@@ -144,7 +151,9 @@ export interface AudioPlay {
      * and connect it to the passed-in audio node, or to Kaplay's default volume node
      * if no node is passed.
      */
-    connect(node?: AudioNode): void;
+    connect(node?: AudioNode | AudioBus): void;
+    /** Current bus, or null for a direct node or master connection. */
+    readonly bus: AudioBus | null;
 }
 
 export function play(
@@ -160,7 +169,9 @@ export function play(
         return playMusic(_k.assets.music[src], opt);
     }
 
-    const ctx = _k.audio.ctx;
+    const audio = _k.audio;
+    const initial = initialAudioDestination(audio, opt);
+    const ctx = audio.ctx;
     let paused = opt.paused ?? false;
     let srcNode = ctx.createBufferSource();
     const onEndEvents = new KEvent();
@@ -175,7 +186,8 @@ export function play(
     srcNode.detune.value = opt.detune ?? 0;
     srcNode.playbackRate.value = opt.speed ?? 1;
     srcNode.connect(panNode);
-    srcNode.onended = () => {
+    srcNode.onended = (event) => {
+        if (event.target === srcNode) route.deactivate();
         if (
             getTime()
                 >= (srcNode.buffer?.duration ?? Number.POSITIVE_INFINITY)
@@ -185,7 +197,7 @@ export function play(
     };
     panNode.pan.value = opt.pan ?? 0;
     panNode.connect(gainNode);
-    gainNode.connect(opt.connectTo ?? _k.audio.masterNode);
+    const route = createAudioRoute(audio, gainNode, initial);
     gainNode.gain.value = opt.volume ?? 1;
 
     const start = (data: SoundData) => {
@@ -213,6 +225,7 @@ export function play(
         if (!paused) {
             startTime = ctx.currentTime;
             srcNode.start(0, pos);
+            route.activate();
             started = true;
         }
     };
@@ -260,12 +273,14 @@ export function play(
                     srcNode.stop();
                     started = false;
                 }
+                route.deactivate();
                 stopTime = ctx.currentTime;
             }
             else {
                 srcNode = cloneNode(srcNode);
                 const pos = stopTime - startTime;
                 srcNode.start(0, pos);
+                route.activate();
                 started = true;
                 startTime = ctx.currentTime - pos;
                 stopTime = 0;
@@ -293,6 +308,7 @@ export function play(
                 srcNode = cloneNode(srcNode);
                 startTime = ctx.currentTime - time;
                 srcNode.start(0, time);
+                route.activate();
                 started = true;
                 stopTime = 0;
             }
@@ -355,9 +371,12 @@ export function play(
             return this.onEnd(action);
         },
 
-        connect(node?: AudioNode) {
-            gainNode.disconnect();
-            gainNode.connect(node ?? _k.audio.masterNode);
+        connect(node?: AudioNode | AudioBus) {
+            route.connect(node);
+        },
+
+        get bus() {
+            return route.bus;
         },
     };
 }
