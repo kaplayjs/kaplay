@@ -20,6 +20,8 @@ export class Texture {
     ctx: GfxCtx;
     src: null | ImageSource = null;
     glTex: WebGLTexture;
+    private freed = false;
+    private cancelCleanup: () => void;
     width: number;
     height: number;
 
@@ -34,7 +36,7 @@ export class Texture {
         }
 
         this.glTex = glText;
-        ctx.onDestroy(() => this.free());
+        this.cancelCleanup = ctx.onDestroy(() => this.free());
 
         this.width = w;
         this.height = h;
@@ -109,6 +111,9 @@ export class Texture {
 
     /** Frees up texture memory. Call this once the texture is no longer being used to avoid memory leaks. */
     free() {
+        if (this.freed) return;
+        this.freed = true;
+        this.cancelCleanup();
         this.ctx.gl.deleteTexture(this.glTex);
     }
 }
@@ -477,14 +482,18 @@ function genStack<T>(setFunc: (item: T | null) => void) {
 }
 
 export function initGfx(gl: WebGLRenderingContext, opts: KAPLAYOpt = {}) {
-    const gc: Array<() => void> = [];
+    const gc = new Set<() => void>();
 
     function onDestroy(action: () => unknown) {
-        gc.push(action);
+        gc.add(action);
+        return () => {
+            gc.delete(action);
+        };
     }
 
     function destroy() {
         gc.forEach((action) => action());
+        gc.clear();
         const extension = gl.getExtension("WEBGL_lose_context");
         if (extension) extension.loseContext();
     }

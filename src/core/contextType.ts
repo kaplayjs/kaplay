@@ -172,6 +172,7 @@ import {
     type Anchor,
     type BlendMode,
     type Canvas,
+    type CanvasSizeSource,
     type Comp,
     type CompList,
     type Cursor,
@@ -1759,9 +1760,9 @@ export interface KAPLAYCtx {
      */
     mask(maskType?: Mask): MaskComp;
     /**
-     * Specifies the FrameBuffer the object should be drawn on.
+     * Specifies the Canvas, FrameBuffer, or Picture the object should be drawn on.
      *
-     * @param canvas - The FrameBuffer to draw on.
+     * @param canvas - The drawing destination.
      *
      * @example
      * ```js
@@ -1770,7 +1771,7 @@ export interface KAPLAYCtx {
      *
      * let beanOnCanvas = add([
      *     sprite("bean"),
-     *     drawon(canvas.fb),
+     *     drawon(canvas),
      * ]);
      * ```
      *
@@ -1779,7 +1780,10 @@ export interface KAPLAYCtx {
      * @group Components
      * @subgroup Rendering
      */
-    drawon(canvas: FrameBuffer | Picture, opt?: DrawonCompOpt): DrawonComp;
+    drawon(
+        canvas: FrameBuffer | Picture | Canvas,
+        opt?: DrawonCompOpt,
+    ): DrawonComp;
     /**
      * A tile on a tile map.
      *
@@ -6954,6 +6958,8 @@ export interface KAPLAYCtx {
      * @subgroup Canvas
      */
     makeCanvas(w: number, h: number): Canvas;
+    /** Create a canvas following logical screen dimensions or an object's size. */
+    makeCanvas(source: CanvasSizeSource): Canvas;
     /**
      * Draw a canvas.
      *

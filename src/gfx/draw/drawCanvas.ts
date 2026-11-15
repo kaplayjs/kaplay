@@ -12,6 +12,7 @@ export type DrawCanvasOpt = DrawUVQuadOpt & {
 };
 
 export function drawCanvas(opt: DrawCanvasOpt) {
+    opt.canvas.syncSize();
     const fb = opt.canvas.fb;
     drawUVQuad(Object.assign({}, opt, {
         tex: fb.tex,
