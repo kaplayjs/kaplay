@@ -430,6 +430,8 @@ export const createContext = (
         onFixedUpdate: defaultScope.onFixedUpdate,
         onUpdate: defaultScope.onUpdate,
         onDraw: defaultScope.onDraw,
+        onBeforeLayerDraw: defaultScope.onBeforeLayerDraw,
+        onAfterLayerDraw: defaultScope.onAfterLayerDraw,
         onAdd: defaultScope.onAdd,
         onDestroy: defaultScope.onDestroy,
         onUse: defaultScope.onUse,

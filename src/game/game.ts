@@ -138,6 +138,7 @@ type CamData = {
     scale: Vec2;
     angle: number;
     shake: number;
+    frameShake: Vec2;
     transform: Mat23;
 };
 
@@ -166,6 +167,7 @@ export const createGame = (
             scale: new Vec2(1),
             angle: 0,
             shake: 0,
+            frameShake: new Vec2(0),
             transform: new Mat23(),
         },
         currentSceneArgs: [], // stores the current scene arguments //

@@ -3,15 +3,18 @@ import { opacity } from "../ecs/components/draw/opacity";
 import { rect } from "../ecs/components/draw/rect";
 import { fixed } from "../ecs/components/transform/fixed";
 import { destroy } from "../ecs/entity/utils";
-import { center, height, width } from "../gfx/stack";
+import { center, flush, height, width } from "../gfx/stack";
 import { type Color, rgb } from "../math/color";
 import { type Mat23, vec2, type Vec2Args } from "../math/math";
+import { rand } from "../math/random";
 import { Vec2 } from "../math/Vec2";
 import { _k } from "../shared";
 import { deprecateMsg } from "../utils/log";
 
 export function setCamPos(...pos: Vec2Args) {
-    _k.game.cam.pos = vec2(...pos);
+    changeCamera(() => {
+        _k.game.cam.pos = vec2(...pos);
+    });
 }
 
 export function getCamPos(): Vec2 {
@@ -19,7 +22,9 @@ export function getCamPos(): Vec2 {
 }
 
 export function setCamScale(...scale: Vec2Args) {
-    _k.game.cam.scale = vec2(...scale);
+    changeCamera(() => {
+        _k.game.cam.scale = vec2(...scale);
+    });
 }
 
 export function getCamScale(): Vec2 {
@@ -27,7 +32,9 @@ export function getCamScale(): Vec2 {
 }
 
 export function setCamRot(angle: number) {
-    _k.game.cam.angle = angle;
+    changeCamera(() => {
+        _k.game.cam.angle = angle;
+    });
 }
 
 export function getCamRot(): number {
@@ -36,6 +43,34 @@ export function getCamRot(): number {
 
 export function getCamTransform(): Mat23 {
     return _k.game.cam.transform.clone();
+}
+
+export function updateCamTransform(): void {
+    const cam = _k.game.cam;
+    const origin = center();
+    const position = cam.pos ?? origin;
+    cam.transform.setIdentity()
+        .translateSelfV(origin)
+        .scaleSelfV(cam.scale)
+        .rotateSelf(cam.angle)
+        .translateSelfV(position.scale(-1).add(cam.frameShake));
+}
+
+let layerDrawHookDepth = 0;
+
+function changeCamera(action: () => void): void {
+    if (layerDrawHookDepth > 0) flush();
+    action();
+    if (layerDrawHookDepth > 0) updateCamTransform();
+}
+
+export function withLayerDrawHook(action: () => void): void {
+    layerDrawHookDepth++;
+    try {
+        action();
+    } finally {
+        layerDrawHookDepth--;
+    }
 }
 
 export function flash(
@@ -54,7 +89,13 @@ export function flash(
 }
 
 export function shake(intensity: number = 12) {
-    _k.game.cam.shake += intensity;
+    changeCamera(() => {
+        const cam = _k.game.cam;
+        cam.shake += intensity;
+        if (layerDrawHookDepth > 0 && intensity !== 0) {
+            cam.frameShake = Vec2.fromAngle(rand(0, 360)).scale(cam.shake);
+        }
+    });
 }
 
 export function toScreen(p: Vec2): Vec2 {

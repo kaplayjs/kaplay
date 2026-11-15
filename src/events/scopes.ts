@@ -50,6 +50,8 @@ const ingnoredHandlersForObject = [
     "onUpdate",
     "onFixedUpdate",
     "onDraw",
+    "onBeforeLayerDraw",
+    "onAfterLayerDraw",
     "onAdd",
     "onDestroy",
     "onUse",

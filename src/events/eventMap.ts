@@ -289,6 +289,8 @@ export type AppEventMap = {
  * @group Events
  */
 export type GameEventMap = {
+    beforeLayerDraw: [string];
+    afterLayerDraw: [string];
     load: [];
     loadError: [string, Asset<any>];
     loading: [number];

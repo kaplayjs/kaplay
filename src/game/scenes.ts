@@ -55,6 +55,7 @@ export function go(name: string, ...args: unknown[]) {
             scale: vec2(1),
             angle: 0,
             shake: 0,
+            frameShake: vec2(0),
             transform: new Mat23(),
         };
 

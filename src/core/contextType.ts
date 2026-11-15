@@ -2966,6 +2966,18 @@ export interface KAPLAYCtx {
      */
     onDraw(action: () => void): KEventController;
     /**
+     * Called before the named configured layer is drawn.
+     *
+     * @group Events
+     */
+    onBeforeLayerDraw(name: string, action: () => void): KEventController;
+    /**
+     * Called after the named configured layer is drawn.
+     *
+     * @group Events
+     */
+    onAfterLayerDraw(name: string, action: () => void): KEventController;
+    /**
      * Register an event that runs when an object with the provided tag is added.
      *
      * @param tag - The tag to listen for.

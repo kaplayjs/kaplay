@@ -10,8 +10,10 @@ import {
     type KEventHandler,
 } from "../../events/events";
 import type { EventHandlersInAppButNotAddedInGameObjRaw } from "../../events/scopes";
+import { updateCamTransform, withLayerDrawHook } from "../../game/camera";
 import { drawMasked } from "../../gfx/draw/drawMasked";
 import { beginPicture, endPicture, Picture } from "../../gfx/draw/drawPicture";
+import { suspendStencil } from "../../gfx/draw/drawStenciled";
 import { drawSubtracted } from "../../gfx/draw/drawSubtracted";
 import { FrameBuffer } from "../../gfx/FrameBuffer";
 import {
@@ -88,6 +90,13 @@ export function objectTransformNeedsUpdate(obj: GameObj<any>) {
 
 export function getTransformVersion(obj: GameObj<any>): number {
     return obj._transformVersion;
+}
+
+function hasLayerDrawPass(): boolean {
+    return !!_k.game.layers && (
+        _k.game.events.numListeners("beforeLayerDraw") > 0
+        || _k.game.events.numListeners("afterLayerDraw") > 0
+    );
 }
 
 /**
@@ -1050,6 +1059,9 @@ export const GameObjRawPrototype: Omit<
 
     drawTree(this: GameObjCamTransform) {
         if (this.hidden) return;
+        if ((this as unknown as GameObj) === _k.game.root) {
+            this._drawLayerIndex = _k.game.defaultLayerIndex;
+        }
 
         const objects = new Array<
             & GameObj<LayerComp | ZComp | FixedComp | MaskComp>
@@ -1069,6 +1081,21 @@ export const GameObjRawPrototype: Omit<
             return (l1 - l2) || (o1.z ?? 0) - (o2.z ?? 0);
         });
 
+        const drawObject = (
+            object: typeof objects[number],
+            drawTarget: boolean,
+        ) => {
+            _k.gfx.fixed = isFixed(object);
+            if (object.mask || (object.target && drawTarget)) {
+                loadMatrix(object.parent!.transform);
+                object.drawTree();
+            }
+            else {
+                loadMatrix(object.transform);
+                object._drawEvents.trigger();
+            }
+        };
+
         // If this subtree is masking, the root is drawn into the mask, then the children are drawn
         if (this.mask) {
             const maskFunc = {
@@ -1084,9 +1111,7 @@ export const GameObjRawPrototype: Omit<
                 // We push once, then update the current transform only
                 pushTransform();
                 for (let i = 0; i < objects.length; i++) {
-                    _k.gfx.fixed = isFixed(objects[i]);
-                    loadMatrix(objects[i].transform);
-                    objects[i]._drawEvents.trigger();
+                    drawObject(objects[i], true);
                 }
                 popTransform();
                 _k.gfx.fixed = f;
@@ -1099,55 +1124,103 @@ export const GameObjRawPrototype: Omit<
             });
         }
         else {
-            // If this subtree is rendered to a target, enable target
-            if (this.target) {
-                if (!this.target?.refreshOnly || !this.target?.isFresh) {
-                    flush();
-                    if (this.target.destination instanceof FrameBuffer) {
-                        this.target.destination.bind();
-                    }
-                    else if (this.target.destination instanceof Picture) {
-                        beginPicture(this.target.destination);
-                    }
+            const target = this.target;
+            const refreshTarget = target
+                && (!target.refreshOnly || !target.isFresh);
+            const outerPicture = _k.gfx.renderer.picture;
+            let restoreStencil: (() => void) | null = null;
+            if (refreshTarget) {
+                flush();
+                _k.gfx.renderer.picture = null;
+                if (target.destination instanceof FrameBuffer) {
+                    restoreStencil = suspendStencil();
+                    target.destination.bind();
+                }
+                else if (target.destination instanceof Picture) {
+                    beginPicture(target.destination);
                 }
             }
 
-            if (!this.target?.refreshOnly || !this.target?.isFresh) {
-                const f = _k.gfx.fixed;
-                pushTransform();
-                // Parent is drawn before children if !childrenOnly
-                if (!this.target?.childrenOnly) {
-                    _k.gfx.fixed = isFixed(this);
-                    loadMatrix(this.transform);
-                    this._drawEvents.trigger();
-                }
-                // Draw children
-                for (let i = 0; i < objects.length; i++) {
-                    // An object with a mask is drawn at draw time, but the transform still needs to be calculated,
-                    // so we push the parent's transform and pretend we are
-                    _k.gfx.fixed = isFixed(objects[i]);
-                    if (objects[i].mask) {
-                        loadMatrix(objects[i].parent!.transform);
-                        objects[i].drawTree();
+            try {
+                if (!this.target?.refreshOnly || !this.target?.isFresh) {
+                    const f = _k.gfx.fixed;
+                    pushTransform();
+                    // Parent is drawn before children if !childrenOnly
+                    if (!this.target?.childrenOnly) {
+                        _k.gfx.fixed = isFixed(this);
+                        loadMatrix(this.transform);
+                        this._drawEvents.trigger();
+                    }
+                    const activeLayers = (this as unknown as GameObj)
+                            === _k.game.root && hasLayerDrawPass();
+                    if (activeLayers) {
+                        let index = 0;
+                        const layers = _k.game.layers!;
+                        try {
+                            for (
+                                let layer = 0;
+                                layer < layers.length;
+                                layer++
+                            ) {
+                                const name = layers[layer];
+                                flush();
+                                _k.gfx.fixed = false;
+                                loadMatrix(this.transform);
+                                updateCamTransform();
+                                withLayerDrawHook(() =>
+                                    _k.game.events.trigger(
+                                        "beforeLayerDraw",
+                                        name,
+                                    )
+                                );
+                                flush();
+                                updateCamTransform();
+                                while (
+                                    index < objects.length
+                                    && objects[index]._drawLayerIndex <= layer
+                                ) {
+                                    drawObject(objects[index++], true);
+                                }
+                                flush();
+                                _k.gfx.fixed = false;
+                                loadMatrix(this.transform);
+                                withLayerDrawHook(() =>
+                                    _k.game.events.trigger(
+                                        "afterLayerDraw",
+                                        name,
+                                    )
+                                );
+                                flush();
+                                updateCamTransform();
+                            }
+                            while (index < objects.length) {
+                                drawObject(objects[index++], true);
+                            }
+                        } finally {
+                            updateCamTransform();
+                        }
                     }
                     else {
-                        loadMatrix(objects[i].transform);
-                        objects[i]._drawEvents.trigger();
+                        for (let i = 0; i < objects.length; i++) {
+                            drawObject(objects[i], true);
+                        }
                     }
+                    popTransform();
+                    _k.gfx.fixed = f;
                 }
-                popTransform();
-                _k.gfx.fixed = f;
-            }
-
-            // If this subtree is rendered to a target, disable target
-            if (this.target) {
-                if (!this.target?.refreshOnly || !this.target?.isFresh) {
-                    flush();
-                    if (this.target.destination instanceof FrameBuffer) {
-                        this.target.destination.unbind();
-                    }
-                    else if (this.target.destination instanceof Picture) {
-                        endPicture();
+            } finally {
+                if (refreshTarget) {
+                    try {
+                        flush();
+                        if (target.destination instanceof FrameBuffer) {
+                            target.destination.unbind();
+                        }
+                        else if (target.destination instanceof Picture) {
+                            endPicture();
+                        }
+                    } finally {
+                        _k.gfx.renderer.picture = outerPicture;
+                        restoreStencil?.();
                     }
                 }
             }
@@ -1257,25 +1330,32 @@ export const GameObjRawPrototype: Omit<
     },
 
     collect(
-        this: GameObj<
-            PosComp | ScaleComp | RotateComp | FixedComp | MaskComp
-        >,
+        this:
+            & GameObj<
+                | PosComp
+                | ScaleComp
+                | RotateComp
+                | FixedComp
+                | MaskComp
+                | LayerComp
+            >
+            & InternalGameObjRaw,
         objects: GameObj<any>[],
     ) {
         // Add to objects
+        this._drawLayerIndex = this.layerIndex
+            ?? this.parent?._drawLayerIndex
+            ?? _k.game.defaultLayerIndex;
         objects.push(this);
+
+        if (this.mask || this.target) return;
 
         // Recurse on children
         for (let i = 0; i < this.children.length; i++) {
             // While we could do this test in collect, it would mean an extra function call
             // so it is better to do this preemptively
             if (this.children[i].hidden) continue;
-            if (this.target) {
-                this.drawTree();
-            }
-            else if (!this.mask) {
-                this.children[i].collect(objects);
-            }
+            this.children[i].collect(objects);
         }
     },
     // #endregion

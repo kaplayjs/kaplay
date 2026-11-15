@@ -1,6 +1,8 @@
 import {
     on,
     onAdd,
+    onAfterLayerDraw,
+    onBeforeLayerDraw,
     onClick,
     onCollide,
     onCollideEnd,
@@ -56,6 +58,8 @@ export const createScopeHandlers = (app: App) => {
         onUpdate: onUpdate,
         onFixedUpdate: onFixedUpdate,
         onDraw: onDraw,
+        onBeforeLayerDraw: onBeforeLayerDraw,
+        onAfterLayerDraw: onAfterLayerDraw,
         onAdd: onAdd,
         onDestroy: onDestroy,
         onUse: onUse,

@@ -191,6 +191,24 @@ export const onDraw = overload2((action: () => void) => {
     return on("draw", tag, action);
 });
 
+export function onBeforeLayerDraw(
+    name: string,
+    action: () => void,
+): KEventController {
+    return _k.game.events.on("beforeLayerDraw", layer => {
+        if (layer === name) return action();
+    });
+}
+
+export function onAfterLayerDraw(
+    name: string,
+    action: () => void,
+): KEventController {
+    return _k.game.events.on("afterLayerDraw", layer => {
+        if (layer === name) return action();
+    });
+}
+
 export const onClick = (tag: Tag, action: (obj: GameObj) => void) => {
     startClickHandler();
     return on("click", tag, action);
