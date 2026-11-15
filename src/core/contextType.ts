@@ -116,6 +116,7 @@ import type { Collision } from "../ecs/systems/Collision";
 import type { SystemPhase } from "../ecs/systems/systems";
 import type { GameObjEventNames, GameObjEvents } from "../events/eventMap";
 import type { KEvent, KEventController, KEventHandler } from "../events/events";
+import type { InputContext } from "../events/inputContexts";
 import type { AppScope, SceneScope } from "../events/scopes";
 import type { SceneDef } from "../game/scenes";
 import type { anchorPt } from "../gfx/anchor";
@@ -205,6 +206,29 @@ import type { OptionalString } from "./taf";
  * @group Start
  */
 export interface KAPLAYCtx {
+    /**
+     * Create an input context owned by the current scene. Its handlers receive
+     * input while it is the top context and survive being popped for reuse.
+     * Scene changes dispose the context and cancel its handlers.
+     *
+     * @group Input
+     */
+    createInputContext(): InputContext;
+    /**
+     * Make a context the active input recipient without changing held state.
+     * Throws if the context is disposed or already on the stack.
+     *
+     * @param context - The input context to activate.
+     * @group Input
+     */
+    pushInputContext(context: InputContext): void;
+    /**
+     * Restore the previous input context, retaining the popped registrations.
+     * Does nothing when only the scene's bottom context remains.
+     *
+     * @group Input
+     */
+    popInputContext(): void;
     /**
      * Internal data that should not be accessed directly.
      *

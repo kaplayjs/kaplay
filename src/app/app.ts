@@ -642,7 +642,10 @@ export const initApp = (
         mouse: MouseButton | MouseButton[],
         action: (m: MouseButton) => void,
     ) => {
-        return state.events.on("mouseRelease", (m) => m === mouse && action(m));
+        return state.events.on(
+            "mouseRelease",
+            (m) => isEqOrIncludes(mouse, m) && action(m),
+        );
     });
 
     function onMouseMove(f: (pos: Vec2, dpos: Vec2) => void): KEventController {
@@ -716,7 +719,7 @@ export const initApp = (
             );
         },
         (
-            btn: KGamepadButton,
+            btn: KGamepadButton | KGamepadButton[],
             action: (btn: KGamepadButton, gamepad: KGamepad) => void,
         ) => {
             return state.events.on(
@@ -776,7 +779,7 @@ export const initApp = (
 
     const onButtonPress = overload2((action: (btn: string) => void) => {
         return state.events.on("buttonPress", (b) => action(b));
-    }, (btn: string | string, action: (btn: string) => void) => {
+    }, (btn: string | string[], action: (btn: string) => void) => {
         return state.events.on(
             "buttonPress",
             (b) => isEqOrIncludes(btn, b) && action(b),
@@ -785,7 +788,7 @@ export const initApp = (
 
     const onButtonDown = overload2((action: (btn: string) => void) => {
         return state.events.on("buttonDown", (b) => action(b));
-    }, (btn: string | string, action: (btn: string) => void) => {
+    }, (btn: string | string[], action: (btn: string) => void) => {
         return state.events.on(
             "buttonDown",
             (b) => isEqOrIncludes(btn, b) && action(b),
@@ -794,7 +797,7 @@ export const initApp = (
 
     const onButtonRelease = overload2((action: (btn: string) => void) => {
         return state.events.on("buttonRelease", (b) => action(b));
-    }, (btn: string | string, action: (btn: string) => void) => {
+    }, (btn: string | string[], action: (btn: string) => void) => {
         return state.events.on(
             "buttonRelease",
             (b) => isEqOrIncludes(btn, b) && action(b),
@@ -925,45 +928,47 @@ export const initApp = (
                 const gamepadBtn = map.buttons[i];
                 const browserGamepadBtn = browserGamepad.buttons[i];
 
-                gamepadState.analogState.set(
-                    gamepadBtn,
-                    browserGamepadBtn.value,
-                );
-                state.mergedGamepadState.analogState.set(
-                    gamepadBtn,
-                    browserGamepadBtn.value,
-                );
+                state.events.withDispatchTransaction(() => {
+                    gamepadState.analogState.set(
+                        gamepadBtn,
+                        browserGamepadBtn.value,
+                    );
+                    state.mergedGamepadState.analogState.set(
+                        gamepadBtn,
+                        browserGamepadBtn.value,
+                    );
 
-                if (browserGamepadBtn.pressed) {
-                    if (gamepadState.buttonState.down.has(gamepadBtn)) {
-                        gamepadState.buttonState.process(state);
-                        continue;
+                    if (browserGamepadBtn.pressed) {
+                        if (gamepadState.buttonState.down.has(gamepadBtn)) {
+                            gamepadState.buttonState.process(state);
+                            return;
+                        }
+
+                        state.lastInputDevice = "gamepad";
+                        state.buttonHandler.processGamepadButtonDown(
+                            gamepadBtn,
+                            state,
+                        );
+
+                        state.mergedGamepadState.buttonState.press(
+                            gamepadBtn,
+                            state,
+                        );
+                        gamepadState.buttonState.press(gamepadBtn, state);
                     }
+                    else if (gamepadState.buttonState.down.has(gamepadBtn)) {
+                        state.buttonHandler.processGamepadButtonUp(
+                            gamepadBtn,
+                            state,
+                        );
 
-                    state.lastInputDevice = "gamepad";
-                    state.buttonHandler.processGamepadButtonDown(
-                        gamepadBtn,
-                        state,
-                    );
-
-                    state.mergedGamepadState.buttonState.press(
-                        gamepadBtn,
-                        state,
-                    );
-                    gamepadState.buttonState.press(gamepadBtn, state);
-                }
-                else if (gamepadState.buttonState.down.has(gamepadBtn)) {
-                    state.buttonHandler.processGamepadButtonUp(
-                        gamepadBtn,
-                        state,
-                    );
-
-                    state.mergedGamepadState.buttonState.release(
-                        gamepadBtn,
-                        state,
-                    );
-                    gamepadState.buttonState.release(gamepadBtn, state);
-                }
+                        state.mergedGamepadState.buttonState.release(
+                            gamepadBtn,
+                            state,
+                        );
+                        gamepadState.buttonState.release(gamepadBtn, state);
+                    }
+                });
             }
 
             for (const stickName in map.sticks) {
@@ -1014,7 +1019,7 @@ export const initApp = (
         // Release all inputs immediately when blur/hide happens,
         // and then queue it to to catch any queued events on the next input tick,
         // that wouldn't be processed otherwise
-        releaseHeldInputs();
+        state.events.withDispatchTransaction(releaseHeldInputs);
         queueReleaseHeldInputs();
     }
 

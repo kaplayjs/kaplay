@@ -34,6 +34,7 @@ export function go(name: string, ...args: unknown[]) {
         _k.game.events.trigger("sceneLeave", name);
 
         _k.game.sceneEvents.forEach((e) => e?.cancel());
+        _k.inputContexts.resetScene();
 
         [..._k.game.root.children].forEach((obj) => {
             if (

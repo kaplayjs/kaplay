@@ -22,6 +22,7 @@ import { rotateFactory } from "../ecs/components/transform/rotate";
 import { scaleFactory } from "../ecs/components/transform/scale";
 import { zFactory } from "../ecs/components/transform/z";
 import { registerPrefabFactory } from "../ecs/entity/prefab";
+import { createInputContexts } from "../events/inputContexts";
 import { createScopeHandlers } from "../events/scopeHandlers";
 import {
     attachScopeHandlersToGameObjRaw,
@@ -67,9 +68,10 @@ export const createEngine = (gopt: KAPLAYOpt) => {
     const { fontCacheC2d, fontCacheCanvas } = createFontCache();
     const app = initApp({ canvas, ...gopt });
     const gameHandlers = createScopeHandlers(app);
-    const sceneScope = createSceneScope(gameHandlers);
+    const inputContexts = createInputContexts(gameHandlers, app);
+    const sceneScope = createSceneScope(inputContexts.sceneHandlers);
     const appScope = createAppScope(gameHandlers);
-    attachScopeHandlersToGameObjRaw(gameHandlers);
+    attachScopeHandlersToGameObjRaw(inputContexts.objectHandlers);
 
     // TODO: Probably we should move this to initGfx
     const canvasContext = app.canvas
@@ -152,6 +154,7 @@ export const createEngine = (gopt: KAPLAYOpt) => {
         gc: [] as (() => void)[],
         sceneScope,
         appScope,
+        inputContexts,
         // Patch, k it's only avaible after running kaplay()
         k: null as unknown as KAPLAYCtx,
         startLoop() {

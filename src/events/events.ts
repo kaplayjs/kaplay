@@ -131,6 +131,8 @@ export class KEvent<Args extends any[] = any[]> {
 
 // TODO: only accept one argument?
 export class KEventHandler<EventMap extends Record<string, any[]>> {
+    private dispatchToken: object | undefined;
+    private transactionToken: object | undefined;
     private handlers: Partial<
         {
             [Name in keyof EventMap]: KEvent<EventMap[Name]>;
@@ -151,7 +153,12 @@ export class KEventHandler<EventMap extends Record<string, any[]>> {
     ): KEventController {
         const ev = this.on(name, (...args) => {
             ev.cancel();
-            action(...args);
+            if (name === "input") {
+                this.withDispatchTransaction(() => action(...args));
+            }
+            else {
+                action(...args);
+            }
         });
         return ev;
     }
@@ -163,7 +170,25 @@ export class KEventHandler<EventMap extends Record<string, any[]>> {
     }
     trigger<Name extends keyof EventMap>(name: Name, ...args: EventMap[Name]) {
         if (this.handlers[name]) {
-            this.handlers[name].trigger(...args);
+            const previous = this.dispatchToken;
+            this.dispatchToken = {};
+            try {
+                this.handlers[name].trigger(...args);
+            } finally {
+                this.dispatchToken = previous;
+            }
+        }
+    }
+    currentDispatch(): object | undefined {
+        return this.transactionToken ?? this.dispatchToken;
+    }
+    withDispatchTransaction<T>(action: () => T): T {
+        const previous = this.transactionToken;
+        this.transactionToken = {};
+        try {
+            return action();
+        } finally {
+            this.transactionToken = previous;
         }
     }
     remove<Name extends keyof EventMap>(name: Name) {
