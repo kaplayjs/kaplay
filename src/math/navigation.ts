@@ -1,4 +1,5 @@
 import { BinaryHeap } from "../utils/binaryheap";
+import { NodePathQuery, type PathQuery } from "./pathquery";
 import { Vec2 } from "./Vec2";
 
 export interface Graph {
@@ -16,6 +17,8 @@ export interface Graph {
         to: Vec2,
         opt: any,
     ): Vec2[];
+    createPathQuery?(from: number, to: number): PathQuery<number>;
+    createWaypointQuery?(from: Vec2, to: Vec2, opt?: any): PathQuery<Vec2>;
     nodes: number[];
 }
 
@@ -111,44 +114,9 @@ export function aStarSearch(
     start: number,
     goal: number,
 ): number[] {
-    interface CostNode {
-        cost: number;
-        node: number;
-    }
-    const frontier = new BinaryHeap<CostNode>((a, b) => a.cost < b.cost);
-    frontier.insert({ cost: 0, node: start });
-
-    const cameFrom = new Map<number, number>();
-    cameFrom.set(start, start);
-    const costSoFar = new Map<number, number>();
-    costSoFar.set(start, 0);
-
-    while (frontier.length !== 0) {
-        const current = frontier.remove()?.node;
-
-        if (current === goal) {
-            break;
-        }
-
-        // TODO: Remove non-null assertion
-        const neighbors = graph.getNeighbors(current!);
-        for (let next of neighbors) {
-            const newCost = (costSoFar.get(current!) || 0)
-                + graph.getCost(current!, next)
-                + graph.getHeuristic(next, goal);
-            if (
-                !costSoFar.has(next)
-                || newCost < costSoFar.get(next)!
-            ) {
-                costSoFar.set(next, newCost);
-                frontier.insert({ cost: newCost, node: next });
-                cameFrom.set(next, current!);
-            }
-        }
-    }
-
-    // TODO: Remove non-null assertion
-    return buildPath(start, goal, cameFrom)!;
+    const query = new NodePathQuery(graph, start, goal);
+    while (query.status === "pending") query.step(Number.MAX_SAFE_INTEGER);
+    return query.path;
 }
 
 export function floodFill(
