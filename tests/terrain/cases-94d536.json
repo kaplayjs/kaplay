@@ -1,0 +1,226 @@
+{
+  "base": [
+    [
+      "integration/components/missingComps.spec.ts",
+      "add() should throw an error when a body() without pos() is passed"
+    ],
+    [
+      "integration/entity/prefab.spec.ts",
+      "Prefab creation \u203a An object created using a addPrefab() should exist"
+    ],
+    [
+      "integration/entity/prefab.spec.ts",
+      "Prefab creation \u203a An object created using a addPrefab() with parameters should keep new component props"
+    ],
+    [
+      "integration/gfx/textureSync.spec.ts",
+      "direct sprite referencing should force a texture flush"
+    ],
+    [
+      "unit/math/mat23.spec.ts",
+      "Mat23.fromTranslation(45).getTranslation() should return 2, 3"
+    ],
+    [
+      "unit/math/mat23.spec.ts",
+      "Mat23.fromRotation(45).getRotation() should return 45"
+    ],
+    [
+      "unit/math/mat23.spec.ts",
+      "Mat23.fromScale(2, 3).getScale() should return 2, 3"
+    ],
+    [
+      "unit/math/mat23.spec.ts",
+      "new Mat23().scaleSelf(2, 3).getScale() should return 2, 3"
+    ],
+    [
+      "unit/math/mat23.spec.ts",
+      "Mat23.fromSkew(45, 0) should return skew matrix"
+    ],
+    [
+      "unit/math/mat23.spec.ts",
+      "Mat23.fromSkew(0, 45) should return skew matrix"
+    ],
+    [
+      "unit/math/mat23.spec.ts",
+      "Mat23.fromSkew(45, 0).getSkew() should return 45"
+    ],
+    [
+      "unit/math/mat23.spec.ts",
+      "new Mat23().skewSelf(45, 0) should return skew matrix"
+    ],
+    [
+      "unit/math/mat23.spec.ts",
+      "new Mat23().skewSelf(0, 45) should return skew matrix"
+    ],
+    [
+      "unit/math/mat23.spec.ts",
+      "new Mat23().skewSelf(45, 0).getSkew() should return 45"
+    ],
+    [
+      "unit/math/mat23.spec.ts",
+      "new Mat23().skewSelf(45, 0).transform(1, 0) should not skew"
+    ],
+    [
+      "unit/math/mat23.spec.ts",
+      "new Mat23().skewSelf(45, 0).transform(1, 1) should skew right"
+    ],
+    [
+      "unit/math/mat23.spec.ts",
+      "new Mat23().skewSelf(0, 45).transform(0, 1) should not skew"
+    ],
+    [
+      "unit/math/mat23.spec.ts",
+      "new Mat23().skewSelf(0, 45).transform(1, 1) should skew down"
+    ],
+    [
+      "unit/math/vec2.spec.ts",
+      "vec2(0, 0).set(1, 2) should return Vec2(1, 2)"
+    ],
+    [
+      "unit/math/vec2.spec.ts",
+      "vec2(2, 1) should return Vec2(2, 1)"
+    ],
+    [
+      "unit/math/vec2.spec.ts",
+      "vec2.fromAngle(90) should return Vec2(0, 1)"
+    ],
+    [
+      "unit/math/vec2.spec.ts",
+      "Vec2.fromAngle(45) should return Vec2(Math.cos(Math.PI / 4))"
+    ],
+    [
+      "unit/math/vec2.spec.ts",
+      "Vec2.addScaled(vec2(2, 4), vec2(3, 5)) should return Vec2(8, 14)"
+    ],
+    [
+      "unit/math/vec2.spec.ts",
+      "Vec2.addc(vec2(2, 4), 3, 5) should return Vec2(5, 9)"
+    ],
+    [
+      "unit/math/vec2.spec.ts",
+      "Vec2.add(vec2(2, 4), vec2(3, 5)) should return Vec2(5, 9)"
+    ],
+    [
+      "unit/math/vec2.spec.ts",
+      "Vec2.subc(vec2(2, 4), 3, 5) should return Vec2(-1, -1)"
+    ],
+    [
+      "unit/math/vec2.spec.ts",
+      "Vec2.sub(vec2(2, 4), vec2(3, 5)) should return Vec2(-1, -1)"
+    ],
+    [
+      "unit/math/vec2.spec.ts",
+      "Vec2.scale(vec2(2, 4), 3) should return Vec2(6, 12)"
+    ],
+    [
+      "unit/math/vec2.spec.ts",
+      "Vec2.scalec(vec2(2, 4), 3, 5) should return Vec2(6, 20)"
+    ],
+    [
+      "unit/math/vec2.spec.ts",
+      "Vec2.scalev(vec2(2, 4), vec2(3, 5)) should return Vec2(6, 20)"
+    ],
+    [
+      "unit/math/vec2.spec.ts",
+      "Vec2.dist(vec2(2, 4), vec2(4, 4)) should return 2"
+    ],
+    [
+      "unit/math/vec2.spec.ts",
+      "Vec2.sdist(vec2(2, 4), vec2(4, 4)) should return 4"
+    ],
+    [
+      "unit/math/vec2.spec.ts",
+      "Vec2.len(vec2(0, 4)) should return 4"
+    ],
+    [
+      "unit/math/vec2.spec.ts",
+      "Vec2.slen(vec2(0, 4)) should return 16"
+    ],
+    [
+      "unit/math/vec2.spec.ts",
+      "Vec2.unit(vec2(0, 4)) should return Vec2(0, 1)"
+    ],
+    [
+      "unit/math/vec2.spec.ts",
+      "Vec2.normal(vec2(1, 0)) should return Vec2(0, -1)"
+    ],
+    [
+      "unit/math/vec2.spec.ts",
+      "Vec2.rotateByAngle(vec2(1, 0), 90) should return Vec2(0, -1)"
+    ],
+    [
+      "unit/math/vec2.spec.ts",
+      "Vec2.dot(vec2(1, 0), vec2(0, 1)) should return 0"
+    ],
+    [
+      "unit/math/vec2.spec.ts",
+      "Vec2.dot(vec2(1, 0), vec2(1, 1)) should return 1"
+    ]
+  ],
+  "new": [
+    [
+      "terrain/bakedLevel-98a30c.spec.ts",
+      "public types accept readonly definitions and expose cell editing"
+    ],
+    [
+      "terrain/bakedLevel-98a30c.spec.ts",
+      "requires a position component"
+    ],
+    [
+      "terrain/bakedLevel-98a30c.spec.ts",
+      "snapshots rows and definitions with default frames, ragged gaps and empty symbols"
+    ],
+    [
+      "terrain/bakedLevel-98a30c.spec.ts",
+      "solid coverage is exact and pairwise merged for holes and disconnected shapes"
+    ],
+    [
+      "terrain/bakedLevel-98a30c.spec.ts",
+      "cell edits merge and split colliders synchronously and redraw the new symbols"
+    ],
+    [
+      "terrain/bakedLevel-98a30c.spec.ts",
+      "ragged padding can be edited inside the longest-row bounds"
+    ],
+    [
+      "terrain/bakedLevel-98a30c.spec.ts",
+      "invalid construction and edits reject without changing existing terrain"
+    ],
+    [
+      "terrain/bakedLevel-98a30c.spec.ts",
+      "unchanged draws reuse uploaded geometry without tile objects"
+    ],
+    [
+      "terrain/bakedLevel-98a30c.spec.ts",
+      "large maps preserve late cells and multiple textures past the index boundary"
+    ],
+    [
+      "terrain/bakedLevel-98a30c.spec.ts",
+      "ancestor transforms move drawing and collision coverage together"
+    ],
+    [
+      "terrain/bakedLevel-98a30c.spec.ts",
+      "ordinary dynamic bodies land on solids and fall through holes"
+    ],
+    [
+      "terrain/bakedLevel-98a30c.spec.ts",
+      "removal and replacement clean owned colliders and geometry without reviving"
+    ],
+    [
+      "terrain/bakedLevel-98a30c.spec.ts",
+      "edits and destruction release geometry while other instances keep shared sprites"
+    ],
+    [
+      "terrain/bakedLevel-98a30c.spec.ts",
+      "terrain blend state is independent of preceding draws and honors explicit normal"
+    ],
+    [
+      "terrain/bakedLevel-98a30c.spec.ts",
+      "terrain follows live opacity color and shader properties without unchanged uploads"
+    ],
+    [
+      "terrain/bakedLevel-98a30c.spec.ts",
+      "terrain records transformed styled frames into picture targets without screen leakage"
+    ]
+  ]
+}
