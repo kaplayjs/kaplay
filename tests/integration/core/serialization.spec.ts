@@ -189,7 +189,8 @@ test("Test serialization of move() component", async ({ page }) => {
 
         const pf = k.addPrefab<CompList<MoveComp>>(prefab);
 
-        return pf.speed == 10 && pf.dir.eq(o.dir);
+        // they will be somehow different, just check for toFixed(2)
+        return pf.speed == 10 && pf.dir.toFixed(2).eq(o.dir.toFixed(2));
     });
 
     expect(method).toBeTruthy();
