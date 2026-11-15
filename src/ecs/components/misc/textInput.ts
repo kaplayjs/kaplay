@@ -33,6 +33,10 @@ export interface TextInputComp extends Comp {
      */
     typedText: string;
     /**
+     * The maximum length of the input.
+     */
+    maxInputLength?: number;
+    /**
      * Focuses this text input so that it will receive input, and
      * removes focus from all other text inputs.
      */
@@ -72,6 +76,7 @@ export function textInput(
     let origText: string = "";
     return {
         id: "textInput",
+        maxInputLength: maxInputLength ?? undefined,
         get hasFocus() {
             return hasFocus;
         },
@@ -111,8 +116,8 @@ export function textInput(
             charEv = _k.app.onCharInput((character) => {
                 if (
                     this.hasFocus
-                    && (!maxInputLength
-                        || this.typedText.length < maxInputLength)
+                    && (!this.maxInputLength
+                        || this.typedText.length < this.maxInputLength)
                 ) {
                     if ((_k.app.isKeyDown("shift") !== _k.app.state.capsOn)) {
                         this.typedText += character.toUpperCase();
@@ -157,8 +162,8 @@ export function textInput(
             const data: SerializedTextInputComp = {
                 hasFocus: hasFocus,
             };
-            if (maxInputLength !== undefined) {
-                data.maxInputLength = maxInputLength;
+            if (this.maxInputLength !== undefined) {
+                data.maxInputLength = this.maxInputLength;
             }
             return data;
         },

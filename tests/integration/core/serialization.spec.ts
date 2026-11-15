@@ -189,10 +189,9 @@ test("Test serialization of move() component", async ({ page }) => {
 
         const pf = k.addPrefab<CompList<MoveComp>>(prefab);
 
-        // just checking it was serialized properly
-        return prefab.components["move"]["dir"]["x"] == 10
-            && prefab.components["move"]["dir"]["y"] == 10
-            && prefab.components["move"]["speed"] == 10;
+        return pf.dir.x == 10
+            && pf.dir.y == 10
+            && pf.speed == 10;
     });
 
     expect(method).toBeTruthy();
@@ -1411,9 +1410,8 @@ test("Test serialization of textInput() component", async ({ page }) => {
             prefab,
         );
 
-        // only checking if the maxInputLength was serialized correctly
         return pf.hasFocus == true
-            && prefab.components["textInput"]["maxInputLength"] == 10;
+            && pf.maxInputLength == 10;
     });
 
     expect(method).toBeTruthy();

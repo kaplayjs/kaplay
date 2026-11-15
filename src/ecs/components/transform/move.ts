@@ -20,6 +20,14 @@ interface SerializedMoveComp {
  * @subgroup Component Types
  */
 export interface MoveComp extends Comp {
+    /**
+     * The direction at which the object will move to
+     */
+    dir: Vec2;
+    /**
+     *  The speed at which the object will move
+     */
+    speed: number;
     serialize: () => SerializedMoveComp;
 }
 
@@ -31,8 +39,10 @@ export function move(
     return {
         id: "move",
         require: ["pos"],
-        update(this: GameObj<PosComp>) {
-            this.move(d.scale(speed));
+        dir: d,
+        speed,
+        update(this: GameObj<MoveComp | PosComp>) {
+            this.move(this.dir.scale(this.speed));
         },
         serialize() {
             return {

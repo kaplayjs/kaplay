@@ -475,7 +475,7 @@ export function area(
     let _cachedRenderAreaVersion = -1; // Currently used render shape
     let _cachedLocalAreaVersion = -1; // Currently used local area
 
-    return {
+    const areaComp = {
         id: "area",
         collisionIgnore: opt.collisionIgnore ?? [],
         restitution: opt.restitution,
@@ -487,6 +487,7 @@ export function area(
             if (this.area.cursor) {
                 events.push(
                     this.onHover(() => _k.app.setCursor(this.area.cursor!)),
+                    this.onHoverEnd(() => _k.app.setCursor("default")),
                 );
             }
 
@@ -607,14 +608,18 @@ export function area(
             },
             set cursor(value: Cursor | null) {
                 _cursor = value;
-                // TODO: attach/detach hover
+                // no need to detach then re-attach, would retrigger hover
+                // check if it's hovering and if it is change the app cursor
+                if ((areaComp as AreaComp).isHovering()) {
+                    _k.app.setCursor(areaComp.area.cursor!);
+                }
             },
             get cursor(): Cursor | null {
                 return _cursor;
             },
         },
 
-        isClicked(): boolean {
+        isClicked(this: GameObj<AreaComp>): boolean {
             if (_k.game.fakeMouse) {
                 return _k.game.fakeMouse.isPressed && this.isHovering();
             }
@@ -672,7 +677,7 @@ export function area(
             }
         },
 
-        isOverlapping(other) {
+        isOverlapping(other: GameObj<AreaComp>) {
             if (!other.id) {
                 throw new Error(
                     "isOverlapping() requires the object to have an id",
@@ -682,7 +687,7 @@ export function area(
             return col && col.hasOverlap();
         },
 
-        isVisuallyColliding(other) {
+        isVisuallyColliding(this: GameObj<AreaComp>, other: GameObj<AreaComp>) {
             return this.screenArea().collides(other.screenArea());
         },
 
@@ -908,6 +913,8 @@ export function area(
             return data;
         },
     };
+
+    return areaComp as AreaComp & { _localAreaVersion: number };
 }
 
 export function areaFactory(data: SerializedAreaComp) {
