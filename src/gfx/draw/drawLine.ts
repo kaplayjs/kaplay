@@ -3,8 +3,13 @@ import { lerp } from "../../math/lerp";
 import { deg2rad, vec2 } from "../../math/math";
 import { Vec2 } from "../../math/Vec2";
 import { _k } from "../../shared";
-import type { RenderProps } from "../../types";
+import type { RenderProps, StrokeTexture } from "../../types";
 import { drawRaw } from "./drawRaw";
+import {
+    drawTexturedLine,
+    drawTexturedStroke,
+    resolveStrokeTexture,
+} from "./strokeTexture";
 
 /**
  * How the line should look like.
@@ -13,6 +18,8 @@ import { drawRaw } from "./drawRaw";
  * @subgroup Types
  */
 export type DrawLineOpt = Omit<RenderProps, "angle" | "scale"> & {
+    /** Optional sprite texture along the stroke. */
+    texture?: StrokeTexture;
     /**
      * Starting point of the line.
      */
@@ -37,6 +44,11 @@ export function drawLine(opt: DrawLineOpt) {
     }
 
     const w = opt.width || 1;
+    if (opt.texture) {
+        const source = resolveStrokeTexture(opt.texture);
+        if (source) drawTexturedLine(p1, p2, w, source, opt);
+        return;
+    }
 
     // the displacement from the line end point to the corner point
     const dis = p2.sub(p1).unit().normal().scale(w * 0.5);
@@ -125,6 +137,8 @@ export type LineCap =
  * How the lines should look like.
  */
 export type DrawLinesOpt = Omit<RenderProps, "angle" | "scale"> & {
+    /** Optional sprite texture along the stroke. */
+    texture?: StrokeTexture;
     /**
      * The points that should be connected with a line.
      */
@@ -158,6 +172,17 @@ export type DrawLinesOpt = Omit<RenderProps, "angle" | "scale"> & {
 export function _drawLinesBevel(opt: DrawLinesOpt) {
     const pts = opt.pts;
     const vertices = [];
+    const source = opt.texture ? resolveStrokeTexture(opt.texture) : undefined;
+    if (source === null) return;
+    const stations = source
+        ? [{
+            index: 0,
+            distance: 0,
+            point: pts[0],
+            direction: pts[1].sub(pts[0]).unit(),
+        }]
+        : [];
+    let distance = 0;
     const halfWidth = (opt.width || 1) * 0.5;
     const centerOffset = halfWidth
         * lerp(-1, 1, ((opt.bias || 0.0) + 1) * 0.5);
@@ -218,6 +243,15 @@ export function _drawLinesBevel(opt: DrawLinesOpt) {
         const nextSegment = pt2.sub(pt1);
         const nextLength = nextSegment.len();
         const nextNormal = nextSegment.normal().scale(1 / nextLength);
+        if (source) {
+            stations.push({
+                index: vertices.length,
+                distance,
+                point: pt1,
+                direction: nextSegment.scale(1 / nextLength),
+            });
+        }
+        if (source) distance += nextLength;
 
         const det = segment.cross(nextSegment);
 
@@ -269,6 +303,14 @@ export function _drawLinesBevel(opt: DrawLinesOpt) {
         normal = nextNormal;
     }
 
+    if (source) {
+        stations.push({
+            index: vertices.length,
+            distance,
+            point: pt2,
+            direction: segment.scale(1 / length),
+        });
+    }
     if (!isLoop) {
         vertices.push(pt2.add(normal.scale(centerOffset - halfWidth)));
         vertices.push(pt2.add(normal.scale(centerOffset + halfWidth)));
@@ -331,6 +373,19 @@ export function _drawLinesBevel(opt: DrawLinesOpt) {
         opacity: opt.opacity ?? 1,
     }));*/
 
+    if (source) {
+        drawTexturedStroke(
+            vertices,
+            indices,
+            stations,
+            distance,
+            isLoop,
+            source,
+            opt,
+        );
+        return;
+    }
+
     const attributes = {
         pos: new Array<number>(vertices.length * 2),
         uv: new Array<number>(vertices.length * 2).fill(1),
@@ -361,6 +416,17 @@ export function _drawLinesBevel(opt: DrawLinesOpt) {
 export function _drawLinesRound(opt: DrawLinesOpt) {
     const pts = opt.pts;
     const vertices = [];
+    const source = opt.texture ? resolveStrokeTexture(opt.texture) : undefined;
+    if (source === null) return;
+    const stations = source
+        ? [{
+            index: 0,
+            distance: 0,
+            point: pts[0],
+            direction: pts[1].sub(pts[0]).unit(),
+        }]
+        : [];
+    let distance = 0;
     const halfWidth = (opt.width || 1) * 0.5;
     const centerOffset = halfWidth * lerp(-1, 1, ((opt.bias || 0.0) + 1) * 0.5);
     const isLoop = pts[0] === pts[pts.length - 1]
@@ -420,6 +486,15 @@ export function _drawLinesRound(opt: DrawLinesOpt) {
         const nextSegment = pt2.sub(pt1);
         const nextLength = nextSegment.len();
         const nextNormal = nextSegment.normal().scale(1 / nextLength);
+        if (source) {
+            stations.push({
+                index: vertices.length,
+                distance,
+                point: pt1,
+                direction: nextSegment.scale(1 / nextLength),
+            });
+        }
+        if (source) distance += nextLength;
 
         const det = segment.cross(nextSegment);
 
@@ -493,6 +568,14 @@ export function _drawLinesRound(opt: DrawLinesOpt) {
         normal = nextNormal;
     }
 
+    if (source) {
+        stations.push({
+            index: vertices.length,
+            distance,
+            point: pt2,
+            direction: segment.scale(1 / length),
+        });
+    }
     if (!isLoop) {
         vertices.push(pt2.add(normal.scale(centerOffset - halfWidth)));
         vertices.push(pt2.add(normal.scale(centerOffset + halfWidth)));
@@ -548,6 +631,19 @@ export function _drawLinesRound(opt: DrawLinesOpt) {
         indices[index++] = vertices.length - 1;
     }
 
+    if (source) {
+        drawTexturedStroke(
+            vertices,
+            indices,
+            stations,
+            distance,
+            isLoop,
+            source,
+            opt,
+        );
+        return;
+    }
+
     const attributes = {
         pos: new Array<number>(vertices.length * 2),
         uv: new Array<number>(vertices.length * 2).fill(1),
@@ -578,6 +674,17 @@ export function _drawLinesRound(opt: DrawLinesOpt) {
 export function _drawLinesMiter(opt: DrawLinesOpt) {
     const pts = opt.pts;
     const vertices = [];
+    const source = opt.texture ? resolveStrokeTexture(opt.texture) : undefined;
+    if (source === null) return;
+    const stations = source
+        ? [{
+            index: 0,
+            distance: 0,
+            point: pts[0],
+            direction: pts[1].sub(pts[0]).unit(),
+        }]
+        : [];
+    let distance = 0;
     const halfWidth = (opt.width || 1) * 0.5;
     const centerOffset = halfWidth * lerp(-1, 1, ((opt.bias || 0.0) + 1) * 0.5);
     const isLoop = pts[0] === pts[pts.length - 1]
@@ -637,6 +744,15 @@ export function _drawLinesMiter(opt: DrawLinesOpt) {
         const nextSegment = pt2.sub(pt1);
         const nextLength = nextSegment.len();
         const nextNormal = nextSegment.normal().scale(1 / nextLength);
+        if (source) {
+            stations.push({
+                index: vertices.length,
+                distance,
+                point: pt1,
+                direction: nextSegment.scale(1 / nextLength),
+            });
+        }
+        if (source) distance += nextLength;
 
         const det = segment.cross(nextSegment);
 
@@ -675,6 +791,14 @@ export function _drawLinesMiter(opt: DrawLinesOpt) {
         normal = nextNormal;
     }
 
+    if (source) {
+        stations.push({
+            index: vertices.length,
+            distance,
+            point: pt2,
+            direction: segment.scale(1 / length),
+        });
+    }
     if (!isLoop) {
         vertices.push(pt2.add(normal.scale(centerOffset - halfWidth)));
         vertices.push(pt2.add(normal.scale(centerOffset + halfWidth)));
@@ -730,6 +854,19 @@ export function _drawLinesMiter(opt: DrawLinesOpt) {
         indices[index++] = vertices.length - 1;
     }
 
+    if (source) {
+        drawTexturedStroke(
+            vertices,
+            indices,
+            stations,
+            distance,
+            isLoop,
+            source,
+            opt,
+        );
+        return;
+    }
+
     const attributes = {
         pos: new Array<number>(vertices.length * 2),
         uv: new Array<number>(vertices.length * 2).fill(1),
@@ -766,6 +903,7 @@ export function drawLines(opt: DrawLinesOpt) {
     }
 
     if (pts.length < 2) {
+        if (opt.texture) resolveStrokeTexture(opt.texture);
         return;
     }
 

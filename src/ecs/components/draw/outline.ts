@@ -1,6 +1,6 @@
 import type { LineCap, LineJoin } from "../../../gfx/draw/drawLine";
 import { Color, rgb, type SerializedColor } from "../../../math/color";
-import type { Comp, Outline } from "../../../types";
+import type { Comp, Outline, StrokeTexture } from "../../../types";
 
 /**
  * The serialized {@link outline `outline()`} component.
@@ -10,6 +10,7 @@ import type { Comp, Outline } from "../../../types";
  */
 export interface SerializedOutlineComp {
     outline: {
+        texture?: StrokeTexture;
         width: number;
         color: SerializedColor;
         opacity: number;
@@ -54,6 +55,9 @@ export function outline(
         serialize() {
             return {
                 outline: {
+                    texture: this.outline.texture
+                        ? { ...this.outline.texture }
+                        : undefined,
                     width: this.outline.width ?? 1,
                     color: {
                         r: this.outline.color?.r ?? 255,
@@ -71,7 +75,7 @@ export function outline(
 }
 
 export function outlineFactory(data: SerializedOutlineComp) {
-    return outline(
+    const component = outline(
         data.outline.width,
         Color.deserialize(data.outline.color),
         data.outline.opacity,
@@ -79,4 +83,8 @@ export function outlineFactory(data: SerializedOutlineComp) {
         data.outline.miterLimit,
         data.outline.cap,
     );
+    component.outline.texture = data.outline.texture
+        ? { ...data.outline.texture }
+        : undefined;
+    return component;
 }

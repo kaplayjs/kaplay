@@ -6,6 +6,7 @@ import { Vec2 } from "../../math/Vec2";
 import type { Anchor, RenderProps } from "../../types";
 import { anchorPt } from "../anchor";
 import { drawPolygon } from "./drawPolygon";
+import { resolveStrokeTexture } from "./strokeTexture";
 
 /**
  * How the rectangle should look like.
@@ -56,6 +57,7 @@ export function drawRect(opt: DrawRectOpt) {
     }
 
     if (opt.width <= 0 || opt.height <= 0) {
+        if (opt.outline?.texture) resolveStrokeTexture(opt.outline.texture);
         return;
     }
 

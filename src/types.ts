@@ -871,7 +871,19 @@ export interface RenderProps {
     outline?: Outline;
 }
 
+/** A sprite frame repeated along a stroke. */
+export interface StrokeTexture {
+    /** Name of the sprite asset. */
+    sprite: string;
+    /** Frame index, default 0. */
+    frame?: number;
+    /** Local distance occupied by one repeat; defaults to the frame's pixel width. */
+    repeatLength?: number;
+}
+
 export interface Outline {
+    /** Optional sprite texture along the outline. */
+    texture?: StrokeTexture;
     /**
      * The width, or thickness of the line.
      */

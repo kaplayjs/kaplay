@@ -4,6 +4,7 @@ import { Vec2 } from "../../math/Vec2";
 import type { Anchor, RenderProps } from "../../types";
 import { anchorPt } from "../anchor";
 import { drawPolygon } from "./drawPolygon";
+import { resolveStrokeTexture } from "./strokeTexture";
 
 /**
  * How the ellipse should look like.
@@ -56,6 +57,7 @@ export function drawEllipse(opt: DrawEllipseOpt) {
     }
 
     if (opt.radiusX === 0 || opt.radiusY === 0) {
+        if (opt.outline?.texture) resolveStrokeTexture(opt.outline.texture);
         return;
     }
 

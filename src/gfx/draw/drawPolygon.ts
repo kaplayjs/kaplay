@@ -15,6 +15,7 @@ import {
 } from "../stack";
 import { drawLines } from "./drawLine";
 import { drawRaw } from "./drawRaw";
+import { resolveStrokeTexture } from "./strokeTexture";
 
 /**
  * How the polygon should look like.
@@ -79,6 +80,8 @@ export function drawPolygon(opt: DrawPolygonOpt) {
     if (!opt.pts) {
         throw new Error("drawPolygon() requires property \"pts\".");
     }
+
+    if (opt.outline?.texture) resolveStrokeTexture(opt.outline.texture);
 
     const npts = opt.pts.length;
 
@@ -178,20 +181,23 @@ export function drawPolygon(opt: DrawPolygonOpt) {
         );
     }
 
-    if (opt.outline) {
-        drawLines({
-            pts: opt.pts[0].eq(opt.pts[opt.pts.length - 1])
-                ? opt.pts
-                : [...opt.pts, opt.pts[0]],
-            radius: opt.radius,
-            width: opt.outline.width,
-            color: opt.outline.color,
-            join: opt.outline.join,
-            uniform: opt.uniform,
-            fixed: opt.fixed,
-            opacity: opt.opacity ?? opt.outline.opacity,
-        });
+    try {
+        if (opt.outline) {
+            drawLines({
+                pts: opt.pts[0].eq(opt.pts[opt.pts.length - 1])
+                    ? opt.pts
+                    : [...opt.pts, opt.pts[0]],
+                radius: opt.radius,
+                width: opt.outline.width,
+                texture: opt.outline.texture,
+                color: opt.outline.color,
+                join: opt.outline.join,
+                uniform: opt.uniform,
+                fixed: opt.fixed,
+                opacity: opt.opacity ?? opt.outline.opacity,
+            });
+        }
+    } finally {
+        popTransform();
     }
-
-    popTransform();
 }

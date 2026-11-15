@@ -2,6 +2,7 @@ import type { Color } from "../../math/color";
 import type { Vec2 } from "../../math/Vec2";
 import type { Anchor, RenderProps } from "../../types";
 import { drawEllipse } from "./drawEllipse";
+import { resolveStrokeTexture } from "./strokeTexture";
 
 /**
  * How the circle should look like.
@@ -47,6 +48,7 @@ export function drawCircle(opt: DrawCircleOpt) {
     }
 
     if (opt.radius === 0) {
+        if (opt.outline?.texture) resolveStrokeTexture(opt.outline.texture);
         return;
     }
 

@@ -1,5 +1,5 @@
 import type { Vec2 } from "../../math/Vec2";
-import type { RenderProps } from "../../types";
+import type { RenderProps, StrokeTexture } from "../../types";
 import { drawLines } from "./drawLine";
 
 /**
@@ -7,6 +7,8 @@ import { drawLines } from "./drawLine";
  * @subgroup Types
  */
 export type DrawCurveOpt = RenderProps & {
+    /** Optional sprite texture along the curve. */
+    texture?: StrokeTexture;
     /**
      * The amount of line segments to draw.
      */
