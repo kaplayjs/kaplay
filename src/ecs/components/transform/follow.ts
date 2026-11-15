@@ -21,6 +21,7 @@ export interface FollowComp extends Comp {
          */
         offset: Vec2;
     };
+    serialize(): { obj: GameObj; offset: Vec2 };
 }
 
 export function follow(obj: GameObj, offset?: Vec2): FollowComp {
@@ -41,5 +42,14 @@ export function follow(obj: GameObj, offset?: Vec2): FollowComp {
                 this.pos = this.follow.obj.pos.add(this.follow.offset);
             }
         },
+        serialize() {
+            return { obj: this.follow.obj, offset: this.follow.offset };
+        },
     };
+}
+
+export function followFactory(
+    data: { obj: GameObj; offset: Vec2 },
+): FollowComp {
+    return follow(data.obj, data.offset);
 }

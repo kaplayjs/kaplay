@@ -84,7 +84,11 @@ import { scale } from "../ecs/components/transform/scale";
 import { skew } from "../ecs/components/transform/skew";
 import { z } from "../ecs/components/transform/z";
 import { KeepFlags } from "../ecs/entity/GameObjRaw";
-import { createPrefab, loadPrefab } from "../ecs/entity/prefab";
+import {
+    createPrefab,
+    loadPrefab,
+    registerPrefabFactory,
+} from "../ecs/entity/prefab";
 import { addKaboom } from "../ecs/entity/premade/addKaboom";
 import { addLevel } from "../ecs/entity/premade/addLevel";
 import { destroy, exists, getTreeRoot } from "../ecs/entity/utils";
@@ -359,6 +363,7 @@ export const createContext = (
         add,
         addPrefab,
         createPrefab,
+        registerPrefabFactory,
         exists,
         destroy,
         destroyAll,
