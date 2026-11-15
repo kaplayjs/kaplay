@@ -1,7 +1,7 @@
 import { _k } from "../shared";
 
 export const quit = () => {
-    const { app, gfx, ggl, gc } = _k;
+    const { app, gfx, ggl, gc, debug } = _k;
 
     app.events.onOnce("frameEnd", () => {
         app.quit();
@@ -31,6 +31,7 @@ export const quit = () => {
         // run all scattered gc events
         ggl.destroy();
         gc.forEach((f) => f());
+        debug.clearWatches();
 
         // remove canvas
         app.canvas.remove();

@@ -1,0 +1,142 @@
+{
+  "base": [
+    [
+      "integration/components/missingComps.spec.ts",
+      "add() should throw an error when a body() without pos() is passed"
+    ],
+    [
+      "integration/components/wait.spec.ts",
+      "Wait 1 second and pass test"
+    ],
+    [
+      "integration/core/plugin.spec.ts",
+      "plugin methods should exist in context"
+    ],
+    [
+      "integration/core/plugin.spec.ts",
+      "plugin methods should work in context"
+    ],
+    [
+      "integration/core/VERSION.spec.ts",
+      "VERSION constant should be defined in global scope when running kaplay()"
+    ],
+    [
+      "integration/core/VERSION.spec.ts",
+      "VERSION constant should not be defined in global scope when running kaplay({ global: false })"
+    ],
+    [
+      "integration/entity/prefab.spec.ts",
+      "Prefab creation \u203a An object created using a addPrefab() should exist"
+    ],
+    [
+      "integration/entity/prefab.spec.ts",
+      "Prefab creation \u203a An object created using a addPrefab() with parameters should keep new component props"
+    ],
+    [
+      "integration/gfx/textureSync.spec.ts",
+      "direct sprite referencing should force a texture flush"
+    ]
+  ],
+  "new": [
+    [
+      "watch/observations-21636d.spec.ts",
+      "property identities, key types and registration ordering remain distinct"
+    ],
+    [
+      "watch/observations-21636d.spec.ts",
+      "quick watches capture values and have an independent ordered namespace"
+    ],
+    [
+      "watch/observations-21636d.spec.ts",
+      "property and quick rows can share a label in the same displayed frame"
+    ],
+    [
+      "watch/observations-21636d.spec.ts",
+      "sampling follows visible frames while observations are detached and passive"
+    ],
+    [
+      "watch/observations-21636d.spec.ts",
+      "quick watches wait for visibility, expire, and can be renewed"
+    ],
+    [
+      "watch/observations-21636d.spec.ts",
+      "paused frames retain quick entries while property watches stay live"
+    ],
+    [
+      "watch/observations-21636d.spec.ts",
+      "array, object and cyclic previews are readable without aborting rendering"
+    ],
+    [
+      "watch/observations-21636d.spec.ts",
+      "getter failures stay isolated and property previews recover"
+    ],
+    [
+      "watch/observations-21636d.spec.ts",
+      "clear empties the cache and repeated removal preserves unrelated entries"
+    ],
+    [
+      "watch/observations-21636d.spec.ts",
+      "scene changes reset old watches before destination scene registration"
+    ],
+    [
+      "watch/observations-21636d.spec.ts",
+      "destroying watched objects removes observations despite cleared events"
+    ],
+    [
+      "watch/observations-21636d.spec.ts",
+      "engine teardown clears retained debug observations"
+    ],
+    [
+      "watch/observations-21636d.spec.ts",
+      "watches are visibly rendered, update pixels and stay fixed under camera changes"
+    ],
+    [
+      "watch/observations-21636d.spec.ts",
+      "markup in labels and string values is displayed literally"
+    ],
+    [
+      "watch/observations-21636d.spec.ts",
+      "watch rendering coexists with logs and hover inspection"
+    ],
+    [
+      "watch/observations-21636d.spec.ts",
+      "clearing from a watched getter does not republish cleared observations"
+    ],
+    [
+      "watch/observations-21636d.spec.ts",
+      "disabling debug suppresses watch getters even with inspect enabled"
+    ],
+    [
+      "watch/observations-21636d.spec.ts",
+      "public declarations reject weak keys, mutable observations and non-void methods"
+    ],
+    [
+      "watch/observations-21636d.spec.ts",
+      "overflowing watches scroll only under the pointer and clamp after removal: many entries"
+    ],
+    [
+      "watch/observations-21636d.spec.ts",
+      "overflowing watches scroll only under the pointer and clamp after removal: one wrapped value"
+    ],
+    [
+      "watch/observations-21636d.spec.ts",
+      "watched accessors reached through object previews are sampled once"
+    ],
+    [
+      "watch/observations-21636d.spec.ts",
+      "array accessors and failed reads share the visible frame sample"
+    ],
+    [
+      "watch/observations-21636d.spec.ts",
+      "quick entries draw captured values, renew in place and disappear visibly"
+    ],
+    [
+      "watch/observations-21636d.spec.ts",
+      "watch previews sample custom stringifier accessors once per frame"
+    ],
+    [
+      "watch/observations-21636d.spec.ts",
+      "ordinary object previews remain readable without a callable toString"
+    ]
+  ]
+}

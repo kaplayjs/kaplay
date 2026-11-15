@@ -1,4 +1,5 @@
 import { DBG_FONT, LOG_TIME } from "../../constants/general";
+import { prettyDebug } from "../../debug/prettyDebug";
 import { isPaused } from "../../ecs/entity/utils";
 import { rgb } from "../../math/color";
 import { vec2, wave } from "../../math/math";
@@ -18,9 +19,11 @@ import { drawInspectText } from "./drawInspectText";
 import { drawRect } from "./drawRect";
 import { drawTriangle } from "./drawTriangle";
 import { drawUnscaled } from "./drawUnscaled";
+import { drawWatches } from "./drawWatches";
 
 export function drawDebug() {
     if (_k.debug.inspect) {
+        drawWatches(_k.debugWatches, _k.debugWatches.sample(_k.debug.paused));
         let inspecting = null;
 
         for (const obj of _k.game.root.get("*", { recursive: true })) {
@@ -240,53 +243,4 @@ Batches: ${batches}`,
             popTransform();
         });
     }
-}
-
-function prettyDebug(
-    object: any | undefined,
-    inside: boolean = false,
-    seen: Set<any> = new Set(),
-): string {
-    if (seen.has(object)) return "<recursive>";
-    var outStr = "", tmp;
-    if (inside && typeof object === "string") {
-        object = JSON.stringify(object);
-    }
-    if (Array.isArray(object)) {
-        outStr = [
-            "[",
-            object.map(e => prettyDebug(e, true, seen.union(new Set([object]))))
-                .join(", "),
-            "]",
-        ].join("");
-        object = outStr;
-    }
-    if (object === null) return "null";
-    if (
-        typeof object === "object"
-        && object.toString === Object.prototype.toString
-    ) {
-        if (object.constructor !== Object) {
-            outStr += object.constructor.name + " ";
-        }
-        outStr += [
-            "{",
-            (tmp = Object.getOwnPropertyNames(object)
-                    .map(p =>
-                        `${/^\w+$/.test(p) ? p : JSON.stringify(p)}: ${
-                            prettyDebug(
-                                object[p],
-                                true,
-                                seen.union(new Set([object])),
-                            )
-                        }`
-                    )
-                    .join(", "))
-                ? ` ${tmp} `
-                : "",
-            "}",
-        ].join("");
-        object = outStr;
-    }
-    return String(object).replaceAll(/(?<!\\)\[/g, "\\[");
 }

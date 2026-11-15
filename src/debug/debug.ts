@@ -5,9 +5,11 @@ import { DEBUG_SYMBOLS, LOG_MAX } from "../constants/general";
 import type { FrameRenderer } from "../core/frameRendering";
 import type { Game } from "../game/game";
 import type { AppGfxCtx } from "../gfx/gfxApp";
+import { viewportToCanvasLocal } from "../gfx/viewport";
 import { _k } from "../shared";
 import type { KAPLAYOpt } from "../types";
 import type { Recording } from "./record";
+import type { DebugWatchEntry, DebugWatches } from "./watches";
 
 /**
  * Available debugging message styles.
@@ -38,6 +40,28 @@ export type DebugLog = {
  * @group Debug
  */
 export interface Debug {
+    /**
+     * Display a live property in inspect mode. The label defaults to String(key).
+     * Registering the same object and key again updates its label in place.
+     */
+    watch<T extends object>(object: T, key: keyof T, name?: string): void;
+    /**
+     * Remove a property watch. Cached observations update on the next visible frame.
+     */
+    removeWatch<T extends object>(object: T, key: keyof T): void;
+    /**
+     * Capture a named value for the next visible inspect frame.
+     * Refreshing its name replaces the value; paused frames retain quick watches.
+     */
+    quickWatch(value: unknown, name: string): void;
+    /**
+     * Remove both kinds of watches and clear their cached observations.
+     */
+    clearWatches(): void;
+    /**
+     * Copy observations from the last visible inspect frame without reading properties.
+     */
+    getWatches(): readonly DebugWatchEntry[];
     /**
      * Pause the whole game.
      */
@@ -173,10 +197,22 @@ export const createDebug = (
     audio: InternalAudioCtx,
     game: Game,
     fr: FrameRenderer,
+    watches: DebugWatches,
 ): Debug => {
     let debugPaused = false;
 
     const debug = {
+        watch: <T extends object>(object: T, key: keyof T, name?: string) => {
+            watches.watch(object, key, name);
+        },
+        removeWatch: <T extends object>(object: T, key: keyof T) => {
+            watches.remove(object, key);
+        },
+        quickWatch: (value: unknown, name: string) => {
+            watches.quickWatch(value, name);
+        },
+        clearWatches: () => watches.clear(),
+        getWatches: () => watches.get(),
         inspect: false,
         set timeScale(timeScale: number) {
             app.state.timeScale = timeScale;
@@ -244,6 +280,13 @@ export const createDebug = (
             );
         },
     } satisfies Debug;
+
+    app.onScroll(delta => {
+        if (gopt.debug === false || !debug.inspect) return;
+        const mouse = app.mousePos();
+        const point = viewportToCanvasLocal(mouse.x, mouse.y);
+        watches.scrollAt(point.x, point.y, delta.y);
+    });
 
     return debug;
 };

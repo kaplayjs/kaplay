@@ -4,6 +4,7 @@ import { initApp } from "../app/app";
 import { initAssets } from "../assets/asset";
 import { initAudio } from "../audio/audio";
 import { createDebug } from "../debug/debug";
+import { DebugWatches } from "../debug/watches";
 import { blendFactory } from "../ecs/components/draw/blend";
 import { circleFactory } from "../ecs/components/draw/circle";
 import { colorFactory } from "../ecs/components/draw/color";
@@ -101,7 +102,17 @@ export const createEngine = (gopt: KAPLAYOpt) => {
     );
 
     // Debug mode
-    const debug = createDebug(opt, app, appGfx, audio, game, frameRenderer);
+    const debugWatches = new DebugWatches();
+    const debug = createDebug(
+        opt,
+        app,
+        appGfx,
+        audio,
+        game,
+        frameRenderer,
+        debugWatches,
+    );
+    game.gameObjEvents.on("destroy", obj => debugWatches.removeObject(obj));
 
     // Register default factories
 
@@ -149,6 +160,7 @@ export const createEngine = (gopt: KAPLAYOpt) => {
         fontCacheCanvas,
         game,
         debug,
+        debugWatches,
         gc: [] as (() => void)[],
         sceneScope,
         appScope,

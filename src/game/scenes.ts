@@ -59,6 +59,7 @@ export function go(name: string, ...args: unknown[]) {
         };
 
         _k.game.currentSceneArgs = args;
+        _k.debug.clearWatches();
         _k.game.scenes[name](...args);
     });
 
