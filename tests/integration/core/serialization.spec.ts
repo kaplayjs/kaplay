@@ -388,7 +388,8 @@ test("Test serialization of circle() component", async ({ page }) => {
 
         const pf = k.addPrefab<CompList<CircleComp>>(prefab);
 
-        return pf.radius == 10 && pf.fill == true;
+        // checking that fill is serialized properly
+        return pf.radius == 10 && prefab.components["circle"]["fill"] == true;
     });
 
     expect(method).toBeTruthy();
@@ -546,12 +547,11 @@ test("Test serialization of rect() component", async ({ page }) => {
         const prefab = o.serialize();
         o.destroy();
 
-        console.log(prefab.components);
-
         const pf = k.addPrefab<CompList<RectComp>>(prefab);
 
+        // checking that fill is serialized properly
         return pf.width == 10 && pf.height == 10 && pf.radius == 10
-            && pf.fill == true;
+            && prefab.components["rect"]["fill"] == true;
     });
 
     expect(method).toBeTruthy();

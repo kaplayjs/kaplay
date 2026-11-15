@@ -23,7 +23,7 @@ export interface SerializedRectComp {
  * @group Components
  * @subgroup Component Types
  */
-export interface RectComp extends Comp, FillComp {
+export interface RectComp extends Comp {
     draw: Comp["draw"];
     /**
      * Width of rectangle.
@@ -92,13 +92,12 @@ export function rect(
             }
         },
         radius: opt.radius || 0,
-        fill: opt.fill || true,
-        draw(this: GameObj<RectComp>) {
+        draw(this: GameObj<RectComp | FillComp>) {
             drawRect(Object.assign(getRenderProps(this), {
                 width: _width,
                 height: _height,
                 radius: this.radius,
-                fill: this.fill,
+                fill: this.fill ?? opt.fill,
             }));
         },
         renderArea() {
@@ -115,7 +114,11 @@ export function rect(
         serialize(this: GameObj<RectComp & FillComp>) {
             const data: SerializedRectComp = { width: _width, height: _height };
             if (this.radius) data.radius = this.radius;
-            if (this.fill) data.fill = opt.fill;
+            console.log(this.fill);
+            console.log(opt.fill);
+            console.log(data.fill);
+            if (this.fill ?? opt.fill) data.fill = this.fill ?? opt.fill;
+            console.log(data.fill);
             return data;
         },
     };
