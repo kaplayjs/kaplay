@@ -893,6 +893,7 @@ export const initApp = (
     }
 
     function removeGamepad(gamepad: Gamepad) {
+        state.buttonHandler.releaseGamepad(gamepad.index, state);
         state.gamepads = state.gamepads.filter((g) =>
             g.index !== gamepad.index
         );
@@ -943,6 +944,7 @@ export const initApp = (
                     state.lastInputDevice = "gamepad";
                     state.buttonHandler.processGamepadButtonDown(
                         gamepadBtn,
+                        gamepad.index,
                         state,
                     );
 
@@ -955,6 +957,7 @@ export const initApp = (
                 else if (gamepadState.buttonState.down.has(gamepadBtn)) {
                     state.buttonHandler.processGamepadButtonUp(
                         gamepadBtn,
+                        gamepad.index,
                         state,
                     );
 
@@ -1102,16 +1105,20 @@ export const initApp = (
         const committer = state.buttonHandler[by].committers.get(key);
         if (!committer) return false;
 
-        btns: for (const mods of committer.btns.values()) {
-            for (const mod of committer.check) {
-                if (
-                    (state.keyState.down.has(mod) || mod === key)
-                        !== mods.includes(mod)
-                ) {
-                    continue btns;
+        for (const options of committer.btns.values()) {
+            for (const mods of options) {
+                let matches = true;
+                for (const mod of committer.check) {
+                    if (
+                        (state.keyState.down.has(mod) || mod === key)
+                            !== mods.includes(mod)
+                    ) {
+                        matches = false;
+                        break;
+                    }
                 }
+                if (matches) return true;
             }
-            return true;
         }
 
         return false;

@@ -12,19 +12,20 @@ export const getButton = (btn: string): ButtonBinding => {
 };
 
 export const setButton = (btn: string, binding: ButtonBinding) => {
-    _k.app.state.buttons[btn] = {
+    const updated = {
         ..._k.app.state.buttons[btn],
         ...binding,
     };
-    _k.app.state.buttonHandler.updateBinding(btn, binding);
+    _k.app.state.buttonHandler.updateBinding(btn, binding, _k.app.state);
+    _k.app.state.buttons[btn] = updated;
 };
 
 // Virtually pressing / releasing
 
 export const pressButton = (btn: string) => {
-    _k.app.state.buttonHandler.state.press(btn, _k.app.state);
+    _k.app.state.buttonHandler.pressVirtual(btn, _k.app.state);
 };
 
 export const releaseButton = (btn: string) => {
-    _k.app.state.buttonHandler.state.release(btn, _k.app.state);
+    _k.app.state.buttonHandler.releaseVirtual(btn, _k.app.state);
 };
