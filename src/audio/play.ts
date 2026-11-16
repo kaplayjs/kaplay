@@ -200,9 +200,7 @@ export function play(
     panNode.pan.value = opt.pan ?? 0;
     panNode.connect(gainNode);
     gainNode.connect(opt.connectTo ?? _k.audio.masterNode);
-    gainNode.gain.value = muted
-        ? gainNode.gain.value = 0
-        : gainNode.gain.value = opt.volume ?? 1;
+    gainNode.gain.value = muted ? 0 : volume;
 
     const applyGain = () => {
         const now = ctx.currentTime;
@@ -350,12 +348,12 @@ export function play(
         },
 
         set volume(val: number) {
-            gainNode.gain.value = Math.max(val, 0);
+            volume = Math.max(val, 0);
             applyGain();
         },
 
         get volume() {
-            return gainNode.gain.value;
+            return volume;
         },
 
         set pan(pan: number) {

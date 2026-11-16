@@ -17,248 +17,267 @@ loadSprite("gun", "/sprites/gun.png");
 
 // TODO: redo this example
 onLoad(() => {
-    const sfx = createChannel("sfx");
-    const music = createChannel("music");
+    scene("1", () => {
+        const sfx = createChannel("sfx");
+        const music = createChannel("music");
 
-    music.play("OtherworldlyFoe");
-    music.mute = true;
+        music.play("OtherworldlyFoe");
+        music.mute = true;
 
-    add([
-        text("Click to play a sound", { width: 300, align: "center" }),
-        pos(center().x, center().y - 125),
-        anchor("center"),
-    ]);
+        add([
+            text("Click to play a sound", { width: 300, align: "center" }),
+            pos(center().x, center().y - 125),
+            anchor("center"),
+        ]);
 
-    const note = add([
-        sprite("note"),
-        anchor("center"),
-        pos(center()),
-        scale(2),
-        area({ cursor: "pointer" }),
-    ]);
+        const note = add([
+            sprite("note"),
+            anchor("center"),
+            pos(center()),
+            scale(2),
+            area({ cursor: "pointer" }),
+        ]);
 
-    note.onClick(() => {
-        sfx.play("bell");
-        tween(
-            vec2(2.5),
-            vec2(2),
-            0.15,
-            (p) => note.scale = p,
-            easings.easeOutQuint,
-        );
-    });
+        note.onClick(() => {
+            sfx.play("bell");
+            tween(
+                vec2(2.5),
+                vec2(2),
+                0.15,
+                (p) => note.scale = p,
+                easings.easeOutQuint,
+            );
+        });
 
-    // sfx
-    add([
-        text("SFX"),
-        pos((1 / 6) * width(), 30),
-        anchor("center"),
-    ]);
+        // sfx
+        add([
+            text("SFX"),
+            pos((1 / 6) * width(), 30),
+            anchor("center"),
+        ]);
 
-    const sfxArrowUp = add([
-        sprite("jumpy"),
-        anchor("center"),
-        pos((1 / 6) * width(), (1 / 6) * height()),
-        scale(1),
-        area(),
-        opacity(1),
-        {
-            add() {
-                this.onClick(() => {
-                    sfx.volume += 0.1;
+        const sfxArrowUp = add([
+            sprite("jumpy"),
+            anchor("center"),
+            pos((1 / 6) * width(), (1 / 6) * height()),
+            scale(1),
+            area(),
+            opacity(1),
+            {
+                add() {
+                    this.onClick(() => {
+                        sfx.volume += 0.1;
 
-                    tween(
-                        vec2(1.5),
-                        vec2(1),
-                        0.15,
-                        (p) => this.scale = p,
-                        easings.easeOutQuint,
-                    );
-                });
+                        tween(
+                            vec2(1.5),
+                            vec2(1),
+                            0.15,
+                            (p) => this.scale = p,
+                            easings.easeOutQuint,
+                        );
+                    });
+                },
             },
-        },
-    ]);
+        ]);
 
-    const sfxMute = add([
-        sprite("gun"),
-        anchor("center"),
-        pos((1 / 6) * width() - 100, (3 / 6) * height()),
-        scale(1),
-        area(),
-        opacity(1),
-        {
-            add() {
-                this.onClick(() => {
-                    sfx.mute = !sfx.mute;
-                    // play out of sfx channel so it's played regardless of sfx being muted
-                    play("shoot");
+        const sfxMute = add([
+            sprite("gun"),
+            anchor("center"),
+            pos((1 / 6) * width() - 100, (3 / 6) * height()),
+            scale(1),
+            area(),
+            opacity(1),
+            {
+                add() {
+                    this.onClick(() => {
+                        sfx.mute = !sfx.mute;
+                        // play out of sfx channel so it's played regardless of sfx being muted
+                        play("shoot");
 
-                    if (sfx.mute) {
-                        this.color = RED;
-                        sfxArrowUp.opacity = 0.5;
-                        sfxText.opacity = 0.5;
-                        sfxArrowDown.opacity = 0.5;
-                    }
-                    else {
-                        this.color = WHITE;
-                        sfxArrowUp.opacity = 1;
-                        sfxText.opacity = 1;
-                        sfxArrowDown.opacity = 1;
-                    }
-                });
+                        if (sfx.mute) {
+                            this.color = RED;
+                            sfxArrowUp.opacity = 0.5;
+                            sfxText.opacity = 0.5;
+                            sfxArrowDown.opacity = 0.5;
+                        }
+                        else {
+                            this.color = WHITE;
+                            sfxArrowUp.opacity = 1;
+                            sfxText.opacity = 1;
+                            sfxArrowDown.opacity = 1;
+                        }
+                    });
+                },
             },
-        },
-    ]);
+        ]);
 
-    const sfxText = add([
-        text(sfx.volume.toString()),
-        anchor("center"),
-        pos((1 / 6) * width(), (3 / 6) * height()),
-        scale(2),
-        area(),
-        opacity(1),
+        const sfxText = add([
+            text(sfx.volume.toString()),
+            anchor("center"),
+            pos((1 / 6) * width(), (3 / 6) * height()),
+            scale(2),
+            area(),
+            opacity(1),
 
-        {
-            update() {
-                this.text = sfx.volume.toFixed(1);
+            {
+                update() {
+                    this.text = sfx.volume.toFixed(1);
+                },
             },
-        },
-    ]);
+        ]);
 
-    const sfxArrowDown = add([
-        sprite("jumpy"),
-        anchor("center"),
-        pos((1 / 6) * width(), (5 / 6) * height()),
-        scale(1),
-        rotate(180),
-        area(),
-        opacity(1),
-        {
-            add() {
-                this.onClick(() => {
-                    sfx.volume -= 0.1;
+        const sfxArrowDown = add([
+            sprite("jumpy"),
+            anchor("center"),
+            pos((1 / 6) * width(), (5 / 6) * height()),
+            scale(1),
+            rotate(180),
+            area(),
+            opacity(1),
+            {
+                add() {
+                    this.onClick(() => {
+                        sfx.volume -= 0.1;
 
-                    tween(
-                        vec2(1.5),
-                        vec2(1),
-                        0.15,
-                        (p) => this.scale = p,
-                        easings.easeOutQuint,
-                    );
-                });
+                        tween(
+                            vec2(1.5),
+                            vec2(1),
+                            0.15,
+                            (p) => this.scale = p,
+                            easings.easeOutQuint,
+                        );
+                    });
+                },
             },
-        },
-    ]);
+        ]);
 
-    // music
-    add([
-        text("MUSIC"),
-        pos((5 / 6) * width(), 30),
-        anchor("center"),
-    ]);
+        // music
+        add([
+            text("MUSIC"),
+            pos((5 / 6) * width(), 30),
+            anchor("center"),
+        ]);
 
-    const musicArrowUp = add([
-        sprite("jumpy"),
-        anchor("center"),
-        pos((5 / 6) * width(), (1 / 6) * height()),
-        scale(1),
-        area(),
-        opacity(1),
-        {
-            add() {
-                this.onClick(() => {
-                    music.volume += 0.1;
+        const musicArrowUp = add([
+            sprite("jumpy"),
+            anchor("center"),
+            pos((5 / 6) * width(), (1 / 6) * height()),
+            scale(1),
+            area(),
+            opacity(1),
+            {
+                add() {
+                    this.onClick(() => {
+                        music.volume += 0.1;
 
-                    tween(
-                        vec2(1.5),
-                        vec2(1),
-                        0.15,
-                        (p) => this.scale = p,
-                        easings.easeOutQuint,
-                    );
-                });
+                        tween(
+                            vec2(1.5),
+                            vec2(1),
+                            0.15,
+                            (p) => this.scale = p,
+                            easings.easeOutQuint,
+                        );
+                    });
+                },
             },
-        },
-    ]);
+        ]);
 
-    const musicMute = add([
-        sprite("gun"),
-        color(),
-        anchor("center"),
-        pos((5 / 6) * width() - 100, (3 / 6) * height()),
-        scale(1),
-        area(),
-        opacity(1),
-        {
-            update() {
-                if (music.mute) {
-                    this.color = RED;
-                    musicArrowUp.opacity = 0.5;
-                    musicText.opacity = 0.5;
-                    musicArrowDown.opacity = 0.5;
-                }
-            },
-
-            add() {
-                this.onClick(() => {
-                    music.mute = !music.mute;
-                    // play out of sfx channel so it's played regardless of sfx being muted
-                    play("shoot");
-
+        const musicMute = add([
+            sprite("gun"),
+            color(),
+            anchor("center"),
+            pos((5 / 6) * width() - 100, (3 / 6) * height()),
+            scale(1),
+            area(),
+            opacity(1),
+            {
+                update() {
                     if (music.mute) {
                         this.color = RED;
                         musicArrowUp.opacity = 0.5;
                         musicText.opacity = 0.5;
                         musicArrowDown.opacity = 0.5;
                     }
-                    else {
-                        this.color = WHITE;
-                        musicArrowUp.opacity = 1;
-                        musicText.opacity = 1;
-                        musicArrowDown.opacity = 1;
-                    }
-                });
+                },
+
+                add() {
+                    this.onClick(() => {
+                        music.mute = !music.mute;
+                        // play out of sfx channel so it's played regardless of sfx being muted
+                        play("shoot");
+
+                        if (music.mute) {
+                            this.color = RED;
+                            musicArrowUp.opacity = 0.5;
+                            musicText.opacity = 0.5;
+                            musicArrowDown.opacity = 0.5;
+                        }
+                        else {
+                            this.color = WHITE;
+                            musicArrowUp.opacity = 1;
+                            musicText.opacity = 1;
+                            musicArrowDown.opacity = 1;
+                        }
+                    });
+                },
             },
-        },
-    ]);
+        ]);
 
-    const musicText = add([
-        text(music.volume.toString()),
-        anchor("center"),
-        pos((5 / 6) * width(), (3 / 6) * height()),
-        scale(2),
-        area(),
-        opacity(1),
+        const musicText = add([
+            text(music.volume.toString()),
+            anchor("center"),
+            pos((5 / 6) * width(), (3 / 6) * height()),
+            scale(2),
+            area(),
+            opacity(1),
 
-        {
-            update() {
-                this.text = music.volume.toFixed(1);
+            {
+                update() {
+                    this.text = music.volume.toFixed(1);
+                },
             },
-        },
-    ]);
+        ]);
 
-    const musicArrowDown = add([
-        sprite("jumpy"),
-        anchor("center"),
-        pos((5 / 6) * width(), (5 / 6) * height()),
-        scale(1),
-        rotate(180),
-        area(),
-        opacity(1),
-        {
-            add() {
-                this.onClick(() => {
-                    music.volume -= 0.1;
+        const musicArrowDown = add([
+            sprite("jumpy"),
+            anchor("center"),
+            pos((5 / 6) * width(), (5 / 6) * height()),
+            scale(1),
+            rotate(180),
+            area(),
+            opacity(1),
+            {
+                add() {
+                    this.onClick(() => {
+                        music.volume -= 0.1;
 
-                    tween(
-                        vec2(1.5),
-                        vec2(1),
-                        0.15,
-                        (p) => this.scale = p,
-                        easings.easeOutQuint,
-                    );
-                });
+                        tween(
+                            vec2(1.5),
+                            vec2(1),
+                            0.15,
+                            (p) => this.scale = p,
+                            easings.easeOutQuint,
+                        );
+                    });
+                },
             },
-        },
-    ]);
+        ]);
+    });
+
+    // test
+    // you can create a channel
+    const soundchannel = createChannel("test");
+    // if you mute the channel itself, no sound will come out, wheter it's muted or not
+    // const soundchannel = createChannel("test").mute = true;
+    // you can play sounds and mute them individually
+    // soundchannel.play("bell").muted = true;
+    // soundchannel.play("burp");
+
+    // test volumes
+    // if the channel's volume is 1 but the sound's volume is 0, the sound won't play
+    // if it was the other way, the sound wouldn't play because the channel reigns over it
+    // channel 0.5 and sound 0.5 would make sound's 0.5 of 0.5, so 0.25 compared to 1
+    // soundchannel.volume = 1;
+    // soundchannel.play("bell").volume = 0;
+    // soundchannel.play("burp").muted = true;
 });
