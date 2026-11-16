@@ -27,6 +27,10 @@ export interface AudioPlayOpt {
      */
     volume?: number;
     /**
+     * Wheter the sound is muted or not. Doesn't affect volume.
+     */
+    muted?: boolean;
+    /**
      * Playback speed. 1.0 means normal playback speed, 2.0 means twice as fast.
      */
     speed?: number;
@@ -66,7 +70,7 @@ export interface AudioPlayOpt {
     connectTo?: AudioNode;
 }
 
-// TODO: add mute and rate to change speed without changing detune
+// TODO: add rate to change speed without changing detune
 /**
  * @group Audio
  */
@@ -116,6 +120,10 @@ export interface AudioPlay {
      * Volume of the sound. 1.0 means full volume, 0.5 means half volume.
      */
     volume: number;
+    /**
+     * Wheter the sound is muted or not. Doesn't affect volume.
+     */
+    muted: boolean;
     /**
      * The stereo pan of the sound.
      * -1.0 means fully from the left channel, 0.0 means centered, 1.0 means fully right.
@@ -173,11 +181,14 @@ export function play(
     let startTime = 0;
     let stopTime = 0;
     let started = false;
+    let muted = opt.muted ?? false;
+    let volume = opt.volume ?? 1;
 
     srcNode.loop = Boolean(opt.loop);
     srcNode.detune.value = opt.detune ?? 0;
     srcNode.playbackRate.value = opt.speed ?? 1;
     srcNode.connect(panNode);
+
     srcNode.onended = () => {
         if (
             getTime()
@@ -189,7 +200,19 @@ export function play(
     panNode.pan.value = opt.pan ?? 0;
     panNode.connect(gainNode);
     gainNode.connect(opt.connectTo ?? _k.audio.masterNode);
-    gainNode.gain.value = opt.volume ?? 1;
+    gainNode.gain.value = muted
+        ? gainNode.gain.value = 0
+        : gainNode.gain.value = opt.volume ?? 1;
+
+    const applyGain = () => {
+        const now = ctx.currentTime;
+        gainNode.gain.cancelScheduledValues(now);
+        gainNode.gain.setValueAtTime(gainNode.gain.value, now);
+        gainNode.gain.linearRampToValueAtTime(
+            muted ? 0 : volume,
+            now,
+        );
+    };
 
     const start = (data: SoundData) => {
         if (opt.reverse) {
@@ -279,6 +302,14 @@ export function play(
             return paused;
         },
 
+        get muted() {
+            return muted;
+        },
+        set muted(val: boolean) {
+            muted = val;
+            applyGain();
+        },
+
         play(time: number = 0) {
             this.seek(time);
             this.paused = false;
@@ -320,6 +351,7 @@ export function play(
 
         set volume(val: number) {
             gainNode.gain.value = Math.max(val, 0);
+            applyGain();
         },
 
         get volume() {

@@ -5167,6 +5167,7 @@ export interface KAPLAYCtx {
      * sfx.mute = true;
      * ```
      *
+     * @since v4000.0
      * @group Audio
      */
     createChannel(name: string, opt: AudioChannelOpt): AudioChannel;

@@ -83,6 +83,14 @@ export function playMusic(url: string, opt: AudioPlayOpt = {}): AudioPlay {
             return el.volume;
         },
 
+        set muted(val: boolean) {
+            val;
+        },
+
+        get muted() {
+            return false;
+        },
+
         set speed(s) {
             el.playbackRate = Math.max(s, 0);
         },

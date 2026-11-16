@@ -4,6 +4,9 @@ import { type AudioPlay, type AudioPlayOpt, play } from "./play";
 
 /**
  * Audio stream that allows the user to play, control and mix independent audio files simultaneously.
+ *
+ * @since v4000.0
+ * @group Audio
  */
 export type AudioChannel = {
     /** Channel name, e.g. "sfx" or "sfx.player" */
@@ -11,22 +14,39 @@ export type AudioChannel = {
     /** The AudioNode this channel's sounds are routed through. Pass this
      * into play()'s existing `connectTo` option. */
     node: GainNode;
-    /** Instant volume, 0-1 */
+    /** Instant volume, 0-1. */
     volume: number;
-    /** Mute this channel (and everything routed through it) */
+    /** Mute this channel (and everything routed through it). */
     mute: boolean;
-    /** A ReadonlySet that contains all of the sounds on this channel, they get cleared when they end */
+    /** A ReadonlySet that contains all of the sounds on this channel, they get cleared when they end. */
     readonly sounds: ReadonlySet<AudioPlay>;
-    /** Pauses all sounds in the channel */
+    /** Pauses all sounds in the channel. */
     pauseAll(): void;
-    /** Stops and removes all the sounds in the channel */
+    /** Resumes all sounds in the channel. */
     resumeAll(): void;
-    /** Play a sound through this channel. Thin wrapper around the
+    /**
+     * Play a sound through this channel. Thin wrapper around the
      * existing global play(), with connectTo pre-filled to this
-     * channel's node — no playback logic is duplicated here. */
+     * channel's node — no playback logic is duplicated here.
+     *
+     * @returns A control handle.
+     */
     play(src: string | SoundData, opt?: AudioPlayOpt): AudioPlay;
+    /**
+     * Lowers the volume in a duration of time.
+     *
+     * @param newVolume - The new volume.
+     * @param duration - How long it'll take to fade the volume.
+     */
+    fadeTo(newVolume: number, duration: number): void;
 };
 
+/**
+ * Options for the {@link createChannel `createChannel()`} function.
+ *
+ * @group Components
+ * @subgroup Component Types
+ */
 export type AudioChannelOpt = {
     /**
      * Starting volume of channel. 1.0 means full volume, 0.5 means half volume.
@@ -52,9 +72,20 @@ export function createChannel(
     gainNode.gain.value = opt.volume ?? 1;
     gainNode.connect(parentNode);
 
+    let volume = opt.volume ?? 1;
     let muted = false;
-    let volumeBeforeMute = opt.volume ?? 1;
+    gainNode.gain.value = muted ? 0 : volume;
     const sounds = new Set<AudioPlay>();
+
+    const applyGain = (duration = 0) => {
+        const now = ctx.currentTime;
+        gainNode.gain.cancelScheduledValues(now);
+        gainNode.gain.setValueAtTime(gainNode.gain.value, now);
+        gainNode.gain.linearRampToValueAtTime(
+            muted ? 0 : volume,
+            now + duration,
+        );
+    };
 
     // have to do it on the gainNode so we don't have to manually work it with every sound
     // this goes to every operation we do regarding channels
@@ -63,23 +94,20 @@ export function createChannel(
         node: gainNode,
 
         get volume() {
-            return muted ? volumeBeforeMute : gainNode.gain.value;
+            return volume;
         },
         set volume(v: number) {
-            volumeBeforeMute = v;
-            if (!muted) gainNode.gain.setValueAtTime(v, ctx.currentTime);
+            volume = Math.max(v, 0);
+            applyGain();
         },
 
         get mute() {
             return muted;
         },
         set mute(v: boolean) {
+            if (v == muted) return;
             muted = v;
-            const now = ctx.currentTime;
-            const target = v ? 0 : volumeBeforeMute;
-            gainNode.gain.cancelScheduledValues(now);
-            gainNode.gain.setValueAtTime(gainNode.gain.value, now);
-            gainNode.gain.linearRampToValueAtTime(target, now + 0.015);
+            applyGain();
         },
 
         get sounds() {
@@ -102,13 +130,9 @@ export function createChannel(
             sounds.clear();
         },
 
-        fadeTo(target: number, duration = 0.5) {
-            const now = ctx.currentTime;
-            gainNode.gain.cancelScheduledValues(now);
-            gainNode.gain.setValueAtTime(gainNode.gain.value, now);
-            gainNode.gain.linearRampToValueAtTime(target, now + duration);
-            volumeBeforeMute = target;
-            muted = false;
+        fadeTo(newVolume: number, duration = 0.5) {
+            volume = Math.max(newVolume, 0);
+            applyGain(duration);
         },
 
         pauseAll() {

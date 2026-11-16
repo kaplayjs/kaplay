@@ -7,13 +7,15 @@ kaplay({
 loadSound("burp", "/sounds/burp.mp3");
 loadSound("bell", "/sounds/bell.mp3");
 loadSound("shoot", "/sounds/shoot.mp3");
-loadMusic("OtherworldlyFoe", "/sounds/OtherworldlyFoe.mp3");
+// Right now channels only work with sounds, not music as to discussion
+loadSound("OtherworldlyFoe", "/sounds/OtherworldlyFoe.mp3");
 // bag loves music
 loadSprite("bag", "/sprites/bag.png");
 loadSprite("note", "/sprites/note.png");
 loadSprite("jumpy", "/sprites/jumpy.png");
 loadSprite("gun", "/sprites/gun.png");
 
+// TODO: redo this example
 onLoad(() => {
     const sfx = createChannel("sfx");
     const music = createChannel("music");
@@ -188,6 +190,15 @@ onLoad(() => {
         area(),
         opacity(1),
         {
+            update() {
+                if (music.mute) {
+                    this.color = RED;
+                    musicArrowUp.opacity = 0.5;
+                    musicText.opacity = 0.5;
+                    musicArrowDown.opacity = 0.5;
+                }
+            },
+
             add() {
                 this.onClick(() => {
                     music.mute = !music.mute;
