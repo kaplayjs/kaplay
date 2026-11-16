@@ -4,7 +4,7 @@ import { Quad, quad } from "../math/math";
 import { _k } from "../shared";
 import { type ImageSource, type TexFilter } from "../types";
 import { Asset, loadImg, loadProgress, spriteSrcToImage } from "./asset";
-import { fixURL, slice } from "./utils";
+import { rootURL, slice } from "./utils";
 
 /**
  * Frame-based animation configuration.
@@ -267,7 +267,7 @@ export function loadSprite(
         anims: {},
     },
 ): Asset<SpriteData> {
-    src = fixURL(src);
+    src = rootURL(src);
 
     if (Array.isArray(src)) {
         if (src.some((s) => typeof s === "string")) {

@@ -9,6 +9,8 @@
 
 kaplay({
     background: [212, 110, 179],
+    // Inspect `text()` letters in debug (F1) (v4000+)
+    inspectTextChars: "styled", // or boolean
 });
 
 // Load a custom font from a .ttf file
@@ -115,12 +117,12 @@ onKeyDown("down", () => {
 // Use this syntax and style option to style chunks of text, with CharTransformFunc.
 add([
     text(
-        "[green]oh hi[/green] here's some [wavy][rainbow]styled[/rainbow][/wavy] text",
+        "[blue]oh hi[/blue] here's some [wavy][rainbow]styled[/rainbow][/wavy] text",
         {
             width: width(),
             styles: {
-                "green": {
-                    color: rgb(128, 128, 255),
+                "blue": {
+                    color: rgb(100, 100, 250),
                 },
                 "wavy": (idx, ch) => ({
                     pos: vec2(0, wave(-4, 4, time() * 6 + idx * 0.5)),
@@ -133,5 +135,14 @@ add([
     ),
     pos(pad, height() - pad),
     anchor("botleft"),
-    // scale(0.5),
+]);
+
+// Letter bounding boxes won't be drawn in debug inspect mode (F1) (v4000+)
+// `KAPLAYOpt.inspectTextChars` would have to be set to true
+// or some text transform/styles added
+add([
+    text(":)"),
+    pos(width() - pad - 32, height() - pad),
+    anchor("botright"),
+    rotate(90),
 ]);

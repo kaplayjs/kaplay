@@ -1,7 +1,7 @@
 import { _k } from "../shared";
 import { dataURLToArrayBuffer, isDataURL } from "../utils/dataURL";
 import { Asset, fetchArrayBuffer, loadProgress } from "./asset";
-import { fixURL } from "./utils";
+import { rootURL } from "./utils";
 
 export class SoundData {
     buf: AudioBuffer;
@@ -67,7 +67,7 @@ export function loadSound(
     name: string | null,
     src: string | ArrayBuffer | AudioBuffer,
 ): Asset<SoundData> {
-    const fixedSrc = fixURL(src);
+    const fixedSrc = rootURL(src);
     let sound: Promise<SoundData> | SoundData;
 
     if (typeof fixedSrc === "string") {
@@ -87,7 +87,7 @@ export function loadMusic(
     name: string | null,
     url: string,
 ) {
-    const musicUrl = fixURL(url);
+    const musicUrl = rootURL(url);
     const a = new Audio(musicUrl);
     a.preload = "auto";
 

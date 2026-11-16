@@ -310,34 +310,34 @@ export interface KAPLAYOpt {
      */
     debug?: boolean;
     /**
-     * Define a specific key for different debug actions using KAPLAY's button system
+     * Define a specific key for different debug actions using KAPLAY's button system.
      *
-     * If KAPLAY.debug is true and no debugButtons is passed, the ones below will be used as the defaults
+     * If `debug` option is true and no `debugButtons` is passed, the ones below will be used as the defaults.
      *
-     * If one of these is missing, the default one will be used
-     * @example
+     * @example If one of these is missing, the default one will be used
      * ```js
      * // These are the default keys
      * kaplay({
-     *  debugButtons: {
-     *      "inspect": { keyboard: "f1" },
-     *      "clearlogs": { keyboard: "f2" },
-     *      "pause": { keyboard: "f8" },
-     *      "slowdown": { keyboard: "f7" },
-     *      "speedup": { keyboard: "f9" },
-     *      "stepframe": { keyboard: "f10" },
-     *  }
-     * })
+     *     debugButtons: {
+     *         "inspect":   { keyboard: "f1" },
+     *         "clearlogs": { keyboard: "f2" },
+     *         "pause":     { keyboard: "f8" },
+     *         "slowdown":  { keyboard: "f7" },
+     *         "speedup":   { keyboard: "f9" },
+     *         "stepframe": { keyboard: "f10" },
+     *     },
+     * });
      * ```
-     *
-     * You can also set them at runtime using KAPLAYCtx.debug.setButton
-     *
+     * @example You can also set them at runtime using `KAPLAYCtx.debug.setButton()`
      * ```js
-     * debug.setButton("inspect", { keyboard: "p" })
+     * debug.setButton("inspect", { keyboard: "p" });
      * ```
+     *
      * @since v4000.0
      * @group Input, Debug
      * @subgroup Buttons API
+     *
+     * @see {@link Debug.setButton}
      */
     debugButtons?: Partial<Record<keyof typeof DEBUG_SYMBOLS, ButtonBinding>>;
     /**
@@ -511,6 +511,10 @@ export interface KAPLAYOpt {
      *
      * Only one object can have a given tag at a time, e.g. ["player", "focused"]
      * means there will be only one "player" or object that can be "focused".
+     *
+     * @since v4000.0
+     *
+     * @see {@link KAPLAYCtx.getSingletonTags get}, {@link KAPLAYCtx.setSingletonTags set}, {@link KAPLAYCtx.addSingletonTag add}, {@link KAPLAYCtx.removeSingletonTag remove}, {@link KAPLAYCtx.isSingletonTag is} helper functions
      */
     singletonTags?: Tag[];
     /**
@@ -527,6 +531,13 @@ export interface KAPLAYOpt {
      * @experimental
      */
     inspectOnlyActive?: boolean;
+    /**
+     * If the debug inspect view should draw bounding boxes of each character in the {@link KAPLAYCtx.text `text()`} component.
+     * If `"styled"`, draw only if {@link TextCompOpt} `transform`, `styles`, or style tags were used.
+     *
+     * @default false
+     */
+    inspectTextChars?: boolean | "styled";
     /**
      * Which strategy to use for broad phase collision, sap, sapv or quadtree.
      *

@@ -4,7 +4,7 @@ import { _k } from "../shared";
 import type { TexFilter } from "../types";
 import { type Asset, loadImg } from "./asset";
 import { makeFont } from "./font";
-import { fixURL } from "./utils";
+import { rootURL } from "./utils";
 
 /**
  * @group Assets
@@ -51,7 +51,7 @@ export function loadBitmapFont(
     gh: number,
     opt: LoadBitmapFontOpt = {},
 ): Asset<BitmapFontData> {
-    const fontSrc = fixURL(src);
+    const fontSrc = rootURL(src);
 
     return _k.assets.bitmapFonts.add(
         name,

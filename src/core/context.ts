@@ -27,6 +27,7 @@ import { getShader, loadShader, loadShaderURL } from "../assets/shader";
 import { getSound, loadMusic, loadSound, SoundData } from "../assets/sound";
 import { getSprite, loadBean, loadSprite, SpriteData } from "../assets/sprite";
 import { loadSpriteAtlas } from "../assets/spriteAtlas";
+import { rootURL } from "../assets/utils";
 import { burp } from "../audio/burp";
 import { createChannel } from "../audio/channel";
 import { play } from "../audio/play";
@@ -286,6 +287,7 @@ export const createContext = (
         // @ts-ignore
         VERSION: KAPLAY_VERSION,
         // asset load
+        rootURL,
         loadRoot,
         loadProgress,
         loadSprite,

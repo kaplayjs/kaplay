@@ -514,7 +514,7 @@ export interface KAPLAYCtx {
      */
     setSingletonTags(tags: Tag[]): void;
     /**
-     * Make tag a {@link KAPLAYOpt.singletonTags `singleton tag`}.
+     * Make tag a {@link KAPLAYOpt.singletonTags singleton tag}.
      * All existing objects with a tag will be untagged except the passed `obj` or the last occurrence in the object tree.
      *
      * @param tag - The tag.
@@ -525,7 +525,7 @@ export interface KAPLAYCtx {
      */
     addSingletonTag(tag: Tag, obj?: GameObj): void;
     /**
-     * Make tag(s) no longer {@link KAPLAYOpt.singletonTags `singleton tag(s)`}.
+     * Make tag(s) no longer {@link KAPLAYOpt.singletonTags singleton tag(s)}.
      *
      * @param tag - The tag(s) to remove.
      *
@@ -534,7 +534,7 @@ export interface KAPLAYCtx {
      */
     removeSingletonTag(tag: Tag | Tag[]): void;
     /**
-     * Check if a tag is a {@link KAPLAYOpt.singletonTags `singleton tag`}.
+     * Check if a tag is a {@link KAPLAYOpt.singletonTags singleton tag}.
      *
      * @param tag - The tag to check.
      *
@@ -3616,6 +3616,12 @@ export interface KAPLAYCtx {
      */
     loadRoot(path?: string): string;
     /**
+     * Adds the current asset root and urlPrefix to a passed url.
+     *
+     * @param url - The url to add the root at the start of.
+     */
+    rootURL(url: string): string;
+    /**
      * Load a sprite into asset manager, with name and resource url and optional config.
      *
      * @param name - The asset name.
@@ -4670,7 +4676,8 @@ export interface KAPLAYCtx {
     /**
      * Camera shake.
      *
-     * @param intensity - The intensity of the shake. Defaults to 12.
+     * @param intensity - The intensity of the shake. Can be a number or a `vec2` to constrain the shake direction. Defaults to 12.
+     * @param duration - The duration of the shake in seconds. If not passed, the intensity will determine the duration.
      *
      * @example
      * ```js
@@ -4678,13 +4685,16 @@ export interface KAPLAYCtx {
      * bean.onCollide("bomb", () => {
      *     shake(120)
      * })
+     *
+     * // shake horizontally only for half a second like an "error"
+     * shake(vec2(60, 0), 0.5)
      * ```
      *
      * @since v3000.0
      * @group Rendering
      * @subgroup Camera
      */
-    shake(intensity?: number): void;
+    shake(intensity?: number | Vec2, duration?: number): void;
     /**
      * Camera flash.
      *
@@ -6946,14 +6956,15 @@ export interface KAPLAYCtx {
     formatText(options: DrawTextOpt): FormattedText;
     /**
      * Parses the text that has formatting tags, and returns the unstyled text
-     * (the actual characters that will be displayed) as well as which styles are
-     * active on each character.
+     * (the actual characters that will be displayed, both as a string and as
+     * an array of grapheme clusters) as well as which styles are active on
+     * each character.
      *
      * @since v4000
      * @group Rendering
      * @subgroup Text
      */
-    compileStyledText(text: any): StyledTextInfo;
+    compileStyledText(text: any, locale?: string): StyledTextInfo;
     /**
      * Create a canvas to draw stuff offscreen.
      *
