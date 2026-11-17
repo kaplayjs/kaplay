@@ -89,6 +89,16 @@ export type DrawTextOpt = RenderProps & {
 /**
  * A function that returns a character transform config. Useful if you're generating dynamic styles.
  *
+ * The `allTags` and `tagIndex` parameters expose the formatting tags that are
+ * active on the character, so a function can react to the tags it is nested
+ * in:
+ *
+ * - `allTags` is the list of `[name, param]` tag pairs applied to the
+ *   character, outermost tag first.
+ * - `tagIndex` is the index in `allTags` of the tag this call is for, or `-1`
+ *   when the function is used as the whole-text {@link DrawTextOpt.transform},
+ *   which is not tied to a single tag.
+ *
  * @group Rendering
  * @subgroup Text
  */
@@ -96,6 +106,8 @@ export type CharTransformFunc = (
     idx: number,
     ch: string,
     param: string,
+    allTags: readonly [string, string][],
+    tagIndex: number,
 ) => CharTransform;
 
 /**
