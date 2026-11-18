@@ -490,7 +490,7 @@ export function area(
                 _hoverEventsRegistered = true;
                 events.push(
                     this.onHover(() => _k.app.setCursor(this.area.cursor!)),
-                    this.onHoverEnd(() => _k.app.setCursor("default")),
+                    // this.onHoverEnd(() => _k.app.setCursor("default")),
                 );
             }
 
@@ -620,7 +620,7 @@ export function area(
                     _hoverEventsRegistered = true;
                     events.push(
                         obj.onHover(() => _k.app.setCursor(obj.area.cursor!)),
-                        obj.onHoverEnd(() => _k.app.setCursor("default")),
+                        // obj.onHoverEnd(() => _k.app.setCursor("default")),
                     );
                 }
             },
