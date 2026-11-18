@@ -115,7 +115,6 @@ export function rect(
             const data: SerializedRectComp = { width: _width, height: _height };
             if (this.radius) data.radius = this.radius;
             if (this.fill ?? opt.fill) data.fill = this.fill ?? opt.fill;
-            console.log(data.fill);
             return data;
         },
     };

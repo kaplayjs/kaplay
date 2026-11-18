@@ -79,8 +79,6 @@ test("Test serialization of anchor() component", async ({ page }) => {
         const prefab = o.serialize();
         o.destroy();
 
-        console.log(prefab.components);
-
         const pf = k.addPrefab<CompList<AnchorComp>>(prefab);
 
         return typeof pf.anchor == "object" && pf.anchor.x == -1
@@ -102,8 +100,6 @@ test("Test serialization of fixed() component", async ({ page }) => {
 
         const prefab = o.serialize();
         o.destroy();
-
-        console.log(prefab.components);
 
         const pf = k.addPrefab<CompList<FixedComp>>(prefab);
 
@@ -132,8 +128,6 @@ test("Test serialization of follow() component", async ({ page }) => {
         const prefab = o.serialize();
         o.destroy();
 
-        console.log(prefab.components);
-
         const pf = k.addPrefab<CompList<FollowComp>>(prefab);
 
         return pf.follow.obj?.tags.includes("bean");
@@ -161,8 +155,6 @@ test("Test serialization of layer() component", async ({ page }) => {
         const prefab = o.serialize();
         o.destroy();
 
-        console.log(prefab.components);
-
         const pf = k.addPrefab<CompList<LayerComp>>(prefab);
 
         return pf.layer == "obj";
@@ -184,8 +176,6 @@ test("Test serialization of move() component", async ({ page }) => {
 
         const prefab = o.serialize();
         o.destroy();
-
-        console.log(prefab.components);
 
         const pf = k.addPrefab<CompList<MoveComp>>(prefab);
 
@@ -216,8 +206,6 @@ test("Test serialization of offscreen() component", async ({ page }) => {
         const prefab = o.serialize();
         o.destroy();
 
-        console.log(prefab.components);
-
         const pf = k.addPrefab<CompList<OffScreenComp>>(prefab);
 
         return pf.offscreenDistance == 10;
@@ -238,8 +226,6 @@ test("Test serialization of pos() component", async ({ page }) => {
 
         const prefab = o.serialize();
         o.destroy();
-
-        console.log(prefab.components);
 
         const pf = k.addPrefab<CompList<PosComp>>(prefab);
 
@@ -262,8 +248,6 @@ test("Test serialization of rotate() component", async ({ page }) => {
         const prefab = o.serialize();
         o.destroy();
 
-        console.log(prefab.components);
-
         const pf = k.addPrefab<CompList<RotateComp>>(prefab);
 
         return pf.angle == 10;
@@ -284,8 +268,6 @@ test("Test serialization of scale() component", async ({ page }) => {
 
         const prefab = o.serialize();
         o.destroy();
-
-        console.log(prefab.components);
 
         const pf = k.addPrefab<CompList<ScaleComp>>(prefab);
 
@@ -308,8 +290,6 @@ test("Test serialization of skew() component", async ({ page }) => {
         const prefab = o.serialize();
         o.destroy();
 
-        console.log(prefab.components);
-
         const pf = k.addPrefab<CompList<SkewComp>>(prefab);
 
         return pf.skew.x == 10 && pf.skew.y == 10;
@@ -330,8 +310,6 @@ test("Test serialization of z() component", async ({ page }) => {
 
         const prefab = o.serialize();
         o.destroy();
-
-        console.log(prefab.components);
 
         const pf = k.addPrefab<CompList<ZComp>>(prefab);
 
@@ -361,8 +339,6 @@ test("Test serialization of blend() component", async ({ page }) => {
         const prefab = o.serialize();
         o.destroy();
 
-        console.log(prefab.components);
-
         const pf = k.addPrefab<CompList<BlendComp>>(prefab);
 
         return pf.blend == BlendMode.Add;
@@ -383,8 +359,6 @@ test("Test serialization of circle() component", async ({ page }) => {
 
         const prefab = o.serialize();
         o.destroy();
-
-        console.log(prefab.components);
 
         const pf = k.addPrefab<CompList<CircleComp>>(prefab);
 
@@ -430,8 +404,6 @@ test("Test serialization of ellipse() component", async ({ page }) => {
         const prefab = o.serialize();
         o.destroy();
 
-        console.log(prefab.components);
-
         const pf = k.addPrefab<CompList<EllipseComp>>(prefab);
 
         // checking that fill is serialized properly
@@ -455,8 +427,6 @@ test("Test serialization of fill() component", async ({ page }) => {
         const prefab = o.serialize();
         o.destroy();
 
-        console.log(prefab.components);
-
         const pf = k.addPrefab<CompList<FillComp>>(prefab);
 
         return pf.fill == true;
@@ -477,8 +447,6 @@ test("Test serialization of mask() component", async ({ page }) => {
 
         const prefab = o.serialize();
         o.destroy();
-
-        console.log(prefab.components);
 
         const pf = k.addPrefab<CompList<MaskComp>>(prefab);
 
@@ -501,8 +469,6 @@ test("Test serialization of opacity() component", async ({ page }) => {
         const prefab = o.serialize();
         o.destroy();
 
-        console.log(prefab.components);
-
         const pf = k.addPrefab<CompList<OpacityComp>>(prefab);
 
         return pf.opacity == 10;
@@ -523,8 +489,6 @@ test("Test serialization of outline() component", async ({ page }) => {
 
         const prefab = o.serialize();
         o.destroy();
-
-        console.log(prefab.components);
 
         const pf = k.addPrefab<CompList<OutlineComp>>(prefab);
 
@@ -573,8 +537,6 @@ test("Test serialization of shader() component", async ({ page }) => {
 
         const prefab = o.serialize();
         o.destroy();
-
-        console.log(prefab.components);
 
         const pf = k.addPrefab<CompList<ShaderComp>>(prefab);
 
@@ -641,8 +603,6 @@ test("Test serialization of sprite() component", async ({ page }) => {
         const prefab = o.serialize();
         o.destroy();
 
-        console.log(prefab.components);
-
         const pf = k.addPrefab<CompList<SpriteComp>>(prefab);
         pf.play("idle");
 
@@ -680,8 +640,6 @@ test("Test serialization of text() component", async ({ page }) => {
         const prefab = o.serialize();
         o.destroy();
 
-        console.log(prefab.components);
-
         const pf = k.addPrefab<CompList<TextComp>>(prefab);
 
         return pf.text == "hello" && pf.align == "center" && pf.font == "happy"
@@ -705,8 +663,6 @@ test("Test serialization of uvquad() component", async ({ page }) => {
 
         const prefab = o.serialize();
         o.destroy();
-
-        console.log(prefab.components);
 
         const pf = k.addPrefab<CompList<UVQuadComp>>(prefab);
 
@@ -739,8 +695,6 @@ test("Test serialization of video() component", async ({ page }) => {
         const prefab = o.serialize();
         o.destroy();
 
-        console.log(prefab.components);
-
         const pf = k.addPrefab<CompList<VideoComp>>(prefab);
 
         return pf.width == 10 && pf.height == 10 && pf.loop == true
@@ -771,8 +725,6 @@ test("Test serialization of agent() component", async ({ page }) => {
 
         const prefab = o.serialize();
         o.destroy();
-
-        console.log(prefab.components);
 
         const pf = k.addPrefab<CompList<AgentComp>>(prefab);
 
@@ -823,8 +775,6 @@ test("Test serialization of level() component", async ({ page }) => {
         const prefab = o.serialize();
         o.destroy();
 
-        console.log(prefab.components);
-
         const pf = k.addPrefab<CompList<LevelComp>>(prefab);
 
         // checking for correct serialization of tiles
@@ -864,8 +814,6 @@ test("Test serialization of patrol() component", async ({ page }) => {
         const prefab = o.serialize();
         o.destroy();
 
-        console.log(prefab.components);
-
         const pf = k.addPrefab<CompList<PatrolComp>>(prefab);
 
         return pf.waypoints?.[0].eq(k.vec2(10));
@@ -890,8 +838,6 @@ test("Test serialization of sentry() component", async ({ page }) => {
 
         const prefab = o.serialize();
         o.destroy();
-
-        console.log(prefab.components);
 
         const pf = k.addPrefab<CompList<SentryComp>>(prefab);
 
@@ -924,8 +870,6 @@ test("Test serialization of tile() component", async ({ page }) => {
 
         const prefab = o.serialize();
         o.destroy();
-
-        console.log(prefab.components);
 
         const pf = k.addPrefab<CompList<TileComp>>(prefab);
 
@@ -961,8 +905,6 @@ test("Test serialization of area() component", async ({ page }) => {
 
         const prefab = o.serialize();
         o.destroy();
-
-        console.log(prefab.components);
 
         const pf = k.addPrefab<CompList<AreaComp>>(prefab);
 
@@ -1000,8 +942,6 @@ test("Test serialization of body() component", async ({ page }) => {
         const prefab = o.serialize();
         o.destroy();
 
-        console.log(prefab.components);
-
         const pf = k.addPrefab<CompList<BodyComp>>(prefab);
 
         return pf.damping == 10 && pf.jumpForce == 10 && pf.gravityScale == 10
@@ -1028,8 +968,6 @@ test("Test serialization of doubleJump() component", async ({ page }) => {
 
         const prefab = o.serialize();
         o.destroy();
-
-        console.log(prefab.components);
 
         const pf = k.addPrefab<CompList<DoubleJumpComp>>(prefab);
 
@@ -1060,8 +998,6 @@ test("Test serialization of surfaceEffector() component", async ({ page }) => {
         const prefab = o.serialize();
         o.destroy();
 
-        console.log(prefab.components);
-
         const pf = k.addPrefab<CompList<SurfaceEffectorComp>>(prefab);
 
         return pf.speed == 10 && pf.forceScale == 10 && pf.speedVariation == 10;
@@ -1089,8 +1025,6 @@ test("Test serialization of areaEffector() component", async ({ page }) => {
 
         const prefab = o.serialize();
         o.destroy();
-
-        console.log(prefab.components);
 
         const pf = k.addPrefab<CompList<AreaEffectorComp>>(prefab);
 
@@ -1123,8 +1057,6 @@ test("Test serialization of pointEffector() component", async ({ page }) => {
         const prefab = o.serialize();
         o.destroy();
 
-        console.log(prefab.components);
-
         const pf = k.addPrefab<CompList<PointEffectorComp>>(prefab);
 
         return pf.forceMagnitude == 10 && pf.distanceScale == 10
@@ -1155,8 +1087,6 @@ test("Test serialization of constantForce() component", async ({ page }) => {
         const prefab = o.serialize();
         o.destroy();
 
-        console.log(prefab.components);
-
         const pf = k.addPrefab<CompList<ConstantForceComp>>(prefab);
 
         return pf.force?.eq(k.vec2(10, 10)) && pf.useGlobalAngle == true;
@@ -1184,8 +1114,6 @@ test("Test serialization of platformEffector() component", async ({ page }) => {
 
         const prefab = o.serialize();
         o.destroy();
-
-        console.log(prefab.components);
 
         const pf = k.addPrefab<CompList<PlatformEffectorComp>>(prefab);
 
@@ -1226,8 +1154,6 @@ test("Test serialization of buoyancyEffector() component", async ({ page }) => {
         const prefab = o.serialize();
         o.destroy();
 
-        console.log(prefab.components);
-
         const pf = k.addPrefab<CompList<BuoyancyEffectorComp>>(prefab);
 
         return pf.surfaceLevel == 10 && pf.angularDrag == 10 && pf.density == 10
@@ -1256,8 +1182,6 @@ test("Test serialization of fakeMouse() component", async ({ page }) => {
         const prefab = o.serialize();
         o.destroy();
 
-        console.log(prefab.components);
-
         const pf = k.addPrefab<CompList<FakeMouseComp>>(prefab);
 
         return pf.followMouse == true;
@@ -1278,8 +1202,6 @@ test("Test serialization of health() component", async ({ page }) => {
 
         const prefab = o.serialize();
         o.destroy();
-
-        console.log(prefab.components);
 
         const pf = k.addPrefab<CompList<HealthComp>>(prefab);
 
@@ -1302,8 +1224,6 @@ test("Test serialization of lifespan() component", async ({ page }) => {
 
         const prefab = o.serialize();
         o.destroy();
-
-        console.log(prefab.components);
 
         const pf = k.addPrefab<CompList<LifespanComp>>(prefab);
 
@@ -1328,8 +1248,6 @@ test("Test serialization of named() component", async ({ page }) => {
         const prefab = o.serialize();
         o.destroy();
 
-        console.log(prefab.components);
-
         const pf = k.addPrefab<CompList<NamedComp>>(prefab);
 
         return pf.name == "ben";
@@ -1350,8 +1268,6 @@ test("Test serialization of state() component", async ({ page }) => {
 
         const prefab = o.serialize();
         o.destroy();
-
-        console.log(prefab.components);
 
         const pf = k.addPrefab<CompList<StateComp<"idle" | "attack" | "move">>>(
             prefab,
@@ -1378,8 +1294,6 @@ test("Test serialization of stay() component", async ({ page }) => {
         const prefab = o.serialize();
         o.destroy();
 
-        console.log(prefab.components);
-
         const pf = k.addPrefab<CompList<StayComp>>(
             prefab,
         );
@@ -1405,8 +1319,6 @@ test("Test serialization of textInput() component", async ({ page }) => {
         const prefab = o.serialize();
         o.destroy();
 
-        console.log(prefab.components);
-
         const pf = k.addPrefab<CompList<TextInputComp>>(
             prefab,
         );
@@ -1430,8 +1342,6 @@ test("Test serialization of timer() component", async ({ page }) => {
 
         const prefab = o.serialize();
         o.destroy();
-
-        console.log(prefab.components);
 
         const pf = k.addPrefab<CompList<TimerComp>>(
             prefab,
