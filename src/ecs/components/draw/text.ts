@@ -389,22 +389,6 @@ export function text(t: string, opt: TextCompOpt = {}): TextComp {
             this._renderAreaVersion = nextRenderAreaVersion();
             update(this as any as GameObj<TextComp>, true);
         },
-        get indentAll() {
-            return _props.indentAll;
-        },
-        set indentAll(value) {
-            if (_props.indentAll == value) return;
-            _props.indentAll = value;
-            update(this as any as GameObj<TextComp>, true);
-        },
-        get locale() {
-            return _props.locale;
-        },
-        set locale(value) {
-            if (_props.locale == value) return;
-            _props.locale = value;
-            update(this as any as GameObj<TextComp>, true);
-        },
 
         formattedText(this: GameObj<TextComp>) {
             return theFormattedText;
@@ -500,6 +484,7 @@ export function text(t: string, opt: TextCompOpt = {}): TextComp {
     // define _props as obj props that call update once with reformat
     defineReactiveProps(obj, _props, {
         set(prop, value) {
+            if (_props[prop] === value) return;
             _props[prop] = value;
             update(this as any as GameObj<TextComp>, true);
         },
@@ -508,6 +493,7 @@ export function text(t: string, opt: TextCompOpt = {}): TextComp {
     // define _proxiedProps as obj props that update with transform only if dynamic
     defineReactiveProps(obj, _proxiedProps, {
         set(prop, value) {
+            if (_proxiedProps[prop] === value) return;
             _proxiedProps[prop] = proxifyProp(value);
             updateDynamic();
         },
