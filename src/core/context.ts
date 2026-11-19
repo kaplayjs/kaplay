@@ -330,6 +330,8 @@ export const createContext = (
         screenshotToBlob: app.screenshotToBlob,
         record,
         isFocused: app.isFocused,
+        setDefaultCursor: app.setDefaultCursor,
+        getDefaultCursor: app.getDefaultCursor,
         setCursor: app.setCursor,
         getCursor: app.getCursor,
         setCursorLocked: app.setCursorLocked,

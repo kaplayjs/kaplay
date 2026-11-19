@@ -4962,28 +4962,58 @@ export interface KAPLAYCtx {
      */
     getGamepads(): KGamepad[];
     /**
+     * Set default cursor style.
+     *
+     * @param style - The cursor style.
+     *
+     * @example
+     * ```js
+     * // To hide cursor completely (useful for fakeMouse)
+     * setDefaultCursor("none");
+     *
+     * // Can also use a custom image url with pointer position defined and fallback
+     * setDefaultCursor(`url("/sprites/cursor_default.png") 8 6, default\`);
+     * ```
+     *
+     * @since v4000.0
+     * @group Info
+     *
+     * @see {@link KAPLAYOpt.defaultCursor}, {@link setCursor}, {@link fakeMouse}
+     */
+    setDefaultCursor(style: Cursor): void;
+    /**
+     * Get default cursor style.
+     *
+     * @returns The deffault cursor style.
+     * @since v4000.0
+     * @group Info
+     *
+     * @see {@link KAPLAYOpt.defaultCursor}, {@link getCursor}
+     */
+    getDefaultCursor(): Cursor;
+    /**
      * Set cursor style.
      *
      * @param style - The cursor style.
      *
      * @example
      * ```js
-     * // Change between cursor styles
+     * // Toggle cursor visibility (useful for fakeMouse)
      *
-     * // Reset cursor to default at start of every frame
-     * onUpdate(() => setCursor("default"));
-     *
-     * button.onHover((c) => {
-     *    // change cursor to pointer when hovering over button
-     *     setCursor("pointer");
-     * });
-     *
-     * // Hide the only cursor at start (useful for fakeMouse)
      * setCursor("none");
+     * setCursor("default"); // or use getDefaultCursor()
+     *
+     * // For interactive objects with area() you don't have to call it manually
+     * // You can define cursor option for hover instead
+     * // It will then use KAPLAYOpt.defaultCursor on hover end
+     *
+     * const button = [area({ cursor: "pointer" }), ...];
      * ```
      *
      * @since v2000.0
      * @group Info
+     *
+     * @see {@link setDefaultCursor}, {@link getDefaultCursor}, {@link fakeMouse}
      */
     setCursor(style: Cursor): void;
     /**
@@ -4992,6 +5022,8 @@ export interface KAPLAYCtx {
      * @returns The current cursor style.
      * @since v2000.0
      * @group Info
+     *
+     * @see {@link getDefaultCursor}
      */
     getCursor(): Cursor;
     /**

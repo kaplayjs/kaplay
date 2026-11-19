@@ -405,6 +405,17 @@ export interface KAPLAYOpt {
      */
     hashGridSize?: number;
     /**
+     * Default cursor style, can be predefined keyword or URL with optional coordinates and fallback.
+     *
+     * E.g. `"crosshair"` or `` `url("/sprites/cursor_default.png") 8 6, default` ``.
+     *
+     * @default "default"
+     * @since v4000.0
+     *
+     * @see {@link KAPLAYCtx.setDefaultCursor `setDefaultCursor()`}, {@link KAPLAYCtx.getDefaultCursor `getDefaultCursor()`}
+     */
+    defaultCursor?: Cursor;
+    /**
      * If translate touch events as mouse clicks.
      *
      * @default true

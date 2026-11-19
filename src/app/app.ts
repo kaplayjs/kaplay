@@ -337,6 +337,15 @@ export const initApp = (
         });
     }
 
+    function setDefaultCursor(c: Cursor): void {
+        if (getCursor() === _k.globalOpt.defaultCursor) setCursor(c);
+        _k.globalOpt.defaultCursor = c;
+    }
+
+    function getDefaultCursor(): Cursor {
+        return _k.globalOpt.defaultCursor;
+    }
+
     function setCursor(c: Cursor): void {
         state.canvas.style.cursor = c;
     }
@@ -1433,10 +1442,12 @@ export const initApp = (
         isHidden,
         setFullscreen,
         isFullscreen,
+        setDefaultCursor,
         setCursor,
         screenshot,
         screenshotToBlob,
         getGamepads,
+        getDefaultCursor,
         getCursor,
         setCursorLocked,
         isCursorLocked,
