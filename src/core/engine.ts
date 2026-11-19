@@ -89,6 +89,7 @@ export const createEngine = (gopt: KAPLAYOpt) => {
     const opt = Object.assign(
         {
             scale: 1,
+            defaultCursor: "default",
             spriteAtlasPadding: 2,
             defaultLifetimeScope: "scene" as "scene" | "app",
         } satisfies KAPLAYOpt,
@@ -97,7 +98,7 @@ export const createEngine = (gopt: KAPLAYOpt) => {
 
     const canvas = createCanvas(opt);
     const { fontCacheC2d, fontCacheCanvas } = createFontCache();
-    const app = initApp({ canvas, ...gopt });
+    const app = initApp({ canvas, ...opt });
     const gameHandlers = createScopeHandlers(app);
     const sceneScope = createSceneScope(gameHandlers);
     const appScope = createAppScope(gameHandlers);

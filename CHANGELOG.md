@@ -53,6 +53,7 @@ So your change should look like:
 
 ### Added
 
+- Added `KAPLAYOpt.defaultCursor` plus its API functions `setDefaultCursor()` and `getDefaultCursor()` (#1216) - @imaginarny
 - Added the ability to check which character a point is hovering over in the `text()` component using `TextComp.pointToChar()` or `TextComp.pointToCharIndex()`, to make text-based menus easier to build by simply styling text (#1064) - @dragoncoder047, @imaginarny
 - Added the `KAPLAYOpt.inspectTextChars` to draw bounding boxes of each character in the `text()` component when debug inspect enabled (#1064) - @dragoncoder047, @imaginarny
 - Added zero-width space word-break opportunities for wrapped text (#902) - @snowyukitty
@@ -111,6 +112,7 @@ So your change should look like:
 - Added a new `gacha` example! (#1057) - @imaginarny
 - Added a new `singletonTags` example! (#1172) - @imaginarny
 - Added a new `textClick` example! (#1064) - @dragoncoder047
+- Added a new `defaultCursor` example! (#1216) - @imaginarny
 
 ### Fixed
 
@@ -139,6 +141,7 @@ So your change should look like:
 - Fixed text color defined in `styles`/`transform` not being applied to grapheme clusters (#1115) - @imaginarny
 - Fixed `level` errors caused by movement functions like `TileComp.tileMove()`, eliminating the need to manually trigger spatial map creation beforehand (#1078) - @SobennaStory
 - Fixed `text()` component always getting serialized with fixed width (#1179) - @imaginarny
+- Fixed behavior when `AreaComp.cursor` used, cursor would only change on `AreaComp.onHover`, but wouldn't change back on `AreaComp.onHoverEnd` (#1216) - @amyspark-ng, @imaginarny
 
 ## [4000.0.0-alpha.27.1] - 2026-05-12
 

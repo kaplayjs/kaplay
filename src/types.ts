@@ -275,6 +275,7 @@ export type GameObjInspect = Record<Tag, string | null>;
 
 export type MustKAPLAYOpt = {
     scale: number;
+    defaultCursor: Cursor;
     spriteAtlasPadding: number;
 } & KAPLAYOpt;
 
@@ -404,6 +405,18 @@ export interface KAPLAYOpt {
      * @since v3000.0
      */
     hashGridSize?: number;
+    /**
+     * Default cursor style, can be predefined keyword or URL with optional coordinates and fallback.
+     *
+     * E.g. `"crosshair"` or `` `url("/sprites/cursor_default.png") 8 6, default` ``.
+     * Use `"none"` if you plant to use {@link KAPLAYCtx.fakeMouse `fakeMouse()`}.
+     *
+     * @default "default"
+     * @since v4000.0
+     *
+     * @see {@link KAPLAYCtx.setDefaultCursor `setDefaultCursor()`}, {@link KAPLAYCtx.getDefaultCursor `getDefaultCursor()`}
+     */
+    defaultCursor?: Cursor;
     /**
      * If translate touch events as mouse clicks.
      *

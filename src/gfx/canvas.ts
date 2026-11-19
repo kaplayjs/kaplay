@@ -23,7 +23,7 @@ export const createCanvas = (gopt: MustKAPLAYOpt) => {
     // canvas css styles
     const styles = [
         "outline: none",
-        "cursor: default",
+        `cursor: ${gopt.defaultCursor}`,
     ];
 
     // Adjust canvas size according to user viewport settings

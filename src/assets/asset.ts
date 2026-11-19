@@ -5,7 +5,7 @@ import type { GfxCtx } from "../gfx/gfx";
 import type { AppGfxCtx } from "../gfx/gfxApp";
 import { TexPacker } from "../gfx/TexPacker";
 import { _k } from "../shared";
-import type { ImageSource, MustKAPLAYOpt } from "../types";
+import type { Cursor, ImageSource, MustKAPLAYOpt } from "../types";
 import type { BitmapFontData } from "./bitmapFont";
 import type { FontData } from "./font";
 import type { ShaderData } from "./shader";
@@ -217,9 +217,9 @@ export function loadJSON(name: string, url: string) {
 }
 
 // wrapper around image loader to get a Promise
-export function loadImg(src: string): Promise<HTMLImageElement> {
+export function loadImg(src: string, anon = true): Promise<HTMLImageElement> {
     const img = new Image();
-    img.crossOrigin = "anonymous";
+    if (anon) img.crossOrigin = "anonymous";
     img.src = src;
 
     return new Promise<HTMLImageElement>((resolve, reject) => {
@@ -308,3 +308,14 @@ export const initAssets = (
 
     return assets;
 };
+
+export function loadCursorImg(c: Cursor | null) {
+    if (!c) return;
+
+    const matches = c.matchAll(/url\(\s*(['"]?)(.*?)\1\s*\)/g);
+    for (const m of matches) {
+        const src = m[2];
+        if (_k.assets.custom.get(src)) continue;
+        _k.assets.custom.add(src, loadImg(src, false));
+    }
+}

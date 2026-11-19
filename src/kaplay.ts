@@ -1,4 +1,5 @@
 // The definitive version!
+import { loadCursorImg } from "./assets/asset";
 import { SoundData } from "./assets/sound";
 import { loadSprite } from "./assets/sprite";
 import { createEmptyAudioBuffer } from "./audio/audio";
@@ -140,6 +141,9 @@ export const kaplay = <
 
     game.defaultAssets.bean = beanSrc;
     game.defaultAssets.happy = happyFontSrc;
+
+    // preload default cursor if custom image url set
+    if (opt?.defaultCursor) loadCursorImg(opt?.defaultCursor);
     // #endregion
 
     _k.startLoop();

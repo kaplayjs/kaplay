@@ -1,3 +1,4 @@
+import { loadCursorImg } from "../../../assets/asset";
 import { DEF_ANCHOR } from "../../../constants/general";
 import type { KEventController } from "../../../events/events";
 import { toWorld } from "../../../game/camera";
@@ -476,6 +477,20 @@ export function area(
     let _cachedLocalAreaVersion = -1; // Currently used local area
 
     let _hoverEventsRegistered = false;
+    const registerHoverEvents = (
+        obj: GameObj<AreaComp> | ReturnType<typeof area>,
+    ) => {
+        _hoverEventsRegistered = true;
+        events.push(
+            obj.onHover(() =>
+                _k.app.setCursor(obj.area.cursor ?? _k.globalOpt.defaultCursor)
+            ),
+            obj.onHoverEnd(() => {
+                if (_k.app.getCursor() !== obj.area.cursor) return;
+                _k.app.setCursor(_k.globalOpt.defaultCursor);
+            }),
+        );
+    };
 
     const obj: ReturnType<typeof area> = {
         id: "area",
@@ -486,12 +501,10 @@ export function area(
 
         add(this: GameObj<AreaComp>) {
             _k.game.areaCount++;
+
             if (this.area.cursor) {
-                _hoverEventsRegistered = true;
-                events.push(
-                    this.onHover(() => _k.app.setCursor(this.area.cursor!)),
-                    // this.onHoverEnd(() => _k.app.setCursor("default")),
-                );
+                loadCursorImg(this.area.cursor);
+                registerHoverEvents(this);
             }
 
             events.push(
@@ -610,18 +623,21 @@ export function area(
                 }));
             },
             set cursor(value: Cursor | null) {
+                if (_cursor === value) return;
+
                 _cursor = value;
 
                 if (obj.isHovering()) {
-                    _k.app.setCursor(obj.area.cursor!);
+                    _k.app.setCursor(
+                        obj.area.cursor ?? _k.globalOpt.defaultCursor,
+                    );
+                }
+                else {
+                    loadCursorImg(obj.area.cursor);
                 }
 
-                if (!_hoverEventsRegistered) {
-                    _hoverEventsRegistered = true;
-                    events.push(
-                        obj.onHover(() => _k.app.setCursor(obj.area.cursor!)),
-                        // obj.onHoverEnd(() => _k.app.setCursor("default")),
-                    );
+                if (_cursor !== null && !_hoverEventsRegistered) {
+                    registerHoverEvents(obj);
                 }
             },
             get cursor(): Cursor | null {
