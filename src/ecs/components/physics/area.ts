@@ -476,6 +476,17 @@ export function area(
     let _cachedLocalAreaVersion = -1; // Currently used local area
 
     let _hoverEventsRegistered = false;
+    const registerHoverEvents = (
+        obj: GameObj<AreaComp> | ReturnType<typeof area>,
+    ) => {
+        _hoverEventsRegistered = true;
+        events.push(
+            obj.onHover(() =>
+                _k.app.setCursor(obj.area.cursor ?? _k.globalOpt.defaultCursor)
+            ),
+            obj.onHoverEnd(() => _k.app.setCursor(_k.globalOpt.defaultCursor)),
+        );
+    };
 
     const obj: ReturnType<typeof area> = {
         id: "area",
@@ -486,13 +497,7 @@ export function area(
 
         add(this: GameObj<AreaComp>) {
             _k.game.areaCount++;
-            if (this.area.cursor) {
-                _hoverEventsRegistered = true;
-                events.push(
-                    this.onHover(() => _k.app.setCursor(this.area.cursor!)),
-                    // this.onHoverEnd(() => _k.app.setCursor("default")),
-                );
-            }
+            if (this.area.cursor) registerHoverEvents(this);
 
             events.push(
                 this.onCollideUpdate((obj, col) => {
@@ -613,15 +618,13 @@ export function area(
                 _cursor = value;
 
                 if (obj.isHovering()) {
-                    _k.app.setCursor(obj.area.cursor!);
+                    _k.app.setCursor(
+                        obj.area.cursor ?? _k.globalOpt.defaultCursor,
+                    );
                 }
 
-                if (!_hoverEventsRegistered) {
-                    _hoverEventsRegistered = true;
-                    events.push(
-                        obj.onHover(() => _k.app.setCursor(obj.area.cursor!)),
-                        // obj.onHoverEnd(() => _k.app.setCursor("default")),
-                    );
+                if (_cursor !== null && !_hoverEventsRegistered) {
+                    registerHoverEvents(obj);
                 }
             },
             get cursor(): Cursor | null {
