@@ -75,6 +75,7 @@ So your change should look like:
 - Added `rootURL(url)` to prefix the passed URL using `loadRoot()` value (#1135) - @amyspark-ng
 - Added prefab support for most components (except those with obj ref or function arguments for now) (#1179) - @imaginarny, @amyspark-ng
 - Exposed `registerPrefabFactory()` to be able to register custom components for deserialization (#1179) - @imaginarny
+- Added `KAPLAYOpt.defaultCursor` plus its API functions `setDefaultCursor()` and `getDefaultCursor()` (#1216) - @imaginarny
 
   ```js
   const myComp = (p = vec2(0)) => ({
@@ -111,6 +112,7 @@ So your change should look like:
 - Added a new `gacha` example! (#1057) - @imaginarny
 - Added a new `singletonTags` example! (#1172) - @imaginarny
 - Added a new `textClick` example! (#1064) - @dragoncoder047
+- Added a new `defaultCursor` example! (#1216) - @imaginarny
 
 ### Fixed
 
@@ -139,6 +141,7 @@ So your change should look like:
 - Fixed text color defined in `styles`/`transform` not being applied to grapheme clusters (#1115) - @imaginarny
 - Fixed `level` errors caused by movement functions like `TileComp.tileMove()`, eliminating the need to manually trigger spatial map creation beforehand (#1078) - @SobennaStory
 - Fixed `text()` component always getting serialized with fixed width (#1179) - @imaginarny
+- Fixed behavior when `AreaComp.cursor` used, cursor would only change on `AreaComp.onHover`, but wouldn't change back on `AreaComp.onHoverEnd` (#1216) - @amyspark-ng, @imaginarny
 
 ## [4000.0.0-alpha.27.1] - 2026-05-12
 
