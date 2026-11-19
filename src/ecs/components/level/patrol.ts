@@ -1,7 +1,17 @@
 import type { KEventController } from "../../../events/events";
-import type { Vec2 } from "../../../math/Vec2";
+import { type SerializedVec2, Vec2 } from "../../../math/Vec2";
 import type { Comp, GameObj } from "../../../types";
 import type { PosComp } from "../transform/pos";
+
+/**
+ * The serialized {@link patrol `patrol()`} component.
+ *
+ * @group Components
+ * @subgroup Component Serialization
+ */
+export type SerializedPatrolComp = Omit<PatrolCompOpt, "waypoints"> & {
+    waypoints?: SerializedVec2[];
+};
 
 export interface PatrolComp extends Comp {
     /**
@@ -21,6 +31,7 @@ export interface PatrolComp extends Comp {
      * @param cb - The event handler called when the patrol finishes.
      */
     onPatrolFinished(cb: (objects: GameObj[]) => void): KEventController;
+    serialize(): SerializedPatrolComp;
 }
 
 type PatrolEndBehavior =
@@ -108,5 +119,19 @@ export function patrol(
                 cb,
             );
         },
+        serialize() {
+            const data: SerializedPatrolComp = {};
+            if (waypoints) {
+                data.waypoints = waypoints.map(w => w.serialize());
+            }
+            if (speed !== undefined) data.speed = speed;
+            if (endBehavior) data.endBehavior = endBehavior;
+            return data;
+        },
     };
+}
+
+export function patrolFactory(data: SerializedPatrolComp) {
+    data.waypoints &&= data.waypoints.map(w => Vec2.deserialize(w));
+    return patrol(data as PatrolCompOpt);
 }

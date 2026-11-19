@@ -4,6 +4,17 @@ import type { Comp, GameObj } from "../../../types";
 import type { TextComp } from "../draw/text";
 
 /**
+ * The serialized {@link textInput `textInput()`} component.
+ *
+ * @group Components
+ * @subgroup Component Serialization
+ */
+export interface SerializedTextInputComp {
+    hasFocus: boolean;
+    maxInputLength?: number;
+}
+
+/**
  * The {@link textInput `textInput()`} component.
  *
  * @group Components
@@ -21,6 +32,10 @@ export interface TextInputComp extends Comp {
      * The "real" text that the user typed, without any escaping.
      */
     typedText: string;
+    /**
+     * The maximum length of the input.
+     */
+    maxInputLength?: number;
     /**
      * Focuses this text input so that it will receive input, and
      * removes focus from all other text inputs.
@@ -49,6 +64,7 @@ export interface TextInputComp extends Comp {
      * input has been focused.
      */
     onChange(cb: () => void): KEventController;
+    serialize(): SerializedTextInputComp;
 }
 
 export function textInput(
@@ -60,6 +76,7 @@ export function textInput(
     let origText: string = "";
     return {
         id: "textInput",
+        maxInputLength: maxInputLength ?? undefined,
         get hasFocus() {
             return hasFocus;
         },
@@ -99,8 +116,8 @@ export function textInput(
             charEv = _k.app.onCharInput((character) => {
                 if (
                     this.hasFocus
-                    && (!maxInputLength
-                        || this.typedText.length < maxInputLength)
+                    && (!this.maxInputLength
+                        || this.typedText.length < this.maxInputLength)
                 ) {
                     if ((_k.app.isKeyDown("shift") !== _k.app.state.capsOn)) {
                         this.typedText += character.toUpperCase();
@@ -141,5 +158,18 @@ export function textInput(
         onChange(this: GameObj, cb) {
             return this.on("change", cb);
         },
+        serialize() {
+            const data: SerializedTextInputComp = {
+                hasFocus: hasFocus,
+            };
+            if (this.maxInputLength !== undefined) {
+                data.maxInputLength = this.maxInputLength;
+            }
+            return data;
+        },
     };
+}
+
+export function textInputFactory(data: SerializedTextInputComp) {
+    return textInput(data.hasFocus, data.maxInputLength);
 }

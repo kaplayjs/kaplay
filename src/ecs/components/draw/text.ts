@@ -43,6 +43,7 @@ export interface SerializedTextComp {
     lineSpacing?: number;
     letterSpacing?: number;
     indentAll?: boolean;
+    locale?: string;
 }
 
 /**
@@ -92,6 +93,19 @@ export interface TextComp extends Comp {
      */
     letterSpacing: number;
     /**
+     * If true, any (whitespace) indent on the first line of the paragraph
+     * will be copied to all of the lines for those parts that text-wrap.
+     */
+    indentAll: boolean;
+    /**
+     * Locale for text segmentation (e.g., 'hi' for Hindi, 'ar' for Arabic, 'bn' for Bengali).
+     * Helps with proper grapheme cluster detection for complex scripts.
+     * Only used when Intl.Segmenter is available in the browser.
+     *
+     * @since v4000.0
+     */
+    locale: string;
+    /**
      * Transform the pos, scale, rotation or color for each character based on the index or char.
      *
      * @since v2000.1
@@ -114,6 +128,9 @@ export interface TextComp extends Comp {
      */
     formattedText(): FormattedText;
 
+    /**
+     * Note: Options `transform` and `styles` are currently not supported.
+     */
     serialize(): SerializedTextComp;
 
     /**
@@ -217,6 +234,8 @@ export function text(t: string, opt: TextCompOpt = {}): TextComp {
         align: opt.align!,
         lineSpacing: opt.lineSpacing!,
         letterSpacing: opt.letterSpacing!,
+        indentAll: opt.indentAll!,
+        locale: opt.locale!,
     };
 
     // dynamic props that update with transform instead, reformat only if _renderProps changed
@@ -250,8 +269,8 @@ export function text(t: string, opt: TextCompOpt = {}): TextComp {
             lineSpacing: obj.lineSpacing,
             transform: obj.textTransform,
             styles: obj.textStyles,
-            indentAll: opt.indentAll,
-            locale: opt.locale,
+            indentAll: obj.indentAll,
+            locale: obj.locale,
         };
 
         theFormattedText = reformat
@@ -452,11 +471,12 @@ export function text(t: string, opt: TextCompOpt = {}): TextComp {
                 text: this.text,
                 size: this.textSize,
                 font: typeof this.font === "string" ? this.font : undefined,
-                width: this.width,
+                width: opt.width !== undefined ? this.width : undefined,
                 align: this.align,
                 lineSpacing: this.lineSpacing,
                 letterSpacing: this.letterSpacing,
                 indentAll: opt.indentAll,
+                locale: opt.locale,
             };
         },
     } as TextComp;
@@ -464,6 +484,7 @@ export function text(t: string, opt: TextCompOpt = {}): TextComp {
     // define _props as obj props that call update once with reformat
     defineReactiveProps(obj, _props, {
         set(prop, value) {
+            if (_props[prop] === value) return;
             _props[prop] = value;
             update(this as any as GameObj<TextComp>, true);
         },
@@ -472,6 +493,7 @@ export function text(t: string, opt: TextCompOpt = {}): TextComp {
     // define _proxiedProps as obj props that update with transform only if dynamic
     defineReactiveProps(obj, _proxiedProps, {
         set(prop, value) {
+            if (_proxiedProps[prop] === value) return;
             _proxiedProps[prop] = proxifyProp(value);
             updateDynamic();
         },
@@ -497,5 +519,6 @@ export function textFactory(data: SerializedTextComp) {
         indentAll: data.indentAll,
         letterSpacing: data.letterSpacing,
         lineSpacing: data.letterSpacing,
+        locale: data.locale,
     });
 }
