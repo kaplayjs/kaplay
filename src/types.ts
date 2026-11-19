@@ -275,6 +275,7 @@ export type GameObjInspect = Record<Tag, string | null>;
 
 export type MustKAPLAYOpt = {
     scale: number;
+    defaultCursor: Cursor;
     spriteAtlasPadding: number;
 } & KAPLAYOpt;
 
@@ -408,6 +409,7 @@ export interface KAPLAYOpt {
      * Default cursor style, can be predefined keyword or URL with optional coordinates and fallback.
      *
      * E.g. `"crosshair"` or `` `url("/sprites/cursor_default.png") 8 6, default` ``.
+     * Use `"none"` if you plant to use {@link KAPLAYCtx.fakeMouse `fakeMouse()`}.
      *
      * @default "default"
      * @since v4000.0

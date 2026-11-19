@@ -10,6 +10,7 @@
 kaplay({
     // Can be a simple CSS keyword value like "crosshair"
     // But can also use a custom image url with pointer coordinates and fallback
+    // Tip: you can use "none" if you plan to use fakeMouse() instead
     defaultCursor: `url("/sprites/cursor_default.png") 8 6, default`,
     font: "happy",
     background: "#301f36",
