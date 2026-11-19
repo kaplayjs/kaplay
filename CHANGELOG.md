@@ -44,6 +44,8 @@ So your change should look like:
 
 ## [unreleased]
 
+## [4000.0.0-alpha.28] - 2026-11-19
+
 ### Breaking Changes
 
 - Renamed `RotationConstraintComp.scale` option to `ratio` (#976) - @dragoncoder047
