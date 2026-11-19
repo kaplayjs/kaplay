@@ -53,6 +53,7 @@ So your change should look like:
 
 ### Added
 
+- Added `KAPLAYOpt.defaultCursor` plus its API functions `setDefaultCursor()` and `getDefaultCursor()` (#1216) - @imaginarny
 - Added the ability to check which character a point is hovering over in the `text()` component using `TextComp.pointToChar()` or `TextComp.pointToCharIndex()`, to make text-based menus easier to build by simply styling text (#1064) - @dragoncoder047, @imaginarny
 - Added the `KAPLAYOpt.inspectTextChars` to draw bounding boxes of each character in the `text()` component when debug inspect enabled (#1064) - @dragoncoder047, @imaginarny
 - Added zero-width space word-break opportunities for wrapped text (#902) - @snowyukitty
@@ -75,7 +76,6 @@ So your change should look like:
 - Added `rootURL(url)` to prefix the passed URL using `loadRoot()` value (#1135) - @amyspark-ng
 - Added prefab support for most components (except those with obj ref or function arguments for now) (#1179) - @imaginarny, @amyspark-ng
 - Exposed `registerPrefabFactory()` to be able to register custom components for deserialization (#1179) - @imaginarny
-- Added `KAPLAYOpt.defaultCursor` plus its API functions `setDefaultCursor()` and `getDefaultCursor()` (#1216) - @imaginarny
 
   ```js
   const myComp = (p = vec2(0)) => ({
