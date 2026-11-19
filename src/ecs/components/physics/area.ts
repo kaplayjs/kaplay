@@ -1,3 +1,4 @@
+import { loadCursorImg } from "../../../assets/asset";
 import { DEF_ANCHOR } from "../../../constants/general";
 import type { KEventController } from "../../../events/events";
 import { toWorld } from "../../../game/camera";
@@ -497,7 +498,11 @@ export function area(
 
         add(this: GameObj<AreaComp>) {
             _k.game.areaCount++;
-            if (this.area.cursor) registerHoverEvents(this);
+
+            if (this.area.cursor) {
+                loadCursorImg(this.area.cursor);
+                registerHoverEvents(this);
+            }
 
             events.push(
                 this.onCollideUpdate((obj, col) => {
@@ -615,12 +620,17 @@ export function area(
                 }));
             },
             set cursor(value: Cursor | null) {
+                if (_cursor === value) return;
+
                 _cursor = value;
 
                 if (obj.isHovering()) {
                     _k.app.setCursor(
                         obj.area.cursor ?? _k.globalOpt.defaultCursor,
                     );
+                }
+                else {
+                    loadCursorImg(obj.area.cursor);
                 }
 
                 if (_cursor !== null && !_hoverEventsRegistered) {
