@@ -53,26 +53,25 @@ So your change should look like:
 
 ### Added
 
-- Added the ability to check which character a point is hovering over in the `text()` component using `TextComp.pointToChar()` or `TextComp.pointToCharIndex()`, to make text-based menus easier to build by simply styling text (#1064) - @dragoncoder047, @imaginarny
-- Added the `KAPLAYOpt.inspectTextChars` to draw bounding boxes of each character in the `text()` component when debug inspect enabled (#1064) - @dragoncoder047, @imaginarny
+- Added `nextFrame()` helper function to defer/run a function on the next frame (#1112) - @imaginarny
+- Added `rootURL(url)` to prefix the passed URL using `loadRoot()` value (#1135) - @amyspark-ng
+- Added `onPause()`, `onUnpause()`, `onHide()`, and `onShow()` events for listening to the state of the `paused` and `hidden` properties on game objects (#1041) - @dragoncoder047
+- Added `KAPLAYOpt.lockResolution` to lock the canvas buffer resolution to the defined size and scale when resized by the `letterbox` option (#1106) - @imaginarny
+- Added `KAPLAYOpt.debugButtons` to rebind the buttons used for debug actions, with `Debug.setButton()` to modify them at runtime as well (#1136) - @amyspark-ng
+- Added `KAPLAYOpt.inspectTextChars` to draw bounding boxes of each character in the `text()` component when debug inspect enabled (#1064) - @dragoncoder047, @imaginarny
+- Added `TextComp.pointToChar()` and `TextComp.pointToCharIndex()` to have the ability to check which character a point is hovering over in the `text()` component (#1064) - @dragoncoder047, @imaginarny
 - Added zero-width space word-break opportunities for wrapped text (#902) - @snowyukitty
 - Added the `LevelCompOpt.charsPerTile` option for the `level()` component and `addLevel()` which lets you use more than one character per tile, that way you can make clearer maps without having to resort to Unicode (#1006) - @dragoncoder047
-- Added `onPause()`, `onUnpause()`, `onHide()`, and `onShow()` events for listening to the state of the `paused` and `hidden` properties on game objects (#1041) - @dragoncoder047
 - Added `setRNG()` to change the random generator algorithm (#1057) - @mflerackers
-- Added xorshift32 as random generator (#1057) - @mflerackers
-- Added Alea as random generator (#1097) - @Stanko
-- Added `KAPLAYOpt.lockResolution` to lock the canvas buffer resolution to the defined size and scale when resized by the `letterbox` option (#1106) - @imaginarny
-- Added `nextFrame()` helper function to defer/run a function on the next frame (#1112) - @imaginarny
+- Added `RandomGeneratorType` xorshift32 (#1057) - @mflerackers
+- Added `RandomGeneratorType` alea (#1097) - @Stanko
 - Added `KGamepad.name` for identifying the recognized controller model (#1119) - @CEREBR4L
 - Added `KGamepad.type` field (`"ps4"`, `"ps5"`, `"playstation"`, `"xbox"`, `"switch"`, a custom string, or `undefined`) for picking button-glyph assets based on controller family (#1119) - @CEREBR4L
-- Added `KAPLAYOpt.debugButtons` to rebind the buttons used for debug actions, with `Debug.setButton()` to modify them at runtime as well (#1136) - @amyspark-ng
 - Added `AudioPlayOpt.reverse` to make a sound play in reverse (#1140) - @amyspark-ng
 - Added `FakeMouseComp.scrollBy()` to trigger `onScroll()` (#1159) - @amyspark-ng
 - Added `FakeMouseComp.deltaPos` to see how much the position of the FakeMouse has changed in the last frame (not comparable to `mouseDeltaPos()`) since they move differently (#1159) - @amyspark-ng
-- Added `btn` parameter to `FakeMouseComp.press(btn)` to control which mouse button it will emulate (defaults to left) (#1159) - @amyspark-ng
-- Added `KAPLAYOpt.singletonTags` with a few helpers to make listed tags unique, meaning only one object can have a given tag at a time, e.g. `["player", "focused"]` (#1172) - @imaginarny
+- Added `FakeMouseComp.press(btn)`'s `btn` parameter to control which mouse button it will emulate (defaults to left) (#1159) - @amyspark-ng
 - Added `GetOpt.op` operator option to allow `"or"` besides the default `"and"` in `GameObjRaw.get()`, e.g. `get(["fruit", "vegetable"], { op: "or" })` (#1172) - @imaginarny
-- Added `rootURL(url)` to prefix the passed URL using `loadRoot()` value (#1135) - @amyspark-ng
 - Added prefab support for most components (except those with obj ref or function arguments for now) (#1179) - @imaginarny, @amyspark-ng
 - Exposed `registerPrefabFactory()` to be able to register custom components for deserialization (#1179) - @imaginarny
 
