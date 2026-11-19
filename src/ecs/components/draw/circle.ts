@@ -73,7 +73,7 @@ export function circle(
         draw(this: GameObj<CircleComp & FillComp>) {
             drawCircle(Object.assign(getRenderProps(this), {
                 radius: _radius,
-                fill: this.fill ?? opt.fill,
+                fill: this.fill,
             }));
         },
         renderArea(
@@ -96,7 +96,7 @@ export function circle(
         },
         serialize(this: GameObj<CircleComp & FillComp>) {
             const data: SerializedCircleComp = { radius: _radius };
-            if (this.fill ?? opt.fill) data.fill = true;
+            if (this.fill ?? opt.fill) data.fill = this.fill ?? opt.fill;
             return data;
         },
     };

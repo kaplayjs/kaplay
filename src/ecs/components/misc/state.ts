@@ -7,7 +7,7 @@ import type { Comp } from "../../../types";
  * @group Components
  * @subgroup Component Serialization
  */
-export interface SerializeStateComp {
+export interface SerializedStateComp {
     initState: string;
     stateList: string[];
     transitions: Record<string, string | string[]>;
@@ -57,7 +57,7 @@ export interface StateComp<T extends string> extends Comp {
      * Register an event that runs every frame when in a specific state.
      */
     onStateDraw: (state: T, action: () => void) => KEventController;
-    serialize(): SerializeStateComp;
+    serialize(): SerializedStateComp;
 }
 
 export function state<T extends string>(
@@ -183,6 +183,6 @@ export function state<T extends string>(
     };
 }
 
-export function stateFactory(data: SerializeStateComp) {
+export function stateFactory(data: SerializedStateComp) {
     return state(data.initState, data.stateList, data.transitions);
 }

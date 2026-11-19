@@ -1,7 +1,17 @@
 import { vec2 } from "../../../math/math";
-import { Vec2 } from "../../../math/Vec2";
+import { type SerializedVec2, Vec2 } from "../../../math/Vec2";
 import { type Comp, type Edge, EdgeMask, type GameObj } from "../../../types";
 import type { LevelComp } from "./level";
+
+/**
+ * The serialized {@link tile `tile()`} component.
+ *
+ * @group Components
+ * @subgroup Component Serialization
+ */
+export type SerializedTileComp = Omit<TileCompOpt, "offset"> & {
+    offset?: SerializedVec2;
+};
 
 /**
  * The {@link tile `tile()`} component.
@@ -37,6 +47,7 @@ export interface TileComp extends Comp {
     moveRight(): void;
     moveUp(): void;
     moveDown(): void;
+    serialize(): SerializedTileComp;
 }
 
 /**
@@ -164,5 +175,19 @@ export function tile(opts: TileCompOpt = {}): TileComp {
         moveDown() {
             this.tileMove(vec2(0, 1));
         },
+        serialize() {
+            const data: SerializedTileComp = {
+                isObstacle: this.isObstacle,
+                cost: this.cost,
+                edges: this.edges,
+            };
+            if (opts.offset) data.offset = opts.offset.serialize();
+            return data;
+        },
     };
+}
+
+export function tileFactory(data: SerializedTileComp) {
+    data.offset &&= Vec2.deserialize(data.offset);
+    return tile(data as TileCompOpt);
 }
