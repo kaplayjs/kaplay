@@ -485,7 +485,10 @@ export function area(
             obj.onHover(() =>
                 _k.app.setCursor(obj.area.cursor ?? _k.globalOpt.defaultCursor)
             ),
-            obj.onHoverEnd(() => _k.app.setCursor(_k.globalOpt.defaultCursor)),
+            obj.onHoverEnd(() => {
+                if (_k.app.getCursor() !== obj.area.cursor) return;
+                _k.app.setCursor(_k.globalOpt.defaultCursor);
+            }),
         );
     };
 
