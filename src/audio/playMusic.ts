@@ -30,6 +30,12 @@ export interface MusicPlayOpt {
      */
     speed?: number;
     /**
+     * Wheter changing speed should also change the pitch.
+     *
+     * @default true
+     */
+    preservesPitch?: boolean;
+    /**
      * The start time, in seconds.
      */
     seek?: number;
@@ -125,6 +131,7 @@ export function playMusic(url: string, opt: MusicPlayOpt = {}): MusicPlay {
     el.volume = opt.volume ?? 1;
     el.playbackRate = opt.speed ?? 1;
     el.muted = opt.muted ?? false;
+    el.preservesPitch = opt.preservesPitch ?? true;
 
     const srcNode = _k.audio.ctx.createMediaElementSource(el);
 

@@ -94,6 +94,7 @@ So your change should look like:
 - Added `playMusic()` for exclusively playing audio loaded by `loadMusic()` (#1215) - @amyspark-ng
 - Added `createChannel` for creating `AudioChannel`s. A wait to group multiple audios together (#1215) - @amyspark-ng
 - Added `SoundPlay.muted` (#1215) - @amyspark-ng
+- Added `MusicPlayOpt.preservesPitch` (#1215) - @amyspark-ng
 
 ### Changed
 
