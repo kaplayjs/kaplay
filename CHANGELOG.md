@@ -53,7 +53,7 @@ So your change should look like:
 - Changed `new RNG()` and `setRNG()` to use config object `RNGConfig` instead of the string/custom rng parameter (#1097) - @Stanko
 - Removed `KAPLAYOpt.debugKey`, use `KAPLAYOpt.debugButtons` now instead (#1136) - @amyspark-ng
 - Renamed `play()` to `playSound()` (#1215) - @amyspark-ng
-- Renamed `playSound()` now only plays audio loaded by `loadSound` (#1215) - @amyspark-ng
+- Made it so `playSound()` (previously `play()`) now only plays audio loaded by `loadSound` (#1215) - @amyspark-ng
 
 ### Added
 
@@ -91,6 +91,7 @@ So your change should look like:
       return myComp(Vec2.deserialize(data.p))
   });
   ```
+- Added `playMusic()` for exclusively playing audio loaded by `loadMusic()` (#1215) - @amyspark-ng
 - Added `createChannel` for creating `AudioChannel`s. A wait to group multiple audios together (#1215) - @amyspark-ng
 - Added `SoundPlay.muted` (#1215) - @amyspark-ng
 
@@ -110,7 +111,6 @@ So your change should look like:
 - Updated `text()` component and `compileStyledText()` to accept an optional `locale` option and parameter, respectively (#1115) - @mahirhir, @imaginarny
 - Component `follow()` now also accepts a tag or name (of `named()` comp) besides a raw object (#1179) - @imaginarny
 - Exposed useful properties of a few components such as `DoubleJumpComp.jumpsLeft`, `SpriteComp.tiled`, `TextComp.indentAll`, `FakeMouseComp.followMouse` (#1179) - @amyspark-ng, @imaginarny
-- Renamed `playMusic()` for exclusively playing audio loaded by `loadMusic()` (#1215) - @amyspark-ng
 
 ### Examples
 
