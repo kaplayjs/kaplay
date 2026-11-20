@@ -23,9 +23,9 @@ const measure = async (
         sampleRate: 48000,
         numberOfChannels: 1,
     });
-    const asset = loadSound(null, buf);
+    const asset = k.loadSound(null, buf);
     await new Promise((resolve) => asset.onLoad(resolve));
-    const snd = play(asset, { speed: speeds[0], seek });
+    const snd = k.playSound(asset, { speed: speeds[0], seek });
     const start = snd.time();
     let expected = start;
     for (const speed of speeds) {
