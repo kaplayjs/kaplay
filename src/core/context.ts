@@ -29,7 +29,9 @@ import { getSprite, loadBean, loadSprite, SpriteData } from "../assets/sprite";
 import { loadSpriteAtlas } from "../assets/spriteAtlas";
 import { rootURL } from "../assets/utils";
 import { burp } from "../audio/burp";
-import { play } from "../audio/play";
+import { createChannel } from "../audio/channel";
+import { playSound } from "../audio/play";
+import { playMusic } from "../audio/playMusic";
 import { getVolume, setVolume, volume } from "../audio/volume";
 import { ASCII_CHARS, EVENT_CANCEL_SYMBOL } from "../constants/general";
 import { record } from "../debug/record";
@@ -520,12 +522,14 @@ export const createContext = (
         wait,
         nextFrame,
         // audio
-        play,
+        playSound: playSound,
+        playMusic: playMusic,
         setVolume: setVolume,
         getVolume: getVolume,
         volume,
         burp,
         audioCtx: audio.ctx,
+        createChannel,
         // math
         Line,
         Rect,

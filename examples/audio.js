@@ -24,11 +24,11 @@ loadMusic("OtherworldlyFoe", "/sounds/OtherworldlyFoe.mp3");
 loadSprite("bag", "/sprites/bag.png");
 
 // Adjust global volume
-volume(0.5);
+setVolume(0.5);
 
 // We use the play() function to play audio
 onKeyPress("enter", () => {
-    play("bell", {
+    playSound("bell", {
         volume: 1,
         speed: 1,
     });
@@ -36,21 +36,21 @@ onKeyPress("enter", () => {
 
 // We play a reversed burp
 onKeyPress("b", () => {
-    play("burp", {
+    playSound("burp", {
         reverse: true,
     });
 });
 
 // For our mobile friends
 onTouchStart(() => {
-    play("bell", {
+    playSound("bell", {
         volume: 1,
         speed: 1,
     });
 });
 
 // We can also play music, and control it
-const music = play("OtherworldlyFoe", {
+const music = playMusic("OtherworldlyFoe", {
     loop: true,
     paused: true,
 });
@@ -83,7 +83,7 @@ const keyboard = "awsedftgyhujk";
 // Simple piano with "bell" sound and the second row of a QWERTY keyboard
 for (let i = 0; i < keyboard.length; i++) {
     onKeyPress(keyboard[i], () => {
-        play("bell", {
+        playSound("bell", {
             // The original "bell" sound is F, -500 will make it C for the first key
             detune: i * 100 - 500,
         });

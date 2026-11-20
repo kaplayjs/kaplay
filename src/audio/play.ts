@@ -3,29 +3,32 @@ import { resolveSound, type SoundData } from "../assets/sound";
 import { KEvent, type KEventController } from "../events/events";
 import { _k } from "../shared";
 import type { MusicData } from "../types";
-import { playMusic } from "./playMusic";
 
-// TODO: enable setting on load, make part of SoundData
+// TODO: enable setting on load
 /**
- * Audio play configurations.
+ * Sound play configurations.
  *
  * @group Audio
  */
-export interface AudioPlayOpt {
+export interface SoundPlayOpt {
     /**
-     * If audio should start out paused.
+     * If sound should start out paused.
      *
      * @since v3000.0
      */
     paused?: boolean;
     /**
-     * If audio should be played again from start when its ended.
+     * If sound should be played again from start when its ended.
      */
     loop?: boolean;
     /**
-     * Volume of audio. 1.0 means full volume, 0.5 means half volume.
+     * Volume of sound. 1.0 means full volume, 0.5 means half volume.
      */
     volume?: number;
+    /**
+     * Wheter the sound is muted or not. Doesn't affect volume.
+     */
+    muted?: boolean;
     /**
      * Playback speed. 1.0 means normal playback speed, 2.0 means twice as fast.
      */
@@ -66,10 +69,11 @@ export interface AudioPlayOpt {
     connectTo?: AudioNode;
 }
 
+// TODO: add rate to change speed without changing detune
 /**
  * @group Audio
  */
-export interface AudioPlay {
+export interface SoundPlay {
     /**
      * Start playing audio.
      *
@@ -116,6 +120,10 @@ export interface AudioPlay {
      */
     volume: number;
     /**
+     * Wheter the sound is muted or not. Doesn't affect volume.
+     */
+    muted: boolean;
+    /**
      * The stereo pan of the sound.
      * -1.0 means fully from the left channel, 0.0 means centered, 1.0 means fully right.
      *
@@ -127,7 +135,7 @@ export interface AudioPlay {
      */
     loop: boolean;
     /**
-     * The current playing time (not accurate if speed is changed).
+     * The current playing time.
      */
     time(): number;
     /**
@@ -149,34 +157,34 @@ export interface AudioPlay {
     connect(node?: AudioNode): void;
 }
 
-export function play(
+export function playSound(
     src:
         | string
         | SoundData
         | Asset<SoundData>
         | MusicData
         | Asset<MusicData>,
-    opt: AudioPlayOpt = {},
-): AudioPlay {
-    if (typeof src === "string" && _k.assets.music[src]) {
-        return playMusic(_k.assets.music[src], opt);
-    }
-
+    opt: SoundPlayOpt = {},
+): SoundPlay {
     const ctx = _k.audio.ctx;
     let paused = opt.paused ?? false;
     let srcNode = ctx.createBufferSource();
     const onEndEvents = new KEvent();
     const gainNode = ctx.createGain();
     const panNode = ctx.createStereoPanner();
-    const pos = opt.seek ?? 0;
-    let startTime = 0;
-    let stopTime = 0;
+    // Buffer position (in seconds) at the moment `anchorTime` was taken.
+    // While playing, the position advances by the playback rate.
+    let anchorPos = opt.seek ?? 0;
+    let anchorTime = 0;
     let started = false;
+    let muted = opt.muted ?? false;
+    let volume = opt.volume ?? 1;
 
     srcNode.loop = Boolean(opt.loop);
     srcNode.detune.value = opt.detune ?? 0;
     srcNode.playbackRate.value = opt.speed ?? 1;
     srcNode.connect(panNode);
+
     srcNode.onended = () => {
         if (
             getTime()
@@ -188,7 +196,17 @@ export function play(
     panNode.pan.value = opt.pan ?? 0;
     panNode.connect(gainNode);
     gainNode.connect(opt.connectTo ?? _k.audio.masterNode);
-    gainNode.gain.value = opt.volume ?? 1;
+    gainNode.gain.value = muted ? 0 : volume;
+
+    const applyGain = () => {
+        const now = ctx.currentTime;
+        gainNode.gain.cancelScheduledValues(now);
+        gainNode.gain.setValueAtTime(gainNode.gain.value, now);
+        gainNode.gain.linearRampToValueAtTime(
+            muted ? 0 : volume,
+            now,
+        );
+    };
 
     const start = (data: SoundData) => {
         if (opt.reverse) {
@@ -213,8 +231,8 @@ export function play(
         else srcNode.buffer = data.buf;
 
         if (!paused) {
-            startTime = ctx.currentTime;
-            srcNode.start(0, pos);
+            anchorTime = ctx.currentTime;
+            srcNode.start(0, anchorPos);
             started = true;
         }
     };
@@ -228,13 +246,29 @@ export function play(
         snd.onLoad(start);
     }
 
+    const rate = () =>
+        srcNode.playbackRate.value * Math.pow(2, srcNode.detune.value / 1200);
+
+    const position = () =>
+        started
+            ? anchorPos + (ctx.currentTime - anchorTime) * rate()
+            : anchorPos;
+
+    const wrap = (t: number) => {
+        const d = srcNode.buffer?.duration ?? 0;
+        if (!d) return 0;
+        return srcNode.loop ? t % d : Math.min(t, d);
+    };
+
+    const reanchor = () => {
+        if (!started) return;
+        anchorPos = wrap(position());
+        anchorTime = ctx.currentTime;
+    };
+
     const getTime = () => {
         if (!srcNode.buffer) return 0;
-        const t = paused
-            ? stopTime - startTime
-            : ctx.currentTime - startTime;
-        const d = srcNode.buffer.duration;
-        return srcNode.loop ? t % d : Math.min(t, d);
+        return wrap(position());
     };
 
     const cloneNode = (oldNode: AudioBufferSourceNode) => {
@@ -259,23 +293,29 @@ export function play(
             paused = p;
             if (p) {
                 if (started) {
+                    reanchor();
                     srcNode.stop();
                     started = false;
                 }
-                stopTime = ctx.currentTime;
             }
             else {
                 srcNode = cloneNode(srcNode);
-                const pos = stopTime - startTime;
-                srcNode.start(0, pos);
+                srcNode.start(0, anchorPos);
                 started = true;
-                startTime = ctx.currentTime - pos;
-                stopTime = 0;
+                anchorTime = ctx.currentTime;
             }
         },
 
         get paused() {
             return paused;
+        },
+
+        get muted() {
+            return muted;
+        },
+        set muted(val: boolean) {
+            muted = val;
+            applyGain();
         },
 
         play(time: number = 0) {
@@ -286,22 +326,21 @@ export function play(
         seek(time: number) {
             if (!srcNode.buffer?.duration) return;
             if (time > srcNode.buffer.duration) return;
+            anchorPos = time;
+            anchorTime = ctx.currentTime;
             if (paused) {
                 srcNode = cloneNode(srcNode);
-                startTime = stopTime - time;
             }
             else {
                 srcNode.stop();
                 srcNode = cloneNode(srcNode);
-                startTime = ctx.currentTime - time;
                 srcNode.start(0, time);
                 started = true;
-                stopTime = 0;
             }
         },
 
-        // TODO: affect time()
         set speed(val: number) {
+            reanchor();
             srcNode.playbackRate.value = val;
         },
 
@@ -310,6 +349,7 @@ export function play(
         },
 
         set detune(val: number) {
+            reanchor();
             srcNode.detune.value = val;
         },
 
@@ -318,11 +358,12 @@ export function play(
         },
 
         set volume(val: number) {
-            gainNode.gain.value = Math.max(val, 0);
+            volume = Math.max(val, 0);
+            applyGain();
         },
 
         get volume() {
-            return gainNode.gain.value;
+            return volume;
         },
 
         set pan(pan: number) {

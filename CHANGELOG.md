@@ -52,6 +52,8 @@ So your change should look like:
 - Changed `onHide()` and `onShow()` to handle changes in the `GameObjRaw.hidden` property, previous behaviour was moved to `onTabHide()` and `onTabShow()` (#1041) - @dragoncoder047
 - Changed `new RNG()` and `setRNG()` to use config object `RNGConfig` instead of the string/custom rng parameter (#1097) - @Stanko
 - Removed `KAPLAYOpt.debugKey`, use `KAPLAYOpt.debugButtons` now instead (#1136) - @amyspark-ng
+- Renamed `play()` to `playSound()` (#1215) - @amyspark-ng
+- Made it so `playSound()` (previously `play()`) now only plays audio loaded by `loadSound` (#1215) - @amyspark-ng
 
 ### Added
 
@@ -89,6 +91,10 @@ So your change should look like:
       return myComp(Vec2.deserialize(data.p))
   });
   ```
+- Added `playMusic()` for exclusively playing audio loaded by `loadMusic()` (#1215) - @amyspark-ng
+- Added `createChannel` for creating `AudioChannel`s. A wait to group multiple audios together (#1215) - @amyspark-ng
+- Added `SoundPlay.muted` (#1215) - @amyspark-ng
+- Added `MusicPlay.preservesPitch` (#1215) - @amyspark-ng
 
 ### Changed
 
@@ -140,6 +146,8 @@ So your change should look like:
 - Fixed text color defined in `styles`/`transform` not being applied to grapheme clusters (#1115) - @imaginarny
 - Fixed `level` errors caused by movement functions like `TileComp.tileMove()`, eliminating the need to manually trigger spatial map creation beforehand (#1078) - @SobennaStory
 - Fixed `text()` component always getting serialized with fixed width (#1179) - @imaginarny
+- Fixed `AudioPlay.time()` ignoring `speed`, `detune` and the `seek` option (#729) - @vtxe02023274
+
 
 ## [4000.0.0-alpha.27.1] - 2026-05-12
 
