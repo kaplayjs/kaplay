@@ -17,7 +17,8 @@ import type {
 } from "../assets/sprite";
 import type { SpriteAtlasData } from "../assets/spriteAtlas";
 import type { AudioChannel, AudioChannelOpt } from "../audio/channel";
-import type { AudioPlay, AudioPlayOpt } from "../audio/play";
+import type { SoundPlay, SoundPlayOpt } from "../audio/play";
+import type { MusicPlay, MusicPlayOpt } from "../audio/playMusic";
 import type { Debug } from "../debug/debug";
 import type { Recording } from "../debug/record";
 import type { BlendComp } from "../ecs/components/draw/blend";
@@ -5143,32 +5144,53 @@ export interface KAPLAYCtx {
      * @example
      * ```js
      * // play a one off sound
-     * play("wooosh")
+     * const wooosh = play("wooosh")
      *
-     * // play a looping soundtrack (check out AudioPlayOpt for more options)
-     * const music = play("OverworldlyFoe", {
-     *     volume: 0.8,
-     *     loop: true
-     * })
-     *
-     * // using the handle to control (check out AudioPlay for more controls / info)
-     * music.paused = true
-     * music.speed = 1.2
+     * // using the handle to control (check out SoundPlay for more controls / info)
+     * wooosh.paused = true
+     * wooosh.speed = 1.2
+     * wooosh.detune = 50
      * ```
      *
      * @returns A control handle.
      * @since v2000.0
      * @group Audio
      */
-    play(
+    playSound(
         src:
             | string
             | SoundData
             | Asset<SoundData>
             | MusicData
             | Asset<MusicData>,
-        options?: AudioPlayOpt,
-    ): AudioPlay;
+        options?: SoundPlayOpt,
+    ): SoundPlay;
+    /**
+     * Play a piece of music loaded with {@link loadMusic} and {@link getVolume}.
+     *
+     * The song is streamed so it won't block loading. Use this for big audio files like background music.
+     *
+     * @example
+     * ```js
+     * // play a looping soundtrack (check out MusicPlayOpt for more options)
+     * const music = play("OverworldlyFoe", {
+     *     volume: 0.8,
+     *     loop: true
+     * })
+     *
+     * // using the handle to control (check out MusicPlay for more controls / info)
+     * music.paused = true
+     * music.speed = 1.2
+     * ```
+     *
+     * @returns A control handle.
+     * @since v4000.0
+     * @group Audio
+     */
+    playMusic(
+        src: string,
+        options?: MusicPlayOpt,
+    ): MusicPlay;
     /**
      * Yep. Plays a burp sound.
      *
@@ -5176,7 +5198,7 @@ export interface KAPLAYCtx {
      * @since v2000.0
      * @group Audio
      */
-    burp(options?: AudioPlayOpt): AudioPlay;
+    burp(options?: SoundPlayOpt): SoundPlay;
     /**
      * Set the global volume.
      *

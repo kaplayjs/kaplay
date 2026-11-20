@@ -30,7 +30,8 @@ import { loadSpriteAtlas } from "../assets/spriteAtlas";
 import { rootURL } from "../assets/utils";
 import { burp } from "../audio/burp";
 import { createChannel } from "../audio/channel";
-import { play } from "../audio/play";
+import { playSound } from "../audio/play";
+import { playMusic } from "../audio/playMusic";
 import { getVolume, setVolume, volume } from "../audio/volume";
 import { ASCII_CHARS, EVENT_CANCEL_SYMBOL } from "../constants/general";
 import { record } from "../debug/record";
@@ -521,7 +522,8 @@ export const createContext = (
         wait,
         nextFrame,
         // audio
-        play,
+        playSound: playSound,
+        playMusic: playMusic,
         setVolume: setVolume,
         getVolume: getVolume,
         volume,

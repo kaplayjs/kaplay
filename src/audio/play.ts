@@ -3,27 +3,26 @@ import { resolveSound, type SoundData } from "../assets/sound";
 import { KEvent, type KEventController } from "../events/events";
 import { _k } from "../shared";
 import type { MusicData } from "../types";
-import { playMusic } from "./playMusic";
 
-// TODO: enable setting on load, make part of SoundData
+// TODO: enable setting on load
 /**
- * Audio play configurations.
+ * Sound play configurations.
  *
  * @group Audio
  */
-export interface AudioPlayOpt {
+export interface SoundPlayOpt {
     /**
-     * If audio should start out paused.
+     * If sound should start out paused.
      *
      * @since v3000.0
      */
     paused?: boolean;
     /**
-     * If audio should be played again from start when its ended.
+     * If sound should be played again from start when its ended.
      */
     loop?: boolean;
     /**
-     * Volume of audio. 1.0 means full volume, 0.5 means half volume.
+     * Volume of sound. 1.0 means full volume, 0.5 means half volume.
      */
     volume?: number;
     /**
@@ -74,7 +73,7 @@ export interface AudioPlayOpt {
 /**
  * @group Audio
  */
-export interface AudioPlay {
+export interface SoundPlay {
     /**
      * Start playing audio.
      *
@@ -158,19 +157,15 @@ export interface AudioPlay {
     connect(node?: AudioNode): void;
 }
 
-export function play(
+export function playSound(
     src:
         | string
         | SoundData
         | Asset<SoundData>
         | MusicData
         | Asset<MusicData>,
-    opt: AudioPlayOpt = {},
-): AudioPlay {
-    if (typeof src === "string" && _k.assets.music[src]) {
-        return playMusic(_k.assets.music[src], opt);
-    }
-
+    opt: SoundPlayOpt = {},
+): SoundPlay {
     const ctx = _k.audio.ctx;
     let paused = opt.paused ?? false;
     let srcNode = ctx.createBufferSource();

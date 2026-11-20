@@ -52,6 +52,8 @@ So your change should look like:
 - Changed `onHide()` and `onShow()` to handle changes in the `GameObjRaw.hidden` property, previous behaviour was moved to `onTabHide()` and `onTabShow()` (#1041) - @dragoncoder047
 - Changed `new RNG()` and `setRNG()` to use config object `RNGConfig` instead of the string/custom rng parameter (#1097) - @Stanko
 - Removed `KAPLAYOpt.debugKey`, use `KAPLAYOpt.debugButtons` now instead (#1136) - @amyspark-ng
+- Renamed `play()` to `playSound()` (#1215) - @amyspark-ng
+- Renamed `playSound()` now only plays audio loaded by `loadSound` (#1215) - @amyspark-ng
 
 ### Added
 
@@ -89,6 +91,8 @@ So your change should look like:
       return myComp(Vec2.deserialize(data.p))
   });
   ```
+- Added `createChannel` for creating `AudioChannel`s. A wait to group multiple audios together (#1215) - @amyspark-ng
+- Added `SoundPlay.muted` (#1215) - @amyspark-ng
 
 ### Changed
 
@@ -106,6 +110,7 @@ So your change should look like:
 - Updated `text()` component and `compileStyledText()` to accept an optional `locale` option and parameter, respectively (#1115) - @mahirhir, @imaginarny
 - Component `follow()` now also accepts a tag or name (of `named()` comp) besides a raw object (#1179) - @imaginarny
 - Exposed useful properties of a few components such as `DoubleJumpComp.jumpsLeft`, `SpriteComp.tiled`, `TextComp.indentAll`, `FakeMouseComp.followMouse` (#1179) - @amyspark-ng, @imaginarny
+- Renamed `playMusic()` for exclusively playing audio loaded by `loadMusic()` (#1215) - @amyspark-ng
 
 ### Examples
 
@@ -116,7 +121,6 @@ So your change should look like:
 ### Fixed
 
 - Fixed `Color.toHex()` incorrectly returning a mangled hex string if the blue component was fractional -- e.g. `rgb(1, 1, 0.5).toHex()` previously returned `"#010100.8"`, it now returns `"#010100"` as it should (#1201) - @dragoncoder047
-- Fixed `AudioPlay.time()` ignoring `speed`, `detune` and the `seek` option (#729) - @vtxe02023274
 - Fixed `scale`, `skew`, and `rotate` component transforms not being applied on the initial `GameObjRaw.use()` call (e.g. `obj.use(scale(2))`) - @mflerackers
 - Fixed `TimerController.timeLeft` returning elapsed time instead of remaining time (#1082) - @nojaf
 - Fixed mouse coordinates not being calculated properly when canvas is resized by CSS and wasn't rendered at its natural size (#1096) - @Stanko
@@ -141,6 +145,8 @@ So your change should look like:
 - Fixed text color defined in `styles`/`transform` not being applied to grapheme clusters (#1115) - @imaginarny
 - Fixed `level` errors caused by movement functions like `TileComp.tileMove()`, eliminating the need to manually trigger spatial map creation beforehand (#1078) - @SobennaStory
 - Fixed `text()` component always getting serialized with fixed width (#1179) - @imaginarny
+- Fixed `AudioPlay.time()` ignoring `speed`, `detune` and the `seek` option (#729) - @vtxe02023274
+
 
 ## [4000.0.0-alpha.27.1] - 2026-05-12
 

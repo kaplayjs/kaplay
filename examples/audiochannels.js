@@ -21,7 +21,7 @@ onLoad(() => {
         const sfx = createChannel("sfx");
         const music = createChannel("music");
 
-        music.play("OtherworldlyFoe");
+        music.playMusic("OtherworldlyFoe");
         music.mute = true;
 
         add([
@@ -39,7 +39,7 @@ onLoad(() => {
         ]);
 
         note.onClick(() => {
-            sfx.play("bell");
+            sfx.playSound("bell");
             tween(
                 vec2(2.5),
                 vec2(2),
@@ -92,7 +92,7 @@ onLoad(() => {
                     this.onClick(() => {
                         sfx.mute = !sfx.mute;
                         // play out of sfx channel so it's played regardless of sfx being muted
-                        play("shoot");
+                        playSound("shoot");
 
                         if (sfx.mute) {
                             this.color = RED;
@@ -204,7 +204,7 @@ onLoad(() => {
                     this.onClick(() => {
                         music.mute = !music.mute;
                         // play out of sfx channel so it's played regardless of sfx being muted
-                        play("shoot");
+                        playSound("shoot");
 
                         if (music.mute) {
                             this.color = RED;
@@ -264,20 +264,22 @@ onLoad(() => {
         ]);
     });
 
+    go("1");
+
     // test
     // you can create a channel
     const soundchannel = createChannel("test");
     // if you mute the channel itself, no sound will come out, wheter it's muted or not
     // const soundchannel = createChannel("test").mute = true;
     // you can play sounds and mute them individually
-    // soundchannel.play("bell").muted = true;
-    // soundchannel.play("burp");
+    soundchannel.playSound("bell").muted = true;
+    soundchannel.playSound("burp");
 
     // test volumes
     // if the channel's volume is 1 but the sound's volume is 0, the sound won't play
     // if it was the other way, the sound wouldn't play because the channel reigns over it
     // channel 0.5 and sound 0.5 would make sound's 0.5 of 0.5, so 0.25 compared to 1
-    // soundchannel.volume = 1;
-    // soundchannel.play("bell").volume = 0;
-    // soundchannel.play("burp").muted = true;
+    soundchannel.volume = 1;
+    soundchannel.playSound("bell").volume = 0;
+    soundchannel.playSound("burp").muted = true;
 });
