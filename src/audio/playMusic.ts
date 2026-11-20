@@ -82,6 +82,10 @@ export interface MusicPlay {
      */
     speed: number;
     /**
+     * Wheter changing speed should also change the pitch.
+     */
+    preservesPitch: boolean;
+    /**
      * Volume of the music. 1.0 means full volume, 0.5 means half volume.
      */
     volume: number;
@@ -219,6 +223,14 @@ export function playMusic(url: string, opt: MusicPlayOpt = {}): MusicPlay {
 
         get speed() {
             return el.playbackRate;
+        },
+
+        get preservesPitch() {
+            return el.preservesPitch;
+        },
+
+        set preservesPitch(v: boolean) {
+            el.preservesPitch = v;
         },
 
         onEnd(action: () => void) {
