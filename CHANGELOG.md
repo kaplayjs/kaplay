@@ -44,6 +44,8 @@ So your change should look like:
 
 ## [unreleased]
 
+## [4000.0.0-alpha.28] - 2026-11-19
+
 ### Breaking Changes
 
 - Renamed `RotationConstraintComp.scale` option to `ratio` (#976) - @dragoncoder047
@@ -53,26 +55,42 @@ So your change should look like:
 
 ### Added
 
-- Added the ability to check which character a point is hovering over in the `text()` component using `TextComp.pointToChar()` or `TextComp.pointToCharIndex()`, to make text-based menus easier to build by simply styling text (#1064) - @dragoncoder047, @imaginarny
-- Added the `KAPLAYOpt.inspectTextChars` to draw bounding boxes of each character in the `text()` component when debug inspect enabled (#1064) - @dragoncoder047, @imaginarny
+- Added `nextFrame()` helper function to defer/run a function on the next frame (#1112) - @imaginarny
+- Added `rootURL(url)` to prefix the passed URL using `loadRoot()` value (#1135) - @amyspark-ng
+- Added `onPause()`, `onUnpause()`, `onHide()`, and `onShow()` events for listening to the state of the `paused` and `hidden` properties on game objects (#1041) - @dragoncoder047
+- Added `KAPLAYOpt.lockResolution` to lock the canvas buffer resolution to the defined size and scale when resized by the `letterbox` option (#1106) - @imaginarny
+- Added `KAPLAYOpt.debugButtons` to rebind the buttons used for debug actions, with `Debug.setButton()` to modify them at runtime as well (#1136) - @amyspark-ng
+- Added `KAPLAYOpt.inspectTextChars` to draw bounding boxes of each character in the `text()` component when debug inspect enabled (#1064) - @dragoncoder047, @imaginarny
+- Added `TextComp.pointToChar()` and `TextComp.pointToCharIndex()` to have the ability to check which character a point is hovering over in the `text()` component (#1064) - @dragoncoder047, @imaginarny
 - Added zero-width space word-break opportunities for wrapped text (#902) - @snowyukitty
 - Added the `LevelCompOpt.charsPerTile` option for the `level()` component and `addLevel()` which lets you use more than one character per tile, that way you can make clearer maps without having to resort to Unicode (#1006) - @dragoncoder047
-- Added `onPause()`, `onUnpause()`, `onHide()`, and `onShow()` events for listening to the state of the `paused` and `hidden` properties on game objects (#1041) - @dragoncoder047
 - Added `setRNG()` to change the random generator algorithm (#1057) - @mflerackers
-- Added xorshift32 as random generator (#1057) - @mflerackers
-- Added Alea as random generator (#1097) - @Stanko
-- Added `KAPLAYOpt.lockResolution` to lock the canvas buffer resolution to the defined size and scale when resized by the `letterbox` option (#1106) - @imaginarny
-- Added `nextFrame()` helper function to defer/run a function on the next frame (#1112) - @imaginarny
+- Added `RandomGeneratorType` xorshift32 (#1057) - @mflerackers
+- Added `RandomGeneratorType` alea (#1097) - @Stanko
 - Added `KGamepad.name` for identifying the recognized controller model (#1119) - @CEREBR4L
 - Added `KGamepad.type` field (`"ps4"`, `"ps5"`, `"playstation"`, `"xbox"`, `"switch"`, a custom string, or `undefined`) for picking button-glyph assets based on controller family (#1119) - @CEREBR4L
-- Added `KAPLAYOpt.debugButtons` to rebind the buttons used for debug actions, with `Debug.setButton()` to modify them at runtime as well (#1136) - @amyspark-ng
 - Added `AudioPlayOpt.reverse` to make a sound play in reverse (#1140) - @amyspark-ng
 - Added `FakeMouseComp.scrollBy()` to trigger `onScroll()` (#1159) - @amyspark-ng
 - Added `FakeMouseComp.deltaPos` to see how much the position of the FakeMouse has changed in the last frame (not comparable to `mouseDeltaPos()`) since they move differently (#1159) - @amyspark-ng
-- Added `btn` parameter to `FakeMouseComp.press(btn)` to control which mouse button it will emulate (defaults to left) (#1159) - @amyspark-ng
-- Added `KAPLAYOpt.singletonTags` with a few helpers to make listed tags unique, meaning only one object can have a given tag at a time, e.g. `["player", "focused"]` (#1172) - @imaginarny
+- Added `FakeMouseComp.press(btn)`'s `btn` parameter to control which mouse button it will emulate (defaults to left) (#1159) - @amyspark-ng
 - Added `GetOpt.op` operator option to allow `"or"` besides the default `"and"` in `GameObjRaw.get()`, e.g. `get(["fruit", "vegetable"], { op: "or" })` (#1172) - @imaginarny
 - Added `rootURL(url)` to prefix the passed URL using `loadRoot()` value (#1135) - @amyspark-ng
+- Added prefab support for most components (except those with obj ref or function arguments for now) (#1179) - @imaginarny, @amyspark-ng
+- Exposed `registerPrefabFactory()` to be able to register custom components for deserialization (#1179) - @imaginarny
+
+  ```js
+  const myComp = (p = vec2(0)) => ({
+      id: "myComp",
+      serialize() {
+          return { p: p.serialize() }
+      },
+  });
+
+  registerPrefabFactory("myComp", data => {
+      return myComp(Vec2.deserialize(data.p))
+  });
+  ```
+
 - Added `IKConstraintOpt.offset` to make `constraint.ik()` reach a point in the target's local space instead of its origin, so a foot can follow a spot on a moving platform without a dummy child object (#1087) - @officialasishkumar
 
 ### Changed
@@ -84,11 +102,13 @@ So your change should look like:
 - RNG can now be set and seeded on init (as `KAPLAYOpt.rng`) and in runtime (#1097) - @Stanko
 - Debug keys, keys defined with the Buttons API, and keyboard input captured by e.g. focused `textInput` now use `preventDefault()` (#1114) - @imaginarny
 - Improved `text` component performance by separating text transform and formatting, reducing update calls for both dynamic and (especially) static text (#1125) - @imaginarny
-- Updated `KAPLAYOpt.onButtonPress`'s family to now accept `string` and `symbol` instead of only strings (#1136) - @amyspark-ng
+- Updated `KAPLAYCtx.onButtonPress`'s family to now accept `string` and `symbol` instead of only strings (#1136) - @amyspark-ng
 - Updated `video()` to render black rectangle (instead of white one) before the video has been played (#1145) - @Stanko
 - Updated `getLastInputDeviceType()` so updates to gamepad when you move a joystick (#1168) - @amyspark-ng
 - Updated `StyledTextInfo` to include the rendered text's grapheme clusters as a `runes` array - @mahirhir
 - Updated `text()` component and `compileStyledText()` to accept an optional `locale` option and parameter, respectively (#1115) - @mahirhir, @imaginarny
+- Component `follow()` now also accepts a tag or name (of `named()` comp) besides a raw object (#1179) - @imaginarny
+- Exposed useful properties of a few components such as `DoubleJumpComp.jumpsLeft`, `SpriteComp.tiled`, `TextComp.indentAll`, `FakeMouseComp.followMouse` (#1179) - @amyspark-ng, @imaginarny
 
 ### Examples
 
@@ -98,6 +118,7 @@ So your change should look like:
 
 ### Fixed
 
+- Fixed `Color.toHex()` incorrectly returning a mangled hex string if the blue component was fractional -- e.g. `rgb(1, 1, 0.5).toHex()` previously returned `"#010100.8"`, it now returns `"#010100"` as it should (#1201) - @dragoncoder047
 - Fixed `scale`, `skew`, and `rotate` component transforms not being applied on the initial `GameObjRaw.use()` call (e.g. `obj.use(scale(2))`) - @mflerackers
 - Fixed `TimerController.timeLeft` returning elapsed time instead of remaining time (#1082) - @nojaf
 - Fixed mouse coordinates not being calculated properly when canvas is resized by CSS and wasn't rendered at its natural size (#1096) - @Stanko
@@ -121,6 +142,7 @@ So your change should look like:
 - Fixed styled text (`[tag]...[/tag]`) style positions desyncing after an emoji, ZWJ sequence or astral character (#1115) - @mahirhir, @imaginarny
 - Fixed text color defined in `styles`/`transform` not being applied to grapheme clusters (#1115) - @imaginarny
 - Fixed `level` errors caused by movement functions like `TileComp.tileMove()`, eliminating the need to manually trigger spatial map creation beforehand (#1078) - @SobennaStory
+- Fixed `text()` component always getting serialized with fixed width (#1179) - @imaginarny
 
 ## [4000.0.0-alpha.27.1] - 2026-05-12
 

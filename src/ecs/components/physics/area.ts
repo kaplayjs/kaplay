@@ -8,7 +8,7 @@ import { drawRect } from "../../../gfx/draw/drawRect";
 import { multTranslate, popTransform, pushTransform } from "../../../gfx/stack";
 import { rgb } from "../../../math/color";
 import { Circle, Polygon, Rect, shapeFactory, vec2 } from "../../../math/math";
-import { Vec2 } from "../../../math/Vec2";
+import { type SerializedVec2, Vec2 } from "../../../math/Vec2";
 import { _k } from "../../../shared";
 import type {
     Comp,
@@ -198,6 +198,20 @@ export function startHoverSystem() {
 }
 
 /**
+ * The serialized {@link area `area()`} component.
+ *
+ * @group Components
+ * @subgroup Component Serialization
+ */
+export type SerializedAreaComp =
+    & Omit<AreaCompOpt, "shape" | "scale" | "offset">
+    & {
+        shape?: any;
+        scale?: SerializedVec2 | number;
+        offset?: SerializedVec2;
+    };
+
+/**
  * The {@link area `area()`} component.
  *
  * @group Components
@@ -371,7 +385,7 @@ export interface AreaComp extends Comp {
      */
     screenArea(): Shape;
 
-    serialize(): any;
+    serialize(): SerializedAreaComp;
 }
 
 /**
@@ -461,7 +475,9 @@ export function area(
     let _cachedRenderAreaVersion = -1; // Currently used render shape
     let _cachedLocalAreaVersion = -1; // Currently used local area
 
-    return {
+    let _hoverEventsRegistered = false;
+
+    const obj: ReturnType<typeof area> = {
         id: "area",
         collisionIgnore: opt.collisionIgnore ?? [],
         restitution: opt.restitution,
@@ -471,8 +487,10 @@ export function area(
         add(this: GameObj<AreaComp>) {
             _k.game.areaCount++;
             if (this.area.cursor) {
+                _hoverEventsRegistered = true;
                 events.push(
                     this.onHover(() => _k.app.setCursor(this.area.cursor!)),
+                    // this.onHoverEnd(() => _k.app.setCursor("default")),
                 );
             }
 
@@ -593,14 +611,25 @@ export function area(
             },
             set cursor(value: Cursor | null) {
                 _cursor = value;
-                // TODO: attach/detach hover
+
+                if (obj.isHovering()) {
+                    _k.app.setCursor(obj.area.cursor!);
+                }
+
+                if (!_hoverEventsRegistered) {
+                    _hoverEventsRegistered = true;
+                    events.push(
+                        obj.onHover(() => _k.app.setCursor(obj.area.cursor!)),
+                        // obj.onHoverEnd(() => _k.app.setCursor("default")),
+                    );
+                }
             },
             get cursor(): Cursor | null {
                 return _cursor;
             },
         },
 
-        isClicked(): boolean {
+        isClicked(this: GameObj<AreaComp>): boolean {
             if (_k.game.fakeMouse) {
                 return _k.game.fakeMouse.isPressed && this.isHovering();
             }
@@ -658,7 +687,7 @@ export function area(
             }
         },
 
-        isOverlapping(other) {
+        isOverlapping(other: GameObj<AreaComp>) {
             if (!other.id) {
                 throw new Error(
                     "isOverlapping() requires the object to have an id",
@@ -668,7 +697,7 @@ export function area(
             return col && col.hasOverlap();
         },
 
-        isVisuallyColliding(other) {
+        isVisuallyColliding(this: GameObj<AreaComp>, other: GameObj<AreaComp>) {
             return this.screenArea().collides(other.screenArea());
         },
 
@@ -873,7 +902,7 @@ export function area(
         },
 
         serialize() {
-            const data: any = {};
+            const data: SerializedAreaComp = {};
             if (this.area.shape) data.shape = this.area.shape.serialize();
             if (this.area.scale) {
                 data.scale = this.area.scale instanceof Vec2
@@ -886,15 +915,20 @@ export function area(
             if (this.collisionIgnore) {
                 data.collisionIgnore = this.collisionIgnore.slice();
             }
-            if (this.restitution) data.restitution = this.restitution;
-            if (this.friction) data.friction = this.friction;
+            if (this.restitution !== undefined) {
+                data.restitution = this.restitution;
+            }
+            if (this.friction !== undefined) data.friction = this.friction;
+            if (this.isSensor !== undefined) data.isSensor = this.isSensor;
             return data;
         },
     };
+
+    return obj;
 }
 
-export function areaFactory(data: any) {
-    const opt: any = {};
+export function areaFactory(data: SerializedAreaComp) {
+    const opt: AreaCompOpt = {};
     if (data.shape) opt.shape = shapeFactory(data.shape);
     if (data.scale) {
         opt.scale = typeof data.scale === "number"
@@ -902,12 +936,13 @@ export function areaFactory(data: any) {
             : Vec2.deserialize(data.scale);
     }
     if (data.offset) opt.offset = Vec2.deserialize(data.offset);
-    if (data.cursor) opt.cursor = opt.cursor;
+    if (data.cursor) opt.cursor = data.cursor;
     // Make a copy, since it might be changed later
     if (data.collisionIgnore) {
         opt.collisionIgnore = data.collisionIgnore.slice();
     }
-    if (data.restitution) opt.restitution = data.restitution;
-    if (data.friction) opt.friction = data.friction;
+    if (data.restitution !== undefined) opt.restitution = data.restitution;
+    if (data.friction !== undefined) opt.friction = data.friction;
+    if (data.isSensor !== undefined) opt.isSensor = data.isSensor;
     return area(opt);
 }

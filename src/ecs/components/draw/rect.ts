@@ -92,7 +92,7 @@ export function rect(
             }
         },
         radius: opt.radius || 0,
-        draw(this: GameObj<RectComp & FillComp>) {
+        draw(this: GameObj<RectComp | FillComp>) {
             drawRect(Object.assign(getRenderProps(this), {
                 width: _width,
                 height: _height,
@@ -114,7 +114,7 @@ export function rect(
         serialize(this: GameObj<RectComp & FillComp>) {
             const data: SerializedRectComp = { width: _width, height: _height };
             if (this.radius) data.radius = this.radius;
-            if (this.fill ?? opt.fill) data.fill = opt.fill;
+            if (this.fill ?? opt.fill) data.fill = this.fill ?? opt.fill;
             return data;
         },
     };

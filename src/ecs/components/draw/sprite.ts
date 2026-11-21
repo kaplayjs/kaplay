@@ -120,6 +120,10 @@ export interface SpriteComp extends Comp {
      */
     flipY: boolean;
     /**
+     * If provided width and height, don't stretch but instead render tiled.
+     */
+    tiled: boolean;
+    /**
      * Register an event that runs when an animation is played.
      */
     onAnimStart(action: (anim: string) => void): KEventController;
@@ -293,6 +297,7 @@ export function sprite(
         animSpeed: opt.animSpeed ?? 1,
         flipX: opt.flipX ?? false,
         flipY: opt.flipY ?? false,
+        tiled: opt.tiled ?? false,
 
         get sprite() {
             return src.toString();
@@ -345,7 +350,7 @@ export function sprite(
                     quad: this.quad,
                     flipX: this.flipX,
                     flipY: this.flipY,
-                    tiled: opt.tiled,
+                    tiled: this.tiled,
                     width: this.width,
                     height: this.height,
                 }),

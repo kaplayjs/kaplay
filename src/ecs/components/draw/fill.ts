@@ -18,7 +18,7 @@ export interface SerializedFillComp {
  */
 export interface FillComp extends Comp {
     /**
-     * If the obj is unaffected by camera
+     * If the obj is filled.
      */
     fill: boolean;
 

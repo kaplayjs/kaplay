@@ -1,5 +1,5 @@
 import { Polygon, vec2 } from "../../../math/math";
-import { Vec2 } from "../../../math/Vec2";
+import { type SerializedVec2, Vec2 } from "../../../math/Vec2";
 import type { Comp, GameObj } from "../../../types";
 import type { PosComp } from "../transform/pos";
 import type { AreaComp } from "./area";
@@ -15,6 +15,7 @@ export interface SurfaceEffectorComp extends Comp {
     speed: number;
     speedVariation: number;
     forceScale: number;
+    serialize(): SurfaceEffectorCompOpt;
 }
 
 export function surfaceEffector(
@@ -36,8 +37,29 @@ export function surfaceEffector(
                 obj.addForce(force?.scale(obj.mass * this.forceScale));
             });
         },
+        serialize() {
+            return {
+                speed: this.speed,
+                speedVariation: this.speedVariation,
+                forceScale: this.forceScale,
+            };
+        },
     };
 }
+
+export function surfaceEffectorFactory(data: SurfaceEffectorCompOpt) {
+    return surfaceEffector(data);
+}
+
+/**
+ * The serialized {@link areaEffector `areaEffector()`} component.
+ *
+ * @group Components
+ * @subgroup Component Serialization
+ */
+export type SerializedAreaEffectorComp = Omit<AreaEffectorCompOpt, "force"> & {
+    force: SerializedVec2;
+};
 
 export type AreaEffectorCompOpt = {
     useGlobalAngle?: boolean;
@@ -49,6 +71,7 @@ export interface AreaEffectorComp extends Comp {
     useGlobalAngle: boolean;
     force: Vec2;
     linearDrag: number;
+    serialize(): SerializedAreaEffectorComp;
 }
 
 export function areaEffector(opts: AreaEffectorCompOpt): AreaEffectorComp {
@@ -71,7 +94,19 @@ export function areaEffector(opts: AreaEffectorCompOpt): AreaEffectorComp {
                 }
             });
         },
+        serialize() {
+            return {
+                useGlobalAngle: this.useGlobalAngle,
+                force: this.force.serialize(),
+                linearDrag: this.linearDrag,
+            };
+        },
     };
+}
+
+export function areaEffectorFactory(data: SerializedAreaEffectorComp) {
+    data.force = Vec2.deserialize(data.force);
+    return areaEffector(data as AreaEffectorCompOpt);
 }
 
 export type ForceMode = "constant" | "inverseLinear" | "inverseSquared";
@@ -88,6 +123,7 @@ export interface PointEffectorComp extends Comp {
     distanceScale: number;
     forceMode: ForceMode;
     linearDrag: number;
+    serialize(): PointEffectorCompOpt;
 }
 
 export function pointEffector(opts: PointEffectorCompOpt): PointEffectorComp {
@@ -119,8 +155,32 @@ export function pointEffector(opts: PointEffectorCompOpt): PointEffectorComp {
                 }
             });
         },
+        serialize() {
+            return {
+                forceMagnitude: this.forceMagnitude,
+                distanceScale: this.distanceScale,
+                forceMode: this.forceMode,
+                linearDrag: this.linearDrag,
+            };
+        },
     };
 }
+
+export function pointEffectorFactory(data: PointEffectorCompOpt) {
+    return pointEffector(data);
+}
+
+/**
+ * The serialized {@link constantForce `constantForce()`} component.
+ *
+ * @group Components
+ * @subgroup Component Serialization
+ */
+export type SerializedConstantForceComp =
+    & Omit<ConstantForceCompOpt, "force">
+    & {
+        force?: SerializedVec2;
+    };
 
 export type ConstantForceCompOpt = {
     force?: Vec2;
@@ -130,6 +190,7 @@ export type ConstantForceCompOpt = {
 export interface ConstantForceComp extends Comp {
     force: Vec2 | undefined;
     useGlobalAngle: boolean;
+    serialize(): SerializedConstantForceComp;
 }
 
 export function constantForce(opts: ConstantForceCompOpt): ConstantForceComp {
@@ -147,7 +208,29 @@ export function constantForce(opts: ConstantForceCompOpt): ConstantForceComp {
                 );
             }
         },
+        serialize() {
+            const data: SerializedConstantForceComp = {
+                useGlobalAngle: this.useGlobalAngle,
+            };
+            if (this.force) data.force = this.force.serialize();
+            return data;
+        },
     };
+}
+
+export function constantForceFactory(data: SerializedConstantForceComp) {
+    data.force &&= Vec2.deserialize(data.force);
+    return constantForce(data as ConstantForceCompOpt);
+}
+
+/**
+ * The serialized {@link platformEffector `platformEffector()`} component.
+ *
+ * @group Components
+ * @subgroup Component Serialization
+ */
+export interface SerializedPlatformEffectorComp {
+    ignoreSides?: SerializedVec2[];
 }
 
 export type PlatformEffectorCompOpt = {
@@ -183,6 +266,10 @@ export interface PlatformEffectorComp extends Comp {
      * with the platform effector, it won't collide even if `shouldCollide` returns true.
      */
     platformIgnore: Set<GameObj>;
+    /**
+     * Note: Only `ignoreSides` is supported (`shouldCollide()` opt will be omitted).
+     */
+    serialize(): SerializedPlatformEffectorComp;
 }
 
 export function platformEffector(
@@ -217,7 +304,19 @@ export function platformEffector(
                 this.platformIgnore.delete(obj);
             });
         },
+        serialize() {
+            const data: SerializedPlatformEffectorComp = {};
+            if (opt.ignoreSides?.length) {
+                data.ignoreSides = opt.ignoreSides.map(s => s.serialize());
+            }
+            return data;
+        },
     };
+}
+
+export function platformEffectorFactory(data: SerializedPlatformEffectorComp) {
+    data.ignoreSides &&= data.ignoreSides.map(s => Vec2.deserialize(s));
+    return platformEffector(data as PlatformEffectorCompOpt);
 }
 
 export type BuoyancyEffectorCompOpt = {
@@ -240,6 +339,7 @@ export interface BuoyancyEffectorComp extends Comp {
     flowVariation: number;
     applyBuoyancy(body: GameObj<BodyComp>, submergedArea: Polygon): void;
     applyDrag(body: GameObj<BodyComp>, submergedArea: Polygon): void;
+    serialize(): BuoyancyEffectorCompOpt;
 }
 
 export function buoyancyEffector(
@@ -299,5 +399,20 @@ export function buoyancyEffector(
             // const angularDrag = submergedArea.area() * -body.angularVelocity * this.angularDrag;
             // object.addTorque(angularDrag);
         },
+        serialize() {
+            return {
+                surfaceLevel: this.surfaceLevel,
+                density: this.density,
+                linearDrag: this.linearDrag,
+                angularDrag: this.angularDrag,
+                flowAngle: this.flowAngle,
+                flowMagnitude: this.flowMagnitude,
+                flowVariation: this.flowVariation,
+            };
+        },
     };
+}
+
+export function buoyancyEffectorFactory(data: BuoyancyEffectorCompOpt) {
+    return buoyancyEffector(data);
 }
