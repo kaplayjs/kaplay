@@ -24,19 +24,36 @@ export type AudioChannel = {
     /** Mute this channel (and everything routed through it). */
     mute: boolean;
     /** A ReadonlySet that contains all of the audios on this channel, they get cleared when they end. */
-    readonly audios: ReadonlySet<SoundPlay>;
+    readonly audios: ReadonlySet<SoundPlay | MusicPlay>;
     /** Pauses all sounds in the channel. */
     pauseAll(): void;
     /** Resumes all sounds in the channel. */
     resumeAll(): void;
     /**
-     * Play audio through this channel. Thin wrapper around the
+     *  Removes a specific audio from this channel.
+     *  @param audio The audio to remove from this channel.
+     */
+    clearAudio(audio: SoundPlay | MusicPlay): void;
+    /**
+     * Removes all of the audios in this channel.
+     */
+    clearAll(): void;
+    /** Runs `stop()` on all of the {@link SoundPlay `SoundPlay`} and {@link MusicPlay `MusicPlay`} */
+    stopAll(): void;
+    /**
+     * Play sound through this channel. Thin wrapper around the
      * playSound, with connectTo pre-filled to this
      * channel's node — no playback logic is duplicated here.
      *
      * @returns A control handle.
      */
-    playSound(src: string | SoundData, opt?: SoundPlayOpt): SoundPlay;
+    playSound(
+        src: string | SoundData,
+        opt?: SoundPlayOpt & {
+            /** Wheter the sound should get cleared from the AudioChannel when it ends. */
+            clearOnEnd?: boolean;
+        },
+    ): SoundPlay;
     /**
      * Play music through this channel. Thin wrapper around the
      * playMusic, with connectTo pre-filled to this
@@ -44,7 +61,13 @@ export type AudioChannel = {
      *
      * @returns A control handle.
      */
-    playSound(src: string | SoundData, opt?: SoundPlayOpt): SoundPlay;
+    playMusic(
+        src: string,
+        opt?: MusicPlayOpt & {
+            /** Wheter the music should get cleared from the AudioChannel when it ends. */
+            clearOnEnd?: boolean;
+        },
+    ): MusicPlay;
     /**
      * Lowers the volume in a duration of time.
      *
@@ -127,27 +150,18 @@ export function createChannel(
             return audios as ReadonlySet<SoundPlay | MusicPlay>;
         },
 
-        playSound(src: string | SoundData, opt: SoundPlayOpt = {}) {
-            // creates an AudioPlay instance with the gainNode created by the channel
+        playSound(src, opt = {}) {
+            // creates an SoundPlay instance with the gainNode created by the channel
             const sound = playSound(src, { ...opt, connectTo: gainNode });
             audios.add(sound);
-            sound.onEnd(() => audios.delete(sound));
             return sound;
         },
 
         playMusic(url: string, opt: MusicPlayOpt = {}) {
+            // creates an MusicPlay instance with the gainNode created by the channel
             const music = playMusic(url, { ...opt, connectTo: gainNode });
             audios.add(music);
-            music.onEnd(() => audios.delete(music));
             return music;
-        },
-
-        stopAll() {
-            // sound.stop() doesn't trigger end
-            // they get removed from the set when end
-            // we have to clear them manually
-            for (const sound of [...audios]) sound.stop();
-            audios.clear();
         },
 
         fadeTo(newVolume: number, duration = 0.5) {
@@ -155,12 +169,24 @@ export function createChannel(
             applyGain(duration);
         },
 
+        clearAudio(audio: SoundPlay | MusicPlay) {
+            audios.delete(audio);
+        },
+
+        clearAll() {
+            for (const audio of [...audios]) audios.delete(audio);
+        },
+
+        stopAll() {
+            for (const audio of [...audios]) audio.stop();
+        },
+
         pauseAll() {
-            for (const sound of audios) sound.paused = true;
+            for (const audio of audios) audio.paused = true;
         },
 
         resumeAll() {
-            for (const sound of audios) sound.paused = false;
+            for (const audio of audios) audio.paused = false;
         },
     } as AudioChannel;
 
