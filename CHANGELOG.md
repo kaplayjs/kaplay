@@ -74,6 +74,7 @@ So your change should look like:
 - Added `FakeMouseComp.deltaPos` to see how much the position of the FakeMouse has changed in the last frame (not comparable to `mouseDeltaPos()`) since they move differently (#1159) - @amyspark-ng
 - Added `FakeMouseComp.press(btn)`'s `btn` parameter to control which mouse button it will emulate (defaults to left) (#1159) - @amyspark-ng
 - Added `GetOpt.op` operator option to allow `"or"` besides the default `"and"` in `GameObjRaw.get()`, e.g. `get(["fruit", "vegetable"], { op: "or" })` (#1172) - @imaginarny
+- Added `rootURL(url)` to prefix the passed URL using `loadRoot()` value (#1135) - @amyspark-ng
 - Added prefab support for most components (except those with obj ref or function arguments for now) (#1179) - @imaginarny, @amyspark-ng
 - Exposed `registerPrefabFactory()` to be able to register custom components for deserialization (#1179) - @imaginarny
 
@@ -89,6 +90,8 @@ So your change should look like:
       return myComp(Vec2.deserialize(data.p))
   });
   ```
+
+- Added `IKConstraintOpt.offset` to make `constraint.ik()` reach a point in the target's local space instead of its origin, so a foot can follow a spot on a moving platform without a dummy child object (#1087) - @officialasishkumar
 
 ### Changed
 
