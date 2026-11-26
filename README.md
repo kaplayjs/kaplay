@@ -83,6 +83,9 @@ onKeyDown("w", () => {
 
 The fastest way to get started:
 
+```sh
+npx create-kaplay my-game
+```
 ![npx create-kaplay my-game](./assets/install.gif)
 
 Then open [http://localhost:5173](http://localhost:5173) and edit `src/game.js`.
