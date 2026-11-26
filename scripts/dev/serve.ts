@@ -17,35 +17,58 @@ export function serve() {
 
     // Expose crew urls
     for (const [name, asset] of Object.entries(assets)) {
-        const outlined = asset.outlined;
+        if (asset.kind === "Sprite" || asset.kind === "Font") {
+            const spriteAsset = "spritesheet" in asset
+                ? asset.spritesheet!
+                : asset;
+            const sprite = spriteAsset.sprite;
+            const outlined = spriteAsset.outlined;
 
-        app.get(`/crew/${name}.png`, (req, res) => {
-            const img = Buffer.from(
-                asset.sprite.replace(/data:image\/png;base64,/, ""),
-                "base64",
-            );
+            app.get(`/crew/${name}.png`, (req, res) => {
+                const img = Buffer.from(
+                    sprite.replace(/data:image\/png;base64,/, ""),
+                    "base64",
+                );
 
-            res.writeHead(200, {
-                "Content-Type": "image/png",
-                "Content-Length": img.length,
+                res.writeHead(200, {
+                    "Content-Type": "image/png",
+                    "Content-Length": img.length,
+                });
+                res.end(img);
             });
-            res.end(img);
-        });
 
-        if (!outlined) continue;
+            if (!outlined) continue;
 
-        app.get(`/crew/${name}-o.png`, (req, res) => {
-            const img = Buffer.from(
-                outlined.replace(/data:image\/png;base64,/, ""),
-                "base64",
-            );
+            app.get(`/crew/${name}-o.png`, (req, res) => {
+                const img = Buffer.from(
+                    outlined.replace(/data:image\/png;base64,/, ""),
+                    "base64",
+                );
 
-            res.writeHead(200, {
-                "Content-Type": "image/png",
-                "Content-Length": img.length,
+                res.writeHead(200, {
+                    "Content-Type": "image/png",
+                    "Content-Length": img.length,
+                });
+                res.end(img);
             });
-            res.end(img);
-        });
+        }
+        else if (asset.kind === "Sound") {
+            app.get(`/crew/${name}.${asset.fileFormat}`, (req, res) => {
+                const sound = Buffer.from(
+                    asset.sound.replace(/data:.*base64,/, ""),
+                    "base64",
+                );
+                const mimeExt = asset.fileFormat === "mp3"
+                    ? "mpeg"
+                    : asset.fileFormat;
+
+                res.writeHead(200, {
+                    "Content-Type": `audio/${mimeExt}`,
+                    "Content-Length": sound.length,
+                });
+                res.end(sound);
+            });
+        }
     }
 
     app.get("/", async (req, res) => {

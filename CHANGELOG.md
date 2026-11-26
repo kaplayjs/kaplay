@@ -44,8 +44,6 @@ So your change should look like:
 
 ## [unreleased]
 
-## [4000.0.0-alpha.28] - 2026-11-19
-
 ### Breaking Changes
 
 - Renamed `RotationConstraintComp.scale` option to `ratio` (#976) - @dragoncoder047
@@ -109,6 +107,10 @@ So your change should look like:
 
 ### Examples
 
+- Added a new `ghostbusting` game example! (#1218) - @anthonygood
+- Added a new `candles` game example! (#1218) - @KeSuave
+- Added a new `spookstoppers` game example! (#1218) - @maxuostudios
+- Added a new `graveyardshooter` game example! (#1218) - @10kumargautamaditya-a11y
 - Added a new `gacha` example! (#1057) - @imaginarny
 - Added a new `singletonTags` example! (#1172) - @imaginarny
 - Added a new `textClick` example! (#1064) - @dragoncoder047
