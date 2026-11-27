@@ -1,5 +1,5 @@
 import { SoundData } from "../assets/sound";
-import { play } from "../audio/play";
+import { playSound } from "../audio/play";
 import { _k } from "../shared";
 import { downloadBlob } from "../utils/dataURL";
 
@@ -100,7 +100,7 @@ export const record = (frameRate?: number, mimeTypes?: string[]): Recording => {
     );
 
     // dummy to make audio work
-    play(dummy);
+    playSound(dummy);
 
     const chunks: any[] = [];
 
