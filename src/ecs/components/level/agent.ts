@@ -21,6 +21,7 @@ export type SerializedAgentComp = AgentCompOpt;
 export interface AgentComp extends Comp {
     agentSpeed: number;
     allowDiagonals: boolean;
+    turnCost: number;
     getDistanceToTarget(): number;
     getNextLocation(): Vec2 | null;
     getPath(): Vec2[] | null;
@@ -45,6 +46,7 @@ export interface AgentComp extends Comp {
 export type AgentCompOpt = {
     speed?: number;
     allowDiagonals?: boolean;
+    turnCost?: number;
 };
 
 export function agent(opts: AgentCompOpt = {}): AgentComp {
@@ -57,6 +59,7 @@ export function agent(opts: AgentCompOpt = {}): AgentComp {
         require: ["pos", "tile"],
         agentSpeed: opts.speed ?? 100,
         allowDiagonals: opts.allowDiagonals ?? true,
+        turnCost: opts.turnCost ?? 0,
         getDistanceToTarget(this: GameObj<AgentComp | PosComp>) {
             return target ? this.pos.dist(target) : 0;
         },
@@ -82,6 +85,7 @@ export function agent(opts: AgentCompOpt = {}): AgentComp {
             target = p;
             path = this.getLevel().getPath(this.pos, target, {
                 allowDiagonals: this.allowDiagonals,
+                turnCost: this.turnCost,
             });
             index = path ? 0 : null;
             if (path && index !== null) {
