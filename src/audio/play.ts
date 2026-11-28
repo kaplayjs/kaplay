@@ -185,10 +185,22 @@ export function play(
             onEndEvents.trigger();
         }
     };
-    panNode.pan.value = opt.pan ?? 0;
+    let volume = opt.volume ?? 1;
+    let pan = opt.pan ?? 0;
+    panNode.pan.value = pan;
     panNode.connect(gainNode);
     gainNode.connect(opt.connectTo ?? _k.audio.masterNode);
-    gainNode.gain.value = opt.volume ?? 1;
+    gainNode.gain.value = volume;
+
+    // Move an audio param to a new value over one frame, at the audio sample
+    // rate, instead of jumping to it once per frame, which crackles when the
+    // value is tweened.
+    const rampParam = (param: AudioParam, value: number) => {
+        const now = ctx.currentTime;
+        param.cancelScheduledValues(now);
+        param.setValueAtTime(param.value, now);
+        param.linearRampToValueAtTime(value, now + _k.app.dt());
+    };
 
     const start = (data: SoundData) => {
         if (opt.reverse) {
@@ -318,19 +330,21 @@ export function play(
         },
 
         set volume(val: number) {
-            gainNode.gain.value = Math.max(val, 0);
+            volume = Math.max(val, 0);
+            rampParam(gainNode.gain, volume);
         },
 
         get volume() {
-            return gainNode.gain.value;
+            return volume;
         },
 
-        set pan(pan: number) {
-            panNode.pan.value = pan;
+        set pan(val: number) {
+            pan = val;
+            rampParam(panNode.pan, pan);
         },
 
         get pan() {
-            return panNode.pan.value;
+            return pan;
         },
 
         set loop(l: boolean) {
